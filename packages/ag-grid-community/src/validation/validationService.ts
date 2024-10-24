@@ -9,6 +9,7 @@ import type { EnterpriseModuleName, ModuleName } from '../interfaces/iModule';
 import { _areModulesGridScoped } from '../modules/moduleRegistry';
 import { _warnOnce } from '../utils/function';
 import { _fuzzySuggestions } from '../utils/fuzzyMatch';
+import type { IconName, IconValue } from '../utils/icon';
 import { validateApiFunction } from './apiFunctionValidator';
 import { ENTERPRISE_MODULE_NAMES } from './enterpriseModuleNames';
 import type { ErrorId, GetErrorParams, MissingModuleErrors } from './errorMessages/errorText';
@@ -16,6 +17,7 @@ import { MISSING_MODULE_REASONS } from './errorMessages/errorText';
 import { getError } from './errorMessages/errorText';
 import { _error, _warn, provideValidationServiceLogger } from './logging';
 import { GRID_OPTIONS_VALIDATORS } from './rules/gridOptionsValidations';
+import { DEPRECATED_ICONS_V33, ICON_MODULES, ICON_VALUES } from './rules/iconValidations';
 import { USER_COMP_MODULES } from './rules/userCompValidations';
 import type { DependentValues, OptionsValidation, OptionsValidator, RequiredOptions } from './validationTypes';
 
@@ -50,7 +52,12 @@ export class ValidationService extends BeanStub implements NamedBean {
         return validateApiFunction(functionName, apiFunction, this.beans);
     }
 
-    public missingModule(moduleName: ModuleName, reasonOrId: string | keyof MissingModuleErrors, gridId: string): void {
+    public missingModule(
+        moduleName: ModuleName | ModuleName[],
+        reasonOrId: string | keyof MissingModuleErrors,
+        gridId: string,
+        additionalText?: string
+    ): void {
         const gridScoped = _areModulesGridScoped();
         const isEnterprise = ENTERPRISE_MODULE_NAMES[moduleName as EnterpriseModuleName] === 1;
         const reason = typeof reasonOrId === 'string' ? reasonOrId : MISSING_MODULE_REASONS[reasonOrId];
@@ -60,6 +67,7 @@ export class ValidationService extends BeanStub implements NamedBean {
             gridScoped,
             gridId,
             isEnterprise,
+            additionalText,
         });
     }
 
@@ -83,6 +91,27 @@ export class ValidationService extends BeanStub implements NamedBean {
                 jsComps,
             });
         }
+    }
+
+    public validateIcon(iconName: IconName): void {
+        if (DEPRECATED_ICONS_V33.has(iconName)) {
+            _warn(43, { iconName });
+        }
+        if (ICON_VALUES[iconName as IconValue]) {
+            // directly referencing icon
+            return;
+        }
+        const moduleName = ICON_MODULES[iconName];
+        if (moduleName) {
+            this.missingModule(
+                moduleName,
+                `icon '${iconName}'`,
+                this.beans.context.getGridId(),
+                `Alternatively, use the CSS icon name directly.`
+            );
+            return;
+        }
+        _warn(134, { iconName });
     }
 
     private processOptions<T extends object>(options: T, validator: OptionsValidator<T>): void {

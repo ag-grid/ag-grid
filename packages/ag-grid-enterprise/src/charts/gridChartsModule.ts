@@ -39,6 +39,28 @@ export const GridChartsCoreModule: _ModuleWithoutApi = {
         });
     },
     beans: [ChartService, ChartTranslationService, ChartCrossFilterService, ChartMenuListFactory, ChartMenuService],
+    icons: {
+        // shown on top right of chart when chart is linked to range data (click to unlink)
+        linked: 'linked',
+        // shown on top right of chart when chart is not linked to range data (click to link)
+        unlinked: 'unlinked',
+        // icon to open charts menu
+        chartsMenu: 'menu-alt',
+        // download chart
+        chartsDownload: 'save',
+        // Edit Chart menu item shown in Integrated Charts menu
+        chartsMenuEdit: 'chart',
+        // Advanced Settings menu item shown in Integrated Charts menu
+        chartsMenuAdvancedSettings: 'settings',
+        // shown in Integrated Charts menu add fields
+        chartsMenuAdd: 'plus',
+        // shown in Integrated Charts tool panel color picker
+        chartsColorPicker: 'small-down',
+        // previous in Integrated Charts settings tool panel theme switcher
+        chartsThemePrevious: 'previous',
+        // next in Integrated Charts settings tool panel theme switcher
+        chartsThemeNext: 'next',
+    },
     dependsOn: [RangeSelectionModule, EnterpriseCoreModule, DragAndDropModule, PopupModule, MenuItemModule],
 };
 

@@ -53,6 +53,12 @@ export const FilterValueModule: _ModuleWithoutApi = {
 export const ColumnFilterModule: _ModuleWithoutApi = {
     ...baseCommunityModule('ColumnFilterModule'),
     beans: [ColumnFilterService],
+    icons: {
+        // open filter button - header, floating filter, menu
+        filter: 'filter',
+        // filter is applied - header (legacy column menu), filter tool panel
+        filterActive: 'filter',
+    },
     dependsOn: [FilterCoreModule, PopupModule, FilterValueModule],
 };
 

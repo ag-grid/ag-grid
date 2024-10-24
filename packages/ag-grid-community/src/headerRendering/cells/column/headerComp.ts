@@ -10,6 +10,7 @@ import type { SortController } from '../../../sort/sortController';
 import type { SortIndicatorComp } from '../../../sort/sortIndicatorComp';
 import { _removeFromParent, _setDisplayed } from '../../../utils/dom';
 import { _exists } from '../../../utils/generic';
+import type { IconName } from '../../../utils/icon';
 import { _createIconNoSpan } from '../../../utils/icon';
 import { _escapeString } from '../../../utils/string';
 import { Component, RefPlaceholder } from '../../../widgets/component';
@@ -206,12 +207,12 @@ export class HeaderComp extends Component implements IHeaderComp {
         }
     }
 
-    private addInIcon(iconName: string, eParent: HTMLElement, column: AgColumn): void {
+    private addInIcon(iconName: IconName, eParent: HTMLElement, column: AgColumn): void {
         if (eParent == null) {
             return;
         }
 
-        const eIcon = _createIconNoSpan(iconName, this.gos, column);
+        const eIcon = _createIconNoSpan(iconName, this.beans, column);
         if (eIcon) {
             eParent.appendChild(eIcon);
         }
@@ -352,7 +353,12 @@ export class HeaderComp extends Component implements IHeaderComp {
         if (!this.eFilter) {
             return;
         }
-        this.configureFilter(this.params.enableFilterIcon, this.eFilter, this.onFilterChangedIcon.bind(this));
+        this.configureFilter(
+            this.params.enableFilterIcon,
+            this.eFilter,
+            this.onFilterChangedIcon.bind(this),
+            'filterActive'
+        );
     }
 
     private setupFilterButton(): void {
@@ -362,7 +368,8 @@ export class HeaderComp extends Component implements IHeaderComp {
         const configured = this.configureFilter(
             this.params.enableFilterButton,
             this.eFilterButton,
-            this.onFilterChangedButton.bind(this)
+            this.onFilterChangedButton.bind(this),
+            'filter'
         );
         if (configured) {
             this.addManagedElementListeners(this.eFilterButton, {
@@ -373,14 +380,19 @@ export class HeaderComp extends Component implements IHeaderComp {
         }
     }
 
-    private configureFilter(enabled: boolean, element: HTMLElement, filterChangedCallback: () => void): boolean {
+    private configureFilter(
+        enabled: boolean,
+        element: HTMLElement,
+        filterChangedCallback: () => void,
+        icon: IconName
+    ): boolean {
         if (!enabled) {
             _removeFromParent(element);
             return false;
         }
 
         const column = this.params.column as AgColumn;
-        this.addInIcon('filter', element, column);
+        this.addInIcon(icon, element, column);
 
         this.addManagedListeners(column, { filterChanged: filterChangedCallback });
         filterChangedCallback();
