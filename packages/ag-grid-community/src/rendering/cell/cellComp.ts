@@ -343,7 +343,7 @@ export class CellComp extends Component {
         // and lastly we never use it if doing auto-height, as the auto-height service checks the
         // row height directly after the cell is created, it doesn't wait around for the tasks to complete
         const suppressAnimationFrame = this.beans.gos.get('suppressAnimationFrame');
-        const useTaskService = !suppressAnimationFrame && this.beans.animationFrameService;
+        const useTaskService = !suppressAnimationFrame && this.beans.animationFrameSvc;
 
         const displayComponentVersionCopy = this.rendererVersion;
 
@@ -368,11 +368,7 @@ export class CellComp extends Component {
         // if we changed this (always use task service) would make sense, however it would break tests, possibly
         // test of users.
         if (useTaskService && this.firstRender) {
-            this.beans.animationFrameService!.createTask(
-                createCellRendererFunc,
-                this.rowNode.rowIndex!,
-                'createTasksP2'
-            );
+            this.beans.animationFrameSvc!.createTask(createCellRendererFunc, this.rowNode.rowIndex!, 'createTasksP2');
         } else {
             createCellRendererFunc();
         }

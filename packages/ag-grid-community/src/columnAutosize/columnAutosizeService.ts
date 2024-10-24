@@ -25,7 +25,7 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
 
     private colModel: ColumnModel;
     private visibleCols: VisibleColsService;
-    private animationFrameService?: AnimationFrameService;
+    private animationFrameSvc?: AnimationFrameService;
     private autoWidthCalculator: AutoWidthCalculator;
     private ctrlsService: CtrlsService;
     private renderStatusService?: IRenderStatusService;
@@ -40,7 +40,7 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
     public wireBeans(beans: BeanCollection): void {
         this.colModel = beans.colModel;
         this.visibleCols = beans.visibleCols;
-        this.animationFrameService = beans.animationFrameService;
+        this.animationFrameSvc = beans.animationFrameSvc;
         this.autoWidthCalculator = beans.autoWidthCalculator!;
         this.ctrlsService = beans.ctrlsService;
         this.renderStatusService = beans.renderStatusService;
@@ -75,7 +75,7 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
         // we autosize after animation frames finish in case any cell renderers need to complete first. this can
         // happen eg if client code is calling api.autoSizeAllColumns() straight after grid is initialised, but grid
         // hasn't fully drawn out all the cells yet (due to cell renderers in animation frames).
-        this.animationFrameService?.flushAllFrames();
+        this.animationFrameSvc?.flushAllFrames();
 
         if (this.timesDelayed < 5 && this.renderStatusService && !this.renderStatusService.areHeaderCellsRendered()) {
             // This is needed for React, as it doesn't render the headers synchronously all the time.

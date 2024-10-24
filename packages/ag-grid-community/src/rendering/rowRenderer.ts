@@ -52,7 +52,7 @@ const ROW_ANIMATION_TIMEOUT = 400 as const;
 export class RowRenderer extends BeanStub implements NamedBean {
     beanName = 'rowRenderer' as const;
 
-    private animationFrameService?: AnimationFrameService;
+    private animationFrameSvc?: AnimationFrameService;
     private paginationService?: PaginationService;
     private pageBoundsService: PageBoundsService;
     private colModel: ColumnModel;
@@ -66,7 +66,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
     private stickyRowService?: StickyRowService;
 
     public wireBeans(beans: BeanCollection): void {
-        this.animationFrameService = beans.animationFrameService;
+        this.animationFrameSvc = beans.animationFrameSvc;
         this.paginationService = beans.paginationService;
         this.pageBoundsService = beans.pageBoundsService;
         this.colModel = beans.colModel;
@@ -942,7 +942,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
             const newFocusedCell = this.getCellToRestoreFocusToAfterRefresh();
 
             if (cellFocused != null && newFocusedCell == null) {
-                this.animationFrameService?.flushAllFrames();
+                this.animationFrameSvc?.flushAllFrames();
                 this.restoreFocusedCell(cellFocused);
             }
         }
@@ -1039,9 +1039,9 @@ export class RowRenderer extends BeanStub implements NamedBean {
                 afterScroll &&
                 !this.gos.get('suppressAnimationFrame') &&
                 !this.printLayout &&
-                this.beans.animationFrameService;
+                this.beans.animationFrameSvc;
             if (useAnimationFrame) {
-                this.beans.animationFrameService!.addDestroyTask(() => {
+                this.beans.animationFrameSvc!.addDestroyTask(() => {
                     this.destroyRowCtrls(rowsToRecycle, animate);
                     this.updateAllRowCtrls();
                     this.dispatchDisplayedRowsChanged();
@@ -1420,7 +1420,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
 
         const suppressAnimationFrame = this.gos.get('suppressAnimationFrame');
         const useAnimationFrameForCreate =
-            afterScroll && !suppressAnimationFrame && !this.printLayout && !!this.beans.animationFrameService;
+            afterScroll && !suppressAnimationFrame && !this.printLayout && !!this.beans.animationFrameSvc;
 
         const res = new RowCtrl(rowNode, this.beans, animate, useAnimationFrameForCreate, this.printLayout);
 

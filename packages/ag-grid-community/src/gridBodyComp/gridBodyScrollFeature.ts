@@ -48,7 +48,7 @@ export interface ScrollPartner {
 
 export class GridBodyScrollFeature extends BeanStub {
     private ctrlsService: CtrlsService;
-    private animationFrameService?: AnimationFrameService;
+    private animationFrameSvc?: AnimationFrameService;
     private paginationService?: PaginationService;
     private pageBoundsService: PageBoundsService;
     private rowModel: IRowModel;
@@ -59,7 +59,7 @@ export class GridBodyScrollFeature extends BeanStub {
 
     public wireBeans(beans: BeanCollection): void {
         this.ctrlsService = beans.ctrlsService;
-        this.animationFrameService = beans.animationFrameService;
+        this.animationFrameSvc = beans.animationFrameSvc;
         this.paginationService = beans.paginationService;
         this.pageBoundsService = beans.pageBoundsService;
         this.rowModel = beans.rowModel;
@@ -254,7 +254,7 @@ export class GridBodyScrollFeature extends BeanStub {
         if (this.shouldBlockScrollUpdate(ScrollDirection.Vertical, scrollTop, true)) {
             return;
         }
-        this.animationFrameService?.setScrollTop(scrollTop);
+        this.animationFrameSvc?.setScrollTop(scrollTop);
         this.nextScrollTop = scrollTop;
 
         if (source === VIEWPORT) {
@@ -266,10 +266,10 @@ export class GridBodyScrollFeature extends BeanStub {
         // the `scrollGridIfNeeded` will recalculate the rows to be rendered by the grid
         // so it should only be called after `eBodyViewport` has been scrolled to the correct
         // position, otherwise the `first` and `last` row could be miscalculated.
-        if (!this.animationFrameService || this.gos.get('suppressAnimationFrame')) {
+        if (!this.animationFrameSvc || this.gos.get('suppressAnimationFrame')) {
             this.scrollGridIfNeeded();
         } else {
-            this.animationFrameService.schedule();
+            this.animationFrameSvc.schedule();
         }
 
         this.resetLastVScrollDebounced();
@@ -583,7 +583,7 @@ export class GridBodyScrollFeature extends BeanStub {
             } while (rowGotShiftedDuringOperation);
 
             // so when we return back to user, the cells have rendered
-            this.animationFrameService?.flushAllFrames();
+            this.animationFrameSvc?.flushAllFrames();
         });
     }
 
@@ -618,7 +618,7 @@ export class GridBodyScrollFeature extends BeanStub {
             this.centerRowsCtrl.onHorizontalViewportChanged();
 
             // so when we return back to user, the cells have rendered
-            this.animationFrameService?.flushAllFrames();
+            this.animationFrameSvc?.flushAllFrames();
         });
     }
 
@@ -627,7 +627,7 @@ export class GridBodyScrollFeature extends BeanStub {
             this.centerRowsCtrl.setCenterViewportScrollLeft(left);
             this.setVerticalScrollPosition(top);
             this.rowRenderer.redraw({ afterScroll: true });
-            this.animationFrameService?.flushAllFrames();
+            this.animationFrameSvc?.flushAllFrames();
         });
     }
 

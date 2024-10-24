@@ -207,7 +207,7 @@ export interface CoreBeanCollection {
     colHover?: ColumnHoverService;
     userCompFactory: UserComponentFactory;
     registry: Registry;
-    animationFrameService?: AnimationFrameService;
+    animationFrameSvc?: AnimationFrameService;
     dragService?: DragService;
     dragAndDropService?: DragAndDropService;
     sortController?: SortController;
@@ -339,7 +339,7 @@ export type BeanName =
     | 'aggColumnNameService'
     | 'aggregationStage'
     | 'alignedGridsService'
-    | 'animationFrameService'
+    | 'animationFrameSvc'
     | 'apiFunctionService'
     | 'ariaAnnouncementService'
     | 'apiEventService'

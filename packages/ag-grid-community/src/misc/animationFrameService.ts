@@ -31,7 +31,7 @@ export function _requestAnimationFrame(gos: GridOptionsService, callback: any) {
 }
 
 export class AnimationFrameService extends BeanStub implements NamedBean {
-    beanName = 'animationFrameService' as const;
+    beanName = 'animationFrameSvc' as const;
 
     private ctrlsService: CtrlsService;
     private paginationService?: PaginationService;
