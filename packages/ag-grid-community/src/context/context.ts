@@ -289,7 +289,7 @@ export interface CoreBeanCollection {
     chartSvc?: IChartService;
     aggColumnNameSvc?: IAggColumnNameService;
     renderStatus?: IRenderStatusService;
-    rowDragService?: RowDragService;
+    rowDragSvc?: RowDragService;
     stickyRowService?: StickyRowService;
     groupHideOpenParentsService?: IGroupHideOpenParentsService;
     filterValueService?: FilterValueService;
@@ -453,7 +453,7 @@ export type BeanName =
     | 'rowAutoHeightService'
     | 'rowChildrenService'
     | 'rowContainerHeight'
-    | 'rowDragService'
+    | 'rowDragSvc'
     | 'rowEditSvc'
     | 'rowModel'
     | 'rowNodeBlockLoader'

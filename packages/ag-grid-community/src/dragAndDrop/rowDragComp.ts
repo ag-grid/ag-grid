@@ -255,7 +255,7 @@ class ManagedVisibilityStrategy extends VisibilityStrategy {
 
     private workOutVisibility(): void {
         // only show the drag if both sort and filter are not present
-        const rowDragFeature = this.beans.rowDragService!.getRowDragFeature();
+        const rowDragFeature = this.beans.rowDragSvc!.getRowDragFeature();
         const shouldPreventRowMove = rowDragFeature && rowDragFeature.shouldPreventRowMove();
         const suppressRowDrag = this.gos.get('suppressRowDrag');
         const hasExternalDropZones = this.beans.dragAndDrop!.hasExternalDropZones();

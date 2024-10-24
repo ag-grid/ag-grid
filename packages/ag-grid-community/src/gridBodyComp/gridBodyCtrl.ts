@@ -59,7 +59,7 @@ export class GridBodyCtrl extends BeanStub {
     private colModel: ColumnModel;
     private scrollVisibleSvc: ScrollVisibleService;
     private contextMenuSvc?: IContextMenuService;
-    private rowDragService?: RowDragService;
+    private rowDragSvc?: RowDragService;
     private pinnedRowModel?: PinnedRowModel;
     private editSvc?: EditService;
     private popupSvc?: PopupService;
@@ -74,7 +74,7 @@ export class GridBodyCtrl extends BeanStub {
         this.colModel = beans.colModel;
         this.scrollVisibleSvc = beans.scrollVisibleSvc;
         this.contextMenuSvc = beans.contextMenuSvc;
-        this.rowDragService = beans.rowDragService;
+        this.rowDragSvc = beans.rowDragSvc;
         this.pinnedRowModel = beans.pinnedRowModel;
         this.editSvc = beans.editSvc;
         this.popupSvc = beans.popupSvc;
@@ -465,7 +465,7 @@ export class GridBodyCtrl extends BeanStub {
     }
 
     private addRowDragListener(): void {
-        this.rowDragService?.setupRowDrag(this.eBodyViewport, this);
+        this.rowDragSvc?.setupRowDrag(this.eBodyViewport, this);
     }
 
     private setFloatingHeights(): void {

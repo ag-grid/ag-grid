@@ -949,7 +949,7 @@ export class CellCtrl extends BeanStub {
         dragStartPixels?: number,
         suppressVisibilityChange?: boolean
     ): RowDragComp | undefined {
-        const rowDragComp = this.beans.rowDragService?.createRowDragCompForCell(
+        const rowDragComp = this.beans.rowDragSvc?.createRowDragCompForCell(
             this.rowNode,
             this.column,
             () => this.value,

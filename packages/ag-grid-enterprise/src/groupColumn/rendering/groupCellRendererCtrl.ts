@@ -66,7 +66,7 @@ export class GroupCellRendererCtrl extends BeanStub implements IGroupCellRendere
     private userCompFactory: UserComponentFactory;
     private ctrlsSvc: CtrlsService;
     private funcColsSvc: FuncColsService;
-    private rowDragService?: RowDragService;
+    private rowDragSvc?: RowDragService;
     private selectionSvc?: ISelectionService;
     private groupHideOpenParentsService?: IGroupHideOpenParentsService;
 
@@ -693,11 +693,11 @@ export class GroupCellRendererCtrl extends BeanStub implements IGroupCellRendere
     }
 
     private addFullWidthRowDraggerIfNeeded(): void {
-        if (!this.params.fullWidth || !this.params.rowDrag || !this.rowDragService) {
+        if (!this.params.fullWidth || !this.params.rowDrag || !this.rowDragSvc) {
             return;
         }
 
-        const rowDragComp = this.rowDragService.createRowDragComp(() => this.params.value, this.params.node as RowNode);
+        const rowDragComp = this.rowDragSvc.createRowDragComp(() => this.params.value, this.params.node as RowNode);
         this.createManagedBean(rowDragComp);
 
         this.eGui.insertAdjacentElement('afterbegin', rowDragComp.getGui());

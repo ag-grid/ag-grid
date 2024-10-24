@@ -352,7 +352,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
     }
 
     private addRowDraggerToRow(gui: RowGui) {
-        const rowDragComp = this.beans.rowDragService?.createRowDragCompForRow(this.rowNode, gui.element);
+        const rowDragComp = this.beans.rowDragSvc?.createRowDragCompForRow(this.rowNode, gui.element);
         if (!rowDragComp) {
             return;
         }
@@ -1114,11 +1114,11 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         value: string = '',
         suppressVisibilityChange?: boolean
     ): void {
-        if (!this.beans.rowDragService || !this.isFullWidth()) {
+        if (!this.beans.rowDragSvc || !this.isFullWidth()) {
             return;
         }
 
-        const rowDragComp = this.beans.rowDragService.createRowDragComp(
+        const rowDragComp = this.beans.rowDragSvc.createRowDragComp(
             () => value,
             this.rowNode,
             undefined,

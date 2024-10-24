@@ -9,7 +9,7 @@ import { RowDragComp } from './rowDragComp';
 import { RowDragFeature } from './rowDragFeature';
 
 export class RowDragService extends BeanStub implements NamedBean {
-    beanName = 'rowDragService' as const;
+    beanName = 'rowDragSvc' as const;
 
     private dragAndDrop: DragAndDropService;
 
