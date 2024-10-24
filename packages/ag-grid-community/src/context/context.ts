@@ -216,7 +216,7 @@ export interface CoreBeanCollection {
     rowContainerHeight: RowContainerHeightService;
     frameworkOverrides: IFrameworkOverrides;
     selectionSvc?: ISelectionService;
-    rowStyleService?: RowStyleService;
+    rowStyleSvc?: RowStyleService;
     rowModel: IRowModel;
     ctrlsService: CtrlsService;
     valueCache?: ValueCache;
@@ -459,7 +459,7 @@ export type BeanName =
     | 'rowNodeBlockLoader'
     | 'rowNodeSorter'
     | 'rowRenderer'
-    | 'rowStyleService'
+    | 'rowStyleSvc'
     | 'scrollVisibleService'
     | 'selectionController'
     | 'selectionSvc'

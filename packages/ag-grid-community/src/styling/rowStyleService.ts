@@ -17,7 +17,7 @@ export function calculateRowLevel(rowNode: RowNode): number {
 }
 
 export class RowStyleService extends BeanStub implements NamedBean {
-    beanName = 'rowStyleService' as const;
+    beanName = 'rowStyleSvc' as const;
 
     private expressionService?: ExpressionService;
 

@@ -1205,7 +1205,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
 
     private postProcessClassesFromGridOptions(): void {
         const cssClasses: string[] = [];
-        this.beans.rowStyleService?.processClassesFromGridOptions(cssClasses, this.rowNode);
+        this.beans.rowStyleSvc?.processClassesFromGridOptions(cssClasses, this.rowNode);
         if (!cssClasses.length) {
             return;
         }
@@ -1216,7 +1216,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
     }
 
     private postProcessRowClassRules(): void {
-        this.beans.rowStyleService?.processRowClassRules(
+        this.beans.rowStyleSvc?.processRowClassRules(
             this.rowNode,
             (className: string) => {
                 this.allRowGuis.forEach((gui) => gui.rowComp.addOrRemoveCssClass(className, true));
@@ -1285,10 +1285,10 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
             classes.push('ag-row-dragging');
         }
 
-        const { rowStyleService } = beans;
-        if (rowStyleService) {
-            rowStyleService.processClassesFromGridOptions(classes, rowNode);
-            rowStyleService.preProcessRowClassRules(classes, rowNode);
+        const { rowStyleSvc } = beans;
+        if (rowStyleSvc) {
+            rowStyleSvc.processClassesFromGridOptions(classes, rowNode);
+            rowStyleSvc.preProcessRowClassRules(classes, rowNode);
         }
 
         // we use absolute position unless we are doing print layout
@@ -1316,7 +1316,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
 
     private processStylesFromGridOptions(): RowStyle {
         // Return constant reference for React
-        return this.beans.rowStyleService?.processStylesFromGridOptions(this.rowNode) ?? this.emptyStyle;
+        return this.beans.rowStyleSvc?.processStylesFromGridOptions(this.rowNode) ?? this.emptyStyle;
     }
 
     private onRowSelected(gui?: RowGui): void {
