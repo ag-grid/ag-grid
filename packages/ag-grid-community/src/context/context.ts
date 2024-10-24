@@ -262,7 +262,7 @@ export interface CoreBeanCollection {
     horizontalResizeSvc?: HorizontalResizeService;
     filterMenuFactory?: IMenuFactory;
     enterpriseMenuFactory?: IMenuFactory;
-    contextMenuService?: IContextMenuService;
+    contextMenuSvc?: IContextMenuService;
     editService?: EditService;
     rowEditService?: RowEditService;
     alignedGridsService?: AlignedGridsService;
@@ -384,7 +384,7 @@ export type BeanName =
     | 'colViewport'
     | 'pivotResultCols'
     | 'context'
-    | 'contextMenuService'
+    | 'contextMenuSvc'
     | 'selectionColSvc'
     | 'ctrlsSvc'
     | 'csvCreator'

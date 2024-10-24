@@ -65,7 +65,7 @@ function _normaliseQwertyAzerty(keyboardEvent: KeyboardEvent): string {
 
 export class RowContainerEventsFeature extends BeanStub {
     private mouseEventSvc: MouseEventService;
-    private contextMenuService?: IContextMenuService;
+    private contextMenuSvc?: IContextMenuService;
     private navigation?: NavigationService;
     private focusSvc: FocusService;
     private undoRedo?: UndoRedoService;
@@ -78,7 +78,7 @@ export class RowContainerEventsFeature extends BeanStub {
 
     public wireBeans(beans: BeanCollection) {
         this.mouseEventSvc = beans.mouseEventSvc;
-        this.contextMenuService = beans.contextMenuService;
+        this.contextMenuSvc = beans.contextMenuSvc;
         this.navigation = beans.navigation;
         this.focusSvc = beans.focusSvc;
         this.undoRedo = beans.undoRedo;
@@ -128,7 +128,7 @@ export class RowContainerEventsFeature extends BeanStub {
         const cellCtrl = this.mouseEventSvc.getRenderedCellForEvent(mouseEvent)!;
 
         if (eventName === 'contextmenu') {
-            this.contextMenuService?.handleContextMenuMouseEvent(mouseEvent, undefined, rowComp, cellCtrl);
+            this.contextMenuSvc?.handleContextMenuMouseEvent(mouseEvent, undefined, rowComp, cellCtrl);
         } else {
             if (cellCtrl) {
                 cellCtrl.onMouseEvent(eventName, mouseEvent);
@@ -150,7 +150,7 @@ export class RowContainerEventsFeature extends BeanStub {
             const rowComp = this.getRowForEvent(event.touchEvent.target);
             const cellComp = this.mouseEventSvc.getRenderedCellForEvent(event.touchEvent)!;
 
-            this.contextMenuService?.handleContextMenuMouseEvent(undefined, event.touchEvent, rowComp, cellComp);
+            this.contextMenuSvc?.handleContextMenuMouseEvent(undefined, event.touchEvent, rowComp, cellComp);
         };
 
         this.addManagedListeners(touchListener, { longTap: longTapListener });

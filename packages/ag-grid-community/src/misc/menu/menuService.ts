@@ -50,14 +50,14 @@ export class MenuService extends BeanStub implements NamedBean {
     private filterMenuFactory: IMenuFactory;
     private ctrlsSvc: CtrlsService;
     private filterManager?: FilterManager;
-    private contextMenuService?: IContextMenuService;
+    private contextMenuSvc?: IContextMenuService;
     private enterpriseMenuFactory?: IMenuFactory;
 
     public wireBeans(beans: BeanCollection): void {
         this.filterMenuFactory = beans.filterMenuFactory!;
         this.ctrlsSvc = beans.ctrlsSvc;
         this.filterManager = beans.filterManager;
-        this.contextMenuService = beans.contextMenuService;
+        this.contextMenuSvc = beans.contextMenuSvc;
         this.enterpriseMenuFactory = beans.enterpriseMenuFactory;
     }
 
@@ -89,7 +89,7 @@ export class MenuService extends BeanStub implements NamedBean {
 
     public hidePopupMenu(): void {
         // hide the context menu if in enterprise
-        this.contextMenuService?.hideActiveMenu();
+        this.contextMenuSvc?.hideActiveMenu();
         // and hide the column menu always
         this.activeMenuFactory.hideActiveMenu();
     }

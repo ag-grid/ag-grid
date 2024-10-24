@@ -31,7 +31,7 @@ const CSS_MENU = 'ag-menu';
 const CSS_CONTEXT_MENU_OPEN = 'ag-context-menu-open';
 
 export class ContextMenuService extends BeanStub implements NamedBean, IContextMenuService {
-    beanName = 'contextMenuService' as const;
+    beanName = 'contextMenuSvc' as const;
 
     private popupSvc: PopupService;
     private ctrlsSvc: CtrlsService;

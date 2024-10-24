@@ -58,7 +58,7 @@ export class GridBodyCtrl extends BeanStub {
     private ctrlsSvc: CtrlsService;
     private colModel: ColumnModel;
     private scrollVisibleSvc: ScrollVisibleService;
-    private contextMenuService?: IContextMenuService;
+    private contextMenuSvc?: IContextMenuService;
     private rowDragService?: RowDragService;
     private pinnedRowModel?: PinnedRowModel;
     private editService?: EditService;
@@ -73,7 +73,7 @@ export class GridBodyCtrl extends BeanStub {
         this.ctrlsSvc = beans.ctrlsSvc;
         this.colModel = beans.colModel;
         this.scrollVisibleSvc = beans.scrollVisibleSvc;
-        this.contextMenuService = beans.contextMenuService;
+        this.contextMenuSvc = beans.contextMenuSvc;
         this.rowDragService = beans.rowDragService;
         this.pinnedRowModel = beans.pinnedRowModel;
         this.editService = beans.editService;
@@ -416,7 +416,7 @@ export class GridBodyCtrl extends BeanStub {
 
         if (target === this.eBodyViewport || target === this.ctrlsSvc.get('center').getViewportElement()) {
             // show it
-            this.contextMenuService?.showContextMenu({
+            this.contextMenuSvc?.showContextMenu({
                 mouseEvent,
                 touchEvent: touchEvent!,
                 value: null,
