@@ -197,7 +197,7 @@ export interface CoreBeanCollection {
     visibleCols: VisibleColsService;
     columnMove?: ColumnMoveService;
     columnFlex?: ColumnFlexService;
-    columnResize?: ColumnResizeService;
+    colResize?: ColumnResizeService;
     headerNavigation?: HeaderNavigationService;
     navigation?: NavigationService;
     colAnimation?: ColumnAnimationService;
@@ -377,7 +377,7 @@ export type BeanName =
     | 'columnMove'
     | 'colNames'
     | 'columnPositionService'
-    | 'columnResize'
+    | 'colResize'
     | 'columnStateService'
     | 'columnToolPanelFactory'
     | 'columnUtils'

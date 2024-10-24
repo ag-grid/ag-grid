@@ -89,9 +89,9 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
         this.setupUserComp();
         this.refreshAria();
 
-        if (this.beans.columnResize) {
+        if (this.beans.colResize) {
             this.resizeFeature = compBean.createManagedBean(
-                this.beans.columnResize.createResizeFeature(this.getPinned(), this.column, eResize, comp, this)
+                this.beans.colResize.createResizeFeature(this.getPinned(), this.column, eResize, comp, this)
             );
         } else {
             _setDisplayed(eResize, false);
@@ -138,7 +138,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
     }
 
     protected resizeHeader(delta: number, shiftKey: boolean): void {
-        this.beans.columnResize?.resizeHeader(this.column, delta, shiftKey);
+        this.beans.colResize?.resizeHeader(this.column, delta, shiftKey);
     }
 
     private setupUserComp(): void {

@@ -23,7 +23,7 @@ export interface ColumnResizeSet {
 }
 
 export class ColumnResizeService extends BeanStub implements NamedBean {
-    beanName = 'columnResize' as const;
+    beanName = 'colResize' as const;
 
     private colModel: ColumnModel;
     private colViewport: ColumnViewportService;

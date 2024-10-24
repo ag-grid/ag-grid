@@ -9,5 +9,5 @@ export function setColumnWidths(
     finished: boolean = true,
     source: ColumnEventType = 'api'
 ): void {
-    beans.columnResize?.setColumnWidths(columnWidths, false, finished, source);
+    beans.colResize?.setColumnWidths(columnWidths, false, finished, source);
 }

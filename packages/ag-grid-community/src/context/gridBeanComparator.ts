@@ -82,7 +82,7 @@ const orderedCoreBeans: BeanName[] = [
     'columnMove',
     'columnAutosizeService',
     'columnFlex',
-    'columnResize',
+    'colResize',
     'funcColsService',
     'colNames',
     'colViewport',

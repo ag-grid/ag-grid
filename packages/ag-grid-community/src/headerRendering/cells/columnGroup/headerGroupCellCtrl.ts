@@ -79,9 +79,9 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
         this.beans.columnHoverService?.createHoverFeature(compBean, leafCols, eGui);
         compBean.createManagedBean(new SetLeftFeature(this.column, eGui, this.beans));
         compBean.createManagedBean(new GroupWidthFeature(comp, this.column));
-        if (this.beans.columnResize) {
+        if (this.beans.colResize) {
             this.resizeFeature = compBean.createManagedBean(
-                this.beans.columnResize.createGroupResizeFeature(comp, eResize, pinned, this.column)
+                this.beans.colResize.createGroupResizeFeature(comp, eResize, pinned, this.column)
             );
         } else {
             comp.setResizableDisplayed(false);
