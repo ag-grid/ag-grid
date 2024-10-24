@@ -8,13 +8,13 @@ import { SetFloatingFilterComp } from './setFloatingFilter';
 
 export const SetFilterCoreModule: _ModuleWithoutApi = {
     ...baseEnterpriseModule('SetFilterCoreModule'),
-    userComponents: [{ name: 'agSetColumnFilter', classImp: SetFilter }],
+    userComponents: { agSetColumnFilter: SetFilter },
     dependsOn: [EnterpriseCoreModule, ColumnFilterModule],
 };
 
 const SetFloatingFilterModule: _ModuleWithoutApi = {
     ...baseEnterpriseModule('SetFloatingFilterModule'),
-    userComponents: [{ name: 'agSetColumnFloatingFilter', classImp: SetFloatingFilterComp }],
+    userComponents: { agSetColumnFloatingFilter: SetFloatingFilterComp },
     dependsOn: [SetFilterCoreModule, FloatingFilterModule],
 };
 

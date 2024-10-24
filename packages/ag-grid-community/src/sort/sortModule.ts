@@ -13,12 +13,9 @@ export const SortCoreModule: _ModuleWithoutApi = {
 
 export const SortIndicatorCompModule: _ModuleWithoutApi = {
     ...baseCommunityModule('SortIndicatorCompModule'),
-    userComponents: [
-        {
-            classImp: SortIndicatorComp,
-            name: 'agSortIndicator',
-        },
-    ],
+    userComponents: {
+        agSortIndicator: SortIndicatorComp,
+    },
     dependsOn: [SortCoreModule],
 };
 

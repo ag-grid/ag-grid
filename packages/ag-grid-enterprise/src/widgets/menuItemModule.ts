@@ -5,10 +5,7 @@ import { AgMenuItemRenderer } from './agMenuItemRenderer';
 
 export const MenuItemModule: _ModuleWithoutApi = {
     ...baseEnterpriseModule('MenuItemModule'),
-    userComponents: [
-        {
-            name: 'agMenuItem',
-            classImp: AgMenuItemRenderer,
-        },
-    ],
+    userComponents: {
+        agMenuItem: AgMenuItemRenderer,
+    },
 };

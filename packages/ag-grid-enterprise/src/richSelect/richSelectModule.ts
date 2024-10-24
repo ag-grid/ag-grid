@@ -8,9 +8,6 @@ import { RichSelectCellEditor } from './richSelectCellEditor';
 export const RichSelectModule: _ModuleWithoutApi = {
     ...baseEnterpriseModule('RichSelectModule'),
     beans: [],
-    userComponents: [
-        { name: 'agRichSelect', classImp: RichSelectCellEditor },
-        { name: 'agRichSelectCellEditor', classImp: RichSelectCellEditor },
-    ],
+    userComponents: { agRichSelect: RichSelectCellEditor, agRichSelectCellEditor: RichSelectCellEditor },
     dependsOn: [EnterpriseCoreModule, EditCoreModule],
 };

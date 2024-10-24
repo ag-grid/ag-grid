@@ -9,13 +9,13 @@ import { MultiFloatingFilterComp } from './multiFloatingFilter';
 
 export const MultiFilterCoreModule: _ModuleWithoutApi = {
     ...baseEnterpriseModule('MultiFilterCoreModule'),
-    userComponents: [{ name: 'agMultiColumnFilter', classImp: MultiFilter }],
+    userComponents: { agMultiColumnFilter: MultiFilter },
     dependsOn: [EnterpriseCoreModule, ColumnFilterModule, MenuItemModule],
 };
 
 const MultiFloatingFilterModule: _ModuleWithoutApi = {
     ...baseEnterpriseModule('MultiFloatingFilterModule'),
-    userComponents: [{ name: 'agMultiColumnFloatingFilter', classImp: MultiFloatingFilterComp }],
+    userComponents: { agMultiColumnFloatingFilter: MultiFloatingFilterComp },
     dependsOn: [MultiFilterCoreModule, ReadOnlyFloatingFilterModule],
 };
 

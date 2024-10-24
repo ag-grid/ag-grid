@@ -8,23 +8,17 @@ import { TooltipService } from './tooltipService';
 export const TooltipCoreModule: _ModuleWithoutApi = {
     ...baseCommunityModule('TooltipCoreModule'),
     beans: [TooltipService],
-    dynamicBeans: [
-        {
-            name: 'tooltipFeature',
-            classImp: TooltipFeature as any,
-        },
-    ],
+    dynamicBeans: {
+        tooltipFeature: TooltipFeature as any,
+    },
     dependsOn: [PopupModule],
 };
 
 export const TooltipCompModule: _ModuleWithoutApi = {
     ...baseCommunityModule('TooltipCompModule'),
-    userComponents: [
-        {
-            name: 'agTooltipComponent',
-            classImp: TooltipComponent,
-        },
-    ],
+    userComponents: {
+        agTooltipComponent: TooltipComponent,
+    },
 };
 
 export const TooltipModule: _ModuleWithoutApi = {
