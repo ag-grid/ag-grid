@@ -41,9 +41,8 @@ export class ShowRowGroupColsService extends BeanStub implements NamedBean, ISho
 
             if (isString) {
                 this.showRowGroupColsMap[showRowGroup] = col;
-            } else {
-                const rowGroupCols = this.rowGroupColsService?.columns ?? [];
-                rowGroupCols.forEach((rowGroupCol) => {
+            } else if (this.rowGroupColsService) {
+                this.rowGroupColsService.columns.forEach((rowGroupCol) => {
                     this.showRowGroupColsMap[rowGroupCol.getId()] = col;
                 });
             }

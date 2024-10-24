@@ -42,20 +42,20 @@ export abstract class BaseColsService extends BeanStub implements IColsService {
         this.columns.sort(compareFn);
     }
 
-    public setColumns(colKeys: ColKey[], source: ColumnEventType): void {
+    public setColumns(colKeys: ColKey[] | undefined, source: ColumnEventType): void {
         this.setColList(colKeys, this.columns, this.eventName, true, true, this.columnProcessors!.set, source);
     }
 
-    public addColumns(colKeys: ColKey[], source: ColumnEventType): void {
+    public addColumns(colKeys: ColKey[] | undefined, source: ColumnEventType): void {
         this.updateColList(colKeys, this.columns, true, true, this.columnProcessors!.add, this.eventName, source);
     }
 
-    public removeColumns(colKeys: ColKey[], source: ColumnEventType): void {
+    public removeColumns(colKeys: ColKey[] | undefined, source: ColumnEventType): void {
         this.updateColList(colKeys, this.columns, false, true, this.columnProcessors!.remove, this.eventName, source);
     }
 
     protected setColList(
-        colKeys: ColKey[],
+        colKeys: ColKey[] = [],
         masterList: AgColumn[],
         eventName: IColsService['eventName'],
         detectOrderChange: boolean,
@@ -115,7 +115,7 @@ export abstract class BaseColsService extends BeanStub implements IColsService {
     }
 
     protected updateColList(
-        keys: Maybe<ColKey>[] | null,
+        keys: Maybe<ColKey>[] = [],
         masterList: AgColumn[],
         actionIsAdd: boolean,
         autoGroupsNeedBuilding: boolean,

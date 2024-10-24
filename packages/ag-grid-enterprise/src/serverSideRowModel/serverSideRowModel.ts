@@ -376,9 +376,9 @@ export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSi
     }
 
     private createStoreParams(): SSRMParams {
-        const rowGroupColumnVos = this.columnsToValueObjects(this.rowGroupColsService?.columns ?? []);
-        const valueColumnVos = this.columnsToValueObjects(this.valueColsService?.columns ?? []);
-        const pivotColumnVos = this.columnsToValueObjects(this.pivotColsService?.columns ?? []);
+        const rowGroupColumnVos = this.columnsToValueObjects(this.rowGroupColsService?.columns);
+        const valueColumnVos = this.columnsToValueObjects(this.valueColsService?.columns);
+        const pivotColumnVos = this.columnsToValueObjects(this.pivotColsService?.columns);
 
         const dynamicRowHeight = _isGetRowHeightFunction(this.gos);
 

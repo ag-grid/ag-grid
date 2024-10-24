@@ -30,9 +30,9 @@ export interface IColsService {
     columnProcessors?: ColumnProcessors;
     columnOrdering?: ColumnOrdering;
     columnExtractors?: ColumnExtractors;
-    setColumns(colKeys: ColKey[], source: ColumnEventType): void;
-    addColumns(keys: Maybe<ColKey>[], source: ColumnEventType): void;
-    removeColumns(keys: Maybe<ColKey>[] | null, source: ColumnEventType): void;
+    setColumns(colKeys: ColKey[] | undefined, source: ColumnEventType): void;
+    addColumns(keys: Maybe<ColKey>[] | undefined, source: ColumnEventType): void;
+    removeColumns(keys: Maybe<ColKey>[] | undefined, source: ColumnEventType): void;
     extractCols(source: ColumnEventType, oldProvidedCols: AgColumn[] | undefined): void;
     syncColumnWithState(
         column: AgColumn,

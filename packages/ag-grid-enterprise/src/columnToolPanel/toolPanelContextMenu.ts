@@ -113,12 +113,16 @@ export class ToolPanelContextMenu extends Component {
             activateLabel: () => `${localeTextFunc('groupBy', 'Group by')} ${this.displayName}`,
             deactivateLabel: () => `${localeTextFunc('ungroupBy', 'Un-Group by')} ${this.displayName}`,
             activateFunction: () => {
-                const groupedColumns = this.rowGroupColsService?.columns ?? [];
-                this.rowGroupColsService?.setColumns(this.addColumnsToList(groupedColumns), 'toolPanelUi');
+                if (this.rowGroupColsService) {
+                    const groupedColumns = this.rowGroupColsService.columns;
+                    this.rowGroupColsService.setColumns(this.addColumnsToList(groupedColumns), 'toolPanelUi');
+                }
             },
             deActivateFunction: () => {
-                const groupedColumns = this.rowGroupColsService?.columns ?? [];
-                this.rowGroupColsService?.setColumns(this.removeColumnsFromList(groupedColumns), 'toolPanelUi');
+                if (this.rowGroupColsService) {
+                    const groupedColumns = this.rowGroupColsService.columns;
+                    this.rowGroupColsService.setColumns(this.removeColumnsFromList(groupedColumns), 'toolPanelUi');
+                }
             },
             addIcon: 'menuAddRowGroup',
             removeIcon: 'menuRemoveRowGroup',
@@ -132,12 +136,16 @@ export class ToolPanelContextMenu extends Component {
             deactivateLabel: () =>
                 localeTextFunc('removeFromValues', `Remove ${this.displayName} from values`, [this.displayName!]),
             activateFunction: () => {
-                const valueColumns = this.valueColsService?.columns ?? [];
-                this.valueColsService?.setColumns(this.addColumnsToList(valueColumns), 'toolPanelUi');
+                if (this.valueColsService) {
+                    const valueColumns = this.valueColsService.columns;
+                    this.valueColsService.setColumns(this.addColumnsToList(valueColumns), 'toolPanelUi');
+                }
             },
             deActivateFunction: () => {
-                const valueColumns = this.valueColsService?.columns ?? [];
-                this.valueColsService?.setColumns(this.removeColumnsFromList(valueColumns), 'toolPanelUi');
+                if (this.valueColsService) {
+                    const valueColumns = this.valueColsService.columns;
+                    this.valueColsService.setColumns(this.removeColumnsFromList(valueColumns), 'toolPanelUi');
+                }
             },
             addIcon: 'valuePanel',
             removeIcon: 'valuePanel',
@@ -151,23 +159,27 @@ export class ToolPanelContextMenu extends Component {
             deactivateLabel: () =>
                 localeTextFunc('removeFromLabels', `Remove ${this.displayName} from labels`, [this.displayName!]),
             activateFunction: () => {
-                const pivotColumns = this.pivotColsService?.columns ?? [];
-                this.pivotColsService?.setColumns(this.addColumnsToList(pivotColumns), 'toolPanelUi');
+                if (this.pivotColsService) {
+                    const pivotColumns = this.pivotColsService.columns;
+                    this.pivotColsService.setColumns(this.addColumnsToList(pivotColumns), 'toolPanelUi');
+                }
             },
             deActivateFunction: () => {
-                const pivotColumns = this.pivotColsService?.columns ?? [];
-                this.pivotColsService?.setColumns(this.removeColumnsFromList(pivotColumns), 'toolPanelUi');
+                if (this.pivotColsService) {
+                    const pivotColumns = this.pivotColsService.columns;
+                    this.pivotColsService.setColumns(this.removeColumnsFromList(pivotColumns), 'toolPanelUi');
+                }
             },
             addIcon: 'pivotPanel',
             removeIcon: 'pivotPanel',
         });
     }
 
-    private addColumnsToList(columnList: AgColumn[]): AgColumn[] {
+    private addColumnsToList(columnList: AgColumn[] = []): AgColumn[] {
         return [...columnList].concat(this.columns.filter((col) => columnList.indexOf(col) === -1));
     }
 
-    private removeColumnsFromList(columnList: AgColumn[]): AgColumn[] {
+    private removeColumnsFromList(columnList: AgColumn[] = []): AgColumn[] {
         return columnList.filter((col) => this.columns.indexOf(col) === -1);
     }
 

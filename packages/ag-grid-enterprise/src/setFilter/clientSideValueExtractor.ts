@@ -56,7 +56,7 @@ export class ClientSideValuesExtractor<V> {
         const existingFormattedKeys = this.extractExistingFormattedKeys(existingValues);
         const formattedKeys: Set<string | null> = new Set();
         const treeData = this.treeData && !!this.getDataPath;
-        const groupedCols = this.rowGroupColsService?.columns ?? [];
+        const groupedCols = this.rowGroupColsService?.columns;
 
         const addValue = (unformattedKey: string | null, value: V | null | undefined) => {
             const formattedKey = this.caseFormat(unformattedKey);
@@ -105,7 +105,7 @@ export class ClientSideValuesExtractor<V> {
     private addValueForTreeDataOrGrouping(
         node: RowNode,
         treeData: boolean,
-        groupedCols: AgColumn[],
+        groupedCols: AgColumn[] = [],
         addValue: (unformattedKey: string | null, value: V | null) => void
     ): void {
         let dataPath: string[] | null;

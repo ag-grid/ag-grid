@@ -83,9 +83,9 @@ export class AutoColService extends BeanStub implements NamedBean, IAutoColServi
         // of the group column in this instance.
         const suppressAutoColumn = isPivotMode ? this.gos.get('pivotSuppressAutoColumn') : this.isSuppressAutoCol();
 
-        const rowGroupCols = this.rowGroupColsService?.columns ?? [];
+        const rowGroupCols = this.rowGroupColsService?.columns;
 
-        const groupingActive = rowGroupCols.length > 0 || this.gos.get('treeData');
+        const groupingActive = (rowGroupCols && rowGroupCols.length > 0) || this.gos.get('treeData');
 
         const noAutoCols = !groupingActive || suppressAutoColumn || groupFullWidthRow;
 
@@ -102,7 +102,7 @@ export class AutoColService extends BeanStub implements NamedBean, IAutoColServi
             return;
         }
 
-        const list = this.generateAutoCols(rowGroupCols) ?? [];
+        const list = this.generateAutoCols(rowGroupCols);
         const autoColsSame = _areColIdsEqual(list, this.autoCols?.list || null);
 
         // the new tree dept will equal the current tree dept of cols
@@ -175,7 +175,7 @@ export class AutoColService extends BeanStub implements NamedBean, IAutoColServi
         return this.autoCols?.list ?? null;
     }
 
-    private generateAutoCols(rowGroupCols: AgColumn[]): AgColumn[] {
+    private generateAutoCols(rowGroupCols: AgColumn[] = []): AgColumn[] {
         const autoCols: AgColumn[] = [];
 
         const doingTreeData = this.gos.get('treeData');

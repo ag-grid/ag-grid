@@ -148,8 +148,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
     }
 
     public shouldPreventRowMove(): boolean {
-        const rowGroupCols = this.rowGroupColsService?.columns ?? [];
-        if (rowGroupCols.length) {
+        if (this.rowGroupColsService?.columns.length) {
             return true;
         }
         const isFilterPresent = this.filterManager?.isAnyFilterPresent();

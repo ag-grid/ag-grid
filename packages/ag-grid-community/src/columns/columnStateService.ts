@@ -664,11 +664,11 @@ export class ColumnStateService extends BeanStub implements NamedBean {
     }
 
     private createStateItemFromColumn(column: AgColumn): ColumnState {
-        const rowGroupColumns = this.rowGroupColsService?.columns ?? [];
-        const pivotColumns = this.pivotColsService?.columns ?? [];
+        const rowGroupColumns = this.rowGroupColsService?.columns;
+        const pivotColumns = this.pivotColsService?.columns;
 
-        const rowGroupIndex = column.isRowGroupActive() ? rowGroupColumns.indexOf(column) : null;
-        const pivotIndex = column.isPivotActive() ? pivotColumns.indexOf(column) : null;
+        const rowGroupIndex = column.isRowGroupActive() && rowGroupColumns ? rowGroupColumns.indexOf(column) : null;
+        const pivotIndex = column.isPivotActive() && pivotColumns ? pivotColumns.indexOf(column) : null;
 
         const aggFunc = column.isValueActive() ? column.getAggFunc() : null;
         const sort = column.getSort() != null ? column.getSort() : null;

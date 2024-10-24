@@ -107,7 +107,7 @@ export class PivotColDefService extends BeanStub implements NamedBean, IPivotCol
         maxDepth: number,
         primaryPivotColumns: AgColumn[]
     ): ColGroupDef[] | ColDef[] {
-        const measureColumns = this.valueColsService?.columns ?? [];
+        const measureColumns = this.valueColsService?.columns;
         if (index >= maxDepth) {
             // Base case - build the measure columns
             return this.buildMeasureCols(pivotKeys);
@@ -119,7 +119,7 @@ export class PivotColDefService extends BeanStub implements NamedBean, IPivotCol
 
         // Base case for the compact layout, instead of recursing build the last layer of groups as measure columns instead
         if (
-            measureColumns.length === 1 &&
+            measureColumns?.length === 1 &&
             this.gos.get('removePivotHeaderRowWhenSingleValueColumn') &&
             index === maxDepth - 1
         ) {

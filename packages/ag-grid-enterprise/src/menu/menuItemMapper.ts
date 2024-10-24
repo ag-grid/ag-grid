@@ -184,11 +184,12 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
                             this.gos.get('functionsReadOnly') ||
                             lockedGroups === -1 ||
                             lockedGroups >= (this.rowGroupColsService?.columns ?? []).length,
-                        action: () =>
-                            this.rowGroupColsService?.setColumns(
-                                (this.rowGroupColsService?.columns ?? []).slice(0, lockedGroups),
-                                source
-                            ),
+                        action: () => {
+                            if (this.rowGroupColsService) {
+                                const lockedGroupsCols = this.rowGroupColsService.columns.slice(0, lockedGroups);
+                                return this.rowGroupColsService.setColumns(lockedGroupsCols, source);
+                            }
+                        },
                         icon: icon,
                     };
                 }

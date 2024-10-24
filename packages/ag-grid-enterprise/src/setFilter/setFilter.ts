@@ -968,10 +968,18 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
     }
 
     private doesFilterPassForGrouping(node: IRowNode): boolean {
-        const dataPath = (this.rowGroupColsService?.columns ?? []).map((groupCol) =>
-            this.valueService.getKeyForNode(groupCol, node)
-        );
-        dataPath.push(this.getValueFromNode(node));
+        let dataPath: any[];
+        const nodeValue = this.getValueFromNode(node);
+
+        if (this.rowGroupColsService) {
+            dataPath = this.rowGroupColsService.columns.map((groupCol) =>
+                this.valueService.getKeyForNode(groupCol, node)
+            );
+            dataPath.push(nodeValue);
+        } else {
+            dataPath = [nodeValue];
+        }
+
         return this.isInAppliedModel(
             this.createKey(processDataPath(dataPath, false, this.gos.get('groupAllowUnbalanced')) as any) as any
         );

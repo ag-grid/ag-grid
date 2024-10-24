@@ -270,12 +270,12 @@ export class ColumnModel extends BeanStub implements NamedBean {
         // show columns we are aggregating on
 
         const showAutoGroupAndValuesOnly = this.isPivotMode() && !this.showingPivotResult;
-        const valueColumns = this.valueColsService?.columns ?? [];
+        const valueColumns = this.valueColsService?.columns;
 
         const res = this.cols.list.filter((col) => {
             const isAutoGroupCol = isColumnGroupAutoCol(col);
             if (showAutoGroupAndValuesOnly) {
-                const isValueCol = valueColumns && valueColumns.includes(col);
+                const isValueCol = valueColumns?.includes(col);
                 return isAutoGroupCol || isValueCol;
             } else {
                 // keep col if a) it's auto-group or b) it's visible
@@ -441,7 +441,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
 
     // + clientSideRowModel
     public isPivotActive(): boolean {
-        const pivotColumns = this.pivotColsService?.columns ?? [];
+        const pivotColumns = this.pivotColsService?.columns;
         return this.pivotMode && !!pivotColumns?.length;
     }
 
