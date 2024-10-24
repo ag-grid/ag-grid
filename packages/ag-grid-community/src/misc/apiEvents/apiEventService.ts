@@ -6,7 +6,7 @@ import { ALWAYS_SYNC_GLOBAL_EVENTS } from '../../events';
 import type { IFrameworkEventListenerService } from '../../interfaces/iFrameworkEventListenerService';
 
 export class ApiEventService extends BeanStub<AgEventType> implements NamedBean {
-    beanName = 'apiEventService' as const;
+    beanName = 'apiEventSvc' as const;
 
     private syncEventListeners: Map<AgEventType, Set<AgEventListener>> = new Map();
     private asyncEventListeners: Map<AgEventType, Set<AgEventListener>> = new Map();

@@ -245,7 +245,7 @@ export interface CoreBeanCollection {
     overlays?: OverlayService;
     pinnedRowModel?: PinnedRowModel;
     menuSvc?: MenuService;
-    apiEventService?: ApiEventService;
+    apiEventSvc?: ApiEventService;
     undoRedoService?: UndoRedoService;
     rowNodeBlockLoader?: RowNodeBlockLoader;
     csvCreator?: ICsvCreator;
@@ -342,7 +342,7 @@ export type BeanName =
     | 'animationFrameSvc'
     | 'apiFunctionService'
     | 'ariaAnnounce'
-    | 'apiEventService'
+    | 'apiEventSvc'
     | 'autoColSvc'
     | 'autoWidthCalculator'
     | 'beans'
