@@ -221,7 +221,7 @@ export interface CoreBeanCollection {
     ctrlsSvc: CtrlsService;
     valueCache?: ValueCache;
     localeSvc?: LocaleService;
-    syncService: SyncService;
+    syncSvc: SyncService;
     ariaAnnouncementService: AriaAnnouncementService;
     rangeService?: IRangeService;
     validationService?: ValidationService;
@@ -480,7 +480,7 @@ export type BeanName =
     | 'stateService'
     | 'statusBarService'
     | 'stickyRowService'
-    | 'syncService'
+    | 'syncSvc'
     | 'templateService'
     | 'toolPanelColDefService'
     | 'tooltipService'

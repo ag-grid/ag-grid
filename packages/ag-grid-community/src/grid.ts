@@ -198,7 +198,7 @@ export class GridCoreCreator {
 
         createUi(context);
 
-        context.getBean('syncService').start();
+        context.getBean('syncSvc').start();
 
         if (acceptChanges) {
             acceptChanges(context);

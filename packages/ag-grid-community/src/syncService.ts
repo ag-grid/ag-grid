@@ -10,7 +10,7 @@ import type { IRowModel } from './interfaces/iRowModel';
 import { _logIfDebug } from './utils/function';
 
 export class SyncService extends BeanStub implements NamedBean {
-    beanName = 'syncService' as const;
+    beanName = 'syncSvc' as const;
 
     private ctrlsSvc: CtrlsService;
     private colModel: ColumnModel;

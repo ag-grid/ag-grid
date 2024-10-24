@@ -71,7 +71,7 @@ const orderedCoreBeans: BeanName[] = [
     'ctrlsSvc',
     'pinnedColumnService',
     'dataTypeService',
-    'syncService',
+    'syncSvc',
     'overlayService',
     'stateService',
     'expansionService',
