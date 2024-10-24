@@ -25,10 +25,10 @@ export abstract class BaseColsService extends BeanStub implements IColsService {
     protected visibleColsService: VisibleColsService;
     protected dispatchColumnChangedEvent = dispatchColumnChangedEvent;
 
-    public abstract columnProcessors?: ColumnProcessors;
-    public abstract columnExtractors?: ColumnExtractors;
-    public abstract eventName: ColumnChangedEventType;
-    public columnOrdering?: ColumnOrdering;
+    abstract eventName: ColumnChangedEventType;
+    abstract columnProcessors: ColumnProcessors;
+    abstract columnExtractors: ColumnExtractors;
+    columnOrdering: ColumnOrdering;
 
     public columns: AgColumn[] = [];
 
@@ -296,7 +296,7 @@ export abstract class BaseColsService extends BeanStub implements IColsService {
             }
         });
 
-        return res;
+        return (this.columns = res);
     }
 
     public abstract syncColumnWithState(
