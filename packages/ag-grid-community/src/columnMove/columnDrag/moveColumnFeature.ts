@@ -28,7 +28,7 @@ const SCROLL_TIME_INTERVAL = 100;
 export class MoveColumnFeature extends BeanStub implements DropListener {
     private columnModel: ColumnModel;
     private visibleCols: VisibleColsService;
-    private columnMoveService: ColumnMoveService;
+    private columnMove: ColumnMoveService;
     private dragAndDropService: DragAndDropService;
     private ctrlsService: CtrlsService;
     private pinnedColumnService?: PinnedColumnService;
@@ -36,7 +36,7 @@ export class MoveColumnFeature extends BeanStub implements DropListener {
     public wireBeans(beans: BeanCollection) {
         this.columnModel = beans.columnModel;
         this.visibleCols = beans.visibleCols;
-        this.columnMoveService = beans.columnMoveService!;
+        this.columnMove = beans.columnMove!;
         this.dragAndDropService = beans.dragAndDropService!;
         this.ctrlsService = beans.ctrlsService;
         this.pinnedColumnService = beans.pinnedColumnService;
@@ -205,7 +205,7 @@ export class MoveColumnFeature extends BeanStub implements DropListener {
 
         const { columns, toIndex } = this.lastMovedInfo;
 
-        this.columnMoveService.moveColumns(columns, toIndex, 'uiColumnMoved', true);
+        this.columnMove.moveColumns(columns, toIndex, 'uiColumnMoved', true);
     }
 
     private handleColumnDragWhileSuppressingMovement(
@@ -307,7 +307,7 @@ export class MoveColumnFeature extends BeanStub implements DropListener {
         fakeEvent: boolean;
     }): ColumnMoveParams {
         const { allMovingColumns, isFromHeader, xPosition, fromLeft, fromEnter, fakeEvent } = params;
-        const { pinned, gos, columnModel, columnMoveService, visibleCols } = this;
+        const { pinned, gos, columnModel, columnMove, visibleCols } = this;
 
         return {
             allMovingColumns,
@@ -319,7 +319,7 @@ export class MoveColumnFeature extends BeanStub implements DropListener {
             fakeEvent,
             gos,
             columnModel,
-            columnMoveService,
+            columnMove,
             visibleCols,
         };
     }

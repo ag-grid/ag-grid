@@ -79,7 +79,7 @@ const orderedCoreBeans: BeanName[] = [
     'ariaAnnouncementService',
     'menuService',
     'columnStateService',
-    'columnMoveService',
+    'columnMove',
     'columnAutosizeService',
     'columnFlexService',
     'columnResizeService',

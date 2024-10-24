@@ -195,7 +195,7 @@ export interface CoreBeanCollection {
     columnViewport: ColumnViewportService;
     columnNames: ColumnNameService;
     visibleCols: VisibleColsService;
-    columnMoveService?: ColumnMoveService;
+    columnMove?: ColumnMoveService;
     columnFlexService?: ColumnFlexService;
     columnResizeService?: ColumnResizeService;
     headerNavigationService?: HeaderNavigationService;
@@ -374,7 +374,7 @@ export type BeanName =
     | 'columnHoverService'
     | 'columnMenuFactory'
     | 'columnModel'
-    | 'columnMoveService'
+    | 'columnMove'
     | 'columnNames'
     | 'columnPositionService'
     | 'columnResizeService'

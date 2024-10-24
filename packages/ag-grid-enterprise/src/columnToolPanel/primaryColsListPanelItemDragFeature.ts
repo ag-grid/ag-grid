@@ -16,11 +16,11 @@ import type { ToolPanelColumnComp } from './toolPanelColumnComp';
 import { ToolPanelColumnGroupComp } from './toolPanelColumnGroupComp';
 
 export class PrimaryColsListPanelItemDragFeature extends BeanStub {
-    private columnMoveService?: ColumnMoveService;
+    private columnMove?: ColumnMoveService;
     private columnModel: ColumnModel;
 
     public wireBeans(beans: BeanCollection) {
-        this.columnMoveService = beans.columnMoveService;
+        this.columnMove = beans.columnMove;
         this.columnModel = beans.columnModel;
     }
 
@@ -116,7 +116,7 @@ export class PrimaryColsListPanelItemDragFeature extends BeanStub {
         });
 
         if (targetIndex != null) {
-            this.columnMoveService?.moveColumns(currentColumns, targetIndex, 'toolPanelUi');
+            this.columnMove?.moveColumns(currentColumns, targetIndex, 'toolPanelUi');
         }
     }
 
