@@ -6,6 +6,7 @@ import {
     deselectAll,
     deselectAllFiltered,
     deselectAllOnCurrentPage,
+    getSelectAllState,
     getSelectedNodes,
     getSelectedRows,
     selectAll,
@@ -32,6 +33,7 @@ export const SharedRowSelectionModule: _ModuleWithApi<_RowSelectionGridApi> = {
         deselectAllOnCurrentPage,
         getSelectedNodes,
         getSelectedRows,
+        getSelectAllState,
     },
 };
 
