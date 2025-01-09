@@ -55,7 +55,6 @@ import type { IExpansionService } from '../interfaces/iExpansionService';
 import type { IFindService } from '../interfaces/iFind';
 import type { IFooterService } from '../interfaces/iFooterService';
 import type { IFrameworkOverrides } from '../interfaces/iFrameworkOverrides';
-import type { IGroupHideOpenParentsService } from '../interfaces/iGroupHideOpenParentsService';
 import type { IMenuFactory } from '../interfaces/iMenuFactory';
 import type { IPivotColDefService } from '../interfaces/iPivotColDefService';
 import type { IPivotResultColsService } from '../interfaces/iPivotResultColsService';
@@ -294,7 +293,6 @@ export interface CoreBeanCollection {
     renderStatus?: IRenderStatusService;
     rowDragSvc?: RowDragService;
     stickyRowSvc?: IStickyRowService;
-    groupHideOpenParentsSvc?: IGroupHideOpenParentsService;
     filterValueSvc?: FilterValueService;
     csrmNodeSvc?: IClientSideNodeManager;
     csrmPathTreeNodeSvc?: IClientSideNodeManager;
@@ -428,7 +426,6 @@ export type BeanName =
     | 'gos'
     | 'gridOptionsWrapper'
     | 'gridSerializer'
-    | 'groupHideOpenParentsSvc'
     | 'groupStage'
     | 'headerNavigation'
     | 'horizontalResizeSvc'

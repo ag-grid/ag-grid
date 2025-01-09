@@ -12,7 +12,6 @@ import { VERSION } from '../version';
 import { AgGridHeaderDropZonesSelector } from './columnDropZones/agGridHeaderDropZones';
 import { GroupFilter } from './groupFilter/groupFilter';
 import { GroupFloatingFilterComp } from './groupFilter/groupFloatingFilter';
-import { GroupHideOpenParentsService } from './groupHideOpenParentsService';
 import { GroupStage } from './groupStage/groupStage';
 import {
     addRowGroupColumns,
@@ -28,7 +27,6 @@ import {
 export const SharedRowGroupingModule: _ModuleWithApi<_RowGroupingGridApi> = {
     moduleName: 'SharedRowGrouping',
     version: VERSION,
-    beans: [GroupHideOpenParentsService],
     apiFunctions: {
         setRowGroupColumns,
         removeRowGroupColumns,

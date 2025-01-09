@@ -154,7 +154,16 @@ export class RowRenderer extends BeanStub implements NamedBean {
             }
         });
 
-        const { stickyRowSvc, gos } = this.beans;
+        const { stickyRowSvc, gos, showRowGroupCols } = this.beans;
+        if (showRowGroupCols) {
+            this.addManagedPropertyListener('showOpenedGroup', () => {
+                const columns = showRowGroupCols.getShowRowGroupCols();
+                if (columns.length) {
+                    this.refreshCells({ columns });
+                }
+            });
+        }
+
         if (stickyRowSvc) {
             this.stickyRowFeature = stickyRowSvc.createStickyRowFeature(
                 this,

@@ -1035,7 +1035,6 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
     }
 
     private doSort(changedRowNodes: IChangedRowNodes | undefined, changedPath: ChangedPath) {
-        const { groupHideOpenParentsSvc } = this.beans;
         if (this.sortStage) {
             this.sortStage.execute({
                 rowNode: this.rootNode!,
@@ -1044,17 +1043,11 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
             });
         } else {
             changedPath.forEachChangedNodeDepthFirst((rowNode) => {
-                // this needs to run before sorting
-                groupHideOpenParentsSvc?.pullDownGroupDataForHideOpenParents(rowNode.childrenAfterAggFilter, true);
-
                 rowNode.childrenAfterSort = rowNode.childrenAfterAggFilter!.slice(0);
 
                 updateRowNodeAfterSort(rowNode);
             });
         }
-
-        // this needs to run after sorting
-        groupHideOpenParentsSvc?.updateGroupDataForHideOpenParents(changedPath);
     }
 
     private doRowGrouping(
