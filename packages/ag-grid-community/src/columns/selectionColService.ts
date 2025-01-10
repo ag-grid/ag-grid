@@ -6,11 +6,11 @@ import type { ColDef } from '../entities/colDef';
 import type { GridOptions, SelectionColumnDef } from '../entities/gridOptions';
 import type { ColumnEventType } from '../events';
 import { _getCheckboxLocation, _getCheckboxes, _getHeaderCheckbox, _isRowSelection } from '../gridOptionsUtils';
-import { _isDeepEqual } from '../utils/object';
 import { _updateColumnState } from './columnFactoryUtils';
 import type { ColKey, ColumnCollections } from './columnModel';
 import { _applyColumnState, _getColumnState } from './columnStateUtils';
 import {
+    _areColIdsEqual,
     _columnsMatch,
     _convertColumnEventSourceType,
     _destroyColumnTree,
@@ -63,7 +63,7 @@ export class SelectionColService extends BeanStub implements NamedBean {
         const treeDepthSame = oldTreeDepth == newTreeDepth;
 
         const list = this.generateSelectionCols();
-        const areSame = _isDeepEqual(list, this.selectionCols?.list ?? []);
+        const areSame = _areColIdsEqual(list, this.selectionCols?.list ?? []);
 
         if (areSame && treeDepthSame) {
             return;
