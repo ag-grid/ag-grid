@@ -31,9 +31,9 @@ export type HeaderCellCtrlInstanceId = BrandedType<string, 'HeaderCellCtrlInstan
 export const DOM_DATA_KEY_HEADER_CTRL = 'headerCtrl';
 
 export abstract class AbstractHeaderCellCtrl<
-    TComp extends IAbstractHeaderCellComp = any,
-    TColumn extends AgColumn | AgColumnGroup = any,
-    TFeature extends IHeaderResizeFeature = any,
+    TComp extends IAbstractHeaderCellComp = IAbstractHeaderCellComp,
+    TColumn extends AgColumn | AgColumnGroup = AgColumn | AgColumnGroup,
+    TFeature extends IHeaderResizeFeature = IHeaderResizeFeature,
 > extends BeanStub {
     public readonly instanceId: HeaderCellCtrlInstanceId;
 
