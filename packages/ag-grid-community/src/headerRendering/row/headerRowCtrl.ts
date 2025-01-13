@@ -135,6 +135,7 @@ export class HeaderRowCtrl extends BeanStub {
     }
 
     private setWidth(): void {
+        this.beans.visibleCols.updateBodyWidths();
         const width = this.getWidthForRow();
         this.comp.setWidth(`${width}px`);
     }
@@ -297,6 +298,10 @@ export class HeaderRowCtrl extends BeanStub {
                     break;
             }
         }
+
+        headerCtrl.addManagedListeners(headerColumn, {
+            widthChanged: this.setWidth.bind(this),
+        });
 
         this.headerCellCtrls.set(idOfChild, headerCtrl);
     }
