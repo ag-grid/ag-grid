@@ -9,6 +9,9 @@ import {
     createGrid,
 } from 'ag-grid-community';
 
+// Initialise random data generation for test/example purposes only. Do not use in production.
+import './random';
+
 ModuleRegistry.registerModules([
     RowApiModule,
     HighlightChangesModule,
