@@ -29,7 +29,6 @@ import {
     getMaxNumCategories,
     getMaxNumSeries,
     getSeriesType,
-    isHierarchical,
     supportsInvertedCategorySeries,
 } from './utils/seriesTypeMapper';
 
@@ -106,7 +105,6 @@ export class ChartController extends BeanStub<ChartControllerEvent> {
             seriesChartTypes: undefined,
             suppressChartRanges: false,
             crossFiltering: false,
-            isHierarchical: isHierarchical(getSeriesType(chartType!)),
         };
 
         const chartModelParams: ChartModelParams = { ...common };

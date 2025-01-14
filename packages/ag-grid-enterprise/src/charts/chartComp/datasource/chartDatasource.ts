@@ -31,7 +31,6 @@ export interface ChartDatasourceParams {
     isScatter: boolean;
     aggFunc?: string | IAggFunc;
     referenceCellRange?: PartialCellRange;
-    isHierarchical?: boolean;
 }
 
 interface IData {
@@ -83,7 +82,7 @@ export class ChartDatasource extends BeanStub {
     }
 
     private extractRowsFromGridRowModel(params: ChartDatasourceParams): IData {
-        const { crossFiltering, startRow, endRow, valueCols, dimensionCols, grouping, isHierarchical } = params;
+        const { crossFiltering, startRow, endRow, valueCols, dimensionCols, grouping } = params;
         let extractedRowData: any[] = [];
         const colNames: { [key: string]: string[] } = {};
 

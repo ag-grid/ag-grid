@@ -17,7 +17,7 @@ import type { ChartDatasourceParams } from '../datasource/chartDatasource';
 import { ChartDatasource } from '../datasource/chartDatasource';
 import { ChartColumnService } from '../services/chartColumnService';
 import type { ChartTranslationService } from '../services/chartTranslationService';
-import { getMaxNumSeries, isComboChart, isHierarchicalChart } from '../utils/seriesTypeMapper';
+import { getMaxNumSeries, getSeriesType, isComboChart, isHierarchical } from '../utils/seriesTypeMapper';
 import { ComboChartModel } from './comboChartModel';
 
 export interface ColState {
@@ -48,7 +48,6 @@ export const DEFAULT_CHART_CATEGORY = 'AG-GRID-DEFAULT-CATEGORY';
 export class ChartDataModel extends BeanStub {
     private rangeSvc: IRangeService;
     private chartTranslation: ChartTranslationService;
-    private isHierarchical: boolean;
 
     public wireBeans(beans: BeanCollection): void {
         this.rangeSvc = beans.rangeSvc!;
@@ -111,7 +110,6 @@ export class ChartDataModel extends BeanStub {
             unlinkChart,
             crossFiltering,
             seriesGroupType,
-            seriesChartTypes,
         } = params;
         this.chartType = chartType;
         this.pivotChart = pivotChart ?? false;
@@ -124,7 +122,6 @@ export class ChartDataModel extends BeanStub {
         this.unlinked = !!unlinkChart;
         this.crossFiltering = !!crossFiltering;
         this.seriesGroupType = seriesGroupType;
-        this.isHierarchical = isHierarchicalChart(seriesChartTypes?.map(({ chartType }) => chartType) ?? chartType);
     }
 
     public postConstruct(): void {
@@ -207,7 +204,6 @@ export class ChartDataModel extends BeanStub {
             startRow,
             endRow,
             isScatter: ['scatter', 'bubble'].includes(this.chartType),
-            isHierarchical: this.isHierarchical,
         };
 
         const { chartData, colNames, groupChartData } = this.datasource.getData(params);
@@ -318,6 +314,7 @@ export class ChartDataModel extends BeanStub {
         this.dimensionColState = [];
         this.valueColState = [];
 
+        const supportsMultipleDimensions = isHierarchical(getSeriesType(this.chartType));
         let hasSelectedDimension = false;
         let order = 1;
 
@@ -334,7 +331,7 @@ export class ChartDataModel extends BeanStub {
             } else {
                 selected = isAutoGroupCol
                     ? true
-                    : (!hasSelectedDimension || this.isHierarchical) && allCols.has(column);
+                    : (!hasSelectedDimension || supportsMultipleDimensions) && allCols.has(column);
             }
 
             this.dimensionColState.push({
@@ -389,13 +386,14 @@ export class ChartDataModel extends BeanStub {
 
         if (matchedDimensionColState) {
             // For non-hierarchical chart types, only one dimension can be selected
-            if (!this.isHierarchical) {
+            const supportsMultipleDimensions = isHierarchical(getSeriesType(this.chartType));
+            if (!supportsMultipleDimensions) {
                 // Determine which column should end up selected, if any
                 const selectedColumnState = updatedCol.selected
                     ? matchedDimensionColState
                     : dimensionColState
-                          .filter((cs) => cs !== matchedDimensionColState)
-                          .find(({ selected }) => selected);
+                        .filter((cs) => cs !== matchedDimensionColState)
+                        .find(({ selected }) => selected);
                 // Update the selection state of all dimension columns
                 dimensionColState.forEach((cs) => (cs.selected = cs === selectedColumnState));
             } else {
@@ -444,12 +442,13 @@ export class ChartDataModel extends BeanStub {
         updatedColState?: ColState
     ): void {
         this.dimensionCellRange = undefined;
+        const supportsMultipleDimensions = isHierarchical(getSeriesType(this.chartType));
 
         if (!updatedColState && !this.dimensionColState.length) {
             const selectedCols = new Array<AgColumn>();
             // use first dimension column in range by default, or all dimension columns for hierarchical charts
             dimensionCols.forEach((col) => {
-                if ((selectedCols.length > 0 && !this.isHierarchical) || !colsInRange.has(col)) {
+                if ((selectedCols.length > 0 && !supportsMultipleDimensions) || !colsInRange.has(col)) {
                     return;
                 }
                 selectedCols.push(col);
@@ -467,7 +466,7 @@ export class ChartDataModel extends BeanStub {
                 (cs) => cs.colId === aggFuncDimension.getColId()
             );
         } else if (
-            this.isHierarchical ||
+            supportsMultipleDimensions ||
             selectedDimensionColStates.length === 0 ||
             selectedDimensionColStates.some(({ column }) => !column || !dimensionCols.has(column))
         ) {
@@ -540,7 +539,8 @@ export class ChartDataModel extends BeanStub {
         const colIdSet = new Set(columns.map((column) => column.getColId()));
 
         // For non-hierarchical chart types, only one dimension can be selected
-        if (!this.isHierarchical) {
+        const supportsMultipleDimensions = isHierarchical(getSeriesType(this.chartType));
+        if (!supportsMultipleDimensions) {
             // Determine which column should end up selected, if any
             // if no dimension found in supplied columns use the default category (always index = 0)
             const foundColState =
