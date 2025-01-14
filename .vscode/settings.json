@@ -112,7 +112,16 @@
             "description": "The extra scripts / styles to be added to the example index.html. Options are defined in .vscode/settings.json to match those supported in Extras.tsx",
             "items": {
               "type": "string",
-              "enum": ["jquery", "jqueryui", "alasql", "flatpickr", "fontawesome", "xlsx-style", "materialdesignicons"]
+              "enum": [
+                "jquery",
+                "jqueryui",
+                "alasql",
+                "flatpickr",
+                "fontawesome",
+                "xlsx-style",
+                "materialdesignicons",
+                "seedrandom"
+              ]
             }
           },
           "noStyle": {
