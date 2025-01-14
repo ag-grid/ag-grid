@@ -76,8 +76,6 @@ export const Extras = ({ extras }: Props) => {
         }
     });
 
-    console.warn({ styles, scripts });
-
     return (
         <>
             <Styles files={styles} />
