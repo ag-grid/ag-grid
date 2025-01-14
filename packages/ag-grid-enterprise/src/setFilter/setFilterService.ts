@@ -5,7 +5,7 @@ import type { SetFilterHelperParams } from './setFilterHelper';
 import { SetFilterHelper } from './setFilterHelper';
 
 export class SetFilterService extends BeanStub implements NamedBean {
-    beanName = 'setFilterSvc' as const;
+    readonly beanName = 'setFilter' as const;
 
     private readonly helpers: Map<string, SetFilterHelper<any>> = new Map();
 

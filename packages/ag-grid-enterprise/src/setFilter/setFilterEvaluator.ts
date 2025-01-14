@@ -33,7 +33,7 @@ export class SetFilterEvaluator<TValue = string>
     public init(
         params: FilterEvaluatorParams<any, any, TValue, SetFilterModel> & ISetFilterParams<any, TValue>
     ): Promise<FilterModelValidation<SetFilterModel>> {
-        const helper = (this.beans.setFilterSvc as SetFilterService).getHelper(params);
+        const helper = (this.beans.setFilter as SetFilterService).getHelper(params);
         this.helper = helper;
         this.appliedModel = new SetFilterAppliedModel(helper.caseFormat.bind(helper));
         this.refresh(params);

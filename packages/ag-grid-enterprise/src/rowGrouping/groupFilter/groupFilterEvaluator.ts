@@ -8,7 +8,7 @@ export class GroupFilterEvaluator extends BeanStub implements FilterEvaluator<an
         return this.validateModel(params);
     }
 
-    public refresh?(
+    public refresh(
         params: FilterEvaluatorParams<any, any, any, null> & IFilterParams<any, any>
     ): FilterModelValidation<null> {
         return this.validateModel(params);

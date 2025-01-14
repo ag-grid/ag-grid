@@ -20,7 +20,8 @@ import {
     _setDisplayed,
 } from 'ag-grid-community';
 
-import { MultiFilter, getMultiFilterDefs } from './multiFilter';
+import { MultiFilter } from './multiFilter';
+import { getMultiFilterDefs } from './multiFilterUtil';
 
 export class MultiFloatingFilterComp extends Component implements IFloatingFilterComp<MultiFilter> {
     private floatingFilters: IFloatingFilterComp[] = [];

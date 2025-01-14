@@ -5,6 +5,8 @@ import { EnterpriseCoreModule } from '../agGridEnterpriseModule';
 import { VERSION } from '../version';
 import { MenuItemModule } from '../widgets/menuItemModule';
 import { MultiFilter } from './multiFilter';
+import { MultiFilterEvaluator } from './multiFilterEvaluator';
+import { MultiFilterUi } from './multiFilterUi';
 import { MultiFloatingFilterComp } from './multiFloatingFilter';
 
 /**
@@ -13,6 +15,13 @@ import { MultiFloatingFilterComp } from './multiFloatingFilter';
 export const MultiFilterModule: _ModuleWithoutApi = {
     moduleName: 'MultiFilter',
     version: VERSION,
-    userComponents: { agMultiColumnFilter: MultiFilter, agMultiColumnFloatingFilter: MultiFloatingFilterComp },
+    userComponents: {
+        agMultiColumnFilter: MultiFilter,
+        agMultiColumnFloatingFilter: MultiFloatingFilterComp,
+        agMultiColumnFilterUi: MultiFilterUi,
+    },
+    dynamicBeans: {
+        agMultiColumnFilterEvaluator: MultiFilterEvaluator,
+    },
     dependsOn: [EnterpriseCoreModule, _ColumnFilterModule, MenuItemModule],
 };

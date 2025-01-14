@@ -66,7 +66,7 @@ export class SetFilter<V = string>
         applyExcelModeOptions(params);
         super.setParams(params);
 
-        const helper = (this.beans.setFilterSvc as SetFilterService).getHelper(params);
+        const helper = (this.beans.setFilter as SetFilterService).getHelper(params);
         this.helper = helper;
 
         this.valueModel = this.createManagedBean(
