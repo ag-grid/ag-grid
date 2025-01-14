@@ -130,6 +130,7 @@ export class SelectionColService extends BeanStub implements NamedBean {
             },
             editable: false,
             suppressFillHandle: true,
+            pinned: null,
             // overrides
             ...selectionColumnDef,
             // non-overridable properties
