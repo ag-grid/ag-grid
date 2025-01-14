@@ -193,6 +193,7 @@ export function updateSomeColumnState(
     // flex
     if (flex !== undefined) {
         colFlex?.setColFlex(column, flex);
+        colFlex?.refreshFlexedColumns({ source });
     }
 }
 

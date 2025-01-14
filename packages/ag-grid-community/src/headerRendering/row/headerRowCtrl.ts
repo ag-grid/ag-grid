@@ -135,7 +135,6 @@ export class HeaderRowCtrl extends BeanStub {
     }
 
     private setWidth(): void {
-        this.beans.visibleCols.updateBodyWidths();
         const width = this.getWidthForRow();
         this.comp.setWidth(`${width}px`);
     }
