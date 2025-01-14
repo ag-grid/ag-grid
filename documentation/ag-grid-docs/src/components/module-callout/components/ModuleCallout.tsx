@@ -1,13 +1,13 @@
+import type { Framework } from '@ag-grid-types';
 import { Alert } from '@ag-website-shared/components/alert/Alert';
-import { getFrameworkFromPath } from '@components/docs/utils/urlPaths';
 import { urlWithPrefix } from '@utils/urlWithPrefix';
 
 interface Props {
     moduleName: string;
+    framework: Framework;
 }
 
-export const ModuleCallout = ({ moduleName }: Props) => {
-    const framework = getFrameworkFromPath(window.location.pathname);
+export const ModuleCallout = ({ moduleName, framework }: Props) => {
     return (
         <>
             <Alert type="info">
