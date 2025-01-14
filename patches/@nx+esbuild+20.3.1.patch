@@ -1,10 +1,10 @@
 diff --git a/node_modules/@nx/esbuild/src/executors/esbuild/lib/build-esbuild-options.js b/node_modules/@nx/esbuild/src/executors/esbuild/lib/build-esbuild-options.js
-index 7f016a3..bf46353 100644
+index 38a9c4b..fd192de 100644
 --- a/node_modules/@nx/esbuild/src/executors/esbuild/lib/build-esbuild-options.js
 +++ b/node_modules/@nx/esbuild/src/executors/esbuild/lib/build-esbuild-options.js
-@@ -98,23 +98,26 @@ function buildEsbuildOptions(format, options, context) {
+@@ -104,22 +104,25 @@ function buildEsbuildOptions(format, options, context) {
+     return esbuildOptions;
  }
- exports.buildEsbuildOptions = buildEsbuildOptions;
  function getOutExtension(format, options) {
 -    const userDefinedExt = options.userDefinedBuildOptions?.outExtension?.['.js'];
 +    const userDefExts = options.userDefinedBuildOptions?.outExtension ?? {};
@@ -26,7 +26,6 @@ index 7f016a3..bf46353 100644
 +
 +    return defaultExt;
  }
- exports.getOutExtension = getOutExtension;
  function getOutfile(format, options, context) {
 -    const ext = getOutExtension(format, options);
      const candidate = (0, devkit_1.joinPathFragments)(context.target.options.outputPath, options.outputFileName);
@@ -38,4 +37,4 @@ index 7f016a3..bf46353 100644
 +    }
      return `${dir}/${name}${ext}`;
  }
- exports.getOutfile = getOutfile;
+ function writeTmpEntryWithRequireOverrides(paths, outExtension, options, context) {
