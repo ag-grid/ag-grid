@@ -30,3 +30,5 @@ packages/ag-grid-angular/projects/ag-grid-angular/src/test.ts
 
 # ignore for now - throws an error when processed
 documentation/ag-grid-docs/src/components/upgrade-33.astro
+
+/.nx/workspace-data
