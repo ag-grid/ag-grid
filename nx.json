@@ -172,5 +172,5 @@
     }
   },
   "defaultProject": "all",
-  "useLegacyCache": true
+  "useLegacyCache": false
 }
