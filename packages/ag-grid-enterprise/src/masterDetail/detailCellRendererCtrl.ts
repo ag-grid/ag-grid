@@ -1,7 +1,10 @@
 import type {
+    BeanCollection,
     DetailGridInfo,
+    Environment,
     FullWidthRowFocusedEvent,
     GridApi,
+    GridOptions,
     IDetailCellRenderer,
     IDetailCellRendererCtrl,
     IDetailCellRendererParams,
@@ -17,6 +20,12 @@ export class DetailCellRendererCtrl extends BeanStub implements IDetailCellRende
     private loadRowDataVersion = 0;
 
     private refreshStrategy: 'rows' | 'everything' | 'nothing';
+
+    private environment: Environment;
+
+    public wireBeans(beans: BeanCollection): void {
+        this.environment = beans.environment;
+    }
 
     public init(comp: IDetailCellRenderer, params: IDetailCellRendererParams): void {
         this.params = params;
@@ -86,7 +95,10 @@ export class DetailCellRendererCtrl extends BeanStub implements IDetailCellRende
         // we clone the detail grid options, as otherwise it would be shared
         // across many instances, and that would be a problem because we set
         // api into gridOptions
-        const gridOptions = { ...params.detailGridOptions };
+        const gridOptions: GridOptions = {
+            styleContainer: this.environment.eStyleContainer,
+            ...params.detailGridOptions,
+        };
 
         const autoHeight = gos.get('detailRowAutoHeight');
         if (autoHeight) {

@@ -165,6 +165,10 @@
     "typeName": "HTMLElement | null",
     "typesToInclude": []
   },
+  "styleContainer": {
+    "typeName": "HTMLElement",
+    "typesToInclude": []
+  },
   "statusBar": {
     "typeName": "{\n        statusPanels: StatusPanelDef[];\n    }",
     "typesToInclude": [

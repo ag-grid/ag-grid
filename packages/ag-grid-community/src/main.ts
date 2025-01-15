@@ -1089,4 +1089,6 @@ export * from './theming/parts/icon-set/icon-sets';
 export * from './theming/parts/input-style/input-styles';
 export * from './theming/parts/button-style/button-styles';
 export * from './theming/parts/tab-style/tab-styles';
+export * from './theming/parts/button-style/button-styles';
+export * from './theming/parts/column-drop-style/column-drop-styles';
 export * from './theming/parts/theme/themes';

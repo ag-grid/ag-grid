@@ -41,9 +41,14 @@ export class Environment extends BeanStub implements NamedBean {
     beanName = 'environment' as const;
 
     private eGridDiv: HTMLElement;
+    public eStyleContainer: HTMLElement;
 
     public wireBeans(beans: BeanCollection): void {
-        this.eGridDiv = beans.eGridDiv;
+        const { eGridDiv } = beans;
+        this.eGridDiv = eGridDiv;
+        // NOTE: need to use beans.gridOptions because beans.gos not yet initialised
+        this.eStyleContainer =
+            beans.gridOptions.styleContainer ?? (eGridDiv.getRootNode() === document ? document.head : eGridDiv);
     }
 
     private sizeEls = new Map<Variable, HTMLElement>();
@@ -149,7 +154,7 @@ export class Environment extends BeanStub implements NamedBean {
 
     public addGlobalCSS(css: string, debugId: string): void {
         if (this.gridTheme) {
-            _injectGlobalCSS(css, this.eGridDiv, debugId);
+            _injectGlobalCSS(css, this.eStyleContainer, debugId);
         } else {
             this.globalCSS.push([css, debugId]);
         }
@@ -265,16 +270,16 @@ export class Environment extends BeanStub implements NamedBean {
         if (newGridTheme !== oldGridTheme) {
             if (newGridTheme) {
                 _registerGridUsingThemingAPI(this);
-                _injectCoreAndModuleCSS(eGridDiv);
+                _injectCoreAndModuleCSS(this.eStyleContainer);
                 for (const [css, debugId] of globalCSS) {
-                    _injectGlobalCSS(css, eGridDiv, debugId);
+                    _injectGlobalCSS(css, this.eStyleContainer, debugId);
                 }
                 globalCSS.length = 0;
             }
             this.gridTheme = newGridTheme;
             newGridTheme?._startUse({
                 loadThemeGoogleFonts: gos.get('loadThemeGoogleFonts'),
-                container: eGridDiv,
+                styleContainer: this.eStyleContainer,
             });
             let eParamsStyle = this.eParamsStyle;
             if (!eParamsStyle) {

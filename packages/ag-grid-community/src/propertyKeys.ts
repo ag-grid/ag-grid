@@ -88,6 +88,7 @@ const OBJECT_GRID_OPTIONS: KeysLike<object | HTMLElement>[] = [
     'loadingOverlayComponentParams',
     'noRowsOverlayComponentParams',
     'popupParent',
+    'styleContainer',
     'statusBar',
     'chartThemeOverrides',
     'customChartThemes',

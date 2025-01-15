@@ -490,7 +490,9 @@ class ContextMenu extends Component<ContextMenuEvent> {
     }
 
     public override destroy(): void {
-        this.restoreFocusedCell();
         super.destroy();
+        // restore focus cell after `super.destroy()` to guarantee
+        // that all submenus have also been destroyed.
+        this.restoreFocusedCell();
     }
 }

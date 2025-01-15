@@ -1,12 +1,27 @@
+import { createPart } from '../../Part';
 import { createTheme } from '../../Theme';
-import { accentColor, accentMix, backgroundColor, foregroundBackgroundMix, foregroundMix } from '../../theme-utils';
-import { buttonStyleAlpine, buttonStyleBalham } from '../button-style/button-styles';
+import type { CoreParams } from '../../core/core-css';
+import type { WithParamTypes } from '../../theme-types';
+import {
+    accentColor,
+    accentMix,
+    backgroundColor,
+    foregroundBackgroundMix,
+    foregroundColor,
+    foregroundMix,
+} from '../../theme-utils';
+import type { ButtonStyleParams } from '../button-style/button-styles';
+import { buttonStyleAlpine, buttonStyleBalham, buttonStyleBase } from '../button-style/button-styles';
 import { checkboxStyleDefault } from '../checkbox-style/checkbox-styles';
 import { colorSchemeVariable } from '../color-scheme/color-schemes';
+import { columnDropStyleBordered, columnDropStylePlain } from '../column-drop-style/column-drop-styles';
 import { iconSetBalham } from '../icon-set/balham/icon-set-balham';
-import { iconSetAlpine, iconSetQuartzRegular } from '../icon-set/icon-sets';
-import { inputStyleBordered } from '../input-style/input-styles';
-import { tabStyleAlpine, tabStyleQuartz, tabStyleRolodex } from '../tab-style/tab-styles';
+import { iconSetAlpine, iconSetMaterial, iconSetQuartzRegular } from '../icon-set/icon-sets';
+import type { InputStyleParams } from '../input-style/input-styles';
+import { inputStyleBordered, inputStyleUnderlined } from '../input-style/input-styles';
+import type { TabStyleParams } from '../tab-style/tab-styles';
+import { tabStyleAlpine, tabStyleMaterial, tabStyleQuartz, tabStyleRolodex } from '../tab-style/tab-styles';
+import { materialAdjustmentsCSS } from './material-adjustments.css-GENERATED';
 
 const makeThemeQuartzTreeShakeable = () =>
     createTheme()
@@ -14,7 +29,8 @@ const makeThemeQuartzTreeShakeable = () =>
         .withPart(colorSchemeVariable)
         .withPart(iconSetQuartzRegular)
         .withPart(tabStyleQuartz)
-        .withPart(() => inputStyleBordered)
+        .withPart(inputStyleBordered)
+        .withPart(columnDropStyleBordered)
         .withParams({
             fontFamily: [
                 { googleFont: 'IBM Plex Sans' },
@@ -39,6 +55,7 @@ const makeThemeAlpineTreeShakeable = () =>
         .withPart(iconSetAlpine)
         .withPart(tabStyleAlpine)
         .withPart(inputStyleBordered)
+        .withPart(columnDropStyleBordered)
         .withParams({
             accentColor: '#2196f3',
             selectedRowBackgroundColor: accentMix(0.3),
@@ -88,6 +105,7 @@ const makeThemeBalhamTreeShakeable = () =>
         .withPart(iconSetBalham)
         .withPart(tabStyleRolodex)
         .withPart(inputStyleBordered)
+        .withPart(columnDropStylePlain)
         .withParams({
             accentColor: '#0091ea',
             borderColor: foregroundMix(0.2),
@@ -131,53 +149,168 @@ export const themeBalham =
     /*#__PURE__*/
     makeThemeBalhamTreeShakeable();
 
-// export const themeMaterial =
-//     /*#__PURE__*/
-//     createThemeWithDefaultWidgets('material')
-//         .withPart(iconSetMaterial)
-//         .withPart(tabStyleMaterial)
-//         .withPart(inputStyleUnderlined)
-//         .withParams({
-//             spacing: 9,
-//             iconSize: 18,
-//             borderRadius: 0,
-//             wrapperBorderRadius: 0,
-//             wrapperBorder: false,
-//             sidePanelBorder: false,
-//             sideButtonSelectedBorder: false,
-//             headerColumnResizeHandleColor: 'none',
-//             headerBackgroundColor: {
-//                 ref: 'backgroundColor',
-//             },
-//             rangeSelectionBackgroundColor: {
-//                 ref: 'primaryColor',
-//                 mix: 0.2,
-//             },
-//             rangeSelectionBorderColor: {
-//                 ref: 'primaryColor',
-//             },
-//             fontFamily: [
-//                 { googleFont: 'Roboto' },
-//                 '-apple-system',
-//                 'BlinkMacSystemFont',
-//                 'Segoe UI',
-//                 'Oxygen-Sans',
-//                 'Ubuntu',
-//                 'Cantarell',
-//                 'Helvetica Neue',
-//                 'sans-serif',
-//             ],
-//             inputFocusBorder: {
-//                 style: 'solid',
-//                 width: 2,
-//                 color: { ref: 'primaryColor' },
-//             },
-//             headerFontWeight: 600,
-//         })
-//         .withCSS(
-//             `
-//             .ag-filter-toolpanel-group-level-0-header, .ag-column-drop-horizontal {
-//                 background-color: color-mix(in srgb, transparent, var(--ag-foreground-color) 7%);
-//             }
-//         `
-//         );
+type StyleMaterialParams = {
+    primaryColor: 'infer';
+};
+
+const makeStyleMaterialTreeShakeable = () => {
+    // define these overrides separately so that they don't affect the type of
+    // this part - adding styleMaterial to a theme should override the value of
+    // e.g. tabSelectedUnderlineColor, but not add that param to the type if
+    // it's not there already
+    const sharedParams: Partial<
+        WithParamTypes<StyleMaterialParams & TabStyleParams & CoreParams & ButtonStyleParams & InputStyleParams>
+    > = {
+        tabSelectedUnderlineColor: { ref: 'primaryColor' },
+        sideButtonSelectedUnderlineColor: { ref: 'primaryColor' },
+        buttonTextColor: { ref: 'primaryColor' },
+        rangeSelectionBackgroundColor: {
+            ref: 'primaryColor',
+            mix: 0.2,
+        },
+        rangeSelectionBorderColor: {
+            ref: 'primaryColor',
+        },
+        rangeSelectionHighlightColor: {
+            ref: 'primaryColor',
+            mix: 0.5,
+        },
+        columnHoverColor: {
+            ref: 'primaryColor',
+            mix: 0.05,
+        },
+        selectedRowBackgroundColor: {
+            ref: 'primaryColor',
+            mix: 0.12,
+        },
+        inputFocusBorder: {
+            width: 2,
+            color: { ref: 'primaryColor' },
+        },
+        pickerButtonFocusBorder: {
+            width: 1,
+            color: { ref: 'primaryColor' },
+        },
+        cellEditingBorder: {
+            color: { ref: 'primaryColor' },
+        },
+        menuBackgroundColor: { ref: 'backgroundColor' },
+        sideButtonBarBackgroundColor: backgroundColor,
+        sideButtonSelectedBackgroundColor: 'transparent',
+        headerColumnResizeHandleColor: 'none',
+        headerBackgroundColor: {
+            ref: 'backgroundColor',
+        },
+        rowHoverColor: foregroundMix(0.08),
+        headerCellHoverBackgroundColor: foregroundMix(0.05),
+    };
+
+    const lightParams = {
+        ...sharedParams,
+        primaryColor: '#3f51b5',
+        foregroundColor: '#000D',
+        headerTextColor: '#0008',
+        accentColor: '#ff4081',
+        checkboxUncheckedBorderColor: foregroundColor,
+        checkboxIndeterminateBackgroundColor: foregroundColor,
+        toggleButtonOffBackgroundColor: foregroundColor,
+    } as const;
+
+    const darkParams = {
+        ...sharedParams,
+        primaryColor: '#3f51b5',
+        foregroundColor: '#fffD',
+        headerTextColor: '#fff8',
+        accentColor: '#bb86fc',
+        checkboxUncheckedBorderColor: foregroundBackgroundMix(0.5),
+        checkboxIndeterminateBackgroundColor: foregroundBackgroundMix(0.5),
+        toggleButtonOffBackgroundColor: foregroundBackgroundMix(0.5),
+    } as const;
+
+    return createPart<StyleMaterialParams>({
+        feature: 'styleMaterial',
+        css: materialAdjustmentsCSS,
+        params: lightParams,
+        modeParams: {
+            light: lightParams,
+            dark: darkParams,
+            'dark-blue': darkParams,
+        },
+    });
+};
+
+export const styleMaterial = /*#__PURE__*/ makeStyleMaterialTreeShakeable();
+
+const makeThemeMaterialTreeShakeable = () =>
+    /*#__PURE__*/
+    createTheme()
+        .withPart(buttonStyleBase)
+        .withPart(checkboxStyleDefault)
+        .withPart(colorSchemeVariable)
+        .withPart(iconSetMaterial)
+        .withPart(tabStyleMaterial)
+        .withPart(inputStyleUnderlined)
+        .withPart(columnDropStylePlain)
+        .withPart(styleMaterial)
+        .withParams({
+            rowHeight: {
+                calc: 'max(iconSize, dataFontSize) + spacing * 3.75 * rowVerticalPaddingScale',
+            },
+            headerHeight: {
+                calc: 'max(iconSize, dataFontSize) + spacing * 4.75 * headerVerticalPaddingScale',
+            },
+            widgetVerticalSpacing: {
+                calc: 'spacing * 1.75',
+            },
+            cellHorizontalPadding: { calc: 'spacing * 3' },
+            widgetContainerHorizontalPadding: { calc: 'spacing * 1.5' },
+            widgetContainerVerticalPadding: { calc: 'spacing * 2' },
+            fontSize: 13,
+            iconSize: 18,
+            borderRadius: 0,
+            wrapperBorderRadius: 0,
+            wrapperBorder: false,
+            menuBorder: false,
+            dialogBorder: false,
+            panelTitleBarBorder: false,
+            tabSelectedBorderWidth: 0,
+            tabSelectedUnderlineTransitionDuration: 0.3,
+            sidePanelBorder: false,
+            sideButtonSelectedBorder: false,
+            sideButtonSelectedUnderlineWidth: 2,
+            sideButtonSelectedUnderlineTransitionDuration: 0.3,
+            sideButtonBorder: false,
+            buttonBorder: false,
+            buttonDisabledBorder: false,
+            focusShadow: {
+                spread: 4,
+                color: foregroundMix(0.16),
+            },
+            fontFamily: [
+                { googleFont: 'Roboto' },
+                '-apple-system',
+                'BlinkMacSystemFont',
+                'Segoe UI',
+                'Oxygen-Sans',
+                'Ubuntu',
+                'Cantarell',
+                'Helvetica Neue',
+                'sans-serif',
+            ],
+            inputHeight: {
+                calc: 'max(iconSize, fontSize) + spacing * 3',
+            },
+            pickerButtonBorder: {
+                width: 1,
+                color: 'transparent',
+            },
+            headerFontWeight: 600,
+            checkboxBorderWidth: 2,
+            checkboxBorderRadius: 2,
+            toggleButtonWidth: 34,
+            toggleButtonSwitchInset: 1,
+            cardShadow: '0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23)',
+            popupShadow: '0 10px 20px rgba(0,0,0,0.25), 0 7px 7px rgba(0,0,0,0.22)',
+        });
+
+export const themeMaterial = /*#__PURE__*/ makeThemeMaterialTreeShakeable();

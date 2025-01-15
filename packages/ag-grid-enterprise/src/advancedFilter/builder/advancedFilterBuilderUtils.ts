@@ -20,7 +20,7 @@ export function getAdvancedFilterBuilderAddButtonParams(
                 displayValue: translate('advancedFilterBuilderAddJoin'),
             },
         ],
-        valueFormatter: (value: AutocompleteEntry) => (value == null ? null : value.displayValue ?? value.key),
+        valueFormatter: (value: AutocompleteEntry) => (value == null ? '' : value.displayValue ?? value.key),
         pickerIcon: 'advancedFilterBuilderAdd',
         maxPickerWidth: `${maxPickerWidth ?? 120}px`,
         wrapperClassName: 'ag-advanced-filter-builder-item-button',

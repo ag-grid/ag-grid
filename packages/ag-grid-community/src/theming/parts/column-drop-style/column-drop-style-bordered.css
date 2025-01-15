@@ -1,0 +1,12 @@
+.ag-column-drop-vertical-empty-message {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: dashed 1px;
+    border-color: var(--ag-border-color);
+    margin: calc(var(--ag-spacing) * 1.5) calc(var(--ag-spacing) * 2);
+    padding: calc(var(--ag-spacing) * 2);
+}

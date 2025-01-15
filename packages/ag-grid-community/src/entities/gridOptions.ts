@@ -1648,6 +1648,17 @@ export interface GridOptions<TData = any> {
      */
     loadThemeGoogleFonts?: boolean;
 
+    /**
+     * An element to insert style elements into when injecting styles into the
+     * grid. If undefined, styles will be added to the document head for grids
+     * rendered in the main document fragment, or to the grid wrapper element
+     * for other grids (e.g. those rendered in a shadow DOM or detached from the
+     * document).
+     *
+     * @initial
+     */
+    styleContainer?: HTMLElement;
+
     // *****************************************************************************************************
     // If you change the callbacks on this interface, you must also update PropertyKeys to be consistent. *
     // *****************************************************************************************************

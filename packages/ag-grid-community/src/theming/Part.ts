@@ -94,7 +94,7 @@ export class PartImpl implements Part {
         };
     }
 
-    use(container?: HTMLElement): string | false {
+    use(styleContainer?: HTMLElement): string | false {
         let inject = this._inject;
         if (inject == null) {
             let { css } = this;
@@ -111,8 +111,8 @@ export class PartImpl implements Part {
             }
             this._inject = inject;
         }
-        if (inject && container) {
-            _injectGlobalCSS(inject.css, container, inject.class);
+        if (inject && styleContainer) {
+            _injectGlobalCSS(inject.css, styleContainer, inject.class, 1);
         }
         return inject ? inject.class : false;
     }

@@ -175,7 +175,7 @@
       }
     },
     "clean": {
-      "command": "rimraf dist/ 'packages/*/dist/' 'documentation/*/dist/' 'documentation/ag-grid-docs/node_modules/.vite/' 'community-modules/locale/umd/'"
+      "command": "rimraf -g dist/ 'packages/*/dist/' 'plugins/*/dist/' 'testing/*/dist/' 'documentation/*/dist/' 'documentation/ag-grid-docs/node_modules/.vite/' 'community-modules/locale/umd/'"
     },
     "generate-examples": {
       "executor": "nx:noop",

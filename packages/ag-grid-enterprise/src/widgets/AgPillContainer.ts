@@ -16,6 +16,7 @@ export interface PillRendererParams<TValue> {
     eWrapper?: HTMLElement;
     announceItemFocus?: () => void;
     onPillMouseDown?: (e: MouseEvent) => void;
+    valueFormatter?: (value: TValue | TValue[]) => string | null;
     getValue: () => TValue[] | null;
     setValue: (value: TValue[] | null) => void;
 }
@@ -40,12 +41,16 @@ export class AgPillContainer<TValue> extends Component {
 
         const { params, onPillKeyDown } = this;
 
-        const values = params.getValue();
+        let values = params.getValue();
 
         if (!Array.isArray(values)) {
-            return;
+            if (values == null) {
+                return;
+            }
+            values = [values];
         }
 
+        const valueFormatter = params.valueFormatter ?? ((v: TValue) => String(v));
         const len = values.length;
 
         for (let i = 0; i < len; i++) {
@@ -70,7 +75,7 @@ export class AgPillContainer<TValue> extends Component {
                 pill.addGuiEventListener('focus', params.announceItemFocus);
             }
 
-            pill.setText(value as string);
+            pill.setText(valueFormatter(value) ?? '');
             pill.toggleCloseButtonClass('ag-icon-cancel', true);
             this.appendChild(pillGui);
             this.pills.push(pill);

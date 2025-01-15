@@ -31,7 +31,6 @@ export interface ChartDatasourceParams {
     isScatter: boolean;
     aggFunc?: string | IAggFunc;
     referenceCellRange?: PartialCellRange;
-    isHierarchical?: boolean;
 }
 
 interface IData {
@@ -83,7 +82,7 @@ export class ChartDatasource extends BeanStub {
     }
 
     private extractRowsFromGridRowModel(params: ChartDatasourceParams): IData {
-        const { crossFiltering, startRow, endRow, valueCols, dimensionCols, grouping, isHierarchical } = params;
+        const { crossFiltering, startRow, endRow, valueCols, dimensionCols, grouping } = params;
         let extractedRowData: any[] = [];
         const colNames: { [key: string]: string[] } = {};
 
@@ -140,6 +139,8 @@ export class ChartDatasource extends BeanStub {
 
         let numRemovedNodes = 0;
 
+        let id = 0;
+
         for (let i = 0; i < numRows; i++) {
             const rowNode = crossFiltering ? allRowNodes[i] : this.gridRowModel.getRow(i + startRow)!;
 
@@ -163,16 +164,14 @@ export class ChartDatasource extends BeanStub {
 
                         // traverse parents to extract group label path
                         const labels = this.getGroupLabels(rowNode, valueString);
+                        const value = labels.slice().reverse();
 
-                        let preparedLabels: string | string[] = labels.slice().reverse();
-
-                        if (!isHierarchical && preparedLabels.length > 1) {
-                            // Charts handles this for hierarchical charts only. When row grouping is present
-                            // for charts that don't support it, emulate Charts behavior
-                            preparedLabels = preparedLabels.filter((label) => !!label).join();
-                        }
-
-                        data[colId] = preparedLabels;
+                        data[colId] = {
+                            value,
+                            // this is needed so that standalone can handle animations properly when data updates
+                            id: id++,
+                            toString: () => value.filter(Boolean).join(' - '),
+                        };
 
                         // keep track of group node indexes, so they can be padded when other groups are expanded
                         if (rowNode.group) {

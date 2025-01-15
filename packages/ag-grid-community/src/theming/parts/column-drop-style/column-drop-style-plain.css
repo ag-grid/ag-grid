@@ -1,0 +1,10 @@
+.ag-column-drop-vertical-empty-message {
+    font-size: calc(var(--ag-font-size) - 1px);
+    font-weight: 600;
+    color: var(--ag-subtle-text-color);
+
+    /* align with heading text after icon */
+    padding-left: calc(var(--ag-icon-size) + var(--ag-spacing) + var(--ag-widget-horizontal-spacing));
+    padding-top: var(--ag-spacing);
+    padding-right: var(--ag-spacing);
+}

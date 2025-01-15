@@ -1,0 +1,50 @@
+.ag-filter-toolpanel-header,
+.ag-filter-toolpanel-search,
+.ag-status-bar,
+.ag-header-row,
+.ag-panel-title-bar-title,
+.ag-multi-filter-group-title-bar,
+.ag-dnd-ghost {
+    font-size: calc(var(--ag-font-size) - 1px);
+    font-weight: 600;
+    color: var(--ag-header-text-color);
+}
+
+.ag-cell.ag-cell-inline-editing {
+    padding: var(--ag-spacing);
+    height: calc(var(--ag-row-height) + var(--ag-spacing) * 3);
+    border: var(--ag-input-border) !important;
+    border-width: 1px !important;
+
+    /* use gradient image to overlay input background onto background, so that
+       if the user supplies a semi-transparent background the content of the
+       cell below won't be visible */
+    background-color: var(--ag-background-color);
+    background-image: linear-gradient(0deg, var(--ag-input-background-color), var(--ag-input-background-color));
+
+    :where(.ag-row-last:not(.ag-row-first)) & {
+        bottom: 0;
+    }
+
+    :where(.ag-has-focus) & {
+        border: var(--ag-input-focus-border) !important;
+        border-width: 1px !important;
+    }
+}
+
+.ag-button {
+    text-transform: uppercase;
+}
+
+.ag-list-item-hovered::after {
+    background-color: var(--ag-primary-color);
+}
+
+.ag-pill-button:hover {
+    color: var(--ag-primary-color);
+}
+
+.ag-header-highlight-before::after,
+.ag-header-highlight-after::after {
+    background-color: var(--ag-primary-color);
+}

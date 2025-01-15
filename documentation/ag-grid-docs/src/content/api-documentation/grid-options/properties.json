@@ -1809,7 +1809,6 @@
             }
         },
         "theme": {
-            "displayName": "Themes",
             "more": {
                 "name": "Built-in themes",
                 "url": "./themes/"
@@ -1819,12 +1818,12 @@
             }
         },
         "loadThemeGoogleFonts": {
-            "displayName": "Tooltips",
             "more": {
                 "name": "Loading Google Fonts",
                 "url": "./theming-fonts/#loading-google-fonts"
             }
-        }
+        },
+        "styleContainer": {}
     },
     "tooltips": {
         "meta": {

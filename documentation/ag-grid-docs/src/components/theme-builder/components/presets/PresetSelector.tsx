@@ -56,7 +56,7 @@ const SelectButton = ({ preset, scrollerRef, presetClass }: SelectButtonProps) =
                 theme = theme.withPart(part);
             }
             wrapper.style.setProperty('--page-background-color', preset.pageBackgroundColor);
-            theme._startUse({ container: wrapper, loadThemeGoogleFonts: true });
+            theme._startUse({ styleContainer: wrapper, loadThemeGoogleFonts: true });
             setThemeClass(theme._getCssClass());
 
             style.textContent = theme._getPerGridCss(presetClass) || '';

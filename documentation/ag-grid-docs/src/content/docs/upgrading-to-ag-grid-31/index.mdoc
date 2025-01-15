@@ -40,8 +40,11 @@ See the [Codemods](./codemods/) documentation for more details.
 
 This release includes the following breaking changes:
 
+{% if isFramework("react") %}
 ### React
+{% /if %}
 
+{% if isFramework("react") %}
 * `AgGridReactFire` is no longer exported from `ag-grid-react`. You should use `AgGridReact` instead.
 * The loading overlay is now displayed for all row models if column definitions are not provided when the grid is initialised. The rows will also not be created and rendered until the column definitions are provided.
 * Validation is now run when `gridOptions` are updated, meaning warnings may appear in console when changing grid options if an invalid configuration is reached.
@@ -52,12 +55,52 @@ This release includes the following breaking changes:
 
   AG Grid now only renders via React components as has been the default since v28.
 * `rowDataChangeDetectionStrategy` - removed. identity / reference equals always used.
+{% /if %}
 
 ### Integrated Charts
 
 The `solar` and `pastel` integrated chart themes have been removed. Any saved chart models will be migrated to the new `polychroma` and `sheets` themes respectively. If you're using themeOverrides, see charts migration page as the structure and naming of options have changed.
 
 If you are using Standalone Charts, please see changes to charts in the [AG Charts Migration Guide](https://www.ag-grid.com/charts/react/upgrade-to-ag-charts-9/).
+
+{% if isFramework("angular") %}
+### CommonJS
+{% /if %}
+
+{% if isFramework("angular") %}
+Angular 15 users with `"module": "commonjs"` will require a custom webpack configuration.
+
+You can resolve this as follows:
+1. Add the following to the package.json: `"@angular-builders/custom-webpack": "^15.0.0",`
+2. Install the dependencies
+3. Change the following entries in angular.json:
+```
+ "architect": {
+        "build": {
+          "builder": "@angular-builders/custom-webpack:browser",
+            "options": {
+              "customWebpackConfig": {
+                "path": "./custom-webpack.config.js"
+              },
+        ...
+        "serve": {
+          "builder": "@angular-builders/custom-webpack:dev-server",
+          ...
+```
+4. Create a file called custom-webpack.config.js in the root folder:
+```
+const path = require('path');
+
+module.exports = {
+    resolve: {
+        alias: {
+            'ag-grid-community$': path.resolve(__dirname, 'node_modules/ag-grid-community/dist/package/main.cjs.js'),
+            'ag-grid-community/styles': path.resolve(__dirname, 'node_modules/ag-grid-community/styles')
+        }
+    }
+};
+```
+{% /if %}
 
 ### ColumnDefs
 

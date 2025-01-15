@@ -3,6 +3,13 @@ import ts from 'typescript';
 
 import type { BindingImport, ExampleConfig, InternalFramework, ParsedBindings } from '../types';
 
+const IMPORT_COMMENTS: Record<string, (i: BindingImport) => string> = {
+    "'./random'": (i: BindingImport) =>
+        `// Initialise random data generation for test/example purposes only. Do not use in production.
+import ${i.module};
+`,
+};
+
 export function readAsJsFile(srcFile, internalFramework: InternalFramework) {
     let tsFile = srcFile
         // Remove imports like import 'ag-grid-community/styles/ag-grid.css';
@@ -476,7 +483,9 @@ export function addBindingImports(bindingImports: any, imports: string[], ignore
                     if (i.imports.length > 0) {
                         namespacedImports.push(`import * as ${i.imports[0]} from ${path};`);
                     } else {
-                        namespacedImports.push(`import ${path};`);
+                        // inject comments for any specific imports
+                        const importString = IMPORT_COMMENTS[i.module]?.(i) || `import ${path};`;
+                        namespacedImports.push(importString);
                     }
                 } else {
                     if (i.namedImport) {
