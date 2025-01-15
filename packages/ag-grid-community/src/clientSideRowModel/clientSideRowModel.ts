@@ -722,7 +722,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
 
         const changedPath = (params.changedPath ??= this.createChangePath(!params.newData && !!params.rowDataUpdated));
 
-        this.nodeManager.refreshModel?.(params);
+        this.nodeManager.refreshModel?.(params, this.started);
 
         this.eventSvc.dispatchEvent({ type: 'beforeRefreshModel', params });
 
