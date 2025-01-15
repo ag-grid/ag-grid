@@ -70,7 +70,7 @@ export abstract class AbstractClientSideTreeNodeManager<TData> extends AbstractC
     /** Rows that are pending deletion, this.commitDeletedRows() will finalize removal. */
     private rowsPendingDestruction: Set<TreeRow> | null = null;
 
-    protected commitPending = false;
+    protected treeCommitPending = true;
 
     /** The root node of the tree. */
     public treeRoot: TreeNode | null = null;
@@ -78,7 +78,7 @@ export abstract class AbstractClientSideTreeNodeManager<TData> extends AbstractC
     public override activate(rootNode: RowNode<TData>): void {
         super.activate(rootNode);
         this.treeSetRootNode(rootNode);
-        this.commitPending = true;
+        this.treeCommitPending = true;
     }
 
     protected treeSetRootNode(rootNode: RowNode<TData>): void {
@@ -198,7 +198,7 @@ export abstract class AbstractClientSideTreeNodeManager<TData> extends AbstractC
             return;
         }
 
-        this.commitPending = false;
+        this.treeCommitPending = false;
         const treeData = this.treeData;
         const activeChangedPath = changedPath?.active ? changedPath : null;
 
@@ -559,7 +559,7 @@ export abstract class AbstractClientSideTreeNodeManager<TData> extends AbstractC
     }
 
     public refreshModel(params: RefreshModelParams<TData>, started: boolean): void {
-        if (started && this.commitPending) {
+        if (started && this.treeCommitPending) {
             this.treeCommit(params.changedPath);
         }
 

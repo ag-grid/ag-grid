@@ -84,7 +84,7 @@ export class ClientSideChildrenTreeNodeManager<TData>
             processChild(treeRoot, rowData[i]);
         }
 
-        this.commitPending = true;
+        this.treeCommitPending = true;
     }
 
     public override setImmutableRowData(params: RefreshModelParams<TData>, rowData: TData[]): void {
@@ -228,7 +228,7 @@ export class ClientSideChildrenTreeNodeManager<TData>
             this.deselectNodes(nodesToUnselect);
         }
 
-        this.commitPending = true;
+        this.treeCommitPending = true;
 
         const sibling = rootNode.sibling;
         if (sibling) {
@@ -255,7 +255,7 @@ export class ClientSideChildrenTreeNodeManager<TData>
                 }
             }
             treeRoot.childrenChanged = true;
-            this.commitPending = true;
+            this.treeCommitPending = true;
         }
 
         super.refreshModel(params, started);

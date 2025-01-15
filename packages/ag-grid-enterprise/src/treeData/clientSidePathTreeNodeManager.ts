@@ -25,7 +25,7 @@ export class ClientSidePathTreeNodeManager<TData>
             this.addOrUpdateRow(getDataPath, allLeafChildren[i], true);
         }
 
-        this.commitPending = true;
+        this.treeCommitPending = true;
     }
 
     public override get treeData(): boolean {
@@ -78,7 +78,7 @@ export class ClientSidePathTreeNodeManager<TData>
             }
         }
 
-        this.commitPending = true;
+        this.treeCommitPending = true;
     }
 
     private addOrUpdateRow(getDataPath: GetDataPath | undefined, row: RowNode, created: boolean): void {
