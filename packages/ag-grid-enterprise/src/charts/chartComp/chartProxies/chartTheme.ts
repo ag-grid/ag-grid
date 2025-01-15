@@ -152,7 +152,10 @@ function pieAndDonutOverrides() {
         pie: {
             series: {
                 title: { _enabledFromTheme: true },
-                calloutLabel: { _enabledFromTheme: true },
+                calloutLabel: {
+                    minAngle: 0.001,
+                    _enabledFromTheme: true,
+                },
                 sectorLabel: {
                     enabled: false,
                     _enabledFromTheme: true,
@@ -162,7 +165,10 @@ function pieAndDonutOverrides() {
         donut: {
             series: {
                 title: { _enabledFromTheme: true },
-                calloutLabel: { _enabledFromTheme: true },
+                calloutLabel: {
+                    minAngle: 0.001,
+                    _enabledFromTheme: true,
+                },
                 sectorLabel: {
                     enabled: false,
                     _enabledFromTheme: true,
