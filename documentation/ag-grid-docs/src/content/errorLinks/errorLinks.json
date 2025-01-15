@@ -1,0 +1,19 @@
+[
+    {
+        "errorIds": [1],
+        "text": "Row Data",
+        "url": "./row-ids"
+    },
+    {
+        "errorIds": [2],
+        "text": "Row IDs",
+        "url": "./row-ids/#row-ids",
+        "description": "Configuration requirements for row IDs."
+    },
+    {
+        "errorIds": [48],
+        "text": "Cell Data Type",
+        "url": "./cell-data-types/#object",
+        "description": "Configuration requirements for an 'object' cell data type."
+    }
+]

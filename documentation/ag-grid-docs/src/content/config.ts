@@ -127,10 +127,23 @@ const errors = defineCollection({
     }),
 });
 
+const errorLinks = defineCollection({
+    type: 'data',
+    schema: z.array(
+        z.object({
+            errorIds: z.array(z.number()),
+            text: z.string(),
+            url: z.string(),
+            description: z.string().optional(),
+        })
+    ),
+});
+
 export const collections = {
     docs,
     menu,
     'matrix-table': matrixTable,
     'module-mappings': moduleMappings,
     errors,
+    errorLinks,
 };
