@@ -41,7 +41,7 @@
         "outputPath": "{projectRoot}/dist/types",
         "main": "{projectRoot}/src/main.ts",
         "additionalEntryPoints": ["{projectRoot}/scripts/plugin-utils/index.ts"],
-        "tsConfig": "{projectRoot}//tsconfig.types.json",
+        "tsConfig": "{projectRoot}/tsconfig.types.json",
         "compiler": "tsc"
       },
       "configurations": {

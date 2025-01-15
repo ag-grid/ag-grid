@@ -1,7 +1,7 @@
 {
   "extends": "./tsconfig.json",
   "compilerOptions": {
-    "verbatimModuleSyntax": true,
+    "verbatimModuleSyntax": false,
     "types": ["node"]
   },
   "include": ["src/**/*.ts", "scripts/**/*.ts"],
