@@ -315,8 +315,6 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         if (newRowData) {
             const immutable =
                 !reset &&
-                this.rowNodesCountReady &&
-                this.started &&
                 !this.isEmpty() &&
                 newRowData.length > 0 &&
                 gos.exists('getRowId') &&
