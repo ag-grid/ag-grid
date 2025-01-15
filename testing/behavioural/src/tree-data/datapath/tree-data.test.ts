@@ -300,7 +300,7 @@ describe('ag-grid tree data', () => {
         `);
     });
 
-    test.only('initializing columns after transactions initialization with tree data', async () => {
+    test('initializing columns after transactions initialization with tree data', async () => {
         let rowDataUpdated = 0;
         let modelUpdated = 0;
         const gridOptions: GridOptions = {
