@@ -60,6 +60,13 @@ validateCommonDist()
     echo "ERROR: $directory/dist/types should have at type files - none found"
     exit 1
   fi
+
+  local sourceMappingCount=`grep sourceMappingURL $directory/dist/package/*.*js | wc -l`
+  if [[ $sourceMappingCount -ne 0 ]]
+  then
+    echo "ERROR: $directory/dist/package has source map references"
+    exit 1
+  fi
 }
 
 validateModules()
