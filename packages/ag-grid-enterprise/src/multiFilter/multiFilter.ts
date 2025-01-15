@@ -1,11 +1,13 @@
 import type {
     AgColumn,
     ContainerType,
+    FilterDisplayParams,
+    FilterEvaluator,
+    FilterEvaluatorParams,
     IAfterGuiAttachedParams,
     IDoesFilterPassParams,
     IFilterComp,
     IFilterDef,
-    IFilterParams,
     IMultiFilter,
     IMultiFilterDef,
     IMultiFilterModel,
@@ -20,9 +22,10 @@ import {
     TabGuardComp,
     _focusInto,
     _getActiveDomElement,
-    _getFilterDetails,
+    _initEvaluator,
     _isNothingFocused,
     _loadTemplate,
+    _refreshEvaluator,
     _removeFromArray,
 } from 'ag-grid-community';
 
@@ -30,31 +33,16 @@ import { AgGroupComponent } from '../widgets/agGroupComponent';
 import type { MenuItemActivatedEvent } from '../widgets/agMenuItemComponent';
 import { AgMenuItemComponent } from '../widgets/agMenuItemComponent';
 import { AgMenuItemRenderer } from '../widgets/agMenuItemRenderer';
+import { forEachReverse, getFilterTitle, getMultiFilterDefs } from './multiFilterUtil';
 
-export function getMultiFilterDefs(params: MultiFilterParams): IMultiFilterDef[] {
-    const { filters } = params;
-
-    return filters && filters.length > 0
-        ? filters
-        : [{ filter: 'agTextColumnFilter' }, { filter: 'agSetColumnFilter' }];
-}
-
-function _forEachReverse<T>(list: T[] | null | undefined, action: (value: T, index: number) => void): void {
-    if (list == null) {
-        return;
-    }
-
-    for (let i = list.length - 1; i >= 0; i--) {
-        action(list[i], i);
-    }
-}
-
-function getFilterTitle(filter: IFilterComp, filterDef: IMultiFilterDef): string {
-    if (filterDef.title != null) {
-        return filterDef.title;
-    }
-
-    return filter instanceof ProvidedFilter ? filter.getFilterTitle() : 'Filter';
+interface FilterWrapper {
+    filter: IFilterComp;
+    /** only set for evaluators */
+    filterParams?: FilterDisplayParams;
+    evaluator?: FilterEvaluator;
+    evaluatorParams?: FilterEvaluatorParams;
+    /** only set for evaluators */
+    model?: any;
 }
 
 export class MultiFilter extends TabGuardComp implements IFilterComp, IMultiFilter {
@@ -62,11 +50,10 @@ export class MultiFilter extends TabGuardComp implements IFilterComp, IMultiFilt
 
     private params: MultiFilterParams;
     private filterDefs: IMultiFilterDef[] = [];
-    private filters: IFilterComp[] | null = [];
+    private wrappers: (FilterWrapper | null)[] = [];
     private guiDestroyFuncs: (() => void)[] = [];
     // this could be the accordion/sub menu element depending on the display type
-    private filterGuis: HTMLElement[] = [];
-    private column: AgColumn;
+    private filterGuis: (HTMLElement | null)[] = [];
     private filterChangedCallback: ((additionalEventAttributes?: any) => void) | null;
     private lastOpenedInContainer?: ContainerType;
     private activeFilterIndices: number[] = [];
@@ -89,25 +76,20 @@ export class MultiFilter extends TabGuardComp implements IFilterComp, IMultiFilt
         this.params = params;
         this.filterDefs = getMultiFilterDefs(params);
 
-        const { column, filterChangedCallback } = params;
+        const initialModel = this.beans.colFilter!.getModelFromInitialState(params.column);
 
-        this.column = column as AgColumn;
+        const { filterChangedCallback } = params;
+
         this.filterChangedCallback = filterChangedCallback;
 
-        const filterPromises: AgPromise<IFilterComp>[] = [];
-
-        this.filterDefs.forEach((filterDef, index) => {
-            const filterPromise = this.createFilter(filterDef, index);
-
-            if (filterPromise != null) {
-                filterPromises.push(filterPromise);
-            }
-        });
+        const filterPromises = this.filterDefs.map((filterDef, index) =>
+            this.createFilter(filterDef, index, initialModel)
+        );
 
         // we have to refresh the GUI here to ensure that Angular components are not rendered in odd places
         return new AgPromise<void>((resolve) => {
-            AgPromise.all(filterPromises).then((filters) => {
-                this.filters = filters as IFilterComp[];
+            AgPromise.all(filterPromises).then((wrappers) => {
+                this.wrappers = wrappers!;
                 this.refreshGui('columnMenu').then(() => {
                     resolve();
                 });
@@ -127,7 +109,11 @@ export class MultiFilter extends TabGuardComp implements IFilterComp, IMultiFilt
         this.destroyChildren();
 
         return AgPromise.all(
-            this.filters!.map((filter, index) => {
+            this.wrappers.map((wrapper, index) => {
+                if (!wrapper) {
+                    return AgPromise.resolve(null);
+                }
+                const filter = wrapper.filter;
                 const filterDef = this.filterDefs[index];
                 const filterTitle = getFilterTitle(filter, filterDef);
                 let filterGuiPromise: AgPromise<HTMLElement>;
@@ -151,12 +137,15 @@ export class MultiFilter extends TabGuardComp implements IFilterComp, IMultiFilt
             })
         ).then((filterGuis) => {
             filterGuis!.forEach((filterGui, index) => {
+                if (!filterGui) {
+                    return;
+                }
                 if (index > 0) {
                     this.appendChild(_loadTemplate(/* html */ `<div class="ag-filter-separator"></div>`));
                 }
-                this.appendChild(filterGui!);
+                this.appendChild(filterGui);
             });
-            this.filterGuis = filterGuis as HTMLElement[];
+            this.filterGuis = filterGuis!;
             this.lastOpenedInContainer = container;
         });
     }
@@ -262,7 +251,16 @@ export class MultiFilter extends TabGuardComp implements IFilterComp, IMultiFilt
     }
 
     public isFilterActive(): boolean {
-        return this.filters!.some((filter) => filter.isFilterActive());
+        return this.wrappers.some((wrapper) => {
+            if (!wrapper) {
+                return false;
+            }
+            const { filter, evaluator, model } = wrapper;
+            if (evaluator) {
+                return model != null;
+            }
+            return filter.isFilterActive();
+        });
     }
 
     public getLastActiveFilterIndex(): number | null {
@@ -270,25 +268,30 @@ export class MultiFilter extends TabGuardComp implements IFilterComp, IMultiFilt
         return activeFilterIndices.length > 0 ? activeFilterIndices[activeFilterIndices.length - 1] : null;
     }
 
-    public doesFilterPass(params: IDoesFilterPassParams, filterToSkip?: IFilterComp): boolean {
-        let rowPasses = true;
-
-        this.filters!.forEach((filter) => {
-            if (!rowPasses || filter === filterToSkip || !filter.isFilterActive()) {
-                return;
+    public doesFilterPass(params: IDoesFilterPassParams, indexToSkip?: number): boolean {
+        return this.wrappers.every((wrapper, index) => {
+            if (!wrapper || (indexToSkip != null && index === indexToSkip)) {
+                return true;
             }
-
-            rowPasses = filter.doesFilterPass(params);
+            const { evaluator, filter, model } = wrapper;
+            if (evaluator && model != null) {
+                return evaluator.doesFilterPass({
+                    ...params,
+                    model,
+                });
+            }
+            return !filter.isFilterActive() || filter.doesFilterPass(params);
         });
-
-        return rowPasses;
     }
 
     public getModelFromUi(): IMultiFilterModel | null {
         const model: IMultiFilterModel = {
             filterType: this.filterType,
-            filterModels: this.filters!.map((filter) => {
-                const providedFilter = filter as ProvidedFilter<IMultiFilterModel, unknown, MultiFilterParams>;
+            filterModels: this.wrappers.map((wrapper) => {
+                if (!wrapper) {
+                    return null;
+                }
+                const providedFilter = wrapper.filter as ProvidedFilter<IMultiFilterModel, unknown, MultiFilterParams>;
 
                 if (typeof providedFilter.getModelFromUi === 'function') {
                     return providedFilter.getModelFromUi();
@@ -308,12 +311,15 @@ export class MultiFilter extends TabGuardComp implements IFilterComp, IMultiFilt
 
         const model: IMultiFilterModel = {
             filterType: this.filterType,
-            filterModels: this.filters!.map((filter) => {
-                if (filter.isFilterActive()) {
-                    return filter.getModel();
+            filterModels: this.wrappers.map((wrapper) => {
+                if (!wrapper) {
+                    return null;
                 }
-
-                return null;
+                const { filter, evaluator, model } = wrapper;
+                if (evaluator) {
+                    return model;
+                }
+                return filter.isFilterActive() ? filter.getModel() : null;
             }),
         };
 
@@ -328,34 +334,56 @@ export class MultiFilter extends TabGuardComp implements IFilterComp, IMultiFilt
             });
         };
 
-        let promises: AgPromise<void>[] = [];
+        const promises: AgPromise<void>[] = [];
 
-        if (model == null) {
-            promises = this.filters!.map((filter: IFilterComp, index: number) => {
-                const res = setFilterModel(filter, null).then(() => {
-                    this.updateActiveList(index);
-                });
-                return res;
-            })!;
-        } else {
-            this.filters!.forEach((filter, index) => {
-                const filterModel = model.filterModels!.length > index ? model.filterModels![index] : null;
-                const res = setFilterModel(filter, filterModel).then(() => {
-                    this.updateActiveList(index);
-                });
-                promises.push(res);
-            });
-        }
-
+        this.wrappers.forEach((wrapper, index) => {
+            if (!wrapper) {
+                return;
+            }
+            const modelForFilter = model?.filterModels?.[index] ?? null;
+            const { filter, filterParams, evaluator, evaluatorParams } = wrapper;
+            if (evaluator) {
+                promises.push(
+                    new AgPromise((resolve) => {
+                        let hasModelChanged = false;
+                        _refreshEvaluator(
+                            () => ({ filter, filterParams: filterParams! }),
+                            evaluator,
+                            evaluatorParams!,
+                            modelForFilter,
+                            (newModel) => {
+                                hasModelChanged = true;
+                                this.onEvaluatorModelChanged(index, newModel);
+                            },
+                            'apiModel'
+                        ).then(() => {
+                            if (!hasModelChanged) {
+                                this.updateActiveListForEvaluator(index, modelForFilter);
+                            }
+                            resolve();
+                        });
+                    })
+                );
+            } else {
+                promises.push(
+                    setFilterModel(filter, modelForFilter).then(() => {
+                        this.updateActiveListForFilter(index, filter);
+                    })
+                );
+            }
+        });
         return AgPromise.all(promises).then(() => {});
     }
 
     public applyModel(source: 'api' | 'ui' | 'rowDataUpdated' = 'api'): boolean {
         let result = false;
 
-        this.filters!.forEach((filter) => {
-            if (filter instanceof ProvidedFilter) {
-                result = filter.applyModel(source) || result;
+        this.wrappers.forEach((wrapper) => {
+            if (wrapper) {
+                const filter = wrapper.filter;
+                if (filter instanceof ProvidedFilter) {
+                    result = filter.applyModel(source) || result;
+                }
             }
         });
 
@@ -363,7 +391,7 @@ export class MultiFilter extends TabGuardComp implements IFilterComp, IMultiFilt
     }
 
     public getChildFilterInstance(index: number): IFilterComp | undefined {
-        return this.filters![index];
+        return this.wrappers[index]?.filter;
     }
 
     public afterGuiAttached(params?: IAfterGuiAttachedParams): void {
@@ -379,16 +407,16 @@ export class MultiFilter extends TabGuardComp implements IFilterComp, IMultiFilt
         const suppressFocus = params?.suppressFocus;
 
         refreshPromise.then(() => {
-            const { filterDefs, filters, filterGuis, beans } = this;
+            const { filterDefs, wrappers, filterGuis, beans } = this;
             // don't want to focus later if focus suppressed
             let hasFocused = !!suppressFocus;
             if (filterDefs) {
-                _forEachReverse(filterDefs, (filterDef, index) => {
+                forEachReverse(filterDefs, (filterDef, index) => {
                     const isFirst = index === 0;
                     const notInlineDisplayType = filterDef.display && filterDef.display !== 'inline';
                     const suppressFocusForFilter = suppressFocus || !isFirst || notInlineDisplayType;
                     const afterGuiAttachedParams = { ...(params ?? {}), suppressFocus: suppressFocusForFilter };
-                    const filter = filters?.[index];
+                    const filter = wrappers?.[index]?.filter;
                     if (filter) {
                         this.executeFunctionIfExistsOnFilter(filter, 'afterGuiAttached', afterGuiAttachedParams);
                         if (isFirst && !suppressFocusForFilter) {
@@ -436,9 +464,12 @@ export class MultiFilter extends TabGuardComp implements IFilterComp, IMultiFilt
     }
 
     public override destroy(): void {
-        this.filters!.forEach((filter) => this.destroyBean(filter));
+        this.wrappers.forEach((wrapper) => {
+            this.destroyBean(wrapper?.filter);
+            this.destroyBean(wrapper?.evaluator);
+        });
 
-        this.filters!.length = 0;
+        this.wrappers.length = 0;
         this.destroyChildren();
         this.hidePopup = undefined;
 
@@ -448,8 +479,10 @@ export class MultiFilter extends TabGuardComp implements IFilterComp, IMultiFilt
     private executeFunctionIfExists<T extends IFilterComp>(name: keyof T, ...params: any[]): void {
         // The first filter is always the "dominant" one. By iterating in reverse order we ensure the first filter
         // always gets the last say
-        _forEachReverse(this.filters, (filter) => {
-            this.executeFunctionIfExistsOnFilter(filter as T, name, params);
+        forEachReverse(this.wrappers, (wrapper) => {
+            if (wrapper) {
+                this.executeFunctionIfExistsOnFilter(wrapper.filter as T, name, params);
+            }
         });
     }
 
@@ -461,62 +494,139 @@ export class MultiFilter extends TabGuardComp implements IFilterComp, IMultiFilt
         }
     }
 
-    private createFilter(filterDef: IFilterDef, index: number): AgPromise<IFilterComp> | null {
-        const { filterModifiedCallback, doesRowPassOtherFilter } = this.params;
-        const { filterManager, userCompFactory } = this.beans;
+    private createFilter(
+        filterDef: IFilterDef,
+        index: number,
+        initialModel: IMultiFilterModel | null
+    ): AgPromise<FilterWrapper | null> {
+        // const { filterModifiedCallback, doesRowPassOtherFilter } = this.params;
+        // const { colFilter, userCompFactory } = this.beans;
 
-        let filterInstance: IFilterComp;
+        const column = this.params.column as AgColumn;
 
-        const filterParams: IFilterParams = {
-            ...filterManager!.createFilterParams(this.column, this.column.getColDef()),
-            filterModifiedCallback,
-            filterChangedCallback: (additionalEventAttributes) => {
-                this.executeWhenAllFiltersReady(() => this.filterChanged(index, additionalEventAttributes));
-            },
-            doesRowPassOtherFilter: (node: RowNode) =>
-                doesRowPassOtherFilter(node) && this.doesFilterPass({ node, data: node.data }, filterInstance),
-        };
+        let initialModelForFilter: any = null;
 
-        const compDetails = _getFilterDetails(userCompFactory, filterDef, filterParams, 'agTextColumnFilter');
-        if (!compDetails) {
-            return null;
+        const { compDetails, evaluator, evaluatorParams, createFilterUi } = this.beans.colFilter!.createFilterInstance(
+            column,
+            filterDef,
+            'agTextColumnFilter',
+            (defaultParams, isEvaluator) => {
+                const updatedParams = {
+                    ...defaultParams,
+                    filterChangedCallback: isEvaluator
+                        ? () => {}
+                        : (additionalEventAttributes?: any) => {
+                              this.executeWhenAllFiltersReady(() =>
+                                  this.onFilterModelChanged(index, additionalEventAttributes)
+                              );
+                          },
+                    doesRowPassOtherFilter: (node: RowNode) =>
+                        defaultParams.doesRowPassOtherFilter(node) &&
+                        this.doesFilterPass({ node, data: node.data }, index),
+                };
+                if (isEvaluator) {
+                    const displayParams = updatedParams as FilterDisplayParams;
+                    initialModelForFilter = initialModel?.filterModels?.[index] ?? null;
+                    displayParams.model = initialModelForFilter;
+                    displayParams.onModelChange = (model, additionalEventAttributes?: any) => {
+                        const wrapper = this.wrappers[index];
+                        if (!wrapper) {
+                            return;
+                        }
+                        _refreshEvaluator(
+                            () => ({ filter: wrapper.filter, filterParams: wrapper.filterParams! }),
+                            wrapper.evaluator!,
+                            wrapper.evaluatorParams!,
+                            model,
+                            (newModel) => {
+                                model = newModel;
+                            },
+                            'ui'
+                        ).then(() => {
+                            wrapper.model = model;
+                            this.onEvaluatorModelChanged(index, model, additionalEventAttributes);
+                        });
+                    };
+                }
+                return updatedParams;
+            }
+        );
+
+        if (!createFilterUi) {
+            return AgPromise.resolve(null);
         }
-        const filterPromise = compDetails.newAgStackInstance();
 
-        filterPromise.then((filter) => (filterInstance = filter!));
-
-        return filterPromise;
+        return new AgPromise((resolve) =>
+            createFilterUi().then((filter) => {
+                if (!evaluator) {
+                    resolve({ filter: filter! });
+                    return;
+                }
+                _initEvaluator(evaluator, { ...evaluatorParams!, model: initialModelForFilter }).then((result) => {
+                    let modelForFilter = initialModelForFilter;
+                    if (!result.valid) {
+                        modelForFilter = result.model ?? null;
+                        this.onEvaluatorModelChanged(index, modelForFilter);
+                    }
+                    resolve({
+                        filter: filter!,
+                        filterParams: compDetails?.params,
+                        evaluator,
+                        evaluatorParams,
+                        model: modelForFilter,
+                    });
+                });
+            })
+        );
     }
 
     private executeWhenAllFiltersReady(action: () => void): void {
-        if ((this.filters?.length ?? 0) > 0) {
+        if ((this.wrappers?.length ?? 0) > 0) {
             action();
         } else {
             this.afterFiltersReadyFuncs.push(action);
         }
     }
 
-    private updateActiveList(index: number): void {
-        const { filters, activeFilterIndices } = this;
-        const changedFilter = filters![index];
+    private updateActiveListForFilter(index: number, filter?: IFilterComp): void {
+        this.updateActiveList(index, () => filter?.isFilterActive());
+    }
 
-        _removeFromArray(activeFilterIndices, index);
+    private updateActiveListForEvaluator(index: number, model?: any): void {
+        this.updateActiveList(index, () => model != null);
+    }
 
-        if (changedFilter.isFilterActive()) {
+    private updateActiveList(index: number, isActive: () => boolean | undefined): void {
+        const activeFilterIndices = this.activeFilterIndices;
+        _removeFromArray(this.activeFilterIndices, index);
+
+        if (isActive()) {
             activeFilterIndices.push(index);
         }
     }
 
+    /** Only called for non-evaluators */
+    private onFilterModelChanged(index: number, additionalEventAttributes: any): void {
+        this.updateActiveListForFilter(index, this.wrappers[index]?.filter);
+
+        this.filterChanged(index, additionalEventAttributes);
+    }
+
+    private onEvaluatorModelChanged(index: number, model: any, additionalEventAttributes?: any): void {
+        this.updateActiveListForEvaluator(index, model);
+
+        this.filterChanged(index, additionalEventAttributes);
+    }
+
     private filterChanged(index: number, additionalEventAttributes: any): void {
-        this.updateActiveList(index);
-
         this.filterChangedCallback!(additionalEventAttributes);
-        const changedFilter = this.filters![index];
 
-        this.filters!.forEach((filter) => {
-            if (filter === changedFilter) {
+        this.wrappers.forEach((wrapper, childIndex) => {
+            if (index === childIndex || !wrapper) {
                 return;
             }
+
+            const filter = wrapper.filter;
 
             if (typeof filter.onAnyFilterChanged === 'function') {
                 filter.onAnyFilterChanged();
@@ -532,12 +642,12 @@ export class MultiFilter extends TabGuardComp implements IFilterComp, IMultiFilt
         }
     }
 
-    getModelAsString(model: IMultiFilterModel): string {
-        if (!this.filters || !model?.filterModels?.length) {
+    public getModelAsString(model: IMultiFilterModel): string {
+        if (!model?.filterModels?.length) {
             return '';
         }
         const lastActiveIndex = this.getLastActiveFilterIndex() ?? 0;
-        const activeFilter = this.filters[lastActiveIndex];
-        return activeFilter.getModelAsString?.(model.filterModels[lastActiveIndex]) ?? '';
+        const activeFilter = this.wrappers[lastActiveIndex]?.filter;
+        return activeFilter?.getModelAsString?.(model.filterModels[lastActiveIndex]) ?? '';
     }
 }

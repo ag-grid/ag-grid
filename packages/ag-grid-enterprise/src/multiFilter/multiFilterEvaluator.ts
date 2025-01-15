@@ -9,7 +9,7 @@ import type {
 } from 'ag-grid-community';
 import { BeanStub, _initEvaluator } from 'ag-grid-community';
 
-import { getMultiFilterDefs, updateMultiFilterModel } from './multiFilterUtil';
+import { getMultiFilterDefs, refreshEvaluator, updateMultiFilterModel } from './multiFilterUtil';
 
 export class MultiFilterEvaluator
     extends BeanStub
@@ -53,9 +53,8 @@ export class MultiFilterEvaluator
             if (!wrapper) {
                 return Promise.resolve({ valid: true });
             }
-            const { evaluator, evaluatorParams } = wrapper;
-            return refreshEvaluator(evaluator, {
-                ...evaluatorParams,
+            return refreshEvaluator(wrapper.evaluator, {
+                ...params,
                 model: params.model?.filterModels?.[index] ?? null,
             });
         });
@@ -118,11 +117,4 @@ export class MultiFilterEvaluator
         this.evaluatorWrappers.length = 0;
         super.destroy();
     }
-}
-
-async function refreshEvaluator(
-    evaluator: FilterEvaluator,
-    evaluatorParams: FilterEvaluatorParams
-): Promise<FilterModelValidation> {
-    return (await evaluator.refresh?.(evaluatorParams)) ?? { valid: true };
 }

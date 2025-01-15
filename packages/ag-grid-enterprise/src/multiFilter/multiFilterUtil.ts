@@ -1,5 +1,13 @@
 import { ProvidedFilter } from 'ag-grid-community';
-import type { IFilterComp, IMultiFilterDef, IMultiFilterModel, IMultiFilterParams } from 'ag-grid-community';
+import type {
+    FilterEvaluator,
+    FilterEvaluatorParams,
+    FilterModelValidation,
+    IFilterComp,
+    IMultiFilterDef,
+    IMultiFilterModel,
+    IMultiFilterParams,
+} from 'ag-grid-community';
 
 export function getMultiFilterDefs(params: IMultiFilterParams): IMultiFilterDef[] {
     const { filters } = params;
@@ -34,4 +42,11 @@ export function updateMultiFilterModel(filterModels: any[]): IMultiFilterModel |
               filterType: 'multi',
               filterModels,
           };
+}
+
+export async function refreshEvaluator(
+    evaluator: FilterEvaluator,
+    evaluatorParams: FilterEvaluatorParams
+): Promise<FilterModelValidation> {
+    return (await evaluator.refresh?.(evaluatorParams)) ?? { valid: true };
 }
