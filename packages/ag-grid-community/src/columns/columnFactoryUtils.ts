@@ -8,7 +8,6 @@ import type { ColumnEventType } from '../events';
 import { _isColumnsSortingCoupledToGroup } from '../gridOptionsUtils';
 import { _mergeDeep } from '../utils/object';
 import { _warn } from '../validation/logging';
-import { dispatchColumnPinnedEvent } from './columnEventUtils';
 import { ColumnKeyCreator } from './columnKeyCreator';
 import { convertColumnTypes } from './columnUtils';
 
@@ -166,7 +165,7 @@ export function updateSomeColumnState(
     flex: number | null | undefined,
     source: ColumnEventType
 ): void {
-    const { sortSvc, pinnedCols, colFlex, visibleCols, eventSvc } = beans;
+    const { sortSvc, pinnedCols, colFlex } = beans;
 
     // hide - anything but undefined, thus null will clear the hide
     if (hide !== undefined) {
@@ -184,16 +183,14 @@ export function updateSomeColumnState(
     }
 
     // pinned - anything but undefined, thus null or empty string will remove pinned
-    if (pinned !== undefined) {
-        pinnedCols?.setColPinned(column, pinned);
-        visibleCols.refresh(source);
-        dispatchColumnPinnedEvent(eventSvc, [column], source);
+    if (pinned !== undefined && pinned !== column.getPinned()) {
+        pinnedCols?.setColsPinned([column], pinned, source);
     }
 
     // flex
-    if (flex !== undefined) {
+    if (flex !== undefined && flex !== column.getFlex()) {
         colFlex?.setColFlex(column, flex);
-        colFlex?.refreshFlexedColumns({ source });
+        colFlex?.refreshFlexedColumns();
     }
 }
 
@@ -230,6 +227,8 @@ export function _updateColumnState(
         const widthBeforeUpdate = column.getActualWidth();
         column.setActualWidth(widthBeforeUpdate, source);
     }
+    beans.visibleCols.setLeftValues(source);
+    beans.visibleCols.updateBodyWidths();
 }
 
 function findExistingColumn(
