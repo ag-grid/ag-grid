@@ -69,14 +69,13 @@ export class HeaderRowCtrl extends BeanStub {
      * @param comp Proxy to the actual component
      * @param initCompState Should the component be initialised with the current state of the controller. Default: true
      */
-    public setComp(comp: IHeaderRowComp, compBean: BeanStub | undefined, initCompState: boolean = true): void {
+    public setComp(comp: IHeaderRowComp): void {
         this.comp = comp;
-        compBean = setupCompBean(this, this.beans.context, compBean);
+        const compBean = setupCompBean(this, this.beans.context, undefined);
 
-        if (initCompState) {
-            this.onRowHeightChanged();
-            this.onVirtualColumnsChanged();
-        }
+        this.onRowHeightChanged();
+        this.onVirtualColumnsChanged();
+
         // width is managed directly regardless of framework and so is not included in initCompState
         this.setWidth();
 
@@ -89,9 +88,10 @@ export class HeaderRowCtrl extends BeanStub {
 
     private addEventListeners(compBean: BeanStub): void {
         const onHeightChanged = this.onRowHeightChanged.bind(this);
+        const onDisplayedColumnsChanged = this.onDisplayedColumnsChanged.bind(this);
         compBean.addManagedEventListeners({
             columnResized: this.setWidth.bind(this),
-            displayedColumnsChanged: this.onDisplayedColumnsChanged.bind(this),
+            displayedColumnsChanged: onDisplayedColumnsChanged,
             virtualColumnsChanged: (params) => this.onVirtualColumnsChanged(params.afterScroll),
             columnGroupHeaderHeightChanged: onHeightChanged,
             columnHeaderHeightChanged: onHeightChanged,
@@ -100,7 +100,7 @@ export class HeaderRowCtrl extends BeanStub {
         });
 
         // when print layout changes, it changes what columns are in what section
-        compBean.addManagedPropertyListener('domLayout', this.onDisplayedColumnsChanged.bind(this));
+        compBean.addManagedPropertyListener('domLayout', onDisplayedColumnsChanged);
         compBean.addManagedPropertyListener('ensureDomOrder', (e) => (this.isEnsureDomOrder = e.currentValue));
 
         compBean.addManagedPropertyListeners(
@@ -140,7 +140,7 @@ export class HeaderRowCtrl extends BeanStub {
     }
 
     private getWidthForRow(): number {
-        const { visibleCols: presentedColsService } = this.beans;
+        const { visibleCols } = this.beans;
         if (this.isPrintLayout) {
             const pinned = this.pinned != null;
             if (pinned) {
@@ -148,14 +148,14 @@ export class HeaderRowCtrl extends BeanStub {
             }
 
             return (
-                presentedColsService.getContainerWidth('right') +
-                presentedColsService.getContainerWidth('left') +
-                presentedColsService.getContainerWidth(null)
+                visibleCols.getContainerWidth('right') +
+                visibleCols.getContainerWidth('left') +
+                visibleCols.getContainerWidth(null)
             );
         }
 
         // if not printing, just return the width as normal
-        return presentedColsService.getContainerWidth(this.pinned);
+        return visibleCols.getContainerWidth(this.pinned);
     }
 
     private onRowHeightChanged(): void {
@@ -297,6 +297,10 @@ export class HeaderRowCtrl extends BeanStub {
                     break;
             }
         }
+
+        headerCtrl.addManagedListeners(headerColumn, {
+            widthChanged: this.setWidth.bind(this),
+        });
 
         this.headerCellCtrls.set(idOfChild, headerCtrl);
     }
