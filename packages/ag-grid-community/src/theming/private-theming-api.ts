@@ -1,5 +1,5 @@
 // This file contains types and utilities required by Theme Builder but not part
-// of the public theming API
+// of the public Theming API
 
 export * from './theme-types';
 export { coreCSS } from './core/core.css-GENERATED';

@@ -60,8 +60,10 @@ type CreatePartArgs<T> = {
  * @param feature an The part feature, e.g. 'iconSet'. Adding a part to a theme will remove any existing part with the same feature.
  * @param variant an optional identifier for debugging, if omitted one will be generated
  */
-export const createPart = <T = unknown>(args: CreatePartArgs<T>): Part<ExpandTypeKeys<WithParamTypes<T>>> =>
-    new PartImpl(args) as any;
+export const createPart = <T = unknown>(args: CreatePartArgs<T>): Part<ExpandTypeKeys<WithParamTypes<T>>> => {
+    /*#__PURE__*/
+    return new PartImpl(args) as any;
+};
 
 export const defaultModeName = '$default';
 
@@ -92,7 +94,7 @@ export class PartImpl implements Part {
         };
     }
 
-    use(container?: HTMLElement): string | false {
+    use(styleContainer: HTMLElement | undefined, layer: string | undefined): string | false {
         let inject = this._inject;
         if (inject == null) {
             let { css } = this;
@@ -109,8 +111,8 @@ export class PartImpl implements Part {
             }
             this._inject = inject;
         }
-        if (inject && container) {
-            _injectGlobalCSS(inject.css, container, inject.class);
+        if (inject && styleContainer) {
+            _injectGlobalCSS(inject.css, styleContainer, inject.class, layer, 1);
         }
         return inject ? inject.class : false;
     }

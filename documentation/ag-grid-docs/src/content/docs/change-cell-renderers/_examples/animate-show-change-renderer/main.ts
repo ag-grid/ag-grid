@@ -10,6 +10,8 @@ import {
     createGrid,
 } from 'ag-grid-community';
 
+import './random';
+
 ModuleRegistry.registerModules([
     TextEditorModule,
     RowApiModule,

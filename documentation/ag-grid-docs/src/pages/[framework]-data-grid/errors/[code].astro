@@ -18,6 +18,7 @@ import Note from '@ag-website-shared/components/alert/Note';
 import { getIsArchive } from '@utils/env';
 import Warning from '@ag-website-shared/components/alert/Warning';
 import { pathJoin } from '@utils/pathJoin';
+import { getFrameworkDisplayText } from '@utils/framework';
 
 interface Params {
     framework: Framework;
@@ -49,7 +50,8 @@ export async function getStaticPaths() {
 const { framework, code } = Astro.params as Params;
 const { errorPage } = Astro.props as Props;
 const errorCode = parseInt(code, 10) as ErrorId;
-const title = `AG Grid Error #${code}`;
+const frameworkDisplayText = framework === 'javascript' ? '' : getFrameworkDisplayText(framework);
+const title = `AG Grid ${frameworkDisplayText} Error #${code}`;
 const description = errorPage?.data.description ? errorPage?.data.description : '';
 
 const { Content } = errorPage ? await errorPage.render() : { Content: undefined };

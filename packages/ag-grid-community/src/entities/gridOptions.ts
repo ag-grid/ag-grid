@@ -556,6 +556,7 @@ export interface GridOptions<TData = any> {
     // *** Filter *** //
     /**
      * Rows are filtered using this text as a Quick Filter.
+     * Only supported for Client-Side Row Model.
      */
     quickFilterText?: string;
     /**
@@ -1647,6 +1648,27 @@ export interface GridOptions<TData = any> {
      */
     loadThemeGoogleFonts?: boolean;
 
+    /**
+     * The CSS layer that this theme should be rendered onto. If your
+     * application loads its styles into a CSS layer, use this to load the grid
+     * styles into a previous layer so that application styles can override grid
+     * styles.
+     *
+     * @see https://developer.mozilla.org/en-US/docs/Web/CSS/@layer
+     */
+    themeCssLayer?: string;
+
+    /**
+     * An element to insert style elements into when injecting styles into the
+     * grid. If undefined, styles will be added to the document head for grids
+     * rendered in the main document fragment, or to the grid wrapper element
+     * for other grids (e.g. those rendered in a shadow DOM or detached from the
+     * document).
+     *
+     * @initial
+     */
+    themeStyleContainer?: HTMLElement;
+
     // *****************************************************************************************************
     // If you change the callbacks on this interface, you must also update PropertyKeys to be consistent. *
     // *****************************************************************************************************
@@ -2531,7 +2553,7 @@ interface CommonRowSelectionOptions<TData = any, TValue = any> {
      *
      * Choosing `'enableSelection'` allows selection of a row by clicking the row itself.
      * Choosing `'enableDeselection'` allows deselection of a row by CTRL-clicking the row itself.
-     * Choosing `true` allows both selection and deselection of a row by clicking.
+     * Choosing `true` allows both selection of a row by clicking and deselection of a row by CTRL-clicking.
      * Choosing `false` prevents rows from being selected or deselected by clicking.
      *
      * @default false

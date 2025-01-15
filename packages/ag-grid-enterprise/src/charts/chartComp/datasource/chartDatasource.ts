@@ -139,6 +139,8 @@ export class ChartDatasource extends BeanStub {
 
         let numRemovedNodes = 0;
 
+        let id = 0;
+
         for (let i = 0; i < numRows; i++) {
             const rowNode = crossFiltering ? allRowNodes[i] : this.gridRowModel.getRow(i + startRow)!;
 
@@ -162,8 +164,14 @@ export class ChartDatasource extends BeanStub {
 
                         // traverse parents to extract group label path
                         const labels = this.getGroupLabels(rowNode, valueString);
+                        const value = labels.slice().reverse();
 
-                        data[colId] = labels.slice().reverse();
+                        data[colId] = {
+                            value,
+                            // this is needed so that standalone can handle animations properly when data updates
+                            id: id++,
+                            toString: () => value.filter(Boolean).join(' - '),
+                        };
 
                         // keep track of group node indexes, so they can be padded when other groups are expanded
                         if (rowNode.group) {

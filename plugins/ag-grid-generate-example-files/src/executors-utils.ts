@@ -69,7 +69,7 @@ export function batchExecutor<ExecutorOptions>(
         const tasks = Object.keys(inputs);
 
         for (let taskIndex = 0; taskIndex < tasks.length; taskIndex++) {
-            const task = tasks[taskIndex++];
+            const task = tasks[taskIndex];
             const inputOptions = inputs[task];
 
             let success = false;

@@ -5,6 +5,7 @@ import {
     createGrid,
     themeAlpine,
     themeBalham,
+    themeMaterial,
     themeQuartz,
 } from 'ag-grid-community';
 import { AllEnterpriseModule } from 'ag-grid-enterprise';
@@ -13,6 +14,7 @@ ModuleRegistry.registerModules([AllCommunityModule, AllEnterpriseModule]);
 
 const themes: Record<string, Theme> = {
     quartz: themeQuartz,
+    material: themeMaterial,
     balham: themeBalham,
     alpine: themeAlpine,
 };

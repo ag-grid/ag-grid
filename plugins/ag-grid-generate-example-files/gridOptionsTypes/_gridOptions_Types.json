@@ -165,6 +165,10 @@
     "typeName": "HTMLElement | null",
     "typesToInclude": []
   },
+  "themeStyleContainer": {
+    "typeName": "HTMLElement",
+    "typesToInclude": []
+  },
   "statusBar": {
     "typeName": "{\n        statusPanels: StatusPanelDef[];\n    }",
     "typesToInclude": [
@@ -307,6 +311,10 @@
   },
   "grandTotalRow": {
     "typeName": "'top' | 'bottom'",
+    "typesToInclude": []
+  },
+  "themeCssLayer": {
+    "typeName": "string",
     "typesToInclude": []
   },
   "rowHeight": {

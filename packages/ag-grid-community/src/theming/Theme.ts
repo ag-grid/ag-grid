@@ -4,6 +4,9 @@ import { PartImpl, createPart, defaultModeName } from './Part';
 import type { CoreParams } from './core/core-css';
 import { coreDefaults } from './core/core-css';
 import { IS_SSR, _injectCoreAndModuleCSS, _injectGlobalCSS } from './inject';
+import { buttonStyleQuartz } from './parts/button-style/button-styles';
+import type { ButtonStyleParams } from './parts/button-style/button-styles';
+import { columnDropStyleBordered } from './parts/column-drop-style/column-drop-styles';
 import type { WithParamTypes } from './theme-types';
 import { paramValueToCss } from './theme-types';
 import { paramToVariableName } from './theme-utils';
@@ -46,11 +49,16 @@ export const _asThemeImpl = <TParams>(theme: Theme<TParams>): ThemeImpl => {
 /**
  * Create a custom theme containing core grid styles but no parts.
  */
-export const createTheme = (): Theme<CoreParams> => new ThemeImpl();
+// TODO button and column drop styles were split out into a part in 33.1 and
+// must be bundled by default to avoid a breaking change for people using
+// createTheme(). In v34 the withPart calls can be removed.
+export const createTheme = (): Theme<CoreParams & WithParamTypes<ButtonStyleParams>> =>
+    new ThemeImpl().withPart(buttonStyleQuartz).withPart(columnDropStyleBordered);
 
 type GridThemeUseArgs = {
     loadThemeGoogleFonts: boolean | undefined;
-    container: HTMLElement;
+    styleContainer: HTMLElement;
+    cssLayer: string | undefined;
 };
 
 export class ThemeImpl {
@@ -83,14 +91,14 @@ export class ThemeImpl {
      * the theme's parts into document head, or the shadow DOM if the provided
      * container is within a shadow root.
      */
-    _startUse({ container, loadThemeGoogleFonts }: GridThemeUseArgs): void {
+    _startUse({ styleContainer, cssLayer, loadThemeGoogleFonts }: GridThemeUseArgs): void {
         if (IS_SSR) return;
 
         if (FORCE_LEGACY_THEMES) return;
 
         uninstallLegacyCSS();
 
-        _injectCoreAndModuleCSS(container);
+        _injectCoreAndModuleCSS(styleContainer, cssLayer);
 
         const googleFontsUsed = getGoogleFontsUsed(this);
         if (googleFontsUsed.length > 0) {
@@ -102,7 +110,7 @@ export class ThemeImpl {
         }
 
         for (const part of this.parts) {
-            part.use(container);
+            part.use(styleContainer, cssLayer);
         }
     }
 
@@ -115,7 +123,7 @@ export class ThemeImpl {
         if (FORCE_LEGACY_THEMES) return 'ag-theme-quartz';
 
         return (this._cssClassCache ??= deduplicatePartsByFeature(this.parts)
-            .map((part) => part.use())
+            .map((part) => part.use(undefined, undefined))
             .filter(Boolean)
             .join(' '));
     }
@@ -202,7 +210,8 @@ export class ThemeImpl {
                     variablesCss += wrapPrefix;
                     inheritanceCss += wrapPrefix;
                 }
-                for (const [key, value] of Object.entries(params)) {
+                for (const key of Object.keys(params).sort()) {
+                    const value = params[key];
                     const cssValue = paramValueToCss(key, value);
                     if (cssValue === false) {
                         _error(107, { key, value });
@@ -287,7 +296,7 @@ const loadGoogleFont = async (font: string) => {
     const css = `@import url('https://${googleFontsDomain}/css2?family=${encodeURIComponent(font)}:wght@100;200;300;400;500;600;700;800;900&display=swap');\n`;
     // fonts are always installed in the document head, they are inherited in
     // shadow DOM without the need for separate installation
-    _injectGlobalCSS(css, document.head, `googleFont:${font}`);
+    _injectGlobalCSS(css, document.head, `googleFont:${font}`, undefined, 0);
 };
 
 const googleFontsDomain = 'fonts.googleapis.com';

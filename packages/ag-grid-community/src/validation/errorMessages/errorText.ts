@@ -509,7 +509,7 @@ export const AG_GRID_ERRORS = {
     228: ({ menuItemOrString }: { menuItemOrString: string }) => `unrecognised menu item ${menuItemOrString}` as const,
     229: ({ index }: { index: number }) => ['invalid row index for ensureIndexVisible: ', index] as const,
     230: () =>
-        'detailCellRendererParams.template is not supported by AG Grid React. To change the template, provide a Custom Detail Cell Renderer. See https://ag-grid.com/react-data-grid/master-detail-custom-detail/' as const,
+        'detailCellRendererParams.template is not supported by AG Grid React. To change the template, provide a Custom Detail Cell Renderer. See https://www.ag-grid.com/react-data-grid/master-detail-custom-detail/' as const,
     // @deprecated v32 mark for removal as part of v32 deprecated features
     231: () => 'As of v32, using custom components with `reactiveCustomComponents = false` is deprecated.' as const,
     232: () => 'Using both rowData and v-model. rowData will be ignored.' as const,
@@ -582,6 +582,8 @@ export const AG_GRID_ERRORS = {
         'As of v33, icon key "smallRight" is deprecated. Use "panelDelimiter" for Row Group Panel / Pivot Panel, "subMenuOpen" for sub-menus.' as const,
     265: ({ colId }: { colId: string }) =>
         `Unable to infer chart data type for column '${colId}' if first data entry is null. Please specify "chartDataType", or a "cellDataType" in the column definition. For more information, see ${baseDocLink}/integrated-charts-range-chart#coldefchartdatatype .` as const,
+    266: () =>
+        'As of v33.1, using "keyCreator" with the Rich Select Editor has been deprecated. It now requires the "formatValue" callback to convert complex data to strings.' as const,
 };
 
 export type ErrorMap = typeof AG_GRID_ERRORS;

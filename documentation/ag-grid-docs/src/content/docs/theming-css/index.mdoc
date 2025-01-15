@@ -28,13 +28,13 @@ If your designer has specified, for example, animated rainbow text on the header
 }
 ```
 
-{% gridExampleRunner title="Custom Properties" name="css-rules"  exampleHeight=450 /%}
+{% gridExampleRunner title="CSS Rules" name="css-rules"  exampleHeight=450 /%}
 
 The best way to find the right class name to use in a CSS rule is using the browser's developer tools. You will notice that components often have multiple class names, some more general than others. For example, the Column Drop component is an area into which you can drag columns. There are two kinds - a horizontal one in the [row group panel](./grouping-group-panel/) and a vertical one in the [columns tool panel](./tool-panel-columns/#example). You can use the class name `ag-column-drop` to target either kind, or `ag-column-drop-vertical` / `ag-column-drop-horizontal` to target one only.
 
 ## Overriding Theme Parameters with Custom Properties
 
-Themes created by the theming API support over a hundred [Theme Parameters](./theming-parameters/#finding-theme-parameters). The values provided through the theming API are default values, and can be overridden using CSS, meaning that many grids can share the same theme and CSS can be used to create differences between the grids.
+Themes created by the Theming API support over a hundred [Theme Parameters](./theming-parameters/#finding-theme-parameters). The values provided through the Theming API are default values, and can be overridden using CSS, meaning that many grids can share the same theme and CSS can be used to create differences between the grids.
 
 The names of the CSS custom properties are prefixed with `--ag-` to avoid conflicts with other custom properties in your application, and use kebab-case:
 
@@ -79,3 +79,15 @@ Browsers use the same mechanism - CSS - for controlling how elements work (e.g. 
 * Setting a component to `display: flex` and changing flex child layout properties like `align-items`, `align-self` and `flex-direction` is probably OK if you're trying to change how something looks on a small scale, e.g. to change the alignment of some text or icons within a container; but if you're trying to change the layout of the grid on a larger scale e.g. turning a vertical scrolling list into a horizontal one, you are likely to break Grid features.
 
 * The style properties `position`, `overflow` and `pointer-events` are intrinsic to how the grid works. Changing these values will change how the grid operates, and may break functionality now or in future minor releases.
+
+## CSS Layers
+
+[Layers](https://developer.mozilla.org/en-US/docs/Web/CSS/@layer) are a CSS feature that allow you to split your CSS into ordered layers so that rules in later layers always override rules in earlier layers, even if the selectors in earlier layers are more [specific](https://developer.mozilla.org/en-US/docs/Web/CSS/Specificity).
+
+By default the grid loads its styles without a layer, meaning that they will override all styles defined in a layer. If your application loads its styles into a CSS layer, you can load the grid styles into an earlier layer so that application styles can override grid styles.
+
+To set the layer that the grid styles are loaded into, use the `themeCssLayer` grid option. You may want to use [global grid options](./grid-interface/#global-grid-options) to set this on all grids in your app.
+
+In the following example, the header is colored red using styles in the `application` layer. The `themeCssLayer` option is used to load grid styles into an earlier layer called `grid`:
+
+{% gridExampleRunner title="CSS Layers" name="css-layers"  exampleHeight=450 /%}

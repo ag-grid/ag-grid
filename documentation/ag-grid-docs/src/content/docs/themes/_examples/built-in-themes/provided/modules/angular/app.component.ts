@@ -4,7 +4,14 @@ import { FormsModule } from '@angular/forms';
 
 import { AgGridAngular } from 'ag-grid-angular';
 import type { ColDef } from 'ag-grid-community';
-import { AllCommunityModule, ModuleRegistry, themeAlpine, themeBalham, themeQuartz } from 'ag-grid-community';
+import {
+    AllCommunityModule,
+    ModuleRegistry,
+    themeAlpine,
+    themeBalham,
+    themeMaterial,
+    themeQuartz,
+} from 'ag-grid-community';
 import { AllEnterpriseModule } from 'ag-grid-enterprise';
 
 ModuleRegistry.registerModules([AllCommunityModule, AllEnterpriseModule]);
@@ -40,6 +47,7 @@ export class AppComponent {
     themes = [
         { label: 'themeQuartz', theme: themeQuartz },
         { label: 'themeBalham', theme: themeBalham },
+        { label: 'themeMaterial', theme: themeMaterial },
         { label: 'themeAlpine', theme: themeAlpine },
     ];
     theme = themeQuartz;

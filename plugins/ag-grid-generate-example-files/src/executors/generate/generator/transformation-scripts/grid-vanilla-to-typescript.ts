@@ -92,6 +92,11 @@ export function vanillaToTypescript(bindings: ParsedBindings, mainFilePath: stri
         // Remove the original import statements
         unWrapped = unWrapped.replace(/import ((.|\n)*?)from.*\n/g, '');
 
+        if (bindings.imports.some((i) => i.module.includes("'./random'"))) {
+            // remove redundant random file import
+            unWrapped = unWrapped.replace(/import.*\.\/random.*;\n{1,}/g, '');
+        }
+
         const result = `${formattedImports}${unWrapped} ${toAttach || ''} ${getIntegratedDarkModeCode(bindings.exampleName, true, 'gridApi') ?? ''}`;
         return result;
     };

@@ -41,9 +41,16 @@ export class Environment extends BeanStub implements NamedBean {
     beanName = 'environment' as const;
 
     private eGridDiv: HTMLElement;
+    public eStyleContainer: HTMLElement;
+    public cssLayer: string | undefined;
 
     public wireBeans(beans: BeanCollection): void {
-        this.eGridDiv = beans.eGridDiv;
+        const { eGridDiv, gridOptions } = beans;
+        this.eGridDiv = eGridDiv;
+        // NOTE: need to use beans.gridOptions because beans.gos not yet initialised
+        this.eStyleContainer =
+            gridOptions.themeStyleContainer ?? (eGridDiv.getRootNode() === document ? document.head : eGridDiv);
+        this.cssLayer = gridOptions.themeCssLayer;
     }
 
     private sizeEls = new Map<Variable, HTMLElement>();
@@ -99,7 +106,7 @@ export class Environment extends BeanStub implements NamedBean {
         const { gridTheme } = this;
         let themeClass = '';
         if (gridTheme) {
-            // theming API mode
+            // Theming API mode
             themeClass = `${this.paramsClass} ${gridTheme._getCssClass()}`;
         } else {
             // legacy mode
@@ -149,7 +156,7 @@ export class Environment extends BeanStub implements NamedBean {
 
     public addGlobalCSS(css: string, debugId: string): void {
         if (this.gridTheme) {
-            _injectGlobalCSS(css, this.eGridDiv, debugId);
+            _injectGlobalCSS(css, this.eStyleContainer, debugId, this.cssLayer, 0);
         } else {
             this.globalCSS.push([css, debugId]);
         }
@@ -265,16 +272,17 @@ export class Environment extends BeanStub implements NamedBean {
         if (newGridTheme !== oldGridTheme) {
             if (newGridTheme) {
                 _registerGridUsingThemingAPI(this);
-                _injectCoreAndModuleCSS(eGridDiv);
+                _injectCoreAndModuleCSS(this.eStyleContainer, this.cssLayer);
                 for (const [css, debugId] of globalCSS) {
-                    _injectGlobalCSS(css, eGridDiv, debugId);
+                    _injectGlobalCSS(css, this.eStyleContainer, debugId, this.cssLayer, 0);
                 }
                 globalCSS.length = 0;
             }
             this.gridTheme = newGridTheme;
             newGridTheme?._startUse({
                 loadThemeGoogleFonts: gos.get('loadThemeGoogleFonts'),
-                container: eGridDiv,
+                styleContainer: this.eStyleContainer,
+                cssLayer: this.cssLayer,
             });
             let eParamsStyle = this.eParamsStyle;
             if (!eParamsStyle) {

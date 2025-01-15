@@ -1,0 +1,8 @@
+/* Order layers to put grid styles before application styles */
+@layer grid, application;
+
+@layer application {
+    .ag-header {
+        background-color: #ff000066;
+    }
+}

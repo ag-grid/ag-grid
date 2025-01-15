@@ -1,7 +1,14 @@
 import React, { StrictMode, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 
-import { AllCommunityModule, ModuleRegistry, themeAlpine, themeBalham, themeQuartz } from 'ag-grid-community';
+import {
+    AllCommunityModule,
+    ModuleRegistry,
+    themeAlpine,
+    themeBalham,
+    themeMaterial,
+    themeQuartz,
+} from 'ag-grid-community';
 import { AllEnterpriseModule } from 'ag-grid-enterprise';
 import { AgGridReact } from 'ag-grid-react';
 
@@ -10,6 +17,7 @@ ModuleRegistry.registerModules([AllCommunityModule, AllEnterpriseModule]);
 const themes = [
     { id: 'themeQuartz', theme: themeQuartz },
     { id: 'themeBalham', theme: themeBalham },
+    { id: 'themeMaterial', theme: themeMaterial },
     { id: 'themeAlpine', theme: themeAlpine },
 ];
 

@@ -5,50 +5,61 @@ import { coreCSS } from './core/core.css-GENERATED';
 
 export const IS_SSR = typeof window !== 'object' || !window?.document?.fonts?.forEach;
 
-type Injection = {
-    css: Set<string>;
-    last?: HTMLStyleElement;
+type InjectedStyle = {
+    css: string;
+    el: HTMLStyleElement;
+    priority: number;
 };
 
-let injections = new WeakMap<HTMLElement, Injection>();
+let injectionsByContainer = new WeakMap<HTMLElement, InjectedStyle[]>();
 
-export const _injectGlobalCSS = (css: string, container: HTMLElement, debugId: string) => {
+export const _injectGlobalCSS = (
+    css: string,
+    styleContainer: HTMLElement,
+    debugId: string,
+    layer: string | undefined,
+    priority: number
+) => {
     if (IS_SSR) return;
     if (FORCE_LEGACY_THEMES) return;
 
-    // if the container is attached to the main document, inject into the head
-    // (only one instance of each stylesheet created per document). Otherwise
-    // (and this happens for grids in the shadow root and grids detached form
-    // the DOM) inject into the container itself.
-    const root = container.getRootNode() === document ? document.head : container;
-
-    let injection = injections.get(root);
-    if (!injection) {
-        injection = { css: new Set() };
-        injections.set(root, injection);
+    if (layer) {
+        css = `@layer ${CSS.escape(layer)} { ${css} }`;
     }
-    if (injection.css.has(css)) return;
 
-    const style = document.createElement('style');
-    style.dataset.agGlobalCss = debugId;
-    style.textContent = css;
+    let injections = injectionsByContainer.get(styleContainer);
+    if (!injections) {
+        injections = [];
+        injectionsByContainer.set(styleContainer, injections);
+    }
+    if (injections.find((i) => i.css === css)) return;
 
-    if (injection.last) {
-        injection.last.insertAdjacentElement('afterend', style);
+    const el = document.createElement('style');
+    el.dataset.agGlobalCss = debugId;
+    el.textContent = css;
+    const newInjection = { css, el, priority };
+
+    let insertAfter: InjectedStyle | undefined;
+    for (const injection of injections) {
+        if (injection.priority > priority) break;
+        insertAfter = injection;
+    }
+    if (insertAfter) {
+        insertAfter.el.insertAdjacentElement('afterend', el);
+        const index = injections.indexOf(insertAfter);
+        injections.splice(index + 1, 0, newInjection);
     } else {
-        root.insertBefore(style, root.querySelector(':not(title, meta)'));
+        styleContainer.insertBefore(el, styleContainer.querySelector(':not(title, meta)'));
+        injections.push(newInjection);
     }
-
-    injection.css.add(css);
-    injection.last = style;
 };
 
-export const _injectCoreAndModuleCSS = (container: HTMLElement) => {
-    _injectGlobalCSS(coreCSS, container, 'core');
+export const _injectCoreAndModuleCSS = (styleContainer: HTMLElement, layer: string | undefined) => {
+    _injectGlobalCSS(coreCSS, styleContainer, 'core', layer, 0);
     Array.from(_getAllRegisteredModules())
         .sort((a, b) => a.moduleName.localeCompare(b.moduleName))
         .forEach((module) =>
-            module.css?.forEach((css) => _injectGlobalCSS(css, container, `module-${module.moduleName}`))
+            module.css?.forEach((css) => _injectGlobalCSS(css, styleContainer, `module-${module.moduleName}`, layer, 0))
         );
 };
 
@@ -60,7 +71,7 @@ export const _registerGridUsingThemingAPI = (environment: Environment) => {
 export const _unregisterGridUsingThemingAPI = (environment: Environment) => {
     gridsUsingThemingAPI.delete(environment);
     if (gridsUsingThemingAPI.size === 0) {
-        injections = new WeakMap();
+        injectionsByContainer = new WeakMap();
         for (const style of document.head.querySelectorAll('style[data-ag-global-css]')) {
             style.remove();
         }

@@ -26,7 +26,7 @@ import {
 
 interface TreeCommitDetails<TData = any> {
     rootNode: AbstractClientSideNodeManager.RootNode<TData>;
-    changedPath: ChangedPath | undefined;
+    activeChangedPath: ChangedPath | null;
     treeData: boolean;
     expandByDefault: number;
     isGroupOpenByDefault: IsGroupOpenByDefaultCallback;
@@ -75,7 +75,18 @@ export abstract class AbstractClientSideTreeNodeManager<TData> extends AbstractC
 
     public override activate(rootNode: RowNode<TData>): void {
         super.activate(rootNode);
-        (this.treeRoot ??= new TreeNode(null, '', -1)).setRow(rootNode);
+        this.treeSetRootNode(rootNode);
+    }
+
+    protected treeSetRootNode(rootNode: RowNode<TData>): void {
+        let treeRoot = this.treeRoot;
+        if (!treeRoot) {
+            treeRoot = new TreeNode(null, '');
+            treeRoot.childrenChanged = true;
+            this.treeRoot = treeRoot;
+        }
+        treeRoot.row = rootNode;
+        (rootNode as TreeRow).treeNode = treeRoot;
     }
 
     public override destroy(): void {
@@ -88,17 +99,18 @@ export abstract class AbstractClientSideTreeNodeManager<TData> extends AbstractC
     }
 
     public override deactivate(): void {
-        const treeRoot = this.treeRoot;
+        const { treeRoot, rootNode } = this;
         if (treeRoot) {
-            const rootRow = treeRoot.row;
-            if (rootRow !== null) {
-                treeRoot.removeRow(rootRow);
-                clearTreeRowFlags(rootRow);
+            if (rootNode) {
+                treeRoot.removeRow(rootNode);
             }
             this.treeDestroy(treeRoot);
+            treeRoot.destroy();
+        }
+        if (rootNode) {
+            clearTreeRowFlags(rootNode);
         }
         this.commitDestroyedRows();
-
         super.deactivate();
         this.treeRoot = null;
         this.oldGroupDisplayColIds = '';
@@ -106,8 +118,8 @@ export abstract class AbstractClientSideTreeNodeManager<TData> extends AbstractC
 
     /** Add or updates the row to a non-root node, preparing the tree correctly for the commit. */
     protected treeSetRow(node: TreeNode, newRow: RowNode, created: boolean): boolean {
-        const { level, row: oldRow } = node;
-        if (level < 0) {
+        const oldRow = node.row;
+        if (node === this.treeRoot) {
             return false; // Cannot overwrite the root row
         }
 
@@ -156,20 +168,19 @@ export abstract class AbstractClientSideTreeNodeManager<TData> extends AbstractC
      * @returns The previous row, if any, that was overwritten.
      */
     protected treeRemove(node: TreeNode, oldRow: RowNode): void {
-        const { parent, level } = node;
-
-        if (level < 0) {
+        if (node === this.treeRoot) {
             return; // Cannot overwrite a null node or the root row
         }
 
         let invalidate = false;
 
         if (node.removeRow(oldRow)) {
-            invalidate = true;
+            const parent = node.parent;
             if (parent) {
                 parent.childrenChanged = true;
             }
             this.destroyRow(oldRow, !oldRow.data);
+            invalidate = true;
         }
 
         if (invalidate) {
@@ -185,16 +196,17 @@ export abstract class AbstractClientSideTreeNodeManager<TData> extends AbstractC
         }
 
         const treeData = this.treeData;
+        const activeChangedPath = changedPath?.active ? changedPath : null;
 
         const details: TreeCommitDetails<TData> = {
             rootNode,
-            changedPath,
+            activeChangedPath,
             treeData,
             expandByDefault: this.gos.get('groupDefaultExpanded'),
             isGroupOpenByDefault: this.gos.getCallback('isGroupOpenByDefault'),
         };
 
-        this.treeCommitChildren(details, treeRoot, false);
+        this.treeCommitChildren(details, treeRoot, false, 0);
 
         const rootRow = treeRoot.row;
         if (rootRow) {
@@ -203,15 +215,17 @@ export abstract class AbstractClientSideTreeNodeManager<TData> extends AbstractC
             }
 
             if (treeRoot.childrenChanged) {
-                if (treeRoot.updateChildrenAfterGroup(treeData)) {
+                if (treeRoot.updateChildrenAfterGroup(treeData, true)) {
                     markTreeRowPathChanged(rootRow);
                 }
             }
 
-            if (isTreeRowPathChanged(rootRow)) {
-                if (details.changedPath?.active) {
-                    details.changedPath.addParentNode(rootRow);
-                }
+            if (treeData || !activeChangedPath) {
+                rootRow.childrenAfterGroup = treeRoot.childrenAfterGroup;
+            }
+
+            if (activeChangedPath && isTreeRowPathChanged(rootRow)) {
+                activeChangedPath.addParentNode(rootRow);
             }
 
             markTreeRowCommitted(rootRow);
@@ -221,18 +235,25 @@ export abstract class AbstractClientSideTreeNodeManager<TData> extends AbstractC
 
         this.commitDestroyedRows();
 
-        this.beans.selectionSvc?.updateSelectableAfterGrouping(changedPath);
+        if (treeData) {
+            this.beans.selectionSvc?.updateSelectableAfterGrouping(changedPath);
+        }
     }
 
     /** Calls commitChild for each invalidated child, recursively. We commit only the invalidated paths. */
-    private treeCommitChildren(details: TreeCommitDetails, parent: TreeNode, collapsed: boolean): void {
+    private treeCommitChildren(
+        details: TreeCommitDetails,
+        parent: TreeNode,
+        collapsed: boolean,
+        childrenLevel: number
+    ): void {
         while (true) {
             const child = parent.dequeueInvalidated();
             if (child === null) {
                 break;
             }
             if (child.parent === parent) {
-                this.treeCommitChild(details, child, collapsed || !(parent.row?.expanded ?? true));
+                this.treeCommitChild(details, child, collapsed || !(parent.row?.expanded ?? true), childrenLevel);
             }
         }
 
@@ -241,14 +262,14 @@ export abstract class AbstractClientSideTreeNodeManager<TData> extends AbstractC
     }
 
     /** Commit the changes performed to a node and its children */
-    private treeCommitChild(details: TreeCommitDetails, node: TreeNode, collapsed: boolean): void {
+    private treeCommitChild(details: TreeCommitDetails, node: TreeNode, collapsed: boolean, level: number): void {
         if (node.isEmptyFillerNode()) {
             this.treeClear(node);
             return; // Removed. No need to process children.
         }
 
-        this.treeCommitPreOrder(details, node);
-        this.treeCommitChildren(details, node, collapsed);
+        this.treeCommitPreOrder(details, node, level);
+        this.treeCommitChildren(details, node, collapsed, level + 1);
 
         if (node.isEmptyFillerNode()) {
             this.treeClear(node);
@@ -258,11 +279,11 @@ export abstract class AbstractClientSideTreeNodeManager<TData> extends AbstractC
         this.treeCommitPostOrder(details, node, collapsed);
     }
 
-    private treeCommitPreOrder(details: TreeCommitDetails, node: TreeNode): void {
+    private treeCommitPreOrder(details: TreeCommitDetails, node: TreeNode, level: number): void {
         let row = node.row;
 
         if (row === null) {
-            row = this.createFillerRow(node);
+            row = this.createFillerRow(node, level);
             node.setRow(row);
         } else {
             row = node.sortFirstDuplicateRow()!; // The main row must have the smallest sourceRowIndex of duplicates
@@ -273,6 +294,7 @@ export abstract class AbstractClientSideTreeNodeManager<TData> extends AbstractC
         }
 
         if (details.treeData) {
+            row.level = level;
             row.parent = node.parent!.row;
             if (node.oldRow !== row) {
                 // We need to update children rows parents, as the row changed
@@ -292,9 +314,10 @@ export abstract class AbstractClientSideTreeNodeManager<TData> extends AbstractC
             } else if (!row.groupData) {
                 this.setGroupData(row, key);
             }
-        } else {
-            row.key = node.key;
+        } else if (!details.activeChangedPath) {
+            row.level = 0;
             row.parent = details.rootNode;
+            row.key = node.key;
         }
     }
 
@@ -302,10 +325,10 @@ export abstract class AbstractClientSideTreeNodeManager<TData> extends AbstractC
         const parent = node.parent!;
         const row = node.row!;
         const oldRow = node.oldRow;
-        const treeData = details.treeData;
+        const oldGroup = row.group;
 
         if (node.childrenChanged) {
-            if (node.updateChildrenAfterGroup(treeData)) {
+            if (node.updateChildrenAfterGroup(details.treeData, false)) {
                 markTreeRowPathChanged(row);
             }
         }
@@ -314,36 +337,39 @@ export abstract class AbstractClientSideTreeNodeManager<TData> extends AbstractC
             node.updateAllLeafChildren();
         }
 
-        const hasChildren = !!row.childrenAfterGroup?.length;
-        const group = hasChildren || !row.data;
-        const oldGroup = row.group;
+        if (details.treeData || !details.activeChangedPath) {
+            row.childrenAfterGroup = node.childrenAfterGroup;
+            row.allLeafChildren = node.allLeafChildren;
+            const hasChildren = node.childrenAfterGroup.length > 0;
+            const group = hasChildren || !row.data;
 
-        if (oldGroup !== group) {
-            markTreeRowPathChanged(row);
-            setRowNodeGroup(row, this.beans, group); // Internally calls updateHasChildren
-            if (!group && !row.expanded) {
-                setTreeRowExpandedInitialized(row, false);
+            if (oldGroup !== group) {
+                markTreeRowPathChanged(row);
+                setRowNodeGroup(row, this.beans, group); // Internally calls updateHasChildren
+                if (!group && !row.expanded) {
+                    setTreeRowExpandedInitialized(row, false);
+                }
+            } else if (row.hasChildren() !== hasChildren) {
+                markTreeRowPathChanged(row);
+                row.updateHasChildren();
             }
-        } else if (row.hasChildren() !== hasChildren) {
-            markTreeRowPathChanged(row);
-            row.updateHasChildren();
-        }
 
-        if (group && !isTreeRowExpandedInitialized(row)) {
-            row.expanded = getExpandedInitialValue(details, oldRow, row);
-            setTreeRowExpandedInitialized(row, true);
-        }
+            if (group && !isTreeRowExpandedInitialized(row)) {
+                row.expanded = getExpandedInitialValue(details, oldRow, row);
+                setTreeRowExpandedInitialized(row, true);
+            }
 
-        if (isTreeRowUpdated(row)) {
-            markTreeRowPathChanged(parent.row!);
+            if (isTreeRowUpdated(row)) {
+                markTreeRowPathChanged(parent.row);
 
-            if (isTreeRowKeyChanged(row)) {
-                // hack - if we didn't do this, then renaming a tree item (ie changing rowNode.key) wouldn't get
-                // refreshed into the gui.
-                // this is needed to kick off the event that rowComp listens to for refresh. this in turn
-                // then will get each cell in the row to refresh - which is what we need as we don't know which
-                // columns will be displaying the rowNode.key info.
-                row.setData(row.data);
+                if (isTreeRowKeyChanged(row)) {
+                    // hack - if we didn't do this, then renaming a tree item (ie changing rowNode.key) wouldn't get
+                    // refreshed into the gui.
+                    // this is needed to kick off the event that rowComp listens to for refresh. this in turn
+                    // then will get each cell in the row to refresh - which is what we need as we don't know which
+                    // columns will be displaying the rowNode.key info.
+                    row.setData(row.data);
+                }
             }
         }
 
@@ -353,12 +379,12 @@ export abstract class AbstractClientSideTreeNodeManager<TData> extends AbstractC
                 markTreeRowPathChanged(row);
             }
             parent.childrenChanged = true;
-            markTreeRowPathChanged(parent.row!);
+            markTreeRowPathChanged(parent.row);
         }
 
         if (isTreeRowPathChanged(row)) {
-            if (treeData && details.changedPath?.active) {
-                details.changedPath.addParentNode(row);
+            if (this.treeData) {
+                details.activeChangedPath?.addParentNode(row);
             } else {
                 markTreeRowPathChanged(details.rootNode);
             }
@@ -393,7 +419,7 @@ export abstract class AbstractClientSideTreeNodeManager<TData> extends AbstractC
         }
     }
 
-    private createFillerRow(node: TreeNode): RowNode {
+    private createFillerRow(node: TreeNode, level: number): RowNode {
         const row = new RowNode(this.beans); // Create a filler node
         row.key = node.key;
         row.group = true;
@@ -403,14 +429,15 @@ export abstract class AbstractClientSideTreeNodeManager<TData> extends AbstractC
         row.allChildrenCount = null;
 
         // Generate a unique id for the filler row
-        let id = node.level + '-' + node.key;
+        let id = level + '-' + node.key;
         let p = node.parent;
         while (p !== null) {
             const parent = p.parent;
             if (parent === null) {
                 break;
             }
-            id = `${p.level}-${p.key}-${id}`;
+            --level;
+            id = `${level}-${p.key}-${id}`;
             p = parent;
         }
         row.id = _ROW_ID_PREFIX_ROW_GROUP + id;
@@ -433,20 +460,18 @@ export abstract class AbstractClientSideTreeNodeManager<TData> extends AbstractC
 
     /** Called to clear a subtree. */
     public treeClear(node: TreeNode): void {
-        const { parent, oldRow, row, level } = node;
+        const { parent, oldRow } = node;
         if (parent !== null && oldRow !== null) {
             parent.childrenChanged = true;
             if (parent.row !== null) {
                 markTreeRowPathChanged(parent.row);
             }
         }
-        if (row !== null) {
-            if (level >= 0) {
-                let row = node.row;
-                while (row !== null && node.removeRow(row)) {
-                    this.destroyRow(row, !row.data);
-                    row = node.row;
-                }
+        if (node !== this.treeRoot) {
+            let row = node.row;
+            while (row !== null && node.removeRow(row)) {
+                this.destroyRow(row, !row.data);
+                row = node.row;
             }
         }
         for (const child of node.enumChildren()) {
@@ -457,9 +482,9 @@ export abstract class AbstractClientSideTreeNodeManager<TData> extends AbstractC
 
     /** Called by the deactivate, to destroy the whole tree. */
     private treeDestroy(node: TreeNode): void {
-        const { row, level, duplicateRows } = node;
+        const { row, duplicateRows } = node;
         if (row) {
-            if (level >= 0 && !row.data) {
+            if (node !== this.treeRoot && !row.data) {
                 this.destroyRow(row, true); // Delete the filler node
             } else {
                 clearTreeRowFlags(row); // Just clear the flags
@@ -467,7 +492,7 @@ export abstract class AbstractClientSideTreeNodeManager<TData> extends AbstractC
         }
         if (duplicateRows) {
             for (const row of duplicateRows) {
-                if (level >= 0 && !row.data) {
+                if (node !== this.treeRoot && !row.data) {
                     this.destroyRow(row, true); // Delete filler nodes
                 } else {
                     clearTreeRowFlags(row); // Just clear the flags

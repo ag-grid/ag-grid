@@ -487,6 +487,7 @@ export interface Props<TData> {
          */
     excelStyles?: ExcelStyle[] | undefined,
     /** Rows are filtered using this text as a Quick Filter.
+         * Only supported for Client-Side Row Model.
          */
     quickFilterText?: string | undefined,
     /** Set to `true` to turn on the Quick Filter cache, used to improve performance when using the Quick Filter.
@@ -1302,6 +1303,23 @@ export interface Props<TData> {
     /** If your theme uses a font that is available on Google Fonts, pass true to load it from Google's CDN.
          */
     loadThemeGoogleFonts?: boolean | undefined,
+    /** The CSS layer that this theme should be rendered onto. If your
+         * application loads its styles into a CSS layer, use this to load the grid
+         * styles into a previous layer so that application styles can override grid
+         * styles.
+         *
+         * @see https://developer.mozilla.org/en-US/docs/Web/CSS/@layer
+         */
+    themeCssLayer?: string | undefined,
+    /** An element to insert style elements into when injecting styles into the
+         * grid. If undefined, styles will be added to the document head for grids
+         * rendered in the main document fragment, or to the grid wrapper element
+         * for other grids (e.g. those rendered in a shadow DOM or detached from the
+         * document).
+         *
+         * @initial
+         */
+    themeStyleContainer?: HTMLElement | undefined,
     /** For customising the context menu.
          */
     getContextMenuItems?: GetContextMenuItems<TData> | undefined,
@@ -1827,6 +1845,8 @@ export function getProps() {
         initialState: undefined,
         theme: undefined,
         loadThemeGoogleFonts: undefined,
+        themeCssLayer: undefined,
+        themeStyleContainer: undefined,
         getContextMenuItems: undefined,
         getMainMenuItems: undefined,
         postProcessPopup: undefined,
@@ -1990,6 +2010,12 @@ export const debounce = (func: () => void, delay: number) => {
     };
 };
 
+function isInputClass(input: any) {
+    return input &&
+        input.constructor &&
+        input.constructor.toString().substring(0, 5) === 'class';
+}
+
 export function deepToRaw<T extends Record<string, any>>(sourceObj: T): T {
     const objectIterator = (input: any): any => {
         if (Array.isArray(input)) {
@@ -2000,7 +2026,8 @@ export function deepToRaw<T extends Record<string, any>>(sourceObj: T): T {
         }
         if (input && typeof input === 'object' && Object.keys(input).length > 0) {
             return Object.keys(input).reduce((acc, key) => {
-                acc[key as keyof typeof acc] = objectIterator(input[key]);
+                // don't convert classes to "raw" object
+                acc[key as keyof typeof acc] = isInputClass(input[key]) ? input[key] : objectIterator(input[key]);
                 return acc;
             }, {} as T);
         }

@@ -142,6 +142,10 @@ input[type='checkbox']:not(.switch)#{$selector-exclude-grid} {
         border-color $transition-default-timing,
         box-shadow $transition-default-timing;
 
+    #{$selector-darkmode} & {
+        border: 1px solid color-mix(in srgb, var(--color-bg-secondary), var(--color-fg-primary) 30%);
+    }
+
     &:hover:not(:disabled):not([readonly]),
     &.hover,
     &:focus-visible:not(:disabled):not([readonly]) {
@@ -201,6 +205,10 @@ input[type='radio']#{$selector-exclude-grid} {
         background-color $transition-default-timing,
         border-color $transition-default-timing,
         box-shadow $transition-default-timing;
+
+    #{$selector-darkmode} & {
+        border: 1px solid color-mix(in srgb, var(--color-bg-secondary), var(--color-fg-primary) 30%);
+    }
 
     &:hover:not(:disabled):not([readonly]),
     &.hover {

@@ -1,7 +1,14 @@
 import { createApp, defineComponent, ref } from 'vue';
 
 import type { ColDef } from 'ag-grid-community';
-import { AllCommunityModule, ModuleRegistry, themeAlpine, themeBalham, themeQuartz } from 'ag-grid-community';
+import {
+    AllCommunityModule,
+    ModuleRegistry,
+    themeAlpine,
+    themeBalham,
+    themeMaterial,
+    themeQuartz,
+} from 'ag-grid-community';
 import { AllEnterpriseModule } from 'ag-grid-enterprise';
 import { AgGridVue } from 'ag-grid-vue3';
 
@@ -31,13 +38,14 @@ const VueExample = defineComponent({
     components: {
         'ag-grid-vue': AgGridVue,
     },
-    setup(props) {
+    setup() {
         const theme = ref(themeQuartz);
         return {
             theme,
             themes: {
                 themeQuartz,
                 themeBalham,
+                themeMaterial,
                 themeAlpine,
             },
 

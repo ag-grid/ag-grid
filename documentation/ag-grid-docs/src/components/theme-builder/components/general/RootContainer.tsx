@@ -2,7 +2,7 @@ import { logErrorMessageOnce, paramToVariableName } from '@components/theme-buil
 import styled from '@emotion/styled';
 import { useEffect } from 'react';
 
-import { type Theme, _asThemeImpl } from 'ag-grid-community';
+import { _asThemeImpl, styleMaterial, themeMaterial } from 'ag-grid-community';
 
 import { useRenderedTheme } from '../../model/rendered-theme';
 import { EditorPanel } from '../editors/EditorPanel';
@@ -107,15 +107,13 @@ const Main = styled('div')`
 `;
 
 function useWarnOfUnknownCssVariables() {
-    const theme = useRenderedTheme();
-
     useEffect(() => {
-        void warnOfUnknownCssVariables(theme);
-    }, [theme]);
+        warnOfUnknownCssVariables();
+    }, []);
 }
 
-async function warnOfUnknownCssVariables(themeArg: Theme) {
-    const theme = _asThemeImpl(themeArg);
+async function warnOfUnknownCssVariables() {
+    const theme = _asThemeImpl(themeMaterial.withPart(styleMaterial));
     const allowedVariables = new Set(Object.keys(theme._getModeParams().$default).map(paramToVariableName));
     allowedVariables.add('--ag-line-height');
     allowedVariables.add('--ag-indentation-level');

@@ -236,4 +236,13 @@
     .ag-header-highlight-after::after {
         background-color: var(--ag-material-primary-color);
     }
+
+    .ag-advanced-filter-builder-item-button-disabled,
+    .ag-disabled,
+    .ag-column-select-column-group-readonly,
+    [disabled] {
+        .ag-icon {
+            color: var(--ag-disabled-foreground-color);
+        }
+    }
 }
