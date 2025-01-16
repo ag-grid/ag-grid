@@ -9,7 +9,7 @@ import { TextFilterModelFormatter } from './textFilterModelFormatter';
 import { trimInputForFilter } from './textFilterUtils';
 
 export class TextFilter extends SimpleFilter<TextFilterModel, string, TextFilterParams> {
-    protected filterType = 'text' as const;
+    public readonly filterType = 'text' as const;
 
     private readonly eValuesFrom: AgInputTextField[] = [];
     private readonly eValuesTo: AgInputTextField[] = [];

@@ -46,7 +46,7 @@ interface FilterWrapper {
 }
 
 export class MultiFilter extends TabGuardComp implements IFilterComp, IMultiFilter {
-    private filterType = 'multi' as const;
+    public readonly filterType = 'multi' as const;
 
     private params: MultiFilterParams;
     private filterDefs: IMultiFilterDef[] = [];

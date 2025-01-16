@@ -1,12 +1,12 @@
 {
   "name": "ag-grid-generate-example-files",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "plugins/ag-grid-generate-example-files/src",
+  "sourceRoot": "plugins/ag-grid-generate-example-files/",
   "projectType": "library",
   "targets": {
     "build": {
       "executor": "@nx/js:swc",
-      "dependsOn": ["generateGridOptionsType"],
+      "dependsOn": ["ag-grid-community:build", "copySrcFilesForGeneration", "ag-shared:build"],
       "outputs": ["{options.outputPath}"],
       "options": {
         "outputPath": "plugins/ag-grid-generate-example-files/dist",
@@ -37,33 +37,17 @@
         ]
       }
     },
-    "generateGridOptionsType": {
-      "executor": "nx:run-script",
-      "dependsOn": ["ag-grid-community:build:types", "copySrcFilesForGeneration"],
-      "options": {
-        "script": "generateGridOptionsType"
-      },
-      "cache": true,
-      "inputs": [
-        "{workspaceRoot}/plugins/ag-grid-generate-example-files/gridOptionsTypes/baseGridOptions.ts",
-        "{workspaceRoot}/plugins/ag-grid-generate-example-files/src/executors/generate/generator/_copiedFromCore/propertyKeys.ts"
-      ],
-      "outputs": ["{workspaceRoot}/plugins/ag-grid-generate-example-files/gridOptionsTypes/_gridOptions_Types.json"]
-    },
     "copySrcFilesForGeneration": {
-      "executor": "nx:run-script",
-      "options": {
-        "script": "copySrcFilesForGeneration"
-      },
+      "command": "node ./src/copySrcFilesForGeneration.js",
       "cache": true,
       "inputs": [
         "{workspaceRoot}/packages/ag-grid-community/src/propertyKeys.ts",
         "{workspaceRoot}/packages/ag-grid-community/src/eventTypes.ts"
       ],
-      "outputs": [
-        "{workspaceRoot}/plugins/ag-grid-generate-example-files/src/executors/generate/generator/_copiedFromCore/propertyKeys.ts",
-        "{workspaceRoot}/plugins/ag-grid-generate-example-files/src/executors/generate/generator/_copiedFromCore/eventTypes.ts"
-      ]
+      "outputs": ["{projectRoot}/src/executors/generate/generator/_copiedFromCore/"],
+      "options": {
+        "cwd": "{projectRoot}"
+      }
     },
     "lint": {
       "command": "eslint",

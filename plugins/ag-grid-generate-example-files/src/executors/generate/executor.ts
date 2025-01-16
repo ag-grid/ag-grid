@@ -1,8 +1,9 @@
+import { readFile, readJSONFile, writeFile } from 'ag-shared/plugin-utils';
 import fs from 'fs/promises';
 import path from 'path';
 import prettier from 'prettier';
 
-import { readFile, readJSONFile, writeFile } from '../../executors-utils';
+import { getGridOptionsType } from '../../../gridOptionsTypes/buildGridOptionsType';
 import { SOURCE_ENTRY_FILE_NAME } from './generator/constants';
 import gridVanillaSrcParser from './generator/transformation-scripts/grid-vanilla-src-parser';
 import {
@@ -37,6 +38,8 @@ export type ExecutorOptions = {
     writeFiles: boolean;
 };
 
+const gridOptionsTypes = getGridOptionsType();
+
 export default async function (options: ExecutorOptions) {
     try {
         await generateFiles(options);
@@ -46,10 +49,6 @@ export default async function (options: ExecutorOptions) {
         console.error(e);
         return { success: false };
     }
-}
-
-async function getGridOptionsType() {
-    return await readJSONFile('plugins/ag-grid-generate-example-files/gridOptionsTypes/_gridOptions_Types.json');
 }
 
 async function getSourceFileList(folderPath: string): Promise<string[]> {
@@ -89,7 +88,6 @@ async function getProvidedFiles(folderPath: string) {
 export async function generateFiles(options: ExecutorOptions) {
     const isDev = options.mode === 'dev';
     const folderPath = options.examplePath;
-    const gridOptionsTypes = await getGridOptionsType();
 
     const sourceFileList = await getSourceFileList(folderPath);
     if (sourceFileList === undefined) {

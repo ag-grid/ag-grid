@@ -3,6 +3,7 @@
   "version": "33.0.1",
   "private": true,
   "dependencies": {
+    "ag-shared": "0.0.1",
     "glob": "8.0.3",
     "typescript": "~5.2.2",
     "@nx/devkit": "17.2.6",
@@ -11,8 +12,5 @@
   "type": "commonjs",
   "main": "./dist/src/index.js",
   "typings": "./dist/src/index.d.ts",
-  "executors": "./executors.json",
-  "scripts": {
-    "copySrcFilesForGeneration": "node ./src/copySrcFilesForGeneration.js"
-  }
+  "executors": "./executors.json"
 }

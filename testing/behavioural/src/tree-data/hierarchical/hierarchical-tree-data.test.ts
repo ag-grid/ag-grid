@@ -5,7 +5,7 @@ import { ClientSideRowModelModule } from 'ag-grid-community';
 import { TreeDataModule } from 'ag-grid-enterprise';
 
 import type { GridRowsOptions } from '../../test-utils';
-import { GridRows, TestGridsManager, asyncSetTimeout } from '../../test-utils';
+import { GridRows, TestGridsManager, asyncSetTimeout, cachedJSONObjects } from '../../test-utils';
 
 describe('ag-grid hierarchical tree data', () => {
     const gridsManager = new TestGridsManager({
@@ -311,54 +311,7 @@ describe('ag-grid hierarchical tree data', () => {
     });
 
     test('ag-grid initial hierarchical tree data (with id)', async () => {
-        const rowData = [
-            {
-                id: 'idA',
-                x: 'A',
-                children: [
-                    {
-                        id: 'idB',
-                        x: 'B',
-                        children: [
-                            {
-                                id: 'idC',
-                                x: 'C',
-                                children: [
-                                    {
-                                        id: 'idD',
-                                        x: 'D',
-                                    },
-                                ],
-                            },
-                            {
-                                id: 'idE',
-                                x: 'E',
-                                children: [
-                                    {
-                                        id: 'idF',
-                                        x: 'F',
-                                    },
-                                ],
-                            },
-                        ],
-                    },
-                ],
-            },
-            {
-                id: 'idG',
-                x: 'G',
-                children: [
-                    {
-                        id: 'idH',
-                        x: 'H',
-                    },
-                    {
-                        id: 'idI',
-                        x: 'I',
-                    },
-                ],
-            },
-        ];
+        const rowData = getHierarchicalData();
 
         const gridOptions: GridOptions = {
             columnDefs: [{ field: 'x' }],
@@ -474,4 +427,108 @@ describe('ag-grid hierarchical tree data', () => {
             · └── J LEAF id:J ag-Grid-AutoColumn:"J"
         `);
     });
+
+    test('initializing columns after rowData with tree data', async () => {
+        let rowDataUpdated = 0;
+        let modelUpdated = 0;
+        const gridOptions: GridOptions = {
+            groupDefaultExpanded: -1,
+            treeData: true,
+            ['treeDataChildrenField' as any]: 'children',
+            getRowId: (params) => params.data.id,
+            onRowDataUpdated: () => ++rowDataUpdated,
+            onModelUpdated: () => ++modelUpdated,
+        };
+
+        const gridRowsOptions: GridRowsOptions = {
+            checkDom: true,
+            columns: true,
+        };
+
+        const api = gridsManager.createGrid('myGrid', gridOptions);
+
+        await asyncSetTimeout(1);
+        expect(rowDataUpdated).toBe(0);
+        expect(modelUpdated).toBe(0);
+
+        const allData = getHierarchicalData();
+        api.setGridOption('rowData', cachedJSONObjects.array([allData[0]]));
+        api.setGridOption('rowData', cachedJSONObjects.array(allData));
+
+        await asyncSetTimeout(1);
+        expect(rowDataUpdated).toBe(0);
+        expect(modelUpdated).toBe(0);
+
+        await new GridRows(api, 'empty', gridRowsOptions).check('empty');
+
+        api.setGridOption('columnDefs', [{ field: 'x' }]);
+
+        await asyncSetTimeout(1);
+        expect(rowDataUpdated).toBe(1);
+        expect(modelUpdated).toBe(1);
+
+        await new GridRows(api, 'data', gridRowsOptions).check(`
+            ROOT id:ROOT_NODE_ID
+            ├─┬ idA GROUP id:idA ag-Grid-AutoColumn:"idA" x:"A"
+            │ └─┬ idB GROUP id:idB ag-Grid-AutoColumn:"idB" x:"B"
+            │ · ├─┬ idC GROUP id:idC ag-Grid-AutoColumn:"idC" x:"C"
+            │ · │ └── idD LEAF id:idD ag-Grid-AutoColumn:"idD" x:"D"
+            │ · └─┬ idE GROUP id:idE ag-Grid-AutoColumn:"idE" x:"E"
+            │ · · └── idF LEAF id:idF ag-Grid-AutoColumn:"idF" x:"F"
+            └─┬ idG GROUP id:idG ag-Grid-AutoColumn:"idG" x:"G"
+            · ├── idH LEAF id:idH ag-Grid-AutoColumn:"idH" x:"H"
+            · └── idI LEAF id:idI ag-Grid-AutoColumn:"idI" x:"I"
+        `);
+    });
 });
+
+function getHierarchicalData() {
+    return [
+        {
+            id: 'idA',
+            x: 'A',
+            children: [
+                {
+                    id: 'idB',
+                    x: 'B',
+                    children: [
+                        {
+                            id: 'idC',
+                            x: 'C',
+                            children: [
+                                {
+                                    id: 'idD',
+                                    x: 'D',
+                                },
+                            ],
+                        },
+                        {
+                            id: 'idE',
+                            x: 'E',
+                            children: [
+                                {
+                                    id: 'idF',
+                                    x: 'F',
+                                },
+                            ],
+                        },
+                    ],
+                },
+            ],
+        },
+        {
+            id: 'idG',
+            x: 'G',
+            children: [
+                {
+                    id: 'idH',
+                    x: 'H',
+                },
+                {
+                    id: 'idI',
+                    x: 'I',
+                },
+            ],
+        },
+    ];
+}

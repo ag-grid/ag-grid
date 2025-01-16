@@ -23,6 +23,7 @@ interface Props {
     extraStyles?: string;
     children?: any;
     extras?: string[];
+    usesMathRandom?: boolean;
 }
 
 const {
@@ -37,6 +38,7 @@ const {
     boilerplatePath,
     extraStyles,
     extras,
+    usesMathRandom,
 } = Astro.props as Props;
 
 const startFile = pathJoin(appLocation, entryFileName);
@@ -73,6 +75,7 @@ const startFile = pathJoin(appLocation, entryFileName);
             startFile={startFile}
             internalFramework={'angular'}
             isEnterprise={isEnterprise}
+            usesMathRandom={usesMathRandom}
         />
         <Styles
             baseUrl={appLocation}

@@ -15,7 +15,7 @@ export class NumberFilter extends SimpleFilter<NumberFilterModel, number, Number
 
     private filterModelFormatter: NumberFilterModelFormatter;
 
-    protected filterType = 'number' as const;
+    public readonly filterType = 'number' as const;
 
     constructor() {
         super('numberFilter', new NumberFilterHelper());

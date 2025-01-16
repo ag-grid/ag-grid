@@ -8,9 +8,6 @@ dist
 # Website
 .astro
 
-# Generated grid options json
-plugins/ag-grid-generate-example-files/gridOptionsTypes/_gridOptions_Types.json
-
 # Generated scss files
 _icon-font-codes.scss
 community-modules/styles/src/internal/ag/generated/*
@@ -33,3 +30,5 @@ packages/ag-grid-angular/projects/ag-grid-angular/src/test.ts
 
 # ignore for now - throws an error when processed
 documentation/ag-grid-docs/src/components/upgrade-33.astro
+
+/.nx/workspace-data

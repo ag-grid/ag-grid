@@ -27,7 +27,7 @@ export class DateFilter extends SimpleFilter<DateFilterModel, Date, DateFilterPa
     private maxValidDate: Date | null = null;
     private filterModelFormatter: DateFilterModelFormatter;
 
-    protected filterType = 'date' as const;
+    public readonly filterType = 'date' as const;
 
     constructor() {
         super('dateFilter', new DateFilterHelper());

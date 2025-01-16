@@ -116,6 +116,15 @@ validatePackages()
         echo "ERROR: $current_dist should have $expected_umd umd files"
         exit 1
       fi
+
+      expected_styles=35
+      current_dist=$current_root_dir/styles
+      count=`find $current_dist | wc -l | tr -d ' '`
+      if [[ $count -ne $expected_styles ]]
+      then
+        echo "ERROR: $current_dist should have $expected_styles style files"
+        exit 1
+      fi
     elif [[ ${frameworks[@]} =~ $directory ]]
     then
       # a framework - here we're just checking there are files in the package as a sanity check
@@ -148,14 +157,14 @@ validateLocale()
 
 validateVue3()
 {
-  local requiredCount=`grep required dist/artifacts/contents/packages/ag-grid-vue3/package/dist/main.mjs`
+  local requiredCount=`grep required dist/artifacts/contents/packages/ag-grid-vue3/package/dist/main.mjs | wc -l`
   if [[ $requiredCount -ne 0 ]]
   then
     echo "ERROR: dist/artifacts/contents/packages/ag-grid-vue3/package/dist/main.mjs has referenced to 'required'"
     exit 1
   fi
 
-  local skipCheckCount=`grep skipCheck dist/artifacts/contents/packages/ag-grid-vue3/package/dist/main.mjs`
+  local skipCheckCount=`grep skipCheck dist/artifacts/contents/packages/ag-grid-vue3/package/dist/main.mjs | wc -l`
   if [[ $skipCheckCount -ne 0 ]]
   then
     echo "ERROR: dist/artifacts/contents/packages/ag-grid-vue3/package/dist/main.mjs has referenced to 'skipCheck'"
@@ -164,10 +173,10 @@ validateVue3()
 }
 
 # check all expected modules & packages are there
-validateExpectedDirs "dist/artifacts/contents/community-modules" 3
+validateExpectedDirs "dist/artifacts/contents/community-modules" 2
 validateExpectedDirs "dist/artifacts/contents/packages" 6
 
-validateExpectedDirs "dist/artifacts/community-modules" 3
+validateExpectedDirs "dist/artifacts/community-modules" 2
 validateExpectedDirs "dist/artifacts/packages" 6
 
 validateModules "dist/artifacts/contents/community-modules"

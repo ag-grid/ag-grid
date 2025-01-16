@@ -1,6 +1,6 @@
+import { inputGlob, writeJSONFile } from 'ag-shared/plugin-utils';
 import ts from 'typescript';
 
-import { inputGlob, writeJSONFile } from '../../executors-utils';
 import {
     buildInterfaceProps,
     getColumnOptions,

@@ -18,6 +18,12 @@ function getProjectBuildTargets(project) {
                 ['ag-charts-community', ['build'], 'watch'],
                 ['ag-charts-enterprise', ['build'], 'watch'],
             ];
+        case 'ag-charts-core':
+            return [
+                [project, ['build'], 'watch'],
+                ['ag-charts-community', ['build'], 'watch'],
+                ['ag-charts-enterprise', ['build'], 'watch'],
+            ];
         case 'ag-charts-community':
             return [
                 [project, ['build'], 'watch'],

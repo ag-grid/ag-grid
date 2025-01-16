@@ -24,7 +24,7 @@ export function runSubRepoCommand({ command, subRepoFolder, isVerbose }: Subrepo
             `git merge-base --is-ancestor ${gitRepoParentValue} HEAD`,
             'Check if .gitrepo parent value is valid on this repo'
         );
-    } catch (error) {
+    } catch {
         gitRepoParentInSync = false;
     }
 

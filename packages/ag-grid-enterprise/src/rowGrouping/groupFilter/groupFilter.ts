@@ -27,6 +27,8 @@ interface FilterColumnPair {
 
 export type GroupFilterEvent = 'columnRowGroupChanged' | 'selectedColumnChanged';
 export class GroupFilter extends TabGuardComp<GroupFilterEvent> implements IFilterComp {
+    public readonly filterType = 'group' as const;
+
     private readonly eGroupField: HTMLElement = RefPlaceholder;
     private readonly eUnderlyingFilter: HTMLElement = RefPlaceholder;
 

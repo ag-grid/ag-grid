@@ -43,7 +43,7 @@ export class SetFilter<V = string>
     extends ProvidedFilter<SetFilterModel, V, SetFilterParams<any, V>>
     implements ISetFilter<V>
 {
-    protected filterType = 'set' as const;
+    public readonly filterType = 'set' as const;
 
     private readonly eMiniFilter: AgInputTextField = RefPlaceholder;
     private readonly eFilterLoading: HTMLElement = RefPlaceholder;

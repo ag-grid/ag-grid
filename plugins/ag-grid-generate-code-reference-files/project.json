@@ -6,7 +6,7 @@
   "targets": {
     "build": {
       "executor": "@nx/js:swc",
-      "dependsOn": ["copySrcFilesForGeneration"],
+      "dependsOn": ["copySrcFilesForGeneration", "ag-shared:build"],
       "inputs": ["{projectRoot}/src/**"],
       "outputs": ["{options.outputPath}"],
       "options": {
@@ -39,15 +39,16 @@
       }
     },
     "copySrcFilesForGeneration": {
-      "executor": "nx:run-script",
+      "command": "node ./src/copySrcFilesForGeneration.js",
+      "cache": true,
+      "inputs": [
+        "{workspaceRoot}/packages/ag-grid-community/src/propertyKeys.ts",
+        "{workspaceRoot}/packages/ag-grid-community/src/eventTypes.ts"
+      ],
+      "outputs": ["{projectRoot}/src/executors/generate/generator/_copiedFromCore/"],
       "options": {
-        "script": "copySrcFilesForGeneration"
-      },
-      "cache": false,
-      "inputs": ["{workspaceRoot}/packages/ag-grid-community/src/eventTypes.ts"],
-      "outputs": [
-        "{workspaceRoot}/plugins/ag-grid-generate-example-files/src/executors/generate/generator/_copiedFromCore/eventTypes.ts"
-      ]
+        "cwd": "{projectRoot}"
+      }
     },
     "lint": {
       "command": "eslint",

@@ -1,4 +1,5 @@
-import { batchExecutor } from '../../executors-utils';
+import { batchExecutor } from 'ag-shared/plugin-utils';
+
 import { generateFiles } from './executor';
 
 const executor = batchExecutor(generateFiles);
