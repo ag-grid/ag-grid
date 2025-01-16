@@ -180,8 +180,11 @@ export type PivotMenuOptionName =
     | 'pivotSunburst'
     | 'pivotCombinationChart'
     | 'pivotColumnLineCombo'
-    | 'pivotAreaColumnCombo';
-
+    | 'pivotAreaColumnCombo'
+    | 'pivotFunnelChart'
+    | 'pivotFunnel'
+    | 'pivotConeFunnel'
+    | 'pivotPyramid';
 class PivotMenuItemMapper implements MenuItemBuilder<PivotMenuOptionName> {
     constructor(
         private beans: BeanCollection,
@@ -351,7 +354,12 @@ class PivotMenuItemMapper implements MenuItemBuilder<PivotMenuOptionName> {
                 boxPlot: null,
             },
             // Funnel charts do not currently support pivot mode
-            funnelGroup: null,
+            funnelGroup: {
+                _key: 'pivotFunnelChart',
+                funnel: 'pivotFunnel',
+                'cone-funnel': 'pivotConeFunnel',
+                pyramid: 'pivotPyramid',
+            },
             // Polar charts do not support pivot mode
             polarGroup: null,
             // Specialized charts do not currently support pivot mode
@@ -531,6 +539,16 @@ class RangeMenuItemMapper implements MenuItemBuilder<RangeMenuOptionName> {
                         getMenuItem('waterfall', 'Waterfall&lrm;', 'waterfall', 'rangeWaterfall'),
                     ],
                     _key: 'rangeSpecializedChart',
+                    _enterprise: true,
+                },
+                {
+                    name: localeTextFunc('funnelChart', 'Funnel'),
+                    subMenu: [
+                        getMenuItem('funnel', 'Funnel&lrm;', 'funnel', 'rangeFunnel'),
+                        getMenuItem('cone-funnel', 'Cone Funnel&lrm;', 'cone-funnel', 'rangeConeFunnel'),
+                        getMenuItem('pyramid', 'Pyramid&lrm;', 'pyramid', 'rangePyramid'),
+                    ],
+                    _key: 'rangeFunnel',
                     _enterprise: true,
                 },
                 {
