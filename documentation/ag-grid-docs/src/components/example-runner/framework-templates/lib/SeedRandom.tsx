@@ -8,7 +8,7 @@ Math.seedrandom('${EXAMPLE_RANDOM_SEED}');
 `;
 
 /**
- * These are the CSS styles shared by all examples.
+ * Inject the seedrandom library and initialise the random number generator with a seed.
  */
 export const SeedRandom = () => {
     return (
