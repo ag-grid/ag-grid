@@ -2636,6 +2636,7 @@ export type SelectionColumnDef = Pick<
     | 'onCellDoubleClicked'
     | 'onCellValueChanged'
     | 'headerTooltip'
+    | 'headerStyle'
     | 'headerClass'
     | 'headerComponent'
     | 'headerComponentParams'

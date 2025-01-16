@@ -1,5 +1,5 @@
 import type { BeanCollection } from '../context/context';
-import type { CellStyle } from '../entities/colDef';
+import type { CellStyle, HeaderStyle } from '../entities/colDef';
 import type { RowStyle } from '../entities/gridOptions';
 import { _getRootNode, _getWindow } from '../gridOptionsUtils';
 import type { ICellRendererComp } from '../rendering/cellRenderers/iCellRenderer';
@@ -364,7 +364,7 @@ function _camelCaseToHyphenated(camelCase: string): string {
     return camelCase.replace(/[A-Z]/g, (s) => `-${s.toLocaleLowerCase()}`);
 }
 
-export function _addStylesToElement(eElement: any, styles: RowStyle | CellStyle | null | undefined) {
+export function _addStylesToElement(eElement: any, styles: RowStyle | CellStyle | HeaderStyle | null | undefined) {
     if (!styles) {
         return;
     }

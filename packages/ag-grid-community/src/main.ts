@@ -769,6 +769,8 @@ export {
     HeaderLocation,
     ColumnChooserParams,
     ColumnMenuTab,
+    HeaderStyle,
+    HeaderStyleFunc,
     HeaderClassParams,
     HeaderClass,
     ToolPanelClassParams,
