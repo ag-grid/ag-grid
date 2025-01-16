@@ -24,6 +24,7 @@ interface Props {
     extraStyles?: string;
     children?: any;
     extras?: string[];
+    usesMathRandom?: boolean;
 }
 
 const {
@@ -38,6 +39,7 @@ const {
     styleFiles = [],
     extraStyles,
     extras,
+    usesMathRandom,
 } = Astro.props as Props;
 
 const startFile = pathJoin(appLocation, entryFileName);
@@ -61,6 +63,7 @@ const startFile = pathJoin(appLocation, entryFileName);
             startFile={startFile}
             internalFramework={'vue3'}
             isEnterprise={isEnterprise}
+            usesMathRandom={usesMathRandom}
         />
         <slot />
     </body>

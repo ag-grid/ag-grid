@@ -8877,47 +8877,52 @@ adm-zip@^0.5.10:
   resolved "http://52.50.158.57:4873/adm-zip/-/adm-zip-0.5.16.tgz#0b5e4c779f07dedea5805cdccb1147071d94a909"
   integrity sha512-TGw5yVi4saajsSEgz25grObGHEUaDrniwvA2qwSC060KfqGPdglhvPMA2lPIoxs3PQIItj2iag35fONcQqgUaQ==
 
-ag-charts-angular@11.0.3-beta.20250112:
-  version "11.0.3-beta.20250112"
-  resolved "http://52.50.158.57:4873/ag-charts-angular/-/ag-charts-angular-11.0.3-beta.20250112.tgz#0f9890b0999e2c08db01752d07cc2c8909373e6f"
-  integrity sha512-whWgWOFxZaIsANgqaJ2Xa8qV/ERbuMHK4Ma0ijE+EFaIwlCnEa+p1s9z0MVLKYePUb8ei1PV24KDnUD3mVs/5g==
+ag-charts-angular@11.0.3-beta.20250116:
+  version "11.0.3-beta.20250116"
+  resolved "http://52.50.158.57:4873/ag-charts-angular/-/ag-charts-angular-11.0.3-beta.20250116.tgz#980a0be12bcff50b07b87edb378f1b82d670b775"
+  integrity sha512-UEitLFQPJrY2kZjRFZM/DP0kIFqrdYclwU45C41cLMC8rmGhZ6t3MhHu4JxyzhBdGCvFnqY44tRIrgpHHAhMWg==
   dependencies:
+    ag-charts-community "11.0.3-beta.20250116"
     tslib "^2.3.0"
 
-ag-charts-community@11.0.3-beta.20250112:
-  version "11.0.3-beta.20250112"
-  resolved "http://52.50.158.57:4873/ag-charts-community/-/ag-charts-community-11.0.3-beta.20250112.tgz#9ad326fce147149962d030d413aad6b29c5863d0"
-  integrity sha512-hUioZDtVq+pcJNGuarfb52lOfDeb5zrQ1hNXAd2FzJNG1jiPbaFGfMnLsJ3f1DMJ9/MdXwMR/LA07ihanlckQQ==
+ag-charts-community@11.0.3-beta.20250116:
+  version "11.0.3-beta.20250116"
+  resolved "http://52.50.158.57:4873/ag-charts-community/-/ag-charts-community-11.0.3-beta.20250116.tgz#34dfd6a62ffb2d66e41ad71d2713bc2ad2a1a191"
+  integrity sha512-OD/4fnwKJj2iz2K4zIsYD2woAJ2puoyFfrheI5ihhKaM3ghUiKzCRch2Pbh/aIPkRhyDexljCarvACJ7eu9I6w==
   dependencies:
-    ag-charts-locale "11.0.3-beta.20250112"
-    ag-charts-types "11.0.3-beta.20250112"
+    ag-charts-locale "11.0.3-beta.20250116"
+    ag-charts-types "11.0.3-beta.20250116"
 
-ag-charts-enterprise@11.0.3-beta.20250112:
-  version "11.0.3-beta.20250112"
-  resolved "http://52.50.158.57:4873/ag-charts-enterprise/-/ag-charts-enterprise-11.0.3-beta.20250112.tgz#4cc3001b235dddd23bbcca0e1c0e451d93dec1c6"
-  integrity sha512-rnHmbtDA8qdiRxzf4831z34MkLUZtmneIvdOZtWo4cPtPcu1gIcKYBnv7xh3zwLwv0JZzcaKWvHxaYt7zhAarQ==
+ag-charts-enterprise@11.0.3-beta.20250116:
+  version "11.0.3-beta.20250116"
+  resolved "http://52.50.158.57:4873/ag-charts-enterprise/-/ag-charts-enterprise-11.0.3-beta.20250116.tgz#e08c0c7a553698d4776910d9bac6e28429a0af18"
+  integrity sha512-sLan0tdATNT1mktnQzZg90eP/475eyNTBOGtcUDmPLHbuMiVtfh5ahNx8wWrRZA7D/CV2T7mN4et1VrwQY/mGg==
   dependencies:
-    ag-charts-community "11.0.3-beta.20250112"
+    ag-charts-community "11.0.3-beta.20250116"
 
-ag-charts-locale@11.0.3-beta.20250112:
-  version "11.0.3-beta.20250112"
-  resolved "http://52.50.158.57:4873/ag-charts-locale/-/ag-charts-locale-11.0.3-beta.20250112.tgz#79dfa4ee35445c827454155e24f645cc0f269c8b"
-  integrity sha512-DZRSFGBNznqp0AP5ueJqmt4wW8oOCk0ANrKSlMOFErCZsD3QhghoXluN4R4HhjgeXWzOUeHQk4TTMWYhyeNd8w==
+ag-charts-locale@11.0.3-beta.20250116:
+  version "11.0.3-beta.20250116"
+  resolved "http://52.50.158.57:4873/ag-charts-locale/-/ag-charts-locale-11.0.3-beta.20250116.tgz#6baeed86711825284a1eb0f7b398d970fa4c1786"
+  integrity sha512-7V/cSKzvSEFqXd92QKC9wawEN11ZJGQA0XmWqJ00lkTe83nP8/WXYDEkVgiwIT3NrY4nN//22lV+v/zXGNE+aw==
 
-ag-charts-react@11.0.3-beta.20250112:
-  version "11.0.3-beta.20250112"
-  resolved "http://52.50.158.57:4873/ag-charts-react/-/ag-charts-react-11.0.3-beta.20250112.tgz#9279944eded609286562ff6fad07b3c07e11cc48"
-  integrity sha512-FNKu8TAMgB/ZppiHGBKy8F92ur2aS/hyxoLZ4IlxSqLly9z5CLQv8oB5bpguSEHRwQ4RHnr/+V+kqQcbzDrN7g==
+ag-charts-react@11.0.3-beta.20250116:
+  version "11.0.3-beta.20250116"
+  resolved "http://52.50.158.57:4873/ag-charts-react/-/ag-charts-react-11.0.3-beta.20250116.tgz#390546e1f4445a6c57cbd3812daee82098ed7504"
+  integrity sha512-Ltoh3MXi9/OIeJs80u5SNeGI53dkbTgpVz/WO/HfSA82IsIwmIpsICg24vpSevYFF/9fbmPGYyUbEBbs2ufK8w==
+  dependencies:
+    ag-charts-community "11.0.3-beta.20250116"
 
-ag-charts-types@11.0.3-beta.20250112:
-  version "11.0.3-beta.20250112"
-  resolved "http://52.50.158.57:4873/ag-charts-types/-/ag-charts-types-11.0.3-beta.20250112.tgz#c259ae4261530e82b8fed9f1ee953a4be07867d3"
-  integrity sha512-8OxZuFk/ogQeY44bCkfbYom4+4951Wk9lNZQbhnXHU59n4nkmgBZEdSLKh+Lnq09DpmsN5SRWgVzCTRGGn9QDg==
+ag-charts-types@11.0.3-beta.20250116:
+  version "11.0.3-beta.20250116"
+  resolved "http://52.50.158.57:4873/ag-charts-types/-/ag-charts-types-11.0.3-beta.20250116.tgz#2167326bfd5eb6d4342d9bc416090a6ec8cf741c"
+  integrity sha512-3O0W6DcwyCNAKklArzZ4SYXtkMWLsLMnyAlQR1GPp8ehMeqD9AEgmmpXIVWMAncDvvyi2R1gwnfk8boydYAV7A==
 
-ag-charts-vue3@11.0.3-beta.20250112:
-  version "11.0.3-beta.20250112"
-  resolved "http://52.50.158.57:4873/ag-charts-vue3/-/ag-charts-vue3-11.0.3-beta.20250112.tgz#731133df61f68a060d8641c7d6c06df4c87fb87a"
-  integrity sha512-XgRDFp2pvrJJLbvKQwdzhUXfcZD4szSs4o3d/d6+YEQkaRcCrZRXMghSjAHvHZXhqDBns+LipWpH3j5CDBk/jg==
+ag-charts-vue3@11.0.3-beta.20250116:
+  version "11.0.3-beta.20250116"
+  resolved "http://52.50.158.57:4873/ag-charts-vue3/-/ag-charts-vue3-11.0.3-beta.20250116.tgz#80b7ff688cefb1bb1a01b6e0d9ca609135dcb7ad"
+  integrity sha512-dlhxCcr2bZMrMjgG9CAl1QVSAKWkKo5mm3etMVm8cZKzeh3x84yFwy9Djph/r559YTDubl8C06Q2lBx0Q9l9Vw==
+  dependencies:
+    ag-charts-community "11.0.3-beta.20250116"
 
 agent-base@4, agent-base@^4.1.0, agent-base@^4.3.0:
   version "4.3.0"
@@ -25904,6 +25909,15 @@ sass@1.71.1:
     immutable "^4.0.0"
     source-map-js ">=0.6.2 <2.0.0"
 
+sass@1.79.3:
+  version "1.79.3"
+  resolved "http://52.50.158.57:4873/sass/-/sass-1.79.3.tgz#7811b000eb68195fe51dea89177e73e7ef7f546f"
+  integrity sha512-m7dZxh0W9EZ3cw50Me5GOuYm/tVAJAn91SUnohLRo9cXBixGUOdvmryN+dXpwR831bhoY3Zv7rEFt85PUwTmzA==
+  dependencies:
+    chokidar "^4.0.0"
+    immutable "^4.0.0"
+    source-map-js ">=0.6.2 <2.0.0"
+
 sass@1.80.7:
   version "1.80.7"
   resolved "http://52.50.158.57:4873/sass/-/sass-1.80.7.tgz#7569334c39220f8ca62fcea38dce60f809ba345c"
@@ -25915,7 +25929,7 @@ sass@1.80.7:
   optionalDependencies:
     "@parcel/watcher" "^2.4.1"
 
-sass@^1.42.1, sass@^1.54.4, sass@^1.69.5, sass@^1.77.8:
+sass@^1.42.1, sass@^1.69.5, sass@^1.77.8:
   version "1.83.4"
   resolved "http://52.50.158.57:4873/sass/-/sass-1.83.4.tgz#5ccf60f43eb61eeec300b780b8dcb85f16eec6d1"
   integrity sha512-B1bozCeNQiOgDcLd33e2Cs2U60wZwjUUXzh900ZyQF5qUasvMdDZYbQ566LJu7cqR+sAHlAfO6RMkaID5s6qpA==

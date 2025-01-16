@@ -17,6 +17,7 @@ interface Props {
     extraStyles?: string;
     children?: any;
     extras?: string[];
+    usesMathRandom?: boolean;
 }
 
 const {
@@ -32,6 +33,7 @@ const {
     appLocation,
     extraStyles,
     extras,
+    usesMathRandom,
 } = Astro.props as Props;
 
 import { MetaData } from './lib/MetaData';
@@ -48,6 +50,7 @@ import {
     getChartsEnterpriseScriptPath,
     getGridLocaleScriptPath,
 } from '@utils/gridLibraryPaths';
+import { SeedRandom } from './lib/SeedRandom';
 
 const siteUrl = Astro.site ? pathJoin(Astro.site, SITE_BASE_URL) : '/';
 
@@ -82,10 +85,11 @@ const gridScriptLocalePath = getCacheBustingUrl(getGridLocaleScriptPath(siteUrl)
         >
             window.__basePath = appLocation;
         </script>
+        {usesMathRandom ?? <SeedRandom />}
         {isIntegratedCharts && <script src={chartsScriptEnterprisePath} />}
         <script src={isEnterprise ? gridScriptEnterprisePath : gridScriptPath}></script>
         {isLocale && <script src={gridScriptLocalePath} />}
-        <Scripts baseUrl={appLocation} files={scriptFiles} />
+        <Scripts baseUrl={appLocation} files={scriptFiles!} />
         <Styles
             baseUrl={appLocation}
             files={styleFiles

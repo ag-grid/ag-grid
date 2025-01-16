@@ -114,10 +114,10 @@ const detailCellRendererParams = (params) => {
 const extractFilterTerm = (location) =>
     location && location.search ? new URLSearchParams(location.search).get('searchQuery') : '';
 
-export const Pipeline = ({ location }) => {
+export const Pipeline = () => {
     const [rowData, setRowData] = useState(null);
     const [gridApi, setGridApi] = useState(null);
-    const URLFilterSearchQuery = useState(extractFilterTerm(location))[0];
+    const URLFilterSearchQuery = useState(extractFilterTerm(window.location))[0];
     const searchBarEl = useRef(null);
 
     useEffect(() => {

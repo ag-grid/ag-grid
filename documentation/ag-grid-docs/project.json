@@ -38,7 +38,14 @@
       "command": "node scripts/buildTime.mjs stop && node scripts/buildTime.mjs elapsed"
     },
     "dev": {
-      "dependsOn": ["^build", "^docs-resolved-interfaces", "elapsedBuildTime"],
+      "dependsOn": [
+        "^build",
+        "^docs-resolved-interfaces",
+        "elapsedBuildTime",
+        "ag-grid-react:build",
+        "ag-grid-angular:build",
+        "ag-grid-vue3:build"
+      ],
       "command": "astro dev --port=${PORT} --host",
       "options": {
         "cwd": "{projectRoot}"
@@ -170,6 +177,6 @@
       }
     }
   },
-  "implicitDependencies": ["packages/ag-grid-community", "packages/ag-grid-enterprise"],
+  "implicitDependencies": ["ag-grid-community", "ag-grid-enterprise"],
   "tags": ["website"]
 }

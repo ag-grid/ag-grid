@@ -4,6 +4,7 @@
   "private": true,
   "dependencies": {
     "ag-shared": "0.0.1",
+    "ag-grid-community": "33.0.1",
     "glob": "8.0.3",
     "typescript": "~5.2.2",
     "cheerio": "^1.0.0-rc.12",

@@ -25,6 +25,6 @@ const { data: docsNavData } = await getEntry('docs-nav', 'docsNav');
     <div class:list={['contentViewport layout-grid']}>
         <DocsNavFromLocalStorage client:load menuData={docsNavData} pageName={pageName} />
 
-        <Pipeline client:load />
+        <Pipeline client:only />
     </div>
 </Layout>

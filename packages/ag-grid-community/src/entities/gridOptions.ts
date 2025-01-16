@@ -2631,6 +2631,7 @@ export type SelectionColumnDef = Pick<
     | 'suppressKeyboardEvent'
     | 'contextMenuItems'
     | 'context'
+    | 'comparator'
     | 'onCellClicked'
     | 'onCellContextMenu'
     | 'onCellDoubleClicked'
@@ -2645,6 +2646,7 @@ export type SelectionColumnDef = Pick<
     | 'suppressHeaderKeyboardEvent'
     | 'pinned'
     | 'lockPinned'
+    | 'lockPosition'
     | 'initialPinned'
     | 'cellAriaRole'
     | 'cellStyle'
@@ -2677,6 +2679,7 @@ export type SelectionColumnDef = Pick<
     | 'resizable'
     | 'suppressSizeToFit'
     | 'suppressAutoSize'
+    | 'suppressMovable'
 >;
 
 /**

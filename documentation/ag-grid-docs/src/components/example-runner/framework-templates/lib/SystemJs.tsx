@@ -9,6 +9,7 @@ import agChartsEnterprise from '../../../../../../../node_modules/ag-charts-ente
 import agChartsReact from '../../../../../../../node_modules/ag-charts-react/package.json';
 import agChartsTypes from '../../../../../../../node_modules/ag-charts-types/package.json';
 import agChartsVue3 from '../../../../../../../node_modules/ag-charts-vue3/package.json';
+import { SeedRandom } from './SeedRandom';
 
 interface Props {
     boilerplatePath: string;
@@ -17,6 +18,7 @@ interface Props {
     internalFramework: InternalFramework;
     isEnterprise: boolean;
     isDev: boolean;
+    usesMathRandom?: boolean;
 }
 
 type Paths = Record<string, string>;
@@ -119,6 +121,7 @@ export const SystemJs = ({
     internalFramework,
     isEnterprise,
     isDev,
+    usesMathRandom,
 }: Props) => {
     const systemJsPath = pathJoin(boilerplatePath, `systemjs.config${isDev ? '.dev' : ''}.js`);
 
@@ -159,6 +162,9 @@ export const SystemJs = ({
             />
             <script src={systemJsVersion} />
             <script src={systemJsPath} />
+
+            {usesMathRandom ? <SeedRandom /> : null}
+
             <script
                 dangerouslySetInnerHTML={{
                     __html: `System.import('${startFile}').catch(function(err) { document.body.innerHTML = '<div class="example-error" style="background:#fdb022;padding:1rem;">' + 'Example Error: ' + err + '</div>'; console.error(err); });`,
