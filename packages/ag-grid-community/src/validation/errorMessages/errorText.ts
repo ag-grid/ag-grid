@@ -25,7 +25,7 @@ export const moduleImportMsg = (moduleNames: ModuleName[]) => {
 
 function convertToUserModuleName(moduleName: ModuleName, inModuleRegistration = false) {
     if (inModuleRegistration && (moduleName === 'IntegratedCharts' || moduleName === 'Sparklines')) {
-        return `${moduleName}.with(AgChartsEnterpriseModule)`;
+        return `${moduleName}Module.with(AgChartsEnterpriseModule)`;
     }
 
     return `${moduleName}Module`;
