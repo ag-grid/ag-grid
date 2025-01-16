@@ -13,6 +13,7 @@ export interface ChartGroupsDef {
     statisticalGroup?: ('boxPlot' | 'histogram' | 'rangeBar' | 'rangeArea')[];
     hierarchicalGroup?: ('treemap' | 'sunburst')[];
     specializedGroup?: ('heatmap' | 'waterfall')[];
+    funnelGroup?: ('funnel' | 'cone-funnel' | 'pyramid')[];
 }
 
 export type ChartToolPanelName = 'settings' | 'data' | 'format';
@@ -122,7 +123,10 @@ export type ChartType =
     | 'waterfall'
     | 'columnLineCombo'
     | 'areaColumnCombo'
-    | 'customCombo';
+    | 'customCombo'
+    | 'funnel'
+    | 'cone-funnel'
+    | 'pyramid';
 
 export type ComboChartType = 'columnLineCombo' | 'areaColumnCombo' | 'customCombo';
 

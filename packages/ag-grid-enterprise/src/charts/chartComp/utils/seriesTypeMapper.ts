@@ -37,6 +37,9 @@ const CHART_TYPE_TO_SERIES_TYPE: Record<ChartTypeExCombo, string> = {
     treemap: 'treemap',
     heatmap: 'heatmap',
     waterfall: 'waterfall',
+    funnel: 'funnel',
+    'cone-funnel': 'cone-funnel',
+    pyramid: 'pyramid',
 } as const;
 
 const COMBO_CHART_TYPES: Set<ComboChartType> = new Set(['columnLineCombo', 'areaColumnCombo', 'customCombo']);

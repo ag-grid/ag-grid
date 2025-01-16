@@ -120,6 +120,11 @@ const miniChartMapping: MiniChartMenuMapping = {
         areaColumnCombo: { range: true, pivot: true, enterprise: false, icon: MiniAreaColumnCombo },
         customCombo: { range: true, pivot: true, enterprise: false, icon: MiniCustomCombo },
     },
+    funnelGroup: {
+        funnel: { range: true, pivot: false, enterprise: true, icon: MiniColumn },
+        'cone-funnel': { range: true, pivot: false, enterprise: true, icon: MiniColumn },
+        pyramid: { range: true, pivot: false, enterprise: true, icon: MiniColumn },
+    },
 };
 
 const DEFAULT_CHART_GROUPS: ChartGroupsDef = {

@@ -350,6 +350,8 @@ class PivotMenuItemMapper implements MenuItemBuilder<PivotMenuOptionName> {
                 rangeArea: null,
                 boxPlot: null,
             },
+            // Funnel charts do not currently support pivot mode
+            funnelGroup: null,
             // Polar charts do not support pivot mode
             polarGroup: null,
             // Specialized charts do not currently support pivot mode
@@ -400,7 +402,10 @@ export type RangeMenuOptionName =
     | 'rangeHeatmap'
     | 'rangeCombinationChart'
     | 'rangeColumnLineCombo'
-    | 'rangeAreaColumnCombo';
+    | 'rangeAreaColumnCombo'
+    | 'rangeFunnel'
+    | 'rangeConeFunnel'
+    | 'rangePyramid';
 
 class RangeMenuItemMapper implements MenuItemBuilder<RangeMenuOptionName> {
     constructor(
@@ -602,6 +607,12 @@ class RangeMenuItemMapper implements MenuItemBuilder<RangeMenuOptionName> {
                 _key: 'rangeSpecializedChart',
                 heatmap: 'rangeHeatmap',
                 waterfall: 'rangeWaterfall',
+            },
+            funnelGroup: {
+                _key: 'rangeFunnel',
+                funnel: 'rangeFunnel',
+                'cone-funnel': 'rangeConeFunnel',
+                pyramid: 'rangePyramid',
             },
             combinationGroup: {
                 _key: 'rangeCombinationChart',
