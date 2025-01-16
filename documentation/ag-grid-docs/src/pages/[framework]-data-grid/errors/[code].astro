@@ -68,7 +68,7 @@ const getTabItemSlug = (id: string) => `${DOCS_TAB_ITEM_ID_PREFIX}${id}`;
 const topHeading = getTopHeading(title);
 const fullErrorTextHeading = { slug: getTabItemSlug('full-error-text'), depth: 2, text: 'Full Error Text' };
 const relatedDocPages = { slug: getTabItemSlug('related-doc-pages'), depth: 2, text: 'Related Doc Pages' };
-const headings = errorPage
+let headings = errorPage
     ? await getHeadings({
           title,
           pageName,
@@ -76,9 +76,13 @@ const headings = errorPage
           framework,
           getTabItemSlug,
       })
-    : [topHeading];
+    : [topHeading, fullErrorTextHeading];
 
-headings.push(fullErrorTextHeading);
+if (errorPage) {
+    // insert FullErrorTextHandling in second position as the errorPage brings its own top heading
+    headings = [headings[0], fullErrorTextHeading, ...headings.slice(1)];
+}
+
 if (errorLinks.length > 0) {
     headings.push(relatedDocPages);
 }
