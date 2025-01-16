@@ -3,7 +3,7 @@ import { ClientSideRowModelModule } from 'ag-grid-community';
 import { RowGroupingModule } from 'ag-grid-enterprise';
 
 import type { GridRowsOptions, RowSnapshot } from '../test-utils';
-import { GridRows, TestGridsManager, getRowsSnapshot } from '../test-utils';
+import { GridRows, TestGridsManager, asyncSetTimeout, getRowsSnapshot } from '../test-utils';
 
 describe('ag-grid grouping simple data', () => {
     const gridsManager = new TestGridsManager({
@@ -40,21 +40,22 @@ describe('ag-grid grouping simple data', () => {
         const api = gridsManager.createGrid('myGrid', gridOptions);
 
         const gridRows = new GridRows(api, 'data', {
-            columns: ['country', 'year', 'athlete'],
+            columns: true,
+            checkDom: true,
         });
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
-            ├─┬ filler id:row-group-country-Ireland
-            │ ├─┬ filler id:row-group-country-Ireland-year-2000
-            │ │ ├── LEAF id:0 country:"Ireland" year:"2000" athlete:"John Von Neumann"
-            │ │ └── LEAF id:1 country:"Ireland" year:"2000" athlete:"Ada Lovelace"
-            │ └─┬ filler id:row-group-country-Ireland-year-2001
-            │ · └── LEAF id:2 country:"Ireland" year:"2001" athlete:"Alan Turing"
-            └─┬ filler id:row-group-country-Italy
-            · ├─┬ filler id:row-group-country-Italy-year-2000
-            · │ └── LEAF id:3 country:"Italy" year:"2000" athlete:"Donald Knuth"
-            · └─┬ filler id:row-group-country-Italy-year-2001
-            · · └── LEAF id:4 country:"Italy" year:"2001" athlete:"Marvin Minsky"
+            ├─┬ filler id:row-group-country-Ireland ag-Grid-AutoColumn:"Ireland"
+            │ ├─┬ filler id:row-group-country-Ireland-year-2000 ag-Grid-AutoColumn:"2000"
+            │ │ ├── LEAF id:0 ag-Grid-AutoColumn:undefined country:"Ireland" year:"2000" athlete:"John Von Neumann"
+            │ │ └── LEAF id:1 ag-Grid-AutoColumn:undefined country:"Ireland" year:"2000" athlete:"Ada Lovelace"
+            │ └─┬ filler id:row-group-country-Ireland-year-2001 ag-Grid-AutoColumn:"2001"
+            │ · └── LEAF id:2 ag-Grid-AutoColumn:undefined country:"Ireland" year:"2001" athlete:"Alan Turing"
+            └─┬ filler id:row-group-country-Italy ag-Grid-AutoColumn:"Italy"
+            · ├─┬ filler id:row-group-country-Italy-year-2000 ag-Grid-AutoColumn:"2000"
+            · │ └── LEAF id:3 ag-Grid-AutoColumn:undefined country:"Italy" year:"2000" athlete:"Donald Knuth"
+            · └─┬ filler id:row-group-country-Italy-year-2001 ag-Grid-AutoColumn:"2001"
+            · · └── LEAF id:4 ag-Grid-AutoColumn:undefined country:"Italy" year:"2001" athlete:"Marvin Minsky"
         `);
 
         const rows = gridRows.rowNodes;
@@ -452,6 +453,195 @@ describe('ag-grid grouping simple data', () => {
             · │ └── LEAF id:3 name:"Donald Knuth" country:"Italy" year:2000
             · └─┬ filler id:row-group-country-Italy-year-2001
             · · └── LEAF id:4 name:"Marvin Minsky" country:"Italy" year:2001
+        `);
+    });
+
+    test('initializing columns after rowData with grouping module registered', async () => {
+        let rowDataUpdated = 0;
+        let modelUpdated = 0;
+        const gridOptions: GridOptions = {
+            getRowId: (params) => params.data.id,
+            onRowDataUpdated: () => ++rowDataUpdated,
+            onModelUpdated: () => ++modelUpdated,
+        };
+
+        const gridRowsOptions: GridRowsOptions = {
+            checkDom: true,
+            columns: true,
+        };
+
+        const api = gridsManager.createGrid('myGrid', gridOptions);
+
+        await asyncSetTimeout(1);
+        expect(rowDataUpdated).toBe(0);
+        expect(modelUpdated).toBe(0);
+
+        api.setGridOption('rowData', [
+            { id: '1', value: 1, x: 10 },
+            { id: '2', value: 2, x: 20 },
+            { id: '3', value: 3, x: 30 },
+        ]);
+
+        await asyncSetTimeout(1);
+        expect(rowDataUpdated).toBe(0);
+        expect(modelUpdated).toBe(0);
+
+        await new GridRows(api, 'empty', gridRowsOptions).check('empty');
+
+        api.setGridOption('columnDefs', [{ field: 'value' }]);
+
+        await asyncSetTimeout(1);
+        expect(rowDataUpdated).toBe(1);
+        expect(modelUpdated).toBe(1);
+
+        await new GridRows(api, 'data', gridRowsOptions).check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:1 value:1
+            ├── LEAF id:2 value:2
+            └── LEAF id:3 value:3
+        `);
+
+        api.setGridOption('columnDefs', [{ field: 'value' }, { field: 'x' }]);
+
+        await asyncSetTimeout(1);
+        expect(rowDataUpdated).toBe(1);
+        expect(modelUpdated).toBe(2);
+
+        await new GridRows(api, 'data', gridRowsOptions).check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:1 value:1 x:10
+            ├── LEAF id:2 value:2 x:20
+            └── LEAF id:3 value:3 x:30
+        `);
+
+        api.setGridOption('rowData', [
+            { id: '1', value: 1, x: 10 },
+            { id: '4', value: 4, x: 40 },
+        ]);
+
+        await asyncSetTimeout(1);
+        expect(rowDataUpdated).toBe(2);
+        expect(modelUpdated).toBe(3);
+
+        api.setGridOption('columnDefs', [{ field: 'x' }, { field: 'value' }]);
+
+        await asyncSetTimeout(1);
+        expect(rowDataUpdated).toBe(2);
+        expect(modelUpdated).toBe(4);
+
+        await new GridRows(api, 'data', gridRowsOptions).check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:1 x:10 value:1
+            └── LEAF id:4 x:40 value:4
+        `);
+    });
+
+    test('initializing columns after rowData with simple grouping', async () => {
+        let rowDataUpdated = 0;
+        let modelUpdated = 0;
+        const gridOptions: GridOptions = {
+            groupDefaultExpanded: -1,
+            getRowId: (params) => params.data.id,
+            onRowDataUpdated: () => ++rowDataUpdated,
+            onModelUpdated: () => ++modelUpdated,
+        };
+
+        const gridRowsOptions: GridRowsOptions = {
+            checkDom: true,
+            columns: true,
+        };
+
+        const api = gridsManager.createGrid('myGrid', gridOptions);
+
+        await asyncSetTimeout(1);
+        expect(rowDataUpdated).toBe(0);
+        expect(modelUpdated).toBe(0);
+
+        api.setGridOption('rowData', [
+            { id: '0', country: 'Ireland', year: '2000', sport: 'Sailing', athlete: 'John Von Neumann' },
+            { id: '1', country: 'Ireland', year: '2000', sport: 'Soccer', athlete: 'Ada Lovelace' },
+            { id: '2', country: 'Ireland', year: '2001', sport: 'Football', athlete: 'Alan Turing' },
+            { id: '3', country: 'Italy', year: '2000', sport: 'Soccer', athlete: 'Donald Knuth' },
+            { id: '4', country: 'Italy', year: '2001', sport: 'Football', athlete: 'Marvin Minsky' },
+        ]);
+
+        await asyncSetTimeout(1);
+        expect(rowDataUpdated).toBe(0);
+        expect(modelUpdated).toBe(0);
+
+        await new GridRows(api, 'empty', gridRowsOptions).check('empty');
+
+        api.setGridOption('columnDefs', [
+            { field: 'country', rowGroup: true, hide: true },
+            { field: 'year', rowGroup: true, hide: true },
+            { field: 'athlete' },
+        ]);
+
+        await asyncSetTimeout(1);
+        expect(rowDataUpdated).toBe(1);
+        expect(modelUpdated).toBe(1);
+
+        await new GridRows(api, 'data', gridRowsOptions).check(`
+            ROOT id:ROOT_NODE_ID
+            ├─┬ filler id:row-group-country-Ireland ag-Grid-AutoColumn:"Ireland"
+            │ ├─┬ filler id:row-group-country-Ireland-year-2000 ag-Grid-AutoColumn:"2000"
+            │ │ ├── LEAF id:0 ag-Grid-AutoColumn:undefined country:"Ireland" year:"2000" athlete:"John Von Neumann"
+            │ │ └── LEAF id:1 ag-Grid-AutoColumn:undefined country:"Ireland" year:"2000" athlete:"Ada Lovelace"
+            │ └─┬ filler id:row-group-country-Ireland-year-2001 ag-Grid-AutoColumn:"2001"
+            │ · └── LEAF id:2 ag-Grid-AutoColumn:undefined country:"Ireland" year:"2001" athlete:"Alan Turing"
+            └─┬ filler id:row-group-country-Italy ag-Grid-AutoColumn:"Italy"
+            · ├─┬ filler id:row-group-country-Italy-year-2000 ag-Grid-AutoColumn:"2000"
+            · │ └── LEAF id:3 ag-Grid-AutoColumn:undefined country:"Italy" year:"2000" athlete:"Donald Knuth"
+            · └─┬ filler id:row-group-country-Italy-year-2001 ag-Grid-AutoColumn:"2001"
+            · · └── LEAF id:4 ag-Grid-AutoColumn:undefined country:"Italy" year:"2001" athlete:"Marvin Minsky"
+        `);
+    });
+
+    test('initializing columns after initializing with a transaction with grouping module registered', async () => {
+        let rowDataUpdated = 0;
+        let modelUpdated = 0;
+        const gridOptions: GridOptions = {
+            getRowId: (params) => params.data.id,
+            onRowDataUpdated: () => ++rowDataUpdated,
+            onModelUpdated: () => ++modelUpdated,
+        };
+
+        const gridRowsOptions: GridRowsOptions = {
+            checkDom: true,
+            columns: ['value'],
+        };
+
+        const api = gridsManager.createGrid('myGrid', gridOptions);
+
+        api.applyTransaction({
+            add: [
+                { id: '1', value: 0 },
+                { id: '2', value: 2 },
+            ],
+        });
+
+        api.applyTransaction({
+            update: [{ id: '1', value: 1 }],
+            add: [{ id: '3', value: 3 }],
+        });
+
+        await asyncSetTimeout(1);
+        expect(rowDataUpdated).toBe(0);
+        expect(modelUpdated).toBe(0);
+
+        await new GridRows(api, 'data', gridRowsOptions).check('empty');
+
+        api.setGridOption('columnDefs', [{ field: 'value' }, { field: 'value' }]);
+
+        await asyncSetTimeout(1);
+        expect(rowDataUpdated).toBe(1);
+        expect(modelUpdated).toBe(1);
+
+        await new GridRows(api, 'data', gridRowsOptions).check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:1 value:1
+            ├── LEAF id:2 value:2
+            └── LEAF id:3 value:3
         `);
     });
 });

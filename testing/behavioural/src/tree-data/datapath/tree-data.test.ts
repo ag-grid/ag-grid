@@ -222,8 +222,6 @@ describe('ag-grid tree data', () => {
             rowData: rowData0,
         });
 
-        console.log('\nUPDATE rowData and treeData together\n');
-
         api.updateGridOptions({
             rowData: rowData1,
             treeData: true,
@@ -242,6 +240,127 @@ describe('ag-grid tree data', () => {
             └─┬ C filler id:row-group-0-C ag-Grid-AutoColumn:"C"
             · └─┬ D GROUP id:3 ag-Grid-AutoColumn:"D" x:"d"
             · · └── E LEAF id:1 ag-Grid-AutoColumn:"E" x:"e"
+        `);
+    });
+
+    test('initializing columns after rowData with tree data', async () => {
+        let rowDataUpdated = 0;
+        let modelUpdated = 0;
+        const gridOptions: GridOptions = {
+            groupDefaultExpanded: -1,
+            treeData: true,
+            getDataPath: (data) => data.orgHierarchy,
+            getRowId: (params) => params.data.id,
+            onRowDataUpdated: () => ++rowDataUpdated,
+            onModelUpdated: () => ++modelUpdated,
+        };
+
+        const gridRowsOptions: GridRowsOptions = {
+            checkDom: true,
+            columns: true,
+        };
+
+        const api = gridsManager.createGrid('myGrid', gridOptions);
+
+        await asyncSetTimeout(1);
+        expect(rowDataUpdated).toBe(0);
+        expect(modelUpdated).toBe(0);
+
+        api.setGridOption('rowData', [
+            { id: 'a', orgHierarchy: ['A'] },
+            { id: 'b', orgHierarchy: ['A', 'B'] },
+            { id: 'd', orgHierarchy: ['C', 'D'] },
+            { id: 'h', orgHierarchy: ['E', 'F', 'G', 'H'] },
+        ]);
+
+        await asyncSetTimeout(1);
+        expect(rowDataUpdated).toBe(0);
+        expect(modelUpdated).toBe(0);
+
+        await new GridRows(api, 'empty', gridRowsOptions).check('empty');
+
+        api.setGridOption('columnDefs', [
+            { field: 'groupType', valueGetter: (params) => (params.data ? 'Provided' : 'Filler') },
+        ]);
+
+        await asyncSetTimeout(1);
+        expect(rowDataUpdated).toBe(1);
+        expect(modelUpdated).toBe(1);
+
+        await new GridRows(api, 'data', gridRowsOptions).check(`
+            ROOT id:ROOT_NODE_ID groupType:"Filler"
+            ├─┬ A GROUP id:a ag-Grid-AutoColumn:"A" groupType:"Provided"
+            │ └── B LEAF id:b ag-Grid-AutoColumn:"B" groupType:"Provided"
+            ├─┬ C filler id:row-group-0-C ag-Grid-AutoColumn:"C" groupType:"Filler"
+            │ └── D LEAF id:d ag-Grid-AutoColumn:"D" groupType:"Provided"
+            └─┬ E filler id:row-group-0-E ag-Grid-AutoColumn:"E" groupType:"Filler"
+            · └─┬ F filler id:row-group-0-E-1-F ag-Grid-AutoColumn:"F" groupType:"Filler"
+            · · └─┬ G filler id:row-group-0-E-1-F-2-G ag-Grid-AutoColumn:"G" groupType:"Filler"
+            · · · └── H LEAF id:h ag-Grid-AutoColumn:"H" groupType:"Provided"
+        `);
+    });
+
+    test('initializing columns after transactions initialization with tree data', async () => {
+        let rowDataUpdated = 0;
+        let modelUpdated = 0;
+        const gridOptions: GridOptions = {
+            groupDefaultExpanded: -1,
+            treeData: true,
+            getDataPath: (data) => data.orgHierarchy,
+            getRowId: (params) => params.data.id,
+            onRowDataUpdated: () => ++rowDataUpdated,
+            onModelUpdated: () => ++modelUpdated,
+        };
+
+        const gridRowsOptions: GridRowsOptions = {
+            checkDom: true,
+            columns: true,
+        };
+
+        const api = gridsManager.createGrid('myGrid', gridOptions);
+
+        await asyncSetTimeout(1);
+        expect(rowDataUpdated).toBe(0);
+        expect(modelUpdated).toBe(0);
+
+        api.applyTransaction({
+            add: [
+                { id: 'a', orgHierarchy: ['A'] },
+                { id: 'b', orgHierarchy: ['A', 'B'] },
+            ],
+        });
+
+        api.applyTransaction({
+            add: [
+                { id: 'd', orgHierarchy: ['C', 'D'] },
+                { id: 'h', orgHierarchy: ['E', 'F', 'G', 'H'] },
+            ],
+        });
+
+        await asyncSetTimeout(1);
+        expect(rowDataUpdated).toBe(0);
+        expect(modelUpdated).toBe(0);
+
+        await new GridRows(api, 'empty', gridRowsOptions).check('empty');
+
+        api.setGridOption('columnDefs', [
+            { field: 'groupType', valueGetter: (params) => (params.data ? 'Provided' : 'Filler') },
+        ]);
+
+        await asyncSetTimeout(1);
+        expect(rowDataUpdated).toBe(1);
+        expect(modelUpdated).toBe(1);
+
+        await new GridRows(api, 'data', gridRowsOptions).check(`
+            ROOT id:ROOT_NODE_ID groupType:"Filler"
+            ├─┬ A GROUP id:a ag-Grid-AutoColumn:"A" groupType:"Provided"
+            │ └── B LEAF id:b ag-Grid-AutoColumn:"B" groupType:"Provided"
+            ├─┬ C filler id:row-group-0-C ag-Grid-AutoColumn:"C" groupType:"Filler"
+            │ └── D LEAF id:d ag-Grid-AutoColumn:"D" groupType:"Provided"
+            └─┬ E filler id:row-group-0-E ag-Grid-AutoColumn:"E" groupType:"Filler"
+            · └─┬ F filler id:row-group-0-E-1-F ag-Grid-AutoColumn:"F" groupType:"Filler"
+            · · └─┬ G filler id:row-group-0-E-1-F-2-G ag-Grid-AutoColumn:"G" groupType:"Filler"
+            · · · └── H LEAF id:h ag-Grid-AutoColumn:"H" groupType:"Provided"
         `);
     });
 });

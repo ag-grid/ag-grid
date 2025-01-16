@@ -227,10 +227,21 @@ export class AgRichSelectList<TValue, TEventType extends string = AgRichSelectLi
             return [];
         }
 
+        const { valueFormatter } = this.params;
         const positions: number[] = [];
 
-        for (let i = 0; i < values.length; i++) {
-            const idx = currentList.indexOf(values[i]);
+        const isObject = typeof values[0] === 'object';
+        const formattedList = currentList.map(valueFormatter!);
+
+        for (const value of values) {
+            let idx = -1;
+
+            if (isObject) {
+                idx = formattedList.indexOf(valueFormatter!(value));
+            } else {
+                idx = currentList.indexOf(value);
+            }
+
             if (idx >= 0) {
                 positions.push(idx);
             }

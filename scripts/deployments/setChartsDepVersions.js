@@ -25,7 +25,9 @@ function updateDependency(fileContents, property, chartsVersion) {
     return updated;
 }
 
-const packageRootDirectories = JSON.parse(fs.readFileSync('package.json', 'utf-8')).workspaces.packages;
+const packageRootDirectories = JSON.parse(fs.readFileSync('package.json', 'utf-8')).workspaces.packages.filter(
+    (d) => !d.startsWith('external/')
+);
 
 const processPackageFile = (packageJsonFilename) => {
     if (fs.existsSync(packageJsonFilename)) {

@@ -8,7 +8,7 @@ const pipe =
         fns.reduce((v, f) => f(v), x);
 
 const ROOT_PACKAGE_JSON = '../../package.json';
-const packageDirectories = require(ROOT_PACKAGE_JSON).workspaces.packages;
+const packageDirectories = require(ROOT_PACKAGE_JSON).workspaces.packages.filter((d) => !d.startsWith('external/'));
 
 if (process.argv.length < 4) {
     console.log('Usage: node scripts/deployments/versionModules.js [Grid Version] [Charts Version]');
