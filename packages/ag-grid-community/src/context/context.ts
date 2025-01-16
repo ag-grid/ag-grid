@@ -91,6 +91,8 @@ import type { OverlayService } from '../rendering/overlays/overlayService';
 import type { RowAutoHeightService } from '../rendering/row/rowAutoHeightService';
 import type { RowContainerHeightService } from '../rendering/rowContainerHeightService';
 import type { RowRenderer } from '../rendering/rowRenderer';
+import type { RowSpanService } from '../rendering/spanning/rowSpanService';
+import type { SpannedCellRenderer } from '../rendering/spanning/spannedCellRenderer';
 import type { RowNodeSorter } from '../sort/rowNodeSorter';
 import type { SortService } from '../sort/sortService';
 import type { CellStyleService } from '../styling/cellStyleService';
@@ -301,6 +303,8 @@ export interface CoreBeanCollection {
     rowChildrenSvc?: IRowChildrenService;
     footerSvc?: IFooterService;
     touchSvc?: TouchService;
+    rowSpanSvc?: RowSpanService;
+    spannedCellRenderer?: SpannedCellRenderer;
 }
 
 export type BeanCollection = CoreBeanCollection & {
@@ -483,4 +487,6 @@ export type BeanName =
     | 'validation'
     | 'csrmNodeSvc'
     | 'csrmPathTreeNodeSvc'
-    | 'csrmChildrenTreeNodeSvc';
+    | 'csrmChildrenTreeNodeSvc'
+    | 'rowSpanSvc'
+    | 'spannedCellRenderer';

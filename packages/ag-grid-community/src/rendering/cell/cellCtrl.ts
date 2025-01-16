@@ -30,6 +30,7 @@ import { _makeNull } from '../../utils/generic';
 import type { ICellRenderer, ICellRendererParams } from '../cellRenderers/iCellRenderer';
 import type { DndSourceComp } from '../dndSourceComp';
 import type { RowCtrl } from '../row/rowCtrl';
+import type { CellSpan } from '../spanning/rowSpanCache';
 import { CellKeyboardListenerFeature } from './cellKeyboardListenerFeature';
 import { CellMouseListenerFeature } from './cellMouseListenerFeature';
 import { CellPositionFeature } from './cellPositionFeature';
@@ -86,7 +87,7 @@ export class CellCtrl extends BeanStub {
     public comp: ICellComp;
     public editCompDetails?: UserCompDetails;
 
-    private focusEventToRestore: CellFocusedEvent | undefined;
+    protected focusEventToRestore: CellFocusedEvent | undefined;
 
     public printLayout: boolean;
 
@@ -163,6 +164,10 @@ export class CellCtrl extends BeanStub {
         }
     }
 
+    public getCellSpan(): CellSpan | undefined {
+        return undefined;
+    }
+
     private removeFeatures(): void {
         const context = this.beans.context;
         this.positionFeature = context.destroyBean(this.positionFeature);
@@ -235,12 +240,7 @@ export class CellCtrl extends BeanStub {
     }
 
     private setupAutoHeight(eCellWrapper: HTMLElement | undefined, compBean: BeanStub): void {
-        this.isAutoHeight = this.column.isAutoHeight();
-        if (!this.isAutoHeight || !eCellWrapper) {
-            return;
-        }
-
-        this.beans.rowAutoHeight?.setupCellAutoHeight(this, eCellWrapper, compBean);
+        this.isAutoHeight = this.beans.rowAutoHeight?.setupCellAutoHeight(this, eCellWrapper, compBean) ?? false;
     }
 
     public getCellAriaRole(): string {
@@ -601,9 +601,7 @@ export class CellCtrl extends BeanStub {
 
     public focusCell(forceBrowserFocus = false): void {
         this.beans.focusSvc.setFocusedCell({
-            rowIndex: this.cellPosition.rowIndex,
-            column: this.column,
-            rowPinned: this.rowNode.rowPinned,
+            ...this.getFocusedCellPosition(),
             forceBrowserFocus,
         });
     }
@@ -641,13 +639,17 @@ export class CellCtrl extends BeanStub {
         this.comp.addOrRemoveCssClass(CSS_CELL_LAST_LEFT_PINNED, lastLeftPinned);
     }
 
+    protected isCellFocused(): boolean {
+        return this.beans.focusSvc.isCellFocused(this.cellPosition);
+    }
+
     public onCellFocused(event?: CellFocusedEvent): void {
         const { beans } = this;
         if (_isCellFocusSuppressed(beans)) {
             return;
         }
-        const cellFocused = beans.focusSvc.isCellFocused(this.cellPosition);
 
+        const cellFocused = this.isCellFocused();
         if (!this.comp) {
             if (cellFocused && event?.forceBrowserFocus) {
                 // The cell comp has not been rendered yet, but the browser focus is being forced for this cell
@@ -847,4 +849,15 @@ export class CellCtrl extends BeanStub {
         this.onEditorAttachedFuncs.forEach((func) => func());
         this.onEditorAttachedFuncs = [];
     }
+
+    public setFocusedCellPosition(cellPosition: CellPosition): void {
+        // noop, used by spannedCellCtrl
+    }
+
+    public getFocusedCellPosition() {
+        return this.cellPosition;
+    }
+
+    // used by spannedCellCtrl
+    public refreshAriaRowIndex(): void {}
 }

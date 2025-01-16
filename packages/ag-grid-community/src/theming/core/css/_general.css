@@ -92,6 +92,15 @@
     flex: 1 1 auto;
 }
 
+.ag-viewport {
+    position: relative;
+}
+
+.ag-spanning-container {
+    position: absolute;
+    top: 0;
+}
+
 .ag-body-viewport,
 .ag-center-cols-viewport,
 .ag-header-viewport,

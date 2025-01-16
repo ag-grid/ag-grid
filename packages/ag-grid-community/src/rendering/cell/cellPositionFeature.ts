@@ -5,6 +5,7 @@ import type { RowNode } from '../../entities/rowNode';
 import { _getRowHeightAsNumber } from '../../gridOptionsUtils';
 import { _areEqual, _last } from '../../utils/array';
 import { _missing } from '../../utils/generic';
+import type { CellSpan } from '../spanning/rowSpanCache';
 import type { CellCtrl } from './cellCtrl';
 
 /**
@@ -42,15 +43,34 @@ export class CellPositionFeature extends BeanStub {
 
     public setComp(eGui: HTMLElement): void {
         this.eGui = eGui;
+        const cellSpan = this.cellCtrl.getCellSpan();
 
         // add event handlers only after GUI is attached,
         // so we don't get events before we are ready
-        this.setupColSpan();
-        this.setupRowSpan();
+        if (!cellSpan) {
+            this.setupColSpan();
+            this.setupRowSpan();
+        }
 
         this.onLeftChanged();
         this.onWidthChanged();
-        this.applyRowSpan();
+        if (!cellSpan) {
+            this._legacyApplyRowSpan();
+        }
+
+        if (cellSpan) {
+            this.refreshSpanHeight(cellSpan);
+            this.addManagedListeners(this.beans.eventSvc, {
+                modelUpdated: this.refreshSpanHeight.bind(this, cellSpan),
+            });
+        }
+    }
+
+    private refreshSpanHeight(cellSpan: CellSpan) {
+        const spanHeight = cellSpan.getCellHeight();
+        if (spanHeight != null) {
+            this.eGui.style.height = `${spanHeight}px`;
+        }
     }
 
     private onNewColumnsLoaded(): void {
@@ -60,7 +80,7 @@ export class CellPositionFeature extends BeanStub {
         }
 
         this.rowSpan = rowSpan;
-        this.applyRowSpan(true);
+        this._legacyApplyRowSpan(true);
     }
 
     private onDisplayColumnsChanged(): void {
@@ -172,7 +192,7 @@ export class CellPositionFeature extends BeanStub {
         return leftWidth + (leftPosition || 0);
     }
 
-    private applyRowSpan(force?: boolean): void {
+    private _legacyApplyRowSpan(force?: boolean): void {
         if (this.rowSpan === 1 && !force) {
             return;
         }

@@ -9,8 +9,12 @@ import {
 
 ModuleRegistry.registerModules([CellSpanModule, ClientSideRowModelModule, ValidationModule /* Development Only */]);
 
+const customSpanFunc = (valueA: any, valueB: any) => {
+    return valueA != 'Algeria' && valueA === valueB;
+};
+
 const columnDefs: ColDef[] = [
-    { field: 'country', spanRows: true, sort: 'asc' },
+    { field: 'country', spanRows: customSpanFunc, sort: 'asc' },
     { field: 'year', spanRows: true, sort: 'asc' },
     { field: 'sport', spanRows: true, sort: 'asc' },
     { field: 'athlete' },

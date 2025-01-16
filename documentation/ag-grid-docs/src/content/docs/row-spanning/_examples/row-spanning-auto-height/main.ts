@@ -3,16 +3,22 @@ import {
     CellSpanModule,
     ClientSideRowModelModule,
     ModuleRegistry,
+    RowAutoHeightModule,
     ValidationModule,
     createGrid,
 } from 'ag-grid-community';
 
-ModuleRegistry.registerModules([CellSpanModule, ClientSideRowModelModule, ValidationModule /* Development Only */]);
+ModuleRegistry.registerModules([
+    CellSpanModule,
+    ClientSideRowModelModule,
+    RowAutoHeightModule,
+    ValidationModule /* Development Only */,
+]);
+
+const lorem = `Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.`;
 
 const columnDefs: ColDef[] = [
-    { field: 'country', spanRows: true, sort: 'asc' },
-    { field: 'year', spanRows: true, sort: 'asc' },
-    { field: 'sport', spanRows: true, sort: 'asc' },
+    { field: 'lorem', spanRows: true, wrapText: true, autoHeight: true, minWidth: 300 },
     { field: 'athlete' },
     { field: 'age' },
     { field: 'total' },
@@ -33,7 +39,16 @@ document.addEventListener('DOMContentLoaded', function () {
     const registry = ModuleRegistry;
     registry.registerModules([CellSpanModule]);
     gridApi = createGrid(gridDiv, gridOptions);
+
     fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
         .then((response) => response.json())
-        .then((data: IOlympicData[]) => gridApi!.setGridOption('rowData', data));
+        .then((data: any[]) => {
+            data.forEach((row, i) => {
+                if (i % 3 === 0) {
+                    return;
+                }
+                row.lorem = lorem;
+            });
+            gridApi!.setGridOption('rowData', data);
+        });
 });

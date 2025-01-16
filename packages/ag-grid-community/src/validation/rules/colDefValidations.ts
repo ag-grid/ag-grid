@@ -204,6 +204,29 @@ const COLUMN_DEFINITION_VALIDATIONS: () => Validations<ColDef | ColGroupDef> = (
             return null;
         },
     },
+    spanRows: {
+        module: 'CellSpan',
+        dependencies: {
+            editable: { required: [false, undefined] },
+            rowDrag: { required: [false, undefined] },
+            colSpan: { required: [false, undefined] },
+            rowSpan: { required: [false, undefined] },
+        },
+        validate: (_options, { rowSelection, cellSelection, suppressRowTransform }) => {
+            if (typeof rowSelection === 'object') {
+                if (rowSelection?.mode === 'singleRow' && rowSelection?.enableClickSelection) {
+                    return 'spanRows is not supported with rowSelection.clickSelection';
+                }
+            }
+            if (cellSelection) {
+                return 'spanRows is not supported with cellSelection.';
+            }
+            if (suppressRowTransform) {
+                return 'spanRows is not supported with suppressRowTransform.';
+            }
+            return null;
+        },
+    },
 });
 
 type ColKey = keyof ColDef | keyof ColGroupDef;
@@ -328,6 +351,7 @@ const colDefPropertyMap: Record<ColKey, undefined> = {
     suppressHeaderKeyboardEvent: undefined,
     colSpan: undefined,
     rowSpan: undefined,
+    spanRows: undefined,
     getQuickFilterText: undefined,
     onCellValueChanged: undefined,
     onCellClicked: undefined,

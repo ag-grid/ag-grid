@@ -151,7 +151,8 @@ export type CommunityModuleName =
     | 'Tooltip'
     | 'UndoRedoEdit'
     | 'Validation'
-    | 'ValueCache';
+    | 'ValueCache'
+    | 'CellSpan';
 
 export type EnterpriseModuleName =
     | 'AdvancedFilter'

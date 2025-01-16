@@ -7,7 +7,6 @@ import type { ServerSideTransaction, ServerSideTransactionResult } from './serve
 export interface IServerSideRowModel<TData = any> extends IRowModel {
     refreshStore(params?: RefreshServerSideParams): void;
     onRowHeightChanged(): void;
-    onRowHeightChangedDebounced(): void;
     getStoreState(): ServerSideGroupLevelState[];
     retryLoads(): void;
     expandAll(value: boolean): void;

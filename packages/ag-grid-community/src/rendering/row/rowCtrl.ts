@@ -236,7 +236,6 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         this.onSuppressCellFocusChanged(this.beans.gos.get('suppressCellFocus'));
 
         this.listenOnDomOrder(gui);
-        this.beans.rowAutoHeight?.checkAutoHeights(this.rowNode);
         this.onRowHeightChanged(gui);
         this.updateRowIndexes(gui);
         this.setFocusedClasses(gui);
@@ -467,6 +466,24 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         this.updateColumnListsPending = true;
     }
 
+    /**
+     * Overridden by SpannedRowCtrl
+     */
+    protected getNewCellCtrl(col: AgColumn): CellCtrl | undefined {
+        const isCellSpan = this.beans.rowSpanSvc?.isCellSpanning(col, this.rowNode);
+        if (isCellSpan) {
+            return undefined;
+        }
+        return new CellCtrl(col, this.rowNode, this.beans, this);
+    }
+
+    /**
+     * Overridden by SpannedRowCtrl, if span context changes cell needs rebuilt
+     */
+    protected shouldRecreateCellCtrl(cell: CellCtrl): boolean {
+        return !!this.beans.rowSpanSvc?.isCellSpanning(cell.column, this.rowNode);
+    }
+
     private createCellCtrls(
         prev: CellCtrlListAndMap,
         cols: AgColumn[],
@@ -492,9 +509,20 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
             // but it's referring to a different column instance. Happens a lot with pivot, as pivot col id's are
             // reused eg pivot_0, pivot_1 etc
             const colInstanceId = col.getInstanceId();
-            let cellCtrl = prev.map[colInstanceId];
+            let cellCtrl: CellCtrl | undefined = prev.map[colInstanceId];
+
+            // for spanned cells, if the span ref has changed, need to hard refresh cell
+            if (cellCtrl && this.shouldRecreateCellCtrl(cellCtrl)) {
+                cellCtrl.destroy();
+                cellCtrl = undefined;
+            }
+
             if (!cellCtrl) {
-                cellCtrl = new CellCtrl(col, this.rowNode, this.beans, this);
+                cellCtrl = this.getNewCellCtrl(col);
+            }
+
+            if (!cellCtrl) {
+                continue;
             }
 
             addCell(colInstanceId, cellCtrl);
@@ -710,6 +738,18 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
             columnMoved: () => this.updateColumnLists(),
         });
 
+        if (this.beans.rowSpanSvc) {
+            // when spans change, need to verify that cells are correctly skipped/rendered
+            this.addManagedListeners(this.beans.rowSpanSvc, {
+                spannedCellsUpdated: ({ pinned }) => {
+                    if (pinned && !this.rowNode.rowPinned) {
+                        return;
+                    }
+                    this.updateColumnLists();
+                },
+            });
+        }
+
         this.addDestroyFunc(() => {
             this.rowDragComps = this.destroyBeans(this.rowDragComps, this.beans.context);
             this.tooltipFeature = this.destroyBean(this.tooltipFeature, this.beans.context);
@@ -813,12 +853,15 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         this.allRowGuis.forEach((gui) => gui.rowComp.addOrRemoveCssClass('ag-row-dragging', dragging));
     }
 
+    public verifyCells(): void {
+        this.onDisplayedColumnsChanged();
+    }
+
     private onDisplayedColumnsChanged(): void {
         // we skip animations for onDisplayedColumnChanged, as otherwise the client could remove columns and
         // then set data, and any old valueGetter's (ie from cols that were removed) would still get called.
         this.updateColumnLists(true);
-
-        this.beans.rowAutoHeight?.checkAutoHeights(this.rowNode);
+        this.beans.rowAutoHeight?.requestCheckAutoHeight();
     }
 
     private onVirtualColumnsChanged(): void {
@@ -1186,7 +1229,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         return this.rowNode.rowIndex === this.beans.pageBounds.getLastRow();
     }
 
-    private refreshFirstAndLastRowStyles(): void {
+    protected refreshFirstAndLastRowStyles(): void {
         const newFirst = this.isFirstRowOnPage();
         const newLast = this.isLastRowOnPage();
 
@@ -1232,7 +1275,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         );
     }
 
-    private setStylesFromGridOptions(updateStyles: boolean, gui?: RowGui): void {
+    protected setStylesFromGridOptions(updateStyles: boolean, gui?: RowGui): void {
         if (updateStyles) {
             this.rowStyles = this.processStylesFromGridOptions();
         }
@@ -1246,7 +1289,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         return null;
     }
 
-    private getInitialRowClasses(rowContainerType: RowContainerType): string[] {
+    protected getInitialRowClasses(rowContainerType: RowContainerType): string[] {
         const pinned = this.getPinnedForContainer(rowContainerType);
         const fullWidthRow = this.isFullWidth();
         const { rowNode, beans } = this;
@@ -1319,7 +1362,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         return classes;
     }
 
-    private processStylesFromGridOptions(): RowStyle {
+    protected processStylesFromGridOptions(): RowStyle {
         // Return constant reference for React
         return this.beans.rowStyleSvc?.processStylesFromGridOptions(this.rowNode) ?? this.emptyStyle;
     }
@@ -1340,7 +1383,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         this.beans.selectionSvc?.announceAriaRowSelection(this.rowNode);
     }
 
-    private addHoverFunctionality(eGui: RowGui): void {
+    protected addHoverFunctionality(eGui: RowGui): void {
         // because we use animation frames to do this, it's possible the row no longer exists
         // by the time we get to add it
         if (!this.active) {
@@ -1408,7 +1451,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         }
     }
 
-    private onRowHeightChanged(gui?: RowGui): void {
+    protected onRowHeightChanged(gui?: RowGui): void {
         // check for exists first - if the user is resetting the row height, then
         // it will be null (or undefined) momentarily until the next time the flatten
         // stage is called where the row will then update again with a new height
@@ -1637,7 +1680,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         return res;
     }
 
-    private onRowIndexChanged(): void {
+    protected onRowIndexChanged(): void {
         // we only bother updating if the rowIndex is present. if it is not present, it means this row
         // is child of a group node, and the group node was closed, it's the only way to have no row index.
         // when this happens, row is about to be de-rendered, so we don't care, rowComp is about to die!

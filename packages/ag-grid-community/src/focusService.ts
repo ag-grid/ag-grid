@@ -23,6 +23,7 @@ import type { NavigationService } from './navigation/navigationService';
 import type { OverlayService } from './rendering/overlays/overlayService';
 import { DOM_DATA_KEY_ROW_CTRL } from './rendering/row/rowCtrl';
 import type { RowRenderer } from './rendering/rowRenderer';
+import type { CellSpan } from './rendering/spanning/rowSpanCache';
 import { _last } from './utils/array';
 import {
     _focusInto,
@@ -144,7 +145,7 @@ export class FocusService extends BeanStub implements NamedBean {
         return this.focusedCell;
     }
 
-    public shouldRestoreFocus(cell: CellPosition): boolean {
+    public shouldRestoreFocus(cell: CellPosition | CellSpan): boolean {
         if (this.isCellRestoreFocused(cell)) {
             setTimeout(() => {
                 // Clear the restore focused cell position after the timeout to avoid
@@ -176,11 +177,14 @@ export class FocusService extends BeanStub implements NamedBean {
         });
     }
 
-    private isCellRestoreFocused(cellPosition: CellPosition): boolean {
+    private isCellRestoreFocused(cellPosition: CellPosition | CellSpan): boolean {
         if (this.restoredFocusedCell == null) {
             return false;
         }
 
+        if ('cellSpan' in cellPosition) {
+            return cellPosition.doesSpanContain(this.restoredFocusedCell);
+        }
         return _areCellsEqual(cellPosition, this.restoredFocusedCell);
     }
 

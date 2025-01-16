@@ -39,6 +39,7 @@ const orderedCoreBeans: BeanName[] = [
     'headerNavigation',
     'pageBounds',
     'pagination',
+    'rowSpanSvc',
     'pageBoundsListener',
     'stickyRowSvc',
     'rowRenderer',

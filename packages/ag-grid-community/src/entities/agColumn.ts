@@ -1,5 +1,6 @@
 import type { ColumnState } from '../columns/columnStateUtils';
 import { BeanStub } from '../context/beanStub';
+import type { BeanCollection } from '../context/context';
 import type { AgEvent, ColumnEvent, ColumnEventType } from '../events';
 import type {
     Column,
@@ -119,6 +120,11 @@ export class AgColumn<TValue = any>
         this.colIdSanitised = _escapeString(colId)!;
     }
 
+    public override destroy() {
+        super.destroy();
+        this.beans.rowSpanSvc?.deregister(this);
+    }
+
     public getInstanceId(): ColumnInstanceId {
         return this.instanceId;
     }
@@ -149,11 +155,16 @@ export class AgColumn<TValue = any>
         userProvidedColDef: ColDef<any, TValue> | null,
         source: ColumnEventType
     ): void {
+        const colSpanChanged = colDef.spanRows !== this.colDef.spanRows;
         this.colDef = colDef;
         this.userProvidedColDef = userProvidedColDef;
         this.initMinAndMaxWidths();
         this.initDotNotation();
         this.initTooltip();
+        if (colSpanChanged) {
+            this.beans.rowSpanSvc?.deregister(this);
+            this.initRowSpan();
+        }
         this.dispatchColEvent('colDefChanged', source);
     }
 
@@ -180,6 +191,8 @@ export class AgColumn<TValue = any>
         this.initDotNotation();
 
         this.initTooltip();
+
+        this.initRowSpan();
     }
 
     private initDotNotation(): void {
@@ -201,6 +214,12 @@ export class AgColumn<TValue = any>
 
     private initTooltip(): void {
         this.beans.tooltipSvc?.initCol(this);
+    }
+
+    private initRowSpan(): void {
+        if (this.colDef.spanRows) {
+            this.beans.rowSpanSvc?.register(this);
+        }
     }
 
     public resetActualWidth(source: ColumnEventType): void {

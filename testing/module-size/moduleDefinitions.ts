@@ -45,8 +45,9 @@ export const AllGridCommunityModules: Record<`${CommunityModuleName}Module`, num
     TextFilterModule: 104,
     TooltipModule: 22.24,
     UndoRedoEditModule: 23.5,
-    ValidationModule: 72,
+    ValidationModule: 74.31,
     ValueCacheModule: 0.65,
+    CellSpanModule: 6.99,
 };
 export const AllEnterpriseModules: Record<`${EnterpriseModuleName}Module`, number> = {
     AdvancedFilterModule: 231.28,

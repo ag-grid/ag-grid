@@ -14,7 +14,7 @@ import { _isElementChildOfClass, _isVerticalScrollShowing } from '../utils/dom';
 import type { PopupService } from '../widgets/popupService';
 import { GridBodyScrollFeature } from './gridBodyScrollFeature';
 import { _isEventFromThisGrid } from './mouseEventUtils';
-import { _getRowContainerOptions } from './rowContainer/rowContainerCtrl';
+import { _getRowContainerClass, _getRowViewportClass } from './rowContainer/rowContainerCtrl';
 import type { ScrollVisibleService } from './scrollVisibleService';
 
 export type RowAnimationCssClasses = 'ag-row-animation' | 'ag-row-no-animation';
@@ -99,17 +99,13 @@ export class GridBodyCtrl extends BeanStub {
         this.eStickyTop = eStickyTop;
         this.eStickyBottom = eStickyBottom;
 
-        this.eCenterColsViewport = eBodyViewport.querySelector(
-            `.${_getRowContainerOptions('center').viewport}`
-        ) as HTMLElement;
-        this.eFullWidthContainer = eBodyViewport.querySelector(
-            `.${_getRowContainerOptions('fullWidth').container}`
-        ) as HTMLElement;
+        this.eCenterColsViewport = eBodyViewport.querySelector(`.${_getRowViewportClass('center')}`) as HTMLElement;
+        this.eFullWidthContainer = eBodyViewport.querySelector(`.${_getRowContainerClass('fullWidth')}`) as HTMLElement;
         this.eStickyTopFullWidthContainer = eStickyTop.querySelector(
-            `.${_getRowContainerOptions('stickyTopFullWidth').container}`
+            `.${_getRowContainerClass('stickyTopFullWidth')}`
         ) as HTMLElement;
         this.eStickyBottomFullWidthContainer = eStickyBottom.querySelector(
-            `.${_getRowContainerOptions('stickyBottomFullWidth').container}`
+            `.${_getRowContainerClass('stickyBottomFullWidth')}`
         ) as HTMLElement;
 
         this.setCellTextSelection(this.gos.get('enableCellTextSelection'));

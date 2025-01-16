@@ -133,6 +133,10 @@ export function _setAriaRowIndex(element: Element, rowIndex: number): void {
     _setAriaAttribute(element, 'rowindex', rowIndex);
 }
 
+export function _setAriaRowSpan(element: Element, spanCount: number): void {
+    _setAriaAttribute(element, 'rowspan', spanCount);
+}
+
 export function _setAriaColCount(element: Element, colCount: number): void {
     _setAriaAttribute(element, 'colcount', colCount);
 }

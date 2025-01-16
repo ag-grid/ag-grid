@@ -277,6 +277,9 @@ export {
     RowContainerType,
     RowContainerOptions,
     _getRowContainerOptions,
+    _getRowSpanContainerClass,
+    _getRowContainerClass,
+    _getRowViewportClass,
 } from './gridBodyComp/rowContainer/rowContainerCtrl';
 
 // headerRendering
@@ -1071,6 +1074,7 @@ export { RowApiModule, ScrollApiModule } from './api/apiModule';
 export { RenderApiModule } from './rendering/renderModule';
 export { ColumnAutoSizeModule } from './columnAutosize/columnAutosizeModule';
 export { PinnedRowModule } from './pinnedRowModel/pinnedRowModule';
+export { CellSpanModule } from './rendering/spanning/cellSpanModule';
 export { ValueCacheModule, CellApiModule } from './valueService/valueModule';
 export { CellStyleModule, RowStyleModule } from './styling/stylingModule';
 export { ColumnHoverModule } from './columns/columnHover/columnHoverModule';

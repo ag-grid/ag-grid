@@ -20,7 +20,6 @@ import type { RowDataTransaction } from '../interfaces/rowDataTransaction';
 import type { RowNodeTransaction } from '../interfaces/rowNodeTransaction';
 import { _EmptyArray, _last, _removeFromArray } from '../utils/array';
 import { ChangedPath } from '../utils/changedPath';
-import { _debounce } from '../utils/function';
 import { _warn } from '../validation/logging';
 import type { ValueCache } from '../valueService/valueCache';
 import { ChangedRowNodes } from './changedRowNodes';
@@ -70,8 +69,6 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         this.pivotStage = beans.pivotStage;
         this.filterAggStage = beans.filterAggStage;
     }
-
-    private onRowHeightChanged_debounced = _debounce(this, this.onRowHeightChanged.bind(this), 100);
 
     // top most node of the tree. the children are the user provided data.
     public rootNode: RowNode | null = null;
@@ -918,6 +915,10 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         this.depthFirstSearchRowNodes(callback, includeFooterNodes);
     }
 
+    public forEachDisplayedNode(callback: (rowNode: RowNode<any>, index: number) => void): void {
+        this.rowsToDisplay.forEach(callback);
+    }
+
     public forEachNodeAfterFilter(
         callback: (node: RowNode, index: number) => void,
         includeFooterNodes: boolean = false
@@ -1225,16 +1226,6 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
             keepRenderedRows: true,
             keepUndoRedoStack: true,
         });
-    }
-
-    /** This method is debounced. It is used for row auto-height. If we don't debounce,
-     * then the Row Models will end up recalculating each row position
-     * for each row height change and result in the Row Renderer laying out rows.
-     * This is particularly bad if using print layout, and showing eg 1,000 rows,
-     * each row will change it's height, causing Row Model to update 1,000 times.
-     */
-    public onRowHeightChangedDebounced(): void {
-        this.onRowHeightChanged_debounced();
     }
 
     public resetRowHeights(): void {

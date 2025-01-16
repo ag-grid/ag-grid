@@ -46,7 +46,6 @@ export interface IClientSideRowModel<TData = any> extends IRowModel {
     ): void;
     resetRowHeights(): void;
     onRowHeightChanged(): void;
-    onRowHeightChangedDebounced(): void;
     batchUpdateRowData(
         rowDataTransaction: RowDataTransaction<TData>,
         callback?: (res: RowNodeTransaction<TData>) => void

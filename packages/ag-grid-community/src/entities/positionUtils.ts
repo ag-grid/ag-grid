@@ -110,6 +110,12 @@ export function _getRowNode(beans: BeanCollection, gridRow: RowPosition): RowNod
 }
 
 export function _getCellByPosition(beans: BeanCollection, cellPosition: CellPosition): CellCtrl | null {
+    // if spanned, return cell ctrl from spanned renderer
+    const spannedCellCtrl = beans.spannedCellRenderer?.getCellByPosition(cellPosition);
+    if (spannedCellCtrl) {
+        return spannedCellCtrl;
+    }
+
     const rowCtrl = beans.rowRenderer.getRowByPosition(cellPosition);
     if (!rowCtrl) {
         return null;

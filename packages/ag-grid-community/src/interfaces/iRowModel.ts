@@ -44,6 +44,10 @@ export interface IRowModel {
      * all nodes. For serverSide, goes through what's loaded in memory. */
     forEachNode(callback: (rowNode: RowNode, index: number) => void, includeFooterNodes?: boolean): void;
 
+    /** Iterate through each each flattened node, appearing as the grid does when scrolled
+     * Used for spanning */
+    forEachDisplayedNode?(callback: (rowNode: RowNode, index: number) => void): void;
+
     /** The base class returns the type. We use this instead of 'instanceof' as the client might provide
      * their own implementation of the models in the future. */
     getType(): RowModelType;

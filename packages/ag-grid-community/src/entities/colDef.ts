@@ -698,6 +698,15 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
      */
     rowSpan?: (params: RowSpanParams<TData, TValue>) => number;
 
+    spanRows?:
+        | boolean
+        | ((
+              valueA: TValue | null | undefined,
+              valueB: TValue | null | undefined,
+              nodeA: IRowNode<TData>,
+              nodeB: IRowNode<TData>
+          ) => boolean);
+
     // *** Columns: Widths *** //
 
     /** Initial width in pixels for the cell. */

@@ -26,7 +26,6 @@ import type {
 import {
     BeanStub,
     RowNode,
-    _debounce,
     _getRowHeightAsNumber,
     _getRowHeightForNode,
     _isGetRowHeightFunction,
@@ -81,8 +80,6 @@ export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSi
         this.storeFactory = beans.ssrmStoreFactory as StoreFactory;
         this.pivotColDefSvc = beans.pivotColDefSvc;
     }
-
-    private onRowHeightChanged_debounced = _debounce(this, this.onRowHeightChanged.bind(this), 100);
 
     public rootNode: RowNode;
     private datasource: IServerSideDatasource | undefined;
@@ -429,16 +426,6 @@ export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSi
         this.dispatchModelUpdated();
     }
 
-    /** This method is debounced. It is used for row auto-height. If we don't debounce,
-     * then the Row Models will end up recalculating each row position
-     * for each row height change and result in the Row Renderer laying out rows.
-     * This is particularly bad if using print layout, and showing eg 1,000 rows,
-     * each row will change it's height, causing Row Model to update 1,000 times.
-     */
-    public onRowHeightChangedDebounced(): void {
-        this.onRowHeightChanged_debounced();
-    }
-
     public onRowHeightChanged(): void {
         this.updateRowIndexesAndBounds();
         this.dispatchModelUpdated();
@@ -594,6 +581,16 @@ export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSi
             return;
         }
         rootStore.forEachNodeDeep(callback);
+    }
+
+    public forEachDisplayedNode(callback: (rowNode: RowNode<any>, index: number) => void): void {
+        const wrappedCallback = (node: RowNode, index: number) => {
+            if (node.stub || !node.displayed) {
+                return;
+            }
+            callback(node, index);
+        };
+        this.forEachNode(wrappedCallback);
     }
 
     public forEachNodeAfterFilterAndSort(

@@ -161,7 +161,7 @@ export class ContextMenuService extends BeanStub implements NamedBean, IContextM
         rowCtrl: RowCtrl | null,
         cellCtrl: CellCtrl
     ): void {
-        const rowNode = rowCtrl?.rowNode ?? null;
+        const rowNode = cellCtrl?.rowNode ?? null;
         const column = cellCtrl?.column ?? rowCtrl?.findFullWidthInfoForEvent(mouseEvent || touchEvent)?.column ?? null;
         const { valueSvc, ctrlsSvc } = this.beans;
         const value = column ? valueSvc.getValue(column, rowNode) : null;

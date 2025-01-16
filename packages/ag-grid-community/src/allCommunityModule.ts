@@ -48,6 +48,7 @@ import { VERSION } from './version';
 export const AllCommunityModule: _ModuleWithoutApi = {
     moduleName: 'AllCommunity',
     version: VERSION,
+    // CellSpanModule has been intentionally omitted until the next major release, as it includes changes to dom structure.
     dependsOn: [
         ClientSideRowModelModule,
         CsvExportModule,
@@ -90,5 +91,6 @@ export const AllCommunityModule: _ModuleWithoutApi = {
         RowAutoHeightModule,
         DragAndDropModule,
         ClientSideRowModelApiModule,
+        // CellSpanModule,
     ],
 };

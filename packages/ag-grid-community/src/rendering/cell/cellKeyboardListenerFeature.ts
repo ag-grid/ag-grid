@@ -5,6 +5,7 @@ import type { RowNode } from '../../entities/rowNode';
 import { _isCellSelectionEnabled, _isRowSelection } from '../../gridOptionsUtils';
 import { _isMacOsUserAgent } from '../../utils/browser';
 import type { RowCtrl } from '../row/rowCtrl';
+import type { SpannedCellCtrl } from '../spanning/spannedCellCtrl';
 import type { CellCtrl } from './cellCtrl';
 
 function _isDeleteKey(key: string, alwaysReturnFalseOnBackspace = false) {
@@ -21,7 +22,7 @@ export class CellKeyboardListenerFeature extends BeanStub {
     private eGui: HTMLElement;
 
     constructor(
-        private readonly cellCtrl: CellCtrl,
+        private readonly cellCtrl: CellCtrl | SpannedCellCtrl,
         beans: BeanCollection,
         private readonly rowNode: RowNode,
         private readonly rowCtrl: RowCtrl
@@ -71,7 +72,8 @@ export class CellKeyboardListenerFeature extends BeanStub {
         if (event.shiftKey && this.cellCtrl.isRangeSelectionEnabled()) {
             this.onShiftRangeSelect(event);
         } else {
-            this.beans.navigation?.navigateToNextCell(event, key, this.cellCtrl.cellPosition, true);
+            const currentCellPosition = this.cellCtrl.getFocusedCellPosition();
+            this.beans.navigation?.navigateToNextCell(event, key, currentCellPosition, true);
         }
 
         // if we don't prevent default, the grid will scroll with the navigation keys

@@ -1,0 +1,215 @@
+import { BeanStub } from '../../context/beanStub';
+import type { BeanCollection } from '../../context/context';
+import type { AgColumn } from '../../entities/agColumn';
+import type { RowNode } from '../../entities/rowNode';
+import type { CellPosition } from '../../interfaces/iCellPosition';
+import type { IRowModel } from '../../interfaces/iRowModel';
+import type { RowPinnedType } from '../../interfaces/iRowNode';
+import type { ValueService } from '../../valueService/valueService';
+import { _normalisePinnedValue } from './spannedCellRenderer';
+
+export const _doesColumnSpan = (column: AgColumn) => {
+    // todo replace with new row spanning
+    return column.getColDef().rowSpan;
+};
+
+export class CellSpan {
+    // used for distinguishing between types
+    public readonly cellSpan = true;
+
+    private spannedNodes: Set<RowNode>;
+    private lastNode: RowNode;
+
+    constructor(
+        public readonly col: AgColumn,
+        public readonly firstNode: RowNode
+    ) {
+        this.firstNode = firstNode;
+        this.spannedNodes = new Set([firstNode]);
+        this.lastNode = firstNode;
+    }
+
+    public addSpannedNode(node: RowNode): void {
+        this.spannedNodes.add(node);
+        this.lastNode = node;
+    }
+
+    public getSpannedNodes() {
+        return this.spannedNodes;
+    }
+
+    public getFirstNode(): RowNode {
+        return this.firstNode;
+    }
+
+    public getLastNode(): RowNode {
+        return this.lastNode;
+    }
+
+    public getCellHeight(): number {
+        return this.lastNode.rowTop! + this.lastNode.rowHeight! - this.firstNode.rowTop! - 1; // -1 should be border height I think
+    }
+
+    public doesSpanContain(cellPosition: CellPosition): boolean {
+        if (cellPosition.column !== this.col) {
+            return false;
+        }
+
+        if (cellPosition.rowPinned != this.firstNode.rowPinned) {
+            return false;
+        }
+
+        for (const node of this.spannedNodes) {
+            if (node.rowIndex === cellPosition.rowIndex) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Gets the auto height value for last node in the spanned cell.
+     * The first node is used to store the auto height for the cell, but the additional height for this cell
+     * needs applied to the last row in the span.
+     */
+    public getLastNodeAutoHeight(): number | undefined {
+        const autoHeight = this.firstNode.__autoHeights?.[this.col.getColId()];
+        if (autoHeight == null) {
+            return undefined;
+        }
+
+        let allButLastHeights = 0;
+        this.getSpannedNodes().forEach((node) => {
+            if (node === this.lastNode) return;
+            allButLastHeights += node.rowHeight!;
+        });
+        return autoHeight - allButLastHeights;
+    }
+}
+
+/**
+ * Belongs to a column, when cells are to be rendered they call back to this service with the values.
+ * This service determines if the cell should instead be replaced with a spanning cell, in which case the cell is
+ * stretched over multiple rows.
+ *
+ * Only create if spanning is enabled for this column.
+ */
+export class RowSpanCache extends BeanStub {
+    private readonly column: AgColumn;
+
+    private valueService: ValueService;
+
+    private centerValueNodeMap: Map<RowNode, CellSpan>;
+
+    // pinned rows
+    private topValueNodeMap: Map<RowNode, CellSpan>;
+    private bottomValueNodeMap: Map<RowNode, CellSpan>;
+
+    constructor(column: AgColumn) {
+        super();
+        this.column = column;
+    }
+
+    private rowModel: IRowModel;
+
+    public wireBeans(beans: BeanCollection) {
+        this.rowModel = beans.rowModel;
+        this.valueService = beans.valueSvc;
+    }
+
+    public buildCache(pinned: 'top' | 'center' | 'bottom'): void {
+        const newMap = new Map();
+
+        const isFullWidthCellFunc = this.beans.gos.getCallback('isFullWidthRow');
+        const equalsFnc = this.column.getColDef().equals;
+        const customCompare = this.column.getColDef().spanRows;
+        const isCustomCompare = typeof customCompare === 'function';
+
+        let lastNode: RowNode | null = null;
+        let spanData: CellSpan | null = null;
+        let lastValue: any;
+        const setNewHead = (node: RowNode | null, value: any | null) => {
+            lastNode = node;
+            spanData = null;
+            lastValue = value;
+        };
+
+        // check each node, if the currently open cell span should span, add this node to span, otherwise close the span.
+        const checkNodeForCache = (node: RowNode) => {
+            const doesNodeSupportSpanning =
+                !node.group && !node.detail && (isFullWidthCellFunc ? !isFullWidthCellFunc({ rowNode: node }) : true);
+
+            // fw, hidden, and detail rows cannot be spanned as head, body nor tail. Skip.
+            if (node.rowIndex == null || !doesNodeSupportSpanning) {
+                setNewHead(null, null);
+                return;
+            }
+
+            // if level or key is different, cells do not span.
+            if (
+                lastNode == null ||
+                node.level !== lastNode.level || // no span across groups
+                node.footer ||
+                (spanData && node.rowIndex - 1 !== spanData?.getLastNode().rowIndex) // no span if rows not contiguous (SSRM)
+            ) {
+                setNewHead(node, this.valueService.getValue(this.column, node));
+                return;
+            }
+
+            // check value is equal, if not, no span
+            const value = this.valueService.getValue(this.column, node);
+            if (isCustomCompare) {
+                if (!customCompare(lastValue, value, lastNode, node)) {
+                    setNewHead(node, value);
+                    return;
+                }
+            } else {
+                if (equalsFnc ? !equalsFnc(lastValue, value) : lastValue !== value) {
+                    setNewHead(node, value);
+                    return;
+                }
+            }
+
+            if (!spanData) {
+                spanData = new CellSpan(this.column, lastNode);
+                newMap.set(lastNode, spanData);
+            }
+            spanData.addSpannedNode(node);
+            newMap.set(node, spanData);
+        };
+
+        switch (pinned) {
+            case 'center':
+                this.rowModel.forEachDisplayedNode?.(checkNodeForCache);
+                break;
+            case 'top':
+                this.beans.pinnedRowModel?.forEachPinnedRow('top', checkNodeForCache);
+                break;
+            case 'bottom':
+                this.beans.pinnedRowModel?.forEachPinnedRow('bottom', checkNodeForCache);
+                break;
+        }
+        this[`${pinned}ValueNodeMap`] = newMap;
+    }
+
+    public isCellSpanning(node: RowNode): boolean {
+        return !!this.getCellSpan(node);
+    }
+
+    public getCellSpan(node: RowNode): CellSpan | undefined {
+        const map = this[`${_normalisePinnedValue(node.rowPinned)}ValueNodeMap`];
+        return map.get(node);
+    }
+
+    public getSpanByRowIndex(rowIndex: number, pinned: 'top' | 'bottom' | 'center'): CellSpan | undefined {
+        const map = this[`${pinned}ValueNodeMap`];
+        for (const span of map.values()) {
+            for (const node of span.getSpannedNodes()) {
+                if (node.rowIndex === rowIndex) {
+                    return span;
+                }
+            }
+        }
+        return undefined;
+    }
+}

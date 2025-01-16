@@ -71,11 +71,19 @@
         background-color: var(--ag-range-selection-highlight-color) !important;
     }
 
+    .ag-row,
+    .ag-spanned-row {
+        color: var(--ag-data-color);
+    }
+
     .ag-row {
         height: var(--ag-row-height);
         background-color: var(--ag-background-color);
-        color: var(--ag-data-color);
         border-bottom: var(--ag-row-border-style) var(--ag-row-border-color) var(--ag-row-border-width);
+    }
+
+    .ag-spanned-row > .ag-cell {
+        background-color: var(--ag-background-color);
     }
 
     .ag-row-highlight-above::after,

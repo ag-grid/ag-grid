@@ -258,7 +258,12 @@
             "description": "See [Column](./column-spanning/) / [Row](./row-spanning/) Spanning"
         },
         "colSpan": {},
-        "rowSpan": {}
+        "spanRows": {
+            "more": {
+                "name": "Row Spanning",
+                "url": "./row-spanning/"
+            }
+        }
     },
     "styling": {
         "meta": {

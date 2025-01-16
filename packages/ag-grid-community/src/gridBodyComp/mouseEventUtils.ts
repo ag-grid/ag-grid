@@ -40,7 +40,7 @@ export function _getCellPositionForEvent(
     gos: GridOptionsService,
     event: MouseEvent | KeyboardEvent
 ): CellPosition | null {
-    return _getCellCtrlForEventTarget(gos, event.target)?.cellPosition ?? null;
+    return _getCellCtrlForEventTarget(gos, event.target)?.getFocusedCellPosition() ?? null;
 }
 
 export function _getNormalisedMousePosition(

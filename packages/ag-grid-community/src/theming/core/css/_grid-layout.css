@@ -50,15 +50,12 @@
     background-color: var(--ag-range-selection-highlight-color) !important;
 }
 
-.ag-row {
-    background-color: var(--ag-background-color);
+.ag-row,
+.ag-spanned-row {
     color: var(--ag-cell-text-color);
     font-family: var(--ag-cell-font-family);
     white-space: nowrap;
-    width: 100%;
-    height: var(--ag-row-height);
     font-size: var(--ag-data-font-size);
-    border-bottom: var(--ag-row-border);
 
     /* Work out the correct line height. --ag-row-height is the default row
            height, --ag-line-height is the actual row height, only set if variable row
@@ -76,6 +73,17 @@
     --ag-internal-content-line-height: calc(
         min(var(--ag-row-height), var(--ag-line-height, 1000px)) - var(--ag-internal-row-border-width, 1px) - 2px
     );
+}
+
+.ag-row {
+    background-color: var(--ag-background-color);
+    width: 100%;
+    height: var(--ag-row-height);
+    border-bottom: var(--ag-row-border);
+}
+
+.ag-spanned-row > .ag-cell {
+    background-color: var(--ag-background-color);
 }
 
 /* Hide the border of the last last row when there is no gap between the row and

@@ -711,6 +711,9 @@ export class RowRenderer extends BeanStub implements NamedBean {
             ...this.bottomRowCtrls,
             ...stickyTopRowCtrls,
             ...stickyBottomRowCtrls,
+            ...(this.beans.spannedCellRenderer?.getCtrls('top') ?? []),
+            ...(this.beans.spannedCellRenderer?.getCtrls('bottom') ?? []),
+            ...(this.beans.spannedCellRenderer?.getCtrls('center') ?? []),
             ...Object.values(this.rowCtrlsByRowIndex),
         ];
 
