@@ -27,6 +27,7 @@ interface Props {
     extraStyles?: string;
     children?: any;
     extras?: string[];
+    usesMathRandom?: boolean;
 }
 
 const {
@@ -43,6 +44,7 @@ const {
     ignoreSystemJs,
     extraStyles,
     extras,
+    usesMathRandom,
 } = Astro.props as Props;
 
 const startFile = pathJoin(appLocation, entryFileName);
@@ -67,6 +69,7 @@ const startFile = pathJoin(appLocation, entryFileName);
                     startFile={startFile}
                     internalFramework={internalFramework}
                     isEnterprise={isEnterprise}
+                    usesMathRandom={usesMathRandom}
                 />
             )
         }

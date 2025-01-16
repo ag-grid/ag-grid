@@ -65,6 +65,8 @@ const boilerPlateUrl = relativePath
 const timeNow = Date.now();
 const title = `${toTitle(pageName)} - ${toTitle(exampleName)}`;
 
+const usesMathRandom = Object.values(generatedContents?.files).some((file) => file.includes('Math.random()'));
+
 const shouldShowTemplate = (framework: InternalFramework) => {
     return internalFramework === framework;
 };
@@ -105,6 +107,7 @@ const shouldShowTemplate = (framework: InternalFramework) => {
             appLocation={appLocation}
             extraStyles={extraStyles}
             extras={extras}
+            usesMathRandom={usesMathRandom}
         >
             {addInitMessageScript && <PostInitMessageScript pageName={pageName} exampleName={exampleName} />}
         </JavascriptTemplate>
@@ -125,6 +128,7 @@ const shouldShowTemplate = (framework: InternalFramework) => {
             extraStyles={extraStyles}
             isEnterprise={isEnterprise}
             extras={extras}
+            usesMathRandom={usesMathRandom}
         >
             {addInitMessageScript && <PostInitMessageScript pageName={pageName} exampleName={exampleName} />}
         </TypescriptTemplate>
@@ -147,6 +151,7 @@ const shouldShowTemplate = (framework: InternalFramework) => {
             isEnterprise={isEnterprise}
             internalFramework={internalFramework}
             extras={extras}
+            usesMathRandom={usesMathRandom}
         >
             {addInitMessageScript && <PostInitMessageScript pageName={pageName} exampleName={exampleName} />}
         </ReactTemplate>
@@ -167,6 +172,7 @@ const shouldShowTemplate = (framework: InternalFramework) => {
             boilerplatePath={boilerPlateUrl}
             extraStyles={extraStyles}
             extras={extras}
+            usesMathRandom={usesMathRandom}
         >
             {addInitMessageScript && <PostInitMessageScript pageName={pageName} exampleName={exampleName} />}
         </AngularTemplate>
@@ -187,6 +193,7 @@ const shouldShowTemplate = (framework: InternalFramework) => {
             boilerplatePath={boilerPlateUrl}
             extraStyles={extraStyles}
             extras={extras}
+            usesMathRandom={usesMathRandom}
         >
             {addInitMessageScript && <PostInitMessageScript pageName={pageName} exampleName={exampleName} />}
         </VueTemplate>

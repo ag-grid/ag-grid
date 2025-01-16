@@ -141,3 +141,5 @@ function calculateGridUrl() {
 }
 
 export const GRID_URL = calculateGridUrl();
+
+export const EXAMPLE_RANDOM_SEED = 'AG Grid Random Seed';
