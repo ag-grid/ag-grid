@@ -54,6 +54,12 @@ export interface IFloatingFilterParams<P = InbuiltParentType, TData = any, TCont
     showParentFilter: () => void;
 }
 
+export interface FloatingFilterDisplayParams<TModel = any> extends IFloatingFilterParams {
+    model: TModel | null;
+    onModelChange: (model: TModel | null, additionalEventAttributes?: any) => void;
+    source: 'init' | 'ui' | 'filter' | 'apiModel' | 'apiParams' | 'dataChanged';
+}
+
 export interface BaseFloatingFilter {
     /**
      * Optional: A hook to perform any necessary operation just after the GUI for this component has been rendered on the screen.

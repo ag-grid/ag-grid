@@ -274,7 +274,11 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl<IHeaderFilterCe
         if (!this.active) {
             return;
         }
-        const { filterManager } = this.beans;
+        const {
+            beans: { colFilter },
+            column,
+            gos,
+        } = this;
 
         const syncWithFilter = (event: ColumnEvent | null) => {
             if (event?.source === 'filterDestroyed' && !this.isAlive()) {
@@ -288,7 +292,20 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl<IHeaderFilterCe
 
             compPromise.then((comp) => {
                 if (comp) {
-                    const parentModel = filterManager?.getCurrentFloatingFilterParentModel(this.column);
+                    if (gos.get('reactiveFloatingFilters')) {
+                        const eventWithParams = event as FilterChangedEvent | null;
+                        let source = 'filter';
+                        if (eventWithParams?.afterFloatingFilter) {
+                            source = 'ui';
+                        } else if (eventWithParams?.afterDataChange) {
+                            source = 'dataChanged';
+                        } else if (event?.source === 'api') {
+                            source = 'api';
+                        }
+                        this.updateFloatingFilterParams(this.userCompDetails, source);
+                        return;
+                    }
+                    const parentModel = colFilter?.getCurrentFloatingFilterParentModel(column);
                     const filterChangedEvent: FilterChangedEvent | null = event
                         ? {
                               // event can have additional params like `afterDataChange` which need to be passed through
@@ -302,9 +319,9 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl<IHeaderFilterCe
             });
         };
 
-        [this.destroySyncListener] = compBean.addManagedListeners(this.column, { filterChanged: syncWithFilter });
+        [this.destroySyncListener] = compBean.addManagedListeners(column, { filterChanged: syncWithFilter });
 
-        if (filterManager?.isFilterActive(this.column)) {
+        if (colFilter?.isFilterActive(column)) {
             syncWithFilter(null);
         }
     }
@@ -362,7 +379,7 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl<IHeaderFilterCe
                 ) {
                     this.updateCompDetails(compBean, newCompDetails, becomeActive);
                 } else {
-                    this.updateFloatingFilterParams(newCompDetails);
+                    this.updateFloatingFilterParams(newCompDetails, 'apiParams');
                 }
             });
         }
@@ -386,17 +403,24 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl<IHeaderFilterCe
         }
     }
 
-    private updateFloatingFilterParams(userCompDetails?: UserCompDetails | null): void {
+    private updateFloatingFilterParams(userCompDetails?: UserCompDetails | null, source?: string): void {
         if (!userCompDetails) {
             return;
         }
 
-        const params = userCompDetails.params;
+        let params = userCompDetails.params;
 
         this.comp.getFloatingFilterComp()?.then((floatingFilter) => {
-            if (floatingFilter?.refresh && typeof floatingFilter.refresh === 'function') {
+            if (typeof floatingFilter?.refresh === 'function') {
+                if (this.gos.get('reactiveFloatingFilters')) {
+                    // TODO - add source
+                    params = {
+                        ...params,
+                        model: this.beans.colFilter?.getModelForEvaluator(this.column),
+                        source,
+                    };
+                }
                 floatingFilter.refresh(params);
-                // framework wrapper always implements optional methods, but returns null if no underlying method
             }
         });
     }

@@ -27,7 +27,8 @@ export class TextFilter extends SimpleFilter<TextFilterModel, string, TextFilter
 
         this.filterModelFormatter = new TextFilterModelFormatter(
             this.getLocaleTextFunc.bind(this),
-            this.optionsFactory
+            this.optionsFactory,
+            params
         );
     }
 

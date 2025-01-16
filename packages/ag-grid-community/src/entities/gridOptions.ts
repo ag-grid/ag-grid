@@ -633,6 +633,7 @@ export interface GridOptions<TData = any> {
      * @initial
      */
     suppressSetFilterByDefault?: boolean;
+    reactiveFloatingFilters?: boolean;
 
     // *** Integrated Charts *** //
     /**

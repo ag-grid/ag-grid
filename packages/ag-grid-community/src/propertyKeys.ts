@@ -307,6 +307,7 @@ export const _BOOLEAN_GRID_OPTIONS: KeysOfType<boolean>[] = [
     'maintainColumnOrder',
     'enableStrictPivotColumnOrder',
     'suppressSetFilterByDefault',
+    'reactiveFloatingFilters',
 ];
 
 // Used in example generation

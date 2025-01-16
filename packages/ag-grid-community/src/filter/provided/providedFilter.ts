@@ -107,7 +107,7 @@ export abstract class ProvidedFilter<M extends ProvidedFilterModel, V, P extends
                 this.setupOnBtApplyDebounce();
             });
 
-        if (source === 'validation' || source === 'apiModel') {
+        if (source !== 'apiParams') {
             // just the model has changed
             updateModel();
             return true;

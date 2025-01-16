@@ -1,5 +1,4 @@
 import { KeyCode } from '../../../constants/keyCode';
-import type { FilterChangedEvent } from '../../../events';
 import { _clearElement } from '../../../utils/dom';
 import { _debounce } from '../../../utils/function';
 import { RefPlaceholder } from '../../../widgets/component';
@@ -10,22 +9,22 @@ import type {
     TextFilterParams,
 } from '../../provided/text/iTextFilter';
 import { trimInputForFilter } from '../../provided/text/textFilterUtils';
+import type { FloatingFilterDisplayParams } from '../floatingFilter';
 import type { FloatingFilterInputService } from './iFloatingFilterInputService';
 import { getDebounceMs, isUseApplyButton } from './providedFilterUtils';
 import { SimpleFloatingFilter } from './simpleFloatingFilter';
 
 type ModelUnion = TextFilterModel | NumberFilterModel;
-export abstract class TextInputFloatingFilter<M extends ModelUnion> extends SimpleFloatingFilter {
+export abstract class TextInputFloatingFilter<
+    TParams extends ITextInputFloatingFilterParams,
+    M extends ModelUnion,
+> extends SimpleFloatingFilter<TParams> {
     private readonly eFloatingFilterInputContainer: HTMLElement = RefPlaceholder;
     private inputSvc: FloatingFilterInputService;
 
-    protected params: ITextInputFloatingFilterParams;
-
     private applyActive: boolean;
 
-    protected abstract createFloatingFilterInputService(
-        params: ITextInputFloatingFilterParams
-    ): FloatingFilterInputService;
+    protected abstract createFloatingFilterInputService(params: TParams): FloatingFilterInputService;
 
     public postConstruct(): void {
         this.setTemplate(/* html */ `
@@ -34,32 +33,24 @@ export abstract class TextInputFloatingFilter<M extends ModelUnion> extends Simp
     }
     protected override defaultDebounceMs: number = 500;
 
-    public onParentModelChanged(model: M, event: FilterChangedEvent): void {
-        if (event?.afterFloatingFilter || event?.afterDataChange) {
-            // if the floating filter triggered the change, it is already in sync.
-            // Data changes also do not affect provided text floating filters
-            return;
-        }
-
+    protected onModelUpdated(model: M): void {
         this.setLastTypeFromModel(model);
         this.setEditable(this.canWeEditAfterModelFromParentFilter(model));
         this.inputSvc.setValue(this.filterModelFormatter.getModelAsString(model));
     }
 
-    public override init(params: ITextInputFloatingFilterParams): void {
+    protected override setParams(params: TParams): void {
         this.setupFloatingFilterInputService(params);
-        super.init(params);
+        super.setParams(params);
         this.setTextInputParams(params);
     }
 
-    private setupFloatingFilterInputService(params: ITextInputFloatingFilterParams): void {
+    private setupFloatingFilterInputService(params: TParams): void {
         this.inputSvc = this.createFloatingFilterInputService(params);
         this.inputSvc.setupGui(this.eFloatingFilterInputContainer);
     }
 
-    private setTextInputParams(params: ITextInputFloatingFilterParams): void {
-        this.params = params;
-
+    private setTextInputParams(params: TParams): void {
         const autoComplete = params.browserAutoComplete ?? false;
         const { inputSvc, defaultDebounceMs, readOnly } = this;
 
@@ -82,12 +73,12 @@ export abstract class TextInputFloatingFilter<M extends ModelUnion> extends Simp
         }
     }
 
-    public override refresh(params: ITextInputFloatingFilterParams): void {
-        super.refresh(params);
+    protected override updateParams(params: TParams): void {
+        super.updateParams(params);
         this.setTextInputParams(params);
     }
 
-    protected recreateFloatingFilterInputService(params: ITextInputFloatingFilterParams): void {
+    protected recreateFloatingFilterInputService(params: TParams): void {
         const { inputSvc } = this;
         const value = inputSvc.getValue();
         _clearElement(this.eFloatingFilterInputContainer);
@@ -111,10 +102,31 @@ export abstract class TextInputFloatingFilter<M extends ModelUnion> extends Simp
             inputSvc.setValue(value, true); // ensure visible value is trimmed
         }
 
-        params.parentFilterInstance((filterInstance) => {
-            // NumberFilter is typed as number, but actually receives string values
-            filterInstance?.onFloatingFilterChanged(this.lastType || null, (value as never) || null);
-        });
+        if (this.reactive) {
+            const reactiveParams = params as unknown as FloatingFilterDisplayParams<M>;
+            const model = reactiveParams.model;
+            const parsedValue = this.convertValue(value);
+            const newModel =
+                parsedValue == null
+                    ? null
+                    : ({
+                          ...(model ?? {
+                              filterType: this.filterType,
+                              type: this.lastType ?? this.optionsFactory.defaultOption,
+                          }),
+                          filter: parsedValue,
+                      } as M);
+            reactiveParams.onModelChange(newModel, { afterFloatingFilter: true });
+        } else {
+            params.parentFilterInstance((filterInstance) => {
+                // NumberFilter is typed as number, but actually receives string values
+                filterInstance?.onFloatingFilterChanged(this.lastType || null, (value as never) || null);
+            });
+        }
+    }
+
+    protected convertValue<TValue>(value: string | null | undefined): TValue | null {
+        return (value as TValue) || null; // '' to null
     }
 
     protected setEditable(editable: boolean): void {

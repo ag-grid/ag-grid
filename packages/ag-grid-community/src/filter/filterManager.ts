@@ -10,7 +10,7 @@ import { _getGroupAggFiltering } from '../gridOptionsUtils';
 import type { AdvancedFilterModel } from '../interfaces/advancedFilterModel';
 import type { IAdvancedFilterService } from '../interfaces/iAdvancedFilterService';
 import type { WithoutGridCommon } from '../interfaces/iCommon';
-import type { FilterModel, IFilter, IFilterComp } from '../interfaces/iFilter';
+import type { FilterModel, IFilter } from '../interfaces/iFilter';
 import type { IRowNode } from '../interfaces/iRowNode';
 import type { UserCompDetails } from '../interfaces/iUserCompDetails';
 import { _mergeDeep } from '../utils/object';
@@ -158,8 +158,8 @@ export class FilterManager extends BeanStub implements NamedBean {
     public onFilterChanged(
         params: {
             source?: FilterChangedEventSourceType;
-            filterInstance?: IFilterComp;
             additionalEventAttributes?: any;
+            column?: AgColumn;
             columns?: AgColumn[];
         } = {}
     ): void {
@@ -264,14 +264,6 @@ export class FilterManager extends BeanStub implements NamedBean {
 
         // got this far, all filters pass
         return true;
-    }
-
-    public isFilterActive(column: AgColumn): boolean {
-        return !!this.colFilter?.isFilterActive(column);
-    }
-
-    public getDefaultFloatingFilter(column: AgColumn): string {
-        return this.colFilter!.getDefaultFloatingFilter(column);
     }
 
     // for group filters, can change dynamically whether they are allowed or not

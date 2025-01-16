@@ -77,9 +77,9 @@ export class DateFilter extends SimpleFilter<DateFilterModel, Date, DateFilterPa
         }
 
         this.filterModelFormatter = new DateFilterModelFormatter(
-            params,
             this.getLocaleTextFunc.bind(this),
-            this.optionsFactory
+            this.optionsFactory,
+            params
         );
     }
 

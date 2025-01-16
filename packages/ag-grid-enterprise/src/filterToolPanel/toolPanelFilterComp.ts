@@ -117,7 +117,7 @@ export class ToolPanelFilterComp extends Component<ToolPanelFilterCompEvent> {
     }
 
     public isFilterActive(): boolean {
-        return !!this.beans.filterManager?.isFilterActive(this.column);
+        return !!this.beans.colFilter?.isFilterActive(this.column);
     }
 
     private onFilterChanged(): void {

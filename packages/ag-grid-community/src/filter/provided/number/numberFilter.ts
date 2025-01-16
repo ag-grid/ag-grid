@@ -4,7 +4,6 @@ import { AgInputNumberField } from '../../../widgets/agInputNumberField';
 import { AgInputTextField } from '../../../widgets/agInputTextField';
 import type { ISimpleFilterModel, Tuple } from '../iSimpleFilter';
 import { SimpleFilter } from '../simpleFilter';
-import type { SimpleFilterModelFormatter } from '../simpleFilterModelFormatter';
 import type { NumberFilterModel, NumberFilterParams } from './iNumberFilter';
 import { NumberFilterHelper } from './numberFilterHelper';
 import { NumberFilterModelFormatter } from './numberFilterModelFormatter';
@@ -14,7 +13,7 @@ export class NumberFilter extends SimpleFilter<NumberFilterModel, number, Number
     private readonly eValuesFrom: (AgInputTextField | AgInputNumberField)[] = [];
     private readonly eValuesTo: (AgInputTextField | AgInputNumberField)[] = [];
 
-    private filterModelFormatter: SimpleFilterModelFormatter;
+    private filterModelFormatter: NumberFilterModelFormatter;
 
     protected filterType = 'number' as const;
 
@@ -30,7 +29,7 @@ export class NumberFilter extends SimpleFilter<NumberFilterModel, number, Number
         this.filterModelFormatter = new NumberFilterModelFormatter(
             this.getLocaleTextFunc.bind(this),
             this.optionsFactory,
-            params.numberFormatter
+            params
         );
     }
 

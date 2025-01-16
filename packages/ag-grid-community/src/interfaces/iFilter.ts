@@ -20,7 +20,7 @@ export interface FilterEvaluatorParams<TData = any, TContext = any, TValue = any
     model: TModel | null;
     colDef: ColDef<TData, TValue>;
     column: Column<TValue>;
-    source: 'init' | 'ui' | 'apiModel' | 'apiParams';
+    source: 'init' | 'ui' | 'apiModel' | 'apiParams' | 'floating';
     /**
      * Get the cell value for the given row node and column, which can be the column ID, definition, or `Column` object.
      * If no column is provided, the column this filter is on will be used.
@@ -218,7 +218,7 @@ export interface BaseFilterParams<TData = any, TContext = any> extends AgGridCom
      * The grid will respond with emitting a FilterModifiedEvent.
      * Apart from emitting the event, the grid takes no further action.
      */
-    filterModifiedCallback: () => void;
+    filterModifiedCallback: (additionalEventAttributes?: any) => void;
 }
 
 /**
