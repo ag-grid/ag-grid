@@ -24,6 +24,7 @@ import type { IRowModel } from '../interfaces/iRowModel';
 import type { IRowNode, RowPinnedType } from '../interfaces/iRowNode';
 import type { RowPosition } from '../interfaces/iRowPosition';
 import type { IStickyRowFeature } from '../interfaces/iStickyRows';
+import { _requestAnimationFrame } from '../misc/animationFrameService';
 import type { PageBoundsService } from '../pagination/pageBoundsService';
 import type { PinnedRowModel } from '../pinnedRowModel/pinnedRowModel';
 import { _removeFromArray } from '../utils/array';
@@ -1291,7 +1292,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
         this.dataFirstRenderedFired = true;
 
         // See AG-7018
-        window.requestAnimationFrame(() => {
+        _requestAnimationFrame(this.beans, () => {
             this.beans.eventSvc.dispatchEvent({
                 type: 'firstDataRendered',
                 firstRow: this.firstRenderedRow,
