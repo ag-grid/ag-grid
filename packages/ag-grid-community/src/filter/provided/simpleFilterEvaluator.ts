@@ -2,7 +2,6 @@ import type {
     FilterEvaluator,
     FilterEvaluatorFuncParams,
     FilterEvaluatorParams,
-    FilterModelValidation,
     IDoesFilterPassParams,
 } from '../../interfaces/iFilter';
 import type {
@@ -38,26 +37,26 @@ export abstract class SimpleFilterEvaluator<
 
     public init(
         params: FilterEvaluatorParams<any, any, TValue, TModel | ICombinedSimpleModel<TModel>> & TParams
-    ): FilterModelValidation<TModel | ICombinedSimpleModel<TModel>> {
+    ): void {
         const optionsFactory = new OptionsFactory();
         this.optionsFactory = optionsFactory;
         optionsFactory.init(params, this.helper.defaultOptions);
 
         this.updateParams(params);
 
-        return this.validateModel(params);
+        this.validateModel(params);
     }
 
     public refresh(
         params: FilterEvaluatorParams<any, any, TValue, TModel | ICombinedSimpleModel<TModel>> & TParams
-    ): FilterModelValidation<TModel | ICombinedSimpleModel<TModel>> {
+    ): void {
         if (params.source === 'apiParams') {
             this.optionsFactory.refresh(params, this.helper.defaultOptions);
 
             this.updateParams(params);
         }
 
-        return this.validateModel(params);
+        this.validateModel(params);
     }
 
     protected updateParams(
@@ -93,7 +92,7 @@ export abstract class SimpleFilterEvaluator<
 
     protected validateModel(
         params: FilterEvaluatorParams<any, any, TValue, TModel | ICombinedSimpleModel<TModel>> & TParams
-    ): FilterModelValidation<TModel | ICombinedSimpleModel<TModel>> {
+    ): void {
         const { model, filterOptions, maxNumConditions } = params;
 
         const conditions: TModel[] | null = model ? (<ICombinedSimpleModel<TModel>>model).conditions ?? [model] : null;
@@ -112,7 +111,8 @@ export abstract class SimpleFilterEvaluator<
                 ...params,
                 model: null,
             };
-            return { valid: false, model: null };
+            params.onModelChange(null);
+            return;
         }
 
         // Check number of conditions vs maxNumConditions
@@ -125,13 +125,9 @@ export abstract class SimpleFilterEvaluator<
                 ...params,
                 model: updatedModel,
             };
-            return {
-                valid: false,
-                model: updatedModel,
-            };
+            params.onModelChange(updatedModel);
+            return;
         }
-
-        return { valid: true };
     }
 
     /** returns true if the row passes the said condition */

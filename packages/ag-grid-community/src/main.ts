@@ -178,7 +178,6 @@ export {
     FilterEvaluatorGeneratorFunc,
     FilterEvaluatorGeneratorFuncParams,
     FilterEvaluatorParams,
-    FilterModelValidation,
 } from './interfaces/iFilter';
 export {
     ISetFilter,
@@ -194,7 +193,7 @@ export {
 export type { FilterManager } from './filter/filterManager';
 export type { FilterValueService } from './filter/filterValueService';
 export { FilterRequestSource } from './filter/iColumnFilter';
-export { _initEvaluator, _refreshEvaluator } from './filter/columnFilterService';
+export { _refreshEvaluator } from './filter/columnFilterService';
 export {
     IMultiFilter,
     IMultiFilterModel,

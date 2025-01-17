@@ -3,13 +3,12 @@ import type {
     FilterEvaluator,
     FilterEvaluatorFuncParams,
     FilterEvaluatorParams,
-    FilterModelValidation,
     IMultiFilterModel,
     IMultiFilterParams,
 } from 'ag-grid-community';
-import { BeanStub, _initEvaluator } from 'ag-grid-community';
+import { BeanStub } from 'ag-grid-community';
 
-import { getMultiFilterDefs, refreshEvaluator, updateMultiFilterModel } from './multiFilterUtil';
+import { getMultiFilterDefs, updateMultiFilterModel } from './multiFilterUtil';
 
 export class MultiFilterEvaluator
     extends BeanStub
@@ -20,46 +19,51 @@ export class MultiFilterEvaluator
         [];
     private activeFilterIndices: number[] = [];
 
-    public init(
-        params: FilterEvaluatorParams<any, any, any, IMultiFilterModel> & IMultiFilterParams
-    ): Promise<FilterModelValidation<IMultiFilterModel>> {
+    public init(params: FilterEvaluatorParams<any, any, any, IMultiFilterModel> & IMultiFilterParams): void {
         this.params = params;
 
         const filterDefs = getMultiFilterDefs(params);
-        const promises: Promise<FilterModelValidation>[] = filterDefs.map((def, index) => {
+        filterDefs.forEach((def, index) => {
             const wrapper = this.beans.colFilter!.createEvaluator(params.column as AgColumn, def, 'agTextColumnFilter');
             this.evaluatorWrappers.push(wrapper);
             if (!wrapper) {
                 // TODO - warning
-                return Promise.resolve({ valid: false, model: null });
+                return;
             }
             const { evaluator, evaluatorParams } = wrapper;
-            const updatedEvaluatorParams: FilterEvaluatorParams = {
-                ...evaluatorParams!,
-                model: params.model?.filterModels?.[index] ?? null,
-            };
-            return _initEvaluator(evaluator, updatedEvaluatorParams);
+            evaluator.init?.(this.updateEvaluatorParams(evaluatorParams!, params.model, index));
         });
-
-        return this.processFilterResults(promises);
+        this.updateActiveFilters(params.model);
     }
 
-    public refresh(
-        params: FilterEvaluatorParams<any, any, any, IMultiFilterModel> & IMultiFilterParams
-    ): Promise<FilterModelValidation<IMultiFilterModel>> {
+    public refresh(params: FilterEvaluatorParams<any, any, any, IMultiFilterModel> & IMultiFilterParams): void {
         this.params = params;
 
-        const promises: Promise<FilterModelValidation>[] = this.evaluatorWrappers.map((wrapper, index) => {
-            if (!wrapper) {
-                return Promise.resolve({ valid: true });
-            }
-            return refreshEvaluator(wrapper.evaluator, {
-                ...params,
-                model: params.model?.filterModels?.[index] ?? null,
-            });
-        });
+        this.evaluatorWrappers.forEach((wrapper, index) =>
+            wrapper?.evaluator.refresh?.(this.updateEvaluatorParams(params, params.model, index))
+        );
+        this.updateActiveFilters(params.model);
+    }
 
-        return this.processFilterResults(promises);
+    private updateEvaluatorParams(
+        params: FilterEvaluatorParams,
+        model: IMultiFilterModel | null,
+        index: number
+    ): FilterEvaluatorParams {
+        const onModelChange = params.onModelChange;
+        return {
+            ...params!,
+            model: model?.filterModels?.[index] ?? null,
+            onModelChange: (newModel, additionalEventAttributes) => {
+                const existingModel = this.params.model;
+                const filterModels =
+                    existingModel?.filterModels ??
+                    this.evaluatorWrappers.map((_evaluator, evaluatorIndex) =>
+                        index === evaluatorIndex ? newModel ?? null : null
+                    );
+                onModelChange(updateMultiFilterModel(filterModels), additionalEventAttributes);
+            },
+        };
     }
 
     public doesFilterPass(params: FilterEvaluatorFuncParams<any, IMultiFilterModel>): boolean {
@@ -72,29 +76,8 @@ export class MultiFilterEvaluator
             if (model == null) {
                 return true;
             }
-            return this.evaluatorWrappers[index]?.evaluator.doesFilterPass({ ...params, model });
-        });
-    }
-
-    private processFilterResults(
-        promises: Promise<FilterModelValidation>[]
-    ): Promise<FilterModelValidation<IMultiFilterModel>> {
-        return Promise.all(promises).then((results) => {
-            const existingModel = this.params.model;
-            if (results.some(({ valid }) => !valid)) {
-                const filterModels = results.map((result, index) => {
-                    if (result.valid) {
-                        return existingModel?.filterModels?.[index] ?? null;
-                    }
-                    return result.model ?? null;
-                });
-                const model = updateMultiFilterModel(filterModels);
-                this.updateActiveFilters(model);
-                return { valid: false, model };
-            }
-
-            this.updateActiveFilters(existingModel);
-            return { valid: true };
+            const evaluator = this.evaluatorWrappers[index]?.evaluator;
+            return !evaluator || evaluator.doesFilterPass({ ...params, model });
         });
     }
 

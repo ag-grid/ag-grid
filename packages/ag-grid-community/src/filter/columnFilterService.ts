@@ -26,7 +26,6 @@ import type {
     FilterEvaluator,
     FilterEvaluatorParams,
     FilterModel,
-    FilterModelValidation,
     IFilter,
     IFilterComp,
     IFilterDef,
@@ -158,7 +157,6 @@ export class ColumnFilterService extends BeanStub implements NamedBean {
         const allPromises: AgPromise<void>[] = [];
         const previousModel = this.getModel(true);
 
-        this.model = {};
         if (model) {
             // mark the filters as we set them, so any active filters left over we stop
             const modelKeys = new Set(Object.keys(model));
@@ -189,9 +187,10 @@ export class ColumnFilterService extends BeanStub implements NamedBean {
                     _warn(64, { colId });
                     return;
                 }
-                allPromises.push(this.setModelOnFilterWrapper(filterWrapper, model[colId]));
+                allPromises.push(this.setModelOnFilterWrapper(filterWrapper, model[colId], true));
             });
         } else {
+            this.model = {};
             this.allColumnFilters.forEach((filterWrapper) => {
                 allPromises.push(this.setModelOnFilterWrapper(filterWrapper, null));
             });
@@ -348,7 +347,7 @@ export class ColumnFilterService extends BeanStub implements NamedBean {
             const colId = column.getColId();
             if (filterWrapper.isEvaluator) {
                 promises.push(
-                    filterWrapper.initPromise.then(() => {
+                    AgPromise.resolve().then(() => {
                         addFilter(column, this.isEvaluatorActive(column), {
                             colId,
                             isEvaluator: true,
@@ -386,7 +385,7 @@ export class ColumnFilterService extends BeanStub implements NamedBean {
             const column = filterWrapper.column;
             if (filterWrapper.isEvaluator) {
                 promises.push(
-                    filterWrapper.initPromise.then(() => {
+                    AgPromise.resolve().then(() => {
                         this.setColFilterActive(
                             column,
                             this.isEvaluatorActive(column),
@@ -638,7 +637,7 @@ export class ColumnFilterService extends BeanStub implements NamedBean {
         compDetails: UserCompDetails | null;
         evaluator: FilterEvaluator | undefined;
         evaluatorParams: FilterEvaluatorParams | undefined;
-        createFilterUi: (() => AgPromise<IFilterComp>) | null;
+        createFilterUi: ((update?: boolean) => AgPromise<IFilterComp>) | null;
     } {
         const defaultFilter = this.getDefaultFilter(column);
 
@@ -656,24 +655,27 @@ export class ColumnFilterService extends BeanStub implements NamedBean {
         compDetails: UserCompDetails | null;
         evaluator: FilterEvaluator | undefined;
         evaluatorParams: FilterEvaluatorParams | undefined;
-        createFilterUi: (() => AgPromise<IFilterComp>) | null;
+        createFilterUi: ((update?: boolean) => AgPromise<IFilterComp>) | null;
     } {
         const { evaluator, evaluatorParams } = this.createEvaluator(column, filterDef, defaultFilter) ?? {};
 
         let filterInstance: IFilterComp;
         const getFilterInstance = () => filterInstance;
 
-        const isEvaluator = !!evaluator;
-        const params = this.createFilterCompParams(column, isEvaluator, getFilterInstance);
-        const updatedParams = getFilterParams(params, isEvaluator);
+        const createFilterCompDetails = () => {
+            const isEvaluator = !!evaluator;
+            const params = this.createFilterCompParams(column, isEvaluator, getFilterInstance);
+            const updatedParams = getFilterParams(params, isEvaluator);
 
-        const compDetails = _getFilterDetails(this.beans.userCompFactory, filterDef, updatedParams, defaultFilter);
+            return _getFilterDetails(this.beans.userCompFactory, filterDef, updatedParams, defaultFilter);
+        };
+        const compDetails = createFilterCompDetails();
         if (!compDetails) {
             return { compDetails: null, createFilterUi: null, evaluator, evaluatorParams };
         }
 
-        const createFilterUi = () => {
-            const filterPromise = compDetails.newAgStackInstance();
+        const createFilterUi = (update?: boolean) => {
+            const filterPromise = (update ? createFilterCompDetails()! : compDetails).newAgStackInstance();
             filterPromise.then((r) => {
                 filterInstance = r!;
             });
@@ -742,17 +744,9 @@ export class ColumnFilterService extends BeanStub implements NamedBean {
         const { compDetails, evaluator, evaluatorParams, createFilterUi } = this.createFilterInstanceForColumn(column);
 
         if (evaluator) {
+            evaluator.init?.(evaluatorParams!);
             return {
                 column,
-                initPromise: new AgPromise((resolve) => {
-                    _initEvaluator(evaluator, evaluatorParams!).then((result) => {
-                        if (!result.valid) {
-                            this.model[column.getColId()] = result.model ?? null;
-                            this.beans.filterManager?.onFilterChanged({ columns: [column], source: 'api' });
-                        }
-                        resolve();
-                    });
-                }),
                 isEvaluator: true,
                 evaluator,
                 evaluatorParams: evaluatorParams!,
@@ -771,7 +765,6 @@ export class ColumnFilterService extends BeanStub implements NamedBean {
             const promise = createFilterUi();
             const filterWrapper: LegacyFilterWrapper = {
                 column,
-                initPromise: promise.then(() => {}),
                 filterUi: {
                     created: true,
                     create: createFilterUi,
@@ -789,7 +782,6 @@ export class ColumnFilterService extends BeanStub implements NamedBean {
 
         return {
             column,
-            initPromise: AgPromise.resolve(),
             filterUi: null,
             isEvaluator: false,
         };
@@ -835,12 +827,20 @@ export class ColumnFilterService extends BeanStub implements NamedBean {
         filterParams: any
     ): FilterEvaluatorParams {
         const colDef = column.getColDef();
+        const colId = column.getColId();
+        const filterChangedCallback = this.filterChangedCallbackFactory(column);
         return this.gos.addGridCommonParams({
             colDef,
             column,
             getValue: this.createGetValue(column),
             source,
             model: this.getModelForEvaluator(column),
+            onModelChange: (newModel, additionalEventAttributes) => {
+                this.model[colId] = newModel;
+                this.refreshEvaluator(colId, newModel, 'evaluator').then(() => {
+                    filterChangedCallback({ ...additionalEventAttributes, source: 'columnFilter' });
+                });
+            },
             ...filterParams,
         });
     }
@@ -1060,11 +1060,10 @@ export class ColumnFilterService extends BeanStub implements NamedBean {
         }
 
         // callbacks need to refer to the old filter instance not the new one
-        const { filterModifiedCallback, filterChangedCallback } = filterWrapper.filterUi.filterParams;
+        const { filterModifiedCallback } = filterWrapper.filterUi.filterParams;
         const newFilterParams = {
             ...(compDetails.params as IFilterParams | FilterDisplayParams),
             filterModifiedCallback,
-            filterChangedCallback,
         };
 
         filterWrapper.filterUi.filterParams = newFilterParams;
@@ -1075,11 +1074,7 @@ export class ColumnFilterService extends BeanStub implements NamedBean {
                 'apiParams',
                 column.getColDef().filterParams
             );
-            this.refreshEvaluator(colId, this.getModelForEvaluator(column), 'apiParams').then((hasModelChanged) => {
-                if (hasModelChanged) {
-                    this.beans.filterManager?.onFilterChanged({ columns: [column], source: 'api' });
-                }
-            });
+            this.refreshEvaluator(colId, this.getModelForEvaluator(column), 'apiParams');
             return;
         }
 
@@ -1096,33 +1091,37 @@ export class ColumnFilterService extends BeanStub implements NamedBean {
         });
     }
 
-    private async refreshEvaluator(
+    private refreshEvaluator(
         colId: string,
         model: any,
-        source: 'ui' | 'apiModel' | 'apiParams' | 'floating'
-    ): Promise<boolean> {
+        source: 'ui' | 'apiModel' | 'apiParams' | 'floating' | 'evaluator'
+    ): AgPromise<void> {
         const filterWrapper = this.allColumnFilters.get(colId);
 
         if (!filterWrapper || !filterWrapper.isEvaluator) {
-            return false;
+            return AgPromise.resolve();
         }
 
         const { filterUi, evaluator, evaluatorParams } = filterWrapper;
 
         return _refreshEvaluator(
-            async () => {
-                if (filterUi?.created) {
-                    const filter = await filterUi.promise;
-                    return filter ? { filter, filterParams: filterUi.filterParams } : undefined;
+            () => {
+                if (filterUi) {
+                    const { created, filterParams } = filterUi;
+                    if (created) {
+                        return filterUi.promise.then((filter) => {
+                            return filter ? { filter, filterParams } : undefined;
+                        });
+                    } else {
+                        filterUi.refreshed = true;
+                    }
                 }
-                return undefined;
+
+                return AgPromise.resolve(undefined);
             },
             evaluator,
             evaluatorParams,
             model,
-            (model, evaluatorParams) => {
-                this.model[evaluatorParams.column.getColId()] = model;
-            },
             source
         );
     }
@@ -1373,7 +1372,11 @@ export class ColumnFilterService extends BeanStub implements NamedBean {
         column.dispatchColEvent('filterChanged', source, additionalEventAttributes);
     }
 
-    private setModelOnFilterWrapper(filterWrapper: FilterWrapper, newModel: any): AgPromise<void> {
+    private setModelOnFilterWrapper(
+        filterWrapper: FilterWrapper,
+        newModel: any,
+        justCreated?: boolean
+    ): AgPromise<void> {
         return new AgPromise((resolve) => {
             if (filterWrapper.isEvaluator) {
                 const colId = filterWrapper.column.getColId();
@@ -1381,6 +1384,11 @@ export class ColumnFilterService extends BeanStub implements NamedBean {
                     this.model[colId] = newModel;
                 } else {
                     delete this.model[colId];
+                }
+                if (justCreated) {
+                    // don't need to refresh as already has the new model
+                    resolve();
+                    return;
                 }
                 this.refreshEvaluator(colId, newModel, 'apiModel').then(() => resolve());
                 return;
@@ -1414,9 +1422,13 @@ export class ColumnFilterService extends BeanStub implements NamedBean {
 }
 
 interface BaseFilterUi {
-    create: () => AgPromise<IFilterComp>;
+    create: (update?: boolean) => AgPromise<IFilterComp>;
     filterParams: IFilterParams;
     compDetails: UserCompDetails;
+    /**
+     * True if has been refreshed but not created yet
+     */
+    refreshed?: boolean;
 }
 
 interface CreatedFilterUi extends BaseFilterUi {
@@ -1432,7 +1444,6 @@ type FilterUi = CreatedFilterUi | UncreatedFilterUi;
 
 interface BaseFilterWrapper {
     column: AgColumn;
-    initPromise: AgPromise<void>;
     /**
      * `null` if invalid
      */
@@ -1460,50 +1471,30 @@ function getFilterUiFromWrapper(filterWrapper: FilterWrapper): AgPromise<IFilter
     if (filterUi.created) {
         return filterUi.promise;
     }
-    const promise = filterUi.create();
+    const promise = filterUi.create(filterUi.refreshed);
     const createdFilterUi = filterUi as unknown as CreatedFilterUi;
     createdFilterUi.created = true;
     createdFilterUi.promise = promise;
     return promise;
 }
 
-export async function _initEvaluator(
-    evaluator: FilterEvaluator,
-    evaluatorParams: FilterEvaluatorParams
-): Promise<FilterModelValidation> {
-    return (await evaluator.init?.(evaluatorParams)) ?? { valid: true };
-}
-
-export async function _refreshEvaluator(
-    getFilterUi: () =>
-        | Promise<{ filter: IFilterComp; filterParams: IFilterParams } | undefined>
-        | ({ filter: IFilterComp; filterParams: IFilterParams } | undefined),
+export function _refreshEvaluator(
+    getFilterUi: () => AgPromise<{ filter: IFilterComp; filterParams: IFilterParams } | undefined>,
     evaluator: FilterEvaluator,
     evaluatorParams: FilterEvaluatorParams,
     model: any,
-    updateModelForValidation: (model: any, evaluatorParams: FilterEvaluatorParams) => void,
-    source: 'ui' | 'apiModel' | 'apiParams' | 'floating'
-): Promise<boolean> {
-    let modelChanged = false;
+    source: 'ui' | 'apiModel' | 'apiParams' | 'floating' | 'evaluator'
+): AgPromise<void> {
+    evaluator.refresh?.({ ...evaluatorParams, model, source });
 
-    if (evaluator && evaluatorParams) {
-        const result = await evaluator.refresh?.({ ...evaluatorParams, model, source });
-        if (result?.valid === false) {
-            model = result.model ?? null;
-            updateModelForValidation(model, evaluatorParams);
-            modelChanged = true;
+    return getFilterUi().then((filterUi) => {
+        if (filterUi) {
+            const { filter, filterParams } = filterUi;
+            filter?.refresh?.({
+                ...filterParams,
+                model,
+                source,
+            } as FilterDisplayParams);
         }
-    }
-
-    const filterUi = await getFilterUi();
-    if (filterUi) {
-        const { filter, filterParams } = filterUi;
-        filter?.refresh?.({
-            ...filterParams,
-            model,
-            source: modelChanged ? 'validation' : source,
-        } as FilterDisplayParams);
-    }
-
-    return modelChanged;
+    });
 }

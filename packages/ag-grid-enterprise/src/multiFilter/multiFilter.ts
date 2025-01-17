@@ -22,7 +22,6 @@ import {
     TabGuardComp,
     _focusInto,
     _getActiveDomElement,
-    _initEvaluator,
     _isNothingFocused,
     _loadTemplate,
     _refreshEvaluator,
@@ -33,7 +32,7 @@ import { AgGroupComponent } from '../widgets/agGroupComponent';
 import type { MenuItemActivatedEvent } from '../widgets/agMenuItemComponent';
 import { AgMenuItemComponent } from '../widgets/agMenuItemComponent';
 import { AgMenuItemRenderer } from '../widgets/agMenuItemRenderer';
-import { forEachReverse, getFilterTitle, getMultiFilterDefs } from './multiFilterUtil';
+import { forEachReverse, getFilterTitle, getMultiFilterDefs, updateMultiFilterModel } from './multiFilterUtil';
 
 interface FilterWrapper {
     filter: IFilterComp;
@@ -344,24 +343,14 @@ export class MultiFilter extends TabGuardComp implements IFilterComp, IMultiFilt
             const { filter, filterParams, evaluator, evaluatorParams } = wrapper;
             if (evaluator) {
                 promises.push(
-                    new AgPromise((resolve) => {
-                        let hasModelChanged = false;
-                        _refreshEvaluator(
-                            () => ({ filter, filterParams: filterParams! }),
-                            evaluator,
-                            evaluatorParams!,
-                            modelForFilter,
-                            (newModel) => {
-                                hasModelChanged = true;
-                                this.onEvaluatorModelChanged(index, newModel);
-                            },
-                            'apiModel'
-                        ).then(() => {
-                            if (!hasModelChanged) {
-                                this.updateActiveListForEvaluator(index, modelForFilter);
-                            }
-                            resolve();
-                        });
+                    _refreshEvaluator(
+                        () => AgPromise.resolve({ filter, filterParams: filterParams! }),
+                        evaluator,
+                        evaluatorParams!,
+                        modelForFilter,
+                        'apiModel'
+                    ).then(() => {
+                        this.updateActiveListForEvaluator(index, modelForFilter);
                     })
                 );
             } else {
@@ -534,13 +523,10 @@ export class MultiFilter extends TabGuardComp implements IFilterComp, IMultiFilt
                             return;
                         }
                         _refreshEvaluator(
-                            () => ({ filter: wrapper.filter, filterParams: wrapper.filterParams! }),
+                            () => AgPromise.resolve({ filter: wrapper.filter, filterParams: wrapper.filterParams! }),
                             wrapper.evaluator!,
                             wrapper.evaluatorParams!,
                             model,
-                            (newModel) => {
-                                model = newModel;
-                            },
                             'ui'
                         ).then(() => {
                             wrapper.model = model;
@@ -556,28 +542,32 @@ export class MultiFilter extends TabGuardComp implements IFilterComp, IMultiFilt
             return AgPromise.resolve(null);
         }
 
-        return new AgPromise((resolve) =>
-            createFilterUi().then((filter) => {
-                if (!evaluator) {
-                    resolve({ filter: filter! });
-                    return;
-                }
-                _initEvaluator(evaluator, { ...evaluatorParams!, model: initialModelForFilter }).then((result) => {
-                    let modelForFilter = initialModelForFilter;
-                    if (!result.valid) {
-                        modelForFilter = result.model ?? null;
-                        this.onEvaluatorModelChanged(index, modelForFilter);
-                    }
-                    resolve({
-                        filter: filter!,
-                        filterParams: compDetails?.params,
-                        evaluator,
-                        evaluatorParams,
-                        model: modelForFilter,
-                    });
-                });
-            })
-        );
+        return createFilterUi().then((filter) => {
+            if (!evaluator) {
+                return { filter: filter! };
+            }
+            const onModelChange = evaluatorParams!.onModelChange;
+            evaluator.init?.({
+                ...evaluatorParams!,
+                model: initialModelForFilter,
+                onModelChange: (newModel, additionalEventAttributes) => {
+                    const existingModel = this.params.model;
+                    const filterModels =
+                        existingModel?.filterModels ??
+                        this.wrappers.map((_wrapper, evaluatorIndex) =>
+                            index === evaluatorIndex ? newModel ?? null : null
+                        );
+                    onModelChange(updateMultiFilterModel(filterModels), additionalEventAttributes);
+                },
+            });
+            return {
+                filter: filter!,
+                filterParams: compDetails?.params,
+                evaluator,
+                evaluatorParams,
+                model: initialModelForFilter,
+            };
+        });
     }
 
     private executeWhenAllFiltersReady(action: () => void): void {

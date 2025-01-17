@@ -18,9 +18,10 @@ export interface FilterEvaluatorFuncParams<TData = any, TModel = any> extends ID
 export interface FilterEvaluatorParams<TData = any, TContext = any, TValue = any, TModel = any>
     extends AgGridCommon<TData, TContext> {
     model: TModel | null;
+    onModelChange: (model: TModel | null, additionalEventAttributes?: any) => void;
     colDef: ColDef<TData, TValue>;
     column: Column<TValue>;
-    source: 'init' | 'ui' | 'apiModel' | 'apiParams' | 'floating';
+    source: 'init' | 'ui' | 'apiModel' | 'apiParams' | 'floating' | 'evaluator';
     /**
      * Get the cell value for the given row node and column, which can be the column ID, definition, or `Column` object.
      * If no column is provided, the column this filter is on will be used.
@@ -31,18 +32,9 @@ export interface FilterEvaluatorParams<TData = any, TContext = any, TValue = any
     ) => TValue | null | undefined;
 }
 
-export interface FilterModelValidation<TModel = any> {
-    valid: boolean;
-    model?: TModel | null;
-}
-
 export interface FilterEvaluator<TData = any, TContext = any, TValue = any, TModel = any, TCustomParams = object> {
-    init?(
-        params: FilterEvaluatorParams<TData, TContext, TValue, TModel> & TCustomParams
-    ): FilterModelValidation<TModel> | Promise<FilterModelValidation<TModel>>;
-    refresh?(
-        params: FilterEvaluatorParams<TData, TContext, TValue, TModel> & TCustomParams
-    ): FilterModelValidation<TModel> | Promise<FilterModelValidation<TModel>>;
+    init?(params: FilterEvaluatorParams<TData, TContext, TValue, TModel> & TCustomParams): void;
+    refresh?(params: FilterEvaluatorParams<TData, TContext, TValue, TModel> & TCustomParams): void;
     doesFilterPass(params: FilterEvaluatorFuncParams<TData, TModel>): boolean;
     destroy?(): void;
 }
@@ -241,7 +233,7 @@ export interface FilterDisplayParams<TData = any, TContext = any, TModel = any> 
     model: TModel | null;
     /** Callback that should be called every time the model in the component changes. */
     onModelChange: (model: TModel | null, additionalEventAttributes?: any) => void;
-    source: 'init' | 'ui' | 'apiModel' | 'apiParams' | 'validation';
+    source: 'init' | 'ui' | 'apiModel' | 'apiParams' | 'evaluator';
     /**
      * @deprecated V33.1 Not used when using filter evaluators
      */

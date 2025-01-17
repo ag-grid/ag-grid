@@ -2,7 +2,6 @@ import type {
     FilterEvaluator,
     FilterEvaluatorFuncParams,
     FilterEvaluatorParams,
-    FilterModelValidation,
     IRowNode,
     ISetFilterParams,
     RowNode,
@@ -30,27 +29,21 @@ export class SetFilterEvaluator<TValue = string>
      */
     private appliedModel: SetFilterAppliedModel;
 
-    public init(
-        params: FilterEvaluatorParams<any, any, TValue, SetFilterModel> & ISetFilterParams<any, TValue>
-    ): Promise<FilterModelValidation<SetFilterModel>> {
+    public init(params: FilterEvaluatorParams<any, any, TValue, SetFilterModel> & ISetFilterParams<any, TValue>): void {
         const helper = (this.beans.setFilter as SetFilterService).getHelper(params);
         this.helper = helper;
         this.appliedModel = new SetFilterAppliedModel(helper.caseFormat.bind(helper));
         this.refresh(params);
-
-        return this.validateModel(params);
     }
 
     public refresh(
         params: FilterEvaluatorParams<any, any, TValue, SetFilterModel> & ISetFilterParams<any, TValue>
-    ): Promise<FilterModelValidation<SetFilterModel>> {
+    ): void {
         this.params = params;
 
-        return this.validateModel(params).then((result) => {
-            const { valid, model } = result;
-            this.appliedModel.update(valid ? params.model : model ?? null);
-            return result;
-        });
+        this.appliedModel.update(params.model);
+
+        this.validateModel(params);
     }
 
     public doesFilterPass(params: FilterEvaluatorFuncParams<any, SetFilterModel>): boolean {
@@ -87,37 +80,38 @@ export class SetFilterEvaluator<TValue = string>
 
     protected validateModel(
         params: FilterEvaluatorParams<any, any, TValue, SetFilterModel> & ISetFilterParams<any, TValue>
-    ): Promise<FilterModelValidation<SetFilterModel>> {
+    ): void {
         const helper = this.helper;
         const allValues = helper.allValues;
-        return new Promise((resolve) => {
-            allValues.allValuesPromise.then(() => {
-                const model = params.model;
-                if (model == null) {
-                    resolve({ valid: true });
-                    return;
-                }
-                const existingFormattedKeys: Map<string | null, string | null> = new Map();
-                allValues.allValues.forEach((_value, key) => {
-                    existingFormattedKeys.set(helper.caseFormat(key), key);
-                });
-                const newValues: SetFilterModelValue = [];
-                let updated = false;
-                for (const unformattedKey of model.values) {
-                    const formattedKey = helper.caseFormat(_makeNull(unformattedKey));
-                    const existingUnformattedKey = existingFormattedKeys.get(formattedKey);
-                    if (existingUnformattedKey !== undefined) {
-                        newValues.push(existingUnformattedKey);
-                    } else {
-                        updated = true;
-                    }
-                }
-                if (newValues.length === 0 && params.excelMode) {
-                    resolve({ valid: false, model: null });
-                    return;
-                }
-                resolve(updated ? { valid: false, model: { ...model, values: newValues } } : { valid: true });
+
+        allValues.allValuesPromise.then(() => {
+            const model = params.model;
+            if (model == null) {
+                return;
+            }
+            const existingFormattedKeys: Map<string | null, string | null> = new Map();
+            allValues.allValues.forEach((_value, key) => {
+                existingFormattedKeys.set(helper.caseFormat(key), key);
             });
+            const newValues: SetFilterModelValue = [];
+            let updated = false;
+            for (const unformattedKey of model.values) {
+                const formattedKey = helper.caseFormat(_makeNull(unformattedKey));
+                const existingUnformattedKey = existingFormattedKeys.get(formattedKey);
+                if (existingUnformattedKey !== undefined) {
+                    newValues.push(existingUnformattedKey);
+                } else {
+                    updated = true;
+                }
+            }
+            if (newValues.length === 0 && params.excelMode) {
+                params.onModelChange(null);
+                return;
+            }
+            if (updated) {
+                params.onModelChange({ ...model, values: newValues });
+                return;
+            }
         });
     }
 
