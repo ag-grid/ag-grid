@@ -220,15 +220,13 @@ export class CellCtrl extends BeanStub {
         this.customStyleFeature?.setComp(comp);
         this.tooltipFeature?.refreshTooltip();
         this.keyboardListener?.setComp(this.eGui);
-
-        if (this.rangeFeature) {
-            this.rangeFeature.setComp(comp, eGui);
-        }
+        this.rangeFeature?.setComp(comp, eGui);
 
         if (startEditing && this.isCellEditable()) {
             this.beans.editSvc?.startEditing(this);
         } else {
-            this.showValue();
+            // We can skip refreshing the range handle as this is done in this.rangeFeature.setComp above
+            this.showValue(false, true);
         }
 
         if (this.onCompAttachedFuncs.length) {
@@ -258,7 +256,7 @@ export class CellCtrl extends BeanStub {
         return this.valueFormatted ?? this.value;
     }
 
-    private showValue(forceNewCellRendererInstance = false): void {
+    private showValue(forceNewCellRendererInstance: boolean, skipRangeHandleRefresh: boolean): void {
         const { beans, column, rowNode, rangeFeature } = this;
         const { userCompFactory } = beans;
         const valueToDisplay = this.getValueToDisplay();
@@ -274,7 +272,9 @@ export class CellCtrl extends BeanStub {
             compDetails = _getCellRendererDetails(userCompFactory, column.getColDef(), params);
         }
         this.comp.setRenderDetails(compDetails, valueToDisplay, forceNewCellRendererInstance);
-        if (rangeFeature) {
+
+        // Don't call expensive _requestAnimationFrame if we don't have to
+        if (!skipRangeHandleRefresh && rangeFeature) {
             _requestAnimationFrame(beans, () => rangeFeature?.refreshHandle());
         }
     }
@@ -445,7 +445,7 @@ export class CellCtrl extends BeanStub {
             // if it's 'new data', then we don't refresh the cellRenderer, even if refresh method is available.
             // this is because if the whole data is new (ie we are showing stock price 'BBA' now and not 'SSD')
             // then we are not showing a movement in the stock price, rather we are showing different stock.
-            this.showValue(newData);
+            this.showValue(newData, false);
 
             // we don't want to flash the cells when processing a filter change, as otherwise the UI would
             // be to busy. see comment in FilterManager with regards processingFilterChange
