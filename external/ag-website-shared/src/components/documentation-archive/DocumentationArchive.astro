@@ -47,7 +47,7 @@ const getChangelogUrl = (version: string) => {
 
     <table class={styles.archiveTable}>
         {
-            versionsData.slice(1).map(({ noArchive, version, versionType, date }) => {
+            versionsData.slice(1).map(({ noArchive, version, versionType, date, noDocs }) => {
                 if (noArchive) return;
 
                 const useDocumentationLink =
@@ -73,7 +73,13 @@ const getChangelogUrl = (version: string) => {
                         </td>
 
                         <td>
-                            <ArchiveLink site={site} version={version} useDocumentationLink={useDocumentationLink} />
+                            {!noDocs ? (
+                                <ArchiveLink
+                                    site={site}
+                                    version={version}
+                                    useDocumentationLink={useDocumentationLink}
+                                />
+                            ) : null}
                         </td>
                     </tr>
                 );
