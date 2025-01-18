@@ -108,6 +108,7 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
         return this.beans.gos.addGridCommonParams({
             colDef,
             columnGroup: column,
+            floatingFilter: false,
         });
     }
 

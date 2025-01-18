@@ -147,6 +147,7 @@ export interface HeaderClassParams<TData = any, TValue = any> extends AgGridComm
     colDef: AbstractColDef<TData, TValue>;
     column?: Column<TValue> | null;
     columnGroup?: ColumnGroup | null;
+    floatingFilter: boolean;
 }
 export type HeaderClass<TData = any, TValue = any> =
     | string

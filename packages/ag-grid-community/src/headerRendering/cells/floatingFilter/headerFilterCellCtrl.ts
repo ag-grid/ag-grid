@@ -43,6 +43,7 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl<IHeaderFilterCe
         this.setGui(eGui, compBean);
         this.setupActive();
 
+        this.refreshHeaderStyles();
         this.setupWidth(compBean);
         this.setupLeft(compBean);
         this.setupHover(compBean);
@@ -79,6 +80,7 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl<IHeaderFilterCe
         return this.beans.gos.addGridCommonParams({
             colDef,
             column,
+            floatingFilter: true,
         });
     }
 
