@@ -1,6 +1,12 @@
 import React, { memo, useCallback, useContext, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 
-import type { HeaderGroupCellCtrl, IHeaderGroupCellComp, IHeaderGroupComp, UserCompDetails } from 'ag-grid-community';
+import type {
+    HeaderGroupCellCtrl,
+    HeaderStyle,
+    IHeaderGroupCellComp,
+    IHeaderGroupComp,
+    UserCompDetails,
+} from 'ag-grid-community';
 import { _EmptyBean } from 'ag-grid-community';
 
 import { BeansContext } from '../beansContext';
@@ -10,6 +16,7 @@ import { CssClasses, isComponentStateless } from '../utils';
 const HeaderGroupCellComp = ({ ctrl }: { ctrl: HeaderGroupCellCtrl }) => {
     const { context } = useContext(BeansContext);
 
+    const [userStyles, setUserStyles] = useState<HeaderStyle>();
     const [cssClasses, setCssClasses] = useState<CssClasses>(() => new CssClasses());
     const [cssResizableClasses, setResizableCssClasses] = useState<CssClasses>(() => new CssClasses());
     const [resizableAriaHidden, setResizableAriaHidden] = useState<'true' | 'false'>('false');
@@ -36,6 +43,7 @@ const HeaderGroupCellComp = ({ ctrl }: { ctrl: HeaderGroupCellCtrl }) => {
                 }
             },
             addOrRemoveCssClass: (name: string, on: boolean) => setCssClasses((prev) => prev.setClass(name, on)),
+            setUserStyles: (styles: HeaderStyle) => setUserStyles(styles),
             setHeaderWrapperHidden: (hidden: boolean) => {
                 const headerCompWrapper = eHeaderCompWrapper.current;
 
@@ -101,7 +109,14 @@ const HeaderGroupCellComp = ({ ctrl }: { ctrl: HeaderGroupCellCtrl }) => {
     const UserCompClass = userCompDetails && userCompDetails.componentClass;
 
     return (
-        <div ref={setRef} className={className} col-id={colId} role="columnheader" aria-expanded={ariaExpanded}>
+        <div
+            ref={setRef}
+            style={userStyles}
+            className={className}
+            col-id={colId}
+            role="columnheader"
+            aria-expanded={ariaExpanded}
+        >
             <div ref={eHeaderCompWrapper} className="ag-header-cell-comp-wrapper" role="presentation">
                 {reactUserComp && userCompStateless && <UserCompClass {...userCompDetails!.params} />}
                 {reactUserComp && !userCompStateless && (
