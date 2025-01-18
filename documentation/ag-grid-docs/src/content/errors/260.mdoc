@@ -1,0 +1,32 @@
+
+## AG Grid Modules
+
+AG Grid features are split into [Modules](./modules/) to help reduce application bundle size by enabling developers to cherry pick the features they require. This error occurs when a feature is used without the feature's module being registered first. 
+
+{% note %}
+For a comprehensive guide on AG Grid Modules please see [Modules](./modules/).
+{% /note %}
+
+### Minimized Bundle Size
+
+If you are concerned about bundle size, only import the modules for the features you required, i.e the missing module in the error above. 
+
+We recommend using the [Module Selector Tool](/modules/#selecting-modules) to identify all the modules required for your application's features. The tool will generate the module registration code which can be copied into your application.
+
+### All Feature Bundles
+
+If you are not concerned about bundle size, you can import all community / enterprise features via the [bundles](./modules/#bundles) `AllCommunityModule` / `AllEnterpriseModule`.
+
+```ts
+// All Community Features
+import { AllCommunityModule, ModuleRegistry } from 'ag-grid-community';
+ModuleRegistry.registerModules([AllCommunityModule]);
+```
+
+```ts
+// All Enterprise Features
+import { AllEnterpriseModule, ModuleRegistry } from 'ag-grid-enterprise';
+ModuleRegistry.registerModules([AllEnterpriseModule]);
+```
+
+

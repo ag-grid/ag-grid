@@ -15,15 +15,11 @@
       }
     },
     "build:package": {
-      "executor": "@nx/js:swc",
+      "command": "swc -d dist/package --delete-dir-on-start scripts/",
       "inputs": ["{projectRoot}/scripts/plugin-utils/**/*.ts"],
-      "outputs": ["{options.outputPath}"],
+      "outputs": ["{projectRoot}/dist/package"],
       "cache": true,
-      "options": {
-        "outputPath": "{projectRoot}/dist/package",
-        "main": "{projectRoot}/scripts/plugin-utils/index.ts",
-        "tsConfig": "{projectRoot}/tsconfig.lib.json"
-      }
+      "options": { "cwd": "{projectRoot}" }
     },
     "build:types": {
       "executor": "@nx/js:tsc",
@@ -42,14 +38,15 @@
       ],
       "outputs": ["{options.outputPath}"],
       "options": {
-        "outputPath": "external/ag-shared/dist/types",
-        "main": "external/ag-shared/src/main.ts",
-        "tsConfig": "external/ag-shared//tsconfig.types.json",
+        "outputPath": "{projectRoot}/dist/types",
+        "main": "{projectRoot}/src/main.ts",
+        "additionalEntryPoints": ["{projectRoot}/scripts/plugin-utils/index.ts"],
+        "tsConfig": "{projectRoot}/tsconfig.types.json",
         "compiler": "tsc"
       },
       "configurations": {
         "watch": {
-          "tsConfig": "external/ag-shared/tsconfig.types.watch.json"
+          "tsConfig": "{projectRoot}/tsconfig.types.watch.json"
         },
         "production": {}
       }

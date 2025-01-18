@@ -23,7 +23,6 @@ function getTypes(node: ts.Node) {
 }
 
 function getTypeLookupFunc(fileName) {
-    console.log('Generating gridOptions types');
     const program = ts.createProgram([fileName], {});
     program.getTypeChecker(); // does something important to make types work below
 
@@ -52,11 +51,16 @@ function getTypeLookupFunc(fileName) {
                 fullLookup[prop] = lookupType(prop as string);
             });
         return fullLookup;
-    } else {
-        console.error('No gridOptions file found');
     }
+    throw new Error('No gridOptions file found');
 }
 
-export function getGridOptionsType() {
+export function getGridOptionsType(): Record<
+    string,
+    {
+        typeName: string;
+        typesToInclude: string[];
+    }
+> {
     return getTypeLookupFunc('./plugins/ag-grid-generate-example-files/gridOptionsTypes/baseGridOptions.ts');
 }

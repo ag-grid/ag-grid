@@ -45,7 +45,8 @@ type ParamTypeForLowercaseKey<K extends string> = K extends `${string}color`
     : K extends `${string}duration` ? DurationValue
     : LengthValue;
 
-const literalToCSS = (value: string | number): string | false => {
+const literalToCSS = (value: string | number | { ref: string }): string | false => {
+    if (typeof value === 'object' && value?.ref) return paramToVariableExpression(value.ref);
     if (typeof value === 'string') return value;
     if (typeof value === 'number') return String(value);
     return false;
@@ -104,7 +105,7 @@ export const colorValueToCss = (value: ColorValue): string | false => {
  *
  * @see https://developer.mozilla.org/en-US/docs/Web/CSS/color-scheme
  */
-export type ColorSchemeValue = 'light' | 'dark' | 'inherit' | 'normal' | AnyString;
+export type ColorSchemeValue = 'light' | 'dark' | 'inherit' | 'normal' | AnyString | { ref: string };
 
 export const colorSchemeValueToCss = literalToCSS;
 
@@ -147,7 +148,7 @@ export const lengthValueToCss = (value: LengthValue): string | false => {
 /**
  * A number without units.
  */
-export type ScaleValue = number;
+export type ScaleValue = number | { ref: 'string' };
 
 export const scaleValueToCss = literalToCSS;
 
@@ -264,7 +265,15 @@ export const shadowValueToCss = (value: ShadowValue): string | false => {
  *
  * @see https://developer.mozilla.org/en-US/docs/Web/CSS/line-style
  */
-export type BorderStyleValue = 'none' | 'solid' | 'dotted' | 'dashed' | 'inset' | 'outset' | AnyString;
+export type BorderStyleValue =
+    | 'none'
+    | 'solid'
+    | 'dotted'
+    | 'dashed'
+    | 'inset'
+    | 'outset'
+    | AnyString
+    | { ref: string };
 
 export const borderStyleValueToCss = literalToCSS;
 
@@ -311,7 +320,7 @@ const quoteUnsafeChars = (font: string) =>
  *
  * @see https://developer.mozilla.org/en-US/docs/Web/CSS/font-weight
  */
-export type FontWeightValue = 'normal' | 'bold' | AnyString | number;
+export type FontWeightValue = 'normal' | 'bold' | AnyString | number | { ref: string };
 
 export const fontWeightValueToCss = literalToCSS;
 

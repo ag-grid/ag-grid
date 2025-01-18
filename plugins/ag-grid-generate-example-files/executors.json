@@ -2,7 +2,7 @@
     "executors": {
         "generate": {
             "implementation": "./dist/src/executors/generate/executor.js",
-            "batchImplementation": "./dist/src/executors/generate/batch-executor",
+            "batchImplementation": "./dist/src/executors/generate/batch-executor.js",
             "schema": "./src/executors/generate/schema.json",
             "description": "generate example files"
         }

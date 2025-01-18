@@ -1,24 +1,25 @@
 ---
-import Layout from '@layouts/Layout.astro';
-import { getCollection, getEntry, type CollectionEntry } from 'astro:content';
 import type { Framework } from '@ag-grid-types';
-import { FRAMEWORKS, PRODUCTION_GRID_SITE_URL } from '@constants';
-import styles from '@ag-website-shared/components/page-styles/docs.module.scss';
+import Note from '@ag-website-shared/components/alert/Note';
+import Warning from '@ag-website-shared/components/alert/Warning';
 import { DocsNav } from '@ag-website-shared/components/docs-navigation/DocsNav';
-import { Header } from '@components/docs/components/Header';
-import { getErrorText } from '@utils/getErrorText';
-import { SideNavigation } from '@components/pages-navigation/components/SideNavigation';
-import { getHeadings, getTopHeading } from '@utils/markdoc/getHeadings';
+import styles from '@ag-website-shared/components/page-styles/docs.module.scss';
 import { DOCS_TAB_ITEM_ID_PREFIX } from '@ag-website-shared/constants';
+import { Header } from '@components/docs/components/Header';
+import { SideNavigation } from '@components/pages-navigation/components/SideNavigation';
+import { FRAMEWORKS, PRODUCTION_GRID_SITE_URL } from '@constants';
+import Layout from '@layouts/Layout.astro';
+import { getIsArchive } from '@utils/env';
+import { getFrameworkDisplayText } from '@utils/framework';
+import { getErrorText } from '@utils/getErrorText';
+import { getHeadings, getTopHeading } from '@utils/markdoc/getHeadings';
+import { pathJoin } from '@utils/pathJoin';
+import { urlWithPrefix } from '@utils/urlWithPrefix';
+import { getCollection, getEntry, type CollectionEntry } from 'astro:content';
 import {
     AG_GRID_ERRORS,
     type ErrorId,
 } from '../../../../../../packages/ag-grid-community/src/validation/errorMessages/errorText';
-import Note from '@ag-website-shared/components/alert/Note';
-import { getIsArchive } from '@utils/env';
-import Warning from '@ag-website-shared/components/alert/Warning';
-import { pathJoin } from '@utils/pathJoin';
-import { getFrameworkDisplayText } from '@utils/framework';
 
 interface Params {
     framework: Framework;
@@ -55,9 +56,10 @@ const title = `AG Grid ${frameworkDisplayText} Error #${code}`;
 const description = errorPage?.data.description ? errorPage?.data.description : '';
 
 const { Content } = errorPage ? await errorPage.render() : { Content: undefined };
-
 const { data: docsNavData } = await getEntry('docs-nav', 'docsNav');
+const { data: allErrorLinks } = await getEntry('errorLinks', 'errorLinks');
 
+const errorLinks = allErrorLinks.filter((e) => e.errorIds.includes(errorCode)) ?? [];
 const path = Astro.url.pathname;
 const pageName = `errors/${code}`;
 const defaultErrorText = getErrorText({ errorCode });
@@ -65,17 +67,26 @@ const defaultErrorText = getErrorText({ errorCode });
 const getTabItemSlug = (id: string) => `${DOCS_TAB_ITEM_ID_PREFIX}${id}`;
 const topHeading = getTopHeading(title);
 const fullErrorTextHeading = { slug: getTabItemSlug('full-error-text'), depth: 2, text: 'Full Error Text' };
-const headings = errorPage
-    ? (
-          await getHeadings({
-              title,
-              pageName,
-              markdocContent: errorPage.body,
-              framework,
-              getTabItemSlug,
-          })
-      ).concat(fullErrorTextHeading)
+const relatedDocPages = { slug: getTabItemSlug('related-doc-pages'), depth: 2, text: 'Related Doc Pages' };
+let headings = errorPage
+    ? await getHeadings({
+          title,
+          pageName,
+          markdocContent: errorPage.body,
+          framework,
+          getTabItemSlug,
+      })
     : [topHeading, fullErrorTextHeading];
+
+if (errorPage) {
+    // insert FullErrorTextHandling in second position as the errorPage brings its own top heading
+    headings = [headings[0], fullErrorTextHeading, ...headings.slice(1)];
+}
+
+if (errorLinks.length > 0) {
+    headings.push(relatedDocPages);
+}
+
 const isArchive = getIsArchive();
 const migrationUrl = pathJoin(
     PRODUCTION_GRID_SITE_URL,
@@ -98,11 +109,31 @@ const migrationUrl = pathJoin(
                 )
             }
             <div class={styles.pageSections}>
-                {Content ? <Content framework={framework} /> : undefined}
-
                 <h2 id={fullErrorTextHeading.slug}>{fullErrorTextHeading.text}</h2>
                 <pre id="errorCodeText" style="white-space: pre-wrap;">{defaultErrorText}</pre>
                 <Note>To show this error text in the dev console, import the <code>ValidationModule</code>.</Note>
+
+                {
+                    errorLinks.length > 0 ? (
+                        <>
+                            <h2 id={relatedDocPages.slug}>{relatedDocPages.text}</h2>
+                            <p>
+                                The following documentation pages should provide additional context / guidance on how to
+                                resolve this error.
+                            </p>
+                            <ul>
+                                {errorLinks.map((e) => (
+                                    <li>
+                                        <a href={urlWithPrefix({ framework, url: e.url })}>{e.text}</a>
+                                        {e.description ? <span> - {e.description}</span> : undefined}
+                                    </li>
+                                ))}
+                            </ul>
+                        </>
+                    ) : undefined
+                }
+
+                {Content ? <Content framework={framework} /> : undefined}
             </div>
         </div>
 

@@ -274,7 +274,7 @@ export const Changelog = () => {
                 filter: 'agTextColumnFilter',
                 wrapText: true,
                 autoHeight: true,
-                cellStyle: { 'line-height': 24, 'padding-top': 8, 'padding-bottom': 8 },
+                cellStyle: { lineHeight: '24px', paddingTop: '8px', paddingBottom: '8px' },
             },
             {
                 field: 'version',

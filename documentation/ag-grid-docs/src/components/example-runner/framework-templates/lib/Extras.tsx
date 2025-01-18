@@ -28,9 +28,6 @@ const extrasMap = {
     materialdesignicons: {
         styles: ['https://cdn.jsdelivr.net/npm/@mdi/font/css/materialdesignicons.css'],
     },
-    seedrandom: {
-        scripts: ['https://cdn.jsdelivr.net/npm/seedrandom@3.0.5/seedrandom.min.js'],
-    },
 };
 
 interface Props {

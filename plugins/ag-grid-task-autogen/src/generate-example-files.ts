@@ -17,8 +17,8 @@ export function createTask(parentProject: string, srcRelativeInputPath: string):
             executor: 'ag-grid-generate-example-files:generate',
             inputs: [
                 '{projectRoot}/**',
-                { dependentTasksOutputFiles: '**/*', transitive: false },
-                { externalDependencies: ['npm:typescript'] },
+                '{workspaceRoot}/packages/ag-grid-community/dist/types/**/*.d.ts',
+                '{workspaceRoot}/plugins/ag-grid-generate-example-files/dist/**/*',
                 '{workspaceRoot}/documentation/ag-grid-docs/public/example-runner/**',
             ],
             outputs: ['{options.outputPath}'],

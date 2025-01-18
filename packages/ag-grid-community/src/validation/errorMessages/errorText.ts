@@ -10,16 +10,24 @@ import { resolveModuleNames } from '../resolvableModuleNames';
 import { USER_COMP_MODULES } from '../rules/userCompValidations';
 
 export const moduleImportMsg = (moduleNames: ModuleName[]) => {
-    const imports = moduleNames
-        .map(
-            (moduleName) =>
-                `import { ${convertToUserModuleName(moduleName)} } from '${ENTERPRISE_MODULE_NAMES[moduleName as EnterpriseModuleName] ? 'ag-grid-enterprise' : 'ag-grid-community'}';`
-        )
-        .join(' \n');
-    return `import { ModuleRegistry } from 'ag-grid-community'; \n${imports} \n\nModuleRegistry.registerModules([ ${moduleNames.map(convertToUserModuleName).join(', ')} ]); \n\nFor more info see: ${baseDocLink}/modules/`;
+    const imports = moduleNames.map(
+        (moduleName) =>
+            `import { ${convertToUserModuleName(moduleName)} } from '${ENTERPRISE_MODULE_NAMES[moduleName as EnterpriseModuleName] ? 'ag-grid-enterprise' : 'ag-grid-community'}';`
+    );
+
+    const includeCharts = moduleNames.some((m) => m === 'IntegratedCharts' || m === 'Sparklines');
+    if (includeCharts) {
+        const chartImport = `import { AgChartsEnterpriseModule } from 'ag-charts-enterprise';`;
+        imports.push(chartImport);
+    }
+    return `import { ModuleRegistry } from 'ag-grid-community'; \n${imports.join(' \n')} \n\nModuleRegistry.registerModules([ ${moduleNames.map((m) => convertToUserModuleName(m, true)).join(', ')} ]); \n\nFor more info see: ${baseDocLink}/modules/`;
 };
 
-function convertToUserModuleName(moduleName: ModuleName): `${ModuleName}Module` {
+function convertToUserModuleName(moduleName: ModuleName, inModuleRegistration = false) {
+    if (inModuleRegistration && (moduleName === 'IntegratedCharts' || moduleName === 'Sparklines')) {
+        return `${moduleName}Module.with(AgChartsEnterpriseModule)`;
+    }
+
     return `${moduleName}Module`;
 }
 
@@ -40,8 +48,17 @@ const missingModule = ({
 }) => {
     const resolvedModuleNames = resolveModuleNames(moduleName, rowModelType);
     const reason = typeof reasonOrId === 'string' ? reasonOrId : MISSING_MODULE_REASONS[reasonOrId];
+
+    const chartModules = resolvedModuleNames.filter((m) => m === 'IntegratedCharts' || m === 'Sparklines');
+    const chartImportRequired =
+        chartModules.length > 0
+            ? `${chartModules.map((m) => convertToUserModuleName(m)).join()} must be initialised with an AG Charts module. One of 'AgChartsCommunityModule' / 'AgChartsEnterpriseModule'.`
+            : '';
+
+    const explanation = `Unable to use ${reason} as ${resolvedModuleNames.length > 1 ? 'one of ' + resolvedModuleNames.map((m) => convertToUserModuleName(m)).join(', ') : convertToUserModuleName(resolvedModuleNames[0])} is not registered${gridScoped ? ' for gridId: ' + gridId : ''}. ${chartImportRequired} Check if you have registered the module:\n`;
+
     return (
-        `Unable to use ${reason} as ${resolvedModuleNames.length > 1 ? 'one of ' + resolvedModuleNames.map(convertToUserModuleName).join(', ') : convertToUserModuleName(resolvedModuleNames[0])} is not registered${gridScoped ? ' for gridId: ' + gridId : ''}. Check if you have registered the module:
+        `${explanation}
 ${moduleImportMsg(resolvedModuleNames)}` + (additionalText ? ` \n\n${additionalText}` : '')
     );
 };
@@ -413,7 +430,7 @@ export const AG_GRID_ERRORS = {
             itemsToConsider,
         ] as const,
     176: ({ key }: { key: string }) => `unknown menu item type ${key}` as const,
-    177: () => `valid values for fillHandleDirection are 'x', 'y' and 'xy'. Default to 'xy'.` as const,
+    177: () => `valid values for cellSelection.handle.direction are 'x', 'y' and 'xy'. Default to 'xy'.` as const,
     178: ({ colId }: { colId: string }) => `column ${colId} is not visible` as const,
     179: () => 'totalValueGetter should be either a function or a string (expression)' as const,
     180: () => 'agRichSelectCellEditor requires cellEditorParams.values to be set' as const,

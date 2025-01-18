@@ -115,7 +115,7 @@
           "if (test \"${BUILD_FWS}\" != \"0\") ; then nx run-many -t build -p @ag-grid-community/angular,@ag-grid-community/react,@ag-grid-community/vue3 --parallel=5; fi",
           "if (test \"${BUILD_PACKAGES}\" != \"0\") ; then nx run-many -t build --projects=tag:package --exclude=tag:framework; fi",
           "if (test \"${BUILD_PACKAGES}\" != \"0\" && test \"${BUILD_FWS}\" != \"0\") ; then nx run-many -t build --projects=tag:package:framework; fi",
-          "if (test \"${BUILD_BATCH}\" != \"0\") ; then nx generate-examples --batch; fi"
+          "nx generate-examples"
         ]
       }
     },
@@ -178,18 +178,18 @@
       "command": "rimraf -g dist/ 'packages/*/dist/' 'plugins/*/dist/' 'testing/*/dist/' 'documentation/*/dist/' 'documentation/ag-grid-docs/node_modules/.vite/' 'community-modules/locale/umd/'"
     },
     "generate-examples": {
-      "executor": "nx:noop",
-      "dependsOn": ["^generate-example"],
-      "inputs": [
-        {
-          "externalDependencies": ["npm:typescript"]
-        }
-      ],
+      "executor": "nx:run-commands",
+      "dependsOn": ["ag-grid-generate-example-files:build", "^build:types"],
+      "inputs": [],
       "outputs": [],
-      "batch": true,
-      "cache": true,
+      "cache": false,
+      "options": {
+        "parallel": false,
+        "commands": ["yarn nx generate-examples ag-grid-docs --batch"]
+      },
       "configurations": {
         "staging": {},
+        "archive": {},
         "production": {}
       }
     },

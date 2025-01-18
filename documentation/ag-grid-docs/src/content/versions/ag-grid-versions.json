@@ -129,7 +129,8 @@
     },
     {
         "version": "31.3.3",
-        "date": "July 16th 2024"
+        "date": "July 16th 2024",
+        "noDocs": true
     },
     {
         "version": "31.3.2",
@@ -317,15 +318,18 @@
     },
     {
         "version": "30.0.3",
-        "date": "July 4th 2023"
+        "date": "July 4th 2023",
+        "noDocs": true
     },
     {
         "version": "30.0.2",
-        "date": "June 19th 2023"
+        "date": "June 19th 2023",
+        "noDocs": true
     },
     {
         "version": "30.0.1",
-        "date": "June 16th 2023"
+        "date": "June 16th 2023",
+        "noDocs": true
     },
     {
         "version": "30.0.0",

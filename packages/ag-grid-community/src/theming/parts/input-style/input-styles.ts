@@ -217,9 +217,8 @@ const makeInputStyleBorderedTreeShakeable = () =>
             inputInvalidBorder: {
                 color: { ref: 'invalidColor' },
             },
-            pickerButtonBorder: false,
-            pickerButtonFocusBorder: { width: 1, color: accentColor },
-            pickerListBorder: false,
+            pickerButtonBorder: true,
+            pickerListBorder: true,
         },
         css: () => inputStyleBaseCSS + inputStyleBorderedCSS,
     });
