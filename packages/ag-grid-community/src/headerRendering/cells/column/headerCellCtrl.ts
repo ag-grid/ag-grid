@@ -299,7 +299,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
     }
 
     private setupStylesFromColDef(): void {
-        this.setRefreshFunction('headerStyles', this.refreshHeaderStyles);
+        this.setRefreshFunction('headerStyles', this.refreshHeaderStyles.bind(this));
         this.refreshHeaderStyles();
     }
 
