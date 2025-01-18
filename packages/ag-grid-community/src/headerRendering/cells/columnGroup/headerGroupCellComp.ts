@@ -1,5 +1,6 @@
+import type { HeaderStyle } from '../../../entities/colDef';
 import type { UserCompDetails } from '../../../interfaces/iUserCompDetails';
-import { _setDisplayed } from '../../../utils/dom';
+import { _addStylesToElement, _setDisplayed } from '../../../utils/dom';
 import { RefPlaceholder } from '../../../widgets/component';
 import { AbstractHeaderCellComp } from '../abstractCell/abstractHeaderCellComp';
 import type { HeaderGroupCellCtrl, IHeaderGroupCellComp } from './headerGroupCellCtrl';
@@ -31,6 +32,7 @@ export class HeaderGroupCellComp extends AbstractHeaderCellComp<HeaderGroupCellC
 
         const compProxy: IHeaderGroupCellComp = {
             addOrRemoveCssClass: (cssClassName, on) => this.addOrRemoveCssClass(cssClassName, on),
+            setUserStyles: (styles: HeaderStyle) => _addStylesToElement(eGui, styles),
             setHeaderWrapperHidden: (hidden) => {
                 if (hidden) {
                     this.eHeaderCompWrapper.style.setProperty('display', 'none');

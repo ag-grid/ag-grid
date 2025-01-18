@@ -2,6 +2,7 @@ import { setupCompBean } from '../../../components/emptyBean';
 import { KeyCode } from '../../../constants/keyCode';
 import type { BeanStub } from '../../../context/beanStub';
 import type { AgColumn } from '../../../entities/agColumn';
+import type { HeaderClassParams } from '../../../entities/colDef';
 import type { ColumnEvent, FilterChangedEvent } from '../../../events';
 import { _getActiveDomElement, _isLegacyMenuEnabled } from '../../../gridOptionsUtils';
 import type { UserCompDetails } from '../../../interfaces/iUserCompDetails';
@@ -69,6 +70,16 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl<IHeaderFilterCe
 
     protected override moveHeader(): void {
         // doesn't support move
+    }
+
+    protected getHeaderClassParams(): HeaderClassParams {
+        const { column } = this;
+        const colDef = column.colDef;
+
+        return this.beans.gos.addGridCommonParams({
+            colDef,
+            column,
+        });
     }
 
     private setupActive(): void {

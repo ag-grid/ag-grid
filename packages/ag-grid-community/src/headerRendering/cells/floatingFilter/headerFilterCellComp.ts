@@ -1,6 +1,7 @@
+import type { HeaderStyle } from '../../../entities/colDef';
 import type { IFloatingFilterComp } from '../../../filter/floating/floatingFilter';
 import type { UserCompDetails } from '../../../interfaces/iUserCompDetails';
-import { _setDisplayed } from '../../../utils/dom';
+import { _addStylesToElement, _setDisplayed } from '../../../utils/dom';
 import type { AgPromise } from '../../../utils/promise';
 import { RefPlaceholder } from '../../../widgets/component';
 import { AbstractHeaderCellComp } from '../abstractCell/abstractHeaderCellComp';
@@ -32,6 +33,7 @@ export class HeaderFilterCellComp extends AbstractHeaderCellComp<HeaderFilterCel
 
         const compProxy: IHeaderFilterCellComp = {
             addOrRemoveCssClass: (cssClassName, on) => this.addOrRemoveCssClass(cssClassName, on),
+            setUserStyles: (styles: HeaderStyle) => _addStylesToElement(eGui, styles),
             addOrRemoveBodyCssClass: (cssClassName, on) => this.eFloatingFilterBody.classList.toggle(cssClassName, on),
             setButtonWrapperDisplayed: (displayed) => _setDisplayed(this.eButtonWrapper, displayed),
             setCompDetails: (compDetails) => this.setCompDetails(compDetails),
