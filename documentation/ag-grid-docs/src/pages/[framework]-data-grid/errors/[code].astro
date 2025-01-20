@@ -157,22 +157,16 @@ const migrationUrl = pathJoin(
     </div>
 </Layout>
 
-<style>
-    #errorCodeText {
-        white-space: pre-wrap;
-    }
-
-    .missing-params-message {
-        display: none;
-    }
-</style>
-
 <script>
     import { getErrorText } from '@utils/getErrorText';
     import type { ErrorId } from '../../../../../../packages/ag-grid-community/src/validation/errorMessages/errorText';
     import { VERSION } from '../../../../../../packages/ag-grid-community/src/version';
     import { getErrorRedirectBaseUrl } from '@utils/getErrorRedirectBaseUrl';
     import { pathJoin } from '@utils/pathJoin';
+
+    const MISSING_PARAMS_MESSAGE_SELECTOR = '.missing-params-message';
+    const FULL_ERROR_MESSAGE_SELECTOR = '.full-error-message';
+    const ERROR_CODE_TEXT_ID = 'errorCodeText';
 
     // Get errorCode from url, so it doesn't need to be passed
     // in from Astro and we can import in this script
@@ -182,8 +176,8 @@ const migrationUrl = pathJoin(
 
     if (!_version_) {
         // Missing version number, show a warning message
-        const missingParamsMessage = (document.querySelector('.missing-params-message') as HTMLElement)!;
-        const fullErrorMessage = (document.querySelector('.full-error-message') as HTMLElement)!;
+        const missingParamsMessage = (document.querySelector(MISSING_PARAMS_MESSAGE_SELECTOR) as HTMLElement)!;
+        const fullErrorMessage = (document.querySelector(FULL_ERROR_MESSAGE_SELECTOR) as HTMLElement)!;
 
         missingParamsMessage.style.display = 'block';
         fullErrorMessage.style.display = 'none';
@@ -196,7 +190,7 @@ const migrationUrl = pathJoin(
             window.location.replace(redirectUrl);
         }
 
-        const errorCodeTextEl = document.getElementById('errorCodeText');
+        const errorCodeTextEl = document.getElementById(ERROR_CODE_TEXT_ID);
         if (errorCodeTextEl) {
             errorCodeTextEl.textContent = errorText;
         }
