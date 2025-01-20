@@ -26,6 +26,22 @@
         "fix": {}
       }
     },
+    "sync-readmes": {
+      "executor": "nx:run-commands",
+      "inputs": ["{workspaceRoot}/README.md"],
+      "outputs": [
+        "{workspaceRoot}/community-modules/locale/README.md",
+        "{workspaceRoot}/packages/ag-grid-angular/README.md",
+        "{workspaceRoot}/packages/ag-grid-angular/projects/ag-grid-angular/README.md",
+        "{workspaceRoot}/packages/ag-grid-community/README.md",
+        "{workspaceRoot}/packages/ag-grid-react/README.md",
+        "{workspaceRoot}/packages/ag-grid-vue3/README.md"
+      ],
+      "options": {
+        "commands": ["node scripts/readme/sync-readme.js"]
+      },
+      "cache": true
+    },
     "test": {
       "executor": "nx:noop",
       "inputs": [
@@ -61,6 +77,7 @@
       "inputs": [],
       "outputs": [],
       "dependsOn": ["^pack:verify"],
+      "parallelism": false,
       "configurations": {
         "production": {},
         "archive": {}
@@ -79,12 +96,6 @@
         "commands": ["nx run-many -t build --projects=tag:package --exclude=tag:framework"]
       },
       "cache": true
-    },
-    "build:core": {
-      "executor": "nx:noop",
-      "dependsOn": ["build:modules", "build:packages"],
-      "inputs": [],
-      "outputs": []
     },
     "test:modules": {
       "executor": "nx:run-commands",

@@ -30,6 +30,7 @@
     "style",
     "theme"
   ],
+  "private": true,
   "author": "Niall Crosby <niall.crosby@gmail.com>",
   "license": "MIT",
   "bugs": {

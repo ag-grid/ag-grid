@@ -601,6 +601,8 @@ export const AG_GRID_ERRORS = {
         `Unable to infer chart data type for column '${colId}' if first data entry is null. Please specify "chartDataType", or a "cellDataType" in the column definition. For more information, see ${baseDocLink}/integrated-charts-range-chart#coldefchartdatatype .` as const,
     266: () =>
         'As of v33.1, using "keyCreator" with the Rich Select Editor has been deprecated. It now requires the "formatValue" callback to convert complex data to strings.' as const,
+    267: () =>
+        'Detail grids can not use a different theme to the master grid, the `theme` detail grid option will be ignored.' as const,
 };
 
 export type ErrorMap = typeof AG_GRID_ERRORS;

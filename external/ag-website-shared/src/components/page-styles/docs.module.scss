@@ -201,3 +201,11 @@ blockquote:where(:not(:last-child)) {
 .sideMenu {
     padding-top: $spacing-size-8 + $spacing-size-1;
 }
+
+:global(#errorCodeText) {
+    white-space: pre-wrap;
+}
+
+:global(.missing-params-message) {
+    display: none;
+}

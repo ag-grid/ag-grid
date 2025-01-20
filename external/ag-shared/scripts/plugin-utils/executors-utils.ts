@@ -114,7 +114,7 @@ export function batchWorkerExecutor<ExecutorOptions>(workerModule: string, extra
 
         let threadCount = os.cpus().length;
         if (process.env.CI == null) {
-            threadCount /= 2;
+            threadCount = Math.round(threadCount / 2);
         }
         const { Tinypool } = await import('tinypool');
         const pool = new Tinypool({
