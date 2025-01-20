@@ -22,7 +22,6 @@ import {
     _mergeDeep,
     _missing,
     _updateColsMap,
-    _updateColumnState,
     _warn,
     isColumnGroupAutoCol,
 } from 'ag-grid-community';
