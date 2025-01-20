@@ -299,10 +299,6 @@ export class HeaderRowCtrl extends BeanStub {
             }
         }
 
-        headerCtrl.addManagedListeners(headerColumn, {
-            widthChanged: this.setWidth.bind(this),
-        });
-
         this.headerCellCtrls.set(idOfChild, headerCtrl);
     }
 
