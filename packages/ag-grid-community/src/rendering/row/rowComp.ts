@@ -92,9 +92,7 @@ export class RowComp extends Component {
             }
         });
 
-        const cellCompsToRemove = Object.values(cellsToRemove).filter((cellComp) => cellComp != null);
-
-        this.destroyCells(cellCompsToRemove as CellComp[]);
+        this.destroyCells(Object.values(cellsToRemove) as CellComp[]);
         this.ensureDomOrder(cellCtrls);
     }
 
@@ -128,12 +126,8 @@ export class RowComp extends Component {
 
     public override destroy(): void {
         super.destroy();
-        this.destroyAllCells();
-    }
-
-    private destroyAllCells(): void {
-        const cellsToDestroy = Object.values(this.cellComps).filter((cp) => cp != null);
-        this.destroyCells(cellsToDestroy as CellComp[]);
+        // Destroy all cells
+        this.destroyCells(Object.values(this.cellComps) as CellComp[]);
     }
 
     private setFullWidthRowComp(fullWidthRowComponent: ICellRendererComp): void {
