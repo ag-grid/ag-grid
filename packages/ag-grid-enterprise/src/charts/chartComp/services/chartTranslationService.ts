@@ -230,6 +230,9 @@ export const DEFAULT_CHART_TRANSLATIONS = {
     'cone-funnel': 'Cone Funnel',
     pyramid: 'Pyramid',
     funnelGroup: 'Funnel',
+    funnelTooltip: 'Funnel',
+    coneFunnelTooltip: 'Cone Funnel',
+    pyramidTooltip: 'Pyramid',
 
     // menu items
     groupedColumn: 'Grouped',
