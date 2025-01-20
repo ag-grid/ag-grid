@@ -6,7 +6,6 @@ import type { ColDef } from '../entities/colDef';
 import type { GridOptions, SelectionColumnDef } from '../entities/gridOptions';
 import type { ColumnEventType } from '../events';
 import { _getCheckboxLocation, _getCheckboxes, _getHeaderCheckbox, _isRowSelection } from '../gridOptionsUtils';
-import { _updateColumnState } from './columnFactoryUtils';
 import type { ColKey, ColumnCollections } from './columnModel';
 import { _applyColumnState, _getColumnState } from './columnStateUtils';
 import {
@@ -194,7 +193,7 @@ export class SelectionColService extends BeanStub implements NamedBean {
         this.selectionCols?.list.forEach((col) => {
             const newColDef = this.createSelectionColDef(current);
             col.setColDef(newColDef, null, source);
-            _updateColumnState(this.beans, col, newColDef, source);
+            _applyColumnState(this.beans, { state: [{ colId: col.getColId(), ...newColDef }] }, source);
         });
     }
 
