@@ -190,7 +190,7 @@ export function updateSomeColumnState(
     // flex
     if (flex !== undefined && flex !== column.getFlex()) {
         colFlex?.setColFlex(column, flex);
-        colFlex?.refreshFlexedColumns();
+        // colFlex?.refreshFlexedColumns();
     }
 }
 
@@ -227,9 +227,9 @@ export function _updateColumnState(
         const widthBeforeUpdate = column.getActualWidth();
         column.setActualWidth(widthBeforeUpdate, source);
     }
-    // Do a minimal refresh here: widths changing imply left positions and body widths have also changed.
-    beans.visibleCols.setLeftValues(source);
-    beans.visibleCols.updateBodyWidths();
+    // // Do a minimal refresh here: widths changing imply left positions and body widths have also changed.
+    // beans.visibleCols.setLeftValues(source);
+    // beans.visibleCols.updateBodyWidths();
 }
 
 function findExistingColumn(
