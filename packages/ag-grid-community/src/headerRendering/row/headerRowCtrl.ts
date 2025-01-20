@@ -69,12 +69,14 @@ export class HeaderRowCtrl extends BeanStub {
      * @param comp Proxy to the actual component
      * @param initCompState Should the component be initialised with the current state of the controller. Default: true
      */
-    public setComp(comp: IHeaderRowComp): void {
+    public setComp(comp: IHeaderRowComp, compBean: BeanStub | undefined, initCompState: boolean = true): void {
         this.comp = comp;
-        const compBean = setupCompBean(this, this.beans.context, undefined);
+        compBean = setupCompBean(this, this.beans.context, undefined);
 
-        this.onRowHeightChanged();
-        this.onVirtualColumnsChanged();
+        if (initCompState) {
+            this.onRowHeightChanged();
+            this.onVirtualColumnsChanged();
+        }
 
         // width is managed directly regardless of framework and so is not included in initCompState
         this.setWidth();
