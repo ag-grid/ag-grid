@@ -104,13 +104,14 @@ The example below demonstrates using the `autoHeaderHeight` property in conjunct
 
 ## Colouring Groups
 
-The grid doesn't colour the groups for you. However you can use the column definition `headerClass` for this purpose. The `headerClass` attribute is available on both columns and column groups.
+The grid does not automatically color the groups for you. However, you can achieve this by using the `headerClass` or `headerStyle` properties in the column definitions. These attributes can be applied to both individual columns and column groups.
 
 ```{% frameworkTransform=true suppressFrameworkContext=true %}
 const gridOptions = {
     columnDefs: [
         // the CSS class name supplied to 'headerClass' will get applied to the header group
-        { headerName: 'Athlete Details', headerClass: 'my-css-class', children: []}
+        { headerName: 'Athlete Details', headerClass: 'my-css-class', children: []},
+        { headerName: 'Medal Details', headerStyle: { backgroundColor: 'green', children: []}
     ]
 }
 ```

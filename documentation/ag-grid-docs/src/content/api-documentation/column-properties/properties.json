@@ -129,6 +129,7 @@
             "description": "Function or [expression](./cell-expressions/#column-definition-expressions). Gets the value for display in the header."
         },
         "headerTooltip": {},
+        "headerStyle": {},
         "headerClass": {},
         "headerComponent": {
             "description": "The custom header group component to be used for rendering the component header. If none specified the default AG Grid is used.",

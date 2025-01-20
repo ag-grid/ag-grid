@@ -136,7 +136,7 @@ export interface IAggFuncParams<TData = any, TValue = any> extends AgGridCommon<
 }
 
 export interface HeaderStyleFunc<TData = any, TValue = any> {
-    (headerClassParams: HeaderClassParams<TData, TValue>): CellStyle | null | undefined;
+    (headerClassParams: HeaderClassParams<TData, TValue>): HeaderStyle | null | undefined;
 }
 
 export interface HeaderStyle {
