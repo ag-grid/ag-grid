@@ -1,7 +1,7 @@
 import type { ExcelOOXMLTemplate } from 'ag-grid-community';
 
 const borderFactory: ExcelOOXMLTemplate = {
-    getTemplate(cellStyle: CellStyle) {
+    getTemplate(cellStyle: ExcelCellStyle) {
         const { builtinId, name, xfId } = cellStyle;
 
         return {
@@ -19,7 +19,7 @@ const borderFactory: ExcelOOXMLTemplate = {
 
 export default borderFactory;
 
-export interface CellStyle {
+export interface ExcelCellStyle {
     builtinId: number;
     name: string;
     xfId: number;
