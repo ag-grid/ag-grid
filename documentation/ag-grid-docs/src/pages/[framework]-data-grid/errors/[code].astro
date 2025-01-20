@@ -94,7 +94,13 @@ const migrationUrl = pathJoin(
 );
 ---
 
-<Layout title={title} description={description} showSearchBar={true} showDocsNav={true}>
+<Layout
+    title={title}
+    description={description}
+    showSearchBar={true}
+    showDocsNav={true}
+    hidePageFromSearchEngines={true}
+>
     <div class:list={[styles.contentViewport, 'layout-grid']}>
         <DocsNav client:load menuData={docsNavData} framework={framework} pageName={pageName} />
 
