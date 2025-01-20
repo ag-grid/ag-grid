@@ -18,6 +18,7 @@ import type { IRowNode } from '../interfaces/iRowNode';
 import { LocalEventService } from '../localEventService';
 import { _exists, _missing } from '../utils/generic';
 import { _mergeDeep } from '../utils/object';
+import { _escapeString } from '../utils/string';
 import { _warn } from '../validation/logging';
 import type { AgColumnGroup } from './agColumnGroup';
 import type { AgProvidedColumnGroup } from './agProvidedColumnGroup';
@@ -63,6 +64,8 @@ export class AgColumn<TValue = any>
     // used by React (and possibly other frameworks) as key for rendering. also used to
     // identify old vs new columns for destroying cols when no longer used.
     private instanceId = getNextColInstanceId();
+    // sanitised version of the column id
+    private colIdSanitised: string;
 
     private actualWidth: any;
 
@@ -113,6 +116,7 @@ export class AgColumn<TValue = any>
         private readonly primary: boolean
     ) {
         super();
+        this.colIdSanitised = _escapeString(colId)!;
     }
 
     public getInstanceId(): ColumnInstanceId {
@@ -544,6 +548,9 @@ export class AgColumn<TValue = any>
 
     public getId(): string {
         return this.colId;
+    }
+    public getColIdSanitised(): string {
+        return this.colIdSanitised;
     }
 
     public getUniqueId(): HeaderColumnId {

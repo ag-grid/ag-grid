@@ -27,7 +27,6 @@ import { _addOrRemoveAttribute } from '../../utils/dom';
 import { _getCtrlForEventTarget } from '../../utils/event';
 import { _findFocusableElements, _isCellFocusSuppressed } from '../../utils/focus';
 import { _makeNull } from '../../utils/generic';
-import { _escapeString } from '../../utils/string';
 import type { ICellRenderer, ICellRendererParams } from '../cellRenderers/iCellRenderer';
 import type { DndSourceComp } from '../dndSourceComp';
 import type { RowCtrl } from '../row/rowCtrl';
@@ -128,8 +127,7 @@ export class CellCtrl extends BeanStub {
 
         // unique id to this instance, including the column ID to help with debugging in React as it's used in 'key'
         this.instanceId = (column.getId() + '-' + instanceIdSequence++) as CellCtrlInstanceId;
-
-        this.colIdSanitised = _escapeString(this.column.getId())!;
+        this.colIdSanitised = this.column.getColIdSanitised();
 
         this.createCellPosition();
         this.updateAndFormatValue(false);
