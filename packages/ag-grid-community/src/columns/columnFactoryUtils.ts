@@ -183,12 +183,12 @@ export function updateSomeColumnState(
     }
 
     // pinned - anything but undefined, thus null or empty string will remove pinned
-    if (pinned !== undefined && pinned !== column.getPinned()) {
+    if (pinned !== undefined) {
         pinnedCols?.setColPinned(column, pinned);
     }
 
     // flex
-    if (flex !== undefined && flex !== column.getFlex()) {
+    if (flex !== undefined) {
         colFlex?.setColFlex(column, flex);
     }
 }

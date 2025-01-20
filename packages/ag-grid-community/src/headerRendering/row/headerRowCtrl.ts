@@ -71,13 +71,12 @@ export class HeaderRowCtrl extends BeanStub {
      */
     public setComp(comp: IHeaderRowComp, compBean: BeanStub | undefined, initCompState: boolean = true): void {
         this.comp = comp;
-        compBean = setupCompBean(this, this.beans.context, undefined);
+        compBean = setupCompBean(this, this.beans.context, compBean);
 
         if (initCompState) {
             this.onRowHeightChanged();
             this.onVirtualColumnsChanged();
         }
-
         // width is managed directly regardless of framework and so is not included in initCompState
         this.setWidth();
 
