@@ -183,14 +183,13 @@ export function updateSomeColumnState(
     }
 
     // pinned - anything but undefined, thus null or empty string will remove pinned
-    if (pinned !== undefined && pinned !== column.getPinned()) {
-        pinnedCols?.setColsPinned([column], pinned, source);
+    if (pinned !== undefined) {
+        pinnedCols?.setColPinned(column, pinned);
     }
 
     // flex
-    if (flex !== undefined && flex !== column.getFlex()) {
+    if (flex !== undefined) {
         colFlex?.setColFlex(column, flex);
-        colFlex?.refreshFlexedColumns();
     }
 }
 
@@ -227,8 +226,6 @@ export function _updateColumnState(
         const widthBeforeUpdate = column.getActualWidth();
         column.setActualWidth(widthBeforeUpdate, source);
     }
-    beans.visibleCols.setLeftValues(source);
-    beans.visibleCols.updateBodyWidths();
 }
 
 function findExistingColumn(
