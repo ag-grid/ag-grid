@@ -107,6 +107,9 @@ export class GridBodyScrollFeature extends BeanStub {
         this.addManagedElementListeners(this.eBodyViewport, {
             scroll: requireUpdatedScrollPosition,
         });
+        this.addManagedElementListeners(this.ctrlsSvc.get('fakeVScrollComp').eViewport, {
+            scroll: requireUpdatedScrollPosition,
+        });
 
         this.ctrlsSvc.whenReady(this, (p) => {
             this.centerRowsCtrl = p.center;
