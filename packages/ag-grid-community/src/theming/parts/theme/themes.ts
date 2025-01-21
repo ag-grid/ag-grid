@@ -208,6 +208,10 @@ const makeStyleMaterialTreeShakeable = () => {
         },
         rowHoverColor: foregroundMix(0.08),
         headerCellHoverBackgroundColor: foregroundMix(0.05),
+        statusBarLabelColor: foregroundMix(0.63),
+        statusBarLabelFontWeight: 600,
+        statusBarValueFontWeight: 600,
+        valueChangeValueHighlightBackgroundColor: '#00acc1',
     };
 
     const lightParams = {
@@ -314,8 +318,9 @@ const makeThemeMaterialTreeShakeable = () =>
             checkboxBorderRadius: 2,
             toggleButtonWidth: 34,
             toggleButtonSwitchInset: 1,
-            cardShadow: '0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23)',
-            popupShadow: '0 10px 20px rgba(0,0,0,0.25), 0 7px 7px rgba(0,0,0,0.22)',
+            cardShadow:
+                '0 3px 1px -2px rgba(0, 0, 0, 0.2), 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12)',
+            popupShadow: '5px 5px 10px rgba(0, 0, 0, 0.3)',
         });
 
 export const themeMaterial = /*#__PURE__*/ makeThemeMaterialTreeShakeable();

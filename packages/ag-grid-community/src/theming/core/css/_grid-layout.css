@@ -71,9 +71,10 @@
             content won't fit
           - subtract the row border width to ensure that text is still centrally aligned
             when there is a thick row border
+          - subtract 2px to account for the 1px border around the cell
             */
     --ag-internal-content-line-height: calc(
-        min(var(--ag-row-height), var(--ag-line-height, 1000px)) - var(--ag-internal-row-border-width, 1px)
+        min(var(--ag-row-height), var(--ag-line-height, 1000px)) - var(--ag-internal-row-border-width, 1px) - 2px
     );
 }
 
