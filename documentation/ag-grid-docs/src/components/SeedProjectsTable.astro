@@ -9,7 +9,7 @@ const { data: seedProjects } = await getEntry('seed-projects', 'grid-seed-projec
 <table class={styles.reposTable} role="grid">
     <thead>
         <tr>
-            <th scope="col" data-column="Github Repo">Github Repo</th>
+            <th scope="col" data-column="GitHub Repo">GitHub Repo</th>
             <th scope="col" data-column="Framework">Framework</th>
             <th scope="col" data-column="Development Environment">Dev Environment</th>
             <th scope="col" data-column="License Type">License Type</th>
@@ -20,7 +20,7 @@ const { data: seedProjects } = await getEntry('seed-projects', 'grid-seed-projec
             seedProjects.map(({ name, url, framework, devEnvironment, licenseType }) => {
                 return (
                     <tr>
-                        <td scope="row" data-column="Github Repo">
+                        <td scope="row" data-column="GitHub Repo">
                             <a class:list={[styles.repoButton, 'button-secondary']} href={url}>
                                 <Icon name="github" />
                                 {name}

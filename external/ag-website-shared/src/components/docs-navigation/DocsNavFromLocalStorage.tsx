@@ -6,7 +6,7 @@ import { useEffect, useState } from 'react';
 
 import { DocsNav } from './DocsNav';
 
-export function DocsNavFromLocalStorage({ menuData, pageName }: { menuData: any; pageName: string }) {
+export function DocsNavFromLocalStorage({ menuData, pageName }: { menuData: any; pageName?: string }) {
     const internalFramework = useStore($internalFramework);
     const [framework, setFramework] = useState<Framework>();
 

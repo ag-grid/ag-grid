@@ -11,6 +11,7 @@ import {
     BeanStub,
     GROUP_AUTO_COLUMN_ID,
     _addColumnDefaultAndTypes,
+    _applyColumnState,
     _areColIdsEqual,
     _columnsMatch,
     _convertColumnEventSourceType,
@@ -21,7 +22,6 @@ import {
     _mergeDeep,
     _missing,
     _updateColsMap,
-    _updateColumnState,
     _warn,
     isColumnGroupAutoCol,
 } from 'ag-grid-community';
@@ -190,10 +190,11 @@ export class AutoColService extends BeanStub implements NamedBean, IAutoColServi
         const underlyingColId = typeof oldColDef.showRowGroup == 'string' ? oldColDef.showRowGroup : undefined;
         const beans = this.beans;
         const underlyingColumn = underlyingColId != null ? beans.colModel.getColDefCol(underlyingColId) : undefined;
-        const colDef = this.createAutoColDef(colToUpdate.getId(), underlyingColumn ?? undefined, index);
+        const colId = colToUpdate.getId();
+        const colDef = this.createAutoColDef(colId, underlyingColumn ?? undefined, index);
 
         colToUpdate.setColDef(colDef, null, source);
-        _updateColumnState(beans, colToUpdate, colDef, source);
+        _applyColumnState(beans, { state: [{ colId, ...colDef }] }, source);
     }
 
     private createAutoColDef(colId: string, underlyingColumn?: AgColumn, index?: number): ColDef {

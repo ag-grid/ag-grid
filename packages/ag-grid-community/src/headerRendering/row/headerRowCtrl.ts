@@ -89,9 +89,10 @@ export class HeaderRowCtrl extends BeanStub {
 
     private addEventListeners(compBean: BeanStub): void {
         const onHeightChanged = this.onRowHeightChanged.bind(this);
+        const onDisplayedColumnsChanged = this.onDisplayedColumnsChanged.bind(this);
         compBean.addManagedEventListeners({
             columnResized: this.setWidth.bind(this),
-            displayedColumnsChanged: this.onDisplayedColumnsChanged.bind(this),
+            displayedColumnsChanged: onDisplayedColumnsChanged,
             virtualColumnsChanged: (params) => this.onVirtualColumnsChanged(params.afterScroll),
             columnGroupHeaderHeightChanged: onHeightChanged,
             columnHeaderHeightChanged: onHeightChanged,
@@ -100,7 +101,7 @@ export class HeaderRowCtrl extends BeanStub {
         });
 
         // when print layout changes, it changes what columns are in what section
-        compBean.addManagedPropertyListener('domLayout', this.onDisplayedColumnsChanged.bind(this));
+        compBean.addManagedPropertyListener('domLayout', onDisplayedColumnsChanged);
         compBean.addManagedPropertyListener('ensureDomOrder', (e) => (this.isEnsureDomOrder = e.currentValue));
 
         compBean.addManagedPropertyListeners(
@@ -140,7 +141,7 @@ export class HeaderRowCtrl extends BeanStub {
     }
 
     private getWidthForRow(): number {
-        const { visibleCols: presentedColsService } = this.beans;
+        const { visibleCols } = this.beans;
         if (this.isPrintLayout) {
             const pinned = this.pinned != null;
             if (pinned) {
@@ -148,14 +149,14 @@ export class HeaderRowCtrl extends BeanStub {
             }
 
             return (
-                presentedColsService.getContainerWidth('right') +
-                presentedColsService.getContainerWidth('left') +
-                presentedColsService.getContainerWidth(null)
+                visibleCols.getContainerWidth('right') +
+                visibleCols.getContainerWidth('left') +
+                visibleCols.getContainerWidth(null)
             );
         }
 
         // if not printing, just return the width as normal
-        return presentedColsService.getContainerWidth(this.pinned);
+        return visibleCols.getContainerWidth(this.pinned);
     }
 
     private onRowHeightChanged(): void {

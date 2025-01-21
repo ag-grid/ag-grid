@@ -300,7 +300,7 @@ export const LicenseSetup: FunctionComponent<Props> = ({ library, framework, pat
                             <table className={styles.reposTable} role="grid">
                                 <thead>
                                     <tr>
-                                        <th scope="col">Github Repo</th>
+                                        <th scope="col">GitHub Repo</th>
                                         <th scope="col">Framework</th>
                                         <th scope="col">Development Environment</th>
                                     </tr>
