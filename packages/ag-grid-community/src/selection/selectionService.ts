@@ -562,7 +562,7 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
     }
 
     public selectAllRowNodes(params: { source: SelectionEventSourceType; selectAll?: SelectAllMode }) {
-        const { gos } = this;
+        const { gos, selectionCtx } = this;
         if (!_isRowSelection(gos)) {
             _warn(132);
             return;
@@ -578,7 +578,14 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
 
         const { source, selectAll } = params;
 
-        this.getNodesToSelect(selectAll).forEach((rowNode) => {
+        const allNodes = this.getNodesToSelect(selectAll);
+
+        if (allNodes.length > 0) {
+            selectionCtx.setRoot(allNodes[0]);
+            selectionCtx.setEndRange(allNodes[allNodes.length - 1]);
+        }
+
+        allNodes.forEach((rowNode) => {
             this.selectRowNode(rowNode.footer ? rowNode.sibling : rowNode, true, undefined, source);
         });
 
