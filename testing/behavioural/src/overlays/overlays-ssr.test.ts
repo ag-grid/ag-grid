@@ -1,5 +1,3 @@
-import type { MockInstance } from 'vitest';
-
 import { ServerSideRowModelModule } from 'ag-grid-enterprise';
 
 import { TestGridsManager } from '../test-utils';
@@ -8,7 +6,6 @@ describe('ag-grid overlays state', () => {
     const gridsManager = new TestGridsManager({
         modules: [ServerSideRowModelModule],
     });
-    let consoleWarnSpy: MockInstance;
 
     function hasLoadingIcon() {
         return !!document.querySelector('.ag-icon.ag-icon-loading');
@@ -19,13 +16,11 @@ describe('ag-grid overlays state', () => {
     }
 
     beforeEach(() => {
-        consoleWarnSpy = vitest.spyOn(console, 'warn').mockImplementation(() => {});
         gridsManager.reset();
     });
 
     afterEach(() => {
         gridsManager.reset();
-        consoleWarnSpy.mockRestore();
     });
 
     test('should show loading and no rows overlay, also when changing columns', async () => {
@@ -68,7 +63,6 @@ describe('ag-grid overlays state', () => {
         expect(hasNoRowsOverlay()).toBe(true);
         expect(hasLoadingIcon()).toBe(false);
 
-        console.log('HERE!');
         // Try to change columnDefs, row data still empty, we must still show the no overlay
         api.setGridOption('columnDefs', [{ field: 'athlete' }, { field: 'sport' }]);
         expect(hasLoadingIcon()).toBe(false);
