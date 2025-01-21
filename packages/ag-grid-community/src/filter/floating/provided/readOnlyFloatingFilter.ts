@@ -3,7 +3,12 @@ import type { IFilter } from '../../../interfaces/iFilter';
 import type { AgInputTextField } from '../../../widgets/agInputTextField';
 import { AgInputTextFieldSelector } from '../../../widgets/agInputTextField';
 import { Component, RefPlaceholder } from '../../../widgets/component';
-import type { IFloatingFilterComp, IFloatingFilterParams, IFloatingFilterParent } from '../floatingFilter';
+import type {
+    FloatingFilterDisplayParams,
+    IFloatingFilterComp,
+    IFloatingFilterParams,
+    IFloatingFilterParent,
+} from '../floatingFilter';
 
 // optional floating filter for user provided filters - instead of providing a floating filter,
 // they can provide a getModelAsString() method on the filter instead. this class just displays
@@ -29,6 +34,10 @@ export class ReadOnlyFloatingFilter extends Component implements IFloatingFilter
         this.eFloatingFilterText
             .setDisabled(true)
             .setInputAriaLabel(`${displayName} ${this.getLocaleTextFunc()('ariaFilterInput', 'Filter Input')}`);
+        if (this.gos.get('reactiveFloatingFilters')) {
+            const reactiveParams = params as unknown as FloatingFilterDisplayParams;
+            this.onParentModelChanged(reactiveParams.model);
+        }
     }
 
     public onParentModelChanged(parentModel: any): void {

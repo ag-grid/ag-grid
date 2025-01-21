@@ -3,6 +3,7 @@ import type {
     AgInputTextField,
     BeanCollection,
     ColumnNameService,
+    FloatingFilterDisplayParams,
     IFloatingFilter,
     IFloatingFilterParams,
     SetFilterModel,
@@ -47,6 +48,11 @@ export class SetFloatingFilterComp<V = string> extends Component implements IFlo
         const translate = this.getLocaleTextFunc();
 
         this.eFloatingFilterText.setInputAriaLabel(`${displayName} ${translate('ariaFilterInput', 'Filter Input')}`);
+
+        if (this.gos.get('reactiveFloatingFilters')) {
+            const reactiveParams = params as unknown as FloatingFilterDisplayParams;
+            this.onParentModelChanged(reactiveParams.model);
+        }
     }
 
     public refresh(params: IFloatingFilterParams): void {

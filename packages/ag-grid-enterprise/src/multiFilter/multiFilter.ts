@@ -32,7 +32,7 @@ import { AgGroupComponent } from '../widgets/agGroupComponent';
 import type { MenuItemActivatedEvent } from '../widgets/agMenuItemComponent';
 import { AgMenuItemComponent } from '../widgets/agMenuItemComponent';
 import { AgMenuItemRenderer } from '../widgets/agMenuItemRenderer';
-import { forEachReverse, getFilterTitle, getMultiFilterDefs, updateMultiFilterModel } from './multiFilterUtil';
+import { forEachReverse, getFilterTitle, getMultiFilterDefs, getUpdatedMultiFilterModel } from './multiFilterUtil';
 
 interface FilterWrapper {
     filter: IFilterComp;
@@ -550,15 +550,11 @@ export class MultiFilter extends TabGuardComp implements IFilterComp, IMultiFilt
             evaluator.init?.({
                 ...evaluatorParams!,
                 model: initialModelForFilter,
-                onModelChange: (newModel, additionalEventAttributes) => {
-                    const existingModel = this.params.model;
-                    const filterModels =
-                        existingModel?.filterModels ??
-                        this.wrappers.map((_wrapper, evaluatorIndex) =>
-                            index === evaluatorIndex ? newModel ?? null : null
-                        );
-                    onModelChange(updateMultiFilterModel(filterModels), additionalEventAttributes);
-                },
+                onModelChange: (newModel, additionalEventAttributes) =>
+                    onModelChange(
+                        getUpdatedMultiFilterModel(this.params.model, this.wrappers.length, newModel, index),
+                        additionalEventAttributes
+                    ),
             });
             return {
                 filter: filter!,

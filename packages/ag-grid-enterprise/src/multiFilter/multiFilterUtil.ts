@@ -27,7 +27,17 @@ export function getFilterTitle(filter: IFilterComp, filterDef: IMultiFilterDef):
     return filter instanceof ProvidedFilter ? filter.getFilterTitle() : 'Filter';
 }
 
-export function updateMultiFilterModel(filterModels: any[]): IMultiFilterModel | null {
+export function getUpdatedMultiFilterModel(
+    existingModel: IMultiFilterModel | null,
+    numFilters: number,
+    newModel: any,
+    index: number
+): IMultiFilterModel | null {
+    const filterModels = [];
+    const existingFilterModels = existingModel?.filterModels;
+    for (let i = 0; i < numFilters; i++) {
+        filterModels[i] = (i === index ? newModel : existingFilterModels?.[i]) ?? null;
+    }
     return filterModels.every((childModel) => childModel == null)
         ? null
         : {

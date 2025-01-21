@@ -233,7 +233,7 @@ export interface FilterDisplayParams<TData = any, TContext = any, TModel = any> 
     model: TModel | null;
     /** Callback that should be called every time the model in the component changes. */
     onModelChange: (model: TModel | null, additionalEventAttributes?: any) => void;
-    source: 'init' | 'ui' | 'apiModel' | 'apiParams' | 'evaluator';
+    source: 'init' | 'ui' | 'apiModel' | 'apiParams' | 'evaluator' | 'floating';
     /**
      * @deprecated V33.1 Not used when using filter evaluators
      */

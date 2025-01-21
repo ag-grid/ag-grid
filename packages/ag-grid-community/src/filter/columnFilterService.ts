@@ -717,7 +717,7 @@ export class ColumnFilterService extends BeanStub implements NamedBean {
             displayParams.model = this.getModelForEvaluator(column);
             displayParams.onModelChange = (model, additionalEventAttributes?: any) => {
                 this.model[colId] = model;
-                this.refreshEvaluator(colId, model, 'ui').then(() => {
+                this.refreshEvaluator(column, model, 'ui').then(() => {
                     filterChangedCallback({ ...additionalEventAttributes, source: 'columnFilter' });
                 });
             };
@@ -837,7 +837,7 @@ export class ColumnFilterService extends BeanStub implements NamedBean {
             model: this.getModelForEvaluator(column),
             onModelChange: (newModel, additionalEventAttributes) => {
                 this.model[colId] = newModel;
-                this.refreshEvaluator(colId, newModel, 'evaluator').then(() => {
+                this.refreshEvaluator(column, newModel, 'evaluator').then(() => {
                     filterChangedCallback({ ...additionalEventAttributes, source: 'columnFilter' });
                 });
             },
@@ -934,8 +934,7 @@ export class ColumnFilterService extends BeanStub implements NamedBean {
                 model: this.getModelForEvaluator(column),
                 onModelChange: (model, additionalEventAttributes) => {
                     this.model[colId] = model;
-                    this.getOrCreateFilterWrapper(column);
-                    this.refreshEvaluator(colId, model, 'floating').then(() => {
+                    this.refreshEvaluator(column, model, 'floating', true).then(() => {
                         filterChangedCallback({ ...additionalEventAttributes, source: 'columnFilter' });
                     });
                 },
@@ -1074,7 +1073,7 @@ export class ColumnFilterService extends BeanStub implements NamedBean {
                 'apiParams',
                 column.getColDef().filterParams
             );
-            this.refreshEvaluator(colId, this.getModelForEvaluator(column), 'apiParams');
+            this.refreshEvaluator(column, this.getModelForEvaluator(column), 'apiParams');
             return;
         }
 
@@ -1092,13 +1091,22 @@ export class ColumnFilterService extends BeanStub implements NamedBean {
     }
 
     private refreshEvaluator(
-        colId: string,
+        column: AgColumn,
         model: any,
-        source: 'ui' | 'apiModel' | 'apiParams' | 'floating' | 'evaluator'
+        source: 'ui' | 'apiModel' | 'apiParams' | 'floating' | 'evaluator',
+        createIfMissing?: boolean
     ): AgPromise<void> {
-        const filterWrapper = this.allColumnFilters.get(colId);
+        const filterWrapper = this.allColumnFilters.get(column.getColId());
 
-        if (!filterWrapper || !filterWrapper.isEvaluator) {
+        if (!filterWrapper) {
+            if (createIfMissing) {
+                // create one. Don't need to refresh as it will be created with the latest details
+                this.getOrCreateFilterWrapper(column);
+            }
+            return AgPromise.resolve();
+        }
+
+        if (!filterWrapper.isEvaluator) {
             return AgPromise.resolve();
         }
 
@@ -1379,7 +1387,8 @@ export class ColumnFilterService extends BeanStub implements NamedBean {
     ): AgPromise<void> {
         return new AgPromise((resolve) => {
             if (filterWrapper.isEvaluator) {
-                const colId = filterWrapper.column.getColId();
+                const column = filterWrapper.column;
+                const colId = column.getColId();
                 if (_exists(newModel)) {
                     this.model[colId] = newModel;
                 } else {
@@ -1390,7 +1399,7 @@ export class ColumnFilterService extends BeanStub implements NamedBean {
                     resolve();
                     return;
                 }
-                this.refreshEvaluator(colId, newModel, 'apiModel').then(() => resolve());
+                this.refreshEvaluator(column, newModel, 'apiModel').then(() => resolve());
                 return;
             }
 

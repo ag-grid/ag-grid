@@ -8,7 +8,7 @@ import type {
 } from 'ag-grid-community';
 import { BeanStub } from 'ag-grid-community';
 
-import { getMultiFilterDefs, updateMultiFilterModel } from './multiFilterUtil';
+import { getMultiFilterDefs, getUpdatedMultiFilterModel } from './multiFilterUtil';
 
 export class MultiFilterEvaluator
     extends BeanStub
@@ -54,15 +54,11 @@ export class MultiFilterEvaluator
         return {
             ...params!,
             model: model?.filterModels?.[index] ?? null,
-            onModelChange: (newModel, additionalEventAttributes) => {
-                const existingModel = this.params.model;
-                const filterModels =
-                    existingModel?.filterModels ??
-                    this.evaluatorWrappers.map((_evaluator, evaluatorIndex) =>
-                        index === evaluatorIndex ? newModel ?? null : null
-                    );
-                onModelChange(updateMultiFilterModel(filterModels), additionalEventAttributes);
-            },
+            onModelChange: (newModel, additionalEventAttributes) =>
+                onModelChange(
+                    getUpdatedMultiFilterModel(this.params.model, this.evaluatorWrappers.length, newModel, index),
+                    additionalEventAttributes
+                ),
         };
     }
 

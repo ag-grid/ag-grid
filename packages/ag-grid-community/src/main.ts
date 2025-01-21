@@ -246,6 +246,7 @@ export {
     IFloatingFilterParent,
     IFloatingFilterParentCallback,
     BaseFloatingFilter,
+    FloatingFilterDisplayParams,
 } from './filter/floating/floatingFilter';
 export type { TextFloatingFilter } from './filter/provided/text/textFloatingFilter';
 export { _getDefaultFloatingFilterType } from './filter/floating/floatingFilterMapper';

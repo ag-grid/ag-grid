@@ -27,7 +27,7 @@ import { AgGroupComponent } from '../widgets/agGroupComponent';
 import type { MenuItemActivatedEvent } from '../widgets/agMenuItemComponent';
 import { AgMenuItemComponent } from '../widgets/agMenuItemComponent';
 import { AgMenuItemRenderer } from '../widgets/agMenuItemRenderer';
-import { forEachReverse, getFilterTitle, getMultiFilterDefs, updateMultiFilterModel } from './multiFilterUtil';
+import { forEachReverse, getFilterTitle, getMultiFilterDefs, getUpdatedMultiFilterModel } from './multiFilterUtil';
 
 export class MultiFilterUi
     extends TabGuardComp
@@ -76,7 +76,14 @@ export class MultiFilterUi
     }
 
     public refresh(params: IMultiFilterParams & FilterDisplayParams<any, any, IMultiFilterModel>): boolean {
-        this.filters.forEach((filter, index) => filter?.refresh?.(this.updateParams(params, index)));
+        this.params = params;
+        this.filters.forEach((filter, index) => {
+            const childParams = this.updateParams(params, index);
+            if (params.source !== 'floating' && params.source !== 'ui') {
+                this.updateActiveList(index, childParams.model);
+            }
+            filter?.refresh?.(childParams);
+        });
         return true;
     }
 
@@ -234,6 +241,10 @@ export class MultiFilterUi
         return activeFilterIndices.length > 0 ? activeFilterIndices[activeFilterIndices.length - 1] : null;
     }
 
+    public getChildFilterInstance(index: number): IFilterComp | undefined {
+        return this.filters[index] ?? undefined;
+    }
+
     public afterGuiAttached(params?: IAfterGuiAttachedParams): void {
         let refreshPromise: AgPromise<void>;
         if (params) {
@@ -334,7 +345,7 @@ export class MultiFilterUi
 
         const filterParams = this.updateParams(this.params, index);
 
-        this.updateActiveList(index);
+        this.updateActiveList(index, filterParams.model);
 
         const compDetails = _getFilterDetails(userCompFactory, filterDef, filterParams, 'agTextColumnFilter');
         if (!compDetails) {
@@ -354,13 +365,11 @@ export class MultiFilterUi
             doesRowPassOtherFilter: (node: RowNode) =>
                 doesRowPassOtherFilter(node) && this.doesOtherFilterPass(node, index),
             model: model?.filterModels?.[index] ?? null,
-            onModelChange: (childModel) => {
+            onModelChange: (childModel, additionalEventAttributes) => {
                 const { filters, params } = this;
-                const filterModels = filters.map((_filter, childIndex) =>
-                    childIndex === index ? childModel : params.model?.filterModels?.[index] ?? null
-                );
-                const newModel = updateMultiFilterModel(filterModels);
-                onModelChange(newModel);
+                const newModel = getUpdatedMultiFilterModel(params.model, filters.length, childModel, index);
+                this.updateActiveList(index, childModel);
+                onModelChange(newModel, additionalEventAttributes);
                 filters.forEach((filter, otherIndex) => {
                     if (index !== otherIndex && typeof filter?.onAnyFilterChanged === 'function') {
                         filter.onAnyFilterChanged();
@@ -386,12 +395,12 @@ export class MultiFilterUi
         );
     }
 
-    private updateActiveList(index: number): void {
-        const { activeFilterIndices, params } = this;
+    private updateActiveList(index: number, childModel: any): void {
+        const activeFilterIndices = this.activeFilterIndices;
 
         _removeFromArray(activeFilterIndices, index);
 
-        if (params.model?.filterModels?.[index] != null) {
+        if (childModel != null) {
             activeFilterIndices.push(index);
         }
     }
