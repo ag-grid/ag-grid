@@ -1,0 +1,19 @@
+---
+import styles from './ExpandingSection.module.scss';
+
+interface Props {
+    headerText: string;
+    isOpen?: boolean;
+}
+
+const sectionContent = await Astro.slots.render('default');
+
+const { headerText, isOpen = false } = Astro.props as Props;
+---
+
+<details class={styles.expandingSection} open={isOpen}>
+    <summary class:list={[styles.expandingSectionHeader, 'button-secondary']}> {headerText}</summary>
+    <div class={styles.expandingSectionContent}>
+        <Fragment set:html={sectionContent} />
+    </div>
+</details>
