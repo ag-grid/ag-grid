@@ -71,7 +71,7 @@ export class HeaderRowCtrl extends BeanStub {
      */
     public setComp(comp: IHeaderRowComp, compBean: BeanStub | undefined, initCompState: boolean = true): void {
         this.comp = comp;
-        compBean = setupCompBean(this, this.beans.context, undefined);
+        compBean = setupCompBean(this, this.beans.context, compBean);
 
         if (initCompState) {
             this.onRowHeightChanged();
@@ -90,7 +90,6 @@ export class HeaderRowCtrl extends BeanStub {
     private addEventListeners(compBean: BeanStub): void {
         const onHeightChanged = this.onRowHeightChanged.bind(this);
         const onDisplayedColumnsChanged = this.onDisplayedColumnsChanged.bind(this);
-
         compBean.addManagedEventListeners({
             columnResized: this.setWidth.bind(this),
             displayedColumnsChanged: onDisplayedColumnsChanged,
