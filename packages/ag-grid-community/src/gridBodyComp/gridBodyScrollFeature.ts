@@ -107,9 +107,6 @@ export class GridBodyScrollFeature extends BeanStub {
         this.addManagedElementListeners(this.eBodyViewport, {
             scroll: requireUpdatedScrollPosition,
         });
-        this.addManagedElementListeners(this.ctrlsSvc.get('fakeVScrollComp').eViewport, {
-            scroll: requireUpdatedScrollPosition,
-        });
 
         this.ctrlsSvc.whenReady(this, (p) => {
             this.centerRowsCtrl = p.center;
@@ -264,8 +261,9 @@ export class GridBodyScrollFeature extends BeanStub {
         // the `scrollGridIfNeeded` will recalculate the rows to be rendered by the grid
         // so it should only be called after `eBodyViewport` has been scrolled to the correct
         // position, otherwise the `first` and `last` row could be miscalculated.
-        if (!animationFrameSvc || this.gos.get('suppressAnimationFrame')) {
-            this.scrollGridIfNeeded();
+        const noAnimationFrame = !animationFrameSvc || this.gos.get('suppressAnimationFrame');
+        if (noAnimationFrame) {
+            this.scrollGridIfNeeded(noAnimationFrame);
         } else {
             animationFrameSvc.schedule();
         }
@@ -376,11 +374,14 @@ export class GridBodyScrollFeature extends BeanStub {
         }
     }
 
-    public scrollGridIfNeeded(): boolean {
+    public scrollGridIfNeeded(suppressedAnimationFrame: boolean = false): boolean {
         const frameNeeded = this.scrollTop != this.nextScrollTop;
 
         if (frameNeeded) {
             this.scrollTop = this.nextScrollTop;
+            if (suppressedAnimationFrame) {
+                this.requireUpdatedScrollPosition();
+            }
             this.redrawRowsAfterScroll();
         }
 
