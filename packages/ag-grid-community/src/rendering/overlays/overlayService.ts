@@ -2,7 +2,7 @@ import { _getLoadingOverlayCompDetails, _getNoRowsOverlayCompDetails } from '../
 import type { NamedBean } from '../../context/bean';
 import { BeanStub } from '../../context/beanStub';
 import type { GridOptions } from '../../entities/gridOptions';
-import { _isClientSideRowModel } from '../../gridOptionsUtils';
+import { _isClientSideRowModel, _isServerSideRowModel } from '../../gridOptionsUtils';
 import type { UserCompDetails } from '../../interfaces/iUserCompDetails';
 import { _warn } from '../../validation/logging';
 import type { ComponentSelector } from '../../widgets/component';
@@ -18,6 +18,7 @@ export class OverlayService extends BeanStub implements NamedBean {
     beanName = 'overlays' as const;
 
     private isClientSide: boolean;
+    private isServerSide: boolean;
     private state: OverlayServiceState = OverlayServiceState.Hidden;
     private showInitialOverlay: boolean = true;
     private exclusive?: boolean;
@@ -27,6 +28,7 @@ export class OverlayService extends BeanStub implements NamedBean {
 
     public postConstruct(): void {
         this.isClientSide = _isClientSideRowModel(this.gos);
+        this.isServerSide = !this.isClientSide && _isServerSideRowModel(this.gos);
         const updateOverlayVisibility = () => this.updateOverlayVisibility();
 
         this.addManagedEventListeners({
@@ -109,6 +111,7 @@ export class OverlayService extends BeanStub implements NamedBean {
         const {
             state,
             isClientSide,
+            isServerSide,
             beans: { gos, colModel, rowModel },
         } = this;
         let loading = this.gos.get('loading');
@@ -134,7 +137,7 @@ export class OverlayService extends BeanStub implements NamedBean {
                 }
             } else if (
                 state === OverlayServiceState.Loading ||
-                (isClientSide && state !== OverlayServiceState.Hidden)
+                (!isServerSide && state !== OverlayServiceState.Hidden)
             ) {
                 this.doHideOverlay();
             }
