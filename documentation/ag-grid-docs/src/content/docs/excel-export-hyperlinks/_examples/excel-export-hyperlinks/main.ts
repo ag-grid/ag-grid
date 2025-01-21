@@ -49,7 +49,7 @@ const gridOptions: GridOptions = {
         { company: 'Twitter', url: 'https://www.twitter.com' },
         { company: 'StackOverflow', url: 'https://stackoverflow.com/' },
         { company: 'Reddit', url: 'https://www.reddit.com' },
-        { company: 'Github', url: 'https://www.github.com' },
+        { company: 'GitHub', url: 'https://www.github.com' },
         { company: 'Microsoft', url: 'https://www.microsoft.com' },
         { company: 'Gizmodo', url: 'https://www.gizmodo.com' },
         { company: 'LinkedIN', url: 'https://www.linkedin.com' },

@@ -421,6 +421,21 @@ type CoreParamsDefinitions = {
     panelTitleBarBackgroundColor: 'infer';
 
     /**
+     * Text color for the title bar of panels and dialogs such as the integrated charts and the advanced filter builder.
+     */
+    panelTitleBarTextColor: 'infer';
+
+    /**
+     * Icon color for the title bar of panels and dialogs such as the integrated charts and the advanced filter builder.
+     */
+    panelTitleBarIconColor: 'infer';
+
+    /**
+     * Font weight for the title bar of panels and dialogs such as the integrated charts and the advanced filter builder.
+     */
+    panelTitleBarFontWeight: 'infer';
+
+    /**
      * Border below the title bar of panels and dialogs such as the integrated charts and the advanced filter builder.
      */
     panelTitleBarBorder: 'infer';
@@ -724,6 +739,26 @@ type CoreParamsDefinitions = {
      * Corner radius of the outermost container around the grid.
      */
     wrapperBorderRadius: 'infer';
+
+    /**
+     * Text color for labels in the status bar component
+     */
+    statusBarLabelColor: 'infer';
+
+    /**
+     * Font weight for labels in the status bar component
+     */
+    statusBarLabelFontWeight: 'infer';
+
+    /**
+     * Text color for values in the status bar component
+     */
+    statusBarValueColor: 'infer';
+
+    /**
+     * Font weight for values in the status bar component
+     */
+    statusBarValueFontWeight: 'infer';
 };
 
 export type CoreParams = ExpandTypeKeys<WithParamTypes<CoreParamsDefinitions>>;
@@ -938,6 +973,15 @@ export const coreDefaults: Readonly<CoreParams> = {
     panelTitleBarBackgroundColor: {
         ref: 'headerBackgroundColor',
     },
+    panelTitleBarIconColor: {
+        ref: 'headerTextColor',
+    },
+    panelTitleBarTextColor: {
+        ref: 'headerTextColor',
+    },
+    panelTitleBarFontWeight: {
+        ref: 'headerFontWeight',
+    },
     panelTitleBarBorder: true,
     columnSelectIndentSize: {
         ref: 'iconSize',
@@ -976,4 +1020,8 @@ export const coreDefaults: Readonly<CoreParams> = {
         ref: 'spacing',
     },
     rowLoadingSkeletonEffectColor: foregroundMix(0.15),
+    statusBarLabelColor: foregroundColor,
+    statusBarLabelFontWeight: 500,
+    statusBarValueColor: foregroundColor,
+    statusBarValueFontWeight: 500,
 };

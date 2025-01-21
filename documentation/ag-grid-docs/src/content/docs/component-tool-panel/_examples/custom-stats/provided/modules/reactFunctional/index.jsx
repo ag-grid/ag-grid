@@ -12,12 +12,13 @@ import {
     TextEditorModule,
     TextFilterModule,
     ValidationModule,
+    iconOverrides,
+    themeQuartz,
 } from 'ag-grid-community';
 import { ColumnsToolPanelModule, FiltersToolPanelModule, SetFilterModule } from 'ag-grid-enterprise';
 import { AgGridReact } from 'ag-grid-react';
 
 import CustomStatsToolPanel from './customStatsToolPanel.jsx';
-import './styles.css';
 
 ModuleRegistry.registerModules([
     ClientSideRowModelApiModule,
@@ -33,6 +34,19 @@ ModuleRegistry.registerModules([
     EventApiModule,
     ValidationModule /* Development Only */,
 ]);
+
+const myTheme = themeQuartz.withPart(
+    iconOverrides({
+        type: 'image',
+        mask: true,
+        icons: {
+            // map of icon names to images
+            'custom-stats': {
+                svg: '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"><g stroke="#7F8C8D" fill="none" fill-rule="evenodd"><path d="M10.5 6V4.5h-5v.532a1 1 0 0 0 .36.768l1.718 1.432a1 1 0 0 1 0 1.536L5.86 10.2a1 1 0 0 0-.36.768v.532h5V10"/><rect x="1.5" y="1.5" width="13" height="13" rx="2"/></g></svg>',
+            },
+        },
+    })
+);
 
 const GridExample = () => {
     const containerStyle = useMemo(() => ({ width: '100%', height: '100%' }), []);
@@ -111,6 +125,7 @@ const GridExample = () => {
             <div style={{ height: '100%', boxSizing: 'border-box' }}>
                 <div style={gridStyle}>
                     <AgGridReact
+                        theme={myTheme}
                         rowData={rowData}
                         columnDefs={columnDefs}
                         defaultColDef={defaultColDef}

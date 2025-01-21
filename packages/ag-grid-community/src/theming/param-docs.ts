@@ -171,9 +171,19 @@ const docs: Record<AllThemeParams, string> = {
         'Background color for panels and dialogs such as the integrated charts and the advanced filter builder.',
     panelTitleBarBackgroundColor:
         'Background color for the title bar of panels and dialogs such as the integrated charts and the advanced filter builder.',
+    panelTitleBarTextColor:
+        'Text color for the title bar of panels and dialogs such as the integrated charts and the advanced filter builder.',
+    panelTitleBarIconColor:
+        'Icon color for the title bar of panels and dialogs such as the integrated charts and the advanced filter builder.',
+    panelTitleBarFontWeight:
+        'Font weight for the title bar of panels and dialogs such as the integrated charts and the advanced filter builder.',
     panelTitleBarBorder:
         'Border below the title bar of panels and dialogs such as the integrated charts and the advanced filter builder.',
-    pickerButtonBorder: 'Border around buttons with attached dropdown menus (e.g. select fields)',
+    statusBarLabelColor: 'Text color for labels in the status bar component',
+    statusBarLabelFontWeight: 'Font weight for labels in the status bar component',
+    statusBarValueColor: 'Text color for values in the status bar component',
+    statusBarValueFontWeight: 'Font weight for values in the status bar component',
+    pickerButtonBorder: 'Border around buttons with attached dropdown menus (e.g. elect fields)',
     pickerButtonFocusBorder: 'Border around buttons with attached dropdown menus (e.g. select fields) when focussed',
     pickerButtonBackgroundColor: 'Background color for buttons with attached dropdown menus (e.g. select fields)',
     pickerButtonFocusBackgroundColor:

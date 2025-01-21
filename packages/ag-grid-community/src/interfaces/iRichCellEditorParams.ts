@@ -105,7 +105,7 @@ export interface IRichCellEditorParams<TData = any, TValue = any, GValue = any> 
     formatValue?: (value: TValue | null | undefined) => string;
 
     /**
-     * A callback function that allows you to convert the value of the Rich Cell Editor to
+     * A callback function that allows you to convert the value of the Rich Select Editor to
      * the data format of the Grid Column when they are different.
      */
     parseValue?: (value: TValue[] | TValue | null | undefined) => GValue;

@@ -536,7 +536,7 @@
                 },
                 "community": {
                     "value": false,
-                    "detail": "Community support via Github"
+                    "detail": "Community support via GitHub"
                 },
                 "enterprise": {
                     "value": true,

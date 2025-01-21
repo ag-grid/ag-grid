@@ -1,6 +1,6 @@
 import { EXAMPLE_RANDOM_SEED, NPM_CDN } from '@constants';
 
-const SEEDRANDOM_CDN_URL = `${NPM_CDN}/seedrandom/3.0.5/seedrandom.min.js`;
+const SEEDRANDOM_CDN_URL = `${NPM_CDN}/seedrandom@3.0.5/seedrandom.min.js`;
 
 const INIT_RANDOM_SEED = `
 // Seed random number generator for predictable tests and examples

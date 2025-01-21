@@ -31,7 +31,7 @@ export class ColumnFlexService extends BeanStub implements NamedBean {
             updateBodyWidths?: boolean;
         } = {}
     ): AgColumn[] {
-        const source = params.source ? params.source : 'flex';
+        const source = params.source ?? 'flex';
 
         if (params.viewportWidth != null) {
             this.flexViewportWidth = params.viewportWidth;

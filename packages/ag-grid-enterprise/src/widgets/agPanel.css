@@ -19,7 +19,8 @@
     flex: none;
     align-items: center;
     cursor: default;
-    color: var(--ag-header-text-color);
+    color: var(--ag-panel-title-bar-text-color);
+    font-weight: var(--ag-panel-title-bar-font-weight);
     background-color: var(--ag-panel-title-bar-background-color);
     height: var(--ag-header-height);
     padding: var(--ag-spacing) var(--ag-cell-horizontal-padding);
@@ -30,12 +31,11 @@
     margin-left: calc(var(--ag-spacing) * 2);
     margin-right: var(--ag-spacing);
     cursor: pointer;
+    color: var(--ag-panel-title-bar-icon-color);
 }
 
 .ag-panel-title-bar-title {
     flex: 1 1 auto;
-    font-weight: 500;
-    color: var(--ag-header-text-color);
 }
 
 .ag-panel-title-bar-buttons {

@@ -143,6 +143,11 @@ const makeThemeBalhamTreeShakeable = () =>
             toggleButtonOffBackgroundColor: foregroundBackgroundMix(0.5),
             sideButtonBorder: true,
             sideButtonBarTopPadding: { calc: 'spacing * 4' },
+            popupShadow: '5px 5px 10px rgba(0, 0, 0, 0.3)',
+            statusBarLabelColor: foregroundMix(0.54),
+            statusBarLabelFontWeight: 600,
+            statusBarValueFontWeight: 600,
+            panelTitleBarIconColor: foregroundColor,
         });
 
 export const themeBalham =

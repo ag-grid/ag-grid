@@ -18,7 +18,13 @@
     margin-right: var(--ag-spacing);
     padding-top: var(--ag-widget-container-vertical-padding);
     padding-bottom: var(--ag-widget-container-vertical-padding);
-    font-weight: 500;
+    font-weight: var(--ag-status-bar-label-font-weight);
+    color: var(--ag-status-bar-label-color);
+}
+
+.ag-status-name-value-value {
+    font-weight: var(--ag-status-bar-value-font-weight);
+    color: var(--ag-status-bar-value-color);
 }
 
 .ag-status-bar-left {

@@ -12,7 +12,7 @@ export const urlWithBaseUrl = (url: string = '', siteBaseUrl: string = SITE_BASE
         path = pathJoin('/', siteBaseUrl, url);
     }
 
-    if (urlHasTrailingSlash) {
+    if (urlHasTrailingSlash && !url.startsWith('http')) {
         path = path + '/';
     }
 

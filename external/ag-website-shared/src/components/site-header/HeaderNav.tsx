@@ -61,8 +61,8 @@ const HeaderLinks = ({
             {items.map(({ title, path, url, icon }) => {
                 const linkClasses = classnames(styles.navItem, {
                     [styles.navItemActive]: getIsActiveNav({ title, path: currentPath, allPaths, apiPaths }),
-                    [styles.buttonItem]: title === 'Github',
-                    [styles.githubItem]: title === 'Github',
+                    [styles.buttonItem]: title === 'GitHub',
+                    [styles.githubItem]: title === 'GitHub',
                 });
                 const href = path
                     ? urlWithPrefix({

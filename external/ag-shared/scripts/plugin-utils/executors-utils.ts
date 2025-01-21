@@ -67,7 +67,8 @@ export async function ensureDirectory(dirPath: string) {
 }
 
 export function batchExecutor<ExecutorOptions>(
-    executor: (opts: ExecutorOptions, ctx: ExecutorContext) => Promise<void>
+    executor: (opts: ExecutorOptions, ctx: ExecutorContext) => Promise<void>,
+    completeCb?: () => Promise<void> | void
 ) {
     return async function* (
         _taskGraph: TaskGraph,
@@ -77,6 +78,8 @@ export function batchExecutor<ExecutorOptions>(
     ): AsyncGenerator<BatchExecutorTaskResult, any, unknown> {
         const tasks = Object.keys(inputs);
 
+        console.info(`Batched execution of ${tasks.length} tasks (single threaded)...`);
+        const start = performance.now();
         for (let taskIndex = 0; taskIndex < tasks.length; taskIndex++) {
             const task = tasks[taskIndex];
             const inputOptions = inputs[task];
@@ -92,21 +95,26 @@ export function batchExecutor<ExecutorOptions>(
 
             yield { task, result: { success, terminalOutput } };
         }
+
+        const duration = performance.now() - start;
+        console.info(`Batched execution of ${tasks.length} jobs complete in ${Math.floor(duration / 100) / 10}s`);
+
+        await completeCb?.();
     };
 }
 
-export function batchWorkerExecutor<ExecutorOptions>(workerModule: string) {
+export function batchWorkerExecutor<ExecutorOptions>(workerModule: string, extraMsgContent?: () => object) {
     return async function* (
         taskGraph: TaskGraph,
         inputs: Record<string, ExecutorOptions>,
         overrides: ExecutorOptions,
-        context: ExecutorContext
+        _context: ExecutorContext
     ): AsyncGenerator<BatchExecutorTaskResult, any, unknown> {
         const results: Map<string, Promise<BatchExecutorTaskResult>> = new Map();
 
         let threadCount = os.cpus().length;
         if (process.env.CI == null) {
-            threadCount /= 2;
+            threadCount = Math.round(threadCount / 2);
         }
         const { Tinypool } = await import('tinypool');
         const pool = new Tinypool({
@@ -123,6 +131,7 @@ export function batchWorkerExecutor<ExecutorOptions>(workerModule: string) {
 
         console.info(`Batched execution of ${tasks.length} tasks, using ${pool.threads.length} threads...`);
         const start = performance.now();
+        const contents = extraMsgContent?.() ?? {};
         for (let taskIndex = 0; taskIndex < tasks.length; taskIndex++) {
             const taskName = tasks[taskIndex];
             const task = taskGraph.tasks[taskName];
@@ -131,12 +140,12 @@ export function batchWorkerExecutor<ExecutorOptions>(workerModule: string) {
             const opts = {
                 options: { ...inputOptions, ...overrides },
                 context: {
-                    ...context,
                     projectName: task.target.project,
                     targetName: task.target.target,
                     configurationName: task.target.configuration,
                 },
                 taskName,
+                ...contents,
             };
             results.set(taskName, pool.run(opts));
         }

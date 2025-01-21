@@ -333,7 +333,15 @@ export abstract class BaseSelectionService extends BeanStub {
 
             if (isRowClicked) {
                 const newValue = currentSelection ? !enableSelectionWithoutKeys : enableClickSelection;
-                if (newValue === currentSelection) return null;
+
+                // if selecting, only proceed if not disabled by grid options
+                const selectingWhenDisabled = newValue && !enableClickSelection;
+                // if deselecting, only proceed if not disabled by grid options
+                const deselectingWhenDisabled = !newValue && !enableDeselection;
+                // only transistion to same state if we also want to clear other selected nodes
+                const wouldStateBeUnchanged = newValue === currentSelection && !shouldClear;
+
+                if (wouldStateBeUnchanged || selectingWhenDisabled || deselectingWhenDisabled) return null;
 
                 return {
                     node,

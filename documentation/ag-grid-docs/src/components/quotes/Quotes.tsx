@@ -60,7 +60,7 @@ export const Quotes = ({ data }: { data: QuotesData }) => {
                 </div>
                 <div className={styles.stat}>
                     <h4 className="text-2xl">13k+</h4>
-                    <p>Github Stars</p>
+                    <p>GitHub Stars</p>
                 </div>
                 <div className={styles.stat}>
                     <h4 className="text-2xl">40K+</h4>

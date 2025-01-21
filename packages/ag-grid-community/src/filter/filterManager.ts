@@ -298,7 +298,10 @@ export class FilterManager extends BeanStub implements NamedBean {
         return this.isAdvFilterEnabled() ? this.advancedFilter.getModel() : null;
     }
 
-    public setAdvFilterModel(expression: AdvancedFilterModel | null | undefined): void {
+    public setAdvFilterModel(
+        expression: AdvancedFilterModel | null | undefined,
+        source: FilterChangedEventSourceType = 'api'
+    ): void {
         if (!this.isAdvFilterEnabled()) {
             return;
         }
@@ -307,7 +310,7 @@ export class FilterManager extends BeanStub implements NamedBean {
             return;
         }
         this.advancedFilter.setModel(expression ?? null);
-        this.onFilterChanged({ source: 'advancedFilter' });
+        this.onFilterChanged({ source });
     }
 
     public toggleAdvFilterBuilder(show: boolean, source: 'api' | 'ui'): void {

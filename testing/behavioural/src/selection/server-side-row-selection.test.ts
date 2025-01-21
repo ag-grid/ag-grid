@@ -236,7 +236,7 @@ describe('Row Selection Grid Options', () => {
                 assertSelectedRowsByIndex([], api);
             });
 
-            test('row-click interaction with multiple selected rows', async () => {
+            test('row-clicks are ignored by default', async () => {
                 const api = await createGridAndWait({
                     columnDefs,
                     rowModelType: 'serverSide',
@@ -257,6 +257,54 @@ describe('Row Selection Grid Options', () => {
 
                 // Both rows should still be selected
                 assertSelectedRowsByIndex([2, 3], api);
+            });
+
+            test('row-click on selected row clears previous selection', async () => {
+                const api = await createGridAndWait({
+                    columnDefs,
+                    rowModelType: 'serverSide',
+                    serverSideDatasource: {
+                        getRows(params) {
+                            return params.success({ rowData, rowCount: rowData.length });
+                        },
+                    },
+                    rowSelection: {
+                        mode: 'multiRow',
+                        enableClickSelection: true,
+                    },
+                });
+
+                // Select two rows by toggling checkboxes
+                selectRowsByIndex([1, 3, 5], false, api);
+
+                clickRowByIndex(3);
+
+                // Both rows should still be selected
+                assertSelectedRowsByIndex([3], api);
+            });
+
+            test('row-click on unselected row clears previous selection', async () => {
+                const api = await createGridAndWait({
+                    columnDefs,
+                    rowModelType: 'serverSide',
+                    serverSideDatasource: {
+                        getRows(params) {
+                            return params.success({ rowData, rowCount: rowData.length });
+                        },
+                    },
+                    rowSelection: {
+                        mode: 'multiRow',
+                        enableClickSelection: true,
+                    },
+                });
+
+                // Select two rows by toggling checkboxes
+                selectRowsByIndex([1, 3, 5], false, api);
+
+                clickRowByIndex(6);
+
+                // Both rows should still be selected
+                assertSelectedRowsByIndex([6], api);
             });
 
             test('must de-select with CTRL when `enableClickSelection: true`', async () => {
