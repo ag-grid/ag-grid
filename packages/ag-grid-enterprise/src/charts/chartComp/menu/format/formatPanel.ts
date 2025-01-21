@@ -3,7 +3,7 @@ import { Component, _warn } from 'ag-grid-community';
 
 import type { AgGroupComponent } from '../../../../widgets/agGroupComponent';
 import type { ChartSeriesType } from '../../utils/seriesTypeMapper';
-import { isCartesian, isPolar } from '../../utils/seriesTypeMapper';
+import { isCartesian, isFunnel, isPolar } from '../../utils/seriesTypeMapper';
 import type { ChartMenuContext } from '../chartMenuContext';
 import { ChartPanelFeature } from '../chartPanelFeature';
 import { CartesianAxisPanel } from './axis/cartesianAxisPanel';
@@ -78,13 +78,16 @@ export class FormatPanel extends Component {
                     this.chartPanelFeature.addComponent(new TitlesPanel(opts));
                     break;
                 case 'legend':
+                    if (isFunnel(seriesType)) {
+                        break;
+                    }
                     this.chartPanelFeature.addComponent(new LegendPanel(opts, this.chartMenuContext));
                     break;
                 case 'axis':
                     // Polar charts have different axis options from cartesian charts, so choose the appropriate panels
                     if (isPolar(seriesType)) {
                         this.chartPanelFeature.addComponent(new PolarAxisPanel(opts));
-                    } else if (isCartesian(seriesType)) {
+                    } else if (isCartesian(seriesType) && !isFunnel(seriesType)) {
                         this.chartPanelFeature.addComponent(new CartesianAxisPanel('xAxis', opts));
                         this.chartPanelFeature.addComponent(new CartesianAxisPanel('yAxis', opts));
                     }

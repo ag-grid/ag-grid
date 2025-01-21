@@ -1,9 +1,18 @@
-import type { AgPyramidSeriesOptions, AgStandaloneChartOptions } from 'ag-charts-types';
+import type {
+    AgChartThemeOverrides,
+    AgConeFunnelSeriesOptions,
+    AgFunnelSeriesOptions,
+    AgPyramidSeriesOptions,
+    AgStandaloneChartOptions,
+} from 'ag-charts-types';
 
 import type { ChartProxyParams, UpdateParams } from '../chartProxy';
 import { ChartProxy } from '../chartProxy';
 
-export class FunnelChartProxy extends ChartProxy<AgStandaloneChartOptions, 'funnel' | 'cone-funnel' | 'pyramid'> {
+type FunnelTypes = AgPyramidSeriesOptions | AgFunnelSeriesOptions | AgConeFunnelSeriesOptions;
+type FunnelChartTypes = FunnelTypes['type'];
+
+export class FunnelChartProxy extends ChartProxy<AgStandaloneChartOptions, FunnelChartTypes> {
     public constructor(params: ChartProxyParams) {
         super(params);
     }
@@ -15,24 +24,35 @@ export class FunnelChartProxy extends ChartProxy<AgStandaloneChartOptions, 'funn
         return {
             ...commonChartOptions,
             data: params.data,
-            series: this.getSeries(params),
+            series: this.getSeries(params) as AgStandaloneChartOptions['series'],
         };
     }
 
-    private getSeries(params: UpdateParams): AgPyramidSeriesOptions[] {
+    protected override getSeriesChartThemeDefaults(): AgChartThemeOverrides[FunnelChartTypes] {
+        return {
+            axes: {
+                category: {
+                    crosshair: {
+                        enabled: false,
+                    },
+                },
+                number: {
+                    crosshair: {
+                        enabled: false,
+                    },
+                },
+            },
+        };
+    }
+
+    private getSeries(params: UpdateParams): FunnelTypes[] {
         const [groupField] = params.categories;
         const [valueField] = params.fields;
 
-        const series: AgPyramidSeriesOptions = {
-            type: this.standaloneChartType as AgPyramidSeriesOptions['type'],
+        const series: FunnelTypes = {
+            type: this.standaloneChartType as FunnelChartTypes,
             stageKey: groupField.id,
-            stageLabel: {
-                enabled: true,
-            },
             valueKey: valueField.colId,
-            label: {
-                enabled: true,
-            },
         };
 
         return [series];

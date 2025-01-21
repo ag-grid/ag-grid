@@ -152,6 +152,18 @@ const SERIES_TYPES: SeriesTypeParams = {
         isEnterprise: true,
         canSwitchDirection: true,
     },
+    funnel: {
+        isCartesian: true,
+        isEnterprise: true,
+    },
+    'cone-funnel': {
+        isCartesian: true,
+        isEnterprise: true,
+    },
+    pyramid: {
+        isCartesian: true,
+        isEnterprise: true,
+    },
 };
 
 export function isSeriesType(seriesType: ChartSeriesType): boolean {
@@ -177,6 +189,10 @@ export function isStacked(chartType: ChartType): boolean {
 
 export function isCartesian(seriesType: ChartSeriesType): boolean {
     return doesSeriesHaveProperty(seriesType, 'isCartesian');
+}
+
+export function isFunnel(seriesType: ChartSeriesType): boolean {
+    return seriesType === 'funnel' || seriesType === 'cone-funnel' || seriesType === 'pyramid';
 }
 
 export function isPolar(seriesType: ChartSeriesType): boolean {
@@ -208,7 +224,14 @@ export function isPieChartSeries(seriesType: ChartSeriesType): boolean {
 }
 
 function canOnlyHaveSingleSeries(chartType: ChartType): boolean {
-    return chartType === 'pie' || chartType === 'waterfall' || chartType === 'histogram';
+    return (
+        chartType === 'pie' ||
+        chartType === 'waterfall' ||
+        chartType === 'histogram' ||
+        chartType === 'funnel' ||
+        chartType === 'cone-funnel' ||
+        chartType === 'pyramid'
+    );
 }
 
 export function getMaxNumCategories(chartType: ChartType): number | undefined {

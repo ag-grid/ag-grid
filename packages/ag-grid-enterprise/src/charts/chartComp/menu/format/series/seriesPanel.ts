@@ -13,6 +13,7 @@ import { getSeriesType, isPieChartSeries } from '../../../utils/seriesTypeMapper
 import { ChartMenuParamsFactory } from '../../chartMenuParamsFactory';
 import { FontPanel } from '../fontPanel';
 import type { FormatPanelOptions } from '../formatPanel';
+import { ToggleablePanel } from '../toggleablePanel';
 import { CalloutPanel } from './calloutPanel';
 import { CapsPanel } from './capsPanel';
 import { ConnectorLinePanel } from './connectorLinePanel';
@@ -31,6 +32,8 @@ const fillOpacity = 'fillOpacity';
 const labels = 'labels';
 const shadow = 'shadow';
 
+type ComponentLike<K extends Component> = K | [K, (groupComponent: K) => void];
+
 export class SeriesPanel extends Component {
     private readonly seriesGroup: AgGroupComponent = RefPlaceholder;
 
@@ -44,7 +47,7 @@ export class SeriesPanel extends Component {
     private activePanels: Component<any>[] = [];
     private seriesType: ChartSeriesType;
 
-    private readonly widgetFuncs = {
+    private readonly widgetFuncs: Record<string, ComponentLike<any>> = {
         lineWidth: () => this.initStrokeWidth('lineWidth'),
         [strokeWidth]: () => this.initStrokeWidth('strokeWidth'),
         lineColor: () => this.initLineColor(),
@@ -66,6 +69,8 @@ export class SeriesPanel extends Component {
         size: () => this.initSize('size', 'size'),
         minSize: () => this.initSize('size', 'minSize'),
         maxSize: () => this.initSize('maxSize', 'maxSize'),
+        dropoff: () => this.initDropOff(),
+        stageLabels: () => this.initStageLabels(),
     } as const;
 
     private readonly seriesWidgetMappings: { [K in ChartSeriesType]?: (keyof typeof this.widgetFuncs)[] } = {
@@ -89,6 +94,9 @@ export class SeriesPanel extends Component {
         sunburst: [tooltips],
         heatmap: [tooltips, labels, 'lineColor', 'lineWidth', lineOpacity],
         waterfall: [tooltips, 'connectorLine', 'seriesItems'],
+        funnel: [tooltips, strokeWidth, lineDash, lineOpacity, fillOpacity, labels, 'dropoff', 'stageLabels', shadow],
+        'cone-funnel': [tooltips, strokeWidth, lineDash, lineOpacity, fillOpacity, labels, 'stageLabels', shadow],
+        pyramid: [tooltips, strokeWidth, lineDash, lineOpacity, fillOpacity, labels, 'stageLabels', shadow],
     };
 
     constructor(private readonly options: FormatPanelOptions) {
@@ -201,18 +209,57 @@ export class SeriesPanel extends Component {
         return new AgColorPicker(this.chartMenuUtils.getDefaultColorPickerParams('stroke', 'strokeColor'));
     }
 
-    private initStrokeWidth(labelKey: 'strokeWidth' | 'lineWidth'): AgSlider {
-        return new AgSlider(this.chartMenuUtils.getDefaultSliderParams('strokeWidth', labelKey, 10));
+    private initStrokeWidth(labelKey: 'strokeWidth' | 'lineWidth', expression?: string): AgSlider {
+        return new AgSlider(
+            this.chartMenuUtils.getDefaultSliderParams(
+                expression ? `${expression}.${labelKey}` : 'strokeWidth',
+                labelKey,
+                10
+            )
+        );
     }
 
-    private initLineDash(): AgSlider {
-        return new AgSlider(this.chartMenuUtils.getDefaultSliderParams('lineDash', 'lineDash', 30, true));
+    private initLineDash(expression?: string): AgSlider {
+        return new AgSlider(
+            this.chartMenuUtils.getDefaultSliderParams(
+                expression ? `${expression}.lineDash` : 'lineDash',
+                'lineDash',
+                30,
+                true
+            )
+        );
     }
 
-    private initOpacity(type: 'strokeOpacity' | 'fillOpacity'): AgSlider {
-        const params = this.chartMenuUtils.getDefaultSliderParams(type, type, 1);
+    private initOpacity(type: 'strokeOpacity' | 'fillOpacity', expression?: string): AgSlider {
+        const params = this.chartMenuUtils.getDefaultSliderParams(expression ? `${expression}.${type}` : type, type, 1);
         params.step = 0.05;
         return new AgSlider(params);
+    }
+
+    private initDropOff(): ComponentLike<ToggleablePanel> {
+        const dropOffGroup = new ToggleablePanel({
+            tag: 'dropOff',
+            cssIdentifier: 'charts-format-sub-level',
+            title: this.translate('dropOff'),
+            suppressEnabledCheckbox: false,
+            chartMenuParamsFactory: this.chartMenuUtils,
+            enabled: true,
+        });
+
+        const addItems = (groupComponent: ToggleablePanel) => {
+            [
+                this.initStrokeWidth('strokeWidth', 'dropOff'),
+                this.initLineDash('dropOff'),
+                this.initOpacity('strokeOpacity', 'dropOff'),
+                this.initOpacity('fillOpacity', 'dropOff'),
+            ].forEach((comp) => {
+                const managed = groupComponent.createManagedBean(comp);
+                groupComponent.addItem(managed);
+                this.activePanels.push(managed);
+            });
+        };
+
+        return [dropOffGroup, addItems];
     }
 
     private initLabels(): [FontPanel, (fontPanel: FontPanel) => void] {
@@ -273,6 +320,10 @@ export class SeriesPanel extends Component {
         };
 
         return [fontPanel, addItems];
+    }
+
+    private initStageLabels(): FontPanel {
+        return new FontPanel(this.chartMenuUtils.getDefaultFontPanelParams('stageLabel', 'stageLabels'));
     }
 
     private initBins(): AgSlider {

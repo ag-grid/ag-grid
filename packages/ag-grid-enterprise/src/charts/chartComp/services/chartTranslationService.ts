@@ -233,6 +233,8 @@ export const DEFAULT_CHART_TRANSLATIONS = {
     funnelTooltip: 'Funnel',
     coneFunnelTooltip: 'Cone Funnel',
     pyramidTooltip: 'Pyramid',
+    dropOff: 'Drop-Off',
+    stageLabels: 'Stage Labels',
 
     // menu items
     groupedColumn: 'Grouped',
