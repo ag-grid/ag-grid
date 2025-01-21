@@ -549,10 +549,15 @@ describe('Row Selection Grid Options', () => {
                     assertSelectedRowsByIndex([2, 3, 4], api);
                 });
 
-                test('SHIFT-click within range after de-selection resets root and clears previous selection', () => {
-                    const api = createGrid({
+                test('SHIFT-click within range after de-selection resets root and clears previous selection', async () => {
+                    const api = await createGridAndWait({
                         columnDefs,
-                        rowData,
+                        rowModelType: 'serverSide',
+                        serverSideDatasource: {
+                            getRows(params) {
+                                return params.success({ rowData, rowCount: rowData.length });
+                            },
+                        },
                         rowSelection: { mode: 'multiRow', enableClickSelection: true },
                     });
 
@@ -567,10 +572,15 @@ describe('Row Selection Grid Options', () => {
                     assertSelectedRowsByIndex([3, 4, 5], api);
                 });
 
-                test('SHIFT-click below range after de-selection resets root and clears previous selection', () => {
-                    const api = createGrid({
+                test('SHIFT-click below range after de-selection resets root and clears previous selection', async () => {
+                    const api = await createGridAndWait({
                         columnDefs,
-                        rowData,
+                        rowModelType: 'serverSide',
+                        serverSideDatasource: {
+                            getRows(params) {
+                                return params.success({ rowData, rowCount: rowData.length });
+                            },
+                        },
                         rowSelection: { mode: 'multiRow', enableClickSelection: true },
                     });
 
@@ -585,10 +595,15 @@ describe('Row Selection Grid Options', () => {
                     assertSelectedRowsByIndex([3, 4, 5, 6], api);
                 });
 
-                test('SHIFT-click above range after de-selection resets root and clears previous selection', () => {
-                    const api = createGrid({
+                test('SHIFT-click above range after de-selection resets root and clears previous selection', async () => {
+                    const api = await createGridAndWait({
                         columnDefs,
-                        rowData,
+                        rowModelType: 'serverSide',
+                        serverSideDatasource: {
+                            getRows(params) {
+                                return params.success({ rowData, rowCount: rowData.length });
+                            },
+                        },
                         rowSelection: { mode: 'multiRow', enableClickSelection: true },
                     });
 
@@ -603,10 +618,15 @@ describe('Row Selection Grid Options', () => {
                     assertSelectedRowsByIndex([1, 2, 3], api);
                 });
 
-                test('META+SHIFT-click within range allows batch deselection', () => {
-                    const api = createGrid({
+                test('META+SHIFT-click within range allows batch deselection', async () => {
+                    const api = await createGridAndWait({
                         columnDefs,
-                        rowData,
+                        rowModelType: 'serverSide',
+                        serverSideDatasource: {
+                            getRows(params) {
+                                return params.success({ rowData, rowCount: rowData.length });
+                            },
+                        },
                         rowSelection: { mode: 'multiRow', enableClickSelection: true },
                     });
 
@@ -621,10 +641,15 @@ describe('Row Selection Grid Options', () => {
                     assertSelectedRowsByIndex([2, 6], api);
                 });
 
-                test('META+SHIFT-click below range allows batch deselection', () => {
-                    const api = createGrid({
+                test('META+SHIFT-click below range allows batch deselection', async () => {
+                    const api = await createGridAndWait({
                         columnDefs,
-                        rowData,
+                        rowModelType: 'serverSide',
+                        serverSideDatasource: {
+                            getRows(params) {
+                                return params.success({ rowData, rowCount: rowData.length });
+                            },
+                        },
                         rowSelection: { mode: 'multiRow', enableClickSelection: true },
                     });
 
@@ -639,10 +664,15 @@ describe('Row Selection Grid Options', () => {
                     assertSelectedRowsByIndex([2], api);
                 });
 
-                test('META+SHIFT-click above range allows batch deselection', () => {
-                    const api = createGrid({
+                test('META+SHIFT-click above range allows batch deselection', async () => {
+                    const api = await createGridAndWait({
                         columnDefs,
-                        rowData,
+                        rowModelType: 'serverSide',
+                        serverSideDatasource: {
+                            getRows(params) {
+                                return params.success({ rowData, rowCount: rowData.length });
+                            },
+                        },
                         rowSelection: { mode: 'multiRow', enableClickSelection: true },
                     });
 
@@ -657,10 +687,15 @@ describe('Row Selection Grid Options', () => {
                     assertSelectedRowsByIndex([4, 5], api);
                 });
 
-                test('CTRL+SHIFT-click within range allows batch deselection', () => {
-                    const api = createGrid({
+                test('CTRL+SHIFT-click within range allows batch deselection', async () => {
+                    const api = await createGridAndWait({
                         columnDefs,
-                        rowData,
+                        rowModelType: 'serverSide',
+                        serverSideDatasource: {
+                            getRows(params) {
+                                return params.success({ rowData, rowCount: rowData.length });
+                            },
+                        },
                         rowSelection: { mode: 'multiRow', enableClickSelection: true },
                     });
 
@@ -675,10 +710,15 @@ describe('Row Selection Grid Options', () => {
                     assertSelectedRowsByIndex([2, 6], api);
                 });
 
-                test('CTRL+SHIFT-click below range allows batch deselection', () => {
-                    const api = createGrid({
+                test('CTRL+SHIFT-click below range allows batch deselection', async () => {
+                    const api = await createGridAndWait({
                         columnDefs,
-                        rowData,
+                        rowModelType: 'serverSide',
+                        serverSideDatasource: {
+                            getRows(params) {
+                                return params.success({ rowData, rowCount: rowData.length });
+                            },
+                        },
                         rowSelection: { mode: 'multiRow', enableClickSelection: true },
                     });
 
@@ -693,10 +733,15 @@ describe('Row Selection Grid Options', () => {
                     assertSelectedRowsByIndex([2], api);
                 });
 
-                test('CTRL+SHIFT-click above range allows batch deselection', () => {
-                    const api = createGrid({
+                test('CTRL+SHIFT-click above range allows batch deselection', async () => {
+                    const api = await createGridAndWait({
                         columnDefs,
-                        rowData,
+                        rowModelType: 'serverSide',
+                        serverSideDatasource: {
+                            getRows(params) {
+                                return params.success({ rowData, rowCount: rowData.length });
+                            },
+                        },
                         rowSelection: { mode: 'multiRow', enableClickSelection: true },
                     });
 
