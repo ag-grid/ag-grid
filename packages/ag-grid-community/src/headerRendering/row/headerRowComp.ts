@@ -14,14 +14,11 @@ import type { HeaderRowCtrl, IHeaderRowComp } from './headerRowCtrl';
 export type HeaderRowType = 'group' | 'column' | 'filter';
 
 export class HeaderRowComp extends Component {
-    private ctrl: HeaderRowCtrl;
-
     private headerComps: { [key: HeaderCellCtrlInstanceId]: AbstractHeaderCellComp<AbstractHeaderCellCtrl> } = {};
 
-    constructor(ctrl: HeaderRowCtrl) {
+    constructor(private readonly ctrl: HeaderRowCtrl) {
         super();
 
-        this.ctrl = ctrl;
         this.setTemplate(/* html */ `<div class="${this.ctrl.headerRowClass}" role="row"></div>`);
     }
 

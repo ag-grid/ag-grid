@@ -2,7 +2,6 @@
 import { getCollection, getEntry } from 'astro:content';
 import Layout from '../layouts/Layout.astro';
 import { getDocsPages } from '../components/docs/utils/pageData';
-import type { Framework } from '@ag-grid-types';
 import { Changelog } from '@components/changelog/Changelog';
 import { DocsNavFromLocalStorage } from '@ag-website-shared/components/docs-navigation/DocsNavFromLocalStorage';
 
@@ -11,7 +10,7 @@ export async function getStaticPaths() {
     return getDocsPages(pages);
 }
 
-const pageName = Astro.params.pageName as Framework;
+const pageName = 'changelog';
 
 const { data: docsNavData } = await getEntry('docs-nav', 'docsNav');
 ---

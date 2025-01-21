@@ -18,6 +18,7 @@ import type { IRowNode } from '../interfaces/iRowNode';
 import { LocalEventService } from '../localEventService';
 import { _exists, _missing } from '../utils/generic';
 import { _mergeDeep } from '../utils/object';
+import { _escapeString } from '../utils/string';
 import { _warn } from '../validation/logging';
 import type { AgColumnGroup } from './agColumnGroup';
 import type { AgProvidedColumnGroup } from './agProvidedColumnGroup';
@@ -63,6 +64,8 @@ export class AgColumn<TValue = any>
     // used by React (and possibly other frameworks) as key for rendering. also used to
     // identify old vs new columns for destroying cols when no longer used.
     private instanceId = getNextColInstanceId();
+    /** Sanitised version of the column id */
+    public readonly colIdSanitised: string;
 
     private actualWidth: any;
 
@@ -109,10 +112,11 @@ export class AgColumn<TValue = any>
         // existing for a col def. we cannot use the this.colDef as that is the result of a merge.
         // This is used in ColumnFactory
         public userProvidedColDef: ColDef<any, TValue> | null,
-        private readonly colId: string,
+        public readonly colId: string,
         private readonly primary: boolean
     ) {
         super();
+        this.colIdSanitised = _escapeString(colId)!;
     }
 
     public getInstanceId(): ColumnInstanceId {
