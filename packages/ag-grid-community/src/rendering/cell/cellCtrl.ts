@@ -125,9 +125,10 @@ export class CellCtrl extends BeanStub {
         super();
         this.beans = beans;
 
+        const { colId, colIdSanitised } = column;
         // unique id to this instance, including the column ID to help with debugging in React as it's used in 'key'
-        this.instanceId = (column.getId() + '-' + instanceIdSequence++) as CellCtrlInstanceId;
-        this.colIdSanitised = this.column.getColIdSanitised();
+        this.instanceId = (colId + '-' + instanceIdSequence++) as CellCtrlInstanceId;
+        this.colIdSanitised = colIdSanitised;
 
         this.createCellPosition();
         this.updateAndFormatValue(false);

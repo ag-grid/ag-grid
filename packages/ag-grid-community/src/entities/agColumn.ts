@@ -64,8 +64,8 @@ export class AgColumn<TValue = any>
     // used by React (and possibly other frameworks) as key for rendering. also used to
     // identify old vs new columns for destroying cols when no longer used.
     private instanceId = getNextColInstanceId();
-    // sanitised version of the column id
-    private colIdSanitised: string;
+    /** Sanitised version of the column id */
+    public readonly colIdSanitised: string;
 
     private actualWidth: any;
 
@@ -112,7 +112,7 @@ export class AgColumn<TValue = any>
         // existing for a col def. we cannot use the this.colDef as that is the result of a merge.
         // This is used in ColumnFactory
         public userProvidedColDef: ColDef<any, TValue> | null,
-        private readonly colId: string,
+        public readonly colId: string,
         private readonly primary: boolean
     ) {
         super();
@@ -548,9 +548,6 @@ export class AgColumn<TValue = any>
 
     public getId(): string {
         return this.colId;
-    }
-    public getColIdSanitised(): string {
-        return this.colIdSanitised;
     }
 
     public getUniqueId(): HeaderColumnId {
