@@ -554,7 +554,7 @@ export class StateService extends BeanStub implements NamedBean {
             filterManager?.setFilterModel(filterModel, 'columnFilter');
         }
         if (advancedFilterModel) {
-            filterManager?.setAdvFilterModel(advancedFilterModel);
+            filterManager?.setAdvFilterModel(advancedFilterModel, 'advancedFilter');
         }
     }
 

@@ -19,6 +19,7 @@ interface Props {
     showDocsNav?: boolean;
     hideHeader?: boolean;
     hideFooter?: boolean;
+    hidePageFromSearchEngines?: boolean;
 }
 
 const { data: metadata } = await getEntry('metadata', 'metadata');
@@ -32,7 +33,15 @@ const isStaging = getIsStaging();
 const isDev = getIsDev();
 const canonicalUrl = new URL(Astro.url.pathname, metadata.canonicalUrlBase);
 
-const { title, description = metadata.description, showSearchBar, showDocsNav, hideHeader, hideFooter } = Astro.props;
+const {
+    title,
+    description = metadata.description,
+    showSearchBar,
+    showDocsNav,
+    hideHeader,
+    hideFooter,
+    hidePageFromSearchEngines,
+} = Astro.props;
 
 const path = Astro.url.pathname;
 const socialImage = urlWithBaseUrl(metadata.socialImage);
@@ -59,7 +68,7 @@ const isHomepage = Astro.url.pathname.replaceAll('/', '') === SITE_BASE_URL.repl
                 <link rel="apple-touch-icon" sizes={`${size}x${size}`} href={icon} />
             ))
         }
-        {(!isProduction || isArchive) && <meta name="robots" content="noindex" />}
+        {(!isProduction || isArchive || hidePageFromSearchEngines) && <meta name="robots" content="noindex" />}
         <meta name="generator" content={Astro.generator} />
         <title>{title}</title>
         <link rel="canonical" href={canonicalUrl} />

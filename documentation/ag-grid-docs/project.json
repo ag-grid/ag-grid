@@ -6,7 +6,7 @@
   "targets": {
     "build": {
       "outputs": ["{projectRoot}/dist"],
-      "dependsOn": ["generate-doc-references", "generate-examples", "^build"],
+      "dependsOn": ["build:copy-styles", "generate-doc-references", "generate-examples", "^build"],
       "inputs": [
         "^production",
         "production",
@@ -27,6 +27,23 @@
         "production": {}
       }
     },
+    "build:copy-styles": {
+      "executor": "nx:run-commands",
+      "inputs": [],
+      "outputs": [],
+      "dependsOn": ["@ag-grid-community/styles:build"],
+      "options": {
+        "cwd": "documentation/ag-grid-docs",
+        "commands": [
+          "rsync -r ../../community-modules/styles/icon-fonts/fonts/agGridAlpine/*.*svg --delete public/theme-icons/alpine",
+          "rsync -r ../../community-modules/styles/icon-fonts/fonts/agGridBalham/*.*svg --delete public/theme-icons/balham",
+          "rsync -r ../../community-modules/styles/icon-fonts/fonts/agGridClassic/*.*svg --delete public/theme-icons/base",
+          "rsync -r ../../community-modules/styles/icon-fonts/fonts/agGridMaterial/*.*svg --delete public/theme-icons/material",
+          "rsync -r ../../community-modules/styles/icon-fonts/fonts/agGridAlpine/*.*svg --delete public/theme-icons/alpine",
+          "rsync -r ../../community-modules/styles/icon-fonts/fonts/agGridQuartz/*.*svg --delete public/theme-icons/quartz"
+        ]
+      }
+    },
     "build-tsc": {
       "executor": "nx:run-commands",
       "options": {
@@ -44,7 +61,8 @@
         "elapsedBuildTime",
         "ag-grid-react:build",
         "ag-grid-angular:build",
-        "ag-grid-vue3:build"
+        "ag-grid-vue3:build",
+        "build:copy-styles"
       ],
       "command": "astro dev --port=${PORT} --host",
       "options": {

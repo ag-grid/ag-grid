@@ -177,6 +177,20 @@ describe('Row Selection Grid Options', () => {
                 assertSelectedRowsByIndex([], api);
             });
 
+            test('Clicking an already-selected row is a no-op', () => {
+                const api = createGrid({
+                    columnDefs,
+                    rowData,
+                    rowSelection: { mode: 'singleRow', enableClickSelection: true, checkboxes: false },
+                });
+
+                clickRowByIndex(2);
+                assertSelectedRowsByIndex([2], api);
+
+                clickRowByIndex(2);
+                assertSelectedRowsByIndex([2], api);
+            });
+
             test('un-selectable row cannot be selected', () => {
                 const api = createGrid({
                     columnDefs,
@@ -233,6 +247,20 @@ describe('Row Selection Grid Options', () => {
 
                 toggleCheckboxByIndex(0, { shiftKey: true });
                 assertSelectedRowsByIndex([], api);
+            });
+
+            test('Clicking an already-selected row is a no-op', () => {
+                const api = createGrid({
+                    columnDefs,
+                    rowData,
+                    rowSelection: { mode: 'multiRow', enableClickSelection: true, checkboxes: false },
+                });
+
+                clickRowByIndex(2);
+                assertSelectedRowsByIndex([2], api);
+
+                clickRowByIndex(2);
+                assertSelectedRowsByIndex([2], api);
             });
 
             test('row-click interaction with multiple selected rows', () => {
@@ -300,6 +328,20 @@ describe('Row Selection Grid Options', () => {
                     clickRowByIndex(2);
 
                     assertSelectedRowsByIndex([2], api);
+                });
+
+                test('Single click on selected row clears previous selection', () => {
+                    const api = createGrid({
+                        columnDefs,
+                        rowData,
+                        rowSelection: { mode: 'multiRow', checkboxes: false, enableClickSelection: true },
+                    });
+
+                    selectRowsByIndex([1, 3, 5], true, api);
+
+                    clickRowByIndex(3);
+
+                    assertSelectedRowsByIndex([3], api);
                 });
 
                 test('SHIFT-click selects range of rows', () => {
@@ -670,6 +712,26 @@ describe('Row Selection Grid Options', () => {
 
                 toggleCheckboxByIndex(2);
                 assertSelectedRowsByIndex([1, 2], api);
+            });
+
+            test('Clicking selected checkbox toggles it off but keeps other selection', () => {
+                const api = createGrid({
+                    columnDefs,
+                    rowData,
+                    rowSelection: {
+                        mode: 'multiRow',
+                        checkboxes: true,
+                    },
+                });
+
+                toggleCheckboxByIndex(1);
+                toggleCheckboxByIndex(3, { shiftKey: true });
+
+                assertSelectedRowsByIndex([1, 2, 3], api);
+
+                toggleCheckboxByIndex(2);
+
+                assertSelectedRowsByIndex([1, 3], api);
             });
 
             test('Clicking a row selects it when `enableClickSelection` is false', () => {

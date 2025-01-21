@@ -94,12 +94,19 @@ const migrationUrl = pathJoin(
 );
 ---
 
-<Layout title={title} description={description} showSearchBar={true} showDocsNav={true}>
+<Layout
+    title={title}
+    description={description}
+    showSearchBar={true}
+    showDocsNav={true}
+    hidePageFromSearchEngines={true}
+>
     <div class:list={[styles.contentViewport, 'layout-grid']}>
         <DocsNav client:load menuData={docsNavData} framework={framework} pageName={pageName} />
 
         <div id="doc-content" class:list={[styles.docPage, styles.errorPage]}>
             <Header client:load title={title} framework={framework} path={path} menuItems={docsNavData.sections} />
+
             {
                 isArchive && (
                     <Warning>
@@ -108,10 +115,19 @@ const migrationUrl = pathJoin(
                     </Warning>
                 )
             }
+
             <div class={styles.pageSections}>
                 <h2 id={fullErrorTextHeading.slug}>{fullErrorTextHeading.text}</h2>
-                <pre id="errorCodeText" style="white-space: pre-wrap;">{defaultErrorText}</pre>
-                <Note>To show this error text in the dev console, import the <code>ValidationModule</code>.</Note>
+                <div class="missing-params-message">
+                    <Warning>
+                        Full error message cannot be shown because there are missing parameters in the URL. Please
+                        follow the full link from the developer tool logs.
+                    </Warning>
+                </div>
+                <div class="full-error-message">
+                    <pre id="errorCodeText">{defaultErrorText}</pre>
+                    <Note>To show this error text in the dev console, import the <code>ValidationModule</code>.</Note>
+                </div>
 
                 {
                     errorLinks.length > 0 ? (
@@ -148,21 +164,35 @@ const migrationUrl = pathJoin(
     import { getErrorRedirectBaseUrl } from '@utils/getErrorRedirectBaseUrl';
     import { pathJoin } from '@utils/pathJoin';
 
+    const MISSING_PARAMS_MESSAGE_SELECTOR = '.missing-params-message';
+    const FULL_ERROR_MESSAGE_SELECTOR = '.full-error-message';
+    const ERROR_CODE_TEXT_ID = 'errorCodeText';
+
     // Get errorCode from url, so it doesn't need to be passed
     // in from Astro and we can import in this script
     const errorCode = parseInt(window.location.pathname.split('/').filter(Boolean).slice(-1)[0], 10) as ErrorId;
     const searchParams = new URLSearchParams(window.location.search);
     const { _version_, ...params } = Object.fromEntries(searchParams.entries());
-    const errorText = getErrorText({ errorCode, params });
-    const errorRedirectBaseUrl = getErrorRedirectBaseUrl({ errorVersion: _version_, pageVersion: VERSION });
 
-    if (errorRedirectBaseUrl) {
-        const redirectUrl = pathJoin(errorRedirectBaseUrl, window.location.pathname, window.location.search);
-        window.location.replace(redirectUrl);
-    }
+    if (!_version_) {
+        // Missing version number, show a warning message
+        const missingParamsMessage = (document.querySelector(MISSING_PARAMS_MESSAGE_SELECTOR) as HTMLElement)!;
+        const fullErrorMessage = (document.querySelector(FULL_ERROR_MESSAGE_SELECTOR) as HTMLElement)!;
 
-    const errorCodeTextEl = document.getElementById('errorCodeText');
-    if (errorCodeTextEl) {
-        errorCodeTextEl.textContent = errorText;
+        missingParamsMessage.style.display = 'block';
+        fullErrorMessage.style.display = 'none';
+    } else {
+        const errorText = getErrorText({ errorCode, params });
+        const errorRedirectBaseUrl = getErrorRedirectBaseUrl({ errorVersion: _version_, pageVersion: VERSION });
+
+        if (errorRedirectBaseUrl) {
+            const redirectUrl = pathJoin(errorRedirectBaseUrl, window.location.pathname, window.location.search);
+            window.location.replace(redirectUrl);
+        }
+
+        const errorCodeTextEl = document.getElementById(ERROR_CODE_TEXT_ID);
+        if (errorCodeTextEl) {
+            errorCodeTextEl.textContent = errorText;
+        }
     }
 </script>

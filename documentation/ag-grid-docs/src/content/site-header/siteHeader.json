@@ -31,7 +31,7 @@
                 "path": "/license-pricing"
             },
             {
-                "title": "Github",
+                "title": "GitHub",
                 "url": "https://github.com/ag-grid/ag-grid",
                 "icon": "github",
                 "github": "true"

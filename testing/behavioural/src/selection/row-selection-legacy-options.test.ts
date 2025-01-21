@@ -147,7 +147,7 @@ describe('Row Selection Legacy Grid Options', () => {
                 assertSelectedRowsByIndex([], api);
             });
 
-            test('row-click interaction with multiple selected rows', () => {
+            test('suppressRowClickSelection prevents clicks from clearing selection state', () => {
                 const api = createGrid({
                     columnDefs: columnDefs.map((c, i) => (i === 0 ? { ...c, checkboxSelection: true } : c)),
                     rowData,
@@ -162,6 +162,22 @@ describe('Row Selection Legacy Grid Options', () => {
 
                 // Both rows should still be selected
                 assertSelectedRowsByIndex([2, 3], api);
+            });
+
+            test('row-click interaction with multiple selected rows', () => {
+                const api = createGrid({
+                    columnDefs: columnDefs.map((c, i) => (i === 0 ? { ...c, checkboxSelection: true } : c)),
+                    rowData,
+                    rowSelection: 'multiple',
+                });
+
+                // Select two rows by toggling checkboxes
+                selectRowsByIndex([2, 3], false, api);
+
+                clickRowByIndex(3);
+
+                // Both rows should still be selected
+                assertSelectedRowsByIndex([3], api);
             });
 
             describe('Range selection behaviour', () => {
