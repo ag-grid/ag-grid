@@ -1,0 +1,18 @@
+@use 'design-system' as *;
+
+.trailForm {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-size-4;
+}
+
+.inputs {
+    display: flex;
+    justify-content: space-between;
+    gap: $spacing-size-4;
+}
+
+.submit {
+    width: 200px;
+    align-self: flex-end;
+}

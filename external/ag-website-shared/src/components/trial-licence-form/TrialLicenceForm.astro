@@ -1,0 +1,22 @@
+---
+import styles from './TrialLicenceForm.module.scss';
+---
+
+<h2>Request Your Two Week Enterprise Bundle Trial Licence</h2>
+<form class={styles.trailForm}>
+    <div class={styles.inputs}>
+        <div>
+            <label for="first-name">First Name</label>
+            <input type="text" id="first-name" name="first-name" required />
+        </div>
+        <div>
+            <label for="last-name">Last Name</label>
+            <input type="text" id="last-name" name="last-name" required />
+        </div>
+        <div>
+            <label for="email">Email</label>
+            <input type="email" id="email" name="email" required />
+        </div>
+    </div>
+    <button class={styles.submit} type="submit">Request a trial licence</button>
+</form>
