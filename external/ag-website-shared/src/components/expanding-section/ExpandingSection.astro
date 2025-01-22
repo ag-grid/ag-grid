@@ -11,41 +11,49 @@ const sectionContent = await Astro.slots.render('default');
 const { headerText, isOpen = false } = Astro.props as Props;
 ---
 
-<expanding-section class={styles.expandingSection} data-is-open={isOpen}>
-    <button class:list={[styles.expandingSectionHeader, 'button-secondary']}>{headerText}</button>
+<expanding-section>
+    <details class={styles.expandingSection} open={isOpen}>
+        <summary class:list={[styles.expandingSectionHeader, 'button-secondary']}> {headerText}</summary>
 
-    <div class:list={[styles.expandingSectionContentOuter, 'es-content-outer']}>
-        <div class:list={[styles.expandingSectionContentInner, 'es-content-inner']}>
-            <Fragment set:html={sectionContent} />
+        <div class:list={[styles.expandingSectionContentOuter, 'es-content-outer']}>
+            <div class:list={[styles.expandingSectionContentInner, 'es-content-inner']}>
+                <Fragment set:html={sectionContent} />
+            </div>
         </div>
-    </div>
+    </details>
 </expanding-section>
 
 <script>
     class ExpandingSection extends HTMLElement {
-        #isOpen: boolean = false;
-        #button: HTMLElement;
+        #isOpen: boolean;
+        #details: HTMLElement;
+        #summary: HTMLElement;
         #contentOuter: HTMLElement;
         #contentInner: HTMLElement;
 
         constructor() {
             super();
 
-            this.#button = this.querySelector('button')!;
+            this.#details = this.querySelector('details')!;
+            this.#summary = this.querySelector('summary')!;
             this.#contentOuter = this.querySelector('.es-content-outer')!;
             this.#contentInner = this.querySelector('.es-content-inner')!;
 
-            this.isOpen = this.dataset.isOpen !== undefined;
+            setTimeout(() => {
+                this.isOpen = this.#details.getAttribute('open') !== null;
 
-            // Prevent transition if section is open on init
-            if (this.isOpen) this.style.setProperty('--content-height', 'none');
+                // Prevent transition if section is open on init
+                if (this.isOpen) this.style.setProperty('--content-height', 'none');
+            }, 10);
 
-            this.#button.addEventListener('click', () => {
-                this.isOpen = !this.isOpen;
-            });
+            this.#summary.addEventListener('click', this.#clickHandler.bind(this));
 
             this.#contentOuter.addEventListener('transitionend', () => {
-                if (this.isOpen) this.style.setProperty('--content-height', 'none');
+                if (this.isOpen) {
+                    this.style.setProperty('--content-height', 'none');
+                } else {
+                    this.#details.removeAttribute('open');
+                }
             });
         }
 
@@ -54,8 +62,6 @@ const { headerText, isOpen = false } = Astro.props as Props;
         }
 
         set isOpen(v) {
-            if (this.#isOpen === v) return;
-
             this.#isOpen = v === true;
 
             if (this.#isOpen) {
@@ -69,28 +75,37 @@ const { headerText, isOpen = false } = Astro.props as Props;
             return this.#contentInner.offsetHeight;
         }
 
+        #clickHandler(event: Event) {
+            event.preventDefault();
+
+            this.isOpen = !this.isOpen;
+        }
+
+        #setCSSProp(propertyName: string, value: string) {
+            this.#details.style.setProperty(propertyName, value);
+        }
+
         #open() {
             const contentHeight = this.#contentHeight;
             const transitionTiming = Math.max(contentHeight / 1250, 0.25);
 
-            this.setAttribute('data-is-open', 'data-is-open');
+            this.#details.setAttribute('open', '');
 
-            this.style.setProperty('--content-transition-timing', `${transitionTiming}s`);
-            this.style.setProperty('--content-height', `${contentHeight + 2}px`);
+            document.documentElement.offsetHeight; // Trigger a reflow, flushing the CSS changes
+            this.#setCSSProp('--content-transition-timing', `${transitionTiming}s`);
+            this.#setCSSProp('--content-height', `${contentHeight + 2}px`);
         }
 
         #close() {
             const contentHeight = this.#contentHeight;
             const transitionTiming = Math.max(contentHeight / 1250, 0.25);
 
-            this.removeAttribute('data-is-open');
-
             // Set a specific height, as you can't transition from `max-height: none`
-            this.style.setProperty('--content-height', `${contentHeight + 2}px`);
+            this.#setCSSProp('--content-height', `${contentHeight + 2}px`);
             document.documentElement.offsetHeight; // Trigger a reflow, flushing the CSS changes
 
-            this.style.setProperty('--content-transition-timing', `${transitionTiming}s`);
-            this.style.setProperty('--content-height', `0px`);
+            this.#setCSSProp('--content-transition-timing', `${transitionTiming}s`);
+            this.#setCSSProp('--content-height', `0px`);
         }
     }
 

@@ -33,18 +33,22 @@
         display: inline-block;
         min-width: 3.5ch;
         margin-left: 0.5ch;
+        font-weight: var(--text-regular);
 
-        .expandingSection[data-is-open] & {
+        details[open] & {
             content: ' - Hide';
         }
     }
 }
 
 .expandingSectionContentOuter {
-    max-height: var(--content-height);
-    margin-top: -3px;
+    // margin-top: -3px;
     overflow: hidden;
     transition: max-height var(--content-transition-timing) ease-in-out;
+
+    details[open] & {
+        max-height: var(--content-height);
+    }
 }
 
 .expandingSectionContentInner {
