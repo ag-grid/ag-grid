@@ -68,19 +68,13 @@ export class RowRangeSelectionContext {
         return this.getRange().some((nodeInRange) => nodeInRange.id === node.id);
     }
 
-    public getRoot(fallback = false): RowNode | null {
+    public getRoot(fallback?: RowNode): RowNode | null {
         if (this.rootId) {
             return this.rowModel.getRowNode(this.rootId) ?? null;
         }
         if (fallback) {
-            // When select-all is active either via UI or API, if there's
-            // no actual selection root, we fallback to the first row node (if available)
-            if (this.selectAll) {
-                const root = this.rowModel.getRow(0) ?? null;
-                if (root) {
-                    this.setRoot(root);
-                }
-            }
+            this.setRoot(fallback);
+            return fallback;
         }
         return null;
     }
