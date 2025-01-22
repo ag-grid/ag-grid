@@ -1,6 +1,7 @@
 @use 'design-system' as *;
 
 .expandingSection {
+    display: block;
     margin-bottom: $spacing-size-5;
 }
 
@@ -9,6 +10,8 @@
     --icon-color: var(--color-link);
 
     display: block;
+    width: 100%;
+    text-align: left;
     color: var(--color-link);
     cursor: pointer;
 
@@ -26,9 +29,10 @@
         content: 'View ';
         display: inline-block;
         min-width: 3.5ch;
+        margin-right: 0.5ch;
     }
 
-    .expandingSection[open] & {
+    .expandingSection[data-is-open] & {
         border-bottom-right-radius: 0;
         border-bottom-left-radius: 0;
 
@@ -38,10 +42,21 @@
     }
 }
 
-.expandingSectionContent {
+.expandingSectionContentOuter {
+    --max-height: 0;
+
+    max-height: var(--max-height);
+    overflow: hidden;
+
+    .expandingSection[data-is-open] & {
+        --max-height: none;
+    }
+}
+
+.expandingSectionContentInner {
+    padding: $spacing-size-4 $spacing-size-4 $spacing-size-5;
     border: 1px solid var(--color-button-secondary-border);
     border-top: none;
-    padding: $spacing-size-4 $spacing-size-4 $spacing-size-5;
     border-bottom-right-radius: var(--radius-sm);
     border-bottom-left-radius: var(--radius-sm);
 

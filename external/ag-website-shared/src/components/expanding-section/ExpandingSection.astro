@@ -11,9 +11,59 @@ const sectionContent = await Astro.slots.render('default');
 const { headerText, isOpen = false } = Astro.props as Props;
 ---
 
-<details class={styles.expandingSection} open={isOpen}>
-    <summary class:list={[styles.expandingSectionHeader, 'button-secondary']}> {headerText}</summary>
-    <div class={styles.expandingSectionContent}>
-        <Fragment set:html={sectionContent} />
+<expanding-section class={styles.expandingSection} data-is-open={isOpen}>
+    <button class:list={[styles.expandingSectionHeader, 'button-secondary']}>{headerText}</button>
+
+    <div class:list={[styles.expandingSectionContentOuter, 'es-content-outer']}>
+        <div class:list={[styles.expandingSectionContentInner, 'es-content-inner']}>
+            <Fragment set:html={sectionContent} />
+        </div>
     </div>
-</details>
+</expanding-section>
+
+<script>
+    class ExpandingSection extends HTMLElement {
+        #isOpen: boolean;
+        #button: HTMLElement | null; // Any way to avoid the `| null` ?
+
+        constructor() {
+            super();
+
+            this.#isOpen = this.dataset.isOpen !== undefined;
+            this.#button = this.querySelector('button');
+
+            // Any way to avoid the `if()`?
+            if (this.#button) {
+                this.#button.addEventListener('click', () => {
+                    this.isOpen = !this.isOpen;
+                });
+            }
+        }
+
+        get isOpen() {
+            return this.#isOpen;
+        }
+
+        set isOpen(v) {
+            if (this.#isOpen === v) return;
+
+            this.#isOpen = v === true;
+
+            if (this.#isOpen) {
+                this.#open();
+            } else {
+                this.#close();
+            }
+        }
+
+        #open() {
+            this.setAttribute('data-is-open', 'data-is-open');
+        }
+
+        #close() {
+            this.removeAttribute('data-is-open');
+        }
+    }
+
+    customElements.define('expanding-section', ExpandingSection);
+</script>
