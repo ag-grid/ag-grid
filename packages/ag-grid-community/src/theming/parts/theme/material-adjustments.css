@@ -10,6 +10,10 @@
     color: var(--ag-header-text-color);
 }
 
+.ag-column-drop-horizontal {
+    background-color: color-mix(in srgb, var(--ag-background-color), var(--ag-foreground-color) 8%);
+}
+
 .ag-cell.ag-cell-inline-editing {
     padding: var(--ag-spacing);
     height: calc(var(--ag-row-height) + var(--ag-spacing) * 3);
@@ -32,8 +36,12 @@
     }
 }
 
-.ag-button {
+.ag-standard-button {
     text-transform: uppercase;
+}
+
+.ag-status-bar {
+    border: solid 1px var(--ag-border-color);
 }
 
 .ag-list-item-hovered::after {

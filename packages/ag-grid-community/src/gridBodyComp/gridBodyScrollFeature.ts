@@ -262,7 +262,7 @@ export class GridBodyScrollFeature extends BeanStub {
         // so it should only be called after `eBodyViewport` has been scrolled to the correct
         // position, otherwise the `first` and `last` row could be miscalculated.
         if (!animationFrameSvc || this.gos.get('suppressAnimationFrame')) {
-            this.scrollGridIfNeeded();
+            this.scrollGridIfNeeded(true);
         } else {
             animationFrameSvc.schedule();
         }
@@ -373,11 +373,14 @@ export class GridBodyScrollFeature extends BeanStub {
         }
     }
 
-    public scrollGridIfNeeded(): boolean {
+    public scrollGridIfNeeded(suppressedAnimationFrame: boolean = false): boolean {
         const frameNeeded = this.scrollTop != this.nextScrollTop;
 
         if (frameNeeded) {
             this.scrollTop = this.nextScrollTop;
+            if (suppressedAnimationFrame) {
+                this.requireUpdatedScrollPosition();
+            }
             this.redrawRowsAfterScroll();
         }
 

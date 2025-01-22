@@ -163,7 +163,7 @@
             --ag-line-height,
             calc(var(--ag-row-height) - var(--ag-row-border-width))
         );
-        --ag-internal-padded-row-height: calc(var(--ag-row-height) - var(--ag-row-border-width));
+        --ag-internal-padded-row-height: calc(var(--ag-row-height) - var(--ag-row-border-width) - 2px);
         // Needed to capitalize min, because it clashes with old versions of Sass
         height: Min(var(--ag-internal-calculated-line-height), var(--ag-internal-padded-row-height));
         display: flex;
