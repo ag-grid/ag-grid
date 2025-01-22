@@ -1,0 +1,7 @@
+.sport-header .ag-header-cell-text {
+    border: orangered 1px dashed;
+    border-radius: 5px;
+    padding: 5px;
+    text-align: center;
+    text-transform: capitalize;
+}

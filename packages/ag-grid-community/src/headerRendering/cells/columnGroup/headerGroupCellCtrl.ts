@@ -274,6 +274,8 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
         } else {
             this.comp.setAriaExpanded(undefined);
         }
+
+        this.refreshHeaderStyles();
     }
 
     private addClasses(): void {
