@@ -381,6 +381,7 @@ input[type='range']#{$selector-exclude-grid} {
     input,
     select {
         --color-border-primary: var(--color-input-error);
+        --color-input-border: var(--color-input-error);
         --color-input-border-hover: var(--color-input-error);
     }
 
