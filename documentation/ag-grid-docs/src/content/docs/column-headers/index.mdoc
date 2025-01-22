@@ -45,7 +45,7 @@ const gridOptions = {
         {
             headerName: 'Dynamic Styles',
             field: 'dynamic',
-            headerStyle: (params: HeaderClassParams) => {
+            headerStyle: params => {
                 // only style floating filter
                 if (params.floatingFilter) {
                     return { backgroundColor: 'green' };
@@ -80,7 +80,7 @@ const gridOptions = {
         {
             headerName: 'Function Returns String',
             field: 'function',
-            headerClass: (params: HeaderClassParams) => {
+            headerClass: params => {
                 return params.columnGroup ? 'my-custom-column-group' : 'my-custom-column';
             },
         }
