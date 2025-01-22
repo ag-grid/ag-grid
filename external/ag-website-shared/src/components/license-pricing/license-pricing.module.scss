@@ -390,6 +390,15 @@
     }
 }
 
+.trialLicence {
+    padding-top: $spacing-size-12;
+    padding-bottom: $spacing-size-6;
+
+    h3 {
+        text-align: center;
+    }
+}
+
 .chartsPricingOuter,
 .chartsPricingOuter iframe {
     min-height: calc(8000px - 100vw * 3.5);

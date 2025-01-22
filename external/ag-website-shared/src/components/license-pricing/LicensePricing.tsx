@@ -11,6 +11,7 @@ import type { FunctionComponent } from 'react';
 
 import chartsFeaturesData from '../../content/license-features/chartsFeaturesMatrix.json';
 import gridFeaturesData from '../../content/license-features/gridFeaturesMatrix.json';
+import { TrialLicenceForm } from '../trial-licence-form/TrialLicenceForm';
 import { InfoEmailLink } from './InfoEmailLink';
 import { Licenses } from './Licenses';
 import SocialProof from './SocialProof';
@@ -158,6 +159,11 @@ export const LicensePricing: FunctionComponent<Props> = ({ defaultSelection }) =
                             >
                                 info@ag-grid.com
                             </InfoEmailLink>
+                        </div>
+
+                        <div className={styles.trialLicence}>
+                            <h3 id="request-trial-licence">Request Your Two Week Enterprise Bundle Trial Licence</h3>
+                            <TrialLicenceForm />
                         </div>
 
                         <div className={styles.licenceKeyDocs}>

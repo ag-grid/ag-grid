@@ -5,6 +5,7 @@ import Warning from '@ag-website-shared/components/alert/Warning';
 import { Icon } from '@ag-website-shared/components/icon/Icon';
 import { LinkIcon } from '@ag-website-shared/components/link-icon/LinkIcon';
 import { Snippet } from '@ag-website-shared/components/snippet/Snippet';
+import { TrialLicenceForm } from '@ag-website-shared/components/trial-licence-form/TrialLicenceForm';
 import fwLogos from '@ag-website-shared/images/fw-logos';
 import { FrameworkSelectorInsideDocs } from '@components/framework-selector-inside-doc/FrameworkSelectorInsideDocs';
 import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
@@ -125,6 +126,11 @@ export const LicenseSetup: FunctionComponent<Props> = ({ library, framework, pat
                             <span>{DUMMY_LICENSE_KEY}</span>
                         </span>
                     )}
+
+                    <h3 id="request-trial-licence">
+                        Request Your Two Week Enterprise Bundle Trial Licence <LinkIcon href="#request-trial-licence" />
+                    </h3>
+                    <TrialLicenceForm />
                 </div>
 
                 {licenseValidMessage.map((message) => (
