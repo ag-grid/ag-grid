@@ -292,14 +292,15 @@ export abstract class BaseSelectionService extends BeanStub {
             }
         } else if (shiftKey && this.isMultiSelect()) {
             // SHIFT is used for bulk selection
-            const root = selectionCtx.getRoot();
+            const root = selectionCtx.getRoot(true);
+
             const partition = selectionCtx.isInRange(node)
                 ? selectionCtx.truncate(node)
                 : selectionCtx.extend(node, groupSelectsDescendants);
             return {
                 select: partition.keep,
                 deselect: partition.discard,
-                reset: !!(root && !root.isSelected()),
+                reset: selectionCtx.selectAll || !!(root && !root.isSelected()),
             };
         } else if (metaKey) {
             // CTRL is used for deselection of a single node

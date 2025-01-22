@@ -73,6 +73,8 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
             return 0;
         }
 
+        this.selectionCtx.selectAll = false;
+
         if ('select' in selection) {
             if (selection.reset) {
                 this.resetNodes();
@@ -444,6 +446,8 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
             this.reset(source);
         }
 
+        this.selectionCtx.selectAll = false;
+
         // the above does not clean up the parent rows if they are selected
         if (rowModelClientSide && this.groupSelectsDescendants) {
             this.updateGroupsFromChildrenSelections(source);
@@ -578,16 +582,11 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
 
         const { source, selectAll } = params;
 
-        const allNodes = this.getNodesToSelect(selectAll);
-
-        if (allNodes.length > 0) {
-            selectionCtx.setRoot(allNodes[0]);
-            selectionCtx.setEndRange(allNodes[allNodes.length - 1]);
-        }
-
-        allNodes.forEach((rowNode) => {
+        this.getNodesToSelect(selectAll).forEach((rowNode) => {
             this.selectRowNode(rowNode.footer ? rowNode.sibling : rowNode, true, undefined, source);
         });
+
+        selectionCtx.selectAll = true;
 
         // the above does not clean up the parent rows if they are selected
         if (_isClientSideRowModel(gos) && this.groupSelectsDescendants) {

@@ -755,6 +755,95 @@ describe('Row Selection Grid Options', () => {
                     clickRowByIndex(1, { shiftKey: true, ctrlKey: true });
                     assertSelectedRowsByIndex([4, 5], api);
                 });
+
+                test('SHIFT-click after select all selects range between clicked row and last clicked row', async () => {
+                    const api = await createGridAndWait({
+                        columnDefs,
+                        rowModelType: 'serverSide',
+                        serverSideDatasource: {
+                            getRows(params) {
+                                return params.success({ rowData, rowCount: rowData.length });
+                            },
+                        },
+                        rowSelection: { mode: 'multiRow', checkboxes: false, enableClickSelection: true },
+                    });
+
+                    clickRowByIndex(2);
+                    toggleHeaderCheckboxByIndex(0);
+
+                    assertSelectedRowElementsById(['0', '1', '2', '3', '4', '5', '6'], api);
+
+                    clickRowByIndex(5, { shiftKey: true });
+
+                    assertSelectedRowElementsById(['2', '3', '4', '5'], api);
+                });
+
+                test('SHIFT-click after select all on pristine grid selects range between first row and clicked row', async () => {
+                    const api = await createGridAndWait({
+                        columnDefs,
+                        rowModelType: 'serverSide',
+                        serverSideDatasource: {
+                            getRows(params) {
+                                return params.success({ rowData, rowCount: rowData.length });
+                            },
+                        },
+                        rowSelection: { mode: 'multiRow', checkboxes: false, enableClickSelection: true },
+                    });
+
+                    toggleHeaderCheckboxByIndex(0);
+
+                    assertSelectedRowElementsById(['0', '1', '2', '3', '4', '5', '6'], api);
+
+                    clickRowByIndex(3, { shiftKey: true });
+
+                    assertSelectedRowElementsById(['0', '1', '2', '3'], api);
+                });
+
+                test('SHIFT-click after select all behaves consistently', async () => {
+                    const api = await createGridAndWait({
+                        columnDefs,
+                        rowModelType: 'serverSide',
+                        serverSideDatasource: {
+                            getRows(params) {
+                                return params.success({ rowData, rowCount: rowData.length });
+                            },
+                        },
+                        rowSelection: { mode: 'multiRow', checkboxes: false, enableClickSelection: true },
+                    });
+
+                    clickRowByIndex(2);
+                    clickRowByIndex(4, { shiftKey: true });
+
+                    assertSelectedRowElementsById(['2', '3', '4'], api);
+
+                    toggleHeaderCheckboxByIndex(0);
+
+                    clickRowByIndex(6, { shiftKey: true });
+
+                    assertSelectedRowElementsById(['2', '3', '4', '5', '6'], api);
+                });
+
+                test('Select all, then de-select, then SHIFT-click goes back to normal behaviour', async () => {
+                    const api = await createGridAndWait({
+                        columnDefs,
+                        rowModelType: 'serverSide',
+                        serverSideDatasource: {
+                            getRows(params) {
+                                return params.success({ rowData, rowCount: rowData.length });
+                            },
+                        },
+                        rowSelection: { mode: 'multiRow', checkboxes: false, enableClickSelection: true },
+                    });
+
+                    toggleHeaderCheckboxByIndex(0);
+
+                    // De-select a single row
+                    clickRowByIndex(3, { ctrlKey: true });
+
+                    clickRowByIndex(6, { shiftKey: true });
+
+                    assertSelectedRowElementsById(['3', '4', '5', '6'], api);
+                });
             });
         });
 

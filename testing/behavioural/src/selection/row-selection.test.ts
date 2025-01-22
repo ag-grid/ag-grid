@@ -653,7 +653,7 @@ describe('Row Selection Grid Options', () => {
                     assertSelectedRowsByIndex([], api);
                 });
 
-                test.only('SHIFT-click after select all selects range between clicked row and last clicked row', () => {
+                test('SHIFT-click after select all selects range between clicked row and last clicked row', () => {
                     const api = createGrid({
                         columnDefs,
                         rowData,
@@ -668,6 +668,58 @@ describe('Row Selection Grid Options', () => {
                     clickRowByIndex(5, { shiftKey: true });
 
                     assertSelectedRowsByIndex([2, 3, 4, 5], api);
+                });
+
+                test('SHIFT-click after select all on pristine grid selects range between first row and clicked row', () => {
+                    const api = createGrid({
+                        columnDefs,
+                        rowData,
+                        rowSelection: { mode: 'multiRow', checkboxes: false, enableClickSelection: true },
+                    });
+
+                    toggleHeaderCheckboxByIndex(0);
+
+                    assertSelectedRowsByIndex([0, 1, 2, 3, 4, 5, 6], api);
+
+                    clickRowByIndex(3, { shiftKey: true });
+
+                    assertSelectedRowsByIndex([0, 1, 2, 3], api);
+                });
+
+                test('SHIFT-click after select all behaves consistently', () => {
+                    const api = createGrid({
+                        columnDefs,
+                        rowData,
+                        rowSelection: { mode: 'multiRow', checkboxes: false, enableClickSelection: true },
+                    });
+
+                    clickRowByIndex(2);
+                    clickRowByIndex(4, { shiftKey: true });
+
+                    assertSelectedRowsByIndex([2, 3, 4], api);
+
+                    toggleHeaderCheckboxByIndex(0);
+
+                    clickRowByIndex(6, { shiftKey: true });
+
+                    assertSelectedRowsByIndex([2, 3, 4, 5, 6], api);
+                });
+
+                test('Select all, then de-select, then SHIFT-click goes back to normal behaviour', () => {
+                    const api = createGrid({
+                        columnDefs,
+                        rowData,
+                        rowSelection: { mode: 'multiRow', checkboxes: false, enableClickSelection: true },
+                    });
+
+                    toggleHeaderCheckboxByIndex(0);
+
+                    // De-select a single row
+                    clickRowByIndex(3, { ctrlKey: true });
+
+                    clickRowByIndex(6, { shiftKey: true });
+
+                    assertSelectedRowsByIndex([3, 4, 5, 6], api);
                 });
             });
         });
