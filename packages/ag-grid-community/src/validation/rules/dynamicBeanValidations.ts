@@ -1,0 +1,19 @@
+import type { DynamicBeanName } from '../../context/context';
+import type { ValidationModuleName } from '../../interfaces/iModule';
+
+export const DYNAMIC_BEAN_MODULES: Record<DynamicBeanName, ValidationModuleName> = {
+    detailCellRendererCtrl: 'SharedMasterDetail',
+    dndSourceComp: 'DragAndDrop',
+    fillHandle: 'CellSelection',
+    groupCellRendererCtrl: 'GroupCellRenderer',
+    headerFilterCellCtrl: 'ColumnFilter',
+    headerGroupCellCtrl: 'ColumnGroup',
+    rangeHandle: 'CellSelection',
+    tooltipFeature: 'Tooltip',
+    agSetColumnFilterEvaluator: 'SetFilter',
+    agMultiColumnFilterEvaluator: 'MultiFilter',
+    agGroupColumnFilterEvaluator: 'GroupFilter',
+    agNumberColumnFilterEvaluator: 'NumberFilter',
+    agDateColumnFilterEvaluator: 'DateFilter',
+    agTextColumnFilterEvaluator: 'TextFilter',
+};

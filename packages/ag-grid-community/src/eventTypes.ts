@@ -67,6 +67,7 @@ export const _PUBLIC_EVENTS = [
     'filterChanged',
     'filterModified',
     'filterOpened',
+    'floatingFilterModified',
     'advancedFilterBuilderVisibleChanged',
     'sortChanged',
     'virtualRowRemoved',

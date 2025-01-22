@@ -55,6 +55,7 @@ import type {
     FilterModifiedEvent,
     FilterOpenedEvent,
     FirstDataRenderedEvent,
+    FloatingFilterModifiedEvent,
     FullWidthCellKeyDownEvent,
     GridColumnsChangedEvent,
     GridPreDestroyedEvent,

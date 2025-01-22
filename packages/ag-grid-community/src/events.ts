@@ -87,6 +87,7 @@ export type AgEventTypeParams<TData = any, TContext = any> = BuildEventTypeMap<
         filterChanged: FilterChangedEvent<TData, TContext>;
         filterModified: FilterModifiedEvent<TData, TContext>;
         filterOpened: FilterOpenedEvent<TData, TContext>;
+        floatingFilterModified: FloatingFilterModifiedEvent<TData, TContext>;
         advancedFilterBuilderVisibleChanged: AdvancedFilterBuilderVisibleChangedEvent<TData, TContext>;
         sortChanged: SortChangedEvent<TData, TContext>;
         virtualRowRemoved: VirtualRowRemovedEvent<TData, TContext>;
@@ -369,6 +370,11 @@ export interface FilterOpenedEvent<TData = any, TContext = any> extends AgGlobal
     source: FilterRequestSource;
     /** Parent element of the filter */
     eGui: HTMLElement;
+}
+
+export interface FloatingFilterModifiedEvent<TData = any, TContext = any>
+    extends AgGlobalEvent<'floatingFilterModified', TData, TContext> {
+    column: Column;
 }
 
 // internal event

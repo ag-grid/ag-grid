@@ -12,7 +12,6 @@ import type { IAdvancedFilterService } from '../interfaces/iAdvancedFilterServic
 import type { WithoutGridCommon } from '../interfaces/iCommon';
 import type { FilterModel, IFilter } from '../interfaces/iFilter';
 import type { IRowNode } from '../interfaces/iRowNode';
-import type { UserCompDetails } from '../interfaces/iUserCompDetails';
 import { _mergeDeep } from '../utils/object';
 import { AgPromise } from '../utils/promise';
 import { _warn } from '../validation/logging';
@@ -274,24 +273,9 @@ export class FilterManager extends BeanStub implements NamedBean {
         return !!this.colFilter?.isFilterAllowed(column);
     }
 
-    public getFloatingFilterCompDetails(column: AgColumn, showParentFilter: () => void): UserCompDetails | undefined {
-        return this.colFilter?.getFloatingFilterCompDetails(column, showParentFilter);
-    }
-
-    public getCurrentFloatingFilterParentModel(column: AgColumn): any {
-        return this.colFilter?.getCurrentFloatingFilterParentModel(column);
-    }
-
     // destroys the filter, so it no longer takes part
     public destroyFilter(column: AgColumn, source: 'api' | 'columnChanged' | 'paramsUpdated' = 'api'): void {
         this.colFilter?.destroyFilter(column, source);
-    }
-
-    public areFilterCompsDifferent(
-        oldCompDetails: UserCompDetails | null,
-        newCompDetails: UserCompDetails | null
-    ): boolean {
-        return !!this.colFilter?.areFilterCompsDifferent(oldCompDetails, newCompDetails);
     }
 
     public getAdvFilterModel(): AdvancedFilterModel | null {

@@ -62,6 +62,18 @@ export class GroupFloatingFilterComp extends Component implements IFloatingFilte
     public refresh(params: IFloatingFilterParams<GroupFilter>): void {
         this.params = params;
         this.setParams();
+        if (this.gos.get('reactiveFloatingFilters')) {
+            if (this.showingUnderlyingFloatingFilter) {
+                const column = this.parentFilterInstance.getSelectedColumn()!;
+                const compDetails = this.beans.colFilter!.getFloatingFilterCompDetails(
+                    column,
+                    this.params.showParentFilter
+                );
+                this.underlyingFloatingFilter?.refresh?.(compDetails?.params);
+            } else {
+                this.updateDisplayedValue();
+            }
+        }
     }
 
     private setParams(): void {
@@ -93,7 +105,10 @@ export class GroupFloatingFilterComp extends Component implements IFloatingFilte
         const column = this.parentFilterInstance.getSelectedColumn();
         // we can only show the underlying filter if there is one instance (e.g. the underlying column is not visible)
         if (column && !column.isVisible()) {
-            const compDetails = this.filterManager!.getFloatingFilterCompDetails(column, this.params.showParentFilter);
+            const compDetails = this.beans.colFilter!.getFloatingFilterCompDetails(
+                column,
+                this.params.showParentFilter
+            );
             if (compDetails) {
                 if (!this.haveAddedColumnListeners) {
                     this.haveAddedColumnListeners = true;
@@ -125,7 +140,7 @@ export class GroupFloatingFilterComp extends Component implements IFloatingFilte
         if (!event.column) {
             return;
         }
-        const compDetails = this.filterManager!.getFloatingFilterCompDetails(
+        const compDetails = this.beans.colFilter!.getFloatingFilterCompDetails(
             event.column as AgColumn,
             this.params.showParentFilter
         );

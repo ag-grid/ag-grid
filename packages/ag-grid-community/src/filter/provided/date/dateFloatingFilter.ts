@@ -6,7 +6,7 @@ import { _debounce } from '../../../utils/function';
 import type { AgInputTextField } from '../../../widgets/agInputTextField';
 import { AgInputTextFieldSelector } from '../../../widgets/agInputTextField';
 import { RefPlaceholder } from '../../../widgets/component';
-import type { IFloatingFilterParams } from '../../floating/floatingFilter';
+import type { FloatingFilterDisplayParams, IFloatingFilterParams } from '../../floating/floatingFilter';
 import { getDebounceMs } from '../../floating/provided/providedFilterUtils';
 import { SimpleFloatingFilter } from '../../floating/provided/simpleFloatingFilter';
 import type { ISimpleFilterModel } from '../iSimpleFilter';
@@ -81,6 +81,25 @@ export class DateFloatingFilter extends SimpleFloatingFilter<IFloatingFilterPara
     private onDateChanged(): void {
         const filterValueDate = this.dateComp.getDate();
         const filterValueText = _serialiseDate(filterValueDate);
+
+        if (this.reactive) {
+            const reactiveParams = this.params as unknown as FloatingFilterDisplayParams<DateFilterModel>;
+            reactiveParams.filterModifiedCallback();
+
+            const model = reactiveParams.model;
+            const newModel =
+                filterValueText == null
+                    ? null
+                    : ({
+                          ...(model ?? {
+                              filterType: this.filterType,
+                              type: this.lastType ?? this.optionsFactory.defaultOption,
+                          }),
+                          dateFrom: filterValueText,
+                      } as DateFilterModel);
+            reactiveParams.onModelChange(newModel, { afterFloatingFilter: true });
+            return;
+        }
 
         this.params.parentFilterInstance((filterInstance) => {
             if (filterInstance) {

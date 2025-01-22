@@ -57,6 +57,7 @@ export interface IFloatingFilterParams<P = InbuiltParentType, TData = any, TCont
 export interface FloatingFilterDisplayParams<TModel = any> extends IFloatingFilterParams {
     model: TModel | null;
     onModelChange: (model: TModel | null, additionalEventAttributes?: any) => void;
+    filterModifiedCallback: (additionalEventAttributes?: any) => void;
     source: 'init' | 'ui' | 'filter' | 'apiModel' | 'apiParams' | 'dataChanged';
 }
 

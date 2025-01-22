@@ -90,6 +90,11 @@ export abstract class TextInputFloatingFilter<
     private syncUpWithParentFilter(e: KeyboardEvent): void {
         const isEnterKey = e.key === KeyCode.ENTER;
 
+        if (this.reactive) {
+            const reactiveParams = this.params as unknown as FloatingFilterDisplayParams<M>;
+            reactiveParams.filterModifiedCallback();
+        }
+
         if (this.applyActive && !isEnterKey) {
             return;
         }

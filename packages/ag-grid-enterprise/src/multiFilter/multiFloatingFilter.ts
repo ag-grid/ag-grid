@@ -75,7 +75,7 @@ export class MultiFloatingFilterComp extends Component implements IFloatingFilte
             newCompDetailsList.length === this.compDetailsList.length &&
             newCompDetailsList.every(
                 (newCompDetails, index) =>
-                    !this.beans.filterManager?.areFilterCompsDifferent(this.compDetailsList[index], newCompDetails)
+                    !this.beans.colFilter?.areFilterCompsDifferent(this.compDetailsList[index], newCompDetails)
             );
 
         if (allFloatingFilterCompsUnchanged) {

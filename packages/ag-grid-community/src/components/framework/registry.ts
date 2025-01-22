@@ -108,7 +108,7 @@ export class Registry extends BeanStub implements NamedBean {
 
         if (BeanClass == null) {
             if (mandatory) {
-                throw new Error(_errMsg(256));
+                throw new Error(this.beans.validation?.missingDynamicBean(name) ?? _errMsg(256));
             }
             return undefined;
         }

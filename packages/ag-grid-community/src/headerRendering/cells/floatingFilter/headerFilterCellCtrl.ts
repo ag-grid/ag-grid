@@ -246,7 +246,7 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl<IHeaderFilterCe
             return;
         }
 
-        const compDetails = this.beans.filterManager?.getFloatingFilterCompDetails(this.column, () =>
+        const compDetails = this.beans.colFilter?.getFloatingFilterCompDetails(this.column, () =>
             this.showParentFilter()
         );
 
@@ -364,8 +364,9 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl<IHeaderFilterCe
             this.destroyFilterChangedListener();
         }
 
+        const colFilter = this.beans.colFilter;
         const newCompDetails = this.active
-            ? this.beans.filterManager?.getFloatingFilterCompDetails(this.column, () => this.showParentFilter())
+            ? colFilter?.getFloatingFilterCompDetails(this.column, () => this.showParentFilter())
             : null;
 
         const compPromise = this.comp.getFloatingFilterComp();
@@ -373,10 +374,7 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl<IHeaderFilterCe
             this.updateCompDetails(compBean, newCompDetails, becomeActive);
         } else {
             compPromise.then((compInstance) => {
-                if (
-                    !compInstance ||
-                    this.beans.filterManager?.areFilterCompsDifferent(this.userCompDetails ?? null, newCompDetails)
-                ) {
+                if (!compInstance || colFilter?.areFilterCompsDifferent(this.userCompDetails ?? null, newCompDetails)) {
                     this.updateCompDetails(compBean, newCompDetails, becomeActive);
                 } else {
                     this.updateFloatingFilterParams(newCompDetails, 'apiParams');

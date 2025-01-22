@@ -931,6 +931,12 @@ export class ColumnFilterService extends BeanStub implements NamedBean {
                 currentParentModel: () => this.getModelForEvaluator(column),
                 parentFilterInstance: parentFilterInstance as any,
                 showParentFilter,
+                filterModifiedCallback: (additionalEventAttributes) =>
+                    this.eventSvc.dispatchEvent({
+                        type: 'floatingFilterModified',
+                        column,
+                        ...additionalEventAttributes,
+                    }),
                 model: this.getModelForEvaluator(column),
                 onModelChange: (model, additionalEventAttributes) => {
                     this.model[colId] = model;

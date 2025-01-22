@@ -86,6 +86,7 @@ import type {
     FilterModifiedEvent,
     FilterOpenedEvent,
     FirstDataRenderedEvent,
+    FloatingFilterModifiedEvent,
     FocusGridInnerElementParams,
     FullWidthCellKeyDownEvent,
     GetChartMenuItems,
@@ -731,6 +732,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * @initial
      */
     @Input({ transform: booleanAttribute }) public suppressSetFilterByDefault: boolean | undefined = undefined;
+    @Input({ transform: booleanAttribute }) public reactiveFloatingFilters: boolean | undefined = undefined;
     /** Set to `true` to Enable Charts.
      * @default false
      */
@@ -1905,6 +1907,11 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      */
     @Output() public filterModified: EventEmitter<FilterModifiedEvent<TData>> = new EventEmitter<
         FilterModifiedEvent<TData>
+    >();
+    /** Floating filter modified. Only used when `reactiveFloatingFilters` is enabled.
+     */
+    @Output() public floatingFilterModified: EventEmitter<FloatingFilterModifiedEvent<TData>> = new EventEmitter<
+        FloatingFilterModifiedEvent<TData>
     >();
     /** Advanced Filter Builder visibility has changed (opened or closed).
      */

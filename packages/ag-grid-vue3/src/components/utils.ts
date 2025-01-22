@@ -138,6 +138,7 @@ import type {
     FilterModifiedEvent,
     FilterOpenedEvent,
     FirstDataRenderedEvent,
+    FloatingFilterModifiedEvent,
     FullWidthCellKeyDownEvent,
     GridColumnsChangedEvent,
     GridPreDestroyedEvent,
@@ -550,6 +551,7 @@ export interface Props<TData> {
          * @initial
          */
     suppressSetFilterByDefault?: boolean | undefined,
+    reactiveFloatingFilters?: boolean | undefined,
     /** Set to `true` to Enable Charts.
          * @default false
          */
@@ -1528,6 +1530,7 @@ export interface Props<TData> {
    'onFilter-opened'?: FilterOpenedEvent<TData>,
    'onFilter-changed'?: FilterChangedEvent<TData>,
    'onFilter-modified'?: FilterModifiedEvent<TData>,
+   'onFloating-filter-modified'?: FloatingFilterModifiedEvent<TData>,
    'onAdvanced-filter-builder-visible-changed'?: AdvancedFilterBuilderVisibleChangedEvent<TData>,
    'onChart-created'?: ChartCreatedEvent<TData>,
    'onChart-range-selection-changed'?: ChartRangeSelectionChangedEvent<TData>,
@@ -1669,6 +1672,7 @@ export function getProps() {
         advancedFilterBuilderParams: undefined,
         suppressAdvancedFilterEval: undefined,
         suppressSetFilterByDefault: undefined,
+        reactiveFloatingFilters: undefined,
         enableCharts: undefined,
         chartThemes: undefined,
         customChartThemes: undefined,
@@ -1963,6 +1967,7 @@ export function getProps() {
         'onFilter-changed': undefined,
         'onFilter-modified': undefined,
         'onFilter-opened': undefined,
+        'onFloating-filter-modified': undefined,
         'onAdvanced-filter-builder-visible-changed': undefined,
         'onSort-changed': undefined,
         'onVirtual-row-removed': undefined,
