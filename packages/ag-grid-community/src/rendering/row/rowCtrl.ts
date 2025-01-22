@@ -503,17 +503,18 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         for (const prevCellCtrl of prev.list) {
             const colInstanceId = prevCellCtrl.column.getInstanceId();
             const cellInResult = res.map[colInstanceId] != null;
+
             if (cellInResult) {
                 continue;
             }
 
             const keepCell = !this.isCellEligibleToBeRemoved(prevCellCtrl, pinned);
+
             if (keepCell) {
                 colsFromPrev.push([colInstanceId, prevCellCtrl]);
-                continue;
+            } else {
+                prevCellCtrl.destroy();
             }
-
-            prevCellCtrl.destroy();
         }
 
         if (colsFromPrev.length) {
