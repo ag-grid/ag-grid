@@ -83,6 +83,8 @@ export class ServerSideSelectionService extends BaseSelectionService implements 
             return 0;
         }
 
+        this.selectionCtx.selectAll = false;
+
         if ('select' in selection) {
             if (selection.reset) {
                 this.selectionStrategy.deselectAllRowNodes({ source: 'api' });
@@ -244,7 +246,7 @@ export class ServerSideSelectionService extends BaseSelectionService implements 
         }
 
         this.selectionStrategy.selectAllRowNodes(params);
-        this.selectionCtx.reset();
+        this.selectionCtx.selectAll = true;
 
         this.beans.rowModel.forEachNode((node) => {
             if (node.stub) {
@@ -261,7 +263,7 @@ export class ServerSideSelectionService extends BaseSelectionService implements 
         validateSelectionParameters(params);
 
         this.selectionStrategy.deselectAllRowNodes(params);
-        this.selectionCtx.reset();
+        this.selectionCtx.selectAll = false;
 
         this.beans.rowModel.forEachNode((node) => {
             if (node.stub) {

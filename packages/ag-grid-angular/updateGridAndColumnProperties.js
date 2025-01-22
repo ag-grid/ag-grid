@@ -215,24 +215,28 @@ const updateGridProperties = (getGridPropertiesAndEvents) => {
         console.log(
             `Grid Properties: ${changes.length === 0 ? 'No Modified files' : 'Modified files: ' + changes.map((change) => change.file).join(', ')}`
         );
+
+        if (changes.length) {
+            const prettierConfig = JSON.parse(fs.readFileSync('../../.prettierrc', 'utf-8'));
+            prettier
+                .format(fs.readFileSync('./projects/ag-grid-angular/src/lib/ag-grid-angular.component.ts', 'utf-8'), {
+                    ...prettierConfig,
+                    filepath: './projects/ag-grid-angular/src/lib/ag-grid-angular.component.ts',
+                })
+                .then((result) =>
+                    fs.writeFileSync('./projects/ag-grid-angular/src/lib/ag-grid-angular.component.ts', result)
+                )
+                .catch((error) => {
+                    // eslint-disable-next-line no-console
+                    console.error(error);
+                    process.exitCode = 1;
+                });
+        }
     });
 };
 
 const updatePropertiesBuilt = () => {
     updateGridProperties(getGridPropertiesAndEventsJs);
-
-    const prettierConfig = JSON.parse(fs.readFileSync('../../.prettierrc', 'utf-8'));
-    prettier
-        .format(fs.readFileSync('./projects/ag-grid-angular/src/lib/ag-grid-angular.component.ts', 'utf-8'), {
-            ...prettierConfig,
-            filepath: './projects/ag-grid-angular/src/lib/ag-grid-angular.component.ts',
-        })
-        .then((result) => fs.writeFileSync('./projects/ag-grid-angular/src/lib/ag-grid-angular.component.ts', result))
-        .catch((error) => {
-            // eslint-disable-next-line no-console
-            console.error(error);
-            process.exitCode = 1;
-        });
 };
 
 // eslint-disable-next-line no-console

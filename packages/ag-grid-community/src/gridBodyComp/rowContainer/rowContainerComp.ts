@@ -1,7 +1,5 @@
 import { RowComp } from '../../rendering/row/rowComp';
 import type { RowCtrl, RowCtrlInstanceId } from '../../rendering/row/rowCtrl';
-import { _setAriaRole } from '../../utils/aria';
-import { _isBrowserFirefox } from '../../utils/browser';
 import { _ensureDomOrder, _insertWithDomOrder } from '../../utils/dom';
 import type { ComponentSelector } from '../../widgets/component';
 import { Component, RefPlaceholder } from '../../widgets/component';
@@ -14,10 +12,10 @@ function templateFactory(options: RowContainerOptions): string {
         res =
             /* html */
             `<div class="${options.viewport}" data-ref="eViewport" role="presentation">
-                <div class="${options.container}" data-ref="eContainer"></div>
+                <div class="${options.container}" data-ref="eContainer" role="rowgroup"></div>
             </div>`;
     } else {
-        res = /* html */ `<div class="${options.container}" data-ref="eContainer"></div>`;
+        res = /* html */ `<div class="${options.container}" data-ref="eContainer" role="rowgroup"></div>`;
     }
 
     return res;
@@ -64,41 +62,52 @@ export class RowContainerComp extends Component {
         // destroys all row comps
         this.setRowCtrls([]);
         super.destroy();
+        this.lastPlacedElement = null;
     }
 
     private setRowCtrls(rowCtrls: RowCtrl[]): void {
-        const oldRows = { ...this.rowComps };
-        this.rowComps = {};
+        const { rowComps, beans, options, eContainer } = this;
+        const oldRows = { ...rowComps };
 
+        this.rowComps = {};
         this.lastPlacedElement = null;
 
-        const processRow = (rowCon: RowCtrl) => {
-            const instanceId = rowCon.instanceId;
+        const orderedRows: [rowComp: RowComp, isNew: boolean][] = [];
+
+        for (const rowCtrl of rowCtrls) {
+            const instanceId = rowCtrl.instanceId;
             const existingRowComp = oldRows[instanceId];
 
+            let rowComp: RowComp;
+
             if (existingRowComp) {
-                this.rowComps[instanceId] = existingRowComp;
+                rowComp = existingRowComp;
                 delete oldRows[instanceId];
-                this.ensureDomOrder(existingRowComp.getGui(), rowCon);
             } else {
-                // don't create new row comps for rows which are not displayed. still want the existing components
-                // as they may be animating out.
-                if (!rowCon.rowNode.displayed) {
-                    return;
+                if (!rowCtrl.rowNode.displayed) {
+                    continue;
                 }
-                const rowComp = new RowComp(rowCon, this.beans, this.options.type);
-                this.rowComps[instanceId] = rowComp;
-                this.appendRow(rowComp.getGui());
+                rowComp = new RowComp(rowCtrl, beans, options.type);
             }
-        };
+            this.rowComps[instanceId] = rowComp;
+            orderedRows.push([rowComp, !existingRowComp]);
+        }
 
-        rowCtrls.forEach(processRow);
-        Object.values(oldRows).forEach((oldRowComp) => {
-            this.eContainer.removeChild(oldRowComp.getGui());
+        for (const oldRowComp of Object.values(oldRows)) {
+            eContainer.removeChild(oldRowComp.getGui());
             oldRowComp.destroy();
-        });
+        }
 
-        _setAriaRole(this.eContainer, 'rowgroup');
+        for (const [rowComp, isNew] of orderedRows) {
+            const eGui = rowComp.getGui();
+            if (!this.ensureDomOrder) {
+                if (isNew) {
+                    eContainer.appendChild(eGui);
+                }
+            } else {
+                this.ensureDomOrder(eGui);
+            }
+        }
     }
 
     public appendRow(element: HTMLElement) {
@@ -110,18 +119,7 @@ export class RowContainerComp extends Component {
         this.lastPlacedElement = element;
     }
 
-    private ensureDomOrder(eRow: HTMLElement, rowCtrl: RowCtrl): void {
-        if (!this.domOrder) {
-            return;
-        }
-
-        // firefox fails to fire mouseleave events if nodes are removed from the DOM
-        // so we manually remove the hover styles, to prevent multiple rows from being
-        // style with hovered CSS while scrolling.
-        if (_isBrowserFirefox()) {
-            rowCtrl.resetHoveredStatus();
-        }
-
+    private ensureDomOrder(eRow: HTMLElement): void {
         _ensureDomOrder(this.eContainer, eRow, this.lastPlacedElement);
         this.lastPlacedElement = eRow;
     }

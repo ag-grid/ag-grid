@@ -16,18 +16,17 @@ interface RangePartition {
  * See AG-9620 for more
  */
 export class RowRangeSelectionContext {
+    /** Whether the user is currently selecting all nodes either via the header checkbox or API */
+    public selectAll = false;
     private rootId: string | null = null;
     /**
      * Note that the "end" `RowNode` may come before or after the "root" `RowNode` in the
      * actual grid.
      */
     private endId: string | null = null;
-    private rowModel: IRowModel;
     private cachedRange: RowNode[] = [];
 
-    constructor(rowModel: IRowModel) {
-        this.rowModel = rowModel;
-    }
+    constructor(private readonly rowModel: IRowModel) {}
 
     public reset(): void {
         this.rootId = null;
@@ -69,9 +68,13 @@ export class RowRangeSelectionContext {
         return this.getRange().some((nodeInRange) => nodeInRange.id === node.id);
     }
 
-    public getRoot(): RowNode | null {
+    public getRoot(fallback?: RowNode): RowNode | null {
         if (this.rootId) {
             return this.rowModel.getRowNode(this.rootId) ?? null;
+        }
+        if (fallback) {
+            this.setRoot(fallback);
+            return fallback;
         }
         return null;
     }

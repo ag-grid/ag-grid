@@ -3,7 +3,6 @@ import type { IComponent } from '../interfaces/iComponent';
 import { _clearElement } from '../utils/dom';
 import type { IconName } from '../utils/icon';
 import { _createIcon } from '../utils/icon';
-import { _escapeString } from '../utils/string';
 import { Component, RefPlaceholder } from '../widgets/component';
 import { dragAndDropImageComponentCSS } from './dragAndDropImageComponent.css-GENERATED';
 import type { DragAndDropIcon, DragSource } from './dragAndDropService';
@@ -92,6 +91,6 @@ export class DragAndDropImageComponent extends Component implements IDragAndDrop
     }
 
     public setLabel(label: string): void {
-        this.eLabel.textContent = _escapeString(label);
+        this.eLabel.textContent = label;
     }
 }

@@ -252,6 +252,7 @@ export abstract class BaseSelectionService extends BeanStub {
         const groupSelectsDescendants = _getGroupSelectsDescendants(gos);
         const enableClickSelection = _getEnableSelection(gos);
         const enableDeselection = _getEnableDeselection(gos);
+        const isMultiSelect = this.isMultiSelect();
         const isRowClicked = source === 'rowClicked';
 
         // we do not allow selecting the group by clicking, when groupSelectChildren, as the logic to
@@ -264,7 +265,7 @@ export abstract class BaseSelectionService extends BeanStub {
 
         if (isRowClicked && !(enableClickSelection || enableDeselection)) return null;
 
-        if (shiftKey && metaKey && this.isMultiSelect()) {
+        if (shiftKey && metaKey && isMultiSelect) {
             // SHIFT+CTRL or SHIFT+CMD is used for bulk deselection, except where the selection root
             // is still selected, in which case we default to normal bulk selection behaviour
             const root = selectionCtx.getRoot();
@@ -290,16 +291,21 @@ export abstract class BaseSelectionService extends BeanStub {
                     reset: false,
                 };
             }
-        } else if (shiftKey && this.isMultiSelect()) {
+        } else if (shiftKey && isMultiSelect) {
             // SHIFT is used for bulk selection
-            const root = selectionCtx.getRoot();
+
+            // When select-all is active either via UI or API, if there's
+            // no actual selection root, we fallback to the first row node (if available)
+            const fallback = selectionCtx.selectAll ? this.beans.rowModel.getRow(0) : undefined;
+            const root = selectionCtx.getRoot(fallback);
+
             const partition = selectionCtx.isInRange(node)
                 ? selectionCtx.truncate(node)
                 : selectionCtx.extend(node, groupSelectsDescendants);
             return {
                 select: partition.keep,
                 deselect: partition.discard,
-                reset: !!(root && !root.isSelected()),
+                reset: selectionCtx.selectAll || !!(root && !root.isSelected()),
             };
         } else if (metaKey) {
             // CTRL is used for deselection of a single node
@@ -311,8 +317,8 @@ export abstract class BaseSelectionService extends BeanStub {
 
             return {
                 node,
-                newValue: currentSelection ? false : true,
-                clearSelection: !this.isMultiSelect(),
+                newValue: !currentSelection,
+                clearSelection: !isMultiSelect,
             };
         } else {
             // Otherwise we just do normal selection of a single node
@@ -327,7 +333,7 @@ export abstract class BaseSelectionService extends BeanStub {
                 return {
                     node,
                     newValue: false,
-                    clearSelection: !this.isMultiSelect() || shouldClear,
+                    clearSelection: !isMultiSelect || shouldClear,
                 };
             }
 
@@ -346,14 +352,14 @@ export abstract class BaseSelectionService extends BeanStub {
                 return {
                     node,
                     newValue,
-                    clearSelection: !this.isMultiSelect() || shouldClear,
+                    clearSelection: !isMultiSelect || shouldClear,
                 };
             }
 
             return {
                 node,
                 newValue: !currentSelection,
-                clearSelection: !this.isMultiSelect() || shouldClear,
+                clearSelection: !isMultiSelect || shouldClear,
             };
         }
     }
