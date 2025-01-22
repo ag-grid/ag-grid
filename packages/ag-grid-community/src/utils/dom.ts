@@ -308,7 +308,9 @@ export function _ensureDomOrder(eContainer: HTMLElement, eChild: HTMLElement, eC
         return;
     }
 
-    if (eChildBefore) {
+    if (!eContainer.firstChild) {
+        eContainer.appendChild(eChild);
+    } else if (eChildBefore) {
         if (eChildBefore.nextSibling) {
             // insert between the eRowBefore and the row after it
             eContainer.insertBefore(eChild, eChildBefore.nextSibling);
@@ -316,12 +318,10 @@ export function _ensureDomOrder(eContainer: HTMLElement, eChild: HTMLElement, eC
             // if nextSibling is missing, means other row is at end, so just append new row at the end
             eContainer.appendChild(eChild);
         }
-    } else {
+    } else if (eContainer.firstChild && eContainer.firstChild !== eChild) {
         // otherwise put at start
-        if (eContainer.firstChild && eContainer.firstChild !== eChild) {
-            // insert it at the first location
-            eContainer.insertAdjacentElement('afterbegin', eChild);
-        }
+        // insert it at the first location
+        eContainer.insertAdjacentElement('afterbegin', eChild);
     }
 }
 

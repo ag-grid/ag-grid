@@ -64,6 +64,7 @@ export class RowContainerComp extends Component {
         // destroys all row comps
         this.setRowCtrls([]);
         super.destroy();
+        this.lastPlacedElement = null;
     }
 
     private setRowCtrls(rowCtrls: RowCtrl[]): void {
@@ -72,31 +73,45 @@ export class RowContainerComp extends Component {
 
         this.lastPlacedElement = null;
 
-        const processRow = (rowCon: RowCtrl) => {
+        const processRow = (rowCon: RowCtrl): [HTMLElement, boolean] | undefined => {
             const instanceId = rowCon.instanceId;
             const existingRowComp = oldRows[instanceId];
 
             if (existingRowComp) {
                 this.rowComps[instanceId] = existingRowComp;
                 delete oldRows[instanceId];
-                this.ensureDomOrder(existingRowComp.getGui(), rowCon);
-            } else {
-                // don't create new row comps for rows which are not displayed. still want the existing components
-                // as they may be animating out.
-                if (!rowCon.rowNode.displayed) {
-                    return;
-                }
-                const rowComp = new RowComp(rowCon, this.beans, this.options.type);
-                this.rowComps[instanceId] = rowComp;
-                this.appendRow(rowComp.getGui());
+                return [existingRowComp.getGui(), false];
             }
+
+            // don't create new row comps for rows which are not displayed. still want the existing components
+            // as they may be animating out.
+            if (!rowCon.rowNode.displayed) {
+                return;
+            }
+
+            const rowComp = new RowComp(rowCon, this.beans, this.options.type);
+            this.rowComps[instanceId] = rowComp;
+            return [rowComp.getGui(), true];
         };
 
-        rowCtrls.forEach(processRow);
+        const orderedRows: [eGui: HTMLElement, rowCtrl: RowCtrl, isNew: boolean][] = [];
+
+        for (const rowCtrl of rowCtrls) {
+            const [eGui, isNew = false] = processRow(rowCtrl) || [];
+
+            if (eGui) {
+                orderedRows.push([eGui, rowCtrl, isNew]);
+            }
+        }
+
         Object.values(oldRows).forEach((oldRowComp) => {
             this.eContainer.removeChild(oldRowComp.getGui());
             oldRowComp.destroy();
         });
+
+        for (const [eGui, rowCtrl, isNew] of orderedRows) {
+            this.ensureDomOrder(eGui, isNew, rowCtrl);
+        }
 
         _setAriaRole(this.eContainer, 'rowgroup');
     }
@@ -110,8 +125,11 @@ export class RowContainerComp extends Component {
         this.lastPlacedElement = element;
     }
 
-    private ensureDomOrder(eRow: HTMLElement, rowCtrl: RowCtrl): void {
+    private ensureDomOrder(eRow: HTMLElement, isNew: boolean, rowCtrl: RowCtrl): void {
         if (!this.domOrder) {
+            if (isNew) {
+                this.eContainer.appendChild(eRow);
+            }
             return;
         }
 
