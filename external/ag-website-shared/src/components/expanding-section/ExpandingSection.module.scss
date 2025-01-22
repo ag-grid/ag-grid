@@ -1,6 +1,9 @@
 @use 'design-system' as *;
 
 .expandingSection {
+    --content-height: 0;
+    --content-transition-timing: 0.33s;
+
     display: block;
     margin-bottom: $spacing-size-5;
 }
@@ -25,32 +28,23 @@
         background-color: var(--color-button-secondary-bg-hover);
     }
 
-    &::before {
-        content: 'View ';
+    &::after {
+        content: ' - View';
         display: inline-block;
         min-width: 3.5ch;
-        margin-right: 0.5ch;
-    }
+        margin-left: 0.5ch;
 
-    .expandingSection[data-is-open] & {
-        border-bottom-right-radius: 0;
-        border-bottom-left-radius: 0;
-
-        &::before {
-            content: 'Hide ';
+        .expandingSection[data-is-open] & {
+            content: ' - Hide';
         }
     }
 }
 
 .expandingSectionContentOuter {
-    --max-height: 0;
-
-    max-height: var(--max-height);
+    max-height: var(--content-height);
+    margin-top: -3px;
     overflow: hidden;
-
-    .expandingSection[data-is-open] & {
-        --max-height: none;
-    }
+    transition: max-height var(--content-transition-timing) ease-in-out;
 }
 
 .expandingSectionContentInner {
