@@ -194,11 +194,7 @@ export const TrialLicenceForm: FunctionComponent = () => {
     return (
         <form noValidate className={styles.trailForm} onSubmit={handleFormSubmit}>
             <div className={styles.inputs}>
-                <div
-                    className={classnames('input-field', {
-                        'input-error': firstNameError,
-                    })}
-                >
+                <div className={classnames('input-field', { 'input-error': firstNameError })}>
                     <label htmlFor="first-name">First Name</label>
                     <input
                         placeholder="First Name"
@@ -209,13 +205,11 @@ export const TrialLicenceForm: FunctionComponent = () => {
                         onChange={handleFirstNameChange}
                         required
                     />
-                    {firstNameError && <p className="error">{firstNameError}</p>}
+
+                    <p className={classnames(!firstNameError && styles.isHidden, 'error')}>First name required</p>
                 </div>
-                <div
-                    className={classnames('input-field', {
-                        'input-error': lastNameError,
-                    })}
-                >
+
+                <div className={classnames('input-field', { 'input-error': lastNameError })}>
                     <label htmlFor="last-name">Last Name</label>
                     <input
                         placeholder="Last Name"
@@ -226,13 +220,11 @@ export const TrialLicenceForm: FunctionComponent = () => {
                         onChange={handleLastNameChange}
                         required
                     />
-                    {lastNameError && <p className="error">{lastNameError}</p>}
+
+                    <p className={classnames(!firstNameError && styles.isHidden, 'error')}>Last name required</p>
                 </div>
-                <div
-                    className={classnames('input-field', styles.emailField, {
-                        'input-error': emailError,
-                    })}
-                >
+
+                <div className={classnames('input-field', styles.emailField, { 'input-error': emailError })}>
                     <label htmlFor="email">Email</label>
                     <input
                         placeholder="Email"
@@ -243,9 +235,12 @@ export const TrialLicenceForm: FunctionComponent = () => {
                         value={email}
                         onChange={handleEmailChange}
                     />
-                    {emailError && <p className="error">{emailError}</p>}
+                    <p className={classnames(!emailError && styles.isHidden, 'error')}>
+                        {emailError ? emailError : 'Email required'}
+                    </p>
                 </div>
             </div>
+
             <div className={styles.actions}>
                 {formError && <p className={styles.error}>{formError}</p>}
                 {formState === 'success' && <p className={styles.success}>{MESSAGES.formSuccess}</p>}

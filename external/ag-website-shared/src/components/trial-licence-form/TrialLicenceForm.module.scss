@@ -5,17 +5,16 @@ $trial-licence-small: 680px;
 .trailForm {
     display: flex;
     flex-direction: column;
-    gap: $spacing-size-4;
 }
 
 .inputs {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    gap: $spacing-size-4;
 
     @media screen and (min-width: $trial-licence-small) {
         flex-direction: row;
+        gap: $spacing-size-4;
 
         :global(.input-field) {
             flex-grow: 1;
@@ -45,6 +44,10 @@ $trial-licence-small: 680px;
 
     button {
         width: 100%;
+    }
+
+    @media screen and (max-width: $trial-licence-small) {
+        margin-top: $spacing-size-2;
     }
 
     @media screen and (min-width: $trial-licence-small) {

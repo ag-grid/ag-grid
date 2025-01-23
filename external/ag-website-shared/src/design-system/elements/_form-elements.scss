@@ -383,12 +383,19 @@ input[type='range']#{$selector-exclude-grid} {
         --color-input-border: var(--color-input-error);
         --color-input-border-hover: var(--color-input-error);
     }
+}
 
-    .error {
-        margin-top: 2px;
-        font-size: var(--text-fs-sm);
-        color: var(--color-input-error);
-    }
+.input-field .error {
+    margin-top: -2px;
+    margin-bottom: -2px;
+    font-size: var(--text-fs-sm);
+    color: var(--color-input-error);
+    opacity: 0;
+    transition: opacity $transition-default-timing;
+}
+
+.input-error .error {
+    opacity: 1;
 }
 
 .extra-info {
