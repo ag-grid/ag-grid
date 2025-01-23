@@ -29,18 +29,16 @@ export class FunnelChartProxy extends ChartProxy<AgStandaloneChartOptions, Funne
     }
 
     protected override getSeriesChartThemeDefaults(): AgChartThemeOverrides[FunnelChartTypes] {
+        const config = {
+            crosshair: {
+                enabled: false,
+            },
+        };
+
         return {
             axes: {
-                category: {
-                    crosshair: {
-                        enabled: false,
-                    },
-                },
-                number: {
-                    crosshair: {
-                        enabled: false,
-                    },
-                },
+                category: config,
+                number: config,
             },
         };
     }

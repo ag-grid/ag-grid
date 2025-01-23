@@ -181,7 +181,6 @@ export type PivotMenuOptionName =
     | 'pivotCombinationChart'
     | 'pivotColumnLineCombo'
     | 'pivotAreaColumnCombo'
-    | 'pivotFunnelChart'
     | 'pivotFunnel'
     | 'pivotConeFunnel'
     | 'pivotPyramid';
@@ -286,8 +285,8 @@ class PivotMenuItemMapper implements MenuItemBuilder<PivotMenuOptionName> {
                     ],
                 },
                 {
-                    _key: 'pivotFunnelChart',
-                    name: localeTextFunc('funnelChart', 'Funnel'),
+                    _key: 'pivotFunnel',
+                    name: localeTextFunc('funnel', 'Funnel'),
                     subMenu: [
                         getMenuItem('funnel', 'Funnel&lrm;', 'funnel', 'pivotFunnel'),
                         getMenuItem('cone-funnel', 'Cone Funnel&lrm;', 'cone-funnel', 'pivotConeFunnel'),
@@ -364,7 +363,7 @@ class PivotMenuItemMapper implements MenuItemBuilder<PivotMenuOptionName> {
                 boxPlot: null,
             },
             funnelGroup: {
-                _key: 'pivotFunnelChart',
+                _key: 'pivotFunnel',
                 funnel: 'pivotFunnel',
                 'cone-funnel': 'pivotConeFunnel',
                 pyramid: 'pivotPyramid',
@@ -551,7 +550,7 @@ class RangeMenuItemMapper implements MenuItemBuilder<RangeMenuOptionName> {
                     _enterprise: true,
                 },
                 {
-                    name: localeTextFunc('funnelChart', 'Funnel'),
+                    name: localeTextFunc('funnel', 'Funnel'),
                     subMenu: [
                         getMenuItem('funnel', 'Funnel&lrm;', 'funnel', 'rangeFunnel'),
                         getMenuItem('cone-funnel', 'Cone Funnel&lrm;', 'cone-funnel', 'rangeConeFunnel'),
