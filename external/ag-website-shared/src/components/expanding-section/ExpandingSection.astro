@@ -65,11 +65,19 @@ const { headerText, isOpen = false } = Astro.props as Props;
         }
 
         connectedCallback() {
-            const isOpen = this.#details.getAttribute('open') !== null;
+            const hasHashId = this.#contentInner.querySelector(window.location.hash);
+            const isOpen = hasHashId || this.#details.getAttribute('open') !== null;
             if (isOpen) {
                 const noAnimation = true;
                 this.#open(noAnimation);
                 this.isOpen = true;
+            }
+
+            if (hasHashId) {
+                // Wait a little bit before scrolling into view
+                setTimeout(() => {
+                    hasHashId.scrollIntoView(true);
+                }, 100);
             }
         }
 
