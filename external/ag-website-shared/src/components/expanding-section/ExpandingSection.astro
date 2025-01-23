@@ -25,7 +25,7 @@ const { headerText, isOpen = false } = Astro.props as Props;
 
 <script>
     class ExpandingSection extends HTMLElement {
-        #isOpen: boolean;
+        #isOpen: boolean = false;
         #details: HTMLElement;
         #summary: HTMLElement;
         #contentOuter: HTMLElement;
@@ -38,13 +38,6 @@ const { headerText, isOpen = false } = Astro.props as Props;
             this.#summary = this.querySelector('summary')!;
             this.#contentOuter = this.querySelector('.es-content-outer')!;
             this.#contentInner = this.querySelector('.es-content-inner')!;
-
-            setTimeout(() => {
-                this.isOpen = this.#details.getAttribute('open') !== null;
-
-                // Prevent transition if section is open on init
-                if (this.isOpen) this.style.setProperty('--content-height', 'none');
-            }, 10);
 
             this.#summary.addEventListener('click', this.#clickHandler.bind(this));
 
@@ -71,6 +64,15 @@ const { headerText, isOpen = false } = Astro.props as Props;
             }
         }
 
+        connectedCallback() {
+            const isOpen = this.#details.getAttribute('open') !== null;
+            if (isOpen) {
+                const noAnimation = true;
+                this.#open(noAnimation);
+                this.isOpen = true;
+            }
+        }
+
         get #contentHeight() {
             return this.#contentInner.offsetHeight;
         }
@@ -85,9 +87,9 @@ const { headerText, isOpen = false } = Astro.props as Props;
             this.#details.style.setProperty(propertyName, value);
         }
 
-        #open() {
+        #open(noAnimation: boolean = false) {
             const contentHeight = this.#contentHeight;
-            const transitionTiming = Math.max(contentHeight / 1250, 0.25);
+            const transitionTiming = noAnimation ? 0 : Math.max(contentHeight / 1250, 0.25);
 
             this.#details.setAttribute('open', '');
 
