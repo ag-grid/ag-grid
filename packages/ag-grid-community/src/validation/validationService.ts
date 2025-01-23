@@ -292,7 +292,9 @@ export class ValidationService extends BeanStub implements NamedBean {
             validProperties
         );
 
-        for (const key of Object.keys(invalidProperties)) {
+        const invalidPropertiesKeys = Object.keys(invalidProperties);
+
+        for (const key of invalidPropertiesKeys) {
             const value = invalidProperties[key];
             let message = `invalid ${containerName} property '${key}' did you mean any of these: ${value.slice(0, 8).join(', ')}.`;
             if (validProperties.includes('context')) {
@@ -301,7 +303,7 @@ export class ValidationService extends BeanStub implements NamedBean {
             _warnOnce(message);
         }
 
-        if (Object.keys(invalidProperties).length > 0 && docsUrl) {
+        if (invalidPropertiesKeys.length > 0 && docsUrl) {
             const url = this.beans.frameworkOverrides.getDocLink(docsUrl);
             _warnOnce(`to see all the valid ${containerName} properties please check: ${url}`);
         }
