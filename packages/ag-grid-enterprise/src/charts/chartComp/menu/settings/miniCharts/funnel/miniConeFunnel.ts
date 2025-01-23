@@ -28,7 +28,7 @@ const CONE_FUNNEL_SHAPES: XYCoordShape[] = [
 ];
 
 export class MiniConeFunnel extends MiniFunnel {
-    static override chartType: ChartType = 'cone-funnel';
+    static override chartType: ChartType = 'coneFunnel';
 
     constructor(
         container: HTMLElement,

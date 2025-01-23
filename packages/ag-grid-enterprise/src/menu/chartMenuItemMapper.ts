@@ -289,7 +289,7 @@ class PivotMenuItemMapper implements MenuItemBuilder<PivotMenuOptionName> {
                     name: localeTextFunc('funnel', 'Funnel'),
                     subMenu: [
                         getMenuItem('funnel', 'Funnel&lrm;', 'funnel', 'pivotFunnel'),
-                        getMenuItem('cone-funnel', 'Cone Funnel&lrm;', 'cone-funnel', 'pivotConeFunnel'),
+                        getMenuItem('coneFunnel', 'Cone Funnel&lrm;', 'coneFunnel', 'pivotConeFunnel'),
                         getMenuItem('pyramid', 'Pyramid&lrm;', 'pyramid', 'pivotPyramid'),
                     ],
                 },
@@ -365,7 +365,7 @@ class PivotMenuItemMapper implements MenuItemBuilder<PivotMenuOptionName> {
             funnelGroup: {
                 _key: 'pivotFunnel',
                 funnel: 'pivotFunnel',
-                'cone-funnel': 'pivotConeFunnel',
+                coneFunnel: 'pivotConeFunnel',
                 pyramid: 'pivotPyramid',
             },
             // Polar charts do not support pivot mode
@@ -553,7 +553,7 @@ class RangeMenuItemMapper implements MenuItemBuilder<RangeMenuOptionName> {
                     name: localeTextFunc('funnel', 'Funnel'),
                     subMenu: [
                         getMenuItem('funnel', 'Funnel&lrm;', 'funnel', 'rangeFunnel'),
-                        getMenuItem('cone-funnel', 'Cone Funnel&lrm;', 'cone-funnel', 'rangeConeFunnel'),
+                        getMenuItem('coneFunnel', 'Cone Funnel&lrm;', 'coneFunnel', 'rangeConeFunnel'),
                         getMenuItem('pyramid', 'Pyramid&lrm;', 'pyramid', 'rangePyramid'),
                     ],
                     _key: 'rangeFunnel',
@@ -637,7 +637,7 @@ class RangeMenuItemMapper implements MenuItemBuilder<RangeMenuOptionName> {
             funnelGroup: {
                 _key: 'rangeFunnel',
                 funnel: 'rangeFunnel',
-                'cone-funnel': 'rangeConeFunnel',
+                coneFunnel: 'rangeConeFunnel',
                 pyramid: 'rangePyramid',
             },
             combinationGroup: {

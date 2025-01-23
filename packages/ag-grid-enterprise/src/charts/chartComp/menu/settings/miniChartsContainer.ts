@@ -125,7 +125,7 @@ const miniChartMapping: MiniChartMenuMapping = {
     },
     funnelGroup: {
         funnel: { range: true, pivot: false, enterprise: true, icon: MiniFunnel },
-        'cone-funnel': { range: true, pivot: false, enterprise: true, icon: MiniConeFunnel },
+        coneFunnel: { range: true, pivot: false, enterprise: true, icon: MiniConeFunnel },
         pyramid: { range: true, pivot: false, enterprise: true, icon: MiniPyramid },
     },
 };
@@ -141,7 +141,7 @@ const DEFAULT_CHART_GROUPS: ChartGroupsDef = {
     statisticalGroup: ['boxPlot', 'histogram', 'rangeBar', 'rangeArea'],
     hierarchicalGroup: ['treemap', 'sunburst'],
     specializedGroup: ['heatmap', 'waterfall'],
-    funnelGroup: ['funnel', 'cone-funnel', 'pyramid'],
+    funnelGroup: ['funnel', 'coneFunnel', 'pyramid'],
     combinationGroup: ['columnLineCombo', 'areaColumnCombo', 'customCombo'],
 };
 

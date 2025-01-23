@@ -227,7 +227,7 @@ export const DEFAULT_CHART_TRANSLATIONS = {
     normalizedLineFull: '100% Stacked Line',
     customCombo: 'Custom Combination',
     funnel: 'Funnel',
-    'cone-funnel': 'Cone Funnel',
+    coneFunnel: 'Cone Funnel',
     pyramid: 'Pyramid',
     funnelGroup: 'Funnel',
     funnelTooltip: 'Funnel',

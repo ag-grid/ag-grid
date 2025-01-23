@@ -38,7 +38,7 @@ const CHART_TYPE_TO_SERIES_TYPE: Record<ChartTypeExCombo, string> = {
     heatmap: 'heatmap',
     waterfall: 'waterfall',
     funnel: 'funnel',
-    'cone-funnel': 'cone-funnel',
+    coneFunnel: 'cone-funnel',
     pyramid: 'pyramid',
 } as const;
 
@@ -229,7 +229,7 @@ function canOnlyHaveSingleSeries(chartType: ChartType): boolean {
         chartType === 'waterfall' ||
         chartType === 'histogram' ||
         chartType === 'funnel' ||
-        chartType === 'cone-funnel' ||
+        chartType === 'coneFunnel' ||
         chartType === 'pyramid'
     );
 }

@@ -37,7 +37,7 @@ export class EnterpriseChartProxyFactory extends BeanStub implements NamedBean {
             case 'waterfall':
                 return new WaterfallChartProxy(chartProxyParams);
             case 'funnel':
-            case 'cone-funnel':
+            case 'coneFunnel':
             case 'pyramid':
                 return new FunnelChartProxy(chartProxyParams);
         }
