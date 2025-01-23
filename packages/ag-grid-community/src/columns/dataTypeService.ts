@@ -273,9 +273,9 @@ export class DataTypeService extends BeanStub implements NamedBean {
         if (value == null) {
             return undefined;
         }
-        const [cellDataType] = Object.keys(this.dataTypeMatchers).find((_cellDataType) =>
-            this.dataTypeMatchers[_cellDataType]!(value)
-        ) ?? ['object'];
+        const cellDataType =
+            Object.keys(this.dataTypeMatchers).find((_cellDataType) => this.dataTypeMatchers[_cellDataType]!(value)) ??
+            'object';
         return cellDataType;
     }
 
