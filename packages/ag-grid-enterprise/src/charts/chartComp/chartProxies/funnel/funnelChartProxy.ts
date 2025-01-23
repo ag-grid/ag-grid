@@ -46,13 +46,13 @@ export class FunnelChartProxy extends ChartProxy<AgStandaloneChartOptions, Funne
     }
 
     private getSeries(params: UpdateParams): FunnelTypes[] {
-        const [groupField] = params.categories;
-        const [valueField] = params.fields;
+        const [{ id }] = params.categories;
+        const [{ colId }] = params.fields;
 
         const series: FunnelTypes = {
             type: this.standaloneChartType as FunnelChartTypes,
-            stageKey: groupField.id,
-            valueKey: valueField.colId,
+            stageKey: id,
+            valueKey: colId,
         };
 
         return [series];

@@ -185,6 +185,7 @@ export type PivotMenuOptionName =
     | 'pivotFunnel'
     | 'pivotConeFunnel'
     | 'pivotPyramid';
+
 class PivotMenuItemMapper implements MenuItemBuilder<PivotMenuOptionName> {
     constructor(
         private beans: BeanCollection,
@@ -285,6 +286,15 @@ class PivotMenuItemMapper implements MenuItemBuilder<PivotMenuOptionName> {
                     ],
                 },
                 {
+                    _key: 'pivotFunnelChart',
+                    name: localeTextFunc('funnelChart', 'Funnel'),
+                    subMenu: [
+                        getMenuItem('funnel', 'Funnel&lrm;', 'funnel', 'pivotFunnel'),
+                        getMenuItem('cone-funnel', 'Cone Funnel&lrm;', 'cone-funnel', 'pivotConeFunnel'),
+                        getMenuItem('pyramid', 'Pyramid&lrm;', 'pyramid', 'pivotPyramid'),
+                    ],
+                },
+                {
                     _key: 'pivotCombinationChart',
                     name: localeTextFunc('combinationChart', 'Combination'),
                     subMenu: [
@@ -353,7 +363,6 @@ class PivotMenuItemMapper implements MenuItemBuilder<PivotMenuOptionName> {
                 rangeArea: null,
                 boxPlot: null,
             },
-            // Funnel charts do not currently support pivot mode
             funnelGroup: {
                 _key: 'pivotFunnelChart',
                 funnel: 'pivotFunnel',
