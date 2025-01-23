@@ -43,7 +43,7 @@
 
 .expandingSectionContentOuter {
     overflow: hidden;
-    transition: max-height var(--content-transition-timing) ease-in-out;
+    transition: max-height var(--content-transition-timing) linear;
 
     details[open] & {
         max-height: var(--content-height);

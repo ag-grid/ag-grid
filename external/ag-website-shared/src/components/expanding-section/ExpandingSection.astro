@@ -24,6 +24,10 @@ const { headerText, isOpen = false } = Astro.props as Props;
 </expanding-section>
 
 <script>
+    const clamp = (num: number, min: number, max: number): number => {
+        return Math.max(min, Math.min(num, max));
+    };
+
     class ExpandingSection extends HTMLElement {
         #isOpen: boolean = false;
         #details: HTMLElement;
@@ -68,6 +72,7 @@ const { headerText, isOpen = false } = Astro.props as Props;
             const hash = window.location.hash;
             const hasHashId = hash ? this.#contentInner.querySelector(hash) : undefined;
             const isOpen = hasHashId || this.#details.getAttribute('open') !== null;
+
             if (isOpen) {
                 const noAnimation = true;
                 this.#open(noAnimation);
@@ -98,7 +103,7 @@ const { headerText, isOpen = false } = Astro.props as Props;
 
         #open(noAnimation: boolean = false) {
             const contentHeight = this.#contentHeight;
-            const transitionTiming = noAnimation ? 0 : Math.max(contentHeight / 1250, 0.25);
+            const transitionTiming = noAnimation ? 0 : clamp(contentHeight / 2500, 0.25, 1);
 
             this.#details.setAttribute('open', '');
 
@@ -109,7 +114,7 @@ const { headerText, isOpen = false } = Astro.props as Props;
 
         #close() {
             const contentHeight = this.#contentHeight;
-            const transitionTiming = Math.max(contentHeight / 1250, 0.25);
+            const transitionTiming = clamp(contentHeight / 2500, 0.25, 1);
 
             // Set a specific height, as you can't transition from `max-height: none`
             this.#setCSSProp('--content-height', `${contentHeight + 2}px`);
