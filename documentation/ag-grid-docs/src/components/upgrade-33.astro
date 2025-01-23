@@ -62,12 +62,7 @@ const isVue = framework === 'vue';
 
 {/* ------------------------------------------------- */}
 
-<<<<<<< HEAD
-<Heading level={3} id="migrating-from-community">Migrating from AG Grid Community</Heading>
-<code>ag-grid-community</code>     
-=======
 <Heading level="3" id="migrating-from-community">Migrating from AG Grid Community</Heading>
->>>>>>> 85117ced92 (AG-13867 - Remove usused Upgrade-33 `.scss` file, refactor Upgrade-33 content to remove inappropriate expanding section)
 
 <p>
     To match the existing behaviour simply register the <i>AllCommunityModule</i> bundle via the ModuleRegistry before any
@@ -93,13 +88,8 @@ provideGlobalGridOptions({ theme: "legacy"});
     />
 </p>
 
-<<<<<<< HEAD
-<Heading level={3} id="migrating-from-enterprise">Migrating from AG Grid Enterprise</Heading>
-<code>ag-grid-enterprise</code>
-=======
 <Heading level="3" id="migrating-from-enterprise">Migrating from AG Grid Enterprise</Heading>
 
->>>>>>> 85117ced92 (AG-13867 - Remove usused Upgrade-33 `.scss` file, refactor Upgrade-33 content to remove inappropriate expanding section)
 <p>
     To match the existing behaviour simply register the <i>AllEnterpriseModule</i> bundle via the ModuleRegistry alongside
     your LicenseManager.
@@ -130,14 +120,7 @@ provideGlobalGridOptions({ theme: "legacy"});
     />
 </p>
 
-<<<<<<< HEAD
-
-   
-
-<Heading level={3} id="migrating-from-modules">Migrating from AG Grid Modules</Heading>
-=======
 <Heading level="3" id="migrating-from-modules">Migrating from AG Grid Modules</Heading>
->>>>>>> 85117ced92 (AG-13867 - Remove usused Upgrade-33 `.scss` file, refactor Upgrade-33 content to remove inappropriate expanding section)
 
 <code>@ag-grid-community/**</code> / <code>@ag-grid-enterprise/**</code>
 
@@ -262,11 +245,7 @@ provideGlobalGridOptions({ theme: "legacy"});
     </Alert>
 </ul>
 
-<<<<<<< HEAD
-<Heading level={2} id="migrating-integrated-charts">Integrated Charts / Sparklines </Heading>
-=======
 <h3>Optimizing Bundle Size</h3>
->>>>>>> 85117ced92 (AG-13867 - Remove usused Upgrade-33 `.scss` file, refactor Upgrade-33 content to remove inappropriate expanding section)
 <p>
     To take full advantage of the new modules you may wish to use the <a
         href={urlWithPrefix({ framework, url: './modules/' })}>Module Selector</a
@@ -325,11 +304,6 @@ SparklinesModule.with(AgChartsEnterpriseModule)
 
 {/* ------------------------------------------------- */}
 
-<<<<<<< HEAD
-<Heading level={2} id="theming">Theming</Heading>
-<p>The new and improved Theming API is now the default theming method for AG Grid. If you wish to migrate to the Theming Api see the <a
-    href={urlWithPrefix({framework, url: './theming-migration/'})}>Theming API Migration Guide</a>. However, this is not a requirement to upgrade to v33.</p>
-=======
 <Heading level="2" id="theming">Theming</Heading>
 <p>
     The new and improved Theming API is now the default theming method for AG Grid. If you wish to migrate to the
@@ -337,7 +311,6 @@ SparklinesModule.with(AgChartsEnterpriseModule)
         >Theming API Migration Guide</a
     >. However, this is not a requirement to upgrade to v33.
 </p>
->>>>>>> 85117ced92 (AG-13867 - Remove usused Upgrade-33 `.scss` file, refactor Upgrade-33 content to remove inappropriate expanding section)
 
 <h3 id="legacy-theming">Continue with Legacy Themes</h3>
 <p>
@@ -409,13 +382,8 @@ provideGlobalGridOptions({ theme: "legacy" });
 
 {/* ------------------------------------------------- */}
 
-<<<<<<< HEAD
-<Heading level={2} id="breaking-changes">Breaking Changes</Heading>
-        <div
-=======
 <Heading level="2" id="breaking-changes">Breaking Changes</Heading>
 <div
->>>>>>> 85117ced92 (AG-13867 - Remove usused Upgrade-33 `.scss` file, refactor Upgrade-33 content to remove inappropriate expanding section)
     data-meta='["ag-grid-enterprise","ag-charts-community","ag-charts-enterprise","IntegratedChartsModule","GridChartsModule","AgChartsCommunityModule","AgChartsEnterpriseModule","RowDragModule","getMainMenuItems","getContextMenuItems","mainMenuItems","contextMenuItems","chartMenuItems","columnGroup","navigator","api.getRowDropZoneParams","Grid","createGrid","selectAll","deselectAll","getFirstDisplayedRow","getLastDisplayedRow","getModel","getValue","getCellValue","showColumnMenuAfterButtonClick","showColumnMenuAfterMouseClick","IHeaderParams","autoSizeColumn","autoSizeColumns","setColumnWidths","moveColumn","moveColumns","addAggFunc","addAggFuncs","removeValueColumn","removeValueColumns","addValueColumn","addValueColumns","removeRowGroupColumn","removeRowGroupColumns","addRowGroupColumn","addRowGroupColumns","removePivotColumn","removePivotColumns","addPivotColumn","addPivotColumns","setColumnVisible","setColumnsVisible","setColumnPinned","setColumnsPinned","getColumnFilterModel","setColumnFilterModel","getServerSideGroupLevelParams","cellFlashDuration","enableCellChangeFlash","suppressGroupMaintainValueType","groupTotalRow","grandTotalRow","columnChooserParams","suppressHeaderMenuBut"RowDragEvent","vDirection","suppressFilterButton","colDef.suppressFloatingFilterButton","textCustomComparator","textMatcher","onParamsUpdated","refresh","valueGetter","getValue","footerValueGetter","totalValueGetter","flashDuration","fadeDuration","IToolPanelColumnCompParams","verticalText","charSet",,"name","sparklineOptions.label.placement"]'
 >
 </div>
@@ -425,10 +393,6 @@ provideGlobalGridOptions({ theme: "legacy" });
 <ExpandingSection headerText="Breaking Changes">
     <p>This release includes the following breaking changes:</p>
 
-<<<<<<< HEAD
-    <Heading id="changes-to-modules-packages" level={3}> Changes To Modules / Packages</Heading>
-    <p>Changes outline above in the <a href={urlWithPrefix({framework, url: "./upgrading-to-ag-grid-33/#changes-to-modules"})}> Changes to Modules / Packages section </a></p>
-=======
     <Heading level="3">Changes To Modules / Packages</Heading>
     <p>
         Changes outline above in the <a
@@ -437,7 +401,6 @@ provideGlobalGridOptions({ theme: "legacy" });
             Changes to Modules / Packages section
         </a>
     </p>
->>>>>>> 85117ced92 (AG-13867 - Remove usused Upgrade-33 `.scss` file, refactor Upgrade-33 content to remove inappropriate expanding section)
 
     <Heading id="integrated-charts-sparklines" level={3}>Integrated Charts / Sparklines</Heading>
     <p>
@@ -669,21 +632,12 @@ provideGlobalGridOptions({ theme: "legacy" });
         </li>
     </ul>
 
-<<<<<<< HEAD
-    <Heading level={3} id="custom-icons">Custom Icons</Heading>
-    <p>Setting any of the custom icons listed below will have the provided custom icon only apply in the specific
-        use case
-        its name indicates, instead of all cases as before. To have the custom icon apply to additional cases, set
-        the
-        additional icon keys pointing to the same custom icon. See list of icons changed:</p>
-=======
     <Heading level="3" id="custom-icons">Custom Icons</Heading>
     <p>
         Setting any of the custom icons listed below will have the provided custom icon only apply in the specific use
         case its name indicates, instead of all cases as before. To have the custom icon apply to additional cases, set
         the additional icon keys pointing to the same custom icon. See list of icons changed:
     </p>
->>>>>>> 85117ced92 (AG-13867 - Remove usused Upgrade-33 `.scss` file, refactor Upgrade-33 content to remove inappropriate expanding section)
     <ul>
         <li>
             <p><code>smallDown</code> (deprecated):</p>
@@ -890,13 +844,7 @@ provideGlobalGridOptions({ theme: "legacy" });
         </li>
     </ul>
 
-<<<<<<< HEAD
-
-
-    <Heading level={3} id="grid-options-1"> Grid Options</Heading>
-=======
     <Heading level="3" id="grid-options-1">Grid Options</Heading>
->>>>>>> 85117ced92 (AG-13867 - Remove usused Upgrade-33 `.scss` file, refactor Upgrade-33 content to remove inappropriate expanding section)
     <div
         data-meta='["suppressServerSideInfiniteScroll","getServerSideGroupLevelParams","advancedFilterModel","suppressAsyncEvents","cellFlashDelay","cellFadeDelay","enableCellChangeFlash","suppressGroupMaintainValueType","groupIncludeFooter","groupIncludeTotalFooter","serverSideSortOnServer","serverSideFilterOnServer","tabToNextCell","tabToNextHeader"]'
     >
@@ -928,15 +876,8 @@ provideGlobalGridOptions({ theme: "legacy" });
         <li><code>tabToNextHeader</code> returning <code>null</code> - removed.</li>
     </ul>
 
-<<<<<<< HEAD
-    <Heading level={3} id="coldef"> ColDef</Heading>
-    <div
-        data-meta='[&amp;quot;suppressCellFlash&amp;quot;,&amp;quot;columnsMenuParams&amp;quot;,&amp;quot;suppressMenu&amp;quot;]'>
-    </div>
-=======
     <Heading level="3" id="coldef">ColDef</Heading>
     <div data-meta='["suppressCellFlash","columnsMenuParams","suppressMenu"]'></div>
->>>>>>> 85117ced92 (AG-13867 - Remove usused Upgrade-33 `.scss` file, refactor Upgrade-33 content to remove inappropriate expanding section)
     <ul>
         <li>
             <code>suppressCellFlash</code> - removed, please use <code>enableCellChangeFlash: false</code> in the
@@ -946,27 +887,16 @@ provideGlobalGridOptions({ theme: "legacy" });
         <li><code>suppressMenu</code> - removed, please use <code>suppressHeaderMenuButton</code> instead.</li>
     </ul>
 
-<<<<<<< HEAD
-    <Heading level={3} id="floating-filters">Floating Filters</Heading>
-    <p>Floating filters provided via the <code>colDef.filter</code> values <code>text</code>, <code>number</code>,
-        <code>date</code>, <code>set</code>, <code>multi</code>, and <code>group</code> no longer work. Use the
-        values
-=======
     <Heading level="3" id="floating-filters">Floating Filters</Heading>
     <p>
         Floating filters provided via the <code>colDef.filter</code> values <code>text</code>, <code>number</code>,
         <code>date</code>, <code>set</code>, <code>multi</code>, and <code>group</code> no longer work. Use the values
->>>>>>> 85117ced92 (AG-13867 - Remove usused Upgrade-33 `.scss` file, refactor Upgrade-33 content to remove inappropriate expanding section)
         <code>agTextColumnFilter</code>, <code>agNumberColumnFilter</code>, <code>agDateColumnFilter</code>,
         <code>agSetColumnFilter</code>, <code>agMultiColumnFilter</code>, and <code>agGroupColumnFilter</code>
         instead.
     </p>
 
-<<<<<<< HEAD
-    <Heading level={3} id="interfaces"> Interfaces</Heading>
-=======
     <Heading level="3" id="interfaces">Interfaces</Heading>
->>>>>>> 85117ced92 (AG-13867 - Remove usused Upgrade-33 `.scss` file, refactor Upgrade-33 content to remove inappropriate expanding section)
     <div
         data-meta='["vDirection","suppressFilterButton","textCustomComparator","onParamsUpdated","valueGetter","footerValueGetter","flashDelay","fadeDelay","ToolPanelColumnCompParams","verticalText","charSet","name"]'
     >
@@ -1023,15 +953,8 @@ provideGlobalGridOptions({ theme: "legacy" });
 </div>
 
 <ExpandingSection headerText="Deprecations">
-<<<<<<< HEAD
-    <Heading level={3} id="modules">Modules</Heading>
-    <div
-        data-meta="[&amp;quot;ModuleRegistry.register&amp;quot;,&amp;quot;MenuModule&amp;quot;,&amp;quot;RangeSelectionModule&amp;quot;]">
-    </div>
-=======
     <Heading level="3" id="modules">Modules</Heading>
     <div data-meta='["ModuleRegistry.register","MenuModule","RangeSelectionModule"]'></div>
->>>>>>> 85117ced92 (AG-13867 - Remove usused Upgrade-33 `.scss` file, refactor Upgrade-33 content to remove inappropriate expanding section)
     <ul>
         <li>
             <code>ModuleRegistry.register(module)</code> - deprecated, use
@@ -1044,26 +967,14 @@ provideGlobalGridOptions({ theme: "legacy" });
         <li><code>RangeSelectionModule</code> - deprecated, use <code>CellSelectionModule</code> instead.</li>
     </ul>
 
-<<<<<<< HEAD
-    <Heading level={3} id="column-object"> Column Object</Heading>
-    <div data-meta="[&amp;quot;Column.isHovered&amp;quot;]">
-    </div>
-=======
     <Heading level="3" id="column-object">Column Object</Heading>
     <div data-meta='["Column.isHovered"]'></div>
->>>>>>> 85117ced92 (AG-13867 - Remove usused Upgrade-33 `.scss` file, refactor Upgrade-33 content to remove inappropriate expanding section)
     <ul>
         <li><code>Column.isHovered()</code> - deprecated, use <code>api.isColumnHovered(column)</code> instead.</li>
     </ul>
 
-<<<<<<< HEAD
-    <Heading level={3} id="grid-api"> Grid API</Heading>
-    <div
-        data-meta="[&amp;quot;deselectAllFiltered&amp;quot;,&amp;quot;deselectAllOnCurrentPage&amp;quot;,&amp;quot;selectAllFiltered&amp;quot;,&amp;quot;selectAllOnCurrentPage&amp;quot;]">
-=======
     <Heading level="3" id="grid-api">Grid API</Heading>
     <div data-meta='["deselectAllFiltered","deselectAllOnCurrentPage","selectAllFiltered","selectAllOnCurrentPage"]'>
->>>>>>> 85117ced92 (AG-13867 - Remove usused Upgrade-33 `.scss` file, refactor Upgrade-33 content to remove inappropriate expanding section)
     </div>
     <ul>
         <li><code>deselectAllFiltered</code> - deprecated, use <code>deselectAll('filtered')</code> instead.</li>
@@ -1074,57 +985,43 @@ provideGlobalGridOptions({ theme: "legacy" });
         <li><code>selectAllOnCurrentPage</code> - deprecated, use <code>selectAll('currentPage')</code> instead.</li>
     </ul>
 
-<<<<<<< HEAD
-    <Heading level={3} id="grid-options"> Grid Options</Heading>
-=======
     <Heading level="3" id="grid-options">Grid Options</Heading>
->>>>>>> 85117ced92 (AG-13867 - Remove usused Upgrade-33 `.scss` file, refactor Upgrade-33 content to remove inappropriate expanding section)
-    <div
-        data-meta='["cellRendererParams.checkbox","gridOptions.sortingOrder","gridOptions.unSortIcon","groupRemoveLowestSingleChildren","groupRemoveSingleChildren","suppressMakeColumnVisibleAfterUnGroup","suppressPropertyNamesCheck","suppressRowGroupHidesColumns"]'
-    >
+    <div <ul>
+        <code>cellRendererParams.checkbox</code> - deprecated, use
+        <code>rowSelection.checkboxLocation = "autoGroupColumn"</code> instead.
     </div>
-    <ul>
-        <li>
-            <code>cellRendererParams.checkbox</code> - deprecated, use
-            <code>rowSelection.checkboxLocation = "autoGroupColumn"</code> instead.
-        </li>
-        <li>
-            <code>gridOptions.sortingOrder</code> - deprecated, use <code>defaultColDef.sortingOrder</code> instead.
-        </li>
-        <li><code>gridOptions.unSortIcon</code> - deprecated, use <code>defaultColDef.unSortIcon</code> instead.</li>
-        <li>
-            <code>groupRemoveLowestSingleChildren</code> - deprecated, use
-            <code>groupHideParentOfSingleChild: 'leafGroupsOnly'</code> instead.
-        </li>
-        <li>
-            <code>groupRemoveSingleChildren</code> - deprecated, use <code>groupHideParentOfSingleChild: true</code>
-            instead.
-        </li>
-        <li>
-            <code>suppressMakeColumnVisibleAfterUnGroup</code> - deprecated, use
-            <code>suppressGroupChangesColumnVisibility: "suppressShowOnUngroup"</code> instead.
-        </li>
-        <li>
-            <code>suppressPropertyNamesCheck</code> - deprecated without replacement. Previously used for adding user properties
-            in <code>gridOptions</code> and <code>columnDefs</code>. Now, use the <code>context</code>
-            property in both for storing arbitrary metadata.
-        </li>
-        <li>
-            <code>suppressRowGroupHidesColumns</code> - deprecated, use
-            <code>suppressGroupChangesColumnVisibility: "suppressHideOnGroup"</code> instead.
-        </li>
-        <li>
-            When setting both <code>suppressMakeColumnVisibleAfterUnGroup</code> and
-            <code>suppressRowGroupHidesColumns</code> to <code>true</code>, use
-            <code>suppressGroupChangesColumnVisibility: true</code> instead.
-        </li>
-    </ul>
+    <li>
+        <code>gridOptions.sortingOrder</code> - deprecated, use <code>defaultColDef.sortingOrder</code> instead.
+    </li>
+    <li><code>gridOptions.unSortIcon</code> - deprecated, use <code>defaultColDef.unSortIcon</code> instead.</li>
+    <li>
+        <code>groupRemoveLowestSingleChildren</code> - deprecated, use
+        <code>groupHideParentOfSingleChild: 'leafGroupsOnly'</code> instead.
+    </li>
+    <li>
+        <code>groupRemoveSingleChildren</code> - deprecated, use <code>groupHideParentOfSingleChild: true</code>
+        instead.
+    </li>
+    <li>
+        <code>suppressMakeColumnVisibleAfterUnGroup</code> - deprecated, use
+        <code>suppressGroupChangesColumnVisibility: "suppressShowOnUngroup"</code> instead.
+    </li>
+    <li>
+        <code>suppressPropertyNamesCheck</code> - deprecated without replacement. Previously used for adding user properties
+        in <code>gridOptions</code> and <code>columnDefs</code>. Now, use the <code>context</code>
+        property in both for storing arbitrary metadata.
+    </li>
+    <li>
+        <code>suppressRowGroupHidesColumns</code> - deprecated, use
+        <code>suppressGroupChangesColumnVisibility: "suppressHideOnGroup"</code> instead.
+    </li>
+    <li>
+        When setting both <code>suppressMakeColumnVisibleAfterUnGroup</code> and
+        <code>suppressRowGroupHidesColumns</code> to <code>true</code>, use
+        <code>suppressGroupChangesColumnVisibility: true</code> instead.
+    </li>
 
-<<<<<<< HEAD
-    <Heading level={3} id="row-node"> Row Node</Heading>
-=======
     <Heading level="3" id="row-node">Row Node</Heading>
->>>>>>> 85117ced92 (AG-13867 - Remove usused Upgrade-33 `.scss` file, refactor Upgrade-33 content to remove inappropriate expanding section)
     <div
         data-meta='["childIndex","firstChild","lastChild","childIndexChanged","firstChildChanged","lastChildChanged","smallDown","smallLeft","smallRight"]'
     >
@@ -1149,15 +1046,8 @@ provideGlobalGridOptions({ theme: "legacy" });
         </li>
     </ul>
 
-<<<<<<< HEAD
-    <Heading level={3} id="row-node-events"> Row Node Events</Heading>
-    <div
-        data-meta="[&amp;quot;childIndexChanged&amp;quot;,&amp;quot;firstChildChanged&amp;quot;,&amp;quot;lastChildChanged&amp;quot;]">
-    </div>
-=======
     <Heading level="3" id="row-node-events">Row Node Events</Heading>
     <div data-meta='["childIndexChanged","firstChildChanged","lastChildChanged"]'></div>
->>>>>>> 85117ced92 (AG-13867 - Remove usused Upgrade-33 `.scss` file, refactor Upgrade-33 content to remove inappropriate expanding section)
     <ul>
         <li>
             <code>childIndexChanged</code> - deprecated, use the global <code>modelUpdated</code> event to determine when
@@ -1173,14 +1063,8 @@ provideGlobalGridOptions({ theme: "legacy" });
         </li>
     </ul>
 
-<<<<<<< HEAD
-    <Heading level={3} id="theming-custom-icons"> Theming Custom Icons</Heading>
-    <div data-meta="[&amp;quot;smallDown&amp;quot;,&amp;quot;smallLeft&amp;quot;,&amp;quot;smallRight&amp;quot;]">
-    </div>
-=======
     <Heading level="3" id="theming-custom-icons">Theming Custom Icons</Heading>
     <div data-meta='["smallDown","smallLeft","smallRight"]'></div>
->>>>>>> 85117ced92 (AG-13867 - Remove usused Upgrade-33 `.scss` file, refactor Upgrade-33 content to remove inappropriate expanding section)
     <ul>
         <li>
             <code>smallDown</code> - deprecated, use:<ul>
