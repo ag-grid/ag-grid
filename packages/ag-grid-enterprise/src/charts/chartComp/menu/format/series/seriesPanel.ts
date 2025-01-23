@@ -32,7 +32,9 @@ const fillOpacity = 'fillOpacity';
 const labels = 'labels';
 const shadow = 'shadow';
 
-type ComponentLike<K extends Component> = K | [K, (groupComponent: K) => void];
+type ComposableComponent = Component & {
+    addItem: (item: Component) => void;
+};
 
 export class SeriesPanel extends Component {
     private readonly seriesGroup: AgGroupComponent = RefPlaceholder;
@@ -47,7 +49,7 @@ export class SeriesPanel extends Component {
     private activePanels: Component<any>[] = [];
     private seriesType: ChartSeriesType;
 
-    private readonly widgetFuncs: Record<string, ComponentLike<any>> = {
+    private readonly widgetFuncs = {
         lineWidth: () => this.initStrokeWidth('lineWidth'),
         [strokeWidth]: () => this.initStrokeWidth('strokeWidth'),
         lineColor: () => this.initLineColor(),
@@ -236,7 +238,7 @@ export class SeriesPanel extends Component {
         return new AgSlider(params);
     }
 
-    private initDropOff(): ComponentLike<ToggleablePanel> {
+    private initDropOff(): [ToggleablePanel, (fontPanel: ComposableComponent) => void] {
         const dropOffGroup = new ToggleablePanel({
             tag: 'dropOff',
             cssIdentifier: 'charts-format-sub-level',
@@ -262,7 +264,7 @@ export class SeriesPanel extends Component {
         return [dropOffGroup, addItems];
     }
 
-    private initLabels(): [FontPanel, (fontPanel: FontPanel) => void] {
+    private initLabels(): [FontPanel, (fontPanel: ComposableComponent) => void] {
         const isPieChart = isPieChartSeries(this.seriesType);
         const seriesOptionLabelProperty = isPieChart ? 'calloutLabel' : 'label';
         const labelKey = isPieChart ? 'calloutLabels' : 'labels';
@@ -304,7 +306,7 @@ export class SeriesPanel extends Component {
         return [fontPanel, addItems];
     }
 
-    private initSectorLabels(): [FontPanel, (fontPanel: FontPanel) => void] {
+    private initSectorLabels(): [FontPanel, (fontPanel: ComposableComponent) => void] {
         const sectorParams = this.chartMenuUtils.getDefaultFontPanelParams('sectorLabel', 'sectorLabels');
         const fontPanel = new FontPanel(sectorParams);
 
