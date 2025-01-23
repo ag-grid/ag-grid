@@ -24,9 +24,9 @@ export class Registry extends BeanStub implements NamedBean {
     public postConstruct(): void {
         const comps = this.gos.get('components');
         if (comps != null) {
-            Object.entries(comps).forEach(([key, component]) => {
-                this.jsComps[key] = component;
-            });
+            for (const key of Object.keys(comps)) {
+                this.jsComps[key] = comps[key];
+            }
         }
     }
 

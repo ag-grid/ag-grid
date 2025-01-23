@@ -232,11 +232,12 @@ export class FontPanel extends Component {
 
     private setFont(font: Font): void {
         const { keyMapper } = this.params;
-        Object.entries(font).forEach(([fontKey, value]: [keyof Font, any]) => {
+        for (const fontKey of Object.keys(font)) {
+            const value = font[fontKey as keyof Font];
             if (value) {
                 this.chartOptions.setValue(keyMapper(fontKey), value);
             }
-        });
+        }
     }
 
     private getInitialFontValue<K extends keyof Font>(fontKey: K): Font[K] {

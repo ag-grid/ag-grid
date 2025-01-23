@@ -213,6 +213,7 @@ export class AdvancedFilterExpressionService extends BeanStub implements NamedBe
     }
 
     public getJoinOperatorAutocompleteEntries(): AutocompleteEntry[] {
+        // eslint-disable-next-line no-restricted-properties
         return Object.entries(this.expressionJoinOperators).map(([key, displayValue]) => ({ key, displayValue }));
     }
 

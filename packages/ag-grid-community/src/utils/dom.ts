@@ -369,7 +369,8 @@ export function _addStylesToElement(eElement: any, styles: RowStyle | CellStyle 
         return;
     }
 
-    for (const [key, value] of Object.entries(styles)) {
+    for (const key of Object.keys(styles)) {
+        const value = styles[key];
         if (!key || !key.length || value == null) {
             continue;
         }

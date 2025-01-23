@@ -88,15 +88,16 @@ export class ChartMenuItemMapper extends BeanStub implements NamedBean {
         const menuItemLookup = this.buildLookup(topLevelMenuItem);
         const orderedAndFiltered: MenuItemDefWithKey = { ...topLevelMenuItem, subMenu: [] };
 
-        Object.entries(chartGroupsDef).forEach(([group, chartTypes]: [keyof ChartGroupsDef, ChartType[]]) => {
+        for (const group of Object.keys(chartGroupsDef) as (keyof ChartGroupsDef)[]) {
+            const chartTypes: ChartType[] = chartGroupsDef[group]!;
             const chartConfigGroup = configLookup[group];
 
             // Skip any context panels that are not enabled for the current chart type
-            if (chartConfigGroup === null) return;
+            if (chartConfigGroup === null) continue;
 
             if (chartConfigGroup == undefined) {
                 _warn(173, { group });
-                return;
+                continue;
             }
 
             const menuItem = menuItemLookup[chartConfigGroup._key];
@@ -122,7 +123,7 @@ export class ChartMenuItemMapper extends BeanStub implements NamedBean {
                     orderedAndFiltered.subMenu?.push(menuItem);
                 }
             }
-        });
+        }
         if (orderedAndFiltered.subMenu?.length == 0) {
             return null;
         }

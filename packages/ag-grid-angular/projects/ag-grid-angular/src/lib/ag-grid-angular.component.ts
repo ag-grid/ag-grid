@@ -253,14 +253,14 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
             this._frameworkCompWrapper.setViewContainerRef(this._viewContainerRef, this._angularFrameworkOverrides);
 
             // Get all the inputs that are valid GridOptions
-            const gridOptionKeys = Object.entries(this)
+            const gridOptionKeys = Object.keys(this)
                 .filter(
-                    ([key, value]) =>
+                    (key) =>
                         !(
                             key.startsWith('_') ||
                             key == 'gridOptions' ||
                             key == 'modules' ||
-                            value instanceof EventEmitter
+                            this[key as keyof AgGridAngular] instanceof EventEmitter
                         )
                 )
                 .map(([key]) => key);
@@ -306,9 +306,10 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
             // Run the changes outside of angular so any event handlers that are created do not trigger change detection
             this._angularFrameworkOverrides.runOutsideAngular(() => {
                 const gridOptions: GridOptions = {};
-                Object.entries(changes).forEach(([key, value]: [string, any]) => {
+                for (const key of Object.keys(changes)) {
+                    const value = changes[key];
                     gridOptions[key as keyof GridOptions] = value.currentValue;
-                });
+                }
                 _processOnChange(gridOptions, this.api);
             });
         }

@@ -136,13 +136,19 @@ export class PivotColDefService extends BeanStub implements NamedBean, IPivotCol
         }
         // Recursive case
         const groups: ColGroupDef[] = [];
-        for (const [key, value] of Object.entries(uniqueValue)) {
+        for (const key of Object.keys(uniqueValue)) {
             // expand group by default based on depth of group. (pivotDefaultExpanded provides desired level of depth for expanding group by default)
             const openByDefault = this.pivotDefaultExpanded === -1 || index < this.pivotDefaultExpanded;
 
             const newPivotKeys = [...pivotKeys, key];
             groups.push({
-                children: this.recursivelyBuildGroup(index + 1, value, newPivotKeys, maxDepth, primaryPivotColumns),
+                children: this.recursivelyBuildGroup(
+                    index + 1,
+                    uniqueValue[key],
+                    newPivotKeys,
+                    maxDepth,
+                    primaryPivotColumns
+                ),
                 headerName: key,
                 pivotKeys: newPivotKeys,
                 columnGroupShow: 'open',

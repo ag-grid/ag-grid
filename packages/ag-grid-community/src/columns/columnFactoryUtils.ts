@@ -323,7 +323,8 @@ function assignColumnTypes(beans: BeanCollection, typeKeys: string[], colDefMerg
     const allColumnTypes = Object.assign({}, DefaultColumnTypes);
     const userTypes = beans.gos.get('columnTypes') || {};
 
-    for (const [key, value] of Object.entries(userTypes)) {
+    for (const key of Object.keys(userTypes)) {
+        const value = userTypes[key];
         if (key in allColumnTypes) {
             // default column types cannot be overridden
             _warn(34, { key });

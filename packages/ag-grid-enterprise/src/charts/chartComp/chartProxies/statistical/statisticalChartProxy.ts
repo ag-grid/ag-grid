@@ -39,11 +39,12 @@ export abstract class StatisticalChartProxy<
                     .map((datum) => datum[field.colId])
                     .filter((value) => typeof value === 'number' && !isNaN(value));
 
-                Object.entries(computeStatsFn(seriesValues)).forEach(([statKey, value]) => {
+                const computed = computeStatsFn(seriesValues);
+                for (const statKey of Object.keys(computed)) {
                     const propertyKey = `${statKey}:${seriesIndex}`;
                     // when no data exists, stat properties are added to results with `null` values!
-                    categoryResult[propertyKey] = seriesValues.length > 0 ? value : null;
-                });
+                    categoryResult[propertyKey] = seriesValues.length > 0 ? computed[statKey] : null;
+                }
             });
 
             return categoryResult;

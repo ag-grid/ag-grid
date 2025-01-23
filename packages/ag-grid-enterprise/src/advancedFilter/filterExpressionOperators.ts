@@ -51,7 +51,8 @@ export function findMatch<T>(
     let partialMatch = false;
     const searchValueLowerCase = searchValue.toLocaleLowerCase();
     const partialSearchValue = searchValueLowerCase + ' ';
-    const parsedValue = Object.entries(values).find(([, value]) => {
+    const parsedValue = Object.keys(values).find((key) => {
+        const value = values[key];
         const displayValueLowerCase = getDisplayValue(value).toLocaleLowerCase();
         if (displayValueLowerCase.startsWith(partialSearchValue)) {
             partialMatch = true;
@@ -59,7 +60,7 @@ export function findMatch<T>(
         return displayValueLowerCase === searchValueLowerCase;
     });
     if (parsedValue) {
-        return parsedValue[0];
+        return parsedValue;
     } else if (partialMatch) {
         return null;
     } else {

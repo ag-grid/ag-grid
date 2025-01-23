@@ -28,8 +28,8 @@ export const iconOverrides = (args: IconSetOverridesArgs) => {
     const cssParts: string[] = [];
     if (args.type === 'image') {
         const { icons, mask } = args;
-        for (const [key, value] of Object.entries(icons)) {
-            const imageCssValue = imageValueToCss(value);
+        for (const key of Object.keys(icons)) {
+            const imageCssValue = imageValueToCss(icons[key]);
             if (mask) {
                 cssParts.push(`.ag-icon-${key}::before { mask-image: ${imageCssValue}; }`);
             } else {
@@ -49,8 +49,8 @@ export const iconOverrides = (args: IconSetOverridesArgs) => {
         if (color) {
             properties += ` color: ${colorValueToCss(color)};`;
         }
-        for (const [key, value] of Object.entries(icons)) {
-            cssParts.push(`.ag-icon-${key}::before { content: ${JSON.stringify(value)}; ${properties} }`);
+        for (const key of Object.keys(icons)) {
+            cssParts.push(`.ag-icon-${key}::before { content: ${JSON.stringify(icons[key])}; ${properties} }`);
         }
     }
     return createPart({

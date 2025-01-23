@@ -112,9 +112,9 @@ export function getErrorLink(errorNum: ErrorId, args: GetErrorParams<any>) {
     const params = new URLSearchParams();
     params.append(VERSION_PARAM_NAME, VERSION);
     if (args) {
-        Object.entries(args).forEach(([key, value]) => {
-            params.append(key, stringifyValue(value));
-        });
+        for (const key of Object.keys(args)) {
+            params.append(key, stringifyValue(args[key]));
+        }
     }
     const baseUrl = `${baseDocLink}/errors/${errorNum}`;
     const url = getParamsUrl(baseUrl, params);

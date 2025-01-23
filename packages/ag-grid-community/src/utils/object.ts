@@ -18,8 +18,8 @@ function _iterateObject<T>(
         return;
     }
 
-    for (const [key, value] of Object.entries<T>(object)) {
-        callback(key, value);
+    for (const key of Object.keys(object)) {
+        callback(key, object[key]);
     }
 }
 

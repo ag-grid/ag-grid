@@ -755,11 +755,13 @@ export class StateService extends BeanStub implements NamedBean {
         const newColumnState = this.getColumnState();
         let hasChanged = false;
         const cachedState = this.cachedState;
-        Object.entries(newColumnState).forEach(([key, value]: [keyof GridState, any]) => {
+        for (const key of Object.keys(newColumnState) as (keyof GridState)[]) {
+            const value = (newColumnState as any)[key];
             if (!_jsonEquals(value, cachedState[key])) {
                 hasChanged = true;
             }
-        });
+        }
+
         this.cachedState = {
             ...cachedState,
             ...newColumnState,

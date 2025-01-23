@@ -188,11 +188,12 @@ export class ColumnFilterService extends BeanStub implements NamedBean {
         });
 
         if (!excludeInitialState) {
-            Object.entries(initialFilterModel).forEach(([colId, model]) => {
+            for (const colId of Object.keys(initialFilterModel)) {
+                const model = initialFilterModel[colId];
                 if (_exists(model) && !allColumnFilters.has(colId) && colModel.getCol(colId)?.isFilterAllowed()) {
                     result[colId] = model;
                 }
-            });
+            }
         }
 
         return result;
