@@ -65,7 +65,8 @@ const { headerText, isOpen = false } = Astro.props as Props;
         }
 
         connectedCallback() {
-            const hasHashId = this.#contentInner.querySelector(window.location.hash);
+            const hash = window.location.hash;
+            const hasHashId = hash ? this.#contentInner.querySelector(hash) : undefined;
             const isOpen = hasHashId || this.#details.getAttribute('open') !== null;
             if (isOpen) {
                 const noAnimation = true;
