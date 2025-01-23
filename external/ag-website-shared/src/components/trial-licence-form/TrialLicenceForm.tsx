@@ -6,17 +6,17 @@ export const TrialLicenceForm: FunctionComponent = () => {
     return (
         <form className={styles.trailForm}>
             <div className={styles.inputs}>
-                <div>
+                <div className="input-field">
                     <label htmlFor="first-name">First Name</label>
-                    <input type="text" id="first-name" name="first-name" required />
+                    <input placeholder="First Name" type="text" id="first-name" name="first-name" required />
                 </div>
-                <div>
+                <div className="input-field">
                     <label htmlFor="last-name">Last Name</label>
-                    <input type="text" id="last-name" name="last-name" required />
+                    <input placeholder="Last Name" type="text" id="last-name" name="last-name" required />
                 </div>
-                <div>
+                <div className={`input-field ${styles.emailField}`}>
                     <label htmlFor="email">Email</label>
-                    <input type="email" id="email" name="email" required />
+                    <input placeholder="Email" type="email" id="email" name="email" required />
                 </div>
             </div>
             <button className={styles.submit} type="submit">

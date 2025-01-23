@@ -1,5 +1,7 @@
 @use 'design-system' as *;
 
+$trial-licence-small: 680px;
+
 .trailForm {
     display: flex;
     flex-direction: column;
@@ -8,11 +10,28 @@
 
 .inputs {
     display: flex;
+    flex-direction: column;
     justify-content: space-between;
     gap: $spacing-size-4;
+
+    @media screen and (min-width: $trial-licence-small) {
+        flex-direction: row;
+
+        input {
+            width: 100%;
+        }
+    }
 }
 
 .submit {
-    width: 200px;
+    width: 100%;
     align-self: flex-end;
+
+    @media screen and (min-width: $trial-licence-small) {
+        width: fit-content;
+    }
+}
+
+.emailField {
+    width: 100%;
 }
