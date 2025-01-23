@@ -253,17 +253,15 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
             this._frameworkCompWrapper.setViewContainerRef(this._viewContainerRef, this._angularFrameworkOverrides);
 
             // Get all the inputs that are valid GridOptions
-            const gridOptionKeys = Object.keys(this)
-                .filter(
-                    (key) =>
-                        !(
-                            key.startsWith('_') ||
-                            key == 'gridOptions' ||
-                            key == 'modules' ||
-                            this[key as keyof AgGridAngular] instanceof EventEmitter
-                        )
-                )
-                .map(([key]) => key);
+            const gridOptionKeys = Object.keys(this).filter(
+                (key) =>
+                    !(
+                        key.startsWith('_') ||
+                        key == 'gridOptions' ||
+                        key == 'modules' ||
+                        this[key as keyof AgGridAngular] instanceof EventEmitter
+                    )
+            );
 
             const coercedGridOptions = {} as GridOptions<TData>;
             gridOptionKeys.forEach((key) => {
