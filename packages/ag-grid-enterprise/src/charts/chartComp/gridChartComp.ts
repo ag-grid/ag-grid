@@ -44,7 +44,6 @@ import { ScatterChartProxy } from './chartProxies/cartesian/scatterChartProxy';
 import type { ChartProxy, ChartProxyParams } from './chartProxies/chartProxy';
 import { ComboChartProxy } from './chartProxies/combo/comboChartProxy';
 import type { EnterpriseChartProxyFactory } from './chartProxies/enterpriseChartProxyFactory';
-import { FunnelChartProxy } from './chartProxies/funnel/funnelChartProxy';
 import { PieChartProxy } from './chartProxies/pie/pieChartProxy';
 import { ChartMenu } from './menu/chartMenu';
 import type { ChartMenuContext } from './menu/chartMenuContext';
@@ -300,10 +299,6 @@ export class GridChartComp extends Component {
             case 'areaColumnCombo':
             case 'customCombo':
                 return new ComboChartProxy(chartProxyParams);
-            case 'funnel':
-            case 'cone-funnel':
-            case 'pyramid':
-                return new FunnelChartProxy(chartProxyParams);
         }
         const enterpriseChartProxy = this.enterpriseChartProxyFactory?.createChartProxy(chartProxyParams);
         if (!enterpriseChartProxy) {
