@@ -1,7 +1,7 @@
 import type { AgBubbleSeriesOptions, AgCartesianAxisOptions, AgScatterSeriesOptions } from 'ag-charts-types';
 
 import { DEFAULT_CHART_CATEGORY } from '../../model/chartDataModel';
-import type { ChartProxyParams, FieldDefinition, UpdateParams } from '../chartProxy';
+import type { FieldDefinition, UpdateParams } from '../chartProxy';
 import { CartesianChartProxy } from './cartesianChartProxy';
 
 interface SeriesDefinition {
@@ -11,10 +11,6 @@ interface SeriesDefinition {
 }
 
 export class ScatterChartProxy extends CartesianChartProxy<'scatter' | 'bubble'> {
-    public constructor(params: ChartProxyParams) {
-        super(params);
-    }
-
     protected override getAxes(_params: UpdateParams): AgCartesianAxisOptions[] {
         return [
             {

@@ -1,13 +1,9 @@
 import type { AgCartesianAxisOptions, AgCartesianChartOptions, AgWaterfallSeriesOptions } from 'ag-charts-types';
 
-import type { ChartProxyParams, UpdateParams } from '../chartProxy';
+import type { UpdateParams } from '../chartProxy';
 import { CartesianChartProxy } from './cartesianChartProxy';
 
 export class WaterfallChartProxy extends CartesianChartProxy<'waterfall'> {
-    public constructor(params: ChartProxyParams) {
-        super(params);
-    }
-
     protected override getAxes(
         params: UpdateParams,
         commonChartOptions: AgCartesianChartOptions

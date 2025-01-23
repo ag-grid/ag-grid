@@ -1,13 +1,9 @@
 import type { AgCartesianAxisOptions, AgLineSeriesOptions } from 'ag-charts-types';
 
-import type { ChartProxyParams, UpdateParams } from '../chartProxy';
+import type { UpdateParams } from '../chartProxy';
 import { CartesianChartProxy } from './cartesianChartProxy';
 
 export class LineChartProxy extends CartesianChartProxy<'line'> {
-    public constructor(params: ChartProxyParams) {
-        super(params);
-    }
-
     protected override getAxes(params: UpdateParams): AgCartesianAxisOptions[] {
         const axes: AgCartesianAxisOptions[] = [
             {

@@ -1,13 +1,9 @@
 import type { AgBoxPlotSeriesOptions } from 'ag-charts-types';
 
-import type { ChartProxyParams, UpdateParams } from '../chartProxy';
+import type { UpdateParams } from '../chartProxy';
 import { StatisticalChartProxy } from './statisticalChartProxy';
 
 export class BoxPlotChartProxy extends StatisticalChartProxy<'box-plot'> {
-    public constructor(params: ChartProxyParams) {
-        super(params);
-    }
-
     public getSeries(params: UpdateParams): AgBoxPlotSeriesOptions<any>[] {
         const [category] = params.categories;
         return params.fields.map((field, seriesIndex) => ({

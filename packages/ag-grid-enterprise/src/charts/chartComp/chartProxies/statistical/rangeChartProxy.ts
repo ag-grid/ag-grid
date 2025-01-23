@@ -1,13 +1,9 @@
 import type { AgRangeAreaSeriesOptions } from 'ag-charts-types';
 
-import type { ChartProxyParams, UpdateParams } from '../chartProxy';
+import type { UpdateParams } from '../chartProxy';
 import { StatisticalChartProxy } from './statisticalChartProxy';
 
 export class RangeChartProxy extends StatisticalChartProxy<'range-bar' | 'range-area'> {
-    public constructor(params: ChartProxyParams) {
-        super(params);
-    }
-
     public getSeries(params: UpdateParams): AgRangeAreaSeriesOptions<any>[] {
         const [category] = params.categories;
         return params.fields.map((field, seriesIndex) => ({

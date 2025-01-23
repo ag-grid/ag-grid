@@ -2,15 +2,11 @@ import type { AgCartesianAxisOptions, AgCartesianChartOptions } from 'ag-charts-
 
 import { DEFAULT_CHART_CATEGORY } from '../../model/chartDataModel';
 import { CartesianChartProxy } from '../cartesian/cartesianChartProxy';
-import type { ChartProxyParams, UpdateParams } from '../chartProxy';
+import type { UpdateParams } from '../chartProxy';
 
 export abstract class StatisticalChartProxy<
     TSeries extends 'box-plot' | 'range-area' | 'range-bar',
 > extends CartesianChartProxy<TSeries> {
-    protected constructor(params: ChartProxyParams) {
-        super(params);
-    }
-
     public getAxes(params: UpdateParams, commonChartOptions: AgCartesianChartOptions): AgCartesianAxisOptions[] {
         return [
             {
