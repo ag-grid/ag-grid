@@ -193,7 +193,7 @@ export {
 export type { FilterManager } from './filter/filterManager';
 export type { FilterValueService } from './filter/filterValueService';
 export { FilterRequestSource } from './filter/iColumnFilter';
-export { _refreshEvaluator } from './filter/columnFilterService';
+export { _refreshEvaluatorAndUi } from './filter/columnFilterService';
 export {
     IMultiFilter,
     IMultiFilterModel,

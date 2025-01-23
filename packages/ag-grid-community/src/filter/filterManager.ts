@@ -273,11 +273,6 @@ export class FilterManager extends BeanStub implements NamedBean {
         return !!this.colFilter?.isFilterAllowed(column);
     }
 
-    // destroys the filter, so it no longer takes part
-    public destroyFilter(column: AgColumn, source: 'api' | 'columnChanged' | 'paramsUpdated' = 'api'): void {
-        this.colFilter?.destroyFilter(column, source);
-    }
-
     public getAdvFilterModel(): AdvancedFilterModel | null {
         return this.isAdvFilterEnabled() ? this.advancedFilter.getModel() : null;
     }

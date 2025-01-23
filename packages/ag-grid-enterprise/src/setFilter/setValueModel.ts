@@ -30,7 +30,7 @@ export interface SetValueModelParams<V> {
     allValues: SetFilterAllValues<V>;
 }
 
-type SetValueModelEvent = 'availableValuesChanged' | 'loadingStart' | 'loadingEnd';
+type SetValueModelEvent = 'availableValuesChanged';
 /** @param V type of value in the Set Filter */
 export class SetValueModel<V> extends BeanStub<SetValueModelEvent> {
     private formatter: TextFormatter;

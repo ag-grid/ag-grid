@@ -19,7 +19,7 @@ export function getColumnFilterInstance<TFilter extends IFilter>(
 export function destroyFilter(beans: BeanCollection, key: string | Column) {
     const column = beans.colModel.getColDefCol(key);
     if (column) {
-        return beans.filterManager?.destroyFilter(column, 'api');
+        return beans.colFilter?.destroyFilter(column, 'api');
     }
 }
 

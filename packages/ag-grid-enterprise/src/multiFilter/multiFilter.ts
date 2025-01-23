@@ -24,7 +24,7 @@ import {
     _getActiveDomElement,
     _isNothingFocused,
     _loadTemplate,
-    _refreshEvaluator,
+    _refreshEvaluatorAndUi,
     _removeFromArray,
 } from 'ag-grid-community';
 
@@ -343,7 +343,7 @@ export class MultiFilter extends TabGuardComp implements IFilterComp, IMultiFilt
             const { filter, filterParams, evaluator, evaluatorParams } = wrapper;
             if (evaluator) {
                 promises.push(
-                    _refreshEvaluator(
+                    _refreshEvaluatorAndUi(
                         () => AgPromise.resolve({ filter, filterParams: filterParams! }),
                         evaluator,
                         evaluatorParams!,
@@ -488,9 +488,6 @@ export class MultiFilter extends TabGuardComp implements IFilterComp, IMultiFilt
         index: number,
         initialModel: IMultiFilterModel | null
     ): AgPromise<FilterWrapper | null> {
-        // const { filterModifiedCallback, doesRowPassOtherFilter } = this.params;
-        // const { colFilter, userCompFactory } = this.beans;
-
         const column = this.params.column as AgColumn;
 
         let initialModelForFilter: any = null;
@@ -522,7 +519,7 @@ export class MultiFilter extends TabGuardComp implements IFilterComp, IMultiFilt
                         if (!wrapper) {
                             return;
                         }
-                        _refreshEvaluator(
+                        _refreshEvaluatorAndUi(
                             () => AgPromise.resolve({ filter: wrapper.filter, filterParams: wrapper.filterParams! }),
                             wrapper.evaluator!,
                             wrapper.evaluatorParams!,

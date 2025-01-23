@@ -51,7 +51,7 @@ export class SetFloatingFilterComp<V = string> extends Component implements IFlo
 
         if (this.gos.get('reactiveFloatingFilters')) {
             const reactiveParams = params as unknown as FloatingFilterDisplayParams;
-            this.onParentModelChanged(reactiveParams.model);
+            this.updateFloatingFilterText(reactiveParams.model, true);
         }
     }
 
@@ -94,13 +94,17 @@ export class SetFloatingFilterComp<V = string> extends Component implements IFlo
         this.availableValuesListenerAdded = true;
     }
 
-    private updateFloatingFilterText(parentModel?: SetFilterModel | null): void {
-        if (!this.availableValuesListenerAdded) {
+    private updateFloatingFilterText(parentModel?: SetFilterModel | null, reactive?: boolean): void {
+        if (!this.availableValuesListenerAdded && (parentModel != null || !reactive)) {
             this.addAvailableValuesListener();
         }
 
-        this.parentSetFilterInstance((setFilter) => {
-            this.eFloatingFilterText.setValue(this.filterModelFormatter.getModelAsString(parentModel, setFilter));
-        });
+        if (reactive && parentModel == null) {
+            this.eFloatingFilterText.setValue('');
+        } else {
+            this.parentSetFilterInstance((setFilter) => {
+                this.eFloatingFilterText.setValue(this.filterModelFormatter.getModelAsString(parentModel, setFilter));
+            });
+        }
     }
 }

@@ -68,6 +68,7 @@ export class SetFilter<V = string>
 
         const helper = (this.beans.setFilter as SetFilterService).getHelper(params);
         this.helper = helper;
+        const allValues = helper.allValues;
 
         this.valueModel = this.createManagedBean(
             new SetValueModel({
@@ -77,12 +78,12 @@ export class SetFilter<V = string>
                 getValueFormatter: () => helper.valueFormatter,
                 treeDataTreeList: helper.treeDataTreeList,
                 groupingTreeList: helper.groupingTreeList,
-                allValues: helper.allValues,
+                allValues: allValues,
             })
         );
 
         const setIsLoading = this.setIsLoading.bind(this);
-        this.addManagedListeners(this.valueModel, {
+        this.addManagedListeners(allValues, {
             loadingStart: () => setIsLoading(true),
             loadingEnd: () => setIsLoading(false),
         });
