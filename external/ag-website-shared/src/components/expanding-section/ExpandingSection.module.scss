@@ -28,16 +28,22 @@
         background-color: var(--color-button-secondary-bg-hover);
     }
 
-    &::after {
-        content: ' - View';
+    &::before {
+        content: 'View';
         display: inline-block;
         min-width: 3.5ch;
-        margin-left: 0.5ch;
-        font-weight: var(--text-regular);
 
         details[open] & {
-            content: ' - Hide';
+            content: 'Hide';
         }
+    }
+}
+
+.expandingSectionHeaderIcon {
+    transition: transform $transition-default-timing;
+
+    &:global(.is-open) {
+        transform: rotate(90deg);
     }
 }
 
