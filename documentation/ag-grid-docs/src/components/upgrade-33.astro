@@ -1,14 +1,11 @@
 ---
 import { getFrameworkFromPath } from '@components/docs/utils/urlPaths';
 import { urlWithPrefix } from '@utils/urlWithPrefix';
-import { Icon } from '@ag-website-shared/components/icon/Icon';
 import { Alert } from '@ag-website-shared/components/alert/Alert';
 import Heading from '@ag-website-shared/components/heading/Heading.astro';
 import Code from '@ag-website-shared/components/code/Code';
 import {agGridVersion, agChartsVersion} from '@constants';
 import ExpandingSection from '@ag-website-shared/components/expanding-section/ExpandingSection.astro';
-
-import styles from './Upgrade-33.module.scss';
 
 const framework = getFrameworkFromPath(Astro.url.pathname);
 
@@ -20,7 +17,7 @@ const isVue = framework === 'vue';
 ---
 <p>Reductions in bundle size, updated theming, column header content customization.</p>
 
-<Heading level="2" id="whats-new">What's New</Heading>
+<Heading level={2} id="whats-new">What's New</Heading>
 
 <p>
     AG Grid 33 significantly reduces bundle size via modularization and enhances functionality, theming and
@@ -41,7 +38,7 @@ const isVue = framework === 'vue';
     </Alert>
 {/* ------------------------------------------------- */}
 
-<Heading level="2" id="changes-to-modules">Changes to Modules / Packages</Heading>
+<Heading level={2} id="changes-to-modules">Changes to Modules / Packages</Heading>
 <p>
     Version 33 introduces a major change to how modules work to allow for smaller bundle sizes. Previously AG Grid
     supported two approaches - modules and packages. These have now been merged together to allow for simpler
@@ -52,7 +49,7 @@ const isVue = framework === 'vue';
 
 {/* ------------------------------------------------- */}
 
-<Heading level="3" id="migrating-from-community">Migrating from AG Grid Community</Heading>
+<Heading level={3} id="migrating-from-community">Migrating from AG Grid Community</Heading>
 <code>ag-grid-community</code>     
 
 <p>
@@ -79,7 +76,7 @@ provideGlobalGridOptions({ theme: "legacy"});
     />
 </p>
 
-<Heading level="3" id="migrating-from-enterprise">Migrating from AG Grid Enterprise</Heading>
+<Heading level={3} id="migrating-from-enterprise">Migrating from AG Grid Enterprise</Heading>
 <code>ag-grid-enterprise</code>
 <p>
     To match the existing behaviour simply register the <i>AllEnterpriseModule</i> bundle via the ModuleRegistry alongside
@@ -114,7 +111,7 @@ provideGlobalGridOptions({ theme: "legacy"});
 
    
 
-<Heading level="3" id="migrating-from-modules">Migrating from AG Grid Modules</Heading>
+<Heading level={3} id="migrating-from-modules">Migrating from AG Grid Modules</Heading>
 
 <code>@ag-grid-community/**</code> / <code>@ag-grid-enterprise/**</code>
 
@@ -235,7 +232,7 @@ provideGlobalGridOptions({ theme: "legacy"});
     To take full advantage of the new modules you may wish to use the <a href={urlWithPrefix({framework, url: "./modules/"})}>Module Selector</a> to work out which modules you require for a give set of features.
     </p>
 
-<Heading level="2" id="migrating-integrated-charts">Integrated Charts / Sparklines </Heading>
+<Heading level={2} id="migrating-integrated-charts">Integrated Charts / Sparklines </Heading>
 <p>
     AG Grid Enterprise no longer includes AG Charts as part of its distribution to avoid bloating the bundle size. If you are using either Integrated Charts or Sparklines, you must now explicitly include either the community / enterprise <a href="https://www.ag-grid.com/charts/" target="_blank">AG Charts </a> library as a dependency.
 </p>
@@ -286,7 +283,7 @@ SparklinesModule.with(AgChartsEnterpriseModule)
 
 {/* ------------------------------------------------- */}
 
-<Heading level="2" id="theming">Theming</Heading>
+<Heading level={2} id="theming">Theming</Heading>
 <p>The new and improved Theming API is now the default theming method for AG Grid. If you wish to migrate to the Theming Api see the <a
     href={urlWithPrefix({framework, url: './theming-migration/'})}>Theming API Migration Guide</a>. However, this is not a requirement to upgrade to v33.</p>
 
@@ -309,7 +306,7 @@ provideGlobalGridOptions({ theme: "legacy" });
 
 {/* ------------------------------------------------- */}
 
-<Heading level="2" id="codemods">Codemods</Heading>
+<Heading level={2} id="codemods">Codemods</Heading>
 <p>Follow these steps to upgrade your project's AG Grid version to <code>{agGridVersion}</code>:</p>
 
 <ol>
@@ -358,7 +355,7 @@ provideGlobalGridOptions({ theme: "legacy" });
 
 {/* ------------------------------------------------- */}
 
-<Heading level="2" id="breaking-changes">Breaking Changes</Heading>
+<Heading level={2} id="breaking-changes">Breaking Changes</Heading>
         <div
     data-meta='["ag-grid-enterprise","ag-charts-community","ag-charts-enterprise","IntegratedChartsModule","GridChartsModule","AgChartsCommunityModule","AgChartsEnterpriseModule","RowDragModule","getMainMenuItems","getContextMenuItems","mainMenuItems","contextMenuItems","chartMenuItems","columnGroup","navigator","api.getRowDropZoneParams","Grid","createGrid","selectAll","deselectAll","getFirstDisplayedRow","getLastDisplayedRow","getModel","getValue","getCellValue","showColumnMenuAfterButtonClick","showColumnMenuAfterMouseClick","IHeaderParams","autoSizeColumn","autoSizeColumns","setColumnWidths","moveColumn","moveColumns","addAggFunc","addAggFuncs","removeValueColumn","removeValueColumns","addValueColumn","addValueColumns","removeRowGroupColumn","removeRowGroupColumns","addRowGroupColumn","addRowGroupColumns","removePivotColumn","removePivotColumns","addPivotColumn","addPivotColumns","setColumnVisible","setColumnsVisible","setColumnPinned","setColumnsPinned","getColumnFilterModel","setColumnFilterModel","getServerSideGroupLevelParams","cellFlashDuration","enableCellChangeFlash","suppressGroupMaintainValueType","groupTotalRow","grandTotalRow","columnChooserParams","suppressHeaderMenuBut"RowDragEvent","vDirection","suppressFilterButton","colDef.suppressFloatingFilterButton","textCustomComparator","textMatcher","onParamsUpdated","refresh","valueGetter","getValue","footerValueGetter","totalValueGetter","flashDuration","fadeDuration","IToolPanelColumnCompParams","verticalText","charSet",,"name","sparklineOptions.label.placement"]'
 ></div>
@@ -368,10 +365,10 @@ provideGlobalGridOptions({ theme: "legacy" });
 <ExpandingSection headerText="Breaking Changes">
     <p>This release includes the following breaking changes:</p>
 
-    <Heading level="3" > Changes To Modules / Packages</Heading>
+    <Heading id="changes-to-modules-packages" level={3}> Changes To Modules / Packages</Heading>
     <p>Changes outline above in the <a href={urlWithPrefix({framework, url: "./upgrading-to-ag-grid-33/#changes-to-modules"})}> Changes to Modules / Packages section </a></p>
 
-    <Heading level="3">Integrated Charts / Sparklines</Heading>
+    <Heading id="integrated-charts-sparklines" level={3}>Integrated Charts / Sparklines</Heading>
     <p>
         Changes outline above in the <a
             href={urlWithPrefix({ framework, url: './upgrading-to-ag-grid-33/#migrating-integrated-charts' })}
@@ -383,7 +380,7 @@ provideGlobalGridOptions({ theme: "legacy" });
     {
         isAngular && (
             <div>
-                <Heading level="3" id="angular-minimum-version">
+                <Heading level={3} id="angular-minimum-version">
                     Angular Minimum Version
                 </Heading>
                 <p>
@@ -397,7 +394,7 @@ provideGlobalGridOptions({ theme: "legacy" });
     {
         isVue && (
             <div>
-                <Heading level="3" id="vue-minimum-version">
+                <Heading level={3} id="vue-minimum-version">
                     Vue Minimum Version
                 </Heading>
                 <p>
@@ -408,7 +405,7 @@ provideGlobalGridOptions({ theme: "legacy" });
         )
     }
 
-    <Heading level="3" id="property-value-coercion">Property Value Coercion</Heading>
+    <Heading level={3} id="property-value-coercion">Property Value Coercion</Heading>
     <p>
         For non-TS users or users who use TS but avoid type validation there's changes in property value coercion:
 
@@ -424,7 +421,7 @@ provideGlobalGridOptions({ theme: "legacy" });
     {
         isReact && (
             <div>
-                <Heading level="3" id="react">
+                <Heading level={3} id="react">
                     React
                 </Heading>
                 <ul>
@@ -508,13 +505,13 @@ provideGlobalGridOptions({ theme: "legacy" });
         )
     }
 
-    <Heading level="3" id="server-side-rendering">Server-side Rendering</Heading>
+    <Heading level={3} id="server-side-rendering">Server-side Rendering</Heading>
     <p>
         AG Grid no longer patches global properties that are not present in a Server environment, i.e HTMLElement
         and others. If possible you should avoid rendering AG Grid on the server as this is not supported.
     </p>
 
-    <Heading level="3" id="typing">Stricter Types</Heading>
+    <Heading level={3} id="typing">Stricter Types</Heading>
     <p>
         The following properties are now strictly typed to only their valid values instead of <code>string</code>:
     </p>
@@ -527,7 +524,7 @@ provideGlobalGridOptions({ theme: "legacy" });
         <li>columnDefs - <code>mainMenuItems</code> / <code>contextMenuItems</code></li>
     </ul>
 
-    <Heading level="3" id="typing">Column Menu</Heading>
+    <Heading level={3} id="typing">Column Menu</Heading>
     <p>
         The column property is now optional in the callback to get column menu items (in the grid option
         <code>getMainMenuItems</code> or <code>colDef.mainMenuItems</code>). <code>column</code> will be null when a
@@ -535,36 +532,36 @@ provideGlobalGridOptions({ theme: "legacy" });
         will be provided when a column group header is right-clicked on.
     </p>
 
-    <Heading level="3" id="modules-1">Row Drop Zone</Heading>
+    <Heading level={3} id="modules-1">Row Drop Zone</Heading>
     <p>
         <code>api.getRowDropZoneParams()</code> returns undefined if the <code>RowDragModule</code> is not registered.
     </p>
 
-    <Heading level="3" id="server-side-row-model">Server-side Row Model</Heading>
+    <Heading level={3} id="server-side-row-model">Server-side Row Model</Heading>
     <p>
         Server-side Row Model full store (activated by <code>suppressServerSideInfiniteScroll</code> property) is now
         removed. Please use the standard server-side row model functionality as documented.
     </p>
 
-    <Heading level="3" id="column-state">Column State</Heading>
+    <Heading level={3} id="column-state">Column State</Heading>
     <p>
         Column state properties in the column definition are no longer parsed to number/boolean. Provide the correct
         types instead of strings.
     </p>
 
-    <Heading level="3" id="grid-state">Grid State</Heading>
+    <Heading level={3} id="grid-state">Grid State</Heading>
     <p>
         Grid state <code>colId ag-Grid-ControlsColumn</code> is now named <code>ag-Grid-SelectionColumn</code>.
         Restoring grid state with the old <code>colId</code> will have no effect.
     </p>
 
-    <Heading level="3" id="integrated-charts">Integrated Charts</Heading>
+    <Heading level={3} id="integrated-charts">Integrated Charts</Heading>
     <p>
         <code>navigator</code> is removed from <code>ChartFormatPanelGroup</code>. Navigator setting is now part of
         the Integrated Charts Advanced Settings.
     </p>
 
-    <Heading level="3" id="sparklines">Sparklines</Heading>
+    <Heading level={3} id="sparklines">Sparklines</Heading>
     <ul>
         <li>
             <code>type: 'column'</code> - removed, use <code>type: 'bar'</code> and
@@ -605,7 +602,7 @@ provideGlobalGridOptions({ theme: "legacy" });
         </li>
     </ul>
 
-    <Heading level="3" id="custom-icons">Custom Icons</Heading>
+    <Heading level={3} id="custom-icons">Custom Icons</Heading>
     <p>Setting any of the custom icons listed below will have the provided custom icon only apply in the specific
         use case
         its name indicates, instead of all cases as before. To have the custom icon apply to additional cases, set
@@ -730,12 +727,12 @@ provideGlobalGridOptions({ theme: "legacy" });
 
 {/* ------------------------------------------------- */}
 
-<Heading level="2" id="removal-of-deprecated-apis">Removal of Deprecated APIs</Heading>
+<Heading level={2} id="removal-of-deprecated-apis">Removal of Deprecated APIs</Heading>
 
 <p>The following APIs have been deprecated since at least v31 and have now been removed.</p>
 
 <ExpandingSection headerText="Removed Deprecated APIs">
-    <Heading level="3" id="grid-api-1">Grid API</Heading>
+    <Heading level={3} id="grid-api-1">Grid API</Heading>
     <div
         data-meta='[&amp;quot;Grid&amp;quot;,&amp;quot;api&amp;quot;,&amp;quot;selectAll&amp;quot;,&amp;quot;deselectAll&amp;quot;,&amp;quot;getFirstDisplayedRow&amp;quot;,&amp;quot;getLastDisplayedRow&amp;quot;,&amp;quot;getModel&amp;quot;,&amp;quot;getValue&amp;quot;,&amp;quot;showColumnMenuAfterButtonClick&amp;quot;,&amp;quot;showColumnMenuAfterMouseClick&amp;quot;,&amp;quot;autoSizeColumn&amp;quot;,&amp;quot;setColumnWidths&amp;quot;,&amp;quot;moveColumn&amp;quot;,&amp;quot;addAggFunc&amp;quot;,&amp;quot;removeValueColumn&amp;quot;,&amp;quot;addValueColumn&amp;quot;,&amp;quot;removeRowGroupColumn&amp;quot;,&amp;quot;addRowGroupColumn&amp;quot;,&amp;quot;removePivotColumn&amp;quot;,&amp;quot;addPivotColumn&amp;quot;,&amp;quot;setColumnVisible&amp;quot;,&amp;quot;setColumnPinned&amp;quot;]'>
     </div>
@@ -796,7 +793,7 @@ provideGlobalGridOptions({ theme: "legacy" });
 
 
 
-    <Heading level="3" id="grid-options-1"> Grid Options</Heading>
+    <Heading level={3} id="grid-options-1"> Grid Options</Heading>
     <div
         data-meta='[&amp;quot;suppressServerSideInfiniteScroll&amp;quot;,&amp;quot;getServerSideGroupLevelParams&amp;quot;,&amp;quot;advancedFilterModel&amp;quot;,&amp;quot;suppressAsyncEvents&amp;quot;,&amp;quot;cellFlashDelay&amp;quot;,&amp;quot;cellFadeDelay&amp;quot;,&amp;quot;enableCellChangeFlash&amp;quot;,&amp;quot;suppressGroupMaintainValueType&amp;quot;,&amp;quot;groupIncludeFooter&amp;quot;,&amp;quot;groupIncludeTotalFooter&amp;quot;,&amp;quot;serverSideSortOnServer&amp;quot;,&amp;quot;serverSideFilterOnServer&amp;quot;,&amp;quot;tabToNextCell&amp;quot;,&amp;quot;tabToNextHeader&amp;quot;]'>
     </div>
@@ -823,7 +820,7 @@ provideGlobalGridOptions({ theme: "legacy" });
         <li><code>tabToNextHeader</code> returning <code>null</code> - removed.</li>
     </ul>
 
-    <Heading level="3" id="coldef"> ColDef</Heading>
+    <Heading level={3} id="coldef"> ColDef</Heading>
     <div
         data-meta='[&amp;quot;suppressCellFlash&amp;quot;,&amp;quot;columnsMenuParams&amp;quot;,&amp;quot;suppressMenu&amp;quot;]'>
     </div>
@@ -835,7 +832,7 @@ provideGlobalGridOptions({ theme: "legacy" });
         <li><code>suppressMenu</code> - removed, please use <code>suppressHeaderMenuButton</code> instead.</li>
     </ul>
 
-    <Heading level="3" id="floating-filters">Floating Filters</Heading>
+    <Heading level={3} id="floating-filters">Floating Filters</Heading>
     <p>Floating filters provided via the <code>colDef.filter</code> values <code>text</code>, <code>number</code>,
         <code>date</code>, <code>set</code>, <code>multi</code>, and <code>group</code> no longer work. Use the
         values
@@ -844,7 +841,7 @@ provideGlobalGridOptions({ theme: "legacy" });
         instead.
     </p>
 
-    <Heading level="3" id="interfaces"> Interfaces</Heading>
+    <Heading level={3} id="interfaces"> Interfaces</Heading>
     <div
         data-meta='[&amp;quot;vDirection&amp;quot;,&amp;quot;suppressFilterButton&amp;quot;,&amp;quot;textCustomComparator&amp;quot;,&amp;quot;onParamsUpdated&amp;quot;,&amp;quot;valueGetter&amp;quot;,&amp;quot;footerValueGetter&amp;quot;,&amp;quot;flashDelay&amp;quot;,&amp;quot;fadeDelay&amp;quot;,&amp;quot;ToolPanelColumnCompParams&amp;quot;,&amp;quot;verticalText&amp;quot;,&amp;quot;charSet&amp;quot;,&amp;quot;name&amp;quot;]'>
     </div>
@@ -884,13 +881,13 @@ provideGlobalGridOptions({ theme: "legacy" });
 
 {/* ------------------------------------------------- */}
 
-<Heading level="2" id="deprecations">Deprecations</Heading>
+<Heading level={2} id="deprecations">Deprecations</Heading>
 <div
     data-meta="[&amp;quot;ModuleRegistry.register&amp;quot;,&amp;quot;MenuModule&amp;quot;,&amp;quot;RangeSelectionModule&amp;quot;,&amp;quot;Column.isHovered&amp;quot;,&amp;quot;deselectAllFiltered&amp;quot;,&amp;quot;deselectAllOnCurrentPage&amp;quot;,&amp;quot;selectAllFiltered&amp;quot;,&amp;quot;selectAllOnCurrentPage&amp;quot;,&amp;quot;cellRendererParams.checkbox&amp;quot;,&amp;quot;gridOptions.sortingOrder&amp;quot;,&amp;quot;gridOptions.unSortIcon&amp;quot;,&amp;quot;groupRemoveLowestSingleChildren&amp;quot;,&amp;quot;groupRemoveSingleChildren&amp;quot;,&amp;quot;suppressMakeColumnVisibleAfterUnGroup&amp;quot;,&amp;quot;suppressPropertyNamesCheck&amp;quot;,&amp;quot;suppressRowGroupHidesColumns&amp;quot;,&amp;quot;childIndex&amp;quot;,&amp;quot;firstChild&amp;quot;,&amp;quot;lastChild&amp;quot;,&amp;quot;childIndexChanged&amp;quot;,&amp;quot;firstChildChanged&amp;quot;,&amp;quot;lastChildChanged&amp;quot;,&amp;quot;smallDown&amp;quot;,&amp;quot;smallLeft&amp;quot;,&amp;quot;smallRight&amp;quot;]">
 </div>
 
 <ExpandingSection headerText="Deprecations">
-    <Heading level="3" id="modules">Modules</Heading>
+    <Heading level={3} id="modules">Modules</Heading>
     <div
         data-meta="[&amp;quot;ModuleRegistry.register&amp;quot;,&amp;quot;MenuModule&amp;quot;,&amp;quot;RangeSelectionModule&amp;quot;]">
     </div>
@@ -904,14 +901,14 @@ provideGlobalGridOptions({ theme: "legacy" });
         <li><code>RangeSelectionModule</code> - deprecated, use <code>CellSelectionModule</code> instead.</li>
     </ul>
 
-    <Heading level="3" id="column-object"> Column Object</Heading>
+    <Heading level={3} id="column-object"> Column Object</Heading>
     <div data-meta="[&amp;quot;Column.isHovered&amp;quot;]">
     </div>
     <ul>
         <li><code>Column.isHovered()</code> - deprecated, use <code>api.isColumnHovered(column)</code> instead.</li>
     </ul>
 
-    <Heading level="3" id="grid-api"> Grid API</Heading>
+    <Heading level={3} id="grid-api"> Grid API</Heading>
     <div
         data-meta="[&amp;quot;deselectAllFiltered&amp;quot;,&amp;quot;deselectAllOnCurrentPage&amp;quot;,&amp;quot;selectAllFiltered&amp;quot;,&amp;quot;selectAllOnCurrentPage&amp;quot;]">
     </div>
@@ -924,7 +921,7 @@ provideGlobalGridOptions({ theme: "legacy" });
         </li>
     </ul>
 
-    <Heading level="3" id="grid-options"> Grid Options</Heading>
+    <Heading level={3} id="grid-options"> Grid Options</Heading>
     <div
         data-meta="[&amp;quot;cellRendererParams.checkbox&amp;quot;,&amp;quot;gridOptions.sortingOrder&amp;quot;,&amp;quot;gridOptions.unSortIcon&amp;quot;,&amp;quot;groupRemoveLowestSingleChildren&amp;quot;,&amp;quot;groupRemoveSingleChildren&amp;quot;,&amp;quot;suppressMakeColumnVisibleAfterUnGroup&amp;quot;,&amp;quot;suppressPropertyNamesCheck&amp;quot;,&amp;quot;suppressRowGroupHidesColumns&amp;quot;]">
     </div>
@@ -958,7 +955,7 @@ provideGlobalGridOptions({ theme: "legacy" });
         </li>
     </ul>
 
-    <Heading level="3" id="row-node"> Row Node</Heading>
+    <Heading level={3} id="row-node"> Row Node</Heading>
     <div
         data-meta="[&amp;quot;childIndex&amp;quot;,&amp;quot;firstChild&amp;quot;,&amp;quot;lastChild&amp;quot;,&amp;quot;childIndexChanged&amp;quot;,&amp;quot;firstChildChanged&amp;quot;,&amp;quot;lastChildChanged&amp;quot;,&amp;quot;smallDown&amp;quot;,&amp;quot;smallLeft&amp;quot;,&amp;quot;smallRight&amp;quot;]">
     </div>
@@ -975,7 +972,7 @@ provideGlobalGridOptions({ theme: "legacy" });
         </li>
     </ul>
 
-    <Heading level="3" id="row-node-events"> Row Node Events</Heading>
+    <Heading level={3} id="row-node-events"> Row Node Events</Heading>
     <div
         data-meta="[&amp;quot;childIndexChanged&amp;quot;,&amp;quot;firstChildChanged&amp;quot;,&amp;quot;lastChildChanged&amp;quot;]">
     </div>
@@ -991,7 +988,7 @@ provideGlobalGridOptions({ theme: "legacy" });
             children have changed.</li>
     </ul>
 
-    <Heading level="3" id="theming-custom-icons"> Theming Custom Icons</Heading>
+    <Heading level={3} id="theming-custom-icons"> Theming Custom Icons</Heading>
     <div data-meta="[&amp;quot;smallDown&amp;quot;,&amp;quot;smallLeft&amp;quot;,&amp;quot;smallRight&amp;quot;]">
     </div>
     <ul>
