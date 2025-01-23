@@ -23,12 +23,36 @@ $trial-licence-small: 680px;
     }
 }
 
-.submit {
-    width: 100%;
-    align-self: flex-end;
+.actions {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-end;
+    gap: $spacing-size-2;
+
+    p {
+        width: fit-content;
+        margin: 0;
+    }
+
+    button {
+        width: 100%;
+    }
 
     @media screen and (min-width: $trial-licence-small) {
-        width: fit-content;
+        flex-direction: row;
+
+        button {
+            width: fit-content;
+        }
+    }
+
+    .error {
+        color: var(--color-input-error);
+    }
+
+    .success {
+        color: var(--color-success);
     }
 }
 
