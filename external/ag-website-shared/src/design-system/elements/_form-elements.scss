@@ -374,10 +374,6 @@ input[type='range']#{$selector-exclude-grid} {
 }
 
 .input-error {
-    label {
-        color: var(--color-input-error);
-    }
-
     input,
     select {
         --color-border-primary: var(--color-input-error);
