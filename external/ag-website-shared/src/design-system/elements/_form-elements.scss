@@ -75,6 +75,7 @@ input[type='number'] {
             box-shadow $transition-default-timing;
 
         &::placeholder {
+            font-style: italic;
             color: var(--color-fg-placeholder);
         }
 
@@ -343,6 +344,7 @@ input[type='range']#{$selector-exclude-grid} {
 
     label {
         margin-bottom: $spacing-size-1;
+        font-size: var(--text-fs-sm);
     }
 
     input,
@@ -363,6 +365,7 @@ input[type='range']#{$selector-exclude-grid} {
         label {
             display: inline-block;
             margin-bottom: 0;
+            font-size: var(--text-fs-base);
         }
 
         input[type='text'],
@@ -382,7 +385,8 @@ input[type='range']#{$selector-exclude-grid} {
     }
 
     .error {
-        margin-top: $spacing-size-1;
+        margin-top: 2px;
+        font-size: var(--text-fs-sm);
         color: var(--color-input-error);
     }
 }
