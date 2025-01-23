@@ -10,43 +10,24 @@ export interface ToggleablePanelParams {
     title?: string;
     enabled: boolean;
     suppressEnabledCheckbox?: boolean;
-    onEnableChange?: (enabled: boolean) => void;
     chartMenuParamsFactory: ChartMenuParamsFactory;
     cssIdentifier?: string;
 }
 
 export class ToggleablePanel extends Component {
-    private readonly dropOffGroup: AgGroupComponent = RefPlaceholder;
+    private readonly toggleableGroup: AgGroupComponent = RefPlaceholder;
 
     private readonly chartOptions: ChartOptionsProxy;
     private activeComps: Component[] = [];
-    private groupName: string;
-
-    private get component(): AgGroupComponent {
-        return (this as any)[this.groupName];
-    }
-
-    private set component(component: AgGroupComponent) {
-        (this as any)[this.groupName] = component;
-    }
 
     constructor(private readonly params: ToggleablePanelParams) {
         super();
-        this.groupName = `${params.tag}Group`;
-        this.component = RefPlaceholder;
         this.chartOptions = params.chartMenuParamsFactory.getChartOptions();
     }
 
     public postConstruct() {
-        const {
-            tag,
-            cssIdentifier = 'charts-format-sub-level',
-            title,
-            enabled,
-            onEnableChange,
-            suppressEnabledCheckbox,
-        } = this.params;
-        const dropOffGroupParams: AgGroupComponentParams =
+        const { tag, cssIdentifier = 'charts-format-sub-level', title, enabled, suppressEnabledCheckbox } = this.params;
+        const groupParams: AgGroupComponentParams =
             this.params.chartMenuParamsFactory.addEnableParams<AgGroupComponentParams>(`${tag}.enabled`, {
                 cssIdentifier,
                 direction: 'vertical',
@@ -54,37 +35,32 @@ export class ToggleablePanel extends Component {
                 title,
                 enabled,
                 suppressEnabledCheckbox: true,
-                onEnableChange: (enabled) => {
-                    if (onEnableChange) {
-                        onEnableChange(enabled);
-                    }
-                },
                 useToggle: !suppressEnabledCheckbox,
             });
         this.setTemplate(
-            /* html */ `<div class="ag-${tag}-panel">
-                <ag-group-component data-ref="${tag}Group">
+            /* html */ `<div class="ag-toggleableGroup-panel">
+                <ag-group-component data-ref="toggleableGroup">
                 </ag-group-component>
             </div>`,
             [AgGroupComponentSelector],
             {
-                [`${tag}Group`]: dropOffGroupParams,
+                toggleableGroup: groupParams,
             }
         );
-        this.addOrRemoveCssClass(`ag-${tag}-panel-no-header`, !title);
+        this.addOrRemoveCssClass(`ag-toggleableGroup-panel-no-header`, !title);
     }
 
     public addItem(comp: Component<any>, prepend?: boolean) {
         if (prepend) {
-            this.component.prependItem(comp);
+            this.toggleableGroup.prependItem(comp);
         } else {
-            this.component.addItem(comp);
+            this.toggleableGroup.addItem(comp);
         }
         this.activeComps.push(comp);
     }
 
     public setEnabled(enabled: boolean): void {
-        this.component.setEnabled(enabled);
+        this.toggleableGroup.setEnabled(enabled);
     }
 
     private destroyActiveComps(): void {

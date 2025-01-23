@@ -24,6 +24,7 @@ const DefaultFormatPanelDef: ChartFormatPanel = {
     groups: [{ type: 'chart' }, { type: 'titles' }, { type: 'legend' }, { type: 'series' }, { type: 'axis' }],
 };
 
+const AXIS_KEYS = ['axis', 'horizontalAxis', 'verticalAxis'];
 export class FormatPanel extends Component {
     private chartPanelFeature: ChartPanelFeature;
     private groupExpansionFeature: GroupExpansionFeature;
@@ -78,16 +79,13 @@ export class FormatPanel extends Component {
                     this.chartPanelFeature.addComponent(new TitlesPanel(opts));
                     break;
                 case 'legend':
-                    if (isFunnel(seriesType)) {
-                        break;
-                    }
                     this.chartPanelFeature.addComponent(new LegendPanel(opts, this.chartMenuContext));
                     break;
                 case 'axis':
                     // Polar charts have different axis options from cartesian charts, so choose the appropriate panels
                     if (isPolar(seriesType)) {
                         this.chartPanelFeature.addComponent(new PolarAxisPanel(opts));
-                    } else if (isCartesian(seriesType) && !isFunnel(seriesType)) {
+                    } else if (isCartesian(seriesType)) {
                         this.chartPanelFeature.addComponent(new CartesianAxisPanel('xAxis', opts));
                         this.chartPanelFeature.addComponent(new CartesianAxisPanel('yAxis', opts));
                     }
@@ -113,10 +111,14 @@ export class FormatPanel extends Component {
     }
 
     private isGroupPanelShownInSeries(group: ChartFormatPanelGroup, seriesType: ChartSeriesType): boolean {
-        return (
+        const enable =
             ['chart', 'titles', 'legend', 'series'].includes(group) ||
-            (isCartesian(seriesType) && ['axis', 'horizontalAxis', 'verticalAxis'].includes(group)) ||
-            (isPolar(seriesType) && group === 'axis')
-        );
+            (isCartesian(seriesType) && AXIS_KEYS.includes(group)) ||
+            (isPolar(seriesType) && group === 'axis');
+
+        const disable =
+            (isFunnel(seriesType) && group === 'legend') || (isFunnel(seriesType) && AXIS_KEYS.includes(group));
+
+        return enable && !disable;
     }
 }
