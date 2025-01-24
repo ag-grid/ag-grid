@@ -84,7 +84,7 @@ function createSetFilter(filterParams?: any): SetFilter<unknown> {
         api: null,
         colDef,
         rowModel,
-        column: { getId: () => '' },
+        column: { getId: () => '', getColDef: () => ({}) },
         context: null,
         doesRowPassOtherFilter: () => true,
         filterChangedCallback: () => {},
@@ -106,7 +106,10 @@ function createSetFilter(filterParams?: any): SetFilter<unknown> {
     (setFilter as any).eSelectAll = eSelectAll;
     (setFilter as any).gos = gridOptionsService;
     (setFilter as any).rowGroupColsSvc = rowGroupColsSvc;
-    (setFilter as any).beans = {};
+    (setFilter as any).beans = {
+        registry: { getIcon: () => undefined },
+    };
+    (setFilter as any).eFilterLoadingIcon = { appendChild: () => {} };
 
     setFilter.setParams(params);
 
