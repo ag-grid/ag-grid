@@ -189,7 +189,7 @@ export const TrialLicenceForm: FunctionComponent = () => {
         handleLastNameChange,
         handleFormSubmit,
     } = useTrialForm();
-    const hasFormError = emailError || firstNameError || lastNameError;
+    const hasFormError = Boolean(emailError || firstNameError || lastNameError);
 
     return (
         <form noValidate className={styles.trailForm} onSubmit={handleFormSubmit}>
