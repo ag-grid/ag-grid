@@ -22,6 +22,7 @@ import {
 } from 'ag-grid-community';
 
 import { MultiFilter } from './multiFilter';
+import type { MultiFilterEvaluator } from './multiFilterEvaluator';
 import { MultiFilterUi } from './multiFilterUi';
 import { getMultiFilterDefs, getUpdatedMultiFilterModel } from './multiFilterUtil';
 
@@ -90,13 +91,13 @@ export class MultiFloatingFilterComp extends Component implements IFloatingFilte
                         _setDisplayed(filter.getGui(), i === 0);
                     });
                 } else {
-                    this.parentMultiFilterInstance((parent) => {
-                        const lastActiveFloatingFilterIndex = parent.getLastActiveFilterIndex();
-                        this.floatingFilters.forEach((filter, i) => {
-                            const shouldShow =
-                                lastActiveFloatingFilterIndex == null ? i === 0 : i === lastActiveFloatingFilterIndex;
-                            _setDisplayed(filter.getGui(), shouldShow);
-                        });
+                    const lastActiveFloatingFilterIndex = (
+                        reactiveParams.getEvaluator() as MultiFilterEvaluator
+                    )?.getLastActiveFilterIndex?.();
+                    this.floatingFilters.forEach((filter, i) => {
+                        const shouldShow =
+                            lastActiveFloatingFilterIndex == null ? i === 0 : i === lastActiveFloatingFilterIndex;
+                        _setDisplayed(filter.getGui(), shouldShow);
                     });
                 }
             }

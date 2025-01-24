@@ -83,7 +83,7 @@ export class DateFloatingFilter extends SimpleFloatingFilter<IFloatingFilterPara
         const filterValueText = _serialiseDate(filterValueDate);
 
         if (this.reactive) {
-            const reactiveParams = this.params as unknown as FloatingFilterDisplayParams<DateFilterModel>;
+            const reactiveParams = this.params as unknown as FloatingFilterDisplayParams<any, any, DateFilterModel>;
             reactiveParams.filterModifiedCallback();
 
             const model = reactiveParams.model;
@@ -98,15 +98,14 @@ export class DateFloatingFilter extends SimpleFloatingFilter<IFloatingFilterPara
                           dateFrom: filterValueText,
                       } as DateFilterModel);
             reactiveParams.onModelChange(newModel, { afterFloatingFilter: true });
-            return;
+        } else {
+            this.params.parentFilterInstance((filterInstance) => {
+                if (filterInstance) {
+                    const date = _parseDateTimeFromString(filterValueText);
+                    filterInstance.onFloatingFilterChanged(this.lastType || null, date);
+                }
+            });
         }
-
-        this.params.parentFilterInstance((filterInstance) => {
-            if (filterInstance) {
-                const date = _parseDateTimeFromString(filterValueText);
-                filterInstance.onFloatingFilterChanged(this.lastType || null, date);
-            }
-        });
     }
 
     private getDateComponentParams(): WithoutGridCommon<IDateParams> {

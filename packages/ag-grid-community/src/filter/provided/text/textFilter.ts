@@ -1,11 +1,10 @@
 import { _setAriaRole } from '../../../utils/aria';
 import { _makeNull } from '../../../utils/generic';
 import { AgInputTextField } from '../../../widgets/agInputTextField';
-import type { ISimpleFilterModel, Tuple } from '../iSimpleFilter';
+import type { Tuple } from '../iSimpleFilter';
 import { SimpleFilter } from '../simpleFilter';
 import type { TextFilterModel, TextFilterParams } from './iTextFilter';
 import { TextFilterHelper } from './textFilterHelper';
-import { TextFilterModelFormatter } from './textFilterModelFormatter';
 import { trimInputForFilter } from './textFilterUtils';
 
 export class TextFilter extends SimpleFilter<TextFilterModel, string, TextFilterParams> {
@@ -14,23 +13,11 @@ export class TextFilter extends SimpleFilter<TextFilterModel, string, TextFilter
     private readonly eValuesFrom: AgInputTextField[] = [];
     private readonly eValuesTo: AgInputTextField[] = [];
 
-    private filterModelFormatter: TextFilterModelFormatter;
-
     constructor() {
         super('textFilter', new TextFilterHelper());
     }
 
     protected override defaultDebounceMs: number = 500;
-
-    protected override commonUpdateSimpleParams(params: TextFilterParams): void {
-        super.commonUpdateSimpleParams(params);
-
-        this.filterModelFormatter = new TextFilterModelFormatter(
-            this.getLocaleTextFunc.bind(this),
-            this.optionsFactory,
-            params
-        );
-    }
 
     protected createCondition(position: number): TextFilterModel {
         const type = this.getConditionType(position);
@@ -108,9 +95,5 @@ export class TextFilter extends SimpleFilter<TextFilterModel, string, TextFilter
         const removeComps = (eGui: AgInputTextField[]) => this.removeComponents(eGui, startPosition, deleteCount);
         removeComps(this.eValuesFrom);
         removeComps(this.eValuesTo);
-    }
-
-    public getModelAsString(model: ISimpleFilterModel): string {
-        return this.filterModelFormatter.getModelAsString(model) ?? '';
     }
 }

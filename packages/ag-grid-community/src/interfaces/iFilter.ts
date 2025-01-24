@@ -36,6 +36,7 @@ export interface FilterEvaluator<TData = any, TContext = any, TValue = any, TMod
     init?(params: FilterEvaluatorParams<TData, TContext, TValue, TModel> & TCustomParams): void;
     refresh?(params: FilterEvaluatorParams<TData, TContext, TValue, TModel> & TCustomParams): void;
     doesFilterPass(params: FilterEvaluatorFuncParams<TData, TModel>): boolean;
+    getModelAsString?(model: TModel | null): string;
     destroy?(): void;
 }
 
@@ -233,6 +234,7 @@ export interface FilterDisplayParams<TData = any, TContext = any, TModel = any> 
     model: TModel | null;
     /** Callback that should be called every time the model in the component changes. */
     onModelChange: (model: TModel | null, additionalEventAttributes?: any) => void;
+    getEvaluator: () => FilterEvaluator<TData, TContext, TModel>;
     source: 'init' | 'ui' | 'apiModel' | 'apiParams' | 'evaluator' | 'floating';
     /**
      * @deprecated V33.1 Not used when using filter evaluators

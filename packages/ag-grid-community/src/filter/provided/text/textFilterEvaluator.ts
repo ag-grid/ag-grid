@@ -4,6 +4,7 @@ import { SimpleFilterEvaluator } from '../simpleFilterEvaluator';
 import { isBlank } from '../simpleFilterUtils';
 import type { ITextFilterParams, TextFilterModel, TextFormatter, TextMatcher } from './iTextFilter';
 import { TextFilterHelper } from './textFilterHelper';
+import { TextFilterModelFormatter } from './textFilterModelFormatter';
 
 const defaultMatcher: TextMatcher = ({ filterOption, value, filterText }) => {
     if (filterText == null) {
@@ -36,6 +37,7 @@ const defaultLowercaseFormatter: TextFormatter = (from: string) =>
     from == null ? null : from.toString().toLowerCase();
 
 export class TextFilterEvaluator extends SimpleFilterEvaluator<TextFilterModel, string, ITextFilterParams> {
+    protected readonly FilterModelFormatterClass = TextFilterModelFormatter;
     private matcher: TextMatcher;
     private formatter: TextFormatter;
 

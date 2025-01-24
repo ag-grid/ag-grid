@@ -1,9 +1,11 @@
+import { BeanStub } from '../../context/beanStub';
 import type {
     FilterEvaluator,
     FilterEvaluatorFuncParams,
     FilterEvaluatorParams,
     IDoesFilterPassParams,
 } from '../../interfaces/iFilter';
+import type { LocaleTextFunc } from '../../misc/locale/localeUtils';
 import type {
     ICombinedSimpleModel,
     ISimpleFilterModel,
@@ -13,18 +15,30 @@ import type {
 } from './iSimpleFilter';
 import { OptionsFactory } from './optionsFactory';
 import type { SimpleFilterHelper } from './simpleFilterHelper';
+import type { SimpleFilterModelFormatter } from './simpleFilterModelFormatter';
 import { evaluateCustomFilter } from './simpleFilterUtils';
 
 export abstract class SimpleFilterEvaluator<
-    TModel extends ISimpleFilterModel,
-    TValue,
-    TParams extends ISimpleFilterParams,
-> implements FilterEvaluator<any, any, TValue, TModel | ICombinedSimpleModel<TModel>, TParams>
+        TModel extends ISimpleFilterModel,
+        TValue,
+        TParams extends ISimpleFilterParams,
+    >
+    extends BeanStub
+    implements FilterEvaluator<any, any, TValue, TModel | ICombinedSimpleModel<TModel>, TParams>
 {
+    protected abstract readonly FilterModelFormatterClass: new (
+        getLocaleTextFunc: () => LocaleTextFunc,
+        optionsFactory: OptionsFactory,
+        filterParams: ISimpleFilterParams
+    ) => SimpleFilterModelFormatter<ISimpleFilterParams>;
+
     protected params: FilterEvaluatorParams<any, any, TValue, TModel | ICombinedSimpleModel<TModel>> & TParams;
     private optionsFactory: OptionsFactory;
+    private filterModelFormatter: SimpleFilterModelFormatter<ISimpleFilterParams>;
 
-    constructor(private readonly helper: SimpleFilterHelper<TModel, TValue>) {}
+    constructor(private readonly helper: SimpleFilterHelper<TModel, TValue>) {
+        super();
+    }
 
     protected abstract evaluateNullValue(filterType?: ISimpleFilterModelType | null): boolean;
 
@@ -42,6 +56,12 @@ export abstract class SimpleFilterEvaluator<
         this.optionsFactory = optionsFactory;
         optionsFactory.init(params, this.helper.defaultOptions);
 
+        this.filterModelFormatter = new this.FilterModelFormatterClass(
+            this.getLocaleTextFunc.bind(this),
+            optionsFactory,
+            params
+        );
+
         this.updateParams(params);
 
         this.validateModel(params);
@@ -51,7 +71,9 @@ export abstract class SimpleFilterEvaluator<
         params: FilterEvaluatorParams<any, any, TValue, TModel | ICombinedSimpleModel<TModel>> & TParams
     ): void {
         if (params.source === 'apiParams') {
-            this.optionsFactory.refresh(params, this.helper.defaultOptions);
+            const optionsFactory = this.optionsFactory;
+            optionsFactory.refresh(params, this.helper.defaultOptions);
+            this.filterModelFormatter.updateParams({ optionsFactory, filterParams: params });
 
             this.updateParams(params);
         }
@@ -88,6 +110,10 @@ export abstract class SimpleFilterEvaluator<
         const cellValue = this.params.getValue(params.node);
 
         return models[combineFunction]((m) => this.individualConditionPasses(params, m, cellValue));
+    }
+
+    public getModelAsString(model: TModel | ICombinedSimpleModel<TModel> | null): string {
+        return this.filterModelFormatter.getModelAsString(model) ?? '';
     }
 
     protected validateModel(

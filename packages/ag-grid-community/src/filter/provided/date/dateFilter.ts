@@ -3,12 +3,11 @@ import type { IAfterGuiAttachedParams } from '../../../interfaces/iAfterGuiAttac
 import { _parseDateTimeFromString, _serialiseDate } from '../../../utils/date';
 import { _warn } from '../../../validation/logging';
 import type { FILTER_LOCALE_TEXT } from '../../filterLocaleText';
-import type { ISimpleFilterModel, Tuple } from '../iSimpleFilter';
+import type { Tuple } from '../iSimpleFilter';
 import { SimpleFilter } from '../simpleFilter';
 import { removeItems } from '../simpleFilterUtils';
 import { DateCompWrapper } from './dateCompWrapper';
 import { DateFilterHelper } from './dateFilterHelper';
-import { DateFilterModelFormatter } from './dateFilterModelFormatter';
 import type { DateFilterModel, DateFilterParams } from './iDateFilter';
 
 const DEFAULT_MIN_YEAR = 1000;
@@ -25,7 +24,6 @@ export class DateFilter extends SimpleFilter<DateFilterModel, Date, DateFilterPa
     private maxValidYear: number = DEFAULT_MAX_YEAR;
     private minValidDate: Date | null = null;
     private maxValidDate: Date | null = null;
-    private filterModelFormatter: DateFilterModelFormatter;
 
     public readonly filterType = 'date' as const;
 
@@ -75,12 +73,6 @@ export class DateFilter extends SimpleFilter<DateFilterModel, Date, DateFilterPa
         if (parsedMinValidDate && parsedMaxValidDate && parsedMinValidDate > parsedMaxValidDate) {
             _warn(84);
         }
-
-        this.filterModelFormatter = new DateFilterModelFormatter(
-            this.getLocaleTextFunc.bind(this),
-            this.optionsFactory,
-            params
-        );
     }
 
     createDateCompWrapper(element: HTMLElement): DateCompWrapper {
@@ -260,9 +252,5 @@ export class DateFilter extends SimpleFilter<DateFilterModel, Date, DateFilterPa
             return super.translate('after');
         }
         return super.translate(key);
-    }
-
-    public getModelAsString(model: ISimpleFilterModel): string {
-        return this.filterModelFormatter.getModelAsString(model) ?? '';
     }
 }

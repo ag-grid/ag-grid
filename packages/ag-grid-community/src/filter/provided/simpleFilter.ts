@@ -89,8 +89,9 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, P extends Si
     protected override setParams(params: P): void {
         super.setParams(params);
 
-        this.optionsFactory = new OptionsFactory();
-        this.optionsFactory.init(params, this.helper.defaultOptions);
+        const optionsFactory = new OptionsFactory();
+        this.optionsFactory = optionsFactory;
+        optionsFactory.init(params, this.helper.defaultOptions);
 
         this.commonUpdateSimpleParams(params);
 
@@ -573,6 +574,10 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, P extends Si
             this.updateJoinOperatorsDisabled();
         }
         this.lastUiCompletePosition = updatedLastUiCompletePosition;
+    }
+
+    public getModelAsString(model: ISimpleFilterModel): string {
+        return this.params.getEvaluator()?.getModelAsString?.(model) ?? '';
     }
 
     private getPlaceholderText(defaultPlaceholder: keyof typeof FILTER_LOCALE_TEXT, position: number): string {

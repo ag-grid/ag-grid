@@ -78,6 +78,11 @@ export class SetFilterEvaluator<TValue = string>
         return appliedModel.has(helper.createKey(value, node));
     }
 
+    public getModelAsString(model: SetFilterModel | null): string {
+        // TODO
+        return model?.filterType ?? '';
+    }
+
     protected validateModel(
         params: FilterEvaluatorParams<any, any, TValue, SetFilterModel> & ISetFilterParams<any, TValue>
     ): void {

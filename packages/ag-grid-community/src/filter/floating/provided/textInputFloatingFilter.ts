@@ -91,7 +91,7 @@ export abstract class TextInputFloatingFilter<
         const isEnterKey = e.key === KeyCode.ENTER;
 
         if (this.reactive) {
-            const reactiveParams = this.params as unknown as FloatingFilterDisplayParams<M>;
+            const reactiveParams = this.params as unknown as FloatingFilterDisplayParams<any, any, M>;
             reactiveParams.filterModifiedCallback();
         }
 
@@ -108,7 +108,7 @@ export abstract class TextInputFloatingFilter<
         }
 
         if (this.reactive) {
-            const reactiveParams = params as unknown as FloatingFilterDisplayParams<M>;
+            const reactiveParams = params as unknown as FloatingFilterDisplayParams<any, any, M>;
             const model = reactiveParams.model;
             const parsedValue = this.convertValue(value);
             const newModel =

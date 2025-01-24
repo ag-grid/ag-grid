@@ -2,18 +2,15 @@ import { _setAriaRole } from '../../../utils/aria';
 import { _makeNull } from '../../../utils/generic';
 import { AgInputNumberField } from '../../../widgets/agInputNumberField';
 import { AgInputTextField } from '../../../widgets/agInputTextField';
-import type { ISimpleFilterModel, Tuple } from '../iSimpleFilter';
+import type { Tuple } from '../iSimpleFilter';
 import { SimpleFilter } from '../simpleFilter';
 import type { NumberFilterModel, NumberFilterParams } from './iNumberFilter';
 import { NumberFilterHelper } from './numberFilterHelper';
-import { NumberFilterModelFormatter } from './numberFilterModelFormatter';
 import { getAllowedCharPattern, processNumberFilterValue } from './numberFilterUtils';
 
 export class NumberFilter extends SimpleFilter<NumberFilterModel, number, NumberFilterParams> {
     private readonly eValuesFrom: (AgInputTextField | AgInputNumberField)[] = [];
     private readonly eValuesTo: (AgInputTextField | AgInputNumberField)[] = [];
-
-    private filterModelFormatter: NumberFilterModelFormatter;
 
     public readonly filterType = 'number' as const;
 
@@ -22,16 +19,6 @@ export class NumberFilter extends SimpleFilter<NumberFilterModel, number, Number
     }
 
     protected override defaultDebounceMs: number = 500;
-
-    protected override commonUpdateSimpleParams(params: NumberFilterParams): void {
-        super.commonUpdateSimpleParams(params);
-
-        this.filterModelFormatter = new NumberFilterModelFormatter(
-            this.getLocaleTextFunc.bind(this),
-            this.optionsFactory,
-            params
-        );
-    }
 
     protected override setElementValue(
         element: AgInputTextField | AgInputNumberField,
@@ -140,10 +127,6 @@ export class NumberFilter extends SimpleFilter<NumberFilterModel, number, Number
             return [null, null];
         }
         return [eValuesFrom[position], eValuesTo[position]];
-    }
-
-    public getModelAsString(model: ISimpleFilterModel): string {
-        return this.filterModelFormatter.getModelAsString(model) ?? '';
     }
 
     protected override hasInvalidInputs(): boolean {

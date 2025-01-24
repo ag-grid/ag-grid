@@ -20,13 +20,13 @@ import {
     _getFilterDetails,
     _isNothingFocused,
     _loadTemplate,
-    _removeFromArray,
 } from 'ag-grid-community';
 
 import { AgGroupComponent } from '../widgets/agGroupComponent';
 import type { MenuItemActivatedEvent } from '../widgets/agMenuItemComponent';
 import { AgMenuItemComponent } from '../widgets/agMenuItemComponent';
 import { AgMenuItemRenderer } from '../widgets/agMenuItemRenderer';
+import type { MultiFilterEvaluator } from './multiFilterEvaluator';
 import { forEachReverse, getFilterTitle, getMultiFilterDefs, getUpdatedMultiFilterModel } from './multiFilterUtil';
 
 export class MultiFilterUi
@@ -42,7 +42,6 @@ export class MultiFilterUi
     // this could be the accordion/sub menu element depending on the display type
     private filterGuis: (HTMLElement | null)[] = [];
     private lastOpenedInContainer?: ContainerType;
-    private activeFilterIndices: number[] = [];
     private lastActivatedMenuItem: AgMenuItemComponent | null = null;
     private hidePopup?: () => void;
 
@@ -78,11 +77,7 @@ export class MultiFilterUi
     public refresh(params: IMultiFilterParams & FilterDisplayParams<any, any, IMultiFilterModel>): boolean {
         this.params = params;
         this.filters.forEach((filter, index) => {
-            const childParams = this.updateParams(params, index);
-            if (params.source !== 'floating' && params.source !== 'ui') {
-                this.updateActiveList(index, childParams.model);
-            }
-            filter?.refresh?.(childParams);
+            filter?.refresh?.(this.updateParams(params, index));
         });
         return true;
     }
@@ -237,8 +232,7 @@ export class MultiFilterUi
     }
 
     public getLastActiveFilterIndex(): number | null {
-        const activeFilterIndices = this.activeFilterIndices;
-        return activeFilterIndices.length > 0 ? activeFilterIndices[activeFilterIndices.length - 1] : null;
+        return (this.params.getEvaluator() as MultiFilterEvaluator)?.getLastActiveFilterIndex?.() ?? null;
     }
 
     public getChildFilterInstance(index: number): IFilterComp | undefined {
@@ -345,8 +339,6 @@ export class MultiFilterUi
 
         const filterParams = this.updateParams(this.params, index);
 
-        this.updateActiveList(index, filterParams.model);
-
         const compDetails = _getFilterDetails(userCompFactory, filterDef, filterParams, 'agTextColumnFilter');
         if (!compDetails) {
             return AgPromise.resolve(null);
@@ -396,12 +388,9 @@ export class MultiFilterUi
     }
 
     private updateActiveList(index: number, childModel: any): void {
-        const activeFilterIndices = this.activeFilterIndices;
-
-        _removeFromArray(activeFilterIndices, index);
-
-        if (childModel != null) {
-            activeFilterIndices.push(index);
+        const evaluator = this.params.getEvaluator();
+        if ((evaluator as MultiFilterEvaluator)?.updateActiveList) {
+            (evaluator as MultiFilterEvaluator).updateActiveList(index, childModel);
         }
     }
 
@@ -414,11 +403,6 @@ export class MultiFilterUi
     }
 
     public getModelAsString(model: IMultiFilterModel): string {
-        if (!this.filters || !model?.filterModels?.length) {
-            return '';
-        }
-        const lastActiveIndex = this.getLastActiveFilterIndex() ?? 0;
-        const activeFilter = this.filters[lastActiveIndex];
-        return activeFilter?.getModelAsString?.(model.filterModels[lastActiveIndex]) ?? '';
+        return this.params.getEvaluator()?.getModelAsString?.(model) ?? '';
     }
 }

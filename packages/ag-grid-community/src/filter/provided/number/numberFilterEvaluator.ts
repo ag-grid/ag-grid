@@ -2,8 +2,11 @@ import type { Comparator } from '../iScalarFilter';
 import { ScalarFilterEvaluator } from '../scalarFilterEvaluator';
 import type { INumberFilterParams, NumberFilterModel } from './iNumberFilter';
 import { NumberFilterHelper } from './numberFilterHelper';
+import { NumberFilterModelFormatter } from './numberFilterModelFormatter';
 
 export class NumberFilterEvaluator extends ScalarFilterEvaluator<NumberFilterModel, number, INumberFilterParams> {
+    protected readonly FilterModelFormatterClass = NumberFilterModelFormatter;
+
     constructor() {
         super(new NumberFilterHelper());
     }

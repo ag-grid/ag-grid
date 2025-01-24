@@ -418,7 +418,7 @@ export class SetFilter<V = string>
         if (params.suppressSelectAll) {
             model = new ModelWrapper(this.valueModel);
         } else {
-            model = new ModelWrapperWithSelectAll(this.valueModel, () => this.isSelectAllSelected());
+            model = new ModelWrapperWithSelectAll(this.valueModel);
         }
         if (params.treeList) {
             model = new TreeModelWrapper(model);
@@ -1069,10 +1069,7 @@ class ModelWrapper<V> implements VirtualListModel {
 }
 
 class ModelWrapperWithSelectAll<V> implements VirtualListModel {
-    constructor(
-        private readonly model: SetValueModel<V>,
-        private readonly isSelectAllSelected: () => boolean | undefined
-    ) {}
+    constructor(private readonly model: SetValueModel<V>) {}
 
     public getRowCount(): number {
         const showAddCurrentSelectionToFilter = this.model.showAddCurrentSelectionToFilter();

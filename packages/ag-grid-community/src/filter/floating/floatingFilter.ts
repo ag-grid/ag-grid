@@ -2,7 +2,7 @@ import type { FilterChangedEvent } from '../../events';
 import type { Column } from '../../interfaces/iColumn';
 import type { AgGridCommon } from '../../interfaces/iCommon';
 import type { IComponent } from '../../interfaces/iComponent';
-import type { IFilter, IFilterParams, ProvidedFilterModel } from '../../interfaces/iFilter';
+import type { FilterEvaluator, IFilter, IFilterParams, ProvidedFilterModel } from '../../interfaces/iFilter';
 
 export interface IFloatingFilterParent {
     /**
@@ -54,10 +54,12 @@ export interface IFloatingFilterParams<P = InbuiltParentType, TData = any, TCont
     showParentFilter: () => void;
 }
 
-export interface FloatingFilterDisplayParams<TModel = any> extends IFloatingFilterParams {
+export interface FloatingFilterDisplayParams<TData = any, TContext = any, TModel = any, TParent = InbuiltParentType>
+    extends IFloatingFilterParams<TParent, TData, TContext> {
     model: TModel | null;
     onModelChange: (model: TModel | null, additionalEventAttributes?: any) => void;
     filterModifiedCallback: (additionalEventAttributes?: any) => void;
+    getEvaluator: () => FilterEvaluator<TData, TContext, TModel>;
     source: 'init' | 'ui' | 'filter' | 'apiModel' | 'apiParams' | 'dataChanged';
 }
 

@@ -6,7 +6,7 @@ import type {
     IMultiFilterModel,
     IMultiFilterParams,
 } from 'ag-grid-community';
-import { BeanStub } from 'ag-grid-community';
+import { BeanStub, _removeFromArray } from 'ag-grid-community';
 
 import { getMultiFilterDefs, getUpdatedMultiFilterModel } from './multiFilterUtil';
 
@@ -17,6 +17,7 @@ export class MultiFilterEvaluator
     private params: FilterEvaluatorParams<any, any, any, IMultiFilterModel> & IMultiFilterParams;
     private evaluatorWrappers: ({ evaluator: FilterEvaluator; evaluatorParams: FilterEvaluatorParams } | undefined)[] =
         [];
+    /** ui active. could still have null model */
     private activeFilterIndices: number[] = [];
 
     public init(params: FilterEvaluatorParams<any, any, any, IMultiFilterModel> & IMultiFilterParams): void {
@@ -33,7 +34,7 @@ export class MultiFilterEvaluator
             const { evaluator, evaluatorParams } = wrapper;
             evaluator.init?.(this.updateEvaluatorParams(evaluatorParams!, params.model, index));
         });
-        this.updateActiveFilters(params.model);
+        this.resetActiveList(params.model);
     }
 
     public refresh(params: FilterEvaluatorParams<any, any, any, IMultiFilterModel> & IMultiFilterParams): void {
@@ -42,7 +43,9 @@ export class MultiFilterEvaluator
         this.evaluatorWrappers.forEach((wrapper, index) =>
             wrapper?.evaluator.refresh?.(this.updateEvaluatorParams(params, params.model, index))
         );
-        this.updateActiveFilters(params.model);
+        if (params.source !== 'floating' && params.source !== 'ui') {
+            this.resetActiveList(params.model);
+        }
     }
 
     private updateEvaluatorParams(
@@ -67,17 +70,17 @@ export class MultiFilterEvaluator
         if (filterModels == null) {
             return true;
         }
-        return this.activeFilterIndices.every((index) => {
+        return this.evaluatorWrappers.every((wrapper, index) => {
             const model = filterModels[index];
             if (model == null) {
                 return true;
             }
-            const evaluator = this.evaluatorWrappers[index]?.evaluator;
+            const evaluator = wrapper?.evaluator;
             return !evaluator || evaluator.doesFilterPass({ ...params, model });
         });
     }
 
-    private updateActiveFilters(model: IMultiFilterModel | null): void {
+    private resetActiveList(model: IMultiFilterModel | null): void {
         this.activeFilterIndices = [];
         const filterModels = model?.filterModels;
         if (filterModels == null) {
@@ -89,6 +92,30 @@ export class MultiFilterEvaluator
                 this.activeFilterIndices.push(i);
             }
         }
+    }
+
+    public updateActiveList<TModel>(index: number, childModel: TModel | null): void {
+        const activeFilterIndices = this.activeFilterIndices;
+
+        _removeFromArray(activeFilterIndices, index);
+
+        if (childModel != null) {
+            activeFilterIndices.push(index);
+        }
+    }
+
+    public getLastActiveFilterIndex(): number | null {
+        const activeFilterIndices = this.activeFilterIndices;
+        return activeFilterIndices.length > 0 ? activeFilterIndices[activeFilterIndices.length - 1] : null;
+    }
+
+    public getModelAsString(model: IMultiFilterModel | null): string {
+        if (!model?.filterModels?.length) {
+            return '';
+        }
+        const lastActiveIndex = this.getLastActiveFilterIndex() ?? 0;
+        const activeWrapper = this.evaluatorWrappers[lastActiveIndex];
+        return activeWrapper?.evaluator.getModelAsString?.(model.filterModels[lastActiveIndex]) ?? '';
     }
 
     public override destroy(): void {

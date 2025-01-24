@@ -575,10 +575,12 @@ export class ColumnFilterService extends BeanStub implements NamedBean {
 
     public getEvaluator(column: AgColumn): FilterEvaluator | undefined {
         const filterWrapper = this.cachedFilter(column);
-        if (filterWrapper) {
-            return filterWrapper.isEvaluator ? filterWrapper.evaluator : undefined;
-        }
-        return undefined;
+        return filterWrapper?.isEvaluator ? filterWrapper.evaluator : undefined;
+    }
+
+    private getOrCreateEvaluator(column: AgColumn): FilterEvaluator | undefined {
+        const filterWrapper = this.getOrCreateFilterWrapper(column);
+        return filterWrapper?.isEvaluator ? filterWrapper.evaluator : undefined;
     }
 
     private getOrCreateFilterWrapper(column: AgColumn): FilterWrapper | null {
@@ -751,6 +753,7 @@ export class ColumnFilterService extends BeanStub implements NamedBean {
                     filterChangedCallback({ ...additionalEventAttributes, source: 'columnFilter' });
                 });
             };
+            displayParams.getEvaluator = () => this.getOrCreateEvaluator(column)!;
             displayParams.filterChangedCallback = () => {};
         } else {
             (params as IFilterParams).filterChangedCallback = filterChangedCallback;
@@ -1022,6 +1025,7 @@ export class ColumnFilterService extends BeanStub implements NamedBean {
                         filterChangedCallback({ ...additionalEventAttributes, source: 'columnFilter' });
                     });
                 },
+                getEvaluator: () => this.getOrCreateEvaluator(column)!,
                 source: 'init',
             } as WithoutGridCommon<FloatingFilterDisplayParams>;
         } else {
@@ -1169,7 +1173,7 @@ export class ColumnFilterService extends BeanStub implements NamedBean {
         if (wasEvaluator) {
             if (filterWrapper.evaluatorGenerator != (evaluatorFunc?.evaluatorName ?? evaluatorFunc?.filterEvaluator)) {
                 // evaluator has changed
-                this.destroyBean(filterWrapper.evaluator);
+                const oldEvaluator = filterWrapper.evaluator;
                 const { evaluator, evaluatorParams } = this.createEvaluatorFromFunc(
                     column,
                     colDef,
@@ -1177,6 +1181,9 @@ export class ColumnFilterService extends BeanStub implements NamedBean {
                 );
                 filterWrapper.evaluator = evaluator;
                 filterWrapper.evaluatorParams = evaluatorParams;
+                // destroy the old evaluator after creating and assigning the new one in case anything
+                // is listening to events on the evaluator and needs to resubscribe to the new one
+                this.destroyBean(oldEvaluator);
             } else {
                 const evaluatorParams = this.createEvaluatorParams(column, 'apiParams', colDef.filterParams);
                 // evaluator exists and is the same

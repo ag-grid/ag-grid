@@ -104,7 +104,7 @@ export abstract class SimpleFloatingFilter<TParams extends IFloatingFilterParams
 
         this.filterModelFormatter = new this.FilterModelFormatterClass(
             this.getLocaleTextFunc.bind(this),
-            this.optionsFactory,
+            optionsFactory,
             params.filterParams as ISimpleFilterParams
         );
 
