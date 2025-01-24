@@ -259,39 +259,38 @@ provideGlobalGridOptions({ theme: "legacy"});
     enterprise <a href="https://www.ag-grid.com/charts/" target="_blank">AG Charts</a> library as a dependency.
 </p>
 
-<ExpandingSection headerText="Integrated Charts / Sparklines Migration Steps">
-    <p>
-        For an application using Integrated Charts / Sparklines via the <i>AllEnterpriseModule</i> bundle with the Enterprise
-        version of AG Charts first add <i>ag-charts-enterprise</i> to your package.json dependencies.
-    </p>
-    <Code
-        language={'diff'}
-        code={`"dependencies": {
+<Heading level="3" id="migrating-integrated-charts">Integrated Charts / Sparklines Migration Steps</Heading>
+<p>
+    For an application using Integrated Charts / Sparklines via the <i>AllEnterpriseModule</i> bundle with the Enterprise
+    version of AG Charts first add <i>ag-charts-enterprise</i> to your package.json dependencies.
+</p>
+<Code
+    language={'diff'}
+    code={`"dependencies": {
 "ag-grid-enterprise": "${agGridVersion}",
 +   "ag-charts-enterprise": "${agChartsVersion}",
 }
 `}
-    />
-    <p>
-        Then pass the <i>AgChartsEnterpriseModule</i> to the <i>AllEnterpriseModule</i> to activate the charting features.
-    </p>
-    <Code
-        code={`import { AllEnterpriseModule, LicenseManager, ModuleRegistry } from 'ag-grid-enterprise';
+/>
+<p>
+    Then pass the <i>AgChartsEnterpriseModule</i> to the <i>AllEnterpriseModule</i> to activate the charting features.
+</p>
+<Code
+    code={`import { AllEnterpriseModule, LicenseManager, ModuleRegistry } from 'ag-grid-enterprise';
 import { AgChartsEnterpriseModule } from 'ag-charts-enterprise';
 
 LicenseManager.setLicenseKey('your License Key');
 ModuleRegistry.registerModules([
 AllEnterpriseModule.with(AgChartsEnterpriseModule)
 ]);`}
-    />
+/>
 
-    <p>
-        If you are using AG Grid Modules, then both the <code>IntegratedChartsModule</code> and <code
-            >SparklinesModule</code
-        > also require the AG Charts module to be registered when they are used.
-    </p>
-    <Code
-        code={`import { IntegratedChartsModule, SparklinesModule, LicenseManager, ModuleRegistry } from 'ag-grid-enterprise';
+<p>
+    If you are using AG Grid Modules, then both the <code>IntegratedChartsModule</code> and <code>SparklinesModule</code
+    > also require the AG Charts module to be registered when they are used.
+</p>
+<Code
+    code={`import { IntegratedChartsModule, SparklinesModule, LicenseManager, ModuleRegistry } from 'ag-grid-enterprise';
 import { AgChartsEnterpriseModule } from 'ag-charts-enterprise';
 
 LicenseManager.setLicenseKey('your License Key');
@@ -299,8 +298,7 @@ ModuleRegistry.registerModules([
 IntegratedChartsModule.with(AgChartsEnterpriseModule),
 SparklinesModule.with(AgChartsEnterpriseModule)
 ]);`}
-    />
-</ExpandingSection>
+/>
 
 {/* ------------------------------------------------- */}
 
