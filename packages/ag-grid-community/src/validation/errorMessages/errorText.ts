@@ -103,7 +103,7 @@ export const AG_GRID_ERRORS = {
     7: () => 'Pivoting is not supported with aligned grids as it may produce different columns in each grid.' as const,
     8: ({ key }: { key: string }) => `Unknown key for navigation ${key}` as const,
     9: ({ variable }: { variable: { cssName: string; defaultValue: number } }) =>
-        `No value for ${variable.cssName}. This usually means that the grid has been initialised before styles have been loaded. The default value of ${variable.defaultValue} will be used and updated when styles load.` as const,
+        `No value for ${variable?.cssName}. This usually means that the grid has been initialised before styles have been loaded. The default value of ${variable?.defaultValue} will be used and updated when styles load.` as const,
     10: ({ eventType }: { eventType: RowNodeEventType }) =>
         `As of v33, the '${eventType}' event is deprecated. Use the global 'modelUpdated' event to determine when row children have changed.`,
     11: () => 'No gridOptions provided to createGrid' as const,
@@ -257,7 +257,7 @@ export const AG_GRID_ERRORS = {
         pageSizesSet: any;
         pageSizeOptions: any[];
     }) =>
-        `'paginationPageSize=${paginationPageSizeOption}'${pageSizeSet ? '' : ' (default value)'}, but ${paginationPageSizeOption} is not included in${pageSizesSet ? '' : ' the default'} paginationPageSizeSelector=[${pageSizeOptions.join(', ')}].` as const,
+        `'paginationPageSize=${paginationPageSizeOption}'${pageSizeSet ? '' : ' (default value)'}, but ${paginationPageSizeOption} is not included in${pageSizesSet ? '' : ' the default'} paginationPageSizeSelector=[${pageSizeOptions?.join(', ')}].` as const,
     95: ({
         paginationPageSizeOption,
         paginationPageSizeSelector,
@@ -295,10 +295,10 @@ export const AG_GRID_ERRORS = {
         const textOutput: string[] = [];
         const validComponents = [
             // Don't include the old names / internals in potential suggestions
-            ...Object.keys(agGridDefaults).filter(
+            ...Object.keys(agGridDefaults ?? []).filter(
                 (k) => !['agCellEditor', 'agGroupRowRenderer', 'agSortIndicator'].includes(k)
             ),
-            ...Object.keys(jsComps),
+            ...Object.keys(jsComps ?? []),
         ];
         const suggestions = _fuzzySuggestions({
             inputValue: componentName,
@@ -450,7 +450,13 @@ export const AG_GRID_ERRORS = {
         rowId: string | undefined;
         rowData: any;
         duplicateRowsData: any[];
-    }) => [`duplicate group keys for row data, keys should be unique`, rowId, rowData, ...duplicateRowsData] as const,
+    }) =>
+        [
+            `duplicate group keys for row data, keys should be unique`,
+            rowId,
+            rowData,
+            ...(duplicateRowsData ?? []),
+        ] as const,
     187: ({ rowId, firstData, secondData }: { rowId: string; firstData: any; secondData: any }) =>
         [
             `Duplicate node id ${rowId}. Row IDs are provided via the getRowId() callback. Please modify the getRowId() callback code to provide unique row id values.`,
@@ -508,7 +514,7 @@ export const AG_GRID_ERRORS = {
     213: () => 'Advanced Filter does not work with Filters Tool Panel. Filters Tool Panel has been disabled.' as const,
     214: ({ key }: { key: string }) => `unable to lookup Tool Panel as invalid key supplied: ${key}` as const,
     215: ({ key, defaultByKey }: { key: string; defaultByKey: object }) =>
-        `the key ${key} is not a valid key for specifying a tool panel, valid keys are: ${Object.keys(defaultByKey).join(',')}` as const,
+        `the key ${key} is not a valid key for specifying a tool panel, valid keys are: ${Object.keys(defaultByKey ?? {}).join(',')}` as const,
     216: ({ name }: { name: string }) => `Missing component for '${name}'` as const,
     217: ({ invalidColIds }: { invalidColIds: any[] }) =>
         ['unable to find grid columns for the supplied colDef(s):', invalidColIds] as const,
@@ -564,7 +570,7 @@ export const AG_GRID_ERRORS = {
     253: ({ version }: { version: string }) => ['Illegal version string: ', version] as const,
     254: () => 'Cannot create chart: no chart themes available.' as const,
     255: ({ point }: { point: number }) =>
-        `Lone surrogate U+${point.toString(16).toUpperCase()} is not a scalar value` as const,
+        `Lone surrogate U+${point?.toString(16).toUpperCase()} is not a scalar value` as const,
     256: () => 'Unable to initialise. See validation error, or load ValidationModule if missing.' as const,
     257: () => missingChartsWithModule('IntegratedChartsModule'),
     258: () => missingChartsWithModule('SparklinesModule'),
