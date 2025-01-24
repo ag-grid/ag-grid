@@ -32,6 +32,7 @@ export type IconName =
     | 'setFilterGroupClosed'
     | 'setFilterGroupOpen'
     | 'setFilterGroupIndeterminate'
+    | 'setFilterLoading'
     | 'chart'
     | 'close'
     | 'cancel'

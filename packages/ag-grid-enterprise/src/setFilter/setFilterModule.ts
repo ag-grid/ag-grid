@@ -21,6 +21,8 @@ export const SetFilterModule: _ModuleWithoutApi = {
         // set filter tree list expand/collapse all button, shown when some children are expanded and
         //     others are collapsed
         setFilterGroupIndeterminate: 'tree-indeterminate',
+        // set filter async values loading
+        setFilterLoading: 'loading',
     },
     dependsOn: [EnterpriseCoreModule, _ColumnFilterModule],
 };

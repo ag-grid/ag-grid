@@ -104,6 +104,7 @@ export const ICON_MODULES: Record<IconName, ValidationModuleName | ValidationMod
     setFilterGroupClosed: 'SetFilter',
     setFilterGroupOpen: 'SetFilter',
     setFilterGroupIndeterminate: 'SetFilter',
+    setFilterLoading: 'SetFilter',
     close: 'EnterpriseCore',
     check: 'MenuItem',
     colorPicker: 'CommunityCore',

@@ -25,6 +25,7 @@ import {
     ProvidedFilter,
     RefPlaceholder,
     _areEqual,
+    _createIconNoSpan,
     _error,
     _getActiveDomElement,
     _last,
@@ -66,6 +67,7 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
 
     private readonly eMiniFilter: AgInputTextField = RefPlaceholder;
     private readonly eFilterLoading: HTMLElement = RefPlaceholder;
+    private readonly eFilterLoadingIcon: HTMLElement = RefPlaceholder;
     private readonly eSetFilterList: HTMLElement = RefPlaceholder;
     private readonly eFilterNoMatches: HTMLElement = RefPlaceholder;
 
@@ -98,7 +100,10 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
     protected createBodyTemplate(): string {
         return /* html */ `
             <div class="ag-set-filter">
-                <div data-ref="eFilterLoading" class="ag-filter-loading ag-hidden">${this.translateForSetFilter('loadingOoo')}</div>
+                <div data-ref="eFilterLoading" class="ag-filter-loading ag-loading ag-hidden">
+                    <span data-ref="eFilterLoadingIcon" class="ag-loading-icon"></span>
+                    <span class="ag-loading-text">${this.translateForSetFilter('loadingOoo')}</span>
+                </div>
                 <ag-input-text-field class="ag-mini-filter" data-ref="eMiniFilter"></ag-input-text-field>
                 <div data-ref="eFilterNoMatches" class="ag-filter-no-matches ag-hidden">${this.translateForSetFilter('noMatches')}</div>
                 <div data-ref="eSetFilterList" class="ag-set-filter-list" role="presentation"></div>
@@ -480,6 +485,14 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
     private initialiseFilterBodyUi(): void {
         this.initVirtualList();
         this.initMiniFilter();
+        this.initLoading();
+    }
+
+    private initLoading(): void {
+        const loadingIcon = _createIconNoSpan('setFilterLoading', this.beans, this.setFilterParams.column as AgColumn);
+        if (loadingIcon) {
+            this.eFilterLoadingIcon.appendChild(loadingIcon);
+        }
     }
 
     private initVirtualList(): void {
