@@ -162,7 +162,11 @@ export const LicensePricing: FunctionComponent<Props> = ({ defaultSelection }) =
                         </div>
 
                         <div className={styles.trialLicence}>
-                            <h3 id="request-trial-licence">Request Your Two Week Enterprise Bundle Trial Licence</h3>
+                            <h3 className="text-2xl" id="request-trial-licence">
+                                Request A Two Week
+                                <br />
+                                Enterprise Bundle Trial Licence
+                            </h3>
                             <TrialLicenceForm />
                         </div>
 

@@ -243,7 +243,7 @@ export const TrialLicenceForm: FunctionComponent = () => {
                 </div>
             </div>
 
-            <div className={styles.actions}>
+            <div className={classnames(styles.actions, 'trial-licence-actions')}>
                 <button
                     className={styles.submit}
                     type="submit"
