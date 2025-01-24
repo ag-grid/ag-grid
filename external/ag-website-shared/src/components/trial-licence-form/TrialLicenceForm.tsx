@@ -1,4 +1,6 @@
+import { Icon } from '@ag-website-shared/components/icon/Icon';
 import { TRIAL_LICENCE_FORM_URL } from '@constants';
+import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
 import classnames from 'classnames';
 import { useCallback, useState } from 'react';
 import type { ChangeEventHandler, FormEventHandler, FunctionComponent } from 'react';
@@ -242,8 +244,6 @@ export const TrialLicenceForm: FunctionComponent = () => {
             </div>
 
             <div className={styles.actions}>
-                {formError && <p className={styles.error}>{formError}</p>}
-                {formState === 'success' && <p className={styles.success}>{MESSAGES.formSuccess}</p>}
                 <button
                     className={styles.submit}
                     type="submit"
@@ -251,6 +251,23 @@ export const TrialLicenceForm: FunctionComponent = () => {
                 >
                     Request a trial licence
                 </button>
+
+                {formState === 'success' && (
+                    <p className={styles.statusMessage}>
+                        <Icon name="tick" svgClasses={styles.statusIconSuccess} />
+                        <span>
+                            Thank you. Please check your inbox to validate your email and receive your{' '}
+                            <a href={urlWithBaseUrl('/license-pricing/')}>Enterprise Bundle</a> trial license.
+                        </span>
+                    </p>
+                )}
+
+                {formError && (
+                    <p className={classnames(styles.statusMessage, styles.errorMessage)}>
+                        <Icon name="warning" svgClasses={styles.statusIconError} />
+                        <span dangerouslySetInnerHTML={{ __html: formError }}></span>
+                    </p>
+                )}
             </div>
         </form>
     );
