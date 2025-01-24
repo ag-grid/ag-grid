@@ -163,10 +163,21 @@ export const LicensePricing: FunctionComponent<Props> = ({ defaultSelection }) =
 
                         <div className={styles.trialLicence}>
                             <h3 className="text-2xl" id="request-trial-licence">
-                                Request A Two Week
+                                Request A Free Two Week
                                 <br />
                                 Enterprise Bundle Trial Licence
                             </h3>
+
+                            <p>
+                                If you would like to trial AG Grid Enterprise in a production environment, you can
+                                request a free trial license key. The trial license key will remove the watermark and
+                                provide access to Enterprise support via{' '}
+                                <a href="https://ag-grid.zendesk.com/hc/en-us">Zendesk</a> as well as{' '}
+                                <a href="/charts/">AG Charts</a> Enterprise, our standalone JavaScript charting library.
+                            </p>
+
+                            <p>Fill out the form below and a member of our team will be in touch:</p>
+
                             <TrialLicenceForm />
                         </div>
 
