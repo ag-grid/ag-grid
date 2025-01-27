@@ -2,7 +2,7 @@ import { type Framework } from '@ag-grid-types';
 import { getPagePath } from '@components/docs/utils/filesData';
 import { getPropertiesFromSource } from '@components/reference-documentation/utils/getPropertiesFromSource';
 import { getAllSectionHeadingLinks } from '@components/reference-documentation/utils/interface-helpers';
-import Markdoc, { type Node, type RenderableTreeNode } from '@markdoc/markdoc';
+import Markdoc, { type Node, type RenderableTreeNode, type Tag } from '@markdoc/markdoc';
 import { type MarkdownHeading } from 'astro';
 import Slugger from 'github-slugger';
 import { readFileSync } from 'node:fs';
@@ -163,12 +163,22 @@ async function transformRenderTreeWithReferenceHeadings(renderTree: RenderableTr
     renderTree!.children = children;
 }
 
-function getTextFromChildren(node: Node): string {
+function getTextFromChildren(node: Node | Tag): string {
     const { children } = node;
 
     return children
         .map((child) => {
-            return typeof child === 'string' ? child : getTextFromChildren(child);
+            let output;
+            const childTag = child as Tag;
+            if (Boolean(Markdoc.Tag.isTag(childTag)) && childTag.attributes._navTitle) {
+                // Use _navTitle from tag attributes if available
+                output = childTag.attributes._navTitle;
+            } else if (typeof child === 'string') {
+                output = child;
+            } else {
+                output = getTextFromChildren(child as Node);
+            }
+            return output;
         })
         .join(' ');
 }
