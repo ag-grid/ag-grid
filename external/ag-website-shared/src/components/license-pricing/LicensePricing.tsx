@@ -145,7 +145,7 @@ export const LicensePricing: FunctionComponent<Props> = ({ defaultSelection }) =
 
                             <p className="text-secondary">
                                 Email{' '}
-                                <InfoEmailLink emailSubject="AG Grid Developer license query" trackingType="headerLink">
+                                <InfoEmailLink emailSubject="AG Grid Developer licence query" trackingType="headerLink">
                                     info@ag-grid.com
                                 </InfoEmailLink>{' '}
                                 and start a conversation. We can provide quotes, give bulk pricing, and answer any sales
@@ -153,7 +153,7 @@ export const LicensePricing: FunctionComponent<Props> = ({ defaultSelection }) =
                             </p>
 
                             <InfoEmailLink
-                                emailSubject="AG Grid Developer license query"
+                                emailSubject="AG Grid Developer licence query"
                                 className="button"
                                 trackingType="footer"
                             >
@@ -170,7 +170,7 @@ export const LicensePricing: FunctionComponent<Props> = ({ defaultSelection }) =
 
                             <p>
                                 If you would like to trial AG Grid Enterprise in a production environment, you can
-                                request a free trial license key. The trial license key will remove the watermark and
+                                request a free trial licence key. The trial licence key will remove the watermark and
                                 provide access to Enterprise support via{' '}
                                 <a href="https://ag-grid.zendesk.com/hc/en-us">Zendesk</a> as well as{' '}
                                 <a href="/charts/">AG Charts</a> Enterprise, our standalone JavaScript charting library.
@@ -206,12 +206,12 @@ export const LicensePricing: FunctionComponent<Props> = ({ defaultSelection }) =
                             >
                                 <img
                                     src="https://img.youtube.com/vi/VPr__OKxH50/hqdefault.jpg"
-                                    alt="AG Grid license explained video"
+                                    alt="AG Grid licence explained video"
                                 />
                             </a>
 
                             <div>
-                                <h3>Which licenses do I need?</h3>
+                                <h3>Which licences do I need?</h3>
                                 <p>
                                     <a href="https://www.youtube.com/watch?v=VPr__OKxH50" target="_blank">
                                         <span className="icon"></span>

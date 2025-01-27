@@ -194,7 +194,7 @@ export const TrialLicenceForm: FunctionComponent = () => {
     const hasFormError = Boolean(emailError || firstNameError || lastNameError);
 
     return (
-        <form noValidate className={styles.trailForm} onSubmit={handleFormSubmit}>
+        <form noValidate className={styles.trialForm} onSubmit={handleFormSubmit}>
             <div className={styles.inputs}>
                 <div className={classnames('input-field', { 'input-error': firstNameError })}>
                     <label htmlFor="first-name">First Name</label>
@@ -208,7 +208,16 @@ export const TrialLicenceForm: FunctionComponent = () => {
                         required
                     />
 
-                    <p className={classnames(!firstNameError && styles.isHidden, 'error')}>First name required</p>
+                    <p
+                        className={classnames(
+                            {
+                                [styles.isHidden]: !firstNameError,
+                            },
+                            'error'
+                        )}
+                    >
+                        First name required
+                    </p>
                 </div>
 
                 <div className={classnames('input-field', { 'input-error': lastNameError })}>
@@ -223,7 +232,7 @@ export const TrialLicenceForm: FunctionComponent = () => {
                         required
                     />
 
-                    <p className={classnames(!firstNameError && styles.isHidden, 'error')}>Last name required</p>
+                    <p className={classnames({ [styles.isHidden]: !firstNameError }, 'error')}>Last name required</p>
                 </div>
 
                 <div className={classnames('input-field', styles.emailField, { 'input-error': emailError })}>
@@ -237,7 +246,7 @@ export const TrialLicenceForm: FunctionComponent = () => {
                         value={email}
                         onChange={handleEmailChange}
                     />
-                    <p className={classnames(!emailError && styles.isHidden, 'error')}>
+                    <p className={classnames({ [styles.isHidden]: !emailError }, 'error')}>
                         {emailError ? emailError : 'Email required'}
                     </p>
                 </div>
