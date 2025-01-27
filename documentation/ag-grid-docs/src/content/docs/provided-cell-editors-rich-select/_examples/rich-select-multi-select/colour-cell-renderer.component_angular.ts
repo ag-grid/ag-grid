@@ -1,20 +1,22 @@
 import { NgClass, NgFor, NgStyle } from '@angular/common';
-import { Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, signal } from '@angular/core';
 
 import type { ICellRendererAngularComp } from 'ag-grid-angular';
 import type { ICellRendererParams } from 'ag-grid-community';
 
-// simple cell renderer returns dummy buttons. in a real application, a component would probably
-// be used with operations tied to the buttons. in this example, the cell renderer is just for
-// display purposes.
 @Component({
     standalone: true,
+    changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [NgFor, NgClass, NgStyle],
     template: `
-        <div [ngClass]="{ 'custom-color-cell-renderer': true, 'color-pill': isPill, 'color-tag': !isPill }">
-            <ng-container *ngFor="let value of values">
+        <div [ngClass]="{ 'custom-color-cell-renderer': true, 'color-pill': isPill(), 'color-tag': !isPill() }">
+            <ng-container *ngFor="let value of values()">
                 <span
-                    [ngStyle]="{ 'background-color': backgroundColor, 'border-color': value, 'box-shadow': boxShadow }"
+                    [ngStyle]="{
+                        'background-color': backgroundColor(),
+                        'border-color': value,
+                        'box-shadow': boxShadow()
+                    }"
                     >{{ value }}</span
                 >
             </ng-container>
@@ -54,20 +56,23 @@ import type { ICellRendererParams } from 'ag-grid-community';
     ],
 })
 export class ColourCellRenderer implements ICellRendererAngularComp {
-    public params!: ICellRendererParams;
-    public isPill!: boolean;
-    public values!: string[];
-    public backgroundColor!: string;
-    public boxShadow!: string;
+    params = signal<ICellRendererParams | undefined>(undefined);
+
+    isPill = computed<boolean>(() => Array.isArray(this.params()?.value));
+
+    values = computed<string[]>(() => {
+        const value = this.params()?.value;
+        return (this.isPill() ? value : [value]).filter((value: string | null) => value != null && value !== '');
+    });
+    backgroundColor = computed<string>(() =>
+        this.isPill() ? `color-mix(in srgb, transparent, ${this.params()?.value} 20%)` : ''
+    );
+    boxShadow = computed<string>(() =>
+        this.isPill() ? `0 0 0 1px color-mix(in srgb, transparent, ${this.params()?.value} 50%)` : ''
+    );
 
     agInit(params: ICellRendererParams): void {
-        const { value } = params;
-
-        this.params = params;
-        const isPill = (this.isPill = Array.isArray(value));
-        this.values = (this.isPill ? value : [value]).filter((value: string | null) => value != null && value !== '');
-        this.backgroundColor = isPill ? `color-mix(in srgb, transparent, ${value} 20%)` : '';
-        this.boxShadow = isPill ? `0 0 0 1px color-mix(in srgb, transparent, ${value} 50%)` : '';
+        this.params.set(params);
     }
 
     refresh() {

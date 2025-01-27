@@ -1,5 +1,5 @@
 import { HttpClient, HttpClientModule } from '@angular/common/http';
-import { Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, signal } from '@angular/core';
 
 import type { ICellRendererAngularComp } from 'ag-grid-angular';
 import { AgGridAngular } from 'ag-grid-angular';
@@ -31,13 +31,14 @@ interface IRow {
 // Custom Cell Renderer Component
 @Component({
     selector: 'app-mission-result-renderer',
+    changeDetection: ChangeDetectionStrategy.OnPush,
     standalone: true,
     template: `
         <span>
-            @if (value) {
+            @if (value()) {
                 <img
-                    [alt]="value"
-                    [src]="'https://www.ag-grid.com/example-assets/icons/' + value + '.png'"
+                    [alt]="value()"
+                    [src]="'https://www.ag-grid.com/example-assets/icons/' + value() + '.png'"
                     [height]="30"
                 />
             }
@@ -48,15 +49,13 @@ interface IRow {
     ],
 })
 export class MissionResultRenderer implements ICellRendererAngularComp {
-    // Init Cell Value
-    public value!: string;
+    value = signal('');
     agInit(params: ICellRendererParams): void {
-        this.value = params.value ? 'tick-in-circle' : 'cross-in-circle';
+        this.refresh(params);
     }
 
-    // Return Cell Value
     refresh(params: ICellRendererParams): boolean {
-        this.value = params.value;
+        this.value.set(params.value ? 'tick-in-circle' : 'cross-in-circle');
         return true;
     }
 }
@@ -64,33 +63,33 @@ export class MissionResultRenderer implements ICellRendererAngularComp {
 // Custom Cell Renderer Component
 @Component({
     selector: 'app-company-logo-renderer',
+    changeDetection: ChangeDetectionStrategy.OnPush,
     standalone: true,
     template: `
         <span>
-            @if (value) {
+            @if (value()) {
                 <img
-                    [alt]="value"
-                    [src]="'https://www.ag-grid.com/example-assets/space-company-logos/' + value.toLowerCase() + '.png'"
-                    [height]="30"
+                    [alt]="value()"
+                    [src]="'https://www.ag-grid.com/example-assets/space-company-logos/' + lowercase() + '.png'"
                 />
-                <p>{{ value }}</p>
+                <p>{{ value() }}</p>
             }
         </span>
     `,
     styles: [
-        'img {display: block; width: 25px; height: auto; max-height: 50%; margin-right: 12px; filter: brightness(1.1);} span {display: flex; height: 100%; width: 100%; align-items: center} p { text-overflow: ellipsis; overflow: hidden; white-space: nowrap }',
+        'img {display: block; width: 25px; height: auto; max-height: 50%; margin-right: 12px; filter: brightness(1.2);} span {display: flex; height: 100%; width: 100%; align-items: center} p { text-overflow: ellipsis; overflow: hidden; white-space: nowrap }',
     ],
 })
 export class CompanyLogoRenderer implements ICellRendererAngularComp {
-    // Init Cell Value
-    public value!: string;
+    value = signal('');
+    lowercase = computed(() => this.value().toLowerCase());
+
     agInit(params: ICellRendererParams): void {
-        this.value = params.value;
+        this.refresh(params);
     }
 
-    // Return Cell Value
     refresh(params: ICellRendererParams): boolean {
-        this.value = params.value;
+        this.value.set(params.value);
         return true;
     }
 }

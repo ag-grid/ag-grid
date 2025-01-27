@@ -17,7 +17,7 @@ export interface CustomParams {
             type="number"
             min="0"
             [(ngModel)]="currentValue"
-            (input)="onInputBoxChanged($event)"
+            (input)="onInputBoxChanged()"
         />`,
 })
 export class NumberFloatingFilterComponent implements IFloatingFilterAngularComp {

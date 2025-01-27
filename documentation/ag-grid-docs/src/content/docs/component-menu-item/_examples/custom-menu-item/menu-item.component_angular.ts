@@ -1,5 +1,4 @@
 import { Component } from '@angular/core';
-import { FormsModule } from '@angular/forms';
 
 import type { IMenuItemAngularComp } from 'ag-grid-angular';
 import type { IMenuConfigParams, IMenuItemParams } from 'ag-grid-community';
@@ -10,7 +9,6 @@ export interface CustomMenuItemParams extends IMenuItemParams {
 
 @Component({
     standalone: true,
-    imports: [FormsModule],
     template: `
         <div>
             <span class="ag-menu-option-part ag-menu-option-icon" role="presentation"></span>
@@ -27,13 +25,11 @@ export interface CustomMenuItemParams extends IMenuItemParams {
     `,
 })
 export class MenuItem implements IMenuItemAngularComp {
-    params!: CustomMenuItemParams;
     name!: string;
     showSubMenu!: boolean;
     buttonValue!: string;
 
     agInit(params: CustomMenuItemParams): void {
-        this.params = params;
         this.name = params.name;
         this.showSubMenu = !!params.subMenu;
         this.buttonValue = params.buttonValue;

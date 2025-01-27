@@ -96,8 +96,12 @@ export class AngularFrameworkOverrides extends VanillaFrameworkOverrides {
     }
 
     runInsideAngular<T>(callback: () => T): T {
+        if (!this._ngZone || NgZone.isInAngularZone()) {
+            return callback();
+        }
+
         // Check for _ngZone existence as it is not present when Zoneless
-        return this._ngZone ? this._ngZone.run(callback) : callback();
+        return this._ngZone.run(callback);
     }
 
     runOutsideAngular<T>(callback: () => T, source?: FrameworkOverridesIncomingSource): T {

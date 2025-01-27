@@ -1,33 +1,31 @@
-import { Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, signal } from '@angular/core';
 
 import type { ICellRendererAngularComp } from 'ag-grid-angular';
 import type { ICellRendererParams } from 'ag-grid-community';
 
-// simple cell renderer returns dummy buttons. in a real application, a component would probably
-// be used with operations tied to the buttons. in this example, the cell renderer is just for
-// display purposes.
 @Component({
     standalone: true,
+    changeDetection: ChangeDetectionStrategy.OnPush,
     template: `
-        @if (params.value === '(Select All)') {
-            <div>{{ params.value }}</div>
+        @if (value() === '(Select All)') {
+            <div>{{ value() }}</div>
         } @else {
-            <span [style.color]="removeSpaces(params.valueFormatted)">{{ params.valueFormatted }}</span>
+            <span [style.color]="valueNoSpaces()">{{ valueFormatted() }}</span>
         }
     `,
 })
 export class ColourCellRenderer implements ICellRendererAngularComp {
-    public params!: ICellRendererParams;
+    params = signal<ICellRendererParams | undefined>(undefined);
+
+    value = computed(() => this.params()?.value);
+    valueFormatted = computed(() => this.params()?.valueFormatted);
+    valueNoSpaces = computed(() => this.valueFormatted()?.replace(/\s/g, ''));
 
     agInit(params: ICellRendererParams): void {
-        this.params = params;
+        this.params.set(params);
     }
 
     refresh() {
         return false;
-    }
-
-    removeSpaces(str: string) {
-        return str ? str.replace(/\s/g, '') : str;
     }
 }

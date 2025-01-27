@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, signal } from '@angular/core';
 
 import type { ICellRendererAngularComp } from 'ag-grid-angular';
 
@@ -11,19 +11,19 @@ import type { ICellRendererAngularComp } from 'ag-grid-angular';
                     <div>
                         <label>
                             Call Id:<br />
-                            <input type="text" value="{{ firstRecord.callId }}" />
+                            <input type="text" value="{{ firstRecord()?.callId }}" />
                         </label>
                     </div>
                     <div>
                         <label>
                             Number:<br />
-                            <input type="text" value="{{ firstRecord.number }}" />
+                            <input type="text" value="{{ firstRecord()?.number }}" />
                         </label>
                     </div>
                     <div>
                         <label>
                             Direction:<br />
-                            <input type="text" value="{{ firstRecord.direction }}" />
+                            <input type="text" value="{{ firstRecord()?.direction }}" />
                         </label>
                     </div>
                 </div>
@@ -32,10 +32,10 @@ import type { ICellRendererAngularComp } from 'ag-grid-angular';
     `,
 })
 export class DetailCellRenderer implements ICellRendererAngularComp {
-    firstRecord!: any;
+    firstRecord = signal<any>(undefined);
     // called on init
     agInit(params: any): void {
-        this.firstRecord = params.data.callRecords[0];
+        this.firstRecord.set(params.data.callRecords[0]);
     }
 
     // called when the cell is refreshed

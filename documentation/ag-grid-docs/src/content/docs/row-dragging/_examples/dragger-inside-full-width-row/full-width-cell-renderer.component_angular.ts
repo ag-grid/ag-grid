@@ -1,26 +1,27 @@
-import { Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
 
 import type { ICellRendererAngularComp } from 'ag-grid-angular';
 import type { ICellRendererParams } from 'ag-grid-community';
 
 @Component({
     standalone: true,
+    changeDetection: ChangeDetectionStrategy.OnPush,
     template: `
         <div class="full-width-panel">
             <div class="full-width-flag">
-                <img border="0" [src]="flag" />
+                <img border="0" [src]="flag()" />
             </div>
             <div class="full-width-summary">
-                <span class="full-width-title">{{ data.name }}</span>
+                <span class="full-width-title">{{ data()?.name }}</span>
                 <br />
                 <label>
                     <b>Population:</b>
-                    {{ data.population }}
+                    {{ data()?.population }}
                 </label>
                 <br />
                 <label>
                     <b>Language:</b>
-                    {{ data.language }}
+                    {{ data()?.language }}
                 </label>
                 <br />
             </div>
@@ -77,13 +78,15 @@ import type { ICellRendererParams } from 'ag-grid-community';
     ],
 })
 export class FullWidthCellRenderer implements ICellRendererAngularComp {
-    public data: any;
-    public flag!: string;
+    data = signal<any>(undefined);
+    flag = signal<string>('');
 
     agInit(params: ICellRendererParams): void {
-        this.data = params.node.data;
-        this.flag = `https://www.ag-grid.com/example-assets/large-flags/${this.data.code}.png`;
-        params.registerRowDragger(params.eParentOfValue, undefined, params.data.name, true);
+        const data = params.node.data;
+        this.data.set(data);
+        this.flag.set(`https://www.ag-grid.com/example-assets/large-flags/${data.code}.png`);
+
+        params.registerRowDragger(params.eParentOfValue, undefined, data.name, true);
     }
 
     mouseWheelListener(event: Event) {

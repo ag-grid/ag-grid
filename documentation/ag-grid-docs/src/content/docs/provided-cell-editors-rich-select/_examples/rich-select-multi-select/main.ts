@@ -41,6 +41,10 @@ const valueParser = (params: ValueParserParams) => {
         return null;
     }
 
+    if (Array.isArray(newValue)) {
+        return newValue;
+    }
+
     return params.newValue.split(',');
 };
 

@@ -35,6 +35,7 @@ export class AnimationFrameService extends BeanStub implements NamedBean {
     // TaskItem so we know what index the item is for.
     private createTasksP1: TaskList = { list: [], sorted: false }; // eg drawing back-ground of rows
     private createTasksP2: TaskList = { list: [], sorted: false }; // eg cell renderers, adding hover functionality
+    private createTasksPA: TaskList = { list: [], sorted: false }; // eg Angular components
 
     // destroy tasks are to do with row removal. they are done after row creation as the user will need to see new
     // rows first (as blank is scrolled into view), when we remove the old rows (no longer in view) is not as
@@ -82,7 +83,11 @@ export class AnimationFrameService extends BeanStub implements NamedBean {
         }
     }
 
-    public createTask(task: () => void, index: number, list: 'createTasksP1' | 'createTasksP2') {
+    public createTask(
+        task: () => void,
+        index: number,
+        list: 'createTasksP1' | 'createTasksP2' | 'createTasksPA'
+    ): void {
         this.verifyAnimationFrameOn(list);
         const taskItem: TaskItem = { task, index, createOrder: ++this.taskCount };
         this.addTaskToList(this[list], taskItem);
@@ -128,6 +133,9 @@ export class AnimationFrameService extends BeanStub implements NamedBean {
         const p2TaskList = this.createTasksP2;
         const p2Tasks = p2TaskList.list;
 
+        const pATaskList = this.createTasksPA;
+        const pATasks = pATaskList.list;
+
         const destroyTasks = this.destroyTasks;
 
         const frameStart = new Date().getTime();
@@ -142,13 +150,24 @@ export class AnimationFrameService extends BeanStub implements NamedBean {
             const gridBodyDidSomething = scrollFeature.scrollGridIfNeeded();
 
             if (!gridBodyDidSomething) {
-                let task: () => void;
+                let task: (() => void) | undefined = undefined;
                 if (p1Tasks.length) {
                     this.sortTaskList(p1TaskList);
                     task = p1Tasks.pop()!.task;
                 } else if (p2Tasks.length) {
                     this.sortTaskList(p2TaskList);
                     task = p2Tasks.pop()!.task;
+                } else if (pATasks.length) {
+                    this.sortTaskList(pATaskList);
+                    this.beans.frameworkOverrides.wrapOutgoing(() => {
+                        console.log('pATasks', pATasks.length);
+                        while (pATasks.length) {
+                            task = pATasks.pop()!.task;
+                            if (!this.cancelledTasks.has(task)) {
+                                task();
+                            }
+                        }
+                    });
                 } else if (destroyTasks.length) {
                     task = destroyTasks.pop()!;
                 } else {
@@ -156,7 +175,7 @@ export class AnimationFrameService extends BeanStub implements NamedBean {
                     break;
                 }
 
-                if (!this.cancelledTasks.has(task)) {
+                if (!!task && !this.cancelledTasks.has(task)) {
                     task();
                 }
             }
@@ -164,7 +183,7 @@ export class AnimationFrameService extends BeanStub implements NamedBean {
             duration = new Date().getTime() - frameStart;
         }
 
-        if (p1Tasks.length || p2Tasks.length || destroyTasks.length) {
+        if (p1Tasks.length || p2Tasks.length || pATasks.length || destroyTasks.length) {
             this.requestFrame();
         } else {
             this.ticking = false;

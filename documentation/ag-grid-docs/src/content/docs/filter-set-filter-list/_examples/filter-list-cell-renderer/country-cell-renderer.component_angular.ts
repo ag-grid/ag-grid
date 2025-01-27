@@ -1,25 +1,37 @@
-import { Component } from '@angular/core';
+import { Component, signal } from '@angular/core';
 
 import type { ICellRendererAngularComp } from 'ag-grid-angular';
 import type { ICellRendererParams } from 'ag-grid-community';
 
 @Component({
     standalone: true,
-    template: ` <div [innerHTML]="value"></div>`,
+    template: ` <div>
+        @if (flagCode()) {
+            <img
+                class="flag"
+                border="0"
+                width="15"
+                height="10"
+                src="https://flags.fmcdn.net/data/flags/mini/{{ flagCode() }}.png"
+            />
+        }
+        {{ textValue() }}
+    </div>`,
 })
 export class CountryCellRenderer implements ICellRendererAngularComp {
-    public value!: string;
+    textValue = signal<string | undefined>(undefined);
+    flagCode = signal<string | undefined>(undefined);
 
     agInit(params: ICellRendererParams & { isFilterRenderer?: boolean }): void {
-        if (!params.value) {
-            this.value = params.isFilterRenderer ? '(Blanks)' : params.value;
-        } else if (params.value === '(Select All)') {
-            this.value = params.value;
-        } else {
-            const url = `https://flags.fmcdn.net/data/flags/mini/${params.context.COUNTRY_CODES[params.value]}.png`;
-            const flagImage = `<img class="flag" border="0" width="15" height="10" src="${url}">`;
+        this.flagCode.set(undefined);
 
-            this.value = `${flagImage} ${params.value}`;
+        if (!params.value) {
+            this.textValue.set(params.isFilterRenderer ? '(Blanks)' : params.value);
+        } else if (params.value === '(Select All)') {
+            this.textValue.set(params.value);
+        } else {
+            this.flagCode.set(params.context.COUNTRY_CODES[params.value]);
+            this.textValue.set(params.value);
         }
     }
 

@@ -1,10 +1,11 @@
-import { Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
 
 import type { ICellRendererAngularComp } from 'ag-grid-angular';
 import type { ICellRendererParams } from 'ag-grid-community';
 
 @Component({
     standalone: true,
+    changeDetection: ChangeDetectionStrategy.OnPush,
     template: `
         <span class="total-value-renderer">
             <span>{{ country }}</span>
@@ -13,12 +14,12 @@ import type { ICellRendererParams } from 'ag-grid-community';
     `,
 })
 export class MedalRenderer implements ICellRendererAngularComp {
-    public country: string = '';
-    public total: string = '';
+    public country = signal('');
+    private total: string = '';
 
     // gets called once before the renderer is used
     agInit(params: ICellRendererParams): void {
-        this.country = params.valueFormatted ? params.valueFormatted : params.value;
+        this.country.set(params.valueFormatted ?? params.value);
         this.total = params.data.total;
     }
 

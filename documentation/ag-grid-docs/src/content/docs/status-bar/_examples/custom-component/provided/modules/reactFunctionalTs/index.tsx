@@ -4,6 +4,7 @@ import { createRoot } from 'react-dom/client';
 import type { ColDef, RowSelectionOptions, StatusPanelDef } from 'ag-grid-community';
 import {
     ClientSideRowModelModule,
+    EventApiModule,
     ModuleRegistry,
     RowApiModule,
     RowSelectionModule,
@@ -19,6 +20,7 @@ import CountStatusBarComponent from './countStatusBarComponent';
 import './styles.css';
 
 ModuleRegistry.registerModules([
+    EventApiModule,
     TextEditorModule,
     TextFilterModule,
     RowSelectionModule,

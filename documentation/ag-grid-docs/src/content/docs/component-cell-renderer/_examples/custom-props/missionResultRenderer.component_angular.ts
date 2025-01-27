@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
 
 import type { ICellRendererAngularComp } from 'ag-grid-angular';
 import type { ICellRendererParams } from 'ag-grid-community';
@@ -10,10 +10,11 @@ interface MissionCellRendererParams extends ICellRendererParams {
 @Component({
     selector: 'app-mission-result-renderer',
     standalone: true,
+    changeDetection: ChangeDetectionStrategy.OnPush,
     template: `
         <span :class="missionSpan">
-            @if (value) {
-                <img [alt]="value" [src]="value" [height]="30" :class="missionIcon" />
+            @if (value()) {
+                <img [alt]="value()" [src]="value()" [height]="30" :class="missionIcon" />
             }
         </span>
     `,
@@ -22,26 +23,20 @@ interface MissionCellRendererParams extends ICellRendererParams {
     ],
 })
 export class MissionResultRenderer implements ICellRendererAngularComp {
-    // Init Cell Value
-    public value!: string;
+    value = signal<string>('');
     agInit(params: MissionCellRendererParams): void {
-        if (params.src) {
-            this.value = params.src(params.value);
-        } else {
-            this.value = `https://www.ag-grid.com/example-assets/icons/${
-                params.value ? 'tick-in-circle' : 'cross-in-circle'
-            }.png`;
-        }
+        this.refresh(params);
     }
 
     // Return Cell Value
     refresh(params: MissionCellRendererParams): boolean {
         if (params.src) {
-            this.value = params.src(params.value);
+            this.value.set(params.src(params.value));
         } else {
-            this.value = `https://www.ag-grid.com/example-assets/icons/${
+            const defaultSrc = `https://www.ag-grid.com/example-assets/icons/${
                 params.value ? 'tick-in-circle' : 'cross-in-circle'
             }.png`;
+            this.value.set(defaultSrc);
         }
         return true;
     }

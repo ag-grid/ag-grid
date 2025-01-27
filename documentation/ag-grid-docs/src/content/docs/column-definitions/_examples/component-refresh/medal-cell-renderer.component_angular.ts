@@ -1,14 +1,15 @@
-import { Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
 
 import type { ICellRendererAngularComp } from 'ag-grid-angular';
 import type { ICellRendererParams } from 'ag-grid-community';
 
 @Component({
     standalone: true,
-    template: `<span>{{ this.displayValue }}</span>`,
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    template: `<span>{{ displayValue() }}</span>`,
 })
 export class MedalCellRenderer implements ICellRendererAngularComp {
-    displayValue!: string;
+    displayValue = signal<string>('');
 
     agInit(params: ICellRendererParams): void {
         console.log('renderer created');
@@ -22,6 +23,7 @@ export class MedalCellRenderer implements ICellRendererAngularComp {
     }
 
     private updateDisplayValue(params: ICellRendererParams): void {
-        this.displayValue = new Array(params.value!).fill('#').join('');
+        const medalSymbolsForCount = new Array(params.value!).fill('#').join('');
+        this.displayValue.set(medalSymbolsForCount);
     }
 }

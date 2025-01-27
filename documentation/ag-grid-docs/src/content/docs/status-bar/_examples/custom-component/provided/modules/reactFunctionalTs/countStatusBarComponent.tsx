@@ -6,7 +6,16 @@ export default (props: CustomStatusPanelProps) => {
     const [count, setCount] = useState(0);
 
     useEffect(() => {
-        setCount(props.api.getDisplayedRowCount());
+        const onRowCountChanged = () => {
+            setCount(props.api.getDisplayedRowCount());
+        };
+        props.api.addEventListener('rowDataUpdated', onRowCountChanged);
+
+        // Get the initial count
+        onRowCountChanged();
+        return () => {
+            props.api.removeEventListener('rowDataUpdated', onRowCountChanged);
+        };
     }, []);
 
     return (

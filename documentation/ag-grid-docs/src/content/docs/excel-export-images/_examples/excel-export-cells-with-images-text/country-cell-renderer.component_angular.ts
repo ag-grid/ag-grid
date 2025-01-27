@@ -1,28 +1,24 @@
-import { Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
 
 import type { ICellRendererAngularComp } from 'ag-grid-angular';
 import type { ICellRendererParams } from 'ag-grid-community';
 
 import type { FlagContext, IOlympicData } from './interfaces';
 
-// simple cell renderer returns dummy buttons. in a real application, a component would probably
-// be used with operations tied to the buttons. in this example, the cell renderer is just for
-// display purposes.
 @Component({
     standalone: true,
-    template: `<div>
-        <img
-            alt="{{ params.data.country }}"
-            src="{{ params.context.base64flags[params.context.countryCodes[params.data.country]] }}"
-        />
-        {{ params.data.country }}
-    </div>`,
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    template: `<img alt="{{ country() }}" src="{{ base64flags()[countryCodes()[country()]] }}" /> {{ country() }}`,
 })
 export class CountryCellRenderer implements ICellRendererAngularComp {
-    public params!: ICellRendererParams<IOlympicData, any, FlagContext>;
+    country = signal<string>('');
+    base64flags = signal<Record<string, string>>({});
+    countryCodes = signal<Record<string, string>>({});
 
     agInit(params: ICellRendererParams<IOlympicData, any, FlagContext>): void {
-        this.params = params;
+        this.country.set(params.data?.country ?? '');
+        this.base64flags.set(params.context.base64flags);
+        this.countryCodes.set(params.context.countryCodes);
     }
 
     refresh() {

@@ -1,4 +1,3 @@
-import { NgClass } from '@angular/common';
 import { Component, ElementRef, ViewChild } from '@angular/core';
 
 import type { IDragAndDropImageAngularComponent } from 'ag-grid-angular';
@@ -6,7 +5,6 @@ import type { IDragAndDropImageParams } from 'ag-grid-community';
 
 @Component({
     standalone: true,
-    imports: [NgClass],
     template: `
         <div #eImage class="my-custom-drag-and-drop-cover">
             <i #eIcon class="fas fa-2x"></i>

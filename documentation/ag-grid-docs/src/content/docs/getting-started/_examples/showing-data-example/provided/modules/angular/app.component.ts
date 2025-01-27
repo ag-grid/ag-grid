@@ -1,5 +1,5 @@
 // NOTE: Angular CLI does not support component CSS imports: angular-cli/issues/23273
-import { Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 
 import type { ICellRendererAngularComp } from 'ag-grid-angular';
 import { AgGridAngular } from 'ag-grid-angular';
@@ -10,6 +10,7 @@ ModuleRegistry.registerModules([AllCommunityModule]);
 
 @Component({
     standalone: true,
+    changeDetection: ChangeDetectionStrategy.OnPush,
     template: `<button (click)="buttonClicked()">Push Me!</button>`,
 })
 export class CustomButtonComponent implements ICellRendererAngularComp {

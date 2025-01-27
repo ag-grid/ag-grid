@@ -1,5 +1,5 @@
 import { HttpClient, HttpClientModule } from '@angular/common/http';
-import { Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, signal } from '@angular/core';
 
 import type { ICellRendererAngularComp } from 'ag-grid-angular';
 import { AgGridAngular } from 'ag-grid-angular';
@@ -29,15 +29,16 @@ interface IRow {
 // Custom Cell Renderer Component
 @Component({
     selector: 'app-company-logo-renderer',
+    changeDetection: ChangeDetectionStrategy.OnPush,
     standalone: true,
     template: `
         <span>
-            @if (value) {
+            @if (value()) {
                 <img
-                    [alt]="value"
-                    [src]="'https://www.ag-grid.com/example-assets/space-company-logos/' + value.toLowerCase() + '.png'"
+                    [alt]="value()"
+                    [src]="'https://www.ag-grid.com/example-assets/space-company-logos/' + lowercase() + '.png'"
                 />
-                <p>{{ value }}</p>
+                <p>{{ value() }}</p>
             }
         </span>
     `,
@@ -46,15 +47,15 @@ interface IRow {
     ],
 })
 export class CompanyLogoRenderer implements ICellRendererAngularComp {
-    // Init Cell Value
-    public value!: string;
+    value = signal('');
+    lowercase = computed(() => this.value().toLowerCase());
+
     agInit(params: ICellRendererParams): void {
-        this.value = params.value;
+        this.value.set(params.value);
     }
 
-    // Return Cell Value
     refresh(params: ICellRendererParams): boolean {
-        this.value = params.value;
+        this.value.set(params.value);
         return true;
     }
 }

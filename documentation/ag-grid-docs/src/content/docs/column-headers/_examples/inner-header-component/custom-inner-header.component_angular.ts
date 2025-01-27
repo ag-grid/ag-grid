@@ -1,5 +1,4 @@
-import { NgClass } from '@angular/common';
-import { Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
 
 import type { IHeaderAngularComp } from 'ag-grid-angular';
 import type { IHeaderParams } from 'ag-grid-community';
@@ -10,13 +9,14 @@ export interface ICustomInnerHeaderParams {
 
 @Component({
     standalone: true,
-    imports: [NgClass],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+
     template: `
         <div class="customInnerHeader">
-            @if (params.icon) {
-                <i class="fa {{ params.icon }}"></i>
+            @if (icon()) {
+                <i class="fa {{ icon() }}"></i>
             }
-            <span>{{ params.displayName }}</span>
+            <span>{{ displayName() }}</span>
         </div>
     `,
     styles: [
@@ -39,13 +39,15 @@ export interface ICustomInnerHeaderParams {
     ],
 })
 export class CustomInnerHeader implements IHeaderAngularComp {
-    public params!: IHeaderParams & ICustomInnerHeaderParams;
+    icon = signal('');
+    displayName = signal('');
 
     agInit(params: IHeaderParams & ICustomInnerHeaderParams): void {
-        this.params = params;
+        this.icon.set(params.icon);
+        this.displayName.set(params.displayName);
     }
 
     refresh(params: IHeaderParams): boolean {
-        return true;
+        return false;
     }
 }

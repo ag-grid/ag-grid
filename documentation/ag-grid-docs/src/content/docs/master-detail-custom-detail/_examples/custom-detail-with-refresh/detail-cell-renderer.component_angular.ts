@@ -1,10 +1,11 @@
-import { Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
 
 import type { ICellRendererAngularComp } from 'ag-grid-angular';
 import type { ICellRendererParams } from 'ag-grid-community';
 
 @Component({
     standalone: true,
+    changeDetection: ChangeDetectionStrategy.OnPush,
     template: `
         <div>
             <form>
@@ -12,13 +13,13 @@ import type { ICellRendererParams } from 'ag-grid-community';
                     <p>
                         <label>
                             Calls:<br />
-                            <input type="text" value="{{ callsCount }}" />
+                            <input type="text" value="{{ callsCount() }}" />
                         </label>
                     </p>
                     <p>
                         <label>
                             Last Updated:
-                            {{ now }}
+                            {{ now() }}
                         </label>
                     </p>
                 </div>
@@ -27,8 +28,8 @@ import type { ICellRendererParams } from 'ag-grid-community';
     `,
 })
 export class DetailCellRenderer implements ICellRendererAngularComp {
-    public callsCount!: number;
-    public now!: string;
+    callsCount = signal(0);
+    now = signal('');
 
     // called on init
     agInit(params: ICellRendererParams): void {
@@ -37,8 +38,8 @@ export class DetailCellRenderer implements ICellRendererAngularComp {
 
     // called when the cell is refreshed
     refresh(params: ICellRendererParams): boolean {
-        this.callsCount = params.data.calls;
-        this.now = new Date().toLocaleTimeString();
+        this.callsCount.set(params.data.calls);
+        this.now.set(new Date().toLocaleTimeString());
         // tell the grid not to destroy and recreate
         return true;
     }

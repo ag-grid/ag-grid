@@ -1,20 +1,21 @@
 import type { ElementRef } from '@angular/core';
-import { Component, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, ViewChild, signal } from '@angular/core';
 
 import type { ICellRendererAngularComp } from 'ag-grid-angular';
 import type { ICellRendererParams } from 'ag-grid-community';
 
 @Component({
     standalone: true,
-    template: `<div #wrapper style="overflow: hidden; text-overflow: ellipsis">{{ this.displayValue }}</div>`,
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    template: `<div #wrapper style="overflow: hidden; text-overflow: ellipsis">{{ displayValue() }}</div>`,
 })
 export class AthleteCellRenderer implements ICellRendererAngularComp {
-    public displayValue!: string;
+    displayValue = signal('');
 
     @ViewChild('wrapper', { static: true }) private wrapper!: ElementRef;
 
     agInit(params: ICellRendererParams<IOlympicData, string>): void {
-        this.displayValue = params.value!;
+        this.displayValue.set(params.value!);
         const el = this.wrapper.nativeElement;
 
         params.setTooltip(`Dynamic Tooltip for ${params.value}`, () => el.scrollWidth > el.clientWidth);
