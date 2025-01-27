@@ -7,6 +7,13 @@ import Code from '@ag-website-shared/components/code/Code';
 import { agGridVersion, agChartsVersion } from '@constants';
 import ExpandingSection from '@ag-website-shared/components/expanding-section/ExpandingSection.astro';
 import DocumentationArchiveLink from '@ag-website-shared/components/documentation-archive/DocumentationArchiveLink.astro';
+import { Icon } from '@ag-website-shared/components/icon/Icon';
+import { getChangelogUrl } from '@ag-website-shared/utils/getChangelogUrl';
+import type { Library } from '@ag-grid-types';
+
+interface Props {
+    site: Library;
+}
 
 const framework = getFrameworkFromPath(Astro.url.pathname);
 
@@ -14,6 +21,8 @@ const isJS = framework === 'javascript';
 const isReact = framework === 'react';
 const isAngular = framework === 'angular';
 const isVue = framework === 'vue';
+
+const { site } = Astro.props as Props;
 ---
 
 <p>Reductions in bundle size, updated theming, column header content customization.</p>
@@ -1096,3 +1105,5 @@ provideGlobalGridOptions({ theme: "legacy" });
         <li><code>ExcelStyle</code>: Legacy property <code>name</code> - removed.</li>
     </ul>
 </ExpandingSection>
+
+<Heading level={2} id="changes-list"><a href={getChangelogUrl({ site, version: "33.0.0" })}>Changes List <Icon name="arrowRight" /></a></Heading>
