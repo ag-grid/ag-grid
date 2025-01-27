@@ -5,7 +5,7 @@ import type { Library } from '@ag-grid-types';
 import { pathJoin } from '@utils/pathJoin';
 import { PRODUCTION_GRID_SITE_URL, PRODUCTION_CHARTS_SITE_URL } from '@constants';
 import { ArchiveLink } from './ArchiveLink';
-import { versionIsGreaterOrEqual } from '@ag-website-shared/utils/versionIsGreaterOrEqual';
+import { getHasDocumentationLink } from '@ag-website-shared/utils/getHasDocumentationLink';
 
 interface Props {
     site: Library;
@@ -13,8 +13,6 @@ interface Props {
 }
 
 const { site, versionsData } = Astro.props as Props;
-
-const FIRST_GRID_VERSION_WITH_HOMEPAGE = '27.3.0';
 
 const getVersionType = (version: string) => {
     const [_, minor, patch] = version.split('.');
@@ -50,9 +48,7 @@ const getChangelogUrl = (version: string) => {
             versionsData.slice(1).map(({ noArchive, version, versionType, date, noDocs }) => {
                 if (noArchive) return;
 
-                const useDocumentationLink =
-                    (site === 'grid' && versionIsGreaterOrEqual(version, FIRST_GRID_VERSION_WITH_HOMEPAGE)) ||
-                    site === 'charts';
+                const useDocumentationLink = getHasDocumentationLink({ site, version });
 
                 return (
                     <tr>

@@ -6,6 +6,7 @@ import Heading from '@ag-website-shared/components/heading/Heading.astro';
 import Code from '@ag-website-shared/components/code/Code';
 import { agGridVersion, agChartsVersion } from '@constants';
 import ExpandingSection from '@ag-website-shared/components/expanding-section/ExpandingSection.astro';
+import DocumentationArchiveLink from '@ag-website-shared/components/documentation-archive/DocumentationArchiveLink.astro';
 
 const framework = getFrameworkFromPath(Astro.url.pathname);
 
@@ -43,6 +44,8 @@ const isVue = framework === 'vue';
     </p>
 </Alert>
 {/* ------------------------------------------------- */}
+
+<Heading level={2} id="documentation"><DocumentationArchiveLink version="33.0.4" /></Heading>
 
 <Heading level={2} id="changes-to-modules">Changes to Modules / Packages</Heading>
 <p>
