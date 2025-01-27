@@ -1,4 +1,4 @@
-import { HttpClient, HttpClientModule } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import type { ElementRef } from '@angular/core';
 import { Component, ViewChild } from '@angular/core';
 import { AgChartsEnterpriseModule } from 'ag-charts-enterprise';
@@ -22,7 +22,7 @@ ModuleRegistry.registerModules([
 @Component({
     selector: 'my-app',
     standalone: true,
-    imports: [AgGridAngular, HttpClientModule],
+    imports: [AgGridAngular],
     template: `<div id="container">
         <ag-grid-angular
             style="width: 100%; height: 300px;"

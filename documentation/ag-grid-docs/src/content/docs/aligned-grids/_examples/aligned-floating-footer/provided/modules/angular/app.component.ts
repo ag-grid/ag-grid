@@ -1,4 +1,4 @@
-import { HttpClient, HttpClientModule } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Component } from '@angular/core';
 
 import { AgGridAngular } from 'ag-grid-angular';
@@ -29,7 +29,7 @@ ModuleRegistry.registerModules([
 @Component({
     selector: 'my-app',
     standalone: true,
-    imports: [AgGridAngular, HttpClientModule],
+    imports: [AgGridAngular],
     styles: [
         `
             .bold-row {

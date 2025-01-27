@@ -1,4 +1,4 @@
-import { HttpClient, HttpClientModule } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { ChangeDetectionStrategy, Component, computed, signal } from '@angular/core';
 
 import type { ICellRendererAngularComp } from 'ag-grid-angular';
@@ -62,7 +62,7 @@ export class CompanyLogoRenderer implements ICellRendererAngularComp {
 
 @Component({
     standalone: true,
-    imports: [AgGridAngular, HttpClientModule],
+    imports: [AgGridAngular],
     selector: 'my-app',
     template: `
         <div class="content">

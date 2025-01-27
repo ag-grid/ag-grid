@@ -1,5 +1,5 @@
 import { NgStyle } from '@angular/common';
-import { HttpClient, HttpClientModule } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import type { OnInit } from '@angular/core';
 import { Component, ViewChild } from '@angular/core';
 
@@ -13,7 +13,7 @@ ModuleRegistry.registerModules([ClientSideRowModelModule, ValidationModule /* De
 
 @Component({
     standalone: true,
-    imports: [AgGridAngular, HttpClientModule, NgStyle],
+    imports: [AgGridAngular, NgStyle],
     selector: 'my-app',
     template: `
         <div style="height: 100%; display: flex; flex-direction: column;">

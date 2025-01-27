@@ -1,4 +1,4 @@
-import { HttpClient, HttpClientModule } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Component, ViewChild } from '@angular/core';
 
 import { AgGridAngular } from 'ag-grid-angular';
@@ -29,7 +29,7 @@ ModuleRegistry.registerModules([
 @Component({
     selector: 'my-app',
     standalone: true,
-    imports: [AgGridAngular, HttpClientModule],
+    imports: [AgGridAngular],
     template: `
         <div class="test-header" style="height: 5%">
             <label><input type="checkbox" checked (change)="onCbAthlete($event.target.checked)" />Athlete</label>

@@ -1,4 +1,4 @@
-import { HttpClient, HttpClientModule } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Component } from '@angular/core';
 
 import { AgGridAngular } from 'ag-grid-angular';
@@ -22,7 +22,7 @@ interface IRow {
 @Component({
     selector: 'my-app',
     standalone: true,
-    imports: [AgGridAngular, HttpClientModule],
+    imports: [AgGridAngular],
     template: `
         <div class="content">
             <!-- The AG Grid component, with Dimensions, CSS Theme, Row Data, and Column Definition -->

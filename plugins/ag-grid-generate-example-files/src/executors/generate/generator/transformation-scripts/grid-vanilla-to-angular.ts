@@ -98,7 +98,7 @@ function getImports(
     const imports = ["import { Component } from '@angular/core';"];
 
     if (bindings.data) {
-        imports.push("import { HttpClient, HttpClientModule } from '@angular/common/http';");
+        imports.push("import { HttpClient } from '@angular/common/http';");
     }
 
     const localeImport = findLocaleImport(bindings.imports);
@@ -236,9 +236,6 @@ export function vanillaToAngular(
             .replace(/(?<!this.)gridApi(\??)(!?)/g, 'this.gridApi');
 
         const standaloneImports = ['AgGridAngular'];
-        if (bindings.data) {
-            standaloneImports.push('HttpClientModule');
-        }
 
         if (componentFileNames) {
             componentFileNames.forEach((filename) => {
