@@ -1,4 +1,3 @@
-// NOTE: Angular CLI does not support component CSS imports: angular-cli/issues/23273
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 
 import type { ICellRendererAngularComp } from 'ag-grid-angular';

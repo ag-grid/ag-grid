@@ -1,4 +1,3 @@
-// NOTE: Angular CLI does not support component CSS imports: angular-cli/issues/23273
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { Component } from '@angular/core';
 
