@@ -358,7 +358,7 @@ export class CellComp extends Component {
         // if we changed this (always use task service) would make sense, however it would break tests, possibly
         // test of users.
         if (useTaskService && this.firstRender) {
-            this.beans.animationFrameSvc!.createTask(createCellRendererFunc, this.rowNode.rowIndex!, 'createTasksPA');
+            this.beans.animationFrameSvc!.createTask(createCellRendererFunc, this.rowNode.rowIndex!, 'createTasksP2');
         } else {
             createCellRendererFunc();
         }
