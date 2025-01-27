@@ -261,6 +261,7 @@ export class ValidationService extends BeanStub implements NamedBean {
         validator: RequiredOptions<T>,
         options: T
     ): string | null {
+        // eslint-disable-next-line no-restricted-properties
         const optionEntries = Object.entries<DependentValues<T, keyof T>>(validator);
         const failedOptions = optionEntries.filter(([key, value]) => {
             const gridOptionValue = options[key as keyof T];
@@ -304,15 +305,18 @@ export class ValidationService extends BeanStub implements NamedBean {
             validProperties
         );
 
-        Object.entries(invalidProperties).forEach(([key, value]) => {
+        const invalidPropertiesKeys = Object.keys(invalidProperties);
+
+        for (const key of invalidPropertiesKeys) {
+            const value = invalidProperties[key];
             let message = `invalid ${containerName} property '${key}' did you mean any of these: ${value.slice(0, 8).join(', ')}.`;
             if (validProperties.includes('context')) {
                 message += `\nIf you are trying to annotate ${containerName} with application data, use the '${containerName}.context' property instead.`;
             }
             _warnOnce(message);
-        });
+        }
 
-        if (Object.keys(invalidProperties).length > 0 && docsUrl) {
+        if (invalidPropertiesKeys.length > 0 && docsUrl) {
             const url = this.beans.frameworkOverrides.getDocLink(docsUrl);
             _warnOnce(`to see all the valid ${containerName} properties please check: ${url}`);
         }

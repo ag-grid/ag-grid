@@ -139,11 +139,13 @@ export class ThemeImpl {
                 [defaultModeName]: { ...coreDefaults },
             };
             for (const part of deduplicatePartsByFeature(this.parts)) {
-                for (const [partMode, partParams] of Object.entries(part.modeParams)) {
+                for (const partMode of Object.keys(part.modeParams)) {
+                    const partParams = part.modeParams[partMode];
                     if (partParams) {
                         const mergedParams = (mergedModeParams[partMode] ??= {});
                         const partParamNames = new Set<string>();
-                        for (const [partParamName, partParamValue] of Object.entries(partParams)) {
+                        for (const partParamName of Object.keys(partParams)) {
+                            const partParamValue = partParams[partParamName];
                             if (partParamValue !== undefined) {
                                 mergedParams[partParamName] = partParamValue;
                                 partParamNames.add(partParamName);
@@ -159,10 +161,11 @@ export class ThemeImpl {
                         // value from the `dark` mode params otherwise it would override the default
                         // accent color.
                         if (partMode === defaultModeName) {
-                            for (const [mergedMode, mergedParams] of Object.entries(mergedModeParams)) {
+                            for (const mergedMode of Object.keys(mergedModeParams)) {
+                                const mergedParams = mergedModeParams[mergedMode];
                                 if (mergedMode !== defaultModeName) {
                                     for (const partParamName of partParamNames) {
-                                        delete mergedParams[partParamName];
+                                        delete mergedParams[partParamName as any];
                                     }
                                 }
                             }
@@ -202,8 +205,9 @@ export class ThemeImpl {
             // applying our own default if it is unset.
             let variablesCss = '';
             let inheritanceCss = '';
-
-            for (const [mode, params] of Object.entries(this._getModeParams())) {
+            const modeParams = this._getModeParams();
+            for (const mode of Object.keys(modeParams)) {
+                const params = modeParams[mode];
                 if (mode !== defaultModeName) {
                     const escapedMode = typeof CSS === 'object' ? CSS.escape(mode) : mode; // check for CSS global in case we're running in tests
                     const wrapPrefix = `:where([data-ag-theme-mode="${escapedMode}"]) & {\n`;

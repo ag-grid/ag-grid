@@ -24,7 +24,7 @@
         "feature": "[Row Filtering](./filtering)",
         "clientSide": "client",
         "infinite": "server",
-        "serverSide": "client OR server",
+        "serverSide": "server",
         "viewport": "server"
     },
     {

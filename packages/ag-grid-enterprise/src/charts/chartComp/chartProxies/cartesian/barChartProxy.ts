@@ -2,16 +2,12 @@ import type { AgBarSeriesOptions, AgCartesianAxisOptions } from 'ag-charts-types
 
 import { hexToRGBA } from '../../utils/color';
 import { isStacked } from '../../utils/seriesTypeMapper';
-import type { ChartProxyParams, UpdateParams } from '../chartProxy';
+import type { UpdateParams } from '../chartProxy';
 import { CartesianChartProxy } from './cartesianChartProxy';
 
 const HORIZONTAL_CHART_TYPES = new Set(['bar', 'groupedBar', 'stackedBar', 'normalizedBar']);
 
 export class BarChartProxy extends CartesianChartProxy<'bar'> {
-    public constructor(params: ChartProxyParams) {
-        super(params);
-    }
-
     protected override getAxes(params: UpdateParams): AgCartesianAxisOptions[] {
         const axes: AgCartesianAxisOptions[] = [
             {

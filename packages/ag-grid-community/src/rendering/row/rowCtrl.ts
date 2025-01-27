@@ -477,12 +477,17 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
             map: {},
         };
 
-        const addCell = (colInstanceId: ColumnInstanceId, cellCtrl: CellCtrl) => {
-            res.list.push(cellCtrl);
+        const addCell = (colInstanceId: ColumnInstanceId, cellCtrl: CellCtrl, index?: number) => {
+            if (index != null) {
+                res.list.splice(index, 0, cellCtrl);
+            } else {
+                res.list.push(cellCtrl);
+            }
             res.map[colInstanceId] = cellCtrl;
         };
+        const colsFromPrev: [colInstanceId: ColumnInstanceId, cellCtrl: CellCtrl][] = [];
 
-        cols.forEach((col) => {
+        for (const col of cols) {
             // we use instanceId's rather than colId as it's possible there is a Column with same Id,
             // but it's referring to a different column instance. Happens a lot with pivot, as pivot col id's are
             // reused eg pivot_0, pivot_1 etc
@@ -491,24 +496,35 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
             if (!cellCtrl) {
                 cellCtrl = new CellCtrl(col, this.rowNode, this.beans, this);
             }
-            addCell(colInstanceId, cellCtrl);
-        });
 
-        prev.list.forEach((prevCellCtrl) => {
+            addCell(colInstanceId, cellCtrl);
+        }
+
+        for (const prevCellCtrl of prev.list) {
             const colInstanceId = prevCellCtrl.column.getInstanceId();
             const cellInResult = res.map[colInstanceId] != null;
+
             if (cellInResult) {
-                return;
+                continue;
             }
 
             const keepCell = !this.isCellEligibleToBeRemoved(prevCellCtrl, pinned);
-            if (keepCell) {
-                addCell(colInstanceId, prevCellCtrl);
-                return;
-            }
 
-            prevCellCtrl.destroy();
-        });
+            if (keepCell) {
+                colsFromPrev.push([colInstanceId, prevCellCtrl]);
+            } else {
+                prevCellCtrl.destroy();
+            }
+        }
+
+        if (colsFromPrev.length) {
+            for (const [colInstanceId, cellCtrl] of colsFromPrev) {
+                const index = res.list.findIndex((ctrl) => ctrl.column.getLeft()! > cellCtrl.column.getLeft()!);
+                const normalisedIndex = index === -1 ? undefined : Math.max(index - 1, 0);
+
+                addCell(colInstanceId, cellCtrl, normalisedIndex);
+            }
+        }
 
         return res;
     }

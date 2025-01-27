@@ -407,6 +407,7 @@ export class GridBodyCtrl extends BeanStub {
                 touchEvent: touchEvent!,
                 value: null,
                 anchorToElement: this.eGridBody,
+                source: 'ui',
             });
         }
     }

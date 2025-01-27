@@ -18,6 +18,8 @@ export interface AbstractColDef<TData = any, TValue = any> {
     headerValueGetter?: string | HeaderValueGetterFunc<TData, TValue>;
     /** Tooltip for the column header */
     headerTooltip?: string;
+    /** An object of css values / or function returning an object of css values for a particular header. */
+    headerStyle?: HeaderStyle | HeaderStyleFunc<TData, TValue>;
     /** CSS class to use for the header cell. Can be a string, array of strings, or function. */
     headerClass?: HeaderClass<TData, TValue>;
     /** Suppress the grid taking action for the relevant keyboard event when a header is focused. */
@@ -133,10 +135,19 @@ export interface IAggFuncParams<TData = any, TValue = any> extends AgGridCommon<
     data: TData;
 }
 
+export interface HeaderStyleFunc<TData = any, TValue = any> {
+    (headerClassParams: HeaderClassParams<TData, TValue>): HeaderStyle | null | undefined;
+}
+
+export interface HeaderStyle {
+    [cssProperty: string]: string | number;
+}
+
 export interface HeaderClassParams<TData = any, TValue = any> extends AgGridCommon<TData, any> {
     colDef: AbstractColDef<TData, TValue>;
     column?: Column<TValue> | null;
     columnGroup?: ColumnGroup | null;
+    floatingFilter: boolean;
 }
 export type HeaderClass<TData = any, TValue = any> =
     | string

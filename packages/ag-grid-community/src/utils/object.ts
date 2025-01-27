@@ -18,8 +18,8 @@ function _iterateObject<T>(
         return;
     }
 
-    for (const [key, value] of Object.entries<T>(object)) {
-        callback(key, value);
+    for (const key of Object.keys(object)) {
+        callback(key, object[key]);
     }
 }
 
@@ -91,6 +91,6 @@ export function _getValueUsingField(data: any, field: string, fieldContainsDots:
     return currentObject;
 }
 
-function _isNonNullObject(value: any): boolean {
+function _isNonNullObject(value: any): value is object {
     return typeof value === 'object' && value !== null;
 }

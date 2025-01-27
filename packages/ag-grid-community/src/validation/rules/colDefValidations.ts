@@ -210,6 +210,7 @@ type ColKey = keyof ColDef | keyof ColGroupDef;
 const colDefPropertyMap: Record<ColKey, undefined> = {
     headerName: undefined,
     columnGroupShow: undefined,
+    headerStyle: undefined,
     headerClass: undefined,
     toolPanelClass: undefined,
     headerValueGetter: undefined,

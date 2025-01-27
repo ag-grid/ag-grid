@@ -23,6 +23,7 @@ export function showContextMenu(beans: BeanCollection, params?: IContextMenuPara
         rowNode,
         column,
         value,
+        source: 'api',
     });
 }
 

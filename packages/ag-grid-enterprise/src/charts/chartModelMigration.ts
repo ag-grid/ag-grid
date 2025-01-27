@@ -384,6 +384,7 @@ export function heuristicVersionDetection(model: ChartModel) {
 
     // Default to 27.1.0, the last version before we added `version`.
     const defaultVersion = '27.1.0';
+    // eslint-disable-next-line no-restricted-properties
     const matchingHints = Object.entries(hints).filter(([_, match]) => match);
 
     // eslint-disable-next-line no-console

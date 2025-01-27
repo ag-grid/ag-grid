@@ -4,7 +4,7 @@ import type { DragSource } from '../../../dragAndDrop/dragAndDropService';
 import type { AgColumn } from '../../../entities/agColumn';
 import type { AgColumnGroup } from '../../../entities/agColumnGroup';
 import type { AgProvidedColumnGroup } from '../../../entities/agProvidedColumnGroup';
-import type { SuppressHeaderKeyboardEventParams } from '../../../entities/colDef';
+import type { HeaderClassParams, HeaderStyle, SuppressHeaderKeyboardEventParams } from '../../../entities/colDef';
 import { _getActiveDomElement, _getDocument, _setDomData } from '../../../gridOptionsUtils';
 import type { BrandedType } from '../../../interfaces/brandedType';
 import { _requestAnimationFrame } from '../../../misc/animationFrameService';
@@ -20,6 +20,7 @@ let instanceIdSequence = 0;
 
 export interface IAbstractHeaderCellComp {
     addOrRemoveCssClass(cssClassName: string, on: boolean): void;
+    setUserStyles(styles: HeaderStyle): void;
 }
 
 export interface IHeaderResizeFeature {
@@ -50,6 +51,7 @@ export abstract class AbstractHeaderCellCtrl<
     protected dragSource: DragSource | null = null;
 
     protected abstract resizeHeader(delta: number, shiftKey: boolean): void;
+    protected abstract getHeaderClassParams(): HeaderClassParams;
 
     constructor(
         public readonly column: TColumn,
@@ -108,6 +110,29 @@ export abstract class AbstractHeaderCellCtrl<
 
         this.onDisplayedColumnsChanged();
         this.refreshTabIndex();
+    }
+
+    protected refreshHeaderStyles(): void {
+        const colDef = this.column.getDefinition();
+
+        if (!colDef) {
+            return;
+        }
+
+        const { headerStyle } = colDef;
+
+        let styles: HeaderStyle | null | undefined;
+
+        if (typeof headerStyle === 'function') {
+            const cellStyleParams = this.getHeaderClassParams();
+            styles = headerStyle(cellStyleParams);
+        } else {
+            styles = headerStyle;
+        }
+
+        if (styles) {
+            this.comp.setUserStyles(styles);
+        }
     }
 
     private onGuiFocus(): void {

@@ -16,7 +16,7 @@ export class PersonFilter implements IFilterComp {
     setupGui(params: IFilterParams) {
         this.gui = document.createElement('div');
         this.gui.innerHTML =
-            '<div style="padding: 4px;">' +
+            '<div style="padding: 12px;">' +
             '<div style="font-weight: bold;">Custom Athlete Filter</div>' +
             '<div><input style="margin: 4px 0px 4px 0px;" type="text" id="filterText" placeholder="Full name search..."/></div>' +
             '<div style="margin-top: 20px; width: 200px;">This filter does partial word search on multiple words, eg "mich phel" still brings back Michael Phelps.</div>' +

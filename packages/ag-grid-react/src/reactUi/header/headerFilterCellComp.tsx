@@ -1,6 +1,12 @@
 import React, { memo, useCallback, useContext, useLayoutEffect, useMemo, useRef, useState } from 'react';
 
-import type { HeaderFilterCellCtrl, IFloatingFilter, IHeaderFilterCellComp, UserCompDetails } from 'ag-grid-community';
+import type {
+    HeaderFilterCellCtrl,
+    HeaderStyle,
+    IFloatingFilter,
+    IHeaderFilterCellComp,
+    UserCompDetails,
+} from 'ag-grid-community';
 import { AgPromise, _EmptyBean } from 'ag-grid-community';
 
 import { CustomContext } from '../../shared/customComp/customContext';
@@ -13,6 +19,8 @@ import { CssClasses, isComponentStateless } from '../utils';
 
 const HeaderFilterCellComp = ({ ctrl }: { ctrl: HeaderFilterCellCtrl }) => {
     const { context, gos } = useContext(BeansContext);
+
+    const [userStyles, setUserStyles] = useState<HeaderStyle>();
 
     const [cssClasses, setCssClasses] = useState<CssClasses>(
         () => new CssClasses('ag-header-cell', 'ag-floating-filter')
@@ -56,6 +64,7 @@ const HeaderFilterCellComp = ({ ctrl }: { ctrl: HeaderFilterCellCtrl }) => {
 
         const compProxy: IHeaderFilterCellComp = {
             addOrRemoveCssClass: (name, on) => setCssClasses((prev) => prev.setClass(name, on)),
+            setUserStyles: (styles: HeaderStyle) => setUserStyles(styles),
             addOrRemoveBodyCssClass: (name, on) => setBodyCssClasses((prev) => prev.setClass(name, on)),
             setButtonWrapperDisplayed: (displayed) => {
                 setButtonWrapperCssClasses((prev) => prev.setClass('ag-hidden', !displayed));
@@ -113,7 +122,7 @@ const HeaderFilterCellComp = ({ ctrl }: { ctrl: HeaderFilterCellCtrl }) => {
     const UserCompClass = userCompDetails && userCompDetails.componentClass;
 
     return (
-        <div ref={setRef} className={className} role="gridcell">
+        <div ref={setRef} style={userStyles} className={className} role="gridcell">
             <div ref={eFloatingFilterBody} className={bodyClassName} role="presentation">
                 {reactUserComp && !reactiveCustomComponents && (
                     <UserCompClass {...userCompDetails!.params} ref={userCompStateless ? () => {} : userCompRef} />

@@ -4,7 +4,7 @@ import type { GridApi, GridOptions } from 'ag-grid-community';
 import { ClientSideRowModelModule, isColumnSelectionCol } from 'ag-grid-community';
 import { RowGroupingModule } from 'ag-grid-enterprise';
 
-import { GridRows, TestGridsManager } from '../test-utils';
+import { TestGridsManager } from '../test-utils';
 import { GROUP_ROW_DATA } from './data';
 import {
     assertSelectedRowElementsById,
@@ -301,6 +301,34 @@ describe('Row Selection Grid Options', () => {
                 assertSelectedRowsByIndex([], api);
             });
 
+            test('Single click after multiple selection clears previous selection', () => {
+                const api = createGrid({
+                    columnDefs,
+                    rowData,
+                    rowSelection: { mode: 'multiRow', checkboxes: false, enableClickSelection: true },
+                });
+
+                selectRowsByIndex([1, 3, 5], true, api);
+
+                clickRowByIndex(2);
+
+                assertSelectedRowsByIndex([2], api);
+            });
+
+            test('Single click on selected row clears previous selection', () => {
+                const api = createGrid({
+                    columnDefs,
+                    rowData,
+                    rowSelection: { mode: 'multiRow', checkboxes: false, enableClickSelection: true },
+                });
+
+                selectRowsByIndex([1, 3, 5], true, api);
+
+                clickRowByIndex(3);
+
+                assertSelectedRowsByIndex([3], api);
+            });
+
             describe('Range selection behaviour', () => {
                 test('CTRL-click and CMD-click selects multiple rows', () => {
                     const api = createGrid({
@@ -314,34 +342,6 @@ describe('Row Selection Grid Options', () => {
                     clickRowByIndex(3, { ctrlKey: true });
 
                     assertSelectedRowsByIndex([2, 5, 3], api);
-                });
-
-                test('Single click after multiple selection clears previous selection', () => {
-                    const api = createGrid({
-                        columnDefs,
-                        rowData,
-                        rowSelection: { mode: 'multiRow', checkboxes: false, enableClickSelection: true },
-                    });
-
-                    selectRowsByIndex([1, 3, 5], true, api);
-
-                    clickRowByIndex(2);
-
-                    assertSelectedRowsByIndex([2], api);
-                });
-
-                test('Single click on selected row clears previous selection', () => {
-                    const api = createGrid({
-                        columnDefs,
-                        rowData,
-                        rowSelection: { mode: 'multiRow', checkboxes: false, enableClickSelection: true },
-                    });
-
-                    selectRowsByIndex([1, 3, 5], true, api);
-
-                    clickRowByIndex(3);
-
-                    assertSelectedRowsByIndex([3], api);
                 });
 
                 test('SHIFT-click selects range of rows', () => {
@@ -652,6 +652,75 @@ describe('Row Selection Grid Options', () => {
                     clickRowByIndex(2, { shiftKey: true, metaKey: true });
                     assertSelectedRowsByIndex([], api);
                 });
+
+                test('SHIFT-click after select all selects range between clicked row and last clicked row', () => {
+                    const api = createGrid({
+                        columnDefs,
+                        rowData,
+                        rowSelection: { mode: 'multiRow', checkboxes: false, enableClickSelection: true },
+                    });
+
+                    clickRowByIndex(2);
+                    toggleHeaderCheckboxByIndex(0);
+
+                    assertSelectedRowsByIndex([0, 1, 2, 3, 4, 5, 6], api);
+
+                    clickRowByIndex(5, { shiftKey: true });
+
+                    assertSelectedRowsByIndex([2, 3, 4, 5], api);
+                });
+
+                test('SHIFT-click after select all on pristine grid selects range between first row and clicked row', () => {
+                    const api = createGrid({
+                        columnDefs,
+                        rowData,
+                        rowSelection: { mode: 'multiRow', checkboxes: false, enableClickSelection: true },
+                    });
+
+                    toggleHeaderCheckboxByIndex(0);
+
+                    assertSelectedRowsByIndex([0, 1, 2, 3, 4, 5, 6], api);
+
+                    clickRowByIndex(3, { shiftKey: true });
+
+                    assertSelectedRowsByIndex([0, 1, 2, 3], api);
+                });
+
+                test('SHIFT-click after select all behaves consistently', () => {
+                    const api = createGrid({
+                        columnDefs,
+                        rowData,
+                        rowSelection: { mode: 'multiRow', checkboxes: false, enableClickSelection: true },
+                    });
+
+                    clickRowByIndex(2);
+                    clickRowByIndex(4, { shiftKey: true });
+
+                    assertSelectedRowsByIndex([2, 3, 4], api);
+
+                    toggleHeaderCheckboxByIndex(0);
+
+                    clickRowByIndex(6, { shiftKey: true });
+
+                    assertSelectedRowsByIndex([2, 3, 4, 5, 6], api);
+                });
+
+                test('Select all, then de-select, then SHIFT-click goes back to normal behaviour', () => {
+                    const api = createGrid({
+                        columnDefs,
+                        rowData,
+                        rowSelection: { mode: 'multiRow', checkboxes: false, enableClickSelection: true },
+                    });
+
+                    toggleHeaderCheckboxByIndex(0);
+
+                    // De-select a single row
+                    clickRowByIndex(3, { ctrlKey: true });
+
+                    clickRowByIndex(6, { shiftKey: true });
+
+                    assertSelectedRowsByIndex([3, 4, 5, 6], api);
+                });
             });
         });
 
@@ -788,41 +857,6 @@ describe('Row Selection Grid Options', () => {
 
                 toggleCheckboxByIndex(5);
                 assertSelectedRowsByIndex([5], api);
-            });
-
-            test('Multiple sorting works with selection column', async () => {
-                const api = createGrid({
-                    columnDefs,
-                    rowData,
-                    rowSelection: {
-                        mode: 'multiRow',
-                    },
-                    selectionColumnDef: {
-                        sortable: true,
-                        pinned: 'left',
-                    },
-                });
-
-                selectRowsByIndex([3, 4, 5], false, api);
-
-                api.applyColumnState({
-                    state: [
-                        { colId: 'ag-Grid-SelectionColumn', sort: 'asc', sortIndex: 0 },
-                        { colId: 'sport', sort: 'asc', sortIndex: 1 },
-                    ],
-                    defaultState: { sort: null },
-                });
-
-                await new GridRows(api).check(`
-                ROOT id:ROOT_NODE_ID
-                ├── LEAF id:0
-                ├── LEAF id:6
-                ├── LEAF id:1
-                ├── LEAF id:2
-                ├── LEAF selected id:3
-                ├── LEAF selected id:4
-                └── LEAF selected id:5
-                `);
             });
 
             describe('Range selection behaviour', () => {

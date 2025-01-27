@@ -78,7 +78,7 @@ export abstract class ChartProxy<
 
     protected clearThemeOverrides = false;
 
-    protected constructor(protected readonly chartProxyParams: ChartProxyParams) {
+    public constructor(protected readonly chartProxyParams: ChartProxyParams) {
         this.agChartsExports = chartProxyParams.agChartsExports;
         this.chart = chartProxyParams.chartInstance!;
         this.chartType = chartProxyParams.chartType;

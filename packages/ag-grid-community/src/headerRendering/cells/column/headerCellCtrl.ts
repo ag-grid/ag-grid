@@ -4,7 +4,7 @@ import { _getHeaderCompDetails } from '../../../components/framework/userCompUti
 import { KeyCode } from '../../../constants/keyCode';
 import type { BeanStub } from '../../../context/beanStub';
 import type { AgColumn } from '../../../entities/agColumn';
-import type { SortDirection } from '../../../entities/colDef';
+import type { HeaderClassParams, SortDirection } from '../../../entities/colDef';
 import { _getActiveDomElement, _isLegacyMenuEnabled } from '../../../gridOptionsUtils';
 import { ColumnHighlightPosition } from '../../../interfaces/iColumn';
 import type { UserCompDetails } from '../../../interfaces/iUserCompDetails';
@@ -31,7 +31,14 @@ export interface IHeaderCellComp extends IAbstractHeaderCellComp {
 }
 
 type HeaderAriaDescriptionKey = 'filter' | 'menu' | 'sort' | 'selectAll' | 'filterButton';
-type RefreshFunction = 'updateSortable' | 'tooltip' | 'headerClasses' | 'wrapText' | 'measuring' | 'resize';
+type RefreshFunction =
+    | 'updateSortable'
+    | 'tooltip'
+    | 'headerClasses'
+    | 'headerStyles'
+    | 'wrapText'
+    | 'measuring'
+    | 'resize';
 
 export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgColumn, ResizeFeature> {
     private refreshFunctions: { [key in RefreshFunction]?: () => void } = {};
@@ -79,6 +86,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
 
         this.addColumnHoverListener(compBean);
         this.setupFilterClass(compBean);
+        this.setupStylesFromColDef();
         this.setupClassesFromColDef();
         this.setupTooltip();
         this.addActiveHeaderMouseListeners(compBean);
@@ -136,6 +144,17 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
 
     protected resizeHeader(delta: number, shiftKey: boolean): void {
         this.beans.colResize?.resizeHeader(this.column, delta, shiftKey);
+    }
+
+    protected getHeaderClassParams(): HeaderClassParams {
+        const { column } = this;
+        const colDef = column.colDef;
+
+        return this.beans.gos.addGridCommonParams({
+            colDef,
+            column,
+            floatingFilter: false,
+        });
     }
 
     private setupUserComp(): void {
@@ -278,6 +297,11 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
             value,
             shouldDisplayTooltip
         );
+    }
+
+    private setupStylesFromColDef(): void {
+        this.setRefreshFunction('headerStyles', this.refreshHeaderStyles.bind(this));
+        this.refreshHeaderStyles();
     }
 
     private setupClassesFromColDef(): void {

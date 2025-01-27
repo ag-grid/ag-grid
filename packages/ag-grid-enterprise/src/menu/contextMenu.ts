@@ -137,7 +137,7 @@ export class ContextMenuService extends BeanStub implements NamedBean, IContextM
     public showContextMenu(params: EventShowContextMenuParams & { anchorToElement?: HTMLElement }): void {
         const rowNode = (params.rowNode ?? null) as RowNode | null;
         const column = (params.column ?? null) as AgColumn | null;
-        let { anchorToElement, value } = params;
+        let { anchorToElement, value, source } = params;
 
         if (rowNode && column && value == null) {
             value = this.beans.valueSvc.getValueForDisplay(column, rowNode);
@@ -147,11 +147,12 @@ export class ContextMenuService extends BeanStub implements NamedBean, IContextM
             anchorToElement = this.getContextMenuAnchorElement(rowNode, column);
         }
 
-        (this.beans.menuUtils as MenuUtils).onContextMenu(
-            (params as MouseShowContextMenuParams).mouseEvent ?? null,
-            (params as TouchShowContextMenuParam).touchEvent ?? null,
-            (eventOrTouch) => this.showMenu(rowNode, column, value, eventOrTouch, anchorToElement!)
-        );
+        (this.beans.menuUtils as MenuUtils).onContextMenu({
+            mouseEvent: (params as MouseShowContextMenuParams).mouseEvent ?? null,
+            touchEvent: (params as TouchShowContextMenuParam).touchEvent ?? null,
+            showMenuCallback: (eventOrTouch) => this.showMenu(rowNode, column, value, eventOrTouch, anchorToElement!),
+            source,
+        });
     }
 
     public handleContextMenuMouseEvent(
@@ -176,6 +177,7 @@ export class ContextMenuService extends BeanStub implements NamedBean, IContextM
             column,
             value,
             anchorToElement,
+            source: 'ui',
         } as EventShowContextMenuParams);
     }
 

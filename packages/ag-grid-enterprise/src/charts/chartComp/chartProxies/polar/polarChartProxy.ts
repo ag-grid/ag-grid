@@ -7,17 +7,13 @@ import type {
 
 import type { SeriesGroupType } from 'ag-grid-community';
 
-import type { ChartProxyParams, UpdateParams } from '../chartProxy';
+import type { UpdateParams } from '../chartProxy';
 import { ChartProxy } from '../chartProxy';
 
 export class PolarChartProxy extends ChartProxy<
     AgPolarChartOptions,
     'radar-line' | 'radar-area' | 'nightingale' | 'radial-column' | 'radial-bar'
 > {
-    public constructor(params: ChartProxyParams) {
-        super(params);
-    }
-
     public getAxes(_: UpdateParams): AgPolarAxisOptions[] {
         const radialBar = this.standaloneChartType === 'radial-bar';
         return [

@@ -559,9 +559,10 @@ export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSi
 
         const states: any = {};
         root.forEachStoreDeep((store) => {
-            Object.entries(store.getBlockStates()).forEach(([block, state]) => {
-                states[block] = state;
-            });
+            const blockStates = store.getBlockStates();
+            for (const block of Object.keys(blockStates)) {
+                states[block] = blockStates[block];
+            }
         });
         return states;
     }

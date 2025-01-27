@@ -69,14 +69,14 @@ export const AllEnterpriseModules: Record<`${EnterpriseModuleName}Module`, numbe
     RichSelectModule: 102.86,
     RowGroupingModule: 107.07,
     RowGroupingPanelModule: 98,
-    ServerSideRowModelApiModule: 46.22,
+    ServerSideRowModelApiModule: 47,
     ServerSideRowModelModule: 176.29,
     SetFilterModule: 168.2,
-    SideBarModule: 59.57,
-    SparklinesModule: 46.72,
-    StatusBarModule: 54.49,
+    SideBarModule: 60,
+    SparklinesModule: 48,
+    StatusBarModule: 55,
     TreeDataModule: 116.33,
-    ViewportRowModelModule: 53.7,
+    ViewportRowModelModule: 55,
 };
 
 export interface ModuleTest {

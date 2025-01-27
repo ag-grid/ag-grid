@@ -1,0 +1,139 @@
+---
+import { Icon } from '@ag-website-shared/components/icon/Icon';
+
+import styles from './ExpandingSection.module.scss';
+
+interface Props {
+    headerText: string;
+    isOpen?: boolean;
+}
+
+const sectionContent = await Astro.slots.render('default');
+
+const { headerText, isOpen = false } = Astro.props as Props;
+---
+
+<expanding-section>
+    <details class={styles.expandingSection} open={isOpen}>
+        <summary class:list={[styles.expandingSectionHeader, 'button-secondary']}>
+            {headerText}
+            <Icon name="chevronRight" svgClasses={styles.expandingSectionHeaderIcon} />
+        </summary>
+
+        <div class:list={[styles.expandingSectionContentOuter, 'es-content-outer']}>
+            <div class:list={[styles.expandingSectionContentInner, 'es-content-inner']}>
+                <Fragment set:html={sectionContent} />
+            </div>
+        </div>
+    </details>
+</expanding-section>
+
+<script>
+    const clamp = (num: number, min: number, max: number): number => {
+        return Math.max(min, Math.min(num, max));
+    };
+
+    class ExpandingSection extends HTMLElement {
+        #isOpen: boolean = false;
+        #details: HTMLElement;
+        #summary: HTMLElement;
+        #chevron: SVGElement;
+        #contentOuter: HTMLElement;
+        #contentInner: HTMLElement;
+
+        constructor() {
+            super();
+
+            this.#details = this.querySelector('details')!;
+            this.#summary = this.querySelector('summary')!;
+            this.#chevron = this.querySelector('svg')!;
+            this.#contentOuter = this.querySelector('.es-content-outer')!;
+            this.#contentInner = this.querySelector('.es-content-inner')!;
+
+            this.#summary.addEventListener('click', this.#clickHandler.bind(this));
+
+            this.#contentOuter.addEventListener('transitionend', () => {
+                if (this.isOpen) {
+                    this.style.setProperty('--content-height', 'none');
+                } else {
+                    this.#details.removeAttribute('open');
+                }
+            });
+        }
+
+        get isOpen() {
+            return this.#isOpen;
+        }
+
+        set isOpen(v) {
+            this.#isOpen = v === true;
+
+            if (this.#isOpen) {
+                this.#open();
+            } else {
+                this.#close();
+            }
+        }
+
+        connectedCallback() {
+            const hash = window.location.hash;
+            const hasHashId = hash ? this.#contentInner.querySelector(hash) : undefined;
+            const isOpen = hasHashId || this.#details.getAttribute('open') !== null;
+
+            if (isOpen) {
+                const noAnimation = true;
+                this.#open(noAnimation);
+                this.isOpen = true;
+            }
+
+            if (hasHashId) {
+                // Wait a little bit before scrolling into view
+                setTimeout(() => {
+                    hasHashId.scrollIntoView(true);
+                }, 100);
+            }
+        }
+
+        get #contentHeight() {
+            return this.#contentInner.offsetHeight;
+        }
+
+        #clickHandler(event: Event) {
+            event.preventDefault();
+
+            this.isOpen = !this.isOpen;
+        }
+
+        #setCSSProp(propertyName: string, value: string) {
+            this.#details.style.setProperty(propertyName, value);
+        }
+
+        #open(noAnimation: boolean = false) {
+            const contentHeight = this.#contentHeight;
+            const transitionTiming = noAnimation ? 0 : clamp(contentHeight / 2500, 0.25, 1);
+
+            this.#details.setAttribute('open', '');
+            this.#chevron.classList.add('is-open');
+
+            document.documentElement.offsetHeight; // Trigger a reflow, flushing the CSS changes
+            this.#setCSSProp('--content-transition-timing', `${transitionTiming}s`);
+            this.#setCSSProp('--content-height', `${contentHeight + 2}px`);
+        }
+
+        #close() {
+            const contentHeight = this.#contentHeight;
+            const transitionTiming = clamp(contentHeight / 2500, 0.25, 1);
+
+            this.#chevron.classList.remove('is-open');
+
+            // Set a specific height, as you can't transition from `max-height: none`
+            this.#setCSSProp('--content-height', `${contentHeight + 2}px`);
+            document.documentElement.offsetHeight; // Trigger a reflow, flushing the CSS changes
+
+            this.#setCSSProp('--content-transition-timing', `${transitionTiming}s`);
+            this.#setCSSProp('--content-height', `0px`);
+        }
+    }
+
+    customElements.define('expanding-section', ExpandingSection);
+</script>

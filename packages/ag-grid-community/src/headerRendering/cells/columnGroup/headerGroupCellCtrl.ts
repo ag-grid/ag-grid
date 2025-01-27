@@ -5,6 +5,7 @@ import { KeyCode } from '../../../constants/keyCode';
 import type { BeanStub } from '../../../context/beanStub';
 import type { AgColumn } from '../../../entities/agColumn';
 import type { AgColumnGroup } from '../../../entities/agColumnGroup';
+import type { HeaderClassParams } from '../../../entities/colDef';
 import type { ColumnEventType } from '../../../events';
 import { ColumnHighlightPosition } from '../../../interfaces/iColumn';
 import type { UserCompDetails } from '../../../interfaces/iUserCompDetails';
@@ -52,6 +53,7 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
 
         this.displayName = colNames.getDisplayNameForColumnGroup(column, 'header');
 
+        this.refreshHeaderStyles();
         this.addClasses();
         this.setupMovingCss(compBean);
         this.setupExpandable(compBean);
@@ -97,6 +99,17 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
         this.addResizeAndMoveKeyboardListeners(compBean);
         // Make sure this is the last destroy func as it clears the gui and comp
         compBean.addDestroyFunc(() => this.clearComponent());
+    }
+
+    protected getHeaderClassParams(): HeaderClassParams {
+        const { column } = this;
+        const colDef = column.getDefinition()!;
+
+        return this.beans.gos.addGridCommonParams({
+            colDef,
+            columnGroup: column,
+            floatingFilter: false,
+        });
     }
 
     private refreshMaxHeaderHeight(): void {
@@ -261,6 +274,8 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
         } else {
             this.comp.setAriaExpanded(undefined);
         }
+
+        this.refreshHeaderStyles();
     }
 
     private addClasses(): void {

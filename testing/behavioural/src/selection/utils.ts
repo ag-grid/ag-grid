@@ -1,3 +1,5 @@
+import { expect } from 'vitest';
+
 import type { AgPublicEventType, GridApi, IRowNode } from 'ag-grid-community';
 import { KeyCode, _areEqual } from 'ag-grid-community';
 

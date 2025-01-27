@@ -88,15 +88,16 @@ export class ChartMenuItemMapper extends BeanStub implements NamedBean {
         const menuItemLookup = this.buildLookup(topLevelMenuItem);
         const orderedAndFiltered: MenuItemDefWithKey = { ...topLevelMenuItem, subMenu: [] };
 
-        Object.entries(chartGroupsDef).forEach(([group, chartTypes]: [keyof ChartGroupsDef, ChartType[]]) => {
+        for (const group of Object.keys(chartGroupsDef) as (keyof ChartGroupsDef)[]) {
+            const chartTypes: ChartType[] = chartGroupsDef[group]!;
             const chartConfigGroup = configLookup[group];
 
             // Skip any context panels that are not enabled for the current chart type
-            if (chartConfigGroup === null) return;
+            if (chartConfigGroup === null) continue;
 
             if (chartConfigGroup == undefined) {
                 _warn(173, { group });
-                return;
+                continue;
             }
 
             const menuItem = menuItemLookup[chartConfigGroup._key];
@@ -122,7 +123,7 @@ export class ChartMenuItemMapper extends BeanStub implements NamedBean {
                     orderedAndFiltered.subMenu?.push(menuItem);
                 }
             }
-        });
+        }
         if (orderedAndFiltered.subMenu?.length == 0) {
             return null;
         }
@@ -180,7 +181,10 @@ export type PivotMenuOptionName =
     | 'pivotSunburst'
     | 'pivotCombinationChart'
     | 'pivotColumnLineCombo'
-    | 'pivotAreaColumnCombo';
+    | 'pivotAreaColumnCombo'
+    | 'pivotFunnel'
+    | 'pivotConeFunnel'
+    | 'pivotPyramid';
 
 class PivotMenuItemMapper implements MenuItemBuilder<PivotMenuOptionName> {
     constructor(
@@ -282,6 +286,15 @@ class PivotMenuItemMapper implements MenuItemBuilder<PivotMenuOptionName> {
                     ],
                 },
                 {
+                    _key: 'pivotFunnel',
+                    name: localeTextFunc('funnel', 'Funnel'),
+                    subMenu: [
+                        getMenuItem('funnel', 'Funnel&lrm;', 'funnel', 'pivotFunnel'),
+                        getMenuItem('coneFunnel', 'Cone Funnel&lrm;', 'coneFunnel', 'pivotConeFunnel'),
+                        getMenuItem('pyramid', 'Pyramid&lrm;', 'pyramid', 'pivotPyramid'),
+                    ],
+                },
+                {
                     _key: 'pivotCombinationChart',
                     name: localeTextFunc('combinationChart', 'Combination'),
                     subMenu: [
@@ -350,6 +363,12 @@ class PivotMenuItemMapper implements MenuItemBuilder<PivotMenuOptionName> {
                 rangeArea: null,
                 boxPlot: null,
             },
+            funnelGroup: {
+                _key: 'pivotFunnel',
+                funnel: 'pivotFunnel',
+                coneFunnel: 'pivotConeFunnel',
+                pyramid: 'pivotPyramid',
+            },
             // Polar charts do not support pivot mode
             polarGroup: null,
             // Specialized charts do not currently support pivot mode
@@ -400,7 +419,10 @@ export type RangeMenuOptionName =
     | 'rangeHeatmap'
     | 'rangeCombinationChart'
     | 'rangeColumnLineCombo'
-    | 'rangeAreaColumnCombo';
+    | 'rangeAreaColumnCombo'
+    | 'rangeFunnel'
+    | 'rangeConeFunnel'
+    | 'rangePyramid';
 
 class RangeMenuItemMapper implements MenuItemBuilder<RangeMenuOptionName> {
     constructor(
@@ -529,6 +551,16 @@ class RangeMenuItemMapper implements MenuItemBuilder<RangeMenuOptionName> {
                     _enterprise: true,
                 },
                 {
+                    name: localeTextFunc('funnel', 'Funnel'),
+                    subMenu: [
+                        getMenuItem('funnel', 'Funnel&lrm;', 'funnel', 'rangeFunnel'),
+                        getMenuItem('coneFunnel', 'Cone Funnel&lrm;', 'coneFunnel', 'rangeConeFunnel'),
+                        getMenuItem('pyramid', 'Pyramid&lrm;', 'pyramid', 'rangePyramid'),
+                    ],
+                    _key: 'rangeFunnel',
+                    _enterprise: true,
+                },
+                {
                     name: localeTextFunc('combinationChart', 'Combination'),
                     subMenu: [
                         getMenuItem('columnLineCombo', 'Column & Line&lrm;', 'columnLineCombo', 'rangeColumnLineCombo'),
@@ -602,6 +634,12 @@ class RangeMenuItemMapper implements MenuItemBuilder<RangeMenuOptionName> {
                 _key: 'rangeSpecializedChart',
                 heatmap: 'rangeHeatmap',
                 waterfall: 'rangeWaterfall',
+            },
+            funnelGroup: {
+                _key: 'rangeFunnel',
+                funnel: 'rangeFunnel',
+                coneFunnel: 'rangeConeFunnel',
+                pyramid: 'rangePyramid',
             },
             combinationGroup: {
                 _key: 'rangeCombinationChart',

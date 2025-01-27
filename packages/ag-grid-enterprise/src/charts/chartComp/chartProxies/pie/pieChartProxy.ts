@@ -5,7 +5,7 @@ import type {
     AgPolarSeriesOptions,
 } from 'ag-charts-types';
 
-import type { ChartProxyParams, FieldDefinition, UpdateParams } from '../chartProxy';
+import type { FieldDefinition, UpdateParams } from '../chartProxy';
 import { ChartProxy } from '../chartProxy';
 
 interface DonutOffset {
@@ -24,10 +24,6 @@ function calculateOffsets(offset: DonutOffset) {
 }
 
 export class PieChartProxy extends ChartProxy<AgPolarChartOptions, 'pie' | 'donut'> {
-    public constructor(params: ChartProxyParams) {
-        super(params);
-    }
-
     protected getUpdateOptions(params: UpdateParams, commonChartOptions: AgPolarChartOptions): AgPolarChartOptions {
         return {
             ...commonChartOptions,

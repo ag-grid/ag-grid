@@ -7,7 +7,7 @@ import type {
 } from 'ag-charts-types';
 
 import { flatMap } from '../../utils/array';
-import type { ChartProxyParams, UpdateParams } from '../chartProxy';
+import type { UpdateParams } from '../chartProxy';
 import { ChartProxy } from '../chartProxy';
 
 export const HEATMAP_CATEGORY_KEY = 'AG-GRID-DEFAULT-HEATMAP-CATEGORY-KEY';
@@ -15,10 +15,6 @@ export const HEATMAP_SERIES_KEY = 'AG-GRID-DEFAULT-HEATMAP-SERIES-KEY';
 export const HEATMAP_VALUE_KEY = 'AG-GRID-DEFAULT-HEATMAP-VALUE-KEY';
 
 export class HeatmapChartProxy extends ChartProxy<AgCartesianChartOptions, 'heatmap'> {
-    public constructor(params: ChartProxyParams) {
-        super(params);
-    }
-
     protected getUpdateOptions(
         params: UpdateParams,
         commonChartOptions: AgCartesianChartOptions

@@ -1,6 +1,13 @@
 import React, { memo, useCallback, useContext, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 
-import type { ColumnSortState, HeaderCellCtrl, IHeader, IHeaderCellComp, UserCompDetails } from 'ag-grid-community';
+import type {
+    ColumnSortState,
+    HeaderCellCtrl,
+    HeaderStyle,
+    IHeader,
+    IHeaderCellComp,
+    UserCompDetails,
+} from 'ag-grid-community';
 import { CssClassManager, _EmptyBean, _removeAriaSort, _setAriaSort } from 'ag-grid-community';
 
 import { BeansContext } from '../beansContext';
@@ -13,6 +20,7 @@ const HeaderCellComp = ({ ctrl }: { ctrl: HeaderCellCtrl }) => {
     const { context } = useContext(BeansContext);
     const colId = isAlive ? ctrl.column.getColId() : undefined;
     const [userCompDetails, setUserCompDetails] = useState<UserCompDetails>();
+    const [userStyles, setUserStyles] = useState<HeaderStyle>();
 
     const compBean = useRef<_EmptyBean>();
     const eGui = useRef<HTMLDivElement | null>(null);
@@ -38,6 +46,7 @@ const HeaderCellComp = ({ ctrl }: { ctrl: HeaderCellCtrl }) => {
                 }
             },
             addOrRemoveCssClass: (name: string, on: boolean) => cssClassManager.current!.addOrRemoveCssClass(name, on),
+            setUserStyles: (styles: HeaderStyle) => setUserStyles(styles),
             setAriaSort: (sort?: ColumnSortState) => {
                 if (eGui.current) {
                     sort ? _setAriaSort(eGui.current, sort) : _removeAriaSort(eGui.current);
@@ -76,7 +85,7 @@ const HeaderCellComp = ({ ctrl }: { ctrl: HeaderCellCtrl }) => {
     const UserCompClass = userCompDetails && userCompDetails.componentClass;
 
     return (
-        <div ref={setRef} className="ag-header-cell" col-id={colId} role="columnheader">
+        <div ref={setRef} style={userStyles} className="ag-header-cell" col-id={colId} role="columnheader">
             <div ref={eResize} className="ag-header-cell-resize" role="presentation"></div>
             <div ref={eHeaderCompWrapper} className="ag-header-cell-comp-wrapper" role="presentation">
                 {reactUserComp && userCompStateless && <UserCompClass {...userCompDetails!.params} />}

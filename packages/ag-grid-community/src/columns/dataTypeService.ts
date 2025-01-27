@@ -85,19 +85,23 @@ export class DataTypeService extends BeanStub implements NamedBean {
                 return this.beans.valueSvc.formatValue(column as AgColumn, node, value, valueFormatter as any)!;
             };
         };
-        Object.entries(defaultDataTypes).forEach(([cellDataType, dataTypeDefinition]) => {
+
+        for (const cellDataType of Object.keys(defaultDataTypes)) {
+            const dataTypeDefinition = defaultDataTypes[cellDataType];
             const mergedDataTypeDefinition = {
                 ...dataTypeDefinition,
                 groupSafeValueFormatter: createGroupSafeValueFormatter(dataTypeDefinition, this.gos),
             };
             newDataTypeDefinitions[cellDataType] = mergedDataTypeDefinition;
             newFormatValueFuncs[cellDataType] = generateFormatValueFunc(mergedDataTypeDefinition);
-        });
+        }
+
         const dataTypeDefinitions = this.gos.get('dataTypeDefinitions') ?? {};
         const newDataTypeMatchers: { [cellDataType: string]: ((value: any) => boolean) | undefined } = {};
         this.dataTypeMatchers = newDataTypeMatchers;
 
-        Object.entries(dataTypeDefinitions).forEach(([cellDataType, dataTypeDefinition]) => {
+        for (const cellDataType of Object.keys(dataTypeDefinitions)) {
+            const dataTypeDefinition = dataTypeDefinitions[cellDataType];
             const mergedDataTypeDefinition = this.processDataTypeDefinition(
                 dataTypeDefinition,
                 dataTypeDefinitions,
@@ -111,7 +115,8 @@ export class DataTypeService extends BeanStub implements NamedBean {
                 }
                 newFormatValueFuncs[cellDataType] = generateFormatValueFunc(mergedDataTypeDefinition);
             }
-        });
+        }
+
         this.checkObjectValueHandlers(defaultDataTypes);
 
         ['dateString', 'text', 'number', 'boolean', 'date'].forEach((cellDataType) => {
@@ -268,10 +273,10 @@ export class DataTypeService extends BeanStub implements NamedBean {
         if (value == null) {
             return undefined;
         }
-        const [cellDataType] = Object.entries(this.dataTypeMatchers).find(([_cellDataType, dataTypeMatcher]) =>
-            dataTypeMatcher!(value)
-        ) ?? ['object'];
-        return cellDataType;
+        return (
+            Object.keys(this.dataTypeMatchers).find((_cellDataType) => this.dataTypeMatchers[_cellDataType]!(value)) ??
+            'object'
+        );
     }
 
     private getInitialData(): any {
@@ -326,7 +331,9 @@ export class DataTypeService extends BeanStub implements NamedBean {
         this.destroyColumnStateUpdateListeners();
         const newRowGroupColumnStateWithoutIndex: { [colId: string]: ColumnState } = {};
         const newPivotColumnStateWithoutIndex: { [colId: string]: ColumnState } = {};
-        Object.entries(this.columnStateUpdatesPendingInference).forEach(([colId, columnStateUpdates]) => {
+
+        for (const colId of Object.keys(this.columnStateUpdatesPendingInference)) {
+            const columnStateUpdates = this.columnStateUpdatesPendingInference[colId];
             const column = this.colModel.getCol(colId);
             if (!column) {
                 return;
@@ -346,7 +353,8 @@ export class DataTypeService extends BeanStub implements NamedBean {
                 }
                 state.push(updatedColumnState);
             }
-        });
+        }
+
         if (columnTypeOverridesExist) {
             state.push(
                 ...this.generateColumnStateForRowGroupAndPivotIndexes(

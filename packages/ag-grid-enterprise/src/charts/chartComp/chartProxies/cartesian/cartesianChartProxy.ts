@@ -10,7 +10,7 @@ import type {
     AgRangeBarSeriesThemeableOptions,
 } from 'ag-charts-types';
 
-import type { ChartProxyParams, UpdateParams } from '../chartProxy';
+import type { UpdateParams } from '../chartProxy';
 import { ChartProxy } from '../chartProxy';
 
 export abstract class CartesianChartProxy<
@@ -28,10 +28,6 @@ export abstract class CartesianChartProxy<
 > extends ChartProxy<AgCartesianChartOptions, TSeries> {
     protected crossFilteringAllPoints = new Set<string>();
     protected crossFilteringSelectedPoints: string[] = [];
-
-    protected constructor(params: ChartProxyParams) {
-        super(params);
-    }
 
     protected abstract getAxes(
         params: UpdateParams,

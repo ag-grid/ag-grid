@@ -12,7 +12,7 @@ import type {
 import { convertLegacyBorder, convertLegacyColor, convertLegacyPattern } from '../../../assets/excelLegacyConvert';
 import { getFontFamilyId } from '../../../assets/excelUtils';
 import bordersFactory from './borders';
-import type { CellStyle } from './cellStyle';
+import type { ExcelCellStyle } from './cellStyle';
 import cellStylesXfsFactory from './cellStyleXfs';
 import cellStylesFactory from './cellStyles';
 import cellXfsFactory from './cellXfs';
@@ -28,7 +28,7 @@ let registeredFills: Fill[];
 let registeredBorders: BorderSet[];
 let registeredCellStyleXfs: Xf[];
 let registeredCellXfs: Xf[];
-let registeredCellStyles: CellStyle[];
+let registeredCellStyles: ExcelCellStyle[];
 let currentSheet: number;
 
 const getStyleName = (name: string, currentSheet: number): string => {

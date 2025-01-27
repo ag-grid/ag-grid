@@ -1,5 +1,7 @@
+import type { HeaderStyle } from '../../../entities/colDef';
 import type { UserCompDetails } from '../../../interfaces/iUserCompDetails';
 import { _removeAriaSort, _setAriaSort } from '../../../utils/aria';
+import { _addStylesToElement } from '../../../utils/dom';
 import { RefPlaceholder } from '../../../widgets/component';
 import { AbstractHeaderCellComp } from '../abstractCell/abstractHeaderCellComp';
 import type { HeaderCellCtrl, IHeaderCellComp } from './headerCellCtrl';
@@ -39,6 +41,7 @@ export class HeaderCellComp extends AbstractHeaderCellComp<HeaderCellCtrl> {
         const compProxy: IHeaderCellComp = {
             setWidth: (width) => (eGui.style.width = width),
             addOrRemoveCssClass: (cssClassName, on) => this.addOrRemoveCssClass(cssClassName, on),
+            setUserStyles: (styles: HeaderStyle) => _addStylesToElement(eGui, styles),
             setAriaSort: (sort) => (sort ? _setAriaSort(eGui, sort) : _removeAriaSort(eGui)),
             setUserCompDetails: (compDetails) => this.setUserCompDetails(compDetails),
             getUserCompInstance: () => this.headerComp,

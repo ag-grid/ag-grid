@@ -50,9 +50,9 @@ export class GenericContext<TBeanName extends string, TBeanCollection extends { 
     }
 
     protected init(params: GenericContextParams<TBeanName, TBeanCollection>): void {
-        Object.entries(params.providedBeanInstances).forEach(([beanName, beanInstance]: [TBeanName, any]) => {
-            this.beans[beanName] = beanInstance;
-        });
+        for (const beanName of Object.keys(params.providedBeanInstances) as TBeanName[]) {
+            this.beans[beanName] = params.providedBeanInstances[beanName] as any;
+        }
 
         params.beanClasses.forEach((BeanClass) => {
             const instance = new BeanClass();

@@ -34,6 +34,11 @@ export default [
             'no-restricted-properties': [
                 'warn',
                 { property: 'innerText', message: 'Prefer textContent where possible' },
+                {
+                    object: 'Object',
+                    property: 'entries',
+                    message: 'Prefer Object.keys() to Object.entries() for performance reasons.',
+                },
             ],
             'no-console': 'error',
         },

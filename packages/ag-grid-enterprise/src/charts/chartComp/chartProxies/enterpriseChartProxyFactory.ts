@@ -4,6 +4,7 @@ import { BeanStub } from 'ag-grid-community';
 import { HistogramChartProxy } from './cartesian/histogramChartProxy';
 import { WaterfallChartProxy } from './cartesian/waterfallChartProxy';
 import type { ChartProxy, ChartProxyParams } from './chartProxy';
+import { FunnelChartProxy } from './funnel/funnelChartProxy';
 import { HierarchicalChartProxy } from './hierarchical/hierarchicalChartProxy';
 import { PolarChartProxy } from './polar/polarChartProxy';
 import { HeatmapChartProxy } from './specialized/heatmapChartProxy';
@@ -35,6 +36,10 @@ export class EnterpriseChartProxyFactory extends BeanStub implements NamedBean {
                 return new HeatmapChartProxy(chartProxyParams);
             case 'waterfall':
                 return new WaterfallChartProxy(chartProxyParams);
+            case 'funnel':
+            case 'coneFunnel':
+            case 'pyramid':
+                return new FunnelChartProxy(chartProxyParams);
         }
         return undefined;
     }

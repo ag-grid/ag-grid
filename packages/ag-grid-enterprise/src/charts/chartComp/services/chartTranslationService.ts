@@ -226,6 +226,15 @@ export const DEFAULT_CHART_TRANSLATIONS = {
     stackedLineFull: 'Stacked Line',
     normalizedLineFull: '100% Stacked Line',
     customCombo: 'Custom Combination',
+    funnel: 'Funnel',
+    coneFunnel: 'Cone Funnel',
+    pyramid: 'Pyramid',
+    funnelGroup: 'Funnel',
+    funnelTooltip: 'Funnel',
+    coneFunnelTooltip: 'Cone Funnel',
+    pyramidTooltip: 'Pyramid',
+    dropOff: 'Drop-Off',
+    stageLabels: 'Stage Labels',
 
     // menu items
     groupedColumn: 'Grouped',

@@ -420,5 +420,10 @@
         "errorIds": [234, 235, 236, 237],
         "text": "Row Grouping - Multiple Column Filtering",
         "url": "./grouping-multiple-group-columns/#filtering"
+    },
+    {
+        "errorIds": [121],
+        "text": "Row Grouping - Grouping Data keyCreator",
+        "url": "./grouping-data/#grouping-on-object-data"
     }
 ]

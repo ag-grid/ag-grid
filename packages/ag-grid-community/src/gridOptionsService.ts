@@ -178,7 +178,9 @@ export class GridOptionsService extends BeanStub implements NamedBean {
         // all events are fired after grid options has finished updating.
         const events: PropertyValueChangedEvent<keyof GridOptions>[] = [];
         const { gridOptions, validation } = this;
-        Object.entries(options).forEach(([key, value]) => {
+
+        for (const key of Object.keys(options)) {
+            const value = options[key as keyof GridOptions];
             validation?.warnOnInitialPropertyUpdate(source, key);
 
             const shouldForce = force || (typeof value === 'object' && source === 'api'); // force objects as they could have been mutated.
@@ -195,7 +197,7 @@ export class GridOptionsService extends BeanStub implements NamedBean {
                 };
                 events.push(event);
             }
-        });
+        }
 
         validation?.processGridOptions(this.gridOptions);
 

@@ -3,7 +3,7 @@ import { Component, _warn } from 'ag-grid-community';
 
 import type { AgGroupComponent } from '../../../../widgets/agGroupComponent';
 import type { ChartSeriesType } from '../../utils/seriesTypeMapper';
-import { isCartesian, isPolar } from '../../utils/seriesTypeMapper';
+import { isCartesian, isFunnel, isPolar } from '../../utils/seriesTypeMapper';
 import type { ChartMenuContext } from '../chartMenuContext';
 import { ChartPanelFeature } from '../chartPanelFeature';
 import { CartesianAxisPanel } from './axis/cartesianAxisPanel';
@@ -24,6 +24,7 @@ const DefaultFormatPanelDef: ChartFormatPanel = {
     groups: [{ type: 'chart' }, { type: 'titles' }, { type: 'legend' }, { type: 'series' }, { type: 'axis' }],
 };
 
+const AXIS_KEYS = ['axis', 'horizontalAxis', 'verticalAxis'];
 export class FormatPanel extends Component {
     private chartPanelFeature: ChartPanelFeature;
     private groupExpansionFeature: GroupExpansionFeature;
@@ -110,10 +111,14 @@ export class FormatPanel extends Component {
     }
 
     private isGroupPanelShownInSeries(group: ChartFormatPanelGroup, seriesType: ChartSeriesType): boolean {
-        return (
+        const enable =
             ['chart', 'titles', 'legend', 'series'].includes(group) ||
-            (isCartesian(seriesType) && ['axis', 'horizontalAxis', 'verticalAxis'].includes(group)) ||
-            (isPolar(seriesType) && group === 'axis')
-        );
+            (isCartesian(seriesType) && AXIS_KEYS.includes(group)) ||
+            (isPolar(seriesType) && group === 'axis');
+
+        const disable =
+            (isFunnel(seriesType) && group === 'legend') || (isFunnel(seriesType) && AXIS_KEYS.includes(group));
+
+        return enable && !disable;
     }
 }

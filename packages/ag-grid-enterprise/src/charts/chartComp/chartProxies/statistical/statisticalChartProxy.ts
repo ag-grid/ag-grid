@@ -2,15 +2,11 @@ import type { AgCartesianAxisOptions, AgCartesianChartOptions } from 'ag-charts-
 
 import { DEFAULT_CHART_CATEGORY } from '../../model/chartDataModel';
 import { CartesianChartProxy } from '../cartesian/cartesianChartProxy';
-import type { ChartProxyParams, UpdateParams } from '../chartProxy';
+import type { UpdateParams } from '../chartProxy';
 
 export abstract class StatisticalChartProxy<
     TSeries extends 'box-plot' | 'range-area' | 'range-bar',
 > extends CartesianChartProxy<TSeries> {
-    protected constructor(params: ChartProxyParams) {
-        super(params);
-    }
-
     public getAxes(params: UpdateParams, commonChartOptions: AgCartesianChartOptions): AgCartesianAxisOptions[] {
         return [
             {
@@ -39,11 +35,12 @@ export abstract class StatisticalChartProxy<
                     .map((datum) => datum[field.colId])
                     .filter((value) => typeof value === 'number' && !isNaN(value));
 
-                Object.entries(computeStatsFn(seriesValues)).forEach(([statKey, value]) => {
+                const computed = computeStatsFn(seriesValues);
+                for (const statKey of Object.keys(computed)) {
                     const propertyKey = `${statKey}:${seriesIndex}`;
                     // when no data exists, stat properties are added to results with `null` values!
-                    categoryResult[propertyKey] = seriesValues.length > 0 ? value : null;
-                });
+                    categoryResult[propertyKey] = seriesValues.length > 0 ? computed[statKey] : null;
+                }
             });
 
             return categoryResult;

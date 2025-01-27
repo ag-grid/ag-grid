@@ -165,9 +165,9 @@ const replaceHeaderFooterTokens = (value: string): string => {
         '&[Picture]': '&G',
     };
 
-    Object.entries(map).forEach(([key, val]) => {
-        value = value.replace(key, val);
-    });
+    for (const key of Object.keys(map) as (keyof typeof map)[]) {
+        value = value.replace(key, map[key]);
+    }
 
     return value;
 };
@@ -251,7 +251,8 @@ const buildHeaderFooter = (headerFooterConfig: ExcelHeaderFooterConfig): XmlElem
             return;
         }
 
-        for (const [key, value] of Object.entries<ExcelHeaderFooterContent[]>(headerFooter)) {
+        for (const key of Object.keys(headerFooter)) {
+            const value: ExcelHeaderFooterContent[] = (headerFooter as any)[key];
             const nameSuffix = `${key.charAt(0).toUpperCase()}${key.slice(1)}`;
             const location: 'H' | 'F' = key[0].toUpperCase() as 'H' | 'F';
 

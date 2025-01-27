@@ -264,8 +264,8 @@ export class PivotStage extends BeanStub implements NamedBean, IRowNodeStage {
         } else {
             const result: Record<string, any> = {};
 
-            for (const [key, value] of Object.entries(mappedChildren)) {
-                result[key] = this.bucketChildren(value, pivotColumns, pivotIndex + 1, uniqueValues[key]);
+            for (const key of Object.keys(mappedChildren)) {
+                result[key] = this.bucketChildren(mappedChildren[key], pivotColumns, pivotIndex + 1, uniqueValues[key]);
             }
 
             return result;

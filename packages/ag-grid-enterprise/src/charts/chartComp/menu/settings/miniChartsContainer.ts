@@ -5,6 +5,9 @@ import { AgGroupComponent } from '../../../../widgets/agGroupComponent';
 import type { ChartController } from '../../chartController';
 import type { ChartTranslationService } from '../../services/chartTranslationService';
 import { getFullChartNameTranslationKey } from '../../utils/seriesTypeMapper';
+import { MiniConeFunnel } from './miniCharts/funnel/miniConeFunnel';
+import { MiniFunnel } from './miniCharts/funnel/miniFunnel';
+import { MiniPyramid } from './miniCharts/funnel/miniPyramid';
 import {
     MiniArea,
     MiniAreaColumnCombo,
@@ -120,6 +123,11 @@ const miniChartMapping: MiniChartMenuMapping = {
         areaColumnCombo: { range: true, pivot: true, enterprise: false, icon: MiniAreaColumnCombo },
         customCombo: { range: true, pivot: true, enterprise: false, icon: MiniCustomCombo },
     },
+    funnelGroup: {
+        funnel: { range: true, pivot: false, enterprise: true, icon: MiniFunnel },
+        coneFunnel: { range: true, pivot: false, enterprise: true, icon: MiniConeFunnel },
+        pyramid: { range: true, pivot: false, enterprise: true, icon: MiniPyramid },
+    },
 };
 
 const DEFAULT_CHART_GROUPS: ChartGroupsDef = {
@@ -133,6 +141,7 @@ const DEFAULT_CHART_GROUPS: ChartGroupsDef = {
     statisticalGroup: ['boxPlot', 'histogram', 'rangeBar', 'rangeArea'],
     hierarchicalGroup: ['treemap', 'sunburst'],
     specializedGroup: ['heatmap', 'waterfall'],
+    funnelGroup: ['funnel', 'coneFunnel', 'pyramid'],
     combinationGroup: ['columnLineCombo', 'areaColumnCombo', 'customCombo'],
 };
 

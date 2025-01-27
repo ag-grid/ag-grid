@@ -592,8 +592,8 @@ export class LazyCache extends BeanStub {
         const blockPrefix = this.blockUtils.createNodeIdPrefix(this.store.getParentNode());
 
         const results: { [key: string]: any } = {};
-        Object.entries(blockStates).forEach(([blockStart, uniqueStates]) => {
-            const sortedStates = [...uniqueStates].sort(
+        for (const blockStart of Object.keys(blockStates)) {
+            const sortedStates = [...blockStates[blockStart]].sort(
                 (a, b) => (statePriorityMap[a] ?? 0) - (statePriorityMap[b] ?? 0)
             );
             const priorityState = sortedStates[0];
@@ -608,7 +608,7 @@ export class LazyCache extends BeanStub {
                 pageStatus: priorityState,
                 loadedRowCount: blockCounts[blockStart] ?? 0,
             };
-        });
+        }
         return results;
     }
 
@@ -700,6 +700,7 @@ export class LazyCache extends BeanStub {
 
             blockDistanceToMiddle[blockStart] = farthest;
         });
+        // eslint-disable-next-line no-restricted-properties
         return Object.entries(blockDistanceToMiddle);
     }
 

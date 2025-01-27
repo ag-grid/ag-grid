@@ -22,6 +22,106 @@ const gridOptions = {
 }
 ```
 
+## Header Styling
+
+This section will show different ways of manually styling the Grid Header.
+
+### Header Style
+
+Used to provide CSS styles directly (not using a class) to the header. Can be either an object
+of CSS styles, or a function returning an object of CSS styles.
+
+{% apiDocumentation source="column-properties/properties.json" section="styling" names=["headerStyles"] /%}
+
+```{% frameworkTransform=true spaceBetweenProperties=true %}
+const gridOptions = {
+    columnDefs: [
+        // applies to header and floating filter header
+        {
+            headerName: 'Static Styles',
+            field: 'static',
+            headerStyle: { color: 'red', 'background-color': 'green' }
+        },
+        {
+            headerName: 'Dynamic Styles',
+            field: 'dynamic',
+            headerStyle: params => {
+                // only style floating filter
+                if (params.floatingFilter) {
+                    return { backgroundColor: 'green' };
+                }
+                return null;
+            }
+        },
+    ]
+}
+```
+
+### Header Class
+
+Provides a class for the header. Can be a string (a class), array of strings
+(array of classes), or a function (that returns a string or an array of strings).
+
+{% apiDocumentation source="column-properties/properties.json" section="styling" names=["headerClass"] /%}
+
+```{% frameworkTransform=true spaceBetweenProperties=true %}
+const gridOptions = {
+    columnDefs: [
+        {
+            headerName: 'Static Class',
+            field: 'static',
+            headerClass: 'my-class'
+        },
+        {
+            headerName: 'Static Array of Classes',
+            field: 'staticArray',
+            headerClass: ['my-class1','my-class2'],
+        },
+        {
+            headerName: 'Function Returns String',
+            field: 'function',
+            headerClass: params => {
+                return params.columnGroup ? 'my-custom-column-group' : 'my-custom-column';
+            },
+        }
+    ]
+}
+```
+
+### Style Refresh
+
+If you refresh a header, the headerStyle and headerClass will be all applied again. This has the following effect:
+
+* `headerStyle`: All new styles are applied. If a new style is the same as an old style, the new style overwrites the old style. If a new style is not present, the old style is left (the grid will NOT remove styles).
+* `headerClass`: All new classes are applied. Old classes are not removed so be aware that classes will accumulate.
+
+```js
+// unsafe, the red will stay after initially applied
+headerStyle: params => params.colDef.field === 'athlete' ? { color: 'red' } : null
+```
+
+```js
+// safe, to black will override the red when the condition is not true
+headerStyle: params => params.colDef.field === 'athlete' ? { color: 'red' } : { color: 'black' }
+```
+
+### Style Interface
+
+{% interfaceDocumentation interfaceName="AbstractColDef" names=["headerStyle", "headerClass" ] /%}
+
+### Combined Example
+
+Below shows both headerStyle and headerClass in a full working example. The example demonstrates the following:
+
+- **Athlete Details**: uses `headerStyle` static object.
+- **Athlete**: uses `headerStyle` static object functions. This also causes the floating filter to be styled.
+- **Country**: uses `headerStyle` function callback. This allows to set a different background color for the header and floating filter.
+- **Sport**: uses `headerClass` to add the `sport-header` class to the header.
+- **Medal Details**: uses `headerStyle` callback function to toggle different styles when the group is expanded or collapsed.
+
+
+{% gridExampleRunner title="Header Styling" name="header-styles" /%}
+
 ## Header Height
 
 These properties can be used to change the different heights used in the headers.
@@ -29,6 +129,7 @@ These properties can be used to change the different heights used in the headers
 {% apiDocumentation source="grid-options/properties.json" section="headers" /%}
 
 As you can see in the example below, if you change any of the header heights, this change will be reflected automatically. Note how if the value is cleared (set to `undefined`), it might reuse other values. To see all the interactions check the properties descriptions at the top of the page.
+
 
 {% gridExampleRunner title="Dynamic Header Height" name="dynamic-height" /%}
 

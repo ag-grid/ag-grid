@@ -180,14 +180,6 @@ const makeStyleMaterialTreeShakeable = () => {
             ref: 'primaryColor',
             mix: 0.5,
         },
-        columnHoverColor: {
-            ref: 'primaryColor',
-            mix: 0.05,
-        },
-        selectedRowBackgroundColor: {
-            ref: 'primaryColor',
-            mix: 0.12,
-        },
         inputFocusBorder: {
             width: 2,
             color: { ref: 'primaryColor' },
@@ -207,11 +199,14 @@ const makeStyleMaterialTreeShakeable = () => {
             ref: 'backgroundColor',
         },
         rowHoverColor: foregroundMix(0.08),
+        columnHoverColor: foregroundMix(0.08),
         headerCellHoverBackgroundColor: foregroundMix(0.05),
         statusBarLabelColor: foregroundMix(0.63),
         statusBarLabelFontWeight: 600,
         statusBarValueFontWeight: 600,
         valueChangeValueHighlightBackgroundColor: '#00acc1',
+        panelTitleBarIconColor: foregroundColor,
+        advancedFilterBuilderButtonBarBorder: false,
     };
 
     const lightParams = {
@@ -223,6 +218,7 @@ const makeStyleMaterialTreeShakeable = () => {
         checkboxUncheckedBorderColor: foregroundColor,
         checkboxIndeterminateBackgroundColor: foregroundColor,
         toggleButtonOffBackgroundColor: foregroundColor,
+        selectedRowBackgroundColor: 'rgba(33, 150, 243, 0.3)',
     } as const;
 
     const darkParams = {
@@ -234,6 +230,7 @@ const makeStyleMaterialTreeShakeable = () => {
         checkboxUncheckedBorderColor: foregroundBackgroundMix(0.5),
         checkboxIndeterminateBackgroundColor: foregroundBackgroundMix(0.5),
         toggleButtonOffBackgroundColor: foregroundBackgroundMix(0.5),
+        selectedRowBackgroundColor: '#bb86fc33',
     } as const;
 
     return createPart<StyleMaterialParams>({
@@ -272,6 +269,7 @@ const makeThemeMaterialTreeShakeable = () =>
                 calc: 'spacing * 1.75',
             },
             cellHorizontalPadding: { calc: 'spacing * 3' },
+            buttonHorizontalPadding: { ref: 'spacing' },
             widgetContainerHorizontalPadding: { calc: 'spacing * 1.5' },
             widgetContainerVerticalPadding: { calc: 'spacing * 2' },
             fontSize: 13,

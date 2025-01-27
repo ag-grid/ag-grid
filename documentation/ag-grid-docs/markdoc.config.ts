@@ -4,6 +4,7 @@ import { heading } from '@ag-website-shared/markdoc/nodes/heading';
 import { br } from '@ag-website-shared/markdoc/tags/br';
 import { embedSnippet } from '@ag-website-shared/markdoc/tags/embedSnippet';
 import { enterpriseIcon } from '@ag-website-shared/markdoc/tags/enterpriseIcon';
+import { expandingSection } from '@ag-website-shared/markdoc/tags/expandingSection';
 import { idea } from '@ag-website-shared/markdoc/tags/idea';
 import { image } from '@ag-website-shared/markdoc/tags/image';
 import { kbd } from '@ag-website-shared/markdoc/tags/kbd';
@@ -63,6 +64,7 @@ export default defineMarkdocConfig({
         warning,
         idea,
         openInCTA,
+        expandingSection,
         moduleCallout: {
             render: component('./src/components/module-callout/components/ModuleCallout.astro'),
             attributes: {

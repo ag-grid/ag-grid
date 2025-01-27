@@ -832,7 +832,8 @@ export class RowRenderer extends BeanStub implements NamedBean {
     private getRowsToRecycle(): RowCtrlByRowNodeIdMap {
         // remove all stub nodes, they can't be reused, as no rowNode id
         const stubNodeIndexes: string[] = [];
-        for (const [index, rowCtrl] of Object.entries(this.rowCtrlsByRowIndex)) {
+        for (const index of Object.keys(this.rowCtrlsByRowIndex)) {
+            const rowCtrl = this.rowCtrlsByRowIndex[index as any];
             const stubNode = rowCtrl.rowNode.id == null;
             if (stubNode) {
                 stubNodeIndexes.push(index);

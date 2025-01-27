@@ -269,7 +269,8 @@ export class ViewportRowModel extends BeanStub implements NamedBean, IRowModel {
 
     private setRowData(rowData: { [key: number]: any }): void {
         const rowNodesByIndex = this.rowNodesByIndex;
-        for (const [indexStr, dataItem] of Object.entries(rowData)) {
+        for (const indexStr of Object.keys(rowData)) {
+            const dataItem = rowData[indexStr as any];
             const index = parseInt(indexStr, 10);
             // we should never keep rows that we didn't specifically ask for, this
             // guarantees the contract we have with the server.

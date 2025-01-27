@@ -17,10 +17,16 @@ if (process.argv.length < 4) {
     process.exit(1);
 }
 
-const [exec, scriptPath, gridNewVersion, chartsDependencyVersion] = process.argv;
+const [exec, scriptPath, gridNewVersion, chartsDependencyVersion, environment] = process.argv;
 
-if (!gridNewVersion || !chartsDependencyVersion) {
-    console.error('ERROR: Invalid grid or charts version supplied');
+if (!gridNewVersion || !chartsDependencyVersion || !environment) {
+    console.error('ERROR: Invalid grid or charts version, or missing environment supplied');
+    console.error('node scripts/deployments/versionModules.js <grid version> <charts version> <environment>');
+    process.exit(1);
+}
+
+if (!['production', 'archive', 'local'].some((test) => environment === test)) {
+    console.error('ERROR: Invalid environment supplied. Must be one of: production|archive|local');
     process.exit(1);
 }
 
@@ -40,9 +46,9 @@ function createRootEnvFiles() {
     const data = `# Production Build
 BUILD_GRID_VERSION=${gridNewVersion}
 BUILD_CHARTS_VERSION=${chartsDependencyVersion}
+ENV=${environment}
 `;
-    fs.writeFileSync('./.env.production', data, 'utf-8');
-    fs.writeFileSync('./.env.archive', data, 'utf-8');
+    fs.writeFileSync('./.env', data, 'utf-8');
 }
 
 function updateAngularProject(CWD, packageDirectory) {
