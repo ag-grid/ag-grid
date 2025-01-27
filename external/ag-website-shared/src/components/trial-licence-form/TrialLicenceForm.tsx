@@ -5,8 +5,8 @@ import classnames from 'classnames';
 import { useCallback, useState } from 'react';
 import type { ChangeEventHandler, FormEventHandler, FunctionComponent } from 'react';
 
+import { MESSAGES } from './Messages';
 import styles from './TrialLicenceForm.module.scss';
-import { MESSAGES } from './constants';
 
 type TrialFormState = 'success' | 'error' | 'loading' | 'idle';
 
@@ -274,7 +274,7 @@ export const TrialLicenceForm: FunctionComponent = () => {
                 {formError && (
                     <p className={classnames(styles.statusMessage, styles.errorMessage)}>
                         <Icon name="warning" svgClasses={styles.statusIconError} />
-                        <span dangerouslySetInnerHTML={{ __html: formError }}></span>
+                        <span>{formError}</span>
                     </p>
                 )}
             </div>
