@@ -163,13 +163,13 @@ export const LicensePricing: FunctionComponent<Props> = ({ defaultSelection }) =
 
                         <div className={styles.trialLicence}>
                             <h3 className="text-2xl" id="request-trial-licence">
-                                Request an Enterprise Bundle Trial License
+                                Request an Enterprise Bundle Trial License Key
                             </h3>
 
                             <p>
-                                If you would like to trial AG Grid Enterprise in a production environment, you can
-                                request a free trial license key. The trial license key will remove the watermark &
-                                console error message, and provide access to both AG Grid and AG Charts Enterprise.
+                                If you would like to trial AG Grid Enterprise in an environment, you can request a free
+                                trial license key. The trial license key will remove the watermark & console error
+                                message, and provide access to both AG Grid and AG Charts Enterprise.
                             </p>
 
                             <p>
