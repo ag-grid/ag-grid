@@ -760,6 +760,150 @@ provideGlobalGridOptions({ theme: "legacy" });
 
 {/* ------------------------------------------------- */}
 
+<Heading level={2} id="deprecations">Deprecations</Heading>
+<div
+    data-meta='["ModuleRegistry.register","MenuModule","RangeSelectionModule","Column.isHovered","deselectAllFiltered","deselectAllOnCurrentPage","selectAllFiltered","selectAllOnCurrentPage","cellRendererParams.checkbox","gridOptions.sortingOrder","gridOptions.unSortIcon","groupRemoveLowestSingleChildren","groupRemoveSingleChildren","suppressMakeColumnVisibleAfterUnGroup","suppressPropertyNamesCheck","suppressRowGroupHidesColumns","childIndex","firstChild","lastChild","childIndexChanged","firstChildChanged","lastChildChanged","smallDown","smallLeft","smallRight"]'
+>
+</div>
+
+<ExpandingSection headerText="Deprecations">
+    <Heading level="3" id="modules">Modules</Heading>
+    <div data-meta='["ModuleRegistry.register","MenuModule","RangeSelectionModule"]'></div>
+    <ul>
+        <li>
+            <code>ModuleRegistry.register(module)</code> - deprecated, use
+            <code>ModuleRegistry.registerModules([module])</code> instead.
+        </li>
+        <li>
+            <code>MenuModule</code> - deprecated, use <code>ColumnMenuModule</code> for the Column Menu and/or
+            <code>ContextMenuModule</code> for the Context Menu instead.
+        </li>
+        <li><code>RangeSelectionModule</code> - deprecated, use <code>CellSelectionModule</code> instead.</li>
+    </ul>
+
+    <Heading level="3" id="column-object">Column Object</Heading>
+    <div data-meta='["Column.isHovered"]'></div>
+    <ul>
+        <li><code>Column.isHovered()</code> - deprecated, use <code>api.isColumnHovered(column)</code> instead.</li>
+    </ul>
+
+    <Heading level="3" id="grid-api">Grid API</Heading>
+    <div data-meta='["deselectAllFiltered","deselectAllOnCurrentPage","selectAllFiltered","selectAllOnCurrentPage"]'>
+    </div>
+    <ul>
+        <li><code>deselectAllFiltered</code> - deprecated, use <code>deselectAll('filtered')</code> instead.</li>
+        <li>
+            <code>deselectAllOnCurrentPage</code> - deprecated, use <code>deselectAll('currentPage')</code> instead.
+        </li>
+        <li><code>selectAllFiltered</code> - deprecated, use <code>selectAll('filtered')</code> instead.</li>
+        <li><code>selectAllOnCurrentPage</code> - deprecated, use <code>selectAll('currentPage')</code> instead.</li>
+    </ul>
+
+    <Heading level="3" id="grid-options">Grid Options</Heading>
+    <div <ul>
+        <code>cellRendererParams.checkbox</code> - deprecated, use
+        <code>rowSelection.checkboxLocation = "autoGroupColumn"</code> instead.
+    </div>
+    <li>
+        <code>gridOptions.sortingOrder</code> - deprecated, use <code>defaultColDef.sortingOrder</code> instead.
+    </li>
+    <li><code>gridOptions.unSortIcon</code> - deprecated, use <code>defaultColDef.unSortIcon</code> instead.</li>
+    <li>
+        <code>groupRemoveLowestSingleChildren</code> - deprecated, use
+        <code>groupHideParentOfSingleChild: 'leafGroupsOnly'</code> instead.
+    </li>
+    <li>
+        <code>groupRemoveSingleChildren</code> - deprecated, use <code>groupHideParentOfSingleChild: true</code>
+        instead.
+    </li>
+    <li>
+        <code>suppressMakeColumnVisibleAfterUnGroup</code> - deprecated, use
+        <code>suppressGroupChangesColumnVisibility: "suppressShowOnUngroup"</code> instead.
+    </li>
+    <li>
+        <code>suppressPropertyNamesCheck</code> - deprecated without replacement. Previously used for adding user properties
+        in <code>gridOptions</code> and <code>columnDefs</code>. Now, use the <code>context</code>
+        property in both for storing arbitrary metadata.
+    </li>
+    <li>
+        <code>suppressRowGroupHidesColumns</code> - deprecated, use
+        <code>suppressGroupChangesColumnVisibility: "suppressHideOnGroup"</code> instead.
+    </li>
+    <li>
+        When setting both <code>suppressMakeColumnVisibleAfterUnGroup</code> and
+        <code>suppressRowGroupHidesColumns</code> to <code>true</code>, use
+        <code>suppressGroupChangesColumnVisibility: true</code> instead.
+    </li>
+
+    <Heading level="3" id="row-node">Row Node</Heading>
+    <div
+        data-meta='["childIndex","firstChild","lastChild","childIndexChanged","firstChildChanged","lastChildChanged","smallDown","smallLeft","smallRight"]'
+    >
+    </div>
+    <ul>
+        <li>
+            <code>childIndex</code> - deprecated, use
+            <code>rowNode.parent?.childrenAfterSort?.findIndex(r =&gt; r === rowNode)</code> instead.
+        </li>
+        <li>
+            <code>firstChild</code> - deprecated, use
+            <code>rowNode.parent?.childrenAfterSort?.[0] === rowNode</code>
+            instead.
+        </li>
+        <li>
+            <code>lastChild</code> - deprecated, use
+            <code
+                >!!rowNode.parent?.childrenAfterSort &amp;&amp;
+                (rowNode.parent.childrenAfterSort[rowNode.parent.childrenAfterSort.length - 1] === rowNode)</code
+            >
+            instead.
+        </li>
+    </ul>
+
+    <Heading level="3" id="row-node-events">Row Node Events</Heading>
+    <div data-meta='["childIndexChanged","firstChildChanged","lastChildChanged"]'></div>
+    <ul>
+        <li>
+            <code>childIndexChanged</code> - deprecated, use the global <code>modelUpdated</code> event to determine when
+            row children have changed.
+        </li>
+        <li>
+            <code>firstChildChanged</code> - deprecated, use the global <code>modelUpdated</code> event to determine when
+            row children have changed.
+        </li>
+        <li>
+            <code>lastChildChanged</code> - deprecated, use the global <code>modelUpdated</code> event to determine when
+            row children have changed.
+        </li>
+    </ul>
+
+    <Heading level="3" id="theming-custom-icons">Theming Custom Icons</Heading>
+    <div data-meta='["smallDown","smallLeft","smallRight"]'></div>
+    <ul>
+        <li>
+            <code>smallDown</code> - deprecated, use:<ul>
+                <li><code>advancedFilterBuilderSelect</code> for Advanced Filter Builder dropdown.</li>
+                <li><code>selectOpen</code> for Select cell editor and dropdowns (e.g., Integrated Charts menu).</li>
+                <li><code>richSelectOpen</code> for Rich Select cell editor.</li>
+            </ul>
+        </li>
+        <li>
+            <code>smallLeft</code> - deprecated, use:<ul>
+                <li><code>panelDelimiterRtl</code> for Row Group Panel / Pivot Panel.</li>
+                <li><code>subMenuOpenRtl</code> for sub-menus.</li>
+            </ul>
+        </li>
+        <li>
+            <code>smallRight</code> - deprecated, use:<ul>
+                <li><code>panelDelimiter</code> for Row Group Panel / Pivot Panel.</li>
+                <li><code>subMenuOpen</code> for sub-menus.</li>
+            </ul>
+        </li>
+    </ul>
+</ExpandingSection>
+
+{/* ------------------------------------------------- */}
+
 <Heading level={2} id="removal-of-deprecated-apis">Removal of Deprecated APIs</Heading>
 
 <p>The following APIs have been deprecated since at least v31 and have now been removed.</p>
@@ -942,149 +1086,5 @@ provideGlobalGridOptions({ theme: "legacy" });
         <li><code>ExcelAlignment</code>: Legacy property <code>verticalText</code> - removed.</li>
         <li><code>ExcelFont</code>: Legacy property <code>charSet</code> - removed.</li>
         <li><code>ExcelStyle</code>: Legacy property <code>name</code> - removed.</li>
-    </ul>
-</ExpandingSection>
-
-{/* ------------------------------------------------- */}
-
-<Heading level={2} id="deprecations">Deprecations</Heading>
-<div
-    data-meta='["ModuleRegistry.register","MenuModule","RangeSelectionModule","Column.isHovered","deselectAllFiltered","deselectAllOnCurrentPage","selectAllFiltered","selectAllOnCurrentPage","cellRendererParams.checkbox","gridOptions.sortingOrder","gridOptions.unSortIcon","groupRemoveLowestSingleChildren","groupRemoveSingleChildren","suppressMakeColumnVisibleAfterUnGroup","suppressPropertyNamesCheck","suppressRowGroupHidesColumns","childIndex","firstChild","lastChild","childIndexChanged","firstChildChanged","lastChildChanged","smallDown","smallLeft","smallRight"]'
->
-</div>
-
-<ExpandingSection headerText="Deprecations">
-    <Heading level="3" id="modules">Modules</Heading>
-    <div data-meta='["ModuleRegistry.register","MenuModule","RangeSelectionModule"]'></div>
-    <ul>
-        <li>
-            <code>ModuleRegistry.register(module)</code> - deprecated, use
-            <code>ModuleRegistry.registerModules([module])</code> instead.
-        </li>
-        <li>
-            <code>MenuModule</code> - deprecated, use <code>ColumnMenuModule</code> for the Column Menu and/or
-            <code>ContextMenuModule</code> for the Context Menu instead.
-        </li>
-        <li><code>RangeSelectionModule</code> - deprecated, use <code>CellSelectionModule</code> instead.</li>
-    </ul>
-
-    <Heading level="3" id="column-object">Column Object</Heading>
-    <div data-meta='["Column.isHovered"]'></div>
-    <ul>
-        <li><code>Column.isHovered()</code> - deprecated, use <code>api.isColumnHovered(column)</code> instead.</li>
-    </ul>
-
-    <Heading level="3" id="grid-api">Grid API</Heading>
-    <div data-meta='["deselectAllFiltered","deselectAllOnCurrentPage","selectAllFiltered","selectAllOnCurrentPage"]'>
-    </div>
-    <ul>
-        <li><code>deselectAllFiltered</code> - deprecated, use <code>deselectAll('filtered')</code> instead.</li>
-        <li>
-            <code>deselectAllOnCurrentPage</code> - deprecated, use <code>deselectAll('currentPage')</code> instead.
-        </li>
-        <li><code>selectAllFiltered</code> - deprecated, use <code>selectAll('filtered')</code> instead.</li>
-        <li><code>selectAllOnCurrentPage</code> - deprecated, use <code>selectAll('currentPage')</code> instead.</li>
-    </ul>
-
-    <Heading level="3" id="grid-options">Grid Options</Heading>
-    <div <ul>
-        <code>cellRendererParams.checkbox</code> - deprecated, use
-        <code>rowSelection.checkboxLocation = "autoGroupColumn"</code> instead.
-    </div>
-    <li>
-        <code>gridOptions.sortingOrder</code> - deprecated, use <code>defaultColDef.sortingOrder</code> instead.
-    </li>
-    <li><code>gridOptions.unSortIcon</code> - deprecated, use <code>defaultColDef.unSortIcon</code> instead.</li>
-    <li>
-        <code>groupRemoveLowestSingleChildren</code> - deprecated, use
-        <code>groupHideParentOfSingleChild: 'leafGroupsOnly'</code> instead.
-    </li>
-    <li>
-        <code>groupRemoveSingleChildren</code> - deprecated, use <code>groupHideParentOfSingleChild: true</code>
-        instead.
-    </li>
-    <li>
-        <code>suppressMakeColumnVisibleAfterUnGroup</code> - deprecated, use
-        <code>suppressGroupChangesColumnVisibility: "suppressShowOnUngroup"</code> instead.
-    </li>
-    <li>
-        <code>suppressPropertyNamesCheck</code> - deprecated without replacement. Previously used for adding user properties
-        in <code>gridOptions</code> and <code>columnDefs</code>. Now, use the <code>context</code>
-        property in both for storing arbitrary metadata.
-    </li>
-    <li>
-        <code>suppressRowGroupHidesColumns</code> - deprecated, use
-        <code>suppressGroupChangesColumnVisibility: "suppressHideOnGroup"</code> instead.
-    </li>
-    <li>
-        When setting both <code>suppressMakeColumnVisibleAfterUnGroup</code> and
-        <code>suppressRowGroupHidesColumns</code> to <code>true</code>, use
-        <code>suppressGroupChangesColumnVisibility: true</code> instead.
-    </li>
-
-    <Heading level="3" id="row-node">Row Node</Heading>
-    <div
-        data-meta='["childIndex","firstChild","lastChild","childIndexChanged","firstChildChanged","lastChildChanged","smallDown","smallLeft","smallRight"]'
-    >
-    </div>
-    <ul>
-        <li>
-            <code>childIndex</code> - deprecated, use
-            <code>rowNode.parent?.childrenAfterSort?.findIndex(r =&gt; r === rowNode)</code> instead.
-        </li>
-        <li>
-            <code>firstChild</code> - deprecated, use
-            <code>rowNode.parent?.childrenAfterSort?.[0] === rowNode</code>
-            instead.
-        </li>
-        <li>
-            <code>lastChild</code> - deprecated, use
-            <code
-                >!!rowNode.parent?.childrenAfterSort &amp;&amp;
-                (rowNode.parent.childrenAfterSort[rowNode.parent.childrenAfterSort.length - 1] === rowNode)</code
-            >
-            instead.
-        </li>
-    </ul>
-
-    <Heading level="3" id="row-node-events">Row Node Events</Heading>
-    <div data-meta='["childIndexChanged","firstChildChanged","lastChildChanged"]'></div>
-    <ul>
-        <li>
-            <code>childIndexChanged</code> - deprecated, use the global <code>modelUpdated</code> event to determine when
-            row children have changed.
-        </li>
-        <li>
-            <code>firstChildChanged</code> - deprecated, use the global <code>modelUpdated</code> event to determine when
-            row children have changed.
-        </li>
-        <li>
-            <code>lastChildChanged</code> - deprecated, use the global <code>modelUpdated</code> event to determine when
-            row children have changed.
-        </li>
-    </ul>
-
-    <Heading level="3" id="theming-custom-icons">Theming Custom Icons</Heading>
-    <div data-meta='["smallDown","smallLeft","smallRight"]'></div>
-    <ul>
-        <li>
-            <code>smallDown</code> - deprecated, use:<ul>
-                <li><code>advancedFilterBuilderSelect</code> for Advanced Filter Builder dropdown.</li>
-                <li><code>selectOpen</code> for Select cell editor and dropdowns (e.g., Integrated Charts menu).</li>
-                <li><code>richSelectOpen</code> for Rich Select cell editor.</li>
-            </ul>
-        </li>
-        <li>
-            <code>smallLeft</code> - deprecated, use:<ul>
-                <li><code>panelDelimiterRtl</code> for Row Group Panel / Pivot Panel.</li>
-                <li><code>subMenuOpenRtl</code> for sub-menus.</li>
-            </ul>
-        </li>
-        <li>
-            <code>smallRight</code> - deprecated, use:<ul>
-                <li><code>panelDelimiter</code> for Row Group Panel / Pivot Panel.</li>
-                <li><code>subMenuOpen</code> for sub-menus.</li>
-            </ul>
-        </li>
     </ul>
 </ExpandingSection>
