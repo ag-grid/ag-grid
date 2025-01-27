@@ -27,6 +27,7 @@ packages/ag-grid-vue3/src/components/utils.ts
 
 # angular - test file requires imports to be in a specific order
 packages/ag-grid-angular/projects/ag-grid-angular/src/test.ts
+documentation/ag-grid-docs/public/example-runner/grid-angular-boilerplate/main.ts
 
 # ignore for now - throws an error when processed
 documentation/ag-grid-docs/src/components/upgrade-33.astro
