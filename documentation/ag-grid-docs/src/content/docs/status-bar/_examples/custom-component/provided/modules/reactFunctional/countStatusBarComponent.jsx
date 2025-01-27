@@ -1,4 +1,3 @@
-import { on } from 'events';
 import React, { useEffect, useState } from 'react';
 
 export default (props) => {

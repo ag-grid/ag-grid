@@ -8,7 +8,7 @@ import type { ICellRendererParams } from 'ag-grid-community';
     changeDetection: ChangeDetectionStrategy.OnPush,
     template: `<span>
         <button style="height: 30px;" (click)="onClick()">✎</button>
-        <span style="padding-left: 4px;">{{ this.displayValue() }}</span>
+        <span style="padding-left: 4px;">{{ displayValue() }}</span>
     </span>`,
 })
 export class CellRenderer implements ICellRendererAngularComp {

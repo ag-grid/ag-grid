@@ -11,7 +11,7 @@ import type { ITooltipParams } from 'ag-grid-community';
     template: ` <div class="custom-tooltip">
         <div [ngClass]="'panel panel-' + type()">
             <div class="panel-heading">
-                <h3 class="panel-title">{{ data().country }}</h3>
+                <h3 class="panel-title">{{ data()?.country }}</h3>
             </div>
             <form class="panel-body" (submit)="onFormSubmit($event)">
                 <div class="form-group">
@@ -21,12 +21,12 @@ import type { ITooltipParams } from 'ag-grid-community';
                         id="name"
                         placeholder="Name"
                         autocomplete="off"
-                        value="{{ data().athlete }}"
+                        value="{{ data()?.athlete }}"
                         (focus)="$event.target.select()"
                     />
                     <button type="submit" class="btn btn-primary">Submit</button>
                 </div>
-                <p>Total: {{ data().total }}</p>
+                <p>Total: {{ data()?.total }}</p>
             </form>
         </div>
     </div>`,

@@ -22,7 +22,6 @@ export class PriceRenderer implements ICellRendererAngularComp {
         this.refresh(params);
     }
 
-    // Return Cell Value
     refresh(params: ICellRendererParams): boolean {
         let priceMultiplier = 1;
 

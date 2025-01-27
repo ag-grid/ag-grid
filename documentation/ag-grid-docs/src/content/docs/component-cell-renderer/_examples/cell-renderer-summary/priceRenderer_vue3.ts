@@ -17,16 +17,16 @@ export default {
             this.updateDisplay(params);
         },
         updateDisplay(params) {
-            if (params.value > 5000000000) {
+            if (params.value > 5_000_000_000) {
                 this.priceMultiplier = 2;
             }
-            if (params.value > 10000000000) {
+            if (params.value > 10_000_000_000) {
                 this.priceMultiplier = 3;
             }
-            if (params.value > 20000000000) {
+            if (params.value > 20_000_000_000) {
                 this.priceMultiplier = 4;
             }
-            if (params.value > 300000000000) {
+            if (params.value > 300_000_000_000) {
                 this.priceMultiplier = 5;
             }
             this.arr = new Array(this.priceMultiplier);

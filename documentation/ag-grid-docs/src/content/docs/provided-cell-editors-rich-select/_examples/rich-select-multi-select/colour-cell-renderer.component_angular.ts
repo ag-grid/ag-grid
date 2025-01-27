@@ -14,10 +14,10 @@ import type { ICellRendererParams } from 'ag-grid-community';
                 <span
                     [ngStyle]="{
                         'background-color': backgroundColor(),
-                        'border-color': value,
+                        'border-color': value(),
                         'box-shadow': boxShadow()
                     }"
-                    >{{ value }}</span
+                    >{{ value() }}</span
                 >
             </ng-container>
         </div>

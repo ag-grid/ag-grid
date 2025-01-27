@@ -186,7 +186,7 @@ export function vanillaToAngular(
         }
 
         if (!propertyAssignments.find((item) => item.indexOf('rowData') >= 0)) {
-            propertyAssignments.push(`public rowData!: ${rowDataType}[];`);
+            propertyAssignments.push(`rowData!: ${rowDataType}[];`);
         }
 
         const componentForCheckBody = eventHandlers

@@ -5,7 +5,7 @@ import { toTitleCase } from './string-utils';
 export const toInput = (property: Property) => `[${property.name}]="${property.name}"`;
 export const toConst = (property: Property) => `[${property.name}]="${property.value}"`;
 export const toOutput = (event: EventHandler) => `(${event.name})="${event.handlerName}($event)"`;
-export const toMember = (property: Property) => `public ${property.name};`;
+export const toMember = (property: Property) => `${property.name};`;
 export const toMemberWithValue = (property: Property) => {
     if (property.typings) {
         const typing = property.typings.typeName;
@@ -16,10 +16,10 @@ export const toMemberWithValue = (property: Property) => {
                 // Special logic for columnDefs as its a popular property
                 typeName = property.value.includes('children') ? '(ColDef | ColGroupDef)[]' : 'ColDef[]';
             }
-            return `public ${property.name}: ${typeName} = ${property.value}`;
+            return `${property.name}: ${typeName} = ${property.value}`;
         }
     }
-    return `public ${property.name} = ${property.value}`;
+    return `${property.name} = ${property.value}`;
 };
 export const toAssignment = (property: Property) => `this.${property.name} = ${property.value}`;
 

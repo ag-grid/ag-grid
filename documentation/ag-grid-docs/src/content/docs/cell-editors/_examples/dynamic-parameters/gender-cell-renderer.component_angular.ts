@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, signal } from '@angular/core';
 
 import type { ICellRendererAngularComp } from 'ag-grid-angular';
 import type { ICellRendererParams } from 'ag-grid-community';
@@ -13,11 +13,10 @@ import type { ICellRendererParams } from 'ag-grid-community';
     `,
 })
 export class GenderCellRenderer implements ICellRendererAngularComp {
-    iconClass = signal('');
     value = signal(undefined);
+    iconClass = computed(() => (this.value() === 'Male' ? 'fa fa-male' : 'fa fa-female'));
 
     agInit(params: ICellRendererParams): void {
-        this.iconClass.set(params.value === 'Male' ? 'fa fa-male' : 'fa fa-female');
         this.value.set(params.value);
     }
 

@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, signal } from '@angular/core';
 
 import type { ICellRendererAngularComp } from 'ag-grid-angular';
 import type { ICellRendererParams } from 'ag-grid-community';
@@ -70,16 +70,17 @@ import type { ICellRendererParams } from 'ag-grid-community';
     `,
 })
 export class FullWidthCellRenderer implements ICellRendererAngularComp {
-    data = signal(undefined);
-    flag = signal('');
+    data = signal<any>(undefined);
+    flag = computed(() =>
+        this.data()?.code ? `https://www.ag-grid.com/example-assets/large-flags/${this.data().code}.png` : ''
+    );
 
     agInit(params: ICellRendererParams): void {
-        const data = params.node.data;
-        this.data.set(data);
-        this.flag.set(`https://www.ag-grid.com/example-assets/large-flags/${data.code}.png`);
+        this.refresh(params);
     }
 
     refresh(params: ICellRendererParams): boolean {
-        return false;
+        this.data.set(params.node.data);
+        return true;
     }
 }

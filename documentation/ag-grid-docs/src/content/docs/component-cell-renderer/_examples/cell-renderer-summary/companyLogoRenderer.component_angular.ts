@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, signal } from '@angular/core';
 
 import type { ICellRendererAngularComp } from 'ag-grid-angular';
 import type { ICellRendererParams } from 'ag-grid-community';
@@ -12,11 +12,7 @@ import type { ICellRendererParams } from 'ag-grid-community';
             @if (value()) {
                 <img
                     [alt]="value()"
-                    [src]="
-                        'https://www.ag-grid.com/example-assets/software-company-logos/' +
-                        value().toLowerCase() +
-                        '.svg'
-                    "
+                    [src]="'https://www.ag-grid.com/example-assets/software-company-logos/' + valueLowerCase() + '.svg'"
                     [height]="30"
                     :class="logo"
                 />
@@ -26,6 +22,7 @@ import type { ICellRendererParams } from 'ag-grid-community';
 })
 export class CompanyLogoRenderer implements ICellRendererAngularComp {
     value = signal('');
+    valueLowerCase = computed(() => this.value().toLowerCase());
 
     agInit(params: ICellRendererParams): void {
         this.refresh(params);

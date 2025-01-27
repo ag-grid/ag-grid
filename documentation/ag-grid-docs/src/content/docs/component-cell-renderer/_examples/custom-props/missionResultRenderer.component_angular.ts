@@ -28,7 +28,6 @@ export class MissionResultRenderer implements ICellRendererAngularComp {
         this.refresh(params);
     }
 
-    // Return Cell Value
     refresh(params: MissionCellRendererParams): boolean {
         if (params.src) {
             this.value.set(params.src(params.value));

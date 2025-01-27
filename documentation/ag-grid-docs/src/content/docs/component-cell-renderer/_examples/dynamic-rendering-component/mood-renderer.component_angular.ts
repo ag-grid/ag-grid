@@ -6,7 +6,7 @@ import type { ICellRendererParams } from 'ag-grid-community';
 @Component({
     standalone: true,
     changeDetection: ChangeDetectionStrategy.OnPush,
-    template: `<img width="20px" [src]="imgForMood" />`,
+    template: `<img width="20px" [src]="imgForMood()" />`,
 })
 export class MoodRenderer implements ICellRendererAngularComp {
     imgForMood = signal('');

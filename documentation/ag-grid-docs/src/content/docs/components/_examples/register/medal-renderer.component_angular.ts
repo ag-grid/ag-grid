@@ -8,7 +8,7 @@ import type { ICellRendererParams } from 'ag-grid-community';
     changeDetection: ChangeDetectionStrategy.OnPush,
     template: `
         <span class="total-value-renderer">
-            <span>{{ country }}</span>
+            <span>{{ country() }}</span>
             <button (click)="buttonClicked()">Push For Total</button>
         </span>
     `,

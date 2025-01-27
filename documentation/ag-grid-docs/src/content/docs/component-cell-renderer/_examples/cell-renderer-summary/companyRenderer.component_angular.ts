@@ -16,7 +16,6 @@ export class CompanyRenderer implements ICellRendererAngularComp {
         this.refresh(params);
     }
 
-    // Return Cell Value
     refresh(params: ICellRendererParams): boolean {
         this.value.set(params.value);
         this.parsedValue.set(new URL(params.value).hostname);
