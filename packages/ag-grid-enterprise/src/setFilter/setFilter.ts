@@ -1,5 +1,4 @@
 import type {
-    AgColumn,
     AgInputTextField,
     ComponentSelector,
     IAfterGuiAttachedParams,
@@ -16,27 +15,22 @@ import {
     RefPlaceholder,
     _areEqual,
     _getActiveDomElement,
-    _last,
     _setDisplayed,
-    _toStringOrNull,
 } from 'ag-grid-community';
 
 import type { VirtualListModel } from '../widgets/iVirtualList';
 import { VirtualList } from '../widgets/virtualList';
 import type { SetFilterModelTreeItem } from './iSetDisplayValueModel';
 import { SET_FILTER_ADD_SELECTION_TO_FILTER, SET_FILTER_SELECT_ALL } from './iSetDisplayValueModel';
-import type { SetFilterHelper } from './setFilterHelper';
+import type { SetFilterEvaluator } from './setFilterEvaluator';
 import type {
     SetFilterListItemExpandedChangedEvent,
     SetFilterListItemParams,
     SetFilterListItemSelectionChangedEvent,
 } from './setFilterListItem';
 import { SetFilterListItem } from './setFilterListItem';
-import { SetFilterModelFormatter } from './setFilterModelFormatter';
-import type { SetFilterService } from './setFilterService';
 import { applyExcelModeOptions, translateForSetFilter } from './setFilterUtils';
 import { SetValueModel } from './setValueModel';
-import { SetFilterModelValuesType } from './setValueModel';
 
 /** @param V type of value in the Set Filter */
 export class SetFilter<V = string>
@@ -54,9 +48,8 @@ export class SetFilter<V = string>
     private virtualList: VirtualList<any>;
     private hardRefreshVirtualList = false;
 
-    private readonly filterModelFormatter = new SetFilterModelFormatter();
-
-    private helper: SetFilterHelper<V>;
+    public evaluator: SetFilterEvaluator<V>;
+    private evaluatorDestroyFuncs?: (() => void)[];
 
     constructor() {
         super('setFilter');
@@ -66,35 +59,16 @@ export class SetFilter<V = string>
         applyExcelModeOptions(params);
         super.setParams(params);
 
-        const helper = (this.beans.setFilter as SetFilterService).getHelper(params);
-        this.helper = helper;
-        const allValues = helper.allValues;
+        const evaluator = this.updateEvaluator(params.getEvaluator() as unknown as SetFilterEvaluator<V>);
 
-        this.valueModel = this.createManagedBean(
-            new SetValueModel({
-                filterParams: params,
-                translate: (key) => translateForSetFilter(this, key),
-                caseFormat: (v) => helper.caseFormat(v),
-                getValueFormatter: () => helper.valueFormatter,
-                treeDataTreeList: helper.treeDataTreeList,
-                groupingTreeList: helper.groupingTreeList,
-                allValues: allValues,
-            })
-        );
-
-        const setIsLoading = this.setIsLoading.bind(this);
-        this.addManagedListeners(allValues, {
-            loadingStart: () => setIsLoading(true),
-            loadingEnd: () => setIsLoading(false),
-        });
+        this.valueModel = this.createManagedBean(new SetValueModel(evaluator.getSetValueModelParams()));
 
         this.initialiseFilterBodyUi();
-
-        this.addEventListenersForDataChanges();
     }
 
     public override refresh(newParams: SetFilterParams<any, V>): boolean {
         applyExcelModeOptions(newParams);
+        this.updateEvaluator(newParams.getEvaluator() as unknown as SetFilterEvaluator<V>);
         return super.refresh(newParams);
     }
 
@@ -130,7 +104,6 @@ export class SetFilter<V = string>
     ): AgPromise<void> {
         return new AgPromise((resolve) =>
             super.updateParams(newParams, oldParams).then(() => {
-                this.helper.refresh(newParams);
                 this.updateMiniFilter();
 
                 if (newParams.suppressSelectAll !== oldParams.suppressSelectAll) {
@@ -147,9 +120,40 @@ export class SetFilter<V = string>
         );
     }
 
-    public doesFilterPass(): boolean {
-        // TODO remove
-        return true;
+    private updateEvaluator(evaluator: SetFilterEvaluator<V>): SetFilterEvaluator<V> {
+        const oldEvaluator = this.evaluator;
+        if (oldEvaluator !== evaluator) {
+            this.evaluatorDestroyFuncs?.forEach((func) => func());
+            this.evaluatorDestroyFuncs = [
+                ...this.addManagedListeners(evaluator, {
+                    anyFilterChanged: (event) => {
+                        evaluator.allValues.allValuesPromise.then((values) => {
+                            if (this.isAlive()) {
+                                this.valueModel.updateDisplayedValues('otherFilter', values ?? []);
+                                if (event.updated) {
+                                    this.checkAndRefreshVirtualList();
+                                    this.showOrHideResults();
+                                }
+                            }
+                        });
+                    },
+                    dataChanged: () => {
+                        evaluator.allValues.allValuesPromise.then((values) => {
+                            if (this.isAlive()) {
+                                this.valueModel.updateDisplayedValues('reload', values ?? []);
+                                this.checkAndRefreshVirtualList();
+                            }
+                        });
+                    },
+                }),
+                ...this.addManagedListeners(evaluator.allValues, {
+                    loadingStart: () => this.setIsLoading(true),
+                    loadingEnd: () => this.setIsLoading(false),
+                }),
+            ];
+            this.evaluator = evaluator;
+        }
+        return evaluator;
     }
 
     // unlike the simple filters, nothing in the set filter UI shows/hides.
@@ -285,10 +289,6 @@ export class SetFilter<V = string>
         return { values, filterType: this.filterType };
     }
 
-    public getValueModel(): SetValueModel<V> {
-        return this.valueModel;
-    }
-
     protected areModelsEqual(a: SetFilterModel, b: SetFilterModel): boolean {
         // both are missing
         if (a == null && b == null) {
@@ -300,63 +300,6 @@ export class SetFilter<V = string>
 
     private onAddCurrentSelectionToFilterChange(newValue: boolean) {
         this.valueModel.setAddCurrentSelectionToFilter(newValue);
-    }
-
-    public getFormattedValue(key: string | null): string | null {
-        let value: V | string | null = this.valueModel.getValue(key);
-        if (
-            this.helper.noValueFormatterSupplied &&
-            (this.helper.treeDataTreeList || this.helper.groupingTreeList) &&
-            Array.isArray(value)
-        ) {
-            // essentially get back the cell value
-            value = _last(value) as string;
-        }
-
-        const formattedValue = this.beans.valueSvc.formatValue(
-            this.params.column as AgColumn,
-            null,
-            value,
-            this.helper.valueFormatter,
-            false
-        );
-
-        return (
-            (formattedValue == null ? _toStringOrNull(value) : formattedValue) ?? translateForSetFilter(this, 'blanks')
-        );
-    }
-
-    private addEventListenersForDataChanges(): void {
-        if (!this.isValuesTakenFromGrid()) {
-            return;
-        }
-
-        this.addManagedPropertyListeners(['groupAllowUnbalanced'], () => {
-            this.syncAfterDataChange();
-        });
-
-        this.addManagedEventListeners({
-            cellValueChanged: (event) => {
-                // only interested in changes to do with this column
-                if (event.column === this.params.column) {
-                    this.syncAfterDataChange();
-                }
-            },
-        });
-    }
-
-    private syncAfterDataChange(): AgPromise<void> {
-        const doApply = !this.applyActive || this.areModelsEqual(this.getModel()!, this.getModelFromUi()!);
-        const promise = this.valueModel.refreshValues();
-
-        return promise.then(() => {
-            if (this.isAlive()) {
-                this.checkAndRefreshVirtualList();
-                if (doApply) {
-                    this.onBtApply(false, true);
-                }
-            }
-        });
     }
 
     private setIsLoading(isLoading: boolean): void {
@@ -454,7 +397,7 @@ export class SetFilter<V = string>
             value,
             params: this.params,
             translate: (translateKey: any) => translateForSetFilter(this, translateKey),
-            valueFormatter: this.helper.valueFormatter,
+            valueFormatter: this.evaluator.valueFormatter,
             item,
             isSelected,
             isTree,
@@ -694,13 +637,7 @@ export class SetFilter<V = string>
     }
 
     public override onNewRowsLoaded(): void {
-        if (this.isValuesTakenFromGrid()) {
-            this.syncAfterDataChange();
-        }
-    }
-
-    private isValuesTakenFromGrid(): boolean {
-        return this.helper.allValues.valuesType === SetFilterModelValuesType.TAKEN_FROM_GRID_VALUES;
+        // do nothing
     }
 
     //noinspection JSUnusedGlobalSymbols
@@ -718,18 +655,16 @@ export class SetFilter<V = string>
         });
     }
 
-    //noinspection JSUnusedGlobalSymbols
     /**
      * Public method provided so the user can reset the values of the filter once that it has started.
      */
     public resetFilterValues(): void {
-        this.helper.allValues.valuesType = SetFilterModelValuesType.TAKEN_FROM_GRID_VALUES;
-        this.syncAfterDataChange();
+        this.evaluator.resetValues();
     }
 
     public refreshFilterValues(): void {
         // the model is still being initialised
-        if (!this.valueModel.isInitialised()) {
+        if (!this.evaluator.allValues.isInitialised()) {
             return;
         }
 
@@ -743,19 +678,7 @@ export class SetFilter<V = string>
     }
 
     public onAnyFilterChanged(): void {
-        // don't block the current action when updating the values for this filter
-        setTimeout(() => {
-            if (!this.isAlive()) {
-                return;
-            }
-
-            this.valueModel.refreshAfterAnyFilterChanged().then((refresh) => {
-                if (refresh && this.isAlive()) {
-                    this.checkAndRefreshVirtualList();
-                    this.showOrHideResults();
-                }
-            });
-        }, 0);
+        // do nothing
     }
 
     private onMiniFilterInput() {
@@ -800,10 +723,13 @@ export class SetFilter<V = string>
 
     protected override resetUiToActiveModel(
         currentModel: SetFilterModel | null,
-        afterUiUpdatedFunc?: () => void
+        afterUiUpdatedFunc?: () => void,
+        fromEvaluator?: boolean
     ): void {
+        // if from the evaluator, we don't want to reset unapplied state
+        const model = fromEvaluator && this.applyActive ? this.getModelFromUi() : currentModel;
         // override the default behaviour as we don't always want to clear the mini filter
-        this.setModelAndRefresh(currentModel == null ? null : currentModel.values).then(() => {
+        this.setModelAndRefresh(model == null ? null : model.values).then(() => {
             if (this.isAlive()) {
                 this.onUiChanged(false, 'prevent');
 
@@ -1021,6 +947,8 @@ export class SetFilter<V = string>
     public override destroy(): void {
         (this.virtualList as any) = this.destroyBean(this.virtualList);
 
+        this.evaluatorDestroyFuncs?.forEach((func) => func());
+
         super.destroy();
     }
 
@@ -1043,8 +971,8 @@ export class SetFilter<V = string>
         }
     }
 
-    public getModelAsString(model: SetFilterModel): string {
-        return this.filterModelFormatter.getModelAsString(model, this);
+    public getModelAsString(model: SetFilterModel | null): string {
+        return this.evaluator.getModelAsString(model);
     }
 
     protected override getPositionableElement(): HTMLElement {

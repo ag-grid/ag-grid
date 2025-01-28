@@ -1,6 +1,8 @@
 import type {
     AgColumn,
-    RowNode,
+    FilterEvaluatorParams,
+    ISetFilterParams,
+    SetFilterModel,
     SetFilterModelValue,
     SetFilterParams,
     TextFormatter,
@@ -14,14 +16,8 @@ import type { ISetFilterLocaleText } from './localeText';
 import type { SetFilterAllValues } from './setFilterAllValues';
 import { TreeSetDisplayValueModel } from './treeSetDisplayValueModel';
 
-export enum SetFilterModelValuesType {
-    PROVIDED_LIST,
-    PROVIDED_CALLBACK,
-    TAKEN_FROM_GRID_VALUES,
-}
-
 export interface SetValueModelParams<V> {
-    filterParams: SetFilterParams<any, V>;
+    filterParams: FilterEvaluatorParams<any, any, V, SetFilterModel> & ISetFilterParams<any, V>;
     translate: (key: keyof ISetFilterLocaleText) => string;
     caseFormat: <T extends string | null>(valueToFormat: T) => typeof valueToFormat;
     getValueFormatter: () => ((params: ValueFormatterParams) => string) | undefined;
@@ -30,13 +26,11 @@ export interface SetValueModelParams<V> {
     allValues: SetFilterAllValues<V>;
 }
 
-type SetValueModelEvent = 'availableValuesChanged';
 /** @param V type of value in the Set Filter */
-export class SetValueModel<V> extends BeanStub<SetValueModelEvent> {
+export class SetValueModel<V> extends BeanStub {
     private formatter: TextFormatter;
-    private doesRowPassOtherFilters: (node: RowNode) => boolean;
     private displayValueModel: ISetDisplayValueModel<V>;
-    private filterParams: SetFilterParams<any, V>;
+    private filterParams: FilterEvaluatorParams<any, any, V, SetFilterModel> & ISetFilterParams<any, V>;
     private translate: (key: keyof ISetFilterLocaleText) => string;
     private caseFormat: <T extends string | null>(valueToFormat: T) => typeof valueToFormat;
 
@@ -47,13 +41,8 @@ export class SetValueModel<V> extends BeanStub<SetValueModelEvent> {
 
     private allValues: SetFilterAllValues<V>;
 
-    /** Remaining keys when filters from other columns have been applied. */
-    private availableKeys = new Set<string | null>();
-
     /** Keys that have been selected for this filter. */
     private selectedKeys = new Set<string | null>();
-
-    private initialised: boolean = false;
 
     constructor(private params: SetValueModelParams<V>) {
         super();
@@ -69,15 +58,13 @@ export class SetValueModel<V> extends BeanStub<SetValueModelEvent> {
             caseFormat,
             allValues,
         } = this.params;
-        const { column, textFormatter, treeList, treeListPathGetter, treeListFormatter, doesRowPassOtherFilter } =
-            filterParams;
+        const { column, textFormatter, treeList, treeListPathGetter, treeListFormatter } = filterParams;
 
         this.filterParams = filterParams;
         this.allValues = allValues;
         this.translate = translate;
         this.caseFormat = caseFormat;
         this.formatter = textFormatter ?? ((value) => value ?? null);
-        this.doesRowPassOtherFilters = doesRowPassOtherFilter;
 
         this.displayValueModel = treeList
             ? new TreeSetDisplayValueModel(
@@ -94,7 +81,7 @@ export class SetValueModel<V> extends BeanStub<SetValueModelEvent> {
               ) as any);
 
         this.allValues.allValuesPromise.then((values) => {
-            this.updateAvailableValues(values);
+            this.updateDisplayedValues('reload', values ?? []);
             this.resetSelectionState(values ?? []);
         });
     }
@@ -150,7 +137,7 @@ export class SetValueModel<V> extends BeanStub<SetValueModelEvent> {
                 const currentModel = this.getModel();
 
                 this.allValues.updateAllValues().then((values) => {
-                    this.updateAvailableValues(values);
+                    this.updateDisplayedValues('reload', values ?? []);
                     // ensure model is updated for new values
                     this.setModel(currentModel).then(() => resolve());
                 });
@@ -170,52 +157,6 @@ export class SetValueModel<V> extends BeanStub<SetValueModelEvent> {
                 this.refreshValues().then(() => resolve());
             });
         });
-    }
-
-    /** @return has anything been updated */
-    public refreshAfterAnyFilterChanged(): AgPromise<boolean> {
-        if (this.showAvailableOnly()) {
-            return this.allValues.allValuesPromise.then((keys) => {
-                this.updateAvailableKeys(keys ?? [], 'otherFilter');
-                return true;
-            });
-        }
-        return AgPromise.resolve(false);
-    }
-
-    public isInitialised(): boolean {
-        return this.initialised;
-    }
-
-    private updateAllValues(): AgPromise<(string | null)[]> {
-        return this.allValues.updateAllValues().then((values) => {
-            this.updateAvailableValues(values);
-            return values ?? [];
-        });
-    }
-
-    private updateAvailableValues(values: (string | null)[] | null): void {
-        this.updateAvailableKeys(values || [], 'reload');
-        this.initialised = true;
-    }
-
-    public isKeyAvailable(key: string | null): boolean {
-        return this.availableKeys.has(key);
-    }
-
-    private showAvailableOnly(): boolean {
-        return this.allValues.valuesType === SetFilterModelValuesType.TAKEN_FROM_GRID_VALUES;
-    }
-
-    private updateAvailableKeys(allKeys: (string | null)[], source: 'reload' | 'otherFilter'): void {
-        const availableKeys = this.showAvailableOnly()
-            ? this.allValues.getAvailableValues((node) => this.doesRowPassOtherFilters(node))
-            : allKeys;
-
-        this.availableKeys = new Set(availableKeys);
-        this.dispatchLocalEvent({ type: 'availableValuesChanged' });
-
-        this.updateDisplayedValues(source, allKeys);
     }
 
     /** Sets mini filter value. Returns true if it changed from last value, otherwise false. */
@@ -256,7 +197,7 @@ export class SetValueModel<V> extends BeanStub<SetValueModelEvent> {
             this.displayValueModel.updateDisplayedValuesToAllAvailable(
                 (key: string | null) => this.getValue(key),
                 allKeys,
-                this.availableKeys,
+                this.allValues.availableKeys,
                 source
             );
             return;
@@ -274,7 +215,7 @@ export class SetValueModel<V> extends BeanStub<SetValueModelEvent> {
         this.displayValueModel.updateDisplayedValuesToMatchMiniFilter(
             (key: string | null) => this.getValue(key),
             allKeys,
-            this.availableKeys,
+            this.allValues.availableKeys,
             matchesFilter,
             nullMatchesFilter,
             source

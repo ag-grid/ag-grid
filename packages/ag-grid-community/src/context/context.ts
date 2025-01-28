@@ -466,7 +466,6 @@ export type BeanName =
     | 'scrollVisibleSvc'
     | 'selectionController'
     | 'selectionSvc'
-    | 'setFilter'
     | 'showRowGroupCols'
     | 'sideBar'
     | 'sortSvc'

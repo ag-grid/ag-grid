@@ -11,7 +11,7 @@ import type {
 import { AgInputTextFieldSelector, Component, RefPlaceholder, _error } from 'ag-grid-community';
 
 import { SetFilter } from './setFilter';
-import { SetFilterModelFormatter } from './setFilterModelFormatter';
+import type { SetFilterEvaluator } from './setFilterEvaluator';
 
 export class SetFloatingFilterComp<V = string> extends Component implements IFloatingFilter {
     private colNames: ColumnNameService;
@@ -23,7 +23,6 @@ export class SetFloatingFilterComp<V = string> extends Component implements IFlo
 
     private params: IFloatingFilterParams;
     private availableValuesListenerAdded = false;
-    private readonly filterModelFormatter = new SetFilterModelFormatter();
 
     constructor() {
         super(
@@ -51,7 +50,7 @@ export class SetFloatingFilterComp<V = string> extends Component implements IFlo
 
         if (this.gos.get('reactiveFloatingFilters')) {
             const reactiveParams = params as unknown as FloatingFilterDisplayParams;
-            this.updateFloatingFilterText(reactiveParams.model, true);
+            this.updateFloatingFilterText(reactiveParams.model);
         }
     }
 
@@ -60,7 +59,7 @@ export class SetFloatingFilterComp<V = string> extends Component implements IFlo
         this.setParams(params);
     }
 
-    public onParentModelChanged(parentModel: SetFilterModel): void {
+    public onParentModelChanged(parentModel: SetFilterModel | null): void {
         this.updateFloatingFilterText(parentModel);
     }
 
@@ -76,35 +75,51 @@ export class SetFloatingFilterComp<V = string> extends Component implements IFlo
     }
 
     private addAvailableValuesListener(): void {
-        this.parentSetFilterInstance((setFilter) => {
-            const setValueModel = setFilter.getValueModel();
-
-            if (!setValueModel) {
-                return;
-            }
-
+        const addListener = (evaluator: SetFilterEvaluator<V>) => {
             // unlike other filters, what we show in the floating filter can be different, even
             // if another filter changes. this is due to how set filter restricts its values based
             // on selections in other filters, e.g. if you filter Language to English, then the set filter
             // on Country will only show English speaking countries. Thus the list of items to show
             // in the floating filter can change.
-            this.addManagedListeners(setValueModel, { availableValuesChanged: () => this.updateFloatingFilterText() });
-        });
+            this.addManagedListeners(evaluator.allValues, {
+                availableValuesChanged: () =>
+                    this.updateFloatingFilterText(
+                        this.beans.colFilter!.getModelForColumn(this.params.column as AgColumn)
+                    ),
+            });
+        };
+        if (this.gos.get('reactiveFloatingFilters')) {
+            addListener(
+                (this.params as unknown as FloatingFilterDisplayParams).getEvaluator() as SetFilterEvaluator<V>
+            );
+        } else {
+            this.parentSetFilterInstance((setFilter) => {
+                addListener(setFilter.evaluator);
+            });
+        }
 
         this.availableValuesListenerAdded = true;
     }
 
-    private updateFloatingFilterText(parentModel?: SetFilterModel | null, reactive?: boolean): void {
-        if (!this.availableValuesListenerAdded && (parentModel != null || !reactive)) {
+    private updateFloatingFilterText(parentModel: SetFilterModel | null): void {
+        if (!this.availableValuesListenerAdded) {
             this.addAvailableValuesListener();
         }
 
-        if (reactive && parentModel == null) {
+        if (parentModel == null) {
             this.eFloatingFilterText.setValue('');
         } else {
-            this.parentSetFilterInstance((setFilter) => {
-                this.eFloatingFilterText.setValue(this.filterModelFormatter.getModelAsString(parentModel, setFilter));
-            });
+            if (this.gos.get('reactiveFloatingFilters')) {
+                this.eFloatingFilterText.setValue(
+                    (this.params as unknown as FloatingFilterDisplayParams)
+                        .getEvaluator()
+                        .getModelAsString?.(parentModel) ?? ''
+                );
+            } else {
+                this.parentSetFilterInstance((setFilter) => {
+                    this.eFloatingFilterText.setValue(setFilter.getModelAsString(parentModel));
+                });
+            }
         }
     }
 }

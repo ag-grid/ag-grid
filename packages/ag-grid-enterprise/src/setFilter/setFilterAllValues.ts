@@ -1,15 +1,29 @@
-import type { RowNode, SetFilterValues, SetFilterValuesFunc, SetFilterValuesFuncParams } from 'ag-grid-community';
+import type {
+    FilterEvaluatorParams,
+    ISetFilterParams,
+    RowNode,
+    SetFilterModel,
+    SetFilterModelValue,
+    SetFilterValues,
+    SetFilterValuesFunc,
+    SetFilterValuesFuncParams,
+} from 'ag-grid-community';
 import { AgPromise, BeanStub, _defaultComparator, _error, _makeNull, _warn } from 'ag-grid-community';
 
 import type { ClientSideValuesExtractor } from './clientSideValueExtractor';
-import type { SetFilterHelperParams } from './setFilterHelper';
 import { createTreeDataOrGroupingComparator } from './setFilterUtils';
-import { SetFilterModelValuesType } from './setValueModel';
 
-type SetFilterAllValuesEvent = 'loadingStart' | 'loadingEnd';
+type SetFilterAllValuesEvent = 'availableValuesChanged' | 'loadingStart' | 'loadingEnd';
+
+enum SetFilterModelValuesType {
+    PROVIDED_LIST,
+    PROVIDED_CALLBACK,
+    TAKEN_FROM_GRID_VALUES,
+}
+export default SetFilterModelValuesType;
 
 export interface SetAllValuesParams<TValue> {
-    filterParams: SetFilterHelperParams<TValue>;
+    filterParams: FilterEvaluatorParams<any, any, TValue, SetFilterModel> & ISetFilterParams<any, TValue>;
     usingComplexObjects?: boolean;
 }
 
@@ -20,6 +34,9 @@ export class SetFilterAllValues<TValue> extends BeanStub<SetFilterAllValuesEvent
     /** All possible values for the filter, sorted if required. */
     public allValues: Map<string | null, TValue | null> = new Map();
 
+    /** Remaining keys when filters from other columns have been applied. */
+    public availableKeys = new Set<string | null>();
+
     public valuesType: SetFilterModelValuesType;
 
     private keyComparator: (a: string | null, b: string | null) => number;
@@ -27,6 +44,8 @@ export class SetFilterAllValues<TValue> extends BeanStub<SetFilterAllValuesEvent
     private compareByValue: boolean;
 
     private providedValues: SetFilterValues<any, TValue> | null = null;
+
+    private initialised: boolean = false;
 
     constructor(
         private readonly clientSideValuesExtractor: ClientSideValuesExtractor<TValue> | undefined,
@@ -157,6 +176,11 @@ export class SetFilterAllValues<TValue> extends BeanStub<SetFilterAllValuesEvent
             }
         });
 
+        this.allValuesPromise.then((values) => {
+            this.updateAvailableKeys(values ?? []);
+            this.initialised = true;
+        });
+
         return this.allValuesPromise;
     }
 
@@ -169,6 +193,41 @@ export class SetFilterAllValues<TValue> extends BeanStub<SetFilterAllValuesEvent
             this.valuesType = SetFilterModelValuesType.PROVIDED_LIST;
             this.providedValues = valuesToUse;
         });
+    }
+
+    public refreshAvailable(): AgPromise<boolean> {
+        return new AgPromise((resolve) => {
+            if (this.showAvailableOnly()) {
+                this.allValuesPromise.then((keys) => {
+                    const updatedKeys = keys ?? [];
+                    this.updateAvailableKeys(updatedKeys);
+                    resolve(true);
+                });
+            }
+            resolve(false);
+        });
+    }
+
+    public refreshAll(): AgPromise<void> {
+        return new AgPromise((resolve) => {
+            this.allValuesPromise.then(() => {
+                this.updateAllValues().then(() => {
+                    resolve();
+                });
+            });
+        });
+    }
+
+    public isInitialised(): boolean {
+        return this.initialised;
+    }
+
+    public getValueForFormatter(key: string | null): TValue | string | null {
+        return this.initialised ? this.allValues.get(key)! : key;
+    }
+
+    public getAvailableKeys(values: SetFilterModelValue): SetFilterModelValue {
+        return this.initialised ? values.filter((v) => this.availableKeys.has(v)) : values;
     }
 
     private getParamsForValuesFromRows(
@@ -265,5 +324,18 @@ export class SetFilterAllValues<TValue> extends BeanStub<SetFilterAllValuesEvent
         }
 
         return sortedKeys;
+    }
+
+    private showAvailableOnly(): boolean {
+        return this.valuesType === SetFilterModelValuesType.TAKEN_FROM_GRID_VALUES;
+    }
+
+    private updateAvailableKeys(allKeys: (string | null)[]): void {
+        const availableKeys = this.showAvailableOnly()
+            ? this.getAvailableValues((node) => this.params.filterParams.doesRowPassOtherFilter(node))
+            : allKeys;
+
+        this.availableKeys = new Set(availableKeys);
+        this.dispatchLocalEvent({ type: 'availableValuesChanged' });
     }
 }

@@ -29,7 +29,13 @@ export interface FilterEvaluatorParams<TData = any, TContext = any, TValue = any
     getValue: <TValue = any>(
         node: IRowNode<TData>,
         column?: string | ColDef<TData, TValue> | Column<TValue>
-    ) => TValue | null | undefined;
+    ) => TValue | null | undefined /**
+     * A function callback, call with a node to be told whether the node passes all filters except the current filter.
+     * This is useful if you want to only present to the user values that this filter can filter given the status of the other filters.
+     * The set filter uses this to remove from the list,
+     * items that are no longer available due to the state of other filters (like Excel type filtering).
+     */;
+    doesRowPassOtherFilter: (rowNode: IRowNode<TData>) => boolean; // TODO: this method should be "doesRowPassOtherFilters"
 }
 
 export interface FilterEvaluator<TData = any, TContext = any, TValue = any, TModel = any, TCustomParams = object> {
@@ -37,6 +43,18 @@ export interface FilterEvaluator<TData = any, TContext = any, TValue = any, TMod
     refresh?(params: FilterEvaluatorParams<TData, TContext, TValue, TModel> & TCustomParams): void;
     doesFilterPass(params: FilterEvaluatorFuncParams<TData, TModel>): boolean;
     getModelAsString?(model: TModel | null): string;
+
+    /**
+     * Optional: Gets called when new rows are inserted into the grid. If the filter needs to change its
+     * state after rows are loaded, it can do it here. For example the set filters uses this
+     * to update the list of available values to select from (e.g. 'Ireland', 'UK' etc for
+     * Country filter). To get the list of available values from within this method from the
+     * Client Side Row Model, use `gridApi.forEachLeafNode(callback)`.
+     */
+    onNewRowsLoaded?(): void;
+
+    /** Optional: Called whenever any filter is changed. */
+    onAnyFilterChanged?(): void;
     destroy?(): void;
 }
 

@@ -273,11 +273,6 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, P extends Si
         return AgPromise.resolve();
     }
 
-    public doesFilterPass(): boolean {
-        // TODO remove
-        return true;
-    }
-
     private setNumConditions(params: P): void {
         let maxNumConditions = params.maxNumConditions ?? 2;
         if (maxNumConditions < 1) {

@@ -5,7 +5,6 @@ import { EnterpriseCoreModule } from '../agGridEnterpriseModule';
 import { VERSION } from '../version';
 import { SetFilter } from './setFilter';
 import { SetFilterEvaluator } from './setFilterEvaluator';
-import { SetFilterService } from './setFilterService';
 import { SetFloatingFilterComp } from './setFloatingFilter';
 
 /**
@@ -14,7 +13,6 @@ import { SetFloatingFilterComp } from './setFloatingFilter';
 export const SetFilterModule: _ModuleWithoutApi = {
     moduleName: 'SetFilter',
     version: VERSION,
-    beans: [SetFilterService],
     userComponents: { agSetColumnFilter: SetFilter, agSetColumnFloatingFilter: SetFloatingFilterComp },
     dynamicBeans: {
         agSetColumnFilterEvaluator: SetFilterEvaluator,

@@ -90,9 +90,6 @@ export abstract class SimpleFloatingFilter<TParams extends IFloatingFilterParams
 
         if (this.reactive) {
             const reactiveParams = params as unknown as FloatingFilterDisplayParams;
-            if (reactiveParams.source === 'dataChanged' || reactiveParams.source === 'ui') {
-                return;
-            }
             this.onModelUpdated(reactiveParams.model);
         }
     }

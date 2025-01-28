@@ -47,8 +47,6 @@ export abstract class ProvidedFilter<M extends ProvidedFilterModel, V, P extends
         super();
     }
 
-    public abstract doesFilterPass(params: IDoesFilterPassParams): boolean;
-
     protected abstract updateUiVisibility(): void;
 
     protected abstract createBodyTemplate(): string;
@@ -102,10 +100,14 @@ export abstract class ProvidedFilter<M extends ProvidedFilterModel, V, P extends
         }
 
         const updateModel = () =>
-            this.resetUiToActiveModel(newParams.model, () => {
-                this.updateUiVisibility();
-                this.setupOnBtApplyDebounce();
-            });
+            this.resetUiToActiveModel(
+                newParams.model,
+                () => {
+                    this.updateUiVisibility();
+                    this.setupOnBtApplyDebounce();
+                },
+                source === 'evaluator'
+            );
 
         if (source !== 'apiParams') {
             // just the model has changed
@@ -132,6 +134,11 @@ export abstract class ProvidedFilter<M extends ProvidedFilterModel, V, P extends
         this.applyActive = isUseApplyButton(newParams);
 
         this.resetButtonsPanel(newParams, oldParams);
+    }
+
+    public doesFilterPass(params: IDoesFilterPassParams): boolean {
+        const { getEvaluator, model } = this.params;
+        return getEvaluator().doesFilterPass({ ...params, model });
     }
 
     public getFilterTitle(): string {
@@ -300,7 +307,12 @@ export abstract class ProvidedFilter<M extends ProvidedFilterModel, V, P extends
         }
     }
 
-    protected resetUiToActiveModel(currentModel: M | null, afterUiUpdatedFunc?: () => void): void {
+    protected resetUiToActiveModel(
+        currentModel: M | null,
+        afterUiUpdatedFunc?: () => void,
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        fromEvaluator?: boolean
+    ): void {
         const afterAppliedFunc = () => {
             this.onUiChanged(false, 'prevent');
 

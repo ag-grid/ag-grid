@@ -491,11 +491,14 @@ export class ColumnFilterService extends BeanStub implements NamedBean {
         return this.updateActiveFilters().then(() =>
             this.updateFilterFlagInColumns('filterChanged', additionalEventAttributes).then(() => {
                 this.allColumnFilters.forEach((filterWrapper) => {
-                    const { filterUi, column: filterColumn } = filterWrapper;
-                    if (colId === filterColumn.getColId() || !filterUi || !filterUi.created) {
+                    const { column: filterColumn, isEvaluator } = filterWrapper;
+                    if (colId === filterColumn.getColId()) {
                         return;
                     }
-                    filterUi.promise.then((filter) => {
+                    if (isEvaluator) {
+                        filterWrapper.evaluator.onAnyFilterChanged?.();
+                    }
+                    getFilterUiFromWrapper(filterWrapper, isEvaluator)?.then((filter) => {
                         if (typeof filter?.onAnyFilterChanged === 'function') {
                             filter.onAnyFilterChanged();
                         }
@@ -523,7 +526,11 @@ export class ColumnFilterService extends BeanStub implements NamedBean {
     private onNewRowsLoaded(source: ColumnEventType): void {
         const promises: AgPromise<void>[] = [];
         this.allColumnFilters.forEach((filterWrapper) => {
-            const promise = getFilterUiFromWrapper(filterWrapper);
+            const isEvaluator = filterWrapper.isEvaluator;
+            if (isEvaluator) {
+                filterWrapper.evaluator.onNewRowsLoaded?.();
+            }
+            const promise = getFilterUiFromWrapper(filterWrapper, isEvaluator);
             if (promise) {
                 promises.push(
                     promise.then((filter) => {
@@ -915,6 +922,8 @@ export class ColumnFilterService extends BeanStub implements NamedBean {
             colDef,
             column,
             getValue: this.createGetValue(column),
+            doesRowPassOtherFilter: (node) =>
+                this.beans.filterManager?.doesRowPassOtherFilters(colId, node as RowNode) ?? true,
             source,
             model: this.getModelForEvaluator(column),
             onModelChange: (newModel, additionalEventAttributes) => {
@@ -1219,8 +1228,7 @@ export class ColumnFilterService extends BeanStub implements NamedBean {
         // Otherwise - Check for refresh method before destruction
         // If refresh() method is implemented - call it and destroy filter if it returns false
         // Otherwise - do nothing ( filter will not be destroyed - we assume new params are compatible with old ones )
-
-        getFilterUiFromWrapper(filterWrapper)?.then((filter) => {
+        getFilterUiFromWrapper(filterWrapper, wasEvaluator)?.then((filter) => {
             const shouldRefreshFilter = filter?.refresh ? filter.refresh(newFilterParams as IFilterParams) : true;
             // framework wrapper always implements optional methods, but returns null if no underlying method
             if (shouldRefreshFilter === false) {
@@ -1612,13 +1620,16 @@ interface EvaluatorFilterWrapper extends BaseFilterWrapper {
 
 type FilterWrapper = LegacyFilterWrapper | EvaluatorFilterWrapper;
 
-function getFilterUiFromWrapper(filterWrapper: FilterWrapper): AgPromise<IFilterComp> | null {
+function getFilterUiFromWrapper(filterWrapper: FilterWrapper, skipCreate?: boolean): AgPromise<IFilterComp> | null {
     const filterUi = filterWrapper.filterUi;
     if (!filterUi) {
         return null;
     }
     if (filterUi.created) {
         return filterUi.promise;
+    }
+    if (skipCreate) {
+        return null;
     }
     const promise = filterUi.create(filterUi.refreshed);
     const createdFilterUi = filterUi as unknown as CreatedFilterUi;
