@@ -8,9 +8,25 @@
     background-color: var(--social-proof-bg);
     border-right: 1px solid var(--color-border-secondary);
     border-left: 1px solid var(--color-border-secondary);
-    box-shadow:
-        50vw 0 0 0 var(--social-proof-bg),
-        -50vw 0 0 0 var(--social-proof-bg);
+
+    &::before,
+    &::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        width: 100vw;
+        background-color: var(--social-proof-bg);
+        z-index: -1;
+    }
+
+    &::before {
+        left: -100vw;
+    }
+
+    &::after {
+        right: -100vw;
+    }
 
     #{$selector-darkmode} & {
         --social-proof-bg: color-mix(in srgb, var(--color-fg-primary), var(--color-bg-primary) 98%);

@@ -237,7 +237,7 @@ export class AgMenuList extends TabGuardComp<AgMenuListEvent> {
     }
 
     private findNextItem(up?: boolean): AgMenuItemComponent | undefined {
-        const items = this.menuItems.filter((item) => !item.isDisabled());
+        const items = [...this.menuItems];
 
         if (!items.length) {
             return;
@@ -254,9 +254,7 @@ export class AgMenuList extends TabGuardComp<AgMenuListEvent> {
         let nextItem: AgMenuItemComponent | undefined;
         let foundCurrent = false;
 
-        for (let i = 0; i < items.length; i++) {
-            const item = items[i];
-
+        for (const item of items) {
             if (!foundCurrent) {
                 if (item === this.activeMenuItem) {
                     foundCurrent = true;

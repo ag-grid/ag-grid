@@ -36,7 +36,8 @@
     }
 }
 
-.ag-standard-button {
+.ag-standard-button,
+.ag-advanced-filter-builder-button {
     text-transform: uppercase;
 }
 

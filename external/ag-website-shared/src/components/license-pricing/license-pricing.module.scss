@@ -334,9 +334,24 @@
     text-align: center;
     position: relative;
     background-color: var(--section-background-color);
-    box-shadow:
-        50vw 0 0 0 var(--section-background-color),
-        -50vw 0 0 0 var(--section-background-color);
+
+    &::before,
+    &::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        width: 100vw;
+        background-color: var(--section-background-color);
+    }
+
+    &::before {
+        left: -100vw;
+    }
+
+    &::after {
+        right: -100vw;
+    }
 
     h3 {
         margin-bottom: -$spacing-size-6;

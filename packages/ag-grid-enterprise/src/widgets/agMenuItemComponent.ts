@@ -289,7 +289,7 @@ export class AgMenuItemComponent extends BeanStub<AgMenuItemComponentEvent> {
     public activate(openSubMenu?: boolean, fromKeyNav?: boolean): void {
         this.cancelActivate();
 
-        if (this.params.disabled) {
+        if (this.params.disabled && !fromKeyNav) {
             return;
         }
 

@@ -39,22 +39,18 @@ You can find more information about how to create and manage themes within the F
 
 {% imageCaption imagePath="resources/FDS-themes.png" alt="Figma Variable Theming" centered=true constrained=false /%}
 
-## Tokens Studio
-
-We also offer full support for [Tokens studio](https://tokens.studio/) users. To start using Tokens studio, open the plugin with the design system document and select a **theme**, **mode**, and **density** in the left hand menu. We also have a full output of our tokens in `AG-Grid-Token-Studio.json`, available at our [design systems GitHub repo](https://github.com/ag-grid/ag-grid-figma-design-system/).
-
-{% imageCaption imagePath="resources/FDS-token-studio.png" alt="Tokens Studio setup" centered=true constrained=false /%}
-
 ## Generating AG Grid Themes From Figma Variables
 
-If you have created your own theme in Figma using the variables feature, you can export those variables and use the [Style Dictionary](https://amzn.github.io/style-dictionary/#/) NPM package to create an [AG Grid CSS theme](./themes/). An example Style Dictionary project and full instructions are included in our [design systems GitHub repo](https://github.com/ag-grid/ag-grid-figma-design-system/tree/main/ag-grid-figma-variables-to-css).
+If you have created your own theme in Figma using the variables feature, you can export those variables and use the [Style Dictionary](https://amzn.github.io/style-dictionary/#/) NPM package to create an [AG Grid legacy CSS theme](./theming/#legacy-themes). An example Style Dictionary project and full instructions are included in our [design systems GitHub repo](https://github.com/ag-grid/ag-grid-figma-design-system/tree/main/ag-grid-figma-variables-to-css).
 
 To export your Figma Variables as json...
 
-1. In the Resources panel go to the Plugins tab and search for the [Design Tokens plugin](https://www.figma.com/community/plugin/888356646278934516/Design-Tokens).
-1. Click on the [Design Tokens plugin](https://www.figma.com/community/plugin/888356646278934516/Design-Tokens) and select the "Export Design Token File" option.
-1. Deselect all include types except for "Figma Variables".
-1. Click the 'Save & Export' button and save the json to the `./tokens/` directory.
+1. In the Resources panel go to the Plugins tab. 
+2. Search for the [Design Tokens](https://www.figma.com/community/plugin/888356646278934516/design-tokens) Figma plugin.
+3. In the [Design Tokens](https://www.figma.com/community/plugin/888356646278934516/design-tokens) plugin settings enable the options "**Add mode to design token name (if 2 or more modes)**" and "**Add mode to design token value**".
+4. Click run for the [Design Tokens](https://www.figma.com/community/plugin/888356646278934516/design-tokens) and select the 'Export Design Tokens File' option. 
+5. Deselect all ‘include types...’ except for "Figma Variables"
+6. Click the 'Save & Export' button and save the json to the `./tokens/` directory.
 
 {% imageCaption imagePath="resources/FDS-export-variables.png" alt="Export Figma Variables" centered=true constrained=false /%}
 
