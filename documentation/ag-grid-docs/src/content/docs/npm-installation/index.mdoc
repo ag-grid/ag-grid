@@ -1,0 +1,36 @@
+---
+title: "Install AG Grid with NPM"
+frameworks: ["javascript"]
+---
+
+AG Grid is available through NPM packages. Below is a code example of using AG Grid with NPM and ECMA 6 imports.
+
+## Installation
+
+To install AG Grid and update your `package.json` file run:
+
+```bash
+npm install --save ag-grid-community
+```
+
+To install AG Grid Enterprise and update your `package.json` file run:
+
+```bash
+npm install --save ag-grid-enterprise
+```
+
+## Importing
+
+Once installed, you can `import` the module. For AG Grid Community, you need the `ag-grid-community` module:
+
+```js
+// ECMA 6 - using the system import method
+import { createGrid } from 'ag-grid-community';
+```
+
+For AG Grid Enterprise features, import the `ag-grid-enterprise` package for it to be included in your application:
+
+```js
+import 'ag-grid-enterprise'
+```
+

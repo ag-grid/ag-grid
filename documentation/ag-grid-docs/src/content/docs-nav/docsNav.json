@@ -19,15 +19,15 @@
                     "path": "community-vs-enterprise"
                 },
                 {
-                    "title": "Installation",
+                    "title": "Configuration",
                     "type": "group",
                     "children": [
                         {
-                            "title": "Install Specific Modules",
+                            "title": "Specific Modules",
                             "path": "modules"
                         },
                         {
-                            "title": "Install AG Grid Enterprise",
+                            "title": "Enterprise Licence",
                             "path": "license-install"
                         }
                     ]
@@ -91,8 +91,14 @@
                         },
                         {
                             "type": "item",
-                            "title": "Installation",
-                            "path": "installation",
+                            "title": "NPM Installation",
+                            "path": "npm-installation",
+                            "frameworks": ["javascript"]
+                        },
+                        {
+                            "type": "item",
+                            "title": "Download",
+                            "path": "download",
                             "frameworks": ["javascript"]
                         }
                     ]

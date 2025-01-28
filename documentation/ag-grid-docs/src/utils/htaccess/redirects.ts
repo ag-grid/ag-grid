@@ -2707,6 +2707,8 @@ export const SITE_301_REDIRECTS: Redirect[] = [
     { from: '/angular-data-grid/licensing/', to: '/angular-data-grid/community-vs-enterprise/' },
     { from: '/javascript-data-grid/licensing/', to: '/javascript-data-grid/community-vs-enterprise/' },
 
+    { from: '/javascript-data-grid/installation/', to: '/javascript-data-grid/npm-installation/' },
+
     ...pageForAllFrameworks('range-selection', 'cell-selection'),
     ...pageForAllFrameworks('range-selection-handle', 'cell-selection-handle'),
     ...pageForAllFrameworks('range-selection-fill-handle', 'cell-selection-fill-handle'),
