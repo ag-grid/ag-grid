@@ -1,0 +1,15 @@
+---
+import type { Library } from '@ag-grid-types';
+import { Icon } from '@ag-website-shared/components/icon/Icon';
+import { getChangelogUrl } from '@ag-website-shared/utils/getChangelogUrl';
+
+interface Props {
+    site: Library;
+    version: string;
+}
+
+const { site, version } = Astro.props as Props;
+const changelogLink = getChangelogUrl({ site, version });
+---
+
+<a href={changelogLink}>Changes List <Icon name="arrowRight" /></a>
