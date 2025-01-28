@@ -9,34 +9,53 @@
                     "path": "getting-started"
                 },
                 {
-                    "title": "Guides",
+                    "type": "item",
+                    "title": "Key Concepts",
+                    "path": "key-concepts"
+                },
+                {
+                    "type": "item",
+                    "title": "Community Vs. Enterprise",
+                    "path": "community-vs-enterprise"
+                },
+                {
+                    "title": "Installation",
                     "type": "group",
                     "children": [
                         {
-                            "type": "item",
-                            "title": "Tutorial: My First Grid",
+                            "title": "Install Specific Modules",
+                            "path": "modules"
+                        },
+                        {
+                            "title": "Install AG Grid Enterprise",
+                            "path": "license-install"
+                        }
+                    ]
+                },
+                {
+                    "title": "Tutorials",
+                    "type": "group",
+                    "children": [
+                        {
+                            "title": "1. Building a Basic Grid",
                             "path": "deep-dive"
                         },
                         {
-                            "type": "item",
-                            "title": "Video Tutorials",
-                            "path": "videos"
+                            "title": "2. Styling the Grid",
+                            "path": "styling-the-grid"
                         },
                         {
-                            "type": "item",
-                            "title": "AG Grid Enterprise",
-                            "path": "licensing"
+                            "title": "3. Building an Enterprise Grid",
+                            "path": "building-enterprise-grid"
                         },
                         {
-                            "type": "item",
-                            "title": "Installing Your Licence Key",
-                            "path": "license-install"
-                        },
-                        {
-                            "type": "item",
-                            "title": "React Best Practices",
+                            "title": "Best Practices",
                             "path": "react-hooks",
                             "frameworks": ["react"]
+                        },
+                        {
+                            "title": "Video Tutorials",
+                            "path": "videos"
                         }
                     ]
                 },
@@ -44,11 +63,6 @@
                     "title": "Build & Tooling",
                     "type": "group",
                     "children": [
-                        {
-                            "type": "item",
-                            "title": "Modules",
-                            "path": "modules"
-                        },
                         {
                             "type": "item",
                             "title": "Testing",
