@@ -422,14 +422,83 @@ AG Grid comes in two forms:
 
 To learn more about the differences between AG Grid Community and Enterprise, when to use each version, and how to access our [free trial](./community-vs-enterprise/#request-an-enterprise-bundle-trial-license) or purchase a license, see the [Community vs Enterprise](./community-vs-enterprise/) docs.
 
-### Integrated Charting
+### User Created Charts {% enterpriseIcon /%}
 
-### Row Grouping & Aggregation
+[Integrated Charts](./integrated-charts/) allow users to build and customise charts directly within the grid. 
 
-### Pivoting
+Enable Integrated Charts by setting `enableCharts` to `true`. Set `cellSelection` to `true` to allow users to create charts from a Cell Selection:
 
-### Tree Data
+```{% frameworkTransform=true %}
+const gridOptions = {
+    enableCharts: true,
+    cellSelection: true,
+}
+```
 
-### Tool Panels
+### Grouping Rows  {% enterpriseIcon /%}
+
+Enable [Row Grouping](./grouping/) by setting `rowGroup` column definition property to `true`:
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    columnDefs: [
+        { field: 'country', rowGroup: true },
+        // ...
+    ],
+}
+```
+
+### Aggregating Rows {% enterpriseIcon /%}
+
+Enable [Aggregation](./aggregation/) by setting `aggFunc` column definition property to one of `sum`, `min`, `max`, `count`, `avg`, `first`, or `last`:
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    columnDefs: [
+        { field: 'gold', aggFunc: 'sum' },
+        // ...
+    ],
+}
+```
+
+### Pivoting Rows {% enterpriseIcon /%}
+
+Enable [Pivoting](./pivoting/) by setting `pivotMode` to `true` and defining pivot columns by setting `pivot` to `true`:
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    columnDefs: [
+        { field: 'sport', pivot: true },
+    ],
+    pivotMode: true,
+};
+```
+
+### Displaying Structured Hierarchical (Tree) Data {% enterpriseIcon /%}
+
+Tree Data provides a way to supply the grid with structured hierarchical data. Enable Tree Data by setting `treeData` to `true`. Provide a `getDataPath` callback to configure the [Row Hierarchy](./tree-data-hierarchy/):
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    treeData: true,
+    getDataPath: data => data.path,
+}
+```
+
+### Displaying Tool Panels {% enterpriseIcon /%}
+
+The grid provides [Tool Panels](./tool-panel/) for [Columns](./tool-panel-columns/) and [Filters](./tool-panel-filters/). You can also provide [Custom Tool Panels](./component-tool-panel/).
+
+To enable Column and Filter Tool Panels, set `sideBar` to `true`. To display only the Column or Filter Tool Panel, set `sideBar` to `'columns'` or `'filters'`:
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    sideBar: true, // or 'columns' or 'filters'
+}
+```
 
 ### Example
+
+This example demonstrates Integrated Charting, Row Grouping, Aggregation and Tool Panels:
+
+// TODO: Example
