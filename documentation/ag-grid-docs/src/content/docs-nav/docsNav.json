@@ -15,7 +15,7 @@
                 },
                 {
                     "type": "item",
-                    "title": "Community Vs. Enterprise",
+                    "title": "Community vs. Enterprise",
                     "path": "community-vs-enterprise"
                 },
                 {
@@ -53,7 +53,7 @@
                             "path": "deep-dive"
                         },
                         {
-                            "title": "2. Styling the Grid",
+                            "title": "2. Theming & Styling a Grid",
                             "path": "styling-the-grid"
                         },
                         {
