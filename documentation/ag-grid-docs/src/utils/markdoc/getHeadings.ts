@@ -13,6 +13,7 @@ import { transformMarkdoc } from './transformMarkdoc';
 const TABS_TAG_NAME = 'tabs';
 const TAB_ITEM_TAG_NAME = 'tabItem';
 const API_DOC_HEADINGS_ATTR_NAME = '__apiDocumentationHeadings';
+const HEADING_ATTR_NAME = '__heading';
 
 function isTabsTag({ tag, type }: Node) {
     return type === 'tag' && tag === TABS_TAG_NAME;
@@ -46,6 +47,10 @@ function isApiDocsHeadingNode(node: Node) {
 
 function hasApiDocsHeadingAttribute(node: Node) {
     return node.attributes[API_DOC_HEADINGS_ATTR_NAME];
+}
+
+function hasHeadingAttribute(node: Node) {
+    return node.attributes[HEADING_ATTR_NAME];
 }
 
 function addAttributeToNode({ node, name, value }: { node: Node; name: string; value: any }) {
@@ -154,6 +159,9 @@ async function transformRenderTreeWithReferenceHeadings(renderTree: RenderableTr
             });
 
             return headingNodes;
+        } else if (hasHeadingAttribute(node)) {
+            const { level, id, text } = node.attributes[HEADING_ATTR_NAME];
+            return createHeadingRenderableNode({ level, id, text });
         } else {
             return node;
         }
@@ -163,22 +171,12 @@ async function transformRenderTreeWithReferenceHeadings(renderTree: RenderableTr
     renderTree!.children = children;
 }
 
-function getTextFromChildren(node: Node | Tag): string {
+function getTextFromChildren(node: Node): string {
     const { children } = node;
 
     return children
         .map((child) => {
-            let output;
-            const childTag = child as Tag;
-            if (Boolean(Markdoc.Tag.isTag(childTag)) && childTag.attributes._navTitle) {
-                // Use _navTitle from tag attributes if available
-                output = childTag.attributes._navTitle;
-            } else if (typeof child === 'string') {
-                output = child;
-            } else {
-                output = getTextFromChildren(child as Node);
-            }
-            return output;
+            return typeof child === 'string' ? child : getTextFromChildren(child);
         })
         .join(' ');
 }
