@@ -61,11 +61,6 @@
                             "path": "building-enterprise-grid"
                         },
                         {
-                            "title": "Best Practices",
-                            "path": "react-hooks",
-                            "frameworks": ["react"]
-                        },
-                        {
                             "title": "Testing",
                             "type": "group",
                             "frameworks": ["react"],
@@ -140,6 +135,11 @@
                     "title": "Resources",
                     "type": "group",
                     "children": [
+                        {
+                            "title": "Best Practices",
+                            "path": "react-hooks",
+                            "frameworks": ["react"]
+                        },
                         {
                             "type": "item",
                             "title": "Compatibility",
