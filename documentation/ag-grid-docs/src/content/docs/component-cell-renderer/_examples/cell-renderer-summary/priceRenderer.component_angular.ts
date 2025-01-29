@@ -25,14 +25,14 @@ export class PriceRenderer implements ICellRendererAngularComp {
     refresh(params: ICellRendererParams): boolean {
         let priceMultiplier = 1;
 
-        if (params.value > 5_000_000_000) {
-            priceMultiplier = 2;
-        } else if (params.value > 10_000_000_000) {
-            priceMultiplier = 3;
+        if (params.value > 300_000_000_000) {
+            priceMultiplier = 5;
         } else if (params.value > 20_000_000_000) {
             priceMultiplier = 4;
-        } else if (params.value > 300_000_000_000) {
-            priceMultiplier = 5;
+        } else if (params.value > 10_000_000_000) {
+            priceMultiplier = 3;
+        } else if (params.value > 5_000_000_000) {
+            priceMultiplier = 2;
         }
         this.arr.set(Array(priceMultiplier).fill(''));
         return true;
