@@ -1,10 +1,10 @@
 import type { NamedBean } from '../../context/bean';
 import { BeanStub } from '../../context/beanStub';
+import type { RowNode } from '../../entities/rowNode';
 import type { CellPosition } from '../../interfaces/iCellPosition';
 import type { RowPinnedType } from '../../interfaces/iRowNode';
 import type { CellCtrl } from '../cell/cellCtrl';
 import type { RowCtrl } from '../row/rowCtrl';
-import type { CellSpan } from './rowSpanCache';
 import { SpannedRowCtrl } from './spannedRowCtrl';
 
 export class SpannedCellRenderer extends BeanStub<'spannedRowsUpdated'> implements NamedBean {
@@ -16,9 +16,9 @@ export class SpannedCellRenderer extends BeanStub<'spannedRowsUpdated'> implemen
         });
     }
 
-    private topCtrls = new Map<CellSpan, RowCtrl>();
-    private bottomCtrls = new Map<CellSpan, RowCtrl>();
-    private centerCtrls = new Map<CellSpan, RowCtrl>();
+    private topCtrls = new Map<RowNode, RowCtrl>();
+    private bottomCtrls = new Map<RowNode, RowCtrl>();
+    private centerCtrls = new Map<RowNode, RowCtrl>();
 
     private createAllCtrls(): void {
         this.createCtrls('top');
@@ -37,30 +37,30 @@ export class SpannedCellRenderer extends BeanStub<'spannedRowsUpdated'> implemen
         // all currently rendered row ctrls which may have spanned cells
         const rowCtrls = this.getAllRelevantRowControls(ctrlsKey);
 
-        const newRowCtrls = new Map<CellSpan, RowCtrl>();
+        const newRowCtrls = new Map<RowNode, RowCtrl>();
 
         let hasNewSpans = false;
         for (const ctrl of rowCtrls) {
             // skip cells that are animating out.
-            // if (!ctrl.isAlive()) {
-            //     continue;
-            // }
+            if (!ctrl.isAlive()) {
+                continue;
+            }
             this.beans.rowSpanSvc?.forEachSpannedColumn(ctrl.rowNode, (col, cellSpan) => {
                 // if spanned row ctrl already exists
-                if (newRowCtrls.has(cellSpan)) {
+                if (newRowCtrls.has(cellSpan.firstNode)) {
                     return;
                 }
 
-                const existingCtrl = previousCtrls.get(cellSpan);
+                const existingCtrl = previousCtrls.get(cellSpan.firstNode);
                 if (existingCtrl) {
-                    newRowCtrls.set(cellSpan, existingCtrl);
-                    previousCtrls.delete(cellSpan);
+                    newRowCtrls.set(cellSpan.firstNode, existingCtrl);
+                    previousCtrls.delete(cellSpan.firstNode);
                     return;
                 }
 
                 hasNewSpans = true;
                 const newCtrl = new SpannedRowCtrl(cellSpan.firstNode, this.beans, false, false, false);
-                newRowCtrls.set(cellSpan, newCtrl);
+                newRowCtrls.set(cellSpan.firstNode, newCtrl);
             });
         }
 
@@ -101,7 +101,7 @@ export class SpannedCellRenderer extends BeanStub<'spannedRowsUpdated'> implemen
         }
 
         const ctrlsName = `${_normalisePinnedValue(cellPosition.rowPinned)}Ctrls` as const;
-        const ctrl = this[ctrlsName].get(cellSpan);
+        const ctrl = this[ctrlsName].get(cellSpan.firstNode);
 
         if (!ctrl) {
             return undefined;
