@@ -23,12 +23,24 @@
                     "type": "group",
                     "children": [
                         {
-                            "title": "Specific Modules",
+                            "title": "Registering Modules",
                             "path": "modules"
                         },
                         {
-                            "title": "Enterprise Licence",
+                            "title": "Enterprise Licence Key",
                             "path": "license-install"
+                        },
+                        {
+                            "type": "item",
+                            "title": "NPM Installation",
+                            "path": "npm-installation",
+                            "frameworks": ["javascript"]
+                        },
+                        {
+                            "type": "item",
+                            "title": "Download",
+                            "path": "download",
+                            "frameworks": ["javascript"]
                         }
                     ]
                 },
@@ -37,7 +49,7 @@
                     "type": "group",
                     "children": [
                         {
-                            "title": "1. Building a Basic Grid",
+                            "title": "1. Creating a Basic Grid",
                             "path": "deep-dive"
                         },
                         {
@@ -45,7 +57,7 @@
                             "path": "styling-the-grid"
                         },
                         {
-                            "title": "3. Building an Enterprise Grid",
+                            "title": "3. Creating an Enterprise Grid",
                             "path": "building-enterprise-grid"
                         },
                         {
@@ -54,26 +66,80 @@
                             "frameworks": ["react"]
                         },
                         {
+                            "title": "Testing",
+                            "type": "group",
+                            "frameworks": ["react"],
+                            "children": [
+                                {
+                                    "title": "Overview",
+                                    "path": "testing"
+                                },
+                                {
+                                    "title": "Playwright",
+                                    "url": "https://blog.ag-grid.com/writing-e2e-tests-for-ag-grid-react-tables-with-playwright/"
+                                },
+                                {
+                                    "title": "Cypress",
+                                    "url": "https://blog.ag-grid.com/writing-e2e-tests-for-ag-grid-react-tables-with-playwright/"
+                                },
+                                {
+                                    "title": "React Testing Library",
+                                    "url": "https://blog.ag-grid.com/unit-testing-ag-grid-react-components-with-react-testing-library-and-vitest/"
+                                }
+                            ]
+                        },
+                        {
+                            "title": "Testing",
+                            "type": "group",
+                            "frameworks": ["angular"],
+                            "children": [
+                                {
+                                    "title": "Overview",
+                                    "path": "testing"
+                                },
+                                {
+                                    "type": "item",
+                                    "title": "Testing Async",
+                                    "path": "testing-async"
+                                }
+                            ]
+                        },
+                        {
+                            "title": "Testing",
+                            "type": "item",
+                            "path": "testing",
+                            "frameworks": ["javascript", "vue"]
+                        },
+                        {
+                            "type": "item",
                             "title": "Video Tutorials",
-                            "path": "videos"
+                            "url": "https://www.youtube.com/watch?v=6hxbPqziELk&list=PLsZlhayVgqNwHNHeqpCkSgdRV08xrKtzW&pp=gAQB",
+                            "frameworks": ["react"]
+                        },
+                        {
+                            "type": "item",
+                            "title": "Video Tutorials",
+                            "url": "https://www.youtube.com/watch?v=X_Ip_jGDtho&list=PLsZlhayVgqNw6VHFn4j6FcJM5vLACsf0x&pp=gAQB",
+                            "frameworks": ["angular"]
+                        },
+                        {
+                            "type": "item",
+                            "title": "Video Tutorials",
+                            "url": "https://www.youtube.com/watch?v=V14w_NFuZB4&list=PLsZlhayVgqNz5iC0wFQDgixcAepFyrWbP&pp=gAQB",
+                            "frameworks": ["vue"]
+                        },
+                        {
+                            "type": "item",
+                            "title": "Video Tutorials",
+                            "url": "https://www.youtube.com/watch?v=Ww7-LC6rU6U&list=PLsZlhayVgqNxijfRQxg5Mc6W4MzZHQ9MK&pp=gAQB",
+                            "frameworks": ["javascript"]
                         }
                     ]
                 },
                 {
-                    "title": "Build & Tooling",
+                    "title": "Resources",
                     "type": "group",
                     "children": [
-                        {
-                            "type": "item",
-                            "title": "Testing",
-                            "path": "testing"
-                        },
-                        {
-                            "type": "item",
-                            "title": "Testing Async",
-                            "path": "testing-async",
-                            "frameworks": ["angular"]
-                        },
                         {
                             "type": "item",
                             "title": "Compatibility",
@@ -88,18 +154,6 @@
                             "type": "item",
                             "title": "Supported Browsers",
                             "path": "supported-browsers"
-                        },
-                        {
-                            "type": "item",
-                            "title": "NPM Installation",
-                            "path": "npm-installation",
-                            "frameworks": ["javascript"]
-                        },
-                        {
-                            "type": "item",
-                            "title": "Download",
-                            "path": "download",
-                            "frameworks": ["javascript"]
                         }
                     ]
                 }
