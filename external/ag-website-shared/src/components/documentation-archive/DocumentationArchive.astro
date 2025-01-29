@@ -4,7 +4,6 @@ import styles from './DocumentationArchive.module.scss';
 import type { Library } from '@ag-grid-types';
 import { getChangelogUrl } from '@ag-website-shared/utils/getChangelogUrl';
 import { ArchiveLink } from './ArchiveLink';
-import { getHasDocumentationLink } from '@ag-website-shared/utils/getHasDocumentationLink';
 
 interface Props {
     site: Library;
@@ -39,8 +38,6 @@ const isMajor = (version: string) => {
             versionsData.slice(1).map(({ noArchive, version, versionType, date, noDocs }) => {
                 if (noArchive) return;
 
-                const useDocumentationLink = getHasDocumentationLink({ site, version });
-
                 return (
                     <tr>
                         <td class="text-base text-monospace text-semibold">{version}</td>
@@ -59,15 +56,7 @@ const isMajor = (version: string) => {
                             </a>
                         </td>
 
-                        <td>
-                            {!noDocs ? (
-                                <ArchiveLink
-                                    site={site}
-                                    version={version}
-                                    useDocumentationLink={useDocumentationLink}
-                                />
-                            ) : null}
-                        </td>
+                        <td>{!noDocs ? <ArchiveLink site={site} version={version} /> : null}</td>
                     </tr>
                 );
             })

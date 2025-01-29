@@ -11,5 +11,5 @@ interface Props {
 const { site, version } = Astro.props as Props;
 ---
 
-<ArchiveLink version={version} site={site} useDocumentationLink />
+<ArchiveLink version={version} site={site} />
 <HideDocumentationLinkIfLatest version={version} />
