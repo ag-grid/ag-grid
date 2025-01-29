@@ -194,6 +194,7 @@ const makeStyleMaterialTreeShakeable = () => {
         menuBackgroundColor: { ref: 'backgroundColor' },
         sideButtonBarBackgroundColor: backgroundColor,
         sideButtonSelectedBackgroundColor: 'transparent',
+        sideButtonBarTopPadding: { calc: 'spacing * 4' },
         headerColumnResizeHandleColor: 'none',
         headerBackgroundColor: {
             ref: 'backgroundColor',

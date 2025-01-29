@@ -478,6 +478,16 @@ export const AG_GRID_LOCALE_EN = {
     stackedAreaFull: 'Stacked Area',
     normalizedAreaFull: '100% Stacked Area',
     customCombo: 'Custom Combination',
+    funnel: 'Funnel',
+    coneFunnel: 'Cone Funnel',
+    pyramid: 'Pyramid',
+    funnelGroup: 'Funnel',
+    funnelTooltip: 'Funnel',
+    coneFunnelTooltip: 'Cone Funnel',
+    pyramidTooltip: 'Pyramid',
+    dropOff: 'Drop-Off',
+    stageLabels: 'Stage Labels',
+    reverse: 'Reverse',
 
     // ARIA
     ariaAdvancedFilterBuilderItem: '${variable}. Level ${variable}. Press ENTER to edit',

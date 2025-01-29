@@ -166,7 +166,11 @@ export class HeaderComp extends Component implements IHeaderComp {
             return false;
         }
 
-        this.setDisplayName(params);
+        if (this.innerHeaderComponent) {
+            this.innerHeaderComponent.refresh?.(params);
+        } else {
+            this.setDisplayName(params);
+        }
 
         return true;
     }
@@ -228,7 +232,6 @@ export class HeaderComp extends Component implements IHeaderComp {
         if (oldDisplayName === displayName || this.innerHeaderComponent || this.isLoadingInnerComponent) {
             return;
         }
-
         const displayNameSanitised = _escapeString(displayName, true);
         this.eText.textContent = displayNameSanitised!;
     }

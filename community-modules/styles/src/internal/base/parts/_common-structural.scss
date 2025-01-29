@@ -1571,6 +1571,7 @@
         align-items: center;
         height: 100%;
         position: absolute;
+        contain: paint;
     }
 
     .ag-header-group-cell-no-group.ag-header-span-height {

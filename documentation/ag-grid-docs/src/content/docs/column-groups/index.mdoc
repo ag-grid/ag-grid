@@ -241,6 +241,38 @@ colDef = {
 
 {% gridExampleRunner title="Custom Inner Header Group Component" name="inner-header-group-component" /%}
 
+{% if isFramework("javascript", "angular") %}
+Implement this interface to provide a custom inner header component.
+{% /if %}
+{% if isFramework("javascript") %}
+### IInnerHeaderGroupComponent
+{% interfaceDocumentation interfaceName="IInnerHeaderGroupComponent" config={"asCode":true } /%}
+{% /if %}
+{% if isFramework("angular") %}
+### IInnerHeaderGroupAngularComp
+{% interfaceDocumentation interfaceName="IInnerHeaderGroupAngularComp" config={"asCode":true } /%}
+{% /if %}
+{% if isFramework("javascript", "angular") %}
+### IHeaderGroupParams
+{% interfaceDocumentation interfaceName="IHeaderGroupParams" exclude=["template"] config={ "description": "" } /%}
+{% /if %}
+{% if isFramework("react") %}
+```ts
+const CustomInnerHeaderGroupComponent = (props: CustomInnerHeaderGroupProps) => {
+    return <div>{props.displayName}</div>;
+};
+```
+The following props are passed to the Custom Component (`CustomInnerHeaderGroupProps` interface).
+### CustomInnerHeaderGroupProps
+{% interfaceDocumentation interfaceName="CustomInnerHeaderGroupProps" config={ "description": "" } /%}
+{% /if %}
+{% if isFramework("vue") %}
+Any valid Vue component can be a custom inner header group component, however it must implement the `IHeaderGroup` interface:
+
+### IHeaderGroup
+{% interfaceDocumentation interfaceName="IHeaderGroup" config={"asCode":true } /%}
+{% /if %}
+
 ## Selecting Components
 
 By default the grid uses the provided Header Group Component. To use a Custom Group Component set `headerGroupComponent` on the Column Definition.

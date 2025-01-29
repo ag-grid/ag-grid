@@ -98,6 +98,7 @@ export interface CustomMenuItemProps<TData = any, TContext = any> extends BaseMe
     onActiveChange: (active: boolean) => void;
 }
 
+/** Props provided to custom Drag and Drop Image components */
 export interface CustomDragAndDropImageProps<TData = any, TContext = any>
     extends IDragAndDropImageParams<TData, TContext> {
     /** The label provided by the grid about the item being dragged. */
@@ -107,6 +108,9 @@ export interface CustomDragAndDropImageProps<TData = any, TContext = any>
     /** `True` if the grid is attempting to scroll horizontally while dragging. */
     shake: boolean;
 }
+
+export interface CustomInnerHeaderProps<TData = any, TContext = any> extends IHeaderParams<TData, TContext> {}
+export interface CustomInnerHeaderGroupProps<TData = any, TContext = any> extends IHeaderGroupParams<TData, TContext> {}
 
 /** Props provided to custom loading overlay component */
 export interface CustomLoadingOverlayProps<TData = any, TContext = any>

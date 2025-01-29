@@ -35,6 +35,11 @@ const HORIZONTAL_SOURCES = [
 type VerticalScrollSource = typeof VIEWPORT | typeof FAKE_V_SCROLLBAR;
 type HorizontalScrollSource = typeof VIEWPORT | (typeof HORIZONTAL_SOURCES)[number];
 
+// timeout used for the debounceVerticalScrollbar property
+const SCROLL_DEBOUNCE_TIMEOUT = 100;
+// timeout used to fire onBodyScrollEnd and to reset last scroll source
+const SCROLL_END_TIMEOUT = 150;
+
 export interface ScrollPartner {
     eViewport: HTMLElement;
     onScrollCallback(fn: () => void): void;
@@ -80,12 +85,12 @@ export class GridBodyScrollFeature extends BeanStub {
         this.resetLastHScrollDebounced = _debounce(
             this,
             () => (this.lastScrollSource[ScrollDirection.Horizontal] = null),
-            500
+            SCROLL_END_TIMEOUT
         );
         this.resetLastVScrollDebounced = _debounce(
             this,
             () => (this.lastScrollSource[ScrollDirection.Vertical] = null),
-            500
+            SCROLL_END_TIMEOUT
         );
     }
 
@@ -140,10 +145,10 @@ export class GridBodyScrollFeature extends BeanStub {
         const isDebounce = this.gos.get('debounceVerticalScrollbar');
 
         const onVScroll = isDebounce
-            ? _debounce(this, this.onVScroll.bind(this, VIEWPORT), 100)
+            ? _debounce(this, this.onVScroll.bind(this, VIEWPORT), SCROLL_DEBOUNCE_TIMEOUT)
             : this.onVScroll.bind(this, VIEWPORT);
         const onFakeVScroll = isDebounce
-            ? _debounce(this, this.onVScroll.bind(this, FAKE_V_SCROLLBAR), 100)
+            ? _debounce(this, this.onVScroll.bind(this, FAKE_V_SCROLLBAR), SCROLL_DEBOUNCE_TIMEOUT)
             : this.onVScroll.bind(this, FAKE_V_SCROLLBAR);
 
         this.addManagedElementListeners(this.eBodyViewport, { scroll: onVScroll });
@@ -301,7 +306,7 @@ export class GridBodyScrollFeature extends BeanStub {
                 ...bodyScrollEvent,
                 type: 'bodyScrollEnd',
             });
-        }, 100);
+        }, SCROLL_END_TIMEOUT);
     }
 
     private shouldBlockScrollUpdate(direction: ScrollDirection, scrollTo: number, touchOnly: boolean = false): boolean {

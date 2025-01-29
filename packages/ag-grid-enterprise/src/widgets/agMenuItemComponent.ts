@@ -6,7 +6,7 @@ import {
     _preserveRangesWhile,
     _setAriaDisabled,
     _setAriaExpanded,
-    _setAriaLevel,
+    _setAriaHasPopup,
     _setAriaRole,
 } from 'ag-grid-community';
 import type {
@@ -289,7 +289,7 @@ export class AgMenuItemComponent extends BeanStub<AgMenuItemComponentEvent> {
     public activate(openSubMenu?: boolean, fromKeyNav?: boolean): void {
         this.cancelActivate();
 
-        if (this.params.disabled) {
+        if (this.params.disabled && !fromKeyNav) {
             return;
         }
 
@@ -463,8 +463,10 @@ export class AgMenuItemComponent extends BeanStub<AgMenuItemComponentEvent> {
         this.suppressAria = !!suppressAria;
 
         if (!this.suppressAria) {
-            _setAriaRole(eGui, 'treeitem');
-            _setAriaLevel(eGui, this.level + 1);
+            _setAriaRole(eGui, 'menuitem');
+            if (this.params.subMenu) {
+                _setAriaHasPopup(eGui, 'menu');
+            }
             if (this.params.disabled) {
                 _setAriaDisabled(eGui, true);
             }

@@ -92,6 +92,12 @@ const gridOptions = {
 
 If you refresh a header, the headerStyle and headerClass will be all applied again. This has the following effect:
 
+{% note %}
+If you are using headerStyle to dynamically style headers, then please take note that grid will not remove styles. 
+For example if you are setting text color to 'red' for a condition, then you should explicitly set it back to default eg 'black' when the condition is not met. Otherwise the red color will remain once it's first applied.
+{% /note %}
+
+
 * `headerStyle`: All new styles are applied. If a new style is the same as an old style, the new style overwrites the old style. If a new style is not present, the old style is left (the grid will NOT remove styles).
 * `headerClass`: All new classes are applied. Old classes are not removed so be aware that classes will accumulate.
 
@@ -235,7 +241,7 @@ Note that specifying your own templates is compatible with other configurations:
 
 {% gridExampleRunner title="Header template" name="header-template" /%}
 
-### Inner Header Component
+## Inner Header Component
 
 When using the Header Component, the `agColumnHeader` component will display the header name,
 adjacent to any configured menu, filter, and checkbox.
@@ -273,6 +279,38 @@ colDef = {
 {% /if %}
 
 {% gridExampleRunner title="Custom Inner Header Component" name="inner-header-component" /%}
+
+{% if isFramework("javascript", "angular") %}
+Implement this interface to provide a custom inner header component.
+{% /if %}
+{% if isFramework("javascript") %}
+### IInnerHeaderComponent
+{% interfaceDocumentation interfaceName="IInnerHeaderComponent" config={"asCode":true } /%}
+{% /if %}
+{% if isFramework("angular") %}
+### IInnerHeaderAngularComp
+{% interfaceDocumentation interfaceName="IInnerHeaderAngularComp" config={"asCode":true } /%}
+{% /if %}
+{% if isFramework("javascript", "angular") %}
+### IHeaderParams
+{% interfaceDocumentation interfaceName="IHeaderParams" exclude=["template"] config={ "description": "" } /%}
+{% /if %}
+{% if isFramework("react") %}
+```ts
+const CustomInnerHeaderComponent = (props: CustomInnerHeaderProps) => {
+    return <div>{props.displayName}</div>;
+};
+```
+The following props are passed to the Custom Component (`CustomInnerHeaderProps` interface).
+### CustomInnerHeaderProps
+{% interfaceDocumentation interfaceName="CustomInnerHeaderProps" config={ "description": "" } /%}
+{% /if %}
+{% if isFramework("vue") %}
+Any valid Vue component can be a custom inner header component, however it must implement the `IHeader` interface:
+
+### IHeader
+{% interfaceDocumentation interfaceName="IHeader" config={"asCode":true } /%}
+{% /if %}
 
 
 ## Custom Component

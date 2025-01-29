@@ -118,7 +118,7 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
             const rowNode = nodes[i];
             // if node is a footer, we don't do selection, just pass the info
             // to the sibling (the parent of the group)
-            const node = rowNode.footer ? rowNode.sibling : rowNode;
+            const node = _normaliseFooterRef(rowNode);
 
             // when groupSelectsFiltered, then this node may end up indeterminate despite
             // trying to set it to true / false. this group will be calculated further on
@@ -152,7 +152,7 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
         if (!suppressFinishActions) {
             const clearOtherNodes = newValue && (clearSelection || !this.isMultiSelect());
             if (clearOtherNodes) {
-                updatedCount += this.clearOtherNodes(nodes[0], source);
+                updatedCount += this.clearOtherNodes(_normaliseFooterRef(nodes[0]), source);
             }
 
             // only if we selected something, then update groups and fire events
@@ -429,7 +429,7 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
 
     public deselectAllRowNodes(params: { source: SelectionEventSourceType; selectAll?: SelectAllMode }) {
         const callback = (rowNode: RowNode) =>
-            this.selectRowNode(rowNode.footer ? rowNode.sibling : rowNode, false, undefined, source);
+            this.selectRowNode(_normaliseFooterRef(rowNode), false, undefined, source);
         const rowModelClientSide = _isClientSideRowModel(this.gos);
 
         const { source, selectAll } = params;
@@ -583,7 +583,7 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
         const { source, selectAll } = params;
 
         this.getNodesToSelect(selectAll).forEach((rowNode) => {
-            this.selectRowNode(rowNode.footer ? rowNode.sibling : rowNode, true, undefined, source);
+            this.selectRowNode(_normaliseFooterRef(rowNode), true, undefined, source);
         });
 
         selectionCtx.selectAll = true;
@@ -717,4 +717,9 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
             }
         }
     }
+}
+
+/** Selection state of footer nodes is a clone of their siblings, so always act on sibling rather than footer */
+function _normaliseFooterRef(node: RowNode): RowNode {
+    return node.footer ? node.sibling : node;
 }

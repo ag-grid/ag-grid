@@ -166,6 +166,13 @@ export function _setAriaControls(controllerElement: Element, controlledElement: 
     _setAriaLabelledBy(controlledElement, controllerElement.id);
 }
 
+export function _setAriaHasPopup(
+    element: Element,
+    hasPopup: 'menu' | 'listbox' | 'tree' | 'grid' | 'dialog' | boolean
+) {
+    _toggleAriaAttribute(element, 'haspopup', hasPopup === false ? null : hasPopup);
+}
+
 export function _getAriaCheckboxStateName(translate: LocaleTextFunc, state?: boolean): string {
     return state === undefined
         ? translate('ariaIndeterminate', 'indeterminate')

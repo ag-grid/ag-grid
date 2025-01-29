@@ -155,14 +155,17 @@ const SERIES_TYPES: SeriesTypeParams = {
     funnel: {
         isCartesian: true,
         isEnterprise: true,
+        canSwitchDirection: true,
     },
     'cone-funnel': {
         isCartesian: true,
         isEnterprise: true,
+        canSwitchDirection: true,
     },
     pyramid: {
         isCartesian: true,
         isEnterprise: true,
+        canSwitchDirection: true,
     },
 };
 

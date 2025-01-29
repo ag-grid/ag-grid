@@ -14,6 +14,7 @@ export class RichSelectCellEditor<TData = any, TValue = any> extends PopupCompon
     private params: RichCellEditorParams<TData, TValue>;
     private focusAfterAttached: boolean;
     private richSelect: AgRichSelect<TValue>;
+    private isAsync: boolean = false;
 
     constructor() {
         super(/* html */ `<div class="ag-cell-edit-wrapper"></div>`);
@@ -22,7 +23,7 @@ export class RichSelectCellEditor<TData = any, TValue = any> extends PopupCompon
     public init(params: RichCellEditorParams<TData, TValue>): void {
         this.params = params;
 
-        const { cellStartedEdit, values } = params;
+        const { cellStartedEdit, values, eventKey } = params;
 
         if (_missing(values)) {
             _warn(180);
@@ -36,12 +37,15 @@ export class RichSelectCellEditor<TData = any, TValue = any> extends PopupCompon
         this.appendChild(richSelect);
 
         if (valuesPromise) {
+            this.isAsync = true;
             valuesPromise.then((values: TValue[]) => {
                 richSelect.setValueList({ valueList: values, refresh: true });
                 const searchStringCallback = this.getSearchStringCallback(values);
                 if (searchStringCallback) {
                     richSelect.setSearchStringCreator(searchStringCallback);
                 }
+
+                this.processEventKey(eventKey);
             });
         }
 
@@ -170,11 +174,12 @@ export class RichSelectCellEditor<TData = any, TValue = any> extends PopupCompon
             }
 
             const richSelect = this.richSelect;
+            const { allowTyping, eventKey } = params;
 
             if (focusAfterAttached) {
                 const focusableEl = richSelect.getFocusableElement() as HTMLInputElement;
                 focusableEl.focus();
-                const { allowTyping, eventKey } = this.params;
+
                 if (allowTyping && (!eventKey || eventKey.length !== 1)) {
                     focusableEl.select();
                 }
@@ -182,13 +187,20 @@ export class RichSelectCellEditor<TData = any, TValue = any> extends PopupCompon
 
             richSelect.showPicker();
 
-            const { eventKey } = params;
-            if (eventKey) {
-                if (eventKey?.length === 1) {
-                    richSelect.searchTextFromString(eventKey);
-                }
+            if (!this.isAsync) {
+                this.processEventKey(eventKey);
             }
         });
+    }
+
+    private processEventKey(eventKey: string | null) {
+        if (!eventKey) {
+            return;
+        }
+
+        if (eventKey?.length === 1) {
+            this.richSelect.searchTextFromString(eventKey);
+        }
     }
 
     public focusIn(): void {

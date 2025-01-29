@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
 
-import type { IHeaderAngularComp } from 'ag-grid-angular';
+import type { IInnerHeaderAngularComp } from 'ag-grid-angular';
 import type { IHeaderParams } from 'ag-grid-community';
 
 export interface ICustomInnerHeaderParams {
@@ -38,7 +38,7 @@ export interface ICustomInnerHeaderParams {
         `,
     ],
 })
-export class CustomInnerHeader implements IHeaderAngularComp {
+export class CustomInnerHeader implements IInnerHeaderAngularComp {
     icon = signal('');
     displayName = signal('');
 

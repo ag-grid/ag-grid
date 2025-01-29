@@ -18,7 +18,7 @@ export interface AbstractColDef<TData = any, TValue = any> {
     headerValueGetter?: string | HeaderValueGetterFunc<TData, TValue>;
     /** Tooltip for the column header */
     headerTooltip?: string;
-    /** An object of css values / or function returning an object of css values for a particular header. */
+    /** An object of CSS values / or function returning an object of CSS values for a particular header. */
     headerStyle?: HeaderStyle | HeaderStyleFunc<TData, TValue>;
     /** CSS class to use for the header cell. Can be a string, array of strings, or function. */
     headerClass?: HeaderClass<TData, TValue>;
@@ -512,7 +512,7 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
 
     // *** Columns: Rendering and Styling *** //
 
-    /** An object of css values / or function returning an object of css values for a particular cell. */
+    /** An object of CSS values / or function returning an object of CSS values for a particular cell. */
     cellStyle?: CellStyle | CellStyleFunc<TData, TValue>;
     /** Class to use for the cell. Can be string, array of strings, or function that returns a string or array of strings. */
     cellClass?: string | string[] | CellClassFunc<TData, TValue>;

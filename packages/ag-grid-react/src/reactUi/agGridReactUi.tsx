@@ -42,6 +42,7 @@ import { DateComponentWrapper } from '../shared/customComp/dateComponentWrapper'
 import { DragAndDropImageComponentWrapper } from '../shared/customComp/dragAndDropImageComponentWrapper';
 import { FilterComponentWrapper } from '../shared/customComp/filterComponentWrapper';
 import { FloatingFilterComponentWrapper } from '../shared/customComp/floatingFilterComponentWrapper';
+import { InnerHeaderComponentWrapper } from '../shared/customComp/innerHeaderComponentWrapper';
 import { LoadingOverlayComponentWrapper } from '../shared/customComp/loadingOverlayComponentWrapper';
 import { MenuItemComponentWrapper } from '../shared/customComp/menuItemComponentWrapper';
 import { NoRowsOverlayComponentWrapper } from '../shared/customComp/noRowsOverlayComponentWrapper';
@@ -291,6 +292,8 @@ class ReactFrameworkComponentWrapper
                         return MenuItemComponentWrapper;
                     case 'cellRenderer':
                         return CellRendererComponentWrapper;
+                    case 'innerHeaderComponent':
+                        return InnerHeaderComponentWrapper;
                 }
             };
             const ComponentClass = getComponentClass(componentType.name);

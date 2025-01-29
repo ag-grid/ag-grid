@@ -699,7 +699,7 @@ function findFirstAndLastMovingColumns(allMovingColumns: AgColumn[]): {
     let firstMovingCol: AgColumn | undefined;
     let lastMovingCol: AgColumn | undefined;
 
-    for (let i = 0; i <= moveLen; i++) {
+    for (let i = 0; i < moveLen; i++) {
         if (!firstMovingCol) {
             const leftCol = allMovingColumns[i];
             if (leftCol.getLeft() != null) {

@@ -476,19 +476,42 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
 
         const { suggestions, filteredValues } = this.getSuggestionsAndFilteredValues(this.searchString, searchStrings);
         const { filterList, highlightMatch, searchType = 'fuzzy' } = this.config;
-
-        const filterValueLen = filteredValues.length;
         const shouldFilter = !!(filterList && this.searchString !== '');
 
         this.filterListModel(shouldFilter ? filteredValues : values);
 
+        if (!this.highlightEmptyValue()) {
+            this.highlightListValue(suggestions, filteredValues, shouldFilter);
+        }
+
+        if (highlightMatch && searchType !== 'fuzzy') {
+            this.listComponent?.highlightFilterMatch(this.searchString);
+        }
+
+        this.displayOrHidePicker();
+    }
+
+    private highlightEmptyValue(): boolean {
+        if (this.searchString === '') {
+            const emptyIdx = this.searchStrings?.indexOf('');
+            if (emptyIdx !== undefined && emptyIdx !== -1) {
+                this.listComponent?.highlightIndex(emptyIdx);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private highlightListValue(suggestions: string[], filteredValues: TValue[], shouldFilter: boolean): void {
         if (suggestions.length) {
-            const topSuggestionIndex = shouldFilter ? 0 : searchStrings.indexOf(suggestions[0]);
-            this.listComponent?.highlightIndex(topSuggestionIndex);
+            const topSuggestionIndex = shouldFilter ? 0 : this.searchStrings?.indexOf(suggestions[0]);
+            if (topSuggestionIndex !== undefined) {
+                this.listComponent?.highlightIndex(topSuggestionIndex);
+            }
         } else {
             this.listComponent?.highlightIndex(-1);
 
-            if (!shouldFilter || filterValueLen) {
+            if (!shouldFilter || filteredValues.length) {
                 this.listComponent?.ensureIndexVisible(0);
             } else if (shouldFilter) {
                 this.getAriaElement().removeAttribute('data-active-option');
@@ -498,12 +521,6 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
                 }
             }
         }
-
-        if (highlightMatch && searchType !== 'fuzzy') {
-            this.listComponent?.highlightFilterMatch(this.searchString);
-        }
-
-        this.displayOrHidePicker();
     }
 
     private getSuggestionsAndFilteredValues(

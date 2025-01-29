@@ -884,11 +884,12 @@ export { IDateParams, IDate, IDateComp, BaseDate, BaseDateParams } from './inter
 export { IAfterGuiAttachedParams, ContainerType } from './interfaces/iAfterGuiAttachedParams';
 export { IComponent } from './interfaces/iComponent';
 export { IEventEmitter, IEventListener } from './interfaces/iEventEmitter';
-export { IHeaderParams, IHeaderComp, IHeader } from './headerRendering/cells/column/headerComp';
+export { IHeaderParams, IHeaderComp, IHeader, IInnerHeaderComponent } from './headerRendering/cells/column/headerComp';
 export {
     IHeaderGroupParams,
     IHeaderGroup,
     IHeaderGroupComp,
+    IInnerHeaderGroupComponent,
 } from './headerRendering/cells/columnGroup/headerGroupComp';
 export {
     WrappableInterface,
@@ -939,6 +940,7 @@ export {
     _setAriaColSpan,
     _setAriaRowIndex,
     _setAriaDisabled,
+    _setAriaHasPopup,
     _removeAriaExpanded,
     _removeAriaSort,
     _setAriaSort,

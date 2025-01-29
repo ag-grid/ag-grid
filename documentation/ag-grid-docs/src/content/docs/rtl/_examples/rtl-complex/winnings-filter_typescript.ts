@@ -15,7 +15,7 @@ export class WinningsFilter implements IFilterComp {
         this.filterChangedCallback = params.filterChangedCallback;
         this.eGui = document.createElement('div');
         this.eGui.innerHTML =
-            '<div style="padding: 4px;">' +
+            '<div style="padding: 12px;">' +
             '<div style="font-weight: bold;">Example Custom Filter</div>' +
             '<div><label><input type="radio" name="filter"' +
             uniqueId +

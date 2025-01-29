@@ -2,7 +2,7 @@ import { isColumnGroupAutoCol, isColumnSelectionCol } from '../columns/columnUti
 import { BeanStub } from '../context/beanStub';
 import type { AgColumn } from '../entities/agColumn';
 import type { SelectAllMode } from '../entities/gridOptions';
-import type { SelectionEventSourceType } from '../events';
+import type { DisplayedColumnsChangedEvent, SelectionEventSourceType } from '../events';
 import {
     _getActiveDomElement,
     _getCheckboxLocation,
@@ -50,7 +50,7 @@ export class SelectAllFeature extends BeanStub {
         this.showOrHideSelectAll();
 
         this.addManagedEventListeners({
-            newColumnsLoaded: this.showOrHideSelectAll.bind(this),
+            newColumnsLoaded: () => this.showOrHideSelectAll(),
             displayedColumnsChanged: this.onDisplayedColumnsChanged.bind(this),
             selectionChanged: this.onSelectionChanged.bind(this),
             paginationChanged: this.onSelectionChanged.bind(this),
@@ -62,14 +62,14 @@ export class SelectAllFeature extends BeanStub {
         this.refreshSelectAllLabel();
     }
 
-    private onDisplayedColumnsChanged(): void {
+    private onDisplayedColumnsChanged(e: DisplayedColumnsChangedEvent): void {
         if (!this.isAlive()) {
             return;
         }
-        this.showOrHideSelectAll();
+        this.showOrHideSelectAll(e.source === 'uiColumnMoved');
     }
 
-    private showOrHideSelectAll(): void {
+    private showOrHideSelectAll(fromColumnMoved: boolean = false): void {
         const cbSelectAllVisible = this.isCheckboxSelection();
         this.cbSelectAllVisible = cbSelectAllVisible;
         this.cbSelectAll.setDisplayed(cbSelectAllVisible);
@@ -81,7 +81,7 @@ export class SelectAllFeature extends BeanStub {
             // make sure checkbox is showing the right state
             this.updateStateOfCheckbox();
         }
-        this.refreshSelectAllLabel();
+        this.refreshSelectAllLabel(fromColumnMoved);
     }
 
     private onModelChanged(): void {
@@ -121,7 +121,7 @@ export class SelectAllFeature extends BeanStub {
         this.processingEventFromCheckbox = false;
     }
 
-    private refreshSelectAllLabel(): void {
+    private refreshSelectAllLabel(fromColumnMoved: boolean = false): void {
         const translate = this.getLocaleTextFunc();
         const { headerCellCtrl, cbSelectAll, cbSelectAllVisible } = this;
         const checked = cbSelectAll.getValue();
@@ -134,7 +134,11 @@ export class SelectAllFeature extends BeanStub {
         );
 
         cbSelectAll.setInputAriaLabel(translate('ariaHeaderSelection', 'Column with Header Selection'));
-        headerCellCtrl.announceAriaDescription();
+
+        // skip repetitive announcements during column move
+        if (!fromColumnMoved) {
+            headerCellCtrl.announceAriaDescription();
+        }
     }
 
     private checkSelectionType(feature: string): boolean {
