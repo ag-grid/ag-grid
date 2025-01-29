@@ -698,6 +698,9 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
      */
     rowSpan?: (params: RowSpanParams<TData, TValue>) => number;
 
+    /**
+     * Set to `true` to automatically merge cells in this column with equal values. Provide a callback to specify custom merging logic.
+     */
     spanRows?:
         | boolean
         | ((
