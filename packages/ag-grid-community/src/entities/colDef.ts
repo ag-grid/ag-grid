@@ -701,14 +701,7 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
     /**
      * Set to `true` to automatically merge cells in this column with equal values. Provide a callback to specify custom merging logic.
      */
-    spanRows?:
-        | boolean
-        | ((
-              valueA: TValue | null | undefined,
-              valueB: TValue | null | undefined,
-              nodeA: IRowNode<TData>,
-              nodeB: IRowNode<TData>
-          ) => boolean);
+    spanRows?: boolean | ((params: SpanRowsParams<TData, TValue>) => boolean);
 
     // *** Columns: Widths *** //
 
@@ -869,6 +862,21 @@ export interface BaseColDefOptionalDataParams<TData = any, TValue = any> extends
     node: IRowNode<TData> | null;
     /** Data associated with the node */
     data: TData | undefined;
+    /** Column for this callback */
+    column: Column<TValue>;
+    /** ColDef provided for this column */
+    colDef: ColDef<TData, TValue>;
+}
+
+export interface SpanRowsParams<TData = any, TValue = any> extends AgGridCommon<TData, any> {
+    /** First row of the span, which if spanned represents the spanned cells */
+    nodeA: IRowNode<TData> | null;
+    /** First rows value */
+    valueA: TValue | null | undefined;
+    /** Next row of the span to test */
+    nodeB: IRowNode<TData> | null;
+    /** Next rows value */
+    valueB: TValue | null | undefined;
     /** Column for this callback */
     column: Column<TValue>;
     /** ColDef provided for this column */

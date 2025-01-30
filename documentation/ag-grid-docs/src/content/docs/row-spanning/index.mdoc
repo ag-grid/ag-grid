@@ -47,7 +47,7 @@ const gridOptions = {
     columnDefs: [
         {
             field: 'country',
-            rowSpan: (valueA, valueB) => valueA != 'Algeria' && valueA === valueB,
+            rowSpan: ({ valueA, valueB }) => valueA != 'Algeria' && valueA === valueB,
         },
         // other column definitions ...
     ]

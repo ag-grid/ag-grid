@@ -92,11 +92,16 @@ export class RowContainerComp extends Component {
     private setRowCtrls(rowCtrls: RowCtrl[], spanContainer?: boolean): void {
         const { beans, options } = this;
 
-        const rowCompsName = spanContainer ? 'rowCompsWithSpan' : 'rowCompsNoSpan';
-        const containerName = spanContainer ? 'eSpannedContainer' : 'eContainer';
-        const oldRows = { ...this[rowCompsName] };
+        const container = spanContainer ? this.eSpannedContainer : this.eContainer;
+        const oldRows = spanContainer ? { ...this.rowCompsWithSpan } : { ...this.rowCompsNoSpan };
+        const newComps: { [id: RowCtrlInstanceId]: RowComp } = {};
 
-        this[rowCompsName] = {};
+        if (spanContainer) {
+            this.rowCompsWithSpan = newComps;
+        } else {
+            this.rowCompsNoSpan = newComps;
+        }
+
         this.lastPlacedElement = null;
 
         const orderedRows: [rowComp: RowComp, isNew: boolean][] = [];
@@ -116,19 +121,16 @@ export class RowContainerComp extends Component {
                 }
                 rowComp = new RowComp(rowCtrl, beans, options.type);
             }
-            this[rowCompsName][instanceId] = rowComp;
+            newComps[instanceId] = rowComp;
             orderedRows.push([rowComp, !existingRowComp]);
         }
 
-        this.removeOldRows(Object.values(oldRows), containerName);
-        this.addRowNodes(orderedRows, containerName);
+        this.removeOldRows(Object.values(oldRows), container);
+        this.addRowNodes(orderedRows, container);
     }
 
-    private addRowNodes(
-        rows: [rowComp: RowComp, isNew: boolean][],
-        containerName: 'eContainer' | 'eSpannedContainer'
-    ): void {
-        const { domOrder, [containerName]: container } = this;
+    private addRowNodes(rows: [rowComp: RowComp, isNew: boolean][], container: HTMLElement): void {
+        const { domOrder } = this;
         for (const [rowComp, isNew] of rows) {
             const eGui = rowComp.getGui();
             if (!domOrder) {
@@ -141,8 +143,7 @@ export class RowContainerComp extends Component {
         }
     }
 
-    private removeOldRows(rowComps: RowComp[], containerName: 'eContainer' | 'eSpannedContainer'): void {
-        const { [containerName]: container } = this;
+    private removeOldRows(rowComps: RowComp[], container: HTMLElement): void {
         for (const oldRowComp of rowComps) {
             container.removeChild(oldRowComp.getGui());
             oldRowComp.destroy();

@@ -1,6 +1,7 @@
 import { BeanStub } from '../../context/beanStub';
 import type { BeanCollection } from '../../context/context';
 import type { AgColumn } from '../../entities/agColumn';
+import { SpanRowsParams } from '../../entities/colDef';
 import type { RowNode } from '../../entities/rowNode';
 import type { CellPosition } from '../../interfaces/iCellPosition';
 import type { IRowModel } from '../../interfaces/iRowModel';
@@ -145,7 +146,15 @@ export class RowSpanCache extends BeanStub {
             // check value is equal, if not, no span
             const value = this.valueService.getValue(this.column, node);
             if (isCustomCompare) {
-                if (!customCompare(lastValue, value, lastNode, node)) {
+                const params: SpanRowsParams = this.gos.addGridCommonParams({
+                    valueA: lastValue,
+                    nodeA: lastNode,
+                    valueB: value,
+                    nodeB: node,
+                    column: this.column,
+                    colDef: this.column.colDef,
+                });
+                if (!customCompare(params)) {
                     setNewHead(node, value);
                     return;
                 }
