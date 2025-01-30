@@ -318,10 +318,6 @@ The codemod only transforms source files that make use of deprecated features, s
 
 See the [Codemods](./codemods/) documentation for more details.
 
-## Development Environment Changes
-
-There are no development environment changes in AG Grid version 33.0
-
 ## Breaking Changes
 
 {% metaTag tags=["ag-grid-enterprise","ag-charts-community","ag-charts-enterprise","IntegratedChartsModule","GridChartsModule","AgChartsCommunityModule","AgChartsEnterpriseModule","RowDragModule","getMainMenuItems","getContextMenuItems","mainMenuItems","contextMenuItems","chartMenuItems","columnGroup","navigator","api.getRowDropZoneParams","Grid","createGrid","selectAll","deselectAll","getFirstDisplayedRow","getLastDisplayedRow","getModel","getValue","getCellValue","showColumnMenuAfterButtonClick","showColumnMenuAfterMouseClick","IHeaderParams","autoSizeColumn","autoSizeColumns","setColumnWidths","moveColumn","moveColumns","addAggFunc","addAggFuncs","removeValueColumn","removeValueColumns","addValueColumn","addValueColumns","removeRowGroupColumn","removeRowGroupColumns","addRowGroupColumn","addRowGroupColumns","removePivotColumn","removePivotColumns","addPivotColumn","addPivotColumns","setColumnVisible","setColumnsVisible","setColumnPinned","setColumnsPinned","getColumnFilterModel","setColumnFilterModel","getServerSideGroupLevelParams","cellFlashDuration","enableCellChangeFlash","suppressGroupMaintainValueType","groupTotalRow","grandTotalRow","columnChooserParams","suppressHeaderMenuButton", "RowDragEvent","vDirection","suppressFilterButton","colDef.suppressFloatingFilterButton","textCustomComparator","textMatcher","onParamsUpdated","refresh","valueGetter","getValue","footerValueGetter","totalValueGetter","flashDuration","fadeDuration","IToolPanelColumnCompParams","verticalText","charSet","name","sparklineOptions.label.placement"] /%}
@@ -497,76 +493,6 @@ Setting any of the custom icons listed below will have the provided custom icon 
 
 There are no Behaviour changes in AG Grid version 33.0
 
-## Deprecations
-
-{% metaTag tags=["ModuleRegistry.register","MenuModule","RangeSelectionModule","Column.isHovered","deselectAllFiltered","deselectAllOnCurrentPage","selectAllFiltered","selectAllOnCurrentPage","cellRendererParams.checkbox","gridOptions.sortingOrder","gridOptions.unSortIcon","groupRemoveLowestSingleChildren","groupRemoveSingleChildren","suppressMakeColumnVisibleAfterUnGroup","suppressPropertyNamesCheck","suppressRowGroupHidesColumns","childIndex","firstChild","lastChild","childIndexChanged","firstChildChanged","lastChildChanged","smallDown","smallLeft","smallRight"] /%}
-
-{% expandingSection headerText="Deprecations" %}
-
-### Modules
-
-{% metaTag tags=["ModuleRegistry.register","MenuModule","RangeSelectionModule"] /%}
-
-* `ModuleRegistry.register(module)` - deprecated, use `ModuleRegistry.registerModules([module])` instead.
-* `MenuModule` - deprecated, use `ColumnMenuModule` for the Column Menu and/or `ContextMenuModule` for the Context Menu instead.
-* `RangeSelectionModule` - deprecated, use `CellSelectionModule` instead.
-
-
-### Column Object
-{% metaTag tags=["Column.isHovered"] /%}
-
-* `Column.isHovered()` - deprecated, use `api.isColumnHovered(column)` instead.
-
-### Grid API
-{% metaTag tags=["deselectAllFiltered","deselectAllOnCurrentPage","selectAllFiltered","selectAllOnCurrentPage"] /%}
-
-* `deselectAllFiltered` - deprecated, use `deselectAll('filtered')` instead.
-* `deselectAllOnCurrentPage` - deprecated, use `deselectAll('currentPage')` instead.
-* `selectAllFiltered` - deprecated, use `selectAll('filtered')` instead.
-* `selectAllOnCurrentPage` - deprecated, use `selectAll('currentPage')` instead.
-
-### Grid Options
-
-* `cellRendererParams.checkbox` - deprecated, use `rowSelection.checkboxLocation = "autoGroupColumn"` instead.
-* `gridOptions.sortingOrder` - deprecated, use `defaultColDef.sortingOrder` instead.  
-* `gridOptions.unSortIcon` - deprecated, use `defaultColDef.unSortIcon` instead.
-* `groupRemoveLowestSingleChildren` - deprecated, use `groupHideParentOfSingleChild: 'leafGroupsOnly'` instead.  
-* `groupRemoveSingleChildren` - deprecated, use `groupHideParentOfSingleChild: true` instead.
-* `suppressMakeColumnVisibleAfterUnGroup` - deprecated, use `suppressGroupChangesColumnVisibility: "suppressShowOnUngroup"` instead.
-* `suppressPropertyNamesCheck` - deprecated without replacement. Previously used for adding user properties in `gridOptions` and `columnDefs`. Now, use the `context` property in both for storing arbitrary metadata.
-* `suppressRowGroupHidesColumns` - deprecated, use `suppressGroupChangesColumnVisibility: "suppressHideOnGroup"` instead.
-* When setting both `suppressMakeColumnVisibleAfterUnGroup` and `suppressRowGroupHidesColumns` to `true`, use `suppressGroupChangesColumnVisibility: true` instead.
-
-### Row Node
-{% metaTag tags=["childIndex","firstChild","lastChild","childIndexChanged","firstChildChanged","lastChildChanged","smallDown","smallLeft","smallRight"] /%}
-
-* `childIndex` - deprecated, use `rowNode.parent?.childrenAfterSort?.findIndex(r =&gt; r === rowNode)` instead.
-* `firstChild` - deprecated, use `rowNode.parent?.childrenAfterSort?.[0] === rowNode` instead.
-* `lastChild` - deprecated, use `!!rowNode.parent?.childrenAfterSort && (rowNode.parent.childrenAfterSort[rowNode.parent.childrenAfterSort.length - 1] === rowNode)` instead.
-        
-### Row Node Events
-{% metaTag tags=["childIndexChanged","firstChildChanged","lastChildChanged"] /%}
-
-* `childIndexChanged` - deprecated, use the global `modelUpdated` event to determine when row children have changed.        
-* `firstChildChanged` - deprecated, use the global `modelUpdated` event to determine when row children have changed.
-* `lastChildChanged` - deprecated, use the global `modelUpdated` event to determine when row children have changed.
-
-### Theming Custom Icons
-{% metaTag tags=["smallDown","smallLeft","smallRight"] /%}
-
-* `smallDown` - deprecated, use:
-  * `advancedFilterBuilderSelect` for Advanced Filter Builder dropdown.
-  * `selectOpen` for Select cell editor and dropdowns (e.g., Integrated Charts menu).
-  * `richSelectOpen` for Rich Select cell editor.
-* `smallLeft` - deprecated, use:
-  * `panelDelimiterRtl` for Row Group Panel / Pivot Panel.
-  * `subMenuOpenRtl` for sub-menus.        
-* `smallRight` - deprecated, use:
-  * `panelDelimiter` for Row Group Panel / Pivot Panel.
-  * `subMenuOpen` for sub-menus.
-
-{% /expandingSection %}
-
 ## Removal of Deprecated APIs
 
 The following APIs have been deprecated since at least v31 and have now been removed.
@@ -645,6 +571,76 @@ Floating filters provided via the `colDef.filter` values `text`, `number`, `date
 * `ExcelAlignment`: Legacy property `verticalText` - removed.
 * `ExcelFont`: Legacy property `charSet` - removed.
 * `ExcelStyle`: Legacy property `name` - removed.
+
+{% /expandingSection %}
+
+## Deprecations
+
+{% metaTag tags=["ModuleRegistry.register","MenuModule","RangeSelectionModule","Column.isHovered","deselectAllFiltered","deselectAllOnCurrentPage","selectAllFiltered","selectAllOnCurrentPage","cellRendererParams.checkbox","gridOptions.sortingOrder","gridOptions.unSortIcon","groupRemoveLowestSingleChildren","groupRemoveSingleChildren","suppressMakeColumnVisibleAfterUnGroup","suppressPropertyNamesCheck","suppressRowGroupHidesColumns","childIndex","firstChild","lastChild","childIndexChanged","firstChildChanged","lastChildChanged","smallDown","smallLeft","smallRight"] /%}
+
+{% expandingSection headerText="Deprecations" %}
+
+### Modules
+
+{% metaTag tags=["ModuleRegistry.register","MenuModule","RangeSelectionModule"] /%}
+
+* `ModuleRegistry.register(module)` - deprecated, use `ModuleRegistry.registerModules([module])` instead.
+* `MenuModule` - deprecated, use `ColumnMenuModule` for the Column Menu and/or `ContextMenuModule` for the Context Menu instead.
+* `RangeSelectionModule` - deprecated, use `CellSelectionModule` instead.
+
+
+### Column Object
+{% metaTag tags=["Column.isHovered"] /%}
+
+* `Column.isHovered()` - deprecated, use `api.isColumnHovered(column)` instead.
+
+### Grid API
+{% metaTag tags=["deselectAllFiltered","deselectAllOnCurrentPage","selectAllFiltered","selectAllOnCurrentPage"] /%}
+
+* `deselectAllFiltered` - deprecated, use `deselectAll('filtered')` instead.
+* `deselectAllOnCurrentPage` - deprecated, use `deselectAll('currentPage')` instead.
+* `selectAllFiltered` - deprecated, use `selectAll('filtered')` instead.
+* `selectAllOnCurrentPage` - deprecated, use `selectAll('currentPage')` instead.
+
+### Grid Options
+
+* `cellRendererParams.checkbox` - deprecated, use `rowSelection.checkboxLocation = "autoGroupColumn"` instead.
+* `gridOptions.sortingOrder` - deprecated, use `defaultColDef.sortingOrder` instead.  
+* `gridOptions.unSortIcon` - deprecated, use `defaultColDef.unSortIcon` instead.
+* `groupRemoveLowestSingleChildren` - deprecated, use `groupHideParentOfSingleChild: 'leafGroupsOnly'` instead.  
+* `groupRemoveSingleChildren` - deprecated, use `groupHideParentOfSingleChild: true` instead.
+* `suppressMakeColumnVisibleAfterUnGroup` - deprecated, use `suppressGroupChangesColumnVisibility: "suppressShowOnUngroup"` instead.
+* `suppressPropertyNamesCheck` - deprecated without replacement. Previously used for adding user properties in `gridOptions` and `columnDefs`. Now, use the `context` property in both for storing arbitrary metadata.
+* `suppressRowGroupHidesColumns` - deprecated, use `suppressGroupChangesColumnVisibility: "suppressHideOnGroup"` instead.
+* When setting both `suppressMakeColumnVisibleAfterUnGroup` and `suppressRowGroupHidesColumns` to `true`, use `suppressGroupChangesColumnVisibility: true` instead.
+
+### Row Node
+{% metaTag tags=["childIndex","firstChild","lastChild","childIndexChanged","firstChildChanged","lastChildChanged","smallDown","smallLeft","smallRight"] /%}
+
+* `childIndex` - deprecated, use `rowNode.parent?.childrenAfterSort?.findIndex(r =&gt; r === rowNode)` instead.
+* `firstChild` - deprecated, use `rowNode.parent?.childrenAfterSort?.[0] === rowNode` instead.
+* `lastChild` - deprecated, use `!!rowNode.parent?.childrenAfterSort && (rowNode.parent.childrenAfterSort[rowNode.parent.childrenAfterSort.length - 1] === rowNode)` instead.
+        
+### Row Node Events
+{% metaTag tags=["childIndexChanged","firstChildChanged","lastChildChanged"] /%}
+
+* `childIndexChanged` - deprecated, use the global `modelUpdated` event to determine when row children have changed.        
+* `firstChildChanged` - deprecated, use the global `modelUpdated` event to determine when row children have changed.
+* `lastChildChanged` - deprecated, use the global `modelUpdated` event to determine when row children have changed.
+
+### Theming Custom Icons
+{% metaTag tags=["smallDown","smallLeft","smallRight"] /%}
+
+* `smallDown` - deprecated, use:
+  * `advancedFilterBuilderSelect` for Advanced Filter Builder dropdown.
+  * `selectOpen` for Select cell editor and dropdowns (e.g., Integrated Charts menu).
+  * `richSelectOpen` for Rich Select cell editor.
+* `smallLeft` - deprecated, use:
+  * `panelDelimiterRtl` for Row Group Panel / Pivot Panel.
+  * `subMenuOpenRtl` for sub-menus.        
+* `smallRight` - deprecated, use:
+  * `panelDelimiter` for Row Group Panel / Pivot Panel.
+  * `subMenuOpen` for sub-menus.
 
 {% /expandingSection %}
 
