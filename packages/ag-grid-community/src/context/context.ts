@@ -92,7 +92,7 @@ import type { RowAutoHeightService } from '../rendering/row/rowAutoHeightService
 import type { RowContainerHeightService } from '../rendering/rowContainerHeightService';
 import type { RowRenderer } from '../rendering/rowRenderer';
 import type { RowSpanService } from '../rendering/spanning/rowSpanService';
-import type { SpannedCellRenderer } from '../rendering/spanning/spannedCellRenderer';
+import type { SpannedRowRenderer } from '../rendering/spanning/spannedRowRenderer';
 import type { RowNodeSorter } from '../sort/rowNodeSorter';
 import type { SortService } from '../sort/sortService';
 import type { CellStyleService } from '../styling/cellStyleService';
@@ -304,7 +304,7 @@ export interface CoreBeanCollection {
     footerSvc?: IFooterService;
     touchSvc?: TouchService;
     rowSpanSvc?: RowSpanService;
-    spannedCellRenderer?: SpannedCellRenderer;
+    spannedRowRenderer?: SpannedRowRenderer;
 }
 
 export type BeanCollection = CoreBeanCollection & {
@@ -489,4 +489,4 @@ export type BeanName =
     | 'csrmPathTreeNodeSvc'
     | 'csrmChildrenTreeNodeSvc'
     | 'rowSpanSvc'
-    | 'spannedCellRenderer';
+    | 'spannedRowRenderer';

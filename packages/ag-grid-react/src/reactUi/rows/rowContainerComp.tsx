@@ -15,7 +15,7 @@ import { agFlushSync, classesList, getNextValueIfDifferent } from '../utils';
 import RowComp from './rowComp';
 
 const RowContainerComp = ({ name }: { name: RowContainerName }) => {
-    const { context, spannedCellRenderer } = useContext(BeansContext);
+    const { context, spannedRowRenderer } = useContext(BeansContext);
 
     const containerOptions = useMemo(() => _getRowContainerOptions(name), [name]);
 
@@ -26,10 +26,7 @@ const RowContainerComp = ({ name }: { name: RowContainerName }) => {
     const prevRowCtrlsRef = useRef<RowCtrl[]>([]);
     const [rowCtrlsOrdered, setRowCtrlsOrdered] = useState<RowCtrl[]>(() => []);
 
-    const isSpanning = useMemo(
-        () => !!spannedCellRenderer && !!containerOptions.getSpannedRowCtrls,
-        [spannedCellRenderer, containerOptions]
-    );
+    const isSpanning = !!spannedRowRenderer && !!containerOptions.getSpannedRowCtrls;
     const spannedRowCtrlsRef = useRef<RowCtrl[]>([]);
     const prevSpannedRowCtrlsRef = useRef<RowCtrl[]>([]);
     const [spannedRowCtrlsOrdered, setSpannedRowCtrlsOrdered] = useState<RowCtrl[]>(() => []);
@@ -37,7 +34,7 @@ const RowContainerComp = ({ name }: { name: RowContainerName }) => {
     const domOrderRef = useRef<boolean>(false);
     const rowContainerCtrlRef = useRef<RowContainerCtrl>();
 
-    const viewportClasses = useMemo(() => classesList(_getRowViewportClass(name)), [name]);
+    const viewportClasses = useMemo(() => classesList('ag-viewport', _getRowViewportClass(name)), [name]);
     const containerClasses = useMemo(() => classesList(_getRowContainerClass(name)), [name]);
     const spanClasses = useMemo(() => classesList('ag-spanning-container', _getRowSpanContainerClass(name)), [name]);
 

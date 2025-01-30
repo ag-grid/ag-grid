@@ -4,42 +4,31 @@ import type { AgColumn } from '../../entities/agColumn';
 import type { RowNode } from '../../entities/rowNode';
 import type { CellPosition } from '../../interfaces/iCellPosition';
 import type { IRowModel } from '../../interfaces/iRowModel';
-import type { RowPinnedType } from '../../interfaces/iRowNode';
 import type { ValueService } from '../../valueService/valueService';
-import { _normalisePinnedValue } from './spannedCellRenderer';
+import { _normalisePinnedValue } from './spannedRowRenderer';
 
 export const _doesColumnSpan = (column: AgColumn) => {
     // todo replace with new row spanning
-    return column.getColDef().rowSpan;
+    return column.colDef.rowSpan;
 };
 
 export class CellSpan {
     // used for distinguishing between types
     public readonly cellSpan = true;
 
-    private spannedNodes: Set<RowNode>;
+    public readonly spannedNodes: Set<RowNode> = new Set();
     private lastNode: RowNode;
 
     constructor(
         public readonly col: AgColumn,
         public readonly firstNode: RowNode
     ) {
-        this.firstNode = firstNode;
-        this.spannedNodes = new Set([firstNode]);
-        this.lastNode = firstNode;
+        this.addSpannedNode(firstNode);
     }
 
     public addSpannedNode(node: RowNode): void {
         this.spannedNodes.add(node);
         this.lastNode = node;
-    }
-
-    public getSpannedNodes() {
-        return this.spannedNodes;
-    }
-
-    public getFirstNode(): RowNode {
-        return this.firstNode;
     }
 
     public getLastNode(): RowNode {
@@ -79,7 +68,7 @@ export class CellSpan {
         }
 
         let allButLastHeights = 0;
-        this.getSpannedNodes().forEach((node) => {
+        this.spannedNodes.forEach((node) => {
             if (node === this.lastNode) return;
             allButLastHeights += node.rowHeight!;
         });
@@ -95,8 +84,6 @@ export class CellSpan {
  * Only create if spanning is enabled for this column.
  */
 export class RowSpanCache extends BeanStub {
-    private readonly column: AgColumn;
-
     private valueService: ValueService;
 
     private centerValueNodeMap: Map<RowNode, CellSpan>;
@@ -105,9 +92,8 @@ export class RowSpanCache extends BeanStub {
     private topValueNodeMap: Map<RowNode, CellSpan>;
     private bottomValueNodeMap: Map<RowNode, CellSpan>;
 
-    constructor(column: AgColumn) {
+    constructor(private readonly column: AgColumn) {
         super();
-        this.column = column;
     }
 
     private rowModel: IRowModel;
@@ -204,7 +190,7 @@ export class RowSpanCache extends BeanStub {
     public getSpanByRowIndex(rowIndex: number, pinned: 'top' | 'bottom' | 'center'): CellSpan | undefined {
         const map = this[`${pinned}ValueNodeMap`];
         for (const span of map.values()) {
-            for (const node of span.getSpannedNodes()) {
+            for (const node of span.spannedNodes) {
                 if (node.rowIndex === rowIndex) {
                     return span;
                 }

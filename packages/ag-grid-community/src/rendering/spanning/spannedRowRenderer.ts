@@ -7,8 +7,8 @@ import type { CellCtrl } from '../cell/cellCtrl';
 import type { RowCtrl } from '../row/rowCtrl';
 import { SpannedRowCtrl } from './spannedRowCtrl';
 
-export class SpannedCellRenderer extends BeanStub<'spannedRowsUpdated'> implements NamedBean {
-    beanName = 'spannedCellRenderer' as const;
+export class SpannedRowRenderer extends BeanStub<'spannedRowsUpdated'> implements NamedBean {
+    beanName = 'spannedRowRenderer' as const;
 
     public postConstruct(): void {
         this.addManagedEventListeners({
@@ -30,6 +30,8 @@ export class SpannedCellRenderer extends BeanStub<'spannedRowsUpdated'> implemen
      * When displayed rows or cols change, the spanned cell ctrls need to update
      */
     private createCtrls(ctrlsKey: 'top' | 'bottom' | 'center'): void {
+        const { rowSpanSvc } = this.beans;
+
         const ctrlsName = `${ctrlsKey}Ctrls` as const;
         const previousCtrls = this[ctrlsName];
         const previousCtrlsSize = previousCtrls.size;
@@ -45,7 +47,7 @@ export class SpannedCellRenderer extends BeanStub<'spannedRowsUpdated'> implemen
             if (!ctrl.isAlive()) {
                 continue;
             }
-            this.beans.rowSpanSvc?.forEachSpannedColumn(ctrl.rowNode, (col, cellSpan) => {
+            rowSpanSvc?.forEachSpannedColumn(ctrl.rowNode, (col, cellSpan) => {
                 // if spanned row ctrl already exists
                 if (newRowCtrls.has(cellSpan.firstNode)) {
                     return;
@@ -84,18 +86,20 @@ export class SpannedCellRenderer extends BeanStub<'spannedRowsUpdated'> implemen
 
     // cannot use getAllRowCtrls as it returns this services row ctrls.
     private getAllRelevantRowControls(ctrlsKey: 'top' | 'bottom' | 'center'): RowCtrl[] {
+        const { rowRenderer } = this.beans;
         switch (ctrlsKey) {
             case 'top':
-                return this.beans.rowRenderer.topRowCtrls;
+                return rowRenderer.topRowCtrls;
             case 'bottom':
-                return this.beans.rowRenderer.bottomRowCtrls;
+                return rowRenderer.bottomRowCtrls;
             case 'center':
-                return this.beans.rowRenderer.allRowCtrls;
+                return rowRenderer.allRowCtrls;
         }
     }
 
     public getCellByPosition(cellPosition: CellPosition): CellCtrl | undefined {
-        const cellSpan = this.beans.rowSpanSvc?.getCellSpanByPosition(cellPosition);
+        const { rowSpanSvc } = this.beans;
+        const cellSpan = rowSpanSvc?.getCellSpanByPosition(cellPosition);
         if (!cellSpan) {
             return undefined;
         }

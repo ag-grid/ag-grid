@@ -30,7 +30,7 @@ export class RowAutoHeightService extends BeanStub implements NamedBean {
 
     private _debouncedCalculateRowHeights = _debounce(this, this.calculateRowHeights.bind(this), 1);
     private calculateRowHeights() {
-        const { visibleCols, rowModel } = this.beans;
+        const { visibleCols, rowModel, rowSpanSvc } = this.beans;
         const displayedAutoHeightCols = visibleCols.autoHeightCols;
 
         let anyNodeChanged = false;
@@ -46,14 +46,14 @@ export class RowAutoHeightService extends BeanStub implements NamedBean {
 
                 let cellHeight = autoHeights?.[col.getColId()];
 
-                const spannedCell = this.beans.rowSpanSvc?.getCellSpan(col, row);
+                const spannedCell = rowSpanSvc?.getCellSpan(col, row);
                 if (spannedCell) {
                     // only last row gets additional auto height of spanned cell
                     if (spannedCell.getLastNode() !== row) {
                         continue;
                     }
 
-                    cellHeight = this.beans.rowSpanSvc?.getCellSpan(col, row)?.getLastNodeAutoHeight();
+                    cellHeight = rowSpanSvc?.getCellSpan(col, row)?.getLastNodeAutoHeight();
                     // if this is the last row, but no span value, skip this row as auto height not ready
                     if (!cellHeight) {
                         return;

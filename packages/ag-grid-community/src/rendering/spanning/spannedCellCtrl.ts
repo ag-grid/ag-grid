@@ -52,7 +52,7 @@ export class SpannedCellCtrl extends CellCtrl {
      * When cell is spanning, ensure row index is also available on the cell
      */
     private setAriaRowSpan(): void {
-        _setAriaRowSpan(this.eGui, this.cellSpan.getSpannedNodes().size);
+        _setAriaRowSpan(this.eGui, this.cellSpan.spannedNodes.size);
     }
 
     public override shouldRestoreFocus(): boolean {

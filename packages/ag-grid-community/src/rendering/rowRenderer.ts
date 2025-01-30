@@ -704,6 +704,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
     }
 
     public getAllRowCtrls(): RowCtrl[] {
+        const { spannedRowRenderer } = this.beans;
         const stickyTopRowCtrls = this.getStickyTopRowCtrls();
         const stickyBottomRowCtrls = this.getStickyBottomRowCtrls();
         const res = [
@@ -711,9 +712,9 @@ export class RowRenderer extends BeanStub implements NamedBean {
             ...this.bottomRowCtrls,
             ...stickyTopRowCtrls,
             ...stickyBottomRowCtrls,
-            ...(this.beans.spannedCellRenderer?.getCtrls('top') ?? []),
-            ...(this.beans.spannedCellRenderer?.getCtrls('bottom') ?? []),
-            ...(this.beans.spannedCellRenderer?.getCtrls('center') ?? []),
+            ...(spannedRowRenderer?.getCtrls('top') ?? []),
+            ...(spannedRowRenderer?.getCtrls('bottom') ?? []),
+            ...(spannedRowRenderer?.getCtrls('center') ?? []),
             ...Object.values(this.rowCtrlsByRowIndex),
         ];
 

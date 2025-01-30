@@ -6,7 +6,7 @@ import type { CellPosition } from '../../interfaces/iCellPosition';
 import { _debounce } from '../../utils/function';
 import type { CellSpan } from './rowSpanCache';
 import { RowSpanCache } from './rowSpanCache';
-import { _normalisePinnedValue } from './spannedCellRenderer';
+import { _normalisePinnedValue } from './spannedRowRenderer';
 
 export class RowSpanService extends BeanStub<'spannedCellsUpdated'> implements NamedBean {
     beanName = 'rowSpanSvc' as const;
@@ -39,7 +39,7 @@ export class RowSpanService extends BeanStub<'spannedCellsUpdated'> implements N
         this.debounceModelEvent();
     }
 
-    // debounced to allow spannedCellRenderer to run first, removing any old spanned rows
+    // debounced to allow spannedRowRenderer to run first, removing any old spanned rows
     private debouncePinnedEvent = _debounce(this, this.dispatchCellsUpdatedEvent.bind(this, true), 0);
     private debounceModelEvent = _debounce(this, this.dispatchCellsUpdatedEvent.bind(this, false), 0);
     private dispatchCellsUpdatedEvent(pinned: boolean): void {
@@ -94,7 +94,7 @@ export class RowSpanService extends BeanStub<'spannedCellsUpdated'> implements N
             return position;
         }
 
-        return { ...position, rowIndex: span.getFirstNode().rowIndex! };
+        return { ...position, rowIndex: span.firstNode.rowIndex! };
     }
 
     public getCellEnd(position: CellPosition): CellPosition | undefined {

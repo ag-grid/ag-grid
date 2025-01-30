@@ -4,7 +4,7 @@ import { _isDomLayout } from '../../gridOptionsUtils';
 import type { ColumnPinnedType } from '../../interfaces/iColumn';
 import type { RowCtrl } from '../../rendering/row/rowCtrl';
 import type { RowRenderer } from '../../rendering/rowRenderer';
-import type { SpannedCellRenderer } from '../../rendering/spanning/spannedCellRenderer';
+import type { SpannedRowRenderer } from '../../rendering/spanning/spannedRowRenderer';
 import {
     _getInnerWidth,
     _getScrollLeft,
@@ -45,7 +45,7 @@ export type RowContainerName =
 export type RowContainerType = 'left' | 'right' | 'center' | 'fullWidth';
 
 type GetRowCtrls = (renderer: RowRenderer) => RowCtrl[];
-type GetSpannedRowCtrls = (renderer: SpannedCellRenderer) => RowCtrl[];
+type GetSpannedRowCtrls = (renderer: SpannedRowRenderer) => RowCtrl[];
 export type RowContainerOptions = {
     type: RowContainerType;
     name: string;
@@ -352,6 +352,7 @@ export class RowContainerCtrl extends BeanStub implements ScrollPartner {
     }
 
     private addListeners(): void {
+        const { spannedRowRenderer } = this.beans;
         this.addManagedEventListeners({
             displayedColumnsChanged: this.onDisplayedColumnsChanged.bind(this),
             displayedColumnsWidthChanged: this.onDisplayedColumnsChanged.bind(this),
@@ -361,10 +362,10 @@ export class RowContainerCtrl extends BeanStub implements ScrollPartner {
         this.onDisplayedColumnsChanged();
         this.onDisplayedRowsChanged();
 
-        if (this.beans.spannedCellRenderer && this.options.getSpannedRowCtrls) {
-            this.addManagedListeners(this.beans.spannedCellRenderer, {
+        if (spannedRowRenderer && this.options.getSpannedRowCtrls) {
+            this.addManagedListeners(spannedRowRenderer, {
                 spannedRowsUpdated: () => {
-                    const spannedCtrls = this.options.getSpannedRowCtrls!(this.beans.spannedCellRenderer!);
+                    const spannedCtrls = this.options.getSpannedRowCtrls!(spannedRowRenderer!);
                     if (!spannedCtrls) {
                         return;
                     }

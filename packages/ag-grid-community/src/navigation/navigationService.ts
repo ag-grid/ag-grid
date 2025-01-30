@@ -812,7 +812,7 @@ export class NavigationService extends BeanStub implements NamedBean {
     }
 
     private getNormalisedPosition(cellPosition: CellPosition): CellPosition | null {
-        const isSpannedCell = !!this.beans.spannedCellRenderer?.getCellByPosition(cellPosition);
+        const isSpannedCell = !!this.beans.spannedRowRenderer?.getCellByPosition(cellPosition);
         if (isSpannedCell) {
             return cellPosition;
         }
