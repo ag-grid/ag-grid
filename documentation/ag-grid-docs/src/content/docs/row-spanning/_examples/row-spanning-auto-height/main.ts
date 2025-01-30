@@ -31,15 +31,13 @@ const gridOptions: GridOptions<IOlympicData> = {
     defaultColDef: {
         flex: 1,
     },
+    enableCellSpan: true,
 };
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
     const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
-    const registry = ModuleRegistry;
-    registry.registerModules([CellSpanModule]);
     gridApi = createGrid(gridDiv, gridOptions);
-
     fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
         .then((response) => response.json())
         .then((data: any[]) => {

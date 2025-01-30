@@ -1022,6 +1022,12 @@ export interface GridOptions<TData = any> {
      */
     ensureDomOrder?: boolean;
     /**
+     * When `true`, enables the cell span feature` allowing for the use of the `colDef.spanRows` property.
+     * @default false
+     * @initial
+     */
+    enableCellSpan?: boolean;
+    /**
      * Set to `true` to operate the grid in RTL (Right to Left) mode.
      * @default false
      * @initial

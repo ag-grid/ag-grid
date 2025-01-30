@@ -15,7 +15,7 @@ import { agFlushSync, classesList, getNextValueIfDifferent } from '../utils';
 import RowComp from './rowComp';
 
 const RowContainerComp = ({ name }: { name: RowContainerName }) => {
-    const { context, spannedRowRenderer } = useContext(BeansContext);
+    const { context, gos } = useContext(BeansContext);
 
     const containerOptions = useMemo(() => _getRowContainerOptions(name), [name]);
 
@@ -26,7 +26,7 @@ const RowContainerComp = ({ name }: { name: RowContainerName }) => {
     const prevRowCtrlsRef = useRef<RowCtrl[]>([]);
     const [rowCtrlsOrdered, setRowCtrlsOrdered] = useState<RowCtrl[]>(() => []);
 
-    const isSpanning = !!spannedRowRenderer && !!containerOptions.getSpannedRowCtrls;
+    const isSpanning = !!gos.get('enableCellSpan') && !!containerOptions.getSpannedRowCtrls;
     const spannedRowCtrlsRef = useRef<RowCtrl[]>([]);
     const prevSpannedRowCtrlsRef = useRef<RowCtrl[]>([]);
     const [spannedRowCtrlsOrdered, setSpannedRowCtrlsOrdered] = useState<RowCtrl[]>(() => []);

@@ -14,7 +14,7 @@ import {
 } from './rowContainerCtrl';
 
 function templateFactory(name: RowContainerName, options: RowContainerOptions, beans: BeanCollection): string {
-    const isCellSpanning = !!beans.spannedRowRenderer && !!options.getSpannedRowCtrls;
+    const isCellSpanning = !!beans.gos.get('enableCellSpan') && !!options.getSpannedRowCtrls;
 
     const containerClass = _getRowContainerClass(name);
     const eContainerTemplate = `<div class="${containerClass}" data-ref="eContainer" role="rowgroup"></div>`;

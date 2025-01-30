@@ -1,4 +1,4 @@
-import type { ColDef, GridApi, GridOptions } from 'ag-grid-community';
+import type { ColDef, GridApi, GridOptions, SpanRowsParams } from 'ag-grid-community';
 import {
     CellSpanModule,
     ClientSideRowModelModule,
@@ -9,7 +9,7 @@ import {
 
 ModuleRegistry.registerModules([CellSpanModule, ClientSideRowModelModule, ValidationModule /* Development Only */]);
 
-const customSpanFunc = (valueA: any, valueB: any) => {
+const customSpanFunc = ({ valueA, valueB }: SpanRowsParams) => {
     return valueA != 'Algeria' && valueA === valueB;
 };
 
@@ -29,13 +29,12 @@ const gridOptions: GridOptions<IOlympicData> = {
     defaultColDef: {
         flex: 1,
     },
+    enableCellSpan: true,
 };
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
     const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
-    const registry = ModuleRegistry;
-    registry.registerModules([CellSpanModule]);
     gridApi = createGrid(gridDiv, gridOptions);
     fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
         .then((response) => response.json())

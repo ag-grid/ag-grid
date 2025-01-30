@@ -352,7 +352,7 @@ export class RowContainerCtrl extends BeanStub implements ScrollPartner {
     }
 
     private addListeners(): void {
-        const { spannedRowRenderer } = this.beans;
+        const { spannedRowRenderer, gos } = this.beans;
         this.addManagedEventListeners({
             displayedColumnsChanged: this.onDisplayedColumnsChanged.bind(this),
             displayedColumnsWidthChanged: this.onDisplayedColumnsChanged.bind(this),
@@ -362,7 +362,7 @@ export class RowContainerCtrl extends BeanStub implements ScrollPartner {
         this.onDisplayedColumnsChanged();
         this.onDisplayedRowsChanged();
 
-        if (spannedRowRenderer && this.options.getSpannedRowCtrls) {
+        if (spannedRowRenderer && this.options.getSpannedRowCtrls && gos.get('enableCellSpan')) {
             this.addManagedListeners(spannedRowRenderer, {
                 spannedRowsUpdated: () => {
                     const spannedCtrls = this.options.getSpannedRowCtrls!(spannedRowRenderer!);

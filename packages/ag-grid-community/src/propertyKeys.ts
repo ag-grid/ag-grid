@@ -222,6 +222,7 @@ export const _BOOLEAN_GRID_OPTIONS: KeysOfType<boolean>[] = [
     'groupRemoveSingleChildren',
     'groupRemoveLowestSingleChildren',
     'enableRtl',
+    'enableCellSpan',
     'suppressClickEdit',
     'rowDragEntireRow',
     'rowDragManaged',

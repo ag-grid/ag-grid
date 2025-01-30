@@ -3,34 +3,31 @@ title: "Row Spanning"
 ---
 A single cell can be used to represent multiple contiguous rows with equal values.
 
-
-{% warning %}
-This module is new in v33.1.0 and is not yet included in the AllCommunityModules export. To use this module, register the CellSpanModule in your project.
-{% /warning %}
-
 {% gridExampleRunner title="Row Spanning Simple" name="row-spanning-simple" /%}
 
 ## Enabling Row Spanning
 The example above demonstrates merging cells with equal values into a single cell that spans multiple rows.
 
-The following snippet demonstrates enabling row spanning on the country, year, and sport columns by setting `colDef.spanRows` to `true`
+The following snippet demonstrates enabling row spanning by setting `gridOption.enableCellSpan` to true.
+The country, year, and sport columns then configure row span by setting `colDef.spanRows` to `true`.
 ```{% frameworkTransform=true %}
 const gridOptions = {
     columnDefs: [
         {
             field: 'country',
-            rowSpan: true,
+            spanRows: true,
         },
         {
             field: 'year',
-            rowSpan: true,
+            spanRows: true,
         },
         {
             field: 'sport',
-            rowSpan: true,
+            spanRows: true,
         },
         // other column definitions ...
-    ]
+    ],
+    enableCellSpan: true,
 }
 ```
 
@@ -47,10 +44,11 @@ const gridOptions = {
     columnDefs: [
         {
             field: 'country',
-            rowSpan: ({ valueA, valueB }) => valueA != 'Algeria' && valueA === valueB,
+            spanRows: ({ valueA, valueB }) => valueA != 'Algeria' && valueA === valueB,
         },
         // other column definitions ...
-    ]
+    ],
+    enableCellSpan: true,
 }
 ```
 
@@ -59,3 +57,18 @@ Row spanning can be configured alongside auto height. Note when doing so, if the
 
 {% gridExampleRunner title="Row Spanning Simple" name="row-spanning-auto-height" /%}
 
+The following snippet demonstrates how to configure auto height and row spanning:
+```{% frameworkTransform=true %}
+const gridOptions = {
+    columnDefs: [
+        {
+            field: 'lorem',
+            spanRows: true,
+            autoHeight: true,
+            wrapText: true,
+        },
+        // other column definitions ...
+    ],
+    enableCellSpan: true,
+}
+```

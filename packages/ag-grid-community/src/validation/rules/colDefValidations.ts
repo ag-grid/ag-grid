@@ -212,18 +212,25 @@ const COLUMN_DEFINITION_VALIDATIONS: () => Validations<ColDef | ColGroupDef> = (
             colSpan: { required: [false, undefined] },
             rowSpan: { required: [false, undefined] },
         },
-        validate: (_options, { rowSelection, cellSelection, suppressRowTransform }) => {
+        validate: (_options, { rowSelection, cellSelection, suppressRowTransform, enableCellSpan, pagination }) => {
             if (typeof rowSelection === 'object') {
                 if (rowSelection?.mode === 'singleRow' && rowSelection?.enableClickSelection) {
-                    return 'spanRows is not supported with rowSelection.clickSelection';
+                    return 'colDef.spanRows is not supported with rowSelection.clickSelection';
                 }
             }
             if (cellSelection) {
-                return 'spanRows is not supported with cellSelection.';
+                return 'colDef.spanRows is not supported with cellSelection.';
             }
             if (suppressRowTransform) {
-                return 'spanRows is not supported with suppressRowTransform.';
+                return 'colDef.spanRows is not supported with suppressRowTransform.';
             }
+            if (!enableCellSpan) {
+                return 'colDef.spanRows requires enableCellSpan to be enabled.';
+            }
+            if (pagination) {
+                return 'colDef.spanRows is not supported with pagination.';
+            }
+
             return null;
         },
     },
