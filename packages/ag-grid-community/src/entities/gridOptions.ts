@@ -1022,7 +1022,7 @@ export interface GridOptions<TData = any> {
      */
     ensureDomOrder?: boolean;
     /**
-     * When `true`, enables the cell span feature` allowing for the use of the `colDef.spanRows` property.
+     * When `true`, enables the cell span feature allowing for the use of the `colDef.spanRows` property.
      * @default false
      * @initial
      */
