@@ -739,6 +739,7 @@ export {
     HeaderValueGetterParams,
     ColSpanParams,
     RowSpanParams,
+    SpanRowsParams,
     SuppressKeyboardEventParams,
     SuppressHeaderKeyboardEventParams,
     ValueGetterParams,
