@@ -97,19 +97,18 @@ export class RowSpanCache extends BeanStub {
         super();
     }
 
-    private rowModel: IRowModel;
-
-    public wireBeans(beans: BeanCollection) {
-        this.rowModel = beans.rowModel;
-        this.valueService = beans.valueSvc;
-    }
-
     public buildCache(pinned: 'top' | 'center' | 'bottom'): void {
+        const {
+            column,
+            beans: { gos, pinnedRowModel, rowModel, valueSvc },
+        } = this;
+        const { colDef } = column;
+
         const newMap = new Map();
 
-        const isFullWidthCellFunc = this.beans.gos.getCallback('isFullWidthRow');
-        const equalsFnc = this.column.getColDef().equals;
-        const customCompare = this.column.getColDef().spanRows;
+        const isFullWidthCellFunc = gos.getCallback('isFullWidthRow');
+        const equalsFnc = colDef.equals;
+        const customCompare = colDef.spanRows;
         const isCustomCompare = typeof customCompare === 'function';
 
         let lastNode: RowNode | null = null;
@@ -139,20 +138,20 @@ export class RowSpanCache extends BeanStub {
                 node.footer ||
                 (spanData && node.rowIndex - 1 !== spanData?.getLastNode().rowIndex) // no span if rows not contiguous (SSRM)
             ) {
-                setNewHead(node, this.valueService.getValue(this.column, node));
+                setNewHead(node, valueSvc.getValue(column, node));
                 return;
             }
 
             // check value is equal, if not, no span
-            const value = this.valueService.getValue(this.column, node);
+            const value = valueSvc.getValue(column, node);
             if (isCustomCompare) {
-                const params: SpanRowsParams = this.gos.addGridCommonParams({
+                const params: SpanRowsParams = gos.addGridCommonParams({
                     valueA: lastValue,
                     nodeA: lastNode,
                     valueB: value,
                     nodeB: node,
-                    column: this.column,
-                    colDef: this.column.colDef,
+                    column,
+                    colDef,
                 });
                 if (!customCompare(params)) {
                     setNewHead(node, value);
@@ -166,7 +165,7 @@ export class RowSpanCache extends BeanStub {
             }
 
             if (!spanData) {
-                spanData = new CellSpan(this.column, lastNode);
+                spanData = new CellSpan(column, lastNode);
                 newMap.set(lastNode, spanData);
             }
             spanData.addSpannedNode(node);
@@ -175,13 +174,13 @@ export class RowSpanCache extends BeanStub {
 
         switch (pinned) {
             case 'center':
-                this.rowModel.forEachDisplayedNode?.(checkNodeForCache);
+                rowModel.forEachDisplayedNode?.(checkNodeForCache);
                 break;
             case 'top':
-                this.beans.pinnedRowModel?.forEachPinnedRow('top', checkNodeForCache);
+                pinnedRowModel?.forEachPinnedRow('top', checkNodeForCache);
                 break;
             case 'bottom':
-                this.beans.pinnedRowModel?.forEachPinnedRow('bottom', checkNodeForCache);
+                pinnedRowModel?.forEachPinnedRow('bottom', checkNodeForCache);
                 break;
         }
         this[`${pinned}ValueNodeMap`] = newMap;

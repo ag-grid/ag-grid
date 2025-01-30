@@ -26,6 +26,7 @@ import type {
 import {
     BeanStub,
     RowNode,
+    _debounce,
     _getRowHeightAsNumber,
     _getRowHeightForNode,
     _isGetRowHeightFunction,
@@ -703,5 +704,13 @@ export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSi
         this.destroyDatasource();
         this.destroyRootStore();
         super.destroy();
+    }
+
+    private onRowHeightChanged_debounced = _debounce(this, this.onRowHeightChanged.bind(this), 100);
+    /**
+     * @deprecated v33.1
+     */
+    public onRowHeightChangedDebounced(): void {
+        this.onRowHeightChanged_debounced();
     }
 }

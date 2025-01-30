@@ -19,6 +19,11 @@ export interface IServerSideRowModel<TData = any> extends IRowModel {
     getBlockStates(): void;
     setRowCount(rowCount: number, isLastRowIndexKnown?: boolean): void;
     applyRowData(rowDataParams: LoadSuccessParams<TData>, startRow: number, route: string[]): void;
+
+    /**
+     * @deprecated v33.1.0 - use `gridApi.onRowHeightChanged()` instead
+     */
+    onRowHeightChangedDebounced(): void;
 }
 
 export interface IServerSideTransactionManager<TData = any> {

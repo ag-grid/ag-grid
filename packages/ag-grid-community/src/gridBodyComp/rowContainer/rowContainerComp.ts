@@ -70,9 +70,10 @@ export class RowContainerComp extends Component {
                 }
             },
             setOffsetTop: (offset) => {
-                this.eContainer.style.transform = `translateY(${offset})`;
+                const top = `translateY(${offset})`;
+                this.eContainer.style.transform = top;
                 if (this.eSpannedContainer) {
-                    this.eSpannedContainer.style.transform = `translateY(${offset})`;
+                    this.eSpannedContainer.style.transform = top;
                 }
             },
         };

@@ -20,6 +20,7 @@ import type { RowDataTransaction } from '../interfaces/rowDataTransaction';
 import type { RowNodeTransaction } from '../interfaces/rowNodeTransaction';
 import { _EmptyArray, _last, _removeFromArray } from '../utils/array';
 import { ChangedPath } from '../utils/changedPath';
+import { _debounce } from '../utils/function';
 import { _warn } from '../validation/logging';
 import type { ValueCache } from '../valueService/valueCache';
 import { ChangedRowNodes } from './changedRowNodes';
@@ -1302,5 +1303,13 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         this.lastHighlightedRow = null;
         this.orderedStages = _EmptyArray;
         this.rowsToDisplay = _EmptyArray;
+    }
+
+    private onRowHeightChanged_debounced = _debounce(this, this.onRowHeightChanged.bind(this), 100);
+    /**
+     * @deprecated v33.1
+     */
+    public onRowHeightChangedDebounced(): void {
+        this.onRowHeightChanged_debounced();
     }
 }
