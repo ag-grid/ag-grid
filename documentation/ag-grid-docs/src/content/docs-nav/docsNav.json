@@ -63,39 +63,33 @@
                         {
                             "title": "Testing",
                             "type": "group",
-                            "frameworks": ["react"],
+                            "frameworks": ["angular", "react"],
                             "children": [
                                 {
                                     "title": "Overview",
-                                    "path": "testing"
-                                },
-                                {
-                                    "title": "Playwright",
-                                    "url": "https://blog.ag-grid.com/writing-e2e-tests-for-ag-grid-react-tables-with-playwright/"
-                                },
-                                {
-                                    "title": "Cypress",
-                                    "url": "https://blog.ag-grid.com/end-to-end-testing-for-ag-grid-in-react-with-cypress/"
-                                },
-                                {
-                                    "title": "React Testing Library",
-                                    "url": "https://blog.ag-grid.com/unit-testing-ag-grid-react-components-with-react-testing-library-and-vitest/"
-                                }
-                            ]
-                        },
-                        {
-                            "title": "Testing",
-                            "type": "group",
-                            "frameworks": ["angular"],
-                            "children": [
-                                {
-                                    "title": "Overview",
-                                    "path": "testing"
+                                    "path": "testing",
+                                    "frameworks": ["angular", "react"]
                                 },
                                 {
                                     "type": "item",
                                     "title": "Testing Async",
-                                    "path": "testing-async"
+                                    "path": "testing-async",
+                                    "frameworks": ["angular"]
+                                },
+                                {
+                                    "title": "Playwright",
+                                    "url": "https://blog.ag-grid.com/writing-e2e-tests-for-ag-grid-react-tables-with-playwright/",
+                                    "frameworks": ["react"]
+                                },
+                                {
+                                    "title": "Cypress",
+                                    "url": "https://blog.ag-grid.com/end-to-end-testing-for-ag-grid-in-react-with-cypress/",
+                                    "frameworks": ["react"]
+                                },
+                                {
+                                    "title": "React Testing Library",
+                                    "url": "https://blog.ag-grid.com/unit-testing-ag-grid-react-components-with-react-testing-library-and-vitest/",
+                                    "frameworks": ["react"]
                                 }
                             ]
                         },
