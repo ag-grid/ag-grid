@@ -8,7 +8,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0
+          fetch-depth: 1 # shallow copy
          
       - name: Bootstrap
         run: |
@@ -20,7 +20,7 @@ jobs:
 
       - name: nx lint
         run: |
-          yarn nx -t lint --parallel=3 --exclude all
+          yarn nx lint 
 
       - name: nx pack:verify --prod
         run: |
