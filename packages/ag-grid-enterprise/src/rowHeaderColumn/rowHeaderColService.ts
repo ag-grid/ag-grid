@@ -5,6 +5,7 @@ import {
     _areColIdsEqual,
     _columnsMatch,
     _convertColumnEventSourceType,
+    _debounce,
     _destroyColumnTree,
     _getColumnState,
     _updateColsMap,
@@ -29,7 +30,7 @@ export class RowHeaderColService extends BeanStub implements NamedBean, IColumnC
     public columns: _ColumnCollections | null;
 
     public postConstruct(): void {
-        const listener = this.refreshCells.bind(this);
+        const listener = _debounce(this, this.refreshCells.bind(this), 100);
         this.addManagedEventListeners({
             modelUpdated: listener,
         });
@@ -104,6 +105,15 @@ export class RowHeaderColService extends BeanStub implements NamedBean, IColumnC
         if (!column) {
             return;
         }
+
+        this.beans.colAutosize?.autoSizeCols({
+            colKeys: [ROW_HEADER_COLUMN_ID_PREFIX],
+            skipHeader: true,
+            skipHeaderGroups: true,
+            silent: true,
+            source: 'rowHeaderColService',
+        });
+
         this.beans.rowRenderer.refreshCells({
             columns: [column],
         });
@@ -129,7 +139,8 @@ export class RowHeaderColService extends BeanStub implements NamedBean, IColumnC
         const enableRTL = gos.get('enableRtl');
         return {
             // overridable properties
-            width: 70,
+            minWidth: 60,
+            width: 60,
             resizable: false,
             suppressHeaderMenuButton: true,
             sortable: false,
@@ -143,7 +154,7 @@ export class RowHeaderColService extends BeanStub implements NamedBean, IColumnC
             suppressNavigable: true,
             cellClass: 'ag-header-row-cell',
             cellAriaRole: 'rowheader',
-            valueGetter: (p) => p.node?.rowIndex,
+            valueGetter: (p) => (p.node?.rowIndex || 0) + 1,
             // overrides
             ...rowHeaderColumnDef,
             // non-overridable properties
