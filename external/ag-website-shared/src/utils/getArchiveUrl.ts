@@ -1,4 +1,5 @@
 import type { Library } from '@ag-grid-types';
+import { parseVersion } from '@ag-website-shared/utils/parseVersion';
 import { versionIsGreaterOrEqual } from '@ag-website-shared/utils/versionIsGreaterOrEqual';
 import { LEGACY_CHARTS_SITE_URL, PRODUCTION_CHARTS_SITE_URL } from '@constants';
 import { pathJoin } from '@utils/pathJoin';
@@ -14,9 +15,7 @@ function getHasDocumentationLink({ version, site }: { version: string; site: Lib
 
 export const getArchiveUrl = ({ version, site }: { version: string; site: Library }) => {
     const archiveBaseUrl = '/archive';
-    const [versionMajor, versionMinor] = version.split('.');
-    const major = parseInt(versionMajor, 10);
-    const minor = parseInt(versionMinor, 10);
+    const { major, minor } = parseVersion(version);
 
     let baseUrl = 'https://www.ag-grid.com';
     if (site === 'charts') {
