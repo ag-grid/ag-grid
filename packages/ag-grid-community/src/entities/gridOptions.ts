@@ -2706,7 +2706,6 @@ export type RowHeaderColumnDef = Pick<
     | 'onCellValueChanged'
     | 'headerTooltip'
     | 'headerStyle'
-    | 'headerClass'
     | 'headerComponent'
     | 'headerComponentParams'
     | 'mainMenuItems'

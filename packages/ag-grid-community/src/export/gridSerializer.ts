@@ -347,8 +347,10 @@ export class GridSerializer extends BeanStub implements NamedBean {
         const { colModel, gos, visibleCols } = this;
         const isPivotMode = colModel.isPivotMode();
 
+        const isNotRowHeaderColOrSelection = (col: AgColumn) => !isRowHeaderCol(col) && !isColumnSelectionCol(col);
+
         if (columnKeys && columnKeys.length) {
-            return colModel.getColsForKeys(columnKeys);
+            return colModel.getColsForKeys(columnKeys).filter(isNotRowHeaderColOrSelection);
         }
 
         const isTreeData = gos.get('treeData');
@@ -363,8 +365,7 @@ export class GridSerializer extends BeanStub implements NamedBean {
 
         columnsToExport = columnsToExport.filter(
             (column) =>
-                !isColumnSelectionCol(column) &&
-                !isRowHeaderCol(column) &&
+                isNotRowHeaderColOrSelection(column) &&
                 (skipRowGroups && !isTreeData ? !isColumnGroupAutoCol(column) : true)
         );
 

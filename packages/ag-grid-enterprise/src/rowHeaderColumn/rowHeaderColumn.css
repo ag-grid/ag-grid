@@ -9,3 +9,19 @@
     font-family: var(--ag-header-font-family);
     font-weight: var(--ag-header-font-weight);
 }
+
+:where(.ag-ltr) {
+    .ag-header-row-header,
+    :where(.ag-ltr .ag-cell.ag-header-row-cell):not(.ag-cell-last-left-pinned) {
+        /* rtl:ignore */
+        border-right: var(--ag-pinned-column-border);
+    }
+}
+
+:where(.ag-rtl) {
+    .ag-header-row-header,
+    :where(.ag-rtl .ag-cell.ag-header-row-cell):not(.ag-cell-first-right-pinned) {
+        /* rtl:ignore */
+        border-left: var(--ag-pinned-column-border);
+    }
+}

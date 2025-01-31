@@ -152,6 +152,7 @@ export class RowHeaderColService extends BeanStub implements NamedBean, IColumnC
             suppressAutoSize: true,
             suppressSizeToFit: true,
             suppressNavigable: true,
+            headerClass: 'ag-header-row-header',
             cellClass: 'ag-header-row-cell',
             cellAriaRole: 'rowheader',
             valueGetter: (p) => (p.node?.rowIndex || 0) + 1,
