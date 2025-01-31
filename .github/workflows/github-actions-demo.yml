@@ -6,17 +6,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-        with:
-          fetch-depth: 1 # shallow copy
+        # with:
+        #   fetch-depth: 1 # shallow copy
       - uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: 'yarn'
-          cache-dependency-path: yarn.lock
-         
-      - name: Bootstrap
-        run: |
-          npm run bootstrap
+#          cache-dependency-path: yarn.lock
+      - run: npm run bootstrap
         
       # - name: nx format:check
       #   run: |
