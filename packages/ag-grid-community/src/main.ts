@@ -23,6 +23,9 @@ export type { VisibleColsService } from './columns/visibleColsService';
 export { GroupInstanceIdCreator } from './columns/groupInstanceIdCreator';
 export {
     GROUP_AUTO_COLUMN_ID,
+    SELECTION_COLUMN_ID,
+    ROW_HEADER_COLUMN_ID,
+    isRowHeaderCol,
     isColumnSelectionCol,
     isColumnGroupAutoCol,
     _destroyColumnTree,

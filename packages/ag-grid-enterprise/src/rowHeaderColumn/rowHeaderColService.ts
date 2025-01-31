@@ -1,6 +1,7 @@
 import {
     AgColumn,
     BeanStub,
+    ROW_HEADER_COLUMN_ID,
     _applyColumnState,
     _areColIdsEqual,
     _columnsMatch,
@@ -9,6 +10,7 @@ import {
     _destroyColumnTree,
     _getColumnState,
     _updateColsMap,
+    isRowHeaderCol,
 } from 'ag-grid-community';
 import type {
     AgColumnGroup,
@@ -21,8 +23,6 @@ import type {
     RowHeaderColumnDef,
     _ColumnCollections,
 } from 'ag-grid-community';
-
-export const ROW_HEADER_COLUMN_ID_PREFIX = 'ag-Grid-RowHeaderColumn' as const;
 
 export class RowHeaderColService extends BeanStub implements NamedBean, IColumnCollectionService {
     beanName = 'rowHeaderColSvc' as const;
@@ -100,14 +100,14 @@ export class RowHeaderColService extends BeanStub implements NamedBean, IColumnC
     }
 
     private refreshCells(): void {
-        const column = this.getColumn(ROW_HEADER_COLUMN_ID_PREFIX);
+        const column = this.getColumn(ROW_HEADER_COLUMN_ID);
 
         if (!column) {
             return;
         }
 
         this.beans.colAutosize?.autoSizeCols({
-            colKeys: [ROW_HEADER_COLUMN_ID_PREFIX],
+            colKeys: [ROW_HEADER_COLUMN_ID],
             skipHeader: true,
             skipHeaderGroups: true,
             silent: true,
@@ -124,7 +124,7 @@ export class RowHeaderColService extends BeanStub implements NamedBean, IColumnC
             return null;
         }
         // we use colId, and not instance, to remove old rowHeaderCols
-        const colsFiltered = cols.filter((col) => !isRowHeaderColumn(col));
+        const colsFiltered = cols.filter((col) => !isRowHeaderCol(col));
         return [...list, ...colsFiltered];
     }
 
@@ -158,7 +158,7 @@ export class RowHeaderColService extends BeanStub implements NamedBean, IColumnC
             // overrides
             ...rowHeaderColumnDef,
             // non-overridable properties
-            colId: ROW_HEADER_COLUMN_ID_PREFIX,
+            colId: ROW_HEADER_COLUMN_ID,
         };
     }
 
@@ -194,7 +194,7 @@ export class RowHeaderColService extends BeanStub implements NamedBean, IColumnC
 
         // check first: one or more columns showing -- none are row header column
         if (!visibleColumns.some(isLeafRowHeaderColumn)) {
-            const existingState = _getColumnState(beans).find((state) => isRowHeaderColumn(state.colId));
+            const existingState = _getColumnState(beans).find((state) => isRowHeaderCol(state.colId));
 
             if (existingState) {
                 _applyColumnState(
@@ -221,17 +221,12 @@ export class RowHeaderColService extends BeanStub implements NamedBean, IColumnC
     }
 }
 
-export function isRowHeaderColumn(col: ColKey): boolean {
-    const id = typeof col === 'string' ? col : 'getColId' in col ? col.getColId() : col.colId;
-    return id?.startsWith(ROW_HEADER_COLUMN_ID_PREFIX) ?? false;
-}
-
 const isLeafRowHeaderColumn = (c: AgColumn | AgColumnGroup): boolean =>
-    c.isColumn ? isRowHeaderColumn(c) : c.getChildren()?.some(isLeafRowHeaderColumn) ?? false;
+    c.isColumn ? isRowHeaderCol(c) : c.getChildren()?.some(isLeafRowHeaderColumn) ?? false;
 
 function getLeafRowHeaderColumn(c: AgColumn | AgColumnGroup): AgColumn | null {
     if (c.isColumn) {
-        return isRowHeaderColumn(c) ? c : null;
+        return isRowHeaderCol(c) ? c : null;
     }
 
     const children = c.getChildren() ?? [];
