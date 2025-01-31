@@ -2,13 +2,18 @@ import { type Framework } from '@ag-grid-types';
 import { getPagePath } from '@components/docs/utils/filesData';
 import { getPropertiesFromSource } from '@components/reference-documentation/utils/getPropertiesFromSource';
 import { getAllSectionHeadingLinks } from '@components/reference-documentation/utils/interface-helpers';
-import Markdoc, { type Node, type RenderableTreeNode, type Tag } from '@markdoc/markdoc';
+import Markdoc, { type Node, type RenderableTreeNode } from '@markdoc/markdoc';
 import { type MarkdownHeading } from 'astro';
 import Slugger from 'github-slugger';
 import { readFileSync } from 'node:fs';
 import path from 'node:path';
 
 import { transformMarkdoc } from './transformMarkdoc';
+
+interface HeadingData {
+    id: string;
+    text: string;
+}
 
 const TABS_TAG_NAME = 'tabs';
 const TAB_ITEM_TAG_NAME = 'tabItem';
@@ -140,8 +145,23 @@ function addTabsToHeadings({
     return headingsClone;
 }
 
-async function transformRenderTreeWithReferenceHeadings(renderTree: RenderableTreeNode) {
-    const childrenPromises = renderTree!.children.map(async (node) => {
+async function transformRenderTreeWithReferenceHeadings({
+    renderTree,
+    skipHeading,
+}: {
+    renderTree: RenderableTreeNode;
+    skipHeading?: (node: HeadingData) => boolean;
+}) {
+    const renderTreeChildren = skipHeading
+        ? renderTree!.children.filter((node) => {
+              if (hasHeadingAttribute(node)) {
+                  return !skipHeading(node.attributes[HEADING_ATTR_NAME]);
+              } else {
+                  return true;
+              }
+          })
+        : renderTree!.children;
+    const childrenPromises = renderTreeChildren.map(async (node) => {
         if (hasApiDocsHeadingAttribute(node)) {
             const { source, sources, config = {} } = node.attributes;
 
@@ -220,12 +240,14 @@ export async function getHeadings({
     markdocContent,
     framework,
     getTabItemSlug,
+    skipHeading,
 }: {
     title: string;
     pageName: string;
     markdocContent: string;
     framework: Framework;
     getTabItemSlug: (id: string) => string;
+    skipHeading?: (heading: HeadingData) => boolean;
 }): Promise<MarkdownHeading[]> {
     const transformAst = (ast: Node) => {
         ast.children = ast.children.map((node) => {
@@ -242,7 +264,7 @@ export async function getHeadings({
         return [];
     }
 
-    await transformRenderTreeWithReferenceHeadings(renderTree);
+    await transformRenderTreeWithReferenceHeadings({ renderTree, skipHeading });
 
     const renderTreeHeadings = renderTree['children']?.filter(isHeadingTag).map((node) => {
         const { id: slug, level: depth } = node.attributes;

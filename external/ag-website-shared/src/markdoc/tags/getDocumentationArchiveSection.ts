@@ -1,4 +1,5 @@
 import type { Library } from '@ag-grid-types';
+import { MIGRATION_DOCUMENTATION_NAV_DATA } from '@ag-website-shared/constants';
 import { component } from '@astrojs/markdoc/config';
 import type { Render } from '@astrojs/markdoc/config';
 import type { Config, Schema } from '@markdoc/markdoc';
@@ -17,8 +18,7 @@ export const getDocumentationArchiveSection = (site: Library): Schema<Config, Re
                 type: Object,
                 default: {
                     level: 2,
-                    id: 'documentation',
-                    text: 'Documentation',
+                    ...MIGRATION_DOCUMENTATION_NAV_DATA,
                 },
             },
         },
