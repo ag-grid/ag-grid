@@ -25,4 +25,12 @@ jobs:
       - name: nx pack:verify --prod
         run: |
           yarn nx pack:verify --prod
-  
+
+      - name: nx test:modules
+        run: |
+          yarn nx test:modules
+          
+      - name: nx run ag-grid-docs:test
+        run: |
+          yarn nx run ag-grid-docs:test
+ 
