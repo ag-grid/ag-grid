@@ -737,6 +737,15 @@ export interface _QuickFilterGridApi {
     resetQuickFilter(): void;
 }
 
+export interface _SearchApi {
+    searchNext(): void;
+    searchPrevious(): void;
+    searchGetTotalMatches(): number;
+    searchGoTo(match: number): void;
+    searchGetActiveMatch(): CellPosition | undefined;
+    searchGetActiveMatchNum(): number | undefined;
+}
+
 export interface _StateGridApi {
     /** Get the current state of the grid. Can be used in conjunction with the `initialState` grid option to save and restore grid state. */
     getState(): GridState;
@@ -1199,6 +1208,7 @@ export interface GridApi<TData = any>
         _FilterGridApi,
         _ColumnFilterGridApi,
         _QuickFilterGridApi,
+        _SearchApi,
         _PaginationGridApi,
         _CsrmSsrmSharedGridApi,
         _SsrmInfiniteSharedGridApi,

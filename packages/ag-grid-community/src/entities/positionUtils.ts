@@ -14,7 +14,7 @@ export function _createCellId(cellPosition: CellPosition): string {
 
 export function _areCellsEqual(cellA: CellPosition, cellB: CellPosition): boolean {
     const colsMatch = cellA.column === cellB.column;
-    const floatingMatch = cellA.rowPinned === cellB.rowPinned;
+    const floatingMatch = cellA.rowPinned == cellB.rowPinned;
     const indexMatch = cellA.rowIndex === cellB.rowIndex;
     return colsMatch && floatingMatch && indexMatch;
 }

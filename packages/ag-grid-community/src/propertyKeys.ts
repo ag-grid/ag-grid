@@ -60,6 +60,7 @@ const STRING_GRID_OPTIONS: KeysOfType<string>[] = [
     'tooltipShowMode',
     'grandTotalRow',
     'themeCssLayer',
+    'searchText',
 ];
 
 // only used internally

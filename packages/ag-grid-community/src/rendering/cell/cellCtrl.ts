@@ -269,6 +269,19 @@ export class CellCtrl extends BeanStub {
         } else if (this.isCellRenderer()) {
             const params = this.createCellRendererParams();
             compDetails = _getCellRendererDetails(userCompFactory, column.getColDef(), params);
+        } else if (
+            beans.search?.isMatch({
+                column,
+                rowIndex: rowNode.rowIndex!,
+                rowPinned: rowNode.rowPinned,
+            })
+        ) {
+            const params = this.createCellRendererParams();
+            compDetails = _getCellRendererDetails(
+                userCompFactory,
+                { ...column.getColDef(), cellRenderer: 'agSearchCellRenderer' },
+                params
+            );
         }
         this.comp.setRenderDetails(compDetails, valueToDisplay, forceNewCellRendererInstance);
 

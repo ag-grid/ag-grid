@@ -6,6 +6,7 @@ import type { AgEventType, AgInternalEventType, AgPublicEventType } from './even
 import type { FilterRequestSource } from './filter/iColumnFilter';
 import type { CellRange, CellRangeParams } from './interfaces/IRangeService';
 import type { GridState } from './interfaces/gridState';
+import type { CellPosition } from './interfaces/iCellPosition';
 import type { ChartType } from './interfaces/iChartOptions';
 import type { RefreshModelParams } from './interfaces/iClientSideRowModel';
 import type { Column, ColumnEventName, ColumnGroup, ColumnPinnedType, ProvidedColumnGroup } from './interfaces/iColumn';
@@ -117,6 +118,7 @@ export type AgEventTypeParams<TData = any, TContext = any> = BuildEventTypeMap<
         rowDragLeave: RowDragLeaveEvent<TData, TContext>;
         rowDragEnd: RowDragEndEvent<TData, TContext>;
         rowDragCancel: RowDragCancelEvent<TData, TContext>;
+        searchChanged: SearchChangedEvent<TData, TContext>;
         // Internal events
         beforeRefreshModel: BeforeRefreshModelEvent<TData, TContext>;
         scrollbarWidthChanged: ScrollbarWidthChangedEvent<TData, TContext>;
@@ -376,6 +378,13 @@ export interface FilterDestroyedEvent<TData = any, TContext = any>
     extends AgGlobalEvent<'filterDestroyed', TData, TContext> {
     source: 'api' | 'columnChanged' | 'gridDestroyed' | 'advancedFilterEnabled' | 'paramsUpdated';
     column: Column;
+}
+
+export interface SearchChangedEvent<TData = any, TContext = any>
+    extends AgGlobalEvent<'searchChanged', TData, TContext> {
+    activeMatch: CellPosition | undefined;
+    activeMatchNum: number | undefined;
+    totalMatches: number;
 }
 
 export interface SortChangedEvent<TData = any, TContext = any> extends AgGlobalEvent<'sortChanged', TData, TContext> {

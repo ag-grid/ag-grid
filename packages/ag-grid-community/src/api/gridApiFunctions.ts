@@ -1,4 +1,5 @@
 import type { ValidationModuleName } from '../interfaces/iModule';
+import type { _SearchApi } from './gridApi';
 import type {
     GridApi,
     _AdvancedFilterGridApi,
@@ -239,6 +240,14 @@ export const gridApiFunctionsMap: Record<keyof GridApi, ValidationModuleName> = 
         isQuickFilterPresent: 0,
         getQuickFilter: 0,
         resetQuickFilter: 0,
+    }),
+    ...mod<_SearchApi>('Search', {
+        searchGetActiveMatch: 0,
+        searchGetTotalMatches: 0,
+        searchGoTo: 0,
+        searchNext: 0,
+        searchPrevious: 0,
+        searchGetActiveMatchNum: 0,
     }),
     ...mod<_PaginationGridApi>('Pagination', {
         paginationIsLastPageFound: 0,

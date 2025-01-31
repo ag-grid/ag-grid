@@ -1039,6 +1039,7 @@ export {
     DateFilterModule,
     ExternalFilterModule,
 } from './filter/filterModule';
+export { SearchModule } from './search/searchModule';
 export {
     EditCoreModule as _EditCoreModule,
     NumberEditorModule,

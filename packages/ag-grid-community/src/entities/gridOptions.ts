@@ -88,6 +88,7 @@ import type {
     RowGroupOpenedEvent,
     RowSelectedEvent,
     RowValueChangedEvent,
+    SearchChangedEvent,
     SelectionChangedEvent,
     SortChangedEvent,
     StateUpdatedEvent,
@@ -552,6 +553,8 @@ export interface GridOptions<TData = any> {
      * @initial
      */
     excelStyles?: ExcelStyle[];
+
+    searchText?: string;
 
     // *** Filter *** //
     /**
@@ -2132,6 +2135,8 @@ export interface GridOptions<TData = any> {
      * Advanced Filter Builder visibility has changed (opened or closed).
      */
     onAdvancedFilterBuilderVisibleChanged?(event: AdvancedFilterBuilderVisibleChangedEvent<TData>): void;
+
+    onSearchChanged?(event: SearchChangedEvent<TData>): void;
 
     // *** Integrated Charts *** //
     /**

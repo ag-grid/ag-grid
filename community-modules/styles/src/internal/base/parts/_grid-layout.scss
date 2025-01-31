@@ -338,4 +338,12 @@
     .ag-floating-bottom {
         border-top: var(--ag-borders-critical) var(--ag-border-color);
     }
+
+    .ag-search-match {
+        background-color: yellow;
+    }
+
+    .ag-search-active-match {
+        background-color: orange;
+    }
 }

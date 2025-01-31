@@ -93,6 +93,7 @@ import type { RowContainerHeightService } from '../rendering/rowContainerHeightS
 import type { RowRenderer } from '../rendering/rowRenderer';
 import type { RowSpanService } from '../rendering/spanning/rowSpanService';
 import type { SpannedRowRenderer } from '../rendering/spanning/spannedRowRenderer';
+import type { SearchService } from '../search/searchService';
 import type { RowNodeSorter } from '../sort/rowNodeSorter';
 import type { SortService } from '../sort/sortService';
 import type { CellStyleService } from '../styling/cellStyleService';
@@ -173,7 +174,8 @@ export type UserComponentName =
     | 'agSelectedRowCountComponent'
     | 'agTotalRowCountComponent'
     | 'agFilteredRowCountComponent'
-    | 'agTotalAndFilteredRowCountComponent';
+    | 'agTotalAndFilteredRowCountComponent'
+    | 'agSearchCellRenderer';
 
 export type ClassImp = new (...args: []) => object;
 export type ComponentMeta =
@@ -305,6 +307,7 @@ export interface CoreBeanCollection {
     touchSvc?: TouchService;
     rowSpanSvc?: RowSpanService;
     spannedRowRenderer?: SpannedRowRenderer;
+    search?: SearchService;
 }
 
 export type BeanCollection = CoreBeanCollection & {
@@ -458,6 +461,7 @@ export type BeanName =
     | 'rowRenderer'
     | 'rowStyleSvc'
     | 'scrollVisibleSvc'
+    | 'search'
     | 'selectionController'
     | 'selectionSvc'
     | 'showRowGroupCols'

@@ -86,6 +86,7 @@ import type {
     RowGroupOpenedEvent,
     RowSelectedEvent,
     RowValueChangedEvent,
+    SearchChangedEvent,
     SelectionChangedEvent,
     SortChangedEvent,
     StateUpdatedEvent,
