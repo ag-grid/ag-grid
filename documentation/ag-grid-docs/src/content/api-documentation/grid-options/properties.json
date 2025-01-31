@@ -1663,6 +1663,8 @@
                 "url": "./row-selection-single-row/#customising-the-checkbox-column"
             }
         },
+        "enableRowHeaderColumn": {},
+        "rowHeaderColumnDef": {},
         "suppressCellFocus": {
             "more": {
                 "name": "Suppress Cell Focus",

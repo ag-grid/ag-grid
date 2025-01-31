@@ -99,6 +99,7 @@ const OBJECT_GRID_OPTIONS: KeysLike<object | HTMLElement>[] = [
     'initialState',
     'autoSizeStrategy',
     'selectionColumnDef',
+    'rowHeaderColumnDef',
 ];
 
 // only used internally
@@ -308,6 +309,7 @@ export const _BOOLEAN_GRID_OPTIONS: KeysOfType<boolean>[] = [
     'maintainColumnOrder',
     'enableStrictPivotColumnOrder',
     'suppressSetFilterByDefault',
+    'enableRowHeaderColumn',
 ];
 
 // Used in example generation

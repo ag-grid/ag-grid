@@ -1481,6 +1481,11 @@ export interface GridOptions<TData = any> {
      */
     selectionColumnDef?: SelectionColumnDef;
 
+    /**If `true`, a column will be displayed as the first column of the grid contain */
+    enableRowHeaderColumn?: boolean;
+
+    rowHeaderColumnDef?: RowHeaderColumnDef;
+
     /**
      * If `true`, only a single range can be selected.
      * @default false
@@ -2687,6 +2692,52 @@ export type SelectionColumnDef = Pick<
     | 'suppressSizeToFit'
     | 'suppressAutoSize'
     | 'suppressMovable'
+>;
+
+export type RowHeaderColumnDef = Pick<
+    ColDef,
+    | 'icons'
+    | 'contextMenuItems'
+    | 'context'
+    | 'comparator'
+    | 'onCellClicked'
+    | 'onCellContextMenu'
+    | 'onCellDoubleClicked'
+    | 'onCellValueChanged'
+    | 'headerTooltip'
+    | 'headerStyle'
+    | 'headerClass'
+    | 'headerComponent'
+    | 'headerComponentParams'
+    | 'mainMenuItems'
+    | 'suppressHeaderContextMenu'
+    | 'suppressHeaderMenuButton'
+    | 'suppressHeaderKeyboardEvent'
+    | 'cellRenderer'
+    | 'cellRendererParams'
+    | 'cellRendererSelector'
+    | 'rowDrag'
+    | 'rowDragText'
+    | 'dndSource'
+    | 'dndSourceOnRowDrag'
+    | 'sortable'
+    | 'sort'
+    | 'initialSort'
+    | 'sortIndex'
+    | 'initialSortIndex'
+    | 'sortingOrder'
+    | 'unSortIcon'
+    | 'tooltipField'
+    | 'tooltipValueGetter'
+    | 'tooltipComponent'
+    | 'tooltipComponentParams'
+    | 'width'
+    | 'initialWidth'
+    | 'maxWidth'
+    | 'minWidth'
+    | 'flex'
+    | 'initialFlex'
+    | 'resizable'
 >;
 
 /**

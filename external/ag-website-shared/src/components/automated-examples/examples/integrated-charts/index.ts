@@ -10,6 +10,7 @@ import {
     ContextMenuModule,
     IntegratedChartsModule,
     RowGroupingModule,
+    RowHeaderColumnModule,
     SideBarModule,
 } from 'ag-grid-enterprise';
 
@@ -21,6 +22,7 @@ ModuleRegistry.registerModules([
     AllCommunityModule,
     ClientSideRowModelModule,
     ClipboardModule,
+    RowHeaderColumnModule,
     IntegratedChartsModule.with(AgChartsEnterpriseModule),
     ColumnMenuModule,
     ContextMenuModule,

@@ -169,15 +169,6 @@ export class SelectionColService extends BeanStub implements NamedBean, IColumnC
         return [col];
     }
 
-    public putSelectionColsFirstInList(list: AgColumn[], cols?: AgColumn[] | null): AgColumn[] | null {
-        if (!cols) {
-            return null;
-        }
-        // we use colId, and not instance, to remove old selectionCols
-        const colsFiltered = cols.filter((col) => !isColumnSelectionCol(col));
-        return [...list, ...colsFiltered];
-    }
-
     private onSelectionOptionsChanged(
         current: GridOptions['rowSelection'],
         prev: GridOptions['rowSelection'],

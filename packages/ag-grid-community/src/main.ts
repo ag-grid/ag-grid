@@ -11,6 +11,7 @@ export {
     ApplyColumnStateParams,
     _resetColumnState,
     _applyColumnState,
+    _getColumnState,
 } from './columns/columnStateUtils';
 export type { ColumnMoveService } from './columnMove/columnMoveService';
 export type { ColumnNameService } from './columns/columnNameService';
@@ -803,6 +804,7 @@ export {
     GroupSelectionMode,
     SelectAllMode,
     SelectionColumnDef,
+    RowHeaderColumnDef,
     CellSelectionOptions,
     RowSelectionOptions,
     RowSelectionMode,

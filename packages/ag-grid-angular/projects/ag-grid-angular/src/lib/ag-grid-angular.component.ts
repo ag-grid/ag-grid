@@ -160,6 +160,7 @@ import type {
     RowEditingStoppedEvent,
     RowGroupOpenedEvent,
     RowGroupingDisplayType,
+    RowHeaderColumnDef,
     RowHeightParams,
     RowModelType,
     RowSelectedEvent,
@@ -1370,6 +1371,9 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * Note that due to the nature of this column, this type is a subset of `ColDef`, which does not support several normal column features such as editing, pivoting and grouping.
      */
     @Input() public selectionColumnDef: SelectionColumnDef | undefined = undefined;
+    /**If `true`, a column will be displayed as the first column of the grid contain     */
+    @Input({ transform: booleanAttribute }) public enableRowHeaderColumn: boolean | undefined = undefined;
+    @Input() public rowHeaderColumnDef: RowHeaderColumnDef | undefined = undefined;
     /** If `true`, only a single range can be selected.
      * @default false
      * @deprecated v32.2 Use `cellSelection.suppressMultiRanges` instead
