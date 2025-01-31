@@ -1,14 +1,21 @@
+import type { Library } from '@ag-grid-types';
 import { parseVersion } from '@ag-website-shared/utils/parseVersion';
+import { readFileSync } from 'fs';
 
-import agGridVersions from '../content/versions/ag-grid-versions.json';
+import { VERSION_DATA_PATH } from '../constants';
 
 interface Params {
+    site: Library;
     major: number;
     minor: number;
 }
 
-export function getHighestPatch({ major, minor }: Params) {
-    const majorMinorVersions = agGridVersions
+export function getHighestPatch({ site, major, minor }: Params) {
+    const versionDataPath = new URL(VERSION_DATA_PATH[site], import.meta.url);
+    const versionData = readFileSync(versionDataPath, 'utf8');
+    const versions = JSON.parse(versionData);
+
+    const majorMinorVersions = versions
         .map(({ version }) => {
             return parseVersion(version);
         })
