@@ -13,7 +13,7 @@ jobs:
           node-version: 20
           cache: 'yarn'
 #          cache-dependency-path: yarn.lock
-      - run: npm run bootstrap
+      - run: SHARP_IGNORE_GLOBAL_LIBVIPS=true YARN_REGISTRY="http://52.50.158.57:4873" yarn --frozen-lockfile #npm run bootstrap
         
       # - name: nx format:check
       #   run: |
