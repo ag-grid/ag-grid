@@ -23,7 +23,7 @@ const { page } = Astro.props;
 const currentFramework = Astro.params.framework as Framework;
 const pageName = Astro.params.pageName as Framework;
 const path = Astro.url.pathname;
-const { title, enterprise, hideSideMenu, hidePageMenu, headings: pageHeadings } = page.data;
+const { title, enterprise, hideSideMenu, hidePageMenu, headings: pageHeadings, migrationVersion } = page.data;
 
 const { data: versionsData } = await getEntry('versions', 'ag-grid-versions');
 const version = versionsData[0]?.version;
@@ -95,7 +95,7 @@ const headings =
 
             {/* Wrapping div is a hack to target "intro" section of docs page */}
             <div class={styles.pageSections}>
-                <Content framework={currentFramework} page={page} />
+                <Content framework={currentFramework} page={page} migrationVersion={migrationVersion} />
             </div>
         </div>
 

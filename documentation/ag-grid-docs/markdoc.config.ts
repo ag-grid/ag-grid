@@ -1,5 +1,6 @@
 import { isFramework } from '@ag-website-shared/markdoc/functions/isFramework';
 import { isNotJavascriptFramework } from '@ag-website-shared/markdoc/functions/isNotJavascriptFramework';
+import { migrationVersion, migrationVersionPatch } from '@ag-website-shared/markdoc/functions/migrationVersion';
 import { heading } from '@ag-website-shared/markdoc/nodes/heading';
 import { br } from '@ag-website-shared/markdoc/tags/br';
 import { embedSnippet } from '@ag-website-shared/markdoc/tags/embedSnippet';
@@ -53,6 +54,8 @@ export default defineMarkdocConfig({
         isFramework,
         isNotJavascriptFramework,
         getFrameworkCapitalised,
+        migrationVersion,
+        migrationVersionPatch,
     },
     tags: {
         kbd,

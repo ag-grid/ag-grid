@@ -1,27 +1,28 @@
 ---
 title: "Upgrading to AG Grid 33"
 description: "See whats new in AG Grid, view a full list of changes and migrate your $framework Data Grid to v33 with our Codemods."
+migrationVersion: "33.0.0"
 ---
 
 Reductions in bundle size, updated theming, column header content customization.
 
 ## What's New
 
-AG Grid 33 significantly reduces bundle size via modularization and enhances functionality, theming and accessibility as described in the [release post](https://blog.ag-grid.com/whats-new-in-ag-grid-33/). These major improvements require certain breaking changes as listed below.
+AG Grid {% migrationVersion() %} significantly reduces bundle size via modularization and enhances functionality, theming and accessibility as described in the [release post](https://blog.ag-grid.com/whats-new-in-ag-grid-33/). These major improvements require certain breaking changes as listed below.
 
 Please use the [codemods](#codemods) to start your migration, then review the changes to [modules](#changes-to-modules) and [themes](#theming).
 
 {% note %}
-AG Grid 33 is aimed at addressing long-standing community feedback around bundle size and theming. Naturally, given the significance of these changes, AG Grid 33 has introduced more breaking changes than usual. We recognise that not all users can immediately benefit from these improvements.
+AG Grid {% migrationVersion() %} is aimed at addressing long-standing community feedback around bundle size and theming. Naturally, given the significance of these changes, AG Grid {% migrationVersion() %} has introduced more breaking changes than usual. We recognise that not all users can immediately benefit from these improvements.
 
 Therefore we are launching Long-Term Support (LTS) versions of AG Grid (v32-lts) and AG Charts (v10-lts), ensuring you can continue receiving bug fixes without upgrading to the latest major release. We will proactively identify necessary fixes, but please feel free to report any issues you encounter against our LTS versions.
 {% /note %}
 
-{% documentationArchiveSection version="33.0.4" /%}
+{% documentationArchiveSection version=migrationVersionPatch() /%}
 
 ## Changes to Modules / Packages
 
-Version 33 introduces a major change to how modules work to allow for smaller bundle sizes. Previously AG Grid supported two approaches - modules and packages. These have now been merged together to allow for simpler configuration and greater optimisation of bundle size.
+Version {% migrationVersion() %} introduces a major change to how modules work to allow for smaller bundle sizes. Previously AG Grid supported two approaches - modules and packages. These have now been merged together to allow for simpler configuration and greater optimisation of bundle size.
 
 {% if isFramework("javascript") %}
 If you are using the UMD bundle, then you do not need to make any changes as all modules are automatically registered. Otherwise, see the steps below.
@@ -70,7 +71,7 @@ provideGlobalGridOptions({ theme: "legacy"});
 `@ag-grid-community/**` / `@ag-grid-enterprise/**`
 
 
-In v33 there is no longer a requirement for separate NPM feature modules to achieve tree shaking. This means we can simply export all the modules from either _ag-grid-community_ or _ag-grid-enterprise_ as follows:
+In version {% migrationVersion() %} there is no longer a requirement for separate NPM feature modules to achieve tree shaking. This means we can simply export all the modules from either _ag-grid-community_ or _ag-grid-enterprise_ as follows:
 
 
 {% if isFramework("react") %}
@@ -107,8 +108,8 @@ AG Grid Community
 -    "@ag-grid-community/react": "^32.3.0",
 -    "@ag-grid-community/client-side-row-model": "^32.3.0",
 -    "@ag-grid-community/csv-export": "^32.3.0",
-+    "ag-grid-react": "{% $agGridVersion %}",
-+    "ag-grid-community": "{% $agGridVersion %}",
++    "ag-grid-react": "~{% migrationVersionPatch() %}",
++    "ag-grid-community": "~{% migrationVersionPatch() %}",
 }
 ```
 {% /if %}
@@ -118,8 +119,8 @@ AG Grid Community
 -    "@ag-grid-community/angular": "^32.3.0",
 -    "@ag-grid-community/client-side-row-model": "^32.3.0",
 -    "@ag-grid-community/csv-export": "^32.3.0",
-+    "ag-grid-angular": "{% $agGridVersion %}",
-+    "ag-grid-community": "{% $agGridVersion %}",
++    "ag-grid-angular": "~{% migrationVersionPatch() %}",
++    "ag-grid-community": "~{% migrationVersionPatch() %}",
 }
 ```
 {% /if %}
@@ -128,7 +129,7 @@ AG Grid Community
 "dependencies": {
 -    "@ag-grid-community/client-side-row-model": "^32.3.0",
 -    "@ag-grid-community/csv-export": "^32.3.0",
-+    "ag-grid-community": "{% $agGridVersion %}",
++    "ag-grid-community": "~{% migrationVersionPatch() %}",
 }
 ```
 {% /if %}
@@ -138,8 +139,8 @@ AG Grid Community
 -    "@ag-grid-community/vue3": "^32.3.0",
 -    "@ag-grid-community/client-side-row-model": "^32.3.0",
 -    "@ag-grid-community/csv-export": "^32.3.0",
-+    "ag-grid-vue3": "{% $agGridVersion %}",
-+    "ag-grid-community": "{% $agGridVersion %}",
++    "ag-grid-vue3": "~{% migrationVersionPatch() %}",
++    "ag-grid-community": "~{% migrationVersionPatch() %}",
 }
 ```
 {% /if %}
@@ -155,8 +156,8 @@ AG Grid Enterprise
 -    "@ag-grid-enterprise/clipboard": "^32.3.0",
 -    "@ag-grid-enterprise/master-detail": "^32.3.0",
 -    "@ag-grid-enterprise/row-grouping": "^32.3.0",
-+    "ag-grid-react": "{% $agGridVersion %}",
-+    "ag-grid-enterprise": "{% $agGridVersion %}",
++    "ag-grid-react": "~{% migrationVersionPatch() %}",
++    "ag-grid-enterprise": "~{% migrationVersionPatch() %}",
 }
 ```
 {% /if %}
@@ -169,8 +170,8 @@ AG Grid Enterprise
 -    "@ag-grid-enterprise/clipboard": "^32.3.0",
 -    "@ag-grid-enterprise/master-detail": "^32.3.0",
 -    "@ag-grid-enterprise/row-grouping": "^32.3.0",
-+    "ag-grid-angular": "{% $agGridVersion %}",
-+    "ag-grid-enterprise": "{% $agGridVersion %}",
++    "ag-grid-angular": "~{% migrationVersionPatch() %}",
++    "ag-grid-enterprise": "~{% migrationVersionPatch() %}",
 }
 ```
 {% /if %}
@@ -182,7 +183,7 @@ AG Grid Enterprise
 -    "@ag-grid-enterprise/clipboard": "^32.3.0",
 -    "@ag-grid-enterprise/master-detail": "^32.3.0",
 -    "@ag-grid-enterprise/row-grouping": "^32.3.0",
-+    "ag-grid-enterprise": "{% $agGridVersion %}",
++    "ag-grid-enterprise": "~{% migrationVersionPatch() %}",
 }
 ```
 {% /if %}
@@ -195,8 +196,8 @@ AG Grid Enterprise
 -    "@ag-grid-enterprise/clipboard": "^32.3.0",
 -    "@ag-grid-enterprise/master-detail": "^32.3.0",
 -    "@ag-grid-enterprise/row-grouping": "^32.3.0",
-+    "ag-grid-vue3": "{% $agGridVersion %}",
-+    "ag-grid-enterprise": "{% $agGridVersion %}",
++    "ag-grid-vue3": "~{% migrationVersionPatch() %}",
++    "ag-grid-enterprise": "~{% migrationVersionPatch() %}",
 }
 ```
 {% /if %}
@@ -246,8 +247,8 @@ For an application using Integrated Charts / Sparklines via the _AllEnterpriseMo
 
 ```diff
 "dependencies": {
-    "ag-grid-enterprise": "{% $agGridVersion %}",
-+   "ag-charts-enterprise": "{% $agChartsVersion %}",
+    "ag-grid-enterprise": "~{% migrationVersionPatch() %}",
++   "ag-charts-enterprise": "~11.0.0",
 }
 ```
 
@@ -278,11 +279,11 @@ ModuleRegistry.registerModules([
 
 ## Theming
 
-The new and improved Theming API is now the default theming method for AG Grid. If you wish to migrate to the Theming Api see the [Theming API Migration Guide](./theming-migration/). However, this is not a requirement to upgrade to v33.
+The new and improved Theming API is now the default theming method for AG Grid. If you wish to migrate to the Theming Api see the [Theming API Migration Guide](./theming-migration/). However, this is not a requirement to upgrade to version {% migrationVersion() %}.
 
 ### Continue with Legacy Themes
 
-If you want to upgrade to v33 without immediately adopting the Theming API, you can opt back in to the v32 style of themes by setting the grid option `theme: "legacy"`. You can then continue to use legacy themes.
+If you want to upgrade to version {% migrationVersion() %} without immediately adopting the Theming API, you can opt back in to the v32 style of themes by setting the grid option `theme: "legacy"`. You can then continue to use legacy themes.
 
 If you have multiple grids you can mark them all as using legacy themes via a [Global Grid Option](./grid-interface/#global-grid-options). Enterprise users can define this alongside their license key.
 
@@ -295,10 +296,10 @@ provideGlobalGridOptions({ theme: "legacy" });
 
 ## Codemods
 
-Follow these steps to upgrade your project's AG Grid version to {% $agGridVersion %}:
+Follow these steps to upgrade your project's AG Grid version to {% migrationVersion() %}:
 
 1. Locate your project's package.json and note the version of AG Grid that you are currently using
-1. Update any AG Grid dependencies listed in the package.json as outline above to version {% $agGridVersion %}
+1. Update any AG Grid dependencies listed in the package.json as outline above to version {% migrationVersion() %}
 1. Open a terminal and navigate to your project's root folder
 1. Run the `migrate` command of version `33.0` of the AG Grid codemod runner, where `$FROM_VERSION` refers to your project's existing AG Grid version:
 
@@ -322,10 +323,10 @@ See the [Codemods](./codemods/) documentation for more details.
 
 {% metaTag tags=["ag-grid-enterprise","ag-charts-community","ag-charts-enterprise","IntegratedChartsModule","GridChartsModule","AgChartsCommunityModule","AgChartsEnterpriseModule","RowDragModule","getMainMenuItems","getContextMenuItems","mainMenuItems","contextMenuItems","chartMenuItems","columnGroup","navigator","api.getRowDropZoneParams","Grid","createGrid","selectAll","deselectAll","getFirstDisplayedRow","getLastDisplayedRow","getModel","getValue","getCellValue","showColumnMenuAfterButtonClick","showColumnMenuAfterMouseClick","IHeaderParams","autoSizeColumn","autoSizeColumns","setColumnWidths","moveColumn","moveColumns","addAggFunc","addAggFuncs","removeValueColumn","removeValueColumns","addValueColumn","addValueColumns","removeRowGroupColumn","removeRowGroupColumns","addRowGroupColumn","addRowGroupColumns","removePivotColumn","removePivotColumns","addPivotColumn","addPivotColumns","setColumnVisible","setColumnsVisible","setColumnPinned","setColumnsPinned","getColumnFilterModel","setColumnFilterModel","getServerSideGroupLevelParams","cellFlashDuration","enableCellChangeFlash","suppressGroupMaintainValueType","groupTotalRow","grandTotalRow","columnChooserParams","suppressHeaderMenuButton", "RowDragEvent","vDirection","suppressFilterButton","colDef.suppressFloatingFilterButton","textCustomComparator","textMatcher","onParamsUpdated","refresh","valueGetter","getValue","footerValueGetter","totalValueGetter","flashDuration","fadeDuration","IToolPanelColumnCompParams","verticalText","charSet","name","sparklineOptions.label.placement"] /%}
 
-The full list of breaking changes across all features for v33.
+The full list of breaking changes across all features for version {% migrationVersion() %}.
 
 {% expandingSection headerText="Breaking Changes" %}
-AG Grid 33 includes the following breaking changes:
+AG Grid version {% migrationVersion() %} includes the following breaking changes:
 
 ### Changes To Modules / Packages
 
@@ -489,9 +490,9 @@ Setting any of the custom icons listed below will have the provided custom icon 
 
 {% /expandingSection %}
 
-## Behaviour changes
+## Behaviour Changes
 
-There are no Behaviour changes in AG Grid version 33.0
+There are no behaviour changes in AG Grid version {% migrationVersion() %}
 
 ## Removal of Deprecated APIs
 
@@ -644,4 +645,4 @@ Floating filters provided via the `colDef.filter` values `text`, `number`, `date
 
 {% /expandingSection %}
 
-{% changelogSection version="33.0.0" /%}
+{% changelogSection version=$migrationVersion /%}
