@@ -6,7 +6,6 @@ import type { AgEventType, AgInternalEventType, AgPublicEventType } from './even
 import type { FilterRequestSource } from './filter/iColumnFilter';
 import type { CellRange, CellRangeParams } from './interfaces/IRangeService';
 import type { GridState } from './interfaces/gridState';
-import type { CellPosition } from './interfaces/iCellPosition';
 import type { ChartType } from './interfaces/iChartOptions';
 import type { RefreshModelParams } from './interfaces/iClientSideRowModel';
 import type { Column, ColumnEventName, ColumnGroup, ColumnPinnedType, ProvidedColumnGroup } from './interfaces/iColumn';
@@ -16,6 +15,7 @@ import type { IFilterComp } from './interfaces/iFilter';
 import type { IRowNode, RowPinnedType } from './interfaces/iRowNode';
 import type { RowNodeTransaction } from './interfaces/rowNodeTransaction';
 import type { ServerSideTransactionResult } from './interfaces/serverSideTransaction';
+import type { SearchMatch } from './search/searchService';
 
 export const ALWAYS_SYNC_GLOBAL_EVENTS: Set<AgEventType> = new Set(['gridPreDestroyed', 'fillStart', 'pasteStart']);
 
@@ -382,8 +382,7 @@ export interface FilterDestroyedEvent<TData = any, TContext = any>
 
 export interface SearchChangedEvent<TData = any, TContext = any>
     extends AgGlobalEvent<'searchChanged', TData, TContext> {
-    activeMatch: CellPosition | undefined;
-    activeMatchNum: number | undefined;
+    activeMatch: SearchMatch | undefined;
     totalMatches: number;
 }
 

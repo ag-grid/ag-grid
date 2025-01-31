@@ -261,6 +261,8 @@ export { IAdvancedFilterCtrl } from './interfaces/iAdvancedFilterCtrl';
 export { IAdvancedFilterBuilderParams } from './interfaces/iAdvancedFilterBuilderParams';
 export { IAdvancedFilterService } from './interfaces/iAdvancedFilterService';
 
+export { SearchMatch } from './search/searchService';
+
 // gridPanel
 export { GridBodyCtrl, IGridBodyComp, RowAnimationCssClasses } from './gridBodyComp/gridBodyCtrl';
 export type { ScrollVisibleService } from './gridBodyComp/scrollVisibleService';

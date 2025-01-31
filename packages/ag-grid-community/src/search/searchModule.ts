@@ -2,14 +2,7 @@ import type { _SearchApi } from '../api/gridApi';
 import type { _ModuleWithApi, _ModuleWithoutApi } from '../interfaces/iModule';
 import { VERSION } from '../version';
 import { searchCSS } from './search.css-GENERATED';
-import {
-    searchGetActiveMatch,
-    searchGetActiveMatchNum,
-    searchGetTotalMatches,
-    searchGoTo,
-    searchNext,
-    searchPrevious,
-} from './searchApi';
+import { searchGetActiveMatch, searchGetTotalMatches, searchGoTo, searchNext, searchPrevious } from './searchApi';
 import { SearchCellRenderer } from './searchCellRenderer';
 import { SearchService } from './searchService';
 
@@ -40,7 +33,6 @@ export const SearchModule: _ModuleWithApi<_SearchApi> = {
         searchNext,
         searchPrevious,
         searchGetActiveMatch,
-        searchGetActiveMatchNum,
     },
     dependsOn: [SearchCoreModule],
 };

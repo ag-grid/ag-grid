@@ -1,5 +1,5 @@
 import type { BeanCollection } from '../context/context';
-import type { CellPosition } from '../interfaces/iCellPosition';
+import type { SearchMatch } from './searchService';
 
 export function searchNext(beans: BeanCollection): void {
     beans.search?.next();
@@ -17,10 +17,6 @@ export function searchGoTo(beans: BeanCollection, match: number): void {
     beans.search?.goTo(match);
 }
 
-export function searchGetActiveMatch(beans: BeanCollection): CellPosition | undefined {
+export function searchGetActiveMatch(beans: BeanCollection): SearchMatch | undefined {
     return beans.search?.getActiveMatch();
-}
-
-export function searchGetActiveMatchNum(beans: BeanCollection): number | undefined {
-    return beans.search?.getActiveMatchNum();
 }

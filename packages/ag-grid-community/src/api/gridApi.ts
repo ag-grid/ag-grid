@@ -52,6 +52,7 @@ import type { RowDataTransaction } from '../interfaces/rowDataTransaction';
 import type { RowNodeTransaction } from '../interfaces/rowNodeTransaction';
 import type { ServerSideTransaction, ServerSideTransactionResult } from '../interfaces/serverSideTransaction';
 import type { GetCellRendererInstancesParams, ICellRenderer } from '../rendering/cellRenderers/iCellRenderer';
+import type { SearchMatch } from '../search/searchService';
 
 export interface DetailGridInfo {
     /**
@@ -742,8 +743,7 @@ export interface _SearchApi {
     searchPrevious(): void;
     searchGetTotalMatches(): number;
     searchGoTo(match: number): void;
-    searchGetActiveMatch(): CellPosition | undefined;
-    searchGetActiveMatchNum(): number | undefined;
+    searchGetActiveMatch(): SearchMatch | undefined;
 }
 
 export interface _StateGridApi {
