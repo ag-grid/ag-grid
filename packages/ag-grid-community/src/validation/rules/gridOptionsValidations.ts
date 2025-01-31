@@ -441,6 +441,9 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => {
                 cellSelection: { required: [undefined] },
             },
         },
+        enableCellSpan: {
+            module: 'CellSpan',
+        },
     };
     const validations: Validations<GridOptions> = {};
     _BOOLEAN_GRID_OPTIONS.forEach((key) => {

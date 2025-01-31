@@ -35,6 +35,7 @@ import { PinnedRowModule } from './pinnedRowModel/pinnedRowModule';
 import { HighlightChangesModule } from './rendering/cell/highlightChangesModule';
 import { RenderApiModule } from './rendering/renderModule';
 import { RowAutoHeightModule } from './rendering/row/rowAutoHeightModule';
+import { CellSpanModule } from './rendering/spanning/cellSpanModule';
 import { RowSelectionModule } from './selection/rowSelectionModule';
 import { CellStyleModule, RowStyleModule } from './styling/stylingModule';
 import { TooltipModule } from './tooltip/tooltipModule';
@@ -48,7 +49,6 @@ import { VERSION } from './version';
 export const AllCommunityModule: _ModuleWithoutApi = {
     moduleName: 'AllCommunity',
     version: VERSION,
-    // CellSpanModule has been intentionally omitted until the next major release, as it includes changes to dom structure.
     dependsOn: [
         ClientSideRowModelModule,
         CsvExportModule,
@@ -91,6 +91,6 @@ export const AllCommunityModule: _ModuleWithoutApi = {
         RowAutoHeightModule,
         DragAndDropModule,
         ClientSideRowModelApiModule,
-        // CellSpanModule,
+        CellSpanModule,
     ],
 };
