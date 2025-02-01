@@ -8,17 +8,14 @@ import {
     _convertColumnEventSourceType,
     _debounce,
     _destroyColumnTree,
-    _getColumnState,
     _isRowHeaderColumnEnabled,
     _updateColsMap,
     isRowHeaderCol,
 } from 'ag-grid-community';
 import type {
-    AgColumnGroup,
     CellClassParams,
     ColDef,
     ColKey,
-    ColumnEventType,
     IColumnCollectionService,
     NamedBean,
     PropertyValueChangedEvent,
@@ -206,64 +203,4 @@ export class RowHeaderColService extends BeanStub implements NamedBean, IColumnC
         _destroyColumnTree(this.beans, this.columns?.tree);
         super.destroy();
     }
-
-    public refreshVisibility(source: ColumnEventType): void {
-        const { gos, beans } = this;
-        if (!_isRowHeaderColumnEnabled(gos)) {
-            return;
-        }
-
-        const visibleColumns = beans.visibleCols.getAllTrees() ?? [];
-
-        if (visibleColumns.length === 0) {
-            return;
-        }
-
-        // check first: one or more columns showing -- none are row header column
-        if (!visibleColumns.some(isLeafRowHeaderColumn)) {
-            const existingState = _getColumnState(beans).find((state) => isRowHeaderCol(state.colId));
-
-            if (existingState) {
-                _applyColumnState(
-                    beans,
-                    {
-                        state: [{ colId: existingState.colId, hide: !existingState.hide }],
-                    },
-                    source
-                );
-            }
-        }
-
-        // lastly, check only one column showing -- row header column
-        if (visibleColumns.length === 1) {
-            const firstColumn = visibleColumns[0];
-            const leafCol = getLeafRowHeaderColumn(firstColumn);
-
-            if (!leafCol) {
-                return;
-            }
-
-            _applyColumnState(beans, { state: [{ colId: leafCol.getColId(), hide: true }] }, source);
-        }
-    }
-}
-
-const isLeafRowHeaderColumn = (c: AgColumn | AgColumnGroup): boolean =>
-    c.isColumn ? isRowHeaderCol(c) : c.getChildren()?.some(isLeafRowHeaderColumn) ?? false;
-
-function getLeafRowHeaderColumn(c: AgColumn | AgColumnGroup): AgColumn | null {
-    if (c.isColumn) {
-        return isRowHeaderCol(c) ? c : null;
-    }
-
-    const children = c.getChildren() ?? [];
-
-    for (const child of children) {
-        const col = getLeafRowHeaderColumn(child);
-        if (col) {
-            return col;
-        }
-    }
-
-    return null;
 }
