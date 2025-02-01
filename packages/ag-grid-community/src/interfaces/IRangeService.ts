@@ -13,6 +13,7 @@ export interface IRangeService {
     getCellRangeCount(cell: CellPosition): number;
     isCellInAnyRange(cell: CellPosition): boolean;
     isCellInSpecificRange(cell: CellPosition, range: CellRange): boolean;
+    isRowInRange(rowIndex: number, rowPinned: RowPinnedType, cellRange: CellRange): boolean;
     isBottomRightCell(cellRange: CellRange, cell: CellPosition): boolean;
     isContiguousRange(cellRange: CellRange): boolean;
     isMoreThanOneCell(): boolean;

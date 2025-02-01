@@ -14,6 +14,7 @@ import {
 } from 'ag-grid-community';
 import type {
     AgColumnGroup,
+    CellClassParams,
     ColDef,
     ColKey,
     ColumnEventType,
@@ -30,9 +31,10 @@ export class RowHeaderColService extends BeanStub implements NamedBean, IColumnC
     public columns: _ColumnCollections | null;
 
     public postConstruct(): void {
-        const listener = _debounce(this, this.refreshCells.bind(this), 100);
+        const refreshCells_debounced = _debounce(this, this.refreshCells.bind(this), 10);
         this.addManagedEventListeners({
-            modelUpdated: listener,
+            modelUpdated: refreshCells_debounced,
+            rangeSelectionChanged: () => this.refreshCells(true),
         });
         this.addManagedPropertyListener('rowHeaderColumnDef', this.updateColumns.bind(this));
     }
@@ -99,7 +101,7 @@ export class RowHeaderColService extends BeanStub implements NamedBean, IColumnC
         return this.columns?.list ?? null;
     }
 
-    private refreshCells(): void {
+    private refreshCells(force?: boolean): void {
         const column = this.getColumn(ROW_HEADER_COLUMN_ID);
 
         if (!column) {
@@ -116,6 +118,7 @@ export class RowHeaderColService extends BeanStub implements NamedBean, IColumnC
 
         this.beans.rowRenderer.refreshCells({
             columns: [column],
+            force,
         });
     }
 
@@ -153,7 +156,7 @@ export class RowHeaderColService extends BeanStub implements NamedBean, IColumnC
             suppressSizeToFit: true,
             suppressNavigable: true,
             headerClass: 'ag-header-row-header',
-            cellClass: 'ag-header-row-cell',
+            cellClass: this.getCellClass.bind(this),
             cellAriaRole: 'rowheader',
             valueGetter: (p) => (p.node?.rowIndex || 0) + 1,
             // overrides
@@ -161,6 +164,31 @@ export class RowHeaderColService extends BeanStub implements NamedBean, IColumnC
             // non-overridable properties
             colId: ROW_HEADER_COLUMN_ID,
         };
+    }
+
+    private getCellClass(params: CellClassParams): string[] {
+        const { node } = params;
+        const { rangeSvc } = this.beans;
+        const cssClasses = ['ag-header-row-cell'];
+
+        if (!rangeSvc) {
+            return cssClasses;
+        }
+
+        const ranges = rangeSvc.getCellRanges();
+
+        if (!ranges.length) {
+            return cssClasses;
+        }
+
+        for (const range of ranges) {
+            if (rangeSvc.isRowInRange(node.rowIndex!, node.rowPinned, range)) {
+                cssClasses.push('ag-header-row-cell-highlight');
+                break;
+            }
+        }
+
+        return cssClasses;
     }
 
     private generateRowHeaderCols(): AgColumn[] {

@@ -10,18 +10,34 @@
     font-weight: var(--ag-header-font-weight);
 }
 
+.ag-header-row-header {
+    cursor: cell;
+}
+
+.ag-header-row-cell-highlight {
+    background-color: var(--ag-range-header-highlight-color);
+}
+
 :where(.ag-ltr) {
     .ag-header-row-header,
-    :where(.ag-ltr .ag-cell.ag-header-row-cell):not(.ag-cell-last-left-pinned) {
+    :where(.ag-cell.ag-header-row-cell):not(.ag-cell-last-left-pinned) {
         /* rtl:ignore */
         border-right: var(--ag-pinned-column-border);
+    }
+
+    .ag-header-row-cell {
+        cursor: e-resize;
     }
 }
 
 :where(.ag-rtl) {
     .ag-header-row-header,
-    :where(.ag-rtl .ag-cell.ag-header-row-cell):not(.ag-cell-first-right-pinned) {
+    :where(.ag-cell.ag-header-row-cell):not(.ag-cell-first-right-pinned) {
         /* rtl:ignore */
         border-left: var(--ag-pinned-column-border);
+    }
+
+    .ag-header-row-cell {
+        cursor: w-resize;
     }
 }
