@@ -168,10 +168,11 @@ export class RowHeaderColService extends BeanStub implements NamedBean, IColumnC
 
     private getCellClass(params: CellClassParams): string[] {
         const { node } = params;
-        const { rangeSvc } = this.beans;
+        const { rangeSvc, gos } = this.beans;
         const cssClasses = ['ag-header-row-cell'];
+        const cellSelection = gos.get('cellSelection');
 
-        if (!rangeSvc) {
+        if (!rangeSvc || !cellSelection || typeof cellSelection !== 'object' || !cellSelection.highlightHeaders) {
             return cssClasses;
         }
 

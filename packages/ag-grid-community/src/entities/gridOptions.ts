@@ -2521,6 +2521,10 @@ export interface CellSelectionOptions<TData = any> {
      */
     suppressMultiRanges?: boolean;
     /**
+     * If `true` the header of cells containing ranges will be highlighted.
+     */
+    highlightHeaders?: boolean;
+    /**
      * Determine the selection handle behaviour. Can be used to configure the range handle and the fill handle.
      */
     handle?: RangeHandleOptions | FillHandleOptions<TData>;
