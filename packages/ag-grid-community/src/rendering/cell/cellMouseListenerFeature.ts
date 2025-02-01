@@ -1,3 +1,4 @@
+import { isRowHeaderCol } from '../../columns/columnUtils';
 import { BeanStub } from '../../context/beanStub';
 import type { BeanCollection } from '../../context/context';
 import type { AgColumn } from '../../entities/agColumn';
@@ -177,6 +178,10 @@ export class CellMouseListenerFeature extends BeanStub {
         }
 
         if (rangeSvc) {
+            if (isRowHeaderCol(cellPosition.column)) {
+                mouseEvent.preventDefault();
+            }
+
             if (shiftKey) {
                 rangeSvc.extendLatestRangeToCell(cellPosition);
             } else {

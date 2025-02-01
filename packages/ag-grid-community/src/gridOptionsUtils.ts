@@ -494,6 +494,10 @@ export function _isCellSelectionEnabled(gos: GridOptionsService): boolean {
     return useNewAPI ? !!selection : gos.get('enableRangeSelection');
 }
 
+export function _isRowHeaderColumnEnabled(gos: GridOptionsService): boolean {
+    return gos.get('enableRowHeaderColumn') || false;
+}
+
 export function _getFillHandle(gos: GridOptionsService): FillHandleOptions | undefined {
     const selection = gos.get('cellSelection');
     const useNewAPI = selection !== undefined;

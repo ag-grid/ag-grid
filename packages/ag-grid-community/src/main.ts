@@ -653,6 +653,7 @@ export {
     _isMultiRowSelection,
     _getFillHandle,
     _isCellSelectionEnabled,
+    _isRowHeaderColumnEnabled,
     _getSuppressMultiRanges,
     _getRowSelectionMode,
     _isLegacyMenuEnabled,

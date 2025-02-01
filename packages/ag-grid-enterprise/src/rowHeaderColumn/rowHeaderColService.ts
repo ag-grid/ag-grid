@@ -9,6 +9,7 @@ import {
     _debounce,
     _destroyColumnTree,
     _getColumnState,
+    _isRowHeaderColumnEnabled,
     _updateColsMap,
     isRowHeaderCol,
 } from 'ag-grid-community';
@@ -131,11 +132,6 @@ export class RowHeaderColService extends BeanStub implements NamedBean, IColumnC
         return [...list, ...colsFiltered];
     }
 
-    private isRowHeaderColumnEnabled(): boolean {
-        const { gos } = this;
-        return !!gos.get('enableRowHeaderColumn');
-    }
-
     private createRowHeaderColDef(def?: RowHeaderColumnDef): ColDef {
         const { gos } = this.beans;
         const rowHeaderColumnDef = def ?? gos.get('rowHeaderColumnDef');
@@ -156,9 +152,9 @@ export class RowHeaderColService extends BeanStub implements NamedBean, IColumnC
             suppressSizeToFit: true,
             suppressNavigable: true,
             headerClass: 'ag-header-row-header',
+            valueGetter: (p) => (p.node?.rowIndex || 0) + 1,
             cellClass: this.getCellClass.bind(this),
             cellAriaRole: 'rowheader',
-            valueGetter: (p) => (p.node?.rowIndex || 0) + 1,
             // overrides
             ...rowHeaderColumnDef,
             // non-overridable properties
@@ -193,13 +189,14 @@ export class RowHeaderColService extends BeanStub implements NamedBean, IColumnC
     }
 
     private generateRowHeaderCols(): AgColumn[] {
-        if (!this.isRowHeaderColumnEnabled()) {
+        const { gos, beans } = this;
+        if (!_isRowHeaderColumnEnabled(gos)) {
             return [];
         }
 
         const colDef = this.createRowHeaderColDef();
         const colId = colDef.colId!;
-        this.beans.validation?.validateColDef(colDef, colId, true);
+        beans.validation?.validateColDef(colDef, colId, true);
         const col = new AgColumn(colDef, null, colId, false);
         this.createBean(col);
         return [col];
@@ -211,11 +208,11 @@ export class RowHeaderColService extends BeanStub implements NamedBean, IColumnC
     }
 
     public refreshVisibility(source: ColumnEventType): void {
-        if (!this.isRowHeaderColumnEnabled()) {
+        const { gos, beans } = this;
+        if (!_isRowHeaderColumnEnabled(gos)) {
             return;
         }
 
-        const beans = this.beans;
         const visibleColumns = beans.visibleCols.getAllTrees() ?? [];
 
         if (visibleColumns.length === 0) {
