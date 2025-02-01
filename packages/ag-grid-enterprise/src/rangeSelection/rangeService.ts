@@ -283,7 +283,52 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
 
         const cellRange = _last(this.cellRanges);
 
-        this.updateRangeEnd(cellRange, cellPosition);
+        const isCurrentCellHeaderCol = isRowHeaderCol(cellPosition.column);
+        const isCurrentRangeFromHeaderCol = isRowHeaderCol(cellRange.startColumn);
+        const isFromGridToHeaderCell = isCurrentCellHeaderCol && !isCurrentRangeFromHeaderCol;
+        const isFromHeaderCellToGrid = !isCurrentCellHeaderCol && isCurrentRangeFromHeaderCol;
+
+        if (isFromGridToHeaderCell) {
+            this.updateRangeFromGridViewToHeaderCell(cellRange, cellPosition);
+        } else if (isFromHeaderCellToGrid) {
+            this.updateRangeFromHeaderCellToGridView(cellRange, cellPosition);
+        } else {
+            this.updateRangeEnd(cellRange, cellPosition);
+        }
+    }
+
+    private updateRangeFromGridViewToHeaderCell(cellRange: CellRange, fromPosition: CellPosition): void {
+        const { startRow } = cellRange;
+        this.setCellRange({
+            rowStartIndex: startRow!.rowIndex,
+            rowStartPinned: startRow!.rowPinned,
+            rowEndIndex: fromPosition.rowIndex,
+            rowEndPinned: fromPosition.rowPinned,
+            columnStart: cellRange.startColumn,
+            columns: this.visibleCols.allCols,
+        });
+    }
+
+    private updateRangeFromHeaderCellToGridView(cellRange: CellRange, toPosition: CellPosition): void {
+        const { startRow } = cellRange;
+        const startPosition = this.beans.focusSvc.getFocusedCell();
+
+        if (!startPosition || !startRow) {
+            return;
+        }
+
+        const { rowIndex, rowPinned } = startRow;
+        const startColumn = startPosition.column as AgColumn;
+        const toColumn = toPosition.column as AgColumn;
+
+        this.setCellRange({
+            rowStartIndex: rowIndex,
+            rowStartPinned: rowPinned,
+            rowEndIndex: toPosition.rowIndex,
+            rowEndPinned: toPosition.rowPinned,
+            columnStart: startColumn,
+            columns: this.calculateColumnsBetween(startColumn, toColumn),
+        });
     }
 
     public updateRangeEnd(cellRange: CellRange, cellPosition: CellPosition, silent = false): void {
@@ -535,7 +580,9 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
             startRow,
             endRow,
             columns,
-            startColumn: startsOnTheRight ? _last(columns) : columns[0],
+            startColumn:
+                this.getColumnFromModel(params.columnStart as AgColumn) ??
+                (startsOnTheRight ? _last(columns) : columns[0]),
         };
     }
 
@@ -1069,7 +1116,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
             return;
         }
 
-        if (isSameColumn) {
+        if (isSameColumn || isRowHeaderCol(columnFrom)) {
             return this.processRangeColumns([columnFrom]);
         }
 
