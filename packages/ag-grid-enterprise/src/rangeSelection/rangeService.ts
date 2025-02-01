@@ -39,6 +39,7 @@ import {
     _makeNull,
     _missing,
     _warn,
+    isRowHeaderCol,
 } from 'ag-grid-community';
 
 import { CellRangeFeature } from './cellRangeFeature';
@@ -366,17 +367,26 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
 
         this.removeAllCellRanges(true);
 
-        cellRanges.forEach((newRange) => {
-            if (newRange.columns && newRange.startRow) {
+        for (const cellRange of cellRanges) {
+            if (cellRange.columns && cellRange.startRow) {
+                const columns = this.processRangeColumns(cellRange.columns as (string | AgColumn)[]);
+                if (!columns || columns.length === 0) {
+                    continue;
+                }
+
+                cellRange.columns = columns;
+
+                const { startRow } = cellRange;
+
                 this.setNewestRangeStartCell({
-                    rowIndex: newRange.startRow.rowIndex,
-                    rowPinned: newRange.startRow.rowPinned,
-                    column: newRange.columns[0],
+                    rowIndex: startRow.rowIndex,
+                    rowPinned: startRow.rowPinned,
+                    column: cellRange.columns[0],
                 });
             }
 
-            this.cellRanges.push(newRange);
-        });
+            this.cellRanges.push(cellRange);
+        }
 
         this.dispatchChangedEvent(false, true);
     }
@@ -446,7 +456,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
         let startsOnTheRight: boolean = false;
 
         if (params.columns) {
-            columns = params.columns.map((c) => this.colModel.getCol(c)!).filter((c) => c);
+            columns = this.processRangeColumns(params.columns as (string | AgColumn)[]);
         } else {
             const columnStart = this.colModel.getCol(params.columnStart);
             const columnEnd = this.colModel.getCol(params.columnEnd);
@@ -883,7 +893,8 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
     }
 
     public onDragging(mouseEvent: MouseEvent | null): void {
-        if (!this.dragging || !mouseEvent) {
+        const { dragging, lastCellHovered, newestRangeStartCell, autoScrollService, cellHasChanged } = this;
+        if (!dragging || !mouseEvent) {
             return;
         }
 
@@ -891,35 +902,39 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
 
         this.lastMouseEvent = mouseEvent;
 
-        const cellPosition = this.lastCellHovered!;
         const isMouseAndStartInPinned = (position: string) =>
-            cellPosition && cellPosition.rowPinned === position && this.newestRangeStartCell!.rowPinned === position;
+            lastCellHovered && lastCellHovered.rowPinned === position && newestRangeStartCell!.rowPinned === position;
 
         const skipVerticalScroll = isMouseAndStartInPinned('top') || isMouseAndStartInPinned('bottom');
 
-        this.autoScrollService.check(mouseEvent, skipVerticalScroll!);
+        autoScrollService.check(mouseEvent, skipVerticalScroll!);
 
-        if (!this.cellHasChanged) {
+        if (!cellHasChanged || !lastCellHovered) {
             return;
         }
 
-        const columns = this.calculateColumnsBetween(
-            this.newestRangeStartCell!.column as AgColumn,
-            cellPosition.column as AgColumn
-        );
+        const startColumn = newestRangeStartCell?.column as AgColumn;
+        const currentColumn = lastCellHovered?.column as AgColumn;
+
+        const columns = this.calculateColumnsBetween(startColumn, currentColumn);
 
         if (!columns) {
             return;
         }
 
+        const { rowIndex, rowPinned } = lastCellHovered;
+
         this.draggingRange!.endRow = {
-            rowIndex: cellPosition.rowIndex,
-            rowPinned: cellPosition.rowPinned,
+            rowIndex,
+            rowPinned,
         };
 
         this.draggingRange!.columns = columns;
-
         this.dispatchChangedEvent(false, false, this.draggingRange!.id);
+    }
+
+    private shouldSkipCurrentColumn(currentColumn: AgColumn): boolean {
+        return isRowHeaderCol(currentColumn);
     }
 
     public onDragStop(): void {
@@ -960,17 +975,34 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
         });
     }
 
+    private processRangeColumns(cols: (string | AgColumn)[]): AgColumn[] | undefined {
+        const { colModel, gos } = this;
+        const isRowHeaderActive = gos.get('enableRowHeaderColumn');
+
+        const columns: AgColumn[] = [];
+
+        for (const col of cols) {
+            const column = typeof col === 'string' ? colModel.getCol(col) : col;
+            if (!column || (isRowHeaderActive && this.shouldSkipCurrentColumn(column))) {
+                continue;
+            }
+            columns.push(column);
+        }
+
+        return columns.length ? columns : undefined;
+    }
+
     private calculateColumnsBetween(columnFrom: AgColumn, columnTo: AgColumn): AgColumn[] | undefined {
         const allColumns = this.visibleCols.allCols;
         const isSameColumn = columnFrom === columnTo;
-        const fromIndex = allColumns.indexOf(columnFrom as AgColumn);
+        const fromIndex = allColumns.indexOf(columnFrom);
 
         if (fromIndex < 0) {
             _warn(178, { colId: columnFrom.getId() });
             return;
         }
 
-        const toIndex = isSameColumn ? fromIndex : allColumns.indexOf(columnTo as AgColumn);
+        const toIndex = isSameColumn ? fromIndex : allColumns.indexOf(columnTo);
 
         if (toIndex < 0) {
             _warn(178, { colId: columnTo.getId() });
@@ -989,7 +1021,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
             columns.push(allColumns[i]);
         }
 
-        return columns;
+        return this.processRangeColumns(columns);
     }
 
     public createDragListenerFeature(eContainer: HTMLElement): BeanStub {
