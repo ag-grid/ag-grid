@@ -184,7 +184,7 @@ export class RowHeaderColService extends BeanStub implements NamedBean, IColumnC
 
         for (const range of ranges) {
             if (rangeSvc.isRowInRange(node.rowIndex!, node.rowPinned, range)) {
-                cssClasses.push('ag-header-row-cell-highlight');
+                cssClasses.push('ag-header-row-range-highlight');
                 break;
             }
         }

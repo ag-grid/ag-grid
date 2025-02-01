@@ -14,7 +14,7 @@
     cursor: cell;
 }
 
-.ag-header-row-cell-highlight {
+.ag-header-row-range-highlight {
     background-color: var(--ag-range-header-highlight-color);
 }
 

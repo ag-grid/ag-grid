@@ -102,6 +102,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
             _setDisplayed(eResize, false);
         }
         colHover?.createHoverFeature(compBean, [this.column], eGui);
+        this.setupRangeHeaderHighlight();
         compBean.createManagedBean(new SetLeftFeature(this.column, eGui, this.beans));
         compBean.createManagedBean(
             new ManagedFocusFeature(eGui, {
@@ -249,6 +250,35 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
         if (e.key === KeyCode.DOWN && e.altKey) {
             this.showMenuOnKeyPress(e, false);
         }
+    }
+
+    private setupRangeHeaderHighlight(): void {
+        const { gos, rangeSvc } = this.beans;
+        const selection = gos.get('cellSelection');
+
+        if (!selection || !rangeSvc || typeof selection !== 'object' || !selection.highlightHeaders) {
+            return;
+        }
+
+        this.addManagedEventListeners({
+            rangeSelectionChanged: () => {
+                const ranges = rangeSvc.getCellRanges();
+                let hasRange = false;
+                for (const range of ranges) {
+                    if (hasRange) {
+                        break;
+                    }
+                    for (const column of range.columns) {
+                        if (column === this.column) {
+                            hasRange = true;
+                            break;
+                        }
+                    }
+                }
+
+                this.comp.addOrRemoveCssClass('ag-header-range-highlight', hasRange);
+            },
+        });
     }
 
     private onEnterKeyDown(e: KeyboardEvent): void {
