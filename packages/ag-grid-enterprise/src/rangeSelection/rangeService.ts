@@ -207,7 +207,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
     }
 
     public setRangeToCell(cell: CellPosition, appendRange = false): void {
-        const { gos, beans } = this;
+        const { gos } = this;
         if (!_isCellSelectionEnabled(gos)) {
             return;
         }
@@ -220,15 +220,9 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
 
         // if rowHeaderColumns is enabled and more than one columns is an
         // array of more than one column, it means that the click happened
-        // inside the row header cell, then we need to focus the next cell.
+        // inside the row header cell, then we need to focus the next rendered cell.
         if (_isRowHeaderColumnEnabled(gos) && columns.length > 1) {
-            beans.focusSvc.setFocusedCell({
-                rowIndex: cell.rowIndex,
-                rowPinned: cell.rowPinned,
-                column: columns[0],
-                forceBrowserFocus: true,
-                preventScrollOnBrowserFocus: true,
-            });
+            this.focusFirstRenderedCellAtRowPosition(cell, columns);
         }
 
         const suppressMultiRangeSelections = _getSuppressMultiRanges(this.gos);
@@ -255,6 +249,31 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
         this.setNewestRangeStartCell(cell);
         this.onDragStop();
         this.dispatchChangedEvent(true, true);
+    }
+
+    private focusFirstRenderedCellAtRowPosition(rowPosition: RowPosition, columnList: AgColumn[]) {
+        const { beans } = this;
+        const rowNode = _getRowNode(beans, rowPosition);
+
+        if (!rowNode) {
+            return;
+        }
+        const colsInViewport = beans.colViewport.getColsWithinViewport(rowNode);
+        const column = columnList.find((col) => colsInViewport.indexOf(col) !== -1);
+
+        if (!column) {
+            return;
+        }
+
+        const { rowPinned, rowIndex } = rowPosition;
+
+        beans.focusSvc.setFocusedCell({
+            rowIndex,
+            rowPinned,
+            column,
+            forceBrowserFocus: true,
+            preventScrollOnBrowserFocus: true,
+        });
     }
 
     public extendLatestRangeToCell(cellPosition: CellPosition): void {
