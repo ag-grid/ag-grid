@@ -47,6 +47,10 @@ import {
 import { CellRangeFeature } from './cellRangeFeature';
 import { DragListenerFeature } from './dragListenerFeature';
 
+enum SelectionMode {
+    NORMAL,
+    ALL_COLUMNS,
+}
 export class RangeService extends BeanStub implements NamedBean, IRangeService {
     beanName = 'rangeSvc' as const;
 
@@ -58,6 +62,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
     private pinnedRowModel?: PinnedRowModel;
     private ctrlsSvc: CtrlsService;
     private valueSvc: ValueService;
+    private selectionMode: SelectionMode;
 
     public wireBeans(beans: BeanCollection) {
         this.rowModel = beans.rowModel;
@@ -206,10 +211,20 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
         };
     }
 
+    private setSelectionMode(allColumns: boolean) {
+        this.selectionMode = allColumns ? SelectionMode.ALL_COLUMNS : SelectionMode.NORMAL;
+    }
+
     public setRangeToCell(cell: CellPosition, appendRange = false): void {
         const { gos } = this;
         if (!_isCellSelectionEnabled(gos)) {
             return;
+        }
+
+        const isRowHeaderColumnEnabled = _isRowHeaderColumnEnabled(gos);
+
+        if (isRowHeaderColumnEnabled) {
+            this.setSelectionMode(isRowHeaderCol(cell.column));
         }
 
         const columns = this.calculateColumnsBetween(cell.column as AgColumn, cell.column as AgColumn);
@@ -221,7 +236,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
         // if rowHeaderColumns is enabled and more than one columns is an
         // array of more than one column, it means that the click happened
         // inside the row header cell, then we need to focus the next rendered cell.
-        if (_isRowHeaderColumnEnabled(gos) && columns.length > 1) {
+        if (isRowHeaderColumnEnabled && columns.length > 1) {
             this.focusFirstRenderedCellAtRowPosition(cell, columns);
         }
 
@@ -283,52 +298,8 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
 
         const cellRange = _last(this.cellRanges);
 
-        const isCurrentCellHeaderCol = isRowHeaderCol(cellPosition.column);
-        const isCurrentRangeFromHeaderCol = isRowHeaderCol(cellRange.startColumn);
-        const isFromGridToHeaderCell = isCurrentCellHeaderCol && !isCurrentRangeFromHeaderCol;
-        const isFromHeaderCellToGrid = !isCurrentCellHeaderCol && isCurrentRangeFromHeaderCol;
-
-        if (isFromGridToHeaderCell) {
-            this.updateRangeFromGridViewToHeaderCell(cellRange, cellPosition);
-        } else if (isFromHeaderCellToGrid) {
-            this.updateRangeFromHeaderCellToGridView(cellRange, cellPosition);
-        } else {
-            this.updateRangeEnd(cellRange, cellPosition);
-        }
-    }
-
-    private updateRangeFromGridViewToHeaderCell(cellRange: CellRange, fromPosition: CellPosition): void {
-        const { startRow } = cellRange;
-        this.setCellRange({
-            rowStartIndex: startRow!.rowIndex,
-            rowStartPinned: startRow!.rowPinned,
-            rowEndIndex: fromPosition.rowIndex,
-            rowEndPinned: fromPosition.rowPinned,
-            columnStart: cellRange.startColumn,
-            columns: this.visibleCols.allCols,
-        });
-    }
-
-    private updateRangeFromHeaderCellToGridView(cellRange: CellRange, toPosition: CellPosition): void {
-        const { startRow } = cellRange;
-        const startPosition = this.beans.focusSvc.getFocusedCell();
-
-        if (!startPosition || !startRow) {
-            return;
-        }
-
-        const { rowIndex, rowPinned } = startRow;
-        const startColumn = startPosition.column as AgColumn;
-        const toColumn = toPosition.column as AgColumn;
-
-        this.setCellRange({
-            rowStartIndex: rowIndex,
-            rowStartPinned: rowPinned,
-            rowEndIndex: toPosition.rowIndex,
-            rowEndPinned: toPosition.rowPinned,
-            columnStart: startColumn,
-            columns: this.calculateColumnsBetween(startColumn, toColumn),
-        });
+        this.setSelectionMode(isRowHeaderCol(cellPosition.column));
+        this.updateRangeEnd(cellRange, cellPosition);
     }
 
     public updateRangeEnd(cellRange: CellRange, cellPosition: CellPosition, silent = false): void {
@@ -1075,15 +1046,8 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
         const { gos, visibleCols } = this;
         const isRowHeaderActive = _isRowHeaderColumnEnabled(gos);
 
-        if (isRowHeaderActive && cols.length == 1) {
-            const column = this.getColumnFromModel(cols[0]);
-            if (!column) {
-                return;
-            }
-
-            if (isRowHeaderCol(column)) {
-                cols = visibleCols.allCols;
-            }
+        if (this.selectionMode === SelectionMode.ALL_COLUMNS) {
+            cols = visibleCols.allCols;
         }
 
         const columns: AgColumn[] = [];
@@ -1116,7 +1080,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
             return;
         }
 
-        if (isSameColumn || isRowHeaderCol(columnFrom)) {
+        if (isSameColumn || this.selectionMode === SelectionMode.ALL_COLUMNS) {
             return this.processRangeColumns([columnFrom]);
         }
 
