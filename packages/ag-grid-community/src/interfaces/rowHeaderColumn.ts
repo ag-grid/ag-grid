@@ -29,5 +29,8 @@ export interface RowHeaderColumnDef
         | 'initialFlex'
         | 'resizable'
     > {
+    /**
+     * Set to `true` to prevent the automatic integration with Cell Selection
+     */
     suppressCellSelectionIntegration?: boolean;
 }
