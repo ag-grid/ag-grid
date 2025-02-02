@@ -30,7 +30,7 @@ export class RowHeaderColService extends BeanStub implements NamedBean, IRowHead
     public columns: _ColumnCollections | null;
 
     public postConstruct(): void {
-        const refreshCells_debounced = _debounce(this, this.refreshCells.bind(this), 10);
+        const refreshCells_debounced = _debounce(this, this.refreshCells.bind(this, false, true), 10);
         this.addManagedEventListeners({
             modelUpdated: refreshCells_debounced,
             rangeSelectionChanged: () => this.refreshCells(true),
@@ -114,20 +114,22 @@ export class RowHeaderColService extends BeanStub implements NamedBean, IRowHead
         _selectAllCells(this.beans);
     }
 
-    private refreshCells(force?: boolean): void {
+    private refreshCells(force?: boolean, runAutoSize?: boolean): void {
         const column = this.getColumn(ROW_HEADER_COLUMN_ID);
 
         if (!column) {
             return;
         }
 
-        this.beans.colAutosize?.autoSizeCols({
-            colKeys: [ROW_HEADER_COLUMN_ID],
-            skipHeader: true,
-            skipHeaderGroups: true,
-            silent: true,
-            source: 'rowHeaderColService',
-        });
+        if (runAutoSize) {
+            this.beans.colAutosize?.autoSizeCols({
+                colKeys: [ROW_HEADER_COLUMN_ID],
+                skipHeader: true,
+                skipHeaderGroups: true,
+                silent: true,
+                source: 'rowHeaderColService',
+            });
+        }
 
         this.beans.rowRenderer.refreshCells({
             columns: [column],
@@ -181,7 +183,7 @@ export class RowHeaderColService extends BeanStub implements NamedBean, IRowHead
         const cssClasses = ['ag-header-row-cell'];
         const cellSelection = gos.get('cellSelection');
 
-        if (!rangeSvc || !cellSelection || typeof cellSelection !== 'object' || !cellSelection.highlightHeaders) {
+        if (!rangeSvc || !cellSelection) {
             return cssClasses;
         }
 
@@ -191,9 +193,14 @@ export class RowHeaderColService extends BeanStub implements NamedBean, IRowHead
             return cssClasses;
         }
 
+        const shouldHighlight = typeof cellSelection !== 'object' || cellSelection.highlightHeaders;
+
         for (const range of ranges) {
             if (rangeSvc.isRowInRange(node.rowIndex!, node.rowPinned, range)) {
-                cssClasses.push('ag-header-row-range-highlight');
+                if (shouldHighlight) {
+                    cssClasses.push('ag-header-row-range-highlight');
+                }
+
                 if (range.allColumnsRange) {
                     cssClasses.push('ag-header-row-range-selected');
                 }
