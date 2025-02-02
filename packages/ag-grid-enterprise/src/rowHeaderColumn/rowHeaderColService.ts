@@ -9,6 +9,7 @@ import {
     _debounce,
     _destroyColumnTree,
     _isRowHeaderColumnEnabled,
+    _selectAllCells,
     _updateColsMap,
     isRowHeaderCol,
 } from 'ag-grid-community';
@@ -16,14 +17,14 @@ import type {
     CellClassParams,
     ColDef,
     ColKey,
-    IColumnCollectionService,
+    IRowHeaderColsService,
     NamedBean,
     PropertyValueChangedEvent,
     RowHeaderColumnDef,
     _ColumnCollections,
 } from 'ag-grid-community';
 
-export class RowHeaderColService extends BeanStub implements NamedBean, IColumnCollectionService {
+export class RowHeaderColService extends BeanStub implements NamedBean, IRowHeaderColsService {
     beanName = 'rowHeaderColSvc' as const;
 
     public columns: _ColumnCollections | null;
@@ -97,6 +98,20 @@ export class RowHeaderColService extends BeanStub implements NamedBean, IColumnC
 
     public getColumns(): AgColumn[] | null {
         return this.columns?.list ?? null;
+    }
+
+    public setupHeader(eGui: HTMLElement, column: AgColumn): void {
+        if (!isRowHeaderCol(column)) {
+            return;
+        }
+
+        this.addManagedElementListeners(eGui, {
+            click: this.onHeaderClick.bind(this),
+        });
+    }
+
+    private onHeaderClick(): void {
+        _selectAllCells(this.beans);
     }
 
     private refreshCells(force?: boolean): void {

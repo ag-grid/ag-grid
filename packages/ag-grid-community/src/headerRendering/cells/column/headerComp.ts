@@ -191,8 +191,10 @@ export class HeaderComp extends Component implements IHeaderComp {
         this.currentTemplate = this.workOutTemplate();
         this.setTemplate(this.currentTemplate, sortSvc ? [sortSvc.getSortIndicatorSelector()] : undefined);
         touchSvc?.setupForHeader(this);
+
         this.setMenu();
         this.setupSort();
+        this.setupRowHeader();
         this.setupFilterIcon();
         this.setupFilterButton();
         this.workOutInnerHeaderComponent(userCompFactory, params);
@@ -310,6 +312,16 @@ export class HeaderComp extends Component implements IHeaderComp {
             return true;
         }
         return false;
+    }
+
+    private setupRowHeader(): void {
+        const { rowHeaderColSvc } = this.beans;
+
+        if (!rowHeaderColSvc) {
+            return;
+        }
+
+        rowHeaderColSvc.setupHeader(this.getGui(), this.params.column as AgColumn);
     }
 
     private setupSort(): void {

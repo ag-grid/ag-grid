@@ -3,15 +3,14 @@ import { BeanStub } from '../../context/beanStub';
 import type { AgColumn } from '../../entities/agColumn';
 import { _getSelectAll, _isCellSelectionEnabled } from '../../gridOptionsUtils';
 import type { IClipboardService } from '../../interfaces/iClipboardService';
-import type { RowPinnedType } from '../../interfaces/iRowNode';
 import type { CellCtrl } from '../../rendering/cell/cellCtrl';
 import { _getCellCtrlForEventTarget } from '../../rendering/cell/cellCtrl';
 import type { RowCtrl } from '../../rendering/row/rowCtrl';
 import { DOM_DATA_KEY_ROW_CTRL } from '../../rendering/row/rowCtrl';
 import type { UndoRedoService } from '../../undoRedo/undoRedoService';
-import { _last } from '../../utils/array';
 import { _getCtrlForEventTarget, _isEventSupported, _isStopPropagationForAgGrid } from '../../utils/event';
 import { _isEventFromPrintableCharacter, _isUserSuppressingKeyboardEvent } from '../../utils/keyboard';
+import { _selectAllCells } from '../../utils/selection';
 import { _isEventFromThisGrid } from '../mouseEventUtils';
 
 const A_KEYCODE = 65;
@@ -242,41 +241,12 @@ export class RowContainerEventsFeature extends BeanStub {
 
     private onCtrlAndA(event: KeyboardEvent): void {
         const {
-            beans: { pinnedRowModel, rowModel, visibleCols, rangeSvc, selectionSvc },
+            beans: { rowModel, rangeSvc, selectionSvc },
             gos,
         } = this;
 
         if (rangeSvc && _isCellSelectionEnabled(gos) && rowModel.isRowsToRender()) {
-            const [isEmptyPinnedTop, isEmptyPinnedBottom] = [
-                pinnedRowModel?.isEmpty('top') ?? true,
-                pinnedRowModel?.isEmpty('bottom') ?? true,
-            ];
-
-            const floatingStart: RowPinnedType = isEmptyPinnedTop ? null : 'top';
-            let floatingEnd: RowPinnedType;
-            let rowEnd: number;
-
-            if (isEmptyPinnedBottom) {
-                floatingEnd = null;
-                rowEnd = rowModel.getRowCount() - 1;
-            } else {
-                floatingEnd = 'bottom';
-                rowEnd = pinnedRowModel?.getPinnedBottomRowCount() ?? 0 - 1;
-            }
-
-            const allDisplayedColumns = visibleCols.allCols;
-            if (!allDisplayedColumns?.length) {
-                return;
-            }
-
-            rangeSvc.setCellRange({
-                rowStartIndex: 0,
-                rowStartPinned: floatingStart,
-                rowEndIndex: rowEnd,
-                rowEndPinned: floatingEnd,
-                columnStart: allDisplayedColumns[0],
-                columnEnd: _last(allDisplayedColumns),
-            });
+            _selectAllCells(this.beans);
         } else if (selectionSvc) {
             selectionSvc?.selectAllRowNodes({ source: 'keyboardSelectAll', selectAll: _getSelectAll(gos) });
         }

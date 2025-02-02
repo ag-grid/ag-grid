@@ -316,6 +316,7 @@ export type { MenuService } from './misc/menu/menuService';
 export { _setColMenuVisible } from './misc/menu/menuService';
 export type { IColsService } from './interfaces/iColsService';
 export type { IColumnCollectionService } from './interfaces/iColumnCollectionService';
+export type { IRowHeaderColsService } from './interfaces/iRowHeaderColsService';
 
 // editing / cellEditors
 export {
@@ -986,6 +987,7 @@ export {
     _observeResize,
     _preserveRangesWhile,
 } from './utils/dom';
+export { _selectAllCells } from './utils/selection';
 export { _stopPropagationForAgGrid, _isStopPropagationForAgGrid, _isElementInEventPath } from './utils/event';
 export { _warnOnce, _debounce, _doOnce, _waitUntil } from './utils/function';
 export { _warn, _error, _errMsg, _preInitErrMsg } from './validation/logging';
