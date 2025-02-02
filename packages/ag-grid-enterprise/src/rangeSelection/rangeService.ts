@@ -175,7 +175,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
                 rowPinned: this.lastCellHovered.rowPinned,
             };
 
-            const columns = this.processRangeColumns([this.lastCellHovered.column] as AgColumn[]);
+            const columns = this.getColumnsFromModel([this.lastCellHovered.column] as AgColumn[]);
 
             if (!columns || !columns.length) {
                 return;
@@ -504,7 +504,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
 
         for (const cellRange of cellRanges) {
             if (cellRange.columns && cellRange.startRow) {
-                const columns = this.processRangeColumns(cellRange.columns as (string | AgColumn)[]);
+                const columns = this.getColumnsFromModel(cellRange.columns as (string | AgColumn)[]);
                 if (!columns || columns.length === 0) {
                     continue;
                 }
@@ -607,7 +607,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
         const { columns, startsOnTheRight, allColumnsRange } = columnInfo;
 
         if (allColumnsRange) {
-            this.selectionMode = SelectionMode.ALL_COLUMNS;
+            this.setSelectionMode(true);
         }
 
         const startRow = this.createRowPosition(rowStartIndex, rowStartPinned);
@@ -868,6 +868,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
         if (!rowNode) {
             return;
         }
+
         const colsInViewport = beans.colViewport.getColsWithinViewport(rowNode);
         const column = columnList.find((col) => colsInViewport.indexOf(col) !== -1);
 
@@ -934,7 +935,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
             if (noColsInfo) {
                 allColumnsRange = true;
             }
-            processedColumns = this.processRangeColumns(noColsInfo ? undefined : columns);
+            processedColumns = this.getColumnsFromModel(noColsInfo ? undefined : columns);
         } else if (columnA && columnB) {
             processedColumns = this.calculateColumnsBetween(columnA, columnB);
 
@@ -1067,7 +1068,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
         return typeof col === 'string' ? this.colModel.getCol(col) : col;
     }
 
-    private processRangeColumns(cols?: (string | AgColumn)[]): AgColumn[] | undefined {
+    private getColumnsFromModel(cols?: (string | AgColumn)[]): AgColumn[] | undefined {
         const { gos, visibleCols } = this;
         const isRowHeaderActive = _isRowHeaderColumnEnabled(gos);
 
@@ -1110,7 +1111,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
         }
 
         if (isSameColumn || this.selectionMode === SelectionMode.ALL_COLUMNS) {
-            return this.processRangeColumns([fromColumn]);
+            return this.getColumnsFromModel([fromColumn]);
         }
 
         const firstIndex = Math.min(fromIndex, toIndex);
@@ -1121,7 +1122,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
             columns.push(allColumns[i]);
         }
 
-        return this.processRangeColumns(columns);
+        return this.getColumnsFromModel(columns);
     }
 
     public createDragListenerFeature(eContainer: HTMLElement): BeanStub {

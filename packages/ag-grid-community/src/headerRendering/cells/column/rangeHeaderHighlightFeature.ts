@@ -21,7 +21,7 @@ export class RangeHeaderHighlightFeature extends BeanStub {
         const { gos, rangeSvc } = this.beans;
         const selection = gos.get('cellSelection');
 
-        if (!selection || !rangeSvc || typeof selection !== 'object' || !selection.highlightHeaders) {
+        if (!selection || !rangeSvc || typeof selection !== 'object' || !selection.enableHeaderHighlight) {
             return;
         }
 

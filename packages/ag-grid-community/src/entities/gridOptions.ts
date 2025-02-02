@@ -1481,9 +1481,17 @@ export interface GridOptions<TData = any> {
      */
     selectionColumnDef?: SelectionColumnDef;
 
-    /**If `true`, a column will be displayed as the first column of the grid contain */
+    /**
+     * If `true`, a column will be displayed as the first column of the grid, containing
+     * the visible index of each row. These cells interact with `Cell Selection`  when it is enabled.
+     * @default false
+     */
     enableRowHeaderColumn?: boolean;
 
+    /**
+     * Configure the Row Header Column.
+     * Note that due to the nature of this column, this type is a subset of `ColDef`, which does not support several normal column features.
+     */
     rowHeaderColumnDef?: RowHeaderColumnDef;
 
     /**
@@ -2523,7 +2531,7 @@ export interface CellSelectionOptions<TData = any> {
     /**
      * If `true` the header of cells containing ranges will be highlighted.
      */
-    highlightHeaders?: boolean;
+    enableHeaderHighlight?: boolean;
     /**
      * Determine the selection handle behaviour. Can be used to configure the range handle and the fill handle.
      */
@@ -2703,7 +2711,6 @@ export type RowHeaderColumnDef = Pick<
     | 'icons'
     | 'contextMenuItems'
     | 'context'
-    | 'comparator'
     | 'onCellClicked'
     | 'onCellContextMenu'
     | 'onCellDoubleClicked'
@@ -2723,13 +2730,6 @@ export type RowHeaderColumnDef = Pick<
     | 'rowDragText'
     | 'dndSource'
     | 'dndSourceOnRowDrag'
-    | 'sortable'
-    | 'sort'
-    | 'initialSort'
-    | 'sortIndex'
-    | 'initialSortIndex'
-    | 'sortingOrder'
-    | 'unSortIcon'
     | 'tooltipField'
     | 'tooltipValueGetter'
     | 'tooltipComponent'

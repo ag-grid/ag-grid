@@ -52,6 +52,18 @@
                 "url": "./column-menu/#customising-the-menu-items"
             }
         },
+        "enableRowHeaderColumn": {
+            "more": {
+                "name": "Row Header Column",
+                "url": "./row-header-column/"
+            }
+        },
+        "rowHeaderColumnDef": {
+            "more": {
+                "name": "Row Header Column Definition",
+                "url": "./row-header-column/#interface"
+            }
+        },
         "columnMenu": {
             "more": {
                 "name": "Column Menu",
@@ -1663,8 +1675,6 @@
                 "url": "./row-selection-single-row/#customising-the-checkbox-column"
             }
         },
-        "enableRowHeaderColumn": {},
-        "rowHeaderColumnDef": {},
         "suppressCellFocus": {
             "more": {
                 "name": "Suppress Cell Focus",

@@ -1187,8 +1187,13 @@ export interface Props<TData> {
          * Note that due to the nature of this column, this type is a subset of `ColDef`, which does not support several normal column features such as editing, pivoting and grouping.
          */
     selectionColumnDef?: SelectionColumnDef | undefined,
-    /**If `true`, a column will be displayed as the first column of the grid contain     */
+    /** If `true`, a column will be displayed as the first column of the grid, containing
+         * the visible index of each row. These cells interact with `Cell Selection`  when it is enabled.
+         */
     enableRowHeaderColumn?: boolean | undefined,
+    /** Configure the Row Header Column.
+         * Note that due to the nature of this column, this type is a subset of `ColDef`, which does not support several normal column features.
+         */
     rowHeaderColumnDef?: RowHeaderColumnDef | undefined,
     /** If `true`, only a single range can be selected.
          * @default false

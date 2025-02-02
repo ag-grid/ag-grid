@@ -193,7 +193,7 @@ export class RowHeaderColService extends BeanStub implements NamedBean, IRowHead
             return cssClasses;
         }
 
-        const shouldHighlight = typeof cellSelection !== 'object' || cellSelection.highlightHeaders;
+        const shouldHighlight = typeof cellSelection === 'object' && cellSelection.enableHeaderHighlight;
 
         for (const range of ranges) {
             if (rangeSvc.isRowInRange(node.rowIndex!, node.rowPinned, range)) {

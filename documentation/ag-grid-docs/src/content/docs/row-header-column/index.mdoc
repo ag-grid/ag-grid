@@ -1,0 +1,29 @@
+---
+title: "Row Header Column"
+enterprise: true
+---
+
+Row Header Column is a Column always present at the start of the grid where each cell of this column will work as a row header.
+The following example demonstrates the grid with a Row Header Column with no additional configuration.
+
+{% gridExampleRunner title="Custom Menu Item Component" name="row-header-column-default" /%}
+
+## Cell Selection
+
+When the grid is configured with [Cell Selection](./cell-selection/), the Row Header Column will automatically integrate with it. This integration works
+by selection of cells of the row when a cell in the Row Header Column is clicked.
+
+{% gridExampleRunner title="Custom Menu Item Component" name="row-header-column-cell-selection" /%}
+
+## Value Export
+
+By default, when working with exporters such as [CSV Export](./csv-export/) or [Excel Export](./excel-export/), the value of the Row Header Column is not exported. 
+This behaviour can be changed by toggling the `exportRowHeaderColumn` of the export params.
+
+{% interfaceDocumentation interfaceName="ExportParams" config={ "description": "" } names=["exportRowHeaderColumn"] /%}
+
+{% gridExampleRunner title="Custom Menu Item Component" name="row-header-column-export" /%}
+
+
+## Interface
+{% interfaceDocumentation interfaceName="RowHeaderColumnDef" config={ "description": "" } /%}

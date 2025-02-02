@@ -101,6 +101,11 @@ export interface ExportParams<T> extends BaseExportParams {
 
     /** A callback function to return content to be inserted below a row in the export. */
     getCustomContentBelowRow?: (params: ProcessRowGroupForExportParams) => T | undefined;
+
+    /**
+     * Set to `true` to allow the contents of the Header Row Column to be exported.
+     */
+    exportRowHeaderColumn?: boolean;
 }
 
 export type PackageFileParams<T> = T & {
