@@ -496,6 +496,11 @@ type CoreParamsDefinitions = {
     rangeHeaderHighlightColor: 'infer';
 
     /**
+     * Background color of the Row Header Column cell when the range selects all cells for that row.
+     */
+    rowHeaderSelectedColor: 'infer';
+
+    /**
      * Horizontal borders between rows.
      */
     rowBorder: 'infer';
@@ -866,6 +871,7 @@ export const coreDefaults: Readonly<CoreParams> = {
     rangeSelectionChartCategoryBackgroundColor: '#00FF841A',
     rangeSelectionHighlightColor: accentMix(0.5),
     rangeHeaderHighlightColor: foregroundMix(0.08),
+    rowHeaderSelectedColor: accentMix(0.5),
     rowHoverColor: accentMix(0.08),
     columnHoverColor: accentMix(0.05),
     selectedRowBackgroundColor: accentMix(0.12),

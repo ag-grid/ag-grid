@@ -223,8 +223,9 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
 
         const isRowHeaderColumnEnabled = _isRowHeaderColumnEnabled(gos);
 
+        const allColumnsRange = isRowHeaderCol(cell.column);
         if (isRowHeaderColumnEnabled) {
-            this.setSelectionMode(isRowHeaderCol(cell.column));
+            this.setSelectionMode(allColumnsRange);
         }
 
         const columns = this.calculateColumnsBetween(cell.column as AgColumn, cell.column as AgColumn);
@@ -252,11 +253,12 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
             rowPinned: cell.rowPinned,
         };
 
-        const cellRange = {
+        const cellRange: CellRange = {
             startRow: rowForCell,
             endRow: rowForCell,
             columns,
             startColumn: cell.column,
+            allColumnsRange,
         };
 
         this.cellRanges.push(cellRange);
@@ -312,6 +314,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
 
         cellRange.columns = colsToAdd;
         cellRange.endRow = { rowIndex: cellPosition.rowIndex, rowPinned: cellPosition.rowPinned };
+        cellRange.allColumnsRange = this.selectionMode === SelectionMode.ALL_COLUMNS;
 
         if (!silent) {
             this.dispatchChangedEvent(true, true, cellRange.id);
@@ -509,6 +512,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
     ): PartialCellRange | undefined {
         let columns: AgColumn[] | undefined;
         let startsOnTheRight: boolean = false;
+        let isAllColumns = this.selectionMode === SelectionMode.ALL_COLUMNS;
 
         if (params.columns) {
             columns = this.processRangeColumns(params.columns as (string | AgColumn)[]);
@@ -525,6 +529,8 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
             if (columns && columns.length) {
                 startsOnTheRight = columns[0] !== columnStart;
             }
+
+            isAllColumns = true;
         }
 
         if (!columns || (!allowEmptyColumns && columns.length === 0)) {
@@ -554,6 +560,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
             startColumn:
                 this.getColumnFromModel(params.columnStart as AgColumn) ??
                 (startsOnTheRight ? _last(columns) : columns[0]),
+            allColumnsRange: isAllColumns,
         };
     }
 
@@ -820,6 +827,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
                 endRow: mouseRowPosition,
                 columns,
                 startColumn: this.newestRangeStartCell!.column,
+                allColumnsRange: this.selectionMode === SelectionMode.ALL_COLUMNS,
             };
 
             this.cellRanges.push(this.draggingRange);

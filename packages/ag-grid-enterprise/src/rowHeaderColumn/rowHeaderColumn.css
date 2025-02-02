@@ -18,6 +18,10 @@
     background-color: var(--ag-range-header-highlight-color);
 }
 
+.ag-header-row-range-selected {
+    background-color: var(--ag-row-header-selected-color);
+}
+
 :where(.ag-ltr) {
     .ag-header-row-header,
     :where(.ag-cell.ag-header-row-cell):not(.ag-cell-last-left-pinned) {

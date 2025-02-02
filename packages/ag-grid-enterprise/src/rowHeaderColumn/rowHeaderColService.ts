@@ -160,8 +160,9 @@ export class RowHeaderColService extends BeanStub implements NamedBean, IColumnC
     }
 
     private getCellClass(params: CellClassParams): string[] {
+        const { beans } = this;
+        const { rangeSvc, gos } = beans;
         const { node } = params;
-        const { rangeSvc, gos } = this.beans;
         const cssClasses = ['ag-header-row-cell'];
         const cellSelection = gos.get('cellSelection');
 
@@ -178,7 +179,9 @@ export class RowHeaderColService extends BeanStub implements NamedBean, IColumnC
         for (const range of ranges) {
             if (rangeSvc.isRowInRange(node.rowIndex!, node.rowPinned, range)) {
                 cssClasses.push('ag-header-row-range-highlight');
-                break;
+                if (range.allColumnsRange) {
+                    cssClasses.push('ag-header-row-range-selected');
+                }
             }
         }
 

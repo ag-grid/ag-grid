@@ -184,6 +184,10 @@ const makeStyleMaterialTreeShakeable = () => {
             ref: 'foregroundColor',
             mix: 0.08,
         },
+        rowHeaderSelectedColor: {
+            ref: 'primaryColor',
+            mix: 0.5,
+        },
         inputFocusBorder: {
             width: 2,
             color: { ref: 'primaryColor' },
