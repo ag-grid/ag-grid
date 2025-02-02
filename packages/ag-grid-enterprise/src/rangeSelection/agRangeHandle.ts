@@ -58,6 +58,10 @@ export class AgRangeHandle extends AbstractSelectionHandle {
         rangeSvc.extendLatestRangeToCell(this.endPosition);
     }
 
+    protected override shouldSkipCell(_: CellPosition): boolean {
+        return false;
+    }
+
     protected onDragEnd(_: MouseEvent) {
         const cellRange = _last(this.beans.rangeSvc!.getCellRanges())!;
 

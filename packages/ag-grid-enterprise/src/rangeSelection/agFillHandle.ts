@@ -17,6 +17,7 @@ import {
     _last,
     _toStringOrNull,
     _warn,
+    isRowHeaderCol,
 } from 'ag-grid-community';
 
 import { AbstractSelectionHandle, SelectionHandleType } from './abstractSelectionHandle';
@@ -77,6 +78,10 @@ export class AgFillHandle extends AbstractSelectionHandle {
             this.dragAxis = direction;
             this.changedCalculatedValues = true;
         }
+    }
+
+    protected override shouldSkipCell(cell: CellPosition): boolean {
+        return isRowHeaderCol(cell.column);
     }
 
     protected onDrag(_: MouseEvent) {

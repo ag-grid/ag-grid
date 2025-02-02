@@ -29,6 +29,7 @@ export abstract class AbstractSelectionHandle extends Component {
     private dragging: boolean = false;
 
     protected abstract type: SelectionHandleType;
+    protected abstract shouldSkipCell(cell: CellPosition): boolean;
     protected shouldDestroyOnEndDragging: boolean = false;
 
     public postConstruct() {
@@ -92,7 +93,11 @@ export abstract class AbstractSelectionHandle extends Component {
     protected updateValuesOnMove(e: MouseEvent) {
         const cell = _getCellPositionForEvent(this.gos, e);
 
-        if (!cell || (this.lastCellHovered && _areCellsEqual(cell, this.lastCellHovered))) {
+        if (
+            !cell ||
+            this.shouldSkipCell(cell) ||
+            (this.lastCellHovered && _areCellsEqual(cell, this.lastCellHovered))
+        ) {
             return;
         }
 
