@@ -35,7 +35,7 @@ export class RowHeaderColService extends BeanStub implements NamedBean, IRowHead
             modelUpdated: refreshCells_debounced,
             rangeSelectionChanged: () => this.refreshCells(true),
         });
-        this.addManagedPropertyListener('rowHeaderColumnDef', this.updateColumns.bind(this));
+        this.addManagedPropertyListeners(['rowHeaderColumnDef', 'cellSelection'], this.updateColumns.bind(this));
     }
 
     public addColumns(cols: _ColumnCollections): void {
@@ -81,7 +81,7 @@ export class RowHeaderColService extends BeanStub implements NamedBean, IRowHead
         updateOrders(this.putRowHeaderColsFirstInList);
     }
 
-    public updateColumns(event: PropertyValueChangedEvent<'rowHeaderColumnDef'>): void {
+    public updateColumns(event: PropertyValueChangedEvent<any>): void {
         const source = _convertColumnEventSourceType(event.source);
         const current = event.currentValue;
 

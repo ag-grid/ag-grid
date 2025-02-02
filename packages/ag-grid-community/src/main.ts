@@ -809,7 +809,6 @@ export {
     GroupSelectionMode,
     SelectAllMode,
     SelectionColumnDef,
-    RowHeaderColumnDef,
     CellSelectionOptions,
     RowSelectionOptions,
     RowSelectionMode,
@@ -841,6 +840,7 @@ export {
     UseGroupTotalRow,
     GetChartMenuItems,
 } from './entities/gridOptions';
+export type { RowHeaderColumnDef } from './interfaces/rowHeaderColumn';
 export type { ManagedGridOptionKey, ManagedGridOptions } from './gridOptionsInitial';
 
 export {

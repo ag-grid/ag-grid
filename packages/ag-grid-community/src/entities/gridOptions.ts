@@ -169,6 +169,7 @@ import type { SideBarDef } from '../interfaces/iSideBar';
 import type { StatusPanelDef } from '../interfaces/iStatusPanel';
 import type { IViewportDatasource } from '../interfaces/iViewportDatasource';
 import type { DefaultMenuItem, MenuItemDef } from '../interfaces/menuItem';
+import type { RowHeaderColumnDef } from '../interfaces/rowHeaderColumn';
 import type { Theme } from '../theming/Theme';
 import type { CheckboxSelectionCallback, ColDef, ColGroupDef, ColTypeDef, IAggFunc, SortDirection } from './colDef';
 import type { DataTypeDefinition } from './dataType';
@@ -2704,43 +2705,6 @@ export type SelectionColumnDef = Pick<
     | 'suppressSizeToFit'
     | 'suppressAutoSize'
     | 'suppressMovable'
->;
-
-export type RowHeaderColumnDef = Pick<
-    ColDef,
-    | 'icons'
-    | 'contextMenuItems'
-    | 'context'
-    | 'onCellClicked'
-    | 'onCellContextMenu'
-    | 'onCellDoubleClicked'
-    | 'onCellValueChanged'
-    | 'headerTooltip'
-    | 'headerStyle'
-    | 'headerComponent'
-    | 'headerComponentParams'
-    | 'mainMenuItems'
-    | 'suppressHeaderContextMenu'
-    | 'suppressHeaderMenuButton'
-    | 'suppressHeaderKeyboardEvent'
-    | 'cellRenderer'
-    | 'cellRendererParams'
-    | 'cellRendererSelector'
-    | 'rowDrag'
-    | 'rowDragText'
-    | 'dndSource'
-    | 'dndSourceOnRowDrag'
-    | 'tooltipField'
-    | 'tooltipValueGetter'
-    | 'tooltipComponent'
-    | 'tooltipComponentParams'
-    | 'width'
-    | 'initialWidth'
-    | 'maxWidth'
-    | 'minWidth'
-    | 'flex'
-    | 'initialFlex'
-    | 'resizable'
 >;
 
 /**
