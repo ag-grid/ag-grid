@@ -1,6 +1,5 @@
 import type { BeanCollection } from '../context/context';
 import type { RowPinnedType } from '../interfaces/iRowNode';
-import { _last } from './array';
 
 export function _selectAllCells(beans: BeanCollection) {
     const { pinnedRowModel, rowModel } = beans;
@@ -33,7 +32,5 @@ export function _selectAllCells(beans: BeanCollection) {
         rowStartPinned: floatingStart,
         rowEndIndex: rowEnd,
         rowEndPinned: floatingEnd,
-        columnStart: allDisplayedColumns[0],
-        columnEnd: _last(allDisplayedColumns),
     });
 }

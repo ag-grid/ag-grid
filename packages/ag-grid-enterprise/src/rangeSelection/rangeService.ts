@@ -125,6 +125,144 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
         });
     }
 
+    // Drag And Drop Target Methods
+    public onDragStart(mouseEvent: MouseEvent): void {
+        if (!_isCellSelectionEnabled(this.gos)) {
+            return;
+        }
+
+        const { ctrlKey, metaKey, shiftKey } = mouseEvent;
+
+        // ctrlKey for windows, metaKey for Apple
+        const isMultiKey = ctrlKey || metaKey;
+        const allowMulti = !_getSuppressMultiRanges(this.gos);
+        const isMultiSelect = allowMulti ? isMultiKey : false;
+        const extendRange = shiftKey && !!this.cellRanges?.length;
+
+        if (!isMultiSelect && (!extendRange || _exists(_last(this.cellRanges)!.type))) {
+            this.removeAllCellRanges(true);
+        }
+
+        // The browser changes the Event target of cached events when working with the ShadowDOM
+        // so we need to retrieve the initial DragStartTarget.
+        const startTarget = this.dragSvc.startTarget;
+
+        if (startTarget) {
+            this.updateValuesOnMove(startTarget);
+        }
+
+        if (!this.lastCellHovered) {
+            return;
+        }
+
+        this.dragging = true;
+        this.lastMouseEvent = mouseEvent;
+        this.intersectionRange = isMultiSelect && this.getCellRangeCount(this.lastCellHovered) > 1;
+
+        if (!extendRange) {
+            this.setNewestRangeStartCell(this.lastCellHovered);
+        }
+
+        // if we didn't clear the ranges, then dragging means the user clicked, and when the
+        // user clicks it means a range of one cell was created. we need to extend this range
+        // rather than creating another range. otherwise we end up with two distinct ranges
+        // from a drag operation (one from click, and one from drag).
+        if (this.cellRanges.length > 0) {
+            this.draggingRange = _last(this.cellRanges);
+        } else {
+            const mouseRowPosition: RowPosition = {
+                rowIndex: this.lastCellHovered.rowIndex,
+                rowPinned: this.lastCellHovered.rowPinned,
+            };
+
+            const columns = this.processRangeColumns([this.lastCellHovered.column] as AgColumn[]);
+
+            if (!columns || !columns.length) {
+                return;
+            }
+
+            this.draggingRange = {
+                startRow: mouseRowPosition,
+                endRow: mouseRowPosition,
+                columns,
+                startColumn: this.newestRangeStartCell!.column,
+                allColumnsRange: this.selectionMode === SelectionMode.ALL_COLUMNS,
+            };
+
+            this.cellRanges.push(this.draggingRange);
+        }
+
+        this.ctrlsSvc
+            .getGridBodyCtrl()
+            .eBodyViewport.addEventListener('scroll', this.bodyScrollListener, { passive: true });
+
+        this.dispatchChangedEvent(true, false, this.draggingRange.id);
+    }
+
+    public onDragging(mouseEvent: MouseEvent | null): void {
+        const { dragging, lastCellHovered, newestRangeStartCell, autoScrollService, cellHasChanged } = this;
+        if (!dragging || !mouseEvent) {
+            return;
+        }
+
+        this.updateValuesOnMove(mouseEvent.target);
+
+        this.lastMouseEvent = mouseEvent;
+
+        const isMouseAndStartInPinned = (position: string) =>
+            lastCellHovered && lastCellHovered.rowPinned === position && newestRangeStartCell!.rowPinned === position;
+
+        const skipVerticalScroll = isMouseAndStartInPinned('top') || isMouseAndStartInPinned('bottom');
+
+        autoScrollService.check(mouseEvent, skipVerticalScroll!);
+
+        if (!cellHasChanged || !lastCellHovered) {
+            return;
+        }
+
+        const startColumn = newestRangeStartCell?.column as AgColumn;
+        const currentColumn = lastCellHovered?.column as AgColumn;
+
+        const columns = this.calculateColumnsBetween(startColumn, currentColumn);
+
+        if (!columns) {
+            return;
+        }
+
+        const { rowIndex, rowPinned } = lastCellHovered;
+
+        this.draggingRange!.endRow = {
+            rowIndex,
+            rowPinned,
+        };
+
+        this.draggingRange!.columns = columns;
+        this.dispatchChangedEvent(false, false, this.draggingRange!.id);
+    }
+
+    public onDragStop(): void {
+        if (!this.dragging) {
+            return;
+        }
+
+        const { id } = this.draggingRange!;
+
+        this.autoScrollService.ensureCleared();
+
+        this.ctrlsSvc.getGridBodyCtrl().eBodyViewport.removeEventListener('scroll', this.bodyScrollListener);
+        this.lastMouseEvent = null;
+        this.dragging = false;
+        this.draggingRange = undefined;
+        this.lastCellHovered = undefined;
+
+        if (this.intersectionRange) {
+            this.intersectionRange = false;
+            this.intersectLastRange();
+        }
+
+        this.dispatchChangedEvent(false, true, id);
+    }
+
     // Called for both columns loaded & column visibility events
     public onColumnsChanged(): void {
         // first move start column in last cell range (i.e. series chart range)
@@ -211,10 +349,6 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
         };
     }
 
-    private setSelectionMode(allColumns: boolean) {
-        this.selectionMode = allColumns ? SelectionMode.ALL_COLUMNS : SelectionMode.NORMAL;
-    }
-
     public setRangeToCell(cell: CellPosition, appendRange = false): void {
         const { gos } = this;
         if (!_isCellSelectionEnabled(gos)) {
@@ -268,31 +402,6 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
         this.dispatchChangedEvent(true, true);
     }
 
-    private focusFirstRenderedCellAtRowPosition(rowPosition: RowPosition, columnList: AgColumn[]) {
-        const { beans } = this;
-        const rowNode = _getRowNode(beans, rowPosition);
-
-        if (!rowNode) {
-            return;
-        }
-        const colsInViewport = beans.colViewport.getColsWithinViewport(rowNode);
-        const column = columnList.find((col) => colsInViewport.indexOf(col) !== -1);
-
-        if (!column) {
-            return;
-        }
-
-        const { rowPinned, rowIndex } = rowPosition;
-
-        beans.focusSvc.setFocusedCell({
-            rowIndex,
-            rowPinned,
-            column,
-            forceBrowserFocus: true,
-            preventScrollOnBrowserFocus: true,
-        });
-    }
-
     public extendLatestRangeToCell(cellPosition: CellPosition): void {
         if (this.isEmpty() || !this.newestRangeStartCell) {
             return;
@@ -318,36 +427,6 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
 
         if (!silent) {
             this.dispatchChangedEvent(true, true, cellRange.id);
-        }
-    }
-
-    private refreshRangeStart(cellRange: CellRange) {
-        const { startColumn, columns } = cellRange;
-
-        const moveColInCellRange = (colToMove: AgColumn, moveToFront: boolean) => {
-            const otherCols = cellRange.columns.filter((col) => col !== colToMove);
-
-            if (colToMove) {
-                cellRange.startColumn = colToMove;
-                cellRange.columns = moveToFront ? [colToMove, ...otherCols] : [...otherCols, colToMove];
-            } else {
-                cellRange.columns = otherCols;
-            }
-        };
-
-        const { left, right } = this.getRangeEdgeColumns(cellRange);
-        const shouldMoveLeftCol = startColumn === columns[0] && startColumn !== left;
-
-        if (shouldMoveLeftCol) {
-            moveColInCellRange(left, true);
-            return;
-        }
-
-        const shouldMoveRightCol = startColumn === _last(columns) && startColumn === right;
-
-        if (shouldMoveRightCol) {
-            moveColInCellRange(right, false);
-            return;
         }
     }
 
@@ -447,10 +526,6 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
         this.dispatchChangedEvent(false, true);
     }
 
-    private setNewestRangeStartCell(position: CellPosition) {
-        this.newestRangeStartCell = position;
-    }
-
     public clearCellRangeCellValues(params: ClearCellRangeParams): void {
         const { beans, valueSvc, eventSvc } = this;
         const { cellEventSource = 'rangeSvc', dispatchWrapperEvents, wrapperEventSource = 'deleteKey' } = params;
@@ -510,64 +585,42 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
         params: CellRangeParams,
         allowEmptyColumns: boolean
     ): PartialCellRange | undefined {
-        let columns: AgColumn[] | undefined;
-        let startsOnTheRight: boolean = false;
+        const {
+            columns: paramColumns,
+            columnStart,
+            columnEnd,
+            rowStartIndex,
+            rowStartPinned,
+            rowEndIndex,
+            rowEndPinned,
+        } = params;
+        const columnInfo = this.getColumnsFromParams(
+            paramColumns as (string | AgColumn)[],
+            columnStart as string | AgColumn,
+            columnEnd as string | AgColumn
+        );
 
-        if (params.columns) {
-            columns = this.processRangeColumns(params.columns as (string | AgColumn)[]);
-        } else {
-            const columnStart = this.getColumnFromModel(params.columnStart as AgColumn);
-            const columnEnd = this.getColumnFromModel(params.columnEnd as AgColumn);
-
-            if (!columnStart || !columnEnd) {
-                return;
-            }
-
-            columns = this.calculateColumnsBetween(columnStart, columnEnd);
-
-            if (columns && columns.length) {
-                startsOnTheRight = columns[0] !== columnStart;
-            }
-        }
-
-        if (!columns || (!allowEmptyColumns && columns.length === 0)) {
+        if (!columnInfo || (!allowEmptyColumns && columnInfo.columns.length === 0)) {
             return;
         }
 
-        const startRow =
-            params.rowStartIndex != null
-                ? {
-                      rowIndex: params.rowStartIndex,
-                      rowPinned: params.rowStartPinned || null,
-                  }
-                : undefined;
+        const { columns, startsOnTheRight, allColumnsRange } = columnInfo;
 
-        const endRow =
-            params.rowEndIndex != null
-                ? {
-                      rowIndex: params.rowEndIndex,
-                      rowPinned: params.rowEndPinned || null,
-                  }
-                : undefined;
+        if (allColumnsRange) {
+            this.selectionMode = SelectionMode.ALL_COLUMNS;
+        }
+
+        const startRow = this.createRowPosition(rowStartIndex, rowStartPinned);
+        const endRow = this.createRowPosition(rowEndIndex, rowEndPinned);
 
         return {
             startRow,
             endRow,
             columns,
             startColumn:
-                this.getColumnFromModel(params.columnStart as AgColumn) ??
-                (startsOnTheRight ? _last(columns) : columns[0]),
-            allColumnsRange: this.selectionMode === SelectionMode.ALL_COLUMNS,
+                this.getColumnFromModel(columnStart as AgColumn) ?? (startsOnTheRight ? _last(columns) : columns[0]),
+            allColumnsRange,
         };
-    }
-
-    private verifyCellRanges(gos: GridOptionsService): boolean {
-        const invalid = _isUsingNewCellSelectionAPI(gos) && _getSuppressMultiRanges(gos) && this.cellRanges.length > 0;
-        if (invalid) {
-            _warn(93);
-        }
-
-        return !invalid;
     }
 
     public addCellRange(params: CellRangeParams): void {
@@ -658,21 +711,6 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
         return true;
     }
 
-    private forEachRowInRange(cellRange: CellRange, callback: (row: RowPosition) => void) {
-        const topRow = this.getRangeStartRow(cellRange);
-        const bottomRow = this.getRangeEndRow(cellRange);
-        let currentRow: RowPosition | null = topRow;
-
-        while (currentRow) {
-            callback(currentRow);
-
-            if (_isSameRow(currentRow, bottomRow)) {
-                break;
-            }
-            currentRow = this.cellNavigation.getRowBelow(currentRow);
-        }
-    }
-
     public removeAllCellRanges(silent?: boolean): void {
         if (this.isEmpty()) {
             return;
@@ -686,15 +724,6 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
         }
     }
 
-    // as the user is dragging outside of the panel, the div starts to scroll, which in turn
-    // means we are selection more (or less) cells, but the mouse isn't moving, so we recalculate
-    // the selection my mimicking a new mouse event
-    private onBodyScroll(): void {
-        if (this.dragging && this.lastMouseEvent) {
-            this.onDragging(this.lastMouseEvent);
-        }
-    }
-
     public isCellInAnyRange(cell: CellPosition): boolean {
         return this.getCellRangeCount(cell) > 0;
     }
@@ -704,19 +733,6 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
         const rowInRange = this.isRowInRange(cell.rowIndex, cell.rowPinned, range);
 
         return columnInRange && rowInRange;
-    }
-
-    private isLastCellOfRange(cellRange: CellRange, cell: CellPosition): boolean {
-        const { startRow, endRow } = cellRange;
-        const lastRow = _isRowBefore(startRow!, endRow!) ? endRow : startRow;
-        const isLastRow = cell.rowIndex === lastRow!.rowIndex && cell.rowPinned === lastRow!.rowPinned;
-        const rangeFirstIndexColumn = cellRange.columns[0];
-        const rangeLastIndexColumn = _last(cellRange.columns);
-        const lastRangeColumn =
-            cellRange.startColumn === rangeFirstIndexColumn ? rangeLastIndexColumn : rangeFirstIndexColumn;
-        const isLastColumn = cell.column === lastRangeColumn;
-
-        return isLastColumn && isLastRow;
     }
 
     public isBottomRightCell(cellRange: CellRange, cell: CellPosition): boolean {
@@ -758,83 +774,6 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
         const beforeLastRow = _isRowBefore(thisRow, lastRow);
 
         return afterFirstRow && beforeLastRow;
-    }
-
-    public getDraggingRange(): CellRange | undefined {
-        return this.draggingRange;
-    }
-
-    public onDragStart(mouseEvent: MouseEvent): void {
-        if (!_isCellSelectionEnabled(this.gos)) {
-            return;
-        }
-
-        const { ctrlKey, metaKey, shiftKey } = mouseEvent;
-
-        // ctrlKey for windows, metaKey for Apple
-        const isMultiKey = ctrlKey || metaKey;
-        const allowMulti = !_getSuppressMultiRanges(this.gos);
-        const isMultiSelect = allowMulti ? isMultiKey : false;
-        const extendRange = shiftKey && !!this.cellRanges?.length;
-
-        if (!isMultiSelect && (!extendRange || _exists(_last(this.cellRanges)!.type))) {
-            this.removeAllCellRanges(true);
-        }
-
-        // The browser changes the Event target of cached events when working with the ShadowDOM
-        // so we need to retrieve the initial DragStartTarget.
-        const startTarget = this.dragSvc.startTarget;
-
-        if (startTarget) {
-            this.updateValuesOnMove(startTarget);
-        }
-
-        if (!this.lastCellHovered) {
-            return;
-        }
-
-        this.dragging = true;
-        this.lastMouseEvent = mouseEvent;
-        this.intersectionRange = isMultiSelect && this.getCellRangeCount(this.lastCellHovered) > 1;
-
-        if (!extendRange) {
-            this.setNewestRangeStartCell(this.lastCellHovered);
-        }
-
-        // if we didn't clear the ranges, then dragging means the user clicked, and when the
-        // user clicks it means a range of one cell was created. we need to extend this range
-        // rather than creating another range. otherwise we end up with two distinct ranges
-        // from a drag operation (one from click, and one from drag).
-        if (this.cellRanges.length > 0) {
-            this.draggingRange = _last(this.cellRanges);
-        } else {
-            const mouseRowPosition: RowPosition = {
-                rowIndex: this.lastCellHovered.rowIndex,
-                rowPinned: this.lastCellHovered.rowPinned,
-            };
-
-            const columns = this.processRangeColumns([this.lastCellHovered.column] as AgColumn[]);
-
-            if (!columns || !columns.length) {
-                return;
-            }
-
-            this.draggingRange = {
-                startRow: mouseRowPosition,
-                endRow: mouseRowPosition,
-                columns,
-                startColumn: this.newestRangeStartCell!.column,
-                allColumnsRange: this.selectionMode === SelectionMode.ALL_COLUMNS,
-            };
-
-            this.cellRanges.push(this.draggingRange);
-        }
-
-        this.ctrlsSvc
-            .getGridBodyCtrl()
-            .eBodyViewport.addEventListener('scroll', this.bodyScrollListener, { passive: true });
-
-        this.dispatchChangedEvent(true, false, this.draggingRange.id);
     }
 
     public intersectLastRange(fromMouseClick?: boolean) {
@@ -918,6 +857,151 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
         }
     }
 
+    private setSelectionMode(allColumns: boolean) {
+        this.selectionMode = allColumns ? SelectionMode.ALL_COLUMNS : SelectionMode.NORMAL;
+    }
+
+    private focusFirstRenderedCellAtRowPosition(rowPosition: RowPosition, columnList: AgColumn[]) {
+        const { beans } = this;
+        const rowNode = _getRowNode(beans, rowPosition);
+
+        if (!rowNode) {
+            return;
+        }
+        const colsInViewport = beans.colViewport.getColsWithinViewport(rowNode);
+        const column = columnList.find((col) => colsInViewport.indexOf(col) !== -1);
+
+        if (!column) {
+            return;
+        }
+
+        const { rowPinned, rowIndex } = rowPosition;
+
+        beans.focusSvc.setFocusedCell({
+            rowIndex,
+            rowPinned,
+            column,
+            forceBrowserFocus: true,
+            preventScrollOnBrowserFocus: true,
+        });
+    }
+
+    private refreshRangeStart(cellRange: CellRange) {
+        const { startColumn, columns } = cellRange;
+
+        const moveColInCellRange = (colToMove: AgColumn, moveToFront: boolean) => {
+            const otherCols = cellRange.columns.filter((col) => col !== colToMove);
+
+            if (colToMove) {
+                cellRange.startColumn = colToMove;
+                cellRange.columns = moveToFront ? [colToMove, ...otherCols] : [...otherCols, colToMove];
+            } else {
+                cellRange.columns = otherCols;
+            }
+        };
+
+        const { left, right } = this.getRangeEdgeColumns(cellRange);
+        const shouldMoveLeftCol = startColumn === columns[0] && startColumn !== left;
+
+        if (shouldMoveLeftCol) {
+            moveColInCellRange(left, true);
+            return;
+        }
+
+        const shouldMoveRightCol = startColumn === _last(columns) && startColumn === right;
+
+        if (shouldMoveRightCol) {
+            moveColInCellRange(right, false);
+            return;
+        }
+    }
+
+    private setNewestRangeStartCell(position: CellPosition) {
+        this.newestRangeStartCell = position;
+    }
+
+    private getColumnsFromParams(
+        columns?: (string | AgColumn)[],
+        columnA?: string | AgColumn,
+        columnB?: string | AgColumn
+    ): { columns: AgColumn[]; allColumnsRange: boolean; startsOnTheRight: boolean } | undefined {
+        const noColsInfo = !columns && !columnA && !columnB;
+        let processedColumns: AgColumn[] | undefined;
+        let startsOnTheRight = false;
+        let allColumnsRange = this.selectionMode === SelectionMode.ALL_COLUMNS;
+
+        if (noColsInfo || columns) {
+            if (noColsInfo) {
+                allColumnsRange = true;
+            }
+            processedColumns = this.processRangeColumns(noColsInfo ? undefined : columns);
+        } else if (columnA && columnB) {
+            processedColumns = this.calculateColumnsBetween(columnA, columnB);
+
+            if (processedColumns && processedColumns.length) {
+                startsOnTheRight = processedColumns[0] !== this.getColumnFromModel(columnA);
+            }
+        }
+
+        return processedColumns
+            ? {
+                  columns: processedColumns,
+                  startsOnTheRight,
+                  allColumnsRange,
+              }
+            : undefined;
+    }
+
+    private createRowPosition(rowIndex: number | null, rowPinned?: RowPinnedType): RowPosition | undefined {
+        return rowIndex != null ? { rowIndex, rowPinned } : undefined;
+    }
+
+    private verifyCellRanges(gos: GridOptionsService): boolean {
+        const invalid = _isUsingNewCellSelectionAPI(gos) && _getSuppressMultiRanges(gos) && this.cellRanges.length > 0;
+        if (invalid) {
+            _warn(93);
+        }
+
+        return !invalid;
+    }
+
+    private forEachRowInRange(cellRange: CellRange, callback: (row: RowPosition) => void) {
+        const topRow = this.getRangeStartRow(cellRange);
+        const bottomRow = this.getRangeEndRow(cellRange);
+        let currentRow: RowPosition | null = topRow;
+
+        while (currentRow) {
+            callback(currentRow);
+
+            if (_isSameRow(currentRow, bottomRow)) {
+                break;
+            }
+            currentRow = this.cellNavigation.getRowBelow(currentRow);
+        }
+    }
+
+    // as the user is dragging outside of the panel, the div starts to scroll, which in turn
+    // means we are selection more (or less) cells, but the mouse isn't moving, so we recalculate
+    // the selection my mimicking a new mouse event
+    private onBodyScroll(): void {
+        if (this.dragging && this.lastMouseEvent) {
+            this.onDragging(this.lastMouseEvent);
+        }
+    }
+
+    private isLastCellOfRange(cellRange: CellRange, cell: CellPosition): boolean {
+        const { startRow, endRow } = cellRange;
+        const lastRow = _isRowBefore(startRow!, endRow!) ? endRow : startRow;
+        const isLastRow = cell.rowIndex === lastRow!.rowIndex && cell.rowPinned === lastRow!.rowPinned;
+        const rangeFirstIndexColumn = cellRange.columns[0];
+        const rangeLastIndexColumn = _last(cellRange.columns);
+        const lastRangeColumn =
+            cellRange.startColumn === rangeFirstIndexColumn ? rangeLastIndexColumn : rangeFirstIndexColumn;
+        const isLastColumn = cell.column === lastRangeColumn;
+
+        return isLastColumn && isLastRow;
+    }
+
     private rowMax(rows: RowPosition[]): RowPosition | undefined {
         let max: RowPosition | undefined;
         rows.forEach((row) => {
@@ -960,72 +1044,8 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
         this.lastCellHovered = cell;
     }
 
-    public onDragging(mouseEvent: MouseEvent | null): void {
-        const { dragging, lastCellHovered, newestRangeStartCell, autoScrollService, cellHasChanged } = this;
-        if (!dragging || !mouseEvent) {
-            return;
-        }
-
-        this.updateValuesOnMove(mouseEvent.target);
-
-        this.lastMouseEvent = mouseEvent;
-
-        const isMouseAndStartInPinned = (position: string) =>
-            lastCellHovered && lastCellHovered.rowPinned === position && newestRangeStartCell!.rowPinned === position;
-
-        const skipVerticalScroll = isMouseAndStartInPinned('top') || isMouseAndStartInPinned('bottom');
-
-        autoScrollService.check(mouseEvent, skipVerticalScroll!);
-
-        if (!cellHasChanged || !lastCellHovered) {
-            return;
-        }
-
-        const startColumn = newestRangeStartCell?.column as AgColumn;
-        const currentColumn = lastCellHovered?.column as AgColumn;
-
-        const columns = this.calculateColumnsBetween(startColumn, currentColumn);
-
-        if (!columns) {
-            return;
-        }
-
-        const { rowIndex, rowPinned } = lastCellHovered;
-
-        this.draggingRange!.endRow = {
-            rowIndex,
-            rowPinned,
-        };
-
-        this.draggingRange!.columns = columns;
-        this.dispatchChangedEvent(false, false, this.draggingRange!.id);
-    }
-
     private shouldSkipCurrentColumn(currentColumn: AgColumn): boolean {
         return isRowHeaderCol(currentColumn);
-    }
-
-    public onDragStop(): void {
-        if (!this.dragging) {
-            return;
-        }
-
-        const { id } = this.draggingRange!;
-
-        this.autoScrollService.ensureCleared();
-
-        this.ctrlsSvc.getGridBodyCtrl().eBodyViewport.removeEventListener('scroll', this.bodyScrollListener);
-        this.lastMouseEvent = null;
-        this.dragging = false;
-        this.draggingRange = undefined;
-        this.lastCellHovered = undefined;
-
-        if (this.intersectionRange) {
-            this.intersectionRange = false;
-            this.intersectLastRange();
-        }
-
-        this.dispatchChangedEvent(false, true, id);
     }
 
     private dispatchChangedEvent(started: boolean, finished: boolean, id?: string): void {
@@ -1047,12 +1067,12 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
         return typeof col === 'string' ? this.colModel.getCol(col) : col;
     }
 
-    private processRangeColumns(cols: (string | AgColumn)[]): AgColumn[] | undefined {
+    private processRangeColumns(cols?: (string | AgColumn)[]): AgColumn[] | undefined {
         const { gos, visibleCols } = this;
         const isRowHeaderActive = _isRowHeaderColumnEnabled(gos);
 
-        if (this.selectionMode === SelectionMode.ALL_COLUMNS) {
-            cols = visibleCols.allCols;
+        if (!cols || this.selectionMode === SelectionMode.ALL_COLUMNS) {
+            cols = [...visibleCols.allCols];
         }
 
         const columns: AgColumn[] = [];
@@ -1068,25 +1088,29 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
         return columns.length ? columns : undefined;
     }
 
-    private calculateColumnsBetween(columnFrom: AgColumn, columnTo: AgColumn): AgColumn[] | undefined {
+    private calculateColumnsBetween(columnA: string | AgColumn, columnB: string | AgColumn): AgColumn[] | undefined {
         const allColumns = this.visibleCols.allCols;
-        const isSameColumn = columnFrom === columnTo;
-        const fromIndex = allColumns.indexOf(columnFrom);
+
+        const fromColumn = this.getColumnFromModel(columnA) as AgColumn;
+        const toColumn = this.getColumnFromModel(columnB) as AgColumn;
+
+        const isSameColumn = fromColumn === toColumn;
+        const fromIndex = allColumns.indexOf(fromColumn);
 
         if (fromIndex < 0) {
-            _warn(178, { colId: columnFrom.getId() });
+            _warn(178, { colId: fromColumn.getId() });
             return;
         }
 
-        const toIndex = isSameColumn ? fromIndex : allColumns.indexOf(columnTo);
+        const toIndex = isSameColumn ? fromIndex : allColumns.indexOf(toColumn);
 
         if (toIndex < 0) {
-            _warn(178, { colId: columnTo.getId() });
+            _warn(178, { colId: toColumn.getId() });
             return;
         }
 
         if (isSameColumn || this.selectionMode === SelectionMode.ALL_COLUMNS) {
-            return this.processRangeColumns([columnFrom]);
+            return this.processRangeColumns([fromColumn]);
         }
 
         const firstIndex = Math.min(fromIndex, toIndex);
