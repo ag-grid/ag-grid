@@ -512,7 +512,6 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
     ): PartialCellRange | undefined {
         let columns: AgColumn[] | undefined;
         let startsOnTheRight: boolean = false;
-        let isAllColumns = this.selectionMode === SelectionMode.ALL_COLUMNS;
 
         if (params.columns) {
             columns = this.processRangeColumns(params.columns as (string | AgColumn)[]);
@@ -529,8 +528,6 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
             if (columns && columns.length) {
                 startsOnTheRight = columns[0] !== columnStart;
             }
-
-            isAllColumns = true;
         }
 
         if (!columns || (!allowEmptyColumns && columns.length === 0)) {
@@ -560,7 +557,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
             startColumn:
                 this.getColumnFromModel(params.columnStart as AgColumn) ??
                 (startsOnTheRight ? _last(columns) : columns[0]),
-            allColumnsRange: isAllColumns,
+            allColumnsRange: this.selectionMode === SelectionMode.ALL_COLUMNS,
         };
     }
 
