@@ -41,11 +41,7 @@ export function executeTransactionsAsync(
     }
     const promises: Promise<RowNodeTransaction<any>>[] = [];
     for (const transaction of transactions) {
-        promises.push(
-            new Promise((resolve) => {
-                api.applyTransactionAsync(transaction, (x) => resolve(x));
-            })
-        );
+        promises.push(new Promise((resolve) => api.applyTransactionAsync(transaction, resolve)));
     }
     api.flushAsyncTransactions();
     return Promise.all(promises);
