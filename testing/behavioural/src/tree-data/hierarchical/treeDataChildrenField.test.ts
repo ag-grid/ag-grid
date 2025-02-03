@@ -138,7 +138,7 @@ describe('ag-grid treeDataChildrenField', () => {
 
         api.updateGridOptions({
             treeData: true,
-            ['treeDataChildrenField' as any]: 'children1',
+            treeDataChildrenField: 'children1',
         });
 
         gridRows = new GridRows(api, 'data', gridRowsOptions);

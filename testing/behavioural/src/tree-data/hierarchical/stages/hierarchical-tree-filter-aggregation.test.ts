@@ -68,7 +68,7 @@ describe('ag-grid hierarchical tree aggregation and filter', () => {
             ],
             autoGroupColumnDef: { headerName: 'Path' },
             treeData: true,
-            ['treeDataChildrenField' as any]: 'children',
+            treeDataChildrenField: 'children',
             animateRows: false,
             rowSelection: { mode: 'multiRow' },
             grandTotalRow: 'top',

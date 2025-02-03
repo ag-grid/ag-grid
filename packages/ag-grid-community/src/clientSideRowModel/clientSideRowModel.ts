@@ -138,7 +138,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         const { gos, beans } = this;
         let nodeManager: IClientSideNodeManager<any> | undefined;
         if (gos.get('treeData')) {
-            if (gos.get('treeDataChildrenField' as any)) {
+            if (gos.get('treeDataChildrenField')) {
                 nodeManager = beans.csrmChildrenTreeNodeSvc;
             } else {
                 nodeManager = beans.csrmPathTreeNodeSvc;
@@ -180,7 +180,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
 
         const allProps: (keyof GridOptions)[] = [
             'treeData',
-            'treeDataChildrenField' as any,
+            'treeDataChildrenField',
             ...this.orderedStages.flatMap(({ refreshProps }) => [...refreshProps]),
         ];
 
@@ -277,7 +277,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         const nodeManager = this.getNewNodeManager();
 
         const reset =
-            oldNodeManager !== nodeManager || (changedProps.has('treeDataChildrenField' as any) && gos.get('treeData'));
+            oldNodeManager !== nodeManager || (changedProps.has('treeDataChildrenField') && gos.get('treeData'));
 
         let newRowData: any[] | null | undefined;
 

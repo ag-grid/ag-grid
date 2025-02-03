@@ -54,7 +54,7 @@ describe('ag-grid hierarchical tree excel export', () => {
             rowData,
             treeData: true,
             groupDefaultExpanded: -1,
-            ['treeDataChildrenField' as any]: 'children',
+            treeDataChildrenField: 'children',
             getRowId: (params) => params.data.uiId,
         });
 
@@ -104,7 +104,7 @@ describe('ag-grid hierarchical tree excel export', () => {
             rowData,
             treeData: false,
             groupDefaultExpanded: -1,
-            ['treeDataChildrenField' as any]: 'children',
+            treeDataChildrenField: 'children',
             getRowId: (params) => params.data.uiId,
         });
 

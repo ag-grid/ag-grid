@@ -36,7 +36,7 @@ describe('ag-grid hierarchical tree data reset', () => {
             columnDefs: [],
             autoGroupColumnDef: { headerName: 'Organisation Hierarchy' },
             treeData: true,
-            ['treeDataChildrenField' as any]: 'children',
+            treeDataChildrenField: 'children',
             animateRows: false,
             groupDefaultExpanded: -1,
             rowData: rowData,

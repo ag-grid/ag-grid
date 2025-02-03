@@ -41,7 +41,7 @@ describe('ag-grid grouping hierarchical treeData is reactive', () => {
                     return 'X-' + params.node?.id;
                 },
             },
-            ['treeDataChildrenField' as any]: 'children',
+            treeDataChildrenField: 'children',
             treeData: false,
             animateRows: false,
             groupDefaultExpanded: -1,
@@ -110,7 +110,7 @@ describe('ag-grid grouping hierarchical treeData is reactive', () => {
                     return 'X-' + params.node?.id;
                 },
             },
-            ['treeDataChildrenField' as any]: 'children',
+            treeDataChildrenField: 'children',
             treeData: false,
             animateRows: false,
             groupDefaultExpanded: -1,

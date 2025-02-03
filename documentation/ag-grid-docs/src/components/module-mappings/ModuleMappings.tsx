@@ -191,7 +191,7 @@ export const ModuleMappings: FunctionComponent<Props> = ({ framework, modules })
             <div style={{ height: '410px' }}>
                 <AgGridReact
                     ref={gridRef}
-                    gridOptions={{ treeDataChildrenField: 'children' } as GridOptions}
+                    treeDataChildrenField="children"
                     defaultColDef={defaultColDef}
                     columnDefs={columnDefs}
                     autoGroupColumnDef={autoGroupColumnDef}

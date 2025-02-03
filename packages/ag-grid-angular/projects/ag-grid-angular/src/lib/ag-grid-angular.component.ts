@@ -1186,6 +1186,26 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * @default false
      */
     @Input({ transform: booleanAttribute }) public treeData: boolean | undefined = undefined;
+    /** The name of the field in a a data item to use to retrieve the array of children of a node when using treeData=true.
+     * It supports accessing nested fields using dot notation.
+     *
+     * @example
+     *
+     * ```ts
+     * gridOptions = {
+     *    treeData: true,
+     *    treeDataChildrenField: 'children',
+     *    rowData: [{ name: 'Top Level', children: [ { name: 'Level 2' } ] }]
+     * }```
+     *
+     * ```ts
+     * gridOptions = {
+     *   treeData: true,
+     *   treeDataChildrenField: 'obj.children',
+     *   rowData: [{ name: 'Top Level', obj: { children: [ { name: 'Level 2' } ] } }]
+     * }```
+     */
+    @Input() public treeDataChildrenField: string | undefined = undefined;
     /** Set to `true` to suppress sort indicators and actions from the row group panel.
      * @default false
      */

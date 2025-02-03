@@ -57,7 +57,7 @@ describe('ag-grid hierarchical immutable tree data', () => {
         const gridOptions: GridOptions = {
             columnDefs: [{ field: 'v' }],
             treeData: true,
-            ['treeDataChildrenField' as any]: 'children',
+            treeDataChildrenField: 'children',
             animateRows: false,
             groupDefaultExpanded: -1,
             rowData: rowData1,
@@ -477,7 +477,7 @@ describe('ag-grid hierarchical immutable tree data', () => {
         const gridOptions: GridOptions = {
             columnDefs: [{ field: 'v' }],
             treeData: true,
-            ['treeDataChildrenField' as any]: 'children',
+            treeDataChildrenField: 'children',
             animateRows: false,
             groupDefaultExpanded: -1,
             rowData: rowData1,
@@ -939,7 +939,7 @@ describe('ag-grid hierarchical immutable tree data', () => {
         const gridOptions: GridOptions = {
             columnDefs: [{ field: 'v' }],
             treeData: true,
-            ['treeDataChildrenField' as any]: 'children',
+            treeDataChildrenField: 'children',
             suppressMaintainUnsortedOrder: true,
             animateRows: false,
             groupDefaultExpanded: -1,
