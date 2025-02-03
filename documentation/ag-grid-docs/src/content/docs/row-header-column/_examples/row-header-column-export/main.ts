@@ -1,12 +1,13 @@
 import type { ColDef, GridApi, GridOptions } from 'ag-grid-community';
 import { ClientSideRowModelModule, ModuleRegistry, ValidationModule, createGrid } from 'ag-grid-community';
-import { CellSelectionModule, ExcelExportModule, RowHeaderColumnModule } from 'ag-grid-enterprise';
+import { CellSelectionModule, ContextMenuModule, ExcelExportModule, RowHeaderColumnModule } from 'ag-grid-enterprise';
 
 ModuleRegistry.registerModules([
     ClientSideRowModelModule,
     RowHeaderColumnModule,
     CellSelectionModule,
     ExcelExportModule,
+    ContextMenuModule,
     ValidationModule /* Development Only */,
 ]);
 
