@@ -125,11 +125,9 @@ export class CellMouseListenerFeature extends BeanStub {
         const containsWidget = this.containsWidget(target);
         const { cellPosition } = cellCtrl;
 
-        if (
-            rowHeaderColSvc &&
-            isRowHeaderCol(cellPosition.column) &&
-            !rowHeaderColSvc.handleMouseDownOnCell(cellPosition, mouseEvent)
-        ) {
+        const isRowHeaderColumn = isRowHeaderCol(cellPosition.column);
+
+        if (rowHeaderColSvc && isRowHeaderColumn && !rowHeaderColSvc.handleMouseDownOnCell(cellPosition, mouseEvent)) {
             if (rangeSvc) {
                 mouseEvent.preventDefault();
             }
@@ -159,9 +157,7 @@ export class CellMouseListenerFeature extends BeanStub {
         // range as the user then changes the range selection.
         if (shiftKey && hasRanges && !focusSvc.isCellFocused(cellPosition)) {
             // this stops the cell from getting focused
-            if (mouseEvent.defaultPrevented) {
-                mouseEvent.preventDefault();
-            }
+            mouseEvent.preventDefault();
 
             const focusedCellPosition = focusSvc.getFocusedCell();
             if (focusedCellPosition) {
@@ -192,6 +188,9 @@ export class CellMouseListenerFeature extends BeanStub {
         }
 
         if (rangeSvc) {
+            if (isRowHeaderColumn) {
+                mouseEvent.preventDefault();
+            }
             if (shiftKey) {
                 rangeSvc.extendLatestRangeToCell(cellPosition);
             } else {

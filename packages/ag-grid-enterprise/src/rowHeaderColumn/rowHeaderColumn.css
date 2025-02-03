@@ -10,7 +10,7 @@
     font-weight: var(--ag-header-font-weight);
 }
 
-.ag-header-row-header {
+:where(.ag-header-row-header.ag-header-row-selection-enabled) {
     cursor: cell;
 }
 
@@ -29,7 +29,7 @@
         border-right: var(--ag-pinned-column-border);
     }
 
-    .ag-header-row-cell {
+    :where(.ag-header-row-cell.ag-header-row-selection-enabled) {
         cursor: e-resize;
     }
 }
@@ -41,7 +41,7 @@
         border-left: var(--ag-pinned-column-border);
     }
 
-    .ag-header-row-cell {
+    :where(.ag-header-row-cell.ag-header-row-selection-enabled) {
         cursor: w-resize;
     }
 }

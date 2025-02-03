@@ -31,6 +31,7 @@ export class RowHeaderColService extends BeanStub implements NamedBean, IRowHead
     beanName = 'rowHeaderColSvc' as const;
 
     public columns: _ColumnCollections | null;
+    private isIntegratedWithSelection: boolean = false;
 
     public postConstruct(): void {
         const refreshCells_debounced = _debounce(this, this.refreshCells.bind(this, false, true), 10);
@@ -38,7 +39,16 @@ export class RowHeaderColService extends BeanStub implements NamedBean, IRowHead
             modelUpdated: refreshCells_debounced,
             rangeSelectionChanged: () => this.refreshCells(true),
         });
-        this.addManagedPropertyListeners(['rowHeaderColumnDef', 'cellSelection'], this.updateColumns.bind(this));
+
+        this.addManagedPropertyListeners(
+            ['rowHeaderColumnDef', 'cellSelection'],
+            (e: PropertyValueChangedEvent<any>) => {
+                this.refreshSelectionIntegration();
+                this.updateColumns(e);
+            }
+        );
+
+        this.refreshSelectionIntegration();
     }
 
     public addColumns(cols: _ColumnCollections): void {
@@ -85,11 +95,7 @@ export class RowHeaderColService extends BeanStub implements NamedBean, IRowHead
     }
 
     public handleMouseDownOnCell(cellPosition: CellPosition, mouseEvent: MouseEvent): boolean {
-        const { gos } = this;
-        const rowHeaderColDef = gos.get('rowHeaderColumnDef');
-        const isSuppressingRangeIntegration = !!rowHeaderColDef?.suppressCellSelectionIntegration;
-
-        if (isSuppressingRangeIntegration) {
+        if (!this.isIntegratedWithSelection) {
             return false;
         }
 
@@ -105,6 +111,8 @@ export class RowHeaderColService extends BeanStub implements NamedBean, IRowHead
     public updateColumns(event: PropertyValueChangedEvent<any>): void {
         const source = _convertColumnEventSourceType(event.source);
         const current = event.currentValue;
+
+        this.refreshSelectionIntegration();
 
         this.columns?.list.forEach((col) => {
             const newColDef = this.createRowHeaderColDef(current);
@@ -131,7 +139,17 @@ export class RowHeaderColService extends BeanStub implements NamedBean, IRowHead
         });
     }
 
+    private refreshSelectionIntegration(): void {
+        const { gos, beans } = this;
+        const rowHeaderColDef = gos.get('rowHeaderColumnDef');
+
+        this.isIntegratedWithSelection = !!beans.rangeSvc && !rowHeaderColDef?.suppressCellSelectionIntegration;
+    }
+
     private onHeaderClick(): void {
+        if (!this.isIntegratedWithSelection) {
+            return;
+        }
         _selectAllCells(this.beans);
     }
 
@@ -186,7 +204,7 @@ export class RowHeaderColService extends BeanStub implements NamedBean, IRowHead
             suppressAutoSize: true,
             suppressSizeToFit: true,
             suppressNavigable: true,
-            headerClass: 'ag-header-row-header',
+            headerClass: this.getHeaderClass(),
             valueGetter: (p) => (p.node?.rowIndex || 0) + 1,
             cellClass: this.getCellClass.bind(this),
             cellAriaRole: 'rowheader',
@@ -195,6 +213,16 @@ export class RowHeaderColService extends BeanStub implements NamedBean, IRowHead
             // non-overridable properties
             colId: ROW_HEADER_COLUMN_ID,
         };
+    }
+
+    private getHeaderClass(): string[] {
+        const cssClass = ['ag-header-row-header'];
+
+        if (this.isIntegratedWithSelection) {
+            cssClass.push('ag-header-row-selection-enabled');
+        }
+
+        return cssClass;
     }
 
     private getCellClass(params: CellClassParams): string[] {
@@ -206,6 +234,10 @@ export class RowHeaderColService extends BeanStub implements NamedBean, IRowHead
 
         if (!rangeSvc || !cellSelection) {
             return cssClasses;
+        }
+
+        if (this.isIntegratedWithSelection) {
+            cssClasses.push('ag-header-row-selection-enabled');
         }
 
         const ranges = rangeSvc.getCellRanges();
