@@ -16,13 +16,9 @@ export class SearchCellRenderer extends Component implements ICellRenderer {
     public refresh(params: ICellRendererParams<any, any, any>): boolean {
         const { node, column, valueFormatted, value } = params;
         const search = this.beans.search;
-        const activeMatchNum = search?.getActiveMatchNum({
-            rowIndex: node.rowIndex!,
-            rowPinned: node.rowPinned,
-            column: column!,
-        });
+        const activeMatchNum = search?.getActiveMatchNum(node, column!);
         const searchText = search?.searchText;
-        const displayValue = valueFormatted ?? value;
+        const displayValue = valueFormatted ?? value ?? '';
         const valueToSearch = _escapeString(displayValue, true)?.toLocaleUpperCase() ?? '';
         const eGui = this.getGui();
         _clearElement(eGui);

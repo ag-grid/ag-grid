@@ -380,6 +380,7 @@ const colDefPropertyMap: Record<ColKey, undefined> = {
     loadingCellRendererParams: undefined,
     loadingCellRendererSelector: undefined,
     context: undefined,
+    getSearchText: undefined,
 };
 const ALL_PROPERTIES: () => ColKey[] = () => Object.keys(colDefPropertyMap) as ColKey[];
 

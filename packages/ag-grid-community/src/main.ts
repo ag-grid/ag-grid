@@ -784,6 +784,7 @@ export {
     KeyCreatorParams,
     SortDirection,
     NestedFieldPaths,
+    GetSearchTextParams,
 } from './entities/colDef';
 export {
     DataTypeDefinition,

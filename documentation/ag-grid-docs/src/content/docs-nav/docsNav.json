@@ -638,6 +638,11 @@
                             "type": "item",
                             "title": "Cell Text Selection",
                             "path": "cell-text-selection"
+                        },
+                        {
+                            "type": "item",
+                            "title": "Search",
+                            "path": "search"
                         }
                     ]
                 },

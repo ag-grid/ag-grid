@@ -466,6 +466,14 @@ export class GroupCellRendererCtrl extends BeanStub implements IGroupCellRendere
                 params
             );
         }
+
+        if (this.beans.search?.isMatch(params.node, params.column!)) {
+            return _getCellRendererDetails(
+                this.userCompFactory,
+                { ...params.colDef, cellRenderer: 'agSearchCellRenderer' },
+                params
+            );
+        }
     }
 
     private addChildCount(): void {

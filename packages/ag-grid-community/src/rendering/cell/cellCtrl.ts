@@ -269,13 +269,7 @@ export class CellCtrl extends BeanStub {
         } else if (this.isCellRenderer()) {
             const params = this.createCellRendererParams();
             compDetails = _getCellRendererDetails(userCompFactory, column.getColDef(), params);
-        } else if (
-            beans.search?.isMatch({
-                column,
-                rowIndex: rowNode.rowIndex!,
-                rowPinned: rowNode.rowPinned,
-            })
-        ) {
+        } else if (beans.search?.isMatch(rowNode, column)) {
             const params = this.createCellRendererParams();
             compDetails = _getCellRendererDetails(
                 userCompFactory,
