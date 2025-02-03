@@ -1344,6 +1344,12 @@
                 "url": "./tree-data/"
             }
         },
+        "treeDataChildrenField": {
+            "more": {
+                "name": "Tree Data",
+                "url": "./tree-data/"
+            }
+        },
         "autoGroupColumnDef": {
             "more": {
                 "name": "Group Column Configuration",
