@@ -22,6 +22,7 @@ import { Markdoc, component, defineMarkdocConfig } from '@astrojs/markdoc/config
 import { getFrameworkCapitalised } from '@utils/markdoc/getFrameworkCapitalised';
 
 import { agChartsVersion, agGridVersion } from './src/constants';
+import versionsData from './src/content/versions/ag-grid-versions.json';
 import { link } from './src/utils/markdoc/tags/link';
 
 export default defineMarkdocConfig({
@@ -55,7 +56,7 @@ export default defineMarkdocConfig({
         isNotJavascriptFramework,
         getFrameworkCapitalised,
         migrationVersion,
-        migrationVersionPatch: getMigrationVersionPatch('grid'),
+        migrationVersionPatch: getMigrationVersionPatch(versionsData),
     },
     tags: {
         kbd,
