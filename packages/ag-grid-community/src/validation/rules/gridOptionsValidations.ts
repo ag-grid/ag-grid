@@ -406,8 +406,14 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => {
                 const rowModel = options.rowModelType ?? 'clientSide';
                 switch (rowModel) {
                     case 'clientSide': {
-                        const csrmWarning = `treeData requires 'getDataPath' in the ${rowModel} row model.`;
-                        return options.treeDataChildrenField || options.getDataPath ? null : csrmWarning;
+                        const { treeDataChildrenField, getDataPath } = options;
+                        if (!treeDataChildrenField && !getDataPath) {
+                            return "treeData requires either 'treeDataChildrenField' or 'getDataPath' in the clientSide row model.";
+                        }
+                        if (treeDataChildrenField && getDataPath) {
+                            return "Cannot use both 'treeDataChildrenField' and 'getDataPath' at the same time.";
+                        }
+                        return null;
                     }
                     case 'serverSide': {
                         const ssrmWarning = `treeData requires 'isServerSideGroup' and 'getServerSideGroupKey' in the ${rowModel} row model.`;
