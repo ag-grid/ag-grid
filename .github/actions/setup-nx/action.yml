@@ -32,7 +32,10 @@ runs:
           id: nx_config
           shell: bash
           run: |
-              git fetch origin latest
+              echo "base=origin/latest" >> $GITHUB_OUTPUT
+              echo "NX_BASE=origin/latest" >> $GITHUB_ENV
+              echo "type=latest" >> $GITHUB_OUTPUT
+              git fetch origin --depth 1 latest
 
         - name: Restore node_modules
           if: inputs.cache_mode == 'ro'
