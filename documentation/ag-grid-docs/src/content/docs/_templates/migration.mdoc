@@ -1,0 +1,88 @@
+---
+# Replace these:
+# * `!x.x!` - the major/minor version of the migration eg, 33.2
+# * `!x.x.x!` - the version of the migration eg, 33.2.1
+# * `!PREV_x.x!` - a previous version before migration version eg, 33.1
+# * `!BLOG_LINK!` - the link to the blog post for the release
+
+# Useful markdoc commands:
+# * `migrationVersion()` - returns the major/minor version eg, `33.2.1` returns `33.2`
+# * `migrationVersionPatch()` - returns the major/minor and highest patch version available eg, `33.2.0` returns `33.2.2` as it is the highest patch release for `33.2`
+# * `{% if isFramework("react") %}` - wrap around blocks specific to a framework
+# * `{% if not(isFramework("react")) %}` - wrap around blocks where it does *not* apply to a framework
+# * `{% metaTag tags=[...] %}` - add meta tags to the page for search engines
+
+title: "Upgrading to AG Grid !x.x!"
+description: "See whats new in AG Grid, view a full list of changes and migrate your $framework Data Grid to version !x.x!."
+# Or with codemods:
+# description: "See whats new in AG Grid, view a full list of changes and migrate your $framework Data Grid to version !x.x! with our Codemods."
+migrationVersion: "!x.x.x!"
+---
+
+<!-- Subtitle -->
+
+## What's New
+
+<!-- Description with [release post](!BLOG_LINK!) -->
+AG Grid {% migrationVersion() %} ...
+
+<!-- 
+Documentation to the highest patch release of the major/minor
+NOTE: This will not show if the current library version is the same as the migration version
+-->
+{% documentationArchiveSection version=migrationVersionPatch() /%}
+
+## <!-- Release specific section -->
+
+<!-- If codemods exist, add the following: -->
+<!-- 
+## Codemods
+-->
+
+## Breaking Changes
+
+The full list of breaking changes across all features for version {% migrationVersion() %}.
+
+{% expandingSection headerText="Breaking Changes" %}
+AG Grid version {% migrationVersion() %} includes the following breaking changes:
+
+### <!-- Breaking change section -->
+
+{% /expandingSection %}
+
+## Behaviour Changes
+
+<!-- If behaviour changes do *not* exist, add the following: -->
+<!--
+There are no behaviour changes in AG Grid version {% migrationVersion() %}
+-->
+
+<!-- Otherwise -->
+<!--
+{% expandingSection headerText="Behaviour Changes" %}
+
+### Behaviour Changes section
+
+{% /expandingSection %}
+-->
+
+## Removal of Deprecated APIs
+
+The following APIs have been deprecated since at least !PREV_x.x! and have now been removed.
+
+{% expandingSection headerText="Removed Deprecated APIs" %}
+
+### <!-- Deprecated APIs section -->
+
+{% /expandingSection %}
+
+## Deprecations
+
+{% expandingSection headerText="Deprecations" %}
+
+### <!-- Deprecations section -->
+
+{% /expandingSection %}
+
+<!-- Changelog for the `migrationVersion` property -->
+{% changelogSection version=$migrationVersion /%}

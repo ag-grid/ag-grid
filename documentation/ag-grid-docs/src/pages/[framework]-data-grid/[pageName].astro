@@ -7,12 +7,14 @@ import type { Framework } from '@ag-grid-types';
 import { getDocsPages } from '@components/docs/utils/pageData';
 import { SideNavigation } from '@components/pages-navigation/components/SideNavigation';
 import { getFirstParagraphText } from '@utils/markdoc/getFirstParagraphText';
-import { DOCS_TAB_ITEM_ID_PREFIX } from '@ag-website-shared/constants';
+import { DOCS_TAB_ITEM_ID_PREFIX, MIGRATION_DOCUMENTATION_NAV_DATA } from '@ag-website-shared/constants';
 import { getHeadings } from '@utils/markdoc/getHeadings';
 import { isApiMenuPath } from '@utils/apiMenuPath';
 import { DocsNav } from '@ag-website-shared/components/docs-navigation/DocsNav';
 
 import styles from '@ag-website-shared/components/page-styles/docs.module.scss';
+import { parseVersion } from '@ag-website-shared/utils/parseVersion';
+import { agLibraryVersion } from '@constants';
 
 export async function getStaticPaths() {
     const pages = await getCollection('docs');
@@ -23,7 +25,7 @@ const { page } = Astro.props;
 const currentFramework = Astro.params.framework as Framework;
 const pageName = Astro.params.pageName as Framework;
 const path = Astro.url.pathname;
-const { title, enterprise, hideSideMenu, hidePageMenu, headings: pageHeadings } = page.data;
+const { title, enterprise, hideSideMenu, hidePageMenu, headings: pageHeadings, migrationVersion } = page.data;
 
 const { data: versionsData } = await getEntry('versions', 'ag-grid-versions');
 const version = versionsData[0]?.version;
@@ -49,6 +51,18 @@ const headings =
         markdocContent: page.body,
         framework: currentFramework,
         getTabItemSlug: (id) => `${DOCS_TAB_ITEM_ID_PREFIX}${id}`,
+        /**
+         * Skip the headings for migration doc nav items if the major/minor is the same as the current library version.
+         *
+         * NOTE: The migration version comes from the frontmatter on the page. There is also a version attribute on the documentation archive section tag, but if the value comes from a variable, it doesn't get parsed during build time, and hence doesn't come through to this function. Using the frontmatter value is the best way to get the migration version here.
+         */
+        skipHeading: (heading) => {
+            const libraryVersion = parseVersion(agLibraryVersion);
+            const { major, minor } = parseVersion(migrationVersion);
+            // Don't show documentation nav if the current library major/minor version is the same as the migration version
+            const checkHeading = major === libraryVersion.major && minor === libraryVersion.minor;
+            return checkHeading ? heading.id === MIGRATION_DOCUMENTATION_NAV_DATA.id : false;
+        },
     }));
 ---
 
@@ -95,7 +109,7 @@ const headings =
 
             {/* Wrapping div is a hack to target "intro" section of docs page */}
             <div class={styles.pageSections}>
-                <Content framework={currentFramework} page={page} />
+                <Content framework={currentFramework} page={page} migrationVersion={migrationVersion} />
             </div>
         </div>
 
