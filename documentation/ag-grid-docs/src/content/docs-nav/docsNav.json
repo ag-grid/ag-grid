@@ -10,8 +10,8 @@
                 },
                 {
                     "type": "item",
-                    "title": "Quick Reference",
-                    "path": "quick-reference"
+                    "title": "Key Feature Reference",
+                    "path": "key-feature-reference"
                 },
                 {
                     "type": "item",
@@ -19,17 +19,9 @@
                     "path": "community-vs-enterprise"
                 },
                 {
-                    "title": "Configuration",
+                    "title": "Setup",
                     "type": "group",
                     "children": [
-                        {
-                            "title": "Registering Modules",
-                            "path": "modules"
-                        },
-                        {
-                            "title": "Enterprise Licence Key",
-                            "path": "license-install"
-                        },
                         {
                             "type": "item",
                             "title": "NPM Installation",
@@ -37,10 +29,12 @@
                             "frameworks": ["javascript"]
                         },
                         {
-                            "type": "item",
-                            "title": "Download",
-                            "path": "download",
-                            "frameworks": ["javascript"]
+                            "title": "Registering Modules",
+                            "path": "modules"
+                        },
+                        {
+                            "title": "Installing Enterprise Licence",
+                            "path": "license-install"
                         }
                     ]
                 },
@@ -59,6 +53,11 @@
                         {
                             "title": "3. Creating an Enterprise Grid",
                             "path": "building-enterprise-grid"
+                        },
+                        {
+                            "title": "Best Practices",
+                            "path": "react-hooks",
+                            "frameworks": ["react"]
                         },
                         {
                             "title": "Testing",
@@ -126,14 +125,9 @@
                     ]
                 },
                 {
-                    "title": "Resources",
+                    "title": "Compatibility & Security",
                     "type": "group",
                     "children": [
-                        {
-                            "title": "Best Practices",
-                            "path": "react-hooks",
-                            "frameworks": ["react"]
-                        },
                         {
                             "type": "item",
                             "title": "Compatibility",
