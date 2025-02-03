@@ -55,26 +55,23 @@ jobs:
         with:
             cache_mode: ${{ github.event.inputs.clean_checkout == 'true' && 'off' || 'rw' }}
 
+      - name: nx format:check
+        run: |
+          yarn nx format:check --all
+
+      - name: nx lint
+        run: |
+          yarn nx lint 
+
+      - name: nx pack:verify --prod
+        run: |
+          yarn nx pack:verify --prod
+
+      - name: nx test:modules
+        run: |
+          yarn nx test:modules
             
-      #- run: SHARP_IGNORE_GLOBAL_LIBVIPS=true YARN_REGISTRY="http://52.50.158.57:4873" yarn --frozen-lockfile #npm run bootstrap
-        
-      # - name: nx format:check
-      #   run: |
-      #     yarn nx format:check --all
-
-      # - name: nx lint
-      #   run: |
-      #     yarn nx lint 
-
-      # - name: nx pack:verify --prod
-      #   run: |
-      #     yarn nx pack:verify --prod
-
-      # - name: nx test:modules
-      #   run: |
-      #     yarn nx test:modules
-            
-      # - name: nx run ag-grid-docs:test
-      #   run: |
-      #     yarn nx run ag-grid-docs:test
+      - name: nx run ag-grid-docs:test
+        run: |
+          yarn nx run ag-grid-docs:test
  
