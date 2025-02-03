@@ -12,7 +12,7 @@ on:
           #         - 'true'
           #         - 'false'
           clean_checkout:
-              description: 'Disable all caching'
+              description: 'Disable all caching' 
               type: 'choice'
               required: true
               default: 'false'
