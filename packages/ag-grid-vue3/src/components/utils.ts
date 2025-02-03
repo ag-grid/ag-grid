@@ -1004,24 +1004,9 @@ export interface Props<TData> {
          * @default false
          */
     treeData?: boolean | undefined,
-    /** The name of the field in a a data item to use to retrieve the array of children of a node when using treeData=true.
+    /** The name of the field to use in a data item to retrieve the array of children nodes of a node when while using treeData=true.
+         * It supports accessing nested fields using the dot notation.
          * It supports accessing nested fields using dot notation.
-         *
-         * @example
-         *
-         * ```ts
-         * gridOptions = {
-         *    treeData: true,
-         *    treeDataChildrenField: 'children',
-         *    rowData: [{ name: 'Top Level', children: [ { name: 'Level 2' } ] }]
-         * }```
-         *
-         * ```ts
-         * gridOptions = {
-         *   treeData: true,
-         *   treeDataChildrenField: 'obj.children',
-         *   rowData: [{ name: 'Top Level', obj: { children: [ { name: 'Level 2' } ] } }]
-         * }```
          */
     treeDataChildrenField?: string | undefined,
     /** Set to `true` to suppress sort indicators and actions from the row group panel.
