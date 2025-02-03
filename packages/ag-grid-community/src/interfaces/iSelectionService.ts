@@ -1,5 +1,6 @@
+import type { GridApi } from '../api/gridApi';
 import type { AgColumn } from '../entities/agColumn';
-import type { SelectAllMode } from '../entities/gridOptions';
+import type { GridOptions, SelectAllMode } from '../entities/gridOptions';
 import type { RowNode } from '../entities/rowNode';
 import type { SelectionEventSourceType } from '../events';
 import type { RowCtrl, RowGui } from '../rendering/row/rowCtrl';
@@ -46,6 +47,8 @@ export interface ISelectionService {
     handleSelectionEvent(event: MouseEvent | KeyboardEvent, rowNode: RowNode, source: SelectionEventSourceType): number;
     isCellCheckboxSelection(column: AgColumn, rowNode: IRowNode): boolean;
     refreshMasterNodeState(node: RowNode, e?: Event): void;
+    getDetailSelectionState(node: RowNode): Set<string> | undefined;
+    setDetailSelectionState(masterNode: RowNode, option: GridOptions, detailApi: GridApi): void;
 }
 
 export interface ISetNodesSelectedParams {

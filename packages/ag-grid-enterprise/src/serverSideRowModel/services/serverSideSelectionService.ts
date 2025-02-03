@@ -1,4 +1,6 @@
 import type {
+    GridApi,
+    GridOptions,
     ISelectionService,
     ISetNodesSelectedParams,
     NamedBean,
@@ -347,6 +349,14 @@ export class ServerSideSelectionService extends BaseSelectionService implements 
                 this.shotgunResetNodeSelectionState(source);
             }
         }
+    }
+
+    public getDetailSelectionState(node: RowNode<any>): Set<string> | undefined {
+        return;
+    }
+
+    setDetailSelectionState(masterNode: RowNode<any>, options: GridOptions<any>, detailApi: GridApi<any>): void {
+        return;
     }
 }
 

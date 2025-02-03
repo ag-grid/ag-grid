@@ -9,6 +9,7 @@ import type {
     IDetailCellRendererCtrl,
     IDetailCellRendererParams,
     RowNode,
+    RowSelectedEvent,
 } from 'ag-grid-community';
 import { BeanStub, _focusInto, _isSameRow, _missing, _warn } from 'ag-grid-community';
 
@@ -113,7 +114,10 @@ export class DetailCellRendererCtrl extends BeanStub implements IDetailCellRende
     }
 
     public registerDetailWithMaster(api: GridApi): void {
-        const params = this.params;
+        const {
+            params,
+            beans: { selectionSvc },
+        } = this;
         const rowId = params.node.id!;
         const masterGridApi = params.api;
 
@@ -133,29 +137,32 @@ export class DetailCellRendererCtrl extends BeanStub implements IDetailCellRende
         // register with node
         rowNode.detailGridInfo = gridInfo;
 
-        const masterNode = rowNode.parent;
+        const masterNode = rowNode.parent!;
 
-        api.addEventListener('selectionChanged', () => {
-            masterNode && this.beans.selectionSvc?.refreshMasterNodeState(masterNode);
-        });
+        function onDetailSelectionChanged() {
+            masterNode && selectionSvc?.refreshMasterNodeState(masterNode);
+        }
 
-        masterGridApi.addEventListener('rowSelected', (e) => {
-            if (e.node !== masterNode || e.source === 'masterDetail') {
+        function onMasterRowSelected({ node, source }: RowSelectedEvent) {
+            if (node !== masterNode || source === 'masterDetail') {
                 return;
             }
 
-            const { rowSelection } = this.params.detailGridOptions;
-            const selectAllMode =
-                (typeof rowSelection !== 'string' && rowSelection?.mode === 'multiRow' && rowSelection.selectAll) ||
-                undefined;
-            if (e.node.isSelected()) {
-                api.selectAll(selectAllMode);
-            } else {
-                api.deselectAll(selectAllMode);
-            }
+            selectionSvc?.setDetailSelectionState(masterNode, params.detailGridOptions, api);
+        }
+
+        // initialise selection state
+        api.addEventListener('firstDataRendered', () => {
+            selectionSvc?.setDetailSelectionState(masterNode, params.detailGridOptions, api);
+
+            api.addEventListener('selectionChanged', onDetailSelectionChanged);
+            masterGridApi.addEventListener('rowSelected', onMasterRowSelected);
         });
 
         this.addDestroyFunc(() => {
+            api.removeEventListener('selectionChanged', onDetailSelectionChanged);
+            masterGridApi.removeEventListener('rowSelected', onMasterRowSelected);
+
             // the gridInfo can be stale if a refresh happens and
             // a new row is created before the old one is destroyed.
             if (rowNode.detailGridInfo !== gridInfo) {
