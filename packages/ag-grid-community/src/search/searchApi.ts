@@ -10,7 +10,7 @@ export function searchPrevious(beans: BeanCollection): void {
 }
 
 export function searchGetTotalMatches(beans: BeanCollection): number {
-    return beans.search?.getTotalMatches() ?? 0;
+    return beans.search?.totalMatches ?? 0;
 }
 
 export function searchGoTo(beans: BeanCollection, match: number): void {
@@ -18,5 +18,5 @@ export function searchGoTo(beans: BeanCollection, match: number): void {
 }
 
 export function searchGetActiveMatch(beans: BeanCollection): SearchMatch | undefined {
-    return beans.search?.getActiveMatch();
+    return beans.search?.activeMatch;
 }
