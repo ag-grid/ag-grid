@@ -41,6 +41,16 @@ concurrency:
 
 jobs:  
   Build-Lint:
+    name: Build & Lint  
+    outputs:
+        nx_base: ${{ steps.setup.outputs.base }}
+        build: ${{ steps.build.outcome || '' }}
+        lint: ${{ steps.lint.outcome || '' }}
+        format: ${{ steps.format.outcome || '' }}
+        test_count: ${{ steps.matrix.outputs.test_count }}
+        test_matrix: ${{ steps.matrix.outputs.test_matrix }}
+        test_pkg_matrix: ${{ steps.matrix.outputs.pkg_matrix }}
+        build_type: ${{ steps.setup.outputs.type }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -56,8 +66,14 @@ jobs:
             cache_mode: ${{ github.event.inputs.clean_checkout == 'true' && 'off' || 'rw' }}
 
       - name: nx format:check
+        id: format
+        if: steps.setup.outcome == 'success' || steps.setup.outcome == 'skipped'
         run: |
-          yarn nx format:check --all
+            if [[ "${{ github.event.inputs.nx_command || 'affected' }}" == "run-many" ]] ; then
+              yarn nx format:check --all
+            else
+              yarn nx format:check --base ${{ steps.setup.outputs.base }}
+            fi
 
       - name: nx lint
         run: |
