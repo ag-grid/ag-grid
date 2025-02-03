@@ -1,19 +1,62 @@
 name: GitHub Actions Demo
 run-name: ${{ github.actor }} is testing out GitHub Actions 🚀
-on: [push]
+on: 
+  push:
+  workflow_dispatch:
+      inputs:
+          # run_e2e:
+          #     type: 'choice'
+          #     required: true
+          #     default: 'false'
+          #     options:
+          #         - 'true'
+          #         - 'false'
+          clean_checkout:
+              description: 'Disable all caching'
+              type: 'choice'
+              required: true
+              default: 'false'
+              options:
+                  - 'true'
+                  - 'false'
+          nx_command:
+              type: 'choice'
+              required: true
+              default: 'affected'
+              options:
+                  - 'affected'
+                  - 'run-many'
+env:
+    NX_REJECT_UNKNOWN_LOCAL_CACHE: 0
+    NX_NO_CLOUD: true
+    # NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
+    NX_BRANCH: ${{ github.ref }}
+    BRANCH_NAME: ${{ github.head_ref || github.ref_name }}
+    SHARP_IGNORE_GLOBAL_LIBVIPS: true 
+    YARN_REGISTRY: "http://52.50.158.57:4873"
+
+concurrency:
+    group: ${{ github.workflow }}-${{ github.ref }}
+#    cancel-in-progress: ${{ github.ref != 'refs/heads/latest' }}
+
 jobs:  
   Build-Lint:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-        # with:
-        #   fetch-depth: 1 # shallow copy
-      - uses: actions/setup-node@v4
+      - name: Checkout
+        id: checkout
+        uses: actions/checkout@v4
         with:
-          node-version: 20
-          cache: 'yarn'
-#          cache-dependency-path: yarn.lock
-      - run: SHARP_IGNORE_GLOBAL_LIBVIPS=true YARN_REGISTRY="http://52.50.158.57:4873" yarn --frozen-lockfile #npm run bootstrap
+          fetch-depth: 1 # shallow copy
+
+      - name: Setup 
+        id: setup
+        uses: ./.github/actions/setup-nx
+        with:
+            cache_mode: ${{ github.event.inputs.clean_checkout == 'true' && 'off' || 'rw' }}
+
+            
+      #- run: SHARP_IGNORE_GLOBAL_LIBVIPS=true YARN_REGISTRY="http://52.50.158.57:4873" yarn --frozen-lockfile #npm run bootstrap
         
       # - name: nx format:check
       #   run: |
