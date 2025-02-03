@@ -190,7 +190,10 @@ export class AgMenuItemComponent extends BeanStub<AgMenuItemComponentEvent> {
 
             subMenuGui.addEventListener(mouseEvent, mouseEnterListener);
 
-            destroySubMenu = () => subMenuGui.removeEventListener(mouseEvent, mouseEnterListener);
+            destroySubMenu = () => {
+                subMenuGui.removeEventListener(mouseEvent, mouseEnterListener);
+                this.destroyBean(menuPanel);
+            };
 
             ePopup.appendChild(subMenuGui);
 
@@ -322,7 +325,7 @@ export class AgMenuItemComponent extends BeanStub<AgMenuItemComponentEvent> {
         this.isActive = false;
 
         if (this.subMenuIsOpen) {
-            this.hideSubMenu?.();
+            this.closeSubMenu();
         }
     }
 

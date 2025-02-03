@@ -126,6 +126,13 @@ export class TabGuardFeature extends BeanStub {
         this.addTabGuards(...tabGuards);
     }
 
+    public removeTabGuards(): void {
+        const { comp, eTopGuard, eBottomGuard } = this;
+        const parent = comp.getFocusableElement();
+        parent.removeChild(eTopGuard);
+        parent.removeChild(eBottomGuard);
+    }
+
     public forceFocusOutOfContainer(up: boolean = false): void {
         this.tabGuardCtrl.forceFocusOutOfContainer(up);
     }
