@@ -32,17 +32,17 @@ export const getAllRows = (api: GridApi | null | undefined): RowNode[] => {
     return rows;
 };
 
-export function executeTransactionsAsync(
-    transactions: RowDataTransaction<any>[] | RowDataTransaction<any>,
+export function executeTransactionsAsync<TData = any>(
+    transactions: RowDataTransaction<TData>[] | RowDataTransaction<TData>,
     api: GridApi<any>
-): Promise<RowNodeTransaction<any>[]> {
+): Promise<RowNodeTransaction<TData>[]> {
     if (!Array.isArray(transactions)) {
         transactions = [transactions];
     }
-    const promises: Promise<RowNodeTransaction<any>>[] = [];
-    for (const transaction of transactions) {
-        promises.push(new Promise((resolve) => api.applyTransactionAsync(transaction, resolve)));
-    }
+    const promises = transactions.map(
+        (transaction) =>
+            new Promise<RowNodeTransaction<TData>>((resolve) => api.applyTransactionAsync(transaction, resolve))
+    );
     api.flushAsyncTransactions();
     return Promise.all(promises);
 }
