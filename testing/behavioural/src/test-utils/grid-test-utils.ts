@@ -34,7 +34,7 @@ export const getAllRows = (api: GridApi | null | undefined): RowNode[] => {
 
 export function executeTransactionsAsync<TData = any>(
     transactions: RowDataTransaction<TData>[] | RowDataTransaction<TData>,
-    api: GridApi<any>
+    api: GridApi<TData>
 ): Promise<RowNodeTransaction<TData>[]> {
     if (!Array.isArray(transactions)) {
         transactions = [transactions];
