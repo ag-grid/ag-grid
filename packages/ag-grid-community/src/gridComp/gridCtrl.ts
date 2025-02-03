@@ -111,7 +111,7 @@ export class GridCtrl extends BeanStub {
                 const { visibleCols, focusSvc } = this.beans;
                 const allColumns = visibleCols.allCols;
                 const lastColumn = _last(allColumns);
-                if (focusSvc.focusGridView(lastColumn, true)) {
+                if (focusSvc.focusGridView({ column: lastColumn, backwards: true })) {
                     return true;
                 }
             }
@@ -137,13 +137,13 @@ export class GridCtrl extends BeanStub {
             }
 
             const lastColumn = _last(allColumns);
-            if (focusSvc.focusGridView(lastColumn, fromBottom)) {
+            if (focusSvc.focusGridView({ column: lastColumn, backwards: fromBottom })) {
                 return true;
             }
         }
 
         if (this.gos.get('headerHeight') === 0 || _isHeaderFocusSuppressed(this.beans)) {
-            if (focusSvc.focusGridView(allColumns[0], fromBottom)) {
+            if (focusSvc.focusGridView({ column: allColumns[0], backwards: fromBottom })) {
                 return true;
             }
 
