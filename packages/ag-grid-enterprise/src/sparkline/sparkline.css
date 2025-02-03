@@ -5,12 +5,9 @@
     /* rtl:ignore */
     left: 0;
     top: 0;
+    line-height: initial;
 }
 
 .ag-sparkline-wrapper :where(canvas) {
     position: absolute;
-}
-
-.ag-sparkline-wrapper :where(.ag-charts-tooltip) {
-    line-height: initial;
 }

@@ -866,14 +866,11 @@
         width: 100%;
         left: 0;
         top: 0;
+        line-height: initial;
     }
 
     .ag-sparkline-wrapper :where(canvas) {
         position: absolute;
-    }
-
-    .ag-sparkline-wrapper :where(.ag-charts-tooltip) {
-        line-height: initial;
     }
 
     .ag-full-width-row .ag-cell-wrapper.ag-row-group {
