@@ -18,7 +18,8 @@ describe('ag-grid grouping treeDataChildrenField with set immutable data', () =>
         gridsManager.reset();
     });
 
-    test('grouping treeDataChildrenField with set immutable data', async () => {
+    // TODO: disabled due to AG-13994 - Remove the treeData flattening behavior (from the API, not the codebase)
+    test.skip('grouping treeDataChildrenField with set immutable data', async () => {
         const gridOptions: GridOptions = {
             columnDefs: [
                 { field: 'name' },
@@ -327,7 +328,8 @@ describe('ag-grid grouping treeDataChildrenField with set immutable data', () =>
         await gridRows.check('empty');
     });
 
-    test('expanded state is preserved correctly', async () => {
+    // TODO: disabled due to AG-13994 - Remove the treeData flattening behavior (from the API, not the codebase)
+    test.skip('expanded state is preserved correctly', async () => {
         const gridOptions: GridOptions = {
             columnDefs: [
                 { field: 'name' },

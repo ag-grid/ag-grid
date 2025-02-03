@@ -128,32 +128,23 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         this.addPropertyListeners();
 
         this.rootNode = new RowNode(this.beans);
-        this.initRowManager();
+
+        const nodeManager = this.getNewNodeManager();
+        this.nodeManager = nodeManager;
+        nodeManager.activate(this.rootNode);
     }
 
-    private initRowManager(): void {
-        const { gos, beans, nodeManager: oldNodeManager } = this;
-
-        const treeData = gos.get('treeData');
-        const childrenField = gos.get('treeDataChildrenField' as any);
-
-        const isTree = childrenField || treeData;
-
+    private getNewNodeManager(): IClientSideNodeManager<any> {
+        const { gos, beans } = this;
         let nodeManager: IClientSideNodeManager<any> | undefined;
-        if (isTree) {
-            nodeManager = childrenField ? beans.csrmChildrenTreeNodeSvc : beans.csrmPathTreeNodeSvc;
+        if (gos.get('treeData')) {
+            if (gos.get('treeDataChildrenField' as any)) {
+                nodeManager = beans.csrmChildrenTreeNodeSvc;
+            } else {
+                nodeManager = beans.csrmPathTreeNodeSvc;
+            }
         }
-
-        if (!nodeManager) {
-            nodeManager = beans.csrmNodeSvc!;
-        }
-
-        if (oldNodeManager !== nodeManager) {
-            oldNodeManager?.deactivate();
-            this.nodeManager = nodeManager;
-        }
-
-        nodeManager.activate(this.rootNode);
+        return nodeManager ?? beans.csrmNodeSvc!;
     }
 
     private addPropertyListeners() {
@@ -281,9 +272,12 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
 
         const rowDataChanged = changedProps.has('rowData');
         const treeDataChanged = changedProps.has('treeData');
-        const treeDataChildrenFieldChanged = changedProps.has('treeDataChildrenField' as any);
 
-        const reset = treeDataChildrenFieldChanged || (treeDataChanged && !gos.get('treeDataChildrenField' as any));
+        const oldNodeManager = this.nodeManager;
+        const nodeManager = this.getNewNodeManager();
+
+        const reset =
+            oldNodeManager !== nodeManager || (changedProps.has('treeDataChildrenField' as any) && gos.get('treeData'));
 
         let newRowData: any[] | null | undefined;
 
@@ -305,9 +299,14 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
             if (!rowDataChanged) {
                 // No new rowData was passed, so to include user executed transaction we need to extract
                 // the row data from the node manager as it might be different from the original rowData
-                newRowData = this.nodeManager?.extractRowData() ?? newRowData;
+                newRowData = oldNodeManager?.extractRowData() ?? newRowData;
             }
-            this.initRowManager();
+
+            if (oldNodeManager !== nodeManager) {
+                oldNodeManager?.deactivate();
+                this.nodeManager = nodeManager;
+            }
+            nodeManager.activate(this.rootNode);
         }
 
         if (newRowData) {
@@ -325,7 +324,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
                 params.animate = !this.gos.get('suppressAnimationFrame');
                 params.changedRowNodes = new ChangedRowNodes();
 
-                this.nodeManager.setImmutableRowData(params, newRowData);
+                nodeManager.setImmutableRowData(params, newRowData);
             } else {
                 params.rowDataUpdated = true;
                 params.newData = true;
@@ -337,7 +336,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
                 this.beans.selectionSvc?.reset('rowDataChanged');
 
                 this.rowNodesCountReady = true;
-                this.nodeManager.setNewRowData(newRowData);
+                nodeManager.setNewRowData(newRowData);
             }
         }
 

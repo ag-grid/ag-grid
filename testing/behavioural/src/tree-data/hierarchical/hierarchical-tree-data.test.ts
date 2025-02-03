@@ -71,42 +71,8 @@ describe('ag-grid hierarchical tree data', () => {
 
     test('ag-grid hierarchical tree data (without id)', async () => {
         const rowData = [
-            {
-                x: 'A',
-                children: [
-                    {
-                        x: 'B',
-                        children: [
-                            {
-                                x: 'C',
-                                children: [
-                                    {
-                                        x: 'D',
-                                    },
-                                ],
-                            },
-                        ],
-                    },
-                ],
-            },
-            {
-                x: 'E',
-                children: [
-                    {
-                        x: 'F',
-                        children: [
-                            {
-                                x: 'G',
-                                children: [
-                                    {
-                                        x: 'H',
-                                    },
-                                ],
-                            },
-                        ],
-                    },
-                ],
-            },
+            { x: 'A', children: [{ x: 'B', children: [{ x: 'C', children: [{ x: 'D' }] }] }] },
+            { x: 'E', children: [{ x: 'F', children: [{ x: 'G', children: [{ x: 'H' }] }] }] },
         ];
 
         const gridOptions: GridOptions = {
@@ -125,8 +91,43 @@ describe('ag-grid hierarchical tree data', () => {
             columns: true,
         };
 
-        const gridRows = new GridRows(api, 'data', gridRowsOptions);
-        await gridRows.check(`
+        await new GridRows(api, 'data', gridRowsOptions).check(`
+            ROOT id:ROOT_NODE_ID
+            ├─┬ 0 GROUP id:0 ag-Grid-AutoColumn:"0" x:"A"
+            │ └─┬ 1 GROUP id:1 ag-Grid-AutoColumn:"1" x:"B"
+            │ · └─┬ 2 GROUP id:2 ag-Grid-AutoColumn:"2" x:"C"
+            │ · · └── 3 LEAF id:3 ag-Grid-AutoColumn:"3" x:"D"
+            └─┬ 4 GROUP id:4 ag-Grid-AutoColumn:"4" x:"E"
+            · └─┬ 5 GROUP id:5 ag-Grid-AutoColumn:"5" x:"F"
+            · · └─┬ 6 GROUP id:6 ag-Grid-AutoColumn:"6" x:"G"
+            · · · └── 7 LEAF id:7 ag-Grid-AutoColumn:"7" x:"H"
+        `);
+    });
+
+    // TODO: disabled due to AG-13994 - Remove the treeData flattening behavior (from the API, not the codebase)
+    test.skip('ag-grid hierarchical tree data (without id) flattening', async () => {
+        const rowData = [
+            { x: 'A', children: [{ x: 'B', children: [{ x: 'C', children: [{ x: 'D' }] }] }] },
+            { x: 'E', children: [{ x: 'F', children: [{ x: 'G', children: [{ x: 'H' }] }] }] },
+        ];
+
+        const gridOptions: GridOptions = {
+            columnDefs: [{ field: 'x' }],
+            treeData: true,
+            ['treeDataChildrenField' as any]: 'children',
+            animateRows: false,
+            groupDefaultExpanded: -1,
+            rowData,
+        };
+
+        const api = gridsManager.createGrid('myGrid', gridOptions);
+
+        const gridRowsOptions: GridRowsOptions = {
+            checkDom: true,
+            columns: true,
+        };
+
+        await new GridRows(api, 'initial', gridRowsOptions).check(`
             ROOT id:ROOT_NODE_ID
             ├─┬ 0 GROUP id:0 ag-Grid-AutoColumn:"0" x:"A"
             │ └─┬ 1 GROUP id:1 ag-Grid-AutoColumn:"1" x:"B"
@@ -140,7 +141,7 @@ describe('ag-grid hierarchical tree data', () => {
 
         api.setGridOption('treeData', false);
 
-        await gridRows.check(`
+        await new GridRows(api, 'flat', gridRowsOptions).check(`
             ROOT id:ROOT_NODE_ID
             ├── 0 LEAF id:0 x:"A"
             ├── 1 LEAF id:1 x:"B"
@@ -154,7 +155,7 @@ describe('ag-grid hierarchical tree data', () => {
 
         api.setGridOption('treeData', true);
 
-        await gridRows.check(`
+        await new GridRows(api, 'hierarchical', gridRowsOptions).check(`
             ROOT id:ROOT_NODE_ID
             ├─┬ 0 GROUP id:0 ag-Grid-AutoColumn:"0" x:"A"
             │ └─┬ 1 GROUP id:1 ag-Grid-AutoColumn:"1" x:"B"
@@ -168,6 +169,79 @@ describe('ag-grid hierarchical tree data', () => {
     });
 
     test('ag-grid hierarchical override tree data (without id)', async () => {
+        const rowData0 = [
+            { x: 'A', children: [{ x: 'B' }] },
+            { x: 'C', children: [{ x: 'D' }] },
+        ];
+
+        const rowData1 = [
+            { x: 'E', children: [{ x: 'F' }, { x: 'G' }] },
+            { x: 'H', children: [{ x: 'I' }, { x: 'J' }] },
+        ];
+
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: [{ field: 'x' }],
+            treeData: true,
+            ['treeDataChildrenField' as any]: 'children',
+            animateRows: false,
+            groupDefaultExpanded: -1,
+            rowData: rowData0,
+        });
+
+        const gridRowsOptions: GridRowsOptions = {
+            checkDom: true,
+            columns: true,
+        };
+
+        let gridRows = new GridRows(api, 'data', gridRowsOptions);
+        await gridRows.check(`
+            ROOT id:ROOT_NODE_ID
+            ├─┬ 0 GROUP id:0 ag-Grid-AutoColumn:"0" x:"A"
+            │ └── 1 LEAF id:1 ag-Grid-AutoColumn:"1" x:"B"
+            └─┬ 2 GROUP id:2 ag-Grid-AutoColumn:"2" x:"C"
+            · └── 3 LEAF id:3 ag-Grid-AutoColumn:"3" x:"D"
+        `);
+
+        api.setGridOption('rowData', rowData1);
+
+        gridRows = new GridRows(api, 'update 1', gridRowsOptions);
+        await gridRows.check(`
+            ROOT id:ROOT_NODE_ID
+            ├─┬ 0 GROUP id:0 ag-Grid-AutoColumn:"0" x:"E"
+            │ ├── 1 LEAF id:1 ag-Grid-AutoColumn:"1" x:"F"
+            │ └── 2 LEAF id:2 ag-Grid-AutoColumn:"2" x:"G"
+            └─┬ 3 GROUP id:3 ag-Grid-AutoColumn:"3" x:"H"
+            · ├── 4 LEAF id:4 ag-Grid-AutoColumn:"4" x:"I"
+            · └── 5 LEAF id:5 ag-Grid-AutoColumn:"5" x:"J"
+        `);
+
+        api.updateGridOptions({ rowData: rowData0 });
+
+        gridRows = new GridRows(api, 'update 2', gridRowsOptions);
+        await gridRows.check(`
+            ROOT id:ROOT_NODE_ID
+            ├─┬ 0 GROUP id:0 ag-Grid-AutoColumn:"0" x:"A"
+            │ └── 1 LEAF id:1 ag-Grid-AutoColumn:"1" x:"B"
+            └─┬ 2 GROUP id:2 ag-Grid-AutoColumn:"2" x:"C"
+            · └── 3 LEAF id:3 ag-Grid-AutoColumn:"3" x:"D"
+            `);
+
+        api.updateGridOptions({ rowData: rowData1 });
+
+        gridRows = new GridRows(api, 'update 4', gridRowsOptions);
+        await gridRows.check(`
+                ROOT id:ROOT_NODE_ID
+                ├─┬ 0 GROUP id:0 ag-Grid-AutoColumn:"0" x:"E"
+                │ ├── 1 LEAF id:1 ag-Grid-AutoColumn:"1" x:"F"
+                │ └── 2 LEAF id:2 ag-Grid-AutoColumn:"2" x:"G"
+                └─┬ 3 GROUP id:3 ag-Grid-AutoColumn:"3" x:"H"
+                · ├── 4 LEAF id:4 ag-Grid-AutoColumn:"4" x:"I"
+                · └── 5 LEAF id:5 ag-Grid-AutoColumn:"5" x:"J"
+            `);
+    });
+
+    // TODO: disabled due to AG-13994 - Remove the treeData flattening behavior (from the API, not the codebase)
+    test.skip('ag-grid hierarchical override flat tree data (without id)', async () => {
         const rowData0 = [
             { x: 'A', children: [{ x: 'B' }] },
             { x: 'C', children: [{ x: 'D' }] },
@@ -343,10 +417,32 @@ describe('ag-grid hierarchical tree data', () => {
             · ├── idH LEAF id:idH ag-Grid-AutoColumn:"idH" x:"H"
             · └── idI LEAF id:idI ag-Grid-AutoColumn:"idI" x:"I"
         `);
+    });
+
+    // TODO: disabled due to AG-13994 - Remove the treeData flattening behavior (from the API, not the codebase)
+    test.skip('ag-grid initial hierarchical tree data (with id) flattening', async () => {
+        const rowData = getHierarchicalData();
+
+        const gridOptions: GridOptions = {
+            columnDefs: [{ field: 'x' }],
+            treeData: true,
+            ['treeDataChildrenField' as any]: 'children',
+            animateRows: false,
+            groupDefaultExpanded: -1,
+            rowData,
+            getRowId: ({ data }) => data.id,
+        };
+
+        const api = gridsManager.createGrid('myGrid', gridOptions);
+
+        const gridRowsOptions: GridRowsOptions = {
+            checkDom: true,
+            columns: true,
+        };
 
         api.setGridOption('treeData', false);
 
-        await gridRows.check(`
+        await new GridRows(api, 'flat', gridRowsOptions).check(`
             ROOT id:ROOT_NODE_ID
             ├── idA LEAF id:idA x:"A"
             ├── idB LEAF id:idB x:"B"
@@ -361,7 +457,7 @@ describe('ag-grid hierarchical tree data', () => {
 
         api.setGridOption('treeData', true);
 
-        await gridRows.check(`
+        await new GridRows(api, 'tree', gridRowsOptions).check(`
             ROOT id:ROOT_NODE_ID
             ├─┬ idA GROUP id:idA ag-Grid-AutoColumn:"idA" x:"A"
             │ └─┬ idB GROUP id:idB ag-Grid-AutoColumn:"idB" x:"B"

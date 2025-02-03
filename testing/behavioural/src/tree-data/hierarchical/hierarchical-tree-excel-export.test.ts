@@ -67,9 +67,46 @@ describe('ag-grid hierarchical tree excel export', () => {
             { Group: 'grp-3', value: 'value-400' },
             { Group: 'grp-4', value: 'value-500' },
         ]);
+    });
 
-        // Try to disable tree data now
-        api.setGridOption('treeData', false);
+    // TODO: disabled due to AG-13994 - Remove the treeData flattening behavior (from the API, not the codebase)
+    test.skip('excel exports calls value getter for groups and leafs with flattened tree data', async () => {
+        const rowData = [
+            {
+                uiId: '1',
+                value: 100,
+                children: [
+                    {
+                        uiId: '2',
+                        value: 200,
+                        children: [
+                            { uiId: '3', value: 300 },
+                            { uiId: '4', value: 400 },
+                        ],
+                    },
+                    { uiId: '5', value: 500 },
+                ],
+            },
+        ];
+
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: [
+                {
+                    headerName: 'value',
+                    valueGetter: ({ data }) => (data ? 'value-' + data.value : 'filler'),
+                },
+            ],
+            autoGroupColumnDef: {
+                valueGetter: (params) => {
+                    return 'grp-' + params.node?.rowIndex;
+                },
+            },
+            rowData,
+            treeData: false,
+            groupDefaultExpanded: -1,
+            ['treeDataChildrenField' as any]: 'children',
+            getRowId: (params) => params.data.uiId,
+        });
 
         api.exportDataAsExcel({ fileName: 'test.xlsx' });
 
