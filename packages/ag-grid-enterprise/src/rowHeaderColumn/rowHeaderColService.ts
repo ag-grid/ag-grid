@@ -8,6 +8,7 @@ import {
     _convertColumnEventSourceType,
     _debounce,
     _destroyColumnTree,
+    _getRowNode,
     _isRowHeaderColumnEnabled,
     _selectAllCells,
     _updateColsMap,
@@ -15,12 +16,14 @@ import {
 } from 'ag-grid-community';
 import type {
     CellClassParams,
+    CellPosition,
     ColDef,
     ColKey,
     IRowHeaderColsService,
     NamedBean,
     PropertyValueChangedEvent,
     RowHeaderColumnDef,
+    RowPosition,
     _ColumnCollections,
 } from 'ag-grid-community';
 
@@ -79,6 +82,24 @@ export class RowHeaderColService extends BeanStub implements NamedBean, IRowHead
         };
 
         updateOrders(this.putRowHeaderColsFirstInList);
+    }
+
+    public handleMouseDownOnCell(cellPosition: CellPosition, mouseEvent: MouseEvent): boolean {
+        const { gos } = this;
+        const rowHeaderColDef = gos.get('rowHeaderColumnDef');
+        const isSuppressingRangeIntegration = !!rowHeaderColDef?.suppressCellSelectionIntegration;
+
+        if (isSuppressingRangeIntegration) {
+            return false;
+        }
+
+        if (!mouseEvent.shiftKey) {
+            setTimeout(() => {
+                this.focusFirstRenderedCellAtRowPosition(cellPosition);
+            });
+        }
+
+        return true;
     }
 
     public updateColumns(event: PropertyValueChangedEvent<any>): void {
@@ -193,6 +214,8 @@ export class RowHeaderColService extends BeanStub implements NamedBean, IRowHead
             return cssClasses;
         }
 
+        // -1 here because we shouldn't consider this Row Header Column
+        const allColsLen = this.beans.visibleCols.allCols.length - 1;
         const shouldHighlight = typeof cellSelection === 'object' && cellSelection.enableHeaderHighlight;
 
         for (const range of ranges) {
@@ -201,7 +224,7 @@ export class RowHeaderColService extends BeanStub implements NamedBean, IRowHead
                     cssClasses.push('ag-header-row-range-highlight');
                 }
 
-                if (range.allColumnsRange) {
+                if (range.columns.length === allColsLen) {
                     cssClasses.push('ag-header-row-range-selected');
                 }
             }
@@ -222,6 +245,34 @@ export class RowHeaderColService extends BeanStub implements NamedBean, IRowHead
         const col = new AgColumn(colDef, null, colId, false);
         this.createBean(col);
         return [col];
+    }
+
+    // focus is disabled on the Row Header cells, when a click happens on it,
+    // it should focus the first cell of that row.
+    private focusFirstRenderedCellAtRowPosition(rowPosition: RowPosition) {
+        const { beans } = this;
+        const rowNode = _getRowNode(beans, rowPosition);
+
+        if (!rowNode) {
+            return;
+        }
+
+        const colsInViewport = beans.colViewport.getColsWithinViewport(rowNode);
+        const column = colsInViewport.find((col) => col.colId !== ROW_HEADER_COLUMN_ID);
+
+        if (!column) {
+            return;
+        }
+
+        const { rowPinned, rowIndex } = rowPosition;
+
+        beans.focusSvc.setFocusedCell({
+            rowIndex,
+            rowPinned,
+            column,
+            forceBrowserFocus: true,
+            preventScrollOnBrowserFocus: true,
+        });
     }
 
     public override destroy(): void {

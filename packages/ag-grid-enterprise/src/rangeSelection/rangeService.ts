@@ -186,7 +186,6 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
                 endRow: mouseRowPosition,
                 columns,
                 startColumn: this.newestRangeStartCell!.column,
-                allColumnsRange: this.selectionMode === SelectionMode.ALL_COLUMNS,
             };
 
             this.cellRanges.push(this.draggingRange);
@@ -356,7 +355,6 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
         }
 
         const isRowHeaderColumnEnabled = _isRowHeaderColumnEnabled(gos);
-
         const allColumnsRange = isRowHeaderCol(cell.column);
         if (isRowHeaderColumnEnabled) {
             this.setSelectionMode(allColumnsRange);
@@ -366,13 +364,6 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
 
         if (!columns) {
             return;
-        }
-
-        // if rowHeaderColumns is enabled and more than one columns is an
-        // array of more than one column, it means that the click happened
-        // inside the row header cell, then we need to focus the next rendered cell.
-        if (isRowHeaderColumnEnabled && columns.length > 1) {
-            this.focusFirstRenderedCellAtRowPosition(cell, columns);
         }
 
         const suppressMultiRangeSelections = _getSuppressMultiRanges(this.gos);
@@ -392,7 +383,6 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
             endRow: rowForCell,
             columns,
             startColumn: cell.column,
-            allColumnsRange,
         };
 
         this.cellRanges.push(cellRange);
@@ -423,7 +413,6 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
 
         cellRange.columns = colsToAdd;
         cellRange.endRow = { rowIndex: cellPosition.rowIndex, rowPinned: cellPosition.rowPinned };
-        cellRange.allColumnsRange = this.selectionMode === SelectionMode.ALL_COLUMNS;
 
         if (!silent) {
             this.dispatchChangedEvent(true, true, cellRange.id);
@@ -604,11 +593,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
             return;
         }
 
-        const { columns, startsOnTheRight, allColumnsRange } = columnInfo;
-
-        if (allColumnsRange) {
-            this.setSelectionMode(true);
-        }
+        const { columns, startsOnTheRight } = columnInfo;
 
         const startRow = this.createRowPosition(rowStartIndex, rowStartPinned);
         const endRow = this.createRowPosition(rowEndIndex, rowEndPinned);
@@ -619,7 +604,6 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
             columns,
             startColumn:
                 this.getColumnFromModel(columnStart as AgColumn) ?? (startsOnTheRight ? _last(columns) : columns[0]),
-            allColumnsRange,
         };
     }
 
@@ -925,16 +909,12 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
         columns?: (string | AgColumn)[],
         columnA?: string | AgColumn,
         columnB?: string | AgColumn
-    ): { columns: AgColumn[]; allColumnsRange: boolean; startsOnTheRight: boolean } | undefined {
+    ): { columns: AgColumn[]; startsOnTheRight: boolean } | undefined {
         const noColsInfo = !columns && !columnA && !columnB;
         let processedColumns: AgColumn[] | undefined;
         let startsOnTheRight = false;
-        let allColumnsRange = this.selectionMode === SelectionMode.ALL_COLUMNS;
 
         if (noColsInfo || columns) {
-            if (noColsInfo) {
-                allColumnsRange = true;
-            }
             processedColumns = this.getColumnsFromModel(noColsInfo ? undefined : columns);
         } else if (columnA && columnB) {
             processedColumns = this.calculateColumnsBetween(columnA, columnB);
@@ -948,7 +928,6 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
             ? {
                   columns: processedColumns,
                   startsOnTheRight,
-                  allColumnsRange,
               }
             : undefined;
     }

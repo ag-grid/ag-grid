@@ -59,10 +59,6 @@ export interface CellRange {
     columns: Column[];
     /** The start column for the range */
     startColumn: Column;
-    /**
-     * The range includes all columns of the grid.
-     */
-    allColumnsRange?: boolean;
 }
 
 export type PartialCellRange = Omit<CellRange, 'startColumn'> & Partial<Pick<CellRange, 'startColumn'>>;
