@@ -1681,6 +1681,16 @@
         display: inline-flex;
     }
 
+    // * Row Header Columns
+    // *****************************
+    // */
+    .ag-header-row-cell {
+        display: flex;
+        width: 100%;
+        white-space: nowrap;
+        overflow: hidden;
+    }
+
     // /**
     //  ****************************
     //  * Widgets

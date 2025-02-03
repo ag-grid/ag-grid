@@ -22,6 +22,7 @@
     --ag-range-selection-background-color-2: rgba(122, 134, 203, 0.19);
     --ag-range-selection-background-color-3: rgba(122, 134, 203, 0.27);
     --ag-range-selection-background-color-4: rgba(122, 134, 203, 0.34);
+    --ag-row-header-selected-color: color-mix(in srgb, transparent, var(--ag-material-accent-color) 50%);
     --ag-range-selection-highlight-color: #fce4ec;
     --ag-row-hover-color: #fafafa;
     --ag-column-hover-color: #fafafa;

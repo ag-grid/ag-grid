@@ -1,0 +1,45 @@
+@use 'ag';
+
+@mixin output {
+    .ag-header-row-cell {
+        background-color: var(--ag-header-background-color);
+        color: var(--ag-header-text-color);
+        font-size: var(--ag-header-font-size);
+        font-family: var(--ag-header-font-family);
+        font-weight: var(--ag-header-font-weight);
+    }
+
+    .ag-header-row-header.ag-header-row-selection-enabled {
+        cursor: cell;
+    }
+
+    .ag-header-row-range-highlight {
+        background-color: var(--ag-range-header-highlight-color);
+    }
+
+    .ag-header-row-range-selected {
+        background-color: var(--ag-row-header-selected-color);
+    }
+
+    .ag-ltr {
+        .ag-header-row-header,
+        .ag-cell.ag-header-row-cell:not(.ag-cell-last-left-pinned) {
+            border-right: var(--ag-pinned-column-border);
+        }
+
+        :where(.ag-header-row-cell.ag-header-row-selection-enabled) {
+            cursor: e-resize;
+        }
+    }
+
+    :where(.ag-rtl) {
+        .ag-header-row-header,
+        .ag-cell.ag-header-row-cell:not(.ag-cell-first-right-pinned) {
+            border-left: var(--ag-pinned-column-border);
+        }
+
+        :where(.ag-header-row-cell.ag-header-row-selection-enabled) {
+            cursor: w-resize;
+        }
+    }
+}

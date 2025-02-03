@@ -55,6 +55,8 @@
 
         --ag-range-selection-highlight-color: var(--ag-range-selection-border-color);
 
+        --ag-range-header-highlight-color: color-mix(in srgb, transparent, var(--ag-foreground-color) 8%);
+
         --ag-selected-tab-underline-color: var(--ag-range-selection-border-color);
         --ag-selected-tab-underline-width: 0;
         --ag-selected-tab-underline-transition-speed: 0s;
@@ -173,6 +175,8 @@
         --ag-advanced-filter-builder-indent-size: calc(var(--ag-grid-size) * 2 + var(--ag-icon-size));
 
         --ag-row-group-indent-size: calc(var(--ag-cell-widget-spacing) + var(--ag-icon-size));
+
+        --ag-row-header-selected-color: #bbb;
 
         --ag-filter-tool-panel-group-indent: 16px;
 

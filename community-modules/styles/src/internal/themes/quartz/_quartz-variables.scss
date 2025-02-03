@@ -39,6 +39,7 @@
     --ag-range-selection-background-color-2: color-mix(in srgb, transparent, var(--ag-active-color) 36%);
     --ag-range-selection-background-color-3: color-mix(in srgb, transparent, var(--ag-active-color) 49%);
     --ag-range-selection-background-color-4: color-mix(in srgb, transparent, var(--ag-active-color) 59%);
+    --ag-row-header-selected-color: color-mix(in srgb, transparent, var(--ag-active-color) 50%);
     --ag-checkbox-background-color: var(--ag-background-color);
     --ag-checkbox-checked-color: var(--ag-active-color);
     --ag-range-selection-border-color: var(--ag-active-color);
