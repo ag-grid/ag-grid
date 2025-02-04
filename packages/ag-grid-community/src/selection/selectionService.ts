@@ -745,17 +745,13 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
             return;
         }
 
-        const { rowSelection } = detailGridOptions;
-        const selectAllMode =
-            (typeof rowSelection !== 'string' && rowSelection?.mode === 'multiRow' && rowSelection.selectAll) ||
-            undefined;
         switch (masterNode.isSelected()) {
             case true: {
-                detailApi.selectAll(selectAllMode);
+                detailApi.selectAll();
                 break;
             }
             case false: {
-                detailApi.deselectAll(selectAllMode);
+                detailApi.deselectAll();
                 break;
             }
             case undefined: {
