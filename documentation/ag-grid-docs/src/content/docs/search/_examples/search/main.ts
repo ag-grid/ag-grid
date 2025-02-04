@@ -45,6 +45,7 @@ const gridOptions: GridOptions = {
         (document.getElementById('resultPosition') as HTMLElement).textContent = activeMatch
             ? ` { pinned: ${activeMatch.node.rowPinned}, row index: ${activeMatch.node.rowIndex}, column: ${activeMatch.column.getColId()}, num in cell: ${activeMatch.numInMatch} }`
             : '';
+        console.log('searchChanged', event);
     },
     onGridReady: () => {
         (document.getElementById('search-text-box') as HTMLInputElement).addEventListener('keydown', (event) => {
@@ -64,9 +65,8 @@ const gridOptions: GridOptions = {
 };
 
 function search() {
-    const newSearchText = (document.getElementById('search-text-box') as HTMLInputElement).value;
-    if (newSearchText !== searchText) {
-        searchText = newSearchText;
+    const searchText = (document.getElementById('search-text-box') as HTMLInputElement).value;
+    if (searchText !== gridApi.getGridOption('searchText')) {
         gridApi!.setGridOption('searchText', searchText);
     }
 }

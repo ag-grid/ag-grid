@@ -480,6 +480,7 @@ export class SearchService extends BeanStub implements NamedBean {
         this.unpinnedRowNodes.length = 0;
         this.pinnedBottomMatches.clear();
         this.pinnedBottomRowNodes.length = 0;
+        this.activeMatch = undefined;
         super.destroy();
     }
 }

@@ -340,10 +340,12 @@
     }
 
     .ag-search-match {
-        background-color: yellow;
+        color: var(--ag-search-match-color);
+        background-color: var(--ag-search-match-background-color);
     }
 
     .ag-search-active-match {
-        background-color: orange;
+        color: var(--ag-search-active-match-color);
+        background-color: var(--ag-search-active-match-background-color);
     }
 }

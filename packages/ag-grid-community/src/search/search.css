@@ -1,7 +1,9 @@
 .ag-search-match {
-    background-color: #ffff00;
+    color: var(--ag-search-match-color);
+    background-color: var(--ag-search-match-background-color);
 }
 
 .ag-search-active-match {
-    background-color: #ffa500;
+    color: var(--ag-search-active-match-color);
+    background-color: var(--ag-search-active-match-background-color);
 }

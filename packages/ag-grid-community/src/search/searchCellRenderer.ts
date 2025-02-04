@@ -21,11 +21,9 @@ export class SearchCellRenderer extends Component implements ICellRenderer {
         const displayValue = valueFormatted ?? value ?? '';
         const valueToSearch = _escapeString(displayValue, true)?.toLocaleUpperCase() ?? '';
         const eGui = this.getGui();
+        _clearElement(eGui);
         if (_missing(searchText)) {
-            _clearElement(eGui);
-            const eSpan = document.createElement('span');
-            eSpan.textContent = _escapeString(displayValue, true);
-            eGui.appendChild(eSpan);
+            eGui.textContent = _escapeString(displayValue, true) ?? '';
             return true;
         }
 
@@ -57,23 +55,18 @@ export class SearchCellRenderer extends Component implements ICellRenderer {
             }
         }
 
-        const numParts = parts.length;
-        const eChildren = eGui.children;
-        for (let i = 0; i < numParts; i++) {
-            const { value: partValue, match, activeMatch } = parts[i];
-            let eSpan = eChildren.item(i);
-            if (!eSpan) {
-                eSpan = document.createElement('span');
-                eGui.appendChild(eSpan);
-            }
-            eSpan.textContent = _escapeString(partValue, true);
-            eSpan.classList.toggle('ag-search-match', !!match);
-            eSpan.classList.toggle('ag-search-active-match', !!activeMatch);
-        }
-        const numEChildren = eChildren.length;
-        if (numEChildren > numParts) {
-            for (let i = numParts; i < numEChildren; i++) {
-                eGui.removeChild(eChildren.item(i)!);
+        for (const { value: partValue, match, activeMatch } of parts) {
+            const content = _escapeString(partValue, true) ?? '';
+            if (match) {
+                const element = document.createElement('mark');
+                element.textContent = content;
+                element.classList.add('ag-search-match');
+                if (activeMatch) {
+                    element.classList.add('ag-search-active-match');
+                }
+                eGui.appendChild(element);
+            } else {
+                eGui.appendChild(document.createTextNode(content));
             }
         }
 

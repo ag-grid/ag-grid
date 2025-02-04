@@ -521,6 +521,26 @@ type CoreParamsDefinitions = {
     rowVerticalPaddingScale: 'infer';
 
     /**
+     * Color of matches used in Search
+     */
+    searchMatchColor: 'infer';
+
+    /**
+     * Background color of matches used in Search
+     */
+    searchMatchBackgroundColor: 'infer';
+
+    /**
+     * Color of the active match used in Search
+     */
+    searchActiveMatchColor: 'infer';
+
+    /**
+     * Background color of the active match used in Search
+     */
+    searchActiveMatchBackgroundColor: 'infer';
+
+    /**
      * Background color for selected items within the multiple select widget
      */
     selectCellBackgroundColor: 'infer';
@@ -1016,6 +1036,10 @@ export const coreDefaults: Readonly<CoreParams> = {
     advancedFilterBuilderColumnPillColor: '#a6e194',
     advancedFilterBuilderOptionPillColor: '#f3c08b',
     advancedFilterBuilderValuePillColor: '#85c0e4',
+    searchMatchColor: foregroundColor,
+    searchMatchBackgroundColor: '#ffff00',
+    searchActiveMatchColor: foregroundColor,
+    searchActiveMatchBackgroundColor: '#ffa500',
     filterToolPanelGroupIndent: {
         ref: 'spacing',
     },

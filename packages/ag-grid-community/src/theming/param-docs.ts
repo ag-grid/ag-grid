@@ -220,6 +220,10 @@ const docs: Record<AllThemeParams, string> = {
         'Color of the skeleton loading effect used when loading row data with the Server-side Row Model',
     rowVerticalPaddingScale:
         'Multiply the row vertical padding by a number, e.g. 1.5 to increase by 50%. Has no effect if rowHeight is set.',
+    searchMatchColor: 'Color of matches used in Search',
+    searchMatchBackgroundColor: 'Background color of matches used in Search',
+    searchActiveMatchColor: 'Color of the active match used in Search',
+    searchActiveMatchBackgroundColor: 'Background color of the active match used in Search',
     selectCellBackgroundColor: 'Background color for selected items within the multiple select widget',
     selectCellBorder: 'Border for selected items within the multiple select widget',
     selectedRowBackgroundColor: 'Background color of selected rows in the grid and in dropdown menus.',

@@ -21,8 +21,8 @@ const SearchCoreModule: _ModuleWithoutApi = {
 };
 
 /**
- * @feature Filtering -> Quick Filter
- * @gridOption SearchText
+ * @feature Search
+ * @gridOption searchText
  */
 export const SearchModule: _ModuleWithApi<_SearchApi> = {
     moduleName: 'Search',

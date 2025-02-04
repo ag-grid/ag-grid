@@ -196,5 +196,10 @@
         --ag-advanced-filter-column-pill-color: #a6e194;
         --ag-advanced-filter-option-pill-color: #f3c08b;
         --ag-advanced-filter-value-pill-color: #85c0e4;
+
+        --ag-search-match-color: var(--ag-foreground-color);
+        --ag-search-active-match-color: var(--ag-foreground-color);
+        --ag-search-match-background-color: #ffff00;
+        --ag-search-active-match-background-color: #ffa500;
     }
 }
