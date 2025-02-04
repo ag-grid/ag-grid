@@ -238,7 +238,7 @@ export class UserComponentFactory extends BeanStub implements NamedBean {
         paramsFromSelector: any = null,
         defaultCompParams?: any
     ): any {
-        const params = { ...paramsFromGrid, ...(defaultCompParams ?? {}) };
+        const params = { ...paramsFromGrid, ...defaultCompParams };
 
         // pull user params from the defObject
         const defObjectAny = defObject as any;
