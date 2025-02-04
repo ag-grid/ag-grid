@@ -654,7 +654,6 @@ export {
     _isMultiRowSelection,
     _getFillHandle,
     _isCellSelectionEnabled,
-    _isRowHeaderColumnEnabled,
     _getSuppressMultiRanges,
     _getRowSelectionMode,
     _isLegacyMenuEnabled,
@@ -895,7 +894,13 @@ export { IDateParams, IDate, IDateComp, BaseDate, BaseDateParams } from './inter
 export { IAfterGuiAttachedParams, ContainerType } from './interfaces/iAfterGuiAttachedParams';
 export { IComponent } from './interfaces/iComponent';
 export { IEventEmitter, IEventListener } from './interfaces/iEventEmitter';
-export { IHeaderParams, IHeaderComp, IHeader, IInnerHeaderComponent } from './headerRendering/cells/column/headerComp';
+export {
+    HeaderComp as _HeaderComp,
+    IHeaderParams,
+    IHeaderComp,
+    IHeader,
+    IInnerHeaderComponent,
+} from './headerRendering/cells/column/headerComp';
 export {
     IHeaderGroupParams,
     IHeaderGroup,

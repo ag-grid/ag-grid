@@ -171,6 +171,7 @@ export const GRID_OPTION_DEFAULTS = {
     columnMenu: 'new',
     reactiveCustomComponents: true,
     suppressSetFilterByDefault: false,
+    enableRowHeaderColumn: false,
 } as const;
 /**
  * Used simply to type check the default grid options.

@@ -50,7 +50,7 @@
             "type": "CSS color (e.g. `red` or `#fff`)"
         },
         "--ag-disabled-foreground-color": {
-            "description": "Color of elements that can't be interacted with because they are in a disabled state",
+            "description": "Colour of elements that can't be interacted with because they are in a disabled state",
             "type": "CSS color (e.g. `red` or `#fff`)"
         },
         "--ag-subheader-background-color": {
@@ -98,7 +98,7 @@
             "type": "CSS color (e.g. `red` or `#fff`)"
         },
         "--ag-range-selection-border-color": {
-            "description": "Color to draw around selected cell ranges",
+            "description": "Colour to draw around selected cell ranges",
             "type": "CSS color (e.g. `red` or `#fff`)"
         },
         "--ag-range-selection-border-style": {
@@ -123,6 +123,10 @@
         },
         "--ag-range-selection-highlight-color": {
             "description": "Background colour to briefly apply to a cell range when it is copied from or pasted into",
+            "type": "CSS color (e.g. `red` or `#fff`)"
+        },
+        "--ag-range-header-highlight-color": {
+            "description": "Background colour of the grid header when any cell of that header is part of a range. This is not visible unless enabled in the cell selection options.",
             "type": "CSS color (e.g. `red` or `#fff`)"
         },
         "--ag-selected-tab-underline-color": {
@@ -199,6 +203,10 @@
         },
         "--ag-row-border-color": {
             "description": "Colour of the border between grid rows, or `transparent` to display no border",
+            "type": "CSS color (e.g. `red` or `#fff`)"
+        },
+        "--ag-row-header-selected-color": {
+            "description": "Background colour of the Row Header Column cell when the range selects all cells for that row.",
             "type": "CSS color (e.g. `red` or `#fff`)"
         },
         "--ag-menu-border-color": {
@@ -314,11 +322,11 @@
             "type": "CSS color (e.g. `red` or `#fff`)"
         },
         "--ag-minichart-selected-chart-color": {
-            "description": "Color of border around selected chart style",
+            "description": "Colour of border around selected chart style",
             "type": "CSS color (e.g. `red` or `#fff`)"
         },
         "--ag-minichart-selected-page-color": {
-            "description": "Color of dot representing selected page of chart styles",
+            "description": "Colour of dot representing selected page of chart styles",
             "type": "CSS color (e.g. `red` or `#fff`)"
         },
         "--ag-grid-size": {

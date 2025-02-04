@@ -49,11 +49,11 @@ export class CellNavigationService extends BeanStub implements NamedBean {
             rowIndex = upKey ? pageBounds.getFirstRow() : pageBounds.getLastRow();
             column = focusedCell.column as AgColumn;
         } else {
-            const allColumns = [...visibleCols.allCols];
+            let allColumns = visibleCols.allCols;
             const isRtl = gos.get('enableRtl');
             rowIndex = focusedCell.rowIndex;
             if (leftKey === isRtl) {
-                allColumns.reverse();
+                allColumns = [...allColumns].reverse();
             }
 
             column = allColumns.find((col) =>

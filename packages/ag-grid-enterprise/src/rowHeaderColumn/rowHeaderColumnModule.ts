@@ -8,8 +8,8 @@ import { RowHeaderColService } from './rowHeaderColService';
 import { rowHeaderColumnCSS } from './rowHeaderColumn.css-GENERATED';
 
 /**
- * @feature Selection -> Cell Selection
- * @gridOption cellSelection
+ * @feature Accessories -> Row Header Column
+ * @gridOption enableRowHeaderColumn
  */
 export const RowHeaderColumnModule: _ModuleWithoutApi = {
     moduleName: 'RowHeaderColumn',

@@ -34,7 +34,6 @@ import {
     _isCellSelectionEnabled,
     _isDomLayout,
     _isRowBefore,
-    _isRowHeaderColumnEnabled,
     _isSameRow,
     _isUsingNewCellSelectionAPI,
     _last,
@@ -354,7 +353,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
             return;
         }
 
-        const isRowHeaderColumnEnabled = _isRowHeaderColumnEnabled(gos);
+        const isRowHeaderColumnEnabled = gos.get('enableRowHeaderColumn');
         const allColumnsRange = isRowHeaderCol(cell.column);
         if (isRowHeaderColumnEnabled) {
             this.setSelectionMode(allColumnsRange);
@@ -1049,7 +1048,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
 
     private getColumnsFromModel(cols?: (string | AgColumn)[]): AgColumn[] | undefined {
         const { gos, visibleCols } = this;
-        const isRowHeaderActive = _isRowHeaderColumnEnabled(gos);
+        const isRowHeaderActive = gos.get('enableRowHeaderColumn');
 
         if (!cols || this.selectionMode === SelectionMode.ALL_COLUMNS) {
             cols = [...visibleCols.allCols];

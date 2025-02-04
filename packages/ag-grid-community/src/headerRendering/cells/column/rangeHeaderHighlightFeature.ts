@@ -3,10 +3,10 @@ import type { AgColumn } from '../../../entities/agColumn';
 import type { IHeaderCellComp } from './headerCellCtrl';
 
 export class RangeHeaderHighlightFeature extends BeanStub {
-    private column: AgColumn;
-    private comp: IHeaderCellComp;
-
-    constructor(column: AgColumn, comp: IHeaderCellComp) {
+    constructor(
+        private column: AgColumn,
+        private comp: IHeaderCellComp
+    ) {
         super();
 
         this.column = column;
