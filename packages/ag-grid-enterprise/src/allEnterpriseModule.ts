@@ -16,6 +16,7 @@ import { PivotModule } from './pivot/pivotModule';
 import { CellSelectionModule } from './rangeSelection/rangeSelectionModule';
 import { RichSelectModule } from './richSelect/richSelectModule';
 import { GroupFilterModule, RowGroupingModule, RowGroupingPanelModule } from './rowGrouping/rowGroupingModule';
+import { RowHeaderColumnModule } from './rowHeaderColumn/rowHeaderColumnModule';
 import { ServerSideRowModelApiModule, ServerSideRowModelModule } from './serverSideRowModel/serverSideRowModelModule';
 import { SetFilterModule } from './setFilter/setFilterModule';
 import { SideBarModule } from './sideBar/sideBarModule';
@@ -38,6 +39,7 @@ const dependsOn = [
     ContextMenuModule,
     CellSelectionModule,
     RichSelectModule,
+    RowHeaderColumnModule,
     RowGroupingModule,
     RowGroupingPanelModule,
     GroupFilterModule,

@@ -866,10 +866,7 @@
         width: 100%;
         left: 0;
         top: 0;
-    }
-
-    .ag-sparkline-wrapper :where(canvas) {
-        position: absolute;
+        line-height: initial;
     }
 
     .ag-full-width-row .ag-cell-wrapper.ag-row-group {
@@ -1679,6 +1676,16 @@
 
     .ag-status-bar-right {
         display: inline-flex;
+    }
+
+    // * Row Header Columns
+    // *****************************
+    // */
+    .ag-header-row-cell {
+        display: flex;
+        width: 100%;
+        white-space: nowrap;
+        overflow: hidden;
     }
 
     // /**

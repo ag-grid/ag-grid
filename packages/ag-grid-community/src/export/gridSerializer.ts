@@ -1,5 +1,5 @@
 import type { ColumnModel } from '../columns/columnModel';
-import { isColumnGroupAutoCol, isColumnSelectionCol } from '../columns/columnUtils';
+import { isColumnGroupAutoCol, isColumnSelectionCol, isRowHeaderCol } from '../columns/columnUtils';
 import { GroupInstanceIdCreator } from '../columns/groupInstanceIdCreator';
 import type { VisibleColsService } from '../columns/visibleColsService';
 import type { NamedBean } from '../context/bean';
@@ -38,12 +38,13 @@ export class GridSerializer extends BeanStub implements NamedBean {
     }
 
     public serialize<T>(gridSerializingSession: GridSerializingSession<T>, params: ExportParams<T> = {}): string {
-        const { allColumns, columnKeys, skipRowGroups } = params;
-        const columnsToExport = this.getColumnsToExport(
+        const { allColumns, columnKeys, skipRowGroups, exportRowHeaderColumn } = params;
+        const columnsToExport = this.getColumnsToExport({
             allColumns,
             skipRowGroups,
-            columnKeys as (string | AgColumn)[] | undefined
-        );
+            columnKeys: columnKeys as (string | AgColumn)[] | undefined,
+            exportRowHeaderColumn,
+        });
 
         return [
             // first pass, put in the header names of the cols
@@ -339,16 +340,26 @@ export class GridSerializer extends BeanStub implements NamedBean {
         };
     }
 
-    private getColumnsToExport(
-        allColumns: boolean = false,
-        skipRowGroups: boolean = false,
-        columnKeys?: (string | AgColumn)[]
-    ): AgColumn[] {
+    private getColumnsToExport(params: {
+        allColumns?: boolean;
+        skipRowGroups?: boolean;
+        exportRowHeaderColumn?: boolean;
+        columnKeys?: (string | AgColumn)[];
+    }): AgColumn[] {
+        const { allColumns = false, skipRowGroups = false, exportRowHeaderColumn = false, columnKeys } = params;
         const { colModel, gos, visibleCols } = this;
         const isPivotMode = colModel.isPivotMode();
 
+        const filterSpecialColumns = (col: AgColumn) => {
+            if (isColumnSelectionCol(col)) {
+                return false;
+            }
+
+            return !isRowHeaderCol(col) || exportRowHeaderColumn;
+        };
+
         if (columnKeys && columnKeys.length) {
-            return colModel.getColsForKeys(columnKeys);
+            return colModel.getColsForKeys(columnKeys).filter(filterSpecialColumns);
         }
 
         const isTreeData = gos.get('treeData');
@@ -363,7 +374,7 @@ export class GridSerializer extends BeanStub implements NamedBean {
 
         columnsToExport = columnsToExport.filter(
             (column) =>
-                !isColumnSelectionCol(column) && (skipRowGroups && !isTreeData ? !isColumnGroupAutoCol(column) : true)
+                filterSpecialColumns(column) && (skipRowGroups && !isTreeData ? !isColumnGroupAutoCol(column) : true)
         );
 
         return columnsToExport;

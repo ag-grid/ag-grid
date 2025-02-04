@@ -15,7 +15,7 @@ describe('ag-grid hierarchical tree data reset', () => {
         modules: [ClientSideRowModelModule, TreeDataModule],
     });
 
-    let consoleErrorSpy: MockInstance;
+    let consoleWarnSpy: MockInstance;
 
     beforeEach(() => {
         gridsManager.reset();
@@ -23,7 +23,7 @@ describe('ag-grid hierarchical tree data reset', () => {
 
     afterEach(() => {
         gridsManager.reset();
-        consoleErrorSpy?.mockRestore();
+        consoleWarnSpy?.mockRestore();
     });
 
     test('transactions are no-ops and an error is generated', async () => {
@@ -43,7 +43,7 @@ describe('ag-grid hierarchical tree data reset', () => {
             getRowId: (params) => params.data.id,
         });
 
-        consoleErrorSpy = vitest.spyOn(console, 'error').mockImplementation(() => {});
+        consoleWarnSpy = vitest.spyOn(console, 'warn').mockImplementation(() => {});
 
         const transactionResult = api.applyTransaction({
             add: [{ id: 'F', children: [{ id: 'G' }] }],
@@ -63,7 +63,7 @@ describe('ag-grid hierarchical tree data reset', () => {
             { add: [], remove: [], update: [] },
         ]);
 
-        expect(consoleErrorSpy).toHaveBeenCalledWith(
+        expect(consoleWarnSpy).toHaveBeenCalledWith(
             'AG Grid: error #268',
             "Transactions aren't supported with tree data when using treeDataChildrenField",
             expect.anything()

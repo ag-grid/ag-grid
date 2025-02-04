@@ -193,6 +193,17 @@
           "command": "npm run updateProd"
         }
       }
+    },
+    "update-versions-data": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "tsx {projectRoot}/scripts/versions-data/updateVersionsData.ts"
+      },
+      "configurations": {
+        "verbose": {
+          "args": ["--verbose"]
+        }
+      }
     }
   },
   "implicitDependencies": ["ag-grid-community", "ag-grid-enterprise"],

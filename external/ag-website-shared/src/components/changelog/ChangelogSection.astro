@@ -1,0 +1,21 @@
+---
+import type { Library } from '@ag-grid-types';
+import { getChangelogUrl } from '@ag-website-shared/utils/getChangelogUrl';
+import { parseVersion } from '@ag-website-shared/utils/parseVersion';
+import { LinkIcon } from '@ag-website-shared/components/link-icon/LinkIcon';
+import whatsNewData from '@ag-website-shared/content/whats-new/data.json';
+
+interface Props {
+    site: Library;
+    version: string;
+}
+
+const { site, version } = Astro.props as Props;
+const { major, minor } = parseVersion(version);
+const changelogLink = getChangelogUrl({ site, version });
+
+const name = whatsNewData[site].name;
+---
+
+<h2 id="changes-list">Changes List <LinkIcon href="#changes-list" /></h2>
+<p>See <a href={changelogLink}>{name} {major}.{minor} Changelog</a>.</p>

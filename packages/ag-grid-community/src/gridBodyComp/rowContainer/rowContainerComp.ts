@@ -79,7 +79,7 @@ export class RowContainerComp extends Component {
         };
 
         const ctrl = this.createManagedBean(new RowContainerCtrl(this.name));
-        ctrl.setComp(compProxy, this.eContainer, this.eViewport);
+        ctrl.setComp(compProxy, this.eContainer, this.eSpannedContainer, this.eViewport);
     }
 
     public override destroy(): void {

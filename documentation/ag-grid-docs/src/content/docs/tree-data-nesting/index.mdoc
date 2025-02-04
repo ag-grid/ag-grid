@@ -6,9 +6,9 @@ Configure the grid to display structured data by providing nested records.
 
 ## Providing Hierarchy
 
-Each row in the data can contain a field containing an array of child rows. The `treeDataChildrenPath` property is used to specify the field containing the child rows.
+Each row in the data can contain a field containing an array of child rows. The `treeDataChildrenField` property is used to specify the field containing the child rows.
 
-The below structure demonstrates a simple hierarchy, wherein the `treeDataChildrenPath` grid option would specify `"children"` as the field containing child rows:
+The below structure demonstrates a simple hierarchy, wherein the `treeDataChildrenField` grid option would specify `"children"` as the field containing child rows:
 ```
 const data = [
     {
@@ -34,7 +34,7 @@ const data = [
 In the above hierarchy, the 'A' row is the parent of 'B' and 'C'. The 'D' row is the parent of 'E' which is the parent of 'F'.
 
 {% note %}
-Due to the nature of the nested records, the grid does not support transactions when using `treeDataChildrenPath`.
+Due to the nature of the nested records, the grid does not support transactions when using `treeDataChildrenField`.
 {% /note %}
 
 ## Providing Group Values

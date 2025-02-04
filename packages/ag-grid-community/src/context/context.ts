@@ -59,6 +59,7 @@ import type { IMenuFactory } from '../interfaces/iMenuFactory';
 import type { IPivotColDefService } from '../interfaces/iPivotColDefService';
 import type { IPivotResultColsService } from '../interfaces/iPivotResultColsService';
 import type { IRowChildrenService } from '../interfaces/iRowChildrenService';
+import type { IRowHeaderColsService } from '../interfaces/iRowHeaderColsService';
 import type { IRowModel } from '../interfaces/iRowModel';
 import type { IRowNodeStage } from '../interfaces/iRowNodeStage';
 import type { ISelectionService } from '../interfaces/iSelectionService';
@@ -232,6 +233,7 @@ export interface CoreBeanCollection {
     pivotResultCols?: IPivotResultColsService;
     autoColSvc?: IColumnCollectionService;
     selectionColSvc?: SelectionColService;
+    rowHeaderColSvc?: IRowHeaderColsService;
     colDefFactory?: ColumnDefFactory;
     colAutosize?: ColumnAutosizeService;
     rowGroupColsSvc?: IColsService;
@@ -408,6 +410,7 @@ export type BeanName =
     | 'focusSvc'
     | 'footerSvc'
     | 'funcColsSvc'
+    | 'rowHeaderColSvc'
     | 'pivotColsSvc'
     | 'rowGroupColsSvc'
     | 'valueColsSvc'

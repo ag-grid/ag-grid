@@ -118,7 +118,10 @@ export class RowSpanCache extends BeanStub {
         // check each node, if the currently open cell span should span, add this node to span, otherwise close the span.
         const checkNodeForCache = (node: RowNode) => {
             const doesNodeSupportSpanning =
-                !node.group && !node.detail && (isFullWidthCellFunc ? !isFullWidthCellFunc({ rowNode: node }) : true);
+                !node.isExpandable() &&
+                !node.group &&
+                !node.detail &&
+                (isFullWidthCellFunc ? !isFullWidthCellFunc({ rowNode: node }) : true);
 
             // fw, hidden, and detail rows cannot be spanned as head, body nor tail. Skip.
             if (node.rowIndex == null || !doesNodeSupportSpanning) {

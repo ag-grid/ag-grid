@@ -1265,6 +1265,12 @@
                         },
                         {
                             "type": "item",
+                            "title": "Row Header Column",
+                            "path": "row-header-column",
+                            "isEnterprise": true
+                        },
+                        {
+                            "type": "item",
                             "title": "Menu Item Component",
                             "path": "component-menu-item",
                             "isEnterprise": true

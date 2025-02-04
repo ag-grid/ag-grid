@@ -209,6 +209,10 @@ const docs: Record<AllThemeParams, string> = {
         'Background color for cells that provide categories to the current range chart',
     rangeSelectionHighlightColor:
         'Background color to briefly apply to a cell range when the user copies from or pastes into it.',
+    rangeHeaderHighlightColor:
+        'Background color of the grid header when any cell of that header is part of a range. This is not visible unless enabled in the cell selection options.',
+    rowHeaderSelectedColor:
+        'Background color of the Row Header Column cell when the range selects all cells for that row.',
     rowBorder: 'Horizontal borders between rows.',
     rowGroupIndentSize:
         'The size of indentation applied to each level of row grouping - deep rows are indented by a multiple of this value.',

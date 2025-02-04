@@ -11,6 +11,7 @@ export {
     ApplyColumnStateParams,
     _resetColumnState,
     _applyColumnState,
+    _getColumnState,
 } from './columns/columnStateUtils';
 export type { ColumnMoveService } from './columnMove/columnMoveService';
 export type { ColumnNameService } from './columns/columnNameService';
@@ -22,6 +23,9 @@ export type { VisibleColsService } from './columns/visibleColsService';
 export { GroupInstanceIdCreator } from './columns/groupInstanceIdCreator';
 export {
     GROUP_AUTO_COLUMN_ID,
+    SELECTION_COLUMN_ID,
+    ROW_HEADER_COLUMN_ID,
+    isRowHeaderCol,
     isColumnSelectionCol,
     isColumnGroupAutoCol,
     _destroyColumnTree,
@@ -312,6 +316,7 @@ export type { MenuService } from './misc/menu/menuService';
 export { _setColMenuVisible } from './misc/menu/menuService';
 export type { IColsService } from './interfaces/iColsService';
 export type { IColumnCollectionService } from './interfaces/iColumnCollectionService';
+export type { IRowHeaderColsService } from './interfaces/iRowHeaderColsService';
 
 // editing / cellEditors
 export {
@@ -834,6 +839,7 @@ export {
     UseGroupTotalRow,
     GetChartMenuItems,
 } from './entities/gridOptions';
+export type { RowHeaderColumnDef } from './interfaces/rowHeaderColumn';
 export type { ManagedGridOptionKey, ManagedGridOptions } from './gridOptionsInitial';
 
 export {
@@ -888,7 +894,13 @@ export { IDateParams, IDate, IDateComp, BaseDate, BaseDateParams } from './inter
 export { IAfterGuiAttachedParams, ContainerType } from './interfaces/iAfterGuiAttachedParams';
 export { IComponent } from './interfaces/iComponent';
 export { IEventEmitter, IEventListener } from './interfaces/iEventEmitter';
-export { IHeaderParams, IHeaderComp, IHeader, IInnerHeaderComponent } from './headerRendering/cells/column/headerComp';
+export {
+    HeaderComp as _HeaderComp,
+    IHeaderParams,
+    IHeaderComp,
+    IHeader,
+    IInnerHeaderComponent,
+} from './headerRendering/cells/column/headerComp';
 export {
     IHeaderGroupParams,
     IHeaderGroup,
@@ -980,6 +992,7 @@ export {
     _observeResize,
     _preserveRangesWhile,
 } from './utils/dom';
+export { _selectAllCells } from './utils/selection';
 export { _stopPropagationForAgGrid, _isStopPropagationForAgGrid, _isElementInEventPath } from './utils/event';
 export { _warnOnce, _debounce, _doOnce, _waitUntil } from './utils/function';
 export { _warn, _error, _errMsg, _preInitErrMsg } from './validation/logging';

@@ -68,6 +68,7 @@ export const AllEnterpriseModules: Record<`${EnterpriseModuleName}Module`, numbe
     PivotModule: 120.06,
     RangeSelectionModule: 79.42,
     RichSelectModule: 102.86,
+    RowHeaderColumnModule: 10.05,
     RowGroupingModule: 107.07,
     RowGroupingPanelModule: 98,
     ServerSideRowModelApiModule: 47,

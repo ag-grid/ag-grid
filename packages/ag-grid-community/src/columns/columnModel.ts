@@ -9,6 +9,7 @@ import type { ColumnEventType } from '../events';
 import type { PropertyChangedEvent, PropertyValueChangedEvent } from '../gridOptionsService';
 import { _shouldMaintainColumnOrder } from '../gridOptionsUtils';
 import type { Column } from '../interfaces/iColumn';
+import type { IColumnCollectionService } from '../interfaces/iColumnCollectionService';
 import type { IPivotResultColsService } from '../interfaces/iPivotResultColsService';
 import { _areEqual } from '../utils/array';
 import { _createColumnTree } from './columnFactoryUtils';
@@ -168,6 +169,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
         const {
             autoColSvc,
             selectionColSvc,
+            rowHeaderColSvc,
             quickFilter,
             pivotResultCols,
             showRowGroupCols,
@@ -179,17 +181,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
 
         const cols = this.selectCols(pivotResultCols, this.colDefCols);
 
-        autoColSvc?.createColumns(cols, (updateOrder) => {
-            this.lastOrder = updateOrder(this.lastOrder);
-            this.lastPivotOrder = updateOrder(this.lastPivotOrder);
-        });
-        autoColSvc?.addColumns(cols);
-
-        selectionColSvc?.createColumns(cols, (updateOrder) => {
-            this.lastOrder = updateOrder(this.lastOrder) ?? null;
-            this.lastPivotOrder = updateOrder(this.lastPivotOrder) ?? null;
-        });
-        selectionColSvc?.addColumns(cols);
+        this.createColumnsForService([autoColSvc, selectionColSvc, rowHeaderColSvc], cols);
 
         const shouldSortNewColDefs = _shouldMaintainColumnOrder(this.gos, this.showingPivotResult);
         if (!newColDefs || shouldSortNewColDefs) {
@@ -215,6 +207,20 @@ export class ColumnModel extends BeanStub implements NamedBean {
             eventSvc.dispatchEvent({
                 type: 'gridColumnsChanged',
             });
+        }
+    }
+
+    private createColumnsForService(services: (IColumnCollectionService | undefined)[], cols: ColumnCollections): void {
+        for (const service of services) {
+            if (!service) {
+                continue;
+            }
+
+            service.createColumns(cols, (updateOrder) => {
+                this.lastOrder = updateOrder(this.lastOrder);
+                this.lastPivotOrder = updateOrder(this.lastPivotOrder);
+            });
+            service.addColumns(cols);
         }
     }
 

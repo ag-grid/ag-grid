@@ -186,13 +186,15 @@ export class HeaderComp extends Component implements IHeaderComp {
     public init(params: IHeaderParams): void {
         this.params = params;
 
-        const { sortSvc, touchSvc, userCompFactory } = this.beans;
+        const { sortSvc, touchSvc, rowHeaderColSvc, userCompFactory } = this.beans;
 
         this.currentTemplate = this.workOutTemplate();
         this.setTemplate(this.currentTemplate, sortSvc ? [sortSvc.getSortIndicatorSelector()] : undefined);
         touchSvc?.setupForHeader(this);
+
         this.setMenu();
         this.setupSort();
+        rowHeaderColSvc?.setupForHeader(this);
         this.setupFilterIcon();
         this.setupFilterButton();
         this.workOutInnerHeaderComponent(userCompFactory, params);

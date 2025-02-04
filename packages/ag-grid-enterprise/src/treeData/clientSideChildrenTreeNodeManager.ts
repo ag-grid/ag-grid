@@ -54,7 +54,7 @@ export class ClientSideChildrenTreeNodeManager<TData>
         _rowDataTran: RowDataTransaction<TData>,
         changedRowNodes: IChangedRowNodes<TData>
     ): ClientSideNodeManagerUpdateRowDataResult<TData> {
-        _error(268);
+        _warn(268);
         return {
             changedRowNodes,
             rowNodeTransaction: { add: [], remove: [], update: [] },

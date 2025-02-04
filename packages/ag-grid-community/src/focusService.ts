@@ -1,11 +1,12 @@
 import type { ColumnModel } from './columns/columnModel';
 import type { VisibleColsService } from './columns/visibleColsService';
+import { KeyCode } from './constants/keyCode';
 import type { NamedBean } from './context/bean';
 import { BeanStub } from './context/beanStub';
 import type { BeanCollection } from './context/context';
 import type { AgColumn } from './entities/agColumn';
 import type { AgColumnGroup } from './entities/agColumnGroup';
-import { _areCellsEqual, _getFirstRow, _getLastRow } from './entities/positionUtils';
+import { _areCellsEqual, _getFirstRow, _getLastRow, _getRowNode } from './entities/positionUtils';
 import type { RowNode } from './entities/rowNode';
 import type { CellFocusedParams, CommonCellFocusParams } from './events';
 import type { FilterManager } from './filter/filterManager';
@@ -418,7 +419,7 @@ export class FocusService extends BeanStub implements NamedBean {
             if (filterManager?.isAdvFilterHeaderActive()) {
                 return this.focusAdvancedFilter(headerPosition);
             }
-            return this.focusGridView(column as AgColumn);
+            return this.focusGridView({ column: column as AgColumn, event });
         }
 
         headerNavigation?.scrollToColumn(column as AgColumn, direction);
@@ -498,7 +499,13 @@ export class FocusService extends BeanStub implements NamedBean {
         return !!overlayGui && _focusInto(overlayGui, backwards);
     }
 
-    public focusGridView(column?: AgColumn, backwards: boolean = false, canFocusOverlay = true): boolean {
+    public focusGridView(params: {
+        column?: AgColumn;
+        backwards?: boolean;
+        canFocusOverlay?: boolean;
+        event?: KeyboardEvent;
+    }): boolean {
+        const { backwards = false, canFocusOverlay = true, event } = params;
         if (this.overlays?.isExclusive()) {
             return canFocusOverlay && this.focusOverlay(backwards);
         }
@@ -527,30 +534,51 @@ export class FocusService extends BeanStub implements NamedBean {
         const nextRow = backwards ? _getLastRow(this.beans) : _getFirstRow(this.beans);
 
         if (nextRow) {
+            const column = params.column ?? (this.focusedHeader?.column as AgColumn);
             const { rowIndex, rowPinned } = nextRow;
-            column ??= this.focusedHeader?.column as AgColumn;
-            if (column && rowIndex !== undefined && rowIndex !== null) {
-                this.navigation?.ensureCellVisible({ rowIndex, column, rowPinned });
+            const rowNode = _getRowNode(this.beans, nextRow);
+            if (!column || !rowNode || rowIndex == null) {
+                return false;
+            }
 
-                if (backwards) {
-                    // if full width we need to focus into the full width cell in the correct direction
-                    const rowCtrl = this.rowRenderer.getRowByPosition(nextRow);
-                    if (rowCtrl?.isFullWidth() && this.navigation?.tryToFocusFullWidthRow(nextRow, backwards)) {
-                        return true;
-                    }
+            if (column.isSuppressNavigable(rowNode)) {
+                const isRtl = this.gos.get('enableRtl');
+                let key: string;
+                if (!event || event.key === KeyCode.TAB) {
+                    key = isRtl ? KeyCode.LEFT : KeyCode.RIGHT;
+                } else {
+                    key = event.key;
                 }
 
-                this.setFocusedCell({
-                    rowIndex,
-                    column,
-                    rowPinned: _makeNull(rowPinned),
-                    forceBrowserFocus: true,
-                });
-
-                this.beans.rangeSvc?.setRangeToCell({ rowIndex, rowPinned, column });
-
+                this.beans.navigation?.navigateToNextCell(
+                    null,
+                    key,
+                    { rowIndex, column, rowPinned: rowPinned || null },
+                    true
+                );
                 return true;
             }
+
+            this.navigation?.ensureCellVisible({ rowIndex, column, rowPinned });
+
+            if (backwards) {
+                // if full width we need to focus into the full width cell in the correct direction
+                const rowCtrl = this.rowRenderer.getRowByPosition(nextRow);
+                if (rowCtrl?.isFullWidth() && this.navigation?.tryToFocusFullWidthRow(nextRow, backwards)) {
+                    return true;
+                }
+            }
+
+            this.setFocusedCell({
+                rowIndex,
+                column,
+                rowPinned: _makeNull(rowPinned),
+                forceBrowserFocus: true,
+            });
+
+            this.beans.rangeSvc?.setRangeToCell({ rowIndex, rowPinned, column });
+
+            return true;
         }
 
         if (canFocusOverlay && this.focusOverlay(backwards)) {
@@ -579,7 +607,7 @@ export class FocusService extends BeanStub implements NamedBean {
                 },
             });
         } else {
-            return this.focusGridView(column);
+            return this.focusGridView({ column });
         }
     }
 

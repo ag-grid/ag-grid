@@ -169,6 +169,7 @@ import type { SideBarDef } from '../interfaces/iSideBar';
 import type { StatusPanelDef } from '../interfaces/iStatusPanel';
 import type { IViewportDatasource } from '../interfaces/iViewportDatasource';
 import type { DefaultMenuItem, MenuItemDef } from '../interfaces/menuItem';
+import type { RowHeaderColumnDef } from '../interfaces/rowHeaderColumn';
 import type { Theme } from '../theming/Theme';
 import type { CheckboxSelectionCallback, ColDef, ColGroupDef, ColTypeDef, IAggFunc, SortDirection } from './colDef';
 import type { DataTypeDefinition } from './dataType';
@@ -1488,6 +1489,19 @@ export interface GridOptions<TData = any> {
     selectionColumnDef?: SelectionColumnDef;
 
     /**
+     * If `true`, a column will be displayed as the first column of the grid, containing
+     * the visible index of each row. These cells interact with `Cell Selection`  when it is enabled.
+     * @default false
+     */
+    enableRowHeaderColumn?: boolean;
+
+    /**
+     * Configure the Row Header Column.
+     * Note that due to the nature of this column, this type is a subset of `ColDef`, which does not support several normal column features.
+     */
+    rowHeaderColumnDef?: RowHeaderColumnDef;
+
+    /**
      * If `true`, only a single range can be selected.
      * @default false
      * @deprecated v32.2 Use `cellSelection.suppressMultiRanges` instead
@@ -2521,6 +2535,10 @@ export interface CellSelectionOptions<TData = any> {
      * @default false
      */
     suppressMultiRanges?: boolean;
+    /**
+     * If `true` the header of cells containing ranges will be highlighted.
+     */
+    enableHeaderHighlight?: boolean;
     /**
      * Determine the selection handle behaviour. Can be used to configure the range handle and the fill handle.
      */

@@ -7,7 +7,6 @@ import { AllCommunityModule, ClientSideRowModelModule, ModuleRegistry, RowSelect
 import type {
     ColDef,
     GetRowIdParams,
-    GridOptions,
     IRowNode,
     RowSelectedEvent,
     RowSelectionOptions,

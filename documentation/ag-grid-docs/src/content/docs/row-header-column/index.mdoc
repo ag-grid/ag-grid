@@ -1,0 +1,84 @@
+---
+title: "Row Header Column"
+enterprise: true
+---
+
+Row Header Column is a Column always present at the start of the grid where each cell of this column will work as a row header.
+The following example demonstrates the grid with a Row Header Column with no additional configuration.
+
+To enable the Row Header Column, set the column property `enableRowHeaderColumn=true` in the Grid Options .
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    enableRowHeaderColumn: true
+}
+```
+
+{% gridExampleRunner title="Row Header Column" name="row-header-column-default" /%}
+
+## Cell Selection
+
+When the grid is configured with [Cell Selection](./cell-selection/), the Row Header Column will automatically integrate with it. This integration works
+by selection of cells of the row when a cell in the Row Header Column is clicked. To prevent this, the `suppressCellSelectionIntegration` option can be used.
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    enableRowHeaderColumn: true,
+    cellSelection: true
+}
+```
+
+### RowHeaderColumnDef
+{% interfaceDocumentation interfaceName="RowHeaderColumnDef" config={ "description": "" } names=["suppressCellSelectionIntegration"] /%}
+
+{% gridExampleRunner title="Row Header Column with Cell Selection" name="row-header-column-cell-selection" /%}
+
+## Value Export
+
+By default, when working with exporters such as [CSV Export](./csv-export/) or [Excel Export](./excel-export/), the value of the Row Header Column is not exported. 
+This behaviour can be changed by toggling the `exportRowHeaderColumn` of the export params.
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    enableRowHeaderColumn: true,
+    cellSelection: true,
+    defaultExcelExportParams: {
+        exportRowHeaderColumn: true,
+    },
+}
+```
+
+### ExportParams
+{% interfaceDocumentation interfaceName="ExportParams" config={ "description": "" } names=["exportRowHeaderColumn"] /%}
+
+{% gridExampleRunner title="Row Header Column with Export" name="row-header-column-export" /%}
+
+
+## Interface
+### RowHeaderColumnDef
+{% interfaceDocumentation interfaceName="RowHeaderColumnDef" config={ "description": "" } names=[
+    "suppressCellSelectionIntegration", 
+    "context",
+    "onCellClicked",
+    "onCellContextMenu",
+    "onCellDoubleClicked",
+    "headerTooltip",
+    "headerStyle",
+    "headerComponent",
+    "headerComponentParams",
+    "suppressHeaderContextMenu",
+    "suppressHeaderKeyboardEvent",
+    "cellRenderer",
+    "cellRendererParams",
+    "cellRendererSelector",
+    "tooltipField",
+    "tooltipValueGetter",
+    "tooltipComponent",
+    "tooltipComponentParams",
+    "width",
+    "initialWidth",
+    "maxWidth",
+    "minWidth",
+    "flex",
+    "initialFlex",
+    "resizable"] /%}

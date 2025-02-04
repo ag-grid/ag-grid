@@ -46,6 +46,7 @@
     --ag-selected-row-background-color: #{color.change(#0091ea, $alpha: 0.28)};
     --ag-header-column-separator-color: #{color.change(#bdc3c7, $alpha: 0.5)};
     --ag-input-disabled-border-color: #{color.change(#95a5a6, $alpha: 0.3)};
+    --ag-row-header-selected-color: color-mix(in srgb, transparent, var(--ag-balham-active-color) 50%);
 
     --ag-header-column-separator-display: block;
     --ag-header-column-separator-height: 50%;

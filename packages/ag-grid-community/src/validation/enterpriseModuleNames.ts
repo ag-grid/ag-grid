@@ -19,6 +19,7 @@ export const ENTERPRISE_MODULE_NAMES: Record<EnterpriseModuleName, 1> = {
     Pivot: 1,
     RangeSelection: 1,
     RichSelect: 1,
+    RowHeaderColumn: 1,
     RowGrouping: 1,
     RowGroupingPanel: 1,
     ServerSideRowModelApi: 1,

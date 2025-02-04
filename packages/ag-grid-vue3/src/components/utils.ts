@@ -62,6 +62,7 @@ import type {
     RowClassParams,
     RowClassRules,
     RowGroupingDisplayType,
+    RowHeaderColumnDef,
     RowHeightParams,
     RowModelType,
     RowSelectionOptions,
@@ -1190,6 +1191,15 @@ export interface Props<TData> {
          * Note that due to the nature of this column, this type is a subset of `ColDef`, which does not support several normal column features such as editing, pivoting and grouping.
          */
     selectionColumnDef?: SelectionColumnDef | undefined,
+    /** If `true`, a column will be displayed as the first column of the grid, containing
+         * the visible index of each row. These cells interact with `Cell Selection`  when it is enabled.
+         * @default false
+         */
+    enableRowHeaderColumn?: boolean | undefined,
+    /** Configure the Row Header Column.
+         * Note that due to the nature of this column, this type is a subset of `ColDef`, which does not support several normal column features.
+         */
+    rowHeaderColumnDef?: RowHeaderColumnDef | undefined,
     /** If `true`, only a single range can be selected.
          * @default false
          * @deprecated v32.2 Use `cellSelection.suppressMultiRanges` instead
@@ -1827,6 +1837,8 @@ export function getProps() {
         suppressCellFocus: undefined,
         suppressHeaderFocus: undefined,
         selectionColumnDef: undefined,
+        enableRowHeaderColumn: undefined,
+        rowHeaderColumnDef: undefined,
         suppressMultiRangeSelection: undefined,
         enableCellTextSelection: undefined,
         enableRangeSelection: undefined,
