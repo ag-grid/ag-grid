@@ -103,7 +103,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
             _setDisplayed(eResize, false);
         }
         colHover?.createHoverFeature(compBean, [column], eGui);
-        rangeSvc?.createRangeHighlightFeature(column, comp);
+        rangeSvc?.createRangeHighlightFeature(compBean, column, comp);
         compBean.createManagedBean(new SetLeftFeature(column, eGui, beans));
         compBean.createManagedBean(
             new ManagedFocusFeature(eGui, {

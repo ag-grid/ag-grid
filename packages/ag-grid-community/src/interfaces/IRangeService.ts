@@ -42,7 +42,7 @@ export interface IRangeService {
     clearCellRangeCellValues(params: ClearCellRangeParams): void;
     createDragListenerFeature(eContainer: HTMLElement): BeanStub;
     createCellRangeFeature(beans: BeanCollection, ctrl: CellCtrl): ICellRangeFeature;
-    createRangeHighlightFeature(column: AgColumn, headerComp: IHeaderCellComp): void;
+    createRangeHighlightFeature(compBean: BeanStub, column: AgColumn, headerComp: IHeaderCellComp): void;
 }
 
 export enum CellRangeType {

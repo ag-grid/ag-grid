@@ -842,8 +842,8 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
         }
     }
 
-    public createRangeHighlightFeature(column: AgColumn<any>, headerComp: IHeaderCellComp): void {
-        this.createManagedBean(new RangeHeaderHighlightFeature(column, headerComp));
+    public createRangeHighlightFeature(compBean: BeanStub, column: AgColumn<any>, headerComp: IHeaderCellComp): void {
+        compBean.createManagedBean(new RangeHeaderHighlightFeature(column, headerComp));
     }
 
     private setSelectionMode(allColumns: boolean) {
