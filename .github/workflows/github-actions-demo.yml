@@ -1,6 +1,9 @@
 name: GitHub Actions Demo
 run-name: ${{ github.actor }} is testing out GitHub Actions 🚀
 on:
+  push:
+    branches:
+      - 'seanlandsman-patch-9'
   pull_request:
     branches:
       - 'seanlandsman-patch-9'
