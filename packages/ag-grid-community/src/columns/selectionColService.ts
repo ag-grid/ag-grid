@@ -132,6 +132,10 @@ export class SelectionColService extends BeanStub implements NamedBean, IColumnC
         const { gos } = this.beans;
         const selectionColumnDef = def ?? gos.get('selectionColumnDef');
         const enableRTL = gos.get('enableRtl');
+
+        // We don't support row spanning in the selection column
+        const { rowSpan: _, spanRows: __, ...filteredSelColDef } = selectionColumnDef as ColDef;
+
         return {
             // overridable properties
             width: 50,
@@ -149,7 +153,7 @@ export class SelectionColService extends BeanStub implements NamedBean, IColumnC
             suppressFillHandle: true,
             pinned: null,
             // overrides
-            ...selectionColumnDef,
+            ...filteredSelColDef,
             // non-overridable properties
             colId: SELECTION_COLUMN_ID,
         };

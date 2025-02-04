@@ -1,0 +1,15 @@
+diff --git a/node_modules/nx/src/tasks-runner/forked-process-task-runner.js b/node_modules/nx/src/tasks-runner/forked-process-task-runner.js
+index aa01b52..7763f2f 100644
+--- a/node_modules/nx/src/tasks-runner/forked-process-task-runner.js
++++ b/node_modules/nx/src/tasks-runner/forked-process-task-runner.js
+@@ -391,8 +391,8 @@ exports.ForkedProcessTaskRunner = ForkedProcessTaskRunner;
+ const colors = [
+     chalk.green,
+     chalk.greenBright,
+-    chalk.red,
+-    chalk.redBright,
++    // chalk.red,
++    // chalk.redBright,
+     chalk.cyan,
+     chalk.cyanBright,
+     chalk.yellow,

@@ -80,8 +80,8 @@ export class PinnedColumnService extends BeanStub implements NamedBean {
         this.setColsPinned(columnsToRemove, null, 'viewportSizeFeature');
     }
 
-    public createPinnedWidthFeature(element: HTMLElement, isLeft: boolean): SetPinnedWidthFeature {
-        return new SetPinnedWidthFeature(element, isLeft);
+    public createPinnedWidthFeature(isLeft: boolean, ...elements: (HTMLElement | undefined)[]): SetPinnedWidthFeature {
+        return new SetPinnedWidthFeature(isLeft, elements);
     }
 
     public setColsPinned(keys: ColKey[], pinned: ColumnPinnedType, source: ColumnEventType): void {

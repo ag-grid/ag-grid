@@ -647,10 +647,6 @@ export class ChartOptionsService extends BeanStub {
             chartOptions: chartModel.chartOptions,
         });
     }
-
-    public override destroy(): void {
-        super.destroy();
-    }
 }
 
 function isMatchingSeries(seriesType: ChartSeriesType, series: SupportedSeries): boolean {

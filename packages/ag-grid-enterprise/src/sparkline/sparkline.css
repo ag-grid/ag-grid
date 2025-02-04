@@ -2,11 +2,13 @@
     position: absolute;
     height: 100%;
     width: 100%;
-    /* rtl:ignore */
     left: 0;
     top: 0;
 }
 
-.ag-sparkline-wrapper :where(canvas) {
-    position: absolute;
+.ag-sparkline-wrapper :where(.ag-charts-wrapper) {
+    line-height: initial;
+
+    --ag-charts-align: flex-start;
+    --ag-charts-justify: flex-start;
 }
