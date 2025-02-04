@@ -1,6 +1,4 @@
 import type {
-    GridApi,
-    GridOptions,
     ISelectionService,
     ISetNodesSelectedParams,
     NamedBean,
@@ -323,39 +321,12 @@ export class ServerSideSelectionService extends BaseSelectionService implements 
         return _error(194, { method: 'updateSelectableAfterGrouping' }) as undefined;
     }
 
-    public refreshMasterNodeState(node: RowNode<any>, event?: Event | undefined): void {
-        const detailApi = node.detailNode?.detailGridInfo?.api;
-
-        if (!detailApi) return;
-
-        const isSelectAll = detailApi.getSelectAllState();
-        const current = node.isSelected() ?? null;
-        const source: SelectionEventSourceType = 'masterDetail';
-        if (current !== isSelectAll) {
-            if (isSelectAll === null) {
-                const selectionChanged = this.selectRowNode(node, undefined, event, source);
-                this.selectionStrategy.setNodesSelected({ nodes: [node], newValue: false, source, event });
-
-                if (selectionChanged) {
-                    this.dispatchSelectionChanged(source);
-                }
-            } else {
-                this.selectionStrategy.setNodesSelected({
-                    nodes: [node],
-                    newValue: isSelectAll,
-                    source,
-                    event,
-                });
-                this.shotgunResetNodeSelectionState(source);
-            }
-        }
+    public refreshMasterNodeState(): void {
+        // Initially we don't support SSRM for master detail selection
     }
 
-    public getDetailSelectionState(node: RowNode<any>): Set<string> | undefined {
-        return;
-    }
-
-    setDetailSelectionState(masterNode: RowNode<any>, options: GridOptions<any>, detailApi: GridApi<any>): void {
+    public setDetailSelectionState(): void {
+        // Initially we don't support SSRM for master detail selection
         return;
     }
 }

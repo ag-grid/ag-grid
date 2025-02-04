@@ -6,6 +6,7 @@ import type { RowSelectedEvent, SelectionEventSourceType } from '../events';
 import {
     _getGroupSelection,
     _getGroupSelectsDescendants,
+    _getMasterSelects,
     _getRowSelectionMode,
     _isClientSideRowModel,
     _isMultiRowSelection,
@@ -30,6 +31,7 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
     private groupSelectsDescendants: boolean;
     private groupSelectsFiltered: boolean;
     private mode?: RowSelectionMode;
+    private masterSelectsDetail = false;
 
     public override postConstruct(): void {
         super.postConstruct();
@@ -38,11 +40,14 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
         this.mode = _getRowSelectionMode(gos);
         this.groupSelectsDescendants = _getGroupSelectsDescendants(gos);
         this.groupSelectsFiltered = _getGroupSelection(gos) === 'filteredDescendants';
+        this.masterSelectsDetail = _getMasterSelects(gos) === 'detail';
 
         this.addManagedPropertyListeners(['groupSelectsChildren', 'groupSelectsFiltered', 'rowSelection'], () => {
             const groupSelectsDescendants = _getGroupSelectsDescendants(gos);
             const selectionMode = _getRowSelectionMode(gos);
             const groupSelectsFiltered = _getGroupSelection(gos) === 'filteredDescendants';
+
+            this.masterSelectsDetail = _getMasterSelects(gos) === 'detail';
 
             if (
                 groupSelectsDescendants !== this.groupSelectsDescendants ||
@@ -719,6 +724,8 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
     }
 
     public refreshMasterNodeState(node: RowNode, e?: Event): void {
+        if (!this.masterSelectsDetail) return;
+
         const detailApi = node.detailNode?.detailGridInfo?.api;
 
         if (!detailApi) return;
@@ -734,15 +741,23 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
         }
 
         if (!isSelectAll) {
-            const current = this.detailSelection.get(node.id!) ?? new Set();
+            const detailSelected = this.detailSelection.get(node.id!) ?? new Set();
             for (const n of detailApi.getSelectedNodes()) {
-                current.add(n.id!);
+                detailSelected.add(n.id!);
             }
-            this.detailSelection.set(node.id!, current);
+            this.detailSelection.set(node.id!, detailSelected);
         }
     }
 
-    public setDetailSelectionState(masterNode: RowNode, { rowSelection }: GridOptions, detailApi: GridApi): void {
+    public setDetailSelectionState(masterNode: RowNode, detailGridOptions: GridOptions, detailApi: GridApi): void {
+        if (!this.masterSelectsDetail) return;
+
+        if (!_isMultiRowSelection(detailGridOptions)) {
+            _warn(269);
+            return;
+        }
+
+        const { rowSelection } = detailGridOptions;
         const selectAllMode =
             (typeof rowSelection !== 'string' && rowSelection?.mode === 'multiRow' && rowSelection.selectAll) ||
             undefined;
@@ -756,7 +771,7 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
                 break;
             }
             case undefined: {
-                const selectedIds = this.getDetailSelectionState(masterNode);
+                const selectedIds = this.detailSelection.get(masterNode.id!);
                 if (selectedIds) {
                     const nodes: IRowNode[] = [];
                     for (const id of selectedIds) {
@@ -774,10 +789,6 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
             default:
                 break;
         }
-    }
-
-    public getDetailSelectionState(node: RowNode): Set<string> | undefined {
-        return this.detailSelection.get(node.id!);
     }
 }
 

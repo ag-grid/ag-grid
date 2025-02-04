@@ -8,6 +8,7 @@ import type {
     GridOptions,
     GroupSelectionMode,
     IsRowSelectable,
+    MasterSelectionMode,
     MultiRowSelectionOptions,
     RowSelectionMode,
     RowSelectionOptions,
@@ -553,8 +554,13 @@ export function _getIsRowSelectable(gos: GridOptionsService): IsRowSelectable | 
     return selection?.isRowSelectable;
 }
 
-export function _getRowSelectionMode(gos: GridOptionsService): RowSelectionMode | undefined {
-    const selection = gos.get('rowSelection');
+export function _getRowSelectionMode(gridOptions: GridOptions): RowSelectionMode | undefined;
+export function _getRowSelectionMode(gos: GridOptionsService): RowSelectionMode | undefined;
+export function _getRowSelectionMode(arg: object): RowSelectionMode | undefined {
+    const selection =
+        'beanName' in arg && arg.beanName === 'gos'
+            ? (arg as GridOptionsService).get('rowSelection')
+            : (arg as GridOptions).rowSelection;
 
     if (typeof selection === 'string') {
         switch (selection) {
@@ -577,8 +583,10 @@ export function _getRowSelectionMode(gos: GridOptionsService): RowSelectionMode 
     }
 }
 
-export function _isMultiRowSelection(gos: GridOptionsService): boolean {
-    const mode = _getRowSelectionMode(gos);
+export function _isMultiRowSelection(gridOptions: GridOptions): boolean;
+export function _isMultiRowSelection(gos: GridOptionsService): boolean;
+export function _isMultiRowSelection(arg: object): boolean {
+    const mode = _getRowSelectionMode(arg as GridOptionsService);
     return mode === 'multiRow';
 }
 
@@ -624,6 +632,11 @@ export function _getSelectAll(gos: GridOptionsService, defaultValue = true): Sel
 export function _getGroupSelectsDescendants(gos: GridOptionsService): boolean {
     const groupSelection = _getGroupSelection(gos);
     return groupSelection === 'descendants' || groupSelection === 'filteredDescendants';
+}
+
+export function _getMasterSelects(gos: GridOptionsService): MasterSelectionMode {
+    const rowSelection = gos.get('rowSelection');
+    return (typeof rowSelection === 'object' && rowSelection.masterSelects) || 'self';
 }
 
 export function _isSetFilterByDefault(gos: GridOptionsService): boolean {

@@ -610,6 +610,7 @@ export const AG_GRID_ERRORS = {
     267: () =>
         'Detail grids can not use a different theme to the master grid, the `theme` detail grid option will be ignored.' as const,
     268: () => "Transactions aren't supported with tree data when using treeDataChildrenField" as const,
+    269: () => "When `masterSelects: 'detail'`, detail grids must be configured with multi-row selection" as const,
 };
 
 export type ErrorMap = typeof AG_GRID_ERRORS;

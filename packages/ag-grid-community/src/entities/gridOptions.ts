@@ -2604,6 +2604,15 @@ interface CommonRowSelectionOptions<TData = any, TValue = any> {
      * @default false
      */
     enableSelectionWithoutKeys?: boolean;
+    /**
+     * Determines the selection behaviour of master rows with respect to their detail cells.
+     *
+     * When set to `'self'`, selecting the master row has no effect on the selection state of the detail row.
+     * When set to `'detail'`, selecting the master row behaves the same as the header checkbox of the detail grid.
+     *
+     * @default 'self'
+     */
+    masterSelects?: 'self' | 'detail';
 }
 
 /**
@@ -2716,3 +2725,5 @@ export type SelectAllMode = 'all' | 'filtered' | 'currentPage';
 export type RowSelectionMode = RowSelectionOptions['mode'];
 
 export type CheckboxLocation = 'selectionColumn' | 'autoGroupColumn';
+
+export type MasterSelectionMode = NonNullable<CommonRowSelectionOptions['masterSelects']>;

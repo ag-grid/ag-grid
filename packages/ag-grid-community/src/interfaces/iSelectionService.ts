@@ -47,7 +47,6 @@ export interface ISelectionService {
     handleSelectionEvent(event: MouseEvent | KeyboardEvent, rowNode: RowNode, source: SelectionEventSourceType): number;
     isCellCheckboxSelection(column: AgColumn, rowNode: IRowNode): boolean;
     refreshMasterNodeState(node: RowNode, e?: Event): void;
-    getDetailSelectionState(node: RowNode): Set<string> | undefined;
     setDetailSelectionState(masterNode: RowNode, option: GridOptions, detailApi: GridApi): void;
 }
 
