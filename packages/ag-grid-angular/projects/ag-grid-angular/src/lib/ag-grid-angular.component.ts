@@ -1377,6 +1377,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Input() public selectionColumnDef: SelectionColumnDef | undefined = undefined;
     /** If `true`, a column will be displayed as the first column of the grid, containing
      * the visible index of each row. These cells interact with `Cell Selection`  when it is enabled.
+     * @default false
      */
     @Input({ transform: booleanAttribute }) public enableRowHeaderColumn: boolean | undefined = undefined;
     /** Configure the Row Header Column.

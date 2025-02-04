@@ -1193,6 +1193,7 @@ export interface Props<TData> {
     selectionColumnDef?: SelectionColumnDef | undefined,
     /** If `true`, a column will be displayed as the first column of the grid, containing
          * the visible index of each row. These cells interact with `Cell Selection`  when it is enabled.
+         * @default false
          */
     enableRowHeaderColumn?: boolean | undefined,
     /** Configure the Row Header Column.
