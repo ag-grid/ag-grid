@@ -1,18 +1,15 @@
-import type { ChartType } from 'ag-grid-community';
-
 import type { AgChartsExports } from '../../../../../agChartsExports';
 import type { ChartTranslationKey } from '../../../../services/chartTranslationService';
-import type { ThemeTemplateParameters } from '../../miniChartsContainer';
+import type { MiniChartSelector, ThemeTemplateParameters } from '../../miniChartsContainer';
 import { MiniChartWithAxes } from '../miniChartWithAxes';
 
-export class MiniStackedBar extends MiniChartWithAxes {
-    static chartType: ChartType = 'stackedBar';
-    static data = [
-        [8, 12, 16],
-        [6, 9, 12],
-        [2, 3, 4],
-    ];
+export const miniStackedBarData = [
+    [8, 12, 16],
+    [6, 9, 12],
+    [2, 3, 4],
+];
 
+export class MiniStackedBarClass extends MiniChartWithAxes {
     private readonly bars: any[][];
 
     constructor(
@@ -22,7 +19,7 @@ export class MiniStackedBar extends MiniChartWithAxes {
         strokes: string[],
         _themeTemplateParameters: ThemeTemplateParameters,
         _isCustomTheme: boolean,
-        data = MiniStackedBar.data,
+        data = miniStackedBarData,
         xScaleDomain = [0, 16],
         tooltipName: ChartTranslationKey = 'stackedBarTooltip'
     ) {
@@ -72,3 +69,8 @@ export class MiniStackedBar extends MiniChartWithAxes {
         );
     }
 }
+
+export const MiniStackedBar: MiniChartSelector = {
+    chartType: 'stackedBar',
+    miniChart: MiniStackedBarClass,
+};

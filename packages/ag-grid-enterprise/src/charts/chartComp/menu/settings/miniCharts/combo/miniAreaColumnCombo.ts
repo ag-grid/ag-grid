@@ -1,8 +1,7 @@
 import type { Path, Rect } from 'ag-charts-types/scene';
 
-import type { ChartType } from 'ag-grid-community';
-
 import type { AgChartsExports } from '../../../../../agChartsExports';
+import type { MiniChartSelector } from '../../miniChartsContainer';
 import { createColumnRects } from '../miniChartHelpers';
 import { MiniChartWithAxes } from '../miniChartWithAxes';
 
@@ -10,9 +9,7 @@ export interface Coordinate {
     x: number;
     y: number;
 }
-export class MiniAreaColumnCombo extends MiniChartWithAxes {
-    static chartType: ChartType = 'areaColumnCombo';
-
+export class MiniAreaColumnComboClass extends MiniChartWithAxes {
     private columns: Rect[];
     private areas: Path[];
 
@@ -123,3 +120,8 @@ export class MiniAreaColumnCombo extends MiniChartWithAxes {
         });
     }
 }
+
+export const MiniAreaColumnCombo: MiniChartSelector = {
+    chartType: 'areaColumnCombo',
+    miniChart: MiniAreaColumnComboClass,
+};
