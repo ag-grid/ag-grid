@@ -2,6 +2,7 @@ import { AgChartsEnterpriseModule } from 'ag-charts-enterprise';
 
 import type {
     ChartCreatedEvent,
+    ChartOptionsChangedEvent,
     ChartRangeSelectionChangedEvent,
     CreateRangeChartParams,
     FirstDataRenderedEvent,
@@ -42,6 +43,7 @@ const gridOptions: GridOptions = {
     onFirstDataRendered: onFirstDataRendered,
     onChartCreated: onChartCreated,
     onChartRangeSelectionChanged: onChartRangeSelectionChanged,
+    onChartOptionsChanged: onChartOptionsChanged,
 };
 
 function onFirstDataRendered(params: FirstDataRenderedEvent) {
@@ -66,6 +68,10 @@ function onChartCreated(event: ChartCreatedEvent) {
 function onChartRangeSelectionChanged(event: ChartRangeSelectionChangedEvent) {
     console.log('Changed range selection of chart with ID ' + event.chartId);
     updateTitle(gridApi!, event.chartId);
+}
+
+function onChartOptionsChanged(event: ChartOptionsChangedEvent) {
+    console.log('Changed options of chart with ID ' + event.chartId);
 }
 
 function updateTitle(api: GridApi, chartId: string) {
