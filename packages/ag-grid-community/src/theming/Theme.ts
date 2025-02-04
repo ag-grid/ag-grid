@@ -52,7 +52,7 @@ export const _asThemeImpl = <TParams>(theme: Theme<TParams>): ThemeImpl => {
 // TODO button and column drop styles were split out into a part in 33.1 and
 // must be bundled by default to avoid a breaking change for people using
 // createTheme(). In v34 the withPart calls can be removed.
-export const createTheme = (): Theme<CoreParams & WithParamTypes<ButtonStyleParams>> =>
+export const createTheme = (): Theme<CoreParams & ButtonStyleParams> =>
     new ThemeImpl().withPart(buttonStyleQuartz).withPart(columnDropStyleBordered);
 
 type GridThemeUseArgs = {

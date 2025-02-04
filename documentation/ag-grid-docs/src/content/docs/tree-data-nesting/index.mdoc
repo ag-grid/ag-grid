@@ -1,0 +1,88 @@
+---
+title: "Tree Data - Nested Records"
+enterprise: true
+---
+Configure the grid to display structured data by providing nested records.
+
+## Providing Hierarchy
+
+Each row in the data can contain a field containing an array of child rows. The `treeDataChildrenField` property is used to specify the field containing the child rows.
+
+The below structure demonstrates a simple hierarchy, wherein the `treeDataChildrenField` grid option would specify `"children"` as the field containing child rows:
+```
+const data = [
+    {
+        id: 'A',
+        children: [
+            { id: 'B' },
+            { id: 'C' },
+        ]
+    },
+    {
+        id: 'D',
+        children: [
+            {
+                id: 'E',
+                children: [
+                    { id: 'F' },
+                ]
+            }
+        ]
+    }
+]
+```
+In the above hierarchy, the 'A' row is the parent of 'B' and 'C'. The 'D' row is the parent of 'E' which is the parent of 'F'.
+
+{% note %}
+Due to the nature of the nested records, the grid does not support transactions when using `treeDataChildrenField`.
+{% /note %}
+
+## Providing Group Values
+
+When providing a nested hierarchy, the grid will use the row ID as the group value by default. To provide a custom value, the `autoGroupColumnDef` grid options `field` can be used.
+
+The example below demonstrates a case where the `autoGroupColumnDef` field is set to `name` to display a group value:
+
+{% gridExampleRunner title="Group Values" name="basic-example" exampleHeight=350 /%}
+
+The following snippet demonstrates how to provide nested siblings with a custom group value:
+```{% frameworkTransform=true %}
+const gridOptions = {
+    treeData: true,
+    treeDataChildrenField: 'children',
+    autoGroupColumnDef: {
+        field: 'name',
+    },
+};
+```
+
+## Supplied vs Aggregated
+
+When using Tree Data, columns defined with an aggregation function will always perform aggregations on the group nodes.
+This means any supplied group data will be ignored in favour of the aggregated values.
+
+{% gridExampleRunner title="Aggregated Data" name="aggregated-data" exampleHeight=350 /%}
+
+The example above uses the configuration below to demonstrate the `Desktop` row is being aggregated to show
+the sum of its children (4), rather than the provided value (1), despite both columns showing the same field:
+```
+const gridOptions = {
+    treeData: true,
+    columnDefs: [
+        {
+            headerName: 'Aggregated (Sum)',
+            aggFunc: 'sum',
+            field: 'items',
+        },
+        {
+            headerName: 'Provided',
+            field: 'items',
+        },
+    ],
+};
+```
+
+Refer to the [Aggregation](./aggregation/) page for more details.
+
+## Next Up
+Continue to the next section to learn how to configure the [Group Column](./tree-data-group-column/).

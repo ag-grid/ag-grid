@@ -166,7 +166,8 @@ export interface GridState {
     /**
      * Includes currently selected rows.
      * For Server-Side Row Model, will be `ServerSideRowSelectionState | ServerSideRowGroupSelectionState`,
-     * for other row models, will be an array of row IDs
+     * for other row models, will be an array of row IDs.
+     * Can only be set for Client-Side Row Model and Server-Side Row Model.
      */
     rowSelection?: string[] | ServerSideRowSelectionState | ServerSideRowGroupSelectionState;
     /** Includes current scroll position. Works for Client-Side Row Model only */

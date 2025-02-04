@@ -1100,12 +1100,52 @@ export * from './events';
 // theming
 export { type Part, createPart } from './theming/Part';
 export { type Theme, createTheme, _asThemeImpl } from './theming/Theme';
-export * from './theming/parts/checkbox-style/checkbox-styles';
-export * from './theming/parts/color-scheme/color-schemes';
-export * from './theming/parts/icon-set/icon-sets';
-export * from './theming/parts/input-style/input-styles';
-export * from './theming/parts/button-style/button-styles';
-export * from './theming/parts/tab-style/tab-styles';
-export * from './theming/parts/button-style/button-styles';
-export * from './theming/parts/column-drop-style/column-drop-styles';
-export * from './theming/parts/theme/themes';
+export { checkboxStyleDefault } from './theming/parts/checkbox-style/checkbox-styles';
+export {
+    colorSchemeDark,
+    colorSchemeDarkBlue,
+    colorSchemeDarkWarm,
+    colorSchemeLight,
+    colorSchemeLightCold,
+    colorSchemeLightWarm,
+    colorSchemeVariable,
+} from './theming/parts/color-scheme/color-schemes';
+export {
+    iconOverrides,
+    iconSetAlpine,
+    iconSetMaterial,
+    iconSetQuartz,
+    iconSetQuartzBold,
+    iconSetQuartzLight,
+    iconSetQuartzRegular,
+} from './theming/parts/icon-set/icon-sets';
+export { inputStyleBase, inputStyleBordered, inputStyleUnderlined } from './theming/parts/input-style/input-styles';
+export {
+    buttonStyleAlpine,
+    buttonStyleBalham,
+    buttonStyleBase,
+    buttonStyleQuartz,
+} from './theming/parts/button-style/button-styles';
+export {
+    tabStyleAlpine,
+    tabStyleBase,
+    tabStyleMaterial,
+    tabStyleQuartz,
+    tabStyleRolodex,
+} from './theming/parts/tab-style/tab-styles';
+export { columnDropStyleBordered, columnDropStylePlain } from './theming/parts/column-drop-style/column-drop-styles';
+export { styleMaterial, themeAlpine, themeBalham, themeMaterial, themeQuartz } from './theming/parts/theme/themes';
+export type {
+    ColorValue,
+    ImageValue,
+    ScaleValue,
+    BorderValue,
+    LengthValue,
+    ShadowValue,
+    DurationValue,
+    FontFamilyValue,
+    FontWeightValue,
+    BorderStyleValue,
+    ColorSchemeValue,
+    WithParamTypes,
+} from './theming/theme-types';

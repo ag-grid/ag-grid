@@ -1005,6 +1005,10 @@ export interface Props<TData> {
          * @default false
          */
     treeData?: boolean | undefined,
+    /** The name of the field to use in a data item to retrieve the array of children nodes of a node when while using treeData=true.
+         * It supports accessing nested fields using the dot notation.
+         */
+    treeDataChildrenField?: string | undefined,
     /** Set to `true` to suppress sort indicators and actions from the row group panel.
          * @default false
          */
@@ -1787,6 +1791,7 @@ export function getProps() {
         groupRowRenderer: undefined,
         groupRowRendererParams: undefined,
         treeData: undefined,
+        treeDataChildrenField: undefined,
         rowGroupPanelSuppressSort: undefined,
         suppressGroupRowsSticky: undefined,
         pinnedTopRowData: undefined,

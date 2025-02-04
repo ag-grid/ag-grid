@@ -189,6 +189,8 @@ export class PivotColDefService extends BeanStub implements NamedBean, IPivotCol
             acc: Map<string, string[]>
         ) => {
             if ('children' in def) {
+                const { valueColsSvc } = this;
+                const { columns: valueCols = [] } = valueColsSvc ?? {};
                 const childAcc = new Map();
 
                 def.children.forEach((grp: ColDef | ColGroupDef) => {
@@ -196,8 +198,10 @@ export class PivotColDefService extends BeanStub implements NamedBean, IPivotCol
                 });
 
                 const leafGroup = !def.children.some((child) => (child as ColGroupDef).children);
+                const hasCollapsedLeafGroup =
+                    leafGroup && valueCols.length === 1 && this.gos.get('removePivotHeaderRowWhenSingleValueColumn');
 
-                this.valueColsSvc?.columns.forEach((valueColumn) => {
+                valueCols.forEach((valueColumn) => {
                     const columnName: string | null = this.colNames.getDisplayNameForColumn(valueColumn, 'header');
                     const totalColDef = this.createColDef(valueColumn, columnName, def.pivotKeys);
                     totalColDef.pivotTotalColumnIds = childAcc.get(valueColumn.getColId());
@@ -206,7 +210,7 @@ export class PivotColDefService extends BeanStub implements NamedBean, IPivotCol
 
                     totalColDef.aggFunc = valueColumn.getAggFunc();
 
-                    if (!leafGroup) {
+                    if (!leafGroup || hasCollapsedLeafGroup) {
                         // add total colDef to group and pivot colDefs array
                         const children = def.children;
                         children.push(totalColDef);

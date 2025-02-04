@@ -1117,9 +1117,23 @@
                         },
                         {
                             "type": "item",
-                            "title": "Row Hierarchy",
-                            "path": "tree-data-hierarchy",
-                            "isEnterprise": true
+                            "title": "Supplying Data",
+                            "path": "tree-data-data",
+                            "isEnterprise": true,
+                            "children": [
+                                {
+                                    "type": "item",
+                                    "title": "Data Paths",
+                                    "path": "tree-data-paths",
+                                    "isEnterprise": true
+                                },
+                                {
+                                    "type": "item",
+                                    "title": "Nested Records",
+                                    "path": "tree-data-nesting",
+                                    "isEnterprise": true
+                                }
+                            ]
                         },
                         {
                             "type": "item",
