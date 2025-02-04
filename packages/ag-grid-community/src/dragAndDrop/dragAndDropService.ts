@@ -531,15 +531,18 @@ export class DragAndDropService extends BeanStub implements NamedBean {
     }
 
     private createDragAndDropImageComponent(): void {
-        const { dragSource } = this;
+        const { dragSource, gos, userCompFactory } = this;
 
         if (!dragSource) {
             return;
         }
 
-        const userCompDetails = _getDragAndDropImageCompDetails(this.userCompFactory, {
-            dragSource,
-        });
+        const userCompDetails = _getDragAndDropImageCompDetails(
+            userCompFactory,
+            _addGridCommonParams(gos, {
+                dragSource,
+            })
+        );
         if (!userCompDetails) {
             return;
         }

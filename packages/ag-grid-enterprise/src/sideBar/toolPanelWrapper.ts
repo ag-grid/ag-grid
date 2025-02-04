@@ -14,7 +14,7 @@ import { AgHorizontalResize } from './agHorizontalResize';
 function getToolPanelCompDetails(
     userCompFactory: UserComponentFactory,
     toolPanelDef: ToolPanelDef,
-    params: WithoutGridCommon<IToolPanelParams>
+    params: IToolPanelParams
 ): UserCompDetails<IToolPanelComp> | undefined {
     return userCompFactory.getCompDetails(toolPanelDef, ToolPanelComponent, undefined, params, true);
 }
@@ -49,7 +49,7 @@ export class ToolPanelWrapper extends Component {
         return this.toolPanelId;
     }
 
-    public setToolPanelDef(toolPanelDef: ToolPanelDef, params: WithoutGridCommon<IToolPanelParams>): boolean {
+    public setToolPanelDef(toolPanelDef: ToolPanelDef, params: IToolPanelParams): boolean {
         const { id, minWidth, maxWidth, width } = toolPanelDef;
 
         this.toolPanelId = id;

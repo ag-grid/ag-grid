@@ -2,7 +2,6 @@ import type {
     BeanCollection,
     ComponentSelector,
     ComponentType,
-    GridOptionsService,
     IStatusPanelComp,
     IStatusPanelParams,
     StatusPanelDef,
@@ -18,7 +17,7 @@ import type { StatusBarService } from './statusBarService';
 function getStatusPanelCompDetails(
     userCompFactory: UserComponentFactory,
     def: StatusPanelDef,
-    params: WithoutGridCommon<IStatusPanelParams>
+    params: IStatusPanelParams
 ): UserCompDetails<IStatusPanelComp> | undefined {
     return userCompFactory.getCompDetails(def, StatusPanelComponent, undefined, params, true);
 }
@@ -167,9 +166,11 @@ export class AgStatusBar extends Component {
             if (existingStatusPanel) {
                 promise = AgPromise.resolve(existingStatusPanel);
             } else {
-                const params: WithoutGridCommon<IStatusPanelParams> = {};
-
-                const compDetails = getStatusPanelCompDetails(this.userCompFactory, componentConfig, params);
+                const compDetails = getStatusPanelCompDetails(
+                    this.userCompFactory,
+                    componentConfig,
+                    _addGridCommonParams(this.gos, {})
+                );
 
                 if (compDetails == null) {
                     return;

@@ -11,6 +11,7 @@ import type {
 } from 'ag-grid-community';
 import {
     Component,
+    _addGridCommonParams,
     _bindCellRendererToHtmlElement,
     _escapeString,
     _exists,
@@ -139,7 +140,7 @@ export class RichSelectRow<TValue> extends Component {
             userCompDetails = _getEditorRendererDetails<RichSelectParams, IRichCellEditorRendererParams<TValue>>(
                 this.userCompFactory,
                 this.params,
-                {
+                _addGridCommonParams(this.gos, {
                     value,
                     valueFormatted,
                     getValue: () => richSelect?.getValue(),
@@ -151,7 +152,7 @@ export class RichSelectRow<TValue> extends Component {
                         this.shouldDisplayTooltip = shouldDisplayTooltip;
                         this.tooltipFeature?.setTooltipAndRefresh(value);
                     },
-                }
+                })
             );
         }
 

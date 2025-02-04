@@ -1138,7 +1138,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
 
     private createFullWidthCompDetails(eRow: HTMLElement, pinned: ColumnPinnedType): UserCompDetails {
         const { gos, rowNode } = this;
-        const params = _addGridCommonParams(gos, {
+        const params = _addGridCommonParams<ICellRendererParams>(gos, {
             fullWidth: true,
             data: rowNode.data,
             node: rowNode,
@@ -1147,8 +1147,8 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
             // these need to be taken out, as part of 'afterAttached' now
             eGridCell: eRow,
             eParentOfValue: eRow,
-            pinned: pinned,
-            addRenderedRowListener: this.addEventListener.bind(this),
+            pinned: pinned as any,
+            addRenderedRowListener: this.addEventListener.bind(this) as any, // This is not on the type of ICellRendererParams
             registerRowDragger: (rowDraggerElement, dragStartPixels, value, suppressVisibilityChange) =>
                 this.addFullWidthRowDragging(rowDraggerElement, dragStartPixels, value, suppressVisibilityChange),
             setTooltip: (value, shouldDisplayTooltip) => {

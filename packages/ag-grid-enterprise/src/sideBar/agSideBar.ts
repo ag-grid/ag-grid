@@ -307,10 +307,13 @@ export class AgSideBar extends Component implements ISideBar {
         } else {
             wrapper = this.createBean(new ToolPanelWrapper());
 
-            const created = wrapper.setToolPanelDef(def, {
-                initialState,
-                onStateUpdated: () => this.dispatchSideBarUpdated(),
-            });
+            const created = wrapper.setToolPanelDef(
+                def,
+                _addGridCommonParams<IToolPanelParams>(this.gos, {
+                    initialState,
+                    onStateUpdated: () => this.dispatchSideBarUpdated(),
+                })
+            );
             if (!created) {
                 return;
             }
