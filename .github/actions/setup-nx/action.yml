@@ -32,10 +32,25 @@ runs:
           id: nx_config
           shell: bash
           run: |
-              echo "base=origin/latest" >> $GITHUB_OUTPUT
-              echo "NX_BASE=origin/latest" >> $GITHUB_ENV
-              echo "type=latest" >> $GITHUB_OUTPUT
-              git fetch origin --depth 1 latest
+              branch=$(git branch --show-current)
+              if [[ ${branch} == 'latest' ]] ; then
+                # Latest
+                echo "base=latest-success" >> $GITHUB_OUTPUT
+                echo "NX_BASE=latest-success" >> $GITHUB_ENV
+                echo "type=latest" >> $GITHUB_OUTPUT
+                git fetch origin --depth 1 tag latest-success
+              elif [[ ${branch} =~ 'b[0-9][0-9]\..+' ]] ; then
+                # Release
+                echo "base=${branch}" >> $GITHUB_OUTPUT
+                echo "NX_BASE=${branch}" >> $GITHUB_ENV
+                echo "type=release" >> $GITHUB_OUTPUT
+              else
+                # PR
+                echo "base=origin/latest" >> $GITHUB_OUTPUT
+                echo "NX_BASE=origin/latest" >> $GITHUB_ENV
+                echo "type=pr" >> $GITHUB_OUTPUT
+                git fetch origin --depth 1 latest
+              fi
 
         - name: Restore node_modules
           if: inputs.cache_mode == 'ro'
