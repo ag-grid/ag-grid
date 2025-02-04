@@ -1,7 +1,9 @@
 name: GitHub Actions Demo
 run-name: ${{ github.actor }} is testing out GitHub Actions 🚀
-on: 
-  push:
+on:
+  pull_request:
+    branches:
+      - 'seanlandsman-patch-9'
   workflow_dispatch:
       inputs:
           # run_e2e:
