@@ -1,6 +1,5 @@
-import { BeanStub } from '../../../context/beanStub';
-import type { AgColumn } from '../../../entities/agColumn';
-import type { IHeaderCellComp } from './headerCellCtrl';
+import { BeanStub } from 'ag-grid-community';
+import type { AgColumn, IHeaderCellComp } from 'ag-grid-community';
 
 export class RangeHeaderHighlightFeature extends BeanStub {
     constructor(

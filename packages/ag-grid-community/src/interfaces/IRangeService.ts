@@ -1,5 +1,7 @@
 import type { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
+import type { AgColumn } from '../entities/agColumn';
+import type { IHeaderCellComp } from '../headerRendering/cells/column/headerCellCtrl';
 import type { Column } from '../interfaces/iColumn';
 import type { RowPinnedType } from '../interfaces/iRowNode';
 import type { CellCtrl } from '../rendering/cell/cellCtrl';
@@ -40,6 +42,7 @@ export interface IRangeService {
     clearCellRangeCellValues(params: ClearCellRangeParams): void;
     createDragListenerFeature(eContainer: HTMLElement): BeanStub;
     createCellRangeFeature(beans: BeanCollection, ctrl: CellCtrl): ICellRangeFeature;
+    createRangeHighlightFeature(column: AgColumn, headerComp: IHeaderCellComp): void;
 }
 
 export enum CellRangeType {

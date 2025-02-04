@@ -22,7 +22,6 @@ import { AbstractHeaderCellCtrl } from '../abstractCell/abstractHeaderCellCtrl';
 import { _getHeaderClassesFromColDef } from '../cssClassApplier';
 import type { IHeader, IHeaderParams } from './headerComp';
 import type { HeaderComp } from './headerComp';
-import { RangeHeaderHighlightFeature } from './rangeHeaderHighlightFeature';
 
 export interface IHeaderCellComp extends IAbstractHeaderCellComp {
     setWidth(width: string): void;
@@ -68,7 +67,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
         this.comp = comp;
 
         const { rowCtrl, column, beans } = this;
-        const { colResize, context, colHover } = beans;
+        const { colResize, context, colHover, rangeSvc } = beans;
         const compBean = setupCompBean(this, context, compBeanInput);
 
         this.setGui(eGui, compBean);
@@ -104,7 +103,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
             _setDisplayed(eResize, false);
         }
         colHover?.createHoverFeature(compBean, [column], eGui);
-        compBean.createManagedBean(new RangeHeaderHighlightFeature(column, comp));
+        rangeSvc?.createRangeHighlightFeature(column, comp);
         compBean.createManagedBean(new SetLeftFeature(column, eGui, beans));
         compBean.createManagedBean(
             new ManagedFocusFeature(eGui, {

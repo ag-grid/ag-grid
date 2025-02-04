@@ -12,6 +12,7 @@ import type {
     DragService,
     GridOptionsService,
     ICellRangeFeature,
+    IHeaderCellComp,
     IRangeService,
     IRowModel,
     NamedBean,
@@ -45,6 +46,7 @@ import {
 
 import { CellRangeFeature } from './cellRangeFeature';
 import { DragListenerFeature } from './dragListenerFeature';
+import { RangeHeaderHighlightFeature } from './rangeHeaderHighlightFeature';
 
 enum SelectionMode {
     NORMAL,
@@ -838,6 +840,10 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
         if (fromMouseClick) {
             this.dispatchChangedEvent(false, true);
         }
+    }
+
+    public createRangeHighlightFeature(column: AgColumn<any>, headerComp: IHeaderCellComp): void {
+        this.createManagedBean(new RangeHeaderHighlightFeature(column, headerComp));
     }
 
     private setSelectionMode(allColumns: boolean) {
