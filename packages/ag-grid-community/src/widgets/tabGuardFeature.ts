@@ -126,13 +126,6 @@ export class TabGuardFeature extends BeanStub {
         this.addTabGuards(...tabGuards);
     }
 
-    public removeTabGuards(): void {
-        const { comp, eTopGuard, eBottomGuard } = this;
-        const parent = comp.getFocusableElement();
-        parent.removeChild(eTopGuard);
-        parent.removeChild(eBottomGuard);
-    }
-
     public forceFocusOutOfContainer(up: boolean = false): void {
         this.tabGuardCtrl.forceFocusOutOfContainer(up);
     }
@@ -153,5 +146,14 @@ export class TabGuardFeature extends BeanStub {
         } else {
             appendChild(newChild, container);
         }
+    }
+
+    public override destroy(): void {
+        // in some places (`AgMenuPanel`) the lifecycle on the tab guard feature doesn't match
+        // the lifecycle of the component gui, so remove the tab guards on destroy
+        const { eFocusableElement, eTopGuard, eBottomGuard } = this;
+        eFocusableElement.removeChild(eTopGuard);
+        eFocusableElement.removeChild(eBottomGuard);
+        super.destroy();
     }
 }

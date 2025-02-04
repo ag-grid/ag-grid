@@ -37,10 +37,4 @@ export class AgMenuPanel extends TabGuardComp {
         menuItem.closeSubMenu();
         setTimeout(() => menuItem.getGui().focus(), 0);
     }
-
-    public override destroy(): void {
-        // remove the tab guards from the wrapped component as it may not be destroyed with this component
-        this.tabGuardFeature.removeTabGuards();
-        super.destroy();
-    }
 }
