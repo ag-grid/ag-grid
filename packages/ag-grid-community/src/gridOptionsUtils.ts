@@ -27,7 +27,7 @@ import type {
     RowHeightParams,
 } from './interfaces/iCallbackParams';
 import type { IClientSideRowModel } from './interfaces/iClientSideRowModel';
-import type { WithoutGridCommon } from './interfaces/iCommon';
+import type { AgGridCommon, WithoutGridCommon } from './interfaces/iCommon';
 import type { IRowModel, RowModelType } from './interfaces/iRowModel';
 import type { IRowNode } from './interfaces/iRowNode';
 import type { IServerSideRowModel } from './interfaces/iServerSideRowModel';
@@ -700,4 +700,11 @@ export function _processOnChange(changes: any, api: GridApi): void {
     };
 
     api.dispatchEvent(event);
+}
+
+export function _addGridCommonParams<T extends AgGridCommon<TData, TContext>, TData = any, TContext = any>(
+    gos: GridOptionsService,
+    params: WithoutGridCommon<T>
+): T {
+    return gos.addGridCommonParams(params);
 }
