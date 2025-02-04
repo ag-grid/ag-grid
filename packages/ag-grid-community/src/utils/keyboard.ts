@@ -1,8 +1,7 @@
-import { _addGridCommonParams } from 'ag-grid-community';
-
 import type { AgColumn } from '../entities/agColumn';
 import type { SuppressKeyboardEventParams } from '../entities/colDef';
 import type { GridOptionsService } from '../gridOptionsService';
+import { _addGridCommonParams } from '../gridOptionsUtils';
 import type { IRowNode } from '../interfaces/iRowNode';
 
 export function _isEventFromPrintableCharacter(event: KeyboardEvent): boolean {

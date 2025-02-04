@@ -7,7 +7,6 @@ import type {
     StatusPanelDef,
     UserCompDetails,
     UserComponentFactory,
-    WithoutGridCommon,
 } from 'ag-grid-community';
 import { AgPromise, Component, RefPlaceholder, _addGridCommonParams, _removeFromParent } from 'ag-grid-community';
 

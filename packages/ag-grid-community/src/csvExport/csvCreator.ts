@@ -1,11 +1,10 @@
-import { _addGridCommonParams } from 'ag-grid-community';
-
 import type { ColumnModel } from '../columns/columnModel';
 import type { ColumnNameService } from '../columns/columnNameService';
 import type { NamedBean } from '../context/bean';
 import type { BeanCollection } from '../context/context';
 import { BaseCreator } from '../export/baseCreator';
 import { _downloadFile } from '../export/downloader';
+import { _addGridCommonParams } from '../gridOptionsUtils';
 import type { CsvCustomContent, CsvExportParams } from '../interfaces/exportParams';
 import type { IColsService } from '../interfaces/iColsService';
 import type { ICsvCreator } from '../interfaces/iCsvCreator';

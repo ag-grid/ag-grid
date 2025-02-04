@@ -1,7 +1,6 @@
-import { _addGridCommonParams } from 'ag-grid-community';
-
 import { BeanStub } from '../context/beanStub';
 import { RowNode } from '../entities/rowNode';
+import { _addGridCommonParams } from '../gridOptionsUtils';
 import type { IGetRowsParams } from '../interfaces/iDatasource';
 import type { LoadSuccessParams } from '../interfaces/iServerSideRowModel';
 import { _exists, _missing } from '../utils/generic';

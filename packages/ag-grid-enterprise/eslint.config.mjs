@@ -50,6 +50,10 @@ export default [
                     name: 'ag-charts-enterprise',
                     message: 'There should be no direct imports of ag-charts-enterprise',
                 },
+                {
+                    name: 'ag-grid-enterprise',
+                    message: 'There should be no imports of ag-grid-enterprise, use relative imports instead',
+                },
             ],
             'no-console': 'error',
         },

@@ -5,7 +5,6 @@ import type {
     ToolPanelDef,
     UserCompDetails,
     UserComponentFactory,
-    WithoutGridCommon,
 } from 'ag-grid-community';
 import { Component } from 'ag-grid-community';
 
