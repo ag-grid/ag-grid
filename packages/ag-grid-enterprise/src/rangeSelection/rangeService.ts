@@ -1057,7 +1057,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
         const isRowHeaderActive = gos.get('enableRowHeaderColumn');
 
         if (!cols || this.selectionMode === SelectionMode.ALL_COLUMNS) {
-            cols = [...visibleCols.allCols];
+            cols = visibleCols.allCols;
         }
 
         const columns: AgColumn[] = [];
