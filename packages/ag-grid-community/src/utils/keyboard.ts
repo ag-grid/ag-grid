@@ -1,3 +1,5 @@
+import { _addGridCommonParams } from 'ag-grid-community';
+
 import type { AgColumn } from '../entities/agColumn';
 import type { SuppressKeyboardEventParams } from '../entities/colDef';
 import type { GridOptionsService } from '../gridOptionsService';
@@ -39,7 +41,7 @@ export function _isUserSuppressingKeyboardEvent(
         return false;
     }
 
-    const params: SuppressKeyboardEventParams = gos.addGridCommonParams({
+    const params: SuppressKeyboardEventParams = _addGridCommonParams(gos, {
         event: keyboardEvent,
         editing,
         column,

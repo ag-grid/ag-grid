@@ -1,4 +1,5 @@
 import type { FilterChangedEvent } from '../../../events';
+import { _addGridCommonParams } from '../../../gridOptionsUtils';
 import type { IDateParams } from '../../../interfaces/dateComponent';
 import type { WithoutGridCommon } from '../../../interfaces/iCommon';
 import { _parseDateTimeFromString, _serialiseDate } from '../../../utils/date';
@@ -61,7 +62,7 @@ export class DateFloatingFilter extends SimpleFloatingFilter {
         this.params = params;
         this.filterParams = params.filterParams;
 
-        const dateParams = this.gos.addGridCommonParams(this.getDateComponentParams());
+        const dateParams = _addGridCommonParams(this.gos, this.getDateComponentParams());
         this.dateComp.updateParams(dateParams);
 
         this.filterModelFormatter.updateParams({

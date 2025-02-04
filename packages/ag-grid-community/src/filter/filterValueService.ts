@@ -3,6 +3,7 @@ import { BeanStub } from '../context/beanStub';
 import type { BeanName } from '../context/context';
 import type { AgColumn } from '../entities/agColumn';
 import type { ColDef, ValueGetterParams } from '../entities/colDef';
+import { _addGridCommonParams } from '../gridOptionsUtils';
 import type { IRowNode } from '../interfaces/iRowNode';
 
 export class FilterValueService extends BeanStub implements NamedBean {
@@ -29,7 +30,7 @@ export class FilterValueService extends BeanStub implements NamedBean {
         colDef: ColDef
     ): any {
         const { expressionSvc, valueSvc } = this.beans;
-        const params: ValueGetterParams = this.gos.addGridCommonParams({
+        const params: ValueGetterParams = _addGridCommonParams(this.gos, {
             data,
             node,
             column,

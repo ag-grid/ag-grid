@@ -9,7 +9,7 @@ import type { RowNode } from '../../entities/rowNode';
 import type { AgEventType } from '../../eventTypes';
 import type { CellContextMenuEvent, CellEvent, CellFocusedEvent } from '../../events';
 import type { GridOptionsService } from '../../gridOptionsService';
-import { _getCheckboxes, _isCellSelectionEnabled, _setDomData } from '../../gridOptionsUtils';
+import { _addGridCommonParams, _getCheckboxes, _isCellSelectionEnabled, _setDomData } from '../../gridOptionsUtils';
 import { refreshFirstAndLastStyles } from '../../headerRendering/cells/cssClassApplier';
 import type { BrandedType } from '../../interfaces/brandedType';
 import type { ICellEditor } from '../../interfaces/iCellEditor';
@@ -355,7 +355,7 @@ export class CellCtrl extends BeanStub {
             eGui,
             beans: { valueSvc, gos },
         } = this;
-        const res: ICellRendererParams = gos.addGridCommonParams({
+        const res: ICellRendererParams = _addGridCommonParams(gos, {
             value: value,
             valueFormatted: valueFormatted,
             getValue: () => valueSvc.getValueForDisplay(column, rowNode),
@@ -512,8 +512,8 @@ export class CellCtrl extends BeanStub {
     }
 
     public createEvent<T extends AgEventType>(domEvent: Event | null, eventType: T): CellEvent<T> {
-        const { rowNode, column, value } = this;
-        const event: CellEvent<T> = this.beans.gos.addGridCommonParams({
+        const { rowNode, column, value, beans } = this;
+        const event: CellEvent<T> = _addGridCommonParams(beans.gos, {
             type: eventType,
             node: rowNode,
             data: rowNode.data,

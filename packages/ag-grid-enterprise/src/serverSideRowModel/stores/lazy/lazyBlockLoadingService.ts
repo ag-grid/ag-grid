@@ -7,7 +7,7 @@ import type {
     RowNode,
     RowRenderer,
 } from 'ag-grid-community';
-import { BeanStub, _getMaxConcurrentDatasourceRequests } from 'ag-grid-community';
+import { BeanStub, _addGridCommonParams, _getMaxConcurrentDatasourceRequests } from 'ag-grid-community';
 
 import type { ServerSideRowModel } from '../../serverSideRowModel';
 import type { LazyCache } from './lazyCache';
@@ -162,7 +162,7 @@ export class LazyBlockLoadingService extends BeanStub implements NamedBean {
             removeNodesFromLoadingMap();
         };
 
-        const params: IServerSideGetRowsParams = this.gos.addGridCommonParams({
+        const params: IServerSideGetRowsParams = _addGridCommonParams(this.gos, {
             request,
             success,
             fail,

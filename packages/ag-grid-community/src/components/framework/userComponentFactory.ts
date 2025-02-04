@@ -1,3 +1,5 @@
+import { _addGridCommonParams } from 'ag-grid-community';
+
 import type { NamedBean } from '../../context/bean';
 import { BeanStub } from '../../context/beanStub';
 import type { BeanCollection } from '../../context/context';
@@ -238,7 +240,7 @@ export class UserComponentFactory extends BeanStub implements NamedBean {
         paramsFromSelector: any = null,
         defaultCompParams?: any
     ): any {
-        const params: AgGridCommon<any, any> = this.gos.getGridCommonParams();
+        const params: AgGridCommon<any, any> = _addGridCommonParams(this.gos, {});
 
         _mergeDeep(params, paramsFromGrid);
 

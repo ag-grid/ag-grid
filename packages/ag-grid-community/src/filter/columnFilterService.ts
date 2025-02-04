@@ -16,7 +16,7 @@ import type {
 } from '../entities/dataType';
 import type { RowNode } from '../entities/rowNode';
 import type { ColumnEventType, FilterChangedEventSourceType } from '../events';
-import { _getGroupAggFiltering, _isSetFilterByDefault } from '../gridOptionsUtils';
+import { _addGridCommonParams, _getGroupAggFiltering, _isSetFilterByDefault } from '../gridOptionsUtils';
 import type { WithoutGridCommon } from '../interfaces/iCommon';
 import type { FilterModel, IFilter, IFilterComp, IFilterParams } from '../interfaces/iFilter';
 import type { UserCompDetails } from '../interfaces/iUserCompDetails';
@@ -533,7 +533,7 @@ export class ColumnFilterService extends BeanStub implements NamedBean {
     }
 
     public createFilterParams(column: AgColumn, colDef: ColDef): IFilterParams {
-        const params: IFilterParams = this.gos.addGridCommonParams({
+        const params: IFilterParams = _addGridCommonParams(this.gos, {
             column,
             colDef,
             rowModel: this.beans.rowModel, // @deprecated v33.1

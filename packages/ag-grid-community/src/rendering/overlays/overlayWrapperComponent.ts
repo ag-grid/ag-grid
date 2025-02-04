@@ -1,6 +1,6 @@
 import { KeyCode } from '../../constants/keyCode';
 import type { GridOptions } from '../../entities/gridOptions';
-import { _getActiveDomElement, _isNothingFocused } from '../../gridOptionsUtils';
+import { _addGridCommonParams, _getActiveDomElement, _isNothingFocused } from '../../gridOptionsUtils';
 import type { LayoutView, UpdateLayoutClassesParams } from '../../styling/layoutFeature';
 import { LayoutCssClasses, LayoutFeature } from '../../styling/layoutFeature';
 import { _last } from '../../utils/array';
@@ -131,7 +131,7 @@ export class OverlayWrapperComponent extends Component implements LayoutView {
                 if (gridOption) {
                     const component = comp;
                     this.updateListenerDestroyFunc = this.addManagedPropertyListener(gridOption, ({ currentValue }) => {
-                        component.refresh?.(this.gos.addGridCommonParams({ ...(currentValue ?? {}) }));
+                        component.refresh?.(_addGridCommonParams(this.gos, { ...(currentValue ?? {}) }));
                     });
                 }
             }

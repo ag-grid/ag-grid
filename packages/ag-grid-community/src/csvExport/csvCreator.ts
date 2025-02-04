@@ -1,3 +1,5 @@
+import { _addGridCommonParams } from 'ag-grid-community';
+
 import type { ColumnModel } from '../columns/columnModel';
 import type { ColumnNameService } from '../columns/columnNameService';
 import type { NamedBean } from '../context/bean';
@@ -48,7 +50,7 @@ export class CsvCreator
 
         const fileName =
             typeof mergedParams.fileName === 'function'
-                ? mergedParams.fileName(this.gos.getGridCommonParams())
+                ? mergedParams.fileName(_addGridCommonParams(this.gos, {}))
                 : mergedParams.fileName;
 
         _downloadFile(this.getFileName(fileName), packagedFile);

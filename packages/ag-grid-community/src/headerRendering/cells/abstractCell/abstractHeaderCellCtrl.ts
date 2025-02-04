@@ -5,7 +5,7 @@ import type { AgColumn } from '../../../entities/agColumn';
 import type { AgColumnGroup } from '../../../entities/agColumnGroup';
 import type { AgProvidedColumnGroup } from '../../../entities/agProvidedColumnGroup';
 import type { HeaderClassParams, HeaderStyle, SuppressHeaderKeyboardEventParams } from '../../../entities/colDef';
-import { _getActiveDomElement, _getDocument, _setDomData } from '../../../gridOptionsUtils';
+import { _addGridCommonParams, _getActiveDomElement, _getDocument, _setDomData } from '../../../gridOptionsUtils';
 import type { BrandedType } from '../../../interfaces/brandedType';
 import { _requestAnimationFrame } from '../../../misc/animationFrameService';
 import { _setAriaColIndex } from '../../../utils/aria';
@@ -81,7 +81,7 @@ export abstract class AbstractHeaderCellCtrl<
             return false;
         }
 
-        const params: SuppressHeaderKeyboardEventParams = this.gos.addGridCommonParams({
+        const params: SuppressHeaderKeyboardEventParams = _addGridCommonParams(this.gos, {
             colDef: colDef,
             column,
             headerRowIndex,

@@ -10,7 +10,7 @@ import type {
     IDetailCellRendererParams,
     RowNode,
 } from 'ag-grid-community';
-import { BeanStub, _focusInto, _isSameRow, _missing, _warn } from 'ag-grid-community';
+import { BeanStub, _addGridCommonParams, _focusInto, _isSameRow, _missing, _warn } from 'ag-grid-community';
 
 export class DetailCellRendererCtrl extends BeanStub implements IDetailCellRendererCtrl {
     private params: IDetailCellRendererParams;
@@ -178,7 +178,7 @@ export class DetailCellRendererCtrl extends BeanStub implements IDetailCellRende
             // as the data could have been updated with new instance
             data: params.node.data,
             successCallback: successCallback,
-            context: this.gos.getGridCommonParams().context,
+            context: _addGridCommonParams(this.gos, {}).context,
         };
         userFunc(funcParams);
     }

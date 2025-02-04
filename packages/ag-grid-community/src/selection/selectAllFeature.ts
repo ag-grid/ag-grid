@@ -4,6 +4,7 @@ import type { AgColumn } from '../entities/agColumn';
 import type { SelectAllMode } from '../entities/gridOptions';
 import type { DisplayedColumnsChangedEvent, SelectionEventSourceType } from '../events';
 import {
+    _addGridCommonParams,
     _getActiveDomElement,
     _getCheckboxLocation,
     _getHeaderCheckbox,
@@ -216,7 +217,7 @@ export class SelectAllFeature extends BeanStub {
         } else {
             // legacy selection config
             if (typeof headerCheckboxSelection === 'function') {
-                result = headerCheckboxSelection(gos.addGridCommonParams({ column, colDef }));
+                result = headerCheckboxSelection(_addGridCommonParams(gos, { column, colDef }));
             } else {
                 result = !!headerCheckboxSelection;
             }

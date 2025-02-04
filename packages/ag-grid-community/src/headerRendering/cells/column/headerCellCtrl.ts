@@ -5,7 +5,7 @@ import { KeyCode } from '../../../constants/keyCode';
 import type { BeanStub } from '../../../context/beanStub';
 import type { AgColumn } from '../../../entities/agColumn';
 import type { HeaderClassParams, SortDirection } from '../../../entities/colDef';
-import { _getActiveDomElement, _isLegacyMenuEnabled } from '../../../gridOptionsUtils';
+import { _addGridCommonParams, _getActiveDomElement, _isLegacyMenuEnabled } from '../../../gridOptionsUtils';
 import { ColumnHighlightPosition } from '../../../interfaces/iColumn';
 import type { UserCompDetails } from '../../../interfaces/iUserCompDetails';
 import { SetLeftFeature } from '../../../rendering/features/setLeftFeature';
@@ -20,8 +20,7 @@ import { getColumnHeaderRowHeight, getGroupRowsHeight } from '../../headerUtils'
 import type { IAbstractHeaderCellComp } from '../abstractCell/abstractHeaderCellCtrl';
 import { AbstractHeaderCellCtrl } from '../abstractCell/abstractHeaderCellCtrl';
 import { _getHeaderClassesFromColDef } from '../cssClassApplier';
-import type { IHeader, IHeaderParams } from './headerComp';
-import type { HeaderComp } from './headerComp';
+import type { HeaderComp, IHeader, IHeaderParams } from './headerComp';
 
 export interface IHeaderCellComp extends IAbstractHeaderCellComp {
     setWidth(width: string): void;
@@ -147,10 +146,10 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
     }
 
     protected getHeaderClassParams(): HeaderClassParams {
-        const { column } = this;
+        const { column, beans } = this;
         const colDef = column.colDef;
 
-        return this.beans.gos.addGridCommonParams({
+        return _addGridCommonParams(beans.gos, {
             colDef,
             column,
             floatingFilter: false,
@@ -177,7 +176,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
 
     private createParams(): IHeaderParams {
         const { menuSvc, sortSvc, colFilter, gos } = this.beans;
-        const params: IHeaderParams = gos.addGridCommonParams({
+        const params: IHeaderParams = _addGridCommonParams(gos, {
             column: this.column,
             displayName: this.displayName!,
             enableSorting: this.column.isSortable(),

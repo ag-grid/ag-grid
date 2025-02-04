@@ -14,6 +14,7 @@ import type { AgEventType } from '../../eventTypes';
 import type { CellFocusedEvent, RowEvent, VirtualRowRemovedEvent } from '../../events';
 import type { RowContainerType } from '../../gridBodyComp/rowContainer/rowContainerCtrl';
 import {
+    _addGridCommonParams,
     _getActiveDomElement,
     _getRowHeightForNode,
     _isAnimateRows,
@@ -1015,7 +1016,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
 
     public createRowEvent<T extends AgEventType>(type: T, domEvent?: Event): RowEvent<T> {
         const { rowNode } = this;
-        return this.gos.addGridCommonParams({
+        return _addGridCommonParams(this.gos, {
             type: type,
             node: rowNode,
             data: rowNode.data,
@@ -1137,7 +1138,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
 
     private createFullWidthCompDetails(eRow: HTMLElement, pinned: ColumnPinnedType): UserCompDetails {
         const { gos, rowNode } = this;
-        const params = gos.addGridCommonParams({
+        const params = _addGridCommonParams(gos, {
             fullWidth: true,
             data: rowNode.data,
             node: rowNode,

@@ -3,6 +3,7 @@ import { BeanStub } from '../context/beanStub';
 import type { AgColumn } from '../entities/agColumn';
 import type { GetQuickFilterTextParams } from '../entities/colDef';
 import type { RowNode } from '../entities/rowNode';
+import { _addGridCommonParams } from '../gridOptionsUtils';
 import { _exists } from '../utils/generic';
 import { _warn } from '../validation/logging';
 
@@ -183,7 +184,7 @@ export class QuickFilterService extends BeanStub<QuickFilterServiceEvent> implem
         const colDef = column.getColDef();
 
         if (colDef.getQuickFilterText) {
-            const params: GetQuickFilterTextParams = this.gos.addGridCommonParams({
+            const params: GetQuickFilterTextParams = _addGridCommonParams(this.gos, {
                 value,
                 node,
                 data: node.data,

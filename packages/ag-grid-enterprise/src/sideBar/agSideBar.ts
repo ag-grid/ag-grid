@@ -13,6 +13,7 @@ import {
     ManagedFocusFeature,
     RefPlaceholder,
     _addFocusableContainerListener,
+    _addGridCommonParams,
     _findNextFocusableElement,
     _focusInto,
     _focusNextGridCoreContainer,
@@ -428,7 +429,7 @@ export class AgSideBar extends Component implements ISideBar {
                 if (!toolPanelWrapper) {
                     return;
                 }
-                const params = this.gos.addGridCommonParams<IToolPanelParams>({
+                const params = _addGridCommonParams<IToolPanelParams>(this.gos, {
                     ...(toolPanelDef.toolPanelParams ?? {}),
                     onStateUpdated: () => this.dispatchSideBarUpdated(),
                 });

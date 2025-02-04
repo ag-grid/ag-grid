@@ -7,6 +7,7 @@ import type { AgColumn } from '../../../entities/agColumn';
 import type { AgColumnGroup } from '../../../entities/agColumnGroup';
 import type { HeaderClassParams } from '../../../entities/colDef';
 import type { ColumnEventType } from '../../../events';
+import { _addGridCommonParams } from '../../../gridOptionsUtils';
 import { ColumnHighlightPosition } from '../../../interfaces/iColumn';
 import type { UserCompDetails } from '../../../interfaces/iUserCompDetails';
 import { SetLeftFeature } from '../../../rendering/features/setLeftFeature';
@@ -102,10 +103,10 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
     }
 
     protected getHeaderClassParams(): HeaderClassParams {
-        const { column } = this;
+        const { column, beans } = this;
         const colDef = column.getDefinition()!;
 
-        return this.beans.gos.addGridCommonParams({
+        return _addGridCommonParams(beans.gos, {
             colDef,
             columnGroup: column,
             floatingFilter: false,
@@ -203,7 +204,7 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
 
     private setupUserComp(): void {
         const { colGroupSvc, userCompFactory, gos } = this.beans;
-        const params: IHeaderGroupParams = gos.addGridCommonParams({
+        const params: IHeaderGroupParams = _addGridCommonParams(gos, {
             displayName: this.displayName!,
             columnGroup: this.column,
             setExpanded: (expanded: boolean) => {

@@ -1,3 +1,5 @@
+import { _addGridCommonParams } from 'ag-grid-community';
+
 import { BeanStub } from '../context/beanStub';
 import { RowNode } from '../entities/rowNode';
 import type { IGetRowsParams } from '../interfaces/iDatasource';
@@ -164,7 +166,7 @@ export class InfiniteBlock extends BeanStub<RowNodeBlockEvent> {
             failCallback: this.pageLoadFailed.bind(this, version),
             sortModel,
             filterModel,
-            context: gos.getGridCommonParams().context,
+            context: _addGridCommonParams(gos, {}).context,
         };
         return params;
     }

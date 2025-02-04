@@ -2,6 +2,7 @@ import { BeanStub } from '../../context/beanStub';
 import type { AgColumn } from '../../entities/agColumn';
 import type { SpanRowsParams } from '../../entities/colDef';
 import type { RowNode } from '../../entities/rowNode';
+import { _addGridCommonParams } from '../../gridOptionsUtils';
 import type { CellPosition } from '../../interfaces/iCellPosition';
 import { _normalisePinnedValue } from './spannedRowRenderer';
 
@@ -143,7 +144,7 @@ export class RowSpanCache extends BeanStub {
             // check value is equal, if not, no span
             const value = valueSvc.getValue(column, node);
             if (isCustomCompare) {
-                const params: SpanRowsParams = gos.addGridCommonParams({
+                const params: SpanRowsParams = _addGridCommonParams(gos, {
                     valueA: lastValue,
                     nodeA: lastNode,
                     valueB: value,

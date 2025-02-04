@@ -8,6 +8,7 @@ import type {
     RowPosition,
 } from 'ag-grid-community';
 import {
+    _addGridCommonParams,
     _getCellByPosition,
     _getFillHandle,
     _getNormalisedMousePosition,
@@ -370,7 +371,7 @@ export class AgFillHandle extends AbstractSelectionHandle {
         }
 
         if (userFillOperation) {
-            const params = this.gos.addGridCommonParams<FillOperationParams>({
+            const params = _addGridCommonParams<FillOperationParams>(this.gos, {
                 event,
                 values: values.map(({ value }) => value),
                 initialValues,

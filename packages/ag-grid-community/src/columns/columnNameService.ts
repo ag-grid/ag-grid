@@ -4,6 +4,7 @@ import type { AgColumn } from '../entities/agColumn';
 import type { AgColumnGroup } from '../entities/agColumnGroup';
 import type { AgProvidedColumnGroup } from '../entities/agProvidedColumnGroup';
 import type { AbstractColDef, ColDef, HeaderLocation, HeaderValueGetterParams } from '../entities/colDef';
+import { _addGridCommonParams } from '../gridOptionsUtils';
 
 /**
  * Converts a camelCase string into startCase
@@ -77,7 +78,7 @@ export class ColumnNameService extends BeanStub implements NamedBean {
         const headerValueGetter = colDef.headerValueGetter;
 
         if (headerValueGetter) {
-            const params: HeaderValueGetterParams = this.gos.addGridCommonParams({
+            const params: HeaderValueGetterParams = _addGridCommonParams(this.gos, {
                 colDef: colDef,
                 column: column,
                 columnGroup: columnGroup,

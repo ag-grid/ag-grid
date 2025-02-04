@@ -6,7 +6,7 @@ import type {
     RichCellEditorParams,
     RichSelectParams,
 } from 'ag-grid-community';
-import { PopupComponent, _missing, _warn } from 'ag-grid-community';
+import { PopupComponent, _addGridCommonParams, _missing, _warn } from 'ag-grid-community';
 
 import { AgRichSelect } from '../widgets/agRichSelect';
 
@@ -149,7 +149,7 @@ export class RichSelectCellEditor<TData = any, TValue = any> extends PopupCompon
             const { column, node, data } = params;
             return (values: TValue[]) =>
                 values.map((value: TValue) => {
-                    const keyParams: KeyCreatorParams = this.gos.addGridCommonParams({
+                    const keyParams: KeyCreatorParams = _addGridCommonParams(this.gos, {
                         value,
                         colDef,
                         column,

@@ -13,7 +13,7 @@ import type {
 } from '../entities/colDef';
 import type { RowNode } from '../entities/rowNode';
 import type { CellValueChangedEvent } from '../events';
-import { _isServerSideRowModel } from '../gridOptionsUtils';
+import { _addGridCommonParams, _isServerSideRowModel } from '../gridOptionsUtils';
 import type { IRowNode } from '../interfaces/iRowNode';
 import { _exists, _missing } from '../utils/generic';
 import { _getValueUsingField } from '../utils/object';
@@ -179,7 +179,7 @@ export class ValueService extends BeanStub implements NamedBean {
         const valueParser = colDef.valueParser;
 
         if (_exists(valueParser)) {
-            const params: ValueParserParams = this.gos.addGridCommonParams({
+            const params: ValueParserParams = _addGridCommonParams(this.gos, {
                 node: rowNode,
                 data: rowNode?.data,
                 oldValue,
@@ -222,7 +222,7 @@ export class ValueService extends BeanStub implements NamedBean {
         }
 
         if (formatter) {
-            const params: ValueFormatterParams = this.gos.addGridCommonParams({
+            const params: ValueFormatterParams = _addGridCommonParams(this.gos, {
                 value,
                 node,
                 data: node ? node.data : null,
@@ -304,7 +304,7 @@ export class ValueService extends BeanStub implements NamedBean {
             return false;
         }
 
-        const params: ValueSetterParams = this.gos.addGridCommonParams({
+        const params: ValueSetterParams = _addGridCommonParams(this.gos, {
             node: rowNode,
             data: rowNode.data,
             oldValue: this.getValue(column, rowNode),
@@ -450,7 +450,7 @@ export class ValueService extends BeanStub implements NamedBean {
         column: AgColumn,
         rowNode: IRowNode
     ): any {
-        const params: ValueGetterParams = this.gos.addGridCommonParams({
+        const params: ValueGetterParams = _addGridCommonParams(this.gos, {
             data: data,
             node: rowNode,
             column: column,
@@ -485,7 +485,7 @@ export class ValueService extends BeanStub implements NamedBean {
 
         let result = value;
         if (keyCreator) {
-            const keyParams: KeyCreatorParams = this.gos.addGridCommonParams({
+            const keyParams: KeyCreatorParams = _addGridCommonParams(this.gos, {
                 value: value,
                 colDef: col.getColDef(),
                 column: col,

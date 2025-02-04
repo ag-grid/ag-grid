@@ -2,6 +2,7 @@ import {
     AgPromise,
     BeanStub,
     KeyCode,
+    _addGridCommonParams,
     _loadTemplate,
     _preserveRangesWhile,
     _setAriaDisabled,
@@ -347,7 +348,7 @@ export class AgMenuItemComponent extends BeanStub<AgMenuItemComponentEvent> {
         if (this.params.action) {
             this.beans.frameworkOverrides.wrapOutgoing(() =>
                 this.params.action!(
-                    this.gos.addGridCommonParams({
+                    _addGridCommonParams(this.gos, {
                         ...this.contextParams,
                     })
                 )

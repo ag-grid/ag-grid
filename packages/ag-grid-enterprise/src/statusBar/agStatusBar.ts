@@ -2,6 +2,7 @@ import type {
     BeanCollection,
     ComponentSelector,
     ComponentType,
+    GridOptionsService,
     IStatusPanelComp,
     IStatusPanelParams,
     StatusPanelDef,
@@ -9,7 +10,7 @@ import type {
     UserComponentFactory,
     WithoutGridCommon,
 } from 'ag-grid-community';
-import { AgPromise, Component, RefPlaceholder, _removeFromParent } from 'ag-grid-community';
+import { AgPromise, Component, RefPlaceholder, _addGridCommonParams, _removeFromParent } from 'ag-grid-community';
 
 import { agStatusBarCSS } from './agStatusBar.css-GENERATED';
 import type { StatusBarService } from './statusBarService';
@@ -115,7 +116,7 @@ export class AgStatusBar extends Component {
                 const key = statusPanelConfig.key ?? statusPanelConfig.statusPanel;
                 const existingStatusPanel = this.statusBarSvc.getStatusPanel(key);
                 if (existingStatusPanel?.refresh) {
-                    const newParams = this.gos.addGridCommonParams(statusPanelConfig.statusPanelParams ?? {});
+                    const newParams = _addGridCommonParams(this.gos, statusPanelConfig.statusPanelParams ?? {});
                     const hasRefreshed = existingStatusPanel.refresh(newParams);
                     if (hasRefreshed) {
                         existingStatusPanelsToReuse.set(key, existingStatusPanel);

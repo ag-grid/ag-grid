@@ -11,6 +11,7 @@ import {
     BeanStub,
     Component,
     RefPlaceholder,
+    _addGridCommonParams,
     _createIconNoSpan,
     _focusInto,
     _isNothingFocused,
@@ -114,7 +115,7 @@ export class ChartMenuListFactory extends BeanStub implements NamedBean {
             return chartMenuItems;
         } else {
             return chartMenuItems(
-                this.gos.addGridCommonParams({
+                _addGridCommonParams(this.gos, {
                     defaultItems,
                 })
             );
