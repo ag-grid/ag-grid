@@ -491,18 +491,7 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
 
     public getSelectAllState(selectAll?: SelectAllMode): boolean | null {
         const { selectedCount, notSelectedCount } = this.getSelectedCounts(selectAll);
-        // if no rows, always have it unselected
-        if (selectedCount === 0 && notSelectedCount === 0) {
-            return false;
-        }
-
-        // if mix of selected and unselected, this is indeterminate
-        if (selectedCount > 0 && notSelectedCount > 0) {
-            return null;
-        }
-
-        // only selected
-        return selectedCount > 0;
+        return _calculateSelectAllState(selectedCount, notSelectedCount) ?? null;
     }
 
     public hasNodesToSelect(selectAll: SelectAllMode): boolean {
@@ -727,13 +716,12 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
         if (!this.masterSelectsDetail) return;
 
         const detailApi = node.detailNode?.detailGridInfo?.api;
-
         if (!detailApi) return;
 
-        const isSelectAll = detailApi.getSelectAllState();
-        const current = node.isSelected() ?? null;
+        const isSelectAll = _isAllSelected(detailApi);
+        const current = node.isSelected();
         if (current !== isSelectAll) {
-            const selectionChanged = this.selectRowNode(node, isSelectAll ?? undefined, e, 'masterDetail');
+            const selectionChanged = this.selectRowNode(node, isSelectAll, e, 'masterDetail');
 
             if (selectionChanged) {
                 this.dispatchSelectionChanged('masterDetail');
@@ -795,4 +783,35 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
 /** Selection state of footer nodes is a clone of their siblings, so always act on sibling rather than footer */
 function _normaliseFooterRef(node: RowNode): RowNode {
     return node.footer ? node.sibling : node;
+}
+
+function _isAllSelected(api: GridApi): boolean | undefined {
+    let selectedCount = 0;
+    let notSelectedCount = 0;
+
+    api.forEachNode((node) => {
+        if (node.isSelected()) {
+            selectedCount++;
+        } else if (node.selectable) {
+            // don't count non-selectable nodes!
+            notSelectedCount++;
+        }
+    });
+
+    return _calculateSelectAllState(selectedCount, notSelectedCount);
+}
+
+function _calculateSelectAllState(selected: number, notSelected: number): boolean | undefined {
+    // if no rows, always have it unselected
+    if (selected === 0 && notSelected === 0) {
+        return false;
+    }
+
+    // if mix of selected and unselected, this is indeterminate
+    if (selected > 0 && notSelected > 0) {
+        return;
+    }
+
+    // only selected
+    return selected > 0;
 }

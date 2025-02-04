@@ -175,15 +175,6 @@ export interface _RowSelectionGridApi<TData = any> {
 
     /** Returns an unsorted list of selected rows (i.e. row data that you provided). */
     getSelectedRows(): TData[];
-
-    /**
-     * Returns true if all rows have been selected, null if some rows have been selected, and false otherwise.
-     *
-     * Intended for internal use only. This is not a supported API and may change at any time.
-     *
-     * @internal
-     */
-    getSelectAllState(selectAll?: SelectAllMode): boolean | null;
 }
 
 export interface _OverlayGridApi {
