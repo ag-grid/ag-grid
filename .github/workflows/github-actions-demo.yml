@@ -92,12 +92,12 @@ jobs:
               count=$(yarn -s nx show projects --affected --base ${{ steps.setup.outputs.base }} -t test | wc -l)
             fi
 
-            matrix=$(node ./tools/test/calculate-shards.js eval --ratio 1 --zero ${count})
+            matrix=$(node ./scripts/test/calculate-shards.js eval --ratio 1 --zero ${count})
             echo "test_matrix=${matrix}" >> $GITHUB_OUTPUT
             echo "test_count=${count}" >> $GITHUB_OUTPUT
             echo "Test matrix determined to be: ${matrix}"
 
-            pkg_matrix=$(node ./tools/test/calculate-pkg-shards.js)
+            pkg_matrix=$(node ./scripts/test/calculate-pkg-shards.js)
             echo "pkg_matrix=${pkg_matrix}" >> $GITHUB_OUTPUT
             echo "Package test matrix determined to be: ${pkg_matrix}"
 
