@@ -84,12 +84,9 @@ jobs:
         run: |
           yarn nx lint
 
-      - name: nx build --prod
+      - name: nx build
         run: |
-          yarn nx build --prod
-          #yarn nx build
-          #ls -l community-modules/styles
-          #ls -l packages/ag-grid-enterprise
+          yarn nx build 
 
       - name: calculate matrix
         id: matrix
