@@ -1,4 +1,4 @@
-import { EventHandler, Property } from '../types';
+import type { EventHandler, Property } from '../types';
 import {
     convertTemplate,
     getImport,
