@@ -74,10 +74,10 @@ jobs:
         id: styles
         run: |
             ls -l packages/ag-grid-enterprise
-            nx build ag-grid-enterprise
+            yarn nx build ag-grid-enterprise
             ls -l packages/ag-grid-enterprise 
             rm -rf packages/ag-grid-enterprise/styles
-            nx build ag-grid-enterprise
+            yarn nx build ag-grid-enterprise
             ls -l packages/ag-grid-enterprise 
 
       #      - name: nx format:check
