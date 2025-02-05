@@ -129,3 +129,27 @@ The example below demonstrates keeping Detail Rows. Note the following:
 The pattern of setting components such as Cell Renderers and providing parameters to those components is consistent across the grid and explained in [Grid Components](./components/).
 
 As with all components, the parameters object (in this case `detailCellRendererParams`) can either be a JSON Object, or it can be a function that returns a JSON Object. The latter allows providing different parameters for each Detail Grid, allowing Detail Grids to be configured differently.
+
+## Row Selection
+By default, selecting rows in the Master Grid has no effect on any of the Detail Grids. In order to have the selection state of the Master Grid be reflected in the Detail Grids (and vice-versa), users should use the `rowSelection.masterSelects` grid option:
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    rowSelection: { 
+        mode: 'multiRow',
+        masterSelects: 'detail',
+    }
+}
+```
+
+{% note %}
+When using modules, you _must_ register the `EventApiModule` in order for this feature to work correctly. Alternatively, register the `AllCommunityModule` or the `AllEnterpriseModule`.
+{% /note %}
+
+In the example below, selecting a master row will select all rows in the associated detail grid. Similarly, selecting all rows in the detail grid will select the master row. When only some rows in the detail grid are selected, the master row will have the indeterminate state.
+
+{% gridExampleRunner title="Row Selection" name="row-selection"  exampleHeight=550 /%}
+
+Note that selecting a master row will select _all_ rows in the detail grid, regardless of the value of `rowSelection.selectAll` in the `detailGridOptions`.
+
+Note also that calling the API methods `getSelectedNodes` and `getSelectedRows` on the master grid will not return any information about the selection states of any detail grids.
