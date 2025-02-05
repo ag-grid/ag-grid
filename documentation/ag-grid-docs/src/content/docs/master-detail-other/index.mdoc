@@ -37,6 +37,25 @@ Below shows a simple Master / Detail setup which has filtering and sorting enabl
 
 {% gridExampleRunner title="Filtering with Sort" name="filtering-with-sort"  exampleHeight=550 /%}
 
+## Row Selection
+
+By default, selecting rows in the Master Grid has no effect on any of the Detail Grids. In order to have the selection state of the Master Grid be reflected in the Detail Grids (and vice-versa), users should use the `rowSelection.masterSelects` grid option:
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    rowSelection: { 
+        mode: 'multiRow',
+        masterSelects: 'detail',
+    }
+}
+```
+
+In the example below, selecting a master row will select all rows in the associated detail grid. Similarly, selecting all rows in the detail grid will select the master row. When only some rows in the detail grid are selected, the master row will have the indeterminate state.
+
+{% gridExampleRunner title="Row Selection" name="row-selection"  exampleHeight=550 /%}
+
+Note that selecting a master row will select _all_ rows in the detail grid, regardless of the value of `rowSelection.selectAll` in the `detailGridOptions`.
+
 ## Supported Modes
 
 The Master / Detail feature organises the grid in a way which overlaps with other features. For this reason, Master / Detail does not work with certain grid configurations. These configurations are as follows:
