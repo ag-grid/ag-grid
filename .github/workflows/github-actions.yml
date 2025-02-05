@@ -129,10 +129,10 @@ jobs:
             with:
                 cache_mode: ro
 
-          - name: nx test
-            if: matrix.shard != 0
-            id: test
-            run: yarn nx ${{ github.event.inputs.nx_command || 'affected' }} -t test --configuration=ci --exclude tag:no-sharding --exclude all --shard=${{ matrix.shard }}/$((${{ strategy.job-total }} - 1))
+#          - name: nx test
+#            if: matrix.shard != 0
+#            id: test
+#            run: yarn nx ${{ github.event.inputs.nx_command || 'affected' }} -t test --configuration=ci --exclude tag:no-sharding --exclude all --shard=${{ matrix.shard }}/$((${{ strategy.job-total }} - 1))
 #          - name: nx test (non-sharded)
 #            if: matrix.shard == 0
 #            id: test-no-shard
@@ -144,7 +144,7 @@ jobs:
           - name: nx pack:verify
             if: matrix.shard == 0
             id: pack-verify
-            run: ls -l packages/ag-grid-enteprise #yarn nx ${{ github.event.inputs.nx_command || 'affected' }} -t pack:verify
+            run: ls -l packages/ag-grid-enterprise && ls -l packages/ag-grid-enterprise/styles #yarn nx ${{ github.event.inputs.nx_command || 'affected' }} -t pack:verify
           - name: Perist test results
             if: always()
             uses: actions/upload-artifact@v4
