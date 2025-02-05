@@ -1101,7 +1101,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         const element = rowGui.element;
         const target = mouseEvent.target as HTMLElement;
 
-        let forceBrowserFocus = true;
+        let forceBrowserFocus = mouseEvent.defaultPrevented;
 
         if (element && element.contains(target) && _isFocusableFormField(target)) {
             forceBrowserFocus = false;
