@@ -190,7 +190,24 @@ export function getInterfaces(globs) {
     const extensions = {};
     globs.forEach((file) => {
         const parsedFile = parseFile(file);
-        interfaces = { ...interfaces, ...extractInterfaces(parsedFile, extensions) };
+
+        // check for clashing interfaces
+        const allInterfaces = extractInterfaces(parsedFile, extensions);
+
+        Object.entries(allInterfaces).forEach(([k, v]) => {
+            if (interfaces[k]) {
+                // deep equality check
+                if (JSON.stringify(interfaces[k]) !== JSON.stringify(v)) {
+                    throw new Error(
+                        `Interface ${k} already exists in interfaces.AUTO.json and is different! ${JSON.stringify(interfaces[k])} vs ${JSON.stringify(v)}`
+                    );
+                } else {
+                    // console.warn(`Interface ${k} looks to be duplicated interfaces.AUTO.json.`);
+                }
+            }
+        });
+
+        interfaces = { ...interfaces, ...allInterfaces };
     });
 
     // Now that we have recorded all the interfaces we can apply the extension properties.
