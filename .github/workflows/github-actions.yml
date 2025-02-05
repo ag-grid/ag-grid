@@ -70,6 +70,12 @@ jobs:
         with:
             cache_mode: ${{ github.event.inputs.clean_checkout == 'true' && 'off' || 'rw' }}
 
+      - name: styles check
+        id: styles
+        run: |
+            ls -l community-modules/styles
+            ls -l packages/ag-grid-enterprise  #yarn nx ${{ github.event.inputs.nx_command || 'affected' }} -t pack:verify
+
       - name: nx format:check
         id: format
         if: steps.setup.outcome == 'success' || steps.setup.outcome == 'skipped'
@@ -144,7 +150,9 @@ jobs:
           - name: nx pack:verify
             if: matrix.shard == 0
             id: pack-verify
-            run: ls -l packages/ag-grid-enterprise && ls -l packages/ag-grid-enterprise/styles #yarn nx ${{ github.event.inputs.nx_command || 'affected' }} -t pack:verify
+            run: |
+              ls -l community-modules/styles
+              ls -l packages/ag-grid-enterprise  #yarn nx ${{ github.event.inputs.nx_command || 'affected' }} -t pack:verify
           - name: Perist test results
             if: always()
             uses: actions/upload-artifact@v4
