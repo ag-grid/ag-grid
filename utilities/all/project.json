@@ -167,7 +167,7 @@
       }
     },
     "clean": {
-      "command": "rimraf -g dist/ 'packages/*/dist/' 'plugins/*/dist/' 'testing/*/dist/' 'documentation/*/dist/' 'documentation/ag-grid-docs/node_modules/.vite/' 'community-modules/locale/umd/'"
+      "command": "rimraf -g dist/ 'packages/*/dist/' 'plugins/*/dist/' 'testing/*/dist/' 'documentation/*/dist/' 'documentation/ag-grid-docs/node_modules/.vite/' 'community-modules/locale/umd/' 'packages/ag-grid-community/styles' 'packages/ag-grid-enterprise/styles'"
     },
     "generate-examples": {
       "dependsOn": ["^generate-examples"],

@@ -38,8 +38,8 @@ plugins/ag-grid-task-autogen/dist
 # latest only
 dist
 
-packages/ag-grid-community/styles/**
-packages/ag-grid-enterprise/styles/**
+packages/ag-grid-community/styles
+packages/ag-grid-enterprise/styles
 
 # compiled CSS files
 community-modules/styles/*.css
