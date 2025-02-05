@@ -1,3 +1,4 @@
+import { EventHandler, Property } from '../types';
 import {
     convertTemplate,
     getImport,
@@ -8,7 +9,6 @@ import {
     toMember,
     toOutput,
 } from './vue-utils';
-import {EventHandler, Property} from "../types";
 
 describe('toInput', () => {
     it('returns input definition', () => {

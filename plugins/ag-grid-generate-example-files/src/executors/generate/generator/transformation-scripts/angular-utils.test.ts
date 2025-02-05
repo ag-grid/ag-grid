@@ -1,5 +1,5 @@
+import { EventHandler, Property } from '../types';
 import { convertTemplate, getImport, toAssignment, toConst, toInput, toMember, toOutput } from './angular-utils';
-import {EventHandler, Property} from "../types";
 
 describe('toInput', () => {
     it('returns input definition', () => {
