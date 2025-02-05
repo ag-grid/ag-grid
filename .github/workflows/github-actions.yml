@@ -136,10 +136,10 @@ jobs:
             if: matrix.shard != 0
             id: test
             run: yarn nx ${{ github.event.inputs.nx_command || 'affected' }} -t test --configuration=ci --exclude tag:no-sharding --exclude all --shard=${{ matrix.shard }}/$((${{ strategy.job-total }} - 1))
-#          - name: nx test (non-sharded)
-#            if: matrix.shard == 0
-#            id: test-no-shard
-#            run: yarn nx ${{ github.event.inputs.nx_command || 'affected' }} -t test --configuration=ci --exclude '*,!tag:no-sharding'
+          - name: nx test (non-sharded)
+            if: matrix.shard == 0
+            id: test-no-shard
+            run: yarn nx ${{ github.event.inputs.nx_command || 'affected' }} -t test --configuration=ci --exclude '*,!tag:no-sharding'
 #           - name: nx benchmark
 #             if: matrix.shard == 0
 #             id: benchmark
@@ -149,12 +149,6 @@ jobs:
             id: pack-verify
             run: |
               yarn nx ${{ github.event.inputs.nx_command || 'affected' }} -t pack:verify
-#              ls -l packages/ag-grid-enterprise
-#              yarn nx build ag-grid-enterprise
-#              ls -l packages/ag-grid-enterprise
-#              rm -rf packages/ag-grid-enterprise/styles
-#              yarn nx build ag-grid-enterprise
-#              ls -l packages/ag-grid-enterprise
           - name: Persist test results
             if: always()
             uses: actions/upload-artifact@v4

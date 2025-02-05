@@ -6,6 +6,7 @@
   "targets": {
     "test": {
       "executor": "nx:run-commands",
+      "dependsOn": ["^build"],
       "inputs": [],
       "outputs": [],
       "options": {
@@ -14,5 +15,6 @@
       }
     }
   },
-  "tags": ["module-size"]
+  "tags": ["module-size", "no-sharding"],
+  "implicitDependencies": ["ag-grid-react"]
 }
