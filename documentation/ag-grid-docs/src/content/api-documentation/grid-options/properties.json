@@ -760,6 +760,9 @@
             "more": {
                 "name": "Row Numbers",
                 "url": "./row-numbers/"
+            },
+            "interfaceHierarchyOverrides": {
+                "include": ["RowNumbersOptions"]
             }
         },
         "valueCache": {
