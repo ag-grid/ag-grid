@@ -162,22 +162,33 @@ export const LicensePricing: FunctionComponent<Props> = ({ defaultSelection }) =
                         </div>
 
                         <div className={styles.trialLicence}>
-                            <h3 className="text-2xl" id="request-trial-licence">
-                                Request an Enterprise Bundle Trial License Key
-                            </h3>
+                            <div className={styles.trialLicenceCopy}>
+                                <h3 className="text-2xl" id="request-trial-licence">
+                                    Request an Enterprise Trial
+                                </h3>
 
-                            <p>
-                                If you would like to trial AG Grid Enterprise in an environment, you can request a free
-                                trial license key. The trial license key will remove the watermark & console error
-                                message, and provide access to both AG Grid and AG Charts Enterprise.
-                            </p>
+                                <p>Fill out the form and we'll send you an Enterprise Bundle licence key</p>
 
-                            <p>
-                                Fill out the form below and we'll send you an Enterprise Bundle license key, valid for
-                                two weeks:
-                            </p>
+                                <div className={styles.trialLicenceCopyItem}>
+                                    <h4>Two week trial</h4>
+                                    <p>
+                                        Trial AG Grid for free for two weeks, you can request a free trial license key.{' '}
+                                    </p>
+                                </div>
 
-                            <TrialLicenceForm />
+                                <div className={styles.trialLicenceCopyItem}>
+                                    <h4>Set-Up ENterprise Trial</h4>
+                                    <p>
+                                        Will remove watermark & console error message, access to AG Grid and AG Charts
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div className={styles.trialLicenceSeparator}></div>
+
+                            <div className={styles.trialLicenceForm}>
+                                <TrialLicenceForm />
+                            </div>
                         </div>
 
                         <div className={styles.licenceKeyDocs}>
