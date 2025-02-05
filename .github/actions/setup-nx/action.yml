@@ -101,7 +101,7 @@ runs:
             path: |
               .nx/cache
               .nx/workspace-data
-                          key: cache-nx-v20-${{ hashFiles('yarn.lock','patches/*.patch', 'packages/*/package.json', 'plugins/*/package.json', 'documentation/*/package.json', 'testing/*/package.json', 'community-modules/*/package.json') }}-${{ github.sha }}
+            key: cache-nx-v20-${{ hashFiles('yarn.lock','patches/*.patch', 'packages/*/package.json', 'plugins/*/package.json', 'documentation/*/package.json', 'testing/*/package.json', 'community-modules/*/package.json') }}-${{ github.sha }}
             restore-keys: cache-nx-v20-${{ hashFiles('yarn.lock','patches/*.patch', 'packages/*/package.json', 'plugins/*/package.json', 'documentation/*/package.json', 'testing/*/package.json', 'community-modules/*/package.json') }}-
 
         #- name: Tidy Nx Cache (Post Job) 
