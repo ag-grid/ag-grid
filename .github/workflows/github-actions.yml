@@ -74,6 +74,7 @@ jobs:
         id: styles
         run: |
             ls -l community-modules/styles
+            ls -l packages/ag-grid-community 
             ls -l packages/ag-grid-enterprise 
 
 #      - name: nx format:check
