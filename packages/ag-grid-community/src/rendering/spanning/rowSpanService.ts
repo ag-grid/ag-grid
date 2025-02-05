@@ -89,7 +89,23 @@ export class RowSpanService extends BeanStub<'spannedCellsUpdated'> implements N
             return undefined;
         }
 
-        return cache.getSpanByRowIndex(index, _normalisePinnedValue(position.rowPinned));
+        let node;
+        switch (position.rowPinned) {
+            case 'top':
+                node = this.beans.pinnedRowModel?.getPinnedTopRow(index);
+                break;
+            case 'bottom':
+                node = this.beans.pinnedRowModel?.getPinnedBottomRow(index);
+                break;
+            default:
+                node = this.beans.rowModel.getRow(index);
+        }
+
+        if (!node) {
+            return undefined;
+        }
+
+        return cache.getCellSpan(node);
     }
 
     public getCellStart(position: CellPosition): CellPosition | undefined {

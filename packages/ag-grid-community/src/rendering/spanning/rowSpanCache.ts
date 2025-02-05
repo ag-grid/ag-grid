@@ -47,12 +47,7 @@ export class CellSpan {
             return false;
         }
 
-        for (const node of this.spannedNodes) {
-            if (node.rowIndex === cellPosition.rowIndex) {
-                return true;
-            }
-        }
-        return false;
+        return this.firstNode.rowIndex! <= cellPosition.rowIndex && cellPosition.rowIndex <= this.lastNode.rowIndex!;
     }
 
     /**
@@ -192,17 +187,5 @@ export class RowSpanCache extends BeanStub {
     public getCellSpan(node: RowNode): CellSpan | undefined {
         const map = this[`${_normalisePinnedValue(node.rowPinned)}ValueNodeMap`];
         return map.get(node);
-    }
-
-    public getSpanByRowIndex(rowIndex: number, pinned: 'top' | 'bottom' | 'center'): CellSpan | undefined {
-        const map = this[`${pinned}ValueNodeMap`];
-        for (const span of map.values()) {
-            for (const node of span.spannedNodes) {
-                if (node.rowIndex === rowIndex) {
-                    return span;
-                }
-            }
-        }
-        return undefined;
     }
 }
