@@ -30,6 +30,24 @@ $trial-licence-small: 680px;
     }
 }
 
+.emailInputOuter {
+    position: relative;
+
+    input[type='email'] {
+        width: 100%;
+        padding: 0.375em 0.75em 0.375em 2.75em;
+    }
+
+    :global(.icon) {
+        --icon-size: #{$spacing-size-6};
+        --icon-color: var(--color-util-gray-400);
+
+        position: absolute;
+        top: 7px;
+        left: $spacing-size-3;
+    }
+}
+
 .actions {
     display: flex;
     flex-direction: column;
@@ -72,6 +90,7 @@ $trial-licence-small: 680px;
         border-color: var(--color-util-warning-500);
     }
 }
+
 .statusIconSuccess {
     --icon-size: #{$spacing-size-6};
     --icon-color: var(--color-bg-primary);

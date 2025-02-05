@@ -237,15 +237,18 @@ export const TrialLicenceForm: FunctionComponent = () => {
 
                 <div className={classnames('input-field', styles.emailField, { 'input-error': emailError })}>
                     <label htmlFor="email">Email</label>
-                    <input
-                        placeholder="Email"
-                        type="email"
-                        id="email"
-                        name="email"
-                        required
-                        value={email}
-                        onChange={handleEmailChange}
-                    />
+                    <span className={styles.emailInputOuter}>
+                        <Icon name="email" />
+                        <input
+                            placeholder="Email"
+                            type="email"
+                            id="email"
+                            name="email"
+                            required
+                            value={email}
+                            onChange={handleEmailChange}
+                        />
+                    </span>
                     <p className={classnames({ [styles.isHidden]: !emailError }, 'error')}>
                         {emailError ? emailError : 'Email required'}
                     </p>
