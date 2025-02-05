@@ -87,7 +87,8 @@
         position: absolute;
     }
 
-    .ag-spanned-cell {
+    .ag-spanned-cell-wrapper > .ag-spanned-cell {
+        display: block;
         position: relative;
     }
 
