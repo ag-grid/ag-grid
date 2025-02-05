@@ -3,10 +3,21 @@ import type { FunctionComponent } from 'react';
 import styles from './features.module.scss';
 
 interface Props {
-    type: string;
+    type: 'community' | 'enterprise';
 }
 
 const FeaturesSection: FunctionComponent<Props> = ({ type }) => {
+    function Section({ index, feature }) {
+        return (
+            <div key={index} className={styles.card}>
+                <div className={styles.titleIcon}>
+                    <h4 className={styles.title}>{feature.title}</h4>
+                </div>
+                <p className={styles.description}>{feature.description}</p>
+            </div>
+        );
+    }
+
     const communityFeatures = [
         {
             title: 'Data Grid Essentials',
@@ -80,22 +91,8 @@ const FeaturesSection: FunctionComponent<Props> = ({ type }) => {
     return (
         <div className={styles.container}>
             {type === 'community'
-                ? communityFeatures.map((feature, index) => (
-                      <div key={index} className={styles.card}>
-                          <div className={styles.titleIcon}>
-                              <h4 className={styles.title}>{feature.title}</h4>
-                          </div>
-                          <p className={styles.description}>{feature.description}</p>
-                      </div>
-                  ))
-                : enterpriseFeatures.map((feature, index) => (
-                      <div key={index} className={styles.card}>
-                          <div className={styles.titleIcon}>
-                              <h4 className={styles.title}>{feature.title}</h4>
-                          </div>
-                          <p className={styles.description}>{feature.description}</p>
-                      </div>
-                  ))}
+                ? communityFeatures.map((feature, index) => <Section key={index} index={index} feature={feature} />)
+                : enterpriseFeatures.map((feature, index) => <Section key={index} index={index} feature={feature} />)}
         </div>
     );
 };
