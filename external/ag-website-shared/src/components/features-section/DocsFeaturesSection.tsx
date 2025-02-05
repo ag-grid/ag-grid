@@ -6,16 +6,16 @@ interface Props {
     type: 'community' | 'enterprise';
 }
 
-const FeaturesSection: FunctionComponent<Props> = ({ type }) => {
-    function Section({ index, feature }) {
-        return (
-            <div key={index} className={styles.card}>
-                <h4 className={styles.title}>{feature.title}</h4>
-                <p className={styles.description}>{feature.description}</p>
-            </div>
-        );
-    }
+function Section({ index, feature }) {
+    return (
+        <div key={index} className={styles.card}>
+            <h4 className={styles.title}>{feature.title}</h4>
+            <p className={styles.description}>{feature.description}</p>
+        </div>
+    );
+}
 
+const FeaturesSection: FunctionComponent<Props> = ({ type }) => {
     const communityFeatures = [
         {
             title: 'Data Grid Essentials',
