@@ -6,7 +6,7 @@ import { br } from '@ag-website-shared/markdoc/tags/br';
 import { embedSnippet } from '@ag-website-shared/markdoc/tags/embedSnippet';
 import { enterpriseIcon } from '@ag-website-shared/markdoc/tags/enterpriseIcon';
 import { expandingSection } from '@ag-website-shared/markdoc/tags/expandingSection';
-import { FeaturesSection } from '@ag-website-shared/markdoc/tags/featuresSection';
+import { featuresSection } from '@ag-website-shared/markdoc/tags/featuresSection';
 import { getChangelogSection } from '@ag-website-shared/markdoc/tags/getChangelogSection';
 import { getDocumentationArchiveSection } from '@ag-website-shared/markdoc/tags/getDocumentationArchiveSection';
 import { gettingStarted } from '@ag-website-shared/markdoc/tags/getting-started';
@@ -81,7 +81,7 @@ export default defineMarkdocConfig({
         enterpriseIcon,
         video,
         gettingStarted,
-        FeaturesSection,
+        featuresSection,
         licenseSetup: {
             render: component('./src/components/license-setup/components/LicenseSetup.astro'),
         },
