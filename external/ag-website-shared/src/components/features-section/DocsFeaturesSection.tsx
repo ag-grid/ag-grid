@@ -10,9 +10,7 @@ const FeaturesSection: FunctionComponent<Props> = ({ type }) => {
     function Section({ index, feature }) {
         return (
             <div key={index} className={styles.card}>
-                <div className={styles.titleIcon}>
-                    <h4 className={styles.title}>{feature.title}</h4>
-                </div>
+                <h4 className={styles.title}>{feature.title}</h4>
                 <p className={styles.description}>{feature.description}</p>
             </div>
         );

@@ -4,9 +4,11 @@
     gap: 16px;
     font-weight: 400;
     width: 100%;
+
     @media (max-width: 768px) {
         grid-template-columns: 1fr;
     }
+
     a {
         width: 100%;
     }
@@ -35,27 +37,6 @@
     justify-content: space-between;
 }
 
-.titleIcon {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    gap: 8px;
-
-    div {
-        height: 20px;
-
-        svg {
-            height: 20px;
-            width: 20px;
-        }
-
-        path {
-            fill: var(--color-fg-primary);
-            opacity: 0.4;
-        }
-    }
-}
-
 .icon {
     font-size: 2rem;
     padding: 10px;
@@ -65,6 +46,7 @@
 
 .title {
     font-size: 18px;
+    margin-top: 0;
     margin-bottom: 8px;
     font-weight: 700;
 }
