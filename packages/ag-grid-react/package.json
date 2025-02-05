@@ -11,11 +11,6 @@
     "types": "./dist/types/src/index.d.ts",
     "default": "./dist/package/index.cjs.js"
   },
-  "scripts": {
-    "cypress:open": "npx cross-env NODE_ENV=test cypress open",
-    "cypress:e2e": "npx cross-env NODE_ENV=test cypress run --spec 'cypress/integration/*spec.js'",
-    "cypress:components": "npx cross-env NODE_ENV=test cypress run --spec 'cypress/components/**/*spec.jsx'"
-  },
   "repository": {
     "type": "git",
     "url": "https://github.com/ag-grid/ag-grid.git"
@@ -42,13 +37,6 @@
     "@types/react": "~18.2.0",
     "@types/react-dom": "~18.2.0",
     "babel-preset-react-app": "^10.0.0",
-    "cypress": "^5.6.0",
-    "cypress-react-unit-test": "^4.17.0",
-    "enzyme": "^3.10.0",
-    "enzyme-adapter-react-16": "^1.14.0",
-    "jest": "26.6.0",
-    "jest-circus": "26.6.0",
-    "jest-watch-typeahead": "0.6.1",
     "react": "^16.9.0",
     "react-app-polyfill": "^2.0.0",
     "react-dom": "^16.9.0",
