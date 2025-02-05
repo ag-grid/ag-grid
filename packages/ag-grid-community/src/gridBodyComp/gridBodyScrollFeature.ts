@@ -14,7 +14,7 @@ import { _debounce } from '../utils/function';
 import { _warn } from '../validation/logging';
 import type { RowContainerCtrl } from './rowContainer/rowContainerCtrl';
 
-enum ScrollDirection {
+enum ScrollDir {
     Vertical,
     Horizontal,
 }
@@ -84,12 +84,12 @@ export class GridBodyScrollFeature extends BeanStub {
         this.eBodyViewport = eBodyViewport;
         this.resetLastHScrollDebounced = _debounce(
             this,
-            () => (this.lastScrollSource[ScrollDirection.Horizontal] = null),
+            () => (this.lastScrollSource[ScrollDir.Horizontal] = null),
             SCROLL_END_TIMEOUT
         );
         this.resetLastVScrollDebounced = _debounce(
             this,
-            () => (this.lastScrollSource[ScrollDirection.Vertical] = null),
+            () => (this.lastScrollSource[ScrollDir.Vertical] = null),
             SCROLL_END_TIMEOUT
         );
     }
@@ -186,7 +186,7 @@ export class GridBodyScrollFeature extends BeanStub {
 
     private setScrollLeftForAllContainersExceptCurrent(scrollLeft: number): void {
         for (const container of [...HORIZONTAL_SOURCES, VIEWPORT] as const) {
-            if (this.lastScrollSource[ScrollDirection.Horizontal] === container) {
+            if (this.lastScrollSource[ScrollDir.Horizontal] === container) {
                 continue;
             }
 
@@ -203,12 +203,9 @@ export class GridBodyScrollFeature extends BeanStub {
         return this.ctrlsSvc.get(source).eViewport;
     }
 
-    private isControllingScroll(
-        source: HorizontalScrollSource | VerticalScrollSource,
-        direction: ScrollDirection
-    ): boolean {
+    private isControllingScroll(source: HorizontalScrollSource | VerticalScrollSource, direction: ScrollDir): boolean {
         if (this.lastScrollSource[direction] == null) {
-            if (direction === ScrollDirection.Vertical) {
+            if (direction === ScrollDir.Vertical) {
                 this.lastScrollSource[0] = source as VerticalScrollSource;
             } else {
                 this.lastScrollSource[1] = source as HorizontalScrollSource;
@@ -221,14 +218,14 @@ export class GridBodyScrollFeature extends BeanStub {
     }
 
     private onHScroll(source: HorizontalScrollSource): void {
-        if (!this.isControllingScroll(source, ScrollDirection.Horizontal)) {
+        if (!this.isControllingScroll(source, ScrollDir.Horizontal)) {
             return;
         }
 
         const centerContainerViewport = this.centerRowsCtrl.eViewport;
         const { scrollLeft } = centerContainerViewport;
 
-        if (this.shouldBlockScrollUpdate(ScrollDirection.Horizontal, scrollLeft, true)) {
+        if (this.shouldBlockScrollUpdate(ScrollDir.Horizontal, scrollLeft, true)) {
             return;
         }
         const newScrollLeft = _getScrollLeft(this.getViewportForSource(source), this.enableRtl);
@@ -238,7 +235,7 @@ export class GridBodyScrollFeature extends BeanStub {
     }
 
     private onVScroll(source: VerticalScrollSource): void {
-        if (!this.isControllingScroll(source, ScrollDirection.Vertical)) {
+        if (!this.isControllingScroll(source, ScrollDir.Vertical)) {
             return;
         }
 
@@ -250,7 +247,7 @@ export class GridBodyScrollFeature extends BeanStub {
             scrollTop = this.ctrlsSvc.get('fakeVScrollComp').getScrollPosition();
         }
 
-        if (this.shouldBlockScrollUpdate(ScrollDirection.Vertical, scrollTop, true)) {
+        if (this.shouldBlockScrollUpdate(ScrollDir.Vertical, scrollTop, true)) {
             return;
         }
         const { animationFrameSvc } = this;
@@ -284,15 +281,15 @@ export class GridBodyScrollFeature extends BeanStub {
 
         this.scrollLeft = scrollLeft;
 
-        this.fireScrollEvent(ScrollDirection.Horizontal);
+        this.fireScrollEvent(ScrollDir.Horizontal);
         this.horizontallyScrollHeaderCenterAndFloatingCenter(scrollLeft);
         this.centerRowsCtrl.onHorizontalViewportChanged(true);
     }
 
-    private fireScrollEvent(direction: ScrollDirection): void {
+    private fireScrollEvent(direction: ScrollDir): void {
         const bodyScrollEvent: WithoutGridCommon<BodyScrollEvent> = {
             type: 'bodyScroll',
-            direction: direction === ScrollDirection.Horizontal ? 'horizontal' : 'vertical',
+            direction: direction === ScrollDir.Horizontal ? 'horizontal' : 'vertical',
             left: this.scrollLeft,
             top: this.scrollTop,
         };
@@ -309,7 +306,7 @@ export class GridBodyScrollFeature extends BeanStub {
         }, SCROLL_END_TIMEOUT);
     }
 
-    private shouldBlockScrollUpdate(direction: ScrollDirection, scrollTo: number, touchOnly: boolean = false): boolean {
+    private shouldBlockScrollUpdate(direction: ScrollDir, scrollTo: number, touchOnly: boolean = false): boolean {
         // touch devices allow elastic scroll - which temporally scrolls the panel outside of the viewport
         // (eg user uses touch to go to the left of the grid, but drags past the left, the rows will actually
         // scroll past the left until the user releases the mouse). when this happens, we want ignore the scroll,
@@ -325,7 +322,7 @@ export class GridBodyScrollFeature extends BeanStub {
             return false;
         }
 
-        if (direction === ScrollDirection.Vertical) {
+        if (direction === ScrollDir.Vertical) {
             return this.shouldBlockVerticalScroll(scrollTo);
         }
 
@@ -363,7 +360,7 @@ export class GridBodyScrollFeature extends BeanStub {
     }
 
     private redrawRowsAfterScroll(): void {
-        this.fireScrollEvent(ScrollDirection.Vertical);
+        this.fireScrollEvent(ScrollDir.Vertical);
     }
 
     // this is to cater for AG-3274, where grid is removed from the dom and then inserted back in again.
@@ -399,7 +396,7 @@ export class GridBodyScrollFeature extends BeanStub {
 
         // if this is call is coming from the alignedGridsSvc, we don't need to validate the
         // scroll, because it has already been validated by the grid firing the scroll event.
-        if (!fromAlignedGridsService && this.shouldBlockScrollUpdate(ScrollDirection.Horizontal, hScrollPosition)) {
+        if (!fromAlignedGridsService && this.shouldBlockScrollUpdate(ScrollDir.Horizontal, hScrollPosition)) {
             if (this.enableRtl && _isRtlNegativeScroll()) {
                 hScrollPosition = hScrollPosition > 0 ? 0 : maxScrollLeft;
             } else {

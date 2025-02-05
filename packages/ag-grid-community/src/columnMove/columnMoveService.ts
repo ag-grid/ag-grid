@@ -17,7 +17,7 @@ import { BodyDropTarget } from './columnDrag/bodyDropTarget';
 import { doesMovePassMarryChildren } from './columnMoveUtils';
 import { attemptMoveColumns, normaliseX, setColumnsMoving } from './internalColumnMoveUtils';
 
-enum Direction {
+enum MoveDirection {
     LEFT = -1,
     NONE = 0,
     RIGHT = 1,
@@ -88,13 +88,13 @@ export class ColumnMoveService extends BeanStub implements NamedBean {
         const doesMovePassLockedPositions = (proposedColumnOrder: AgColumn[]) => {
             const lockPositionToPlacement = (position: ColDef['lockPosition']) => {
                 if (!position) {
-                    return Direction.NONE;
+                    return MoveDirection.NONE;
                 }
-                return position === 'left' || position === true ? Direction.LEFT : Direction.RIGHT;
+                return position === 'left' || position === true ? MoveDirection.LEFT : MoveDirection.RIGHT;
             };
 
             const isRtl = gos.get('enableRtl');
-            let lastPlacement = isRtl ? Direction.RIGHT : Direction.LEFT;
+            let lastPlacement = isRtl ? MoveDirection.RIGHT : MoveDirection.LEFT;
             let rulePassed = true;
             proposedColumnOrder.forEach((col) => {
                 const placement = lockPositionToPlacement(col.getColDef().lockPosition);

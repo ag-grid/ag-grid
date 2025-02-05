@@ -177,9 +177,10 @@ export const GRID_OPTION_DEFAULTS = {
  * Used simply to type check the default grid options.
  * Done here to allow inference of the above type, for gridOptionsService.get to infer where defaults exist.
  */
-type AllValidKeys = Exclude<keyof typeof GRID_OPTION_DEFAULTS, keyof GridOptions> extends never ? true : false;
+type AllValidGridOptionsKeys =
+    Exclude<keyof typeof GRID_OPTION_DEFAULTS, keyof GridOptions> extends never ? true : false;
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-const allValidKeys: AllValidKeys = true;
+const allValidKeys: AllValidGridOptionsKeys = true;
 
 // validate each default value is the right type
 type AllTypesValid = {

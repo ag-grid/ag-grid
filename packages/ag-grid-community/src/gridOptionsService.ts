@@ -29,7 +29,7 @@ type GetKeys<T, U> = {
  * Get all the GridOption properties that strictly contain the provided type.
  * Does not include `any` properties.
  */
-export type KeysOfType<U> = Exclude<GetKeys<GridOptions, U>, AnyGridOptions>;
+type KeysOfType<U> = Exclude<GetKeys<GridOptions, U>, AnyGridOptions>;
 
 type BooleanProps = Exclude<KeysOfType<boolean>, AnyGridOptions>;
 type NoArgFuncs = KeysOfType<() => any>;

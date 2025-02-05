@@ -236,8 +236,8 @@ const COLUMN_DEFINITION_VALIDATIONS: () => Validations<ColDef | ColGroupDef> = (
     },
 });
 
-type ColKey = keyof ColDef | keyof ColGroupDef;
-const colDefPropertyMap: Record<ColKey, undefined> = {
+type ColOrGroupKey = keyof ColDef | keyof ColGroupDef;
+const colDefPropertyMap: Record<ColOrGroupKey, undefined> = {
     headerName: undefined,
     columnGroupShow: undefined,
     headerStyle: undefined,
@@ -381,7 +381,7 @@ const colDefPropertyMap: Record<ColKey, undefined> = {
     loadingCellRendererSelector: undefined,
     context: undefined,
 };
-const ALL_PROPERTIES: () => ColKey[] = () => Object.keys(colDefPropertyMap) as ColKey[];
+const ALL_PROPERTIES: () => ColOrGroupKey[] = () => Object.keys(colDefPropertyMap) as ColOrGroupKey[];
 
 export const COL_DEF_VALIDATORS: () => OptionsValidator<ColDef | ColGroupDef> = () => ({
     objectName: 'colDef',
