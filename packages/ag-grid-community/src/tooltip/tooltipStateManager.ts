@@ -2,11 +2,11 @@ import { _getTooltipCompDetails } from '../components/framework/userCompUtils';
 import type { UserComponentFactory } from '../components/framework/userComponentFactory';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
-import { _getActiveDomElement, _getDocument } from '../gridOptionsUtils';
+import { _addGridCommonParams, _getActiveDomElement, _getDocument } from '../gridOptionsUtils';
 import { _isIOSUserAgent } from '../utils/browser';
 import { _exists } from '../utils/generic';
 import type { PopupService } from '../widgets/popupService';
-import type { ITooltipComp } from './tooltipComponent';
+import type { ITooltipComp, ITooltipParams } from './tooltipComponent';
 import type { ITooltipCtrl } from './tooltipFeature';
 
 enum TooltipStates {
@@ -284,7 +284,7 @@ export class TooltipStateManager extends BeanStub {
 
         const rowNode = ctrl.getRowNode?.();
 
-        const params = {
+        const params = _addGridCommonParams<ITooltipParams>(this.gos, {
             location: ctrl.getLocation?.() ?? 'UNKNOWN', //'cell',
             colDef: ctrl.getColDef?.(),
             column: ctrl.getColumn?.(),
@@ -295,7 +295,7 @@ export class TooltipStateManager extends BeanStub {
             valueFormatted: ctrl.getValueFormatted?.(),
             hideTooltipCallback: () => this.hideTooltip(true),
             ...(ctrl.getAdditionalParams?.() ?? {}),
-        };
+        });
 
         this.state = TooltipStates.SHOWING;
         this.tooltipInstanceCount++;

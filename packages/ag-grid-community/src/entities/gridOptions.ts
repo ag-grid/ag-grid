@@ -169,6 +169,7 @@ import type { SideBarDef } from '../interfaces/iSideBar';
 import type { StatusPanelDef } from '../interfaces/iStatusPanel';
 import type { IViewportDatasource } from '../interfaces/iViewportDatasource';
 import type { DefaultMenuItem, MenuItemDef } from '../interfaces/menuItem';
+import type { RowNumbersOptions } from '../interfaces/rowNumbers';
 import type { Theme } from '../theming/Theme';
 import type { CheckboxSelectionCallback, ColDef, ColGroupDef, ColTypeDef, IAggFunc, SortDirection } from './colDef';
 import type { DataTypeDefinition } from './dataType';
@@ -1235,6 +1236,12 @@ export interface GridOptions<TData = any> {
     treeData?: boolean;
 
     /**
+     * The name of the field to use in a data item to retrieve the array of children nodes of a node when while using treeData=true.
+     * It supports accessing nested fields using the dot notation.
+     */
+    treeDataChildrenField?: string;
+
+    /**
      * Set to `true` to suppress sort indicators and actions from the row group panel.
      * @default false
      */
@@ -1480,6 +1487,12 @@ export interface GridOptions<TData = any> {
      * Note that due to the nature of this column, this type is a subset of `ColDef`, which does not support several normal column features such as editing, pivoting and grouping.
      */
     selectionColumnDef?: SelectionColumnDef;
+
+    /**
+     * Configure the Row Numbers Feature.
+     * @default false
+     */
+    rowNumbers?: boolean | RowNumbersOptions;
 
     /**
      * If `true`, only a single range can be selected.
@@ -2516,6 +2529,10 @@ export interface CellSelectionOptions<TData = any> {
      */
     suppressMultiRanges?: boolean;
     /**
+     * If `true` the header of cells containing ranges will be highlighted.
+     */
+    enableHeaderHighlight?: boolean;
+    /**
      * Determine the selection handle behaviour. Can be used to configure the range handle and the fill handle.
      */
     handle?: RangeHandleOptions | FillHandleOptions<TData>;
@@ -2598,6 +2615,15 @@ interface CommonRowSelectionOptions<TData = any, TValue = any> {
      * @default false
      */
     enableSelectionWithoutKeys?: boolean;
+    /**
+     * Determines the selection behaviour of master rows with respect to their detail cells.
+     *
+     * When set to `'self'`, selecting the master row has no effect on the selection state of the detail row.
+     * When set to `'detail'`, selecting the master row behaves the same as the header checkbox of the detail grid.
+     *
+     * @default 'self'
+     */
+    masterSelects?: 'self' | 'detail';
 }
 
 /**
@@ -2710,3 +2736,5 @@ export type SelectAllMode = 'all' | 'filtered' | 'currentPage';
 export type RowSelectionMode = RowSelectionOptions['mode'];
 
 export type CheckboxLocation = 'selectionColumn' | 'autoGroupColumn';
+
+export type MasterSelectionMode = NonNullable<CommonRowSelectionOptions['masterSelects']>;

@@ -1,13 +1,10 @@
 import type { Rect } from 'ag-charts-types/scene';
 
-import type { ChartType } from 'ag-grid-community';
-
 import type { AgChartsExports } from '../../../../../agChartsExports';
-import type { ThemeTemplateParameters } from '../../miniChartsContainer';
+import type { MiniChartSelector, ThemeTemplateParameters } from '../../miniChartsContainer';
 import { MiniChart } from '../miniChart';
 
-export class MiniHeatmap extends MiniChart {
-    static chartType: ChartType = 'heatmap';
+export class MiniHeatmapClass extends MiniChart {
     private readonly rects: Rect[];
 
     constructor(
@@ -92,3 +89,8 @@ export class MiniHeatmap extends MiniChart {
         });
     }
 }
+
+export const MiniHeatmap: MiniChartSelector = {
+    chartType: 'heatmap',
+    miniChart: MiniHeatmapClass,
+};

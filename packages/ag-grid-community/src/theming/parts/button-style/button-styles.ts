@@ -3,7 +3,7 @@ import type { WithParamTypes } from '../../theme-types';
 import { accentColor, backgroundColor, foregroundBackgroundMix, foregroundColor } from '../../theme-utils';
 import { buttonStyleBaseCSS } from './button-style-base.css-GENERATED';
 
-export type ButtonStyleParams = {
+export type ButtonStyleParams = WithParamTypes<{
     /**
      * Text color of standard action buttons (e.g. "Reset" and "Apply")
      */
@@ -83,9 +83,9 @@ export type ButtonStyleParams = {
      * Border around standard action buttons (e.g. "Reset" and "Apply") when disabled.
      */
     buttonDisabledBorder: 'infer';
-};
+}>;
 
-const baseParams: WithParamTypes<ButtonStyleParams> = {
+const baseParams: ButtonStyleParams = {
     buttonTextColor: 'inherit',
     buttonFontWeight: 'normal',
     buttonBackgroundColor: 'transparent',

@@ -1,73 +1,74 @@
 import { createPart } from '../../Part';
+import type { WithParamTypes } from '../../theme-types';
 import { accentColor, backgroundColor, foregroundBackgroundMix } from '../../theme-utils';
 import { checkboxStyleDefaultCSS } from './checkbox-style-default.css-GENERATED';
 
-type CheckboxStyleDefaultParams = {
+type CheckboxStyleDefaultParams = WithParamTypes<{
     /**
      * Border radius for checkboxes
      */
-    checkboxBorderRadius: never;
+    checkboxBorderRadius: 'infer';
 
     /**
      * Border width for checkboxes
      */
-    checkboxBorderWidth: never;
+    checkboxBorderWidth: 'infer';
 
     /**
      * Background color of a checked checkbox
      */
-    checkboxCheckedBackgroundColor: never;
+    checkboxCheckedBackgroundColor: 'infer';
 
     /**
      * Border color of a checked checkbox
      */
-    checkboxCheckedBorderColor: never;
+    checkboxCheckedBorderColor: 'infer';
 
     /**
      * The color of the check mark on checked checkboxes.
      */
-    checkboxCheckedShapeColor: never;
+    checkboxCheckedShapeColor: 'infer';
 
     /**
      * An image defining the shape of the check mark on checked checkboxes.
      */
-    checkboxCheckedShapeImage: never;
+    checkboxCheckedShapeImage: 'infer';
 
     /**
      * Background color of an indeterminate checkbox
      */
-    checkboxIndeterminateBackgroundColor: never;
+    checkboxIndeterminateBackgroundColor: 'infer';
 
     /**
      * Border color of an indeterminate checkbox
      */
-    checkboxIndeterminateBorderColor: never;
+    checkboxIndeterminateBorderColor: 'infer';
 
     /**
      * The color of the dash mark on indeterminate checkboxes
      */
-    checkboxIndeterminateShapeColor: never;
+    checkboxIndeterminateShapeColor: 'infer';
 
     /**
      * An image defining the shape of the dash mark on indeterminate checkboxes
      */
-    checkboxIndeterminateShapeImage: never;
+    checkboxIndeterminateShapeImage: 'infer';
 
     /**
      * Background color of an unchecked checkbox
      */
-    checkboxUncheckedBackgroundColor: never;
+    checkboxUncheckedBackgroundColor: 'infer';
 
     /**
      * Border color of an unchecked checkbox
      */
-    checkboxUncheckedBorderColor: never;
+    checkboxUncheckedBorderColor: 'infer';
 
     /**
      * An image defining the shape of the mark on checked radio buttons
      */
-    radioCheckedShapeImage: never;
-};
+    radioCheckedShapeImage: 'infer';
+}>;
 
 const makeCheckboxStyleDefaultTreeShakeable = () =>
     createPart<CheckboxStyleDefaultParams>({

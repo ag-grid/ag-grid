@@ -1,6 +1,7 @@
 import type { AgColumn } from '../entities/agColumn';
 import type { DndSourceOnRowDragParams } from '../entities/colDef';
 import type { RowNode } from '../entities/rowNode';
+import { _addGridCommonParams } from '../gridOptionsUtils';
 import { _createIconNoSpan } from '../utils/icon';
 import { Component } from '../widgets/component';
 
@@ -37,7 +38,7 @@ export class DndSourceComp extends Component {
         dataTransfer.setDragImage(eCell, 0, 0);
 
         if (providedOnRowDrag) {
-            const params: DndSourceOnRowDragParams = gos.addGridCommonParams({
+            const params: DndSourceOnRowDragParams = _addGridCommonParams(gos, {
                 rowNode,
                 dragEvent,
             });

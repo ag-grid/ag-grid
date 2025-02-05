@@ -7,9 +7,8 @@ import type {
     StatusPanelDef,
     UserCompDetails,
     UserComponentFactory,
-    WithoutGridCommon,
 } from 'ag-grid-community';
-import { AgPromise, Component, RefPlaceholder, _removeFromParent } from 'ag-grid-community';
+import { AgPromise, Component, RefPlaceholder, _addGridCommonParams, _removeFromParent } from 'ag-grid-community';
 
 import { agStatusBarCSS } from './agStatusBar.css-GENERATED';
 import type { StatusBarService } from './statusBarService';
@@ -17,7 +16,7 @@ import type { StatusBarService } from './statusBarService';
 function getStatusPanelCompDetails(
     userCompFactory: UserComponentFactory,
     def: StatusPanelDef,
-    params: WithoutGridCommon<IStatusPanelParams>
+    params: IStatusPanelParams
 ): UserCompDetails<IStatusPanelComp> | undefined {
     return userCompFactory.getCompDetails(def, StatusPanelComponent, undefined, params, true);
 }
@@ -115,7 +114,7 @@ export class AgStatusBar extends Component {
                 const key = statusPanelConfig.key ?? statusPanelConfig.statusPanel;
                 const existingStatusPanel = this.statusBarSvc.getStatusPanel(key);
                 if (existingStatusPanel?.refresh) {
-                    const newParams = this.gos.addGridCommonParams(statusPanelConfig.statusPanelParams ?? {});
+                    const newParams = _addGridCommonParams(this.gos, statusPanelConfig.statusPanelParams ?? {});
                     const hasRefreshed = existingStatusPanel.refresh(newParams);
                     if (hasRefreshed) {
                         existingStatusPanelsToReuse.set(key, existingStatusPanel);
@@ -166,9 +165,11 @@ export class AgStatusBar extends Component {
             if (existingStatusPanel) {
                 promise = AgPromise.resolve(existingStatusPanel);
             } else {
-                const params: WithoutGridCommon<IStatusPanelParams> = {};
-
-                const compDetails = getStatusPanelCompDetails(this.userCompFactory, componentConfig, params);
+                const compDetails = getStatusPanelCompDetails(
+                    this.userCompFactory,
+                    componentConfig,
+                    _addGridCommonParams(this.gos, {})
+                );
 
                 if (compDetails == null) {
                     return;

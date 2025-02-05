@@ -7,67 +7,91 @@ function escapeQuotes(value: string): string {
     return value.replaceAll(/(['"])/g, '\\$1');
 }
 
-export function getRowByIndex(index: number): HTMLElement | null {
-    return document.getElementById('myGrid')!.querySelector(`[row-index="${index}"]`);
-}
+export class GridActions {
+    private parent: HTMLElement;
 
-export function getRowById(id: string): HTMLElement | null {
-    return document.getElementById('myGrid')!.querySelector(`[row-id="${escapeQuotes(id)}"]`);
-}
-
-export function getCellByPosition(rowIndex: number, colId: string): HTMLElement | null {
-    return getRowByIndex(rowIndex)?.querySelector(`[col-id="${colId}"]`) ?? null;
-}
-
-export function getCheckboxByIndex(index: number): HTMLElement | null {
-    return getRowByIndex(index)?.querySelector<HTMLElement>('.ag-selection-checkbox input[type=checkbox]') ?? null;
-}
-
-export function getCheckboxById(id: string): HTMLElement | null {
-    return getRowById(id)?.querySelector<HTMLElement>('.ag-selection-checkbox input[type=checkbox]') ?? null;
-}
-
-export function getHeaderCheckboxByIndex(index: number): HTMLElement | null {
-    return document
-        .getElementById('myGrid')!
-        .querySelectorAll<HTMLElement>('.ag-header-select-all')
-        .item(index)
-        .querySelector('input[type=checkbox]');
-}
-
-export function selectRowsByIndex(indices: number[], click: boolean, api: GridApi): void {
-    for (const i of indices) {
-        click ? clickRowByIndex(i, { ctrlKey: true }) : toggleCheckboxByIndex(i);
+    constructor(
+        private api: GridApi,
+        parentSelector = '#myGrid'
+    ) {
+        this.parent = document.querySelector(parentSelector)!;
     }
-    assertSelectedRowsByIndex(indices, api);
-}
 
-export function clickRowByIndex(index: number, opts?: MouseEventInit): void {
-    getRowByIndex(index)?.dispatchEvent(new MouseEvent('click', { ...opts, bubbles: true }));
-}
+    getRowByIndex(index: number): HTMLElement | null {
+        return this.parent.querySelector(`[row-index="${index}"]`);
+    }
 
-export function toggleCheckboxByIndex(index: number, opts?: MouseEventInit): void {
-    getCheckboxByIndex(index)?.dispatchEvent(new MouseEvent('click', { ...opts, bubbles: true }));
-}
+    getRowById(id: string): HTMLElement | null {
+        return this.parent.querySelector(`[row-id="${escapeQuotes(id)}"]`);
+    }
 
-export function toggleCheckboxById(id: string, opts?: MouseEventInit): void {
-    getCheckboxById(id)?.dispatchEvent(new MouseEvent('click', { ...opts, bubbles: true }));
-}
+    getCellByPosition(rowIndex: number, colId: string): HTMLElement | null {
+        return this.getRowByIndex(rowIndex)?.querySelector(`[col-id="${colId}"]`) ?? null;
+    }
 
-export function toggleHeaderCheckboxByIndex(index: number, opts?: MouseEventInit): void {
-    getHeaderCheckboxByIndex(index)?.dispatchEvent(new MouseEvent('click', { ...opts, bubbles: true }));
-}
+    getCheckboxByIndex(index: number): HTMLElement | null {
+        return (
+            this.getRowByIndex(index)?.querySelector<HTMLElement>('.ag-selection-checkbox input[type=checkbox]') ?? null
+        );
+    }
 
-export function clickExpandGroupRowByIndex(index: number, opts?: MouseEventInit): void {
-    getRowByIndex(index)
-        ?.querySelector<HTMLElement>('.ag-group-contracted')
-        ?.dispatchEvent(new MouseEvent('click', { ...opts, bubbles: true }));
-}
+    getCheckboxById(id: string): HTMLElement | null {
+        return this.getRowById(id)?.querySelector<HTMLElement>('.ag-selection-checkbox input[type=checkbox]') ?? null;
+    }
 
-export async function expandGroupRowByIndex(api: GridApi, index: number, opts?: MouseEventInit): Promise<void> {
-    const updated = waitForEvent('modelUpdated', api, 2); // attach listener first
-    clickExpandGroupRowByIndex(index, opts);
-    await updated;
+    getHeaderCheckboxByIndex(index: number): HTMLElement | null {
+        return this.parent
+            .querySelectorAll<HTMLElement>('.ag-header-select-all')
+            .item(index)
+            .querySelector('input[type=checkbox]');
+    }
+
+    selectRowsByIndex(indices: number[], click: boolean): void {
+        for (const i of indices) {
+            click ? this.clickRowByIndex(i, { ctrlKey: true }) : this.toggleCheckboxByIndex(i);
+        }
+        assertSelectedRowsByIndex(indices, this.api);
+    }
+
+    clickRowByIndex(index: number, opts?: MouseEventInit): void {
+        this.getRowByIndex(index)?.dispatchEvent(new MouseEvent('click', { ...opts, bubbles: true }));
+    }
+
+    toggleCheckboxByIndex(index: number, opts?: MouseEventInit): void {
+        this.getCheckboxByIndex(index)?.dispatchEvent(new MouseEvent('click', { ...opts, bubbles: true }));
+    }
+
+    toggleCheckboxById(id: string, opts?: MouseEventInit): void {
+        this.getCheckboxById(id)?.dispatchEvent(new MouseEvent('click', { ...opts, bubbles: true }));
+    }
+
+    toggleHeaderCheckboxByIndex(index: number, opts?: MouseEventInit): void {
+        this.getHeaderCheckboxByIndex(index)?.dispatchEvent(new MouseEvent('click', { ...opts, bubbles: true }));
+    }
+
+    clickExpandGroupRowByIndex(index: number, opts?: MouseEventInit): void {
+        this.getRowByIndex(index)
+            ?.querySelector<HTMLElement>('.ag-group-contracted')
+            ?.dispatchEvent(new MouseEvent('click', { ...opts, bubbles: true }));
+    }
+
+    clickExpandGroupRowById(id: string, opts?: MouseEventInit): void {
+        this.getRowById(id)
+            ?.querySelector<HTMLElement>('.ag-group-contracted')
+            ?.dispatchEvent(new MouseEvent('click', { ...opts, bubbles: true }));
+    }
+
+    async expandGroupRowByIndex(index: number, opts?: MouseEventInit & { count?: number }): Promise<void> {
+        const updated = waitForEvent('modelUpdated', this.api, opts?.count ?? 2); // attach listener first
+        this.clickExpandGroupRowByIndex(index, opts);
+        await updated;
+    }
+
+    async expandGroupRowById(id: string, opts?: MouseEventInit & { count?: number }): Promise<void> {
+        const updated = waitForEvent('modelUpdated', this.api, opts?.count ?? 2);
+        this.clickExpandGroupRowById(id, opts);
+        await updated;
+    }
 }
 
 export function assertSelectedRowsByIndex(indices: number[], api: GridApi): void {

@@ -1,11 +1,10 @@
-import type { IColsService } from 'ag-grid-community';
-
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
 import type { AgColumn } from '../entities/agColumn';
 import type { AgProvidedColumnGroup } from '../entities/agProvidedColumnGroup';
 import type { ColDef, ColGroupDef } from '../entities/colDef';
+import type { IColsService } from '../interfaces/iColsService';
 import { SKIP_JS_BUILTINS } from '../utils/object';
 
 // returns copy of an object, doing a deep clone of any objects with that object.

@@ -1,13 +1,10 @@
 import type { Rect } from 'ag-charts-types/scene';
 
-import type { ChartType } from 'ag-grid-community';
-
 import type { AgChartsExports } from '../../../../../agChartsExports';
-import type { ThemeTemplateParameters } from '../../miniChartsContainer';
+import type { MiniChartSelector, ThemeTemplateParameters } from '../../miniChartsContainer';
 import { MiniChart } from '../miniChart';
 
-export class MiniTreemap extends MiniChart {
-    static chartType: ChartType = 'treemap';
+export class MiniTreemapClass extends MiniChart {
     private readonly rects: Rect[];
 
     constructor(
@@ -99,3 +96,8 @@ export class MiniTreemap extends MiniChart {
         });
     }
 }
+
+export const MiniTreemap: MiniChartSelector = {
+    chartType: 'treemap',
+    miniChart: MiniTreemapClass,
+};

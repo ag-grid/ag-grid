@@ -1,0 +1,116 @@
+---
+title: "Install AG Grid with NPM"
+description: "todo"
+---
+
+AG Grid is available through NPM packages.
+
+## Installation
+
+To install AG Grid Community, run:
+
+{% if isFramework("react") %}
+```bash
+npm install --save ag-grid-react
+```
+
+*This also installs `ag-grid-community` as a peer dependency.*
+{% /if %}
+
+{% if isFramework("angular") %}
+```bash
+npm install --save ag-grid-angular
+```
+{% /if %}
+
+{% if isFramework("vue") %}
+```bash
+npm install --save ag-grid-vue3
+```
+{% /if %}
+
+{% if isFramework("javascript") %}
+```bash
+npm install --save ag-grid-community
+```
+{% /if %}
+
+To install AG Grid Enterprise, run:
+
+```bash
+npm install --save ag-grid-enterprise
+```
+
+{% note %}
+You can test AG Grid Enterprise locally without a licence. To test in production, access support and remove the watermark & console warnings, [request a trial licence](./community-vs-enterprise/#request-an-enterprise-bundle-trial-licence).
+{% /note %}
+
+## Importing
+
+Once installed, you can `import` the module. For AG Grid Community, you need the `ag-grid-community` module:
+
+{% if isFramework("react") %}
+```js
+import { AgGridReact } from 'ag-grid-react';
+```
+{% /if %}
+
+{% if isFramework("angular") %}
+```js
+import { AgGridAngular } from 'ag-grid-angular';
+```
+{% /if %}
+
+{% if isFramework("vue") %}
+```js
+import { AgGridVue } from "ag-grid-vue3";
+```
+{% /if %}
+
+{% if isFramework("javascript") %}
+```js
+// ECMA 6 - using the system import method
+import { createGrid } from 'ag-grid-community';
+```
+
+For AG Grid Enterprise features, import the `ag-grid-enterprise` package for it to be included in your application:
+
+```js
+import 'ag-grid-enterprise'
+```
+{% /if %}
+
+## Registering Modules 
+
+Before using AG Grid, you need to register the modules you want to use. This is done by calling `ModuleRegistry.registerModules()`.
+
+To use all Community Features in AG Grid, you need to register the `AllCommunityModule`:
+
+```js
+import {
+    ModuleRegistry,
+    AllCommunityModule,
+} from 'ag-grid-community';
+
+ModuleRegistry.registerModules([
+    AllCommunityModule,
+]);
+```
+
+To use all Community and Enterprise Features in AG Grid, you need to register the `AllEnterpriseModule`:
+
+```js
+import {
+    ModuleRegistry,
+} from 'ag-grid-community';
+import {
+    AllEnterpriseModule,
+} from 'ag-grid-enterprise';
+
+ModuleRegistry.registerModules([
+    AllEnterpriseModule,
+]);
+```
+{% note %}
+If you want to reduce the bundle size of your application you can cherry-pick the modules you want to use. See the [Selecting Modules](./modules/#selecting-modules) docs for more information.
+{% /note %}

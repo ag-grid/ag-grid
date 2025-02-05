@@ -8,6 +8,7 @@ import type {
     RowPosition,
 } from 'ag-grid-community';
 import {
+    _addGridCommonParams,
     _getCellByPosition,
     _getFillHandle,
     _getNormalisedMousePosition,
@@ -17,6 +18,7 @@ import {
     _last,
     _toStringOrNull,
     _warn,
+    isRowNumberCol,
 } from 'ag-grid-community';
 
 import { AbstractSelectionHandle, SelectionHandleType } from './abstractSelectionHandle';
@@ -77,6 +79,10 @@ export class AgFillHandle extends AbstractSelectionHandle {
             this.dragAxis = direction;
             this.changedCalculatedValues = true;
         }
+    }
+
+    protected override shouldSkipCell(cell: CellPosition): boolean {
+        return isRowNumberCol(cell.column);
     }
 
     protected onDrag(_: MouseEvent) {
@@ -370,7 +376,7 @@ export class AgFillHandle extends AbstractSelectionHandle {
         }
 
         if (userFillOperation) {
-            const params = this.gos.addGridCommonParams<FillOperationParams>({
+            const params = _addGridCommonParams<FillOperationParams>(this.gos, {
                 event,
                 values: values.map(({ value }) => value),
                 initialValues,

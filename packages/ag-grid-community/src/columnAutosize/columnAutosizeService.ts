@@ -31,6 +31,7 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
         skipHeader?: boolean;
         skipHeaderGroups?: boolean;
         stopAtGroup?: AgColumnGroup;
+        silent?: boolean;
         source?: ColumnEventType;
     }): void {
         if (this.shouldQueueResizeOperations) {
@@ -38,7 +39,7 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
             return;
         }
 
-        const { colKeys, skipHeader, skipHeaderGroups, stopAtGroup, source = 'api' } = params;
+        const { colKeys, skipHeader, skipHeaderGroups, stopAtGroup, silent, source = 'api' } = params;
         // because of column virtualisation, we can only do this function on columns that are
         // actually rendered, as non-rendered columns (outside the viewport and not rendered
         // due to column virtualisation) are not present. this can result in all rendered columns
@@ -119,7 +120,9 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
             this.autoSizeColumnGroupsByColumns(colKeys, source, stopAtGroup);
         }
 
-        dispatchColumnResizedEvent(this.eventSvc, columnsAutosized, true, 'autosizeColumns');
+        if (!silent) {
+            dispatchColumnResizedEvent(this.eventSvc, columnsAutosized, true, 'autosizeColumns');
+        }
     }
 
     public autoSizeColumn(key: Maybe<ColKey>, source: ColumnEventType, skipHeader?: boolean): void {

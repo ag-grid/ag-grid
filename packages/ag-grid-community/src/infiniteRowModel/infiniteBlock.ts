@@ -1,5 +1,6 @@
 import { BeanStub } from '../context/beanStub';
 import { RowNode } from '../entities/rowNode';
+import { _addGridCommonParams } from '../gridOptionsUtils';
 import type { IGetRowsParams } from '../interfaces/iDatasource';
 import type { LoadSuccessParams } from '../interfaces/iServerSideRowModel';
 import { _exists, _missing } from '../utils/generic';
@@ -164,7 +165,7 @@ export class InfiniteBlock extends BeanStub<RowNodeBlockEvent> {
             failCallback: this.pageLoadFailed.bind(this, version),
             sortModel,
             filterModel,
-            context: gos.getGridCommonParams().context,
+            context: _addGridCommonParams(gos, {}).context,
         };
         return params;
     }

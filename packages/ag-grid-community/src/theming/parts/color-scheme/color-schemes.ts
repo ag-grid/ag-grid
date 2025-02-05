@@ -58,7 +58,7 @@ const darkParams = () =>
 const makeColorSchemeDarkTreeShakeable = () =>
     createPart({
         feature: 'colorScheme',
-        params: darkParams,
+        params: darkParams(),
     });
 
 export const colorSchemeDark = /*#__PURE__*/ makeColorSchemeDarkTreeShakeable();
@@ -84,7 +84,7 @@ export const colorSchemeDarkWarm = /*#__PURE__*/ makeColorSchemeDarkWarmTreeShak
 const makeColorSchemeDarkBlueTreeShakeable = () =>
     createPart({
         feature: 'colorScheme',
-        params: darkBlueParams,
+        params: darkBlueParams(),
     });
 
 export const colorSchemeDarkBlue = /*#__PURE__*/ makeColorSchemeDarkBlueTreeShakeable();

@@ -2,8 +2,9 @@ import type {
     ColDef,
     ColKey,
     ColumnEventType,
-    IAutoColService,
+    IColumnCollectionService,
     NamedBean,
+    PropertyValueChangedEvent,
     _ColumnCollections,
 } from 'ag-grid-community';
 import {
@@ -26,28 +27,26 @@ import {
     isColumnGroupAutoCol,
 } from 'ag-grid-community';
 
-export class AutoColService extends BeanStub implements NamedBean, IAutoColService {
+export class AutoColService extends BeanStub implements NamedBean, IColumnCollectionService {
     beanName = 'autoColSvc' as const;
 
     /** Group auto columns */
-    public autoCols: _ColumnCollections | null;
+    public columns: _ColumnCollections | null;
 
     public postConstruct(): void {
-        this.addManagedPropertyListener('autoGroupColumnDef', (event) =>
-            this.onAutoGroupColumnDefChanged(_convertColumnEventSourceType(event.source))
-        );
+        this.addManagedPropertyListener('autoGroupColumnDef', this.updateColumns.bind(this));
     }
 
-    public addAutoCols(cols: _ColumnCollections): void {
-        if (this.autoCols == null) {
+    public addColumns(cols: _ColumnCollections): void {
+        if (this.columns == null) {
             return;
         }
-        cols.list = this.autoCols.list.concat(cols.list);
-        cols.tree = this.autoCols.tree.concat(cols.tree);
+        cols.list = this.columns.list.concat(cols.list);
+        cols.tree = this.columns.tree.concat(cols.tree);
         _updateColsMap(cols);
     }
 
-    public createAutoCols(
+    public createColumns(
         cols: _ColumnCollections,
         updateOrders: (callback: (cols: AgColumn[] | null) => AgColumn[] | null) => void
     ): void {
@@ -70,9 +69,9 @@ export class AutoColService extends BeanStub implements NamedBean, IAutoColServi
         const noAutoCols = !groupingActive || suppressAutoColumn || groupFullWidthRow;
 
         const destroyPrevious = () => {
-            if (this.autoCols) {
-                _destroyColumnTree(beans, this.autoCols.tree);
-                this.autoCols = null;
+            if (this.columns) {
+                _destroyColumnTree(beans, this.columns.tree);
+                this.columns = null;
             }
         };
 
@@ -83,11 +82,11 @@ export class AutoColService extends BeanStub implements NamedBean, IAutoColServi
         }
 
         const list = this.generateAutoCols(rowGroupCols);
-        const autoColsSame = _areColIdsEqual(list, this.autoCols?.list || null);
+        const autoColsSame = _areColIdsEqual(list, this.columns?.list || null);
 
         // the new tree dept will equal the current tree dept of cols
         const newTreeDepth = cols.treeDepth;
-        const oldTreeDepth = this.autoCols ? this.autoCols.treeDepth : -1;
+        const oldTreeDepth = this.columns ? this.columns.treeDepth : -1;
         const treeDeptSame = oldTreeDepth == newTreeDepth;
 
         if (autoColsSame && treeDeptSame) {
@@ -97,7 +96,7 @@ export class AutoColService extends BeanStub implements NamedBean, IAutoColServi
         destroyPrevious();
         const treeDepth = colGroupSvc?.findDepth(cols.tree) ?? 0;
         const tree = colGroupSvc?.balanceTreeForAutoCols(list, treeDepth) ?? [];
-        this.autoCols = {
+        this.columns = {
             list,
             tree,
             treeDepth,
@@ -116,12 +115,17 @@ export class AutoColService extends BeanStub implements NamedBean, IAutoColServi
         updateOrders(putAutoColsFirstInList);
     }
 
-    public getAutoCol(key: ColKey): AgColumn | null {
-        return this.autoCols?.list.find((groupCol) => _columnsMatch(groupCol, key)) ?? null;
+    public updateColumns(event: PropertyValueChangedEvent<'autoGroupColumnDef'>) {
+        const source = _convertColumnEventSourceType(event.source);
+        this.columns?.list.forEach((col, index) => this.updateOneAutoCol(col, index, source));
     }
 
-    public getAutoCols(): AgColumn[] | null {
-        return this.autoCols?.list ?? null;
+    public getColumn(key: ColKey): AgColumn | null {
+        return this.columns?.list.find((groupCol) => _columnsMatch(groupCol, key)) ?? null;
+    }
+
+    public getColumns(): AgColumn[] | null {
+        return this.columns?.list ?? null;
     }
 
     private generateAutoCols(rowGroupCols: AgColumn[] = []): AgColumn[] {
@@ -146,10 +150,6 @@ export class AutoColService extends BeanStub implements NamedBean, IAutoColServi
         }
 
         return autoCols;
-    }
-
-    public updateAutoCols(source: ColumnEventType) {
-        this.autoCols?.list.forEach((col, index) => this.updateOneAutoCol(col, index, source));
     }
 
     private isSuppressAutoCol() {
@@ -275,12 +275,8 @@ export class AutoColService extends BeanStub implements NamedBean, IAutoColServi
         return res;
     }
 
-    private onAutoGroupColumnDefChanged(source: ColumnEventType) {
-        this.updateAutoCols(source);
-    }
-
     public override destroy(): void {
-        _destroyColumnTree(this.beans, this.autoCols?.tree);
+        _destroyColumnTree(this.beans, this.columns?.tree);
         super.destroy();
     }
 }

@@ -177,6 +177,9 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => {
                 rowDragEntireRow: { required: [false, undefined] },
             },
         },
+        rowNumbers: {
+            module: 'RowNumbers',
+        },
         getContextMenuItems: { module: 'ContextMenu' },
         getLocaleText: { module: 'Locale' },
         getMainMenuItems: { module: 'ColumnMenu' },
@@ -406,8 +409,14 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => {
                 const rowModel = options.rowModelType ?? 'clientSide';
                 switch (rowModel) {
                     case 'clientSide': {
-                        const csrmWarning = `treeData requires 'getDataPath' in the ${rowModel} row model.`;
-                        return (options as any).treeDataChildrenField || options.getDataPath ? null : csrmWarning;
+                        const { treeDataChildrenField, getDataPath } = options;
+                        if (!treeDataChildrenField && !getDataPath) {
+                            return "treeData requires either 'treeDataChildrenField' or 'getDataPath' in the clientSide row model.";
+                        }
+                        if (treeDataChildrenField && getDataPath) {
+                            return "Cannot use both 'treeDataChildrenField' and 'getDataPath' at the same time.";
+                        }
+                        return null;
                     }
                     case 'serverSide': {
                         const ssrmWarning = `treeData requires 'isServerSideGroup' and 'getServerSideGroupKey' in the ${rowModel} row model.`;
@@ -417,7 +426,7 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => {
                 return null;
             },
         },
-        ['treeDataChildrenField' as any]: {
+        treeDataChildrenField: {
             module: 'SharedTreeData',
         },
         undoRedoCellEditing: { module: 'UndoRedoEdit' },
@@ -460,7 +469,7 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => {
 export const GRID_OPTIONS_VALIDATORS: () => OptionsValidator<GridOptions> = () => ({
     objectName: 'gridOptions',
     allProperties: [..._ALL_GRID_OPTIONS, ..._ALL_EVENTS.map((event) => _getCallbackForEvent(event))],
-    propertyExceptions: ['api', 'treeDataChildrenField'],
+    propertyExceptions: ['api'],
     docsUrl: 'grid-options/',
     deprecations: GRID_OPTION_DEPRECATIONS(),
     validations: GRID_OPTION_VALIDATIONS(),

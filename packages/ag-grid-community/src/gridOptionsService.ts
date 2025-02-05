@@ -247,13 +247,7 @@ export class GridOptionsService extends BeanStub implements NamedBean {
         return this.domDataKey;
     }
 
-    public getGridCommonParams<TData = any, TContext = any>(): AgGridCommon<TData, TContext> {
-        return {
-            api: this.api,
-            context: this.gridOptionsContext,
-        };
-    }
-
+    /** Prefer _addGridCommonParams from gridOptionsUtils for bundle size savings */
     public addGridCommonParams<T extends AgGridCommon<TData, TContext>, TData = any, TContext = any>(
         params: WithoutGridCommon<T>
     ): T {

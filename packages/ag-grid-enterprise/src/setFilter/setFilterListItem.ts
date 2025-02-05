@@ -14,6 +14,7 @@ import {
     AgCheckboxSelector,
     Component,
     RefPlaceholder,
+    _addGridCommonParams,
     _createIcon,
     _getCellRendererDetails,
     _getShouldDisplayTooltip,
@@ -377,7 +378,7 @@ export class SetFilterListItem<V> extends Component<SetFilterListItemEvent> {
             this.tooltipFeature?.setTooltipAndRefresh(newTooltipText);
         }
 
-        this.cellRendererParams = gos.addGridCommonParams({
+        this.cellRendererParams = _addGridCommonParams(gos, {
             value,
             valueFormatted: formattedValue,
             colDef: this.params.colDef,

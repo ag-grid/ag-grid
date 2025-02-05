@@ -4,7 +4,7 @@ import type { GridApi, GridOptions } from 'ag-grid-community';
 import { ClientSideRowModelModule } from 'ag-grid-community';
 
 import { GridRows, TestGridsManager } from '../test-utils';
-import { selectRowsByIndex } from './utils';
+import { GridActions } from './utils';
 
 describe('Row Selection Grid Options', () => {
     const columnDefs = [{ field: 'sport' }];
@@ -21,8 +21,10 @@ describe('Row Selection Grid Options', () => {
     let consoleErrorSpy: MockInstance;
     let consoleWarnSpy: MockInstance;
 
-    function createGrid(gridOptions: GridOptions): GridApi {
-        return gridMgr.createGrid('myGrid', gridOptions);
+    function createGrid(gridOptions: GridOptions): [GridApi, GridActions] {
+        const api = gridMgr.createGrid('myGrid', gridOptions);
+        const actions = new GridActions(api, '#myGrid');
+        return [api, actions];
     }
 
     const gridMgr = new TestGridsManager({
@@ -44,7 +46,7 @@ describe('Row Selection Grid Options', () => {
     });
 
     test('Multiple sorting works with selection column', async () => {
-        const api = createGrid({
+        const [api, actions] = createGrid({
             columnDefs,
             rowData,
             rowSelection: {
@@ -56,7 +58,7 @@ describe('Row Selection Grid Options', () => {
             },
         });
 
-        selectRowsByIndex([3, 4, 5], false, api);
+        actions.selectRowsByIndex([3, 4, 5], false);
 
         api.applyColumnState({
             state: [
@@ -79,14 +81,12 @@ describe('Row Selection Grid Options', () => {
     });
 
     test('Selection column width and pinning is updated when `selectionColDef` changes', () => {
-        const api = createGrid({
+        const [api] = createGrid({
             columnDefs,
             rowData,
             rowSelection: { mode: 'multiRow' },
             selectionColumnDef: {},
         });
-
-        gridMgr;
 
         expect(api.isPinning()).toBe(false);
 

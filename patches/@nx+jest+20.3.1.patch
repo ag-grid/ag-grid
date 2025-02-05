@@ -1,0 +1,12 @@
+diff --git a/node_modules/@nx/jest/executors.json b/node_modules/@nx/jest/executors.json
+index 136c230..c0ea260 100644
+--- a/node_modules/@nx/jest/executors.json
++++ b/node_modules/@nx/jest/executors.json
+@@ -2,7 +2,6 @@
+   "executors": {
+     "jest": {
+       "implementation": "./src/executors/jest/jest.impl",
+-      "batchImplementation": "./src/executors/jest/jest.impl#batchJest",
+       "schema": "./src/executors/jest/schema.json",
+       "description": "Run Jest unit tests."
+     }

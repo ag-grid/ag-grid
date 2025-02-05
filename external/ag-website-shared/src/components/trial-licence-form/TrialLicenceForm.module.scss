@@ -1,0 +1,93 @@
+@use 'design-system' as *;
+
+$trial-licence-small: 680px;
+
+.trialForm {
+    display: flex;
+    flex-direction: column;
+}
+
+.inputs {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+
+    @media screen and (min-width: $trial-licence-small) {
+        flex-direction: row;
+        gap: $spacing-size-4;
+
+        :global(.input-field) {
+            flex-grow: 1;
+        }
+
+        .emailField {
+            flex-grow: 6;
+        }
+
+        input {
+            width: 100%;
+        }
+    }
+}
+
+.actions {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    justify-content: flex-end;
+    gap: $spacing-size-4;
+
+    p {
+        width: fit-content;
+    }
+
+    button {
+        width: 100%;
+    }
+
+    @media screen and (max-width: $trial-licence-small) {
+        margin-top: $spacing-size-2;
+    }
+
+    @media screen and (min-width: $trial-licence-small) {
+        button {
+            width: fit-content;
+        }
+    }
+}
+
+.statusMessage {
+    display: flex;
+    gap: $spacing-size-2;
+    align-items: center;
+    padding: $spacing-size-2 $spacing-size-3;
+    font-size: var(--text-fs-sm) !important;
+    line-height: var(--text-lh-sm) !important;
+    color: var(--color-gray-600);
+    border: 1px solid var(--color-border-primary);
+    border-radius: var(--radius-sm);
+
+    #{$selector-darkmode} & {
+        color: var(--color-gray-400);
+    }
+
+    &.errorMessage {
+        border-color: var(--color-util-warning-500);
+    }
+}
+.statusIconSuccess {
+    --icon-size: #{$spacing-size-6};
+    --icon-color: var(--color-bg-primary);
+
+    flex-shrink: 0;
+    padding: $spacing-size-1;
+    background-color: var(--color-success);
+    border-radius: 50%;
+}
+
+.statusIconError {
+    --icon-size: #{$spacing-size-6};
+    --icon-color: var(--color-util-warning-500);
+
+    flex-shrink: 0;
+}

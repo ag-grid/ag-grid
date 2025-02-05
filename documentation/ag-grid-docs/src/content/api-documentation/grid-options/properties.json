@@ -756,6 +756,12 @@
                 "url": "./dom-virtualisation/#row-buffer"
             }
         },
+        "rowNumbers": {
+            "more": {
+                "name": "Row Numbers",
+                "url": "./row-numbers/"
+            }
+        },
         "valueCache": {
             "more": {
                 "name": "Value Cache",
@@ -1339,6 +1345,12 @@
             }
         },
         "getDataPath": {
+            "more": {
+                "name": "Tree Data",
+                "url": "./tree-data/"
+            }
+        },
+        "treeDataChildrenField": {
             "more": {
                 "name": "Tree Data",
                 "url": "./tree-data/"

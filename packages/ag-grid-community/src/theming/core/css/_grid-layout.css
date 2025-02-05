@@ -254,6 +254,10 @@
     background-color: var(--ag-column-hover-color);
 }
 
+.ag-header-range-highlight {
+    background-color: var(--ag-range-header-highlight-color);
+}
+
 .ag-right-aligned-cell {
     text-align: right;
     font-variant-numeric: tabular-nums;

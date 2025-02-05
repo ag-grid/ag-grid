@@ -1,0 +1,39 @@
+---
+import type { Library } from '@ag-grid-types';
+import { parseVersion } from '@ag-website-shared/utils/parseVersion';
+import whatsNewData from '@ag-website-shared/content/whats-new/data.json';
+import { getDocumentationArchiveUrl } from '@ag-website-shared/utils/getArchiveUrl';
+import { LinkIcon } from '@ag-website-shared/components/link-icon/LinkIcon';
+import { agLibraryVersion } from '@constants';
+
+interface Props {
+    site: Library;
+    version: string;
+}
+
+const { site, version } = Astro.props as Props;
+const { major, minor } = parseVersion(version);
+
+const documentationArchiveLink = getDocumentationArchiveUrl({ site, version });
+const name = whatsNewData[site].name;
+const libraryVersion = parseVersion(agLibraryVersion);
+// Don't show documentation if the current library major/minor version is the same as the passed in version
+const showContent = !(major === libraryVersion.major && minor === libraryVersion.minor);
+---
+
+{
+    showContent && (
+        <Fragment>
+            <h2 id="documentation">
+                Documentation <LinkIcon href="#documentation" />
+            </h2>
+            <p>
+                See{' '}
+                <a href={documentationArchiveLink}>
+                    {name} {major}.{minor} Documentation
+                </a>
+                .
+            </p>
+        </Fragment>
+    )
+}

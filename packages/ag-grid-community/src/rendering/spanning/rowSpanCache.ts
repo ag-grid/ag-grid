@@ -2,6 +2,7 @@ import { BeanStub } from '../../context/beanStub';
 import type { AgColumn } from '../../entities/agColumn';
 import type { SpanRowsParams } from '../../entities/colDef';
 import type { RowNode } from '../../entities/rowNode';
+import { _addGridCommonParams } from '../../gridOptionsUtils';
 import type { CellPosition } from '../../interfaces/iCellPosition';
 import { _normalisePinnedValue } from './spannedRowRenderer';
 
@@ -118,7 +119,10 @@ export class RowSpanCache extends BeanStub {
         // check each node, if the currently open cell span should span, add this node to span, otherwise close the span.
         const checkNodeForCache = (node: RowNode) => {
             const doesNodeSupportSpanning =
-                !node.group && !node.detail && (isFullWidthCellFunc ? !isFullWidthCellFunc({ rowNode: node }) : true);
+                !node.isExpandable() &&
+                !node.group &&
+                !node.detail &&
+                (isFullWidthCellFunc ? !isFullWidthCellFunc({ rowNode: node }) : true);
 
             // fw, hidden, and detail rows cannot be spanned as head, body nor tail. Skip.
             if (node.rowIndex == null || !doesNodeSupportSpanning) {
@@ -140,7 +144,7 @@ export class RowSpanCache extends BeanStub {
             // check value is equal, if not, no span
             const value = valueSvc.getValue(column, node);
             if (isCustomCompare) {
-                const params: SpanRowsParams = gos.addGridCommonParams({
+                const params: SpanRowsParams = _addGridCommonParams(gos, {
                     valueA: lastValue,
                     nodeA: lastNode,
                     valueB: value,

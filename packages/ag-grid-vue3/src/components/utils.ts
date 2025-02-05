@@ -64,6 +64,7 @@ import type {
     RowGroupingDisplayType,
     RowHeightParams,
     RowModelType,
+    RowNumbersOptions,
     RowSelectionOptions,
     RowStyle,
     SelectionColumnDef,
@@ -1004,6 +1005,10 @@ export interface Props<TData> {
          * @default false
          */
     treeData?: boolean | undefined,
+    /** The name of the field to use in a data item to retrieve the array of children nodes of a node when while using treeData=true.
+         * It supports accessing nested fields using the dot notation.
+         */
+    treeDataChildrenField?: string | undefined,
     /** Set to `true` to suppress sort indicators and actions from the row group panel.
          * @default false
          */
@@ -1186,6 +1191,10 @@ export interface Props<TData> {
          * Note that due to the nature of this column, this type is a subset of `ColDef`, which does not support several normal column features such as editing, pivoting and grouping.
          */
     selectionColumnDef?: SelectionColumnDef | undefined,
+    /** Configure the Row Numbers Feature.
+         * @default false
+         */
+    rowNumbers?: boolean | RowNumbersOptions | undefined,
     /** If `true`, only a single range can be selected.
          * @default false
          * @deprecated v32.2 Use `cellSelection.suppressMultiRanges` instead
@@ -1778,6 +1787,7 @@ export function getProps() {
         groupRowRenderer: undefined,
         groupRowRendererParams: undefined,
         treeData: undefined,
+        treeDataChildrenField: undefined,
         rowGroupPanelSuppressSort: undefined,
         suppressGroupRowsSticky: undefined,
         pinnedTopRowData: undefined,
@@ -1822,6 +1832,7 @@ export function getProps() {
         suppressCellFocus: undefined,
         suppressHeaderFocus: undefined,
         selectionColumnDef: undefined,
+        rowNumbers: undefined,
         suppressMultiRangeSelection: undefined,
         enableCellTextSelection: undefined,
         enableRangeSelection: undefined,

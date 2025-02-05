@@ -1,10 +1,12 @@
+import type { GridApi } from '../api/gridApi';
 import type { NamedBean } from '../context/bean';
-import type { RowSelectionMode, SelectAllMode } from '../entities/gridOptions';
+import type { GridOptions, RowSelectionMode, SelectAllMode } from '../entities/gridOptions';
 import { RowNode } from '../entities/rowNode';
 import type { RowSelectedEvent, SelectionEventSourceType } from '../events';
 import {
     _getGroupSelection,
     _getGroupSelectsDescendants,
+    _getMasterSelects,
     _getRowSelectionMode,
     _isClientSideRowModel,
     _isMultiRowSelection,
@@ -12,6 +14,7 @@ import {
     _isUsingNewRowSelectionAPI,
 } from '../gridOptionsUtils';
 import type { IClientSideRowModel } from '../interfaces/iClientSideRowModel';
+import type { IRowNode } from '../interfaces/iRowNode';
 import type { ISelectionService, ISetNodesSelectedParams } from '../interfaces/iSelectionService';
 import type { ServerSideRowGroupSelectionState, ServerSideRowSelectionState } from '../interfaces/selectionState';
 import { ChangedPath } from '../utils/changedPath';
@@ -21,11 +24,14 @@ import { BaseSelectionService } from './baseSelectionService';
 export class SelectionService extends BaseSelectionService implements NamedBean, ISelectionService {
     beanName = 'selectionSvc' as const;
 
-    private selectedNodes: Map<string, RowNode> = new Map();
+    private selectedNodes = new Map<string, RowNode>();
+    /** Only used to track detail grid selection state when master/detail is enabled */
+    private detailSelection = new Map<string, Set<string>>();
 
     private groupSelectsDescendants: boolean;
     private groupSelectsFiltered: boolean;
     private mode?: RowSelectionMode;
+    private masterSelectsDetail = false;
 
     public override postConstruct(): void {
         super.postConstruct();
@@ -34,11 +40,14 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
         this.mode = _getRowSelectionMode(gos);
         this.groupSelectsDescendants = _getGroupSelectsDescendants(gos);
         this.groupSelectsFiltered = _getGroupSelection(gos) === 'filteredDescendants';
+        this.masterSelectsDetail = _getMasterSelects(gos) === 'detail';
 
         this.addManagedPropertyListeners(['groupSelectsChildren', 'groupSelectsFiltered', 'rowSelection'], () => {
             const groupSelectsDescendants = _getGroupSelectsDescendants(gos);
             const selectionMode = _getRowSelectionMode(gos);
             const groupSelectsFiltered = _getGroupSelection(gos) === 'filteredDescendants';
+
+            this.masterSelectsDetail = _getMasterSelects(gos) === 'detail';
 
             if (
                 groupSelectsDescendants !== this.groupSelectsDescendants ||
@@ -139,6 +148,7 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
             if (!skipThisNode) {
                 const thisNodeWasSelected = this.selectRowNode(node, newValue, event, source);
                 if (thisNodeWasSelected) {
+                    this.detailSelection.delete(node.id);
                     updatedCount++;
                 }
             }
@@ -200,7 +210,7 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
         }
 
         return this.setNodesSelected({
-            newValue: newValue,
+            newValue,
             clearSelection: false,
             suppressFinishActions: true,
             source,
@@ -463,38 +473,25 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
         let selectedCount = 0;
         let notSelectedCount = 0;
 
-        const callback = (node: RowNode) => {
+        this.getNodesToSelect(selectAll).forEach((node) => {
             if (this.groupSelectsDescendants && node.group) {
                 return;
             }
 
             if (node.isSelected()) {
                 selectedCount++;
-            } else if (!node.selectable) {
+            } else if (node.selectable) {
                 // don't count non-selectable nodes!
-            } else {
                 notSelectedCount++;
             }
-        };
+        });
 
-        this.getNodesToSelect(selectAll).forEach(callback);
         return { selectedCount, notSelectedCount };
     }
 
     public getSelectAllState(selectAll?: SelectAllMode): boolean | null {
         const { selectedCount, notSelectedCount } = this.getSelectedCounts(selectAll);
-        // if no rows, always have it unselected
-        if (selectedCount === 0 && notSelectedCount === 0) {
-            return false;
-        }
-
-        // if mix of selected and unselected, this is indeterminate
-        if (selectedCount > 0 && notSelectedCount > 0) {
-            return null;
-        }
-
-        // only selected
-        return selectedCount > 0;
+        return _calculateSelectAllState(selectedCount, notSelectedCount) ?? null;
     }
 
     public hasNodesToSelect(selectAll: SelectAllMode): boolean {
@@ -710,11 +707,71 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
         if (this.groupSelectsDescendants) {
             const selectionChanged = this.updateGroupsFromChildrenSelections?.('rowGroupChanged', changedPath);
             if (selectionChanged) {
-                this.eventSvc.dispatchEvent({
-                    type: 'selectionChanged',
-                    source: 'rowGroupChanged',
-                });
+                this.dispatchSelectionChanged('rowGroupChanged');
             }
+        }
+    }
+
+    public refreshMasterNodeState(node: RowNode, e?: Event): void {
+        if (!this.masterSelectsDetail) return;
+
+        const detailApi = node.detailNode?.detailGridInfo?.api;
+        if (!detailApi) return;
+
+        const isSelectAll = _isAllSelected(detailApi);
+        const current = node.isSelected();
+        if (current !== isSelectAll) {
+            const selectionChanged = this.selectRowNode(node, isSelectAll, e, 'masterDetail');
+
+            if (selectionChanged) {
+                this.dispatchSelectionChanged('masterDetail');
+            }
+        }
+
+        if (!isSelectAll) {
+            const detailSelected = this.detailSelection.get(node.id!) ?? new Set();
+            for (const n of detailApi.getSelectedNodes()) {
+                detailSelected.add(n.id!);
+            }
+            this.detailSelection.set(node.id!, detailSelected);
+        }
+    }
+
+    public setDetailSelectionState(masterNode: RowNode, detailGridOptions: GridOptions, detailApi: GridApi): void {
+        if (!this.masterSelectsDetail) return;
+
+        if (!_isMultiRowSelection(detailGridOptions)) {
+            _warn(269);
+            return;
+        }
+
+        switch (masterNode.isSelected()) {
+            case true: {
+                detailApi.selectAll();
+                break;
+            }
+            case false: {
+                detailApi.deselectAll();
+                break;
+            }
+            case undefined: {
+                const selectedIds = this.detailSelection.get(masterNode.id!);
+                if (selectedIds) {
+                    const nodes: IRowNode[] = [];
+                    for (const id of selectedIds) {
+                        const n = detailApi.getRowNode(id);
+                        if (n) {
+                            nodes.push(n);
+                        }
+                    }
+
+                    detailApi.setNodesSelected({ nodes, newValue: true, source: 'masterDetail' });
+                }
+                break;
+            }
+
+            default:
+                break;
         }
     }
 }
@@ -722,4 +779,35 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
 /** Selection state of footer nodes is a clone of their siblings, so always act on sibling rather than footer */
 function _normaliseFooterRef(node: RowNode): RowNode {
     return node.footer ? node.sibling : node;
+}
+
+function _isAllSelected(api: GridApi): boolean | undefined {
+    let selectedCount = 0;
+    let notSelectedCount = 0;
+
+    api.forEachNode((node) => {
+        if (node.isSelected()) {
+            selectedCount++;
+        } else if (node.selectable) {
+            // don't count non-selectable nodes!
+            notSelectedCount++;
+        }
+    });
+
+    return _calculateSelectAllState(selectedCount, notSelectedCount);
+}
+
+function _calculateSelectAllState(selected: number, notSelected: number): boolean | undefined {
+    // if no rows, always have it unselected
+    if (selected === 0 && notSelected === 0) {
+        return false;
+    }
+
+    // if mix of selected and unselected, this is indeterminate
+    if (selected > 0 && notSelected > 0) {
+        return;
+    }
+
+    // only selected
+    return selected > 0;
 }

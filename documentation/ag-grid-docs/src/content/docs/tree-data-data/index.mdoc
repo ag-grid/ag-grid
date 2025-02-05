@@ -1,0 +1,16 @@
+---
+title: "Tree Data - Supplying Data"
+enterprise: true
+---
+Tree Data can be supplied to the grid in multiple ways.
+
+## Picking Your Approach
+
+Tree Data can be provided in two different ways, either as a flat list with each record knowing it's ancestry, or as a nested structure with each record containing an array of its children.
+
+Your requirements should determine which approach is best for your application:
+- Use [Data Paths](./tree-data-paths) when using relational databases or being provided with flat data. The data does not need to be provided to the grid pre-structured and can support transactions.
+- Use [Nested Records](./tree-data-nesting) if your data is already in a structured hierarchy, for example, when using object databases.
+
+## Next Up
+Continue to the next section to learn about supplying [Data Paths](./tree-data-paths/).

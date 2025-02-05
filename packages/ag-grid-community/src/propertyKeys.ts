@@ -53,6 +53,7 @@ const STRING_GRID_OPTIONS: KeysOfType<string>[] = [
     'fillHandleDirection',
     'groupDisplayType',
     'treeDataDisplayType',
+    'treeDataChildrenField',
     'colResizeDefault',
     'tooltipTrigger',
     'serverSidePivotResultFieldSeparator',
@@ -161,6 +162,7 @@ const OTHER_GRID_OPTIONS: GridOptionKey[] = ['theme', 'rowSelection'];
 export const _BOOLEAN_MIXED_GRID_OPTIONS: KeysOfType<boolean>[] = [
     'cellSelection',
     'sideBar',
+    'rowNumbers',
     'suppressGroupChangesColumnVisibility',
     'groupAggFiltering',
     'suppressStickyTotalRow',

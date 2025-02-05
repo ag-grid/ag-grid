@@ -320,7 +320,17 @@ export class ServerSideSelectionService extends BaseSelectionService implements 
     public updateSelectableAfterGrouping(): void {
         return _error(194, { method: 'updateSelectableAfterGrouping' }) as undefined;
     }
+
+    public refreshMasterNodeState(): void {
+        // Initially we don't support SSRM for master detail selection
+    }
+
+    public setDetailSelectionState(): void {
+        // Initially we don't support SSRM for master detail selection
+        return;
+    }
 }
+
 function validateSelectionParameters({ selectAll }: { source: SelectionEventSourceType; selectAll?: SelectAllMode }) {
     if (selectAll === 'filtered' || selectAll === 'currentPage') {
         _warn(195, { justCurrentPage: selectAll === 'currentPage' });

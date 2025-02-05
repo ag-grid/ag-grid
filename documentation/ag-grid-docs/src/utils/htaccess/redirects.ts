@@ -2702,6 +2702,13 @@ export const SITE_301_REDIRECTS: Redirect[] = [
     { from: '/javascript-data-grid/whats-new', to: '/whats-new' },
     { from: '/vue-data-grid/framework-data-flow', to: '/vue-data-grid/getting-started/' },
 
+    { from: '/react-data-grid/licensing/', to: '/react-data-grid/community-vs-enterprise/' },
+    { from: '/vue-data-grid/licensing/', to: '/vue-data-grid/community-vs-enterprise/' },
+    { from: '/angular-data-grid/licensing/', to: '/angular-data-grid/community-vs-enterprise/' },
+    { from: '/javascript-data-grid/licensing/', to: '/javascript-data-grid/community-vs-enterprise/' },
+
+    { from: '/javascript-data-grid/installation/', to: '/javascript-data-grid/npm-installation/' },
+
     ...pageForAllFrameworks('range-selection', 'cell-selection'),
     ...pageForAllFrameworks('range-selection-handle', 'cell-selection-handle'),
     ...pageForAllFrameworks('range-selection-fill-handle', 'cell-selection-fill-handle'),
@@ -2733,4 +2740,5 @@ export const SITE_301_REDIRECTS: Redirect[] = [
     ...pageForAllFrameworks('global-style-customisation-css', 'theming-css'),
     ...pageForAllFrameworks('global-style-customisation-sass', 'theming-v32-customisation-sass'),
     ...pageForAllFrameworks('global-style-customisation-sass-legacy', 'theming-v32-customisation-sass-legacy'),
+    ...pageForAllFrameworks('tree-data-hierarchy', 'tree-data-paths'),
 ];

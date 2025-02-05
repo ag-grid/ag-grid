@@ -18,7 +18,7 @@ import type {
     RowNode,
     RowSpanningAccumulator,
 } from 'ag-grid-community';
-import { BaseGridSerializingSession, _last, _mergeDeep, _warn } from 'ag-grid-community';
+import { BaseGridSerializingSession, _addGridCommonParams, _last, _mergeDeep, _warn } from 'ag-grid-community';
 
 import { getHeightFromProperty } from './assets/excelUtils';
 import { addXlsxBodyImageToMap, createXlsxExcel, getXlsxStringPosition } from './excelXlsxFactory';
@@ -182,7 +182,7 @@ export class ExcelSerializingSession extends BaseGridSerializingSession<ExcelRow
             if (freezeRows === 'headersAndPinnedRows' && node?.rowPinned === 'top') {
                 this.frozenRowCount++;
             } else if (typeof freezeRows === 'function') {
-                if (freezeRows({ ...this.gos.getGridCommonParams(), node: node! })) {
+                if (freezeRows(_addGridCommonParams(this.gos, { node: node! }))) {
                     this.frozenRowCount++;
                 } else {
                     this.skipFrozenRows = true;
@@ -220,7 +220,7 @@ export class ExcelSerializingSession extends BaseGridSerializingSession<ExcelRow
         if (config.sheetName != null) {
             const { sheetName } = config;
             const sheetNameValue =
-                typeof sheetName === 'function' ? sheetName(this.gos.getGridCommonParams()) : sheetName;
+                typeof sheetName === 'function' ? sheetName(_addGridCommonParams(this.gos, {})) : sheetName;
 
             name = String(sheetNameValue).substring(0, 31);
         } else {
@@ -347,7 +347,7 @@ export class ExcelSerializingSession extends BaseGridSerializingSession<ExcelRow
                     this.frozenColumnCount++;
                 } else if (
                     typeof freezeColumns === 'function' &&
-                    freezeColumns({ ...this.gos.getGridCommonParams(), column })
+                    freezeColumns(_addGridCommonParams(this.gos, { column }))
                 ) {
                     this.frozenColumnCount++;
                 } else {

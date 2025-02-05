@@ -17,7 +17,7 @@ import type {
     ValueService,
     WithoutGridCommon,
 } from 'ag-grid-community';
-import { BeanStub, _error, _getGrandTotalRow, _getGroupAggFiltering } from 'ag-grid-community';
+import { BeanStub, _addGridCommonParams, _error, _getGrandTotalRow, _getGroupAggFiltering } from 'ag-grid-community';
 
 import type { AggFuncService } from './aggFuncService';
 
@@ -308,7 +308,7 @@ export class AggregationStage extends BeanStub implements NamedBean, IRowNodeSta
         }
 
         const aggFuncAny = aggFunc;
-        const params: IAggFuncParams = this.gos.addGridCommonParams({
+        const params: IAggFuncParams = _addGridCommonParams(this.gos, {
             values: values,
             column: column,
             colDef: column ? column.getColDef() : undefined,

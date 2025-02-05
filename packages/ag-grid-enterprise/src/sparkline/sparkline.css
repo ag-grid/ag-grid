@@ -2,11 +2,7 @@
     position: absolute;
     height: 100%;
     width: 100%;
-    /* rtl:ignore */
     left: 0;
     top: 0;
-}
-
-.ag-sparkline-wrapper :where(canvas) {
-    position: absolute;
+    line-height: initial;
 }

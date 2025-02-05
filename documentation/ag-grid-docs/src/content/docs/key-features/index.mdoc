@@ -1,0 +1,510 @@
+---
+title: "Key Features"
+description: "Overview of popular AG Grid features with code snippets. Learn how to use key Community features, customise themes and explore advanced Enterprise features."
+---
+
+{% if isFramework("vue") %}
+The page provides an overview of and introduction to popular features available in AG Grid. Learn how to use Community features, configure and customise themes, and explore advanced Enterprise features.
+{% /if %}
+
+{% if isFramework("react") %}
+{% videoSection id="6hxbPqziELk" title="React Data Grid quick start video tutorial" playlist="PLsZlhayVgqNwHNHeqpCkSgdRV08xrKtzW" showHeader=true %}
+The page provides an overview of and introduction to popular features available in AG Grid. Learn how to use Community features, configure and customise themes, and explore advanced Enterprise features.
+{% /videoSection %}
+{% /if %}
+
+{% if isFramework("angular") %}
+{% videoSection id="X_Ip_jGDtho" title="Angular Data Grid quick start video tutorial" playlist="PLsZlhayVgqNw6VHFn4j6FcJM5vLACsf0x" showHeader=true %}
+The page provides an overview of and introduction to popular features available in AG Grid. Learn how to use Community features, configure and customise themes, and explore advanced Enterprise features.
+{% /videoSection %}
+{% /if %}
+
+{% if isFramework("javascript") %}
+{% videoSection id="Ww7-LC6rU6U" title="JavaScript Data Grid quick start video tutorial" playlist="PLsZlhayVgqNxijfRQxg5Mc6W4MzZHQ9MK" showHeader=true %}
+The page provides an overview of and introduction to popular features available in AG Grid. Learn how to use Community features, configure and customise themes, and explore advanced Enterprise features.
+{% /videoSection %}
+{% /if %}
+
+
+{% note %}
+The following sections assume a level of familiarity with common Data Grid concepts. If you're new to {% getFrameworkCapitalised() %} Data Grids in general, we recommend starting with our [Introductory Tutorial](./deep-dive/) instead.
+{% /note %}
+
+## Showing Data
+
+### Mapping Values
+
+The `field` or `valueGetter` attributes [Map Data to Columns](./column-definitions). A field maps to a field in the data. A [Value Getter](./value-getters/) is a function callback that returns the cell value.
+
+The `headerName` provides the title for the header. If missing the title is derived from `field`.
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    columnDefs: [
+        { headerName: "Make & Model", valueGetter: p => p.make + ' ' + p.model},
+        { field: "price" },
+    ],
+};
+```
+
+### Text Formatting
+
+Format text for cell content using a [Value Formatter](./value-formatters/).
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    columnDefs: [
+        { field: "price", valueFormatter: p => '£' + p.value.toLocaleString() },
+    ],
+};
+```
+
+### Cell Components
+
+Add buttons, checkboxes or images to cells with a [Cell Component](./component-cell-renderer/).
+
+{% if isFramework("react") %}
+```jsx
+const CustomButtonComponent = (props) => {
+    return <button onClick={() => window.alert('clicked') }>Push Me!</button>;
+};
+
+const [colDefs, setColDefs] = useState([
+    { field: "button", cellRenderer: CustomButtonComponent },
+    // ...
+]);
+```
+{% /if %}
+
+{% if isFramework("javascript") %}
+```js
+class CustomButtonComponent {
+    eGui;
+    eButton;
+    eventListener;
+
+    init(params) {
+        this.eGui = document.createElement("div");
+        let button = document.createElement("button");
+        button.className = "btn-simple";
+        button.textContent = "Push Me!";
+        this.eventListener = () => alert("clicked");
+        button.addEventListener("click", this.eventListener);
+        this.eGui.appendChild(button);
+    }
+
+    getGui() {
+        return this.eGui;
+    }
+
+    refresh(params) {
+        return true;
+    }
+
+    destroy() {
+        if (button) {
+            button.removeEventListener("click", this.eventListener);
+        }
+    }
+}
+
+
+const columnDefs = [
+    { field: "button", cellRenderer: CustomButtonComponent },
+    // ...
+];
+```
+{% /if %}
+
+{% if isFramework("angular") %}
+```js
+@Component({
+    standalone: true,
+    template: `<button (click)="buttonClicked()">Push Me!</button>`,
+})
+export class CustomButtonComponent implements ICellRendererAngularComp {
+    agInit(params: ICellRendererParams): void {}
+    refresh(params: ICellRendererParams) {
+        return true;
+    }
+    buttonClicked() {
+        alert("clicked");
+    }
+}
+
+columnDefs: ColDef[] = [
+    { field: "button", cellRenderer: CustomButtonComponent },
+    // ...
+];
+```
+{% /if %}
+
+{% if isFramework("vue") %}
+```js
+// ...
+    components: {
+        "ag-grid-vue": AgGridVue,
+        CustomButtonComponent: {
+            template: `
+                <button @click="buttonClicked()">Push Me!</button>
+            `,
+            methods: {
+            buttonClicked() {
+                alert("clicked");
+            },
+            },
+        },
+    },
+    data: function () {
+        return {
+        columnDefs: [
+            { field: "button", cellRenderer: CustomButtonComponent },
+            // ...
+        ],
+    };
+},
+// ...
+```
+{% /if %}
+
+### Resizing Columns
+
+Columns are [Resized](./column-sizing/) by dragging the Column Header edges. Additionally assign `flex` values to
+allow columns to flex to the grid width.
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    columnDefs: [
+        { field: "make", flex: 2 }, //This column will be twice as wide as the others
+        { field: "model", flex: 1 },
+        { field: "price", flex: 1 },
+        { field: "electric", flex: 1 }
+    ],
+};
+```
+
+### Example
+
+This example demonstrates mapping and formatting values, cell components, and resizing columns.
+
+{% gridExampleRunner title="Showing Data Example" name="showing-data-example" exampleHeight=303 /%}
+
+## Working with Data
+
+By default, the row data is used to infer the [Cell Data Type](./cell-data-types/). The cell data type allows grid features, such as filtering and editing, to work without additional configuration.
+
+### Filtering
+
+[Column Filters](./filtering/) are embedded into each column menu. These are enabled using the `filter` attribute. The filter type is inferred from the cell data type.
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    columnDefs: [
+        { field: "make", filter: true },
+    ],
+};
+```
+
+There are 5 [Provided Filters](./filtering/) which can be set through this attribute.
+You can also create your own [Custom Filter](./component-filter/).
+
+[Floating Filters](./floating-filters/) embed the Column Filter into the header for ease of access.
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    columnDefs: [
+        { field: "make", filter: true, floatingFilter: true },
+    ],
+};
+```
+
+### Editing
+
+Enable [Editing](./cell-editing/) by setting the `editable` attribute to `true`. The cell editor is inferred from the cell data type.
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    columnDefs: [
+        { field: "make", editable: true },
+    ],
+};
+```
+
+Set the cell editor type using the `cellEditor` attribute. There are 7 [Provided Cell Editors](./provided-cell-editors/) which can be set through this attribute.
+You can also create your own [Custom Editors](./cell-editors/).
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    columnDefs: [
+        {
+            field: "make",
+            editable: true,
+            cellEditor: 'agSelectCellEditor',
+            cellEditorParams: {
+                values: ['Tesla', 'Ford', 'Toyota'],
+            },
+        },
+    ],
+};
+```
+
+### Sorting
+
+Data is [Sorted](./row-sorting/) by clicking the column headers. Sorting is enabled by default.
+
+### Row Selection
+
+[Row Selection](./row-selection/) is enabled using the `rowSelection` attribute.
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    // Column Definitions: Defines the columns to be displayed.
+    columnDefs: [
+        { field: "make" },
+    ],
+    rowSelection: {
+        mode: 'multiRow',
+    },
+};
+```
+
+### Pagination
+
+Enable [Pagination](./row-pagination/) by setting `pagination` to be true.
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    pagination: true,
+    paginationPageSize: 500,
+    paginationPageSizeSelector: [200, 500, 1000],
+};
+```
+
+### Example
+
+This example demonstrates filtering, editing, sorting, row selection, and pagination.
+
+{% gridExampleRunner title="Working With Data Example" name="working-with-data-example" exampleHeight=500 /%}
+
+## Themes & Style
+
+### Themes
+
+[Grid Themes](./theming/) define how the grid looks (colors, font, spacing etc). The default theme is called Quartz. You can choose a [different theme](./themes/), or customise a built-in theme by changing parameters. Here we create a new theme based on Quartz:
+
+```js
+import { themeQuartz } from "ag-grid-community"; // or themeBalham, themeAlpine
+
+const myTheme = themeQuartz.withParams({
+    /* Low spacing = very compact */
+    spacing: 2,
+    /* Changes the color of the grid text */
+    foregroundColor: 'rgb(14, 68, 145)',
+    /* Changes the color of the grid background */
+    backgroundColor: 'rgb(241, 247, 255)',
+    /* Changes the header color of the top row */
+    headerBackgroundColor: 'rgb(228, 237, 250)',
+    /* Changes the hover color of the row*/
+    rowHoverColor: 'rgb(216, 226, 255)',
+});
+
+{% if isFramework("react") %}
+...
+return (
+    <div>
+        <AgGridReact theme={myTheme} rowData={...} columnDefs={...} />
+    </div>
+)
+{% /if %}
+{% if isFramework("javascript") %}
+const gridOptions = {
+    theme: myTheme,
+    ...
+}
+{% /if %}
+{% if isFramework("angular") %}
+// ...
+    template: `<div style="height: 100%; box-sizing: border-box;">
+        <ag-grid-angular
+            // ...
+            [theme]="theme"
+            />
+    </div>`,
+// ...
+public theme = myTheme;
+{% /if %}
+{% if isFramework("vue") %}
+const VueExample = {
+    template: `
+        <div style="height: 100%">
+            <div style="height: 100%; box-sizing: border-box;">
+                <ag-grid-vue
+                // ...
+                :theme="theme"></ag-grid-vue>
+            </div>
+        </div>
+    `,
+// ...
+ data: function () {
+    return {
+        // ...
+        theme: myTheme,
+    };
+ },
+// ...
+{% /if %}
+```
+
+{% gridExampleRunner title="Customising Quartz Theme" name="custom-quartz-theme" suppressDarkMode=true /%}
+
+### Theme Builder
+
+Use the [Theme Builder](/theme-builder/) to create a custom theme with our visual editor. Browse and customise 100's of theme parameters and preview the changes in real-time. Automatically generate the theme code to copy & paste into your application.
+
+{% video videoSrc="resources/theme-builder-demo.mp4" centered=true /%}
+
+### Figma
+
+If you are designing within Figma, you can use the [AG Grid Design System](./ag-grid-design-system/) to replicate the
+Quartz and Alpine AG Grid themes within Figma. These default themes can be extended with Figma variables to match any
+existing visual design or create entirely new AG Grid themes. These can then be exported and generated into new AG Grid
+themes.
+
+{% figmaCommunityButton /%}
+
+### Cell Style
+
+Define rules to apply [Styling to Cells](./cell-styles) using `cellClassRules`. This can be used, for example, to set cell background colour based on its value.
+
+```css
+.rag-green {
+    background-color: #33cc3344;
+}
+```
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    columnDefs: [{
+        field: 'electric',
+        cellClassRules: {
+            // apply green to electric cars
+            'rag-green': params => params.value === true,
+        }
+    }],
+};
+```
+
+### Row Style
+
+Define rules to apply [Styling to Rows](./row-styles) using `rowClassRules`. This allows changing style (e.g. row colour) based on row values.
+
+```css
+.rag-red {
+    background-color: #cc222244;
+}
+```
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    rowClassRules: {
+        // apply red to Ford cars
+        'rag-red': params => params.data.make === 'Ford',
+    },
+};
+```
+
+### Example
+
+This example demonstrates cell style and row style.
+
+{% gridExampleRunner title="Cell and Row Style" name="cell-row-style" /%}
+
+## Enterprise Features {% enterpriseIcon /%}
+
+AG Grid comes in two forms: 
+
+- **AG Grid Community**: Free for everyone, including production use - no license required.
+- **AG Grid Enterprise**: Requires a license to use in production. Free to test locally, or request a [trial](./community-vs-enterprise/#request-an-enterprise-bundle-trial-license) to test in production.
+
+To learn more about the differences between AG Grid Community and Enterprise, when to use each version, and how to access our [free trial](./community-vs-enterprise/#request-an-enterprise-bundle-trial-license) or purchase a license, see the [Community vs Enterprise](./community-vs-enterprise/) docs.
+
+### Integrated Charts {% enterpriseIcon /%}
+
+[Integrated Charts](./integrated-charts/) allow users to build and customise charts directly within the grid. 
+
+Enable Integrated Charts by setting `enableCharts` to `true`. Set `cellSelection` to `true` to allow users to create charts from a Cell Selection:
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    enableCharts: true,
+    cellSelection: true,
+}
+```
+
+### Grouping Rows  {% enterpriseIcon /%}
+
+Enable [Row Grouping](./grouping/) by setting `rowGroup` column definition property to `true`:
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    columnDefs: [
+        { field: 'country', rowGroup: true },
+        // ...
+    ],
+}
+```
+
+### Aggregating Rows {% enterpriseIcon /%}
+
+Enable [Aggregation](./aggregation/) by setting `aggFunc` column definition property to one of `sum`, `min`, `max`, `count`, `avg`, `first`, or `last`:
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    columnDefs: [
+        { field: 'gold', aggFunc: 'sum' },
+        // ...
+    ],
+}
+```
+
+### Pivoting Rows {% enterpriseIcon /%}
+
+Enable [Pivoting](./pivoting/) by setting `pivotMode` to `true` and defining pivot columns by setting `pivot` to `true`:
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    columnDefs: [
+        { field: 'sport', pivot: true },
+    ],
+    pivotMode: true,
+};
+```
+
+### Displaying Tree Data {% enterpriseIcon /%}
+
+Tree Data provides a way to supply the grid with structured hierarchical data. Enable Tree Data by setting `treeData` to `true`. Provide a `getDataPath` callback to configure the [Row Hierarchy](./tree-data-hierarchy/):
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    treeData: true,
+    getDataPath: data => data.path,
+}
+```
+
+### Displaying Tool Panels {% enterpriseIcon /%}
+
+The grid provides [Tool Panels](./tool-panel/) for [Columns](./tool-panel-columns/) and [Filters](./tool-panel-filters/). You can also provide [Custom Tool Panels](./component-tool-panel/).
+
+To enable Column and Filter Tool Panels, set `sideBar` to `true`. To display only the Column or Filter Tool Panel, set `sideBar` to `'columns'` or `'filters'`:
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    sideBar: true, // or 'columns' or 'filters'
+}
+```
+
+### Example
+
+This example demonstrates Integrated Charting, Row Grouping, Pivoting, Aggregation and Tool Panels:
+
+{% gridExampleRunner title="Enterprise Features" name="enterprise-features-example" suppressDarkMode=true /%}

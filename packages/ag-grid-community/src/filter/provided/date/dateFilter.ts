@@ -1,4 +1,5 @@
-import { _getDocument } from '../../../gridOptionsUtils';
+import { _addGridCommonParams, _getDocument } from '../../../gridOptionsUtils';
+import type { IDateParams } from '../../../interfaces/dateComponent';
 import type { IAfterGuiAttachedParams } from '../../../interfaces/iAfterGuiAttachedParams';
 import { _parseDateTimeFromString, _serialiseDate } from '../../../utils/date';
 import { _warn } from '../../../validation/logging';
@@ -113,15 +114,15 @@ export class DateFilter extends ScalarFilter<DateFilterModel, Date, DateCompWrap
     }
 
     createDateCompWrapper(element: HTMLElement): DateCompWrapper {
-        const { userCompFactory, context } = this.beans;
+        const { userCompFactory, context, gos } = this.beans;
         const dateCompWrapper = new DateCompWrapper(
             context,
             userCompFactory,
-            {
+            _addGridCommonParams<IDateParams>(gos, {
                 onDateChanged: () => this.onUiChanged(),
                 filterParams: this.dateFilterParams,
                 location: 'filter',
-            },
+            }),
             element
         );
         this.addDestroyFunc(() => dateCompWrapper.destroy());

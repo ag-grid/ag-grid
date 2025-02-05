@@ -76,7 +76,7 @@ export class ColumnGroupService extends BeanStub implements NamedBean {
     ): void {
         const { colModel, colAnimation, visibleCols, eventSvc } = this.beans;
         const gridBalancedTree = colModel.getColTree();
-        if (!gridBalancedTree) {
+        if (!gridBalancedTree.length) {
             return;
         }
 

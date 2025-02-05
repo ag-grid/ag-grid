@@ -1,21 +1,16 @@
-import type { ChartType } from 'ag-grid-community';
-
 import type { AgChartsExports } from '../../../../../agChartsExports';
 import type { ChartTranslationKey } from '../../../../services/chartTranslationService';
-import type { ThemeTemplateParameters } from '../../miniChartsContainer';
+import type { MiniChartSelector, ThemeTemplateParameters } from '../../miniChartsContainer';
 import { createColumnRects } from '../miniChartHelpers';
 import { MiniChartWithAxes } from '../miniChartWithAxes';
 
-export class MiniStackedColumn extends MiniChartWithAxes {
-    static chartType: ChartType = 'stackedColumn';
-
+export const miniStackedColumnData = [
+    [8, 12, 16],
+    [6, 9, 12],
+    [2, 3, 4],
+];
+export class MiniStackedColumnClass extends MiniChartWithAxes {
     private readonly stackedColumns: any[][];
-
-    static data = [
-        [8, 12, 16],
-        [6, 9, 12],
-        [2, 3, 4],
-    ];
 
     constructor(
         container: HTMLElement,
@@ -24,7 +19,7 @@ export class MiniStackedColumn extends MiniChartWithAxes {
         strokes: string[],
         _themeTemplateParameters: ThemeTemplateParameters,
         _isCustomTheme: boolean,
-        data = MiniStackedColumn.data,
+        data = miniStackedColumnData,
         yScaleDomain = [0, 16],
         tooltipName: ChartTranslationKey = 'stackedColumnTooltip'
     ) {
@@ -58,3 +53,8 @@ export class MiniStackedColumn extends MiniChartWithAxes {
         );
     }
 }
+
+export const MiniStackedColumn: MiniChartSelector = {
+    chartType: 'stackedColumn',
+    miniChart: MiniStackedColumnClass,
+};

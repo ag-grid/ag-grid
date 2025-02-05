@@ -1,14 +1,10 @@
 import type { Group } from 'ag-charts-types/scene';
 
-import type { ChartType } from 'ag-grid-community';
-
 import type { AgChartsExports } from '../../../../../agChartsExports';
-import type { ThemeTemplateParameters } from '../../miniChartsContainer';
+import type { MiniChartSelector, ThemeTemplateParameters } from '../../miniChartsContainer';
 import { MiniChartWithAxes } from '../miniChartWithAxes';
 
-export class MiniBoxPlot extends MiniChartWithAxes {
-    static chartType: ChartType = 'boxPlot';
-
+export class MiniBoxPlotClass extends MiniChartWithAxes {
     private readonly boxPlotGroups: Group[];
 
     constructor(
@@ -128,3 +124,8 @@ export class MiniBoxPlot extends MiniChartWithAxes {
         line.strokeOpacity = 0.75;
     }
 }
+
+export const MiniBoxPlot: MiniChartSelector = {
+    chartType: 'boxPlot',
+    miniChart: MiniBoxPlotClass,
+};

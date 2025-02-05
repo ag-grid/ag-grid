@@ -330,6 +330,7 @@
 }
 
 .contactSales,
+.trialLicence,
 .licenceKeyDocs {
     text-align: center;
     position: relative;
@@ -376,6 +377,34 @@
 
     #{$selector-darkmode} & {
         --section-background-color: color-mix(in srgb, var(--color-fg-primary), var(--color-bg-primary) 98%);
+    }
+}
+
+.trialLicence {
+    --section-background-color: var(--color-util-brand-50);
+
+    padding-top: $spacing-size-12;
+    padding-bottom: $spacing-size-6;
+
+    #{$selector-darkmode} & {
+        --section-background-color: var(--color-util-gray-100);
+    }
+
+    h3,
+    p,
+    form {
+        max-width: 800px;
+        margin-right: auto;
+        margin-left: auto;
+    }
+
+    h3,
+    p {
+        text-align: center;
+    }
+
+    :global(.trial-licence-actions) {
+        align-items: center;
     }
 }
 

@@ -75,6 +75,7 @@ input[type='number'] {
             box-shadow $transition-default-timing;
 
         &::placeholder {
+            font-style: italic;
             color: var(--color-fg-placeholder);
         }
 
@@ -343,6 +344,7 @@ input[type='range']#{$selector-exclude-grid} {
 
     label {
         margin-bottom: $spacing-size-1;
+        font-size: var(--text-fs-sm);
     }
 
     input,
@@ -363,6 +365,7 @@ input[type='range']#{$selector-exclude-grid} {
         label {
             display: inline-block;
             margin-bottom: 0;
+            font-size: var(--text-fs-base);
         }
 
         input[type='text'],
@@ -374,20 +377,25 @@ input[type='range']#{$selector-exclude-grid} {
 }
 
 .input-error {
-    label {
-        color: var(--color-input-error);
-    }
-
     input,
     select {
         --color-border-primary: var(--color-input-error);
+        --color-input-border: var(--color-input-error);
         --color-input-border-hover: var(--color-input-error);
     }
+}
 
-    .error {
-        margin-top: $spacing-size-1;
-        color: var(--color-input-error);
-    }
+.input-field .error {
+    margin-top: -2px;
+    margin-bottom: -2px;
+    font-size: var(--text-fs-sm);
+    color: var(--color-input-error);
+    opacity: 0;
+    transition: opacity $transition-default-timing;
+}
+
+.input-error .error {
+    opacity: 1;
 }
 
 .extra-info {

@@ -7,6 +7,8 @@ import Chord from '@ag-website-shared/images/inline-svgs/chord.svg?react';
 import CodeResult from '@ag-website-shared/images/inline-svgs/code-result.svg?react';
 import CodeSandboxIcon from '@ag-website-shared/images/inline-svgs/codesandbox.svg?react';
 import ColumnsIcon from '@ag-website-shared/images/inline-svgs/columns.svg?react';
+import CommunityEntperise from '@ag-website-shared/images/inline-svgs/community-enterprise.svg?react';
+import Concepts from '@ag-website-shared/images/inline-svgs/concepts.svg?react';
 import ConeFunnel from '@ag-website-shared/images/inline-svgs/cone-funnel.svg?react';
 import CrossIcon from '@ag-website-shared/images/inline-svgs/cross.svg?react';
 import EnterpriseIcon from '@ag-website-shared/images/inline-svgs/enterprise.svg?react';
@@ -32,6 +34,7 @@ import StackOverflowMonochromeIcon from '@ag-website-shared/images/inline-svgs/s
 import StackOverflowIcon from '@ag-website-shared/images/inline-svgs/stack-overflow.svg?react';
 import TakeControlIcon from '@ag-website-shared/images/inline-svgs/take-control-icon.svg?react';
 import TickIcon from '@ag-website-shared/images/inline-svgs/tick.svg?react';
+import Tutorials from '@ag-website-shared/images/inline-svgs/tutorials.svg?react';
 import XLogoIcon from '@ag-website-shared/images/inline-svgs/x-logo.svg?react';
 import ZendeskMonochromeIcon from '@ag-website-shared/images/inline-svgs/zendesk-monochrome.svg?react';
 import ZendeskIcon from '@ag-website-shared/images/inline-svgs/zendesk.svg?react';
@@ -187,6 +190,9 @@ export const ICON_MAP = {
     copy: CarbonIcon.Copy,
     play: CarbonIcon.PlayFilled,
     pause: CarbonIcon.PauseOutlineFilled,
+    communityEnterprise: CommunityEntperise,
+    tutorials: Tutorials,
+    concepts: Concepts,
     ...SOCIALS_ICON_MAP,
     ...DOCS_CATEGORIES_ICON_MAP,
     ...HOMEPAGE_FEATURES_ICON_MAP,

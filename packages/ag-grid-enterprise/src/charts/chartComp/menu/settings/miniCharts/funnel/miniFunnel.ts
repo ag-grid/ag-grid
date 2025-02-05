@@ -1,10 +1,8 @@
 import type { Shape } from 'ag-charts-types/scene';
 
-import type { ChartType } from 'ag-grid-community';
-
 import type { AgChartsExports } from '../../../../../agChartsExports';
 import type { ChartTranslationKey } from '../../../../services/chartTranslationService';
-import type { ThemeTemplateParameters } from '../../miniChartsContainer';
+import type { MiniChartSelector, ThemeTemplateParameters } from '../../miniChartsContainer';
 import { MiniChart } from '../miniChart';
 import type { XYCoordShape } from '../miniChartApi';
 import { createShapePaths } from '../miniChartHelpers';
@@ -30,9 +28,7 @@ const FUNNEL_SHAPES: XYCoordShape[] = [
     ],
 ];
 
-export class MiniFunnel extends MiniChart {
-    static chartType: ChartType = 'funnel';
-
+export class MiniFunnelClass extends MiniChart {
     protected shapes: Shape[];
 
     constructor(
@@ -60,3 +56,8 @@ export class MiniFunnel extends MiniChart {
         });
     }
 }
+
+export const MiniFunnel: MiniChartSelector = {
+    chartType: 'funnel',
+    miniChart: MiniFunnelClass,
+};

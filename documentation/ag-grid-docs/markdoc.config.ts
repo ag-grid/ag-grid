@@ -1,10 +1,14 @@
 import { isFramework } from '@ag-website-shared/markdoc/functions/isFramework';
 import { isNotJavascriptFramework } from '@ag-website-shared/markdoc/functions/isNotJavascriptFramework';
+import { getMigrationVersionPatch, migrationVersion } from '@ag-website-shared/markdoc/functions/migrationVersion';
 import { heading } from '@ag-website-shared/markdoc/nodes/heading';
 import { br } from '@ag-website-shared/markdoc/tags/br';
 import { embedSnippet } from '@ag-website-shared/markdoc/tags/embedSnippet';
 import { enterpriseIcon } from '@ag-website-shared/markdoc/tags/enterpriseIcon';
 import { expandingSection } from '@ag-website-shared/markdoc/tags/expandingSection';
+import { getChangelogSection } from '@ag-website-shared/markdoc/tags/getChangelogSection';
+import { getDocumentationArchiveSection } from '@ag-website-shared/markdoc/tags/getDocumentationArchiveSection';
+import { gettingStarted } from '@ag-website-shared/markdoc/tags/getting-started';
 import { idea } from '@ag-website-shared/markdoc/tags/idea';
 import { image } from '@ag-website-shared/markdoc/tags/image';
 import { kbd } from '@ag-website-shared/markdoc/tags/kbd';
@@ -12,18 +16,21 @@ import { note } from '@ag-website-shared/markdoc/tags/note';
 import { oneTrustCookies } from '@ag-website-shared/markdoc/tags/oneTrustCookies';
 import { openInCTA } from '@ag-website-shared/markdoc/tags/openInCTA';
 import { tabItem, tabs } from '@ag-website-shared/markdoc/tags/tabs';
+import { trialLicenceForm } from '@ag-website-shared/markdoc/tags/trialLicenceForm';
 import { video } from '@ag-website-shared/markdoc/tags/video';
 import { videoSection } from '@ag-website-shared/markdoc/tags/videoSection';
 import { warning } from '@ag-website-shared/markdoc/tags/warning';
 import { Markdoc, component, defineMarkdocConfig } from '@astrojs/markdoc/config';
 import { getFrameworkCapitalised } from '@utils/markdoc/getFrameworkCapitalised';
 
-import { agGridVersion } from './src/constants';
+import { agChartsVersion, agGridVersion } from './src/constants';
+import versionsData from './src/content/versions/ag-grid-versions.json';
 import { link } from './src/utils/markdoc/tags/link';
 
 export default defineMarkdocConfig({
     variables: {
         agGridVersion,
+        agChartsVersion,
     },
     nodes: {
         heading,
@@ -50,6 +57,8 @@ export default defineMarkdocConfig({
         isFramework,
         isNotJavascriptFramework,
         getFrameworkCapitalised,
+        migrationVersion,
+        migrationVersionPatch: getMigrationVersionPatch(versionsData),
     },
     tags: {
         kbd,
@@ -65,8 +74,12 @@ export default defineMarkdocConfig({
         idea,
         openInCTA,
         expandingSection,
+        documentationArchiveSection: getDocumentationArchiveSection('grid'),
+        changelogSection: getChangelogSection('grid'),
+        trialLicenceForm,
         enterpriseIcon,
         video,
+        gettingStarted,
         licenseSetup: {
             render: component('./src/components/license-setup/components/LicenseSetup.astro'),
         },
@@ -225,9 +238,6 @@ export default defineMarkdocConfig({
         },
         moduleMappings: {
             render: component('./src/components/module-mappings/ModuleMappings.astro'),
-        },
-        upgrade33: {
-            render: component('./src/components/upgrade-33.astro'),
         },
     },
 });

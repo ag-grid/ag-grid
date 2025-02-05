@@ -101,6 +101,15 @@ export const LicenseSetup: FunctionComponent<Props> = ({ library, framework, pat
 
     return (
         <>
+            <Note>
+                You can test AG Grid Enterprise locally without a licence. To test in production, access support and
+                remove the watermark & console warnings,{' '}
+                <a href="../community-vs-enterprise/#request-an-enterprise-bundle-trial-licence">
+                    request a trial licence
+                </a>
+                .
+            </Note>
+
             <form className={styles.form}>
                 <h2 id="validate-your-license">
                     Validate Your Licence
@@ -196,8 +205,6 @@ export const LicenseSetup: FunctionComponent<Props> = ({ library, framework, pat
                 </div>
 
                 <div className={styles.results}>
-                    <br />
-
                     <h3 id="add-your-dependencies">
                         Add Your Dependencies
                         <LinkIcon href="#add-your-dependencies" />

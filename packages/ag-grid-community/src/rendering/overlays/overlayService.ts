@@ -2,7 +2,7 @@ import { _getLoadingOverlayCompDetails, _getNoRowsOverlayCompDetails } from '../
 import type { NamedBean } from '../../context/bean';
 import { BeanStub } from '../../context/beanStub';
 import type { GridOptions } from '../../entities/gridOptions';
-import { _isClientSideRowModel, _isServerSideRowModel } from '../../gridOptionsUtils';
+import { _addGridCommonParams, _isClientSideRowModel, _isServerSideRowModel } from '../../gridOptionsUtils';
 import type { UserCompDetails } from '../../interfaces/iUserCompDetails';
 import { _warn } from '../../validation/logging';
 import type { ComponentSelector } from '../../widgets/component';
@@ -151,7 +151,7 @@ export class OverlayService extends BeanStub implements NamedBean {
 
         this.state = OverlayServiceState.Loading;
         this.showOverlay(
-            _getLoadingOverlayCompDetails(this.beans.userCompFactory, {}),
+            _getLoadingOverlayCompDetails(this.beans.userCompFactory, _addGridCommonParams(this.gos, {})),
             'ag-overlay-loading-wrapper',
             'loadingOverlayComponentParams'
         );
@@ -165,7 +165,7 @@ export class OverlayService extends BeanStub implements NamedBean {
 
         this.state = OverlayServiceState.NoRows;
         this.showOverlay(
-            _getNoRowsOverlayCompDetails(this.beans.userCompFactory, {}),
+            _getNoRowsOverlayCompDetails(this.beans.userCompFactory, _addGridCommonParams(this.gos, {})),
             'ag-overlay-no-rows-wrapper',
             'noRowsOverlayComponentParams'
         );

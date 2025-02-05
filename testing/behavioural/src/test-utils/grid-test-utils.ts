@@ -1,4 +1,4 @@
-import type { GridApi, IRowNode, RowDataTransaction, RowNode } from 'ag-grid-community';
+import type { GridApi, IRowNode, RowDataTransaction, RowNode, RowNodeTransaction } from 'ag-grid-community';
 
 export function optionalEscapeString(s: string): string {
     return /^(?!\d)\w[._-\w]*$|^\d+$/.test(s) ? s : JSON.stringify(s);
@@ -32,21 +32,17 @@ export const getAllRows = (api: GridApi | null | undefined): RowNode[] => {
     return rows;
 };
 
-export async function executeTransactionsAsync(
-    transactions: RowDataTransaction<any>[] | RowDataTransaction<any>,
-    api: GridApi<any>
-) {
+export function executeTransactionsAsync<TData = any>(
+    transactions: RowDataTransaction<TData>[] | RowDataTransaction<TData>,
+    api: GridApi<TData>
+): Promise<RowNodeTransaction<TData>[]> {
     if (!Array.isArray(transactions)) {
         transactions = [transactions];
     }
-    const promises: Promise<void>[] = [];
-    for (const transaction of transactions) {
-        promises.push(
-            new Promise((resolve) => {
-                api.applyTransactionAsync(transaction, () => resolve());
-            })
-        );
-    }
+    const promises = transactions.map(
+        (transaction) =>
+            new Promise<RowNodeTransaction<TData>>((resolve) => api.applyTransactionAsync(transaction, resolve))
+    );
     api.flushAsyncTransactions();
-    await Promise.all(promises);
+    return Promise.all(promises);
 }

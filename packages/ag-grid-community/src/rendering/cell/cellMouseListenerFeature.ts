@@ -1,3 +1,4 @@
+import { isRowNumberCol } from '../../columns/columnUtils';
 import { BeanStub } from '../../context/beanStub';
 import type { BeanCollection } from '../../context/context';
 import type { AgColumn } from '../../entities/agColumn';
@@ -113,7 +114,7 @@ export class CellMouseListenerFeature extends BeanStub {
         const { ctrlKey, metaKey, shiftKey } = mouseEvent;
         const target = mouseEvent.target as HTMLElement;
         const { cellCtrl, beans } = this;
-        const { eventSvc, rangeSvc, focusSvc, gos } = beans;
+        const { eventSvc, rangeSvc, rowNumbersSvc, focusSvc, gos } = beans;
 
         // do not change the range for right-clicks inside an existing range
         if (this.isRightClickInExistingRange(mouseEvent)) {
@@ -123,6 +124,16 @@ export class CellMouseListenerFeature extends BeanStub {
         const hasRanges = rangeSvc && !rangeSvc.isEmpty();
         const containsWidget = this.containsWidget(target);
         const { cellPosition } = cellCtrl;
+
+        const isRowNumberColumn = isRowNumberCol(cellPosition.column);
+
+        if (rowNumbersSvc && isRowNumberColumn && !rowNumbersSvc.handleMouseDownOnCell(cellPosition, mouseEvent)) {
+            if (rangeSvc) {
+                mouseEvent.preventDefault();
+            }
+            mouseEvent.stopImmediatePropagation();
+            return;
+        }
 
         if (!shiftKey || !hasRanges) {
             const isEnableCellTextSelection = gos.get('enableCellTextSelection');
@@ -177,6 +188,9 @@ export class CellMouseListenerFeature extends BeanStub {
         }
 
         if (rangeSvc) {
+            if (isRowNumberColumn) {
+                mouseEvent.preventDefault();
+            }
             if (shiftKey) {
                 rangeSvc.extendLatestRangeToCell(cellPosition);
             } else {

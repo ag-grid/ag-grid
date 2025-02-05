@@ -67,6 +67,20 @@ The above two (pinning and floating) can be thought of as follows: if you have a
 
 {% gridExampleRunner title="Cell Range Selection and Pinned Areas" name="range-selection-pinned-areas" /%}
 
+## Highlight Headers
+
+It is possible to highlight the Grid Headers that are part of a range by setting the `cellSelection.enableHeaderHighlight` to `true`.
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    cellSelection: {
+        enableHeaderHighlight: true,
+    }
+}
+```
+
+{% gridExampleRunner title="Cell Range Selection Header Highlight" name="range-selection-highlight-headers" /%}
+
 ## Copy Cell Range Down
 
 When you have more than one row selected in a range, pressing keys {% kbd "^ Ctrl" /%}+{% kbd "D" /%} will copy the top row values to all other rows in the selected range.

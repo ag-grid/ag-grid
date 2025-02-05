@@ -1,0 +1,43 @@
+.container {
+    display: flex;
+    gap: 20px;
+    justify-content: left;
+    font-weight: 400;
+    flex-wrap: wrap;
+}
+
+.card {
+    background: var(--color-bg-primary);
+    border-radius: 10px;
+    padding: 20px;
+    text-align: left;
+    width: 250px;
+    transition: transform 0.2s ease-in-out;
+    border: 1px solid var(--color-border-secondary);
+    min-height: 180px;
+    color: var(--color-bg-secondary);
+    &:hover {
+        transform: translateY(-5px);
+    }
+    path {
+        fill: var(--color-util-brand-700);
+    }
+}
+
+.icon {
+    font-size: 2rem;
+    padding: 10px;
+    border-radius: 50%;
+    display: inline-block;
+}
+
+.title {
+    font-size: 1.2rem;
+    margin-top: 10px;
+    font-weight: bold;
+}
+
+.description {
+    color: var(--color-text-secondary);
+    font-weight: normal;
+}

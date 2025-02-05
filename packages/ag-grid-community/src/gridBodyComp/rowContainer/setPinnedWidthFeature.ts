@@ -5,8 +5,8 @@ export class SetPinnedWidthFeature extends BeanStub {
     public readonly getWidth: () => number;
 
     constructor(
-        private readonly element: HTMLElement,
-        private readonly isLeft: boolean
+        private readonly isLeft: boolean,
+        private readonly elements: (HTMLElement | undefined)[]
     ) {
         super();
         this.getWidth = isLeft ? () => this.beans.pinnedCols!.leftWidth : () => this.beans.pinnedCols!.rightWidth;
@@ -21,7 +21,12 @@ export class SetPinnedWidthFeature extends BeanStub {
     private onPinnedWidthChanged(): void {
         const width = this.getWidth();
         const displayed = width > 0;
-        _setDisplayed(this.element, displayed);
-        _setFixedWidth(this.element, width);
+
+        for (const element of this.elements) {
+            if (element) {
+                _setDisplayed(element, displayed);
+                _setFixedWidth(element, width);
+            }
+        }
     }
 }

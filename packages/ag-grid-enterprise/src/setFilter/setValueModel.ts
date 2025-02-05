@@ -18,6 +18,7 @@ import type {
 import {
     AgPromise,
     LocalEventService,
+    _addGridCommonParams,
     _defaultComparator,
     _error,
     _exists,
@@ -334,7 +335,7 @@ export class SetValueModel<V> implements IEventEmitter<SetValueModelEvent> {
 
                     const callback = this.providedValues as SetFilterValuesFunc<any, V>;
                     const { column, colDef } = this.filterParams;
-                    const params: SetFilterValuesFuncParams<any, V> = this.gos.addGridCommonParams({
+                    const params: SetFilterValuesFuncParams<any, V> = _addGridCommonParams(this.gos, {
                         success: (values) => {
                             this.setIsLoading(false);
 

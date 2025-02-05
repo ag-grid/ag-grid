@@ -44,10 +44,10 @@ import type { IRangeService } from '../interfaces/IRangeService';
 import type { IAdvancedFilterService } from '../interfaces/iAdvancedFilterService';
 import type { IAggColumnNameService } from '../interfaces/iAggColumnNameService';
 import type { IAggFuncService } from '../interfaces/iAggFuncService';
-import type { IAutoColService } from '../interfaces/iAutoColService';
 import type { IClientSideNodeManager } from '../interfaces/iClientSideNodeManager';
 import type { IClipboardService } from '../interfaces/iClipboardService';
 import type { IColsService } from '../interfaces/iColsService';
+import type { IColumnCollectionService } from '../interfaces/iColumnCollectionService';
 import type { IContextMenuService } from '../interfaces/iContextMenu';
 import type { ICsvCreator } from '../interfaces/iCsvCreator';
 import type { IExcelCreator } from '../interfaces/iExcelCreator';
@@ -68,6 +68,7 @@ import type { ISideBarService } from '../interfaces/iSideBar';
 import type { IStickyRowService } from '../interfaces/iStickyRows';
 import type { IMasterDetailService } from '../interfaces/masterDetail';
 import type { IRenderStatusService } from '../interfaces/renderStatusService';
+import type { IRowNumbersService } from '../interfaces/rowNumbers';
 import type { AnimationFrameService } from '../misc/animationFrameService';
 import type { ApiEventService } from '../misc/apiEvents/apiEventService';
 import type { LocaleService } from '../misc/locale/localeService';
@@ -230,8 +231,9 @@ export interface CoreBeanCollection {
     gridOptions: GridOptions;
     eGridDiv: HTMLElement;
     pivotResultCols?: IPivotResultColsService;
-    autoColSvc?: IAutoColService;
+    autoColSvc?: IColumnCollectionService;
     selectionColSvc?: SelectionColService;
+    rowNumbersSvc?: IRowNumbersService;
     colDefFactory?: ColumnDefFactory;
     colAutosize?: ColumnAutosizeService;
     rowGroupColsSvc?: IColsService;
@@ -408,6 +410,7 @@ export type BeanName =
     | 'focusSvc'
     | 'footerSvc'
     | 'funcColsSvc'
+    | 'rowNumbersSvc'
     | 'pivotColsSvc'
     | 'rowGroupColsSvc'
     | 'valueColsSvc'

@@ -1,10 +1,8 @@
-import type { ChartType } from 'ag-grid-community';
-
 import type { AgChartsExports } from '../../../../../agChartsExports';
 import type { ChartTranslationKey } from '../../../../services/chartTranslationService';
-import type { ThemeTemplateParameters } from '../../miniChartsContainer';
+import type { MiniChartSelector, ThemeTemplateParameters } from '../../miniChartsContainer';
 import type { XYCoordShape } from '../miniChartApi';
-import { MiniFunnel } from './miniFunnel';
+import { MiniFunnelClass } from './miniFunnel';
 
 const PYRAMID_SHAPES: XYCoordShape[] = [
     [
@@ -26,9 +24,7 @@ const PYRAMID_SHAPES: XYCoordShape[] = [
     ],
 ];
 
-export class MiniPyramid extends MiniFunnel {
-    static override chartType: ChartType = 'pyramid';
-
+export class MiniPyramidClass extends MiniFunnelClass {
     constructor(
         container: HTMLElement,
         agChartsExports: AgChartsExports,
@@ -58,3 +54,8 @@ export class MiniPyramid extends MiniFunnel {
         });
     }
 }
+
+export const MiniPyramid: MiniChartSelector = {
+    chartType: 'pyramid',
+    miniChart: MiniPyramidClass,
+};

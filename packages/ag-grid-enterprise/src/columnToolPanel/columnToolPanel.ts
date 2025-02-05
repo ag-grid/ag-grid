@@ -8,7 +8,7 @@ import type {
     IToolPanelComp,
     IToolPanelParams,
 } from 'ag-grid-community';
-import { Component, _clearElement, _last } from 'ag-grid-community';
+import { Component, _addGridCommonParams, _clearElement, _last } from 'ag-grid-community';
 
 import type { PivotDropZonePanel } from '../rowGrouping/columnDropZones/pivotDropZonePanel';
 import type { RowGroupDropZonePanel } from '../rowGrouping/columnDropZones/rowGroupDropZonePanel';
@@ -53,7 +53,7 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
     }
 
     public init(params: ToolPanelColumnCompParams): void {
-        const defaultParams: Partial<ToolPanelColumnCompParams> = this.gos.addGridCommonParams({
+        const defaultParams: Partial<ToolPanelColumnCompParams> = _addGridCommonParams(this.gos, {
             suppressColumnMove: false,
             suppressColumnSelectAll: false,
             suppressColumnFilter: false,

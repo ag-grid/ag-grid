@@ -3,7 +3,12 @@ import type { ColumnNameService } from '../columns/columnNameService';
 import type { AgColumn } from '../entities/agColumn';
 import type { RowNode } from '../entities/rowNode';
 import type { GridOptionsService } from '../gridOptionsService';
-import { _isGroupMultiAutoColumn, _isGroupUseEntireRow, _isServerSideRowModel } from '../gridOptionsUtils';
+import {
+    _addGridCommonParams,
+    _isGroupMultiAutoColumn,
+    _isGroupUseEntireRow,
+    _isServerSideRowModel,
+} from '../gridOptionsUtils';
 import type {
     ProcessCellForExportParams,
     ProcessGroupHeaderForExportParams,
@@ -130,7 +135,7 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
         column: AgColumn
     ): string | null {
         if (callback) {
-            return callback(this.gos.addGridCommonParams({ column }));
+            return callback(_addGridCommonParams(this.gos, { column }));
         }
 
         return this.colNames.getDisplayNameForColumn(column, 'csv', true);
@@ -138,7 +143,7 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
 
     private createValueForGroupNode(column: AgColumn, node: RowNode): string {
         if (this.processRowGroupCallback) {
-            return this.processRowGroupCallback(this.gos.addGridCommonParams({ column, node }));
+            return this.processRowGroupCallback(_addGridCommonParams(this.gos, { column, node }));
         }
 
         const isTreeData = this.gos.get('treeData');
@@ -188,7 +193,7 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
             return {
                 value:
                     processCellCallback(
-                        this.gos.addGridCommonParams({
+                        _addGridCommonParams(this.gos, {
                             accumulatedRowIndex,
                             column: column,
                             node: rowNode,

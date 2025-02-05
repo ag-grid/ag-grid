@@ -1,15 +1,11 @@
 import type { Rect } from 'ag-charts-types/scene';
 
-import type { ChartType } from 'ag-grid-community';
-
 import type { AgChartsExports } from '../../../../../agChartsExports';
-import type { ThemeTemplateParameters } from '../../miniChartsContainer';
+import type { MiniChartSelector, ThemeTemplateParameters } from '../../miniChartsContainer';
 import { accumulateData } from '../miniChartHelpers';
 import { MiniChartWithAxes } from '../miniChartWithAxes';
 
-export class MiniWaterfall extends MiniChartWithAxes {
-    static chartType: ChartType = 'waterfall';
-
+export class MiniWaterfallClass extends MiniChartWithAxes {
     private readonly bars: Rect[];
 
     private data = [4, 3, -3, 6, -3];
@@ -125,3 +121,8 @@ export class MiniWaterfall extends MiniChartWithAxes {
         return { bars };
     }
 }
+
+export const MiniWaterfall: MiniChartSelector = {
+    chartType: 'waterfall',
+    miniChart: MiniWaterfallClass,
+};

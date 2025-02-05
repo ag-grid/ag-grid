@@ -1,0 +1,45 @@
+@use 'ag';
+
+@mixin output {
+    .ag-row-number-cell {
+        background-color: var(--ag-header-background-color);
+        color: var(--ag-header-text-color);
+        font-size: var(--ag-header-font-size);
+        font-family: var(--ag-header-font-family);
+        font-weight: var(--ag-header-font-weight);
+    }
+
+    .ag-row-number-header.ag-row-number-selection-enabled {
+        cursor: cell;
+    }
+
+    .ag-row-number-range-highlight {
+        background-color: var(--ag-range-header-highlight-color);
+    }
+
+    .ag-row-number-range-selected {
+        background-color: var(--ag-row-numbers-selected-color);
+    }
+
+    .ag-ltr {
+        .ag-row-number-header,
+        .ag-cell.ag-row-number-cell:not(.ag-cell-last-left-pinned) {
+            border-right: var(--ag-pinned-column-border);
+        }
+
+        :where(.ag-row-number-cell.ag-row-number-selection-enabled) {
+            cursor: e-resize;
+        }
+    }
+
+    :where(.ag-rtl) {
+        .ag-row-number-header,
+        .ag-cell.ag-row-number-cell:not(.ag-cell-first-right-pinned) {
+            border-left: var(--ag-pinned-column-border);
+        }
+
+        :where(.ag-row-number-cell.ag-row-number-selection-enabled) {
+            cursor: w-resize;
+        }
+    }
+}

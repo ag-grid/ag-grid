@@ -11,6 +11,7 @@ export {
     ApplyColumnStateParams,
     _resetColumnState,
     _applyColumnState,
+    _getColumnState,
 } from './columns/columnStateUtils';
 export type { ColumnMoveService } from './columnMove/columnMoveService';
 export type { ColumnNameService } from './columns/columnNameService';
@@ -22,6 +23,9 @@ export type { VisibleColsService } from './columns/visibleColsService';
 export { GroupInstanceIdCreator } from './columns/groupInstanceIdCreator';
 export {
     GROUP_AUTO_COLUMN_ID,
+    SELECTION_COLUMN_ID,
+    ROW_NUMBERS_COLUMN_ID,
+    isRowNumberCol,
     isColumnSelectionCol,
     isColumnGroupAutoCol,
     _destroyColumnTree,
@@ -31,7 +35,6 @@ export {
     _convertColumnEventSourceType,
     _columnsMatch,
 } from './columns/columnUtils';
-export { IAutoColService } from './interfaces/iAutoColService';
 export type { SelectionColService } from './columns/selectionColService';
 export {
     SizeColumnsToFitGridColumnLimits,
@@ -312,6 +315,8 @@ export { AlignedGrid } from './interfaces/iAlignedGrid';
 export type { MenuService } from './misc/menu/menuService';
 export { _setColMenuVisible } from './misc/menu/menuService';
 export type { IColsService } from './interfaces/iColsService';
+export type { IColumnCollectionService } from './interfaces/iColumnCollectionService';
+export type { IRowNumbersService } from './interfaces/rowNumbers';
 
 // editing / cellEditors
 export {
@@ -610,9 +615,10 @@ export {
 export { _getClientSideRowModel, _getServerSideRowModel } from './api/rowModelApiUtils';
 export { AgEventType, AgPublicEventType, _ALL_EVENTS, _PUBLIC_EVENTS } from './eventTypes'; // TODO: remove _ALL_EVENTS, _PUBLIC_EVENTS if not required by VUE
 export type { FocusService } from './focusService';
-export type { GridOptionsService } from './gridOptionsService';
+export type { GridOptionsService, PropertyValueChangedEvent } from './gridOptionsService';
 export { PropertyChangedEvent } from './gridOptionsService';
 export {
+    _addGridCommonParams,
     _getCallbackForEvent,
     _combineAttributesAndGridOptions,
     _processOnChange,
@@ -834,6 +840,7 @@ export {
     UseGroupTotalRow,
     GetChartMenuItems,
 } from './entities/gridOptions';
+export type { RowNumbersOptions } from './interfaces/rowNumbers';
 export type { ManagedGridOptionKey, ManagedGridOptions } from './gridOptionsInitial';
 
 export {
@@ -888,7 +895,13 @@ export { IDateParams, IDate, IDateComp, BaseDate, BaseDateParams } from './inter
 export { IAfterGuiAttachedParams, ContainerType } from './interfaces/iAfterGuiAttachedParams';
 export { IComponent } from './interfaces/iComponent';
 export { IEventEmitter, IEventListener } from './interfaces/iEventEmitter';
-export { IHeaderParams, IHeaderComp, IHeader, IInnerHeaderComponent } from './headerRendering/cells/column/headerComp';
+export {
+    HeaderComp as _HeaderComp,
+    IHeaderParams,
+    IHeaderComp,
+    IHeader,
+    IInnerHeaderComponent,
+} from './headerRendering/cells/column/headerComp';
 export {
     IHeaderGroupParams,
     IHeaderGroup,
@@ -980,6 +993,7 @@ export {
     _observeResize,
     _preserveRangesWhile,
 } from './utils/dom';
+export { _selectAllCells } from './utils/selection';
 export { _stopPropagationForAgGrid, _isStopPropagationForAgGrid, _isElementInEventPath } from './utils/event';
 export { _warnOnce, _debounce, _doOnce, _waitUntil } from './utils/function';
 export { _warn, _error, _errMsg, _preInitErrMsg } from './validation/logging';
@@ -1092,12 +1106,52 @@ export * from './events';
 // theming
 export { type Part, createPart } from './theming/Part';
 export { type Theme, createTheme, _asThemeImpl } from './theming/Theme';
-export * from './theming/parts/checkbox-style/checkbox-styles';
-export * from './theming/parts/color-scheme/color-schemes';
-export * from './theming/parts/icon-set/icon-sets';
-export * from './theming/parts/input-style/input-styles';
-export * from './theming/parts/button-style/button-styles';
-export * from './theming/parts/tab-style/tab-styles';
-export * from './theming/parts/button-style/button-styles';
-export * from './theming/parts/column-drop-style/column-drop-styles';
-export * from './theming/parts/theme/themes';
+export { checkboxStyleDefault } from './theming/parts/checkbox-style/checkbox-styles';
+export {
+    colorSchemeDark,
+    colorSchemeDarkBlue,
+    colorSchemeDarkWarm,
+    colorSchemeLight,
+    colorSchemeLightCold,
+    colorSchemeLightWarm,
+    colorSchemeVariable,
+} from './theming/parts/color-scheme/color-schemes';
+export {
+    iconOverrides,
+    iconSetAlpine,
+    iconSetMaterial,
+    iconSetQuartz,
+    iconSetQuartzBold,
+    iconSetQuartzLight,
+    iconSetQuartzRegular,
+} from './theming/parts/icon-set/icon-sets';
+export { inputStyleBase, inputStyleBordered, inputStyleUnderlined } from './theming/parts/input-style/input-styles';
+export {
+    buttonStyleAlpine,
+    buttonStyleBalham,
+    buttonStyleBase,
+    buttonStyleQuartz,
+} from './theming/parts/button-style/button-styles';
+export {
+    tabStyleAlpine,
+    tabStyleBase,
+    tabStyleMaterial,
+    tabStyleQuartz,
+    tabStyleRolodex,
+} from './theming/parts/tab-style/tab-styles';
+export { columnDropStyleBordered, columnDropStylePlain } from './theming/parts/column-drop-style/column-drop-styles';
+export { styleMaterial, themeAlpine, themeBalham, themeMaterial, themeQuartz } from './theming/parts/theme/themes';
+export type {
+    ColorValue,
+    ImageValue,
+    ScaleValue,
+    BorderValue,
+    LengthValue,
+    ShadowValue,
+    DurationValue,
+    FontFamilyValue,
+    FontWeightValue,
+    BorderStyleValue,
+    ColorSchemeValue,
+    WithParamTypes,
+} from './theming/theme-types';

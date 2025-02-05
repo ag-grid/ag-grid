@@ -173,6 +173,7 @@ export type EnterpriseModuleName =
     | 'Pivot'
     | 'RangeSelection'
     | 'RichSelect'
+    | 'RowNumbers'
     | 'RowGrouping'
     | 'RowGroupingPanel'
     | 'ServerSideRowModelApi'

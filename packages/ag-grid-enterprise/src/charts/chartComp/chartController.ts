@@ -251,8 +251,8 @@ export class ChartController extends BeanStub<ChartControllerEvent> {
             chartId: this.model.chartId,
             chartType: this.model.chartType,
             chartThemeName: this.getChartThemeName(),
-            chartOptions: this.chartProxy.getChartThemeOverrides(),
-            chartPalette: this.chartProxy.getChartPalette(),
+            chartOptions: this.chartProxy?.getChartThemeOverrides(),
+            chartPalette: this.chartProxy?.getChartPalette(),
             cellRange: this.getCellRangeParams(),
             switchCategorySeries: this.model.switchCategorySeries,
             suppressChartRanges: this.model.suppressChartRanges,
@@ -290,7 +290,6 @@ export class ChartController extends BeanStub<ChartControllerEvent> {
         this.model.seriesGroupType = undefined;
 
         this.raiseChartModelUpdateEvent();
-        this.raiseChartOptionsChangedEvent();
     }
 
     public isCategorySeriesSwitched(): boolean {
@@ -355,7 +354,6 @@ export class ChartController extends BeanStub<ChartControllerEvent> {
         this.model.chartThemeName = chartThemeName;
         if (!silent) {
             this.raiseChartModelUpdateEvent();
-            this.raiseChartOptionsChangedEvent();
         }
     }
 
@@ -635,6 +633,8 @@ export class ChartController extends BeanStub<ChartControllerEvent> {
 
     public raiseChartModelUpdateEvent(): void {
         this.dispatchLocalEvent({ type: 'chartModelUpdate' });
+        // every model event effectively updates the chart options
+        this.raiseChartOptionsChangedEvent();
     }
 
     public raiseChartUpdatedEvent(): void {
@@ -653,7 +653,7 @@ export class ChartController extends BeanStub<ChartControllerEvent> {
             chartId,
             chartType,
             chartThemeName: this.getChartThemeName(),
-            chartOptions: this.chartProxy.getChartThemeOverrides(),
+            chartOptions: this.chartProxy?.getChartThemeOverrides(),
         });
     }
 

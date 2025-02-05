@@ -85,7 +85,7 @@ export abstract class BaseSelectionService extends BeanStub {
         }
 
         const selected = rowNode.isSelected()!;
-        if (selected && !_getEnableDeselection(this.gos)) {
+        if (!rowNode.selectable) {
             return;
         }
 

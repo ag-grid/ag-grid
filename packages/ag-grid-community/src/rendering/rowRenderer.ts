@@ -9,6 +9,7 @@ import type { BodyScrollEvent, CellFocusedEvent, PaginationChangedEvent } from '
 import type { FocusService } from '../focusService';
 import type { GridBodyCtrl } from '../gridBodyComp/gridBodyCtrl';
 import {
+    _addGridCommonParams,
     _getActiveDomElement,
     _getDomData,
     _getRowHeightAsNumber,
@@ -674,7 +675,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
             // so we mock a change event for the full width rows and cells to ensure they update to the newly selected state
 
             this.onCellFocusChanged(
-                this.gos.addGridCommonParams<CellFocusedEvent>({
+                _addGridCommonParams<CellFocusedEvent>(this.gos, {
                     rowIndex: cellPosition.rowIndex,
                     column: cellPosition.column,
                     rowPinned: cellPosition.rowPinned,
