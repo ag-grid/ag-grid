@@ -13,7 +13,7 @@ NON_PACKAGE_JSON_COUNT=`git status --porcelain | grep -Ev "package.json|yarn.loc
 
 if [ $NON_PACKAGE_JSON_COUNT -ne 0 ];
 then
-  echo "Only package.json, version.ts, yarn.lock, root env files and  licenseMangager files should be updated - please verify changeset.."
+  echo "Only package.json, version.ts, yarn.lock, root env files and licenseManager files should be updated - please verify changeset.."
   git status --porcelain
   exit 1
 fi
