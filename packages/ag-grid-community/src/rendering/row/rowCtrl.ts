@@ -1276,7 +1276,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         );
     }
 
-    protected setStylesFromGridOptions(updateStyles: boolean, gui?: RowGui): void {
+    private setStylesFromGridOptions(updateStyles: boolean, gui?: RowGui): void {
         if (updateStyles) {
             this.rowStyles = this.processStylesFromGridOptions();
         }
@@ -1363,7 +1363,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         return classes;
     }
 
-    protected processStylesFromGridOptions(): RowStyle {
+    private processStylesFromGridOptions(): RowStyle {
         // Return constant reference for React
         return this.beans.rowStyleSvc?.processStylesFromGridOptions(this.rowNode) ?? this.emptyStyle;
     }

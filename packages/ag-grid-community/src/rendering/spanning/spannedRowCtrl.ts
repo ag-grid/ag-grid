@@ -54,10 +54,6 @@ export class SpannedRowCtrl extends RowCtrl {
     protected override onRowHeightChanged(): void {}
 
     // no styling spanned rows
-    protected override setStylesFromGridOptions(): void {}
-    protected override processStylesFromGridOptions(): RowStyle {
-        return {};
-    }
     protected override refreshFirstAndLastRowStyles(): void {}
 
     // no hover functionality for spanned rows

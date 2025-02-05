@@ -252,6 +252,12 @@
         min-height: 1px;
     }
 
+    /* sticky containers need to appear over spanned and edited rows */
+    .ag-sticky-top,
+    .ag-sticky-bottom {
+        z-index: 1;
+    }
+
     .ag-center-cols-viewport {
         min-height: 100%;
         width: 100%;
@@ -594,6 +600,10 @@
         }
 
         .ag-header-cell {
+            transition: left 0.2s;
+        }
+
+        .ag-spanned-cell-wrapper {
             transition: left 0.2s;
         }
 

@@ -83,7 +83,8 @@ export class CellCtrl extends BeanStub {
     public readonly instanceId: CellCtrlInstanceId;
     public readonly colIdSanitised: string;
 
-    public eGui: HTMLElement;
+    private eGui: HTMLElement;
+
     public comp: ICellComp;
     public editCompDetails?: UserCompDetails;
 
@@ -164,6 +165,10 @@ export class CellCtrl extends BeanStub {
         }
     }
 
+    public isCellSpanning(): boolean {
+        return false;
+    }
+
     public getCellSpan(): CellSpan | undefined {
         return undefined;
     }
@@ -189,14 +194,15 @@ export class CellCtrl extends BeanStub {
 
     public setComp(
         comp: ICellComp,
-        eGui: HTMLElement,
+        eCell: HTMLElement,
+        _eWrapper: HTMLElement | undefined,
         eCellWrapper: HTMLElement | undefined,
         printLayout: boolean,
         startEditing: boolean,
         compBean: BeanStub | undefined
     ): void {
         this.comp = comp;
-        this.eGui = eGui;
+        this.eGui = eCell;
         this.printLayout = printLayout;
         compBean ??= this;
 
@@ -220,11 +226,11 @@ export class CellCtrl extends BeanStub {
         this.refreshFirstAndLastStyles();
         this.refreshAriaColIndex();
 
-        this.positionFeature?.setComp(eGui);
+        this.positionFeature?.init();
         this.customStyleFeature?.setComp(comp);
         this.tooltipFeature?.refreshTooltip();
-        this.keyboardListener?.setComp(this.eGui);
-        this.rangeFeature?.setComp(comp, eGui);
+        this.keyboardListener?.init();
+        this.rangeFeature?.setComp(comp);
 
         if (startEditing && this.isCellEditable()) {
             this.beans.editSvc?.startEditing(this);
@@ -505,7 +511,7 @@ export class CellCtrl extends BeanStub {
     }
 
     private addDomData(compBean: BeanStub): void {
-        const element = this.eGui;
+        const element = this.getElement();
 
         _setDomData(this.beans.gos, element, DOM_DATA_KEY_CELL_CTRL, this);
         compBean.addDestroyFunc(() => _setDomData(this.beans.gos, element, DOM_DATA_KEY_CELL_CTRL, null));
@@ -552,7 +558,7 @@ export class CellCtrl extends BeanStub {
     }
 
     public onDisplayedColumnsChanged(): void {
-        if (!this.eGui) {
+        if (!this.getElement()) {
             return;
         }
         this.refreshAriaColIndex();
@@ -566,7 +572,7 @@ export class CellCtrl extends BeanStub {
 
     private refreshAriaColIndex(): void {
         const colIdx = this.beans.visibleCols.getAriaColIndex(this.column);
-        _setAriaColIndex(this.eGui, colIdx); // for react, we don't use JSX, as it slowed down column moving
+        _setAriaColIndex(this.getElement(), colIdx); // for react, we don't use JSX, as it slowed down column moving
     }
 
     public onWidthChanged(): void {
@@ -617,13 +623,14 @@ export class CellCtrl extends BeanStub {
     }
 
     public onSuppressCellFocusChanged(suppressCellFocus: boolean): void {
-        if (!this.eGui) {
+        const element = this.getElement();
+        if (!element) {
             return;
         }
         if (isRowNumberCol(this.column)) {
             suppressCellFocus = true;
         }
-        _addOrRemoveAttribute(this.eGui, 'tabindex', suppressCellFocus ? undefined : -1);
+        _addOrRemoveAttribute(element, 'tabindex', suppressCellFocus ? undefined : -1);
     }
 
     public onFirstRightPinnedChanged(): void {
@@ -706,7 +713,7 @@ export class CellCtrl extends BeanStub {
     }
 
     // CSS Classes that only get applied once, they never change
-    private applyStaticCssClasses(): void {
+    protected applyStaticCssClasses(): void {
         const { comp } = this;
         comp.addOrRemoveCssClass(CSS_CELL, true);
         comp.addOrRemoveCssClass(CSS_CELL_NOT_INLINE_EDITING, true);
@@ -796,7 +803,7 @@ export class CellCtrl extends BeanStub {
             false,
             this.rowNode,
             this.column,
-            this.eGui
+            this.getElement()
         );
         if (dndSourceComp) {
             this.beans.context.createBean(dndSourceComp);
@@ -863,4 +870,20 @@ export class CellCtrl extends BeanStub {
 
     // used by spannedCellCtrl
     public refreshAriaRowIndex(): void {}
+
+    /**
+     * Returns the root element of the cell, could be a span container rather than the cell element.
+     * @returns The root element of the cell.
+     */
+    public getRootElement(): HTMLElement {
+        return this.eGui;
+    }
+
+    /**
+     * Get the cell element.
+     * @returns The DOM element for the cell.
+     */
+    public getElement(): HTMLElement {
+        return this.eGui;
+    }
 }

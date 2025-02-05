@@ -169,7 +169,7 @@ export class ContextMenuService extends BeanStub implements NamedBean, IContextM
 
         // if user clicked on a cell, anchor to that cell, otherwise anchor to the grid panel
         const gridBodyCon = ctrlsSvc.getGridBodyCtrl();
-        const anchorToElement = cellCtrl ? cellCtrl.eGui : gridBodyCon.eGridBody;
+        const anchorToElement = cellCtrl ? cellCtrl.getElement() : gridBodyCon.eGridBody;
 
         this.showContextMenu({
             mouseEvent,
@@ -391,7 +391,7 @@ export class ContextMenuService extends BeanStub implements NamedBean, IContextM
 
         const cellCtrl = rowCtrl.getCellCtrl(column);
 
-        return cellCtrl?.eGui || undefined;
+        return cellCtrl?.getElement() || undefined;
     }
 
     private getContextMenuAnchorElement(rowNode: RowNode | null, column?: AgColumn | null): HTMLElement {

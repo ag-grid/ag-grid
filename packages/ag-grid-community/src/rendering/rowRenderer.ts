@@ -407,7 +407,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
         const res: HTMLElement[] = [];
 
         this.getAllRowCtrls().forEach((rowCtrl) => {
-            const eCell = rowCtrl.getCellCtrl(column, true)?.eGui;
+            const eCell = rowCtrl.getCellCtrl(column, true)?.getElement();
             if (eCell) {
                 res.push(eCell);
             }

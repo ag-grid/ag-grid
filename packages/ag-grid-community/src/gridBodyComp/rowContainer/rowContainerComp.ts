@@ -139,7 +139,7 @@ export class RowContainerComp extends Component {
                     container.appendChild(eGui);
                 }
             } else {
-                this.ensureDomOrder(eGui);
+                this.ensureDomOrder(eGui, container);
             }
         }
     }
@@ -151,8 +151,8 @@ export class RowContainerComp extends Component {
         }
     }
 
-    private ensureDomOrder(eRow: HTMLElement): void {
-        _ensureDomOrder(this.eContainer, eRow, this.lastPlacedElement);
+    private ensureDomOrder(eRow: HTMLElement, container: HTMLElement): void {
+        _ensureDomOrder(container, eRow, this.lastPlacedElement);
         this.lastPlacedElement = eRow;
     }
 }

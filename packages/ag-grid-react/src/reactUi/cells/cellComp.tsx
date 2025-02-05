@@ -203,6 +203,7 @@ const CellComp = ({
     const forceWrapper = useMemo(() => cellCtrl.isForceWrapper(), [cellCtrl]);
     const cellAriaRole = useMemo(() => cellCtrl.getCellAriaRole(), [cellCtrl]);
     const eGui = useRef<HTMLDivElement | null>(null);
+    const eWrapper = useRef<HTMLDivElement | null>(null);
     const cellRendererRef = useRef<any>(null);
     const jsCellRendererRef = useRef<ICellRendererComp>();
     const cellEditorRef = useRef<ICellEditor>();
@@ -444,7 +445,15 @@ const CellComp = ({
         };
 
         const cellWrapperOrUndefined = eCellWrapper.current || undefined;
-        cellCtrl.setComp(compProxy, eRef, cellWrapperOrUndefined, printLayout, editingRow, compBean.current);
+        cellCtrl.setComp(
+            compProxy,
+            eRef,
+            eWrapper.current,
+            cellWrapperOrUndefined,
+            printLayout,
+            editingRow,
+            compBean.current
+        );
     }, []);
 
     const reactCellRendererStateless = useMemo(() => {
@@ -490,7 +499,7 @@ const CellComp = ({
 
     const onBlur = useCallback(() => cellCtrl.onFocusOut(), []);
 
-    return (
+    const renderCell = () => (
         <div ref={setRef} style={userStyles} role={cellAriaRole} col-id={colIdSanitised} onBlur={onBlur}>
             {showCellWrapper ? (
                 <div className="ag-cell-wrapper" role="presentation" ref={setCellWrapperRef}>
@@ -501,6 +510,15 @@ const CellComp = ({
             )}
         </div>
     );
+
+    if (cellCtrl.isCellSpanning()) {
+        return (
+            <div role="presentation" className="ag-spanned-cell-wrapper" ref={eWrapper}>
+                {renderCell()}
+            </div>
+        );
+    }
+    return renderCell();
 };
 
 export default memo(CellComp);

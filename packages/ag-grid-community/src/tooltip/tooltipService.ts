@@ -134,10 +134,10 @@ export class TooltipService extends BeanStub implements NamedBean {
 
         if (!shouldDisplayTooltip && isTooltipWhenTruncated && !ctrl.isCellRenderer()) {
             shouldDisplayTooltip = _shouldDisplayTooltip(() => {
-                const { eGui } = ctrl;
-                return eGui.children.length === 0
-                    ? eGui
-                    : (eGui.querySelector('.ag-cell-value') as HTMLElement | undefined);
+                const eCell = ctrl.getElement();
+                return eCell.children.length === 0
+                    ? eCell
+                    : (eCell.querySelector('.ag-cell-value') as HTMLElement | undefined);
             });
         }
 
@@ -146,7 +146,7 @@ export class TooltipService extends BeanStub implements NamedBean {
             getColDef: () => column.getColDef(),
             getRowIndex: () => ctrl.cellPosition.rowIndex,
             getRowNode: () => rowNode,
-            getGui: () => ctrl.eGui,
+            getGui: () => ctrl.getElement(),
             getLocation: () => 'cell',
             getTooltipValue: value != null ? () => value : getTooltipValue,
 

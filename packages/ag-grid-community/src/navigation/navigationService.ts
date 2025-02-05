@@ -482,7 +482,7 @@ export class NavigationService extends BeanStub implements NamedBean {
 
         // before we stop editing, we need to focus the cell element
         // so the grid doesn't detect that focus has left the grid
-        previousCell.eGui.focus();
+        previousCell.getElement().focus();
 
         // need to do this before getting next cell to edit, in case the next cell
         // has editable function (eg colDef.editable=func() ) and it depends on the
