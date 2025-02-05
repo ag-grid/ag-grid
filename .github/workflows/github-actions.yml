@@ -73,11 +73,14 @@ jobs:
       - name: styles check
         id: styles
         run: |
-            ls -l community-modules/styles
-            ls -l packages/ag-grid-community 
+            ls -l packages/ag-grid-enterprise
+            nx build ag-grid-enterprise
+            ls -l packages/ag-grid-enterprise 
+            rm -rf packages/ag-grid-enterprise/styles
+            nx build ag-grid-enterprise
             ls -l packages/ag-grid-enterprise 
 
-#      - name: nx format:check
+      #      - name: nx format:check
 #        id: format
 #        if: steps.setup.outcome == 'success' || steps.setup.outcome == 'skipped'
 #        run: |
@@ -91,77 +94,77 @@ jobs:
 #        run: |
 #          yarn nx lint
 
-      - name: nx build --prod
-        run: |
-          #yarn nx build --prod
-          yarn nx build 
-          ls -l community-modules/styles
-          ls -l packages/ag-grid-enterprise 
+#      - name: nx build --prod
+#        run: |
+#          #yarn nx build --prod
+#          yarn nx build
+#          ls -l community-modules/styles
+#          ls -l packages/ag-grid-enterprise
 
-      - name: calculate matrix
-        id: matrix
-        run: |
-            if [[ "${{ github.event.inputs.nx_command || 'affected' }}" == "run-many" ]] ; then
-              count=10
-            else
-              count=$(yarn -s nx show projects --affected --base ${{ steps.setup.outputs.base }} -t test | wc -l)
-            fi
+#      - name: calculate matrix
+#        id: matrix
+#        run: |
+#            if [[ "${{ github.event.inputs.nx_command || 'affected' }}" == "run-many" ]] ; then
+#              count=10
+#            else
+#              count=$(yarn -s nx show projects --affected --base ${{ steps.setup.outputs.base }} -t test | wc -l)
+#            fi
+#
+#            matrix=$(node ./scripts/test/calculate-shards.js eval --ratio 1 --zero ${count})
+#            echo "test_matrix=${matrix}" >> $GITHUB_OUTPUT
+#            echo "test_count=${count}" >> $GITHUB_OUTPUT
+#            echo "Test matrix determined to be: ${matrix}"
+#
+#            pkg_matrix=$(node ./scripts/test/calculate-pkg-shards.js)
+#            echo "pkg_matrix=${pkg_matrix}" >> $GITHUB_OUTPUT
+#            echo "Package test matrix determined to be: ${pkg_matrix}"
 
-            matrix=$(node ./scripts/test/calculate-shards.js eval --ratio 1 --zero ${count})
-            echo "test_matrix=${matrix}" >> $GITHUB_OUTPUT
-            echo "test_count=${count}" >> $GITHUB_OUTPUT
-            echo "Test matrix determined to be: ${matrix}"
-
-            pkg_matrix=$(node ./scripts/test/calculate-pkg-shards.js)
-            echo "pkg_matrix=${pkg_matrix}" >> $GITHUB_OUTPUT
-            echo "Package test matrix determined to be: ${pkg_matrix}"
-
-  test:
-      runs-on: ubuntu-24.04
-      name: Unit & Integration Tests (${{ matrix.shard }}/${{ strategy.job-total }})
-      needs: build_lint
-      if: needs.build_lint.outputs.test_count > 0
-      strategy:
-          matrix: ${{ fromJson(needs.build_lint.outputs.test_matrix )}}
-      env:
-          NX_PARALLEL: 1
-          NX_BASE: ${{ needs.build_lint.outputs.nx_base }}
-      steps:
-          - name: Checkout
-            id: checkout
-            uses: actions/checkout@v4
-            with:
-                fetch-depth: 1 # shallow copy
-
-          - name: Setup
-            id: setup
-            uses: ./.github/actions/setup-nx
-            with:
-                cache_mode: ro
-
-#          - name: nx test
-#            if: matrix.shard != 0
-#            id: test
-#            run: yarn nx ${{ github.event.inputs.nx_command || 'affected' }} -t test --configuration=ci --exclude tag:no-sharding --exclude all --shard=${{ matrix.shard }}/$((${{ strategy.job-total }} - 1))
-#          - name: nx test (non-sharded)
+#  test:
+#      runs-on: ubuntu-24.04
+#      name: Unit & Integration Tests (${{ matrix.shard }}/${{ strategy.job-total }})
+#      needs: build_lint
+#      if: needs.build_lint.outputs.test_count > 0
+#      strategy:
+#          matrix: ${{ fromJson(needs.build_lint.outputs.test_matrix )}}
+#      env:
+#          NX_PARALLEL: 1
+#          NX_BASE: ${{ needs.build_lint.outputs.nx_base }}
+#      steps:
+#          - name: Checkout
+#            id: checkout
+#            uses: actions/checkout@v4
+#            with:
+#                fetch-depth: 1 # shallow copy
+#
+#          - name: Setup
+#            id: setup
+#            uses: ./.github/actions/setup-nx
+#            with:
+#                cache_mode: ro
+#
+##          - name: nx test
+##            if: matrix.shard != 0
+##            id: test
+##            run: yarn nx ${{ github.event.inputs.nx_command || 'affected' }} -t test --configuration=ci --exclude tag:no-sharding --exclude all --shard=${{ matrix.shard }}/$((${{ strategy.job-total }} - 1))
+##          - name: nx test (non-sharded)
+##            if: matrix.shard == 0
+##            id: test-no-shard
+##            run: yarn nx ${{ github.event.inputs.nx_command || 'affected' }} -t test --configuration=ci --exclude '*,!tag:no-sharding'
+#          # - name: nx benchmark
+#          #   if: matrix.shard == 0
+#          #   id: benchmark
+#          #   run: yarn nx ${{ github.event.inputs.nx_command || 'affected' }} -t benchmark --configuration=ci --exclude all
+#          - name: nx pack:verify
 #            if: matrix.shard == 0
-#            id: test-no-shard
-#            run: yarn nx ${{ github.event.inputs.nx_command || 'affected' }} -t test --configuration=ci --exclude '*,!tag:no-sharding'
-          # - name: nx benchmark
-          #   if: matrix.shard == 0
-          #   id: benchmark
-          #   run: yarn nx ${{ github.event.inputs.nx_command || 'affected' }} -t benchmark --configuration=ci --exclude all
-          - name: nx pack:verify
-            if: matrix.shard == 0
-            id: pack-verify
-            run: |
-              ls -l community-modules/styles
-              ls -l packages/ag-grid-enterprise  #yarn nx ${{ github.event.inputs.nx_command || 'affected' }} -t pack:verify
-          - name: Persist test results
-            if: always()
-            uses: actions/upload-artifact@v4
-            with:
-                name: test-results-${{matrix.shard}}
-                path: |
-                    reports/
-                    packages/**/__diff_output__/*
+#            id: pack-verify
+#            run: |
+#              ls -l community-modules/styles
+#              ls -l packages/ag-grid-enterprise  #yarn nx ${{ github.event.inputs.nx_command || 'affected' }} -t pack:verify
+#          - name: Persist test results
+#            if: always()
+#            uses: actions/upload-artifact@v4
+#            with:
+#                name: test-results-${{matrix.shard}}
+#                path: |
+#                    reports/
+#                    packages/**/__diff_output__/*
