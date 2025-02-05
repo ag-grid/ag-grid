@@ -1276,6 +1276,12 @@
                         },
                         {
                             "type": "item",
+                            "title": "Row Selection",
+                            "path": "master-detail-row-selection",
+                            "isEnterprise": true
+                        },
+                        {
+                            "type": "item",
                             "title": "Other",
                             "path": "master-detail-other",
                             "isEnterprise": true
