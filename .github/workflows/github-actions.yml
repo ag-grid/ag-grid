@@ -92,7 +92,7 @@ jobs:
 
       - name: nx build --prod
         run: |
-#          yarn nx build --prod
+          #yarn nx build --prod
           yarn nx build 
           ls -l community-modules/styles
           ls -l packages/ag-grid-enterprise 
