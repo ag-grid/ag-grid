@@ -22,26 +22,6 @@
     transition: transform 0.2s ease-in-out;
     border: 1px solid var(--color-border-secondary);
     color: var(--color-bg-secondary);
-
-    svg {
-        margin-bottom: 16px;
-    }
-
-    path {
-        fill: var(--color-util-brand-700);
-    }
-}
-
-.iconGroup {
-    display: flex;
-    justify-content: space-between;
-}
-
-.icon {
-    font-size: 2rem;
-    padding: 10px;
-    border-radius: 50%;
-    display: inline-block;
 }
 
 .title {
