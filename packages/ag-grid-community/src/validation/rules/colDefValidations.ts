@@ -219,7 +219,6 @@ const COLUMN_DEFINITION_VALIDATIONS: () => Validations<ColDef | ColGroupDef> = (
                 cellSelection,
                 suppressRowTransform,
                 enableCellSpan,
-                pagination,
                 rowDragEntireRow,
                 enableCellTextSelection,
             }
@@ -237,9 +236,6 @@ const COLUMN_DEFINITION_VALIDATIONS: () => Validations<ColDef | ColGroupDef> = (
             }
             if (!enableCellSpan) {
                 return 'colDef.spanRows requires enableCellSpan to be enabled.';
-            }
-            if (pagination) {
-                return 'colDef.spanRows is not supported with pagination.';
             }
             if (rowDragEntireRow) {
                 return 'colDef.spanRows is not supported with rowDragEntireRow.';

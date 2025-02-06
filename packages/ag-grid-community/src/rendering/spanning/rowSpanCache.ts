@@ -91,7 +91,7 @@ export class RowSpanCache extends BeanStub {
     public buildCache(pinned: 'top' | 'center' | 'bottom'): void {
         const {
             column,
-            beans: { gos, pinnedRowModel, rowModel, valueSvc },
+            beans: { gos, pinnedRowModel, rowModel, valueSvc, pagination },
         } = this;
         const { colDef } = column;
 
@@ -168,7 +168,13 @@ export class RowSpanCache extends BeanStub {
 
         switch (pinned) {
             case 'center':
-                rowModel.forEachDisplayedNode?.(checkNodeForCache);
+                rowModel.forEachDisplayedNode?.((node: RowNode) => {
+                    const isNodeInPage = !pagination || pagination.isRowPresent(node);
+                    if (!isNodeInPage) {
+                        return;
+                    }
+                    checkNodeForCache(node);
+                });
                 break;
             case 'top':
                 pinnedRowModel?.forEachPinnedRow('top', checkNodeForCache);
