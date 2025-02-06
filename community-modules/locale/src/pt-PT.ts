@@ -560,8 +560,8 @@ export const AG_GRID_LOCALE_PT = {
     ariaFilterPanelList: 'Lista de Filtros',
 
     // Number Format (Status Bar, Pagination Panel)
-    thousandSeparator: ',',
-    decimalSeparator: '.',
+    thousandSeparator: '.',
+    decimalSeparator: ',',
 
     // Data types
     true: 'Verdadeiro',
