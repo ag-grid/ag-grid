@@ -97,7 +97,7 @@ jobs:
               count=$(yarn -s nx show projects --affected --base ${{ steps.setup.outputs.base }} -t test | wc -l)
             fi
 
-            matrix=$(node ./scripts/test/calculate-shards.js eval --ratio 1 --zero ${count})
+            matrix=$(node ./scripts/test/calculate-shards.js eval --ratio 1 --zero ${count} --max 2)
             echo "test_matrix=${matrix}" >> $GITHUB_OUTPUT
             echo "test_count=${count}" >> $GITHUB_OUTPUT
             echo "Test matrix determined to be: ${matrix}"
@@ -113,6 +113,7 @@ jobs:
       if: needs.build_lint.outputs.test_count > 0
       strategy:
           matrix: ${{ fromJson(needs.build_lint.outputs.test_matrix )}}
+          fail-fast: false
       env:
           NX_PARALLEL: 1
           NX_BASE: ${{ needs.build_lint.outputs.nx_base }}
