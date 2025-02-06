@@ -284,7 +284,7 @@ export class GridCoreCreator {
 
         if (!rowModuleModelName) {
             // can't use validation service here as hasn't been created yet
-            _logPreInitErr(201, { rowModelType }, `Unknown rowModelType ${rowModelType}.`);
+            _logPreInitErr(201, { rowModelType }, `Unknown rowModelType!! ${rowModelType}.`);
             return;
         }
 
