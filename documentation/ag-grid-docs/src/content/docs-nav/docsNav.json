@@ -24,8 +24,8 @@
                     "children": [
                         {
                             "type": "item",
-                            "title": "NPM Installation",
-                            "path": "npm-installation"
+                            "title": "Installation",
+                            "path": "installation"
                         },
                         {
                             "title": "Registering Modules",
@@ -42,16 +42,8 @@
                     "type": "group",
                     "children": [
                         {
-                            "title": "1. Creating a Basic Grid",
+                            "title": "Creating a Basic Grid",
                             "path": "deep-dive"
-                        },
-                        {
-                            "title": "2. Theming & Styling a Grid",
-                            "path": "styling-the-grid"
-                        },
-                        {
-                            "title": "3. Creating an Enterprise Grid",
-                            "path": "building-enterprise-grid"
                         },
                         {
                             "title": "Best Practices",

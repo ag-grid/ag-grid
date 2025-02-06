@@ -1,0 +1,200 @@
+--- 
+title: "Installation"
+description: "Learn how to install AG Grid Community and Enterprise via NPM, CDN, or direct download, with step-by-step instructions and best practices."
+---
+
+{% if isFramework("javascript") %}
+
+AG Grid is available for download from NPM, CDN or as a direct download, however, we strongly recommend using either NPM or CDN. When using NPM, you need to import the package and register the modules you want to use.
+
+## NPM Installation
+
+{% /if %}
+
+{% if isFramework("react", "angular", "vue") %}
+
+AG Grid is available for download from NPM. Once installed, you need to import the package and register the modules you want to use.
+
+## Installation
+
+{% /if %}
+
+{% if isFramework("react") %}
+Install the `ag-grid-react` package, which also installs `ag-grid-community`:
+
+```bash
+npm install ag-grid-react
+```
+{% /if %}
+
+{% if isFramework("angular") %}
+Install the `ag-grid-angular` package, which also installs `ag-grid-community`:
+
+```bash
+npm install ag-grid-angular
+```
+{% /if %}
+
+{% if isFramework("vue") %}
+Install the `ag-grid-vue3` package, which also installs `ag-grid-community`:
+
+```bash
+npm install ag-grid-vue3
+```
+{% /if %}
+
+{% if isFramework("javascript") %}
+Install the `ag-grid-community` package:
+
+```bash
+npm install ag-grid-community
+```
+{% /if %}
+
+To use AG Grid Enterprise features, install the `ag-grid-enterprise` package:
+
+```bash
+npm install ag-grid-enterprise
+```
+
+{% note %}
+You can test AG Grid Enterprise locally without a licence. To test in production, access support and remove the watermark & console warnings, [request a trial licence](./community-vs-enterprise/#request-an-enterprise-bundle-trial-licence).
+{% /note %}
+
+{% if isFramework("react", "angular", "vue") %}
+## Importing
+{% /if %}
+
+{% if isFramework("javascript") %}
+### Importing
+{% /if %}
+
+{% if isFramework("react") %}
+Import the `AgGridReact` component from the `ag-grid-react` package:
+
+```js
+import { AgGridReact } from 'ag-grid-react';
+```
+{% /if %}
+
+{% if isFramework("angular") %}
+Import the `AgGridAngular` component from the `ag-grid-angular` package:
+
+```js
+import { AgGridAngular } from 'ag-grid-angular';
+```
+{% /if %}
+
+{% if isFramework("vue") %}
+Import the `AgGridVue` component from the `ag-grid-vue3` package:
+
+```js
+import { AgGridVue } from "ag-grid-vue3";
+```
+{% /if %}
+
+{% if isFramework("javascript") %}
+To use AG Grid Community features, import them from the `ag-grid-community` package, e.g:
+
+```js
+import { createGrid } from 'ag-grid-community';
+```
+
+To use AG Grid Enterprise features, import the `ag-grid-enterprise` package:
+
+```js
+import 'ag-grid-enterprise';
+```
+{% /if %}
+
+{% if isFramework("react", "angular", "vue") %}
+## Registering Modules
+{% /if %}
+
+{% if isFramework("javascript") %}
+### Registering Modules
+{% /if %}
+
+Register the `AllCommunityModule` to access all Community features:
+
+```js
+import { AllCommunityModule, ModuleRegistry } from 'ag-grid-community'; 
+
+// Register all Community features
+ModuleRegistry.registerModules([AllCommunityModule]);
+```
+
+Register the `AllEnterpriseBundle` to access all Community ***and*** Enterprise features:
+
+```js
+import { ModuleRegistry } from 'ag-grid-community'; 
+import { AllEnterpriseModule } from 'ag-grid-enterprise';
+
+// Register all Community and Enterprise features
+ModuleRegistry.registerModules([AllEnterpriseModule]);
+```
+
+{% note %}
+To minimize bundle size, only register the modules you want to use. See the [Selecting Modules](./modules/) docs for more information.
+{% /note %}
+
+{% if isFramework("javascript") %}
+## CDN Installation
+
+To install AG Grid Community, include the following script tags in your HTML file:
+
+```html
+<script src="https://cdn.jsdelivr.net/npm/ag-grid-community@{% $agGridVersion %}/dist/ag-grid-community.min.js"></script>
+```
+
+To install AG Grid Enterprise, include the following script tags in your HTML file:
+
+```html
+<script src="https://cdn.jsdelivr.net/npm/ag-grid-enterprise@{% $agGridVersion %}/dist/ag-grid-enterprise.min.js"></script>
+```
+
+When installing AG Grid via a CDN, all modules are automatically registered for you. You can then access AG Grid via the `agGrid` global variable. See the [Quick Start](./getting-started/) for more information.
+
+## Download
+
+If your project does not use package manager and you don't want to refer AG Grid from CDN, you can download AG Grid's source files and keep them in your project structure.
+
+{% warning %}
+Downloading AG Grid makes upgrading more complex and prone to errors. We recommend using AG Grid from an NPM package or from CDN.
+{% /warning %}
+
+{% tabs %}
+{% tabItem id="community" label="Community" %}
+You can download AG Grid Community from {% link href="https://github.com/ag-grid/ag-grid/releases/download/v{% $agGridVersion %}/ag-grid-community.tgz" %}GitHub Repository{% /link %}.
+
+Once unpacked you'll see four bundle files in within the `dist` folder:
+
+* `dist/ag-grid-community.js` — standard bundle containing JavaScript and CSS
+* `dist/ag-grid-community.min.js` — minified bundle containing JavaScript and CSS
+* `dist/ag-grid-community.noStyle.js` — standard bundle containing JavaScript without CSS
+* `dist/ag-grid-community.min.noStyle.js` — minified bundle containing JavaScript without CSS
+
+Should you decide to use the `noStyle` versions of the bundle, the style sheet files are present in the `styles` folder.
+
+{% /tabItem %}
+{% tabItem id="enterprise" label="Enterprise" %}
+You can download AG Grid Enterprise from {% link href="https://github.com/ag-grid/ag-grid/releases/download/v{% $agGridVersion %}/ag-grid-enterprise.tgz" %}GitHub Repository{% /link %}.
+
+Once unpacked you'll see four bundle files in within the `dist` folder:
+
+Again there are four bundle files in the distribution:
+
+* `dist/ag-grid-enterprise.js` — standard bundle containing JavaScript and CSS
+* `dist/ag-grid-enterprise.min.js` — minified bundle containing JavaScript and CSS
+* `dist/ag-grid-enterprise.noStyle.js` — standard bundle containing JavaScript without CSS
+* `dist/ag-grid-enterprise.min.noStyle.js ` — minified bundle containing JavaScript without CSS
+
+Should you decide to use the `noStyle` versions of the bundle, you should use the style files from
+the AG Grid bundle (all the styles needed for community and enterprise are in the community CSS files).
+
+{% /tabItem %}
+{% /tabs %}
+
+After downloading the bundles, you can refer to the files in the same way as you would from CDN. See the [Quick Start](./quick-start/) for more information.
+
+{% /if %}
