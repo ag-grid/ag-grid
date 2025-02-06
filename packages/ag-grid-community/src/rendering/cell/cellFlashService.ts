@@ -55,7 +55,7 @@ export class CellFlashService extends BeanStub implements NamedBean {
         cellComp.addOrRemoveCssClass(fullName, true);
         cellComp.addOrRemoveCssClass(animationFullName, false);
 
-        const eCell = cellCtrl.getElement();
+        const eCell = cellCtrl.eGui;
 
         // then once that is applied, we remove the highlight with animation
         this.beans.frameworkOverrides.wrapIncoming(() => {

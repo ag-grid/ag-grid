@@ -83,7 +83,7 @@ export class CellCtrl extends BeanStub {
     public readonly instanceId: CellCtrlInstanceId;
     public readonly colIdSanitised: string;
 
-    private eGui: HTMLElement;
+    public eGui: HTMLElement;
 
     public comp: ICellComp;
     public editCompDetails?: UserCompDetails;
@@ -511,7 +511,7 @@ export class CellCtrl extends BeanStub {
     }
 
     private addDomData(compBean: BeanStub): void {
-        const element = this.getElement();
+        const element = this.eGui;
 
         _setDomData(this.beans.gos, element, DOM_DATA_KEY_CELL_CTRL, this);
         compBean.addDestroyFunc(() => _setDomData(this.beans.gos, element, DOM_DATA_KEY_CELL_CTRL, null));
@@ -558,7 +558,7 @@ export class CellCtrl extends BeanStub {
     }
 
     public onDisplayedColumnsChanged(): void {
-        if (!this.getElement()) {
+        if (!this.eGui) {
             return;
         }
         this.refreshAriaColIndex();
@@ -572,7 +572,7 @@ export class CellCtrl extends BeanStub {
 
     private refreshAriaColIndex(): void {
         const colIdx = this.beans.visibleCols.getAriaColIndex(this.column);
-        _setAriaColIndex(this.getElement(), colIdx); // for react, we don't use JSX, as it slowed down column moving
+        _setAriaColIndex(this.eGui, colIdx); // for react, we don't use JSX, as it slowed down column moving
     }
 
     public onWidthChanged(): void {
@@ -623,7 +623,7 @@ export class CellCtrl extends BeanStub {
     }
 
     public onSuppressCellFocusChanged(suppressCellFocus: boolean): void {
-        const element = this.getElement();
+        const element = this.eGui;
         if (!element) {
             return;
         }
@@ -803,7 +803,7 @@ export class CellCtrl extends BeanStub {
             false,
             this.rowNode,
             this.column,
-            this.getElement()
+            this.eGui
         );
         if (dndSourceComp) {
             this.beans.context.createBean(dndSourceComp);
@@ -876,14 +876,6 @@ export class CellCtrl extends BeanStub {
      * @returns The root element of the cell.
      */
     public getRootElement(): HTMLElement {
-        return this.eGui;
-    }
-
-    /**
-     * Get the cell element.
-     * @returns The DOM element for the cell.
-     */
-    public getElement(): HTMLElement {
         return this.eGui;
     }
 }

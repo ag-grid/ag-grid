@@ -64,7 +64,7 @@ export class CellRangeFeature implements ICellRangeFeature {
 
     public setComp(cellComp: ICellComp): void {
         this.cellComp = cellComp;
-        this.eGui = this.cellCtrl.getElement();
+        this.eGui = this.cellCtrl.eGui;
         this.onCellSelectionChanged();
     }
 

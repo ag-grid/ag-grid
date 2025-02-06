@@ -44,7 +44,7 @@ export class CellPositionFeature extends BeanStub {
 
     public init(): void {
         this.eSetLeft = this.cellCtrl.getRootElement();
-        this.eContent = this.cellCtrl.getElement();
+        this.eContent = this.cellCtrl.eGui;
 
         const cellSpan = this.cellCtrl.getCellSpan();
 

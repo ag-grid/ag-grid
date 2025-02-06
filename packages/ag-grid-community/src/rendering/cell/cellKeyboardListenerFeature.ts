@@ -32,7 +32,7 @@ export class CellKeyboardListenerFeature extends BeanStub {
     }
 
     public init(): void {
-        this.eGui = this.cellCtrl.getElement();
+        this.eGui = this.cellCtrl.eGui;
     }
 
     public onKeyDown(event: KeyboardEvent): void {

@@ -54,14 +54,14 @@ export class SpannedCellCtrl extends CellCtrl {
         if (this.rowNode.rowIndex == null) {
             return;
         }
-        _setAriaRowIndex(this.getElement(), this.rowNode.rowIndex);
+        _setAriaRowIndex(this.eGui, this.rowNode.rowIndex);
     }
 
     /**
      * When cell is spanning, ensure row index is also available on the cell
      */
     private setAriaRowSpan(): void {
-        _setAriaRowSpan(this.getElement(), this.cellSpan.spannedNodes.size);
+        _setAriaRowSpan(this.eGui, this.cellSpan.spannedNodes.size);
     }
 
     public override shouldRestoreFocus(): boolean {

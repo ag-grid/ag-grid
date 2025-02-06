@@ -134,7 +134,7 @@ export class TooltipService extends BeanStub implements NamedBean {
 
         if (!shouldDisplayTooltip && isTooltipWhenTruncated && !ctrl.isCellRenderer()) {
             shouldDisplayTooltip = _shouldDisplayTooltip(() => {
-                const eCell = ctrl.getElement();
+                const eCell = ctrl.eGui;
                 return eCell.children.length === 0
                     ? eCell
                     : (eCell.querySelector('.ag-cell-value') as HTMLElement | undefined);
@@ -146,7 +146,7 @@ export class TooltipService extends BeanStub implements NamedBean {
             getColDef: () => column.getColDef(),
             getRowIndex: () => ctrl.cellPosition.rowIndex,
             getRowNode: () => rowNode,
-            getGui: () => ctrl.getElement(),
+            getGui: () => ctrl.eGui,
             getLocation: () => 'cell',
             getTooltipValue: value != null ? () => value : getTooltipValue,
 

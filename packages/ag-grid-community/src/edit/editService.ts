@@ -299,7 +299,7 @@ export class EditService extends BeanStub implements NamedBean {
             cellStartedEdit: cellStartedEdit,
             onKeyDown: cellCtrl.onKeyDown.bind(cellCtrl),
             stopEditing: cellCtrl.stopEditingAndFocus.bind(cellCtrl),
-            eGridCell: cellCtrl.getElement(),
+            eGridCell: cellCtrl.eGui,
             parseValue: (newValue: any) => valueSvc.parseValue(column, rowNode, newValue, cellCtrl.value),
             formatValue: cellCtrl.formatValue.bind(cellCtrl),
         });
