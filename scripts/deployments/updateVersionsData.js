@@ -34,35 +34,32 @@ function formatDate(isoString) {
 function main(mode) {
     const resolvedPath = path.resolve(__dirname, VERSIONS_DATA_PATH);
     const versionsData = JSON.parse(fs.readFileSync(resolvedPath, 'utf8'));
-    const currentVersion = versionsData.find((version) => version.version === rootPackageJson.version);
+    // NOTE: Strip off beta, as we only care about the main version
+    const rootVersion = rootPackageJson.version.replace(/(.*)(-beta.*)$/g, '$1');
+    const currentVersion = versionsData.find((version) => version.version === rootVersion);
     const hasVersion = currentVersion !== undefined;
 
     if (mode === 'version') {
         if (hasVersion) {
-            console.error(`Version '${rootPackageJson.version}' already exists in '${resolvedPath}'`);
-            return;
-        } else if (rootPackageJson.version.includes('beta')) {
-            console.error(
-                `WARNING: Version '${rootPackageJson.version}' is a beta version in '${resolvedPath}' (this script is probably run at the wrong time)`
-            );
+            console.info(`Version '${rootVersion}' already exists in '${resolvedPath}'`);
             return;
         }
 
         const newVersion = {
-            version: rootPackageJson.version,
+            version: rootVersion,
         };
 
         versionsData.unshift(newVersion);
 
         fs.writeFileSync(resolvedPath, JSON.stringify(versionsData, null, 4) + '\n', 'utf8');
 
-        console.log(`Added version '${rootPackageJson.version}' to '${resolvedPath}'`);
+        console.log(`Added version '${rootVersion}' to '${resolvedPath}'`);
     } else if (mode === 'date') {
         if (!hasVersion) {
-            console.error(`Version '${rootPackageJson.version}' does not exist, to add date`);
-            return;
+            console.error(`ERROR: Version '${rootVersion}' does not exist, to add date`);
+            process.exit(1);
         } else if (currentVersion.date !== undefined) {
-            console.log(`Version '${rootPackageJson.version}' already has a date: ${currentVersion.date}`);
+            console.info(`Version '${rootVersion}' already has a date: ${currentVersion.date}`);
             return;
         }
 
