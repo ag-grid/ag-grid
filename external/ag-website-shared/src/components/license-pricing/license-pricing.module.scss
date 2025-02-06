@@ -90,6 +90,7 @@
     min-width: 160px;
     max-width: 220px;
     border-radius: var(--radius-md);
+
     img {
         width: 100%;
         aspect-ratio: 16 / 9;
@@ -101,7 +102,6 @@
 .licensesOuter {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-    // gap: $spacing-size-8;
     padding-top: $spacing-size-5;
 }
 
@@ -439,6 +439,10 @@
         flex-shrink: 0;
         margin-right: $spacing-size-2;
         transform: translateY(-$spacing-size-1);
+    }
+
+    b {
+        color: var(--color-fg-primary);
     }
 }
 

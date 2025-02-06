@@ -174,6 +174,8 @@ export const LicensePricing: FunctionComponent<Props> = ({ defaultSelection }) =
                                 <div className={styles.trialLicenceCopyItem}>
                                     <Icon name="alarm" svgClasses={styles.alarmIcon} />
                                     <p>
+                                        <b>Two Week Trial</b>
+                                        <br />
                                         Trial licences are valid for two weeks from the date of issue, or{' '}
                                         <a href="mailto:info@ag-grid.com">contact&nbsp;us</a> to extend.
                                     </p>
@@ -184,6 +186,8 @@ export const LicensePricing: FunctionComponent<Props> = ({ defaultSelection }) =
                                 <div className={styles.trialLicenceCopyItem}>
                                     <Icon name="terminal" svgClasses={styles.terminalIcon} />
                                     <p>
+                                        <b>Suppresses Console Warnings</b>
+                                        <br />
                                         Removes console errors and watermarks from AG Grid and
                                         AG&nbsp;Chart&nbsp;components.
                                     </p>
@@ -194,6 +198,8 @@ export const LicensePricing: FunctionComponent<Props> = ({ defaultSelection }) =
                                 <div className={styles.trialLicenceCopyItem}>
                                     <Icon name="support" svgClasses={styles.supportIcon} />
                                     <p>
+                                        <b>Access Support</b>
+                                        <br />
                                         Access dedicated support from our engineering team via{' '}
                                         <a href="https://ag-grid.zendesk.com/hc/en-us">Zendesk</a>.
                                     </p>
