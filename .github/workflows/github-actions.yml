@@ -32,7 +32,7 @@ on:
                   - 'affected'
                   - 'run-many'
 env:
-    NX_REJECT_UNKNOWN_LOCAL_CACHE: 0
+    #NX_REJECT_UNKNOWN_LOCAL_CACHE: 0
     NX_NO_CLOUD: true
     # NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
     NX_BRANCH: ${{ github.ref }}
