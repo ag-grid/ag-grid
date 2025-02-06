@@ -121,8 +121,8 @@ div p.privacyMessage {
 // Pricing page form changes
 :global(.trial-licence-form) {
     .trialForm {
-        @media screen and (min-width: $breakpoint-pricing-medium) {
-            padding-left: $spacing-size-24;
+        @media screen and (min-width: $breakpoint-pricing-large) {
+            padding-left: 18%;
         }
     }
 

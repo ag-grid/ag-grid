@@ -380,14 +380,19 @@
 }
 
 .trialLicence {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-size-4 $spacing-size-10;
+    padding-top: $spacing-size-16;
+    padding-bottom: $spacing-size-16;
+
     > .trialLicenceSeparator {
         width: 1px;
         align-self: stretch;
     }
 
     @media screen and (min-width: $breakpoint-pricing-medium) {
-        display: flex;
-        gap: $spacing-size-10;
+        flex-direction: row;
         align-items: center;
         padding-top: $spacing-size-24;
         padding-bottom: $spacing-size-20;
