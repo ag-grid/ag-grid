@@ -186,7 +186,7 @@ export const LicensePricing: FunctionComponent<Props> = ({ defaultSelection }) =
 
                             <div className={styles.trialLicenceSeparator}></div>
 
-                            <div className={styles.trialLicenceForm}>
+                            <div className={classnames(styles.trialLicenceForm, 'trial-licence-form')}>
                                 <TrialLicenceForm />
                             </div>
                         </div>

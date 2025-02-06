@@ -107,3 +107,25 @@ $trial-licence-small: 680px;
 
     flex-shrink: 0;
 }
+
+// Pricing page form changes
+:global(.trial-licence-form) {
+    .trialForm {
+        @media screen and (min-width: $breakpoint-pricing-medium) {
+            padding-left: $spacing-size-24;
+        }
+    }
+
+    .inputs {
+        flex-wrap: wrap;
+        gap: 0 $spacing-size-4;
+    }
+
+    .emailField {
+        width: 100%;
+    }
+
+    .actions {
+        margin-top: $spacing-size-4;
+    }
+}

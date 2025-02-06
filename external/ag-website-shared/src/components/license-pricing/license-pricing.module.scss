@@ -330,7 +330,6 @@
 }
 
 .contactSales,
-.trialLicence,
 .licenceKeyDocs {
     text-align: center;
     position: relative;
@@ -381,31 +380,26 @@
 }
 
 .trialLicence {
-    --section-background-color: var(--color-util-brand-50);
-
-    padding-top: $spacing-size-12;
-    padding-bottom: $spacing-size-6;
-
-    #{$selector-darkmode} & {
-        --section-background-color: var(--color-util-gray-100);
+    @media screen and (min-width: $breakpoint-pricing-medium) {
+        display: flex;
+        gap: $spacing-size-8;
     }
+}
 
-    h3,
-    p,
-    form {
-        max-width: 800px;
-        margin-right: auto;
-        margin-left: auto;
-    }
+.trialLicenceCopy {
+    flex: 1;
+}
 
-    h3,
-    p {
-        text-align: center;
-    }
+.trialLicenceCopyItem {
+}
 
-    :global(.trial-licence-actions) {
-        align-items: center;
-    }
+.trialLicenceSeparator {
+    width: 1px;
+    background-color: var(--color-util-gray-300);
+}
+
+.trialLicenceForm {
+    flex: 1;
 }
 
 .licenceKeyDocs {
