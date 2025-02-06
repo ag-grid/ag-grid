@@ -19,7 +19,7 @@ if (swcJestConfig.swcrc === undefined) {
 const pathToGlob = (path: string) => path.replace('./', '**/');
 
 const tests = glob.sync('plugins/ag-grid-generate-example-files/src/**/*.test.ts');
-const unitTests = tests.map(pathToGlob);//.filter((path) => !e2eTests.includes(path));
+const unitTests = tests.map(pathToGlob); //.filter((path) => !e2eTests.includes(path));
 
 const commonConfig = {
     resolver: undefined, // NX redirects CSS imports https://github.com/nrwl/nx/blob/7495f0664b19e8fa32ef693f43d709173b6a2bc4/packages/jest/plugins/resolver.ts#L43
@@ -31,7 +31,7 @@ const commonConfig = {
         '^.+\\.[tj]s$': ['@swc/jest', swcJestConfig],
         '^.+\\.css$': 'jest-text-transformer',
         '^.+\\.html$': 'jest-text-transformer',
-    }
+    },
 };
 
 const reporters: any[] = [['default', { summaryThreshold: Infinity }]];
@@ -47,6 +47,6 @@ export default {
             displayName: 'ag-grid-generate-example-files - unit',
             testMatch: unitTests.map(pathFix),
             ...commonConfig,
-        }
+        },
     ],
 };
