@@ -426,6 +426,13 @@
 }
 
 .trialLicenceCopyItem {
+    display: flex;
+
+    svg {
+        flex-shrink: 0;
+        margin-right: $spacing-size-2;
+        transform: translateY(-$spacing-size-1);
+    }
 }
 
 .enterpriseIcon {

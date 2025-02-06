@@ -166,30 +166,33 @@ export const LicensePricing: FunctionComponent<Props> = ({ defaultSelection }) =
                             <div className={styles.trialLicenceCopy}>
                                 <h3 className="text-2xl" id="request-trial-licence">
                                     <Icon name="enterprise" svgClasses={styles.enterpriseIcon} />
-                                    <span>Request an Enterprise Trial</span>
+                                    <span>Enterprise Bundle Trial</span>
                                 </h3>
 
-                                <p>Fill out the form and we'll send you an Enterprise Bundle licence key</p>
+                                <p>Fill out the form to receive a trial licence for AG Grid and AG Charts</p>
 
                                 <div className={styles.trialLicenceCopyItem}>
-                                    <h4>
-                                        <Icon name="alarm" svgClasses={styles.alarmIcon} />
-                                        <span>Two week trial</span>
-                                    </h4>
+                                    <Icon name="alarm" svgClasses={styles.alarmIcon} />
                                     <p>
-                                        Trial AG Grid for free for two weeks, you can request a free trial license key.{' '}
+                                        Trial licences are valid for two weeks from the date of issue, or{' '}
+                                        <a href="mailto:info@ag-grid.com">contact&nbsp;us</a> to extend.
                                     </p>
                                 </div>
 
                                 <div className={styles.trialLicenceSeparator}></div>
 
                                 <div className={styles.trialLicenceCopyItem}>
-                                    <h4>
-                                        <Icon name="enterprise" svgClasses={styles.enterpriseIcon} />
-                                        <span>Set-Up Enterprise Trial</span>
-                                    </h4>
+                                    <Icon name="enterprise" svgClasses={styles.enterpriseIcon} />
+                                    <p>Removes console errors and watermarks from AG Grid and AG Chart components.</p>
+                                </div>
+
+                                <div className={styles.trialLicenceSeparator}></div>
+
+                                <div className={styles.trialLicenceCopyItem}>
+                                    <Icon name="enterprise" svgClasses={styles.enterpriseIcon} />
                                     <p>
-                                        Will remove watermark & console error message, access to AG Grid and AG Charts
+                                        Access dedicated support from our engineering team via{' '}
+                                        <a href="https://ag-grid.zendesk.com/hc/en-us">Zendesk</a>.
                                     </p>
                                 </div>
                             </div>
