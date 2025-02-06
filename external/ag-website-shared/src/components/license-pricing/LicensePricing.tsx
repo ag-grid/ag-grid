@@ -1,3 +1,4 @@
+import { Icon } from '@ag-website-shared/components/icon/Icon';
 import ChartsActive from '@ag-website-shared/images/inline-svgs/pricing/charts-active.svg?react';
 import ChartsInactive from '@ag-website-shared/images/inline-svgs/pricing/charts-inactive.svg?react';
 import GridActive from '@ag-website-shared/images/inline-svgs/pricing/grid-active.svg?react';
@@ -164,20 +165,29 @@ export const LicensePricing: FunctionComponent<Props> = ({ defaultSelection }) =
                         <div className={styles.trialLicence}>
                             <div className={styles.trialLicenceCopy}>
                                 <h3 className="text-2xl" id="request-trial-licence">
-                                    Request an Enterprise Trial
+                                    <Icon name="enterprise" svgClasses={styles.enterpriseIcon} />
+                                    <span>Request an Enterprise Trial</span>
                                 </h3>
 
                                 <p>Fill out the form and we'll send you an Enterprise Bundle licence key</p>
 
                                 <div className={styles.trialLicenceCopyItem}>
-                                    <h4>Two week trial</h4>
+                                    <h4>
+                                        <Icon name="alarm" svgClasses={styles.alarmIcon} />
+                                        <span>Two week trial</span>
+                                    </h4>
                                     <p>
                                         Trial AG Grid for free for two weeks, you can request a free trial license key.{' '}
                                     </p>
                                 </div>
 
+                                <div className={styles.trialLicenceSeparator}></div>
+
                                 <div className={styles.trialLicenceCopyItem}>
-                                    <h4>Set-Up ENterprise Trial</h4>
+                                    <h4>
+                                        <Icon name="enterprise" svgClasses={styles.enterpriseIcon} />
+                                        <span>Set-Up Enterprise Trial</span>
+                                    </h4>
                                     <p>
                                         Will remove watermark & console error message, access to AG Grid and AG Charts
                                     </p>

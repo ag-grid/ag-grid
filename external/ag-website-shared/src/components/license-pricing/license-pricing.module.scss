@@ -380,21 +380,62 @@
 }
 
 .trialLicence {
+    > .trialLicenceSeparator {
+        width: 1px;
+        align-self: stretch;
+    }
+
     @media screen and (min-width: $breakpoint-pricing-medium) {
         display: flex;
-        gap: $spacing-size-8;
+        gap: $spacing-size-10;
+        align-items: center;
+        padding-top: $spacing-size-24;
+        padding-bottom: $spacing-size-10;
     }
 }
 
 .trialLicenceCopy {
     flex: 1;
+    padding-top: $spacing-size-4;
+    padding-bottom: $spacing-size-8;
+
+    h3 svg {
+        --icon-size: 36px;
+
+        margin-right: $spacing-size-2;
+        transform: translateY(-3px);
+    }
+
+    h4 svg {
+        --icon-size: #{$spacing-size-6};
+
+        margin-right: $spacing-size-2;
+        transform: translateY(-2px);
+    }
+
+    > p {
+        margin-bottom: $spacing-size-10;
+    }
+
+    > .trialLicenceSeparator {
+        height: 1px;
+        margin-top: $spacing-size-6;
+        margin-bottom: $spacing-size-6;
+    }
 }
 
 .trialLicenceCopyItem {
 }
 
+.enterpriseIcon {
+    --icon-color: var(--color-enterprise-icon);
+}
+
+.alarmIcon {
+    --icon-color: var(--color-util-brand-500);
+}
+
 .trialLicenceSeparator {
-    width: 1px;
     background-color: var(--color-util-gray-300);
 }
 

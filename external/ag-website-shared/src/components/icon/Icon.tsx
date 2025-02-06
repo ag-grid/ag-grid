@@ -1,3 +1,4 @@
+import AlarmIcon from '@ag-website-shared/images/inline-svgs/alarm.svg?react';
 import ApiIcon from '@ag-website-shared/images/inline-svgs/api.svg?react';
 import BoldChevronDown from '@ag-website-shared/images/inline-svgs/bold-chevron-down.svg?react';
 import BoldChevronLeft from '@ag-website-shared/images/inline-svgs/bold-chevron-left.svg?react';
@@ -193,6 +194,7 @@ export const ICON_MAP = {
     communityEnterprise: CommunityEntperise,
     tutorials: Tutorials,
     concepts: Concepts,
+    alarm: AlarmIcon,
     ...SOCIALS_ICON_MAP,
     ...DOCS_CATEGORIES_ICON_MAP,
     ...HOMEPAGE_FEATURES_ICON_MAP,
