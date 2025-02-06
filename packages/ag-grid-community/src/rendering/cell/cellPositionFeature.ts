@@ -18,8 +18,8 @@ export class CellPositionFeature extends BeanStub {
     private readonly column: AgColumn;
     private readonly rowNode: RowNode;
 
-    private setLeftElement: HTMLElement;
-    private contentElement: HTMLElement;
+    private eSetLeft: HTMLElement;
+    private eContent: HTMLElement;
 
     private colsSpanning: AgColumn[];
     private rowSpan: number;
@@ -43,8 +43,8 @@ export class CellPositionFeature extends BeanStub {
     }
 
     public init(): void {
-        this.setLeftElement = this.cellCtrl.getRootElement();
-        this.contentElement = this.cellCtrl.getElement();
+        this.eSetLeft = this.cellCtrl.getRootElement();
+        this.eContent = this.cellCtrl.getElement();
 
         const cellSpan = this.cellCtrl.getCellSpan();
 
@@ -73,7 +73,7 @@ export class CellPositionFeature extends BeanStub {
     private refreshSpanHeight(cellSpan: CellSpan) {
         const spanHeight = cellSpan.getCellHeight();
         if (spanHeight != null) {
-            this.cellCtrl.getElement().style.height = `${spanHeight}px`;
+            this.eContent.style.height = `${spanHeight}px`;
         }
     }
 
@@ -117,11 +117,11 @@ export class CellPositionFeature extends BeanStub {
     }
 
     public onWidthChanged(): void {
-        if (!this.cellCtrl.getElement()) {
+        if (!this.eContent) {
             return;
         }
         const width = this.getCellWidth();
-        this.contentElement.style.width = `${width}px`;
+        this.eContent.style.width = `${width}px`;
     }
 
     private getCellWidth(): number {
@@ -160,11 +160,11 @@ export class CellPositionFeature extends BeanStub {
     }
 
     public onLeftChanged(): void {
-        if (!this.setLeftElement) {
+        if (!this.eSetLeft) {
             return;
         }
         const left = this.modifyLeftForPrintLayout(this.getCellLeft());
-        this.setLeftElement.style.left = left + 'px';
+        this.eSetLeft.style.left = left + 'px';
     }
 
     private getCellLeft(): number | null {
@@ -204,8 +204,8 @@ export class CellPositionFeature extends BeanStub {
         const singleRowHeight = _getRowHeightAsNumber(this.beans);
         const totalRowHeight = singleRowHeight * this.rowSpan;
 
-        this.contentElement.style.height = `${totalRowHeight}px`;
-        this.contentElement.style.zIndex = '1';
+        this.eContent.style.height = `${totalRowHeight}px`;
+        this.eContent.style.zIndex = '1';
     }
 
     // overriding to make public, as we don't dispose this bean via context
