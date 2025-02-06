@@ -179,6 +179,8 @@ Note that the `empty` filter option is primarily used when creating [Custom Filt
 
 The default option for the Date Filter is `equals`.
 
+When providing filter options, the default filter option (or the first option if no default set) must be an option that displays an input or the `empty` filter option (as a filter option with no inputs would mean the filter is active by default).
+
 ## Filter Values
 
 By default, the values supplied to the Date Filter are retrieved from the data based on the `field` attribute. This can be overridden by providing a `filterValueGetter` in the Column Definition. This is similar to using a [Value Getter](./value-getters), but is specific to the filter.

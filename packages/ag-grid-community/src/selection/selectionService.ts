@@ -437,12 +437,14 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
         return this.getSelectionCount() === 0;
     }
 
-    public deselectAllRowNodes(params: { source: SelectionEventSourceType; selectAll?: SelectAllMode }) {
-        const callback = (rowNode: RowNode) =>
-            this.selectRowNode(_normaliseFooterRef(rowNode), false, undefined, source);
+    public deselectAllRowNodes({ source, selectAll }: { source: SelectionEventSourceType; selectAll?: SelectAllMode }) {
         const rowModelClientSide = _isClientSideRowModel(this.gos);
 
-        const { source, selectAll } = params;
+        let updatedNodes = false;
+        const callback = (rowNode: RowNode) => {
+            const updated = this.selectRowNode(_normaliseFooterRef(rowNode), false, undefined, source);
+            updatedNodes ||= updated;
+        };
 
         if (selectAll === 'currentPage' || selectAll === 'filtered') {
             if (!rowModelClientSide) {
@@ -460,10 +462,13 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
 
         // the above does not clean up the parent rows if they are selected
         if (rowModelClientSide && this.groupSelectsDescendants) {
-            this.updateGroupsFromChildrenSelections(source);
+            const updated = this.updateGroupsFromChildrenSelections(source);
+            updatedNodes ||= updated;
         }
 
-        this.dispatchSelectionChanged(source);
+        if (updatedNodes) {
+            this.dispatchSelectionChanged(source);
+        }
     }
 
     private getSelectedCounts(selectAll?: SelectAllMode): {
@@ -578,19 +583,24 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
         }
 
         const { source, selectAll } = params;
+        let updatedNodes = false;
 
         this.getNodesToSelect(selectAll).forEach((rowNode) => {
-            this.selectRowNode(_normaliseFooterRef(rowNode), true, undefined, source);
+            const updated = this.selectRowNode(_normaliseFooterRef(rowNode), true, undefined, source);
+            updatedNodes ||= updated;
         });
 
         selectionCtx.selectAll = true;
 
         // the above does not clean up the parent rows if they are selected
         if (_isClientSideRowModel(gos) && this.groupSelectsDescendants) {
-            this.updateGroupsFromChildrenSelections(source);
+            const updated = this.updateGroupsFromChildrenSelections(source);
+            updatedNodes ||= updated;
         }
 
-        this.dispatchSelectionChanged(source);
+        if (updatedNodes) {
+            this.dispatchSelectionChanged(source);
+        }
     }
 
     public getSelectionState(): string[] | null {

@@ -1,9 +1,14 @@
 .container {
     display: flex;
-    gap: 20px;
-    justify-content: left;
+    gap: 16px;
     font-weight: 400;
-    flex-wrap: wrap;
+    width: 100%;
+    @media (max-width: 768px) {
+        flex-direction: column;
+    }
+    a {
+        width: 100%;
+    }
 }
 
 .card {
@@ -11,16 +16,48 @@
     border-radius: 10px;
     padding: 20px;
     text-align: left;
-    width: 250px;
     transition: transform 0.2s ease-in-out;
     border: 1px solid var(--color-border-secondary);
     min-height: 180px;
     color: var(--color-bg-secondary);
+
+    svg {
+        margin-bottom: 16px;
+    }
     &:hover {
         transform: translateY(-5px);
+        background-color: var(--color-bg-secondary);
+        transition: all 0.3s;
     }
+
     path {
         fill: var(--color-util-brand-700);
+    }
+}
+
+.iconGroup {
+    display: flex;
+    justify-content: space-between;
+}
+
+.titleIcon {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 8px;
+
+    div {
+        height: 20px;
+
+        svg {
+            height: 20px;
+            width: 20px;
+        }
+
+        path {
+            fill: var(--color-fg-primary);
+            opacity: 0.4;
+        }
     }
 }
 
@@ -32,12 +69,12 @@
 }
 
 .title {
-    font-size: 1.2rem;
+    font-size: 18px;
     margin-top: 10px;
-    font-weight: bold;
+    font-weight: 700;
 }
 
 .description {
-    color: var(--color-text-secondary);
+    color: color-mix(in srgb, var(--color-text-secondary), var(--color-bg-primary) 20%);
     font-weight: normal;
 }

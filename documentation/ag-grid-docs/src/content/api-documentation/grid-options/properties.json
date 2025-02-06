@@ -760,6 +760,9 @@
             "more": {
                 "name": "Row Numbers",
                 "url": "./row-numbers/"
+            },
+            "interfaceHierarchyOverrides": {
+                "include": ["RowNumbersOptions"]
             }
         },
         "valueCache": {
@@ -1809,7 +1812,7 @@
                 "name": "Configuring Row Spanning",
                 "url": "./row-spanning/#enabling-row-spanning"
             },
-            "description": "Uses CSS `top` instead of CSS `transform` for positioning rows. Useful if the transform function is causing issues such as used in [row spanning](./row-spanning/). Default: `false`"
+            "description": "Uses CSS `top` instead of CSS `transform` for positioning rows. Default: `false`"
         },
         "columnHoverHighlight": {
             "more": {

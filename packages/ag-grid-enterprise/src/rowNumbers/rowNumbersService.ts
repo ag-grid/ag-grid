@@ -2,6 +2,7 @@ import {
     AgColumn,
     BeanStub,
     ROW_NUMBERS_COLUMN_ID,
+    _addGridCommonParams,
     _applyColumnState,
     _areColIdsEqual,
     _convertColumnEventSourceType,
@@ -21,6 +22,8 @@ import type {
     PropertyValueChangedEvent,
     RowNumbersOptions,
     RowPosition,
+    ValueFormatterParams,
+    ValueGetterParams,
     _ColumnCollections,
     _HeaderComp,
 } from 'ag-grid-community';
@@ -29,7 +32,10 @@ export class RowNumbersService extends BeanStub implements NamedBean, IRowNumber
     beanName = 'rowNumbersSvc' as const;
 
     public columns: _ColumnCollections | null;
+
     private isIntegratedWithSelection: boolean = false;
+    private isSuppressCellSelectionIntegration: boolean;
+
     private rowNumberOverrides: RowNumbersOptions;
 
     public postConstruct(): void {
@@ -138,16 +144,53 @@ export class RowNumbersService extends BeanStub implements NamedBean, IRowNumber
 
     private refreshSelectionIntegration(): void {
         const { beans } = this;
-
+        const { gos, rangeSvc } = beans;
+        const cellSelection = gos.get('cellSelection');
         this.refreshRowNumberOverrides();
 
-        this.isIntegratedWithSelection = !!beans.rangeSvc && !this.rowNumberOverrides?.suppressCellSelectionIntegration;
+        this.isIntegratedWithSelection = !!rangeSvc && !!cellSelection && !this.isSuppressCellSelectionIntegration;
     }
 
     private refreshRowNumberOverrides(): void {
         const rowNumbers = this.gos.get('rowNumbers');
+        this.rowNumberOverrides = {};
 
-        this.rowNumberOverrides = rowNumbers && typeof rowNumbers === 'object' ? rowNumbers : {};
+        if (!rowNumbers || typeof rowNumbers !== 'object') {
+            return;
+        }
+
+        if (rowNumbers.suppressCellSelectionIntegration) {
+            this.isSuppressCellSelectionIntegration = true;
+        }
+
+        const colDefValidProps: (keyof RowNumbersOptions)[] = [
+            'contextMenuItems',
+            'context',
+            'onCellClicked',
+            'onCellContextMenu',
+            'onCellDoubleClicked',
+            'headerTooltip',
+            'headerStyle',
+            'headerComponent',
+            'headerComponentParams',
+            'suppressHeaderKeyboardEvent',
+            'tooltipField',
+            'tooltipValueGetter',
+            'tooltipComponent',
+            'tooltipComponentParams',
+            'valueGetter',
+            'valueFormatter',
+            'width',
+            'maxWidth',
+            'minWidth',
+            'resizable',
+        ];
+
+        for (const prop of colDefValidProps) {
+            if (rowNumbers[prop] != null) {
+                this.rowNumberOverrides[prop] = rowNumbers[prop];
+            }
+        }
     }
 
     private onHeaderClick(): void {
@@ -165,19 +208,43 @@ export class RowNumbersService extends BeanStub implements NamedBean, IRowNumber
         }
 
         if (runAutoSize) {
-            this.beans.colAutosize?.autoSizeCols({
-                colKeys: [ROW_NUMBERS_COLUMN_ID],
-                skipHeader: true,
-                skipHeaderGroups: true,
-                silent: true,
-                source: 'rowNumbersService',
-            });
+            const width = this.beans.autoWidthCalc?.getPreferredWidthForElements([this.createDummyElement(column)], 2);
+            if (width != null) {
+                this.beans.colResize?.setColumnWidths(
+                    [{ key: column, newWidth: width }],
+                    false,
+                    true,
+                    'rowNumbersService'
+                );
+            }
         }
 
         this.beans.rowRenderer.refreshCells({
             columns: [column],
             force,
         });
+    }
+
+    private createDummyElement(column: AgColumn): HTMLDivElement {
+        const div = document.createElement('div');
+        div.classList.add('ag-cell-value', 'ag-cell');
+
+        let value = String(this.beans.rowModel.getRowCount() + 1);
+
+        if (typeof this.rowNumberOverrides.valueFormatter === 'function') {
+            const valueFormatterParams: ValueFormatterParams = _addGridCommonParams(this.beans.gos, {
+                data: undefined,
+                value,
+                node: null,
+                column,
+                colDef: column.colDef,
+            });
+            value = this.rowNumberOverrides.valueFormatter(valueFormatterParams);
+        }
+
+        div.textContent = value;
+
+        return div;
     }
 
     private putRowNumbersColsFirstInList(list: AgColumn[], cols?: AgColumn[] | null): AgColumn[] | null {
@@ -190,14 +257,16 @@ export class RowNumbersService extends BeanStub implements NamedBean, IRowNumber
     }
 
     private createRowNumbersColDef(): ColDef {
-        const { gos } = this.beans;
+        const { gos, contextMenuSvc } = this.beans;
         const enableRTL = gos.get('enableRtl');
+
         return {
             // overridable properties
             minWidth: 60,
             width: 60,
             resizable: false,
-            valueGetter: (p) => (p.node?.rowIndex || 0) + 1,
+            valueGetter: this.valueGetter,
+            contextMenuItems: this.isIntegratedWithSelection || !contextMenuSvc ? undefined : () => [],
             // overrides
             ...this.rowNumberOverrides,
             // non-overridable properties
@@ -205,17 +274,23 @@ export class RowNumbersService extends BeanStub implements NamedBean, IRowNumber
             suppressHeaderMenuButton: true,
             sortable: false,
             suppressMovable: true,
+            lockPinned: true,
             pinned: enableRTL ? 'right' : 'left',
             lockPosition: enableRTL ? 'right' : 'left',
             editable: false,
             suppressFillHandle: true,
             suppressAutoSize: true,
             suppressSizeToFit: true,
+            suppressHeaderContextMenu: true,
             suppressNavigable: true,
             headerClass: this.getHeaderClass(),
             cellClass: this.getCellClass.bind(this),
             cellAriaRole: 'rowheader',
         };
+    }
+
+    private valueGetter(params: ValueGetterParams): string {
+        return String((params.node?.rowIndex || 0) + 1);
     }
 
     private getHeaderClass(): string[] {
@@ -285,15 +360,23 @@ export class RowNumbersService extends BeanStub implements NamedBean, IRowNumber
     // focus is disabled on the Row Numbers cells, when a click happens on it,
     // it should focus the first cell of that row.
     private focusFirstRenderedCellAtRowPosition(rowPosition: RowPosition) {
-        const { beans } = this;
-        const rowNode = _getRowNode(beans, rowPosition);
+        const { beans, gos } = this;
+        const { visibleCols, colViewport } = beans;
+        const pinnedCols = gos.get('enableRtl') ? visibleCols.rightCols : visibleCols.leftCols;
+        let columns: AgColumn[];
 
-        if (!rowNode) {
-            return;
+        if (pinnedCols.length == 1) {
+            const rowNode = _getRowNode(beans, rowPosition);
+
+            if (!rowNode) {
+                return;
+            }
+            columns = colViewport.getColsWithinViewport(rowNode);
+        } else {
+            columns = pinnedCols;
         }
 
-        const colsInViewport = beans.colViewport.getColsWithinViewport(rowNode);
-        const column = colsInViewport.find(isRowNumberCol);
+        const column = columns.find((col) => !isRowNumberCol(col));
 
         if (!column) {
             return;

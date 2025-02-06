@@ -30,10 +30,27 @@ $trial-licence-small: 680px;
     }
 }
 
+.emailInputOuter {
+    position: relative;
+
+    input[type='email'] {
+        width: 100%;
+        padding: 0.375em 0.75em 0.375em 2.75em;
+    }
+
+    :global(.icon) {
+        --icon-size: #{$spacing-size-6};
+        --icon-color: var(--color-util-gray-400);
+
+        position: absolute;
+        top: 7px;
+        left: $spacing-size-3;
+    }
+}
+
 .actions {
     display: flex;
     flex-direction: column;
-    align-items: flex-end;
     justify-content: flex-end;
     gap: $spacing-size-4;
 
@@ -43,16 +60,24 @@ $trial-licence-small: 680px;
 
     button {
         width: 100%;
+
+        @media screen and (min-width: $trial-licence-small) {
+            width: fit-content;
+        }
     }
 
     @media screen and (max-width: $trial-licence-small) {
         margin-top: $spacing-size-2;
     }
+}
 
-    @media screen and (min-width: $trial-licence-small) {
-        button {
-            width: fit-content;
-        }
+div p.privacyMessage {
+    font-size: var(--text-fs-xs);
+    line-height: var(--text-lh-xs);
+    color: var(--color-fg-quinary);
+
+    a {
+        font-weight: var(--text-regular);
     }
 }
 
@@ -75,6 +100,7 @@ $trial-licence-small: 680px;
         border-color: var(--color-util-warning-500);
     }
 }
+
 .statusIconSuccess {
     --icon-size: #{$spacing-size-6};
     --icon-color: var(--color-bg-primary);
@@ -90,4 +116,26 @@ $trial-licence-small: 680px;
     --icon-color: var(--color-util-warning-500);
 
     flex-shrink: 0;
+}
+
+// Pricing page form changes
+:global(.trial-licence-form) {
+    .trialForm {
+        @media screen and (min-width: $breakpoint-pricing-large) {
+            padding-left: 18%;
+        }
+    }
+
+    .inputs {
+        flex-wrap: wrap;
+        gap: 0 $spacing-size-4;
+    }
+
+    .emailField {
+        width: 100%;
+    }
+
+    .actions {
+        margin-top: $spacing-size-4;
+    }
 }

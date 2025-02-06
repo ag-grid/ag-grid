@@ -82,8 +82,14 @@
         border-bottom: var(--ag-row-border-style) var(--ag-row-border-color) var(--ag-row-border-width);
     }
 
-    .ag-spanned-row > .ag-cell {
+    .ag-spanned-cell-wrapper {
         background-color: var(--ag-background-color);
+        position: absolute;
+    }
+
+    .ag-spanned-cell-wrapper > .ag-spanned-cell {
+        display: block;
+        position: relative;
     }
 
     .ag-row-highlight-above::after,

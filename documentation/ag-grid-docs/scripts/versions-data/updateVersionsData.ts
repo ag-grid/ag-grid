@@ -75,7 +75,7 @@ function logInitialReport({ versionsDataFile, agVersions, npmVersions, missingNp
     console.log(`${agVersions.length} versions in '${versionsDataFile}'`);
     console.log(`${npmVersions.length} npm versions`);
     console.log(`${websiteVersions.length} website versions`);
-    console.log(`${missingNpmVersions.length} missing npm versions:`);
+    console.log(`${missingNpmVersions.length} missing npm versions${missingNpmVersions.length ? ':' : ''}`);
     if (missingNpmVersions.length) {
         console.log(missingNpmVersions);
     }

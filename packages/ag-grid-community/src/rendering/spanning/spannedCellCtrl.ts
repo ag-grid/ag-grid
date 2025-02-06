@@ -11,6 +11,9 @@ import type { RowCtrl } from '../row/rowCtrl';
 import type { CellSpan } from './rowSpanCache';
 
 export class SpannedCellCtrl extends CellCtrl {
+    private readonly SPANNED_CELL_CSS_CLASS = 'ag-spanned-cell';
+    private eWrapper: HTMLElement;
+
     constructor(
         private readonly cellSpan: CellSpan,
         rowCtrl: RowCtrl,
@@ -23,15 +26,21 @@ export class SpannedCellCtrl extends CellCtrl {
 
     public override setComp(
         comp: ICellComp,
-        eGui: HTMLElement,
+        eCell: HTMLElement,
+        eWrapper: HTMLElement | undefined,
         eCellWrapper: HTMLElement | undefined,
         printLayout: boolean,
         startEditing: boolean,
         compBean: BeanStub<'destroyed'> | undefined
     ): void {
-        super.setComp(comp, eGui, eCellWrapper, printLayout, startEditing, compBean);
+        this.eWrapper = eWrapper!;
+        super.setComp(comp, eCell, eWrapper, eCellWrapper, printLayout, startEditing, compBean);
         this.setAriaRowSpan();
         this.refreshAriaRowIndex();
+    }
+
+    public override isCellSpanning(): boolean {
+        return true;
     }
 
     public override getCellSpan(): CellSpan | undefined {
@@ -79,6 +88,11 @@ export class SpannedCellCtrl extends CellCtrl {
         return !!focusedCell && this.cellSpan.doesSpanContain(focusedCell);
     }
 
+    protected override applyStaticCssClasses(): void {
+        super.applyStaticCssClasses();
+        this.comp.addOrRemoveCssClass(this.SPANNED_CELL_CSS_CLASS, true);
+    }
+
     public override onCellFocused(event?: CellFocusedEvent): void {
         const { beans } = this;
         if (_isCellFocusSuppressed(beans)) {
@@ -100,5 +114,9 @@ export class SpannedCellCtrl extends CellCtrl {
         }
 
         super.onCellFocused(event);
+    }
+
+    public override getRootElement() {
+        return this.eWrapper;
     }
 }

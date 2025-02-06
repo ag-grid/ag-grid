@@ -1,14 +1,38 @@
 ---
 title: "AG Grid Modules"
+description: "Reduce your application bundle size by cherry-picking grid features. Use the module selector to select the features you want to use and generate the code."
 ---
 
-Reduce your application bundle size by cherry picking grid features using AG Grid modules.
+Reduce your application bundle size by cherry-picking grid features using AG Grid modules, generate registration code with the module selector, and validate your setup with the validation module.
 
-## Bundles
+{% if isFramework("javascript") %}
+{% note %}
+If you are using the UMD bundle you do not need to register modules as this already done automatically.
+{% /note %}
+{% /if %}
 
-To include all community or enterprise modules, either the `AllCommunityModule` or `AllEnterpriseModule` bundle can be used. This replicates the behaviour of the package versions of AG Grid prior to version 33.
+## Overview
 
-If you are using the enterprise features Integrated Charts or Sparklines, then you need to provide the relevant module from AG Charts to `AllEnterpriseModule`, e.g. `AllEnterpriseModule.with(AgChartsEnterpriseModule)`. Use the [Module Selector](#selecting-modules) tool below to help generate the correct registration code.
+AG Grid Modules allow you to reduce the bundle size of your application by only including the modules you want to use. 
+
+To include all Community or Enterprise modules, use either the `AllCommunityModule` or `AllEnterpriseModule` bundles, which replicates the behaviour of the package versions of AG Grid prior to version 33:
+
+```js
+// Import ModuleRegistry and the required module
+import {
+    ModuleRegistry,
+    AllCommunityModule, // or AllEnterpriseModule
+} from 'ag-grid-community';
+
+// Register the module
+ModuleRegistry.registerModules([
+    AllCommunityModule, // or AllEnterpriseModule
+]);
+```
+
+If you are using the enterprise features Integrated Charts or Sparklines, then you need to provide the relevant module from AG Charts to `AllEnterpriseModule`, e.g. `AllEnterpriseModule.with(AgChartsEnterpriseModule)`. 
+
+Use the [Module Selector](#selecting-modules) tool below to help generate the correct registration code.
 
 ## Selecting Modules
 

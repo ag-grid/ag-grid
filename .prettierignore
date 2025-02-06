@@ -29,4 +29,7 @@ packages/ag-grid-vue3/src/components/utils.ts
 packages/ag-grid-angular/projects/ag-grid-angular/src/test.ts
 documentation/ag-grid-docs/public/example-runner/grid-angular-boilerplate/main.ts
 
+# Comment in astro file
+external/ag-website-shared/src/components/documentation-archive/DocumentationArchiveSection.astro
+
 /.nx/workspace-data

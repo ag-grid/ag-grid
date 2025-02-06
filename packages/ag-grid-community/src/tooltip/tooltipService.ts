@@ -134,10 +134,10 @@ export class TooltipService extends BeanStub implements NamedBean {
 
         if (!shouldDisplayTooltip && isTooltipWhenTruncated && !ctrl.isCellRenderer()) {
             shouldDisplayTooltip = _shouldDisplayTooltip(() => {
-                const { eGui } = ctrl;
-                return eGui.children.length === 0
-                    ? eGui
-                    : (eGui.querySelector('.ag-cell-value') as HTMLElement | undefined);
+                const eCell = ctrl.eGui;
+                return eCell.children.length === 0
+                    ? eCell
+                    : (eCell.querySelector('.ag-cell-value') as HTMLElement | undefined);
             });
         }
 

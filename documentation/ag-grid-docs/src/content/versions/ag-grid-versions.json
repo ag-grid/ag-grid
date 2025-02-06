@@ -1,5 +1,33 @@
 [
     {
+        "version": "33.1.0",
+        "date": "February 12th 2025",
+        "landingPageHighlight": "Row Numbers, Row Spanning, Master/Detail Selection, Tree Data Children",
+        "highlights": [
+            {
+                "text": "Row Numbers",
+                "path": "./row-numbers"
+            },
+            {
+                "text": "Row Spanning",
+                "path": "./row-spanning"
+            },
+            {
+                "text": "Master/Detail Selection",
+                "path": "./master-detail-grids/#row-selection"
+            },
+            {
+                "text": "Tree Data Nested Records",
+                "path": "./tree-data-nesting"
+            },
+            {
+                "text": "Accessibility Improvements"
+            }
+        ],
+        "notesPath": "./upgrading-to-ag-grid-33.1",
+        "hideBlogPostLink": false
+    },
+    {
         "version": "33.0.4",
         "date": "January 15th 2025"
     },

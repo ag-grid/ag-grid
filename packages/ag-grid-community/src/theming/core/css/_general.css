@@ -449,6 +449,9 @@ always be 0 and then making a row sticky causes the grid to scroll. */
     overflow: hidden;
     height: 0;
     background-color: var(--ag-background-color);
+
+    /* sticky containers need to appear over spanned and edited rows */
+    z-index: 1;
 }
 
 .ag-sticky-bottom {

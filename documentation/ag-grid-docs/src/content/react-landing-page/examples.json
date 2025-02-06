@@ -5,7 +5,7 @@
         "title": "Quick Start",
         "content": "Create your first React Table and learn the basics in just a few minutes.",
         "docs": "./react-data-grid/getting-started",
-        "demo": "./examples/getting-started/working-with-data-example/reactFunctionalTs"
+        "demo": "./examples/getting-started/quick-start-example/reactFunctionalTs/"
     },
     {
         "img": "beginner-tutorial.png",

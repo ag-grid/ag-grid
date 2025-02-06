@@ -80,3 +80,7 @@ async function generateFile(options: ExecutorOptions) {
     console.log(`Generated OK.`);
     console.log(`--------------------------------------------------------------------------------`);
 }
+
+// Run the executor for degugging
+/// node --inspect-brk ./plugins/ag-grid-generate-code-reference-files/dist/src/executors/generate/executor.js
+// generateFile({ output: 'TEST' });

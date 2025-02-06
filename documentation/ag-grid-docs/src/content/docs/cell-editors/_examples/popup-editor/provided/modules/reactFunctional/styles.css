@@ -1,0 +1,29 @@
+.mood-renderer {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+}
+
+.mood {
+    border-radius: 5px;
+    border: 1px solid grey;
+    background-color: #e6e6e6;
+    padding: 2px;
+    height: 33px;
+    text-align: center;
+    display: inline-block;
+    outline: none;
+}
+
+.default {
+    width: 22px;
+    border: 1px solid transparent !important;
+    padding: 4px;
+}
+
+.selected {
+    width: 22px;
+    border: 1px solid blue !important;
+    padding: 4px;
+}

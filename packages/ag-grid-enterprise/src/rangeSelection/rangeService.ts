@@ -1,5 +1,6 @@
 import type {
     AgColumn,
+    AgColumnGroup,
     BeanCollection,
     CellCtrl,
     CellNavigationService,
@@ -842,7 +843,11 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
         }
     }
 
-    public createRangeHighlightFeature(compBean: BeanStub, column: AgColumn<any>, headerComp: IHeaderCellComp): void {
+    public createRangeHighlightFeature(
+        compBean: BeanStub,
+        column: AgColumn<any> | AgColumnGroup,
+        headerComp: IHeaderCellComp
+    ): void {
         compBean.createManagedBean(new RangeHeaderHighlightFeature(column, headerComp));
     }
 

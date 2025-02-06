@@ -285,7 +285,6 @@ export class EditService extends BeanStub implements NamedBean {
         const {
             column,
             rowNode,
-            eGui,
             cellPosition: { rowIndex },
         } = cellCtrl;
         const { valueSvc, gos } = this.beans;
@@ -300,7 +299,7 @@ export class EditService extends BeanStub implements NamedBean {
             cellStartedEdit: cellStartedEdit,
             onKeyDown: cellCtrl.onKeyDown.bind(cellCtrl),
             stopEditing: cellCtrl.stopEditingAndFocus.bind(cellCtrl),
-            eGridCell: eGui,
+            eGridCell: cellCtrl.eGui,
             parseValue: (newValue: any) => valueSvc.parseValue(column, rowNode, newValue, cellCtrl.value),
             formatValue: cellCtrl.formatValue.bind(cellCtrl),
         });

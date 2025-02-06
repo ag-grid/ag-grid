@@ -424,15 +424,15 @@ This example demonstrates cell style and row style.
 AG Grid comes in two forms: 
 
 - **AG Grid Community**: Free for everyone, including production use - no license required.
-- **AG Grid Enterprise**: Requires a license to use in production. Free to test locally, or request a [trial](./community-vs-enterprise/#request-an-enterprise-bundle-trial-license) to test in production.
+- **AG Grid Enterprise**: Requires a license to use in production. Free to test locally, or request a [trial](./community-vs-enterprise/#request-an-enterprise-bundle-trial-licence) to test in production.
 
-To learn more about the differences between AG Grid Community and Enterprise, when to use each version, and how to access our [free trial](./community-vs-enterprise/#request-an-enterprise-bundle-trial-license) or purchase a license, see the [Community vs Enterprise](./community-vs-enterprise/) docs.
+To learn more about the differences between AG Grid Community and Enterprise, when to use each version, and how to access our [free trial](./community-vs-enterprise/#request-an-enterprise-bundle-trial-licence) or purchase a license, see the [Community vs Enterprise](./community-vs-enterprise/) docs.
 
 ### Integrated Charts {% enterpriseIcon /%}
 
 [Integrated Charts](./integrated-charts/) allow users to build and customise charts directly within the grid. 
 
-Enable Integrated Charts by setting `enableCharts` to `true`. Set `cellSelection` to `true` to allow users to create charts from a Cell Selection:
+Enable Integrated Charts by setting `enableCharts` to `true`. Set `cellSelection` to `true` to allow users to create charts by selecting a range of cells:
 
 ```{% frameworkTransform=true %}
 const gridOptions = {
@@ -443,7 +443,7 @@ const gridOptions = {
 
 ### Grouping Rows  {% enterpriseIcon /%}
 
-Enable [Row Grouping](./grouping/) by setting `rowGroup` column definition property to `true`:
+Enable [Row Grouping](./grouping/) by setting `rowGroup` to `true`:
 
 ```{% frameworkTransform=true %}
 const gridOptions = {
@@ -456,7 +456,7 @@ const gridOptions = {
 
 ### Aggregating Rows {% enterpriseIcon /%}
 
-Enable [Aggregation](./aggregation/) by setting `aggFunc` column definition property to one of `sum`, `min`, `max`, `count`, `avg`, `first`, or `last`:
+Enable [Aggregation](./aggregation/) by setting `aggFunc` to one of `sum`, `min`, `max`, `count`, `avg`, `first`, or `last`:
 
 ```{% frameworkTransform=true %}
 const gridOptions = {
@@ -469,7 +469,7 @@ const gridOptions = {
 
 ### Pivoting Rows {% enterpriseIcon /%}
 
-Enable [Pivoting](./pivoting/) by setting `pivotMode` to `true` and defining pivot columns by setting `pivot` to `true`:
+Enable [Pivoting](./pivoting/) by setting `pivotMode` to `true`. Define pivot columns by setting `pivot` to `true`:
 
 ```{% frameworkTransform=true %}
 const gridOptions = {
@@ -482,7 +482,9 @@ const gridOptions = {
 
 ### Displaying Tree Data {% enterpriseIcon /%}
 
-Tree Data provides a way to supply the grid with structured hierarchical data. Enable Tree Data by setting `treeData` to `true`. Provide a `getDataPath` callback to configure the [Row Hierarchy](./tree-data-hierarchy/):
+Tree Data provides a way to supply the grid with structured hierarchical data. 
+
+Enable Tree Data by setting `treeData` to `true`. Provide a `getDataPath` callback to configure the [Row Hierarchy](./tree-data-hierarchy/):
 
 ```{% frameworkTransform=true %}
 const gridOptions = {

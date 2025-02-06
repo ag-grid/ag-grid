@@ -35,7 +35,7 @@ interface ValueContext {
     rowNode: RowNode;
 }
 
-type Direction = 'x' | 'y';
+type FillDirection = 'x' | 'y';
 
 export class AgFillHandle extends AbstractSelectionHandle {
     private initialPosition: CellPosition | undefined;
@@ -44,7 +44,7 @@ export class AgFillHandle extends AbstractSelectionHandle {
     private markedCells: CellCtrl[] = [];
     private cellValues: FillValues[][] = [];
 
-    private dragAxis: Direction;
+    private dragAxis: FillDirection;
     private isUp: boolean = false;
     private isLeft: boolean = false;
     private isReduce: boolean = false;
@@ -67,7 +67,7 @@ export class AgFillHandle extends AbstractSelectionHandle {
         const diffX = Math.abs(x - newX);
         const diffY = Math.abs(y - newY);
         const allowedDirection = this.getFillHandleDirection();
-        let direction: Direction;
+        let direction: FillDirection;
 
         if (allowedDirection === 'xy') {
             direction = diffX > diffY ? 'x' : 'y';

@@ -212,7 +212,18 @@ const COLUMN_DEFINITION_VALIDATIONS: () => Validations<ColDef | ColGroupDef> = (
             colSpan: { required: [false, undefined] },
             rowSpan: { required: [false, undefined] },
         },
-        validate: (_options, { rowSelection, cellSelection, suppressRowTransform, enableCellSpan, pagination }) => {
+        validate: (
+            _options,
+            {
+                rowSelection,
+                cellSelection,
+                suppressRowTransform,
+                enableCellSpan,
+                pagination,
+                rowDragEntireRow,
+                enableCellTextSelection,
+            }
+        ) => {
             if (typeof rowSelection === 'object') {
                 if (rowSelection?.mode === 'singleRow' && rowSelection?.enableClickSelection) {
                     return 'colDef.spanRows is not supported with rowSelection.clickSelection';
@@ -230,14 +241,20 @@ const COLUMN_DEFINITION_VALIDATIONS: () => Validations<ColDef | ColGroupDef> = (
             if (pagination) {
                 return 'colDef.spanRows is not supported with pagination.';
             }
+            if (rowDragEntireRow) {
+                return 'colDef.spanRows is not supported with rowDragEntireRow.';
+            }
+            if (enableCellTextSelection) {
+                return 'colDef.spanRows is not supported with enableCellTextSelection.';
+            }
 
             return null;
         },
     },
 });
 
-type ColKey = keyof ColDef | keyof ColGroupDef;
-const colDefPropertyMap: Record<ColKey, undefined> = {
+type ColOrGroupKey = keyof ColDef | keyof ColGroupDef;
+const colDefPropertyMap: Record<ColOrGroupKey, undefined> = {
     headerName: undefined,
     columnGroupShow: undefined,
     headerStyle: undefined,
@@ -381,7 +398,7 @@ const colDefPropertyMap: Record<ColKey, undefined> = {
     loadingCellRendererSelector: undefined,
     context: undefined,
 };
-const ALL_PROPERTIES: () => ColKey[] = () => Object.keys(colDefPropertyMap) as ColKey[];
+const ALL_PROPERTIES: () => ColOrGroupKey[] = () => Object.keys(colDefPropertyMap) as ColOrGroupKey[];
 
 export const COL_DEF_VALIDATORS: () => OptionsValidator<ColDef | ColGroupDef> = () => ({
     objectName: 'colDef',

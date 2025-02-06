@@ -1,5 +1,6 @@
 ---
-title: "Community and Enterprise"
+title: "Community vs. Enterprise"
+description: "Explore the differences between AG Grid Community and Enterprise, how to choose the right version for your project, access our free trial, or purchase a licence."
 ---
 
 {% videoSection id="9t4g5M3CM3o" title="Why Choose AG Grid Enterprise for your Data Grid" showHeader=true %}
@@ -19,35 +20,35 @@ AG Grid comes in two forms:
 
 AG Grid Community contains all of the core features needed to build a robust data grid, including:
 
-- **Data Grid Essentials:** Row and column configurations, sorting, filtering, and pagination.
-- **Cell Rendering:** Custom cell rendering - use your own components inside cells.
-- **Themes and Styling:** Pre-built themes and CSS customization.
-- **Accessibility Support:** ARIA support and keyboard navigation.
-- **Performance Optimisations:** Column and row virtualization enabled by default.
-- **Major Frameworks:** Support for React, Angular and Vue, in addition to vanilla JavaScript.
+{% featuresSection type="community" /%}
 
 ### Enterprise Features
 
 AG Grid Enterprise contains advanced features, which are not available in other data grids, such as:
 
-- **Server-Side Row Model:** Efficiently handle large datasets by loading data on-demand from the server.
-- **Excel Export:** Advanced export options, including styles and formulas.
-- **Pivot Tables & Aggregations:** Built-in pivot and aggregation capabilities for complex data analysis.
-- **Range Selection:** Select and manipulate ranges of data.
-- **Integrated Charts:** Create and customize charts directly within the grid.
-- **Master/Detail View:** Nested grid views for hierarchical data representation.
-- **Row Grouping & Multi-Column Sorting:** Advanced grouping and sorting options for better data organization.
-- **Clipboard Operations:** Enhanced copy and paste functionality, including support for Excel-like behaviour.
-- **Tool Panels:** Built-in configuration panels for columns and filters, or create your own custom panels.
-- **Custom Context Menu & Sidebars:** Additional UI elements for enhanced user interaction and customization.
+{% featuresSection type="enterprise" /%}
 
 {% note %}
-See the [Pricing](/licence-pricing) page for a full feature comparison.
+See the [Pricing](/license-pricing) page for a full feature comparison.
 {% /note %}
 
 ## Enterprise Bundle 
 
-In addition to AG Grid Enterprise, we also offer an Enterprise Bundle licence, which provides access to both [AG Charts](https://www.ag-grid.com/charts) Enterprise (our standalone JavaScript Charting Library) and Integrated Enterprise Charts. Without an Enterprise Bundle licence, you will only have access to Integrated Community charts. To learn more about the difference between Community Charts and Enterprise Charts, see the [AG Charts Community vs. Enterprise docs](https://www.ag-grid.com/charts/community-vs-enterprise).
+{% if isFramework("react") %}
+In addition to AG Grid Enterprise, we also offer an Enterprise Bundle licence, which provides access to both [AG Charts](https://www.ag-grid.com/charts) Enterprise (our standalone JavaScript Charting Library) and Integrated Enterprise Charts. Without an Enterprise Bundle licence, you will only have access to Integrated Community charts, powered by AG Charts Community. To learn more about the difference between Community Charts and Enterprise Charts, see the [AG Charts Community vs. Enterprise docs](https://www.ag-grid.com/charts/react/community-vs-enterprise).
+{% /if %}
+
+{% if isFramework("angular") %}
+In addition to AG Grid Enterprise, we also offer an Enterprise Bundle licence, which provides access to both [AG Charts](https://www.ag-grid.com/charts) Enterprise (our standalone JavaScript Charting Library) and Integrated Enterprise Charts. Without an Enterprise Bundle licence, you will only have access to Integrated Community charts, powered by AG Charts Community. To learn more about the difference between Community Charts and Enterprise Charts, see the [AG Charts Community vs. Enterprise docs](https://www.ag-grid.com/charts/angular/community-vs-enterprise).
+{% /if %}
+
+{% if isFramework("vue") %}
+In addition to AG Grid Enterprise, we also offer an Enterprise Bundle licence, which provides access to both [AG Charts](https://www.ag-grid.com/charts) Enterprise (our standalone JavaScript Charting Library) and Integrated Enterprise Charts. Without an Enterprise Bundle licence, you will only have access to Integrated Community charts, powered by AG Charts Community. To learn more about the difference between Community Charts and Enterprise Charts, see the [AG Charts Community vs. Enterprise docs](https://www.ag-grid.com/charts/vue/community-vs-enterprise).
+{% /if %}
+
+{% if isFramework("javascript") %}
+In addition to AG Grid Enterprise, we also offer an Enterprise Bundle licence, which provides access to both [AG Charts](https://www.ag-grid.com/charts) Enterprise (our standalone JavaScript Charting Library) and Integrated Enterprise Charts. Without an Enterprise Bundle licence, you will only have access to Integrated Community charts, powered by AG Charts Community. To learn more about the difference between Community Charts and Enterprise Charts, see the [AG Charts Community vs. Enterprise docs](https://www.ag-grid.com/charts/javascript/community-vs-enterprise).
+{% /if %}
 
 ## Test AG Grid Enterprise Features
 
@@ -84,8 +85,8 @@ For more information, review our [Licences on GitHub](https://github.com/ag-grid
 
 Licences for AG Grid Enterprise are available on a per-developer, per-deployment basis. Licences are perpetual and come with 1 year of support and updates. 
 
-For more information on pricing, see the [Pricing](/licence-pricing) page.
+For more information on pricing, see the [Pricing](/license-pricing) page.
 
 ## Next Steps
 
-[Install AG Grid Enterprise](./licence-install) to start using our advanced features, or [Get Started with AG Grid Community](./getting-started) to explore the core functionality of the grid.
+[Install AG Grid Enterprise](./license-install) to start using our advanced features, or [Get Started with AG Grid Community](./getting-started) to explore the core functionality of the grid.

@@ -3,10 +3,9 @@
 @mixin output {
     .ag-row-number-cell {
         background-color: var(--ag-header-background-color);
-        color: var(--ag-header-text-color);
-        font-size: var(--ag-header-font-size);
-        font-family: var(--ag-header-font-family);
-        font-weight: var(--ag-header-font-weight);
+        color: var(--ag-header-foreground-color);
+        font-size: var(--ag-font-size);
+        font-family: var(--ag-font-family);
     }
 
     .ag-row-number-header.ag-row-number-selection-enabled {
@@ -26,20 +25,12 @@
         .ag-cell.ag-row-number-cell:not(.ag-cell-last-left-pinned) {
             border-right: var(--ag-pinned-column-border);
         }
-
-        :where(.ag-row-number-cell.ag-row-number-selection-enabled) {
-            cursor: e-resize;
-        }
     }
 
     :where(.ag-rtl) {
         .ag-row-number-header,
         .ag-cell.ag-row-number-cell:not(.ag-cell-first-right-pinned) {
             border-left: var(--ag-pinned-column-border);
-        }
-
-        :where(.ag-row-number-cell.ag-row-number-selection-enabled) {
-            cursor: w-resize;
         }
     }
 }

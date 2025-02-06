@@ -253,12 +253,6 @@ export const LicenseSetup: FunctionComponent<Props> = ({ library, framework, pat
                         </Warning>
                     )}
 
-                    <Note>
-                        If you are using an AG Grid version before 33.0.0, please see the documentation for your{' '}
-                        <a href={urlWithBaseUrl('/documentation-archive')}>version</a> for help on installing your
-                        license key.
-                    </Note>
-
                     <p>An example of how to set up your {productName} Enterprise License Key:</p>
 
                     {licenseState.minimalModulesInfo && <Note>{licenseState.minimalModulesInfo}</Note>}
@@ -270,30 +264,28 @@ export const LicenseSetup: FunctionComponent<Props> = ({ library, framework, pat
                     />
 
                     <Note>
-                        The code above imports all the grid features. You can reduce your bundle size and import only
-                        the modules for the features you are using. See the{' '}
+                        To minimize bundle size, only register the modules you want to use. See the{' '}
                         <a
                             href={urlWithPrefix({
                                 framework,
-                                url: './modules',
+                                url: './modules/#selecting-modules',
                             })}
                         >
-                            Modules
+                            Selecting Modules
                         </a>{' '}
-                        page for more information.
+                        docs for more information.{' '}
+                        {framework === 'javascript'
+                            ? `If you're using the UMD bundle, you do not need to import or
+                                register the modules.`
+                            : ``}
+                        .
                     </Note>
 
-                    <h2 id="nextjs">
-                        Next.js
-                        <LinkIcon href="#seed-repos" />
-                    </h2>
-                    <p>
-                        If you're using Next.js we have a{' '}
-                        <a href="https://blog.ag-grid.com/using-ag-grid-with-next-js-to-build-a-react-table/#how-to-set-up-a-license-key-for-enterprise">
-                            blog
-                        </a>{' '}
-                        that details how to get you up and running, as well as how to set the license key.
-                    </p>
+                    <Note>
+                        If you are using an AG Grid version before 33.0.0, please see the documentation for your{' '}
+                        <a href={urlWithBaseUrl('/documentation-archive')}>version</a> for help on installing your
+                        license key.
+                    </Note>
 
                     <h2 id="seed-repos">
                         Seed Repositories

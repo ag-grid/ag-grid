@@ -1,8 +1,9 @@
 .ag-row-number-cell {
-    display: flex;
     width: 100%;
     white-space: nowrap;
     overflow: hidden;
+    text-align: right;
+    user-select: none;
     background-color: var(--ag-header-background-color);
     color: var(--ag-header-text-color);
     font-size: var(--ag-header-font-size);
@@ -28,10 +29,6 @@
         /* rtl:ignore */
         border-right: var(--ag-pinned-column-border);
     }
-
-    :where(.ag-row-number-cell.ag-row-number-selection-enabled) {
-        cursor: e-resize;
-    }
 }
 
 :where(.ag-rtl) {
@@ -39,9 +36,5 @@
     :where(.ag-cell.ag-row-number-cell):not(.ag-cell-first-right-pinned) {
         /* rtl:ignore */
         border-left: var(--ag-pinned-column-border);
-    }
-
-    :where(.ag-row-number-cell.ag-row-number-selection-enabled) {
-        cursor: w-resize;
     }
 }

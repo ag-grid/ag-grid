@@ -59,6 +59,8 @@ There are no behaviour changes in AG Grid version {% migrationVersion() %}
 
 <!-- Otherwise -->
 <!--
+The full list of behaviour changes across all features for version {% migrationVersion() %}.
+
 {% expandingSection headerText="Behaviour Changes" %}
 
 ### Behaviour Changes section
@@ -68,21 +70,38 @@ There are no behaviour changes in AG Grid version {% migrationVersion() %}
 
 ## Removal of Deprecated APIs
 
+<!-- If there are *no* deprecated APIs, add the following: -->
+<!--
+There are no deprecated APIs removed in AG Grid version {% migrationVersion() %}
+-->
+
+<!-- Otherwise: -->
+<!--
 The following APIs have been deprecated since at least !PREV_x.x! and have now been removed.
 
 {% expandingSection headerText="Removed Deprecated APIs" %}
 
-### <!-- Deprecated APIs section -->
+### Deprecated APIs section
 
 {% /expandingSection %}
+-->
 
 ## Deprecations
 
+<!-- If there are *no* deprecations, add the following: -->
+<!--
+There are no deprecations in AG Grid version {% migrationVersion() %}
+-->
+
+<!-- Otherwise: -->
+<!--
 {% expandingSection headerText="Deprecations" %}
 
-### <!-- Deprecations section -->
+### Deprecation section
 
 {% /expandingSection %}
+-->
 
 <!-- Changelog for the `migrationVersion` property -->
+
 {% changelogSection version=$migrationVersion /%}

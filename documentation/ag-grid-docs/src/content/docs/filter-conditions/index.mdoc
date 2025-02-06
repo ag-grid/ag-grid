@@ -108,6 +108,8 @@ const gridOptions = {
 }
 ```
 
+When providing filter options, the default filter option (or the first option if no default set) must be an option with `numberOfInputs` greater than zero or the `'empty'` filter option (as a filter option with no inputs would mean the filter is active by default).
+
 The following example demonstrates several custom filter options:
 
 * The **Athlete** column contains four custom filter options managed by a [Text Filter](./filter-text/):

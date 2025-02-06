@@ -1,12 +1,12 @@
 ---
-title: "Tree Data - Hierarchy"
+title: "Tree Data - Data Paths"
 enterprise: true
 ---
 Configure the grid to display structured data by providing data paths.
 
 ## Providing Hierarchy
 
-Each rows position in the hierarchy must be provided to the grid as an array of strings, representing the path to the row.
+Each row's position in the hierarchy must be provided to the grid as an array of strings, representing the path to the row.
 The `getDataPath` callback is used to provide the grid with this path for each row.
 
 The below structure demonstrates a simple hierarchy, wherein the grid would expect the `getDataPath` callback to return the `path` field:

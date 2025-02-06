@@ -15,7 +15,6 @@ export interface RowNumbersOptions
         | 'headerStyle'
         | 'headerComponent'
         | 'headerComponentParams'
-        | 'suppressHeaderContextMenu'
         | 'suppressHeaderKeyboardEvent'
         | 'tooltipField'
         | 'tooltipValueGetter'
@@ -24,15 +23,13 @@ export interface RowNumbersOptions
         | 'valueGetter'
         | 'valueFormatter'
         | 'width'
-        | 'initialWidth'
         | 'maxWidth'
         | 'minWidth'
-        | 'flex'
-        | 'initialFlex'
         | 'resizable'
     > {
     /**
-     * Set to `true` to prevent the automatic integration with Cell Selection
+     * Set to `true` to prevent selecting all the currently visible cells in the row when clicking a Row Number.
+     * @default false
      */
     suppressCellSelectionIntegration?: boolean;
 }

@@ -118,8 +118,14 @@
     border-right: var(--ag-column-border);
 }
 
-.ag-spanned-row > .ag-cell {
+.ag-spanned-cell-wrapper {
     background-color: var(--ag-background-color);
+    position: absolute;
+}
+
+.ag-spanned-cell-wrapper > .ag-spanned-cell {
+    display: block;
+    position: relative;
 }
 
 /* Only display the right border of the rightmost column when there is a gap between the column and grid edge */

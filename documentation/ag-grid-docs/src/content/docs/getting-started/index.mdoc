@@ -101,6 +101,10 @@ Load the AG Grid library and create a container div. The div should have a heigh
 </html>
 ```
 
+{% note %}
+If you're using TypeScript you need to import and register the modules you want to use. See the [NPM Installation](./installation/#npm-installation) docs for more information. 
+{% /note %}
+
 ### Instantiating the JavaScript Data Grid
 
 Create the Data Grid inside of your container div using `createGrid`.
@@ -159,7 +163,7 @@ ModuleRegistry.registerModules([AllCommunityModule]);
 ```
 
 {% note %}
-To minimize bundle size, only register the modules you want to use. See the [Modules](./modules/) page for more information.
+To minimize bundle size, only register the modules you want to use. See the [Modules](./modules/) docs for more information.
 {% /note %}
 
 ### Define Rows and Columns

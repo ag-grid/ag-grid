@@ -35,6 +35,7 @@ import type { UserCompDetails } from '../../interfaces/iUserCompDetails';
 import { calculateRowLevel } from '../../styling/rowStyleService';
 import type { TooltipFeature } from '../../tooltip/tooltipFeature';
 import { _setAriaExpanded, _setAriaRowIndex } from '../../utils/aria';
+import { _isBrowserSafari } from '../../utils/browser';
 import { _addOrRemoveAttribute, _isElementChildOfClass, _isFocusableFormField, _isVisible } from '../../utils/dom';
 import { _isStopPropagationForAgGrid } from '../../utils/event';
 import { _findNextFocusableElement } from '../../utils/focus';
@@ -1101,7 +1102,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         const element = rowGui.element;
         const target = mouseEvent.target as HTMLElement;
 
-        let forceBrowserFocus = true;
+        let forceBrowserFocus = mouseEvent.defaultPrevented || _isBrowserSafari();
 
         if (element && element.contains(target) && _isFocusableFormField(target)) {
             forceBrowserFocus = false;
@@ -1276,7 +1277,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         );
     }
 
-    protected setStylesFromGridOptions(updateStyles: boolean, gui?: RowGui): void {
+    private setStylesFromGridOptions(updateStyles: boolean, gui?: RowGui): void {
         if (updateStyles) {
             this.rowStyles = this.processStylesFromGridOptions();
         }
@@ -1363,7 +1364,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         return classes;
     }
 
-    protected processStylesFromGridOptions(): RowStyle {
+    private processStylesFromGridOptions(): RowStyle {
         // Return constant reference for React
         return this.beans.rowStyleSvc?.processStylesFromGridOptions(this.rowNode) ?? this.emptyStyle;
     }

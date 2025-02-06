@@ -1,7 +1,7 @@
 import type { ICellComp } from '../rendering/cell/cellCtrl';
 
 export interface ICellRangeFeature {
-    setComp(cellComp: ICellComp, eGui: HTMLElement): void;
+    setComp(cellComp: ICellComp): void;
     refreshHandle(): void;
     updateRangeBordersIfRangeCount(): void;
     onCellSelectionChanged(): void;

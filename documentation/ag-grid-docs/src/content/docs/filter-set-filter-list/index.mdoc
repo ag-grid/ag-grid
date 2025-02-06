@@ -81,6 +81,10 @@ const gridOptions = {
 
 In the code above, the same value formatter is supplied to the Column and Filter params, however separate Value Formatters can be used.
 
+There is not a one-to-one mapping between Filter List items and rows (as values from multiple rows may map to the same Filter List item), so the Value Formatter for the Filter List will not be passed `node` or `data` params, and should just format based on the `value`.
+
+If the data contains [Missing Values](#missing-values), the Value Formatter will need to handle how to display the blank values (e.g. return `'(Blanks)'`).
+
 The following example shows how Set Filter values are formatted using a Value Formatter. Note the following:
 
 * **No Value Formatter** does not have a Value Formatter supplied to the Set Filter. The column is supplied a Value Formatter through `colDef.valueFormatter = countryValueFormatter`.

@@ -1,3 +1,4 @@
+import { Icon } from '@ag-website-shared/components/icon/Icon';
 import ChartsActive from '@ag-website-shared/images/inline-svgs/pricing/charts-active.svg?react';
 import ChartsInactive from '@ag-website-shared/images/inline-svgs/pricing/charts-inactive.svg?react';
 import GridActive from '@ag-website-shared/images/inline-svgs/pricing/grid-active.svg?react';
@@ -162,22 +163,54 @@ export const LicensePricing: FunctionComponent<Props> = ({ defaultSelection }) =
                         </div>
 
                         <div className={styles.trialLicence}>
-                            <h3 className="text-2xl" id="request-trial-licence">
-                                Request an Enterprise Bundle Trial License Key
-                            </h3>
+                            <div className={styles.trialLicenceCopy}>
+                                <h3 className="text-2xl" id="request-trial-licence">
+                                    <Icon name="enterprise" svgClasses={styles.enterpriseIcon} />
+                                    <span>Enterprise Bundle Trial</span>
+                                </h3>
 
-                            <p>
-                                If you would like to trial AG Grid Enterprise in an environment, you can request a free
-                                trial license key. The trial license key will remove the watermark & console error
-                                message, and provide access to both AG Grid and AG Charts Enterprise.
-                            </p>
+                                <p>Fill out the form to receive a trial licence for AG Grid and AG Charts</p>
 
-                            <p>
-                                Fill out the form below and we'll send you an Enterprise Bundle license key, valid for
-                                two weeks:
-                            </p>
+                                <div className={styles.trialLicenceCopyItem}>
+                                    <Icon name="alarm" svgClasses={styles.alarmIcon} />
+                                    <p>
+                                        <b>Two Week Trial</b>
+                                        <br />
+                                        Trial licences are valid for two weeks from the date of issue, or{' '}
+                                        <a href="mailto:info@ag-grid.com">contact&nbsp;us</a> to extend.
+                                    </p>
+                                </div>
 
-                            <TrialLicenceForm />
+                                <div className={styles.trialLicenceSeparator}></div>
+
+                                <div className={styles.trialLicenceCopyItem}>
+                                    <Icon name="terminal" svgClasses={styles.terminalIcon} />
+                                    <p>
+                                        <b>Suppresses Console Warnings</b>
+                                        <br />
+                                        Removes console errors and watermarks from AG Grid and
+                                        AG&nbsp;Chart&nbsp;components.
+                                    </p>
+                                </div>
+
+                                <div className={styles.trialLicenceSeparator}></div>
+
+                                <div className={styles.trialLicenceCopyItem}>
+                                    <Icon name="support" svgClasses={styles.supportIcon} />
+                                    <p>
+                                        <b>Access Support</b>
+                                        <br />
+                                        Access dedicated support from our engineering team via{' '}
+                                        <a href="https://ag-grid.zendesk.com/hc/en-us">Zendesk</a>.
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div className={styles.trialLicenceSeparator}></div>
+
+                            <div className={classnames(styles.trialLicenceForm, 'trial-licence-form')}>
+                                <TrialLicenceForm />
+                            </div>
                         </div>
 
                         <div className={styles.licenceKeyDocs}>

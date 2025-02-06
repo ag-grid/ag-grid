@@ -90,6 +90,7 @@
     min-width: 160px;
     max-width: 220px;
     border-radius: var(--radius-md);
+
     img {
         width: 100%;
         aspect-ratio: 16 / 9;
@@ -101,7 +102,6 @@
 .licensesOuter {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-    // gap: $spacing-size-8;
     padding-top: $spacing-size-5;
 }
 
@@ -330,7 +330,6 @@
 }
 
 .contactSales,
-.trialLicence,
 .licenceKeyDocs {
     text-align: center;
     position: relative;
@@ -381,31 +380,82 @@
 }
 
 .trialLicence {
-    --section-background-color: var(--color-util-brand-50);
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-size-4 $spacing-size-10;
+    padding-top: $spacing-size-16;
+    padding-bottom: $spacing-size-16;
 
-    padding-top: $spacing-size-12;
-    padding-bottom: $spacing-size-6;
-
-    #{$selector-darkmode} & {
-        --section-background-color: var(--color-util-gray-100);
+    > .trialLicenceSeparator {
+        width: 1px;
+        align-self: stretch;
     }
 
-    h3,
-    p,
-    form {
-        max-width: 800px;
-        margin-right: auto;
-        margin-left: auto;
-    }
-
-    h3,
-    p {
-        text-align: center;
-    }
-
-    :global(.trial-licence-actions) {
+    @media screen and (min-width: $breakpoint-pricing-medium) {
+        flex-direction: row;
         align-items: center;
+        padding-top: $spacing-size-24;
+        padding-bottom: $spacing-size-20;
+        border-top: 1px solid var(--color-border-secondary);
     }
+}
+
+.trialLicenceCopy {
+    flex: 1;
+    padding-top: $spacing-size-4;
+    padding-bottom: $spacing-size-8;
+
+    h3 svg {
+        --icon-size: 36px;
+
+        margin-right: $spacing-size-2;
+        transform: translateY(-3px);
+    }
+
+    h4 svg {
+        --icon-size: #{$spacing-size-6};
+
+        margin-right: $spacing-size-2;
+        transform: translateY(-2px);
+    }
+
+    > p {
+        margin-bottom: $spacing-size-10;
+    }
+
+    > .trialLicenceSeparator {
+        height: 1px;
+        margin-top: $spacing-size-6;
+        margin-bottom: $spacing-size-6;
+    }
+}
+
+.trialLicenceCopyItem {
+    --icon-color: var(--color-util-brand-500);
+
+    display: flex;
+
+    svg {
+        flex-shrink: 0;
+        margin-right: $spacing-size-2;
+        transform: translateY(-$spacing-size-1);
+    }
+
+    b {
+        color: var(--color-fg-primary);
+    }
+}
+
+.enterpriseIcon {
+    --icon-color: var(--color-enterprise-icon);
+}
+
+.trialLicenceSeparator {
+    background-color: var(--color-border-secondary);
+}
+
+.trialLicenceForm {
+    flex: 1;
 }
 
 .licenceKeyDocs {

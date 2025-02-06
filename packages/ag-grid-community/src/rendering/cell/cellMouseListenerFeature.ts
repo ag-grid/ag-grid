@@ -247,9 +247,9 @@ export class CellMouseListenerFeature extends BeanStub {
         if (!e.target || !e.relatedTarget) {
             return false;
         }
-        const { eGui } = this.cellCtrl;
-        const cellContainsTarget = eGui.contains(e.target as Node);
-        const cellContainsRelatedTarget = eGui.contains(e.relatedTarget as Node);
+        const eCell = this.cellCtrl.eGui;
+        const cellContainsTarget = eCell.contains(e.target as Node);
+        const cellContainsRelatedTarget = eCell.contains(e.relatedTarget as Node);
         return cellContainsTarget && cellContainsRelatedTarget;
     }
 

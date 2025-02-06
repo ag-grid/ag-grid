@@ -1,0 +1,37 @@
+.container {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+    font-weight: 400;
+    width: 100%;
+
+    @media (max-width: 768px) {
+        grid-template-columns: 1fr;
+    }
+
+    a {
+        width: 100%;
+    }
+}
+
+.card {
+    background: var(--color-bg-primary);
+    border-radius: 10px;
+    padding: 20px;
+    text-align: left;
+    transition: transform 0.2s ease-in-out;
+    border: 1px solid var(--color-border-secondary);
+    color: var(--color-bg-secondary);
+}
+
+.title {
+    font-size: 18px;
+    margin-top: 0;
+    margin-bottom: 8px;
+    font-weight: 700;
+}
+
+.description {
+    color: color-mix(in srgb, var(--color-text-secondary), var(--color-bg-primary) 20%);
+    font-weight: normal;
+}
