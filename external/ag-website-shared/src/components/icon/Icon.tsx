@@ -61,47 +61,6 @@ const SOCIALS_ICON_MAP = {
     zendeskMonochrome: ZendeskMonochromeIcon,
 };
 
-const DOCS_CATEGORIES_ICON_MAP = {
-    'docs-api': ApiIcon,
-    'docs-columns': ColumnsIcon,
-    'docs-row': RowsIcon,
-    'docs-tooling': CarbonIcon.ToolKit,
-    'docs-styling': CarbonIcon.ColorPalette,
-    'docs-csd': CarbonIcon.Gui,
-    'docs-ssd': CarbonIcon.Db2Database,
-    'docs-selection': CarbonIcon.CheckboxChecked,
-    'docs-filtering': CarbonIcon.Filter,
-    'docs-rendering': CarbonIcon.DataVis_4,
-    'docs-editing': CarbonIcon.WatsonHealthTextAnnotationToggle,
-    'docs-group': CarbonIcon.CrossTab,
-    'docs-detail': CarbonIcon.ShrinkScreen,
-    'docs-import-export': CarbonIcon.Launch,
-    'docs-accessories': CarbonIcon.ListDropdown,
-    'docs-components': CarbonIcon.Settings,
-    'docs-sparklines': CarbonIcon.Growth,
-    'docs-integrated-charts': IntegratedChartsIcon,
-    'docs-standalone-charts': CarbonIcon.SkillLevel,
-    'docs-scrolling': CarbonIcon.FitToHeight,
-    'docs-interactivity': CarbonIcon.TouchInteraction,
-    'docs-testing': CarbonIcon.Task,
-    'docs-misc': CarbonIcon.IbmCloudEventNotification,
-};
-
-const HOMEPAGE_FEATURES_ICON_MAP = {
-    'feature-editing': CarbonIcon.WatsonHealthTextAnnotationToggle,
-    'feature-transactions': CarbonIcon.DataShare,
-    'feature-aggregation': CarbonIcon.Sigma,
-    'feature-grouping': CarbonIcon.Table,
-    'feature-detail': CarbonIcon.ShrinkScreen,
-    'feature-clipboard': CarbonIcon.Report,
-    'feature-server-side': CarbonIcon.Db2Database,
-    'feature-pivoting': CarbonIcon.CrossTab,
-    'feature-filtering': CarbonIcon.Filter,
-    'feature-excel': CarbonIcon.DocumentExport,
-    'feature-menu': CarbonIcon.ListDropdown,
-    'feature-tree': CarbonIcon.TreeViewAlt,
-};
-
 const CHARTS_ICON_MAP = {
     chartsBar: CarbonIcon.ChartBar,
     chartsColumn: CarbonIcon.ChartColumn,
@@ -196,8 +155,6 @@ export const ICON_MAP = {
     concepts: Concepts,
     alarm: AlarmIcon,
     ...SOCIALS_ICON_MAP,
-    ...DOCS_CATEGORIES_ICON_MAP,
-    ...HOMEPAGE_FEATURES_ICON_MAP,
     ...CHARTS_ICON_MAP,
 };
 
