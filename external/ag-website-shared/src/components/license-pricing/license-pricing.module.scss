@@ -390,7 +390,8 @@
         gap: $spacing-size-10;
         align-items: center;
         padding-top: $spacing-size-24;
-        padding-bottom: $spacing-size-10;
+        padding-bottom: $spacing-size-20;
+        border-top: 1px solid var(--color-border-secondary);
     }
 }
 
@@ -436,7 +437,7 @@
 }
 
 .trialLicenceSeparator {
-    background-color: var(--color-util-gray-300);
+    background-color: var(--color-border-secondary);
 }
 
 .trialLicenceForm {
