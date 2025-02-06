@@ -81,6 +81,7 @@ export class RowSpanService extends BeanStub<'spannedCellsUpdated'> implements N
     }
 
     public getCellSpanByPosition(position: CellPosition): CellSpan | undefined {
+        const { pinnedRowModel, rowModel } = this.beans;
         const col = position.column;
         const index = position.rowIndex;
 
@@ -92,13 +93,13 @@ export class RowSpanService extends BeanStub<'spannedCellsUpdated'> implements N
         let node;
         switch (position.rowPinned) {
             case 'top':
-                node = this.beans.pinnedRowModel?.getPinnedTopRow(index);
+                node = pinnedRowModel?.getPinnedTopRow(index);
                 break;
             case 'bottom':
-                node = this.beans.pinnedRowModel?.getPinnedBottomRow(index);
+                node = pinnedRowModel?.getPinnedBottomRow(index);
                 break;
             default:
-                node = this.beans.rowModel.getRow(index);
+                node = rowModel.getRow(index);
         }
 
         if (!node) {
