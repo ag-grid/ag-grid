@@ -3,5 +3,5 @@
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "testing/module-size-angular",
   "projectType": "app",
-  "tags": ["module-size", "no-sharding"]
+  "tags": ["module-size"]
 }

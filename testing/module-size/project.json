@@ -4,7 +4,7 @@
   "sourceRoot": "testing/module-size",
   "projectType": "app",
   "targets": {
-    "test": {
+    "test:e2e": {
       "executor": "nx:run-commands",
       "dependsOn": ["^build"],
       "inputs": [],
@@ -15,6 +15,6 @@
       }
     }
   },
-  "tags": ["module-size", "no-sharding"],
+  "tags": ["module-size"],
   "implicitDependencies": ["ag-grid-react"]
 }
