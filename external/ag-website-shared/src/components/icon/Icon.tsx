@@ -1,5 +1,4 @@
 import AlarmIcon from '@ag-website-shared/images/inline-svgs/alarm.svg?react';
-import ApiIcon from '@ag-website-shared/images/inline-svgs/api.svg?react';
 import BoldChevronDown from '@ag-website-shared/images/inline-svgs/bold-chevron-down.svg?react';
 import BoldChevronLeft from '@ag-website-shared/images/inline-svgs/bold-chevron-left.svg?react';
 import BoldChevronRight from '@ag-website-shared/images/inline-svgs/bold-chevron-right.svg?react';
@@ -7,7 +6,6 @@ import BoldChevronUp from '@ag-website-shared/images/inline-svgs/bold-chevron-up
 import Chord from '@ag-website-shared/images/inline-svgs/chord.svg?react';
 import CodeResult from '@ag-website-shared/images/inline-svgs/code-result.svg?react';
 import CodeSandboxIcon from '@ag-website-shared/images/inline-svgs/codesandbox.svg?react';
-import ColumnsIcon from '@ag-website-shared/images/inline-svgs/columns.svg?react';
 import CommunityEntperise from '@ag-website-shared/images/inline-svgs/community-enterprise.svg?react';
 import Concepts from '@ag-website-shared/images/inline-svgs/concepts.svg?react';
 import ConeFunnel from '@ag-website-shared/images/inline-svgs/cone-funnel.svg?react';
@@ -17,7 +15,6 @@ import EscapeIcon from '@ag-website-shared/images/inline-svgs/escape.svg?react';
 import FigmaIcon from '@ag-website-shared/images/inline-svgs/figma-logo.svg?react';
 import Funnel from '@ag-website-shared/images/inline-svgs/funnel.svg?react';
 import HeadingResult from '@ag-website-shared/images/inline-svgs/heading-result.svg?react';
-import IntegratedChartsIcon from '@ag-website-shared/images/inline-svgs/integrated-chart.svg?react';
 import maximizeIcon from '@ag-website-shared/images/inline-svgs/maximize.svg?react';
 import minimizeIcon from '@ag-website-shared/images/inline-svgs/minimize.svg?react';
 import NewTabIcon from '@ag-website-shared/images/inline-svgs/new-tab.svg?react';
@@ -28,7 +25,6 @@ import RadarArea from '@ag-website-shared/images/inline-svgs/radar-area.svg?reac
 import RadialColumn from '@ag-website-shared/images/inline-svgs/radial-column.svg?react';
 import RadialGauge from '@ag-website-shared/images/inline-svgs/radial-gauge.svg?react';
 import ReplayDemoIcon from '@ag-website-shared/images/inline-svgs/replay-demo-icon.svg?react';
-import RowsIcon from '@ag-website-shared/images/inline-svgs/rows.svg?react';
 import Sankey from '@ag-website-shared/images/inline-svgs/sankey.svg?react';
 import StackBlitzIcon from '@ag-website-shared/images/inline-svgs/stack-blitz.svg?react';
 import StackOverflowMonochromeIcon from '@ag-website-shared/images/inline-svgs/stack-overflow-monochrome.svg?react';
@@ -153,7 +149,9 @@ export const ICON_MAP = {
     communityEnterprise: CommunityEntperise,
     tutorials: Tutorials,
     concepts: Concepts,
-    alarm: AlarmIcon,
+    alarm: CarbonIcon.Alarm,
+    terminal: CarbonIcon.Terminal,
+    support: CarbonIcon.Chat,
     ...SOCIALS_ICON_MAP,
     ...CHARTS_ICON_MAP,
 };

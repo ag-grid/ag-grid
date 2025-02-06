@@ -182,14 +182,17 @@ export const LicensePricing: FunctionComponent<Props> = ({ defaultSelection }) =
                                 <div className={styles.trialLicenceSeparator}></div>
 
                                 <div className={styles.trialLicenceCopyItem}>
-                                    <Icon name="enterprise" svgClasses={styles.enterpriseIcon} />
-                                    <p>Removes console errors and watermarks from AG Grid and AG Chart components.</p>
+                                    <Icon name="terminal" svgClasses={styles.terminalIcon} />
+                                    <p>
+                                        Removes console errors and watermarks from AG Grid and
+                                        AG&nbsp;Chart&nbsp;components.
+                                    </p>
                                 </div>
 
                                 <div className={styles.trialLicenceSeparator}></div>
 
                                 <div className={styles.trialLicenceCopyItem}>
-                                    <Icon name="enterprise" svgClasses={styles.enterpriseIcon} />
+                                    <Icon name="support" svgClasses={styles.supportIcon} />
                                     <p>
                                         Access dedicated support from our engineering team via{' '}
                                         <a href="https://ag-grid.zendesk.com/hc/en-us">Zendesk</a>.

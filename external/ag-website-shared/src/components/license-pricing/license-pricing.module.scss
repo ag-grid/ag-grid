@@ -426,6 +426,8 @@
 }
 
 .trialLicenceCopyItem {
+    --icon-color: var(--color-util-brand-500);
+
     display: flex;
 
     svg {
@@ -437,10 +439,6 @@
 
 .enterpriseIcon {
     --icon-color: var(--color-enterprise-icon);
-}
-
-.alarmIcon {
-    --icon-color: var(--color-util-brand-500);
 }
 
 .trialLicenceSeparator {
