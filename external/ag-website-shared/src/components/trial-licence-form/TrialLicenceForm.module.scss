@@ -71,6 +71,16 @@ $trial-licence-small: 680px;
     }
 }
 
+div p.privacyMessage {
+    font-size: var(--text-fs-xs);
+    line-height: var(--text-lh-xs);
+    color: var(--color-fg-quinary);
+
+    a {
+        font-weight: var(--text-regular);
+    }
+}
+
 .statusMessage {
     display: flex;
     gap: $spacing-size-2;

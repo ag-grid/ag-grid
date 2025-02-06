@@ -264,6 +264,11 @@ export const TrialLicenceForm: FunctionComponent = () => {
                     Request a trial licence
                 </button>
 
+                <p className={styles.privacyMessage}>
+                    By clicking "Request trial license" you agree to our{' '}
+                    <a href={urlWithBaseUrl('/privacy/')}>Privacy Policy</a>.
+                </p>
+
                 {formState === 'success' && (
                     <p className={styles.statusMessage}>
                         <Icon name="tick" svgClasses={styles.statusIconSuccess} />
