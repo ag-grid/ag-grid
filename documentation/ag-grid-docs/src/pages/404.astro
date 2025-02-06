@@ -3,6 +3,7 @@ import Layout from '@layouts/Layout.astro';
 import { getEntry } from 'astro:content';
 import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
 import { DocsNavFromLocalStorage } from '@ag-website-shared/components/docs-navigation/DocsNavFromLocalStorage';
+import styles from '@ag-website-shared/components/page-styles/docs.module.scss';
 
 const { data: docsNavData } = await getEntry('docs-nav', 'docsNav');
 ---
@@ -12,7 +13,7 @@ const { data: docsNavData } = await getEntry('docs-nav', 'docsNav');
         <!-- NOTE: 404 is used for all paths, so will need to get framework from localstorage -->
         <DocsNavFromLocalStorage client:load menuData={docsNavData} pageName={'404'} />
 
-        <div id="doc-content" class:list={['docPage', 'noSideMenu']}>
+        <div id="doc-content" class:list={[styles.docPage, styles.noSideMenu]}>
             <h1>Page Not Found</h1>
             <p>
                 Sorry, but it looks like you've ended up in the wrong place. Please go to the <a
@@ -32,28 +33,3 @@ const { data: docsNavData } = await getEntry('docs-nav', 'docsNav');
         window.plausible('404', { props: { path: document.location.pathname } });
     });
 </script>
-
-<style lang="scss">
-    @use 'design-system' as *;
-    @import '@ag-website-shared/components/page-styles/docs.module.scss';
-
-    .contentViewport {
-        display: flex;
-        flex-direction: column;
-        flex-grow: 1;
-
-        @media (min-width: $breakpoint-docs-nav-medium) {
-            flex-direction: row;
-        }
-
-        @media (min-width: $breakpoint-docs-nav-large) {
-            &.noLeftMenu {
-                padding-left: max(var(--horizontal-margin), calc(50vw - var(--max-page-width) / 2));
-            }
-
-            .docPage {
-                padding-left: 0;
-            }
-        }
-    }
-</style>
