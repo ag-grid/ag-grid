@@ -75,7 +75,6 @@ input[type='number'] {
             box-shadow $transition-default-timing;
 
         &::placeholder {
-            font-style: italic;
             color: var(--color-fg-placeholder);
         }
 
