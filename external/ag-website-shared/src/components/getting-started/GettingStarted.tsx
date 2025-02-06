@@ -12,19 +12,19 @@ const GettingStarted: FunctionComponent = () => {
         {
             icon: 'concepts',
             title: 'Key Features',
-            description: 'Browse our commonly used features',
+            description: 'Browse an overview of our commonly used features',
             link: './key-features/',
         },
         {
             icon: 'tutorials',
             title: 'Tutorials',
-            description: 'Features, themes and more',
+            description: 'Get started with our step-by-step tutorials',
             link: './deep-dive/',
         },
         {
             icon: 'communityEnterprise',
-            title: 'Community & Enterprise',
-            description: 'Compare the differences between versions',
+            title: 'Community vs. Enterprise',
+            description: 'Understand the differences between each version',
             link: './community-vs-enterprise/',
         },
     ];
