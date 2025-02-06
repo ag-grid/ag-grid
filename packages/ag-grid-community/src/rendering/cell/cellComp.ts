@@ -456,9 +456,10 @@ export class CellComp extends Component {
     }
 
     private refreshEditStyles(editing: boolean, isPopup?: boolean): void {
-        this.cellCssClassManager.addOrRemoveCssClass('ag-cell-inline-editing', editing && !isPopup);
-        this.cellCssClassManager.addOrRemoveCssClass('ag-cell-popup-editing', editing && !!isPopup);
-        this.cellCssClassManager.addOrRemoveCssClass('ag-cell-not-inline-editing', !editing || !!isPopup);
+        const { cellCssClassManager } = this;
+        cellCssClassManager.addOrRemoveCssClass('ag-cell-inline-editing', editing && !isPopup);
+        cellCssClassManager.addOrRemoveCssClass('ag-cell-popup-editing', editing && !!isPopup);
+        cellCssClassManager.addOrRemoveCssClass('ag-cell-not-inline-editing', !editing || !!isPopup);
 
         this.cellCtrl.setInlineEditingCss();
     }
