@@ -1,3 +1,4 @@
+import { EventApiModule } from 'ag-grid-community';
 import type { _MasterDetailGridApi, _ModuleWithApi, _ModuleWithoutApi } from 'ag-grid-community';
 
 import { EnterpriseCoreModule } from '../agGridEnterpriseModule';
@@ -39,5 +40,5 @@ export const SharedMasterDetailModule: _ModuleWithApi<_MasterDetailGridApi> = {
 export const MasterDetailModule: _ModuleWithoutApi = {
     moduleName: 'MasterDetail',
     version: VERSION,
-    dependsOn: [SharedMasterDetailModule, ClientSideRowModelHierarchyModule],
+    dependsOn: [SharedMasterDetailModule, ClientSideRowModelHierarchyModule, EventApiModule],
 };
