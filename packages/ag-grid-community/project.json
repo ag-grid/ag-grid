@@ -119,9 +119,10 @@
     },
     "test": {
       "executor": "@nx/jest:jest",
-      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "outputs": ["{workspaceRoot}/coverage/{projectRoot}", "{workspaceRoot}/reports/ag-grid-community.xml"],
+      "parallelism": false,
       "options": {
-        "jestConfig": "packages/ag-grid-community/jest.config.js"
+        "jestConfig": "{projectRoot}/jest.config.ts"
       }
     },
     "pack": {

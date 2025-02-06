@@ -167,11 +167,12 @@
       }
     },
     "test": {
-      "dependsOn": ["ag-grid-community:build"],
       "executor": "@nx/jest:jest",
-      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "dependsOn": ["ag-grid-community:build"],
+      "outputs": ["{workspaceRoot}/coverage/{projectRoot}", "{workspaceRoot}/reports/ag-grid-enterprise.xml"],
+      "parallelism": false,
       "options": {
-        "jestConfig": "packages/ag-grid-enterprise/jest.config.js"
+        "jestConfig": "{projectRoot}/jest.config.ts"
       }
     }
   },

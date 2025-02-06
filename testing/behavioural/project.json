@@ -12,9 +12,23 @@
     },
     "test": {
       "executor": "@nx/vite:test",
+      "outputs": ["{workspaceRoot}/reports/ag-behavioural-testing.xml"],
+      "dependsOn": [],
       "options": {
-        "config": "{projectRoot}/vitest.config.ts",
-        "reporters": ["default"]
+        "cwd": "{projectRoot}",
+        "config": "{projectRoot}/vitest.config.ts"
+      },
+      "configurations": {
+        "ci": {
+          "outputFile": "../../reports/ag-behavioural-testing.xml",
+          "reporters": ["junit"]
+        },
+        "watch": {
+          "watch": true
+        },
+        "update": {
+          "update": true
+        }
       }
     }
   },
