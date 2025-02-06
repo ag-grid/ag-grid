@@ -88,9 +88,7 @@
       "outputs": [],
       "options": {
         "cwd": "community-modules/styles",
-        "commands": [
-          "sass test/test.scss"
-        ]
+        "commands": ["sass test/test.scss"]
       }
     }
   },
