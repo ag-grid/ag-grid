@@ -41,14 +41,20 @@ function main(mode) {
         if (hasVersion) {
             console.error(`Version '${rootPackageJson.version}' already exists in '${resolvedPath}'`);
             return;
+        } else if (rootPackageJson.version.includes('beta')) {
+            console.error(
+                `WARNING: Version '${rootPackageJson.version}' is a beta version in '${resolvedPath}' (this script is probably run at the wrong time)`
+            );
+            return;
         }
+
         const newVersion = {
             version: rootPackageJson.version,
         };
 
         versionsData.unshift(newVersion);
 
-        fs.writeFileSync(resolvedPath, JSON.stringify(versionsData, null, 4), 'utf8');
+        fs.writeFileSync(resolvedPath, JSON.stringify(versionsData, null, 4) + '\n', 'utf8');
 
         console.log(`Added version '${rootPackageJson.version}' to '${resolvedPath}'`);
     } else if (mode === 'date') {
@@ -68,7 +74,7 @@ function main(mode) {
             version.version === newVersion.version ? newVersion : version
         );
 
-        fs.writeFileSync(resolvedPath, JSON.stringify(newVersionsData, null, 4), 'utf8');
+        fs.writeFileSync(resolvedPath, JSON.stringify(newVersionsData, null, 4) + '\n', 'utf8');
         console.log(`Updated version '${newVersion.version}' with date '${newVersion.date}' in '${resolvedPath}'`);
     }
 }
