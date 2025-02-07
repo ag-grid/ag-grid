@@ -1,5 +1,5 @@
 import type { BeanCollection, IChartService } from 'ag-grid-community';
-import { AgSelect, Component, RefPlaceholder } from 'ag-grid-community';
+import { AgSelect, AgToggleButton, Component, RefPlaceholder } from 'ag-grid-community';
 
 import type { AgGroupComponent, AgGroupComponentParams } from '../../../../widgets/agGroupComponent';
 import { AgGroupComponentSelector } from '../../../../widgets/agGroupComponent';
@@ -25,6 +25,7 @@ export class ChartSpecificDataPanel extends Component {
     private readonly chartSpecificGroup: AgGroupComponent = RefPlaceholder;
 
     private directionSelect?: AgSelect;
+    private reverseToggle?: AgToggleButton;
     private groupTypeSelect?: AgSelect;
     private hasContent = false;
 
@@ -44,7 +45,7 @@ export class ChartSpecificDataPanel extends Component {
             suppressOpenCloseIcons: false,
             cssIdentifier: 'charts-data',
             expanded: this.isOpen,
-            items: [...this.createDirectionSelect(), this.createGroupTypeSelect()],
+            items: [...this.createDirectionSelect(), this.createReverseSelect(), this.createGroupTypeSelect()],
         };
         this.setTemplate(
             /* html */ `
@@ -63,6 +64,7 @@ export class ChartSpecificDataPanel extends Component {
         this.hasContent = false;
         this.chartSpecificGroup.setTitle(this.getTitle());
         this.updateDirectionSelect();
+        this.updateReverseSelect();
         this.updateGroupTypeSelect();
         this.setDisplayed(this.hasContent);
     }
@@ -99,6 +101,19 @@ export class ChartSpecificDataPanel extends Component {
         return [this.directionSelect];
     }
 
+    private createReverseSelect(): AgToggleButton {
+        const { chartMenuParamsFactory } = this.chartMenuContext;
+        const params = chartMenuParamsFactory.getDefaultToggleParams('series.reverse', 'reverse');
+        this.reverseToggle = this.createManagedBean(new AgToggleButton(params));
+        this.updateReverseSelect();
+        return this.reverseToggle;
+    }
+
+    private updateReverseSelect(): void {
+        const isDisplayed = this.chartMenuContext.chartController.getChartType() === 'pyramid';
+        this.updateDisplayed(this.reverseToggle, isDisplayed);
+    }
+
     private updateDirectionSelect(): void {
         const isDisplayed = canSwitchDirection(this.chartMenuContext.chartController.getChartType());
         this.updateDisplayed(this.directionSelect, isDisplayed);
@@ -130,7 +145,7 @@ export class ChartSpecificDataPanel extends Component {
         this.updateDisplayed(this.groupTypeSelect, isDisplayed);
     }
 
-    private updateDisplayed(select: AgSelect | undefined, isDisplayed: boolean): void {
+    private updateDisplayed(select: AgSelect | AgToggleButton | undefined, isDisplayed: boolean): void {
         select?.setDisplayed(isDisplayed);
         if (select) {
             this.hasContent = this.hasContent || isDisplayed;

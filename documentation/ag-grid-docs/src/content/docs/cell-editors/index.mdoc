@@ -192,6 +192,10 @@ colDef = {
 }
 ```
 
+The following example demonstrates the same editor positioned inline, as a popup over the cell, and as a popup under the cell:
+
+{% gridExampleRunner title="Popup Editor Components" name="popup-editor"  exampleHeight=370 /%}
+
 {% note %}
 If a custom cell editor creates its own popup that is anchored outside of the editor component (e.g. like a third-party date picker), then the popup element needs to have the `'ag-custom-component-popup'` CSS class. This allows the grid to determine correctly when to stop editing.
 {% /note %}
@@ -267,21 +271,3 @@ The example below shows using `getCellEditorInstances`. The following can be not
 * The example sets an interval to print information from the active cell editor. There are three results: 1) No editing 2) Editing with default cell renderer and 3) editing with the custom cell editor. All results are printed to the developer console.
 
 {% gridExampleRunner title="Get Editor Instance" name="get-editor-instance" /%}
-
-<!-- ## Datepicker Cell Editing Example
-
-The example below illustrates:
-
-* 'Date' column uses a Component cell editor that allows you to pick a date using jQuery UI Datepicker.
-
-{% gridExampleRunner title="Datepicker Cell Editing" name="datepicker-cell-editing" /%} -->
-
-<!-- ## Another Example
-
-* 'Gender' column uses a Component cell editor that allows choices via a 'richSelect' (AG Grid Enterprise only), with values supplied by complementing the editor parameters.
-* 'Age' column uses a Component cell editor that allows simple integer input only.
-* 'Mood' column uses a custom Component cell editor and renderer that allows choice of mood based on image selection.
-* 'Address' column uses a Component cell editor that allows input of multiline text via a 'largeText'. {% kbd "⇥ Tab" /%} and {% kbd "⎋ Esc" /%} (amongst others) will exit editing in this field, {% kbd "⇧ Shift" /%}+{% kbd "↵ Enter" /%} will allow newlines.
-* 'Country' columns shows using 'richSelect' for a complex object - the cell renderer takes care of only rendering the country name.
-
-{% gridExampleRunner title="Simple Editor Components" name="component-editor-2"  exampleHeight=370 /%} -->

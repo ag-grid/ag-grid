@@ -1,0 +1,155 @@
+name: GitHub Actions
+run-name: ${{ github.actor }} is testing out GitHub Actions 🚀
+on:
+  push:
+    branches:
+      - 'seanlandsman-patch-9'
+  pull_request:
+    branches:
+      - 'seanlandsman-patch-9'
+  workflow_dispatch:
+      inputs:
+          # run_e2e:
+          #     type: 'choice'
+          #     required: true
+          #     default: 'false'
+          #     options:
+          #         - 'true'
+          #         - 'false'
+          clean_checkout:
+              description: 'Disable all caching' 
+              type: 'choice'
+              required: true
+              default: 'false'
+              options:
+                  - 'true'
+                  - 'false'
+          nx_command:
+              type: 'choice'
+              required: true
+              default: 'affected'
+              options:
+                  - 'affected'
+                  - 'run-many'
+env:
+    NX_REJECT_UNKNOWN_LOCAL_CACHE: 0
+    NX_NO_CLOUD: true
+    # NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
+    NX_BRANCH: ${{ github.ref }}
+    BRANCH_NAME: ${{ github.head_ref || github.ref_name }}
+    SHARP_IGNORE_GLOBAL_LIBVIPS: true 
+    YARN_REGISTRY: "http://52.50.158.57:4873"
+
+concurrency:
+    group: ${{ github.workflow }}-${{ github.ref }}
+#    cancel-in-progress: ${{ github.ref != 'refs/heads/latest' }}
+
+jobs:  
+  build_lint:
+    name: Build & Lint  
+    outputs:
+        nx_base: ${{ steps.setup.outputs.base }}
+        build: ${{ steps.build.outcome || '' }}
+        lint: ${{ steps.lint.outcome || '' }}
+        format: ${{ steps.format.outcome || '' }}
+        test_count: ${{ steps.matrix.outputs.test_count }}
+        test_matrix: ${{ steps.matrix.outputs.test_matrix }}
+        test_pkg_matrix: ${{ steps.matrix.outputs.pkg_matrix }}
+        build_type: ${{ steps.setup.outputs.type }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        id: checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1 # shallow copy
+
+      - name: Setup 
+        id: setup
+        uses: ./.github/actions/setup-nx
+        with:
+            cache_mode: ${{ github.event.inputs.clean_checkout == 'true' && 'off' || 'rw' }}
+
+      - name: nx format:check
+        id: format
+        if: steps.setup.outcome == 'success' || steps.setup.outcome == 'skipped'
+        run: |
+            if [[ "${{ github.event.inputs.nx_command || 'affected' }}" == "run-many" ]] ; then
+              yarn nx format:check --all
+            else
+              yarn nx format:check --base ${{ steps.setup.outputs.base }}
+            fi
+
+      - name: nx lint
+        run: |
+          yarn nx lint 
+
+      - name: nx build --prod
+        run: |
+          yarn nx build --prod
+
+      - name: calculate matrix
+        id: matrix
+        run: |
+            if [[ "${{ github.event.inputs.nx_command || 'affected' }}" == "run-many" ]] ; then
+              count=10
+            else
+              count=$(yarn -s nx show projects --affected --base ${{ steps.setup.outputs.base }} -t test | wc -l)
+            fi
+
+            matrix=$(node ./scripts/test/calculate-shards.js eval --ratio 1 --zero ${count})
+            echo "test_matrix=${matrix}" >> $GITHUB_OUTPUT
+            echo "test_count=${count}" >> $GITHUB_OUTPUT
+            echo "Test matrix determined to be: ${matrix}"
+
+            pkg_matrix=$(node ./scripts/test/calculate-pkg-shards.js)
+            echo "pkg_matrix=${pkg_matrix}" >> $GITHUB_OUTPUT
+            echo "Package test matrix determined to be: ${pkg_matrix}"
+
+  test:
+      runs-on: ubuntu-24.04
+      name: Unit & Integration Tests (${{ matrix.shard }}/${{ strategy.job-total }})
+      needs: build_lint
+      if: needs.build_lint.outputs.test_count > 0
+      strategy:
+          matrix: ${{ fromJson(needs.build_lint.outputs.test_matrix )}}
+      env:
+          NX_PARALLEL: 1
+          NX_BASE: ${{ needs.build_lint.outputs.nx_base }}
+      steps:
+          - name: Checkout
+            id: checkout
+            uses: actions/checkout@v4
+            with:
+                fetch-depth: 0
+
+          - name: Setup
+            id: setup
+            uses: ./.github/actions/setup-nx
+            with:
+                cache_mode: ro
+
+          - name: nx test
+            if: matrix.shard != 0
+            id: test
+            run: yarn nx ${{ github.event.inputs.nx_command || 'affected' }} -t test --configuration=ci --exclude tag:no-sharding --exclude all --shard=${{ matrix.shard }}/$((${{ strategy.job-total }} - 1))
+          - name: nx test (non-sharded)
+            if: matrix.shard == 0
+            id: test-no-shard
+            run: yarn nx ${{ github.event.inputs.nx_command || 'affected' }} -t test --configuration=ci --exclude '*,!tag:no-sharding'
+          # - name: nx benchmark
+          #   if: matrix.shard == 0
+          #   id: benchmark
+          #   run: yarn nx ${{ github.event.inputs.nx_command || 'affected' }} -t benchmark --configuration=ci --exclude all
+          - name: nx pack:verify
+            if: matrix.shard == 0
+            id: pack-verify
+            run: yarn nx ${{ github.event.inputs.nx_command || 'affected' }} -t pack:verify
+          - name: Perist test results
+            if: always()
+            uses: actions/upload-artifact@v4
+            with:
+                name: test-results-${{matrix.shard}}
+                path: |
+                    reports/
+                    packages/**/__diff_output__/*

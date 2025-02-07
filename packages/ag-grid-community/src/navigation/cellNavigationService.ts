@@ -41,7 +41,7 @@ export class CellNavigationService extends BeanStub implements NamedBean {
         const downKey = key === KeyCode.DOWN;
         const leftKey = key === KeyCode.LEFT;
 
-        let column: AgColumn;
+        let column: AgColumn | undefined;
         let rowIndex: number;
 
         const { pageBounds, gos, visibleCols } = this.beans;
@@ -49,17 +49,26 @@ export class CellNavigationService extends BeanStub implements NamedBean {
             rowIndex = upKey ? pageBounds.getFirstRow() : pageBounds.getLastRow();
             column = focusedCell.column as AgColumn;
         } else {
-            const allColumns = visibleCols.allCols;
             const isRtl = gos.get('enableRtl');
             rowIndex = focusedCell.rowIndex;
-            column = leftKey !== isRtl ? allColumns[0] : _last(allColumns);
+            const allColumns = leftKey !== isRtl ? visibleCols.allCols : [...visibleCols.allCols].reverse();
+
+            column = allColumns.find((col) =>
+                this.isCellGoodToFocusOn({
+                    rowIndex,
+                    rowPinned: null,
+                    column: col,
+                })
+            );
         }
 
-        return {
-            rowIndex,
-            rowPinned: null,
-            column,
-        };
+        return column
+            ? {
+                  rowIndex,
+                  rowPinned: null,
+                  column,
+              }
+            : null;
     }
 
     private getNextCellToFocusWithoutCtrlPressed(key: string, focusedCell: CellPosition): CellPosition | null {

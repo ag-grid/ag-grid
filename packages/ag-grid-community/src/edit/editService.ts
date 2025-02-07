@@ -5,6 +5,7 @@ import { BeanStub } from '../context/beanStub';
 import type { AgColumn } from '../entities/agColumn';
 import type { RowNode } from '../entities/rowNode';
 import { _isElementInThisGrid } from '../gridBodyComp/mouseEventUtils';
+import { _addGridCommonParams } from '../gridOptionsUtils';
 import type { DefaultProvidedCellEditorParams, ICellEditorParams } from '../interfaces/iCellEditor';
 import type { CellPosition } from '../interfaces/iCellPosition';
 import type { IRowNode } from '../interfaces/iRowNode';
@@ -284,11 +285,10 @@ export class EditService extends BeanStub implements NamedBean {
         const {
             column,
             rowNode,
-            eGui,
             cellPosition: { rowIndex },
         } = cellCtrl;
         const { valueSvc, gos } = this.beans;
-        return gos.addGridCommonParams({
+        return _addGridCommonParams(gos, {
             value: valueSvc.getValueForDisplay(column, rowNode),
             eventKey: key,
             column,
@@ -299,7 +299,7 @@ export class EditService extends BeanStub implements NamedBean {
             cellStartedEdit: cellStartedEdit,
             onKeyDown: cellCtrl.onKeyDown.bind(cellCtrl),
             stopEditing: cellCtrl.stopEditingAndFocus.bind(cellCtrl),
-            eGridCell: eGui,
+            eGridCell: cellCtrl.eGui,
             parseValue: (newValue: any) => valueSvc.parseValue(column, rowNode, newValue, cellCtrl.value),
             formatValue: cellCtrl.formatValue.bind(cellCtrl),
         });

@@ -8,6 +8,7 @@ import type {
     RowPosition,
 } from 'ag-grid-community';
 import {
+    _addGridCommonParams,
     _getCellByPosition,
     _getFillHandle,
     _getNormalisedMousePosition,
@@ -17,6 +18,7 @@ import {
     _last,
     _toStringOrNull,
     _warn,
+    isRowNumberCol,
 } from 'ag-grid-community';
 
 import { AbstractSelectionHandle, SelectionHandleType } from './abstractSelectionHandle';
@@ -33,7 +35,7 @@ interface ValueContext {
     rowNode: RowNode;
 }
 
-type Direction = 'x' | 'y';
+type FillDirection = 'x' | 'y';
 
 export class AgFillHandle extends AbstractSelectionHandle {
     private initialPosition: CellPosition | undefined;
@@ -42,7 +44,7 @@ export class AgFillHandle extends AbstractSelectionHandle {
     private markedCells: CellCtrl[] = [];
     private cellValues: FillValues[][] = [];
 
-    private dragAxis: Direction;
+    private dragAxis: FillDirection;
     private isUp: boolean = false;
     private isLeft: boolean = false;
     private isReduce: boolean = false;
@@ -65,7 +67,7 @@ export class AgFillHandle extends AbstractSelectionHandle {
         const diffX = Math.abs(x - newX);
         const diffY = Math.abs(y - newY);
         const allowedDirection = this.getFillHandleDirection();
-        let direction: Direction;
+        let direction: FillDirection;
 
         if (allowedDirection === 'xy') {
             direction = diffX > diffY ? 'x' : 'y';
@@ -77,6 +79,10 @@ export class AgFillHandle extends AbstractSelectionHandle {
             this.dragAxis = direction;
             this.changedCalculatedValues = true;
         }
+    }
+
+    protected override shouldSkipCell(cell: CellPosition): boolean {
+        return isRowNumberCol(cell.column);
     }
 
     protected onDrag(_: MouseEvent) {
@@ -370,7 +376,7 @@ export class AgFillHandle extends AbstractSelectionHandle {
         }
 
         if (userFillOperation) {
-            const params = this.gos.addGridCommonParams<FillOperationParams>({
+            const params = _addGridCommonParams<FillOperationParams>(this.gos, {
                 event,
                 values: values.map(({ value }) => value),
                 initialValues,

@@ -1,6 +1,6 @@
 import type { FilterChangedEvent } from '../../../events';
+import { _addGridCommonParams } from '../../../gridOptionsUtils';
 import type { IDateParams } from '../../../interfaces/dateComponent';
-import type { WithoutGridCommon } from '../../../interfaces/iCommon';
 import { _parseDateTimeFromString, _serialiseDate } from '../../../utils/date';
 import { _setDisplayed } from '../../../utils/dom';
 import { _debounce } from '../../../utils/function';
@@ -61,8 +61,7 @@ export class DateFloatingFilter extends SimpleFloatingFilter {
         this.params = params;
         this.filterParams = params.filterParams;
 
-        const dateParams = this.gos.addGridCommonParams(this.getDateComponentParams());
-        this.dateComp.updateParams(dateParams);
+        this.dateComp.updateParams(this.getDateComponentParams());
 
         this.filterModelFormatter.updateParams({
             optionsFactory: this.optionsFactory,
@@ -117,14 +116,14 @@ export class DateFloatingFilter extends SimpleFloatingFilter {
         });
     }
 
-    private getDateComponentParams(): WithoutGridCommon<IDateParams> {
+    private getDateComponentParams(): IDateParams {
         const { filterParams, column } = this.params;
         const debounceMs = getDebounceMs(filterParams, this.defaultDebounceMs);
-        return {
+        return _addGridCommonParams(this.gos, {
             onDateChanged: _debounce(this, this.onDateChanged.bind(this), debounceMs),
             filterParams: column.getColDef().filterParams,
             location: 'floatingFilter',
-        };
+        });
     }
 
     private createDateComponent(): void {

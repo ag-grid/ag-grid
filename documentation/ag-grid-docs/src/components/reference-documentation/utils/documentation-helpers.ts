@@ -4,6 +4,12 @@ import { urlWithPrefix } from '@utils/urlWithPrefix';
 import type { InterfaceEntry, Properties, PropertyType } from '../types';
 import { getTypeLink } from './type-links';
 
+const paramReg = /\* @param (\w+) (.*)\n/g;
+const returnsReg = /\* (@returns) (.*)\n/g;
+const newLineReg = /\n\s+\*(?!\*)/g;
+// Turn option list, new line starting with - into bullet points
+const optionReg = /\n[\s]*[*]*[\s]*- (.*)/g;
+
 export const inferType = (value: any): string | null => {
     if (value == null) {
         return null;
@@ -221,23 +227,34 @@ export function formatJsDocString(docString: string) {
     if (!docString || docString.length === 0) {
         return;
     }
-    const paramReg = /\* @param (\w+) (.*)\n/g;
-    const returnsReg = /\* (@returns) (.*)\n/g;
-    const newLineReg = /\n\s+\*(?!\*)/g;
-
-    // Turn option list, new line starting with - into bullet points
-
-    const optionReg = /\n[\s]*[*]*[\s]*- (.*)/g;
 
     const formatted = docString
         .replace('/**', '')
         .replace('*/', '')
-        .replace(paramReg, '<br> `$1` $2 \n')
-        .replace(returnsReg, '<br> <strong>Returns: </strong> $2 \n')
+        .replace(paramReg, '<span class="param"> `$1` $2 </span>\n')
+        .replace(returnsReg, '<strong>Returns: </strong> $2 \n')
         .replace(optionReg, '<li style="margin-left:1rem"> $1 </li>')
         .replace(newLineReg, ' ');
 
     return formatted;
+}
+
+export function extractJSDocTags(docString?: string) {
+    if (!docString || docString.length === 0) {
+        return {};
+    }
+
+    const params = [...docString.matchAll(paramReg)].map(([_, name, value]) => {
+        return {
+            name,
+            value,
+        };
+    });
+    const returns = [...docString.matchAll(returnsReg)].map(([_, _returns, value]) => {
+        return value;
+    })[0]; // Take first match only
+
+    return { params, returns };
 }
 
 export function appendCallSignature(name: string, interfaceType: any, framework: Framework, allLines: string[]) {

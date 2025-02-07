@@ -18,6 +18,7 @@ export { GroupFilterModule, RowGroupingPanelModule, RowGroupingModule } from './
 export { SideBarModule } from './sideBar/sideBarModule';
 export { ViewportRowModelModule } from './viewportRowModel/viewportRowModelModule';
 export { ClipboardModule } from './clipboard/clipboardModule';
+export { RowNumbersModule } from './rowNumbers/rowNumbersModule';
 export { FiltersToolPanelModule } from './filterToolPanel/filtersToolPanelModule';
 export { MasterDetailModule } from './masterDetail/masterDetailModule';
 export { CellSelectionModule, RangeSelectionModule } from './rangeSelection/rangeSelectionModule';

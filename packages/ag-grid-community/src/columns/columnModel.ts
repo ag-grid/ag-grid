@@ -4,9 +4,12 @@ import { BeanStub } from '../context/beanStub';
 import type { AgColumn } from '../entities/agColumn';
 import type { AgProvidedColumnGroup } from '../entities/agProvidedColumnGroup';
 import type { ColDef, ColGroupDef } from '../entities/colDef';
+import type { GridOptions } from '../entities/gridOptions';
 import type { ColumnEventType } from '../events';
+import type { PropertyChangedEvent, PropertyValueChangedEvent } from '../gridOptionsService';
 import { _shouldMaintainColumnOrder } from '../gridOptionsUtils';
 import type { Column } from '../interfaces/iColumn';
+import type { IColumnCollectionService } from '../interfaces/iColumnCollectionService';
 import type { IPivotResultColsService } from '../interfaces/iPivotResultColsService';
 import { _areEqual } from '../utils/array';
 import { _createColumnTree } from './columnFactoryUtils';
@@ -71,7 +74,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
         );
         this.addManagedPropertyListeners(
             ['defaultColDef', 'defaultColGroupDef', 'columnTypes', 'suppressFieldDotNotation'],
-            (event) => this.recreateColumnDefs(_convertColumnEventSourceType(event.source))
+            this.recreateColumnDefs.bind(this)
         );
         this.addManagedPropertyListener('pivotMode', (event) =>
             this.setPivotMode(this.gos.get('pivotMode'), _convertColumnEventSourceType(event.source))
@@ -166,6 +169,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
         const {
             autoColSvc,
             selectionColSvc,
+            rowNumbersSvc,
             quickFilter,
             pivotResultCols,
             showRowGroupCols,
@@ -177,17 +181,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
 
         const cols = this.selectCols(pivotResultCols, this.colDefCols);
 
-        autoColSvc?.createAutoCols(cols, (updateOrder) => {
-            this.lastOrder = updateOrder(this.lastOrder);
-            this.lastPivotOrder = updateOrder(this.lastPivotOrder);
-        });
-        autoColSvc?.addAutoCols(cols);
-
-        selectionColSvc?.createSelectionCols(cols, (updateOrder) => {
-            this.lastOrder = updateOrder(this.lastOrder) ?? null;
-            this.lastPivotOrder = updateOrder(this.lastPivotOrder) ?? null;
-        });
-        selectionColSvc?.addSelectionCols(cols);
+        this.createColumnsForService([autoColSvc, selectionColSvc, rowNumbersSvc], cols);
 
         const shouldSortNewColDefs = _shouldMaintainColumnOrder(this.gos, this.showingPivotResult);
         if (!newColDefs || shouldSortNewColDefs) {
@@ -213,6 +207,20 @@ export class ColumnModel extends BeanStub implements NamedBean {
             eventSvc.dispatchEvent({
                 type: 'gridColumnsChanged',
             });
+        }
+    }
+
+    private createColumnsForService(services: (IColumnCollectionService | undefined)[], cols: ColumnCollections): void {
+        for (const service of services) {
+            if (!service) {
+                continue;
+            }
+
+            service.createColumns(cols, (updateOrder) => {
+                this.lastOrder = updateOrder(this.lastOrder);
+                this.lastPivotOrder = updateOrder(this.lastPivotOrder);
+            });
+            service.addColumns(cols);
         }
     }
 
@@ -415,13 +423,14 @@ export class ColumnModel extends BeanStub implements NamedBean {
     }
 
     // called when dataTypes change
-    public recreateColumnDefs(source: ColumnEventType): void {
+    public recreateColumnDefs(e: PropertyChangedEvent | PropertyValueChangedEvent<keyof GridOptions>): void {
         if (!this.cols) {
             return;
         }
 
         // if we aren't going to force, update the auto cols in place
-        this.beans.autoColSvc?.updateAutoCols(source);
+        this.beans.autoColSvc?.updateColumns(e);
+        const source = _convertColumnEventSourceType(e.source);
         this.createColsFromColDefs(source);
     }
 
@@ -461,8 +470,8 @@ export class ColumnModel extends BeanStub implements NamedBean {
         const pivotResultColsList = pivotResultCols?.getPivotResultCols()?.list;
         return [
             this.colDefCols?.list ?? [],
-            autoColSvc?.autoCols?.list ?? [],
-            selectionColSvc?.selectionCols?.list ?? [],
+            autoColSvc?.columns?.list ?? [],
+            selectionColSvc?.columns?.list ?? [],
             pivotResultColsList ?? [],
         ].flat();
     }
@@ -507,6 +516,6 @@ export class ColumnModel extends BeanStub implements NamedBean {
             }
         }
 
-        return this.beans.autoColSvc?.getAutoCol(key) ?? this.beans.selectionColSvc?.getSelectionCol(key) ?? null;
+        return this.beans.autoColSvc?.getColumn(key) ?? this.beans.selectionColSvc?.getColumn(key) ?? null;
     }
 }

@@ -1,14 +1,11 @@
 import type { Path, Rect } from 'ag-charts-types/scene';
 
-import type { ChartType } from 'ag-grid-community';
-
 import type { AgChartsExports } from '../../../../../agChartsExports';
+import type { MiniChartSelector } from '../../miniChartsContainer';
 import { createColumnRects, createLinePaths } from '../miniChartHelpers';
 import { MiniChartWithAxes } from '../miniChartWithAxes';
 
-export class MiniColumnLineCombo extends MiniChartWithAxes {
-    static chartType: ChartType = 'columnLineCombo';
-
+export class MiniColumnLineComboClass extends MiniChartWithAxes {
     private columns: Rect[];
     private lines: Path[];
 
@@ -51,3 +48,8 @@ export class MiniColumnLineCombo extends MiniChartWithAxes {
         });
     }
 }
+
+export const MiniColumnLineCombo: MiniChartSelector = {
+    chartType: 'columnLineCombo',
+    miniChart: MiniColumnLineComboClass,
+};

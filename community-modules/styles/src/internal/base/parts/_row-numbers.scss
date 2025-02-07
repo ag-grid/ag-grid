@@ -1,0 +1,36 @@
+@use 'ag';
+
+@mixin output {
+    .ag-row-number-cell {
+        background-color: var(--ag-header-background-color);
+        color: var(--ag-header-foreground-color);
+        font-size: var(--ag-font-size);
+        font-family: var(--ag-font-family);
+    }
+
+    .ag-row-number-header.ag-row-number-selection-enabled {
+        cursor: cell;
+    }
+
+    .ag-row-number-range-highlight {
+        background-color: var(--ag-range-header-highlight-color);
+    }
+
+    .ag-row-number-range-selected {
+        background-color: var(--ag-row-numbers-selected-color);
+    }
+
+    .ag-ltr {
+        .ag-row-number-header,
+        .ag-cell.ag-row-number-cell:not(.ag-cell-last-left-pinned) {
+            border-right: var(--ag-pinned-column-border);
+        }
+    }
+
+    :where(.ag-rtl) {
+        .ag-row-number-header,
+        .ag-cell.ag-row-number-cell:not(.ag-cell-first-right-pinned) {
+            border-left: var(--ag-pinned-column-border);
+        }
+    }
+}

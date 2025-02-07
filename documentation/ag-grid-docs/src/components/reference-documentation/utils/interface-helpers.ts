@@ -46,12 +46,16 @@ export function applyInterfaceInclusions({
 }) {
     return (typeName: string) => {
         if (interfaceHierarchyOverrides) {
+            if (interfaceHierarchyOverrides.include && interfaceHierarchyOverrides.include.length > 0) {
+                if (interfaceHierarchyOverrides.include.includes(typeName)) {
+                    return true;
+                }
+                return false;
+            }
+
             // If definition includes overrides apply them
             if ((interfaceHierarchyOverrides.exclude || []).includes(typeName)) {
                 return false;
-            }
-            if ((interfaceHierarchyOverrides.include || []).includes(typeName)) {
-                return true;
             }
         }
         // If its an event return true to force inclusion, otherwise undefined to use default inclusion logic.

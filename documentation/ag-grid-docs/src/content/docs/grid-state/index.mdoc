@@ -55,7 +55,7 @@ The following is captured in the grid state:
 * [Cell Selection](./cell-selection/)
 * [Row Group Columns](./grouping/) (column state)
 * [Expanded Row Groups](./grouping-opening-groups/)
-* [Row Selection](./row-selection/)
+* [Row Selection](./row-selection/) (retrievable for all row models, but can only be set for [Client-Side Row Model](./row-models/) and [Server-Side Row Model](./row-models/))
 * [Side Bar](./side-bar/)
 * [Sort](./row-sorting/) (column state)
 
@@ -73,5 +73,7 @@ All state properties are optional, so a property can be excluded if you do not w
 If applying some but not all of the column state properties, then `initialState.partialColumnState` must be set to `true`.
 
 The state also contains the grid version number. When applying state with older version numbers, any old state properties will be automatically migrated to the current format.
+
+The grid state is designed to be serialisable, so any functions will be stripped out. For example, aggregation functions should be [Registered as Custom Functions](./aggregation-custom-functions/#registering-custom-functions) to work with state rather than being set as [Directly Applied Functions](./aggregation-custom-functions/#directly-applied-functions).
 
 {% interfaceDocumentation interfaceName="GridState" /%}

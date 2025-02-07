@@ -7,7 +7,7 @@ import type { ColDef, GridApi, GridReadyEvent, ICellRendererParams } from 'ag-gr
 @Component({
     standalone: true,
     imports: [AgGridAngular],
-    template: ` <div class="full-width-panel">
+    template: ` <div role="gridcell" class="full-width-panel">
         <div class="full-width-details">
             <div class="full-width-detail"><b>Name: </b>{{ params.data.name }}</div>
             <div class="full-width-detail"><b>Account: </b>{{ params.data.account }}</div>

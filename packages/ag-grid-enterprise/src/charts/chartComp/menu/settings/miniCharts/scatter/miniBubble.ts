@@ -1,12 +1,10 @@
 import type { Shape } from 'ag-charts-types/scene';
 
-import type { ChartType } from 'ag-grid-community';
-
 import type { AgChartsExports } from '../../../../../agChartsExports';
+import type { MiniChartSelector } from '../../miniChartsContainer';
 import { MiniChartWithAxes } from '../miniChartWithAxes';
 
-export class MiniBubble extends MiniChartWithAxes {
-    static chartType: ChartType = 'bubble';
+export class MiniBubbleClass extends MiniChartWithAxes {
     private readonly points: Shape[];
 
     constructor(container: HTMLElement, agChartsExports: AgChartsExports, fills: string[], strokes: string[]) {
@@ -69,3 +67,8 @@ export class MiniBubble extends MiniChartWithAxes {
         });
     }
 }
+
+export const MiniBubble: MiniChartSelector = {
+    chartType: 'bubble',
+    miniChart: MiniBubbleClass,
+};

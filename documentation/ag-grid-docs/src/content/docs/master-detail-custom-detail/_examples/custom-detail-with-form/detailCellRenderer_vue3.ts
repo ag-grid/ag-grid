@@ -1,6 +1,6 @@
 export default {
     template: `
-      <div class="cell-renderer-outer">
+      <div role="gridcell" class="cell-renderer-outer">
       <form>
         <div>
           <div>

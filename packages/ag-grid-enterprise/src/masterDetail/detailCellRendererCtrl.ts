@@ -9,8 +9,9 @@ import type {
     IDetailCellRendererCtrl,
     IDetailCellRendererParams,
     RowNode,
+    RowSelectedEvent,
 } from 'ag-grid-community';
-import { BeanStub, _focusInto, _isSameRow, _missing, _warn } from 'ag-grid-community';
+import { BeanStub, _addGridCommonParams, _focusInto, _isSameRow, _missing, _warn } from 'ag-grid-community';
 
 export class DetailCellRendererCtrl extends BeanStub implements IDetailCellRendererCtrl {
     private params: IDetailCellRendererParams;
@@ -113,13 +114,16 @@ export class DetailCellRendererCtrl extends BeanStub implements IDetailCellRende
     }
 
     public registerDetailWithMaster(api: GridApi): void {
-        const params = this.params;
+        const {
+            params,
+            beans: { selectionSvc },
+        } = this;
         const rowId = params.node.id!;
         const masterGridApi = params.api;
 
         const gridInfo: DetailGridInfo = {
             id: rowId,
-            api: api,
+            api,
         };
 
         const rowNode = params.node as RowNode;
@@ -133,7 +137,32 @@ export class DetailCellRendererCtrl extends BeanStub implements IDetailCellRende
         // register with node
         rowNode.detailGridInfo = gridInfo;
 
+        const masterNode = rowNode.parent!;
+
+        function onDetailSelectionChanged() {
+            masterNode && selectionSvc?.refreshMasterNodeState(masterNode);
+        }
+
+        function onMasterRowSelected({ node, source }: RowSelectedEvent) {
+            if (node !== masterNode || source === 'masterDetail') {
+                return;
+            }
+
+            selectionSvc?.setDetailSelectionState(masterNode, params.detailGridOptions, api);
+        }
+
+        // initialise selection state
+        api.addEventListener('firstDataRendered', () => {
+            selectionSvc?.setDetailSelectionState(masterNode, params.detailGridOptions, api);
+
+            api.addEventListener('selectionChanged', onDetailSelectionChanged);
+            masterGridApi.addEventListener('rowSelected', onMasterRowSelected);
+        });
+
         this.addDestroyFunc(() => {
+            api.removeEventListener('selectionChanged', onDetailSelectionChanged);
+            masterGridApi.removeEventListener('rowSelected', onMasterRowSelected);
+
             // the gridInfo can be stale if a refresh happens and
             // a new row is created before the old one is destroyed.
             if (rowNode.detailGridInfo !== gridInfo) {
@@ -172,13 +201,13 @@ export class DetailCellRendererCtrl extends BeanStub implements IDetailCellRende
             }
         };
 
-        const funcParams: any = {
+        const funcParams = {
             node: params.node,
             // we take data from node, rather than params.data
             // as the data could have been updated with new instance
             data: params.node.data,
             successCallback: successCallback,
-            context: this.gos.getGridCommonParams().context,
+            context: _addGridCommonParams(this.gos, {}).context,
         };
         userFunc(funcParams);
     }

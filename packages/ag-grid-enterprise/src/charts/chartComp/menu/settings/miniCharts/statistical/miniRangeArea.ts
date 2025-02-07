@@ -1,13 +1,10 @@
 import type { Path } from 'ag-charts-types/scene';
 
-import type { ChartType } from 'ag-grid-community';
-
 import type { AgChartsExports } from '../../../../../agChartsExports';
+import type { MiniChartSelector } from '../../miniChartsContainer';
 import { MiniChartWithAxes } from '../miniChartWithAxes';
 
-export class MiniRangeArea extends MiniChartWithAxes {
-    static chartType: ChartType = 'rangeArea';
-
+export class MiniRangeAreaClass extends MiniChartWithAxes {
     private readonly lines: Path[][];
     private readonly areas: Path[];
 
@@ -194,3 +191,8 @@ function swapArrayItems<T>(items: T[], leftIndex: number, rightIndex: number): T
     results[rightIndex] = temp;
     return results;
 }
+
+export const MiniRangeArea: MiniChartSelector = {
+    chartType: 'rangeArea',
+    miniChart: MiniRangeAreaClass,
+};

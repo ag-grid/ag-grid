@@ -18,6 +18,7 @@ import {
     PivotModule,
     RichSelectModule,
     RowGroupingModule,
+    RowNumbersModule,
     SetFilterModule,
     StatusBarModule,
 } from 'ag-grid-enterprise';
@@ -47,6 +48,7 @@ ModuleRegistry.registerModules([
     RichSelectModule,
     StatusBarModule,
     PivotModule,
+    RowNumbersModule,
 ]);
 
 const GridPreview = () => {

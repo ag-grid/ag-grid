@@ -57,7 +57,7 @@ const DetailCellRenderer = ({ data, eParentOfValue }: CustomCellRendererProps) =
     }, []);
 
     return (
-        <div>
+        <div role="gridcell">
             <form>
                 <div>
                     <p>

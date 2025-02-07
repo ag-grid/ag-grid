@@ -1,5 +1,6 @@
 import { dispatchColumnPinnedEvent } from '../columns/columnEventUtils';
 import type { ColKey } from '../columns/columnModel';
+import { isRowNumberCol } from '../columns/columnUtils';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { AgColumn } from '../entities/agColumn';
@@ -62,10 +63,13 @@ export class PinnedColumnService extends BeanStub implements NamedBean {
         }
 
         // remove 50px from the bodyWidth to give some margin
-        let columnsToRemove = this.getPinnedColumnsOverflowingViewport(bodyWidth - 50);
+        const processedColumnsToRemove = this.getPinnedColumnsOverflowingViewport(bodyWidth - 50);
         const processUnpinnedColumns = this.gos.getCallback('processUnpinnedColumns');
+        const { columns, hasLockedPinned } = processedColumnsToRemove;
 
-        if (!columnsToRemove.length) {
+        let columnsToRemove = columns;
+
+        if (!columnsToRemove.length && !hasLockedPinned) {
             return;
         }
 
@@ -77,11 +81,16 @@ export class PinnedColumnService extends BeanStub implements NamedBean {
             columnsToRemove = processUnpinnedColumns(params) as AgColumn[];
         }
 
+        if (!columnsToRemove || !columnsToRemove.length) {
+            return;
+        }
+
+        columnsToRemove = columnsToRemove.filter((col) => !isRowNumberCol(col));
         this.setColsPinned(columnsToRemove, null, 'viewportSizeFeature');
     }
 
-    public createPinnedWidthFeature(element: HTMLElement, isLeft: boolean): SetPinnedWidthFeature {
-        return new SetPinnedWidthFeature(element, isLeft);
+    public createPinnedWidthFeature(isLeft: boolean, ...elements: (HTMLElement | undefined)[]): SetPinnedWidthFeature {
+        return new SetPinnedWidthFeature(isLeft, elements);
     }
 
     public setColsPinned(keys: ColKey[], pinned: ColumnPinnedType, source: ColumnEventType): void {
@@ -220,13 +229,17 @@ export class PinnedColumnService extends BeanStub implements NamedBean {
         return diff;
     }
 
-    private getPinnedColumnsOverflowingViewport(viewportWidth: number): AgColumn[] {
+    private getPinnedColumnsOverflowingViewport(viewportWidth: number): {
+        columns: AgColumn[];
+        hasLockedPinned: boolean;
+    } {
         const pinnedRightWidth = this.rightWidth ?? 0;
         const pinnedLeftWidth = this.leftWidth ?? 0;
         const totalPinnedWidth = pinnedRightWidth + pinnedLeftWidth;
+        let hasLockedPinned: boolean = false;
 
         if (totalPinnedWidth < viewportWidth) {
-            return [];
+            return { columns: [], hasLockedPinned };
         }
 
         const { visibleCols } = this.beans;
@@ -244,17 +257,25 @@ export class PinnedColumnService extends BeanStub implements NamedBean {
         while ((indexLeft < pinnedLeftColumns.length || indexRight < pinnedRightColumns.length) && spaceNecessary > 0) {
             if (indexRight < pinnedRightColumns.length) {
                 const currentColumn = pinnedRightColumns[indexRight++];
+                if (currentColumn.colDef.lockPinned) {
+                    hasLockedPinned = true;
+                    continue;
+                }
                 spaceNecessary -= currentColumn.getActualWidth();
                 columnsToRemove.push(currentColumn);
             }
 
             if (indexLeft < pinnedLeftColumns.length && spaceNecessary > 0) {
                 const currentColumn = pinnedLeftColumns[indexLeft++];
+                if (currentColumn.colDef.lockPinned) {
+                    hasLockedPinned = true;
+                    continue;
+                }
                 spaceNecessary -= currentColumn.getActualWidth();
                 columnsToRemove.push(currentColumn);
             }
         }
 
-        return columnsToRemove;
+        return { columns: columnsToRemove, hasLockedPinned };
     }
 }

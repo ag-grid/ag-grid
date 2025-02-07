@@ -3,7 +3,7 @@ import type { AgGridCommon } from './interfaces/iCommon';
 
 type GridOptionKey = keyof GridOptions;
 
-type GetKeys<T, U> = {
+type GetPropKeys<T, U> = {
     [K in keyof T]: U extends T[K] ? K : T[K] extends U | null | undefined ? K : never; //Reverse match for string literal types
 }[keyof T];
 
@@ -20,13 +20,13 @@ export type AnyGridOptions = {
  * Get all the GridOptions properties of the provided type.
  * Will also include `any` properties.
  */
-type KeysLike<U> = Exclude<GetKeys<GridOptions, U>, undefined>;
+type KeysLike<U> = Exclude<GetPropKeys<GridOptions, U>, undefined>;
 /**
  * Get all the GridOption properties that strictly contain the provided type.
  * Does not include `any` properties.
  */
-type KeysOfType<U> = Exclude<GetKeys<GridOptions, U>, AnyGridOptions>;
-type CallbackKeys = KeysOfType<(any: AgGridCommon<any, any>) => any>;
+type KeysWithType<U> = Exclude<GetPropKeys<GridOptions, U>, AnyGridOptions>;
+type CallbackKeys = KeysWithType<(any: AgGridCommon<any, any>) => any>;
 /** All function properties excluding those explicity match the common callback interface. */
 // eslint-disable-next-line @typescript-eslint/ban-types
 type FunctionKeys = Exclude<KeysLike<Function>, CallbackKeys>;
@@ -36,7 +36,7 @@ type FunctionKeys = Exclude<KeysLike<Function>, CallbackKeys>;
  * If you change the properties on the gridOptions interface, you *must* update this file as well to be consistent.
  */
 // only used internally
-const STRING_GRID_OPTIONS: KeysOfType<string>[] = [
+const STRING_GRID_OPTIONS: KeysWithType<string>[] = [
     'overlayLoadingTemplate',
     'overlayNoRowsTemplate',
     'gridId',
@@ -53,6 +53,7 @@ const STRING_GRID_OPTIONS: KeysOfType<string>[] = [
     'fillHandleDirection',
     'groupDisplayType',
     'treeDataDisplayType',
+    'treeDataChildrenField',
     'colResizeDefault',
     'tooltipTrigger',
     'serverSidePivotResultFieldSeparator',
@@ -103,7 +104,7 @@ const OBJECT_GRID_OPTIONS: KeysLike<object | HTMLElement>[] = [
 ];
 
 // only used internally
-const ARRAY_GRID_OPTIONS: KeysOfType<any[]>[] = [
+const ARRAY_GRID_OPTIONS: KeysWithType<any[]>[] = [
     'sortingOrder',
     'alignedGrids',
     'rowData',
@@ -117,7 +118,7 @@ const ARRAY_GRID_OPTIONS: KeysOfType<any[]>[] = [
 ];
 
 // Used in validations to check type of number inputs
-export const _NUMBER_GRID_OPTIONS: KeysOfType<number>[] = [
+export const _NUMBER_GRID_OPTIONS: KeysWithType<number>[] = [
     'rowHeight',
     'detailRowHeight',
     'rowBuffer',
@@ -159,9 +160,10 @@ const OTHER_GRID_OPTIONS: GridOptionKey[] = ['theme', 'rowSelection'];
 // Used by Angular to support the user setting these
 // as plain HTML attributes and us correctly mapping that to true
 // These are all of type boolean | something else
-export const _BOOLEAN_MIXED_GRID_OPTIONS: KeysOfType<boolean>[] = [
+export const _BOOLEAN_MIXED_GRID_OPTIONS: KeysWithType<boolean>[] = [
     'cellSelection',
     'sideBar',
+    'rowNumbers',
     'suppressGroupChangesColumnVisibility',
     'groupAggFiltering',
     'suppressStickyTotalRow',
@@ -169,7 +171,7 @@ export const _BOOLEAN_MIXED_GRID_OPTIONS: KeysOfType<boolean>[] = [
 ];
 
 // Used in validations to check type of pure boolean inputs
-export const _BOOLEAN_GRID_OPTIONS: KeysOfType<boolean>[] = [
+export const _BOOLEAN_GRID_OPTIONS: KeysWithType<boolean>[] = [
     'loadThemeGoogleFonts',
     'suppressMakeColumnVisibleAfterUnGroup',
     'suppressRowClickSelection',

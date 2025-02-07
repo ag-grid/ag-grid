@@ -3,7 +3,6 @@ import type { UserComponentFactory } from '../../../components/framework/userCom
 import type { Context } from '../../../context/context';
 import type { IDateComp, IDateParams } from '../../../interfaces/dateComponent';
 import type { IAfterGuiAttachedParams } from '../../../interfaces/iAfterGuiAttachedParams';
-import type { WithoutGridCommon } from '../../../interfaces/iCommon';
 import { _setDisplayed } from '../../../utils/dom';
 
 /** Provides sync access to async component. Date component can be lazy created - this class encapsulates
@@ -19,7 +18,7 @@ export class DateCompWrapper {
     constructor(
         context: Context,
         userCompFactory: UserComponentFactory,
-        dateComponentParams: WithoutGridCommon<IDateParams>,
+        dateComponentParams: IDateParams,
         eParent: HTMLElement,
         onReady?: (comp: DateCompWrapper) => void
     ) {

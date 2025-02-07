@@ -1,12 +1,10 @@
 import type { Rect } from 'ag-charts-types/scene';
 
-import type { ChartType } from 'ag-grid-community';
-
 import type { AgChartsExports } from '../../../../../agChartsExports';
+import type { MiniChartSelector } from '../../miniChartsContainer';
 import { MiniChartWithAxes } from '../miniChartWithAxes';
 
-export class MiniBar extends MiniChartWithAxes {
-    static chartType: ChartType = 'groupedBar';
+export class MiniBarClass extends MiniChartWithAxes {
     private readonly bars: Rect[];
 
     constructor(container: HTMLElement, agChartsExports: AgChartsExports, fills: string[], strokes: string[]) {
@@ -53,3 +51,8 @@ export class MiniBar extends MiniChartWithAxes {
         });
     }
 }
+
+export const MiniBar: MiniChartSelector = {
+    chartType: 'groupedBar',
+    miniChart: MiniBarClass,
+};

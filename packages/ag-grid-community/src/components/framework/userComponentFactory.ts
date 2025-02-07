@@ -102,7 +102,7 @@ export class UserComponentFactory extends BeanStub implements NamedBean {
     public getCompDetailsFromGridOptions(
         type: ComponentType,
         defaultName: string | undefined,
-        params: any,
+        params: AgGridCommon<any, any>,
         mandatory = false
     ): UserCompDetails | undefined {
         return this.getCompDetails(this.gridOptions, type, defaultName, params, mandatory);
@@ -112,7 +112,7 @@ export class UserComponentFactory extends BeanStub implements NamedBean {
         defObject: TDefinition,
         type: ComponentType,
         defaultName: string | undefined,
-        params: any,
+        params: AgGridCommon<any, any>,
         mandatory = false
     ): UserCompDetails<TComp> | undefined {
         const { name, cellRenderer } = type;
@@ -234,20 +234,13 @@ export class UserComponentFactory extends BeanStub implements NamedBean {
     public mergeParams<TDefinition>(
         defObject: TDefinition,
         type: ComponentType,
-        paramsFromGrid: any,
+        paramsFromGrid: AgGridCommon<any, any>,
         paramsFromSelector: any = null,
         defaultCompParams?: any
     ): any {
-        const params: AgGridCommon<any, any> = this.gos.getGridCommonParams();
+        const params = { ...paramsFromGrid, ...defaultCompParams };
 
-        _mergeDeep(params, paramsFromGrid);
-
-        if (defaultCompParams) {
-            _mergeDeep(params, defaultCompParams);
-        }
-
-        // pull user params from either the old prop name and new prop name
-        // eg either cellRendererParams and cellCompParams
+        // pull user params from the defObject
         const defObjectAny = defObject as any;
         const userParams = defObjectAny && defObjectAny[type.name + 'Params'];
 

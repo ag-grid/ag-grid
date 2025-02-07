@@ -76,7 +76,6 @@ export class SeriesPanel extends Component {
         maxSize: () => this.initSize('maxSize', 'maxSize'),
         dropoff: () => this.initDropOff(),
         stageLabels: () => this.initStageLabels(),
-        reverse: () => this.initReverse(),
     } as const;
 
     private readonly seriesWidgetMappings: { [K in ChartSeriesType]?: (keyof typeof this.widgetFuncs)[] } = {
@@ -101,8 +100,8 @@ export class SeriesPanel extends Component {
         heatmap: [tooltips, labels, 'lineColor', lineWidth, lineOpacity],
         waterfall: [tooltips, 'connectorLine', 'seriesItems'],
         funnel: [tooltips, strokeWidth, lineDash, lineOpacity, fillOpacity, labels, 'dropoff', stageLabels, shadow],
-        'cone-funnel': [tooltips, strokeWidth, lineDash, lineOpacity, fillOpacity, labels, stageLabels, shadow],
-        pyramid: [tooltips, strokeWidth, lineDash, lineOpacity, fillOpacity, labels, stageLabels, shadow, 'reverse'],
+        'cone-funnel': [tooltips, strokeWidth, lineDash, lineOpacity, fillOpacity, labels, stageLabels],
+        pyramid: [tooltips, strokeWidth, lineDash, lineOpacity, fillOpacity, labels, stageLabels, shadow],
     };
 
     constructor(private readonly options: FormatPanelOptions) {
@@ -349,17 +348,6 @@ export class SeriesPanel extends Component {
 
     private initSize(expression: 'size' | 'maxSize', labelKey: 'size' | 'minSize' | 'maxSize'): AgSlider {
         return new AgSlider(this.chartMenuUtils.getDefaultSliderParams(expression, labelKey, 60));
-    }
-
-    private initReverse(): AgToggleButton {
-        return new AgToggleButton(
-            this.chartMenuUtils.addValueParams<AgToggleButtonParams>('reverse', {
-                label: this.translate('reverse'),
-                labelAlignment: 'left',
-                labelWidth: 'flex',
-                inputWidth: 'flex',
-            })
-        );
     }
 
     private getSeriesSelectOptions(): ListOption[] {

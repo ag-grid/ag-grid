@@ -980,11 +980,13 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
     }
 
     private copyFocusedCellToClipboard(params: IClipboardCopyParams = {}): void {
-        const focusedCell = this.beans.focusSvc.getFocusedCell();
+        let focusedCell = this.beans.focusSvc.getFocusedCell();
 
         if (focusedCell == null) {
             return;
         }
+
+        focusedCell = this.beans.rowSpanSvc?.getCellStart(focusedCell) ?? focusedCell;
 
         const cellId = _createCellId(focusedCell);
         const currentRow: RowPosition = { rowPinned: focusedCell.rowPinned, rowIndex: focusedCell.rowIndex };

@@ -756,6 +756,15 @@
                 "url": "./dom-virtualisation/#row-buffer"
             }
         },
+        "rowNumbers": {
+            "more": {
+                "name": "Row Numbers",
+                "url": "./row-numbers/"
+            },
+            "interfaceHierarchyOverrides": {
+                "include": ["RowNumbersOptions"]
+            }
+        },
         "valueCache": {
             "more": {
                 "name": "Value Cache",
@@ -782,7 +791,6 @@
             }
         },
         "dragAndDropImageComponent": {},
-        "noRowsOverlayComponentParams": {},
         "suppressFocusAfterRefresh": {},
         "suppressChangeDetection": {
             "more": {
@@ -1344,6 +1352,12 @@
                 "url": "./tree-data/"
             }
         },
+        "treeDataChildrenField": {
+            "more": {
+                "name": "Tree Data",
+                "url": "./tree-data/"
+            }
+        },
         "autoGroupColumnDef": {
             "more": {
                 "name": "Group Column Configuration",
@@ -1791,13 +1805,6 @@
                 "name": "Highlighting Rows and Columns",
                 "url": "./row-styles/#highlighting-rows-and-columns"
             }
-        },
-        "suppressRowTransform": {
-            "more": {
-                "name": "Configuring Row Spanning",
-                "url": "./row-spanning/#enabling-row-spanning"
-            },
-            "description": "Uses CSS `top` instead of CSS `transform` for positioning rows. Useful if the transform function is causing issues such as used in [row spanning](./row-spanning/). Default: `false`"
         },
         "columnHoverHighlight": {
             "more": {

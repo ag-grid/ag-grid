@@ -27,7 +27,7 @@ import { _addColumnDefaultAndTypes } from './columnFactoryUtils';
 import type { ColumnModel } from './columnModel';
 import { _applyColumnState, getColumnStateFromColDef } from './columnStateUtils';
 import type { ColumnState, ColumnStateParams } from './columnStateUtils';
-import { _convertColumnEventSourceType, convertColumnTypes } from './columnUtils';
+import { convertColumnTypes } from './columnUtils';
 
 interface GroupSafeValueFormatter {
     groupSafeValueFormatter?: ValueFormatterFunc;
@@ -63,7 +63,7 @@ export class DataTypeService extends BeanStub implements NamedBean {
 
         this.addManagedPropertyListener('dataTypeDefinitions', (event) => {
             this.processDataTypeDefinitions();
-            this.colModel.recreateColumnDefs(_convertColumnEventSourceType(event.source));
+            this.colModel.recreateColumnDefs(event);
         });
     }
 

@@ -8,7 +8,7 @@ const DetailCellRenderer = ({ data }) => {
     }, [data.calls]);
 
     return (
-        <div>
+        <div role="gridcell">
             <form>
                 <div>
                     <p>

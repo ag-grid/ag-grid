@@ -522,6 +522,7 @@ export const AG_GRID_LOCALE_EN = {
     ariaFilterColumn: 'Press CTRL ENTER to open filter',
     ariaRowDeselect: 'Press SPACE to deselect this row',
     ariaHeaderSelection: 'Column with Header Selection',
+    ariaSelectAllCells: 'Press Space to select all cells',
     ariaRowSelectAll: 'Press Space to toggle all rows selection',
     ariaRowToggleSelection: 'Press Space to toggle row selection',
     ariaRowSelect: 'Press SPACE to select this row',

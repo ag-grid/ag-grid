@@ -2,6 +2,7 @@ import type { NamedBean } from './context/bean';
 import { BeanStub } from './context/beanStub';
 import type { AgEventType } from './eventTypes';
 import type { AgEventListener, AgGlobalEventListener, AllEventsWithoutGridCommon } from './events';
+import { _addGridCommonParams } from './gridOptionsUtils';
 import type { IEventEmitter } from './interfaces/iEventEmitter';
 import { LocalEventService } from './localEventService';
 
@@ -51,10 +52,10 @@ export class EventService extends BeanStub<AgEventType> implements NamedBean, IE
     }
 
     public dispatchEvent(event: AllEventsWithoutGridCommon): void {
-        this.globalEventService.dispatchEvent(this.gos.addGridCommonParams<any>(event));
+        this.globalEventService.dispatchEvent(_addGridCommonParams<any>(this.gos, event));
     }
 
     public dispatchEventOnce(event: AllEventsWithoutGridCommon): void {
-        this.globalEventService.dispatchEventOnce(this.gos.addGridCommonParams<any>(event));
+        this.globalEventService.dispatchEventOnce(_addGridCommonParams<any>(this.gos, event));
     }
 }

@@ -2,6 +2,7 @@ import {
     AgPromise,
     BeanStub,
     KeyCode,
+    _addGridCommonParams,
     _loadTemplate,
     _preserveRangesWhile,
     _setAriaDisabled,
@@ -54,7 +55,7 @@ export type AgMenuItemComponentEvent = 'closeMenu' | 'menuItemActivated';
 function getMenuItemCompDetails(
     userCompFactory: UserComponentFactory,
     def: MenuItemDef,
-    params: WithoutGridCommon<IMenuItemParams>
+    params: IMenuItemParams
 ): UserCompDetails<IMenuItemComp> | undefined {
     return userCompFactory.getCompDetails(def, MenuItemComponent, 'agMenuItem', params, true);
 }
@@ -107,16 +108,20 @@ export class AgMenuItemComponent extends BeanStub<AgMenuItemComponentEvent> {
         this.childComponent = childComponent;
         this.contextParams = contextParams;
         this.cssClassPrefix = this.params.menuItemParams?.cssClassPrefix ?? 'ag-menu-option';
-        const compDetails = getMenuItemCompDetails(this.userCompFactory, this.params, {
-            ...menuItemDef,
-            level,
-            isAnotherSubMenuOpen,
-            openSubMenu: (activateFirstItem) => this.openSubMenu(activateFirstItem),
-            closeSubMenu: () => this.closeSubMenu(),
-            closeMenu: (event) => this.closeMenu(event),
-            updateTooltip: (tooltip, shouldDisplayTooltip) => this.refreshTooltip(tooltip, shouldDisplayTooltip),
-            onItemActivated: () => this.onItemActivated(),
-        });
+        const compDetails = getMenuItemCompDetails(
+            this.userCompFactory,
+            this.params,
+            _addGridCommonParams(this.gos, {
+                ...menuItemDef,
+                level,
+                isAnotherSubMenuOpen,
+                openSubMenu: (activateFirstItem) => this.openSubMenu(activateFirstItem),
+                closeSubMenu: () => this.closeSubMenu(),
+                closeMenu: (event) => this.closeMenu(event),
+                updateTooltip: (tooltip, shouldDisplayTooltip) => this.refreshTooltip(tooltip, shouldDisplayTooltip),
+                onItemActivated: () => this.onItemActivated(),
+            })
+        );
         return (
             compDetails?.newAgStackInstance().then((comp: IMenuItemComp) => {
                 this.menuItemComp = comp;
@@ -190,7 +195,10 @@ export class AgMenuItemComponent extends BeanStub<AgMenuItemComponentEvent> {
 
             subMenuGui.addEventListener(mouseEvent, mouseEnterListener);
 
-            destroySubMenu = () => subMenuGui.removeEventListener(mouseEvent, mouseEnterListener);
+            destroySubMenu = () => {
+                subMenuGui.removeEventListener(mouseEvent, mouseEnterListener);
+                this.destroyBean(menuPanel);
+            };
 
             ePopup.appendChild(subMenuGui);
 
@@ -322,7 +330,7 @@ export class AgMenuItemComponent extends BeanStub<AgMenuItemComponentEvent> {
         this.isActive = false;
 
         if (this.subMenuIsOpen) {
-            this.hideSubMenu?.();
+            this.closeSubMenu();
         }
     }
 
@@ -347,7 +355,7 @@ export class AgMenuItemComponent extends BeanStub<AgMenuItemComponentEvent> {
         if (this.params.action) {
             this.beans.frameworkOverrides.wrapOutgoing(() =>
                 this.params.action!(
-                    this.gos.addGridCommonParams({
+                    _addGridCommonParams(this.gos, {
                         ...this.contextParams,
                     })
                 )

@@ -1,0 +1,165 @@
+{
+    "grid": {
+        "community": [
+            {
+                "title": "Data Grid Essentials",
+                "description": "Row and column configurations, sorting, filtering, and pagination."
+            },
+            {
+                "title": "Cell Rendering",
+                "description": "Custom cell rendering - use your own components inside cells.",
+                "link": "./component-cell-renderer"
+            },
+            {
+                "title": "Themes and Styling",
+                "description": "Pre-built themes and CSS customization.",
+                "link": "./theming"
+            },
+            {
+                "title": "Accessibility Support",
+                "description": "ARIA support and keyboard navigation.",
+                "link": "./accessibility"
+            },
+            {
+                "title": "Performance Optimisations",
+                "description": "Column and row virtualization enabled by default.",
+                "link": "./dom-virtualisation"
+            },
+            {
+                "title": "Major Frameworks",
+                "description": "Support for React, Angular and Vue, in addition to vanilla JavaScript."
+            }
+        ],
+        "enterprise": [
+            {
+                "title": "Server-Side Row Model",
+                "description": "Efficiently handle large datasets by loading data on-demand from the server.",
+                "link": "./server-side-model"
+            },
+            {
+                "title": "Excel Export",
+                "description": "Advanced export options, including styles and formulas.",
+                "link": "./excel-export"
+            },
+            {
+                "title": "Pivot Tables & Aggregations",
+                "description": "Built-in pivot and aggregation capabilities for complex data analysis.",
+                "link": "./pivoting"
+            },
+            {
+                "title": "Range Selection",
+                "description": "Select and manipulate ranges of data.",
+                "link": "./cell-selection"
+            },
+            {
+                "title": "Integrated Charts",
+                "description": "Create and customize charts directly within the grid.",
+                "link": "./integrated-charts"
+            },
+            {
+                "title": "Master/Detail View",
+                "description": "Nested grid views for hierarchical data representation.",
+                "link": "./master-detail"
+            },
+            {
+                "title": "Row Grouping & Multi-Column Sorting",
+                "description": "Advanced grouping and sorting options for better data organization.",
+                "link": "./grouping"
+            },
+            {
+                "title": "Clipboard Operations",
+                "description": "Enhanced copy and paste functionality, including support for Excel-like behaviour.",
+                "link": "./clipboard"
+            },
+            {
+                "title": "Tool Panels",
+                "description": "Built-in configuration panels for columns and filters, or create your own custom panels.",
+                "link": "./tool-panel"
+            },
+            {
+                "title": "Custom Context Menu & Sidebars",
+                "description": "Additional UI elements for enhanced user interaction and customization.",
+                "link": "./context-menu"
+            }
+        ]
+    },
+    "charts": {
+        "community": [
+            {
+                "title": "Chart Essentials",
+                "description": "Basic chart types, including line, bar, column, and pie charts.",
+                "link": "/gallery/"
+            },
+            {
+                "title": "Accessibility Support",
+                "description": "Fully accessible charts with keyboard navigation and screen reader support.",
+                "link": "./accessibility/"
+            },
+            {
+                "title": "Basic Interactivity",
+                "description": "Highlight data items or entire series and add tooltips to provide extra contextual information.",
+                "link": "./series-highlighting/"
+            },
+            {
+                "title": "Intuitive Data Handling",
+                "description": "Handles your data in its existing format, no transformation required."
+            },
+            {
+                "title": "Themes and Styling",
+                "description": "Customize backgrounds, layouts, overlays, and themes to match your brand.",
+                "link": "./themes/"
+            },
+            {
+                "title": "Localization",
+                "description": "Support for 31 languages and integration with localization engines.",
+                "link": "./localisation/"
+            },
+            {
+                "title": "Download API",
+                "description": "Trigger browser-based image downloads of Charts in Base64 and PNG.",
+                "link": "./api-download/"
+            },
+            {
+                "title": "Event API",
+                "description": "Listen to and respond to user interactions with Charts and Series.",
+                "link": "./events/"
+            },
+            {
+                "title": "Major Frameworks",
+                "description": "Support for React, Angular and Vue, in addition to vanilla JavaScript."
+            }
+        ],
+        "enterprise": [
+            {
+                "title": "Advanced Chart Types",
+                "description": "Access to 20+ additional chart types, including Range, Heatmap, Sankey and more.",
+                "link": "/gallery/"
+            },
+            {
+                "title": "Financial Charts",
+                "description": "Build interactive financial charts with minimal configuration.",
+                "link": "./financial-charts/"
+            },
+            {
+                "title": "Animations",
+                "description": "Control charts initial load and data update animations.",
+                "link": "./animation/"
+            },
+            {
+                "title": "Advanced Interactivity",
+                "description": "Context menus, cross-hairs, navigator, zoom and chart synchronization.",
+                "link": "./context-menu/"
+            },
+            {
+                "title": "Background Images",
+                "description": "Add background images to charts for branding or context.",
+                "link": "./background-image/"
+            },
+            {
+                "title": "Dedicated Support",
+                "description": "Priority support with guaranteed response times, bug fixes, and direct access to the AG Grid team.",
+                "link": "./community-vs-enterprise/#support"
+            }
+        ]
+    }
+}

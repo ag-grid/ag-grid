@@ -7,7 +7,7 @@ const DetailCellRenderer = ({ data }) => {
     const [direction, setDirection] = useState(firstRecord.direction);
 
     return (
-        <div className="cell-renderer-outer">
+        <div role="gridcell" className="cell-renderer-outer">
             <form>
                 <div>
                     <div>

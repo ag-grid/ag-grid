@@ -1,13 +1,11 @@
 import type { Marker, Path } from 'ag-charts-types/scene';
 
-import type { ChartType } from 'ag-grid-community';
-
 import type { AgChartsExports } from '../../../../../agChartsExports';
+import type { MiniChartSelector } from '../../miniChartsContainer';
 import { createPolarPaths } from '../miniChartHelpers';
 import { MiniChartWithPolarAxes } from '../miniChartWithPolarAxes';
 
-export class MiniRadarLine extends MiniChartWithPolarAxes {
-    static chartType: ChartType = 'radarLine';
+export class MiniRadarLineClass extends MiniChartWithPolarAxes {
     private readonly lines: Path[];
     private readonly markers: Marker[];
     private readonly markerSize: number = 4;
@@ -58,3 +56,7 @@ export class MiniRadarLine extends MiniChartWithPolarAxes {
         });
     }
 }
+export const MiniRadarLine: MiniChartSelector = {
+    chartType: 'radarLine',
+    miniChart: MiniRadarLineClass,
+};

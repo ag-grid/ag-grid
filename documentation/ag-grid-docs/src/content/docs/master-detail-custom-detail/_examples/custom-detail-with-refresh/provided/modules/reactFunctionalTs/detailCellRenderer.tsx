@@ -10,7 +10,7 @@ const DetailCellRenderer = ({ data }: CustomCellRendererProps) => {
     }, [data.calls]);
 
     return (
-        <div>
+        <div role="gridcell">
             <form>
                 <div>
                     <p>

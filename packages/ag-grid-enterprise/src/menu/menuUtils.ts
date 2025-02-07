@@ -125,16 +125,14 @@ export class MenuUtils extends BeanStub implements NamedBean {
         // even though `getAllCols` is a synchronous method, we use `await` to make it async
         const isColumnStillVisible = await visibleCols.allCols.some((col) => col === column);
 
-        if (column && !column.isAlive()) {
+        if (!this.isAlive()) {
             return;
         }
 
-        if (isColumnStillVisible && eventSource && _isVisible(eventSource)) {
+        if (column?.isAlive() && isColumnStillVisible && eventSource && _isVisible(eventSource)) {
             const focusableEl = _findTabbableParent(eventSource);
             if (focusableEl) {
-                if (column) {
-                    headerNavigation?.scrollToColumn(column);
-                }
+                headerNavigation?.scrollToColumn(column);
                 focusableEl.focus();
             }
         }

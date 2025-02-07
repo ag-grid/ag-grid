@@ -1,5 +1,4 @@
 import type { AgColumn } from '../../entities/agColumn';
-import type { RowStyle } from '../../entities/gridOptions';
 import type { RowContainerType } from '../../gridBodyComp/rowContainer/rowContainerCtrl';
 import type { CellCtrl } from '../cell/cellCtrl';
 import { RowCtrl } from '../row/rowCtrl';
@@ -54,10 +53,6 @@ export class SpannedRowCtrl extends RowCtrl {
     protected override onRowHeightChanged(): void {}
 
     // no styling spanned rows
-    protected override setStylesFromGridOptions(): void {}
-    protected override processStylesFromGridOptions(): RowStyle {
-        return {};
-    }
     protected override refreshFirstAndLastRowStyles(): void {}
 
     // no hover functionality for spanned rows

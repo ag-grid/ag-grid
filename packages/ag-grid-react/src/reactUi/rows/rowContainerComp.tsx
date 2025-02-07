@@ -126,7 +126,12 @@ const RowContainerComp = ({ name }: { name: RowContainerName }) => {
             };
 
             rowContainerCtrlRef.current = context.createBean(new RowContainerCtrl(name));
-            rowContainerCtrlRef.current.setComp(compProxy, eContainer.current!, eViewport.current!);
+            rowContainerCtrlRef.current.setComp(
+                compProxy,
+                eContainer.current!,
+                eSpanContainer.current ?? undefined,
+                eViewport.current!
+            );
         }
     }, [areElementsReady, areElementsRemoved]);
 

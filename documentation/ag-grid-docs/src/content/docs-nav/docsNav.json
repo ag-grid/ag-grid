@@ -9,57 +9,116 @@
                     "path": "getting-started"
                 },
                 {
-                    "title": "Guides",
+                    "type": "item",
+                    "title": "Key Features",
+                    "path": "key-features"
+                },
+                {
+                    "type": "item",
+                    "title": "Community vs. Enterprise",
+                    "path": "community-vs-enterprise"
+                },
+                {
+                    "title": "Setup",
                     "type": "group",
                     "children": [
                         {
                             "type": "item",
-                            "title": "Tutorial: My First Grid",
-                            "path": "deep-dive"
+                            "title": "Installation",
+                            "path": "installation"
                         },
                         {
-                            "type": "item",
-                            "title": "Video Tutorials",
-                            "path": "videos"
+                            "title": "Registering Modules",
+                            "path": "modules"
                         },
                         {
-                            "type": "item",
-                            "title": "AG Grid Enterprise",
-                            "path": "licensing"
-                        },
-                        {
-                            "type": "item",
-                            "title": "Installing Your Licence Key",
+                            "title": "Installing Enterprise Licence",
                             "path": "license-install"
-                        },
-                        {
-                            "type": "item",
-                            "title": "React Best Practices",
-                            "path": "react-hooks",
-                            "frameworks": ["react"]
                         }
                     ]
                 },
                 {
-                    "title": "Build & Tooling",
+                    "title": "Tutorials",
                     "type": "group",
                     "children": [
                         {
-                            "type": "item",
-                            "title": "Modules",
-                            "path": "modules"
+                            "title": "Creating a Basic Grid",
+                            "path": "deep-dive"
                         },
                         {
-                            "type": "item",
+                            "title": "Best Practices",
+                            "path": "react-hooks",
+                            "frameworks": ["react"]
+                        },
+                        {
                             "title": "Testing",
-                            "path": "testing"
+                            "type": "group",
+                            "frameworks": ["angular", "react"],
+                            "children": [
+                                {
+                                    "title": "Overview",
+                                    "path": "testing",
+                                    "frameworks": ["angular", "react"]
+                                },
+                                {
+                                    "type": "item",
+                                    "title": "Testing Async",
+                                    "path": "testing-async",
+                                    "frameworks": ["angular"]
+                                },
+                                {
+                                    "title": "Playwright",
+                                    "url": "https://blog.ag-grid.com/writing-e2e-tests-for-ag-grid-react-tables-with-playwright/",
+                                    "frameworks": ["react"]
+                                },
+                                {
+                                    "title": "Cypress",
+                                    "url": "https://blog.ag-grid.com/end-to-end-testing-for-ag-grid-in-react-with-cypress/",
+                                    "frameworks": ["react"]
+                                },
+                                {
+                                    "title": "React Testing Library",
+                                    "url": "https://blog.ag-grid.com/unit-testing-ag-grid-react-tables-with-react-testing-library-and-vitest/",
+                                    "frameworks": ["react"]
+                                }
+                            ]
+                        },
+                        {
+                            "title": "Testing",
+                            "type": "item",
+                            "path": "testing",
+                            "frameworks": ["javascript", "vue"]
                         },
                         {
                             "type": "item",
-                            "title": "Testing Async",
-                            "path": "testing-async",
+                            "title": "Video Tutorials",
+                            "url": "https://www.youtube.com/watch?v=6hxbPqziELk&list=PLsZlhayVgqNwHNHeqpCkSgdRV08xrKtzW&pp=gAQB",
+                            "frameworks": ["react"]
+                        },
+                        {
+                            "type": "item",
+                            "title": "Video Tutorials",
+                            "url": "https://www.youtube.com/watch?v=X_Ip_jGDtho&list=PLsZlhayVgqNw6VHFn4j6FcJM5vLACsf0x&pp=gAQB",
                             "frameworks": ["angular"]
                         },
+                        {
+                            "type": "item",
+                            "title": "Video Tutorials",
+                            "url": "https://www.youtube.com/watch?v=V14w_NFuZB4&list=PLsZlhayVgqNz5iC0wFQDgixcAepFyrWbP&pp=gAQB",
+                            "frameworks": ["vue"]
+                        },
+                        {
+                            "type": "item",
+                            "title": "Video Tutorials",
+                            "url": "https://www.youtube.com/watch?v=Ww7-LC6rU6U&list=PLsZlhayVgqNxijfRQxg5Mc6W4MzZHQ9MK&pp=gAQB",
+                            "frameworks": ["javascript"]
+                        }
+                    ]
+                },
+                {
+                    "title": "Compatibility & Security",
+                    "type": "group",
+                    "children": [
                         {
                             "type": "item",
                             "title": "Compatibility",
@@ -74,12 +133,6 @@
                             "type": "item",
                             "title": "Supported Browsers",
                             "path": "supported-browsers"
-                        },
-                        {
-                            "type": "item",
-                            "title": "Installation",
-                            "path": "installation",
-                            "frameworks": ["javascript"]
                         }
                     ]
                 }
@@ -518,6 +571,12 @@
                             "type": "item",
                             "title": "Row Sorting",
                             "path": "row-sorting"
+                        },
+                        {
+                            "type": "item",
+                            "title": "Row Numbers",
+                            "path": "row-numbers",
+                            "isEnterprise": true
                         },
                         {
                             "type": "item",
@@ -1122,9 +1181,23 @@
                         },
                         {
                             "type": "item",
-                            "title": "Row Hierarchy",
-                            "path": "tree-data-hierarchy",
-                            "isEnterprise": true
+                            "title": "Supplying Data",
+                            "path": "tree-data-data",
+                            "isEnterprise": true,
+                            "children": [
+                                {
+                                    "type": "item",
+                                    "title": "Data Paths",
+                                    "path": "tree-data-paths",
+                                    "isEnterprise": true
+                                },
+                                {
+                                    "type": "item",
+                                    "title": "Nested Records",
+                                    "path": "tree-data-nesting",
+                                    "isEnterprise": true
+                                }
+                            ]
                         },
                         {
                             "type": "item",
@@ -1620,6 +1693,11 @@
                     "type": "group",
                     "title": "Migration",
                     "children": [
+                        {
+                            "type": "item",
+                            "title": "Upgrading to AG Grid 33.1",
+                            "path": "upgrading-to-ag-grid-33-1"
+                        },
                         {
                             "type": "item",
                             "title": "Upgrading to AG Grid 33",

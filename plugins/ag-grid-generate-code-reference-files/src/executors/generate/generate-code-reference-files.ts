@@ -190,7 +190,24 @@ export function getInterfaces(globs) {
     const extensions = {};
     globs.forEach((file) => {
         const parsedFile = parseFile(file);
-        interfaces = { ...interfaces, ...extractInterfaces(parsedFile, extensions) };
+
+        // check for clashing interfaces
+        const allInterfaces = extractInterfaces(parsedFile, extensions);
+
+        Object.entries(allInterfaces).forEach(([k, v]) => {
+            if (interfaces[k]) {
+                // deep equality check
+                if (JSON.stringify(interfaces[k]) !== JSON.stringify(v)) {
+                    throw new Error(
+                        `Interface ${k} already exists in interfaces.AUTO.json and is different! ${JSON.stringify(interfaces[k])} vs ${JSON.stringify(v)}`
+                    );
+                } else {
+                    // console.warn(`Interface ${k} looks to be duplicated interfaces.AUTO.json.`);
+                }
+            }
+        });
+
+        interfaces = { ...interfaces, ...allInterfaces };
     });
 
     // Now that we have recorded all the interfaces we can apply the extension properties.
@@ -277,12 +294,24 @@ function mergeAncestorProps(isDocStyle, parent, child, getProps) {
     return mergedProps;
 }
 
-function mergeRespectingChildOverrides(parent, child) {
+function mergeRespectingChildOverrides(parent, child, pickFields = []) {
+    // only pick the fields that are in the pickFields array
+    let filteredParent = {};
+    if (pickFields.length > 0) {
+        pickFields.forEach((f) => {
+            if (parent[f]) {
+                filteredParent[f] = parent[f];
+            }
+        });
+    } else {
+        filteredParent = { ...parent };
+    }
+
     const merged = { ...child };
     // We want the child properties to be list first for better doc reading experience
     // Normal spread merge to get the correct order wipes out child overrides
     // Hence the manual approach to the merge here.
-    Object.entries(parent).forEach(([k, v]) => {
+    Object.entries(filteredParent).forEach(([k, v]) => {
         if (!merged[k]) {
             merged[k] = v;
         }
@@ -304,6 +333,7 @@ function applyInheritance(extensions, interfaces, isDocStyle) {
 
             let extInt = undefined;
             const omitFields = [];
+            const pickFields = [];
             if (extended === 'Omit') {
                 // Omit: https://www.typescriptlang.org/docs/handbook/utility-types.html#omittype-keys
                 // Special logic to handle the removing of properties via the Omit utility when a type is defined via extension.
@@ -313,6 +343,15 @@ function applyInheritance(extensions, interfaces, isDocStyle) {
                     toRemove.split('|').forEach((property) => {
                         const typeName = property.replace(/'/g, '').trim();
                         omitFields.push(typeName);
+                    });
+                });
+            } else if (extended === 'Pick') {
+                extended = a.params[0].replace(/<.*>/, '');
+                a.params.slice(1).forEach((toPick) => {
+                    toPick.split('|').forEach((property) => {
+                        const typeName = property.replace(/'/g, '').trim();
+                        pickFields.push(typeName);
+                        pickFields.push(typeName + '?'); // Enable support for optional fields as their keys are suffixed with '?'
                     });
                 });
             } else if (isBuiltinUtilityType(extended)) {
@@ -332,7 +371,8 @@ function applyInheritance(extensions, interfaces, isDocStyle) {
                 if (extInt) {
                     extendedInterface = mergeRespectingChildOverrides(
                         mergeAncestorProps(isDocStyle, a, extInt, (a) => a),
-                        extendedInterface
+                        extendedInterface,
+                        pickFields
                     );
                 }
                 omitFields.forEach((f) => {
@@ -342,13 +382,15 @@ function applyInheritance(extensions, interfaces, isDocStyle) {
                 if (extInt && extInt.type) {
                     extendedInterface.type = mergeRespectingChildOverrides(
                         mergeAncestorProps(isDocStyle, a, extInt, (a) => a.type),
-                        extendedInterface.type
+                        extendedInterface.type,
+                        pickFields
                     );
                 }
                 if (extInt && extInt.docs) {
                     extendedInterface.docs = mergeRespectingChildOverrides(
                         mergeAncestorProps(isDocStyle, a, extInt, (a) => a.docs),
-                        extendedInterface.docs
+                        extendedInterface.docs,
+                        pickFields
                     );
                 }
                 omitFields.forEach((f) => {

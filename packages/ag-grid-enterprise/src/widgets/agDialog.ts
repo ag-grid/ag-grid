@@ -18,16 +18,6 @@ import {
 import type { PanelOptions } from './agPanel';
 import { AgPanel } from './agPanel';
 
-export type ResizableSides =
-    | 'topLeft'
-    | 'top'
-    | 'topRight'
-    | 'right'
-    | 'bottomRight'
-    | 'bottom'
-    | 'bottomLeft'
-    | 'left';
-
 export interface DialogPostProcessPopupParams {
     type: string;
     eventSource?: HTMLElement | null;

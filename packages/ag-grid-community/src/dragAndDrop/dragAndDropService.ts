@@ -7,7 +7,7 @@ import type { BeanCollection } from '../context/context';
 import type { CtrlsService } from '../ctrlsService';
 import type { Environment } from '../environment';
 import { _stampTopLevelGridCompWithGridInstance } from '../gridBodyComp/mouseEventUtils';
-import { _anchorElementToMouseMoveEvent, _getPageBody, _getRootNode } from '../gridOptionsUtils';
+import { _addGridCommonParams, _anchorElementToMouseMoveEvent, _getPageBody, _getRootNode } from '../gridOptionsUtils';
 import type { AgGridCommon } from '../interfaces/iCommon';
 import type { DragItem } from '../interfaces/iDragItem';
 import { _removeFromArray } from '../utils/array';
@@ -493,7 +493,7 @@ export class DragAndDropService extends BeanStub implements NamedBean {
         const x = event.clientX - rect.left;
         const y = event.clientY - rect.top;
 
-        return gos.addGridCommonParams({
+        return _addGridCommonParams(gos, {
             event,
             x,
             y,
@@ -531,15 +531,18 @@ export class DragAndDropService extends BeanStub implements NamedBean {
     }
 
     private createDragAndDropImageComponent(): void {
-        const { dragSource } = this;
+        const { dragSource, gos, userCompFactory } = this;
 
         if (!dragSource) {
             return;
         }
 
-        const userCompDetails = _getDragAndDropImageCompDetails(this.userCompFactory, {
-            dragSource,
-        });
+        const userCompDetails = _getDragAndDropImageCompDetails(
+            userCompFactory,
+            _addGridCommonParams(gos, {
+                dragSource,
+            })
+        );
         if (!userCompDetails) {
             return;
         }

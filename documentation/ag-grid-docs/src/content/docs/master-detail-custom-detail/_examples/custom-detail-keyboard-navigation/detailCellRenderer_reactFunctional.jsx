@@ -43,7 +43,7 @@ const DetailCellRenderer = ({ data, eParentOfValue }) => {
     }, []);
 
     return (
-        <div>
+        <div role="gridcell">
             <form>
                 <div>
                     <p>

@@ -1,17 +1,14 @@
-import type { ChartType } from 'ag-grid-community';
-
 import type { AgChartsExports } from '../../../../../agChartsExports';
-import type { ThemeTemplateParameters } from '../../miniChartsContainer';
-import { MiniStackedBar } from './miniStackedBar';
+import type { MiniChartSelector, ThemeTemplateParameters } from '../../miniChartsContainer';
+import { MiniStackedBarClass } from './miniStackedBar';
 
-export class MiniNormalizedBar extends MiniStackedBar {
-    static override chartType: ChartType = 'normalizedBar';
-    static override data = [
-        [10, 10, 10],
-        [6, 7, 8],
-        [2, 4, 6],
-    ];
+const miniNormalizedBarData = [
+    [10, 10, 10],
+    [6, 7, 8],
+    [2, 4, 6],
+];
 
+export class MiniNormalizedBarClass extends MiniStackedBarClass {
     constructor(
         container: HTMLElement,
         agChartsExports: AgChartsExports,
@@ -27,9 +24,14 @@ export class MiniNormalizedBar extends MiniStackedBar {
             strokes,
             themeTemplateParameters,
             isCustomTheme,
-            MiniNormalizedBar.data,
+            miniNormalizedBarData,
             [0, 10],
             'normalizedBarTooltip'
         );
     }
 }
+
+export const MiniNormalizedBar: MiniChartSelector = {
+    chartType: 'normalizedBar',
+    miniChart: MiniNormalizedBarClass,
+};

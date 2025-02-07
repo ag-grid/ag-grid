@@ -7,6 +7,7 @@ import type { AgColumn } from '../../../entities/agColumn';
 import type { AgColumnGroup } from '../../../entities/agColumnGroup';
 import type { HeaderClassParams } from '../../../entities/colDef';
 import type { ColumnEventType } from '../../../events';
+import { _addGridCommonParams } from '../../../gridOptionsUtils';
 import { ColumnHighlightPosition } from '../../../interfaces/iColumn';
 import type { UserCompDetails } from '../../../interfaces/iUserCompDetails';
 import { SetLeftFeature } from '../../../rendering/features/setLeftFeature';
@@ -46,7 +47,7 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
         compBean: BeanStub<any> | undefined
     ): void {
         const { column, beans } = this;
-        const { context, colNames, colHover, colResize } = beans;
+        const { context, colNames, colHover, rangeSvc, colResize } = beans;
         this.comp = comp;
         compBean = setupCompBean(this, context, compBean);
         this.setGui(eGui, compBean);
@@ -74,6 +75,7 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
         const leafCols = column.getProvidedColumnGroup().getLeafColumns();
 
         colHover?.createHoverFeature(compBean, leafCols, eGui);
+        rangeSvc?.createRangeHighlightFeature(compBean, column, comp);
         compBean.createManagedBean(new SetLeftFeature(column, eGui, beans));
         compBean.createManagedBean(new GroupWidthFeature(comp, column));
         if (colResize) {
@@ -102,10 +104,10 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
     }
 
     protected getHeaderClassParams(): HeaderClassParams {
-        const { column } = this;
+        const { column, beans } = this;
         const colDef = column.getDefinition()!;
 
-        return this.beans.gos.addGridCommonParams({
+        return _addGridCommonParams(beans.gos, {
             colDef,
             columnGroup: column,
             floatingFilter: false,
@@ -203,7 +205,7 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
 
     private setupUserComp(): void {
         const { colGroupSvc, userCompFactory, gos } = this.beans;
-        const params: IHeaderGroupParams = gos.addGridCommonParams({
+        const params: IHeaderGroupParams = _addGridCommonParams(gos, {
             displayName: this.displayName!,
             columnGroup: this.column,
             setExpanded: (expanded: boolean) => {

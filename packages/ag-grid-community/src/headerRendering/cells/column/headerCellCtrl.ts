@@ -5,7 +5,7 @@ import { KeyCode } from '../../../constants/keyCode';
 import type { BeanStub } from '../../../context/beanStub';
 import type { AgColumn } from '../../../entities/agColumn';
 import type { HeaderClassParams, SortDirection } from '../../../entities/colDef';
-import { _getActiveDomElement, _isLegacyMenuEnabled } from '../../../gridOptionsUtils';
+import { _addGridCommonParams, _getActiveDomElement, _isLegacyMenuEnabled } from '../../../gridOptionsUtils';
 import { ColumnHighlightPosition } from '../../../interfaces/iColumn';
 import type { UserCompDetails } from '../../../interfaces/iUserCompDetails';
 import { SetLeftFeature } from '../../../rendering/features/setLeftFeature';
@@ -20,8 +20,7 @@ import { getColumnHeaderRowHeight, getGroupRowsHeight } from '../../headerUtils'
 import type { IAbstractHeaderCellComp } from '../abstractCell/abstractHeaderCellCtrl';
 import { AbstractHeaderCellCtrl } from '../abstractCell/abstractHeaderCellCtrl';
 import { _getHeaderClassesFromColDef } from '../cssClassApplier';
-import type { IHeader, IHeaderParams } from './headerComp';
-import type { HeaderComp } from './headerComp';
+import type { HeaderComp, IHeader, IHeaderParams } from './headerComp';
 
 export interface IHeaderCellComp extends IAbstractHeaderCellComp {
     setWidth(width: string): void;
@@ -66,7 +65,8 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
     ): void {
         this.comp = comp;
 
-        const { colResize, context, colHover } = this.beans;
+        const { rowCtrl, column, beans } = this;
+        const { colResize, context, colHover, rangeSvc } = beans;
         const compBean = setupCompBean(this, context, compBeanInput);
 
         this.setGui(eGui, compBean);
@@ -96,13 +96,14 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
 
         if (colResize) {
             this.resizeFeature = compBean.createManagedBean(
-                colResize.createResizeFeature(this.rowCtrl.pinned, this.column, eResize, comp, this)
+                colResize.createResizeFeature(rowCtrl.pinned, column, eResize, comp, this)
             );
         } else {
             _setDisplayed(eResize, false);
         }
-        colHover?.createHoverFeature(compBean, [this.column], eGui);
-        compBean.createManagedBean(new SetLeftFeature(this.column, eGui, this.beans));
+        colHover?.createHoverFeature(compBean, [column], eGui);
+        rangeSvc?.createRangeHighlightFeature(compBean, column, comp);
+        compBean.createManagedBean(new SetLeftFeature(column, eGui, beans));
         compBean.createManagedBean(
             new ManagedFocusFeature(eGui, {
                 shouldStopEventPropagation: (e) => this.shouldStopEventPropagation(e),
@@ -119,8 +120,8 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
             ['suppressMovableColumns', 'suppressMenuHide', 'suppressAggFuncInHeader', 'enableAdvancedFilter'],
             () => this.refresh()
         );
-        compBean.addManagedListeners(this.column, { colDefChanged: () => this.refresh() });
-        compBean.addManagedListeners(this.column, { headerHighlightChanged: this.onHeaderHighlightChanged.bind(this) });
+        compBean.addManagedListeners(column, { colDefChanged: () => this.refresh() });
+        compBean.addManagedListeners(column, { headerHighlightChanged: this.onHeaderHighlightChanged.bind(this) });
 
         const listener = () => this.checkDisplayName();
         compBean.addManagedEventListeners({
@@ -147,10 +148,10 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
     }
 
     protected getHeaderClassParams(): HeaderClassParams {
-        const { column } = this;
+        const { column, beans } = this;
         const colDef = column.colDef;
 
-        return this.beans.gos.addGridCommonParams({
+        return _addGridCommonParams(beans.gos, {
             colDef,
             column,
             floatingFilter: false,
@@ -177,7 +178,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
 
     private createParams(): IHeaderParams {
         const { menuSvc, sortSvc, colFilter, gos } = this.beans;
-        const params: IHeaderParams = gos.addGridCommonParams({
+        const params: IHeaderParams = _addGridCommonParams(gos, {
             column: this.column,
             displayName: this.displayName!,
             enableSorting: this.column.isSortable(),

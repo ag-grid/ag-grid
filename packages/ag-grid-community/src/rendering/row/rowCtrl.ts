@@ -14,6 +14,7 @@ import type { AgEventType } from '../../eventTypes';
 import type { CellFocusedEvent, RowEvent, VirtualRowRemovedEvent } from '../../events';
 import type { RowContainerType } from '../../gridBodyComp/rowContainer/rowContainerCtrl';
 import {
+    _addGridCommonParams,
     _getActiveDomElement,
     _getRowHeightForNode,
     _isAnimateRows,
@@ -34,6 +35,7 @@ import type { UserCompDetails } from '../../interfaces/iUserCompDetails';
 import { calculateRowLevel } from '../../styling/rowStyleService';
 import type { TooltipFeature } from '../../tooltip/tooltipFeature';
 import { _setAriaExpanded, _setAriaRowIndex } from '../../utils/aria';
+import { _isBrowserSafari } from '../../utils/browser';
 import { _addOrRemoveAttribute, _isElementChildOfClass, _isFocusableFormField, _isVisible } from '../../utils/dom';
 import { _isStopPropagationForAgGrid } from '../../utils/event';
 import { _findNextFocusableElement } from '../../utils/focus';
@@ -1015,7 +1017,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
 
     public createRowEvent<T extends AgEventType>(type: T, domEvent?: Event): RowEvent<T> {
         const { rowNode } = this;
-        return this.gos.addGridCommonParams({
+        return _addGridCommonParams(this.gos, {
             type: type,
             node: rowNode,
             data: rowNode.data,
@@ -1100,7 +1102,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         const element = rowGui.element;
         const target = mouseEvent.target as HTMLElement;
 
-        let forceBrowserFocus = true;
+        let forceBrowserFocus = mouseEvent.defaultPrevented || _isBrowserSafari();
 
         if (element && element.contains(target) && _isFocusableFormField(target)) {
             forceBrowserFocus = false;
@@ -1137,7 +1139,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
 
     private createFullWidthCompDetails(eRow: HTMLElement, pinned: ColumnPinnedType): UserCompDetails {
         const { gos, rowNode } = this;
-        const params = gos.addGridCommonParams({
+        const params = _addGridCommonParams<ICellRendererParams>(gos, {
             fullWidth: true,
             data: rowNode.data,
             node: rowNode,
@@ -1146,8 +1148,8 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
             // these need to be taken out, as part of 'afterAttached' now
             eGridCell: eRow,
             eParentOfValue: eRow,
-            pinned: pinned,
-            addRenderedRowListener: this.addEventListener.bind(this),
+            pinned: pinned as any,
+            addRenderedRowListener: this.addEventListener.bind(this) as any, // This is not on the type of ICellRendererParams
             registerRowDragger: (rowDraggerElement, dragStartPixels, value, suppressVisibilityChange) =>
                 this.addFullWidthRowDragging(rowDraggerElement, dragStartPixels, value, suppressVisibilityChange),
             setTooltip: (value, shouldDisplayTooltip) => {
@@ -1275,7 +1277,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         );
     }
 
-    protected setStylesFromGridOptions(updateStyles: boolean, gui?: RowGui): void {
+    private setStylesFromGridOptions(updateStyles: boolean, gui?: RowGui): void {
         if (updateStyles) {
             this.rowStyles = this.processStylesFromGridOptions();
         }
@@ -1362,7 +1364,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         return classes;
     }
 
-    protected processStylesFromGridOptions(): RowStyle {
+    private processStylesFromGridOptions(): RowStyle {
         // Return constant reference for React
         return this.beans.rowStyleSvc?.processStylesFromGridOptions(this.rowNode) ?? this.emptyStyle;
     }

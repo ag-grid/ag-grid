@@ -40,6 +40,14 @@ export default [
                     message: 'Prefer Object.keys() to Object.entries() for performance reasons.',
                 },
             ],
+            'no-restricted-syntax': [
+                'error',
+                {
+                    selector: 'ImportDeclaration[specifiers.length = 0][source.value=ag-grid-community]',
+                    message:
+                        'Empty imports are not allowed. i.e import "ag-grid-community"; as it will cause warnings about being sideEffect free',
+                },
+            ],
             'no-restricted-imports': [
                 'error',
                 {
@@ -50,7 +58,12 @@ export default [
                     name: 'ag-charts-enterprise',
                     message: 'There should be no direct imports of ag-charts-enterprise',
                 },
+                {
+                    name: 'ag-grid-enterprise',
+                    message: 'There should be no imports of ag-grid-enterprise, use relative imports instead',
+                },
             ],
+
             'no-console': 'error',
         },
     },

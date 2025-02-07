@@ -47,14 +47,12 @@ let gridApi: GridApi<IOlympicData>;
 const gridOptions: GridOptions<IOlympicData> = {
     columnDefs: columnDefs,
     rowData: null,
-    components: {
-        agColumnHeader: CustomHeader,
-    },
     defaultColDef: {
         editable: true,
         flex: 1,
         minWidth: 100,
         filter: true,
+        headerComponent: CustomHeader,
         headerComponentParams: {
             menuIcon: 'fa-filter',
         },

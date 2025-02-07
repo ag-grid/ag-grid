@@ -167,6 +167,11 @@
             padding-left: $spacing-size-6;
         }
     }
+
+    :global(.param) {
+        display: block;
+        margin: $spacing-size-2 0;
+    }
 }
 
 .name {

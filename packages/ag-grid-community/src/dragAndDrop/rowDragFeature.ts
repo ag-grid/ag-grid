@@ -11,7 +11,7 @@ import type {
     RowDragMoveEvent,
 } from '../events';
 import { _getNormalisedMousePosition } from '../gridBodyComp/mouseEventUtils';
-import { _getRowIdCallback, _isClientSideRowModel } from '../gridOptionsUtils';
+import { _addGridCommonParams, _getRowIdCallback, _isClientSideRowModel } from '../gridOptionsUtils';
 import type { IClientSideRowModel } from '../interfaces/iClientSideRowModel';
 import { _last } from '../utils/array';
 import { _warn } from '../validation/logging';
@@ -411,7 +411,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
             overNode = rowModel.getRow(overIndex);
         }
 
-        const event: RowDragEvent<T> = gos.addGridCommonParams({
+        const event: RowDragEvent<T> = _addGridCommonParams(gos, {
             type: type,
             event: draggingEvent.event,
             node: draggingEvent.dragItem.rowNode!,

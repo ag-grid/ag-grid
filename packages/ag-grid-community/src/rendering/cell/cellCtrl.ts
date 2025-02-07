@@ -1,4 +1,4 @@
-import { isColumnSelectionCol } from '../../columns/columnUtils';
+import { isColumnSelectionCol, isRowNumberCol } from '../../columns/columnUtils';
 import { _getCellRendererDetails, _getLoadingCellRendererDetails } from '../../components/framework/userCompUtils';
 import { BeanStub } from '../../context/beanStub';
 import type { BeanCollection } from '../../context/context';
@@ -9,7 +9,7 @@ import type { RowNode } from '../../entities/rowNode';
 import type { AgEventType } from '../../eventTypes';
 import type { CellContextMenuEvent, CellEvent, CellFocusedEvent } from '../../events';
 import type { GridOptionsService } from '../../gridOptionsService';
-import { _getCheckboxes, _isCellSelectionEnabled, _setDomData } from '../../gridOptionsUtils';
+import { _addGridCommonParams, _getCheckboxes, _isCellSelectionEnabled, _setDomData } from '../../gridOptionsUtils';
 import { refreshFirstAndLastStyles } from '../../headerRendering/cells/cssClassApplier';
 import type { BrandedType } from '../../interfaces/brandedType';
 import type { ICellEditor } from '../../interfaces/iCellEditor';
@@ -84,6 +84,7 @@ export class CellCtrl extends BeanStub {
     public readonly colIdSanitised: string;
 
     public eGui: HTMLElement;
+
     public comp: ICellComp;
     public editCompDetails?: UserCompDetails;
 
@@ -164,6 +165,10 @@ export class CellCtrl extends BeanStub {
         }
     }
 
+    public isCellSpanning(): boolean {
+        return false;
+    }
+
     public getCellSpan(): CellSpan | undefined {
         return undefined;
     }
@@ -189,14 +194,15 @@ export class CellCtrl extends BeanStub {
 
     public setComp(
         comp: ICellComp,
-        eGui: HTMLElement,
+        eCell: HTMLElement,
+        _eWrapper: HTMLElement | undefined,
         eCellWrapper: HTMLElement | undefined,
         printLayout: boolean,
         startEditing: boolean,
         compBean: BeanStub | undefined
     ): void {
         this.comp = comp;
-        this.eGui = eGui;
+        this.eGui = eCell;
         this.printLayout = printLayout;
         compBean ??= this;
 
@@ -220,11 +226,11 @@ export class CellCtrl extends BeanStub {
         this.refreshFirstAndLastStyles();
         this.refreshAriaColIndex();
 
-        this.positionFeature?.setComp(eGui);
+        this.positionFeature?.init();
         this.customStyleFeature?.setComp(comp);
         this.tooltipFeature?.refreshTooltip();
-        this.keyboardListener?.setComp(this.eGui);
-        this.rangeFeature?.setComp(comp, eGui);
+        this.keyboardListener?.init();
+        this.rangeFeature?.setComp(comp);
 
         if (startEditing && this.isCellEditable()) {
             this.beans.editSvc?.startEditing(this);
@@ -362,7 +368,7 @@ export class CellCtrl extends BeanStub {
             eGui,
             beans: { valueSvc, gos },
         } = this;
-        const res: ICellRendererParams = gos.addGridCommonParams({
+        const res: ICellRendererParams = _addGridCommonParams(gos, {
             value: value,
             valueFormatted: valueFormatted,
             getValue: () => valueSvc.getValueForDisplay(column, rowNode),
@@ -519,8 +525,8 @@ export class CellCtrl extends BeanStub {
     }
 
     public createEvent<T extends AgEventType>(domEvent: Event | null, eventType: T): CellEvent<T> {
-        const { rowNode, column, value } = this;
-        const event: CellEvent<T> = this.beans.gos.addGridCommonParams({
+        const { rowNode, column, value, beans } = this;
+        const event: CellEvent<T> = _addGridCommonParams(beans.gos, {
             type: eventType,
             node: rowNode,
             data: rowNode.data,
@@ -624,10 +630,14 @@ export class CellCtrl extends BeanStub {
     }
 
     public onSuppressCellFocusChanged(suppressCellFocus: boolean): void {
-        if (!this.eGui) {
+        const element = this.eGui;
+        if (!element) {
             return;
         }
-        _addOrRemoveAttribute(this.eGui, 'tabindex', suppressCellFocus ? undefined : -1);
+        if (isRowNumberCol(this.column)) {
+            suppressCellFocus = true;
+        }
+        _addOrRemoveAttribute(element, 'tabindex', suppressCellFocus ? undefined : -1);
     }
 
     public onFirstRightPinnedChanged(): void {
@@ -710,7 +720,7 @@ export class CellCtrl extends BeanStub {
     }
 
     // CSS Classes that only get applied once, they never change
-    private applyStaticCssClasses(): void {
+    protected applyStaticCssClasses(): void {
         const { comp } = this;
         comp.addOrRemoveCssClass(CSS_CELL, true);
         comp.addOrRemoveCssClass(CSS_CELL_NOT_INLINE_EDITING, true);
@@ -867,4 +877,12 @@ export class CellCtrl extends BeanStub {
 
     // used by spannedCellCtrl
     public refreshAriaRowIndex(): void {}
+
+    /**
+     * Returns the root element of the cell, could be a span container rather than the cell element.
+     * @returns The root element of the cell.
+     */
+    public getRootElement(): HTMLElement {
+        return this.eGui;
+    }
 }

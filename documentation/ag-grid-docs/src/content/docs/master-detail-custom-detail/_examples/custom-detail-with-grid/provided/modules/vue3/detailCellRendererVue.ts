@@ -5,18 +5,18 @@ import { AgGridVue } from 'ag-grid-vue3';
 
 export default defineComponent({
     template: `
-      <div class="full-width-panel">
-      <div class="full-width-details">
-        <div class="full-width-detail"><b>Name: </b>{{ params.data.name }}</div>
-        <div class="full-width-detail"><b>Account: </b>{{ params.data.account }}</div>
-      </div>
-      <ag-grid-vue style="height: 100%;"
-                   class="full-width-grid"
-                   :columnDefs="colDefs"
-                   :defaultColDef="defaultColDef"
-                   :rowData="rowData"
-                   @grid-ready="onGridReady">
-      </ag-grid-vue>
+      <div role="gridcell" class="full-width-panel">
+        <div class="full-width-details">
+            <div class="full-width-detail"><b>Name: </b>{{ params.data.name }}</div>
+            <div class="full-width-detail"><b>Account: </b>{{ params.data.account }}</div>
+        </div>
+        <ag-grid-vue style="height: 100%;"
+                    class="full-width-grid"
+                    :columnDefs="colDefs"
+                    :defaultColDef="defaultColDef"
+                    :rowData="rowData"
+                    @grid-ready="onGridReady">
+        </ag-grid-vue>
       </div>
     `,
     components: {

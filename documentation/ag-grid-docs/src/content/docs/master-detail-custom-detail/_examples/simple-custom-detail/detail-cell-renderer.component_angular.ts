@@ -5,7 +5,7 @@ import type { ICellRendererAngularComp } from 'ag-grid-angular';
 @Component({
     standalone: true,
     changeDetection: ChangeDetectionStrategy.OnPush,
-    template: `<h1 style="padding: 20px;">My Custom Detail</h1>`,
+    template: `<div role="gridcell"><h1 style="padding: 20px;">My Custom Detail</h1></div>`,
 })
 export class DetailCellRenderer implements ICellRendererAngularComp {
     agInit(params: any): void {}

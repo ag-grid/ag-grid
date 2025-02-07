@@ -2,6 +2,7 @@ import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { RowClassParams, RowStyle } from '../entities/gridOptions';
 import type { RowNode } from '../entities/rowNode';
+import { _addGridCommonParams } from '../gridOptionsUtils';
 import type { WithoutGridCommon } from '../interfaces/iCommon';
 import { processClassRules } from './stylingUtils';
 
@@ -67,7 +68,7 @@ export class RowStyleService extends BeanStub implements NamedBean {
         onNotApplicableClass?: (className: string) => void
     ): void {
         const { gos, expressionSvc } = this.beans;
-        const rowClassParams: RowClassParams = gos.addGridCommonParams({
+        const rowClassParams: RowClassParams = _addGridCommonParams(gos, {
             data: rowNode.data,
             node: rowNode,
             rowIndex: rowNode.rowIndex!,

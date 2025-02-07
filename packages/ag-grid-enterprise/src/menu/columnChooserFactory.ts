@@ -1,5 +1,5 @@
 import type { AgColumn, ColumnChooserParams, NamedBean } from 'ag-grid-community';
-import { BeanStub, _findNextFocusableElement } from 'ag-grid-community';
+import { BeanStub, _addGridCommonParams, _findNextFocusableElement } from 'ag-grid-community';
 
 import { AgPrimaryCols } from '../columnToolPanel/agPrimaryCols';
 import { AgDialog } from '../widgets/agDialog';
@@ -38,7 +38,7 @@ export class ColumnChooserFactory extends BeanStub implements NamedBean {
 
         columnSelectPanel.init(
             !!draggable,
-            this.gos.addGridCommonParams({
+            _addGridCommonParams(this.gos, {
                 suppressColumnMove: false,
                 suppressValues: false,
                 suppressPivots: false,

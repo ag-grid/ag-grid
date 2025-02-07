@@ -261,6 +261,7 @@ export class RowContainerCtrl extends BeanStub implements ScrollPartner {
 
     private comp: IRowContainerComp;
     public eContainer: HTMLElement;
+    private eSpannedContainer: HTMLElement | undefined;
     public eViewport: HTMLElement;
     private enableRtl: boolean;
 
@@ -302,9 +303,15 @@ export class RowContainerCtrl extends BeanStub implements ScrollPartner {
         }
     }
 
-    public setComp(view: IRowContainerComp, eContainer: HTMLElement, eViewport: HTMLElement): void {
+    public setComp(
+        view: IRowContainerComp,
+        eContainer: HTMLElement,
+        eSpannedContainer: HTMLElement | undefined,
+        eViewport: HTMLElement
+    ): void {
         this.comp = view;
         this.eContainer = eContainer;
+        this.eSpannedContainer = eSpannedContainer;
         this.eViewport = eViewport;
 
         this.createManagedBean(new RowContainerEventsFeature(this.eViewport ?? this.eContainer));
@@ -316,13 +323,13 @@ export class RowContainerCtrl extends BeanStub implements ScrollPartner {
         const pinnedWidthChanged = () => this.onPinnedWidthChanged();
         this.forContainers(allLeft, () => {
             this.pinnedWidthFeature = this.createOptionalManagedBean(
-                pinnedCols?.createPinnedWidthFeature(this.eContainer, true)
+                pinnedCols?.createPinnedWidthFeature(true, this.eContainer, this.eSpannedContainer)
             );
             this.addManagedEventListeners({ leftPinnedWidthChanged: pinnedWidthChanged });
         });
         this.forContainers(allRight, () => {
             this.pinnedWidthFeature = this.createOptionalManagedBean(
-                pinnedCols?.createPinnedWidthFeature(this.eContainer, false)
+                pinnedCols?.createPinnedWidthFeature(false, this.eContainer, this.eSpannedContainer)
             );
             this.addManagedEventListeners({ rightPinnedWidthChanged: pinnedWidthChanged });
         });

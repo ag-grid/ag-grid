@@ -35,7 +35,7 @@ export class AutoWidthCalculator extends BeanStub implements NamedBean {
             elements.push(eHeaderCell);
         }
 
-        return this.addElementsToContainerAndGetWidth(elements);
+        return this.getPreferredWidthForElements(elements);
     }
 
     public getPreferredWidthForColumnGroup(columnGroup: AgColumnGroup): number {
@@ -45,10 +45,10 @@ export class AutoWidthCalculator extends BeanStub implements NamedBean {
             return -1;
         }
 
-        return this.addElementsToContainerAndGetWidth([eHeaderCell]);
+        return this.getPreferredWidthForElements([eHeaderCell]);
     }
 
-    private addElementsToContainerAndGetWidth(elements: HTMLElement[]): number {
+    public getPreferredWidthForElements(elements: HTMLElement[], extraPadding?: number): number {
         // this element has to be a form, otherwise form elements within a cell
         // will be validated while being cloned. This can cause issues such as
         // radio buttons being reset and losing their values.
@@ -74,9 +74,9 @@ export class AutoWidthCalculator extends BeanStub implements NamedBean {
 
         // we add padding as I found sometimes the gui still put '...' after some of the texts. so the
         // user can configure the grid to add a few more pixels after the calculated width
-        const autoSizePadding = this.gos.get('autoSizePadding');
+        extraPadding = extraPadding ?? this.gos.get('autoSizePadding');
 
-        return dummyContainerWidth + autoSizePadding;
+        return dummyContainerWidth + extraPadding;
     }
 
     private getHeaderCellForColumn(column: AgColumnGroup | AgColumn): HTMLElement | null {

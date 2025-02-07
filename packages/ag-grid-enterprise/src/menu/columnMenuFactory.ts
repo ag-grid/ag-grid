@@ -1,5 +1,5 @@
 import type { AgColumn, AgProvidedColumnGroup, DefaultMenuItem, MenuItemDef, NamedBean } from 'ag-grid-community';
-import { BeanStub, _isClientSideRowModel, _isLegacyMenuEnabled } from 'ag-grid-community';
+import { BeanStub, _addGridCommonParams, _isClientSideRowModel, _isLegacyMenuEnabled } from 'ag-grid-community';
 
 import { isRowGroupColLocked } from '../rowGrouping/rowGroupingUtils';
 import { AgMenuList } from '../widgets/agMenuList';
@@ -47,7 +47,7 @@ export class ColumnMenuFactory extends BeanStub implements NamedBean {
             result = columnMainMenuItems;
         } else if (typeof columnMainMenuItems === 'function') {
             result = columnMainMenuItems(
-                this.gos.addGridCommonParams({
+                _addGridCommonParams(this.gos, {
                     column,
                     columnGroup,
                     defaultItems,

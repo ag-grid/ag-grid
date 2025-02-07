@@ -109,12 +109,12 @@ export class AgAutocomplete extends Component<AgAutocompleteEvent> {
 
     private updateAutocompleteList(value: string | null): void {
         const autocompleteListParams = this.listGenerator?.(value, this.lastPosition) ?? { enabled: false };
-        const isListOpen = this.isListOpen;
         if (!autocompleteListParams.type || autocompleteListParams.type !== this.autocompleteListParams?.type) {
-            if (isListOpen) {
+            if (this.isListOpen) {
                 this.closeList();
             }
         }
+        const isListOpen = this.isListOpen;
         this.autocompleteListParams = autocompleteListParams;
         if (autocompleteListParams?.enabled) {
             if (!isListOpen) {

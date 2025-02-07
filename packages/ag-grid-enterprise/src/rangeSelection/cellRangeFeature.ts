@@ -62,9 +62,9 @@ export class CellRangeFeature implements ICellRangeFeature {
         this.rangeSvc = beans.rangeSvc!;
     }
 
-    public setComp(cellComp: ICellComp, eGui: HTMLElement): void {
+    public setComp(cellComp: ICellComp): void {
         this.cellComp = cellComp;
-        this.eGui = eGui;
+        this.eGui = this.cellCtrl.eGui;
         this.onCellSelectionChanged();
     }
 

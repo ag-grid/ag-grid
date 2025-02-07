@@ -1,6 +1,7 @@
 import type { ColumnState } from '../columns/columnStateUtils';
 import { BeanStub } from '../context/beanStub';
 import type { AgEvent, ColumnEvent, ColumnEventType } from '../events';
+import { _addGridCommonParams } from '../gridOptionsUtils';
 import type {
     Column,
     ColumnEventName,
@@ -318,7 +319,7 @@ export class AgColumn<TValue = any>
     }
 
     public createColumnFunctionCallbackParams(rowNode: IRowNode): ColumnFunctionCallbackParams {
-        return this.gos.addGridCommonParams({
+        return _addGridCommonParams(this.gos, {
             node: rowNode,
             data: rowNode.data,
             column: this,
@@ -391,7 +392,7 @@ export class AgColumn<TValue = any>
     }
 
     private createColumnEvent<T extends ColumnEventName>(type: T, source: ColumnEventType): ColumnEvent<T> {
-        return this.gos.addGridCommonParams({
+        return _addGridCommonParams(this.gos, {
             type,
             column: this,
             columns: [this],
@@ -588,7 +589,7 @@ export class AgColumn<TValue = any>
     }
 
     private createBaseColDefParams(rowNode: IRowNode): BaseColDefParams {
-        const params: BaseColDefParams = this.gos.addGridCommonParams({
+        const params: BaseColDefParams = _addGridCommonParams(this.gos, {
             node: rowNode,
             data: rowNode.data,
             colDef: this.colDef,

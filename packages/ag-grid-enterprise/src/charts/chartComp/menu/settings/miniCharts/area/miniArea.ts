@@ -1,19 +1,16 @@
 import type { Path } from 'ag-charts-types/scene';
 
-import type { ChartType } from 'ag-grid-community';
-
 import type { AgChartsExports } from '../../../../../agChartsExports';
 import type { ChartTranslationKey } from '../../../../services/chartTranslationService';
-import type { ThemeTemplateParameters } from '../../miniChartsContainer';
-import { MiniLine } from '../line/miniLine';
+import type { MiniChartSelector, ThemeTemplateParameters } from '../../miniChartsContainer';
+import { miniLineData } from '../line/miniLine';
 import { createAreaPaths } from '../miniChartHelpers';
 import { MiniChartWithAxes } from '../miniChartWithAxes';
 
-export class MiniArea extends MiniChartWithAxes {
-    static chartType: ChartType = 'area';
-    protected readonly areas: Path[];
+export const miniAreaData = miniLineData;
 
-    static readonly data = MiniLine.data;
+export class MiniAreaClass extends MiniChartWithAxes {
+    protected readonly areas: Path[];
 
     constructor(
         container: HTMLElement,
@@ -22,7 +19,7 @@ export class MiniArea extends MiniChartWithAxes {
         strokes: string[],
         _themeTemplateParameters: ThemeTemplateParameters,
         _isCustomTheme: boolean,
-        data: number[][] = MiniArea.data,
+        data: number[][] = miniAreaData,
         tooltipName: ChartTranslationKey = 'groupedAreaTooltip',
         stacked: boolean = false
     ) {
@@ -43,3 +40,8 @@ export class MiniArea extends MiniChartWithAxes {
         });
     }
 }
+
+export const MiniArea: MiniChartSelector = {
+    chartType: 'area',
+    miniChart: MiniAreaClass,
+};

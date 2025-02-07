@@ -19,6 +19,7 @@ import {
     AgPickerField,
     KeyCode,
     RefPlaceholder,
+    _addGridCommonParams,
     _bindCellRendererToHtmlElement,
     _clearElement,
     _createIconNoSpan,
@@ -221,7 +222,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
             userCompDetails = _getEditorRendererDetails<RichSelectParams, IRichCellEditorRendererParams<TValue>>(
                 this.userCompFactory,
                 config,
-                {
+                _addGridCommonParams(this.gos, {
                     value,
                     valueFormatted,
                     getValue: () => this.getValue(),
@@ -233,7 +234,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
                         this.shouldDisplayTooltip = shouldDisplayTooltip;
                         this.tooltipFeature?.setTooltipAndRefresh(value);
                     },
-                }
+                })
             );
         }
 

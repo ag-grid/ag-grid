@@ -162,6 +162,7 @@ import type {
     RowGroupingDisplayType,
     RowHeightParams,
     RowModelType,
+    RowNumbersOptions,
     RowSelectedEvent,
     RowSelectionOptions,
     RowStyle,
@@ -395,9 +396,10 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * @initial
      */
     @Input() public columnMenu: 'legacy' | 'new' | undefined = undefined;
-    /** When `true`, the column menu button will always be shown.
+    /** Only recommended for use if `columnMenu = 'legacy'`.
+     * When `true`, the column menu button will always be shown.
      * When `false`, the column menu button will only show when the mouse is over the column header.
-     * If `columnMenu = 'legacy'`, this will default to `false` instead of `true`.
+     * When using `columnMenu = 'legacy'`, this will default to `false` instead of `true`.
      * @default true
      */
     @Input({ transform: booleanAttribute }) public suppressMenuHide: boolean | undefined = undefined;
@@ -1188,6 +1190,10 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * @default false
      */
     @Input({ transform: booleanAttribute }) public treeData: boolean | undefined = undefined;
+    /** The name of the field to use in a data item to retrieve the array of children nodes of a node when while using treeData=true.
+     * It supports accessing nested fields using the dot notation.
+     */
+    @Input() public treeDataChildrenField: string | undefined = undefined;
     /** Set to `true` to suppress sort indicators and actions from the row group panel.
      * @default false
      */
@@ -1372,6 +1378,10 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * Note that due to the nature of this column, this type is a subset of `ColDef`, which does not support several normal column features such as editing, pivoting and grouping.
      */
     @Input() public selectionColumnDef: SelectionColumnDef | undefined = undefined;
+    /** Configure the Row Numbers Feature.
+     * @default false
+     */
+    @Input() public rowNumbers: boolean | RowNumbersOptions | undefined = undefined;
     /** If `true`, only a single range can be selected.
      * @default false
      * @deprecated v32.2 Use `cellSelection.suppressMultiRanges` instead

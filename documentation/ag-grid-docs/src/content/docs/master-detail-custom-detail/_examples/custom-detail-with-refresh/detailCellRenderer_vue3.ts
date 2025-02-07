@@ -1,6 +1,6 @@
 export default {
     template: `
-        <div>
+        <div role="gridcell">
             <form>
                 <div>
                     <p>

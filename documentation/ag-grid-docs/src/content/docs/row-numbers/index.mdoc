@@ -1,0 +1,71 @@
+---
+title: "Row Numbers"
+enterprise: true
+---
+
+The Row Numbers Feature adds a Column that is always present at the start of the grid where each cell of this column will work as a row header.
+The following example demonstrates the grid with Row Numbers and no additional configuration.
+
+To enable the Row Numbers, set the column property `rowNumbers=true` in the Grid Options .
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    rowNumbers: true
+}
+```
+
+{% gridExampleRunner title="Row Numbers" name="row-numbers-default" /%}
+
+## Cell Selection
+
+When the grid is configured with [Cell Selection](./cell-selection/), clicking a Row Number will select all the currently visible cells in the row.
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    rowNumbers: true,
+
+    cellSelection: true
+}
+```
+{% gridExampleRunner title="Row Numbers with Cell Selection" name="row-numbers-cell-selection" /%}
+
+### Suppressing Integration
+
+By default, clicking a row number selects a cell range including all the cells in the row. To prevent this behaviour use the `suppressCellSelectionIntegration` option.
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    rowNumbers: {
+        suppressCellSelectionIntegration: true
+    },
+    cellSelection: true
+}
+```
+
+{% interfaceDocumentation interfaceName="RowNumbersOptions" config={ "description": "" } names=["suppressCellSelectionIntegration"] /%}
+
+## Value Export
+
+By default, when working with exporters such as [CSV Export](./csv-export/) or [Excel Export](./excel-export/), the value of the Row Numbers column is not exported. 
+This behaviour can be changed by toggling the `exportRowNumbers` of the export params.
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    rowNumbers: true,
+    cellSelection: true,
+    defaultExcelExportParams: {
+        exportRowNumbers: true,
+    },
+}
+```
+
+### ExportParams
+{% interfaceDocumentation interfaceName="ExportParams" config={ "description": "" } names=["exportRowNumbers"] /%}
+
+{% gridExampleRunner title="Row Numbers with Export" name="row-numbers-export" /%}
+
+
+## Interface
+### RowNumbersOptions
+{% interfaceDocumentation interfaceName="RowNumbersOptions" config={ "description": "" } 
+/%}

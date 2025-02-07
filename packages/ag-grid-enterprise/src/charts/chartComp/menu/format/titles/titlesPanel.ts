@@ -32,7 +32,7 @@ export class TitlesPanel extends Component {
             registerGroupComponent,
         } = this.options;
         const axisTitlePanels: TitlePanel[] = [];
-        if (isCartesian(seriesType)) {
+        if (isCartesian(seriesType) && seriesType !== 'pyramid') {
             const createAxisParamsFactory = (axisType: 'xAxis' | 'yAxis') =>
                 this.createManagedBean(
                     new ChartMenuParamsFactory(chartOptionsService.getCartesianAxisThemeOverridesProxy(axisType))

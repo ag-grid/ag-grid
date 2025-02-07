@@ -48,7 +48,7 @@ class DetailCellRenderer {
     getTemplate() {
         var data = this.params.data;
         var template =
-            '<div class="full-width-panel">' +
+            '<div role="gridcell" class="full-width-panel">' +
             '  <div class="full-width-details">' +
             '    <div class="full-width-detail"><b>Name: </b>' +
             data.name +

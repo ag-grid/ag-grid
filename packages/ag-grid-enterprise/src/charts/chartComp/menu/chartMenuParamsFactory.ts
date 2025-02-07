@@ -3,6 +3,7 @@ import type {
     AgFieldParams,
     AgInputNumberFieldParams,
     AgSelectParams,
+    AgToggleButtonParams,
     BeanCollection,
     ListOption,
 } from 'ag-grid-community';
@@ -120,6 +121,30 @@ export class ChartMenuParamsFactory extends BeanStub {
         const value = this.chartOptionsProxy.getValue<boolean>(expression);
         const params: AgCheckboxParams = {
             label: this.chartTranslation.translate(labelKey),
+            value,
+            readOnly: options?.readOnly,
+            passive: options?.passive,
+        };
+        params.onValueChange = (value) => {
+            this.chartOptionsProxy.setValue(expression, typeof value === 'boolean' ? value : undefined);
+        };
+        return params;
+    }
+
+    public getDefaultToggleParams(
+        expression: string,
+        labelKey: ChartTranslationKey,
+        options?: {
+            readOnly?: boolean;
+            passive?: boolean;
+        }
+    ): AgToggleButtonParams {
+        const value = this.chartOptionsProxy.getValue<boolean>(expression);
+        const params: AgCheckboxParams = {
+            label: this.chartTranslation.translate(labelKey),
+            labelAlignment: 'left',
+            labelWidth: 'flex',
+            inputWidth: 'flex',
             value,
             readOnly: options?.readOnly,
             passive: options?.passive,

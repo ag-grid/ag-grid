@@ -9,6 +9,7 @@ import type {
 } from 'ag-grid-community';
 import {
     Component,
+    _addGridCommonParams,
     _clearElement,
     _exists,
     _getActiveDomElement,
@@ -54,7 +55,7 @@ export class AgFiltersToolPanelList extends Component<AgFiltersToolPanelListEven
     public init(params: ToolPanelFiltersCompParams): void {
         this.initialised = true;
 
-        const defaultParams: Partial<ToolPanelFiltersCompParams> = this.gos.addGridCommonParams({
+        const defaultParams: Partial<ToolPanelFiltersCompParams> = _addGridCommonParams(this.gos, {
             suppressExpandAll: false,
             suppressFilterSearch: false,
             suppressSyncLayoutWithGrid: false,

@@ -5,14 +5,12 @@ import { ClientSideRowModelModule } from 'ag-grid-community';
 import { RowGroupingModule, ServerSideRowModelModule } from 'ag-grid-enterprise';
 
 import { TestGridsManager } from '../test-utils';
-import { GROUP_ROW_DATA, fakeFetch } from './data';
+import { GROUP_ROW_DATA, fakeFetch } from './group-data';
 import {
+    GridActions,
     assertSelectedRowElementsById,
     assertSelectedRowNodes,
     assertSelectedRowsByIndex,
-    expandGroupRowByIndex,
-    selectRowsByIndex,
-    toggleCheckboxByIndex,
     waitForEvent,
 } from './utils';
 
@@ -24,8 +22,10 @@ describe('Row Selection Grid API', () => {
         modules: [ClientSideRowModelModule, ServerSideRowModelModule, RowGroupingModule],
     });
 
-    function createGrid(go: GridOptions): GridApi {
-        return gridMgr.createGrid('myGrid', go);
+    function createGrid(gridOptions: GridOptions): [GridApi, GridActions] {
+        const api = gridMgr.createGrid('myGrid', gridOptions);
+        const actions = new GridActions(api, '#myGrid');
+        return [api, actions];
     }
 
     beforeEach(() => {
@@ -57,7 +57,7 @@ describe('Row Selection Grid API', () => {
         describe('CSRM', () => {
             describe('selectAll', () => {
                 test('Prevented from selecting all rows via the API', () => {
-                    const api = createGrid({
+                    const [api] = createGrid({
                         columnDefs,
                         rowData,
                         rowSelection: {
@@ -75,7 +75,7 @@ describe('Row Selection Grid API', () => {
 
             describe('selectAll("currentPage")', () => {
                 test('Cannot select all rows on current page', () => {
-                    const api = createGrid({
+                    const [api] = createGrid({
                         columnDefs,
                         rowData,
                         rowSelection: { mode: 'singleRow' },
@@ -92,7 +92,7 @@ describe('Row Selection Grid API', () => {
 
             describe('selectAll("filtered")', () => {
                 test('Cannot select all filtered rows', () => {
-                    const api = createGrid({
+                    const [api] = createGrid({
                         columnDefs,
                         rowData,
                         rowSelection: { mode: 'singleRow' },
@@ -108,7 +108,7 @@ describe('Row Selection Grid API', () => {
 
             describe('setNodesSelected', () => {
                 test('Select single row', () => {
-                    const api = createGrid({
+                    const [api] = createGrid({
                         columnDefs,
                         rowData,
                         rowSelection: { mode: 'singleRow' },
@@ -122,7 +122,7 @@ describe('Row Selection Grid API', () => {
                 });
 
                 test('Cannot select multiple rows', () => {
-                    const api = createGrid({
+                    const [api] = createGrid({
                         columnDefs,
                         rowData,
                         rowSelection: { mode: 'singleRow' },
@@ -140,7 +140,7 @@ describe('Row Selection Grid API', () => {
         describe('SSRM', () => {
             describe('selectAll', () => {
                 test('Prevented from selecting all rows via the API', async () => {
-                    const api = createGrid({
+                    const [api] = createGrid({
                         columnDefs,
                         rowSelection: {
                             mode: 'singleRow',
@@ -167,7 +167,7 @@ describe('Row Selection Grid API', () => {
 
             describe('setNodesSelected', () => {
                 test('Select single row', async () => {
-                    const api = createGrid({
+                    const [api] = createGrid({
                         columnDefs,
                         rowModelType: 'serverSide',
                         serverSideDatasource: {
@@ -190,7 +190,7 @@ describe('Row Selection Grid API', () => {
                 });
 
                 test('Cannot select multiple rows', async () => {
-                    const api = createGrid({
+                    const [api] = createGrid({
                         columnDefs,
                         rowModelType: 'serverSide',
                         serverSideDatasource: {
@@ -219,7 +219,7 @@ describe('Row Selection Grid API', () => {
         describe('CSRM', () => {
             describe('setNodesSelected', () => {
                 test('Select single row', () => {
-                    const api = createGrid({ columnDefs, rowData, rowSelection: { mode: 'multiRow' } });
+                    const [api] = createGrid({ columnDefs, rowData, rowSelection: { mode: 'multiRow' } });
 
                     const nodes = api.getRenderedNodes();
                     const toSelect = [nodes[3]];
@@ -229,7 +229,7 @@ describe('Row Selection Grid API', () => {
                 });
 
                 test('Can select multiple rows', () => {
-                    const api = createGrid({ columnDefs, rowData, rowSelection: { mode: 'multiRow' } });
+                    const [api] = createGrid({ columnDefs, rowData, rowSelection: { mode: 'multiRow' } });
 
                     const nodes = api.getRenderedNodes();
                     const toSelect = [nodes[5], nodes[4], nodes[2]];
@@ -241,7 +241,7 @@ describe('Row Selection Grid API', () => {
 
             describe('selectAll', () => {
                 test('Can select all rows', () => {
-                    const api = createGrid({ columnDefs, rowData, rowSelection: { mode: 'multiRow' } });
+                    const [api] = createGrid({ columnDefs, rowData, rowSelection: { mode: 'multiRow' } });
 
                     api.selectAll();
 
@@ -256,7 +256,7 @@ describe('Row Selection Grid API', () => {
         describe('SSRM', () => {
             describe('setNodesSelected', () => {
                 test('Select single row', async () => {
-                    const api = createGrid({
+                    const [api] = createGrid({
                         columnDefs,
                         rowModelType: 'serverSide',
                         serverSideDatasource: {
@@ -279,7 +279,7 @@ describe('Row Selection Grid API', () => {
                 });
 
                 test('Can select multiple rows', async () => {
-                    const api = createGrid({
+                    const [api] = createGrid({
                         columnDefs,
                         rowModelType: 'serverSide',
                         serverSideDatasource: {
@@ -307,9 +307,9 @@ describe('Row Selection Grid API', () => {
     describe('Transactions', () => {
         describe('CSRM', () => {
             test('selection state maintained after add transaction', () => {
-                const api = createGrid({ columnDefs, rowData, rowSelection: { mode: 'multiRow' } });
+                const [api, actions] = createGrid({ columnDefs, rowData, rowSelection: { mode: 'multiRow' } });
 
-                selectRowsByIndex([2, 4, 6], false, api);
+                actions.selectRowsByIndex([2, 4, 6], false);
 
                 api.applyTransaction({ add: [{ sport: 'lacrosse' }] });
 
@@ -317,7 +317,7 @@ describe('Row Selection Grid API', () => {
             });
 
             test('selection state maintained after update transaction', () => {
-                const api = createGrid({
+                const [api, actions] = createGrid({
                     columnDefs,
                     rowData,
                     rowSelection: { mode: 'multiRow' },
@@ -326,7 +326,7 @@ describe('Row Selection Grid API', () => {
                     },
                 });
 
-                selectRowsByIndex([2, 4, 6], false, api);
+                actions.selectRowsByIndex([2, 4, 6], false);
 
                 api.applyTransaction({ update: [{ id: '7', sport: 'lacrosse' }] });
 
@@ -334,7 +334,7 @@ describe('Row Selection Grid API', () => {
             });
 
             test('selection state updated after remove transaction', () => {
-                const api = createGrid({
+                const [api, actions] = createGrid({
                     columnDefs,
                     rowData,
                     rowSelection: { mode: 'multiRow' },
@@ -343,7 +343,7 @@ describe('Row Selection Grid API', () => {
                     },
                 });
 
-                selectRowsByIndex([2, 4, 6], false, api);
+                actions.selectRowsByIndex([2, 4, 6], false);
 
                 api.applyTransaction({ remove: rowData.slice(-1) });
 
@@ -368,14 +368,14 @@ describe('Row Selection Grid API', () => {
                     groupDefaultExpanded: -1,
                 };
 
-                const api = createGrid({
+                const [api, actions] = createGrid({
                     ...groupGridOptions,
                     rowSelection: { mode: 'multiRow', groupSelects: 'descendants' },
                 });
 
                 await waitForEvent('firstDataRendered', api);
 
-                toggleCheckboxByIndex(1); // select swimming group
+                actions.toggleCheckboxByIndex(1); // select swimming group
                 const expectedRowIds = [
                     'row-group-country-United States-sport-Swimming',
                     '0',
@@ -420,7 +420,7 @@ describe('Row Selection Grid API', () => {
 
         describe('SSRM', () => {
             test('selection state maintained after add transaction', async () => {
-                const api = createGrid({
+                const [api, actions] = createGrid({
                     columnDefs,
                     rowSelection: { mode: 'multiRow' },
                     rowModelType: 'serverSide',
@@ -436,7 +436,7 @@ describe('Row Selection Grid API', () => {
 
                 await waitForEvent('firstDataRendered', api);
 
-                selectRowsByIndex([2, 4, 6], false, api);
+                actions.selectRowsByIndex([2, 4, 6], false);
 
                 api.applyServerSideTransaction({ add: [{ id: '8', sport: 'lacrosse' }] });
 
@@ -444,7 +444,7 @@ describe('Row Selection Grid API', () => {
             });
 
             test('selection state maintained after update transaction', async () => {
-                const api = createGrid({
+                const [api, actions] = createGrid({
                     columnDefs,
                     rowSelection: { mode: 'multiRow' },
                     rowModelType: 'serverSide',
@@ -460,7 +460,7 @@ describe('Row Selection Grid API', () => {
 
                 await waitForEvent('firstDataRendered', api);
 
-                selectRowsByIndex([2, 4, 6], false, api);
+                actions.selectRowsByIndex([2, 4, 6], false);
 
                 api.applyTransaction({ update: [{ id: '7', sport: 'lacrosse' }] });
 
@@ -468,7 +468,7 @@ describe('Row Selection Grid API', () => {
             });
 
             test('selection state updated after remove transaction', async () => {
-                const api = createGrid({
+                const [api, actions] = createGrid({
                     columnDefs,
                     rowSelection: { mode: 'multiRow' },
                     rowModelType: 'serverSide',
@@ -484,7 +484,7 @@ describe('Row Selection Grid API', () => {
 
                 await waitForEvent('firstDataRendered', api);
 
-                selectRowsByIndex([2, 4, 6], false, api);
+                actions.selectRowsByIndex([2, 4, 6], false);
 
                 api.applyServerSideTransaction({ remove: rowData.slice(-1) });
 
@@ -521,16 +521,16 @@ describe('Row Selection Grid API', () => {
                     },
                 };
 
-                const api = createGrid({
+                const [api, actions] = createGrid({
                     ...groupGridOptions,
                     rowSelection: { mode: 'multiRow', groupSelects: 'descendants' },
                 });
 
                 await waitForEvent('firstDataRendered', api);
 
-                await expandGroupRowByIndex(api, 0);
+                await actions.expandGroupRowByIndex(0);
 
-                toggleCheckboxByIndex(0); // select USA group
+                actions.toggleCheckboxByIndex(0); // select USA group
 
                 const expectedRowIds = [
                     { data: { country: 'United States' } },

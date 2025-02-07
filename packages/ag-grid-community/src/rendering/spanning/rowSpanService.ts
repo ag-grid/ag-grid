@@ -6,7 +6,6 @@ import type { CellPosition } from '../../interfaces/iCellPosition';
 import { _debounce } from '../../utils/function';
 import type { CellSpan } from './rowSpanCache';
 import { RowSpanCache } from './rowSpanCache';
-import { _normalisePinnedValue } from './spannedRowRenderer';
 
 export class RowSpanService extends BeanStub<'spannedCellsUpdated'> implements NamedBean {
     beanName = 'rowSpanSvc' as const;
@@ -81,6 +80,7 @@ export class RowSpanService extends BeanStub<'spannedCellsUpdated'> implements N
     }
 
     public getCellSpanByPosition(position: CellPosition): CellSpan | undefined {
+        const { pinnedRowModel, rowModel } = this.beans;
         const col = position.column;
         const index = position.rowIndex;
 
@@ -89,7 +89,23 @@ export class RowSpanService extends BeanStub<'spannedCellsUpdated'> implements N
             return undefined;
         }
 
-        return cache.getSpanByRowIndex(index, _normalisePinnedValue(position.rowPinned));
+        let node;
+        switch (position.rowPinned) {
+            case 'top':
+                node = pinnedRowModel?.getPinnedTopRow(index);
+                break;
+            case 'bottom':
+                node = pinnedRowModel?.getPinnedBottomRow(index);
+                break;
+            default:
+                node = rowModel.getRow(index);
+        }
+
+        if (!node) {
+            return undefined;
+        }
+
+        return cache.getCellSpan(node);
     }
 
     public getCellStart(position: CellPosition): CellPosition | undefined {

@@ -2,6 +2,7 @@ import { BeanStub } from '../../context/beanStub';
 import type { AgColumn } from '../../entities/agColumn';
 import type { SpanRowsParams } from '../../entities/colDef';
 import type { RowNode } from '../../entities/rowNode';
+import { _addGridCommonParams } from '../../gridOptionsUtils';
 import type { CellPosition } from '../../interfaces/iCellPosition';
 import { _normalisePinnedValue } from './spannedRowRenderer';
 
@@ -46,12 +47,7 @@ export class CellSpan {
             return false;
         }
 
-        for (const node of this.spannedNodes) {
-            if (node.rowIndex === cellPosition.rowIndex) {
-                return true;
-            }
-        }
-        return false;
+        return this.firstNode.rowIndex! <= cellPosition.rowIndex && cellPosition.rowIndex <= this.lastNode.rowIndex!;
     }
 
     /**
@@ -118,7 +114,10 @@ export class RowSpanCache extends BeanStub {
         // check each node, if the currently open cell span should span, add this node to span, otherwise close the span.
         const checkNodeForCache = (node: RowNode) => {
             const doesNodeSupportSpanning =
-                !node.group && !node.detail && (isFullWidthCellFunc ? !isFullWidthCellFunc({ rowNode: node }) : true);
+                !node.isExpandable() &&
+                !node.group &&
+                !node.detail &&
+                (isFullWidthCellFunc ? !isFullWidthCellFunc({ rowNode: node }) : true);
 
             // fw, hidden, and detail rows cannot be spanned as head, body nor tail. Skip.
             if (node.rowIndex == null || !doesNodeSupportSpanning) {
@@ -140,7 +139,7 @@ export class RowSpanCache extends BeanStub {
             // check value is equal, if not, no span
             const value = valueSvc.getValue(column, node);
             if (isCustomCompare) {
-                const params: SpanRowsParams = gos.addGridCommonParams({
+                const params: SpanRowsParams = _addGridCommonParams(gos, {
                     valueA: lastValue,
                     nodeA: lastNode,
                     valueB: value,
@@ -188,17 +187,5 @@ export class RowSpanCache extends BeanStub {
     public getCellSpan(node: RowNode): CellSpan | undefined {
         const map = this[`${_normalisePinnedValue(node.rowPinned)}ValueNodeMap`];
         return map.get(node);
-    }
-
-    public getSpanByRowIndex(rowIndex: number, pinned: 'top' | 'bottom' | 'center'): CellSpan | undefined {
-        const map = this[`${pinned}ValueNodeMap`];
-        for (const span of map.values()) {
-            for (const node of span.spannedNodes) {
-                if (node.rowIndex === rowIndex) {
-                    return span;
-                }
-            }
-        }
-        return undefined;
     }
 }

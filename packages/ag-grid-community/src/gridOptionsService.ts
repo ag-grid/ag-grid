@@ -29,7 +29,7 @@ type GetKeys<T, U> = {
  * Get all the GridOption properties that strictly contain the provided type.
  * Does not include `any` properties.
  */
-export type KeysOfType<U> = Exclude<GetKeys<GridOptions, U>, AnyGridOptions>;
+type KeysOfType<U> = Exclude<GetKeys<GridOptions, U>, AnyGridOptions>;
 
 type BooleanProps = Exclude<KeysOfType<boolean>, AnyGridOptions>;
 type NoArgFuncs = KeysOfType<() => any>;
@@ -247,20 +247,13 @@ export class GridOptionsService extends BeanStub implements NamedBean {
         return this.domDataKey;
     }
 
-    public getGridCommonParams<TData = any, TContext = any>(): AgGridCommon<TData, TContext> {
-        return {
-            api: this.api,
-            context: this.gridOptionsContext,
-        };
-    }
-
+    /** Prefer _addGridCommonParams from gridOptionsUtils for bundle size savings */
     public addGridCommonParams<T extends AgGridCommon<TData, TContext>, TData = any, TContext = any>(
         params: WithoutGridCommon<T>
     ): T {
-        const updatedParams = params as T;
-        updatedParams.api = this.api;
-        updatedParams.context = this.gridOptionsContext;
-        return updatedParams;
+        (params as T).api = this.api;
+        (params as T).context = this.gridOptionsContext;
+        return params as T;
     }
 
     public assertModuleRegistered<

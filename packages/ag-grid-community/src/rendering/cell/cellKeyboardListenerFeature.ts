@@ -31,8 +31,8 @@ export class CellKeyboardListenerFeature extends BeanStub {
         this.beans = beans;
     }
 
-    public setComp(eGui: HTMLElement): void {
-        this.eGui = eGui;
+    public init(): void {
+        this.eGui = this.cellCtrl.eGui;
     }
 
     public onKeyDown(event: KeyboardEvent): void {

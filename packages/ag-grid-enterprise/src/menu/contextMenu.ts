@@ -16,6 +16,7 @@ import type {
 import {
     BeanStub,
     Component,
+    _addGridCommonParams,
     _anchorElementToMouseMoveEvent,
     _areCellsEqual,
     _createIconNoSpan,
@@ -103,7 +104,7 @@ export class ContextMenuService extends BeanStub implements NamedBean, IContextM
 
         if (typeof columnContextMenuItems === 'function') {
             return columnContextMenuItems(
-                gos.addGridCommonParams({
+                _addGridCommonParams(gos, {
                     column,
                     node,
                     value,

@@ -10,6 +10,7 @@ export class DetailCellRenderer implements ICellRendererComp {
         this.eParentEl = params.eParentOfValue;
         this.eParentEl.addEventListener('focus', this.onParentElFocus);
         this.eGui = document.createElement('div');
+        this.eGui.setAttribute('role', 'gridcell');
         this.eGui.innerHTML =
             '<form>' +
             '  <div>' +

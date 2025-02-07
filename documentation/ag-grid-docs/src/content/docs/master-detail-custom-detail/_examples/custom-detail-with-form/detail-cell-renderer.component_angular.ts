@@ -5,7 +5,7 @@ import type { ICellRendererAngularComp } from 'ag-grid-angular';
 @Component({
     standalone: true,
     template: `
-        <div class="cell-renderer-outer">
+        <div role="gridcell" class="cell-renderer-outer">
             <form>
                 <div>
                     <div>
