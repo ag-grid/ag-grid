@@ -60,7 +60,7 @@ function getDescription({
     let description: string | undefined = '';
     let isObject: boolean = false;
     let propDescription: string | undefined =
-        definition.description || (gridOpProp && (gridOpProp.meta as ICallSignature['meta'])?.comment) || undefined;
+        definition.description || (gridOpProp && (gridOpProp.meta as ICallSignature['meta'])?.all) || undefined;
 
     if (propDescription) {
         propDescription = formatJsDocString(propDescription);
