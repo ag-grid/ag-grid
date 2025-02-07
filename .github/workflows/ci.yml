@@ -102,7 +102,7 @@ jobs:
             count=$(yarn -s nx show projects --affected --base ${{ steps.setup.outputs.base }} -t test | wc -l)
           fi
           
-          matrix=$(node ./scripts/test/calculate-shards.js eval --ratio 1 --zero ${count} --max 2)
+          matrix=$(node ./scripts/test/calculate-shards.js eval --ratio 1 --zero ${count} --max 1)
           echo "test_matrix=${matrix}" >> $GITHUB_OUTPUT
           echo "test_count=${count}" >> $GITHUB_OUTPUT
           echo "Test matrix determined to be: ${matrix}"
