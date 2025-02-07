@@ -1,4 +1,6 @@
 import type { BeanCollection } from '../context/context';
+import type { Column } from '../interfaces/iColumn';
+import type { IRowNode } from '../interfaces/iRowNode';
 import type { SearchMatch } from './searchService';
 
 export function searchNext(beans: BeanCollection): void {
@@ -19,4 +21,16 @@ export function searchGoTo(beans: BeanCollection, match: number): void {
 
 export function searchGetActiveMatch(beans: BeanCollection): SearchMatch | undefined {
     return beans.search?.activeMatch;
+}
+
+export function searchGetNumMatches(beans: BeanCollection, params: { node: IRowNode; column: Column }): number {
+    const { node, column } = params;
+    return beans.search?.getNumMatches(node, column) ?? 0;
+}
+
+export function searchGetParts(
+    beans: BeanCollection,
+    params: { value: string; node: IRowNode; column: Column }
+): { value: string; match?: boolean; activeMatch?: boolean }[] {
+    return beans.search?.getParts(params) ?? [];
 }

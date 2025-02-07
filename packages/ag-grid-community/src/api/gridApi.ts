@@ -744,6 +744,12 @@ export interface _SearchApi {
     searchGetTotalMatches(): number;
     searchGoTo(match: number): void;
     searchGetActiveMatch(): SearchMatch | undefined;
+    searchGetNumMatches(params: { node: IRowNode; column: Column }): number;
+    searchGetParts(params: {
+        value: string;
+        node: IRowNode;
+        column: Column;
+    }): { value: string; match?: boolean; activeMatch?: boolean }[];
 }
 
 export interface _StateGridApi {

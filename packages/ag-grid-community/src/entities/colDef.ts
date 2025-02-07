@@ -399,7 +399,7 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
      */
     suppressFloatingFilterButton?: boolean;
 
-    getSearchText?: (params: GetSearchTextParams<TData, TValue>) => string;
+    getSearchText?: (params: GetSearchTextParams<TData, TValue>) => string | null;
 
     // *** Column Headers *** //
     /**
@@ -830,31 +830,12 @@ interface GetTextParams<TData = any, TContext = any, TValue = any> extends AgGri
     colDef: ColDef<TData, TValue>;
 }
 
-export interface GetQuickFilterTextParams<TData = any, TValue = any> extends GetTextParams<TData, any, TValue> {
-    /** Value for the cell. */
-    value: TValue | null | undefined;
-    /** Row node for the given row */
-    node: IRowNode<TData>;
-    /** Row data associated with the node. */
-    data: TData;
-    /** Column for this callback */
-    column: Column<TValue>;
-    /** ColDef provided for this column */
-    colDef: ColDef<TData, TValue>;
-}
+export interface GetQuickFilterTextParams<TData = any, TValue = any> extends GetTextParams<TData, any, TValue> {}
 
 export interface GetSearchTextParams<TData = any, TContext = any, TValue = any>
     extends GetTextParams<TData, TContext, TValue> {
-    /** Value for the cell. */
-    value: TValue | null | undefined;
-    /** Row node for the given row */
-    node: IRowNode<TData>;
-    /** Row data associated with the node. */
-    data: TData;
-    /** Column for this callback */
-    column: Column<TValue>;
-    /** ColDef provided for this column */
-    colDef: ColDef<TData, TValue>;
+    /** Get formatted value for the cell (or `null` if no `valueFormatter`) */
+    getValueFormatted: () => string | null;
 }
 
 export type ColumnMenuTab = 'filterMenuTab' | 'generalMenuTab' | 'columnsMenuTab';

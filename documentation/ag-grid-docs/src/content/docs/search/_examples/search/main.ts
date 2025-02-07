@@ -1,4 +1,4 @@
-import type { GridApi, GridOptions, SearchChangedEvent } from 'ag-grid-community';
+import type { GetSearchTextParams, GridApi, GridOptions, SearchChangedEvent } from 'ag-grid-community';
 import {
     ClientSideRowModelModule,
     ModuleRegistry,
@@ -8,6 +8,8 @@ import {
     createGrid,
 } from 'ag-grid-community';
 import { RowGroupingModule, RowGroupingPanelModule } from 'ag-grid-enterprise';
+
+import { SearchRenderer } from './searchRenderer_typescript';
 
 ModuleRegistry.registerModules([
     SearchModule,
@@ -20,8 +22,6 @@ ModuleRegistry.registerModules([
 
 let gridApi: GridApi;
 
-let searchText: string;
-
 const gridOptions: GridOptions = {
     pinnedTopRowData: [{ athlete: 'Michael Phelps' }],
     pinnedBottomRowData: [{ athlete: 'Michael Phelps' }],
@@ -29,6 +29,17 @@ const gridOptions: GridOptions = {
         { field: 'athlete' },
         { field: 'country' },
         { field: 'sport' },
+        {
+            field: 'year',
+            cellRenderer: SearchRenderer,
+            getSearchText: (params: GetSearchTextParams) => {
+                const cellValue = params.getValueFormatted() ?? params.value?.toString();
+                if (!cellValue?.length) {
+                    return null;
+                }
+                return `Year is ${cellValue}`;
+            },
+        },
         { field: 'age', minWidth: 100 },
         { field: 'gold', minWidth: 100 },
         { field: 'silver', minWidth: 100 },

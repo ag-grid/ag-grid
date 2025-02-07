@@ -247,6 +247,8 @@ export const gridApiFunctionsMap: Record<keyof GridApi, ValidationModuleName> = 
         searchGoTo: 0,
         searchNext: 0,
         searchPrevious: 0,
+        searchGetNumMatches: 0,
+        searchGetParts: 0,
     }),
     ...mod<_PaginationGridApi>('Pagination', {
         paginationIsLastPageFound: 0,

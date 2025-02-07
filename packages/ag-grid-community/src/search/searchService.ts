@@ -72,8 +72,17 @@ export class SearchService extends BeanStub implements NamedBean {
     }
 
     public isMatch(node: IRowNode, column: Column): boolean {
-        const matches = this.getMatches(node.rowPinned ?? null);
-        return !!matches.get(node as RowNode)?.some(([colToCheck]) => colToCheck === column);
+        return !!this.getMatches(node.rowPinned)
+            .get(node as RowNode)
+            ?.some(([colToCheck]) => colToCheck === column);
+    }
+
+    public getNumMatches(node: IRowNode, column: Column): number {
+        return (
+            this.getMatches(node.rowPinned)
+                .get(node as RowNode)
+                ?.find(([colToCheck]) => colToCheck === column)?.[1] ?? 0
+        );
     }
 
     public getActiveMatchNum(node: IRowNode, column: Column): number {
@@ -81,6 +90,47 @@ export class SearchService extends BeanStub implements NamedBean {
         return activeMatch != null && activeMatch.node === node && activeMatch.column === column
             ? activeMatch.numInMatch
             : 0;
+    }
+
+    public getParts(params: {
+        value: string;
+        node: IRowNode;
+        column: Column;
+    }): { value: string; match?: boolean; activeMatch?: boolean }[] {
+        const { value, node, column } = params;
+        const searchText = this.searchText;
+        if (_missing(searchText)) {
+            return [{ value }];
+        }
+        const valueToSearch = _escapeString(value, true)?.toLocaleUpperCase() ?? '';
+        const activeMatchNum = this.getActiveMatchNum(node, column);
+        let lastIndex = 0;
+        let currentMatchNum = 0;
+        const searchTextLength = searchText.length;
+        const parts: { value: string; match?: boolean; activeMatch?: boolean }[] = [];
+        while (true) {
+            const index = valueToSearch.indexOf(searchText, lastIndex === 0 ? 0 : lastIndex + 1);
+            if (index != -1) {
+                currentMatchNum++;
+                if (index > lastIndex) {
+                    parts.push({ value: value.slice(lastIndex, index) });
+                }
+                const endIndex = index + searchTextLength;
+                parts.push({
+                    value: value.slice(index, endIndex),
+                    match: true,
+                    activeMatch: currentMatchNum === activeMatchNum,
+                });
+                lastIndex = endIndex;
+            } else {
+                if (lastIndex < value.length) {
+                    parts.push({
+                        value: value.slice(lastIndex),
+                    });
+                }
+                return parts;
+            }
+        }
     }
 
     private updateSearch(maintainActive?: boolean): void {
@@ -134,7 +184,7 @@ export class SearchService extends BeanStub implements NamedBean {
         const callback = (node: RowNode) => {
             for (const column of allCols) {
                 const value = valueSvc.getValueForDisplay(column, node);
-                let valueToSearch: string;
+                let valueToSearch: string | null;
                 const colDef = column.colDef;
                 const getSearchText = colDef.getSearchText;
                 if (getSearchText) {
@@ -145,6 +195,7 @@ export class SearchService extends BeanStub implements NamedBean {
                             data: node.data,
                             column,
                             colDef,
+                            getValueFormatted: () => valueSvc.formatValue(column, node, value),
                         })
                     );
                 } else {
