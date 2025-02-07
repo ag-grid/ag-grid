@@ -1,5 +1,6 @@
 import type { Framework, Library } from '@ag-grid-types';
-import { agLibraryVersion } from '@constants';
+import { parseVersion } from '@ag-website-shared/utils/parseVersion';
+import { agChartsVersion, agGridVersion } from '@constants';
 
 import { getDependencies } from './getDependencies';
 import { CHARTS_LICENSE_TEMPLATES, GRID_LICENSE_TEMPLATES } from './templates';
@@ -21,7 +22,9 @@ export const getDependenciesSnippet = ({
 
     const depObject: Record<string, string> = {};
     dependencies.forEach((dependency) => {
-        depObject[dependency] = agLibraryVersion;
+        const version = dependency.includes('ag-charts') ? agChartsVersion : agGridVersion;
+        const { major, minor, patchNum } = parseVersion(version);
+        depObject[dependency] = `^${major}.${minor}.${patchNum}`;
     });
 
     return dependencies.length > 0 ? `dependencies: ${JSON.stringify(depObject, null, 4)}` : undefined;
