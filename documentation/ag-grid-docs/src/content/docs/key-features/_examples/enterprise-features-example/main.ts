@@ -67,7 +67,7 @@ const gridOptions: GridOptions = {
         resizable: true,
     },
     groupDisplayType: 'singleColumn',
-    enableRangeSelection: true,
+    cellSelection: true,
     enableCharts: true,
     onFirstDataRendered: (params) => {
         params.api.createRangeChart({
@@ -88,17 +88,7 @@ const gridOptions: GridOptions = {
         });
     },
     sideBar: {
-        toolPanels: [
-            'columns',
-            'filters',
-            {
-                id: 'charts',
-                labelDefault: 'Charts',
-                labelKey: 'charts',
-                iconKey: 'chart',
-                toolPanel: 'agChartsToolPanel',
-            },
-        ],
+        toolPanels: ['columns', 'filters'],
         defaultToolPanel: 'columns',
     },
 };
