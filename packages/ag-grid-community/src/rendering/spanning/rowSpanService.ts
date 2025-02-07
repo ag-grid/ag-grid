@@ -57,12 +57,57 @@ export class RowSpanService extends BeanStub<'spannedCellsUpdated'> implements N
         this.spanningColumns.delete(column);
     }
 
+    private pinnedTimeout: number | null = null;
+    private modelTimeout: number | null = null;
+    // called by rowNode when data changes, as this could be a hot path it's debounced
+    // it uses timeouts instead of debounce so that it can be cancelled by `modelUpdated`
+    // which is expected to run immediately (to exec before the rowRenderer)
+    public onRowDataUpdated(node: RowNode) {
+        const { spannedRowRenderer } = this.beans;
+        if (node.rowPinned) {
+            if (this.pinnedTimeout != null) {
+                return;
+            }
+            this.pinnedTimeout = setTimeout(() => {
+                this.pinnedTimeout = null;
+                this.buildPinnedCaches();
+
+                // normally updated by the rowRenderer, but as this change is
+                // caused by data, need to manually update
+                spannedRowRenderer?.createCtrls('top');
+                spannedRowRenderer?.createCtrls('bottom');
+            }, 0);
+            return;
+        }
+
+        if (this.modelTimeout != null) {
+            return;
+        }
+
+        this.modelTimeout = setTimeout(() => {
+            this.modelTimeout = null;
+            this.buildModelCaches();
+
+            // normally updated by the rowRenderer, but as this change is
+            // caused by data, need to manually update
+            spannedRowRenderer?.createCtrls('center');
+        }, 0);
+    }
+
     private buildModelCaches(): void {
+        if (this.modelTimeout != null) {
+            clearTimeout(this.modelTimeout);
+        }
+
         this.spanningColumns.forEach((cache) => cache.buildCache('center'));
         this.debounceModelEvent();
     }
 
     private buildPinnedCaches(): void {
+        if (this.pinnedTimeout != null) {
+            clearTimeout(this.pinnedTimeout);
+        }
+
         this.spanningColumns.forEach((cache) => {
             cache.buildCache('top');
             cache.buildCache('bottom');

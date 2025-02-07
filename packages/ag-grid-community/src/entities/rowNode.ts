@@ -316,6 +316,7 @@ export class RowNode<TData = any>
         const event: DataChangedEvent<TData> = this.createDataChangedEvent(data, oldData, update);
 
         this.__localEventService?.dispatchEvent(event);
+        this.beans.rowSpanSvc?.onRowDataUpdated(this);
     }
 
     // when we are doing master / detail, the detail node is lazy created, but then kept around.
@@ -472,7 +473,7 @@ export class RowNode<TData = any>
         // the cell knows about the change given it's in charge of the editing.
         // this method is for the client to call, so the cell listens for the change
         // event, and also flashes the cell when the change occurs.
-        const { colModel, valueSvc, gos, selectionSvc } = this.beans;
+        const { colModel, valueSvc, gos, selectionSvc, rowSpanSvc } = this.beans;
 
         // if in pivot mode, grid columns wont include primary columns
         const column = typeof colKey !== 'string' ? colKey : colModel.getCol(colKey) ?? colModel.getColDefCol(colKey);
@@ -509,6 +510,7 @@ export class RowNode<TData = any>
 
         this.dispatchCellChangedEvent(column, newValue, oldValue);
         selectionSvc?.updateRowSelectable(this);
+        rowSpanSvc?.onRowDataUpdated(this);
 
         return valueChanged;
     }
