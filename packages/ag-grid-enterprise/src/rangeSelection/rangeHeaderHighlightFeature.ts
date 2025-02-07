@@ -1,4 +1,3 @@
-import 'ag-grid-community';
 import { BeanStub } from 'ag-grid-community';
 import type { AgColumn, AgColumnGroup, IHeaderCellComp } from 'ag-grid-community';
 

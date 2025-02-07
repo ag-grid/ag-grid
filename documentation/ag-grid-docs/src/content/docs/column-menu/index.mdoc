@@ -25,10 +25,6 @@ How the column menu is launched from the header can be configured via the follow
 
 {% apiDocumentation source="column-properties/properties.json" section="header" names=["suppressHeaderMenuButton", "suppressHeaderFilterButton", "suppressHeaderContextMenu"] /%}
 
-The column menu button can be hidden until moused over by the grid option `suppressMenuHide`.
-
-{% apiDocumentation source="grid-options/properties.json" section="accessories" names=["suppressMenuHide"] /%}
-
 The following example demonstrates different ways of customising the column menu:
 
 * The **Athlete** column has a filter and the menu button suppressed, but still available via right-click.
@@ -224,3 +220,7 @@ The following example demonstrates the default tabbed menu:
 * The **Sport** column hides the menu by suppressing all the menuTabs that can be shown: `[]`.
 
 {% gridExampleRunner title="Column Menu" name="column-menu-legacy" /%}
+
+With the legacy menu, the column menu button is hidden until moused over. This can be changed to always show the button using the grid option `suppressMenuHide`.
+
+{% apiDocumentation source="grid-options/properties.json" section="accessories" names=["suppressMenuHide"] /%}

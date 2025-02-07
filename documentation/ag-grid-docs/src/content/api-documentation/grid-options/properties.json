@@ -1807,13 +1807,6 @@
                 "url": "./row-styles/#highlighting-rows-and-columns"
             }
         },
-        "suppressRowTransform": {
-            "more": {
-                "name": "Configuring Row Spanning",
-                "url": "./row-spanning/#enabling-row-spanning"
-            },
-            "description": "Uses CSS `top` instead of CSS `transform` for positioning rows. Default: `false`"
-        },
         "columnHoverHighlight": {
             "more": {
                 "name": "Highlighting Rows and Columns",

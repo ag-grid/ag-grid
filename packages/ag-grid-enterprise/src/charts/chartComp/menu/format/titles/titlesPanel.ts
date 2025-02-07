@@ -4,7 +4,7 @@ import { Component, RefPlaceholder } from 'ag-grid-community';
 import type { AgGroupComponent, AgGroupComponentParams } from '../../../../../widgets/agGroupComponent';
 import { AgGroupComponentSelector } from '../../../../../widgets/agGroupComponent';
 import type { ChartTranslationService } from '../../../services/chartTranslationService';
-import { isCartesian, isPolar } from '../../../utils/seriesTypeMapper';
+import { isCartesian, isFunnel, isPolar } from '../../../utils/seriesTypeMapper';
 import { ChartMenuParamsFactory } from '../../chartMenuParamsFactory';
 import type { FormatPanelOptions } from '../formatPanel';
 import { ChartTitlePanel } from './chartTitlePanel';
@@ -32,7 +32,7 @@ export class TitlesPanel extends Component {
             registerGroupComponent,
         } = this.options;
         const axisTitlePanels: TitlePanel[] = [];
-        if (isCartesian(seriesType)) {
+        if (isCartesian(seriesType) && !isFunnel(seriesType)) {
             const createAxisParamsFactory = (axisType: 'xAxis' | 'yAxis') =>
                 this.createManagedBean(
                     new ChartMenuParamsFactory(chartOptionsService.getCartesianAxisThemeOverridesProxy(axisType))
