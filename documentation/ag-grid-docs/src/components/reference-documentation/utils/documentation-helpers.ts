@@ -232,8 +232,8 @@ export function formatJsDocString(docString: string) {
     const formatted = docString
         .replace('/**', '')
         .replace('*/', '')
-        .replace(paramReg, '<br> `$1` $2 \n')
-        .replace(returnsReg, '<br> <strong>Returns: </strong> $2 \n')
+        .replace(paramReg, '<span class="param"> `$1` $2 </span>\n')
+        .replace(returnsReg, '<strong>Returns: </strong> $2 \n')
         .replace(optionReg, '<li style="margin-left:1rem"> $1 </li>')
         .replace(newLineReg, ' ');
 
