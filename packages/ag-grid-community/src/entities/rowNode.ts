@@ -305,18 +305,19 @@ export class RowNode<TData = any>
     }
 
     private setDataCommon(data: TData, update: boolean): void {
+        const { valueCache, selectionSvc, rowSpanSvc } = this.beans;
         const oldData = this.data;
 
         this.data = data;
-        this.beans.valueCache?.onDataChanged();
+        valueCache?.onDataChanged();
         this.updateDataOnDetailNode();
-        this.beans.selectionSvc?.updateRowSelectable(this);
+        selectionSvc?.updateRowSelectable(this);
         this.resetQuickFilterAggregateText();
 
         const event: DataChangedEvent<TData> = this.createDataChangedEvent(data, oldData, update);
 
         this.__localEventService?.dispatchEvent(event);
-        this.beans.rowSpanSvc?.onRowDataUpdated(this);
+        rowSpanSvc?.onRowDataUpdated(this);
     }
 
     // when we are doing master / detail, the detail node is lazy created, but then kept around.
