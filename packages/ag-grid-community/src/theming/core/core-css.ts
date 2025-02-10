@@ -25,7 +25,7 @@ export { coreCSS } from './core.css-GENERATED';
 /**
  * All possible theme param types - the actual params available will be a subset of this type depending on the parts in use by the theme.
  */
-export interface CoreParams {
+export type CoreParams = {
     /**
      * The 'brand color' for the grid, used wherever a non-neutral color is required. Selections, focus outlines and checkboxes use the accent color by default.
      */
@@ -780,7 +780,7 @@ export interface CoreParams {
      * Font weight for values in the status bar component
      */
     statusBarValueFontWeight: FontWeightValue;
-}
+};
 
 export const defaultLightColorSchemeParams = {
     backgroundColor: '#fff',

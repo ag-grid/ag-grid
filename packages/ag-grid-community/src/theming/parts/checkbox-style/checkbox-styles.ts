@@ -4,7 +4,7 @@ import type { ColorValue, ImageValue, LengthValue } from '../../theme-types';
 import { accentColor, backgroundColor, foregroundBackgroundMix } from '../../theme-utils';
 import { checkboxStyleDefaultCSS } from './checkbox-style-default.css-GENERATED';
 
-export interface CheckboxStyleParams {
+export type CheckboxStyleParams = {
     /**
      * Border radius for checkboxes
      */
@@ -69,7 +69,7 @@ export interface CheckboxStyleParams {
      * An image defining the shape of the mark on checked radio buttons
      */
     radioCheckedShapeImage: ImageValue;
-}
+};
 
 const makeCheckboxStyleDefaultTreeShakeable = () =>
     createPart<CheckboxStyleParams>({

@@ -6,7 +6,7 @@ import { inputStyleBaseCSS } from './input-style-base.css-GENERATED';
 import { inputStyleBorderedCSS } from './input-style-bordered.css-GENERATED';
 import { inputStyleUnderlinedCSS } from './input-style-underlined.css-GENERATED';
 
-export interface InputStyleParams {
+export type InputStyleParams = {
     /**
      * Background color for text inputs
      */
@@ -126,7 +126,7 @@ export interface InputStyleParams {
      * Background color for dropdown menus attached to buttons (e.g. select fields)
      */
     pickerListBackgroundColor: ColorValue;
-}
+};
 
 const baseParams: InputStyleParams = {
     inputBackgroundColor: 'transparent',

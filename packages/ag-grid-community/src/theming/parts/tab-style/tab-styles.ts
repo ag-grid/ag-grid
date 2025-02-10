@@ -5,7 +5,7 @@ import { accentColor, backgroundColor, foregroundMix } from '../../theme-utils';
 import { tabStyleBaseCSS } from './tab-style-base.css-GENERATED';
 import { tabStyleRolodexCSS } from './tab-style-rolodex.css-GENERATED';
 
-export interface TabStyleParams {
+export type TabStyleParams = {
     /**
      * Background color of tabs
      */
@@ -100,7 +100,7 @@ export interface TabStyleParams {
      * Padding at the top of the container for tabs
      */
     tabTopPadding: LengthValue;
-}
+};
 
 const baseParams: TabStyleParams = {
     tabBarBackgroundColor: 'transparent',

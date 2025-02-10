@@ -4,7 +4,7 @@ import type { BorderValue, ColorValue, FontWeightValue, LengthValue } from '../.
 import { accentColor, backgroundColor, foregroundBackgroundMix, foregroundColor } from '../../theme-utils';
 import { buttonStyleBaseCSS } from './button-style-base.css-GENERATED';
 
-export interface ButtonStyleParams {
+export type ButtonStyleParams = {
     /**
      * Text color of standard action buttons (e.g. "Reset" and "Apply")
      */
@@ -84,7 +84,7 @@ export interface ButtonStyleParams {
      * Border around standard action buttons (e.g. "Reset" and "Apply") when disabled.
      */
     buttonDisabledBorder: BorderValue;
-}
+};
 
 const baseParams: ButtonStyleParams = {
     buttonTextColor: 'inherit',
