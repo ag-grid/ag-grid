@@ -51,7 +51,7 @@
 }
 
 .videoOuter {
-    --scroll-indicator-width: #{$spacing-size-20};
+    --scroll-indicator-width: min(10vw, #{$spacing-size-20});
 
     position: relative;
 
