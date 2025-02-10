@@ -7,9 +7,15 @@
     @media screen and (max-width: $breakpoint-community-medium) {
         flex-direction: column;
     }
-}
 
-// Filter
+    // Invert images for Rust logo in darkmode
+    #{$selector-darkmode} & {
+        img[alt*='Rust'],
+        img[alt*='rust'] {
+            filter: invert(1);
+        }
+    }
+}
 
 .filterPanel {
     border-radius: var(--radius-2xl);
@@ -79,12 +85,6 @@
             margin-right: $spacing-size-2;
             padding: 4px;
             object-fit: contain;
-
-            &.invert {
-                #{$selector-darkmode} & {
-                    filter: invert(1);
-                }
-            }
         }
 
         &[active='true'] {
