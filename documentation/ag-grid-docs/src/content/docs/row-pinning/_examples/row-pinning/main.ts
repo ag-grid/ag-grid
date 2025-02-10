@@ -77,21 +77,6 @@ const gridOptions: GridOptions<IOlympicData> = {
     ],
 };
 
-function createData(count: number, prefix: string): any[] {
-    const result: any[] = [];
-    for (let i = 0; i < count; i++) {
-        result.push({
-            athlete: prefix + ' Athlete ' + i,
-            age: prefix + ' Age ' + i,
-            country: prefix + ' Country ' + i,
-            year: prefix + ' Year ' + i,
-            date: prefix + ' Date ' + i,
-            sport: prefix + ' Sport ' + i,
-        });
-    }
-    return result;
-}
-
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
     const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
