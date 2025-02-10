@@ -5,8 +5,13 @@
     justify-content: center;
 }
 
-.figmaCommunityButton :global(svg.icon) {
-    --icon-size: #{$spacing-size-5};
+.figmaCommunityButton {
+    white-space: normal;
+    text-align: center;
 
-    margin-left: $spacing-size-1;
+    :global(svg.icon) {
+        --icon-size: #{$spacing-size-5};
+
+        margin-left: $spacing-size-1;
+    }
 }
