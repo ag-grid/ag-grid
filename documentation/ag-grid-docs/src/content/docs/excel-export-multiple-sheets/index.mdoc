@@ -19,10 +19,13 @@ Calling `getSheetDataForExcel` starts a **Multiple Sheet** export process, that 
 
 ## Using Selected Rows
 
-In this example, we use the `onlySelected=true` property to segment the grid data into multiple sheets, each containing 100 data rows.
+In this example, we use the `onlySelected=true` property to segment the grid data into multiple sheets, each containing 100 data rows. Specifically:
+
+1. We manually select 100 rows at a time using `setNodesSelected`. 
+2. We then use `getSheetDataForExcel` with the `onlySelected` option to generate sheet data for these selected nodes only.
+3. We then deselect rows again to avoid affecting the UI.
 
 Note the following:
-
 * The header is exported on each page, so each page will contain 101 records (including the header).
 * Because each export did not have a specified `sheetName`, they will be named `ag-grid`, `ag-grid_1`, `ag-grid_2` and so on.
 
