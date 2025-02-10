@@ -33,7 +33,6 @@ let gridApi: GridApi<IOlympicData>;
 
 const gridOptions: GridOptions<IOlympicData> = {
     columnDefs: columnDefs,
-    rowData: null,
     animateRows: false,
     groupDisplayType: 'groupRows',
     onRowGroupOpened: onRowGroupOpened,

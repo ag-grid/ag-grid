@@ -49,7 +49,6 @@ const gridOptions: GridOptions<IOlympicData> = {
         suppressHeaderFilterButton: true,
     },
     columnDefs: columnDefs,
-    rowData: null,
     getMainMenuItems: (params: GetMainMenuItemsParams) => {
         return [
             ...params.defaultItems.filter((item) => item !== 'columnFilter'),

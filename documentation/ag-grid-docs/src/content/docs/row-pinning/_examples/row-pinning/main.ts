@@ -60,7 +60,6 @@ const gridOptions: GridOptions<IOlympicData> = {
         flex: 1,
     },
     columnDefs: columnDefs,
-    rowData: null,
     getRowStyle: (params: RowClassParams): RowStyle | undefined => {
         if (params.node.rowPinned) {
             return { fontWeight: 'bold' };

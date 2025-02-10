@@ -81,7 +81,6 @@ const gridOptions: GridOptions<IOlympicData> = {
     },
     // debug: true,
     columnDefs: columnDefs,
-    rowData: null,
     onSortChanged: onSortChanged,
     onColumnResized: onColumnResized,
     onColumnVisible: onColumnVisible,

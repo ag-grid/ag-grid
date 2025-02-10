@@ -55,7 +55,6 @@ const gridOptionsTop: GridOptions = {
         minWidth: 120,
     },
     columnDefs: columnDefs,
-    rowData: null,
     alignedGrids: () => [bottomApi],
     autoSizeStrategy: {
         type: 'fitGridWidth',
@@ -70,7 +69,6 @@ const gridOptionsBottom: GridOptions = {
         minWidth: 120,
     },
     columnDefs: columnDefs,
-    rowData: null,
     alignedGrids: () => [topApi],
 };
 

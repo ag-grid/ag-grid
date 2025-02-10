@@ -78,7 +78,6 @@ const gridOptions: GridOptions<IOlympicData> = {
     },
     // debug: true,
     columnDefs: columnDefs,
-    rowData: null,
     defaultExcelExportParams: {
         allColumns: true,
     },

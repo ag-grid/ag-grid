@@ -54,7 +54,6 @@ let gridApi: GridApi<IOlympicData>;
 
 const gridOptions: GridOptions<IOlympicData> = {
     theme: 'legacy',
-    rowData: null,
     columnDefs: columnDefs,
     defaultColDef: {
         editable: true,

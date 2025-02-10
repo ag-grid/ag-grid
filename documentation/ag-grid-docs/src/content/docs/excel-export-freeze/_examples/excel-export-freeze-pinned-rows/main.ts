@@ -77,7 +77,6 @@ let gridApi: GridApi<IOlympicData>;
 const gridOptions: GridOptions<IOlympicData> = {
     // debug: true,
     columnDefs: columnDefs,
-    rowData: null,
     pinnedTopRowData: [
         {
             athlete: 'TOP (athlete)',
