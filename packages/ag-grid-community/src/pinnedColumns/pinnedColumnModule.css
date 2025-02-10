@@ -8,29 +8,10 @@
  * visually on the left
  */
 
-.ag-pinned-left-floating-top {
-    display: inline-block;
-    overflow: hidden;
-    position: relative;
-    min-width: 0;
-}
-
-.ag-pinned-right-floating-top {
-    display: inline-block;
-    overflow: hidden;
-    position: relative;
-    min-width: 0;
-}
-
-.ag-pinned-left-floating-bottom {
-    display: inline-block;
-    overflow: hidden;
-    position: relative;
-    min-width: 0;
-}
-
+.ag-pinned-left-floating-top,
+.ag-pinned-right-floating-top,
+.ag-pinned-left-floating-bottom,
 .ag-pinned-right-floating-bottom {
-    display: inline-block;
     overflow: hidden;
     position: relative;
     min-width: 0;

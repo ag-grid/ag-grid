@@ -1074,28 +1074,7 @@
     //  * Floating Top and Bottom
     //  ****************************
     // */
-    .ag-floating-top {
-        overflow: hidden;
-        white-space: nowrap;
-        width: 100%;
-        position: relative;
-        display: flex;
-    }
-
-    .ag-pinned-left-floating-top {
-        display: inline-block;
-        overflow: hidden;
-        position: relative;
-        min-width: 0px;
-    }
-
-    .ag-pinned-right-floating-top {
-        display: inline-block;
-        overflow: hidden;
-        position: relative;
-        min-width: 0px;
-    }
-
+    .ag-floating-top,
     .ag-floating-bottom {
         overflow: hidden;
         white-space: nowrap;
@@ -1104,15 +1083,10 @@
         display: flex;
     }
 
-    .ag-pinned-left-floating-bottom {
-        display: inline-block;
-        overflow: hidden;
-        position: relative;
-        min-width: 0px;
-    }
-
+    .ag-pinned-left-floating-top,
+    .ag-pinned-right-floating-top,
+    .ag-pinned-left-floating-bottom,
     .ag-pinned-right-floating-bottom {
-        display: inline-block;
         overflow: hidden;
         position: relative;
         min-width: 0px;
