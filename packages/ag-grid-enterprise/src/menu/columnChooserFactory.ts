@@ -1,4 +1,4 @@
-import type { AgColumn, ColumnChooserParams, NamedBean } from 'ag-grid-community';
+import type { AgColumn, ColumnChooserParams, HeaderPosition, NamedBean } from 'ag-grid-community';
 import { BeanStub, _addGridCommonParams, _findNextFocusableElement } from 'ag-grid-community';
 
 import { AgPrimaryCols } from '../columnToolPanel/agPrimaryCols';
@@ -9,6 +9,7 @@ interface ShowColumnChooserParams {
     column?: AgColumn | null;
     chooserParams?: ColumnChooserParams;
     eventSource?: HTMLElement;
+    headerPosition?: HeaderPosition | null;
 }
 
 export class ColumnChooserFactory extends BeanStub implements NamedBean {
@@ -61,7 +62,12 @@ export class ColumnChooserFactory extends BeanStub implements NamedBean {
         return columnSelectPanel;
     }
 
-    public showColumnChooser({ column, chooserParams, eventSource }: ShowColumnChooserParams): void {
+    public showColumnChooser({
+        column,
+        chooserParams,
+        eventSource,
+        headerPosition: providedHeaderPosition,
+    }: ShowColumnChooserParams): void {
         this.hideActiveColumnChooser();
 
         const columnSelectPanel = this.createColumnSelectPanel(this, column, true, chooserParams);
@@ -69,7 +75,7 @@ export class ColumnChooserFactory extends BeanStub implements NamedBean {
         const beans = this.beans;
         const { visibleCols, focusSvc, menuUtils } = beans;
         const columnIndex = visibleCols.allCols.indexOf(column as AgColumn);
-        const headerPosition = column ? focusSvc.focusedHeader : null;
+        const headerPosition = column ? focusSvc.focusedHeader ?? providedHeaderPosition ?? null : null;
 
         this.activeColumnChooserDialog = this.createBean(
             new AgDialog({
