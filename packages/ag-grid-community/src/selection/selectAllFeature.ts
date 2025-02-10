@@ -58,6 +58,8 @@ export class SelectAllFeature extends BeanStub {
             modelUpdated: this.onModelChanged.bind(this),
         });
 
+        this.addManagedPropertyListener('rowSelection', () => this.showOrHideSelectAll());
+
         this.addManagedListeners(cbSelectAll, { fieldValueChanged: this.onCbSelectAll.bind(this) });
         cbSelectAll.getInputElement().setAttribute('tabindex', '-1');
         this.refreshSelectAllLabel();
