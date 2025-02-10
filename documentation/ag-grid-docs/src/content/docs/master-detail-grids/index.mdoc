@@ -72,7 +72,7 @@ The Detail Grid Info objects are accessed via the Master Grid's API via the foll
 {% apiDocumentation source="grid-api/api.json" section="masterDetail" names=["getDetailGridInfo"] /%}
 
 ```{% frameworkTransform=true %}
-// lookup a specific DetailGridInfo by id, and then call stopEditing() on it
+// lookup a specific DetailGridInfo by id, and then call flashCells() on it
 const detailGridInfo = api.getDetailGridInfo('detail_someId');
 detailGridInfo.api.flashCells();
 ```
@@ -82,7 +82,7 @@ The grid generates IDs for detail grids by prefixing the parent row's ID with `d
 {% apiDocumentation source="grid-api/api.json" section="masterDetail" names=["forEachDetailGridInfo"] /%}
 
 ```{% frameworkTransform=true %}
-// iterate over all DetailGridInfos, and call stopEditing() on each one
+// iterate over all DetailGridInfos, and call flashCells() on each one
 api.forEachDetailGridInfo(detailGridInfo => {
     detailGridInfo.api.flashCells();
 });
