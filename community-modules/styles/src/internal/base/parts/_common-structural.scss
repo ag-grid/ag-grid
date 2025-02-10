@@ -301,7 +301,11 @@
     // for when auto height is used but there is no row data
     .ag-header-container,
     .ag-floating-top-container,
+    .ag-pinned-left-floating-top,
+    .ag-pinned-right-floating-top,
     .ag-floating-bottom-container,
+    .ag-pinned-left-floating-bottom,
+    .ag-pinned-right-floating-bottom,
     .ag-sticky-top-container,
     .ag-sticky-bottom-container {
         height: 100%;
