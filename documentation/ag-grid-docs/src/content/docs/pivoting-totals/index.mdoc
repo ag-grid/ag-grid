@@ -20,14 +20,9 @@ of these total columns relative to the pivot columns.
 
 {% gridExampleRunner title="Pivot Row Totals" name="row-totals" /%}
 
-The example above demonstrates the following configuration for adding an additional `Gold` row total at the start of the grid:
+The example above demonstrates the following configuration for adding additional pivot row totals at the start of the grid:
 ```{% frameworkTransform=true %}
 const gridOptions = {
-    columnDefs: [
-        // ...other column defs
-        { field: 'gold', aggFunc: 'sum' },
-    ],
-    pivotMode: true,
     pivotRowTotals: 'before',
 }
 ```
