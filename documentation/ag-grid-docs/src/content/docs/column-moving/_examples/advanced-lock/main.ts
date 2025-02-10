@@ -24,13 +24,6 @@ ModuleRegistry.registerModules([
 const columnDefs: ColDef[] = [
     {
         lockPosition: 'left',
-        valueGetter: 'node.rowIndex',
-        cellClass: 'locked-col',
-        width: 60,
-        suppressNavigable: true,
-    },
-    {
-        lockPosition: 'left',
         cellRenderer: ControlsCellRenderer,
         cellClass: 'locked-col',
         width: 120,
