@@ -27,19 +27,24 @@ export class CustomHeader implements IHeaderAngularComp {
 
     agInit(params: IHeaderParams): void {
         this.update(params);
-        console.log('CustomHeader.init() -> ' + params.column.getId());
+        console.log('CustomHeader.agInit() -> ' + params.column.getId());
     }
 
     refresh(params: IHeaderParams): boolean {
-        this.update(params);
-        console.log('CustomHeader.refresh() -> ' + params.column.getId() + ' returning ' + true);
-        return true;
+        const refreshed = this.update(params);
+        console.log('CustomHeader.refresh() -> ' + params.column.getId() + ' returning ' + refreshed);
+        return refreshed;
     }
 
-    private update(params: IHeaderParams): void {
+    private update(params: IHeaderParams): boolean {
         this.params = params;
+
+        const res = this.enableFilterButton() === params.enableFilterButton;
+
         this.enableFilterButton.set(params.enableFilterButton);
         this.displayName.set(params.displayName);
+
+        return res;
     }
 
     onMenuClicked() {
