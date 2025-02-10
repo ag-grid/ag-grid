@@ -25,7 +25,7 @@ const myCheckboxStyle = createPart({
     },
     // Add some CSS to this part.
     // If your application is bundled with Vite you can put this in a separate
-    // file and import it with `import checkboxCSS from "./checkbox.css?inline"`
+    // file and import it with `import checkboxCSS "./checkbox.css?inline"`
     css: `
         .ag-checkbox-input-wrapper {
             border-radius: 4px;

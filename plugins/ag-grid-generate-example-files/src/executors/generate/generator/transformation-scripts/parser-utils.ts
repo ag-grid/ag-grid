@@ -6,16 +6,16 @@ import type { BindingImport, ExampleConfig, InternalFramework, ParsedBindings } 
 export function readAsJsFile(srcFile, internalFramework: InternalFramework) {
     let tsFile = srcFile
         // Remove imports like import 'ag-grid-community/styles/ag-grid.css';
-        .replace(/^\s*import ['"].*['"](;?)\n/g, '');
+        .replace(/import ['"].*['"](;?)\n/g, '');
 
     // Remove imports that are not required in javascript
     if (internalFramework !== 'vanilla') {
         // We leave in the relative imports as they are required for the example to work
         // e.g import { colors } from './colors'; for non Vanilla examples
-        tsFile = tsFile.replace(/^\s*import {((.|\n)*?)} from(?!(\s['"]\.\/)).*\n/g, '');
+        tsFile = tsFile.replace(/import {((.|\n)*?)} from(?!(\s['"]\.\/)).*\n/g, '');
     } else {
-        tsFile = tsFile.replace(/^\s*import ((.|\n)*?)from.*\n/g, '');
-        tsFile = tsFile.replace(/^\s*export /g, '');
+        tsFile = tsFile.replace(/import ((.|\n)*?)from.*\n/g, '');
+        tsFile = tsFile.replace(/export /g, '');
     }
 
     const jsFile = transform(tsFile, { transforms: ['typescript'], disableESTransforms: true }).code;
