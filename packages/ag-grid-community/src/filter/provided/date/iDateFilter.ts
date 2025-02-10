@@ -30,7 +30,10 @@ export type DateFilterParams<TData = any> = IDateFilterParams & IFilterParams<TD
  */
 
 export interface IDateFilterParams extends IScalarFilterParams {
-    /** Required if the data for the column are not native JS `Date` objects. */
+    /**
+     * Required if the data for the column are not native JS `Date` objects.
+     * If cell values can contain invalid dates, should also implement `isValidDate`.
+     */
     comparator?: IDateComparatorFunc;
     /**
      * Defines whether the grid uses the browser date picker or a plain text box.
