@@ -62,8 +62,9 @@ export class DateFilter extends ScalarFilter<DateFilterModel, Date, DateCompWrap
         return this.dateFilterParams.comparator ?? defaultDateComparator;
     }
 
-    protected override isValid(value: Date): boolean {
-        return value instanceof Date && !isNaN(value.getTime());
+    protected override isValid(value: any): boolean {
+        const isValidDate = this.dateFilterParams.isValidDate;
+        return !isValidDate || isValidDate(value);
     }
 
     protected override setParams(params: DateFilterParams): void {

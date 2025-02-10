@@ -66,6 +66,12 @@ export interface IDateFilterParams extends IScalarFilterParams {
      * @default YYYY-MM-DD
      */
     inRangeFloatingFilterDateFormat?: string;
+    /**
+     * If providing a `comparator` and cell values can contain invalid dates,
+     * this can be implemented to allow invalid date values to be filtered out
+     * (as the comparator only allows for greater than, less than and equals).
+     */
+    isValidDate?: (value: any) => boolean;
 }
 
 export interface IDateComparatorFunc {

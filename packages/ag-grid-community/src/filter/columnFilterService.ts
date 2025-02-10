@@ -963,6 +963,10 @@ export class ColumnFilterService extends BeanStub implements NamedBean {
                             return pathKey ?? translate('blanks', '(Blanks)');
                         },
                     });
+                } else {
+                    mergeFilterParams({
+                        isValidDate,
+                    });
                 }
                 break;
             }
@@ -1001,6 +1005,7 @@ export class ColumnFilterService extends BeanStub implements NamedBean {
                             }
                             return 0;
                         },
+                        isValidDate: (value: any) => typeof value === 'string' && isValidDate(convertToDate(value)),
                     });
                 }
                 break;
@@ -1066,6 +1071,10 @@ function setModelOnFilterWrapper(filterPromise: AgPromise<IFilterComp> | null, n
 
 function isGroupFilter(column: AgColumn): boolean {
     return column.getColDef().filter === 'agGroupColumnFilter';
+}
+
+function isValidDate(value: any): boolean {
+    return value instanceof Date && !isNaN(value.getTime());
 }
 
 export interface FilterWrapper {
