@@ -36,11 +36,7 @@ The `successCallback` can be called immediately in a synchronous fashion (typica
 
 The Master Grid in turn will call `api.setGridOption('rowData', data)` on the Detail Grid with the data provided.
 
-All the previous examples on Master Detail provided the result synchronously and as such another specific example is not given here.
-
-The following snippet illustrates this using a simple `setTimeout()` function to delay supplying data to the detail row after a fixed timeout.
-
-Below shows an example using `setTimeout()` to simulate lazying loading of data in the detail.
+Below shows an example using `setTimeout()` to delay supplying data to the detail row to simulate asynchronous loading of data in the detail.
 
 {% gridExampleRunner title="Lazy Load Detail Rows" name="lazy-load-rows"  exampleHeight=550 /%}
 
