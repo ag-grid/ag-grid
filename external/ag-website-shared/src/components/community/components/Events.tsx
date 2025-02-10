@@ -120,18 +120,20 @@ const Events = ({ images, events }: { images: Image[]; events: Event[] }) => {
             <div className={styles.scrollingGalleryContainer}>
                 <ScrollingGallery images={images} />
             </div>
-            {upcomingEvents && (
-                <>
-                    <p className={styles.eventsSeparatorTitle}>Upcoming Events</p>
-                    <div className={styles.eventsContainer}>
-                        {upcomingEvents
-                            .sort((a, b) => new Date(a.startDate).getTime() - new Date(b.startDate).getTime())
-                            .map((event, index) => (
-                                <EventItem key={index} event={event} />
-                            ))}
-                    </div>
-                </>
-            )}
+            <p className={styles.eventsSeparatorTitle}>Upcoming Events</p>
+            <div className={styles.eventsContainer}>
+                {upcomingEvents?.length > 0 ? (
+                    upcomingEvents
+                        .sort((a, b) => new Date(a.startDate).getTime() - new Date(b.startDate).getTime())
+                        .map((event, index) => <EventItem key={index} event={event} />)
+                ) : (
+                    <p>
+                        We're currently planning our {new Date().getFullYear()} events. Check back soon for more
+                        information.
+                    </p>
+                )}
+            </div>
+
             <p className={styles.eventsSeparatorTitle}>Past Events</p>
             <div className={styles.eventsContainer}>
                 {pastEvents.map((event, index) => (
