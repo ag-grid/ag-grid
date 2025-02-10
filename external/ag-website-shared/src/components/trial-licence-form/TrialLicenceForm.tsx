@@ -273,7 +273,7 @@ export const TrialLicenceForm: FunctionComponent = () => {
                         <Icon name="tick" svgClasses={styles.statusIconSuccess} />
                         <span>
                             Thank you. Please check your inbox to validate your email and receive your{' '}
-                            <a href={urlWithBaseUrl('/license-pricing/')}>Enterprise Bundle</a> trial license.
+                            <b>Enterprise Bundle</b> trial license.
                         </span>
                     </p>
                 )}
