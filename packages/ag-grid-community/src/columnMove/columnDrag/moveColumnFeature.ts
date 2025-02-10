@@ -55,24 +55,18 @@ export class MoveColumnFeature extends BeanStub implements DropListener {
         const columns = lastDraggingEvent?.dragItem.columns ?? [];
 
         for (const col of columns) {
+            const lockPinned = col.getColDef().lockPinned;
             const colPinned = col.getPinned();
-            // when the column is lockPinned, only moves within pinned section
-            if (col.getColDef().lockPinned) {
-                if (colPinned == pinned) {
-                    return 'move';
+
+            if (pinned) {
+                if (!lockPinned || colPinned == pinned) {
+                    return 'pinned';
                 }
                 continue;
             }
-            // if the column pinned state is the same as the container's, or
-            // when `unpinning` a column, set the icon to move
-            if (colPinned === pinned || !pinned) {
-                return 'move';
-            }
 
-            // moving an unpinned column to a pinned container
-            // set the icon to pinned
-            if (!colPinned && pinned) {
-                return 'pinned';
+            if (!lockPinned || !pinned) {
+                return 'move';
             }
         }
 
