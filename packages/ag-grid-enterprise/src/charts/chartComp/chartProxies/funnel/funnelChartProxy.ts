@@ -46,6 +46,9 @@ export class FunnelChartProxy extends ChartProxy<AgStandaloneChartOptions, Funne
         };
 
         return {
+            zoom: {
+                enabled: false,
+            },
             axes: {
                 category: config,
                 number: config,
