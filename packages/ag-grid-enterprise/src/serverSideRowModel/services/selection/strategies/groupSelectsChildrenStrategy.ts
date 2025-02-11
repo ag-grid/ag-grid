@@ -45,13 +45,14 @@ export class GroupSelectsChildrenStrategy extends BeanStub implements ISelection
     }
 
     public getSelectedState(): IServerSideGroupSelectionState {
-        const treeData = this.gos.get('treeData');
+        const { gos, rowGroupColsSvc, selectedState } = this;
+        const treeData = gos.get('treeData');
         const recursivelySerializeState = (state: SelectionState, level: number, nodeId?: string) => {
             const normalisedState: IServerSideGroupSelectionState = {
                 nodeId,
             };
 
-            if (treeData || (this.rowGroupColsSvc && level <= this.rowGroupColsSvc?.columns.length)) {
+            if (treeData || (rowGroupColsSvc && level <= rowGroupColsSvc.columns.length)) {
                 normalisedState.selectAllChildren = state.selectAllChildren;
             }
 
@@ -67,7 +68,7 @@ export class GroupSelectsChildrenStrategy extends BeanStub implements ISelection
 
             return normalisedState;
         };
-        return recursivelySerializeState(this.selectedState, 0);
+        return recursivelySerializeState(selectedState, 0);
     }
 
     public setSelectedState(state: IServerSideSelectionState | IServerSideGroupSelectionState): void {

@@ -604,13 +604,7 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
     }
 
     public getSelectionState(): string[] | null {
-        const selectedIds: string[] = [];
-        this.selectedNodes.forEach((node) => {
-            if (node?.id) {
-                selectedIds.push(node.id);
-            }
-        });
-        return selectedIds.length ? selectedIds : null;
+        return this.isEmpty() ? null : Array.from(this.selectedNodes.keys());
     }
 
     public setSelectionState(
