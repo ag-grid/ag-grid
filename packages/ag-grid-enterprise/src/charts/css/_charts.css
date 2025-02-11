@@ -33,14 +33,6 @@
     --ag-icon-size: 20px;
 }
 
-:where(.ag-chart) .ag-chart-menu {
-    display: none;
-}
-
-:where(.ag-chart-menu-hidden:hover) .ag-chart-menu {
-    display: block;
-}
-
 .ag-chart-docked-container {
     position: relative;
     min-width: var(--ag-chart-menu-panel-width);
