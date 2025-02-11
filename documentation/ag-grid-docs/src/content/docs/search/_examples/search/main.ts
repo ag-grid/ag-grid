@@ -2,6 +2,7 @@ import type { GetSearchTextParams, GridApi, GridOptions, SearchChangedEvent } fr
 import {
     ClientSideRowModelModule,
     ModuleRegistry,
+    PaginationModule,
     PinnedRowModule,
     SearchModule,
     ValidationModule,
@@ -17,6 +18,7 @@ ModuleRegistry.registerModules([
     RowGroupingPanelModule,
     PinnedRowModule,
     ClientSideRowModelModule,
+    PaginationModule,
     ValidationModule /* Development Only */,
 ]);
 
@@ -73,6 +75,7 @@ const gridOptions: GridOptions = {
         });
     },
     rowGroupPanelShow: 'always',
+    pagination: true,
 };
 
 function search() {

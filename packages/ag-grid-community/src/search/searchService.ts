@@ -109,7 +109,7 @@ export class SearchService extends BeanStub implements NamedBean {
         const searchTextLength = searchText.length;
         const parts: { value: string; match?: boolean; activeMatch?: boolean }[] = [];
         while (true) {
-            const index = valueToSearch.indexOf(searchText, lastIndex === 0 ? 0 : lastIndex + 1);
+            const index = valueToSearch.indexOf(searchText, lastIndex);
             if (index != -1) {
                 currentMatchNum++;
                 if (index > lastIndex) {
@@ -455,8 +455,6 @@ export class SearchService extends BeanStub implements NamedBean {
         activeMatch: SearchMatch | undefined,
         oldActiveMatch: SearchMatch | undefined
     ): void {
-        const beans = this.beans;
-
         if (activeMatch || oldActiveMatch) {
             const nodes = new Set<RowNode>();
             const columns = new Set<Column>();
@@ -477,8 +475,12 @@ export class SearchService extends BeanStub implements NamedBean {
                 node: { rowPinned, rowIndex },
                 column,
             } = activeMatch;
-            const scrollFeature = beans.ctrlsSvc.getScrollFeature();
+            const { ctrlsSvc, pagination } = this.beans;
+            const scrollFeature = ctrlsSvc.getScrollFeature();
             if (rowPinned == null && rowIndex != null) {
+                if (pagination && !pagination.isRowInPage(rowIndex)) {
+                    pagination.goToPageWithIndex(rowIndex);
+                }
                 scrollFeature.ensureIndexVisible(rowIndex);
             }
             scrollFeature.ensureColumnVisible(column);

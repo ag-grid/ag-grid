@@ -1372,7 +1372,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
         if (!this.rowModel.isRowPresent(rowNode)) {
             return false;
         }
-        return this.beans.pagination?.isRowPresent(rowNode) ?? true;
+        return this.beans.pagination?.isRowInPage(rowNode.rowIndex!) ?? true;
     }
 
     private createRowCon(rowNode: RowNode, animate: boolean, afterScroll: boolean): RowCtrl {
