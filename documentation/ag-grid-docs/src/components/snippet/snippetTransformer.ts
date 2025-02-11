@@ -303,6 +303,7 @@ const isUseMemoProp = (propName) =>
         'rowSelection',
         'sideBar',
         'statusBar',
+        'autoSizeStrategy',
     ].includes(propName);
 
 const isUseCallbackProp = (propName) => ['getDataPath'].includes(propName);
