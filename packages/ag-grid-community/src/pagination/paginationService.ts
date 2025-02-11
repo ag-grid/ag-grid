@@ -89,25 +89,17 @@ export class PaginationService extends BeanStub implements NamedBean {
         return nodeIsInPage;
     }
 
-    private getPageForIndex(index: number): number {
-        return Math.floor(index / this.pageSize);
-    }
-
-    public goToPageWithIndex(index: any): void {
-        if (!this.active) {
-            return;
-        }
-
-        const pageNumber = this.getPageForIndex(index);
-        this.goToPage(pageNumber);
-    }
-
     public isRowInPage(row: RowPosition): boolean {
         if (!this.active) {
             return true;
         }
-        const rowPage = this.getPageForIndex(row.rowIndex);
-        return rowPage === this.currentPage;
+
+        if (row.rowPinned) {
+            return true;
+        }
+
+        const { rowIndex } = row;
+        return rowIndex >= this.topDisplayedRowIndex && rowIndex <= this.bottomDisplayedRowIndex;
     }
 
     public getCurrentPage(): number {
