@@ -29,7 +29,7 @@ export class SpannedRowRenderer extends BeanStub<'spannedRowsUpdated'> implement
     /**
      * When displayed rows or cols change, the spanned cell ctrls need to update
      */
-    private createCtrls(ctrlsKey: 'top' | 'bottom' | 'center'): void {
+    public createCtrls(ctrlsKey: 'top' | 'bottom' | 'center'): void {
         const { rowSpanSvc } = this.beans;
 
         const ctrlsName = `${ctrlsKey}Ctrls` as const;
