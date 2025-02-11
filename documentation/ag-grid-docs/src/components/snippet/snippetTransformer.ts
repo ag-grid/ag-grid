@@ -208,6 +208,10 @@ class ReactTransformer extends SnippetTransformer {
             return `const ${propName} = useMemo(() => { \n\treturn ${value};\n}, []);`;
         }
 
+        if (isUseCallbackProp(propName)) {
+            return `const ${propName} = useCallback(${value}, []);`;
+        }
+
         return `const ${getName(property)} = ${decreaseIndent(value)};`;
     }
 
@@ -300,6 +304,8 @@ const isUseMemoProp = (propName) =>
         'sideBar',
         'statusBar',
     ].includes(propName);
+
+const isUseCallbackProp = (propName) => ['getDataPath'].includes(propName);
 
 // removes a tab spacing from the beginning of each line after first
 const decreaseIndent = (codeBlock, times = 1) => {
