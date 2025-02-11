@@ -20,8 +20,8 @@ export class AgNameValue extends Component {
         this.eLabel.innerHTML = localeTextFunc(key, defaultValue);
     }
 
-    public setValue(value: any): void {
-        this.eValue.innerHTML = value;
+    public setValue(value: string): void {
+        this.eValue.textContent = value;
     }
 }
 export const AgNameValueSelector: ComponentSelector = {
