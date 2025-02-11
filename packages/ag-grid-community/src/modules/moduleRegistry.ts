@@ -15,6 +15,7 @@ const globalModulesMap: ModuleStore = {};
 const gridModulesMap: { [gridId: string]: ModuleStore } = {};
 let currentModuleVersion: string;
 let areGridScopedModules = false;
+let isUmd = false;
 
 function isValidModuleVersion(module: Module): boolean {
     const [moduleMajor, moduleMinor] = module.version.split('.') || [];
@@ -107,6 +108,15 @@ export function _getAllRegisteredModules(): Set<Module> {
 export function _getGridRegisteredModules(gridId: string, rowModel: RowModelType): Module[] {
     const gridModules = gridModulesMap[gridId] ?? {};
     return [...Object.values(gridModules['all'] ?? {}), ...Object.values(gridModules[rowModel] ?? {})];
+}
+
+export function _isUmd(): boolean {
+    return isUmd;
+}
+
+/** Internal use to provide clear error messages for UMD users. */
+export function _setUmd(): void {
+    isUmd = true;
 }
 
 export class ModuleRegistry {

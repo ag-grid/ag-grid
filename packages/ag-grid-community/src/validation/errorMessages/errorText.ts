@@ -1,6 +1,11 @@
 import type { UserComponentName } from '../../context/context';
 import type { Column } from '../../interfaces/iColumn';
-import type { EnterpriseModuleName, ModuleName, ValidationModuleName } from '../../interfaces/iModule';
+import type {
+    CommunityModuleName,
+    EnterpriseModuleName,
+    ModuleName,
+    ValidationModuleName,
+} from '../../interfaces/iModule';
 import type { RowModelType } from '../../interfaces/iRowModel';
 import type { RowNodeEventType } from '../../interfaces/iRowNode';
 import { _fuzzySuggestions } from '../../utils/fuzzyMatch';
@@ -31,6 +36,25 @@ function convertToUserModuleName(moduleName: ModuleName, inModuleRegistration = 
     return `${moduleName}Module`;
 }
 
+function umdMissingModule(
+    reasonOrId: string | keyof MissingModuleErrors,
+    moduleNames: (CommunityModuleName | EnterpriseModuleName)[]
+) {
+    const chartModules = moduleNames.filter((m) => m === 'IntegratedCharts' || m === 'Sparklines');
+
+    let message = '';
+
+    const agChartsDynamic = (globalThis as any)?.agCharts;
+
+    if (!agChartsDynamic && chartModules.length > 0) {
+        message = `Unable to use ${reasonOrId} as either the ag-charts-community or ag-charts-enterprise script needs to be included alongside ag-grid-enterprise.\n`;
+    } else if (moduleNames.some((m) => ENTERPRISE_MODULE_NAMES[m as EnterpriseModuleName])) {
+        message =
+            message + `Unable to use ${reasonOrId} as that requires the ag-grid-enterprise script to be included.\n`;
+    }
+    return message;
+}
+
 const missingModule = ({
     reasonOrId,
     moduleName,
@@ -38,6 +62,7 @@ const missingModule = ({
     gridId,
     rowModelType,
     additionalText,
+    isUmd,
 }: {
     reasonOrId: string | keyof MissingModuleErrors;
     moduleName: ValidationModuleName | ValidationModuleName[];
@@ -45,9 +70,14 @@ const missingModule = ({
     gridId: string;
     rowModelType: RowModelType;
     additionalText?: string;
+    isUmd?: boolean;
 }) => {
     const resolvedModuleNames = resolveModuleNames(moduleName, rowModelType);
     const reason = typeof reasonOrId === 'string' ? reasonOrId : MISSING_MODULE_REASONS[reasonOrId];
+
+    if (isUmd) {
+        return umdMissingModule(reason, resolvedModuleNames);
+    }
 
     const chartModules = resolvedModuleNames.filter((m) => m === 'IntegratedCharts' || m === 'Sparklines');
     const chartImportRequired =

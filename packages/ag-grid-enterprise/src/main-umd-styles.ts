@@ -16,10 +16,11 @@ import '@ag-grid-community/styles/agGridClassicFont.css';
 import '@ag-grid-community/styles/agGridMaterialFont.css';
 import '@ag-grid-community/styles/agGridQuartzFont.css';
 
-import { ModuleRegistry } from 'ag-grid-community';
+import { ModuleRegistry, _setUmd } from 'ag-grid-community';
 
 import { AllEnterpriseModule } from './main';
 
+_setUmd();
 ModuleRegistry.registerModules([AllEnterpriseModule]);
 
 export * from 'ag-grid-community';

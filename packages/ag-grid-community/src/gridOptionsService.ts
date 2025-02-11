@@ -13,7 +13,7 @@ import type { AgGridCommon, WithoutGridCommon } from './interfaces/iCommon';
 import type { ModuleName, ValidationModuleName } from './interfaces/iModule';
 import type { RowModelType } from './interfaces/iRowModel';
 import { LocalEventService } from './localEventService';
-import { _areModulesGridScoped, _isModuleRegistered } from './modules/moduleRegistry';
+import { _areModulesGridScoped, _isModuleRegistered, _isUmd } from './modules/moduleRegistry';
 import type { AnyGridOptions } from './propertyKeys';
 import { _logIfDebug } from './utils/function';
 import { _exists } from './utils/generic';
@@ -274,11 +274,17 @@ export class GridOptionsService extends BeanStub implements NamedBean {
         return registered;
     }
 
-    public getModuleErrorParams(): { gridScoped: boolean; gridId: string; rowModelType: RowModelType } {
+    public getModuleErrorParams(): {
+        gridScoped: boolean;
+        gridId: string;
+        rowModelType: RowModelType;
+        isUmd: boolean;
+    } {
         return {
             gridId: this.gridId,
             gridScoped: _areModulesGridScoped(),
             rowModelType: this.get('rowModelType'),
+            isUmd: _isUmd(),
         };
     }
 
