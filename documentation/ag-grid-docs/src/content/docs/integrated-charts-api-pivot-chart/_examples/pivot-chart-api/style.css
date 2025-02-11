@@ -1,11 +1,15 @@
+#container {
+    display: grid;
+    grid-template-rows: 40% 60%;
+    grid-template-columns: 100%;
+    width: 100%;
+    height: 100%;
+}
+
 #myGrid {
-    flex: 1 1 auto;
-    overflow: hidden;
-    height: 40%;
+    grid-row: 1;
 }
 
 #myChart {
-    flex: 1 1 auto;
-    overflow: hidden;
-    height: 60%;
+    grid-row: 2;
 }
