@@ -6,7 +6,9 @@ enterprise: true
 The Row Numbers Feature adds a Column that is always present at the start of the grid where each cell of this column will work as a row header.
 The following example demonstrates the grid with Row Numbers and no additional configuration.
 
-To enable the Row Numbers, set the column property `rowNumbers=true` in the Grid Options .
+To enable Row Numbers, set the grid option `rowNumbers = true`.
+
+{% apiDocumentation source="grid-options/properties.json" section="miscellaneous" names=["rowNumbers"] /%}
 
 ```{% frameworkTransform=true %}
 const gridOptions = {
@@ -64,8 +66,9 @@ const gridOptions = {
 
 {% gridExampleRunner title="Row Numbers with Export" name="row-numbers-export" /%}
 
+## Customising Row Numbers
 
-## Interface
-### RowNumbersOptions
+Row Numbers can be customised by providing a `RowNumbersOptions` object to the `rowNumbers` grid option:
+
 {% interfaceDocumentation interfaceName="RowNumbersOptions" config={ "description": "" } 
 /%}
