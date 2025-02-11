@@ -208,7 +208,7 @@ class ReactTransformer extends SnippetTransformer {
             return `const ${propName} = useMemo(() => { \n\treturn ${value};\n}, []);`;
         }
 
-        if (isUseCallbackProp(propName)) {
+        if (isUseCallbackProp(propName) && !isJsLiteralValue(value)) {
             return `const ${propName} = useCallback(${value}, []);`;
         }
 
