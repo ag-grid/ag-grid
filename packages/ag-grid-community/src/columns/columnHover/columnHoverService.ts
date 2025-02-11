@@ -13,6 +13,14 @@ export class ColumnHoverService extends BeanStub implements NamedBean {
 
     private selectedColumns: AgColumn[] | null;
 
+    public postConstruct() {
+        this.addManagedPropertyListener('columnHoverHighlight', ({ currentValue }) => {
+            if (!currentValue) {
+                this.updateState([]);
+            }
+        });
+    }
+
     public setMouseOver(columns: AgColumn[]): void {
         this.updateState(columns);
     }
