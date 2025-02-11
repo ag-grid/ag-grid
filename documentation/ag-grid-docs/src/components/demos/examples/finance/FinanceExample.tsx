@@ -307,7 +307,7 @@ export const FinanceExample: React.FC<Props> = ({
     );
 
     const themeClass = `${gridTheme}${isDarkMode ? '-dark' : ''}`;
-    const chartThemes = isDarkMode ? ['ag-default-dark'] : ['ag-default'];
+    const chartThemes = useMemo(() => (isDarkMode ? ['ag-default-dark'] : ['ag-default']), [isDarkMode]);
 
     return (
         <div
