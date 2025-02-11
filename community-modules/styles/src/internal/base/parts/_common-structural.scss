@@ -241,6 +241,9 @@
     .ag-spanning-container {
         position: absolute;
         top: 0;
+
+        /* z-index: 1 appears over editing rows but under dragging rows */
+        z-index: 1;
     }
 
     // the sticky containers need at least one 1px height
