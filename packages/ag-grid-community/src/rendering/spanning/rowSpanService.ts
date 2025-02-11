@@ -14,14 +14,7 @@ export class RowSpanService extends BeanStub<'spannedCellsUpdated'> implements N
 
     public postConstruct(): void {
         this.addManagedEventListeners({
-            modelUpdated: this.buildModelCaches.bind(this),
-            paginationChanged: ({ newPage, newPageSize }) => {
-                // recalculate the spans if the page or page size has changed.
-                if (!newPage && !newPageSize) {
-                    return;
-                }
-                this.buildModelCaches();
-            },
+            paginationChanged: this.buildModelCaches.bind(this),
             pinnedRowDataChanged: this.buildPinnedCaches.bind(this),
         });
     }
