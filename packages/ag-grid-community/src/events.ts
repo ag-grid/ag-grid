@@ -15,6 +15,7 @@ import type { BuildEventTypeMap } from './interfaces/iEventEmitter';
 import type { IFilterComp } from './interfaces/iFilter';
 import type { FindMatch } from './interfaces/iFind';
 import type { IRowNode, RowPinnedType } from './interfaces/iRowNode';
+import type { IServerSideGroupSelectionState, IServerSideSelectionState } from './interfaces/iServerSideSelection';
 import type { RowNodeTransaction } from './interfaces/rowNodeTransaction';
 import type { ServerSideTransactionResult } from './interfaces/serverSideTransaction';
 
@@ -333,6 +334,7 @@ export type SelectionEventSourceType =
 export interface SelectionChangedEvent<TData = any, TContext = any>
     extends AgGlobalEvent<'selectionChanged', TData, TContext> {
     source: SelectionEventSourceType;
+    state: string[] | IServerSideSelectionState | IServerSideGroupSelectionState | null;
 }
 
 export type FilterChangedEventSourceType = 'api' | 'quickFilter' | 'columnFilter' | 'advancedFilter';
