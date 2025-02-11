@@ -653,6 +653,7 @@ const chartsExamplePathSubstrings = [
     '/modules/examples/individual-registration',
     '/localisation/examples/callback',
     '/localisation/examples/localisation',
+    '/key-features',
 ];
 
 export function getIntegratedDarkModeCode(
