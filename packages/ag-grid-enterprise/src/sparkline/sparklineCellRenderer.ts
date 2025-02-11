@@ -18,6 +18,8 @@ export class SparklineCellRenderer extends Component implements ICellRenderer {
     private sparklineInstance?: AgChartInstance<any>;
     private sparklineOptions: AgSparklineOptions;
     private params: ISparklineCellRendererParams<any, any> | undefined;
+    private cachedWidth = 0;
+    private cachedHeight = 0;
 
     constructor() {
         super(/* html */ `<div class="ag-sparkline-wrapper">
@@ -31,7 +33,17 @@ export class SparklineCellRenderer extends Component implements ICellRenderer {
 
     public init(params: ISparklineCellRendererParams): void {
         this.refresh(params);
-        const unsubscribeFromResize = _observeResize(this.beans, this.getGui(), () => this.refresh(params));
+        const unsubscribeFromResize = _observeResize(this.beans, this.getGui(), () => {
+            const { clientWidth: width, clientHeight: height } = this.getGui();
+
+            if (this.cachedWidth === width && this.cachedHeight === height) {
+                return;
+            }
+
+            this.cachedWidth = width;
+            this.cachedHeight = height;
+            this.refresh(this.params);
+        });
         this.addDestroyFunc(() => unsubscribeFromResize());
     }
 
@@ -42,7 +54,8 @@ export class SparklineCellRenderer extends Component implements ICellRenderer {
 
     public refresh(params?: ISparklineCellRendererParams): boolean {
         this.params = params;
-        const { clientWidth: width, clientHeight: height } = this.getGui();
+        const width = this.cachedWidth;
+        const height = this.cachedHeight;
 
         if (!this.sparklineInstance && params && width > 0 && height) {
             this.sparklineOptions = {
