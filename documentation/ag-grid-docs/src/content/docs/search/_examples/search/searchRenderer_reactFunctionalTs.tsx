@@ -24,7 +24,7 @@ export default (params: CustomCellRendererProps) => {
         <span>
             {getParts(params).map(({ value: partValue, match, activeMatch }, index) =>
                 match ? (
-                    <mark key={index} className={`ag-search-match ${activeMatch ? ' ag-search-active-match' : ''}`}>
+                    <mark key={index} className={`ag-search-match${activeMatch ? ' ag-search-active-match' : ''}`}>
                         {partValue}
                     </mark>
                 ) : (
