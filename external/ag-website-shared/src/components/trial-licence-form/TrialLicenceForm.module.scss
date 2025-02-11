@@ -74,7 +74,7 @@ $trial-licence-small: 680px;
 div p.privacyMessage {
     font-size: var(--text-fs-xs);
     line-height: var(--text-lh-xs);
-    color: color-mix(in srgb, var(--color-text-secondary), var(--color-bg-primary) 60%);
+    color: color-mix(in srgb, var(--color-text-secondary), var(--color-bg-primary) 30%);
 
     a {
         font-weight: var(--text-regular);
