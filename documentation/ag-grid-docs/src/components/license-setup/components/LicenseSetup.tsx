@@ -7,7 +7,6 @@ import { LinkIcon } from '@ag-website-shared/components/link-icon/LinkIcon';
 import { Snippet } from '@ag-website-shared/components/snippet/Snippet';
 import fwLogos from '@ag-website-shared/images/fw-logos';
 import { FrameworkSelectorInsideDocs } from '@components/framework-selector-inside-doc/FrameworkSelectorInsideDocs';
-import { useDarkmode } from '@utils/hooks/useDarkmode';
 import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
 import { urlWithPrefix } from '@utils/urlWithPrefix';
 import classnames from 'classnames';
@@ -21,7 +20,7 @@ import styles from './LicenseSetup.module.scss';
 
 interface SeedRepo {
     name: string;
-    framework: Framework | 'nextjs';
+    framework: Framework;
     licenseType: 'enterprise' | 'enterprise-bundle';
     devEnvironment: string;
     url: string;
@@ -60,7 +59,6 @@ export const LicenseSetup: FunctionComponent<Props> = ({ library, framework, pat
         licenseInvalidErrors,
         licenseValidMessage,
     } = useLicenseData({ library });
-    const [darkMode] = useDarkmode();
     const dependenciesSnippet = useMemo(
         () =>
             getDependenciesSnippet({
@@ -95,9 +93,7 @@ export const LicenseSetup: FunctionComponent<Props> = ({ library, framework, pat
                     return isIntegratedCharts ? licenseType === 'enterprise-bundle' : licenseType === 'enterprise';
                 })
                 .filter((seedRepo) => {
-                    return (
-                        seedRepo.framework === framework || (framework === 'react' && seedRepo.framework === 'nextjs')
-                    );
+                    return seedRepo.framework === framework;
                 }),
         [seedRepos, isIntegratedCharts, framework]
     );
@@ -324,11 +320,7 @@ export const LicenseSetup: FunctionComponent<Props> = ({ library, framework, pat
                                                 <td>
                                                     <img
                                                         className={styles.frameworkLogo}
-                                                        src={
-                                                            darkMode && framework === 'nextjs'
-                                                                ? fwLogos['nextjsInverted']
-                                                                : fwLogos[framework]
-                                                        }
+                                                        src={fwLogos[framework]}
                                                         alt={framework}
                                                     />{' '}
                                                     {framework}
