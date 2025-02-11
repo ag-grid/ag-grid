@@ -334,7 +334,7 @@ export type SelectionEventSourceType =
 export interface SelectionChangedEvent<TData = any, TContext = any>
     extends AgGlobalEvent<'selectionChanged', TData, TContext> {
     source: SelectionEventSourceType;
-    state: string[] | IServerSideSelectionState | IServerSideGroupSelectionState | null;
+    state: IRowNode[] | IServerSideSelectionState | IServerSideGroupSelectionState | null;
 }
 
 export type FilterChangedEventSourceType = 'api' | 'quickFilter' | 'columnFilter' | 'advancedFilter';

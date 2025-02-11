@@ -20,7 +20,6 @@ import {
 } from '../gridOptionsUtils';
 import type { IRowNode } from '../interfaces/iRowNode';
 import type { ISetNodesSelectedParams } from '../interfaces/iSelectionService';
-import type { ServerSideRowGroupSelectionState, ServerSideRowSelectionState } from '../interfaces/selectionState';
 import type { RowCtrl, RowGui } from '../rendering/row/rowCtrl';
 import { _setAriaSelected } from '../utils/aria';
 import type { ChangedPath } from '../utils/changedPath';
@@ -64,12 +63,6 @@ export abstract class BaseSelectionService extends BeanStub {
         return _isMultiRowSelection(this.gos);
     }
 
-    public abstract getSelectionState():
-        | string[]
-        | ServerSideRowSelectionState
-        | ServerSideRowGroupSelectionState
-        | null;
-
     public onRowCtrlSelected(rowCtrl: RowCtrl, hasFocusFunc: (gui: RowGui) => void, gui?: RowGui): void {
         // Treat undefined as false, if we pass undefined down it gets treated as toggle class, rather than explicitly
         // setting the required value
@@ -103,14 +96,6 @@ export abstract class BaseSelectionService extends BeanStub {
         );
 
         this.beans.ariaAnnounce?.announceValue(label, 'rowSelection');
-    }
-
-    protected dispatchSelectionChanged(source: SelectionEventSourceType): void {
-        this.eventSvc.dispatchEvent({
-            type: 'selectionChanged',
-            source,
-            state: this.getSelectionState(),
-        });
     }
 
     public updateGroupsFromChildrenSelections?(source: SelectionEventSourceType, changedPath?: ChangedPath): boolean;

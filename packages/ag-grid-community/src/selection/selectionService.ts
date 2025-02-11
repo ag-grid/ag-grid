@@ -778,6 +778,14 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
                 break;
         }
     }
+
+    private dispatchSelectionChanged(source: SelectionEventSourceType): void {
+        this.eventSvc.dispatchEvent({
+            type: 'selectionChanged',
+            source,
+            state: this.getSelectedNodes(),
+        });
+    }
 }
 
 /** Selection state of footer nodes is a clone of their siblings, so always act on sibling rather than footer */

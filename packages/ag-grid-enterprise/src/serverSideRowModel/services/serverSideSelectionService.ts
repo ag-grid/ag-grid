@@ -1,5 +1,7 @@
 import type {
     ISelectionService,
+    IServerSideGroupSelectionState,
+    IServerSideSelectionState,
     ISetNodesSelectedParams,
     NamedBean,
     RowNode,
@@ -315,6 +317,14 @@ export class ServerSideSelectionService extends BaseSelectionService implements 
                 source: 'selectableChanged',
             });
         }
+    }
+
+    private dispatchSelectionChanged(source: SelectionEventSourceType): void {
+        this.eventSvc.dispatchEvent({
+            type: 'selectionChanged',
+            source,
+            state: this.getSelectionState() as IServerSideSelectionState | IServerSideGroupSelectionState | null,
+        });
     }
 
     public updateSelectableAfterGrouping(): void {
