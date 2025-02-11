@@ -2,6 +2,7 @@ import type { IClientSideRowModel, IStatusPanelComp } from 'ag-grid-community';
 import { _formatNumberCommas, _isClientSideRowModel, _warn } from 'ag-grid-community';
 
 import { AgNameValue } from './agNameValue';
+import { _getFilteredRowCount, _getTotalRowCount } from './utils';
 
 export class TotalAndFilteredRowsComp extends AgNameValue implements IStatusPanelComp {
     public postConstruct(): void {
@@ -22,9 +23,10 @@ export class TotalAndFilteredRowsComp extends AgNameValue implements IStatusPane
     }
 
     private onDataChanged() {
+        const { rowModel } = this.beans;
         const getLocaleTextFunc = this.getLocaleTextFunc.bind(this);
-        const rowCount = _formatNumberCommas(this.getFilteredRowCountValue(), getLocaleTextFunc);
-        const totalRowCount = _formatNumberCommas(this.getTotalRowCount(), getLocaleTextFunc);
+        const rowCount = _formatNumberCommas(_getFilteredRowCount(rowModel as IClientSideRowModel), getLocaleTextFunc);
+        const totalRowCount = _formatNumberCommas(_getTotalRowCount(rowModel), getLocaleTextFunc);
 
         if (rowCount === totalRowCount) {
             this.setValue(rowCount);
@@ -32,26 +34,6 @@ export class TotalAndFilteredRowsComp extends AgNameValue implements IStatusPane
             const localeTextFunc = this.getLocaleTextFunc();
             this.setValue(`${rowCount} ${localeTextFunc('of', 'of')} ${totalRowCount}`);
         }
-    }
-
-    private getFilteredRowCountValue(): number {
-        let filteredRowCount = 0;
-        (this.beans.rowModel as IClientSideRowModel).forEachNodeAfterFilter((node) => {
-            if (!node.group) {
-                filteredRowCount++;
-            }
-        });
-        return filteredRowCount;
-    }
-
-    private getTotalRowCount(): number {
-        let totalRowCount = 0;
-        this.beans.rowModel.forEachNode((node) => {
-            if (!node.group) {
-                totalRowCount++;
-            }
-        });
-        return totalRowCount;
     }
 
     public init() {}
