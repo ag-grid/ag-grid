@@ -188,7 +188,7 @@ export class ServerSideSelectionService extends BaseSelectionService implements 
     }
 
     public getSelectedNodes(): RowNode<any>[] {
-        return this.selectionStrategy.getSelectedNodes();
+        return this.selectionStrategy.getSelectedNodes() ?? [];
     }
 
     public getSelectedRows(): any[] {
@@ -323,7 +323,11 @@ export class ServerSideSelectionService extends BaseSelectionService implements 
         this.eventSvc.dispatchEvent({
             type: 'selectionChanged',
             source,
-            state: this.getSelectionState() as IServerSideSelectionState | IServerSideGroupSelectionState | null,
+            selectedNodes: this.selectionStrategy.getSelectedNodes(true),
+            serverSideState: this.getSelectionState() as
+                | IServerSideSelectionState
+                | IServerSideGroupSelectionState
+                | null,
         });
     }
 

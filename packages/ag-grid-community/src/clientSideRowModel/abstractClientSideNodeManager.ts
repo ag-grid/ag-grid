@@ -436,7 +436,8 @@ export abstract class AbstractClientSideNodeManager<TData = any>
             this.eventSvc.dispatchEvent({
                 type: 'selectionChanged',
                 source: source,
-                state: selectionSvc?.getSelectedNodes() ?? null,
+                selectedNodes: selectionSvc?.getSelectedNodes() ?? null,
+                serverSideState: null,
             });
         }
     }

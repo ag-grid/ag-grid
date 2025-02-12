@@ -783,7 +783,8 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
         this.eventSvc.dispatchEvent({
             type: 'selectionChanged',
             source,
-            state: this.getSelectedNodes(),
+            selectedNodes: this.getSelectedNodes(),
+            serverSideState: null,
         });
     }
 }

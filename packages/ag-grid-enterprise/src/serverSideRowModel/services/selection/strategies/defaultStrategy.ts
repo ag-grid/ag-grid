@@ -147,15 +147,16 @@ export class DefaultStrategy extends BeanStub implements ISelectionStrategy {
         return this.selectedState.selectAll ? !isToggled : isToggled;
     }
 
-    public getSelectedNodes(): RowNode<any>[] {
+    public getSelectedNodes(nullWhenSelectAll = false): RowNode<any>[] | null {
         if (this.selectAllUsed) {
             _warn(199);
+            if (nullWhenSelectAll) return null;
         }
         return Object.values(this.selectedNodes);
     }
 
     public getSelectedRows(): any[] {
-        return this.getSelectedNodes().map((node) => node.data);
+        return (this.getSelectedNodes() ?? []).map((node) => node.data);
     }
 
     public getSelectionCount(): number {
@@ -170,14 +171,17 @@ export class DefaultStrategy extends BeanStub implements ISelectionStrategy {
     }
 
     public selectAllRowNodes(): void {
-        this.selectedState = { selectAll: true, toggledNodes: new Set() };
-        this.selectedNodes = {};
-        this.selectAllUsed = true;
+        this.reset(true);
     }
 
     public deselectAllRowNodes(): void {
-        this.selectedState = { selectAll: false, toggledNodes: new Set() };
+        this.reset(false);
+    }
+
+    private reset(selectAll: boolean): void {
+        this.selectedState = { selectAll, toggledNodes: new Set() };
         this.selectedNodes = {};
+        this.selectAllUsed = selectAll;
     }
 
     public getSelectAllState(): boolean | null {
