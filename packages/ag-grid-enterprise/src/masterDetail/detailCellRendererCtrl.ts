@@ -168,10 +168,8 @@ export class DetailCellRendererCtrl extends BeanStub implements IDetailCellRende
                 return;
             }
             if (!masterGridApi.isDestroyed()) {
-                masterGridApi.removeEventListener('rowSelected', onMasterRowSelected);
                 masterGridApi.removeDetailGridInfo(rowId); // unregister from api
             }
-            !api.isDestroyed() && api.removeEventListener('selectionChanged', onDetailSelectionChanged);
             rowNode.detailGridInfo = null; // unregister from node
         });
     }
