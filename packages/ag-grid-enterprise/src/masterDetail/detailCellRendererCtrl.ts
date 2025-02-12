@@ -144,7 +144,7 @@ export class DetailCellRendererCtrl extends BeanStub implements IDetailCellRende
         }
 
         function onMasterRowSelected({ node, source }: RowSelectedEvent) {
-            if (node !== masterNode || source === 'masterDetail') {
+            if (node !== masterNode || source === 'masterDetail' || api.isDestroyed()) {
                 return;
             }
 
@@ -153,6 +153,8 @@ export class DetailCellRendererCtrl extends BeanStub implements IDetailCellRende
 
         // initialise selection state
         api.addEventListener('firstDataRendered', () => {
+            if (api.isDestroyed() || masterGridApi.isDestroyed()) return;
+
             selectionSvc?.setDetailSelectionState(masterNode, params.detailGridOptions, api);
 
             api.addEventListener('selectionChanged', onDetailSelectionChanged);
@@ -160,17 +162,16 @@ export class DetailCellRendererCtrl extends BeanStub implements IDetailCellRende
         });
 
         this.addDestroyFunc(() => {
-            api.removeEventListener('selectionChanged', onDetailSelectionChanged);
-            masterGridApi.removeEventListener('rowSelected', onMasterRowSelected);
-
             // the gridInfo can be stale if a refresh happens and
             // a new row is created before the old one is destroyed.
             if (rowNode.detailGridInfo !== gridInfo) {
                 return;
             }
             if (!masterGridApi.isDestroyed()) {
+                masterGridApi.removeEventListener('rowSelected', onMasterRowSelected);
                 masterGridApi.removeDetailGridInfo(rowId); // unregister from api
             }
+            !api.isDestroyed() && api.removeEventListener('selectionChanged', onDetailSelectionChanged);
             rowNode.detailGridInfo = null; // unregister from node
         });
     }
