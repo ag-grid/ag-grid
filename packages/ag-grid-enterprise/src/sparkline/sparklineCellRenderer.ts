@@ -94,9 +94,15 @@ export class SparklineCellRenderer extends Component implements ICellRenderer {
             this.sparklineOptions.width = width;
             this.sparklineOptions.height = height;
             this.sparklineOptions.data = this.processData(data);
+            const currTheme = this.sparklineOptions.theme;
             this.updateTheme(this.sparklineOptions);
-
-            this.sparklineInstance.updateDelta(this.sparklineOptions);
+            if (currTheme !== this.sparklineOptions.theme) {
+                this.sparklineInstance.updateDelta(this.sparklineOptions);
+            } else {
+                const newData = this.sparklineOptions.data;
+                // Fast path for updating data or width/height to match Charts fast path
+                this.sparklineInstance.updateDelta({ data: newData, width, height });
+            }
 
             return true;
         }
