@@ -140,7 +140,9 @@ export class DetailCellRendererCtrl extends BeanStub implements IDetailCellRende
         const masterNode = rowNode.parent!;
 
         function onDetailSelectionChanged() {
-            masterNode && selectionSvc?.refreshMasterNodeState(masterNode);
+            if (masterNode) {
+                selectionSvc?.refreshMasterNodeState(masterNode);
+            }
         }
 
         function onMasterRowSelected({ node, source }: RowSelectedEvent) {
