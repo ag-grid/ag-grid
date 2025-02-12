@@ -1,4 +1,4 @@
-import type { ColDef, KeyCreatorParams, ValueFormatterParams } from '../entities/colDef';
+import type { ColDef, KeyCreatorFunc, KeyCreatorParams, ValueFormatterParams } from '../entities/colDef';
 import type { IProvidedFilter, IProvidedFilterParams } from '../filter/provided/iProvidedFilter';
 import type { Column } from '../interfaces/iColumn';
 import type { ITooltipParams } from '../tooltip/tooltipComponent';
@@ -168,7 +168,7 @@ export interface ISetFilterParams<TData = any, V = string> extends IProvidedFilt
      * or when `treeList = true` and the column is a group column with Tree Data or Grouping enabled.
      * If not provided, the Column Definition Key Creator is used.
      */
-    keyCreator?: (params: KeyCreatorParams<TData>) => string;
+    keyCreator?: KeyCreatorFunc<TData>;
     /**
      * If `true`, hovering over a value in the Set Filter will show a tooltip containing the full,
      * untruncated value.

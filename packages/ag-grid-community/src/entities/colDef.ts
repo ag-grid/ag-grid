@@ -236,7 +236,7 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
      * This string is used for grouping, Set filtering, and searching within cell editor dropdowns.
      * When filtering and searching the string is exposed to the user, so make sure to return a human-readable value.
      */
-    keyCreator?: (params: KeyCreatorParams<TData, TValue>) => string;
+    keyCreator?: KeyCreatorFunc<TData, TValue>;
     /**
      * Custom comparator for values, used by renderer to know if values have changed. Cells whose values have not changed don't get refreshed.
      * By default the grid uses `===` which should work for most use cases.
@@ -952,6 +952,10 @@ export interface ValueFormatterFunc<TData = any, TValue = any> {
 export interface KeyCreatorParams<TData = any, TValue = any> extends BaseColDefParams<TData, TValue> {
     /** Value for the cell. */
     value: TValue | null | undefined;
+}
+
+export interface KeyCreatorFunc<TData = any, TValue = any> {
+    (params: KeyCreatorParams<TData, TValue>): string;
 }
 
 export interface ColSpanParams<TData = any, TValue = any> extends BaseColDefOptionalDataParams<TData, TValue> {}
