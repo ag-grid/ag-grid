@@ -358,23 +358,5 @@
     .ag-find-active-match {
         color: var(--ag-find-active-match-color);
         background-color: var(--ag-find-active-match-background-color);
-        display: inline-block;
-    }
-
-    .ag-find-hidden-match::after,
-    .ag-find-hidden-active-match::after {
-        content: '';
-        position: absolute;
-        height: 100%;
-        width: var(--ag-cell-horizontal-padding);
-        left: calc(100% - var(--ag-cell-horizontal-padding));
-    }
-
-    .ag-find-hidden-match::after {
-        background-color: var(--ag-find-match-background-color);
-    }
-
-    .ag-find-hidden-active-match::after {
-        background-color: var(--ag-find-active-match-background-color);
     }
 }
