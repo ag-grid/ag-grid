@@ -24,7 +24,6 @@ export const imageCaption: Schema<Config, Render> = {
         alt: { type: String, required: true },
         centered: { type: Boolean },
         constrained: { type: Boolean },
-        descriptionTop: { type: Boolean },
         width: { type: String },
         height: { type: String },
         minWidth: { type: String },

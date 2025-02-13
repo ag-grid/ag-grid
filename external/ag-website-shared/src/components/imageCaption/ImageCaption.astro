@@ -12,7 +12,6 @@ interface Props {
     alt: string;
     centered?: boolean;
     constrained?: boolean;
-    descriptionTop?: boolean;
     width?: string;
     height?: string;
     minWidth?: string;
@@ -35,7 +34,6 @@ const {
     centered,
     constrained,
     enableDarkModeFilter,
-    descriptionTop,
 } = Astro.props as Props;
 
 const pageName = propPageName ? propPageName : getPageNameFromPath(Astro.url.pathname);
@@ -74,21 +72,10 @@ const imageId = id ? id : `image-${imagePath}`;
     ]}
     style={style}
 >
-    {
-        descriptionTop && Astro.slots.has('default') && (
-            <ImageDescription className={styles.top}>
-                <slot />
-            </ImageDescription>
-        )
-    }
     <img id={imageId} src={imageSrc} class={styles.image} alt={alt} />
-    {
-        !descriptionTop && (
-            <ImageDescription>
-                <slot />
-            </ImageDescription>
-        )
-    }
+    <ImageDescription>
+        <slot />
+    </ImageDescription>
 </div>
 
 <script
