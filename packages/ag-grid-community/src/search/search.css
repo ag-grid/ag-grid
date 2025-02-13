@@ -1,9 +1,28 @@
 .ag-search-match {
     color: var(--ag-search-match-color);
     background-color: var(--ag-search-match-background-color);
+    display: inline-block;
 }
 
 .ag-search-active-match {
     color: var(--ag-search-active-match-color);
     background-color: var(--ag-search-active-match-background-color);
+}
+
+.ag-search-hidden-match::after {
+    background-color: var(--ag-search-match-background-color);
+    content: '';
+    position: absolute;
+    height: 100%;
+    width: var(--ag-cell-horizontal-padding);
+    left: calc(100% - var(--ag-cell-horizontal-padding));
+}
+
+.ag-search-hidden-active-match::after {
+    background-color: var(--ag-search-active-match-background-color);
+    content: '';
+    position: absolute;
+    height: 100%;
+    width: var(--ag-cell-horizontal-padding);
+    left: calc(100% - var(--ag-cell-horizontal-padding));
 }
