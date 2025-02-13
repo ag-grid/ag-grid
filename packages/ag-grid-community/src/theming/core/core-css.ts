@@ -204,22 +204,22 @@ export type CoreParams = {
     /**
      * Color of matches used in Find
      */
-    findMatchColor: 'infer';
+    findMatchColor: ColorValue;
 
     /**
      * Background color of matches used in Find
      */
-    findMatchBackgroundColor: 'infer';
+    findMatchBackgroundColor: ColorValue;
 
     /**
      * Color of the active match used in Find
      */
-    findActiveMatchColor: 'infer';
+    findActiveMatchColor: ColorValue;
 
     /**
      * Background color of the active match used in Find
      */
-    findActiveMatchBackgroundColor: 'infer';
+    findActiveMatchBackgroundColor: ColorValue;
 
     /**
      * Shadow around UI controls that have focus e.g. text inputs and buttons. The value must a valid CSS box-shadow.
