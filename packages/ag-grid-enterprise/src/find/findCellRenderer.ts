@@ -49,36 +49,6 @@ export class FindCellRenderer extends Component implements ICellRenderer {
             }
         }
 
-        const { scrollWidth, clientWidth } = params.eParentOfValue;
-        let cumulativeWidth = 0;
-        if (scrollWidth > clientWidth) {
-            setTimeout(() => {
-                if (!this.isAlive()) {
-                    return;
-                }
-                const availableWidth = _getInnerWidth(params.eParentOfValue);
-                let addHighlight = false;
-                for (let i = 0; i < eGui.childNodes.length; i++) {
-                    const node = eGui.childNodes.item(i);
-                    if (cumulativeWidth > availableWidth) {
-                        if (node.nodeType === Node.ELEMENT_NODE) {
-                            addHighlight = true;
-                            break;
-                        }
-                    } else {
-                        // only need to keep calculating until overflow
-                        const range = document.createRange();
-                        range.selectNodeContents(node);
-                        const currentWidth = range.getClientRects()[0]?.width ?? 0;
-                        cumulativeWidth += currentWidth;
-                    }
-                }
-                eGui.classList.toggle('ag-find-hidden-match', addHighlight);
-            });
-        } else {
-            eGui.classList.remove('ag-find-hidden-match');
-        }
-
         this.checkSize();
 
         return true;
