@@ -1,5 +1,6 @@
 import { existsSync, readFileSync, readdirSync } from 'fs';
 import path from 'path';
+import { JsxEmit, ModuleKind, ScriptTarget, transpileModule } from 'typescript';
 
 import type { InternalFramework, TransformTsFileExt } from '../types';
 import { TYPESCRIPT_INTERNAL_FRAMEWORKS } from '../types';
@@ -155,3 +156,14 @@ export const getFileList = async ({ folderPath, fileList }: { folderPath: string
 
 export const getIsEnterprise = ({ entryFile }: { entryFile: string }) => entryFile?.includes('ag-grid-enterprise');
 export const getIsLocale = ({ entryFile }: { entryFile: string }) => entryFile?.includes('@ag-grid-community/locale');
+
+export function convertTsxToJsx(fileStr: string): string {
+    const jsxFile = transpileModule(fileStr, {
+        compilerOptions: {
+            target: ScriptTarget.ESNext,
+            module: ModuleKind.ESNext,
+            jsx: JsxEmit.Preserve,
+        },
+    }).outputText;
+    return jsxFile;
+}

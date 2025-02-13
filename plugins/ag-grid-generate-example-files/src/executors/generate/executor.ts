@@ -3,7 +3,6 @@ import { readFile, readJSONFile, writeFile } from 'ag-shared/plugin-utils';
 import fs from 'fs/promises';
 import path from 'path';
 import prettier from 'prettier';
-import { JsxEmit, ModuleKind, ScriptTarget, transpileModule } from 'typescript';
 
 import { getGridOptionsType } from '../../../gridOptionsTypes/buildGridOptionsType';
 import { SOURCE_ENTRY_FILE_NAME } from './generator/constants';
@@ -17,6 +16,7 @@ import {
 import type { ExampleConfig, GeneratedContents, GridOptionsType, InternalFramework } from './generator/types';
 import { FRAMEWORKS, TYPESCRIPT_INTERNAL_FRAMEWORKS } from './generator/types';
 import {
+    convertTsxToJsx,
     getBoilerPlateFiles,
     getEntryFileName,
     getIsEnterprise,
@@ -201,6 +201,12 @@ export async function generateFiles(options: ExecutorOptions, gridOptionsTypes: 
                 if (internalFramework === 'reactFunctional') {
                     // convert tsx files to jsx
                     writeToFileName = fileName.replace('.tsx', '.jsx');
+
+                    if (fileName === 'interfaces.ts') {
+                        // interfaces.ts is just a type file so delete it
+                        delete provideFrameworkFiles[fileName];
+                        continue;
+                    }
                 }
                 if (fileName.endsWith('.css')) {
                     mergedStyleFiles[fileName] = provideFrameworkFiles[fileName];
@@ -214,25 +220,8 @@ export async function generateFiles(options: ExecutorOptions, gridOptionsTypes: 
                         );
 
                         if (internalFramework === 'reactFunctional') {
-                            const convertToJsx = (file: string, fileStr: string) => {
-                                if (file.endsWith('.tsx')) {
-                                    console.log('Converting ', file);
-                                    // convert to js file
-                                    const jsxFile = transpileModule(fileStr, {
-                                        compilerOptions: {
-                                            target: ScriptTarget.ESNext,
-                                            module: ModuleKind.ESNext,
-                                            jsx: JsxEmit.Preserve,
-                                        },
-                                    }).outputText;
-                                    return jsxFile;
-                                }
-                                return fileStr;
-                            };
-
                             // convert tsx files to jsx
-                            provideFrameworkFiles[writeToFileName] = convertToJsx(
-                                fileName,
+                            provideFrameworkFiles[writeToFileName] = convertTsxToJsx(
                                 provideFrameworkFiles[writeToFileName]
                             );
                             // remove the tsx file version
@@ -246,7 +235,7 @@ export async function generateFiles(options: ExecutorOptions, gridOptionsTypes: 
                     const useClientCode = "'use client';\n";
                     const fileContent = provideFrameworkFiles[writeToFileName];
                     if (!fileContent) {
-                        console.log(`No content for ${writeToFileName} ${fileName}, ${internalFramework}`);
+                        // console.log(`No content for ${writeToFileName} ${fileName}, ${internalFramework}`);
                     } else if (fileContent.includes('AgGridReact') && !fileContent.includes('use client')) {
                         provideFrameworkFiles[writeToFileName] = useClientCode + fileContent;
                     }
@@ -346,15 +335,15 @@ async function writeContents(
 
 // nx run ag-grid-docs:generate-examples --skip-nx-cache
 // node --inspect-brk ./plugins/ag-grid-generate-example-files/dist/src/executors/generate/executor.js
-console.log('should generate');
-generateFiles(
-    {
-        examplePath: 'documentation/ag-grid-docs/src/content/docs/aligned-grids/_examples/aligned-grids',
-        mode: 'dev',
-        inputs: [],
-        output: '',
-        outputPath: 'dist/generated-examples/ag-grid-docs/docs/aligned-grids/_examples/aligned-grids',
-        writeFiles: true,
-    },
-    {}
-).then(() => console.log('done'));
+// console.log('should generate');
+// generateFiles(
+//     {
+//         examplePath: 'documentation/ag-grid-docs/src/content/docs/aligned-grids/_examples/aligned-grids',
+//         mode: 'dev',
+//         inputs: [],
+//         output: '',
+//         outputPath: 'dist/generated-examples/ag-grid-docs/docs/aligned-grids/_examples/aligned-grids',
+//         writeFiles: true,
+//     },
+//     {}
+// ).then(() => console.log('done'));
