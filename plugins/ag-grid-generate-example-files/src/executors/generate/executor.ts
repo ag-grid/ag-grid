@@ -3,6 +3,7 @@ import { readFile, readJSONFile, writeFile } from 'ag-shared/plugin-utils';
 import fs from 'fs/promises';
 import path from 'path';
 import prettier from 'prettier';
+import { JsxEmit, ModuleKind, ScriptTarget, transpileModule } from 'typescript';
 
 import { getGridOptionsType } from '../../../gridOptionsTypes/buildGridOptionsType';
 import { SOURCE_ENTRY_FILE_NAME } from './generator/constants';
@@ -150,7 +151,9 @@ export async function generateFiles(options: ExecutorOptions, gridOptionsTypes: 
         const boilerPlateFiles = await getBoilerPlateFiles(isDev, internalFramework);
         const entryFileName = getEntryFileName(internalFramework)!;
         const mainFileName = getMainFileName(internalFramework)!;
-        const provideFrameworkFiles = frameworkProvidedExamples[internalFramework];
+
+        const providedFramework = internalFramework === 'reactFunctional' ? 'reactFunctionalTs' : internalFramework;
+        const provideFrameworkFiles = { ...frameworkProvidedExamples[providedFramework] };
 
         const packageJson = getPackageJson({
             isLocale,
@@ -194,46 +197,79 @@ export async function generateFiles(options: ExecutorOptions, gridOptionsTypes: 
             }
 
             for (const fileName of Object.keys(provideFrameworkFiles)) {
+                let writeToFileName = fileName;
+                if (internalFramework === 'reactFunctional') {
+                    // convert tsx files to jsx
+                    writeToFileName = fileName.replace('.tsx', '.jsx');
+                }
                 if (fileName.endsWith('.css')) {
                     mergedStyleFiles[fileName] = provideFrameworkFiles[fileName];
                 } else {
                     const fileContent = provideFrameworkFiles[fileName];
                     if (fileContent) {
-                        provideFrameworkFiles[fileName] = await convertModulesToPackages(
+                        provideFrameworkFiles[writeToFileName] = await convertModulesToPackages(
                             fileContent,
                             isDev,
                             internalFramework
                         );
+
+                        if (internalFramework === 'reactFunctional') {
+                            const convertToJsx = (file: string, fileStr: string) => {
+                                if (file.endsWith('.tsx')) {
+                                    console.log('Converting ', file);
+                                    // convert to js file
+                                    const jsxFile = transpileModule(fileStr, {
+                                        compilerOptions: {
+                                            target: ScriptTarget.ESNext,
+                                            module: ModuleKind.ESNext,
+                                            jsx: JsxEmit.Preserve,
+                                        },
+                                    }).outputText;
+                                    return jsxFile;
+                                }
+                                return fileStr;
+                            };
+
+                            // convert tsx files to jsx
+                            provideFrameworkFiles[writeToFileName] = convertToJsx(
+                                fileName,
+                                provideFrameworkFiles[writeToFileName]
+                            );
+                            // remove the tsx file version
+                            delete provideFrameworkFiles[fileName];
+                        }
                     }
                 }
 
                 if (internalFramework === 'reactFunctional' || internalFramework === 'reactFunctionalTs') {
                     // add use client to the provided files if they contain AgGridReact
                     const useClientCode = "'use client';\n";
-                    const fileContent = provideFrameworkFiles[fileName];
-                    if (fileContent.includes('AgGridReact') && !fileContent.includes('use client')) {
-                        provideFrameworkFiles[fileName] = useClientCode + fileContent;
+                    const fileContent = provideFrameworkFiles[writeToFileName];
+                    if (!fileContent) {
+                        console.log(`No content for ${writeToFileName} ${fileName}, ${internalFramework}`);
+                    } else if (fileContent.includes('AgGridReact') && !fileContent.includes('use client')) {
+                        provideFrameworkFiles[writeToFileName] = useClientCode + fileContent;
                     }
                 }
 
                 // Add Dark Mode code to the provided files if they are an integrated example
-                if (isIntegratedCharts && fileName === mainFileName) {
+                if (isIntegratedCharts && writeToFileName === mainFileName) {
                     const code =
                         getIntegratedDarkModeCode(
                             folderPath,
                             TYPESCRIPT_INTERNAL_FRAMEWORKS.includes(internalFramework)
                         ) ?? '';
-                    const fileContent = provideFrameworkFiles[fileName];
+                    const fileContent = provideFrameworkFiles[writeToFileName];
                     const providedPlaceholder = '/** PROVIDED EXAMPLE DARK INTEGRATED **/';
                     if (
                         !fileContent.includes(providedPlaceholder) &&
                         !fileContent.includes(DARK_INTEGRATED_START) // might have already been replaced
                     ) {
                         throw new Error(
-                            `Provided example ${folderPath}/provided/modules/${internalFramework}/${fileName} does not contain the expected comment: ${providedPlaceholder} in gridReady code for an example that includes integrated charts`
+                            `Provided example ${folderPath}/provided/modules/${internalFramework}/${writeToFileName} does not contain the expected comment: ${providedPlaceholder} in gridReady code for an example that includes integrated charts`
                         );
                     }
-                    provideFrameworkFiles[fileName] = provideFrameworkFiles[fileName].replace(
+                    provideFrameworkFiles[writeToFileName] = provideFrameworkFiles[writeToFileName].replace(
                         providedPlaceholder,
                         code
                     );
@@ -266,20 +302,20 @@ export async function generateFiles(options: ExecutorOptions, gridOptionsTypes: 
 }
 
 async function convertModulesToPackages(fileContent: any, isDev: boolean, internalFramework: InternalFramework) {
-    const isEnterprise = fileContent.includes('-enterprise');
+    // const isEnterprise = fileContent.includes('-enterprise');
 
     if (internalFramework === 'vanilla') {
         fileContent = removeModuleRegistration(fileContent);
     }
 
-    if (isEnterprise) {
-        const communityImportRegex = /import ['"]ag-grid-community/;
-        if (communityImportRegex.test(fileContent)) {
-            fileContent = fileContent.replace(communityImportRegex, `import 'ag-grid-enterprise';\n$&`);
-        } else {
-            fileContent = `import 'ag-grid-enterprise';\n${fileContent}`;
-        }
-    }
+    // if (isEnterprise) {
+    //     const communityImportRegex = /import ['"]ag-grid-community/;
+    //     if (communityImportRegex.test(fileContent)) {
+    //         fileContent = fileContent.replace(communityImportRegex, `import 'ag-grid-enterprise';\n$&`);
+    //     } else {
+    //         fileContent = `import 'ag-grid-enterprise';\n${fileContent}`;
+    //     }
+    // }
 
     if (!isDev) {
         const parser = TYPESCRIPT_INTERNAL_FRAMEWORKS.includes(internalFramework) ? 'typescript' : 'babel';
@@ -307,13 +343,18 @@ async function writeContents(
         }
     }
 }
+
+// nx run ag-grid-docs:generate-examples --skip-nx-cache
 // node --inspect-brk ./plugins/ag-grid-generate-example-files/dist/src/executors/generate/executor.js
-// console.log('should generate')
-// generateFiles({
-//     examplePath: 'documentation/ag-grid-docs/src/content/docs/cell-editing-full-row/_examples/full-row-editing',
-//     mode: 'dev',
-//     inputs: [],
-//     output: '',
-//     outputPath: 'dist/generated-examples/ag-grid-docs/docs/cell-editing-full-row/_examples/full-row-editing',
-//     writeFiles: true,
-// }).then(() => console.log('done'));
+console.log('should generate');
+generateFiles(
+    {
+        examplePath: 'documentation/ag-grid-docs/src/content/docs/aligned-grids/_examples/aligned-grids',
+        mode: 'dev',
+        inputs: [],
+        output: '',
+        outputPath: 'dist/generated-examples/ag-grid-docs/docs/aligned-grids/_examples/aligned-grids',
+        writeFiles: true,
+    },
+    {}
+).then(() => console.log('done'));
