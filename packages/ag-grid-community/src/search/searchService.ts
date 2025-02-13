@@ -39,7 +39,7 @@ export class SearchService extends BeanStub implements NamedBean {
         }
 
         const updateSearch = this.updateSearch.bind(this);
-        this.addManagedPropertyListener('searchText', () => updateSearch());
+        this.addManagedPropertyListeners(['searchText', 'searchOptions'], () => updateSearch());
         this.addManagedEventListeners({
             modelUpdated: () => updateSearch(true),
             displayedColumnsChanged: () => updateSearch(true),
@@ -152,7 +152,7 @@ export class SearchService extends BeanStub implements NamedBean {
             beans,
             searchText: oldSearchText,
         } = this;
-        const { gos, visibleCols, rowModel, valueSvc, pinnedRowModel } = beans;
+        const { gos, visibleCols, rowModel, valueSvc, pinnedRowModel, pagination } = beans;
 
         const searchText = gos.get('searchText')?.trim().toLocaleUpperCase();
         this.searchText = searchText;
@@ -181,7 +181,13 @@ export class SearchService extends BeanStub implements NamedBean {
         let containerNumMatches = 0;
         let matches: Map<RowNode, [Column, number][]>;
         let rowNodes: RowNode[];
+        let checkCurrentPage: boolean = false;
         const callback = (node: RowNode) => {
+            if (checkCurrentPage) {
+                if (!pagination!.isRowInPage(node.rowIndex!)) {
+                    return;
+                }
+            }
             for (const column of allCols) {
                 const value = valueSvc.getValueForDisplay(column, node);
                 let valueToSearch: string | null;
@@ -238,6 +244,7 @@ export class SearchService extends BeanStub implements NamedBean {
         matches = unpinnedMatches;
         rowNodes = unpinnedRowNodes;
         containerNumMatches = 0;
+        checkCurrentPage = !!pagination && !!this.gos.get('searchOptions')?.currentPageOnly;
         (rowModel as IClientSideRowModel).forEachNodeAfterFilterAndSort(callback);
         this.unpinnedNumMatches = containerNumMatches;
         totalMatches += containerNumMatches;
@@ -245,6 +252,7 @@ export class SearchService extends BeanStub implements NamedBean {
         matches = pinnedBottomMatches;
         rowNodes = pinnedBottomRowNodes;
         containerNumMatches = 0;
+        checkCurrentPage = false;
         pinnedRowModel?.forEachPinnedRow('bottom', callback);
         totalMatches += containerNumMatches;
 

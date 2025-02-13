@@ -557,6 +557,9 @@ export interface GridOptions<TData = any> {
     excelStyles?: ExcelStyle[];
 
     searchText?: string;
+    searchOptions?: {
+        currentPageOnly?: boolean;
+    };
 
     // *** Filter *** //
     /**

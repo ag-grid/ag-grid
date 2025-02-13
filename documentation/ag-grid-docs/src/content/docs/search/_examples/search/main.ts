@@ -93,6 +93,14 @@ function previous() {
     gridApi!.searchPrevious();
 }
 
+function goToSearch() {
+    const num = Number((document.getElementById('search-goto') as HTMLInputElement).value);
+    if (isNaN(num) || num < 0) {
+        return;
+    }
+    gridApi!.searchGoTo(num);
+}
+
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
     const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
