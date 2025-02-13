@@ -15,6 +15,10 @@ export interface SearchMatch {
     numOverall: number;
 }
 
+function defaultCaseFormat(value?: string | null): string | undefined {
+    return value?.toLocaleLowerCase();
+}
+
 export class SearchService extends BeanStub implements NamedBean {
     beanName = 'search' as const;
 
@@ -26,6 +30,8 @@ export class SearchService extends BeanStub implements NamedBean {
     private unpinnedNumMatches: number = 0;
     private pinnedBottomMatches: Map<RowNode, [Column, number][]> = new Map();
     private pinnedBottomRowNodes: RowNode[] = [];
+
+    private caseFormat: (value?: string | null) => string | undefined = defaultCaseFormat;
 
     public totalMatches: number = 0;
 
@@ -102,7 +108,7 @@ export class SearchService extends BeanStub implements NamedBean {
         if (_missing(searchText)) {
             return [{ value }];
         }
-        const valueToSearch = _escapeString(value, true)?.toLocaleUpperCase() ?? '';
+        const valueToSearch = this.caseFormat(_escapeString(value, true)) ?? '';
         const activeMatchNum = this.getActiveMatchNum(node, column);
         let lastIndex = 0;
         let currentMatchNum = 0;
@@ -153,8 +159,13 @@ export class SearchService extends BeanStub implements NamedBean {
             searchText: oldSearchText,
         } = this;
         const { gos, visibleCols, rowModel, valueSvc, pinnedRowModel, pagination } = beans;
+        const searchOptions = gos.get('searchOptions');
+        const caseFormat: (value?: string | null) => string | undefined = searchOptions?.matchCase
+            ? (value) => value ?? undefined
+            : defaultCaseFormat;
+        this.caseFormat = caseFormat;
 
-        const searchText = gos.get('searchText')?.trim().toLocaleUpperCase();
+        const searchText = caseFormat(gos.get('searchText')?.trim());
         this.searchText = searchText;
 
         pinnedTopMatches.clear();
@@ -208,7 +219,7 @@ export class SearchService extends BeanStub implements NamedBean {
                     const valueFormatted = valueSvc.formatValue(column, node, value);
                     valueToSearch = valueFormatted ?? value;
                 }
-                const finalValue = _escapeString(valueToSearch, true)?.toLocaleUpperCase() as string | undefined;
+                const finalValue = caseFormat(_escapeString(valueToSearch, true));
                 let numMatches = 0;
                 if (finalValue?.length) {
                     let index = -1;
@@ -244,7 +255,7 @@ export class SearchService extends BeanStub implements NamedBean {
         matches = unpinnedMatches;
         rowNodes = unpinnedRowNodes;
         containerNumMatches = 0;
-        checkCurrentPage = !!pagination && !!this.gos.get('searchOptions')?.currentPageOnly;
+        checkCurrentPage = !!pagination && !!searchOptions?.currentPageOnly;
         (rowModel as IClientSideRowModel).forEachNodeAfterFilterAndSort(callback);
         this.unpinnedNumMatches = containerNumMatches;
         totalMatches += containerNumMatches;

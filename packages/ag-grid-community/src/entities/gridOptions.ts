@@ -559,6 +559,7 @@ export interface GridOptions<TData = any> {
     searchText?: string;
     searchOptions?: {
         currentPageOnly?: boolean;
+        matchCase?: boolean;
     };
 
     // *** Filter *** //
