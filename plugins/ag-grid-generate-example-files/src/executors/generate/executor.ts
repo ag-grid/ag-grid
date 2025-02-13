@@ -201,12 +201,6 @@ export async function generateFiles(options: ExecutorOptions, gridOptionsTypes: 
                 if (internalFramework === 'reactFunctional') {
                     // convert tsx files to jsx
                     writeToFileName = fileName.replace('.tsx', '.jsx');
-
-                    if (fileName === 'interfaces.ts') {
-                        // interfaces.ts is just a type file so delete it
-                        delete provideFrameworkFiles[fileName];
-                        continue;
-                    }
                 }
                 if (fileName.endsWith('.css')) {
                     mergedStyleFiles[fileName] = provideFrameworkFiles[fileName];
@@ -219,7 +213,7 @@ export async function generateFiles(options: ExecutorOptions, gridOptionsTypes: 
                             internalFramework
                         );
 
-                        if (internalFramework === 'reactFunctional') {
+                        if (internalFramework === 'reactFunctional' && fileName.endsWith('.tsx')) {
                             // convert tsx files to jsx
                             provideFrameworkFiles[writeToFileName] = convertTsxToJsx(
                                 provideFrameworkFiles[writeToFileName]
@@ -239,6 +233,11 @@ export async function generateFiles(options: ExecutorOptions, gridOptionsTypes: 
                     } else if (fileContent.includes('AgGridReact') && !fileContent.includes('use client')) {
                         provideFrameworkFiles[writeToFileName] = useClientCode + fileContent;
                     }
+                }
+
+                if (internalFramework === 'reactFunctional' && fileName === 'interfaces.ts') {
+                    // interfaces.ts is just a type file so delete it
+                    delete provideFrameworkFiles[fileName];
                 }
 
                 // Add Dark Mode code to the provided files if they are an integrated example
