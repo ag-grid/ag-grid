@@ -2,6 +2,7 @@ import type { ColDef } from '../entities/colDef';
 import type { HeaderComp } from '../headerRendering/cells/column/headerComp';
 import type { CellPosition } from './iCellPosition';
 import type { IColumnCollectionService } from './iColumnCollectionService';
+import type { IRowNode } from './iRowNode';
 
 export interface RowNumbersOptions
     extends Pick<
@@ -52,4 +53,5 @@ export interface RowNumbersOptions
 export interface IRowNumbersService extends IColumnCollectionService {
     setupForHeader(comp: HeaderComp): void;
     handleMouseDownOnCell(cell: CellPosition, mouseEvent: MouseEvent): boolean;
+    getPlaceholderCellForNode(node: IRowNode): HTMLElement;
 }

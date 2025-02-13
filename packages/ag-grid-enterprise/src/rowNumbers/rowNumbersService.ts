@@ -19,6 +19,7 @@ import type {
     CellClassParams,
     CellPosition,
     ColDef,
+    IRowNode,
     IRowNumbersService,
     NamedBean,
     PropertyValueChangedEvent,
@@ -148,6 +149,27 @@ export class RowNumbersService extends BeanStub implements NamedBean, IRowNumber
         });
     }
 
+    public getPlaceholderCellForNode(node: IRowNode): HTMLElement {
+        const el = this.createDummyElement(node);
+        const propSuffix = this.gos.get('enableRtl') ? 'Left' : 'Right';
+
+        const styles = {
+            width: `${this.getColumn()?.getActualWidth() || 60}px`,
+            position: 'relative',
+            padding: '0',
+            [`padding${propSuffix}`]: 'var(--ag-cell-horizontal-padding)',
+            [`margin${propSuffix}`]: 'var(--ag-cell-horizontal-padding)',
+            [`border${propSuffix}`]: 'var(--ag-pinned-column-border)',
+        };
+
+        Object.assign(el.style, styles);
+
+        el.classList.add('ag-row-number-cell');
+        el.textContent = String((node.rowIndex || 0) + 1);
+
+        return el;
+    }
+
     private refreshSelectionIntegration(): void {
         const { beans } = this;
         const { gos, rangeSvc } = beans;
@@ -225,7 +247,7 @@ export class RowNumbersService extends BeanStub implements NamedBean, IRowNumber
         }
 
         if (runAutoSize) {
-            const width = this.beans.autoWidthCalc?.getPreferredWidthForElements([this.createDummyElement(column)], 2);
+            const width = this.beans.autoWidthCalc?.getPreferredWidthForElements([this.createDummyElement()], 2);
             if (width != null) {
                 this.beans.colResize?.setColumnWidths(
                     [{ key: column, newWidth: width }],
@@ -242,11 +264,18 @@ export class RowNumbersService extends BeanStub implements NamedBean, IRowNumber
         });
     }
 
-    private createDummyElement(column: AgColumn): HTMLDivElement {
-        const div = document.createElement('div');
-        div.classList.add('ag-cell-value', 'ag-cell');
+    private createDummyElement(rowNode?: IRowNode): HTMLDivElement {
+        const { beans } = this;
+        const column = this.getColumn();
 
-        let value = String(this.beans.rowModel.getRowCount() + 1);
+        const div = document.createElement('div');
+        div.classList.add('ag-cell', 'ag-cell-value', 'ag-row-number-cell');
+
+        if (!column) {
+            return div;
+        }
+
+        let value = String(rowNode ? rowNode.rowIndex || 0 : beans.rowModel.getRowCount() + 1);
 
         if (typeof this.rowNumberOverrides.valueFormatter === 'function') {
             const valueFormatterParams: ValueFormatterParams = _addGridCommonParams(this.beans.gos, {
