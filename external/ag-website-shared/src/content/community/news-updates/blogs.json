@@ -1,30 +1,30 @@
 [
     {
-        "title": "Efficient JavaScript Charting with Tree-Based Scene Graphs",
-        "description": "Learn how AG Charts leverages a tree-based scene graph abstraction to efficiently render complex JavaScript charts.",
+        "title": "Optimising Large Data Set Visualisations with the M4 Algorithm",
+        "description": "A deep dive into how we implemented the M4 algorithm to create a line chart that can support over a million data points at 60fps.",
         "image": "/community/events/news/charts.png",
-        "link": "https://blog.ag-grid.com/building-ag-charts-efficient-javascript-charting-with-tree-based-scene-graphs/",
+        "link": "https://blog.ag-grid.com/optimizing-large-data-set-visualisations-with-the-m4-algorithm/",
         "linkText": "Read article"
     },
     {
-        "title": "Whats New in AG Grid 32",
-        "description": "What's New in AG Grid 32 - Rich Select Editor Multi Select, 15% Reduced Bundle Size, Localisation in 20+ languages, and more",
+        "title": "What's New in AG Grid 33",
+        "description": "What's New in AG Grid 33 - Bundle size improvements, Async Context Menu support, and Default Column Header customisation.",
         "image": "/community/events/news/grid-table.png",
-        "link": "https://blog.ag-grid.com/whats-new-in-ag-grid-32/",
+        "link": "https://blog.ag-grid.com/whats-new-in-ag-grid-33/",
         "linkText": "Read article"
     },
     {
-        "title": "What's New in AG Charts 10",
-        "description": "What's New in AG Charts 10 - Financial Charts, Sankey & Chord Series, Smooth & Step Line Styles, and Localisation in 20+ languages",
+        "title": "What's New in AG Charts 11",
+        "description": "What's New in AG Charts 11 - Fibonacci Tools for Financial Charts, Grouped Category Axis, and Save/Restore Chart State.",
         "image": "/community/events/news/integrated.png",
-        "link": "https://blog.ag-grid.com/whats-new-in-ag-charts-10/",
+        "link": "https://blog.ag-grid.com/whats-new-in-ag-charts-11/",
         "linkText": "Read article"
     },
     {
-        "title": "Introducing Our New Theming API",
-        "description": "Learn more about the Theming API: The new, easy way to create and customise themes for AG Grid, directly from your JavaScript code.",
+        "title": "Writing E2E Tests for AG Grid React Tables with Playwright",
+        "description": "Learn how to write E2E tests for AG Grid with Playwright, including how to test rendering, user interaction, and accessibility.",
         "image": "/community/events/news/grid-2.png",
-        "link": "https://blog.ag-grid.com/introducing-our-new-theming-api/",
+        "link": "https://blog.ag-grid.com/writing-e2e-tests-for-ag-grid-react-tables-with-playwright/",
         "linkText": "Read article"
     }
 ]

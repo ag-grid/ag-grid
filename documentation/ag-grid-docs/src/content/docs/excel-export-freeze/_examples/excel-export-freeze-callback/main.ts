@@ -65,7 +65,6 @@ let gridApi: GridApi<IOlympicData>;
 const gridOptions: GridOptions<IOlympicData> = {
     // debug: true,
     columnDefs: columnDefs,
-    rowData: null,
     defaultExcelExportParams: {
         freezeRows: (params) => {
             const node = params.node;

@@ -8,7 +8,9 @@ exports[`Snippet Component > given a mix of grid options > it should create 'ang
     [rowHeight]="rowHeight"
     [rowDragManaged]="rowDragManaged"
     [columnMenu]="columnMenu"
+    [rowNumbers]="rowNumbers"
     [postSort]="postSort"
+    [getDataPath]="getDataPath"
     /* other grid options ... */ />
 
 // columnDefs property (special)
@@ -29,6 +31,7 @@ this.rowHeight = 50;
 this.rowDragManaged = true;
 // string property
 this.columnMenu = 'new';
+this.rowNumbers = { suppressCellSelectionIntegration: true };
 // function property
 this.postSort = rowNodes => {
     // here we put Ireland rows on top while preserving the sort order  
@@ -40,7 +43,9 @@ this.postSort = rowNodes => {
             nextInsertPos++;
         }
     }
-};"
+};
+// getDataPath should use useCallback
+this.getDataPath = (data) => data.path;"
 `;
 
 exports[`Snippet Component > given a mix of grid options > it should create 'angular' snippets with space between properties 1`] = `
@@ -51,7 +56,9 @@ exports[`Snippet Component > given a mix of grid options > it should create 'ang
     [rowHeight]="rowHeight"
     [rowDragManaged]="rowDragManaged"
     [columnMenu]="columnMenu"
+    [rowNumbers]="rowNumbers"
     [postSort]="postSort"
+    [getDataPath]="getDataPath"
     /* other grid options ... */ />
 
 // columnDefs property (special)
@@ -78,6 +85,8 @@ this.rowDragManaged = true;
 // string property
 this.columnMenu = 'new';
 
+this.rowNumbers = { suppressCellSelectionIntegration: true };
+
 // function property
 this.postSort = rowNodes => {
     // here we put Ireland rows on top while preserving the sort order  
@@ -89,7 +98,10 @@ this.postSort = rowNodes => {
             nextInsertPos++;
         }
     }
-};"
+};
+
+// getDataPath should use useCallback
+this.getDataPath = (data) => data.path;"
 `;
 
 exports[`Snippet Component > given a mix of grid options > it should create 'angular' snippets without framework context 1`] = `
@@ -111,6 +123,7 @@ this.rowHeight = 50;
 this.rowDragManaged = true;
 // string property
 this.columnMenu = 'new';
+this.rowNumbers = { suppressCellSelectionIntegration: true };
 // function property
 this.postSort = rowNodes => {
     // here we put Ireland rows on top while preserving the sort order  
@@ -122,7 +135,9 @@ this.postSort = rowNodes => {
             nextInsertPos++;
         }
     }
-};"
+};
+// getDataPath should use useCallback
+this.getDataPath = (data) => data.path;"
 `;
 
 exports[`Snippet Component > given a mix of grid options > it should create 'angular' snippets without framework context and space between properties 1`] = `
@@ -150,6 +165,8 @@ this.rowDragManaged = true;
 // string property
 this.columnMenu = 'new';
 
+this.rowNumbers = { suppressCellSelectionIntegration: true };
+
 // function property
 this.postSort = rowNodes => {
     // here we put Ireland rows on top while preserving the sort order  
@@ -161,7 +178,10 @@ this.postSort = rowNodes => {
             nextInsertPos++;
         }
     }
-};"
+};
+
+// getDataPath should use useCallback
+this.getDataPath = (data) => data.path;"
 `;
 
 exports[`Snippet Component > given a mix of grid options > it should create 'javascript' snippets 1`] = `
@@ -184,6 +204,7 @@ exports[`Snippet Component > given a mix of grid options > it should create 'jav
     rowDragManaged: true,
     // string property
     columnMenu: 'new',
+    rowNumbers: { suppressCellSelectionIntegration: true },
     // function property
     postSort: rowNodes => {
         // here we put Ireland rows on top while preserving the sort order  
@@ -196,6 +217,8 @@ exports[`Snippet Component > given a mix of grid options > it should create 'jav
             }
         }
     },
+    // getDataPath should use useCallback
+    getDataPath: (data) => data.path,
 
     // other grid options ...
 }"
@@ -227,6 +250,8 @@ exports[`Snippet Component > given a mix of grid options > it should create 'jav
     // string property
     columnMenu: 'new',
 
+    rowNumbers: { suppressCellSelectionIntegration: true },
+
     // function property
     postSort: rowNodes => {
         // here we put Ireland rows on top while preserving the sort order  
@@ -239,6 +264,9 @@ exports[`Snippet Component > given a mix of grid options > it should create 'jav
             }
         }
     },
+
+    // getDataPath should use useCallback
+    getDataPath: (data) => data.path,
 
     // other grid options ...
 }"
@@ -263,6 +291,7 @@ rowHeight: 50,
 rowDragManaged: true,
 // string property
 columnMenu: 'new',
+rowNumbers: { suppressCellSelectionIntegration: true },
 // function property
 postSort: rowNodes => {
     // here we put Ireland rows on top while preserving the sort order  
@@ -274,7 +303,9 @@ postSort: rowNodes => {
             nextInsertPos++;
         }
     }
-},"
+},
+// getDataPath should use useCallback
+getDataPath: (data) => data.path,"
 `;
 
 exports[`Snippet Component > given a mix of grid options > it should create 'javascript' snippets without framework context and space between properties 1`] = `
@@ -302,6 +333,8 @@ rowDragManaged: true,
 // string property
 columnMenu: 'new',
 
+rowNumbers: { suppressCellSelectionIntegration: true },
+
 // function property
 postSort: rowNodes => {
     // here we put Ireland rows on top while preserving the sort order  
@@ -313,7 +346,10 @@ postSort: rowNodes => {
             nextInsertPos++;
         }
     }
-},"
+},
+
+// getDataPath should use useCallback
+getDataPath: (data) => data.path,"
 `;
 
 exports[`Snippet Component > given a mix of grid options > it should create 'react' snippets 1`] = `
@@ -339,6 +375,9 @@ const rowHeight = 50;
 const rowDragManaged = true;
 // string property
 const columnMenu = 'new';
+const rowNumbers = useMemo(() => { 
+	return { suppressCellSelectionIntegration: true };
+}, []);
 // function property
 const postSort = rowNodes => {
     // here we put Ireland rows on top while preserving the sort order  
@@ -351,6 +390,8 @@ const postSort = rowNodes => {
         }
     }
 };
+// getDataPath should use useCallback
+const getDataPath = useCallback((data) => data.path, []);
 
 <AgGridReact
     columnDefs={columnDefs}
@@ -359,7 +400,9 @@ const postSort = rowNodes => {
     rowHeight={rowHeight}
     rowDragManaged={rowDragManaged}
     columnMenu={columnMenu}
+    rowNumbers={rowNumbers}
     postSort={postSort}
+    getDataPath={getDataPath}
 />"
 `;
 
@@ -392,6 +435,10 @@ const rowDragManaged = true;
 // string property
 const columnMenu = 'new';
 
+const rowNumbers = useMemo(() => { 
+	return { suppressCellSelectionIntegration: true };
+}, []);
+
 // function property
 const postSort = rowNodes => {
     // here we put Ireland rows on top while preserving the sort order  
@@ -405,6 +452,9 @@ const postSort = rowNodes => {
     }
 };
 
+// getDataPath should use useCallback
+const getDataPath = useCallback((data) => data.path, []);
+
 <AgGridReact
     columnDefs={columnDefs}
     defaultColDef={defaultColDef}
@@ -412,7 +462,9 @@ const postSort = rowNodes => {
     rowHeight={rowHeight}
     rowDragManaged={rowDragManaged}
     columnMenu={columnMenu}
+    rowNumbers={rowNumbers}
     postSort={postSort}
+    getDataPath={getDataPath}
 />"
 `;
 
@@ -439,6 +491,9 @@ const rowHeight = 50;
 const rowDragManaged = true;
 // string property
 const columnMenu = 'new';
+const rowNumbers = useMemo(() => { 
+	return { suppressCellSelectionIntegration: true };
+}, []);
 // function property
 const postSort = rowNodes => {
     // here we put Ireland rows on top while preserving the sort order  
@@ -451,6 +506,8 @@ const postSort = rowNodes => {
         }
     }
 };
+// getDataPath should use useCallback
+const getDataPath = useCallback((data) => data.path, []);
 
 <AgGridReact
     columnDefs={columnDefs}
@@ -459,7 +516,9 @@ const postSort = rowNodes => {
     rowHeight={rowHeight}
     rowDragManaged={rowDragManaged}
     columnMenu={columnMenu}
+    rowNumbers={rowNumbers}
     postSort={postSort}
+    getDataPath={getDataPath}
 />"
 `;
 
@@ -492,6 +551,10 @@ const rowDragManaged = true;
 // string property
 const columnMenu = 'new';
 
+const rowNumbers = useMemo(() => { 
+	return { suppressCellSelectionIntegration: true };
+}, []);
+
 // function property
 const postSort = rowNodes => {
     // here we put Ireland rows on top while preserving the sort order  
@@ -505,6 +568,9 @@ const postSort = rowNodes => {
     }
 };
 
+// getDataPath should use useCallback
+const getDataPath = useCallback((data) => data.path, []);
+
 <AgGridReact
     columnDefs={columnDefs}
     defaultColDef={defaultColDef}
@@ -512,7 +578,9 @@ const postSort = rowNodes => {
     rowHeight={rowHeight}
     rowDragManaged={rowDragManaged}
     columnMenu={columnMenu}
+    rowNumbers={rowNumbers}
     postSort={postSort}
+    getDataPath={getDataPath}
 />"
 `;
 
@@ -524,7 +592,9 @@ exports[`Snippet Component > given a mix of grid options > it should create 'vue
     :rowHeight="rowHeight"
     :rowDragManaged="rowDragManaged"
     :columnMenu="columnMenu"
+    :rowNumbers="rowNumbers"
     :postSort="postSort"
+    :getDataPath="getDataPath"
     /* other grid options ... */>
 </ag-grid-vue>
 
@@ -546,6 +616,7 @@ this.rowHeight = 50;
 this.rowDragManaged = true;
 // string property
 this.columnMenu = 'new';
+this.rowNumbers = { suppressCellSelectionIntegration: true };
 // function property
 this.postSort = rowNodes => {
     // here we put Ireland rows on top while preserving the sort order  
@@ -557,7 +628,9 @@ this.postSort = rowNodes => {
             nextInsertPos++;
         }
     }
-};"
+};
+// getDataPath should use useCallback
+this.getDataPath = (data) => data.path;"
 `;
 
 exports[`Snippet Component > given a mix of grid options > it should create 'vue' snippets with space between properties 1`] = `
@@ -568,7 +641,9 @@ exports[`Snippet Component > given a mix of grid options > it should create 'vue
     :rowHeight="rowHeight"
     :rowDragManaged="rowDragManaged"
     :columnMenu="columnMenu"
+    :rowNumbers="rowNumbers"
     :postSort="postSort"
+    :getDataPath="getDataPath"
     /* other grid options ... */>
 </ag-grid-vue>
 
@@ -596,6 +671,8 @@ this.rowDragManaged = true;
 // string property
 this.columnMenu = 'new';
 
+this.rowNumbers = { suppressCellSelectionIntegration: true };
+
 // function property
 this.postSort = rowNodes => {
     // here we put Ireland rows on top while preserving the sort order  
@@ -607,7 +684,10 @@ this.postSort = rowNodes => {
             nextInsertPos++;
         }
     }
-};"
+};
+
+// getDataPath should use useCallback
+this.getDataPath = (data) => data.path;"
 `;
 
 exports[`Snippet Component > given a mix of grid options > it should create 'vue' snippets without framework context 1`] = `
@@ -629,6 +709,7 @@ this.rowHeight = 50;
 this.rowDragManaged = true;
 // string property
 this.columnMenu = 'new';
+this.rowNumbers = { suppressCellSelectionIntegration: true };
 // function property
 this.postSort = rowNodes => {
     // here we put Ireland rows on top while preserving the sort order  
@@ -640,7 +721,9 @@ this.postSort = rowNodes => {
             nextInsertPos++;
         }
     }
-};"
+};
+// getDataPath should use useCallback
+this.getDataPath = (data) => data.path;"
 `;
 
 exports[`Snippet Component > given a mix of grid options > it should create 'vue' snippets without framework context and space between properties 1`] = `
@@ -668,6 +751,8 @@ this.rowDragManaged = true;
 // string property
 this.columnMenu = 'new';
 
+this.rowNumbers = { suppressCellSelectionIntegration: true };
+
 // function property
 this.postSort = rowNodes => {
     // here we put Ireland rows on top while preserving the sort order  
@@ -679,7 +764,10 @@ this.postSort = rowNodes => {
             nextInsertPos++;
         }
     }
-};"
+};
+
+// getDataPath should use useCallback
+this.getDataPath = (data) => data.path;"
 `;
 
 exports[`Snippet Component > given api statements > it should create 'angular' snippets 1`] = `
@@ -2242,4 +2330,334 @@ this.columnDefs = [
     { headerName: 'B', field: 'b' },
     { headerName: 'C', field: 'c' },
 ];"
+`;
+
+exports[`Snippet Component > given useMemo and useCallback properties with JS literals does not add useMemo or useCallback > it should create 'angular' snippets 1`] = `
+"<ag-grid-angular
+    [popupParent]="popupParent"
+    [cellSelection]="cellSelection"
+    [rowSelection]="rowSelection"
+    [sideBar]="sideBar"
+    [statusBar]="statusBar"
+    [autoSizeStrategy]="autoSizeStrategy"
+    [rowNumbers]="rowNumbers"
+    [getDataPath]="getDataPath"
+    /* other grid options ... */ />
+
+this.popupParent = -Infinity;
+this.cellSelection = 'xxx';
+this.rowSelection = "X";
+this.sideBar = undefined;
+this.statusBar = NaN;
+this.autoSizeStrategy = true;
+this.rowNumbers = false;
+this.getDataPath = null;"
+`;
+
+exports[`Snippet Component > given useMemo and useCallback properties with JS literals does not add useMemo or useCallback > it should create 'angular' snippets with space between properties 1`] = `
+"<ag-grid-angular
+    [popupParent]="popupParent"
+    [cellSelection]="cellSelection"
+    [rowSelection]="rowSelection"
+    [sideBar]="sideBar"
+    [statusBar]="statusBar"
+    [autoSizeStrategy]="autoSizeStrategy"
+    [rowNumbers]="rowNumbers"
+    [getDataPath]="getDataPath"
+    /* other grid options ... */ />
+
+this.popupParent = -Infinity;
+
+this.cellSelection = 'xxx';
+
+this.rowSelection = "X";
+
+this.sideBar = undefined;
+
+this.statusBar = NaN;
+
+this.autoSizeStrategy = true;
+
+this.rowNumbers = false;
+
+this.getDataPath = null;"
+`;
+
+exports[`Snippet Component > given useMemo and useCallback properties with JS literals does not add useMemo or useCallback > it should create 'angular' snippets without framework context 1`] = `
+"this.popupParent = -Infinity;
+this.cellSelection = 'xxx';
+this.rowSelection = "X";
+this.sideBar = undefined;
+this.statusBar = NaN;
+this.autoSizeStrategy = true;
+this.rowNumbers = false;
+this.getDataPath = null;"
+`;
+
+exports[`Snippet Component > given useMemo and useCallback properties with JS literals does not add useMemo or useCallback > it should create 'angular' snippets without framework context and space between properties 1`] = `
+"this.popupParent = -Infinity;
+
+this.cellSelection = 'xxx';
+
+this.rowSelection = "X";
+
+this.sideBar = undefined;
+
+this.statusBar = NaN;
+
+this.autoSizeStrategy = true;
+
+this.rowNumbers = false;
+
+this.getDataPath = null;"
+`;
+
+exports[`Snippet Component > given useMemo and useCallback properties with JS literals does not add useMemo or useCallback > it should create 'javascript' snippets 1`] = `
+"const gridOptions = {
+    popupParent: -Infinity,
+    cellSelection: 'xxx',
+    rowSelection: "X",
+    sideBar: undefined,
+    statusBar: NaN,
+    autoSizeStrategy: true,
+    rowNumbers: false,
+    getDataPath: null,
+
+    // other grid options ...
+}"
+`;
+
+exports[`Snippet Component > given useMemo and useCallback properties with JS literals does not add useMemo or useCallback > it should create 'javascript' snippets with space between properties 1`] = `
+"const gridOptions = {
+    popupParent: -Infinity,
+
+    cellSelection: 'xxx',
+
+    rowSelection: "X",
+
+    sideBar: undefined,
+
+    statusBar: NaN,
+
+    autoSizeStrategy: true,
+
+    rowNumbers: false,
+
+    getDataPath: null,
+
+    // other grid options ...
+}"
+`;
+
+exports[`Snippet Component > given useMemo and useCallback properties with JS literals does not add useMemo or useCallback > it should create 'javascript' snippets without framework context 1`] = `
+"popupParent: -Infinity,
+cellSelection: 'xxx',
+rowSelection: "X",
+sideBar: undefined,
+statusBar: NaN,
+autoSizeStrategy: true,
+rowNumbers: false,
+getDataPath: null,"
+`;
+
+exports[`Snippet Component > given useMemo and useCallback properties with JS literals does not add useMemo or useCallback > it should create 'javascript' snippets without framework context and space between properties 1`] = `
+"popupParent: -Infinity,
+
+cellSelection: 'xxx',
+
+rowSelection: "X",
+
+sideBar: undefined,
+
+statusBar: NaN,
+
+autoSizeStrategy: true,
+
+rowNumbers: false,
+
+getDataPath: null,"
+`;
+
+exports[`Snippet Component > given useMemo and useCallback properties with JS literals does not add useMemo or useCallback > it should create 'react' snippets 1`] = `
+"const popupParent = -Infinity;
+const cellSelection = 'xxx';
+const rowSelection = "X";
+const sideBar = undefined;
+const statusBar = NaN;
+const autoSizeStrategy = true;
+const rowNumbers = false;
+const getDataPath = null;
+
+<AgGridReact
+    popupParent={popupParent}
+    cellSelection={cellSelection}
+    rowSelection={rowSelection}
+    sideBar={sideBar}
+    statusBar={statusBar}
+    autoSizeStrategy={autoSizeStrategy}
+    rowNumbers={rowNumbers}
+    getDataPath={getDataPath}
+/>"
+`;
+
+exports[`Snippet Component > given useMemo and useCallback properties with JS literals does not add useMemo or useCallback > it should create 'react' snippets with space between properties 1`] = `
+"const popupParent = -Infinity;
+
+const cellSelection = 'xxx';
+
+const rowSelection = "X";
+
+const sideBar = undefined;
+
+const statusBar = NaN;
+
+const autoSizeStrategy = true;
+
+const rowNumbers = false;
+
+const getDataPath = null;
+
+<AgGridReact
+    popupParent={popupParent}
+    cellSelection={cellSelection}
+    rowSelection={rowSelection}
+    sideBar={sideBar}
+    statusBar={statusBar}
+    autoSizeStrategy={autoSizeStrategy}
+    rowNumbers={rowNumbers}
+    getDataPath={getDataPath}
+/>"
+`;
+
+exports[`Snippet Component > given useMemo and useCallback properties with JS literals does not add useMemo or useCallback > it should create 'react' snippets without framework context 1`] = `
+"const popupParent = -Infinity;
+const cellSelection = 'xxx';
+const rowSelection = "X";
+const sideBar = undefined;
+const statusBar = NaN;
+const autoSizeStrategy = true;
+const rowNumbers = false;
+const getDataPath = null;
+
+<AgGridReact
+    popupParent={popupParent}
+    cellSelection={cellSelection}
+    rowSelection={rowSelection}
+    sideBar={sideBar}
+    statusBar={statusBar}
+    autoSizeStrategy={autoSizeStrategy}
+    rowNumbers={rowNumbers}
+    getDataPath={getDataPath}
+/>"
+`;
+
+exports[`Snippet Component > given useMemo and useCallback properties with JS literals does not add useMemo or useCallback > it should create 'react' snippets without framework context and space between properties 1`] = `
+"const popupParent = -Infinity;
+
+const cellSelection = 'xxx';
+
+const rowSelection = "X";
+
+const sideBar = undefined;
+
+const statusBar = NaN;
+
+const autoSizeStrategy = true;
+
+const rowNumbers = false;
+
+const getDataPath = null;
+
+<AgGridReact
+    popupParent={popupParent}
+    cellSelection={cellSelection}
+    rowSelection={rowSelection}
+    sideBar={sideBar}
+    statusBar={statusBar}
+    autoSizeStrategy={autoSizeStrategy}
+    rowNumbers={rowNumbers}
+    getDataPath={getDataPath}
+/>"
+`;
+
+exports[`Snippet Component > given useMemo and useCallback properties with JS literals does not add useMemo or useCallback > it should create 'vue' snippets 1`] = `
+"<ag-grid-vue
+    :popupParent="popupParent"
+    :cellSelection="cellSelection"
+    :rowSelection="rowSelection"
+    :sideBar="sideBar"
+    :statusBar="statusBar"
+    :autoSizeStrategy="autoSizeStrategy"
+    :rowNumbers="rowNumbers"
+    :getDataPath="getDataPath"
+    /* other grid options ... */>
+</ag-grid-vue>
+
+this.popupParent = -Infinity;
+this.cellSelection = 'xxx';
+this.rowSelection = "X";
+this.sideBar = undefined;
+this.statusBar = NaN;
+this.autoSizeStrategy = true;
+this.rowNumbers = false;
+this.getDataPath = null;"
+`;
+
+exports[`Snippet Component > given useMemo and useCallback properties with JS literals does not add useMemo or useCallback > it should create 'vue' snippets with space between properties 1`] = `
+"<ag-grid-vue
+    :popupParent="popupParent"
+    :cellSelection="cellSelection"
+    :rowSelection="rowSelection"
+    :sideBar="sideBar"
+    :statusBar="statusBar"
+    :autoSizeStrategy="autoSizeStrategy"
+    :rowNumbers="rowNumbers"
+    :getDataPath="getDataPath"
+    /* other grid options ... */>
+</ag-grid-vue>
+
+this.popupParent = -Infinity;
+
+this.cellSelection = 'xxx';
+
+this.rowSelection = "X";
+
+this.sideBar = undefined;
+
+this.statusBar = NaN;
+
+this.autoSizeStrategy = true;
+
+this.rowNumbers = false;
+
+this.getDataPath = null;"
+`;
+
+exports[`Snippet Component > given useMemo and useCallback properties with JS literals does not add useMemo or useCallback > it should create 'vue' snippets without framework context 1`] = `
+"this.popupParent = -Infinity;
+this.cellSelection = 'xxx';
+this.rowSelection = "X";
+this.sideBar = undefined;
+this.statusBar = NaN;
+this.autoSizeStrategy = true;
+this.rowNumbers = false;
+this.getDataPath = null;"
+`;
+
+exports[`Snippet Component > given useMemo and useCallback properties with JS literals does not add useMemo or useCallback > it should create 'vue' snippets without framework context and space between properties 1`] = `
+"this.popupParent = -Infinity;
+
+this.cellSelection = 'xxx';
+
+this.rowSelection = "X";
+
+this.sideBar = undefined;
+
+this.statusBar = NaN;
+
+this.autoSizeStrategy = true;
+
+this.rowNumbers = false;
+
+this.getDataPath = null;"
 `;

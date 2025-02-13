@@ -42,7 +42,6 @@ const gridOptions: GridOptions<IOlympicData> = {
         minWidth: 100,
     },
     enableBrowserTooltips: true,
-    rowData: null,
     columnDefs: columnDefs,
 };
 

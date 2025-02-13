@@ -1,10 +1,10 @@
 {
   "name": "ag-grid-generate-example-files",
-  "version": "33.0.1",
+  "version": "33.1.0",
   "private": true,
   "dependencies": {
     "ag-shared": "0.0.1",
-    "ag-grid-community": "33.0.1",
+    "ag-grid-community": "33.1.0",
     "glob": "8.0.3",
     "typescript": "~5.2.2",
     "cheerio": "^1.0.0-rc.12",

@@ -138,9 +138,33 @@ const isHomepage = Astro.url.pathname.replaceAll('/', '') === SITE_BASE_URL.repl
 
             htmlEl.classList.add('no-transitions');
             htmlEl.dataset.darkMode = localDarkmode !== undefined ? localDarkmode : isOSDarkmode;
-            htmlEl.dataset.agThemeMode = htmlEl.dataset.darkMode === 'true' ? 'dark-blue' : 'light';
+
+            const getDarkmode = () => htmlEl.dataset.darkMode === 'true';
+            htmlEl.dataset.agThemeMode = getDarkmode() ? 'dark-blue' : 'light';
             htmlEl.offsetHeight; // Trigger a reflow, flushing the CSS changes
             htmlEl.classList.remove('no-transitions');
+
+            // Set up dark mode on change listeners
+            const darkModeListeners = [];
+            globalThis.addDarkmodeOnChange = (onChange) => {
+                darkModeListeners.push(onChange);
+
+                // Run once on initialisation
+                onChange(getDarkmode());
+            };
+
+            // Listen to changes to html[data-dark-mode] attribute and notify listeners
+            const observer = new MutationObserver((mutations) => {
+                mutations.forEach((mutation) => {
+                    if (mutation.attributeName === 'data-dark-mode') {
+                        const newDarkmode = getDarkmode();
+                        darkModeListeners.forEach((listener) => {
+                            listener(newDarkmode);
+                        });
+                    }
+                });
+            });
+            observer.observe(htmlEl, { attributes: true });
         </script>
 
         <div class:list={styles.mainContainer}>

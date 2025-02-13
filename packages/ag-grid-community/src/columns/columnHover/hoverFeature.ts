@@ -9,13 +9,33 @@ export class HoverFeature extends BeanStub {
         super();
     }
 
+    private destroyManagedListeners: (() => void)[] = [];
+
     public postConstruct(): void {
-        if (this.gos.get('columnHoverHighlight')) {
-            const colHover = this.beans.colHover!;
-            this.addManagedListeners(this.element, {
-                mouseout: colHover.clearMouseOver.bind(colHover),
-                mouseover: colHover.setMouseOver.bind(colHover, this.columns),
+        this.addManagedPropertyListener('columnHoverHighlight', ({ currentValue }) => {
+            this.enableFeature(currentValue);
+        });
+        this.enableFeature();
+    }
+
+    private enableFeature = (enabled?: boolean) => {
+        const { beans, gos, element, columns } = this;
+        const colHover = beans.colHover!;
+        const active = enabled ?? !!gos.get('columnHoverHighlight');
+
+        if (active) {
+            this.destroyManagedListeners = this.addManagedElementListeners(element, {
+                mouseover: colHover.setMouseOver.bind(colHover, columns),
+                mouseout: colHover.setMouseOver.bind(colHover, columns),
             });
+        } else {
+            this.destroyManagedListeners.forEach((fn) => fn());
+            this.destroyManagedListeners = [];
         }
+    };
+
+    public override destroy() {
+        super.destroy();
+        (this.destroyManagedListeners as any) = null;
     }
 }

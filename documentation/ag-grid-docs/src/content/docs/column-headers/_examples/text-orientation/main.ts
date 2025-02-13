@@ -90,7 +90,6 @@ let gridApi: GridApi<IOlympicData>;
 
 const gridOptions: GridOptions<IOlympicData> = {
     columnDefs: columnDefs,
-    rowData: null,
     groupHeaderHeight: 75,
     headerHeight: 150,
     floatingFiltersHeight: 50,

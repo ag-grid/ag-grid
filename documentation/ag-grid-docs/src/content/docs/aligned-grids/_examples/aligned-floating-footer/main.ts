@@ -61,7 +61,6 @@ const gridOptionsTop: GridOptions = {
         minWidth: 100,
     },
     columnDefs,
-    rowData: null,
     // don't show the horizontal scrollbar on the top grid
     suppressHorizontalScroll: true,
     alwaysShowVerticalScroll: true,

@@ -2,7 +2,7 @@ import type { ChartType } from 'ag-grid-community';
 import { Component } from 'ag-grid-community';
 
 import type { ChartSeriesType } from '../../utils/seriesTypeMapper';
-import { isCartesian } from '../../utils/seriesTypeMapper';
+import { isCartesian, isFunnel } from '../../utils/seriesTypeMapper';
 import type { ChartMenuContext } from '../chartMenuContext';
 import { ChartPanelFeature } from '../chartPanelFeature';
 import { AnimationPanel } from './interactivity/animationPanel';
@@ -45,7 +45,7 @@ export class AdvancedSettingsPanel extends Component {
     }
 
     private isGroupPanelShownForSeries(group: ChartInteractivityGroup, seriesType: ChartSeriesType): boolean {
-        return group === 'animation' || isCartesian(seriesType);
+        return group === 'animation' || (isCartesian(seriesType) && !isFunnel(seriesType));
     }
 
     private createPanel(group: ChartInteractivityGroup): Component {

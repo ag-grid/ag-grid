@@ -15,7 +15,6 @@ let gridApi: GridApi<IOlympicData>;
 
 const gridOptions: GridOptions<IOlympicData> = {
     theme: myTheme,
-    rowData: null,
     columnDefs: [
         { field: 'athlete', minWidth: 170 },
         { field: 'age' },

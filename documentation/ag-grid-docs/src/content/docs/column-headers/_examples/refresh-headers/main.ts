@@ -32,7 +32,6 @@ const gridOptions: GridOptions<IOlympicData> = {
         { field: 'bronze' },
         { field: 'total' },
     ],
-    rowData: null,
     defaultColDef: {
         headerComponent: CustomHeader,
     },

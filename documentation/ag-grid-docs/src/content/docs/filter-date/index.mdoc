@@ -110,6 +110,8 @@ const gridOptions = {
 
 Once the date comparator callback is provided, then the Date Filter is able to perform all the comparison operations it needs, e.g. 'Less Than', 'Greater Than' and 'Equals'.
 
+If the cell values can contain invalid dates, then the `isValidDate` filter param should be implemented alongside `comparator` to allow the invalid date values to be filtered out.
+
 ## Filter Model
 
 The Filter Model describes the current state of the applied Date Filter. The Date Filter Model represents the Date as a string in format `'YYYY-MM-DD'`, however when doing comparisons the date is provided as a JavaScript `Date` object as that's what date pickers typically work with. The model uses string representation to make it easier to save and avoid any timezone issues.

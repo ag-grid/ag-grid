@@ -88,29 +88,6 @@ const gridOptions = {
 }
 ```
 
-### Style Refresh
-
-If you refresh a header, the headerStyle and headerClass will be all applied again. This has the following effect:
-
-{% note %}
-If you are using headerStyle to dynamically style headers, then please take note that grid will not remove styles. 
-For example if you are setting text color to 'red' for a condition, then you should explicitly set it back to default eg 'black' when the condition is not met. Otherwise the red color will remain once it's first applied.
-{% /note %}
-
-
-* `headerStyle`: All new styles are applied. If a new style is the same as an old style, the new style overwrites the old style. If a new style is not present, the old style is left (the grid will NOT remove styles).
-* `headerClass`: All new classes are applied. Old classes are not removed so be aware that classes will accumulate.
-
-```js
-// unsafe, the red will stay after initially applied
-headerStyle: params => params.colDef.field === 'athlete' ? { color: 'red' } : null
-```
-
-```js
-// safe, to black will override the red when the condition is not true
-headerStyle: params => params.colDef.field === 'athlete' ? { color: 'red' } : { color: 'black' }
-```
-
 ### Style Interface
 
 {% interfaceDocumentation interfaceName="AbstractColDef" names=["headerStyle", "headerClass" ] /%}

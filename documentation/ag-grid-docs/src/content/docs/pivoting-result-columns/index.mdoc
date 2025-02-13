@@ -13,10 +13,10 @@ to specifically customise pivot result columns using the `processPivotResultColD
 
 {% apiDocumentation source="grid-options/properties.json" section="rowPivoting" names=["processPivotResultColDef"] /%}
 
-In the example below, the `Gold` column has `cellStyle: { backgroundColor: '#f2e2879e' }` applied, this is then inherited by the pivot result columns,
+In the example below, the `Gold` column has `cellStyle: { backgroundColor: '#f2e287' }` applied, this is then inherited by the pivot result columns,
 causing all of the `sum(Gold)` columns to have a gold background. Note that the `Silver` column does not have this background so neither do the `sum(Silver)` columns.
 
-The grid option `processPivotResultColDef` is then also used, which sets the text colour of all the pivot result columns to '#696FA2'.
+The grid option `processPivotResultColDef` is then also used, which sets the text colour of all the pivot result columns to `#2f73ff`.
 
 {% gridExampleRunner title="Column Definitions Example" name="column-definitions-example"  /%}
 
@@ -26,12 +26,12 @@ This uses the following configuration to both inherit and modify column definiti
 const gridOptions = {
     columnDefs: [
         // ...other column definitions
-        { field: 'gold', aggFunc: 'sum', cellStyle: { backgroundColor: '#f2e2879e' } },
+        { field: 'gold', aggFunc: 'sum', cellStyle: { backgroundColor: '#f2e287' } },
         { field: 'silver', aggFunc: 'sum', cellStyle: {} },
     ],
     pivotMode: true,
     processPivotResultColDef: (colDef) => {
-        colDef.cellStyle.color = '#696FA2'; // the params are mutated directly, not returned
+        colDef.cellStyle.color = '#2f73ff'; // the params are mutated directly, not returned
     },
 }
 ```

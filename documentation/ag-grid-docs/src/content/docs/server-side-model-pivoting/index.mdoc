@@ -37,18 +37,7 @@ containing row grouping details.
 
 The properties relevant to pivoting in the request are shown below:
 
-```ts
-// IServerSideGetRowsRequest
-{
-    // pivot columns, cols with 'pivot=true'
-    pivotCols: ColumnVO[];
-
-        // true if pivot mode is one, otherwise false
-    pivotMode: boolean;
-
-    ... // other properties
-}
-```
+{% interfaceDocumentation interfaceName="IServerSideGetRowsRequest" names=["pivotMode", "pivotCols"] config={"description": ""}/%}
 
 Note in the snippet above that `pivotCols` contains all the columns the grid is pivoting on,
 and `pivotMode` is used to determine if pivoting is currently enabled in the grid.
@@ -66,7 +55,7 @@ year present in the data, such as `2000`, `2002`, `2004`, and so on.
 The simplest way to provide pivot result columns is by supplying the fields containing your pivoted data to the
 `pivotResultFields` attribute in the `getRows` success callback. These fields are used to generate pivot result columns
 and appropriate column groups. By default, the grid expects the fields to be separated by an underscore (`'_'`), however,
-this can be altered via the `serverSidePivotResultSeparator` grid option as shown below:
+this can be altered via the `serverSidePivotResultFieldSeparator` grid option as shown below:
 
 ```{% frameworkTransform=true spaceBetweenProperties=true %}
 const gridOptions = {

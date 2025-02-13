@@ -47,6 +47,7 @@ function createRootEnvFiles() {
 BUILD_GRID_VERSION=${gridNewVersion}
 BUILD_CHARTS_VERSION=${chartsDependencyVersion}
 ENV=${environment}
+NX_BATCH_MODE=true
 `;
     fs.writeFileSync('./.env', data, 'utf-8');
 }

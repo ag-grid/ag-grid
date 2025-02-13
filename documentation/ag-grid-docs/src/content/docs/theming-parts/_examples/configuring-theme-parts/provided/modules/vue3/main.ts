@@ -5,6 +5,7 @@ import {
     AllCommunityModule,
     ModuleRegistry,
     colorSchemeDark,
+    colorSchemeDarkBlue,
     colorSchemeDarkWarm,
     colorSchemeLight,
     colorSchemeLightCold,
@@ -37,7 +38,7 @@ const colorSchemes = [
     { id: 'colorSchemeLightWarm', part: colorSchemeLightWarm },
     { id: 'colorSchemeDark', part: colorSchemeDark },
     { id: 'colorSchemeDarkWarm', part: colorSchemeDarkWarm },
-    { id: 'colorSchemeDarkBlue', part: colorSchemeDark },
+    { id: 'colorSchemeDarkBlue', part: colorSchemeDarkBlue },
     { id: 'colorSchemeVariable', part: colorSchemeVariable },
 ];
 

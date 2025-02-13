@@ -57,12 +57,12 @@ export default {
         },
 
         refresh(params) {
-            console.log('CustomHeader refresh() -> ' + this.params.column.getId());
-
+            const filterChanged = this.enableFilterButton === params.enableFilterButton;
+            console.log('CustomHeader refresh() -> ' + this.params.column.getId() + ' returning ' + filterChanged);
             this.enableFilterButton = params.enableFilterButton;
             this.enableSorting = params.enableSorting;
             this.displayName = params.displayName;
-            return true;
+            return filterChanged;
         },
     },
 };

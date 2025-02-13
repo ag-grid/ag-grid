@@ -315,6 +315,10 @@ a.metaValue {
     &:hover {
         color: var(--color-link-hover);
     }
+
+    #{$selector-darkmode} & {
+        background-color: color-mix(in srgb, var(--color-link), var(--color-bg-primary) 90%);
+    }
 }
 
 .actions {

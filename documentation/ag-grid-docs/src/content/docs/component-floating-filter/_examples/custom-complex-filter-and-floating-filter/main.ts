@@ -122,7 +122,6 @@ const gridOptions: GridOptions<IOlympicData> = {
         floatingFilter: true,
     },
     columnDefs: columnDefs,
-    rowData: null,
 };
 
 // setup the grid after the page has finished loading

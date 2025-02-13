@@ -43,7 +43,6 @@ const columnDefs: ColDef[] = [
 let gridApi: GridApi<IOlympicData>;
 
 const gridOptions: GridOptions<IOlympicData> = {
-    rowData: null,
     columnDefs: columnDefs,
     defaultColDef: {
         flex: 1,

@@ -34,7 +34,6 @@ const gridOptions: GridOptions<IOlympicData> = {
         width: 200,
     },
     columnDefs: columnDefs,
-    rowData: null,
 };
 
 // setup the grid after the page has finished loading

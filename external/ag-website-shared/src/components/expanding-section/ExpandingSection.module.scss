@@ -28,6 +28,10 @@
         background-color: var(--color-button-secondary-bg-hover);
     }
 
+    &::-webkit-details-marker {
+        display: none;
+    }
+
     &::before {
         content: 'View';
         display: inline-block;

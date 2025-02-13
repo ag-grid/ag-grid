@@ -38,7 +38,7 @@ When using group selection with the server-side row model, you should **not** us
 
 ### Transactions
 
-When adding a new row via transaction, the new row will be treated as if it conforms to the parents selection. Therefore, if the parent row was selected the new row will be treated as selected upon creation. For indeterminate groups, this will follow the last non-indeterminate state. Note the following:
+When adding a new row via transaction, the new row will be treated as if it conforms to its parent's selection. Therefore, if the parent row was selected the new row will be treated as selected upon creation. For indeterminate groups, this will follow the last non-indeterminate state. Note the following:
 
 * When clicking the `Add new Aggressive` button, the new row is unselected
 * After selecting the `Aggressive` group, new rows created by the `Add new Aggressive` button will be selected.
@@ -89,7 +89,7 @@ params.api.setServerSideSelectionState({
     toggledNodes: [{
         // as this is a group node with toggledNodes, this node will be marked as indeterminate
         nodeId: 'group-country-year-United States',
-        // selectAllChildren can be used to determine whether this groups children are all selected
+        // selectAllChildren can be used to determine whether this group's children are all selected
         selectAllChildren: false,
         toggledNodes: [{
             // this group node has no toggledNodes, and so it will respect its own `selectAllChildren` property along

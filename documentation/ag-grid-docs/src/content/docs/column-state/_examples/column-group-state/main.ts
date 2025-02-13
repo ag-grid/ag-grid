@@ -35,7 +35,6 @@ const gridOptions: GridOptions<IOlympicData> = {
         width: 150,
     },
     columnDefs: columnDefs,
-    rowData: null,
 };
 
 function saveState() {

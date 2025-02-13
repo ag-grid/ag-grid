@@ -30,7 +30,6 @@ export default [
             '@typescript-eslint/no-unnecessary-type-constraint': 'error',
             '@typescript-eslint/no-this-alias': 'off',
             '@typescript-eslint/no-for-in-array': 'error',
-            'no-restricted-syntax': ['error', 'ForInStatement'],
             'no-restricted-properties': [
                 'warn',
                 { property: 'innerText', message: 'Prefer textContent where possible.' },
@@ -42,6 +41,7 @@ export default [
             ],
             'no-restricted-syntax': [
                 'error',
+                'ForInStatement',
                 {
                     selector: 'ImportDeclaration[specifiers.length = 0][source.value=ag-grid-community]',
                     message:

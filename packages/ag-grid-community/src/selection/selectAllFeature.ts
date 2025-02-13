@@ -1,7 +1,7 @@
 import { isColumnGroupAutoCol, isColumnSelectionCol } from '../columns/columnUtils';
 import { BeanStub } from '../context/beanStub';
 import type { AgColumn } from '../entities/agColumn';
-import type { SelectAllMode } from '../entities/gridOptions';
+import type { GridOptions, SelectAllMode } from '../entities/gridOptions';
 import type { DisplayedColumnsChangedEvent, SelectionEventSourceType } from '../events';
 import {
     _addGridCommonParams,
@@ -56,6 +56,16 @@ export class SelectAllFeature extends BeanStub {
             selectionChanged: this.onSelectionChanged.bind(this),
             paginationChanged: this.onSelectionChanged.bind(this),
             modelUpdated: this.onModelChanged.bind(this),
+        });
+
+        this.addManagedPropertyListener('rowSelection', ({ currentValue, previousValue }) => {
+            const getSelectAll = (rowSelection: GridOptions['rowSelection']) =>
+                typeof rowSelection === 'string' || !rowSelection || rowSelection.mode === 'singleRow'
+                    ? undefined
+                    : rowSelection.selectAll;
+            if (getSelectAll(currentValue) !== getSelectAll(previousValue)) {
+                this.showOrHideSelectAll();
+            }
         });
 
         this.addManagedListeners(cbSelectAll, { fieldValueChanged: this.onCbSelectAll.bind(this) });

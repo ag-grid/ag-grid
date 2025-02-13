@@ -67,6 +67,8 @@ const gridOptions: GridOptions = {
     rowData: getData(),
     defaultColDef: {
         width: 100,
+        sortable: false,
+        suppressMovable: true,
     },
     autoSizeStrategy: {
         type: 'fitGridWidth',

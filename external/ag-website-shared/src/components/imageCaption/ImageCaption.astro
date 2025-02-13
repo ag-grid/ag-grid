@@ -1,15 +1,17 @@
 ---
-import { ImageCaption } from './ImageCaption';
 import { getPageImages } from '@components/docs/utils/filesData';
 import { getPageNameFromPath } from '@components/docs/utils/urlPaths';
 
+import ImageDescription from './ImageDescription.astro';
+import styles from './ImageCaption.module.scss';
+
 interface Props {
+    id?: string;
     pageName?: string;
     imagePath: string;
     alt: string;
     centered?: boolean;
     constrained?: boolean;
-    descriptionTop?: boolean;
     width?: string;
     height?: string;
     minWidth?: string;
@@ -20,7 +22,19 @@ interface Props {
     enableDarkModeFilter?: boolean;
 }
 
-const { pageName: propPageName, imagePath, alt, ...props } = Astro.props as Props;
+const {
+    id,
+    pageName: propPageName,
+    imagePath,
+    alt,
+    width,
+    minWidth,
+    maxWidth,
+    height,
+    centered,
+    constrained,
+    enableDarkModeFilter,
+} = Astro.props as Props;
 
 const pageName = propPageName ? propPageName : getPageNameFromPath(Astro.url.pathname);
 
@@ -28,18 +42,59 @@ const { imageSrc, darkModeImageSrc } = await getPageImages({
     pageName,
     imagePath,
 });
-const caption = await Astro.slots.render('default');
+
+const style: any = {};
+if (width !== undefined) {
+    style.width = width;
+}
+if (minWidth !== undefined) {
+    style.minWidth = minWidth;
+}
+if (maxWidth !== undefined) {
+    style.maxWidth = maxWidth;
+}
+if (height !== undefined) {
+    style.height = height;
+}
+
+const imageId = id ? id : `image-${imagePath}`;
 ---
 
-{
-    imageSrc && (
-        <ImageCaption
-            client:load
-            imageSrc={imageSrc}
-            alt={alt}
-            darkModeImageSrc={darkModeImageSrc}
-            captionHtml={caption}
-            {...props}
-        />
-    )
-}
+<div
+    class:list={[
+        styles.imageCaption,
+        'image-caption',
+        {
+            [styles.centered]: centered,
+            [styles.constrained]: constrained,
+            [styles.darkmodeFilter]: enableDarkModeFilter,
+        },
+    ]}
+    style={style}
+>
+    <img id={imageId} src={imageSrc} class={styles.image} alt={alt} />
+    <ImageDescription>
+        <slot />
+    </ImageDescription>
+</div>
+
+<script
+    define:vars={{
+        imageId,
+        imageSrc,
+        darkModeImageSrc,
+        skip: enableDarkModeFilter,
+    }}
+>
+    if (skip) {
+        return;
+    }
+    const image = document.getElementById(imageId);
+    globalThis.addDarkmodeOnChange((darkMode) => {
+        if (darkMode) {
+            image.src = darkModeImageSrc;
+        } else {
+            image.src = imageSrc;
+        }
+    });
+</script>

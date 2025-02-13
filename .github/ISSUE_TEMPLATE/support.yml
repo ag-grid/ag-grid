@@ -1,0 +1,56 @@
+name: Support Request
+description: Ask the community for support.
+title: "[Support]: "
+labels: ["community-support"]
+body:
+  - type: input
+    id: repro
+    attributes:
+      label: Link to reproducible scenario
+      description: Add a live plunker sample which shows the issue. You can use one of the examples from our website as a starting point.
+      placeholder: plunker or codesandbox link here
+    validations:
+      required: false
+  - type: textarea
+    id: description
+    attributes:
+      label: Add a description
+      description: Provide as much detail as possible!
+      placeholder: |
+        What is the best way to...
+        How do I...
+        Where can I find...
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Version
+      description: What version of AG Grid are you using?
+    validations:
+      required: true
+  - type: dropdown
+    id: languages
+    attributes:
+      label: What language are you using?
+      multiple: false
+      default: 0
+      options:
+        - Please select
+        - React
+        - Angular
+        - Vue
+        - JavaScript
+        - TypeScript
+  - type: dropdown
+    id: browsers
+    attributes:
+      label: What browser are you using?
+      multiple: false
+      default: 0
+      options:
+        - Please select
+        - Chrome
+        - Firefox
+        - Safari
+        - Microsoft Edge

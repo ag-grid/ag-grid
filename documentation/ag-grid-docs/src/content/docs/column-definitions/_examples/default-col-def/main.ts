@@ -18,7 +18,6 @@ const gridOptions: GridOptions<IOlympicData> = {
         width: 150,
         cellStyle: { fontWeight: 'bold' },
     },
-    rowData: null,
 };
 
 // setup the grid after the page has finished loading

@@ -332,7 +332,8 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
                                   }),
                           }
                         : null;
-                case 'columnChooser':
+                case 'columnChooser': {
+                    const headerPosition = focusSvc.focusedHeader;
                     return colChooserFactory
                         ? {
                               name: localeTextFunc('columnChooser', 'Choose Columns'),
@@ -341,9 +342,11 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
                                   (colChooserFactory as ColumnChooserFactory).showColumnChooser({
                                       column,
                                       eventSource: sourceElement(),
+                                      headerPosition,
                                   }),
                           }
                         : null;
+                }
                 case 'sortAscending':
                     return sortSvc
                         ? {

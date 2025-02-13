@@ -17,7 +17,6 @@ const gridOptions: GridOptions<IOlympicData> = {
         { field: 'bronze', cellRenderer: MedalCellRenderer },
         { cellRenderer: UpdateCellRenderer },
     ],
-    rowData: null,
     defaultColDef: {
         flex: 1,
         minWidth: 100,

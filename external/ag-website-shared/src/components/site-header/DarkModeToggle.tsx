@@ -15,7 +15,7 @@ export const DarkModeToggle = () => {
             >
                 <div className={classNames(styles.icon, styles.pseudoIcon)} />
 
-                <span>{darkmode ? 'Light Mode' : 'Dark Mode'}</span>
+                <span suppressHydrationWarning={true}>{darkmode ? 'Light Mode' : 'Dark Mode'}</span>
             </button>
         </li>
     );

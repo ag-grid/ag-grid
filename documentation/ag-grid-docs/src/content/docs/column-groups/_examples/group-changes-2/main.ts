@@ -66,7 +66,6 @@ const gridOptions: GridOptions<IOlympicData> = {
     },
     // debug: true,
     columnDefs: createNormalColDefs(),
-    rowData: null,
 };
 
 // setup the grid after the page has finished loading

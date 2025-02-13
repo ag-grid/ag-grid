@@ -174,6 +174,7 @@
 .ag-cell-focus:not(.ag-cell-range-selected):focus-within,
 .ag-context-menu-open .ag-cell-focus:not(.ag-cell-range-selected),
 .ag-full-width-row.ag-row-focus:focus .ag-cell-wrapper.ag-row-group,
+.ag-context-menu-open .ag-full-width-row.ag-row-focus .ag-cell-wrapper.ag-row-group,
 .ag-cell-range-single-cell,
 .ag-cell-range-single-cell.ag-cell-range-handle {
     border: 1px solid;
