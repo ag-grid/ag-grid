@@ -153,7 +153,9 @@ export async function generateFiles(options: ExecutorOptions, gridOptionsTypes: 
         const mainFileName = getMainFileName(internalFramework)!;
 
         const providedFramework = internalFramework === 'reactFunctional' ? 'reactFunctionalTs' : internalFramework;
-        const provideFrameworkFiles = { ...frameworkProvidedExamples[providedFramework] };
+        const provideFrameworkFiles = frameworkProvidedExamples[providedFramework]
+            ? { ...frameworkProvidedExamples[providedFramework] }
+            : undefined;
 
         const packageJson = getPackageJson({
             isLocale,
@@ -337,11 +339,12 @@ async function writeContents(
 // console.log('should generate');
 // generateFiles(
 //     {
-//         examplePath: 'documentation/ag-grid-docs/src/content/docs/aligned-grids/_examples/aligned-grids',
+//         examplePath:
+//             'documentation/ag-grid-docs/src/content/docs/component-cell-renderer/_examples/cell-renderer-summary',
 //         mode: 'dev',
 //         inputs: [],
 //         output: '',
-//         outputPath: 'dist/generated-examples/ag-grid-docs/docs/aligned-grids/_examples/aligned-grids',
+//         outputPath: 'dist/generated-examples/ag-grid-docs/docs/component-cell-renderer/_examples/cell-renderer-summary',
 //         writeFiles: true,
 //     },
 //     {}
