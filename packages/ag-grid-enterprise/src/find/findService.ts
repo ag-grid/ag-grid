@@ -5,6 +5,7 @@ import type {
     IFindService,
     IRowNode,
     NamedBean,
+    RowNode,
     RowPinnedType,
 } from 'ag-grid-community';
 import { BeanStub, _escapeString, _isClientSideRowModel, _missing } from 'ag-grid-community';
@@ -194,6 +195,11 @@ export class FindService extends BeanStub implements NamedBean, IFindService {
                 }
             }
             for (const column of allCols) {
+                const cellSpan = beans.rowSpanSvc?.getCellSpan(column, node as RowNode);
+                if (cellSpan && cellSpan.firstNode !== node) {
+                    // only match on first row of span
+                    return;
+                }
                 const value = valueSvc.getValueForDisplay(column, node);
                 let valueToFind: string | null;
                 const colDef = column.colDef;

@@ -701,7 +701,8 @@
                         {
                             "type": "item",
                             "title": "Find",
-                            "path": "find"
+                            "path": "find",
+                            "isEnterprise": true
                         }
                     ]
                 },
