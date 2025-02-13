@@ -90,6 +90,10 @@ const docs: Record<AllThemeParams, string> = {
     dragHandleColor: 'Color of the drag handle on draggable rows and column markers',
     dropdownShadow: 'Default shadow for dropdown menus',
     filterToolPanelGroupIndent: 'How much to indent child columns in the filters tool panel relative to their parent',
+    findMatchColor: 'Color of matches used in Find',
+    findMatchBackgroundColor: 'Background color of matches used in Find',
+    findActiveMatchColor: 'Color of the active match used in Find',
+    findActiveMatchBackgroundColor: 'Background color of the active match used in Find',
     focusShadow:
         'Shadow around UI controls that have focus e.g. text inputs and buttons. The value must a valid CSS box-shadow.',
     fontFamily: 'Font family used for all text.',
@@ -223,10 +227,6 @@ const docs: Record<AllThemeParams, string> = {
         'Color of the skeleton loading effect used when loading row data with the Server-side Row Model',
     rowVerticalPaddingScale:
         'Multiply the row vertical padding by a number, e.g. 1.5 to increase by 50%. Has no effect if rowHeight is set.',
-    searchMatchColor: 'Color of matches used in Search',
-    searchMatchBackgroundColor: 'Background color of matches used in Search',
-    searchActiveMatchColor: 'Color of the active match used in Search',
-    searchActiveMatchBackgroundColor: 'Background color of the active match used in Search',
     selectCellBackgroundColor: 'Background color for selected items within the multiple select widget',
     selectCellBorder: 'Border for selected items within the multiple select widget',
     selectedRowBackgroundColor: 'Background color of selected rows in the grid and in dropdown menus.',

@@ -85,6 +85,7 @@ import type {
     FilterChangedEvent,
     FilterModifiedEvent,
     FilterOpenedEvent,
+    FindChangedEvent,
     FirstDataRenderedEvent,
     FocusGridInnerElementParams,
     FullWidthCellKeyDownEvent,
@@ -167,7 +168,6 @@ import type {
     RowSelectionOptions,
     RowStyle,
     RowValueChangedEvent,
-    SearchChangedEvent,
     SelectionChangedEvent,
     SelectionColumnDef,
     SendToClipboardParams,
@@ -665,7 +665,13 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * @initial
      */
     @Input() public excelStyles: ExcelStyle[] | undefined = undefined;
-    @Input() public searchText: string | undefined = undefined;
+    @Input() public findText: string | undefined = undefined;
+    @Input() public findOptions:
+        | {
+              currentPageOnly?: boolean;
+              matchCase?: boolean;
+          }
+        | undefined = undefined;
     /** Rows are filtered using this text as a Quick Filter.
      * Only supported for Client-Side Row Model.
      */
@@ -1927,9 +1933,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Output() public advancedFilterBuilderVisibleChanged: EventEmitter<
         AdvancedFilterBuilderVisibleChangedEvent<TData>
     > = new EventEmitter<AdvancedFilterBuilderVisibleChangedEvent<TData>>();
-    @Output() public searchChanged: EventEmitter<SearchChangedEvent<TData>> = new EventEmitter<
-        SearchChangedEvent<TData>
-    >();
+    @Output() public findChanged: EventEmitter<FindChangedEvent<TData>> = new EventEmitter<FindChangedEvent<TData>>();
     /** A chart has been created.
      */
     @Output() public chartCreated: EventEmitter<ChartCreatedEvent<TData>> = new EventEmitter<

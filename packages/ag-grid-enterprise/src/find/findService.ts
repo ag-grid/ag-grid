@@ -1,58 +1,52 @@
-import type { NamedBean } from '../context/bean';
-import { BeanStub } from '../context/beanStub';
-import type { RowNode } from '../entities/rowNode';
-import { _isClientSideRowModel } from '../gridOptionsUtils';
-import type { IClientSideRowModel } from '../interfaces/iClientSideRowModel';
-import type { Column } from '../interfaces/iColumn';
-import type { IRowNode, RowPinnedType } from '../interfaces/iRowNode';
-import { _missing } from '../utils/generic';
-import { _escapeString } from '../utils/string';
-
-export interface SearchMatch {
-    node: RowNode;
-    column: Column;
-    numInMatch: number;
-    numOverall: number;
-}
+import type {
+    Column,
+    FindMatch,
+    IClientSideRowModel,
+    IFindService,
+    IRowNode,
+    NamedBean,
+    RowPinnedType,
+} from 'ag-grid-community';
+import { BeanStub, _escapeString, _isClientSideRowModel, _missing } from 'ag-grid-community';
 
 function defaultCaseFormat(value?: string | null): string | undefined {
     return value?.toLocaleLowerCase();
 }
 
-export class SearchService extends BeanStub implements NamedBean {
-    beanName = 'search' as const;
+export class FindService extends BeanStub implements NamedBean, IFindService {
+    beanName = 'find' as const;
 
-    private pinnedTopMatches: Map<RowNode, [Column, number][]> = new Map();
-    private pinnedTopRowNodes: RowNode[] = [];
+    private pinnedTopMatches: Map<IRowNode, [Column, number][]> = new Map();
+    private pinnedTopRowNodes: IRowNode[] = [];
     private pinnedTopNumMatches: number = 0;
-    private unpinnedMatches: Map<RowNode, [Column, number][]> = new Map();
-    private unpinnedRowNodes: RowNode[] = [];
+    private unpinnedMatches: Map<IRowNode, [Column, number][]> = new Map();
+    private unpinnedRowNodes: IRowNode[] = [];
     private unpinnedNumMatches: number = 0;
-    private pinnedBottomMatches: Map<RowNode, [Column, number][]> = new Map();
-    private pinnedBottomRowNodes: RowNode[] = [];
+    private pinnedBottomMatches: Map<IRowNode, [Column, number][]> = new Map();
+    private pinnedBottomRowNodes: IRowNode[] = [];
 
     private caseFormat: (value?: string | null) => string | undefined = defaultCaseFormat;
 
+    private findText: string | undefined;
+
     public totalMatches: number = 0;
 
-    public activeMatch: SearchMatch | undefined;
-
-    public searchText: string | undefined;
+    public activeMatch: FindMatch | undefined;
 
     public postConstruct(): void {
         if (!_isClientSideRowModel(this.gos)) {
             return;
         }
 
-        const updateSearch = this.updateSearch.bind(this);
-        this.addManagedPropertyListeners(['searchText', 'searchOptions'], () => updateSearch());
+        const updateFind = this.updateFind.bind(this);
+        this.addManagedPropertyListeners(['findText', 'findOptions'], () => updateFind());
         this.addManagedEventListeners({
-            modelUpdated: () => updateSearch(true),
-            displayedColumnsChanged: () => updateSearch(true),
-            pinnedRowDataChanged: () => updateSearch(true),
+            modelUpdated: () => updateFind(true),
+            displayedColumnsChanged: () => updateFind(true),
+            pinnedRowDataChanged: () => updateFind(true),
         });
 
-        this.updateSearch();
+        this.updateFind();
     }
 
     public next(): void {
@@ -79,14 +73,14 @@ export class SearchService extends BeanStub implements NamedBean {
 
     public isMatch(node: IRowNode, column: Column): boolean {
         return !!this.getMatches(node.rowPinned)
-            .get(node as RowNode)
+            .get(node)
             ?.some(([colToCheck]) => colToCheck === column);
     }
 
     public getNumMatches(node: IRowNode, column: Column): number {
         return (
             this.getMatches(node.rowPinned)
-                .get(node as RowNode)
+                .get(node)
                 ?.find(([colToCheck]) => colToCheck === column)?.[1] ?? 0
         );
     }
@@ -104,24 +98,24 @@ export class SearchService extends BeanStub implements NamedBean {
         column: Column;
     }): { value: string; match?: boolean; activeMatch?: boolean }[] {
         const { value, node, column } = params;
-        const searchText = this.searchText;
-        if (_missing(searchText)) {
+        const findText = this.findText;
+        if (_missing(findText)) {
             return [{ value }];
         }
-        const valueToSearch = this.caseFormat(_escapeString(value, true)) ?? '';
+        const valueToFind = this.caseFormat(_escapeString(value, true)) ?? '';
         const activeMatchNum = this.getActiveMatchNum(node, column);
         let lastIndex = 0;
         let currentMatchNum = 0;
-        const searchTextLength = searchText.length;
+        const findTextLength = findText.length;
         const parts: { value: string; match?: boolean; activeMatch?: boolean }[] = [];
         while (true) {
-            const index = valueToSearch.indexOf(searchText, lastIndex);
+            const index = valueToFind.indexOf(findText, lastIndex);
             if (index != -1) {
                 currentMatchNum++;
                 if (index > lastIndex) {
                     parts.push({ value: value.slice(lastIndex, index) });
                 }
-                const endIndex = index + searchTextLength;
+                const endIndex = index + findTextLength;
                 parts.push({
                     value: value.slice(index, endIndex),
                     match: true,
@@ -139,7 +133,7 @@ export class SearchService extends BeanStub implements NamedBean {
         }
     }
 
-    private updateSearch(maintainActive?: boolean): void {
+    private updateFind(maintainActive?: boolean): void {
         const rowNodesToRefresh = new Set([
             ...this.pinnedTopRowNodes,
             ...this.unpinnedRowNodes,
@@ -156,17 +150,17 @@ export class SearchService extends BeanStub implements NamedBean {
             pinnedBottomRowNodes,
             pinnedBottomMatches,
             beans,
-            searchText: oldSearchText,
+            findText: oldFindText,
         } = this;
         const { gos, visibleCols, rowModel, valueSvc, pinnedRowModel, pagination } = beans;
-        const searchOptions = gos.get('searchOptions');
-        const caseFormat: (value?: string | null) => string | undefined = searchOptions?.matchCase
+        const findOptions = gos.get('findOptions');
+        const caseFormat: (value?: string | null) => string | undefined = findOptions?.matchCase
             ? (value) => value ?? undefined
             : defaultCaseFormat;
         this.caseFormat = caseFormat;
 
-        const searchText = caseFormat(gos.get('searchText')?.trim());
-        this.searchText = searchText;
+        const findText = caseFormat(gos.get('findText')?.trim());
+        this.findText = findText;
 
         pinnedTopMatches.clear();
         unpinnedMatches.clear();
@@ -175,14 +169,14 @@ export class SearchService extends BeanStub implements NamedBean {
         const oldActiveMatch = maintainActive ? this.activeMatch : undefined;
         this.activeMatch = undefined;
 
-        if (_missing(searchText)) {
+        if (_missing(findText)) {
             this.pinnedTopNumMatches = 0;
             this.unpinnedNumMatches = 0;
             this.totalMatches = 0;
             this.refreshRows(rowNodesToRefresh);
 
-            if (!_missing(oldSearchText)) {
-                this.dispatchSearchChanged();
+            if (!_missing(oldFindText)) {
+                this.dispatchFindChanged();
             }
             return;
         }
@@ -190,10 +184,10 @@ export class SearchService extends BeanStub implements NamedBean {
         const allCols = visibleCols.allCols;
 
         let containerNumMatches = 0;
-        let matches: Map<RowNode, [Column, number][]>;
-        let rowNodes: RowNode[];
+        let matches: Map<IRowNode, [Column, number][]>;
+        let rowNodes: IRowNode[];
         let checkCurrentPage: boolean = false;
-        const callback = (node: RowNode) => {
+        const callback = (node: IRowNode) => {
             if (checkCurrentPage) {
                 if (!pagination!.isRowInPage(node.rowIndex!)) {
                     return;
@@ -201,11 +195,11 @@ export class SearchService extends BeanStub implements NamedBean {
             }
             for (const column of allCols) {
                 const value = valueSvc.getValueForDisplay(column, node);
-                let valueToSearch: string | null;
+                let valueToFind: string | null;
                 const colDef = column.colDef;
-                const getSearchText = colDef.getSearchText;
-                if (getSearchText) {
-                    valueToSearch = getSearchText(
+                const getFindText = colDef.getFindText;
+                if (getFindText) {
+                    valueToFind = getFindText(
                         gos.addGridCommonParams({
                             value,
                             node,
@@ -217,14 +211,14 @@ export class SearchService extends BeanStub implements NamedBean {
                     );
                 } else {
                     const valueFormatted = valueSvc.formatValue(column, node, value);
-                    valueToSearch = valueFormatted ?? value;
+                    valueToFind = valueFormatted ?? value;
                 }
-                const finalValue = caseFormat(_escapeString(valueToSearch, true));
+                const finalValue = caseFormat(_escapeString(valueToFind, true));
                 let numMatches = 0;
                 if (finalValue?.length) {
                     let index = -1;
                     while (true) {
-                        index = finalValue.indexOf(searchText, index + 1);
+                        index = finalValue.indexOf(findText, index + 1);
                         if (index != -1) {
                             numMatches++;
                         } else {
@@ -255,7 +249,7 @@ export class SearchService extends BeanStub implements NamedBean {
         matches = unpinnedMatches;
         rowNodes = unpinnedRowNodes;
         containerNumMatches = 0;
-        checkCurrentPage = !!pagination && !!searchOptions?.currentPageOnly;
+        checkCurrentPage = !!pagination && !!findOptions?.currentPageOnly;
         (rowModel as IClientSideRowModel).forEachNodeAfterFilterAndSort(callback);
         this.unpinnedNumMatches = containerNumMatches;
         totalMatches += containerNumMatches;
@@ -275,10 +269,10 @@ export class SearchService extends BeanStub implements NamedBean {
             this.resetActiveMatch(oldActiveMatch);
         }
 
-        this.dispatchSearchChanged();
+        this.dispatchFindChanged();
     }
 
-    private resetActiveMatch(oldActiveMatch: SearchMatch): void {
+    private resetActiveMatch(oldActiveMatch: FindMatch): void {
         const { node, column, numInMatch } = oldActiveMatch;
         const rowPinned = node.rowPinned ?? null;
         const stillValid = this.getMatches(rowPinned)
@@ -318,7 +312,7 @@ export class SearchService extends BeanStub implements NamedBean {
         this.refreshAndScrollToActive(activeMatch, undefined);
     }
 
-    private refreshRows(rowNodes: Set<RowNode>, columns?: Set<Column>): void {
+    private refreshRows(rowNodes: Set<IRowNode>, columns?: Set<Column>): void {
         if (!rowNodes.size) {
             return;
         }
@@ -337,7 +331,7 @@ export class SearchService extends BeanStub implements NamedBean {
 
         const activeMatch = this.activeMatch;
 
-        let containersToSearch = containers;
+        let containersToFind = containers;
 
         if (activeMatch) {
             const { column, node, numInMatch, numOverall } = activeMatch;
@@ -354,7 +348,7 @@ export class SearchService extends BeanStub implements NamedBean {
             if (matchInContainer) {
                 return;
             }
-            // otherwise search after and then before
+            // otherwise find after and then before
             const activeContainerIndex = containers.indexOf(rowPinned);
             const containerLength = containers.length;
             const containersAfter = containers.slice(activeContainerIndex + 1, containerLength);
@@ -365,17 +359,17 @@ export class SearchService extends BeanStub implements NamedBean {
             ) {
                 return;
             }
-            containersToSearch = containers.slice(0, activeContainerIndex + 1); // containers before
+            containersToFind = containers.slice(0, activeContainerIndex + 1); // containers before
         }
 
-        containersToSearch.some((containerRowPinned) => this.findInContainer(containerRowPinned, backwards, startNum));
+        containersToFind.some((containerRowPinned) => this.findInContainer(containerRowPinned, backwards, startNum));
     }
 
     private findInContainer(
         rowPinned: RowPinnedType,
         backwards: boolean,
         nextOverallNum: number,
-        currentNode?: RowNode,
+        currentNode?: IRowNode,
         currentColumn?: Column,
         currentNumInMatch?: number
     ): boolean {
@@ -414,7 +408,7 @@ export class SearchService extends BeanStub implements NamedBean {
             }
         }
 
-        let nextNode: RowNode | undefined;
+        let nextNode: IRowNode | undefined;
         if (currentNode == null) {
             nextNode = rowNodes[backwards ? rowNodes.length - 1 : 0];
         } else {
@@ -439,15 +433,15 @@ export class SearchService extends BeanStub implements NamedBean {
         return false;
     }
 
-    private dispatchSearchChanged(): void {
+    private dispatchFindChanged(): void {
         this.eventSvc.dispatchEvent({
-            type: 'searchChanged',
+            type: 'findChanged',
             activeMatch: this.activeMatch,
             totalMatches: this.totalMatches,
         });
     }
 
-    private setActive(activeMatch?: SearchMatch): void {
+    private setActive(activeMatch?: FindMatch): void {
         if (activeMatch && activeMatch.node.rowIndex == null) {
             // child in unexpanded group
             const node = activeMatch.node;
@@ -458,7 +452,7 @@ export class SearchService extends BeanStub implements NamedBean {
             }
             this.activeMatch = activeMatch;
             this.beans.expansionSvc?.onGroupExpandedOrCollapsed();
-            // this will cause a refresh model which will cause the search to be re-applied
+            // this will cause a refresh model which will cause the find to be re-applied
             return;
         }
 
@@ -467,17 +461,14 @@ export class SearchService extends BeanStub implements NamedBean {
 
         this.refreshAndScrollToActive(activeMatch, oldActiveMatch);
 
-        this.dispatchSearchChanged();
+        this.dispatchFindChanged();
     }
 
-    private refreshAndScrollToActive(
-        activeMatch: SearchMatch | undefined,
-        oldActiveMatch: SearchMatch | undefined
-    ): void {
+    private refreshAndScrollToActive(activeMatch: FindMatch | undefined, oldActiveMatch: FindMatch | undefined): void {
         if (activeMatch || oldActiveMatch) {
-            const nodes = new Set<RowNode>();
+            const nodes = new Set<IRowNode>();
             const columns = new Set<Column>();
-            const addMatch = (match?: SearchMatch) => {
+            const addMatch = (match?: FindMatch) => {
                 if (!match) {
                     return;
                 }
@@ -506,7 +497,7 @@ export class SearchService extends BeanStub implements NamedBean {
         }
     }
 
-    private goToInContainer(matches: Map<RowNode, [Column, number][]>, match: number, startNum: number): void {
+    private goToInContainer(matches: Map<IRowNode, [Column, number][]>, match: number, startNum: number): void {
         let currentMatch = startNum;
         for (const node of matches.keys()) {
             const cols = matches.get(node)!;
@@ -525,7 +516,7 @@ export class SearchService extends BeanStub implements NamedBean {
         }
     }
 
-    private getMatches(rowPinned: RowPinnedType): Map<RowNode, [Column, number][]> {
+    private getMatches(rowPinned: RowPinnedType): Map<IRowNode, [Column, number][]> {
         if (rowPinned === 'top') {
             return this.pinnedTopMatches;
         } else if (rowPinned === 'bottom') {
@@ -535,7 +526,7 @@ export class SearchService extends BeanStub implements NamedBean {
         }
     }
 
-    private getRowNodes(rowPinned: RowPinnedType): RowNode[] {
+    private getRowNodes(rowPinned: RowPinnedType): IRowNode[] {
         if (rowPinned === 'top') {
             return this.pinnedTopRowNodes;
         } else if (rowPinned === 'bottom') {

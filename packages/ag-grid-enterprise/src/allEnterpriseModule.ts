@@ -9,6 +9,7 @@ import { ClipboardModule } from './clipboard/clipboardModule';
 import { ColumnsToolPanelModule } from './columnToolPanel/columnsToolPanelModule';
 import { ExcelExportModule } from './excelExport/excelExportModule';
 import { FiltersToolPanelModule } from './filterToolPanel/filtersToolPanelModule';
+import { FindModule } from './find/findModule';
 import { MasterDetailModule } from './masterDetail/masterDetailModule';
 import { ColumnMenuModule, ContextMenuModule } from './menu/menuModule';
 import { MultiFilterModule } from './multiFilter/multiFilterModule';
@@ -53,6 +54,7 @@ const dependsOn = [
     ViewportRowModelModule,
     PivotModule,
     TreeDataModule,
+    FindModule,
 ];
 const moduleName: ModuleName = 'AllEnterprise';
 

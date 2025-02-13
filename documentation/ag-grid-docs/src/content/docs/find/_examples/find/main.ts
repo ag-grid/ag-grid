@@ -1,19 +1,18 @@
-import type { GetSearchTextParams, GridApi, GridOptions, SearchChangedEvent } from 'ag-grid-community';
+import type { FindChangedEvent, GetFindTextParams, GridApi, GridOptions } from 'ag-grid-community';
 import {
     ClientSideRowModelModule,
     ModuleRegistry,
     PaginationModule,
     PinnedRowModule,
-    SearchModule,
     ValidationModule,
     createGrid,
 } from 'ag-grid-community';
-import { RowGroupingModule, RowGroupingPanelModule } from 'ag-grid-enterprise';
+import { FindModule, RowGroupingModule, RowGroupingPanelModule } from 'ag-grid-enterprise';
 
-import { SearchRenderer } from './searchRenderer_typescript';
+import { FindRenderer } from './findRenderer_typescript';
 
 ModuleRegistry.registerModules([
-    SearchModule,
+    FindModule,
     RowGroupingModule,
     RowGroupingPanelModule,
     PinnedRowModule,
@@ -33,8 +32,8 @@ const gridOptions: GridOptions = {
         { field: 'sport' },
         {
             field: 'year',
-            cellRenderer: SearchRenderer,
-            getSearchText: (params: GetSearchTextParams) => {
+            cellRenderer: FindRenderer,
+            getFindText: (params: GetFindTextParams) => {
                 const cellValue = params.getValueFormatted() ?? params.value?.toString();
                 if (!cellValue?.length) {
                     return null;
@@ -50,7 +49,7 @@ const gridOptions: GridOptions = {
     defaultColDef: {
         enableRowGroup: true,
     },
-    onSearchChanged: (event: SearchChangedEvent) => {
+    onFindChanged: (event: FindChangedEvent) => {
         const { activeMatch, totalMatches } = event;
         (document.getElementById('resultNum') as HTMLElement).textContent = activeMatch
             ? `${activeMatch.numOverall}/${totalMatches}`
@@ -58,13 +57,13 @@ const gridOptions: GridOptions = {
         (document.getElementById('resultPosition') as HTMLElement).textContent = activeMatch
             ? ` { pinned: ${activeMatch.node.rowPinned}, row index: ${activeMatch.node.rowIndex}, column: ${activeMatch.column.getColId()}, num in cell: ${activeMatch.numInMatch} }`
             : '';
-        console.log('searchChanged', event);
+        console.log('findChanged', event);
     },
     onGridReady: () => {
-        (document.getElementById('search-text-box') as HTMLInputElement).addEventListener('keydown', (event) => {
+        (document.getElementById('find-text-box') as HTMLInputElement).addEventListener('keydown', (event) => {
             if (event.key === 'Enter') {
                 event.preventDefault();
-                search();
+                find();
                 const backwards = event.shiftKey;
                 if (backwards) {
                     previous();
@@ -78,27 +77,27 @@ const gridOptions: GridOptions = {
     pagination: true,
 };
 
-function search() {
-    const searchText = (document.getElementById('search-text-box') as HTMLInputElement).value;
-    if (searchText !== gridApi.getGridOption('searchText')) {
-        gridApi!.setGridOption('searchText', searchText);
+function find() {
+    const findText = (document.getElementById('find-text-box') as HTMLInputElement).value;
+    if (findText !== gridApi.getGridOption('findText')) {
+        gridApi!.setGridOption('findText', findText);
     }
 }
 
 function next() {
-    gridApi!.searchNext();
+    gridApi!.findNext();
 }
 
 function previous() {
-    gridApi!.searchPrevious();
+    gridApi!.findPrevious();
 }
 
-function goToSearch() {
-    const num = Number((document.getElementById('search-goto') as HTMLInputElement).value);
+function goToFind() {
+    const num = Number((document.getElementById('find-goto') as HTMLInputElement).value);
     if (isNaN(num) || num < 0) {
         return;
     }
-    gridApi!.searchGoTo(num);
+    gridApi!.findGoTo(num);
 }
 
 // setup the grid after the page has finished loading

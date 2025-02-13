@@ -10,7 +10,7 @@ import type { ICellRendererParams } from 'ag-grid-community';
         <span>
             @for (part of parts(); track $index) {
                 @if (part.match) {
-                    <mark [class]="{ 'ag-search-match': true, 'ag-search-active-match': part.activeMatch }">{{
+                    <mark [class]="{ 'ag-find-match': true, 'ag-find-active-match': part.activeMatch }">{{
                         part.value
                     }}</mark>
                 } @else {
@@ -37,7 +37,7 @@ export class SearchRenderer implements ICellRendererAngularComp {
         const cellDisplayValue = `Year is ${cellValue}`;
         const parts =
             column != null
-                ? api.searchGetParts({
+                ? api.findGetParts({
                       value: cellDisplayValue,
                       node,
                       column,

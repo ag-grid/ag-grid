@@ -52,6 +52,7 @@ import type { IContextMenuService } from '../interfaces/iContextMenu';
 import type { ICsvCreator } from '../interfaces/iCsvCreator';
 import type { IExcelCreator } from '../interfaces/iExcelCreator';
 import type { IExpansionService } from '../interfaces/iExpansionService';
+import type { IFindService } from '../interfaces/iFind';
 import type { IFooterService } from '../interfaces/iFooterService';
 import type { IFrameworkOverrides } from '../interfaces/iFrameworkOverrides';
 import type { IGroupHideOpenParentsService } from '../interfaces/iGroupHideOpenParentsService';
@@ -94,7 +95,6 @@ import type { RowContainerHeightService } from '../rendering/rowContainerHeightS
 import type { RowRenderer } from '../rendering/rowRenderer';
 import type { RowSpanService } from '../rendering/spanning/rowSpanService';
 import type { SpannedRowRenderer } from '../rendering/spanning/spannedRowRenderer';
-import type { SearchService } from '../search/searchService';
 import type { RowNodeSorter } from '../sort/rowNodeSorter';
 import type { SortService } from '../sort/sortService';
 import type { CellStyleService } from '../styling/cellStyleService';
@@ -176,7 +176,7 @@ export type UserComponentName =
     | 'agTotalRowCountComponent'
     | 'agFilteredRowCountComponent'
     | 'agTotalAndFilteredRowCountComponent'
-    | 'agSearchCellRenderer';
+    | 'agFindCellRenderer';
 
 export type ClassImp = new (...args: []) => object;
 export type ComponentMeta =
@@ -309,7 +309,7 @@ export interface CoreBeanCollection {
     touchSvc?: TouchService;
     rowSpanSvc?: RowSpanService;
     spannedRowRenderer?: SpannedRowRenderer;
-    search?: SearchService;
+    find?: IFindService;
 }
 
 export type BeanCollection = CoreBeanCollection & {
@@ -408,6 +408,7 @@ export type BeanName =
     | 'filterMenuFactory'
     | 'filterStage'
     | 'filterValueSvc'
+    | 'find'
     | 'flashCellSvc'
     | 'flattenStage'
     | 'focusSvc'
@@ -464,7 +465,6 @@ export type BeanName =
     | 'rowRenderer'
     | 'rowStyleSvc'
     | 'scrollVisibleSvc'
-    | 'search'
     | 'selectionController'
     | 'selectionSvc'
     | 'showRowGroupCols'

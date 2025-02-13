@@ -56,6 +56,7 @@ import type {
     FilterChangedEvent,
     FilterModifiedEvent,
     FilterOpenedEvent,
+    FindChangedEvent,
     FirstDataRenderedEvent,
     FullWidthCellKeyDownEvent,
     GridColumnsChangedEvent,
@@ -88,7 +89,6 @@ import type {
     RowGroupOpenedEvent,
     RowSelectedEvent,
     RowValueChangedEvent,
-    SearchChangedEvent,
     SelectionChangedEvent,
     SortChangedEvent,
     StateUpdatedEvent,
@@ -556,8 +556,8 @@ export interface GridOptions<TData = any> {
      */
     excelStyles?: ExcelStyle[];
 
-    searchText?: string;
-    searchOptions?: {
+    findText?: string;
+    findOptions?: {
         currentPageOnly?: boolean;
         matchCase?: boolean;
     };
@@ -2154,7 +2154,7 @@ export interface GridOptions<TData = any> {
      */
     onAdvancedFilterBuilderVisibleChanged?(event: AdvancedFilterBuilderVisibleChangedEvent<TData>): void;
 
-    onSearchChanged?(event: SearchChangedEvent<TData>): void;
+    onFindChanged?(event: FindChangedEvent<TData>): void;
 
     // *** Integrated Charts *** //
     /**

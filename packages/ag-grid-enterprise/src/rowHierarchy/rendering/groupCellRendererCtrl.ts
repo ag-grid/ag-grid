@@ -467,10 +467,10 @@ export class GroupCellRendererCtrl extends BeanStub implements IGroupCellRendere
             );
         }
 
-        if (this.beans.search?.isMatch(params.node, params.column!)) {
+        if (this.beans.find?.isMatch(params.node, params.column!)) {
             return _getCellRendererDetails(
                 this.userCompFactory,
-                { ...params.colDef, cellRenderer: 'agSearchCellRenderer' },
+                { ...params.colDef, cellRenderer: 'agFindCellRenderer' },
                 params
             );
         }

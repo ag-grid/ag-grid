@@ -399,7 +399,7 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
      */
     suppressFloatingFilterButton?: boolean;
 
-    getSearchText?: (params: GetSearchTextParams<TData, TValue>) => string | null;
+    getFindText?: (params: GetFindTextParams<TData, TValue>) => string | null;
 
     // *** Column Headers *** //
     /**
@@ -835,7 +835,7 @@ interface GetTextParams<TData = any, TContext = any, TValue = any> extends AgGri
 
 export interface GetQuickFilterTextParams<TData = any, TValue = any> extends GetTextParams<TData, any, TValue> {}
 
-export interface GetSearchTextParams<TData = any, TContext = any, TValue = any>
+export interface GetFindTextParams<TData = any, TContext = any, TValue = any>
     extends GetTextParams<TData, TContext, TValue> {
     /** Get formatted value for the cell (or `null` if no `valueFormatter`) */
     getValueFormatted: () => string | null;

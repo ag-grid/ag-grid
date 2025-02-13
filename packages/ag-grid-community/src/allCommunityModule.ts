@@ -36,7 +36,6 @@ import { HighlightChangesModule } from './rendering/cell/highlightChangesModule'
 import { RenderApiModule } from './rendering/renderModule';
 import { RowAutoHeightModule } from './rendering/row/rowAutoHeightModule';
 import { CellSpanModule } from './rendering/spanning/cellSpanModule';
-import { SearchModule } from './search/searchModule';
 import { RowSelectionModule } from './selection/rowSelectionModule';
 import { CellStyleModule, RowStyleModule } from './styling/stylingModule';
 import { TooltipModule } from './tooltip/tooltipModule';
@@ -93,6 +92,5 @@ export const AllCommunityModule: _ModuleWithoutApi = {
         DragAndDropModule,
         ClientSideRowModelApiModule,
         CellSpanModule,
-        SearchModule,
     ],
 };

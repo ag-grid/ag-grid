@@ -61,7 +61,7 @@ const STRING_GRID_OPTIONS: KeysWithType<string>[] = [
     'tooltipShowMode',
     'grandTotalRow',
     'themeCssLayer',
-    'searchText',
+    'findText',
 ];
 
 // only used internally
@@ -101,7 +101,7 @@ const OBJECT_GRID_OPTIONS: KeysLike<object | HTMLElement>[] = [
     'initialState',
     'autoSizeStrategy',
     'selectionColumnDef',
-    'searchOptions',
+    'findOptions',
 ];
 
 // only used internally

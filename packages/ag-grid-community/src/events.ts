@@ -12,10 +12,10 @@ import type { Column, ColumnEventName, ColumnGroup, ColumnPinnedType, ProvidedCo
 import type { AgGridCommon, WithoutGridCommon } from './interfaces/iCommon';
 import type { BuildEventTypeMap } from './interfaces/iEventEmitter';
 import type { IFilterComp } from './interfaces/iFilter';
+import type { FindMatch } from './interfaces/iFind';
 import type { IRowNode, RowPinnedType } from './interfaces/iRowNode';
 import type { RowNodeTransaction } from './interfaces/rowNodeTransaction';
 import type { ServerSideTransactionResult } from './interfaces/serverSideTransaction';
-import type { SearchMatch } from './search/searchService';
 
 export const ALWAYS_SYNC_GLOBAL_EVENTS: Set<AgEventType> = new Set(['gridPreDestroyed', 'fillStart', 'pasteStart']);
 
@@ -118,7 +118,7 @@ export type AgEventTypeParams<TData = any, TContext = any> = BuildEventTypeMap<
         rowDragLeave: RowDragLeaveEvent<TData, TContext>;
         rowDragEnd: RowDragEndEvent<TData, TContext>;
         rowDragCancel: RowDragCancelEvent<TData, TContext>;
-        searchChanged: SearchChangedEvent<TData, TContext>;
+        findChanged: FindChangedEvent<TData, TContext>;
         // Internal events
         beforeRefreshModel: BeforeRefreshModelEvent<TData, TContext>;
         scrollbarWidthChanged: ScrollbarWidthChangedEvent<TData, TContext>;
@@ -382,9 +382,8 @@ export interface FilterDestroyedEvent<TData = any, TContext = any>
     column: Column;
 }
 
-export interface SearchChangedEvent<TData = any, TContext = any>
-    extends AgGlobalEvent<'searchChanged', TData, TContext> {
-    activeMatch: SearchMatch | undefined;
+export interface FindChangedEvent<TData = any, TContext = any> extends AgGlobalEvent<'findChanged', TData, TContext> {
+    activeMatch: FindMatch | undefined;
     totalMatches: number;
 }
 

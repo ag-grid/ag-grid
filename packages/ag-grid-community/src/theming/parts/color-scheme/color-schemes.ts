@@ -51,8 +51,8 @@ const darkParams = () =>
         advancedFilterBuilderColumnPillColor: '#355f2d',
         advancedFilterBuilderOptionPillColor: '#5a3168',
         advancedFilterBuilderValuePillColor: '#374c86',
-        searchMatchColor: backgroundColor,
-        searchActiveMatchColor: backgroundColor,
+        findMatchColor: backgroundColor,
+        findActiveMatchColor: backgroundColor,
         checkboxUncheckedBorderColor: foregroundBackgroundMix(0.4),
         toggleButtonOffBackgroundColor: foregroundBackgroundMix(0.4),
     }) as const;

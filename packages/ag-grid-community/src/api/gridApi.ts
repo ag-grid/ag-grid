@@ -41,6 +41,7 @@ import type { IContextMenuParams } from '../interfaces/iContextMenu';
 import type { ExcelExportMultipleSheetParams, ExcelExportParams } from '../interfaces/iExcelCreator';
 import type { FilterModel, IFilter } from '../interfaces/iFilter';
 import type { IFiltersToolPanel } from '../interfaces/iFiltersToolPanel';
+import type { FindMatch } from '../interfaces/iFind';
 import type { RedrawRowsParams } from '../interfaces/iRedrawRowsParams';
 import type { IRowNode, RowPinnedType } from '../interfaces/iRowNode';
 import type { LoadSuccessParams, RefreshServerSideParams } from '../interfaces/iServerSideRowModel';
@@ -52,7 +53,6 @@ import type { RowDataTransaction } from '../interfaces/rowDataTransaction';
 import type { RowNodeTransaction } from '../interfaces/rowNodeTransaction';
 import type { ServerSideTransaction, ServerSideTransactionResult } from '../interfaces/serverSideTransaction';
 import type { GetCellRendererInstancesParams, ICellRenderer } from '../rendering/cellRenderers/iCellRenderer';
-import type { SearchMatch } from '../search/searchService';
 
 export interface DetailGridInfo {
     /**
@@ -738,14 +738,14 @@ export interface _QuickFilterGridApi {
     resetQuickFilter(): void;
 }
 
-export interface _SearchApi {
-    searchNext(): void;
-    searchPrevious(): void;
-    searchGetTotalMatches(): number;
-    searchGoTo(match: number): void;
-    searchGetActiveMatch(): SearchMatch | undefined;
-    searchGetNumMatches(params: { node: IRowNode; column: Column }): number;
-    searchGetParts(params: {
+export interface _FindApi {
+    findNext(): void;
+    findPrevious(): void;
+    findGetTotalMatches(): number;
+    findGoTo(match: number): void;
+    findGetActiveMatch(): FindMatch | undefined;
+    findGetNumMatches(params: { node: IRowNode; column: Column }): number;
+    findGetParts(params: {
         value: string;
         node: IRowNode;
         column: Column;
@@ -1214,7 +1214,7 @@ export interface GridApi<TData = any>
         _FilterGridApi,
         _ColumnFilterGridApi,
         _QuickFilterGridApi,
-        _SearchApi,
+        _FindApi,
         _PaginationGridApi,
         _CsrmSsrmSharedGridApi,
         _SsrmInfiniteSharedGridApi,

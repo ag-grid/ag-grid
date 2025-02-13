@@ -5,24 +5,21 @@ import { AgGridAngular } from 'ag-grid-angular';
 import {
     ClientSideRowModelModule,
     ColDef,
-    ColGroupDef,
-    GetSearchTextParams,
+    FindChangedEvent,
+    GetFindTextParams,
     GridApi,
-    GridOptions,
     GridReadyEvent,
     ModuleRegistry,
     PinnedRowModule,
-    SearchChangedEvent,
-    SearchModule,
     ValidationModule,
 } from 'ag-grid-community';
-import { RowGroupingModule, RowGroupingPanelModule } from 'ag-grid-enterprise';
+import { FindModule, RowGroupingModule, RowGroupingPanelModule } from 'ag-grid-enterprise';
 
-import { SearchRenderer } from './searchRenderer.component';
+import { FindRenderer } from './findRenderer.component';
 import './styles.css';
 
 ModuleRegistry.registerModules([
-    SearchModule,
+    FindModule,
     RowGroupingModule,
     RowGroupingPanelModule,
     PinnedRowModule,
@@ -33,12 +30,12 @@ ModuleRegistry.registerModules([
 @Component({
     selector: 'my-app',
     standalone: true,
-    imports: [AgGridAngular, SearchRenderer],
+    imports: [AgGridAngular, FindRenderer],
     template: `<div class="example-wrapper">
         <div class="example-header">
-            <span>Search:</span>
-            <input type="text" id="search-text-box" />
-            <button (click)="search()">Search</button>
+            <span>Find:</span>
+            <input type="text" id="find-text-box" />
+            <button (click)="find()">Find</button>
             <button (click)="previous()">Previous</button>
             <button (click)="next()">Next</button>
             <span id="resultNum"></span>
@@ -52,7 +49,7 @@ ModuleRegistry.registerModules([
             [defaultColDef]="defaultColDef"
             [rowGroupPanelShow]="rowGroupPanelShow"
             [rowData]="rowData"
-            (searchChanged)="onSearchChanged($event)"
+            (findChanged)="onFindChanged($event)"
             (gridReady)="onGridReady($event)"
         />
     </div> `,
@@ -68,8 +65,8 @@ export class AppComponent {
         { field: 'sport' },
         {
             field: 'year',
-            cellRenderer: SearchRenderer,
-            getSearchText: (params: GetSearchTextParams) => {
+            cellRenderer: FindRenderer,
+            getFindText: (params: GetFindTextParams) => {
                 const cellValue = params.getValueFormatted() ?? params.value?.toString();
                 if (!cellValue?.length) {
                     return null;
@@ -90,7 +87,7 @@ export class AppComponent {
 
     constructor(private http: HttpClient) {}
 
-    onSearchChanged(event: SearchChangedEvent) {
+    onFindChanged(event: FindChangedEvent) {
         const { activeMatch, totalMatches } = event;
         (document.getElementById('resultNum') as HTMLElement).textContent = activeMatch
             ? `${activeMatch.numOverall}/${totalMatches}`
@@ -98,31 +95,31 @@ export class AppComponent {
         (document.getElementById('resultPosition') as HTMLElement).textContent = activeMatch
             ? ` { pinned: ${activeMatch.node.rowPinned}, row index: ${activeMatch.node.rowIndex}, column: ${activeMatch.column.getColId()}, num in cell: ${activeMatch.numInMatch} }`
             : '';
-        console.log('searchChanged', event);
+        console.log('findChanged', event);
     }
 
-    search() {
-        const searchText = (document.getElementById('search-text-box') as HTMLInputElement).value;
-        if (searchText !== this.gridApi.getGridOption('searchText')) {
-            this.gridApi.setGridOption('searchText', searchText);
+    find() {
+        const findText = (document.getElementById('find-text-box') as HTMLInputElement).value;
+        if (findText !== this.gridApi.getGridOption('findText')) {
+            this.gridApi.setGridOption('findText', findText);
         }
     }
 
     next() {
-        this.gridApi.searchNext();
+        this.gridApi.findNext();
     }
 
     previous() {
-        this.gridApi.searchPrevious();
+        this.gridApi.findPrevious();
     }
 
     onGridReady(params: GridReadyEvent) {
         this.gridApi = params.api;
 
-        (document.getElementById('search-text-box') as HTMLInputElement).addEventListener('keydown', (event) => {
+        (document.getElementById('find-text-box') as HTMLInputElement).addEventListener('keydown', (event) => {
             if (event.key === 'Enter') {
                 event.preventDefault();
-                this.search();
+                this.find();
                 const backwards = event.shiftKey;
                 if (backwards) {
                     this.previous();

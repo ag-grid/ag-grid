@@ -264,7 +264,7 @@ export { IAdvancedFilterCtrl } from './interfaces/iAdvancedFilterCtrl';
 export { IAdvancedFilterBuilderParams } from './interfaces/iAdvancedFilterBuilderParams';
 export { IAdvancedFilterService } from './interfaces/iAdvancedFilterService';
 
-export { SearchMatch } from './search/searchService';
+export { FindMatch, IFindService } from './interfaces/iFind';
 
 // gridPanel
 export { GridBodyCtrl, IGridBodyComp, RowAnimationCssClasses } from './gridBodyComp/gridBodyCtrl';
@@ -613,6 +613,7 @@ export {
     _MasterDetailGridApi,
     _StatusBarGridApi,
     _AdvancedFilterGridApi,
+    _FindApi,
 } from './api/gridApi';
 export { _getClientSideRowModel, _getServerSideRowModel } from './api/rowModelApiUtils';
 export { AgEventType, AgPublicEventType, _ALL_EVENTS, _PUBLIC_EVENTS } from './eventTypes'; // TODO: remove _ALL_EVENTS, _PUBLIC_EVENTS if not required by VUE
@@ -790,7 +791,7 @@ export {
     KeyCreatorParams,
     SortDirection,
     NestedFieldPaths,
-    GetSearchTextParams,
+    GetFindTextParams,
 } from './entities/colDef';
 export {
     DataTypeDefinition,
@@ -1056,7 +1057,6 @@ export {
     DateFilterModule,
     ExternalFilterModule,
 } from './filter/filterModule';
-export { SearchModule } from './search/searchModule';
 export {
     EditCoreModule as _EditCoreModule,
     NumberEditorModule,

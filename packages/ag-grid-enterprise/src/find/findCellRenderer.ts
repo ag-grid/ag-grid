@@ -1,14 +1,12 @@
-import type { ICellRenderer, ICellRendererParams } from '../rendering/cellRenderers/iCellRenderer';
-import { _clearElement, _getInnerWidth } from '../utils/dom';
-import { _escapeString } from '../utils/string';
-import { Component } from '../widgets/component';
+import type { ICellRenderer, ICellRendererParams } from 'ag-grid-community';
+import { Component, _clearElement, _escapeString, _getInnerWidth } from 'ag-grid-community';
 
-export class SearchCellRenderer extends Component implements ICellRenderer {
+export class FindCellRenderer extends Component implements ICellRenderer {
     private params: ICellRendererParams;
     private parts?: { value: string; match?: boolean; activeMatch?: boolean }[];
 
     constructor() {
-        super(/* html */ `<span class="ag-search-cell"></span>`);
+        super(/* html */ `<span class="ag-find-cell"></span>`);
     }
 
     public init(params: ICellRendererParams): void {
@@ -26,12 +24,12 @@ export class SearchCellRenderer extends Component implements ICellRenderer {
         const displayValue = valueFormatted ?? value ?? '';
         const eGui = this.getGui();
         _clearElement(eGui);
-        const parts = column ? this.beans.search?.getParts({ value: displayValue, node, column }) : undefined;
+        const parts = column ? this.beans.find?.getParts({ value: displayValue, node, column }) : undefined;
         this.parts = parts;
         if (!parts) {
             eGui.textContent = _escapeString(displayValue, true) ?? '';
-            eGui.classList.remove('ag-search-hidden-match');
-            eGui.classList.remove('ag-search-hidden-active-match');
+            eGui.classList.remove('ag-find-hidden-match');
+            eGui.classList.remove('ag-find-hidden-active-match');
             return true;
         }
         const eHighlights: HTMLElement[] = [];
@@ -40,9 +38,9 @@ export class SearchCellRenderer extends Component implements ICellRenderer {
             if (match) {
                 const element = document.createElement('mark');
                 element.textContent = content;
-                element.classList.add('ag-search-match');
+                element.classList.add('ag-find-match');
                 if (activeMatch) {
-                    element.classList.add('ag-search-active-match');
+                    element.classList.add('ag-find-active-match');
                 }
                 eGui.appendChild(element);
                 eHighlights.push(element);
@@ -75,10 +73,10 @@ export class SearchCellRenderer extends Component implements ICellRenderer {
                         cumulativeWidth += currentWidth;
                     }
                 }
-                eGui.classList.toggle('ag-search-hidden-match', addHighlight);
+                eGui.classList.toggle('ag-find-hidden-match', addHighlight);
             });
         } else {
-            eGui.classList.remove('ag-search-hidden-match');
+            eGui.classList.remove('ag-find-hidden-match');
         }
 
         this.checkSize();
@@ -117,12 +115,12 @@ export class SearchCellRenderer extends Component implements ICellRenderer {
                         cumulativeWidth += currentWidth;
                     }
                 }
-                eGui.classList.toggle('ag-search-hidden-match', addHighlight && !addActiveHighlight);
-                eGui.classList.toggle('ag-search-hidden-active-match', addActiveHighlight);
+                eGui.classList.toggle('ag-find-hidden-match', addHighlight && !addActiveHighlight);
+                eGui.classList.toggle('ag-find-hidden-active-match', addActiveHighlight);
             });
         } else {
-            eGui.classList.remove('ag-search-hidden-match');
-            eGui.classList.remove('ag-search-hidden-active-match');
+            eGui.classList.remove('ag-find-hidden-match');
+            eGui.classList.remove('ag-find-hidden-active-match');
         }
     }
 }

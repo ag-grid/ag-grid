@@ -1,6 +1,6 @@
 import type { ICellRendererComp, ICellRendererParams } from 'ag-grid-community';
 
-export class SearchRenderer implements ICellRendererComp {
+export class FindRenderer implements ICellRendererComp {
     eGui!: HTMLSpanElement;
 
     init(params: ICellRendererParams) {
@@ -25,7 +25,7 @@ export class SearchRenderer implements ICellRendererComp {
         const cellDisplayValue = `Year is ${cellValue}`;
         const parts =
             column != null
-                ? api.searchGetParts({
+                ? api.findGetParts({
                       value: cellDisplayValue,
                       node,
                       column,
@@ -41,9 +41,9 @@ export class SearchRenderer implements ICellRendererComp {
             if (match) {
                 const element = document.createElement('mark');
                 element.textContent = partValue;
-                element.classList.add('ag-search-match');
+                element.classList.add('ag-find-match');
                 if (activeMatch) {
-                    element.classList.add('ag-search-active-match');
+                    element.classList.add('ag-find-active-match');
                 }
                 eGui.appendChild(element);
             } else {

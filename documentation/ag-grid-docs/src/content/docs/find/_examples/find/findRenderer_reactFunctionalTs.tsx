@@ -10,7 +10,7 @@ function getParts({ api, value, valueFormatted, column, node }: CustomCellRender
     const cellDisplayValue = `Year is ${cellValue}`;
     const parts =
         column != null
-            ? api.searchGetParts({
+            ? api.findGetParts({
                   value: cellDisplayValue,
                   node,
                   column,
@@ -24,7 +24,7 @@ export default (params: CustomCellRendererProps) => {
         <span>
             {getParts(params).map(({ value: partValue, match, activeMatch }, index) =>
                 match ? (
-                    <mark key={index} className={`ag-search-match${activeMatch ? ' ag-search-active-match' : ''}`}>
+                    <mark key={index} className={`ag-find-match${activeMatch ? ' ag-find-active-match' : ''}`}>
                         {partValue}
                     </mark>
                 ) : (

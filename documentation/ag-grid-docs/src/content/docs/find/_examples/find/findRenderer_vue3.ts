@@ -1,7 +1,7 @@
 export default {
     template: `<span>
         <template v-for="part in parts">
-            <mark v-if="part.match" :class="['ag-search-match', part.activeMatch ? 'ag-search-active-match' : '']">{{ part.value }}</mark>
+            <mark v-if="part.match" :class="['ag-find-match', part.activeMatch ? 'ag-find-active-match' : '']">{{ part.value }}</mark>
             <template v-if="!part.match">{{ part.value }}</template>
         </template>
       </span>`,
@@ -28,7 +28,7 @@ export default {
             const cellDisplayValue = `Year is ${cellValue}`;
             const parts =
                 column != null
-                    ? api.searchGetParts({
+                    ? api.findGetParts({
                           value: cellDisplayValue,
                           node,
                           column,

@@ -397,7 +397,7 @@ const colDefPropertyMap: Record<ColOrGroupKey, undefined> = {
     loadingCellRendererParams: undefined,
     loadingCellRendererSelector: undefined,
     context: undefined,
-    getSearchText: undefined,
+    getFindText: undefined,
 };
 const ALL_PROPERTIES: () => ColOrGroupKey[] = () => Object.keys(colDefPropertyMap) as ColOrGroupKey[];
 

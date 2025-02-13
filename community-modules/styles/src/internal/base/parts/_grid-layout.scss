@@ -349,13 +349,32 @@
         border-top: var(--ag-borders-critical) var(--ag-border-color);
     }
 
-    .ag-search-match {
-        color: var(--ag-search-match-color);
-        background-color: var(--ag-search-match-background-color);
+    .ag-find-match {
+        color: var(--ag-find-match-color);
+        background-color: var(--ag-find-match-background-color);
+        display: inline-block;
     }
 
-    .ag-search-active-match {
-        color: var(--ag-search-active-match-color);
-        background-color: var(--ag-search-active-match-background-color);
+    .ag-find-active-match {
+        color: var(--ag-find-active-match-color);
+        background-color: var(--ag-find-active-match-background-color);
+        display: inline-block;
+    }
+
+    .ag-find-hidden-match::after,
+    .ag-find-hidden-active-match::after {
+        content: '';
+        position: absolute;
+        height: 100%;
+        width: var(--ag-cell-horizontal-padding);
+        left: calc(100% - var(--ag-cell-horizontal-padding));
+    }
+
+    .ag-find-hidden-match::after {
+        background-color: var(--ag-find-match-background-color);
+    }
+
+    .ag-find-hidden-active-match::after {
+        background-color: var(--ag-find-active-match-background-color);
     }
 }
