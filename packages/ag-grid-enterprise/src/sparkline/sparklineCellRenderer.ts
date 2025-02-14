@@ -90,18 +90,17 @@ export class SparklineCellRenderer extends Component implements ICellRenderer {
             this.sparklineInstance = params.createSparkline!(this.sparklineOptions);
             return true;
         } else if (this.sparklineInstance) {
-            const data = params?.value;
             this.sparklineOptions.width = width;
             this.sparklineOptions.height = height;
-            this.sparklineOptions.data = this.processData(data);
-            const currTheme = this.sparklineOptions.theme;
-            this.updateTheme(this.sparklineOptions);
-            if (currTheme !== this.sparklineOptions.theme) {
+            const data = this.processData(params?.value);
+            this.sparklineOptions.data = data;
+
+            const themeChanged = this.updateTheme(this.sparklineOptions);
+            if (themeChanged) {
                 this.sparklineInstance.updateDelta(this.sparklineOptions);
             } else {
-                const newData = this.sparklineOptions.data;
                 // Fast path for updating data or width/height to match Charts fast path
-                this.sparklineInstance.updateDelta({ data: newData, width, height });
+                this.sparklineInstance.updateDelta({ data, width, height });
             }
 
             return true;
@@ -109,13 +108,17 @@ export class SparklineCellRenderer extends Component implements ICellRenderer {
         return false;
     }
 
-    private updateTheme(sparklineOptions: AgSparklineOptions) {
+    private updateTheme(sparklineOptions: AgSparklineOptions): boolean {
         const themeName = this.getThemeName() as AgChartThemeName;
+        let themeChanged = false;
         if (typeof sparklineOptions.theme === 'string' || !sparklineOptions.theme) {
+            themeChanged = sparklineOptions.theme !== themeName;
             sparklineOptions.theme = themeName;
         } else if (sparklineOptions.theme) {
+            themeChanged = sparklineOptions.theme.baseTheme !== themeName;
             sparklineOptions.theme.baseTheme = themeName;
         }
+        return themeChanged;
     }
 
     private processData(data: any[] = []) {
