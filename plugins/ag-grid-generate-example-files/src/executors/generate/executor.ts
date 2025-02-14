@@ -90,7 +90,7 @@ async function getProvidedFiles(folderPath: string) {
 }
 
 export async function generateFiles(options: ExecutorOptions, gridOptionsTypes: Record<string, GridOptionsType>) {
-    const isDev = false; //options.mode === 'dev';
+    const isDev = options.mode === 'dev';
     const folderPath = options.examplePath;
 
     const sourceFileList = await getSourceFileList(folderPath);
@@ -151,11 +151,7 @@ export async function generateFiles(options: ExecutorOptions, gridOptionsTypes: 
         const boilerPlateFiles = await getBoilerPlateFiles(isDev, internalFramework);
         const entryFileName = getEntryFileName(internalFramework)!;
         const mainFileName = getMainFileName(internalFramework)!;
-
-        const providedFramework = internalFramework === 'reactFunctional' ? 'reactFunctionalTs' : internalFramework;
-        const provideFrameworkFiles = frameworkProvidedExamples[providedFramework]
-            ? { ...frameworkProvidedExamples[providedFramework] }
-            : undefined;
+        const provideFrameworkFiles = getProvidedFrameworkFiles(internalFramework, frameworkProvidedExamples);
 
         const packageJson = getPackageJson({
             isLocale,
@@ -228,6 +224,14 @@ export async function generateFiles(options: ExecutorOptions, gridOptionsTypes: 
 
         await writeContents(options, internalFramework, result);
     }
+}
+
+function getProvidedFrameworkFiles(internalFramework: string, frameworkProvidedExamples: any) {
+    const providedFramework = internalFramework === 'reactFunctional' ? 'reactFunctionalTs' : internalFramework;
+    const provideFrameworkFiles = frameworkProvidedExamples[providedFramework]
+        ? { ...frameworkProvidedExamples[providedFramework] }
+        : undefined;
+    return provideFrameworkFiles;
 }
 
 // process the provided files and updates the file collections passed into it
