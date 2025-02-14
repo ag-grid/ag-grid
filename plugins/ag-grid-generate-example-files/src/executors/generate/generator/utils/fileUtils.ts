@@ -124,7 +124,7 @@ export const getProvidedExampleFolder = ({
     folderPath: string;
     internalFramework: InternalFramework;
 }) => {
-    return path.join(folderPath, 'provided/modules', internalFramework);
+    return path.join(folderPath, 'provided', internalFramework);
 };
 
 export const getProvidedExampleFiles = ({

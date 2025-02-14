@@ -307,7 +307,7 @@ async function processProvidedFiles(
                 !fileContent.includes(DARK_INTEGRATED_START) // might have already been replaced
             ) {
                 throw new Error(
-                    `Provided example ${folderPath}/provided/modules/${internalFramework}/${writeToFileName} does not contain the expected comment: ${providedPlaceholder} in gridReady code for an example that includes integrated charts`
+                    `Provided example ${folderPath}/provided/${internalFramework}/${writeToFileName} does not contain the expected comment: ${providedPlaceholder} in gridReady code for an example that includes integrated charts`
                 );
             }
             provideFrameworkFiles[writeToFileName] = provideFrameworkFiles[writeToFileName].replace(
