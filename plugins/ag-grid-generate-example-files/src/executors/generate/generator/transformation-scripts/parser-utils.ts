@@ -247,13 +247,6 @@ export function addLicenseManager(imports: any[], exampleConfig: ExampleConfig) 
     }
 }
 
-export function addEnterprisePackage(imports: any[], bindings: ParsedBindings) {
-    const isEnterprise = bindings.imports.some((i) => i.module.includes('-enterprise'));
-    if (isEnterprise) {
-        imports.push(`import 'ag-grid-enterprise';`);
-    }
-}
-
 export function extractModuleRegistration(srcFile: ts.SourceFile): string {
     for (const statement of srcFile.statements) {
         if (

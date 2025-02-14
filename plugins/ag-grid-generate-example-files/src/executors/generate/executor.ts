@@ -292,20 +292,9 @@ export async function generateFiles(options: ExecutorOptions, gridOptionsTypes: 
 }
 
 async function convertModulesToPackages(fileContent: any, isDev: boolean, internalFramework: InternalFramework) {
-    // const isEnterprise = fileContent.includes('-enterprise');
-
     if (internalFramework === 'vanilla') {
         fileContent = removeModuleRegistration(fileContent);
     }
-
-    // if (isEnterprise) {
-    //     const communityImportRegex = /import ['"]ag-grid-community/;
-    //     if (communityImportRegex.test(fileContent)) {
-    //         fileContent = fileContent.replace(communityImportRegex, `import 'ag-grid-enterprise';\n$&`);
-    //     } else {
-    //         fileContent = `import 'ag-grid-enterprise';\n${fileContent}`;
-    //     }
-    // }
 
     if (!isDev) {
         const parser = TYPESCRIPT_INTERNAL_FRAMEWORKS.includes(internalFramework) ? 'typescript' : 'typescript';
@@ -339,12 +328,11 @@ async function writeContents(
 // console.log('should generate');
 // generateFiles(
 //     {
-//         examplePath:
-//             'documentation/ag-grid-docs/src/content/docs/component-cell-renderer/_examples/cell-renderer-summary',
+//         examplePath: 'documentation/ag-grid-docs/src/content/docs/component-filter/_examples/custom-filter',
 //         mode: 'dev',
 //         inputs: [],
 //         output: '',
-//         outputPath: 'dist/generated-examples/ag-grid-docs/docs/component-cell-renderer/_examples/cell-renderer-summary',
+//         outputPath: 'dist/generated-examples/ag-grid-docs/docs/component-filter/_examples/custom-filter',
 //         writeFiles: true,
 //     },
 //     {}
