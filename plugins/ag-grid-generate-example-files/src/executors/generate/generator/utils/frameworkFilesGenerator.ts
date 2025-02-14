@@ -128,7 +128,7 @@ export const frameworkFilesGenerator: Partial<Record<InternalFramework, ConfigGe
         )();
 
         if (!isDev) {
-            indexJsx = await prettier.format(indexJsx, { parser: 'typescript' });
+            indexJsx = await prettier.format(indexJsx, { parser: 'babel' });
         }
 
         return {

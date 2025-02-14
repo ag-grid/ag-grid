@@ -90,7 +90,7 @@ async function getProvidedFiles(folderPath: string) {
 }
 
 export async function generateFiles(options: ExecutorOptions, gridOptionsTypes: Record<string, GridOptionsType>) {
-    const isDev = false; /// options.mode === 'dev';
+    const isDev = options.mode === 'dev';
     const folderPath = options.examplePath;
 
     const sourceFileList = await getSourceFileList(folderPath);
@@ -207,13 +207,13 @@ export async function generateFiles(options: ExecutorOptions, gridOptionsTypes: 
                 if (fileName.endsWith('.css')) {
                     mergedStyleFiles[fileName] = provideFrameworkFiles[fileName];
                 } else {
-                    const fileContent = provideFrameworkFiles[fileName];
+                    let fileContent = provideFrameworkFiles[fileName];
                     if (fileContent) {
-                        provideFrameworkFiles[writeToFileName] = await convertModulesToPackages(
-                            fileContent,
-                            isDev,
-                            internalFramework
-                        );
+                        if (internalFramework === 'vanilla') {
+                            fileContent = removeModuleRegistration(fileContent);
+                        }
+
+                        provideFrameworkFiles[writeToFileName] = fileContent;
 
                         if (internalFramework === 'reactFunctional' && fileName.endsWith('.tsx')) {
                             // convert tsx files to jsx
@@ -226,6 +226,15 @@ export async function generateFiles(options: ExecutorOptions, gridOptionsTypes: 
                     }
                 }
 
+                if (internalFramework === 'reactFunctional' && fileName === 'interfaces.ts') {
+                    // interfaces.ts is just a type file so delete it
+                    delete provideFrameworkFiles[fileName];
+                }
+
+                if (!isDev && provideFrameworkFiles[writeToFileName]?.length > 0) {
+                    await formatFile(internalFramework, provideFrameworkFiles, writeToFileName);
+                }
+
                 if (internalFramework === 'reactFunctional' || internalFramework === 'reactFunctionalTs') {
                     // add use client to the provided files if they contain AgGridReact
                     const useClientCode = "'use client';\n";
@@ -235,11 +244,6 @@ export async function generateFiles(options: ExecutorOptions, gridOptionsTypes: 
                     } else if (fileContent.includes('AgGridReact') && !fileContent.includes('use client')) {
                         provideFrameworkFiles[writeToFileName] = useClientCode + fileContent;
                     }
-                }
-
-                if (internalFramework === 'reactFunctional' && fileName === 'interfaces.ts') {
-                    // interfaces.ts is just a type file so delete it
-                    delete provideFrameworkFiles[fileName];
                 }
 
                 // Add Dark Mode code to the provided files if they are an integrated example
@@ -291,16 +295,19 @@ export async function generateFiles(options: ExecutorOptions, gridOptionsTypes: 
     }
 }
 
-async function convertModulesToPackages(fileContent: any, isDev: boolean, internalFramework: InternalFramework) {
-    if (internalFramework === 'vanilla') {
-        fileContent = removeModuleRegistration(fileContent);
+async function formatFile(internalFramework: InternalFramework, provideFrameworkFiles: any, writeToFileName: string) {
+    if (writeToFileName.endsWith('.css')) {
+        return;
     }
 
-    if (!isDev) {
-        const parser = TYPESCRIPT_INTERNAL_FRAMEWORKS.includes(internalFramework) ? 'typescript' : 'typescript';
-        fileContent = await prettier.format(fileContent, { parser });
+    try {
+        const parser = TYPESCRIPT_INTERNAL_FRAMEWORKS.includes(internalFramework) ? 'typescript' : 'babel';
+        provideFrameworkFiles[writeToFileName] = await prettier.format(provideFrameworkFiles[writeToFileName], {
+            parser,
+        });
+    } catch (e) {
+        console.error(`Error formatting file ${writeToFileName} for ${internalFramework}`, e);
     }
-    return fileContent;
 }
 
 async function writeContents(
@@ -328,11 +335,11 @@ async function writeContents(
 // console.log('should generate');
 // generateFiles(
 //     {
-//         examplePath: 'documentation/ag-grid-docs/src/content/docs/component-filter/_examples/custom-filter',
+//         examplePath: 'documentation/ag-grid-docs/src/content/docs/tree-data-group-column/_examples/custom-component',
 //         mode: 'dev',
 //         inputs: [],
 //         output: '',
-//         outputPath: 'dist/generated-examples/ag-grid-docs/docs/component-filter/_examples/custom-filter',
+//         outputPath: 'dist/generated-examples/ag-grid-docs/docs/tree-data-group-column/_examples/custom-component',
 //         writeFiles: true,
 //     },
 //     {}
