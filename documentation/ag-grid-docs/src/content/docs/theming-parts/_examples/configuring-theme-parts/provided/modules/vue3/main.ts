@@ -2,7 +2,6 @@ import { computed, createApp, defineComponent, ref } from 'vue';
 
 import type { ColDef } from 'ag-grid-community';
 import {
-    AllCommunityModule,
     ModuleRegistry,
     colorSchemeDark,
     colorSchemeDarkBlue,
@@ -23,7 +22,7 @@ import {
 import { AllEnterpriseModule } from 'ag-grid-enterprise';
 import { AgGridVue } from 'ag-grid-vue3';
 
-ModuleRegistry.registerModules([AllCommunityModule, AllEnterpriseModule]);
+ModuleRegistry.registerModules([AllEnterpriseModule]);
 
 const baseThemes = [
     { id: 'themeQuartz', theme: themeQuartz },
