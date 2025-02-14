@@ -497,14 +497,21 @@
 .fullWidthBar {
     width: 100%;
     position: fixed;
-    top: 64px;
-    background-color: var(--color-bg-primary);
+    top: 0px;
     border-bottom: 1px solid var(--color-border-secondary);
     height: 56px;
     padding-top: $spacing-size-4;
     z-index: 2;
+    background-color: var(--color-bg-primary);
 }
-@media screen and (max-width: $breakpoint-pricing-large) {
+
+@media screen and (min-width: $breakpoint-pricing-large) {
+    .fullWidthBar {
+        top: 64px;
+    }
+}
+
+@media screen and (max-width: $breakpoint-pricing-medium) {
     .fullWidthBar {
         display: none;
     }

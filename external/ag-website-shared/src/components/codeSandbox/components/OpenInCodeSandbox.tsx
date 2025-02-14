@@ -2,7 +2,7 @@ import type { InternalFramework } from '@ag-grid-types';
 import { OpenInCTA } from '@ag-website-shared/components/open-in-cta/OpenInCTA';
 import { cleanIndexHtml } from '@ag-website-shared/utils/cleanIndexHtml';
 import type { FileContents } from '@components/example-generator/types';
-import { stripOutDarkModeCode } from '@components/example-runner/components/CodeViewer';
+import { stripOutExampleGeneratorCode } from '@components/example-runner/components/CodeViewer';
 import { fetchTextFile } from '@utils/fetchTextFile';
 import type { FunctionComponent } from 'react';
 
@@ -34,7 +34,7 @@ export const OpenInCodeSandbox: FunctionComponent<Props> = ({
                 const html = await fetchTextFile(htmlUrl);
                 const indexHtml = isDev ? cleanIndexHtml(html) : html;
                 const localFiles = { ...files };
-                stripOutDarkModeCode(localFiles);
+                stripOutExampleGeneratorCode(localFiles);
                 const sandboxFiles = {
                     ...localFiles,
                     'package.json': JSON.stringify(packageJson, null, 2),

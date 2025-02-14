@@ -1,0 +1,68 @@
+name: Bug Report
+description: Report a bug.
+title: "[Bug]: "
+labels: ["triage"]
+assignees:
+  - AG-Zoheil
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for taking the time to report this bug!
+  - type: input
+    id: repro
+    attributes:
+      label: Link to reproducible scenario
+      description: Please provide us with a live plunker sample which shows the issue. You can use one of the examples from our website as a starting point.
+      placeholder: plunker or codesandbox link here
+    validations:
+      required: true
+  - type: textarea
+    id: description
+    attributes:
+      label: Describe the bug
+      description: Please provide a list of steps to follow with the live example above to reproduce the issue
+      value: |
+        Steps to reproduce 
+        1. 
+        
+        Actual behaviour
+        
+        
+        Expected behaviour
+        
+        
+        More information
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Version
+      description: What version of AG Grid are you using?
+    validations:
+      required: true
+  - type: dropdown
+    id: languages
+    attributes:
+      label: Does the issue occur for a specific framework only?
+      multiple: false
+      default: 0
+      options:
+        - All languages
+        - React
+        - Angular
+        - Vue
+        - JavaScript
+  - type: dropdown
+    id: browsers
+    attributes:
+      label: Is the issue only observable on a specific browser?
+      multiple: false
+      default: 0
+      options:
+        - All browsers
+        - Chrome
+        - Firefox
+        - Safari
+        - Microsoft Edge

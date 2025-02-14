@@ -1,9 +1,7 @@
 import { basename } from 'path';
-import prettier from 'prettier';
 
 import { ANGULAR_GENERATED_MAIN_FILE_NAME } from '../constants';
 import { vanillaToAngular } from '../transformation-scripts/grid-vanilla-to-angular';
-import { vanillaToReactFunctional } from '../transformation-scripts/grid-vanilla-to-react-functional';
 import { vanillaToReactFunctionalTs } from '../transformation-scripts/grid-vanilla-to-react-functional-ts';
 import { vanillaToTypescript } from '../transformation-scripts/grid-vanilla-to-typescript';
 import { vanillaToVue3 } from '../transformation-scripts/grid-vanilla-to-vue3';
@@ -15,7 +13,7 @@ import {
 import type { InternalFramework, ParsedBindings } from '../types';
 import type { ExampleConfig, FileContents } from '../types';
 import { deepCloneObject } from './deepCloneObject';
-import { getBoilerPlateFiles, getEntryFileName, getMainFileName } from './fileUtils';
+import { convertTsxToJsx, formatFile, getBoilerPlateFiles, getEntryFileName, getMainFileName } from './fileUtils';
 
 interface FrameworkFiles {
     files: FileContents;
@@ -73,7 +71,7 @@ export const frameworkFilesGenerator: Partial<Record<InternalFramework, ConfigGe
 
         const scriptFiles = { ...otherScriptFiles, ...componentScriptFiles };
         if (!isDev) {
-            mainJs = await prettier.format(mainJs, { parser: 'babel' });
+            mainJs = await formatFile(internalFramework, mainJs);
         }
 
         return {
@@ -93,7 +91,7 @@ export const frameworkFilesGenerator: Partial<Record<InternalFramework, ConfigGe
         let mainTs = vanillaToTypescript(deepCloneObject(typedBindings), mainFileName, entryFile)();
 
         if (!isDev) {
-            mainTs = await prettier.format(mainTs, { parser: 'typescript' });
+            mainTs = await formatFile(internalFramework, mainTs);
         }
 
         const scriptFiles = { ...otherScriptFiles, ...componentScriptFiles };
@@ -108,7 +106,7 @@ export const frameworkFilesGenerator: Partial<Record<InternalFramework, ConfigGe
         };
     },
     reactFunctional: async ({
-        bindings,
+        typedBindings,
         indexHtml,
         otherScriptFiles,
         componentScriptFiles,
@@ -116,19 +114,20 @@ export const frameworkFilesGenerator: Partial<Record<InternalFramework, ConfigGe
         isDev,
         exampleConfig,
     }) => {
-        const internalFramework = 'reactFunctional';
+        const internalFramework: InternalFramework = 'reactFunctional';
         const entryFileName = getEntryFileName(internalFramework)!;
-
         const componentNames = getComponentName(componentScriptFiles);
-        let indexJsx = vanillaToReactFunctional(
-            deepCloneObject(bindings),
+        const indexTsx = vanillaToReactFunctionalTs(
+            deepCloneObject(typedBindings),
             exampleConfig,
             componentNames,
             Object.keys(styleFiles)
         )();
 
+        let indexJsx = convertTsxToJsx(indexTsx);
+
         if (!isDev) {
-            indexJsx = await prettier.format(indexJsx, { parser: 'babel' });
+            indexJsx = await formatFile(internalFramework, indexJsx);
         }
 
         return {
@@ -161,7 +160,7 @@ export const frameworkFilesGenerator: Partial<Record<InternalFramework, ConfigGe
         )();
 
         if (!isDev) {
-            indexTsx = await prettier.format(indexTsx, { parser: 'typescript' });
+            indexTsx = await formatFile(internalFramework, indexTsx);
         }
 
         return {
@@ -188,7 +187,7 @@ export const frameworkFilesGenerator: Partial<Record<InternalFramework, ConfigGe
         )();
 
         if (!isDev) {
-            appComponent = await prettier.format(appComponent, { parser: 'typescript' });
+            appComponent = await formatFile(internalFramework, appComponent);
         }
 
         return {
@@ -223,7 +222,7 @@ export const frameworkFilesGenerator: Partial<Record<InternalFramework, ConfigGe
         )();
 
         if (!isDev) {
-            mainJs = await prettier.format(mainJs, { parser: 'typescript' });
+            mainJs = await formatFile(internalFramework, mainJs);
         }
 
         const entryFileName = getEntryFileName(internalFramework)!;

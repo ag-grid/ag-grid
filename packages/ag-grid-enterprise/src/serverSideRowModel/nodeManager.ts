@@ -4,26 +4,24 @@ import { BeanStub, _warn } from 'ag-grid-community';
 export class NodeManager extends BeanStub implements NamedBean {
     beanName = 'ssrmNodeManager' as const;
 
-    private rowNodes: { [id: string]: RowNode | undefined } = {};
+    private rowNodes: Map<string, RowNode> = new Map();
 
     public addRowNode(rowNode: RowNode): void {
         const id = rowNode.id!;
-        if (this.rowNodes[id]) {
+        if (this.rowNodes.has(id)) {
             _warn(187, {
                 rowId: id,
-                firstData: this.rowNodes[id]!.data,
+                firstData: this.rowNodes.get(id)!.data,
                 secondData: rowNode.data,
             });
         }
 
-        this.rowNodes[id] = rowNode;
+        this.rowNodes.set(id, rowNode);
     }
 
     public removeNode(rowNode: RowNode): void {
         const id = rowNode.id!;
-        if (this.rowNodes[id]) {
-            this.rowNodes[id] = undefined;
-        }
+        this.rowNodes.delete(id);
     }
 
     public override destroy(): void {
@@ -32,7 +30,7 @@ export class NodeManager extends BeanStub implements NamedBean {
     }
 
     public clear(): void {
-        this.rowNodes = {};
+        this.rowNodes.clear();
         super.destroy();
     }
 }
