@@ -305,7 +305,7 @@ export class RowNode<TData = any>
     }
 
     private setDataCommon(data: TData, update: boolean): void {
-        const { valueCache, selectionSvc, rowSpanSvc } = this.beans;
+        const { valueCache, selectionSvc, rowSpanSvc, eventSvc } = this.beans;
         const oldData = this.data;
 
         this.data = data;
@@ -318,6 +318,9 @@ export class RowNode<TData = any>
 
         this.__localEventService?.dispatchEvent(event);
         rowSpanSvc?.onRowDataUpdated(this);
+        // if you want to add new feature stuff here, consider whether it can listen
+        // to the event below instead (e.g. no dependency on ordering)
+        eventSvc.dispatchEvent({ type: 'rowNodeDataChanged', node: this });
     }
 
     // when we are doing master / detail, the detail node is lazy created, but then kept around.

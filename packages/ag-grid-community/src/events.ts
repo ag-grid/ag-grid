@@ -2,6 +2,7 @@ import type { AgChartThemeOverrides } from 'ag-charts-types';
 
 import type { ColDef } from './entities/colDef';
 import type { GridOptions } from './entities/gridOptions';
+import type { RowNode } from './entities/rowNode';
 import type { AgEventType, AgInternalEventType, AgPublicEventType } from './eventTypes';
 import type { FilterRequestSource } from './filter/iColumnFilter';
 import type { CellRange, CellRangeParams } from './interfaces/IRangeService';
@@ -167,6 +168,7 @@ export type AgEventTypeParams<TData = any, TContext = any> = BuildEventTypeMap<
         recalculateRowBounds: RecalculateRowBoundsEvent<TData, TContext>;
         stickyTopOffsetChanged: StickyTopOffsetChangedEvent<TData, TContext>;
         overlayExclusiveChanged: AgEvent<'overlayExclusiveChanged'>;
+        rowNodeDataChanged: RowNodeDataChangedEvent<TData, TContext>;
     }
 >;
 
@@ -1164,3 +1166,7 @@ export interface RecalculateRowBoundsEvent<TData = any, TContext = any>
     extends AgGlobalEvent<'recalculateRowBounds', TData, TContext> {}
 export interface StickyTopOffsetChangedEvent<TData = any, TContext = any>
     extends AgGlobalEvent<'stickyTopOffsetChanged', TData, TContext> {}
+export interface RowNodeDataChangedEvent<TData = any, TContext = any>
+    extends AgGlobalEvent<'rowNodeDataChanged', TData, TContext> {
+    node: RowNode<TData>;
+}

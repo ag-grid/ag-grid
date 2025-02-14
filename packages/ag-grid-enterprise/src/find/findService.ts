@@ -41,15 +41,18 @@ export class FindService extends BeanStub implements NamedBean, IFindService {
             return;
         }
 
-        const updateFind = this.updateFind.bind(this);
-        this.addManagedPropertyListeners(['findSearchValue', 'findOptions'], () => updateFind());
+        const refreshAndWipeActive = this.refresh.bind(this, false);
+        const refreshAndKeepActive = this.refresh.bind(this, true);
+        this.addManagedPropertyListeners(['findSearchValue', 'findOptions'], refreshAndWipeActive);
         this.addManagedEventListeners({
-            modelUpdated: () => updateFind(true),
-            displayedColumnsChanged: () => updateFind(true),
-            pinnedRowDataChanged: () => updateFind(true),
+            modelUpdated: refreshAndKeepActive,
+            displayedColumnsChanged: refreshAndKeepActive,
+            pinnedRowDataChanged: refreshAndKeepActive,
+            cellValueChanged: refreshAndKeepActive,
+            rowNodeDataChanged: refreshAndKeepActive,
         });
 
-        this.updateFind();
+        refreshAndWipeActive();
     }
 
     public next(): void {
@@ -131,7 +134,7 @@ export class FindService extends BeanStub implements NamedBean, IFindService {
         }
     }
 
-    private updateFind(maintainActive?: boolean): void {
+    private refresh(maintainActive: boolean): void {
         const rowNodesToRefresh = new Set([...this.topNodes, ...this.centerNodes, ...this.bottomNodes]);
         this.topNodes = [];
         this.centerNodes = [];
@@ -493,10 +496,10 @@ export class FindService extends BeanStub implements NamedBean, IFindService {
                 node: { rowPinned, rowIndex },
                 column,
             } = activeMatch;
-            const { ctrlsSvc, pagination } = this.beans;
+            const { ctrlsSvc, pagination, gos } = this.beans;
             const scrollFeature = ctrlsSvc.getScrollFeature();
             if (rowPinned == null && rowIndex != null) {
-                if (pagination && !pagination.isRowInPage(rowIndex)) {
+                if (pagination && !gos.get('findOptions')?.currentPageOnly && !pagination.isRowInPage(rowIndex)) {
                     pagination.goToPageWithIndex(rowIndex);
                 }
                 scrollFeature.ensureIndexVisible(rowIndex);
