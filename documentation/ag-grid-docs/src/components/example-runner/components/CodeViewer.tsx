@@ -25,6 +25,17 @@ export function stripOutDarkModeCode(files: FileContents) {
                 /\/\*\* DARK INTEGRATED START \*\*\/([\s\S]*?)\/\*\* DARK INTEGRATED END \*\*\//g,
                 ''
             );
+
+            // hide React tear down example code
+            if (mainFile === 'index.tsx') {
+                files[mainFile] = files[mainFile]?.replace(
+                    '(window as any).tearDownExample = () => root.unmount();',
+                    ''
+                );
+            }
+            if (mainFile === 'index.jsx') {
+                files[mainFile] = files[mainFile]?.replace('window.tearDownExample = () => root.unmount();', '');
+            }
         }
     });
 }
