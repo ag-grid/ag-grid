@@ -383,9 +383,11 @@ export interface FilterDestroyedEvent<TData = any, TContext = any>
 }
 
 export interface FindChangedEvent<TData = any, TContext = any> extends AgGlobalEvent<'findChanged', TData, TContext> {
-    /** The active match, or `undefined` if no active match */
+    /** The current search value. */
+    findSearchValue: string | undefined;
+    /** The active match, or `undefined` if no active match. */
     activeMatch: FindMatch | undefined;
-    /** The total number of matches in the grid */
+    /** The total number of matches in the grid. */
     totalMatches: number;
 }
 

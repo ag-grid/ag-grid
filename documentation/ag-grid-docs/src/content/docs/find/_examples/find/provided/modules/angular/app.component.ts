@@ -65,9 +65,9 @@ export class AppComponent {
     constructor(private http: HttpClient) {}
 
     onFindChanged(event: FindChangedEvent) {
-        const { activeMatch, totalMatches } = event;
-        (document.getElementById('resultNum') as HTMLElement).textContent = activeMatch
-            ? `${activeMatch.numOverall}/${totalMatches}`
+        const { activeMatch, totalMatches, findSearchValue } = event;
+        (document.getElementById('resultNum') as HTMLElement).textContent = findSearchValue?.length
+            ? `${activeMatch?.numOverall ?? 0}/${totalMatches}`
             : '';
         (document.getElementById('resultPosition') as HTMLElement).textContent = activeMatch
             ? `Active match: { pinned: ${activeMatch.node.rowPinned}, row index: ${activeMatch.node.rowIndex}, column: ${activeMatch.column.getColId()}, match number in cell: ${activeMatch.numInMatch} }`

@@ -103,9 +103,9 @@ export class AppComponent {
     constructor(private http: HttpClient) {}
 
     onFindChanged(event: FindChangedEvent) {
-        const { activeMatch, totalMatches } = event;
-        (document.getElementById('resultNum') as HTMLElement).textContent = activeMatch
-            ? `${activeMatch.numOverall}/${totalMatches}`
+        const { activeMatch, totalMatches, findSearchValue } = event;
+        (document.getElementById('resultNum') as HTMLElement).textContent = findSearchValue?.length
+            ? `${activeMatch?.numOverall ?? 0}/${totalMatches}`
             : '';
     }
 

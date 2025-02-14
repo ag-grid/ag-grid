@@ -7,6 +7,10 @@ Find allows for values to be searched within the grid, with all matches highligh
 
 {% gridExampleRunner title="Find" name="find" /%}
 
+{% note %}
+Find is only compatible with the [Client-Side Row Model](./row-models/).
+{% /note %}
+
 ## Enabling Find
 
 Find is enabled by setting the grid option `findSearchValue` with the text to be searched for.
@@ -77,3 +81,16 @@ The following example demonstrates performing a case sensitive search, and findi
 
 {% gridExampleRunner title="Customising Find" name="customising-find" /%}
 
+## Content to Search
+
+Find is designed to search within "visible" cell contents.
+
+Searching is not performed within hidden columns. Columns not displayed due to [Column Groups](./column-groups/) being expanded/collapsed are counted as being hidden.
+
+The rows are searched after filtering and sorting have been performed.
+
+Searching will be performed within the children of [Collapsed Row Groups](./grouping-opening-groups/). When the active match is set to a child row within a collapsed group, the group is expanded (along with its parents if necessary).
+
+When using [Row Pagination](./row-pagination/), searching will be performed across all pages by default.
+
+See the [Customising Find](#customising-find) section for an example of using Find with Row Grouping, as well as how to customise behaviour for Pagination.

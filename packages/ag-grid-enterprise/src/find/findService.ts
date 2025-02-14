@@ -183,7 +183,13 @@ export class FindService extends BeanStub implements NamedBean, IFindService {
         let checkCurrentPage: boolean = false;
         const callback = (node: IRowNode) => {
             if (checkCurrentPage) {
-                if (!pagination!.isRowInPage(node.rowIndex!)) {
+                let rowIndex = node.rowIndex;
+                let nodeToCheck = node.parent;
+                while (rowIndex == null && nodeToCheck) {
+                    rowIndex = nodeToCheck.rowIndex;
+                    nodeToCheck = nodeToCheck.parent;
+                }
+                if (rowIndex == null || !pagination!.isRowInPage(rowIndex)) {
                     return;
                 }
             }
@@ -291,9 +297,10 @@ export class FindService extends BeanStub implements NamedBean, IFindService {
         const updateNumInMatches = () => {
             const matches = this.getMatches(rowPinned);
             for (const nodeToCheck of matches.keys()) {
+                const matchingNode = nodeToCheck === node;
                 const cols = matches.get(nodeToCheck)!;
                 for (const [columnToCheck, numMatches] of cols) {
-                    if (columnToCheck === column) {
+                    if (matchingNode && columnToCheck === column) {
                         numOverall += numInMatch;
                         return;
                     }
@@ -433,11 +440,12 @@ export class FindService extends BeanStub implements NamedBean, IFindService {
     }
 
     private dispatchFindChanged(): void {
-        const { eventSvc, activeMatch, totalMatches } = this;
+        const { eventSvc, activeMatch, totalMatches, findSearchValue } = this;
         eventSvc.dispatchEvent({
             type: 'findChanged',
             activeMatch,
             totalMatches,
+            findSearchValue,
         });
     }
 
