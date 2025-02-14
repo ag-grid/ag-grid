@@ -765,6 +765,18 @@
                 "include": ["RowNumbersOptions"]
             }
         },
+        "findSearchValue": {
+            "more": {
+                "name": "Find",
+                "url": "./find/"
+            }
+        },
+        "findOptions": {
+            "more": {
+                "name": "Customising Find",
+                "url": "./find/#customising-find"
+            }
+        },
         "valueCache": {
             "more": {
                 "name": "Value Cache",

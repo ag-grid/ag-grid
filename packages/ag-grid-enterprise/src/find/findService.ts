@@ -1,6 +1,8 @@
 import type {
     Column,
+    FindCellValueParams,
     FindMatch,
+    FindPart,
     IClientSideRowModel,
     IFindService,
     IRowNode,
@@ -17,18 +19,18 @@ function defaultCaseFormat(value?: string | null): string | undefined {
 export class FindService extends BeanStub implements NamedBean, IFindService {
     beanName = 'find' as const;
 
-    private pinnedTopMatches: Map<IRowNode, [Column, number][]> = new Map();
-    private pinnedTopRowNodes: IRowNode[] = [];
-    private pinnedTopNumMatches: number = 0;
-    private unpinnedMatches: Map<IRowNode, [Column, number][]> = new Map();
-    private unpinnedRowNodes: IRowNode[] = [];
-    private unpinnedNumMatches: number = 0;
-    private pinnedBottomMatches: Map<IRowNode, [Column, number][]> = new Map();
-    private pinnedBottomRowNodes: IRowNode[] = [];
+    private topMatches: Map<IRowNode, [Column, number][]> = new Map();
+    private topNodes: IRowNode[] = [];
+    private topNumMatches: number = 0;
+    private centerMatches: Map<IRowNode, [Column, number][]> = new Map();
+    private centerNodes: IRowNode[] = [];
+    private centerNumMatches: number = 0;
+    private bottomMatches: Map<IRowNode, [Column, number][]> = new Map();
+    private bottomNodes: IRowNode[] = [];
 
     private caseFormat: (value?: string | null) => string | undefined = defaultCaseFormat;
 
-    private findText: string | undefined;
+    private findSearchValue: string | undefined;
 
     public totalMatches: number = 0;
 
@@ -40,7 +42,7 @@ export class FindService extends BeanStub implements NamedBean, IFindService {
         }
 
         const updateFind = this.updateFind.bind(this);
-        this.addManagedPropertyListeners(['findText', 'findOptions'], () => updateFind());
+        this.addManagedPropertyListeners(['findSearchValue', 'findOptions'], () => updateFind());
         this.addManagedEventListeners({
             modelUpdated: () => updateFind(true),
             displayedColumnsChanged: () => updateFind(true),
@@ -59,17 +61,16 @@ export class FindService extends BeanStub implements NamedBean, IFindService {
     }
 
     public goTo(match: number): void {
-        const { pinnedTopMatches, pinnedTopNumMatches, unpinnedMatches, unpinnedNumMatches, pinnedBottomMatches } =
-            this;
-        if (match <= pinnedTopNumMatches) {
-            this.goToInContainer(pinnedTopMatches, match, 0);
+        const { topMatches, topNumMatches, centerMatches, centerNumMatches, bottomMatches } = this;
+        if (match <= topNumMatches) {
+            this.goToInContainer(topMatches, match, 0);
             return;
         }
-        if (match <= unpinnedNumMatches) {
-            this.goToInContainer(unpinnedMatches, match, pinnedTopNumMatches);
+        if (match <= centerNumMatches) {
+            this.goToInContainer(centerMatches, match, topNumMatches);
             return;
         }
-        this.goToInContainer(pinnedBottomMatches, match, pinnedTopNumMatches + unpinnedNumMatches);
+        this.goToInContainer(bottomMatches, match, topNumMatches + centerNumMatches);
     }
 
     public isMatch(node: IRowNode, column: Column): boolean {
@@ -93,24 +94,20 @@ export class FindService extends BeanStub implements NamedBean, IFindService {
             : 0;
     }
 
-    public getParts(params: {
-        value: string;
-        node: IRowNode;
-        column: Column;
-    }): { value: string; match?: boolean; activeMatch?: boolean }[] {
+    public getParts(params: FindCellValueParams): FindPart[] {
         const { value, node, column } = params;
-        const findText = this.findText;
-        if (_missing(findText)) {
+        const findSearchValue = this.findSearchValue;
+        if (_missing(findSearchValue)) {
             return [{ value }];
         }
         const valueToFind = this.caseFormat(_escapeString(value, true)) ?? '';
         const activeMatchNum = this.getActiveMatchNum(node, column);
         let lastIndex = 0;
         let currentMatchNum = 0;
-        const findTextLength = findText.length;
-        const parts: { value: string; match?: boolean; activeMatch?: boolean }[] = [];
+        const findTextLength = findSearchValue.length;
+        const parts: FindPart[] = [];
         while (true) {
-            const index = valueToFind.indexOf(findText, lastIndex);
+            const index = valueToFind.indexOf(findSearchValue, lastIndex);
             if (index != -1) {
                 currentMatchNum++;
                 if (index > lastIndex) {
@@ -135,44 +132,40 @@ export class FindService extends BeanStub implements NamedBean, IFindService {
     }
 
     private updateFind(maintainActive?: boolean): void {
-        const rowNodesToRefresh = new Set([
-            ...this.pinnedTopRowNodes,
-            ...this.unpinnedRowNodes,
-            ...this.pinnedBottomRowNodes,
-        ]);
-        this.pinnedTopRowNodes = [];
-        this.unpinnedRowNodes = [];
-        this.pinnedBottomRowNodes = [];
+        const rowNodesToRefresh = new Set([...this.topNodes, ...this.centerNodes, ...this.bottomNodes]);
+        this.topNodes = [];
+        this.centerNodes = [];
+        this.bottomNodes = [];
         const {
-            pinnedTopRowNodes,
-            pinnedTopMatches,
-            unpinnedMatches,
-            unpinnedRowNodes,
-            pinnedBottomRowNodes,
-            pinnedBottomMatches,
+            topNodes,
+            topMatches,
+            centerMatches,
+            centerNodes,
+            bottomNodes,
+            bottomMatches,
             beans,
-            findText: oldFindText,
+            findSearchValue: oldFindText,
         } = this;
         const { gos, visibleCols, rowModel, valueSvc, pinnedRowModel, pagination } = beans;
         const findOptions = gos.get('findOptions');
-        const caseFormat: (value?: string | null) => string | undefined = findOptions?.matchCase
+        const caseFormat: (value?: string | null) => string | undefined = findOptions?.caseSensitive
             ? (value) => value ?? undefined
             : defaultCaseFormat;
         this.caseFormat = caseFormat;
 
-        const findText = caseFormat(gos.get('findText')?.trim());
-        this.findText = findText;
+        const findSearchValue = caseFormat(gos.get('findSearchValue')?.trim());
+        this.findSearchValue = findSearchValue;
 
-        pinnedTopMatches.clear();
-        unpinnedMatches.clear();
-        pinnedBottomMatches.clear();
+        topMatches.clear();
+        centerMatches.clear();
+        bottomMatches.clear();
 
         const oldActiveMatch = maintainActive ? this.activeMatch : undefined;
         this.activeMatch = undefined;
 
-        if (_missing(findText)) {
-            this.pinnedTopNumMatches = 0;
-            this.unpinnedNumMatches = 0;
+        if (_missing(findSearchValue)) {
+            this.topNumMatches = 0;
+            this.centerNumMatches = 0;
             this.totalMatches = 0;
             this.refreshRows(rowNodesToRefresh);
 
@@ -224,7 +217,7 @@ export class FindService extends BeanStub implements NamedBean, IFindService {
                 if (finalValue?.length) {
                     let index = -1;
                     while (true) {
-                        index = finalValue.indexOf(findText, index + 1);
+                        index = finalValue.indexOf(findSearchValue, index + 1);
                         if (index != -1) {
                             numMatches++;
                         } else {
@@ -246,22 +239,22 @@ export class FindService extends BeanStub implements NamedBean, IFindService {
             }
         };
 
-        matches = pinnedTopMatches;
-        rowNodes = pinnedTopRowNodes;
+        matches = topMatches;
+        rowNodes = topNodes;
         pinnedRowModel?.forEachPinnedRow('top', callback);
-        this.pinnedTopNumMatches = containerNumMatches;
+        this.topNumMatches = containerNumMatches;
         let totalMatches = containerNumMatches;
 
-        matches = unpinnedMatches;
-        rowNodes = unpinnedRowNodes;
+        matches = centerMatches;
+        rowNodes = centerNodes;
         containerNumMatches = 0;
         checkCurrentPage = !!pagination && !!findOptions?.currentPageOnly;
         (rowModel as IClientSideRowModel).forEachNodeAfterFilterAndSort(callback);
-        this.unpinnedNumMatches = containerNumMatches;
+        this.centerNumMatches = containerNumMatches;
         totalMatches += containerNumMatches;
 
-        matches = pinnedBottomMatches;
-        rowNodes = pinnedBottomRowNodes;
+        matches = bottomMatches;
+        rowNodes = bottomNodes;
         containerNumMatches = 0;
         checkCurrentPage = false;
         pinnedRowModel?.forEachPinnedRow('bottom', callback);
@@ -291,9 +284,9 @@ export class FindService extends BeanStub implements NamedBean, IFindService {
         // need to update overall num
         let numOverall = 0;
         if (rowPinned == null) {
-            numOverall = this.pinnedTopNumMatches;
+            numOverall = this.topNumMatches;
         } else if (rowPinned === 'bottom') {
-            numOverall = this.pinnedTopNumMatches + this.unpinnedNumMatches;
+            numOverall = this.topNumMatches + this.centerNumMatches;
         }
         const updateNumInMatches = () => {
             const matches = this.getMatches(rowPinned);
@@ -440,10 +433,11 @@ export class FindService extends BeanStub implements NamedBean, IFindService {
     }
 
     private dispatchFindChanged(): void {
-        this.eventSvc.dispatchEvent({
+        const { eventSvc, activeMatch, totalMatches } = this;
+        eventSvc.dispatchEvent({
             type: 'findChanged',
-            activeMatch: this.activeMatch,
-            totalMatches: this.totalMatches,
+            activeMatch,
+            totalMatches,
         });
     }
 
@@ -524,31 +518,31 @@ export class FindService extends BeanStub implements NamedBean, IFindService {
 
     private getMatches(rowPinned: RowPinnedType): Map<IRowNode, [Column, number][]> {
         if (rowPinned === 'top') {
-            return this.pinnedTopMatches;
+            return this.topMatches;
         } else if (rowPinned === 'bottom') {
-            return this.pinnedBottomMatches;
+            return this.bottomMatches;
         } else {
-            return this.unpinnedMatches;
+            return this.centerMatches;
         }
     }
 
     private getRowNodes(rowPinned: RowPinnedType): IRowNode[] {
         if (rowPinned === 'top') {
-            return this.pinnedTopRowNodes;
+            return this.topNodes;
         } else if (rowPinned === 'bottom') {
-            return this.pinnedBottomRowNodes;
+            return this.bottomNodes;
         } else {
-            return this.unpinnedRowNodes;
+            return this.centerNodes;
         }
     }
 
     public override destroy(): void {
-        this.pinnedTopMatches.clear();
-        this.pinnedTopRowNodes.length = 0;
-        this.unpinnedMatches.clear();
-        this.unpinnedRowNodes.length = 0;
-        this.pinnedBottomMatches.clear();
-        this.pinnedBottomRowNodes.length = 0;
+        this.topMatches.clear();
+        this.topNodes.length = 0;
+        this.centerMatches.clear();
+        this.centerNodes.length = 0;
+        this.bottomMatches.clear();
+        this.bottomNodes.length = 0;
         this.activeMatch = undefined;
         super.destroy();
     }

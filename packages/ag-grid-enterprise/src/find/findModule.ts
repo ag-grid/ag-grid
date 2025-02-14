@@ -30,9 +30,9 @@ const FindCoreModule: _ModuleWithoutApi = {
 
 /**
  * @feature Find
- * @gridOption findText
+ * @gridOption findSearchValue
  */
-export const FindModule: _ModuleWithApi<_FindApi> = {
+export const FindModule: _ModuleWithApi<_FindApi<any>> = {
     moduleName: 'Find',
     version: VERSION,
     apiFunctions: {

@@ -16,6 +16,7 @@ import type {
     ExcelExportParams,
     ExcelStyle,
     FillOperationParams,
+    FindOptions,
     FocusGridInnerElementParams,
     GetChartMenuItems,
     GetChartToolbarItems,
@@ -489,11 +490,12 @@ export interface Props<TData> {
          * @initial
          */
     excelStyles?: ExcelStyle[] | undefined,
-    findText?: string | undefined,
-    findOptions?: {
-        currentPageOnly?: boolean;
-        matchCase?: boolean;
-    } | undefined,
+    /** Text to find within the grid.
+         */
+    findSearchValue?: string | undefined,
+    /** Options for the Find feature.
+         */
+    findOptions?: FindOptions | undefined,
     /** Rows are filtered using this text as a Quick Filter.
          * Only supported for Client-Side Row Model.
          */
@@ -1677,7 +1679,7 @@ export function getProps() {
         defaultExcelExportParams: undefined,
         suppressExcelExport: undefined,
         excelStyles: undefined,
-        findText: undefined,
+        findSearchValue: undefined,
         findOptions: undefined,
         quickFilterText: undefined,
         cacheQuickFilter: undefined,

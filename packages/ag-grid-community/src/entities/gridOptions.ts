@@ -160,6 +160,7 @@ import type { Column } from '../interfaces/iColumn';
 import type { AgGridCommon } from '../interfaces/iCommon';
 import type { IDatasource } from '../interfaces/iDatasource';
 import type { ExcelExportParams, ExcelStyle } from '../interfaces/iExcelCreator';
+import type { FindOptions } from '../interfaces/iFind';
 import type { HeaderPosition } from '../interfaces/iHeaderPosition';
 import type { ILoadingCellRendererParams } from '../interfaces/iLoadingCellRenderer';
 import type { IRowDragItem } from '../interfaces/iRowDragItem';
@@ -556,11 +557,15 @@ export interface GridOptions<TData = any> {
      */
     excelStyles?: ExcelStyle[];
 
-    findText?: string;
-    findOptions?: {
-        currentPageOnly?: boolean;
-        matchCase?: boolean;
-    };
+    // *** Find *** //
+    /**
+     * Text to find within the grid.
+     */
+    findSearchValue?: string;
+    /**
+     * Options for the Find feature.
+     */
+    findOptions?: FindOptions;
 
     // *** Filter *** //
     /**
@@ -2154,6 +2159,9 @@ export interface GridOptions<TData = any> {
      */
     onAdvancedFilterBuilderVisibleChanged?(event: AdvancedFilterBuilderVisibleChangedEvent<TData>): void;
 
+    /**
+     * Find details have changed (e.g. Find search value, active match, or updates to grid cells).
+     */
     onFindChanged?(event: FindChangedEvent<TData>): void;
 
     // *** Integrated Charts *** //

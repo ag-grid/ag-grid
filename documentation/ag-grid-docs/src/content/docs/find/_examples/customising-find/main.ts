@@ -1,31 +1,55 @@
 import type { FindChangedEvent, GridApi, GridOptions } from 'ag-grid-community';
-import { ClientSideRowModelModule, ModuleRegistry, ValidationModule, createGrid } from 'ag-grid-community';
-import { FindModule } from 'ag-grid-enterprise';
+import {
+    ClientSideRowModelModule,
+    ModuleRegistry,
+    PaginationModule,
+    PinnedRowModule,
+    ValidationModule,
+    createGrid,
+} from 'ag-grid-community';
+import { FindModule, RowGroupingModule, RowGroupingPanelModule } from 'ag-grid-enterprise';
 
-ModuleRegistry.registerModules([FindModule, ClientSideRowModelModule, ValidationModule /* Development Only */]);
+ModuleRegistry.registerModules([
+    FindModule,
+    RowGroupingModule,
+    RowGroupingPanelModule,
+    PinnedRowModule,
+    ClientSideRowModelModule,
+    PaginationModule,
+    ValidationModule /* Development Only */,
+]);
 
 let gridApi: GridApi;
 
 const gridOptions: GridOptions = {
+    pinnedTopRowData: [{ athlete: 'Top' }],
+    pinnedBottomRowData: [{ athlete: 'Bottom' }],
     columnDefs: [
         { field: 'athlete' },
         { field: 'country' },
-        { field: 'sport' },
+        { field: 'sport', rowGroup: true, hide: true },
         { field: 'year' },
         { field: 'age', minWidth: 100 },
         { field: 'gold', minWidth: 100 },
         { field: 'silver', minWidth: 100 },
         { field: 'bronze', minWidth: 100 },
     ],
+    defaultColDef: {
+        enableRowGroup: true,
+    },
+    rowGroupPanelShow: 'always',
+    pagination: true,
+    paginationPageSize: 5,
+    paginationPageSizeSelector: [5, 10],
+    findOptions: {
+        caseSensitive: true,
+        currentPageOnly: true,
+    },
     onFindChanged: (event: FindChangedEvent) => {
         const { activeMatch, totalMatches } = event;
         (document.getElementById('resultNum') as HTMLElement).textContent = activeMatch
             ? `${activeMatch.numOverall}/${totalMatches}`
             : '';
-        (document.getElementById('resultPosition') as HTMLElement).textContent = activeMatch
-            ? `Active match: { pinned: ${activeMatch.node.rowPinned}, row index: ${activeMatch.node.rowIndex}, column: ${activeMatch.column.getColId()}, match number in cell: ${activeMatch.numInMatch} }`
-            : '';
-        console.log('findChanged', event);
     },
     onGridReady: () => {
         (document.getElementById('find-text-box') as HTMLInputElement).addEventListener('keydown', (event) => {
@@ -64,6 +88,24 @@ function goToFind() {
         return;
     }
     gridApi!.findGoTo(num);
+}
+
+function toggleCaseSensitive() {
+    const caseSensitive = (document.getElementById('caseSensitive') as HTMLInputElement).checked;
+    const findOptions = gridApi.getGridOption('findOptions');
+    gridApi.setGridOption('findOptions', {
+        ...findOptions,
+        caseSensitive,
+    });
+}
+
+function toggleCurrentPageOnly() {
+    const currentPageOnly = (document.getElementById('currentPageOnly') as HTMLInputElement).checked;
+    const findOptions = gridApi.getGridOption('findOptions');
+    gridApi.setGridOption('findOptions', {
+        ...findOptions,
+        currentPageOnly,
+    });
 }
 
 // setup the grid after the page has finished loading

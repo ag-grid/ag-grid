@@ -597,5 +597,16 @@
         "headerGroupComponentParams": {},
         "suppressSpanHeaderHeight": {},
         "suppressStickyLabel": {}
+    },
+    "find": {
+        "meta": {
+            "displayName": "Columns: Find"
+        },
+        "getFindText": {
+            "more": {
+                "name": "Using Find with Custom Cell Components",
+                "url": "./find/#using-find-with-custom-cell-components"
+            }
+        }
     }
 }

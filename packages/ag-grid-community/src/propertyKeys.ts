@@ -61,7 +61,7 @@ const STRING_GRID_OPTIONS: KeysWithType<string>[] = [
     'tooltipShowMode',
     'grandTotalRow',
     'themeCssLayer',
-    'findText',
+    'findSearchValue',
 ];
 
 // only used internally

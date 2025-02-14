@@ -3,4 +3,77 @@ title: "Find"
 enterprise: true
 ---
 
+Find allows for values to be searched within the grid, with all matches highlighted and navigable, similar to find ({% kbd "^ Ctrl" /%} + {% kbd "F" /%}) within the browser.
+
 {% gridExampleRunner title="Find" name="find" /%}
+
+## Enabling Find
+
+Find is enabled by setting the grid option `findSearchValue` with the text to be searched for.
+
+{% apiDocumentation source="grid-options/properties.json" section="miscellaneous" names=["findSearchValue"] /%}
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    findSearchValue: 'rowing'
+}
+```
+
+The grid API methods `findNext()`, `findPrevious()`, and `findGoTo(matchNumber)` can be used to move between the matches.
+
+{% apiDocumentation source="grid-api/api.json" section="find" names=["findNext", "findPrevious", "findGoTo"] /%}
+
+Changing the Find search value, changing the active match, or updates to the grid that cause changes to the visible cells (e.g. changing columns/rows) trigger the `findChanged` event. The event contains details on the active match, as well as the total number of matches.
+
+{% apiDocumentation source="grid-events/events.json" section="miscellaneous" names=["findChanged"] /%}
+
+The active match and the total number of matches can also be retrieved via the API.
+
+{% apiDocumentation source="grid-api/api.json" section="find" names=["findGetActiveMatch", "findGetTotalMatches"] /%}
+
+## Using Find with Custom Cell Components
+
+By default, Find searches within the [Formatted Value](./value-formatters/) of the cell, or the raw cell value if there is no Value Formatter. This is what is displayed in the cell by default.
+
+Custom cell components may display text that does not appear in the cell value. To enable Find to search within this additional text, the `getFindText` callback can be implemented on the Column Definition. Find will search within this value for matches.
+
+{% apiDocumentation source="column-properties/properties.json" section="find" names=["getFindText"] /%}
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    columnDefs: [
+        {
+            field: 'year',
+            getFindText: params => `Year is ${params.value}`,
+        }
+    ]
+}
+```
+
+The custom cell component is responsible for highlighting any matches and active matches within the cell. The grid API provides the following methods to help with this.
+
+{% apiDocumentation source="grid-api/api.json" section="find" names=["findGetNumMatches", "findGetParts"] /%}
+
+The following example demonstrates a custom cell component in the `Year` column, which uses the features described above. The custom cell component reuses the grid CSS classes `ag-find-match` and `ag-find-active-match` to apply the same styling as the default grid cell component.
+
+{% gridExampleRunner title="Find with Cell Components" name="find-cell-components" /%}
+
+## Customising Find
+
+Find can be customised by providing an object of type `FindOptions` to the grid option `findOptions`.
+
+{% interfaceDocumentation interfaceName="FindOptions" config={"description":""} /%}
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    findOptions: {
+        caseSensitive: true,
+        currentPageOnly: true,
+    }
+}
+```
+
+The following example demonstrates performing a case sensitive search, and finding matches within the current page only:
+
+{% gridExampleRunner title="Customising Find" name="customising-find" /%}
+

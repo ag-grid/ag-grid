@@ -1,4 +1,4 @@
-import type { BeanCollection, Column, FindMatch, IRowNode } from 'ag-grid-community';
+import type { BeanCollection, FindCellParams, FindCellValueParams, FindMatch, FindPart } from 'ag-grid-community';
 
 export function findNext(beans: BeanCollection): void {
     beans.find?.next();
@@ -20,14 +20,11 @@ export function findGetActiveMatch(beans: BeanCollection): FindMatch | undefined
     return beans.find?.activeMatch;
 }
 
-export function findGetNumMatches(beans: BeanCollection, params: { node: IRowNode; column: Column }): number {
+export function findGetNumMatches(beans: BeanCollection, params: FindCellParams): number {
     const { node, column } = params;
     return beans.find?.getNumMatches(node, column) ?? 0;
 }
 
-export function findGetParts(
-    beans: BeanCollection,
-    params: { value: string; node: IRowNode; column: Column }
-): { value: string; match?: boolean; activeMatch?: boolean }[] {
+export function findGetParts(beans: BeanCollection, params: FindCellValueParams): FindPart[] {
     return beans.find?.getParts(params) ?? [];
 }

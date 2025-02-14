@@ -264,7 +264,14 @@ export { IAdvancedFilterCtrl } from './interfaces/iAdvancedFilterCtrl';
 export { IAdvancedFilterBuilderParams } from './interfaces/iAdvancedFilterBuilderParams';
 export { IAdvancedFilterService } from './interfaces/iAdvancedFilterService';
 
-export { FindMatch, IFindService } from './interfaces/iFind';
+export {
+    FindMatch,
+    IFindService,
+    FindOptions,
+    FindCellParams,
+    FindCellValueParams,
+    FindPart,
+} from './interfaces/iFind';
 
 // gridPanel
 export { GridBodyCtrl, IGridBodyComp, RowAnimationCssClasses } from './gridBodyComp/gridBodyCtrl';

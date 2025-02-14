@@ -20,7 +20,7 @@ import type { ICellRendererParams } from 'ag-grid-community';
         </span>
     `,
 })
-export class SearchRenderer implements ICellRendererAngularComp {
+export class FindRenderer implements ICellRendererAngularComp {
     parts = signal<any[]>([]);
 
     agInit(params: ICellRendererParams): void {

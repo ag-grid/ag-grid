@@ -6,16 +6,27 @@ import {
     ClientSideRowModelModule,
     ColDef,
     FindChangedEvent,
+    FindOptions,
     GridApi,
     GridReadyEvent,
     ModuleRegistry,
+    PaginationModule,
+    PinnedRowModule,
     ValidationModule,
 } from 'ag-grid-community';
-import { FindModule } from 'ag-grid-enterprise';
+import { FindModule, RowGroupingModule, RowGroupingPanelModule } from 'ag-grid-enterprise';
 
 import './styles.css';
 
-ModuleRegistry.registerModules([FindModule, ClientSideRowModelModule, ValidationModule /* Development Only */]);
+ModuleRegistry.registerModules([
+    FindModule,
+    RowGroupingModule,
+    RowGroupingPanelModule,
+    PinnedRowModule,
+    ClientSideRowModelModule,
+    PaginationModule,
+    ValidationModule /* Development Only */,
+]);
 
 @Component({
     selector: 'my-app',
@@ -23,6 +34,14 @@ ModuleRegistry.registerModules([FindModule, ClientSideRowModelModule, Validation
     imports: [AgGridAngular],
     template: `<div class="example-wrapper">
         <div class="example-header">
+            <label>
+                <span>caseSensitive:</span>
+                <input id="caseSensitive" type="checkbox" (change)="toggleCaseSensitive()" checked="" />
+            </label>
+            <label>
+                <span>currentPageOnly:</span>
+                <input id="currentPageOnly" type="checkbox" (change)="toggleCurrentPageOnly()" checked="" />
+            </label>
             <div>
                 <span>Find:</span>
                 <input type="text" id="find-text-box" />
@@ -36,11 +55,18 @@ ModuleRegistry.registerModules([FindModule, ClientSideRowModelModule, Validation
                 <input type="number" id="find-goto" />
                 <button (click)="goToFind()">Go To</button>
             </div>
-            <div id="resultPosition"></div>
         </div>
         <ag-grid-angular
             style="width: 100%; height: 100%;"
+            [pinnedTopRowData]="pinnedTopRowData"
+            [pinnedBottomRowData]="pinnedBottomRowData"
             [columnDefs]="columnDefs"
+            [defaultColDef]="defaultColDef"
+            [rowGroupPanelShow]="rowGroupPanelShow"
+            [pagination]="true"
+            [paginationPageSize]="paginationPageSize"
+            [paginationPageSizeSelector]="paginationPageSizeSelector"
+            [findOptions]="findOptions"
             [rowData]="rowData"
             (findChanged)="onFindChanged($event)"
             (gridReady)="onGridReady($event)"
@@ -50,16 +76,28 @@ ModuleRegistry.registerModules([FindModule, ClientSideRowModelModule, Validation
 export class AppComponent {
     private gridApi!: GridApi;
 
+    pinnedTopRowData: any[] = [{ athlete: 'Top' }];
+    pinnedBottomRowData: any[] = [{ athlete: 'Bottom' }];
     columnDefs: ColDef[] = [
         { field: 'athlete' },
         { field: 'country' },
-        { field: 'sport' },
+        { field: 'sport', rowGroup: true, hide: true },
         { field: 'year' },
         { field: 'age', minWidth: 100 },
         { field: 'gold', minWidth: 100 },
         { field: 'silver', minWidth: 100 },
         { field: 'bronze', minWidth: 100 },
     ];
+    defaultColDef: ColDef = {
+        enableRowGroup: true,
+    };
+    rowGroupPanelShow: 'always' | 'onlyWhenGrouping' | 'never' = 'always';
+    paginationPageSize = 5;
+    paginationPageSizeSelector: number[] | boolean = [5, 10];
+    findOptions: FindOptions = {
+        caseSensitive: true,
+        currentPageOnly: true,
+    };
     rowData!: any[];
 
     constructor(private http: HttpClient) {}
@@ -69,10 +107,6 @@ export class AppComponent {
         (document.getElementById('resultNum') as HTMLElement).textContent = activeMatch
             ? `${activeMatch.numOverall}/${totalMatches}`
             : '';
-        (document.getElementById('resultPosition') as HTMLElement).textContent = activeMatch
-            ? `Active match: { pinned: ${activeMatch.node.rowPinned}, row index: ${activeMatch.node.rowIndex}, column: ${activeMatch.column.getColId()}, match number in cell: ${activeMatch.numInMatch} }`
-            : '';
-        console.log('findChanged', event);
     }
 
     find() {
@@ -96,6 +130,24 @@ export class AppComponent {
             return;
         }
         this.gridApi.findGoTo(num);
+    }
+
+    toggleCaseSensitive() {
+        const caseSensitive = (document.getElementById('caseSensitive') as HTMLInputElement).checked;
+        const findOptions = this.gridApi.getGridOption('findOptions');
+        this.gridApi.setGridOption('findOptions', {
+            ...findOptions,
+            caseSensitive,
+        });
+    }
+
+    toggleCurrentPageOnly() {
+        const currentPageOnly = (document.getElementById('currentPageOnly') as HTMLInputElement).checked;
+        const findOptions = this.gridApi.getGridOption('findOptions');
+        this.gridApi.setGridOption('findOptions', {
+            ...findOptions,
+            currentPageOnly,
+        });
     }
 
     onGridReady(params: GridReadyEvent) {

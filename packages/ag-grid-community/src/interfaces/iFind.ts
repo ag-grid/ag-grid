@@ -4,7 +4,11 @@ import type { IRowNode } from './iRowNode';
 export interface FindMatch {
     node: IRowNode;
     column: Column;
+    /**
+     * The number of the match within the cell (starting from `1`).
+     */
     numInMatch: number;
+    /** The number of the match within all the matches in the grid (starting from `1`) */
     numOverall: number;
 }
 
@@ -15,11 +19,7 @@ export interface IFindService {
 
     isMatch(node: IRowNode, column: Column): boolean;
 
-    getParts(params: {
-        value: string;
-        node: IRowNode;
-        column: Column;
-    }): { value: string; match?: boolean; activeMatch?: boolean }[];
+    getParts(params: FindCellValueParams): FindPart[];
 
     next(): void;
 
@@ -28,4 +28,34 @@ export interface IFindService {
     goTo(match: number): void;
 
     getNumMatches(node: IRowNode, column: Column): number;
+}
+
+export interface FindOptions {
+    /**
+     * Match values in the current page only (when pagination enabled).
+     */
+    currentPageOnly?: boolean;
+    /**
+     * Match case of values.
+     */
+    caseSensitive?: boolean;
+}
+
+export interface FindCellParams<TData = any, TValue = any> {
+    node: IRowNode<TData>;
+    column: Column<TValue>;
+}
+
+export interface FindCellValueParams<TData = any, TValue = any> extends FindCellParams<TData, TValue> {
+    /** Display value to search within. */
+    value: string;
+}
+
+export interface FindPart {
+    /** Partial display value. */
+    value: string;
+    /** `true` if a match. */
+    match?: boolean;
+    /** `true` if the active match. */
+    activeMatch?: boolean;
 }

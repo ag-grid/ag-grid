@@ -241,7 +241,7 @@ export const gridApiFunctionsMap: Record<keyof GridApi, ValidationModuleName> = 
         getQuickFilter: 0,
         resetQuickFilter: 0,
     }),
-    ...mod<_FindApi>('Find', {
+    ...mod<_FindApi<any>>('Find', {
         findGetActiveMatch: 0,
         findGetTotalMatches: 0,
         findGoTo: 0,

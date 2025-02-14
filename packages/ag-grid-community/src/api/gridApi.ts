@@ -41,7 +41,7 @@ import type { IContextMenuParams } from '../interfaces/iContextMenu';
 import type { ExcelExportMultipleSheetParams, ExcelExportParams } from '../interfaces/iExcelCreator';
 import type { FilterModel, IFilter } from '../interfaces/iFilter';
 import type { IFiltersToolPanel } from '../interfaces/iFiltersToolPanel';
-import type { FindMatch } from '../interfaces/iFind';
+import type { FindCellParams, FindCellValueParams, FindMatch, FindPart } from '../interfaces/iFind';
 import type { RedrawRowsParams } from '../interfaces/iRedrawRowsParams';
 import type { IRowNode, RowPinnedType } from '../interfaces/iRowNode';
 import type { LoadSuccessParams, RefreshServerSideParams } from '../interfaces/iServerSideRowModel';
@@ -738,18 +738,24 @@ export interface _QuickFilterGridApi {
     resetQuickFilter(): void;
 }
 
-export interface _FindApi {
+export interface _FindApi<TData> {
+    /** Go to the next match. */
     findNext(): void;
+    /** Go to the previous match. */
     findPrevious(): void;
+    /** Get the total number of matches. */
     findGetTotalMatches(): number;
+    /** Go to the provided match (first match is `1`). */
     findGoTo(match: number): void;
+    /** Get the active match, or `undefined` if no active match. */
     findGetActiveMatch(): FindMatch | undefined;
-    findGetNumMatches(params: { node: IRowNode; column: Column }): number;
-    findGetParts(params: {
-        value: string;
-        node: IRowNode;
-        column: Column;
-    }): { value: string; match?: boolean; activeMatch?: boolean }[];
+    /** Get the number of matches within the provided cell. */
+    findGetNumMatches(params: FindCellParams<TData>): number;
+    /**
+     * Get the parts of a cell value, including matches and active match.
+     * Used for custom cell components.
+     */
+    findGetParts(params: FindCellValueParams<TData>): FindPart[];
 }
 
 export interface _StateGridApi {
@@ -1214,7 +1220,7 @@ export interface GridApi<TData = any>
         _FilterGridApi,
         _ColumnFilterGridApi,
         _QuickFilterGridApi,
-        _FindApi,
+        _FindApi<TData>,
         _PaginationGridApi,
         _CsrmSsrmSharedGridApi,
         _SsrmInfiniteSharedGridApi,

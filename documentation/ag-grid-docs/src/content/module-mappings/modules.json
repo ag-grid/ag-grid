@@ -67,6 +67,11 @@
                     "moduleName": "TooltipModule",
                     "name": "Tooltips",
                     "path": "tooltips/"
+                },
+                {
+                    "moduleName": "FindModule",
+                    "name": "Find",
+                    "path": "find/"
                 }
             ]
         },

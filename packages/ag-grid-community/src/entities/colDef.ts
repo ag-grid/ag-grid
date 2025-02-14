@@ -399,6 +399,12 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
      */
     suppressFloatingFilterButton?: boolean;
 
+    // *** Find *** //
+    /**
+     * When using Find with custom cell renderers, this allows providing a custom value to search within.
+     * E.g. if the cell renderer is displaying text that is different from the cell formatted value.
+     * Returning `null` means Find will not search within the cell.
+     */
     getFindText?: (params: GetFindTextParams<TData, TValue>) => string | null;
 
     // *** Column Headers *** //

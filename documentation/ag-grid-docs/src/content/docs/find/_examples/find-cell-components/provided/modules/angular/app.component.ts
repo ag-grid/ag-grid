@@ -6,6 +6,7 @@ import {
     ClientSideRowModelModule,
     ColDef,
     FindChangedEvent,
+    GetFindTextParams,
     GridApi,
     GridReadyEvent,
     ModuleRegistry,
@@ -13,6 +14,7 @@ import {
 } from 'ag-grid-community';
 import { FindModule } from 'ag-grid-enterprise';
 
+import { FindRenderer } from './findRenderer.component';
 import './styles.css';
 
 ModuleRegistry.registerModules([FindModule, ClientSideRowModelModule, ValidationModule /* Development Only */]);
@@ -20,23 +22,15 @@ ModuleRegistry.registerModules([FindModule, ClientSideRowModelModule, Validation
 @Component({
     selector: 'my-app',
     standalone: true,
-    imports: [AgGridAngular],
+    imports: [AgGridAngular, FindRenderer],
     template: `<div class="example-wrapper">
         <div class="example-header">
-            <div>
-                <span>Find:</span>
-                <input type="text" id="find-text-box" />
-                <button (click)="find()">Find</button>
-                <button (click)="previous()">Previous</button>
-                <button (click)="next()">Next</button>
-                <span id="resultNum"></span>
-            </div>
-            <div>
-                <span>Go to match:</span>
-                <input type="number" id="find-goto" />
-                <button (click)="goToFind()">Go To</button>
-            </div>
-            <div id="resultPosition"></div>
+            <span>Find:</span>
+            <input type="text" id="find-text-box" />
+            <button (click)="find()">Find</button>
+            <button (click)="previous()">Previous</button>
+            <button (click)="next()">Next</button>
+            <span id="resultNum"></span>
         </div>
         <ag-grid-angular
             style="width: 100%; height: 100%;"
@@ -53,12 +47,17 @@ export class AppComponent {
     columnDefs: ColDef[] = [
         { field: 'athlete' },
         { field: 'country' },
-        { field: 'sport' },
-        { field: 'year' },
-        { field: 'age', minWidth: 100 },
-        { field: 'gold', minWidth: 100 },
-        { field: 'silver', minWidth: 100 },
-        { field: 'bronze', minWidth: 100 },
+        {
+            field: 'year',
+            cellRenderer: FindRenderer,
+            getFindText: (params: GetFindTextParams) => {
+                const cellValue = params.getValueFormatted() ?? params.value?.toString();
+                if (!cellValue?.length) {
+                    return null;
+                }
+                return `Year is ${cellValue}`;
+            },
+        },
     ];
     rowData!: any[];
 
@@ -69,10 +68,6 @@ export class AppComponent {
         (document.getElementById('resultNum') as HTMLElement).textContent = activeMatch
             ? `${activeMatch.numOverall}/${totalMatches}`
             : '';
-        (document.getElementById('resultPosition') as HTMLElement).textContent = activeMatch
-            ? `Active match: { pinned: ${activeMatch.node.rowPinned}, row index: ${activeMatch.node.rowIndex}, column: ${activeMatch.column.getColId()}, match number in cell: ${activeMatch.numInMatch} }`
-            : '';
-        console.log('findChanged', event);
     }
 
     find() {
@@ -88,14 +83,6 @@ export class AppComponent {
 
     previous() {
         this.gridApi.findPrevious();
-    }
-
-    goToFind() {
-        const num = Number((document.getElementById('find-goto') as HTMLInputElement).value);
-        if (isNaN(num) || num < 0) {
-            return;
-        }
-        this.gridApi.findGoTo(num);
     }
 
     onGridReady(params: GridReadyEvent) {

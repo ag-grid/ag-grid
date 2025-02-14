@@ -1,6 +1,8 @@
-import type { FindChangedEvent, GridApi, GridOptions } from 'ag-grid-community';
+import type { FindChangedEvent, GetFindTextParams, GridApi, GridOptions } from 'ag-grid-community';
 import { ClientSideRowModelModule, ModuleRegistry, ValidationModule, createGrid } from 'ag-grid-community';
 import { FindModule } from 'ag-grid-enterprise';
+
+import { FindRenderer } from './findRenderer_typescript';
 
 ModuleRegistry.registerModules([FindModule, ClientSideRowModelModule, ValidationModule /* Development Only */]);
 
@@ -10,22 +12,23 @@ const gridOptions: GridOptions = {
     columnDefs: [
         { field: 'athlete' },
         { field: 'country' },
-        { field: 'sport' },
-        { field: 'year' },
-        { field: 'age', minWidth: 100 },
-        { field: 'gold', minWidth: 100 },
-        { field: 'silver', minWidth: 100 },
-        { field: 'bronze', minWidth: 100 },
+        {
+            field: 'year',
+            cellRenderer: FindRenderer,
+            getFindText: (params: GetFindTextParams) => {
+                const cellValue = params.getValueFormatted() ?? params.value?.toString();
+                if (!cellValue?.length) {
+                    return null;
+                }
+                return `Year is ${cellValue}`;
+            },
+        },
     ],
     onFindChanged: (event: FindChangedEvent) => {
         const { activeMatch, totalMatches } = event;
         (document.getElementById('resultNum') as HTMLElement).textContent = activeMatch
             ? `${activeMatch.numOverall}/${totalMatches}`
             : '';
-        (document.getElementById('resultPosition') as HTMLElement).textContent = activeMatch
-            ? `Active match: { pinned: ${activeMatch.node.rowPinned}, row index: ${activeMatch.node.rowIndex}, column: ${activeMatch.column.getColId()}, match number in cell: ${activeMatch.numInMatch} }`
-            : '';
-        console.log('findChanged', event);
     },
     onGridReady: () => {
         (document.getElementById('find-text-box') as HTMLInputElement).addEventListener('keydown', (event) => {
@@ -40,6 +43,10 @@ const gridOptions: GridOptions = {
                 }
             }
         });
+    },
+    onFirstDataRendered: () => {
+        find();
+        next();
     },
 };
 
@@ -56,14 +63,6 @@ function next() {
 
 function previous() {
     gridApi!.findPrevious();
-}
-
-function goToFind() {
-    const num = Number((document.getElementById('find-goto') as HTMLInputElement).value);
-    if (isNaN(num) || num < 0) {
-        return;
-    }
-    gridApi!.findGoTo(num);
 }
 
 // setup the grid after the page has finished loading
