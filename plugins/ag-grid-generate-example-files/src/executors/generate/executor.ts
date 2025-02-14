@@ -2,7 +2,6 @@ import type { ExecutorContext } from '@nx/devkit';
 import { readFile, readJSONFile, writeFile } from 'ag-shared/plugin-utils';
 import fs from 'fs/promises';
 import path from 'path';
-import prettier from 'prettier';
 
 import { getGridOptionsType } from '../../../gridOptionsTypes/buildGridOptionsType';
 import { SOURCE_ENTRY_FILE_NAME } from './generator/constants';
@@ -17,6 +16,7 @@ import type { ExampleConfig, GeneratedContents, GridOptionsType, InternalFramewo
 import { FRAMEWORKS, TYPESCRIPT_INTERNAL_FRAMEWORKS } from './generator/types';
 import {
     convertTsxToJsx,
+    formatFile,
     getBoilerPlateFiles,
     getEntryFileName,
     getIsEnterprise,
@@ -278,8 +278,11 @@ async function processProvidedFiles(
             delete provideFrameworkFiles[fileName];
         }
 
-        if (!isDev && provideFrameworkFiles[writeToFileName]?.length > 0) {
-            await formatFile(internalFramework, provideFrameworkFiles, writeToFileName);
+        if (!isDev && provideFrameworkFiles[writeToFileName]?.length > 0 && !writeToFileName.endsWith('.css')) {
+            provideFrameworkFiles[writeToFileName] = await formatFile(
+                internalFramework,
+                provideFrameworkFiles[writeToFileName]
+            );
         }
 
         if (internalFramework === 'reactFunctional' || internalFramework === 'reactFunctionalTs') {
@@ -314,21 +317,6 @@ async function processProvidedFiles(
         }
     }
     return scriptFiles;
-}
-
-async function formatFile(internalFramework: InternalFramework, provideFrameworkFiles: any, writeToFileName: string) {
-    if (writeToFileName.endsWith('.css')) {
-        return;
-    }
-
-    try {
-        const parser = TYPESCRIPT_INTERNAL_FRAMEWORKS.includes(internalFramework) ? 'typescript' : 'babel';
-        provideFrameworkFiles[writeToFileName] = await prettier.format(provideFrameworkFiles[writeToFileName], {
-            parser,
-        });
-    } catch (e) {
-        console.error(`Error formatting file ${writeToFileName} for ${internalFramework}`, e);
-    }
 }
 
 async function writeContents(

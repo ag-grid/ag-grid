@@ -1,5 +1,6 @@
 import { existsSync, readFileSync, readdirSync } from 'fs';
 import path from 'path';
+import prettier from 'prettier';
 import { JsxEmit, ModuleKind, ScriptTarget, transpileModule } from 'typescript';
 
 import type { InternalFramework, TransformTsFileExt } from '../types';
@@ -173,4 +174,18 @@ export function convertTsxToJsx(fileStr: string): string {
     // remove the comments to return the file to its original state
     jsxFile = jsxFile.replaceAll('// empty line', '');
     return jsxFile;
+}
+
+export async function formatFile(internalFramework: InternalFramework, fileString: string): Promise<string> {
+    try {
+        const parser =
+            TYPESCRIPT_INTERNAL_FRAMEWORKS.includes(internalFramework) || internalFramework === 'vanilla'
+                ? 'typescript'
+                : 'babel';
+        return await prettier.format(fileString, {
+            parser,
+        });
+    } catch (e) {
+        console.error(`Error formatting file for ${internalFramework}`, e);
+    }
 }
