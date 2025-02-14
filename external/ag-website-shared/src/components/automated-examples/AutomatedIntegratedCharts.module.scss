@@ -19,7 +19,6 @@ $z-index-splash-contents: 10;
     @media screen and (max-width: $breakpoint-automated-row-grouping-medium) {
         height: calc(var(--ic-grid-height) / 2);
         overflow: hidden;
-        pointer-events: none;
     }
 
     @media screen and (max-width: $breakpoint-automated-row-grouping-small) {

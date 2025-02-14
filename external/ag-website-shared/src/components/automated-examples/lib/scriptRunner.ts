@@ -22,6 +22,7 @@ import type { EasingFunction } from './tween';
 export interface Action {
     name?: string;
     type: string;
+    ignoreError?: boolean;
 }
 
 export interface PathAction extends Action {
@@ -247,7 +248,9 @@ function createScriptActionSequence({
                     }),
                     error,
                 });
-                throw error;
+                if (!scriptAction.ignoreError) {
+                    throw error;
+                }
             }
         };
     });
@@ -323,7 +326,15 @@ export function createScriptRunner({
                                 } as CancelledPromise);
                             }
 
-                            onError?.({ error, index, action });
+                            const scriptAction = script[index];
+                            if (scriptAction.ignoreError) {
+                                scriptDebugger?.log('Action error (ignored)', {
+                                    index,
+                                    error,
+                                });
+                            } else {
+                                onError?.({ error, index, action });
+                            }
                         }) as Promise<void>;
                 }, Promise.resolve())
                 .then(resolve)
