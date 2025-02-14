@@ -19,6 +19,8 @@ import type {
     CellClassParams,
     CellPosition,
     ColDef,
+    ColumnPinnedType,
+    Component,
     IRowNode,
     IRowNumbersService,
     NamedBean,
@@ -149,7 +151,39 @@ export class RowNumbersService extends BeanStub implements NamedBean, IRowNumber
         });
     }
 
-    public getPlaceholderCellForNode(node: IRowNode): HTMLElement {
+    public setupLoadingRenderer(comp: Component, node: IRowNode, pinned?: ColumnPinnedType): void {
+        const { gos } = this;
+
+        if (!gos.get('rowNumbers')) {
+            return;
+        }
+
+        const columns = this.getColumns();
+
+        if (!columns?.length) {
+            return;
+        }
+
+        const isEmbedFullWidthRows = gos.get('embedFullWidthRows');
+        const isRtl = gos.get('enableRtl');
+        const isLeftPinned = pinned === true || pinned === 'left';
+
+        if (isEmbedFullWidthRows && (!pinned || isLeftPinned === isRtl)) {
+            return;
+        }
+
+        const eGui = comp.getGui();
+        const propSuffix = gos.get('enableRtl') ? 'right' : 'left';
+        eGui.style.setProperty(`padding-${propSuffix}`, '0');
+        const cell = this.getPlaceholderCellForNode(node);
+
+        comp.addManagedEventListeners({
+            columnResized: () => cell.style.setProperty('width', `${columns[0].getActualWidth()}px`),
+        });
+        eGui.insertAdjacentElement('afterbegin', cell);
+    }
+
+    private getPlaceholderCellForNode(node: IRowNode): HTMLElement {
         const el = this.createDummyElement(node);
         const propSuffix = this.gos.get('enableRtl') ? 'Left' : 'Right';
 

@@ -1,6 +1,8 @@
 import type { ColDef } from '../entities/colDef';
 import type { HeaderComp } from '../headerRendering/cells/column/headerComp';
+import type { Component } from '../widgets/component';
 import type { CellPosition } from './iCellPosition';
+import type { ColumnPinnedType } from './iColumn';
 import type { IColumnCollectionService } from './iColumnCollectionService';
 import type { IRowNode } from './iRowNode';
 
@@ -53,5 +55,5 @@ export interface RowNumbersOptions
 export interface IRowNumbersService extends IColumnCollectionService {
     setupForHeader(comp: HeaderComp): void;
     handleMouseDownOnCell(cell: CellPosition, mouseEvent: MouseEvent): boolean;
-    getPlaceholderCellForNode(node: IRowNode): HTMLElement;
+    setupLoadingRenderer(comp: Component, node: IRowNode, pinned?: ColumnPinnedType): void;
 }
