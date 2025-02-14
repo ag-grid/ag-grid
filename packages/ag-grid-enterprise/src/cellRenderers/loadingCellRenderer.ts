@@ -51,7 +51,7 @@ export class LoadingCellRenderer extends Component implements ILoadingCellRender
         const eGui = this.getGui();
         const propSuffix = gos.get('enableRtl') ? 'right' : 'left';
         eGui.style.setProperty(`padding-${propSuffix}`, '0');
-        const cell = rowNumbersSvc?.getPlaceholderCellForNode(node);
+        const cell = rowNumbersSvc.getPlaceholderCellForNode(node);
 
         if (cell) {
             this.addManagedEventListeners({
