@@ -3,7 +3,6 @@ import prettier from 'prettier';
 
 import { ANGULAR_GENERATED_MAIN_FILE_NAME } from '../constants';
 import { vanillaToAngular } from '../transformation-scripts/grid-vanilla-to-angular';
-import { vanillaToReactFunctional } from '../transformation-scripts/grid-vanilla-to-react-functional';
 import { vanillaToReactFunctionalTs } from '../transformation-scripts/grid-vanilla-to-react-functional-ts';
 import { vanillaToTypescript } from '../transformation-scripts/grid-vanilla-to-typescript';
 import { vanillaToVue3 } from '../transformation-scripts/grid-vanilla-to-vue3';
@@ -15,7 +14,7 @@ import {
 import type { InternalFramework, ParsedBindings } from '../types';
 import type { ExampleConfig, FileContents } from '../types';
 import { deepCloneObject } from './deepCloneObject';
-import { getBoilerPlateFiles, getEntryFileName, getMainFileName } from './fileUtils';
+import { convertTsxToJsx, getBoilerPlateFiles, getEntryFileName, getMainFileName } from './fileUtils';
 
 interface FrameworkFiles {
     files: FileContents;
@@ -108,7 +107,7 @@ export const frameworkFilesGenerator: Partial<Record<InternalFramework, ConfigGe
         };
     },
     reactFunctional: async ({
-        bindings,
+        typedBindings,
         indexHtml,
         otherScriptFiles,
         componentScriptFiles,
@@ -116,16 +115,17 @@ export const frameworkFilesGenerator: Partial<Record<InternalFramework, ConfigGe
         isDev,
         exampleConfig,
     }) => {
-        const internalFramework = 'reactFunctional';
+        const internalFramework: InternalFramework = 'reactFunctional';
         const entryFileName = getEntryFileName(internalFramework)!;
-
         const componentNames = getComponentName(componentScriptFiles);
-        let indexJsx = vanillaToReactFunctional(
-            deepCloneObject(bindings),
+        const indexTsx = vanillaToReactFunctionalTs(
+            deepCloneObject(typedBindings),
             exampleConfig,
             componentNames,
             Object.keys(styleFiles)
         )();
+
+        let indexJsx = convertTsxToJsx(indexTsx);
 
         if (!isDev) {
             indexJsx = await prettier.format(indexJsx, { parser: 'babel' });

@@ -158,12 +158,19 @@ export const getIsEnterprise = ({ entryFile }: { entryFile: string }) => entryFi
 export const getIsLocale = ({ entryFile }: { entryFile: string }) => entryFile?.includes('@ag-grid-community/locale');
 
 export function convertTsxToJsx(fileStr: string): string {
-    const jsxFile = transpileModule(fileStr, {
+    // replace empty lines with a comment so that it does not get removed by the transpiler
+    fileStr = fileStr.replace(/^\s*$/gm, '// empty line');
+
+    let jsxFile = transpileModule(fileStr, {
         compilerOptions: {
             target: ScriptTarget.ESNext,
             module: ModuleKind.ESNext,
             jsx: JsxEmit.Preserve,
+            removeComments: false,
         },
     }).outputText;
+
+    // remove the comments to return the file to its original state
+    jsxFile = jsxFile.replaceAll('// empty line', '');
     return jsxFile;
 }

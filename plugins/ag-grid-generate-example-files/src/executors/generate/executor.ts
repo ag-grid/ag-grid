@@ -90,7 +90,7 @@ async function getProvidedFiles(folderPath: string) {
 }
 
 export async function generateFiles(options: ExecutorOptions, gridOptionsTypes: Record<string, GridOptionsType>) {
-    const isDev = options.mode === 'dev';
+    const isDev = false; //options.mode === 'dev';
     const folderPath = options.examplePath;
 
     const sourceFileList = await getSourceFileList(folderPath);
@@ -193,82 +193,17 @@ export async function generateFiles(options: ExecutorOptions, gridOptionsTypes: 
             files = result.files;
             scriptFiles = result.scriptFiles;
         } else {
-            if (internalFramework === 'vanilla') {
-                // NOTE: Vanilla provided examples, we need to include the entryfile
-                scriptFiles = [entryFileName];
-            }
-
-            for (const fileName of Object.keys(provideFrameworkFiles)) {
-                let writeToFileName = fileName;
-                if (internalFramework === 'reactFunctional') {
-                    // convert tsx files to jsx
-                    writeToFileName = fileName.replace('.tsx', '.jsx');
-                }
-                if (fileName.endsWith('.css')) {
-                    mergedStyleFiles[fileName] = provideFrameworkFiles[fileName];
-                } else {
-                    let fileContent = provideFrameworkFiles[fileName];
-                    if (fileContent) {
-                        if (internalFramework === 'vanilla') {
-                            fileContent = removeModuleRegistration(fileContent);
-                        }
-
-                        provideFrameworkFiles[writeToFileName] = fileContent;
-
-                        if (internalFramework === 'reactFunctional' && fileName.endsWith('.tsx')) {
-                            // convert tsx files to jsx
-                            provideFrameworkFiles[writeToFileName] = convertTsxToJsx(
-                                provideFrameworkFiles[writeToFileName]
-                            );
-                            // remove the tsx file version
-                            delete provideFrameworkFiles[fileName];
-                        }
-                    }
-                }
-
-                if (internalFramework === 'reactFunctional' && fileName === 'interfaces.ts') {
-                    // interfaces.ts is just a type file so delete it
-                    delete provideFrameworkFiles[fileName];
-                }
-
-                if (!isDev && provideFrameworkFiles[writeToFileName]?.length > 0) {
-                    await formatFile(internalFramework, provideFrameworkFiles, writeToFileName);
-                }
-
-                if (internalFramework === 'reactFunctional' || internalFramework === 'reactFunctionalTs') {
-                    // add use client to the provided files if they contain AgGridReact
-                    const useClientCode = "'use client';\n";
-                    const fileContent = provideFrameworkFiles[writeToFileName];
-                    if (!fileContent) {
-                        // console.log(`No content for ${writeToFileName} ${fileName}, ${internalFramework}`);
-                    } else if (fileContent.includes('AgGridReact') && !fileContent.includes('use client')) {
-                        provideFrameworkFiles[writeToFileName] = useClientCode + fileContent;
-                    }
-                }
-
-                // Add Dark Mode code to the provided files if they are an integrated example
-                if (isIntegratedCharts && writeToFileName === mainFileName) {
-                    const code =
-                        getIntegratedDarkModeCode(
-                            folderPath,
-                            TYPESCRIPT_INTERNAL_FRAMEWORKS.includes(internalFramework)
-                        ) ?? '';
-                    const fileContent = provideFrameworkFiles[writeToFileName];
-                    const providedPlaceholder = '/** PROVIDED EXAMPLE DARK INTEGRATED **/';
-                    if (
-                        !fileContent.includes(providedPlaceholder) &&
-                        !fileContent.includes(DARK_INTEGRATED_START) // might have already been replaced
-                    ) {
-                        throw new Error(
-                            `Provided example ${folderPath}/provided/modules/${internalFramework}/${writeToFileName} does not contain the expected comment: ${providedPlaceholder} in gridReady code for an example that includes integrated charts`
-                        );
-                    }
-                    provideFrameworkFiles[writeToFileName] = provideFrameworkFiles[writeToFileName].replace(
-                        providedPlaceholder,
-                        code
-                    );
-                }
-            }
+            scriptFiles = await processProvidedFiles(
+                internalFramework,
+                scriptFiles,
+                entryFileName,
+                provideFrameworkFiles,
+                mergedStyleFiles,
+                isDev,
+                isIntegratedCharts,
+                mainFileName,
+                folderPath
+            );
         }
 
         let styleFilesKeys = [];
@@ -293,6 +228,92 @@ export async function generateFiles(options: ExecutorOptions, gridOptionsTypes: 
 
         await writeContents(options, internalFramework, result);
     }
+}
+
+// process the provided files and updates the file collections passed into it
+async function processProvidedFiles(
+    internalFramework: InternalFramework,
+    scriptFiles: any[],
+    entryFileName: string,
+    provideFrameworkFiles: any,
+    mergedStyleFiles: { [x: string]: string },
+    isDev: boolean,
+    isIntegratedCharts: boolean,
+    mainFileName: string,
+    folderPath: string
+) {
+    if (internalFramework === 'vanilla') {
+        // NOTE: Vanilla provided examples, we need to include the entryfile
+        scriptFiles = [entryFileName];
+    }
+
+    for (const fileName of Object.keys(provideFrameworkFiles)) {
+        let writeToFileName = fileName;
+        if (internalFramework === 'reactFunctional') {
+            // convert tsx files to jsx
+            writeToFileName = fileName.replace('.tsx', '.jsx');
+        }
+        if (fileName.endsWith('.css')) {
+            mergedStyleFiles[fileName] = provideFrameworkFiles[fileName];
+        } else {
+            let fileContent = provideFrameworkFiles[fileName];
+            if (fileContent) {
+                if (internalFramework === 'vanilla') {
+                    fileContent = removeModuleRegistration(fileContent);
+                }
+
+                provideFrameworkFiles[writeToFileName] = fileContent;
+
+                if (internalFramework === 'reactFunctional' && fileName.endsWith('.tsx')) {
+                    // convert tsx files to jsx
+                    provideFrameworkFiles[writeToFileName] = convertTsxToJsx(provideFrameworkFiles[writeToFileName]);
+                    // remove the tsx file version
+                    delete provideFrameworkFiles[fileName];
+                }
+            }
+        }
+
+        if (internalFramework === 'reactFunctional' && fileName === 'interfaces.ts') {
+            // interfaces.ts is just a type file so delete it
+            delete provideFrameworkFiles[fileName];
+        }
+
+        if (!isDev && provideFrameworkFiles[writeToFileName]?.length > 0) {
+            await formatFile(internalFramework, provideFrameworkFiles, writeToFileName);
+        }
+
+        if (internalFramework === 'reactFunctional' || internalFramework === 'reactFunctionalTs') {
+            // add use client to the provided files if they contain AgGridReact
+            const useClientCode = "'use client';\n";
+            const fileContent = provideFrameworkFiles[writeToFileName];
+            if (!fileContent) {
+                // console.log(`No content for ${writeToFileName} ${fileName}, ${internalFramework}`);
+            } else if (fileContent.includes('AgGridReact') && !fileContent.includes('use client')) {
+                provideFrameworkFiles[writeToFileName] = useClientCode + fileContent;
+            }
+        }
+
+        // Add Dark Mode code to the provided files if they are an integrated example
+        if (isIntegratedCharts && writeToFileName === mainFileName) {
+            const code =
+                getIntegratedDarkModeCode(folderPath, TYPESCRIPT_INTERNAL_FRAMEWORKS.includes(internalFramework)) ?? '';
+            const fileContent = provideFrameworkFiles[writeToFileName];
+            const providedPlaceholder = '/** PROVIDED EXAMPLE DARK INTEGRATED **/';
+            if (
+                !fileContent.includes(providedPlaceholder) &&
+                !fileContent.includes(DARK_INTEGRATED_START) // might have already been replaced
+            ) {
+                throw new Error(
+                    `Provided example ${folderPath}/provided/modules/${internalFramework}/${writeToFileName} does not contain the expected comment: ${providedPlaceholder} in gridReady code for an example that includes integrated charts`
+                );
+            }
+            provideFrameworkFiles[writeToFileName] = provideFrameworkFiles[writeToFileName].replace(
+                providedPlaceholder,
+                code
+            );
+        }
+    }
+    return scriptFiles;
 }
 
 async function formatFile(internalFramework: InternalFramework, provideFrameworkFiles: any, writeToFileName: string) {
