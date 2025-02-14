@@ -26,7 +26,7 @@ export class HoverFeature extends BeanStub {
         if (active) {
             this.destroyManagedListeners = this.addManagedElementListeners(element, {
                 mouseover: colHover.setMouseOver.bind(colHover, columns),
-                mouseout: colHover.setMouseOver.bind(colHover, columns),
+                mouseout: colHover.clearMouseOver.bind(colHover),
             });
         } else {
             this.destroyManagedListeners.forEach((fn) => fn());
