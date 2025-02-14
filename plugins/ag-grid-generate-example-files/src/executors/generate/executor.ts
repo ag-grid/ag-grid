@@ -90,7 +90,7 @@ async function getProvidedFiles(folderPath: string) {
 }
 
 export async function generateFiles(options: ExecutorOptions, gridOptionsTypes: Record<string, GridOptionsType>) {
-    const isDev = options.mode === 'dev';
+    const isDev = false; /// options.mode === 'dev';
     const folderPath = options.examplePath;
 
     const sourceFileList = await getSourceFileList(folderPath);
@@ -308,7 +308,7 @@ async function convertModulesToPackages(fileContent: any, isDev: boolean, intern
     // }
 
     if (!isDev) {
-        const parser = TYPESCRIPT_INTERNAL_FRAMEWORKS.includes(internalFramework) ? 'typescript' : 'babel';
+        const parser = TYPESCRIPT_INTERNAL_FRAMEWORKS.includes(internalFramework) ? 'typescript' : 'typescript';
         fileContent = await prettier.format(fileContent, { parser });
     }
     return fileContent;

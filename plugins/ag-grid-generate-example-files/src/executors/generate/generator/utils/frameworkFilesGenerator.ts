@@ -73,7 +73,7 @@ export const frameworkFilesGenerator: Partial<Record<InternalFramework, ConfigGe
 
         const scriptFiles = { ...otherScriptFiles, ...componentScriptFiles };
         if (!isDev) {
-            mainJs = await prettier.format(mainJs, { parser: 'babel' });
+            mainJs = await prettier.format(mainJs, { parser: 'typescript' });
         }
 
         return {
@@ -128,7 +128,7 @@ export const frameworkFilesGenerator: Partial<Record<InternalFramework, ConfigGe
         )();
 
         if (!isDev) {
-            indexJsx = await prettier.format(indexJsx, { parser: 'babel' });
+            indexJsx = await prettier.format(indexJsx, { parser: 'typescript' });
         }
 
         return {
