@@ -15,6 +15,7 @@
         height: 0.85em;
         visibility: visible;
         fill: var(--color-link);
+        pointer-events: none;
     }
 
     &:hover {
