@@ -184,19 +184,32 @@ export function vanillaToReactFunctionalTs(
             additionalInReady.push(hackedHandler);
         }
 
+        let useFetchHook = undefined;
+        if (data) {
+            const callback = data.callback
+                .replace(/^{|}$/g, '')
+                .replace("gridApi!.setGridOption('rowData',", 'setRowData(')
+                .replace("params.api.setGridOption('rowData',", 'setRowData(');
+
+            if (callback === 'setRowData( data)') {
+                // get url from data
+                useFetchHook = `    const { data, loading } = useFetchJson<${rowDataType}>(
+                ${data.url}${data.totalRows ? `, ${data.totalRows}` : ''}
+            );`;
+                componentProps.push('rowData={data}');
+                componentProps.push('loading={loading}');
+            } else {
+                const setRowDataBlock = data.callback.replace("gridApi!.setGridOption('rowData',", 'setRowData(');
+                additionalInReady.push(`
+                    fetch(${data.url})
+                    .then(resp => resp.json())
+                    .then((data: ${rowDataType}[]) => ${setRowDataBlock});`);
+            }
+        }
+
         let extraCoreTypes = [];
         if (additionalInReady.length > 0) {
             extraCoreTypes = ['GridReadyEvent'];
-        }
-
-        let useFetchHook = undefined;
-        if (data) {
-            // get url from data
-            useFetchHook = `    const { data, loading } = useFetchJson<${rowDataType}>(
-        ${data.url}${data.totalRows ? `, ${data.totalRows}` : ''}
-    );`;
-            componentProps.push('rowData={data}');
-            componentProps.push('loading={loading}');
         }
 
         const imports = getImports(
