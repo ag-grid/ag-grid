@@ -1025,13 +1025,13 @@
                         },
                         {
                             "type": "item",
-                            "title": "Localisation",
-                            "path": "localisation"
+                            "title": "Aligned Grids",
+                            "path": "aligned-grids"
                         },
                         {
                             "type": "item",
-                            "title": "Aligned Grids",
-                            "path": "aligned-grids"
+                            "title": "Localisation",
+                            "path": "localisation"
                         }
                     ]
                 }
