@@ -1,6 +1,5 @@
 import type { ColDef, GridOptions, Part, Theme } from 'ag-grid-community';
 import {
-    AllCommunityModule,
     ModuleRegistry,
     colorSchemeDark,
     colorSchemeDarkBlue,
@@ -20,7 +19,7 @@ import {
 } from 'ag-grid-community';
 import { AllEnterpriseModule } from 'ag-grid-enterprise';
 
-ModuleRegistry.registerModules([AllCommunityModule, AllEnterpriseModule]);
+ModuleRegistry.registerModules([AllEnterpriseModule]);
 
 const baseThemes: Record<string, Theme> = {
     quartz: themeQuartz,

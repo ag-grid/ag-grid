@@ -371,6 +371,67 @@
     },
     {
         "group": {
+            "name": "Data Elements"
+        },
+        "items": [
+            {
+                "label": {
+                    "name": "Cross Lines",
+                    "link": "https://www.ag-grid.com/charts/react/axes-cross-lines/"
+                },
+                "community": true,
+                "enterprise": true,
+                "chartsGrid": true
+            },
+            {
+                "label": {
+                    "name": "Legend",
+                    "link": "https://www.ag-grid.com/charts/react/legend/"
+                },
+                "community": true,
+                "enterprise": true,
+                "chartsGrid": true
+            },
+            {
+                "label": {
+                    "name": "Stylers",
+                    "link": "https://www.ag-grid.com/charts/react/stylers/"
+                },
+                "community": true,
+                "enterprise": true,
+                "chartsGrid": true
+            },
+            {
+                "label": {
+                    "name": "Series Markers",
+                    "link": "https://www.ag-grid.com/charts/react/markers/"
+                },
+                "community": true,
+                "enterprise": true,
+                "chartsGrid": true
+            },
+            {
+                "label": {
+                    "name": "Annotations",
+                    "link": "https://www.ag-grid.com/charts/react/annotations/"
+                },
+                "community": false,
+                "enterprise": true,
+                "chartsGrid": true
+            },
+            {
+                "label": {
+                    "name": "Error Bars",
+                    "link": "https://www.ag-grid.com/charts/react/error-bars/"
+                },
+                "community": false,
+                "enterprise": true,
+                "chartsGrid": true
+            }
+        ]
+    },
+    {
+        "group": {
             "name": "Interactivity"
         },
         "items": [
@@ -405,6 +466,15 @@
                 "label": {
                     "name": "Tooltips",
                     "link": "https://www.ag-grid.com/charts/react/tooltips/"
+                },
+                "community": true,
+                "enterprise": true,
+                "chartsGrid": true
+            },
+            {
+                "label": {
+                    "name": "Touch",
+                    "link": "https://www.ag-grid.com/charts/react/touch/"
                 },
                 "community": true,
                 "enterprise": true,

@@ -491,7 +491,7 @@ export class ExcelSerializingSession extends BaseGridSerializingSession<ExcelRow
         valueFormatted?: string | null
     ): ExcelCell {
         const actualStyle: ExcelStyle | null = this.getStyleById(styleId);
-        if (!actualStyle?.dataType && type === 's' && valueFormatted) {
+        if (!actualStyle?.dataType && type === 's' && valueFormatted != null) {
             value = valueFormatted;
         }
         const processedType = this.getTypeFromStyle(actualStyle, value) || type;

@@ -16,7 +16,7 @@ const ExtensionMap = {
     json: 'js',
 };
 
-export function stripOutDarkModeCode(files: FileContents) {
+export function stripOutExampleGeneratorCode(files: FileContents) {
     const mainFiles = ['main.js', 'main.ts', 'index.tsx', 'index.jsx', 'app.component.ts'];
     mainFiles.forEach((mainFile) => {
         if (files[mainFile]) {
@@ -25,6 +25,17 @@ export function stripOutDarkModeCode(files: FileContents) {
                 /\/\*\* DARK INTEGRATED START \*\*\/([\s\S]*?)\/\*\* DARK INTEGRATED END \*\*\//g,
                 ''
             );
+
+            // hide React tear down example code
+            if (mainFile === 'index.tsx') {
+                files[mainFile] = files[mainFile]?.replace(
+                    '(window as any).tearDownExample = () => root.unmount();',
+                    ''
+                );
+            }
+            if (mainFile === 'index.jsx') {
+                files[mainFile] = files[mainFile]?.replace('window.tearDownExample = () => root.unmount();', '');
+            }
         }
     });
 }
@@ -53,7 +64,7 @@ export const CodeViewer = ({
     const [showFiles, setShowFiles] = useState(true);
     const localFiles = { ...files };
     const exampleFiles = Object.keys(localFiles);
-    stripOutDarkModeCode(localFiles);
+    stripOutExampleGeneratorCode(localFiles);
 
     useEffect(() => {
         setActiveFile(initialSelectedFile);

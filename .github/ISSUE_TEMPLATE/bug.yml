@@ -21,7 +21,7 @@ body:
     id: description
     attributes:
       label: Describe the bug
-      description: Please provide detailed steps on how to reproduce the issue!
+      description: Please provide a list of steps to follow with the live example above to reproduce the issue
       value: |
         Steps to reproduce 
         1. 
@@ -45,7 +45,7 @@ body:
   - type: dropdown
     id: languages
     attributes:
-      label: Does the issue occur for a specific language only?
+      label: Does the issue occur for a specific framework only?
       multiple: false
       default: 0
       options:
@@ -54,7 +54,6 @@ body:
         - Angular
         - Vue
         - JavaScript
-        - TypeScript
   - type: dropdown
     id: browsers
     attributes:

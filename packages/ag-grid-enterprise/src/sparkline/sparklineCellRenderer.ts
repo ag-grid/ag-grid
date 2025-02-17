@@ -90,26 +90,35 @@ export class SparklineCellRenderer extends Component implements ICellRenderer {
             this.sparklineInstance = params.createSparkline!(this.sparklineOptions);
             return true;
         } else if (this.sparklineInstance) {
-            const data = params?.value;
             this.sparklineOptions.width = width;
             this.sparklineOptions.height = height;
-            this.sparklineOptions.data = this.processData(data);
-            this.updateTheme(this.sparklineOptions);
+            const data = this.processData(params?.value);
+            this.sparklineOptions.data = data;
 
-            this.sparklineInstance.updateDelta(this.sparklineOptions);
+            const themeChanged = this.updateTheme(this.sparklineOptions);
+            if (themeChanged) {
+                this.sparklineInstance.updateDelta(this.sparklineOptions);
+            } else {
+                // Fast path for updating data or width/height to match Charts fast path
+                this.sparklineInstance.updateDelta({ data, width, height });
+            }
 
             return true;
         }
         return false;
     }
 
-    private updateTheme(sparklineOptions: AgSparklineOptions) {
+    private updateTheme(sparklineOptions: AgSparklineOptions): boolean {
         const themeName = this.getThemeName() as AgChartThemeName;
+        let themeChanged = false;
         if (typeof sparklineOptions.theme === 'string' || !sparklineOptions.theme) {
+            themeChanged = sparklineOptions.theme !== themeName;
             sparklineOptions.theme = themeName;
         } else if (sparklineOptions.theme) {
+            themeChanged = sparklineOptions.theme.baseTheme !== themeName;
             sparklineOptions.theme.baseTheme = themeName;
         }
+        return themeChanged;
     }
 
     private processData(data: any[] = []) {

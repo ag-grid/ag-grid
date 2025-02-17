@@ -14,6 +14,7 @@ import {
     handleRowGenericInterface,
     isInstanceMethod,
     preferParamsApi,
+    removeCreateGridImport,
     removeFunctionKeyword,
     replaceGridReadyRowData,
 } from './parser-utils';
@@ -114,7 +115,7 @@ function getImports(
 
     addGenericInterfaceImport(imports, bindings.tData, bindings);
 
-    return imports;
+    return removeCreateGridImport(imports);
 }
 
 function getTemplate(bindings: ParsedBindings, exampleConfig: ExampleConfig, attributes: string[]): string {

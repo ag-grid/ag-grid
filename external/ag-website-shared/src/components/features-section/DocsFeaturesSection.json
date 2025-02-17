@@ -12,7 +12,7 @@
             },
             {
                 "title": "Themes and Styling",
-                "description": "Pre-built themes and CSS customization.",
+                "description": "Pre-built themes and CSS customisation.",
                 "link": "./theming"
             },
             {
@@ -53,7 +53,7 @@
             },
             {
                 "title": "Integrated Charts",
-                "description": "Create and customize charts directly within the grid.",
+                "description": "Create and customise charts directly within the grid.",
                 "link": "./integrated-charts"
             },
             {
@@ -78,7 +78,7 @@
             },
             {
                 "title": "Custom Context Menu & Sidebars",
-                "description": "Additional UI elements for enhanced user interaction and customization.",
+                "description": "Additional UI elements for enhanced user interaction and customisation.",
                 "link": "./context-menu"
             }
         ]
@@ -106,12 +106,12 @@
             },
             {
                 "title": "Themes and Styling",
-                "description": "Customize backgrounds, layouts, overlays, and themes to match your brand.",
+                "description": "Customise backgrounds, layouts, overlays, and themes to match your brand.",
                 "link": "./themes/"
             },
             {
-                "title": "Localization",
-                "description": "Support for 31 languages and integration with localization engines.",
+                "title": "Localisation",
+                "description": "Support for 31 languages and integration with localisation engines.",
                 "link": "./localisation/"
             },
             {
@@ -133,7 +133,7 @@
             {
                 "title": "Advanced Chart Types",
                 "description": "Access to 20+ additional chart types, including Range, Heatmap, Sankey and more.",
-                "link": "/gallery/"
+                "link": "/gallery/#maps"
             },
             {
                 "title": "Financial Charts",
@@ -147,7 +147,7 @@
             },
             {
                 "title": "Advanced Interactivity",
-                "description": "Context menus, cross-hairs, navigator, zoom and chart synchronization.",
+                "description": "Context menus, crosshairs, navigator, zoom and chart synchronization.",
                 "link": "./context-menu/"
             },
             {

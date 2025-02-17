@@ -2,7 +2,7 @@ import { SOURCE_ENTRY_FILE_NAME } from '../constants';
 import { readAsJsFile } from '../transformation-scripts/parser-utils';
 import type { FileContents, InternalFramework, TransformTsFileExt } from '../types';
 import { FRAMEWORKS } from '../types';
-import { getFileList } from './fileUtils';
+import { convertTsxToJsx, getFileList } from './fileUtils';
 
 const getOtherTsGeneratedFiles = async ({
     folderPath,
@@ -89,6 +89,11 @@ const getComponentSuffix = (file: string, framework: InternalFramework) => {
         if (file.includes('_vue3.')) {
             return '_vue3';
         }
+    } else if (framework === 'reactFunctional') {
+        // Let reactFunctional share the TS react files
+        if (file.includes('_reactFunctionalTs.')) {
+            return '_reactFunctionalTs';
+        }
     } else if (file.includes('_' + framework + '.')) {
         return '_' + framework;
     }
@@ -103,6 +108,11 @@ const isValidFrameworkFile = (internalFramework: InternalFramework, framework: I
         // Let vue3 share vue files
         return true;
     }
+    if (internalFramework === 'reactFunctional' && framework === 'reactFunctionalTs') {
+        // Let reactFunctional share the TS react files
+        return true;
+    }
+
     return false;
 };
 
@@ -161,7 +171,11 @@ export const getOtherScriptFiles = async ({
             const suffix = getComponentSuffix(file, framework);
             if (suffix !== undefined) {
                 if (isValidFrameworkFile(internalFramework, framework)) {
-                    filteredToFramework[file.replace(suffix, frameworkComponentSuffix(framework))] = content;
+                    if (internalFramework === 'reactFunctional') {
+                        filteredToFramework[file.replace('_reactFunctionalTs.tsx', '.jsx')] = convertTsxToJsx(content);
+                    } else {
+                        filteredToFramework[file.replace(suffix, frameworkComponentSuffix(framework))] = content;
+                    }
                 } else {
                     // Is a framework file, but not the current framework so we don't want to include it
                 }

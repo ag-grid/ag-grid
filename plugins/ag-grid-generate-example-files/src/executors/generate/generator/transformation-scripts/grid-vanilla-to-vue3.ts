@@ -13,6 +13,7 @@ import {
     handleRowGenericInterface,
     isInstanceMethod,
     preferParamsApi,
+    removeCreateGridImport,
     replaceGridReadyRowData,
 } from './parser-utils';
 import { getComponentName, getImport, toConst, toInput, toMemberWithType, toOutput } from './vue-utils';
@@ -187,7 +188,7 @@ function getImports(
         imports.push(bindings.moduleRegistration);
     }
 
-    return imports;
+    return removeCreateGridImport(imports);
 }
 
 export function vanillaToVue3(

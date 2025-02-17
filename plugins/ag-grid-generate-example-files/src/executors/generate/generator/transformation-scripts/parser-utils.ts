@@ -71,6 +71,10 @@ export function isInstanceMethod(methods: string[], property: any): boolean {
     return methods.map(getFunctionName).filter((name) => name === property.name).length > 0;
 }
 
+export function removeCreateGridImport(imports: string[]): string[] {
+    return imports.map((i) => i.replace(`, createGrid`, ''));
+}
+
 export const enum NodeType {
     Variable = 'VariableDeclaration',
     Function = 'FunctionDeclaration',
@@ -244,13 +248,6 @@ export function extractImportStatements(srcFile: ts.SourceFile): BindingImport[]
 export function addLicenseManager(imports: any[], exampleConfig: ExampleConfig) {
     if (exampleConfig.licenseKey) {
         imports.push(`import { LicenseManager } from 'ag-grid-enterprise';`);
-    }
-}
-
-export function addEnterprisePackage(imports: any[], bindings: ParsedBindings) {
-    const isEnterprise = bindings.imports.some((i) => i.module.includes('-enterprise'));
-    if (isEnterprise) {
-        imports.push(`import 'ag-grid-enterprise';`);
     }
 }
 

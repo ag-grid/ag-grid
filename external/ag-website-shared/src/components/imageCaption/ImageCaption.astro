@@ -2,7 +2,6 @@
 import { getPageImages } from '@components/docs/utils/filesData';
 import { getPageNameFromPath } from '@components/docs/utils/urlPaths';
 
-import ImageDescription from './ImageDescription.astro';
 import styles from './ImageCaption.module.scss';
 
 interface Props {
@@ -73,9 +72,9 @@ const imageId = id ? id : `image-${imagePath}`;
     style={style}
 >
     <img id={imageId} src={imageSrc} class={styles.image} alt={alt} />
-    <ImageDescription>
+    <div class={styles.body}>
         <slot />
-    </ImageDescription>
+    </div>
 </div>
 
 <script

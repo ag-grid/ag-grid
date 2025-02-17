@@ -56,6 +56,7 @@ export function AutomatedIntegratedChartsWithCreate({
     const [darkMode] = useDarkmode();
     const debuggerManager = automatedExampleManager?.getDebuggerManager();
     const { isCI: useStaticData, runOnce } = getAutomatedExampleSearchParams();
+    const getIsMobileDevice = useCallback(() => isMobile('integratedCharts'), []);
 
     const setAllScriptEnabledVars = (isEnabled: boolean) => {
         setScriptIsEnabled(isEnabled);
@@ -100,7 +101,7 @@ export function AutomatedIntegratedChartsWithCreate({
                 return overlayRef.current;
             },
             getContainerScale: () => {
-                return isMobile() ? AUTOMATED_EXAMPLE_MOBILE_SCALE : 1;
+                return getIsMobileDevice() ? AUTOMATED_EXAMPLE_MOBILE_SCALE : 1;
             },
             mouseMaskClassname: styles.mouseMask,
             scriptDebuggerManager: debuggerManager,
@@ -118,7 +119,7 @@ export function AutomatedIntegratedChartsWithCreate({
                 },
             ],
             onStateChange(state: RunScriptState) {
-                if (state === 'errored' && !isMobile()) {
+                if (state === 'errored' && !getIsMobileDevice()) {
                     setAllScriptEnabledVars(false);
                     automatedExampleManager.errored(exampleId);
                 }
@@ -164,7 +165,7 @@ export function AutomatedIntegratedChartsWithCreate({
                             onPointerEnter={() => setGridIsHoveredOver(true)}
                             onPointerOut={() => setGridIsHoveredOver(false)}
                             onClick={() => {
-                                if (!isMobile()) {
+                                if (!getIsMobileDevice()) {
                                     setAllScriptEnabledVars(false);
                                     automatedExampleManager.stop(exampleId);
 
