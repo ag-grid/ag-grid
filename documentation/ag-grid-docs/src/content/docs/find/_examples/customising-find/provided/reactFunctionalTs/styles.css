@@ -14,3 +14,11 @@
     font-size: 13px;
     margin-bottom: 5px;
 }
+
+.example-controls {
+    margin-bottom: 4px;
+}
+
+.example-controls > *:not(:last-child) {
+    margin-right: 8px;
+}

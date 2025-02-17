@@ -24,38 +24,17 @@ const gridOptions: GridOptions = {
             },
         },
     ],
+    findSearchValue: 'e',
     onFindChanged: (event: FindChangedEvent) => {
         const { activeMatch, totalMatches, findSearchValue } = event;
-        (document.getElementById('resultNum') as HTMLElement).textContent = findSearchValue?.length
+        (document.getElementById('activeMatchNum') as HTMLElement).textContent = findSearchValue?.length
             ? `${activeMatch?.numOverall ?? 0}/${totalMatches}`
             : '';
     },
-    onGridReady: () => {
-        (document.getElementById('find-text-box') as HTMLInputElement).addEventListener('keydown', (event) => {
-            if (event.key === 'Enter') {
-                event.preventDefault();
-                find();
-                const backwards = event.shiftKey;
-                if (backwards) {
-                    previous();
-                } else {
-                    next();
-                }
-            }
-        });
-    },
     onFirstDataRendered: () => {
-        find();
         next();
     },
 };
-
-function find() {
-    const findSearchValue = (document.getElementById('find-text-box') as HTMLInputElement).value;
-    if (findSearchValue !== gridApi.getGridOption('findSearchValue')) {
-        gridApi!.setGridOption('findSearchValue', findSearchValue);
-    }
-}
 
 function next() {
     gridApi!.findNext();
@@ -73,4 +52,20 @@ document.addEventListener('DOMContentLoaded', function () {
     fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
         .then((response) => response.json())
         .then((data: IOlympicData[]) => gridApi!.setGridOption('rowData', data));
+
+    const findInput = document.getElementById('find-text-box') as HTMLInputElement;
+    findInput.addEventListener('input', (event) => {
+        gridApi.setGridOption('findSearchValue', (event.target as HTMLInputElement).value);
+    });
+    findInput.addEventListener('keydown', (event) => {
+        if (event.key === 'Enter') {
+            event.preventDefault();
+            const backwards = event.shiftKey;
+            if (backwards) {
+                previous();
+            } else {
+                next();
+            }
+        }
+    });
 });

@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { Component } from '@angular/core';
+import { Component, ElementRef, ViewChild } from '@angular/core';
 
 import { AgGridAngular } from 'ag-grid-angular';
 import {
@@ -23,31 +23,32 @@ ModuleRegistry.registerModules([FindModule, ClientSideRowModelModule, Validation
     imports: [AgGridAngular],
     template: `<div class="example-wrapper">
         <div class="example-header">
-            <div>
+            <div class="example-controls">
                 <span>Find:</span>
-                <input type="text" id="find-text-box" />
-                <button (click)="find()">Find</button>
+                <input type="text" (input)="onInput($event)" (keydown)="onKeyDown($event)" />
                 <button (click)="previous()">Previous</button>
                 <button (click)="next()">Next</button>
-                <span id="resultNum"></span>
+                <span>{{ activeMatchNum }}</span>
             </div>
-            <div>
+            <div class="example-controls">
                 <span>Go to match:</span>
-                <input type="number" id="find-goto" />
+                <input #goToInput type="number" />
                 <button (click)="goToFind()">Go To</button>
             </div>
-            <div id="resultPosition"></div>
         </div>
         <ag-grid-angular
             style="width: 100%; height: 100%;"
             [columnDefs]="columnDefs"
             [rowData]="rowData"
+            [findSearchValue]="findSearchValue"
             (findChanged)="onFindChanged($event)"
             (gridReady)="onGridReady($event)"
         />
     </div> `,
 })
 export class AppComponent {
+    @ViewChild('goToInput', { read: ElementRef }) public goToInput!: ElementRef;
+
     private gridApi!: GridApi;
 
     columnDefs: ColDef[] = [
@@ -62,24 +63,16 @@ export class AppComponent {
     ];
     rowData!: any[];
 
+    activeMatchNum: string = '';
+
+    findSearchValue: string | undefined;
+
     constructor(private http: HttpClient) {}
 
     onFindChanged(event: FindChangedEvent) {
         const { activeMatch, totalMatches, findSearchValue } = event;
-        (document.getElementById('resultNum') as HTMLElement).textContent = findSearchValue?.length
-            ? `${activeMatch?.numOverall ?? 0}/${totalMatches}`
-            : '';
-        (document.getElementById('resultPosition') as HTMLElement).textContent = activeMatch
-            ? `Active match: { pinned: ${activeMatch.node.rowPinned}, row index: ${activeMatch.node.rowIndex}, column: ${activeMatch.column.getColId()}, match number in cell: ${activeMatch.numInMatch} }`
-            : '';
+        this.activeMatchNum = findSearchValue?.length ? `${activeMatch?.numOverall ?? 0}/${totalMatches}` : '';
         console.log('findChanged', event);
-    }
-
-    find() {
-        const findSearchValue = (document.getElementById('find-text-box') as HTMLInputElement).value;
-        if (findSearchValue !== this.gridApi.getGridOption('findSearchValue')) {
-            this.gridApi.setGridOption('findSearchValue', findSearchValue);
-        }
     }
 
     next() {
@@ -91,7 +84,7 @@ export class AppComponent {
     }
 
     goToFind() {
-        const num = Number((document.getElementById('find-goto') as HTMLInputElement).value);
+        const num = Number((this.goToInput.nativeElement as HTMLInputElement).value);
         if (isNaN(num) || num < 0) {
             return;
         }
@@ -101,21 +94,24 @@ export class AppComponent {
     onGridReady(params: GridReadyEvent) {
         this.gridApi = params.api;
 
-        (document.getElementById('find-text-box') as HTMLInputElement).addEventListener('keydown', (event) => {
-            if (event.key === 'Enter') {
-                event.preventDefault();
-                this.find();
-                const backwards = event.shiftKey;
-                if (backwards) {
-                    this.previous();
-                } else {
-                    this.next();
-                }
-            }
-        });
-
         this.http
             .get<any[]>('https://www.ag-grid.com/example-assets/olympic-winners.json')
             .subscribe((data) => (this.rowData = data));
+    }
+
+    onInput(event: Event): void {
+        this.findSearchValue = (event.target as HTMLInputElement).value;
+    }
+
+    onKeyDown(event: KeyboardEvent): void {
+        if (event.key === 'Enter') {
+            event.preventDefault();
+            const backwards = event.shiftKey;
+            if (backwards) {
+                this.previous();
+            } else {
+                this.next();
+            }
+        }
     }
 }
