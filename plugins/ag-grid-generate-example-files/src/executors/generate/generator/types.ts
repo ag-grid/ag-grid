@@ -44,6 +44,7 @@ export interface ExternalEventHandlers {
 export interface DataCallback {
     url: string;
     callback: string;
+    totalRows?: number;
 }
 export interface Property {
     name: string;
