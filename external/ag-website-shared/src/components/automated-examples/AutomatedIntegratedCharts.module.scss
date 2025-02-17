@@ -10,12 +10,10 @@ $z-index-splash: $z-index-debug-canvas + 10;
 $z-index-debug-panel: $z-index-splash + 10;
 $z-index-splash-contents: 10;
 
-$aspect-ratio: math.div(16, 9);
-
 .automatedExampleWrapper {
     position: relative;
     z-index: $z-index-grid;
-    aspect-ratio: $aspect-ratio;
+    aspect-ratio: 16 / 9;
     overflow: hidden;
 
     svg[class*='logo-mark'] {
@@ -32,7 +30,7 @@ $aspect-ratio: math.div(16, 9);
 
 :global(.automated-integrated-charts-grid.ag-theme-quartz),
 :global(.automated-integrated-charts-grid.ag-theme-quartz-dark) {
-    aspect-ratio: $aspect-ratio;
+    aspect-ratio: 16 / 9;
 
     @media screen and (max-width: $breakpoint-automated-integrated-charts-medium) {
         width: 200% !important;
