@@ -73,7 +73,8 @@ function getImports(
     exampleConfig: ExampleConfig,
     componentFileNames: string[],
     extraCoreTypes: string[],
-    allStylesheets: string[]
+    allStylesheets: string[],
+    useFetchHook: boolean = false
 ): string[] {
     const imports = [];
     const localeImport = findLocaleImport(bindings.imports);
@@ -83,6 +84,9 @@ function getImports(
 
     imports.push(...getModuleImports(bindings, exampleConfig, componentFileNames, extraCoreTypes, allStylesheets));
 
+    if (useFetchHook) {
+        imports.push(`import { useFetchJson } from './useFetchJson';`);
+    }
     return imports;
 }
 
@@ -171,18 +175,12 @@ export function vanillaToReactFunctionalTs(
         const componentProps = ['rowData={rowData}'];
 
         const additionalInReady = [];
-        if (data) {
-            const setRowDataBlock = data.callback.replace("gridApi!.setGridOption('rowData',", 'setRowData(');
-            additionalInReady.push(`
-                fetch(${data.url})
-                .then(resp => resp.json())
-                .then((data: ${rowDataType}[]) => ${setRowDataBlock});`);
-        }
 
         if (onGridReady) {
             const hackedHandler = onGridReady
                 .replace(/^{|}$/g, '')
-                .replace("gridApi!.setGridOption('rowData',", 'setRowData(');
+                .replace("gridApi!.setGridOption('rowData',", 'setRowData(')
+                .replace("params.api.setGridOption('rowData',", 'setRowData(');
             additionalInReady.push(hackedHandler);
         }
 
@@ -190,7 +188,25 @@ export function vanillaToReactFunctionalTs(
         if (additionalInReady.length > 0) {
             extraCoreTypes = ['GridReadyEvent'];
         }
-        const imports = getImports(bindings, exampleConfig, componentFilenames, extraCoreTypes, allStylesheets);
+
+        let useFetchHook = undefined;
+        if (data) {
+            // get url from data
+            useFetchHook = `    const { data, loading } = useFetchJson<${rowDataType}>(
+        ${data.url}${data.totalRows ? `, ${data.totalRows}` : ''}
+    );`;
+            componentProps.push('rowData={data}');
+            componentProps.push('loading={loading}');
+        }
+
+        const imports = getImports(
+            bindings,
+            exampleConfig,
+            componentFilenames,
+            extraCoreTypes,
+            allStylesheets,
+            useFetchHook !== undefined
+        );
 
         const darkModeWithGridRef = addChartsDarkModeIfRequired(bindings, imports, true);
 
@@ -332,7 +348,7 @@ ${bindings.classes.join('\n')}
 
 const GridExample = () => {
     ${gridRefHook}
-    ${stateProperties.join('\n    ')}
+    ${useFetchHook ?? ''}${stateProperties.join('\n    ')}
 
 ${gridReady}${darkModeWithGridRef ? '\n' + darkModeWithGridRef : ''}
 

@@ -27,7 +27,7 @@ import {
     getTransformTsFileExt,
 } from './generator/utils/fileUtils';
 import { frameworkFilesGenerator } from './generator/utils/frameworkFilesGenerator';
-import { getOtherScriptFiles } from './generator/utils/getOtherScriptFiles';
+import { getOtherScriptFiles, getUseFetchJsonFile } from './generator/utils/getOtherScriptFiles';
 import { getPackageJson } from './generator/utils/getPackageJson';
 import { getStyleFiles } from './generator/utils/getStyleFiles';
 
@@ -207,6 +207,14 @@ export async function generateFiles(options: ExecutorOptions, gridOptionsTypes: 
         if ((['typescript', 'vanilla'] as InternalFramework[]).includes(internalFramework)) {
             styleFilesKeys = Object.keys(mergedStyleFiles);
         }
+
+        if (internalFramework === 'reactFunctional' || internalFramework === 'reactFunctionalTs') {
+            if (mergedFiles[mainFileName].includes('useFetchJson')) {
+                mergedFiles['useFetchJson.' + (internalFramework === 'reactFunctionalTs' ? 'tsx' : 'jsx')] =
+                    getUseFetchJsonFile(internalFramework);
+            }
+        }
+
         // Replace files with provided examples
         const result: GeneratedContents = {
             isEnterprise,
@@ -291,12 +299,20 @@ async function processProvidedFiles(
 
         if (internalFramework === 'reactFunctional' || internalFramework === 'reactFunctionalTs') {
             // add use client to the provided files if they contain AgGridReact
-            const useClientCode = "'use client';\n";
-            const fileContent = provideFrameworkFiles[writeToFileName];
+            let fileContent = provideFrameworkFiles[writeToFileName];
             if (!fileContent) {
                 // console.log(`No content for ${writeToFileName} ${fileName}, ${internalFramework}`);
-            } else if (fileContent.includes('AgGridReact') && !fileContent.includes('use client')) {
-                provideFrameworkFiles[writeToFileName] = useClientCode + fileContent;
+            } else {
+                // if the useFetchJson hook is used in the provided files, add the import
+                if (fileContent.includes('useFetchJson') && !fileContent.includes('./useFetchJson')) {
+                    const importStr = "import { useFetchJson } from './useFetchJson';\n";
+                    fileContent = importStr + fileContent;
+                }
+                if (fileContent.includes('AgGridReact') && !fileContent.includes('use client')) {
+                    const useClientCode = "'use client';\n";
+                    fileContent = useClientCode + fileContent;
+                }
+                provideFrameworkFiles[writeToFileName] = fileContent;
             }
         }
 
