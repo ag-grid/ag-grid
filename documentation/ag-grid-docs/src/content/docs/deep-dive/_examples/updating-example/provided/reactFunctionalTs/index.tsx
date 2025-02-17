@@ -1,5 +1,5 @@
 // React Grid Logic
-import React, { StrictMode, useEffect, useState } from 'react';
+import React, { StrictMode, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 
 // Theme
@@ -25,7 +25,7 @@ interface IRow {
 // Create new GridExample component
 const GridExample = () => {
     // Row Data: The data to be displayed.
-    const [rowData, setRowData] = useState<IRow[]>([]);
+    const { data, loading } = useFetchJson<IRow>('https://www.ag-grid.com/example-assets/space-mission-data.json');
 
     // Column Definitions: Defines & controls grid columns.
     const [colDefs] = useState<ColDef[]>([
@@ -38,18 +38,11 @@ const GridExample = () => {
         { field: 'rocket' },
     ]);
 
-    // Fetch data & update rowData state
-    useEffect(() => {
-        fetch('https://www.ag-grid.com/example-assets/space-mission-data.json') // Fetch data from server
-            .then((result) => result.json()) // Convert to JSON
-            .then((rowData) => setRowData(rowData)); // Update state of `rowData`
-    }, []);
-
     // Container: Defines the grid's theme & dimensions.
     return (
         <div style={{ width: '100%', height: '100%' }}>
             {/* The AG Grid component, with Row Data & Column Definition props */}
-            <AgGridReact rowData={rowData} columnDefs={colDefs} />
+            <AgGridReact rowData={data} loading={loading} columnDefs={colDefs} />
         </div>
     );
 };

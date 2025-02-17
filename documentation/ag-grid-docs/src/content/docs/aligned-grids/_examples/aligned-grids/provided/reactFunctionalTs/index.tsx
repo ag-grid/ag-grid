@@ -1,7 +1,7 @@
 import React, { StrictMode, useMemo, useRef, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 
-import type { ColDef, ColGroupDef, GridReadyEvent, SizeColumnsToFitGridStrategy } from 'ag-grid-community';
+import type { ColDef, ColGroupDef, SizeColumnsToFitGridStrategy } from 'ag-grid-community';
 import {
     AlignedGridsModule,
     ClientSideRowModelModule,
@@ -63,8 +63,6 @@ const GridExample = () => {
         []
     );
 
-    const [rowData, setRowData] = useState([]);
-
     const autoSizeStrategy = useMemo<SizeColumnsToFitGridStrategy>(
         () => ({
             type: 'fitGridWidth',
@@ -72,11 +70,7 @@ const GridExample = () => {
         []
     );
 
-    const onGridReady = (params: GridReadyEvent) => {
-        fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
-            .then((resp) => resp.json())
-            .then((data) => setRowData(data));
-    };
+    const { data, loading } = useFetchJson('https://www.ag-grid.com/example-assets/olympic-winners.json');
 
     const onCbAthlete = (event: any) => {
         // we only need to update one grid, as the other is a slave
@@ -114,11 +108,11 @@ const GridExample = () => {
                 <AgGridReact
                     ref={topGrid}
                     alignedGrids={[bottomGrid]}
-                    rowData={rowData}
+                    rowData={data}
+                    loading={loading}
                     columnDefs={columnDefs}
                     defaultColDef={defaultColDef}
                     autoSizeStrategy={autoSizeStrategy}
-                    onGridReady={onGridReady}
                 />
             </div>
 
@@ -128,7 +122,8 @@ const GridExample = () => {
                 <AgGridReact
                     ref={bottomGrid}
                     alignedGrids={[topGrid]}
-                    rowData={rowData}
+                    rowData={data}
+                    loading={loading}
                     columnDefs={columnDefs}
                     defaultColDef={defaultColDef}
                 />
