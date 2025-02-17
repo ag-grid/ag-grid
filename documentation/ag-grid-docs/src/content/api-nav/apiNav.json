@@ -42,6 +42,16 @@
                     "type": "item",
                     "title": "Grid Lifecycle",
                     "path": "grid-lifecycle"
+                },
+                {
+                    "type": "item",
+                    "title": "Grid Context",
+                    "path": "context"
+                },
+                {
+                    "type": "item",
+                    "title": "Custom Components",
+                    "path": "components"
                 }
             ]
         },
