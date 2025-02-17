@@ -616,6 +616,33 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         }
     }
 
+    /**
+     * The opposite of `getTopLevelRowDisplayedIndex`
+     */
+    public getTopLevelIndexFromDisplayedIndex(displayedIndex: number): number {
+        const { rootNode, rowsToDisplay } = this;
+        const showingRootNode = !rootNode || !rowsToDisplay.length || rowsToDisplay[0] === rootNode;
+
+        if (showingRootNode) {
+            return displayedIndex;
+        }
+
+        let node = this.getRow(displayedIndex);
+
+        if (node.footer) {
+            node = node.sibling;
+        }
+
+        // find the top level node
+        while (node.parent && node.parent !== rootNode) {
+            node = node.parent;
+        }
+
+        const topLevelIndex = rootNode.childrenAfterSort?.findIndex((childNode) => childNode === node);
+
+        return topLevelIndex === -1 ? displayedIndex : topLevelIndex ?? displayedIndex;
+    }
+
     public getRowBounds(index: number): RowBounds | null {
         const rowNode = this.rowsToDisplay[index];
 

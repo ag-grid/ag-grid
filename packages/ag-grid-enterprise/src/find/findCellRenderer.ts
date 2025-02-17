@@ -12,10 +12,11 @@ export class FindCellRenderer extends Component implements ICellRenderer {
 
     public refresh(params: ICellRendererParams): boolean {
         const { node, column, valueFormatted, value } = params;
-        const displayValue = valueFormatted ?? value ?? '';
+        const { footerSvc, find } = this.beans;
+        const displayValue = node.footer ? footerSvc?.getTotalValue(value) : valueFormatted ?? value ?? '';
         const eGui = this.getGui();
         _clearElement(eGui);
-        const parts = column ? this.beans.find?.getParts({ value: displayValue, node, column }) : undefined;
+        const parts = column ? find?.getParts({ value: displayValue, node, column }) : undefined;
         if (!parts) {
             eGui.textContent = _escapeString(displayValue, true) ?? '';
             eGui.classList.remove('ag-find-cell-active-match');

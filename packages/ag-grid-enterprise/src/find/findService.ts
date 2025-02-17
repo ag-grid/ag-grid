@@ -1,4 +1,5 @@
 import type {
+    ColDef,
     Column,
     FindCellValueParams,
     FindMatch,
@@ -134,6 +135,15 @@ export class FindService extends BeanStub implements NamedBean, IFindService {
         }
     }
 
+    public setupGroupCol(colDef: ColDef): void {
+        colDef.getFindText = (params) => {
+            if (params.node.footer) {
+                return this.beans.footerSvc?.getTotalValue(params.value);
+            }
+            return params.getValueFormatted() ?? params.value;
+        };
+    }
+
     private refresh(maintainActive: boolean): void {
         const rowNodesToRefresh = new Set([...this.topNodes, ...this.centerNodes, ...this.bottomNodes]);
         this.topNodes = [];
@@ -258,7 +268,7 @@ export class FindService extends BeanStub implements NamedBean, IFindService {
         rowNodes = centerNodes;
         containerNumMatches = 0;
         checkCurrentPage = !!pagination && !!findOptions?.currentPageOnly;
-        (rowModel as IClientSideRowModel).forEachNodeAfterFilterAndSort(callback);
+        (rowModel as IClientSideRowModel).forEachNodeAfterFilterAndSort(callback, true);
         this.centerNumMatches = containerNumMatches;
         totalMatches += containerNumMatches;
 
@@ -456,7 +466,7 @@ export class FindService extends BeanStub implements NamedBean, IFindService {
         if (activeMatch && activeMatch.node.rowIndex == null) {
             // child in unexpanded group
             const node = activeMatch.node;
-            let parent = node.parent;
+            let parent = node.footer ? node.sibling : node.parent;
             while (parent && !parent.expanded) {
                 parent.expanded = true;
                 parent = parent.parent;

@@ -60,4 +60,8 @@ export class FooterService extends BeanStub implements NamedBean, IFooterService
 
         return getDefaultIndex(adjustedIndex);
     }
+
+    public getTotalValue(value: any): string {
+        return this.getLocaleTextFunc()('footerTotal', 'Total') + ' ' + (value ?? '');
+    }
 }

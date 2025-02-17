@@ -1,3 +1,4 @@
+import type { ColDef } from '../entities/colDef';
 import type { Column } from './iColumn';
 import type { IRowNode } from './iRowNode';
 
@@ -28,6 +29,8 @@ export interface IFindService {
     goTo(match: number): void;
 
     getNumMatches(node: IRowNode, column: Column): number;
+
+    setupGroupCol(colDef: ColDef): void;
 }
 
 export interface FindOptions {
