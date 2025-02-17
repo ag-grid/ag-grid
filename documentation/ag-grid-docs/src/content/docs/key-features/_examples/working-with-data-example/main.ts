@@ -2,7 +2,6 @@ import type { GridApi, GridOptions } from 'ag-grid-community';
 import { AllCommunityModule, ModuleRegistry, createGrid } from 'ag-grid-community';
 
 ModuleRegistry.registerModules([AllCommunityModule]);
-let gridApi: GridApi;
 
 const gridOptions: GridOptions = {
     rowData: [
@@ -91,5 +90,8 @@ const gridOptions: GridOptions = {
     paginationPageSizeSelector: [10, 25, 50],
 };
 
-const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
-gridApi = createGrid(gridDiv, gridOptions);
+// setup the grid after the page has finished loading
+document.addEventListener('DOMContentLoaded', function () {
+    const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
+    const gridApi = createGrid(gridDiv, gridOptions);
+});

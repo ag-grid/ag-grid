@@ -10,8 +10,6 @@ ModuleRegistry.registerModules([
     IntegratedChartsModule.with(AgChartsEnterpriseModule),
 ]);
 
-let gridApi: GridApi;
-
 const gridOptions: GridOptions = {
     rowData: [
         { make: 'Tesla', model: 'Model Y', price: 64950, electric: true, month: 'June' },
@@ -93,5 +91,8 @@ const gridOptions: GridOptions = {
     },
 };
 
-const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
-gridApi = createGrid(gridDiv, gridOptions);
+// setup the grid after the page has finished loading
+document.addEventListener('DOMContentLoaded', function () {
+    const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
+    const gridApi = createGrid(gridDiv, gridOptions);
+});
