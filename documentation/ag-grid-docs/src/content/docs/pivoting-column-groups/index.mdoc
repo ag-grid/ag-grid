@@ -54,6 +54,12 @@ const gridOptions = {
 }
 ```
 
+{% note %}
+If the `pivotComparator` returns 0, the order of the groups is then further determined by the order in which they appear in the data.
+
+This means that writing a `pivotComparator` function that always returns 0 will result in the groups being ordered by the order in which they appear in the data.
+{% /note %}
+
 ### Changing Data, Filters, and Configurations
 
 When changing data, filters, or configurations such as `pivotRowTotals` the generated column groups and their order is impacted. The grid will add
