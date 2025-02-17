@@ -1,5 +1,6 @@
+import { useIntersectionObserver } from '@utils/hooks/useIntersectionObserver';
 import { AgChartsEnterpriseModule } from 'ag-charts-enterprise';
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useMemo, useRef, useState } from 'react';
 
 import {
     AllCommunityModule,
@@ -131,10 +132,11 @@ export const FinanceExample: React.FC<Props> = ({
 }) => {
     const [rowData, setRowData] = useState(getData());
     const gridRef = useRef<AgGridReact>(null);
+    const gridWrapperRef = useRef<AgGridReact>(null);
+    const intervalId = useRef<ReturnType<typeof setInterval>>();
     const [breakpoint, setBreakpoint] = useState<Breakpoint>('xlarge');
-
-    useEffect(() => {
-        const intervalId = setInterval(() => {
+    const createUpdater = useCallback(() => {
+        return setInterval(() => {
             setRowData((rowData) =>
                 rowData.map((item) => {
                     const isRandomChance = Math.random() < 0.1;
@@ -160,9 +162,18 @@ export const FinanceExample: React.FC<Props> = ({
                 })
             );
         }, updateInterval);
-
-        return () => clearInterval(intervalId);
     }, [updateInterval]);
+
+    useIntersectionObserver({
+        elementRef: gridWrapperRef as any,
+        onChange: ({ isIntersecting }: { isIntersecting: boolean }) => {
+            if (isIntersecting) {
+                intervalId.current = createUpdater();
+            } else {
+                clearInterval(intervalId.current);
+            }
+        },
+    });
 
     const colDefs = useMemo<ColDef[]>(() => {
         const breakpointConfig = BREAKPOINT_CONFIG[breakpoint];
@@ -311,6 +322,7 @@ export const FinanceExample: React.FC<Props> = ({
 
     return (
         <div
+            ref={gridWrapperRef}
             style={gridHeight ? { height: gridHeight } : {}}
             className={`${themeClass} ${styles.grid} ${gridHeight ? '' : styles.gridHeight}`}
         >
