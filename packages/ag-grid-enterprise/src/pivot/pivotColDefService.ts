@@ -49,7 +49,7 @@ export class PivotColDefService extends BeanStub implements NamedBean, IPivotCol
         });
     }
 
-    public createPivotColumnDefs(uniqueValues: any): PivotColDefServiceResult {
+    public createPivotColumnDefs(uniqueValues: Map<string, any>): PivotColDefServiceResult {
         // this is passed to the colModel, to configure the columns and groups we show
 
         const pivotColumnGroupDefs: (ColDef | ColGroupDef)[] = this.createPivotColumnsFromUniqueValues(uniqueValues);
@@ -86,7 +86,7 @@ export class PivotColDefService extends BeanStub implements NamedBean, IPivotCol
         };
     }
 
-    private createPivotColumnsFromUniqueValues(uniqueValues: any): (ColDef | ColGroupDef)[] {
+    private createPivotColumnsFromUniqueValues(uniqueValues: Map<string, any>): (ColDef | ColGroupDef)[] {
         const pivotColumns = this.pivotColsSvc?.columns ?? [];
         const maxDepth = pivotColumns.length;
 
@@ -102,7 +102,7 @@ export class PivotColDefService extends BeanStub implements NamedBean, IPivotCol
 
     private recursivelyBuildGroup(
         index: number,
-        uniqueValue: any,
+        uniqueValue: Map<string, any>,
         pivotKeys: string[],
         maxDepth: number,
         primaryPivotColumns: AgColumn[]
@@ -115,7 +115,17 @@ export class PivotColDefService extends BeanStub implements NamedBean, IPivotCol
 
         // sort by either user provided comparator, or our own one
         const primaryPivotColumnDefs = primaryPivotColumns[index].getColDef();
-        const comparator = this.headerNameComparator.bind(this, primaryPivotColumnDefs.pivotComparator);
+
+        let pivotComparator = primaryPivotColumnDefs.pivotComparator;
+
+        const keys = Array.from(uniqueValue.keys());
+
+        if (pivotComparator) {
+            // wrap the user provided comparator in a function that defaults to key order if comparator returns 0
+            pivotComparator = this.addOrderedComparator(keys, pivotComparator);
+        }
+
+        const comparator = this.headerNameComparator.bind(this, pivotComparator);
 
         // Base case for the compact layout, instead of recursing build the last layer of groups as measure columns instead
         if (
@@ -125,7 +135,7 @@ export class PivotColDefService extends BeanStub implements NamedBean, IPivotCol
         ) {
             const leafCols: ColDef[] = [];
 
-            for (const key of Object.keys(uniqueValue)) {
+            for (const key of keys) {
                 const newPivotKeys = [...pivotKeys, key];
                 const colDef = this.createColDef(measureColumns[0], key, newPivotKeys);
                 colDef.columnGroupShow = 'open';
@@ -136,7 +146,7 @@ export class PivotColDefService extends BeanStub implements NamedBean, IPivotCol
         }
         // Recursive case
         const groups: ColGroupDef[] = [];
-        for (const key of Object.keys(uniqueValue)) {
+        for (const key of keys) {
             // expand group by default based on depth of group. (pivotDefaultExpanded provides desired level of depth for expanding group by default)
             const openByDefault = this.pivotDefaultExpanded === -1 || index < this.pivotDefaultExpanded;
 
@@ -144,7 +154,7 @@ export class PivotColDefService extends BeanStub implements NamedBean, IPivotCol
             groups.push({
                 children: this.recursivelyBuildGroup(
                     index + 1,
-                    uniqueValue[key],
+                    uniqueValue.get(key),
                     newPivotKeys,
                     maxDepth,
                     primaryPivotColumns
@@ -158,6 +168,23 @@ export class PivotColDefService extends BeanStub implements NamedBean, IPivotCol
         }
         groups.sort(comparator);
         return groups;
+    }
+
+    private addOrderedComparator(keys: string[], pivotComparator: (valueA: string, valueB: string) => number) {
+        // index of keys
+        const keyIndex: Record<string, number> = {};
+        keys.forEach((k, i) => (keyIndex[k] = i));
+
+        const orderedComparator = (a: string, b: string) => {
+            const aIndex = keyIndex[a] ?? 0;
+            const bIndex = keyIndex[b] ?? 0;
+            return aIndex - bIndex;
+        };
+
+        return (a: string, b: string) => {
+            const result = pivotComparator!(a, b);
+            return result === 0 ? orderedComparator(a, b) : result;
+        };
     }
 
     private buildMeasureCols(pivotKeys: string[]): ColDef[] {
@@ -424,7 +451,7 @@ export class PivotColDefService extends BeanStub implements NamedBean, IPivotCol
                 return -1;
             }
 
-            // slightly naff here - just to satify typescript
+            // slightly naff here - just to satisfy typescript
             // really should be &&, but if so ts complains
             // the above if/else checks would deal with either being falsy, so at this stage if either are falsy, both are
             // ..still naff though
