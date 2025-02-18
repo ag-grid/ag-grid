@@ -204,12 +204,17 @@ export class ContextMenuService extends BeanStub implements NamedBean, IContextM
                     return;
                 }
 
+                const { target } = mouseEvent;
+
+                // if there is no event target, it means the event was created by `api.showContextMenu`.
+                const isFromFakeEvent = !target;
+
                 const shouldShowMenu =
                     // check if there are actual menu items to be displayed
                     menuItems &&
                     menuItems.length &&
                     // check if the element that triggered the context menu was removed from the DOM
-                    _isVisible(mouseEvent.target as HTMLElement) &&
+                    (isFromFakeEvent || _isVisible(target as HTMLElement)) &&
                     // overlay was displayed
                     !this.beans.overlays?.isExclusive();
 
