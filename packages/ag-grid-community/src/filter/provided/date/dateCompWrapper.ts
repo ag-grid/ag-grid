@@ -1,6 +1,7 @@
 import { _getDateCompDetails } from '../../../components/framework/userCompUtils';
 import type { UserComponentFactory } from '../../../components/framework/userComponentFactory';
 import type { Context } from '../../../context/context';
+import type { ColDef } from '../../../entities/colDef';
 import type { IDateComp, IDateParams } from '../../../interfaces/dateComponent';
 import type { IAfterGuiAttachedParams } from '../../../interfaces/iAfterGuiAttachedParams';
 import { _setDisplayed } from '../../../utils/dom';
@@ -18,6 +19,7 @@ export class DateCompWrapper {
     constructor(
         context: Context,
         userCompFactory: UserComponentFactory,
+        colDef: ColDef,
         dateComponentParams: IDateParams,
         eParent: HTMLElement,
         onReady?: (comp: DateCompWrapper) => void
@@ -25,7 +27,7 @@ export class DateCompWrapper {
         this.context = context;
         this.eParent = eParent;
 
-        const compDetails = _getDateCompDetails(userCompFactory, dateComponentParams);
+        const compDetails = _getDateCompDetails(userCompFactory, colDef, dateComponentParams);
         if (!compDetails) {
             return;
         }

@@ -397,6 +397,8 @@ const colDefPropertyMap: Record<ColOrGroupKey, undefined> = {
     loadingCellRendererParams: undefined,
     loadingCellRendererSelector: undefined,
     context: undefined,
+    dateComponent: undefined,
+    dateComponentParams: undefined,
 };
 const ALL_PROPERTIES: () => ColOrGroupKey[] = () => Object.keys(colDefPropertyMap) as ColOrGroupKey[];
 

@@ -394,7 +394,20 @@
                 "url": "./component-floating-filter/#example-custom-floating-filter"
             }
         },
-        "suppressFiltersToolPanel": {}
+        "suppressFiltersToolPanel": {},
+        "dateComponent": {
+            "description": "Custom date selection component to be used in Date Filters and Date Floating Filters for this column.",
+            "more": {
+                "name": "Custom Selection Component",
+                "url": "./filter-date/#custom-selection-component"
+            }
+        },
+        "dateComponentParams": {
+            "more": {
+                "name": "Custom Selection Component",
+                "url": "./filter-date/#custom-selection-component"
+            }
+        }
     },
     "editing": {
         "meta": {

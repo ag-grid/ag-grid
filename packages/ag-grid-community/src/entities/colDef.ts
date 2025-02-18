@@ -398,6 +398,13 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
      * Only applies if `floatingFilter = true`.
      */
     suppressFloatingFilterButton?: boolean;
+    /**
+     * Custom date selection component to be used in Date Filters and Date Floating Filters for this column.
+     * See [Custom Selection Component](https://www.ag-grid.com/javascript-data-grid/filter-date/#custom-selection-component) for framework specific implementation detail.
+     */
+    dateComponent?: any;
+    /** The parameters to be passed to the `dateComponent`. */
+    dateComponentParams?: any;
 
     // *** Column Headers *** //
     /**

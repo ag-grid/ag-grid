@@ -23,6 +23,7 @@ const columnDefs: ColDef[] = [
     {
         field: 'date',
         minWidth: 190,
+        dateComponent: CustomDateComponent,
     },
     { field: 'sport' },
 ];
@@ -38,9 +39,6 @@ const gridOptions: GridOptions<IOlympicData> = {
     },
     columnDefs: columnDefs,
     rowData: null,
-    components: {
-        agDateInput: CustomDateComponent,
-    },
 };
 
 // setup the grid after the page has finished loading

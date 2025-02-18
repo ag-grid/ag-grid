@@ -32,6 +32,7 @@ const GridExample = () => {
         {
             field: 'date',
             minWidth: 190,
+            dateComponent: CustomDateComponent,
         },
         { field: 'sport' },
     ]);
@@ -43,7 +44,6 @@ const GridExample = () => {
             floatingFilter: true,
         };
     }, []);
-    const components = useMemo<{ [p: string]: any }>(() => ({ agDateInput: CustomDateComponent }), []);
 
     const onGridReady = useCallback(() => {
         fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
@@ -69,7 +69,6 @@ const GridExample = () => {
                     rowData={rowData}
                     columnDefs={columnDefs}
                     defaultColDef={defaultColDef}
-                    components={components}
                     onGridReady={onGridReady}
                 />
             </div>

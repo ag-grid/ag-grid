@@ -115,13 +115,17 @@ export class DateFilter extends ScalarFilter<DateFilterModel, Date, DateCompWrap
     }
 
     createDateCompWrapper(element: HTMLElement): DateCompWrapper {
-        const { userCompFactory, context, gos } = this.beans;
+        const {
+            beans: { userCompFactory, context, gos },
+            dateFilterParams,
+        } = this;
         const dateCompWrapper = new DateCompWrapper(
             context,
             userCompFactory,
+            dateFilterParams.colDef,
             _addGridCommonParams<IDateParams>(gos, {
                 onDateChanged: () => this.onUiChanged(),
-                filterParams: this.dateFilterParams,
+                filterParams: dateFilterParams,
                 location: 'filter',
             }),
             element
