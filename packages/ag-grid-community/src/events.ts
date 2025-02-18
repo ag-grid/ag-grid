@@ -388,7 +388,7 @@ export interface FindChangedEvent<TData = any, TContext = any> extends AgGlobalE
     /** The current search value. */
     findSearchValue: string | undefined;
     /** The active match, or `undefined` if no active match. */
-    activeMatch: FindMatch | undefined;
+    activeMatch: FindMatch<TData> | undefined;
     /** The total number of matches in the grid. */
     totalMatches: number;
 }

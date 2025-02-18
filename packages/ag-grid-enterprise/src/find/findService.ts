@@ -20,6 +20,7 @@ function defaultCaseFormat(value?: string | null): string | undefined {
 export class FindService extends BeanStub implements NamedBean, IFindService {
     beanName = 'find' as const;
 
+    private active: boolean = false;
     private topMatches: Map<IRowNode, [Column, number][]> = new Map();
     private topNodes: IRowNode[] = [];
     private topNumMatches: number = 0;
@@ -78,9 +79,12 @@ export class FindService extends BeanStub implements NamedBean, IFindService {
     }
 
     public isMatch(node: IRowNode, column: Column): boolean {
-        return !!this.getMatches(node.rowPinned)
-            .get(node)
-            ?.some(([colToCheck]) => colToCheck === column);
+        return (
+            this.active &&
+            !!this.getMatches(node.rowPinned)
+                .get(node)
+                ?.some(([colToCheck]) => colToCheck === column)
+        );
     }
 
     public getNumMatches(node: IRowNode, column: Column): number {
@@ -89,13 +93,6 @@ export class FindService extends BeanStub implements NamedBean, IFindService {
                 .get(node)
                 ?.find(([colToCheck]) => colToCheck === column)?.[1] ?? 0
         );
-    }
-
-    public getActiveMatchNum(node: IRowNode, column: Column): number {
-        const activeMatch = this.activeMatch;
-        return activeMatch != null && activeMatch.node === node && activeMatch.column === column
-            ? activeMatch.numInMatch
-            : 0;
     }
 
     public getParts(params: FindCellValueParams): FindPart[] {
@@ -156,10 +153,9 @@ export class FindService extends BeanStub implements NamedBean, IFindService {
             centerNodes,
             bottomNodes,
             bottomMatches,
-            beans,
-            findSearchValue: oldFindText,
+            beans: { gos, visibleCols, rowModel, valueSvc, pinnedRowModel, pagination, rowSpanSvc },
+            findSearchValue: oldFindSearchValue,
         } = this;
-        const { gos, visibleCols, rowModel, valueSvc, pinnedRowModel, pagination } = beans;
         const findOptions = gos.get('findOptions');
         const caseFormat: (value?: string | null) => string | undefined = findOptions?.caseSensitive
             ? (value) => value ?? undefined
@@ -177,12 +173,13 @@ export class FindService extends BeanStub implements NamedBean, IFindService {
         this.activeMatch = undefined;
 
         if (_missing(findSearchValue)) {
+            this.active = false;
             this.topNumMatches = 0;
             this.centerNumMatches = 0;
             this.totalMatches = 0;
             this.refreshRows(rowNodesToRefresh);
 
-            if (!_missing(oldFindText)) {
+            if (!_missing(oldFindSearchValue)) {
                 this.dispatchFindChanged();
             }
             return;
@@ -207,7 +204,7 @@ export class FindService extends BeanStub implements NamedBean, IFindService {
                 }
             }
             for (const column of allCols) {
-                const cellSpan = beans.rowSpanSvc?.getCellSpan(column, node as RowNode);
+                const cellSpan = rowSpanSvc?.getCellSpan(column, node as RowNode);
                 if (cellSpan && cellSpan.firstNode !== node) {
                     // only match on first row of span
                     return;
@@ -280,6 +277,7 @@ export class FindService extends BeanStub implements NamedBean, IFindService {
         totalMatches += containerNumMatches;
 
         this.totalMatches = totalMatches;
+        this.active = true;
 
         this.refreshRows(rowNodesToRefresh);
 
@@ -555,6 +553,13 @@ export class FindService extends BeanStub implements NamedBean, IFindService {
         } else {
             return this.centerNodes;
         }
+    }
+
+    private getActiveMatchNum(node: IRowNode, column: Column): number {
+        const activeMatch = this.activeMatch;
+        return activeMatch != null && activeMatch.node === node && activeMatch.column === column
+            ? activeMatch.numInMatch
+            : 0;
     }
 
     public override destroy(): void {

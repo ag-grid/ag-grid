@@ -2,9 +2,9 @@ import type { ColDef } from '../entities/colDef';
 import type { Column } from './iColumn';
 import type { IRowNode } from './iRowNode';
 
-export interface FindMatch {
-    node: IRowNode;
-    column: Column;
+export interface FindMatch<TData = any, TValue = any> {
+    node: IRowNode<TData>;
+    column: Column<TValue>;
     /**
      * The number of the match within the cell (starting from `1`).
      */

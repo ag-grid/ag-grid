@@ -13,7 +13,7 @@ export class FindCellRenderer extends Component implements ICellRenderer {
     public refresh(params: ICellRendererParams): boolean {
         const { node, column, valueFormatted, value } = params;
         const { footerSvc, find } = this.beans;
-        const displayValue = node.footer ? footerSvc?.getTotalValue(value) : valueFormatted ?? value ?? '';
+        const displayValue = (node.footer ? footerSvc?.getTotalValue(value) : valueFormatted ?? value) ?? '';
         const eGui = this.getGui();
         _clearElement(eGui);
         const parts = column ? find?.getParts({ value: displayValue, node, column }) : undefined;
@@ -22,7 +22,6 @@ export class FindCellRenderer extends Component implements ICellRenderer {
             eGui.classList.remove('ag-find-cell-active-match');
             return true;
         }
-        const eHighlights: HTMLElement[] = [];
         let hasActiveMatch = false;
         for (const { value: partValue, match, activeMatch } of parts) {
             const content = _escapeString(partValue, true) ?? '';
@@ -35,7 +34,6 @@ export class FindCellRenderer extends Component implements ICellRenderer {
                     hasActiveMatch = true;
                 }
                 eGui.appendChild(element);
-                eHighlights.push(element);
             } else {
                 eGui.appendChild(document.createTextNode(content));
             }

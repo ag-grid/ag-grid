@@ -748,7 +748,7 @@ export interface _FindApi<TData> {
     /** Go to the provided match (first match is `1`). */
     findGoTo(match: number): void;
     /** Get the active match, or `undefined` if no active match. */
-    findGetActiveMatch(): FindMatch | undefined;
+    findGetActiveMatch(): FindMatch<TData> | undefined;
     /** Get the number of matches within the provided cell. */
     findGetNumMatches(params: FindCellParams<TData>): number;
     /**
