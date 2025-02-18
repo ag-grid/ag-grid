@@ -291,10 +291,12 @@
     .ag-chart-mini-thumbnail {
         border: 1px solid var(--ag-secondary-border-color);
         border-radius: 5px;
+        padding: 1px;
 
         &.ag-selected {
             border-color: var(--ag-minichart-selected-chart-color);
             border-width: 2px;
+            padding: unset;
         }
 
         &:focus-visible {
