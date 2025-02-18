@@ -179,8 +179,7 @@ export function vanillaToReactFunctionalTs(
         if (onGridReady) {
             const hackedHandler = onGridReady
                 .replace(/^{|}$/g, '')
-                .replace("gridApi!.setGridOption('rowData',", 'setRowData(')
-                .replace("params.api.setGridOption('rowData',", 'setRowData(');
+                .replace(/(gridApi|params\.api)(!?\.setGridOption\('rowData',\s*)/g, 'setRowData(');
             additionalInReady.push(hackedHandler);
         }
 
@@ -188,10 +187,13 @@ export function vanillaToReactFunctionalTs(
         if (data) {
             const callback = data.callback
                 .replace(/^{|}$/g, '')
-                .replace("gridApi!.setGridOption('rowData',", 'setRowData(')
-                .replace("params.api.setGridOption('rowData',", 'setRowData(');
+                .replace(/(gridApi|params\.api)(!?\.setGridOption\('rowData',\s*)/g, 'setRowData(');
 
-            if (callback === 'setRowData( data)') {
+            const cleanedCallback = callback.replaceAll('\n', '').trim();
+            if (
+                cleanedCallback.match(/setRowData\(data\)(;?)/) ||
+                cleanedCallback.match(/data\.slice\((\d+), (\d+)\)/)
+            ) {
                 // get url from data
                 useFetchHook = `    const { data, loading } = useFetchJson<${rowDataType}>(
                 ${data.url}${data.totalRows ? `, ${data.totalRows}` : ''}
