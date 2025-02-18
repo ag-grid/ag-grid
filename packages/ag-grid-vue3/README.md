@@ -190,7 +190,23 @@ $ npm install --save ag-grid-vue3
 
 <!-- START SETUP -->
 
-**1. Import the Vue Data Grid**
+**1. Register Modules**
+
+Register the `AllCommunityModule` to access all Community features:
+
+```js
+import { AllCommunityModule, ModuleRegistry } from 'ag-grid-community';
+
+// Register all Community features
+ModuleRegistry.registerModules([AllCommunityModule]);
+```
+
+<blockquote>
+    <p>ℹ️ <b>Note:</b></p>
+    <p>To minimize bundle size, only register the modules you want to use. See the <a href="https://www.ag-grid.com/vue-data-grid/modules/">Modules</a> page for more information.</p>
+</blockquote>
+
+**2. Import the Vue Data Grid**
 
 ```js
 <template></template>
@@ -208,22 +224,6 @@ export default {
 };
 </script>
 ```
-
-**2. Register Modules**
-
-Register the `AllCommunityModule` to access all Community features:
-
-```js
-import { AllCommunityModule, ModuleRegistry } from 'ag-grid-community';
-
-// Register all Community features
-ModuleRegistry.registerModules([AllCommunityModule]);
-```
-
-<blockquote>
-    <p>ℹ️ <b>Note:</b></p>
-    <p>To minimize bundle size, only register the modules you want to use. See the <a href="https://www.ag-grid.com/vue-data-grid/modules/">Modules</a> page for more information.</p>
-</blockquote>
 
 **3. Define Rows and Columns**
 

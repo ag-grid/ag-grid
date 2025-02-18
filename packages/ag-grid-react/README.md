@@ -190,14 +190,7 @@ $ npm install --save ag-grid-react
 
 <!-- START SETUP -->
 
-**1. Import the React Data Grid**
-
-```js
-// React Data Grid Component
-import { AgGridReact } from 'ag-grid-react';
-```
-
-**2. Register Modules**
+**1. Register Modules**
 
 Register the `AllCommunityModule` to access all Community features:
 
@@ -212,6 +205,13 @@ ModuleRegistry.registerModules([AllCommunityModule]);
     <p>ℹ️ <b>Note:</b></p>
     <p>To minimize bundle size, only register the modules you want to use. See the <a href="https://www.ag-grid.com/react-data-grid/modules/">Modules</a> page for more information.</p>
 </blockquote>
+
+**2. Import the React Data Grid**
+
+```js
+// React Data Grid Component
+import { AgGridReact } from 'ag-grid-react';
+```
 
 **3. Define Rows and Columns**
 
