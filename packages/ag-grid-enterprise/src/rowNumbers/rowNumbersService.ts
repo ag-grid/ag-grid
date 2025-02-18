@@ -68,6 +68,10 @@ export class RowNumbersService extends BeanStub implements NamedBean, IRowNumber
         cols: _ColumnCollections,
         updateOrders: (callback: (cols: AgColumn[] | null) => AgColumn[] | null) => void
     ): void {
+        if (!this.gos.get('rowNumbers')) {
+            return;
+        }
+
         const destroyCollection = () => {
             _destroyColumnTree(this.beans, this.columns?.tree);
             this.columns = null;
@@ -95,7 +99,16 @@ export class RowNumbersService extends BeanStub implements NamedBean, IRowNumber
             map: {},
         };
 
-        updateOrders(this.putRowNumbersColsFirstInList);
+        const putRowNumbersColsFirstInList = (cols: AgColumn[] | null): AgColumn[] | null => {
+            if (!cols) {
+                return null;
+            }
+            // we use colId, and not instance, to remove old rowNumbersCols
+            const colsFiltered = cols.filter((col) => !isRowNumberCol(col));
+            return [...list, ...colsFiltered];
+        };
+
+        updateOrders(putRowNumbersColsFirstInList);
     }
 
     public handleMouseDownOnCell(cellPosition: CellPosition, mouseEvent: MouseEvent): boolean {
@@ -262,15 +275,6 @@ export class RowNumbersService extends BeanStub implements NamedBean, IRowNumber
         div.textContent = value;
 
         return div;
-    }
-
-    private putRowNumbersColsFirstInList(list: AgColumn[], cols?: AgColumn[] | null): AgColumn[] | null {
-        if (!cols) {
-            return null;
-        }
-        // we use colId, and not instance, to remove old rowNumbersCols
-        const colsFiltered = cols.filter((col) => !isRowNumberCol(col));
-        return [...list, ...colsFiltered];
     }
 
     private createRowNumbersColDef(): ColDef {
