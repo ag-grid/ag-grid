@@ -55,10 +55,13 @@ export class DragAndDropImageComponent extends Component implements IDragAndDrop
         this.dragSource = params.dragSource;
 
         this.setTemplate(
+            // the wrapper div has no class - the drag and drop service adds the theme class to it
             /* html */
-            `<div class="ag-dnd-ghost ag-unselectable">
-                <span data-ref="eIcon" class="ag-dnd-ghost-icon ag-shake-left-to-right"></span>
-                <div data-ref="eLabel" class="ag-dnd-ghost-label"></div>
+            `<div>
+                <div class="ag-dnd-ghost ag-unselectable">
+                    <span data-ref="eIcon" class="ag-dnd-ghost-icon ag-shake-left-to-right"></span>
+                    <div data-ref="eLabel" class="ag-dnd-ghost-label"></div>
+                </div>
             </div>`
         );
     }
