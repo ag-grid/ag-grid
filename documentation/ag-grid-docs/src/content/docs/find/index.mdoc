@@ -35,11 +35,11 @@ The active match and the total number of matches can also be retrieved via the A
 
 {% apiDocumentation source="grid-api/api.json" section="find" names=["findGetActiveMatch", "findGetTotalMatches"] /%}
 
-## Using Find with Custom Cell Components
+## Using Find with Cell Components
 
 By default, Find searches within the [Formatted Value](./value-formatters/) of the cell, or the raw cell value if there is no Value Formatter. This is what is displayed in the cell by default.
 
-Custom cell components may display text that does not appear in the cell value. To enable Find to search within this additional text, the `getFindText` callback can be implemented on the Column Definition. Find will search within this value for matches.
+[Cell Components](./component-cell-renderer/) may display text that does not appear in the cell value. To enable Find to search within this additional text, the `getFindText` callback can be implemented on the Column Definition. Find will search within this value for matches.
 
 {% apiDocumentation source="column-properties/properties.json" section="find" names=["getFindText"] /%}
 
@@ -54,13 +54,17 @@ const gridOptions = {
 }
 ```
 
-The custom cell component is responsible for highlighting any matches and active matches within the cell. The grid API provides the following methods to help with this.
+When providing a custom cell component, the component is responsible for highlighting any matches and active matches within the cell. The grid API provides the following methods to help with this.
 
 {% apiDocumentation source="grid-api/api.json" section="find" names=["findGetNumMatches", "findGetParts"] /%}
 
 The following example demonstrates a custom cell component in the `Year` column, which uses the features described above. The custom cell component reuses the grid CSS classes `ag-find-match` and `ag-find-active-match` to apply the same styling as the default grid cell component.
 
 {% gridExampleRunner title="Find with Cell Components" name="find-cell-components" /%}
+
+{% note %}
+Find does not work with the [Animate Show Changed Cell Component](./change-cell-renderers/#animate-show-changed-cells) or the [Animate Slide Cell Component](./change-cell-renderers/#animate-slide-cells). If using these, provide a `getFindText` that returns `null` to exclude them from the search results. The same approach should also be used if manually specifying `agCheckboxCellRenderer`.
+{% /note %}
 
 ## Customising Find
 
@@ -94,3 +98,5 @@ Searching will be performed within the children of [Collapsed Row Groups](./grou
 When using [Row Pagination](./row-pagination/), searching will be performed across all pages by default.
 
 See the [Customising Find](#customising-find) section for an example of using Find with Row Grouping, as well as how to customise behaviour for Pagination.
+
+[Detail Rows / Grids](./master-detail/) and [Full Width Rows](./full-width-rows/) are not searched.

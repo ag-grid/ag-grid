@@ -187,6 +187,8 @@ export class FindService extends BeanStub implements NamedBean, IFindService {
 
         const allCols = visibleCols.allCols;
 
+        const isFullWidthCellFunc = this.beans.gos.getCallback('isFullWidthRow');
+
         let containerNumMatches = 0;
         let matches: Map<IRowNode, [Column, number][]>;
         let rowNodes: IRowNode[];
@@ -202,6 +204,10 @@ export class FindService extends BeanStub implements NamedBean, IFindService {
                 if (rowIndex == null || !pagination!.isRowInPage(rowIndex)) {
                     return;
                 }
+            }
+            if (node.detail || isFullWidthCellFunc?.({ rowNode: node })) {
+                // master detail and full width rows not currently supported
+                return;
             }
             for (const column of allCols) {
                 const cellSpan = rowSpanSvc?.getCellSpan(column, node as RowNode);

@@ -481,6 +481,7 @@ export class DataTypeService extends BeanStub implements NamedBean {
             case 'boolean': {
                 colDef.cellEditor = 'agCheckboxCellEditor';
                 colDef.cellRenderer = 'agCheckboxCellRenderer';
+                colDef.getFindText = () => null;
                 colDef.suppressKeyboardEvent = (params: SuppressKeyboardEventParams<any, boolean>) =>
                     !!params.colDef.editable && params.event.key === KeyCode.SPACE;
                 break;
