@@ -118,11 +118,9 @@ export class PivotColDefService extends BeanStub implements NamedBean, IPivotCol
 
         let pivotComparator = primaryPivotColumnDefs.pivotComparator;
 
-        const keys = Array.from(uniqueValue.keys());
-
         if (pivotComparator) {
             // wrap the user provided comparator in a function that defaults to key order if comparator returns 0
-            pivotComparator = this.addOrderedComparator(keys, pivotComparator);
+            pivotComparator = this.addOrderedComparator(uniqueValue.keys(), pivotComparator);
         }
 
         const comparator = this.headerNameComparator.bind(this, pivotComparator);
@@ -135,7 +133,7 @@ export class PivotColDefService extends BeanStub implements NamedBean, IPivotCol
         ) {
             const leafCols: ColDef[] = [];
 
-            for (const key of keys) {
+            for (const key of uniqueValue.keys()) {
                 const newPivotKeys = [...pivotKeys, key];
                 const colDef = this.createColDef(measureColumns[0], key, newPivotKeys);
                 colDef.columnGroupShow = 'open';
@@ -146,7 +144,7 @@ export class PivotColDefService extends BeanStub implements NamedBean, IPivotCol
         }
         // Recursive case
         const groups: ColGroupDef[] = [];
-        for (const key of keys) {
+        for (const key of uniqueValue.keys()) {
             // expand group by default based on depth of group. (pivotDefaultExpanded provides desired level of depth for expanding group by default)
             const openByDefault = this.pivotDefaultExpanded === -1 || index < this.pivotDefaultExpanded;
 
@@ -170,10 +168,13 @@ export class PivotColDefService extends BeanStub implements NamedBean, IPivotCol
         return groups;
     }
 
-    private addOrderedComparator(keys: string[], pivotComparator: (valueA: string, valueB: string) => number) {
-        // index of keys
+    private addOrderedComparator(
+        keys: IterableIterator<string>,
+        pivotComparator: (valueA: string, valueB: string) => number
+    ) {
+        // index of keys, need to convert from iterator to array to iterate and get index
         const keyIndex: Record<string, number> = {};
-        keys.forEach((k, i) => (keyIndex[k] = i));
+        Array.from(keys).forEach((k, i) => (keyIndex[k] = i));
 
         const orderedComparator = (a: string, b: string) => {
             const aIndex = keyIndex[a] ?? 0;
