@@ -78,7 +78,7 @@
                                 },
                                 {
                                     "title": "React Testing Library",
-                                    "url": "https://blog.ag-grid.com/unit-testing-ag-grid-react-components-with-react-testing-library-and-vitest/",
+                                    "url": "https://blog.ag-grid.com/unit-testing-ag-grid-react-tables-with-react-testing-library-and-vitest/",
                                     "frameworks": ["react"]
                                 }
                             ]
@@ -1020,6 +1020,11 @@
                         },
                         {
                             "type": "item",
+                            "title": "Aligned Grids",
+                            "path": "aligned-grids"
+                        },
+                        {
+                            "type": "item",
                             "title": "Localisation",
                             "path": "localisation"
                         }
@@ -1647,6 +1652,11 @@
                     "children": [
                         {
                             "type": "item",
+                            "title": "Change Detection",
+                            "path": "change-detection"
+                        },
+                        {
+                            "type": "item",
                             "title": "DOM Virtualisation",
                             "path": "dom-virtualisation"
                         },
@@ -1747,32 +1757,6 @@
                             "type": "item",
                             "title": "Codemods",
                             "path": "codemods"
-                        }
-                    ]
-                },
-                {
-                    "type": "group",
-                    "title": "Other",
-                    "children": [
-                        {
-                            "type": "item",
-                            "title": "Context",
-                            "path": "context"
-                        },
-                        {
-                            "type": "item",
-                            "title": "Change Detection",
-                            "path": "change-detection"
-                        },
-                        {
-                            "type": "item",
-                            "title": "Custom Components",
-                            "path": "components"
-                        },
-                        {
-                            "type": "item",
-                            "title": "Aligned Grids",
-                            "path": "aligned-grids"
                         }
                     ]
                 }

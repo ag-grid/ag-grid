@@ -90,7 +90,7 @@ export function AutomatedRowGrouping({ visibilityThreshold, darkMode }: Props) {
                 return overlayRef.current;
             },
             getContainerScale: () => {
-                return isMobile() ? AUTOMATED_EXAMPLE_MOBILE_SCALE : 1;
+                return isMobile('rowGrouping') ? AUTOMATED_EXAMPLE_MOBILE_SCALE : 1;
             },
             mouseMaskClassname: styles.mouseMask,
             scriptDebuggerManager: debuggerManager,

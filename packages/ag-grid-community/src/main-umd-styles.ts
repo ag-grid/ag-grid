@@ -16,8 +16,9 @@ import '@ag-grid-community/styles/agGridClassicFont.css';
 import '@ag-grid-community/styles/agGridMaterialFont.css';
 import '@ag-grid-community/styles/agGridQuartzFont.css';
 
-import { AllCommunityModule, ModuleRegistry } from './main';
+import { AllCommunityModule, ModuleRegistry, _setUmd } from './main';
 
+_setUmd();
 ModuleRegistry.registerModules([AllCommunityModule]);
 
 export * from './main';

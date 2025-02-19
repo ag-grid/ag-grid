@@ -48,7 +48,6 @@ let gridApi: GridApi<IOlympicData>;
 
 const gridOptions: GridOptions<IOlympicData> = {
     columnDefs: columnDefs,
-    rowData: null,
     defaultColDef: {
         editable: true,
         flex: 1,

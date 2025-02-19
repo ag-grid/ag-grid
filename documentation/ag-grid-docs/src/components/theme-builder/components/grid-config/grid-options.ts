@@ -9,6 +9,8 @@ export const productionConfigFields = [
     'columnHover',
     'rowGrouping',
     'columnResizing',
+    'cellSelectionHeaderHighlight',
+    'rowNumbers',
     'rowDrag',
     'rowSelection',
     'rightToLeft',
@@ -71,7 +73,9 @@ export const buildGridOptions = (config: GridConfig): GridOptions => {
         sideBar,
         enableCharts: true,
         columnHoverHighlight: config.columnHover,
-        cellSelection: true,
+        cellSelection: {
+            enableHeaderHighlight: config.cellSelectionHeaderHighlight,
+        },
         rowData: defaultRowData(),
         columnDefs: config.columnGroupsDeep
             ? buildDeepGroupColumnDefs(columnDefs)
@@ -87,6 +91,7 @@ export const buildGridOptions = (config: GridConfig): GridOptions => {
             field: 'name',
             minWidth: 250,
         },
+        rowNumbers: config.rowNumbers,
         popupParent: config.popupParentIsBody ? document.body : undefined,
         grandTotalRow: config.grandTotalRow ? 'bottom' : undefined,
     };

@@ -350,10 +350,22 @@ export class NavigationService extends BeanStub implements NamedBean {
     // same cell into view (which means either scroll all the way up, or all the way down).
     private onHomeOrEndKey(key: string): void {
         const homeKey = key === KeyCode.PAGE_HOME;
-        const { visibleCols, pageBounds } = this.beans;
+        const { visibleCols, pageBounds, rowModel } = this.beans;
         const allColumns: AgColumn[] = visibleCols.allCols;
-        const columnToSelect = homeKey ? allColumns[0] : _last(allColumns);
         const scrollIndex = homeKey ? pageBounds.getFirstRow() : pageBounds.getLastRow();
+        const rowNode = rowModel.getRow(scrollIndex);
+
+        if (!rowNode) {
+            return;
+        }
+
+        const columnToSelect = (homeKey ? allColumns : [...allColumns].reverse()).find(
+            (col) => !col.isSuppressNavigable(rowNode)
+        );
+
+        if (!columnToSelect) {
+            return;
+        }
 
         this.navigateTo({
             scrollIndex: scrollIndex,

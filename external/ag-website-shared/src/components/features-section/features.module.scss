@@ -1,3 +1,5 @@
+@use 'design-system' as *;
+
 .container {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
@@ -8,13 +10,10 @@
     @media (max-width: 768px) {
         grid-template-columns: 1fr;
     }
-
-    a {
-        width: 100%;
-    }
 }
 
 .card {
+    width: 100%;
     background: var(--color-bg-primary);
     border-radius: 10px;
     padding: 20px;
@@ -22,13 +21,41 @@
     transition: transform 0.2s ease-in-out;
     border: 1px solid var(--color-border-secondary);
     color: var(--color-bg-secondary);
+    transition: background-color $transition-default-timing;
+}
+
+a.card:hover {
+    background-color: var(--color-bg-secondary);
 }
 
 .title {
+    --icon-color: var(--color-fg-primary);
+    --icon-size: 1em;
+
     font-size: 18px;
     margin-top: 0;
     margin-bottom: 8px;
     font-weight: 700;
+    transition: background-color $transition-default-timing;
+
+    a & {
+        color: var(--color-link);
+    }
+
+    a:hover & {
+        color: var(--color-link-hover);
+
+        svg {
+            transform: translate($spacing-size-1, -1px);
+        }
+    }
+
+    svg {
+        margin-left: $spacing-size-1;
+        opacity: 0.4;
+        transform: translate(0, -1px);
+        transition: transform $transition-default-timing;
+    }
 }
 
 .description {

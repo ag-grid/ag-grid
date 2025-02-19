@@ -58,7 +58,56 @@ npm install ag-grid-enterprise
 ```
 
 {% note %}
-You can test AG Grid Enterprise locally without a licence. To test in production, access support and remove the watermark & console warnings, [request a trial licence](./community-vs-enterprise/#request-an-enterprise-bundle-trial-licence).
+You can test AG Grid Enterprise locally without a licence. To test in production, access support, and remove the watermark and console warnings, [request a trial licence](./community-vs-enterprise/#request-an-enterprise-bundle-trial-licence).
+{% /note %}
+
+{% if isFramework("react") %}
+{% note %}
+`ag-grid-react` and `ag-grid-enterprise` versions must be identical to ensure that all features work correctly.
+{% /note %}
+{% /if %}
+
+{% if isFramework("angular") %}
+{% note %}
+`ag-grid-angular` and `ag-grid-enterprise` versions must be identical to ensure that all features work correctly.
+{% /note %}
+{% /if %}
+
+{% if isFramework("vue") %}
+{% note %}
+`ag-grid-vue3` and `ag-grid-enterprise` versions must be identical to ensure that all features work correctly.
+{% /note %}
+{% /if %}
+
+{% if isFramework("react", "angular", "vue") %}
+## Registering Modules
+{% /if %}
+
+{% if isFramework("javascript") %}
+### Registering Modules
+{% /if %}
+
+Register the `AllCommunityModule` to access all Community features:
+
+```js
+import { AllCommunityModule, ModuleRegistry } from 'ag-grid-community'; 
+
+// Register all Community features
+ModuleRegistry.registerModules([AllCommunityModule]);
+```
+
+Register the `AllEnterpriseBundle` to access all Community ***and*** Enterprise features:
+
+```js
+import { ModuleRegistry } from 'ag-grid-community'; 
+import { AllEnterpriseModule } from 'ag-grid-enterprise';
+
+// Register all Community and Enterprise features
+ModuleRegistry.registerModules([AllEnterpriseModule]);
+```
+
+{% note %}
+To minimize bundle size, only register the modules you want to use. See the [Selecting Modules](./modules/) docs for more information.
 {% /note %}
 
 {% if isFramework("react", "angular", "vue") %}
@@ -94,49 +143,12 @@ import { AgGridVue } from "ag-grid-vue3";
 {% /if %}
 
 {% if isFramework("javascript") %}
-To use AG Grid Community features, import them from the `ag-grid-community` package, e.g:
+Import `createGrid` from the `ag-grid-community` package to create a new data grid:
 
 ```js
 import { createGrid } from 'ag-grid-community';
 ```
-
-To use AG Grid Enterprise features, import the `ag-grid-enterprise` package:
-
-```js
-import 'ag-grid-enterprise';
-```
 {% /if %}
-
-{% if isFramework("react", "angular", "vue") %}
-## Registering Modules
-{% /if %}
-
-{% if isFramework("javascript") %}
-### Registering Modules
-{% /if %}
-
-Register the `AllCommunityModule` to access all Community features:
-
-```js
-import { AllCommunityModule, ModuleRegistry } from 'ag-grid-community'; 
-
-// Register all Community features
-ModuleRegistry.registerModules([AllCommunityModule]);
-```
-
-Register the `AllEnterpriseBundle` to access all Community ***and*** Enterprise features:
-
-```js
-import { ModuleRegistry } from 'ag-grid-community'; 
-import { AllEnterpriseModule } from 'ag-grid-enterprise';
-
-// Register all Community and Enterprise features
-ModuleRegistry.registerModules([AllEnterpriseModule]);
-```
-
-{% note %}
-To minimize bundle size, only register the modules you want to use. See the [Selecting Modules](./modules/) docs for more information.
-{% /note %}
 
 {% if isFramework("javascript") %}
 ## CDN Installation
@@ -195,6 +207,6 @@ the AG Grid bundle (all the styles needed for community and enterprise are in th
 {% /tabItem %}
 {% /tabs %}
 
-After downloading the bundles, you can refer to the files in the same way as you would from CDN. See the [Quick Start](./quick-start/) for more information.
+After downloading the bundles, you can refer to the files in the same way as you would from CDN. See the [Quick Start](./getting-started/) for more information.
 
 {% /if %}

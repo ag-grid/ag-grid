@@ -70,6 +70,20 @@
         "url": "https://github.com/ag-grid/ag-grid-seed/tree/main/enterprise/packages/create-react-app"
     },
     {
+        "name": "Create Next App",
+        "devEnvironment": "Next.js",
+        "framework": "react",
+        "licenseType": "enterprise",
+        "url": "https://github.com/ag-grid/ag-grid-seed/tree/main/enterprise/packages/create-next-app"
+    },
+    {
+        "name": "Create Next App",
+        "devEnvironment": "Next.js",
+        "framework": "react",
+        "licenseType": "enterprise-bundle",
+        "url": "https://github.com/ag-grid/ag-grid-seed/tree/main/enterprise-bundle/packages/create-next-app"
+    },
+    {
         "name": "Nuxt - Vue3",
         "devEnvironment": "Nuxt",
         "framework": "vue",

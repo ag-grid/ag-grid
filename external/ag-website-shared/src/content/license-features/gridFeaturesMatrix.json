@@ -140,6 +140,15 @@
             },
             {
                 "label": {
+                    "name": "Row Numbers",
+                    "link": "https://www.ag-grid.com/react-data-grid/row-numbers/"
+                },
+                "community": false,
+                "enterprise": true,
+                "chartsGrid": true
+            },
+            {
+                "label": {
                     "name": "Cell Range Selection",
                     "link": "https://www.ag-grid.com/react-data-grid/range-selection/"
                 },

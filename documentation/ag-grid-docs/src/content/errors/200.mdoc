@@ -29,4 +29,12 @@ import { AllEnterpriseModule, ModuleRegistry } from 'ag-grid-enterprise';
 ModuleRegistry.registerModules([AllEnterpriseModule]);
 ```
 
+{% if isFramework("javascript") %}
 
+### UMD / CDN 
+
+If you are using AG Grid via a UMD file or CDN script tag then you do not need to register modules yourself. See [AG Grid CDN Installation](./installation/#cdn-installation) for more details.
+
+If you are using Integrated Charts via a UMD file or CDN see [Integrated Charts Installation](./integrated-charts-installation/#cdn-installation) for more details.
+
+{% /if %}

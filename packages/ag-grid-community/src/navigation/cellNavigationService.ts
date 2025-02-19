@@ -49,12 +49,9 @@ export class CellNavigationService extends BeanStub implements NamedBean {
             rowIndex = upKey ? pageBounds.getFirstRow() : pageBounds.getLastRow();
             column = focusedCell.column as AgColumn;
         } else {
-            let allColumns = visibleCols.allCols;
             const isRtl = gos.get('enableRtl');
             rowIndex = focusedCell.rowIndex;
-            if (leftKey === isRtl) {
-                allColumns = [...allColumns].reverse();
-            }
+            const allColumns = leftKey !== isRtl ? visibleCols.allCols : [...visibleCols.allCols].reverse();
 
             column = allColumns.find((col) =>
                 this.isCellGoodToFocusOn({

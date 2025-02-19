@@ -329,8 +329,8 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
         }
 
         let idx = null;
+        listComponent.selectValue(this.value);
         if (this.value != null) {
-            listComponent.selectValue(this.value);
             idx = listComponent.getIndicesForValues(Array.isArray(value) ? value : [value])[0];
         }
 

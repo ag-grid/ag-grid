@@ -22,7 +22,6 @@ const getFormErrorMessage = (message: string) => {
         // eg, "Error: Unable to create a lead for a trial LK for email something@somewhere.com. Error: Duplicate email"
         errorMessage = MESSAGES.formErrorDuplicateEmail;
     }
-    ('');
 
     return errorMessage;
 };
@@ -274,7 +273,7 @@ export const TrialLicenceForm: FunctionComponent = () => {
                         <Icon name="tick" svgClasses={styles.statusIconSuccess} />
                         <span>
                             Thank you. Please check your inbox to validate your email and receive your{' '}
-                            <a href={urlWithBaseUrl('/license-pricing/')}>Enterprise Bundle</a> trial license.
+                            <b>Enterprise Bundle</b> trial license.
                         </span>
                     </p>
                 )}

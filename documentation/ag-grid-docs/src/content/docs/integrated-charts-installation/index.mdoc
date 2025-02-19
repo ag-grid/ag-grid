@@ -24,6 +24,27 @@ AG Charts Community (`AgChartsCommunityModule`) is available from the `ag-charts
 {% /note %}
 
 
+{% if isFramework("javascript") %}
+## CDN Installation
+
+To use Integrated Charts via a CDN then you must include both AG Grid Enterprise and one of AG Charts Community or Enterprise as follows. There is no need to register modules as this is done automatically in the UMD files.
+
+To use AG Charts Community via a CDN, include the following script tags in your HTML file:
+
+```html
+<script src="https://cdn.jsdelivr.net/npm/ag-grid-enterprise@{% $agGridVersion %}/dist/ag-grid-enterprise.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/ag-charts-community@{% $agChartsVersion %}/dist/umd/ag-charts-community.min.js"></script>
+```
+
+To use AG Charts Enterprise, include the following script tags in your HTML file:
+
+```html
+<script src="https://cdn.jsdelivr.net/npm/ag-grid-enterprise@{% $agGridVersion %}/dist/ag-grid-enterprise.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/ag-charts-enterprise@{% $agChartsVersion %}/dist/umd/ag-charts-enterprise.min.js"></script>
+```
+{% /if %}
+
+
 ## Next Up
 
 Continue to the next section to learn about [User Created Charts](./integrated-charts-user-created/).

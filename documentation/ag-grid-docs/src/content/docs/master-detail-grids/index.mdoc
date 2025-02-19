@@ -36,11 +36,7 @@ The `successCallback` can be called immediately in a synchronous fashion (typica
 
 The Master Grid in turn will call `api.setGridOption('rowData', data)` on the Detail Grid with the data provided.
 
-All the previous examples on Master Detail provided the result synchronously and as such another specific example is not given here.
-
-The following snippet illustrates this using a simple `setTimeout()` function to delay supplying data to the detail row after a fixed timeout.
-
-Below shows an example using `setTimeout()` to simulate lazying loading of data in the detail.
+Below shows an example using `setTimeout()` to delay supplying data to the detail row to simulate asynchronous loading of data in the detail.
 
 {% gridExampleRunner title="Lazy Load Detail Rows" name="lazy-load-rows"  exampleHeight=550 /%}
 
@@ -72,7 +68,7 @@ The Detail Grid Info objects are accessed via the Master Grid's API via the foll
 {% apiDocumentation source="grid-api/api.json" section="masterDetail" names=["getDetailGridInfo"] /%}
 
 ```{% frameworkTransform=true %}
-// lookup a specific DetailGridInfo by id, and then call stopEditing() on it
+// lookup a specific DetailGridInfo by id, and then call flashCells() on it
 const detailGridInfo = api.getDetailGridInfo('detail_someId');
 detailGridInfo.api.flashCells();
 ```
@@ -82,7 +78,7 @@ The grid generates IDs for detail grids by prefixing the parent row's ID with `d
 {% apiDocumentation source="grid-api/api.json" section="masterDetail" names=["forEachDetailGridInfo"] /%}
 
 ```{% frameworkTransform=true %}
-// iterate over all DetailGridInfos, and call stopEditing() on each one
+// iterate over all DetailGridInfos, and call flashCells() on each one
 api.forEachDetailGridInfo(detailGridInfo => {
     detailGridInfo.api.flashCells();
 });

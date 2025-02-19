@@ -89,13 +89,15 @@ function updateChart(chartType: 'heatmap' | 'waterfall') {
             columnDefs: chartType === 'heatmap' ? heatmapColDefs : waterfallColDefs,
             rowData,
         });
-        gridApi.updateChart({
-            type: 'rangeChartUpdate',
-            chartId: chartRef.chartId,
-            chartType,
-            cellRange: {
-                columns: chartType === 'heatmap' ? heatmapColIds : waterfallColIds,
-            },
+        setTimeout(() => {
+            gridApi.updateChart({
+                type: 'rangeChartUpdate',
+                chartId: chartRef.chartId,
+                chartType,
+                cellRange: {
+                    columns: chartType === 'heatmap' ? heatmapColIds : waterfallColIds,
+                },
+            });
         });
     });
 }

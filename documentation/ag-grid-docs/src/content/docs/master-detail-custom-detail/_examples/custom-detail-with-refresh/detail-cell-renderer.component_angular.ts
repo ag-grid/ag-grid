@@ -7,7 +7,7 @@ import type { ICellRendererParams } from 'ag-grid-community';
     standalone: true,
     changeDetection: ChangeDetectionStrategy.OnPush,
     template: `
-        <div>
+        <div role="gridcell">
             <form>
                 <div>
                     <p>

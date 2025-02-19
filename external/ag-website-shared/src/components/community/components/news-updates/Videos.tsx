@@ -46,29 +46,32 @@ const Videos = ({ videos }: { videos: Video[] }) => {
                     )}
                 </div>
             </div>
-            <div className={styles.videoContainer}>
-                {videos.map((video, index) => (
-                    <div
-                        key={index}
-                        onClick={() => handleVideoSelect(video)}
-                        className={`${styles.video} ${videos.indexOf(currentVideo) === index ? styles.active : ''}`}
-                    >
-                        {/* TODO: GitNation Portal Support */}
-                        {video.id ? (
-                            <img
-                                src={`https://img.youtube.com/vi/${video.id}/0.jpg`}
-                                alt="Video thumbnail"
-                                className={styles.youtubeThumbnail}
-                            />
-                        ) : (
-                            <img
-                                src={urlWithBaseUrl(video.thumbnail)}
-                                alt="Video thumbnail"
-                                className={styles.videoThumbnail}
-                            />
-                        )}
-                    </div>
-                ))}
+
+            <div className={styles.videoOuter}>
+                <div className={styles.videoContainer}>
+                    {videos.map((video, index) => (
+                        <div
+                            key={index}
+                            onClick={() => handleVideoSelect(video)}
+                            className={`${styles.video} ${videos.indexOf(currentVideo) === index ? styles.active : ''}`}
+                        >
+                            {/* TODO: GitNation Portal Support */}
+                            {video.id ? (
+                                <img
+                                    src={`https://img.youtube.com/vi/${video.id}/0.jpg`}
+                                    alt="Video thumbnail"
+                                    className={styles.youtubeThumbnail}
+                                />
+                            ) : (
+                                <img
+                                    src={urlWithBaseUrl(video.thumbnail)}
+                                    alt="Video thumbnail"
+                                    className={styles.videoThumbnail}
+                                />
+                            )}
+                        </div>
+                    ))}
+                </div>
             </div>
         </div>
     );

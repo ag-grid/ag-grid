@@ -5,6 +5,7 @@ export class DetailCellRenderer implements ICellRendererComp {
 
     init(params: ICellRendererParams) {
         this.eGui = document.createElement('div');
+        this.eGui.setAttribute('role', 'gridcell');
         this.eGui.innerHTML = '<h1 style="padding: 20px;">My Custom Detail</h1>';
     }
 

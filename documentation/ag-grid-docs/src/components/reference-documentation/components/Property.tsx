@@ -11,6 +11,7 @@ import { Fragment, type FunctionComponent, useCallback, useEffect, useRef, useSt
 import type { ChildDocEntry, Config, ICallSignature, InterfaceEntry } from '../types';
 import {
     convertMarkdown,
+    extractJSDocTags,
     formatJsDocString,
     getTypeUrl,
     inferType,
@@ -64,6 +65,16 @@ function getDescription({
 
     if (propDescription) {
         propDescription = formatJsDocString(propDescription);
+        if (!definition.description && gridOpProp && (gridOpProp.meta as ICallSignature['meta'])?.all) {
+            const { params, returns } = extractJSDocTags(
+                definition.description || (gridOpProp && (gridOpProp.meta as ICallSignature['meta'])?.all)
+            );
+            const paramsStr = params?.map((p) => `<span class="param">\`${p.name}\`: ${p.value}</span>`).join('');
+            const returnsStr = returns ? `<strong>Returns:</strong> ${returns}` : '';
+
+            propDescription = [propDescription, paramsStr, returnsStr].filter(Boolean).join('\n');
+        }
+
         // process property object
         description = convertMarkdown(propDescription, framework);
     } else {

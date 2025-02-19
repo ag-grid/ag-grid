@@ -1,6 +1,7 @@
 import {
     AgColumn,
     BeanStub,
+    KeyCode,
     ROW_NUMBERS_COLUMN_ID,
     _addGridCommonParams,
     _applyColumnState,
@@ -10,6 +11,7 @@ import {
     _destroyColumnTree,
     _getRowNode,
     _selectAllCells,
+    _setAriaLabel,
     _updateColsMap,
     isRowNumberCol,
 } from 'ag-grid-community';
@@ -66,6 +68,10 @@ export class RowNumbersService extends BeanStub implements NamedBean, IRowNumber
         cols: _ColumnCollections,
         updateOrders: (callback: (cols: AgColumn[] | null) => AgColumn[] | null) => void
     ): void {
+        if (!this.gos.get('rowNumbers')) {
+            return;
+        }
+
         const destroyCollection = () => {
             _destroyColumnTree(this.beans, this.columns?.tree);
             this.columns = null;
@@ -93,7 +99,16 @@ export class RowNumbersService extends BeanStub implements NamedBean, IRowNumber
             map: {},
         };
 
-        updateOrders(this.putRowNumbersColsFirstInList);
+        const putRowNumbersColsFirstInList = (cols: AgColumn[] | null): AgColumn[] | null => {
+            if (!cols) {
+                return null;
+            }
+            // we use colId, and not instance, to remove old rowNumbersCols
+            const colsFiltered = cols.filter((col) => !isRowNumberCol(col));
+            return [...list, ...colsFiltered];
+        };
+
+        updateOrders(putRowNumbersColsFirstInList);
     }
 
     public handleMouseDownOnCell(cellPosition: CellPosition, mouseEvent: MouseEvent): boolean {
@@ -131,14 +146,18 @@ export class RowNumbersService extends BeanStub implements NamedBean, IRowNumber
     }
 
     public setupForHeader(comp: _HeaderComp): void {
-        const { column } = comp.params;
-        const eGui = comp.getGui();
+        const { column, eGridHeader } = comp.params;
+
         if (!isRowNumberCol(column)) {
             return;
         }
 
-        this.addManagedElementListeners(eGui, {
+        _setAriaLabel(eGridHeader, 'Row Number');
+
+        this.addManagedElementListeners(eGridHeader, {
             click: this.onHeaderClick.bind(this),
+            keydown: this.onHeaderKeyDown.bind(this),
+            focus: this.onHeaderFocus.bind(this),
         });
     }
 
@@ -193,6 +212,17 @@ export class RowNumbersService extends BeanStub implements NamedBean, IRowNumber
         }
     }
 
+    private onHeaderFocus(): void {
+        this.beans.ariaAnnounce?.announceValue('Press Space to select all cells', 'ariaSelectAllCells');
+    }
+
+    private onHeaderKeyDown(e: KeyboardEvent): void {
+        if (!this.isIntegratedWithSelection || e.key !== KeyCode.SPACE) {
+            return;
+        }
+        _selectAllCells(this.beans);
+    }
+
     private onHeaderClick(): void {
         if (!this.isIntegratedWithSelection) {
             return;
@@ -245,15 +275,6 @@ export class RowNumbersService extends BeanStub implements NamedBean, IRowNumber
         div.textContent = value;
 
         return div;
-    }
-
-    private putRowNumbersColsFirstInList(list: AgColumn[], cols?: AgColumn[] | null): AgColumn[] | null {
-        if (!cols) {
-            return null;
-        }
-        // we use colId, and not instance, to remove old rowNumbersCols
-        const colsFiltered = cols.filter((col) => !isRowNumberCol(col));
-        return [...list, ...colsFiltered];
     }
 
     private createRowNumbersColDef(): ColDef {

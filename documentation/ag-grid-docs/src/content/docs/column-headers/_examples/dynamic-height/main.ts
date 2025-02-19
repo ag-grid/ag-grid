@@ -89,7 +89,6 @@ const gridOptions: GridOptions<IOlympicData> = {
         width: 200,
     },
     columnDefs: columnDefs,
-    rowData: null,
 };
 
 function setIdText(id: string, value: string | number | undefined) {

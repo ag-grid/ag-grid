@@ -54,7 +54,7 @@ const { headerText, isOpen = false } = Astro.props as Props;
 
             this.#contentOuter.addEventListener('transitionend', () => {
                 if (this.isOpen) {
-                    this.style.setProperty('--content-height', 'none');
+                    this.#setCSSProp('--content-height', 'none');
                 } else {
                     this.#details.removeAttribute('open');
                 }

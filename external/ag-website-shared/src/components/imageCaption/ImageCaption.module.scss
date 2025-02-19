@@ -27,14 +27,6 @@
 
 .body {
     padding: $spacing-size-4;
-
-    &.top {
-        padding: $spacing-size-1;
-    }
-}
-
-.bodyText {
-    white-space: nowrap;
 }
 
 #{$selector-darkmode} .imageCaption.darkmodeFilter img {

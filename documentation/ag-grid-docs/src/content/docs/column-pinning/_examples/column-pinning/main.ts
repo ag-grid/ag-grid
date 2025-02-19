@@ -40,7 +40,6 @@ let gridApi: GridApi<IOlympicData>;
 const gridOptions: GridOptions<IOlympicData> = {
     columnDefs: columnDefs,
     // debug: true,
-    rowData: null,
 };
 
 function clearPinned() {

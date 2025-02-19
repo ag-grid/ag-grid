@@ -3,15 +3,14 @@
     gap: 16px;
     font-weight: 400;
     width: 100%;
+
     @media (max-width: 768px) {
         flex-direction: column;
-    }
-    a {
-        width: 100%;
     }
 }
 
 .card {
+    width: 100%;
     background: var(--color-bg-primary);
     border-radius: 10px;
     padding: 20px;
@@ -21,13 +20,14 @@
     min-height: 180px;
     color: var(--color-bg-secondary);
 
-    svg {
-        margin-bottom: 16px;
-    }
     &:hover {
         transform: translateY(-5px);
         background-color: var(--color-bg-secondary);
         transition: all 0.3s;
+    }
+
+    svg {
+        margin-bottom: 16px;
     }
 
     path {
@@ -48,16 +48,16 @@
 
     div {
         height: 20px;
+    }
 
-        svg {
-            height: 20px;
-            width: 20px;
-        }
+    svg {
+        height: 20px;
+        width: 20px;
+    }
 
-        path {
-            fill: var(--color-fg-primary);
-            opacity: 0.4;
-        }
+    path {
+        fill: var(--color-fg-primary);
+        opacity: 0.4;
     }
 }
 

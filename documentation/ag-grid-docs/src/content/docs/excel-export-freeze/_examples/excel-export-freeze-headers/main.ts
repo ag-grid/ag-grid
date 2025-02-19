@@ -75,7 +75,6 @@ let gridApi: GridApi<IOlympicData>;
 const gridOptions: GridOptions<IOlympicData> = {
     // debug: true,
     columnDefs: columnDefs,
-    rowData: null,
     defaultExcelExportParams: {
         freezeRows: 'headers',
     },

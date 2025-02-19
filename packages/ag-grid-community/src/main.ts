@@ -1031,7 +1031,7 @@ export { RowSpanningAccumulator, GridSerializingParams, RowAccumulator } from '.
 
 // modules
 export { Module, ModuleValidationResult, _ModuleWithApi, _ModuleWithoutApi, ModuleName } from './interfaces/iModule';
-export { ModuleRegistry, _getGridRegisteredModules } from './modules/moduleRegistry';
+export { ModuleRegistry, _getGridRegisteredModules, _setUmd } from './modules/moduleRegistry';
 
 export { ValidationModule } from './validation/validationModule';
 export { ColumnMoveModule as _ColumnMoveModule } from './columnMove/columnMoveModule';
@@ -1104,9 +1104,13 @@ export { AllCommunityModule } from './allCommunityModule';
 export * from './events';
 
 // theming
-export { type Part, createPart } from './theming/Part';
-export { type Theme, createTheme, _asThemeImpl } from './theming/Theme';
+export { createPart } from './theming/Part';
+export type { Part } from './theming/Part';
+export { createTheme, _asThemeImpl } from './theming/Theme';
+export type { Theme } from './theming/Theme';
+export type { CoreParams } from './theming/core/core-css';
 export { checkboxStyleDefault } from './theming/parts/checkbox-style/checkbox-styles';
+export type { CheckboxStyleParams } from './theming/parts/checkbox-style/checkbox-styles';
 export {
     colorSchemeDark,
     colorSchemeDarkBlue,
@@ -1126,12 +1130,14 @@ export {
     iconSetQuartzRegular,
 } from './theming/parts/icon-set/icon-sets';
 export { inputStyleBase, inputStyleBordered, inputStyleUnderlined } from './theming/parts/input-style/input-styles';
+export type { InputStyleParams } from './theming/parts/input-style/input-styles';
 export {
     buttonStyleAlpine,
     buttonStyleBalham,
     buttonStyleBase,
     buttonStyleQuartz,
 } from './theming/parts/button-style/button-styles';
+export type { ButtonStyleParams } from './theming/parts/button-style/button-styles';
 export {
     tabStyleAlpine,
     tabStyleBase,
@@ -1139,8 +1145,11 @@ export {
     tabStyleQuartz,
     tabStyleRolodex,
 } from './theming/parts/tab-style/tab-styles';
+export type { TabStyleParams } from './theming/parts/tab-style/tab-styles';
 export { columnDropStyleBordered, columnDropStylePlain } from './theming/parts/column-drop-style/column-drop-styles';
 export { styleMaterial, themeAlpine, themeBalham, themeMaterial, themeQuartz } from './theming/parts/theme/themes';
+export type { ThemeDefaultParams } from './theming/parts/theme/themes';
+export type { StyleMaterialParams } from './theming/parts/theme/themes';
 export type {
     ColorValue,
     ImageValue,

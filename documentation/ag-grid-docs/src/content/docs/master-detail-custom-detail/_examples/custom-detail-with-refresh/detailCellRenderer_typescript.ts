@@ -5,6 +5,7 @@ export class DetailCellRenderer implements ICellRendererComp {
 
     init(params: ICellRendererParams) {
         this.eGui = document.createElement('div');
+        this.eGui.setAttribute('role', 'gridcell');
         this.refresh(params);
     }
 

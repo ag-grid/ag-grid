@@ -37,7 +37,7 @@ The `iconOverrides` part can be used to change individual icons to an image, sol
 
 ### Overriding Icons with Images
 
-`iconOverrides` can replace icons with images with the following arguments:
+`iconOverrides` can replace icons with images using the following arguments:
 
 | Parameter | Description |
 |-|-|
@@ -65,13 +65,13 @@ const myTheme = themeQuartz.withPart(mySvgIcons);
 
 ### Replacing Icons with Icon Font Characters
 
-Using `iconOverrides` with image icons:
+`iconOverrides` can replace icons with icon font glyphs or emoji using the following arguments:
 
 | Parameter | Description |
 |-|-|
 | `type` | `font` |
 | `family` | Optional, the name of the icon font family to use |
-| `cssImports` | Aptional, an array CSS file URLs to import, can be used to load the CSS file that defines the icon font |
+| `cssImports` | Optional, an array CSS file URLs to import, can be used to load the CSS file that defines the icon font |
 | `weight` | Optional, e.g. `bold`. Some icon fonts such as fontawesome require a bold font weight. |
 | `color` | Optional CSS color e.g. `red`. Can use [color parameter syntax](./theming-parameters/#color-values) to reference and mix other color parameters. |
 | `icons` | A map of [icon name](#icon-names) to text data. If you're using an icon font, the correct character for each icon will be documented by your font. But you can use any text or emoji. |

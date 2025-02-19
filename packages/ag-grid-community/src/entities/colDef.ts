@@ -705,7 +705,10 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
 
     // *** Columns: Widths *** //
 
-    /** Initial width in pixels for the cell. */
+    /**
+     * Initial width in pixels for the cell.
+     * If no width or flex properties set, cell width will default to 200 pixels.
+     */
     width?: number;
     /**
      * Same as `width`, except only applied when creating a new column. Not applied when updating column definitions.

@@ -25,7 +25,7 @@ const columnDefs: ColDef[] = [
     // this row just shows the row index, doesn't use any data from the row
     {
         headerName: '#',
-        width: 50,
+        width: 70,
         valueFormatter: (params: ValueFormatterParams) => {
             return `${parseInt(params.node!.id!) + 1}`;
         },

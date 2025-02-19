@@ -33,7 +33,6 @@ const gridOptions: GridOptions = {
         minWidth: 100,
     },
     tooltipShowDelay: 500,
-    rowData: null,
     columnDefs: columnDefs,
 };
 

@@ -269,13 +269,18 @@ export class CellCtrl extends BeanStub {
 
         // if node is stub, and no group data for this node (groupSelectsChildren can populate group data)
         const isSsrmLoading = rowNode.stub && rowNode.groupData?.[column.getId()] == null;
-        if (isSsrmLoading) {
+        const colDef = column.getColDef();
+        const isCellRenderer = this.isCellRenderer();
+
+        if (isSsrmLoading || isCellRenderer) {
             const params = this.createCellRendererParams();
-            compDetails = _getLoadingCellRendererDetails(userCompFactory, column.getColDef(), params);
-        } else if (this.isCellRenderer()) {
-            const params = this.createCellRendererParams();
-            compDetails = _getCellRendererDetails(userCompFactory, column.getColDef(), params);
+            if (!isSsrmLoading || isRowNumberCol(column)) {
+                compDetails = _getCellRendererDetails(userCompFactory, colDef, params);
+            } else {
+                compDetails = _getLoadingCellRendererDetails(userCompFactory, colDef, params);
+            }
         }
+
         this.comp.setRenderDetails(compDetails, valueToDisplay, forceNewCellRendererInstance);
 
         // Don't call expensive _requestAnimationFrame if we don't have to

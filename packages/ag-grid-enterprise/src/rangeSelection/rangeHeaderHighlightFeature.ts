@@ -1,4 +1,3 @@
-import 'ag-grid-community';
 import { BeanStub } from 'ag-grid-community';
 import type { AgColumn, AgColumnGroup, IHeaderCellComp } from 'ag-grid-community';
 
@@ -52,6 +51,8 @@ export class RangeHeaderHighlightFeature extends BeanStub {
             columnMoved: listener,
             columnGroupOpened: listener,
         });
+
+        listener();
     }
 
     public onRangeSelectionChanged(): void {

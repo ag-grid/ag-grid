@@ -42,6 +42,8 @@ It's often required that one or more columns fill the entire available space in 
 
 Flex sizing works by dividing the remaining space in the grid among all flex columns in proportion to their flex value. For example, suppose the grid has a total width of 450px and it has three columns: the first with `width: 150`; the second with `flex: 1`; and third with `flex: 2`. The first column will be 150px wide, leaving 300px remaining. The column with `flex: 2` has twice the size with `flex: 1`. So final sizes will be: 150px, 100px, 200px.
 
+If a column has no width or flex properties set, it will default to 200px. 
+
 {% note %}
 The flex config does **not** work with a `width` config
 in the same column. If you need to provide a minimum width for a column,

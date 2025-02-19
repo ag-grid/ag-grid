@@ -30,7 +30,6 @@ export default [
             '@typescript-eslint/no-unnecessary-type-constraint': 'error',
             '@typescript-eslint/no-this-alias': 'off',
             '@typescript-eslint/no-for-in-array': 'error',
-            'no-restricted-syntax': ['error', 'ForInStatement'],
             'no-restricted-properties': [
                 'warn',
                 { property: 'innerText', message: 'Prefer textContent where possible.' },
@@ -38,6 +37,15 @@ export default [
                     object: 'Object',
                     property: 'entries',
                     message: 'Prefer Object.keys() to Object.entries() for performance reasons.',
+                },
+            ],
+            'no-restricted-syntax': [
+                'error',
+                'ForInStatement',
+                {
+                    selector: 'ImportDeclaration[specifiers.length = 0][source.value=ag-grid-community]',
+                    message:
+                        'Empty imports are not allowed. i.e import "ag-grid-community"; as it will cause warnings about being sideEffect free',
                 },
             ],
             'no-restricted-imports': [
@@ -55,6 +63,7 @@ export default [
                     message: 'There should be no imports of ag-grid-enterprise, use relative imports instead',
                 },
             ],
+
             'no-console': 'error',
         },
     },

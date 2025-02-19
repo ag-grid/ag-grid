@@ -55,7 +55,11 @@
 
         --ag-range-selection-highlight-color: var(--ag-range-selection-border-color);
 
-        --ag-range-header-highlight-color: color-mix(in srgb, transparent, var(--ag-foreground-color) 8%);
+        --ag-range-header-highlight-color: color-mix(
+            in srgb,
+            var(--ag-header-background-color),
+            var(--ag-foreground-color) 8%
+        );
 
         --ag-selected-tab-underline-color: var(--ag-range-selection-border-color);
         --ag-selected-tab-underline-width: 0;

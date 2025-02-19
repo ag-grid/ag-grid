@@ -1,131 +1,132 @@
 import { createPart } from '../../Part';
-import type { WithParamTypes } from '../../theme-types';
+import type { Part } from '../../Part';
+import type { BorderValue, ColorValue, LengthValue, ShadowValue } from '../../theme-types';
 import { accentColor, backgroundColor, foregroundBackgroundMix, foregroundMix } from '../../theme-utils';
 import { inputStyleBaseCSS } from './input-style-base.css-GENERATED';
 import { inputStyleBorderedCSS } from './input-style-bordered.css-GENERATED';
 import { inputStyleUnderlinedCSS } from './input-style-underlined.css-GENERATED';
 
-export type InputStyleParams = WithParamTypes<{
+export type InputStyleParams = {
     /**
      * Background color for text inputs
      */
-    inputBackgroundColor: 'infer';
+    inputBackgroundColor: ColorValue;
 
     /**
      * Border around text inputs (or underneath, if using the underlined input style)
      */
-    inputBorder: 'infer';
+    inputBorder: BorderValue;
 
     /**
      * Corner radius of text inputs
      */
-    inputBorderRadius: 'infer';
+    inputBorderRadius: LengthValue;
 
     /**
      * Background color for disabled text inputs
      */
-    inputDisabledBackgroundColor: 'infer';
+    inputDisabledBackgroundColor: ColorValue;
 
     /**
      * Border around disabled text inputs (or underneath, if using the underlined input style)
      */
-    inputDisabledBorder: 'infer';
+    inputDisabledBorder: BorderValue;
 
     /**
      * Color of text within disabled text inputs
      */
-    inputDisabledTextColor: 'infer';
+    inputDisabledTextColor: ColorValue;
 
     /**
      * Background color for focussed text inputs
      */
-    inputFocusBackgroundColor: 'infer';
+    inputFocusBackgroundColor: ColorValue;
 
     /**
      * Border around focussed text inputs (or underneath, if using the underlined input style)
      */
-    inputFocusBorder: 'infer';
+    inputFocusBorder: BorderValue;
 
     /**
      * Shadow around focussed text inputs
      */
-    inputFocusShadow: 'infer';
+    inputFocusShadow: ShadowValue;
 
     /**
      * Color of text within focussed text inputs
      */
-    inputFocusTextColor: 'infer';
+    inputFocusTextColor: ColorValue;
 
     /**
      * Minimum height of text inputs
      */
-    inputHeight: 'infer';
+    inputHeight: LengthValue;
 
     /**
      * Background color for text inputs in an invalid state
      */
-    inputInvalidBackgroundColor: 'infer';
+    inputInvalidBackgroundColor: ColorValue;
 
     /**
      * Border around text inputs in an invalid state (or underneath, if using the underlined input style)
      */
-    inputInvalidBorder: 'infer';
+    inputInvalidBorder: BorderValue;
 
     /**
      * Color of text within text inputs in an invalid state
      */
-    inputInvalidTextColor: 'infer';
+    inputInvalidTextColor: ColorValue;
 
     /**
      * Padding at the start of text in text inputs
      */
-    inputPaddingStart: 'infer';
+    inputPaddingStart: LengthValue;
 
     /**
      * Color of text within text inputs
      */
-    inputTextColor: 'infer';
+    inputTextColor: ColorValue;
 
     /**
      * Color of placeholder text in empty inputs describing the purpose of the input e.g. "Search..."
      */
-    inputPlaceholderTextColor: 'infer';
+    inputPlaceholderTextColor: ColorValue;
 
     /**
      * Color of search icon within search text inputs
      */
-    inputIconColor: 'infer';
+    inputIconColor: ColorValue;
 
     /**
      * Border around buttons with attached dropdown menus (e.g. select fields)
      */
-    pickerButtonBorder: 'infer';
+    pickerButtonBorder: BorderValue;
 
     /**
      * Border around buttons with attached dropdown menus (e.g. select fields) when focussed
      */
-    pickerButtonFocusBorder: 'infer';
+    pickerButtonFocusBorder: BorderValue;
 
     /**
      * Background color for buttons with attached dropdown menus (e.g. select fields)
      */
-    pickerButtonBackgroundColor: 'infer';
+    pickerButtonBackgroundColor: ColorValue;
 
     /**
      * Background color for buttons with attached dropdown menus (e.g. select fields) when focussed
      */
-    pickerButtonFocusBackgroundColor: 'infer';
+    pickerButtonFocusBackgroundColor: ColorValue;
 
     /**
      * Border around dropdown menus attached to buttons (e.g. select fields)
      */
-    pickerListBorder: 'infer';
+    pickerListBorder: BorderValue;
 
     /**
      * Background color for dropdown menus attached to buttons (e.g. select fields)
      */
-    pickerListBackgroundColor: 'infer';
-}>;
+    pickerListBackgroundColor: ColorValue;
+};
 
 const baseParams: InputStyleParams = {
     inputBackgroundColor: 'transparent',
@@ -188,7 +189,7 @@ const makeInputStyleBaseTreeShakeable = () =>
         css: inputStyleBaseCSS,
     });
 
-export const inputStyleBase = /*#__PURE__*/ makeInputStyleBaseTreeShakeable();
+export const inputStyleBase: Part<InputStyleParams> = /*#__PURE__*/ makeInputStyleBaseTreeShakeable();
 
 const makeInputStyleBorderedTreeShakeable = () =>
     createPart<InputStyleParams>({
@@ -223,7 +224,7 @@ const makeInputStyleBorderedTreeShakeable = () =>
         css: () => inputStyleBaseCSS + inputStyleBorderedCSS,
     });
 
-export const inputStyleBordered = /*#__PURE__*/ makeInputStyleBorderedTreeShakeable();
+export const inputStyleBordered: Part<InputStyleParams> = /*#__PURE__*/ makeInputStyleBorderedTreeShakeable();
 
 const makeInputStyleUnderlinedTreeShakeable = () =>
     createPart<InputStyleParams>({
@@ -255,4 +256,4 @@ const makeInputStyleUnderlinedTreeShakeable = () =>
         css: () => inputStyleBaseCSS + inputStyleUnderlinedCSS,
     });
 
-export const inputStyleUnderlined = /*#__PURE__*/ makeInputStyleUnderlinedTreeShakeable();
+export const inputStyleUnderlined: Part<InputStyleParams> = /*#__PURE__*/ makeInputStyleUnderlinedTreeShakeable();

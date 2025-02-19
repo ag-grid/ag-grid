@@ -97,4 +97,6 @@ module.exports = {
     executeJiraRequest,
     saveDataToFile,
     logger,
+    jiraRequest,
+    curlRequest,
 };

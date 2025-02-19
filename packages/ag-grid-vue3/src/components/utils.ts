@@ -228,9 +228,10 @@ export interface Props<TData> {
          * @initial
          */
     columnMenu?: 'legacy' | 'new' | undefined,
-    /** When `true`, the column menu button will always be shown.
+    /** Only recommended for use if `columnMenu = 'legacy'`.
+         * When `true`, the column menu button will always be shown.
          * When `false`, the column menu button will only show when the mouse is over the column header.
-         * If `columnMenu = 'legacy'`, this will default to `false` instead of `true`.
+         * When using `columnMenu = 'legacy'`, this will default to `false` instead of `true`.
          * @default true
          */
     suppressMenuHide?: boolean | undefined,

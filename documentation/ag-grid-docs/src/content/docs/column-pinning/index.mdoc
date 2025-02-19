@@ -35,7 +35,9 @@ It is possible to pin a column by moving the column in the following ways:
 
 ## Resizing Pinned Sections
 
-When resizing pinned columns, the size of the pinned sections (left and right) will be limited to the size of the  `grid - 50px`. This will prevent the center viewport of the grid from becoming inaccessible. For the same reason, if columns that are too wide become pinned, the grid will automatically unpin columns from the pinned sections to make the center viewport visible again. To customise the columns being unpinned, use [processUnpinnedColumns](./grid-options/#reference-columnPinning-processUnpinnedColumns)
+When resizing pinned columns, the size of the pinned sections (left and right) will be limited to the size of the  `grid - 50px`. This will prevent the center viewport of the grid from becoming inaccessible. For the same reason, if columns that are too wide become pinned, the grid will automatically unpin columns from the pinned sections to make the center viewport visible again. To customise the columns being unpinned, provide the grid option `processUnpinnedColumns`.
+
+{% apiDocumentation source="grid-options/properties.json" section="columnPinning" names=["processUnpinnedColumns"] /%}
 
 ## Lock Pinned
 

@@ -165,4 +165,5 @@ async function updateVersionsData({ isVerbose }: { isVerbose: boolean }) {
 }
 
 const isVerbose = process.argv.includes('--verbose');
+// eslint-disable-next-line @typescript-eslint/no-floating-promises
 updateVersionsData({ isVerbose });

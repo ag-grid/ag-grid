@@ -1,7 +1,8 @@
 import { createPart } from '../../Part';
 import { createTheme } from '../../Theme';
+import type { Theme } from '../../Theme';
 import type { CoreParams } from '../../core/core-css';
-import type { WithParamTypes } from '../../theme-types';
+import type { ColorValue } from '../../theme-types';
 import {
     accentColor,
     accentMix,
@@ -13,6 +14,7 @@ import {
 import type { ButtonStyleParams } from '../button-style/button-styles';
 import { buttonStyleAlpine, buttonStyleBalham, buttonStyleBase } from '../button-style/button-styles';
 import { checkboxStyleDefault } from '../checkbox-style/checkbox-styles';
+import type { CheckboxStyleParams } from '../checkbox-style/checkbox-styles';
 import { colorSchemeVariable } from '../color-scheme/color-schemes';
 import { columnDropStyleBordered, columnDropStylePlain } from '../column-drop-style/column-drop-styles';
 import { iconSetBalham } from '../icon-set/balham/icon-set-balham';
@@ -22,6 +24,12 @@ import { inputStyleBordered, inputStyleUnderlined } from '../input-style/input-s
 import type { TabStyleParams } from '../tab-style/tab-styles';
 import { tabStyleAlpine, tabStyleMaterial, tabStyleQuartz, tabStyleRolodex } from '../tab-style/tab-styles';
 import { materialAdjustmentsCSS } from './material-adjustments.css-GENERATED';
+
+export type ThemeDefaultParams = CoreParams &
+    ButtonStyleParams &
+    CheckboxStyleParams &
+    TabStyleParams &
+    InputStyleParams;
 
 const makeThemeQuartzTreeShakeable = () =>
     createTheme()
@@ -43,7 +51,7 @@ const makeThemeQuartzTreeShakeable = () =>
             ],
         });
 
-export const themeQuartz =
+export const themeQuartz: Theme<ThemeDefaultParams> =
     /*#__PURE__*/
     makeThemeQuartzTreeShakeable();
 
@@ -93,7 +101,7 @@ const makeThemeAlpineTreeShakeable = () =>
             toggleButtonOffBackgroundColor: foregroundBackgroundMix(0.45),
         });
 
-export const themeAlpine =
+export const themeAlpine: Theme<ThemeDefaultParams> =
     /*#__PURE__*/
     makeThemeAlpineTreeShakeable();
 
@@ -150,12 +158,12 @@ const makeThemeBalhamTreeShakeable = () =>
             panelTitleBarIconColor: foregroundColor,
         });
 
-export const themeBalham =
+export const themeBalham: Theme<ThemeDefaultParams> =
     /*#__PURE__*/
     makeThemeBalhamTreeShakeable();
 
-type StyleMaterialParams = {
-    primaryColor: 'infer';
+export type StyleMaterialParams = {
+    primaryColor: ColorValue;
 };
 
 const makeStyleMaterialTreeShakeable = () => {
@@ -164,7 +172,7 @@ const makeStyleMaterialTreeShakeable = () => {
     // e.g. tabSelectedUnderlineColor, but not add that param to the type if
     // it's not there already
     const sharedParams: Partial<
-        WithParamTypes<StyleMaterialParams & TabStyleParams & CoreParams & ButtonStyleParams & InputStyleParams>
+        StyleMaterialParams & TabStyleParams & CoreParams & ButtonStyleParams & InputStyleParams
     > = {
         tabSelectedUnderlineColor: { ref: 'primaryColor' },
         sideButtonSelectedUnderlineColor: { ref: 'primaryColor' },
@@ -330,4 +338,5 @@ const makeThemeMaterialTreeShakeable = () =>
             popupShadow: '5px 5px 10px rgba(0, 0, 0, 0.3)',
         });
 
-export const themeMaterial = /*#__PURE__*/ makeThemeMaterialTreeShakeable();
+export const themeMaterial: Theme<ThemeDefaultParams & StyleMaterialParams> =
+    /*#__PURE__*/ makeThemeMaterialTreeShakeable();

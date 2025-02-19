@@ -24,7 +24,6 @@ const gridOptions: GridOptions<IOlympicData> = {
         sortingOrder: ['desc', 'asc', null],
     },
     columnDefs: columnDefs,
-    rowData: null,
 };
 
 // setup the grid after the page has finished loading

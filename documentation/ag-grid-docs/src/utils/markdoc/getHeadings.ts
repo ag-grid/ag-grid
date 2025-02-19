@@ -50,12 +50,12 @@ function isApiDocsHeadingNode(node: Node) {
     return node.tag === 'apiDocumentation' && !node.attributes.section;
 }
 
-function hasApiDocsHeadingAttribute(node: Node) {
-    return node.attributes[API_DOC_HEADINGS_ATTR_NAME];
+function hasApiDocsHeadingAttribute(node?: Node) {
+    return node?.attributes?.[API_DOC_HEADINGS_ATTR_NAME];
 }
 
-function hasHeadingAttribute(node: Node) {
-    return node.attributes[HEADING_ATTR_NAME];
+function hasHeadingAttribute(node?: Node) {
+    return node?.attributes?.[HEADING_ATTR_NAME];
 }
 
 function addAttributeToNode({ node, name, value }: { node: Node; name: string; value: any }) {

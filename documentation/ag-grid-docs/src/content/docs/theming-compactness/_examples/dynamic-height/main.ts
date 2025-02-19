@@ -1,8 +1,8 @@
 import type { ColDef, GridApi, GridOptions } from 'ag-grid-community';
-import { AllCommunityModule, ModuleRegistry, createGrid } from 'ag-grid-community';
+import { ModuleRegistry, createGrid } from 'ag-grid-community';
 import { AllEnterpriseModule } from 'ag-grid-enterprise';
 
-ModuleRegistry.registerModules([AllCommunityModule, AllEnterpriseModule]);
+ModuleRegistry.registerModules([AllEnterpriseModule]);
 
 function changeSize(value: number) {
     document.documentElement.style.setProperty('--ag-spacing', `${value}px`);
@@ -25,7 +25,6 @@ const columnDefs: ColDef[] = [
 let gridApi: GridApi<IOlympicData>;
 
 const gridOptions: GridOptions<IOlympicData> = {
-    rowData: null,
     columnDefs: columnDefs,
     defaultColDef: {
         editable: true,

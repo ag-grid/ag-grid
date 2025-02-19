@@ -24,6 +24,12 @@ html {
     @media (min-width: $breakpoint-docs-nav-medium) {
         --header-nav-height: 64px;
     }
+
+    // Fixes Radix <Select /> visual jump on click
+    // (Breaks position sticky header)
+    body[data-scroll-locked] {
+        overflow: visible !important;
+    }
 }
 
 // Safari only fix light/darkmode scrollbar colors

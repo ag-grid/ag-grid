@@ -49,7 +49,6 @@ const defaultColDef: ColDef = {
 const gridOptionsTop: GridOptions = {
     defaultColDef,
     columnDefs,
-    rowData: null,
     alignedGrids: () => [bottomApi],
     autoSizeStrategy: {
         type: 'fitGridWidth',
@@ -62,7 +61,6 @@ const topApi = createGrid(gridDivTop, gridOptionsTop);
 const gridOptionsBottom: GridOptions = {
     defaultColDef,
     columnDefs,
-    rowData: null,
     alignedGrids: () => [topApi],
 };
 const gridDivBottom = document.querySelector<HTMLElement>('#myGridBottom')!;

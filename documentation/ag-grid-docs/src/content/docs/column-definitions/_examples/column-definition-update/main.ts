@@ -26,7 +26,6 @@ let gridApi: GridApi<IOlympicData>;
 
 const gridOptions: GridOptions<IOlympicData> = {
     columnDefs: columnDefinitions,
-    rowData: null,
     autoSizeStrategy: {
         type: 'fitGridWidth',
     },

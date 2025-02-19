@@ -90,7 +90,6 @@ const gridOptions: GridOptions<IOlympicData> = {
         enableValue: true,
     },
     columnDefs: columnDefs,
-    rowData: null,
     sideBar: true,
     autoGroupColumnDef: {
         headerName: 'Athlete',

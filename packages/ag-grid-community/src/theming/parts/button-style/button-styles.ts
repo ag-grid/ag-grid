@@ -1,89 +1,90 @@
 import { createPart } from '../../Part';
-import type { WithParamTypes } from '../../theme-types';
+import type { Part } from '../../Part';
+import type { BorderValue, ColorValue, FontWeightValue, LengthValue } from '../../theme-types';
 import { accentColor, backgroundColor, foregroundBackgroundMix, foregroundColor } from '../../theme-utils';
 import { buttonStyleBaseCSS } from './button-style-base.css-GENERATED';
 
-export type ButtonStyleParams = WithParamTypes<{
+export type ButtonStyleParams = {
     /**
      * Text color of standard action buttons (e.g. "Reset" and "Apply")
      */
-    buttonTextColor: 'infer';
+    buttonTextColor: ColorValue;
 
     /**
      * Font weight of standard action buttons (e.g. "Reset" and "Apply")
      */
-    buttonFontWeight: 'infer';
+    buttonFontWeight: FontWeightValue;
 
     /**
      * Background color of standard action buttons (e.g. "Reset" and "Apply")
      */
-    buttonBackgroundColor: 'infer';
+    buttonBackgroundColor: ColorValue;
 
     /**
      * Border around standard action buttons (e.g. "Reset" and "Apply")
      */
-    buttonBorder: 'infer';
+    buttonBorder: BorderValue;
 
     /**
      * Corner radius of standard action buttons (e.g. "Reset" and "Apply")
      */
-    buttonBorderRadius: 'infer';
+    buttonBorderRadius: LengthValue;
 
     /**
      * Horizontal padding inside standard action buttons (e.g. "Reset" and "Apply")
      */
-    buttonHorizontalPadding: 'infer';
+    buttonHorizontalPadding: LengthValue;
 
     /**
      * Vertical padding inside standard action buttons (e.g. "Reset" and "Apply")
      */
-    buttonVerticalPadding: 'infer';
+    buttonVerticalPadding: LengthValue;
 
     /**
      * Text color of standard action buttons (e.g. "Reset" and "Apply") when hovered
      */
-    buttonHoverTextColor: 'infer';
+    buttonHoverTextColor: ColorValue;
 
     /**
      * Background color of standard action buttons (e.g. "Reset" and "Apply") when hovered
      */
-    buttonHoverBackgroundColor: 'infer';
+    buttonHoverBackgroundColor: ColorValue;
 
     /**
      * Border around standard action buttons (e.g. "Reset" and "Apply") when hovered. Only has an effect if a border is enabled with `buttonBorder`.
      */
-    buttonHoverBorder: 'infer';
+    buttonHoverBorder: BorderValue;
 
     /**
      * Text color of standard action buttons (e.g. "Reset" and "Apply") when being clicked
      */
-    buttonActiveTextColor: 'infer';
+    buttonActiveTextColor: ColorValue;
 
     /**
      * Background color of standard action buttons (e.g. "Reset" and "Apply") when being clicked
      */
-    buttonActiveBackgroundColor: 'infer';
+    buttonActiveBackgroundColor: ColorValue;
 
     /**
      * Border around standard action buttons (e.g. "Reset" and "Apply") when being clicked.
      */
-    buttonActiveBorder: 'infer';
+    buttonActiveBorder: BorderValue;
 
     /**
      * Text color of standard action buttons (e.g. "Reset" and "Apply") when disabled
      */
-    buttonDisabledTextColor: 'infer';
+    buttonDisabledTextColor: ColorValue;
 
     /**
      * Background color of standard action buttons (e.g. "Reset" and "Apply") when disabled
      */
-    buttonDisabledBackgroundColor: 'infer';
+    buttonDisabledBackgroundColor: ColorValue;
 
     /**
      * Border around standard action buttons (e.g. "Reset" and "Apply") when disabled.
      */
-    buttonDisabledBorder: 'infer';
-}>;
+    buttonDisabledBorder: BorderValue;
+};
 
 const baseParams: ButtonStyleParams = {
     buttonTextColor: 'inherit',
@@ -111,7 +112,7 @@ const makeButtonStyleBaseTreeShakeable = () =>
         css: buttonStyleBaseCSS,
     });
 
-export const buttonStyleBase = /*#__PURE__*/ makeButtonStyleBaseTreeShakeable();
+export const buttonStyleBase: Part<ButtonStyleParams> = /*#__PURE__*/ makeButtonStyleBaseTreeShakeable();
 
 const makeButtonStyleQuartzTreeShakeable = () =>
     createPart<ButtonStyleParams>({
@@ -126,7 +127,7 @@ const makeButtonStyleQuartzTreeShakeable = () =>
         css: buttonStyleBaseCSS,
     });
 
-export const buttonStyleQuartz = /*#__PURE__*/ makeButtonStyleQuartzTreeShakeable();
+export const buttonStyleQuartz: Part<ButtonStyleParams> = /*#__PURE__*/ makeButtonStyleQuartzTreeShakeable();
 
 const makeButtonStyleAlpineTreeShakeable = () =>
     createPart<ButtonStyleParams>({
@@ -144,7 +145,7 @@ const makeButtonStyleAlpineTreeShakeable = () =>
         css: buttonStyleBaseCSS,
     });
 
-export const buttonStyleAlpine = /*#__PURE__*/ makeButtonStyleAlpineTreeShakeable();
+export const buttonStyleAlpine: Part<ButtonStyleParams> = /*#__PURE__*/ makeButtonStyleAlpineTreeShakeable();
 
 const makeButtonStyleBalhamTreeShakeable = () =>
     createPart<ButtonStyleParams>({
@@ -160,4 +161,4 @@ const makeButtonStyleBalhamTreeShakeable = () =>
         css: buttonStyleBaseCSS,
     });
 
-export const buttonStyleBalham = /*#__PURE__*/ makeButtonStyleBalhamTreeShakeable();
+export const buttonStyleBalham: Part<ButtonStyleParams> = /*#__PURE__*/ makeButtonStyleBalhamTreeShakeable();

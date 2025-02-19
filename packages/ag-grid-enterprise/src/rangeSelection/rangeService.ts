@@ -855,32 +855,6 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
         this.selectionMode = allColumns ? SelectionMode.ALL_COLUMNS : SelectionMode.NORMAL;
     }
 
-    private focusFirstRenderedCellAtRowPosition(rowPosition: RowPosition, columnList: AgColumn[]) {
-        const { beans } = this;
-        const rowNode = _getRowNode(beans, rowPosition);
-
-        if (!rowNode) {
-            return;
-        }
-
-        const colsInViewport = beans.colViewport.getColsWithinViewport(rowNode);
-        const column = columnList.find((col) => colsInViewport.indexOf(col) !== -1);
-
-        if (!column) {
-            return;
-        }
-
-        const { rowPinned, rowIndex } = rowPosition;
-
-        beans.focusSvc.setFocusedCell({
-            rowIndex,
-            rowPinned,
-            column,
-            forceBrowserFocus: true,
-            preventScrollOnBrowserFocus: true,
-        });
-    }
-
     private refreshRangeStart(cellRange: CellRange) {
         const { startColumn, columns } = cellRange;
 

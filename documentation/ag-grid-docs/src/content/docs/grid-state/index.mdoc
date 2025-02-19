@@ -74,4 +74,6 @@ If applying some but not all of the column state properties, then `initialState.
 
 The state also contains the grid version number. When applying state with older version numbers, any old state properties will be automatically migrated to the current format.
 
+The grid state is designed to be serialisable, so any functions will be stripped out. For example, aggregation functions should be [Registered as Custom Functions](./aggregation-custom-functions/#registering-custom-functions) to work with state rather than being set as [Directly Applied Functions](./aggregation-custom-functions/#directly-applied-functions).
+
 {% interfaceDocumentation interfaceName="GridState" /%}

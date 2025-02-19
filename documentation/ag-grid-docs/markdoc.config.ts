@@ -12,6 +12,7 @@ import { getDocumentationArchiveSection } from '@ag-website-shared/markdoc/tags/
 import { gettingStarted } from '@ag-website-shared/markdoc/tags/getting-started';
 import { idea } from '@ag-website-shared/markdoc/tags/idea';
 import { image } from '@ag-website-shared/markdoc/tags/image';
+import { imageCaption } from '@ag-website-shared/markdoc/tags/imageCaption';
 import { kbd } from '@ag-website-shared/markdoc/tags/kbd';
 import { note } from '@ag-website-shared/markdoc/tags/note';
 import { oneTrustCookies } from '@ag-website-shared/markdoc/tags/oneTrustCookies';
@@ -22,6 +23,12 @@ import { video } from '@ag-website-shared/markdoc/tags/video';
 import { videoSection } from '@ag-website-shared/markdoc/tags/videoSection';
 import { warning } from '@ag-website-shared/markdoc/tags/warning';
 import { Markdoc, component, defineMarkdocConfig } from '@astrojs/markdoc/config';
+import {
+    chartsVersion,
+    chartsVersionPatch,
+    gridVersion,
+    gridVersionPatch,
+} from '@utils/markdoc/functions/libraryVersions';
 import { getFrameworkCapitalised } from '@utils/markdoc/getFrameworkCapitalised';
 
 import { agChartsVersion, agGridVersion } from './src/constants';
@@ -60,6 +67,10 @@ export default defineMarkdocConfig({
         getFrameworkCapitalised,
         migrationVersion,
         migrationVersionPatch: getMigrationVersionPatch(versionsData),
+        gridVersion,
+        gridVersionPatch,
+        chartsVersion,
+        chartsVersionPatch,
     },
     tags: {
         kbd,
@@ -163,40 +174,7 @@ export default defineMarkdocConfig({
         iconsPanel: {
             render: component('./src/components/icon/IconsPanel.astro'),
         },
-        imageCaption: {
-            render: component('./src/components/image/ImageCaption.astro'),
-            attributes: {
-                /**
-                 * Docs page name in `src/content/[pageName]
-                 *
-                 * If not provided, will default to the location of the markdoc file
-                 */
-                pageName: { type: String },
-                /**
-                 * Relative path within markdoc page folder
-                 */
-                imagePath: { type: String, required: true },
-                alt: { type: String, required: true },
-                centered: { type: Boolean },
-                constrained: { type: Boolean },
-                descriptionTop: { type: Boolean },
-                width: { type: String },
-                height: { type: String },
-                minWidth: { type: String },
-                maxWidth: { type: String },
-                /**
-                 * Enable dark mode CSS filter for image
-                 *
-                 * Alternatively, add `-dark` suffixed image in `imagePath` to add
-                 * dark mode image manually
-                 */
-                enableDarkModeFilter: { type: Boolean },
-                /**
-                 * Autoplay gif
-                 */
-                autoPlay: { type: Boolean },
-            },
-        },
+        imageCaption,
         flex: {
             render: component('./src/components/flex/Flex.astro'),
             attributes: {
