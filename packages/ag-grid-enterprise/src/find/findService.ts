@@ -68,9 +68,13 @@ export class FindService extends BeanStub implements NamedBean, IFindService {
             modelUpdated: refreshAndKeepActive,
             displayedColumnsChanged: refreshAndKeepActive,
             pinnedRowDataChanged: refreshAndKeepActive,
-            cellValueChanged: refreshAndKeepActive,
+            cellValueChanged: refreshAndKeepActiveDebounced,
             rowNodeDataChanged: refreshAndKeepActiveDebounced,
         });
+        const rowSpanSvc = this.beans.rowSpanSvc;
+        if (rowSpanSvc) {
+            this.addManagedListeners(rowSpanSvc, { spannedCellsUpdated: refreshAndKeepActiveDebounced });
+        }
 
         refreshAndWipeActive();
     }
@@ -368,7 +372,7 @@ export class FindService extends BeanStub implements NamedBean, IFindService {
             numOverall,
         };
         this.activeMatch = activeMatch;
-        this.refreshAndScrollToActive(activeMatch, undefined);
+        this.refreshRows(new Set([node]), new Set([column]));
     }
 
     private refreshRows(rowNodes: Set<IRowNode>, columns?: Set<Column>): void {

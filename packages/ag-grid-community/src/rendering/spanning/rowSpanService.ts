@@ -3,6 +3,7 @@ import { BeanStub } from '../../context/beanStub';
 import type { AgColumn } from '../../entities/agColumn';
 import type { RowNode } from '../../entities/rowNode';
 import type { CellPosition } from '../../interfaces/iCellPosition';
+import type { IRowNode } from '../../interfaces/iRowNode';
 import { _debounce } from '../../utils/function';
 import type { CellSpan } from './rowSpanCache';
 import { RowSpanCache } from './rowSpanCache';
@@ -13,9 +14,12 @@ export class RowSpanService extends BeanStub<'spannedCellsUpdated'> implements N
     private spanningColumns: Map<AgColumn, RowSpanCache> = new Map();
 
     public postConstruct(): void {
+        const onRowDataUpdated = this.onRowDataUpdated.bind(this);
         this.addManagedEventListeners({
             paginationChanged: this.buildModelCaches.bind(this),
             pinnedRowDataChanged: this.buildPinnedCaches.bind(this),
+            rowNodeDataChanged: onRowDataUpdated,
+            cellValueChanged: onRowDataUpdated,
         });
     }
 
@@ -59,10 +63,10 @@ export class RowSpanService extends BeanStub<'spannedCellsUpdated'> implements N
 
     private pinnedTimeout: number | null = null;
     private modelTimeout: number | null = null;
-    // called by rowNode when data changes, as this could be a hot path it's debounced
+    // called when data changes, as this could be a hot path it's debounced
     // it uses timeouts instead of debounce so that it can be cancelled by `modelUpdated`
     // which is expected to run immediately (to exec before the rowRenderer)
-    public onRowDataUpdated(node: RowNode) {
+    private onRowDataUpdated({ node }: { node: IRowNode }) {
         const { spannedRowRenderer } = this.beans;
         if (node.rowPinned) {
             if (this.pinnedTimeout != null) {
