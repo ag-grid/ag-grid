@@ -1,7 +1,7 @@
 import React, { StrictMode, useCallback, useMemo, useRef, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 
-import type { ColDef, GridReadyEvent } from 'ag-grid-community';
+import type { ColDef } from 'ag-grid-community';
 import { ClientSideRowModelModule, ModuleRegistry, ValidationModule } from 'ag-grid-community';
 import {
     ColumnMenuModule,
@@ -42,7 +42,7 @@ const GridExample = () => {
     const gridRef = useRef<AgGridReact<IOlympicData>>(null);
     const containerStyle = useMemo(() => ({ width: '100%', height: '100%' }), []);
     const gridStyle = useMemo(() => ({ height: '100%', width: '100%' }), []);
-    const [rowData, setRowData] = useState<IOlympicData[]>();
+
     const [columnDefs, setColumnDefs] = useState<ColDef[]>([
         { field: 'country', rowGroup: true },
         { field: 'sport', pivot: true },
@@ -60,11 +60,7 @@ const GridExample = () => {
         };
     }, []);
 
-    const onGridReady = useCallback((params: GridReadyEvent) => {
-        fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
-            .then((resp) => resp.json())
-            .then((data: IOlympicData[]) => setRowData(data));
-    }, []);
+    const { data, loading } = useFetchJson<IOlympicData>('https://www.ag-grid.com/example-assets/olympic-winners.json');
 
     const togglePivotHeader = useCallback(() => {
         const checkbox = document.querySelector<HTMLInputElement>('#removePivotHeaderRowWhenSingleValueColumn')!;
@@ -89,13 +85,13 @@ const GridExample = () => {
                 <div style={gridStyle}>
                     <AgGridReact<IOlympicData>
                         ref={gridRef}
-                        rowData={rowData}
+                        rowData={data}
+                        loading={loading}
                         columnDefs={columnDefs}
                         defaultColDef={defaultColDef}
                         autoGroupColumnDef={autoGroupColumnDef}
                         pivotMode={true}
                         removePivotHeaderRowWhenSingleValueColumn={true}
-                        onGridReady={onGridReady}
                     />
                 </div>
             </div>

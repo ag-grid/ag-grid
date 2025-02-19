@@ -78,7 +78,9 @@ export function vanillaToTypescript(bindings: ParsedBindings, mainFilePath: stri
         // (.*DOMContentLoaded.*)\n Match the line with DOMContentLoaded
         // (.|\n)*? Match the shortest number of lines until the next part matches (body of the event handler)
         // (\n}\)) Match a }) on a new line with no indentation
-        .replace(/(.*DOMContentLoaded.*)\n((.|\n)*?)(\n}\))/g, '$2');
+        .replace(/(.*DOMContentLoaded.*)\n((.|\n)*?)(\n}\))/g, '$2')
+        // comment only makes sense with the DOMContentLoaded event
+        .replace('// setup the grid after the page has finished loading', '');
 
     if (unWrapped.includes('DOMContentLoaded')) {
         console.error('DomContentLoaded replace failed for', mainFilePath);

@@ -1,7 +1,7 @@
 import React, { StrictMode, useMemo, useRef, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 
-import type { ColDef, GridReadyEvent } from 'ag-grid-community';
+import type { ColDef } from 'ag-grid-community';
 import { ClientSideRowModelModule, ModuleRegistry, ValidationModule } from 'ag-grid-community';
 import { AgGridReact } from 'ag-grid-react';
 
@@ -11,7 +11,7 @@ ModuleRegistry.registerModules([ClientSideRowModelModule, ValidationModule /* De
 
 const GridExample = () => {
     const gridRef = useRef<AgGridReact>(null);
-    const [rowData, setRowData] = useState(null);
+
     const columnDefs = useMemo<ColDef[]>(
         () => [
             { field: 'athlete', width: 150 },
@@ -32,13 +32,7 @@ const GridExample = () => {
         width: '100%',
     });
 
-    const onGridReady = (params: GridReadyEvent) => {
-        fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
-            .then((resp) => resp.json())
-            .then((data) => {
-                setRowData(data);
-            });
-    };
+    const { data, loading } = useFetchJson<IOlympicData>('https://www.ag-grid.com/example-assets/olympic-winners.json');
 
     const fillLarge = () => {
         setWidthAndHeight('100%', '100%');
@@ -68,7 +62,7 @@ const GridExample = () => {
             </div>
             <div className="grid-wrapper">
                 <div style={style}>
-                    <AgGridReact ref={gridRef} rowData={rowData} columnDefs={columnDefs} onGridReady={onGridReady} />
+                    <AgGridReact ref={gridRef} rowData={data} loading={loading} columnDefs={columnDefs} />
                 </div>
             </div>
         </div>

@@ -1,7 +1,7 @@
 import React, { StrictMode, useCallback, useMemo, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 
-import type { ColDef, GridReadyEvent } from 'ag-grid-community';
+import type { ColDef } from 'ag-grid-community';
 import { ClientSideRowModelModule, CustomFilterModule, ModuleRegistry, ValidationModule } from 'ag-grid-community';
 import { AgGridReact } from 'ag-grid-react';
 
@@ -15,7 +15,7 @@ ModuleRegistry.registerModules([CustomFilterModule, ClientSideRowModelModule, Va
 const GridExample = () => {
     const containerStyle = useMemo(() => ({ width: '100%', height: '100%' }), []);
     const gridStyle = useMemo(() => ({ height: '100%', width: '100%' }), []);
-    const [rowData, setRowData] = useState<IOlympicData[]>();
+
     const [columnDefs, setColumnDefs] = useState<ColDef[]>([
         { field: 'athlete', minWidth: 150, filter: PersonFilter },
         { field: 'year', minWidth: 130, filter: YearFilter },
@@ -33,22 +33,16 @@ const GridExample = () => {
         };
     }, []);
 
-    const onGridReady = useCallback((params: GridReadyEvent) => {
-        fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
-            .then((resp) => resp.json())
-            .then((data: IOlympicData[]) => {
-                setRowData(data);
-            });
-    }, []);
+    const { data, loading } = useFetchJson<IOlympicData>('https://www.ag-grid.com/example-assets/olympic-winners.json');
 
     return (
         <div style={containerStyle}>
             <div style={gridStyle}>
                 <AgGridReact<IOlympicData>
-                    rowData={rowData}
+                    rowData={data}
+                    loading={loading}
                     columnDefs={columnDefs}
                     defaultColDef={defaultColDef}
-                    onGridReady={onGridReady}
                 />
             </div>
         </div>

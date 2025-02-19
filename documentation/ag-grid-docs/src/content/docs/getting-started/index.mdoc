@@ -145,12 +145,6 @@ const gridOptions = {
 {% metaTag tags=["aggridreact"] /%}
 <!-- Create React -->
 
-### Import the React Data Grid
-
-```js
-import { AgGridReact } from 'ag-grid-react'; // React Data Grid Component
-```
-
 ### Register Modules
 
 Register the `AllCommunityModule` to access all Community features:
@@ -165,6 +159,12 @@ ModuleRegistry.registerModules([AllCommunityModule]);
 {% note %}
 To minimize bundle size, only register the modules you want to use. See the [Modules](./modules/) docs for more information.
 {% /note %}
+
+### Import the React Data Grid
+
+```js
+import { AgGridReact } from 'ag-grid-react'; // React Data Grid Component
+```
 
 ### Define Rows and Columns
 
@@ -208,14 +208,6 @@ return (
 
 {% if isFramework("angular") %}
 
-### Import the Angular Data Grid
-
-```js
-import { Component } from '@angular/core';
-import { AgGridAngular } from 'ag-grid-angular'; // Angular Data Grid Component
-import type { ColDef } from 'ag-grid-community'; // Column Definition Type Interface
-```
-
 ### Register Modules
 
 Register the `AllCommunityModule` to access all Community features:
@@ -231,12 +223,16 @@ ModuleRegistry.registerModules([AllCommunityModule]);
 To minimize bundle size, only register the modules you want to use. See the [Modules](./modules/) page for more information.
 {% /note %}
 
+### Import the Angular Data Grid
+
+```js
+import { AgGridAngular } from 'ag-grid-angular'; // Angular Data Grid Component
+import type { ColDef } from 'ag-grid-community'; // Column Definition Type Interface
+```
+
 ### Define Rows and Columns
 
 ```jsx
-// Register all community features
-ModuleRegistry.registerModules([AllCommunityModule]);
-
 @Component({
     selector: 'app-root',
     standalone: true,
@@ -281,25 +277,6 @@ template:
 
 {% if isFramework("vue") %}
 
-### Import the Vue Data Grid
-
-```html
-<template></template>
-
-<script>
-import { ref } from 'vue';
-import { AgGridVue } from "ag-grid-vue3"; // Vue Data Grid Component
-
-export default {
-    name: "App",
-    components: {
-        AgGridVue, // Add Vue Data Grid component
-    },
-    setup() {},
-};
-</script>
-```
-
 ### Register Modules
 
 Register the `AllCommunityModule` to access all Community features:
@@ -314,6 +291,22 @@ ModuleRegistry.registerModules([AllCommunityModule]);
 {% note %}
 To minimize bundle size, only register the modules you want to use. See the [Modules](./modules/) page for more information.
 {% /note %}
+
+### Import the Vue Data Grid
+
+```html
+<script>
+import { AgGridVue } from "ag-grid-vue3"; // Vue Data Grid Component
+
+export default {
+    name: "App",
+    components: {
+        AgGridVue, // Add Vue Data Grid component
+    },
+    setup() {},
+};
+</script>
+```
 
 ### Define Rows and Columns
 

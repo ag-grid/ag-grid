@@ -151,7 +151,7 @@ export class AgRichSelectList<TValue, TEventType extends string = AgRichSelectLi
 
         for (let i = 0; i < values.length; i++) {
             const currentItem = values[i];
-            if (this.selectedItems.has(currentItem)) {
+            if (this.findItemInSelected(currentItem) !== undefined) {
                 continue;
             }
             this.selectedItems.add(currentItem);
@@ -251,8 +251,10 @@ export class AgRichSelectList<TValue, TEventType extends string = AgRichSelectLi
     }
 
     public toggleListItemSelection(value: TValue): void {
-        if (this.selectedItems.has(value)) {
-            this.selectedItems.delete(value);
+        const item = this.findItemInSelected(value);
+
+        if (item !== undefined) {
+            this.selectedItems.delete(item);
         } else {
             this.selectedItems.add(value);
         }
@@ -263,9 +265,23 @@ export class AgRichSelectList<TValue, TEventType extends string = AgRichSelectLi
 
     private refreshSelectedItems(): void {
         this.forEachRenderedRow((cmp: RichSelectRow<TValue>) => {
-            const selected = this.selectedItems.has(cmp.getValue());
+            const selected = this.findItemInSelected(cmp.getValue()) !== undefined;
             cmp.updateSelected(selected);
         });
+    }
+
+    private findItemInSelected(value: TValue): TValue | undefined {
+        if (typeof value === 'object') {
+            const valueFormatter = this.params.valueFormatter!;
+            const valueFormatted = valueFormatter(value);
+            for (const item of this.selectedItems) {
+                if (valueFormatter(item) === valueFormatted) {
+                    return item;
+                }
+            }
+        } else {
+            return this.selectedItems.has(value) ? value : undefined;
+        }
     }
 
     private createLoadingElement(): void {

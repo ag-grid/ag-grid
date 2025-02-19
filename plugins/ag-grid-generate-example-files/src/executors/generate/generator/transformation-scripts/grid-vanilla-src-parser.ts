@@ -223,7 +223,22 @@ function internalParser(
                 /gridOptions/g,
                 'params'
             );
-            bindings.data = { url, callback };
+
+            // extract the numbers from data.slice(0, 600) when this is contained in the callback
+            const matches = callback.match(/data\.slice\((\d+), (\d+)\)/);
+            let totalRows = undefined;
+            if (matches) {
+                const [_, start, end] = matches;
+                if (start !== '0') {
+                    console.warn(
+                        'The start index of the data slice is not 0, this may cause issues with the totalRows calculation for example generation',
+                        examplePath
+                    );
+                }
+                totalRows = end;
+            }
+
+            bindings.data = { url, callback, totalRows };
         },
     });
 

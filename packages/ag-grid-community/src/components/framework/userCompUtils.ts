@@ -250,9 +250,10 @@ export function _getFilterDetails(
 
 export function _getDateCompDetails(
     userCompFactory: UserComponentFactory,
+    def: ColDef,
     params: IDateParams
 ): UserCompDetails<IDateComp> | undefined {
-    return userCompFactory.getCompDetailsFromGridOptions(DateComponent, 'agDateInput', params, true);
+    return userCompFactory.getCompDetails(def, DateComponent, 'agDateInput', params, true);
 }
 
 export function _getLoadingOverlayCompDetails(

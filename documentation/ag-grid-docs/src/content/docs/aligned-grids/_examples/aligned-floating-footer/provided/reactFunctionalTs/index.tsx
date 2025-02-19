@@ -41,7 +41,6 @@ const bottomData = [
 ];
 
 const GridExample = () => {
-    const [rowData, setRowData] = useState(null);
     const topGrid = useRef<AgGridReact>(null);
     const bottomGrid = useRef<AgGridReact>(null);
 
@@ -82,11 +81,7 @@ const GridExample = () => {
         []
     );
 
-    const onGridReady = (params: GridReadyEvent) => {
-        fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
-            .then((resp) => resp.json())
-            .then((data) => setRowData(data));
-    };
+    const { data, loading } = useFetchJson('https://www.ag-grid.com/example-assets/olympic-winners.json');
 
     return (
         <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }} className="example-container">
@@ -94,10 +89,10 @@ const GridExample = () => {
                 <AgGridReact
                     ref={topGrid}
                     alignedGrids={[bottomGrid]}
-                    rowData={rowData}
+                    rowData={data}
+                    loading={loading}
                     defaultColDef={defaultColDef}
                     columnDefs={columnDefs}
-                    onGridReady={onGridReady}
                     suppressHorizontalScroll
                     alwaysShowVerticalScroll
                     autoSizeStrategy={autoSizeStrategy}

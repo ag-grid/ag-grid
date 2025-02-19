@@ -1,4 +1,4 @@
-import type { ColDef, GridApi, GridOptions } from 'ag-grid-community';
+import type { GridApi, GridOptions } from 'ag-grid-community';
 import { AllCommunityModule, ModuleRegistry, createGrid } from 'ag-grid-community';
 
 ModuleRegistry.registerModules([AllCommunityModule]);
@@ -19,9 +19,9 @@ interface IRow {
 let gridApi: GridApi;
 
 // Grid Options: Contains all of the grid configurations
-const gridOptions: GridOptions = {
+const gridOptions: GridOptions<IRow> = {
     // Data to be displayed
-    rowData: [] as IRow[],
+    rowData: [],
     // Columns to be displayed (Should match rowData properties)
     columnDefs: [
         { field: 'mission', filter: true },
@@ -31,11 +31,11 @@ const gridOptions: GridOptions = {
         { field: 'price' },
         { field: 'successful' },
         { field: 'rocket' },
-    ] as ColDef[],
+    ],
     // Configurations applied to all columns
     defaultColDef: {
         filter: true,
-    } as ColDef,
+    },
 };
 
 // Create Grid: Create new grid within the #myGrid div, using the Grid Options object

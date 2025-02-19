@@ -1,5 +1,5 @@
 // React Grid Logic
-import React, { StrictMode, useEffect, useMemo, useState } from 'react';
+import React, { StrictMode, useMemo, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 
 // Theme
@@ -47,7 +47,7 @@ interface IRow {
 // Create new GridExample component
 const GridExample = () => {
     // Row Data: The data to be displayed.
-    const [rowData, setRowData] = useState<IRow[]>([]);
+    const { data, loading } = useFetchJson<IRow>('https://www.ag-grid.com/example-assets/space-mission-data.json');
 
     // Column Definitions: Defines & controls grid columns.
     const [colDefs] = useState<ColDef[]>([
@@ -73,13 +73,6 @@ const GridExample = () => {
         { field: 'rocket' },
     ]);
 
-    // Fetch data & update rowData state
-    useEffect(() => {
-        fetch('https://www.ag-grid.com/example-assets/space-mission-data.json') // Fetch data from server
-            .then((result) => result.json()) // Convert to JSON
-            .then((rowData) => setRowData(rowData)); // Update state of `rowData`
-    }, []);
-
     // Apply settings across all columns
     const defaultColDef = useMemo<ColDef>(() => {
         return {
@@ -93,7 +86,8 @@ const GridExample = () => {
         <div style={{ width: '100%', height: '100%' }}>
             {/* The AG Grid component, with Row Data & Column Definition props */}
             <AgGridReact
-                rowData={rowData}
+                rowData={data}
+                loading={loading}
                 columnDefs={colDefs}
                 defaultColDef={defaultColDef}
                 pagination={true}

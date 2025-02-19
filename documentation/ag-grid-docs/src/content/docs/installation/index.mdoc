@@ -80,6 +80,37 @@ You can test AG Grid Enterprise locally without a licence. To test in production
 {% /if %}
 
 {% if isFramework("react", "angular", "vue") %}
+## Registering Modules
+{% /if %}
+
+{% if isFramework("javascript") %}
+### Registering Modules
+{% /if %}
+
+Register the `AllCommunityModule` to access all Community features:
+
+```js
+import { AllCommunityModule, ModuleRegistry } from 'ag-grid-community'; 
+
+// Register all Community features
+ModuleRegistry.registerModules([AllCommunityModule]);
+```
+
+Register the `AllEnterpriseBundle` to access all Community ***and*** Enterprise features:
+
+```js
+import { ModuleRegistry } from 'ag-grid-community'; 
+import { AllEnterpriseModule } from 'ag-grid-enterprise';
+
+// Register all Community and Enterprise features
+ModuleRegistry.registerModules([AllEnterpriseModule]);
+```
+
+{% note %}
+To minimize bundle size, only register the modules you want to use. See the [Selecting Modules](./modules/) docs for more information.
+{% /note %}
+
+{% if isFramework("react", "angular", "vue") %}
 ## Importing
 {% /if %}
 
@@ -112,49 +143,12 @@ import { AgGridVue } from "ag-grid-vue3";
 {% /if %}
 
 {% if isFramework("javascript") %}
-To use AG Grid Community features, import them from the `ag-grid-community` package, e.g:
+Import `createGrid` from the `ag-grid-community` package to create a new data grid:
 
 ```js
 import { createGrid } from 'ag-grid-community';
 ```
-
-To use AG Grid Enterprise features, import the `ag-grid-enterprise` package:
-
-```js
-import 'ag-grid-enterprise';
-```
 {% /if %}
-
-{% if isFramework("react", "angular", "vue") %}
-## Registering Modules
-{% /if %}
-
-{% if isFramework("javascript") %}
-### Registering Modules
-{% /if %}
-
-Register the `AllCommunityModule` to access all Community features:
-
-```js
-import { AllCommunityModule, ModuleRegistry } from 'ag-grid-community'; 
-
-// Register all Community features
-ModuleRegistry.registerModules([AllCommunityModule]);
-```
-
-Register the `AllEnterpriseBundle` to access all Community ***and*** Enterprise features:
-
-```js
-import { ModuleRegistry } from 'ag-grid-community'; 
-import { AllEnterpriseModule } from 'ag-grid-enterprise';
-
-// Register all Community and Enterprise features
-ModuleRegistry.registerModules([AllEnterpriseModule]);
-```
-
-{% note %}
-To minimize bundle size, only register the modules you want to use. See the [Selecting Modules](./modules/) docs for more information.
-{% /note %}
 
 {% if isFramework("javascript") %}
 ## CDN Installation

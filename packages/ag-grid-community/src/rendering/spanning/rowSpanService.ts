@@ -14,7 +14,7 @@ export class RowSpanService extends BeanStub<'spannedCellsUpdated'> implements N
 
     public postConstruct(): void {
         this.addManagedEventListeners({
-            modelUpdated: this.buildModelCaches.bind(this),
+            paginationChanged: this.buildModelCaches.bind(this),
             pinnedRowDataChanged: this.buildPinnedCaches.bind(this),
         });
     }
