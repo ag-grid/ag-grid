@@ -47,12 +47,51 @@
                     "moduleName": "RowDragModule",
                     "name": "Row Dragging",
                     "path": "row-dragging"
+                },
+                {
+                    "moduleName": "RowNumbersModule",
+                    "name": "Row Numbers",
+                    "path": "row-numbers",
+                    "isEnterprise": true
+                }
+            ]
+        },
+        {
+            "name": "Row Models",
+            "children": [
+                {
+                    "moduleName": "ClientSideRowModelModule",
+                    "name": "Client Side Row Model",
+                    "path": "row-models"
+                },
+                {
+                    "moduleName": "InfiniteRowModelModule",
+                    "name": "Infinite Row Model",
+                    "path": "infinite-scrolling"
+                },
+                {
+                    "moduleName": "ServerSideRowModelModule",
+                    "name": "Server Side Row Model",
+                    "path": "server-side-model",
+                    "isEnterprise": true,
+                    "ssrmBundled": true
+                },
+                {
+                    "moduleName": "ViewportRowModelModule",
+                    "name": "Viewport Row Model",
+                    "path": "viewport",
+                    "isEnterprise": true
                 }
             ]
         },
         {
             "name": "Cells",
             "children": [
+                {
+                    "moduleName": "CellSpanModule",
+                    "name": "Cell Span",
+                    "path": "row-spanning"
+                },
                 {
                     "moduleName": "CellStyleModule",
                     "name": "Styling Cells",
@@ -71,7 +110,8 @@
                 {
                     "moduleName": "FindModule",
                     "name": "Find",
-                    "path": "find"
+                    "path": "find",
+                    "isEnterprise": true
                 }
             ]
         },
@@ -261,6 +301,23 @@
             "path": "master-detail",
             "isEnterprise": true,
             "ssrmBundled": true
+        },
+        {
+            "name": "Charts",
+            "children": [
+                {
+                    "moduleName": "IntegratedChartsModule",
+                    "name": "Integrated Charts",
+                    "path": "integrated-charts",
+                    "isEnterprise": true
+                },
+                {
+                    "moduleName": "SparklinesModule",
+                    "name": "Sparklines",
+                    "path": "sparklines-overview",
+                    "isEnterprise": true
+                }
+            ]
         },
         {
             "name": "Accessories",
