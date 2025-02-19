@@ -13,8 +13,12 @@ const IGNORED_MODULES = [
     'AllCommunityModule',
     // Bundled module
     'AllEnterpriseModule',
-    // Deprecated in favour or `IntegratedChartsModule`
+    // Deprecated in favour of `IntegratedChartsModule`
     'GridChartsModule',
+    // Deprecated
+    'MenuModule',
+    // Deprecated
+    'RangeSelectionModule',
 ];
 const MODULE_SETUP_PAGE_URL = 'https://www.ag-grid.com/javascript-data-grid/modules/#selecting-modules';
 
