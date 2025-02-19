@@ -309,7 +309,7 @@ export interface CoreBeanCollection {
     touchSvc?: TouchService;
     rowSpanSvc?: RowSpanService;
     spannedRowRenderer?: SpannedRowRenderer;
-    find?: IFindService;
+    findSvc?: IFindService;
 }
 
 export type BeanCollection = CoreBeanCollection & {
@@ -408,7 +408,7 @@ export type BeanName =
     | 'filterMenuFactory'
     | 'filterStage'
     | 'filterValueSvc'
-    | 'find'
+    | 'findSvc'
     | 'flashCellSvc'
     | 'flattenStage'
     | 'focusSvc'

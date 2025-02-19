@@ -1,30 +1,30 @@
 import type { BeanCollection, FindCellParams, FindCellValueParams, FindMatch, FindPart } from 'ag-grid-community';
 
 export function findNext(beans: BeanCollection): void {
-    beans.find?.next();
+    beans.findSvc?.next();
 }
 
 export function findPrevious(beans: BeanCollection): void {
-    beans.find?.previous();
+    beans.findSvc?.previous();
 }
 
 export function findGetTotalMatches(beans: BeanCollection): number {
-    return beans.find?.totalMatches ?? 0;
+    return beans.findSvc?.totalMatches ?? 0;
 }
 
 export function findGoTo(beans: BeanCollection, match: number): void {
-    beans.find?.goTo(match);
+    beans.findSvc?.goTo(match);
 }
 
 export function findGetActiveMatch(beans: BeanCollection): FindMatch | undefined {
-    return beans.find?.activeMatch;
+    return beans.findSvc?.activeMatch;
 }
 
 export function findGetNumMatches(beans: BeanCollection, params: FindCellParams): number {
     const { node, column } = params;
-    return beans.find?.getNumMatches(node, column) ?? 0;
+    return beans.findSvc?.getNumMatches(node, column) ?? 0;
 }
 
 export function findGetParts(beans: BeanCollection, params: FindCellValueParams): FindPart[] {
-    return beans.find?.getParts(params) ?? [];
+    return beans.findSvc?.getParts(params) ?? [];
 }

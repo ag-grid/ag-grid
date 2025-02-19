@@ -275,7 +275,7 @@ export class CellCtrl extends BeanStub {
         } else if (this.isCellRenderer()) {
             const params = this.createCellRendererParams();
             compDetails = _getCellRendererDetails(userCompFactory, column.getColDef(), params);
-        } else if (beans.find?.isMatch(rowNode, column)) {
+        } else if (beans.findSvc?.isMatch(rowNode, column)) {
             const params = this.createCellRendererParams();
             compDetails = _getCellRendererDetails(
                 userCompFactory,
