@@ -542,13 +542,14 @@ export class GridBodyScrollFeature extends BeanStub {
             }
 
             const gridBodyCtrl = this.ctrlsSvc.getGridBodyCtrl();
-            const stickyTopHeight = gridBodyCtrl.stickyTopHeight;
-            const stickyBottomHeight = gridBodyCtrl.stickyBottomHeight;
 
             const rowNode = rowModel.getRow(index);
             let rowGotShiftedDuringOperation: boolean;
+            let stickyHeightsChanged: boolean;
+            let attempt = 0;
 
             do {
+                const { stickyTopHeight, stickyBottomHeight } = gridBodyCtrl;
                 const startingRowTop = rowNode!.rowTop;
                 const startingRowHeight = rowNode!.rowHeight;
 
@@ -577,9 +578,9 @@ export class GridBodyScrollFeature extends BeanStub {
                 let newScrollPosition: number | null = null;
 
                 if (position === 'top') {
-                    newScrollPosition = pxTop;
+                    newScrollPosition = pxTop - stickyTopHeight;
                 } else if (position === 'bottom') {
-                    newScrollPosition = pxBottom;
+                    newScrollPosition = pxBottom + stickyBottomHeight;
                 } else if (position === 'middle') {
                     newScrollPosition = pxMiddle;
                 } else if (rowAboveViewport) {
@@ -601,7 +602,13 @@ export class GridBodyScrollFeature extends BeanStub {
                 // if row was shifted, then the position we scrolled to is incorrect.
                 rowGotShiftedDuringOperation =
                     startingRowTop !== rowNode!.rowTop || startingRowHeight !== rowNode!.rowHeight;
-            } while (rowGotShiftedDuringOperation);
+                // `rowRenderer.redraw` can cause sticky heights to change, which means the row may no longer be visible
+                stickyHeightsChanged =
+                    stickyTopHeight !== gridBodyCtrl.stickyTopHeight ||
+                    stickyBottomHeight !== gridBodyCtrl.stickyBottomHeight;
+                attempt++;
+                // prevent infinite loops
+            } while ((rowGotShiftedDuringOperation || stickyHeightsChanged) && attempt < 10);
 
             // so when we return back to user, the cells have rendered
             this.animationFrameSvc?.flushAllFrames();
