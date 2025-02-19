@@ -176,13 +176,6 @@ export function vanillaToReactFunctionalTs(
 
         const additionalInReady = [];
 
-        if (onGridReady) {
-            const hackedHandler = onGridReady
-                .replace(/^{|}$/g, '')
-                .replace(/(gridApi|params\.api)(!?\.setGridOption\('rowData',\s*)/g, 'setRowData(');
-            additionalInReady.push(hackedHandler);
-        }
-
         let useFetchHook = undefined;
         if (data) {
             const callback = data.callback
@@ -191,8 +184,8 @@ export function vanillaToReactFunctionalTs(
 
             const cleanedCallback = callback.replaceAll('\n', '').trim();
             if (
-                cleanedCallback.match(/setRowData\(data\)(;?)/) ||
-                cleanedCallback.match(/data\.slice\((\d+), (\d+)\)/)
+                cleanedCallback.match(/^setRowData\(data\)(;?)$/) ||
+                cleanedCallback.match(/^setRowData\(data\.slice\((\d+), (\d+)\)\)(;?)$/)
             ) {
                 // get url from data
                 useFetchHook = `    const { data, loading } = useFetchJson<${rowDataType}>(
@@ -207,6 +200,13 @@ export function vanillaToReactFunctionalTs(
                     .then(resp => resp.json())
                     .then((data: ${rowDataType}[]) => ${setRowDataBlock});`);
             }
+        }
+
+        if (onGridReady) {
+            const hackedHandler = onGridReady
+                .replace(/^{|}$/g, '')
+                .replace(/(gridApi|params\.api)(!?\.setGridOption\('rowData',\s*)/g, 'setRowData(');
+            additionalInReady.push(hackedHandler);
         }
 
         let extraCoreTypes = [];
@@ -363,9 +363,9 @@ ${bindings.classes.join('\n')}
 
 const GridExample = () => {
     ${gridRefHook}
-    ${useFetchHook ?? ''}${stateProperties.join('\n    ')}
+    ${stateProperties.join('\n    ')}
 
-${gridReady}${darkModeWithGridRef ? '\n' + darkModeWithGridRef : ''}
+${gridReady}${useFetchHook ?? ''}${darkModeWithGridRef ? '\n' + darkModeWithGridRef : ''}
 
 ${[].concat(eventHandlers, externalEventHandlers, instanceMethods).join('\n\n   ')}
 
