@@ -198,7 +198,7 @@ export const getUseFetchJsonFile = (internalFramework: InternalFramework) => {
  * Not recommended for production use!
  */
 export const useFetchJson = (url, limit) => {
-    const [data, setData] = useState([]);
+    const [data, setData] = useState();
     const [loading, setLoading] = useState(false);
     useEffect(() => {
         const fetchData = async () => {
@@ -223,7 +223,7 @@ export const useFetchJson = (url, limit) => {
  * Not recommended for production use!
  */
 export const useFetchJson = <T,>(url:string, limit?: number) => {
-    const [data, setData] = useState<T[]>([]);
+    const [data, setData] = useState<T[]>();
     const [loading, setLoading] = useState(false);
     useEffect(() => {
         const fetchData = async () => {
