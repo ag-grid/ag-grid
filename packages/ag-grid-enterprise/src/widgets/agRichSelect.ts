@@ -542,7 +542,6 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
                 inputValue: searchValue,
                 allSuggestions: valueList,
                 hideIrrelevant: true,
-                addSequentialWeight: true,
             });
             suggestions = fuzzySearchResult.values;
 

@@ -8,13 +8,12 @@ export function _fuzzySuggestions(params: {
     allSuggestions: string[];
     hideIrrelevant?: boolean;
     filterByPercentageOfBestMatch?: number;
-    addSequentialWeight?: boolean;
 }): { values: string[]; indices: number[] } {
-    const { inputValue, allSuggestions, hideIrrelevant, filterByPercentageOfBestMatch, addSequentialWeight } = params;
+    const { inputValue, allSuggestions, hideIrrelevant, filterByPercentageOfBestMatch } = params;
 
     let thisSuggestions: { value: string; relevance: number; idx: number }[] = allSuggestions.map((text, idx) => ({
         value: text,
-        relevance: levenshteinDistance(inputValue.toLowerCase(), text.toLocaleLowerCase(), addSequentialWeight),
+        relevance: hybridFuzzySearch(inputValue, text),
         idx,
     }));
 
@@ -23,6 +22,7 @@ export function _fuzzySuggestions(params: {
     if (hideIrrelevant) {
         thisSuggestions = thisSuggestions.filter((suggestion) => suggestion.relevance !== 0);
     }
+
     if (thisSuggestions.length > 0 && filterByPercentageOfBestMatch && filterByPercentageOfBestMatch > 0) {
         const bestMatch = thisSuggestions[0].relevance;
         const limit = bestMatch * filterByPercentageOfBestMatch;
@@ -40,62 +40,76 @@ export function _fuzzySuggestions(params: {
     return { values, indices };
 }
 
-function getAllSubstrings(str: string): string[] {
-    const result: string[] = [];
-    const size = str.length;
+/**
+ * This uses a combination of matchAny and Levenshtein Distance
+ * to match strings but also account for typos.
+ */
+function hybridFuzzySearch(str1: string, str2: string): number {
+    if (str1 === str2) {
+        return 1000; // Exact match, highest possible score
+    }
 
-    for (let len = 1; len <= size; len++) {
-        for (let i = 0; i <= size - len; i++) {
-            const j = i + len - 1;
-            result.push(str.slice(i, j + 1));
+    if (str1.length === 0 || str2.length === 0) {
+        return 0; // No match at all
+    }
+
+    const str1Lower = str1.toLowerCase();
+    const str2Lower = str2.toLowerCase();
+
+    // Direct substring match gets a higher reward
+    if (str2Lower.includes(str1Lower)) {
+        const position = str2Lower.indexOf(str1Lower);
+        return 980 - position * 2;
+    }
+
+    // Partial word matching bonus (e.g., "detector" should rank well for "detection")
+    const wordsInStr2 = str2Lower.split(' ');
+    for (const word of wordsInStr2) {
+        if (word.includes(str1Lower)) {
+            return 950 - str2Lower.indexOf(word) * 2;
         }
     }
 
-    return result;
-}
-
-function levenshteinDistance(str1: string, str2: string, addSequentialWeight: boolean = false): number {
-    const a = str1.replace(/\s/g, '');
-    const b = str2.replace(/\s/g, '');
-    const len1 = a.length;
-    const len2 = b.length;
-
-    // Levenshtein Distance (Wagner–Fischer algorithm)
-    const m = new Array(len1 + 1).fill(null).map(() => new Array(len2 + 1).fill(0));
-
-    for (let i = 0; i <= len1; i += 1) {
-        m[i][0] = i;
+    // If there are no common characters, return 0 (no match)
+    const commonChars = [...str1Lower].filter((char) => str2Lower.includes(char));
+    if (commonChars.length === 0) {
+        return 0;
     }
 
-    for (let j = 0; j <= len2; j += 1) {
-        m[0][j] = j;
-    }
+    let previousRow: number[] = Array.from({ length: str2.length + 1 }, (_, i) => i);
 
-    for (let i = 1; i <= len1; i++) {
-        for (let j = 1; j <= len2; j++) {
-            if (a[i - 1] === b[j - 1]) {
-                m[i][j] = m[i - 1][j - 1];
-            } else {
-                m[i][j] = 1 + Math.min(m[i][j - 1], Math.min(m[i - 1][j], m[i - 1][j - 1]));
+    for (let i = 0; i < str1.length; i++) {
+        const currentRow: number[] = [i + 1];
+
+        for (let j = 0; j < str2.length; j++) {
+            const insertions = previousRow[j + 1] + 1;
+            const deletions = currentRow[j] + 1;
+            let substitutions = previousRow[j] + (str1[i] !== str2[j] ? 1 : 0);
+
+            // Favour matches that appear earlier in the string
+            if (str2.length > 10 && j > str2.length / 2) {
+                substitutions += 1;
             }
-        }
-    }
 
-    const distance = m[len1][len2];
-    const maxDistance = Math.max(len1, len2);
-
-    let weight = maxDistance - distance;
-
-    if (addSequentialWeight) {
-        const substrings = getAllSubstrings(a);
-        for (let i = 0; i < substrings.length; i++) {
-            const currentSubstring = substrings[i];
-            if (b.indexOf(currentSubstring) !== -1) {
-                weight += 1;
-                weight *= currentSubstring.length;
+            // Higher weight for sequential matches
+            if (i > 0 && j > 0 && str1[i - 1] === str2[j - 1]) {
+                substitutions -= 4;
             }
+
+            currentRow.push(Math.min(insertions, deletions, substitutions));
         }
+        previousRow = currentRow;
     }
 
-    return weight;
+    const distance = Math.round(previousRow[str2.length]);
+
+    // Convert distance into a similarity score (higher is better)
+    let score = Math.max(1, 1000 - distance * 30);
+
+    // Penalty for shared characters without meaningful matches
+    if (!str2Lower.includes(str1Lower) && !wordsInStr2.some((word) => word.includes(str1Lower))) {
+        score -= 200;
+    }
+
+    return Math.max(1, score);
 }

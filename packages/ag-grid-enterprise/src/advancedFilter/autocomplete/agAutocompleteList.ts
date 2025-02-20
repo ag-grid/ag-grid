@@ -115,7 +115,6 @@ export class AgAutocompleteList extends PopupComponent {
                 inputValue: this.searchString,
                 allSuggestions: searchStrings,
                 hideIrrelevant: true,
-                addSequentialWeight: true,
             }).values;
             topSuggestion = matchingStrings.length ? matchingStrings[0] : undefined;
         } else {
