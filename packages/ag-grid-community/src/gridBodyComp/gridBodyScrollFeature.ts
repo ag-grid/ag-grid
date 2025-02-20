@@ -547,6 +547,7 @@ export class GridBodyScrollFeature extends BeanStub {
             let rowGotShiftedDuringOperation: boolean;
             let stickyHeightsChanged: boolean;
             let attempt = 0;
+            this.requireUpdatedScrollPosition();
 
             do {
                 const { stickyTopHeight, stickyBottomHeight } = gridBodyCtrl;
