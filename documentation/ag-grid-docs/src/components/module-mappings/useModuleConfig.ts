@@ -1,7 +1,7 @@
 import { throwDevWarning } from '@ag-website-shared/utils/throwDevWarning';
-import { type RefObject, useCallback, useMemo, useState } from 'react';
+import { type RefObject, useCallback, useEffect, useMemo, useState } from 'react';
 
-import type { IRowNode } from 'ag-grid-community';
+import type { GridState, IRowNode } from 'ag-grid-community';
 import type { AgGridReact } from 'ag-grid-react';
 
 import {
@@ -11,6 +11,7 @@ import {
     type ChartModuleName,
     type ChartOptions,
     DEFAULT_CHART_OPTIONS,
+    DEFAULT_SELECTED_ROW_MODEL_OPTION,
     INTEGRATED_CHARTS_MODULE,
     ROW_MODEL_OPTIONS,
     SPARKLINES_MODULE,
@@ -33,7 +34,7 @@ const getChartsImportType = (chartOptions: ChartOptions): ChartsImportType => {
 };
 
 export function useModuleConfig(gridRef: RefObject<AgGridReact>) {
-    const [rowModelOption, setRowModelOption] = useState<string>('ClientSideRowModelModule');
+    const [rowModelOption, setRowModelOption] = useState<string>(DEFAULT_SELECTED_ROW_MODEL_OPTION.moduleName);
     const [bundleOption, setBundleOption] = useState<BundleOptionValue>('');
     const [chartOptions, setChartOptions] = useState(DEFAULT_CHART_OPTIONS);
     const [selectedModules, setSelectedModules] = useState<SelectedModules>({
@@ -91,9 +92,35 @@ export function useModuleConfig(gridRef: RefObject<AgGridReact>) {
         return getModuleMappingsSnippet({ chartsImportType, selectedModules: allImportModules });
     }, [allImportModules, chartOptions]);
 
-    const updateRowModelOption = useCallback((moduleName: string) => {
-        setRowModelOption(moduleName);
-    }, []);
+    const updateRowModelOption = useCallback(
+        (moduleName: string) => {
+            setRowModelOption(moduleName);
+
+            const api = gridRef?.current?.api;
+            if (!api) {
+                return;
+            }
+
+            // Select row model chosen
+            const selectedRowModel: IRowNode = api.getRowNode(moduleName)!;
+            api.setNodesSelected({
+                nodes: [selectedRowModel],
+                newValue: true,
+            });
+
+            // Deselect other row models
+            const otherRowModels: IRowNode[] = ROW_MODEL_OPTIONS.filter(
+                (rowModel) => rowModel.moduleName !== moduleName
+            ).map((node) => {
+                return api.getRowNode(node.moduleName)!;
+            });
+            api.setNodesSelected({
+                nodes: otherRowModels,
+                newValue: false,
+            });
+        },
+        [gridRef]
+    );
 
     const updateBundleOption = useCallback(
         (moduleName: BundleOptionValue) => {
@@ -152,7 +179,26 @@ export function useModuleConfig(gridRef: RefObject<AgGridReact>) {
         });
     }, []);
 
+    // Initialise default selected row model
+    useEffect(() => {
+        const defaultRowModelOption = DEFAULT_SELECTED_ROW_MODEL_OPTION;
+        const selected = defaultRowModelOption.isEnterprise
+            ? {
+                  community: [],
+                  enterprise: [defaultRowModelOption.moduleName],
+              }
+            : {
+                  community: [defaultRowModelOption.moduleName],
+                  enterprise: [],
+              };
+        setSelectedModules(selected);
+    }, [gridRef]);
+    const initialState: GridState = {
+        rowSelection: [DEFAULT_SELECTED_ROW_MODEL_OPTION.moduleName],
+    };
+
     return {
+        initialState,
         rowModelOption,
         updateRowModelOption,
         bundleOption,

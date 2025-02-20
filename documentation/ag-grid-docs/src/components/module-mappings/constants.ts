@@ -17,6 +17,7 @@ export const ROW_MODEL_OPTIONS: Option[] = [
     { name: 'Infinite', moduleName: 'InfiniteRowModelModule' },
     { name: 'Viewport', moduleName: 'ViewportRowModelModule', isEnterprise: true },
 ];
+export const DEFAULT_SELECTED_ROW_MODEL_OPTION: Option = ROW_MODEL_OPTIONS[0];
 
 export const BUNDLE_OPTIONS: Option[] = [
     { name: 'None', moduleName: '' },

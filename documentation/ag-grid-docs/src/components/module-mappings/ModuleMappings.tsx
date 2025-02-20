@@ -40,7 +40,8 @@ ModuleRegistry.registerModules([
 export const ModuleMappings: FunctionComponent<Props> = ({ framework, modules }) => {
     const gridRef = useRef<AgGridReact>(null);
     const moduleConfig = useModuleConfig(gridRef);
-    const { selectedDependenciesSnippet, setSelectedModules, bundleOption, rowModelOption } = moduleConfig;
+    const { selectedDependenciesSnippet, setSelectedModules, bundleOption, rowModelOption, initialState } =
+        moduleConfig;
 
     const rowData = useMemo(() => {
         const groups = modules.groups;
@@ -208,6 +209,7 @@ export const ModuleMappings: FunctionComponent<Props> = ({ framework, modules })
                     columnDefs={columnDefs}
                     autoGroupColumnDef={autoGroupColumnDef}
                     rowData={rowData}
+                    initialState={initialState}
                     treeData
                     getRowId={getRowId}
                     rowSelection={rowSelection}
