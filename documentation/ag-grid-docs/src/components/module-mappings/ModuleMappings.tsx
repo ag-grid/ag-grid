@@ -160,23 +160,36 @@ export const ModuleMappings: FunctionComponent<Props> = ({ framework, modules })
         return {
             mode: 'multiRow',
             checkboxes: (params) => {
+                let isInBundle = false;
                 if (bundleOption === '') {
                     // No bundles are checked, so everything available
-                    return true;
+                    isInBundle = true;
                 } else if (bundleOption === 'AllCommunityModule') {
                     // All community is checked, only enterprise values are available
-                    return params.node.allLeafChildren?.length
+                    isInBundle = params.node.allLeafChildren?.length
                         ? params.node.allLeafChildren.some((child) => child.data.isEnterprise)
                         : params.data.isEnterprise;
                 }
 
-                // All enterprise is checked, none are available
-                return false;
+                let isRowModel = false;
+                if (
+                    (rowModelOption === 'ClientSideRowModelModule' &&
+                        params.data.moduleName === 'ClientSideRowModelModule') ||
+                    (rowModelOption === 'InfiniteRowModelModule' &&
+                        params.data.moduleName === 'InfiniteRowModelModule') ||
+                    (rowModelOption === 'ServerSideRowModelModule' &&
+                        params.data.moduleName === 'ServerSideRowModelModule') ||
+                    (rowModelOption === 'ViewportRowModelModule' && params.data.moduleName === 'ViewportRowModelModule')
+                ) {
+                    isRowModel = true;
+                }
+
+                return isInBundle && !isRowModel;
             },
             groupSelects: 'descendants',
             headerCheckbox: bundleOption === '',
         };
-    }, [bundleOption]);
+    }, [bundleOption, rowModelOption]);
 
     useEffect(() => {
         updateSelected();
