@@ -20,7 +20,7 @@ import { ModuleConfiguration } from './ModuleConfiguration';
 import styles from './ModuleMappings.module.scss';
 import { ModuleNameCellRenderer } from './ModuleNameCellRenderer';
 import { ModuleSearch } from './ModuleSearch';
-import { useModuleConfig } from './useModuleConfig';
+import { getChartsModuleName, useModuleConfig } from './useModuleConfig';
 
 interface Props {
     framework: Framework;
@@ -39,8 +39,14 @@ ModuleRegistry.registerModules([
 export const ModuleMappings: FunctionComponent<Props> = ({ framework, modules }) => {
     const gridRef = useRef<AgGridReact>(null);
     const moduleConfig = useModuleConfig(gridRef);
-    const { selectedDependenciesSnippet, updateSelectedModule, bundleOption, rowModelOption, initialState } =
-        moduleConfig;
+    const {
+        selectedDependenciesSnippet,
+        updateSelectedModule,
+        bundleOption,
+        rowModelOption,
+        initialState,
+        chartOptions,
+    } = moduleConfig;
 
     const rowData = useMemo(() => {
         const groups = modules.groups;
@@ -94,17 +100,29 @@ export const ModuleMappings: FunctionComponent<Props> = ({ framework, modules })
                 api,
             } = event;
             const isSelected = !!node.isSelected();
-            if (!moduleName && !isSelected && bundleOption === 'AllCommunityModule') {
-                // when deselecting a group with all community selected, we need to prevent deselecting disabled children
+            if (!moduleName && !isSelected) {
                 const nodesToReselect: IRowNode[] = [];
+
                 node.allLeafChildren?.forEach((child) => {
-                    if (!child.isSelected() && !child.data.isEnterprise) {
+                    if (
+                        // Reselect community module if AllCommunityModule is selected
+                        (bundleOption === 'AllCommunityModule' && !child.isSelected() && !child.data.isEnterprise) ||
+                        // Reselect row module if selected
+                        (!child.isSelected() && rowModelOption === child.data.moduleName) ||
+                        // Reselect charts option if selected
+                        (!child.isSelected() &&
+                            Object.entries(chartOptions)
+                                .filter(([_, isSelected]) => isSelected)
+                                .map(([name]) => getChartsModuleName(name))
+                                .includes(child.data.moduleName))
+                    ) {
                         nodesToReselect.push(child);
                     }
-                    api.setNodesSelected({
-                        nodes: nodesToReselect,
-                        newValue: true,
-                    });
+                });
+
+                api.setNodesSelected({
+                    nodes: nodesToReselect,
+                    newValue: true,
                 });
             }
 
@@ -114,7 +132,7 @@ export const ModuleMappings: FunctionComponent<Props> = ({ framework, modules })
                 isEnterprise: node.data.isEnterprise,
             });
         },
-        [bundleOption, updateSelectedModule]
+        [bundleOption, updateSelectedModule, rowModelOption, chartOptions]
     );
 
     const rowSelection = useMemo<RowSelectionOptions>(() => {
@@ -132,25 +150,26 @@ export const ModuleMappings: FunctionComponent<Props> = ({ framework, modules })
                         : params.data.isEnterprise;
                 }
 
-                let isRowModel = false;
-                if (
+                const isRowModel =
                     (rowModelOption === 'ClientSideRowModelModule' &&
                         params.data.moduleName === 'ClientSideRowModelModule') ||
                     (rowModelOption === 'InfiniteRowModelModule' &&
                         params.data.moduleName === 'InfiniteRowModelModule') ||
                     (rowModelOption === 'ServerSideRowModelModule' &&
                         params.data.moduleName === 'ServerSideRowModelModule') ||
-                    (rowModelOption === 'ViewportRowModelModule' && params.data.moduleName === 'ViewportRowModelModule')
-                ) {
-                    isRowModel = true;
-                }
+                    (rowModelOption === 'ViewportRowModelModule' &&
+                        params.data.moduleName === 'ViewportRowModelModule');
 
-                return isInBundle && !isRowModel;
+                const isChartsModel = Object.entries(chartOptions).some(
+                    ([name, isSelected]) => isSelected && params.data.moduleName === getChartsModuleName(name)
+                );
+
+                return isInBundle && !isRowModel && !isChartsModel;
             },
             groupSelects: 'descendants',
             headerCheckbox: bundleOption === '',
         };
-    }, [bundleOption, rowModelOption]);
+    }, [bundleOption, rowModelOption, chartOptions]);
 
     return (
         <>

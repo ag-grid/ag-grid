@@ -1,4 +1,3 @@
-import { throwDevWarning } from '@ag-website-shared/utils/throwDevWarning';
 import { type RefObject, useCallback, useMemo, useState } from 'react';
 
 import type { GridState, IRowNode } from 'ag-grid-community';
@@ -33,6 +32,10 @@ const getChartsImportType = (chartOptions: ChartOptions): ChartsImportType => {
     return chartsImport;
 };
 
+export const getChartsModuleName = (name: string) => {
+    return name === 'Sparklines' ? SPARKLINES_MODULE.moduleName : INTEGRATED_CHARTS_MODULE.moduleName;
+};
+
 export function useModuleConfig(gridRef: RefObject<AgGridReact>) {
     const [rowModelOption, setRowModelOption] = useState<string>(DEFAULT_SELECTED_ROW_MODEL_OPTION.moduleName);
     const [bundleOption, setBundleOption] = useState<BundleOptionValue>('');
@@ -41,44 +44,10 @@ export function useModuleConfig(gridRef: RefObject<AgGridReact>) {
         community: [],
         enterprise: [],
     });
-    const allImportModules = useMemo(() => {
-        const community = [...selectedModules.community];
-        const enterprise = [...selectedModules.enterprise];
-
-        const rowModelOptionObj = ROW_MODEL_OPTIONS.find(({ moduleName }) => moduleName === rowModelOption);
-        if (!rowModelOptionObj) {
-            throwDevWarning({ message: `Invalid row model option: ${rowModelOption}` });
-            return {
-                community,
-                enterprise,
-            };
-        }
-
-        if (chartOptions['Sparklines'] && bundleOption === ALL_COMMUNITY_MODULE) {
-            enterprise.push(SPARKLINES_MODULE.moduleName);
-        } else if (chartOptions['Sparklines'] && bundleOption === ALL_ENTERPRISE_MODULE) {
-            // Do nothing, `AllEnterpriseModule` includes sparklines module
-        } else if (chartOptions['Sparklines']) {
-            enterprise.push(SPARKLINES_MODULE.moduleName);
-        }
-
-        if (chartOptions['Integrated Charts'] && bundleOption === ALL_COMMUNITY_MODULE) {
-            enterprise.push(INTEGRATED_CHARTS_MODULE.moduleName);
-        } else if (chartOptions['Integrated Charts'] && bundleOption === ALL_ENTERPRISE_MODULE) {
-            // Do nothing, `AllEnterpriseModule` includes integrated charts module
-        } else if (chartOptions['Integrated Charts']) {
-            enterprise.push(INTEGRATED_CHARTS_MODULE.moduleName);
-        }
-
-        return {
-            community,
-            enterprise,
-        };
-    }, [selectedModules, bundleOption, rowModelOption, chartOptions]);
     const selectedDependenciesSnippet = useMemo(() => {
         const chartsImportType = getChartsImportType(chartOptions);
-        return getModuleMappingsSnippet({ chartsImportType, selectedModules: allImportModules });
-    }, [allImportModules, chartOptions]);
+        return getModuleMappingsSnippet({ chartsImportType, selectedModules });
+    }, [selectedModules, chartOptions]);
 
     const updateRowModelOption = useCallback(
         (moduleName: string) => {
@@ -126,6 +95,43 @@ export function useModuleConfig(gridRef: RefObject<AgGridReact>) {
         [gridRef, bundleOption]
     );
 
+    const selectChartOptions = useCallback(() => {
+        const api = gridRef?.current?.api;
+        if (!api) {
+            return;
+        }
+        const selectedChartRowModels = Object.entries(chartOptions)
+            .filter(([_, isSelected]) => isSelected)
+            .map(([name]) => {
+                const chartModuleName = getChartsModuleName(name);
+                return api.getRowNode(chartModuleName)!;
+            });
+
+        api.setNodesSelected({
+            nodes: selectedChartRowModels,
+            newValue: true,
+        });
+
+        setSelectedModules((prev) => {
+            const community = [...prev.community];
+            const enterprise = [...prev.enterprise];
+
+            // NOTE: Charts modules are enterprise only
+            Object.entries(chartOptions).forEach(([name, isSelected]) => {
+                const moduleName = getChartsModuleName(name);
+                const index = enterprise.indexOf(moduleName);
+                if (isSelected && index === -1) {
+                    enterprise.push(moduleName);
+                }
+            });
+
+            return {
+                community,
+                enterprise,
+            };
+        });
+    }, [chartOptions, gridRef]);
+
     const updateBundleOption = useCallback(
         (moduleName: BundleOptionValue) => {
             const api = gridRef?.current?.api;
@@ -162,6 +168,9 @@ export function useModuleConfig(gridRef: RefObject<AgGridReact>) {
                         enterprise: [...prev.enterprise],
                     };
                 });
+
+                // Reselect chart options
+                selectChartOptions();
             } else {
                 api.deselectAll('all');
 
@@ -185,23 +194,42 @@ export function useModuleConfig(gridRef: RefObject<AgGridReact>) {
                         };
                     });
                 }
+
+                // Reselect chart options
+                selectChartOptions();
             }
 
             setBundleOption(moduleName);
         },
-        [gridRef, rowModelOption]
+        [gridRef, rowModelOption, selectChartOptions]
     );
 
-    const updateChartOption = useCallback((name: ChartModuleName) => {
-        setChartOptions((prevSelectedCharts) => {
-            const newSelection = {
-                ...prevSelectedCharts,
-                [name]: !prevSelectedCharts[name],
-            };
+    const updateChartOption = useCallback(
+        (name: ChartModuleName) => {
+            const api = gridRef?.current?.api;
+            if (!api) {
+                return;
+            }
 
-            return newSelection;
-        });
-    }, []);
+            const moduleName = getChartsModuleName(name);
+            const isSelected = chartOptions[name];
+            const selectedRowModel: IRowNode = api.getRowNode(moduleName)!;
+            api.setNodesSelected({
+                nodes: [selectedRowModel],
+                newValue: !isSelected,
+            });
+
+            setChartOptions((prevSelectedCharts) => {
+                const newSelection = {
+                    ...prevSelectedCharts,
+                    [name]: !prevSelectedCharts[name],
+                };
+
+                return newSelection;
+            });
+        },
+        [gridRef, chartOptions]
+    );
 
     // Initialise default selected row model
     const initialState: GridState = {
