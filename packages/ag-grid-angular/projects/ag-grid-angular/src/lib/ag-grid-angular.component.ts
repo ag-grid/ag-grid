@@ -2121,7 +2121,8 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     /** Row is selected or deselected. The event contains the node in question, so call the node's `isSelected()` method to see if it was just selected or deselected.
      */
     @Output() public rowSelected: EventEmitter<RowSelectedEvent<TData>> = new EventEmitter<RowSelectedEvent<TData>>();
-    /** Row selection is changed. Use the grid API `getSelectedNodes()` or `getSelectedRows()` to get the new list of selected nodes / row data.
+    /** Row selection is changed. Use the `selectedNodes` field to get the list of selected nodes at the time of the event. When using the SSRM, `selectedNodes` will be `null`
+     * when selecting all nodes. Instead, refer to the `serverSideState` field.
      */
     @Output() public selectionChanged: EventEmitter<SelectionChangedEvent<TData>> = new EventEmitter<
         SelectionChangedEvent<TData>

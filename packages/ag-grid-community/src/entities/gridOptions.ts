@@ -2357,7 +2357,8 @@ export interface GridOptions<TData = any> {
      */
     onRowSelected?(event: RowSelectedEvent<TData>): void;
     /**
-     * Row selection is changed. Use the grid API `getSelectedNodes()` or `getSelectedRows()` to get the new list of selected nodes / row data.
+     * Row selection is changed. Use the `selectedNodes` field to get the list of selected nodes at the time of the event. When using the SSRM, `selectedNodes` will be `null`
+     * when selecting all nodes. Instead, refer to the `serverSideState` field.
      */
     onSelectionChanged?(event: SelectionChangedEvent<TData>): void;
     /**

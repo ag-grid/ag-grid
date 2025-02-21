@@ -38,7 +38,8 @@ function onRowSelected(event: RowSelectedEvent) {
 }
 
 function onSelectionChanged(event: SelectionChangedEvent) {
-    const rowCount = event.api.getSelectedNodes().length;
+    const rowCount = event.selectedNodes?.length;
+
     console.log('selection changed, ' + rowCount + ' rows selected');
 }
 
