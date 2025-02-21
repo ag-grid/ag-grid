@@ -1,5 +1,5 @@
 import { throwDevWarning } from '@ag-website-shared/utils/throwDevWarning';
-import { type RefObject, useCallback, useEffect, useMemo, useState } from 'react';
+import { type RefObject, useCallback, useMemo, useState } from 'react';
 
 import type { GridState, IRowNode } from 'ag-grid-community';
 import type { AgGridReact } from 'ag-grid-react';
@@ -54,18 +54,6 @@ export function useModuleConfig(gridRef: RefObject<AgGridReact>) {
             };
         }
 
-        if (bundleOption === ALL_COMMUNITY_MODULE && rowModelOptionObj?.isEnterprise) {
-            enterprise.push(rowModelOptionObj.moduleName);
-        } else if (bundleOption === ALL_COMMUNITY_MODULE && !rowModelOptionObj?.isEnterprise) {
-            // Do nothing, as `AllCommunityModule` includes all community row models
-        } else if (bundleOption === ALL_ENTERPRISE_MODULE) {
-            // Do nothing, as `AllEnterpriseModule` includes all row models
-        } else if (rowModelOptionObj.isEnterprise) {
-            enterprise.push(rowModelOptionObj.moduleName);
-        } else {
-            community.push(rowModelOptionObj.moduleName);
-        }
-
         if (chartOptions['Sparklines'] && bundleOption === ALL_COMMUNITY_MODULE) {
             enterprise.push(SPARKLINES_MODULE.moduleName);
         } else if (chartOptions['Sparklines'] && bundleOption === ALL_ENTERPRISE_MODULE) {
@@ -94,7 +82,10 @@ export function useModuleConfig(gridRef: RefObject<AgGridReact>) {
 
     const updateRowModelOption = useCallback(
         (moduleName: string) => {
+            const otherRowModelObjs = ROW_MODEL_OPTIONS.filter((rowModel) => rowModel.moduleName !== moduleName);
+
             setRowModelOption(moduleName);
+            // NOTE: `selectedModules` is set by the updatedSelectedModule callback
 
             const api = gridRef?.current?.api;
             if (!api) {
@@ -108,18 +99,31 @@ export function useModuleConfig(gridRef: RefObject<AgGridReact>) {
                 newValue: true,
             });
 
-            // Deselect other row models
-            const otherRowModels: IRowNode[] = ROW_MODEL_OPTIONS.filter(
-                (rowModel) => rowModel.moduleName !== moduleName
-            ).map((node) => {
-                return api.getRowNode(node.moduleName)!;
-            });
-            api.setNodesSelected({
-                nodes: otherRowModels,
-                newValue: false,
-            });
+            if (bundleOption === '') {
+                // Deselect other row models
+                const otherRowModels: IRowNode[] = otherRowModelObjs.map((node) => {
+                    return api.getRowNode(node.moduleName)!;
+                });
+                api.setNodesSelected({
+                    nodes: otherRowModels,
+                    newValue: false,
+                });
+            } else if (bundleOption === ALL_COMMUNITY_MODULE) {
+                // Deselect other non-selected enterprise row models
+                const otherRowModels: IRowNode[] = otherRowModelObjs
+                    .filter((rowModel) => {
+                        return rowModel.moduleName !== moduleName && rowModel.isEnterprise;
+                    })
+                    .map((rowModel) => {
+                        return api.getRowNode(rowModel.moduleName)!;
+                    });
+                api.setNodesSelected({
+                    nodes: otherRowModels,
+                    newValue: false,
+                });
+            }
         },
-        [gridRef]
+        [gridRef, bundleOption]
     );
 
     const updateBundleOption = useCallback(
@@ -143,6 +147,8 @@ export function useModuleConfig(gridRef: RefObject<AgGridReact>) {
                 api.forEachLeafNode((child) => {
                     if (!child.data.isEnterprise && child.data.moduleName) {
                         nodesToToggle.push(child);
+                    } else if (child.data.isEnterprise && child.data.moduleName === rowModelOption) {
+                        nodesToToggle.push(child);
                     }
                 });
                 api.setNodesSelected({
@@ -150,22 +156,40 @@ export function useModuleConfig(gridRef: RefObject<AgGridReact>) {
                     newValue: true,
                 });
 
-                setSelectedModules({
-                    community: [ALL_COMMUNITY_MODULE],
-                    enterprise: [],
+                setSelectedModules((prev) => {
+                    return {
+                        community: [ALL_COMMUNITY_MODULE],
+                        enterprise: [...prev.enterprise],
+                    };
                 });
             } else {
                 api.deselectAll('all');
 
-                setSelectedModules({
-                    community: [],
-                    enterprise: [],
+                // Reselect row model
+                const selectedRowModel: IRowNode = api.getRowNode(rowModelOption)!;
+                api.setNodesSelected({
+                    nodes: [selectedRowModel],
+                    newValue: true,
                 });
+                const rowModel = ROW_MODEL_OPTIONS.find((rowModel) => rowModel.moduleName === rowModelOption);
+                // When going from AllCommunityModules to none, and when the row model is
+                // community, need to add the row model to the selected modules
+                if (!rowModel?.isEnterprise) {
+                    setSelectedModules((prev) => {
+                        const community = [...prev.community, rowModelOption];
+                        const enterprise = [...prev.enterprise];
+
+                        return {
+                            community,
+                            enterprise,
+                        };
+                    });
+                }
             }
 
             setBundleOption(moduleName);
         },
-        [gridRef]
+        [gridRef, rowModelOption]
     );
 
     const updateChartOption = useCallback((name: ChartModuleName) => {
@@ -180,22 +204,86 @@ export function useModuleConfig(gridRef: RefObject<AgGridReact>) {
     }, []);
 
     // Initialise default selected row model
-    useEffect(() => {
-        const defaultRowModelOption = DEFAULT_SELECTED_ROW_MODEL_OPTION;
-        const selected = defaultRowModelOption.isEnterprise
-            ? {
-                  community: [],
-                  enterprise: [defaultRowModelOption.moduleName],
-              }
-            : {
-                  community: [defaultRowModelOption.moduleName],
-                  enterprise: [],
-              };
-        setSelectedModules(selected);
-    }, [gridRef]);
     const initialState: GridState = {
         rowSelection: [DEFAULT_SELECTED_ROW_MODEL_OPTION.moduleName],
     };
+
+    const updateSelectedModule = useCallback(
+        ({
+            moduleName,
+            isSelected,
+            isEnterprise,
+        }: {
+            moduleName: string;
+            isSelected: boolean;
+            isEnterprise: boolean;
+        }) => {
+            if (!moduleName) {
+                return;
+            }
+
+            if (bundleOption === ALL_ENTERPRISE_MODULE) {
+                // No modules can be selected
+                return;
+            } else if (bundleOption === ALL_COMMUNITY_MODULE) {
+                setSelectedModules((curSelectedModules) => {
+                    // Only select if enterprise
+                    const enterprise = [...curSelectedModules.enterprise].filter(
+                        (module) => module !== ALL_ENTERPRISE_MODULE
+                    );
+                    if (isEnterprise) {
+                        const index = enterprise.indexOf(moduleName);
+                        if (isSelected && index === -1) {
+                            enterprise.push(moduleName);
+                        } else {
+                            if (index > -1) {
+                                enterprise.splice(index, 1);
+                            }
+                        }
+                    }
+
+                    return {
+                        community: [...curSelectedModules.community],
+                        enterprise,
+                    };
+                });
+                return;
+            }
+
+            setSelectedModules((curSelectedModules) => {
+                const community = [...curSelectedModules.community].filter((module) => module !== ALL_COMMUNITY_MODULE);
+                const enterprise = [...curSelectedModules.enterprise].filter(
+                    (module) => module !== ALL_ENTERPRISE_MODULE
+                );
+
+                if (isEnterprise) {
+                    const index = enterprise.indexOf(moduleName);
+                    if (isSelected && index === -1) {
+                        enterprise.push(moduleName);
+                    } else {
+                        if (index > -1) {
+                            enterprise.splice(index, 1);
+                        }
+                    }
+                } else {
+                    const index = community.indexOf(moduleName);
+                    if (isSelected && index === -1) {
+                        community.push(moduleName);
+                    } else {
+                        if (index > -1) {
+                            community.splice(index, 1);
+                        }
+                    }
+                }
+
+                return {
+                    community,
+                    enterprise,
+                };
+            });
+        },
+        [bundleOption]
+    );
 
     return {
         initialState,
@@ -205,7 +293,7 @@ export function useModuleConfig(gridRef: RefObject<AgGridReact>) {
         updateBundleOption,
         chartOptions,
         updateChartOption,
-        setSelectedModules,
+        updateSelectedModule,
         selectedDependenciesSnippet,
     };
 }
