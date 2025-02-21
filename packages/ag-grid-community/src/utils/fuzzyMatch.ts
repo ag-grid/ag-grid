@@ -53,13 +53,13 @@ function hybridFuzzySearch(str1: string, str2: string): number {
         return 0; // No match at all
     }
 
-    const str1Lower = str1.toLowerCase();
-    const str2Lower = str2.toLowerCase();
+    const str1Lower = str1.toLocaleLowerCase();
+    const str2Lower = str2.toLocaleLowerCase();
 
     // Direct substring match gets a higher reward
-    if (str2Lower.includes(str1Lower)) {
-        const position = str2Lower.indexOf(str1Lower);
-        return 980 - position * 2;
+    const str2PositionInStr1 = str2Lower.indexOf(str1Lower);
+    if (str2PositionInStr1 !== -1) {
+        return 980 - str2PositionInStr1 * 2;
     }
 
     // Partial word matching bonus (e.g., "detector" should rank well for "detection")
@@ -107,7 +107,7 @@ function hybridFuzzySearch(str1: string, str2: string): number {
     let score = Math.max(1, 1000 - distance * 30);
 
     // Penalty for shared characters without meaningful matches
-    if (!str2Lower.includes(str1Lower) && !wordsInStr2.some((word) => word.includes(str1Lower))) {
+    if (str2PositionInStr1 === -1 && !wordsInStr2.some((word) => word.includes(str1Lower))) {
         score -= 200;
     }
 
