@@ -1,15 +1,15 @@
+import type { GridApi } from '../api/gridApi';
 import type { ColDef } from '../entities/colDef';
 import type { Column } from './iColumn';
 import type { IRowNode } from './iRowNode';
 
 export interface FindMatch<TData = any, TValue = any> {
     node: IRowNode<TData>;
-    column: Column<TValue>;
-    /**
-     * The number of the match within the cell (starting from `1`).
-     */
+    /** Will be `null` if the match is within a full width row or detail row. */
+    column: Column<TValue> | null;
+    /** The number of the match within the cell (starting from `1`). */
     numInMatch: number;
-    /** The number of the match within all the matches in the grid (starting from `1`) */
+    /** The number of the match within all the matches in the grid (starting from `1`). */
     numOverall: number;
 }
 
@@ -18,7 +18,7 @@ export interface IFindService {
 
     activeMatch: FindMatch | undefined;
 
-    isMatch(node: IRowNode, column: Column): boolean;
+    isMatch(node: IRowNode, column: Column | null): boolean;
 
     getParts(params: FindCellValueParams): FindPart[];
 
@@ -26,27 +26,30 @@ export interface IFindService {
 
     previous(): void;
 
-    goTo(match: number): void;
+    goTo(match: number, force?: boolean): void;
 
-    getNumMatches(node: IRowNode, column: Column): number;
+    clearActive(): void;
+
+    getNumMatches(node: IRowNode, column: Column | null): number;
 
     setupGroupCol(colDef: ColDef): void;
+
+    registerDetailGrid(node: IRowNode, api: GridApi): void;
 }
 
 export interface FindOptions {
-    /**
-     * Match values in the current page only (when pagination enabled).
-     */
+    /** Match values in the current page only (when pagination enabled). */
     currentPageOnly?: boolean;
-    /**
-     * Match case of values.
-     */
+    /** Match case of values. */
     caseSensitive?: boolean;
+    /** Perform searches across Detail Grids or Custom Detail Cells when using Master/Detail. */
+    searchDetail?: boolean;
 }
 
 export interface FindCellParams<TData = any, TValue = any> {
     node: IRowNode<TData>;
-    column: Column<TValue>;
+    /** `null` if the cell is a full width row or detail row. */
+    column: Column<TValue> | null;
 }
 
 export interface FindCellValueParams<TData = any, TValue = any> extends FindCellParams<TData, TValue> {
@@ -61,4 +64,44 @@ export interface FindPart {
     match?: boolean;
     /** `true` if the active match. */
     activeMatch?: boolean;
+}
+
+export interface GetFindMatches<TData = any> {
+    (params: GetFindMatchesParams<TData>): number;
+}
+
+export interface GetFindMatchesParams<TData = any> {
+    node: IRowNode<TData>;
+    data: TData;
+    /** Current search value. */
+    findSearchValue: string;
+    /** Should be called if the number of matches has updated. */
+    updateMatches(): void;
+    /** Helper function to get the number of matches within the provided string value. */
+    getMatchesForValue(value: string): number;
+}
+
+export interface FindDetailCellRendererParams<TData = any> {
+    /**
+     * If using Find across Master/Detail, this will be called to work out
+     * the number of matches that would be within the custom detail cell.
+     */
+    getFindMatches?: GetFindMatches<TData>;
+}
+
+export interface FindDetailGridCellRendererParams<TData = any> {
+    /**
+     * If using Find across Master/Detail and the Detail Grid is not open,
+     * this will be called to work out the number of matches that would be
+     * within the Detail Grid.
+     */
+    getFindMatches?: GetFindMatches<TData>;
+}
+
+export interface FindFullWidthCellRendererParams<TData = any> {
+    /**
+     * If using Find with full width rows, this will be called to work out
+     * the number of matches that would be within the full width row.
+     */
+    getFindMatches?: GetFindMatches<TData>;
 }

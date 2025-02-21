@@ -116,7 +116,7 @@ export class DetailCellRendererCtrl extends BeanStub implements IDetailCellRende
     public registerDetailWithMaster(api: GridApi): void {
         const {
             params,
-            beans: { selectionSvc },
+            beans: { selectionSvc, findSvc },
         } = this;
         const rowId = params.node.id!;
         const masterGridApi = params.api;
@@ -138,6 +138,8 @@ export class DetailCellRendererCtrl extends BeanStub implements IDetailCellRende
         rowNode.detailGridInfo = gridInfo;
 
         const masterNode = rowNode.parent!;
+
+        findSvc?.registerDetailGrid(rowNode, api);
 
         function onDetailSelectionChanged() {
             if (masterNode) {

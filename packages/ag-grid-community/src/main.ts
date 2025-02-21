@@ -272,6 +272,11 @@ export {
     FindCellParams,
     FindCellValueParams,
     FindPart,
+    GetFindMatches,
+    GetFindMatchesParams,
+    FindDetailCellRendererParams,
+    FindDetailGridCellRendererParams,
+    FindFullWidthCellRendererParams,
 } from './interfaces/iFind';
 
 // gridPanel

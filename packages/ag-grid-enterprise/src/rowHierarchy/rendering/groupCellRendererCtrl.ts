@@ -439,7 +439,16 @@ export class GroupCellRendererCtrl extends BeanStub implements IGroupCellRendere
         const relatedColumn = this.displayedGroupNode.rowGroupColumn;
         const relatedColDef = relatedColumn?.getColDef();
 
+        const findSvc = this.beans.findSvc;
+
         if (!relatedColDef) {
+            if (findSvc?.isMatch(params.node, params.column!)) {
+                return _getCellRendererDetails(
+                    this.userCompFactory,
+                    { ...params.colDef, cellRenderer: 'agFindCellRenderer' },
+                    params
+                );
+            }
             return;
         }
 
@@ -465,7 +474,7 @@ export class GroupCellRendererCtrl extends BeanStub implements IGroupCellRendere
             );
         }
 
-        if (this.beans.findSvc?.isMatch(params.node, params.column!)) {
+        if (findSvc?.isMatch(params.node, params.column!)) {
             return _getCellRendererDetails(
                 this.userCompFactory,
                 { ...relatedColDef, cellRenderer: 'agFindCellRenderer' },

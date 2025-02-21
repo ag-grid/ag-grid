@@ -2,8 +2,11 @@ import type {
     ColDef,
     Column,
     FindCellValueParams,
+    FindDetailCellRendererParams,
+    FindFullWidthCellRendererParams,
     FindMatch,
     FindPart,
+    GridApi,
     IClientSideRowModel,
     IFindService,
     IRowNode,
@@ -16,6 +19,7 @@ import {
     _debounce,
     _escapeString,
     _isClientSideRowModel,
+    _jsonEquals,
     _missing,
     isColumnSelectionCol,
     isRowNumberCol,
@@ -25,6 +29,23 @@ function defaultCaseFormat(value?: string | null): string | undefined {
     return value?.toLocaleLowerCase();
 }
 
+/**
+ * Detail nodes are created lazily, but we need them to store matches against.
+ * Instead we create a dummy node containing the master. When the master is expanded,
+ * a refresh will be triggered, switching this out for the real detail node.
+ */
+type DummyDetailNode = {
+    /** the master row */
+    parent: IRowNode;
+    dummy: true;
+};
+
+/** key could also be DummyDetailNode */
+type Matches = Map<IRowNode, CellMatch[]>;
+
+/** column and corresponding number of matches in the cell for that column. `null` column is full width. */
+type CellMatch = [Column | null, number];
+
 export class FindService extends BeanStub implements NamedBean, IFindService {
     beanName = 'findSvc' as const;
 
@@ -33,16 +54,16 @@ export class FindService extends BeanStub implements NamedBean, IFindService {
      * Used for performance when checking matches (part of cell rendering)
      */
     private active: boolean = false;
-    /** pinned top matches. values are column and corresponding number of matches in the cell for that column */
-    private topMatches: Map<IRowNode, [Column, number][]> = new Map();
+    /** pinned top matches */
+    private topMatches: Matches = new Map();
     /** same nodes as keys in `topMatches`, but kept separate for performance when moving backwards and forwards through the matches */
     private topNodes: IRowNode[] = [];
     /** total number of matches in pinned top */
     private topNumMatches: number = 0;
-    private centerMatches: Map<IRowNode, [Column, number][]> = new Map();
+    private centerMatches: Matches = new Map();
     private centerNodes: IRowNode[] = [];
     private centerNumMatches: number = 0;
-    private bottomMatches: Map<IRowNode, [Column, number][]> = new Map();
+    private bottomMatches: Matches = new Map();
     private bottomNodes: IRowNode[] = [];
 
     /** switches based on grid options */
@@ -50,6 +71,12 @@ export class FindService extends BeanStub implements NamedBean, IFindService {
 
     /** cached version that has been trimmed and potentially case converted */
     private findSearchValue: string | undefined;
+
+    /** whether to scroll to active match after a refresh */
+    private scrollOnRefresh: boolean = false;
+
+    /** keeps active match */
+    private refreshDebounced: () => void;
 
     public totalMatches: number = 0;
 
@@ -62,8 +89,23 @@ export class FindService extends BeanStub implements NamedBean, IFindService {
 
         const refreshAndWipeActive = this.refresh.bind(this, false);
         const refreshAndKeepActive = this.refresh.bind(this, true);
-        const refreshAndKeepActiveDebounced = _debounce(this, refreshAndKeepActive, 0);
-        this.addManagedPropertyListeners(['findSearchValue', 'findOptions'], refreshAndWipeActive);
+        const refreshAndKeepActiveDebounced = _debounce(
+            this,
+            () => {
+                if (this.isAlive()) {
+                    refreshAndKeepActive();
+                }
+            },
+            0
+        );
+        this.refreshDebounced = refreshAndKeepActiveDebounced;
+        this.addManagedPropertyListener('findSearchValue', refreshAndWipeActive);
+        this.addManagedPropertyListener('findOptions', ({ currentValue, previousValue }) => {
+            // perform deep equality check to avoid unnecessary refreshes
+            if (!_jsonEquals(currentValue, previousValue)) {
+                refreshAndWipeActive();
+            }
+        });
         this.addManagedEventListeners({
             modelUpdated: refreshAndKeepActive,
             displayedColumnsChanged: refreshAndKeepActive,
@@ -87,7 +129,11 @@ export class FindService extends BeanStub implements NamedBean, IFindService {
         this.findAcrossContainers(true, ['bottom', null, 'top'], this.totalMatches, -1);
     }
 
-    public goTo(match: number): void {
+    public goTo(match: number, force?: boolean): void {
+        if (!force && match === this.activeMatch?.numOverall) {
+            // active match is current, so do nothing
+            return;
+        }
         const { topMatches, topNumMatches, centerMatches, centerNumMatches, bottomMatches } = this;
         if (match <= topNumMatches) {
             this.goToInContainer(topMatches, match, 0);
@@ -100,8 +146,14 @@ export class FindService extends BeanStub implements NamedBean, IFindService {
         this.goToInContainer(bottomMatches, match, topNumMatches + centerNumMatches);
     }
 
+    public clearActive(): void {
+        if (this.activeMatch) {
+            this.setActive(undefined);
+        }
+    }
+
     // called by cell ctrl, so needs to be performant
-    public isMatch(node: IRowNode, column: Column): boolean {
+    public isMatch(node: IRowNode, column: Column | null): boolean {
         return (
             this.active &&
             !!this.getMatches(node.rowPinned)
@@ -110,7 +162,7 @@ export class FindService extends BeanStub implements NamedBean, IFindService {
         );
     }
 
-    public getNumMatches(node: IRowNode, column: Column): number {
+    public getNumMatches(node: IRowNode, column: Column | null): number {
         return (
             this.getMatches(node.rowPinned)
                 .get(node)
@@ -169,6 +221,31 @@ export class FindService extends BeanStub implements NamedBean, IFindService {
         };
     }
 
+    // when a detail grid is created, we need to sync the matches
+    public registerDetailGrid(node: IRowNode, api: GridApi): void {
+        const gos = this.gos;
+        if (!_isClientSideRowModel(gos)) {
+            return;
+        }
+        // don't need to remove the listener as this will happen automatically when the detail grid is destroyed
+        api.addEventListener('findChanged', (event) => {
+            if (api.isDestroyed() || !this.isAlive()) return;
+            // we check this here as it is reactive
+            if (gos.get('findOptions')?.searchDetail) {
+                const newNumMatches = event.totalMatches;
+                const nodeMatch = this.centerMatches.get(node)?.[0];
+                const oldNumMatches = nodeMatch?.[1] ?? 0;
+                if (newNumMatches !== oldNumMatches) {
+                    this.refreshDebounced();
+                }
+            }
+        });
+
+        if (gos.get('findOptions')?.searchDetail) {
+            api.setGridOption('findSearchValue', gos.get('findSearchValue'));
+        }
+    }
+
     // updates all the matches
     private refresh(maintainActive: boolean): void {
         const rowNodesToRefresh = new Set([...this.topNodes, ...this.centerNodes, ...this.bottomNodes]);
@@ -182,7 +259,7 @@ export class FindService extends BeanStub implements NamedBean, IFindService {
             centerNodes,
             bottomNodes,
             bottomMatches,
-            beans: { gos, visibleCols, rowModel, valueSvc, pinnedRowModel, pagination, rowSpanSvc },
+            beans: { gos, visibleCols, rowModel, valueSvc, pinnedRowModel, pagination, rowSpanSvc, masterDetailSvc },
             findSearchValue: oldFindSearchValue,
         } = this;
         const findOptions = gos.get('findOptions');
@@ -191,6 +268,7 @@ export class FindService extends BeanStub implements NamedBean, IFindService {
             : defaultCaseFormat;
         this.caseFormat = caseFormat;
 
+        const providedFindSearchValue = gos.get('findSearchValue');
         const findSearchValue = caseFormat(gos.get('findSearchValue')?.trim());
         this.findSearchValue = findSearchValue;
 
@@ -201,6 +279,8 @@ export class FindService extends BeanStub implements NamedBean, IFindService {
         const oldActiveMatch = maintainActive ? this.activeMatch : undefined;
         this.activeMatch = undefined;
 
+        const checkMasterDetail = gos.get('masterDetail') && findOptions?.searchDetail && masterDetailSvc;
+
         if (_missing(findSearchValue)) {
             // nothing to match, clear down results
             this.active = false;
@@ -209,6 +289,14 @@ export class FindService extends BeanStub implements NamedBean, IFindService {
             this.totalMatches = 0;
             this.refreshRows(rowNodesToRefresh);
 
+            if (checkMasterDetail) {
+                // clear any detail grids
+                const store = masterDetailSvc.store;
+                for (const detailId of Object.keys(store)) {
+                    store[detailId]?.api?.findClearActive();
+                }
+            }
+
             if (!_missing(oldFindSearchValue)) {
                 this.dispatchFindChanged();
             }
@@ -216,13 +304,47 @@ export class FindService extends BeanStub implements NamedBean, IFindService {
         }
 
         const allCols = visibleCols.allCols;
-
         const isFullWidthCellFunc = gos.getCallback('isFullWidthRow');
+        const detailCellRendererParams = gos.get('detailCellRendererParams');
+        const fullWidthCellRendererParams = gos.get('fullWidthCellRendererParams');
 
         let containerNumMatches = 0;
-        let matches: Map<IRowNode, [Column, number][]>;
+        let matches: Matches;
         let rowNodes: IRowNode[];
         let checkCurrentPage: boolean = false;
+        const addMatches = (node: IRowNode, column: Column | null, numMatches: number, skipRefresh?: boolean) => {
+            if (!numMatches) {
+                return;
+            }
+            let rowMatches = matches.get(node);
+            if (!rowMatches) {
+                rowMatches = [];
+                matches.set(node, rowMatches);
+                rowNodes.push(node);
+                if (!skipRefresh) {
+                    rowNodesToRefresh.add(node);
+                }
+            }
+            rowMatches.push([column, numMatches]);
+            containerNumMatches += numMatches;
+        };
+        const getMatchesForValue = (valueToFind: string | null) => {
+            const finalValue = caseFormat(_escapeString(valueToFind, true));
+            let numMatches = 0;
+            if (finalValue?.length) {
+                // there can be multiple matches per cell, so find them all
+                let index = -1;
+                while (true) {
+                    index = finalValue.indexOf(findSearchValue, index + 1);
+                    if (index != -1) {
+                        numMatches++;
+                    } else {
+                        break;
+                    }
+                }
+            }
+            return numMatches;
+        };
         const findMatchesForRow = (node: IRowNode) => {
             if (checkCurrentPage) {
                 // row index is null when a group is collapsed. We need to find the first displayed ancestor.
@@ -236,8 +358,19 @@ export class FindService extends BeanStub implements NamedBean, IFindService {
                     return;
                 }
             }
-            if (node.detail || isFullWidthCellFunc?.({ rowNode: node })) {
-                // master detail and full width rows not currently supported
+            const data = node.data;
+            if (isFullWidthCellFunc?.({ rowNode: node })) {
+                if (fullWidthCellRendererParams) {
+                    const numMatches =
+                        (fullWidthCellRendererParams as FindFullWidthCellRendererParams).getFindMatches?.({
+                            node,
+                            data,
+                            findSearchValue: providedFindSearchValue!,
+                            updateMatches: this.refreshDebounced,
+                            getMatchesForValue,
+                        }) ?? 0;
+                    addMatches(node, null, numMatches);
+                }
                 return;
             }
             for (const column of allCols) {
@@ -258,7 +391,7 @@ export class FindService extends BeanStub implements NamedBean, IFindService {
                         gos.addGridCommonParams({
                             value,
                             node,
-                            data: node.data,
+                            data,
                             column,
                             colDef,
                             getValueFormatted: () => valueSvc.formatValue(column, node, value),
@@ -268,30 +401,39 @@ export class FindService extends BeanStub implements NamedBean, IFindService {
                     const valueFormatted = valueSvc.formatValue(column, node, value);
                     valueToFind = valueFormatted ?? value;
                 }
-                const finalValue = caseFormat(_escapeString(valueToFind, true));
-                let numMatches = 0;
-                if (finalValue?.length) {
-                    // there can be multiple matches per cell, so find them all
-                    let index = -1;
-                    while (true) {
-                        index = finalValue.indexOf(findSearchValue, index + 1);
-                        if (index != -1) {
-                            numMatches++;
-                        } else {
-                            break;
-                        }
+                const numMatches = getMatchesForValue(valueToFind);
+                addMatches(node, column, numMatches);
+            }
+            if (node.master && checkMasterDetail) {
+                // add detail node after master has been processed
+                const detailNode = (node as RowNode).detailNode;
+                if (detailNode) {
+                    const detailApi = detailNode.detailGridInfo?.api;
+                    if (detailApi) {
+                        // grid exists, so can search directly
+                        detailApi.setGridOption('findSearchValue', providedFindSearchValue);
+                        const numMatches = detailApi.findGetTotalMatches();
+                        addMatches(detailNode, null, numMatches);
+                        return;
                     }
                 }
-                if (numMatches) {
-                    let rowMatches = matches.get(node);
-                    if (!rowMatches) {
-                        rowMatches = [];
-                        matches.set(node, rowMatches);
-                        rowNodes.push(node);
-                        rowNodesToRefresh.add(node);
-                    }
-                    rowMatches.push([column, numMatches]);
-                    containerNumMatches += numMatches;
+                // no grid. either a custom detail or not expanded, so try the callback
+                if (detailCellRendererParams) {
+                    const numMatches =
+                        (detailCellRendererParams as FindDetailCellRendererParams).getFindMatches?.({
+                            node,
+                            data,
+                            findSearchValue: providedFindSearchValue!,
+                            updateMatches: this.refreshDebounced,
+                            getMatchesForValue,
+                        }) ?? 0;
+                    // if detail node doesn't exist yet, stick under dummy node
+                    addMatches(
+                        detailNode ?? ({ parent: node, dummy: true } as DummyDetailNode as any),
+                        null,
+                        numMatches,
+                        !detailNode // if dummy detail node, don't refresh
+                    );
                 }
             }
         };
@@ -334,7 +476,16 @@ export class FindService extends BeanStub implements NamedBean, IFindService {
 
     // update the active match back to what it was previously if possible. e.g. row index might have changed
     private resetActiveMatch(oldActiveMatch: FindMatch): void {
-        const { node, column, numInMatch } = oldActiveMatch;
+        const { column, numInMatch } = oldActiveMatch;
+        let node = oldActiveMatch.node;
+        if ((node as unknown as DummyDetailNode).dummy) {
+            // handle recently expanded master node
+            const detailNode = (node.parent as RowNode)?.detailNode;
+            if (!detailNode) {
+                return;
+            }
+            node = detailNode;
+        }
         const rowPinned = node.rowPinned ?? null;
         const stillValid = this.getMatches(rowPinned)
             ?.get(node)
@@ -369,10 +520,19 @@ export class FindService extends BeanStub implements NamedBean, IFindService {
 
         const activeMatch = {
             ...oldActiveMatch,
+            node,
             numOverall,
         };
         this.activeMatch = activeMatch;
-        this.refreshRows(new Set([node]), new Set([column]));
+        this.refreshRows(new Set([node]), column == null ? undefined : new Set([column]));
+
+        // after expansion we want to scroll back to active
+        if (this.scrollOnRefresh) {
+            this.scrollOnRefresh = false;
+            this.scrollToActive(activeMatch);
+        }
+
+        this.setDetailActive(activeMatch);
     }
 
     private refreshRows(rowNodes: Set<IRowNode>, columns?: Set<Column>): void {
@@ -445,7 +605,7 @@ export class FindService extends BeanStub implements NamedBean, IFindService {
         backwards: boolean,
         nextOverallNum: number,
         currentNode?: IRowNode,
-        currentColumn?: Column,
+        currentColumn?: Column | null,
         currentNumInMatch?: number
     ): boolean {
         const matches = this.getMatches(rowPinned);
@@ -534,6 +694,7 @@ export class FindService extends BeanStub implements NamedBean, IFindService {
                 parent = parent.parent;
             }
             this.activeMatch = activeMatch;
+            this.scrollOnRefresh = true;
             this.beans.expansionSvc?.onGroupExpandedOrCollapsed();
             // this will cause a refresh model which will cause the find to be re-applied
             // (and therefore call this method again), so exit here
@@ -545,46 +706,62 @@ export class FindService extends BeanStub implements NamedBean, IFindService {
 
         this.refreshAndScrollToActive(activeMatch, oldActiveMatch);
 
+        if (activeMatch) {
+            this.setDetailActive(activeMatch);
+        }
+
         this.dispatchFindChanged();
+    }
+
+    private setDetailActive({ node, numInMatch }: FindMatch): void {
+        if (node.detail) {
+            (node as RowNode).detailGridInfo?.api?.findGoTo(numInMatch);
+        }
     }
 
     private refreshAndScrollToActive(activeMatch: FindMatch | undefined, oldActiveMatch: FindMatch | undefined): void {
         if (activeMatch || oldActiveMatch) {
             const nodes = new Set<IRowNode>();
             const columns = new Set<Column>();
+            let skipColumns = false;
             const addMatch = (match?: FindMatch) => {
                 if (!match) {
                     return;
                 }
-                nodes.add(match.node);
-                columns.add(match.column);
+                const { node, column } = match;
+                nodes.add(node);
+                if (column == null) {
+                    // refresh everything for full width/detail
+                    skipColumns = true;
+                } else {
+                    columns.add(column);
+                }
             };
             addMatch(activeMatch);
             addMatch(oldActiveMatch);
             // active (and now inactive) match cells needs refreshing to add/remove the active highlight
-            this.refreshRows(nodes, columns);
+            this.refreshRows(nodes, skipColumns ? undefined : columns);
         }
 
         if (activeMatch) {
-            // scroll the grid to the active match cell
-            const {
-                node: { rowPinned, rowIndex },
-                column,
-            } = activeMatch;
-            const { ctrlsSvc, pagination, gos } = this.beans;
-            const scrollFeature = ctrlsSvc.getScrollFeature();
-            if (rowPinned == null && rowIndex != null) {
-                if (pagination && !gos.get('findOptions')?.currentPageOnly && !pagination.isRowInPage(rowIndex)) {
-                    pagination.goToPageWithIndex(rowIndex);
-                }
-                scrollFeature.ensureIndexVisible(rowIndex);
-            }
-            scrollFeature.ensureColumnVisible(column);
+            this.scrollToActive(activeMatch);
         }
     }
 
+    private scrollToActive({ node: { rowPinned, rowIndex }, column }: FindMatch) {
+        const { ctrlsSvc, pagination, gos } = this.beans;
+        const scrollFeature = ctrlsSvc.getScrollFeature();
+        if (rowPinned == null && rowIndex != null) {
+            if (pagination && !gos.get('findOptions')?.currentPageOnly && !pagination.isRowInPage(rowIndex)) {
+                pagination.goToPageWithIndex(rowIndex);
+            }
+            scrollFeature.ensureIndexVisible(rowIndex);
+        }
+        scrollFeature.ensureColumnVisible(column);
+    }
+
     // search for the specified overall `match` number with the provided container, and set it to be active
-    private goToInContainer(matches: Map<IRowNode, [Column, number][]>, match: number, startNum: number): void {
+    private goToInContainer(matches: Matches, match: number, startNum: number): void {
         let currentMatch = startNum;
         for (const node of matches.keys()) {
             const cols = matches.get(node)!;
@@ -603,7 +780,7 @@ export class FindService extends BeanStub implements NamedBean, IFindService {
         }
     }
 
-    private getMatches(rowPinned: RowPinnedType): Map<IRowNode, [Column, number][]> {
+    private getMatches(rowPinned: RowPinnedType): Matches {
         if (rowPinned === 'top') {
             return this.topMatches;
         } else if (rowPinned === 'bottom') {
@@ -623,7 +800,7 @@ export class FindService extends BeanStub implements NamedBean, IFindService {
         }
     }
 
-    private getActiveMatchNum(node: IRowNode, column: Column): number {
+    private getActiveMatchNum(node: IRowNode, column: Column | null): number {
         const activeMatch = this.activeMatch;
         return activeMatch != null && activeMatch.node === node && activeMatch.column === column
             ? activeMatch.numInMatch

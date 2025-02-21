@@ -51,7 +51,7 @@ const gridOptions: GridOptions = {
             ? `${activeMatch?.numOverall ?? 0}/${totalMatches}`
             : '';
         (document.getElementById('activeMatch') as HTMLElement).textContent = activeMatch
-            ? `Active match: { pinned: ${activeMatch.node.rowPinned}, row index: ${activeMatch.node.rowIndex}, column: ${activeMatch.column.getColId()}, match number in cell: ${activeMatch.numInMatch} }`
+            ? `Active match: { pinned: ${activeMatch.node.rowPinned}, row index: ${activeMatch.node.rowIndex}, column: ${activeMatch.column?.getColId()}, match number in cell: ${activeMatch.numInMatch} }`
             : '';
     },
 };

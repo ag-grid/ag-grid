@@ -1,12 +1,10 @@
 import type { BeanCollection, DetailGridInfo } from 'ag-grid-community';
 
-import type { MasterDetailService } from './masterDetailService';
-
 function operateOnStore<TCallbackResult>(
     beans: BeanCollection,
     callback: (store: { [id: string]: DetailGridInfo | undefined }) => TCallbackResult
 ): TCallbackResult | undefined {
-    const store = (beans.masterDetailSvc as MasterDetailService | undefined)?.store;
+    const store = beans.masterDetailSvc?.store;
     return store ? callback(store) : undefined;
 }
 

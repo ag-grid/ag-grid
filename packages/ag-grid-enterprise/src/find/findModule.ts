@@ -3,6 +3,7 @@ import type { _FindApi, _ModuleWithApi, _ModuleWithoutApi } from 'ag-grid-commun
 import { VERSION } from '../version';
 import { findCSS } from './find.css-GENERATED';
 import {
+    findClearActive,
     findGetActiveMatch,
     findGetNumMatches,
     findGetParts,
@@ -43,6 +44,7 @@ export const FindModule: _ModuleWithApi<_FindApi<any>> = {
         findGetActiveMatch,
         findGetNumMatches,
         findGetParts,
+        findClearActive,
     },
     dependsOn: [FindCoreModule],
 };

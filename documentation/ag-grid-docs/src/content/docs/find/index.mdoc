@@ -23,9 +23,9 @@ const gridOptions = {
 }
 ```
 
-The grid API methods `findNext()`, `findPrevious()`, and `findGoTo(matchNumber)` can be used to move between the matches.
+The grid API methods `findNext()`, `findPrevious()`, and `findGoTo(matchNumber)` can be used to move between the matches, or `findClearActive()` can be used to clear the active match.
 
-{% apiDocumentation source="grid-api/api.json" section="find" names=["findNext", "findPrevious", "findGoTo"] /%}
+{% apiDocumentation source="grid-api/api.json" section="find" names=["findNext", "findPrevious", "findGoTo", "findClearActive"] /%}
 
 Changing the Find search value, changing the active match, or updates to the grid that cause changes to the visible cells (e.g. changing columns/rows) trigger the `findChanged` event. The event contains details on the active match, as well as the total number of matches.
 

@@ -745,8 +745,15 @@ export interface _FindApi<TData> {
     findPrevious(): void;
     /** Get the total number of matches. */
     findGetTotalMatches(): number;
-    /** Go to the provided match (first match is `1`). */
-    findGoTo(match: number): void;
+    /**
+     * Go to the provided match (first match is `1`).
+     * By default, if the provided match is already active, this will do nothing.
+     * If `force` is set to `true`, this will instead reset the active match to that provided
+     * (e.g. scroll the grid).
+     */
+    findGoTo(match: number, force?: boolean): void;
+    /** Clear the active match. */
+    findClearActive(): void;
     /** Get the active match, or `undefined` if no active match. */
     findGetActiveMatch(): FindMatch<TData> | undefined;
     /** Get the number of matches within the provided cell. */

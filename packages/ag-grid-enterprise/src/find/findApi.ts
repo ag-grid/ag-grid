@@ -12,8 +12,12 @@ export function findGetTotalMatches(beans: BeanCollection): number {
     return beans.findSvc?.totalMatches ?? 0;
 }
 
-export function findGoTo(beans: BeanCollection, match: number): void {
-    beans.findSvc?.goTo(match);
+export function findGoTo(beans: BeanCollection, match: number, force?: boolean): void {
+    beans.findSvc?.goTo(match, force);
+}
+
+export function findClearActive(beans: BeanCollection): void {
+    beans.findSvc?.clearActive();
 }
 
 export function findGetActiveMatch(beans: BeanCollection): FindMatch | undefined {

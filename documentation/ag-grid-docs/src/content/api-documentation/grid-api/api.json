@@ -1174,6 +1174,12 @@
                 "url": "./find/"
             }
         },
+        "findClearActive": {
+            "more": {
+                "name": "Find",
+                "url": "./find/"
+            }
+        },
         "findGetActiveMatch": {
             "more": {
                 "name": "Find",
