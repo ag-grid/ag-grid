@@ -333,8 +333,11 @@ export type SelectionEventSourceType =
 
 export interface SelectionChangedEvent<TData = any, TContext = any>
     extends AgGlobalEvent<'selectionChanged', TData, TContext> {
+    /** The source that triggered the selection change event. */
     source: SelectionEventSourceType;
+    /** The row nodes that are selected at the time the event is generated. When selecting all nodes in SSRM or when group selecting in SSRM, this will be `null`. */
     selectedNodes: IRowNode[] | null;
+    /** The SSRM selection state. This can be referred to when `selectedNodes` is `null`. This will be `null` when using a row model other than SSRM. */
     serverSideState: IServerSideSelectionState | IServerSideGroupSelectionState | null;
 }
 
