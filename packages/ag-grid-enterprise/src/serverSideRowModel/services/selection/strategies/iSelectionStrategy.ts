@@ -14,7 +14,7 @@ export interface ISelectionStrategy extends Bean {
     setNodesSelected(params: ISetNodesSelectedParams): number;
     isNodeSelected(node: RowNode): boolean | undefined;
     processNewRow(node: RowNode): void;
-    getSelectedNodes(nullWhenSelectAll?: boolean): RowNode<any>[] | null;
+    getSelectedNodes(nullWhenSelectAll?: boolean, warnWhenSelectAll?: boolean): RowNode<any>[] | null;
     getSelectedRows(): any[];
     getSelectionCount(): number;
     isEmpty(): boolean;
