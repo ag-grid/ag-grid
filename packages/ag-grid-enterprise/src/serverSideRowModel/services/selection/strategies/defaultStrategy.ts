@@ -148,11 +148,11 @@ export class DefaultStrategy extends BeanStub implements ISelectionStrategy {
     }
 
     public getSelectedNodes(nullWhenSelectAll = false): RowNode<any>[] | null {
-        if (this.selectAllUsed) {
+        const { selectAllUsed, selectedState, selectedNodes } = this;
+        if (selectAllUsed) {
             _warn(199);
-            if (nullWhenSelectAll) return null;
         }
-        return Object.values(this.selectedNodes);
+        return nullWhenSelectAll && selectedState.selectAll ? null : Object.values(selectedNodes);
     }
 
     public getSelectedRows(): any[] {
