@@ -49,7 +49,10 @@ function hybridFuzzySearch(str1: string, str2: string): number {
         return 1000; // Exact match, highest possible score
     }
 
-    if (str1.length === 0 || str2.length === 0) {
+    const len1 = str1.length;
+    const len2 = str2.length;
+
+    if (len1 === 0 || len2 === 0) {
         return 0; // No match at all
     }
 
@@ -76,18 +79,18 @@ function hybridFuzzySearch(str1: string, str2: string): number {
         return 0;
     }
 
-    let previousRow: number[] = Array.from({ length: str2.length + 1 }, (_, i) => i);
+    let previousRow: number[] = Array.from({ length: len2 + 1 }, (_, i) => i);
 
-    for (let i = 0; i < str1.length; i++) {
+    for (let i = 0; i < len1; i++) {
         const currentRow: number[] = [i + 1];
 
-        for (let j = 0; j < str2.length; j++) {
+        for (let j = 0; j < len2; j++) {
             const insertions = previousRow[j + 1] + 1;
             const deletions = currentRow[j] + 1;
             let substitutions = previousRow[j] + (str1[i] !== str2[j] ? 1 : 0);
 
             // Favour matches that appear earlier in the string
-            if (str2.length > 10 && j > str2.length / 2) {
+            if (len2 > 10 && j > len2 / 2) {
                 substitutions += 1;
             }
 
@@ -101,7 +104,7 @@ function hybridFuzzySearch(str1: string, str2: string): number {
         previousRow = currentRow;
     }
 
-    const distance = Math.round(previousRow[str2.length]);
+    const distance = Math.round(previousRow[len2]);
 
     // Convert distance into a similarity score (higher is better)
     let score = Math.max(1, 1000 - distance * 30);
