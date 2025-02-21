@@ -65,14 +65,6 @@ function hybridFuzzySearch(str1: string, str2: string): number {
         return 980 - str2PositionInStr1 * 2;
     }
 
-    // Partial word matching bonus (e.g., "detector" should rank well for "detection")
-    const wordsInStr2 = str2Lower.split(' ');
-    for (const word of wordsInStr2) {
-        if (word.includes(str1Lower)) {
-            return 950 - str2Lower.indexOf(word) * 2;
-        }
-    }
-
     // If there are no common characters, return 0 (no match)
     const commonChars = [...str1Lower].filter((char) => str2Lower.includes(char));
     if (commonChars.length === 0) {
@@ -107,12 +99,7 @@ function hybridFuzzySearch(str1: string, str2: string): number {
     const distance = Math.round(previousRow[len2]);
 
     // Convert distance into a similarity score (higher is better)
-    let score = Math.max(1, 1000 - distance * 30);
-
-    // Penalty for shared characters without meaningful matches
-    if (str2PositionInStr1 === -1 && !wordsInStr2.some((word) => word.includes(str1Lower))) {
-        score -= 200;
-    }
+    const score = Math.max(1, 1000 - distance * 30);
 
     return Math.max(1, score);
 }
