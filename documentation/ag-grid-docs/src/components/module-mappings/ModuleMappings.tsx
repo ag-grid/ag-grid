@@ -55,7 +55,7 @@ export const ModuleMappings: FunctionComponent<Props> = ({ framework, modules })
             const modifyData = (row: any) => ({
                 ...row,
                 children: row.children?.map(modifyData),
-                hide: row.ssrmBundled,
+                showSSRMLabel: row.ssrmBundled,
             });
             const modifiedGroups = groups.map(modifyData);
             return modifiedGroups;
@@ -72,7 +72,9 @@ export const ModuleMappings: FunctionComponent<Props> = ({ framework, modules })
     const [columnDefs] = useState([
         {
             field: 'moduleName',
-            valueGetter: ({ data }: ValueGetterParams) => (data.hide ? null : data.moduleName),
+            valueGetter: ({ data }: ValueGetterParams) => {
+                return data.showSSRMLabel ? null : data.moduleName;
+            },
             cellRenderer: ModuleNameCellRenderer,
         },
     ]);
@@ -163,13 +165,13 @@ export const ModuleMappings: FunctionComponent<Props> = ({ framework, modules })
                         params.data.moduleName === 'ServerSideRowModelModule') ||
                     (rowModelOption === 'ViewportRowModelModule' &&
                         params.data.moduleName === 'ViewportRowModelModule');
-                const isHidden = params.data.hide;
+                const showSSRMLabel = params.data.showSSRMLabel;
 
                 const isChartsModel = Object.entries(chartOptions).some(
                     ([name, isSelected]) => isSelected && params.data.moduleName === getChartsModuleName(name)
                 );
 
-                return isInBundle && !isRowModel && !isHidden && !isChartsModel;
+                return isInBundle && !isRowModel && !showSSRMLabel && !isChartsModel;
             },
             groupSelects: 'descendants',
             headerCheckbox: bundleOption === '',
