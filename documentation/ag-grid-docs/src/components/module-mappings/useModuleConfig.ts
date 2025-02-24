@@ -19,9 +19,17 @@ import { type ChartsImportType, type SelectedModules, getModuleMappingsSnippet }
 
 export type ModuleConfig = ReturnType<typeof useModuleConfig>;
 
-const getChartsImportType = (chartOptions: ChartOptions): ChartsImportType => {
-    const hasSparklines = chartOptions['Sparklines'];
-    const hasIntegratedCharts = chartOptions['Integrated Charts'];
+const getChartsImportType = ({
+    chartOptions,
+    selectedModules,
+}: {
+    chartOptions: ChartOptions;
+    selectedModules: SelectedModules;
+}): ChartsImportType => {
+    const hasSparklines =
+        chartOptions['Sparklines'] || selectedModules.enterprise.includes(SPARKLINES_MODULE.moduleName);
+    const hasIntegratedCharts =
+        chartOptions['Integrated Charts'] || selectedModules.enterprise.includes(INTEGRATED_CHARTS_MODULE.moduleName);
     let chartsImport: ChartsImportType = 'none';
     if (hasSparklines && !hasIntegratedCharts) {
         chartsImport = 'community';
@@ -45,7 +53,7 @@ export function useModuleConfig(gridRef: RefObject<AgGridReact>) {
         enterprise: [],
     });
     const selectedDependenciesSnippet = useMemo(() => {
-        const chartsImportType = getChartsImportType(chartOptions);
+        const chartsImportType = getChartsImportType({ chartOptions, selectedModules });
         return getModuleMappingsSnippet({ chartsImportType, selectedModules });
     }, [selectedModules, chartOptions]);
 
