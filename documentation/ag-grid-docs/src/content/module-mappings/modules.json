@@ -58,6 +58,7 @@
         },
         {
             "name": "Row Models",
+            "hideFromSelection": true,
             "children": [
                 {
                     "moduleName": "ClientSideRowModelModule",
@@ -304,6 +305,7 @@
         },
         {
             "name": "Charts",
+            "hideFromSelection": true,
             "children": [
                 {
                     "moduleName": "IntegratedChartsModule",

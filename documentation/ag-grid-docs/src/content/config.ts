@@ -102,6 +102,7 @@ const moduleItemBase = {
     path: z.string().optional(),
     isEnterprise: z.boolean().optional(),
     ssrmBundled: z.boolean().optional(),
+    hideFromSelection: z.boolean().optional(),
 };
 
 const moduleGroupLevel2 = z.object({
@@ -114,6 +115,7 @@ const moduleGroupLevel1 = z.object({
     name: z.string(),
     children: z.array(z.object(moduleItemBase).or(moduleGroupLevel2)).optional(),
     isEnterprise: z.boolean().optional(),
+    hideFromSelection: z.boolean().optional(),
 });
 
 const moduleMappings = defineCollection({
