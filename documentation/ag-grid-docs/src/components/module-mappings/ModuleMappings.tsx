@@ -109,6 +109,10 @@ export const ModuleMappings: FunctionComponent<Props> = ({ framework, modules })
                         (bundleOption === 'AllCommunityModule' && !child.isSelected() && !child.data.isEnterprise) ||
                         // Reselect row module if selected
                         (!child.isSelected() && rowModelOption === child.data.moduleName) ||
+                        // Reselect SSRM modules if selected
+                        (!child.isSelected() &&
+                            rowModelOption === 'ServerSideRowModelModule' &&
+                            child.data.ssrmBundled) ||
                         // Reselect charts option if selected
                         (!child.isSelected() &&
                             Object.entries(chartOptions)
