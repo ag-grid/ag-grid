@@ -3,6 +3,7 @@ import type {
     AgPieSeriesOptions,
     AgPolarChartOptions,
     AgPolarSeriesOptions,
+    WithThemeParams,
 } from 'ag-charts-types';
 
 import type { FieldDefinition, UpdateParams } from '../chartProxy';
@@ -95,8 +96,6 @@ export class PieChartProxy extends ChartProxy<AgPolarChartOptions, 'pie' | 'donu
     }
 
     private extractCrossFilterSeries(series: (AgPieSeriesOptions | AgDonutSeriesOptions)[]) {
-        const palette = this.getChartPalette();
-
         const primaryOptions = (seriesOptions: AgPieSeriesOptions | AgDonutSeriesOptions) => {
             return {
                 ...seriesOptions,
@@ -113,12 +112,15 @@ export class PieChartProxy extends ChartProxy<AgPolarChartOptions, 'pie' | 'donu
             };
         };
 
-        const filteredOutOptions = (seriesOptions: AgPieSeriesOptions | AgDonutSeriesOptions, angleKey: string) => {
+        const filteredOutOptions = (
+            seriesOptions: AgPieSeriesOptions | AgDonutSeriesOptions,
+            angleKey: string
+        ): WithThemeParams<AgPieSeriesOptions> | WithThemeParams<AgDonutSeriesOptions> => {
             return {
-                ...primaryOpts,
+                ...seriesOptions,
                 radiusKey: angleKey + '-filtered-out',
-                fills: this.changeOpacity(seriesOptions.fills ?? palette?.fills ?? [], 0.3),
-                strokes: this.changeOpacity(seriesOptions.strokes ?? palette?.strokes ?? [], 0.3),
+                fills: { $mixEach: [{ $path: '../0/fills' }, { $ref: 'backgroundColor' }, 0.7] },
+                strokes: { $mixEach: [{ $path: '../0/strokes' }, { $ref: 'backgroundColor' }, 0.7] },
                 showInLegend: false,
             };
         };
@@ -130,7 +132,10 @@ export class PieChartProxy extends ChartProxy<AgPolarChartOptions, 'pie' | 'donu
         const angleKey = primarySeries.angleKey!;
         const primaryOpts = primaryOptions(primarySeries);
 
-        return [filteredOutOptions(primaryOptions(primarySeries), angleKey), primaryOpts];
+        return [
+            filteredOutOptions(primaryOptions(primarySeries), angleKey) as AgPieSeriesOptions | AgDonutSeriesOptions,
+            primaryOpts,
+        ];
     }
 
     private getFields(params: UpdateParams): FieldDefinition[] {

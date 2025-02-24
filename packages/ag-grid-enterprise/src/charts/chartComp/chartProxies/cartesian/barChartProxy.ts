@@ -1,6 +1,5 @@
-import type { AgBarSeriesOptions, AgCartesianAxisOptions } from 'ag-charts-types';
+import type { AgBarSeriesOptions, AgCartesianAxisOptions, WithThemeParams } from 'ag-charts-types';
 
-import { hexToRGBA } from '../../utils/color';
 import { isStacked } from '../../utils/seriesTypeMapper';
 import type { UpdateParams } from '../chartProxy';
 import { CartesianChartProxy } from './cartesianChartProxy';
@@ -62,13 +61,13 @@ export class BarChartProxy extends CartesianChartProxy<'bar'> {
             };
         };
 
-        const updateFilteredOutSeries = (seriesOptions: AgBarSeriesOptions): AgBarSeriesOptions => {
+        const updateFilteredOutSeries = (seriesOptions: AgBarSeriesOptions): WithThemeParams<AgBarSeriesOptions> => {
             const yKey = seriesOptions.yKey + '-filtered-out';
             return {
                 ...seriesOptions,
                 yKey,
-                fill: hexToRGBA(seriesOptions.fill as string, '0.3'),
-                stroke: hexToRGBA(seriesOptions.stroke as string, '0.3'),
+                fill: { $mix: [{ $path: '../0/fill' }, { $ref: 'backgroundColor' }, 0.7] },
+                stroke: { $mix: [{ $path: '../0/stroke' }, { $ref: 'backgroundColor' }, 0.7] },
                 showInLegend: false,
             };
         };
@@ -80,7 +79,7 @@ export class BarChartProxy extends CartesianChartProxy<'bar'> {
             allSeries.push(updatePrimarySeries(originalSeries, i));
 
             // add 'filtered-out' series
-            allSeries.push(updateFilteredOutSeries(updatePrimarySeries(originalSeries, i)));
+            allSeries.push(updateFilteredOutSeries(updatePrimarySeries(originalSeries, i)) as AgBarSeriesOptions);
         }
         return allSeries;
     }
