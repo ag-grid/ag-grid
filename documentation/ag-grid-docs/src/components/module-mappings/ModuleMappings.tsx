@@ -159,12 +159,13 @@ export const ModuleMappings: FunctionComponent<Props> = ({ framework, modules })
                         params.data.moduleName === 'ServerSideRowModelModule') ||
                     (rowModelOption === 'ViewportRowModelModule' &&
                         params.data.moduleName === 'ViewportRowModelModule');
+                const isHidden = params.data.hide;
 
                 const isChartsModel = Object.entries(chartOptions).some(
                     ([name, isSelected]) => isSelected && params.data.moduleName === getChartsModuleName(name)
                 );
 
-                return isInBundle && !isRowModel && !isChartsModel;
+                return isInBundle && !isRowModel && !isHidden && !isChartsModel;
             },
             groupSelects: 'descendants',
             headerCheckbox: bundleOption === '',

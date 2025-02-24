@@ -49,6 +49,25 @@ export function useModuleConfig(gridRef: RefObject<AgGridReact>) {
         return getModuleMappingsSnippet({ chartsImportType, selectedModules });
     }, [selectedModules, chartOptions]);
 
+    const updateSSRMSelectedRows = useCallback(() => {
+        const api = gridRef?.current?.api;
+        if (!api) {
+            return;
+        }
+
+        const nodesToSelect: IRowNode[] = [];
+        api.forEachLeafNode((child) => {
+            if (child.data.ssrmBundled) {
+                nodesToSelect.push(child);
+            }
+        });
+
+        api.setNodesSelected({
+            nodes: nodesToSelect,
+            newValue: true,
+        });
+    }, [gridRef]);
+
     const updateRowModelOption = useCallback(
         (moduleName: string) => {
             const otherRowModelObjs = ROW_MODEL_OPTIONS.filter((rowModel) => rowModel.moduleName !== moduleName);
@@ -67,6 +86,10 @@ export function useModuleConfig(gridRef: RefObject<AgGridReact>) {
                 nodes: [selectedRowModel],
                 newValue: true,
             });
+
+            if (moduleName === 'ServerSideRowModelModule') {
+                updateSSRMSelectedRows();
+            }
 
             if (bundleOption === '') {
                 // Deselect other row models
@@ -92,7 +115,33 @@ export function useModuleConfig(gridRef: RefObject<AgGridReact>) {
                 });
             }
         },
-        [gridRef, bundleOption]
+        [gridRef, bundleOption, updateSSRMSelectedRows]
+    );
+
+    const selectRowModelOption = useCallback(
+        ({ overrideCommunity }: { overrideCommunity?: string[] } = { overrideCommunity: undefined }) => {
+            setSelectedModules((prev) => {
+                const rowModel = ROW_MODEL_OPTIONS.find((rowModel) => rowModel.moduleName === rowModelOption)!;
+
+                const community = overrideCommunity ? overrideCommunity : [...prev.community];
+                const enterprise = [...prev.enterprise];
+
+                if (rowModel.isEnterprise) {
+                    const index = enterprise.indexOf(rowModelOption);
+                    if (index === -1) {
+                        enterprise.push(rowModelOption);
+                    }
+                } else if (!overrideCommunity) {
+                    community.push(rowModelOption);
+                }
+
+                return {
+                    community,
+                    enterprise,
+                };
+            });
+        },
+        [rowModelOption]
     );
 
     const selectChartOptions = useCallback(() => {
@@ -162,12 +211,12 @@ export function useModuleConfig(gridRef: RefObject<AgGridReact>) {
                     newValue: true,
                 });
 
-                setSelectedModules((prev) => {
-                    return {
-                        community: [ALL_COMMUNITY_MODULE],
-                        enterprise: [...prev.enterprise],
-                    };
-                });
+                if (rowModelOption === 'ServerSideRowModelModule') {
+                    updateSSRMSelectedRows();
+                }
+
+                // Reselect row model
+                selectRowModelOption({ overrideCommunity: [ALL_COMMUNITY_MODULE] });
 
                 // Reselect chart options
                 selectChartOptions();
@@ -180,20 +229,13 @@ export function useModuleConfig(gridRef: RefObject<AgGridReact>) {
                     nodes: [selectedRowModel],
                     newValue: true,
                 });
-                const rowModel = ROW_MODEL_OPTIONS.find((rowModel) => rowModel.moduleName === rowModelOption);
-                // When going from AllCommunityModules to none, and when the row model is
-                // community, need to add the row model to the selected modules
-                if (!rowModel?.isEnterprise) {
-                    setSelectedModules((prev) => {
-                        const community = [...prev.community, rowModelOption];
-                        const enterprise = [...prev.enterprise];
 
-                        return {
-                            community,
-                            enterprise,
-                        };
-                    });
+                if (rowModelOption === 'ServerSideRowModelModule') {
+                    updateSSRMSelectedRows();
                 }
+
+                // Reselect row model
+                selectRowModelOption();
 
                 // Reselect chart options
                 selectChartOptions();
@@ -201,7 +243,7 @@ export function useModuleConfig(gridRef: RefObject<AgGridReact>) {
 
             setBundleOption(moduleName);
         },
-        [gridRef, rowModelOption, selectChartOptions]
+        [gridRef, rowModelOption, selectChartOptions, updateSSRMSelectedRows, selectRowModelOption]
     );
 
     const updateChartOption = useCallback(
@@ -246,9 +288,15 @@ export function useModuleConfig(gridRef: RefObject<AgGridReact>) {
             isSelected: boolean;
             isEnterprise: boolean;
         }) => {
-            if (!moduleName) {
+            const api = gridRef?.current?.api;
+            if (!moduleName || !api) {
                 return;
             }
+
+            const serverSideRowModelSelected = rowModelOption === 'ServerSideRowModelModule';
+            const selectedRowModel: IRowNode = api.getRowNode(moduleName)!;
+            const moduleIsSSRM = selectedRowModel.data.ssrmBundled;
+            const isSSRM = moduleName !== 'ServerSideRowModelModule' && serverSideRowModelSelected && moduleIsSSRM;
 
             if (bundleOption === ALL_ENTERPRISE_MODULE) {
                 // No modules can be selected
@@ -261,7 +309,7 @@ export function useModuleConfig(gridRef: RefObject<AgGridReact>) {
                     );
                     if (isEnterprise) {
                         const index = enterprise.indexOf(moduleName);
-                        if (isSelected && index === -1) {
+                        if (isSelected && index === -1 && !isSSRM) {
                             enterprise.push(moduleName);
                         } else {
                             if (index > -1) {
@@ -286,7 +334,7 @@ export function useModuleConfig(gridRef: RefObject<AgGridReact>) {
 
                 if (isEnterprise) {
                     const index = enterprise.indexOf(moduleName);
-                    if (isSelected && index === -1) {
+                    if (isSelected && index === -1 && !isSSRM) {
                         enterprise.push(moduleName);
                     } else {
                         if (index > -1) {
@@ -295,7 +343,7 @@ export function useModuleConfig(gridRef: RefObject<AgGridReact>) {
                     }
                 } else {
                     const index = community.indexOf(moduleName);
-                    if (isSelected && index === -1) {
+                    if (isSelected && index === -1 && !isSSRM) {
                         community.push(moduleName);
                     } else {
                         if (index > -1) {
@@ -310,7 +358,7 @@ export function useModuleConfig(gridRef: RefObject<AgGridReact>) {
                 };
             });
         },
-        [bundleOption]
+        [bundleOption, rowModelOption, gridRef]
     );
 
     return {
