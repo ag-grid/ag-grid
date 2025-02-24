@@ -70,11 +70,6 @@ export function useModuleConfig(gridRef: RefObject<AgGridReact>) {
 
     const updateRowModelOption = useCallback(
         (moduleName: string) => {
-            const otherRowModelObjs = ROW_MODEL_OPTIONS.filter((rowModel) => rowModel.moduleName !== moduleName);
-
-            setRowModelOption(moduleName);
-            // NOTE: `selectedModules` is set by the updatedSelectedModule callback
-
             const api = gridRef?.current?.api;
             if (!api) {
                 return;
@@ -91,31 +86,50 @@ export function useModuleConfig(gridRef: RefObject<AgGridReact>) {
                 updateSSRMSelectedRows();
             }
 
+            const otherRowModelObjs = ROW_MODEL_OPTIONS.filter((rowModel) => rowModel.moduleName !== moduleName);
+            const rowModelsToDeselect: IRowNode[] = [];
             if (bundleOption === '') {
                 // Deselect other row models
-                const otherRowModels: IRowNode[] = otherRowModelObjs.map((node) => {
-                    return api.getRowNode(node.moduleName)!;
-                });
+                rowModelsToDeselect.push(
+                    ...otherRowModelObjs.map((node) => {
+                        return api.getRowNode(node.moduleName)!;
+                    })
+                );
                 api.setNodesSelected({
-                    nodes: otherRowModels,
+                    nodes: rowModelsToDeselect,
                     newValue: false,
                 });
             } else if (bundleOption === ALL_COMMUNITY_MODULE) {
                 // Deselect other non-selected enterprise row models
-                const otherRowModels: IRowNode[] = otherRowModelObjs
-                    .filter((rowModel) => {
-                        return rowModel.moduleName !== moduleName && rowModel.isEnterprise;
-                    })
-                    .map((rowModel) => {
-                        return api.getRowNode(rowModel.moduleName)!;
-                    });
-                api.setNodesSelected({
-                    nodes: otherRowModels,
-                    newValue: false,
+                rowModelsToDeselect.push(
+                    ...otherRowModelObjs
+                        .filter((rowModel) => {
+                            return rowModel.moduleName !== moduleName && rowModel.isEnterprise;
+                        })
+                        .map((rowModel) => {
+                            return api.getRowNode(rowModel.moduleName)!;
+                        })
+                );
+            }
+
+            // Switching away from `ServerSideRowModelModule`
+            if (rowModelOption === 'ServerSideRowModelModule') {
+                api.forEachLeafNode((child) => {
+                    if (child.data.moduleName && child.data.ssrmBundled) {
+                        rowModelsToDeselect.push(child);
+                    }
                 });
             }
+
+            api.setNodesSelected({
+                nodes: rowModelsToDeselect,
+                newValue: false,
+            });
+
+            setRowModelOption(moduleName);
+            // NOTE: `selectedModules` is set by the updatedSelectedModule callback
         },
-        [gridRef, bundleOption, updateSSRMSelectedRows]
+        [gridRef, bundleOption, updateSSRMSelectedRows, rowModelOption]
     );
 
     const selectRowModelOption = useCallback(
