@@ -175,13 +175,13 @@ export class FindService extends BeanStub implements NamedBean, IFindService {
      * whether they don't match, match, or are the active match
      */
     public getParts(params: FindCellValueParams): FindPart[] {
-        const { value, node, column } = params;
+        const { value, node, column, precedingNumMatches } = params;
         const findSearchValue = this.findSearchValue;
         if (_missing(findSearchValue)) {
             return [{ value }];
         }
         const valueToFind = this.caseFormat(_escapeString(value, true)) ?? '';
-        const activeMatchNum = this.getActiveMatchNum(node, column);
+        const activeMatchNum = this.getActiveMatchNum(node, column) - (precedingNumMatches ?? 0);
         let lastIndex = 0;
         let currentMatchNum = 0;
         const findTextLength = findSearchValue.length;

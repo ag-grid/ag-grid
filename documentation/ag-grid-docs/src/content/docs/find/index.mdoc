@@ -85,6 +85,54 @@ The following example demonstrates performing a case sensitive search, and findi
 
 {% gridExampleRunner title="Customising Find" name="customising-find" /%}
 
+## Find with Master / Detail
+
+When using [Master / Detail](./master-detail/), Find will not search within detail rows by default (either [Detail Grids](./master-detail-grids/) or [Custom Details](./master-detail-custom-detail/)). To enable Find to search within detail rows, set `searchDetail` within `findOptions` to `true`:
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    findOptions: {
+        searchDetail: true,
+    }
+}
+```
+
+### Detail Grids
+
+If a row containing a Detail Grid is expanded, Find will automatically search within the Detail Grid. If the master row is not expanded, the grid does not exist yet, so Find does not know how many matches there are. Find cannot create all of the Detail Grids as there may be a very large number of them.
+
+If you want Find to search within collapsed detail rows, then you must provide the `getFindMatches` callback to the `detailCellRendererParams` grid option. This tells Find how many matches are expected to be in the Detail Grid. If the active match moves to within the Detail Grid, the Detail Grid will automatically be expanded.
+
+{% interfaceDocumentation interfaceName="FindDetailGridCellRendererParams" config={"description":""} /%}
+
+The following example demonstrates Find across nested Master / Detail Grids:
+
+{% gridExampleRunner title="Find with Detail Grids" name="find-detail-grid" /%}
+
+### Custom Detail
+
+For Find to work with Custom Detail Cells, Find needs to know how many matches are within the detail row. This is done by providing the `getFindMatches` callback to the `detailCellRendererParams` grid option. This tells Find how many matches are expected to be in the Custom Detail. If the active match moves to within the Custom Detail, the Custom Detail will automatically be expanded.
+
+{% interfaceDocumentation interfaceName="FindDetailCellRendererParams" config={"description":""} /%}
+
+The Custom Detail Cell Component is responsible for highlighting matches, similar to [Custom Cell Components](#using-find-with-cell-components).
+
+The following example demonstrates Find across Custom Details:
+
+{% gridExampleRunner title="Find with Custom Details" name="find-custom-detail" /%}
+
+## Find with Full Width Rows
+
+For Find to work with [Full Width Rows](./full-width-rows/), Find needs to know how many matches are within the row. This is done by providing the `getFindMatches` callback to the `fullWidthCellRendererParams` grid option. This tells Find how many matches are expected to be in the Full Width Row.
+
+{% interfaceDocumentation interfaceName="FindFullWidthCellRendererParams" config={"description":""} /%}
+
+The Full Width Row Component is responsible for highlighting matches, similar to [Custom Cell Components](#using-find-with-cell-components).
+
+The following example demonstrates Find with Full Width Rows:
+
+{% gridExampleRunner title="Find with Full Width Rows" name="find-full-width" /%}
+
 ## Content to Search
 
 Find is designed to search within "visible" cell contents.
@@ -98,5 +146,3 @@ Searching will be performed within the children of [Collapsed Row Groups](./grou
 When using [Row Pagination](./row-pagination/), searching will be performed across all pages by default.
 
 See the [Customising Find](#customising-find) section for an example of using Find with Row Grouping, as well as how to customise behaviour for Pagination.
-
-[Detail Rows / Grids](./master-detail/) and [Full Width Rows](./full-width-rows/) are not searched.

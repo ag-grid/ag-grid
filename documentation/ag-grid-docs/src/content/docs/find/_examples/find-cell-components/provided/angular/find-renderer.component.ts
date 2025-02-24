@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
 
 import type { ICellRendererAngularComp } from 'ag-grid-angular';
-import type { ICellRendererParams } from 'ag-grid-community';
+import type { FindPart, ICellRendererParams } from 'ag-grid-community';
 
 @Component({
     standalone: true,
@@ -21,7 +21,7 @@ import type { ICellRendererParams } from 'ag-grid-community';
     `,
 })
 export class FindRenderer implements ICellRendererAngularComp {
-    parts = signal<any[]>([]);
+    parts = signal<FindPart[]>([]);
 
     agInit(params: ICellRendererParams): void {
         this.refresh(params);

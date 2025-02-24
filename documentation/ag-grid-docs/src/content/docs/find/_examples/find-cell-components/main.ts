@@ -2,7 +2,7 @@ import type { FindChangedEvent, GetFindTextParams, GridApi, GridOptions } from '
 import { ClientSideRowModelModule, ModuleRegistry, ValidationModule, createGrid } from 'ag-grid-community';
 import { FindModule } from 'ag-grid-enterprise';
 
-import { FindRenderer } from './findRenderer_typescript';
+import { FindRenderer } from './findRenderer';
 
 ModuleRegistry.registerModules([FindModule, ClientSideRowModelModule, ValidationModule /* Development Only */]);
 
