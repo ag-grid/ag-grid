@@ -1,26 +1,40 @@
 import React from 'react';
 
-import type { CustomCellRendererProps } from 'ag-grid-react';
+import { FindPart } from 'ag-grid-community';
+import { CustomCellRendererProps } from 'ag-grid-react';
 
 import { getLatinText } from './data';
 
+const PartsRenderer = ({ parts }: { parts: FindPart[] }) => {
+    return (
+        <p>
+            {parts.map(({ value: partValue, match, activeMatch }, index) =>
+                match ? (
+                    <mark key={index} className={`ag-find-match${activeMatch ? ' ag-find-active-match' : ''}`}>
+                        {partValue}
+                    </mark>
+                ) : (
+                    partValue
+                )
+            )}
+        </p>
+    );
+};
+
 export default ({ api, node }: CustomCellRendererProps) => {
-    const originalSampleText = 'Sample Text in a Paragraph';
-    const originalLatinText = getLatinText();
-    const sampleTextParts = api.findGetParts({
-        value: originalSampleText,
-        node,
-        column: null,
-    });
-    const sampleText = sampleTextParts.length ? sampleTextParts : [{ value: originalSampleText }];
-    const precedingNumMatches = sampleTextParts.filter((part) => part.match).length;
-    const latinTextParts = api.findGetParts({
-        value: originalLatinText,
-        node,
-        column: null,
-        precedingNumMatches,
-    });
-    const latinText = latinTextParts.length ? latinTextParts : [{ value: originalLatinText }];
+    const paragraphs = ['Sample Text in a Paragraph', ...getLatinText()];
+    const textParts: FindPart[][] = [];
+    let precedingNumMatches = 0;
+    for (const paragraph of paragraphs) {
+        const parts = api.findGetParts({
+            value: paragraph,
+            node,
+            column: null,
+            precedingNumMatches,
+        });
+        textParts.push(parts);
+        precedingNumMatches += parts.filter((part) => part.match).length;
+    }
 
     return (
         <div className="full-width-panel">
@@ -42,28 +56,9 @@ export default ({ api, node }: CustomCellRendererProps) => {
                 <br />
             </div>
             <div className="full-width-center">
-                <p>
-                    {sampleText.map(({ value: partValue, match, activeMatch }, index) =>
-                        match ? (
-                            <mark key={index} className={`ag-find-match${activeMatch ? ' ag-find-active-match' : ''}`}>
-                                {partValue}
-                            </mark>
-                        ) : (
-                            partValue
-                        )
-                    )}
-                </p>
-                <p>
-                    {latinText.map(({ value: partValue, match, activeMatch }, index) =>
-                        match ? (
-                            <mark key={index} className={`ag-find-match${activeMatch ? ' ag-find-active-match' : ''}`}>
-                                {partValue}
-                            </mark>
-                        ) : (
-                            partValue
-                        )
-                    )}
-                </p>
+                {textParts.map((parts, index) => (
+                    <PartsRenderer parts={parts} key={index} />
+                ))}
             </div>
         </div>
     );

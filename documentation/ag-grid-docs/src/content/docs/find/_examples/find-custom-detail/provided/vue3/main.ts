@@ -77,7 +77,6 @@ const VueExample = defineComponent({
         onFindChanged(event: FindChangedEvent) {
             const { activeMatch, totalMatches, findSearchValue } = event;
             this.activeMatchNum = findSearchValue?.length ? `${activeMatch?.numOverall ?? 0}/${totalMatches}` : '';
-            console.log('findChanged', event);
         },
         onFirstDataRendered(event: FirstDataRenderedEvent) {
             event.api.getDisplayedRowAtIndex(0)?.setExpanded(true);

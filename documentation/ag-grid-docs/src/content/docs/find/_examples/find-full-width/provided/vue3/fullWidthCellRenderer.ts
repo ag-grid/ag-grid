@@ -1,3 +1,5 @@
+import type { FindPart } from 'ag-grid-community';
+
 import { getLatinText } from './data';
 
 export default {
@@ -22,26 +24,21 @@ export default {
             <br/>
           </div>
           <div class="full-width-center">
-            <p>
-              <template v-for="part in sampleTextParts">
-                <mark v-if="part.match" :class="['ag-find-match', part.activeMatch ? 'ag-find-active-match' : '']">{{ part.value }}</mark>
-                <template v-if="!part.match">{{ part.value }}</template>
-              </template>
-            </p>
-            <p>
-              <template v-for="part in latinTextParts">
-                <mark v-if="part.match" :class="['ag-find-match', part.activeMatch ? 'ag-find-active-match' : '']">{{ part.value }}</mark>
-                <template v-if="!part.match">{{ part.value }}</template>
-              </template>
-            </p>
+            <template v-for="parts in textParts">
+              <p>
+                <template v-for="part in parts">
+                  <mark v-if="part.match" :class="['ag-find-match', part.activeMatch ? 'ag-find-active-match' : '']">{{ part.value }}</mark>
+                  <template v-if="!part.match">{{ part.value }}</template>
+                </template>
+              </p>
+            </template>
           </div>
       </div>
     `,
     data: function () {
         return {
             imgSrc: null,
-            sampleTextParts: [],
-            latinTextParts: [],
+            textParts: [],
         };
     },
     beforeMount() {
@@ -55,22 +52,20 @@ export default {
         updateDisplay(params) {
             this.imgSrc = `https://www.ag-grid.com/example-assets/large-flags/${this.params.node.data.code}.png`;
             const { api, node } = params;
-            const originalSampleText = 'Sample Text in a Paragraph';
-            const originalLatinText = getLatinText();
-            const sampleTextParts = api.findGetParts({
-                value: originalSampleText,
-                node,
-                column: null,
-            });
-            this.sampleTextParts = sampleTextParts.length ? sampleTextParts : [{ value: originalSampleText }];
-            const precedingNumMatches = sampleTextParts.filter((part) => part.match).length;
-            const latinTextParts = api.findGetParts({
-                value: originalLatinText,
-                node,
-                column: null,
-                precedingNumMatches,
-            });
-            this.latinTextParts = latinTextParts.length ? latinTextParts : [{ value: originalLatinText }];
+            const paragraphs = ['Sample Text in a Paragraph', ...getLatinText()];
+            const textParts: FindPart[][] = [];
+            let precedingNumMatches = 0;
+            for (const paragraph of paragraphs) {
+                const parts = api.findGetParts({
+                    value: paragraph,
+                    node,
+                    column: null,
+                    precedingNumMatches,
+                });
+                textParts.push(parts);
+                precedingNumMatches += parts.filter((part) => part.match).length;
+            }
+            this.textParts = textParts;
         },
     },
 };

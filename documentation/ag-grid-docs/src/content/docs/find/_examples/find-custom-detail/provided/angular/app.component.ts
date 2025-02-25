@@ -59,6 +59,7 @@ ModuleRegistry.registerModules([
             [detailRowHeight]="100"
             [findOptions]="findOptions"
             (findChanged)="onFindChanged($event)"
+            (firstDataRendered)="onFirstDataRendered($event)"
             (gridReady)="onGridReady($event)"
         />
     </div> `,

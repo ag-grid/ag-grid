@@ -34,41 +34,31 @@ export class FullWidthCellRenderer implements ICellRendererComp {
 
     private latinText(params: ICellRendererParams) {
         const { api, node } = params;
-        const originalSampleText = 'Sample Text in a Paragraph';
-        const originalLatinText = getLatinText();
-        let numMatches = 0;
-        const convert = (parts: FindPart[], defaultValue: string) => {
-            if (!parts.length) {
-                return defaultValue;
-            }
-            return parts
-                .map(({ value, match, activeMatch }) => {
-                    if (match) {
-                        numMatches++;
-                        return `<mark class="ag-find-match${activeMatch ? ' ag-find-active-match' : ''}">${value}</mark>`;
-                    }
-                    return value;
-                })
-                .join('');
-        };
-        const sample = convert(
-            api.findGetParts({
-                value: originalSampleText,
+        const paragraphs = ['Sample Text in a Paragraph', ...getLatinText()];
+        const textParts: FindPart[][] = [];
+        let precedingNumMatches = 0;
+        for (const paragraph of paragraphs) {
+            const parts = api.findGetParts({
+                value: paragraph,
                 node,
                 column: null,
-            }),
-            originalSampleText
-        );
-        const latinText = convert(
-            api.findGetParts({
-                value: originalLatinText,
-                node,
-                column: null,
-                precedingNumMatches: numMatches,
-            }),
-            originalLatinText
-        );
-        return `<p>${sample}</p><p>${latinText}</p>`;
+                precedingNumMatches,
+            });
+            textParts.push(parts);
+            precedingNumMatches += parts.filter((part) => part.match).length;
+        }
+        return `<p>${textParts
+            .map((parts) =>
+                parts
+                    .map(({ value, match, activeMatch }) => {
+                        if (match) {
+                            return `<mark class="ag-find-match${activeMatch ? ' ag-find-active-match' : ''}">${value}</mark>`;
+                        }
+                        return value;
+                    })
+                    .join('')
+            )
+            .join('</p><p>')}</p>`;
     }
 
     getGui() {

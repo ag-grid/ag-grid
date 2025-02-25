@@ -6,6 +6,7 @@ import {
     ColDef,
     FindChangedEvent,
     FindOptions,
+    FirstDataRenderedEvent,
     GetDetailRowDataParams,
     GetFindMatchesParams,
     GetRowIdParams,
@@ -59,6 +60,7 @@ ModuleRegistry.registerModules([
             [findOptions]="findOptions"
             [findSearchValue]="findSearchValue"
             (findChanged)="onFindChanged($event)"
+            (firstDataRendered)="onFirstDataRendered($event)"
             (gridReady)="onGridReady($event)"
         />
     </div> `,
@@ -120,6 +122,10 @@ export class AppComponent {
     onFindChanged(event: FindChangedEvent) {
         const { activeMatch, totalMatches, findSearchValue } = event;
         this.activeMatchNum = findSearchValue?.length ? `${activeMatch?.numOverall ?? 0}/${totalMatches}` : '';
+    }
+
+    onFirstDataRendered(event: FirstDataRenderedEvent) {
+        event.api.getDisplayedRowAtIndex(0)?.setExpanded(true);
     }
 
     next() {

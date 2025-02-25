@@ -64,7 +64,9 @@ const GridExample = () => {
                 const getMatchesForValue = params.getMatchesForValue;
                 // this example only implements searching across part of the renderer
                 let numMatches = getMatchesForValue('Sample Text in a Paragraph');
-                numMatches += getMatchesForValue(getLatinText());
+                getLatinText().forEach((paragraph) => {
+                    numMatches += getMatchesForValue(paragraph);
+                });
                 return numMatches;
             },
         }),

@@ -28,35 +28,25 @@ import { getLatinText } from './data';
                 <br />
             </div>
             <div class="full-width-center">
-                <p>
-                    @for (part of sampleTextParts(); track $index) {
-                        @if (part.match) {
-                            <mark [class]="{ 'ag-find-match': true, 'ag-find-active-match': part.activeMatch }">{{
-                                part.value
-                            }}</mark>
-                        } @else {
-                            <ng-container>{{ part.value }}</ng-container>
+                @for (parts of textParts(); track $index) {
+                    <p>
+                        @for (part of parts; track $index) {
+                            @if (part.match) {
+                                <mark [class]="{ 'ag-find-match': true, 'ag-find-active-match': part.activeMatch }">{{
+                                    part.value
+                                }}</mark>
+                            } @else {
+                                <ng-container>{{ part.value }}</ng-container>
+                            }
                         }
-                    }
-                </p>
-                <p>
-                    @for (part of latinTextParts(); track $index) {
-                        @if (part.match) {
-                            <mark [class]="{ 'ag-find-match': true, 'ag-find-active-match': part.activeMatch }">{{
-                                part.value
-                            }}</mark>
-                        } @else {
-                            <ng-container>{{ part.value }}</ng-container>
-                        }
-                    }
-                </p>
+                    </p>
+                }
             </div>
         </div>
     `,
 })
 export class FullWidthCellRenderer implements ICellRendererAngularComp {
-    sampleTextParts = signal<FindPart[]>([]);
-    latinTextParts = signal<FindPart[]>([]);
+    textParts = signal<FindPart[][]>([]);
     data = signal<any>(undefined);
     flag = computed(() =>
         this.data()?.code ? `https://www.ag-grid.com/example-assets/large-flags/${this.data().code}.png` : ''
@@ -69,22 +59,20 @@ export class FullWidthCellRenderer implements ICellRendererAngularComp {
     refresh(params: ICellRendererParams): boolean {
         const { api, node } = params;
         this.data.set(node.data);
-        const originalSampleText = 'Sample Text in a Paragraph';
-        const originalLatinText = getLatinText();
-        const sampleTextParts = api.findGetParts({
-            value: originalSampleText,
-            node,
-            column: null,
-        });
-        this.sampleTextParts.set(sampleTextParts.length ? sampleTextParts : [{ value: originalSampleText }]);
-        const precedingNumMatches = sampleTextParts.filter((part) => part.match).length;
-        const latinTextParts = api.findGetParts({
-            value: originalLatinText,
-            node,
-            column: null,
-            precedingNumMatches,
-        });
-        this.latinTextParts.set(latinTextParts.length ? latinTextParts : [{ value: originalLatinText }]);
+        const paragraphs = ['Sample Text in a Paragraph', ...getLatinText()];
+        const textParts: FindPart[][] = [];
+        let precedingNumMatches = 0;
+        for (const paragraph of paragraphs) {
+            const parts = api.findGetParts({
+                value: paragraph,
+                node,
+                column: null,
+                precedingNumMatches,
+            });
+            textParts.push(parts);
+            precedingNumMatches += parts.filter((part) => part.match).length;
+        }
+        this.textParts.set(textParts);
         return true;
     }
 }
