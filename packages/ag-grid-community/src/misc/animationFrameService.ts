@@ -33,8 +33,9 @@ export class AnimationFrameService extends BeanStub implements NamedBean {
     // p1 and p2 are create tasks are to do with row and cell creation.
     // for them we want to execute according to row order, so we use
     // TaskItem so we know what index the item is for.
-    private createTasksP1: TaskList = { list: [], sorted: false }; // eg drawing back-ground of rows
-    private createTasksP2: TaskList = { list: [], sorted: false }; // eg cell renderers, adding hover functionality
+    private p1: TaskList = { list: [], sorted: false }; // eg drawing back-ground of rows
+    private p2: TaskList = { list: [], sorted: false }; // eg cell renderers, adding hover functionality
+    private f1: TaskList = { list: [], sorted: false }; // eg framework cell renderers
 
     // destroy tasks are to do with row removal. they are done after row creation as the user will need to see new
     // rows first (as blank is scrolled into view), when we remove the old rows (no longer in view) is not as
@@ -42,6 +43,7 @@ export class AnimationFrameService extends BeanStub implements NamedBean {
     private destroyTasks: (() => void)[] = [];
     private ticking = false;
     public active: boolean;
+    private batchFrameworkComponents: boolean;
 
     // we need to know direction of scroll, to build up rows in the direction of
     // the scroll. eg if user scrolls down, we extend the rows by building down.
@@ -50,7 +52,6 @@ export class AnimationFrameService extends BeanStub implements NamedBean {
     private lastScrollTop = 0;
 
     private taskCount = 0;
-    private cancelledTasks = new Set();
 
     public setScrollTop(scrollTop: number): void {
         const { gos, pagination } = this.beans;
@@ -70,27 +71,28 @@ export class AnimationFrameService extends BeanStub implements NamedBean {
 
     public postConstruct(): void {
         this.active = !this.gos.get('suppressAnimationFrame');
+        this.batchFrameworkComponents = this.beans.frameworkOverrides.batchFrameworkComponents;
     }
 
     // this method is for our AG Grid sanity only - if animation frames are turned off,
     // then no place in the code should be looking to add any work to be done in animation
     // frames. this stops bugs - where some code is asking for a frame to be executed
     // when it should not.
-    private verifyAnimationFrameOn(methodName: string): void {
+    private verify(): void {
         if (this.active === false) {
-            _warn(92, { methodName });
+            _warn(92);
         }
     }
 
-    public createTask(task: () => void, index: number, list: 'createTasksP1' | 'createTasksP2') {
-        this.verifyAnimationFrameOn(list);
+    public createTask(task: () => void, index: number, list: 'p1' | 'p2', isFramework: boolean) {
+        this.verify();
+        let taskList: 'p1' | 'p2' | 'f1' = list;
+        if (isFramework && this.batchFrameworkComponents) {
+            taskList = 'f1';
+        }
         const taskItem: TaskItem = { task, index, createOrder: ++this.taskCount };
-        this.addTaskToList(this[list], taskItem);
+        this.addTaskToList(this[taskList], taskItem);
         this.schedule();
-    }
-
-    public cancelTask(task: () => void) {
-        this.cancelledTasks.add(task);
     }
 
     private addTaskToList(taskList: TaskList, task: TaskItem): void {
@@ -114,19 +116,22 @@ export class AnimationFrameService extends BeanStub implements NamedBean {
     }
 
     public addDestroyTask(task: () => void): void {
-        this.verifyAnimationFrameOn('createTasksP3');
+        this.verify();
         this.destroyTasks.push(task);
         this.schedule();
     }
 
     private executeFrame(millis: number): void {
-        this.verifyAnimationFrameOn('executeFrame');
+        this.verify();
 
-        const p1TaskList = this.createTasksP1;
+        const p1TaskList = this.p1;
         const p1Tasks = p1TaskList.list;
 
-        const p2TaskList = this.createTasksP2;
+        const p2TaskList = this.p2;
         const p2Tasks = p2TaskList.list;
+
+        const f1TaskList = this.f1;
+        const f1Tasks = f1TaskList.list;
 
         const destroyTasks = this.destroyTasks;
 
@@ -149,22 +154,68 @@ export class AnimationFrameService extends BeanStub implements NamedBean {
                 } else if (p2Tasks.length) {
                     this.sortTaskList(p2TaskList);
                     task = p2Tasks.pop()!.task;
+                } else if (f1Tasks.length) {
+                    this.sortTaskList(f1TaskList);
+                    // switch to framework tasks for the remaining time
+                    this.executeFrameworkFrame(noMaxMillis ? -1 : millis - duration);
+                    return;
                 } else if (destroyTasks.length) {
                     task = destroyTasks.pop()!;
                 } else {
-                    this.cancelledTasks.clear();
                     break;
                 }
 
-                if (!this.cancelledTasks.has(task)) {
-                    task();
-                }
+                task();
             }
 
             duration = Date.now() - frameStart;
         }
 
-        if (p1Tasks.length || p2Tasks.length || destroyTasks.length) {
+        if (p1Tasks.length || p2Tasks.length || f1Tasks.length || destroyTasks.length) {
+            this.requestFrame();
+        } else {
+            this.ticking = false;
+        }
+    }
+
+    private executeFrameworkFrame(millis: number): void {
+        const f1TaskList = this.f1;
+        const f1Tasks = f1TaskList.list;
+
+        const frameStart = Date.now();
+        let duration = 0;
+
+        // 16ms is 60 fps
+        const noMaxMillis = millis <= 0;
+
+        const scrollFeature = this.beans.ctrlsSvc.getScrollFeature();
+
+        this.beans.frameworkOverrides.wrapOutgoing(() => {
+            while (noMaxMillis || duration < millis) {
+                const gridBodyDidSomething = scrollFeature.scrollGridIfNeeded();
+
+                if (!gridBodyDidSomething) {
+                    let task: () => void;
+                    if (f1Tasks.length) {
+                        this.sortTaskList(f1TaskList);
+                        task = f1Tasks.pop()!.task;
+                        task();
+                    } else {
+                        break;
+                    }
+                }
+
+                duration = Date.now() - frameStart;
+            }
+        });
+
+        const p1TaskList = this.p1;
+        const p1Tasks = p1TaskList.list;
+
+        const p2TaskList = this.p2;
+        const p2Tasks = p2TaskList.list;
+
+        if (p1Tasks.length || p2Tasks.length || f1Tasks.length || this.destroyTasks.length) {
             this.requestFrame();
         } else {
             this.ticking = false;

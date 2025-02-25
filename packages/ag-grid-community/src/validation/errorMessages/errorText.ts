@@ -273,8 +273,7 @@ export const AG_GRID_ERRORS = {
         `A template was provided for Header Group Comp - templates are only supported for Header Comps (not groups)` as const,
     90: () => `datasource is missing getRows method` as const,
     91: () => 'Filter is missing method doesFilterPass' as const,
-    92: ({ methodName }: { methodName: string }) =>
-        `AnimationFrameService.${methodName} called but animation frames are off` as const,
+    92: () => `AnimationFrameService called but animation frames are off` as const,
     93: () => 'cannot add multiple ranges when `cellSelection.suppressMultiRanges = true`' as const,
     94: ({
         paginationPageSizeOption,
