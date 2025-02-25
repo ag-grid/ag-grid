@@ -171,6 +171,7 @@ export const _BOOLEAN_MIXED_GRID_OPTIONS: KeysWithType<boolean>[] = [
     'groupAggFiltering',
     'suppressStickyTotalRow',
     'groupHideParentOfSingleChild',
+    'enableRowPinning',
 ];
 
 // Used in validations to check type of pure boolean inputs
