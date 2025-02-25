@@ -60,13 +60,18 @@
       }
     },
     "build:css": {
-      "executor": "nx:run-script",
+      "command": "tsx ./scripts/build-css.ts --package ag-grid-community",
       "cache": true,
       "options": {
-        "script": "build:css"
+        "cwd": "{workspaceRoot}"
       },
       "inputs": ["{projectRoot}/src/**/*.css"],
-      "outputs": ["{projectRoot}/**/*.css-GENERATED.ts"]
+      "outputs": ["{projectRoot}/**/*.css-GENERATED.ts"],
+      "configurations": {
+        "debug": {
+          "command": "CSS_DEBUG=1 tsx ./scripts/build-css.ts --package ag-grid-community"
+        }
+      }
     },
     "build:package": {
       "executor": "@nx/esbuild:esbuild",
