@@ -269,7 +269,7 @@ export class FindService extends BeanStub implements NamedBean, IFindService {
         this.caseFormat = caseFormat;
 
         const providedFindSearchValue = gos.get('findSearchValue');
-        const findSearchValue = caseFormat(gos.get('findSearchValue')?.trim());
+        const findSearchValue = caseFormat(providedFindSearchValue?.trim());
         this.findSearchValue = findSearchValue;
 
         topMatches.clear();
