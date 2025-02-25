@@ -74,14 +74,14 @@
     &:hover,
     &:focus-visible {
         text-decoration: none;
-        background-color: var(--color-brand-100);
+        background: rgba(255, 255, 255, 0.1);
 
-        #{$selector-darkmode} & {
-            background: rgba(255, 255, 255, 0.1);
+        a {
+            color: white;
         }
 
         svg {
-            fill: var(--color-fg-primary);
+            fill: white;
             transition: none;
         }
     }
