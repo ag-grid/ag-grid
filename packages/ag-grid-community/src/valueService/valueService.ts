@@ -263,16 +263,16 @@ export class ValueService extends BeanStub implements NamedBean {
      * @returns a parent node of node to display the value from, or undefined if no value will be inherited
      */
     public getDisplayedNode(node: IRowNode, column: AgColumn): RowNode | undefined {
-        const isGroupHideOpenParents = this.gos.get('groupHideOpenParents');
-        const isShowOpenedGroupValue = this.gos.get('showOpenedGroup');
+        const gos = this.gos;
+        const isGroupHideOpenParents = gos.get('groupHideOpenParents');
+        const isShowOpenedGroupValue = gos.get('showOpenedGroup');
 
         // don't traverse tree if neither starts enabled
         if (!isGroupHideOpenParents && !isShowOpenedGroupValue) {
             return undefined;
         }
 
-        const { showRowGroup } = column.colDef;
-
+        const showRowGroup = column.colDef.showRowGroup;
         // single auto col can only showOpenedGroup for leaf rows
         if (showRowGroup === true) {
             if (node.group) {

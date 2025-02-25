@@ -206,15 +206,16 @@ export class GroupCellRendererCtrl extends BeanStub implements IGroupCellRendere
         // if no formatted value and node key is '', then we replace this group with (Blanks)
         // this does not propagate down for [showOpenedGroup]
         if (formattedValue == null) {
-            const isCellBlankValue = this.displayedNode.key === '';
+            const displayedNode = this.displayedNode;
+            const isCellBlankValue = displayedNode.key === '';
             const isGroupColForNode =
-                !!this.displayedNode.rowGroupColumn &&
-                this.params.column?.isRowGroupDisplayed(this.displayedNode.rowGroupColumn.getId());
+                !!displayedNode.rowGroupColumn &&
+                this.params.column?.isRowGroupDisplayed(displayedNode.rowGroupColumn.getId());
             // if value is empty and correct column
             if (isCellBlankValue && isGroupColForNode) {
                 const isHiddenParent = this.isHiddenParent();
                 // ensure node is unchanged or hidden parent
-                if (this.displayedNode === this.node || isHiddenParent) {
+                if (displayedNode === this.node || isHiddenParent) {
                     const localeTextFunc = this.getLocaleTextFunc();
                     formattedValue = localeTextFunc('blanks', '(Blanks)');
                 }
@@ -287,6 +288,7 @@ export class GroupCellRendererCtrl extends BeanStub implements IGroupCellRendere
         addIconToDom('groupExpanded', this.eExpanded);
         addIconToDom('groupContracted', this.eContracted);
 
+        const comp = this.comp;
         const onExpandedChanged = () => {
             const expandable = this.isExpandable();
             if (!expandable) {
@@ -294,8 +296,8 @@ export class GroupCellRendererCtrl extends BeanStub implements IGroupCellRendere
             }
 
             const expanded = this.displayedNode.expanded;
-            this.comp.setExpandedDisplayed(expanded);
-            this.comp.setContractedDisplayed(!expanded);
+            comp.setExpandedDisplayed(expanded);
+            comp.setContractedDisplayed(!expanded);
 
             _setAriaExpanded(eGridCell, !!this.displayedNode.expanded);
         };
@@ -303,25 +305,25 @@ export class GroupCellRendererCtrl extends BeanStub implements IGroupCellRendere
         const onExpandableChanged = () => {
             const expandable = this.isExpandable();
 
-            this.comp.addOrRemoveCssClass('ag-cell-expandable', expandable);
-            this.comp.addOrRemoveCssClass('ag-row-group', expandable);
+            comp.addOrRemoveCssClass('ag-cell-expandable', expandable);
+            comp.addOrRemoveCssClass('ag-row-group', expandable);
 
             // indent non-expandable cells so they correctly indent with expandable cells
             const pivotModeAndLeaf = !expandable && colModel.isPivotMode();
-            this.comp.addOrRemoveCssClass('ag-pivot-leaf-group', pivotModeAndLeaf);
+            comp.addOrRemoveCssClass('ag-pivot-leaf-group', pivotModeAndLeaf);
             const normalModeNotTotalFooter =
                 !colModel.isPivotMode() && (!this.displayedNode.footer || this.displayedNode.level !== -1);
-            this.comp.addOrRemoveCssClass('ag-row-group-leaf-indent', !expandable && normalModeNotTotalFooter);
+            comp.addOrRemoveCssClass('ag-row-group-leaf-indent', !expandable && normalModeNotTotalFooter);
 
             // update the child count component
             const count = this.getChildCount();
             const countString = count > 0 ? `(${count})` : ``;
-            this.comp.setChildCount(countString);
+            comp.setChildCount(countString);
 
             // configure chevrons/aria
             if (!expandable) {
-                this.comp.setExpandedDisplayed(false);
-                this.comp.setContractedDisplayed(false);
+                comp.setExpandedDisplayed(false);
+                comp.setContractedDisplayed(false);
                 _removeAriaExpanded(eGridCell);
             } else {
                 onExpandedChanged();
