@@ -85,16 +85,12 @@ const frameworksData = [
                     with our free, open source library.
                 </h2>
                 <div class={styles.heroSectionbuttonContainer}>
-                    <a
-                        class:list={[
-                            'button-secondary',
-                            styles.heroSectioncta1,
-                            'plausible-event-name=react-table-get-started',
-                        ]}
-                        href={urlWithBaseUrl('./example')}>See demos <Icon name="chevronRight" /></a
-                    >
                     <div class={styles.heroSectioncta2}>
-                        <InstallText client:load />
+                        <div class={styles.homepageFrameworks}>
+                            <div class:list={[styles.frameworksInner, 'layout-max-width-small']}>
+                                <LandingPageFWSelector client:load data={frameworksData} isFullWidth />
+                            </div>
+                        </div>
                     </div>
                 </div>
             </section>
@@ -108,18 +104,21 @@ const frameworksData = [
             </div>
 
             <div class={styles.heroLinks}>
+                <a
+                    class:list={[
+                        'button-tertiary',
+                        styles.heroSectioncta1,
+                        'plausible-event-name=react-table-get-started',
+                    ]}
+                    href={urlWithBaseUrl('./example')}>See demos <Icon name="chevronRight" /></a
+                >
+
                 <a class="button-tertiary" href="https://github.com/ag-grid/ag-grid-demos/tree/main/finance">
                     <Icon name="github" svgClasses={styles.githubIcon} />
                     <span>View on GitHub</span>
                 </a>
             </div>
         </section>
-    </div>
-
-    <div class={styles.homepageFrameworks}>
-        <div class:list={[styles.frameworksInner, 'layout-max-width-small']}>
-            <LandingPageFWSelector client:load data={frameworksData} isFullWidth />
-        </div>
     </div>
 
     <div class={styles.homepageCustomers}>
