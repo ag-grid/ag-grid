@@ -122,18 +122,11 @@ export class AnimationFrameService extends BeanStub implements NamedBean {
     }
 
     private executeFrame(millis: number): void {
-        this.verify();
+        const { p1, p2, f1, destroyTasks } = this;
 
-        const p1TaskList = this.p1;
-        const p1Tasks = p1TaskList.list;
-
-        const p2TaskList = this.p2;
-        const p2Tasks = p2TaskList.list;
-
-        const f1TaskList = this.f1;
-        const f1Tasks = f1TaskList.list;
-
-        const destroyTasks = this.destroyTasks;
+        const p1Tasks = p1.list;
+        const p2Tasks = p2.list;
+        const f1Tasks = f1.list;
 
         const frameStart = Date.now();
         let duration = 0;
@@ -144,21 +137,40 @@ export class AnimationFrameService extends BeanStub implements NamedBean {
         const scrollFeature = this.beans.ctrlsSvc.getScrollFeature();
 
         while (noMaxMillis || duration < millis) {
+            // scrollGridIfNeeded will cause tasks to be populated if scrolling was done and may have taken time
+            // to do so. This is why we need to check if we have time left after scrolling before performing any tasks.
             const gridBodyDidSomething = scrollFeature.scrollGridIfNeeded();
 
             if (!gridBodyDidSomething) {
                 let task: () => void;
                 if (p1Tasks.length) {
-                    this.sortTaskList(p1TaskList);
+                    this.sortTaskList(p1);
                     task = p1Tasks.pop()!.task;
                 } else if (p2Tasks.length) {
-                    this.sortTaskList(p2TaskList);
+                    this.sortTaskList(p2);
                     task = p2Tasks.pop()!.task;
                 } else if (f1Tasks.length) {
-                    this.sortTaskList(f1TaskList);
-                    // switch to framework tasks for the remaining time
-                    this.executeFrameworkFrame(noMaxMillis ? -1 : millis - duration);
-                    return;
+                    // Assuming that framework tasks do not schedule p1 or p2 tasks so that it is safe
+                    // to loop through all framework tasks for as long as we have time left
+                    this.beans.frameworkOverrides.wrapOutgoing(() => {
+                        while (noMaxMillis || duration < millis) {
+                            const gridBodyDidSomething = scrollFeature.scrollGridIfNeeded();
+
+                            if (!gridBodyDidSomething) {
+                                if (f1Tasks.length) {
+                                    this.sortTaskList(f1);
+                                    task = f1Tasks.pop()!.task;
+                                    task();
+                                } else {
+                                    break;
+                                }
+                            }
+                            duration = Date.now() - frameStart;
+                        }
+                    });
+
+                    // Empty task to avoid needing to check if task is defined in other path.
+                    task = () => {};
                 } else if (destroyTasks.length) {
                     task = destroyTasks.pop()!;
                 } else {
@@ -172,50 +184,6 @@ export class AnimationFrameService extends BeanStub implements NamedBean {
         }
 
         if (p1Tasks.length || p2Tasks.length || f1Tasks.length || destroyTasks.length) {
-            this.requestFrame();
-        } else {
-            this.ticking = false;
-        }
-    }
-
-    private executeFrameworkFrame(millis: number): void {
-        const f1TaskList = this.f1;
-        const f1Tasks = f1TaskList.list;
-
-        const frameStart = Date.now();
-        let duration = 0;
-
-        // 16ms is 60 fps
-        const noMaxMillis = millis <= 0;
-
-        const scrollFeature = this.beans.ctrlsSvc.getScrollFeature();
-
-        this.beans.frameworkOverrides.wrapOutgoing(() => {
-            while (noMaxMillis || duration < millis) {
-                const gridBodyDidSomething = scrollFeature.scrollGridIfNeeded();
-
-                if (!gridBodyDidSomething) {
-                    let task: () => void;
-                    if (f1Tasks.length) {
-                        this.sortTaskList(f1TaskList);
-                        task = f1Tasks.pop()!.task;
-                        task();
-                    } else {
-                        break;
-                    }
-                }
-
-                duration = Date.now() - frameStart;
-            }
-        });
-
-        const p1TaskList = this.p1;
-        const p1Tasks = p1TaskList.list;
-
-        const p2TaskList = this.p2;
-        const p2Tasks = p2TaskList.list;
-
-        if (p1Tasks.length || p2Tasks.length || f1Tasks.length || this.destroyTasks.length) {
             this.requestFrame();
         } else {
             this.ticking = false;
