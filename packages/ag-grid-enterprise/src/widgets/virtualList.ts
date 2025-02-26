@@ -131,21 +131,26 @@ export class VirtualList<
     }
 
     protected handleKeyDown(e: KeyboardEvent): void {
-        switch (e.key) {
+        const { key, shiftKey } = e;
+
+        switch (key) {
             case KeyCode.UP:
             case KeyCode.DOWN:
-                e.preventDefault();
-                if (this.moveItemCallback && e.shiftKey) {
-                    this.moveItem(e.key === KeyCode.UP);
-                } else {
-                    this.navigate(e.key === KeyCode.UP);
+                {
+                    const isUp = key === KeyCode.UP;
+                    e.preventDefault();
+                    if (shiftKey) {
+                        this.moveItem(isUp);
+                    } else {
+                        this.navigate(isUp);
+                    }
                 }
                 break;
             case KeyCode.PAGE_HOME:
             case KeyCode.PAGE_END:
             case KeyCode.PAGE_UP:
             case KeyCode.PAGE_DOWN:
-                if (this.navigateToPage(e.key) !== null) {
+                if (this.navigateToPage(key) !== null) {
                     e.preventDefault();
                 }
                 break;
