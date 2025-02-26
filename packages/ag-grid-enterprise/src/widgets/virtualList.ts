@@ -21,6 +21,7 @@ interface VirtualListParams {
     cssIdentifier?: string;
     ariaRole?: string;
     listName?: string;
+    moveItemCallback?: (from: number, to: number) => boolean;
 }
 
 function getVirtualListTemplate(cssIdentifier: string) {
@@ -57,15 +58,17 @@ export class VirtualList<
     private isHeightFromTheme: boolean = true;
     private readonly eContainer: HTMLElement = RefPlaceholder;
     private awaitStableCallbacks: (() => void)[] = [];
+    private moveItemCallback?: (from: number, to: number) => boolean;
 
     constructor(params?: VirtualListParams) {
         super(getVirtualListTemplate(params?.cssIdentifier || 'default'));
 
-        const { cssIdentifier = 'default', ariaRole = 'listbox', listName } = params || {};
+        const { cssIdentifier = 'default', ariaRole = 'listbox', listName, moveItemCallback } = params || {};
 
         this.cssIdentifier = cssIdentifier;
         this.ariaRole = ariaRole;
         this.listName = listName;
+        this.moveItemCallback = moveItemCallback;
     }
 
     public postConstruct(): void {
@@ -132,7 +135,11 @@ export class VirtualList<
             case KeyCode.UP:
             case KeyCode.DOWN:
                 e.preventDefault();
-                this.navigate(e.key === KeyCode.UP);
+                if (this.moveItemCallback && e.shiftKey) {
+                    this.moveItem(e.key === KeyCode.UP);
+                } else {
+                    this.navigate(e.key === KeyCode.UP);
+                }
                 break;
             case KeyCode.PAGE_HOME:
             case KeyCode.PAGE_END:
@@ -150,14 +157,36 @@ export class VirtualList<
         this.forceFocusOutOfContainer(e.shiftKey);
     }
 
-    private navigate(up: boolean): void {
+    private getNextRow(up: boolean): number | undefined {
         if (this.lastFocusedRowIndex == null) {
-            return;
+            return undefined;
         }
 
         const nextRow = this.lastFocusedRowIndex + (up ? -1 : 1);
 
         if (nextRow < 0 || nextRow >= this.model.getRowCount()) {
+            return undefined;
+        }
+
+        return nextRow;
+    }
+
+    private moveItem(up: boolean): void {
+        const nextRow = this.getNextRow(up);
+
+        if (nextRow === undefined) {
+            return;
+        }
+
+        if (this.moveItemCallback!(this.lastFocusedRowIndex!, nextRow)) {
+            this.focusRow(nextRow);
+        }
+    }
+
+    private navigate(up: boolean): void {
+        const nextRow = this.getNextRow(up);
+
+        if (nextRow === undefined) {
             return;
         }
 

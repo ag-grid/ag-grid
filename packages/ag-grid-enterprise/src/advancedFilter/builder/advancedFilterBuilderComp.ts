@@ -117,6 +117,7 @@ export class AdvancedFilterBuilderComp extends Component<AdvancedFilterBuilderEv
                 cssIdentifier: 'advanced-filter-builder',
                 ariaRole: 'tree',
                 listName: this.advFilterExpSvc.translate('ariaAdvancedFilterBuilderList'),
+                moveItemCallback: this.virtualListMoveItemCallback.bind(this),
             })
         ));
 
@@ -401,7 +402,7 @@ export class AdvancedFilterBuilderComp extends Component<AdvancedFilterBuilderEv
         }
     }
 
-    private moveItemUpDown(item: AdvancedFilterBuilderItem, backwards: boolean): void {
+    private moveItemUpDown(item: AdvancedFilterBuilderItem, backwards: boolean, fromVirtualList?: boolean): void {
         const itemIndex = this.items.indexOf(item);
         const destinationIndex = backwards ? itemIndex - 1 : itemIndex + 1;
         if (destinationIndex === 0 || (!backwards && !this.canMoveDown(item, itemIndex))) {
@@ -454,12 +455,38 @@ export class AdvancedFilterBuilderComp extends Component<AdvancedFilterBuilderEv
         const newIndex = this.items.findIndex(
             ({ filterModel: filterModelToCheck }) => filterModelToCheck === filterModel
         );
-        if (newIndex >= 0) {
-            const comp = this.virtualList.getComponentAt(newIndex);
-            if (comp instanceof AdvancedFilterBuilderItemComp) {
-                comp.focusMoveButton(backwards);
-            }
+        if (newIndex < 0) {
+            return;
         }
+        const comp = this.virtualList.getComponentAt(newIndex);
+        if (!(comp instanceof AdvancedFilterBuilderItemComp)) {
+            return;
+        }
+
+        if (!fromVirtualList) {
+            comp.focusMoveButton(backwards);
+        }
+    }
+
+    private virtualListMoveItemCallback(from: number, to: number): boolean {
+        if (from === 0 || from === this.items.length - 1) {
+            return false;
+        }
+
+        const comp = this.items[from];
+        if (!comp) {
+            return false;
+        }
+
+        const isUp = from > to;
+
+        if ((isUp && from === 1) || (!isUp && !this.canMoveDown(comp, from))) {
+            return false;
+        }
+
+        this.moveItemUpDown(comp, isUp, true);
+
+        return true;
     }
 
     private canMoveDown(item: AdvancedFilterBuilderItem, index: number): boolean {
