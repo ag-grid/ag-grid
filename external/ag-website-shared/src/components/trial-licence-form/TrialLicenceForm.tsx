@@ -142,6 +142,8 @@ function useTrialForm() {
             setFormError('');
             setFormState('loading');
 
+            const currentPage = window.location.pathname;
+
             try {
                 const response = await submitTrialLicenceFormData({ firstName, lastName, email });
 
@@ -149,10 +151,17 @@ function useTrialForm() {
                     setFormState('error');
                     const errorMessage = getFormErrorMessage(response.error.message);
                     setFormError(errorMessage);
-                    trackTrialLicenseFormError({ error: response.error.message, errorType: 'api_error' });
+                    trackTrialLicenseFormError({
+                        error: response.error.message,
+                        errorType: 'api_error',
+                        page: currentPage,
+                    });
                 } else {
                     setFormState('success');
-                    trackTrialLicenseFormSuccess();
+                    trackTrialLicenseFormSuccess({
+                        email,
+                        page: currentPage,
+                    });
                 }
             } catch (e) {
                 console.error(e);
@@ -161,6 +170,7 @@ function useTrialForm() {
                 trackTrialLicenseFormError({
                     error: e instanceof Error ? e.message : 'Unknown error',
                     errorType: 'system_error',
+                    page: currentPage,
                 });
                 setFormState('error');
             }
