@@ -21,6 +21,38 @@ describe('ag-grid parentId tree data warnings', () => {
         consoleWarnSpy?.mockRestore();
     });
 
+    test('treeDataParentIdField without getRowId', async () => {
+        const rowData = [
+            { x: 0 },
+            { x: 1 },
+            { x: 2, parentId: '1' },
+            { x: 3, parentId: '1' },
+            { x: 4 },
+            { x: 5, parentId: '3' },
+        ];
+
+        consoleWarnSpy = vitest.spyOn(console, 'warn').mockImplementation(() => {});
+
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: [{ field: 'x' }],
+            autoGroupColumnDef: {
+                headerName: 'Organisation Hierarchy',
+                cellRendererParams: { suppressCount: true },
+            },
+            treeData: true,
+            animateRows: false,
+            groupDefaultExpanded: -1,
+            rowData: rowData,
+            ['treeDataParentIdField' as any]: 'parentId',
+        });
+
+        expect(consoleWarnSpy).toHaveBeenCalledWith(
+            'AG Grid: getRowId callback not provided, tree data with parent id cannot be built.'
+        );
+
+        await new GridRows(api, 'rowData', { checkDom: true, columns: true }).check('empty');
+    });
+
     test('a not existing parentId should log a warning, and move that row to the root', async () => {
         const rowData = [
             { id: '1', x: '1' },
