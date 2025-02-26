@@ -1,6 +1,6 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import { getEntry } from 'astro:content';
+import { getEntry, type CollectionEntry } from 'astro:content';
 import styles from '../pages-styles/react-table.module.scss';
 import Customers from '../components/framework-landing-pages/react/sections/customers/Customers';
 import { LandingPageFAQ } from '@ag-website-shared/components/landing-pages/LandingPageFAQ';
@@ -13,9 +13,9 @@ import { Icon } from '@ag-website-shared/components/icon/Icon';
 import { Finance } from 'src/components/demos/examples/finance';
 import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
 
-const { data: FAQData } = await getEntry('react-landing-page', 'reactTableFAQs');
-const { data: versionsData } = await getEntry('versions', 'ag-grid-versions');
-const { data: examples } = await getEntry('react-landing-page', 'examples');
+const { data: faqData } = (await getEntry('faqs', 'react-landing-page')) as CollectionEntry<'faqs'>;
+const { data: versionsData } = (await getEntry('versions', 'ag-grid-versions')) as CollectionEntry<'versions'>;
+const { data: examples } = (await getEntry('reactLandingPage', 'examples')) as CollectionEntry<'reactLandingPage'>;
 ---
 
 <Layout
@@ -117,7 +117,7 @@ const { data: examples } = await getEntry('react-landing-page', 'examples');
                         <img
                             class={styles.examplesSectionCardImage}
                             src={urlWithBaseUrl(`landing-pages/examples/${card.img}`)}
-                            alt={card.img_alt}
+                            alt={card.imgAlt}
                         />
 
                         <div class={styles.examplesSectionCardDetails}>
@@ -144,6 +144,6 @@ const { data: examples } = await getEntry('react-landing-page', 'examples');
         heading="Frequently Asked Questions"
         subHeading="Answers to some commonly asked questions when building React Tables with AG Grid"
     >
-        <LandingPageFAQ client:load FAQData={FAQData} framework={'react'} />
+        <LandingPageFAQ client:load FAQData={faqData} framework={'react'} />
     </LandingPageSection>
 </Layout>

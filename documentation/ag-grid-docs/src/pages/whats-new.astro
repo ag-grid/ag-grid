@@ -1,8 +1,8 @@
 ---
-import { getEntry } from 'astro:content';
+import { getEntry, type CollectionEntry } from 'astro:content';
 import WhatsNew from '@ag-website-shared/components/whats-new/pages/whats-new.astro';
 
-const { data: versionsData } = await getEntry('versions', 'ag-grid-versions');
+const { data: versionsData } = (await getEntry('versions', 'ag-grid-versions')) as CollectionEntry<'versions'>;
 ---
 
 <WhatsNew site="grid" versionsData={versionsData} />

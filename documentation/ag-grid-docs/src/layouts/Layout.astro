@@ -1,5 +1,5 @@
 ---
-import { getEntry } from 'astro:content';
+import { getEntry, type CollectionEntry } from 'astro:content';
 import '@design-system/design-system.scss';
 import SiteHeader from '@ag-website-shared/components/site-header/SiteHeader.astro';
 import { getFavIconsData, getAppleTouchIconsData } from '@utils/favicons';
@@ -22,9 +22,10 @@ interface Props {
     hidePageFromSearchEngines?: boolean;
 }
 
-const { data: metadata } = await getEntry('metadata', 'metadata');
-const { data: apiNavData } = await getEntry('api-nav', 'apiNav');
-const { data: footerItems } = await getEntry('footer', 'data');
+const { data: metadata } = (await getEntry('metadata', 'metadata')) as CollectionEntry<'metadata'>;
+const { data: apiNavData } = (await getEntry('apiNav', 'nav')) as CollectionEntry<'apiNav'>;
+
+const { data: footerItems } = (await getEntry('footer', 'footer')) as CollectionEntry<'footer'>;
 const apiPaths = getApiPaths(apiNavData);
 
 const isProduction = getIsProduction();

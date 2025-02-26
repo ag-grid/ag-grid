@@ -154,7 +154,7 @@ export default defineConfig({
         css: {
             preprocessorOptions: {
                 scss: {
-                    api: 'modern-compiler',
+                    api: 'modern',
                     functions: {
                         'urlWithBaseUrl($url)': function (args) {
                             const sassUrl = args[0].assertString();
