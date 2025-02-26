@@ -296,11 +296,6 @@ export class CellComp extends Component {
         }
     }
 
-    private destroyEditorAndRenderer(): void {
-        this.destroyRenderer();
-        this.destroyEditor();
-    }
-
     private destroyRenderer(): void {
         const { context } = this.beans;
         this.cellRenderer = context.destroyBean(this.cellRenderer);
@@ -557,7 +552,8 @@ export class CellComp extends Component {
     public override destroy(): void {
         this.cellCtrl.stopEditing();
 
-        this.destroyEditorAndRenderer();
+        this.destroyRenderer();
+        this.destroyEditor();
         this.removeControls();
 
         super.destroy();
