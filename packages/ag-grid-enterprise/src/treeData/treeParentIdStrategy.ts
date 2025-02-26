@@ -178,6 +178,7 @@ export class TreeParentIdStrategy<TData = any> extends BeanStub implements Named
                 allLeafChildrenLen += child.allLeafChildren!.length;
             }
 
+<<<<<<< HEAD
             let allLeafChildren = (row.allLeafChildren ??= _EmptyArray);
             const oldAllLeafChildrenLen = allLeafChildren.length;
             if (oldAllLeafChildrenLen !== allLeafChildrenLen || allLeafChildrenChanged) {
@@ -206,6 +207,12 @@ export class TreeParentIdStrategy<TData = any> extends BeanStub implements Named
                             ++writeIdx;
                         }
                     }
+=======
+            const allLeafChildren = (row.allLeafChildren ??= _EmptyArray);
+            if (allLeafChildrenChanged || allLeafChildren.length !== allLeafChildrenLen) {
+                if (updateAllLeafChildren(row, allLeafChildren, allLeafChildrenLen)) {
+                    allLeafChildrenChanged = true;
+>>>>>>> AG-12272-tree-data-parent-id-tmp
                 }
             }
 
@@ -239,17 +246,7 @@ export class TreeParentIdStrategy<TData = any> extends BeanStub implements Named
             }
 
             if (fullReload) {
-                row.childrenAfterFilter ??= childrenAfterGroup;
-                row.childrenAfterAggFilter ??= childrenAfterGroup;
-                row.childrenAfterSort ??= childrenAfterGroup;
-
-                const sibling = row.sibling;
-                if (sibling) {
-                    sibling.childrenAfterGroup = row.childrenAfterGroup;
-                    sibling.childrenAfterAggFilter = row.childrenAfterAggFilter;
-                    sibling.childrenAfterFilter = row.childrenAfterFilter;
-                    sibling.childrenAfterSort = row.childrenAfterSort;
-                }
+                updateRowArrays(row, childrenAfterGroup);
             }
 
             return allLeafChildrenChanged;
@@ -319,6 +316,57 @@ export class TreeParentIdStrategy<TData = any> extends BeanStub implements Named
 }
 
 type IsGroupOpenByDefaultCallback = ((params: WithoutGridCommon<IsGroupOpenByDefaultParams>) => boolean) | undefined;
+
+const updateRowArrays = <TData>(row: TreeRow<TData>, childrenAfterGroup: TreeRow<TData>[]) => {
+    row.childrenAfterFilter ??= childrenAfterGroup;
+    row.childrenAfterAggFilter ??= childrenAfterGroup;
+    row.childrenAfterSort ??= childrenAfterGroup;
+
+    const sibling = row.sibling;
+    if (sibling) {
+        sibling.childrenAfterGroup = row.childrenAfterGroup;
+        sibling.childrenAfterAggFilter = row.childrenAfterAggFilter;
+        sibling.childrenAfterFilter = row.childrenAfterFilter;
+        sibling.childrenAfterSort = row.childrenAfterSort;
+    }
+};
+
+const updateAllLeafChildren = <TData>(
+    row: TreeRow<TData>,
+    allLeafChildren: TreeRow<TData>[],
+    allLeafChildrenLen: number
+): boolean => {
+    let changed = false;
+    const oldAllLeafChildrenLen = allLeafChildren.length;
+    if (allLeafChildrenLen === 0) {
+        if (oldAllLeafChildrenLen !== 0) {
+            row.allLeafChildren = _EmptyArray;
+            changed = true;
+        }
+    } else {
+        if (oldAllLeafChildrenLen !== allLeafChildrenLen) {
+            if (allLeafChildren === _EmptyArray) {
+                row.allLeafChildren = allLeafChildren = new Array(allLeafChildrenLen);
+            } else {
+                allLeafChildren.length = allLeafChildrenLen;
+            }
+            changed = true;
+        }
+        let writeIdx = 0;
+        const childrenAfterGroup = row.childrenAfterGroup!;
+        for (let j = 0, childrenLen = childrenAfterGroup.length; j < childrenLen; ++j) {
+            const childAllLeafChildren = childrenAfterGroup[j].allLeafChildren!;
+            for (let k = 0, len = childAllLeafChildren!.length; k < len; ++k) {
+                if (changed || allLeafChildren[writeIdx] !== childAllLeafChildren[k]) {
+                    allLeafChildren[writeIdx] = childAllLeafChildren[k];
+                    changed = true;
+                }
+                ++writeIdx;
+            }
+        }
+    }
+    return changed;
+};
 
 const getExpandedInitialValue = (
     isGroupOpenByDefault: IsGroupOpenByDefaultCallback,
