@@ -159,7 +159,6 @@ function useTrialForm() {
                 } else {
                     setFormState('success');
                     trackTrialLicenseFormSuccess({
-                        email,
                         page: currentPage,
                     });
                 }
