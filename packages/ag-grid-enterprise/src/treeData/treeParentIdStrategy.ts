@@ -191,7 +191,7 @@ export class TreeParentIdStrategy<TData = any> extends BeanStub implements Named
                     let writeIdx = 0;
                     for (let j = 0; j < childrenAfterGroupLen; ++j) {
                         const childAllLeafChildren = childrenAfterGroup[j].allLeafChildren!;
-                        for (let k = 0; k < childAllLeafChildren!.length; ++k) {
+                        for (let k = 0, len = childAllLeafChildren!.length; k < len; ++k) {
                             allLeafChildren[writeIdx++] = childAllLeafChildren[k];
                         }
                     }
