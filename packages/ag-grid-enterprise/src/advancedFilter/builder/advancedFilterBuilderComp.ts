@@ -468,25 +468,20 @@ export class AdvancedFilterBuilderComp extends Component<AdvancedFilterBuilderEv
         }
     }
 
-    private virtualListMoveItemCallback(from: number, to: number): boolean {
-        if (from === 0 || from === this.items.length - 1) {
-            return false;
+    private virtualListMoveItemCallback(itemComp: AdvancedFilterBuilderItemComp, isUp: boolean): void {
+        const item = itemComp.item;
+        const from = this.items.indexOf(item);
+
+        if (from <= 0 || from === this.items.length - 1) {
+            return;
         }
 
-        const comp = this.items[from];
-        if (!comp) {
-            return false;
+        if ((isUp && from === 1) || (!isUp && !this.canMoveDown(item, from))) {
+            return;
         }
 
-        const isUp = from > to;
-
-        if ((isUp && from === 1) || (!isUp && !this.canMoveDown(comp, from))) {
-            return false;
-        }
-
-        this.moveItemUpDown(comp, isUp, true);
-
-        return true;
+        this.moveItemUpDown(item, isUp, true);
+        this.virtualList.focusRow(from + (isUp ? -1 : 1));
     }
 
     private canMoveDown(item: AdvancedFilterBuilderItem, index: number): boolean {

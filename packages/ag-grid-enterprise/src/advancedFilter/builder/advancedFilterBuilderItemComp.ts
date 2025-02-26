@@ -73,7 +73,7 @@ export class AdvancedFilterBuilderItemComp extends TabGuardComp<AdvancedFilterBu
     private moveDownTooltipFeature?: TooltipFeature;
 
     constructor(
-        private readonly item: AdvancedFilterBuilderItem,
+        public readonly item: AdvancedFilterBuilderItem,
         private readonly dragFeature: AdvancedFilterBuilderDragFeature,
         private readonly focusWrapper: HTMLElement
     ) {

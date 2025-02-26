@@ -21,7 +21,7 @@ interface VirtualListParams {
     cssIdentifier?: string;
     ariaRole?: string;
     listName?: string;
-    moveItemCallback?: (from: number, to: number) => boolean;
+    moveItemCallback?: (item: any, isUp: boolean) => void;
 }
 
 function getVirtualListTemplate(cssIdentifier: string) {
@@ -58,7 +58,7 @@ export class VirtualList<
     private isHeightFromTheme: boolean = true;
     private readonly eContainer: HTMLElement = RefPlaceholder;
     private awaitStableCallbacks: (() => void)[] = [];
-    private moveItemCallback?: (from: number, to: number) => boolean;
+    private moveItemCallback?: (item: any, isUp: boolean) => void;
 
     constructor(params?: VirtualListParams) {
         super(getVirtualListTemplate(params?.cssIdentifier || 'default'));
@@ -177,15 +177,17 @@ export class VirtualList<
     }
 
     private moveItem(up: boolean): void {
-        const nextRow = this.getNextRow(up);
-
-        if (!this.moveItemCallback || nextRow === undefined) {
+        if (!this.moveItemCallback) {
             return;
         }
 
-        if (this.moveItemCallback(this.lastFocusedRowIndex!, nextRow)) {
-            this.focusRow(nextRow);
+        const item = this.getComponentAt(this.lastFocusedRowIndex!);
+
+        if (!item) {
+            return;
         }
+
+        this.moveItemCallback(item, up);
     }
 
     private navigate(up: boolean): void {
