@@ -25,6 +25,13 @@ import {
     isRowNumberCol,
 } from 'ag-grid-community';
 
+import {
+    _getFlattenDetails,
+    _isRemovedLowestSingleChildrenGroup,
+    _isRemovedSingleChildrenGroup,
+    _shouldRowBeRendered,
+} from '../rowHierarchy/flattenUtils';
+
 function defaultCaseFormat(value?: string | null): string | undefined {
     return value?.toLocaleLowerCase();
 }
@@ -260,7 +267,17 @@ export class FindService extends BeanStub implements NamedBean, IFindService {
             centerNodes,
             bottomNodes,
             bottomMatches,
-            beans: { gos, visibleCols, rowModel, valueSvc, pinnedRowModel, pagination, rowSpanSvc, masterDetailSvc },
+            beans: {
+                gos,
+                visibleCols,
+                rowModel,
+                valueSvc,
+                pinnedRowModel,
+                pagination,
+                rowSpanSvc,
+                masterDetailSvc,
+                colModel,
+            },
             findSearchValue: oldFindSearchValue,
         } = this;
         const findOptions = gos.get('findOptions');
@@ -308,6 +325,8 @@ export class FindService extends BeanStub implements NamedBean, IFindService {
         const isFullWidthCellFunc = gos.getCallback('isFullWidthRow');
         const detailCellRendererParams = gos.get('detailCellRendererParams');
         const fullWidthCellRendererParams = gos.get('fullWidthCellRendererParams');
+        const flattenDetails = _getFlattenDetails(gos);
+        const skipLeafNodes = colModel.isPivotMode();
 
         let containerNumMatches = 0;
         let matches: Matches;
@@ -346,7 +365,7 @@ export class FindService extends BeanStub implements NamedBean, IFindService {
             }
             return numMatches;
         };
-        const findMatchesForRow = (node: IRowNode) => {
+        const findMatchesForRow = (node: RowNode) => {
             if (checkCurrentPage) {
                 // row index is null when a group is collapsed. We need to find the first displayed ancestor.
                 let rowIndex = node.rowIndex;
@@ -358,6 +377,20 @@ export class FindService extends BeanStub implements NamedBean, IFindService {
                 if (rowIndex == null || !pagination!.isRowInPage(rowIndex)) {
                     return;
                 }
+            }
+            const isParent = node.hasChildren();
+            // mimic flatten stage logic
+            if (
+                !_shouldRowBeRendered(
+                    flattenDetails,
+                    node,
+                    isParent,
+                    skipLeafNodes,
+                    _isRemovedSingleChildrenGroup(flattenDetails, node, isParent),
+                    _isRemovedLowestSingleChildrenGroup(flattenDetails, node, isParent)
+                )
+            ) {
+                return;
             }
             const data = node.data;
             if (isFullWidthCellFunc?.({ rowNode: node })) {
@@ -378,12 +411,16 @@ export class FindService extends BeanStub implements NamedBean, IFindService {
                 if (isRowNumberCol(column) || isColumnSelectionCol(column)) {
                     continue;
                 }
-                const cellSpan = rowSpanSvc?.getCellSpan(column, node as RowNode);
+                const cellSpan = rowSpanSvc?.getCellSpan(column, node);
                 if (cellSpan && cellSpan.firstNode !== node) {
                     // only match on first row of span
                     continue;
                 }
-                const value = valueSvc.getValueForDisplay(column, node);
+                // we don't want to call `getValueForDisplay` if the node is not actually displayed,
+                // as this can cause duplicate matches for things like `groupHideOpenParents`
+                const value = node.displayed
+                    ? valueSvc.getValueForDisplay(column, node)
+                    : valueSvc.getValue(column, node);
                 let valueToFind: string | null;
                 const colDef = column.colDef;
                 const getFindText = colDef.getFindText;
@@ -407,7 +444,7 @@ export class FindService extends BeanStub implements NamedBean, IFindService {
             }
             if (node.master && checkMasterDetail) {
                 // add detail node after master has been processed
-                const detailNode = (node as RowNode).detailNode;
+                const detailNode = node.detailNode;
                 if (detailNode) {
                     const detailApi = detailNode.detailGridInfo?.api;
                     if (detailApi) {
