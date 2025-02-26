@@ -8,7 +8,7 @@
       "executor": "nx:noop",
       "inputs": [],
       "outputs": [],
-      "dependsOn": ["build:types", "build:css", "build:package", "build:copy-styles", "build:umd"]
+      "dependsOn": ["build:types", "build:package", "build:copy-styles", "build:umd"]
     },
     "build:umd": {
       "executor": "nx:run-commands",
@@ -42,7 +42,7 @@
     },
     "build:types": {
       "executor": "@nx/js:tsc",
-      "dependsOn": ["^build:types", "chartsTypes"],
+      "dependsOn": ["^build:types", "chartsTypes", "build:css"],
       "inputs": [
         "{projectRoot}/package.json",
         "{projectRoot}/src/**/*",
@@ -70,17 +70,22 @@
       }
     },
     "build:css": {
-      "executor": "nx:run-script",
+      "command": "tsx ./scripts/build-css.ts --package ag-grid-enterprise",
       "cache": true,
       "options": {
-        "script": "build:css"
+        "cwd": "{workspaceRoot}"
       },
       "inputs": ["{projectRoot}/src/**/*.css"],
-      "outputs": ["{projectRoot}/**/*.css-GENERATED.ts"]
+      "outputs": ["{projectRoot}/**/*.css-GENERATED.ts"],
+      "configurations": {
+        "debug": {
+          "command": "CSS_DEBUG=1 tsx ./scripts/build-css.ts --package ag-grid-enterprise"
+        }
+      }
     },
     "build:package": {
       "executor": "@nx/esbuild:esbuild",
-      "dependsOn": ["^build:types", "chartsPackages"],
+      "dependsOn": ["^build:types", "chartsPackages", "build:css"],
       "inputs": [
         "{projectRoot}/package.json",
         "{projectRoot}/src/**/*",

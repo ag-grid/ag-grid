@@ -258,10 +258,10 @@ Then pass the _AgChartsEnterpriseModule_ to the _AllEnterpriseModule_ to activat
 import { AllEnterpriseModule, LicenseManager, ModuleRegistry } from 'ag-grid-enterprise';
 import { AgChartsEnterpriseModule } from 'ag-charts-enterprise';
 
-LicenseManager.setLicenseKey('your License Key');
 ModuleRegistry.registerModules([
     AllEnterpriseModule.with(AgChartsEnterpriseModule)
 ]);
+LicenseManager.setLicenseKey('your License Key');
 ```
 
 If you are using AG Grid Modules, then both the `IntegratedChartsModule` and `SparklinesModule` also require the AG Charts module to be registered when they are used.
@@ -270,11 +270,11 @@ If you are using AG Grid Modules, then both the `IntegratedChartsModule` and `Sp
 import { IntegratedChartsModule, SparklinesModule, LicenseManager, ModuleRegistry } from 'ag-grid-enterprise';
 import { AgChartsEnterpriseModule } from 'ag-charts-enterprise';
 
-LicenseManager.setLicenseKey('your License Key');
 ModuleRegistry.registerModules([
     IntegratedChartsModule.with(AgChartsEnterpriseModule),
     SparklinesModule.with(AgChartsEnterpriseModule)
 ]);
+LicenseManager.setLicenseKey('your License Key');
 ```
 
 ## Theming

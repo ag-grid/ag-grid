@@ -177,10 +177,11 @@ export class FindService extends BeanStub implements NamedBean, IFindService {
     public getParts(params: FindCellValueParams): FindPart[] {
         const { value, node, column, precedingNumMatches } = params;
         const findSearchValue = this.findSearchValue;
+        const stringValue = _escapeString(value, true) ?? '';
         if (_missing(findSearchValue)) {
-            return [{ value }];
+            return [{ value: stringValue }];
         }
-        const valueToFind = this.caseFormat(_escapeString(value, true)) ?? '';
+        const valueToFind = this.caseFormat(stringValue) ?? '';
         const activeMatchNum = this.getActiveMatchNum(node, column) - (precedingNumMatches ?? 0);
         let lastIndex = 0;
         let currentMatchNum = 0;
@@ -191,19 +192,19 @@ export class FindService extends BeanStub implements NamedBean, IFindService {
             if (index != -1) {
                 currentMatchNum++;
                 if (index > lastIndex) {
-                    parts.push({ value: value.slice(lastIndex, index) });
+                    parts.push({ value: stringValue.slice(lastIndex, index) });
                 }
                 const endIndex = index + findTextLength;
                 parts.push({
-                    value: value.slice(index, endIndex),
+                    value: stringValue.slice(index, endIndex),
                     match: true,
                     activeMatch: currentMatchNum === activeMatchNum,
                 });
                 lastIndex = endIndex;
             } else {
-                if (lastIndex < value.length) {
+                if (lastIndex < stringValue.length) {
                     parts.push({
-                        value: value.slice(lastIndex),
+                        value: stringValue.slice(lastIndex),
                     });
                 }
                 return parts;
@@ -543,6 +544,7 @@ export class FindService extends BeanStub implements NamedBean, IFindService {
             rowNodes: [...rowNodes],
             columns: columns ? [...columns] : undefined,
             force: true,
+            suppressFlash: true,
         });
     }
 

@@ -177,6 +177,9 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => {
                 rowDragEntireRow: { required: [false, undefined] },
             },
         },
+        findSearchValue: {
+            module: 'Find',
+        },
         rowNumbers: {
             module: 'RowNumbers',
         },
