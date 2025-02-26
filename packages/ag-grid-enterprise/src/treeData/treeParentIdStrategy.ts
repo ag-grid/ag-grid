@@ -178,21 +178,32 @@ export class TreeParentIdStrategy<TData = any> extends BeanStub implements Named
                 allLeafChildrenLen += child.allLeafChildren!.length;
             }
 
-            let allLeafChildren = row.allLeafChildren;
-            if (allLeafChildrenChanged || !allLeafChildren || allLeafChildren.length !== allLeafChildrenLen) {
+            let allLeafChildren = (row.allLeafChildren ??= _EmptyArray);
+            const oldAllLeafChildrenLen = allLeafChildren.length;
+            if (oldAllLeafChildrenLen !== allLeafChildrenLen || allLeafChildrenChanged) {
                 if (allLeafChildrenLen === 0) {
-                    row.allLeafChildren = allLeafChildren = _EmptyArray;
+                    if (oldAllLeafChildrenLen !== 0) {
+                        row.allLeafChildren = _EmptyArray;
+                        allLeafChildrenChanged = true;
+                    }
                 } else {
-                    if (!allLeafChildren || allLeafChildren === _EmptyArray) {
-                        row.allLeafChildren = allLeafChildren = new Array(allLeafChildrenLen);
-                    } else {
-                        allLeafChildren.length = allLeafChildrenLen;
+                    if (oldAllLeafChildrenLen !== allLeafChildrenLen) {
+                        if (allLeafChildren === _EmptyArray) {
+                            row.allLeafChildren = allLeafChildren = new Array(allLeafChildrenLen);
+                        } else {
+                            allLeafChildren.length = allLeafChildrenLen;
+                        }
+                        allLeafChildrenChanged = true;
                     }
                     let writeIdx = 0;
                     for (let j = 0; j < childrenAfterGroupLen; ++j) {
                         const childAllLeafChildren = childrenAfterGroup[j].allLeafChildren!;
                         for (let k = 0, len = childAllLeafChildren!.length; k < len; ++k) {
-                            allLeafChildren[writeIdx++] = childAllLeafChildren[k];
+                            if (allLeafChildrenChanged || allLeafChildren[writeIdx] !== childAllLeafChildren[k]) {
+                                allLeafChildren[writeIdx] = childAllLeafChildren[k];
+                                allLeafChildrenChanged = true;
+                            }
+                            ++writeIdx;
                         }
                     }
                 }
