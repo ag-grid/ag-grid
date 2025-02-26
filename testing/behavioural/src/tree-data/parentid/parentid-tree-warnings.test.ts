@@ -53,6 +53,37 @@ describe('ag-grid parentId tree data warnings', () => {
         await new GridRows(api, 'rowData', { checkDom: true, columns: true }).check('empty');
     });
 
+    test('treeDataParentIdField with treeDataChildrenField', async () => {
+        const rowData = [{ id: '0' }, { id: '1', parentId: '0', children: [{ id: 2 }, { id: 3 }] }];
+
+        consoleWarnSpy = vitest.spyOn(console, 'warn').mockImplementation(() => {});
+
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: [],
+            autoGroupColumnDef: {
+                headerName: 'Organisation Hierarchy',
+                cellRendererParams: { suppressCount: true },
+            },
+            treeData: true,
+            animateRows: false,
+            groupDefaultExpanded: -1,
+            rowData: rowData,
+            getRowId: (params) => params.data.id,
+            ['treeDataParentIdField' as any]: 'parentId',
+            ['treeDataChildrenField']: 'children',
+        });
+
+        expect(consoleWarnSpy).toHaveBeenCalledWith(
+            "AG Grid: Cannot use both 'treeDataChildrenField' and 'treeDataParentIdField' at the same time."
+        );
+
+        await new GridRows(api, 'rowData', { checkDom: true, columns: true, treeData: false }).check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:0 ag-Grid-AutoColumn:undefined
+            └── LEAF id:1 ag-Grid-AutoColumn:undefined
+        `);
+    });
+
     test('a not existing parentId should log a warning, and move that row to the root', async () => {
         const rowData = [
             { id: '1', x: '1' },
