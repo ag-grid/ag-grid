@@ -1,5 +1,6 @@
 import { Icon } from '@ag-website-shared/components/icon/Icon';
 import { TRIAL_LICENCE_FORM_URL } from '@constants';
+import { trackTrialLicenseFormSuccess } from '@utils/analytics';
 import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
 import classnames from 'classnames';
 import { useCallback, useState } from 'react';
@@ -149,6 +150,7 @@ function useTrialForm() {
                     setFormError(getFormErrorMessage(response.error.message));
                 } else {
                     setFormState('success');
+                    trackTrialLicenseFormSuccess({ email });
                 }
             } catch (e) {
                 console.error(e);
