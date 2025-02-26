@@ -79,18 +79,7 @@ export class TreeParentIdStrategy<TData = any> extends BeanStub implements Named
         // Loop all the nodes, and put the children in the right place, updating the parent and the children arrays
 
         const renderEmpty = !this.gos.get('getRowId'); // If getRowId is not provided, we make an empty tree
-        if (renderEmpty) {
-            for (let i = 0; i < rootAllLeafChildrenLen; ++i) {
-                const row = rootAllLeafChildren[i];
-                const oldParent = row.parent;
-                if (oldParent) {
-                    row.parent = null;
-                    oldParent.treeNodeFlags |= FLAG_CHANGED | FLAG_CHILDREN_CHANGED;
-                } else if (updates?.has(row) || adds?.has(row)) {
-                    row.treeNodeFlags |= FLAG_CHANGED;
-                }
-            }
-        } else {
+        if (!renderEmpty) {
             for (let i = 0; i < rootAllLeafChildrenLen; ++i) {
                 const row = rootAllLeafChildren[i];
 
