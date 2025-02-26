@@ -25,6 +25,7 @@ const EVENT_NAME = {
     reactLandingPageIntegratedChartsTemplate: 'React Landing Page - Integrated Charts Template',
     reactLandingPageFaqExpand: 'React Landing Page - FAQ Expand',
     trialLicenseFormSuccess: 'Trial License Form - Success',
+    trialLicenseFormError: 'Trial License Form - Error',
 };
 
 const trackPlausible = ({ eventName, props }: { eventName: string; props?: object }) => {
@@ -149,4 +150,16 @@ export const trackTrialLicenseFormSuccess = (props: object) => {
 export const trackOnceTrialLicenseFormSuccess = createTrackPlausibleOnce(
     EVENT_NAME.trialLicenseFormSuccess,
     trackTrialLicenseFormSuccess
+);
+
+export const trackTrialLicenseFormError = (props: object) => {
+    trackPlausible({
+        eventName: EVENT_NAME.trialLicenseFormError,
+        props,
+    });
+};
+
+export const trackOnceTrialLicenseFormError = createTrackPlausibleOnce(
+    EVENT_NAME.trialLicenseFormError,
+    trackTrialLicenseFormError
 );
