@@ -409,12 +409,18 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => {
                 const rowModel = options.rowModelType ?? 'clientSide';
                 switch (rowModel) {
                     case 'clientSide': {
-                        const { treeDataChildrenField, getDataPath } = options;
-                        if (!treeDataChildrenField && !getDataPath) {
+                        const { treeDataChildrenField, treeDataParentIdField, getDataPath } = options as any;
+                        if (!treeDataChildrenField && !treeDataParentIdField && !getDataPath) {
                             return "treeData requires either 'treeDataChildrenField' or 'getDataPath' in the clientSide row model.";
+                        }
+                        if (treeDataParentIdField && treeDataChildrenField) {
+                            return "Cannot use both 'treeDataParentIdField' and 'treeDataChildrenField' at the same time.";
                         }
                         if (treeDataChildrenField && getDataPath) {
                             return "Cannot use both 'treeDataChildrenField' and 'getDataPath' at the same time.";
+                        }
+                        if (treeDataParentIdField && getDataPath) {
+                            return "Cannot use both 'treeDataParentIdField' and 'getDataPath' at the same time.";
                         }
                         return null;
                     }
@@ -427,6 +433,9 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => {
             },
         },
         treeDataChildrenField: {
+            module: 'SharedTreeData',
+        },
+        ['treeDataParentIdField' as any]: {
             module: 'SharedTreeData',
         },
         undoRedoCellEditing: { module: 'UndoRedoEdit' },
@@ -469,7 +478,7 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => {
 export const GRID_OPTIONS_VALIDATORS: () => OptionsValidator<GridOptions> = () => ({
     objectName: 'gridOptions',
     allProperties: [..._ALL_GRID_OPTIONS, ..._ALL_EVENTS.map((event) => _getCallbackForEvent(event))],
-    propertyExceptions: ['api'],
+    propertyExceptions: ['api', 'treeDataParentIdField'],
     docsUrl: 'grid-options/',
     deprecations: GRID_OPTION_DEPRECATIONS(),
     validations: GRID_OPTION_VALIDATIONS(),

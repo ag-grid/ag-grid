@@ -2,12 +2,10 @@ import type {
     AgColumn,
     BeanCollection,
     ChangedPath,
-    ClientSideRowModelStage,
     ColumnModel,
-    GridOptions,
     IChangedRowNodes,
     IColsService,
-    IRowNodeStage,
+    IRowGroupingStrategy,
     ISelectionService,
     IShowRowGroupColsService,
     InitialGroupOrderComparatorParams,
@@ -56,17 +54,8 @@ interface GroupingDetails {
     keyCreators: (((params: KeyCreatorParams) => string) | undefined)[];
 }
 
-export class GroupStage extends BeanStub implements NamedBean, IRowNodeStage {
-    beanName = 'groupStage' as const;
-
-    public refreshProps: Set<keyof GridOptions<any>> = new Set([
-        'groupDefaultExpanded',
-        'groupAllowUnbalanced',
-        'initialGroupOrderComparator',
-        'groupHideOpenParents',
-        'groupDisplayType',
-    ]);
-    public step: ClientSideRowModelStage = 'group';
+export class GroupStrategy extends BeanStub implements NamedBean, IRowGroupingStrategy {
+    beanName = 'groupStrategy' as const;
 
     private colModel: ColumnModel;
     private rowGroupColsSvc?: IColsService;

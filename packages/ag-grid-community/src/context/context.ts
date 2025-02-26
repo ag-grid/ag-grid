@@ -60,7 +60,7 @@ import type { IPivotColDefService } from '../interfaces/iPivotColDefService';
 import type { IPivotResultColsService } from '../interfaces/iPivotResultColsService';
 import type { IRowChildrenService } from '../interfaces/iRowChildrenService';
 import type { IRowModel } from '../interfaces/iRowModel';
-import type { IRowNodeStage } from '../interfaces/iRowNodeStage';
+import type { IRowGroupingStrategy, IRowNodeStage } from '../interfaces/iRowNodeStage';
 import type { ISelectionService } from '../interfaces/iSelectionService';
 import type { IServerSideTransactionManager } from '../interfaces/iServerSideRowModel';
 import type { IShowRowGroupColsService } from '../interfaces/iShowRowGroupColsService';
@@ -283,6 +283,8 @@ export interface CoreBeanCollection {
     sortStage?: IRowNodeStage;
     flattenStage?: IRowNodeStage;
     groupStage?: IRowNodeStage;
+    groupStrategy?: IRowGroupingStrategy;
+    treeParentIdStrategy?: IRowGroupingStrategy;
     aggStage?: IRowNodeStage;
     pivotStage?: IRowNodeStage;
     filterAggStage?: IRowNodeStage;
@@ -427,6 +429,8 @@ export type BeanName =
     | 'gridOptionsWrapper'
     | 'gridSerializer'
     | 'groupStage'
+    | 'groupStrategy'
+    | 'treeParentIdStrategy'
     | 'headerNavigation'
     | 'horizontalResizeSvc'
     | 'lazyBlockLoadingSvc'

@@ -906,7 +906,13 @@ export {
     MouseShowContextMenuParams,
     TouchShowContextMenuParam,
 } from './interfaces/iContextMenu';
-export { IRowNodeStage, StageExecuteParams } from './interfaces/iRowNodeStage';
+export {
+    IRowNodeStage,
+    IRowGroupingStrategy,
+    RowGroupingStrategyExecuteParams,
+    RowGroupingRowNode,
+    StageExecuteParams,
+} from './interfaces/iRowNodeStage';
 export { IDateParams, IDate, IDateComp, BaseDate, BaseDateParams } from './interfaces/dateComponent';
 export { IAfterGuiAttachedParams, ContainerType } from './interfaces/iAfterGuiAttachedParams';
 export { IComponent } from './interfaces/iComponent';
