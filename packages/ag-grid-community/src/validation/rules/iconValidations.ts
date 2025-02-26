@@ -159,6 +159,9 @@ export const ICON_MODULES: Record<IconName, ValidationModuleName | ValidationMod
     checkboxUnchecked: 'CommunityCore',
     radioButtonOn: 'CommunityCore',
     radioButtonOff: 'CommunityCore',
+    findPrevious: 'Find',
+    findNext: 'Find',
+    findClear: 'Find',
 };
 
 export const DEPRECATED_ICONS_V33: Set<IconName> = new Set([

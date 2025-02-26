@@ -102,6 +102,9 @@ export type IconName =
     | 'chartsThemePrevious'
     | 'chartsThemeNext'
     | 'chartsDownload'
+    | 'findPrevious'
+    | 'findNext'
+    | 'findClear'
     | 'checkboxChecked' // deprecated v33
     | 'checkboxIndeterminate' // deprecated v33
     | 'checkboxUnchecked' // deprecated v33

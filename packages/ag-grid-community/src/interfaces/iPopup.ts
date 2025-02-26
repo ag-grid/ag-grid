@@ -7,7 +7,7 @@ export interface PopupPositionParams {
     rowNode?: IRowNode | null;
     nudgeX?: number;
     nudgeY?: number;
-    position?: 'over' | 'under';
+    position?: 'over' | 'under' | 'above';
     alignSide?: 'left' | 'right';
     keepWithinBounds?: boolean;
     skipObserver?: boolean;

@@ -1,3 +1,4 @@
+import { _PopupModule } from 'ag-grid-community';
 import type { _FindApi, _ModuleWithApi, _ModuleWithoutApi } from 'ag-grid-community';
 
 import { VERSION } from '../version';
@@ -27,6 +28,12 @@ const FindCoreModule: _ModuleWithoutApi = {
         agFindCellRenderer: FindCellRenderer,
     },
     css: [findCSS],
+    icons: {
+        findPrevious: 'up',
+        findNext: 'down',
+        findClear: 'cancel',
+    },
+    dependsOn: [_PopupModule],
 };
 
 /**

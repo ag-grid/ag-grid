@@ -3,6 +3,7 @@ import { BeanStub } from '../../context/beanStub';
 import type { AgColumn } from '../../entities/agColumn';
 import { _getSelectAll, _isCellSelectionEnabled } from '../../gridOptionsUtils';
 import type { IClipboardService } from '../../interfaces/iClipboardService';
+import type { IFindService } from '../../interfaces/iFind';
 import type { CellCtrl } from '../../rendering/cell/cellCtrl';
 import { _getCellCtrlForEventTarget } from '../../rendering/cell/cellCtrl';
 import type { RowCtrl } from '../../rendering/row/rowCtrl';
@@ -214,7 +215,7 @@ export class RowContainerEventsFeature extends BeanStub {
 
         const keyCode = _normaliseQwertyAzerty(keyboardEvent);
 
-        const { clipboardSvc, undoRedo } = this.beans;
+        const { clipboardSvc, undoRedo, findSvc } = this.beans;
 
         if (keyCode === KeyCode.A) {
             return this.onCtrlAndA(keyboardEvent);
@@ -224,6 +225,9 @@ export class RowContainerEventsFeature extends BeanStub {
         }
         if (keyCode === KeyCode.D) {
             return this.onCtrlAndD(clipboardSvc, keyboardEvent);
+        }
+        if (keyCode === KeyCode.F) {
+            return this.onCtrlAndF(findSvc, keyboardEvent);
         }
         if (keyCode === KeyCode.V) {
             return this.onCtrlAndV(clipboardSvc, keyboardEvent);
@@ -317,5 +321,15 @@ export class RowContainerEventsFeature extends BeanStub {
 
     private onCtrlAndY(undoRedo: UndoRedoService | undefined): void {
         undoRedo?.redo('ui');
+    }
+
+    private onCtrlAndF(findSvc: IFindService | undefined, event: KeyboardEvent): void {
+        if (!findSvc || this.gos.get('findOptions')?.suppressShortcutKey) {
+            return;
+        }
+
+        event.preventDefault();
+
+        findSvc.show();
     }
 }

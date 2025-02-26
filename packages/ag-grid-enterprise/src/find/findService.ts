@@ -18,12 +18,15 @@ import {
     BeanStub,
     _debounce,
     _escapeString,
+    _focusInto,
     _isClientSideRowModel,
     _jsonEquals,
     _missing,
     isColumnSelectionCol,
     isRowNumberCol,
 } from 'ag-grid-community';
+
+import { FindComp } from './findComp';
 
 function defaultCaseFormat(value?: string | null): string | undefined {
     return value?.toLocaleLowerCase();
@@ -77,6 +80,8 @@ export class FindService extends BeanStub implements NamedBean, IFindService {
 
     /** keeps active match */
     private refreshDebounced: () => void;
+
+    private comp?: FindComp;
 
     public totalMatches: number = 0;
 
@@ -243,6 +248,47 @@ export class FindService extends BeanStub implements NamedBean, IFindService {
 
         if (gos.get('findOptions')?.searchDetail) {
             api.setGridOption('findSearchValue', gos.get('findSearchValue'));
+        }
+    }
+
+    public show(): void {
+        if (this.comp || !_isClientSideRowModel(this.gos)) {
+            return;
+        }
+        let hidePopup: (() => void) | undefined;
+        const close = () => hidePopup?.();
+        const comp = this.createBean(
+            new FindComp({
+                close,
+            })
+        );
+        this.comp = comp;
+        const { ctrlsSvc, popupSvc } = this.beans;
+        const eComp = comp.getGui();
+
+        const eventSource = ctrlsSvc.getHeaderRowContainerCtrl()?.eViewport;
+        if (eventSource) {
+            const result = popupSvc?.addPopup({
+                // modal: true,
+                eChild: eComp,
+                closeOnEsc: true,
+                closedCallback: () => {
+                    this.comp = this.destroyBean(comp);
+                },
+                positionCallback: () =>
+                    popupSvc?.positionPopupByComponent({
+                        type: 'find',
+                        eventSource,
+                        ePopup: comp.getGui(),
+                        position: 'above',
+                        alignSide: 'right',
+                    }),
+                ariaLabel: 'Find', // TODO
+                afterGuiAttached: () => {
+                    _focusInto(eComp);
+                },
+            });
+            hidePopup = result?.hideFunc;
         }
     }
 
@@ -815,6 +861,7 @@ export class FindService extends BeanStub implements NamedBean, IFindService {
         this.bottomMatches.clear();
         this.bottomNodes.length = 0;
         this.activeMatch = undefined;
+        this.comp = this.destroyBean(this.comp);
         super.destroy();
     }
 }

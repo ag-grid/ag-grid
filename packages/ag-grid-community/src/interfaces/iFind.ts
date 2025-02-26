@@ -35,6 +35,8 @@ export interface IFindService {
     setupGroupCol(colDef: ColDef): void;
 
     registerDetailGrid(node: IRowNode, api: GridApi): void;
+
+    show(): void;
 }
 
 export interface FindOptions {
@@ -44,6 +46,7 @@ export interface FindOptions {
     caseSensitive?: boolean;
     /** Perform searches across Detail Grids or Custom Detail Cells when using Master/Detail. */
     searchDetail?: boolean;
+    suppressShortcutKey?: boolean;
 }
 
 export interface FindCellParams<TData = any, TValue = any> {

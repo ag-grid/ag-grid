@@ -246,8 +246,14 @@ export class PopupService extends BeanStub implements NamedBean {
                 y = sourceRect.top - parentRect.top;
                 this.setAlignedStyles(ePopup, 'over');
             } else {
-                this.setAlignedStyles(ePopup, 'under');
-                const alignSide = this.shouldRenderUnderOrAbove(ePopup, sourceRect, parentRect, params.nudgeY || 0);
+                this.setAlignedStyles(ePopup, position);
+                const alignSide = this.shouldRenderUnderOrAbove(
+                    ePopup,
+                    sourceRect,
+                    parentRect,
+                    params.nudgeY || 0,
+                    position
+                );
                 if (alignSide === 'under') {
                     y = sourceRect.top - parentRect.top + sourceRect.height;
                 } else {
@@ -272,21 +278,27 @@ export class PopupService extends BeanStub implements NamedBean {
         ePopup: HTMLElement,
         targetCompRect: DOMRect,
         parentRect: DOMRect,
-        nudgeY: number
+        nudgeY: number,
+        desiredPosition: 'under' | 'above'
     ): 'under' | 'above' {
         const spaceAvailableUnder = parentRect.bottom - targetCompRect.bottom;
         const spaceAvailableAbove = targetCompRect.top - parentRect.top;
         const spaceRequired = ePopup.offsetHeight + nudgeY;
 
-        if (spaceAvailableUnder > spaceRequired) {
-            return 'under';
+        const isDesiredUnder = desiredPosition === 'under';
+        const alternativePosition = isDesiredUnder ? 'above' : 'under';
+        const desiredAvailableSpace = isDesiredUnder ? spaceAvailableUnder : spaceAvailableAbove;
+        const alternativeAvailableSpace = isDesiredUnder ? spaceAvailableAbove : spaceAvailableUnder;
+
+        if (desiredAvailableSpace > spaceRequired) {
+            return desiredPosition;
         }
 
-        if (spaceAvailableAbove > spaceRequired || spaceAvailableAbove > spaceAvailableUnder) {
-            return 'above';
+        if (alternativeAvailableSpace > spaceRequired || alternativeAvailableSpace > desiredAvailableSpace) {
+            return alternativePosition;
         }
 
-        return 'under';
+        return desiredPosition;
     }
 
     private setAlignedStyles(ePopup: HTMLElement, positioned: 'right' | 'left' | 'over' | 'above' | 'under' | null) {

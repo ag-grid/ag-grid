@@ -22,6 +22,7 @@ export const KeyCode = {
     A: 'KeyA',
     C: 'KeyC',
     D: 'KeyD',
+    F: 'KeyF',
     V: 'KeyV',
     X: 'KeyX',
     Y: 'KeyY',
