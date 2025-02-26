@@ -77,49 +77,66 @@ export class TreeParentIdStrategy<TData = any> extends BeanStub implements Named
         rootNode.treeNodeFlags = 0;
 
         // Loop all the nodes, and put the children in the right place, updating the parent and the children arrays
-        for (let i = 0; i < rootAllLeafChildrenLen; ++i) {
-            const row = rootAllLeafChildren[i];
 
-            const updated = updates?.has(row) || adds?.has(row);
-            const oldParent = row.parent ?? rootNode;
-            let newParent: TreeRow<TData> | null | undefined = oldParent;
+        const renderEmpty = !this.gos.get('getRowId'); // If getRowId is not provided, we make an empty tree
+        if (renderEmpty) {
+            for (let i = 0; i < rootAllLeafChildrenLen; ++i) {
+                const row = rootAllLeafChildren[i];
+                const oldParent = row.parent;
+                if (oldParent) {
+                    row.parent = null;
+                    oldParent.treeNodeFlags |= FLAG_CHANGED | FLAG_CHILDREN_CHANGED;
+                } else if (updates?.has(row) || adds?.has(row)) {
+                    row.treeNodeFlags |= FLAG_CHANGED;
+                }
+            }
+        } else {
+            for (let i = 0; i < rootAllLeafChildrenLen; ++i) {
+                const row = rootAllLeafChildren[i];
 
-            if (updated || fullReload) {
-                const parentId = parentIdGetter(row.data);
-                if (parentId === null || parentId === undefined) {
-                    newParent = rootNode;
-                } else {
-                    newParent = nodeManager.getRowNode(parentId);
-                    if (!newParent) {
-                        _warn(271, { id: row.id!, parentId });
+                const updated = updates?.has(row) || adds?.has(row);
+                const oldParent = row.parent ?? rootNode;
+                let newParent: TreeRow<TData> | null | undefined;
+
+                if (updated || fullReload) {
+                    const parentId = parentIdGetter(row.data);
+                    if (parentId === null || parentId === undefined) {
                         newParent = rootNode;
+                    } else {
+                        newParent = nodeManager.getRowNode(parentId);
+                        if (!newParent) {
+                            _warn(271, { id: row.id!, parentId });
+                            newParent = rootNode;
+                        }
+                    }
+                } else {
+                    newParent = row.parent ?? rootNode;
+                }
+
+                let parentFlags = newParent.treeNodeFlags;
+                const indexInParent = parentFlags & MASK_CHILDREN_LENGTH;
+                parentFlags = (parentFlags & ~MASK_CHILDREN_LENGTH) | (indexInParent + 1);
+
+                let parentChildren = newParent.childrenAfterGroup;
+                if (!parentChildren || parentChildren === _EmptyArray) {
+                    newParent.childrenAfterGroup = parentChildren = [];
+                }
+
+                if (parentChildren.length <= indexInParent || parentChildren[indexInParent] !== row) {
+                    parentChildren[indexInParent] = row;
+                    parentFlags |= FLAG_CHILDREN_CHANGED;
+                }
+
+                if (updated || row.parent !== newParent) {
+                    row.parent = newParent;
+                    parentFlags |= FLAG_CHANGED;
+                    if (oldParent && oldParent !== newParent) {
+                        oldParent.treeNodeFlags |= FLAG_CHANGED;
                     }
                 }
+
+                newParent.treeNodeFlags = parentFlags;
             }
-
-            let parentFlags = newParent.treeNodeFlags;
-            const indexInParent = parentFlags & MASK_CHILDREN_LENGTH;
-            parentFlags = (parentFlags & ~MASK_CHILDREN_LENGTH) | (indexInParent + 1);
-
-            let parentChildren = newParent.childrenAfterGroup;
-            if (!parentChildren || parentChildren === _EmptyArray) {
-                newParent.childrenAfterGroup = parentChildren = [];
-            }
-
-            if (parentChildren.length <= indexInParent || parentChildren[indexInParent] !== row) {
-                parentChildren[indexInParent] = row;
-                parentFlags |= FLAG_CHILDREN_CHANGED;
-            }
-
-            if (updated || row.parent !== newParent) {
-                row.parent = newParent;
-                parentFlags |= FLAG_CHANGED;
-                if (oldParent && oldParent !== newParent) {
-                    oldParent.treeNodeFlags |= FLAG_CHANGED;
-                }
-            }
-
-            newParent.treeNodeFlags = parentFlags;
         }
 
         rootChildrenAfterGroup.length = rootNode.treeNodeFlags & MASK_CHILDREN_LENGTH;
@@ -256,7 +273,7 @@ export class TreeParentIdStrategy<TData = any> extends BeanStub implements Named
             }
         }
 
-        if (processedNodesCount !== rootAllLeafChildrenLen) {
+        if (processedNodesCount !== rootAllLeafChildrenLen && !renderEmpty) {
             // We have unprocessed nodes, this means we have at least one cycle, we need to fix it and raise warnings
             // This is not optimal at all in terms of performance, and we don't care as this should never happen.
             const processedNodes = new Set<TreeRow<TData>>();
