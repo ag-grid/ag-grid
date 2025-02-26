@@ -179,11 +179,11 @@ export class VirtualList<
     private moveItem(up: boolean): void {
         const nextRow = this.getNextRow(up);
 
-        if (nextRow === undefined) {
+        if (!this.moveItemCallback || nextRow === undefined) {
             return;
         }
 
-        if (this.moveItemCallback!(this.lastFocusedRowIndex!, nextRow)) {
+        if (this.moveItemCallback(this.lastFocusedRowIndex!, nextRow)) {
             this.focusRow(nextRow);
         }
     }
