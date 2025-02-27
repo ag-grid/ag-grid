@@ -940,7 +940,6 @@ export {
     _getShouldDisplayTooltip,
     _isShowTooltipWhenTruncated,
 } from './tooltip/tooltipFeature';
-export { IAggregationStage } from './interfaces/iAggregationStage';
 export { IFooterService } from './interfaces/iFooterService';
 export {
     MenuItemLeafDef,
