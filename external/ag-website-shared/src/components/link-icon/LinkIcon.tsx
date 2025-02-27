@@ -38,10 +38,15 @@ export function LinkIcon({ className, ...props }: AllHTMLAttributes<HTMLAnchorEl
         <a
             aria-label="Heading link"
             {...props}
-            className={classnames(styles.docsHeaderIcon, { [styles.active]: linkCopied }, className)}
+            className={classnames(
+                styles.docsHeaderIcon,
+                { [styles.active]: linkCopied },
+                'button-secondary',
+                className
+            )}
             onClick={onclick}
         >
-            <span className={styles.tooltip}>{linkCopied ? 'Link copied' : 'Copy link'}</span>
+            <span className={styles.tooltip}>{linkCopied ? 'Link copied' : 'Copy'}</span>
             <Icon name="link" />
         </a>
     );

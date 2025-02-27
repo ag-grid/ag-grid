@@ -1,20 +1,22 @@
 @use 'design-system' as *;
 
 .docsHeaderIcon {
+    width: 28px;
+    height: 28px;
     position: relative;
-    padding-left: 0;
-    margin-left: $spacing-size-2;
-    font-size: inherit;
+    padding: 0 0 0 0;
+    margin-left: $spacing-size-1;
+    transform: translateY(-4px);
     opacity: 0;
     transition: opacity 0.33s ease-in-out;
 
     svg {
+        --icon-size: 18px;
+        --icon-color: var(--color-link);
+
         position: relative;
-        top: -0.1em;
-        width: 0.85em;
-        height: 0.85em;
         visibility: visible;
-        fill: var(--color-link);
+        transform: translateX(4px);
         pointer-events: none;
     }
 
@@ -32,11 +34,7 @@ h4,
 h5,
 h6 {
     &:hover .docsHeaderIcon {
-        opacity: 0.5;
-
-        &:hover {
-            opacity: 1;
-        }
+        opacity: 1;
     }
 }
 
@@ -46,7 +44,7 @@ h6 {
     position: absolute;
     display: block;
     color: var(--color-bg-primary);
-    top: -32px;
+    top: -38px;
     left: 50%;
     padding: $spacing-size-1 $spacing-size-4;
     white-space: nowrap;
