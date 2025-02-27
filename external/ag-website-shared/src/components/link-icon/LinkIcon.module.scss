@@ -85,7 +85,7 @@ h6 {
 
     .docsHeaderIcon.active & {
         animation-name: bounce;
-        animation-duration: 0.33s;
+        animation-duration: 0.25s;
     }
 
     #{$selector-darkmode} & {

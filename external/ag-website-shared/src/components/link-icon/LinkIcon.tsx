@@ -6,7 +6,9 @@ import styles from './LinkIcon.module.scss';
 
 export function LinkIcon({ className, ...props }: AllHTMLAttributes<HTMLAnchorElement> & { children?: never }) {
     const [linkCopied, setLinkCopied] = useState(false);
-    const timeoutRef = useRef(null);
+    const [linkActive, setlinkActive] = useState(false);
+    const copiedTimeoutRef = useRef(null);
+    const activeTimeoutRef = useRef(null);
 
     const onclick = (event) => {
         event.preventDefault();
@@ -16,20 +18,24 @@ export function LinkIcon({ className, ...props }: AllHTMLAttributes<HTMLAnchorEl
         navigator.clipboard.writeText(href);
 
         setLinkCopied(true);
+        setlinkActive(true);
 
-        if (timeoutRef.current) {
-            clearTimeout(timeoutRef.current);
-        }
+        if (copiedTimeoutRef.current) clearTimeout(copiedTimeoutRef.current);
+        if (activeTimeoutRef.current) clearTimeout(activeTimeoutRef.current);
 
-        timeoutRef.current = setTimeout(() => {
+        copiedTimeoutRef.current = setTimeout(() => {
             setLinkCopied(false);
+        }, 2250);
+
+        activeTimeoutRef.current = setTimeout(() => {
+            setlinkActive(false);
         }, 2000);
     };
 
     useEffect(() => {
         return () => {
-            if (timeoutRef.current) {
-                clearTimeout(timeoutRef.current);
+            if (copiedTimeoutRef.current) {
+                clearTimeout(copiedTimeoutRef.current);
             }
         };
     }, []);
@@ -40,7 +46,7 @@ export function LinkIcon({ className, ...props }: AllHTMLAttributes<HTMLAnchorEl
             {...props}
             className={classnames(
                 styles.docsHeaderIcon,
-                { [styles.active]: linkCopied },
+                { [styles.active]: linkActive },
                 'button-secondary',
                 className
             )}
