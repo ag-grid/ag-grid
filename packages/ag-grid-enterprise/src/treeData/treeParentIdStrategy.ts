@@ -208,7 +208,7 @@ export class TreeParentIdStrategy<TData = any> extends BeanStub implements Named
                 row.expanded = getExpandedInitialValue(isGroupOpenByDefault, expandByDefault, row);
             }
 
-            if (childrenChanged || fullReload) {
+            if (childrenChanged || allLeafChildrenChanged || fullReload) {
                 updateRowArrays(row, childrenAfterGroup);
             }
 
@@ -290,6 +290,7 @@ const updateRowArrays = <TData>(row: TreeRow<TData>, childrenAfterGroup: TreeRow
     row.childrenAfterSort ??= childrenAfterGroup;
     const sibling = row.sibling;
     if (sibling) {
+        sibling.allLeafChildren = row.allLeafChildren;
         sibling.childrenAfterGroup = row.childrenAfterGroup;
         sibling.childrenAfterAggFilter = row.childrenAfterAggFilter;
         sibling.childrenAfterFilter = row.childrenAfterFilter;
