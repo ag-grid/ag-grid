@@ -73,7 +73,7 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
 
     private valueModel: SetValueModel<V>;
     private setFilterParams: SetFilterParams<any, V>;
-    private virtualList: VirtualList<any>;
+    private virtualList: VirtualList<SetFilterListItem<V | string | null>, SetFilterModelTreeItem | string | null>;
     private caseSensitive: boolean = false;
     private treeDataTreeList = false;
     private groupingTreeList = false;

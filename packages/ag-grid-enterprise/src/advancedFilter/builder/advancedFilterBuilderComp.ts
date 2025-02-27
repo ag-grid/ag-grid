@@ -113,7 +113,10 @@ export class AdvancedFilterBuilderComp extends Component<AdvancedFilterBuilderEv
 
     private setupVirtualList(): void {
         const virtualList = (this.virtualList = this.createManagedBean(
-            new VirtualList({
+            new VirtualList<
+                AdvancedFilterBuilderItemComp | AdvancedFilterBuilderItemAddComp,
+                AdvancedFilterBuilderItem
+            >({
                 cssIdentifier: 'advanced-filter-builder',
                 ariaRole: 'tree',
                 listName: this.advFilterExpSvc.translate('ariaAdvancedFilterBuilderList'),

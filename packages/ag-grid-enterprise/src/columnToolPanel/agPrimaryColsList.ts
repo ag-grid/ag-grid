@@ -110,7 +110,7 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
         this.expandGroupsByDefault = !params.contractColumnSelection;
 
         const virtualList = this.createManagedBean(
-            new VirtualList({
+            new VirtualList<ToolPanelColumnGroupComp | ToolPanelColumnComp, ColumnModelItem>({
                 cssIdentifier: 'column-select',
                 ariaRole: 'tree',
                 moveItemCallback: this.moveColumns.bind(this),
@@ -195,7 +195,10 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
         }
     }
 
-    private createComponentFromItem(item: ColumnModelItem, listItemElement: HTMLElement): Component {
+    private createComponentFromItem(
+        item: ColumnModelItem,
+        listItemElement: HTMLElement
+    ): ToolPanelColumnGroupComp | ToolPanelColumnComp {
         const allowDragging = this.allowDragging;
         if (item.group) {
             const renderedGroup = new ToolPanelColumnGroupComp(item, allowDragging, this.eventType, listItemElement);

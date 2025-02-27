@@ -17,11 +17,11 @@ import {
 
 import type { VirtualListModel } from './iVirtualList';
 
-interface VirtualListParams {
+interface VirtualListParams<C> {
     cssIdentifier?: string;
     ariaRole?: string;
     listName?: string;
-    moveItemCallback?: (item: any, isUp: boolean) => void;
+    moveItemCallback?: (item: C, isUp: boolean) => void;
 }
 
 function getVirtualListTemplate(cssIdentifier: string) {
@@ -35,6 +35,7 @@ function getVirtualListTemplate(cssIdentifier: string) {
 
 export class VirtualList<
     C extends Component<any> = Component<any>,
+    V = any,
     TEventType extends string = ComponentEvent,
 > extends TabGuardComp<TEventType> {
     private environment: Environment;
@@ -48,9 +49,9 @@ export class VirtualList<
     private listName?: string;
 
     private model: VirtualListModel;
-    private renderedRows = new Map<number, { rowComponent: C; eDiv: HTMLDivElement; value: any }>();
-    private componentCreator: (value: any, listItemElement: HTMLElement) => C;
-    private componentUpdater: (value: any, component: C) => void;
+    private renderedRows = new Map<number, { rowComponent: C; eDiv: HTMLDivElement; value: V }>();
+    private componentCreator: (value: V, listItemElement: HTMLElement) => C;
+    private componentUpdater: (value: V, component: C) => void;
     private rowHeight = 20;
     private pageSize = -1;
     private isScrolling = false;
@@ -58,9 +59,9 @@ export class VirtualList<
     private isHeightFromTheme: boolean = true;
     private readonly eContainer: HTMLElement = RefPlaceholder;
     private awaitStableCallbacks: (() => void)[] = [];
-    private moveItemCallback?: (item: any, isUp: boolean) => void;
+    private moveItemCallback?: (item: C, isUp: boolean) => void;
 
-    constructor(params?: VirtualListParams) {
+    constructor(params?: VirtualListParams<C>) {
         super(getVirtualListTemplate(params?.cssIdentifier || 'default'));
 
         const { cssIdentifier = 'default', ariaRole = 'listbox', listName, moveItemCallback } = params || {};
@@ -319,11 +320,11 @@ export class VirtualList<
         return false;
     }
 
-    public setComponentCreator(componentCreator: (value: any, listItemElement: HTMLElement) => C): void {
+    public setComponentCreator(componentCreator: (value: V, listItemElement: HTMLElement) => C): void {
         this.componentCreator = componentCreator;
     }
 
-    public setComponentUpdater(componentUpdater: (value: any, component: C) => void): void {
+    public setComponentUpdater(componentUpdater: (value: V, component: C) => void): void {
         this.componentUpdater = componentUpdater;
     }
 
