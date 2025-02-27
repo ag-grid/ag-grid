@@ -47,3 +47,31 @@ input[type='search'].searchInput {
         display: none;
     }
 }
+
+.gettingStarted {
+    padding: $spacing-size-5;
+
+    span {
+        text-transform: uppercase;
+        font-weight: 600;
+        letter-spacing: 1.2pxs;
+        color: var(--color-text-secondary);
+        opacity: 0.6;
+        font-size: 13px;
+    }
+
+    h3 {
+        color: var(--color-brand-500);
+        font-size: 17px;
+    }
+
+    p {
+        font-size: 15px;
+    }
+
+    a {
+        margin-top: 12px;
+        box-shadow: var(--shadow-sm);
+        height: 100px !important;
+    }
+}
