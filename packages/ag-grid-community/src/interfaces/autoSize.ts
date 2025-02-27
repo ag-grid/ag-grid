@@ -46,6 +46,8 @@ export interface SizeColumnsToFitProvidedWidthStrategy {
 
 /**
  * Auto-size columns to fit their cell contents.
+ *
+ * Not supported by the VPRM
  */
 export interface SizeColumnsToContentStrategy {
     type: 'fitCellContents';
