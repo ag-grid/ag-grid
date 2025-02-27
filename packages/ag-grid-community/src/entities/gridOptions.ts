@@ -1691,6 +1691,17 @@ export interface GridOptions<TData = any> {
     themeCssLayer?: string;
 
     /**
+     * The nonce attribute to set on style elements added to the document by
+     * themes. If "foo" is passed to this property, the grid can use the Content
+     * Security Policy `style-src 'nonce-foo'`, instead of the less secure
+     * `style-src 'unsafe-inline'`.
+     *
+     * Note: CSP nonces are global to a page, where a page has multiple grids,
+     * every one must have the same styleNonce set.
+     */
+    styleNonce?: string;
+
+    /**
      * An element to insert style elements into when injecting styles into the
      * grid. If undefined, styles will be added to the document head for grids
      * rendered in the main document fragment, or to the grid wrapper element

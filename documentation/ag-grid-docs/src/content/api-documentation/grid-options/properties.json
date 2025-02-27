@@ -1854,6 +1854,12 @@
                 "name": "CSS Layers",
                 "url": "./theming-css/#css-layers"
             }
+        },
+        "styleNonce": {
+            "more": {
+                "name": "Security",
+                "url": "./security#style-src"
+            }
         }
     },
     "tooltips": {

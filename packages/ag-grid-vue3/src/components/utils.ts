@@ -1335,6 +1335,15 @@ export interface Props<TData> {
          * @see https://developer.mozilla.org/en-US/docs/Web/CSS/@layer
          */
     themeCssLayer?: string | undefined,
+    /** The nonce attribute to set on style elements added to the document by
+         * themes. If "foo" is passed to this property, the grid can use the Content
+         * Security Policy `style-src 'nonce-foo'`, instead of the less secure
+         * `style-src 'unsafe-inline'`.
+         *
+         * Note: CSP nonces are global to a page, where a page has multiple grids,
+         * every one must have the same styleNonce set.
+         */
+    styleNonce?: string | undefined,
     /** An element to insert style elements into when injecting styles into the
          * grid. If undefined, styles will be added to the document head for grids
          * rendered in the main document fragment, or to the grid wrapper element
@@ -1876,6 +1885,7 @@ export function getProps() {
         theme: undefined,
         loadThemeGoogleFonts: undefined,
         themeCssLayer: undefined,
+        styleNonce: undefined,
         themeStyleContainer: undefined,
         getContextMenuItems: undefined,
         getMainMenuItems: undefined,

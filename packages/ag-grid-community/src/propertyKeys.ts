@@ -62,6 +62,7 @@ const STRING_GRID_OPTIONS: KeysWithType<string>[] = [
     'grandTotalRow',
     'themeCssLayer',
     'findSearchValue',
+    'styleNonce',
 ];
 
 // only used internally
