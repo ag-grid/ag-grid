@@ -34,9 +34,8 @@ export function LinkIcon({ className, ...props }: AllHTMLAttributes<HTMLAnchorEl
 
     useEffect(() => {
         return () => {
-            if (copiedTimeoutRef.current) {
-                clearTimeout(copiedTimeoutRef.current);
-            }
+            clearTimeout(copiedTimeoutRef.current);
+            clearTimeout(activeTimeoutRef.current);
         };
     }, []);
 
