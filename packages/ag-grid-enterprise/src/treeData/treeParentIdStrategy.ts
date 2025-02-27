@@ -156,17 +156,17 @@ export class TreeParentIdStrategy<TData = any> extends BeanStub implements Named
             const childrenAfterGroup = (row.childrenAfterGroup ??= _EmptyArray);
             const childrenAfterGroupLen = treeNodeFlags & MASK_CHILDREN_LENGTH;
 
-            let allLeafChildrenChanged = false;
-            let changed = (treeNodeFlags & FLAG_CHANGED) !== 0;
+            let childrenChanged = (treeNodeFlags & FLAG_CHILDREN_CHANGED) !== 0;
 
-            if (childrenAfterGroup.length !== childrenAfterGroupLen || treeNodeFlags & FLAG_CHILDREN_CHANGED) {
+            if (childrenAfterGroup.length !== childrenAfterGroupLen) {
                 childrenAfterGroup.length = childrenAfterGroupLen;
-                changed = true;
-                allLeafChildrenChanged = true;
+                childrenChanged = true;
             }
 
-            row.treeNodeFlags = treeNodeFlags & FLAG_EXPANDED_INITIALIZED; // Keep only the expanded initialized flag
+            let changed = childrenChanged || (treeNodeFlags & FLAG_CHANGED) !== 0;
+            let allLeafChildrenChanged = childrenChanged;
 
+            row.treeNodeFlags = treeNodeFlags & FLAG_EXPANDED_INITIALIZED; // Keep only the expanded initialized flag
             row.level = level++;
 
             let allLeafChildrenLen = 0;
@@ -180,9 +180,7 @@ export class TreeParentIdStrategy<TData = any> extends BeanStub implements Named
 
             const allLeafChildren = (row.allLeafChildren ??= _EmptyArray);
             if (allLeafChildrenChanged || allLeafChildren.length !== allLeafChildrenLen) {
-                if (updateAllLeafChildren(row, allLeafChildren, allLeafChildrenLen)) {
-                    allLeafChildrenChanged = true;
-                }
+                allLeafChildrenChanged = updateAllLeafChildren(row, allLeafChildren, allLeafChildrenLen);
             }
 
             const key = row.id!;
@@ -210,12 +208,12 @@ export class TreeParentIdStrategy<TData = any> extends BeanStub implements Named
                 row.expanded = getExpandedInitialValue(isGroupOpenByDefault, expandByDefault, row);
             }
 
-            if (changed) {
-                activeChangedPath?.addParentNode(row);
+            if (childrenChanged || fullReload) {
+                updateRowArrays(row, childrenAfterGroup);
             }
 
-            if (fullReload) {
-                updateRowArrays(row, childrenAfterGroup);
+            if (changed) {
+                activeChangedPath?.addParentNode(row);
             }
 
             return allLeafChildrenChanged;
@@ -290,7 +288,6 @@ const updateRowArrays = <TData>(row: TreeRow<TData>, childrenAfterGroup: TreeRow
     row.childrenAfterFilter ??= childrenAfterGroup;
     row.childrenAfterAggFilter ??= childrenAfterGroup;
     row.childrenAfterSort ??= childrenAfterGroup;
-
     const sibling = row.sibling;
     if (sibling) {
         sibling.childrenAfterGroup = row.childrenAfterGroup;
