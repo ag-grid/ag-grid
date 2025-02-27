@@ -282,6 +282,9 @@ export const Changelog = () => {
                 filter: 'agSetColumnFilter',
                 width: 145,
                 sort: 'desc',
+                filterParams: {
+                    suppressSorting: true,
+                },
             },
             IssueTypeColDef,
             {
