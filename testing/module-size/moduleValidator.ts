@@ -28,26 +28,33 @@ function validateSizes() {
         (result) => result.selfSize < result.expectedSize - bufferSize(result.expectedSize)
     );
 
-    if (failuresTooBig.length > 0) {
-        console.error(
-            'Validation failed for the following modules which are too large compared to their expected size:'
-        );
-        failuresTooBig.forEach((failure) => {
+    const tooBig = failuresTooBig.length > 0;
+    const tooSmall = failuresTooSmall.length > 0;
+
+    if (tooBig || tooSmall) {
+        if (tooBig) {
             console.error(
-                `Module: [${failure.modules.join()}], selfSize: ${failure.selfSize}, expectedSize: ${failure.expectedSize} + (${bufferSize(failure.expectedSize)})`
+                'Validation failed for the following modules which are too large compared to their expected size:'
             );
-        });
-        process.exit(1); // Return a non-zero exit code
-    } else if (failuresTooSmall.length > 0) {
-        console.error(
-            'Validation failed for the following modules which are too much smaller than their expected size:'
-        );
-        console.error('Is the expected size too high in moduleDefinitions? Or has the module dependencies changed?');
-        failuresTooSmall.forEach((failure) => {
+            failuresTooBig.forEach((failure) => {
+                console.error(
+                    `Module: [${failure.modules.join()}], selfSize: ${failure.selfSize}, expectedSize: ${failure.expectedSize} + (${bufferSize(failure.expectedSize)})`
+                );
+            });
+        }
+        if (tooSmall) {
             console.error(
-                `Module: [${failure.modules.join()}], selfSize: ${failure.selfSize}, expectedSize: ${failure.expectedSize} + (${bufferSize(failure.expectedSize)})`
+                'Validation failed for the following modules which are too small compared to their expected size:'
             );
-        });
+            console.error(
+                'Is the expected size too high in moduleDefinitions? Or have the module dependencies changed?'
+            );
+            failuresTooSmall.forEach((failure) => {
+                console.error(
+                    `Module: [${failure.modules.join()}], selfSize: ${failure.selfSize}, expectedSize: ${failure.expectedSize} + (${bufferSize(failure.expectedSize)})`
+                );
+            });
+        }
         process.exit(1); // Return a non-zero exit code
     } else {
         console.log(`All modules (${results.length}) passed size validation.`);

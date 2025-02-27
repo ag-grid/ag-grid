@@ -177,6 +177,9 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => {
                 rowDragEntireRow: { required: [false, undefined] },
             },
         },
+        findSearchValue: {
+            module: 'Find',
+        },
         rowNumbers: {
             module: 'RowNumbers',
         },
@@ -409,18 +412,25 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => {
                 const rowModel = options.rowModelType ?? 'clientSide';
                 switch (rowModel) {
                     case 'clientSide': {
-                        const { treeDataChildrenField, treeDataParentIdField, getDataPath } = options as any;
+                        const { treeDataChildrenField, treeDataParentIdField, getDataPath, getRowId } = options as any;
                         if (!treeDataChildrenField && !treeDataParentIdField && !getDataPath) {
                             return "treeData requires either 'treeDataChildrenField' or 'getDataPath' in the clientSide row model.";
                         }
-                        if (treeDataParentIdField && treeDataChildrenField) {
-                            return "Cannot use both 'treeDataParentIdField' and 'treeDataChildrenField' at the same time.";
+                        if (treeDataChildrenField) {
+                            if (getDataPath) {
+                                return "Cannot use both 'treeDataChildrenField' and 'getDataPath' at the same time.";
+                            }
+                            if (treeDataParentIdField) {
+                                return "Cannot use both 'treeDataChildrenField' and 'treeDataParentIdField' at the same time.";
+                            }
                         }
-                        if (treeDataChildrenField && getDataPath) {
-                            return "Cannot use both 'treeDataChildrenField' and 'getDataPath' at the same time.";
-                        }
-                        if (treeDataParentIdField && getDataPath) {
-                            return "Cannot use both 'treeDataParentIdField' and 'getDataPath' at the same time.";
+                        if (treeDataParentIdField) {
+                            if (!getRowId) {
+                                return 'getRowId callback not provided, tree data with parent id cannot be built.';
+                            }
+                            if (getDataPath) {
+                                return "Cannot use both 'treeDataParentIdField' and 'getDataPath' at the same time.";
+                            }
                         }
                         return null;
                     }

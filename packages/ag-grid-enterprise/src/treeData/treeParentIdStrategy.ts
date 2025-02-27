@@ -77,49 +77,55 @@ export class TreeParentIdStrategy<TData = any> extends BeanStub implements Named
         rootNode.treeNodeFlags = 0;
 
         // Loop all the nodes, and put the children in the right place, updating the parent and the children arrays
-        for (let i = 0; i < rootAllLeafChildrenLen; ++i) {
-            const row = rootAllLeafChildren[i];
 
-            const updated = updates?.has(row) || adds?.has(row);
-            const oldParent = row.parent ?? rootNode;
-            let newParent: TreeRow<TData> | null | undefined = oldParent;
+        const renderEmpty = !this.gos.get('getRowId'); // If getRowId is not provided, we make an empty tree
+        if (!renderEmpty) {
+            for (let i = 0; i < rootAllLeafChildrenLen; ++i) {
+                const row = rootAllLeafChildren[i];
 
-            if (updated || fullReload) {
-                const parentId = parentIdGetter(row.data);
-                if (parentId === null || parentId === undefined) {
-                    newParent = rootNode;
-                } else {
-                    newParent = nodeManager.getRowNode(parentId);
-                    if (!newParent) {
-                        _warn(271, { id: row.id!, parentId });
+                const updated = updates?.has(row) || adds?.has(row);
+                const oldParent = row.parent ?? rootNode;
+                let newParent: TreeRow<TData> | null | undefined;
+
+                if (updated || fullReload) {
+                    const parentId = parentIdGetter(row.data);
+                    if (parentId === null || parentId === undefined) {
                         newParent = rootNode;
+                    } else {
+                        newParent = nodeManager.getRowNode(parentId);
+                        if (!newParent) {
+                            _warn(271, { id: row.id!, parentId });
+                            newParent = rootNode;
+                        }
+                    }
+                } else {
+                    newParent = row.parent ?? rootNode;
+                }
+
+                let parentFlags = newParent.treeNodeFlags;
+                const indexInParent = parentFlags & MASK_CHILDREN_LENGTH;
+                parentFlags = (parentFlags & ~MASK_CHILDREN_LENGTH) | (indexInParent + 1);
+
+                let parentChildren = newParent.childrenAfterGroup;
+                if (!parentChildren || parentChildren === _EmptyArray) {
+                    newParent.childrenAfterGroup = parentChildren = [];
+                }
+
+                if (parentChildren.length <= indexInParent || parentChildren[indexInParent] !== row) {
+                    parentChildren[indexInParent] = row;
+                    parentFlags |= FLAG_CHILDREN_CHANGED;
+                }
+
+                if (updated || row.parent !== newParent) {
+                    row.parent = newParent;
+                    parentFlags |= FLAG_CHANGED;
+                    if (oldParent && oldParent !== newParent) {
+                        oldParent.treeNodeFlags |= FLAG_CHANGED;
                     }
                 }
+
+                newParent.treeNodeFlags = parentFlags;
             }
-
-            let parentFlags = newParent.treeNodeFlags;
-            const indexInParent = parentFlags & MASK_CHILDREN_LENGTH;
-            parentFlags = (parentFlags & ~MASK_CHILDREN_LENGTH) | (indexInParent + 1);
-
-            let parentChildren = newParent.childrenAfterGroup;
-            if (!parentChildren || parentChildren === _EmptyArray) {
-                newParent.childrenAfterGroup = parentChildren = [];
-            }
-
-            if (parentChildren.length <= indexInParent || parentChildren[indexInParent] !== row) {
-                parentChildren[indexInParent] = row;
-                parentFlags |= FLAG_CHILDREN_CHANGED;
-            }
-
-            if (updated || row.parent !== newParent) {
-                row.parent = newParent;
-                parentFlags |= FLAG_CHANGED;
-                if (oldParent && oldParent !== newParent) {
-                    oldParent.treeNodeFlags |= FLAG_CHANGED;
-                }
-            }
-
-            newParent.treeNodeFlags = parentFlags;
         }
 
         rootChildrenAfterGroup.length = rootNode.treeNodeFlags & MASK_CHILDREN_LENGTH;
@@ -150,17 +156,17 @@ export class TreeParentIdStrategy<TData = any> extends BeanStub implements Named
             const childrenAfterGroup = (row.childrenAfterGroup ??= _EmptyArray);
             const childrenAfterGroupLen = treeNodeFlags & MASK_CHILDREN_LENGTH;
 
-            let allLeafChildrenChanged = false;
-            let changed = (treeNodeFlags & FLAG_CHANGED) !== 0;
+            let childrenChanged = (treeNodeFlags & FLAG_CHILDREN_CHANGED) !== 0;
 
-            if (childrenAfterGroup.length !== childrenAfterGroupLen || treeNodeFlags & FLAG_CHILDREN_CHANGED) {
+            if (childrenAfterGroup.length !== childrenAfterGroupLen) {
                 childrenAfterGroup.length = childrenAfterGroupLen;
-                changed = true;
-                allLeafChildrenChanged = true;
+                childrenChanged = true;
             }
 
-            row.treeNodeFlags = treeNodeFlags & FLAG_EXPANDED_INITIALIZED; // Keep only the expanded initialized flag
+            let changed = childrenChanged || (treeNodeFlags & FLAG_CHANGED) !== 0;
+            let allLeafChildrenChanged = childrenChanged;
 
+            row.treeNodeFlags = treeNodeFlags & FLAG_EXPANDED_INITIALIZED; // Keep only the expanded initialized flag
             row.level = level++;
 
             let allLeafChildrenLen = 0;
@@ -172,24 +178,9 @@ export class TreeParentIdStrategy<TData = any> extends BeanStub implements Named
                 allLeafChildrenLen += child.allLeafChildren!.length;
             }
 
-            let allLeafChildren = row.allLeafChildren;
-            if (allLeafChildrenChanged || !allLeafChildren || allLeafChildren.length !== allLeafChildrenLen) {
-                if (allLeafChildrenLen === 0) {
-                    row.allLeafChildren = allLeafChildren = _EmptyArray;
-                } else {
-                    if (!allLeafChildren || allLeafChildren === _EmptyArray) {
-                        row.allLeafChildren = allLeafChildren = new Array(allLeafChildrenLen);
-                    } else {
-                        allLeafChildren.length = allLeafChildrenLen;
-                    }
-                    let writeIdx = 0;
-                    for (let j = 0; j < childrenAfterGroupLen; ++j) {
-                        const childAllLeafChildren = childrenAfterGroup[j].allLeafChildren!;
-                        for (let k = 0; k < childAllLeafChildren!.length; ++k) {
-                            allLeafChildren[writeIdx++] = childAllLeafChildren[k];
-                        }
-                    }
-                }
+            const allLeafChildren = (row.allLeafChildren ??= _EmptyArray);
+            if (allLeafChildrenChanged || allLeafChildren.length !== allLeafChildrenLen) {
+                allLeafChildrenChanged = updateAllLeafChildren(row, allLeafChildren, allLeafChildrenLen);
             }
 
             const key = row.id!;
@@ -217,22 +208,12 @@ export class TreeParentIdStrategy<TData = any> extends BeanStub implements Named
                 row.expanded = getExpandedInitialValue(isGroupOpenByDefault, expandByDefault, row);
             }
 
-            if (changed) {
-                activeChangedPath?.addParentNode(row);
+            if (childrenChanged || allLeafChildrenChanged || fullReload) {
+                updateRowArrays(row, childrenAfterGroup);
             }
 
-            if (fullReload) {
-                row.childrenAfterFilter ??= childrenAfterGroup;
-                row.childrenAfterAggFilter ??= childrenAfterGroup;
-                row.childrenAfterSort ??= childrenAfterGroup;
-
-                const sibling = row.sibling;
-                if (sibling) {
-                    sibling.childrenAfterGroup = row.childrenAfterGroup;
-                    sibling.childrenAfterAggFilter = row.childrenAfterAggFilter;
-                    sibling.childrenAfterFilter = row.childrenAfterFilter;
-                    sibling.childrenAfterSort = row.childrenAfterSort;
-                }
+            if (changed) {
+                activeChangedPath?.addParentNode(row);
             }
 
             return allLeafChildrenChanged;
@@ -256,7 +237,7 @@ export class TreeParentIdStrategy<TData = any> extends BeanStub implements Named
             }
         }
 
-        if (processedNodesCount !== rootAllLeafChildrenLen) {
+        if (processedNodesCount !== rootAllLeafChildrenLen && !renderEmpty) {
             // We have unprocessed nodes, this means we have at least one cycle, we need to fix it and raise warnings
             // This is not optimal at all in terms of performance, and we don't care as this should never happen.
             const processedNodes = new Set<TreeRow<TData>>();
@@ -302,6 +283,54 @@ export class TreeParentIdStrategy<TData = any> extends BeanStub implements Named
 }
 
 type IsGroupOpenByDefaultCallback = ((params: WithoutGridCommon<IsGroupOpenByDefaultParams>) => boolean) | undefined;
+
+const updateRowArrays = <TData>(row: TreeRow<TData>, childrenAfterGroup: TreeRow<TData>[]) => {
+    row.childrenAfterFilter ??= childrenAfterGroup;
+    row.childrenAfterAggFilter ??= childrenAfterGroup;
+    row.childrenAfterSort ??= childrenAfterGroup;
+    const sibling = row.sibling;
+    if (sibling) {
+        sibling.allLeafChildren = row.allLeafChildren;
+        sibling.childrenAfterGroup = row.childrenAfterGroup;
+        sibling.childrenAfterAggFilter = row.childrenAfterAggFilter;
+        sibling.childrenAfterFilter = row.childrenAfterFilter;
+        sibling.childrenAfterSort = row.childrenAfterSort;
+    }
+};
+
+const updateAllLeafChildren = <TData>(
+    row: TreeRow<TData>,
+    allLeafChildren: TreeRow<TData>[],
+    allLeafChildrenLen: number
+): boolean => {
+    let changed = false;
+    const oldAllLeafChildrenLen = allLeafChildren.length;
+    if (oldAllLeafChildrenLen !== allLeafChildrenLen) {
+        if (allLeafChildrenLen === 0) {
+            row.allLeafChildren = _EmptyArray;
+            return true;
+        }
+        if (allLeafChildren === _EmptyArray) {
+            row.allLeafChildren = allLeafChildren = new Array(allLeafChildrenLen);
+        } else {
+            allLeafChildren.length = allLeafChildrenLen;
+        }
+        changed = true;
+    }
+    let writeIdx = 0;
+    const childrenAfterGroup = row.childrenAfterGroup!;
+    for (let j = 0, childrenLen = childrenAfterGroup.length; j < childrenLen; ++j) {
+        const childAllLeafChildren = childrenAfterGroup[j].allLeafChildren!;
+        for (let k = 0, len = childAllLeafChildren!.length; k < len; ++k) {
+            if (changed || allLeafChildren[writeIdx] !== childAllLeafChildren[k]) {
+                allLeafChildren[writeIdx] = childAllLeafChildren[k];
+                changed = true;
+            }
+            ++writeIdx;
+        }
+    }
+    return changed;
+};
 
 const getExpandedInitialValue = (
     isGroupOpenByDefault: IsGroupOpenByDefaultCallback,

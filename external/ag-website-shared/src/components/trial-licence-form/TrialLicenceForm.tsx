@@ -1,5 +1,6 @@
 import { Icon } from '@ag-website-shared/components/icon/Icon';
 import { TRIAL_LICENCE_FORM_URL } from '@constants';
+import { trackTrialLicenseFormError, trackTrialLicenseFormSuccess } from '@utils/analytics';
 import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
 import classnames from 'classnames';
 import { useCallback, useState } from 'react';
@@ -141,18 +142,35 @@ function useTrialForm() {
             setFormError('');
             setFormState('loading');
 
+            const currentPage = window.location.pathname;
+
             try {
                 const response = await submitTrialLicenceFormData({ firstName, lastName, email });
 
                 if (response.error) {
                     setFormState('error');
-                    setFormError(getFormErrorMessage(response.error.message));
+                    const errorMessage = getFormErrorMessage(response.error.message);
+                    setFormError(errorMessage);
+                    trackTrialLicenseFormError({
+                        error: response.error.message,
+                        errorType: 'api_error',
+                        page: currentPage,
+                    });
                 } else {
                     setFormState('success');
+                    trackTrialLicenseFormSuccess({
+                        page: currentPage,
+                    });
                 }
             } catch (e) {
                 console.error(e);
-                setFormError(MESSAGES.formErrorDefault);
+                const errorMessage = MESSAGES.formErrorDefault;
+                setFormError(errorMessage);
+                trackTrialLicenseFormError({
+                    error: e instanceof Error ? e.message : 'Unknown error',
+                    errorType: 'system_error',
+                    page: currentPage,
+                });
                 setFormState('error');
             }
         },

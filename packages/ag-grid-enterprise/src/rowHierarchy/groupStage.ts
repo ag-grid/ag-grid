@@ -39,10 +39,16 @@ export class GroupStage<TData> extends BeanStub implements NamedBean, IRowNodeSt
                 !changedRowNodes ||
                 (changedProps &&
                     (changedProps.has('treeData') ||
-                        (gos.get('treeData') && changedProps.has('treeDataParentIdField' as any))))
+                        (gos.get('treeData') &&
+                            changedProps.has('treeDataParentIdField' as any) &&
+                            changedProps.has('treeDataChildrenField' as any))))
             ) {
                 newStrategy = undefined;
-                if (gos.get('treeData') && gos.get('treeDataParentIdField' as any)) {
+                if (
+                    gos.get('treeData') &&
+                    gos.get('treeDataParentIdField' as any) &&
+                    !gos.get('treeDataChildrenField')
+                ) {
                     newStrategy = beans.treeParentIdStrategy;
                 }
             }
