@@ -18,7 +18,8 @@
         pointer-events: none;
     }
 
-    &:hover {
+    &:hover,
+    &.active {
         opacity: 1;
     }
 }
@@ -36,5 +37,60 @@ h6 {
         &:hover {
             opacity: 1;
         }
+    }
+}
+
+.tooltip {
+    --tooltip-background: var(--color-fg-primary);
+
+    position: absolute;
+    display: block;
+    color: var(--color-bg-primary);
+    top: -32px;
+    left: 50%;
+    padding: $spacing-size-1 $spacing-size-4;
+    white-space: nowrap;
+    font-size: var(--text-fs-sm);
+    background-color: var(--tooltip-background);
+    border-radius: 6px;
+    transform: translate(-50%, $spacing-size-1);
+    opacity: 0;
+    pointer-events: none;
+    transition-delay: 0;
+    transition:
+        opacity 0.165s ease-in,
+        transform 0.165s ease-in;
+    z-index: 1;
+
+    &::before {
+        $pointer-size: 8px;
+
+        content: '';
+        position: absolute;
+        background-color: var(--tooltip-background);
+        width: $pointer-size * 2;
+        height: $pointer-size * 2;
+        transform: rotate(45deg);
+        bottom: -7px;
+        left: calc(50% - $pointer-size);
+        border-radius: 3px;
+        z-index: -1;
+    }
+
+    .docsHeaderIcon:hover &,
+    .docsHeaderIcon.active & {
+        opacity: 1;
+        transform: translate(-50%, 0);
+        transition:
+            opacity 0.33s ease-in,
+            transform 0.33s ease-in;
+        transition-delay: 0.165s;
+    }
+
+    #{$selector-darkmode} & {
+        --tooltip-background: var(--color-bg-secondary);
+
+        color: var(--color-fg-primary);
+        box-shadow: 0 -4px 16px 0 rgba(0, 0, 0, 0.4);
     }
 }
