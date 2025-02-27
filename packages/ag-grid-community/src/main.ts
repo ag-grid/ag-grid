@@ -909,7 +909,6 @@ export {
 export {
     IRowNodeStage,
     IRowGroupingStrategy,
-    RowGroupingStrategyExecuteParams,
     RowGroupingRowNode,
     StageExecuteParams,
 } from './interfaces/iRowNodeStage';

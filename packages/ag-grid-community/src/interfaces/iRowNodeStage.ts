@@ -30,12 +30,8 @@ export interface StageExecuteParams<TData = any> {
     afterColumnsChanged?: boolean;
 }
 
-export interface RowGroupingStrategyExecuteParams<TData = any> extends StageExecuteParams<TData> {
-    rowNode: RowGroupingRowNode<TData>;
-}
-
 export interface IRowGroupingStrategy<TData = any> {
-    execute(params: RowGroupingStrategyExecuteParams<TData>, needReset: boolean): void;
+    execute(params: StageExecuteParams<TData>, needReset: boolean): void;
     deactivate?(): void;
 }
 
