@@ -24,7 +24,10 @@
       "configurations": {
         "staging": {},
         "archive": {},
-        "production": {}
+        "production": {},
+        "verbose": {
+          "silent": null
+        }
       }
     },
     "build:copy-styles": {
