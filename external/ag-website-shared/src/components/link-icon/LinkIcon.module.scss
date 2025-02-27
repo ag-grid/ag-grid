@@ -54,7 +54,6 @@ h6 {
     transform: translate(-50%, $spacing-size-1);
     opacity: 0;
     pointer-events: none;
-    transition-delay: 0;
     transition:
         opacity 0.165s ease-in,
         transform 0.165s ease-in;
@@ -82,7 +81,11 @@ h6 {
         transition:
             opacity 0.33s ease-in,
             transform 0.33s ease-in;
-        transition-delay: 0.165s;
+    }
+
+    .docsHeaderIcon.active & {
+        animation-name: bounce;
+        animation-duration: 0.33s;
     }
 
     #{$selector-darkmode} & {
@@ -90,5 +93,17 @@ h6 {
 
         color: var(--color-fg-primary);
         box-shadow: 0 -4px 16px 0 rgba(0, 0, 0, 0.4);
+    }
+}
+
+@keyframes bounce {
+    0% {
+        transform: translate(-50%, 0);
+    }
+    50% {
+        transform: translate(-50%, -$spacing-size-1);
+    }
+    100% {
+        transform: translate(-50%, 0);
     }
 }

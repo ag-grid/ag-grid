@@ -46,7 +46,7 @@ export function LinkIcon({ className, ...props }: AllHTMLAttributes<HTMLAnchorEl
             )}
             onClick={onclick}
         >
-            <span className={styles.tooltip}>{linkCopied ? 'Link copied' : 'Copy'}</span>
+            <span className={styles.tooltip}>{linkCopied ? 'Link copied!' : 'Copy'}</span>
             <Icon name="link" />
         </a>
     );
