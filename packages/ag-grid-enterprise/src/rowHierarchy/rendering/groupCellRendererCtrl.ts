@@ -391,8 +391,12 @@ export class GroupCellRendererCtrl extends BeanStub implements IGroupCellRendere
         /**
          * Use the provided cellRenderer of the grouped column
          */
-        const relatedColDef = this.displayedNode.rowGroupColumn?.getColDef();
-        if (relatedColDef) {
+        const {
+            displayedNode: { rowGroupColumn },
+        } = this;
+        const relatedColDef = rowGroupColumn?.colDef;
+        const isShowingThisCol = rowGroupColumn && params.column?.isRowGroupDisplayed(rowGroupColumn.getId());
+        if (relatedColDef && isShowingThisCol) {
             const relatedCompDetails = _getCellRendererDetails(userCompFactory, relatedColDef, params);
             if (relatedCompDetails) {
                 // the column that was grouped might have been using `agGroupCellRenderer`, e.g. for master-detail chevrons, if so,
