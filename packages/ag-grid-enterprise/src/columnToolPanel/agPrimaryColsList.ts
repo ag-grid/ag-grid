@@ -138,50 +138,28 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
 
     private moveColumns(item: ToolPanelColumnComp | ToolPanelColumnGroupComp, isUp: boolean): void {
         const { colModel, colMoves } = this.beans;
-        const cols = colModel.getCols();
+        const allColumns = colModel.getCols();
         const isGroup = item instanceof ToolPanelColumnGroupComp;
-        const columns = isGroup ? item.getColumns() : [item.getColumn()];
-        const columnToUse = isUp ? columns[0] : _last(columns);
+        const movingColumns = isGroup ? item.getColumns() : [item.getColumn()];
+        const currentIndex = this.getCurrentMovingIndex(allColumns, movingColumns, isUp);
 
-        if (!columnToUse || !colMoves) {
+        if (!colMoves || currentIndex === -1) {
             return;
         }
 
-        const currentIndex = cols.indexOf(columnToUse);
+        const targetIndex = this.findValidTargetIndex(allColumns, movingColumns, currentIndex, isUp);
 
-        if ((isUp && currentIndex === 0) || (!isUp && currentIndex === cols.length - 1)) {
+        if (targetIndex === -1) {
             return;
         }
-
-        const isSuppressMovableColumns = this.gos.get('suppressMovableColumns');
-
-        if (isSuppressMovableColumns || columns.some(({ colDef }) => colDef.suppressMovable || colDef.lockPosition)) {
-            return;
-        }
-
-        const diff = isUp ? -1 : 1;
-        let targetIndex = currentIndex + diff;
-        let foundValidOrder = false;
-
-        while (targetIndex >= 0 && targetIndex < cols.length) {
-            const proposedColumnOrder = colMoves.getProposedColumnOrder(columns, targetIndex);
-            foundValidOrder = colMoves.doesOrderPassRules(proposedColumnOrder);
-
-            if (foundValidOrder) {
-                break;
-            }
-            targetIndex += diff;
-        }
-
-        if (!foundValidOrder) {
-            return;
-        }
-
-        this.skipRefocus = true;
 
         const currentColumnOrGroup = isGroup ? item.columnGroup : item.column;
 
-        colMoves.moveColumns(columns, targetIndex, 'uiColumnMoved', true);
+        // set skipRefocus to true, to prevent the `colMoves.moveColumns` from trying to refocus
+        // while columns are being moved, as that would attempt to fixed the previously focused row index.
+        this.skipRefocus = true;
+        colMoves.moveColumns(movingColumns, targetIndex, 'uiColumnMoved', true);
+
         const newIndex = this.displayedColsList.findIndex((listItem) => {
             if (currentColumnOrGroup.isColumn) {
                 return listItem.column === currentColumnOrGroup;
@@ -191,8 +169,62 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
         });
 
         if (newIndex !== -1) {
-            this.focusRowIfAlive(newIndex, true);
+            this.focusRowIfAlive(newIndex).then(() => {
+                this.skipRefocus = false;
+            });
         }
+    }
+
+    private getCurrentMovingIndex(allColumns: AgColumn[], movingColumns: AgColumn[], isUp: boolean): number {
+        const columnToUse = isUp ? movingColumns[0] : _last(movingColumns);
+        if (!columnToUse) {
+            return -1;
+        }
+
+        const currentIndex = allColumns.indexOf(columnToUse);
+
+        if ((isUp && currentIndex === 0) || (!isUp && currentIndex === allColumns.length - 1)) {
+            return -1;
+        }
+
+        const isSuppressMovableColumns = this.gos.get('suppressMovableColumns');
+
+        if (
+            isSuppressMovableColumns ||
+            movingColumns.some(({ colDef }) => colDef.suppressMovable || colDef.lockPosition)
+        ) {
+            return -1;
+        }
+
+        return currentIndex;
+    }
+
+    private findValidTargetIndex(
+        allColumns: AgColumn[],
+        movingColumns: AgColumn[],
+        currentIndex: number,
+        isUp: boolean
+    ): number {
+        const { colMoves } = this.beans;
+        const diff = isUp ? -1 : 1;
+        let targetIndex = currentIndex + diff;
+        let foundValidOrder = false;
+
+        while (targetIndex >= 0 && targetIndex < allColumns.length) {
+            const proposedColumnOrder = colMoves!.getProposedColumnOrder(movingColumns, targetIndex);
+            foundValidOrder = colMoves!.doesOrderPassRules(proposedColumnOrder);
+
+            if (foundValidOrder) {
+                break;
+            }
+            targetIndex += diff;
+        }
+
+        if (!foundValidOrder) {
+            return -1;
+        }
+
+        return targetIndex;
     }
 
     private createComponentFromItem(
@@ -432,15 +464,15 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
         _setAriaLabel(this.virtualList.getAriaElement(), `${columnListName} ${items} ${localeColumns}`);
     }
 
-    private focusRowIfAlive(rowIndex: number, clearSkipRefocus?: boolean): void {
-        window.setTimeout(() => {
-            if (this.isAlive()) {
-                this.virtualList.focusRow(rowIndex);
-                if (clearSkipRefocus) {
-                    this.skipRefocus = false;
+    private focusRowIfAlive(rowIndex: number): Promise<void> {
+        return new Promise((res) => {
+            window.setTimeout(() => {
+                if (this.isAlive()) {
+                    this.virtualList.focusRow(rowIndex);
                 }
-            }
-        }, 0);
+                res();
+            }, 0);
+        });
     }
 
     private forEachItem(callback: (item: ColumnModelItem) => void): void {

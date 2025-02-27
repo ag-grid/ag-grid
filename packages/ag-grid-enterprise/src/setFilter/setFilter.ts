@@ -1066,16 +1066,19 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
         this.showOrHideResults();
     }
 
-    private focusRowIfAlive(rowIndex: number | null): void {
+    private focusRowIfAlive(rowIndex: number | null): Promise<void> {
         if (rowIndex == null) {
-            return;
+            return Promise.resolve();
         }
 
-        window.setTimeout(() => {
-            if (this.isAlive()) {
-                this.virtualList.focusRow(rowIndex);
-            }
-        }, 0);
+        return new Promise((res) => {
+            window.setTimeout(() => {
+                if (this.isAlive()) {
+                    this.virtualList.focusRow(rowIndex);
+                }
+                res();
+            }, 0);
+        });
     }
 
     private onSelectAll(isSelected: boolean): void {
