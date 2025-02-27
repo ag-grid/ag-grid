@@ -168,11 +168,9 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
             return !!listItem.columnGroup && listItem.columnGroup.getGroupId() === currentColumnOrGroup.getGroupId();
         });
 
-        if (newIndex !== -1) {
-            this.focusRowIfAlive(newIndex).then(() => {
-                this.skipRefocus = false;
-            });
-        }
+        this.focusRowIfAlive(newIndex).then(() => {
+            this.skipRefocus = false;
+        });
     }
 
     private getCurrentMovingIndex(allColumns: AgColumn[], movingColumns: AgColumn[], isUp: boolean): number {
@@ -465,6 +463,10 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
     }
 
     private focusRowIfAlive(rowIndex: number): Promise<void> {
+        if (rowIndex === -1) {
+            return Promise.resolve();
+        }
+
         return new Promise((res) => {
             window.setTimeout(() => {
                 if (this.isAlive()) {
