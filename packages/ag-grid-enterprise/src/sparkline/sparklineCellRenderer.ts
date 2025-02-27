@@ -34,9 +34,16 @@ export class SparklineCellRenderer extends Component implements ICellRenderer {
     private cachedHeight = 0;
 
     constructor() {
-        super(/* html */ `<div class="ag-sparkline-wrapper">
-            <span data-ref="eSparkline"></span>
-        </div>`);
+        super();
+
+        // Manually construct DOM to avoid costly HTML parsing on fast-scrolling.
+        const wrapper = document.createElement('div');
+        wrapper.classList.add('ag-sparkline-wrapper');
+        const eSparkline = document.createElement('span');
+        eSparkline.dataset['ref'] = 'eSparkline';
+        wrapper.appendChild(eSparkline);
+
+        this.setTemplateFromElement(wrapper);
     }
 
     postConstruct(): void {
@@ -44,9 +51,26 @@ export class SparklineCellRenderer extends Component implements ICellRenderer {
     }
 
     public init(params: ISparklineCellRendererParams): void {
+        // Guess initial width/height to allow synchronous sparkline initialisation, otherwise
+        // rendering gets deferred until after a browser layout + paint, after which a resize event
+        // is triggered.
+        this.cachedHeight = (params.node.rowHeight ?? 0) - 3;
+        const columnWidth = params.column?.getActualWidth() ?? 0;
+        // Default width of 200 should be ignored, wait for resize.
+        this.cachedWidth = columnWidth === 200 ? 0 : columnWidth - 2;
+
         this.refresh(params);
-        const unsubscribeFromResize = _observeResize(this.beans, this.getGui(), () => {
-            const { clientWidth: width, clientHeight: height } = this.getGui();
+        const unsubscribeFromResize = _observeResize(this.beans, this.getGui(), this.resizeHandler.bind(this));
+        this.addDestroyFunc(() => unsubscribeFromResize());
+    }
+
+    private resizeHandler(entries: ResizeObserverEntry[]) {
+        for (const item of entries) {
+            if (item.target !== this.getGui()) continue;
+
+            // Use the provided sizes to avoid forced re-layout by reading clientWidth/clientHeight
+            // after a DOM mutation.
+            const { inlineSize: width, blockSize: height } = item.contentBoxSize[0];
 
             if (this.cachedWidth === width && this.cachedHeight === height) {
                 return;
@@ -55,8 +79,7 @@ export class SparklineCellRenderer extends Component implements ICellRenderer {
             this.cachedWidth = width;
             this.cachedHeight = height;
             this.refresh(this.params);
-        });
-        this.addDestroyFunc(() => unsubscribeFromResize());
+        }
     }
 
     private getThemeName(): string {
