@@ -363,18 +363,36 @@ export class GroupCellRendererCtrl extends BeanStub implements IGroupCellRendere
      *
      * Prioritises:
      * 1. Group row renderer for group rows
-     * 2. Provided innerRenderer (i.e, cellRendererParams.innerRenderer)
-     * 3. Cell renderer of the grouped column
-     * 4. Inner renderer of the grouped column
-     * 5. agFindCellRenderer for find results
+     * 2. agFindCellRenderer for find results in group rows
+     * 3. Provided innerRenderer (i.e, cellRendererParams.innerRenderer)
+     * 4. Cell renderer of the grouped column
+     * 5. Inner renderer of the grouped column
+     * 6. agFindCellRenderer for find results
      */
     private getInnerCompDetails(): UserCompDetails | undefined {
-        const { userCompFactory } = this.beans;
+        const { userCompFactory, findSvc } = this.beans;
         const params = this.params;
 
         // full width rows do not inherit the child group column renderer
         if (params.fullWidth) {
-            return _getInnerCellRendererDetails(userCompFactory, this.gos.get('groupRowRendererParams'), params);
+            const groupRowRendererParams = this.gos.get('groupRowRendererParams');
+            const groupRowInnerCompDetails = _getInnerCellRendererDetails(
+                userCompFactory,
+                groupRowRendererParams,
+                params
+            );
+            if (groupRowInnerCompDetails) {
+                return groupRowInnerCompDetails;
+            }
+            // if no group row inner renderer, use find renderer if match
+            if (findSvc?.isMatch(params.node, null)) {
+                return _getInnerCellRendererDetails(
+                    userCompFactory,
+                    { ...groupRowRendererParams, innerRenderer: 'agFindCellRenderer' },
+                    params
+                );
+            }
+            return undefined;
         }
 
         const isGroupRowRenderer = (details: UserCompDetails | undefined) =>
@@ -418,7 +436,7 @@ export class GroupCellRendererCtrl extends BeanStub implements IGroupCellRendere
         /**
          * Use the find renderer
          */
-        if (this.beans.findSvc?.isMatch(params.node, params.column!)) {
+        if (findSvc?.isMatch(params.node, params.column!)) {
             return _getCellRendererDetails(
                 userCompFactory,
                 { ...(relatedColDef ?? params.colDef), cellRenderer: 'agFindCellRenderer' },

@@ -19,6 +19,7 @@ import {
     _debounce,
     _escapeString,
     _isClientSideRowModel,
+    _isGroupUseEntireRow,
     _jsonEquals,
     _missing,
     isColumnSelectionCol,
@@ -326,7 +327,7 @@ export class FindService extends BeanStub implements NamedBean, IFindService {
         const detailCellRendererParams = gos.get('detailCellRendererParams');
         const fullWidthCellRendererParams = gos.get('fullWidthCellRendererParams');
         const flattenDetails = _getFlattenDetails(gos);
-        const skipLeafNodes = colModel.isPivotMode();
+        const pivotMode = colModel.isPivotMode();
 
         let containerNumMatches = 0;
         let matches: Matches;
@@ -385,7 +386,7 @@ export class FindService extends BeanStub implements NamedBean, IFindService {
                     flattenDetails,
                     node,
                     isParent,
-                    skipLeafNodes,
+                    pivotMode,
                     _isRemovedSingleChildrenGroup(flattenDetails, node, isParent),
                     _isRemovedLowestSingleChildrenGroup(flattenDetails, node, isParent)
                 )
@@ -405,6 +406,12 @@ export class FindService extends BeanStub implements NamedBean, IFindService {
                         }) ?? 0;
                     addMatches(node, null, numMatches);
                 }
+                return;
+            }
+            if (node.group && !node.footer && _isGroupUseEntireRow(gos, pivotMode)) {
+                // full width group
+                const numMatches = getMatchesForValue(node.key);
+                addMatches(node, null, numMatches);
                 return;
             }
             for (const column of allCols) {
