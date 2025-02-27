@@ -53,7 +53,7 @@ export default ({ selectedHit }) => {
                 {!searchValue && (
                     <div className={styles.gettingStarted}>
                         <span>Suggested</span>
-                        <GettingStarted />
+                        <GettingStarted library="grid" />
                     </div>
                 )}
             </div>
