@@ -44,7 +44,7 @@ describe('ag-grid parentId tree excel export', () => {
             rowData,
             treeData: true,
             groupDefaultExpanded: -1,
-            ['treeDataParentIdField' as any]: 'parent',
+            treeDataParentIdField: 'parent',
             getRowId: (params) => params.data.uiId,
         });
 

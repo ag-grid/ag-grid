@@ -52,7 +52,7 @@ describe('ag-grid tree transactions', () => {
             groupDefaultExpanded: -1,
             rowData: rowData,
             getRowId: (params) => params.data.id,
-            ['treeDataParentIdField' as any]: 'parentId',
+            treeDataParentIdField: 'parentId',
         });
 
         let gridRows = new GridRows(api, 'rowData', gridRowsOptions);
@@ -139,7 +139,7 @@ describe('ag-grid tree transactions', () => {
             groupDefaultExpanded: -1,
             rowData: rowData,
             getRowId: (params) => params.data.id,
-            ['treeDataParentIdField' as any]: 'parentId',
+            treeDataParentIdField: 'parentId',
         });
 
         let gridRows = new GridRows(api, 'rowData', gridRowsOptions);

@@ -37,7 +37,7 @@ describe('ag-grid parentId tree remove', () => {
             groupDefaultExpanded: -1,
             rowData: [rowA, rowB, rowC, rowD],
             getRowId: (params) => params.data.id,
-            ['treeDataParentIdField' as any]: 'parentId',
+            treeDataParentIdField: 'parentId',
         });
 
         await new GridRows(api, '', gridRowsOptions).check(`
@@ -85,7 +85,7 @@ describe('ag-grid parentId tree remove', () => {
             groupDefaultExpanded: -1,
             rowData,
             getRowId: (params) => params.data.id,
-            ['treeDataParentIdField' as any]: 'parentId',
+            treeDataParentIdField: 'parentId',
         });
 
         await new GridRows(api, 'initial', gridRowsOptions).check(`
@@ -136,7 +136,7 @@ describe('ag-grid parentId tree remove', () => {
             groupDefaultExpanded: -1,
             rowData: [rowA, rowB, rowC, rowD],
             getRowId: (params) => params.data.id,
-            ['treeDataParentIdField' as any]: 'parentId',
+            treeDataParentIdField: 'parentId',
         });
 
         await new GridRows(api, 'initial', gridRowsOptions).check(`
@@ -193,7 +193,7 @@ describe('ag-grid parentId tree remove', () => {
             groupDefaultExpanded: -1,
             rowData: [rowA, rowB, rowC, rowD],
             getRowId: (params) => params.data.id,
-            ['treeDataParentIdField' as any]: 'parentId',
+            treeDataParentIdField: 'parentId',
         });
 
         await new GridRows(api, 'initial', gridRowsOptions).check(`

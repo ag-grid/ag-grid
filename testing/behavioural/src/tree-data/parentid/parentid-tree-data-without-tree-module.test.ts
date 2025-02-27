@@ -33,7 +33,7 @@ describe('ag-grid parentId tree data without tree module', () => {
                 cellRendererParams: { suppressCount: true },
             },
             treeData: true,
-            ['treeDataParentIdField' as any]: 'p',
+            treeDataParentIdField: 'p',
             animateRows: false,
             groupDefaultExpanded: -1,
             rowData,

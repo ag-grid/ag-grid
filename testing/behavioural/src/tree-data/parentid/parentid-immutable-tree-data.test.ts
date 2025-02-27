@@ -41,7 +41,7 @@ describe('ag-grid parentId immutable tree data', () => {
         const gridOptions: GridOptions = {
             columnDefs: [{ field: 'v' }],
             treeData: true,
-            ['treeDataParentIdField' as any]: 'parentId',
+            treeDataParentIdField: 'parentId',
             animateRows: false,
             groupDefaultExpanded: -1,
             rowData: rowData1,
@@ -378,7 +378,7 @@ describe('ag-grid parentId immutable tree data', () => {
         const gridOptions: GridOptions = {
             columnDefs: [{ field: 'v' }],
             treeData: true,
-            ['treeDataParentIdField' as any]: 'parentId',
+            treeDataParentIdField: 'parentId',
             suppressMaintainUnsortedOrder: true,
             animateRows: false,
             groupDefaultExpanded: -1,

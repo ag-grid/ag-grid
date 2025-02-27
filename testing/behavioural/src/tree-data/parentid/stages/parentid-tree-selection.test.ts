@@ -40,7 +40,7 @@ describe('ag-grid parentId tree selection', () => {
             groupDefaultExpanded: -1,
             rowData,
             getRowId: (params) => params.data.id,
-            ['treeDataParentIdField' as any]: 'parent',
+            treeDataParentIdField: 'parent',
         });
 
         const gridRowsOptions: GridRowsOptions = {

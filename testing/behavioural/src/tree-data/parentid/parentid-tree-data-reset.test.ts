@@ -46,7 +46,7 @@ describe('ag-grid parentId tree data reset', () => {
             rowData: rowData,
             getRowId: (params) => params.data.id,
             treeData: true,
-            ['treeDataParentIdField' as any]: 'parent',
+            treeDataParentIdField: 'parent',
         });
 
         await new GridRows(api, 'initial', defaultGridRowsOptions).check(`
@@ -127,7 +127,7 @@ describe('ag-grid parentId tree data reset', () => {
             groupDefaultExpanded: -1,
             getRowId: (params) => params.data.id,
             treeData: true,
-            ['treeDataParentIdField' as any]: 'parent',
+            treeDataParentIdField: 'parent',
         });
 
         await asyncSetTimeout(1); // Simulate async loading
@@ -163,7 +163,7 @@ describe('ag-grid parentId tree data reset', () => {
             rowData: [],
             getRowId: (params) => params.data.id,
             treeData: true,
-            ['treeDataParentIdField' as any]: 'parent',
+            treeDataParentIdField: 'parent',
         });
 
         api.setGridOption('rowData', rowData);
@@ -205,7 +205,7 @@ describe('ag-grid parentId tree data reset', () => {
         ];
 
         const api = gridsManager.createGrid('myGrid', {
-            ['treeDataParentIdField' as any]: 'parent',
+            treeDataParentIdField: 'parent',
             treeData: true,
             columnDefs: [],
             autoGroupColumnDef: { headerName: 'Organisation Hierarchy' },
@@ -253,7 +253,7 @@ describe('ag-grid parentId tree data reset', () => {
             columnDefs: [],
             autoGroupColumnDef: { headerName: 'x' },
             treeData: true,
-            ['treeDataParentIdField' as any]: 'parent',
+            treeDataParentIdField: 'parent',
             animateRows: false,
             groupDefaultExpanded: -1,
             rowData: [],
@@ -316,7 +316,7 @@ describe('ag-grid parentId tree data reset', () => {
             columnDefs: [{ field: 'label' }],
             autoGroupColumnDef: { headerName: 'Organisation Hierarchy' },
             treeData: true,
-            ['treeDataParentIdField' as any]: 'parent',
+            treeDataParentIdField: 'parent',
             animateRows: false,
             groupDefaultExpanded: -1,
             rowData: [],
@@ -399,7 +399,7 @@ describe('ag-grid parentId tree data reset', () => {
             columnDefs: [{ field: 'label' }, { field: 'x' }],
             autoGroupColumnDef: { headerName: 'path' },
             treeData: true,
-            ['treeDataParentIdField' as any]: 'parent',
+            treeDataParentIdField: 'parent',
             animateRows: false,
             groupDefaultExpanded: -1,
             rowData: [],

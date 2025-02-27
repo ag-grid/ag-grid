@@ -66,7 +66,7 @@ export class TreeParentIdStrategy<TData = any> extends BeanStub implements Named
         }
 
         let parentIdGetter = this.parentIdGetter;
-        const parentIdField = this.gos.get('treeDataParentIdField' as any);
+        const parentIdField = this.gos.get('treeDataParentIdField');
         if (!parentIdGetter || parentIdGetter.path !== parentIdField) {
             parentIdGetter = makeFieldPathGetter(parentIdField);
         }

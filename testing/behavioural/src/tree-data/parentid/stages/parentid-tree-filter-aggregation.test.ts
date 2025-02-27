@@ -50,7 +50,7 @@ describe('ag-grid parentId tree aggregation and filter', () => {
                 groupDefaultExpanded: -1,
                 rowData,
                 getRowId: (params) => params.data.id,
-                ['treeDataParentIdField' as any]: 'parentId',
+                treeDataParentIdField: 'parentId',
                 groupSuppressBlankHeader: true,
             });
 
@@ -247,7 +247,7 @@ describe('ag-grid parentId tree aggregation and filter', () => {
             groupDefaultExpanded: -1,
             rowData,
             getRowId: (params) => params.data.id,
-            ['treeDataParentIdField' as any]: 'parentId',
+            treeDataParentIdField: 'parentId',
             groupSuppressBlankHeader: true,
         });
 

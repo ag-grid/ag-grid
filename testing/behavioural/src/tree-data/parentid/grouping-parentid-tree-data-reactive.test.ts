@@ -37,7 +37,7 @@ describe('ag-grid grouping parentId treeData is reactive', () => {
                     return 'X-' + params.node?.id;
                 },
             },
-            ['treeDataParentIdField' as any]: 'parentId',
+            treeDataParentIdField: 'parentId',
             treeData: false,
             animateRows: false,
             groupDefaultExpanded: -1,

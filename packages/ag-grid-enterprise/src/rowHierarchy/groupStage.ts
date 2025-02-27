@@ -20,7 +20,7 @@ export class GroupStage<TData> extends BeanStub implements NamedBean, IRowNodeSt
         'groupDisplayType',
         'treeData',
         'treeDataChildrenField',
-        'treeDataParentIdField' as any,
+        'treeDataParentIdField',
     ]);
     public step: ClientSideRowModelStage = 'group';
 
@@ -40,15 +40,11 @@ export class GroupStage<TData> extends BeanStub implements NamedBean, IRowNodeSt
                 (changedProps &&
                     (changedProps.has('treeData') ||
                         (gos.get('treeData') &&
-                            changedProps.has('treeDataParentIdField' as any) &&
-                            changedProps.has('treeDataChildrenField' as any))))
+                            changedProps.has('treeDataParentIdField') &&
+                            changedProps.has('treeDataChildrenField'))))
             ) {
                 newStrategy = undefined;
-                if (
-                    gos.get('treeData') &&
-                    gos.get('treeDataParentIdField' as any) &&
-                    !gos.get('treeDataChildrenField')
-                ) {
+                if (gos.get('treeData') && gos.get('treeDataParentIdField') && !gos.get('treeDataChildrenField')) {
                     newStrategy = beans.treeParentIdStrategy;
                 }
             }

@@ -36,7 +36,7 @@ describe('ag-grid parentId tree expanded state', () => {
                 valueGetter: (params) => params.data?.name ?? 'unknown',
             },
             treeData: true,
-            ['treeDataParentIdField' as any]: 'parentId',
+            treeDataParentIdField: 'parentId',
             animateRows: false,
             rowData: originalRowData,
             getRowId: ({ data }) => data.id,

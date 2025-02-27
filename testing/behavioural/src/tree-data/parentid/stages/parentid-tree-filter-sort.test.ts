@@ -35,7 +35,7 @@ describe('ag-grid parentId tree data parentId filter sort', () => {
             groupDefaultExpanded: -1,
             rowData,
             getRowId: (params) => params.data.id,
-            ['treeDataParentIdField' as any]: 'parentId',
+            treeDataParentIdField: 'parentId',
         });
 
         const gridRowsOptions: GridRowsOptions = {
@@ -188,7 +188,7 @@ describe('ag-grid parentId tree data parentId filter sort', () => {
             groupDefaultExpanded: -1,
             rowData,
             getRowId: (params) => params.data.id,
-            ['treeDataParentIdField' as any]: 'parentId',
+            treeDataParentIdField: 'parentId',
         });
 
         const gridRowsOptions: GridRowsOptions = {
@@ -419,7 +419,7 @@ describe('ag-grid parentId tree data parentId filter sort', () => {
             groupDefaultExpanded: -1,
             rowData,
             getRowId: (params) => params.data.id,
-            ['treeDataParentIdField' as any]: 'parentId',
+            treeDataParentIdField: 'parentId',
         });
 
         const gridRowsOptions: GridRowsOptions = {

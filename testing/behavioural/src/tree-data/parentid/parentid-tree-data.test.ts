@@ -50,7 +50,7 @@ describe('ag-grid tree data parent id', () => {
             animateRows: false,
             groupDefaultExpanded: -1,
             getRowId: (params) => params.data.id,
-            ['treeDataParentIdField' as any]: 'parentId',
+            treeDataParentIdField: 'parentId',
         };
 
         const api = gridsManager.createGrid('myGrid', gridOptions);
@@ -96,7 +96,7 @@ describe('ag-grid tree data parent id', () => {
             rowData,
             getRowId: (params) => params.data.id,
             treeData: true,
-            ['treeDataParentIdField' as any]: 'parentId',
+            treeDataParentIdField: 'parentId',
         };
 
         const api = gridsManager.createGrid('myGrid', gridOptions);
@@ -151,7 +151,7 @@ describe('ag-grid tree data parent id', () => {
             rowData,
             getRowId: (params) => params.data.id,
             treeData: true,
-            ['treeDataParentIdField' as any]: 'parentId',
+            treeDataParentIdField: 'parentId',
         };
 
         const api = gridsManager.createGrid('myGrid', gridOptions);
@@ -200,7 +200,7 @@ describe('ag-grid tree data parent id', () => {
             rowData: rowData0,
             getRowId: (params) => params.data.id,
             treeData: false,
-            ['treeDataParentIdField' as any]: 'parentId',
+            treeDataParentIdField: 'parentId',
         });
 
         api.updateGridOptions({
@@ -230,7 +230,7 @@ describe('ag-grid tree data parent id', () => {
         const gridOptions: GridOptions = {
             groupDefaultExpanded: -1,
             treeData: true,
-            ['treeDataParentIdField' as any]: 'parentId',
+            treeDataParentIdField: 'parentId',
             getRowId: (params) => params.data.id,
             onRowDataUpdated: () => ++rowDataUpdated,
             onModelUpdated: () => ++modelUpdated,
@@ -303,7 +303,7 @@ describe('ag-grid tree data parent id', () => {
             rowData,
             getRowId: (params) => params.data.id,
             treeData: true,
-            ['treeDataParentIdField' as any]: 'parentId',
+            treeDataParentIdField: 'parentId',
         });
 
         const gridRowsOptions: GridRowsOptions = {

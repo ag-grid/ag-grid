@@ -32,7 +32,7 @@ describe('ag-grid grouping parentId tree data with groupRows', () => {
         const api = gridsManager.createGrid('myGrid', {
             columnDefs: [{ field: 'x' }],
             treeData: true,
-            ['treeDataParentIdField' as any]: 'parentId',
+            treeDataParentIdField: 'parentId',
             autoGroupColumnDef: { headerName: 'tree' },
             animateRows: false,
             groupDefaultExpanded: -1,

@@ -43,7 +43,7 @@ describe('ag-grid parentId tree data warnings', () => {
             animateRows: false,
             groupDefaultExpanded: -1,
             rowData: rowData,
-            ['treeDataParentIdField' as any]: 'parentId',
+            treeDataParentIdField: 'parentId',
         });
 
         expect(consoleWarnSpy).toHaveBeenCalledWith(
@@ -69,7 +69,7 @@ describe('ag-grid parentId tree data warnings', () => {
             groupDefaultExpanded: -1,
             rowData: rowData,
             getRowId: (params) => params.data.id,
-            ['treeDataParentIdField' as any]: 'parentId',
+            treeDataParentIdField: 'parentId',
             ['treeDataChildrenField']: 'children',
         });
 
@@ -107,7 +107,7 @@ describe('ag-grid parentId tree data warnings', () => {
             groupDefaultExpanded: -1,
             rowData: rowData,
             getRowId: (params) => params.data.id,
-            ['treeDataParentIdField' as any]: 'parentId',
+            treeDataParentIdField: 'parentId',
         });
 
         await new GridRows(api, 'rowData', { checkDom: true, columns: true }).check(`
@@ -150,7 +150,7 @@ describe('ag-grid parentId tree data warnings', () => {
             groupDefaultExpanded: -1,
             rowData: rowData,
             getRowId: (params) => params.data.id,
-            ['treeDataParentIdField' as any]: 'parentId',
+            treeDataParentIdField: 'parentId',
         });
 
         await new GridRows(api, 'rowData', { checkDom: true, columns: true }).check(`
@@ -199,7 +199,7 @@ describe('ag-grid parentId tree data warnings', () => {
             groupDefaultExpanded: -1,
             rowData: rowData,
             getRowId: (params) => params.data.id,
-            ['treeDataParentIdField' as any]: 'parentId',
+            treeDataParentIdField: 'parentId',
         });
 
         await new GridRows(api, 'rowData', { checkDom: true, columns: true }).check(`
