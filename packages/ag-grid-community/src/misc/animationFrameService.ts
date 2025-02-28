@@ -122,7 +122,8 @@ export class AnimationFrameService extends BeanStub implements NamedBean {
     }
 
     private executeFrame(millis: number): void {
-        const { p1, p2, f1, destroyTasks } = this;
+        const { p1, p2, f1, destroyTasks, beans } = this;
+        const { ctrlsSvc, frameworkOverrides } = beans;
 
         const p1Tasks = p1.list;
         const p2Tasks = p2.list;
@@ -134,7 +135,7 @@ export class AnimationFrameService extends BeanStub implements NamedBean {
         // 16ms is 60 fps
         const noMaxMillis = millis <= 0;
 
-        const scrollFeature = this.beans.ctrlsSvc.getScrollFeature();
+        const scrollFeature = ctrlsSvc.getScrollFeature();
 
         while (noMaxMillis || duration < millis) {
             // scrollGridIfNeeded will cause tasks to be populated if scrolling was done and may have taken time
@@ -152,7 +153,7 @@ export class AnimationFrameService extends BeanStub implements NamedBean {
                 } else if (f1Tasks.length) {
                     // Assuming that framework tasks do not schedule p1 or p2 tasks so that it is safe
                     // to loop through all framework tasks for as long as we have time left
-                    this.beans.frameworkOverrides.wrapOutgoing(() => {
+                    frameworkOverrides.wrapOutgoing(() => {
                         while (noMaxMillis || duration < millis) {
                             const gridBodyDidSomething = scrollFeature.scrollGridIfNeeded();
 
