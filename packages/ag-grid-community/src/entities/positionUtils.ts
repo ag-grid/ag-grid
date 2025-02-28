@@ -127,131 +127,61 @@ export function _getCellByPosition(beans: BeanCollection, cellPosition: CellPosi
 }
 
 export function _getRowAbove(beans: BeanCollection, rowPosition: RowPosition): RowPosition | null {
-    // if already on top row, do nothing
-    const index = rowPosition.rowIndex;
-    const pinned = rowPosition.rowPinned;
+    const { rowIndex: index, rowPinned: pinned } = rowPosition;
     const { pageBounds, pinnedRowModel, rowModel } = beans;
-    const isFirstRow = pinned ? index === 0 : index === pageBounds.getFirstRow();
-    let ignoreSticky = false;
 
-    const getLastFloatingTopRow = (): RowPosition => {
-        const lastFloatingRow = pinnedRowModel?.getPinnedTopRowCount() ?? 0 - 1;
-
-        return { rowIndex: lastFloatingRow, rowPinned: 'top' } as RowPosition;
-    };
-
-    // if already on top row, do nothing
-    if (isFirstRow) {
-        if (pinned === 'top') {
-            return null;
-        }
-
-        if (!pinned) {
-            if (pinnedRowModel?.isRowsToRender('top')) {
-                return getLastFloatingTopRow();
-            }
-            return null;
-        }
-
-        // last floating bottom
-        if (rowModel.isRowsToRender()) {
-            const lastBodyRow = pageBounds.getLastRow();
-            return { rowIndex: lastBodyRow, rowPinned: null } as RowPosition;
-        }
-
-        if (pinnedRowModel?.isRowsToRender('top')) {
-            return getLastFloatingTopRow();
-        }
-
-        return null;
-    } else if (pinned) {
-        // if more pinned rows, should always navigate there
-        ignoreSticky = true;
+    if (pinned === 'top' || (pinned === null && index === pageBounds.getFirstRow())) {
+        return pinnedRowModel?.isRowsToRender('top')
+            ? { rowIndex: pinnedRowModel.getPinnedTopRowCount() - 1, rowPinned: 'top' }
+            : null;
     }
 
-    const rowNode = rowModel.getRow(rowPosition.rowIndex);
-    const nextStickyPosition = ignoreSticky ? undefined : getNextStickyPosition(beans, rowNode, true);
-
-    if (nextStickyPosition) {
-        return nextStickyPosition;
+    if (pinned === 'bottom' && rowModel.isRowsToRender()) {
+        return { rowIndex: pageBounds.getLastRow(), rowPinned: null };
     }
 
-    return { rowIndex: index - 1, rowPinned: pinned } as RowPosition;
+    const rowNode = rowModel.getRow(index);
+    return getNextStickyPosition(beans, rowNode, true) ?? { rowIndex: index - 1, rowPinned: pinned };
 }
 
 export function _getRowBelow(beans: BeanCollection, rowPosition: RowPosition): RowPosition | null {
-    // if already on top row, do nothing
-    const index = rowPosition.rowIndex;
-    const pinned = rowPosition.rowPinned;
-    let ignoreSticky = false;
-
+    const { rowIndex: index, rowPinned: pinned } = rowPosition;
     const { pageBounds, pinnedRowModel, rowModel } = beans;
 
     if (isLastRowInContainer(beans, rowPosition)) {
-        switch (pinned) {
-            case 'bottom':
-                // never any rows after pinned bottom
-                return null;
-            case 'top':
-                // if on last row of pinned top, then next row is main body (if rows exist),
-                // otherwise it's the pinned bottom
-                if (rowModel.isRowsToRender()) {
-                    return { rowIndex: pageBounds.getFirstRow(), rowPinned: null } as RowPosition;
-                }
-
-                if (pinnedRowModel?.isRowsToRender('bottom')) {
-                    return { rowIndex: 0, rowPinned: 'bottom' } as RowPosition;
-                }
-
-                return null;
-            default:
-                // if in the main body, then try pinned bottom, otherwise return nothing
-                if (pinnedRowModel?.isRowsToRender('bottom')) {
-                    return { rowIndex: 0, rowPinned: 'bottom' } as RowPosition;
-                }
-                return null;
+        if (pinned === 'bottom') {
+            return null;
         }
-    } else if (pinned) {
-        // if more pinned rows, should always navigate there
-        ignoreSticky = true;
+
+        if (pinned === 'top' && rowModel.isRowsToRender()) {
+            return { rowIndex: pageBounds.getFirstRow(), rowPinned: null };
+        }
+
+        return pinnedRowModel?.isRowsToRender('bottom') ? { rowIndex: 0, rowPinned: 'bottom' } : null;
     }
 
-    const rowNode = rowModel.getRow(rowPosition.rowIndex);
-    const nextStickyPosition = ignoreSticky ? undefined : getNextStickyPosition(beans, rowNode);
-
-    if (nextStickyPosition) {
-        return nextStickyPosition;
-    }
-
-    return { rowIndex: index + 1, rowPinned: pinned } as RowPosition;
+    const rowNode = rowModel.getRow(index);
+    return getNextStickyPosition(beans, rowNode) ?? { rowIndex: index + 1, rowPinned: pinned };
 }
 
 function getNextStickyPosition(beans: BeanCollection, rowNode?: RowNode, up?: boolean): RowPosition | undefined {
     const { gos, rowRenderer } = beans;
-    if (!_isGroupRowsSticky(gos) || !rowNode || !rowNode.sticky) {
+
+    if (!rowNode?.sticky || !_isGroupRowsSticky(gos)) {
         return;
     }
 
-    const isTopCtrls = rowRenderer.getStickyTopRowCtrls().some((ctrl) => ctrl.rowNode.rowIndex === rowNode.rowIndex);
+    const stickyRowCtrls = up ? rowRenderer.getStickyTopRowCtrls() : rowRenderer.getStickyBottomRowCtrls();
 
-    let stickyRowCtrls: RowCtrl[] = [];
-    if (isTopCtrls) {
-        stickyRowCtrls = [...rowRenderer.getStickyTopRowCtrls()].sort(
-            (a, b) => a.rowNode.rowIndex! - b.rowNode.rowIndex!
-        );
-    } else {
-        stickyRowCtrls = [...rowRenderer.getStickyBottomRowCtrls()].sort(
-            (a, b) => b.rowNode.rowIndex! - a.rowNode.rowIndex!
-        );
+    let nextCtrl: RowCtrl | undefined;
+    for (let i = 0; i < stickyRowCtrls.length; i++) {
+        if (stickyRowCtrls[i].rowNode.rowIndex === rowNode.rowIndex) {
+            nextCtrl = stickyRowCtrls[i + (up ? -1 : 1)];
+            break;
+        }
     }
 
-    const diff = up ? -1 : 1;
-    const idx = stickyRowCtrls.findIndex((ctrl) => ctrl.rowNode.rowIndex === rowNode.rowIndex);
-    const nextCtrl = stickyRowCtrls[idx + diff];
-
-    if (nextCtrl) {
-        return { rowIndex: nextCtrl.rowNode.rowIndex!, rowPinned: null };
-    }
+    return nextCtrl ? { rowIndex: nextCtrl.rowNode.rowIndex!, rowPinned: null } : undefined;
 }
 
 function isLastRowInContainer(beans: BeanCollection, rowPosition: RowPosition): boolean {
