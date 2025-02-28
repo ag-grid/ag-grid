@@ -4,6 +4,7 @@ import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
 import type { CtrlsService } from '../ctrlsService';
 import type { AgColumn } from '../entities/agColumn';
+import { _getRowAbove } from '../entities/positionUtils';
 import type { RowNode } from '../entities/rowNode';
 import type { BodyScrollEvent, CellFocusedEvent, PaginationChangedEvent } from '../events';
 import type { FocusService } from '../focusService';
@@ -17,6 +18,7 @@ import {
     _isCellSelectionEnabled,
     _isDomLayout,
 } from '../gridOptionsUtils';
+import { getFocusHeaderRowCount } from '../headerRendering/headerUtils';
 import type { RenderedRowEvent } from '../interfaces/iCallbackParams';
 import type { CellPosition } from '../interfaces/iCellPosition';
 import type { RefreshCellsParams } from '../interfaces/iCellsParams';
@@ -679,21 +681,51 @@ export class RowRenderer extends BeanStub implements NamedBean {
             return;
         }
 
-        this.focusSvc.restoreFocusedCell(cellPosition, () => {
-            // we don't wish to dispatch an event as the rowRenderer is not capable of changing the selected cell,
-            // so we mock a change event for the full width rows and cells to ensure they update to the newly selected state
+        const cellToFocus = this.findPositionToFocus(cellPosition);
 
-            this.onCellFocusChanged(
-                _addGridCommonParams<CellFocusedEvent>(this.gos, {
-                    rowIndex: cellPosition.rowIndex,
+        if (!cellToFocus) {
+            this.focusSvc.focusHeaderPosition({
+                headerPosition: {
+                    headerRowIndex: getFocusHeaderRowCount(this.beans) - 1,
                     column: cellPosition.column,
-                    rowPinned: cellPosition.rowPinned,
-                    forceBrowserFocus: true,
-                    preventScrollOnBrowserFocus: true,
-                    type: 'cellFocused',
-                })
-            );
-        });
+                },
+            });
+        } else {
+            const params = {
+                ...cellToFocus,
+                preventScrollOnBrowserFocus: true,
+                forceBrowserFocus: true,
+            };
+            if (cellPosition.rowIndex !== cellToFocus.rowIndex || cellPosition.rowPinned != cellPosition.rowPinned) {
+                this.focusSvc.setFocusedCell(params);
+            } else {
+                this.focusSvc.restoreFocusedCell(cellToFocus, () => {
+                    // we don't wish to dispatch an event as the rowRenderer is not capable of changing the selected cell,
+                    // so we mock a change event for the full width rows and cells to ensure they update to the newly selected state
+
+                    this.onCellFocusChanged(
+                        _addGridCommonParams<CellFocusedEvent>(this.gos, {
+                            ...params,
+                            type: 'cellFocused',
+                        })
+                    );
+                });
+            }
+        }
+    }
+
+    private findPositionToFocus(cellPosition: CellPosition): CellPosition | null {
+        let rowPosition: RowPosition | null = cellPosition;
+
+        while (rowPosition) {
+            const row = this.getRowByPosition(rowPosition);
+            if (row?.isAlive()) {
+                return { ...row.getRowPosition(), column: cellPosition.column };
+            }
+            rowPosition = _getRowAbove(this.beans, rowPosition);
+        }
+
+        return null;
     }
 
     public getAllCellCtrls(): CellCtrl[] {
