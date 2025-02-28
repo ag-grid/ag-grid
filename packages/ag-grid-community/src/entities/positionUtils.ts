@@ -130,6 +130,10 @@ export function _getRowAbove(beans: BeanCollection, rowPosition: RowPosition): R
     const { rowIndex: index, rowPinned: pinned } = rowPosition;
     const { pageBounds, pinnedRowModel, rowModel } = beans;
 
+    if (pinned === 'top' && index === 0) {
+        return null;
+    }
+
     if (pinned == null && index === pageBounds.getFirstRow()) {
         return pinnedRowModel?.isRowsToRender('top')
             ? { rowIndex: pinnedRowModel.getPinnedTopRowCount() - 1, rowPinned: 'top' }
