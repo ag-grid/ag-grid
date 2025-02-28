@@ -459,7 +459,11 @@ export {
     RefreshModelParams,
     IChangedRowNodes,
 } from './interfaces/iClientSideRowModel';
-export { IClientSideNodeManager, ClientSideNodeManagerUpdateRowDataResult } from './interfaces/iClientSideNodeManager';
+export {
+    IClientSideNodeManager,
+    IClientSideNodeLookup,
+    ClientSideNodeManagerUpdateRowDataResult,
+} from './interfaces/iClientSideNodeManager';
 export { AbstractClientSideNodeManager } from './clientSideRowModel/abstractClientSideNodeManager';
 export type { RowAutoHeightService } from './rendering/row/rowAutoHeightService';
 

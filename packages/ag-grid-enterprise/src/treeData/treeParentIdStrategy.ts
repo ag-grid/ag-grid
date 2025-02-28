@@ -49,7 +49,7 @@ export class TreeParentIdStrategy<TData = any> extends BeanStub implements Named
         // This avoid the needs to create complex data structures to store temporary data or add more fields to the row nodes.
 
         const rootNode: TreeRow<TData> = params.rowNode;
-        const nodeManager = params.nodeManager!;
+        const nodeLookup = params.nodeLookup!;
         const changedRowNodes = params.changedRowNodes;
 
         const rootAllLeafChildren = rootNode.allLeafChildren!;
@@ -93,7 +93,7 @@ export class TreeParentIdStrategy<TData = any> extends BeanStub implements Named
                     if (parentId === null || parentId === undefined) {
                         newParent = rootNode;
                     } else {
-                        newParent = nodeManager.getRowNode(parentId);
+                        newParent = nodeLookup.getRowNode(parentId);
                         if (!newParent) {
                             _warn(271, { id: row.id!, parentId });
                             newParent = rootNode;

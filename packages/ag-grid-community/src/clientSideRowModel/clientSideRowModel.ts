@@ -1061,7 +1061,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
                 changedRowNodes,
                 rowNodesOrderChanged,
                 afterColumnsChanged,
-                nodeManager: this.nodeManager,
+                nodeLookup: this.nodeManager,
             }) &&
             !this.nodeManager.treeData // managed by the node manager
         ) {
