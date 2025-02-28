@@ -102,18 +102,29 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
             this.filterAggStage,
             this.flattenStage,
         ].filter((stage) => !!stage) as IRowNodeStage[];
-        const refreshEverythingFunc = this.refreshModel.bind(this, { step: 'group' });
-        const refreshEverythingAfterColsChangedFunc = this.refreshModel.bind(this, {
-            step: 'group', // after cols change, row grouping (the first stage) could of changed
-            afterColumnsChanged: true,
-            keepRenderedRows: true,
-            // we want animations cos sorting or filtering could be applied
-            animate: !this.gos.get('suppressAnimationFrame'),
-        });
 
+        const refreshEverythingFunc = this.refreshModel.bind(this, { step: 'group' });
+
+        // inelegant solution; when cols change only one event is acted upon by refreshModel - newColumnsLoaded
+        // if grouping has changed, no anim wanted, otherwise animate
+        let skipNextColsAnimation = false;
         this.addManagedEventListeners({
-            newColumnsLoaded: refreshEverythingAfterColsChangedFunc,
-            columnRowGroupChanged: refreshEverythingFunc,
+            newColumnsLoaded: () => {
+                this.refreshModel({
+                    step: 'group', // after cols change, row grouping (the first stage) could of changed
+                    afterColumnsChanged: true,
+                    keepRenderedRows: true,
+                    // we want animations if sorting or filtering could be impacted, but not if grouping has changed
+                    animate: !skipNextColsAnimation && !this.gos.get('suppressAnimationFrame'),
+                });
+                skipNextColsAnimation = false;
+            },
+            columnRowGroupChanged: () => {
+                if (this.colModel.changeEventsDispatching) {
+                    skipNextColsAnimation = true;
+                }
+                refreshEverythingFunc();
+            },
             columnValueChanged: this.onValueChanged.bind(this),
             columnPivotChanged: this.refreshModel.bind(this, { step: 'pivot' }),
             filterChanged: this.onFilterChanged.bind(this),
@@ -798,7 +809,6 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         this.clearRowTopAndRowIndex(changedPath, displayedNodesMapped);
 
         this.isRefreshingModel = false;
-
         this.eventSvc.dispatchEvent({
             type: 'modelUpdated',
             animate: params.animate,
