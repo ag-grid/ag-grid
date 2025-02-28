@@ -189,21 +189,19 @@ function getNextStickyPosition(beans: BeanCollection, rowNode?: RowNode, up?: bo
 }
 
 function isLastRowInContainer(beans: BeanCollection, rowPosition: RowPosition): boolean {
-    const pinned = rowPosition.rowPinned;
-    const index = rowPosition.rowIndex;
-
+    const { rowPinned, rowIndex } = rowPosition;
     const { pinnedRowModel, pageBounds } = beans;
 
-    if (pinned === 'top') {
+    if (rowPinned === 'top') {
         const lastTopIndex = pinnedRowModel?.getPinnedTopRowCount() ?? 0 - 1;
-        return lastTopIndex <= index;
+        return lastTopIndex <= rowIndex;
     }
 
-    if (pinned === 'bottom') {
+    if (rowPinned === 'bottom') {
         const lastBottomIndex = pinnedRowModel?.getPinnedBottomRowCount() ?? 0 - 1;
-        return lastBottomIndex <= index;
+        return lastBottomIndex <= rowIndex;
     }
 
     const lastBodyIndex = pageBounds.getLastRow();
-    return lastBodyIndex <= index;
+    return lastBodyIndex <= rowIndex;
 }
