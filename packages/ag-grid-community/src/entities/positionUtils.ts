@@ -144,7 +144,7 @@ export function _getRowAbove(beans: BeanCollection, rowPosition: RowPosition): R
         return { rowIndex: pageBounds.getLastRow(), rowPinned: null };
     }
 
-    const rowNode = rowModel.getRow(index);
+    const rowNode = pinned ? undefined : rowModel.getRow(index);
     return getNextStickyPosition(beans, rowNode, true) ?? { rowIndex: index - 1, rowPinned: pinned };
 }
 
@@ -164,7 +164,7 @@ export function _getRowBelow(beans: BeanCollection, rowPosition: RowPosition): R
         return pinnedRowModel?.isRowsToRender('bottom') ? { rowIndex: 0, rowPinned: 'bottom' } : null;
     }
 
-    const rowNode = rowModel.getRow(index);
+    const rowNode = pinned ? undefined : rowModel.getRow(index);
     return getNextStickyPosition(beans, rowNode) ?? { rowIndex: index + 1, rowPinned: pinned };
 }
 
