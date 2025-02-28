@@ -696,7 +696,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
                 preventScrollOnBrowserFocus: true,
                 forceBrowserFocus: true,
             };
-            if (cellPosition.rowIndex !== cellToFocus.rowIndex || cellPosition.rowPinned != cellPosition.rowPinned) {
+            if (cellPosition.rowIndex !== cellToFocus.rowIndex || cellPosition.rowPinned != cellToFocus.rowPinned) {
                 this.focusSvc.setFocusedCell(params);
             } else {
                 this.focusSvc.restoreFocusedCell(cellToFocus, () => {
