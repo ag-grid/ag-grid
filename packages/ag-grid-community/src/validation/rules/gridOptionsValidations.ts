@@ -412,9 +412,9 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => {
                 const rowModel = options.rowModelType ?? 'clientSide';
                 switch (rowModel) {
                     case 'clientSide': {
-                        const { treeDataChildrenField, treeDataParentIdField, getDataPath, getRowId } = options as any;
+                        const { treeDataChildrenField, treeDataParentIdField, getDataPath, getRowId } = options;
                         if (!treeDataChildrenField && !treeDataParentIdField && !getDataPath) {
-                            return "treeData requires either 'treeDataChildrenField' or 'getDataPath' in the clientSide row model.";
+                            return "treeData requires either 'treeDataChildrenField' or 'treeDataParentIdField' or or 'getDataPath' in the clientSide row model.";
                         }
                         if (treeDataChildrenField) {
                             if (getDataPath) {
@@ -445,7 +445,7 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => {
         treeDataChildrenField: {
             module: 'SharedTreeData',
         },
-        ['treeDataParentIdField' as any]: {
+        treeDataParentIdField: {
             module: 'SharedTreeData',
         },
         undoRedoCellEditing: { module: 'UndoRedoEdit' },
@@ -488,7 +488,7 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => {
 export const GRID_OPTIONS_VALIDATORS: () => OptionsValidator<GridOptions> = () => ({
     objectName: 'gridOptions',
     allProperties: [..._ALL_GRID_OPTIONS, ..._ALL_EVENTS.map((event) => _getCallbackForEvent(event))],
-    propertyExceptions: ['api', 'treeDataParentIdField'],
+    propertyExceptions: ['api'],
     docsUrl: 'grid-options/',
     deprecations: GRID_OPTION_DEPRECATIONS(),
     validations: GRID_OPTION_VALIDATIONS(),

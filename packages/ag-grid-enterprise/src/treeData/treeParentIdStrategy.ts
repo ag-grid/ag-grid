@@ -2,8 +2,8 @@ import type {
     IRowGroupingStrategy,
     IsGroupOpenByDefaultParams,
     NamedBean,
-    RowGroupingStrategyExecuteParams,
     RowNode,
+    StageExecuteParams,
     WithoutGridCommon,
 } from 'ag-grid-community';
 import { BeanStub, _EmptyArray, _warn } from 'ag-grid-community';
@@ -35,7 +35,7 @@ export class TreeParentIdStrategy<TData = any> extends BeanStub implements Named
         this.oldGroupDisplayColIds = null;
     }
 
-    public execute(params: RowGroupingStrategyExecuteParams<TData>, fullReload: boolean) {
+    public execute(params: StageExecuteParams<TData>) {
         // Instead of trying to optimize for immutable row update and transactions when a small portion of the tree changes
         // the decision here was to implement with two linear loops, first all nodes and then a tree traversal,
         // reducing allocations to the minimum possible.
@@ -49,12 +49,13 @@ export class TreeParentIdStrategy<TData = any> extends BeanStub implements Named
         // This avoid the needs to create complex data structures to store temporary data or add more fields to the row nodes.
 
         const rootNode: TreeRow<TData> = params.rowNode;
-        const nodeManager = params.nodeManager!;
+        const nodeLookup = params.nodeLookup!;
         const changedRowNodes = params.changedRowNodes;
 
         const rootAllLeafChildren = rootNode.allLeafChildren!;
         const rootAllLeafChildrenLen = rootAllLeafChildren.length;
 
+        let fullReload = false;
         let rootChildrenAfterGroup = rootNode.childrenAfterGroup;
         if (!rootChildrenAfterGroup || rootChildrenAfterGroup === rootAllLeafChildren) {
             fullReload = true;
@@ -66,7 +67,7 @@ export class TreeParentIdStrategy<TData = any> extends BeanStub implements Named
         }
 
         let parentIdGetter = this.parentIdGetter;
-        const parentIdField = this.gos.get('treeDataParentIdField' as any);
+        const parentIdField = this.gos.get('treeDataParentIdField');
         if (!parentIdGetter || parentIdGetter.path !== parentIdField) {
             parentIdGetter = makeFieldPathGetter(parentIdField);
         }
@@ -92,7 +93,7 @@ export class TreeParentIdStrategy<TData = any> extends BeanStub implements Named
                     if (parentId === null || parentId === undefined) {
                         newParent = rootNode;
                     } else {
-                        newParent = nodeManager.getRowNode(parentId);
+                        newParent = nodeLookup.getRowNode(parentId);
                         if (!newParent) {
                             _warn(271, { id: row.id!, parentId });
                             newParent = rootNode;

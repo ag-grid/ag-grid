@@ -1,7 +1,7 @@
 import type { GridOptions } from '../entities/gridOptions';
 import type { ITreeNode, RowNode } from '../entities/rowNode';
 import type { ChangedPath } from '../utils/changedPath';
-import type { IClientSideNodeManager } from './iClientSideNodeManager';
+import type { IClientSideNodeLookup } from './iClientSideNodeManager';
 import type { ClientSideRowModelStage, IChangedRowNodes } from './iClientSideRowModel';
 
 export interface RowGroupingRowNode<TData = any> extends RowNode<TData> {
@@ -17,8 +17,7 @@ export interface RowGroupingRowNode<TData = any> extends RowNode<TData> {
 export interface StageExecuteParams<TData = any> {
     rowNode: RowNode<TData>;
 
-    nodeManager?: IClientSideNodeManager<TData>;
-    changedProps?: ReadonlySet<keyof GridOptions>;
+    nodeLookup?: IClientSideNodeLookup<TData>;
 
     // used in sort stage, as sort stage looks at all transactions in one go
     changedRowNodes?: IChangedRowNodes<TData>;
@@ -30,12 +29,8 @@ export interface StageExecuteParams<TData = any> {
     afterColumnsChanged?: boolean;
 }
 
-export interface RowGroupingStrategyExecuteParams<TData = any> extends StageExecuteParams<TData> {
-    rowNode: RowGroupingRowNode<TData>;
-}
-
 export interface IRowGroupingStrategy<TData = any> {
-    execute(params: RowGroupingStrategyExecuteParams<TData>, needReset: boolean): void;
+    execute(params: StageExecuteParams<TData>): void;
     deactivate?(): void;
 }
 

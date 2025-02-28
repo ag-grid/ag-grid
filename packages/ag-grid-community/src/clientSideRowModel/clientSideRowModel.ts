@@ -137,7 +137,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
     private getNewNodeManager(): IClientSideNodeManager<any> {
         const { gos, beans } = this;
         let nodeManager: IClientSideNodeManager<any> | undefined;
-        if (gos.get('treeData') && !gos.get('treeDataParentIdField' as any)) {
+        if (gos.get('treeData') && !gos.get('treeDataParentIdField')) {
             if (gos.get('treeDataChildrenField')) {
                 nodeManager = beans.csrmChildrenTreeNodeSvc;
             } else {
@@ -271,19 +271,15 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         };
 
         const rowDataChanged = changedProps.has('rowData');
-        const treeDataChanged = changedProps.has('treeData');
-
         const oldNodeManager = this.nodeManager;
         const nodeManager = this.getNewNodeManager();
 
         const reset =
-            oldNodeManager !== nodeManager || (changedProps.has('treeDataChildrenField') && gos.get('treeData'));
+            oldNodeManager !== nodeManager ||
+            (rowDataChanged && changedProps.has('treeData') && gos.get('treeData')) ||
+            (changedProps.has('treeDataChildrenField') && gos.get('treeData'));
 
         let newRowData: any[] | null | undefined;
-
-        if (treeDataChanged) {
-            params.step = 'group';
-        }
 
         if (reset || rowDataChanged) {
             newRowData = gos.get('rowData');
@@ -771,7 +767,6 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
                 this.doRowGrouping(
                     params.changedRowNodes,
                     changedPath,
-                    params.changedProps,
                     !!params.rowNodesOrderChanged,
                     !!params.afterColumnsChanged
                 );
@@ -1054,7 +1049,6 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
     private doRowGrouping(
         changedRowNodes: IChangedRowNodes | undefined,
         changedPath: ChangedPath,
-        changedProps: ReadonlySet<keyof GridOptions> | undefined,
         rowNodesOrderChanged: boolean,
         afterColumnsChanged: boolean
     ) {
@@ -1065,10 +1059,9 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
                 rowNode: rootNode,
                 changedPath,
                 changedRowNodes,
-                changedProps,
                 rowNodesOrderChanged,
                 afterColumnsChanged,
-                nodeManager: this.nodeManager,
+                nodeLookup: this.nodeManager,
             }) &&
             !this.nodeManager.treeData // managed by the node manager
         ) {

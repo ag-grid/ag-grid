@@ -4,7 +4,7 @@ import type {
     IRowGroupingStrategy,
     IRowNodeStage,
     NamedBean,
-    RowGroupingStrategyExecuteParams,
+    RowGroupingRowNode,
     StageExecuteParams,
 } from 'ag-grid-community';
 import { BeanStub } from 'ag-grid-community';
@@ -20,98 +20,102 @@ export class GroupStage<TData> extends BeanStub implements NamedBean, IRowNodeSt
         'groupDisplayType',
         'treeData',
         'treeDataChildrenField',
-        'treeDataParentIdField' as any,
+        'treeDataParentIdField',
     ]);
     public step: ClientSideRowModelStage = 'group';
 
     private strategy: IRowGroupingStrategy<TData> | undefined = undefined;
 
-    public execute(params: StageExecuteParams<TData>): boolean {
-        const { beans, gos, strategy: oldStrategy } = this;
+    public postConstruct(): void {
+        this.strategy = this.getNewStrategy();
+    }
 
-        let newStrategy = oldStrategy;
-        const treeDataManagedByNodeManager = params.nodeManager!.treeData;
-        if (treeDataManagedByNodeManager) {
-            newStrategy = undefined;
-        } else {
-            const { changedRowNodes, changedProps } = params;
-            if (
-                !changedRowNodes ||
-                (changedProps &&
-                    (changedProps.has('treeData') ||
-                        (gos.get('treeData') &&
-                            changedProps.has('treeDataParentIdField' as any) &&
-                            changedProps.has('treeDataChildrenField' as any))))
-            ) {
-                newStrategy = undefined;
-                if (
-                    gos.get('treeData') &&
-                    gos.get('treeDataParentIdField' as any) &&
-                    !gos.get('treeDataChildrenField')
-                ) {
-                    newStrategy = beans.treeParentIdStrategy;
-                }
+    private getNewStrategy(): IRowGroupingStrategy<TData> | undefined {
+        const { gos, beans } = this;
+        if (gos.get('treeData')) {
+            if (gos.get('treeDataChildrenField')) {
+                return undefined; // managed by node manager
             }
-            newStrategy ??= beans.groupStrategy;
+            if (gos.get('treeDataParentIdField')) {
+                return beans.treeParentIdStrategy;
+            }
+            if (gos.get('getDataPath')) {
+                return undefined; // managed by node manager
+            }
         }
+        return beans.groupStrategy;
+    }
+
+    private treeDataManagedByNodeManager(): boolean {
+        // TODO: this method is temporary and will be removed once we move most of the computation
+        // for treeData in node managers as strategies in the next refactoring PRs.
+        // resetGrouping should replace the reset logic present in the tree nodeManagers
+        const gos = this.gos;
+        return gos.get('treeData') && (!!gos.get('getDataPath') || !!gos.get('treeDataChildrenField'));
+    }
+
+    public execute(params: StageExecuteParams<TData>): boolean {
+        const { strategy: oldStrategy } = this;
+
+        const newStrategy = this.getNewStrategy();
 
         const strategyChanged = oldStrategy !== newStrategy;
         if (strategyChanged) {
-            oldStrategy?.deactivate?.();
-            if (!treeDataManagedByNodeManager && oldStrategy) {
-                this.reset(params);
-            }
             this.strategy = newStrategy;
+            if (oldStrategy) {
+                oldStrategy.deactivate?.();
+                if (!this.treeDataManagedByNodeManager()) {
+                    resetGrouping(params.rowNode);
+                }
+            }
         }
 
-        newStrategy?.execute(params, strategyChanged);
+        newStrategy?.execute(params);
         return !!newStrategy;
     }
-
-    private reset(params: RowGroupingStrategyExecuteParams<TData>): void {
-        const rootNode = params.rowNode;
-        const allLeafChildren = rootNode.allLeafChildren!;
-        rootNode.childrenAfterGroup = allLeafChildren;
-        const sibling = rootNode.sibling;
-        rootNode.groupData = null;
-        rootNode.childrenMapped = null;
-        if (sibling) {
-            sibling.childrenAfterGroup = rootNode.childrenAfterGroup;
-            sibling.childrenAfterAggFilter = rootNode.childrenAfterAggFilter;
-            sibling.childrenAfterFilter = rootNode.childrenAfterFilter;
-            sibling.childrenAfterSort = rootNode.childrenAfterSort;
-            sibling.childrenMapped = null;
-            sibling.groupData = null;
-        }
-        for (let i = 0, len = allLeafChildren?.length || 0; i < len; i++) {
-            const row = allLeafChildren[i];
-            row.parent = rootNode;
-            row.key = null;
-            row.level = 0;
-            row.childrenAfterGroup = null;
-            row.childrenAfterAggFilter = null;
-            row.childrenAfterFilter = null;
-            row.childrenAfterSort = null;
-            row.childrenMapped = null;
-            row.treeNodeFlags = 0;
-            if (row.groupData) {
-                row.groupData = null;
-            }
-            if (row.group || row.hasChildren()) {
-                row.group = false;
-                row.updateHasChildren();
-            }
-            const sibling = row.sibling;
-            if (sibling) {
-                sibling.childrenAfterGroup = null;
-                sibling.childrenAfterAggFilter = null;
-                sibling.childrenAfterFilter = null;
-                sibling.childrenAfterSort = null;
-                sibling.childrenMapped = null;
-                sibling.groupData = null;
-            }
-        }
-        rootNode.updateHasChildren();
-        rootNode.treeNodeFlags = 0;
-    }
 }
+
+const resetGrouping = <TData>(rootNode: RowGroupingRowNode<TData>): void => {
+    const allLeafChildren = rootNode.allLeafChildren!;
+    const rootSibling = rootNode.sibling;
+    rootNode.treeNodeFlags = 0;
+    rootNode.childrenAfterGroup = allLeafChildren;
+    rootNode.childrenMapped = null;
+    rootNode.groupData = null;
+    if (rootSibling) {
+        rootSibling.childrenAfterGroup = rootNode.childrenAfterGroup;
+        rootSibling.childrenAfterAggFilter = rootNode.childrenAfterAggFilter;
+        rootSibling.childrenAfterFilter = rootNode.childrenAfterFilter;
+        rootSibling.childrenAfterSort = rootNode.childrenAfterSort;
+        rootSibling.childrenMapped = null;
+        rootSibling.groupData = null;
+    }
+    for (const row of allLeafChildren) {
+        const sibling = row.sibling;
+        resetChildRowGrouping(row);
+        if (sibling) {
+            resetChildRowGrouping(sibling);
+        }
+        row.parent = rootNode;
+        row.level = 0;
+        row.key = null;
+        row.treeNodeFlags = 0;
+        if (row.group || row.hasChildren()) {
+            row.group = false;
+            row.updateHasChildren();
+        }
+    }
+    rootNode.updateHasChildren();
+};
+
+const resetChildRowGrouping = <TData>(row: RowGroupingRowNode<TData>): void => {
+    row.allLeafChildren = null;
+    row.childrenAfterGroup = null;
+    row.childrenAfterAggFilter = null;
+    row.childrenAfterFilter = null;
+    row.childrenAfterSort = null;
+    row.childrenMapped = null;
+    if (row.groupData) {
+        row.groupData = null;
+    }
+};
