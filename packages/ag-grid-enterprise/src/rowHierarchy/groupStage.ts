@@ -46,39 +46,31 @@ export class GroupStage<TData> extends BeanStub implements NamedBean, IRowNodeSt
         return beans.groupStrategy;
     }
 
-    private isTreeDataNodeManager(): boolean {
+    private treeDataManagedByNodeManager(): boolean {
         // TODO: this method is temporary and will be removed once we move most of the computation
-        // for treeData in node managers as strategies in the next refactoring PRs
+        // for treeData in node managers as strategies in the next refactoring PRs.
+        // resetGrouping should replace the reset logic present in the tree nodeManagers
         const gos = this.gos;
         return gos.get('treeData') && (!!gos.get('getDataPath') || !!gos.get('treeDataChildrenField'));
     }
 
     public execute(params: StageExecuteParams<TData>): boolean {
         const { strategy: oldStrategy } = this;
-        const { changedProps } = params;
 
-        let newStrategy = oldStrategy;
-        if (
-            changedProps &&
-            (changedProps.has('treeData') ||
-                changedProps.has('treeDataParentIdField') ||
-                changedProps.has('treeDataChildrenField'))
-        ) {
-            newStrategy = this.getNewStrategy();
-        }
+        const newStrategy = this.getNewStrategy();
 
         const strategyChanged = oldStrategy !== newStrategy;
         if (strategyChanged) {
             this.strategy = newStrategy;
             if (oldStrategy) {
                 oldStrategy.deactivate?.();
-                if (!this.isTreeDataNodeManager()) {
+                if (!this.treeDataManagedByNodeManager()) {
                     resetGrouping(params.rowNode);
                 }
             }
         }
 
-        newStrategy?.execute(params, strategyChanged);
+        newStrategy?.execute(params);
         return !!newStrategy;
     }
 }

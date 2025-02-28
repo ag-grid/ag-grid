@@ -18,7 +18,6 @@ export interface StageExecuteParams<TData = any> {
     rowNode: RowNode<TData>;
 
     nodeManager?: IClientSideNodeManager<TData>;
-    changedProps?: ReadonlySet<keyof GridOptions>;
 
     // used in sort stage, as sort stage looks at all transactions in one go
     changedRowNodes?: IChangedRowNodes<TData>;
@@ -31,7 +30,7 @@ export interface StageExecuteParams<TData = any> {
 }
 
 export interface IRowGroupingStrategy<TData = any> {
-    execute(params: StageExecuteParams<TData>, needReset: boolean): void;
+    execute(params: StageExecuteParams<TData>): void;
     deactivate?(): void;
 }
 

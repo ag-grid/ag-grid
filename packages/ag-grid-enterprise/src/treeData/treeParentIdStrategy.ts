@@ -35,7 +35,7 @@ export class TreeParentIdStrategy<TData = any> extends BeanStub implements Named
         this.oldGroupDisplayColIds = null;
     }
 
-    public execute(params: StageExecuteParams<TData>, fullReload: boolean) {
+    public execute(params: StageExecuteParams<TData>) {
         // Instead of trying to optimize for immutable row update and transactions when a small portion of the tree changes
         // the decision here was to implement with two linear loops, first all nodes and then a tree traversal,
         // reducing allocations to the minimum possible.
@@ -55,6 +55,7 @@ export class TreeParentIdStrategy<TData = any> extends BeanStub implements Named
         const rootAllLeafChildren = rootNode.allLeafChildren!;
         const rootAllLeafChildrenLen = rootAllLeafChildren.length;
 
+        let fullReload = false;
         let rootChildrenAfterGroup = rootNode.childrenAfterGroup;
         if (!rootChildrenAfterGroup || rootChildrenAfterGroup === rootAllLeafChildren) {
             fullReload = true;
