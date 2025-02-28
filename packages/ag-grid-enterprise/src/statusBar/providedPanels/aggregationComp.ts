@@ -12,6 +12,7 @@ import {
     _createCellId,
     _exists,
     _formatNumberCommas,
+    _getRowBelow,
     _getRowNode,
     _isClientSideRowModel,
     _isRowBefore,
@@ -119,7 +120,7 @@ export class AggregationComp extends Component implements IStatusPanelComp {
 
     private onCellSelectionChanged(): void {
         const beans = this.beans;
-        const { rangeSvc, valueSvc, cellNavigation } = beans;
+        const { rangeSvc, valueSvc } = beans;
         const cellRanges = rangeSvc?.getCellRanges();
 
         let sum = 0;
@@ -202,7 +203,7 @@ export class AggregationComp extends Component implements IStatusPanelComp {
                         }
                     });
 
-                    currentRow = cellNavigation!.getRowBelow(currentRow);
+                    currentRow = _getRowBelow(beans, currentRow);
                 }
             }
         }
