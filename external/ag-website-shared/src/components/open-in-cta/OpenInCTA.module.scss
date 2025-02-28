@@ -47,6 +47,13 @@
     }
 }
 
+// Hide button (CodeSandbox & Plunker) CTA items for Mobile Safari only
+@supports (-webkit-touch-callout: none) {
+    .cta button {
+        display: none;
+    }
+}
+
 .tooltip {
     --tooltip-background: var(--color-fg-primary);
 

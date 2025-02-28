@@ -146,7 +146,6 @@ let gridApi: GridApi<IOlympicData>;
 const gridOptions: GridOptions<IOlympicData> = {
     // debug: true,
     columnDefs: columnDefs,
-    rowData: null,
     defaultColGroupDef: { headerClass: headerClassFunc },
     defaultColDef: {
         headerClass: headerClassFunc,

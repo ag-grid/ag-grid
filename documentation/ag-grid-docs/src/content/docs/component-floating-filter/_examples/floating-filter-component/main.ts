@@ -69,7 +69,6 @@ const gridOptions: GridOptions<IOlympicData> = {
         floatingFilter: true,
     },
     columnDefs: columnDefs,
-    rowData: null,
     alwaysShowVerticalScroll: true,
 };
 

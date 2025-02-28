@@ -1,17 +1,13 @@
-import { Component } from '@angular/core';
+import { Component, signal } from '@angular/core';
 
 import type { ICellRendererAngularComp } from 'ag-grid-angular';
 import type { ICellRendererParams } from 'ag-grid-community';
 
-// simple cell renderer returns dummy buttons. in a real application, a component would probably
-// be used with operations tied to the buttons. in this example, the cell renderer is just for
-// display purposes.
 @Component({
     standalone: true,
     template: `
         <div [style.overflow]="'hidden'" [style.textOverflow]="'ellipsis'">
-            <span [style.borderLeft]="'10px solid ' + params.value" [style.paddingRight]="'5px'"></span
-            >{{ params.value }}
+            <span [style.borderLeft]="'10px solid ' + value()" [style.paddingRight]="'5px'"></span>{{ value() }}
         </div>
     `,
     styles: [
@@ -23,10 +19,10 @@ import type { ICellRendererParams } from 'ag-grid-community';
     ],
 })
 export class ColourCellRenderer implements ICellRendererAngularComp {
-    public params!: ICellRendererParams;
+    value = signal<string>('');
 
     agInit(params: ICellRendererParams): void {
-        this.params = params;
+        this.value.set(params.value);
     }
 
     refresh() {

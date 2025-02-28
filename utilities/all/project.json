@@ -6,9 +6,14 @@
   "targets": {
     "build": {
       "executor": "nx:noop",
+      "dependsOn": ["generate-doc-references", "^build", "generate-examples"],
       "inputs": [],
       "outputs": [],
-      "dependsOn": ["generate-doc-references", "^build", "generate-examples"]
+      "configurations": {
+        "staging": {},
+        "archive": {},
+        "production": {}
+      }
     },
     "build:styles": {
       "executor": "nx:noop",
@@ -16,12 +21,10 @@
     },
     "lint": {
       "executor": "nx:noop",
-      "inputs": [
-        {
-          "externalDependencies": ["npm:typescript"]
-        }
-      ],
       "dependsOn": ["^lint"],
+      "inputs": [],
+      "outputs": [],
+      "cache": false,
       "configurations": {
         "fix": {}
       }
@@ -44,31 +47,35 @@
     },
     "test": {
       "executor": "nx:noop",
-      "inputs": [
-        {
-          "externalDependencies": ["npm:typescript"]
-        }
-      ],
       "dependsOn": ["^test"],
+      "inputs": [],
+      "outputs": [],
+      "cache": false,
       "configurations": {
         "update": {}
       }
     },
     "pack": {
       "executor": "nx:noop",
+      "dependsOn": ["^pack"],
       "inputs": [],
       "outputs": [],
-      "dependsOn": ["^pack"],
+      "cache": false,
       "configurations": {
+        "staging": {},
+        "archive": {},
         "production": {}
       }
     },
     "pack:extract": {
       "executor": "nx:noop",
+      "dependsOn": ["^pack:extract"],
       "inputs": [],
       "outputs": [],
-      "dependsOn": ["^pack:extract"],
+      "cache": false,
       "configurations": {
+        "staging": {},
+        "archive": {},
         "production": {}
       }
     },
@@ -79,8 +86,9 @@
       "dependsOn": ["^pack:verify"],
       "parallelism": false,
       "configurations": {
-        "production": {},
-        "archive": {}
+        "staging": {},
+        "archive": {},
+        "production": {}
       }
     },
     "build:core:modules": {
@@ -115,37 +123,16 @@
       },
       "cache": true
     },
-    "dev:setup": {
-      "executor": "nx:run-commands",
-      "options": {
-        "parallel": false,
-        "commands": [
-          "node scripts/buildTime.mjs start",
-          "nx run-many -t build --projects=tag:module --exclude=tag:framework",
-          "nx run all:generate-doc-references",
-          "if (test \"${BUILD_FWS}\" != \"0\") ; then nx run-many -t build -p @ag-grid-community/angular,@ag-grid-community/react,@ag-grid-community/vue3 --parallel=5; fi",
-          "if (test \"${BUILD_PACKAGES}\" != \"0\") ; then nx run-many -t build --projects=tag:package --exclude=tag:framework; fi",
-          "if (test \"${BUILD_PACKAGES}\" != \"0\" && test \"${BUILD_FWS}\" != \"0\") ; then nx run-many -t build --projects=tag:package:framework; fi",
-          "nx generate-examples"
-        ]
-      }
-    },
     "dev": {
       "executor": "nx:run-commands",
-      "dependsOn": ["dev:setup"],
+      "dependsOn": ["^build:types", "^build:package", "generate-examples", "generate-doc-references"],
       "inputs": [],
+      "outputs": [],
+      "cache": false,
+      "parallelism": false,
       "options": {
         "parallel": true,
         "commands": ["node external/ag-shared/scripts/watch/watch.js grid", "nx run ag-grid-docs:dev"]
-      },
-      "configurations": {
-        "windows": {
-          "commands": [
-            {
-              "command": "nx run ag-charts-website:dev --configuration watch"
-            }
-          ]
-        }
       }
     },
     "dev:quick": {
@@ -154,18 +141,12 @@
         "ag-grid-docs-src_content_docs_sparklines-bar-customisation__examples_bar-sparkline-customisation_main.ts:generate"
       ],
       "inputs": [],
+      "outputs": [],
+      "cache": false,
+      "parallelism": false,
       "options": {
         "parallel": true,
         "commands": ["node external/ag-shared/scripts/watch/watch.js grid", "nx run ag-grid-docs:dev"]
-      },
-      "configurations": {
-        "windows": {
-          "commands": [
-            {
-              "command": "nx run ag-charts-website:dev --configuration watch"
-            }
-          ]
-        }
       }
     },
     "format-check": {
@@ -189,15 +170,11 @@
       "command": "rimraf -g dist/ 'packages/*/dist/' 'plugins/*/dist/' 'testing/*/dist/' 'documentation/*/dist/' 'documentation/ag-grid-docs/node_modules/.vite/' 'community-modules/locale/umd/'"
     },
     "generate-examples": {
-      "executor": "nx:run-commands",
-      "dependsOn": ["ag-grid-generate-example-files:build", "^build:types"],
+      "dependsOn": ["^generate-examples"],
+      "executor": "nx:noop",
       "inputs": [],
       "outputs": [],
       "cache": false,
-      "options": {
-        "parallel": false,
-        "commands": ["yarn nx generate-examples ag-grid-docs --batch"]
-      },
       "configurations": {
         "staging": {},
         "archive": {},
@@ -215,15 +192,12 @@
     "generate-doc-references": {
       "executor": "nx:noop",
       "dependsOn": ["^generate-doc-references"],
-      "inputs": [
-        {
-          "externalDependencies": ["npm:typescript"]
-        }
-      ],
+      "inputs": [],
       "outputs": [],
       "cache": false,
       "configurations": {
         "staging": {},
+        "archive": {},
         "production": {}
       }
     },

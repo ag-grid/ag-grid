@@ -1,0 +1,81 @@
+.container {
+    display: flex;
+    gap: 16px;
+    font-weight: 400;
+    width: 100%;
+
+    @media (max-width: 768px) {
+        flex-direction: column;
+    }
+}
+
+.card {
+    width: 100%;
+    background: var(--color-bg-primary);
+    border-radius: 10px;
+    padding: 20px;
+    text-align: left;
+    transition: transform 0.2s ease-in-out;
+    border: 1px solid var(--color-border-secondary);
+    min-height: 180px;
+    color: var(--color-bg-secondary);
+
+    &:hover {
+        transform: translateY(-5px);
+        background-color: var(--color-bg-secondary);
+        transition: all 0.3s;
+    }
+
+    svg {
+        margin-bottom: 16px;
+    }
+
+    path {
+        fill: var(--color-util-brand-700);
+    }
+}
+
+.iconGroup {
+    display: flex;
+    justify-content: space-between;
+}
+
+.titleIcon {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 8px;
+    padding-bottom: 8px;
+
+    div {
+        height: 20px;
+    }
+
+    svg {
+        height: 20px;
+        width: 20px;
+    }
+
+    path {
+        fill: var(--color-fg-primary);
+        opacity: 0.4;
+    }
+}
+
+.icon {
+    font-size: 2rem;
+    padding: 10px;
+    border-radius: 50%;
+    display: inline-block;
+}
+
+.title {
+    font-size: 18px;
+    margin-top: 10px;
+    font-weight: 700;
+}
+
+.description {
+    color: color-mix(in srgb, var(--color-text-secondary), var(--color-bg-primary) 20%);
+    font-weight: normal;
+}

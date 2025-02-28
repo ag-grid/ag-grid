@@ -17,7 +17,7 @@ import type {
 } from '../entities/dataType';
 import type { RowNode } from '../entities/rowNode';
 import type { ColumnEventType, FilterChangedEventSourceType } from '../events';
-import { _getGroupAggFiltering, _isSetFilterByDefault } from '../gridOptionsUtils';
+import { _addGridCommonParams, _getGroupAggFiltering, _isSetFilterByDefault } from '../gridOptionsUtils';
 import type { Column } from '../interfaces/iColumn';
 import type { WithoutGridCommon } from '../interfaces/iCommon';
 import type {
@@ -734,7 +734,7 @@ export class ColumnFilterService extends BeanStub implements NamedBean {
             ? () => {}
             : (additionalEventAttributes?: any) => this.filterUiChanged(column, additionalEventAttributes);
 
-        const params: IFilterParams = this.gos.addGridCommonParams({
+        const params: IFilterParams = _addGridCommonParams(this.gos, {
             column,
             colDef,
             getValue: this.createGetValue(column),
@@ -895,7 +895,7 @@ export class ColumnFilterService extends BeanStub implements NamedBean {
         filterParams: any
     ): { evaluator: FilterEvaluator; evaluatorParams: FilterEvaluatorParams } {
         const colDef = column.getColDef();
-        const evaluator = filterEvaluator(this.gos.addGridCommonParams({ column, colDef }));
+        const evaluator = filterEvaluator(_addGridCommonParams(this.gos, { column, colDef }));
         const evaluatorParams = this.createEvaluatorParams(column, 'init', filterParams);
         return { evaluator, evaluatorParams };
     }
@@ -908,7 +908,7 @@ export class ColumnFilterService extends BeanStub implements NamedBean {
         const colDef = column.getColDef();
         const colId = column.getColId();
         const filterChangedCallback = this.filterChangedCallbackFactory(column);
-        return this.gos.addGridCommonParams({
+        return _addGridCommonParams(this.gos, {
             colDef,
             column,
             getValue: this.createGetValue(column),
@@ -996,13 +996,13 @@ export class ColumnFilterService extends BeanStub implements NamedBean {
             this.createFilterCompParams(column, isReactive, true) as IFilterParams
         );
 
-        const params: WithoutGridCommon<IFloatingFilterParams<IFilter>> = {
+        const params: IFloatingFilterParams<IFilter> = _addGridCommonParams(this.gos, {
             column,
             filterParams,
             currentParentModel: () => this.getCurrentFloatingFilterParentModel(column),
             parentFilterInstance,
             showParentFilter,
-        };
+        });
 
         if (isReactive) {
             const displayParams = params as unknown as WithoutGridCommon<FloatingFilterDisplayParams>;
@@ -1424,6 +1424,10 @@ export class ColumnFilterService extends BeanStub implements NamedBean {
                             return pathKey ?? translate('blanks', '(Blanks)');
                         },
                     });
+                } else {
+                    mergeFilterParams({
+                        isValidDate,
+                    });
                 }
                 break;
             }
@@ -1462,6 +1466,7 @@ export class ColumnFilterService extends BeanStub implements NamedBean {
                             }
                             return 0;
                         },
+                        isValidDate: (value: any) => typeof value === 'string' && isValidDate(convertToDate(value)),
                     });
                 }
                 break;
@@ -1658,4 +1663,8 @@ export function _refreshEvaluatorAndUi(
             });
         }
     });
+}
+
+function isValidDate(value: any): boolean {
+    return value instanceof Date && !isNaN(value.getTime());
 }

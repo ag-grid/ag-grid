@@ -51,7 +51,7 @@ export class DetailCellRenderer implements ICellRendererComp {
     getTemplate() {
         const data = this.params.data;
         const template =
-            '<div class="full-width-panel">' +
+            '<div role="gridcell" class="full-width-panel">' +
             '  <div class="full-width-details">' +
             '    <div class="full-width-detail"><b>Name: </b>' +
             data.name +

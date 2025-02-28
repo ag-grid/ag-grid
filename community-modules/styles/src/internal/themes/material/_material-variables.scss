@@ -22,6 +22,7 @@
     --ag-range-selection-background-color-2: rgba(122, 134, 203, 0.19);
     --ag-range-selection-background-color-3: rgba(122, 134, 203, 0.27);
     --ag-range-selection-background-color-4: rgba(122, 134, 203, 0.34);
+    --ag-row-numbers-selected-color: color-mix(in srgb, transparent, var(--ag-material-accent-color) 50%);
     --ag-range-selection-highlight-color: #fce4ec;
     --ag-row-hover-color: #fafafa;
     --ag-column-hover-color: #fafafa;
@@ -34,6 +35,10 @@
     --ag-advanced-filter-column-pill-color: #a6e194;
     --ag-advanced-filter-option-pill-color: #f3c08b;
     --ag-advanced-filter-value-pill-color: #85c0e4;
+    --ag-find-match-color: var(--ag-foreground-color);
+    --ag-find-match-background-color: #ffff00;
+    --ag-find-active-match-color: var(--ag-foreground-color);
+    --ag-find-active-match-background-color: #ffa500;
 
     // derived colours (no color blending)
     --ag-range-selection-border-color: var(--ag-material-primary-color);
@@ -85,6 +90,8 @@
     --ag-material-accent-color: #bb86fcff;
 
     --ag-range-selection-border-color: var(--ag-material-accent-color);
+    --ag-find-match-color: var(--ag-background-color);
+    --ag-find-active-match-color: var(--ag-background-color);
 
     --ag-background-color: #121212ff;
     --ag-foreground-color: #ffffffff;

@@ -82,8 +82,6 @@ export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSi
         this.pivotColDefSvc = beans.pivotColDefSvc;
     }
 
-    private onRowHeightChanged_debounced = _debounce(this, this.onRowHeightChanged.bind(this), 100);
-
     public rootNode: RowNode;
     private datasource: IServerSideDatasource | undefined;
 
@@ -330,7 +328,7 @@ export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSi
 
             if (rowNode.sibling) {
                 const siblingRowHeight = _getRowHeightForNode(this.beans, rowNode.sibling);
-                detailNode.setRowHeight(siblingRowHeight.height, siblingRowHeight.estimated);
+                detailNode?.setRowHeight(siblingRowHeight.height, siblingRowHeight.estimated);
             }
             atLeastOne = true;
         });
@@ -427,16 +425,6 @@ export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSi
 
         this.updateRowIndexesAndBounds();
         this.dispatchModelUpdated();
-    }
-
-    /** This method is debounced. It is used for row auto-height. If we don't debounce,
-     * then the Row Models will end up recalculating each row position
-     * for each row height change and result in the Row Renderer laying out rows.
-     * This is particularly bad if using print layout, and showing eg 1,000 rows,
-     * each row will change it's height, causing Row Model to update 1,000 times.
-     */
-    public onRowHeightChangedDebounced(): void {
-        this.onRowHeightChanged_debounced();
     }
 
     public onRowHeightChanged(): void {
@@ -596,6 +584,16 @@ export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSi
         rootStore.forEachNodeDeep(callback);
     }
 
+    public forEachDisplayedNode(callback: (rowNode: RowNode<any>, index: number) => void): void {
+        const wrappedCallback = (node: RowNode, index: number) => {
+            if (node.stub || !node.displayed) {
+                return;
+            }
+            callback(node, index);
+        };
+        this.forEachNode(wrappedCallback);
+    }
+
     public forEachNodeAfterFilterAndSort(
         callback: (node: RowNode, index: number) => void,
         includeFooterNodes = false
@@ -706,5 +704,13 @@ export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSi
         this.destroyDatasource();
         this.destroyRootStore();
         super.destroy();
+    }
+
+    private onRowHeightChanged_debounced = _debounce(this, this.onRowHeightChanged.bind(this), 100);
+    /**
+     * @deprecated v33.1
+     */
+    public onRowHeightChangedDebounced(): void {
+        this.onRowHeightChanged_debounced();
     }
 }

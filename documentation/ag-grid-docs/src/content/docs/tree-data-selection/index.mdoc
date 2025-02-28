@@ -11,21 +11,11 @@ ancestor rows when a row is selected.
 
 To enable hierarchical selection, set the `rowSelection.groupSelects` option to one of the following values:
 
-- `'self'`: Selecting a group row has no additional side effects.
-- `'descendants'`: Selecting a group row will select all of its descendants.
-- `'filteredDescendants'`: Selecting a group row will select all of its descendants that pass the filter.
+- `'self'` (default): Selecting a row selects only the row itself.
+- `'descendants'`: Selecting a row will select all of its descendants. Its ancestor row will become indeterminate, unless all of its descendant rows are selected.
+- `'filteredDescendants'`: Selecting a group row will select all of its descendants that pass the filter. Its ancestor row will become indeterminate, unless all of its descendant rows are selected.
 
 {% gridExampleRunner title="Group Selection" name="group-selection" /%}
-
-The example above demonstrates the following configuration:
-```{% frameworkTransform=true %}
-const gridOptions = {
-    rowSelection: {
-        mode: 'multiRow',
-        groupSelects: 'descendants',
-    },
-}
-```
 
 ## Checkboxes in Group Cells
 

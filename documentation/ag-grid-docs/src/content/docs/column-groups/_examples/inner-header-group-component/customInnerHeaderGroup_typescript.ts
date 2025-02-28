@@ -1,10 +1,10 @@
-import type { IHeaderGroupParams } from 'ag-grid-community';
+import type { IHeaderGroupParams, IInnerHeaderGroupComponent } from 'ag-grid-community';
 
 export interface ICustomInnerHeaderGroupParams {
     icon: string;
 }
 
-export class CustomInnerHeaderGroup {
+export class CustomInnerHeaderGroup implements IInnerHeaderGroupComponent {
     private agParams!: ICustomInnerHeaderGroupParams & IHeaderGroupParams;
     private eGui!: HTMLDivElement;
 

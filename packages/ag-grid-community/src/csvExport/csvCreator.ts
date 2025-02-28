@@ -4,6 +4,7 @@ import type { NamedBean } from '../context/bean';
 import type { BeanCollection } from '../context/context';
 import { BaseCreator } from '../export/baseCreator';
 import { _downloadFile } from '../export/downloader';
+import { _addGridCommonParams } from '../gridOptionsUtils';
 import type { CsvCustomContent, CsvExportParams } from '../interfaces/exportParams';
 import type { IColsService } from '../interfaces/iColsService';
 import type { ICsvCreator } from '../interfaces/iCsvCreator';
@@ -48,7 +49,7 @@ export class CsvCreator
 
         const fileName =
             typeof mergedParams.fileName === 'function'
-                ? mergedParams.fileName(this.gos.getGridCommonParams())
+                ? mergedParams.fileName(_addGridCommonParams(this.gos, {}))
                 : mergedParams.fileName;
 
         _downloadFile(this.getFileName(fileName), packagedFile);

@@ -103,8 +103,7 @@
         "meta": {
             "displayName": "Spanning"
         },
-        "getColSpan": {},
-        "getRowSpan": {}
+        "getColSpan": {}
     },
     "selection": {
         "meta": {

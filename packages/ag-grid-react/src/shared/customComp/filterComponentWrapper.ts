@@ -10,7 +10,7 @@ export class FilterComponentWrapper
 {
     private model: any = null;
     private readonly onModelChange = (model: any) => this.updateModel(model);
-    private readonly onUiChange = () => this.sourceParams.filterChangedCallback();
+    private readonly onUiChange = () => this.sourceParams.filterModifiedCallback();
     private expectingNewMethods = true;
     private hasBeenActive = false;
     private resolveSetMethodsCallback!: () => void;

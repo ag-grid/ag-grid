@@ -1,17 +1,14 @@
-import type { ChartType } from 'ag-grid-community';
-
 import type { AgChartsExports } from '../../../../../agChartsExports';
-import type { ThemeTemplateParameters } from '../../miniChartsContainer';
-import { MiniStackedColumn } from './miniStackedColumn';
+import type { MiniChartSelector, ThemeTemplateParameters } from '../../miniChartsContainer';
+import { MiniStackedColumnClass } from './miniStackedColumn';
 
-export class MiniNormalizedColumn extends MiniStackedColumn {
-    static override chartType: ChartType = 'normalizedColumn';
-    static override data = [
-        [10, 10, 10],
-        [6, 7, 8],
-        [2, 4, 6],
-    ];
+export const miniNormalizedColumnData = [
+    [10, 10, 10],
+    [6, 7, 8],
+    [2, 4, 6],
+];
 
+export class MiniNormalizedColumnClass extends MiniStackedColumnClass {
     constructor(
         container: HTMLElement,
         agChartsExports: AgChartsExports,
@@ -27,9 +24,14 @@ export class MiniNormalizedColumn extends MiniStackedColumn {
             strokes,
             themeTemplateParameters,
             isCustomTheme,
-            MiniNormalizedColumn.data,
+            miniNormalizedColumnData,
             [0, 10],
             'normalizedColumnTooltip'
         );
     }
 }
+
+export const MiniNormalizedColumn: MiniChartSelector = {
+    chartType: 'normalizedColumn',
+    miniChart: MiniNormalizedColumnClass,
+};

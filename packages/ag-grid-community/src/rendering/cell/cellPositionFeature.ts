@@ -5,6 +5,7 @@ import type { RowNode } from '../../entities/rowNode';
 import { _getRowHeightAsNumber } from '../../gridOptionsUtils';
 import { _areEqual, _last } from '../../utils/array';
 import { _missing } from '../../utils/generic';
+import type { CellSpan } from '../spanning/rowSpanCache';
 import type { CellCtrl } from './cellCtrl';
 
 /**
@@ -14,10 +15,11 @@ import type { CellCtrl } from './cellCtrl';
  *  #) Cell Left (the horizontal positioning of the cell, the vertical positioning is on the row)
  */
 export class CellPositionFeature extends BeanStub {
-    private eGui: HTMLElement;
-
     private readonly column: AgColumn;
     private readonly rowNode: RowNode;
+
+    private eSetLeft: HTMLElement;
+    private eContent: HTMLElement;
 
     private colsSpanning: AgColumn[];
     private rowSpan: number;
@@ -40,17 +42,39 @@ export class CellPositionFeature extends BeanStub {
         this.addManagedListeners(this.beans.eventSvc, { newColumnsLoaded: () => this.onNewColumnsLoaded() });
     }
 
-    public setComp(eGui: HTMLElement): void {
-        this.eGui = eGui;
+    public init(): void {
+        this.eSetLeft = this.cellCtrl.getRootElement();
+        this.eContent = this.cellCtrl.eGui;
+
+        const cellSpan = this.cellCtrl.getCellSpan();
 
         // add event handlers only after GUI is attached,
         // so we don't get events before we are ready
-        this.setupColSpan();
-        this.setupRowSpan();
+        if (!cellSpan) {
+            this.setupColSpan();
+            this.setupRowSpan();
+        }
 
         this.onLeftChanged();
         this.onWidthChanged();
-        this.applyRowSpan();
+        if (!cellSpan) {
+            this._legacyApplyRowSpan();
+        }
+
+        if (cellSpan) {
+            this.refreshSpanHeight(cellSpan);
+            this.addManagedListeners(this.beans.eventSvc, {
+                paginationChanged: this.refreshSpanHeight.bind(this, cellSpan),
+                recalculateRowBounds: this.refreshSpanHeight.bind(this, cellSpan),
+            });
+        }
+    }
+
+    private refreshSpanHeight(cellSpan: CellSpan) {
+        const spanHeight = cellSpan.getCellHeight();
+        if (spanHeight != null) {
+            this.eContent.style.height = `${spanHeight}px`;
+        }
     }
 
     private onNewColumnsLoaded(): void {
@@ -60,7 +84,7 @@ export class CellPositionFeature extends BeanStub {
         }
 
         this.rowSpan = rowSpan;
-        this.applyRowSpan(true);
+        this._legacyApplyRowSpan(true);
     }
 
     private onDisplayColumnsChanged(): void {
@@ -93,11 +117,11 @@ export class CellPositionFeature extends BeanStub {
     }
 
     public onWidthChanged(): void {
-        if (!this.eGui) {
+        if (!this.eContent) {
             return;
         }
         const width = this.getCellWidth();
-        this.eGui.style.width = `${width}px`;
+        this.eContent.style.width = `${width}px`;
     }
 
     private getCellWidth(): number {
@@ -136,11 +160,11 @@ export class CellPositionFeature extends BeanStub {
     }
 
     public onLeftChanged(): void {
-        if (!this.eGui) {
+        if (!this.eSetLeft) {
             return;
         }
         const left = this.modifyLeftForPrintLayout(this.getCellLeft());
-        this.eGui.style.left = left + 'px';
+        this.eSetLeft.style.left = left + 'px';
     }
 
     private getCellLeft(): number | null {
@@ -172,7 +196,7 @@ export class CellPositionFeature extends BeanStub {
         return leftWidth + (leftPosition || 0);
     }
 
-    private applyRowSpan(force?: boolean): void {
+    private _legacyApplyRowSpan(force?: boolean): void {
         if (this.rowSpan === 1 && !force) {
             return;
         }
@@ -180,8 +204,8 @@ export class CellPositionFeature extends BeanStub {
         const singleRowHeight = _getRowHeightAsNumber(this.beans);
         const totalRowHeight = singleRowHeight * this.rowSpan;
 
-        this.eGui.style.height = `${totalRowHeight}px`;
-        this.eGui.style.zIndex = '1';
+        this.eContent.style.height = `${totalRowHeight}px`;
+        this.eContent.style.zIndex = '1';
     }
 
     // overriding to make public, as we don't dispose this bean via context

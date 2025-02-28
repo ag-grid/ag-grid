@@ -59,12 +59,12 @@ interface MiniChartMenuItem {
     range: boolean;
     pivot: boolean;
     enterprise: boolean;
-    icon: MiniChartConstructor;
+    icon: MiniChartSelector;
 }
 
-type MiniChartConstructor = {
+export type MiniChartSelector = {
     chartType: ChartType;
-    new (...args: any[]): MiniChart;
+    miniChart: new (...args: any[]) => MiniChart;
 };
 
 const miniChartMapping: MiniChartMenuMapping = {
@@ -253,13 +253,13 @@ export class MiniChartsContainer extends Component {
             );
 
             for (const menuItem of items) {
-                const MiniClass = menuItem.icon;
+                const { miniChart: MiniClass, chartType } = menuItem.icon;
                 const miniWrapper = document.createElement('div');
                 miniWrapper.classList.add('ag-chart-mini-thumbnail');
                 miniWrapper.setAttribute('tabindex', '0');
                 miniWrapper.setAttribute('role', 'button');
 
-                const miniClassChartType: ChartType = MiniClass.chartType;
+                const miniClassChartType: ChartType = chartType;
                 const listener = () => {
                     this.chartController.setChartType(miniClassChartType);
                     this.updateSelectedMiniChart();

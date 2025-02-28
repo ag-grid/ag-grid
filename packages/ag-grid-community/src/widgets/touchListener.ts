@@ -137,7 +137,7 @@ export class TouchListener implements IEventEmitter<TouchListenerEvent> {
     }
 
     private checkForDoubleTap(): void {
-        const now = new Date().getTime();
+        const now = Date.now();
 
         if (this.lastTapTime && this.lastTapTime > 0) {
             // if previous tap, see if duration is short enough to be considered double tap

@@ -1,5 +1,6 @@
+import type { GridApi } from '../api/gridApi';
 import type { AgColumn } from '../entities/agColumn';
-import type { SelectAllMode } from '../entities/gridOptions';
+import type { GridOptions, SelectAllMode } from '../entities/gridOptions';
 import type { RowNode } from '../entities/rowNode';
 import type { SelectionEventSourceType } from '../events';
 import type { RowCtrl, RowGui } from '../rendering/row/rowCtrl';
@@ -45,9 +46,13 @@ export interface ISelectionService {
     createDaemonNode?(rowNode: RowNode): RowNode | undefined;
     handleSelectionEvent(event: MouseEvent | KeyboardEvent, rowNode: RowNode, source: SelectionEventSourceType): number;
     isCellCheckboxSelection(column: AgColumn, rowNode: IRowNode): boolean;
+    refreshMasterNodeState(node: RowNode, e?: Event): void;
+    setDetailSelectionState(masterNode: RowNode, option: GridOptions, detailApi: GridApi): void;
 }
 
-interface ICommonSelectionParams {
+export interface ISetNodesSelectedParams {
+    /** nodes to change selection of */
+    nodes: readonly RowNode[];
     /** true or false, whatever you want to set selection to */
     newValue: boolean;
     /** whether to remove other selections after this selection is done */
@@ -58,9 +63,4 @@ interface ICommonSelectionParams {
     source: SelectionEventSourceType;
     /** originating event */
     event?: Event;
-}
-
-export interface ISetNodesSelectedParams extends ICommonSelectionParams {
-    /** nodes to change selection of */
-    nodes: readonly RowNode[];
 }

@@ -1,23 +1,30 @@
 @use 'design-system' as *;
 
 .docsHeaderIcon {
+    width: 28px;
+    height: 28px;
     position: relative;
-    padding-left: 0;
-    margin-left: $spacing-size-2;
-    font-size: inherit;
+    padding: 0 0 0 0;
+    margin-left: $spacing-size-1;
+    font-size: var(--text-fs-base);
+    transform: translateY(-10px);
     opacity: 0;
     transition: opacity 0.33s ease-in-out;
 
     svg {
+        --icon-size: 18px;
+        --icon-color: var(--color-link);
+
+        bottom: 0;
+        margin: 0;
         position: relative;
-        top: -0.1em;
-        width: 0.85em;
-        height: 0.85em;
         visibility: visible;
-        fill: var(--color-link);
+        transform: translate(4px, 2px);
+        pointer-events: none;
     }
 
-    &:hover {
+    &:hover,
+    &.active {
         opacity: 1;
     }
 }
@@ -30,10 +37,76 @@ h4,
 h5,
 h6 {
     &:hover .docsHeaderIcon {
-        opacity: 0.5;
+        opacity: 1;
+    }
+}
 
-        &:hover {
-            opacity: 1;
-        }
+.tooltip {
+    --tooltip-background: var(--color-fg-primary);
+
+    position: absolute;
+    display: block;
+    color: var(--color-bg-primary);
+    top: -38px;
+    left: 50%;
+    padding: $spacing-size-1 $spacing-size-4;
+    white-space: nowrap;
+    font-size: var(--text-fs-sm);
+    background-color: var(--tooltip-background);
+    border-radius: 6px;
+    transform: translate(-50%, $spacing-size-1);
+    opacity: 0;
+    pointer-events: none;
+    transition:
+        opacity 0.165s ease-in,
+        transform 0.165s ease-in;
+    z-index: 1;
+
+    &::before {
+        $pointer-size: 8px;
+
+        content: '';
+        position: absolute;
+        background-color: var(--tooltip-background);
+        width: $pointer-size * 2;
+        height: $pointer-size * 2;
+        transform: rotate(45deg);
+        bottom: -7px;
+        left: calc(50% - $pointer-size);
+        border-radius: 3px;
+        z-index: -1;
+    }
+
+    .docsHeaderIcon:hover &,
+    .docsHeaderIcon.active & {
+        opacity: 1;
+        transform: translate(-50%, 0);
+        transition:
+            opacity 0.33s ease-in,
+            transform 0.33s ease-in;
+    }
+
+    .docsHeaderIcon.active & {
+        animation-name: bounce;
+        animation-duration: 0.25s;
+    }
+
+    #{$selector-darkmode} & {
+        --tooltip-background: var(--color-bg-secondary);
+
+        color: var(--color-fg-primary);
+        box-shadow: 0 -4px 16px 0 rgba(0, 0, 0, 0.4);
+    }
+}
+
+@keyframes bounce {
+    0% {
+        transform: translate(-50%, 0);
+    }
+    50% {
+        transform: translate(-50%, -$spacing-size-1);
+    }
+    100% {
+        transform: translate(-50%, 0);
     }
 }

@@ -224,16 +224,16 @@ export function _applyColumnState(
 
         // sync newly created auto group columns with ColumnState
         syncColStates(
-            (colId: string) => autoColSvc?.getAutoCol(colId) ?? null,
+            (colId: string) => autoColSvc?.getColumn(colId) ?? null,
             autoColStates,
-            autoColSvc?.getAutoCols()?.slice()
+            autoColSvc?.getColumns()?.slice()
         );
 
         // sync selection columns with ColumnState
         syncColStates(
-            (colId: string) => selectionColSvc?.getSelectionCol(colId) ?? null,
+            (colId: string) => selectionColSvc?.getColumn(colId) ?? null,
             selectionColStates,
-            selectionColSvc?.getSelectionCols()?.slice()
+            selectionColSvc?.getColumns()?.slice()
         );
 
         orderLiveColsLikeState(params, colModel, gos);
@@ -291,7 +291,7 @@ export function _resetColumnState(beans: BeanCollection, source: ColumnEventType
     let letPivotIndex = 1000;
 
     let colsToProcess: AgColumn[] = [];
-    const groupAutoCols = autoColSvc?.getAutoCols();
+    const groupAutoCols = autoColSvc?.getColumns();
     if (groupAutoCols) {
         colsToProcess = colsToProcess.concat(groupAutoCols);
     }

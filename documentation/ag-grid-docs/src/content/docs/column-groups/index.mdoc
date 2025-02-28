@@ -110,8 +110,8 @@ The grid does not automatically color the groups for you. However, you can achie
 const gridOptions = {
     columnDefs: [
         // the CSS class name supplied to 'headerClass' will get applied to the header group
-        { headerName: 'Athlete Details', headerClass: 'my-css-class', children: []},
-        { headerName: 'Medal Details', headerStyle: { backgroundColor: 'green', children: []}
+        { headerName: 'Athlete Details', headerClass: 'my-css-class', children: [] },
+        { headerName: 'Medal Details', headerStyle: { backgroundColor: 'green', children: [] } }
     ]
 }
 ```
@@ -131,7 +131,7 @@ The labels in the grouping headers are positioned with `display: flex`. To make 
 When Column Groups are too wide, the **Header Label** is always visible while scrolling the grid horizontally. To suppress this behaviour, set the column group property `suppressStickyLabel=true`. The example below demonstrates the following:
 
 * Both 'Athlete Details' and 'Sport Results' have `suppressStickyLabel=true`.
-* If you scroll the grid horizontally, the header label will not be visible until the column is completely out of view.
+* If you scroll the grid horizontally, the header label will not remain visible as the column is partially scrolled out of view.
 
 {% gridExampleRunner title="Sticky Label" name="suppress-sticky-label"  exampleHeight=560 /%}
 
@@ -216,8 +216,8 @@ the other header group functionality such as the expand / collapse.
 colDef = {
     ...
     headerGroupComponentParams : {
-        innerHeaderComponent: MyInnerHeaderGroupComponent,
-        innerHeaderComponentParams: {
+        innerHeaderGroupComponent: MyInnerHeaderGroupComponent,
+        innerHeaderGroupComponentParams: {
             currencySymbol: '£' // the pound symbol will be placed into params
         }
     }
@@ -240,6 +240,38 @@ colDef = {
 {% /if %}
 
 {% gridExampleRunner title="Custom Inner Header Group Component" name="inner-header-group-component" /%}
+
+{% if isFramework("javascript", "angular") %}
+Implement this interface to provide a custom inner header component.
+{% /if %}
+{% if isFramework("javascript") %}
+### IInnerHeaderGroupComponent
+{% interfaceDocumentation interfaceName="IInnerHeaderGroupComponent" config={"asCode":true } /%}
+{% /if %}
+{% if isFramework("angular") %}
+### IInnerHeaderGroupAngularComp
+{% interfaceDocumentation interfaceName="IInnerHeaderGroupAngularComp" config={"asCode":true } /%}
+{% /if %}
+{% if isFramework("javascript", "angular") %}
+### IHeaderGroupParams
+{% interfaceDocumentation interfaceName="IHeaderGroupParams" exclude=["template"] config={ "description": "" } /%}
+{% /if %}
+{% if isFramework("react") %}
+```ts
+const CustomInnerHeaderGroupComponent = (props: CustomInnerHeaderGroupProps) => {
+    return <div>{props.displayName}</div>;
+};
+```
+The following props are passed to the Custom Component (`CustomInnerHeaderGroupProps` interface).
+### CustomInnerHeaderGroupProps
+{% interfaceDocumentation interfaceName="CustomInnerHeaderGroupProps" config={ "description": "" } /%}
+{% /if %}
+{% if isFramework("vue") %}
+Any valid Vue component can be a custom inner header group component, however it must implement the `IHeaderGroup` interface:
+
+### IHeaderGroup
+{% interfaceDocumentation interfaceName="IHeaderGroup" config={"asCode":true } /%}
+{% /if %}
 
 ## Selecting Components
 

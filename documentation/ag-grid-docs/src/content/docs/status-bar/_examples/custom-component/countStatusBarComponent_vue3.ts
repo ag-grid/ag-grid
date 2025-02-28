@@ -11,11 +11,11 @@ export default {
         };
     },
     beforeMount() {
-        this.params.api.addEventListener('gridReady', this.onGridReady.bind(this));
+        this.params.api.addEventListener('rowDataUpdated', () => {
+            this.count = this.params.api.getDisplayedRowCount();
+        });
     },
     methods: {
-        onGridReady(params) {
-            this.count = this.params.api.getDisplayedRowCount();
-        },
+        onGridReady(params) {},
     },
 };

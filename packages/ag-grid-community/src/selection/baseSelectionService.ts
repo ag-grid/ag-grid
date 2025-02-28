@@ -85,7 +85,7 @@ export abstract class BaseSelectionService extends BeanStub {
         }
 
         const selected = rowNode.isSelected()!;
-        if (selected && !_getEnableDeselection(this.gos)) {
+        if (!rowNode.selectable) {
             return;
         }
 
@@ -96,13 +96,6 @@ export abstract class BaseSelectionService extends BeanStub {
         );
 
         this.beans.ariaAnnounce?.announceValue(label, 'rowSelection');
-    }
-
-    protected dispatchSelectionChanged(source: SelectionEventSourceType): void {
-        this.eventSvc.dispatchEvent({
-            type: 'selectionChanged',
-            source,
-        });
     }
 
     public updateGroupsFromChildrenSelections?(source: SelectionEventSourceType, changedPath?: ChangedPath): boolean;

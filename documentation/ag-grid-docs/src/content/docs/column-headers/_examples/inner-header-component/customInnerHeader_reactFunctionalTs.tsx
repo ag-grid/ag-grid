@@ -1,8 +1,8 @@
 import React from 'react';
 
-import type { CustomHeaderProps } from 'ag-grid-react';
+import type { CustomInnerHeaderProps } from 'ag-grid-react';
 
-export interface MyCustomInnerHeaderProps extends CustomHeaderProps {
+export interface MyCustomInnerHeaderProps extends CustomInnerHeaderProps {
     icon: string;
 }
 

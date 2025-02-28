@@ -399,6 +399,12 @@
                 "name": "Grid State",
                 "url": "./grid-state/"
             }
+        },
+        "findChanged": {
+            "more": {
+                "name": "Find",
+                "url": "./find/"
+            }
         }
     },
     "clientRowModel": {

@@ -9,6 +9,7 @@ export default [
             },
         },
         rules: {
+            'no-undef': 0,
             '@typescript-eslint/no-var-requires': 0,
             '@typescript-eslint/ban-types': 0,
             '@typescript-eslint/no-floating-promises': 2,

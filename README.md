@@ -1,11 +1,13 @@
 # JavaScript Data Grid | JavaScript Table
 
 <div align="center">
-    <picture>
-      <source media="(prefers-color-scheme: dark)" srcset="https://github.com/ag-grid/ag-grid/blob/latest/documentation/ag-grid-docs/public/images/ag-logos/svg-logos/AG-Grid-Logo_Dark-Theme.svg?raw=true"/>
-      <source media="(prefers-color-scheme: light)" srcset="https://github.com/ag-grid/ag-grid/blob/latest/documentation/ag-grid-docs/public/images/ag-logos/svg-logos/AG-Grid-Logo_Light-Theme.svg?raw=true"/>
-      <img width="100%" alt="AG Grid Logo" src="https://github.com/ag-grid/ag-grid/blob/latest/documentation/ag-grid-docs/public/images/ag-logos/svg-logos/AG-Grid-Logo_Light-Theme.svg?raw=true"/>
-    </picture>
+    <a href="https://www.ag-grid.com?utm_source=ag-grid-readme&utm_medium=repository&utm_campaign=github">
+        <picture>
+        <source media="(prefers-color-scheme: dark)" srcset="https://github.com/ag-grid/ag-grid/blob/latest/documentation/ag-grid-docs/public/images/ag-logos/svg-logos/AG-Grid-Logo_Dark-Theme.svg?raw=true"/>
+        <source media="(prefers-color-scheme: light)" srcset="https://github.com/ag-grid/ag-grid/blob/latest/documentation/ag-grid-docs/public/images/ag-logos/svg-logos/AG-Grid-Logo_Light-Theme.svg?raw=true"/>
+        <img width="100%" alt="AG Grid Logo" src="https://github.com/ag-grid/ag-grid/blob/latest/documentation/ag-grid-docs/public/images/ag-logos/svg-logos/AG-Grid-Logo_Light-Theme.svg?raw=true"/>
+        </picture>
+    </a>
     <div align="center">
         <h4><a href="https://www.ag-grid.com?utm_source=ag-grid-readme&utm_medium=repository&utm_campaign=github">🌐 Website</a> • <a href="https://www.ag-grid.com/javascript-data-grid/getting-started/?utm_source=ag-grid-readme&utm_medium=repository&utm_campaign=github">📖 Documentation</a> • <a href="https://www.ag-grid.com/community?utm_source=ag-grid-readme&utm_medium=repository&utm_campaign=github">🏘️ Community</a></h4>
     </div>
@@ -252,58 +254,44 @@ We also provide [Seed Projects](https://github.com/ag-grid/ag-grid-seed) to help
     <tr>
       <th>Environment</th>
       <th>Framework</th>
-      <th>Packages</th>
-      <th>Modules</th>
     </tr>
   </thead>
   <tbody>
     <tr>
-      <td>Create React App (CRA)</td>
+      <td><a href="https://github.com/ag-grid/ag-grid-seed/tree/main/enterprise/packages/create-react-app">Create React App (CRA)</a></td>
       <td align="middle"><img width="22" height="22" src="https://github.com/ag-grid/ag-grid/blob/latest/documentation/ag-grid-docs/public/images/fw-logos/react.svg?raw=true" alt="React Logo"></td>
-      <td><a href="https://github.com/ag-grid/ag-grid-seed/tree/main/enterprise/packages/create-react-app">Packages</a></td>
-      <td><a href="https://github.com/ag-grid/ag-grid-seed/tree/main/enterprise/modules/create-react-app">Modules</a></td>
     </tr>
     <tr>
-      <td>Vite</td>
+      <td><a href="https://github.com/ag-grid/ag-grid-seed/tree/main/enterprise/packages/vite-react">Vite</a></td>
       <td align="middle"><img width="22" height="22" src="https://github.com/ag-grid/ag-grid/blob/latest/documentation/ag-grid-docs/public/images/fw-logos/react.svg?raw=true" alt="React Logo"></td>
-      <td><a href="https://github.com/ag-grid/ag-grid-seed/tree/main/enterprise/packages/vite-react">Packages</a></td>
-      <td><a href="https://github.com/ag-grid/ag-grid-seed/tree/main/enterprise/modules/vite-react">Modules</a></td>
     </tr>
     <tr>
-      <td>Vite - TypeScript</td>
+      <td><a href="https://github.com/ag-grid/ag-grid-seed/tree/main/enterprise/packages/create-next-app">Create Next App</a></td>
+      <td align="middle"><img width="22" height="22" src="https://github.com/ag-grid/ag-grid/blob/latest/documentation/ag-grid-docs/public/images/fw-logos/react.svg?raw=true" alt="React Logo"></td>
+    </tr>
+    <tr>
+      <td><a href="https://github.com/ag-grid/ag-grid-seed/tree/main/enterprise/packages/vite-typescript">Vite - TypeScript</a></td>
       <td align="middle"><img width="22" height="22" src="https://github.com/ag-grid/ag-grid/blob/latest/documentation/ag-grid-docs/public/community/frameworks/typescript.svg?raw=true" alt="TypeScript Logo"></td>
-      <td><a href="https://github.com/ag-grid/ag-grid-seed/tree/main/enterprise/packages/vite-typescript">Packages</a></td>
-      <td><a href="https://github.com/ag-grid/ag-grid-seed/tree/main/enterprise/modules/vite-typescript">Modules</a></td>
     </tr>
     <tr>
-      <td>Webpack 5 - TypeScript</td>
+      <td><a href="https://github.com/ag-grid/ag-grid-seed/tree/main/enterprise/packages/webpack5-typescript">Webpack 5 - TypeScript</a></td>
       <td align="middle"><img width="22" height="22" src="https://github.com/ag-grid/ag-grid/blob/latest/documentation/ag-grid-docs/public/community/frameworks/typescript.svg?raw=true" alt="TypeScript Logo"></td>
-      <td><a href="https://github.com/ag-grid/ag-grid-seed/tree/main/enterprise/packages/webpack5-typescript">Packages</a></td>
-      <td><a href="https://github.com/ag-grid/ag-grid-seed/tree/main/enterprise/modules/webpack5-typescript">Modules</a></td>
     </tr>
     <tr>
-      <td>Webpack 5 - JavaScript</td>
+      <td><a href="https://github.com/ag-grid/ag-grid-seed/tree/main/enterprise/packages/webpack5-javascript">Webpack 5 - JavaScript</a></td>
       <td align="middle"><img width="22" height="22" src="https://github.com/ag-grid/ag-grid/blob/latest/documentation/ag-grid-docs/public/images/fw-logos/javascript.svg?raw=true" alt="JavaScript Logo"></td>
-      <td><a href="https://github.com/ag-grid/ag-grid-seed/tree/main/enterprise/packages/webpack5-javascript">Packages</a></td>
-      <td><a href="https://github.com/ag-grid/ag-grid-seed/tree/main/enterprise/modules/webpack5-javascript">Modules</a></td>
     </tr>
     <tr>
-      <td>Angular CLI</td>
+      <td><a href="https://github.com/ag-grid/ag-grid-seed/tree/main/enterprise/packages/angular-cli">Angular CLI</a></td>
       <td align="middle"><img width="22" height="22" src="https://github.com/ag-grid/ag-grid/blob/latest/documentation/ag-grid-docs/public/images/fw-logos/angular.svg?raw=true" alt="Angular Logo"></td>
-      <td><a href="https://github.com/ag-grid/ag-grid-seed/tree/main/enterprise/packages/angular-cli">Packages</a></td>
-      <td><a href="https://github.com/ag-grid/ag-grid-seed/tree/main/enterprise/modules/angular-cli">Modules</a></td>
     </tr>
     <tr>
-      <td>Nuxt</td>
+      <td><a href="https://github.com/ag-grid/ag-grid-seed/tree/main/enterprise/packages/nuxt-vue3">Nuxt</a></td>
       <td align="middle"><img width="22" height="22" src="https://github.com/ag-grid/ag-grid/blob/latest/documentation/ag-grid-docs/public/images/fw-logos/vue.svg?raw=true" alt="Vue3 Logo"></td>
-      <td><a href="https://github.com/ag-grid/ag-grid-seed/tree/main/enterprise/packages/nuxt-vue3">Packages</a></td>
-      <td><a href="https://github.com/ag-grid/ag-grid-seed/tree/main/enterprise/modules/nuxt-vue3">Modules</a></td>
     </tr>
     <tr>
-      <td>Vite</td>
+      <td><a href="https://github.com/ag-grid/ag-grid-seed/tree/main/enterprise/packages/vite-vue3">Vite</a></td>
       <td align="middle"><img width="22" height="22" src="https://github.com/ag-grid/ag-grid/blob/latest/documentation/ag-grid-docs/public/images/fw-logos/vue.svg?raw=true" alt="Vue3 Logo"></td>
-      <td><a href="https://github.com/ag-grid/ag-grid-seed/tree/main/enterprise/packages/vite-vue3">Packages</a></td>
-      <td><a href="https://github.com/ag-grid/ag-grid-seed/tree/main/enterprise/modules/vite-vue3">Modules</a></td>
     </tr>
   </tbody>
 </table>

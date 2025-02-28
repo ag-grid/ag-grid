@@ -1,14 +1,51 @@
 ---
 title: "AG Grid Modules"
+description: "Reduce your application bundle size by cherry-picking grid features. Use the module selector to select the features you want to use and generate the code."
 ---
 
-Reduce your application bundle size by cherry picking grid features using AG Grid modules.
+Reduce your application bundle size by cherry-picking grid features using AG Grid modules, generate registration code with the module selector, and validate your setup with the validation module.
+
+{% if isFramework("javascript") %}
+{% note %}
+If you are using the UMD bundle you do not need to register modules as this is already done automatically.
+{% /note %}
+{% /if %}
+
+## Overview
+
+AG Grid Modules allow you to reduce the bundle size of your application by only including the modules you want to use. Use the [Module Selector](#selecting-modules) tool below to select the modules you want to use and generate the correct module registration code.
+
+Alternatively, if you are not concerned about bundle size and you want access to every feature in Community / Enterprise, use [Bundles](#bundles) to include all Community / Enterprise modules.
 
 ## Bundles
 
-To include all community or enterprise modules, either the `AllCommunityModule` or `AllEnterpriseModule` bundle can be used. This replicates the behaviour of the package versions of AG Grid prior to version 33.
+The `AllCommunityModule` bundle contains all of the modules available in AG Grid Community. The `AllEnterpriseModule` bundle contains all of the modules available in Community and Enterprise. Registering one of these bundles replicates the behaviour of the package versions of AG Grid prior to version 33:
 
-If you are using the enterprise features Integrated Charts or Sparklines, then you need to provide the relevant module from AG Charts to `AllEnterpriseModule`, e.g. `AllEnterpriseModule.with(AgChartsEnterpriseModule)`. Use the [Module Selector](#selecting-modules) tool below to help generate the correct registration code.
+```js
+// Import ModuleRegistry and the required module
+import {
+    ModuleRegistry,
+    AllCommunityModule, // or AllEnterpriseModule
+} from 'ag-grid-community';
+
+// Register the module
+ModuleRegistry.registerModules([
+    AllCommunityModule, // or AllEnterpriseModule
+]);
+```
+
+If you are using [Integrated Charts](./integrated-charts/) or [Sparklines](./sparklines-overview/), then you need to provide the relevant module from AG Charts to `AllEnterpriseModule`, for example:
+
+```js
+import { AgChartsEnterpriseModule } from 'ag-charts-enterprise';
+import { ModuleRegistry } from 'ag-grid-community';
+import { AllEnterpriseModule,} from 'ag-grid-enterprise';
+
+// All Enterprise Features, with Integrated Charts and Sparklines 
+ModuleRegistry.registerModules([
+    AllEnterpriseModule.with(AgChartsEnterpriseModule),
+]);
+```
 
 ## Selecting Modules
 

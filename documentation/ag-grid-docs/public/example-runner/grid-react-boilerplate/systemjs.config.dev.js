@@ -65,6 +65,11 @@
                 defaultExtension: 'js',
                 format: 'cjs',
             },
+            'ag-charts-core': {
+                main: './dist/package/main.cjs.js',
+                defaultExtension: 'js',
+                format: 'cjs',
+            },
             'ag-charts-community': {
                 main: './dist/package/main.cjs.js',
                 defaultExtension: 'js',

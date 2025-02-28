@@ -19,9 +19,23 @@ export class FunnelChartProxy extends ChartProxy<AgStandaloneChartOptions, Funne
     ): AgStandaloneChartOptions {
         return {
             ...commonChartOptions,
-            data: params.data,
+            data: this.transformFunnelCategories(params),
             series: this.getSeries(params) as AgStandaloneChartOptions['series'],
         };
+    }
+
+    private transformFunnelCategories(params: UpdateParams): any[] {
+        const { data } = params;
+        const [{ id }] = params.categories;
+
+        return data.map((d, index) => ({
+            ...d,
+            [id]: {
+                name: d[id],
+                id: index,
+                toString: () => d[id],
+            },
+        }));
     }
 
     protected override getSeriesChartThemeDefaults(): AgChartThemeOverrides[FunnelChartTypes] {
@@ -32,6 +46,9 @@ export class FunnelChartProxy extends ChartProxy<AgStandaloneChartOptions, Funne
         };
 
         return {
+            zoom: {
+                enabled: false,
+            },
             axes: {
                 category: config,
                 number: config,

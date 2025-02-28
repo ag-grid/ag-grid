@@ -10,31 +10,10 @@ $z-index-debug-panel: $z-index-splash + 10;
 $z-index-splash-contents: 10;
 
 .automatedExampleWrapper {
-    --ic-grid-height: 550px;
-
     position: relative;
-    width: 100%;
     z-index: $z-index-grid;
-
-    @media screen and (max-width: $breakpoint-automated-row-grouping-medium) {
-        height: calc(var(--ic-grid-height) / 2);
-        overflow: hidden;
-        pointer-events: none;
-    }
-
-    @media screen and (max-width: $breakpoint-automated-row-grouping-small) {
-        height: calc(var(--ic-grid-height) / 3);
-    }
-
-    @media screen and (min-width: $breakpoint-automated-row-grouping-medium) {
-        --ic-grid-height: 450px;
-
-        height: var(--ic-grid-height);
-    }
-
-    @media screen and (min-width: $breakpoint-automated-row-grouping-large) {
-        --ic-grid-height: 600px;
-    }
+    aspect-ratio: 16 / 9;
+    overflow: hidden;
 
     svg[class*='logo-mark'] {
         position: absolute;
@@ -50,12 +29,12 @@ $z-index-splash-contents: 10;
 
 :global(.automated-integrated-charts-grid.ag-theme-quartz),
 :global(.automated-integrated-charts-grid.ag-theme-quartz-dark) {
-    @media screen and (max-width: $breakpoint-automated-row-grouping-medium) {
+    aspect-ratio: 16 / 9;
+
+    @media screen and (max-width: $breakpoint-automated-integrated-charts-medium) {
         width: 200% !important;
-        height: var(--ic-grid-height) !important;
         transform-origin: top left;
         transform: scale(0.5);
-        overflow: hidden;
 
         :global(.overlay-button) {
             cursor: default;
@@ -64,12 +43,7 @@ $z-index-splash-contents: 10;
 
     @media screen and (max-width: $breakpoint-automated-row-grouping-small) {
         width: 300% !important;
-        height: var(--ic-grid-height) !important;
         transform: scale(0.3333);
-    }
-
-    @media screen and (min-width: $breakpoint-automated-row-grouping-medium) {
-        height: var(--ic-grid-height);
     }
 
     :global(.country) {
@@ -77,7 +51,7 @@ $z-index-splash-contents: 10;
         align-items: center;
         gap: $spacing-size-1;
 
-        @media screen and (max-width: $breakpoint-automated-row-grouping-medium) {
+        @media screen and (max-width: $breakpoint-automated-integrated-charts-medium) {
             gap: $spacing-size-2;
         }
     }
@@ -99,7 +73,7 @@ $z-index-splash-contents: 10;
     gap: $spacing-size-12;
     margin-top: $spacing-size-12;
 
-    @media screen and (min-width: $breakpoint-automated-row-grouping-medium) {
+    @media screen and (min-width: $breakpoint-automated-integrated-charts-medium) {
         display: flex;
     }
 
@@ -128,7 +102,7 @@ $z-index-splash-contents: 10;
         top: $mouse-offset-top;
         left: $mouse-offset-left;
 
-        @media screen and (max-width: $breakpoint-automated-row-grouping-medium) {
+        @media screen and (max-width: $breakpoint-automated-integrated-charts-medium) {
             top: calc(#{$mouse-offset-top} * var(--mobile-mouse-scale));
             left: calc(#{$mouse-offset-left} * var(--mobile-mouse-scale));
             width: calc(#{$mouse-base-width} * var(--mobile-mouse-scale));

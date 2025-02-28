@@ -1,76 +1,78 @@
 import { createPart } from '../../Part';
+import type { Part } from '../../Part';
+import type { ColorValue, ImageValue, LengthValue } from '../../theme-types';
 import { accentColor, backgroundColor, foregroundBackgroundMix } from '../../theme-utils';
 import { checkboxStyleDefaultCSS } from './checkbox-style-default.css-GENERATED';
 
-type CheckboxStyleDefaultParams = {
+export type CheckboxStyleParams = {
     /**
      * Border radius for checkboxes
      */
-    checkboxBorderRadius: never;
+    checkboxBorderRadius: LengthValue;
 
     /**
      * Border width for checkboxes
      */
-    checkboxBorderWidth: never;
+    checkboxBorderWidth: LengthValue;
 
     /**
      * Background color of a checked checkbox
      */
-    checkboxCheckedBackgroundColor: never;
+    checkboxCheckedBackgroundColor: ColorValue;
 
     /**
      * Border color of a checked checkbox
      */
-    checkboxCheckedBorderColor: never;
+    checkboxCheckedBorderColor: ColorValue;
 
     /**
      * The color of the check mark on checked checkboxes.
      */
-    checkboxCheckedShapeColor: never;
+    checkboxCheckedShapeColor: ColorValue;
 
     /**
      * An image defining the shape of the check mark on checked checkboxes.
      */
-    checkboxCheckedShapeImage: never;
+    checkboxCheckedShapeImage: ImageValue;
 
     /**
      * Background color of an indeterminate checkbox
      */
-    checkboxIndeterminateBackgroundColor: never;
+    checkboxIndeterminateBackgroundColor: ColorValue;
 
     /**
      * Border color of an indeterminate checkbox
      */
-    checkboxIndeterminateBorderColor: never;
+    checkboxIndeterminateBorderColor: ColorValue;
 
     /**
      * The color of the dash mark on indeterminate checkboxes
      */
-    checkboxIndeterminateShapeColor: never;
+    checkboxIndeterminateShapeColor: ColorValue;
 
     /**
      * An image defining the shape of the dash mark on indeterminate checkboxes
      */
-    checkboxIndeterminateShapeImage: never;
+    checkboxIndeterminateShapeImage: ImageValue;
 
     /**
      * Background color of an unchecked checkbox
      */
-    checkboxUncheckedBackgroundColor: never;
+    checkboxUncheckedBackgroundColor: ColorValue;
 
     /**
      * Border color of an unchecked checkbox
      */
-    checkboxUncheckedBorderColor: never;
+    checkboxUncheckedBorderColor: ColorValue;
 
     /**
      * An image defining the shape of the mark on checked radio buttons
      */
-    radioCheckedShapeImage: never;
+    radioCheckedShapeImage: ImageValue;
 };
 
 const makeCheckboxStyleDefaultTreeShakeable = () =>
-    createPart<CheckboxStyleDefaultParams>({
+    createPart<CheckboxStyleParams>({
         feature: 'checkboxStyle',
         params: {
             checkboxBorderWidth: 1,
@@ -98,4 +100,4 @@ const makeCheckboxStyleDefaultTreeShakeable = () =>
         css: checkboxStyleDefaultCSS,
     });
 
-export const checkboxStyleDefault = /*#__PURE__*/ makeCheckboxStyleDefaultTreeShakeable();
+export const checkboxStyleDefault: Part<CheckboxStyleParams> = /*#__PURE__*/ makeCheckboxStyleDefaultTreeShakeable();

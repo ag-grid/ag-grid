@@ -323,7 +323,7 @@ export class StateService extends BeanStub implements NamedBean {
             if (hide) {
                 hiddenColIds.push(colId);
             }
-            if (flex || width) {
+            if (flex != null || width) {
                 columnSizes.push({ colId, flex: flex ?? undefined, width });
             }
         }

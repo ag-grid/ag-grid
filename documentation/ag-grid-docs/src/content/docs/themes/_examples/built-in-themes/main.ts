@@ -1,16 +1,8 @@
 import type { ColDef, GridOptions, Theme } from 'ag-grid-community';
-import {
-    AllCommunityModule,
-    ModuleRegistry,
-    createGrid,
-    themeAlpine,
-    themeBalham,
-    themeMaterial,
-    themeQuartz,
-} from 'ag-grid-community';
+import { ModuleRegistry, createGrid, themeAlpine, themeBalham, themeMaterial, themeQuartz } from 'ag-grid-community';
 import { AllEnterpriseModule } from 'ag-grid-enterprise';
 
-ModuleRegistry.registerModules([AllCommunityModule, AllEnterpriseModule]);
+ModuleRegistry.registerModules([AllEnterpriseModule]);
 
 const themes: Record<string, Theme> = {
     quartz: themeQuartz,

@@ -9,12 +9,12 @@ import type {
 } from 'ag-grid-community';
 
 export interface ISelectionStrategy extends Bean {
-    getSelectedState(): any;
+    getSelectedState(): IServerSideSelectionState | IServerSideGroupSelectionState;
     setSelectedState(state: IServerSideSelectionState | IServerSideGroupSelectionState): void;
     setNodesSelected(params: ISetNodesSelectedParams): number;
     isNodeSelected(node: RowNode): boolean | undefined;
     processNewRow(node: RowNode): void;
-    getSelectedNodes(): RowNode<any>[];
+    getSelectedNodes(nullWhenSelectAll?: boolean, warnWhenSelectAll?: boolean): RowNode<any>[] | null;
     getSelectedRows(): any[];
     getSelectionCount(): number;
     isEmpty(): boolean;

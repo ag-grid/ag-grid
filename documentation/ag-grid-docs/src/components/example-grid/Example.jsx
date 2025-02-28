@@ -25,6 +25,7 @@ import {
     RichSelectModule,
     RowGroupingModule,
     RowGroupingPanelModule,
+    RowNumbersModule,
     SetFilterModule,
     SideBarModule,
     SparklinesModule,
@@ -589,6 +590,7 @@ const ExampleInner = ({ darkMode }) => {
             SideBarModule,
             StatusBarModule,
             PivotModule,
+            RowNumbersModule,
             IntegratedChartsModule.with(AgChartsEnterpriseModule),
             SparklinesModule.with(AgChartsEnterpriseModule),
         ],
@@ -655,7 +657,9 @@ const ExampleInner = ({ darkMode }) => {
             undoRedoCellEditingLimit: 50,
             quickFilterText: null,
             autoGroupColumnDef: groupColumn,
+            rowNumbers: true,
             cellSelection: {
+                enableHeaderHighlight: true,
                 handle: {
                     mode: 'fill',
                 },

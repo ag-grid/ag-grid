@@ -199,6 +199,26 @@ export class HeaderNavigationService extends BeanStub implements NamedBean {
             nextHeader = this.findHeader(focusedHeader, normalisedDirection)!;
         }
 
+        const userFunc = gos.getCallback('tabToNextHeader');
+
+        if (fromTab && userFunc) {
+            const wasFocusedFromUserFunc = focusSvc.focusHeaderPositionFromUserFunc({
+                userFunc,
+                headerPosition: nextHeader,
+                direction: normalisedDirection,
+            });
+
+            // the user could have forced a change in rowHeaderIndex
+            if (wasFocusedFromUserFunc) {
+                const { headerRowIndex } = focusSvc.focusedHeader || {};
+                if (headerRowIndex != null && headerRowIndex != focusedHeader.headerRowIndex) {
+                    this.currentHeaderRowWithoutSpan = headerRowIndex;
+                }
+            }
+
+            return wasFocusedFromUserFunc;
+        }
+
         if (nextHeader || !fromTab) {
             return focusSvc.focusHeaderPosition({
                 headerPosition: nextHeader,
@@ -207,15 +227,6 @@ export class HeaderNavigationService extends BeanStub implements NamedBean {
                 allowUserOverride: true,
                 event,
             });
-        } else if (fromTab) {
-            const userFunc = gos.getCallback('tabToNextHeader');
-            if (userFunc) {
-                return focusSvc.focusHeaderPositionFromUserFunc({
-                    userFunc,
-                    headerPosition: nextHeader,
-                    direction: normalisedDirection,
-                });
-            }
         }
 
         return this.focusNextHeaderRow(focusedHeader, normalisedDirection, event);

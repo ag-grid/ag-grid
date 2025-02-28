@@ -16,6 +16,7 @@ import type {
 import {
     BeanStub,
     Component,
+    _addGridCommonParams,
     _anchorElementToMouseMoveEvent,
     _areCellsEqual,
     _createIconNoSpan,
@@ -103,7 +104,7 @@ export class ContextMenuService extends BeanStub implements NamedBean, IContextM
 
         if (typeof columnContextMenuItems === 'function') {
             return columnContextMenuItems(
-                gos.addGridCommonParams({
+                _addGridCommonParams(gos, {
                     column,
                     node,
                     value,
@@ -158,11 +159,12 @@ export class ContextMenuService extends BeanStub implements NamedBean, IContextM
     public handleContextMenuMouseEvent(
         mouseEvent: MouseEvent | undefined,
         touchEvent: TouchEvent | undefined,
-        rowComp: RowCtrl | null,
+        rowCtrl: RowCtrl | null,
         cellCtrl: CellCtrl
     ): void {
-        const rowNode = rowComp?.rowNode ?? null;
-        const column = cellCtrl?.column ?? null;
+        // prio cell ctrl first, in case of spanned cell, then rowCtrl in case of full width row
+        const rowNode = cellCtrl?.rowNode ?? rowCtrl?.rowNode ?? null;
+        const column = cellCtrl?.column ?? rowCtrl?.findFullWidthInfoForEvent(mouseEvent || touchEvent)?.column ?? null;
         const { valueSvc, ctrlsSvc } = this.beans;
         const value = column ? valueSvc.getValue(column, rowNode) : null;
 
@@ -202,12 +204,17 @@ export class ContextMenuService extends BeanStub implements NamedBean, IContextM
                     return;
                 }
 
+                const { target } = mouseEvent;
+
+                // if there is no event target, it means the event was created by `api.showContextMenu`.
+                const isFromFakeEvent = !target;
+
                 const shouldShowMenu =
                     // check if there are actual menu items to be displayed
                     menuItems &&
                     menuItems.length &&
                     // check if the element that triggered the context menu was removed from the DOM
-                    _isVisible(mouseEvent.target as HTMLElement) &&
+                    (isFromFakeEvent || _isVisible(target as HTMLElement)) &&
                     // overlay was displayed
                     !this.beans.overlays?.isExclusive();
 

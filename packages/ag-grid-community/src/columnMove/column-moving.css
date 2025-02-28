@@ -3,6 +3,10 @@
         transition: left 0.2s;
     }
 
+    .ag-spanned-cell-wrapper {
+        transition: left 0.2s;
+    }
+
     .ag-header-cell {
         transition: left 0.2s;
     }

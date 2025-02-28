@@ -6,6 +6,7 @@ import type { ThemeParam } from '@components/theme-builder/model/utils';
 import styled from '@emotion/styled';
 import * as RadixDropdown from '@radix-ui/react-dropdown-menu';
 
+import { getThemeDefaultParams } from '../component-utils';
 import { withErrorBoundary } from '../general/ErrorBoundary';
 import { FormField } from './FormField';
 import { SharedContent, SharedIndicator, SharedItem, SharedTrigger } from './dropdown-shared';
@@ -14,12 +15,12 @@ const borders: [ThemeParam, string][] = [
     ['wrapperBorder', 'Around grid'],
     ['rowBorder', 'Between rows'],
     ['columnBorder', 'Between columns'],
-    ['sidePanelBorder', 'Around side panel'],
+    ['headerRowBorder', 'Below header'],
 ];
 
 export const BordersEditor = withErrorBoundary(() => {
-    const params = useRenderedTheme()._getModeParams();
-    const selectedBorders = borders.filter(([param]) => !!params[param]).map(([, label]) => label);
+    const params = getThemeDefaultParams(useRenderedTheme());
+    const selectedBorders = borders.filter(([param]) => borderEnabled(param, params[param])).map(([, label]) => label);
 
     return (
         <FormField label="Borders">
@@ -40,6 +41,12 @@ export const BordersEditor = withErrorBoundary(() => {
     );
 });
 
+const borderEnabled = (paramName: string, border: unknown): boolean => {
+    if (!border) return false;
+    const css = paramValueToCss(paramName, border);
+    return !!(css && css !== 'none' && !css.includes('transparent'));
+};
+
 type BorderProps = {
     param: ThemeParam;
     label: string;
@@ -59,7 +66,7 @@ const BorderItem = (props: BorderProps) => {
     const theme = useRenderedTheme();
     let editorValue = value;
     if (editorValue == null) {
-        const params = theme._getModeParams();
+        const params = getThemeDefaultParams(theme);
         if (param.property in params) {
             editorValue = params[param.property];
         } else {
@@ -67,8 +74,7 @@ const BorderItem = (props: BorderProps) => {
         }
     }
 
-    const rendered = paramValueToCss(props.param, editorValue);
-    const checked = !!rendered && rendered !== 'none' && !rendered.includes('transparent');
+    const checked = borderEnabled(props.param, editorValue);
 
     return (
         <StyledItem

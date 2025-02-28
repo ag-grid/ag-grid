@@ -19,6 +19,7 @@ import {
     AgPickerField,
     KeyCode,
     RefPlaceholder,
+    _addGridCommonParams,
     _bindCellRendererToHtmlElement,
     _clearElement,
     _createIconNoSpan,
@@ -221,7 +222,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
             userCompDetails = _getEditorRendererDetails<RichSelectParams, IRichCellEditorRendererParams<TValue>>(
                 this.userCompFactory,
                 config,
-                {
+                _addGridCommonParams(this.gos, {
                     value,
                     valueFormatted,
                     getValue: () => this.getValue(),
@@ -233,7 +234,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
                         this.shouldDisplayTooltip = shouldDisplayTooltip;
                         this.tooltipFeature?.setTooltipAndRefresh(value);
                     },
-                }
+                })
             );
         }
 
@@ -328,8 +329,8 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
         }
 
         let idx = null;
+        listComponent.selectValue(this.value);
         if (this.value != null) {
-            listComponent.selectValue(this.value);
             idx = listComponent.getIndicesForValues(Array.isArray(value) ? value : [value])[0];
         }
 
@@ -476,19 +477,42 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
 
         const { suggestions, filteredValues } = this.getSuggestionsAndFilteredValues(this.searchString, searchStrings);
         const { filterList, highlightMatch, searchType = 'fuzzy' } = this.config;
-
-        const filterValueLen = filteredValues.length;
         const shouldFilter = !!(filterList && this.searchString !== '');
 
         this.filterListModel(shouldFilter ? filteredValues : values);
 
+        if (!this.highlightEmptyValue()) {
+            this.highlightListValue(suggestions, filteredValues, shouldFilter);
+        }
+
+        if (highlightMatch && searchType !== 'fuzzy') {
+            this.listComponent?.highlightFilterMatch(this.searchString);
+        }
+
+        this.displayOrHidePicker();
+    }
+
+    private highlightEmptyValue(): boolean {
+        if (this.searchString === '') {
+            const emptyIdx = this.searchStrings?.indexOf('');
+            if (emptyIdx !== undefined && emptyIdx !== -1) {
+                this.listComponent?.highlightIndex(emptyIdx);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private highlightListValue(suggestions: string[], filteredValues: TValue[], shouldFilter: boolean): void {
         if (suggestions.length) {
-            const topSuggestionIndex = shouldFilter ? 0 : searchStrings.indexOf(suggestions[0]);
-            this.listComponent?.highlightIndex(topSuggestionIndex);
+            const topSuggestionIndex = shouldFilter ? 0 : this.searchStrings?.indexOf(suggestions[0]);
+            if (topSuggestionIndex !== undefined) {
+                this.listComponent?.highlightIndex(topSuggestionIndex);
+            }
         } else {
             this.listComponent?.highlightIndex(-1);
 
-            if (!shouldFilter || filterValueLen) {
+            if (!shouldFilter || filteredValues.length) {
                 this.listComponent?.ensureIndexVisible(0);
             } else if (shouldFilter) {
                 this.getAriaElement().removeAttribute('data-active-option');
@@ -498,12 +522,6 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
                 }
             }
         }
-
-        if (highlightMatch && searchType !== 'fuzzy') {
-            this.listComponent?.highlightFilterMatch(this.searchString);
-        }
-
-        this.displayOrHidePicker();
     }
 
     private getSuggestionsAndFilteredValues(
@@ -524,7 +542,6 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
                 inputValue: searchValue,
                 allSuggestions: valueList,
                 hideIrrelevant: true,
-                addSequentialWeight: true,
             });
             suggestions = fuzzySearchResult.values;
 
@@ -660,7 +677,10 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
                 this.setValue(values, false, true, true);
             }
         } else {
-            this.setValue(listComponent.getLastItemHovered(), false, true);
+            const lastItemHovered = listComponent.getLastItemHovered();
+            if (lastItemHovered) {
+                this.setValue(lastItemHovered, false, true);
+            }
         }
         this.hidePicker();
     }

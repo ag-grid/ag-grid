@@ -56,12 +56,21 @@
     }
 }
 
-.searchExplainer {
+.searchExplainer,
+label.searchBreakingText {
     line-height: var(--text-lh-tight);
 
     @media screen and (max-width: $breakpoint-changelog-pipeline-large) {
         display: none;
     }
+}
+
+.searchBreakingText {
+    display: flex;
+    align-items: center;
+    gap: $spacing-size-1;
+    min-width: 160px;
+    margin-left: auto;
 }
 
 .checkboxLabel {

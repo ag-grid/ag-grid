@@ -1,13 +1,14 @@
-import { Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
 
-import { ICellRendererAngularComp } from 'ag-grid-angular';
-import { ICellRendererParams } from 'ag-grid-community';
+import type { ICellRendererAngularComp } from 'ag-grid-angular';
+import type { ICellRendererParams } from 'ag-grid-community';
 
 @Component({
     standalone: true,
+    changeDetection: ChangeDetectionStrategy.OnPush,
     template: `
         <span :class="imgSpan">
-            @for (number of arr; track $index) {
+            @for (number of arr(); track $index) {
                 <img [src]="src" :class="medalIcon" />
             }
         </span>
@@ -15,15 +16,14 @@ import { ICellRendererParams } from 'ag-grid-community';
 })
 export class CustomMedalCellRenderer implements ICellRendererAngularComp {
     src: string = 'https://www.ag-grid.com/example-assets/gold-star.png';
-    arr!: any[];
+    arr = signal<any[]>([]);
 
     agInit(params: ICellRendererParams): void {
         this.refresh(params);
     }
 
-    // Return Cell Value
     refresh(params: ICellRendererParams): boolean {
-        this.arr = new Array(params.value ?? 0).fill('');
+        this.arr.set(Array(Number(params.value ?? 0)).fill(''));
         return true;
     }
 }

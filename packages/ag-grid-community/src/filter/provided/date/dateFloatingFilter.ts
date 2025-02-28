@@ -1,5 +1,5 @@
+import { _addGridCommonParams } from '../../../gridOptionsUtils';
 import type { IDateParams } from '../../../interfaces/dateComponent';
-import type { WithoutGridCommon } from '../../../interfaces/iCommon';
 import { _parseDateTimeFromString, _serialiseDate } from '../../../utils/date';
 import { _setDisplayed } from '../../../utils/dom';
 import { _debounce } from '../../../utils/function';
@@ -46,8 +46,7 @@ export class DateFloatingFilter extends SimpleFloatingFilter<IFloatingFilterPara
 
     protected override updateParams(params: IFloatingFilterParams<DateFilter, any, any>): void {
         super.updateParams(params);
-        const dateParams = this.gos.addGridCommonParams(this.getDateComponentParams());
-        this.dateComp.updateParams(dateParams);
+        this.dateComp.updateParams(this.getDateComponentParams());
 
         this.updateCompOnModelChange(params.currentParentModel());
     }
@@ -108,28 +107,30 @@ export class DateFloatingFilter extends SimpleFloatingFilter<IFloatingFilterPara
         }
     }
 
-    private getDateComponentParams(): WithoutGridCommon<IDateParams> {
+    private getDateComponentParams(): IDateParams {
         const { filterParams, column } = this.params;
         const debounceMs = getDebounceMs(filterParams as DateFilterParams, this.defaultDebounceMs);
-        return {
+        return _addGridCommonParams(this.gos, {
             onDateChanged: _debounce(this, this.onDateChanged.bind(this), debounceMs),
             filterParams: column.getColDef().filterParams,
             location: 'floatingFilter',
-        };
+        });
     }
 
     private createDateComponent(): void {
         const {
             beans: { context, userCompFactory },
             eDateWrapper,
+            params,
         } = this;
         this.dateComp = new DateCompWrapper(
             context,
             userCompFactory,
+            params.column.getColDef(),
             this.getDateComponentParams(),
             eDateWrapper,
             (dateComp) => {
-                dateComp.setInputAriaLabel(this.getAriaLabel(this.params));
+                dateComp.setInputAriaLabel(this.getAriaLabel(params));
             }
         );
 

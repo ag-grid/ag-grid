@@ -55,6 +55,12 @@
 
         --ag-range-selection-highlight-color: var(--ag-range-selection-border-color);
 
+        --ag-range-header-highlight-color: color-mix(
+            in srgb,
+            var(--ag-header-background-color),
+            var(--ag-foreground-color) 8%
+        );
+
         --ag-selected-tab-underline-color: var(--ag-range-selection-border-color);
         --ag-selected-tab-underline-width: 0;
         --ag-selected-tab-underline-transition-speed: 0s;
@@ -174,6 +180,8 @@
 
         --ag-row-group-indent-size: calc(var(--ag-cell-widget-spacing) + var(--ag-icon-size));
 
+        --ag-row-numbers-selected-color: #bbb;
+
         --ag-filter-tool-panel-group-indent: 16px;
 
         --ag-tab-min-width: 220px;
@@ -196,5 +204,10 @@
         --ag-advanced-filter-column-pill-color: #a6e194;
         --ag-advanced-filter-option-pill-color: #f3c08b;
         --ag-advanced-filter-value-pill-color: #85c0e4;
+
+        --ag-find-match-color: var(--ag-foreground-color);
+        --ag-find-active-match-color: var(--ag-foreground-color);
+        --ag-find-match-background-color: #ffff00;
+        --ag-find-active-match-background-color: #ffa500;
     }
 }

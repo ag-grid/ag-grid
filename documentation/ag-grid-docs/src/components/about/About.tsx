@@ -340,10 +340,18 @@ export const About = () => {
                         <div>
                             <img
                                 src={urlWithBaseUrl('/images/team/sachshell.png')}
-                                alt="Sachshell Rhoden, Customer Experience Manager"
+                                alt="Sachshell Rhoden, Operations Manager"
                             />
                             <h3>Sachshell Rhoden</h3>
                             <p>Sales Operations Manager</p>
+                        </div>
+                        <div>
+                            <img
+                                src={urlWithBaseUrl('/images/team/Tam.jpg')}
+                                alt="Tam Trinh, Operations Administrator"
+                            />
+                            <h3>Tam Trinh</h3>
+                            <p>Operations Administrator</p>
                         </div>
                         <div>
                             <img

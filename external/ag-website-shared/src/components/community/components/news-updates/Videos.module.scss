@@ -38,7 +38,7 @@
 .videoFrame,
 .videoImage {
     width: 100%;
-    height: 300px;
+    aspect-ratio: 16/9;
 }
 
 .videoImage {
@@ -50,17 +50,49 @@
     justify-content: space-around;
 }
 
+.videoOuter {
+    --scroll-indicator-width: min(10vw, #{$spacing-size-20});
+
+    position: relative;
+
+    &::before,
+    &::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        width: var(--scroll-indicator-width);
+        z-index: 1;
+    }
+
+    &::before {
+        left: 0;
+        background: linear-gradient(90deg, var(--color-bg-primary), transparent);
+    }
+
+    &::after {
+        right: 0;
+        background: linear-gradient(-90deg, var(--color-bg-primary), transparent);
+    }
+}
+
 .videoContainer {
     display: flex;
     overflow-x: scroll !important;
     gap: $spacing-size-4;
     padding-bottom: $spacing-size-6;
+    padding-right: var(--scroll-indicator-width);
 }
 
 .video {
     cursor: pointer;
     padding: 0px $spacing-size-4;
     opacity: 0.7;
+
+    &:first-child {
+        position: relative;
+        z-index: 2;
+    }
 }
 
 .youtubeThumbnail {

@@ -7,7 +7,7 @@ import type {
     IToolPanelFiltersCompParams,
     IToolPanelParams,
 } from 'ag-grid-community';
-import { Component, RefPlaceholder } from 'ag-grid-community';
+import { Component, RefPlaceholder, _addGridCommonParams } from 'ag-grid-community';
 
 import type { AgFiltersToolPanelHeader } from './agFiltersToolPanelHeader';
 import { AgFiltersToolPanelHeaderSelector } from './agFiltersToolPanelHeader';
@@ -47,7 +47,7 @@ export class FiltersToolPanel extends Component implements IFiltersToolPanel, IT
 
         this.initialised = true;
 
-        const defaultParams: Partial<ToolPanelFiltersCompParams> = this.gos.addGridCommonParams({
+        const defaultParams: Partial<ToolPanelFiltersCompParams> = _addGridCommonParams(this.gos, {
             suppressExpandAll: false,
             suppressFilterSearch: false,
             suppressSyncLayoutWithGrid: false,

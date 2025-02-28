@@ -28,6 +28,11 @@
         border-top: var(--ag-borders-critical) var(--ag-border-color);
     }
 
+    .ag-menu-option {
+        position: relative;
+    }
+    @include ag.keyboard-focus((ag-menu-option), 1px);
+
     .ag-menu-option-active,
     .ag-compact-menu-option-active {
         background-color: var(--ag-row-hover-color);

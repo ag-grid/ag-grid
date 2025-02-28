@@ -1,25 +1,24 @@
-import { Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
 
 import type { ICellRendererAngularComp } from 'ag-grid-angular';
 import type { ICellRendererParams } from 'ag-grid-community';
 
 @Component({
     standalone: true,
+    changeDetection: ChangeDetectionStrategy.OnPush,
     template: `
         <div class="custom-element">
-            <button>Age: {{ params.data.age ? params.data.age : '?' }}</button>
-            <input value="{{ params.data.country ? params.data.country : '' }}" />
-            <a href="https://www.google.com/search?q={{ params.data.sport }}" target="_blank">{{
-                params.data.sport
-            }}</a>
+            <button>Age: {{ data()?.age ?? '?' }}</button>
+            <input value="{{ data()?.country ?? '' }}" />
+            <a href="https://www.google.com/search?q={{ data()?.sport }}" target="_blank">{{ data()?.sport }}</a>
         </div>
     `,
 })
 export class CustomElements implements ICellRendererAngularComp {
-    public params!: ICellRendererParams;
+    data = signal<any | undefined>(undefined);
 
     agInit(params: ICellRendererParams): void {
-        this.params = params;
+        this.data.set(params.data);
     }
 
     refresh(params: ICellRendererParams) {

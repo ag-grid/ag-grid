@@ -13,6 +13,7 @@
         left: 0;
         height: 5px;
         width: 5px;
+        /* rtl:ignore */
         cursor: nwse-resize;
     }
 
@@ -32,6 +33,7 @@
         right: 0;
         height: 5px;
         width: 5px;
+        /* rtl:ignore */
         cursor: nesw-resize;
     }
 
@@ -51,6 +53,7 @@
         right: 0;
         height: 5px;
         width: 5px;
+        /* rtl:ignore */
         cursor: nwse-resize;
     }
 
@@ -70,6 +73,7 @@
         left: 0;
         height: 5px;
         width: 5px;
+        /* rtl:ignore */
         cursor: nesw-resize;
     }
 

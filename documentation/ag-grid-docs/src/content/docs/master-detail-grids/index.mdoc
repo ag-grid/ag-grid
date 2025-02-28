@@ -36,11 +36,7 @@ The `successCallback` can be called immediately in a synchronous fashion (typica
 
 The Master Grid in turn will call `api.setGridOption('rowData', data)` on the Detail Grid with the data provided.
 
-All the previous examples on Master Detail provided the result synchronously and as such another specific example is not given here.
-
-The following snippet illustrates this using a simple `setTimeout()` function to delay supplying data to the detail row after a fixed timeout.
-
-Below shows an example using `setTimeout()` to simulate lazying loading of data in the detail.
+Below shows an example using `setTimeout()` to delay supplying data to the detail row to simulate asynchronous loading of data in the detail.
 
 {% gridExampleRunner title="Lazy Load Detail Rows" name="lazy-load-rows"  exampleHeight=550 /%}
 
@@ -72,7 +68,7 @@ The Detail Grid Info objects are accessed via the Master Grid's API via the foll
 {% apiDocumentation source="grid-api/api.json" section="masterDetail" names=["getDetailGridInfo"] /%}
 
 ```{% frameworkTransform=true %}
-// lookup a specific DetailGridInfo by id, and then call stopEditing() on it
+// lookup a specific DetailGridInfo by id, and then call flashCells() on it
 const detailGridInfo = api.getDetailGridInfo('detail_someId');
 detailGridInfo.api.flashCells();
 ```
@@ -82,7 +78,7 @@ The grid generates IDs for detail grids by prefixing the parent row's ID with `d
 {% apiDocumentation source="grid-api/api.json" section="masterDetail" names=["forEachDetailGridInfo"] /%}
 
 ```{% frameworkTransform=true %}
-// iterate over all DetailGridInfos, and call stopEditing() on each one
+// iterate over all DetailGridInfos, and call flashCells() on each one
 api.forEachDetailGridInfo(detailGridInfo => {
     detailGridInfo.api.flashCells();
 });
@@ -129,3 +125,23 @@ The example below demonstrates keeping Detail Rows. Note the following:
 The pattern of setting components such as Cell Renderers and providing parameters to those components is consistent across the grid and explained in [Grid Components](./components/).
 
 As with all components, the parameters object (in this case `detailCellRendererParams`) can either be a JSON Object, or it can be a function that returns a JSON Object. The latter allows providing different parameters for each Detail Grid, allowing Detail Grids to be configured differently.
+
+## Row Selection
+By default, selecting rows in the Master Grid has no effect on any of the Detail Grids. In order to have the selection state of the Master Grid be reflected in the Detail Grids (and vice-versa), users should use the `rowSelection.masterSelects` grid option:
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    rowSelection: { 
+        mode: 'multiRow',
+        masterSelects: 'detail',
+    }
+}
+```
+
+In the example below, selecting a master row will select all rows in the associated detail grid. Similarly, selecting all rows in the detail grid will select the master row. When only some rows in the detail grid are selected, the master row will have the indeterminate state.
+
+{% gridExampleRunner title="Row Selection" name="row-selection"  exampleHeight=550 /%}
+
+Note that selecting a master row will select _all_ rows in the detail grid, regardless of the value of `rowSelection.selectAll` in the `detailGridOptions`.
+
+Note also that calling the API methods `getSelectedNodes` and `getSelectedRows` on the master grid will not return any information about the selection states of any detail grids.

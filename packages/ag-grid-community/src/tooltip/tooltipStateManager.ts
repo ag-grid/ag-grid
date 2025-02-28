@@ -2,11 +2,11 @@ import { _getTooltipCompDetails } from '../components/framework/userCompUtils';
 import type { UserComponentFactory } from '../components/framework/userComponentFactory';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
-import { _getActiveDomElement, _getDocument } from '../gridOptionsUtils';
+import { _addGridCommonParams, _getActiveDomElement, _getDocument } from '../gridOptionsUtils';
 import { _isIOSUserAgent } from '../utils/browser';
 import { _exists } from '../utils/generic';
 import type { PopupService } from '../widgets/popupService';
-import type { ITooltipComp } from './tooltipComponent';
+import type { ITooltipComp, ITooltipParams } from './tooltipComponent';
 import type { ITooltipCtrl } from './tooltipFeature';
 
 enum TooltipStates {
@@ -242,7 +242,7 @@ export class TooltipStateManager extends BeanStub {
 
     private isLastTooltipHiddenRecently(): boolean {
         // return true if <1000ms since last time we hid a tooltip
-        const now = new Date().getTime();
+        const now = Date.now();
         const then = lastTooltipHideTime;
 
         return now - then < SHOW_QUICK_TOOLTIP_DIFF;
@@ -284,7 +284,7 @@ export class TooltipStateManager extends BeanStub {
 
         const rowNode = ctrl.getRowNode?.();
 
-        const params = {
+        const params = _addGridCommonParams<ITooltipParams>(this.gos, {
             location: ctrl.getLocation?.() ?? 'UNKNOWN', //'cell',
             colDef: ctrl.getColDef?.(),
             column: ctrl.getColumn?.(),
@@ -295,7 +295,7 @@ export class TooltipStateManager extends BeanStub {
             valueFormatted: ctrl.getValueFormatted?.(),
             hideTooltipCallback: () => this.hideTooltip(true),
             ...(ctrl.getAdditionalParams?.() ?? {}),
-        };
+        });
 
         this.state = TooltipStates.SHOWING;
         this.tooltipInstanceCount++;
@@ -317,7 +317,7 @@ export class TooltipStateManager extends BeanStub {
         // one, the instance may not be back yet
         if (this.tooltipComp) {
             this.destroyTooltipComp();
-            lastTooltipHideTime = new Date().getTime();
+            lastTooltipHideTime = Date.now();
         }
 
         this.eventSvc.dispatchEvent({

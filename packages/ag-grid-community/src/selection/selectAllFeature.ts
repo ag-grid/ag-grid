@@ -1,9 +1,10 @@
 import { isColumnGroupAutoCol, isColumnSelectionCol } from '../columns/columnUtils';
 import { BeanStub } from '../context/beanStub';
 import type { AgColumn } from '../entities/agColumn';
-import type { SelectAllMode } from '../entities/gridOptions';
-import type { SelectionEventSourceType } from '../events';
+import type { GridOptions, SelectAllMode } from '../entities/gridOptions';
+import type { DisplayedColumnsChangedEvent, SelectionEventSourceType } from '../events';
 import {
+    _addGridCommonParams,
     _getActiveDomElement,
     _getCheckboxLocation,
     _getHeaderCheckbox,
@@ -50,11 +51,21 @@ export class SelectAllFeature extends BeanStub {
         this.showOrHideSelectAll();
 
         this.addManagedEventListeners({
-            newColumnsLoaded: this.showOrHideSelectAll.bind(this),
+            newColumnsLoaded: () => this.showOrHideSelectAll(),
             displayedColumnsChanged: this.onDisplayedColumnsChanged.bind(this),
             selectionChanged: this.onSelectionChanged.bind(this),
             paginationChanged: this.onSelectionChanged.bind(this),
             modelUpdated: this.onModelChanged.bind(this),
+        });
+
+        this.addManagedPropertyListener('rowSelection', ({ currentValue, previousValue }) => {
+            const getSelectAll = (rowSelection: GridOptions['rowSelection']) =>
+                typeof rowSelection === 'string' || !rowSelection || rowSelection.mode === 'singleRow'
+                    ? undefined
+                    : rowSelection.selectAll;
+            if (getSelectAll(currentValue) !== getSelectAll(previousValue)) {
+                this.showOrHideSelectAll();
+            }
         });
 
         this.addManagedListeners(cbSelectAll, { fieldValueChanged: this.onCbSelectAll.bind(this) });
@@ -62,14 +73,14 @@ export class SelectAllFeature extends BeanStub {
         this.refreshSelectAllLabel();
     }
 
-    private onDisplayedColumnsChanged(): void {
+    private onDisplayedColumnsChanged(e: DisplayedColumnsChangedEvent): void {
         if (!this.isAlive()) {
             return;
         }
-        this.showOrHideSelectAll();
+        this.showOrHideSelectAll(e.source === 'uiColumnMoved');
     }
 
-    private showOrHideSelectAll(): void {
+    private showOrHideSelectAll(fromColumnMoved: boolean = false): void {
         const cbSelectAllVisible = this.isCheckboxSelection();
         this.cbSelectAllVisible = cbSelectAllVisible;
         this.cbSelectAll.setDisplayed(cbSelectAllVisible);
@@ -81,7 +92,7 @@ export class SelectAllFeature extends BeanStub {
             // make sure checkbox is showing the right state
             this.updateStateOfCheckbox();
         }
-        this.refreshSelectAllLabel();
+        this.refreshSelectAllLabel(fromColumnMoved);
     }
 
     private onModelChanged(): void {
@@ -121,7 +132,7 @@ export class SelectAllFeature extends BeanStub {
         this.processingEventFromCheckbox = false;
     }
 
-    private refreshSelectAllLabel(): void {
+    private refreshSelectAllLabel(fromColumnMoved: boolean = false): void {
         const translate = this.getLocaleTextFunc();
         const { headerCellCtrl, cbSelectAll, cbSelectAllVisible } = this;
         const checked = cbSelectAll.getValue();
@@ -134,7 +145,11 @@ export class SelectAllFeature extends BeanStub {
         );
 
         cbSelectAll.setInputAriaLabel(translate('ariaHeaderSelection', 'Column with Header Selection'));
-        headerCellCtrl.announceAriaDescription();
+
+        // skip repetitive announcements during column move
+        if (!fromColumnMoved) {
+            headerCellCtrl.announceAriaDescription();
+        }
     }
 
     private checkSelectionType(feature: string): boolean {
@@ -212,7 +227,7 @@ export class SelectAllFeature extends BeanStub {
         } else {
             // legacy selection config
             if (typeof headerCheckboxSelection === 'function') {
-                result = headerCheckboxSelection(gos.addGridCommonParams({ column, colDef }));
+                result = headerCheckboxSelection(_addGridCommonParams(gos, { column, colDef }));
             } else {
                 result = !!headerCheckboxSelection;
             }

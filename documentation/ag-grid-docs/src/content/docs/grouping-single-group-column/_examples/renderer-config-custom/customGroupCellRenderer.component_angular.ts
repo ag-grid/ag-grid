@@ -1,15 +1,16 @@
-import { Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
 
-import { ICellRendererAngularComp } from 'ag-grid-angular';
-import { ICellRendererParams } from 'ag-grid-community';
+import type { ICellRendererAngularComp } from 'ag-grid-angular';
+import type { ICellRendererParams, IRowNode } from 'ag-grid-community';
 
 @Component({
     standalone: true,
+    changeDetection: ChangeDetectionStrategy.OnPush,
     template: `
-        <div [style.paddingLeft.px]="paddingLeft">
-            @if (isGroup) {
+        <div [style.paddingLeft.px]="paddingLeft()">
+            @if (isGroup()) {
                 <div
-                    [style.transform]="rotation"
+                    [style.transform]="rotation()"
                     [style.cursor]="'pointer'"
                     [style.display]="'inline-block'"
                     (click)="onClick()"
@@ -18,23 +19,26 @@ import { ICellRendererParams } from 'ag-grid-community';
                 </div>
             }
             &nbsp;
-            {{ params.value }}
+            {{ value() }}
         </div>
     `,
 })
 export class CustomGroupCellRenderer implements ICellRendererAngularComp {
-    public params!: ICellRendererParams;
-    public paddingLeft!: number;
-    public isGroup!: boolean;
-    public rotation!: string;
+    private node!: IRowNode;
+
+    value = signal<string>('');
+    paddingLeft = signal(0);
+    isGroup = signal(false);
+    rotation = signal('');
 
     agInit(params: ICellRendererParams): void {
-        this.params = params;
-        this.paddingLeft = params.node.level * 15;
-        this.isGroup = !!params.node.group;
-        this.rotation = params.node.expanded ? 'rotate(90deg)' : 'rotate(0deg)';
+        this.value.set(params.value);
+        this.node = params.node;
+        this.paddingLeft.set(this.node.level * 15);
+        this.isGroup.set(!!this.node.group);
+        this.rotation.set(this.node.expanded ? 'rotate(90deg)' : 'rotate(0deg)');
 
-        this.params.node.addEventListener('expandedChanged', this.onExpand);
+        this.node.addEventListener('expandedChanged', this.onExpand);
     }
 
     refresh(params: ICellRendererParams) {
@@ -42,14 +46,14 @@ export class CustomGroupCellRenderer implements ICellRendererAngularComp {
     }
 
     destroy() {
-        this.params.node.removeEventListener('expandedChanged', this.onExpand);
+        this.node.removeEventListener('expandedChanged', this.onExpand);
     }
 
     onClick() {
-        this.params.node.setExpanded(!this.params.node.expanded);
+        this.node.setExpanded(!this.node.expanded);
     }
 
     onExpand = () => {
-        this.rotation = this.params.node.expanded ? 'rotate(90deg)' : 'rotate(0deg)';
+        this.rotation.set(this.node.expanded ? 'rotate(90deg)' : 'rotate(0deg)');
     };
 }

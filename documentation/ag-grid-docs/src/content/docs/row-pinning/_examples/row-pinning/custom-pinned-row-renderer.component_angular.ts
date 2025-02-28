@@ -1,20 +1,24 @@
 import { NgStyle } from '@angular/common';
-import { Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, signal } from '@angular/core';
 
 import type { ICellRendererAngularComp } from 'ag-grid-angular';
+import type { ICellRendererParams } from 'ag-grid-community';
+
+interface CustomParams extends ICellRendererParams {
+    style: { [key: string]: string };
+}
 
 @Component({
     standalone: true,
+    changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [NgStyle],
-    template: `<span [ngStyle]="style">{{ params.value }}</span>`,
+    template: `<span [ngStyle]="params()?.style">{{ params()?.value }}</span>`,
 })
 export class CustomPinnedRowRenderer implements ICellRendererAngularComp {
-    public params: any;
-    public style!: string;
+    params = signal<CustomParams | undefined>(undefined);
 
-    agInit(params: any): void {
-        this.params = params;
-        this.style = this.params.style;
+    agInit(params: CustomParams): void {
+        this.params.set(params);
     }
 
     refresh(): boolean {

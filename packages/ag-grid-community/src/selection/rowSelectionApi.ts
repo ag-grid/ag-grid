@@ -27,8 +27,7 @@ export function setNodesSelected(
     }
 
     const { nodes, source, newValue } = params;
-    const nodesAsRowNode = nodes as RowNode[];
-    beans.selectionSvc?.setNodesSelected({ nodes: nodesAsRowNode, source: source ?? 'api', newValue });
+    beans.selectionSvc?.setNodesSelected({ nodes: nodes as RowNode[], source: source ?? 'api', newValue });
 }
 
 export function selectAll(

@@ -44,18 +44,18 @@ import type { IRangeService } from '../interfaces/IRangeService';
 import type { IAdvancedFilterService } from '../interfaces/iAdvancedFilterService';
 import type { IAggColumnNameService } from '../interfaces/iAggColumnNameService';
 import type { IAggFuncService } from '../interfaces/iAggFuncService';
-import type { IAutoColService } from '../interfaces/iAutoColService';
 import type { IClientSideNodeManager } from '../interfaces/iClientSideNodeManager';
 import type { IClipboardService } from '../interfaces/iClipboardService';
 import type { IColsService } from '../interfaces/iColsService';
+import type { IColumnCollectionService } from '../interfaces/iColumnCollectionService';
 import type { IContextMenuService } from '../interfaces/iContextMenu';
 import type { ICsvCreator } from '../interfaces/iCsvCreator';
 import type { IExcelCreator } from '../interfaces/iExcelCreator';
 import type { IExpansionService } from '../interfaces/iExpansionService';
+import type { IFindService } from '../interfaces/iFind';
 import type { IFooterService } from '../interfaces/iFooterService';
 import type { IFrameworkOverrides } from '../interfaces/iFrameworkOverrides';
 import type { IGroupFilterService } from '../interfaces/iGroupFilterService';
-import type { IGroupHideOpenParentsService } from '../interfaces/iGroupHideOpenParentsService';
 import type { IMenuFactory } from '../interfaces/iMenuFactory';
 import type { IPivotColDefService } from '../interfaces/iPivotColDefService';
 import type { IPivotResultColsService } from '../interfaces/iPivotResultColsService';
@@ -69,6 +69,7 @@ import type { ISideBarService } from '../interfaces/iSideBar';
 import type { IStickyRowService } from '../interfaces/iStickyRows';
 import type { IMasterDetailService } from '../interfaces/masterDetail';
 import type { IRenderStatusService } from '../interfaces/renderStatusService';
+import type { IRowNumbersService } from '../interfaces/rowNumbers';
 import type { AnimationFrameService } from '../misc/animationFrameService';
 import type { ApiEventService } from '../misc/apiEvents/apiEventService';
 import type { LocaleService } from '../misc/locale/localeService';
@@ -92,6 +93,8 @@ import type { OverlayService } from '../rendering/overlays/overlayService';
 import type { RowAutoHeightService } from '../rendering/row/rowAutoHeightService';
 import type { RowContainerHeightService } from '../rendering/rowContainerHeightService';
 import type { RowRenderer } from '../rendering/rowRenderer';
+import type { RowSpanService } from '../rendering/spanning/rowSpanService';
+import type { SpannedRowRenderer } from '../rendering/spanning/spannedRowRenderer';
 import type { RowNodeSorter } from '../sort/rowNodeSorter';
 import type { SortService } from '../sort/sortService';
 import type { CellStyleService } from '../styling/cellStyleService';
@@ -179,7 +182,8 @@ export type UserComponentName =
     | 'agSelectedRowCountComponent'
     | 'agTotalRowCountComponent'
     | 'agFilteredRowCountComponent'
-    | 'agTotalAndFilteredRowCountComponent';
+    | 'agTotalAndFilteredRowCountComponent'
+    | 'agFindCellRenderer';
 
 export type ClassImp = new (...args: []) => object;
 export type ComponentMeta =
@@ -236,8 +240,9 @@ export interface CoreBeanCollection {
     gridOptions: GridOptions;
     eGridDiv: HTMLElement;
     pivotResultCols?: IPivotResultColsService;
-    autoColSvc?: IAutoColService;
+    autoColSvc?: IColumnCollectionService;
     selectionColSvc?: SelectionColService;
+    rowNumbersSvc?: IRowNumbersService;
     colDefFactory?: ColumnDefFactory;
     colAutosize?: ColumnAutosizeService;
     rowGroupColsSvc?: IColsService;
@@ -296,7 +301,6 @@ export interface CoreBeanCollection {
     renderStatus?: IRenderStatusService;
     rowDragSvc?: RowDragService;
     stickyRowSvc?: IStickyRowService;
-    groupHideOpenParentsSvc?: IGroupHideOpenParentsService;
     filterValueSvc?: FilterValueService;
     csrmNodeSvc?: IClientSideNodeManager;
     csrmPathTreeNodeSvc?: IClientSideNodeManager;
@@ -309,6 +313,9 @@ export interface CoreBeanCollection {
     rowChildrenSvc?: IRowChildrenService;
     footerSvc?: IFooterService;
     touchSvc?: TouchService;
+    rowSpanSvc?: RowSpanService;
+    spannedRowRenderer?: SpannedRowRenderer;
+    findSvc?: IFindService;
     groupFilter?: IGroupFilterService;
 }
 
@@ -408,11 +415,13 @@ export type BeanName =
     | 'filterMenuFactory'
     | 'filterStage'
     | 'filterValueSvc'
+    | 'findSvc'
     | 'flashCellSvc'
     | 'flattenStage'
     | 'focusSvc'
     | 'footerSvc'
     | 'funcColsSvc'
+    | 'rowNumbersSvc'
     | 'pivotColsSvc'
     | 'rowGroupColsSvc'
     | 'valueColsSvc'
@@ -427,7 +436,6 @@ export type BeanName =
     | 'gridOptionsWrapper'
     | 'gridSerializer'
     | 'groupFilter'
-    | 'groupHideOpenParentsSvc'
     | 'groupStage'
     | 'headerNavigation'
     | 'horizontalResizeSvc'
@@ -493,4 +501,6 @@ export type BeanName =
     | 'validation'
     | 'csrmNodeSvc'
     | 'csrmPathTreeNodeSvc'
-    | 'csrmChildrenTreeNodeSvc';
+    | 'csrmChildrenTreeNodeSvc'
+    | 'rowSpanSvc'
+    | 'spannedRowRenderer';

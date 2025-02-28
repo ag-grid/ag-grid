@@ -62,9 +62,9 @@ export class CellRangeFeature implements ICellRangeFeature {
         this.rangeSvc = beans.rangeSvc!;
     }
 
-    public setComp(cellComp: ICellComp, eGui: HTMLElement): void {
+    public setComp(cellComp: ICellComp): void {
         this.cellComp = cellComp;
-        this.eGui = eGui;
+        this.eGui = this.cellCtrl.eGui;
         this.onCellSelectionChanged();
     }
 
@@ -160,6 +160,11 @@ export class CellRangeFeature implements ICellRangeFeature {
         } = this;
         const thisCol = cellPosition.column as AgColumn;
 
+        const ranges = rangeSvc.getCellRanges().filter((range) => rangeSvc.isCellInSpecificRange(cellPosition, range));
+        if (!ranges.length) {
+            return { top, right, bottom, left };
+        }
+
         let leftCol: AgColumn | null;
         let rightCol: AgColumn | null;
 
@@ -170,8 +175,6 @@ export class CellRangeFeature implements ICellRangeFeature {
             leftCol = visibleCols.getColBefore(thisCol);
             rightCol = visibleCols.getColAfter(thisCol);
         }
-
-        const ranges = rangeSvc.getCellRanges().filter((range) => rangeSvc.isCellInSpecificRange(cellPosition, range));
 
         // this means we are the first column in the grid
         if (!leftCol) {

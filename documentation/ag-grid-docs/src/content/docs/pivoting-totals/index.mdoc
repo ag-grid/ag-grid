@@ -15,19 +15,14 @@ The example below demonstrates that when collapsed, group totals are displayed f
 
 ## Row Totals
 
-It is possible to include the grand total value (equivalent to if pivoting was disabled) for each aggregation in each row by setting the grid option `pivotRowTotals` to `'before'` or `'after'`
-(determining the inserted total columns position in the grid).
+A total column can be included for each aggregation by using the `pivotRowTotals` grid option. This option can be set to `"before"` or `"after"` determining the position
+of these total columns relative to the pivot columns.
 
 {% gridExampleRunner title="Pivot Row Totals" name="row-totals" /%}
 
-The example above demonstrates the following configuration for adding an additional `Gold` row total at the start of the grid:
+The example above demonstrates the following configuration for adding additional pivot row totals at the start of the grid:
 ```{% frameworkTransform=true %}
 const gridOptions = {
-    columnDefs: [
-        // ...other column defs
-        { field: 'gold', aggFunc: 'sum' },
-    ],
-    pivotMode: true,
     pivotRowTotals: 'before',
 }
 ```

@@ -92,7 +92,7 @@ export function _throttle(func: (...args: any[]) => void, wait: number): (...arg
     return function (...args: any[]) {
         //@ts-expect-error no implicit this
         const context = this;
-        const currentCall = new Date().getTime();
+        const currentCall = Date.now();
 
         if (currentCall - previousCall < wait) {
             return;
@@ -110,13 +110,13 @@ export function _waitUntil(
     timeout: number = 100,
     timeoutMessage?: string
 ) {
-    const timeStamp = new Date().getTime();
+    const timeStamp = Date.now();
 
     let interval: number | null = null;
     let executed: boolean = false;
 
     const internalCallback = () => {
-        const reachedTimeout = new Date().getTime() - timeStamp > timeout;
+        const reachedTimeout = Date.now() - timeStamp > timeout;
         if (condition() || reachedTimeout) {
             callback();
             executed = true;

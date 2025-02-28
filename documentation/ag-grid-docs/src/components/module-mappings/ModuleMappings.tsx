@@ -7,7 +7,6 @@ import { AllCommunityModule, ClientSideRowModelModule, ModuleRegistry, RowSelect
 import type {
     ColDef,
     GetRowIdParams,
-    GridOptions,
     IRowNode,
     RowSelectedEvent,
     RowSelectionOptions,
@@ -44,7 +43,9 @@ export const ModuleMappings: FunctionComponent<Props> = ({ framework, modules })
     const { selectedDependenciesSnippet, setSelectedModules, bundleOption, rowModelOption } = moduleConfig;
 
     const rowData = useMemo(() => {
-        const groups = modules.groups;
+        const groups = modules.groups.filter((group) => {
+            return !group.hideFromSelection;
+        });
         // update data to hide/unhide modules that are included as part of SSRM
         if (rowModelOption === 'ServerSideRowModelModule') {
             const modifyData = (row: any) => ({
@@ -191,7 +192,7 @@ export const ModuleMappings: FunctionComponent<Props> = ({ framework, modules })
             <div style={{ height: '410px' }}>
                 <AgGridReact
                     ref={gridRef}
-                    gridOptions={{ treeDataChildrenField: 'children' } as GridOptions}
+                    treeDataChildrenField="children"
                     defaultColDef={defaultColDef}
                     columnDefs={columnDefs}
                     autoGroupColumnDef={autoGroupColumnDef}

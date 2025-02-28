@@ -3,6 +3,7 @@ import type { BeanCollection } from '../context/context';
 import type { AgColumn } from '../entities/agColumn';
 import type { CellClassParams, CellClassRules, ColDef } from '../entities/colDef';
 import type { CellStyle } from '../entities/colDef';
+import { _addGridCommonParams } from '../gridOptionsUtils';
 import type { CellCtrl, ICellComp } from '../rendering/cell/cellCtrl';
 import { processClassRules } from './stylingUtils';
 
@@ -89,7 +90,7 @@ export class CellCustomStyleFeature extends BeanStub {
 
     private getCellClassParams(column: AgColumn, colDef: ColDef): CellClassParams {
         const { value, rowNode } = this.cellCtrl;
-        return this.beans.gos.addGridCommonParams({
+        return _addGridCommonParams(this.beans.gos, {
             value,
             data: rowNode.data,
             node: rowNode,

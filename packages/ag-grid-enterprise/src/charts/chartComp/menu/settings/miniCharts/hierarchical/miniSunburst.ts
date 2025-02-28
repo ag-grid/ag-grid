@@ -1,12 +1,10 @@
 import type { Group } from 'ag-charts-types/scene';
 
-import type { ChartType } from 'ag-grid-community';
-
 import type { AgChartsExports } from '../../../../../agChartsExports';
+import type { MiniChartSelector } from '../../miniChartsContainer';
 import { MiniChartWithPolarAxes } from '../miniChartWithPolarAxes';
 
-export class MiniSunburst extends MiniChartWithPolarAxes {
-    static chartType: ChartType = 'sunburst';
+export class MiniSunburstClass extends MiniChartWithPolarAxes {
     private readonly series: Group[];
 
     // Hierarchical data using multidimensional array
@@ -121,3 +119,8 @@ export class MiniSunburst extends MiniChartWithPolarAxes {
         });
     }
 }
+
+export const MiniSunburst: MiniChartSelector = {
+    chartType: 'sunburst',
+    miniChart: MiniSunburstClass,
+};

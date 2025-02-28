@@ -3,6 +3,8 @@ import type {
     AgChartTheme,
     AgChartThemeName,
     AgSparklineOptions,
+    AgSparklineTooltipRendererParams,
+    AgSparklineTooltipRendererResult,
     AgTooltipRendererResult,
 } from 'ag-charts-types';
 
@@ -13,11 +15,23 @@ import { wrapFn } from './sparklinesUtils';
 
 export const DEFAULT_THEMES = ['ag-default', 'ag-material', 'ag-sheets', 'ag-polychroma', 'ag-vivid'];
 
+function tooltipRendererWithXValue(
+    params: AgSparklineTooltipRendererParams<unknown>
+): AgSparklineTooltipRendererResult {
+    return { content: `${params.xValue} ${params.yValue}` };
+}
+
+function tooltipRenderer(params: AgSparklineTooltipRendererParams<unknown>): AgSparklineTooltipRendererResult {
+    return { content: `${params.yValue}` };
+}
+
 export class SparklineCellRenderer extends Component implements ICellRenderer {
     private readonly eSparkline: HTMLElement = RefPlaceholder;
     private sparklineInstance?: AgChartInstance<any>;
     private sparklineOptions: AgSparklineOptions;
     private params: ISparklineCellRendererParams<any, any> | undefined;
+    private cachedWidth = 0;
+    private cachedHeight = 0;
 
     constructor() {
         super(/* html */ `<div class="ag-sparkline-wrapper">
@@ -31,7 +45,17 @@ export class SparklineCellRenderer extends Component implements ICellRenderer {
 
     public init(params: ISparklineCellRendererParams): void {
         this.refresh(params);
-        const unsubscribeFromResize = _observeResize(this.beans, this.getGui(), () => this.refresh(params));
+        const unsubscribeFromResize = _observeResize(this.beans, this.getGui(), () => {
+            const { clientWidth: width, clientHeight: height } = this.getGui();
+
+            if (this.cachedWidth === width && this.cachedHeight === height) {
+                return;
+            }
+
+            this.cachedWidth = width;
+            this.cachedHeight = height;
+            this.refresh(this.params);
+        });
         this.addDestroyFunc(() => unsubscribeFromResize());
     }
 
@@ -42,7 +66,8 @@ export class SparklineCellRenderer extends Component implements ICellRenderer {
 
     public refresh(params?: ISparklineCellRendererParams): boolean {
         this.params = params;
-        const { clientWidth: width, clientHeight: height } = this.getGui();
+        const width = this.cachedWidth;
+        const height = this.cachedHeight;
 
         if (!this.sparklineInstance && params && width > 0 && height) {
             this.sparklineOptions = {
@@ -56,10 +81,10 @@ export class SparklineCellRenderer extends Component implements ICellRenderer {
             if (this.sparklineOptions.tooltip?.renderer) {
                 this.wrapTooltipRenderer();
             } else {
+                const renderer = this.getDefaultTooltipRenderer();
                 this.sparklineOptions.tooltip = {
                     ...this.sparklineOptions.tooltip,
-                    renderer: (params: any) =>
-                        ({ content: this.createDefaultContent(params) }) as AgTooltipRendererResult,
+                    renderer,
                 };
             }
 
@@ -77,26 +102,35 @@ export class SparklineCellRenderer extends Component implements ICellRenderer {
             this.sparklineInstance = params.createSparkline!(this.sparklineOptions);
             return true;
         } else if (this.sparklineInstance) {
-            const data = params?.value;
             this.sparklineOptions.width = width;
             this.sparklineOptions.height = height;
-            this.sparklineOptions.data = this.processData(data);
-            this.updateTheme(this.sparklineOptions);
+            const data = this.processData(params?.value);
+            this.sparklineOptions.data = data;
 
-            this.sparklineInstance.updateDelta(this.sparklineOptions);
+            const themeChanged = this.updateTheme(this.sparklineOptions);
+            if (themeChanged) {
+                this.sparklineInstance.updateDelta(this.sparklineOptions);
+            } else {
+                // Fast path for updating data or width/height to match Charts fast path
+                this.sparklineInstance.updateDelta({ data, width, height });
+            }
 
             return true;
         }
         return false;
     }
 
-    private updateTheme(sparklineOptions: AgSparklineOptions) {
+    private updateTheme(sparklineOptions: AgSparklineOptions): boolean {
         const themeName = this.getThemeName() as AgChartThemeName;
+        let themeChanged = false;
         if (typeof sparklineOptions.theme === 'string' || !sparklineOptions.theme) {
+            themeChanged = sparklineOptions.theme !== themeName;
             sparklineOptions.theme = themeName;
         } else if (sparklineOptions.theme) {
+            themeChanged = sparklineOptions.theme.baseTheme !== themeName;
             sparklineOptions.theme.baseTheme = themeName;
         }
+        return themeChanged;
     }
 
     private processData(data: any[] = []) {
@@ -114,14 +148,14 @@ export class SparklineCellRenderer extends Component implements ICellRenderer {
         };
     }
 
-    private createDefaultContent(params: any, userRendererResult?: AgTooltipRendererResult): string {
+    private getDefaultTooltipRenderer(userRendererResult?: AgTooltipRendererResult) {
         const userTitle = userRendererResult?.title;
         const xKeyProvided = this.sparklineOptions.xKey;
         const tupleData = Array.isArray(this.sparklineOptions.data?.[0]);
 
         const showXValue = !userTitle && (xKeyProvided || tupleData);
 
-        return `${showXValue ? `${params.xValue} ` : ''}${params.yValue}`;
+        return showXValue ? tooltipRendererWithXValue : tooltipRenderer;
     }
 
     private wrapItemStyler(container: { itemStyler?: any }) {
@@ -146,7 +180,7 @@ export class SparklineCellRenderer extends Component implements ICellRenderer {
                     return userRendererResult;
                 }
                 return {
-                    content: this.createDefaultContent(tooltipParams, userRendererResult),
+                    ...this.getDefaultTooltipRenderer(userRendererResult)(tooltipParams),
                     ...userRendererResult,
                 };
             }),

@@ -30,6 +30,7 @@ export class DateFilterEvaluator extends ScalarFilterEvaluator<DateFilterModel, 
     }
 
     protected override isValid(value: Date): boolean {
-        return value instanceof Date && !isNaN(value.getTime());
+        const isValidDate = this.params.isValidDate;
+        return !isValidDate || isValidDate(value);
     }
 }

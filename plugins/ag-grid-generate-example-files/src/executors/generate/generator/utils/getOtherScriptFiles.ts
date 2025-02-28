@@ -2,7 +2,7 @@ import { SOURCE_ENTRY_FILE_NAME } from '../constants';
 import { readAsJsFile } from '../transformation-scripts/parser-utils';
 import type { FileContents, InternalFramework, TransformTsFileExt } from '../types';
 import { FRAMEWORKS } from '../types';
-import { getFileList } from './fileUtils';
+import { convertTsxToJsx, getFileList } from './fileUtils';
 
 const getOtherTsGeneratedFiles = async ({
     folderPath,
@@ -89,6 +89,11 @@ const getComponentSuffix = (file: string, framework: InternalFramework) => {
         if (file.includes('_vue3.')) {
             return '_vue3';
         }
+    } else if (framework === 'reactFunctional') {
+        // Let reactFunctional share the TS react files
+        if (file.includes('_reactFunctionalTs.')) {
+            return '_reactFunctionalTs';
+        }
     } else if (file.includes('_' + framework + '.')) {
         return '_' + framework;
     }
@@ -103,6 +108,11 @@ const isValidFrameworkFile = (internalFramework: InternalFramework, framework: I
         // Let vue3 share vue files
         return true;
     }
+    if (internalFramework === 'reactFunctional' && framework === 'reactFunctionalTs') {
+        // Let reactFunctional share the TS react files
+        return true;
+    }
+
     return false;
 };
 
@@ -161,7 +171,11 @@ export const getOtherScriptFiles = async ({
             const suffix = getComponentSuffix(file, framework);
             if (suffix !== undefined) {
                 if (isValidFrameworkFile(internalFramework, framework)) {
-                    filteredToFramework[file.replace(suffix, frameworkComponentSuffix(framework))] = content;
+                    if (internalFramework === 'reactFunctional') {
+                        filteredToFramework[file.replace('_reactFunctionalTs.tsx', '.jsx')] = convertTsxToJsx(content);
+                    } else {
+                        filteredToFramework[file.replace(suffix, frameworkComponentSuffix(framework))] = content;
+                    }
                 } else {
                     // Is a framework file, but not the current framework so we don't want to include it
                 }
@@ -173,4 +187,60 @@ export const getOtherScriptFiles = async ({
         }
     });
     return [others, filteredToFramework];
+};
+
+export const getUseFetchJsonFile = (internalFramework: InternalFramework) => {
+    if (internalFramework === 'reactFunctional') {
+        return `import { useState, useEffect } from 'react';
+
+/**
+ * Fetch example Json data
+ * Not recommended for production use!
+ */
+export const useFetchJson = (url, limit) => {
+    const [data, setData] = useState();
+    const [loading, setLoading] = useState(false);
+    useEffect(() => {
+        const fetchData = async () => {
+            setLoading(true);
+            
+            // Note error handling is omitted here for brevity
+            const response = await fetch(url);                
+            const json = await response.json();
+            const data = limit ? json.slice(0, limit) : json;
+            setData(data);
+            setLoading(false);
+        };
+        fetchData();
+    }, [url, limit]);
+    return { data, loading };
+};`;
+    } else if (internalFramework === 'reactFunctionalTs') {
+        return `import { useState, useEffect } from 'react';
+
+/**
+ * Fetch example Json data
+ * Not recommended for production use!
+ */
+export const useFetchJson = <T,>(url:string, limit?: number) => {
+    const [data, setData] = useState<T[]>();
+    const [loading, setLoading] = useState(false);
+    useEffect(() => {
+        const fetchData = async () => {
+            setLoading(true);
+
+            // Note error handling is omitted here for brevity
+            const response = await fetch(url);
+            const json = await response.json();
+            const data = limit ? json.slice(0, limit) : json;
+            setData(data);
+            setLoading(false);
+        };
+        fetchData();
+    }, [url, limit]);
+    return { data, loading };
+};`;
+    } else {
+        return undefined;
+    }
 };

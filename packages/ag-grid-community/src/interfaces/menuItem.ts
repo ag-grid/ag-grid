@@ -35,6 +35,11 @@ export interface MenuItemDef<TData = any, TContext = any> extends MenuItemLeafDe
      * If this item is a sub menu, contains a list of menu item definitions */
     subMenu?: (MenuItemDef<TData, TContext> | string)[];
     /**
+     * The aria role for the subMenu
+     * @default 'menu'
+     */
+    subMenuRole?: 'menu' | 'listbox' | 'tree' | 'grid' | 'dialog';
+    /**
      * Provide a custom menu item component.
      * See [Menu Item Component](https://www.ag-grid.com/javascript-data-grid/component-menu-item/#implementing-a-menu-item-component) for framework specific implementation details.
      */

@@ -141,6 +141,140 @@ export const Inputs: FunctionComponent = () => {
                     </div>
                 </div>
             </div>
+
+            <h2>Input Fields</h2>
+            <h3>Stacked</h3>
+            <div className={styles.inputsOuter}>
+                <div className={styles.textInputGroup}>
+                    <code>.input-field</code>
+                    <div className={styles.textInput}>
+                        <div className="input-field">
+                            <label>Text:</label>
+                            <input type="text" placeholder="Enter email" />
+                        </div>
+                        <div className="input-field">
+                            <label>Checkbox:</label>
+                            <input type="checkbox" />
+                        </div>
+                        <div className="input-field">
+                            <label>Radio:</label>
+                            <input type="radio" />
+                        </div>
+                        <div className="input-field">
+                            <label>Switch:</label>
+                            <input type="checkbox" className="switch" />
+                        </div>
+
+                        <div className="input-field">
+                            <label>Select:</label>
+                            <select>
+                                <option>Select</option>
+                                <option>Option one</option>
+                                <option>Option two</option>
+                                <option>Option three</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div className={styles.textInputGroup}>
+                    <code>.input-field.input-error</code>
+                    <div className={styles.textInput}>
+                        <div className="input-field input-error">
+                            <label>Text:</label>
+                            <input type="text" placeholder="Enter email" />
+                        </div>
+                        <div className="input-field input-error">
+                            <label>Checkbox:</label>
+                            <input type="checkbox" />
+                        </div>
+                        <div className="input-field input-error">
+                            <label>Radio:</label>
+                            <input type="radio" />
+                        </div>
+                        <div className="input-field input-error">
+                            <label>Switch:</label>
+                            <input type="checkbox" className="switch" />
+                        </div>
+
+                        <div className="input-field input-error">
+                            <label>Select:</label>
+                            <select>
+                                <option>Select</option>
+                                <option>Option one</option>
+                                <option>Option two</option>
+                                <option>Option three</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <h3>Inline</h3>
+            <div className={styles.inputsOuter}>
+                <div className={styles.textInputGroupStacked}>
+                    <code>.input-field.inline</code>
+                    <div className={styles.textInput}>
+                        <div className="input-field inline">
+                            <label>Text:</label>
+                            <input type="text" placeholder="Enter email" />
+                        </div>
+                        <div className="input-field inline">
+                            <label>Checkbox:</label>
+                            <input type="checkbox" />
+                        </div>
+                        <div className="input-field inline">
+                            <label>Radio:</label>
+                            <input type="radio" />
+                        </div>
+                        <div className="input-field inline">
+                            <label>Switch:</label>
+                            <input type="checkbox" className="switch" />
+                        </div>
+
+                        <div className="input-field inline">
+                            <label>Select:</label>
+                            <select>
+                                <option>Select</option>
+                                <option>Option one</option>
+                                <option>Option two</option>
+                                <option>Option three</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div className={styles.textInputGroupStacked}>
+                    <code>.input-field.inline.input-error</code>
+                    <div className={styles.textInput}>
+                        <div className="input-field inline input-error">
+                            <label>Text:</label>
+                            <input type="text" placeholder="Enter email" />
+                        </div>
+                        <div className="input-field inline input-error">
+                            <label>Checkbox:</label>
+                            <input type="checkbox" />
+                        </div>
+                        <div className="input-field inline input-error">
+                            <label>Radio:</label>
+                            <input type="radio" />
+                        </div>
+                        <div className="input-field inline input-error">
+                            <label>Switch:</label>
+                            <input type="checkbox" className="switch" />
+                        </div>
+
+                        <div className="input-field inline input-error">
+                            <label>Select:</label>
+                            <select>
+                                <option>Select</option>
+                                <option>Option one</option>
+                                <option>Option two</option>
+                                <option>Option three</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </>
     );
 };

@@ -13,7 +13,7 @@ import type { AgGridCommon, WithoutGridCommon } from './interfaces/iCommon';
 import type { ModuleName, ValidationModuleName } from './interfaces/iModule';
 import type { RowModelType } from './interfaces/iRowModel';
 import { LocalEventService } from './localEventService';
-import { _areModulesGridScoped, _isModuleRegistered } from './modules/moduleRegistry';
+import { _areModulesGridScoped, _isModuleRegistered, _isUmd } from './modules/moduleRegistry';
 import type { AnyGridOptions } from './propertyKeys';
 import { _logIfDebug } from './utils/function';
 import { _exists } from './utils/generic';
@@ -29,7 +29,7 @@ type GetKeys<T, U> = {
  * Get all the GridOption properties that strictly contain the provided type.
  * Does not include `any` properties.
  */
-export type KeysOfType<U> = Exclude<GetKeys<GridOptions, U>, AnyGridOptions>;
+type KeysOfType<U> = Exclude<GetKeys<GridOptions, U>, AnyGridOptions>;
 
 type BooleanProps = Exclude<KeysOfType<boolean>, AnyGridOptions>;
 type NoArgFuncs = KeysOfType<() => any>;
@@ -247,20 +247,13 @@ export class GridOptionsService extends BeanStub implements NamedBean {
         return this.domDataKey;
     }
 
-    public getGridCommonParams<TData = any, TContext = any>(): AgGridCommon<TData, TContext> {
-        return {
-            api: this.api,
-            context: this.gridOptionsContext,
-        };
-    }
-
+    /** Prefer _addGridCommonParams from gridOptionsUtils for bundle size savings */
     public addGridCommonParams<T extends AgGridCommon<TData, TContext>, TData = any, TContext = any>(
         params: WithoutGridCommon<T>
     ): T {
-        const updatedParams = params as T;
-        updatedParams.api = this.api;
-        updatedParams.context = this.gridOptionsContext;
-        return updatedParams;
+        (params as T).api = this.api;
+        (params as T).context = this.gridOptionsContext;
+        return params as T;
     }
 
     public assertModuleRegistered<
@@ -281,11 +274,17 @@ export class GridOptionsService extends BeanStub implements NamedBean {
         return registered;
     }
 
-    public getModuleErrorParams(): { gridScoped: boolean; gridId: string; rowModelType: RowModelType } {
+    public getModuleErrorParams(): {
+        gridScoped: boolean;
+        gridId: string;
+        rowModelType: RowModelType;
+        isUmd: boolean;
+    } {
         return {
             gridId: this.gridId,
             gridScoped: _areModulesGridScoped(),
             rowModelType: this.get('rowModelType'),
+            isUmd: _isUmd(),
         };
     }
 

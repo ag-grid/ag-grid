@@ -18,7 +18,7 @@ export interface AbstractColDef<TData = any, TValue = any> {
     headerValueGetter?: string | HeaderValueGetterFunc<TData, TValue>;
     /** Tooltip for the column header */
     headerTooltip?: string;
-    /** An object of css values / or function returning an object of css values for a particular header. */
+    /** An object of CSS values / or function returning an object of CSS values for a particular header. */
     headerStyle?: HeaderStyle | HeaderStyleFunc<TData, TValue>;
     /** CSS class to use for the header cell. Can be a string, array of strings, or function. */
     headerClass?: HeaderClass<TData, TValue>;
@@ -398,6 +398,21 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
      * Only applies if `floatingFilter = true`.
      */
     suppressFloatingFilterButton?: boolean;
+    /**
+     * Custom date selection component to be used in Date Filters and Date Floating Filters for this column.
+     * See [Custom Selection Component](https://www.ag-grid.com/javascript-data-grid/filter-date/#custom-selection-component) for framework specific implementation detail.
+     */
+    dateComponent?: any;
+    /** The parameters to be passed to the `dateComponent`. */
+    dateComponentParams?: any;
+
+    // *** Find *** //
+    /**
+     * When using Find with custom cell renderers, this allows providing a custom value to search within.
+     * E.g. if the cell renderer is displaying text that is different from the cell formatted value.
+     * Returning `null` means Find will not search within the cell.
+     */
+    getFindText?: (params: GetFindTextParams<TData, TValue>) => string | null;
 
     // *** Column Headers *** //
     /**
@@ -512,7 +527,7 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
 
     // *** Columns: Rendering and Styling *** //
 
-    /** An object of css values / or function returning an object of css values for a particular cell. */
+    /** An object of CSS values / or function returning an object of CSS values for a particular cell. */
     cellStyle?: CellStyle | CellStyleFunc<TData, TValue>;
     /** Class to use for the cell. Can be string, array of strings, or function that returns a string or array of strings. */
     cellClass?: string | string[] | CellClassFunc<TData, TValue>;
@@ -698,9 +713,17 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
      */
     rowSpan?: (params: RowSpanParams<TData, TValue>) => number;
 
+    /**
+     * Set to `true` to automatically merge cells in this column with equal values. Provide a callback to specify custom merging logic.
+     */
+    spanRows?: boolean | ((params: SpanRowsParams<TData, TValue>) => boolean);
+
     // *** Columns: Widths *** //
 
-    /** Initial width in pixels for the cell. */
+    /**
+     * Initial width in pixels for the cell.
+     * If no width or flex properties set, cell width will default to 200 pixels.
+     */
     width?: number;
     /**
      * Same as `width`, except only applied when creating a new column. Not applied when updating column definitions.
@@ -810,7 +833,7 @@ export interface HeaderCheckboxSelectionCallback<TData = any, TValue = any> {
     (params: HeaderCheckboxSelectionCallbackParams<TData, TValue>): boolean;
 }
 
-export interface GetQuickFilterTextParams<TData = any, TValue = any> extends AgGridCommon<TData, any> {
+interface GetTextParams<TData = any, TContext = any, TValue = any> extends AgGridCommon<TData, TContext> {
     /** Value for the cell. */
     value: TValue | null | undefined;
     /** Row node for the given row */
@@ -821,6 +844,14 @@ export interface GetQuickFilterTextParams<TData = any, TValue = any> extends AgG
     column: Column<TValue>;
     /** ColDef provided for this column */
     colDef: ColDef<TData, TValue>;
+}
+
+export interface GetQuickFilterTextParams<TData = any, TValue = any> extends GetTextParams<TData, any, TValue> {}
+
+export interface GetFindTextParams<TData = any, TContext = any, TValue = any>
+    extends GetTextParams<TData, TContext, TValue> {
+    /** Get formatted value for the cell (or `null` if no `valueFormatter`) */
+    getValueFormatted: () => string | null;
 }
 
 export type ColumnMenuTab = 'filterMenuTab' | 'generalMenuTab' | 'columnsMenuTab';
@@ -857,6 +888,21 @@ export interface BaseColDefOptionalDataParams<TData = any, TValue = any> extends
     node: IRowNode<TData> | null;
     /** Data associated with the node */
     data: TData | undefined;
+    /** Column for this callback */
+    column: Column<TValue>;
+    /** ColDef provided for this column */
+    colDef: ColDef<TData, TValue>;
+}
+
+export interface SpanRowsParams<TData = any, TValue = any> extends AgGridCommon<TData, any> {
+    /** First row of the span, which if spanned represents the spanned cells */
+    nodeA: IRowNode<TData> | null;
+    /** First rows value */
+    valueA: TValue | null | undefined;
+    /** Next row of the span to test */
+    nodeB: IRowNode<TData> | null;
+    /** Next rows value */
+    valueB: TValue | null | undefined;
     /** Column for this callback */
     column: Column<TValue>;
     /** ColDef provided for this column */

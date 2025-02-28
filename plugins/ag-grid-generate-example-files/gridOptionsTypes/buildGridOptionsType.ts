@@ -1,6 +1,5 @@
 import ts from 'typescript';
 
-import { EXCLUDED_PROPERTIES } from '../src/executors-utils';
 import { _ALL_GRID_OPTIONS } from '../src/executors/generate/generator/_copiedFromCore/propertyKeys';
 
 function getTypes(node: ts.Node) {
@@ -45,11 +44,9 @@ function getTypeLookupFunc(fileName) {
         };
 
         const fullLookup = {};
-        _ALL_GRID_OPTIONS
-            .filter((option) => !EXCLUDED_PROPERTIES.includes(option as string))
-            .forEach((prop) => {
-                fullLookup[prop] = lookupType(prop as string);
-            });
+        _ALL_GRID_OPTIONS.forEach((prop) => {
+            fullLookup[prop] = lookupType(prop as string);
+        });
         return fullLookup;
     }
     throw new Error('No gridOptions file found');

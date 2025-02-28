@@ -1,13 +1,11 @@
 import type { Group } from 'ag-charts-types/scene';
 
-import type { ChartType } from 'ag-grid-community';
-
 import type { AgChartsExports } from '../../../../../agChartsExports';
+import type { MiniChartSelector } from '../../miniChartsContainer';
 import { accumulateData } from '../miniChartHelpers';
 import { MiniChartWithPolarAxes } from '../miniChartWithPolarAxes';
 
-export class MiniNightingale extends MiniChartWithPolarAxes {
-    static chartType: ChartType = 'nightingale';
+export class MiniNightingaleClass extends MiniChartWithPolarAxes {
     private readonly series: Group[];
 
     private data = [
@@ -85,3 +83,8 @@ export class MiniNightingale extends MiniChartWithPolarAxes {
         });
     }
 }
+
+export const MiniNightingale: MiniChartSelector = {
+    chartType: 'nightingale',
+    miniChart: MiniNightingaleClass,
+};

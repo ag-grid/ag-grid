@@ -8,7 +8,15 @@ import type {
     SetFilterValuesFunc,
     SetFilterValuesFuncParams,
 } from 'ag-grid-community';
-import { AgPromise, BeanStub, _defaultComparator, _error, _makeNull, _warn } from 'ag-grid-community';
+import {
+    AgPromise,
+    BeanStub,
+    _addGridCommonParams,
+    _defaultComparator,
+    _error,
+    _makeNull,
+    _warn,
+} from 'ag-grid-community';
 
 import type { ClientSideValuesExtractor } from './clientSideValueExtractor';
 import { createTreeDataOrGroupingComparator } from './setFilterUtils';
@@ -159,7 +167,7 @@ export class SetFilterAllValues<TValue> extends BeanStub<SetFilterAllValuesEvent
 
                     const callback = this.providedValues as SetFilterValuesFunc<any, TValue>;
                     const { column, colDef } = this.params.filterParams;
-                    const params: SetFilterValuesFuncParams<any, TValue> = this.gos.addGridCommonParams({
+                    const params: SetFilterValuesFuncParams<any, TValue> = _addGridCommonParams(this.gos, {
                         success: (values) => {
                             this.dispatchLocalEvent({ type: 'loadingEnd' });
 

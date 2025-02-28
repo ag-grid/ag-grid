@@ -1,13 +1,11 @@
 import type { Group } from 'ag-charts-types/scene';
 
-import type { ChartType } from 'ag-grid-community';
-
 import type { AgChartsExports } from '../../../../../agChartsExports';
+import type { MiniChartSelector } from '../../miniChartsContainer';
 import { accumulateData } from '../miniChartHelpers';
 import { MiniChartWithPolarAxes } from '../miniChartWithPolarAxes';
 
-export class MiniRadialBar extends MiniChartWithPolarAxes {
-    static chartType: ChartType = 'radialBar';
+export class MiniRadialBarClass extends MiniChartWithPolarAxes {
     private readonly series: Group[];
 
     private data = [
@@ -91,3 +89,8 @@ export class MiniRadialBar extends MiniChartWithPolarAxes {
         });
     }
 }
+
+export const MiniRadialBar: MiniChartSelector = {
+    chartType: 'radialBar',
+    miniChart: MiniRadialBarClass,
+};

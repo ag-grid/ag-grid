@@ -22,7 +22,7 @@ const nonAdvancedParams = new Set([
     'wrapperBorder',
     'rowBorder',
     'columnBorder',
-    'sidePanelBorder',
+    'headerRowBorder',
     'spacing',
     'wrapperBorderRadius',
     'borderRadius',

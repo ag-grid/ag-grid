@@ -24,7 +24,7 @@ export class AgMenuList extends TabGuardComp<AgMenuListEvent> {
         private readonly level = 0,
         params?: WithoutGridCommon<IMenuActionParams>
     ) {
-        super(/* html */ `<div class="ag-menu-list" role="tree"></div>`);
+        super(/* html */ `<div class="ag-menu-list" role="menu"></div>`);
         this.params = params ?? {
             column: null,
             node: null,

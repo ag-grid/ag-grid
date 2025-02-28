@@ -53,7 +53,7 @@ describe('ag-grid treeDataChildrenField', () => {
             └── LEAF id:4
         `);
 
-        api.setGridOption('treeDataChildrenField' as any, 'children');
+        api.setGridOption('treeDataChildrenField', 'children');
 
         gridRows = new GridRows(api, 'data', gridRowsOptions);
         await gridRows.check(`
@@ -64,7 +64,7 @@ describe('ag-grid treeDataChildrenField', () => {
             └── LEAF id:4
         `);
 
-        api.setGridOption('treeDataChildrenField' as any, undefined);
+        api.setGridOption('treeDataChildrenField', undefined);
 
         gridRows = new GridRows(api, 'data', gridRowsOptions);
         await gridRows.check(`
@@ -138,7 +138,7 @@ describe('ag-grid treeDataChildrenField', () => {
 
         api.updateGridOptions({
             treeData: true,
-            ['treeDataChildrenField' as any]: 'children1',
+            treeDataChildrenField: 'children1',
         });
 
         gridRows = new GridRows(api, 'data', gridRowsOptions);
@@ -153,7 +153,7 @@ describe('ag-grid treeDataChildrenField', () => {
             · └── z2 LEAF id:z2
         `);
 
-        api.setGridOption('treeDataChildrenField' as any, 'subObject.children2');
+        api.setGridOption('treeDataChildrenField', 'subObject.children2');
 
         gridRows = new GridRows(api, 'data', gridRowsOptions);
         await gridRows.check(`
@@ -167,7 +167,7 @@ describe('ag-grid treeDataChildrenField', () => {
             · └── w2 LEAF id:w2
         `);
 
-        api.setGridOption('treeDataChildrenField' as any, 'xxx');
+        api.setGridOption('treeDataChildrenField', 'xxx');
 
         gridRows = new GridRows(api, 'data', gridRowsOptions);
         await gridRows.check(`

@@ -42,6 +42,8 @@ It's often required that one or more columns fill the entire available space in 
 
 Flex sizing works by dividing the remaining space in the grid among all flex columns in proportion to their flex value. For example, suppose the grid has a total width of 450px and it has three columns: the first with `width: 150`; the second with `flex: 1`; and third with `flex: 2`. The first column will be 150px wide, leaving 300px remaining. The column with `flex: 2` has twice the size with `flex: 1`. So final sizes will be: 150px, 100px, 200px.
 
+If a column has no width or flex properties set, it will default to 200px. 
+
 {% note %}
 The flex config does **not** work with a `width` config
 in the same column. If you need to provide a minimum width for a column,
@@ -156,8 +158,6 @@ const gridOptions = {
 This can also be performed on demand via the following API methods:
 
 {% apiDocumentation source="grid-api/api.json" section="columnSizing" names=["autoSizeColumns", "autoSizeAllColumns"] /%}
-
-Note that using `autoSizeStrategy` to fit cell contents only works for the Client-Side Row Model and Server-Side Row Model, but the API methods work for all row models.
 
 By default the grid will also resize the column to fit the header. If you do not want the headers to be included in the auto-size calculation, set the grid property `skipHeaderOnAutoSize = true`, or pass `skipHeader = true` to the `autoSizeStrategy` params or the API method.
 

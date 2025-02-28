@@ -25,7 +25,6 @@ let gridApi: GridApi<IOlympicData>;
 
 const gridOptions: GridOptions<IOlympicData> = {
     theme: 'legacy',
-    rowData: null,
     columnDefs: [
         {
             headerName: 'Group 1',

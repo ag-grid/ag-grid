@@ -66,6 +66,7 @@ export const FILES_PATH_MAP: Record<string, string | GlobConfig> = {
 
     // Charts modules
     'ag-charts-types/dist/**': 'node_modules/ag-charts-types/dist/**/*.{cjs,js,map}',
+    'ag-charts-core/dist/**': 'node_modules/ag-charts-core/dist/**/*.{cjs,js,map}',
     'ag-charts-community/dist/**': 'node_modules/ag-charts-community/dist/**/*.{cjs,js,map}',
     'ag-charts-enterprise/dist/**': 'node_modules/ag-charts-enterprise/dist/**/*.{cjs,js,map}',
 

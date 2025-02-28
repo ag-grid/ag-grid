@@ -1,34 +1,30 @@
-import type { ChartType } from 'ag-grid-community';
-
 import type { AgChartsExports } from '../../../../../agChartsExports';
 import type { ChartTranslationKey } from '../../../../services/chartTranslationService';
-import type { ThemeTemplateParameters } from '../../miniChartsContainer';
+import type { MiniChartSelector, ThemeTemplateParameters } from '../../miniChartsContainer';
 import type { XYCoordShape } from '../miniChartApi';
-import { MiniFunnel } from './miniFunnel';
+import { MiniFunnelClass } from './miniFunnel';
 
 const PYRAMID_SHAPES: XYCoordShape[] = [
     [
         [8, 16],
-        [8.875, 13],
-        [7.125, 13],
+        [10, 12],
+        [6, 12],
     ],
     [
-        [9, 12.5],
-        [10.75, 7],
-        [5.25, 7],
-        [7, 12.5],
+        [10.5, 11],
+        [12.5, 7],
+        [3.5, 7],
+        [5.5, 11],
     ],
     [
-        [11, 6.5],
-        [13, 0],
-        [3, 0],
-        [5, 6.5],
+        [13, 6],
+        [15.5, 1.5],
+        [0.5, 1.5],
+        [3, 6],
     ],
 ];
 
-export class MiniPyramid extends MiniFunnel {
-    static override chartType: ChartType = 'pyramid';
-
+export class MiniPyramidClass extends MiniFunnelClass {
     constructor(
         container: HTMLElement,
         agChartsExports: AgChartsExports,
@@ -58,3 +54,8 @@ export class MiniPyramid extends MiniFunnel {
         });
     }
 }
+
+export const MiniPyramid: MiniChartSelector = {
+    chartType: 'pyramid',
+    miniChart: MiniPyramidClass,
+};

@@ -46,3 +46,13 @@ export interface FooterItem {
 }
 
 export type ModuleMappings = CollectionEntry<'module-mappings'>['data'];
+
+export interface VersionData {
+    version: string;
+    date: string;
+    landingPageHightlight?: string;
+    highlights?: { text: string; path?: string }[];
+    notesPath?: string;
+    hideBlogPostLink?: boolean;
+    noDocs?: boolean;
+}

@@ -1,5 +1,6 @@
 import type { ColDef, GridApi, GridOptions } from 'ag-grid-community';
 import {
+    ClientSideRowModelApiModule,
     ClientSideRowModelModule,
     ModuleRegistry,
     RowSelectionModule,
@@ -7,7 +8,12 @@ import {
     createGrid,
 } from 'ag-grid-community';
 
-ModuleRegistry.registerModules([RowSelectionModule, ClientSideRowModelModule, ValidationModule /* Development Only */]);
+ModuleRegistry.registerModules([
+    RowSelectionModule,
+    ClientSideRowModelModule,
+    ClientSideRowModelApiModule,
+    ValidationModule /* Development Only */,
+]);
 
 interface ICar {
     make: string;
@@ -47,6 +53,11 @@ function onRowDataA() {
 
 function onRowDataB() {
     gridApi!.setGridOption('rowData', rowDataB);
+}
+
+function onClearRowData() {
+    // Clear rowData by setting it to an empty array
+    gridApi!.setGridOption('rowData', []);
 }
 
 // setup the grid after the page has finished loading

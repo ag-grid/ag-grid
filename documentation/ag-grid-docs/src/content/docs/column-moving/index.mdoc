@@ -73,12 +73,12 @@ The example below demonstrates these properties as follows:
 
 ## Advanced Locked Position Example
 
-Below is a more real-world example of where locked columns would be used. The first column is a row number, similar to the row column in Excel. The second column is a buttons column - an application could have buttons for actions, e.g. 'Delete', 'Buy', 'Sell' etc.
+Below is a more real-world example of where locked columns would be used. The first column contains buttons for actions, e.g. 'Delete', 'Buy', 'Sell' etc.
 
 From the example the following can be noted:
 
-* The first two columns are locked into first position by setting `colDef.lockPosition='left'`. This means they cannot be moved out of place, and other columns cannot be moved around them.
-* The first two columns have the user provided `locked-col` CSS class applied to them to change the background colour.
+* The first column is locked into first position by setting `colDef.lockPosition='left'`. This means it cannot be moved out of place, and other columns cannot be moved around it.
+* The first column has the user provided `locked-col` CSS class applied to it to change the background colour.
 * The sample application listens for column pinned events. If any column is pinned, then the locked columns are also pinned. This is to keep the locked columns at the first position.
   * Clicking **Pin Athlete** will pin the Athlete column, which will result in locked columns being pinned.
   * Clicking **Un-Pin Athlete** will un-pin the Athlete column, which will result in locked columns being un-pinned (assuming no other columns are left pinned).

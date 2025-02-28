@@ -13,7 +13,7 @@ import type {
 } from '../entities/colDef';
 import type { RowNode } from '../entities/rowNode';
 import type { CellValueChangedEvent } from '../events';
-import { _isServerSideRowModel } from '../gridOptionsUtils';
+import { _addGridCommonParams, _isServerSideRowModel } from '../gridOptionsUtils';
 import type { IRowNode } from '../interfaces/iRowNode';
 import { _exists, _missing } from '../utils/generic';
 import { _getValueUsingField } from '../utils/object';
@@ -88,7 +88,14 @@ export class ValueService extends BeanStub implements NamedBean {
         // checks if we show header data regardless of footer
         const groupAlwaysShowAggData = this.gos.get('groupSuppressBlankHeader');
         if (!isOpenGroup || groupAlwaysShowAggData) {
-            return this.getValue(column, node);
+            const value = this.getValue(column, node);
+            if (value == null) {
+                const displayedNode = this.getDisplayedNode(node, column);
+                if (displayedNode) {
+                    return this.getValue(column, displayedNode);
+                }
+            }
+            return value;
         }
 
         let includeFooter = false;
@@ -103,7 +110,14 @@ export class ValueService extends BeanStub implements NamedBean {
         // if doing grouping and footers, we don't want to include the agg value
         // in the header when the group is open
         const ignoreAggData = isOpenGroup && includeFooter;
-        return this.getValue(column, node, ignoreAggData);
+        const value = this.getValue(column, node, ignoreAggData);
+        if (value == null) {
+            const displayedNode = this.getDisplayedNode(node, column);
+            if (displayedNode) {
+                return this.getValue(column, displayedNode);
+            }
+        }
+        return value;
     }
 
     public getValue(column: AgColumn, rowNode?: IRowNode | null, ignoreAggData = false): any {
@@ -163,13 +177,6 @@ export class ValueService extends BeanStub implements NamedBean {
             result = this.executeValueGetter(cellValueGetter, data, column, rowNode);
         }
 
-        if (result == null) {
-            const openedGroup = this.getOpenedGroup(rowNode, column);
-            if (openedGroup != null) {
-                return openedGroup;
-            }
-        }
-
         return result;
     }
 
@@ -179,7 +186,7 @@ export class ValueService extends BeanStub implements NamedBean {
         const valueParser = colDef.valueParser;
 
         if (_exists(valueParser)) {
-            const params: ValueParserParams = this.gos.addGridCommonParams({
+            const params: ValueParserParams = _addGridCommonParams(this.gos, {
                 node: rowNode,
                 data: rowNode?.data,
                 oldValue,
@@ -222,7 +229,7 @@ export class ValueService extends BeanStub implements NamedBean {
         }
 
         if (formatter) {
-            const params: ValueFormatterParams = this.gos.addGridCommonParams({
+            const params: ValueFormatterParams = _addGridCommonParams(this.gos, {
                 value,
                 node,
                 data: node ? node.data : null,
@@ -246,31 +253,50 @@ export class ValueService extends BeanStub implements NamedBean {
         return result;
     }
 
-    private getOpenedGroup(rowNode: IRowNode, column: AgColumn): any {
-        if (!this.gos.get('showOpenedGroup')) {
-            return;
+    /**
+     * Checks if the node has a value to inherit from the parent node for display in the given column
+     *
+     * This is used when [groupHideOpenParents] or [showOpenedGroup] are enabled
+     *
+     * @param node node to check for preferential nodes to display
+     * @param column column to get the displayed node for
+     * @returns a parent node of node to display the value from, or undefined if no value will be inherited
+     */
+    public getDisplayedNode(node: IRowNode, column: AgColumn): RowNode | undefined {
+        const gos = this.gos;
+        const isGroupHideOpenParents = gos.get('groupHideOpenParents');
+        const isShowOpenedGroupValue = gos.get('showOpenedGroup');
+
+        // don't traverse tree if neither starts enabled
+        if (!isGroupHideOpenParents && !isShowOpenedGroupValue) {
+            return undefined;
         }
 
-        const colDef = column.getColDef();
-        if (!colDef.showRowGroup) {
-            return;
+        const showRowGroup = column.colDef.showRowGroup;
+        // single auto col can only showOpenedGroup for leaf rows
+        if (showRowGroup === true) {
+            if (node.group) {
+                return undefined;
+            }
+            return (node.parent as RowNode) ?? undefined;
         }
 
-        const showRowGroup = column.getColDef().showRowGroup;
-
-        let pointer = rowNode.parent;
-
-        while (pointer != null) {
-            if (
-                pointer.rowGroupColumn &&
-                (showRowGroup === true || showRowGroup === pointer.rowGroupColumn.getColId())
-            ) {
-                return pointer.key;
+        let pointer: RowNode | null = node as RowNode;
+        while (pointer && pointer.rowGroupColumn?.getId() != showRowGroup) {
+            const isFirstChild = node === node.parent?.childrenAfterSort?.[0];
+            if (!isShowOpenedGroupValue && !isFirstChild) {
+                // if not first child and not showOpenedGroup then groupHideOpenParents doesn't
+                // display the parent value
+                return undefined;
             }
             pointer = pointer.parent;
         }
 
-        return undefined;
+        if (pointer === node) {
+            return undefined;
+        }
+
+        return pointer ?? undefined;
     }
 
     /**
@@ -304,7 +330,7 @@ export class ValueService extends BeanStub implements NamedBean {
             return false;
         }
 
-        const params: ValueSetterParams = this.gos.addGridCommonParams({
+        const params: ValueSetterParams = _addGridCommonParams(this.gos, {
             node: rowNode,
             data: rowNode.data,
             oldValue: this.getValue(column, rowNode),
@@ -450,7 +476,7 @@ export class ValueService extends BeanStub implements NamedBean {
         column: AgColumn,
         rowNode: IRowNode
     ): any {
-        const params: ValueGetterParams = this.gos.addGridCommonParams({
+        const params: ValueGetterParams = _addGridCommonParams(this.gos, {
             data: data,
             node: rowNode,
             column: column,
@@ -485,7 +511,7 @@ export class ValueService extends BeanStub implements NamedBean {
 
         let result = value;
         if (keyCreator) {
-            const keyParams: KeyCreatorParams = this.gos.addGridCommonParams({
+            const keyParams: KeyCreatorParams = _addGridCommonParams(this.gos, {
                 value: value,
                 colDef: col.getColDef(),
                 column: col,

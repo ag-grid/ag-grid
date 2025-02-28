@@ -8,6 +8,9 @@ headings:
     - slug: 'validate-your-license'
       text: 'Validate Your License'
       depth: 2
+    - slug: 'request-trial-licence'
+      text: 'Request Trial Licence'
+      depth: 3
     - slug: 'configure-your-application'
       text: 'Configure Your Application'
       depth: 3
@@ -16,9 +19,6 @@ headings:
       depth: 3
     - slug: 'set-up-your-application'
       text: 'Set Up Your Application'
-      depth: 3
-    - slug: 'nextjs'
-      text: 'Next.js'
       depth: 3
     - slug: 'seed-repos'
       text: 'Seed Repositories'
@@ -29,3 +29,11 @@ Validate your licence key and configure your application. See sample code and ex
 
 {% metaTag tags=["LicenseManager"] /%}
 {% licenseSetup /%}
+
+{% if isFramework("react") %}
+
+## Next.js
+
+If you're using Next.js, we have a [blog](https://blog.ag-grid.com/using-ag-grid-with-next-js-to-build-a-react-table/#how-to-register-the-ag-grid-enterprise-license-key) that details how to get you up and running, as well as how to set the license key.
+
+{% /if %}

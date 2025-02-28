@@ -14,7 +14,6 @@ import { GroupFilter } from './groupFilter/groupFilter';
 import { GroupFilterEvaluator } from './groupFilter/groupFilterEvaluator';
 import { GroupFilterService } from './groupFilter/groupFilterService';
 import { GroupFloatingFilterComp } from './groupFilter/groupFloatingFilter';
-import { GroupHideOpenParentsService } from './groupHideOpenParentsService';
 import { GroupStage } from './groupStage/groupStage';
 import {
     addRowGroupColumns,
@@ -30,7 +29,6 @@ import {
 export const SharedRowGroupingModule: _ModuleWithApi<_RowGroupingGridApi> = {
     moduleName: 'SharedRowGrouping',
     version: VERSION,
-    beans: [GroupHideOpenParentsService],
     apiFunctions: {
         setRowGroupColumns,
         removeRowGroupColumns,

@@ -1,4 +1,5 @@
 import type {
+    AgColumn,
     AgInputTextField,
     ComponentSelector,
     FilterDisplayParams,
@@ -16,6 +17,7 @@ import {
     ProvidedFilter,
     RefPlaceholder,
     _areEqual,
+    _createIconNoSpan,
     _getActiveDomElement,
     _setDisplayed,
 } from 'ag-grid-community';
@@ -43,11 +45,13 @@ export class SetFilter<V = string>
 
     private readonly eMiniFilter: AgInputTextField = RefPlaceholder;
     private readonly eFilterLoading: HTMLElement = RefPlaceholder;
+    private readonly eFilterLoadingIcon: HTMLElement = RefPlaceholder;
     private readonly eSetFilterList: HTMLElement = RefPlaceholder;
     private readonly eFilterNoMatches: HTMLElement = RefPlaceholder;
 
     private valueModel: SetValueModel<V>;
-    private virtualList: VirtualList<any>;
+    private virtualList: VirtualList<SetFilterListItem<V | string | null>, SetFilterModelTreeItem | string | null>;
+
     private hardRefreshVirtualList = false;
 
     public evaluator: SetFilterEvaluator<V>;
@@ -171,7 +175,10 @@ export class SetFilter<V = string>
     protected createBodyTemplate(): string {
         return /* html */ `
             <div class="ag-set-filter">
-                <div data-ref="eFilterLoading" class="ag-filter-loading ag-hidden">${translateForSetFilter(this, 'loadingOoo')}</div>
+                <div data-ref="eFilterLoading" class="ag-filter-loading ag-loading ag-hidden">
+                    <span data-ref="eFilterLoadingIcon" class="ag-loading-icon"></span>
+                    <span class="ag-loading-text">${translateForSetFilter(this, 'loadingOoo')}</span>
+                </div>
                 <ag-input-text-field class="ag-mini-filter" data-ref="eMiniFilter"></ag-input-text-field>
                 <div data-ref="eFilterNoMatches" class="ag-filter-no-matches ag-hidden">${translateForSetFilter(this, 'noMatches')}</div>
                 <div data-ref="eSetFilterList" class="ag-set-filter-list" role="presentation"></div>
@@ -321,6 +328,14 @@ export class SetFilter<V = string>
     private initialiseFilterBodyUi(): void {
         this.initVirtualList();
         this.initMiniFilter();
+        this.initLoading();
+    }
+
+    private initLoading(): void {
+        const loadingIcon = _createIconNoSpan('setFilterLoading', this.beans, this.params.column as AgColumn);
+        if (loadingIcon) {
+            this.eFilterLoadingIcon.appendChild(loadingIcon);
+        }
     }
 
     private initVirtualList(): void {
@@ -767,16 +782,19 @@ export class SetFilter<V = string>
         this.showOrHideResults();
     }
 
-    private focusRowIfAlive(rowIndex: number | null): void {
+    private focusRowIfAlive(rowIndex: number | null): Promise<void> {
         if (rowIndex == null) {
-            return;
+            return Promise.resolve();
         }
 
-        window.setTimeout(() => {
-            if (this.isAlive()) {
-                this.virtualList.focusRow(rowIndex);
-            }
-        }, 0);
+        return new Promise((res) => {
+            window.setTimeout(() => {
+                if (this.isAlive()) {
+                    this.virtualList.focusRow(rowIndex);
+                }
+                res();
+            }, 0);
+        });
     }
 
     private onSelectAll(isSelected: boolean): void {

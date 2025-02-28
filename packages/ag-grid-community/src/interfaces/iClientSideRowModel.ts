@@ -46,7 +46,6 @@ export interface IClientSideRowModel<TData = any> extends IRowModel {
     ): void;
     resetRowHeights(): void;
     onRowHeightChanged(): void;
-    onRowHeightChangedDebounced(): void;
     batchUpdateRowData(
         rowDataTransaction: RowDataTransaction<TData>,
         callback?: (res: RowNodeTransaction<TData>) => void
@@ -59,6 +58,11 @@ export interface IClientSideRowModel<TData = any> extends IRowModel {
     getHighlightPosition(pixel: number, rowNode?: RowNode): RowHighlightPosition;
     getLastHighlightedRowNode(): RowNode | null;
     isRowDataLoaded(): boolean;
+
+    /**
+     * @deprecated v33.1.0 - use `gridApi.onRowHeightChanged()` instead
+     */
+    onRowHeightChangedDebounced(): void;
 }
 
 export type IChangedRowNodes<TData = any> = ChangedRowNodes<TData>;

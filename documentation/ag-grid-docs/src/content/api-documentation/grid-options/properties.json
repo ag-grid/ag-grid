@@ -756,6 +756,27 @@
                 "url": "./dom-virtualisation/#row-buffer"
             }
         },
+        "rowNumbers": {
+            "more": {
+                "name": "Row Numbers",
+                "url": "./row-numbers/"
+            },
+            "interfaceHierarchyOverrides": {
+                "include": ["RowNumbersOptions"]
+            }
+        },
+        "findSearchValue": {
+            "more": {
+                "name": "Find",
+                "url": "./find/"
+            }
+        },
+        "findOptions": {
+            "more": {
+                "name": "Customising Find",
+                "url": "./find/#customising-find"
+            }
+        },
         "valueCache": {
             "more": {
                 "name": "Value Cache",
@@ -782,7 +803,6 @@
             }
         },
         "dragAndDropImageComponent": {},
-        "noRowsOverlayComponentParams": {},
         "suppressFocusAfterRefresh": {},
         "suppressChangeDetection": {
             "more": {
@@ -1134,6 +1154,12 @@
                 "name": "Max Rendered Rows",
                 "url": "./dom-virtualisation/#max-rendered-rows"
             }
+        },
+        "enableCellSpan": {
+            "more": {
+                "name": "Row Spanning",
+                "url": "./row-spanning/"
+            }
         }
     },
     "rowDragging": {
@@ -1333,6 +1359,12 @@
             }
         },
         "getDataPath": {
+            "more": {
+                "name": "Tree Data",
+                "url": "./tree-data/"
+            }
+        },
+        "treeDataChildrenField": {
             "more": {
                 "name": "Tree Data",
                 "url": "./tree-data/"
@@ -1786,13 +1818,6 @@
                 "url": "./row-styles/#highlighting-rows-and-columns"
             }
         },
-        "suppressRowTransform": {
-            "more": {
-                "name": "Configuring Row Spanning",
-                "url": "./row-spanning/#configuring-row-spanning"
-            },
-            "description": "Uses CSS `top` instead of CSS `transform` for positioning rows. Useful if the transform function is causing issues such as used in [row spanning](./row-spanning/). Default: `false`"
-        },
         "columnHoverHighlight": {
             "more": {
                 "name": "Highlighting Rows and Columns",
@@ -1828,6 +1853,12 @@
             "more": {
                 "name": "CSS Layers",
                 "url": "./theming-css/#css-layers"
+            }
+        },
+        "styleNonce": {
+            "more": {
+                "name": "Security",
+                "url": "./security#style-src"
             }
         }
     },

@@ -231,14 +231,6 @@
         background-color: var(--ag-background-color);
     }
 
-    .ag-chart .ag-chart-menu {
-        display: none;
-    }
-
-    .ag-chart-menu-hidden:hover .ag-chart-menu {
-        display: block;
-    }
-
     .ag-chart {
         .ag-chart-menu-wrapper {
             .ag-chart-menu {
@@ -299,10 +291,12 @@
     .ag-chart-mini-thumbnail {
         border: 1px solid var(--ag-secondary-border-color);
         border-radius: 5px;
+        padding: 1px;
 
         &.ag-selected {
             border-color: var(--ag-minichart-selected-chart-color);
             border-width: 2px;
+            padding: unset;
         }
 
         &:focus-visible {

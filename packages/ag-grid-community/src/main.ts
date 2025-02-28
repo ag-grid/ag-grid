@@ -11,6 +11,7 @@ export {
     ApplyColumnStateParams,
     _resetColumnState,
     _applyColumnState,
+    _getColumnState,
 } from './columns/columnStateUtils';
 export type { ColumnMoveService } from './columnMove/columnMoveService';
 export type { ColumnNameService } from './columns/columnNameService';
@@ -22,6 +23,9 @@ export type { VisibleColsService } from './columns/visibleColsService';
 export { GroupInstanceIdCreator } from './columns/groupInstanceIdCreator';
 export {
     GROUP_AUTO_COLUMN_ID,
+    SELECTION_COLUMN_ID,
+    ROW_NUMBERS_COLUMN_ID,
+    isRowNumberCol,
     isColumnSelectionCol,
     isColumnGroupAutoCol,
     _destroyColumnTree,
@@ -31,7 +35,6 @@ export {
     _convertColumnEventSourceType,
     _columnsMatch,
 } from './columns/columnUtils';
-export { IAutoColService } from './interfaces/iAutoColService';
 export type { SelectionColService } from './columns/selectionColService';
 export {
     SizeColumnsToFitGridColumnLimits,
@@ -214,6 +217,7 @@ export {
     ISimpleFilterParams,
     SimpleFilterParams,
     ISimpleFilterModel,
+    ISimpleFilterModelType,
     ICombinedSimpleModel,
     JoinOperator,
     IFilterPlaceholderFunctionParams,
@@ -275,6 +279,20 @@ export { IAdvancedFilterCtrl } from './interfaces/iAdvancedFilterCtrl';
 export { IAdvancedFilterBuilderParams } from './interfaces/iAdvancedFilterBuilderParams';
 export { IAdvancedFilterService } from './interfaces/iAdvancedFilterService';
 
+export {
+    FindMatch,
+    IFindService,
+    FindOptions,
+    FindCellParams,
+    FindCellValueParams,
+    FindPart,
+    GetFindMatches,
+    GetFindMatchesParams,
+    FindDetailCellRendererParams,
+    FindDetailGridCellRendererParams,
+    FindFullWidthCellRendererParams,
+} from './interfaces/iFind';
+
 // gridPanel
 export { GridBodyCtrl, IGridBodyComp, RowAnimationCssClasses } from './gridBodyComp/gridBodyCtrl';
 export type { ScrollVisibleService } from './gridBodyComp/scrollVisibleService';
@@ -291,6 +309,9 @@ export {
     RowContainerType,
     RowContainerOptions,
     _getRowContainerOptions,
+    _getRowSpanContainerClass,
+    _getRowContainerClass,
+    _getRowViewportClass,
 } from './gridBodyComp/rowContainer/rowContainerCtrl';
 
 // headerRendering
@@ -323,6 +344,8 @@ export { AlignedGrid } from './interfaces/iAlignedGrid';
 export type { MenuService } from './misc/menu/menuService';
 export { _setColMenuVisible } from './misc/menu/menuService';
 export type { IColsService } from './interfaces/iColsService';
+export type { IColumnCollectionService } from './interfaces/iColumnCollectionService';
+export type { IRowNumbersService } from './interfaces/rowNumbers';
 
 // editing / cellEditors
 export {
@@ -452,7 +475,6 @@ export {
 } from './interfaces/iClientSideRowModel';
 export { IClientSideNodeManager, ClientSideNodeManagerUpdateRowDataResult } from './interfaces/iClientSideNodeManager';
 export { AbstractClientSideNodeManager } from './clientSideRowModel/abstractClientSideNodeManager';
-export { IGroupHideOpenParentsService } from './interfaces/iGroupHideOpenParentsService';
 export type { RowAutoHeightService } from './rendering/row/rowAutoHeightService';
 
 export { ColumnVO } from './interfaces/iColumnVO';
@@ -617,13 +639,15 @@ export {
     _MasterDetailGridApi,
     _StatusBarGridApi,
     _AdvancedFilterGridApi,
+    _FindApi,
 } from './api/gridApi';
 export { _getClientSideRowModel, _getServerSideRowModel } from './api/rowModelApiUtils';
 export { AgEventType, AgPublicEventType, _ALL_EVENTS, _PUBLIC_EVENTS } from './eventTypes'; // TODO: remove _ALL_EVENTS, _PUBLIC_EVENTS if not required by VUE
 export type { FocusService } from './focusService';
-export type { GridOptionsService } from './gridOptionsService';
+export type { GridOptionsService, PropertyValueChangedEvent } from './gridOptionsService';
 export { PropertyChangedEvent } from './gridOptionsService';
 export {
+    _addGridCommonParams,
     _getCallbackForEvent,
     _combineAttributesAndGridOptions,
     _processOnChange,
@@ -727,6 +751,8 @@ export {
     _isSameRow,
     _getRowNode,
     _getCellByPosition,
+    _getRowAbove,
+    _getRowBelow,
 } from './entities/positionUtils';
 export { RowPosition } from './interfaces/iRowPosition';
 export { HeaderPosition } from './interfaces/iHeaderPosition';
@@ -750,6 +776,7 @@ export {
     HeaderValueGetterParams,
     ColSpanParams,
     RowSpanParams,
+    SpanRowsParams,
     SuppressKeyboardEventParams,
     SuppressHeaderKeyboardEventParams,
     ValueGetterParams,
@@ -792,6 +819,7 @@ export {
     KeyCreatorParams,
     SortDirection,
     NestedFieldPaths,
+    GetFindTextParams,
 } from './entities/colDef';
 export {
     DataTypeDefinition,
@@ -844,6 +872,7 @@ export {
     UseGroupTotalRow,
     GetChartMenuItems,
 } from './entities/gridOptions';
+export type { RowNumbersOptions } from './interfaces/rowNumbers';
 export type { ManagedGridOptionKey, ManagedGridOptions } from './gridOptionsInitial';
 
 export {
@@ -898,11 +927,18 @@ export { IDateParams, IDate, IDateComp, BaseDate, BaseDateParams } from './inter
 export { IAfterGuiAttachedParams, ContainerType } from './interfaces/iAfterGuiAttachedParams';
 export { IComponent } from './interfaces/iComponent';
 export { IEventEmitter, IEventListener } from './interfaces/iEventEmitter';
-export { IHeaderParams, IHeaderComp, IHeader } from './headerRendering/cells/column/headerComp';
+export {
+    HeaderComp as _HeaderComp,
+    IHeaderParams,
+    IHeaderComp,
+    IHeader,
+    IInnerHeaderComponent,
+} from './headerRendering/cells/column/headerComp';
 export {
     IHeaderGroupParams,
     IHeaderGroup,
     IHeaderGroupComp,
+    IInnerHeaderGroupComponent,
 } from './headerRendering/cells/columnGroup/headerGroupComp';
 export {
     WrappableInterface,
@@ -920,7 +956,6 @@ export {
     _getShouldDisplayTooltip,
     _isShowTooltipWhenTruncated,
 } from './tooltip/tooltipFeature';
-export { IAggregationStage } from './interfaces/iAggregationStage';
 export { IFooterService } from './interfaces/iFooterService';
 export {
     MenuItemLeafDef,
@@ -953,6 +988,7 @@ export {
     _setAriaColSpan,
     _setAriaRowIndex,
     _setAriaDisabled,
+    _setAriaHasPopup,
     _removeAriaExpanded,
     _removeAriaSort,
     _setAriaSort,
@@ -988,6 +1024,7 @@ export {
     _observeResize,
     _preserveRangesWhile,
 } from './utils/dom';
+export { _selectAllCells } from './utils/selection';
 export { _stopPropagationForAgGrid, _isStopPropagationForAgGrid, _isElementInEventPath } from './utils/event';
 export { _warnOnce, _debounce, _doOnce, _waitUntil } from './utils/function';
 export { _warn, _error, _errMsg, _preInitErrMsg } from './validation/logging';
@@ -1025,7 +1062,7 @@ export { RowSpanningAccumulator, GridSerializingParams, RowAccumulator } from '.
 
 // modules
 export { Module, ModuleValidationResult, _ModuleWithApi, _ModuleWithoutApi, ModuleName } from './interfaces/iModule';
-export { ModuleRegistry, _getGridRegisteredModules } from './modules/moduleRegistry';
+export { ModuleRegistry, _getGridRegisteredModules, _setUmd } from './modules/moduleRegistry';
 
 export { ValidationModule } from './validation/validationModule';
 export { ColumnMoveModule as _ColumnMoveModule } from './columnMove/columnMoveModule';
@@ -1083,6 +1120,7 @@ export { RowApiModule, ScrollApiModule } from './api/apiModule';
 export { RenderApiModule } from './rendering/renderModule';
 export { ColumnAutoSizeModule } from './columnAutosize/columnAutosizeModule';
 export { PinnedRowModule } from './pinnedRowModel/pinnedRowModule';
+export { CellSpanModule } from './rendering/spanning/cellSpanModule';
 export { ValueCacheModule, CellApiModule } from './valueService/valueModule';
 export { CellStyleModule, RowStyleModule } from './styling/stylingModule';
 export { ColumnHoverModule } from './columns/columnHover/columnHoverModule';
@@ -1097,14 +1135,63 @@ export { AllCommunityModule } from './allCommunityModule';
 export * from './events';
 
 // theming
-export { type Part, createPart } from './theming/Part';
-export { type Theme, createTheme, _asThemeImpl } from './theming/Theme';
-export * from './theming/parts/checkbox-style/checkbox-styles';
-export * from './theming/parts/color-scheme/color-schemes';
-export * from './theming/parts/icon-set/icon-sets';
-export * from './theming/parts/input-style/input-styles';
-export * from './theming/parts/button-style/button-styles';
-export * from './theming/parts/tab-style/tab-styles';
-export * from './theming/parts/button-style/button-styles';
-export * from './theming/parts/column-drop-style/column-drop-styles';
-export * from './theming/parts/theme/themes';
+export { createPart } from './theming/Part';
+export type { Part } from './theming/Part';
+export { createTheme, _asThemeImpl } from './theming/Theme';
+export type { Theme } from './theming/Theme';
+export type { CoreParams } from './theming/core/core-css';
+export { checkboxStyleDefault } from './theming/parts/checkbox-style/checkbox-styles';
+export type { CheckboxStyleParams } from './theming/parts/checkbox-style/checkbox-styles';
+export {
+    colorSchemeDark,
+    colorSchemeDarkBlue,
+    colorSchemeDarkWarm,
+    colorSchemeLight,
+    colorSchemeLightCold,
+    colorSchemeLightWarm,
+    colorSchemeVariable,
+} from './theming/parts/color-scheme/color-schemes';
+export {
+    iconOverrides,
+    iconSetAlpine,
+    iconSetMaterial,
+    iconSetQuartz,
+    iconSetQuartzBold,
+    iconSetQuartzLight,
+    iconSetQuartzRegular,
+} from './theming/parts/icon-set/icon-sets';
+export { inputStyleBase, inputStyleBordered, inputStyleUnderlined } from './theming/parts/input-style/input-styles';
+export type { InputStyleParams } from './theming/parts/input-style/input-styles';
+export {
+    buttonStyleAlpine,
+    buttonStyleBalham,
+    buttonStyleBase,
+    buttonStyleQuartz,
+} from './theming/parts/button-style/button-styles';
+export type { ButtonStyleParams } from './theming/parts/button-style/button-styles';
+export {
+    tabStyleAlpine,
+    tabStyleBase,
+    tabStyleMaterial,
+    tabStyleQuartz,
+    tabStyleRolodex,
+} from './theming/parts/tab-style/tab-styles';
+export type { TabStyleParams } from './theming/parts/tab-style/tab-styles';
+export { columnDropStyleBordered, columnDropStylePlain } from './theming/parts/column-drop-style/column-drop-styles';
+export { styleMaterial, themeAlpine, themeBalham, themeMaterial, themeQuartz } from './theming/parts/theme/themes';
+export type { ThemeDefaultParams } from './theming/parts/theme/themes';
+export type { StyleMaterialParams } from './theming/parts/theme/themes';
+export type {
+    ColorValue,
+    ImageValue,
+    ScaleValue,
+    BorderValue,
+    LengthValue,
+    ShadowValue,
+    DurationValue,
+    FontFamilyValue,
+    FontWeightValue,
+    BorderStyleValue,
+    ColorSchemeValue,
+    WithParamTypes,
+} from './theming/theme-types';

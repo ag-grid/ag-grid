@@ -8,6 +8,7 @@ import type {
     GridOptions,
     GroupSelectionMode,
     IsRowSelectable,
+    MasterSelectionMode,
     MultiRowSelectionOptions,
     RowSelectionMode,
     RowSelectionOptions,
@@ -27,7 +28,7 @@ import type {
     RowHeightParams,
 } from './interfaces/iCallbackParams';
 import type { IClientSideRowModel } from './interfaces/iClientSideRowModel';
-import type { WithoutGridCommon } from './interfaces/iCommon';
+import type { AgGridCommon, WithoutGridCommon } from './interfaces/iCommon';
 import type { IRowModel, RowModelType } from './interfaces/iRowModel';
 import type { IRowNode } from './interfaces/iRowNode';
 import type { IServerSideRowModel } from './interfaces/iServerSideRowModel';
@@ -351,11 +352,11 @@ export function _getGroupTotalRowCallback(
 }
 
 export function _isGroupMultiAutoColumn(gos: GridOptionsService) {
-    if (gos.exists('groupDisplayType')) {
-        return gos.get('groupDisplayType') === 'multipleColumns';
+    const isHideOpenParents = !!gos.get('groupHideOpenParents');
+    if (isHideOpenParents) {
+        return true;
     }
-    // if we are doing hideOpenParents we also show multiple columns, otherwise hideOpenParents would not work
-    return gos.get('groupHideOpenParents');
+    return gos.get('groupDisplayType') === 'multipleColumns';
 }
 
 export function _isGroupUseEntireRow(gos: GridOptionsService, pivotMode: boolean): boolean {
@@ -553,8 +554,13 @@ export function _getIsRowSelectable(gos: GridOptionsService): IsRowSelectable | 
     return selection?.isRowSelectable;
 }
 
-export function _getRowSelectionMode(gos: GridOptionsService): RowSelectionMode | undefined {
-    const selection = gos.get('rowSelection');
+export function _getRowSelectionMode(gridOptions: GridOptions): RowSelectionMode | undefined;
+export function _getRowSelectionMode(gos: GridOptionsService): RowSelectionMode | undefined;
+export function _getRowSelectionMode(arg: object): RowSelectionMode | undefined {
+    const selection =
+        'beanName' in arg && arg.beanName === 'gos'
+            ? (arg as GridOptionsService).get('rowSelection')
+            : (arg as GridOptions).rowSelection;
 
     if (typeof selection === 'string') {
         switch (selection) {
@@ -577,8 +583,10 @@ export function _getRowSelectionMode(gos: GridOptionsService): RowSelectionMode 
     }
 }
 
-export function _isMultiRowSelection(gos: GridOptionsService): boolean {
-    const mode = _getRowSelectionMode(gos);
+export function _isMultiRowSelection(gridOptions: GridOptions): boolean;
+export function _isMultiRowSelection(gos: GridOptionsService): boolean;
+export function _isMultiRowSelection(arg: object): boolean {
+    const mode = _getRowSelectionMode(arg as GridOptionsService);
     return mode === 'multiRow';
 }
 
@@ -624,6 +632,11 @@ export function _getSelectAll(gos: GridOptionsService, defaultValue = true): Sel
 export function _getGroupSelectsDescendants(gos: GridOptionsService): boolean {
     const groupSelection = _getGroupSelection(gos);
     return groupSelection === 'descendants' || groupSelection === 'filteredDescendants';
+}
+
+export function _getMasterSelects(gos: GridOptionsService): MasterSelectionMode {
+    const rowSelection = gos.get('rowSelection');
+    return (typeof rowSelection === 'object' && rowSelection.masterSelects) || 'self';
 }
 
 export function _isSetFilterByDefault(gos: GridOptionsService): boolean {
@@ -700,4 +713,11 @@ export function _processOnChange(changes: any, api: GridApi): void {
     };
 
     api.dispatchEvent(event);
+}
+
+export function _addGridCommonParams<T extends AgGridCommon<TData, TContext>, TData = any, TContext = any>(
+    gos: GridOptionsService,
+    params: WithoutGridCommon<T>
+): T {
+    return gos.addGridCommonParams(params);
 }

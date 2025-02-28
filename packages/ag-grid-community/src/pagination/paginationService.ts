@@ -1,7 +1,5 @@
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
-import type { RowNode } from '../entities/rowNode';
-import type { RowPosition } from '../interfaces/iRowPosition';
 import { _exists } from '../utils/generic';
 import type { ComponentSelector } from '../widgets/component';
 import { PaginationSelector } from './paginationComp';
@@ -83,31 +81,24 @@ export class PaginationService extends BeanStub implements NamedBean {
         this.dispatchPaginationChangedEvent({ newPage: true });
     }
 
-    public isRowPresent(rowNode: RowNode): boolean {
-        const nodeIsInPage =
-            rowNode.rowIndex! >= this.topDisplayedRowIndex && rowNode.rowIndex! <= this.bottomDisplayedRowIndex;
-        return nodeIsInPage;
-    }
-
-    private getPageForIndex(index: number): number {
-        return Math.floor(index / this.pageSize);
-    }
-
-    public goToPageWithIndex(index: any): void {
+    public goToPageWithIndex(index: number): void {
         if (!this.active) {
             return;
         }
 
-        const pageNumber = this.getPageForIndex(index);
-        this.goToPage(pageNumber);
+        let adjustedIndex = index;
+        if (!this.paginateChildRows) {
+            adjustedIndex = this.beans.rowModel.getTopLevelIndexFromDisplayedIndex?.(index) ?? index;
+        }
+
+        this.goToPage(Math.floor(adjustedIndex / this.pageSize));
     }
 
-    public isRowInPage(row: RowPosition): boolean {
+    public isRowInPage(rowIndex: number): boolean {
         if (!this.active) {
             return true;
         }
-        const rowPage = this.getPageForIndex(row.rowIndex);
-        return rowPage === this.currentPage;
+        return rowIndex >= this.topDisplayedRowIndex && rowIndex <= this.bottomDisplayedRowIndex;
     }
 
     public getCurrentPage(): number {

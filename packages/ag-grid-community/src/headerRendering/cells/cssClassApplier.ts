@@ -4,6 +4,7 @@ import type { AgColumnGroup } from '../../entities/agColumnGroup';
 import type { AgProvidedColumnGroup } from '../../entities/agProvidedColumnGroup';
 import type { AbstractColDef, HeaderClassParams, ToolPanelClassParams } from '../../entities/colDef';
 import type { GridOptionsService } from '../../gridOptionsService';
+import { _addGridCommonParams } from '../../gridOptionsUtils';
 import type { WithoutGridCommon } from '../../interfaces/iCommon';
 import type { ICellComp } from '../../rendering/cell/cellCtrl';
 import { _missing } from '../../utils/generic';
@@ -53,7 +54,7 @@ function getClassParams<T extends HeaderClassParams | ToolPanelClassParams>(
     column: AgColumn | null,
     columnGroup: T['columnGroup']
 ): T {
-    return gos.addGridCommonParams({
+    return _addGridCommonParams(gos, {
         // bad naming, as colDef here can be a group or a column,
         // however most people won't appreciate the difference,
         // so keeping it as colDef to avoid confusion.

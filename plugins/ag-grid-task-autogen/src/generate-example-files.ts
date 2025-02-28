@@ -1,10 +1,5 @@
-import {
-    type CreateDependencies,
-    DependencyType,
-    type RawProjectGraphDependency,
-    type TargetConfiguration,
-    validateDependency,
-} from '@nx/devkit';
+import { DependencyType, validateDependency } from '@nx/devkit';
+import type { CreateDependencies, RawProjectGraphDependency, TargetConfiguration } from '@nx/devkit';
 
 export function createTask(parentProject: string, srcRelativeInputPath: string): Record<string, TargetConfiguration> {
     return {
@@ -36,7 +31,7 @@ export function createTask(parentProject: string, srcRelativeInputPath: string):
                     mode: 'prod',
                 },
                 staging: {
-                    mode: 'dev',
+                    mode: 'prod',
                 },
             },
         },

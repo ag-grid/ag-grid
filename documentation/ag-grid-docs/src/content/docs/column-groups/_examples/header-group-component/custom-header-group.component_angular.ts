@@ -1,16 +1,17 @@
 import { NgClass } from '@angular/common';
-import { Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
 
 import type { IHeaderGroupAngularComp } from 'ag-grid-angular';
 import type { IHeaderGroupParams } from 'ag-grid-community';
 
 @Component({
     standalone: true,
+    changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [NgClass],
     template: `
         <div class="ag-header-group-cell-label">
-            <div class="customHeaderLabel">{{ params.displayName }}</div>
-            <div class="customExpandButton" [ngClass]="expandState" (click)="expandOrCollapse()">
+            <div class="customHeaderLabel">{{ displayName() }}</div>
+            <div class="customExpandButton" [ngClass]="expandState()" (click)="expandOrCollapse()">
                 <i class="fa fa-arrow-right"></i>
             </div>
         </div>
@@ -104,11 +105,14 @@ import type { IHeaderGroupParams } from 'ag-grid-community';
     ],
 })
 export class CustomHeaderGroup implements IHeaderGroupAngularComp {
-    public params!: IHeaderGroupParams;
-    public expandState!: string;
+    private params!: IHeaderGroupParams;
+
+    displayName = signal<string>('');
+    expandState = signal<string>('');
 
     agInit(params: IHeaderGroupParams): void {
         this.params = params;
+        this.displayName.set(params.displayName);
         this.params.columnGroup
             .getProvidedColumnGroup()
             .addEventListener('expandedChanged', this.syncExpandButtons.bind(this));
@@ -122,10 +126,7 @@ export class CustomHeaderGroup implements IHeaderGroupAngularComp {
     }
 
     syncExpandButtons() {
-        if (this.params.columnGroup.getProvidedColumnGroup().isExpanded()) {
-            this.expandState = 'expanded';
-        } else {
-            this.expandState = 'collapsed';
-        }
+        const isExpanded = this.params.columnGroup.getProvidedColumnGroup().isExpanded();
+        this.expandState.set(isExpanded ? 'expanded' : 'collapsed');
     }
 }

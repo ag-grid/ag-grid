@@ -16,6 +16,7 @@ import type {
     ExcelExportParams,
     ExcelStyle,
     FillOperationParams,
+    FindOptions,
     FocusGridInnerElementParams,
     GetChartMenuItems,
     GetChartToolbarItems,
@@ -64,6 +65,7 @@ import type {
     RowGroupingDisplayType,
     RowHeightParams,
     RowModelType,
+    RowNumbersOptions,
     RowSelectionOptions,
     RowStyle,
     SelectionColumnDef,
@@ -137,6 +139,7 @@ import type {
     FilterChangedEvent,
     FilterModifiedEvent,
     FilterOpenedEvent,
+    FindChangedEvent,
     FirstDataRenderedEvent,
     FloatingFilterModifiedEvent,
     FullWidthCellKeyDownEvent,
@@ -188,7 +191,7 @@ import type {
 
 import type { GridOptions, Module } from 'ag-grid-community';
 import type { AgChartTheme, AgChartThemeOverrides } from 'ag-charts-types';
-import { isProxy, isReactive, isRef, toRaw } from 'vue';
+import {isProxy, isReactive, isRef, toRaw} from 'vue';
 
 export interface Properties {
     [propertyName: string]: any;
@@ -202,6 +205,7 @@ export interface Props<TData> {
      * See [Providing Modules To Individual Grids](https://www.ag-grid.com/vue-data-grid/modules/#providing-modules-to-individual-grids) for more information.
      */
     modules?: Module[] | undefined;
+
 // @START_PROPS@
     /** Specifies the status bar components to use in the status bar.
          */
@@ -228,9 +232,10 @@ export interface Props<TData> {
          * @initial
          */
     columnMenu?: 'legacy' | 'new' | undefined,
-    /** When `true`, the column menu button will always be shown.
+    /** Only recommended for use if `columnMenu = 'legacy'`.
+         * When `true`, the column menu button will always be shown.
          * When `false`, the column menu button will only show when the mouse is over the column header.
-         * If `columnMenu = 'legacy'`, this will default to `false` instead of `true`.
+         * When using `columnMenu = 'legacy'`, this will default to `false` instead of `true`.
          * @default true
          */
     suppressMenuHide?: boolean | undefined,
@@ -487,6 +492,12 @@ export interface Props<TData> {
          * @initial
          */
     excelStyles?: ExcelStyle[] | undefined,
+    /** Text to find within the grid.
+         */
+    findSearchValue?: string | undefined,
+    /** Options for the Find feature.
+         */
+    findOptions?: FindOptions | undefined,
     /** Rows are filtered using this text as a Quick Filter.
          * Only supported for Client-Side Row Model.
          */
@@ -845,6 +856,11 @@ export interface Props<TData> {
          * @initial
          */
     ensureDomOrder?: boolean | undefined,
+    /** When `true`, enables the cell span feature allowing for the use of the `colDef.spanRows` property.
+         * @default false
+         * @initial
+         */
+    enableCellSpan?: boolean | undefined,
     /** Set to `true` to operate the grid in RTL (Right to Left) mode.
          * @default false
          * @initial
@@ -1001,6 +1017,10 @@ export interface Props<TData> {
          * @default false
          */
     treeData?: boolean | undefined,
+    /** The name of the field to use in a data item to retrieve the array of children nodes of a node when while using treeData=true.
+         * It supports accessing nested fields using the dot notation.
+         */
+    treeDataChildrenField?: string | undefined,
     /** Set to `true` to suppress sort indicators and actions from the row group panel.
          * @default false
          */
@@ -1183,6 +1203,10 @@ export interface Props<TData> {
          * Note that due to the nature of this column, this type is a subset of `ColDef`, which does not support several normal column features such as editing, pivoting and grouping.
          */
     selectionColumnDef?: SelectionColumnDef | undefined,
+    /** Configure the Row Numbers Feature.
+         * @default false
+         */
+    rowNumbers?: boolean | RowNumbersOptions | undefined,
     /** If `true`, only a single range can be selected.
          * @default false
          * @deprecated v32.2 Use `cellSelection.suppressMultiRanges` instead
@@ -1313,6 +1337,15 @@ export interface Props<TData> {
          * @see https://developer.mozilla.org/en-US/docs/Web/CSS/@layer
          */
     themeCssLayer?: string | undefined,
+    /** The nonce attribute to set on style elements added to the document by
+         * themes. If "foo" is passed to this property, the grid can use the Content
+         * Security Policy `style-src 'nonce-foo'`, instead of the less secure
+         * `style-src 'unsafe-inline'`.
+         *
+         * Note: CSP nonces are global to a page, where a page has multiple grids,
+         * every one must have the same styleNonce set.
+         */
+    styleNonce?: string | undefined,
     /** An element to insert style elements into when injecting styles into the
          * grid. If undefined, styles will be added to the document head for grids
          * rendered in the main document fragment, or to the grid wrapper element
@@ -1532,6 +1565,7 @@ export interface Props<TData> {
    'onFilter-modified'?: FilterModifiedEvent<TData>,
    'onFloating-filter-modified'?: FloatingFilterModifiedEvent<TData>,
    'onAdvanced-filter-builder-visible-changed'?: AdvancedFilterBuilderVisibleChangedEvent<TData>,
+   'onFind-changed'?: FindChangedEvent<TData>,
    'onChart-created'?: ChartCreatedEvent<TData>,
    'onChart-range-selection-changed'?: ChartRangeSelectionChangedEvent<TData>,
    'onChart-options-changed'?: ChartOptionsChangedEvent<TData>,
@@ -1658,6 +1692,8 @@ export function getProps() {
         defaultExcelExportParams: undefined,
         suppressExcelExport: undefined,
         excelStyles: undefined,
+        findSearchValue: undefined,
+        findOptions: undefined,
         quickFilterText: undefined,
         cacheQuickFilter: undefined,
         includeHiddenColumnsInQuickFilter: undefined,
@@ -1741,6 +1777,7 @@ export function getProps() {
         allowShowChangeAfterFilter: undefined,
         domLayout: undefined,
         ensureDomOrder: undefined,
+        enableCellSpan: undefined,
         enableRtl: undefined,
         suppressColumnVirtualisation: undefined,
         suppressMaxRenderedRowRestriction: undefined,
@@ -1776,6 +1813,7 @@ export function getProps() {
         groupRowRenderer: undefined,
         groupRowRendererParams: undefined,
         treeData: undefined,
+        treeDataChildrenField: undefined,
         rowGroupPanelSuppressSort: undefined,
         suppressGroupRowsSticky: undefined,
         pinnedTopRowData: undefined,
@@ -1820,6 +1858,7 @@ export function getProps() {
         suppressCellFocus: undefined,
         suppressHeaderFocus: undefined,
         selectionColumnDef: undefined,
+        rowNumbers: undefined,
         suppressMultiRangeSelection: undefined,
         enableCellTextSelection: undefined,
         enableRangeSelection: undefined,
@@ -1850,6 +1889,7 @@ export function getProps() {
         theme: undefined,
         loadThemeGoogleFonts: undefined,
         themeCssLayer: undefined,
+        styleNonce: undefined,
         themeStyleContainer: undefined,
         getContextMenuItems: undefined,
         getMainMenuItems: undefined,
@@ -1997,7 +2037,8 @@ export function getProps() {
         'onRow-drag-move': undefined,
         'onRow-drag-leave': undefined,
         'onRow-drag-end': undefined,
-        'onRow-drag-cancel': undefined
+        'onRow-drag-cancel': undefined,
+        'onFind-changed': undefined
 // @END_EVENT_PROPS@
 
     };
@@ -2021,23 +2062,22 @@ function isInputClass(input: any) {
         input.constructor.toString().substring(0, 5) === 'class';
 }
 
+// necessary for grid change detection to work - everything in vue is proxied
 export function deepToRaw<T extends Record<string, any>>(sourceObj: T): T {
     const objectIterator = (input: any): any => {
+        if(isInputClass(input)) {
+            return toRaw(input);
+        }
         if (Array.isArray(input)) {
             return input.map((item) => objectIterator(item));
         }
         if (isRef(input) || isReactive(input) || isProxy(input)) {
             return objectIterator(toRaw(input));
         }
-        if (input && typeof input === 'object' && Object.keys(input).length > 0) {
-            return Object.keys(input).reduce((acc, key) => {
-                // don't convert classes to "raw" object
-                acc[key as keyof typeof acc] = isInputClass(input[key]) ? input[key] : objectIterator(input[key]);
-                return acc;
-            }, {} as T);
-        }
         return input;
     };
 
     return objectIterator(sourceObj);
 }
+
+// export const convertToRaw = (value: any) => (value ? (Object.isFrozen(value) ? value : markRaw(toRaw(value))) : value);

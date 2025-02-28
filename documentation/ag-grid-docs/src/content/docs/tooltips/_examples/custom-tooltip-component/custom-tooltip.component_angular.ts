@@ -33,8 +33,8 @@ import type { ITooltipParams } from 'ag-grid-community';
     ],
 })
 export class CustomTooltip implements ITooltipAngularComp {
-    private params!: { color: string } & ITooltipParams;
-    public color!: string;
+    params!: { color: string } & ITooltipParams;
+    color!: string;
 
     agInit(params: { color: string } & ITooltipParams): void {
         this.params = params;

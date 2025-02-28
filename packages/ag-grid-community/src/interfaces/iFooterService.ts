@@ -16,4 +16,6 @@ export interface IFooterService {
         childrenAfterSort: RowNode[],
         getDefaultIndex: (adjustedIndex: number) => number
     ): number;
+
+    getTotalValue(value: any): string;
 }

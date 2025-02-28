@@ -1,6 +1,7 @@
 import type { ColumnState } from '../columns/columnStateUtils';
 import { BeanStub } from '../context/beanStub';
 import type { AgEvent, ColumnEvent, ColumnEventType } from '../events';
+import { _addGridCommonParams } from '../gridOptionsUtils';
 import type {
     Column,
     ColumnEventName,
@@ -119,6 +120,11 @@ export class AgColumn<TValue = any>
         this.colIdSanitised = _escapeString(colId)!;
     }
 
+    public override destroy() {
+        super.destroy();
+        this.beans.rowSpanSvc?.deregister(this);
+    }
+
     public getInstanceId(): ColumnInstanceId {
         return this.instanceId;
     }
@@ -149,11 +155,16 @@ export class AgColumn<TValue = any>
         userProvidedColDef: ColDef<any, TValue> | null,
         source: ColumnEventType
     ): void {
+        const colSpanChanged = colDef.spanRows !== this.colDef.spanRows;
         this.colDef = colDef;
         this.userProvidedColDef = userProvidedColDef;
         this.initMinAndMaxWidths();
         this.initDotNotation();
         this.initTooltip();
+        if (colSpanChanged) {
+            this.beans.rowSpanSvc?.deregister(this);
+            this.initRowSpan();
+        }
         this.dispatchColEvent('colDefChanged', source);
     }
 
@@ -180,6 +191,8 @@ export class AgColumn<TValue = any>
         this.initDotNotation();
 
         this.initTooltip();
+
+        this.initRowSpan();
     }
 
     private initDotNotation(): void {
@@ -201,6 +214,12 @@ export class AgColumn<TValue = any>
 
     private initTooltip(): void {
         this.beans.tooltipSvc?.initCol(this);
+    }
+
+    private initRowSpan(): void {
+        if (this.colDef.spanRows) {
+            this.beans.rowSpanSvc?.register(this);
+        }
     }
 
     public resetActualWidth(source: ColumnEventType): void {
@@ -300,7 +319,7 @@ export class AgColumn<TValue = any>
     }
 
     public createColumnFunctionCallbackParams(rowNode: IRowNode): ColumnFunctionCallbackParams {
-        return this.gos.addGridCommonParams({
+        return _addGridCommonParams(this.gos, {
             node: rowNode,
             data: rowNode.data,
             column: this,
@@ -373,7 +392,7 @@ export class AgColumn<TValue = any>
     }
 
     private createColumnEvent<T extends ColumnEventName>(type: T, source: ColumnEventType): ColumnEvent<T> {
-        return this.gos.addGridCommonParams({
+        return _addGridCommonParams(this.gos, {
             type,
             column: this,
             columns: [this],
@@ -570,7 +589,7 @@ export class AgColumn<TValue = any>
     }
 
     private createBaseColDefParams(rowNode: IRowNode): BaseColDefParams {
-        const params: BaseColDefParams = this.gos.addGridCommonParams({
+        const params: BaseColDefParams = _addGridCommonParams(this.gos, {
             node: rowNode,
             data: rowNode.data,
             colDef: this.colDef,
@@ -607,7 +626,7 @@ export class AgColumn<TValue = any>
         if (this.actualWidth !== actualWidth) {
             // disable flex for this column if it was manually resized.
             this.actualWidth = actualWidth;
-            if (this.flex && source !== 'flex' && source !== 'gridInitializing') {
+            if (this.flex != null && source !== 'flex' && source !== 'gridInitializing') {
                 this.flex = null;
             }
 

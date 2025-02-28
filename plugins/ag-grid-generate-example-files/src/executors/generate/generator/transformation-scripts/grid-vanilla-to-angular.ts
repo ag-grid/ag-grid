@@ -14,6 +14,7 @@ import {
     handleRowGenericInterface,
     isInstanceMethod,
     preferParamsApi,
+    removeCreateGridImport,
     removeFunctionKeyword,
     replaceGridReadyRowData,
 } from './parser-utils';
@@ -98,7 +99,7 @@ function getImports(
     const imports = ["import { Component } from '@angular/core';"];
 
     if (bindings.data) {
-        imports.push("import { HttpClient, HttpClientModule } from '@angular/common/http';");
+        imports.push("import { HttpClient } from '@angular/common/http';");
     }
 
     const localeImport = findLocaleImport(bindings.imports);
@@ -114,7 +115,7 @@ function getImports(
 
     addGenericInterfaceImport(imports, bindings.tData, bindings);
 
-    return imports;
+    return removeCreateGridImport(imports);
 }
 
 function getTemplate(bindings: ParsedBindings, exampleConfig: ExampleConfig, attributes: string[]): string {
@@ -186,7 +187,7 @@ export function vanillaToAngular(
         }
 
         if (!propertyAssignments.find((item) => item.indexOf('rowData') >= 0)) {
-            propertyAssignments.push(`public rowData!: ${rowDataType}[];`);
+            propertyAssignments.push(`rowData!: ${rowDataType}[];`);
         }
 
         const componentForCheckBody = eventHandlers
@@ -236,9 +237,6 @@ export function vanillaToAngular(
             .replace(/(?<!this.)gridApi(\??)(!?)/g, 'this.gridApi');
 
         const standaloneImports = ['AgGridAngular'];
-        if (bindings.data) {
-            standaloneImports.push('HttpClientModule');
-        }
 
         if (componentFileNames) {
             componentFileNames.forEach((filename) => {

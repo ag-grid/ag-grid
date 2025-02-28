@@ -1,10 +1,8 @@
-import type { ChartType } from 'ag-grid-community';
-
 import type { AgChartsExports } from '../../../../../agChartsExports';
 import type { ChartTranslationKey } from '../../../../services/chartTranslationService';
-import type { ThemeTemplateParameters } from '../../miniChartsContainer';
+import type { MiniChartSelector, ThemeTemplateParameters } from '../../miniChartsContainer';
 import type { XYCoordShape } from '../miniChartApi';
-import { MiniFunnel } from './miniFunnel';
+import { MiniFunnelClass } from './miniFunnel';
 
 const CONE_FUNNEL_SHAPES: XYCoordShape[] = [
     [
@@ -27,9 +25,7 @@ const CONE_FUNNEL_SHAPES: XYCoordShape[] = [
     ],
 ];
 
-export class MiniConeFunnel extends MiniFunnel {
-    static override chartType: ChartType = 'coneFunnel';
-
+export class MiniConeFunnelClass extends MiniFunnelClass {
     constructor(
         container: HTMLElement,
         agChartsExports: AgChartsExports,
@@ -60,3 +56,8 @@ export class MiniConeFunnel extends MiniFunnel {
         });
     }
 }
+
+export const MiniConeFunnel: MiniChartSelector = {
+    chartType: 'coneFunnel',
+    miniChart: MiniConeFunnelClass,
+};

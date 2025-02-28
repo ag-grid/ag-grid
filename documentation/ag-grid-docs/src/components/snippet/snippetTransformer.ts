@@ -204,8 +204,12 @@ class ReactTransformer extends SnippetTransformer {
             return `const [${propName}, ${setterPropName}] = useState(${decreaseIndent(value)});`;
         }
 
-        if (isUseMemoProp(propName)) {
+        if (isUseMemoProp(propName) && !isJsLiteralValue(value)) {
             return `const ${propName} = useMemo(() => { \n\treturn ${value};\n}, []);`;
+        }
+
+        if (isUseCallbackProp(propName) && !isJsLiteralValue(value)) {
+            return `const ${propName} = useCallback(${value}, []);`;
         }
 
         return `const ${getName(property)} = ${decreaseIndent(value)};`;
@@ -240,6 +244,26 @@ class ReactTransformer extends SnippetTransformer {
         return ''; // react comments are added in-place
     }
 }
+
+const isJsLiteralValue = (value: string) => {
+    value = value.trim();
+    if (value === 'null' || value === 'undefined') {
+        return true; // null or undefined
+    }
+    if (value === 'true' || value === 'false') {
+        return true; // A boolean literal
+    }
+    if (value.startsWith('"') && value.endsWith('"')) {
+        return true; // A string literal
+    }
+    if (value.startsWith("'") && value.endsWith("'")) {
+        return true; // A string literal
+    }
+    if (!isNaN(value as any) || value === 'NaN') {
+        return true; // A number
+    }
+    return false;
+};
 
 // This function associates comments with the correct node as comments returned in a separate array by 'esprima'
 const addCommentsToTree = (tree) => {
@@ -299,7 +323,11 @@ const isUseMemoProp = (propName) =>
         'rowSelection',
         'sideBar',
         'statusBar',
+        'autoSizeStrategy',
+        'rowNumbers',
     ].includes(propName);
+
+const isUseCallbackProp = (propName) => ['getDataPath'].includes(propName);
 
 // removes a tab spacing from the beginning of each line after first
 const decreaseIndent = (codeBlock, times = 1) => {

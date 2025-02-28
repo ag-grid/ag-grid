@@ -1,8 +1,8 @@
 import type { ColDef, GridApi, GridOptions } from 'ag-grid-community';
-import { AllCommunityModule, ModuleRegistry, createGrid, themeQuartz } from 'ag-grid-community';
+import { ModuleRegistry, createGrid, themeQuartz } from 'ag-grid-community';
 import { AllEnterpriseModule } from 'ag-grid-enterprise';
 
-ModuleRegistry.registerModules([AllCommunityModule, AllEnterpriseModule]);
+ModuleRegistry.registerModules([AllEnterpriseModule]);
 
 // Set a blue background and red shadows for all menus
 const myTheme = themeQuartz.withParams({
@@ -27,7 +27,6 @@ let gridApi: GridApi<IOlympicData>;
 
 const gridOptions: GridOptions<IOlympicData> = {
     theme: myTheme,
-    rowData: null,
     columnDefs: columnDefs,
     defaultColDef: {
         filter: true,

@@ -1,6 +1,11 @@
 import type { UserComponentName } from '../../context/context';
 import type { Column } from '../../interfaces/iColumn';
-import type { EnterpriseModuleName, ModuleName, ValidationModuleName } from '../../interfaces/iModule';
+import type {
+    CommunityModuleName,
+    EnterpriseModuleName,
+    ModuleName,
+    ValidationModuleName,
+} from '../../interfaces/iModule';
 import type { RowModelType } from '../../interfaces/iRowModel';
 import type { RowNodeEventType } from '../../interfaces/iRowNode';
 import { _fuzzySuggestions } from '../../utils/fuzzyMatch';
@@ -31,6 +36,25 @@ function convertToUserModuleName(moduleName: ModuleName, inModuleRegistration = 
     return `${moduleName}Module`;
 }
 
+function umdMissingModule(
+    reasonOrId: string | keyof MissingModuleErrors,
+    moduleNames: (CommunityModuleName | EnterpriseModuleName)[]
+) {
+    const chartModules = moduleNames.filter((m) => m === 'IntegratedCharts' || m === 'Sparklines');
+
+    let message = '';
+
+    const agChartsDynamic = (globalThis as any)?.agCharts;
+
+    if (!agChartsDynamic && chartModules.length > 0) {
+        message = `Unable to use ${reasonOrId} as either the ag-charts-community or ag-charts-enterprise script needs to be included alongside ag-grid-enterprise.\n`;
+    } else if (moduleNames.some((m) => ENTERPRISE_MODULE_NAMES[m as EnterpriseModuleName])) {
+        message =
+            message + `Unable to use ${reasonOrId} as that requires the ag-grid-enterprise script to be included.\n`;
+    }
+    return message;
+}
+
 const missingModule = ({
     reasonOrId,
     moduleName,
@@ -38,6 +62,7 @@ const missingModule = ({
     gridId,
     rowModelType,
     additionalText,
+    isUmd,
 }: {
     reasonOrId: string | keyof MissingModuleErrors;
     moduleName: ValidationModuleName | ValidationModuleName[];
@@ -45,9 +70,14 @@ const missingModule = ({
     gridId: string;
     rowModelType: RowModelType;
     additionalText?: string;
+    isUmd?: boolean;
 }) => {
     const resolvedModuleNames = resolveModuleNames(moduleName, rowModelType);
     const reason = typeof reasonOrId === 'string' ? reasonOrId : MISSING_MODULE_REASONS[reasonOrId];
+
+    if (isUmd) {
+        return umdMissingModule(reason, resolvedModuleNames);
+    }
 
     const chartModules = resolvedModuleNames.filter((m) => m === 'IntegratedCharts' || m === 'Sparklines');
     const chartImportRequired =
@@ -243,8 +273,7 @@ export const AG_GRID_ERRORS = {
         `A template was provided for Header Group Comp - templates are only supported for Header Comps (not groups)` as const,
     90: () => `datasource is missing getRows method` as const,
     91: () => 'Filter is missing method doesFilterPass' as const,
-    92: ({ methodName }: { methodName: string }) =>
-        `AnimationFrameService.${methodName} called but animation frames are off` as const,
+    92: () => `AnimationFrameService called but animation frames are off` as const,
     93: () => 'cannot add multiple ranges when `cellSelection.suppressMultiRanges = true`' as const,
     94: ({
         paginationPageSizeOption,
@@ -316,7 +345,7 @@ export const AG_GRID_ERRORS = {
         textOutput.push(`If using a custom component check it has been registered correctly.`);
         return textOutput;
     },
-    102: () => "selecting just filtered only works when gridOptions.rowModelType='clientSide'" as const,
+    102: () => "selectAll: 'filtered' only works when gridOptions.rowModelType='clientSide'" as const,
     103: () =>
         'Invalid selection state. When using client-side row model, the state must conform to `string[]`.' as const,
     104: ({ value, param }: { value: number; param: string }) =>
@@ -331,12 +360,12 @@ export const AG_GRID_ERRORS = {
         `unrecognised aggregation function ${aggFuncOrString}` as const,
     110: () => 'groupHideOpenParents only works when specifying specific columns for colDef.showRowGroup' as const,
     111: () =>
-        'Invalid selection state. When `groupSelectsChildren` is enabled, the state must conform to `IServerSideGroupSelectionState`.' as const,
+        'Invalid selection state. When `groupSelects` is enabled, the state must conform to `IServerSideGroupSelectionState`.' as const,
     113: () =>
         'Set Filter cannot initialise because you are using a row model that does not contain all rows in the browser. Either use a different filter type, or configure Set Filter such that you provide it with values' as const,
     114: ({ component }: { component: string }) =>
         `Could not find component with name of ${component}. Is it in Vue.components?` as const,
-    115: () => 'The provided selection state should be an object.' as const,
+    // 115: () => 'The provided selection state should be an object.' as const,
     116: () => 'Invalid selection state. The state must conform to `IServerSideSelectionState`.' as const,
     117: () => 'selectAll must be of boolean type.' as const,
     118: () => 'Infinite scrolling must be enabled in order to set the row count.' as const,
@@ -357,7 +386,7 @@ export const AG_GRID_ERRORS = {
     129: ({ feature, rowModel }: { feature: string; rowModel: string }) =>
         `${feature} is only available if using 'clientSide' or 'serverSide' rowModelType, you are using ${rowModel}.` as const,
     130: () => 'cannot multi select unless selection mode is "multiRow"' as const,
-    131: () => 'cannot range select while selecting multiple rows' as const,
+    // 131: () => 'cannot range select while selecting multiple rows' as const,
     132: () => 'Row selection features are not available unless `rowSelection` is enabled.' as const,
     133: ({ iconName }: { iconName: string }) =>
         `icon '${iconName}' function should return back a string or a dom object` as const,
@@ -475,16 +504,16 @@ export const AG_GRID_ERRORS = {
             `data is `,
             data,
         ] as const,
-    191: () => `cannot multi select unless selection mode is 'multiRow'` as const,
-    192: () => `cannot use range selection when multi selecting rows` as const,
-    193: () => "cannot multi select unless selection mode is 'multiRow'" as const,
+    // 191: () => `cannot multi select unless selection mode is 'multiRow'` as const,
+    // 192: () => `cannot use range selection when multi selecting rows` as const,
+    // 193: () => "cannot multi select unless selection mode is 'multiRow'" as const,
     194: ({ method }: { method: string }) =>
         `calling gridApi.${method}() is only possible when using rowModelType=\`clientSide\`.` as const,
     195: ({ justCurrentPage }: { justCurrentPage: boolean | undefined }) =>
         `selecting just ${justCurrentPage ? 'current page' : 'filtered'} only works when gridOptions.rowModelType='clientSide'` as const,
     196: ({ key }: { key: string }) => `Provided ids must be of string type. Invalid id provided: ${key}` as const,
     197: () => '`toggledNodes` must be an array of string ids.' as const,
-    198: () => `cannot multi select unless selection mode is 'multiRow'` as const,
+    // 198: () => `cannot multi select unless selection mode is 'multiRow'` as const,
     199: () =>
         `getSelectedNodes and getSelectedRows functions cannot be used with select all functionality with the server-side row model. Use \`api.getServerSideSelectionState()\` instead.` as const,
     200: missingModule,
@@ -551,8 +580,8 @@ export const AG_GRID_ERRORS = {
         'Theming API and CSS File Themes are both used in the same page. In v33 we released the Theming API as the new default method of styling the grid. See the migration docs https://www.ag-grid.com/react-data-grid/theming-migration/. Because no value was provided to the `theme` grid option it defaulted to themeQuartz. But the file (ag-grid.css) is also included and will cause styling issues. Either pass the string "legacy" to the theme grid option to use v32 style themes, or remove ag-grid.css from the page to use Theming API.' as const,
     240: ({ theme }: { theme: any }) =>
         `theme grid option must be a Theming API theme object or the string "legacy", received: ${theme}` as const,
-    241: () => `cannot select multiple rows when rowSelection.mode is set to 'singleRow'` as const,
-    242: () => 'cannot select multiple rows when using rangeSelect' as const,
+    // 241: () => `cannot select multiple rows when rowSelection.mode is set to 'singleRow'` as const,
+    // 242: () => 'cannot select multiple rows when using rangeSelect' as const,
     243: () => 'Failed to deserialize state - each provided state object must be an object.' as const,
     244: () => 'Failed to deserialize state - `selectAllChildren` must be a boolean value or undefined.' as const,
     245: () => 'Failed to deserialize state - `toggledNodes` must be an array.' as const,
@@ -609,6 +638,8 @@ export const AG_GRID_ERRORS = {
         'As of v33.1, using "keyCreator" with the Rich Select Editor has been deprecated. It now requires the "formatValue" callback to convert complex data to strings.' as const,
     267: () =>
         'Detail grids can not use a different theme to the master grid, the `theme` detail grid option will be ignored.' as const,
+    268: () => "Transactions aren't supported with tree data when using treeDataChildrenField" as const,
+    269: () => "When `masterSelects: 'detail'`, detail grids must be configured with multi-row selection" as const,
 };
 
 export type ErrorMap = typeof AG_GRID_ERRORS;

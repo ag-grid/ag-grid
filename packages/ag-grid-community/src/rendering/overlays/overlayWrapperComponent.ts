@@ -1,6 +1,6 @@
 import { KeyCode } from '../../constants/keyCode';
 import type { GridOptions } from '../../entities/gridOptions';
-import { _getActiveDomElement, _isNothingFocused } from '../../gridOptionsUtils';
+import { _addGridCommonParams, _getActiveDomElement, _isNothingFocused } from '../../gridOptionsUtils';
 import type { LayoutView, UpdateLayoutClassesParams } from '../../styling/layoutFeature';
 import { LayoutCssClasses, LayoutFeature } from '../../styling/layoutFeature';
 import { _last } from '../../utils/array';
@@ -47,7 +47,11 @@ export class OverlayWrapperComponent extends Component implements LayoutView {
 
         let isFocused = false;
         if (e.shiftKey) {
-            isFocused = beans.focusSvc.focusGridView(_last(beans.visibleCols.allCols), true, false);
+            isFocused = beans.focusSvc.focusGridView({
+                column: _last(beans.visibleCols.allCols),
+                backwards: true,
+                canFocusOverlay: false,
+            });
         } else {
             isFocused = _focusNextGridCoreContainer(beans, false);
         }
@@ -131,7 +135,7 @@ export class OverlayWrapperComponent extends Component implements LayoutView {
                 if (gridOption) {
                     const component = comp;
                     this.updateListenerDestroyFunc = this.addManagedPropertyListener(gridOption, ({ currentValue }) => {
-                        component.refresh?.(this.gos.addGridCommonParams({ ...(currentValue ?? {}) }));
+                        component.refresh?.(_addGridCommonParams(this.gos, { ...(currentValue ?? {}) }));
                     });
                 }
             }

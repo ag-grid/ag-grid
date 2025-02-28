@@ -55,7 +55,7 @@ export class CellFlashService extends BeanStub implements NamedBean {
         cellComp.addOrRemoveCssClass(fullName, true);
         cellComp.addOrRemoveCssClass(animationFullName, false);
 
-        const { eGui } = cellCtrl;
+        const eCell = cellCtrl.eGui;
 
         // then once that is applied, we remove the highlight with animation
         this.beans.frameworkOverrides.wrapIncoming(() => {
@@ -66,14 +66,14 @@ export class CellFlashService extends BeanStub implements NamedBean {
                 cellComp.addOrRemoveCssClass(fullName, false);
                 cellComp.addOrRemoveCssClass(animationFullName, true);
 
-                eGui.style.transition = `background-color ${fadeDuration}ms`;
+                eCell.style.transition = `background-color ${fadeDuration}ms`;
                 window.setTimeout(() => {
                     if (!cellCtrl.isAlive()) {
                         return;
                     }
                     // and then to leave things as we got them, we remove the animation
                     cellComp.addOrRemoveCssClass(animationFullName, false);
-                    eGui.style.transition = '';
+                    eCell.style.transition = '';
                 }, fadeDuration!);
             }, flashDuration!);
         });

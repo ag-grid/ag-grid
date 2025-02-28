@@ -30,8 +30,8 @@ export class RowGroupDropZonePanel extends BaseDropZonePanel {
     }
 
     protected isItemDroppable(column: AgColumn, draggingEvent: DraggingEvent): boolean {
-        // we never allow grouping of secondary columns
-        if (this.gos.get('functionsReadOnly') || !column.isPrimary()) {
+        // we never allow grouping of secondary columns or already-grouped columns
+        if (this.gos.get('functionsReadOnly') || !column.isPrimary() || column.colDef.showRowGroup) {
             return false;
         }
 

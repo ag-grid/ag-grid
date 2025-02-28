@@ -4,7 +4,7 @@ import type { BeanStub } from '../../../context/beanStub';
 import type { AgColumn } from '../../../entities/agColumn';
 import type { HeaderClassParams } from '../../../entities/colDef';
 import type { ColumnEvent, FilterChangedEvent } from '../../../events';
-import { _getActiveDomElement, _isLegacyMenuEnabled } from '../../../gridOptionsUtils';
+import { _addGridCommonParams, _getActiveDomElement, _isLegacyMenuEnabled } from '../../../gridOptionsUtils';
 import type { UserCompDetails } from '../../../interfaces/iUserCompDetails';
 import { SetLeftFeature } from '../../../rendering/features/setLeftFeature';
 import { _setAriaLabel } from '../../../utils/aria';
@@ -74,10 +74,10 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl<IHeaderFilterCe
     }
 
     protected getHeaderClassParams(): HeaderClassParams {
-        const { column } = this;
+        const { column, beans } = this;
         const colDef = column.colDef;
 
-        return this.beans.gos.addGridCommonParams({
+        return _addGridCommonParams(beans.gos, {
             colDef,
             column,
             floatingFilter: true,

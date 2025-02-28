@@ -28,6 +28,7 @@ export class DragAndDropImageComponent extends Component implements IDragAndDrop
 
     private readonly eIcon: HTMLElement = RefPlaceholder;
     private readonly eLabel: HTMLElement = RefPlaceholder;
+    private readonly eGhost: HTMLElement = RefPlaceholder;
 
     private dropIconMap: { [key in DragAndDropIcon]: Element };
 
@@ -55,12 +56,19 @@ export class DragAndDropImageComponent extends Component implements IDragAndDrop
         this.dragSource = params.dragSource;
 
         this.setTemplate(
+            // the wrapper div has no class - the drag and drop service adds the theme class to it
             /* html */
-            `<div class="ag-dnd-ghost ag-unselectable">
-                <span data-ref="eIcon" class="ag-dnd-ghost-icon ag-shake-left-to-right"></span>
-                <div data-ref="eLabel" class="ag-dnd-ghost-label"></div>
+            `<div>
+                <div class="ag-dnd-ghost ag-unselectable" data-ref="eGhost">
+                    <span data-ref="eIcon" class="ag-dnd-ghost-icon ag-shake-left-to-right"></span>
+                    <div data-ref="eLabel" class="ag-dnd-ghost-label"></div>
+                </div>
             </div>`
         );
+        // also apply theme class to the ghost element for backwards compatibility
+        // with themes that use .ag-theme-classname.ag-dnd-ghost, which used to be
+        // required before the theme class was also set on the wrapper.
+        this.beans.environment.applyThemeClasses(this.eGhost);
     }
 
     public override destroy(): void {

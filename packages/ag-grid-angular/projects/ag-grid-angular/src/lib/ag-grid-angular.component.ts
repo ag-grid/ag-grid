@@ -85,6 +85,8 @@ import type {
     FilterChangedEvent,
     FilterModifiedEvent,
     FilterOpenedEvent,
+    FindChangedEvent,
+    FindOptions,
     FirstDataRenderedEvent,
     FloatingFilterModifiedEvent,
     FocusGridInnerElementParams,
@@ -163,6 +165,7 @@ import type {
     RowGroupingDisplayType,
     RowHeightParams,
     RowModelType,
+    RowNumbersOptions,
     RowSelectedEvent,
     RowSelectionOptions,
     RowStyle,
@@ -395,9 +398,10 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * @initial
      */
     @Input() public columnMenu: 'legacy' | 'new' | undefined = undefined;
-    /** When `true`, the column menu button will always be shown.
+    /** Only recommended for use if `columnMenu = 'legacy'`.
+     * When `true`, the column menu button will always be shown.
      * When `false`, the column menu button will only show when the mouse is over the column header.
-     * If `columnMenu = 'legacy'`, this will default to `false` instead of `true`.
+     * When using `columnMenu = 'legacy'`, this will default to `false` instead of `true`.
      * @default true
      */
     @Input({ transform: booleanAttribute }) public suppressMenuHide: boolean | undefined = undefined;
@@ -663,6 +667,12 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * @initial
      */
     @Input() public excelStyles: ExcelStyle[] | undefined = undefined;
+    /** Text to find within the grid.
+     */
+    @Input() public findSearchValue: string | undefined = undefined;
+    /** Options for the Find feature.
+     */
+    @Input() public findOptions: FindOptions | undefined = undefined;
     /** Rows are filtered using this text as a Quick Filter.
      * Only supported for Client-Side Row Model.
      */
@@ -1027,6 +1037,11 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * @initial
      */
     @Input({ transform: booleanAttribute }) public ensureDomOrder: boolean | undefined = undefined;
+    /** When `true`, enables the cell span feature allowing for the use of the `colDef.spanRows` property.
+     * @default false
+     * @initial
+     */
+    @Input({ transform: booleanAttribute }) public enableCellSpan: boolean | undefined = undefined;
     /** Set to `true` to operate the grid in RTL (Right to Left) mode.
      * @default false
      * @initial
@@ -1183,6 +1198,10 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * @default false
      */
     @Input({ transform: booleanAttribute }) public treeData: boolean | undefined = undefined;
+    /** The name of the field to use in a data item to retrieve the array of children nodes of a node when while using treeData=true.
+     * It supports accessing nested fields using the dot notation.
+     */
+    @Input() public treeDataChildrenField: string | undefined = undefined;
     /** Set to `true` to suppress sort indicators and actions from the row group panel.
      * @default false
      */
@@ -1367,6 +1386,10 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * Note that due to the nature of this column, this type is a subset of `ColDef`, which does not support several normal column features such as editing, pivoting and grouping.
      */
     @Input() public selectionColumnDef: SelectionColumnDef | undefined = undefined;
+    /** Configure the Row Numbers Feature.
+     * @default false
+     */
+    @Input() public rowNumbers: boolean | RowNumbersOptions | undefined = undefined;
     /** If `true`, only a single range can be selected.
      * @default false
      * @deprecated v32.2 Use `cellSelection.suppressMultiRanges` instead
@@ -1497,6 +1520,15 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * @see https://developer.mozilla.org/en-US/docs/Web/CSS/@layer
      */
     @Input() public themeCssLayer: string | undefined = undefined;
+    /** The nonce attribute to set on style elements added to the document by
+     * themes. If "foo" is passed to this property, the grid can use the Content
+     * Security Policy `style-src 'nonce-foo'`, instead of the less secure
+     * `style-src 'unsafe-inline'`.
+     *
+     * Note: CSP nonces are global to a page, where a page has multiple grids,
+     * every one must have the same styleNonce set.
+     */
+    @Input() public styleNonce: string | undefined = undefined;
     /** An element to insert style elements into when injecting styles into the
      * grid. If undefined, styles will be added to the document head for grids
      * rendered in the main document fragment, or to the grid wrapper element
@@ -1917,6 +1949,9 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Output() public advancedFilterBuilderVisibleChanged: EventEmitter<
         AdvancedFilterBuilderVisibleChangedEvent<TData>
     > = new EventEmitter<AdvancedFilterBuilderVisibleChangedEvent<TData>>();
+    /** Find details have changed (e.g. Find search value, active match, or updates to grid cells).
+     */
+    @Output() public findChanged: EventEmitter<FindChangedEvent<TData>> = new EventEmitter<FindChangedEvent<TData>>();
     /** A chart has been created.
      */
     @Output() public chartCreated: EventEmitter<ChartCreatedEvent<TData>> = new EventEmitter<
@@ -2102,7 +2137,8 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     /** Row is selected or deselected. The event contains the node in question, so call the node's `isSelected()` method to see if it was just selected or deselected.
      */
     @Output() public rowSelected: EventEmitter<RowSelectedEvent<TData>> = new EventEmitter<RowSelectedEvent<TData>>();
-    /** Row selection is changed. Use the grid API `getSelectedNodes()` or `getSelectedRows()` to get the new list of selected nodes / row data.
+    /** Row selection is changed. Use the `selectedNodes` field to get the list of selected nodes at the time of the event. When using the SSRM, `selectedNodes` will be `null`
+     * when selecting all nodes. Instead, refer to the `serverSideState` field.
      */
     @Output() public selectionChanged: EventEmitter<SelectionChangedEvent<TData>> = new EventEmitter<
         SelectionChangedEvent<TData>

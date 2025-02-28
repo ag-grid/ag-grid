@@ -73,7 +73,7 @@ function Item({ itemData, framework, pageName }: { itemData?: any; framework: Fr
                         {itemData.children.map((childData) => {
                             return (
                                 <Item
-                                    key={childData.title}
+                                    key={`${childData.title} + ${childData.path} + ${childData.url}`}
                                     itemData={childData}
                                     framework={framework}
                                     pageName={pageName}
@@ -124,7 +124,7 @@ function Group({
                     {groupData.children.map((childData) => {
                         return (
                             <Item
-                                key={childData.title}
+                                key={`${childData.title} + ${childData.path} + ${childData.url}`}
                                 itemData={childData}
                                 framework={framework}
                                 pageName={pageName}
@@ -156,7 +156,7 @@ function Section({
 
             {sectionData.children.map((childData) => {
                 return (
-                    <Fragment key={childData.title}>
+                    <Fragment key={`${childData.title} + ${childData.path} + ${childData.url}`}>
                         {childData.type === 'item' && (
                             <Item itemData={childData} framework={framework} pageName={pageName} />
                         )}

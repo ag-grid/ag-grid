@@ -1,8 +1,8 @@
 import type { GridApi, GridOptions } from 'ag-grid-community';
-import { AllCommunityModule, ModuleRegistry, createGrid, themeQuartz } from 'ag-grid-community';
+import { ModuleRegistry, createGrid, themeQuartz } from 'ag-grid-community';
 import { AllEnterpriseModule } from 'ag-grid-enterprise';
 
-ModuleRegistry.registerModules([AllCommunityModule, AllEnterpriseModule]);
+ModuleRegistry.registerModules([AllEnterpriseModule]);
 
 let gridApi: GridApi<IOlympicData>;
 
@@ -16,7 +16,6 @@ const myTheme = themeQuartz.withParams({
 
 const gridOptions: GridOptions<IOlympicData> = {
     theme: myTheme,
-    rowData: null,
     columnDefs: [
         {
             headerName: 'Athlete',

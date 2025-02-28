@@ -14,6 +14,7 @@ import type {
 import {
     BeanStub,
     GROUP_AUTO_COLUMN_ID,
+    _addGridCommonParams,
     _error,
     _isClientSideRowModel,
     _last,
@@ -330,7 +331,7 @@ export class SetFilterEvaluator<TValue = string>
 
     private getKeyCreatorParams(value: TValue | null | undefined, node: IRowNode | null = null): KeyCreatorParams {
         const { colDef, column } = this.params;
-        return this.gos.addGridCommonParams({
+        return _addGridCommonParams(this.gos, {
             value,
             colDef,
             column,

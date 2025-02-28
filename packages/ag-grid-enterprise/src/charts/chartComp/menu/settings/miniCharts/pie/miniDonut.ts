@@ -1,14 +1,11 @@
 import type { Sector } from 'ag-charts-types/scene';
 
-import type { ChartType } from 'ag-grid-community';
-
 import type { AgChartsExports } from '../../../../../agChartsExports';
 import type { ChartTranslationKey } from '../../../../services/chartTranslationService';
-import type { ThemeTemplateParameters } from '../../miniChartsContainer';
+import type { MiniChartSelector, ThemeTemplateParameters } from '../../miniChartsContainer';
 import { MiniChart } from '../miniChart';
 
-export class MiniDonut extends MiniChart {
-    static chartType: ChartType = 'donut';
+export class MiniDonutClass extends MiniChart {
     private readonly sectors: Sector[];
 
     constructor(
@@ -65,3 +62,8 @@ export class MiniDonut extends MiniChart {
         });
     }
 }
+
+export const MiniDonut: MiniChartSelector = {
+    chartType: 'donut',
+    miniChart: MiniDonutClass,
+};

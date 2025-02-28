@@ -9,7 +9,13 @@ import type {
     IExcelCreator,
     NamedBean,
 } from 'ag-grid-community';
-import { BaseCreator, _downloadFile, _getHeaderClassesFromColDef, _warn } from 'ag-grid-community';
+import {
+    BaseCreator,
+    _addGridCommonParams,
+    _downloadFile,
+    _getHeaderClassesFromColDef,
+    _warn,
+} from 'ag-grid-community';
 
 import type { ExcelGridSerializingParams, StyleLinkerInterface } from './excelSerializingSession';
 import { ExcelSerializingSession } from './excelSerializingSession';
@@ -269,7 +275,7 @@ export class ExcelCreator
             if (packageFile) {
                 const { fileName } = mergedParams;
                 const providedFileName =
-                    typeof fileName === 'function' ? fileName(this.gos.getGridCommonParams()) : fileName;
+                    typeof fileName === 'function' ? fileName(_addGridCommonParams(this.gos, {})) : fileName;
 
                 _downloadFile(this.getFileName(providedFileName), packageFile);
             }
@@ -382,7 +388,7 @@ export class ExcelCreator
         const colDef = (column as AgColumn).getDefinition();
         cellStyles?.processAllCellClasses(
             colDef,
-            gos.addGridCommonParams({
+            _addGridCommonParams(gos, {
                 value,
                 data: node!.data,
                 node: node!,

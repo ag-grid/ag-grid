@@ -1,19 +1,18 @@
-import { Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, signal } from '@angular/core';
 
 import type { ICellRendererAngularComp } from 'ag-grid-angular';
 import type { ICellRendererParams } from 'ag-grid-community';
 
 @Component({
     selector: 'app-company-logo-renderer',
+    changeDetection: ChangeDetectionStrategy.OnPush,
     standalone: true,
     template: `
         <span :class="imgSpanLogo">
-            @if (value) {
+            @if (value()) {
                 <img
-                    [alt]="value"
-                    [src]="
-                        'https://www.ag-grid.com/example-assets/software-company-logos/' + value.toLowerCase() + '.svg'
-                    "
+                    [alt]="value()"
+                    [src]="'https://www.ag-grid.com/example-assets/software-company-logos/' + valueLowerCase() + '.svg'"
                     [height]="30"
                     :class="logo"
                 />
@@ -22,15 +21,15 @@ import type { ICellRendererParams } from 'ag-grid-community';
     `,
 })
 export class CompanyLogoRenderer implements ICellRendererAngularComp {
-    // Init Cell Value
-    public value!: string;
+    value = signal('');
+    valueLowerCase = computed(() => this.value().toLowerCase());
+
     agInit(params: ICellRendererParams): void {
         this.refresh(params);
     }
 
-    // Return Cell Value
     refresh(params: ICellRendererParams): boolean {
-        this.value = params.value;
+        this.value.set(params.value);
         return true;
     }
 }

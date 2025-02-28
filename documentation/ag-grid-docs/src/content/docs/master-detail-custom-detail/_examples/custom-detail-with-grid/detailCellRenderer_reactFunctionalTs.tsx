@@ -41,7 +41,7 @@ const DetailCellRenderer = ({ data, node, api }: CustomCellRendererProps) => {
     };
 
     return (
-        <div className="full-width-panel">
+        <div role="gridcell" className="full-width-panel">
             <div className="full-width-details">
                 <div className="full-width-detail">
                     <b>Name: </b>

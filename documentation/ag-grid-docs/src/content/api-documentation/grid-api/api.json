@@ -1141,5 +1141,68 @@
             }
         },
         "isLastRowIndexKnown": {}
+    },
+    "find": {
+        "meta": {
+            "displayName": "Find",
+            "page": {
+                "name": "Find",
+                "url": "./find/"
+            }
+        },
+        "findNext": {
+            "more": {
+                "name": "Find",
+                "url": "./find/"
+            }
+        },
+        "findPrevious": {
+            "more": {
+                "name": "Find",
+                "url": "./find/"
+            }
+        },
+        "findGetTotalMatches": {
+            "more": {
+                "name": "Find",
+                "url": "./find/"
+            }
+        },
+        "findGoTo": {
+            "more": {
+                "name": "Find",
+                "url": "./find/"
+            }
+        },
+        "findClearActive": {
+            "more": {
+                "name": "Find",
+                "url": "./find/"
+            }
+        },
+        "findGetActiveMatch": {
+            "more": {
+                "name": "Find",
+                "url": "./find/"
+            }
+        },
+        "findGetNumMatches": {
+            "more": {
+                "name": "Using Find with Cell Components",
+                "url": "./find/#using-find-with-cell-components"
+            }
+        },
+        "findGetParts": {
+            "more": {
+                "name": "Using Find with Cell Components",
+                "url": "./find/#using-find-with-cell-components"
+            }
+        },
+        "findRefresh": {
+            "more": {
+                "name": "Content to Search",
+                "url": "./find/#content-to-search"
+            }
+        }
     }
 }

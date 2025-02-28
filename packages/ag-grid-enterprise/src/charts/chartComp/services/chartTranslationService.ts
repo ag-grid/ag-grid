@@ -235,6 +235,7 @@ export const DEFAULT_CHART_TRANSLATIONS = {
     pyramidTooltip: 'Pyramid',
     dropOff: 'Drop-Off',
     stageLabels: 'Stage Labels',
+    reverse: 'Reverse',
 
     // menu items
     groupedColumn: 'Grouped',

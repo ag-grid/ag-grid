@@ -24,7 +24,7 @@ const gridOptions: GridOptions<IOlympicData> = {
     columnDefs: [
         { field: 'country', rowGroup: true },
         { field: 'sport', pivot: true },
-        { field: 'gold', aggFunc: 'sum', cellStyle: { backgroundColor: '#f2e2879e' } },
+        { field: 'gold', aggFunc: 'sum', cellStyle: { backgroundColor: '#f2e287' } },
         { field: 'silver', aggFunc: 'sum', cellStyle: {} },
     ],
     defaultColDef: {
@@ -37,7 +37,7 @@ const gridOptions: GridOptions<IOlympicData> = {
     pivotMode: true,
     processPivotResultColDef: (colDef) => {
         if (typeof colDef.cellStyle === 'object') {
-            colDef.cellStyle.color = '#696FA2';
+            colDef.cellStyle.color = '#2f73ff';
         }
     },
 };

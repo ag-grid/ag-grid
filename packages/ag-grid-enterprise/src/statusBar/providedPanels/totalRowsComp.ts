@@ -1,7 +1,8 @@
-import type { IClientSideRowModel, IStatusPanelComp } from 'ag-grid-community';
+import type { IStatusPanelComp } from 'ag-grid-community';
 import { _formatNumberCommas, _isClientSideRowModel, _warn } from 'ag-grid-community';
 
 import { AgNameValue } from './agNameValue';
+import { _getTotalRowCount } from './utils';
 
 export class TotalRowsComp extends AgNameValue implements IStatusPanelComp {
     public postConstruct(): void {
@@ -22,13 +23,7 @@ export class TotalRowsComp extends AgNameValue implements IStatusPanelComp {
     }
 
     private onDataChanged() {
-        this.setValue(_formatNumberCommas(this.getRowCountValue(), this.getLocaleTextFunc.bind(this)));
-    }
-
-    private getRowCountValue(): number {
-        let totalRowCount = 0;
-        (this.beans.rowModel as IClientSideRowModel).forEachLeafNode(() => (totalRowCount += 1));
-        return totalRowCount;
+        this.setValue(_formatNumberCommas(_getTotalRowCount(this.beans.rowModel), this.getLocaleTextFunc.bind(this)));
     }
 
     public init() {}

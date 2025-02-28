@@ -203,6 +203,7 @@ const CellComp = ({
     const forceWrapper = useMemo(() => cellCtrl.isForceWrapper(), [cellCtrl]);
     const cellAriaRole = useMemo(() => cellCtrl.getCellAriaRole(), [cellCtrl]);
     const eGui = useRef<HTMLDivElement | null>(null);
+    const eWrapper = useRef<HTMLDivElement | null>(null);
     const cellRendererRef = useRef<any>(null);
     const jsCellRendererRef = useRef<ICellRendererComp>();
     const cellEditorRef = useRef<ICellEditor>();
@@ -372,10 +373,11 @@ const CellComp = ({
         [cellCtrl, context, includeDndSource, includeRowDrag, includeSelection]
     );
 
-    const setRef = useCallback((eRef: HTMLDivElement | null) => {
-        eGui.current = eRef;
+    const init = useCallback(() => {
+        const spanReady = !cellCtrl.isCellSpanning() || eWrapper.current;
+        const eRef = eGui.current;
         compBean.current = eRef ? context.createBean(new _EmptyBean()) : context.destroyBean(compBean.current);
-        if (!eRef || !cellCtrl) {
+        if (!eRef || !spanReady || !cellCtrl) {
             // We do NOT add a check for if the cellCtrl is destroyed as when there are lots of updates React
             // can get behind our internal state and call this function after the cellCtrl has been destroyed.
             // If we were to shortcut here then cell values will flash in the first column of the grid as they will
@@ -444,7 +446,25 @@ const CellComp = ({
         };
 
         const cellWrapperOrUndefined = eCellWrapper.current || undefined;
-        cellCtrl.setComp(compProxy, eRef, cellWrapperOrUndefined, printLayout, editingRow, compBean.current);
+        cellCtrl.setComp(
+            compProxy,
+            eRef,
+            eWrapper.current ?? undefined,
+            cellWrapperOrUndefined,
+            printLayout,
+            editingRow,
+            compBean.current
+        );
+    }, []);
+
+    const setGuiRef = useCallback((ref: HTMLDivElement | null) => {
+        eGui.current = ref;
+        init();
+    }, []);
+
+    const setWrapperRef = useCallback((ref: HTMLDivElement | null) => {
+        eWrapper.current = ref;
+        init();
     }, []);
 
     const reactCellRendererStateless = useMemo(() => {
@@ -490,8 +510,8 @@ const CellComp = ({
 
     const onBlur = useCallback(() => cellCtrl.onFocusOut(), []);
 
-    return (
-        <div ref={setRef} style={userStyles} role={cellAriaRole} col-id={colIdSanitised} onBlur={onBlur}>
+    const renderCell = () => (
+        <div ref={setGuiRef} style={userStyles} role={cellAriaRole} col-id={colIdSanitised} onBlur={onBlur}>
             {showCellWrapper ? (
                 <div className="ag-cell-wrapper" role="presentation" ref={setCellWrapperRef}>
                     {showContents()}
@@ -501,6 +521,15 @@ const CellComp = ({
             )}
         </div>
     );
+
+    if (cellCtrl.isCellSpanning()) {
+        return (
+            <div ref={setWrapperRef} className="ag-spanned-cell-wrapper" role="presentation">
+                {renderCell()}
+            </div>
+        );
+    }
+    return renderCell();
 };
 
 export default memo(CellComp);

@@ -131,6 +131,10 @@ export const createScript = ({
                 scriptDebugger,
                 speed: 0.5,
             },
+            // A user clicking on the page when the context menu is open causes the context
+            // menu to close, and makes this action fail, but the script can recover in the
+            // next chart creation step
+            ignoreError: true,
         },
         {
             name: 'Create range chart',
@@ -224,6 +228,9 @@ export const createScript = ({
                     text: 'Country',
                 },
             },
+            // A user clicking or scrolling on the page when the dropdown is open causes the
+            // dropdown to close, and makes this action fail, but we can ignore this change
+            ignoreError: true,
         },
         { type: 'wait', duration: 600 },
 
@@ -328,7 +335,7 @@ export const createScript = ({
             actionParams: {
                 target: 'chartsLegendItem',
                 targetParams: {
-                    index: 3,
+                    index: 0,
                 },
             },
         },
@@ -350,7 +357,7 @@ export const createScript = ({
             actionParams: {
                 target: 'chartsLegendItem',
                 targetParams: {
-                    index: 3,
+                    index: 0,
                 },
             },
         },

@@ -26,7 +26,7 @@
                 {
                     "moduleName": "PinnedRowModule",
                     "name": "Row Pinning",
-                    "path": "row-pinning/"
+                    "path": "row-pinning"
                 },
                 {
                     "moduleName": "RowAutoHeightModule",
@@ -36,17 +36,52 @@
                 {
                     "moduleName": "RowStyleModule",
                     "name": "Styling Rows",
-                    "path": "row-styles/"
+                    "path": "row-styles"
                 },
                 {
                     "moduleName": "PaginationModule",
                     "name": "Row Pagination",
-                    "path": "row-pagination/"
+                    "path": "row-pagination"
                 },
                 {
                     "moduleName": "RowDragModule",
                     "name": "Row Dragging",
-                    "path": "row-dragging/"
+                    "path": "row-dragging"
+                },
+                {
+                    "moduleName": "RowNumbersModule",
+                    "name": "Row Numbers",
+                    "path": "row-numbers",
+                    "isEnterprise": true
+                }
+            ]
+        },
+        {
+            "name": "Row Models",
+            "hideFromSelection": true,
+            "children": [
+                {
+                    "moduleName": "ClientSideRowModelModule",
+                    "name": "Client Side Row Model",
+                    "path": "row-models"
+                },
+                {
+                    "moduleName": "InfiniteRowModelModule",
+                    "name": "Infinite Row Model",
+                    "path": "infinite-scrolling"
+                },
+                {
+                    "moduleName": "ServerSideRowModelModule",
+                    "name": "Server Side Row Model",
+                    "path": "server-side-model",
+                    "isEnterprise": true,
+                    "ssrmBundled": true
+                },
+                {
+                    "moduleName": "ViewportRowModelModule",
+                    "name": "Viewport Row Model",
+                    "path": "viewport",
+                    "isEnterprise": true
                 }
             ]
         },
@@ -54,19 +89,30 @@
             "name": "Cells",
             "children": [
                 {
+                    "moduleName": "CellSpanModule",
+                    "name": "Cell Span",
+                    "path": "row-spanning"
+                },
+                {
                     "moduleName": "CellStyleModule",
                     "name": "Styling Cells",
-                    "path": "cell-styles/"
+                    "path": "cell-styles"
                 },
                 {
                     "moduleName": "HighlightChangesModule",
                     "name": "Highlighting Changes",
-                    "path": "change-cell-renderers/"
+                    "path": "change-cell-renderers"
                 },
                 {
                     "moduleName": "TooltipModule",
                     "name": "Tooltips",
-                    "path": "tooltips/"
+                    "path": "tooltips"
+                },
+                {
+                    "moduleName": "FindModule",
+                    "name": "Find",
+                    "path": "find",
+                    "isEnterprise": true
                 }
             ]
         },
@@ -79,52 +125,52 @@
                         {
                             "moduleName": "TextFilterModule",
                             "name": "Text Filter",
-                            "path": "filter-text/"
+                            "path": "filter-text"
                         },
                         {
                             "moduleName": "NumberFilterModule",
                             "name": "Number Filter",
-                            "path": "filter-number/"
+                            "path": "filter-number"
                         },
                         {
                             "moduleName": "DateFilterModule",
                             "name": "Date Filter",
-                            "path": "filter-date/"
+                            "path": "filter-date"
                         },
                         {
                             "moduleName": "SetFilterModule",
                             "name": "Set Filter",
-                            "path": "filter-set/",
+                            "path": "filter-set",
                             "isEnterprise": true
                         },
                         {
                             "moduleName": "MultiFilterModule",
                             "name": "Multi Filter",
-                            "path": "filter-multi/",
+                            "path": "filter-multi",
                             "isEnterprise": true
                         },
                         {
                             "moduleName": "CustomFilterModule",
                             "name": "Custom Column Filters",
-                            "path": "component-filter/"
+                            "path": "component-filter"
                         }
                     ]
                 },
                 {
                     "moduleName": "AdvancedFilterModule",
                     "name": "Advanced Filter",
-                    "path": "filter-advanced/",
+                    "path": "filter-advanced",
                     "isEnterprise": true
                 },
                 {
                     "moduleName": "ExternalFilterModule",
                     "name": "External Filter",
-                    "path": "filter-external/"
+                    "path": "filter-external"
                 },
                 {
                     "moduleName": "QuickFilterModule",
                     "name": "Quick Filter",
-                    "path": "filter-quick/"
+                    "path": "filter-quick"
                 }
             ]
         },
@@ -134,13 +180,13 @@
                 {
                     "moduleName": "RowSelectionModule",
                     "name": "Row Selection",
-                    "path": "row-selection/",
+                    "path": "row-selection",
                     "ssrmBundled": true
                 },
                 {
                     "moduleName": "CellSelectionModule",
                     "name": "Cell Selection",
-                    "path": "cell-selection/",
+                    "path": "cell-selection",
                     "isEnterprise": true
                 }
             ]
@@ -154,38 +200,38 @@
                         {
                             "moduleName": "TextEditorModule",
                             "name": "Text Editor",
-                            "path": "provided-cell-editors-text/"
+                            "path": "provided-cell-editors-text"
                         },
                         {
                             "moduleName": "LargeTextEditorModule",
                             "name": "Large Text Editor",
-                            "path": "provided-cell-editors-large-text/"
+                            "path": "provided-cell-editors-large-text"
                         },
                         {
                             "moduleName": "SelectEditorModule",
                             "name": "Select Editor",
-                            "path": "provided-cell-editors-select/"
+                            "path": "provided-cell-editors-select"
                         },
                         {
                             "moduleName": "RichSelectModule",
                             "name": "Rich Select Editor",
-                            "path": "provided-cell-editors-rich-select/",
+                            "path": "provided-cell-editors-rich-select",
                             "isEnterprise": true
                         },
                         {
                             "moduleName": "NumberEditorModule",
                             "name": "Number Editor",
-                            "path": "provided-cell-editors-number/"
+                            "path": "provided-cell-editors-number"
                         },
                         {
                             "moduleName": "DateEditorModule",
                             "name": "Date Editor",
-                            "path": "provided-cell-editors-date/"
+                            "path": "provided-cell-editors-date"
                         },
                         {
                             "moduleName": "CheckboxEditorModule",
                             "name": "Checkbox Editor",
-                            "path": "provided-cell-editors-checkbox/"
+                            "path": "provided-cell-editors-checkbox"
                         }
                     ]
                 },
@@ -197,7 +243,7 @@
                 {
                     "moduleName": "UndoRedoEditModule",
                     "name": "Undo / Redo Edits",
-                    "path": "undo-redo-edits/"
+                    "path": "undo-redo-edits"
                 }
             ]
         },
@@ -207,7 +253,7 @@
                 {
                     "moduleName": "LocaleModule",
                     "name": "Localisation",
-                    "path": "localisation/"
+                    "path": "localisation"
                 }
             ]
         },
@@ -218,14 +264,14 @@
                 {
                     "moduleName": "RowGroupingModule",
                     "name": "Row Grouping",
-                    "path": "grouping/",
+                    "path": "grouping",
                     "isEnterprise": true,
                     "ssrmBundled": true
                 },
                 {
                     "moduleName": "RowGroupingPanelModule",
                     "name": "Row Grouping Panel",
-                    "path": "grouping-group-panel/",
+                    "path": "grouping-group-panel",
                     "isEnterprise": true
                 },
                 {
@@ -239,23 +285,41 @@
         {
             "moduleName": "PivotModule",
             "name": "Pivoting",
-            "path": "pivoting/",
+            "path": "pivoting",
             "isEnterprise": true,
             "ssrmBundled": true
         },
         {
             "moduleName": "TreeDataModule",
             "name": "Tree Data",
-            "path": "tree-data/",
+            "path": "tree-data",
             "isEnterprise": true,
             "ssrmBundled": true
         },
         {
             "moduleName": "MasterDetailModule",
             "name": "Master Detail",
-            "path": "master-detail/",
+            "path": "master-detail",
             "isEnterprise": true,
             "ssrmBundled": true
+        },
+        {
+            "name": "Charts",
+            "hideFromSelection": true,
+            "children": [
+                {
+                    "moduleName": "IntegratedChartsModule",
+                    "name": "Integrated Charts",
+                    "path": "integrated-charts",
+                    "isEnterprise": true
+                },
+                {
+                    "moduleName": "SparklinesModule",
+                    "name": "Sparklines",
+                    "path": "sparklines-overview",
+                    "isEnterprise": true
+                }
+            ]
         },
         {
             "name": "Accessories",
@@ -267,19 +331,19 @@
                         {
                             "moduleName": "SideBarModule",
                             "name": "Side Bar",
-                            "path": "side-bar/",
+                            "path": "side-bar",
                             "isEnterprise": true
                         },
                         {
                             "moduleName": "ColumnsToolPanelModule",
                             "name": "Columns Tool Panel",
-                            "path": "tool-panel-columns/",
+                            "path": "tool-panel-columns",
                             "isEnterprise": true
                         },
                         {
                             "moduleName": "FiltersToolPanelModule",
                             "name": "Filters Tool Panel",
-                            "path": "tool-panel-filters/",
+                            "path": "tool-panel-filters",
                             "isEnterprise": true
                         }
                     ]
@@ -287,19 +351,19 @@
                 {
                     "moduleName": "ColumnMenuModule",
                     "name": "Column Menu",
-                    "path": "column-menu/",
+                    "path": "column-menu",
                     "isEnterprise": true
                 },
                 {
                     "moduleName": "ContextMenuModule",
                     "name": "Context Menu",
-                    "path": "context-menu/",
+                    "path": "context-menu",
                     "isEnterprise": true
                 },
                 {
                     "moduleName": "StatusBarModule",
                     "name": "Status Bar",
-                    "path": "status-bar/",
+                    "path": "status-bar",
                     "isEnterprise": true
                 }
             ]
@@ -310,25 +374,25 @@
                 {
                     "moduleName": "CsvExportModule",
                     "name": "CSV Export",
-                    "path": "csv-export/"
+                    "path": "csv-export"
                 },
 
                 {
                     "moduleName": "ExcelExportModule",
                     "name": "Excel Export",
-                    "path": "excel-export/",
+                    "path": "excel-export",
                     "isEnterprise": true
                 },
                 {
                     "moduleName": "ClipboardModule",
                     "name": "Clipboard",
-                    "path": "clipboard/",
+                    "path": "clipboard",
                     "isEnterprise": true
                 },
                 {
                     "moduleName": "DragAndDropModule",
                     "name": "Drag & Drop",
-                    "path": "drag-and-drop/"
+                    "path": "drag-and-drop"
                 }
             ]
         },
@@ -338,7 +402,7 @@
                 {
                     "moduleName": "ValueCacheModule",
                     "name": "Value Cache",
-                    "path": "value-cache/"
+                    "path": "value-cache"
                 }
             ]
         },
@@ -348,7 +412,7 @@
                 {
                     "moduleName": "AlignedGridsModule",
                     "name": "Aligned Grids",
-                    "path": "aligned-grids/"
+                    "path": "aligned-grids"
                 }
             ]
         },
@@ -358,7 +422,7 @@
                 {
                     "moduleName": "GridStateModule",
                     "name": "Grid State",
-                    "path": "grid-state/"
+                    "path": "grid-state"
                 },
                 {
                     "moduleName": "ColumnApiModule",

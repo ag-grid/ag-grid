@@ -50,15 +50,12 @@
     background-color: var(--ag-range-selection-highlight-color) !important;
 }
 
-.ag-row {
-    background-color: var(--ag-background-color);
+.ag-row,
+.ag-spanned-row {
     color: var(--ag-cell-text-color);
     font-family: var(--ag-cell-font-family);
     white-space: nowrap;
-    width: 100%;
-    height: var(--ag-row-height);
     font-size: var(--ag-data-font-size);
-    border-bottom: var(--ag-row-border);
 
     /* Work out the correct line height. --ag-row-height is the default row
            height, --ag-line-height is the actual row height, only set if variable row
@@ -76,6 +73,13 @@
     --ag-internal-content-line-height: calc(
         min(var(--ag-row-height), var(--ag-line-height, 1000px)) - var(--ag-internal-row-border-width, 1px) - 2px
     );
+}
+
+.ag-row {
+    background-color: var(--ag-background-color);
+    width: 100%;
+    height: var(--ag-row-height);
+    border-bottom: var(--ag-row-border);
 }
 
 /* Hide the border of the last last row when there is no gap between the row and
@@ -114,6 +118,16 @@
     border-right: var(--ag-column-border);
 }
 
+.ag-spanned-cell-wrapper {
+    background-color: var(--ag-background-color);
+    position: absolute;
+}
+
+.ag-spanned-cell-wrapper > .ag-spanned-cell {
+    display: block;
+    position: relative;
+}
+
 /* Only display the right border of the rightmost column when there is a gap between the column and grid edge */
 :where(.ag-body-horizontal-content-no-gap) .ag-column-last {
     border-right-color: transparent;
@@ -142,6 +156,15 @@
     }
 }
 
+:where(.ag-cell-wrap-text:not(.ag-cell-auto-height)) .ag-cell-wrapper {
+    height: 100%;
+    align-items: normal;
+
+    :where(.ag-cell-value) {
+        height: 100%;
+    }
+}
+
 .ag-row > .ag-cell-wrapper.ag-row-group {
     padding-left: calc(
         var(--ag-cell-horizontal-padding) + var(--ag-row-group-indent-size) * var(--ag-indentation-level)
@@ -151,12 +174,19 @@
 .ag-cell-focus:not(.ag-cell-range-selected):focus-within,
 .ag-context-menu-open .ag-cell-focus:not(.ag-cell-range-selected),
 .ag-full-width-row.ag-row-focus:focus .ag-cell-wrapper.ag-row-group,
+.ag-context-menu-open .ag-full-width-row.ag-row-focus .ag-cell-wrapper.ag-row-group,
 .ag-cell-range-single-cell,
 .ag-cell-range-single-cell.ag-cell-range-handle {
     border: 1px solid;
     border-color: var(--ag-range-selection-border-color);
     border-style: var(--ag-range-selection-border-style);
     outline: initial;
+}
+
+/* remove the box shadow added by default to all focussed divs because rows
+           use a border only to indicate focus */
+.ag-full-width-row.ag-row-focus:focus {
+    box-shadow: none;
 }
 
 .ag-row-drag,
@@ -229,6 +259,10 @@
 
 .ag-column-hover {
     background-color: var(--ag-column-hover-color);
+}
+
+.ag-header-range-highlight {
+    background-color: var(--ag-range-header-highlight-color);
 }
 
 .ag-right-aligned-cell {

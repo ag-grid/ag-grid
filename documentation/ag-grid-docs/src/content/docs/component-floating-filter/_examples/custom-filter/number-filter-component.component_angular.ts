@@ -16,7 +16,7 @@ import type { IDoesFilterPassParams, IFilterParams } from 'ag-grid-community';
                     type="number"
                     min="0"
                     [(ngModel)]="filterText"
-                    (input)="onInputBoxChanged($event)"
+                    (input)="onInputBoxChanged()"
                     placeholder="Number of medals..."
                 />
             </div>

@@ -234,6 +234,18 @@
         }
     }
 
+    .ag-viewport {
+        position: relative;
+    }
+
+    .ag-spanning-container {
+        position: absolute;
+        top: 0;
+
+        // /* z-index: 1 appears over editing rows but under dragging rows */
+        z-index: 1;
+    }
+
     // the sticky containers need at least one 1px height
     // so we can set the scrollLeft position when there are
     // no rows within, otherwise scrollLeft will always be 0
@@ -241,6 +253,12 @@
     .ag-sticky-top-container,
     .ag-sticky-bottom-container {
         min-height: 1px;
+    }
+
+    // /* sticky containers need to appear over spanned and edited rows */
+    .ag-sticky-top,
+    .ag-sticky-bottom {
+        z-index: 1;
     }
 
     .ag-center-cols-viewport {
@@ -286,7 +304,11 @@
     // for when auto height is used but there is no row data
     .ag-header-container,
     .ag-floating-top-container,
+    .ag-pinned-left-floating-top,
+    .ag-pinned-right-floating-top,
     .ag-floating-bottom-container,
+    .ag-pinned-left-floating-bottom,
+    .ag-pinned-right-floating-bottom,
     .ag-sticky-top-container,
     .ag-sticky-bottom-container {
         height: 100%;
@@ -588,6 +610,10 @@
             transition: left 0.2s;
         }
 
+        .ag-spanned-cell-wrapper {
+            transition: left 0.2s;
+        }
+
         .ag-header-group-cell {
             transition:
                 left 0.2s,
@@ -826,11 +852,6 @@
         text-overflow: ellipsis;
     }
 
-    .ag-cell-wrap-text {
-        white-space: normal;
-        word-break: break-word;
-    }
-
     .ag-cell-wrapper {
         display: flex;
         align-items: center;
@@ -843,16 +864,26 @@
         }
     }
 
+    .ag-cell-wrap-text {
+        white-space: normal;
+        word-break: break-word;
+    }
+
+    .ag-cell-wrap-text:not(.ag-cell-auto-height) .ag-cell-wrapper {
+        align-items: normal;
+        height: 100%;
+        .ag-cell-value {
+            height: 100%;
+        }
+    }
+
     .ag-sparkline-wrapper {
         position: absolute;
         height: 100%;
         width: 100%;
         left: 0;
         top: 0;
-    }
-
-    .ag-sparkline-wrapper :where(canvas) {
-        position: absolute;
+        line-height: initial;
     }
 
     .ag-full-width-row .ag-cell-wrapper.ag-row-group {
@@ -1046,28 +1077,7 @@
     //  * Floating Top and Bottom
     //  ****************************
     // */
-    .ag-floating-top {
-        overflow: hidden;
-        white-space: nowrap;
-        width: 100%;
-        position: relative;
-        display: flex;
-    }
-
-    .ag-pinned-left-floating-top {
-        display: inline-block;
-        overflow: hidden;
-        position: relative;
-        min-width: 0px;
-    }
-
-    .ag-pinned-right-floating-top {
-        display: inline-block;
-        overflow: hidden;
-        position: relative;
-        min-width: 0px;
-    }
-
+    .ag-floating-top,
     .ag-floating-bottom {
         overflow: hidden;
         white-space: nowrap;
@@ -1076,15 +1086,10 @@
         display: flex;
     }
 
-    .ag-pinned-left-floating-bottom {
-        display: inline-block;
-        overflow: hidden;
-        position: relative;
-        min-width: 0px;
-    }
-
+    .ag-pinned-left-floating-top,
+    .ag-pinned-right-floating-top,
+    .ag-pinned-left-floating-bottom,
     .ag-pinned-right-floating-bottom {
-        display: inline-block;
         overflow: hidden;
         position: relative;
         min-width: 0px;
@@ -1571,6 +1576,7 @@
         align-items: center;
         height: 100%;
         position: absolute;
+        contain: paint;
     }
 
     .ag-header-group-cell-no-group.ag-header-span-height {
@@ -1661,6 +1667,21 @@
 
     .ag-status-bar-right {
         display: inline-flex;
+    }
+
+    // * Row Number Columns
+    // *****************************
+    // */
+    .ag-row-number-cell {
+        width: 100%;
+        white-space: nowrap;
+        overflow: hidden;
+        user-select: none;
+        @include ag.unthemed-rtl(
+            (
+                text-align: right,
+            )
+        );
     }
 
     // /**

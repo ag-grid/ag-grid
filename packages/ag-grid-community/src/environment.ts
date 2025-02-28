@@ -43,6 +43,8 @@ export class Environment extends BeanStub implements NamedBean {
     private eGridDiv: HTMLElement;
     public eStyleContainer: HTMLElement;
     public cssLayer: string | undefined;
+    public styleNonce: string | undefined;
+    private mutationObserver: MutationObserver;
 
     public wireBeans(beans: BeanCollection): void {
         const { eGridDiv, gridOptions } = beans;
@@ -51,6 +53,7 @@ export class Environment extends BeanStub implements NamedBean {
         this.eStyleContainer =
             gridOptions.themeStyleContainer ?? (eGridDiv.getRootNode() === document ? document.head : eGridDiv);
         this.cssLayer = gridOptions.themeCssLayer;
+        this.styleNonce = gridOptions.styleNonce;
     }
 
     private sizeEls = new Map<Variable, HTMLElement>();
@@ -75,6 +78,11 @@ export class Environment extends BeanStub implements NamedBean {
         this.refreshRowBorderWidthVariable();
 
         this.addDestroyFunc(() => _unregisterGridUsingThemingAPI(this));
+
+        this.mutationObserver = new MutationObserver(() => {
+            this.fireGridStylesChangedEvent('themeChanged');
+        });
+        this.addDestroyFunc(() => this.mutationObserver.disconnect());
     }
 
     public getDefaultRowHeight(): number {
@@ -110,12 +118,21 @@ export class Environment extends BeanStub implements NamedBean {
             themeClass = `${this.paramsClass} ${gridTheme._getCssClass()}`;
         } else {
             // legacy mode
+            this.mutationObserver.disconnect();
             let node: HTMLElement | null = this.eGridDiv;
             while (node) {
+                let isThemeEl = false;
                 for (const className of Array.from(node.classList)) {
                     if (className.startsWith('ag-theme-')) {
+                        isThemeEl = true;
                         themeClass = themeClass ? `${themeClass} ${className}` : className;
                     }
+                }
+                if (isThemeEl) {
+                    this.mutationObserver.observe(node, {
+                        attributes: true,
+                        attributeFilter: ['class'],
+                    });
                 }
                 node = node.parentElement;
             }
@@ -156,7 +173,7 @@ export class Environment extends BeanStub implements NamedBean {
 
     public addGlobalCSS(css: string, debugId: string): void {
         if (this.gridTheme) {
-            _injectGlobalCSS(css, this.eStyleContainer, debugId, this.cssLayer, 0);
+            _injectGlobalCSS(css, this.eStyleContainer, debugId, this.cssLayer, 0, this.styleNonce);
         } else {
             this.globalCSS.push([css, debugId]);
         }
@@ -272,9 +289,9 @@ export class Environment extends BeanStub implements NamedBean {
         if (newGridTheme !== oldGridTheme) {
             if (newGridTheme) {
                 _registerGridUsingThemingAPI(this);
-                _injectCoreAndModuleCSS(this.eStyleContainer, this.cssLayer);
+                _injectCoreAndModuleCSS(this.eStyleContainer, this.cssLayer, this.styleNonce);
                 for (const [css, debugId] of globalCSS) {
-                    _injectGlobalCSS(css, this.eStyleContainer, debugId, this.cssLayer, 0);
+                    _injectGlobalCSS(css, this.eStyleContainer, debugId, this.cssLayer, 0, this.styleNonce);
                 }
                 globalCSS.length = 0;
             }
@@ -283,10 +300,15 @@ export class Environment extends BeanStub implements NamedBean {
                 loadThemeGoogleFonts: gos.get('loadThemeGoogleFonts'),
                 styleContainer: this.eStyleContainer,
                 cssLayer: this.cssLayer,
+                nonce: this.styleNonce,
             });
             let eParamsStyle = this.eParamsStyle;
             if (!eParamsStyle) {
                 eParamsStyle = this.eParamsStyle = document.createElement('style');
+                const styleNonce = this.gos.get('styleNonce');
+                if (styleNonce) {
+                    eParamsStyle.setAttribute('nonce', styleNonce);
+                }
                 eGridDiv.appendChild(eParamsStyle);
             }
             if (!IS_SSR) {

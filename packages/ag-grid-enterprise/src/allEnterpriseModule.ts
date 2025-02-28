@@ -9,6 +9,7 @@ import { ClipboardModule } from './clipboard/clipboardModule';
 import { ColumnsToolPanelModule } from './columnToolPanel/columnsToolPanelModule';
 import { ExcelExportModule } from './excelExport/excelExportModule';
 import { FiltersToolPanelModule } from './filterToolPanel/filtersToolPanelModule';
+import { FindModule } from './find/findModule';
 import { MasterDetailModule } from './masterDetail/masterDetailModule';
 import { ColumnMenuModule, ContextMenuModule } from './menu/menuModule';
 import { MultiFilterModule } from './multiFilter/multiFilterModule';
@@ -16,6 +17,7 @@ import { PivotModule } from './pivot/pivotModule';
 import { CellSelectionModule } from './rangeSelection/rangeSelectionModule';
 import { RichSelectModule } from './richSelect/richSelectModule';
 import { GroupFilterModule, RowGroupingModule, RowGroupingPanelModule } from './rowGrouping/rowGroupingModule';
+import { RowNumbersModule } from './rowNumbers/rowNumbersModule';
 import { ServerSideRowModelApiModule, ServerSideRowModelModule } from './serverSideRowModel/serverSideRowModelModule';
 import { SetFilterModule } from './setFilter/setFilterModule';
 import { SideBarModule } from './sideBar/sideBarModule';
@@ -38,6 +40,7 @@ const dependsOn = [
     ContextMenuModule,
     CellSelectionModule,
     RichSelectModule,
+    RowNumbersModule,
     RowGroupingModule,
     RowGroupingPanelModule,
     GroupFilterModule,
@@ -51,6 +54,7 @@ const dependsOn = [
     ViewportRowModelModule,
     PivotModule,
     TreeDataModule,
+    FindModule,
 ];
 const moduleName: ModuleName = 'AllEnterprise';
 

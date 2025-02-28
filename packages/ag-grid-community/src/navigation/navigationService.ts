@@ -350,10 +350,22 @@ export class NavigationService extends BeanStub implements NamedBean {
     // same cell into view (which means either scroll all the way up, or all the way down).
     private onHomeOrEndKey(key: string): void {
         const homeKey = key === KeyCode.PAGE_HOME;
-        const { visibleCols, pageBounds } = this.beans;
+        const { visibleCols, pageBounds, rowModel } = this.beans;
         const allColumns: AgColumn[] = visibleCols.allCols;
-        const columnToSelect = homeKey ? allColumns[0] : _last(allColumns);
         const scrollIndex = homeKey ? pageBounds.getFirstRow() : pageBounds.getLastRow();
+        const rowNode = rowModel.getRow(scrollIndex);
+
+        if (!rowNode) {
+            return;
+        }
+
+        const columnToSelect = (homeKey ? allColumns : [...allColumns].reverse()).find(
+            (col) => !col.isSuppressNavigable(rowNode)
+        );
+
+        if (!columnToSelect) {
+            return;
+        }
 
         this.navigateTo({
             scrollIndex: scrollIndex,
@@ -565,7 +577,7 @@ export class NavigationService extends BeanStub implements NamedBean {
                 column: backwards ? displayedColumns[0] : _last(displayedColumns),
             };
         } else {
-            cellPos = previousCell.cellPosition;
+            cellPos = previousCell.getFocusedCellPosition();
         }
         // find the next cell to start editing
         const nextCell = this.findNextCellToFocusOn(cellPos, backwards, false);
@@ -683,6 +695,10 @@ export class NavigationService extends BeanStub implements NamedBean {
             if (cellNavigation!.isSuppressNavigable(nextCell.column, nextCell.rowNode)) {
                 continue;
             }
+
+            // when spanning we need to focus a specific index of the spanned cell, by
+            // setting it into the focused cell position we can try to force focus to this specific pos
+            nextCell.setFocusedCellPosition(nextPosition);
 
             // by default, when we click a cell, it gets selected into a range, so to keep keyboard navigation
             // consistent, we set into range here also.
@@ -808,6 +824,11 @@ export class NavigationService extends BeanStub implements NamedBean {
     }
 
     private getNormalisedPosition(cellPosition: CellPosition): CellPosition | null {
+        const isSpannedCell = !!this.beans.spannedRowRenderer?.getCellByPosition(cellPosition);
+        if (isSpannedCell) {
+            return cellPosition;
+        }
+
         // ensureCellVisible first, to make sure cell at position is rendered.
         this.ensureCellVisible(cellPosition);
 
@@ -818,7 +839,8 @@ export class NavigationService extends BeanStub implements NamedBean {
             return null;
         }
 
-        cellPosition = cellCtrl.cellPosition;
+        cellPosition = cellCtrl.getFocusedCellPosition();
+
         // we call this again, as nextCell can be different to it's previous value due to Column Spanning
         // (ie if cursor moving from right to left, and cell is spanning columns, then nextCell was the
         // last column in the group, however now it's the first column in the group). if we didn't do

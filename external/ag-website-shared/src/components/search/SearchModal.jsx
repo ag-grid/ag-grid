@@ -1,3 +1,5 @@
+import { addTrailingSlash } from '@ag-website-shared/utils/addTrailingSlash';
+import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
 import algoliasearch from 'algoliasearch/lite';
 import React, { useEffect, useMemo, useState } from 'react';
 import { InstantSearch, useHits, useInstantSearch, useSearchBox } from 'react-instantsearch';
@@ -135,7 +137,7 @@ const SearchComponent = ({ closeModal }) => {
         }
 
         if (evt.key === 'Enter') {
-            window.location = flattenedHits[selectedHit].path;
+            window.location = addTrailingSlash(urlWithBaseUrl(flattenedHits[selectedHit].path));
             // close modal, if link was same page we don't want to keep the modal open.
             closeModal();
             return;

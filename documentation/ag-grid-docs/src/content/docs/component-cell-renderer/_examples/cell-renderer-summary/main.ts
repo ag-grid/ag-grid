@@ -1,4 +1,4 @@
-import type { ColDef, GridApi, GridOptions } from 'ag-grid-community';
+import type { GridApi, GridOptions } from 'ag-grid-community';
 import {
     CellStyleModule,
     ClientSideRowModelModule,
@@ -21,17 +21,17 @@ let gridApi: GridApi;
 // Row Data Interface
 interface IRow {
     company: string;
-    location: string;
-    price: number;
-    successful: boolean;
+    website: string;
+    revenue: number;
+    hardware: boolean;
 }
 
-const gridOptions: GridOptions = {
+const gridOptions: GridOptions<IRow> = {
     defaultColDef: {
         flex: 10,
     },
     // Data to be displayed
-    rowData: [] as IRow[],
+    rowData: [],
     // Columns to be displayed (Should match rowData properties)
     columnDefs: [
         {
@@ -55,15 +55,14 @@ const gridOptions: GridOptions = {
         },
         {
             field: 'hardware',
-            headerName: 'Hardware',
             cellRenderer: MissionResultRenderer,
         },
         {
-            field: 'actions',
+            colId: 'actions',
             headerName: 'Actions',
             cellRenderer: CustomButtonComponent,
         },
-    ] as ColDef[],
+    ],
 };
 
 // setup the grid after the page has finished loading

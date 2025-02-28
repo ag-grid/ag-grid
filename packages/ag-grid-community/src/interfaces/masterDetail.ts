@@ -1,9 +1,10 @@
-import type { GridApi } from '../api/gridApi';
+import type { DetailGridInfo, GridApi } from '../api/gridApi';
 import type { Bean } from '../context/bean';
 import type { GridOptions } from '../entities/gridOptions';
 import type { RowNode } from '../entities/rowNode';
 import type { ICellRendererParams } from '../rendering/cellRenderers/iCellRenderer';
 import type { RowCtrl } from '../rendering/row/rowCtrl';
+import type { FindDetailGridCellRendererParams } from './iFind';
 import type { IRowNode } from './iRowNode';
 
 export interface IDetailCellRenderer<TData = any> {
@@ -14,7 +15,9 @@ export interface IDetailCellRenderer<TData = any> {
     getGui(): HTMLElement;
 }
 
-export interface IDetailCellRendererParams<TData = any, TDetail = any> extends ICellRendererParams<TData> {
+export interface IDetailCellRendererParams<TData = any, TDetail = any>
+    extends ICellRendererParams<TData>,
+        FindDetailGridCellRendererParams<TData> {
     /**
      * Provide Grid Options to use for the Detail Grid.
      */
@@ -57,6 +60,8 @@ export interface IDetailCellRendererCtrl extends Bean {
 }
 
 export interface IMasterDetailService {
+    store: { [id: string]: DetailGridInfo | undefined };
+
     setupDetailRowAutoHeight(rowCtrl: RowCtrl, eDetailGui: HTMLElement): void;
 
     /** Used by flatten stage to get or create a detail node from a master node */

@@ -2,10 +2,8 @@
 import { Icon } from '@ag-website-shared/components/icon/Icon';
 import styles from './DocumentationArchive.module.scss';
 import type { Library } from '@ag-grid-types';
-import { pathJoin } from '@utils/pathJoin';
-import { PRODUCTION_GRID_SITE_URL, PRODUCTION_CHARTS_SITE_URL } from '@constants';
+import { getChangelogUrl } from '@ag-website-shared/utils/getChangelogUrl';
 import { ArchiveLink } from './ArchiveLink';
-import { versionIsGreaterOrEqual } from '@ag-website-shared/utils/versionIsGreaterOrEqual';
 
 interface Props {
     site: Library;
@@ -13,8 +11,6 @@ interface Props {
 }
 
 const { site, versionsData } = Astro.props as Props;
-
-const FIRST_GRID_VERSION_WITH_HOMEPAGE = '27.3.0';
 
 const getVersionType = (version: string) => {
     const [_, minor, patch] = version.split('.');
@@ -31,14 +27,6 @@ const getVersionType = (version: string) => {
 const isMajor = (version: string) => {
     return getVersionType(version) === 'Major';
 };
-
-const getChangelogUrl = (version: string) => {
-    const changelogBaseUrl = `/changelog/?fixVersion=${version}`;
-
-    const baseUrl = site === 'charts' ? PRODUCTION_CHARTS_SITE_URL : PRODUCTION_GRID_SITE_URL;
-
-    return pathJoin(baseUrl, changelogBaseUrl);
-};
 ---
 
 <div class={styles.docsArchiveContainer}>
@@ -49,10 +37,6 @@ const getChangelogUrl = (version: string) => {
         {
             versionsData.slice(1).map(({ noArchive, version, versionType, date, noDocs }) => {
                 if (noArchive) return;
-
-                const useDocumentationLink =
-                    (site === 'grid' && versionIsGreaterOrEqual(version, FIRST_GRID_VERSION_WITH_HOMEPAGE)) ||
-                    site === 'charts';
 
                 return (
                     <tr>
@@ -67,20 +51,12 @@ const getChangelogUrl = (version: string) => {
                         </td>
 
                         <td>
-                            <a href={getChangelogUrl(version)}>
+                            <a href={getChangelogUrl({ site, version })}>
                                 Changelog <Icon name="arrowRight" />
                             </a>
                         </td>
 
-                        <td>
-                            {!noDocs ? (
-                                <ArchiveLink
-                                    site={site}
-                                    version={version}
-                                    useDocumentationLink={useDocumentationLink}
-                                />
-                            ) : null}
-                        </td>
+                        <td>{!noDocs ? <ArchiveLink site={site} version={version} /> : null}</td>
                     </tr>
                 );
             })

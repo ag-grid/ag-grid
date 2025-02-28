@@ -92,6 +92,18 @@
     flex: 1 1 auto;
 }
 
+.ag-viewport {
+    position: relative;
+}
+
+.ag-spanning-container {
+    position: absolute;
+    top: 0;
+
+    /* z-index: 1 appears over editing rows but under dragging rows */
+    z-index: 1;
+}
+
 .ag-body-viewport,
 .ag-center-cols-viewport,
 .ag-header-viewport,
@@ -169,7 +181,11 @@ always be 0 and then making a row sticky causes the grid to scroll. */
 
 .ag-header-container,
 .ag-floating-top-container,
+.ag-pinned-left-floating-top,
+.ag-pinned-right-floating-top,
 .ag-floating-bottom-container,
+.ag-pinned-left-floating-bottom,
+.ag-pinned-right-floating-bottom,
 .ag-sticky-top-container,
 .ag-sticky-bottom-container {
     height: 100%;
@@ -437,6 +453,9 @@ always be 0 and then making a row sticky causes the grid to scroll. */
     overflow: hidden;
     height: 0;
     background-color: var(--ag-background-color);
+
+    /* sticky containers need to appear over spanned and edited rows */
+    z-index: 1;
 }
 
 .ag-sticky-bottom {

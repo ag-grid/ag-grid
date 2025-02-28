@@ -1,5 +1,6 @@
 import type { GridApi, GridOptions } from 'ag-grid-community';
 import {
+    ClientSideRowModelApiModule,
     ClientSideRowModelModule,
     ModuleRegistry,
     NumberEditorModule,
@@ -11,6 +12,7 @@ import {
 ModuleRegistry.registerModules([
     NumberEditorModule,
     TextEditorModule,
+    ClientSideRowModelApiModule,
     ClientSideRowModelModule,
     ValidationModule /* Development Only */,
 ]);

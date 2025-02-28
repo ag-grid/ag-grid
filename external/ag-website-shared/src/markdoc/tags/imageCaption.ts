@@ -6,6 +6,12 @@ export const imageCaption: Schema<Config, Render> = {
     render: component('../../external/ag-website-shared/src/components/imageCaption/ImageCaption.astro'),
     attributes: {
         /**
+         * Unique identifier for the image
+         *
+         * By default generated with the image path
+         */
+        id: { type: String },
+        /**
          * Docs page name in `src/content/[pageName]
          *
          * If not provided, will default to the location of the markdoc file
@@ -18,7 +24,6 @@ export const imageCaption: Schema<Config, Render> = {
         alt: { type: String, required: true },
         centered: { type: Boolean },
         constrained: { type: Boolean },
-        descriptionTop: { type: Boolean },
         width: { type: String },
         height: { type: String },
         minWidth: { type: String },

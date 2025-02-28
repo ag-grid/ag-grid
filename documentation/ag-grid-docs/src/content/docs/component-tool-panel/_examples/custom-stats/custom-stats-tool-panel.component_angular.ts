@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
 
 import type { IToolPanelAngularComp } from 'ag-grid-angular';
 import type { IRowNode, IToolPanelParams } from 'ag-grid-community';
@@ -9,21 +9,22 @@ export interface CustomStatsToolPanelParams extends IToolPanelParams {
 
 @Component({
     standalone: true,
+    changeDetection: ChangeDetectionStrategy.OnPush,
     template: ` <div style="text-align: center">
         <span>
-            <h2><i class="fa fa-calculator"></i> {{ title }}</h2>
+            <h2><i class="fa fa-calculator"></i> {{ title() }}</h2>
             <dl style="font-size: large; padding: 30px 40px 10px 30px">
                 <dt class="totalStyle">
-                    Total Medals: <b>{{ numMedals }}</b>
+                    Total Medals: <b>{{ numMedals() }}</b>
                 </dt>
                 <dt class="totalStyle">
-                    Total Gold: <b>{{ numGold }}</b>
+                    Total Gold: <b>{{ numGold() }}</b>
                 </dt>
                 <dt class="totalStyle">
-                    Total Silver: <b>{{ numSilver }}</b>
+                    Total Silver: <b>{{ numSilver() }}</b>
                 </dt>
                 <dt class="totalStyle">
-                    Total Bronze: <b>{{ numBronze }}</b>
+                    Total Bronze: <b>{{ numBronze() }}</b>
                 </dt>
             </dl>
         </span>
@@ -39,20 +40,15 @@ export interface CustomStatsToolPanelParams extends IToolPanelParams {
 export class CustomStatsToolPanel implements IToolPanelAngularComp {
     private params!: CustomStatsToolPanelParams;
 
-    public numMedals!: number;
-    public numGold!: number;
-    public numSilver!: number;
-    public numBronze!: number;
-    public title!: string;
+    numMedals = signal(0);
+    numGold = signal(0);
+    numSilver = signal(0);
+    numBronze = signal(0);
+    title = signal('');
 
     agInit(params: CustomStatsToolPanelParams): void {
         this.params = params;
-
-        this.numMedals = 0;
-        this.numGold = 0;
-        this.numSilver = 0;
-        this.numBronze = 0;
-        this.title = params.title;
+        this.title.set(params.title);
 
         // calculate stats when new rows loaded, i.e. onModelUpdated
         this.params.api.addEventListener('modelUpdated', this.updateTotals.bind(this));
@@ -70,10 +66,10 @@ export class CustomStatsToolPanel implements IToolPanelAngularComp {
             if (data.bronze) numBronze += data.bronze;
         });
 
-        this.numMedals = numGold + numSilver + numBronze;
-        this.numGold = numGold;
-        this.numSilver = numSilver;
-        this.numBronze = numBronze;
+        this.numMedals.set(numGold + numSilver + numBronze);
+        this.numGold.set(numGold);
+        this.numSilver.set(numSilver);
+        this.numBronze.set(numBronze);
     }
 
     refresh(): void {}

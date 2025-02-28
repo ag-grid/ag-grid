@@ -133,6 +133,10 @@ export function _setAriaRowIndex(element: Element, rowIndex: number): void {
     _setAriaAttribute(element, 'rowindex', rowIndex);
 }
 
+export function _setAriaRowSpan(element: Element, spanCount: number): void {
+    _setAriaAttribute(element, 'rowspan', spanCount);
+}
+
 export function _setAriaColCount(element: Element, colCount: number): void {
     _setAriaAttribute(element, 'colcount', colCount);
 }
@@ -164,6 +168,13 @@ export function _setAriaChecked(element: Element, checked?: boolean) {
 export function _setAriaControls(controllerElement: Element, controlledElement: Element) {
     _toggleAriaAttribute(controllerElement, 'controls', controlledElement.id);
     _setAriaLabelledBy(controlledElement, controllerElement.id);
+}
+
+export function _setAriaHasPopup(
+    element: Element,
+    hasPopup: 'menu' | 'listbox' | 'tree' | 'grid' | 'dialog' | boolean
+) {
+    _toggleAriaAttribute(element, 'haspopup', hasPopup === false ? null : hasPopup);
 }
 
 export function _getAriaCheckboxStateName(translate: LocaleTextFunc, state?: boolean): string {

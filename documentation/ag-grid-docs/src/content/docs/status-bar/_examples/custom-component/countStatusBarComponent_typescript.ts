@@ -20,7 +20,7 @@ export class CountStatusBarComponent implements IStatusPanelComp {
 
         this.eGui.appendChild(this.eCount);
 
-        params.api.addEventListener('gridReady', this.onGridReady.bind(this));
+        params.api.addEventListener('rowDataUpdated', this.onRowDataUpdated.bind(this));
     }
 
     getGui() {
@@ -29,11 +29,11 @@ export class CountStatusBarComponent implements IStatusPanelComp {
 
     destroy() {
         if (!this.params.api.isDestroyed()) {
-            this.params.api.removeEventListener('gridReady', this.onGridReady);
+            this.params.api.removeEventListener('rowDataUpdated', this.onRowDataUpdated);
         }
     }
 
-    onGridReady() {
+    onRowDataUpdated() {
         this.eCount.textContent = this.params.api.getDisplayedRowCount() + '';
     }
 }

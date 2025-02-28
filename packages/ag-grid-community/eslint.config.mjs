@@ -40,6 +40,13 @@ export default [
                     message: 'Prefer Object.keys() to Object.entries() for performance reasons.',
                 },
             ],
+            'no-restricted-imports': [
+                'error',
+                {
+                    name: 'ag-grid-community',
+                    message: 'There should be no imports of ag-grid-community, use relative imports instead',
+                },
+            ],
             'no-console': 'error',
         },
     },

@@ -49,7 +49,6 @@ const gridOptions: GridOptions<IOlympicData> = {
     pivotPanelShow: 'always',
     // debug: true,
     columnDefs: columnDefs,
-    rowData: null,
 };
 
 function onBtSortAthlete() {

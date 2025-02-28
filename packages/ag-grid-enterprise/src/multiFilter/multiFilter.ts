@@ -27,6 +27,7 @@ import {
     _loadTemplate,
     _refreshEvaluatorAndUi,
     _removeFromArray,
+    _setAriaRole,
 } from 'ag-grid-community';
 
 import { AgGroupComponent } from '../widgets/agGroupComponent';
@@ -35,7 +36,7 @@ import { AgMenuItemComponent } from '../widgets/agMenuItemComponent';
 import { AgMenuItemRenderer } from '../widgets/agMenuItemRenderer';
 import { forEachReverse, getFilterTitle, getMultiFilterDefs, getUpdatedMultiFilterModel } from './multiFilterUtil';
 
-interface FilterWrapper {
+interface MultiFilterWrapper {
     filter: IFilterComp;
     /** only set for evaluators */
     filterParams?: FilterDisplayParams;
@@ -53,7 +54,7 @@ export class MultiFilter extends TabGuardComp implements IFilterComp, IMultiFilt
 
     private params: MultiFilterDisplayParams;
     private filterDefs: IMultiFilterDef[] = [];
-    private wrappers: (FilterWrapper | null)[] = [];
+    private wrappers: (MultiFilterWrapper | null)[] = [];
     private guiDestroyFuncs: (() => void)[] = [];
     // this could be the accordion/sub menu element depending on the display type
     private filterGuis: (HTMLElement | null)[] = [];
@@ -160,12 +161,15 @@ export class MultiFilter extends TabGuardComp implements IFilterComp, IMultiFilt
     }
 
     private insertFilterMenu(filter: IFilterComp, name: string): AgPromise<AgMenuItemComponent> {
+        const eGui = filter.getGui();
+        _setAriaRole(eGui, 'dialog');
         const menuItem = this.createBean(new AgMenuItemComponent());
         return menuItem
             .init({
                 menuItemDef: {
                     name,
                     subMenu: [],
+                    subMenuRole: 'dialog',
                     cssClasses: ['ag-multi-filter-menu-item'],
                     menuItem: AgMenuItemRenderer,
                     menuItemParams: {
@@ -495,7 +499,7 @@ export class MultiFilter extends TabGuardComp implements IFilterComp, IMultiFilt
         filterDef: IFilterDef,
         index: number,
         initialModel: IMultiFilterModel | null
-    ): AgPromise<FilterWrapper | null> {
+    ): AgPromise<MultiFilterWrapper | null> {
         const column = this.params.column as AgColumn;
 
         let initialModelForFilter: any = null;

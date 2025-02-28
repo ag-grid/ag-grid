@@ -20,6 +20,12 @@ import type { PivotColDefService } from './pivotColDefService';
 
 const EXCEEDED_MAX_UNIQUE_VALUES = 'Exceeded maximum allowed pivot column count.';
 
+const mapToObject = (map: Map<string, any>): Record<string, any> => {
+    const obj: Record<string, any> = {};
+    map.forEach((value, key) => (obj[key] = value instanceof Map ? mapToObject(value) : value));
+    return obj;
+};
+
 export class PivotStage extends BeanStub implements NamedBean, IRowNodeStage {
     beanName = 'pivotStage' as const;
 
@@ -49,7 +55,7 @@ export class PivotStage extends BeanStub implements NamedBean, IRowNodeStage {
         this.pivotColDefSvc = beans.pivotColDefSvc as PivotColDefService;
     }
 
-    private uniqueValues: any = {};
+    private uniqueValues: Map<string, any> = new Map();
 
     private pivotColumnDefs: ColDef[];
 
@@ -78,7 +84,7 @@ export class PivotStage extends BeanStub implements NamedBean, IRowNodeStage {
 
     private executePivotOff(changedPath: ChangedPath): void {
         this.aggregationColumnsHashLastTime = null;
-        this.uniqueValues = {};
+        this.uniqueValues = new Map();
         if (this.pivotResultCols.isPivotResultColsPresent()) {
             this.pivotResultCols.setPivotResultCols(null, 'rowModelUpdated');
             if (changedPath) {
@@ -94,7 +100,7 @@ export class PivotStage extends BeanStub implements NamedBean, IRowNodeStage {
         // to get the max number of unique values.
         const configuredMaxCols = this.gos.get('pivotMaxGeneratedColumns');
         this.maxUniqueValues = configuredMaxCols === -1 ? -1 : configuredMaxCols / numberOfAggregationColumns;
-        let uniqueValues;
+        let uniqueValues: Map<string, any>;
         try {
             // try catch is used to force execution to stop when the max count is exceeded.
             uniqueValues = this.bucketUpRowNodes(changedPath);
@@ -167,9 +173,9 @@ export class PivotStage extends BeanStub implements NamedBean, IRowNodeStage {
         this.lastTimeFailed = false;
     }
 
-    private setUniqueValues(newValues: any): boolean {
-        const json1 = JSON.stringify(newValues);
-        const json2 = JSON.stringify(this.uniqueValues);
+    private setUniqueValues(newValues: Map<string, any>): boolean {
+        const json1 = JSON.stringify(mapToObject(this.uniqueValues));
+        const json2 = JSON.stringify(mapToObject(newValues));
 
         const uniqueValuesChanged = json1 !== json2;
 
@@ -184,10 +190,10 @@ export class PivotStage extends BeanStub implements NamedBean, IRowNodeStage {
     }
 
     private currentUniqueCount = 0;
-    private bucketUpRowNodes(changedPath: ChangedPath): any {
+    private bucketUpRowNodes(changedPath: ChangedPath): Map<string, any> {
         this.currentUniqueCount = 0;
         // accessed from inside inner function
-        const uniqueValues: any = {};
+        const uniqueValues: Map<string, any> = new Map();
 
         // ensure childrenMapped is cleared, as if a node has been filtered out it should not have mapped children.
         changedPath.forEachChangedNodeDepthFirst((node) => {
@@ -215,7 +221,9 @@ export class PivotStage extends BeanStub implements NamedBean, IRowNodeStage {
         if (pivotColumns?.length === 0) {
             rowNode.childrenMapped = null;
         } else {
-            rowNode.childrenMapped = this.bucketChildren(rowNode.childrenAfterFilter!, pivotColumns, 0, uniqueValues);
+            rowNode.childrenMapped = mapToObject(
+                this.bucketChildren(rowNode.childrenAfterFilter!, pivotColumns, 0, uniqueValues)
+            );
         }
 
         if (rowNode.sibling) {
@@ -227,9 +235,9 @@ export class PivotStage extends BeanStub implements NamedBean, IRowNodeStage {
         children: RowNode[],
         pivotColumns: AgColumn[] = [],
         pivotIndex: number,
-        uniqueValues: any
-    ): Record<string, any> {
-        const mappedChildren: Record<string, RowNode[]> = {};
+        uniqueValues: Map<string, any>
+    ): Map<string, any> {
+        const mappedChildren: Map<string, RowNode[]> = new Map();
         const pivotColumn = pivotColumns[pivotIndex];
 
         // map the children out based on the pivot column
@@ -240,9 +248,9 @@ export class PivotStage extends BeanStub implements NamedBean, IRowNodeStage {
                 key = '';
             }
 
-            if (!uniqueValues[key]) {
+            if (!uniqueValues.get(key)) {
                 this.currentUniqueCount += 1;
-                uniqueValues[key] = {};
+                uniqueValues.set(key, new Map());
 
                 const doesGeneratedColMaxExist = this.maxUniqueValues !== -1;
                 const hasExceededColMax = this.currentUniqueCount > this.maxUniqueValues;
@@ -252,24 +260,27 @@ export class PivotStage extends BeanStub implements NamedBean, IRowNodeStage {
                 }
             }
 
-            if (!mappedChildren[key]) {
-                mappedChildren[key] = [];
+            if (!mappedChildren.has(key)) {
+                mappedChildren.set(key, []);
             }
-            mappedChildren[key].push(child);
+            mappedChildren.get(key)!.push(child);
         });
 
         // if it's the last pivot column, return as is, otherwise go one level further in the map
         if (pivotIndex === pivotColumns.length - 1) {
             return mappedChildren;
-        } else {
-            const result: Record<string, any> = {};
-
-            for (const key of Object.keys(mappedChildren)) {
-                result[key] = this.bucketChildren(mappedChildren[key], pivotColumns, pivotIndex + 1, uniqueValues[key]);
-            }
-
-            return result;
         }
+
+        const result: Map<string, any> = new Map();
+
+        for (const key of mappedChildren.keys()) {
+            result.set(
+                key,
+                this.bucketChildren(mappedChildren.get(key)!, pivotColumns, pivotIndex + 1, uniqueValues.get(key)!)
+            );
+        }
+
+        return result;
     }
 
     public getPivotColumnDefs(): ColDef[] {

@@ -17,107 +17,140 @@ export class RowAutoHeightService extends BeanStub implements NamedBean {
     public active: boolean;
     private wasEverActive = false;
 
-    public setRowAutoHeight(rowNode: RowNode, cellHeight: number | undefined, column: AgColumn): void {
+    /**
+     * If row height has been active, request a refresh of the row heights.
+     */
+    public requestCheckAutoHeight(): void {
+        if (!this.wasEverActive) {
+            return;
+        }
+
+        this._debouncedCalculateRowHeights();
+    }
+
+    private _debouncedCalculateRowHeights = _debounce(this, this.calculateRowHeights.bind(this), 1);
+    private calculateRowHeights() {
+        const { visibleCols, rowModel, rowSpanSvc, pinnedRowModel } = this.beans;
+        const displayedAutoHeightCols = visibleCols.autoHeightCols;
+
+        let anyNodeChanged = false;
+        const updateDisplayedRowHeights = (row: RowNode) => {
+            const autoHeights = row.__autoHeights;
+
+            let newRowHeight = _getRowHeightForNode(this.beans, row).height;
+            for (const col of displayedAutoHeightCols) {
+                // if using col span, we don't allow auto height.
+                if (this.colSpanSkipRow(col, row)) {
+                    return;
+                }
+
+                let cellHeight = autoHeights?.[col.getColId()];
+
+                const spannedCell = rowSpanSvc?.getCellSpan(col, row);
+                if (spannedCell) {
+                    // only last row gets additional auto height of spanned cell
+                    if (spannedCell.getLastNode() !== row) {
+                        continue;
+                    }
+
+                    cellHeight = rowSpanSvc?.getCellSpan(col, row)?.getLastNodeAutoHeight();
+                    // if this is the last row, but no span value, skip this row as auto height not ready
+                    if (!cellHeight) {
+                        return;
+                    }
+                }
+
+                // if no cell height, auto height not ready skip row
+                if (cellHeight == null) {
+                    return;
+                }
+
+                newRowHeight = Math.max(cellHeight, newRowHeight);
+            }
+
+            if (newRowHeight !== row.rowHeight) {
+                row.setRowHeight(newRowHeight);
+                anyNodeChanged = true;
+            }
+        };
+
+        pinnedRowModel?.forEachPinnedRow?.('top', updateDisplayedRowHeights);
+        pinnedRowModel?.forEachPinnedRow?.('bottom', updateDisplayedRowHeights);
+        rowModel.forEachDisplayedNode?.(updateDisplayedRowHeights);
+
+        if (anyNodeChanged) {
+            (rowModel as IClientSideRowModel | IServerSideRowModel).onRowHeightChanged?.();
+        }
+    }
+
+    /**
+     * Set the cell height into the row node, and request a refresh of the row heights if there's been a change.
+     * @param rowNode the node to set the auto height on
+     * @param cellHeight the height to set, undefined if the cell has just been destroyed
+     * @param column the column of the cell
+     */
+    private setRowAutoHeight(rowNode: RowNode, cellHeight: number | undefined, column: AgColumn): void {
         if (!rowNode.__autoHeights) {
             rowNode.__autoHeights = {};
         }
+
+        // if the cell comp has been unmounted, delete the auto height
+        if (cellHeight == undefined) {
+            delete rowNode.__autoHeights[column.getId()];
+            return;
+        }
+
+        const previousCellHeight = rowNode.__autoHeights[column.getId()];
         rowNode.__autoHeights[column.getId()] = cellHeight;
-
-        if (cellHeight != null) {
-            if (rowNode.__checkAutoHeightsDebounced == null) {
-                rowNode.__checkAutoHeightsDebounced = _debounce(this, this.doCheckAutoHeights.bind(this, rowNode), 1);
-            }
-            rowNode.__checkAutoHeightsDebounced();
+        if (previousCellHeight !== cellHeight) {
+            this.requestCheckAutoHeight();
         }
     }
 
-    public checkAutoHeights(rowNode: RowNode): void {
-        if (this.wasEverActive) {
-            this.doCheckAutoHeights(rowNode);
+    /**
+     * If using col span, we don't allow auto height on rows that span columns.
+     * @param col the column of the cell
+     * @param node the node of the cell
+     * @returns whether the row should skip auto height
+     */
+    private colSpanSkipRow(col: AgColumn, node: RowNode): boolean {
+        const { colModel, colViewport, visibleCols } = this.beans;
+        if (!colModel.colSpanActive) {
+            return false;
         }
+
+        let activeColsForRow: AgColumn[] = [];
+        switch (col.getPinned()) {
+            case 'left':
+                activeColsForRow = visibleCols.getLeftColsForRow(node);
+                break;
+            case 'right':
+                activeColsForRow = visibleCols.getRightColsForRow(node);
+                break;
+            case null:
+                activeColsForRow = colViewport.getColsWithinViewport(node);
+                break;
+        }
+        return activeColsForRow.includes(col);
     }
 
-    private doCheckAutoHeights(rowNode: RowNode): void {
-        const autoHeights = rowNode.__autoHeights;
-        if (autoHeights == null) {
-            return;
+    /**
+     * If required, sets up observers to continuously measure changes in the cell height.
+     * @param cellCtrl the cellCtrl of the cell
+     * @param eCellWrapper the HTMLElement to track the height of
+     * @param compBean the component bean to add the destroy/cleanup function to
+     * @returns whether or not auto height has been set up on this cell
+     */
+    public setupCellAutoHeight(cellCtrl: CellCtrl, eCellWrapper: HTMLElement | undefined, compBean: BeanStub): boolean {
+        if (!cellCtrl.column.isAutoHeight() || !eCellWrapper) {
+            return false;
         }
 
-        let notAllPresent = false;
-        let nonePresent = true;
-        let newRowHeight = 0;
+        this.wasEverActive = true;
 
-        const { visibleCols, colModel, colViewport, rowModel } = this.beans;
-        const displayedAutoHeightCols = visibleCols.autoHeightCols;
-        displayedAutoHeightCols.forEach((col) => {
-            let cellHeight = autoHeights[col.getId()];
-
-            if (cellHeight == null) {
-                // If column spanning is active a column may not provide auto height for a row if that
-                // cell is not present for the given row due to a previous cell spanning over the auto height column.
-                if (colModel.colSpanActive) {
-                    let activeColsForRow: AgColumn[] = [];
-                    switch (col.getPinned()) {
-                        case 'left':
-                            activeColsForRow = visibleCols.getLeftColsForRow(rowNode);
-                            break;
-                        case 'right':
-                            activeColsForRow = visibleCols.getRightColsForRow(rowNode);
-                            break;
-                        case null:
-                            activeColsForRow = colViewport.getColsWithinViewport(rowNode);
-                            break;
-                    }
-                    if (activeColsForRow.includes(col)) {
-                        // Column is present in the row, i.e not spanned over, but no auto height was provided so we cannot calculate the row height
-                        notAllPresent = true;
-                        return;
-                    }
-                    // Ignore this column as it is spanned over and not present in the row
-                    cellHeight = -1;
-                } else {
-                    notAllPresent = true;
-                    return;
-                }
-            } else {
-                // At least one auto height is present
-                nonePresent = false;
-            }
-
-            if (cellHeight > newRowHeight) {
-                newRowHeight = cellHeight;
-            }
-        });
-
-        if (notAllPresent) {
-            return;
-        }
-
-        // we take min of 10, so we don't adjust for empty rows. if <10, we put to default.
-        // this prevents the row starting very small when waiting for async components,
-        // which would then mean the grid squashes in far to many rows (as small heights
-        // means more rows fit in) which looks crap. so best ignore small values and assume
-        // we are still waiting for values to render.
-        if (nonePresent || newRowHeight < 10) {
-            newRowHeight = _getRowHeightForNode(this.beans, rowNode).height;
-        }
-
-        if (newRowHeight == rowNode.rowHeight) {
-            return;
-        }
-
-        rowNode.setRowHeight(newRowHeight);
-
-        (rowModel as IClientSideRowModel | IServerSideRowModel).onRowHeightChangedDebounced?.();
-    }
-
-    public setupCellAutoHeight(cellCtrl: CellCtrl, eCellWrapper: HTMLElement, compBean: BeanStub): void {
         const eParentCell = eCellWrapper.parentElement!;
         const { rowNode, column } = cellCtrl;
         const beans = this.beans;
-        // taking minRowHeight from getRowHeightForNode means the getRowHeight() callback is used,
-        // thus allowing different min heights for different rows.
-        const minRowHeight = _getRowHeightForNode(beans, rowNode).height;
 
         const measureHeight = (timesCalled: number) => {
             if (cellCtrl.editing) {
@@ -151,8 +184,7 @@ export class RowAutoHeightService extends BeanStub implements NamedBean {
                 }
             }
 
-            const newHeight = Math.max(autoHeight, minRowHeight);
-            this.setRowAutoHeight(rowNode, newHeight, column);
+            this.setRowAutoHeight(rowNode, autoHeight, column);
         };
 
         const listener = () => measureHeight(0);
@@ -166,13 +198,10 @@ export class RowAutoHeightService extends BeanStub implements NamedBean {
             destroyResizeObserver();
             this.setRowAutoHeight(rowNode, undefined, column);
         });
+        return true;
     }
 
     public setAutoHeightActive(cols: ColumnCollections): void {
         this.active = cols.list.some((col) => col.isVisible() && col.isAutoHeight());
-
-        if (this.active) {
-            this.wasEverActive = true;
-        }
     }
 }

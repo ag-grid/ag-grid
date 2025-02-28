@@ -4,11 +4,9 @@ import type {
     BeanCollection,
     ColumnModel,
     IAggFunc,
-    IAggregationStage,
     IClientSideRowModel,
     IPivotResultColsService,
     IRowModel,
-    IRowNodeStage,
     PartialCellRange,
     RowNode,
     RowNodeSorter,
@@ -17,6 +15,7 @@ import type {
 } from 'ag-grid-community';
 import { BeanStub, _isClientSideRowModel, _isServerSideRowModel, _last, _warn } from 'ag-grid-community';
 
+import { _aggregateValues } from '../../../aggregation/aggUtils';
 import type { ColState } from '../model/chartDataModel';
 import { DEFAULT_CHART_CATEGORY } from '../model/chartDataModel';
 
@@ -46,7 +45,6 @@ export class ChartDatasource extends BeanStub {
     private colModel: ColumnModel;
     private rowNodeSorter?: RowNodeSorter;
     private sortSvc?: SortService;
-    private aggStage?: IRowNodeStage & IAggregationStage;
 
     public wireBeans(beans: BeanCollection): void {
         this.sortSvc = beans.sortSvc;
@@ -55,7 +53,6 @@ export class ChartDatasource extends BeanStub {
         this.valueSvc = beans.valueSvc;
         this.pivotResultCols = beans.pivotResultCols;
         this.rowNodeSorter = beans.rowNodeSorter;
-        this.aggStage = beans.aggStage as (IRowNodeStage & IAggregationStage) | undefined;
     }
 
     public getData(params: ChartDatasourceParams): IData {
@@ -289,40 +286,41 @@ export class ChartDatasource extends BeanStub {
             });
         });
 
-        if (this.gos.assertModuleRegistered('SharedRowGrouping', 1)) {
-            const aggStage = this.aggStage!;
+        if (this.gos.assertModuleRegistered('SharedAggregation', 1)) {
             dataAggregated.forEach((groupItem) =>
                 params.valueCols.forEach((col) => {
+                    const colId = col.getColId();
                     if (params.crossFiltering) {
-                        params.valueCols.forEach((valueCol) => {
-                            const colId = valueCol.getColId();
+                        // filtered data
+                        const dataToAgg = groupItem.__children
+                            .filter((child: any) => typeof child[colId] !== 'undefined')
+                            .map((child: any) => child[colId]);
 
-                            // filtered data
-                            const dataToAgg = groupItem.__children
-                                .filter((child: any) => typeof child[colId] !== 'undefined')
-                                .map((child: any) => child[colId]);
+                        const aggResult: any = _aggregateValues(this.beans, dataToAgg, params.aggFunc!, col);
+                        groupItem[colId] =
+                            aggResult && typeof aggResult.value !== 'undefined' ? aggResult.value : aggResult;
 
-                            const aggResult: any = aggStage.aggregateValues(dataToAgg, params.aggFunc!);
-                            groupItem[valueCol.getId()] =
-                                aggResult && typeof aggResult.value !== 'undefined' ? aggResult.value : aggResult;
+                        // filtered out data
+                        const filteredOutColId = `${colId}-filtered-out`;
+                        const dataToAggFiltered = groupItem.__children
+                            .filter((child: any) => typeof child[filteredOutColId] !== 'undefined')
+                            .map((child: any) => child[filteredOutColId]);
 
-                            // filtered out data
-                            const filteredOutColId = `${colId}-filtered-out`;
-                            const dataToAggFiltered = groupItem.__children
-                                .filter((child: any) => typeof child[filteredOutColId] !== 'undefined')
-                                .map((child: any) => child[filteredOutColId]);
-
-                            const aggResultFiltered: any = aggStage.aggregateValues(dataToAggFiltered, params.aggFunc!);
-                            groupItem[filteredOutColId] =
-                                aggResultFiltered && typeof aggResultFiltered.value !== 'undefined'
-                                    ? aggResultFiltered.value
-                                    : aggResultFiltered;
-                        });
+                        const aggResultFiltered: any = _aggregateValues(
+                            this.beans,
+                            dataToAggFiltered,
+                            params.aggFunc!,
+                            col
+                        );
+                        groupItem[filteredOutColId] =
+                            aggResultFiltered && typeof aggResultFiltered.value !== 'undefined'
+                                ? aggResultFiltered.value
+                                : aggResultFiltered;
                     } else {
-                        const dataToAgg = groupItem.__children.map((child: any) => child[col.getId()]);
-                        const aggResult = aggStage.aggregateValues(dataToAgg, params.aggFunc!);
+                        const dataToAgg = groupItem.__children.map((child: any) => child[colId]);
+                        const aggResult = _aggregateValues(this.beans, dataToAgg, params.aggFunc!, col);
 
-                        groupItem[col.getId()] =
+                        groupItem[colId] =
                             aggResult && typeof aggResult.value !== 'undefined' ? aggResult.value : aggResult;
                     }
                 })

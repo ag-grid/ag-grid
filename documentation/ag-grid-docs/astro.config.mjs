@@ -8,9 +8,9 @@ import { loadEnv } from 'vite';
 import mkcert from 'vite-plugin-mkcert';
 import svgr from 'vite-plugin-svgr';
 
+import agLinkChecker from '../../external/ag-website-shared/plugins/agLinkChecker';
 import agHotModuleReload from './plugins/agHotModuleReload';
 import agHtaccessGen from './plugins/agHtaccessGen';
-import agLinkChecker from './plugins/agLinkChecker';
 import agMergeSitemap from './plugins/agMergeSitemap';
 import agRedirectsChecker from './plugins/agRedirectsChecker';
 import { getSitemapConfig } from './src/utils/sitemap';

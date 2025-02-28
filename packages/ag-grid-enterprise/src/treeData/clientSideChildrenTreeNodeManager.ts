@@ -1,8 +1,11 @@
 import type {
     AbstractClientSideNodeManager,
+    ClientSideNodeManagerUpdateRowDataResult,
+    IChangedRowNodes,
     IClientSideNodeManager,
     NamedBean,
     RefreshModelParams,
+    RowDataTransaction,
     RowNode,
 } from 'ag-grid-community';
 import { ChangedPath, _error, _getRowIdCallback, _warn } from 'ag-grid-community';
@@ -39,12 +42,24 @@ export class ClientSideChildrenTreeNodeManager<TData>
 
     public override activate(rootNode: RowNode<TData>): void {
         const oldChildrenGetter = this.childrenGetter;
-        const childrenField = this.gos.get('treeDataChildrenField' as any);
+        const childrenField = this.gos.get('treeDataChildrenField');
         if (!oldChildrenGetter || oldChildrenGetter.path !== childrenField) {
             this.childrenGetter = makeFieldPathGetter(childrenField);
         }
 
         super.activate(rootNode);
+    }
+
+    public override updateRowData(
+        _rowDataTran: RowDataTransaction<TData>,
+        changedRowNodes: IChangedRowNodes<TData>
+    ): ClientSideNodeManagerUpdateRowDataResult<TData> {
+        _warn(268);
+        return {
+            changedRowNodes,
+            rowNodeTransaction: { add: [], remove: [], update: [] },
+            rowsInserted: false,
+        };
     }
 
     protected override loadNewRowData(rowData: TData[]): void {

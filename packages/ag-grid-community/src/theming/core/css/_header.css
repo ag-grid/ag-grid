@@ -57,6 +57,7 @@
 
 .ag-header-group-cell {
     display: flex;
+    contain: paint;
 }
 
 .ag-header-cell,

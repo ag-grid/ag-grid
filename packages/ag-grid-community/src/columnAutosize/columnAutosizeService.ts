@@ -1,6 +1,6 @@
 import { dispatchColumnResizedEvent } from '../columns/columnEventUtils';
 import type { ColKey, Maybe } from '../columns/columnModel';
-import { getWidthOfColsInList } from '../columns/columnUtils';
+import { getWidthOfColsInList, isRowNumberCol } from '../columns/columnUtils';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { AgColumn } from '../entities/agColumn';
@@ -43,7 +43,7 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
         // actually rendered, as non-rendered columns (outside the viewport and not rendered
         // due to column virtualisation) are not present. this can result in all rendered columns
         // getting narrowed, which in turn introduces more rendered columns on the RHS which
-        // did not get autosized in the original run, leaving the visible grid with columns on
+        // did not get autoSized in the original run, leaving the visible grid with columns on
         // the LHS sized, but RHS no. so we keep looping through the visible columns until
         // no more cols are available (rendered) to be resized
 
@@ -68,7 +68,7 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
         this.timesDelayed = 0;
 
         // keep track of which cols we have resized in here
-        const columnsAutosized: AgColumn[] = [];
+        const columnsAutoSized: AgColumn[] = [];
         // initialise with anything except 0 so that while loop executes at least once
         let changesThisTimeAround = -1;
 
@@ -85,12 +85,12 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
                     return;
                 }
                 const column = colModel.getCol(key);
-                if (!column) {
+                if (!column || isRowNumberCol(column)) {
                     return;
                 }
 
-                // if already autosized, skip it
-                if (columnsAutosized.indexOf(column) >= 0) {
+                // if already autoSized, skip it
+                if (columnsAutoSized.indexOf(column) >= 0) {
                     return;
                 }
 
@@ -101,7 +101,7 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
                 if (preferredWidth > 0) {
                     const newWidth = normaliseColumnWidth(column, preferredWidth);
                     column.setActualWidth(newWidth, source);
-                    columnsAutosized.push(column);
+                    columnsAutoSized.push(column);
                     changesThisTimeAround++;
                 }
 
@@ -119,7 +119,7 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
             this.autoSizeColumnGroupsByColumns(colKeys, source, stopAtGroup);
         }
 
-        dispatchColumnResizedEvent(this.eventSvc, columnsAutosized, true, 'autosizeColumns');
+        dispatchColumnResizedEvent(this.eventSvc, columnsAutoSized, true, 'autosizeColumns');
     }
 
     public autoSizeColumn(key: Maybe<ColKey>, source: ColumnEventType, skipHeader?: boolean): void {

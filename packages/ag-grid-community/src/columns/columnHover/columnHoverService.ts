@@ -13,6 +13,14 @@ export class ColumnHoverService extends BeanStub implements NamedBean {
 
     private selectedColumns: AgColumn[] | null;
 
+    public postConstruct() {
+        this.addManagedPropertyListener('columnHoverHighlight', ({ currentValue }) => {
+            if (!currentValue) {
+                this.clearMouseOver();
+            }
+        });
+    }
+
     public setMouseOver(columns: AgColumn[]): void {
         this.updateState(columns);
     }
@@ -22,15 +30,15 @@ export class ColumnHoverService extends BeanStub implements NamedBean {
     }
 
     public isHovered(column: AgColumn): boolean {
+        if (!this.gos.get('columnHoverHighlight')) {
+            return false;
+        }
         const selectedColumns = this.selectedColumns;
         return !!selectedColumns && selectedColumns.indexOf(column) >= 0;
     }
 
     public addHeaderColumnHoverListener(compBean: BeanStub, comp: IHeaderCellComp, column: AgColumn): void {
         const listener = () => {
-            if (!this.gos.get('columnHoverHighlight')) {
-                return;
-            }
             const isHovered = this.isHovered(column);
             comp.addOrRemoveCssClass('ag-column-hover', isHovered);
         };
@@ -41,9 +49,6 @@ export class ColumnHoverService extends BeanStub implements NamedBean {
 
     public onCellColumnHover(column: AgColumn, cellComp?: ICellComp): void {
         if (!cellComp) {
-            return;
-        }
-        if (!this.gos.get('columnHoverHighlight')) {
             return;
         }
 
@@ -60,9 +65,6 @@ export class ColumnHoverService extends BeanStub implements NamedBean {
         this.createHoverFeature(compBean, [column], eGui);
 
         const listener = () => {
-            if (!this.gos.get('columnHoverHighlight')) {
-                return;
-            }
             const hovered = this.isHovered(column);
             comp.addOrRemoveCssClass('ag-column-hover', hovered);
         };

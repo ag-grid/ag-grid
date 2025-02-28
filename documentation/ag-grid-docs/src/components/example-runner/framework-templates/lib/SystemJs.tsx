@@ -5,6 +5,7 @@ import { pathJoin } from '@utils/pathJoin';
 
 import agChartsAngular from '../../../../../../../node_modules/ag-charts-angular/package.json';
 import agChartsCommunity from '../../../../../../../node_modules/ag-charts-community/package.json';
+import agChartsCore from '../../../../../../../node_modules/ag-charts-core/package.json';
 import agChartsEnterprise from '../../../../../../../node_modules/ag-charts-enterprise/package.json';
 import agChartsReact from '../../../../../../../node_modules/ag-charts-react/package.json';
 import agChartsTypes from '../../../../../../../node_modules/ag-charts-types/package.json';
@@ -44,6 +45,7 @@ const localBuildAndArchiveConfiguration: Configuration = {
     },
     gridEnterprisePaths: {
         'ag-charts-types': `${localPrefix}/ag-charts-types/dist/package/main.cjs.js`,
+        'ag-charts-core': `${localPrefix}/ag-charts-core/dist/package/main.cjs.js`,
         'ag-charts-community': `${localPrefix}/ag-charts-community/dist/package/main.cjs.js`,
         'ag-charts-enterprise': `${localPrefix}/ag-charts-enterprise/dist/package/main.cjs.js`,
         '@ag-grid-community/locale': `${localPrefix}/@ag-grid-community/locale/dist/package/main.cjs.js`,
@@ -56,6 +58,7 @@ const publishedConfiguration: Configuration = {
         'ag-charts-react': `${NPM_CDN}/ag-charts-react@${agChartsReact.version}/`,
         'ag-charts-angular': `${NPM_CDN}/ag-charts-angular@${agChartsAngular.version}/`,
         'ag-charts-vue3': `${NPM_CDN}/ag-charts-vue3@${agChartsVue3.version}/`,
+        'ag-charts-core': `${NPM_CDN}/ag-charts-core@${agChartsCore.version}/`,
         'ag-charts-community': `${NPM_CDN}/ag-charts-community@${agChartsCommunity.version}/`,
         'ag-charts-types': `${NPM_CDN}/ag-charts-types@${agChartsTypes.version}/`,
         '@ag-grid-community/locale': `${NPM_CDN}/@ag-grid-community/locale@${agGridVersion}/dist/package/main.cjs.js`,
@@ -64,6 +67,7 @@ const publishedConfiguration: Configuration = {
         'ag-charts-react': `${NPM_CDN}/ag-charts-react@${agChartsReact.version}/`,
         'ag-charts-angular': `${NPM_CDN}/ag-charts-angular@${agChartsAngular.version}/`,
         'ag-charts-vue3': `${NPM_CDN}/ag-charts-vue3@${agChartsVue3.version}/`,
+        'ag-charts-core': `${NPM_CDN}/ag-charts-core@${agChartsCommunity.version}/dist/package/main.cjs.js`,
         'ag-charts-community': `${NPM_CDN}/ag-charts-community@${agChartsCommunity.version}/dist/package/main.cjs.js`,
         'ag-charts-types': `${NPM_CDN}/ag-charts-types@${agChartsTypes.version}/`,
         'ag-charts-enterprise': `${NPM_CDN}/ag-charts-enterprise@${agChartsEnterprise.version}/dist/package/main.cjs.js`,
@@ -130,6 +134,7 @@ export const SystemJs = ({
     if (isDev) {
         configuration.gridMap = {
             ...configuration.gridMap,
+            'ag-charts-core': `${localPrefix}/ag-charts-core`,
             'ag-charts-community': `${localPrefix}/ag-charts-community`,
             'ag-charts-enterprise': `${localPrefix}/ag-charts-enterprise`,
             'ag-charts-types': `${localPrefix}/ag-charts-types`,
@@ -163,7 +168,7 @@ export const SystemJs = ({
             <script src={systemJsVersion} />
             <script src={systemJsPath} />
 
-            {usesMathRandom ? <SeedRandom /> : null}
+            {usesMathRandom && <SeedRandom />}
 
             <script
                 dangerouslySetInnerHTML={{

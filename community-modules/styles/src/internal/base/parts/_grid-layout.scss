@@ -71,11 +71,25 @@
         background-color: var(--ag-range-selection-highlight-color) !important;
     }
 
+    .ag-row,
+    .ag-spanned-row {
+        color: var(--ag-data-color);
+    }
+
     .ag-row {
         height: var(--ag-row-height);
         background-color: var(--ag-background-color);
-        color: var(--ag-data-color);
         border-bottom: var(--ag-row-border-style) var(--ag-row-border-color) var(--ag-row-border-width);
+    }
+
+    .ag-spanned-cell-wrapper {
+        background-color: var(--ag-background-color);
+        position: absolute;
+    }
+
+    .ag-spanned-cell-wrapper > .ag-spanned-cell {
+        display: block;
+        position: relative;
     }
 
     .ag-row-highlight-above::after,
@@ -156,6 +170,10 @@
 
     .ag-column-hover {
         background-color: var(--ag-column-hover-color);
+    }
+
+    .ag-header-range-highlight {
+        background-color: var(--ag-range-header-highlight-color);
     }
 
     .ag-right-aligned-cell {
@@ -329,5 +347,21 @@
     }
     .ag-floating-bottom {
         border-top: var(--ag-borders-critical) var(--ag-border-color);
+    }
+
+    .ag-find-cell {
+        display: block;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .ag-find-match {
+        color: var(--ag-find-match-color);
+        background-color: var(--ag-find-match-background-color);
+    }
+
+    .ag-find-active-match {
+        color: var(--ag-find-active-match-color);
+        background-color: var(--ag-find-active-match-background-color);
     }
 }

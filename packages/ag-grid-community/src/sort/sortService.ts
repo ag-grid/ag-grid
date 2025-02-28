@@ -276,7 +276,7 @@ export class SortService extends BeanStub implements NamedBean {
         // keep track of last time the moving changed flag was set
         comp.addManagedListeners(column, {
             movingChanged: () => {
-                lastMovingChanged = new Date().getTime();
+                lastMovingChanged = Date.now();
             },
         });
 
@@ -288,7 +288,7 @@ export class SortService extends BeanStub implements NamedBean {
                     // here is issue raised by user: https://ag-grid.zendesk.com/agent/tickets/1076
                     // this check stops sort if a) column is moving or b) column moved less than 200ms ago (so caters for race condition)
                     const moving = column.isMoving();
-                    const nowTime = new Date().getTime();
+                    const nowTime = Date.now();
                     // typically there is <2ms if moving flag was set recently, as it would be done in same VM turn
                     const movedRecently = nowTime - lastMovingChanged < 50;
                     const columnMoving = moving || movedRecently;

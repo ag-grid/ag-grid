@@ -1,0 +1,33 @@
+---
+title: "Performance Test"
+---
+
+This is an internal page that contains examples that can be used to validate the performance of the grid for different versions and configurations.
+
+
+{% if isFramework("javascript", "vue") %}
+
+{% /if %}
+
+{% if isFramework("angular", "react") %}
+{% warning %}
+Remember when running in localhost Angular and React will be in Dev Mode. 
+Performance testing should be performed in Production Mode so you may have to edit the plunkers when working locally for a fair comparison with staging.
+{% /warning %}
+{% /if %}
+
+{% if isFramework("react") %}
+
+{% /if %}
+
+## Lots of Regular Cells
+
+No column virtualisation with a large rowBuffer to force all the cells to be rendered.
+
+{% gridExampleRunner title="Lots of Cells" name="lots-of-cells" /%}
+
+## Lots of Cell Components
+
+No column virtualisation with a large rowBuffer to force all the cells to be rendered with custom cell components.
+
+{% gridExampleRunner title="Lots of Cell Components" name="lots-of-cells-components" /%}

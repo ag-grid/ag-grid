@@ -32,7 +32,7 @@ describe('toMember', () => {
         const event = { name: 'foo' };
         const memberDefinition = toMember(event);
 
-        expect(memberDefinition).toBe('public foo;');
+        expect(memberDefinition).toBe('foo;');
     });
 });
 

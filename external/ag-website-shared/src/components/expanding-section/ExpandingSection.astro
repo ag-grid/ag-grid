@@ -54,7 +54,7 @@ const { headerText, isOpen = false } = Astro.props as Props;
 
             this.#contentOuter.addEventListener('transitionend', () => {
                 if (this.isOpen) {
-                    this.style.setProperty('--content-height', 'none');
+                    this.#setCSSProp('--content-height', 'none');
                 } else {
                     this.#details.removeAttribute('open');
                 }
@@ -121,7 +121,17 @@ const { headerText, isOpen = false } = Astro.props as Props;
         }
 
         #close() {
-            const contentHeight = this.#contentHeight;
+            const summaryRect = this.#summary.getBoundingClientRect();
+            const distanceFromBottom = window.innerHeight - summaryRect.bottom;
+            const isLargeContent = this.#contentHeight > distanceFromBottom;
+            const contentHeight = isLargeContent ? distanceFromBottom : this.#contentHeight;
+
+            if (isLargeContent) {
+                // Set content to be less than the content viewport
+                this.#setCSSProp('--content-transition-timing', `0s`);
+                this.#setCSSProp('--content-height', `${contentHeight + 2}px`);
+            }
+
             const transitionTiming = clamp(contentHeight / 2500, 0.25, 1);
 
             this.#chevron.classList.remove('is-open');

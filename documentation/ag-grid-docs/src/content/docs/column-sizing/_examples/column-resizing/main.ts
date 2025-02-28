@@ -38,7 +38,6 @@ let gridApi: GridApi<IOlympicData>;
 
 const gridOptions: GridOptions<IOlympicData> = {
     columnDefs: columnDefs,
-    rowData: null,
     onColumnResized: (params: ColumnResizedEvent) => {
         console.log(params);
     },

@@ -1,0 +1,150 @@
+---
+title: "Find"
+enterprise: true
+---
+
+Find allows for values to be searched within the grid, with all matches highlighted and navigable, similar to find ({% kbd "^ Ctrl" /%} + {% kbd "F" /%}) within the browser.
+
+{% gridExampleRunner title="Find" name="find" /%}
+
+{% note %}
+Find is only compatible with the [Client-Side Row Model](./row-models/).
+{% /note %}
+
+## Enabling Find
+
+Find is enabled by setting the grid option `findSearchValue` with the text to be searched for.
+
+{% apiDocumentation source="grid-options/properties.json" section="miscellaneous" names=["findSearchValue"] /%}
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    findSearchValue: 'rowing'
+}
+```
+
+The grid API methods `findNext()`, `findPrevious()`, and `findGoTo(matchNumber)` can be used to move between the matches, or `findClearActive()` can be used to clear the active match.
+
+{% apiDocumentation source="grid-api/api.json" section="find" names=["findNext", "findPrevious", "findGoTo", "findClearActive"] /%}
+
+Changing the Find search value, changing the active match, or updates to the grid that cause changes to the visible cells (e.g. changing columns/rows) trigger the `findChanged` event. The event contains details on the active match, as well as the total number of matches.
+
+{% apiDocumentation source="grid-events/events.json" section="miscellaneous" names=["findChanged"] /%}
+
+The active match and the total number of matches can also be retrieved via the API.
+
+{% apiDocumentation source="grid-api/api.json" section="find" names=["findGetActiveMatch", "findGetTotalMatches"] /%}
+
+## Using Find with Cell Components
+
+By default, Find searches within the [Formatted Value](./value-formatters/) of the cell, or the raw cell value if there is no Value Formatter. This is what is displayed in the cell by default.
+
+[Cell Components](./component-cell-renderer/) may display text that does not appear in the cell value. To enable Find to search within this additional text, the `getFindText` callback can be implemented on the Column Definition. Find will search within this value for matches.
+
+{% apiDocumentation source="column-properties/properties.json" section="find" names=["getFindText"] /%}
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    columnDefs: [
+        {
+            field: 'year',
+            getFindText: params => `Year is ${params.value}`,
+        }
+    ]
+}
+```
+
+When providing a custom cell component, the component is responsible for highlighting any matches and active matches within the cell. The grid API provides the following methods to help with this.
+
+{% apiDocumentation source="grid-api/api.json" section="find" names=["findGetNumMatches", "findGetParts"] /%}
+
+The following example demonstrates a custom cell component in the `Year` column, which uses the features described above. The custom cell component reuses the grid CSS classes `ag-find-match` and `ag-find-active-match` to apply the same styling as the default grid cell component.
+
+{% gridExampleRunner title="Find with Cell Components" name="find-cell-components" /%}
+
+{% note %}
+Find does not work with the [Animate Show Changed Cell Component](./change-cell-renderers/#animate-show-changed-cells) or the [Animate Slide Cell Component](./change-cell-renderers/#animate-slide-cells). If using these, provide a `getFindText` that returns `null` to exclude them from the search results. The same approach should also be used if manually specifying `agCheckboxCellRenderer`.
+{% /note %}
+
+## Customising Find
+
+Find can be customised by providing an object of type `FindOptions` to the grid option `findOptions`.
+
+{% interfaceDocumentation interfaceName="FindOptions" config={"description":""} /%}
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    findOptions: {
+        caseSensitive: true,
+        currentPageOnly: true,
+    }
+}
+```
+
+The following example demonstrates performing a case sensitive search, and finding matches within the current page only:
+
+{% gridExampleRunner title="Customising Find" name="customising-find" /%}
+
+## Find with Master / Detail
+
+When using [Master / Detail](./master-detail/), Find will not search within detail rows by default (either [Detail Grids](./master-detail-grids/) or [Custom Details](./master-detail-custom-detail/)). To enable Find to search within detail rows, set `searchDetail` within `findOptions` to `true`:
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    findOptions: {
+        searchDetail: true,
+    }
+}
+```
+
+### Detail Grids
+
+If a row containing a Detail Grid is expanded, Find will automatically search within the Detail Grid. If the master row is not expanded, the grid does not exist yet, so Find does not know how many matches there are. Find cannot create all of the Detail Grids as there may be a very large number of them.
+
+If you want Find to search within collapsed detail rows, then you must provide the `getFindMatches` callback to the `detailCellRendererParams` grid option. This tells Find how many matches are expected to be in the Detail Grid. If the active match moves to within the Detail Grid, the Detail Grid will automatically be expanded.
+
+{% interfaceDocumentation interfaceName="FindDetailGridCellRendererParams" config={"description":""} /%}
+
+The following example demonstrates Find across nested Master / Detail Grids:
+
+{% gridExampleRunner title="Find with Detail Grids" name="find-detail-grid" /%}
+
+### Custom Detail
+
+For Find to work with Custom Detail Cells, Find needs to know how many matches are within the detail row. This is done by providing the `getFindMatches` callback to the `detailCellRendererParams` grid option. This tells Find how many matches are expected to be in the Custom Detail. If the active match moves to within the Custom Detail, the Custom Detail will automatically be expanded.
+
+{% interfaceDocumentation interfaceName="FindDetailCellRendererParams" config={"description":""} /%}
+
+The Custom Detail Cell Component is responsible for highlighting matches, similar to [Custom Cell Components](#using-find-with-cell-components).
+
+The following example demonstrates Find across Custom Details:
+
+{% gridExampleRunner title="Find with Custom Details" name="find-custom-detail" /%}
+
+## Find with Full Width Rows
+
+For Find to work with [Full Width Rows](./full-width-rows/), Find needs to know how many matches are within the row. This is done by providing the `getFindMatches` callback to the `fullWidthCellRendererParams` grid option. This tells Find how many matches are expected to be in the Full Width Row.
+
+{% interfaceDocumentation interfaceName="FindFullWidthCellRendererParams" config={"description":""} /%}
+
+The Full Width Row Component is responsible for highlighting matches, similar to [Custom Cell Components](#using-find-with-cell-components).
+
+The following example demonstrates Find with Full Width Rows:
+
+{% gridExampleRunner title="Find with Full Width Rows" name="find-full-width" /%}
+
+## Content to Search
+
+Find is designed to search within "visible" cell contents.
+
+Searching is not performed within hidden columns. Columns not displayed due to [Column Groups](./column-groups/) being expanded/collapsed are counted as being hidden.
+
+The rows are searched after filtering and sorting have been performed.
+
+Searching will be performed within the children of [Collapsed Row Groups](./grouping-opening-groups/). When the active match is set to a child row within a collapsed group, the group is expanded (along with its parents if necessary).
+
+When using [Row Pagination](./row-pagination/), searching will be performed across all pages by default.
+
+See the [Customising Find](#customising-find) section for an example of using Find with Row Grouping, as well as how to customise behaviour for Pagination.
+
+If data is mutated outside of the grid (e.g. not via grid options or API methods), Find will not re-run automatically. This would apply to situations where `api.refreshCells()` or `api.redrawRows()` are being used. To get Find to update, `api.findRefresh()` should be called after either of these API methods.

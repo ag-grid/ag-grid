@@ -26,11 +26,14 @@ import { WhiskersPanel } from './whiskersPanel';
 
 const tooltips = 'tooltips';
 const strokeWidth = 'strokeWidth';
+const lineWidth = 'lineWidth';
 const lineDash = 'lineDash';
 const lineOpacity = 'lineOpacity';
 const fillOpacity = 'fillOpacity';
 const labels = 'labels';
 const shadow = 'shadow';
+const stageLabels = 'stageLabels';
+const markers = 'markers';
 
 type ComposableComponent = Component & {
     addItem: (item: Component) => void;
@@ -50,7 +53,7 @@ export class SeriesPanel extends Component {
     private seriesType: ChartSeriesType;
 
     private readonly widgetFuncs = {
-        lineWidth: () => this.initStrokeWidth('lineWidth'),
+        lineWidth: () => this.initStrokeWidth(lineWidth),
         [strokeWidth]: () => this.initStrokeWidth('strokeWidth'),
         lineColor: () => this.initLineColor(),
         [lineDash]: () => this.initLineDash(),
@@ -79,26 +82,26 @@ export class SeriesPanel extends Component {
         bar: [tooltips, strokeWidth, lineDash, lineOpacity, fillOpacity, labels, shadow],
         pie: [tooltips, strokeWidth, lineOpacity, fillOpacity, labels, 'sectorLabels', shadow],
         donut: [tooltips, strokeWidth, lineOpacity, fillOpacity, labels, 'sectorLabels', shadow],
-        line: [tooltips, 'lineWidth', lineDash, lineOpacity, 'markers', labels],
+        line: [tooltips, lineWidth, lineDash, lineOpacity, markers, labels],
         scatter: [tooltips, 'shape', 'size', strokeWidth, labels],
         bubble: [tooltips, 'shape', 'minSize', 'maxSize', strokeWidth, labels],
-        area: [tooltips, 'lineWidth', lineDash, lineOpacity, fillOpacity, 'markers', labels, shadow],
+        area: [tooltips, lineWidth, lineDash, lineOpacity, fillOpacity, markers, labels, shadow],
         histogram: [tooltips, 'bins', strokeWidth, lineDash, lineOpacity, fillOpacity, labels, shadow],
         'radial-column': [tooltips, strokeWidth, lineDash, lineOpacity, fillOpacity, labels],
         'radial-bar': [tooltips, strokeWidth, lineDash, lineOpacity, fillOpacity, labels],
-        'radar-line': [tooltips, strokeWidth, lineDash, lineOpacity, 'markers', labels],
-        'radar-area': [tooltips, strokeWidth, lineDash, lineOpacity, fillOpacity, 'markers', labels],
+        'radar-line': [tooltips, strokeWidth, lineDash, lineOpacity, markers, labels],
+        'radar-area': [tooltips, strokeWidth, lineDash, lineOpacity, fillOpacity, markers, labels],
         nightingale: [tooltips, strokeWidth, lineDash, lineOpacity, fillOpacity, labels],
         'box-plot': [tooltips, strokeWidth, lineDash, lineOpacity, fillOpacity, 'whiskers', 'caps'],
         'range-bar': [tooltips, strokeWidth, lineDash, lineOpacity, fillOpacity, labels],
-        'range-area': [tooltips, 'lineWidth', lineDash, lineOpacity, fillOpacity, 'markers', labels, shadow],
+        'range-area': [tooltips, lineWidth, lineDash, lineOpacity, fillOpacity, markers, labels, shadow],
         treemap: [tooltips, 'tileSpacing'],
         sunburst: [tooltips],
-        heatmap: [tooltips, labels, 'lineColor', 'lineWidth', lineOpacity],
+        heatmap: [tooltips, labels, 'lineColor', lineWidth, lineOpacity],
         waterfall: [tooltips, 'connectorLine', 'seriesItems'],
-        funnel: [tooltips, strokeWidth, lineDash, lineOpacity, fillOpacity, labels, 'dropoff', 'stageLabels', shadow],
-        'cone-funnel': [tooltips, strokeWidth, lineDash, lineOpacity, fillOpacity, labels, 'stageLabels', shadow],
-        pyramid: [tooltips, strokeWidth, lineDash, lineOpacity, fillOpacity, labels, 'stageLabels', shadow],
+        funnel: [tooltips, strokeWidth, lineDash, lineOpacity, fillOpacity, labels, 'dropoff', stageLabels, shadow],
+        'cone-funnel': [tooltips, strokeWidth, lineDash, lineOpacity, fillOpacity, labels, stageLabels],
+        pyramid: [tooltips, strokeWidth, lineDash, lineOpacity, fillOpacity, labels, stageLabels, shadow],
     };
 
     constructor(private readonly options: FormatPanelOptions) {
@@ -324,7 +327,7 @@ export class SeriesPanel extends Component {
     }
 
     private initStageLabels(): FontPanel {
-        return new FontPanel(this.chartMenuUtils.getDefaultFontPanelParams('stageLabel', 'stageLabels'));
+        return new FontPanel(this.chartMenuUtils.getDefaultFontPanelParams('stageLabel', stageLabels));
     }
 
     private initBins(): AgSlider {

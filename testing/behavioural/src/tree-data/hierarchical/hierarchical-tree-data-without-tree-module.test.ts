@@ -33,7 +33,7 @@ describe('ag-grid tree data without tree module', () => {
                 cellRendererParams: { suppressCount: true },
             },
             treeData: true,
-            ['treeDataChildrenField' as any]: 'children',
+            treeDataChildrenField: 'children',
             animateRows: false,
             groupDefaultExpanded: -1,
             rowData,

@@ -90,6 +90,10 @@ const docs: Record<AllThemeParams, string> = {
     dragHandleColor: 'Color of the drag handle on draggable rows and column markers',
     dropdownShadow: 'Default shadow for dropdown menus',
     filterToolPanelGroupIndent: 'How much to indent child columns in the filters tool panel relative to their parent',
+    findMatchColor: 'Color of matches used in Find',
+    findMatchBackgroundColor: 'Background color of matches used in Find',
+    findActiveMatchColor: 'Color of the active match used in Find',
+    findActiveMatchBackgroundColor: 'Background color of the active match used in Find',
     focusShadow:
         'Shadow around UI controls that have focus e.g. text inputs and buttons. The value must a valid CSS box-shadow.',
     fontFamily: 'Font family used for all text.',
@@ -209,6 +213,9 @@ const docs: Record<AllThemeParams, string> = {
         'Background color for cells that provide categories to the current range chart',
     rangeSelectionHighlightColor:
         'Background color to briefly apply to a cell range when the user copies from or pastes into it.',
+    rangeHeaderHighlightColor:
+        'Background color of the grid header when any cell of that header is part of a range. This is not visible unless enabled in the cell selection options.',
+    rowNumbersSelectedColor: 'Background color of the Row Numbers cells when the range selects all cells for that row.',
     rowBorder: 'Horizontal borders between rows.',
     rowGroupIndentSize:
         'The size of indentation applied to each level of row grouping - deep rows are indented by a multiple of this value.',

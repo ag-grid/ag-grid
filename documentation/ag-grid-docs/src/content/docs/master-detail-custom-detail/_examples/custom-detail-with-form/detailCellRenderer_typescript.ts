@@ -7,6 +7,7 @@ export class DetailCellRenderer implements ICellRendererComp {
         const firstRecord = params.data.callRecords[0];
 
         this.eGui = document.createElement('div');
+        this.eGui.setAttribute('role', 'gridcell');
         this.eGui.className = 'cell-renderer-outer';
         this.eGui.innerHTML =
             '<form>' +

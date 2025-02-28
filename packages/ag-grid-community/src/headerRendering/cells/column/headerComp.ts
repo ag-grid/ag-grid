@@ -10,6 +10,7 @@ import type { SortIndicatorComp } from '../../../sort/sortIndicatorComp';
 import { _removeFromParent, _setDisplayed } from '../../../utils/dom';
 import type { IconName } from '../../../utils/icon';
 import { _createIconNoSpan } from '../../../utils/icon';
+import { _mergeDeep } from '../../../utils/object';
 import { _escapeString } from '../../../utils/string';
 import { Component, RefPlaceholder } from '../../../widgets/component';
 
@@ -166,7 +167,14 @@ export class HeaderComp extends Component implements IHeaderComp {
             return false;
         }
 
-        this.setDisplayName(params);
+        if (this.innerHeaderComponent) {
+            // Mimic the merging of params that happens during init of _getInnerHeaderCompDetails(userCompFactory, params, params);
+            const mergedParams = { ...this.params };
+            _mergeDeep(mergedParams, params.innerHeaderComponentParams);
+            this.innerHeaderComponent.refresh?.(mergedParams);
+        } else {
+            this.setDisplayName(params);
+        }
 
         return true;
     }
@@ -182,13 +190,15 @@ export class HeaderComp extends Component implements IHeaderComp {
     public init(params: IHeaderParams): void {
         this.params = params;
 
-        const { sortSvc, touchSvc, userCompFactory } = this.beans;
+        const { sortSvc, touchSvc, rowNumbersSvc, userCompFactory } = this.beans;
 
         this.currentTemplate = this.workOutTemplate();
         this.setTemplate(this.currentTemplate, sortSvc ? [sortSvc.getSortIndicatorSelector()] : undefined);
         touchSvc?.setupForHeader(this);
+
         this.setMenu();
         this.setupSort();
+        rowNumbersSvc?.setupForHeader(this);
         this.setupFilterIcon();
         this.setupFilterButton();
         this.workOutInnerHeaderComponent(userCompFactory, params);
@@ -228,7 +238,6 @@ export class HeaderComp extends Component implements IHeaderComp {
         if (oldDisplayName === displayName || this.innerHeaderComponent || this.isLoadingInnerComponent) {
             return;
         }
-
         const displayNameSanitised = _escapeString(displayName, true);
         this.eText.textContent = displayNameSanitised!;
     }

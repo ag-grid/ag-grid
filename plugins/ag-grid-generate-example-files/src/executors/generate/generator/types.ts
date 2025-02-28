@@ -12,6 +12,7 @@ export interface ExampleConfig {
     noStyle?: boolean;
     licenseKey?: boolean;
     supportedFrameworks?: InternalFramework[];
+    vue3VModel?: boolean;
     /**
      * Example uses `#myGrid`, which needs to be generated in framework examples
      */
@@ -44,6 +45,7 @@ export interface ExternalEventHandlers {
 export interface DataCallback {
     url: string;
     callback: string;
+    totalRows?: number;
 }
 export interface Property {
     name: string;

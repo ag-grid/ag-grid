@@ -81,6 +81,7 @@ export type InternalModuleName =
     | 'Expression'
     | 'FilterCore'
     | 'FilterValue'
+    | 'FindCore'
     | 'GroupCellRenderer'
     | 'GroupColumn'
     | 'HorizontalResize'
@@ -151,7 +152,8 @@ export type CommunityModuleName =
     | 'Tooltip'
     | 'UndoRedoEdit'
     | 'Validation'
-    | 'ValueCache';
+    | 'ValueCache'
+    | 'CellSpan';
 
 export type EnterpriseModuleName =
     | 'AdvancedFilter'
@@ -163,6 +165,7 @@ export type EnterpriseModuleName =
     | 'ContextMenu'
     | 'ExcelExport'
     | 'FiltersToolPanel'
+    | 'Find'
     | 'GridCharts'
     | 'IntegratedCharts'
     | 'GroupFilter'
@@ -172,6 +175,7 @@ export type EnterpriseModuleName =
     | 'Pivot'
     | 'RangeSelection'
     | 'RichSelect'
+    | 'RowNumbers'
     | 'RowGrouping'
     | 'RowGroupingPanel'
     | 'ServerSideRowModelApi'

@@ -56,6 +56,7 @@ import type {
     FilterChangedEvent,
     FilterModifiedEvent,
     FilterOpenedEvent,
+    FindChangedEvent,
     FirstDataRenderedEvent,
     FloatingFilterModifiedEvent,
     FullWidthCellKeyDownEvent,
@@ -160,6 +161,7 @@ import type { Column } from '../interfaces/iColumn';
 import type { AgGridCommon } from '../interfaces/iCommon';
 import type { IDatasource } from '../interfaces/iDatasource';
 import type { ExcelExportParams, ExcelStyle } from '../interfaces/iExcelCreator';
+import type { FindOptions } from '../interfaces/iFind';
 import type { HeaderPosition } from '../interfaces/iHeaderPosition';
 import type { ILoadingCellRendererParams } from '../interfaces/iLoadingCellRenderer';
 import type { IRowDragItem } from '../interfaces/iRowDragItem';
@@ -170,6 +172,7 @@ import type { SideBarDef } from '../interfaces/iSideBar';
 import type { StatusPanelDef } from '../interfaces/iStatusPanel';
 import type { IViewportDatasource } from '../interfaces/iViewportDatasource';
 import type { DefaultMenuItem, MenuItemDef } from '../interfaces/menuItem';
+import type { RowNumbersOptions } from '../interfaces/rowNumbers';
 import type { Theme } from '../theming/Theme';
 import type { CheckboxSelectionCallback, ColDef, ColGroupDef, ColTypeDef, IAggFunc, SortDirection } from './colDef';
 import type { DataTypeDefinition } from './dataType';
@@ -212,9 +215,10 @@ export interface GridOptions<TData = any> {
      */
     columnMenu?: 'legacy' | 'new';
     /**
+     * Only recommended for use if `columnMenu = 'legacy'`.
      * When `true`, the column menu button will always be shown.
      * When `false`, the column menu button will only show when the mouse is over the column header.
-     * If `columnMenu = 'legacy'`, this will default to `false` instead of `true`.
+     * When using `columnMenu = 'legacy'`, this will default to `false` instead of `true`.
      * @default true
      */
     suppressMenuHide?: boolean;
@@ -553,6 +557,16 @@ export interface GridOptions<TData = any> {
      * @initial
      */
     excelStyles?: ExcelStyle[];
+
+    // *** Find *** //
+    /**
+     * Text to find within the grid.
+     */
+    findSearchValue?: string;
+    /**
+     * Options for the Find feature.
+     */
+    findOptions?: FindOptions;
 
     // *** Filter *** //
     /**
@@ -1024,6 +1038,12 @@ export interface GridOptions<TData = any> {
      */
     ensureDomOrder?: boolean;
     /**
+     * When `true`, enables the cell span feature allowing for the use of the `colDef.spanRows` property.
+     * @default false
+     * @initial
+     */
+    enableCellSpan?: boolean;
+    /**
      * Set to `true` to operate the grid in RTL (Right to Left) mode.
      * @default false
      * @initial
@@ -1229,6 +1249,12 @@ export interface GridOptions<TData = any> {
      * @default false
      */
     treeData?: boolean;
+
+    /**
+     * The name of the field to use in a data item to retrieve the array of children nodes of a node when while using treeData=true.
+     * It supports accessing nested fields using the dot notation.
+     */
+    treeDataChildrenField?: string;
 
     /**
      * Set to `true` to suppress sort indicators and actions from the row group panel.
@@ -1478,6 +1504,12 @@ export interface GridOptions<TData = any> {
     selectionColumnDef?: SelectionColumnDef;
 
     /**
+     * Configure the Row Numbers Feature.
+     * @default false
+     */
+    rowNumbers?: boolean | RowNumbersOptions;
+
+    /**
      * If `true`, only a single range can be selected.
      * @default false
      * @deprecated v32.2 Use `cellSelection.suppressMultiRanges` instead
@@ -1659,6 +1691,17 @@ export interface GridOptions<TData = any> {
      * @see https://developer.mozilla.org/en-US/docs/Web/CSS/@layer
      */
     themeCssLayer?: string;
+
+    /**
+     * The nonce attribute to set on style elements added to the document by
+     * themes. If "foo" is passed to this property, the grid can use the Content
+     * Security Policy `style-src 'nonce-foo'`, instead of the less secure
+     * `style-src 'unsafe-inline'`.
+     *
+     * Note: CSP nonces are global to a page, where a page has multiple grids,
+     * every one must have the same styleNonce set.
+     */
+    styleNonce?: string;
 
     /**
      * An element to insert style elements into when injecting styles into the
@@ -2133,6 +2176,11 @@ export interface GridOptions<TData = any> {
      */
     onAdvancedFilterBuilderVisibleChanged?(event: AdvancedFilterBuilderVisibleChangedEvent<TData>): void;
 
+    /**
+     * Find details have changed (e.g. Find search value, active match, or updates to grid cells).
+     */
+    onFindChanged?(event: FindChangedEvent<TData>): void;
+
     // *** Integrated Charts *** //
     /**
      * A chart has been created.
@@ -2326,7 +2374,8 @@ export interface GridOptions<TData = any> {
      */
     onRowSelected?(event: RowSelectedEvent<TData>): void;
     /**
-     * Row selection is changed. Use the grid API `getSelectedNodes()` or `getSelectedRows()` to get the new list of selected nodes / row data.
+     * Row selection is changed. Use the `selectedNodes` field to get the list of selected nodes at the time of the event. When using the SSRM, `selectedNodes` will be `null`
+     * when selecting all nodes. Instead, refer to the `serverSideState` field.
      */
     onSelectionChanged?(event: SelectionChangedEvent<TData>): void;
     /**
@@ -2516,6 +2565,10 @@ export interface CellSelectionOptions<TData = any> {
      */
     suppressMultiRanges?: boolean;
     /**
+     * If `true` the header of cells containing ranges will be highlighted.
+     */
+    enableHeaderHighlight?: boolean;
+    /**
      * Determine the selection handle behaviour. Can be used to configure the range handle and the fill handle.
      */
     handle?: RangeHandleOptions | FillHandleOptions<TData>;
@@ -2598,6 +2651,15 @@ interface CommonRowSelectionOptions<TData = any, TValue = any> {
      * @default false
      */
     enableSelectionWithoutKeys?: boolean;
+    /**
+     * Determines the selection behaviour of master rows with respect to their detail cells.
+     *
+     * When set to `'self'`, selecting the master row has no effect on the selection state of the detail row.
+     * When set to `'detail'`, selecting the master row behaves the same as the header checkbox of the detail grid.
+     *
+     * @default 'self'
+     */
+    masterSelects?: 'self' | 'detail';
 }
 
 /**
@@ -2710,3 +2772,5 @@ export type SelectAllMode = 'all' | 'filtered' | 'currentPage';
 export type RowSelectionMode = RowSelectionOptions['mode'];
 
 export type CheckboxLocation = 'selectionColumn' | 'autoGroupColumn';
+
+export type MasterSelectionMode = NonNullable<CommonRowSelectionOptions['masterSelects']>;

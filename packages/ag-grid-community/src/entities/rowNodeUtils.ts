@@ -1,6 +1,7 @@
 import type { AgEventType } from '../eventTypes';
 import type { RowEvent } from '../events';
 import type { GridOptionsService } from '../gridOptionsService';
+import { _addGridCommonParams } from '../gridOptionsUtils';
 import type { RowNode } from './rowNode';
 
 export function _createGlobalRowEvent<T extends AgEventType>(
@@ -8,7 +9,7 @@ export function _createGlobalRowEvent<T extends AgEventType>(
     gos: GridOptionsService,
     type: T
 ): RowEvent<T> {
-    return gos.addGridCommonParams({
+    return _addGridCommonParams(gos, {
         type,
         node: rowNode,
         data: rowNode.data,

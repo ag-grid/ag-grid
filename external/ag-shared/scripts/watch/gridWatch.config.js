@@ -54,6 +54,7 @@ const externalBuildTriggers = [
 
 module.exports = {
     ignoredProjects: getIgnoredProjects(),
+    devServerReloadTargets: ['generate', 'generate-doc-references', 'build', 'build:css'],
     getProjectBuildTargets,
     externalBuildTriggers,
 };

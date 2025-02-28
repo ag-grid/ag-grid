@@ -204,10 +204,53 @@ const COLUMN_DEFINITION_VALIDATIONS: () => Validations<ColDef | ColGroupDef> = (
             return null;
         },
     },
+    spanRows: {
+        module: 'CellSpan',
+        dependencies: {
+            editable: { required: [false, undefined] },
+            rowDrag: { required: [false, undefined] },
+            colSpan: { required: [false, undefined] },
+            rowSpan: { required: [false, undefined] },
+        },
+        validate: (
+            _options,
+            {
+                rowSelection,
+                cellSelection,
+                suppressRowTransform,
+                enableCellSpan,
+                rowDragEntireRow,
+                enableCellTextSelection,
+            }
+        ) => {
+            if (typeof rowSelection === 'object') {
+                if (rowSelection?.mode === 'singleRow' && rowSelection?.enableClickSelection) {
+                    return 'colDef.spanRows is not supported with rowSelection.clickSelection';
+                }
+            }
+            if (cellSelection) {
+                return 'colDef.spanRows is not supported with cellSelection.';
+            }
+            if (suppressRowTransform) {
+                return 'colDef.spanRows is not supported with suppressRowTransform.';
+            }
+            if (!enableCellSpan) {
+                return 'colDef.spanRows requires enableCellSpan to be enabled.';
+            }
+            if (rowDragEntireRow) {
+                return 'colDef.spanRows is not supported with rowDragEntireRow.';
+            }
+            if (enableCellTextSelection) {
+                return 'colDef.spanRows is not supported with enableCellTextSelection.';
+            }
+
+            return null;
+        },
+    },
 });
 
-type ColKey = keyof ColDef | keyof ColGroupDef;
-const colDefPropertyMap: Record<ColKey, undefined> = {
+type ColOrGroupKey = keyof ColDef | keyof ColGroupDef;
+const colDefPropertyMap: Record<ColOrGroupKey, undefined> = {
     headerName: undefined,
     columnGroupShow: undefined,
     headerStyle: undefined,
@@ -328,6 +371,7 @@ const colDefPropertyMap: Record<ColKey, undefined> = {
     suppressHeaderKeyboardEvent: undefined,
     colSpan: undefined,
     rowSpan: undefined,
+    spanRows: undefined,
     getQuickFilterText: undefined,
     onCellValueChanged: undefined,
     onCellClicked: undefined,
@@ -349,9 +393,12 @@ const colDefPropertyMap: Record<ColKey, undefined> = {
     loadingCellRendererParams: undefined,
     loadingCellRendererSelector: undefined,
     context: undefined,
+    dateComponent: undefined,
+    dateComponentParams: undefined,
+    getFindText: undefined,
     filterEvaluator: undefined,
 };
-const ALL_PROPERTIES: () => ColKey[] = () => Object.keys(colDefPropertyMap) as ColKey[];
+const ALL_PROPERTIES: () => ColOrGroupKey[] = () => Object.keys(colDefPropertyMap) as ColOrGroupKey[];
 
 export const COL_DEF_VALIDATORS: () => OptionsValidator<ColDef | ColGroupDef> = () => ({
     objectName: 'colDef',

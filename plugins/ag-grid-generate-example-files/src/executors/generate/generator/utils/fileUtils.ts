@@ -1,5 +1,7 @@
 import { existsSync, readFileSync, readdirSync } from 'fs';
 import path from 'path';
+import prettier from 'prettier';
+import { JsxEmit, ModuleKind, ScriptTarget, transpileModule } from 'typescript';
 
 import type { InternalFramework, TransformTsFileExt } from '../types';
 import { TYPESCRIPT_INTERNAL_FRAMEWORKS } from '../types';
@@ -122,7 +124,7 @@ export const getProvidedExampleFolder = ({
     folderPath: string;
     internalFramework: InternalFramework;
 }) => {
-    return path.join(folderPath, 'provided/modules', internalFramework);
+    return path.join(folderPath, 'provided', internalFramework);
 };
 
 export const getProvidedExampleFiles = ({
@@ -155,3 +157,35 @@ export const getFileList = async ({ folderPath, fileList }: { folderPath: string
 
 export const getIsEnterprise = ({ entryFile }: { entryFile: string }) => entryFile?.includes('ag-grid-enterprise');
 export const getIsLocale = ({ entryFile }: { entryFile: string }) => entryFile?.includes('@ag-grid-community/locale');
+
+export function convertTsxToJsx(fileStr: string): string {
+    // replace empty lines with a comment so that it does not get removed by the transpiler
+    fileStr = fileStr.replace(/^\s*$/gm, '// empty line');
+
+    let jsxFile = transpileModule(fileStr, {
+        compilerOptions: {
+            target: ScriptTarget.ESNext,
+            module: ModuleKind.ESNext,
+            jsx: JsxEmit.Preserve,
+            removeComments: false,
+        },
+    }).outputText;
+
+    // remove the comments to return the file to its original state
+    jsxFile = jsxFile.replaceAll('// empty line', '');
+    return jsxFile;
+}
+
+export async function formatFile(internalFramework: InternalFramework, fileString: string): Promise<string> {
+    try {
+        const parser =
+            TYPESCRIPT_INTERNAL_FRAMEWORKS.includes(internalFramework) || internalFramework === 'vanilla'
+                ? 'typescript'
+                : 'babel';
+        return await prettier.format(fileString, {
+            parser,
+        });
+    } catch (e) {
+        console.error(`Error formatting file for ${internalFramework}`, e);
+    }
+}
