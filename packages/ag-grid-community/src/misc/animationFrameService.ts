@@ -165,7 +165,7 @@ export class AnimationFrameService extends BeanStub implements NamedBean {
                                     break;
                                 }
                             } else {
-                                // If the grid body did something, we need to break out of the loop to as p1 and p2 tasks may have been scheduled
+                                // If the grid body did something, we need to break out of the framework loop as p1 and p2 tasks may have been scheduled.
                                 break;
                             }
                             duration = Date.now() - frameStart;
