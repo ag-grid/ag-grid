@@ -2,6 +2,7 @@ import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { AgColumn } from '../entities/agColumn';
 import type { GridBodyCtrl } from '../gridBodyComp/gridBodyCtrl';
+import { _isEventFromThisGrid } from '../gridBodyComp/mouseEventUtils';
 import type { RowContainerEventsFeature } from '../gridBodyComp/rowContainer/rowContainerEventsFeature';
 import type { HeaderComp } from '../headerRendering/cells/column/headerComp';
 import type { HeaderGroupComp } from '../headerRendering/cells/columnGroup/headerGroupComp';
@@ -142,6 +143,9 @@ export class TouchService extends BeanStub implements NamedBean {
 
         const touchListener = new TouchListener(element);
         const longTapListener = (event: LongTapEvent) => {
+            if (!_isEventFromThisGrid(this.gos, event.touchEvent)) {
+                return;
+            }
             listener(undefined, event.touchStart, event.touchEvent);
         };
 

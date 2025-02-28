@@ -113,6 +113,7 @@ export const CHARTS_ROBOTS_DISALLOW_JSON_URL = import.meta.env?.CHARTS_ROBOTS_DI
 export const PRODUCTION_CHARTS_SITE_URL = 'https://www.ag-grid.com/charts';
 export const LEGACY_CHARTS_SITE_URL = 'https://charts.ag-grid.com';
 
+export const LIBRARY = 'grid';
 /*
  * Charts URL
  */

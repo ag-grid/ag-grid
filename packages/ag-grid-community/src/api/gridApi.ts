@@ -763,6 +763,13 @@ export interface _FindApi<TData> {
      * Used for custom cell components.
      */
     findGetParts(params: FindCellValueParams<TData>): FindPart[];
+    /**
+     * This will re-run the search with the current value. This is normally done automatically.
+     *
+     * This should only be called in situations where data is mutated outside of the grid,
+     * and `api.refreshCells()` or `api.redrawRows()` are being used (`api.findRefresh()` should be called after these).
+     */
+    findRefresh(): void;
 }
 
 export interface _StateGridApi {

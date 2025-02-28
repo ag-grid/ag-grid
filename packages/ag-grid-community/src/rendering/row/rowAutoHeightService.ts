@@ -30,11 +30,11 @@ export class RowAutoHeightService extends BeanStub implements NamedBean {
 
     private _debouncedCalculateRowHeights = _debounce(this, this.calculateRowHeights.bind(this), 1);
     private calculateRowHeights() {
-        const { visibleCols, rowModel, rowSpanSvc } = this.beans;
+        const { visibleCols, rowModel, rowSpanSvc, pinnedRowModel } = this.beans;
         const displayedAutoHeightCols = visibleCols.autoHeightCols;
 
         let anyNodeChanged = false;
-        rowModel.forEachDisplayedNode?.((row) => {
+        const updateDisplayedRowHeights = (row: RowNode) => {
             const autoHeights = row.__autoHeights;
 
             let newRowHeight = _getRowHeightForNode(this.beans, row).height;
@@ -72,7 +72,11 @@ export class RowAutoHeightService extends BeanStub implements NamedBean {
                 row.setRowHeight(newRowHeight);
                 anyNodeChanged = true;
             }
-        });
+        };
+
+        pinnedRowModel?.forEachPinnedRow?.('top', updateDisplayedRowHeights);
+        pinnedRowModel?.forEachPinnedRow?.('bottom', updateDisplayedRowHeights);
+        rowModel.forEachDisplayedNode?.(updateDisplayedRowHeights);
 
         if (anyNodeChanged) {
             (rowModel as IClientSideRowModel | IServerSideRowModel).onRowHeightChanged?.();

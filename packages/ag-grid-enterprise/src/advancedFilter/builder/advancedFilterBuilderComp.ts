@@ -113,10 +113,14 @@ export class AdvancedFilterBuilderComp extends Component<AdvancedFilterBuilderEv
 
     private setupVirtualList(): void {
         const virtualList = (this.virtualList = this.createManagedBean(
-            new VirtualList({
+            new VirtualList<
+                AdvancedFilterBuilderItemComp | AdvancedFilterBuilderItemAddComp,
+                AdvancedFilterBuilderItem
+            >({
                 cssIdentifier: 'advanced-filter-builder',
                 ariaRole: 'tree',
                 listName: this.advFilterExpSvc.translate('ariaAdvancedFilterBuilderList'),
+                moveItemCallback: this.virtualListMoveItemCallback.bind(this),
             })
         ));
 
@@ -401,7 +405,7 @@ export class AdvancedFilterBuilderComp extends Component<AdvancedFilterBuilderEv
         }
     }
 
-    private moveItemUpDown(item: AdvancedFilterBuilderItem, backwards: boolean): void {
+    private moveItemUpDown(item: AdvancedFilterBuilderItem, backwards: boolean, fromVirtualList?: boolean): void {
         const itemIndex = this.items.indexOf(item);
         const destinationIndex = backwards ? itemIndex - 1 : itemIndex + 1;
         if (destinationIndex === 0 || (!backwards && !this.canMoveDown(item, itemIndex))) {
@@ -454,12 +458,33 @@ export class AdvancedFilterBuilderComp extends Component<AdvancedFilterBuilderEv
         const newIndex = this.items.findIndex(
             ({ filterModel: filterModelToCheck }) => filterModelToCheck === filterModel
         );
-        if (newIndex >= 0) {
-            const comp = this.virtualList.getComponentAt(newIndex);
-            if (comp instanceof AdvancedFilterBuilderItemComp) {
-                comp.focusMoveButton(backwards);
-            }
+        if (newIndex < 0) {
+            return;
         }
+        const comp = this.virtualList.getComponentAt(newIndex);
+        if (!(comp instanceof AdvancedFilterBuilderItemComp)) {
+            return;
+        }
+
+        if (!fromVirtualList) {
+            comp.focusMoveButton(backwards);
+        }
+    }
+
+    private virtualListMoveItemCallback(itemComp: AdvancedFilterBuilderItemComp, isUp: boolean): void {
+        const item = itemComp.item;
+        const from = this.items.indexOf(item);
+
+        if (from <= 0 || from === this.items.length - 1) {
+            return;
+        }
+
+        if ((isUp && from === 1) || (!isUp && !this.canMoveDown(item, from))) {
+            return;
+        }
+
+        this.moveItemUpDown(item, isUp, true);
+        this.virtualList.focusRow(from + (isUp ? -1 : 1));
     }
 
     private canMoveDown(item: AdvancedFilterBuilderItem, index: number): boolean {

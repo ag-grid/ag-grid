@@ -27,6 +27,8 @@ export abstract class PillDragComp<TItem> extends Component<PillDragCompEvent> {
     private readonly eButton: HTMLElement = RefPlaceholder;
 
     public abstract getItem(): TItem;
+    public abstract isMovable(): boolean;
+
     protected abstract getDisplayName(): string;
     protected abstract getAriaDisplayName(): string;
     protected abstract getTooltip(): string | null | undefined;

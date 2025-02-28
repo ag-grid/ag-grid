@@ -18,6 +18,7 @@ const ROW_COMPONENT_NAME = 'ag-rich-select-row';
 
 export class AgRichSelectList<TValue, TEventType extends string = AgRichSelectListEvent> extends VirtualList<
     Component<TEventType | AgRichSelectListEvent>,
+    TValue,
     TEventType | AgRichSelectListEvent
 > {
     private eLoading: HTMLElement | undefined;

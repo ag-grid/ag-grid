@@ -35,6 +35,8 @@ export interface IFindService {
     setupGroupCol(colDef: ColDef): void;
 
     registerDetailGrid(node: IRowNode, api: GridApi): void;
+
+    refresh(maintainActive: boolean): void;
 }
 
 export interface FindOptions {
