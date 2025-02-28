@@ -10,7 +10,7 @@ The basic information on Content Security Policy can be found on the [MDN web do
 
 ### script-src
 
-If you are working with expressions / code parsing inside of the grid instead of functions, it will be necessary to add the `unsafe-eval` rule to your policy.
+If you are working with expressions / code parsing inside of the grid instead of functions, it will be necessary to add the `script-src 'unsafe-eval'` directive to your policy.
 
 Using expressions instead of functions is an option for many grid properties such as [Cell Class Rules](./cell-styles/#cell-class-rules) and [Value Getters](./value-getters/). Below demonstrates the difference where expressions are used instead of functions.
 
@@ -39,7 +39,7 @@ const gridOptions = {
 }
 ```
 
-By default, [Advanced Filter](./filter-advanced) also requires `unsafe-eval`, however this can be disabled by [Suppressing Advanced Filter Function Evaluation](./filter-advanced/#suppress-advanced-filter-function-evaluation).
+By default, [Advanced Filter](./filter-advanced) also requires `script-src 'unsafe-eval'`, however this can be disabled by [Suppressing Advanced Filter Function Evaluation](./filter-advanced/#suppress-advanced-filter-function-evaluation).
 
 ### style-src
 
@@ -67,6 +67,17 @@ The `img-src data:` directive is required because the grid uses data urls to emb
 If you are using [legacy themes](./theming-v32/) then the `font-src data:` directive is required. This is because legacy themes use data urls to embed the icon font CSS files. Theming API themes use SVG icons and so do not require this.
 
 If you use the `loadThemeGoogleFonts` grid option, fonts will be loaded from the Google font CDN, which requires the `font-src fonts.gstatic.com` directive.
+
+### Example of updating an existing CSP
+
+Suppose your existing CSP is `default-src 'self'; img-src 'self' example.com`, which will load assets from your domain only, except for images which can also be loaded from example.com.
+
+Based on the requirements above, you decide to add `img-src data:` and `style-src 'unsafe-inline'` to your CSP.
+
+* There is an existing `img-src` directive, so the `data:` value can be appended to it, giving `img-src 'self' example.com data:`.
+* There is no existing `style-src` directive, so the `default-src 'self'` directive will apply to styles. You should include `'self'` when you add the new directive, giving `style-src 'self' 'unsafe-inline'`.
+
+The updated CSP is therefore `default-src 'self'; img-src 'self' example.com data:; style-src 'self' 'unsafe-inline'`.
 
 ## Security Vulnerability Testing
 
