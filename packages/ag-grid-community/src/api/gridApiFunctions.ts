@@ -250,6 +250,7 @@ export const gridApiFunctionsMap: Record<keyof GridApi, ValidationModuleName> = 
         findGetNumMatches: 0,
         findGetParts: 0,
         findClearActive: 0,
+        findRefresh: 0,
     }),
     ...mod<_PaginationGridApi>('Pagination', {
         paginationIsLastPageFound: 0,

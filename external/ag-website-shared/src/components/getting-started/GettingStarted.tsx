@@ -69,9 +69,6 @@ const GettingStarted: FunctionComponent<Props> = ({ library }) => {
 
                     <div className={styles.titleIcon}>
                         <h3 className={styles.title}>{feature.title}</h3>
-                        <div>
-                            <Icon name="chevronRight" className={`${styles.icon} ${styles.arrowRight}`}></Icon>
-                        </div>
                     </div>
 
                     <p className={styles.description}>{feature.description}</p>

@@ -16,7 +16,7 @@ export class FindCellRenderer extends Component implements ICellRenderer {
         const displayValue = (node.footer ? footerSvc?.getTotalValue(value) : valueFormatted ?? value) ?? '';
         const eGui = this.getGui();
         _clearElement(eGui);
-        const parts = column ? findSvc?.getParts({ value: displayValue, node, column }) : undefined;
+        const parts = findSvc?.getParts({ value: displayValue, node, column: column ?? null });
         if (!parts) {
             eGui.textContent = _escapeString(displayValue, true) ?? '';
             eGui.classList.remove('ag-find-cell-active-match');

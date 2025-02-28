@@ -19,11 +19,19 @@ import {
     _debounce,
     _escapeString,
     _isClientSideRowModel,
+    _isGroupUseEntireRow,
     _jsonEquals,
     _missing,
     isColumnSelectionCol,
     isRowNumberCol,
 } from 'ag-grid-community';
+
+import {
+    _getFlattenDetails,
+    _isRemovedLowestSingleChildrenGroup,
+    _isRemovedSingleChildrenGroup,
+    _shouldRowBeRendered,
+} from '../rowHierarchy/flattenUtils';
 
 function defaultCaseFormat(value?: string | null): string | undefined {
     return value?.toLocaleLowerCase();
@@ -106,6 +114,7 @@ export class FindService extends BeanStub implements NamedBean, IFindService {
                 refreshAndWipeActive();
             }
         });
+        this.addManagedPropertyListeners(['groupSuppressBlankHeader', 'showOpenedGroup'], refreshAndKeepActive);
         this.addManagedEventListeners({
             modelUpdated: refreshAndKeepActive,
             displayedColumnsChanged: refreshAndKeepActive,
@@ -177,10 +186,11 @@ export class FindService extends BeanStub implements NamedBean, IFindService {
     public getParts(params: FindCellValueParams): FindPart[] {
         const { value, node, column, precedingNumMatches } = params;
         const findSearchValue = this.findSearchValue;
+        const stringValue = _escapeString(value, true) ?? '';
         if (_missing(findSearchValue)) {
-            return [{ value }];
+            return [{ value: stringValue }];
         }
-        const valueToFind = this.caseFormat(_escapeString(value, true)) ?? '';
+        const valueToFind = this.caseFormat(stringValue) ?? '';
         const activeMatchNum = this.getActiveMatchNum(node, column) - (precedingNumMatches ?? 0);
         let lastIndex = 0;
         let currentMatchNum = 0;
@@ -191,19 +201,19 @@ export class FindService extends BeanStub implements NamedBean, IFindService {
             if (index != -1) {
                 currentMatchNum++;
                 if (index > lastIndex) {
-                    parts.push({ value: value.slice(lastIndex, index) });
+                    parts.push({ value: stringValue.slice(lastIndex, index) });
                 }
                 const endIndex = index + findTextLength;
                 parts.push({
-                    value: value.slice(index, endIndex),
+                    value: stringValue.slice(index, endIndex),
                     match: true,
                     activeMatch: currentMatchNum === activeMatchNum,
                 });
                 lastIndex = endIndex;
             } else {
-                if (lastIndex < value.length) {
+                if (lastIndex < stringValue.length) {
                     parts.push({
-                        value: value.slice(lastIndex),
+                        value: stringValue.slice(lastIndex),
                     });
                 }
                 return parts;
@@ -247,7 +257,7 @@ export class FindService extends BeanStub implements NamedBean, IFindService {
     }
 
     // updates all the matches
-    private refresh(maintainActive: boolean): void {
+    public refresh(maintainActive: boolean): void {
         const rowNodesToRefresh = new Set([...this.topNodes, ...this.centerNodes, ...this.bottomNodes]);
         this.topNodes = [];
         this.centerNodes = [];
@@ -259,7 +269,17 @@ export class FindService extends BeanStub implements NamedBean, IFindService {
             centerNodes,
             bottomNodes,
             bottomMatches,
-            beans: { gos, visibleCols, rowModel, valueSvc, pinnedRowModel, pagination, rowSpanSvc, masterDetailSvc },
+            beans: {
+                gos,
+                visibleCols,
+                rowModel,
+                valueSvc,
+                pinnedRowModel,
+                pagination,
+                rowSpanSvc,
+                masterDetailSvc,
+                colModel,
+            },
             findSearchValue: oldFindSearchValue,
         } = this;
         const findOptions = gos.get('findOptions');
@@ -307,6 +327,8 @@ export class FindService extends BeanStub implements NamedBean, IFindService {
         const isFullWidthCellFunc = gos.getCallback('isFullWidthRow');
         const detailCellRendererParams = gos.get('detailCellRendererParams');
         const fullWidthCellRendererParams = gos.get('fullWidthCellRendererParams');
+        const flattenDetails = _getFlattenDetails(gos);
+        const pivotMode = colModel.isPivotMode();
 
         let containerNumMatches = 0;
         let matches: Matches;
@@ -345,7 +367,7 @@ export class FindService extends BeanStub implements NamedBean, IFindService {
             }
             return numMatches;
         };
-        const findMatchesForRow = (node: IRowNode) => {
+        const findMatchesForRow = (node: RowNode) => {
             if (checkCurrentPage) {
                 // row index is null when a group is collapsed. We need to find the first displayed ancestor.
                 let rowIndex = node.rowIndex;
@@ -357,6 +379,20 @@ export class FindService extends BeanStub implements NamedBean, IFindService {
                 if (rowIndex == null || !pagination!.isRowInPage(rowIndex)) {
                     return;
                 }
+            }
+            const isParent = node.hasChildren();
+            // mimic flatten stage logic
+            if (
+                !_shouldRowBeRendered(
+                    flattenDetails,
+                    node,
+                    isParent,
+                    pivotMode,
+                    _isRemovedSingleChildrenGroup(flattenDetails, node, isParent),
+                    _isRemovedLowestSingleChildrenGroup(flattenDetails, node, isParent)
+                )
+            ) {
+                return;
             }
             const data = node.data;
             if (isFullWidthCellFunc?.({ rowNode: node })) {
@@ -373,16 +409,26 @@ export class FindService extends BeanStub implements NamedBean, IFindService {
                 }
                 return;
             }
+            if (node.group && !node.footer && _isGroupUseEntireRow(gos, pivotMode)) {
+                // full width group
+                const numMatches = getMatchesForValue(node.key);
+                addMatches(node, null, numMatches);
+                return;
+            }
             for (const column of allCols) {
                 if (isRowNumberCol(column) || isColumnSelectionCol(column)) {
                     continue;
                 }
-                const cellSpan = rowSpanSvc?.getCellSpan(column, node as RowNode);
+                const cellSpan = rowSpanSvc?.getCellSpan(column, node);
                 if (cellSpan && cellSpan.firstNode !== node) {
                     // only match on first row of span
                     continue;
                 }
-                const value = valueSvc.getValueForDisplay(column, node);
+                // we don't want to call `getValueForDisplay` if the node is not actually displayed,
+                // as this can cause duplicate matches for things like `groupHideOpenParents`
+                const value = node.displayed
+                    ? valueSvc.getValueForDisplay(column, node)
+                    : valueSvc.getValue(column, node);
                 let valueToFind: string | null;
                 const colDef = column.colDef;
                 const getFindText = colDef.getFindText;
@@ -406,7 +452,7 @@ export class FindService extends BeanStub implements NamedBean, IFindService {
             }
             if (node.master && checkMasterDetail) {
                 // add detail node after master has been processed
-                const detailNode = (node as RowNode).detailNode;
+                const detailNode = node.detailNode;
                 if (detailNode) {
                     const detailApi = detailNode.detailGridInfo?.api;
                     if (detailApi) {
@@ -543,6 +589,7 @@ export class FindService extends BeanStub implements NamedBean, IFindService {
             rowNodes: [...rowNodes],
             columns: columns ? [...columns] : undefined,
             force: true,
+            suppressFlash: true,
         });
     }
 

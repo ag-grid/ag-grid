@@ -93,6 +93,10 @@ export class DropZoneColumnComp extends PillDragComp<AgColumn> {
         super.addAdditionalAriaInstructions(ariaInstructions, translate);
     }
 
+    public override isMovable(): boolean {
+        return !this.isReadOnly();
+    }
+
     protected override isDraggable(): boolean {
         return this.isReadOnly();
     }

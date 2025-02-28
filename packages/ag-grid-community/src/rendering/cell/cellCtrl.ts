@@ -278,7 +278,8 @@ export class CellCtrl extends BeanStub {
             } else {
                 compDetails = _getLoadingCellRendererDetails(userCompFactory, colDef, params);
             }
-        } else if (beans.findSvc?.isMatch(rowNode, column)) {
+        }
+        if (!compDetails && !isSsrmLoading && beans.findSvc?.isMatch(rowNode, column)) {
             const params = this.createCellRendererParams();
             compDetails = _getCellRendererDetails(
                 userCompFactory,

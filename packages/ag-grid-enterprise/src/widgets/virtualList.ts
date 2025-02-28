@@ -17,10 +17,11 @@ import {
 
 import type { VirtualListModel } from './iVirtualList';
 
-interface VirtualListParams {
+interface VirtualListParams<C> {
     cssIdentifier?: string;
     ariaRole?: string;
     listName?: string;
+    moveItemCallback?: (item: C, isUp: boolean) => void;
 }
 
 function getVirtualListTemplate(cssIdentifier: string) {
@@ -34,6 +35,7 @@ function getVirtualListTemplate(cssIdentifier: string) {
 
 export class VirtualList<
     C extends Component<any> = Component<any>,
+    V = any,
     TEventType extends string = ComponentEvent,
 > extends TabGuardComp<TEventType> {
     private environment: Environment;
@@ -47,9 +49,9 @@ export class VirtualList<
     private listName?: string;
 
     private model: VirtualListModel;
-    private renderedRows = new Map<number, { rowComponent: C; eDiv: HTMLDivElement; value: any }>();
-    private componentCreator: (value: any, listItemElement: HTMLElement) => C;
-    private componentUpdater: (value: any, component: C) => void;
+    private renderedRows = new Map<number, { rowComponent: C; eDiv: HTMLDivElement; value: V }>();
+    private componentCreator: (value: V, listItemElement: HTMLElement) => C;
+    private componentUpdater: (value: V, component: C) => void;
     private rowHeight = 20;
     private pageSize = -1;
     private isScrolling = false;
@@ -57,15 +59,17 @@ export class VirtualList<
     private isHeightFromTheme: boolean = true;
     private readonly eContainer: HTMLElement = RefPlaceholder;
     private awaitStableCallbacks: (() => void)[] = [];
+    private moveItemCallback?: (item: C, isUp: boolean) => void;
 
-    constructor(params?: VirtualListParams) {
+    constructor(params?: VirtualListParams<C>) {
         super(getVirtualListTemplate(params?.cssIdentifier || 'default'));
 
-        const { cssIdentifier = 'default', ariaRole = 'listbox', listName } = params || {};
+        const { cssIdentifier = 'default', ariaRole = 'listbox', listName, moveItemCallback } = params || {};
 
         this.cssIdentifier = cssIdentifier;
         this.ariaRole = ariaRole;
         this.listName = listName;
+        this.moveItemCallback = moveItemCallback;
     }
 
     public postConstruct(): void {
@@ -128,17 +132,26 @@ export class VirtualList<
     }
 
     protected handleKeyDown(e: KeyboardEvent): void {
-        switch (e.key) {
+        const { key, shiftKey } = e;
+
+        switch (key) {
             case KeyCode.UP:
             case KeyCode.DOWN:
-                e.preventDefault();
-                this.navigate(e.key === KeyCode.UP);
+                {
+                    const isUp = key === KeyCode.UP;
+                    e.preventDefault();
+                    if (shiftKey) {
+                        this.moveItem(isUp);
+                    } else {
+                        this.navigate(isUp);
+                    }
+                }
                 break;
             case KeyCode.PAGE_HOME:
             case KeyCode.PAGE_END:
             case KeyCode.PAGE_UP:
             case KeyCode.PAGE_DOWN:
-                if (this.navigateToPage(e.key) !== null) {
+                if (this.navigateToPage(key) !== null) {
                     e.preventDefault();
                 }
                 break;
@@ -150,14 +163,38 @@ export class VirtualList<
         this.forceFocusOutOfContainer(e.shiftKey);
     }
 
-    private navigate(up: boolean): void {
+    private getNextRow(up: boolean): number | undefined {
         if (this.lastFocusedRowIndex == null) {
-            return;
+            return undefined;
         }
 
         const nextRow = this.lastFocusedRowIndex + (up ? -1 : 1);
 
         if (nextRow < 0 || nextRow >= this.model.getRowCount()) {
+            return undefined;
+        }
+
+        return nextRow;
+    }
+
+    private moveItem(up: boolean): void {
+        if (!this.moveItemCallback) {
+            return;
+        }
+
+        const item = this.getComponentAt(this.lastFocusedRowIndex!);
+
+        if (!item) {
+            return;
+        }
+
+        this.moveItemCallback(item, up);
+    }
+
+    private navigate(up: boolean): void {
+        const nextRow = this.getNextRow(up);
+
+        if (nextRow === undefined) {
             return;
         }
 
@@ -283,11 +320,11 @@ export class VirtualList<
         return false;
     }
 
-    public setComponentCreator(componentCreator: (value: any, listItemElement: HTMLElement) => C): void {
+    public setComponentCreator(componentCreator: (value: V, listItemElement: HTMLElement) => C): void {
         this.componentCreator = componentCreator;
     }
 
-    public setComponentUpdater(componentUpdater: (value: any, component: C) => void): void {
+    public setComponentUpdater(componentUpdater: (value: V, component: C) => void): void {
         this.componentUpdater = componentUpdater;
     }
 

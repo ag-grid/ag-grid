@@ -40,7 +40,7 @@ export class ToolPanelColumnGroupComp extends Component {
 
     private eDragHandle: Element;
 
-    private readonly columnGroup: AgProvidedColumnGroup;
+    public readonly columnGroup: AgProvidedColumnGroup;
     private readonly columnDepth: number;
 
     private readonly displayName: string | null;

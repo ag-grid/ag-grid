@@ -11,6 +11,7 @@ import {
     findGoTo,
     findNext,
     findPrevious,
+    findRefresh,
 } from './findApi';
 import { FindCellRenderer } from './findCellRenderer';
 import { FindService } from './findService';
@@ -45,6 +46,7 @@ export const FindModule: _ModuleWithApi<_FindApi<any>> = {
         findGetNumMatches,
         findGetParts,
         findClearActive,
+        findRefresh,
     },
     dependsOn: [FindCoreModule],
 };

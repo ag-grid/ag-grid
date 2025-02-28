@@ -222,6 +222,10 @@ class PillSelectDragComp<TValue> extends PillDragComp<TValue> {
         return this.sourceId;
     }
 
+    public override isMovable(): boolean {
+        return this.draggable;
+    }
+
     protected override isDraggable(): boolean {
         return this.draggable;
     }
