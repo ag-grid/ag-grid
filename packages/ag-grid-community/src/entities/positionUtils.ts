@@ -130,13 +130,13 @@ export function _getRowAbove(beans: BeanCollection, rowPosition: RowPosition): R
     const { rowIndex: index, rowPinned: pinned } = rowPosition;
     const { pageBounds, pinnedRowModel, rowModel } = beans;
 
-    if (pinned === 'top' || (pinned === null && index === pageBounds.getFirstRow())) {
+    if (pinned == null && index === pageBounds.getFirstRow()) {
         return pinnedRowModel?.isRowsToRender('top')
             ? { rowIndex: pinnedRowModel.getPinnedTopRowCount() - 1, rowPinned: 'top' }
             : null;
     }
 
-    if (pinned === 'bottom' && rowModel.isRowsToRender()) {
+    if (pinned === 'bottom' && index === 0 && rowModel.isRowsToRender()) {
         return { rowIndex: pageBounds.getLastRow(), rowPinned: null };
     }
 
