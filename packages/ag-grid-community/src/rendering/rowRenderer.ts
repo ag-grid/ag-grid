@@ -1030,8 +1030,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
 
         if (rowsToRecycle) {
             const { animationFrameSvc } = this.beans;
-            const useAnimationFrame =
-                animationFrameSvc && afterScroll && !this.gos.get('suppressAnimationFrame') && !this.printLayout;
+            const useAnimationFrame = animationFrameSvc?.active && afterScroll && !this.printLayout;
             if (useAnimationFrame) {
                 animationFrameSvc.addDestroyTask(() => {
                     this.destroyRowCtrls(rowsToRecycle, animate);
@@ -1397,9 +1396,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
         // we only do the animation frames after scrolling, as this is where we want the smooth user experience.
         // having animation frames for other times makes the grid look 'jumpy'.
 
-        const suppressAnimationFrame = this.gos.get('suppressAnimationFrame');
-        const useAnimationFrameForCreate =
-            afterScroll && !suppressAnimationFrame && !this.printLayout && !!this.beans.animationFrameSvc;
+        const useAnimationFrameForCreate = afterScroll && !this.printLayout && !!this.beans.animationFrameSvc?.active;
 
         const res = new RowCtrl(rowNode, this.beans, animate, useAnimationFrameForCreate, this.printLayout);
 

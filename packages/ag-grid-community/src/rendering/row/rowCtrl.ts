@@ -445,8 +445,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         }
 
         const { animationFrameSvc } = this.beans;
-        const noAnimation =
-            !animationFrameSvc || suppressAnimationFrame || this.gos.get('suppressAnimationFrame') || this.printLayout;
+        const noAnimation = !animationFrameSvc?.active || suppressAnimationFrame || this.printLayout;
 
         if (noAnimation) {
             this.updateColumnListsImpl(useFlushSync);
