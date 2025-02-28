@@ -1,5 +1,5 @@
 import type { IAfterGuiAttachedParams } from '../../interfaces/iAfterGuiAttachedParams';
-import type { IFilterOptionDef } from '../../interfaces/iFilter';
+import type { FilterDisplayParams } from '../../interfaces/iFilter';
 import { _areEqual } from '../../utils/array';
 import { _removeFromParent, _setDisabled, _setDisplayed } from '../../utils/dom';
 import { AgPromise } from '../../utils/promise';
@@ -14,9 +14,11 @@ import { Component } from '../../widgets/component';
 import type { FILTER_LOCALE_TEXT } from '../filterLocaleText';
 import type {
     ICombinedSimpleModel,
+    IFilterOptionDef,
     ISimpleFilter,
     ISimpleFilterModel,
     ISimpleFilterModelType,
+    ISimpleFilterParams,
     JoinOperator,
     SimpleFilterParams,
     Tuple,
@@ -31,6 +33,10 @@ import {
     validateAndUpdateConditions,
 } from './simpleFilterUtils';
 
+/** temporary type until `SimpleFilterParams` is updated as breaking change */
+type SimpleFilterDisplayParams<M extends ISimpleFilterModel> = ISimpleFilterParams &
+    FilterDisplayParams<any, any, M | ICombinedSimpleModel<M>>;
+
 /**
  * Every filter with a dropdown where the user can specify a comparing type against the filter values.
  *
@@ -38,7 +44,12 @@ import {
  * @param V type of value managed by the concrete sub-class that extends this type
  * @param E type of UI element used for collecting user-input
  */
-export abstract class SimpleFilter<M extends ISimpleFilterModel, V, P extends SimpleFilterParams, E = AgInputTextField>
+export abstract class SimpleFilter<
+        M extends ISimpleFilterModel,
+        V,
+        E = AgInputTextField,
+        P extends SimpleFilterDisplayParams<M> = SimpleFilterDisplayParams<M>,
+    >
     extends ProvidedFilter<M | ICombinedSimpleModel<M>, V, P>
     implements ISimpleFilter
 {
@@ -571,7 +582,7 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, P extends Si
         this.lastUiCompletePosition = updatedLastUiCompletePosition;
     }
 
-    public getModelAsString(model: ISimpleFilterModel): string {
+    public getModelAsString(model: M): string {
         return this.params.getEvaluator()?.getModelAsString?.(model) ?? '';
     }
 

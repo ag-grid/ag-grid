@@ -11,6 +11,7 @@ import type {
     IMultiFilter,
     IMultiFilterDef,
     IMultiFilterModel,
+    IMultiFilterParams,
     MultiFilterParams,
     ProvidedFilterModel,
     RowNode,
@@ -44,10 +45,13 @@ interface FilterWrapper {
     model?: any;
 }
 
+/** temporary type until `MultiFilterParams` is updated as breaking change */
+type MultiFilterDisplayParams = IMultiFilterParams & FilterDisplayParams<any, any, IMultiFilterModel>;
+
 export class MultiFilter extends TabGuardComp implements IFilterComp, IMultiFilter {
     public readonly filterType = 'multi' as const;
 
-    private params: MultiFilterParams;
+    private params: MultiFilterDisplayParams;
     private filterDefs: IMultiFilterDef[] = [];
     private wrappers: (FilterWrapper | null)[] = [];
     private guiDestroyFuncs: (() => void)[] = [];
@@ -72,7 +76,7 @@ export class MultiFilter extends TabGuardComp implements IFilterComp, IMultiFilt
     }
 
     public init(params: MultiFilterParams): AgPromise<void> {
-        this.params = params;
+        this.params = params as unknown as MultiFilterDisplayParams;
         this.filterDefs = getMultiFilterDefs(params);
 
         const initialModel = this.beans.colFilter!.getModelFromInitialState(params.column);
@@ -290,7 +294,11 @@ export class MultiFilter extends TabGuardComp implements IFilterComp, IMultiFilt
                 if (!wrapper) {
                     return null;
                 }
-                const providedFilter = wrapper.filter as ProvidedFilter<IMultiFilterModel, unknown, MultiFilterParams>;
+                const providedFilter = wrapper.filter as ProvidedFilter<
+                    IMultiFilterModel,
+                    unknown,
+                    MultiFilterDisplayParams
+                >;
 
                 if (typeof providedFilter.getModelFromUi === 'function') {
                     return providedFilter.getModelFromUi();
@@ -344,11 +352,11 @@ export class MultiFilter extends TabGuardComp implements IFilterComp, IMultiFilt
             if (evaluator) {
                 promises.push(
                     _refreshEvaluatorAndUi(
-                        () => AgPromise.resolve({ filter, filterParams: filterParams! }),
+                        () => AgPromise.resolve({ filter: filter as any, filterParams: filterParams as any }),
                         evaluator,
                         evaluatorParams!,
                         modelForFilter,
-                        'apiModel'
+                        'api'
                     ).then(() => {
                         this.updateActiveListForEvaluator(index, modelForFilter);
                     })
@@ -511,7 +519,7 @@ export class MultiFilter extends TabGuardComp implements IFilterComp, IMultiFilt
                         this.doesFilterPass({ node, data: node.data }, index),
                 };
                 if (isEvaluator) {
-                    const displayParams = updatedParams as FilterDisplayParams;
+                    const displayParams = updatedParams as unknown as FilterDisplayParams;
                     initialModelForFilter = initialModel?.filterModels?.[index] ?? null;
                     displayParams.model = initialModelForFilter;
                     displayParams.onModelChange = (model, additionalEventAttributes?: any) => {
@@ -520,7 +528,11 @@ export class MultiFilter extends TabGuardComp implements IFilterComp, IMultiFilt
                             return;
                         }
                         _refreshEvaluatorAndUi(
-                            () => AgPromise.resolve({ filter: wrapper.filter, filterParams: wrapper.filterParams! }),
+                            () =>
+                                AgPromise.resolve({
+                                    filter: wrapper.filter as any,
+                                    filterParams: wrapper.filterParams as any,
+                                }),
                             wrapper.evaluator!,
                             wrapper.evaluatorParams!,
                             model,

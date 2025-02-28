@@ -1,6 +1,5 @@
-import type { IFilterOptionDef } from '../../interfaces/iFilter';
 import { _warn } from '../../validation/logging';
-import type { ISimpleFilterModelType, JoinOperator, Tuple } from './iSimpleFilter';
+import type { IFilterOptionDef, ISimpleFilterModelType, JoinOperator, Tuple } from './iSimpleFilter';
 import type { OptionsFactory } from './optionsFactory';
 
 export function removeItems<T>(items: T[], startPosition: number, deleteCount?: number): T[] {

@@ -1,13 +1,18 @@
+import type { FilterDisplayParams } from '../../../interfaces/iFilter';
 import { _setAriaRole } from '../../../utils/aria';
 import { _makeNull } from '../../../utils/generic';
 import { AgInputTextField } from '../../../widgets/agInputTextField';
-import type { Tuple } from '../iSimpleFilter';
+import type { ICombinedSimpleModel, Tuple } from '../iSimpleFilter';
 import { SimpleFilter } from '../simpleFilter';
-import type { TextFilterModel, TextFilterParams } from './iTextFilter';
+import type { ITextFilterParams, TextFilterModel } from './iTextFilter';
 import { TextFilterHelper } from './textFilterHelper';
 import { trimInputForFilter } from './textFilterUtils';
 
-export class TextFilter extends SimpleFilter<TextFilterModel, string, TextFilterParams> {
+/** temporary type until `TextFilterParams` is updated as breaking change */
+type TextFilterDisplayParams = ITextFilterParams &
+    FilterDisplayParams<any, any, TextFilterModel | ICombinedSimpleModel<TextFilterModel>>;
+
+export class TextFilter extends SimpleFilter<TextFilterModel, string, AgInputTextField, TextFilterDisplayParams> {
     public readonly filterType = 'text' as const;
 
     private readonly eValuesFrom: AgInputTextField[] = [];

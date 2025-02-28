@@ -12,15 +12,15 @@ import { getMultiFilterDefs, getUpdatedMultiFilterModel } from './multiFilterUti
 
 export class MultiFilterEvaluator
     extends BeanStub
-    implements FilterEvaluator<any, any, any, IMultiFilterModel, IMultiFilterParams>
+    implements FilterEvaluator<any, any, IMultiFilterModel, IMultiFilterParams>
 {
-    private params: FilterEvaluatorParams<any, any, any, IMultiFilterModel> & IMultiFilterParams;
+    private params: FilterEvaluatorParams<any, any, IMultiFilterModel> & IMultiFilterParams;
     private evaluatorWrappers: ({ evaluator: FilterEvaluator; evaluatorParams: FilterEvaluatorParams } | undefined)[] =
         [];
     /** ui active. could still have null model */
     private activeFilterIndices: number[] = [];
 
-    public init(params: FilterEvaluatorParams<any, any, any, IMultiFilterModel> & IMultiFilterParams): void {
+    public init(params: FilterEvaluatorParams<any, any, IMultiFilterModel> & IMultiFilterParams): void {
         this.params = params;
 
         const filterDefs = getMultiFilterDefs(params);
@@ -37,7 +37,7 @@ export class MultiFilterEvaluator
         this.resetActiveList(params.model);
     }
 
-    public refresh(params: FilterEvaluatorParams<any, any, any, IMultiFilterModel> & IMultiFilterParams): void {
+    public refresh(params: FilterEvaluatorParams<any, any, IMultiFilterModel> & IMultiFilterParams): void {
         this.params = params;
 
         this.evaluatorWrappers.forEach((wrapper, index) =>

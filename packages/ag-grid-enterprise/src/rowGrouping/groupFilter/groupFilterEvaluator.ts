@@ -12,14 +12,14 @@ import type { GroupFilterService } from './groupFilterService';
 export type GroupFilterEvaluatorEventType = 'sourceColumnsChanged' | 'selectedColumnChanged' | 'destroyed';
 export class GroupFilterEvaluator
     extends BeanStub<GroupFilterEvaluatorEventType>
-    implements FilterEvaluator<any, any, any, null, IFilterParams>
+    implements FilterEvaluator<any, any, null, IFilterParams>
 {
-    private params: FilterEvaluatorParams<any, any, any, null> & IFilterParams<any, any>;
+    private params: FilterEvaluatorParams<any, any, null> & IFilterParams<any, any>;
     public selectedColumn: AgColumn | undefined;
     public sourceColumns: AgColumn[];
     public hasMultipleColumns: boolean;
 
-    public init(params: FilterEvaluatorParams<any, any, any, null> & IFilterParams<any, any>): void {
+    public init(params: FilterEvaluatorParams<any, any, null> & IFilterParams<any, any>): void {
         this.params = params;
         this.validateModel(params);
         this.updateColumns();
@@ -29,10 +29,10 @@ export class GroupFilterEvaluator
         });
     }
 
-    public refresh(params: FilterEvaluatorParams<any, any, any, null> & IFilterParams<any, any>): void {
+    public refresh(params: FilterEvaluatorParams<any, any, null> & IFilterParams<any, any>): void {
         this.params = params;
         this.validateModel(params);
-        if (params.source === 'apiParams') {
+        if (params.source === 'colDef') {
             this.updateColumns();
         }
     }
@@ -47,7 +47,7 @@ export class GroupFilterEvaluator
         this.dispatchLocalEvent({ type: 'selectedColumnChanged' });
     }
 
-    private validateModel(params: FilterEvaluatorParams<any, any, any, null> & IFilterParams<any, any>): void {
+    private validateModel(params: FilterEvaluatorParams<any, any, null> & IFilterParams<any, any>): void {
         // model should always be null
         if (params.model != null) {
             params.onModelChange(null);

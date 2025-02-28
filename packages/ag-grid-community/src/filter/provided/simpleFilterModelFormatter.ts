@@ -1,7 +1,7 @@
-import type { IFilterOptionDef, ProvidedFilterModel } from '../../interfaces/iFilter';
 import type { LocaleTextFunc } from '../../misc/locale/localeUtils';
 import { FILTER_LOCALE_TEXT } from '../filterLocaleText';
-import type { ICombinedSimpleModel, ISimpleFilterModel, ISimpleFilterParams } from './iSimpleFilter';
+import type { ProvidedFilterModel } from './iProvidedFilter';
+import type { ICombinedSimpleModel, IFilterOptionDef, ISimpleFilterModel, ISimpleFilterParams } from './iSimpleFilter';
 import type { OptionsFactory } from './optionsFactory';
 
 export abstract class SimpleFilterModelFormatter<TFilterParams extends ISimpleFilterParams, TValue = any> {

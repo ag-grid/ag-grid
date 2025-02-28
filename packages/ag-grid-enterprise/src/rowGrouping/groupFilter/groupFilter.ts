@@ -4,6 +4,7 @@ import type {
     FilterDisplayParams,
     IAfterGuiAttachedParams,
     IFilterComp,
+    IFilterParams,
 } from 'ag-grid-community';
 import {
     AgPromise,
@@ -59,16 +60,17 @@ export class GroupFilter extends TabGuardComp<GroupFilterEvent> implements IFilt
         this.initialiseTabGuard({});
     }
 
-    public init(params: FilterDisplayParams): AgPromise<void> {
-        this.params = params;
+    public init(legacyParams: IFilterParams): AgPromise<void> {
+        this.params = legacyParams as unknown as FilterDisplayParams;
         return this.updateParams().then(() => {
             this.addEvaluatorListeners(this.updateGroups.bind(this));
         });
     }
 
-    public refresh(params: FilterDisplayParams): boolean {
+    public refresh(legacyParams: IFilterParams): boolean {
+        const params = legacyParams as unknown as FilterDisplayParams;
         this.params = params;
-        if (params.source === 'apiParams') {
+        if (params.source === 'colDef') {
             this.updateParams();
         }
         return true;

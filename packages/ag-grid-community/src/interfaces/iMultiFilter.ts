@@ -1,14 +1,13 @@
-import type { IProvidedFilter } from '../filter/provided/iProvidedFilter';
+import type { IProvidedFilter, ProvidedFilterModel } from '../filter/provided/iProvidedFilter';
 import type { AgPromise } from '../utils/promise';
 import type {
-    FilterDisplayParams,
     FilterEvaluatorGeneratorFunc,
     IFilter,
     IFilterComp,
     IFilterDef,
+    IFilterParams,
     IFilterType,
     IFloatingFilterType,
-    ProvidedFilterModel,
 } from './iFilter';
 
 /** Interface contract for the public aspects of the ProvidedFilter implementation(s). */
@@ -43,7 +42,7 @@ export interface IMultiFilterDef extends IFilterDef {
  * Parameters provided by the grid to the `init` method of a `MultiFilter`.
  * Do not use in `colDef.filterParams` - see `IMultiFilterParams` instead.
  */
-export type MultiFilterParams<TData = any> = IMultiFilterParams & FilterDisplayParams<TData, any, IMultiFilterModel>;
+export type MultiFilterParams<TData = any> = IMultiFilterParams & IFilterParams<TData>;
 
 /**
  * Parameters used in `colDef.filterParams` to configure a Multi Filter (`agMultiColumnFilter`).

@@ -1,6 +1,6 @@
-import type { FilterDisplayParams } from '../../../interfaces/iFilter';
+import type { IFilterParams } from '../../../interfaces/iFilter';
 import type { IScalarFilterParams } from '../iScalarFilter';
-import type { ICombinedSimpleModel, ISimpleFilterModel } from '../iSimpleFilter';
+import type { ISimpleFilterModel } from '../iSimpleFilter';
 import type { ITextInputFloatingFilterParams } from '../text/iTextFilter';
 
 export interface NumberFilterModel extends ISimpleFilterModel {
@@ -22,8 +22,7 @@ export interface NumberFilterModel extends ISimpleFilterModel {
  * Parameters provided by the grid to the `init` method of a `NumberFilter`.
  * Do not use in `colDef.filterParams` - see `INumberFilterParams` instead.
  */
-export type NumberFilterParams<TData = any> = INumberFilterParams &
-    FilterDisplayParams<TData, any, NumberFilterModel | ICombinedSimpleModel<NumberFilterModel>>;
+export type NumberFilterParams<TData = any> = INumberFilterParams & IFilterParams<TData>;
 /**
  * Parameters used in `colDef.filterParams` to configure a Number Filter (`agNumberColumnFilter`).
  */

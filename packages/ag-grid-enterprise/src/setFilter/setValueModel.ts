@@ -4,7 +4,6 @@ import type {
     ISetFilterParams,
     SetFilterModel,
     SetFilterModelValue,
-    SetFilterParams,
     TextFormatter,
     ValueFormatterParams,
 } from 'ag-grid-community';
@@ -17,7 +16,7 @@ import type { SetFilterAllValues } from './setFilterAllValues';
 import { TreeSetDisplayValueModel } from './treeSetDisplayValueModel';
 
 export interface SetValueModelParams<V> {
-    filterParams: FilterEvaluatorParams<any, any, V, SetFilterModel> & ISetFilterParams<any, V>;
+    filterParams: FilterEvaluatorParams<any, any, SetFilterModel> & ISetFilterParams<any, V>;
     translate: (key: keyof ISetFilterLocaleText) => string;
     caseFormat: <T extends string | null>(valueToFormat: T) => typeof valueToFormat;
     getValueFormatter: () => ((params: ValueFormatterParams) => string) | undefined;
@@ -30,7 +29,7 @@ export interface SetValueModelParams<V> {
 export class SetValueModel<V> extends BeanStub {
     private formatter: TextFormatter;
     private displayValueModel: ISetDisplayValueModel<V>;
-    private filterParams: FilterEvaluatorParams<any, any, V, SetFilterModel> & ISetFilterParams<any, V>;
+    private filterParams: FilterEvaluatorParams<any, any, SetFilterModel> & ISetFilterParams<any, V>;
     private translate: (key: keyof ISetFilterLocaleText) => string;
     private caseFormat: <T extends string | null>(valueToFormat: T) => typeof valueToFormat;
 
@@ -86,7 +85,9 @@ export class SetValueModel<V> extends BeanStub {
         });
     }
 
-    public updateOnParamsChange(filterParams: SetFilterParams<any, V>): AgPromise<void> {
+    public updateOnParamsChange(
+        filterParams: FilterEvaluatorParams<any, any, SetFilterModel> & ISetFilterParams<any, V>
+    ): AgPromise<void> {
         return new AgPromise<void>((resolve) => {
             const { textFormatter } = filterParams;
             // const { values, textFormatter, suppressSorting, treeListFormatter } = filterParams;

@@ -1,6 +1,5 @@
-import type { IFilterOptionDef } from '../../interfaces/iFilter';
 import { _warn } from '../../validation/logging';
-import type { ISimpleFilterParams } from './iSimpleFilter';
+import type { IFilterOptionDef, ISimpleFilterParams } from './iSimpleFilter';
 
 /* Common logic for options, used by both filters and floating filters. */
 export class OptionsFactory {

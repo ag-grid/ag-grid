@@ -77,7 +77,8 @@ export class MultiFilterUi
     public refresh(params: IMultiFilterParams & FilterDisplayParams<any, any, IMultiFilterModel>): boolean {
         this.params = params;
         this.filters.forEach((filter, index) => {
-            filter?.refresh?.(this.updateParams(params, index));
+            // TODO - recheck typing
+            filter?.refresh?.(this.updateParams(params, index) as any);
         });
         return true;
     }
@@ -339,7 +340,8 @@ export class MultiFilterUi
 
         const filterParams = this.updateParams(this.params, index);
 
-        const compDetails = _getFilterDetails(userCompFactory, filterDef, filterParams, 'agTextColumnFilter');
+        // TODO - recheck typing
+        const compDetails = _getFilterDetails(userCompFactory, filterDef, filterParams as any, 'agTextColumnFilter');
         if (!compDetails) {
             return AgPromise.resolve(null);
         }
@@ -353,7 +355,6 @@ export class MultiFilterUi
         const { doesRowPassOtherFilter, model, onModelChange } = params;
         return {
             ...params,
-            filterChangedCallback: () => {},
             doesRowPassOtherFilter: (node: RowNode) =>
                 doesRowPassOtherFilter(node) && this.doesOtherFilterPass(node, index),
             model: model?.filterModels?.[index] ?? null,

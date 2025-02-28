@@ -390,7 +390,7 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl<IHeaderFilterCe
                 if (!compInstance || colFilter?.areFilterCompsDifferent(this.userCompDetails ?? null, newCompDetails)) {
                     this.updateCompDetails(compBean, newCompDetails, becomeActive);
                 } else {
-                    this.updateFloatingFilterParams(newCompDetails, 'apiParams');
+                    this.updateFloatingFilterParams(newCompDetails, 'colDef');
                 }
             });
         }

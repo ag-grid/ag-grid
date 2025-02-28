@@ -1,8 +1,10 @@
 import type {
     AgInputTextField,
     ComponentSelector,
+    FilterDisplayParams,
     IAfterGuiAttachedParams,
     ISetFilter,
+    ISetFilterParams,
     SetFilterModel,
     SetFilterModelValue,
     SetFilterParams,
@@ -34,7 +36,7 @@ import { SetValueModel } from './setValueModel';
 
 /** @param V type of value in the Set Filter */
 export class SetFilter<V = string>
-    extends ProvidedFilter<SetFilterModel, V, SetFilterParams<any, V>>
+    extends ProvidedFilter<SetFilterModel, V, ISetFilterParams<any, V> & FilterDisplayParams<any, any, SetFilterModel>>
     implements ISetFilter<V>
 {
     public readonly filterType = 'set' as const;
@@ -55,7 +57,9 @@ export class SetFilter<V = string>
         super('setFilter');
     }
 
-    protected override setParams(params: SetFilterParams<any, V>): void {
+    protected override setParams(
+        params: ISetFilterParams<any, V> & FilterDisplayParams<any, any, SetFilterModel>
+    ): void {
         applyExcelModeOptions(params);
         super.setParams(params);
 
@@ -66,10 +70,14 @@ export class SetFilter<V = string>
         this.initialiseFilterBodyUi();
     }
 
-    public override refresh(newParams: SetFilterParams<any, V>): boolean {
-        applyExcelModeOptions(newParams);
-        this.updateEvaluator(newParams.getEvaluator() as unknown as SetFilterEvaluator<V>);
-        return super.refresh(newParams);
+    public override refresh(legacyNewParams: SetFilterParams<any, V>): boolean {
+        applyExcelModeOptions(legacyNewParams);
+        this.updateEvaluator(
+            (
+                legacyNewParams as unknown as ISetFilterParams<any, V> & FilterDisplayParams<any, any, SetFilterModel>
+            ).getEvaluator() as unknown as SetFilterEvaluator<V>
+        );
+        return super.refresh(legacyNewParams);
     }
 
     // TODO - need to update to make the stuff work that this was refreshing
@@ -99,8 +107,8 @@ export class SetFilter<V = string>
     // }
 
     protected override updateParams(
-        newParams: SetFilterParams<any, V>,
-        oldParams: SetFilterParams<any, V>
+        newParams: ISetFilterParams<any, V> & FilterDisplayParams<any, any, SetFilterModel>,
+        oldParams: ISetFilterParams<any, V> & FilterDisplayParams<any, any, SetFilterModel>
     ): AgPromise<void> {
         return new AgPromise((resolve) =>
             super.updateParams(newParams, oldParams).then(() => {
@@ -110,7 +118,7 @@ export class SetFilter<V = string>
                     this.createVirtualListModel(newParams);
                 }
 
-                this.valueModel.updateOnParamsChange(newParams).then(() => {
+                this.valueModel.updateOnParamsChange(this.evaluator.getSetValueModelParams().filterParams).then(() => {
                     if (this.isAlive()) {
                         this.refreshFilterValues();
                     }
@@ -356,7 +364,9 @@ export class SetFilter<V = string>
         this.createVirtualListModel(this.params);
     }
 
-    private createVirtualListModel(params: SetFilterParams<any, V>): void {
+    private createVirtualListModel(
+        params: ISetFilterParams<any, V> & FilterDisplayParams<any, any, SetFilterModel>
+    ): void {
         let model: VirtualListModel;
         if (params.suppressSelectAll) {
             model = new ModelWrapper(this.valueModel);

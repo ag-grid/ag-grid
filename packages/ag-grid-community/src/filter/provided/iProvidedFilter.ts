@@ -1,13 +1,10 @@
-import type { FilterDisplayParams, IFilter, ProvidedFilterModel } from '../../interfaces/iFilter';
+import type { IFilter, IFilterParams } from '../../interfaces/iFilter';
 
 /**
  * Parameters provided by the grid to the `init` method of a `ProvidedFilter`.
  * Do not use in `colDef.filterParams` - see `IProvidedFilterParams` instead.
  */
-export type ProvidedFilterParams<
-    TData = any,
-    TModel extends ProvidedFilterModel = ProvidedFilterModel,
-> = IProvidedFilterParams & FilterDisplayParams<TData, any, TModel>;
+export type ProvidedFilterParams<TData = any> = IProvidedFilterParams & IFilterParams<TData>;
 /**
  * Common parameters in `colDef.filterParams` used by all provided filters. Extended by the specific filter types.
  */
@@ -60,4 +57,8 @@ export interface IProvidedFilter extends IFilter {
      * applied, this model will reflect those changes.
      */
     getModelFromUi(): any;
+}
+
+export interface ProvidedFilterModel {
+    filterType?: string;
 }

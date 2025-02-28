@@ -1,14 +1,24 @@
+import type { FilterDisplayParams } from '../../../interfaces/iFilter';
 import { _setAriaRole } from '../../../utils/aria';
 import { _makeNull } from '../../../utils/generic';
 import { AgInputNumberField } from '../../../widgets/agInputNumberField';
 import { AgInputTextField } from '../../../widgets/agInputTextField';
-import type { Tuple } from '../iSimpleFilter';
+import type { ICombinedSimpleModel, Tuple } from '../iSimpleFilter';
 import { SimpleFilter } from '../simpleFilter';
-import type { NumberFilterModel, NumberFilterParams } from './iNumberFilter';
+import type { INumberFilterParams, NumberFilterModel } from './iNumberFilter';
 import { NumberFilterHelper } from './numberFilterHelper';
 import { getAllowedCharPattern, processNumberFilterValue } from './numberFilterUtils';
 
-export class NumberFilter extends SimpleFilter<NumberFilterModel, number, NumberFilterParams> {
+/** temporary type until `NumberFilterParams` is updated as breaking change */
+type NumberFilterDisplayParams = INumberFilterParams &
+    FilterDisplayParams<any, any, NumberFilterModel | ICombinedSimpleModel<NumberFilterModel>>;
+
+export class NumberFilter extends SimpleFilter<
+    NumberFilterModel,
+    number,
+    AgInputTextField | AgInputNumberField,
+    NumberFilterDisplayParams
+> {
     private readonly eValuesFrom: (AgInputTextField | AgInputNumberField)[] = [];
     private readonly eValuesTo: (AgInputTextField | AgInputNumberField)[] = [];
 

@@ -31,9 +31,9 @@ export type SetFilterEvaluatorEventType = 'anyFilterChanged' | 'dataChanged' | '
 
 export class SetFilterEvaluator<TValue = string>
     extends BeanStub<SetFilterEvaluatorEventType>
-    implements FilterEvaluator<any, any, TValue, SetFilterModel, ISetFilterParams<any, TValue>>
+    implements FilterEvaluator<any, any, SetFilterModel, ISetFilterParams<any, TValue>>
 {
-    private params: FilterEvaluatorParams<any, any, TValue, SetFilterModel> & ISetFilterParams<any, TValue>;
+    private params: FilterEvaluatorParams<any, any, SetFilterModel> & ISetFilterParams<any, TValue>;
     /**
      * Here we keep track of the keys that are currently being used for filtering.
      * In most cases, the filtering keys are the same as the selected keys,
@@ -49,7 +49,7 @@ export class SetFilterEvaluator<TValue = string>
     public valueFormatter?: (params: ValueFormatterParams) => string;
     private noValueFormatterSupplied = false;
 
-    public init(params: FilterEvaluatorParams<any, any, TValue, SetFilterModel> & ISetFilterParams<any, TValue>): void {
+    public init(params: FilterEvaluatorParams<any, any, SetFilterModel> & ISetFilterParams<any, TValue>): void {
         this.updateParams(params);
         const isTreeDataOrGrouping = () => this.treeDataTreeList || this.groupingTreeList;
         const isTreeData = () => this.treeDataTreeList;
@@ -83,9 +83,7 @@ export class SetFilterEvaluator<TValue = string>
         this.addEventListenersForDataChanges();
     }
 
-    public refresh(
-        params: FilterEvaluatorParams<any, any, TValue, SetFilterModel> & ISetFilterParams<any, TValue>
-    ): void {
+    public refresh(params: FilterEvaluatorParams<any, any, SetFilterModel> & ISetFilterParams<any, TValue>): void {
         this.updateParams(params);
         this.allValues.refresh({
             filterParams: params,
@@ -98,7 +96,7 @@ export class SetFilterEvaluator<TValue = string>
     }
 
     private updateParams(
-        params: FilterEvaluatorParams<any, any, TValue, SetFilterModel> & ISetFilterParams<any, TValue>
+        params: FilterEvaluatorParams<any, any, SetFilterModel> & ISetFilterParams<any, TValue>
     ): void {
         this.params = params;
         const { caseSensitive, treeList, column, colDef, keyCreator, valueFormatter } = params;
@@ -235,7 +233,7 @@ export class SetFilterEvaluator<TValue = string>
     }
 
     private validateModel(
-        params: FilterEvaluatorParams<any, any, TValue, SetFilterModel> & ISetFilterParams<any, TValue>,
+        params: FilterEvaluatorParams<any, any, SetFilterModel> & ISetFilterParams<any, TValue>,
         additionalEventAttributes?: any
     ): void {
         const allValues = this.allValues;

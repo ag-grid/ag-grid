@@ -46,7 +46,7 @@ export class TextFilterEvaluator extends SimpleFilterEvaluator<TextFilterModel, 
     }
 
     protected override updateParams(
-        params: FilterEvaluatorParams<any, any, string, TextFilterModel | ICombinedSimpleModel<TextFilterModel>> &
+        params: FilterEvaluatorParams<any, any, TextFilterModel | ICombinedSimpleModel<TextFilterModel>> &
             ITextFilterParams
     ): void {
         super.updateParams(params);

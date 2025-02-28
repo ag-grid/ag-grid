@@ -23,7 +23,7 @@ enum SetFilterModelValuesType {
 export default SetFilterModelValuesType;
 
 export interface SetAllValuesParams<TValue> {
-    filterParams: FilterEvaluatorParams<any, any, TValue, SetFilterModel> & ISetFilterParams<any, TValue>;
+    filterParams: FilterEvaluatorParams<any, any, SetFilterModel> & ISetFilterParams<any, TValue>;
     usingComplexObjects?: boolean;
 }
 

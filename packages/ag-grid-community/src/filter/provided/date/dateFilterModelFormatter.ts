@@ -1,5 +1,5 @@
-import type { IFilterOptionDef } from '../../../interfaces/iFilter';
 import { _dateToFormattedString, _parseDateTimeFromString } from '../../../utils/date';
+import type { IFilterOptionDef } from '../iSimpleFilter';
 import { SimpleFilterModelFormatter } from '../simpleFilterModelFormatter';
 import type { DateFilterModel, IDateFilterParams } from './iDateFilter';
 

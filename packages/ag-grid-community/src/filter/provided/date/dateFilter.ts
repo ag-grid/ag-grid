@@ -1,19 +1,24 @@
 import { _getDocument } from '../../../gridOptionsUtils';
 import type { IAfterGuiAttachedParams } from '../../../interfaces/iAfterGuiAttachedParams';
+import type { FilterDisplayParams } from '../../../interfaces/iFilter';
 import { _parseDateTimeFromString, _serialiseDate } from '../../../utils/date';
 import { _warn } from '../../../validation/logging';
 import type { FILTER_LOCALE_TEXT } from '../../filterLocaleText';
-import type { Tuple } from '../iSimpleFilter';
+import type { ICombinedSimpleModel, Tuple } from '../iSimpleFilter';
 import { SimpleFilter } from '../simpleFilter';
 import { removeItems } from '../simpleFilterUtils';
 import { DateCompWrapper } from './dateCompWrapper';
 import { DateFilterHelper } from './dateFilterHelper';
-import type { DateFilterModel, DateFilterParams } from './iDateFilter';
+import type { DateFilterModel, IDateFilterParams } from './iDateFilter';
 
 const DEFAULT_MIN_YEAR = 1000;
 const DEFAULT_MAX_YEAR = Infinity;
 
-export class DateFilter extends SimpleFilter<DateFilterModel, Date, DateFilterParams, DateCompWrapper> {
+/** temporary type until `DateFilterParams` is updated as breaking change */
+type DateFilterDisplayParams = IDateFilterParams &
+    FilterDisplayParams<any, any, DateFilterModel | ICombinedSimpleModel<DateFilterModel>>;
+
+export class DateFilter extends SimpleFilter<DateFilterModel, Date, DateCompWrapper, DateFilterDisplayParams> {
     private readonly eConditionPanelsFrom: HTMLElement[] = [];
     private readonly eConditionPanelsTo: HTMLElement[] = [];
 
@@ -37,10 +42,10 @@ export class DateFilter extends SimpleFilter<DateFilterModel, Date, DateFilterPa
         this.dateConditionFromComps[0].afterGuiAttached(params);
     }
 
-    protected override commonUpdateSimpleParams(params: DateFilterParams): void {
+    protected override commonUpdateSimpleParams(params: DateFilterDisplayParams): void {
         super.commonUpdateSimpleParams(params);
 
-        const yearParser = (param: keyof DateFilterParams, fallback: number) => {
+        const yearParser = (param: 'minValidYear' | 'maxValidYear', fallback: number) => {
             const value = params[param];
             if (value != null) {
                 if (!isNaN(value)) {
@@ -82,7 +87,7 @@ export class DateFilter extends SimpleFilter<DateFilterModel, Date, DateFilterPa
             userCompFactory,
             {
                 onDateChanged: () => this.onUiChanged(),
-                filterParams: this.params,
+                filterParams: this.params as any,
                 location: 'filter',
             },
             element

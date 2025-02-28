@@ -162,9 +162,7 @@ export {
 export {
     IFilterDef,
     IFilterParams,
-    IFilterOptionDef,
     IDoesFilterPassParams,
-    ProvidedFilterModel,
     IFilter,
     IFilterComp,
     IFilterType,
@@ -204,7 +202,12 @@ export {
 } from './interfaces/iMultiFilter';
 export { FilterWrapperComp } from './filter/filterWrapperComp';
 
-export { IProvidedFilter, IProvidedFilterParams, ProvidedFilterParams } from './filter/provided/iProvidedFilter';
+export {
+    IProvidedFilter,
+    IProvidedFilterParams,
+    ProvidedFilterParams,
+    ProvidedFilterModel,
+} from './filter/provided/iProvidedFilter';
 export { ProvidedFilter } from './filter/provided/providedFilter';
 export {
     ISimpleFilter,
@@ -215,6 +218,7 @@ export {
     JoinOperator,
     IFilterPlaceholderFunctionParams,
     FilterPlaceholderFunction,
+    IFilterOptionDef,
 } from './filter/provided/iSimpleFilter';
 export { IScalarFilterParams, ScalarFilterParams } from './filter/provided/iScalarFilter';
 

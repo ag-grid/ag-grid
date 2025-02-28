@@ -1,10 +1,10 @@
 import type { ColDef, KeyCreatorParams, ValueFormatterParams } from '../entities/colDef';
-import type { IProvidedFilter, IProvidedFilterParams } from '../filter/provided/iProvidedFilter';
+import type { IProvidedFilter, IProvidedFilterParams, ProvidedFilterModel } from '../filter/provided/iProvidedFilter';
 import type { Column } from '../interfaces/iColumn';
 import type { ITooltipParams } from '../tooltip/tooltipComponent';
 import type { AgPromise } from '../utils/promise';
 import type { AgGridCommon } from './iCommon';
-import type { FilterDisplayParams, ProvidedFilterModel } from './iFilter';
+import type { IFilterParams } from './iFilter';
 
 export type SetFilterModelValue = (string | null)[];
 export interface SetFilterModel extends ProvidedFilterModel {
@@ -93,8 +93,7 @@ export type SetFilterValues<TData = any, V = string> = SetFilterValuesFunc<TData
  * Parameters provided by the grid to the `init` method of a `SetFilter`.
  * Do not use in `colDef.filterParams` - see `ISetFilterParams` instead.
  */
-export type SetFilterParams<TData = any, V = string> = ISetFilterParams<TData, V> &
-    FilterDisplayParams<TData, any, SetFilterModel>;
+export type SetFilterParams<TData = any, V = string> = ISetFilterParams<TData, V> & IFilterParams<TData>;
 
 /**
  * Parameters used in `colDef.filterParams` to configure a Set Filter (`agSetColumnFilter`).

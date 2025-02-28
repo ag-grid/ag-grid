@@ -1,6 +1,6 @@
 import type { AgColumn } from '../../entities/agColumn';
 import type { ContainerType, IAfterGuiAttachedParams } from '../../interfaces/iAfterGuiAttachedParams';
-import type { IDoesFilterPassParams, IFilterComp, ProvidedFilterModel } from '../../interfaces/iFilter';
+import type { FilterDisplayParams, IDoesFilterPassParams, IFilterComp } from '../../interfaces/iFilter';
 import type { PopupEventParams } from '../../interfaces/iPopup';
 import { PositionableFeature } from '../../rendering/features/positionableFeature';
 import { _clearElement, _loadTemplate, _removeFromParent, _setDisabled } from '../../utils/dom';
@@ -13,7 +13,16 @@ import { Component, RefPlaceholder } from '../../widgets/component';
 import { ManagedFocusFeature } from '../../widgets/managedFocusFeature';
 import { FILTER_LOCALE_TEXT } from '../filterLocaleText';
 import { getDebounceMs, isUseApplyButton } from '../floating/provided/providedFilterUtils';
-import type { IProvidedFilter, ProvidedFilterParams } from './iProvidedFilter';
+import type {
+    IProvidedFilter,
+    IProvidedFilterParams,
+    ProvidedFilterModel,
+    ProvidedFilterParams,
+} from './iProvidedFilter';
+
+/** temporary type until `ProvidedFilterParams` is updated as breaking change */
+type ProvidedFilterDisplayParams<M extends ProvidedFilterModel> = IProvidedFilterParams &
+    FilterDisplayParams<any, any, M>;
 
 /**
  * Contains common logic to all provided filters (apply button, clear button, etc).
@@ -23,8 +32,12 @@ import type { IProvidedFilter, ProvidedFilterParams } from './iProvidedFilter';
  * @param M type of filter-model managed by the concrete sub-class that extends this type
  * @param V type of value managed by the concrete sub-class that extends this type
  */
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-export abstract class ProvidedFilter<M extends ProvidedFilterModel, V, P extends ProvidedFilterParams<any, M>>
+export abstract class ProvidedFilter<
+        M extends ProvidedFilterModel,
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        V,
+        P extends ProvidedFilterDisplayParams<M> = ProvidedFilterDisplayParams<M>,
+    >
     extends Component
     implements IProvidedFilter, IFilterComp
 {
@@ -79,7 +92,8 @@ export abstract class ProvidedFilter<M extends ProvidedFilterModel, V, P extends
 
     public abstract getModelFromUi(): M | null;
 
-    public init(params: P): void {
+    public init(legacyParams: ProvidedFilterParams): void {
+        const params = legacyParams as unknown as P;
         this.setParams(params);
 
         this.doSetModel(params.model, true).then(() => {
@@ -87,7 +101,8 @@ export abstract class ProvidedFilter<M extends ProvidedFilterModel, V, P extends
         });
     }
 
-    public refresh(newParams: P): boolean {
+    public refresh(legacyNewParams: ProvidedFilterParams): boolean {
+        const newParams = legacyNewParams as unknown as P;
         const oldParams = this.params;
 
         this.params = newParams;
@@ -109,7 +124,7 @@ export abstract class ProvidedFilter<M extends ProvidedFilterModel, V, P extends
                 source === 'evaluator'
             );
 
-        if (source !== 'apiParams') {
+        if (source !== 'colDef') {
             // just the model has changed
             updateModel();
             return true;
@@ -411,7 +426,7 @@ export abstract class ProvidedFilter<M extends ProvidedFilterModel, V, P extends
      */
     protected onUiChanged(fromFloatingFilter = false, apply?: 'immediately' | 'debounce' | 'prevent'): void {
         this.updateUiVisibility();
-        this.params.filterModifiedCallback();
+        this.params.onUiChange();
 
         if (this.applyActive && !this.isReadOnly()) {
             const isValid = this.canApply(this.getModelFromUi()!);

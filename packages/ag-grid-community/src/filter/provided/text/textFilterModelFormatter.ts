@@ -1,4 +1,4 @@
-import type { IFilterOptionDef } from '../../../interfaces/iFilter';
+import type { IFilterOptionDef } from '../iSimpleFilter';
 import { SimpleFilterModelFormatter } from '../simpleFilterModelFormatter';
 import type { ITextFilterParams, TextFilterModel } from './iTextFilter';
 

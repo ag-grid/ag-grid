@@ -84,7 +84,7 @@ export class DateFloatingFilter extends SimpleFloatingFilter<IFloatingFilterPara
 
         if (this.reactive) {
             const reactiveParams = this.params as unknown as FloatingFilterDisplayParams<any, any, DateFilterModel>;
-            reactiveParams.filterModifiedCallback();
+            reactiveParams.onUiChange();
 
             const model = reactiveParams.model;
             const newModel =

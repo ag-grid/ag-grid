@@ -1,5 +1,5 @@
-import type { IFilterOptionDef } from '../../../interfaces/iFilter';
 import type { LocaleTextFunc } from '../../../misc/locale/localeUtils';
+import type { IFilterOptionDef } from '../iSimpleFilter';
 import type { OptionsFactory } from '../optionsFactory';
 import { SimpleFilterModelFormatter } from '../simpleFilterModelFormatter';
 import type { INumberFilterParams, NumberFilterModel } from './iNumberFilter';

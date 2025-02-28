@@ -2,7 +2,8 @@ import type { FilterChangedEvent } from '../../events';
 import type { Column } from '../../interfaces/iColumn';
 import type { AgGridCommon } from '../../interfaces/iCommon';
 import type { IComponent } from '../../interfaces/iComponent';
-import type { FilterEvaluator, IFilter, IFilterParams, ProvidedFilterModel } from '../../interfaces/iFilter';
+import type { FilterEvaluator, IFilter, IFilterParams } from '../../interfaces/iFilter';
+import type { ProvidedFilterModel } from '../provided/iProvidedFilter';
 
 export interface IFloatingFilterParent {
     /**
@@ -16,10 +17,18 @@ export interface IFloatingFilterParent {
 type InbuiltParentType = IFloatingFilterParent & IFilter;
 export type IFloatingFilterParentCallback<P = InbuiltParentType> = (parentFilterInstance: P) => void;
 
-export interface IFloatingFilterParams<P = InbuiltParentType, TData = any, TContext = any>
-    extends AgGridCommon<TData, TContext> {
+interface SharedFloatingFilter<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
     /** The column this filter is for. */
     column: Column;
+
+    /**
+     * Shows the parent filter popup.
+     */
+    showParentFilter: () => void;
+}
+
+export interface IFloatingFilterParams<P = InbuiltParentType, TData = any, TContext = any>
+    extends SharedFloatingFilter<TData, TContext> {
     /**
      * The params object passed to the filter.
      * This is to allow the floating filter access to the configuration of the parent filter.
@@ -48,19 +57,21 @@ export interface IFloatingFilterParams<P = InbuiltParentType, TData = any, TCont
      * when the user updates via the floating filter.
      */
     parentFilterInstance: (callback: IFloatingFilterParentCallback<P>) => void;
-    /**
-     * Shows the parent filter popup.
-     */
-    showParentFilter: () => void;
 }
 
-export interface FloatingFilterDisplayParams<TData = any, TContext = any, TModel = any, TParent = InbuiltParentType>
-    extends IFloatingFilterParams<TParent, TData, TContext> {
+export interface FloatingFilterDisplayParams<TData = any, TContext = any, TModel = any, TCustomParams = object>
+    extends SharedFloatingFilter<TData, TContext> {
+    /**
+     * The params object passed to the filter.
+     * This is to allow the floating filter access to the configuration of the parent filter.
+     * For example, the provided filters use debounceMs from the parent filter params.
+     * */
+    filterParams: TCustomParams;
     model: TModel | null;
     onModelChange: (model: TModel | null, additionalEventAttributes?: any) => void;
-    filterModifiedCallback: (additionalEventAttributes?: any) => void;
-    getEvaluator: () => FilterEvaluator<TData, TContext, TModel>;
-    source: 'init' | 'ui' | 'filter' | 'apiModel' | 'apiParams' | 'dataChanged';
+    onUiChange: (additionalEventAttributes?: any) => void;
+    getEvaluator: () => FilterEvaluator<TData, TContext, TModel, TCustomParams>;
+    source: 'init' | 'ui' | 'filter' | 'api' | 'colDef' | 'dataChanged';
 }
 
 export interface BaseFloatingFilter {
@@ -87,6 +98,10 @@ export interface IFloatingFilter<P = any> extends BaseFloatingFilter {
 
 export interface IFloatingFilterComp<P = any> extends IFloatingFilter<P>, IComponent<IFloatingFilterParams<P>> {}
 
+// @deprecated v30 - this has been unused for years so delete in v34
+/**
+ * @deprecated v33.1 Unused
+ */
 export interface BaseFloatingFilterChange {
     model: ProvidedFilterModel;
     apply: boolean;

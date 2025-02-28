@@ -138,7 +138,7 @@ export class MultiFloatingFilterComp extends Component implements IFloatingFilte
                 currentParentModel: () => currentParentModel()?.filterModels?.[index] ?? null,
             };
             if (this.gos.get('reactiveFloatingFilters')) {
-                const reactiveParams = floatingFilterParams as FloatingFilterDisplayParams;
+                const reactiveParams = floatingFilterParams as unknown as FloatingFilterDisplayParams;
                 reactiveParams.model = reactiveParams.model?.filterModels?.[index] ?? null;
                 const onModelChange = reactiveParams.onModelChange;
                 reactiveParams.onModelChange = (newModel, additionalEventAttributes) =>

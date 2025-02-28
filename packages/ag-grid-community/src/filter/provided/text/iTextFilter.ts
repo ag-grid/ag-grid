@@ -1,7 +1,7 @@
 import type { BaseColDefParams } from '../../../entities/colDef';
-import type { FilterDisplayParams } from '../../../interfaces/iFilter';
+import type { IFilterParams } from '../../../interfaces/iFilter';
 import type { IFloatingFilterParams } from '../../floating/floatingFilter';
-import type { ICombinedSimpleModel, ISimpleFilterModel, ISimpleFilterParams } from '../iSimpleFilter';
+import type { ISimpleFilterModel, ISimpleFilterParams } from '../iSimpleFilter';
 import type { NumberFilter } from '../number/numberFilter';
 import type { TextFilter } from './textFilter';
 
@@ -56,8 +56,7 @@ export interface TextFormatter {
  * Parameters provided by the grid to the `init` method of a `TextFilter`.
  * Do not use in `colDef.filterParams` - see `ITextFilterParams` instead.
  */
-export type TextFilterParams<TData = any> = ITextFilterParams &
-    FilterDisplayParams<TData, any, TextFilterModel | ICombinedSimpleModel<TextFilterModel>>;
+export type TextFilterParams<TData = any> = ITextFilterParams & IFilterParams<TData>;
 /**
  * Parameters used in `colDef.filterParams` to configure a  Text Filter (`agTextColumnFilter`).
  */

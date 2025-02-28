@@ -1,6 +1,6 @@
-import type { NumberFilterParams } from './iNumberFilter';
+import type { INumberFilterParams } from './iNumberFilter';
 
-export function getAllowedCharPattern(filterParams?: NumberFilterParams): string | null {
+export function getAllowedCharPattern(filterParams?: INumberFilterParams): string | null {
     const { allowedCharPattern } = filterParams ?? {};
 
     return allowedCharPattern ?? null;

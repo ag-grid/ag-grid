@@ -1,9 +1,8 @@
 import type { AgColumn } from '../../../entities/agColumn';
 import type { FilterChangedEvent } from '../../../events';
-import type { ProvidedFilterModel } from '../../../interfaces/iFilter';
 import type { LocaleTextFunc } from '../../../misc/locale/localeUtils';
 import { Component } from '../../../widgets/component';
-import type { IProvidedFilterParams } from '../../provided/iProvidedFilter';
+import type { IProvidedFilterParams, ProvidedFilterModel } from '../../provided/iProvidedFilter';
 import type {
     ICombinedSimpleModel,
     ISimpleFilter,
@@ -130,7 +129,7 @@ export abstract class SimpleFloatingFilter<TParams extends IFloatingFilterParams
     public refresh(params: TParams): void {
         this.params = params;
         const reactiveParams = params as unknown as FloatingFilterDisplayParams;
-        if (!this.reactive || reactiveParams.source === 'apiParams') {
+        if (!this.reactive || reactiveParams.source === 'colDef') {
             this.updateParams(params);
         }
 

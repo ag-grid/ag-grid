@@ -1,6 +1,6 @@
-import type { FilterDisplayParams } from '../../../interfaces/iFilter';
+import type { IFilterParams } from '../../../interfaces/iFilter';
 import type { IScalarFilterParams } from '../iScalarFilter';
-import type { ICombinedSimpleModel, ISimpleFilterModel } from '../iSimpleFilter';
+import type { ISimpleFilterModel } from '../iSimpleFilter';
 
 // The date filter model takes strings, although the filter actually works with dates. This is because a Date object
 // won't convert easily to JSON. When the model is used for doing the filtering, it's converted to a Date object.
@@ -24,8 +24,7 @@ export interface DateFilterModel extends ISimpleFilterModel {
  * Do not use in `colDef.filterParams` - see `IDateFilterParams` instead.
  */
 
-export type DateFilterParams<TData = any> = IDateFilterParams &
-    FilterDisplayParams<TData, any, DateFilterModel | ICombinedSimpleModel<DateFilterModel>>;
+export type DateFilterParams<TData = any> = IDateFilterParams & IFilterParams<TData>;
 /**
  * Parameters used in `colDef.filterParams` to configure a Date Filter (`agDateColumnFilter`).
  */

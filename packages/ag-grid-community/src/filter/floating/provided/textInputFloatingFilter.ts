@@ -92,7 +92,7 @@ export abstract class TextInputFloatingFilter<
 
         if (this.reactive) {
             const reactiveParams = this.params as unknown as FloatingFilterDisplayParams<any, any, M>;
-            reactiveParams.filterModifiedCallback();
+            reactiveParams.onUiChange();
         }
 
         if (this.applyActive && !isEnterKey) {
