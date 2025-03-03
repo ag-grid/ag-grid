@@ -5,6 +5,7 @@ import { DocsNavFromLocalStorage } from '@ag-website-shared/components/docs-navi
 import { getDocsPages } from '../components/docs/utils/pageData';
 import type { Framework } from '@ag-grid-types';
 import DocumentationArchive from '@ag-website-shared/components/documentation-archive/DocumentationArchive.astro';
+import type { CollectionEntry } from 'astro:content';
 
 export async function getStaticPaths() {
     const pages = await getCollection('docs');
@@ -13,7 +14,7 @@ export async function getStaticPaths() {
 
 const pageName = Astro.params.pageName as Framework;
 
-const { data: docsNavData } = await getEntry('docs-nav', 'docsNav');
+const { data: docsNavData } = (await getEntry('docsNav', 'nav')) as CollectionEntry<'docsNav'>;
 
 const versionsContent = await getEntry('versions', 'ag-grid-versions');
 const versionsData: any[] = versionsContent ? versionsContent.data : [];

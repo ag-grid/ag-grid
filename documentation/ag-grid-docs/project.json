@@ -24,7 +24,10 @@
       "configurations": {
         "staging": {},
         "archive": {},
-        "production": {}
+        "production": {},
+        "verbose": {
+          "silent": null
+        }
       }
     },
     "build:copy-styles": {
@@ -109,12 +112,12 @@
       }
     },
     "test:vitest": {
-      "executor": "@nx/vite:test",
+      "command": "npx vitest",
       "outputs": ["{workspaceRoot}/reports/ag-grid-website.xml"],
       "dependsOn": [],
       "options": {
         "cwd": "{projectRoot}",
-        "config": "{projectRoot}/vitest.config.mjs"
+        "config": "vitest.config.mjs"
       },
       "configurations": {
         "ci": {

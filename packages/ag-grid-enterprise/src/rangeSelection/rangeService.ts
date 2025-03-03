@@ -31,6 +31,8 @@ import {
     _areEqual,
     _exists,
     _getCellCtrlForEventTarget,
+    _getRowAbove,
+    _getRowBelow,
     _getRowNode,
     _getSuppressMultiRanges,
     _isCellSelectionEnabled,
@@ -775,7 +777,6 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
             return;
         }
         const lastRange = _last(this.cellRanges);
-
         const intersectionStartRow = this.getRangeStartRow(lastRange);
         const intersectionEndRow = this.getRangeEndRow(lastRange);
 
@@ -803,7 +804,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
                     columns: [...cols],
                     startColumn: lastRange.startColumn,
                     startRow: { ...startRow },
-                    endRow: this.cellNavigation.getRowAbove(intersectionStartRow)!,
+                    endRow: _getRowAbove(this.beans, intersectionStartRow)!,
                 };
                 newRanges.push(top);
             }
@@ -824,7 +825,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
                 newRanges.push({
                     columns: [...cols],
                     startColumn: lastRange.startColumn,
-                    startRow: this.cellNavigation.getRowBelow(intersectionEndRow)!,
+                    startRow: _getRowBelow(this.beans, intersectionEndRow)!,
                     endRow: { ...endRow },
                 });
             }
@@ -940,7 +941,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
             if (_isSameRow(currentRow, bottomRow)) {
                 break;
             }
-            currentRow = this.cellNavigation.getRowBelow(currentRow);
+            currentRow = _getRowBelow(this.beans, currentRow);
         }
     }
 

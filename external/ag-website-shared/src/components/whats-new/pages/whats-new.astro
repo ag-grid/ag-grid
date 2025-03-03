@@ -1,5 +1,5 @@
 ---
-import { getEntry } from 'astro:content';
+import { getEntry, type CollectionEntry } from 'astro:content';
 import Layout from '@layouts/Layout.astro';
 import { DocsNavFromLocalStorage } from '@ag-website-shared/components/docs-navigation/DocsNavFromLocalStorage';
 import { parseVersion } from '@ag-website-shared/utils/parseVersion';
@@ -18,7 +18,7 @@ const pageName = Astro.params.pageName as Framework;
 
 const { name, blogPrefix } = whatsNewData[site];
 
-const { data: docsNavData } = await getEntry('docs-nav', 'docsNav');
+const { data: docsNavData } = (await getEntry('docsNav', 'nav')) as CollectionEntry<'docsNav'>;
 ---
 
 <Layout

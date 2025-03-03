@@ -1,5 +1,5 @@
 ---
-import { getEntry } from 'astro:content';
+import { getEntry, type CollectionEntry } from 'astro:content';
 import { ModuleMappings } from './ModuleMappings';
 import { getFrameworkFromPath } from '@components/docs/utils/urlPaths';
 import styles from './ModuleMappings.module.scss';
@@ -7,7 +7,7 @@ import styles from './ModuleMappings.module.scss';
 const { pathname } = Astro.url;
 const framework = getFrameworkFromPath(pathname);
 
-const { data: modules } = await getEntry('module-mappings', 'modules');
+const { data: modules } = (await getEntry('moduleMappings', 'modules')) as CollectionEntry<'moduleMappings'>;
 ---
 
 <div class={styles.container}>

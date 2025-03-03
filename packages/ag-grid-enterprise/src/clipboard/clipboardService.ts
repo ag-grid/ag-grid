@@ -26,6 +26,7 @@ import {
     _exists,
     _getActiveDomElement,
     _getDocument,
+    _getRowBelow,
     _getRowNode,
     _isClientSideRowModel,
     _isSameRow,
@@ -589,7 +590,7 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
         let rowPointer = currentRow;
 
         const beans = this.beans;
-        const { gos, cellNavigation } = beans;
+        const { gos } = beans;
 
         // if doing CSRM and NOT tree data, then it means groups are aggregates, which are read only,
         // so we should skip them when doing paste operations.
@@ -602,7 +603,7 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
                 }
                 const res = _getRowNode(beans, rowPointer);
                 // move to next row down for next set of values
-                rowPointer = cellNavigation!.getRowBelow({
+                rowPointer = _getRowBelow(beans, {
                     rowPinned: rowPointer.rowPinned,
                     rowIndex: rowPointer.rowIndex,
                 });
@@ -827,7 +828,8 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
         columnCallback?: ColumnCallback,
         isLastRange?: boolean
     ): void {
-        const { rangeSvc, cellNavigation } = this.beans;
+        const { beans } = this;
+        const { rangeSvc } = beans;
         if (!rangeSvc) {
             return;
         }
@@ -845,12 +847,12 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
         // the currentRow could be missing if the user sets the active range manually, and sets a range
         // that is outside of the grid (eg. sets range rows 0 to 100, but grid has only 20 rows).
         while (!isLastRow && currentRow != null) {
-            const rowNode = _getRowNode(this.beans, currentRow);
+            const rowNode = _getRowNode(beans, currentRow);
             isLastRow = _isSameRow(currentRow, lastRow);
 
             rowCallback(currentRow, rowNode, range.columns as AgColumn[], rangeIndex++, isLastRow && isLastRange);
 
-            currentRow = cellNavigation!.getRowBelow(currentRow);
+            currentRow = _getRowBelow(beans, currentRow);
         }
     }
 
@@ -951,7 +953,7 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
             if (_isSameRow(node, lastRow)) {
                 break;
             }
-            node = this.beans.cellNavigation!.getRowBelow(node);
+            node = _getRowBelow(this.beans, node);
         }
 
         return { rowPositions, cellsToFlash };

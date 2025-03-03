@@ -459,11 +459,7 @@ export {
     RefreshModelParams,
     IChangedRowNodes,
 } from './interfaces/iClientSideRowModel';
-export {
-    IClientSideNodeManager,
-    IClientSideNodeLookup,
-    ClientSideNodeManagerUpdateRowDataResult,
-} from './interfaces/iClientSideNodeManager';
+export { IClientSideNodeManager, ClientSideNodeManagerUpdateRowDataResult } from './interfaces/iClientSideNodeManager';
 export { AbstractClientSideNodeManager } from './clientSideRowModel/abstractClientSideNodeManager';
 export type { RowAutoHeightService } from './rendering/row/rowAutoHeightService';
 
@@ -681,7 +677,9 @@ export {
     _isUsingNewRowSelectionAPI,
     _isUsingNewCellSelectionAPI,
     _isGroupRowsSticky,
+    _getTreeDataApproach,
 } from './gridOptionsUtils';
+export type { TreeDataApproach } from './gridOptionsUtils';
 export { LocalEventService } from './localEventService';
 export type { EventService } from './eventService';
 export type { RowNodeSorter } from './sort/rowNodeSorter';
@@ -741,6 +739,8 @@ export {
     _isSameRow,
     _getRowNode,
     _getCellByPosition,
+    _getRowAbove,
+    _getRowBelow,
 } from './entities/positionUtils';
 export { RowPosition } from './interfaces/iRowPosition';
 export { HeaderPosition } from './interfaces/iHeaderPosition';
@@ -949,7 +949,6 @@ export {
     _getShouldDisplayTooltip,
     _isShowTooltipWhenTruncated,
 } from './tooltip/tooltipFeature';
-export { IAggregationStage } from './interfaces/iAggregationStage';
 export { IFooterService } from './interfaces/iFooterService';
 export {
     MenuItemLeafDef,

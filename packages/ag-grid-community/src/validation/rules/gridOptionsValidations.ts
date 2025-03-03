@@ -414,7 +414,7 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => {
                     case 'clientSide': {
                         const { treeDataChildrenField, treeDataParentIdField, getDataPath, getRowId } = options;
                         if (!treeDataChildrenField && !treeDataParentIdField && !getDataPath) {
-                            return "treeData requires either 'treeDataChildrenField' or 'treeDataParentIdField' or or 'getDataPath' in the clientSide row model.";
+                            return "treeData requires either 'treeDataChildrenField' or 'treeDataParentIdField' or 'getDataPath' in the clientSide row model.";
                         }
                         if (treeDataChildrenField) {
                             if (getDataPath) {
