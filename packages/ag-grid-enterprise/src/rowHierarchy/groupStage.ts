@@ -24,26 +24,47 @@ export class GroupStage<TData> extends BeanStub implements NamedBean, IRowNodeSt
     ]);
     public step: ClientSideRowModelStage = 'group';
 
+    private parentIdTreeStrategy: IRowGroupingStrategy<TData> | undefined = undefined;
+    private groupStrategy: IRowGroupingStrategy<TData> | undefined = undefined;
+
+    /** The active strategy */
     private strategy: IRowGroupingStrategy<TData> | undefined = undefined;
 
     public postConstruct(): void {
         this.strategy = this.getNewStrategy();
     }
 
+    public override destroy(): void {
+        const context = this.beans.context;
+        super.destroy();
+        this.parentIdTreeStrategy = context.destroyBean(this.parentIdTreeStrategy);
+        this.groupStrategy = context.destroyBean(this.groupStrategy);
+    }
+
+    private createStrategy(name: 'GroupStrategy' | 'TreeParentIdStrategy'): IRowGroupingStrategy<TData> | undefined {
+        const beans = this.beans;
+        const result = beans.registry.createDynamicBean<IRowGroupingStrategy<TData>>(name, false);
+        if (result) {
+            beans.context.createBean(result);
+        }
+        return result;
+    }
+
     private getNewStrategy(): IRowGroupingStrategy<TData> | undefined {
-        const { gos, beans } = this;
+        const gos = this.gos;
         if (gos.get('treeData')) {
             if (gos.get('treeDataChildrenField')) {
                 return undefined; // managed by node manager
             }
             if (gos.get('treeDataParentIdField')) {
-                return beans.treeParentIdStrategy;
+                return (this.parentIdTreeStrategy ??= this.createStrategy('TreeParentIdStrategy'));
             }
             if (gos.get('getDataPath')) {
                 return undefined; // managed by node manager
             }
         }
-        return beans.groupStrategy;
+
+        return (this.groupStrategy ??= this.createStrategy('GroupStrategy'));
     }
 
     private treeDataManagedByNodeManager(): boolean {

@@ -44,7 +44,7 @@ export const SharedRowGroupingModule: _ModuleWithApi<_RowGroupingGridApi> = {
 export const RowGroupingModule: _ModuleWithoutApi = {
     moduleName: 'RowGrouping',
     version: VERSION,
-    beans: [GroupStrategy],
+    dynamicBeans: { GroupStrategy },
     rowModels: ['clientSide'],
     dependsOn: [SharedRowGroupingModule, AggregationModule, ClientSideRowModelHierarchyModule],
 };

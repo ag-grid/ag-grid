@@ -28,7 +28,8 @@ export const SharedTreeDataModule: _ModuleWithoutApi = {
 export const TreeDataModule: _ModuleWithoutApi = {
     moduleName: 'TreeData',
     version: VERSION,
-    beans: [ClientSidePathTreeNodeManager, ClientSideChildrenTreeNodeManager, TreeParentIdStrategy],
+    beans: [ClientSidePathTreeNodeManager, ClientSideChildrenTreeNodeManager],
+    dynamicBeans: { TreeParentIdStrategy },
     rowModels: ['clientSide'],
     dependsOn: [SharedTreeDataModule, AggregationModule, ClientSideRowModelHierarchyModule],
 };

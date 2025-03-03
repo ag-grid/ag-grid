@@ -1,3 +1,4 @@
+import type { Bean } from '../context/bean';
 import type { GridOptions } from '../entities/gridOptions';
 import type { ITreeNode, RowNode } from '../entities/rowNode';
 import type { ChangedPath } from '../utils/changedPath';
@@ -29,7 +30,7 @@ export interface StageExecuteParams<TData = any> {
     afterColumnsChanged?: boolean;
 }
 
-export interface IRowGroupingStrategy<TData = any> {
+export interface IRowGroupingStrategy<TData = any> extends Bean {
     execute(params: StageExecuteParams<TData>): void;
     deactivate?(): void;
 }

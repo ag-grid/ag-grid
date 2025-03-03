@@ -1,7 +1,6 @@
 import type {
     IRowGroupingStrategy,
     IsGroupOpenByDefaultParams,
-    NamedBean,
     RowNode,
     StageExecuteParams,
     WithoutGridCommon,
@@ -18,9 +17,7 @@ const FLAG_CHILDREN_CHANGED = 0x40000000;
 const FLAG_EXPANDED_INITIALIZED = 0x20000000;
 const MASK_CHILDREN_LENGTH = 0x1fffffff; // This equates to 536,870,911 maximum children per parent (536 million rows)
 
-export class TreeParentIdStrategy<TData = any> extends BeanStub implements NamedBean, IRowGroupingStrategy<TData> {
-    beanName = 'treeParentIdStrategy' as const;
-
+export class TreeParentIdStrategy<TData = any> extends BeanStub implements IRowGroupingStrategy<TData> {
     private parentIdGetter: DataFieldGetter<TData, string | null | undefined> | null = null;
     private oldGroupDisplayColIds: string | null = null;
 
@@ -271,8 +268,8 @@ const updateAllLeafChildren = <TData>(
     for (const child of row.childrenAfterGroup!) {
         for (const leaf of child.allLeafChildren!) {
             if (changed || allLeafChildren[writeIdx] !== leaf) {
-                changed = true;
                 allLeafChildren[writeIdx] = leaf;
+                changed = true;
             }
             ++writeIdx;
         }
