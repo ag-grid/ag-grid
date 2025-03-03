@@ -224,10 +224,11 @@ export class BlockUtils extends BeanStub implements NamedBean {
     }
 
     private setGroupDataIntoRowNode(rowNode: RowNode): void {
+        // set group value for full width rows.
+        rowNode.groupValue = rowNode.key;
+
         const groupDisplayCols = this.showRowGroupCols?.getShowRowGroupCols() ?? [];
-
         const usingTreeData = this.gos.get('treeData');
-
         groupDisplayCols.forEach((col) => {
             if (rowNode.groupData == null) {
                 rowNode.groupData = {};
