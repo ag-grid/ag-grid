@@ -7,6 +7,7 @@ import type {
     LocaleTextFunc,
     MenuItemDef,
     NamedBean,
+    RowNode,
 } from 'ag-grid-community';
 import {
     BeanStub,
@@ -74,6 +75,7 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
             sortSvc,
             chartMenuItemMapper,
             valueColsSvc,
+            pinnedRowModel,
         } = beans;
 
         const getStockMenuItem = (
@@ -115,6 +117,34 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
                               name: localeTextFunc('noPin', 'No Pin'),
                               action: () => pinnedCols.setColsPinned([column], null, source),
                               checked: !!column && !column.isPinned(),
+                          }
+                        : null;
+                case 'pinRowSubMenu':
+                    return pinnedRowModel
+                        ? {
+                              name: localeTextFunc('pinRow', 'Pin Row'),
+                              subMenu: ['pinTop', 'pinBottom'],
+                          }
+                        : null;
+                case 'pinTop':
+                    return pinnedRowModel
+                        ? {
+                              name: localeTextFunc('pinTop', 'Pin to Top'),
+                              action: ({ node }) => node && pinnedRowModel.pinRow(node as RowNode, 'top'),
+                          }
+                        : null;
+                case 'pinBottom':
+                    return pinnedRowModel
+                        ? {
+                              name: localeTextFunc('pinBottom', 'Pin to Bottom'),
+                              action: ({ node }) => node && pinnedRowModel.pinRow(node as RowNode, 'bottom'),
+                          }
+                        : null;
+                case 'unpinRow':
+                    return pinnedRowModel
+                        ? {
+                              name: localeTextFunc('unpinRow', 'Unpin Row'),
+                              action: ({ node }) => node && pinnedRowModel.unpinRow(node as RowNode),
                           }
                         : null;
                 case 'valueAggSubMenu':
@@ -314,7 +344,7 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
                           }
                         : null;
                 case 'separator':
-                    return 'separator';
+                    return key;
                 case 'pivotChart':
                 case 'chartRange':
                     return (chartMenuItemMapper as ChartMenuItemMapper).getChartItems(key);

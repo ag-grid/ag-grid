@@ -94,6 +94,11 @@ export class ContextMenuService extends BeanStub implements NamedBean, IContextM
             if (anyExport) {
                 defaultMenuOptions.push('export');
             }
+
+            const enableRowPinning = gos.get('enableRowPinning');
+            if (enableRowPinning) {
+                defaultMenuOptions.push(node.rowPinned ? 'unpinRow' : 'pinRowSubMenu');
+            }
         }
 
         const defaultItems = defaultMenuOptions.length ? defaultMenuOptions : undefined;
