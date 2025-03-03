@@ -1,0 +1,22 @@
+.example-wrapper {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+#myGrid {
+    flex: 1 1 0px;
+    width: 100%;
+}
+
+.missionSpan {
+    display: flex;
+    justify-content: center;
+    height: 100%;
+    align-items: center;
+}
+
+.missionIcon {
+    width: auto;
+    height: auto;
+}

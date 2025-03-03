@@ -12,6 +12,8 @@ import {
     _getCellByPosition,
     _getFillHandle,
     _getNormalisedMousePosition,
+    _getRowAbove,
+    _getRowBelow,
     _getRowNode,
     _isRowBefore,
     _isSameRow,
@@ -180,7 +182,8 @@ export class AgFillHandle extends AbstractSelectionHandle {
     }
 
     private handleValueChanged(initialRange: CellRange, finalRange: CellRange, e: MouseEvent) {
-        const { rangeSvc, gos, cellNavigation, valueSvc } = this.beans;
+        const { beans } = this;
+        const { rangeSvc, gos, valueSvc } = beans;
         const initialRangeEndRow = rangeSvc!.getRangeEndRow(initialRange);
         const initialRangeStartRow = rangeSvc!.getRangeStartRow(initialRange);
         const finalRangeEndRow = rangeSvc!.getRangeEndRow(finalRange);
@@ -196,7 +199,7 @@ export class AgFillHandle extends AbstractSelectionHandle {
                     : initialRange.columns.filter((col) => finalRange.columns.indexOf(col) < 0)
             ) as AgColumn[];
 
-            const startRow = isVertical ? cellNavigation!.getRowBelow(finalRangeEndRow) : finalRangeStartRow;
+            const startRow = isVertical ? _getRowBelow(beans, finalRangeEndRow) : finalRangeStartRow;
 
             if (startRow) {
                 this.clearCellsInRange(startRow, initialRangeEndRow, columns);
@@ -230,7 +233,7 @@ export class AgFillHandle extends AbstractSelectionHandle {
             }
 
             while (!finished && currentRow) {
-                const rowNode = _getRowNode(this.beans, currentRow);
+                const rowNode = _getRowNode(beans, currentRow);
                 if (!rowNode) {
                     break;
                 }
@@ -257,9 +260,7 @@ export class AgFillHandle extends AbstractSelectionHandle {
 
                 finished = _isSameRow(currentRow, this.isUp ? finalRangeStartRow : finalRangeEndRow);
 
-                currentRow = this.isUp
-                    ? cellNavigation!.getRowAbove(currentRow)
-                    : cellNavigation!.getRowBelow(currentRow);
+                currentRow = this.isUp ? _getRowAbove(this.beans, currentRow) : _getRowBelow(beans, currentRow);
             }
         };
 
@@ -504,7 +505,7 @@ export class AgFillHandle extends AbstractSelectionHandle {
 
     private extendVertical(initialPosition: CellPosition, endPosition: CellPosition, isMovingUp?: boolean) {
         const beans = this.beans;
-        const { rangeSvc, cellNavigation } = beans;
+        const { rangeSvc } = beans;
 
         let row: RowPosition | null = initialPosition;
 
@@ -548,14 +549,13 @@ export class AgFillHandle extends AbstractSelectionHandle {
             }
         } while (
             // tslint:disable-next-line
-            (row = isMovingUp ? cellNavigation!.getRowAbove(row) : cellNavigation!.getRowBelow(row))
+            (row = isMovingUp ? _getRowAbove(this.beans, row) : _getRowBelow(beans, row))
         );
     }
 
     private reduceVertical(initialPosition: CellPosition, endPosition: CellPosition) {
         let row: RowPosition | null = initialPosition;
         const beans = this.beans;
-        const cellNavigation = beans.cellNavigation!;
 
         do {
             const cellRange = this.cellRange;
@@ -577,12 +577,12 @@ export class AgFillHandle extends AbstractSelectionHandle {
                 break;
             }
             // tslint:disable-next-line
-        } while ((row = cellNavigation.getRowAbove(row)));
+        } while ((row = _getRowAbove(beans, row)));
     }
 
     private extendHorizontal(initialPosition: CellPosition, endPosition: CellPosition, isMovingLeft?: boolean) {
         const beans = this.beans;
-        const { visibleCols, cellNavigation } = beans;
+        const { visibleCols } = beans;
         const allCols = visibleCols.allCols;
         const startCol = allCols.indexOf((isMovingLeft ? endPosition.column : initialPosition.column) as AgColumn);
         const endCol = allCols.indexOf((isMovingLeft ? this.cellRange.columns[0] : endPosition.column) as AgColumn);
@@ -617,14 +617,14 @@ export class AgFillHandle extends AbstractSelectionHandle {
                     }
                 }
 
-                row = cellNavigation!.getRowBelow(row)!;
+                row = _getRowBelow(beans, row)!;
             } while (!isLastRow);
         });
     }
 
     private reduceHorizontal(initialPosition: CellPosition, endPosition: CellPosition) {
         const beans = this.beans;
-        const { visibleCols, cellNavigation } = beans;
+        const { visibleCols } = beans;
         const allCols = visibleCols.allCols;
         const startCol = allCols.indexOf(endPosition.column as AgColumn);
         const endCol = allCols.indexOf(initialPosition.column as AgColumn);
@@ -649,7 +649,7 @@ export class AgFillHandle extends AbstractSelectionHandle {
                     cell.comp.addOrRemoveCssClass('ag-selection-fill-right', column === colsToMark[0]);
                 }
 
-                row = cellNavigation!.getRowBelow(row)!;
+                row = _getRowBelow(beans, row)!;
             } while (!isLastRow);
         });
     }

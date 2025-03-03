@@ -1,7 +1,7 @@
 ---
 import { Icon } from '@ag-website-shared/components/icon/Icon';
 import { HeaderNav } from './HeaderNav';
-import { getEntry } from 'astro:content';
+import { getEntry, type CollectionEntry } from 'astro:content';
 import { FRAMEWORKS } from '@constants';
 import styles from './SiteHeader.module.scss';
 import { SiteLogo } from '@components/SiteLogo';
@@ -19,7 +19,8 @@ export interface Props {
 const { showSearchBar, showDocsNav, apiPaths = [] } = Astro.props;
 
 const { pathname } = Astro.url;
-const { data: menuData } = await getEntry('site-header', 'siteHeader');
+const { data: menuData } = (await getEntry('siteHeader', 'header')) as CollectionEntry<'siteHeader'>;
+
 const topNavItems = menuData.header?.items || [];
 const frameworkPaths = FRAMEWORKS.map((framework) => ({
     title: 'Docs',

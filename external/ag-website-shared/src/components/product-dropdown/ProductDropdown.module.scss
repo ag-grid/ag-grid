@@ -35,8 +35,8 @@
     border: none;
     border-radius: var(--radius-3xl);
 
-    #{$selector-darkmode}:not(:has([data-is-homepage])) &,
-    #{$selector-darkmode}:has([data-is-homepage] :global(.header-scrolled)) & {
+    #{$selector-darkmode}:has([data-is-homepage='false']) &,
+    #{$selector-darkmode}:has([data-is-homepage='true'] :global(.header-scrolled)) & {
         background-color: var(--color-bg-primary);
         border-radius: var(--radius-3xl);
         border: none;
@@ -111,8 +111,8 @@
         opacity 0.15s ease,
         transform 0.15s ease;
 
-    #{$selector-darkmode}:not(:has([data-is-homepage])) &,
-    #{$selector-darkmode}:has([data-is-homepage] :global(.header-scrolled)) & {
+    #{$selector-darkmode}:has([data-is-homepage='false']) &,
+    #{$selector-darkmode}:has([data-is-homepage='true'] :global(.header-scrolled)) & {
         background: color-mix(in srgb, var(--color-bg-primary), var(--color-fg-white) 5%);
     }
 
@@ -132,8 +132,8 @@
 .productTitle {
     font-weight: var(--text-semibold);
 
-    #{$selector-darkmode}:not(:has([data-is-homepage])) &,
-    #{$selector-darkmode}:has([data-is-homepage] :global(.header-scrolled)) & {
+    #{$selector-darkmode}:has([data-is-homepage='false']) &,
+    #{$selector-darkmode}:has([data-is-homepage='true'] :global(.header-scrolled)) & {
         color: var(--color-fg-primary);
     }
 }
@@ -168,8 +168,8 @@
     padding: 12px;
     border-radius: var(--radius-md);
 
-    #{$selector-darkmode}:not(:has([data-is-homepage])) &,
-    #{$selector-darkmode}:has([data-is-homepage] :global(.header-scrolled)) & {
+    #{$selector-darkmode}:has([data-is-homepage='false']) &,
+    #{$selector-darkmode}:has([data-is-homepage='true'] :global(.header-scrolled)) & {
         background: color-mix(in srgb, var(--color-fg-white), var(--color-bg-primary) 85%);
         box-shadow: var(--shadow-lg);
     }
@@ -180,15 +180,15 @@
     cursor: pointer;
     transition: 0.3s all ease-in-out;
 
-    #{$selector-darkmode}:not(:has([data-is-homepage])) &,
-    #{$selector-darkmode}:has([data-is-homepage] :global(.header-scrolled)) & {
+    #{$selector-darkmode}:has([data-is-homepage='false']) &,
+    #{$selector-darkmode}:has([data-is-homepage='true'] :global(.header-scrolled)) & {
         background: color-mix(in srgb, var(--color-fg-white), var(--color-bg-primary) 85%);
     }
 }
 
 .iconLight {
-    #{$selector-darkmode}:not(:has([data-is-homepage])) &,
-    #{$selector-darkmode}:has([data-is-homepage] :global(.header-scrolled)) & {
+    #{$selector-darkmode}:has([data-is-homepage='false']) &,
+    #{$selector-darkmode}:has([data-is-homepage='true'] :global(.header-scrolled)) & {
         display: none;
     }
 }
@@ -196,8 +196,8 @@
 .iconDark {
     display: none;
 
-    #{$selector-darkmode}:not(:has([data-is-homepage])) &,
-    #{$selector-darkmode}:has([data-is-homepage] :global(.header-scrolled)) & {
+    #{$selector-darkmode}:has([data-is-homepage='false']) &,
+    #{$selector-darkmode}:has([data-is-homepage='true'] :global(.header-scrolled)) & {
         display: block;
     }
 }

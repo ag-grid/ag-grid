@@ -741,6 +741,8 @@ export {
     _isSameRow,
     _getRowNode,
     _getCellByPosition,
+    _getRowAbove,
+    _getRowBelow,
 } from './entities/positionUtils';
 export { RowPosition } from './interfaces/iRowPosition';
 export { HeaderPosition } from './interfaces/iHeaderPosition';
@@ -949,7 +951,6 @@ export {
     _getShouldDisplayTooltip,
     _isShowTooltipWhenTruncated,
 } from './tooltip/tooltipFeature';
-export { IAggregationStage } from './interfaces/iAggregationStage';
 export { IFooterService } from './interfaces/iFooterService';
 export {
     MenuItemLeafDef,
