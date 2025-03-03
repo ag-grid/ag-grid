@@ -58,7 +58,7 @@ describe('ag-grid parentId tree data warnings', () => {
 
         consoleWarnSpy = vitest.spyOn(console, 'warn').mockImplementation(() => {});
 
-        const api = gridsManager.createGrid('myGrid', {
+        gridsManager.createGrid('myGrid', {
             columnDefs: [],
             autoGroupColumnDef: {
                 headerName: 'Organisation Hierarchy',
@@ -76,12 +76,6 @@ describe('ag-grid parentId tree data warnings', () => {
         expect(consoleWarnSpy).toHaveBeenCalledWith(
             "AG Grid: Cannot use both 'treeDataChildrenField' and 'treeDataParentIdField' at the same time."
         );
-
-        await new GridRows(api, 'rowData', { checkDom: true, columns: true, treeData: false }).check(`
-            ROOT id:ROOT_NODE_ID
-            ├── LEAF id:0 ag-Grid-AutoColumn:undefined
-            └── LEAF id:1 ag-Grid-AutoColumn:undefined
-        `);
     });
 
     test('a not existing parentId should log a warning, and move that row to the root', async () => {

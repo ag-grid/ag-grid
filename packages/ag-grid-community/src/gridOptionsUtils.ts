@@ -722,17 +722,17 @@ export function _addGridCommonParams<T extends AgGridCommon<TData, TContext>, TD
     return gos.addGridCommonParams(params);
 }
 
-export type TreeDataApproach = 'path' | 'children' | 'parentId' | null;
+export type GroupingApproach = 'group' | 'treeSelfRef' | 'treeNested' | 'treePath';
 
-export function _getTreeDataApproach(gos: GridOptionsService): TreeDataApproach {
+export function _getGroupingApproach(gos: GridOptionsService): GroupingApproach {
     if (gos.get('treeData')) {
         if (gos.get('treeDataParentIdField')) {
-            return 'parentId';
+            return 'treeSelfRef';
         }
         if (gos.get('treeDataChildrenField')) {
-            return 'children';
+            return 'treeNested';
         }
-        return 'path';
+        return 'treePath';
     }
-    return null;
+    return 'group';
 }
