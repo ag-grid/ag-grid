@@ -1,13 +1,14 @@
 import type {
     ClientSideRowModelStage,
     GridOptions,
+    GroupingApproach,
     IRowGroupingStrategy,
     IRowNodeStage,
     NamedBean,
     RowGroupingRowNode,
     StageExecuteParams,
 } from 'ag-grid-community';
-import { BeanStub } from 'ag-grid-community';
+import { BeanStub, _getGroupingApproach } from 'ag-grid-community';
 
 export class GroupStage<TData> extends BeanStub implements NamedBean, IRowNodeStage {
     beanName = 'groupStage' as const;
@@ -24,71 +25,49 @@ export class GroupStage<TData> extends BeanStub implements NamedBean, IRowNodeSt
     ]);
     public step: ClientSideRowModelStage = 'group';
 
-    private parentIdTreeStrategy: IRowGroupingStrategy<TData> | undefined = undefined;
-    private groupStrategy: IRowGroupingStrategy<TData> | undefined = undefined;
-
-    /** The active strategy */
+    private approach: GroupingApproach | null = null;
     private strategy: IRowGroupingStrategy<TData> | undefined = undefined;
-
-    public postConstruct(): void {
-        this.strategy = this.getNewStrategy();
-    }
 
     public override destroy(): void {
         super.destroy();
-        this.parentIdTreeStrategy = undefined;
-        this.groupStrategy = undefined;
+        this.strategy = undefined;
+        this.approach = null;
     }
 
-    private createStrategy(name: 'GroupStrategy' | 'TreeParentIdStrategy'): IRowGroupingStrategy<TData> | undefined {
-        return this.createOptionalManagedBean(
-            this.beans.registry.createDynamicBean<IRowGroupingStrategy<TData>>(name, false)
-        );
-    }
-
-    private getNewStrategy(): IRowGroupingStrategy<TData> | undefined {
-        const gos = this.gos;
-        if (gos.get('treeData')) {
-            if (gos.get('treeDataChildrenField')) {
-                return undefined; // managed by node manager
-            }
-            if (gos.get('treeDataParentIdField')) {
-                return (this.parentIdTreeStrategy ??= this.createStrategy('TreeParentIdStrategy'));
-            }
-            if (gos.get('getDataPath')) {
-                return undefined; // managed by node manager
-            }
+    private createStrategy(): IRowGroupingStrategy<TData> | undefined {
+        const { beans, approach } = this;
+        let beanName: 'TreeParentIdStrategy' | 'GroupStrategy' | undefined;
+        switch (approach) {
+            case 'treeSelfRef':
+                beanName = 'TreeParentIdStrategy';
+                break;
+            case 'group':
+                beanName = 'GroupStrategy';
+                break;
         }
-
-        return (this.groupStrategy ??= this.createStrategy('GroupStrategy'));
-    }
-
-    private treeDataManagedByNodeManager(): boolean {
-        // TODO: this method is temporary and will be removed once we move most of the computation
-        // for treeData in node managers as strategies in the next refactoring PRs.
-        // resetGrouping should replace the reset logic present in the tree nodeManagers
-        const gos = this.gos;
-        return gos.get('treeData') && (!!gos.get('getDataPath') || !!gos.get('treeDataChildrenField'));
+        if (beanName) {
+            const bean = beans.registry.createDynamicBean<IRowGroupingStrategy<TData>>(beanName, false);
+            this.createOptionalManagedBean(bean);
+            return bean;
+        }
+        return undefined;
     }
 
     public execute(params: StageExecuteParams<TData>): boolean {
-        const { strategy: oldStrategy } = this;
-
-        const newStrategy = this.getNewStrategy();
-
-        const strategyChanged = oldStrategy !== newStrategy;
-        if (strategyChanged) {
-            this.strategy = newStrategy;
-            if (oldStrategy) {
-                oldStrategy.deactivate?.();
-                if (!this.treeDataManagedByNodeManager()) {
-                    resetGrouping(params.rowNode);
-                }
+        let strategy = this.strategy;
+        const approach = _getGroupingApproach(this.gos);
+        if (this.approach !== approach) {
+            this.approach = approach;
+            this.destroyBean(strategy);
+            if (strategy && this.approach !== 'treeNested' && this.approach !== 'treePath') {
+                resetGrouping(params.rowNode);
             }
+            strategy = this.createStrategy();
+            this.strategy = strategy;
         }
 
-        newStrategy?.execute(params);
-        return !!newStrategy;
+        strategy?.execute(params);
+        return !!strategy;
     }
 }
 

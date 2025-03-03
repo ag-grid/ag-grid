@@ -29,7 +29,6 @@ export interface StageExecuteParams<TData = any> {
 
 export interface IRowGroupingStrategy<TData = any> extends Bean {
     execute(params: StageExecuteParams<TData>): void;
-    deactivate?(): void;
 }
 
 export interface IRowNodeStage<TResult = any, TData = any> {

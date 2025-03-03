@@ -8,8 +8,8 @@ import { ROW_ID_PREFIX_ROW_GROUP, RowNode } from '../entities/rowNode';
 import type { CssVariablesChanged, FilterChangedEvent } from '../events';
 import {
     _getGroupSelectsDescendants,
+    _getGroupingApproach,
     _getRowHeightForNode,
-    _getTreeDataApproach,
     _isAnimateRows,
     _isDomLayout,
 } from '../gridOptionsUtils';
@@ -142,10 +142,10 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
 
     private getNewNodeManager(): IClientSideNodeManager<any> {
         const { gos, beans } = this;
-        switch (_getTreeDataApproach(gos)) {
-            case 'children':
+        switch (_getGroupingApproach(gos)) {
+            case 'treeNested':
                 return beans.csrmChildrenTreeNodeSvc ?? beans.csrmNodeSvc!;
-            case 'path':
+            case 'treePath':
                 return beans.csrmPathTreeNodeSvc ?? beans.csrmNodeSvc!;
             default:
                 return beans.csrmNodeSvc!;

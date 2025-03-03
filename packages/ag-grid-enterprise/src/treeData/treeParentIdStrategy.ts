@@ -22,11 +22,6 @@ export class TreeParentIdStrategy<TData = any> extends BeanStub implements IRowG
     private parentIdGetter: DataFieldGetter<TData, string | null | undefined> | null = null;
     private oldGroupDisplayColIds: string | null = null;
 
-    public deactivate(): void {
-        this.parentIdGetter = null;
-        this.oldGroupDisplayColIds = null;
-    }
-
     public override destroy(): void {
         super.destroy();
         this.parentIdGetter = null;
