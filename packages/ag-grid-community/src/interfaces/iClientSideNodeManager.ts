@@ -14,17 +14,14 @@ export interface ClientSideNodeManagerUpdateRowDataResult<TData = any> {
     rowsInserted: boolean;
 }
 
-export interface IClientSideNodeLookup<TData = any> {
-    /** Lookup a node by id in ~O(1) */
-    getRowNode(id: string): RowNode<TData> | undefined;
-}
-
-export interface IClientSideNodeManager<TData = any> extends IClientSideNodeLookup<TData> {
+export interface IClientSideNodeManager<TData = any> {
     readonly treeData: boolean;
 
     activate(rootNode: RowNode<TData> | null): void;
 
     deactivate(): void;
+
+    getRowNode(id: string): RowNode<TData> | undefined;
 
     extractRowData(): (TData | undefined)[] | null | undefined;
 

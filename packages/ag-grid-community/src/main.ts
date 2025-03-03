@@ -459,11 +459,7 @@ export {
     RefreshModelParams,
     IChangedRowNodes,
 } from './interfaces/iClientSideRowModel';
-export {
-    IClientSideNodeManager,
-    IClientSideNodeLookup,
-    ClientSideNodeManagerUpdateRowDataResult,
-} from './interfaces/iClientSideNodeManager';
+export { IClientSideNodeManager, ClientSideNodeManagerUpdateRowDataResult } from './interfaces/iClientSideNodeManager';
 export { AbstractClientSideNodeManager } from './clientSideRowModel/abstractClientSideNodeManager';
 export type { RowAutoHeightService } from './rendering/row/rowAutoHeightService';
 
@@ -681,7 +677,9 @@ export {
     _isUsingNewRowSelectionAPI,
     _isUsingNewCellSelectionAPI,
     _isGroupRowsSticky,
+    _getGroupingApproach,
 } from './gridOptionsUtils';
+export type { GroupingApproach } from './gridOptionsUtils';
 export { LocalEventService } from './localEventService';
 export type { EventService } from './eventService';
 export type { RowNodeSorter } from './sort/rowNodeSorter';

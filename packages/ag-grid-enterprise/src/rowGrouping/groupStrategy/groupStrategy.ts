@@ -11,7 +11,6 @@ import type {
     InitialGroupOrderComparatorParams,
     IsGroupOpenByDefaultParams,
     KeyCreatorParams,
-    NamedBean,
     StageExecuteParams,
     ValueService,
     WithoutGridCommon,
@@ -54,9 +53,7 @@ interface GroupingDetails {
     keyCreators: (((params: KeyCreatorParams) => string) | undefined)[];
 }
 
-export class GroupStrategy extends BeanStub implements NamedBean, IRowGroupingStrategy {
-    beanName = 'groupStrategy' as const;
-
+export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
     private colModel: ColumnModel;
     private rowGroupColsSvc?: IColsService;
     private valueSvc: ValueService;
@@ -598,6 +595,12 @@ export class GroupStrategy extends BeanStub implements NamedBean, IRowGroupingSt
     }
 
     private setGroupData(groupNode: RowNode, groupInfo: GroupInfo): void {
+        const rowGroupCol = groupInfo.rowGroupColumn;
+        if (rowGroupCol && groupInfo.leafNode) {
+            // for full width rows; preserve the value type
+            groupNode.groupValue = this.valueSvc.getValue(rowGroupCol, groupInfo.leafNode);
+        }
+
         groupNode.groupData = {};
         const groupDisplayCols = this.showRowGroupCols.getShowRowGroupCols();
         groupDisplayCols.forEach((col) => {

@@ -2,7 +2,6 @@ import type { Bean } from '../context/bean';
 import type { GridOptions } from '../entities/gridOptions';
 import type { ITreeNode, RowNode } from '../entities/rowNode';
 import type { ChangedPath } from '../utils/changedPath';
-import type { IClientSideNodeLookup } from './iClientSideNodeManager';
 import type { ClientSideRowModelStage, IChangedRowNodes } from './iClientSideRowModel';
 
 export interface RowGroupingRowNode<TData = any> extends RowNode<TData> {
@@ -18,8 +17,6 @@ export interface RowGroupingRowNode<TData = any> extends RowNode<TData> {
 export interface StageExecuteParams<TData = any> {
     rowNode: RowNode<TData>;
 
-    nodeLookup?: IClientSideNodeLookup<TData>;
-
     // used in sort stage, as sort stage looks at all transactions in one go
     changedRowNodes?: IChangedRowNodes<TData>;
 
@@ -32,7 +29,6 @@ export interface StageExecuteParams<TData = any> {
 
 export interface IRowGroupingStrategy<TData = any> extends Bean {
     execute(params: StageExecuteParams<TData>): void;
-    deactivate?(): void;
 }
 
 export interface IRowNodeStage<TResult = any, TData = any> {

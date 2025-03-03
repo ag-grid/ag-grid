@@ -1141,8 +1141,6 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
             fullWidth: true,
             data: rowNode.data,
             node: rowNode,
-            // if this gets changed for groupRows to support the actual value (and formatted value),
-            // need to update the corresponding logic in `FindService.refresh()`
             value: rowNode.key,
             valueFormatted: rowNode.key,
             // these need to be taken out, as part of 'afterAttached' now
@@ -1163,6 +1161,10 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
             case 'FullWidthDetail':
                 return _getFullWidthDetailCellRendererDetails(compFactory, params)!;
             case 'FullWidthGroup':
+                params.value = rowNode.groupValue;
+                params.valueFormatted = rowNode.rowGroupColumn
+                    ? this.beans.valueSvc.formatValue(rowNode.rowGroupColumn, rowNode, params.value)
+                    : params.value;
                 return _getFullWidthGroupCellRendererDetails(compFactory, params)!;
             case 'FullWidthLoading':
                 return _getFullWidthLoadingCellRendererDetails(compFactory, params)!;

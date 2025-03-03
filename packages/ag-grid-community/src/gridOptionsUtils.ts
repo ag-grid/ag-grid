@@ -721,3 +721,18 @@ export function _addGridCommonParams<T extends AgGridCommon<TData, TContext>, TD
 ): T {
     return gos.addGridCommonParams(params);
 }
+
+export type GroupingApproach = 'group' | 'treeSelfRef' | 'treeNested' | 'treePath';
+
+export function _getGroupingApproach(gos: GridOptionsService): GroupingApproach {
+    if (gos.get('treeData')) {
+        if (gos.get('treeDataParentIdField')) {
+            return 'treeSelfRef';
+        }
+        if (gos.get('treeDataChildrenField')) {
+            return 'treeNested';
+        }
+        return 'treePath';
+    }
+    return 'group';
+}

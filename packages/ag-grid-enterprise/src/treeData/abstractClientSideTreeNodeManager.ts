@@ -450,6 +450,9 @@ export abstract class AbstractClientSideTreeNodeManager<TData> extends AbstractC
     }
 
     private setGroupData(row: RowNode, key: string): void {
+        // set group value for full width rows.
+        row.groupValue = key;
+
         const groupData: Record<string, string> = {};
         row.groupData = groupData;
         const groupDisplayCols = this.beans.showRowGroupCols?.getShowRowGroupCols();
