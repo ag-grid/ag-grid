@@ -721,3 +721,18 @@ export function _addGridCommonParams<T extends AgGridCommon<TData, TContext>, TD
 ): T {
     return gos.addGridCommonParams(params);
 }
+
+export type TreeDataApproach = 'path' | 'children' | 'parentId' | null;
+
+export function _getTreeDataApproach(gos: GridOptionsService): TreeDataApproach {
+    if (gos.get('treeData')) {
+        if (gos.get('treeDataParentIdField')) {
+            return 'parentId';
+        }
+        if (gos.get('treeDataChildrenField')) {
+            return 'children';
+        }
+        return 'path';
+    }
+    return null;
+}

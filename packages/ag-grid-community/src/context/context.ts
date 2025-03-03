@@ -429,7 +429,6 @@ export type BeanName =
     | 'gridOptionsWrapper'
     | 'gridSerializer'
     | 'groupStage'
-    | 'treeParentIdStrategy'
     | 'headerNavigation'
     | 'horizontalResizeSvc'
     | 'lazyBlockLoadingSvc'

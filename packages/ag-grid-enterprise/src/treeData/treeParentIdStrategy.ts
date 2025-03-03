@@ -293,7 +293,7 @@ const getExpandedInitialValue = (
 };
 
 const preprocess = <TData>(
-    clientSideRowModel: IRowModel,
+    rowModel: IRowModel,
     { rowNode: rootNode, changedRowNodes }: StageExecuteParams<TData>,
     parentIdGetter: DataFieldGetter<TData, string | null | undefined>,
     fullReload: boolean
@@ -312,7 +312,7 @@ const preprocess = <TData>(
             if (parentId === null || parentId === undefined) {
                 newParent = rootNode;
             } else {
-                newParent = clientSideRowModel.getRowNode(parentId);
+                newParent = rowModel.getRowNode(parentId);
                 if (!newParent) {
                     _warn(271, { id: row.id!, parentId });
                     newParent = rootNode;

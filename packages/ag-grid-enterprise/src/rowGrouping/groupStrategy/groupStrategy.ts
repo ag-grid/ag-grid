@@ -11,7 +11,6 @@ import type {
     InitialGroupOrderComparatorParams,
     IsGroupOpenByDefaultParams,
     KeyCreatorParams,
-    NamedBean,
     StageExecuteParams,
     ValueService,
     WithoutGridCommon,

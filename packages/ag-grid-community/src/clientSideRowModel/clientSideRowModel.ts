@@ -6,7 +6,13 @@ import type { GridOptions } from '../entities/gridOptions';
 import type { RowHighlightPosition } from '../entities/rowNode';
 import { ROW_ID_PREFIX_ROW_GROUP, RowNode } from '../entities/rowNode';
 import type { CssVariablesChanged, FilterChangedEvent } from '../events';
-import { _getGroupSelectsDescendants, _getRowHeightForNode, _isAnimateRows, _isDomLayout } from '../gridOptionsUtils';
+import {
+    _getGroupSelectsDescendants,
+    _getRowHeightForNode,
+    _getTreeDataApproach,
+    _isAnimateRows,
+    _isDomLayout,
+} from '../gridOptionsUtils';
 import type { IClientSideNodeManager } from '../interfaces/iClientSideNodeManager';
 import type {
     ClientSideRowModelStage,
@@ -136,15 +142,14 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
 
     private getNewNodeManager(): IClientSideNodeManager<any> {
         const { gos, beans } = this;
-        let nodeManager: IClientSideNodeManager<any> | undefined;
-        if (gos.get('treeData') && !gos.get('treeDataParentIdField')) {
-            if (gos.get('treeDataChildrenField')) {
-                nodeManager = beans.csrmChildrenTreeNodeSvc;
-            } else {
-                nodeManager = beans.csrmPathTreeNodeSvc;
-            }
+        switch (_getTreeDataApproach(gos)) {
+            case 'children':
+                return beans.csrmChildrenTreeNodeSvc ?? beans.csrmNodeSvc!;
+            case 'path':
+                return beans.csrmPathTreeNodeSvc ?? beans.csrmNodeSvc!;
+            default:
+                return beans.csrmNodeSvc!;
         }
-        return nodeManager ?? beans.csrmNodeSvc!;
     }
 
     private addPropertyListeners() {
