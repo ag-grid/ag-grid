@@ -271,8 +271,8 @@ const updateAllLeafChildren = <TData>(
     for (const child of row.childrenAfterGroup!) {
         for (const leaf of child.allLeafChildren!) {
             if (changed || allLeafChildren[writeIdx] !== leaf) {
-                allLeafChildren[writeIdx] = leaf;
                 changed = true;
+                allLeafChildren[writeIdx] = leaf;
             }
             ++writeIdx;
         }
@@ -306,7 +306,6 @@ const preprocess = <TData>(
     const rootAllLeafChildren = rootNode.allLeafChildren!;
     for (let i = 0, len = rootAllLeafChildren.length; i < len; ++i) {
         const row = rootAllLeafChildren[i];
-
         const updated = updates?.has(row) || adds?.has(row);
         const oldParent: TreeRow<TData> | null = row.parent;
         let newParent: TreeRow<TData> | null | undefined;
