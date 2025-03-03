@@ -526,21 +526,8 @@ export class GridBodyScrollFeature extends BeanStub {
             return;
         }
 
-        const isPaging = this.gos.get('pagination');
-        const paginationPanelEnabled = isPaging && !this.gos.get('suppressPaginationPanel');
-
-        const {
-            frameworkOverrides,
-            pagination,
-            pageBounds,
-            rowContainerHeight: heightScaler,
-            rowRenderer,
-        } = this.beans;
+        const { frameworkOverrides, pageBounds, rowContainerHeight: heightScaler, rowRenderer } = this.beans;
         frameworkOverrides.wrapIncoming(() => {
-            if (!paginationPanelEnabled) {
-                pagination?.goToPageWithIndex(index);
-            }
-
             const gridBodyCtrl = this.ctrlsSvc.getGridBodyCtrl();
 
             const rowNode = rowModel.getRow(index);

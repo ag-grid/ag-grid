@@ -37,7 +37,7 @@ api.getColumnFilterInstance('country').then(countryFilterComponent => {
 
 The `ISetFilter` interface defines the public API for the Set Filter.
 
-{% interfaceDocumentation interfaceName="ISetFilter" overrideSrc="filter-set-api/iSetFilter.json" exclude=["getModelFromUi", "applyModel", "doesFilterPass", "onNewRowsLoaded", "onAnyFilterChanged", "getModelAsString"] /%}
+{% interfaceDocumentation interfaceName="ISetFilter" overrideSrc="filter-set-api/i-set-filter.json" exclude=["getModelFromUi", "applyModel", "doesFilterPass", "onNewRowsLoaded", "onAnyFilterChanged", "getModelAsString"] /%}
 
 It is important to note that when updating the Set Filter through the API, it is up to the developer to call `filterInstance.applyModel()` to apply the changes that have been made to the model and then `api.onFilterChanged()` at the end of the interaction with the filter.
 

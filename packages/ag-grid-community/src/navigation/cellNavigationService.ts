@@ -240,8 +240,6 @@ export class CellNavigationService extends BeanStub implements NamedBean {
                 return null;
             }
 
-            // If we are tabbing and there is a paging panel present, tabbing should go
-            // to the paging panel instead of loading the next page.
             if (!rowBelow.rowPinned && !(pagination?.isRowInPage(rowBelow.rowIndex!) ?? true)) {
                 return null;
             }

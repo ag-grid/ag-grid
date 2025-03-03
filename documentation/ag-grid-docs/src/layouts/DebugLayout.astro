@@ -6,7 +6,7 @@ const { title } = Astro.props;
 ---
 
 <Layout title={title}>
-    <main class="layout-page-max-width container">
+    <main id="debug-main" class="layout-page-max-width container">
         {!ENABLE_GENERATE_DEBUG_PAGES && <p>Not generated.</p>}
         {ENABLE_GENERATE_DEBUG_PAGES && <slot />}
     </main>
@@ -19,5 +19,12 @@ const { title } = Astro.props;
         display: block;
         margin-top: $spacing-size-12;
         margin-bottom: calc($spacing-size-12 * 4);
+    }
+
+    #debug-main {
+        :global(th),
+        :global(td) {
+            padding: $spacing-size-2;
+        }
     }
 </style>

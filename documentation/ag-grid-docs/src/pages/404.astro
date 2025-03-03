@@ -1,11 +1,11 @@
 ---
 import Layout from '@layouts/Layout.astro';
-import { getEntry } from 'astro:content';
+import { getEntry, type CollectionEntry } from 'astro:content';
 import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
 import { DocsNavFromLocalStorage } from '@ag-website-shared/components/docs-navigation/DocsNavFromLocalStorage';
 import styles from '@ag-website-shared/components/page-styles/docs.module.scss';
 
-const { data: docsNavData } = await getEntry('docs-nav', 'docsNav');
+const { data: docsNavData } = (await getEntry('docsNav', 'nav')) as CollectionEntry<'docsNav'>;
 ---
 
 <Layout title="AG Grid: Page Not Found" showDocsNav={true} showSearchBar={true}>

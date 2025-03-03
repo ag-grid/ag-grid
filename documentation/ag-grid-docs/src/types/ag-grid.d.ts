@@ -7,13 +7,6 @@ export type InternalFramework = 'vanilla' | 'typescript' | 'reactFunctional' | '
 
 export type Library = 'charts' | 'grid';
 
-/**
- * Menu types
- *
- * Replicates Astro content validation in `src/content/config.ts`
- */
-export type MenuData = CollectionEntry<'menu'>['data'];
-
 export interface MenuSection {
     title?: string;
     excludeFromFeatures?: boolean;
@@ -45,7 +38,7 @@ export interface FooterItem {
     }[];
 }
 
-export type ModuleMappings = CollectionEntry<'module-mappings'>['data'];
+export type ModuleMappings = CollectionEntry<'moduleMappings'>;
 
 export interface VersionData {
     version: string;

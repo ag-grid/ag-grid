@@ -16,6 +16,7 @@ import type {
 } from 'ag-grid-community';
 import {
     BeanStub,
+    _addGridCommonParams,
     _debounce,
     _escapeString,
     _isClientSideRowModel,
@@ -35,6 +36,28 @@ import {
 
 function defaultCaseFormat(value?: string | null): string | undefined {
     return value?.toLocaleLowerCase();
+}
+
+function getMatchesForValue(
+    findSearchValue: string,
+    caseFormat: (value?: string | null) => string | undefined,
+    valueToFind: string | null
+): number {
+    const finalValue = caseFormat(_escapeString(valueToFind, true));
+    let numMatches = 0;
+    if (finalValue?.length) {
+        // there can be multiple matches per cell, so find them all
+        let index = -1;
+        while (true) {
+            index = finalValue.indexOf(findSearchValue, index + 1);
+            if (index != -1) {
+                numMatches++;
+            } else {
+                break;
+            }
+        }
+    }
+    return numMatches;
 }
 
 /**
@@ -237,21 +260,47 @@ export class FindService extends BeanStub implements NamedBean, IFindService {
         if (!_isClientSideRowModel(gos)) {
             return;
         }
+        // we check this each time as it's reactive
+        const isSearchDetail = () => gos.get('findOptions')?.searchDetail;
+
+        const compareMatchesAndRefresh = (newNumMatches: number) => {
+            const nodeMatch = this.centerMatches.get(node)?.[0];
+            const oldNumMatches = nodeMatch?.[1] ?? 0;
+            if (newNumMatches !== oldNumMatches) {
+                this.refreshDebounced();
+            }
+        };
+
         // don't need to remove the listener as this will happen automatically when the detail grid is destroyed
         api.addEventListener('findChanged', (event) => {
-            if (api.isDestroyed() || !this.isAlive()) return;
-            // we check this here as it is reactive
-            if (gos.get('findOptions')?.searchDetail) {
-                const newNumMatches = event.totalMatches;
-                const nodeMatch = this.centerMatches.get(node)?.[0];
-                const oldNumMatches = nodeMatch?.[1] ?? 0;
-                if (newNumMatches !== oldNumMatches) {
-                    this.refreshDebounced();
-                }
+            if (api.isDestroyed() || !this.isAlive() || !this.active || !isSearchDetail()) {
+                return;
             }
+            compareMatchesAndRefresh(event.totalMatches);
         });
 
-        if (gos.get('findOptions')?.searchDetail) {
+        api.addEventListener('gridPreDestroyed', () => {
+            if (!this.isAlive() || !this.active || !isSearchDetail()) {
+                return;
+            }
+            const masterNode = node.parent;
+            const findSearchValue = this.findSearchValue;
+            if (!masterNode || !findSearchValue) {
+                return;
+            }
+
+            const numMatches =
+                (gos.get('detailCellRendererParams') as FindDetailCellRendererParams)?.getFindMatches?.({
+                    node: masterNode,
+                    data: masterNode.data,
+                    findSearchValue: gos.get('findSearchValue')!,
+                    updateMatches: this.refreshDebounced,
+                    getMatchesForValue: (value) => getMatchesForValue(findSearchValue, this.caseFormat, value),
+                }) ?? 0;
+            compareMatchesAndRefresh(numMatches);
+        });
+
+        if (isSearchDetail()) {
             api.setGridOption('findSearchValue', gos.get('findSearchValue'));
         }
     }
@@ -350,23 +399,6 @@ export class FindService extends BeanStub implements NamedBean, IFindService {
             rowMatches.push([column, numMatches]);
             containerNumMatches += numMatches;
         };
-        const getMatchesForValue = (valueToFind: string | null) => {
-            const finalValue = caseFormat(_escapeString(valueToFind, true));
-            let numMatches = 0;
-            if (finalValue?.length) {
-                // there can be multiple matches per cell, so find them all
-                let index = -1;
-                while (true) {
-                    index = finalValue.indexOf(findSearchValue, index + 1);
-                    if (index != -1) {
-                        numMatches++;
-                    } else {
-                        break;
-                    }
-                }
-            }
-            return numMatches;
-        };
         const findMatchesForRow = (node: RowNode) => {
             if (checkCurrentPage) {
                 // row index is null when a group is collapsed. We need to find the first displayed ancestor.
@@ -403,7 +435,7 @@ export class FindService extends BeanStub implements NamedBean, IFindService {
                             data,
                             findSearchValue: providedFindSearchValue!,
                             updateMatches: this.refreshDebounced,
-                            getMatchesForValue,
+                            getMatchesForValue: (value) => getMatchesForValue(findSearchValue, caseFormat, value),
                         }) ?? 0;
                     addMatches(node, null, numMatches);
                 }
@@ -411,7 +443,7 @@ export class FindService extends BeanStub implements NamedBean, IFindService {
             }
             if (node.group && !node.footer && _isGroupUseEntireRow(gos, pivotMode)) {
                 // full width group
-                const numMatches = getMatchesForValue(node.key);
+                const numMatches = getMatchesForValue(findSearchValue, caseFormat, node.key);
                 addMatches(node, null, numMatches);
                 return;
             }
@@ -434,7 +466,7 @@ export class FindService extends BeanStub implements NamedBean, IFindService {
                 const getFindText = colDef.getFindText;
                 if (getFindText) {
                     valueToFind = getFindText(
-                        gos.addGridCommonParams({
+                        _addGridCommonParams(gos, {
                             value,
                             node,
                             data,
@@ -447,7 +479,7 @@ export class FindService extends BeanStub implements NamedBean, IFindService {
                     const valueFormatted = valueSvc.formatValue(column, node, value);
                     valueToFind = valueFormatted ?? value;
                 }
-                const numMatches = getMatchesForValue(valueToFind);
+                const numMatches = getMatchesForValue(findSearchValue, caseFormat, valueToFind);
                 addMatches(node, column, numMatches);
             }
             if (node.master && checkMasterDetail) {
@@ -471,7 +503,7 @@ export class FindService extends BeanStub implements NamedBean, IFindService {
                             data,
                             findSearchValue: providedFindSearchValue!,
                             updateMatches: this.refreshDebounced,
-                            getMatchesForValue,
+                            getMatchesForValue: (value) => getMatchesForValue(findSearchValue, caseFormat, value),
                         }) ?? 0;
                     // if detail node doesn't exist yet, stick under dummy node
                     addMatches(

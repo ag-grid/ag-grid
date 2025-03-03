@@ -17,7 +17,7 @@ export const getPropertiesFromSource = async ({
     const propertiesFromFilesPromises = sources.map(async (s: string) => {
         // NOTE: Need to remove `.json` for getEntry
         const fileName = s.replace('.json', '');
-        const fileEntry = await getEntry('api-documentation', fileName);
+        const fileEntry = await getEntry('apiDocumentation', fileName);
         if (!fileEntry) {
             const message = `ApiDocumentation source not found: src/content/api-documentation/${fileName}.json`;
             if (getIsDev()) {

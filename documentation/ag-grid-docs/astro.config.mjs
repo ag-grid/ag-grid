@@ -150,11 +150,22 @@ export default defineConfig({
         plugins: [mkcert(), svgr(), agHotModuleReload()],
         server: {
             https: !['0', 'false'].includes(PUBLIC_HTTPS_SERVER),
+            cors: {
+                /**
+                 * CORS allow list for opening examples on external sites
+                 */
+                origin: [
+                    // Plunkr
+                    'https://run.plnkr.co',
+                    // Codesandbox
+                    /\.csb.app/,
+                ],
+            },
         },
         css: {
             preprocessorOptions: {
                 scss: {
-                    api: 'modern-compiler',
+                    api: 'modern',
                     functions: {
                         'urlWithBaseUrl($url)': function (args) {
                             const sassUrl = args[0].assertString();
