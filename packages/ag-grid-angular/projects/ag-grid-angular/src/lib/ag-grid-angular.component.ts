@@ -1221,6 +1221,13 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     /** Data to be displayed as pinned bottom rows in the grid.
      */
     @Input() public pinnedBottomRowData: any[] | undefined = undefined;
+    /** Determines whether manual row pinning is enabled via the row context menu.
+     *
+     * Set to `true` to allow pinning rows to both top and bottom pinned row containers.
+     * Set to `'top'` to allow pinning rows to the top pinned row container only.
+     * Set to `'bottom'` to allow pinning rows to the bottom pinned row container only.
+     */
+    @Input() public enableRowPinning: boolean | 'top' | 'bottom' | undefined = undefined;
     /** Sets the row model type.
      * @default 'clientSide'
      * @initial
