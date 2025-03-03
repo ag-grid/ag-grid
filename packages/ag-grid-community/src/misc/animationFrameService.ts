@@ -54,9 +54,15 @@ export class AnimationFrameService extends BeanStub implements NamedBean {
     private taskCount = 0;
 
     public setScrollTop(scrollTop: number): void {
-        const { gos, pagination } = this.beans;
+        const { gos, pagination, rowModel } = this.beans;
         const isPaginationActive = gos.get('pagination');
         this.scrollGoingDown = scrollTop >= this.lastScrollTop;
+
+        if (scrollTop === 0 && rowModel.isEmpty()) {
+            // If the user last scrolled up and then cleared the data in the grid, we need to reset the scroll direction
+            // otherwise when the new data is loaded the rows will render from bottom to top.
+            this.scrollGoingDown = true;
+        }
 
         if (isPaginationActive && scrollTop === 0) {
             const currentPage = pagination?.getCurrentPage() ?? 0;

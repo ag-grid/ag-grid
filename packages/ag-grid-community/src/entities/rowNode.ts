@@ -48,6 +48,8 @@ export class RowNode<TData = any>
 
     /** If using row grouping, contains the group values for this group. */
     public groupData: { [key: string]: any | null } | null;
+    /** When using group rows, contains the value without casting to string */
+    public groupValue: any;
 
     /** If using row grouping and aggregation, contains the aggregation data. */
     public aggData: any;
