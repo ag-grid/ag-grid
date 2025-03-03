@@ -183,8 +183,6 @@ export class TreeParentIdStrategy<TData = any> extends BeanStub implements IRowG
         const groupDisplayCols = this.beans.showRowGroupCols?.getShowRowGroupCols();
         if (groupDisplayCols) {
             for (const col of groupDisplayCols) {
-                // newGroup.rowGroupColumn=null when working off GroupInfo, and we always display the group in the group column
-                // if rowGroupColumn is present, then it's grid row grouping and we only include if configuration says so
                 groupData[col.getColId()] = key;
             }
         }
