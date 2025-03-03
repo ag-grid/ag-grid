@@ -35,19 +35,15 @@ export class GroupStage<TData> extends BeanStub implements NamedBean, IRowNodeSt
     }
 
     public override destroy(): void {
-        const context = this.beans.context;
         super.destroy();
-        this.parentIdTreeStrategy = context.destroyBean(this.parentIdTreeStrategy);
-        this.groupStrategy = context.destroyBean(this.groupStrategy);
+        this.parentIdTreeStrategy = undefined;
+        this.groupStrategy = undefined;
     }
 
     private createStrategy(name: 'GroupStrategy' | 'TreeParentIdStrategy'): IRowGroupingStrategy<TData> | undefined {
-        const beans = this.beans;
-        const result = beans.registry.createDynamicBean<IRowGroupingStrategy<TData>>(name, false);
-        if (result) {
-            beans.context.createBean(result);
-        }
-        return result;
+        return this.createOptionalManagedBean(
+            this.beans.registry.createDynamicBean<IRowGroupingStrategy<TData>>(name, false)
+        );
     }
 
     private getNewStrategy(): IRowGroupingStrategy<TData> | undefined {
