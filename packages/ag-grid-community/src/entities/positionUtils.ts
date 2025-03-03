@@ -193,12 +193,12 @@ function isLastRowInContainer(beans: BeanCollection, rowPosition: RowPosition): 
     const { pinnedRowModel, pageBounds } = beans;
 
     if (rowPinned === 'top') {
-        const lastTopIndex = pinnedRowModel?.getPinnedTopRowCount() ?? 0 - 1;
+        const lastTopIndex = (pinnedRowModel?.getPinnedTopRowCount() ?? 0) - 1;
         return lastTopIndex <= rowIndex;
     }
 
     if (rowPinned === 'bottom') {
-        const lastBottomIndex = pinnedRowModel?.getPinnedBottomRowCount() ?? 0 - 1;
+        const lastBottomIndex = (pinnedRowModel?.getPinnedBottomRowCount() ?? 0) - 1;
         return lastBottomIndex <= rowIndex;
     }
 

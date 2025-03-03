@@ -442,8 +442,11 @@ export class FindService extends BeanStub implements NamedBean, IFindService {
                 return;
             }
             if (node.group && !node.footer && _isGroupUseEntireRow(gos, pivotMode)) {
+                const formattedValue = node.rowGroupColumn
+                    ? valueSvc.formatValue(node.rowGroupColumn, node, node.groupValue)
+                    : node.groupValue;
                 // full width group
-                const numMatches = getMatchesForValue(findSearchValue, caseFormat, node.key);
+                const numMatches = getMatchesForValue(findSearchValue, caseFormat, formattedValue);
                 addMatches(node, null, numMatches);
                 return;
             }

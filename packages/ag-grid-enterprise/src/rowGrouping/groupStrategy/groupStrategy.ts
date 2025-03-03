@@ -595,6 +595,12 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
     }
 
     private setGroupData(groupNode: RowNode, groupInfo: GroupInfo): void {
+        const rowGroupCol = groupInfo.rowGroupColumn;
+        if (rowGroupCol && groupInfo.leafNode) {
+            // for full width rows; preserve the value type
+            groupNode.groupValue = this.valueSvc.getValue(rowGroupCol, groupInfo.leafNode);
+        }
+
         groupNode.groupData = {};
         const groupDisplayCols = this.showRowGroupCols.getShowRowGroupCols();
         groupDisplayCols.forEach((col) => {
