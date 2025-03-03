@@ -59,6 +59,8 @@ export class AnimationFrameService extends BeanStub implements NamedBean {
         this.scrollGoingDown = scrollTop >= this.lastScrollTop;
 
         if (scrollTop === 0 && rowModel.isEmpty()) {
+            // If the user last scrolled up and then cleared the data in the grid, we need to reset the scroll direction
+            // otherwise when the new data is loaded the rows will render from bottom to top.
             this.scrollGoingDown = true;
         }
 
