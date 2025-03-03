@@ -1,5 +1,6 @@
 import type {
     IRowGroupingStrategy,
+    IRowModel,
     IsGroupOpenByDefaultParams,
     RowNode,
     StageExecuteParams,
@@ -69,7 +70,7 @@ export class TreeParentIdStrategy<TData = any> extends BeanStub implements IRowG
 
         const renderEmpty = !this.gos.get('getRowId'); // If getRowId is not provided, we make an empty tree
         if (!renderEmpty) {
-            preprocess(params, parentIdGetter, fullReload);
+            preprocess(this.beans.rowModel, params, parentIdGetter, fullReload);
         }
 
         rootChildrenAfterGroup.length = rootNode.treeNodeFlags & MASK_CHILDREN_LENGTH;
@@ -292,7 +293,8 @@ const getExpandedInitialValue = (
 };
 
 const preprocess = <TData>(
-    { rowNode: rootNode, changedRowNodes, nodeLookup }: StageExecuteParams<TData>,
+    clientSideRowModel: IRowModel,
+    { rowNode: rootNode, changedRowNodes }: StageExecuteParams<TData>,
     parentIdGetter: DataFieldGetter<TData, string | null | undefined>,
     fullReload: boolean
 ): void => {
@@ -310,7 +312,7 @@ const preprocess = <TData>(
             if (parentId === null || parentId === undefined) {
                 newParent = rootNode;
             } else {
-                newParent = nodeLookup!.getRowNode(parentId);
+                newParent = clientSideRowModel.getRowNode(parentId);
                 if (!newParent) {
                     _warn(271, { id: row.id!, parentId });
                     newParent = rootNode;
