@@ -42,7 +42,7 @@ const filePathsString = (filePaths: Set<string>, options: Options): string => {
         return filePathParts.join('/');
     });
 
-    return pageNames.join(', ');
+    return [...new Set(pageNames)].join(', ');
 };
 
 const checkLinks = async (dir: string, files: string[], options: Options) => {
@@ -187,19 +187,22 @@ const checkLinks = async (dir: string, files: string[], options: Options) => {
     }
 };
 
-export default function createPlugin(options: Options): AstroIntegration {
+export default function createPlugin({ include, prefix, ...opts }: Options): AstroIntegration {
     return {
         name: 'ag-link-test',
         hooks: {
             'astro:build:done': async ({ dir, logger }) => {
-                if (!options.include) {
+                if (!include) {
                     logger.info('Link checking disabled, skipping');
                     return;
+                }
+                if (prefix === '/') {
+                    prefix = undefined;
                 }
 
                 const destDir = fileURLToPath(dir.href);
                 const files = findAllFiles(destDir);
-                await checkLinks(destDir, files, options);
+                await checkLinks(destDir, files, { include, prefix, ...opts });
             },
         },
     };

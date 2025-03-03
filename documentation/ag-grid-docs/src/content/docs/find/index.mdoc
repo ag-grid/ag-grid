@@ -146,3 +146,5 @@ Searching will be performed within the children of [Collapsed Row Groups](./grou
 When using [Row Pagination](./row-pagination/), searching will be performed across all pages by default.
 
 See the [Customising Find](#customising-find) section for an example of using Find with Row Grouping, as well as how to customise behaviour for Pagination.
+
+If data is mutated outside of the grid (e.g. not via grid options or API methods), Find will not re-run automatically. This would apply to situations where `api.refreshCells()` or `api.redrawRows()` are being used. To get Find to update, `api.findRefresh()` should be called after either of these API methods.

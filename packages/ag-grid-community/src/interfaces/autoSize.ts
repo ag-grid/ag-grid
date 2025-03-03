@@ -46,7 +46,8 @@ export interface SizeColumnsToFitProvidedWidthStrategy {
 
 /**
  * Auto-size columns to fit their cell contents.
- * Only works for Client-Side Row Model and Server-Side Row Model.
+ *
+ * Not supported by the Viewport Row Model
  */
 export interface SizeColumnsToContentStrategy {
     type: 'fitCellContents';

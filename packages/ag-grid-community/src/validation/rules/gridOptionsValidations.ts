@@ -472,6 +472,17 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => {
         enableCellSpan: {
             module: 'CellSpan',
         },
+        autoGroupColumnDef: {
+            validate({ autoGroupColumnDef, showOpenedGroup }) {
+                if (autoGroupColumnDef?.field && showOpenedGroup) {
+                    return 'autoGroupColumnDef.field and showOpenedGroup are not supported when used together.';
+                }
+                if (autoGroupColumnDef?.valueGetter && showOpenedGroup) {
+                    return 'autoGroupColumnDef.valueGetter and showOpenedGroup are not supported when used together.';
+                }
+                return null;
+            },
+        },
     };
     const validations: Validations<GridOptions> = {};
     _BOOLEAN_GRID_OPTIONS.forEach((key) => {

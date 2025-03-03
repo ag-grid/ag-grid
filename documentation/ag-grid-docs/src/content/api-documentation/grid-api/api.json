@@ -1197,6 +1197,12 @@
                 "name": "Using Find with Cell Components",
                 "url": "./find/#using-find-with-cell-components"
             }
+        },
+        "findRefresh": {
+            "more": {
+                "name": "Content to Search",
+                "url": "./find/#content-to-search"
+            }
         }
     }
 }

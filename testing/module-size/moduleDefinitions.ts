@@ -59,7 +59,7 @@ export const AllEnterpriseModules: Record<`${EnterpriseModuleName}Module`, numbe
     ContextMenuModule: 70,
     ExcelExportModule: 84,
     FiltersToolPanelModule: 116,
-    FindModule: 11.61,
+    FindModule: 12.91,
     GridChartsModule: 67,
     IntegratedChartsModule: 385.33,
     GroupFilterModule: 93,
@@ -128,7 +128,7 @@ const chartModules: ModuleTest[] = [
     },
     {
         modules: ['AgChartsEnterpriseModule' as any, 'SparklinesModule'],
-        expectedSize: 1500,
+        expectedSize: 1549.16,
     },
 ];
 

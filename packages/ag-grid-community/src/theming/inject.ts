@@ -18,7 +18,8 @@ export const _injectGlobalCSS = (
     styleContainer: HTMLElement,
     debugId: string,
     layer: string | undefined,
-    priority: number
+    priority: number,
+    nonce: string | undefined
 ) => {
     if (IS_SSR) return;
     if (FORCE_LEGACY_THEMES) return;
@@ -35,6 +36,9 @@ export const _injectGlobalCSS = (
     if (injections.find((i) => i.css === css)) return;
 
     const el = document.createElement('style');
+    if (nonce) {
+        el.setAttribute('nonce', nonce);
+    }
     el.dataset.agGlobalCss = debugId;
     el.textContent = css;
     const newInjection = { css, el, priority };
@@ -54,12 +58,18 @@ export const _injectGlobalCSS = (
     }
 };
 
-export const _injectCoreAndModuleCSS = (styleContainer: HTMLElement, layer: string | undefined) => {
-    _injectGlobalCSS(coreCSS, styleContainer, 'core', layer, 0);
+export const _injectCoreAndModuleCSS = (
+    styleContainer: HTMLElement,
+    layer: string | undefined,
+    nonce: string | undefined
+) => {
+    _injectGlobalCSS(coreCSS, styleContainer, 'core', layer, 0, nonce);
     Array.from(_getAllRegisteredModules())
         .sort((a, b) => a.moduleName.localeCompare(b.moduleName))
         .forEach((module) =>
-            module.css?.forEach((css) => _injectGlobalCSS(css, styleContainer, `module-${module.moduleName}`, layer, 0))
+            module.css?.forEach((css) =>
+                _injectGlobalCSS(css, styleContainer, `module-${module.moduleName}`, layer, 0, nonce)
+            )
         );
 };
 

@@ -32,3 +32,7 @@ export function findGetNumMatches(beans: BeanCollection, params: FindCellParams)
 export function findGetParts(beans: BeanCollection, params: FindCellValueParams): FindPart[] {
     return beans.findSvc?.getParts(params) ?? [];
 }
+
+export function findRefresh(beans: BeanCollection): void {
+    return beans.findSvc?.refresh(true);
+}

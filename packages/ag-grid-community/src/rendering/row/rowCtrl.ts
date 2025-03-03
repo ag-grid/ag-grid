@@ -209,8 +209,9 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         this.initialiseRowComp(gui);
 
         const isSsrmLoadingRow = this.rowType === 'FullWidthLoading' || this.rowNode.stub;
+        const isIrmLoadingRow = !this.rowNode.data && this.beans.rowModel.getType() === 'infinite';
         // pinned rows render before the main grid body in the SSRM, only fire the event after the main body has rendered.
-        if (!isSsrmLoadingRow && !this.rowNode.rowPinned) {
+        if (!isSsrmLoadingRow && !isIrmLoadingRow && !this.rowNode.rowPinned) {
             // this is fired within setComp as we know that the component renderer is now trying to render.
             // linked with the fact the function implementation queues behind requestAnimationFrame should allow
             // us to be certain that all rendering is done by the time the event fires.
@@ -855,10 +856,6 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         this.allRowGuis.forEach((gui) => gui.rowComp.addOrRemoveCssClass('ag-row-dragging', dragging));
     }
 
-    public verifyCells(): void {
-        this.onDisplayedColumnsChanged();
-    }
-
     private onDisplayedColumnsChanged(): void {
         // we skip animations for onDisplayedColumnChanged, as otherwise the client could remove columns and
         // then set data, and any old valueGetter's (ie from cols that were removed) would still get called.
@@ -1143,6 +1140,8 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
             fullWidth: true,
             data: rowNode.data,
             node: rowNode,
+            // if this gets changed for groupRows to support the actual value (and formatted value),
+            // need to update the corresponding logic in `FindService.refresh()`
             value: rowNode.key,
             valueFormatted: rowNode.key,
             // these need to be taken out, as part of 'afterAttached' now
