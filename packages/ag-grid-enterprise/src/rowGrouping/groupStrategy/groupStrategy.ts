@@ -54,9 +54,7 @@ interface GroupingDetails {
     keyCreators: (((params: KeyCreatorParams) => string) | undefined)[];
 }
 
-export class GroupStrategy extends BeanStub implements NamedBean, IRowGroupingStrategy {
-    beanName = 'groupStrategy' as const;
-
+export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
     private colModel: ColumnModel;
     private rowGroupColsSvc?: IColsService;
     private valueSvc: ValueService;
