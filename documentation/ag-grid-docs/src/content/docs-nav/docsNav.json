@@ -1202,6 +1202,12 @@
                                     "title": "Nested Records",
                                     "path": "tree-data-nesting",
                                     "isEnterprise": true
+                                },
+                                {
+                                    "type": "item",
+                                    "title": "Self Referential Records",
+                                    "path": "tree-data-self-referential",
+                                    "isEnterprise": true
                                 }
                             ]
                         },

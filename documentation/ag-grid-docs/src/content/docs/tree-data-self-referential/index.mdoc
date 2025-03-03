@@ -1,0 +1,98 @@
+---
+title: "Tree Data - Self Referential Records"
+enterprise: true
+---
+Configure the grid to display structured data by providing self referential records where each record contains a reference to the id of its parent.
+
+## Providing Hierarchy
+
+Each row in the data can contain a field containing the id of its parent row. The `treeDataParentIdField` property is used to specify the field containing the parent row id.
+
+The below structure demonstrates a simple hierarchy, wherein the `treeDataParentIdField` grid option would specify `"parentId"` as the field containing the parent row id:
+```
+const data = [
+    { id: 'A' },
+    { id: 'B', parentId: 'A' },
+    { id: 'C', parentId: 'A' },
+    { id: 'D' },
+    { id: 'E', parentId: 'D' },
+    { id: 'F', parentId: 'E' },
+]
+```
+In the above hierarchy, the 'A' row is the parent of 'B' and 'C'. The 'D' row is the parent of 'E' which is the parent of 'F'.
+
+
+{% note %}
+[getRowId](./grid-properties/#getrowid) callback must be provided when using `treeDataParentIdField` to ensure each row has a unique identifier that can be correctly referenced.
+{% /note %}
+
+Cycles and missing parent rows are not allowed, be sure your data is correctly structured.
+
+For example, the following data structure would not be valid as the 'A' row is missing:
+
+```
+const data = [
+    { id: 'B', parentId: 'A' },
+    { id: 'C', parentId: 'A' },
+]
+```
+
+The following data structure would not be valid as it creates a cycle:
+
+```
+const data = [
+    { id: 'A', parentId: 'B' },
+    { id: 'B', parentId: 'A' },
+]
+```
+
+## Providing Group Values
+
+When providing a self referential hierarchy, the grid will use the row ID as the group value by default. To provide a custom value, the `autoGroupColumnDef` grid options `field` can be used.
+
+The example below demonstrates a case where the `autoGroupColumnDef` field is set to `name` to display a group value:
+
+{% gridExampleRunner title="Group Values" name="basic-example" exampleHeight=350 /%}
+
+The following snippet demonstrates how to provide nested siblings with a custom group value:
+```{% frameworkTransform=true %}
+const gridOptions = {
+    treeData: true,
+    treeDataParentIdField: 'parentId',
+    getRowId: (params) => params.data.id,
+    autoGroupColumnDef: {
+        field: 'name',
+    },
+};
+```
+
+## Supplied vs Aggregated
+
+When using Tree Data, columns defined with an aggregation function will always perform aggregations on the group nodes.
+This means any supplied group data will be ignored in favour of the aggregated values.
+
+{% gridExampleRunner title="Aggregated Data" name="aggregated-data" exampleHeight=350 /%}
+
+The example above uses the configuration below to demonstrate the `Desktop` row is being aggregated to show
+the sum of its children (4), rather than the provided value (1), despite both columns showing the same field:
+```
+const gridOptions = {
+    treeData: true,
+    columnDefs: [
+        {
+            headerName: 'Aggregated (Sum)',
+            aggFunc: 'sum',
+            field: 'items',
+        },
+        {
+            headerName: 'Provided',
+            field: 'items',
+        },
+    ],
+};
+```
+
+Refer to the [Aggregation](./aggregation/) page for more details.
+
+## Next Up
+Continue to the next section to learn how to configure the [Group Column](./tree-data-group-column/).
