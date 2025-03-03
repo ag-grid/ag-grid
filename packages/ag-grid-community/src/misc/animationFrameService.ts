@@ -54,9 +54,13 @@ export class AnimationFrameService extends BeanStub implements NamedBean {
     private taskCount = 0;
 
     public setScrollTop(scrollTop: number): void {
-        const { gos, pagination } = this.beans;
+        const { gos, pagination, rowModel } = this.beans;
         const isPaginationActive = gos.get('pagination');
         this.scrollGoingDown = scrollTop >= this.lastScrollTop;
+
+        if (scrollTop === 0 && rowModel.isEmpty()) {
+            this.scrollGoingDown = true;
+        }
 
         if (isPaginationActive && scrollTop === 0) {
             const currentPage = pagination?.getCurrentPage() ?? 0;
