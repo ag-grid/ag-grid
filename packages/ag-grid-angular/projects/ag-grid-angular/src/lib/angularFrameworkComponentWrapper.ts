@@ -38,7 +38,7 @@ export class AngularFrameworkComponentWrapper
             }
 
             protected createComponent(): ComponentRef<AgFrameworkComponent<any>> {
-                return angularFrameworkOverrides.runInsideAngular(() => that.createComponent(OriginalConstructor));
+                return that.createComponent(OriginalConstructor);
             }
 
             hasMethod(name: string): boolean {
@@ -103,9 +103,7 @@ abstract class BaseGuiComponent<P, T extends AgFrameworkComponent<P>> {
         if (this._frameworkComponentInstance && typeof this._frameworkComponentInstance.destroy === 'function') {
             this._frameworkComponentInstance.destroy();
         }
-        if (this._componentRef) {
-            this._componentRef.destroy();
-        }
+        this._componentRef?.destroy();
     }
 
     public getFrameworkComponentInstance(): any {

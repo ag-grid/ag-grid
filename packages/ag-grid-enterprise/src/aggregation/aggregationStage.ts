@@ -6,8 +6,6 @@ import type {
     ColumnModel,
     GetGroupRowAggParams,
     GridOptions,
-    IAggFunc,
-    IAggFuncParams,
     IColsService,
     IPivotResultColsService,
     IRowNodeStage,
@@ -17,9 +15,9 @@ import type {
     ValueService,
     WithoutGridCommon,
 } from 'ag-grid-community';
-import { BeanStub, _addGridCommonParams, _error, _getGrandTotalRow, _getGroupAggFiltering } from 'ag-grid-community';
+import { BeanStub, _getGrandTotalRow, _getGroupAggFiltering } from 'ag-grid-community';
 
-import type { AggFuncService } from './aggFuncService';
+import { _aggregateValues } from './aggUtils';
 
 interface AggregationDetails {
     alwaysAggregateAtRootLevel: boolean;
@@ -44,14 +42,12 @@ export class AggregationStage extends BeanStub implements NamedBean, IRowNodeSta
 
     private colModel: ColumnModel;
     private valueSvc: ValueService;
-    private aggFuncSvc: AggFuncService;
     private pivotColsSvc?: IColsService;
     private valueColsSvc?: IColsService;
     private pivotResultCols?: IPivotResultColsService;
 
     public wireBeans(beans: BeanCollection) {
         this.colModel = beans.colModel;
-        this.aggFuncSvc = beans.aggFuncSvc as AggFuncService;
         this.pivotColsSvc = beans.pivotColsSvc;
         this.valueColsSvc = beans.valueColsSvc;
         this.pivotResultCols = beans.pivotResultCols;
@@ -160,6 +156,7 @@ export class AggregationStage extends BeanStub implements NamedBean, IRowNodeSta
 
         const secondaryColumns = this.pivotResultCols?.getPivotResultCols()?.list ?? [];
         let canSkipTotalColumns = true;
+        const beans = this.beans;
         for (let i = 0; i < secondaryColumns.length; i++) {
             const secondaryCol = secondaryColumns[i];
             const colDef = secondaryCol.getColDef();
@@ -181,7 +178,8 @@ export class AggregationStage extends BeanStub implements NamedBean, IRowNodeSta
             }
 
             // bit of a memory drain storing null/undefined, but seems to speed up performance.
-            result[colDef.colId!] = this.aggregateValues(
+            result[colDef.colId!] = _aggregateValues(
+                beans,
                 values,
                 colDef.pivotValueColumn!.getAggFunc()!,
                 colDef.pivotValueColumn as AgColumn,
@@ -203,7 +201,8 @@ export class AggregationStage extends BeanStub implements NamedBean, IRowNodeSta
                     (currentColId: string) => result[currentColId]
                 );
                 // bit of a memory drain storing null/undefined, but seems to speed up performance.
-                result[colDef.colId!] = this.aggregateValues(
+                result[colDef.colId!] = _aggregateValues(
+                    beans,
                     aggResults,
                     colDef.pivotValueColumn!.getAggFunc()!,
                     colDef.pivotValueColumn as AgColumn,
@@ -232,8 +231,11 @@ export class AggregationStage extends BeanStub implements NamedBean, IRowNodeSta
         const values2d = this.getValuesNormal(rowNode, changedValueColumns, filteredOnly);
         const oldValues = rowNode.aggData;
 
+        const beans = this.beans;
+
         changedValueColumns.forEach((valueColumn, index) => {
-            result[valueColumn.getId()] = this.aggregateValues(
+            result[valueColumn.getId()] = _aggregateValues(
+                beans,
                 values2d[index],
                 valueColumn.getAggFunc()!,
                 valueColumn,
@@ -291,35 +293,6 @@ export class AggregationStage extends BeanStub implements NamedBean, IRowNodeSta
 
         return values;
     }
-
-    public aggregateValues(
-        values: any[],
-        aggFuncOrString: string | IAggFunc,
-        column?: AgColumn,
-        rowNode?: RowNode,
-        pivotResultColumn?: AgColumn
-    ): any {
-        const aggFunc =
-            typeof aggFuncOrString === 'string' ? this.aggFuncSvc.getAggFunc(aggFuncOrString) : aggFuncOrString;
-
-        if (typeof aggFunc !== 'function') {
-            _error(109, { aggFuncOrString });
-            return null;
-        }
-
-        const aggFuncAny = aggFunc;
-        const params: IAggFuncParams = _addGridCommonParams(this.gos, {
-            values: values,
-            column: column,
-            colDef: column ? column.getColDef() : undefined,
-            pivotResultColumn: pivotResultColumn,
-            rowNode: rowNode,
-            data: rowNode ? rowNode.data : undefined,
-        } as any); // the "as any" is needed to allow the deprecation warning messages
-
-        return aggFuncAny(params);
-    }
-
     private setAggData(rowNode: RowNode, newAggData: any): void {
         const oldAggData = rowNode.aggData;
         rowNode.aggData = newAggData;

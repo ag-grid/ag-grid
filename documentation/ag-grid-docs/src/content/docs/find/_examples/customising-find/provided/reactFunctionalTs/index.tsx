@@ -143,11 +143,21 @@ const GridExample = () => {
                     <div className="example-controls">
                         <label>
                             <span>caseSensitive:</span>
-                            <input id="caseSensitive" type="checkbox" onChange={toggleCaseSensitive} checked />
+                            <input
+                                id="caseSensitive"
+                                type="checkbox"
+                                onChange={toggleCaseSensitive}
+                                checked={findOptions.caseSensitive}
+                            />
                         </label>
                         <label>
                             <span>currentPageOnly:</span>
-                            <input id="currentPageOnly" type="checkbox" onChange={toggleCurrentPageOnly} checked />
+                            <input
+                                id="currentPageOnly"
+                                type="checkbox"
+                                onChange={toggleCurrentPageOnly}
+                                checked={findOptions.currentPageOnly}
+                            />
                         </label>
                     </div>
                     <div className="example-controls">

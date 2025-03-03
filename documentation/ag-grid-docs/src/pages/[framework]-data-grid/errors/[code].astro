@@ -15,7 +15,7 @@ import { getErrorText } from '@utils/getErrorText';
 import { getHeadings, getTopHeading } from '@utils/markdoc/getHeadings';
 import { pathJoin } from '@utils/pathJoin';
 import { urlWithPrefix } from '@utils/urlWithPrefix';
-import { getCollection, getEntry, type CollectionEntry } from 'astro:content';
+import { getCollection, getEntry, render, type CollectionEntry } from 'astro:content';
 import {
     AG_GRID_ERRORS,
     type ErrorId,
@@ -55,9 +55,9 @@ const frameworkDisplayText = framework === 'javascript' ? '' : getFrameworkDispl
 const title = `AG Grid ${frameworkDisplayText} Error #${code}`;
 const description = errorPage?.data.description ? errorPage?.data.description : '';
 
-const { Content } = errorPage ? await errorPage.render() : { Content: undefined };
-const { data: docsNavData } = await getEntry('docs-nav', 'docsNav');
-const { data: allErrorLinks } = await getEntry('errorLinks', 'errorLinks');
+const { Content } = errorPage ? await render(errorPage) : { Content: undefined };
+const { data: docsNavData } = (await getEntry('docsNav', 'nav')) as CollectionEntry<'docsNav'>;
+const { data: allErrorLinks } = (await getEntry('errorLinks', 'links')) as CollectionEntry<'errorLinks'>;
 
 const errorLinks = allErrorLinks.filter((e) => e.errorIds.includes(errorCode)) ?? [];
 const path = Astro.url.pathname;

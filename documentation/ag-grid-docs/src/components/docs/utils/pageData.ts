@@ -20,7 +20,7 @@ export function getDocsPages(pages: DocsPage[]) {
         return getPagesList(pages).map((page) => {
             return {
                 framework,
-                pageName: page.slug,
+                pageName: page.id,
                 page,
             };
         });

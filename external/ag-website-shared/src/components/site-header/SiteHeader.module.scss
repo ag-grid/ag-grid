@@ -13,8 +13,8 @@
         z-index: 10001; // needed in order to prevent grid z-indexes overlapping on small height
     }
 
-    #{$selector-darkmode}:not(:has([data-is-homepage])) &,
-    #{$selector-darkmode}:has([data-is-homepage]) &:global(.header-scrolled) {
+    #{$selector-darkmode}:has([data-is-homepage='false']) &,
+    #{$selector-darkmode}:has([data-is-homepage='true']) &:global(.header-scrolled) {
         background: var(--color-bg-primary);
         border-bottom: 1px solid var(--color-border-primary);
     }
@@ -332,8 +332,8 @@ button.navLink {
         }
     }
 
-    #{$selector-darkmode}:not(:has([data-is-homepage])) &,
-    #{$selector-darkmode}:has([data-is-homepage] :global(.header-scrolled)) & {
+    #{$selector-darkmode}:has([data-is-homepage='false']) &,
+    #{$selector-darkmode}:has([data-is-homepage='true'] :global(.header-scrolled)) & {
         opacity: 0.8;
     }
 }
@@ -383,7 +383,7 @@ button.navLink {
                 0 0 0 4px var(--color-bg-mobile-nav),
                 0 0 0 6px rgba(white, 0.3);
 
-            #{$selector-darkmode}:not(:has([data-is-homepage])) & {
+            #{$selector-darkmode}:has([data-is-homepage='false']) & {
                 box-shadow:
                     0 0 0 4px var(--color-bg-primary),
                     0 0 0 6px rgba(white, 0.3);

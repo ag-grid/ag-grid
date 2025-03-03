@@ -274,7 +274,8 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
             this.beans.animationFrameSvc!.createTask(
                 this.addHoverFunctionality.bind(this, gui),
                 this.rowNode.rowIndex!,
-                'createTasksP2'
+                'p2',
+                false
             );
         } else {
             this.addHoverFunctionality(gui);
@@ -445,8 +446,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         }
 
         const { animationFrameSvc } = this.beans;
-        const noAnimation =
-            !animationFrameSvc || suppressAnimationFrame || this.gos.get('suppressAnimationFrame') || this.printLayout;
+        const noAnimation = !animationFrameSvc?.active || suppressAnimationFrame || this.printLayout;
 
         if (noAnimation) {
             this.updateColumnListsImpl(useFlushSync);
@@ -464,7 +464,8 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
                 this.updateColumnListsImpl(true);
             },
             this.rowNode.rowIndex!,
-            'createTasksP1'
+            'p1',
+            false
         );
         this.updateColumnListsPending = true;
     }

@@ -1,6 +1,6 @@
 ---
 import { MatrixTable } from '../components/MatrixTable';
-import { getEntry } from 'astro:content';
+import { getEntry, type CollectionEntry } from 'astro:content';
 import { getIsDev } from '@utils/env';
 import { getFrameworkFromPath } from '@components/docs/utils/urlPaths';
 
@@ -16,8 +16,8 @@ interface Props {
 const { dataFileName, ...props } = Astro.props as Props;
 
 let data;
+const entry = (await getEntry('matrixTable', dataFileName)) as CollectionEntry<'matrixTable'>;
 const contentFolder = 'matrix-table';
-const entry = await getEntry(contentFolder, dataFileName);
 
 if (entry) {
     data = entry.data;
