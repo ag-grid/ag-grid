@@ -1,6 +1,5 @@
 import type { AgBarSeriesOptions, AgCartesianAxisOptions } from 'ag-charts-types';
 
-import { hexToRGBA } from '../../utils/color';
 import { isStacked } from '../../utils/seriesTypeMapper';
 import type { UpdateParams } from '../chartProxy';
 import { CartesianChartProxy } from './cartesianChartProxy';
@@ -41,6 +40,9 @@ export class BarChartProxy extends CartesianChartProxy<'bar'> {
                     xName: category.name,
                     yKey: f.colId,
                     yName: f.displayName,
+                    listeners: {
+                        nodeClick: this.crossFilterCallback,
+                    },
                 }) as AgBarSeriesOptions
         );
 
@@ -48,39 +50,25 @@ export class BarChartProxy extends CartesianChartProxy<'bar'> {
     }
 
     private extractCrossFilterSeries(series: AgBarSeriesOptions[]): AgBarSeriesOptions[] {
-        const palette = this.getChartPalette();
-
-        const updatePrimarySeries = (seriesOptions: AgBarSeriesOptions, index: number) => {
-            return {
-                ...seriesOptions,
-                highlightStyle: { item: { fill: undefined } },
-                fill: palette?.fills?.[index],
-                stroke: palette?.strokes?.[index],
-                listeners: {
-                    nodeClick: this.crossFilterCallback,
-                },
-            };
-        };
-
-        const updateFilteredOutSeries = (seriesOptions: AgBarSeriesOptions): AgBarSeriesOptions => {
-            const yKey = seriesOptions.yKey + '-filtered-out';
-            return {
-                ...seriesOptions,
-                yKey,
-                fill: hexToRGBA(seriesOptions.fill as string, '0.3'),
-                stroke: hexToRGBA(seriesOptions.stroke as string, '0.3'),
-                showInLegend: false,
-            };
-        };
-
         const allSeries: AgBarSeriesOptions[] = [];
         for (let i = 0; i < series.length; i++) {
-            const originalSeries = series[i];
-            // update primary series
-            allSeries.push(updatePrimarySeries(originalSeries, i));
+            const primarySeries = series[i];
 
-            // add 'filtered-out' series
-            allSeries.push(updateFilteredOutSeries(updatePrimarySeries(originalSeries, i)));
+            const filteredOutSeries = {
+                ...primarySeries,
+                yKey: `${primarySeries.yKey}-filtered-out`,
+                showInLegend: false,
+                fill: {
+                    $mix: [{ $path: '../0/fill' }, { $ref: 'backgroundColor' }, 0.7],
+                } as any,
+                stroke: {
+                    $mix: [{ $path: '../0/stroke' }, { $ref: 'backgroundColor' }, 0.7],
+                } as any,
+            };
+
+            // for bar/column charts, proportion of whole is achieved as a stacked bar/column
+            allSeries.push(primarySeries);
+            allSeries.push(filteredOutSeries);
         }
         return allSeries;
     }
