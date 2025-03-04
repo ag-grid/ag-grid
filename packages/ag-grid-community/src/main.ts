@@ -277,6 +277,7 @@ export {
     FindDetailCellRendererParams,
     FindDetailGridCellRendererParams,
     FindFullWidthCellRendererParams,
+    FindGroupRowRendererParams,
 } from './interfaces/iFind';
 
 // gridPanel
@@ -808,6 +809,7 @@ export {
     SortDirection,
     NestedFieldPaths,
     GetFindTextParams,
+    GetFindTextFunc,
 } from './entities/colDef';
 export {
     DataTypeDefinition,

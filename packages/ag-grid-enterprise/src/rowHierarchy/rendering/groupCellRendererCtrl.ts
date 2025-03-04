@@ -24,6 +24,8 @@ import {
     _warn,
 } from 'ag-grid-community';
 
+import { _getGroupValue, _isHiddenParent } from '../rowHierarchyUtils';
+
 export class GroupCellRendererCtrl extends BeanStub implements IGroupCellRendererCtrl {
     private params: GroupCellRendererParams;
 
@@ -123,36 +125,6 @@ export class GroupCellRendererCtrl extends BeanStub implements IGroupCellRendere
     }
 
     /**
-     * Returns if the node and all of its parents are all firstChild until ancestor node is reached
-     * This is to check for [groupHideOpenParents] where we only show the expand controls for first child of a group
-     *
-     * @return returns if node and all of its parents are first child until ancestor node is reached
-     */
-    private isHiddenParent(): boolean {
-        let node = this.node;
-        const ancestor = this.displayedNode;
-
-        const levelDiff = node.level - ancestor.level;
-        if (levelDiff <= 0) {
-            return false;
-        }
-
-        const isHideOpenParents = this.gos.get('groupHideOpenParents');
-        if (!isHideOpenParents) {
-            return false;
-        }
-
-        for (let i = 0; i < levelDiff; i++) {
-            const isFirstChild = node.parent?.childrenAfterSort?.[0] === node;
-            if (!isFirstChild) {
-                return false;
-            }
-            node = node.parent!;
-        }
-        return node === ancestor;
-    }
-
-    /**
      * Returns an aria "role" to place on full width group cells, or the parent wrapper.
      * @returns the aria role to place on the parent wrapper
      */
@@ -201,30 +173,17 @@ export class GroupCellRendererCtrl extends BeanStub implements IGroupCellRendere
      * Displays the group value for the displayed node
      */
     private addGroupValue(): void {
-        let formattedValue = this.getFormattedValue();
-
+        const {
+            params: { column, value },
+            node,
+            displayedNode,
+            beans,
+        } = this;
         // if no formatted value and node key is '', then we replace this group with (Blanks)
         // this does not propagate down for [showOpenedGroup]
-        if (formattedValue == null) {
-            const displayedNode = this.displayedNode;
-            const isCellBlankValue = displayedNode.key === '';
-            const isGroupColForNode =
-                !!displayedNode.rowGroupColumn &&
-                (!this.params.column || // full width row
-                    this.params.column?.isRowGroupDisplayed(displayedNode.rowGroupColumn.getId())); // correct column cell
-            // if value is empty and correct column
-            if (isCellBlankValue && isGroupColForNode) {
-                const isHiddenParent = this.isHiddenParent();
-                // ensure node is unchanged or hidden parent
-                if (displayedNode === this.node || isHiddenParent) {
-                    const localeTextFunc = this.getLocaleTextFunc();
-                    formattedValue = localeTextFunc('blanks', '(Blanks)');
-                }
-            }
-        }
-
+        const formattedValue = this.getFormattedValue() ?? _getGroupValue(column, node, displayedNode, beans);
         const innerCompDetails = this.getInnerCompDetails();
-        this.comp.setInnerRenderer(innerCompDetails, formattedValue ?? this.params.value ?? null);
+        this.comp.setInnerRenderer(innerCompDetails, formattedValue ?? value ?? null);
     }
 
     /**
@@ -469,7 +428,7 @@ export class GroupCellRendererCtrl extends BeanStub implements IGroupCellRendere
 
         // if [showOpenedGroup] and not [groupHideOpenParents], then no child count
         const isRepresentingOtherNode = this.gos.get('showOpenedGroup') && this.displayedNode !== this.node;
-        if (isRepresentingOtherNode && !this.isHiddenParent()) {
+        if (isRepresentingOtherNode && !_isHiddenParent(this.node, this.displayedNode, this.gos)) {
             return 0;
         }
 
@@ -521,7 +480,7 @@ export class GroupCellRendererCtrl extends BeanStub implements IGroupCellRendere
         }
 
         // if showing for a hidden parent, we show expand/contract
-        return this.isHiddenParent();
+        return _isHiddenParent(this.node, this.displayedNode, this.gos);
     }
 
     /**
