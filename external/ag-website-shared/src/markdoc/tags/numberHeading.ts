@@ -6,5 +6,11 @@ export const numberHeading: Schema<Config, Render> = {
     render: component('../../external/ag-website-shared/src/components/number-heading/NumberHeading'),
     attributes: {
         number: { type: String, required: true },
+        title: { type: String, required: true },
+        level: {
+            type: String,
+            matches: ['h1', 'h2', 'h3', 'h4', 'h5', 'h6'],
+            default: 'h2',
+        },
     },
 };

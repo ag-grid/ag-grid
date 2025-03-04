@@ -1,3 +1,33 @@
 .number {
-    background-color: yellow;
+    background-color: #e5e9ed;
+    height: 32px;
+    width: 32px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: var(--radius-sm);
+    font-weight: 600;
+    font-size: 15px;
+    color: var(--color-fg-primary);
+    display: inline-flex;
+    margin-right: 8px;
+}
+
+.numberHeading {
+    display: flex;
+    margin-top: 12px;
+    margin-bottom: 12px;
+    gap: 16px;
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+        margin-top: 4px;
+    }
+}
+
+.content {
+    width: 100%;
 }
