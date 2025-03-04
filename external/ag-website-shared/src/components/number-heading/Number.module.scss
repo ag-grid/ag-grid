@@ -16,11 +16,8 @@
 
 .number {
     background-color: #e5e9eda9;
-    #{$selector-darkmode} & {
-        background-color: #e5e9ed26;
-    }
-    height: 28px;
-    width: 28px;
+    height: var(--number-size);
+    width: var(--number-size);
     display: flex;
     justify-content: center;
     align-items: center;
@@ -29,26 +26,20 @@
     font-size: 14px;
     color: var(--color-fg-primary);
     flex-shrink: 0;
+
+    #{$selector-darkmode} & {
+        background-color: #e5e9ed26;
+    }
 }
 
 .numberHeading {
+    --number-size: 28px;
+    --number-gap: 32px;
+
     display: flex;
     margin-top: 24px;
     margin-bottom: 24px;
-    gap: 32px;
-
-    @media (max-width: 768px) {
-        flex-direction: column;
-        gap: 16px;
-
-        .numberContainer {
-            justify-content: left;
-            width: 32px;
-        }
-        .content {
-            padding: 0;
-        }
-    }
+    gap: var(--number-gap);
 
     h1,
     h2,
@@ -58,8 +49,27 @@
     h6 {
         margin-top: 2px;
     }
+
+    @media (max-width: 768px) {
+        --number-gap: 16px;
+
+        flex-direction: column;
+
+        .numberContainer {
+            justify-content: left;
+            width: 32px;
+        }
+
+        .content {
+            padding: 0;
+        }
+    }
 }
 
 .content {
     width: 100%;
+
+    @media (min-width: 768px) {
+        max-width: calc(100% - var(--number-size) - var(--number-gap));
+    }
 }
