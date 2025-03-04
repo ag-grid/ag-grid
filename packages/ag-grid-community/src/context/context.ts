@@ -434,6 +434,7 @@ export type BeanName =
     | 'lazyBlockLoadingSvc'
     | 'licenseManager'
     | 'localeSvc'
+    | 'manualPinnedRowModel'
     | 'masterDetailSvc'
     | 'menuItemMapper'
     | 'menuSvc'

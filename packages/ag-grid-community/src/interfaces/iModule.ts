@@ -134,6 +134,7 @@ export type CommunityModuleName =
     | 'InfiniteRowModel'
     | 'LargeTextEditor'
     | 'Locale'
+    | 'ManualPinnedRow'
     | 'NumberEditor'
     | 'NumberFilter'
     | 'Pagination'
