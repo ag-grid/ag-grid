@@ -1,3 +1,5 @@
+@use 'design-system' as *;
+
 .numberContainer {
     display: flex;
     flex-direction: column;
@@ -14,6 +16,9 @@
 
 .number {
     background-color: #e5e9eda9;
+    #{$selector-darkmode} & {
+        background-color: #e5e9ed26;
+    }
     height: 28px;
     width: 28px;
     display: flex;
