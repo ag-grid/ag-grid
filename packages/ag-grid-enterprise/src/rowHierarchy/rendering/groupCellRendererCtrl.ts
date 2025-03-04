@@ -210,7 +210,8 @@ export class GroupCellRendererCtrl extends BeanStub implements IGroupCellRendere
             const isCellBlankValue = displayedNode.key === '';
             const isGroupColForNode =
                 !!displayedNode.rowGroupColumn &&
-                this.params.column?.isRowGroupDisplayed(displayedNode.rowGroupColumn.getId());
+                (!this.params.column || // full width row
+                    this.params.column?.isRowGroupDisplayed(displayedNode.rowGroupColumn.getId())); // correct column cell
             // if value is empty and correct column
             if (isCellBlankValue && isGroupColForNode) {
                 const isHiddenParent = this.isHiddenParent();
