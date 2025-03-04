@@ -1292,6 +1292,13 @@ export interface GridOptions<TData = any> {
      * Set to `'bottom'` to allow pinning rows to the bottom pinned row container only.
      */
     enableRowPinning?: boolean | 'top' | 'bottom';
+    /**
+     * Return `true` if the grid should allow the row to be manually pinned.
+     * Return `false` if the grid should prevent the row from being pinned
+     *
+     * When not defined, all rows default to pinnable.
+     */
+    isRowPinnable?: isRowPinnable<TData>;
     // *** Row Model *** //
     /**
      * Sets the row model type.
@@ -2452,6 +2459,10 @@ export interface IsRowMaster<TData = any> {
 }
 
 export interface IsRowSelectable<TData = any> {
+    (node: IRowNode<TData>): boolean;
+}
+
+export interface isRowPinnable<TData = any> {
     (node: IRowNode<TData>): boolean;
 }
 

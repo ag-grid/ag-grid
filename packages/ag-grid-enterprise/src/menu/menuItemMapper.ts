@@ -75,7 +75,7 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
             sortSvc,
             chartMenuItemMapper,
             valueColsSvc,
-            pinnedRowModel,
+            manualPinnedRowModel,
         } = beans;
 
         const getStockMenuItem = (
@@ -120,31 +120,31 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
                           }
                         : null;
                 case 'pinRowSubMenu':
-                    return pinnedRowModel
+                    return manualPinnedRowModel
                         ? {
                               name: localeTextFunc('pinRow', 'Pin Row'),
                               subMenu: ['pinTop', 'pinBottom'],
                           }
                         : null;
                 case 'pinTop':
-                    return pinnedRowModel
+                    return manualPinnedRowModel
                         ? {
                               name: localeTextFunc('pinTop', 'Pin to Top'),
-                              action: ({ node }) => node && pinnedRowModel.pinRow(node as RowNode, 'top'),
+                              action: ({ node }) => node && manualPinnedRowModel.pinRow(node as RowNode, 'top'),
                           }
                         : null;
                 case 'pinBottom':
-                    return pinnedRowModel
+                    return manualPinnedRowModel
                         ? {
                               name: localeTextFunc('pinBottom', 'Pin to Bottom'),
-                              action: ({ node }) => node && pinnedRowModel.pinRow(node as RowNode, 'bottom'),
+                              action: ({ node }) => node && manualPinnedRowModel.pinRow(node as RowNode, 'bottom'),
                           }
                         : null;
                 case 'unpinRow':
-                    return pinnedRowModel
+                    return manualPinnedRowModel
                         ? {
                               name: localeTextFunc('unpinRow', 'Unpin Row'),
-                              action: ({ node }) => node && pinnedRowModel.unpinRow(node as RowNode),
+                              action: ({ node }) => node && manualPinnedRowModel.pinRow(node as RowNode, null),
                           }
                         : null;
                 case 'valueAggSubMenu':

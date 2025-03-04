@@ -19,6 +19,8 @@ export class ManualPinnedRowModel extends BeanStub implements NamedBean {
         this.addManagedEventListeners({ gridStylesChanged: this.onGridStylesChanges.bind(this) });
     }
 
+    public pinRow(node: RowNode, container: RowPinnedType): void {}
+
     public isEmpty(floating: RowPinnedType): boolean {
         return this.getCache(floating).order.length === 0;
     }

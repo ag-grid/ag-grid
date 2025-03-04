@@ -69,6 +69,7 @@ import type { IStickyRowService } from '../interfaces/iStickyRows';
 import type { IMasterDetailService } from '../interfaces/masterDetail';
 import type { IRenderStatusService } from '../interfaces/renderStatusService';
 import type { IRowNumbersService } from '../interfaces/rowNumbers';
+import type { ManualPinnedRowModel } from '../manualPinnedRowModel/manualPinnedRowModel';
 import type { AnimationFrameService } from '../misc/animationFrameService';
 import type { ApiEventService } from '../misc/apiEvents/apiEventService';
 import type { LocaleService } from '../misc/locale/localeService';
@@ -250,6 +251,7 @@ export interface CoreBeanCollection {
     stateSvc?: StateService;
     overlays?: OverlayService;
     pinnedRowModel?: PinnedRowModel;
+    manualPinnedRowModel?: ManualPinnedRowModel;
     menuSvc?: MenuService;
     apiEventSvc?: ApiEventService;
     undoRedo?: UndoRedoService;
