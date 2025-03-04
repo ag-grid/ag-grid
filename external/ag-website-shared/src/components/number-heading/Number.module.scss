@@ -32,6 +32,19 @@
     margin-bottom: 24px;
     gap: 32px;
 
+    @media (max-width: 768px) {
+        flex-direction: column;
+        gap: 16px;
+
+        .numberContainer {
+            justify-content: left;
+            width: 32px;
+        }
+        .content {
+            padding: 0;
+        }
+    }
+
     h1,
     h2,
     h3,
