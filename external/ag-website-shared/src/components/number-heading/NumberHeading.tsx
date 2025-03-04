@@ -1,3 +1,5 @@
+import { LinkIcon } from '@ag-website-shared/components/link-icon/LinkIcon';
+import Slugger from 'github-slugger';
 import type { FunctionComponent, ReactNode } from 'react';
 import React from 'react';
 
@@ -10,8 +12,10 @@ interface Props {
     level: 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6';
 }
 
-const NumberHeading: FunctionComponent<Props> = ({ level, title, number, children }) => {
+export const NumberHeading: FunctionComponent<Props> = ({ level, title, number, children }) => {
     const Heading = level;
+    const slugger = new Slugger();
+    const headingId = slugger.slug(title);
 
     return (
         <div className={styles.numberHeading}>
@@ -20,11 +24,11 @@ const NumberHeading: FunctionComponent<Props> = ({ level, title, number, childre
             </div>
             <div className={styles.content}>
                 {' '}
-                <Heading>{title}</Heading>
+                <Heading id={headingId}>
+                    {title} <LinkIcon href={`#${headingId}`} />
+                </Heading>
                 <div>{children}</div>
             </div>
         </div>
     );
 };
-
-export default NumberHeading;

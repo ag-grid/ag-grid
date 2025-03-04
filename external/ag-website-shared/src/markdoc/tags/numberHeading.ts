@@ -3,7 +3,7 @@ import type { Render } from '@astrojs/markdoc/config';
 import type { Config, Schema } from '@markdoc/markdoc';
 
 export const numberHeading: Schema<Config, Render> = {
-    render: component('../../external/ag-website-shared/src/components/number-heading/NumberHeading'),
+    render: component('../../external/ag-website-shared/src/components/number-heading/NumberHeading.astro'),
     attributes: {
         number: { type: String, required: true },
         title: { type: String, required: true },
