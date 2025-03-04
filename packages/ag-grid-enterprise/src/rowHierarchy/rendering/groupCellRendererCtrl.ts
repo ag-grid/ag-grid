@@ -207,23 +207,25 @@ export class GroupCellRendererCtrl extends BeanStub implements IGroupCellRendere
      */
     private addFooterValue(): void {
         const { expressionSvc, footerSvc } = this.beans;
-        const { totalValueGetter } = this.params;
-        let footerValue = '';
+        const { totalValueGetter, column, node, value } = this.params;
+        const valueFormatted =
+            this.getFormattedValue() ?? _getGroupValue(column, node as RowNode, node as RowNode, this.beans);
+        let footerValue: string | undefined = '';
 
         if (totalValueGetter) {
             if (typeof totalValueGetter === 'function') {
-                footerValue = totalValueGetter({ ...this.params });
+                footerValue = totalValueGetter({ ...this.params, valueFormatted });
             } else if (typeof totalValueGetter === 'string') {
-                footerValue = expressionSvc?.evaluate(totalValueGetter, { ...this.params }) ?? '';
+                footerValue = expressionSvc?.evaluate(totalValueGetter, { ...this.params, valueFormatted });
             } else {
                 _warn(179);
             }
         } else {
-            footerValue = footerSvc?.getTotalValue(this.params.value) ?? '';
+            footerValue = footerSvc?.getTotalValue(valueFormatted ?? value);
         }
 
         const innerCompDetails = this.getInnerCompDetails();
-        this.comp.setInnerRenderer(innerCompDetails, footerValue);
+        this.comp.setInnerRenderer(innerCompDetails, footerValue ?? '');
     }
 
     /**
