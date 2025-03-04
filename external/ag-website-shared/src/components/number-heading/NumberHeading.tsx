@@ -23,7 +23,6 @@ export const NumberHeading: FunctionComponent<Props> = ({ level, title, number, 
                 <div className={styles.number}>{number}</div> <div className={styles.verticalLine}></div>
             </div>
             <div className={styles.content}>
-                {' '}
                 <Heading id={headingId}>
                     {title} <LinkIcon href={`#${headingId}`} />
                 </Heading>
