@@ -1040,6 +1040,13 @@ export interface Props<TData> {
     /** Data to be displayed as pinned bottom rows in the grid.
          */
     pinnedBottomRowData?: any[] | undefined,
+    /** Determines whether manual row pinning is enabled via the row context menu.
+         *
+         * Set to `true` to allow pinning rows to both top and bottom pinned row containers.
+         * Set to `'top'` to allow pinning rows to the top pinned row container only.
+         * Set to `'bottom'` to allow pinning rows to the bottom pinned row container only.
+         */
+    enableRowPinning?: boolean | 'top' | 'bottom' | undefined,
     /** Sets the row model type.
          * @default 'clientSide'
          * @initial
@@ -1822,6 +1829,7 @@ export function getProps() {
         suppressGroupRowsSticky: undefined,
         pinnedTopRowData: undefined,
         pinnedBottomRowData: undefined,
+        enableRowPinning: undefined,
         rowModelType: undefined,
         rowData: undefined,
         asyncTransactionWaitMillis: undefined,
