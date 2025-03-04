@@ -53,16 +53,17 @@ export class BarChartProxy extends CartesianChartProxy<'bar'> {
         const allSeries: AgBarSeriesOptions[] = [];
         for (let i = 0; i < series.length; i++) {
             const primarySeries = series[i];
+            const primaryIndex = i * 2;
 
             const filteredOutSeries = {
                 ...primarySeries,
                 yKey: `${primarySeries.yKey}-filtered-out`,
                 showInLegend: false,
                 fill: {
-                    $mix: [{ $path: '../0/fill' }, { $ref: 'backgroundColor' }, 0.7],
+                    $mix: [{ $path: `../${primaryIndex}/fill` }, { $ref: 'backgroundColor' }, 0.7],
                 } as any,
                 stroke: {
-                    $mix: [{ $path: '../0/stroke' }, { $ref: 'backgroundColor' }, 0.7],
+                    $mix: [{ $path: `../${primaryIndex}/stroke` }, { $ref: 'backgroundColor' }, 0.7],
                 } as any,
             };
 
