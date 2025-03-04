@@ -85,11 +85,9 @@ npm install ag-grid-vue3
 {% /if %}
 
 
-
 {% if isFramework("javascript") %}
 {% metaTag tags=["createGrid"] /%}
-### Provide a Container
-
+{% numberHeading number="1" title="Provide a Container" level="h3" %}
 <!-- Create JavaScript -->
 
  Load the AG Grid library and create a container div. The div should have a height because the Data Grid will fill the size of the parent container:
@@ -111,7 +109,14 @@ npm install ag-grid-vue3
 If you're using TypeScript you need to import and register the modules you want to use. See the [NPM Installation](./installation/#npm-installation) docs for more information. 
 {% /note %}
 
-### Instantiating the JavaScript Data Grid
+
+{% /numberHeading %}
+{% /if %}
+
+
+{% if isFramework("javascript") %}
+{% numberHeading number="2" title="Instantiating the JavaScript Data Grid" level="h3" %}
+
 
 Create the Data Grid inside of your container div using `createGrid`.
 
@@ -124,7 +129,12 @@ const myGridElement = document.querySelector('#myGrid');
 agGrid.createGrid(myGridElement, gridOptions);
 ```
 
-### Define Rows and Columns
+{% /numberHeading %}
+{% /if %}
+
+
+{% if isFramework("javascript") %}
+{% numberHeading number="3" title="Define Rows and Columns" level="h3" %}
 
 ```js
 // Grid Options: Contains all of the Data Grid configurations
@@ -144,7 +154,7 @@ const gridOptions = {
     ]
 };
 ```
-
+{% /numberHeading %}
 {% /if %}
 
 {% if isFramework("react") %}
@@ -430,7 +440,7 @@ To live-edit the code, open the example in CodeSandbox or Plunker using the butt
 
 
 {% if isFramework("javascript") %}
-{% numberHeading number="6" title="Example JavaScript Data Grid" level="h3" %}
+{% numberHeading number="4" title="Example JavaScript Data Grid" level="h3" %}
 Below is a live example of the application running. Click `</> Code` to see the code.
 {% gridExampleRunner title="Quick Start Example" name="quick-start-example"  exampleHeight=303 /%}
 {% note %}

@@ -15,7 +15,9 @@ const NumberHeading: FunctionComponent<Props> = ({ level, title, number, childre
 
     return (
         <div className={styles.numberHeading}>
-            <div className={styles.number}> {number}</div>
+            <div className={styles.numberContainer}>
+                <div className={styles.number}>{number}</div> <div className={styles.verticalLine}></div>
+            </div>
             <div className={styles.content}>
                 {' '}
                 <Heading>{title}</Heading>

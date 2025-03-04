@@ -1,30 +1,44 @@
+.numberContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex-shrink: 0;
+}
+
+.verticalLine {
+    width: 1px;
+    height: calc(100% - 32px);
+    background-color: var(--color-border-secondary);
+    margin-top: 8px;
+}
+
 .number {
-    background-color: #e5e9ed;
-    height: 32px;
-    width: 32px;
+    background-color: #e5e9eda9;
+    height: 28px;
+    width: 28px;
     display: flex;
     justify-content: center;
     align-items: center;
-    border-radius: var(--radius-sm);
+    border-radius: var(--radius-md);
     font-weight: 600;
-    font-size: 15px;
+    font-size: 14px;
     color: var(--color-fg-primary);
-    display: inline-flex;
-    margin-right: 8px;
+    flex-shrink: 0;
 }
 
 .numberHeading {
     display: flex;
-    margin-top: 12px;
-    margin-bottom: 12px;
-    gap: 16px;
+    margin-top: 24px;
+    margin-bottom: 24px;
+    gap: 32px;
+
     h1,
     h2,
     h3,
     h4,
     h5,
     h6 {
-        margin-top: 4px;
+        margin-top: 2px;
     }
 }
 
