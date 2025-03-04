@@ -14,8 +14,11 @@ export function LinkIcon({ className, ...props }: AllHTMLAttributes<HTMLAnchorEl
         event.preventDefault();
 
         const href = event.target.href;
+        const hash = event.target.hash;
 
         navigator.clipboard.writeText(href);
+
+        history.replaceState({}, '', hash);
 
         setLinkCopied(true);
         setlinkActive(true);
