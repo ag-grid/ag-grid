@@ -43,33 +43,22 @@ export class AnimationFrameService extends BeanStub implements NamedBean {
     private destroyTasks: (() => void)[] = [];
     private ticking = false;
     public active: boolean;
-    private batchFrameworkComponents: boolean;
+    private batchFrameworkComps: boolean;
 
     // we need to know direction of scroll, to build up rows in the direction of
     // the scroll. eg if user scrolls down, we extend the rows by building down.
     private scrollGoingDown = true;
-    private lastPage = 0;
     private lastScrollTop = 0;
 
     private taskCount = 0;
 
     public setScrollTop(scrollTop: number): void {
-        const { gos, pagination, rowModel } = this.beans;
-        const isPaginationActive = gos.get('pagination');
         this.scrollGoingDown = scrollTop >= this.lastScrollTop;
 
-        if (scrollTop === 0 && rowModel.isEmpty()) {
-            // If the user last scrolled up and then cleared the data in the grid, we need to reset the scroll direction
-            // otherwise when the new data is loaded the rows will render from bottom to top.
+        if (scrollTop === 0) {
+            // If we are at the top then we always want to be going down next.
+            // This handles new pages for pagination and also row data being cleared.
             this.scrollGoingDown = true;
-        }
-
-        if (isPaginationActive && scrollTop === 0) {
-            const currentPage = pagination?.getCurrentPage() ?? 0;
-            if (currentPage !== this.lastPage) {
-                this.lastPage = currentPage;
-                this.scrollGoingDown = true;
-            }
         }
 
         this.lastScrollTop = scrollTop;
@@ -77,7 +66,7 @@ export class AnimationFrameService extends BeanStub implements NamedBean {
 
     public postConstruct(): void {
         this.active = !this.gos.get('suppressAnimationFrame');
-        this.batchFrameworkComponents = this.beans.frameworkOverrides.batchFrameworkComponents;
+        this.batchFrameworkComps = this.beans.frameworkOverrides.batchFrameworkComps;
     }
 
     // this method is for our AG Grid sanity only - if animation frames are turned off,
@@ -93,7 +82,7 @@ export class AnimationFrameService extends BeanStub implements NamedBean {
     public createTask(task: () => void, index: number, list: 'p1' | 'p2', isFramework: boolean) {
         this.verify();
         let taskList: 'p1' | 'p2' | 'f1' = list;
-        if (isFramework && this.batchFrameworkComponents) {
+        if (isFramework && this.batchFrameworkComps) {
             taskList = 'f1';
         }
         const taskItem: TaskItem = { task, index, createOrder: ++this.taskCount };
