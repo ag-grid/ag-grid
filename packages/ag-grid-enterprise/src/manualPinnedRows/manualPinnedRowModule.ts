@@ -1,5 +1,5 @@
-import type { _PinnedRowGridApi } from '../api/gridApi';
-import type { _ModuleWithApi } from '../interfaces/iModule';
+import type { _ModuleWithApi, _PinnedRowGridApi } from 'ag-grid-community';
+
 import { VERSION } from '../version';
 import {
     getPinnedBottomRow,

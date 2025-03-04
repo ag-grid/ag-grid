@@ -133,7 +133,13 @@ export { Column, ColumnPinnedType, ColumnGroup, ProvidedColumnGroup, ColumnGroup
 export { AgColumn, isColumn } from './entities/agColumn';
 export { AgColumnGroup, isColumnGroup } from './entities/agColumnGroup';
 export { AgProvidedColumnGroup, isProvidedColumnGroup } from './entities/agProvidedColumnGroup';
-export { type ITreeNode, RowNode, ROW_ID_PREFIX_ROW_GROUP as _ROW_ID_PREFIX_ROW_GROUP } from './entities/rowNode';
+export {
+    type ITreeNode,
+    RowNode,
+    ROW_ID_PREFIX_ROW_GROUP as _ROW_ID_PREFIX_ROW_GROUP,
+    ROW_ID_PREFIX_TOP_PINNED as _ROW_ID_PREFIX_TOP_PINNED,
+    ROW_ID_PREFIX_BOTTOM_PINNED as _ROW_ID_PREFIX_BOTTOM_PINNED,
+} from './entities/rowNode';
 export { _createGlobalRowEvent } from './entities/rowNodeUtils';
 export {
     RowPinnedType,
@@ -627,6 +633,7 @@ export {
     _MasterDetailGridApi,
     _StatusBarGridApi,
     _AdvancedFilterGridApi,
+    _PinnedRowGridApi,
     _FindApi,
 } from './api/gridApi';
 export { _getClientSideRowModel, _getServerSideRowModel } from './api/rowModelApiUtils';
@@ -919,6 +926,7 @@ export {
     RowGroupingRowNode,
     StageExecuteParams,
 } from './interfaces/iRowNodeStage';
+export { IManualPinnedRowModel } from './interfaces/iManualPinnedRowModel';
 export { IDateParams, IDate, IDateComp, BaseDate, BaseDateParams } from './interfaces/dateComponent';
 export { IAfterGuiAttachedParams, ContainerType } from './interfaces/iAfterGuiAttachedParams';
 export { IComponent } from './interfaces/iComponent';

@@ -1,5 +1,4 @@
-import type { BeanCollection } from '../context/context';
-import type { IRowNode } from '../interfaces/iRowNode';
+import type { BeanCollection, IRowNode } from 'ag-grid-community';
 
 export function getPinnedTopRowCount(beans: BeanCollection): number {
     return beans.manualPinnedRowModel?.getPinnedTopRowCount() ?? 0;

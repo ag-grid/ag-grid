@@ -1,11 +1,18 @@
-import type { NamedBean } from '../context/bean';
-import { BeanStub } from '../context/beanStub';
-import type { BeanCollection } from '../context/context';
-import { ROW_ID_PREFIX_BOTTOM_PINNED, ROW_ID_PREFIX_TOP_PINNED, RowNode } from '../entities/rowNode';
-import type { CssVariablesChanged } from '../events';
-import { _getRowHeightForNode } from '../gridOptionsUtils';
-import type { RowPinnedType } from '../interfaces/iRowNode';
-import { _removeFromArray } from '../utils/array';
+import type {
+    BeanCollection,
+    CssVariablesChanged,
+    IManualPinnedRowModel,
+    NamedBean,
+    RowPinnedType,
+} from 'ag-grid-community';
+import {
+    BeanStub,
+    RowNode,
+    _ROW_ID_PREFIX_BOTTOM_PINNED,
+    _ROW_ID_PREFIX_TOP_PINNED,
+    _getRowHeightForNode,
+    _removeFromArray,
+} from 'ag-grid-community';
 
 class OrderedSet {
     private set = new Set<RowNode>();
@@ -48,7 +55,7 @@ class OrderedSet {
     }
 }
 
-export class ManualPinnedRowModel extends BeanStub implements NamedBean {
+export class ManualPinnedRowModel extends BeanStub implements NamedBean, IManualPinnedRowModel {
     beanName = 'manualPinnedRowModel' as const;
 
     private top = new OrderedSet();
@@ -234,7 +241,7 @@ function _createRowNodeSibling(
     // previous information about its position.
     sibling.oldRowTop = null;
 
-    const prefix = container === 'top' ? ROW_ID_PREFIX_TOP_PINNED : ROW_ID_PREFIX_BOTTOM_PINNED;
+    const prefix = container === 'top' ? _ROW_ID_PREFIX_TOP_PINNED : _ROW_ID_PREFIX_BOTTOM_PINNED;
 
     sibling.id = `${prefix}_${container}_${rowNode.id}`;
 
