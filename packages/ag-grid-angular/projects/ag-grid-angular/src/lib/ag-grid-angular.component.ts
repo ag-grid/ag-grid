@@ -120,6 +120,7 @@ import type {
     IsGroupOpenByDefaultParams,
     IsRowFilterable,
     IsRowMaster,
+    IsRowPinnable,
     IsRowSelectable,
     IsServerSideGroup,
     IsServerSideGroupOpenByDefaultParams,
@@ -1228,6 +1229,12 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * Set to `'bottom'` to allow pinning rows to the bottom pinned row container only.
      */
     @Input() public enableRowPinning: boolean | 'top' | 'bottom' | undefined = undefined;
+    /** Return `true` if the grid should allow the row to be manually pinned.
+     * Return `false` if the grid should prevent the row from being pinned
+     *
+     * When not defined, all rows default to pinnable.
+     */
+    @Input() public isRowPinnable: IsRowPinnable<TData> | undefined = undefined;
     /** Sets the row model type.
      * @default 'clientSide'
      * @initial
