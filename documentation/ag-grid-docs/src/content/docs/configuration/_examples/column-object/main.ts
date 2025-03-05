@@ -21,16 +21,14 @@ const rowData = [
 ];
 
 function getAllColumns() {
-    console.log(gridApi!.getColumns());
-    window.alert("Columns printed to developer's console");
+    agLog.log(gridApi!.getColumns());
 }
 
 function getAllColumnIds() {
     const columns = gridApi!.getColumns();
     if (columns) {
-        console.log(columns.map((col) => col.getColId()));
+        agLog.log(columns.map((col) => col.getColId()));
     }
-    window.alert("Column IDs printed to developer's console");
 }
 let gridApi: GridApi;
 
@@ -48,3 +46,64 @@ document.addEventListener('DOMContentLoaded', function () {
     const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
     gridApi = createGrid(gridDiv, gridOptions);
 });
+
+/**
+ * Logger implementation
+ */
+
+function safeStringify({ obj, space = 2 }: { obj: any; space?: number }) {
+    const seen = new WeakSet();
+    return JSON.stringify(
+        obj,
+        (_, value) => {
+            if (typeof value === 'object' && value !== null) {
+                if (seen.has(value)) {
+                    return '[Circular]';
+                }
+                seen.add(value);
+            }
+            return value;
+        },
+        space
+    );
+}
+
+const createAgLog = ({ bufferSize }: { bufferSize: number }) => {
+    const logContainer = document.getElementById('agLog');
+    if (!logContainer) {
+        console.error('No element with #agLog found');
+        return;
+    }
+
+    const removeExcessEntries = () => {
+        while (logContainer.children.length > bufferSize) {
+            logContainer.removeChild(logContainer.lastChild!);
+        }
+    };
+
+    const createEntry = (...args: any[]) => {
+        const entry = document.createElement('div');
+        entry.textContent = args
+            .map((arg) => {
+                if (typeof arg === 'string') {
+                    return arg;
+                }
+                return safeStringify({ obj: arg });
+            })
+            .join(' ');
+
+        return entry;
+    };
+
+    const log = (...args: any[]) => {
+        const entry = createEntry(...args);
+        logContainer.prepend(entry);
+        removeExcessEntries();
+    };
+
+    return {
+        log,
+    };
+};
+// Need to declare this somewhere globally
+const agLog = createAgLog({ bufferSize: 10 })!;

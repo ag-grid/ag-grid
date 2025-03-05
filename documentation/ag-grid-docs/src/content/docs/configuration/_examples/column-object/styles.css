@@ -8,3 +8,15 @@
     flex: 1 1 0px;
     width: 100%;
 }
+
+#agLog {
+    height: 6rem;
+    overflow-y: auto;
+    overflow-x: hidden;
+    margin-bottom: 1rem;
+    background-color: #eaecf0;
+    color: #333;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
