@@ -12,10 +12,6 @@
     height: calc(100% - 32px);
     background-color: var(--color-border-secondary);
     margin-top: 8px;
-
-    &:last-child {
-        background: linear-gradient(to bottom, var(--color-border-secondary) 0%, var(--color-bg-primary) 100%);
-    }
 }
 
 .number {
