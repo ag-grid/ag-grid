@@ -12,6 +12,10 @@
     height: calc(100% - 32px);
     background-color: var(--color-border-secondary);
     margin-top: 8px;
+
+    &:last-child {
+        background: linear-gradient(to bottom, var(--color-border-secondary) 0%, var(--color-bg-primary) 100%);
+    }
 }
 
 .number {
@@ -24,7 +28,7 @@
     border-radius: var(--radius-md);
     font-weight: var(--text-semibold);
     font-size: 14px;
-    color: var(--color-fg-primary);
+    color: color-mix(in srgb, var(--color-text-secondary), var(--color-bg-primary) 20%);
     flex-shrink: 0;
 
     #{$selector-darkmode} & {
