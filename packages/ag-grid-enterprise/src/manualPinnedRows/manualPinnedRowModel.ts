@@ -19,7 +19,7 @@ class OrderedSet {
     public add(item: RowNode): void {
         this.set.add(item);
         this.cachedOrder.push(item);
-        this.cachedOrder.sort((a, b) => (a.rowIndex ?? 0) - (b.rowIndex ?? 0));
+        this.sort();
     }
 
     public delete(item: RowNode): void {
@@ -47,6 +47,10 @@ class OrderedSet {
         this.set.clear();
         this.cachedOrder.length = 0;
     }
+
+    public sort(): void {
+        this.cachedOrder.sort((a, b) => (a.sibling?.rowIndex ?? 0) - (b.sibling?.rowIndex ?? 0));
+    }
 }
 
 export class ManualPinnedRowModel extends BeanStub implements NamedBean, IPinnedRowModel {
@@ -56,7 +60,15 @@ export class ManualPinnedRowModel extends BeanStub implements NamedBean, IPinned
     private bottom = new OrderedSet();
 
     public postConstruct(): void {
-        this.addManagedEventListeners({ gridStylesChanged: this.onGridStylesChanges.bind(this) });
+        this.addManagedEventListeners({
+            gridStylesChanged: this.onGridStylesChanges.bind(this),
+            modelUpdated: () => {
+                this.top.sort();
+                this.bottom.sort();
+                this.refreshRowPositions('top');
+                this.refreshRowPositions('bottom');
+            },
+        });
     }
 
     public override destroy(): void {
