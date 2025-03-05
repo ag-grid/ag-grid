@@ -84,6 +84,7 @@ export class ManualPinnedRowModel extends BeanStub implements NamedBean, IManual
             found[1].delete(node);
             // TODO: CSRM stuff
 
+            this.dispatchPinnedRowDataChanged(node);
             return;
         }
 
@@ -92,16 +93,8 @@ export class ManualPinnedRowModel extends BeanStub implements NamedBean, IManual
         const sibling = _createRowNodeSibling(node, this.beans, container);
         this.getContainer(container).add(sibling);
         this.refreshRowPositions(container);
-    }
 
-    private refreshRowPositions(container: NonNullable<RowPinnedType>): void {
-        let rowTop = 0;
-        this.getContainer(container).forEach((node, index) => {
-            node.setRowTop(rowTop);
-            node.setRowHeight(_getRowHeightForNode(this.beans, node).height);
-            node.setRowIndex(index);
-            rowTop += node.rowHeight!;
-        });
+        this.dispatchPinnedRowDataChanged(node);
     }
 
     public isEmpty(floating: NonNullable<RowPinnedType>): boolean {
@@ -200,6 +193,20 @@ export class ManualPinnedRowModel extends BeanStub implements NamedBean, IManual
         if (this.top.has(node)) return ['top', this.top];
         if (this.bottom.has(node)) return ['bottom', this.bottom];
     }
+
+    private refreshRowPositions(container: NonNullable<RowPinnedType>): void {
+        let rowTop = 0;
+        this.getContainer(container).forEach((node, index) => {
+            node.setRowTop(rowTop);
+            node.setRowHeight(_getRowHeightForNode(this.beans, node).height);
+            node.setRowIndex(index);
+            rowTop += node.rowHeight!;
+        });
+    }
+
+    private dispatchPinnedRowDataChanged(node: RowNode): void {
+        this.eventSvc.dispatchEvent({ type: 'rowPinnedChanged', node });
+    }
 }
 
 /**
@@ -236,6 +243,7 @@ function _createRowNodeSibling(
 
     sibling.setRowTop(null);
     sibling.setRowIndex(null);
+    sibling.footer = true;
 
     // manually set oldRowTop to null so we discard any
     // previous information about its position.

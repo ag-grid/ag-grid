@@ -501,7 +501,11 @@ export class RowContainerCtrl extends BeanStub implements ScrollPartner {
 
     private onDisplayedRowsChanged(afterScroll: boolean = false): void {
         const rows = this.options.getRowCtrls(this.beans.rowRenderer);
-        if (!this.visible || rows.length === 0) {
+        if (this.options.container?.includes('floating-top')) {
+            console.log('rowContainerCtrl.onDisplayedRowsChanged', rows.length, this.options.container);
+        }
+        this.visible = this.isContainerVisible();
+        if (rows.length === 0) {
             this.comp.setRowCtrls({ rowCtrls: this.EMPTY_CTRLS });
             return;
         }
