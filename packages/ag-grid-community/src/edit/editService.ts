@@ -18,6 +18,7 @@ import { PopupEditorWrapper } from './cellEditors/popupEditorWrapper';
 export class EditService extends BeanStub implements NamedBean {
     beanName = 'editSvc' as const;
 
+    /** @return whether to prevent default on event */
     public startEditing(
         cellCtrl: CellCtrl,
         key: string | null = null,
@@ -25,7 +26,7 @@ export class EditService extends BeanStub implements NamedBean {
         event: KeyboardEvent | MouseEvent | null = null
     ): boolean {
         if (!cellCtrl.isCellEditable() || cellCtrl.editing) {
-            return true;
+            return false;
         }
 
         // because of async in React, the cellComp may not be set yet, if no cellComp then we are
@@ -247,6 +248,7 @@ export class EditService extends BeanStub implements NamedBean {
     }
 
     // called by rowRenderer when user navigates via tab key
+    /** @return whether to prevent default on event */
     public startRowOrCellEdit(
         cellCtrl: CellCtrl,
         key?: string | null,
@@ -262,7 +264,7 @@ export class EditService extends BeanStub implements NamedBean {
         }
 
         if (this.gos.get('editType') === 'fullRow') {
-            return this.beans.rowEditSvc?.startEditing(cellCtrl.rowCtrl, key, cellCtrl) ?? true;
+            return this.beans.rowEditSvc?.startEditing(cellCtrl.rowCtrl, key, cellCtrl) ?? false;
         } else {
             return this.startEditing(cellCtrl, key, true, event);
         }
