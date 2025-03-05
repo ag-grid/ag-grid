@@ -548,10 +548,10 @@ export class RowRenderer extends BeanStub implements NamedBean {
 
             switch (rowNode.rowPinned) {
                 case 'top':
-                    destroyAndRecreateCtrl(this.topRowCtrls, rowNode.pinnedSibling);
+                    destroyAndRecreateCtrl(this.topRowCtrls, rowNode.sibling);
                     break;
                 case 'bottom':
-                    destroyAndRecreateCtrl(this.bottomRowCtrls, rowNode.pinnedSibling);
+                    destroyAndRecreateCtrl(this.bottomRowCtrls, rowNode.sibling);
                     break;
                 default:
                     destroyAndRecreateCtrl(this.rowCtrlsByRowIndex);

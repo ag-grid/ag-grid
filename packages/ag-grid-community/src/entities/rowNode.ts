@@ -109,10 +109,8 @@ export class RowNode<TData = any>
      */
     public rowPinned: RowPinnedType;
 
-    /**
-     * When manually pinning a row, the row is duplicated to this sibling, which is what is actually rendered in the pinned container.
-     */
-    public pinnedSibling?: RowNode<TData>;
+    /** `true` if node represents a manually pinned row. This row is similar in behaviour to a footer. */
+    public isPinnedSibling?: boolean;
 
     /** When true, this row will appear in the top */
     public sticky: boolean;
