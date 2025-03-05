@@ -208,14 +208,28 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
 
         this.initialiseRowComp(gui);
 
-        const isSsrmLoadingRow = this.rowType === 'FullWidthLoading' || this.rowNode.stub;
-        const isIrmLoadingRow = !this.rowNode.data && this.beans.rowModel.getType() === 'infinite';
+        const rowNode = this.rowNode;
+        const isSsrmLoadingRow = this.rowType === 'FullWidthLoading' || rowNode.stub;
+        const isIrmLoadingRow = !rowNode.data && this.beans.rowModel.getType() === 'infinite';
         // pinned rows render before the main grid body in the SSRM, only fire the event after the main body has rendered.
-        if (!isSsrmLoadingRow && !isIrmLoadingRow && !this.rowNode.rowPinned) {
+        if (!isSsrmLoadingRow && !isIrmLoadingRow && !rowNode.rowPinned) {
             // this is fired within setComp as we know that the component renderer is now trying to render.
             // linked with the fact the function implementation queues behind requestAnimationFrame should allow
             // us to be certain that all rendering is done by the time the event fires.
             this.beans.rowRenderer.dispatchFirstDataRenderedEvent();
+        }
+
+        const focusSvc = this.beans.focusSvc;
+        const focusableElement = this.fullWidthGui?.element;
+        if (focusableElement) {
+            // when cell is created, if it should be focus the grid should take focus from the focused cell
+            if (
+                !this.editing &&
+                focusSvc.isRowFocused(rowNode.rowIndex!, rowNode.rowPinned) &&
+                focusSvc.shouldTakeFocus()
+            ) {
+                setTimeout(() => focusableElement.focus({ preventScroll: true }), 0);
+            }
         }
     }
 
@@ -1510,6 +1524,11 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
             } else {
                 this.allRowGuis.forEach((gui) => gui.rowComp.addOrRemoveCssClass('ag-opacity-zero', true));
             }
+        }
+
+        // if this was focused; focus will need recovered
+        if (this.fullWidthGui?.element === _getActiveDomElement(this.beans)) {
+            this.beans.focusSvc.needsFocusRestored = true;
         }
 
         rowNode.setHovered(false);

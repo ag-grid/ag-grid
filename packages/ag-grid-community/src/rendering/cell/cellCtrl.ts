@@ -9,7 +9,13 @@ import type { RowNode } from '../../entities/rowNode';
 import type { AgEventType } from '../../eventTypes';
 import type { CellContextMenuEvent, CellEvent, CellFocusedEvent } from '../../events';
 import type { GridOptionsService } from '../../gridOptionsService';
-import { _addGridCommonParams, _getCheckboxes, _isCellSelectionEnabled, _setDomData } from '../../gridOptionsUtils';
+import {
+    _addGridCommonParams,
+    _getActiveDomElement,
+    _getCheckboxes,
+    _isCellSelectionEnabled,
+    _setDomData,
+} from '../../gridOptionsUtils';
 import { refreshFirstAndLastStyles } from '../../headerRendering/cells/cssClassApplier';
 import type { BrandedType } from '../../interfaces/brandedType';
 import type { ICellEditor } from '../../interfaces/iCellEditor';
@@ -88,8 +94,6 @@ export class CellCtrl extends BeanStub {
     public comp: ICellComp;
     public editCompDetails?: UserCompDetails;
 
-    protected focusEventToRestore: CellFocusedEvent | undefined;
-
     public printLayout: boolean;
 
     public value: any;
@@ -134,16 +138,6 @@ export class CellCtrl extends BeanStub {
 
         this.createCellPosition();
         this.updateAndFormatValue(false);
-    }
-
-    public shouldRestoreFocus(): boolean {
-        // Used in React to determine if the cell should restore focus after re-rendering
-        return this.beans.focusSvc.shouldRestoreFocus(this.cellPosition);
-    }
-
-    public onFocusOut(): void {
-        // Used in React
-        this.beans.focusSvc.clearRestoreFocus();
     }
 
     private addFeatures(): void {
@@ -212,7 +206,7 @@ export class CellCtrl extends BeanStub {
 
         this.onSuppressCellFocusChanged(this.beans.gos.get('suppressCellFocus'));
 
-        this.onCellFocused(this.focusEventToRestore);
+        this.setupFocus();
         this.applyStaticCssClasses();
         this.setWrapText();
 
@@ -665,6 +659,16 @@ export class CellCtrl extends BeanStub {
         return this.beans.focusSvc.isCellFocused(this.cellPosition);
     }
 
+    public setupFocus() {
+        // when cell is created, if it should be focus the grid should take focus from the focused cell
+        if (!this.editing && this.isCellFocused() && this.beans.focusSvc.shouldTakeFocus()) {
+            const focusableElement = this.comp.getFocusableElement();
+            setTimeout(() => focusableElement.focus({ preventScroll: true }), 0);
+        }
+
+        this.onCellFocused();
+    }
+
     public onCellFocused(event?: CellFocusedEvent): void {
         const { beans } = this;
         if (_isCellFocusSuppressed(beans)) {
@@ -672,16 +676,6 @@ export class CellCtrl extends BeanStub {
         }
 
         const cellFocused = this.isCellFocused();
-        if (!this.comp) {
-            if (cellFocused && event?.forceBrowserFocus) {
-                // The cell comp has not been rendered yet, but the browser focus is being forced for this cell
-                // so lets save the event to apply it when setComp is called in the next turn.
-                this.focusEventToRestore = event;
-            }
-            return;
-        }
-        // Clear the saved focus event
-        this.focusEventToRestore = undefined;
 
         this.comp.addOrRemoveCssClass(CSS_CELL_FOCUS, cellFocused);
 
@@ -793,6 +787,12 @@ export class CellCtrl extends BeanStub {
     public override destroy(): void {
         this.onCompAttachedFuncs = [];
         this.onEditorAttachedFuncs = [];
+
+        // if this was focused; focus will need recovered
+        if (this.eGui === _getActiveDomElement(this.beans)) {
+            this.beans.focusSvc.needsFocusRestored = true;
+        }
+
         super.destroy();
     }
 
