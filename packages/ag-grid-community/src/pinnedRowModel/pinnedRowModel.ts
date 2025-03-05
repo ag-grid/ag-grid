@@ -3,6 +3,7 @@ import { BeanStub } from '../context/beanStub';
 import { ROW_ID_PREFIX_BOTTOM_PINNED, ROW_ID_PREFIX_TOP_PINNED, RowNode } from '../entities/rowNode';
 import type { CssVariablesChanged } from '../events';
 import { _getRowHeightForNode, _getRowIdCallback } from '../gridOptionsUtils';
+import type { IPinnedRowModel } from '../interfaces/iPinnedRowModel';
 import type { RowPinnedType } from '../interfaces/iRowNode';
 import { _warn } from '../validation/logging';
 
@@ -16,7 +17,7 @@ interface OrderedCache<T extends { id: string | undefined }> {
     order: string[];
 }
 
-export class PinnedRowModel extends BeanStub implements NamedBean {
+export class PinnedRowModel extends BeanStub implements NamedBean, IPinnedRowModel {
     beanName = 'pinnedRowModel' as const;
 
     private nextId = 0;
@@ -38,6 +39,14 @@ export class PinnedRowModel extends BeanStub implements NamedBean {
 
     public isRowsToRender(floating: RowPinnedType): boolean {
         return !this.isEmpty(floating);
+    }
+
+    public isManual(): boolean {
+        return false;
+    }
+
+    public pinRow(_node: RowNode<any>, _container: RowPinnedType): void {
+        // do nothing
     }
 
     private onGridStylesChanges(e: CssVariablesChanged) {

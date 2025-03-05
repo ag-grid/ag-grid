@@ -20,8 +20,8 @@ import type {
     ProcessGroupHeaderForExportParams,
     ShouldRowBeSkippedParams,
 } from '../interfaces/exportParams';
+import type { IPinnedRowModel } from '../interfaces/iPinnedRowModel';
 import type { IRowModel } from '../interfaces/iRowModel';
-import type { PinnedRowModel } from '../pinnedRowModel/pinnedRowModel';
 import { _last } from '../utils/array';
 import type { GridSerializingSession, RowAccumulator, RowSpanningAccumulator } from './iGridSerializer';
 
@@ -33,7 +33,7 @@ export class GridSerializer extends BeanStub implements NamedBean {
     private visibleCols: VisibleColsService;
     private colModel: ColumnModel;
     private rowModel: IRowModel;
-    private pinnedRowModel?: PinnedRowModel;
+    private pinnedRowModel?: IPinnedRowModel;
 
     public wireBeans(beans: BeanCollection): void {
         this.visibleCols = beans.visibleCols;

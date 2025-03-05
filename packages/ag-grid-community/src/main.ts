@@ -926,7 +926,7 @@ export {
     RowGroupingRowNode,
     StageExecuteParams,
 } from './interfaces/iRowNodeStage';
-export { IManualPinnedRowModel } from './interfaces/iManualPinnedRowModel';
+export { IPinnedRowModel } from './interfaces/iPinnedRowModel';
 export { IDateParams, IDate, IDateComp, BaseDate, BaseDateParams } from './interfaces/dateComponent';
 export { IAfterGuiAttachedParams, ContainerType } from './interfaces/iAfterGuiAttachedParams';
 export { IComponent } from './interfaces/iComponent';

@@ -49,7 +49,7 @@ class OrderedSet {
     }
 }
 
-export class ManualPinnedRowModel extends BeanStub implements NamedBean, IPinnedRowModel {
+export class ServerSideManualPinnedRowModel extends BeanStub implements NamedBean, IPinnedRowModel {
     beanName = 'pinnedRowModel' as const;
 
     private top = new OrderedSet();

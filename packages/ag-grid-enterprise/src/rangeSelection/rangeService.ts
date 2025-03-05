@@ -18,7 +18,6 @@ import type {
     IRowModel,
     NamedBean,
     PartialCellRange,
-    PinnedRowModel,
     RowPinnedType,
     RowPosition,
     ValueService,
@@ -63,7 +62,6 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
     private colModel: ColumnModel;
     private visibleCols: VisibleColsService;
     private cellNavigation: CellNavigationService;
-    private pinnedRowModel?: PinnedRowModel;
     private ctrlsSvc: CtrlsService;
     private valueSvc: ValueService;
     private selectionMode: SelectionMode;
@@ -74,7 +72,6 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
         this.colModel = beans.colModel;
         this.visibleCols = beans.visibleCols;
         this.cellNavigation = beans.cellNavigation!;
-        this.pinnedRowModel = beans.pinnedRowModel;
         this.ctrlsSvc = beans.ctrlsSvc;
         this.valueSvc = beans.valueSvc;
     }
@@ -325,7 +322,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
             return _isRowBefore(cellRange.startRow, cellRange.endRow) ? cellRange.startRow : cellRange.endRow;
         }
 
-        const pinnedTopRowCount = this.pinnedRowModel?.getPinnedTopRowCount() ?? 0;
+        const pinnedTopRowCount = this.beans.pinnedRowModel?.getPinnedTopRowCount() ?? 0;
         const rowPinned = pinnedTopRowCount > 0 ? 'top' : null;
 
         return { rowIndex: 0, rowPinned };
@@ -336,7 +333,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
             return _isRowBefore(cellRange.startRow, cellRange.endRow) ? cellRange.endRow : cellRange.startRow;
         }
 
-        const pinnedBottomRowCount = this.pinnedRowModel?.getPinnedBottomRowCount() ?? 0;
+        const pinnedBottomRowCount = this.beans.pinnedRowModel?.getPinnedBottomRowCount() ?? 0;
         const pinnedBottom = pinnedBottomRowCount > 0;
 
         if (pinnedBottom) {

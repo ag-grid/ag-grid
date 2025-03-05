@@ -1,8 +1,10 @@
 import type { RowNode } from '../entities/rowNode';
 import type { RowPinnedType } from './iRowNode';
 
-export interface IManualPinnedRowModel {
+export interface IPinnedRowModel {
     pinRow(node: RowNode, container: RowPinnedType): void;
+
+    isManual(): boolean;
 
     isEmpty(floating: NonNullable<RowPinnedType>): boolean;
 

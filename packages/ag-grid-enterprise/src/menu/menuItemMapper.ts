@@ -75,7 +75,7 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
             sortSvc,
             chartMenuItemMapper,
             valueColsSvc,
-            manualPinnedRowModel,
+            pinnedRowModel,
         } = beans;
 
         const getStockMenuItem = (
@@ -120,31 +120,31 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
                           }
                         : null;
                 case 'pinRowSubMenu':
-                    return manualPinnedRowModel
+                    return pinnedRowModel?.isManual()
                         ? {
                               name: localeTextFunc('pinRow', 'Pin Row'),
                               subMenu: ['pinTop', 'pinBottom'],
                           }
                         : null;
                 case 'pinTop':
-                    return manualPinnedRowModel
+                    return pinnedRowModel?.isManual()
                         ? {
                               name: localeTextFunc('pinTop', 'Pin to Top'),
-                              action: ({ node }) => node && manualPinnedRowModel.pinRow(node as RowNode, 'top'),
+                              action: ({ node }) => node && pinnedRowModel.pinRow(node as RowNode, 'top'),
                           }
                         : null;
                 case 'pinBottom':
-                    return manualPinnedRowModel
+                    return pinnedRowModel?.isManual()
                         ? {
                               name: localeTextFunc('pinBottom', 'Pin to Bottom'),
-                              action: ({ node }) => node && manualPinnedRowModel.pinRow(node as RowNode, 'bottom'),
+                              action: ({ node }) => node && pinnedRowModel.pinRow(node as RowNode, 'bottom'),
                           }
                         : null;
                 case 'unpinRow':
-                    return manualPinnedRowModel
+                    return pinnedRowModel?.isManual()
                         ? {
                               name: localeTextFunc('unpinRow', 'Unpin Row'),
-                              action: ({ node }) => node && manualPinnedRowModel.pinRow(node as RowNode, null),
+                              action: ({ node }) => node && pinnedRowModel.pinRow(node as RowNode, null),
                           }
                         : null;
                 case 'valueAggSubMenu':

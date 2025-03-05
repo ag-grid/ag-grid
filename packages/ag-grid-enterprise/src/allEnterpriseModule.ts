@@ -10,7 +10,11 @@ import { ColumnsToolPanelModule } from './columnToolPanel/columnsToolPanelModule
 import { ExcelExportModule } from './excelExport/excelExportModule';
 import { FiltersToolPanelModule } from './filterToolPanel/filtersToolPanelModule';
 import { FindModule } from './find/findModule';
-import { ManualPinnedRowModule } from './manualPinnedRows/manualPinnedRowModule';
+import {
+    ManualPinnedRowApiModule,
+    ManualPinnedRowModule,
+    ServerSideManualPinnedRowModule,
+} from './manualPinnedRows/manualPinnedRowModule';
 import { MasterDetailModule } from './masterDetail/masterDetailModule';
 import { ColumnMenuModule, ContextMenuModule } from './menu/menuModule';
 import { MultiFilterModule } from './multiFilter/multiFilterModule';
@@ -57,6 +61,8 @@ const dependsOn = [
     TreeDataModule,
     FindModule,
     ManualPinnedRowModule,
+    ManualPinnedRowApiModule,
+    ServerSideManualPinnedRowModule,
 ];
 const moduleName: ModuleName = 'AllEnterprise';
 
