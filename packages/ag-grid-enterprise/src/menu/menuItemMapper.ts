@@ -119,13 +119,22 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
                               checked: !!column && !column.isPinned(),
                           }
                         : null;
-                case 'pinRowSubMenu':
+                case 'pinRowSubMenu': {
+                    const enableRowPinning = gos.get('enableRowPinning');
                     return pinnedRowModel?.isManual()
                         ? {
                               name: localeTextFunc('pinRow', 'Pin Row'),
-                              subMenu: ['pinTop', 'pinBottom'],
+                              subMenu:
+                                  enableRowPinning === 'top'
+                                      ? ['pinTop']
+                                      : enableRowPinning === 'bottom'
+                                        ? ['pinBottom']
+                                        : // We only render `pinRowSubMenu` if `enableRowPinning` is truthy, so
+                                          // don't need to have an additional branch here.
+                                          ['pinTop', 'pinBottom'],
                           }
                         : null;
+                }
                 case 'pinTop':
                     return pinnedRowModel?.isManual()
                         ? {
