@@ -78,7 +78,7 @@ export class ManualPinnedRowModel extends BeanStub implements NamedBean, IPinned
             found[1].delete(node);
             // TODO: CSRM stuff
 
-            this.dispatchPinnedRowDataChanged(node);
+            this.dispatchPinnedRowDataChanged();
             return;
         }
 
@@ -88,7 +88,7 @@ export class ManualPinnedRowModel extends BeanStub implements NamedBean, IPinned
         this.getContainer(container).add(sibling);
         this.refreshRowPositions(container);
 
-        this.dispatchPinnedRowDataChanged(node);
+        this.dispatchPinnedRowDataChanged();
     }
 
     public isManual(): boolean {
@@ -202,8 +202,8 @@ export class ManualPinnedRowModel extends BeanStub implements NamedBean, IPinned
         });
     }
 
-    private dispatchPinnedRowDataChanged(node: RowNode): void {
-        this.eventSvc.dispatchEvent({ type: 'rowPinnedChanged', node });
+    private dispatchPinnedRowDataChanged(): void {
+        this.eventSvc.dispatchEvent({ type: 'rowPinnedChanged' });
     }
 }
 
@@ -241,7 +241,7 @@ function _createRowNodeSibling(
 
     sibling.setRowTop(null);
     sibling.setRowIndex(null);
-    sibling.footer = true;
+    // sibling.footer = true;
 
     // manually set oldRowTop to null so we discard any
     // previous information about its position.

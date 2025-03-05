@@ -78,7 +78,7 @@ export class ServerSideManualPinnedRowModel extends BeanStub implements NamedBea
             found[1].delete(node);
             // TODO: CSRM stuff
 
-            this.dispatchPinnedRowDataChanged(node);
+            this.dispatchPinnedRowDataChanged();
             return;
         }
 
@@ -88,7 +88,7 @@ export class ServerSideManualPinnedRowModel extends BeanStub implements NamedBea
         this.getContainer(container).add(sibling);
         this.refreshRowPositions(container);
 
-        this.dispatchPinnedRowDataChanged(node);
+        this.dispatchPinnedRowDataChanged();
     }
 
     public isManual(): boolean {
@@ -202,8 +202,8 @@ export class ServerSideManualPinnedRowModel extends BeanStub implements NamedBea
         });
     }
 
-    private dispatchPinnedRowDataChanged(node: RowNode): void {
-        this.eventSvc.dispatchEvent({ type: 'rowPinnedChanged', node });
+    private dispatchPinnedRowDataChanged(): void {
+        this.eventSvc.dispatchEvent({ type: 'rowPinnedChanged' });
     }
 }
 
