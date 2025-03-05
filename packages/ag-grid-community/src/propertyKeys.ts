@@ -378,6 +378,7 @@ export const _FUNCTION_GRID_OPTIONS: (CallbackKeys | FunctionKeys)[] = [
     'chartMenuItems',
     'groupTotalRow',
     'alwaysPassFilter',
+    'isRowPinnable',
 ];
 
 // angular generation of component

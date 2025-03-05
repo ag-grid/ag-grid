@@ -1298,7 +1298,7 @@ export interface GridOptions<TData = any> {
      *
      * When not defined, all rows default to pinnable.
      */
-    isRowPinnable?: isRowPinnable<TData>;
+    isRowPinnable?: IsRowPinnable<TData>;
     // *** Row Model *** //
     /**
      * Sets the row model type.
@@ -2462,7 +2462,7 @@ export interface IsRowSelectable<TData = any> {
     (node: IRowNode<TData>): boolean;
 }
 
-export interface isRowPinnable<TData = any> {
+export interface IsRowPinnable<TData = any> {
     (node: IRowNode<TData>): boolean;
 }
 
