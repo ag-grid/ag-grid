@@ -1,6 +1,5 @@
 import type { ComponentRef } from '@angular/core';
-import { ViewContainerRef } from '@angular/core';
-import { Component, Injectable, inject } from '@angular/core';
+import { Component, Injectable, InjectionToken, ViewContainerRef, inject } from '@angular/core';
 
 import type { FrameworkComponentWrapper, WrappableInterface } from 'ag-grid-community';
 import { BaseComponentWrapper, _removeFromParent } from 'ag-grid-community';
@@ -31,6 +30,26 @@ function createComponentContainers(vcr: ViewContainerRef): Map<number, Component
     return containerMap;
 }
 
+const AG_ZONELESS_COMPONENTS = new InjectionToken<AgFrameworkComponent<any>[]>('AgZonelessComponents');
+/**
+ * EXPERIMENTAL: AG Grid Custom components that are compatible with Zoneless Angular can be optimized by AG Grid.
+ *
+ * For example, if you have a cell renderer that is only using signals to update the UI then this is likely to be Zoneless compatible
+ * and could result in a noticeable performance improvement, especially in larger grids that have `suppressAnimationFrame` enabled.
+ *
+ * When enabled for a custom component its template and all its methods will be run outside of NgZone, i.e NgZone.isInAngularZone() will return false.
+ *
+ * See the Angular documentation for more information on Zoneless Angular: https://angular.dev/guide/experimental/zoneless#why-use-zoneless
+ *
+ * This is not required for applications that are already running in Zoneless mode.
+ *
+ * @param zonelessComponents Array of Zoneless compatible custom AG Grid components.
+ */
+export const provideExperimentalAgZonelessComponents = (zonelessComponents: AgFrameworkComponent<any>[]) => ({
+    provide: AG_ZONELESS_COMPONENTS,
+    useValue: zonelessComponents,
+});
+
 @Injectable()
 export class AngularFrameworkComponentWrapper
     extends BaseComponentWrapper<WrappableInterface>
@@ -39,6 +58,10 @@ export class AngularFrameworkComponentWrapper
     private viewContainerRef: ViewContainerRef;
     private angularFrameworkOverrides: AngularFrameworkOverrides;
     private compShards: Map<number, ComponentRef<AgComponentContainer>>;
+    private userZonelessComps = inject(AG_ZONELESS_COMPONENTS, { optional: true });
+    private zonelessComponents: Set<AgFrameworkComponent<any>> | undefined = this.userZonelessComps
+        ? new Set(this.userZonelessComps)
+        : undefined;
 
     public setViewContainerRef(
         viewContainerRef: ViewContainerRef,
@@ -48,20 +71,28 @@ export class AngularFrameworkComponentWrapper
         this.angularFrameworkOverrides = angularFrameworkOverrides;
     }
 
-    protected createWrapper(OriginalConstructor: { new (): any }): WrappableInterface {
+    protected createWrapper(OriginalConstructor: { new (): any } & AgFrameworkComponent<any>): WrappableInterface {
         const angularFrameworkOverrides = this.angularFrameworkOverrides;
         const that = this;
         that.compShards ??= createComponentContainers(this.viewContainerRef);
+        const isZoneless = this.zonelessComponents?.has(OriginalConstructor);
 
         class DynamicAgNg2Component
             extends BaseGuiComponent<any, AgFrameworkComponent<any>>
             implements WrappableInterface
         {
             override init(params: any): void {
-                angularFrameworkOverrides.runInsideAngular(() => {
+                const init = () => {
                     super.init(params);
                     this._componentRef.changeDetectorRef.detectChanges();
-                });
+                };
+                if (isZoneless) {
+                    init();
+                } else {
+                    angularFrameworkOverrides.runInsideAngular(() => {
+                        init();
+                    });
+                }
             }
 
             protected createComponent(): ComponentRef<AgFrameworkComponent<any>> {
@@ -77,7 +108,7 @@ export class AngularFrameworkComponentWrapper
                 const methodCall = componentRef[name];
                 // Special case for `doesFilterPass` as it's called very often and current implementation has
                 // this filter logic as part of the component when really it is just part of the filter model.
-                if (name === 'doesFilterPass') {
+                if (isZoneless || name === 'doesFilterPass') {
                     return methodCall.apply(componentRef, args);
                 }
                 return angularFrameworkOverrides.runInsideAngular(() => methodCall.apply(componentRef, args));
