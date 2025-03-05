@@ -1,9 +1,7 @@
 import type { BeanCollection } from '../../context/context';
 import { RowComp } from '../../rendering/row/rowComp';
 import type { RowCtrl, RowCtrlInstanceId } from '../../rendering/row/rowCtrl';
-import { _setAriaRole } from '../../utils/aria';
-import { _ensureDomOrder, _insertWithDomOrder } from '../../utils/dom';
-import { _getAllValuesInObject } from '../../utils/object';
+import { _ensureDomOrder } from '../../utils/dom';
 import type { ComponentSelector } from '../../widgets/component';
 import { Component, RefPlaceholder } from '../../widgets/component';
 import type { IRowContainerComp, RowContainerName, RowContainerOptions } from './rowContainerCtrl';
@@ -15,10 +13,10 @@ function templateFactory(options: RowContainerOptions): string {
         res =
             /* html */
             `<div class="${options.viewport}" data-ref="eViewport" role="presentation">
-                <div class="${options.container}" data-ref="eContainer"></div>
+                <div class="${options.container}" data-ref="eContainer" role="rowgroup"></div>
             </div>`;
     } else {
-        res = /* html */ `<div class="${options.container}" data-ref="eContainer"></div>`;
+        res = /* html */ `<div class="${options.container}" data-ref="eContainer" role="rowgroup"></div>`;
     }
 
     return res;
@@ -71,57 +69,70 @@ export class RowContainerComp extends Component {
         // destroys all row comps
         this.setRowCtrls([]);
         super.destroy();
+        this.lastPlacedElement = null;
     }
 
     private setRowCtrls(rowCtrls: RowCtrl[]): void {
-        const oldRows = { ...this.rowComps };
-        this.rowComps = {};
+        const { rowComps, beans, options } = this;
+        const oldRows = { ...rowComps };
 
+        this.rowComps = {};
         this.lastPlacedElement = null;
 
-        const processRow = (rowCon: RowCtrl) => {
-            const instanceId = rowCon.instanceId;
+        const orderedRows: [rowComp: RowComp, isNew: boolean][] = [];
+
+        for (const rowCtrl of rowCtrls) {
+            const instanceId = rowCtrl.instanceId;
             const existingRowComp = oldRows[instanceId];
 
+            let rowComp: RowComp;
+
             if (existingRowComp) {
-                this.rowComps[instanceId] = existingRowComp;
+                rowComp = existingRowComp;
                 delete oldRows[instanceId];
-                this.ensureDomOrder(existingRowComp.getGui());
             } else {
-                // don't create new row comps for rows which are not displayed. still want the existing components
-                // as they may be animating out.
-                if (!rowCon.getRowNode().displayed) {
-                    return;
+                if (!rowCtrl.getRowNode().displayed) {
+                    continue;
                 }
-                const rowComp = new RowComp(rowCon, this.beans, this.options.type);
-                this.rowComps[instanceId] = rowComp;
-                this.appendRow(rowComp.getGui());
+                rowComp = new RowComp(rowCtrl, beans, options.type);
             }
-        };
+            this.rowComps[instanceId] = rowComp;
+            orderedRows.push([rowComp, !existingRowComp]);
+        }
 
-        rowCtrls.forEach(processRow);
-        _getAllValuesInObject(oldRows).forEach((oldRowComp) => {
-            this.eContainer.removeChild(oldRowComp.getGui());
-            oldRowComp.destroy();
-        });
-
-        _setAriaRole(this.eContainer, 'rowgroup');
+        this.removeOldRows(Object.values(oldRows));
+        this.addRowNodes(orderedRows);
     }
 
-    public appendRow(element: HTMLElement) {
-        if (this.domOrder) {
-            _insertWithDomOrder(this.eContainer, element, this.lastPlacedElement);
-        } else {
-            this.eContainer.appendChild(element);
+    private addRowNodes(rows: [rowComp: RowComp, isNew: boolean][]): void {
+        const { domOrder, eContainer } = this;
+        for (const [rowComp, isNew] of rows) {
+            const eGui = rowComp.getGui();
+            if (!domOrder) {
+                if (isNew) {
+                    eContainer.appendChild(eGui);
+                }
+            } else {
+                this.ensureDomOrder(eGui);
+            }
         }
-        this.lastPlacedElement = element;
+    }
+
+    private removeOldRows(rowComps: RowComp[]): void {
+        const { eContainer } = this;
+
+        for (const oldRowComp of rowComps) {
+            eContainer.removeChild(oldRowComp.getGui());
+            oldRowComp.destroy();
+        }
     }
 
     private ensureDomOrder(eRow: HTMLElement): void {
-        if (this.domOrder) {
-            _ensureDomOrder(this.eContainer, eRow, this.lastPlacedElement);
-            this.lastPlacedElement = eRow;
+        if (!this.domOrder) {
+            return;
         }
+        _ensureDomOrder(this.eContainer, eRow, this.lastPlacedElement);
+        this.lastPlacedElement = eRow;
     }
 }
 

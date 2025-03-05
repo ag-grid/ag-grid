@@ -30,7 +30,7 @@ export class RowComp extends Component {
 
         const rowDiv = document.createElement('div');
         rowDiv.setAttribute('comp-id', `${this.getCompId()}`);
-        rowDiv.setAttribute('style', this.getInitialStyle(containerType));
+        this.setInitialStyle(rowDiv, containerType);
         this.setTemplateFromElement(rowDiv);
 
         const eGui = this.getGui();
@@ -59,9 +59,17 @@ export class RowComp extends Component {
         });
     }
 
-    private getInitialStyle(containerType: RowContainerType): string {
+    private setInitialStyle(container: HTMLElement, containerType: RowContainerType): void {
         const transform = this.rowCtrl.getInitialTransform(containerType);
-        return transform ? `transform: ${transform}` : `top: ${this.rowCtrl.getInitialRowTop(containerType)}`;
+
+        if (transform) {
+            container.style.setProperty('transform', transform);
+        } else {
+            const top = this.rowCtrl.getInitialRowTop(containerType);
+            if (top) {
+                container.style.setProperty('top', top);
+            }
+        }
     }
 
     private showFullWidth(compDetails: UserCompDetails): void {
