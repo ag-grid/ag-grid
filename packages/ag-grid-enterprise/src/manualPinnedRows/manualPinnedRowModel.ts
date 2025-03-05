@@ -6,6 +6,7 @@ import {
     _ROW_ID_PREFIX_TOP_PINNED,
     _getRowHeightForNode,
     _removeFromArray,
+    _warn,
 } from 'ag-grid-community';
 
 class OrderedSet {
@@ -69,6 +70,8 @@ export class ManualPinnedRowModel extends BeanStub implements NamedBean, IPinned
                 this.refreshRowPositions('bottom');
             },
         });
+
+        this.validatePinningOptions();
     }
 
     public override destroy(): void {
@@ -217,6 +220,17 @@ export class ManualPinnedRowModel extends BeanStub implements NamedBean, IPinned
 
     private dispatchPinnedRowDataChanged(): void {
         this.eventSvc.dispatchEvent({ type: 'rowPinnedChanged' });
+    }
+
+    private validatePinningOptions(): void {
+        const gos = this.gos;
+        const enableRowPinning = gos.get('enableRowPinning');
+        const pinnedTopRowData = gos.get('pinnedTopRowData');
+        const pinnedBottomRowData = gos.get('pinnedBottomRowData');
+
+        if (enableRowPinning && (pinnedTopRowData || pinnedBottomRowData)) {
+            _warn(272);
+        }
     }
 }
 
