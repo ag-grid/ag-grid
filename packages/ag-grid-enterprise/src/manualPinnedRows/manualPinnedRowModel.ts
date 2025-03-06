@@ -107,9 +107,10 @@ export class ManualPinnedRowModel extends BeanStub implements IPinnedRowModel {
             if (!found) return;
 
             found[1].delete(node);
+            const original = node.pinnedSibling!;
             _destroyRowNodeSibling(node);
 
-            this.dispatchRowPinnedEvents(node);
+            this.dispatchRowPinnedEvents(original);
             return;
         }
 

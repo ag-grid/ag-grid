@@ -23,9 +23,6 @@ export const ManualPinnedRowModule: _ModuleWithoutApi = {
     beans: [PinnedRowModel],
     dependsOn: [PinnedRowModule],
     css: [manualPinnedRowCSS],
-    icons: {
-        manualPinnedRow: 'pin',
-    },
 };
 
 /**

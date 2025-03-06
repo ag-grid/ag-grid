@@ -32,7 +32,6 @@ import type { WithoutGridCommon } from '../../interfaces/iCommon';
 import type { DataChangedEvent, IRowNode } from '../../interfaces/iRowNode';
 import type { RowPosition } from '../../interfaces/iRowPosition';
 import type { UserCompDetails } from '../../interfaces/iUserCompDetails';
-import { _createIconNoSpan } from '../../main-umd-noStyles';
 import { calculateRowLevel } from '../../styling/rowStyleService';
 import type { TooltipFeature } from '../../tooltip/tooltipFeature';
 import { _setAriaExpanded, _setAriaRowIndex } from '../../utils/aria';
@@ -770,12 +769,6 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
                 this.allRowGuis.forEach((gui) => {
                     const { rowPinned } = this.rowNode;
                     gui.rowComp.addOrRemoveCssClass('ag-row-pinned-target', !!rowPinned);
-
-                    const icon = _createIconNoSpan('manualPinnedRow', this.beans, null);
-                    if (icon) {
-                        gui.element.appendChild(icon);
-                        this.addDestroyFunc(() => gui.element.removeChild(icon));
-                    }
                 });
             },
         });
@@ -1375,6 +1368,9 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
 
         if (rowNode.isRowPinned()) {
             classes.push('ag-row-pinned');
+            if (!rowNode.manualPinned) {
+                classes.push('ag-row-pinned-target');
+            }
         }
 
         if (rowNode.isSelected()) {
