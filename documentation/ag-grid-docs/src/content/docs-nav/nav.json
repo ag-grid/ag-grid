@@ -34,6 +34,11 @@
                         {
                             "title": "Installing Enterprise Licence",
                             "path": "license-install"
+                        },
+                        {
+                            "type": "item",
+                            "title": "Codemods",
+                            "path": "codemods"
                         }
                     ]
                 },
@@ -1764,11 +1769,6 @@
                             "type": "item",
                             "title": "Upgrading to Older Versions",
                             "path": "upgrading-to-older-versions"
-                        },
-                        {
-                            "type": "item",
-                            "title": "Codemods",
-                            "path": "codemods"
                         }
                     ]
                 }
