@@ -129,6 +129,13 @@ export interface RowGroupExpansionState {
     expandedRowGroupIds: string[];
 }
 
+export interface RowPinningState {
+    /** Row IDs of rows pinned to the top container */
+    top: string[];
+    /** Row IDs of rows pinned to the bottom container */
+    bottom: string[];
+}
+
 export interface GridState {
     /** Grid version number */
     version?: string;
@@ -150,6 +157,8 @@ export interface GridState {
     focusedCell?: FocusedCellState;
     /** Includes current page */
     pagination?: PaginationState;
+    /** Includes currently manually pinned rows */
+    rowPinning?: RowPinningState;
     /** Includes current pivot mode and pivot columns (column state) */
     pivot?: PivotState;
     /** Includes currently selected cell ranges */

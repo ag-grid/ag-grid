@@ -22,6 +22,7 @@ import type {
     PivotState,
     RowGroupExpansionState,
     RowGroupState,
+    RowPinningState,
     ScrollState,
     SideBarState,
     SortState,
@@ -231,6 +232,7 @@ export class StateService extends BeanStub implements NamedBean {
             cellSelection: cellSelectionState,
             focusedCell: focusedCellState,
             columnOrder: columnOrderState,
+            rowPinning,
         } = this.getInitialState();
         if (focusedCellState) {
             this.setFocusedCellState(focusedCellState);
@@ -240,6 +242,9 @@ export class StateService extends BeanStub implements NamedBean {
         }
         if (scrollState) {
             this.setScrollState(scrollState);
+        }
+        if (rowPinning) {
+            this.setRowPinningState(rowPinning);
         }
         this.setColumnPivotState(!!columnOrderState?.orderedColIds);
 
@@ -262,6 +267,7 @@ export class StateService extends BeanStub implements NamedBean {
                 }
             },
             bodyScrollEnd: () => updateCachedState('scroll', this.getScrollState()),
+            rowPinnedChanged: () => updateCachedState('rowPinning', this.getRowPinningState()),
         });
     }
 
@@ -745,6 +751,39 @@ export class StateService extends BeanStub implements NamedBean {
                   expandedRowGroupIds: expandedRowGroups,
               }
             : undefined;
+    }
+
+    private getRowPinningState(): RowPinningState {
+        const top: string[] = [];
+        const bottom: string[] = [];
+
+        this.beans.pinnedRowModel?.forEachPinnedRow('top', (node) => {
+            top.push(node.pinnedSibling!.id!);
+        });
+        this.beans.pinnedRowModel?.forEachPinnedRow('bottom', (node) => {
+            bottom.push(node.pinnedSibling!.id!);
+        });
+
+        return {
+            top,
+            bottom,
+        };
+    }
+
+    private setRowPinningState({ top, bottom }: RowPinningState): void {
+        for (const id of top) {
+            const node = this.beans.rowModel.getRowNode(id);
+            if (node) {
+                this.beans.pinnedRowModel?.pinRow(node, 'top');
+            }
+        }
+
+        for (const id of bottom) {
+            const node = this.beans.rowModel.getRowNode(id);
+            if (node) {
+                this.beans.pinnedRowModel?.pinRow(node, 'bottom');
+            }
+        }
     }
 
     private setRowGroupExpansionState(rowGroupExpansionState: RowGroupExpansionState): void {
