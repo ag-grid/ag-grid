@@ -1,5 +1,5 @@
 (function (global) {
-    var ANGULAR_VERSION = '^19';
+    var ANGULAR_VERSION = '19.1.7';
     window.ENABLE_PROD_MODE = false;
 
     System.config({
