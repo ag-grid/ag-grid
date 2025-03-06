@@ -350,6 +350,10 @@ export abstract class AbstractClientSideNodeManager<TData = any>
                 nodesToUnselect.push(rowNode);
             }
 
+            if (rowNode.rowPinned && rowNode.pinnedSibling) {
+                this.beans.pinnedRowModel?.pinRow(rowNode.pinnedSibling, null);
+            }
+
             // so row renderer knows to fade row out (and not reposition it)
             rowNode.clearRowTopAndRowIndex();
 
