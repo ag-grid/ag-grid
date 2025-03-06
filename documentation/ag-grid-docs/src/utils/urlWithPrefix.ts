@@ -24,6 +24,14 @@ export const urlWithPrefix = ({
     if (url.startsWith('./')) {
         const frameworkPath = getFrameworkPath(framework!);
         path = pathJoin('/', siteBaseUrl, frameworkPath, url.slice('./'.length));
+    } else if (url === '/') {
+        if (siteBaseUrl === '' || siteBaseUrl === '/') {
+            path = '';
+        } else if (siteBaseUrl.endsWith('/')) {
+            path = siteBaseUrl.slice(0, -1);
+        } else {
+            path = siteBaseUrl;
+        }
     } else if (url.startsWith('/')) {
         path = pathJoin('/', siteBaseUrl, url);
     } else if (!url.startsWith('#') && !isExternal) {
