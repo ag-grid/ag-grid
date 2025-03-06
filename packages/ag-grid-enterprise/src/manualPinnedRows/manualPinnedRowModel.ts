@@ -50,7 +50,7 @@ class OrderedSet {
     }
 
     public sort(): void {
-        this.cachedOrder.sort((a, b) => (a.sibling?.rowIndex ?? 0) - (b.sibling?.rowIndex ?? 0));
+        this.cachedOrder.sort((a, b) => (a.pinnedSibling?.rowIndex ?? 0) - (b.pinnedSibling?.rowIndex ?? 0));
     }
 }
 
@@ -85,7 +85,7 @@ export class ManualPinnedRowModel extends BeanStub implements IPinnedRowModel {
     public pinRow(rowNode: RowNode, container: RowPinnedType): void {
         // unpinning
         if (container == null) {
-            const node = rowNode.isPinnedSibling ? rowNode : rowNode.sibling;
+            const node = rowNode.manualPinned ? rowNode : rowNode.pinnedSibling!;
             const found = this.findPinnedRowNode(node);
             if (!found) return;
 
@@ -251,8 +251,8 @@ function _createRowNodeSibling(
 ): RowNode {
     // only create sibling node once, otherwise we have daemons and
     // the animate screws up with the daemons hanging around
-    if (rowNode.sibling) {
-        return rowNode.sibling;
+    if (rowNode.pinnedSibling) {
+        return rowNode.pinnedSibling;
     }
 
     const sibling = new RowNode(beans);
@@ -266,7 +266,7 @@ function _createRowNodeSibling(
 
     sibling.setRowTop(null);
     sibling.setRowIndex(null);
-    sibling.isPinnedSibling = true;
+    sibling.manualPinned = true;
 
     // manually set oldRowTop to null so we discard any
     // previous information about its position.
@@ -274,20 +274,20 @@ function _createRowNodeSibling(
 
     const prefix = container === 'top' ? _ROW_ID_PREFIX_TOP_PINNED : _ROW_ID_PREFIX_BOTTOM_PINNED;
 
-    sibling.id = `${prefix}_${container}_${rowNode.id}`;
+    sibling.id = `${prefix}${container}-${rowNode.id}`;
 
     // get both header and footer to reference each other as siblings. this is never undone,
     // only overwritten. so if a group is expanded, then contracted, it will have a ghost
     // sibling - but that's fine, as we can ignore this if the header is contracted.
-    sibling.sibling = rowNode;
-    rowNode.sibling = sibling;
+    sibling.pinnedSibling = rowNode;
+    rowNode.pinnedSibling = sibling;
 
     return sibling;
 }
 
 /** Expect to be passed the pinned node, not the original node. Therefore `sibling` is the original. */
 function _destroyRowNodeSibling(rowNode: RowNode): void {
-    if (!rowNode.sibling) {
+    if (!rowNode.pinnedSibling) {
         return;
     }
 
@@ -295,9 +295,11 @@ function _destroyRowNodeSibling(rowNode: RowNode): void {
     rowNode.setRowTop(null);
     rowNode.setRowIndex(null);
 
-    const mainNode = rowNode.sibling;
-    rowNode.sibling = undefined as any;
-    mainNode.sibling = undefined as any;
+    const mainNode = rowNode.pinnedSibling;
+    rowNode.pinnedSibling = undefined as any;
 
-    mainNode.rowPinned = null;
+    if (mainNode) {
+        mainNode.pinnedSibling = undefined as any;
+        mainNode.rowPinned = null;
+    }
 }

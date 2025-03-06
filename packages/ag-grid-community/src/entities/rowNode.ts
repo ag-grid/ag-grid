@@ -110,7 +110,10 @@ export class RowNode<TData = any>
     public rowPinned: RowPinnedType;
 
     /** `true` if node represents a manually pinned row. This row is similar in behaviour to a footer. */
-    public isPinnedSibling?: boolean;
+    public manualPinned?: boolean;
+
+    /** If using manual row pinning, a reference to the pinned node corresponding to this node */
+    public pinnedSibling?: RowNode<TData>;
 
     /** When true, this row will appear in the top */
     public sticky: boolean;

@@ -460,7 +460,7 @@ export class GroupCellRendererCtrl extends BeanStub implements IGroupCellRendere
             return false;
         }
 
-        if ((node as RowNode).isPinnedSibling) {
+        if ((node as RowNode).manualPinned) {
             return false;
         }
 
