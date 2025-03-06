@@ -54,6 +54,19 @@ class OrderedSet {
     }
 }
 
+function removeGroupRows(set: OrderedSet) {
+    const rowsToRemove = new Set<RowNode>();
+    set.forEach((node) => {
+        if (node.group) {
+            rowsToRemove.add(node);
+        }
+    });
+
+    rowsToRemove.forEach((node) => {
+        set.delete(node);
+    });
+}
+
 export class ManualPinnedRowModel extends BeanStub implements IPinnedRowModel {
     private top = new OrderedSet();
     private bottom = new OrderedSet();
@@ -64,8 +77,12 @@ export class ManualPinnedRowModel extends BeanStub implements IPinnedRowModel {
             modelUpdated: () => {
                 this.top.sort();
                 this.bottom.sort();
-                this.refreshRowPositions('top');
-                this.refreshRowPositions('bottom');
+                this.refreshRowPositions();
+            },
+            columnRowGroupChanged: () => {
+                removeGroupRows(this.top);
+                removeGroupRows(this.bottom);
+                this.refreshRowPositions();
             },
         });
 
@@ -206,14 +223,9 @@ export class ManualPinnedRowModel extends BeanStub implements IPinnedRowModel {
         if (this.bottom.has(node)) return ['bottom', this.bottom];
     }
 
-    private refreshRowPositions(container: NonNullable<RowPinnedType>): void {
-        let rowTop = 0;
-        this.getContainer(container).forEach((node, index) => {
-            node.setRowTop(rowTop);
-            node.setRowHeight(_getRowHeightForNode(this.beans, node).height);
-            node.setRowIndex(index);
-            rowTop += node.rowHeight!;
-        });
+    private refreshRowPositions(container?: RowPinnedType): void {
+        const sets = container == null ? ['top' as const, 'bottom' as const] : [container];
+        sets.forEach((float) => refreshRowPositions(this.beans, this.getContainer(float)));
     }
 
     private dispatchPinnedRowDataChanged(): void {
@@ -230,6 +242,16 @@ export class ManualPinnedRowModel extends BeanStub implements IPinnedRowModel {
             _warn(272);
         }
     }
+}
+
+function refreshRowPositions(beans: BeanCollection, container: OrderedSet) {
+    let rowTop = 0;
+    container.forEach((node, index) => {
+        node.setRowTop(rowTop);
+        node.setRowHeight(_getRowHeightForNode(beans, node).height);
+        node.setRowIndex(index);
+        rowTop += node.rowHeight!;
+    });
 }
 
 /**
