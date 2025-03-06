@@ -457,7 +457,7 @@ export type { CheckboxCellRenderer } from './rendering/cellRenderers/checkboxCel
 export { ICheckboxCellRendererParams } from './rendering/cellRenderers/checkboxCellRenderer';
 
 // row models
-export type { PinnedRowModel } from './pinnedRowModel/pinnedRowModel';
+export { PinnedRowModel } from './pinnedRowModel/pinnedRowModel';
 export { RowNodeTransaction } from './interfaces/rowNodeTransaction';
 export { RowDataTransaction } from './interfaces/rowDataTransaction';
 export {

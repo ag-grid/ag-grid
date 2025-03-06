@@ -8,7 +8,7 @@ import {
     getPinnedTopRow,
     getPinnedTopRowCount,
 } from './manualPinnedRowApi';
-import { ManualPinnedRowModel } from './manualPinnedRowModel';
+import { PinnedRowModel } from './pinnedRowModel';
 import { ServerSideManualPinnedRowModel } from './serverSideManualPinnedRowModel';
 
 /**
@@ -19,7 +19,7 @@ export const ManualPinnedRowModule: _ModuleWithoutApi = {
     moduleName: 'ManualPinnedRow',
     version: VERSION,
     rowModels: ['clientSide', 'infinite', 'viewport'],
-    beans: [ManualPinnedRowModel],
+    beans: [PinnedRowModel],
     dependsOn: [PinnedRowModule],
 };
 

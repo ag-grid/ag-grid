@@ -1,4 +1,4 @@
-import type { BeanCollection, CssVariablesChanged, IPinnedRowModel, NamedBean, RowPinnedType } from 'ag-grid-community';
+import type { BeanCollection, CssVariablesChanged, IPinnedRowModel, RowPinnedType } from 'ag-grid-community';
 import {
     BeanStub,
     RowNode,
@@ -54,9 +54,7 @@ class OrderedSet {
     }
 }
 
-export class ManualPinnedRowModel extends BeanStub implements NamedBean, IPinnedRowModel {
-    beanName = 'pinnedRowModel' as const;
-
+export class ManualPinnedRowModel extends BeanStub implements IPinnedRowModel {
     private top = new OrderedSet();
     private bottom = new OrderedSet();
 

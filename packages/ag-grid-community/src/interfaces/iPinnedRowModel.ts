@@ -6,9 +6,9 @@ export interface IPinnedRowModel {
 
     isManual(): boolean;
 
-    isEmpty(floating: NonNullable<RowPinnedType>): boolean;
+    isEmpty(container: NonNullable<RowPinnedType>): boolean;
 
-    isRowsToRender(floating: NonNullable<RowPinnedType>): boolean;
+    isRowsToRender(container: NonNullable<RowPinnedType>): boolean;
 
     ensureRowHeightsValid(): boolean;
 
@@ -24,7 +24,7 @@ export interface IPinnedRowModel {
 
     getPinnedBottomRow(index: number): RowNode | undefined;
 
-    getPinnedRowById(id: string, floating: NonNullable<RowPinnedType>): RowNode | undefined;
+    getPinnedRowById(id: string, container: NonNullable<RowPinnedType>): RowNode | undefined;
 
-    forEachPinnedRow(floating: NonNullable<RowPinnedType>, callback: (node: RowNode, index: number) => void): void;
+    forEachPinnedRow(container: NonNullable<RowPinnedType>, callback: (node: RowNode, index: number) => void): void;
 }
