@@ -7,6 +7,7 @@ import type { RowCtrl } from '../rendering/row/rowCtrl';
 export class RowEditService extends BeanStub implements NamedBean {
     beanName = 'rowEditSvc' as const;
 
+    /** @return whether to prevent default on event */
     public startEditing(
         rowCtrl: RowCtrl,
         key: string | null = null,
@@ -15,7 +16,7 @@ export class RowEditService extends BeanStub implements NamedBean {
     ): boolean {
         // don't do it if already editing
         if (rowCtrl.editing) {
-            return true;
+            return false;
         }
 
         let preventDefault = true;
@@ -24,7 +25,7 @@ export class RowEditService extends BeanStub implements NamedBean {
         rowCtrl.getAllCellCtrls().forEach((cellCtrl: CellCtrl) => {
             const cellStartedEdit = cellCtrl === sourceRenderedCell;
             if (cellStartedEdit) {
-                preventDefault = editSvc?.startEditing(cellCtrl, key, cellStartedEdit, event) ?? true;
+                preventDefault = editSvc?.startEditing(cellCtrl, key, cellStartedEdit, event) ?? false;
             } else {
                 editSvc?.startEditing(cellCtrl, null, cellStartedEdit, event);
             }

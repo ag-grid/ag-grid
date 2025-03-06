@@ -1,11 +1,35 @@
-import type { ComponentRef, ViewContainerRef } from '@angular/core';
-import { Injectable } from '@angular/core';
+import type { ComponentRef } from '@angular/core';
+import { ViewContainerRef } from '@angular/core';
+import { Component, Injectable, inject } from '@angular/core';
 
 import type { FrameworkComponentWrapper, WrappableInterface } from 'ag-grid-community';
 import { BaseComponentWrapper, _removeFromParent } from 'ag-grid-community';
 
 import type { AngularFrameworkOverrides } from './angularFrameworkOverrides';
 import type { AgFrameworkComponent } from './interfaces';
+
+// To speed up the removal of custom components we create a number of shards to contain them.
+// Removing a single component calls a function within Angular called removeFromArray.
+// This is a lot faster if the array is smaller.
+@Component({
+    selector: 'ag-component-container',
+    template: '',
+})
+export class AgComponentContainer {
+    public vcr = inject(ViewContainerRef);
+}
+const NUM_SHARDS = 16;
+let shardIdx = 0;
+
+function createComponentContainers(vcr: ViewContainerRef): Map<number, ComponentRef<AgComponentContainer>> {
+    const containerMap = new Map<number, ComponentRef<AgComponentContainer>>();
+    for (let i = 0; i < NUM_SHARDS; i++) {
+        const container = vcr.createComponent(AgComponentContainer);
+        containerMap.set(i, container);
+        _removeFromParent(container.location.nativeElement);
+    }
+    return containerMap;
+}
 
 @Injectable()
 export class AngularFrameworkComponentWrapper
@@ -14,6 +38,7 @@ export class AngularFrameworkComponentWrapper
 {
     private viewContainerRef: ViewContainerRef;
     private angularFrameworkOverrides: AngularFrameworkOverrides;
+    private compShards: Map<number, ComponentRef<AgComponentContainer>>;
 
     public setViewContainerRef(
         viewContainerRef: ViewContainerRef,
@@ -26,6 +51,8 @@ export class AngularFrameworkComponentWrapper
     protected createWrapper(OriginalConstructor: { new (): any }): WrappableInterface {
         const angularFrameworkOverrides = this.angularFrameworkOverrides;
         const that = this;
+        that.compShards ??= createComponentContainers(this.viewContainerRef);
+
         class DynamicAgNg2Component
             extends BaseGuiComponent<any, AgFrameworkComponent<any>>
             implements WrappableInterface
@@ -65,7 +92,9 @@ export class AngularFrameworkComponentWrapper
     }
 
     public createComponent<T>(componentType: { new (...args: any[]): T }): ComponentRef<T> {
-        return this.viewContainerRef.createComponent(componentType);
+        shardIdx = (shardIdx + 1) % NUM_SHARDS;
+        const container = this.compShards.get(shardIdx)!;
+        return container.instance.vcr.createComponent(componentType);
     }
 }
 

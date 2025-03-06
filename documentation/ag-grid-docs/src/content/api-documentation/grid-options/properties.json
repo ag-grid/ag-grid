@@ -1864,7 +1864,7 @@
         "styleNonce": {
             "more": {
                 "name": "Security",
-                "url": "./security#style-src"
+                "url": "./security/#style-src"
             }
         }
     },
