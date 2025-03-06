@@ -32,6 +32,7 @@ import type { WithoutGridCommon } from '../../interfaces/iCommon';
 import type { DataChangedEvent, IRowNode } from '../../interfaces/iRowNode';
 import type { RowPosition } from '../../interfaces/iRowPosition';
 import type { UserCompDetails } from '../../interfaces/iUserCompDetails';
+import { _createIconNoSpan } from '../../main-umd-noStyles';
 import { calculateRowLevel } from '../../styling/rowStyleService';
 import type { TooltipFeature } from '../../tooltip/tooltipFeature';
 import { _setAriaExpanded, _setAriaRowIndex } from '../../utils/aria';
@@ -765,6 +766,18 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
             rowHighlightChanged: this.onRowNodeHighlightChanged.bind(this),
             draggingChanged: this.postProcessRowDragging.bind(this),
             uiLevelChanged: this.onUiLevelChanged.bind(this),
+            rowPinned: () => {
+                this.allRowGuis.forEach((gui) => {
+                    const { rowPinned } = this.rowNode;
+                    gui.rowComp.addOrRemoveCssClass('ag-row-pinned-target', !!rowPinned);
+
+                    const icon = _createIconNoSpan('manualPinnedRow', this.beans, null);
+                    if (icon) {
+                        gui.element.appendChild(icon);
+                        this.addDestroyFunc(() => gui.element.removeChild(icon));
+                    }
+                });
+            },
         });
 
         this.addManagedListeners(this.beans.eventSvc, {

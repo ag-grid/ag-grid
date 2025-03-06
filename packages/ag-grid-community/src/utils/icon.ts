@@ -54,6 +54,7 @@ export type IconName =
     | 'filtersToolPanel'
     | 'columns'
     | 'columnsToolPanel'
+    | 'manualPinnedRow'
     | 'maximize'
     | 'minimize'
     | 'menuPin'

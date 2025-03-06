@@ -109,7 +109,7 @@ export class ManualPinnedRowModel extends BeanStub implements IPinnedRowModel {
             found[1].delete(node);
             _destroyRowNodeSibling(node);
 
-            this.dispatchPinnedRowDataChanged();
+            this.dispatchRowPinnedEvents(node);
             return;
         }
 
@@ -119,7 +119,7 @@ export class ManualPinnedRowModel extends BeanStub implements IPinnedRowModel {
         this.getContainer(container).add(sibling);
         this.refreshRowPositions(container);
 
-        this.dispatchPinnedRowDataChanged();
+        this.dispatchRowPinnedEvents(rowNode);
     }
 
     public isManual(): boolean {
@@ -228,8 +228,9 @@ export class ManualPinnedRowModel extends BeanStub implements IPinnedRowModel {
         sets.forEach((float) => refreshRowPositions(this.beans, this.getContainer(float)));
     }
 
-    private dispatchPinnedRowDataChanged(): void {
-        this.eventSvc.dispatchEvent({ type: 'rowPinnedChanged' });
+    private dispatchRowPinnedEvents(node: RowNode): void {
+        this.eventSvc.dispatchEvent({ type: 'rowPinnedChanged', node });
+        node.dispatchRowEvent('rowPinned');
     }
 
     private validatePinningOptions(): void {

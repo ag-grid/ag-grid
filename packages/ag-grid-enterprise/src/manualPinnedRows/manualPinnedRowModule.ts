@@ -2,6 +2,7 @@ import type { _ModuleWithApi, _ModuleWithoutApi, _PinnedRowGridApi } from 'ag-gr
 import { PinnedRowModule } from 'ag-grid-community';
 
 import { VERSION } from '../version';
+import { manualPinnedRowCSS } from './manualPinnedRow.css-GENERATED';
 import {
     getPinnedBottomRow,
     getPinnedBottomRowCount,
@@ -21,6 +22,10 @@ export const ManualPinnedRowModule: _ModuleWithoutApi = {
     rowModels: ['clientSide', 'infinite', 'viewport'],
     beans: [PinnedRowModel],
     dependsOn: [PinnedRowModule],
+    css: [manualPinnedRowCSS],
+    icons: {
+        manualPinnedRow: 'pin',
+    },
 };
 
 /**
