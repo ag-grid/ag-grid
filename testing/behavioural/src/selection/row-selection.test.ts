@@ -192,7 +192,7 @@ describe('Row Selection Grid Options', () => {
                 const api = createGrid({
                     columnDefs,
                     rowData,
-                    selection: {
+                    rowSelection: {
                         mode: 'multiRow',
                     },
                 });
