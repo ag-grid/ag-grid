@@ -1,4 +1,11 @@
-import type { AgColumn, BeanCollection, CssVariablesChanged, IPinnedRowModel, RowPinnedType } from 'ag-grid-community';
+import type {
+    AgColumn,
+    BeanCollection,
+    CssVariablesChanged,
+    GridOptionsService,
+    IPinnedRowModel,
+    RowPinnedType,
+} from 'ag-grid-community';
 import {
     BeanStub,
     RowNode,
@@ -73,7 +80,7 @@ export class ManualPinnedRowModel extends BeanStub implements IPinnedRowModel {
             },
         });
 
-        this.validatePinningOptions();
+        validatePinningOptions(this.gos);
     }
 
     public override destroy(): void {
@@ -232,17 +239,6 @@ export class ManualPinnedRowModel extends BeanStub implements IPinnedRowModel {
         this.eventSvc.dispatchEvent({ type: 'rowPinnedChanged', node });
         node.dispatchRowEvent('rowPinned');
     }
-
-    private validatePinningOptions(): void {
-        const gos = this.gos;
-        const enableRowPinning = gos.get('enableRowPinning');
-        const pinnedTopRowData = gos.get('pinnedTopRowData');
-        const pinnedBottomRowData = gos.get('pinnedBottomRowData');
-
-        if (enableRowPinning && (pinnedTopRowData || pinnedBottomRowData)) {
-            _warn(272);
-        }
-    }
 }
 
 function refreshRowPositions(beans: BeanCollection, container: OrderedSet) {
@@ -253,6 +249,16 @@ function refreshRowPositions(beans: BeanCollection, container: OrderedSet) {
         node.setRowIndex(index);
         rowTop += node.rowHeight!;
     });
+}
+
+function validatePinningOptions(gos: GridOptionsService): void {
+    const enableRowPinning = gos.get('enableRowPinning');
+    const pinnedTopRowData = gos.get('pinnedTopRowData');
+    const pinnedBottomRowData = gos.get('pinnedBottomRowData');
+
+    if (enableRowPinning && (pinnedTopRowData || pinnedBottomRowData)) {
+        _warn(272);
+    }
 }
 
 /**
