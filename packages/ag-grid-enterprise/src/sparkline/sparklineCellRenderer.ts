@@ -62,20 +62,6 @@ export class SparklineCellRenderer extends Component implements ICellRenderer {
         this.addDestroyFunc(() => unsubscribeFromResize());
     }
 
-    private updateSize(newWidth: number, newHeight: number) {
-        // account for cell padding
-        newWidth -= this.env.getCellPadding();
-
-        if (newWidth !== this.cachedWidth || newHeight !== this.cachedHeight) {
-            this.cachedWidth = newWidth;
-            this.cachedHeight = newHeight;
-            // Batch updates to force charts resizing at the same time
-            _executeNextVMTurn(() => {
-                this.refresh(this.params);
-            });
-        }
-    }
-
     private initGridObserver() {
         const listener = () => {
             this.updateSize(this.params?.column?.getActualWidth() ?? 0, (this.params?.node.rowHeight ?? 0) - 2);
@@ -91,6 +77,20 @@ export class SparklineCellRenderer extends Component implements ICellRenderer {
         this.addDestroyFunc(() => rowNode.__removeEventListener('heightChanged', listener));
 
         listener();
+    }
+
+    private updateSize(newWidth: number, newHeight: number) {
+        // account for cell padding
+        newWidth -= this.env.getCellPadding();
+
+        if (newWidth !== this.cachedWidth || newHeight !== this.cachedHeight) {
+            this.cachedWidth = newWidth;
+            this.cachedHeight = newHeight;
+            // Batch updates to force charts resizing at the same time
+            _executeNextVMTurn(() => {
+                this.refresh(this.params);
+            });
+        }
     }
 
     public init(params: ISparklineCellRendererParams): void {
