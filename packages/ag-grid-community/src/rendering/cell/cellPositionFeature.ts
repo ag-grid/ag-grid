@@ -62,10 +62,14 @@ export class CellPositionFeature extends BeanStub {
         }
 
         if (cellSpan) {
-            this.refreshSpanHeight(cellSpan);
+            const refreshSpanHeight = this.refreshSpanHeight.bind(this, cellSpan);
+            refreshSpanHeight();
             this.addManagedListeners(this.beans.eventSvc, {
-                paginationChanged: this.refreshSpanHeight.bind(this, cellSpan),
-                recalculateRowBounds: this.refreshSpanHeight.bind(this, cellSpan),
+                paginationChanged: refreshSpanHeight,
+                recalculateRowBounds: refreshSpanHeight,
+                // XXX: This might be too eager but there are cases where pinning spanned
+                // rows doesn't fire 'recalculateRowBounds'
+                displayedRowsChanged: refreshSpanHeight,
             });
         }
     }

@@ -54,19 +54,6 @@ class OrderedSet {
     }
 }
 
-function removeGroupRows(set: OrderedSet) {
-    const rowsToRemove = new Set<RowNode>();
-    set.forEach((node) => {
-        if (node.group) {
-            rowsToRemove.add(node);
-        }
-    });
-
-    rowsToRemove.forEach((node) => {
-        set.delete(node);
-    });
-}
-
 export class ManualPinnedRowModel extends BeanStub implements IPinnedRowModel {
     private top = new OrderedSet();
     private bottom = new OrderedSet();
@@ -109,6 +96,7 @@ export class ManualPinnedRowModel extends BeanStub implements IPinnedRowModel {
             found[1].delete(node);
             const original = node.pinnedSibling!;
             _destroyRowNodeSibling(node);
+            this.refreshRowPositions(container);
 
             this.dispatchRowPinnedEvents(original);
             return;
@@ -326,4 +314,17 @@ function _destroyRowNodeSibling(rowNode: RowNode): void {
         mainNode.pinnedSibling = undefined as any;
         mainNode.rowPinned = null;
     }
+}
+
+function removeGroupRows(set: OrderedSet) {
+    const rowsToRemove = new Set<RowNode>();
+    set.forEach((node) => {
+        if (node.group) {
+            rowsToRemove.add(node);
+        }
+    });
+
+    rowsToRemove.forEach((node) => {
+        set.delete(node);
+    });
 }
