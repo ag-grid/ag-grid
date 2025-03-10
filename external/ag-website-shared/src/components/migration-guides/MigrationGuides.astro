@@ -1,0 +1,61 @@
+---
+import { getEntry, type CollectionEntry } from 'astro:content';
+import styles from './MigrationGuides.module.scss';
+import { urlWithPrefix } from '@utils/urlWithPrefix';
+
+const { data: versions } = (await getEntry('versions', 'ag-grid-versions')) as CollectionEntry<'versions'>;
+const { framework } = Astro.params as Params;
+
+const upgradeVersions = versions.filter((version) => version.notesPath);
+const upgradeMajors = upgradeVersions
+    .reduce((uM, version) => {
+        const major = Number(version.version.split('.')[0]);
+
+        if (!uM[major]) uM[major] = { major, versions: [] };
+
+        uM[major].versions.push(version);
+
+        return uM;
+    }, [])
+    .filter((v) => v)
+    .reverse();
+
+const getVersionType = (version: string) => {
+    const [_, minor, patch] = version.split('.');
+
+    if (patch !== '0') {
+        return 'Patch';
+    } else if (minor !== '0') {
+        return 'Minor';
+    } else {
+        return 'Major';
+    }
+};
+---
+
+{
+    upgradeMajors.map(({ major, versions }) => {
+        return (
+            <>
+                <h3>Version {major}</h3>
+
+                <table>
+                    {versions.map((version) => {
+                        const guideUrl = urlWithPrefix({ framework, url: version.notesPath });
+
+                        return (
+                            <tr>
+                                <td>{version.version}</td>
+                                <td>{version.date}</td>
+                                <td>{getVersionType(version.version)}</td>
+                                <td>
+                                    <a href={guideUrl}>{version.version} migration guide</a>
+                                </td>
+                            </tr>
+                        );
+                    })}
+                </table>
+            </>
+        );
+    })
+}
