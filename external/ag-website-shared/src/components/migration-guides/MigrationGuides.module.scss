@@ -1,4 +1,23 @@
 @use 'design-system' as *;
 
-.migrationGuidesOuter {
+.majorTable {
+    vertical-align: baseline;
+
+    td:nth-child(n + 2) {
+        text-align: right;
+    }
+}
+
+.isMajor {
+    .version {
+        color: var(--color-gray-950);
+    }
+
+    .versionType {
+        margin-right: -8px;
+        padding: 2px 8px;
+        border-radius: var(--radius-4xl);
+        border: 1px solid var(--color-logo-orange);
+        color: var(--color-logo-orange);
+    }
 }

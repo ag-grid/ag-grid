@@ -1,7 +1,7 @@
 ---
 import { getEntry, type CollectionEntry } from 'astro:content';
-import styles from './MigrationGuides.module.scss';
 import { urlWithPrefix } from '@utils/urlWithPrefix';
+import styles from './MigrationGuides.module.scss';
 
 const { data: versions } = (await getEntry('versions', 'ag-grid-versions')) as CollectionEntry<'versions'>;
 const { framework } = Astro.params as Params;
@@ -39,15 +39,19 @@ const getVersionType = (version: string) => {
             <>
                 <h3>Version {major}</h3>
 
-                <table>
+                <table class={styles.majorTable}>
                     {versions.map((version) => {
                         const guideUrl = urlWithPrefix({ framework, url: version.notesPath });
 
                         return (
-                            <tr>
-                                <td>{version.version}</td>
+                            <tr class={getVersionType(version.version) === 'Major' ? styles.isMajor : ''}>
+                                <td class:list={[styles.version, 'text-monospace ', 'text-semibold']}>
+                                    {version.version}
+                                </td>
                                 <td>{version.date}</td>
-                                <td>{getVersionType(version.version)}</td>
+                                <td>
+                                    <span class={styles.versionType}>{getVersionType(version.version)}</span>
+                                </td>
                                 <td>
                                     <a href={guideUrl}>{version.version} migration guide</a>
                                 </td>
