@@ -19,6 +19,13 @@ import {
 class OrderedSet {
     private set = new Set<RowNode>();
     private cachedOrder: RowNode[] = [];
+    /**
+     * We cache the row index of nodes to handle the case where they become not displayed (e.g
+     * collapsing a group). Their `rowIndex` then becomes `null` and pinned row order becomes
+     * unstable in a way that looks odd for users. In this case we fall back to their `rowIndex`
+     * when they were last displayed.
+     */
+    private indexCache = new Map<RowNode, number>();
 
     public size(): number {
         return this.set.size;
@@ -33,6 +40,7 @@ class OrderedSet {
     public delete(item: RowNode): void {
         this.set.delete(item);
         _removeFromArray(this.cachedOrder, item);
+        this.indexCache.delete(item);
     }
 
     public has(item: RowNode): boolean {
@@ -53,11 +61,29 @@ class OrderedSet {
 
     public clear(): void {
         this.set.clear();
+        this.indexCache.clear();
         this.cachedOrder.length = 0;
     }
 
     public sort(): void {
-        this.cachedOrder.sort((a, b) => (a.pinnedSibling?.rowIndex ?? 0) - (b.pinnedSibling?.rowIndex ?? 0));
+        this.cachedOrder.sort((a, b) => {
+            const aOrig = a.pinnedSibling;
+            const bOrig = b.pinnedSibling;
+
+            if (!aOrig || !bOrig) return 0;
+
+            if (aOrig.displayed) {
+                this.indexCache.set(aOrig, aOrig.rowIndex!);
+            }
+            const aIndex = aOrig.rowIndex ?? this.indexCache.get(aOrig) ?? 0;
+
+            if (bOrig?.displayed) {
+                this.indexCache.set(bOrig, bOrig.rowIndex!);
+            }
+            const bIndex = bOrig.rowIndex ?? this.indexCache.get(bOrig) ?? 0;
+
+            return aIndex - bIndex;
+        });
     }
 }
 
