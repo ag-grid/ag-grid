@@ -28,7 +28,7 @@ const HeaderRowComp = ({ ctrl }: { ctrl: HeaderRowCtrl }) => {
 
     const cellCtrlsRef = useRef<AbstractHeaderCellCtrl[] | null>(null);
     const prevCellCtrlsRef = useRef<AbstractHeaderCellCtrl[] | null>(null);
-    const [cellCtrls, setCellCtrls] = useState<AbstractHeaderCellCtrl[]>(() => ctrl.getHeaderCtrls());
+    const [cellCtrls, setCellCtrls] = useState<AbstractHeaderCellCtrl[]>(() => ctrl.getUpdatedHeaderCtrls());
 
     const compBean = useRef<_EmptyBean>();
     const eGui = useRef<HTMLDivElement | null>(null);
