@@ -24,6 +24,7 @@ const INDENTATION_LEVEL: Variable = {
     changeKey: 'indentationLevelChanged',
     defaultValue: 0,
     noWarn: true,
+    cacheDefault: true,
 };
 
 const ROW_GROUP_INDENT_SIZE: Variable = {
@@ -233,6 +234,9 @@ export class Environment extends BeanStub implements NamedBean {
         }
         const measurement = this.measureSizeEl(variable);
         if (measurement === 'detached' || measurement === 'no-styles') {
+            if (variable.cacheDefault) {
+                this.lastKnownValues.set(variable, variable.defaultValue);
+            }
             return variable.defaultValue;
         }
         this.lastKnownValues.set(variable, measurement);
@@ -386,6 +390,7 @@ type Variable = {
     defaultValue: number;
     border?: boolean;
     noWarn?: boolean;
+    cacheDefault?: boolean;
 };
 
 type ChangeKey =
