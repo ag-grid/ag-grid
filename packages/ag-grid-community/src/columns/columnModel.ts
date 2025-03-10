@@ -467,13 +467,13 @@ export class ColumnModel extends BeanStub implements NamedBean {
     // returns colDefCols, pivotResultCols and autoCols
     public getAllCols(): AgColumn[] {
         const { pivotResultCols, autoColSvc, selectionColSvc } = this.beans;
-        const pivotResultColsList = pivotResultCols?.getPivotResultCols()?.list;
+
         return [
-            this.colDefCols?.list ?? [],
-            autoColSvc?.columns?.list ?? [],
-            selectionColSvc?.columns?.list ?? [],
-            pivotResultColsList ?? [],
-        ].flat();
+            ...(this.colDefCols?.list ?? []),
+            ...(autoColSvc?.columns?.list ?? []),
+            ...(selectionColSvc?.columns?.list ?? []),
+            ...(pivotResultCols?.getPivotResultCols()?.list ?? []),
+        ];
     }
 
     public getColsForKeys(keys: ColKey[]): AgColumn[] {
