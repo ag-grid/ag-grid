@@ -531,27 +531,26 @@ export class RowRenderer extends BeanStub implements NamedBean {
             this.cachedRowCtrls.removeRow(rowNode);
             return;
         } else {
-            const destroyAndRecreateCtrl = (dataStruct: RowCtrl[] | RowCtrlByRowIndex, pinnedSibling?: RowNode) => {
-                const node = pinnedSibling ?? rowNode;
-                const ctrl = dataStruct[node.rowIndex!];
+            const destroyAndRecreateCtrl = (dataStruct: RowCtrl[] | RowCtrlByRowIndex) => {
+                const ctrl = dataStruct[rowNode.rowIndex!];
                 if (!ctrl) {
                     return;
                 }
-                if (ctrl.rowNode !== node) {
+                if (ctrl.rowNode !== rowNode) {
                     // if the node is in the wrong place, then the row model is responsible for triggering a full refresh.
                     return;
                 }
                 ctrl.destroyFirstPass();
                 ctrl.destroySecondPass();
-                dataStruct[node.rowIndex!] = this.createRowCon(node, false, false);
+                dataStruct[rowNode.rowIndex!] = this.createRowCon(rowNode, false, false);
             };
 
             switch (rowNode.rowPinned) {
                 case 'top':
-                    destroyAndRecreateCtrl(this.topRowCtrls, rowNode.pinnedSibling);
+                    destroyAndRecreateCtrl(this.topRowCtrls);
                     break;
                 case 'bottom':
-                    destroyAndRecreateCtrl(this.bottomRowCtrls, rowNode.pinnedSibling);
+                    destroyAndRecreateCtrl(this.bottomRowCtrls);
                     break;
                 default:
                     destroyAndRecreateCtrl(this.rowCtrlsByRowIndex);

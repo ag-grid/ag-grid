@@ -1,8 +1,9 @@
+import type { AgColumn } from '../entities/agColumn';
 import type { RowNode } from '../entities/rowNode';
 import type { RowPinnedType } from './iRowNode';
 
 export interface IPinnedRowModel {
-    pinRow(node: RowNode, container: RowPinnedType): void;
+    pinRow(node: RowNode, container: RowPinnedType, column?: AgColumn | null): void;
 
     isManual(): boolean;
 

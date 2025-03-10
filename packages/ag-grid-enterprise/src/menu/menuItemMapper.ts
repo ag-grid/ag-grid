@@ -139,14 +139,16 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
                     return pinnedRowModel?.isManual()
                         ? {
                               name: localeTextFunc('pinTop', 'Pin to Top'),
-                              action: ({ node }) => node && pinnedRowModel.pinRow(node as RowNode, 'top'),
+                              action: ({ node, column }) =>
+                                  node && pinnedRowModel.pinRow(node as RowNode, 'top', column as AgColumn | null),
                           }
                         : null;
                 case 'pinBottom':
                     return pinnedRowModel?.isManual()
                         ? {
                               name: localeTextFunc('pinBottom', 'Pin to Bottom'),
-                              action: ({ node }) => node && pinnedRowModel.pinRow(node as RowNode, 'bottom'),
+                              action: ({ node, column }) =>
+                                  node && pinnedRowModel.pinRow(node as RowNode, 'bottom', column as AgColumn | null),
                           }
                         : null;
                 case 'unpinRow':

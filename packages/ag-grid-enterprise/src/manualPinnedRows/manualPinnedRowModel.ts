@@ -1,4 +1,4 @@
-import type { BeanCollection, CssVariablesChanged, IPinnedRowModel, RowPinnedType } from 'ag-grid-community';
+import type { AgColumn, BeanCollection, CssVariablesChanged, IPinnedRowModel, RowPinnedType } from 'ag-grid-community';
 import {
     BeanStub,
     RowNode,
@@ -86,9 +86,10 @@ export class ManualPinnedRowModel extends BeanStub implements IPinnedRowModel {
         super.destroy();
     }
 
-    public pinRow(rowNode: RowNode, container: RowPinnedType): void {
+    public pinRow(rowNode: RowNode, container: RowPinnedType, column?: AgColumn | null): void {
         // unpinning
         if (container == null) {
+            // Want to act on the pinned row, not the original row
             const node = rowNode.manualPinned ? rowNode : rowNode.pinnedSibling!;
             const found = this.findPinnedRowNode(node);
             if (!found) return;
@@ -102,8 +103,18 @@ export class ManualPinnedRowModel extends BeanStub implements IPinnedRowModel {
             return;
         }
 
+        // cell-span pinning
+        const { rowSpanSvc } = this.beans;
+        const isCellSpanning = (column && rowSpanSvc?.isCellSpanning(column, rowNode)) ?? false;
+        if (column && isCellSpanning) {
+            const span = rowSpanSvc?.getCellSpan(column, rowNode);
+            for (const node of span?.spannedNodes ?? []) {
+                this.pinRow(node, container);
+            }
+            return;
+        }
+
         // pinning
-        rowNode.rowPinned = container;
         const sibling = _createRowNodeSibling(rowNode, this.beans, container);
         this.getContainer(container).add(sibling);
         this.refreshRowPositions(container);
@@ -279,6 +290,7 @@ function _createRowNodeSibling(
     sibling.setRowTop(null);
     sibling.setRowIndex(null);
     sibling.manualPinned = true;
+    sibling.rowPinned = container;
 
     // manually set oldRowTop to null so we discard any
     // previous information about its position.

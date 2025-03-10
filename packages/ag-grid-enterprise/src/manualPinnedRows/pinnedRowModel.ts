@@ -1,4 +1,4 @@
-import type { IPinnedRowModel, NamedBean, RowNode, RowPinnedType } from 'ag-grid-community';
+import type { AgColumn, IPinnedRowModel, NamedBean, RowNode, RowPinnedType } from 'ag-grid-community';
 import { BeanStub, PinnedRowModel as LegacyPinnedRowModel } from 'ag-grid-community';
 
 import { ManualPinnedRowModel } from './manualPinnedRowModel';
@@ -33,8 +33,8 @@ export class PinnedRowModel extends BeanStub implements NamedBean, IPinnedRowMod
         return this.inner.isRowsToRender(container);
     }
 
-    public pinRow(node: RowNode<any>, container: RowPinnedType): void {
-        return this.inner.pinRow(node, container);
+    public pinRow(node: RowNode<any>, container: RowPinnedType, column?: AgColumn | null): void {
+        return this.inner.pinRow(node, container, column);
     }
 
     public ensureRowHeightsValid(): boolean {
