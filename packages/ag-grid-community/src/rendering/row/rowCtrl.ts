@@ -767,8 +767,10 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
             uiLevelChanged: this.onUiLevelChanged.bind(this),
             rowPinned: () => {
                 this.allRowGuis.forEach((gui) => {
-                    const { rowPinned } = this.rowNode;
-                    gui.rowComp.addOrRemoveCssClass('ag-row-pinned-target', !!rowPinned);
+                    gui.rowComp.addOrRemoveCssClass(
+                        'ag-row-pinned-target',
+                        !!(this.rowNode.pinnedSibling && !this.rowNode.manualPinned)
+                    );
                 });
             },
         });
