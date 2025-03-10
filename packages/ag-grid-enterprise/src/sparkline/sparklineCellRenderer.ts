@@ -8,11 +8,9 @@ import type {
 } from 'ag-charts-types';
 
 import type { AgColumn, Environment, ICellRenderer, ISparklineCellRendererParams, RowNode } from 'ag-grid-community';
-import { Component, RefPlaceholder, _executeNextVMTurn, _observeResize } from 'ag-grid-community';
+import { Component, RefPlaceholder, _batchCall } from 'ag-grid-community';
 
 import { wrapFn } from './sparklinesUtils';
-
-export const DEFAULT_THEMES = ['ag-default', 'ag-material', 'ag-sheets', 'ag-polychroma', 'ag-vivid'];
 
 function tooltipRendererWithXValue(
     params: AgSparklineTooltipRendererParams<unknown>
@@ -53,18 +51,10 @@ export class SparklineCellRenderer extends Component implements ICellRenderer {
         this.addManagedPropertyListeners(['chartThemeOverrides', 'chartThemes'], (_event) => this.refresh(this.params));
     }
 
-    private initResizeObserver() {
-        const resizeListener = ([
-            {
-                contentRect: { width, height },
-            },
-        ]: ResizeObserverEntry[]) => this.updateSize(width, height);
-
-        const unsubscribeFromResize = _observeResize(this.beans, this.getGui(), resizeListener);
-        this.addDestroyFunc(() => unsubscribeFromResize());
-    }
-
     private initGridObserver() {
+        // Use grid APIs to listen for column width and row height changes instead
+        // of a ResizeObserver to avoid having to wait for a re-layout before resizing sparklines
+
         const listener = () => {
             this.updateSize(this.params?.column?.getActualWidth() ?? 0, (this.params?.node.rowHeight ?? 0) - 2);
         };
@@ -89,7 +79,7 @@ export class SparklineCellRenderer extends Component implements ICellRenderer {
             this.cachedWidth = newWidth;
             this.cachedHeight = newHeight;
             // Batch updates to force charts resizing at the same time
-            _executeNextVMTurn(() => {
+            _batchCall(() => {
                 this.refresh(this.params);
             });
         }
@@ -97,8 +87,7 @@ export class SparklineCellRenderer extends Component implements ICellRenderer {
 
     public init(params: ISparklineCellRendererParams): void {
         this.params = params;
-        this.initResizeObserver();
-        // this.initGridObserver();
+        this.initGridObserver();
     }
 
     public refresh(params?: ISparklineCellRendererParams): boolean {
