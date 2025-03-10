@@ -81,7 +81,7 @@ export class SetFloatingFilterComp<V = string> extends Component implements IFlo
             // on selections in other filters, e.g. if you filter Language to English, then the set filter
             // on Country will only show English speaking countries. Thus the list of items to show
             // in the floating filter can change.
-            this.addManagedListeners(evaluator.allValues, {
+            this.addManagedListeners(evaluator.valueModel, {
                 availableValuesChanged: () =>
                     this.updateFloatingFilterText(
                         this.beans.colFilter!.getModelForColumn(this.params.column as AgColumn)

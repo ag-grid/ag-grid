@@ -69,7 +69,13 @@ export class TextFilterEvaluator extends SimpleFilterEvaluator<TextFilterModel, 
     ): boolean {
         const formattedValues = values.map((v) => this.formatter(v)) || [];
         const cellValueFormatted = this.formatter(cellValue);
-        const { api, colDef, column, context, textFormatter } = this.params;
+        const {
+            api,
+            colDef,
+            column,
+            context,
+            filterParams: { textFormatter },
+        } = this.params;
 
         if (filterModel.type === 'blank') {
             return isBlank(cellValue);

@@ -26,11 +26,11 @@ export class DateFilterEvaluator extends ScalarFilterEvaluator<DateFilterModel, 
     }
 
     protected override comparator(): Comparator<Date> {
-        return this.params.comparator ?? defaultDateComparator;
+        return this.params.filterParams.comparator ?? defaultDateComparator;
     }
 
     protected override isValid(value: Date): boolean {
-        const isValidDate = this.params.isValidDate;
+        const isValidDate = this.params.filterParams.isValidDate;
         return !isValidDate || isValidDate(value);
     }
 }

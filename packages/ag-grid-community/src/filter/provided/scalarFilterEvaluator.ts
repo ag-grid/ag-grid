@@ -20,7 +20,7 @@ export abstract class ScalarFilterEvaluator<
             includeBlanksInGreaterThan,
             includeBlanksInLessThan,
             includeBlanksInRange,
-        } = this.params;
+        } = this.params.filterParams;
         switch (filterType) {
             case 'equals':
                 if (includeBlanksInEquals) {
@@ -90,7 +90,7 @@ export abstract class ScalarFilterEvaluator<
             case 'inRange': {
                 const compareToResult = comparator(values[1]!, cellValue);
 
-                return this.params.inRangeInclusive
+                return this.params.filterParams.inRangeInclusive
                     ? compareResult >= 0 && compareToResult <= 0
                     : compareResult > 0 && compareToResult < 0;
             }

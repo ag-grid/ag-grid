@@ -14,16 +14,16 @@ export class MultiFilterEvaluator
     extends BeanStub
     implements FilterEvaluator<any, any, IMultiFilterModel, IMultiFilterParams>
 {
-    private params: FilterEvaluatorParams<any, any, IMultiFilterModel> & IMultiFilterParams;
+    private params: FilterEvaluatorParams<any, any, IMultiFilterModel, IMultiFilterParams>;
     private evaluatorWrappers: ({ evaluator: FilterEvaluator; evaluatorParams: FilterEvaluatorParams } | undefined)[] =
         [];
     /** ui active. could still have null model */
     private activeFilterIndices: number[] = [];
 
-    public init(params: FilterEvaluatorParams<any, any, IMultiFilterModel> & IMultiFilterParams): void {
+    public init(params: FilterEvaluatorParams<any, any, IMultiFilterModel, IMultiFilterParams>): void {
         this.params = params;
 
-        const filterDefs = getMultiFilterDefs(params);
+        const filterDefs = getMultiFilterDefs(params.filterParams);
         filterDefs.forEach((def, index) => {
             const wrapper = this.beans.colFilter!.createEvaluator(params.column as AgColumn, def, 'agTextColumnFilter');
             this.evaluatorWrappers.push(wrapper);

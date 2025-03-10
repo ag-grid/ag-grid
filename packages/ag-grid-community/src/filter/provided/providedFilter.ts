@@ -96,7 +96,7 @@ export abstract class ProvidedFilter<
         const params = legacyParams as unknown as P;
         this.setParams(params);
 
-        this.doSetModel(params.model, true).then(() => {
+        this.initModel(params.model).then(() => {
             this.setupOnBtApplyDebounce();
         });
     }
@@ -297,8 +297,8 @@ export abstract class ProvidedFilter<
         return beans.colFilter!.setModelForColumnLegacy(params.column as AgColumn, model);
     }
 
-    protected doSetModel(model: M | null, silent?: boolean): AgPromise<void> {
-        const promise = this.setModelIntoUi(model ?? null, silent);
+    private initModel(model: M | null): AgPromise<void> {
+        const promise = this.setModelIntoUi(model ?? null, true);
 
         return promise.then(() => {
             this.updateUiVisibility();

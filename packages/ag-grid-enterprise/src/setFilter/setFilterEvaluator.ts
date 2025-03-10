@@ -1,5 +1,6 @@
 import type {
     AgColumn,
+    AgPromise,
     FilterEvaluator,
     FilterEvaluatorFuncParams,
     FilterEvaluatorParams,
@@ -23,10 +24,9 @@ import {
 } from 'ag-grid-community';
 
 import { ClientSideValuesExtractor } from './clientSideValueExtractor';
-import SetFilterModelValuesType, { SetFilterAllValues } from './setFilterAllValues';
 import { SetFilterAppliedModel } from './setFilterAppliedModel';
 import { processDataPath, translateForSetFilter } from './setFilterUtils';
-import type { SetValueModelParams } from './setValueModel';
+import SetFilterModelValuesType, { SetValueModel } from './setValueModel';
 
 export type SetFilterEvaluatorEventType = 'anyFilterChanged' | 'dataChanged' | 'destroyed';
 
@@ -34,7 +34,7 @@ export class SetFilterEvaluator<TValue = string>
     extends BeanStub<SetFilterEvaluatorEventType>
     implements FilterEvaluator<any, any, SetFilterModel, ISetFilterParams<any, TValue>>
 {
-    private params: FilterEvaluatorParams<any, any, SetFilterModel> & ISetFilterParams<any, TValue>;
+    public params: FilterEvaluatorParams<any, any, SetFilterModel, ISetFilterParams<any, TValue>>;
     /**
      * Here we keep track of the keys that are currently being used for filtering.
      * In most cases, the filtering keys are the same as the selected keys,
@@ -42,7 +42,7 @@ export class SetFilterEvaluator<TValue = string>
      * the filtering keys can be different from the selected keys.
      */
     private appliedModel: SetFilterAppliedModel;
-    public allValues: SetFilterAllValues<TValue>;
+    public valueModel: SetValueModel<TValue>;
     private createKey: (value: TValue | null | undefined, node?: IRowNode | null) => string | null;
     private treeDataTreeList = false;
     private groupingTreeList = false;
@@ -50,11 +50,11 @@ export class SetFilterEvaluator<TValue = string>
     public valueFormatter?: (params: ValueFormatterParams) => string;
     private noValueFormatterSupplied = false;
 
-    public init(params: FilterEvaluatorParams<any, any, SetFilterModel> & ISetFilterParams<any, TValue>): void {
+    public init(params: FilterEvaluatorParams<any, any, SetFilterModel, ISetFilterParams<any, TValue>>): void {
         this.updateParams(params);
-        const isTreeDataOrGrouping = () => this.treeDataTreeList || this.groupingTreeList;
+        const isTreeDataOrGrouping = this.isTreeDataOrGrouping.bind(this);
         const isTreeData = () => this.treeDataTreeList;
-        const createKey = (value: TValue | null | undefined, node?: IRowNode | null) => this.createKey(value, node);
+        const createKey = this.createKey;
         const caseFormat = this.caseFormat.bind(this);
         const { gos, beans } = this;
         const clientSideValuesExtractor = _isClientSideRowModel(gos, beans.rowModel)
@@ -68,10 +68,10 @@ export class SetFilterEvaluator<TValue = string>
                   )
               )
             : undefined;
-        this.allValues = this.createManagedBean(
-            new SetFilterAllValues(clientSideValuesExtractor, caseFormat, createKey, isTreeDataOrGrouping, {
-                filterParams: params,
-                usingComplexObjects: !!(params.keyCreator ?? params.colDef.keyCreator),
+        this.valueModel = this.createManagedBean(
+            new SetValueModel(clientSideValuesExtractor, caseFormat, createKey, isTreeDataOrGrouping, {
+                evaluatorParams: params,
+                usingComplexObjects: !!(params.filterParams.keyCreator ?? params.colDef.keyCreator),
             })
         );
 
@@ -84,11 +84,11 @@ export class SetFilterEvaluator<TValue = string>
         this.addEventListenersForDataChanges();
     }
 
-    public refresh(params: FilterEvaluatorParams<any, any, SetFilterModel> & ISetFilterParams<any, TValue>): void {
+    public refresh(params: FilterEvaluatorParams<any, any, SetFilterModel, ISetFilterParams<any, TValue>>): void {
         this.updateParams(params);
-        this.allValues.refresh({
-            filterParams: params,
-            usingComplexObjects: !!(params.keyCreator ?? params.colDef.keyCreator),
+        this.valueModel.refresh({
+            evaluatorParams: params,
+            usingComplexObjects: !!(params.filterParams.keyCreator ?? params.colDef.keyCreator),
         });
 
         this.appliedModel.update(params.model);
@@ -96,17 +96,19 @@ export class SetFilterEvaluator<TValue = string>
         this.validateModel(params);
     }
 
-    private updateParams(
-        params: FilterEvaluatorParams<any, any, SetFilterModel> & ISetFilterParams<any, TValue>
-    ): void {
+    private updateParams(params: FilterEvaluatorParams<any, any, SetFilterModel, ISetFilterParams<any, TValue>>): void {
         this.params = params;
-        const { caseSensitive, treeList, column, colDef, keyCreator, valueFormatter } = params;
+        const {
+            column,
+            colDef,
+            filterParams: { caseSensitive, treeList, keyCreator, valueFormatter },
+        } = params;
         this.caseSensitive = !!caseSensitive;
         const isGroupCol = column.getId().startsWith(GROUP_AUTO_COLUMN_ID);
         this.treeDataTreeList = this.gos.get('treeData') && !!treeList && isGroupCol;
         this.groupingTreeList = !!this.beans.rowGroupColsSvc?.columns.length && !!treeList && isGroupCol;
         const resolvedKeyCreator = keyCreator ?? colDef.keyCreator;
-        this.createKey = this.generateCreateKey(resolvedKeyCreator, this.treeDataTreeList || this.groupingTreeList);
+        this.createKey = this.generateCreateKey(resolvedKeyCreator, this.isTreeDataOrGrouping());
         this.setValueFormatter(valueFormatter, resolvedKeyCreator, !!treeList, !!colDef.refData);
     }
 
@@ -142,8 +144,8 @@ export class SetFilterEvaluator<TValue = string>
     }
 
     private getFormattedValue(key: string | null): string | null {
-        let value: TValue | string | null = this.allValues.getValueForFormatter(key)!;
-        if (this.noValueFormatterSupplied && (this.treeDataTreeList || this.groupingTreeList) && Array.isArray(value)) {
+        let value: TValue | string | null = this.valueModel.getValueForFormatter(key)!;
+        if (this.noValueFormatterSupplied && this.isTreeDataOrGrouping() && Array.isArray(value)) {
             // essentially get back the cell value
             value = _last(value) as string;
         }
@@ -168,24 +170,12 @@ export class SetFilterEvaluator<TValue = string>
             return '';
         }
 
-        const availableKeys = this.allValues.getAvailableKeys(values);
+        const availableKeys = this.valueModel.getAvailableKeys(values);
         const numValues = availableKeys.length;
 
         const formattedValues = availableKeys.slice(0, 10).map((key) => this.getFormattedValue(key));
 
         return `(${numValues}) ${formattedValues.join(',')}${numValues > 10 ? ',...' : ''}`;
-    }
-
-    public getSetValueModelParams(): SetValueModelParams<TValue> {
-        return {
-            filterParams: this.params,
-            translate: (key) => translateForSetFilter(this, key),
-            caseFormat: (v) => this.caseFormat(v),
-            getValueFormatter: () => this.valueFormatter,
-            treeDataTreeList: this.treeDataTreeList,
-            groupingTreeList: this.groupingTreeList,
-            allValues: this.allValues,
-        };
     }
 
     public onAnyFilterChanged(): void {
@@ -194,7 +184,7 @@ export class SetFilterEvaluator<TValue = string>
             if (!this.isAlive()) {
                 return;
             }
-            this.allValues.refreshAvailable().then((updated) => {
+            this.valueModel.refreshAvailable().then((updated) => {
                 this.dispatchLocalEvent({ type: 'anyFilterChanged', updated: !!updated });
             });
         });
@@ -205,8 +195,26 @@ export class SetFilterEvaluator<TValue = string>
     }
 
     public resetValues(): void {
-        this.allValues.valuesType = SetFilterModelValuesType.TAKEN_FROM_GRID_VALUES;
+        this.valueModel.valuesType = SetFilterModelValuesType.TAKEN_FROM_GRID_VALUES;
         this.syncAfterDataChange();
+    }
+
+    public refreshValues(): AgPromise<void> {
+        return this.valueModel.refreshAll().then(() => {
+            this.dispatchLocalEvent({ type: 'dataChanged', hardRefresh: true });
+            this.validateModel(this.params);
+        });
+    }
+
+    public isTreeDataOrGrouping(): boolean {
+        return this.treeDataTreeList || this.groupingTreeList;
+    }
+
+    public caseFormat<T extends string | number | null>(valueToFormat: T): T {
+        if (valueToFormat == null || typeof valueToFormat !== 'string') {
+            return valueToFormat;
+        }
+        return this.caseSensitive ? valueToFormat : (valueToFormat.toUpperCase() as T);
     }
 
     private addEventListenersForDataChanges(): void {
@@ -227,25 +235,25 @@ export class SetFilterEvaluator<TValue = string>
             return;
         }
 
-        this.allValues.refreshAll().then(() => {
+        this.valueModel.refreshAll().then(() => {
             this.dispatchLocalEvent({ type: 'dataChanged' });
             this.validateModel(this.params, { afterDataChange: true });
         });
     }
 
     private validateModel(
-        params: FilterEvaluatorParams<any, any, SetFilterModel> & ISetFilterParams<any, TValue>,
+        params: FilterEvaluatorParams<any, any, SetFilterModel, ISetFilterParams<any, TValue>>,
         additionalEventAttributes?: any
     ): void {
-        const allValues = this.allValues;
+        const valueModel = this.valueModel;
 
-        allValues.allValuesPromise.then(() => {
+        valueModel.allValuesPromise.then(() => {
             const model = params.model;
             if (model == null) {
                 return;
             }
             const existingFormattedKeys: Map<string | null, string | null> = new Map();
-            allValues.allValues.forEach((_value, key) => {
+            valueModel.allValues.forEach((_value, key) => {
                 existingFormattedKeys.set(this.caseFormat(key), key);
             });
             const newValues: SetFilterModelValue = [];
@@ -259,7 +267,7 @@ export class SetFilterEvaluator<TValue = string>
                     updated = true;
                 }
             }
-            if (newValues.length === 0 && params.excelMode) {
+            if (newValues.length === 0 && params.filterParams.excelMode) {
                 params.onModelChange(null, additionalEventAttributes);
                 return;
             }
@@ -271,7 +279,7 @@ export class SetFilterEvaluator<TValue = string>
     }
 
     private isValuesTakenFromGrid(): boolean {
-        return this.allValues.valuesType === SetFilterModelValuesType.TAKEN_FROM_GRID_VALUES;
+        return this.valueModel.valuesType === SetFilterModelValuesType.TAKEN_FROM_GRID_VALUES;
     }
 
     private doesFilterPassForTreeData(node: IRowNode): boolean {
@@ -303,13 +311,6 @@ export class SetFilterEvaluator<TValue = string>
         return appliedModel.has(
             this.createKey(processDataPath(dataPath, false, gos.get('groupAllowUnbalanced')) as any) as any
         );
-    }
-
-    private caseFormat<T extends string | number | null>(valueToFormat: T): typeof valueToFormat {
-        if (valueToFormat == null || typeof valueToFormat !== 'string') {
-            return valueToFormat;
-        }
-        return this.caseSensitive ? valueToFormat : (valueToFormat.toUpperCase() as T);
     }
 
     private generateCreateKey(
