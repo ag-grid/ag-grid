@@ -7,7 +7,6 @@ import type { AgProvidedColumnGroup } from '../../../entities/agProvidedColumnGr
 import type { HeaderClassParams, HeaderStyle, SuppressHeaderKeyboardEventParams } from '../../../entities/colDef';
 import { _addGridCommonParams, _getActiveDomElement, _getDocument, _setDomData } from '../../../gridOptionsUtils';
 import type { BrandedType } from '../../../interfaces/brandedType';
-import { _requestAnimationFrame } from '../../../misc/animationFrameService';
 import { _setAriaColIndex } from '../../../utils/aria';
 import { _addOrRemoveAttribute, _getElementSize, _observeResize } from '../../../utils/dom';
 import { _isHeaderFocusSuppressed } from '../../../utils/focus';
@@ -171,7 +170,15 @@ export abstract class AbstractHeaderCellCtrl<
                 const possiblyNoContentYet = autoHeight == 0;
 
                 if (notYetInDom || possiblyNoContentYet) {
-                    _requestAnimationFrame(beans, () => measureHeight(timesCalled + 1));
+                    this.beans.animationFrameSvc?.createTask(
+                        () => {
+                            measureHeight(timesCalled + 1);
+                        },
+                        0,
+                        'p1',
+                        false
+                    );
+
                     return;
                 }
             }
