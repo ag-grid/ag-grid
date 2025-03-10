@@ -13,6 +13,25 @@ import { themeQuartz } from './theming/parts/theme/themes';
 import { _observeResize } from './utils/dom';
 import { _error, _warn } from './validation/logging';
 
+const CELL_HORIZONTAL_PADDING: Variable = {
+    cssName: '--ag-cell-horizontal-padding',
+    changeKey: 'cellHorizontalPaddingChanged',
+    defaultValue: 16,
+};
+
+const INDENTATION_LEVEL: Variable = {
+    cssName: '--ag-indentation-level',
+    changeKey: 'indentationLevelChanged',
+    defaultValue: 0,
+    noWarn: true,
+};
+
+const ROW_GROUP_INDENT_SIZE: Variable = {
+    cssName: '--ag-row-group-indent-size',
+    changeKey: 'rowGroupIndentSizeChanged',
+    defaultValue: 0,
+};
+
 const ROW_HEIGHT: Variable = {
     cssName: '--ag-row-height',
     changeKey: 'rowHeightChanged',
@@ -91,6 +110,34 @@ export class Environment extends BeanStub implements NamedBean {
 
     public getDefaultHeaderHeight(): number {
         return this.getCSSVariablePixelValue(HEADER_HEIGHT);
+    }
+
+    public getDefaultCellHorizontalPadding(): number {
+        return this.getCSSVariablePixelValue(CELL_HORIZONTAL_PADDING);
+    }
+
+    public getDefaultIndentation(): number {
+        return this.getCSSVariablePixelValue(INDENTATION_LEVEL);
+    }
+
+    public getDefaultRowGroupIndentSize(): number {
+        return this.getCSSVariablePixelValue(ROW_GROUP_INDENT_SIZE);
+    }
+
+    public getCellPaddingLeft(): number {
+        // calc(var(--ag-cell-horizontal-padding) - 1px + var(--ag-row-group-indent-size)*var(--ag-indentation-level))
+        const cellHorizontalPadding = this.getDefaultCellHorizontalPadding();
+        const indentationLevel = this.getDefaultIndentation();
+        const rowGroupIndentSize = this.getDefaultRowGroupIndentSize();
+        return cellHorizontalPadding - 1 + rowGroupIndentSize * indentationLevel;
+    }
+
+    public getCellPaddingRight(): number {
+        return this.getDefaultCellHorizontalPadding() - 1;
+    }
+
+    public getCellPadding(): number {
+        return this.getCellPaddingLeft() + this.getCellPaddingRight();
     }
 
     public getDefaultColumnMinWidth(): number {
@@ -221,7 +268,7 @@ export class Environment extends BeanStub implements NamedBean {
         const container = this.getMeasurementContainer();
 
         sizeEl = document.createElement('div');
-        const { border } = variable;
+        const { border, noWarn } = variable;
         if (border) {
             sizeEl.className = 'ag-measurement-element-border';
             sizeEl.style.setProperty(
@@ -236,7 +283,7 @@ export class Environment extends BeanStub implements NamedBean {
 
         let lastMeasurement = this.measureSizeEl(variable);
 
-        if (lastMeasurement === 'no-styles') {
+        if (lastMeasurement === 'no-styles' && !noWarn) {
             // No value for the variable
             _warn(9, { variable });
         }
@@ -338,6 +385,7 @@ type Variable = {
     changeKey: ChangeKey;
     defaultValue: number;
     border?: boolean;
+    noWarn?: boolean;
 };
 
 type ChangeKey =
@@ -345,6 +393,9 @@ type ChangeKey =
     | 'headerHeightChanged'
     | 'rowHeightChanged'
     | 'listItemHeightChanged'
-    | 'rowBorderWidthChanged';
+    | 'rowBorderWidthChanged'
+    | 'cellHorizontalPaddingChanged'
+    | 'indentationLevelChanged'
+    | 'rowGroupIndentSizeChanged';
 
 const NO_VALUE_SENTINEL = 15538;
