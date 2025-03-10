@@ -1,6 +1,8 @@
 ---
 import { getEntry, type CollectionEntry } from 'astro:content';
 import { urlWithPrefix } from '@utils/urlWithPrefix';
+
+import { Icon } from '@ag-website-shared/components/icon/Icon';
 import styles from './MigrationGuides.module.scss';
 
 const { data: versions } = (await getEntry('versions', 'ag-grid-versions')) as CollectionEntry<'versions'>;
@@ -37,7 +39,7 @@ const getVersionType = (version: string) => {
     upgradeMajors.map(({ major, versions }) => {
         return (
             <>
-                <h3>Version {major}</h3>
+                <h2>Version {major}</h2>
 
                 <table class={styles.majorTable}>
                     {versions.map((version) => {
@@ -53,7 +55,9 @@ const getVersionType = (version: string) => {
                                     <span class={styles.versionType}>{getVersionType(version.version)}</span>
                                 </td>
                                 <td>
-                                    <a href={guideUrl}>{version.version} migration guide</a>
+                                    <a href={guideUrl}>
+                                        {version.version} migration guide <Icon name="arrowRight" />
+                                    </a>
                                 </td>
                             </tr>
                         );
