@@ -31,6 +31,8 @@ export class SparklineCellRenderer extends Component implements ICellRenderer {
     private params: ISparklineCellRendererParams<any, any> | undefined;
     private cachedWidth = 0;
     private cachedHeight = 0;
+    private dataRef: any[] = [];
+    private processedData: any[] = [];
     private env: Environment;
 
     constructor() {
@@ -153,7 +155,12 @@ export class SparklineCellRenderer extends Component implements ICellRenderer {
             return data;
         }
 
-        return data.filter((item) => item != null);
+        if (this.dataRef !== data) {
+            this.dataRef = data;
+            this.processedData = data.filter((item) => item != null);
+        }
+
+        return this.processedData;
     }
 
     private createContext() {
