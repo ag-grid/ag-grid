@@ -1,22 +1,33 @@
 import type { AgColumn } from '../entities/agColumn';
 import { _isColumnsSortingCoupledToGroup } from '../gridOptionsUtils';
-import { _clearElement, _setDisplayed } from '../utils/dom';
+import { _clearElement, _createElement, _setDisplayed } from '../utils/dom';
 import type { IconName } from '../utils/icon';
 import { _createIconNoSpan } from '../utils/icon';
 import type { ComponentSelector } from '../widgets/component';
 import { Component, RefPlaceholder } from '../widgets/component';
 
-function makeSpan(dataRefSuffix: string, classSuffix: string) {
-    return /* html */ `<span data-ref="eSort${dataRefSuffix}" class="ag-sort-indicator-icon ag-sort-${classSuffix} ag-hidden" aria-hidden="true"></span>`;
+function makeSpan(dataRefSuffix: string, classSuffix: string): HTMLSpanElement {
+    const span = _createElement(
+        'span',
+        ['ag-sort-indicator-icon', `ag-sort-${classSuffix}`, 'ag-hidden'],
+        undefined,
+        `eSort${dataRefSuffix}`
+    );
+
+    span.setAttribute('aria-hidden', 'true');
+    return span;
 }
 
-const SortIndicatorTemplate = /* html */ `<span class="ag-sort-indicator-container">
-        ${makeSpan('Order', 'order')}
-        ${makeSpan('Asc', 'ascending-icon')}
-        ${makeSpan('Desc', 'descending-icon')}
-        ${makeSpan('Mixed', 'mixed-icon')}
-        ${makeSpan('None', 'none-icon')}
-    </span>`;
+function buildTemplate(): HTMLSpanElement {
+    const span = _createElement('span', ['ag-sort-indicator-container']);
+    span.appendChild(makeSpan('Order', 'order'));
+    span.appendChild(makeSpan('Asc', 'ascending-icon'));
+    span.appendChild(makeSpan('Desc', 'descending-icon'));
+    span.appendChild(makeSpan('Mixed', 'mixed-icon'));
+    span.appendChild(makeSpan('None', 'none-icon'));
+    return span;
+}
+
 export class SortIndicatorComp extends Component {
     private eSortOrder: HTMLElement = RefPlaceholder;
     private eSortAsc: HTMLElement = RefPlaceholder;
@@ -31,7 +42,7 @@ export class SortIndicatorComp extends Component {
         super();
 
         if (!skipTemplate) {
-            this.setTemplate(SortIndicatorTemplate);
+            this.setTemplateFromElement(buildTemplate());
         }
     }
 

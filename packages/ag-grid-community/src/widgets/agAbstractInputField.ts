@@ -1,9 +1,22 @@
 import type { AgInputFieldParams } from '../interfaces/agFieldParams';
 import { _setAriaLabel } from '../utils/aria';
-import { _addOrRemoveAttribute, _setDisabled, _setElementWidth } from '../utils/dom';
+import { _addOrRemoveAttribute, _createElement, _setDisabled, _setElementWidth } from '../utils/dom';
 import type { AgAbstractFieldEvent, FieldElement } from './agAbstractField';
 import { AgAbstractField } from './agAbstractField';
 import { RefPlaceholder } from './component';
+
+function buildTemplate(displayFieldTag: keyof HTMLElementTagNameMap) {
+    const div = _createElement('div', undefined, 'presentation');
+
+    const eLabel = _createElement('div', ['ag-input-field-label'], undefined, 'eLabel');
+    const eWrapper = _createElement('div', ['ag-wrapper', 'ag-input-wrapper'], 'presentation', 'eWrapper');
+    const eInput = _createElement(displayFieldTag, ['ag-input-field-input'], undefined, 'eInput');
+    eWrapper.appendChild(eInput);
+
+    div.appendChild(eLabel);
+    div.appendChild(eWrapper);
+    return div;
+}
 
 export type AgAbstractInputFieldEvent = AgAbstractFieldEvent;
 export abstract class AgAbstractInputField<
@@ -20,21 +33,9 @@ export abstract class AgAbstractInputField<
         config?: TConfig,
         className?: string,
         private readonly inputType: string | null = 'text',
-        private readonly displayFieldTag = 'input'
+        private readonly displayFieldTag: keyof HTMLElementTagNameMap = 'input'
     ) {
-        super(
-            config,
-            config?.template ??
-                /* html */ `
-            <div role="presentation">
-                <div data-ref="eLabel" class="ag-input-field-label"></div>
-                <div data-ref="eWrapper" class="ag-wrapper ag-input-wrapper" role="presentation">
-                    <${displayFieldTag} data-ref="eInput" class="ag-input-field-input"></${displayFieldTag}>
-                </div>
-            </div>`,
-            [],
-            className
-        );
+        super(config, config?.template ?? buildTemplate(displayFieldTag), [], className);
     }
 
     public override postConstruct() {

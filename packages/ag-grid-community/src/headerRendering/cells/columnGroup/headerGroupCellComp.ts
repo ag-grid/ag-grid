@@ -1,6 +1,6 @@
 import type { HeaderStyle } from '../../../entities/colDef';
 import type { UserCompDetails } from '../../../interfaces/iUserCompDetails';
-import { _addStylesToElement, _setDisplayed } from '../../../utils/dom';
+import { _addStylesToElement, _createElement, _setDisplayed } from '../../../utils/dom';
 import { RefPlaceholder } from '../../../widgets/component';
 import { AbstractHeaderCellComp } from '../abstractCell/abstractHeaderCellComp';
 import type { HeaderGroupCellCtrl, IHeaderGroupCellComp } from './headerGroupCellCtrl';
@@ -13,13 +13,19 @@ export class HeaderGroupCellComp extends AbstractHeaderCellComp<HeaderGroupCellC
     private headerGroupComp: IHeaderGroupComp | undefined;
 
     constructor(ctrl: HeaderGroupCellCtrl) {
-        super(
-            /* html */ `<div class="ag-header-group-cell" role="columnheader">
-            <div data-ref="eHeaderCompWrapper" class="ag-header-cell-comp-wrapper" role="presentation"></div>
-            <div data-ref="eResize" class="ag-header-cell-resize" role="presentation"></div>
-        </div>`,
-            ctrl
+        const div = _createElement('div', ['ag-header-group-cell'], 'columnheader');
+        const headerCompWrapper = _createElement(
+            'div',
+            ['ag-header-cell-comp-wrapper'],
+            'presentation',
+            'eHeaderCompWrapper'
         );
+        const resize = _createElement('div', ['ag-header-cell-resize'], 'presentation', 'eResize');
+
+        div.appendChild(headerCompWrapper);
+        div.appendChild(resize);
+
+        super(div, ctrl);
     }
 
     public postConstruct(): void {

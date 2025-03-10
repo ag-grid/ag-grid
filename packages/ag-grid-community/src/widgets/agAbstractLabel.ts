@@ -18,7 +18,7 @@ export abstract class AgAbstractLabel<
     protected disabled: boolean = false;
     private label: HTMLElement | string = '';
 
-    constructor(config?: TConfig, template?: string, components?: ComponentSelector[]) {
+    constructor(config?: TConfig, template?: string | HTMLElement, components?: ComponentSelector[]) {
         super(template, components);
 
         this.config = config || ({} as any);

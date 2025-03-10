@@ -557,3 +557,25 @@ export function _preserveRangesWhile(beans: BeanCollection, fn: () => void): voi
         selection?.addRange(range);
     }
 }
+
+/** Just to avoid typos, add to as required */
+type RoleType = 'presentation' | 'columnheader';
+
+export function _createElement<T extends keyof HTMLElementTagNameMap>(
+    tagname: T,
+    classList?: string[],
+    role?: RoleType,
+    dataRef?: string
+): HTMLElement {
+    const element = document.createElement<T>(tagname);
+    if (role) {
+        element.setAttribute('role', role);
+    }
+    if (dataRef) {
+        element.setAttribute('data-ref', dataRef);
+    }
+    if (classList) {
+        element.classList.add(...classList);
+    }
+    return element;
+}

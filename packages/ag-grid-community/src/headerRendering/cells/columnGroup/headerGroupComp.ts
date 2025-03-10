@@ -5,7 +5,7 @@ import type { AgColumnGroup } from '../../../entities/agColumnGroup';
 import type { ColumnGroup } from '../../../interfaces/iColumn';
 import type { AgGridCommon } from '../../../interfaces/iCommon';
 import type { IComponent } from '../../../interfaces/iComponent';
-import { _setDisplayed } from '../../../utils/dom';
+import { _createElement, _setDisplayed } from '../../../utils/dom';
 import { _isStopPropagationForAgGrid, _stopPropagationForAgGrid } from '../../../utils/event';
 import { _exists } from '../../../utils/generic';
 import type { IconName } from '../../../utils/icon';
@@ -48,6 +48,14 @@ export interface IInnerHeaderGroupComponent<
 > extends IComponent<TParams>,
         IHeaderGroup {}
 
+function buildExpandIcon(iconName: 'expanded' | 'collapsed', dataRef: 'agOpened' | 'agClosed'): HTMLElement {
+    return _createElement(
+        'span',
+        ['ag-header-icon', 'ag-header-expand-icon', `ag-header-expand-icon-${iconName}`],
+        undefined,
+        dataRef
+    );
+}
 export class HeaderGroupComp extends Component implements IHeaderGroupComp {
     private params: IHeaderGroupParams;
 
@@ -59,11 +67,13 @@ export class HeaderGroupComp extends Component implements IHeaderGroupComp {
     private isLoadingInnerComponent: boolean = false;
 
     constructor() {
-        super(/* html */ `<div class="ag-header-group-cell-label" role="presentation">
-            <span data-ref="agLabel" class="ag-header-group-text" role="presentation"></span>
-            <span data-ref="agOpened" class="ag-header-icon ag-header-expand-icon ag-header-expand-icon-expanded"></span>
-            <span data-ref="agClosed" class="ag-header-icon ag-header-expand-icon ag-header-expand-icon-collapsed"></span>
-        </div>`);
+        const div = _createElement('div', ['ag-header-group-cell-label'], 'presentation');
+
+        div.appendChild(_createElement('span', ['ag-header-group-text'], 'presentation', 'agLabel'));
+
+        div.appendChild(buildExpandIcon('expanded', 'agOpened'));
+        div.appendChild(buildExpandIcon('collapsed', 'agClosed'));
+        super(div);
     }
 
     public init(params: IHeaderGroupParams): void {

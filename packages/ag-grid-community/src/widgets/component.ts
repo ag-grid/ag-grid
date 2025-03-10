@@ -56,14 +56,18 @@ export class Component<TLocalEvent extends string = ComponentEvent>
 
     private cssClassManager: CssClassManager;
 
-    constructor(template?: string, componentSelectors?: ComponentSelector[]) {
+    constructor(template?: string | HTMLElement, componentSelectors?: ComponentSelector[]) {
         super();
 
         this.cssClassManager = new CssClassManager(() => this.eGui);
 
         this.componentSelectors = new Map((componentSelectors ?? []).map((comp) => [comp.selector, comp]));
         if (template) {
-            this.setTemplate(template);
+            if (typeof template === 'string') {
+                this.setTemplate(template);
+            } else {
+                this.setTemplateFromElement(template);
+            }
         }
     }
 
