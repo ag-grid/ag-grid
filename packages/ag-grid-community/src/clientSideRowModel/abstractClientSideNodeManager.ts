@@ -350,7 +350,8 @@ export abstract class AbstractClientSideNodeManager<TData = any>
                 nodesToUnselect.push(rowNode);
             }
 
-            if (rowNode.rowPinned && rowNode.pinnedSibling) {
+            // If a row has been manually pinned, ensure its sibling is also removed
+            if (rowNode.pinnedSibling) {
                 this.beans.pinnedRowModel?.pinRow(rowNode.pinnedSibling, null);
             }
 
