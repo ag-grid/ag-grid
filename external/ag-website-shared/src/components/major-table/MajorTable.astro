@@ -1,6 +1,7 @@
 ---
 import { getEntry, type CollectionEntry } from 'astro:content';
 import { urlWithPrefix } from '@utils/urlWithPrefix';
+import { parseVersion } from '@ag-website-shared/utils/parseVersion';
 
 import { Icon } from '@ag-website-shared/components/icon/Icon';
 import styles from './MajorTable.module.scss';
@@ -24,29 +25,17 @@ const filterMigrations = (version) => {
     return Number(version.version.split('.')[0]) === major && version.notesPath;
 };
 
-const getVersionType = (version: string) => {
-    const [_, minor, patch] = version.split('.');
-
-    if (patch !== '0') {
-        return 'Patch';
-    } else if (minor !== '0') {
-        return 'Minor';
-    } else {
-        return 'Major';
-    }
-};
-
 const versions = allVersions.filter(filterMigrations);
 ---
 
 <table class={styles.majorTable}>
     {
         versions.map((version) => {
-            const versionType = getVersionType(version.version);
+            const { isMajor, versionType } = parseVersion(version.version);
             const guideUrl = urlWithPrefix({ framework, url: version.notesPath });
 
             return (
-                <tr class={versionType === 'Major' ? styles.isMajor : ''}>
+                <tr class={isMajor ? styles.isMajor : ''}>
                     <td class:list={[styles.version, 'text-monospace ', 'text-semibold']}>{version.version}</td>
                     <td>{version.date}</td>
                     <td>
