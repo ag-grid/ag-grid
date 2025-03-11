@@ -2,7 +2,6 @@ import type {
     AgColumn,
     BeanCollection,
     CssVariablesChanged,
-    GridOptionsService,
     IPinnedRowModel,
     RowNode,
     RowPinnedType,
@@ -13,7 +12,6 @@ import {
     _ROW_ID_PREFIX_TOP_PINNED,
     _getRowHeightForNode,
     _removeFromArray,
-    _warn,
 } from 'ag-grid-community';
 
 import { _createRowNodeSibling } from '../misc/rowNodeSiblingUtils';
@@ -136,8 +134,6 @@ export class ManualPinnedRowModel extends BeanStub implements IPinnedRowModel {
             this.forContainers((container) => container.hide(hideLeaves));
             this.dispatchRowPinnedEvents();
         });
-
-        validatePinningOptions(this.gos);
     }
 
     public override destroy(): void {
@@ -160,7 +156,7 @@ export class ManualPinnedRowModel extends BeanStub implements IPinnedRowModel {
         // unpinning
         if (container == null) {
             // Want to act on the pinned row, not the original row
-            const node = rowNode.manualPinned ? rowNode : rowNode.pinnedSibling!;
+            const node = rowNode.rowPinned ? rowNode : rowNode.pinnedSibling!;
             const found = this.findPinnedRowNode(node);
             if (!found) return;
 
@@ -307,16 +303,6 @@ function refreshRowPositions(beans: BeanCollection, container: OrderedSet) {
     });
 }
 
-function validatePinningOptions(gos: GridOptionsService): void {
-    const enableRowPinning = gos.get('enableRowPinning');
-    const pinnedTopRowData = gos.get('pinnedTopRowData');
-    const pinnedBottomRowData = gos.get('pinnedBottomRowData');
-
-    if (enableRowPinning && (pinnedTopRowData || pinnedBottomRowData)) {
-        _warn(272);
-    }
-}
-
 function _createPinnedSibling(rowNode: RowNode, beans: BeanCollection, container: NonNullable<RowPinnedType>): RowNode {
     // only create sibling node once, otherwise we have daemons and
     // the animate screws up with the daemons hanging around
@@ -328,7 +314,6 @@ function _createPinnedSibling(rowNode: RowNode, beans: BeanCollection, container
 
     sibling.setRowTop(null);
     sibling.setRowIndex(null);
-    sibling.manualPinned = true;
     sibling.rowPinned = container;
 
     const prefix = container === 'top' ? _ROW_ID_PREFIX_TOP_PINNED : _ROW_ID_PREFIX_BOTTOM_PINNED;

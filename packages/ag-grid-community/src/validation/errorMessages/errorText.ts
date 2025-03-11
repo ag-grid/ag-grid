@@ -644,8 +644,6 @@ export const AG_GRID_ERRORS = {
         `Cycle detected for row with id='${id}' and parent id='${parentId}'. Resetting the parent for row with id='${id}' and showing it as a root-level node.` as const,
     271: ({ id, parentId }: { id: string; parentId: string }) =>
         `Parent row not found for row with id='${id}' and parent id='${parentId}'. Showing row with id='${id}' as a root-level node.` as const,
-    272: () =>
-        'Manual row pinning cannot be used together with pinned row data. Either set `enableRowPinning` to `false`, or remove `pinnedTopRowData` and `pinnedBottomRowData`.',
 };
 
 export type ErrorMap = typeof AG_GRID_ERRORS;

@@ -461,7 +461,7 @@ export class GroupCellRendererCtrl extends BeanStub implements IGroupCellRendere
         }
 
         // Manually pinned group rows cannot be expanded
-        if ((node as RowNode).manualPinned) {
+        if ((node as RowNode).isRowPinned()) {
             return false;
         }
 

@@ -177,6 +177,18 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => {
                 rowDragEntireRow: { required: [false, undefined] },
             },
         },
+        enableRowPinning: {
+            module: 'ManualPinnedRow',
+            validate({ enableRowPinning, pinnedTopRowData, pinnedBottomRowData }) {
+                if (enableRowPinning && (pinnedTopRowData || pinnedBottomRowData)) {
+                    return 'Manual row pinning cannot be used together with pinned row data. Either set `enableRowPinning` to `false`, or remove `pinnedTopRowData` and `pinnedBottomRowData`.';
+                }
+                return null;
+            },
+        },
+        isRowPinnable: {
+            module: 'ManualPinnedRow',
+        },
         findSearchValue: {
             module: 'Find',
         },

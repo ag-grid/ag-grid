@@ -765,14 +765,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
             rowHighlightChanged: this.onRowNodeHighlightChanged.bind(this),
             draggingChanged: this.postProcessRowDragging.bind(this),
             uiLevelChanged: this.onUiLevelChanged.bind(this),
-            rowPinned: () => {
-                this.allRowGuis.forEach((gui) => {
-                    gui.rowComp.addOrRemoveCssClass(
-                        'ag-row-pinned-target',
-                        !!(this.rowNode.pinnedSibling && !this.rowNode.manualPinned)
-                    );
-                });
-            },
+            rowPinned: this.onRowPinned.bind(this),
         });
 
         this.addManagedListeners(this.beans.eventSvc, {
@@ -831,6 +824,15 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
             cellChanged: (event) => {
                 this.getAllCellCtrls().forEach((cellCtrl) => cellCtrl.onCellChanged(event));
             },
+        });
+    }
+
+    private onRowPinned(): void {
+        this.allRowGuis.forEach((gui) => {
+            gui.rowComp.addOrRemoveCssClass(
+                'ag-row-pinned-target',
+                !!(this.rowNode.pinnedSibling && !this.rowNode.rowPinned)
+            );
         });
     }
 
@@ -1370,10 +1372,11 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
 
         if (rowNode.isRowPinned()) {
             classes.push('ag-row-pinned');
-            // Only the source of the pinned row gets this class
-            if (!rowNode.manualPinned) {
-                classes.push('ag-row-pinned-target');
-            }
+        }
+
+        // Only the source of the pinned row gets this class
+        if (!rowNode.isRowPinned() && rowNode.pinnedSibling) {
+            classes.push('ag-row-pinned-target');
         }
 
         if (rowNode.isSelected()) {
