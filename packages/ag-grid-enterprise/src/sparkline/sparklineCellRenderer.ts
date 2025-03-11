@@ -69,8 +69,10 @@ export class SparklineCellRenderer extends Component implements ICellRenderer {
         column.__addEventListener('columnStateUpdated', batchListener);
         rowNode.__addEventListener('heightChanged', batchListener);
 
-        this.addDestroyFunc(() => column.__removeEventListener('columnStateUpdated', batchListener));
-        this.addDestroyFunc(() => rowNode.__removeEventListener('heightChanged', batchListener));
+        this.addDestroyFunc(() => {
+            column.__removeEventListener('columnStateUpdated', batchListener);
+            rowNode.__removeEventListener('heightChanged', batchListener);
+        });
 
         listener();
     }
