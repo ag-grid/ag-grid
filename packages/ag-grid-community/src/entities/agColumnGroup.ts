@@ -209,7 +209,7 @@ export class AgColumnGroup<TValue = any> extends BeanStub<AgColumnGroupEvent> im
     }
 
     public isAutoHeaderHeight(): boolean {
-        return !!this.providedColumnGroup.getColGroupDef()?.autoHeaderHeight;
+        return !!this.getColGroupDef()?.autoHeaderHeight;
     }
 
     public getAutoHeaderHeight(): number | null {
