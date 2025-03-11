@@ -1,19 +1,16 @@
 import type {
     AgChartInstance,
     AgChartTheme,
-    AgChartThemeName,
     AgSparklineOptions,
     AgSparklineTooltipRendererParams,
     AgSparklineTooltipRendererResult,
     AgTooltipRendererResult,
 } from 'ag-charts-types';
 
-import type { ICellRenderer, ISparklineCellRendererParams } from 'ag-grid-community';
-import { Component, RefPlaceholder, _observeResize } from 'ag-grid-community';
+import type { AgColumn, Environment, ICellRenderer, ISparklineCellRendererParams, RowNode } from 'ag-grid-community';
+import { Component, RefPlaceholder, _batchCall } from 'ag-grid-community';
 
 import { wrapFn } from './sparklinesUtils';
-
-export const DEFAULT_THEMES = ['ag-default', 'ag-material', 'ag-sheets', 'ag-polychroma', 'ag-vivid'];
 
 function tooltipRendererWithXValue(
     params: AgSparklineTooltipRendererParams<unknown>
@@ -29,47 +26,87 @@ export class SparklineCellRenderer extends Component implements ICellRenderer {
     private readonly eSparkline: HTMLElement = RefPlaceholder;
     private sparklineInstance?: AgChartInstance<any>;
     private sparklineOptions: AgSparklineOptions;
-    private params: ISparklineCellRendererParams<any, any> | undefined;
+    private params: ISparklineCellRendererParams<any, any>;
     private cachedWidth = 0;
     private cachedHeight = 0;
+    private dataRef: any[] = [];
+    private processedData: any[] = [];
+    private env: Environment;
 
     constructor() {
-        super(/* html */ `<div class="ag-sparkline-wrapper">
-            <span data-ref="eSparkline"></span>
-        </div>`);
+        super();
+
+        // Manually construct DOM to avoid costly HTML parsing on fast-scrolling.
+        const wrapper = document.createElement('div');
+        wrapper.classList.add('ag-sparkline-wrapper');
+        const eSparkline = document.createElement('span');
+        eSparkline.dataset.ref = 'eSparkline';
+        wrapper.appendChild(eSparkline);
+
+        this.setTemplateFromElement(wrapper);
     }
 
     postConstruct(): void {
+        this.env = this.beans.environment;
         this.addManagedPropertyListeners(['chartThemeOverrides', 'chartThemes'], (_event) => this.refresh(this.params));
     }
 
-    public init(params: ISparklineCellRendererParams): void {
-        this.refresh(params);
-        const unsubscribeFromResize = _observeResize(this.beans, this.getGui(), () => {
-            const { clientWidth: width, clientHeight: height } = this.getGui();
+    private createListener(batch = true) {
+        return () =>
+            this.updateSize(this.params?.column?.getActualWidth() ?? 0, (this.params?.node.rowHeight ?? 0) - 2, batch);
+    }
 
-            if (this.cachedWidth === width && this.cachedHeight === height) {
-                return;
-            }
+    private initGridObserver() {
+        // Use grid APIs to listen for column width and row height changes instead
+        // of a ResizeObserver to avoid having to wait for a re-layout before resizing sparklines
 
-            this.cachedWidth = width;
-            this.cachedHeight = height;
-            this.refresh(this.params);
+        const batchListener = this.createListener();
+        const listener = this.createListener(false);
+
+        const column = this.params?.column as AgColumn;
+        const rowNode = this.params?.node as RowNode;
+
+        column.__addEventListener('columnStateUpdated', batchListener);
+        rowNode.__addEventListener('heightChanged', batchListener);
+
+        this.addDestroyFunc(() => {
+            column.__removeEventListener('columnStateUpdated', batchListener);
+            rowNode.__removeEventListener('heightChanged', batchListener);
         });
-        this.addDestroyFunc(() => unsubscribeFromResize());
+
+        listener();
     }
 
-    private getThemeName(): string {
-        const availableThemes = this.gos.get('chartThemes');
-        return (availableThemes || DEFAULT_THEMES)[0];
+    private updateSize(newWidth: number, newHeight: number, batch = true) {
+        // account for cell padding
+        newWidth -= this.env.getCellPadding();
+
+        if (newWidth !== this.cachedWidth || newHeight !== this.cachedHeight) {
+            this.cachedWidth = newWidth;
+            this.cachedHeight = newHeight;
+
+            const refresh = this.refresh.bind(this);
+
+            if (batch) {
+                _batchCall(refresh);
+            } else {
+                refresh();
+            }
+        }
     }
 
-    public refresh(params?: ISparklineCellRendererParams): boolean {
+    public init(params: ISparklineCellRendererParams): void {
         this.params = params;
+        this.initGridObserver();
+    }
+
+    public refresh(params: ISparklineCellRendererParams = this.params): boolean {
+        this.params = params;
+
         const width = this.cachedWidth;
         const height = this.cachedHeight;
 
-        if (!this.sparklineInstance && params && width > 0 && height) {
+        if (!this.sparklineInstance && params && width > 0 && height > 0) {
             this.sparklineOptions = {
                 container: this.eSparkline,
                 width,
@@ -96,41 +133,20 @@ export class SparklineCellRenderer extends Component implements ICellRenderer {
                 this.wrapItemStyler(theme.overrides.bar.series);
             }
 
-            this.updateTheme(this.sparklineOptions);
-
             // create new sparkline
             this.sparklineInstance = params.createSparkline!(this.sparklineOptions);
             return true;
         } else if (this.sparklineInstance) {
-            this.sparklineOptions.width = width;
-            this.sparklineOptions.height = height;
-            const data = this.processData(params?.value);
-            this.sparklineOptions.data = data;
-
-            const themeChanged = this.updateTheme(this.sparklineOptions);
-            if (themeChanged) {
-                this.sparklineInstance.updateDelta(this.sparklineOptions);
-            } else {
-                // Fast path for updating data or width/height to match Charts fast path
-                this.sparklineInstance.updateDelta({ data, width, height });
-            }
+            this.sparklineInstance.update({
+                ...this.sparklineOptions,
+                data: this.processData(params?.value),
+                width,
+                height,
+            });
 
             return true;
         }
         return false;
-    }
-
-    private updateTheme(sparklineOptions: AgSparklineOptions): boolean {
-        const themeName = this.getThemeName() as AgChartThemeName;
-        let themeChanged = false;
-        if (typeof sparklineOptions.theme === 'string' || !sparklineOptions.theme) {
-            themeChanged = sparklineOptions.theme !== themeName;
-            sparklineOptions.theme = themeName;
-        } else if (sparklineOptions.theme) {
-            themeChanged = sparklineOptions.theme.baseTheme !== themeName;
-            sparklineOptions.theme.baseTheme = themeName;
-        }
-        return themeChanged;
     }
 
     private processData(data: any[] = []) {
@@ -138,7 +154,12 @@ export class SparklineCellRenderer extends Component implements ICellRenderer {
             return data;
         }
 
-        return data.filter((item) => item != null);
+        if (this.dataRef !== data) {
+            this.dataRef = data;
+            this.processedData = data.filter((item) => item != null);
+        }
+
+        return this.processedData;
     }
 
     private createContext() {

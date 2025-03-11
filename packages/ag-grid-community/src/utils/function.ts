@@ -32,21 +32,25 @@ export function _errorOnce(msg: string, ...args: any[]) {
     _doOnce(() => console.error('AG Grid: ' + msg, ...args), msg + args?.join(''));
 }
 
-const executeNextVMTurnFuncs: ((...args: any[]) => any)[] = [];
-let executeNextVMTurnPending = false;
+const batchedCalls: ((...args: any[]) => any)[] = [];
+let batchedCallsPending = false;
 
-export function _executeNextVMTurn(func: () => void): void {
-    executeNextVMTurnFuncs.push(func);
+/*
+ * Batch calls to execute after the next macro task.
+ * @param {Function} func The function to be batched
+ */
+export function _batchCall(func: () => void): void {
+    batchedCalls.push(func);
 
-    if (executeNextVMTurnPending) {
+    if (batchedCallsPending) {
         return;
     }
 
-    executeNextVMTurnPending = true;
+    batchedCallsPending = true;
     window.setTimeout(() => {
-        const funcsCopy = executeNextVMTurnFuncs.slice();
-        executeNextVMTurnFuncs.length = 0;
-        executeNextVMTurnPending = false;
+        const funcsCopy = batchedCalls.slice();
+        batchedCalls.length = 0;
+        batchedCallsPending = false;
         funcsCopy.forEach((func) => func());
     }, 0);
 }

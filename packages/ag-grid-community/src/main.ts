@@ -1021,7 +1021,7 @@ export {
 } from './utils/dom';
 export { _selectAllCells } from './utils/selection';
 export { _stopPropagationForAgGrid, _isStopPropagationForAgGrid, _isElementInEventPath } from './utils/event';
-export { _warnOnce, _debounce, _doOnce, _waitUntil } from './utils/function';
+export { _warnOnce, _debounce, _doOnce, _waitUntil, _batchCall } from './utils/function';
 export { _warn, _error, _errMsg, _preInitErrMsg } from './validation/logging';
 export { _createIcon, _createIconNoSpan, IconName } from './utils/icon';
 export { _fuzzySuggestions } from './utils/fuzzyMatch';

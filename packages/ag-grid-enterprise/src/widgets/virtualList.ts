@@ -350,6 +350,8 @@ export class VirtualList<
         const rowCount = this.model.getRowCount();
         this.eContainer.style.height = `${rowCount * this.rowHeight}px`;
 
+        this.refreshAriaProperties();
+
         // ensure height is applied before attempting to redraw rows
         this.awaitStable(() => {
             if (!this.isAlive()) {
@@ -500,7 +502,6 @@ export class VirtualList<
 
     public setModel(model: VirtualListModel): void {
         this.model = model;
-        this.refreshAriaProperties();
     }
 
     public override getAriaElement(): Element {

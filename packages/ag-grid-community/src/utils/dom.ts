@@ -510,7 +510,11 @@ export function _bindCellRendererToHtmlElement(
     });
 }
 
-export function _observeResize(beans: BeanCollection, element: HTMLElement, callback: () => void): () => void {
+export function _observeResize(
+    beans: BeanCollection,
+    element: HTMLElement,
+    callback: ResizeObserverCallback
+): () => void {
     const win = _getWindow(beans);
     const ResizeObserverImpl = win.ResizeObserver;
     const resizeObserver = ResizeObserverImpl ? new ResizeObserverImpl(callback) : null;

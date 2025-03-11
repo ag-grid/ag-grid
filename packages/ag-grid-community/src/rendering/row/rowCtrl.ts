@@ -39,7 +39,7 @@ import { _isBrowserSafari } from '../../utils/browser';
 import { _addOrRemoveAttribute, _isElementChildOfClass, _isFocusableFormField, _isVisible } from '../../utils/dom';
 import { _isStopPropagationForAgGrid } from '../../utils/event';
 import { _findNextFocusableElement } from '../../utils/focus';
-import { _executeNextVMTurn } from '../../utils/function';
+import { _batchCall } from '../../utils/function';
 import { _exists, _makeNull } from '../../utils/generic';
 import { _escapeString } from '../../utils/string';
 import type { Component } from '../../widgets/component';
@@ -329,7 +329,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
 
         const shouldSlide = this.slideInAnimation[containerType];
         if (shouldSlide) {
-            _executeNextVMTurn(() => {
+            _batchCall(() => {
                 this.onTopChanged();
             });
             this.slideInAnimation[containerType] = false;
@@ -337,7 +337,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
 
         const shouldFade = this.fadeInAnimation[containerType];
         if (shouldFade) {
-            _executeNextVMTurn(() => {
+            _batchCall(() => {
                 gui.rowComp.addOrRemoveCssClass('ag-opacity-zero', false);
             });
             this.fadeInAnimation[containerType] = false;
