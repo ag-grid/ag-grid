@@ -17,9 +17,15 @@ import {
 } from 'ag-grid-community';
 
 class OrderedSet {
+    /** Canonical set of all pinned nodes */
     private all = new Set<RowNode>();
+    /**
+     * Set of nodes that should currently be visible given the context of the grid.
+     * This is currently used for hiding leaf nodes in pivot mode.
+     */
     private visible = new Set<RowNode>();
-    private cachedOrder: RowNode[] = [];
+    /** Ordering of nodes in the pinned area */
+    private order: RowNode[] = [];
     /**
      * We cache the row index of nodes to handle the case where they become not displayed (e.g
      * collapsing a group). Their `rowIndex` then becomes `null` and pinned row order becomes
@@ -35,14 +41,14 @@ class OrderedSet {
     public add(item: RowNode): void {
         this.all.add(item);
         this.visible.add(item);
-        this.cachedOrder.push(item);
+        this.order.push(item);
         this.sort();
     }
 
     public delete(item: RowNode): void {
         this.all.delete(item);
         this.visible.delete(item);
-        _removeFromArray(this.cachedOrder, item);
+        _removeFromArray(this.order, item);
         this.indexCache.delete(item);
     }
 
@@ -51,11 +57,11 @@ class OrderedSet {
     }
 
     public forEach(fn: (node: RowNode, i: number) => void): void {
-        this.cachedOrder.forEach(fn);
+        this.order.forEach(fn);
     }
 
     public getByIndex(i: number): RowNode | undefined {
-        return this.cachedOrder[i];
+        return this.order[i];
     }
 
     public getById(id: string): RowNode | undefined {
@@ -68,11 +74,11 @@ class OrderedSet {
         this.all.clear();
         this.visible.clear();
         this.indexCache.clear();
-        this.cachedOrder.length = 0;
+        this.order.length = 0;
     }
 
     public sort(): void {
-        this.cachedOrder.sort((a, b) => {
+        this.order.sort((a, b) => {
             const aOrig = a.pinnedSibling;
             const bOrig = b.pinnedSibling;
 
@@ -94,7 +100,7 @@ class OrderedSet {
 
     public hide(shouldHide: (node: RowNode) => boolean): void {
         this.all.forEach((node) => (shouldHide(node) ? this.visible.delete(node) : this.visible.add(node)));
-        this.cachedOrder = Array.from(this.visible);
+        this.order = Array.from(this.visible);
         this.sort();
     }
 }
@@ -107,22 +113,18 @@ export class ManualPinnedRowModel extends BeanStub implements IPinnedRowModel {
         this.addManagedEventListeners({
             gridStylesChanged: this.onGridStylesChanges.bind(this),
             modelUpdated: () => {
-                this.top.sort();
-                this.bottom.sort();
+                this.forContainers((container) => container.sort());
                 this.refreshRowPositions();
             },
             columnRowGroupChanged: () => {
-                removeGroupRows(this.top);
-                removeGroupRows(this.bottom);
+                this.forContainers(removeGroupRows);
                 this.refreshRowPositions();
             },
         });
 
         this.addManagedPropertyListener('pivotMode', (event) => {
             const hideLeaves = (node: RowNode) => (event.currentValue ? !node.group : false);
-            this.top.hide(hideLeaves);
-            this.bottom.hide(hideLeaves);
-
+            this.forContainers((container) => container.hide(hideLeaves));
             this.dispatchRowPinnedEvents();
         });
 
@@ -130,11 +132,10 @@ export class ManualPinnedRowModel extends BeanStub implements IPinnedRowModel {
     }
 
     public override destroy(): void {
-        this.top.forEach(_destroyRowNodeSibling);
-        this.top.clear();
-
-        this.bottom.forEach(_destroyRowNodeSibling);
-        this.bottom.clear();
+        this.forContainers((container) => {
+            container.forEach(_destroyRowNodeSibling);
+            container.clear();
+        });
 
         super.destroy();
     }
@@ -279,6 +280,11 @@ export class ManualPinnedRowModel extends BeanStub implements IPinnedRowModel {
     private refreshRowPositions(container?: RowPinnedType): void {
         const sets = container == null ? ['top' as const, 'bottom' as const] : [container];
         sets.forEach((float) => refreshRowPositions(this.beans, this.getContainer(float)));
+    }
+
+    private forContainers(fn: (container: OrderedSet) => void): void {
+        fn(this.top);
+        fn(this.bottom);
     }
 
     private dispatchRowPinnedEvents(node?: RowNode): void {
