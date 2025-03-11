@@ -10,6 +10,7 @@ import type { BrandedType } from '../../../interfaces/brandedType';
 import { _setAriaColIndex } from '../../../utils/aria';
 import { _addOrRemoveAttribute, _getElementSize, _observeResize } from '../../../utils/dom';
 import { _isHeaderFocusSuppressed } from '../../../utils/focus';
+import { _batchCall } from '../../../utils/function';
 import { _exists } from '../../../utils/generic';
 import { KeyCode } from '../.././../constants/keyCode';
 import type { HeaderRowCtrl } from '../../row/headerRowCtrl';
@@ -170,15 +171,7 @@ export abstract class AbstractHeaderCellCtrl<
                 const possiblyNoContentYet = autoHeight == 0;
 
                 if (notYetInDom || possiblyNoContentYet) {
-                    this.beans.animationFrameSvc?.createTask(
-                        () => {
-                            measureHeight(timesCalled + 1);
-                        },
-                        0,
-                        'p1',
-                        false
-                    );
-
+                    _batchCall(() => measureHeight(timesCalled + 1), 'raf', beans);
                     return;
                 }
             }
