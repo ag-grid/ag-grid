@@ -7,6 +7,5 @@ export const majorTable: Schema<Config, Render> = {
     attributes: {
         library: { type: String, required: true, matches: ['grid', 'charts'] },
         major: { type: Number, required: true },
-        type: { type: String, required: true, matches: ['migration', 'archive'] },
     },
 };

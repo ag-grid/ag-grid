@@ -8,10 +8,9 @@ import styles from './MajorTable.module.scss';
 interface Props {
     library: String;
     major: Number;
-    type: String;
 }
 
-const { library, major, type } = Astro.props as Props;
+const { library, major } = Astro.props as Props;
 
 const isGrid = library === 'grid';
 
@@ -55,7 +54,8 @@ const versions = allVersions.filter(filterMigrations);
                     </td>
                     <td>
                         <a href={guideUrl}>
-                            {version.version} Migration guide <Icon name="arrowRight" />
+                            <span class={'text-monospace'}>{version.version}</span> Migration guide{' '}
+                            <Icon name="arrowRight" />
                         </a>
                     </td>
                 </tr>

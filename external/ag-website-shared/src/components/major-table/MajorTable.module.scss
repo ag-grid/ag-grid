@@ -34,6 +34,10 @@
 .isMajor {
     .version {
         color: var(--color-gray-950);
+
+        #{$selector-darkmode} & {
+            color: var(--color-white);
+        }
     }
 
     .versionType {
