@@ -280,7 +280,7 @@ export class TreeNode implements ITreeNode {
     /** Marks childrenChanged in the parent, so the childrenAfterGroup will be recomputed and invalidates the parent. */
     public invalidateOrder(): void {
         const parent = this.parent;
-        if (parent !== null && !parent.childrenChanged && ((this.children?.size ?? 0) > 1 || !parent.row?.data)) {
+        if (parent !== null && !parent.childrenChanged && ((parent.children?.size ?? 0) > 1 || !parent.row?.data)) {
             parent.childrenChanged = true;
             parent.invalidate();
         }
