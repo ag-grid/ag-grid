@@ -1,6 +1,6 @@
 import type { AgChartsExports } from '../../../../../agChartsExports';
 import type { ChartTranslationKey } from '../../../../services/chartTranslationService';
-import type { MiniChartSelector, ThemeTemplateParameters } from '../../miniChartsContainer';
+import type { MiniChartSelector } from '../../miniChartsContainer';
 import { createColumnRects } from '../miniChartHelpers';
 import { MiniChartWithAxes } from '../miniChartWithAxes';
 
@@ -17,7 +17,6 @@ export class MiniStackedColumnClass extends MiniChartWithAxes {
         agChartsExports: AgChartsExports,
         fills: string[],
         strokes: string[],
-        _themeTemplateParameters: ThemeTemplateParameters,
         _isCustomTheme: boolean,
         data = miniStackedColumnData,
         yScaleDomain = [0, 16],

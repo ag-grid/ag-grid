@@ -309,7 +309,7 @@ export class FindService extends BeanStub implements NamedBean, IFindService {
         const { node, valueFormatted, value, column } = params;
         const beans = this.beans;
         if (node.footer) {
-            return beans.footerSvc?.getTotalValue(value);
+            return beans.footerSvc?.getTotalValue(valueFormatted ?? value);
         }
         if (valueFormatted != null) {
             return valueFormatted;
@@ -926,15 +926,20 @@ export class FindService extends BeanStub implements NamedBean, IFindService {
     private createGroupFindText(): GetFindTextFunc {
         const beans = this.beans;
         return (params) => {
-            const { node, column, value, getValueFormatted } = params;
+            const { node, column, value } = params;
+            const displayedNode = (column ? beans.valueSvc.getDisplayedNode(node, column as AgColumn) : node) ?? node;
+            const rowGroupColumn = displayedNode.rowGroupColumn;
+            const formatColumn =
+                rowGroupColumn && column?.isRowGroupDisplayed(rowGroupColumn.getId()) ? rowGroupColumn : column;
+            const valueFormatted = formatColumn
+                ? beans.valueSvc.formatValue(formatColumn as AgColumn, displayedNode, value)
+                : undefined;
             if (node.footer) {
-                return beans.footerSvc?.getTotalValue(value);
+                return beans.footerSvc?.getTotalValue(valueFormatted ?? value);
             }
-            const valueFormatted = getValueFormatted();
             if (valueFormatted != null) {
                 return valueFormatted;
             }
-            const displayedNode = (column ? beans.valueSvc.getDisplayedNode(node, column as AgColumn) : node) ?? node;
             return _getGroupValue(column, node as RowNode, displayedNode as RowNode, beans) ?? value;
         };
     }

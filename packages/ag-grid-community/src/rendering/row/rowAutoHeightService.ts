@@ -39,11 +39,6 @@ export class RowAutoHeightService extends BeanStub implements NamedBean {
 
             let newRowHeight = _getRowHeightForNode(this.beans, row).height;
             for (const col of displayedAutoHeightCols) {
-                // if using col span, we don't allow auto height.
-                if (this.colSpanSkipRow(col, row)) {
-                    return;
-                }
-
                 let cellHeight = autoHeights?.[col.getColId()];
 
                 const spannedCell = rowSpanSvc?.getCellSpan(col, row);
@@ -62,6 +57,11 @@ export class RowAutoHeightService extends BeanStub implements NamedBean {
 
                 // if no cell height, auto height not ready skip row
                 if (cellHeight == null) {
+                    // if using col span then the cell might be omitted due to being spanned
+                    // if so auto height for that cell is not needed
+                    if (this.colSpanSkipCell(col, row)) {
+                        continue;
+                    }
                     return;
                 }
 
@@ -90,9 +90,7 @@ export class RowAutoHeightService extends BeanStub implements NamedBean {
      * @param column the column of the cell
      */
     private setRowAutoHeight(rowNode: RowNode, cellHeight: number | undefined, column: AgColumn): void {
-        if (!rowNode.__autoHeights) {
-            rowNode.__autoHeights = {};
-        }
+        rowNode.__autoHeights ??= {};
 
         // if the cell comp has been unmounted, delete the auto height
         if (cellHeight == undefined) {
@@ -108,12 +106,12 @@ export class RowAutoHeightService extends BeanStub implements NamedBean {
     }
 
     /**
-     * If using col span, we don't allow auto height on rows that span columns.
+     * If using col span, then cells which have been spanned over do not need an auto height value
      * @param col the column of the cell
      * @param node the node of the cell
-     * @returns whether the row should skip auto height
+     * @returns whether the row needs auto height value for that column
      */
-    private colSpanSkipRow(col: AgColumn, node: RowNode): boolean {
+    private colSpanSkipCell(col: AgColumn, node: RowNode): boolean {
         const { colModel, colViewport, visibleCols } = this.beans;
         if (!colModel.colSpanActive) {
             return false;
@@ -131,7 +129,7 @@ export class RowAutoHeightService extends BeanStub implements NamedBean {
                 activeColsForRow = colViewport.getColsWithinViewport(node);
                 break;
         }
-        return activeColsForRow.includes(col);
+        return !activeColsForRow.includes(col);
     }
 
     /**

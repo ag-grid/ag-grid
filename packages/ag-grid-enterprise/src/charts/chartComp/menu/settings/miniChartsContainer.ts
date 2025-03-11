@@ -45,8 +45,6 @@ import {
 // please leave this as is - we want it to be explicit for build reasons
 import type { MiniChart } from './miniCharts/miniChart';
 
-export type ThemeTemplateParameters = Map<any, any>;
-
 type MiniChartMenuMapping = {
     [K in keyof ChartGroupsDef]-?: MiniChartMenuGroup<K>;
 };
@@ -154,7 +152,6 @@ export class MiniChartsContainer extends Component {
 
     private readonly fills: string[];
     private readonly strokes: string[];
-    private readonly themeTemplateParameters: ThemeTemplateParameters;
     private readonly isCustomTheme: boolean;
     private wrappers: Map<ChartType, HTMLElement> = new Map();
     private chartController: ChartController;
@@ -165,7 +162,6 @@ export class MiniChartsContainer extends Component {
         chartController: ChartController,
         fills: string[],
         strokes: string[],
-        themeTemplateParameters: ThemeTemplateParameters,
         isCustomTheme: boolean,
         chartGroups: ChartGroupsDef = DEFAULT_CHART_GROUPS
     ) {
@@ -174,7 +170,6 @@ export class MiniChartsContainer extends Component {
         this.chartController = chartController;
         this.fills = fills;
         this.strokes = strokes;
-        this.themeTemplateParameters = themeTemplateParameters;
         this.isCustomTheme = isCustomTheme;
         this.chartGroups = { ...chartGroups };
     }
@@ -277,14 +272,7 @@ export class MiniChartsContainer extends Component {
                 this.wrappers.set(miniClassChartType, miniWrapper);
 
                 this.createBean(
-                    new MiniClass(
-                        miniWrapper,
-                        this.beans.agChartsExports,
-                        this.fills,
-                        this.strokes,
-                        this.themeTemplateParameters,
-                        this.isCustomTheme
-                    )
+                    new MiniClass(miniWrapper, this.beans.agChartsExports, this.fills, this.strokes, this.isCustomTheme)
                 );
                 groupComponent.addItem(miniWrapper);
             }

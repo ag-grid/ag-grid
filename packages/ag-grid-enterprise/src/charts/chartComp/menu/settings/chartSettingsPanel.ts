@@ -89,7 +89,6 @@ export class ChartSettingsPanel extends Component {
 
     private resetPalettes(forceReset?: boolean): void {
         const palettes = this.chartController.getPalettes();
-        const themeTemplateParameters = this.chartController.getThemeTemplateParameters();
         const chartGroups = this.gos.get('chartToolPanelsDef')?.settingsPanel?.chartGroupsDef;
 
         if ((_areEqual(palettes, this.palettes) && !forceReset) || this.isAnimating) {
@@ -113,14 +112,7 @@ export class ChartSettingsPanel extends Component {
             const themeName = themes[index];
             const isCustomTheme = !isStockTheme(themeName, (this.beans.agChartsExports as AgChartsExports)._Theme);
             const miniChartsContainer = this.createBean(
-                new MiniChartsContainer(
-                    this.chartController,
-                    fills,
-                    strokes,
-                    themeTemplateParameters[index],
-                    isCustomTheme,
-                    chartGroups
-                )
+                new MiniChartsContainer(this.chartController, fills, strokes, isCustomTheme, chartGroups)
             );
 
             this.miniChartsContainers.push(miniChartsContainer);

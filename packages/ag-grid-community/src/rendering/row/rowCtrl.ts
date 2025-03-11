@@ -961,7 +961,21 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
             ? false
             : this.isFullWidth() && event.rowIndex === node.rowIndex && event.rowPinned == node.rowPinned;
 
-        const element = this.fullWidthGui ? this.fullWidthGui.element : this.centerGui?.element;
+        let element: HTMLElement | undefined;
+
+        if (this.fullWidthGui) {
+            element = this.fullWidthGui.element;
+        } else {
+            const column = this.beans.colModel.getCol(event?.column);
+            const pinned = column?.pinned;
+
+            if (pinned) {
+                element = pinned === 'right' ? this.rightGui?.element : this.leftGui?.element;
+            } else {
+                element = this.centerGui?.element;
+            }
+        }
+
         if (!element) {
             return;
         } // can happen with react ui, comp not yet ready

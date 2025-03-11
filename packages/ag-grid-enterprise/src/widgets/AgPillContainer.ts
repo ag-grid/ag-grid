@@ -7,6 +7,7 @@ import {
     _getActiveDomElement,
     _getDocument,
     _setAriaPosInSet,
+    _setAriaRole,
     _setAriaSetSize,
 } from 'ag-grid-community';
 
@@ -27,7 +28,7 @@ export class AgPillContainer<TValue> extends Component {
 
     constructor() {
         super(/* html */ `
-            <div class="ag-pill-container" role="listbox"></div>
+            <div class="ag-pill-container"></div>
             `);
     }
 
@@ -52,6 +53,8 @@ export class AgPillContainer<TValue> extends Component {
 
         const valueFormatter = params.valueFormatter ?? ((v: TValue) => String(v));
         const len = values.length;
+
+        _setAriaRole(this.getGui(), len === 0 ? 'presentation' : 'listbox');
 
         for (let i = 0; i < len; i++) {
             const value = values[i];

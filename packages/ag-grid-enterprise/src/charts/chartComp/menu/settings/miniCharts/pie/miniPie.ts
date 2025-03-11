@@ -1,5 +1,5 @@
 import type { AgChartsExports } from '../../../../../agChartsExports';
-import type { MiniChartSelector, ThemeTemplateParameters } from '../../miniChartsContainer';
+import type { MiniChartSelector } from '../../miniChartsContainer';
 import { MiniDonutClass } from './miniDonut';
 
 export class MiniPieClass extends MiniDonutClass {
@@ -8,10 +8,9 @@ export class MiniPieClass extends MiniDonutClass {
         agChartsExports: AgChartsExports,
         fills: string[],
         strokes: string[],
-        themeTemplateParameters: ThemeTemplateParameters,
         isCustomTheme: boolean
     ) {
-        super(container, agChartsExports, fills, strokes, themeTemplateParameters, isCustomTheme, 0, 'pieTooltip');
+        super(container, agChartsExports, fills, strokes, isCustomTheme, 0, 'pieTooltip');
     }
 }
 
