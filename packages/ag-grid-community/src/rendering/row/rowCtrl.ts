@@ -1370,6 +1370,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
 
         if (rowNode.isRowPinned()) {
             classes.push('ag-row-pinned');
+            // Only the source of the pinned row gets this class
             if (!rowNode.manualPinned) {
                 classes.push('ag-row-pinned-target');
             }

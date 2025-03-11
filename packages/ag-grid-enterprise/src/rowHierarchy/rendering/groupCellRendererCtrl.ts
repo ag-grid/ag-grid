@@ -460,6 +460,7 @@ export class GroupCellRendererCtrl extends BeanStub implements IGroupCellRendere
             return false;
         }
 
+        // Manually pinned group rows cannot be expanded
         if ((node as RowNode).manualPinned) {
             return false;
         }
