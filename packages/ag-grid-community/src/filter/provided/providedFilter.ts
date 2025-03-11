@@ -135,11 +135,13 @@ export abstract class ProvidedFilter<
         return true;
     }
 
+    /** Called on init only. Override in subclasses */
     protected setParams(params: P): void {
         this.params = params;
         this.commonUpdateParams(params);
     }
 
+    /** Called on refresh only. Override in subclasses */
     protected updateParams(newParams: P, oldParams: P): AgPromise<void> {
         this.commonUpdateParams(newParams, oldParams);
         return AgPromise.resolve();

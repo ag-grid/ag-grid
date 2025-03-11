@@ -70,10 +70,8 @@ export class AgFiltersToolPanelList extends Component<AgFiltersToolPanelListEven
         this.addManagedEventListeners({
             newColumnsLoaded: () => this.onColumnsChanged(),
             toolPanelVisibleChanged: (event) => {
-                // when re-entering the filters tool panel we need to refresh the virtual lists in the set filters in case
-                // filters have been changed elsewhere, i.e. via an api call.
-                if (event.key === 'filters') {
-                    this.refreshFilters(event.visible);
+                if (event.key === 'filters' && !event.visible) {
+                    this.onPanelHidden();
                 }
             },
             dragStarted: () => {
@@ -521,8 +519,8 @@ export class AgFiltersToolPanelList extends Component<AgFiltersToolPanelListEven
         });
     }
 
-    private refreshFilters(isDisplayed: boolean) {
-        this.filterGroupComps.forEach((filterGroupComp) => filterGroupComp.refreshFilters(isDisplayed));
+    private onPanelHidden(): void {
+        this.filterGroupComps.forEach((filterGroupComp) => filterGroupComp.onPanelHidden());
     }
 
     public getExpandedFiltersAndGroups(): { expandedGroupIds: string[]; expandedColIds: string[] } {

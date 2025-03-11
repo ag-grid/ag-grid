@@ -666,13 +666,14 @@ export class ColumnFilterService extends BeanStub implements NamedBean {
         filterDef: IFilterDef,
         defaultFilter: string,
         getFilterParams: (defaultParams: BaseFilterParams, isEvaluator: boolean) => BaseFilterParams,
-        isEvaluator: boolean
+        isEvaluator: boolean,
+        source: 'init' | 'colDef'
     ): {
         compDetails: UserCompDetails;
         createFilterUi: (update?: boolean) => AgPromise<IFilterComp>;
     } | null {
         const createFilterCompDetails = () => {
-            const params = this.createFilterCompParams(column, isEvaluator);
+            const params = this.createFilterCompParams(column, isEvaluator, source);
             const updatedParams = getFilterParams(params, isEvaluator);
 
             return _getFilterDetails(this.beans.userCompFactory, filterDef, updatedParams, defaultFilter);
@@ -706,7 +707,14 @@ export class ColumnFilterService extends BeanStub implements NamedBean {
         const { evaluator, evaluatorParams, evaluatorGenerator } =
             this.createEvaluator(column, filterDef, defaultFilter) ?? {};
 
-        const filterCompDetails = this.createFilterComp(column, filterDef, defaultFilter, getFilterParams, !!evaluator);
+        const filterCompDetails = this.createFilterComp(
+            column,
+            filterDef,
+            defaultFilter,
+            getFilterParams,
+            !!evaluator,
+            'init'
+        );
 
         if (!filterCompDetails) {
             return { compDetails: null, createFilterUi: null, evaluator, evaluatorGenerator, evaluatorParams };
@@ -726,6 +734,7 @@ export class ColumnFilterService extends BeanStub implements NamedBean {
     private createFilterCompParams(
         column: AgColumn,
         useEvaluator: boolean,
+        source: 'init' | 'colDef',
         forFloatingFilter?: boolean
     ): BaseFilterParams {
         const colDef = column.getColDef();
@@ -761,6 +770,7 @@ export class ColumnFilterService extends BeanStub implements NamedBean {
             };
             displayParams.getEvaluator = () => this.getOrCreateEvaluator(column)!;
             displayParams.onUiChange = filterModifiedCallback;
+            displayParams.source = source;
         }
 
         return params;
@@ -882,7 +892,7 @@ export class ColumnFilterService extends BeanStub implements NamedBean {
         const filterParams = _mergeFilterParamsWithApplicationProvidedParams(
             this.beans.userCompFactory,
             column.colDef,
-            this.createFilterCompParams(column, true) as IFilterParams
+            this.createFilterCompParams(column, true, 'init') as IFilterParams
         );
         const { evaluatorName, filterEvaluator } = evaluatorFunc;
         const { evaluator, evaluatorParams } = this.createEvaluatorFromFunc(column, filterEvaluator, filterParams);
@@ -993,7 +1003,7 @@ export class ColumnFilterService extends BeanStub implements NamedBean {
         const filterParams = _mergeFilterParamsWithApplicationProvidedParams(
             userCompFactory,
             colDef,
-            this.createFilterCompParams(column, isReactive, true) as IFilterParams
+            this.createFilterCompParams(column, isReactive, 'init', true) as IFilterParams
         );
 
         const params: IFloatingFilterParams<IFilter> = _addGridCommonParams(this.gos, {
@@ -1153,7 +1163,7 @@ export class ColumnFilterService extends BeanStub implements NamedBean {
             return;
         }
         const { compDetails, createFilterUi } = (isFilterAllowed
-            ? this.createFilterComp(column, colDef, defaultFilter, (params) => params, isEvaluator)
+            ? this.createFilterComp(column, colDef, defaultFilter, (params) => params, isEvaluator, 'colDef')
             : null) ?? { compDetails: null, createFilterUi: null };
 
         const newFilterParams =
@@ -1161,7 +1171,7 @@ export class ColumnFilterService extends BeanStub implements NamedBean {
             _mergeFilterParamsWithApplicationProvidedParams(
                 this.beans.userCompFactory,
                 colDef,
-                this.createFilterCompParams(column, isEvaluator) as IFilterParams
+                this.createFilterCompParams(column, isEvaluator, 'colDef') as IFilterParams
             );
 
         if (wasEvaluator) {

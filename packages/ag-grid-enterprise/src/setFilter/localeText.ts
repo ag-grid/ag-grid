@@ -1,14 +1,4 @@
-export interface ISetFilterLocaleText {
-    loadingOoo: string;
-    blanks: string;
-    searchOoo: string;
-    selectAll: string;
-    selectAllSearchResults: string;
-    addCurrentSelectionToFilter: string;
-    noMatches: string;
-}
-
-export const DEFAULT_LOCALE_TEXT: ISetFilterLocaleText = {
+export const DEFAULT_LOCALE_TEXT = {
     loadingOoo: 'Loading...',
     blanks: '(Blanks)',
     searchOoo: 'Search...',
@@ -16,4 +6,8 @@ export const DEFAULT_LOCALE_TEXT: ISetFilterLocaleText = {
     selectAllSearchResults: '(Select All Search Results)',
     addCurrentSelectionToFilter: 'Add current selection to filter',
     noMatches: 'No matches.',
-};
+    ariaSearchFilterValues: 'Search filter values',
+    ariaFilterList: 'Filter List',
+} as const;
+
+export type ISetFilterLocaleText = typeof DEFAULT_LOCALE_TEXT;

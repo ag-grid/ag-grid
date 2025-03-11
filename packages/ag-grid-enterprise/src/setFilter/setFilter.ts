@@ -62,7 +62,6 @@ export class SetFilter<V = string>
 
     private formatter: TextFormatter;
     private displayValueModel: ISetDisplayValueModel<V>;
-    private caseFormat: <T extends string | null>(valueToFormat: T) => typeof valueToFormat;
 
     private miniFilterText: string | null = null;
 
@@ -88,7 +87,6 @@ export class SetFilter<V = string>
 
         const { column, textFormatter, treeList, treeListPathGetter, treeListFormatter } = params;
 
-        this.caseFormat = (v) => this.evaluator.caseFormat(v);
         this.formatter = textFormatter ?? ((value) => value ?? null);
 
         this.displayValueModel = treeList
@@ -118,6 +116,10 @@ export class SetFilter<V = string>
     }
 
     public override refresh(legacyNewParams: SetFilterParams<any, V>): boolean {
+        if (this.params.treeList !== legacyNewParams.treeList) {
+            // too hard to refresh when tree list changes, just destroy
+            return false;
+        }
         applyExcelModeOptions(legacyNewParams);
         this.updateEvaluator(
             (
@@ -126,32 +128,6 @@ export class SetFilter<V = string>
         );
         return super.refresh(legacyNewParams);
     }
-
-    // TODO - need to update to make the stuff work that this was refreshing
-    // protected override canRefresh(newParams: SetFilterParams<any, V>, oldParams: SetFilterParams<any, V>): boolean {
-    //     if (!super.canRefresh(newParams, oldParams)) {
-    //         return false;
-    //     }
-
-    //     applyExcelModeOptions(newParams);
-
-    //     // Those params have a large impact and should trigger a reload when they change.
-    //     const paramsThatForceReload: (keyof SetFilterParams<any, V>)[] = [
-    //         'treeList',
-    //         'treeListPathGetter',
-    //         'caseSensitive',
-    //     ];
-
-    //     if (paramsThatForceReload.some((param) => newParams[param] !== oldParams[param])) {
-    //         return false;
-    //     }
-
-    //     if (this.helper.haveColDefParamsChanged(newParams)) {
-    //         return false;
-    //     }
-
-    //     return true;
-    // }
 
     protected override updateParams(
         newParams: ISetFilterParams<any, V> & FilterDisplayParams<any, any, SetFilterModel>,
@@ -164,12 +140,12 @@ export class SetFilter<V = string>
                 this.createVirtualListModel(newParams);
             }
 
-            const { textFormatter, treeListFormatter } = newParams;
+            const { textFormatter, treeListPathGetter, treeListFormatter } = newParams;
 
             this.formatter = textFormatter ?? ((value) => value ?? null);
 
             if (this.displayValueModel instanceof TreeSetDisplayValueModel) {
-                this.displayValueModel.updateOnParamsChange(treeListFormatter);
+                this.displayValueModel.updateParams(treeListPathGetter, treeListFormatter);
             }
             this.refreshFilterValues();
         });
@@ -353,10 +329,6 @@ export class SetFilter<V = string>
         return a != null && b != null && _areEqual(a.values, b.values);
     }
 
-    private onAddCurrentSelectionToFilterChange(newValue: boolean) {
-        this.addCurrentSelectionToFilter = newValue;
-    }
-
     private setIsLoading(isLoading: boolean): void {
         _setDisplayed(this.eFilterLoading, isLoading);
         if (!isLoading) {
@@ -379,8 +351,7 @@ export class SetFilter<V = string>
     }
 
     private initVirtualList(): void {
-        const translate = this.getLocaleTextFunc();
-        const filterListName = translate('ariaFilterList', 'Filter List');
+        const filterListName = translateForSetFilter(this, 'ariaFilterList');
         const isTree = !!this.params.treeList;
 
         const virtualList = (this.virtualList = this.createBean(
@@ -515,7 +486,7 @@ export class SetFilter<V = string>
                 isGroup: false,
                 hasIndeterminateExpandState: false,
                 selectedListener: (e: SetFilterListItemSelectionChangedEvent) => {
-                    this.onAddCurrentSelectionToFilterChange(e.isSelected);
+                    this.addCurrentSelectionToFilter = e.isSelected;
                 },
             };
         }
@@ -568,7 +539,7 @@ export class SetFilter<V = string>
             return {
                 value: () => this.getAddSelectionToFilterLabel(),
                 selectedListener: (e: SetFilterListItemSelectionChangedEvent<string | null>) => {
-                    this.onAddCurrentSelectionToFilterChange(e.isSelected);
+                    this.addCurrentSelectionToFilter = e.isSelected;
                 },
             };
         }
@@ -624,12 +595,10 @@ export class SetFilter<V = string>
 
     private initMiniFilter() {
         const { eMiniFilter } = this;
-        const translate = this.getLocaleTextFunc();
 
-        eMiniFilter.setDisplayed(!this.params.suppressMiniFilter);
-        eMiniFilter.setValue(this.miniFilterText);
+        this.updateMiniFilter();
         eMiniFilter.onValueChange(() => this.onMiniFilterInput());
-        eMiniFilter.setInputAriaLabel(translate('ariaSearchFilterValues', 'Search filter values'));
+        eMiniFilter.setInputAriaLabel(translateForSetFilter(this, 'ariaSearchFilterValues'));
 
         this.addManagedElementListeners(eMiniFilter.getInputElement(), {
             keydown: (e) => this.onMiniFilterKeyDown(e!),
@@ -637,17 +606,10 @@ export class SetFilter<V = string>
     }
 
     private updateMiniFilter() {
-        const { eMiniFilter } = this;
+        const { eMiniFilter, miniFilterText, params } = this;
 
-        const isMiniFilterDisplayed = !this.params.suppressMiniFilter;
-        if (eMiniFilter.isDisplayed() !== isMiniFilterDisplayed) {
-            eMiniFilter.setDisplayed(isMiniFilterDisplayed);
-        }
-
-        const miniFilterValue = this.miniFilterText;
-        if (eMiniFilter.getValue() !== miniFilterValue) {
-            eMiniFilter.setValue(miniFilterValue);
-        }
+        eMiniFilter.setDisplayed(!params.suppressMiniFilter);
+        eMiniFilter.setValue(miniFilterText);
     }
 
     // we need to have the GUI attached before we can draw the virtual rows, as the
@@ -851,8 +813,11 @@ export class SetFilter<V = string>
             if (!i.filterPasses) {
                 return;
             }
-            if (i.children) {
-                i.children.forEach((childItem) => recursiveGroupSelection(childItem));
+            const children = i.children;
+            if (children) {
+                for (const childItem of children.values()) {
+                    recursiveGroupSelection(childItem);
+                }
             } else {
                 this.setKeySelected(i.key!, isSelected);
             }
@@ -872,7 +837,9 @@ export class SetFilter<V = string>
     private onExpandAll(item: SetFilterModelTreeItem, isExpanded: boolean): void {
         const recursiveExpansion = (i: SetFilterModelTreeItem) => {
             if (i.filterPasses && i.available && i.children) {
-                i.children.forEach((childItem) => recursiveExpansion(childItem));
+                for (const childItem of i.children.values()) {
+                    recursiveExpansion(childItem);
+                }
                 i.expanded = isExpanded;
             }
         };
@@ -991,24 +958,26 @@ export class SetFilter<V = string>
             if (i.children) {
                 let someTrue = false;
                 let someFalse = false;
-                const mixed = i.children.some((child) => {
+                for (const child of i.children.values()) {
                     if (!child.filterPasses || !child.available) {
-                        return false;
+                        continue;
                     }
                     const childSelected = recursiveChildSelectionCheck(child);
                     if (childSelected === undefined) {
-                        return true;
+                        // child indeterminate so indeterminate
+                        return undefined;
                     }
                     if (childSelected) {
                         someTrue = true;
                     } else {
                         someFalse = true;
                     }
-                    return someTrue && someFalse;
-                });
-                // returning `undefined` means the checkbox status is indeterminate.
-                // if not mixed and some true, all must be true
-                return mixed ? undefined : someTrue;
+                    if (someTrue && someFalse) {
+                        // indeterminate
+                        return undefined;
+                    }
+                }
+                return someTrue;
             } else {
                 return this.selectedKeys.has(i.key!);
             }
@@ -1023,14 +992,6 @@ export class SetFilter<V = string>
         }
     }
 
-    public override destroy(): void {
-        (this.virtualList as any) = this.destroyBean(this.virtualList);
-
-        this.evaluatorDestroyFuncs?.forEach((func) => func());
-
-        super.destroy();
-    }
-
     private resetExpansion(): void {
         if (!this.params.treeList) {
             return;
@@ -1040,8 +1001,11 @@ export class SetFilter<V = string>
 
         if (this.isSetFilterModelTreeItem(selectAllItem)) {
             const recursiveCollapse = (i: SetFilterModelTreeItem) => {
-                if (i.children) {
-                    i.children.forEach((childItem) => recursiveCollapse(childItem));
+                const children = i.children;
+                if (children) {
+                    for (const childItem of children.values()) {
+                        recursiveCollapse(childItem);
+                    }
                     i.expanded = false;
                 }
             };
@@ -1067,7 +1031,8 @@ export class SetFilter<V = string>
             return;
         }
 
-        const valueModel = this.evaluator.valueModel;
+        const evaluator = this.evaluator;
+        const valueModel = evaluator.valueModel;
 
         // if no filter, just display all available values
         if (this.miniFilterText == null) {
@@ -1082,10 +1047,10 @@ export class SetFilter<V = string>
 
         // if filter present, we filter down the list
         // to allow for case insensitive searches, upper-case both filter text and value
-        const formattedFilterText = this.caseFormat(this.formatter(this.miniFilterText) || '');
+        const formattedFilterText = evaluator.caseFormat(this.formatter(this.miniFilterText) || '');
 
         const matchesFilter = (valueToCheck: string | null): boolean =>
-            valueToCheck != null && this.caseFormat(valueToCheck).indexOf(formattedFilterText) >= 0;
+            valueToCheck != null && evaluator.caseFormat(valueToCheck).indexOf(formattedFilterText) >= 0;
 
         const nullMatchesFilter = !!this.params.excelMode && matchesFilter(translateForSetFilter(this, 'blanks'));
 
@@ -1199,7 +1164,8 @@ export class SetFilter<V = string>
     }
 
     private setSelectedModel(model: SetFilterModelValue | null): AgPromise<void> {
-        const valueModel = this.evaluator.valueModel;
+        const evaluator = this.evaluator;
+        const valueModel = evaluator.valueModel;
         return valueModel.allValuesPromise.then((keys) => {
             if (model == null) {
                 this.resetSelectionState(keys ?? []);
@@ -1209,11 +1175,11 @@ export class SetFilter<V = string>
 
                 const existingFormattedKeys: Map<string | null, string | null> = new Map();
                 valueModel.allValues.forEach((_value, key) => {
-                    existingFormattedKeys.set(this.caseFormat(key), key);
+                    existingFormattedKeys.set(evaluator.caseFormat(key), key);
                 });
 
                 model.forEach((unformattedKey) => {
-                    const formattedKey = this.caseFormat(_makeNull(unformattedKey));
+                    const formattedKey = evaluator.caseFormat(_makeNull(unformattedKey));
                     const existingUnformattedKey = existingFormattedKeys.get(formattedKey);
                     if (existingUnformattedKey !== undefined) {
                         this.selectedKeys.add(existingUnformattedKey);
@@ -1229,6 +1195,18 @@ export class SetFilter<V = string>
         } else {
             this.selectedKeys = new Set(keys);
         }
+    }
+
+    public override destroy(): void {
+        (this.virtualList as any) = this.destroyBean(this.virtualList);
+
+        this.evaluatorDestroyFuncs?.forEach((func) => func());
+
+        (this.evaluator as any) = undefined;
+        (this.displayValueModel as any) = undefined;
+        this.selectedKeys.clear();
+
+        super.destroy();
     }
 }
 

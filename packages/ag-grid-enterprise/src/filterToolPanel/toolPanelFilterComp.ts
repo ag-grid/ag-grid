@@ -195,7 +195,7 @@ export class ToolPanelFilterComp extends Component<ToolPanelFilterCompEvent> {
         return this.expanded;
     }
 
-    public refreshFilter(isDisplayed: boolean): void {
+    public onPanelHidden(): void {
         if (!this.expanded) {
             return;
         }
@@ -206,16 +206,7 @@ export class ToolPanelFilterComp extends Component<ToolPanelFilterCompEvent> {
             return;
         }
 
-        if (isDisplayed) {
-            // set filters should be updated when the filter has been changed elsewhere, i.e. via api. Note that we can't
-            // use 'afterGuiAttached' to refresh the virtual list as it also focuses on the mini filter which changes the
-            // scroll position in the filter list panel
-            if (typeof filter.refreshVirtualList === 'function') {
-                filter.refreshVirtualList();
-            }
-        } else {
-            filter.afterGuiDetached?.();
-        }
+        filter.afterGuiDetached?.();
     }
 
     private onFilterOpened(event: FilterOpenedEvent): void {

@@ -104,12 +104,12 @@ export class ToolPanelFilterGroupComp extends Component {
         this.filterGroupComp.addCssClassToTitleBar(cssClass);
     }
 
-    public refreshFilters(isDisplayed: boolean) {
+    public onPanelHidden() {
         this.childFilterComps.forEach((filterComp) => {
             if (filterComp instanceof ToolPanelFilterGroupComp) {
-                filterComp.refreshFilters(isDisplayed);
+                filterComp.onPanelHidden();
             } else {
-                filterComp.refreshFilter(isDisplayed);
+                filterComp.onPanelHidden();
             }
         });
     }

@@ -365,5 +365,6 @@ export class SetFilterEvaluator<TValue = string>
     public override destroy(): void {
         this.appliedModel.destroy();
         super.destroy();
+        (this.valueModel as any) = undefined;
     }
 }
