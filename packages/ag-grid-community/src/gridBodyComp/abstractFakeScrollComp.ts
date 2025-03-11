@@ -1,6 +1,5 @@
-import { _requestAnimationFrame } from '../misc/animationFrameService';
 import { _isIOSUserAgent, _isInvisibleScrollbar, _isMacOsUserAgent } from '../utils/browser';
-import { _isVisible } from '../utils/dom';
+import { _isVisible, _requestAnimationFrame } from '../utils/dom';
 import { _waitUntil } from '../utils/function';
 import { Component, RefPlaceholder } from '../widgets/component';
 import type { ScrollPartner } from './gridBodyScrollFeature';

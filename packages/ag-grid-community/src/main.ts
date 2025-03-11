@@ -325,7 +325,6 @@ export {
 } from './headerRendering/headerUtils';
 
 // misc
-export { _requestAnimationFrame } from './misc/animationFrameService';
 export type { AnimationFrameService } from './misc/animationFrameService';
 export { AlignedGrid } from './interfaces/iAlignedGrid';
 export type { MenuService } from './misc/menu/menuService';
@@ -1018,6 +1017,7 @@ export {
     _isNodeOrElement,
     _observeResize,
     _preserveRangesWhile,
+    _requestAnimationFrame,
 } from './utils/dom';
 export { _selectAllCells } from './utils/selection';
 export { _stopPropagationForAgGrid, _isStopPropagationForAgGrid, _isElementInEventPath } from './utils/event';

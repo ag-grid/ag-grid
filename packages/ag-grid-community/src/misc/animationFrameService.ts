@@ -1,7 +1,6 @@
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
-import type { BeanCollection } from '../context/context';
-import { _getWindow } from '../gridOptionsUtils';
+import { _requestAnimationFrame } from '../utils/dom';
 import { _warn } from '../validation/logging';
 
 interface TaskItem {
@@ -13,18 +12,6 @@ interface TaskItem {
 interface TaskList {
     list: TaskItem[];
     sorted: boolean;
-}
-
-export function _requestAnimationFrame(beans: BeanCollection, callback: any) {
-    const win = _getWindow(beans);
-
-    if (win.requestAnimationFrame) {
-        win.requestAnimationFrame(callback);
-    } else if ((win as any).webkitRequestAnimationFrame) {
-        (win as any).webkitRequestAnimationFrame(callback);
-    } else {
-        win.setTimeout(callback, 0);
-    }
 }
 
 export class AnimationFrameService extends BeanStub implements NamedBean {

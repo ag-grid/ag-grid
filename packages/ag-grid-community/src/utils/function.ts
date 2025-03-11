@@ -1,6 +1,6 @@
 import type { BeanCollection } from '../context/context';
 import type { GridOptionsService } from '../gridOptionsService';
-import { _requestAnimationFrame } from '../misc/animationFrameService';
+import { _requestAnimationFrame } from './dom';
 
 const doOnceFlags: { [key: string]: boolean } = {};
 

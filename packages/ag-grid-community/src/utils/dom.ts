@@ -561,3 +561,15 @@ export function _preserveRangesWhile(beans: BeanCollection, fn: () => void): voi
         selection?.addRange(range);
     }
 }
+
+export function _requestAnimationFrame(beans: BeanCollection, callback: any) {
+    const win = _getWindow(beans);
+
+    if (win.requestAnimationFrame) {
+        win.requestAnimationFrame(callback);
+    } else if ((win as any).webkitRequestAnimationFrame) {
+        (win as any).webkitRequestAnimationFrame(callback);
+    } else {
+        win.setTimeout(callback, 0);
+    }
+}
