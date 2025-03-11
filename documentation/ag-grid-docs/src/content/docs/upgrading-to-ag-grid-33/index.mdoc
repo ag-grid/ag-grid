@@ -43,26 +43,26 @@ The changes can be summarised as follows:
 
 {% if isFramework("react") %}
 * `@ag-grid-community/react` is replaced with `ag-grid-react`
-* `@ag-grid-community/**` packages are replaced with `ag-grid-community`
-  * Apart from `@ag-grid-community/locale` which remains unchanged.
-* `@ag-grid-enterprise/**` packages are replaced with `ag-grid-enterprise`.
+* All individual `@ag-grid-community/**` packages are replaced by a single tree-shakable package `ag-grid-community`
+  * Exception - the `@ag-grid-community/locale` package remains unchanged.
+* All individual `@ag-grid-enterprise/**` packages are replaced by a single tree-shakable package `ag-grid-enterprise`.
 {% /if %}
 {% if isFramework("angular") %}
 * `@ag-grid-community/angular` is replaced with `ag-grid-angular`
-* `@ag-grid-community/**` packages are replaced with `ag-grid-community`
-  * Apart from `@ag-grid-community/locale` which remains unchanged.
-* `@ag-grid-enterprise/**` packages are replaced with `ag-grid-enterprise`.
+* All individual `@ag-grid-community/** packages` are replaced by a single tree-shakable package `ag-grid-community`
+  * Exception - the `@ag-grid-community/locale` package remains unchanged.
+* All individual `@ag-grid-enterprise/**` packages are replaced by a single tree-shakable package `ag-grid-enterprise`.
 {% /if %}
 {% if isFramework("javascript") %}
-* `@ag-grid-community/**` packages are replaced with `ag-grid-community`
-  * Apart from `@ag-grid-community/locale` which remains unchanged.
-* `@ag-grid-enterprise/**` packages are replaced with `ag-grid-enterprise`.
+* All individual `@ag-grid-community/** packages` are replaced by a single tree-shakable package `ag-grid-community`
+  * Exception - the `@ag-grid-community/locale` package remains unchanged.
+* All individual `@ag-grid-enterprise/**` packages are replaced by a single tree-shakable package `ag-grid-enterprise`.
 {% /if %}
 {% if isFramework("vue") %}
 * `@ag-grid-community/vue3` is replaced with `ag-grid-vue3`
-* `@ag-grid-community/**` packages are replaced with `ag-grid-community`
-  * Apart from `@ag-grid-community/locale` which remains unchanged.
-* `@ag-grid-enterprise/**` packages are replaced with `ag-grid-enterprise`.
+* All individual `@ag-grid-community/** packages` are replaced by a single tree-shakable package `ag-grid-community`
+  * Exception - the `@ag-grid-community/locale` package remains unchanged.
+* All individual `@ag-grid-enterprise/**` packages are replaced by a single tree-shakable package `ag-grid-enterprise`.
 {% /if %}
 
 Here is an example of a typical package.json diff for the migration:
@@ -192,10 +192,9 @@ The following changes have been made to the existing modules to ensure that each
 
 ### Validation Module
 
-To help identify configuration issues we strongly recommend including the `ValidationModule` in your development build. The module enables AG Grid to validate your configuration and provide extended error diagnosis to help you resolve issues quickly. 
+To help identify configuration issues we strongly recommend including the `ValidationModule` in your development build. This module enables AG Grid to validate your configuration and provide extended error diagnosis to help you resolve issues quickly.
 
-You should not include this in your production build to save bundle size. Note if you are using either _AllCommunityModule_ or _AllEnterpriseModule_ it is included by default.
-
+Ensure you’re not including the ValidationModule in your production build to avoid increasing bundle size unnecessarily. Note if you are using either `AllCommunityModule` or `AllEnterpriseModule` it is included by default.
 
 ## Migrating from Packages
 
@@ -204,7 +203,7 @@ npm packages: `ag-grid-community` / `ag-grid-enterprise` / `ag-grid-charts-enter
 If you are currently using AG Grid packages, which did not support tree shaking, then you can match the existing behaviour by registering either `AllCommunityModule` or `AllEnterpriseModule` via the ModuleRegistry before any grid is created.
 
 {% warning %}
-Using the `AllCommunityModule` / `AllEnterpriseModule` will prevent tree shaking. Consider using the [Module Selector](./modules/) to only include the modules you require.
+Using the `AllCommunityModule` / `AllEnterpriseModule` will prevent tree shaking. In order to reduce the bundle size, use the [Module Selector](./modules/) to only register the modules you require instead of all modules.
 {% /warning %}
 
 Most users will also want to set `{ theme: "legacy" }` if not already using the new Theming Api. See [Theming](#theming) for more details.
@@ -242,7 +241,7 @@ AG Grid Enterprise no longer includes AG Charts as part of its distribution to a
 
 ### Integrated Charts / Sparklines Migration Steps
 
-For an application using Integrated Charts / Sparklines via the _AllEnterpriseModule_ bundle with the Enterprise version of AG Charts first add _ag-charts-enterprise_ to your package.json dependencies.
+For an application using Integrated Charts / Sparklines via the `AllEnterpriseModule` bundle with the Enterprise version of AG Charts first add `ag-charts-enterprise` to your package.json dependencies.
 
 ```diff
 "dependencies": {
@@ -251,7 +250,7 @@ For an application using Integrated Charts / Sparklines via the _AllEnterpriseMo
 }
 ```
 
-Then pass the _AgChartsEnterpriseModule_ to the _AllEnterpriseModule_ to activate the charting features.
+Then pass the `AgChartsEnterpriseModule` to the `AllEnterpriseModule` to activate the charting features.
 
 ```js
 import { AllEnterpriseModule, LicenseManager, ModuleRegistry } from 'ag-grid-enterprise';
@@ -263,7 +262,7 @@ ModuleRegistry.registerModules([
 LicenseManager.setLicenseKey('your License Key');
 ```
 
-If you are using AG Grid Modules, then both the `IntegratedChartsModule` and `SparklinesModule` also require the AG Charts module to be registered when they are used.
+If you are using AG Grid Modules instead of `AllCommunityModule` or `AllEnterpriseModule`, then both the `IntegratedChartsModule` and `SparklinesModule` also require the AG Charts module to be registered when they are used.
 
 ```js
 import { IntegratedChartsModule, SparklinesModule, LicenseManager, ModuleRegistry } from 'ag-grid-enterprise';
