@@ -148,7 +148,7 @@ export class ManualPinnedRowModel extends BeanStub implements IPinnedRowModel {
             const found = this.findPinnedRowNode(node);
             if (!found) return;
 
-            found[1].delete(node);
+            found.delete(node);
             const original = node.pinnedSibling!;
             _destroyRowNodeSibling(node);
             this.refreshRowPositions(container);
@@ -272,9 +272,9 @@ export class ManualPinnedRowModel extends BeanStub implements IPinnedRowModel {
         return container === 'top' ? this.top : this.bottom;
     }
 
-    private findPinnedRowNode(node: RowNode): [NonNullable<RowPinnedType>, OrderedSet] | undefined {
-        if (this.top.has(node)) return ['top', this.top];
-        if (this.bottom.has(node)) return ['bottom', this.bottom];
+    private findPinnedRowNode(node: RowNode): OrderedSet | undefined {
+        if (this.top.has(node)) return this.top;
+        if (this.bottom.has(node)) return this.bottom;
     }
 
     private refreshRowPositions(container?: RowPinnedType): void {
