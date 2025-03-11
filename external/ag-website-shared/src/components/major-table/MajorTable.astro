@@ -22,7 +22,7 @@ const { data: allVersions } = (await getEntry(
 )) as CollectionEntry<'versions'>;
 
 const filterMigrations = (version) => {
-    return Number(version.version.split('.')[0]) === major && version.notesPath;
+    return parseVersion(version.version).isMajor && version.notesPath;
 };
 
 const versions = allVersions.filter(filterMigrations);
