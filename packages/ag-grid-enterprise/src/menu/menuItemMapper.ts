@@ -155,7 +155,8 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
                     return pinnedRowModel?.isManual()
                         ? {
                               name: localeTextFunc('unpinRow', 'Unpin Row'),
-                              action: ({ node }) => node && pinnedRowModel.pinRow(node as RowNode, null),
+                              action: ({ node, column }) =>
+                                  node && pinnedRowModel.pinRow(node as RowNode, null, column as AgColumn | null),
                           }
                         : null;
                 case 'valueAggSubMenu':

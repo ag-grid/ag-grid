@@ -150,6 +150,13 @@ export class ManualPinnedRowModel extends BeanStub implements IPinnedRowModel {
     }
 
     public pinRow(rowNode: RowNode, container: RowPinnedType, column?: AgColumn | null): void {
+        // cell-span pinning/unpinning
+        const spannedRows = column && getSpannedRows(this.beans, rowNode, column);
+        if (spannedRows) {
+            spannedRows.forEach((node) => this.pinRow(node, container));
+            return;
+        }
+
         // unpinning
         if (container == null) {
             // Want to act on the pinned row, not the original row
@@ -163,26 +170,14 @@ export class ManualPinnedRowModel extends BeanStub implements IPinnedRowModel {
             this.refreshRowPositions(container);
 
             this.dispatchRowPinnedEvents(original);
-            return;
+        } else {
+            // pinning
+            const sibling = _createPinnedSibling(rowNode, this.beans, container);
+            this.getContainer(container).add(sibling);
+            this.refreshRowPositions(container);
+
+            this.dispatchRowPinnedEvents(rowNode);
         }
-
-        // cell-span pinning
-        const { rowSpanSvc } = this.beans;
-        const isCellSpanning = (column && rowSpanSvc?.isCellSpanning(column, rowNode)) ?? false;
-        if (column && isCellSpanning) {
-            const span = rowSpanSvc?.getCellSpan(column, rowNode);
-            for (const node of span?.spannedNodes ?? []) {
-                this.pinRow(node, container);
-            }
-            return;
-        }
-
-        // pinning
-        const sibling = _createPinnedSibling(rowNode, this.beans, container);
-        this.getContainer(container).add(sibling);
-        this.refreshRowPositions(container);
-
-        this.dispatchRowPinnedEvents(rowNode);
     }
 
     public isManual(): boolean {
@@ -377,4 +372,13 @@ function removeGroupRows(set: OrderedSet) {
     rowsToRemove.forEach((node) => {
         set.delete(node);
     });
+}
+
+function getSpannedRows(beans: BeanCollection, rowNode: RowNode, column: AgColumn) {
+    const { rowSpanSvc } = beans;
+    const isCellSpanning = (column && rowSpanSvc?.isCellSpanning(column, rowNode)) ?? false;
+    if (column && isCellSpanning) {
+        const span = rowSpanSvc?.getCellSpan(column, rowNode);
+        if (span) return Array.from(span.spannedNodes);
+    }
 }
