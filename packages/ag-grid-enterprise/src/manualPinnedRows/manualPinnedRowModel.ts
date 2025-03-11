@@ -4,17 +4,19 @@ import type {
     CssVariablesChanged,
     GridOptionsService,
     IPinnedRowModel,
+    RowNode,
     RowPinnedType,
 } from 'ag-grid-community';
 import {
     BeanStub,
-    RowNode,
     _ROW_ID_PREFIX_BOTTOM_PINNED,
     _ROW_ID_PREFIX_TOP_PINNED,
     _getRowHeightForNode,
     _removeFromArray,
     _warn,
 } from 'ag-grid-community';
+
+import { _createRowNodeSibling } from '../misc/rowNodeSiblingUtils';
 
 class OrderedSet {
     /** Canonical set of all pinned nodes */
@@ -176,7 +178,7 @@ export class ManualPinnedRowModel extends BeanStub implements IPinnedRowModel {
         }
 
         // pinning
-        const sibling = _createRowNodeSibling(rowNode, this.beans, container);
+        const sibling = _createPinnedSibling(rowNode, this.beans, container);
         this.getContainer(container).add(sibling);
         this.refreshRowPositions(container);
 
@@ -320,54 +322,25 @@ function validatePinningOptions(gos: GridOptionsService): void {
     }
 }
 
-/**
- * When creating sibling nodes (e.g. footers), we don't copy these properties as they
- * cause the sibling to have properties which should be unique to the row.
- *
- * Note that `keyof T` does not include private members of `T`, so these need to be
- * added explicitly to this list. Take care when adding or renaming private properties
- * of `RowNode`.
- */
-const IGNORED_SIBLING_PROPERTIES = new Set<
-    keyof RowNode | '__localEventService' | '__autoHeights' | '__checkAutoHeightsDebounced'
->(['__localEventService', '__objectId', 'sticky', '__autoHeights', '__checkAutoHeightsDebounced']);
-
-function _createRowNodeSibling(
-    rowNode: RowNode,
-    beans: BeanCollection,
-    container: NonNullable<RowPinnedType>
-): RowNode {
+function _createPinnedSibling(rowNode: RowNode, beans: BeanCollection, container: NonNullable<RowPinnedType>): RowNode {
     // only create sibling node once, otherwise we have daemons and
     // the animate screws up with the daemons hanging around
     if (rowNode.pinnedSibling) {
         return rowNode.pinnedSibling;
     }
 
-    const sibling = new RowNode(beans);
-
-    Object.keys(rowNode).forEach((key: keyof RowNode) => {
-        if (IGNORED_SIBLING_PROPERTIES.has(key)) {
-            return;
-        }
-        (sibling as any)[key] = (rowNode as any)[key];
-    });
+    const sibling = _createRowNodeSibling(rowNode, beans);
 
     sibling.setRowTop(null);
     sibling.setRowIndex(null);
     sibling.manualPinned = true;
     sibling.rowPinned = container;
 
-    // manually set oldRowTop to null so we discard any
-    // previous information about its position.
-    sibling.oldRowTop = null;
-
     const prefix = container === 'top' ? _ROW_ID_PREFIX_TOP_PINNED : _ROW_ID_PREFIX_BOTTOM_PINNED;
 
     sibling.id = `${prefix}${container}-${rowNode.id}`;
 
-    // get both header and footer to reference each other as siblings. this is never undone,
-    // only overwritten. so if a group is expanded, then contracted, it will have a ghost
-    // sibling - but that's fine, as we can ignore this if the header is contracted.
+    // get both header and footer to reference each other as siblings
     sibling.pinnedSibling = rowNode;
     rowNode.pinnedSibling = sibling;
 
