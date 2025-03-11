@@ -26,7 +26,7 @@ export class SparklineCellRenderer extends Component implements ICellRenderer {
     private readonly eSparkline: HTMLElement = RefPlaceholder;
     private sparklineInstance?: AgChartInstance<any>;
     private sparklineOptions: AgSparklineOptions;
-    private params: ISparklineCellRendererParams<any, any> | undefined;
+    private params: ISparklineCellRendererParams<any, any>;
     private cachedWidth = 0;
     private cachedHeight = 0;
     private dataRef: any[] = [];
@@ -40,7 +40,7 @@ export class SparklineCellRenderer extends Component implements ICellRenderer {
         const wrapper = document.createElement('div');
         wrapper.classList.add('ag-sparkline-wrapper');
         const eSparkline = document.createElement('span');
-        eSparkline.dataset['ref'] = 'eSparkline';
+        eSparkline.dataset.ref = 'eSparkline';
         wrapper.appendChild(eSparkline);
 
         this.setTemplateFromElement(wrapper);
@@ -51,37 +51,45 @@ export class SparklineCellRenderer extends Component implements ICellRenderer {
         this.addManagedPropertyListeners(['chartThemeOverrides', 'chartThemes'], (_event) => this.refresh(this.params));
     }
 
+    private createListener(batch = true) {
+        return () =>
+            this.updateSize(this.params?.column?.getActualWidth() ?? 0, (this.params?.node.rowHeight ?? 0) - 2, batch);
+    }
+
     private initGridObserver() {
         // Use grid APIs to listen for column width and row height changes instead
         // of a ResizeObserver to avoid having to wait for a re-layout before resizing sparklines
 
-        const listener = () => {
-            this.updateSize(this.params?.column?.getActualWidth() ?? 0, (this.params?.node.rowHeight ?? 0) - 2);
-        };
+        const batchListener = this.createListener();
+        const listener = this.createListener(false);
 
         const column = this.params?.column as AgColumn;
         const rowNode = this.params?.node as RowNode;
 
-        column.__addEventListener('columnStateUpdated', listener);
-        rowNode.__addEventListener('heightChanged', listener);
+        column.__addEventListener('columnStateUpdated', batchListener);
+        rowNode.__addEventListener('heightChanged', batchListener);
 
-        this.addDestroyFunc(() => column.__removeEventListener('columnStateUpdated', listener));
-        this.addDestroyFunc(() => rowNode.__removeEventListener('heightChanged', listener));
+        this.addDestroyFunc(() => column.__removeEventListener('columnStateUpdated', batchListener));
+        this.addDestroyFunc(() => rowNode.__removeEventListener('heightChanged', batchListener));
 
         listener();
     }
 
-    private updateSize(newWidth: number, newHeight: number) {
+    private updateSize(newWidth: number, newHeight: number, batch = true) {
         // account for cell padding
         newWidth -= this.env.getCellPadding();
 
         if (newWidth !== this.cachedWidth || newHeight !== this.cachedHeight) {
             this.cachedWidth = newWidth;
             this.cachedHeight = newHeight;
-            // Batch updates to force charts resizing at the same time
-            _batchCall(() => {
-                this.refresh(this.params);
-            });
+
+            const refresh = this.refresh.bind(this);
+
+            if (batch) {
+                _batchCall(refresh);
+            } else {
+                refresh();
+            }
         }
     }
 
@@ -90,7 +98,7 @@ export class SparklineCellRenderer extends Component implements ICellRenderer {
         this.initGridObserver();
     }
 
-    public refresh(params?: ISparklineCellRendererParams): boolean {
+    public refresh(params: ISparklineCellRendererParams = this.params): boolean {
         this.params = params;
 
         const width = this.cachedWidth;
