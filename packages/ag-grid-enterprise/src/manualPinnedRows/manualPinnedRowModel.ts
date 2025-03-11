@@ -17,7 +17,8 @@ import {
 } from 'ag-grid-community';
 
 class OrderedSet {
-    private set = new Set<RowNode>();
+    private all = new Set<RowNode>();
+    private visible = new Set<RowNode>();
     private cachedOrder: RowNode[] = [];
     /**
      * We cache the row index of nodes to handle the case where they become not displayed (e.g
@@ -28,23 +29,25 @@ class OrderedSet {
     private indexCache = new Map<RowNode, number>();
 
     public size(): number {
-        return this.set.size;
+        return this.visible.size;
     }
 
     public add(item: RowNode): void {
-        this.set.add(item);
+        this.all.add(item);
+        this.visible.add(item);
         this.cachedOrder.push(item);
         this.sort();
     }
 
     public delete(item: RowNode): void {
-        this.set.delete(item);
+        this.all.delete(item);
+        this.visible.delete(item);
         _removeFromArray(this.cachedOrder, item);
         this.indexCache.delete(item);
     }
 
     public has(item: RowNode): boolean {
-        return this.set.has(item);
+        return this.visible.has(item);
     }
 
     public forEach(fn: (node: RowNode, i: number) => void): void {
@@ -56,11 +59,14 @@ class OrderedSet {
     }
 
     public getById(id: string): RowNode | undefined {
-        return this.cachedOrder.find((node) => node.id === id);
+        for (const node of this.visible) {
+            if (node.id == id) return node;
+        }
     }
 
     public clear(): void {
-        this.set.clear();
+        this.all.clear();
+        this.visible.clear();
         this.indexCache.clear();
         this.cachedOrder.length = 0;
     }
@@ -85,6 +91,12 @@ class OrderedSet {
             return aIndex - bIndex;
         });
     }
+
+    public hide(shouldHide: (node: RowNode) => boolean): void {
+        this.all.forEach((node) => (shouldHide(node) ? this.visible.delete(node) : this.visible.add(node)));
+        this.cachedOrder = Array.from(this.visible);
+        this.sort();
+    }
 }
 
 export class ManualPinnedRowModel extends BeanStub implements IPinnedRowModel {
@@ -104,6 +116,14 @@ export class ManualPinnedRowModel extends BeanStub implements IPinnedRowModel {
                 removeGroupRows(this.bottom);
                 this.refreshRowPositions();
             },
+        });
+
+        this.addManagedPropertyListener('pivotMode', (event) => {
+            const hideLeaves = (node: RowNode) => (event.currentValue ? !node.group : false);
+            this.top.hide(hideLeaves);
+            this.bottom.hide(hideLeaves);
+
+            this.dispatchRowPinnedEvents();
         });
 
         validatePinningOptions(this.gos);
@@ -261,9 +281,9 @@ export class ManualPinnedRowModel extends BeanStub implements IPinnedRowModel {
         sets.forEach((float) => refreshRowPositions(this.beans, this.getContainer(float)));
     }
 
-    private dispatchRowPinnedEvents(node: RowNode): void {
-        this.eventSvc.dispatchEvent({ type: 'rowPinnedChanged', node });
-        node.dispatchRowEvent('rowPinned');
+    private dispatchRowPinnedEvents(node?: RowNode): void {
+        this.eventSvc.dispatchEvent({ type: 'rowPinnedChanged' });
+        node?.dispatchRowEvent('rowPinned');
     }
 }
 

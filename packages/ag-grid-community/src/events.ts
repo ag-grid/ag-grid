@@ -297,9 +297,7 @@ export interface PinnedHeightChangedEvent<TData = any, TContext = any>
     extends AgGlobalEvent<'pinnedHeightChanged', TData, TContext> {}
 
 export interface RowPinnedChangedEvent<TData = any, TContext = any>
-    extends AgGlobalEvent<'rowPinnedChanged', TData, TContext> {
-    node: IRowNode;
-}
+    extends AgGlobalEvent<'rowPinnedChanged', TData, TContext> {}
 
 /**
  * - `api` - from API method
