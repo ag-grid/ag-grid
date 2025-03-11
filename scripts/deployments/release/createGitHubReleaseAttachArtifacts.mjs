@@ -9,6 +9,8 @@ const args = yargs(hideBin(process.argv))
     .usage('Usage: $0 [package path] --private-key-path <path>')
     .demandOption(['app-id', 'installation-id', 'private-key-path'])
     .demandOption(['release-version', 'release-branch', 'artifacts-path'])
+    .boolean(['latest'])
+    .default({ latest: true })
     .parse();
 
 const CREATED_STATUS = 201;
@@ -122,6 +124,7 @@ async function uploadArtifactsForRelease(release) {
                 await octokit.request(`POST /repos/ag-grid/ag-grid/releases/${release.releaseId}/assets`, {
                     owner: 'ag-grid',
                     repo: 'ag-grid',
+                    make_latest: args.latest,
                     url: release.uploadUrl,
                     accept: 'application/vnd.github.v3+json',
                     release_id: release.releaseId,
