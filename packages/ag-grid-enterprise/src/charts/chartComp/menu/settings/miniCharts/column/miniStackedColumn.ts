@@ -1,3 +1,5 @@
+import { _flatten } from 'ag-grid-community';
+
 import type { AgChartsExports } from '../../../../../agChartsExports';
 import type { ChartTranslationKey } from '../../../../services/chartTranslationService';
 import type { MiniChartSelector } from '../../miniChartsContainer';
@@ -38,7 +40,7 @@ export class MiniStackedColumnClass extends MiniChartWithAxes {
             agChartsExports,
         });
 
-        root.append(([] as any[]).concat.apply([], this.stackedColumns));
+        root.append(_flatten(this.stackedColumns));
 
         this.updateColors(fills, strokes);
     }

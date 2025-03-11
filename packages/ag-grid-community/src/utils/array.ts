@@ -53,3 +53,9 @@ export function _moveInArray<T>(array: T[], objectsToMove: T[], toIndex: number)
         array.splice(toIndex, 0, objectsToMove[i]);
     }
 }
+
+export function _flatten<T>(arrays: Array<T[]>): T[] {
+    // Currently the fastest way to flatten an array according to https://jsbench.me/adlib26t2y/2
+    // eslint-disable-next-line prefer-spread
+    return ([] as T[]).concat.apply([], arrays);
+}
