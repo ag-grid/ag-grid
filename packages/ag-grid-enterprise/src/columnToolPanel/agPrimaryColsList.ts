@@ -165,7 +165,11 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
                 return listItem.column === currentColumnOrGroup;
             }
 
-            return !!listItem.columnGroup && listItem.columnGroup.getGroupId() === currentColumnOrGroup.getGroupId();
+            if (!listItem.columnGroup || listItem.columnGroup.getGroupId() !== currentColumnOrGroup.getGroupId()) {
+                return false;
+            }
+
+            return listItem.columnGroup.getLeafColumns().indexOf(movingColumns[0]) !== -1;
         });
 
         this.focusRowIfAlive(newIndex).then(() => {
@@ -185,7 +189,9 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
             return -1;
         }
 
-        const isSuppressMovableColumns = this.gos.get('suppressMovableColumns');
+        const { gos, params } = this;
+
+        const isSuppressMovableColumns = gos.get('suppressMovableColumns') || params.suppressColumnMove;
 
         if (
             isSuppressMovableColumns ||
@@ -222,7 +228,14 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
             return -1;
         }
 
-        return targetIndex;
+        if (isUp) {
+            return targetIndex;
+        }
+
+        // if we are moving down we need to remove the length of the group
+        // from the destination because the moved started from the Group Column
+        // but when looking for the next index, only the last column of the group was used.
+        return targetIndex - (movingColumns.length - 1);
     }
 
     private createComponentFromItem(

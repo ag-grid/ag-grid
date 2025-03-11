@@ -412,7 +412,7 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
      * E.g. if the cell renderer is displaying text that is different from the cell formatted value.
      * Returning `null` means Find will not search within the cell.
      */
-    getFindText?: (params: GetFindTextParams<TData, TValue>) => string | null;
+    getFindText?: GetFindTextFunc<TData, TValue>;
 
     // *** Column Headers *** //
     /**
@@ -833,25 +833,33 @@ export interface HeaderCheckboxSelectionCallback<TData = any, TValue = any> {
     (params: HeaderCheckboxSelectionCallbackParams<TData, TValue>): boolean;
 }
 
-interface GetTextParams<TData = any, TContext = any, TValue = any> extends AgGridCommon<TData, TContext> {
+interface GetTextParams<TData = any, TValue = any> extends AgGridCommon<TData, any> {
     /** Value for the cell. */
     value: TValue | null | undefined;
     /** Row node for the given row */
     node: IRowNode<TData>;
     /** Row data associated with the node. */
     data: TData;
-    /** Column for this callback */
+}
+
+export interface GetQuickFilterTextParams<TData = any, TValue = any> extends GetTextParams<TData, TValue> {
+    /** Column for this callback. */
     column: Column<TValue>;
-    /** ColDef provided for this column */
+    /** ColDef provided for this column. */
     colDef: ColDef<TData, TValue>;
 }
 
-export interface GetQuickFilterTextParams<TData = any, TValue = any> extends GetTextParams<TData, any, TValue> {}
-
-export interface GetFindTextParams<TData = any, TContext = any, TValue = any>
-    extends GetTextParams<TData, TContext, TValue> {
+export interface GetFindTextParams<TData = any, TValue = any> extends GetTextParams<TData, TValue> {
+    /** Column for this callback. `null` for `groupRows`. */
+    column: Column<TValue> | null;
+    /** ColDef provided for this column. `null` for `groupRows`. */
+    colDef: ColDef<TData, TValue> | null;
     /** Get formatted value for the cell (or `null` if no `valueFormatter`) */
     getValueFormatted: () => string | null;
+}
+
+export interface GetFindTextFunc<TData = any, TValue = any> {
+    (params: GetFindTextParams<TData, TValue>): string | null;
 }
 
 export type ColumnMenuTab = 'filterMenuTab' | 'generalMenuTab' | 'columnsMenuTab';

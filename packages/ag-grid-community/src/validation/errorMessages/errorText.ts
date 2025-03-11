@@ -640,6 +640,10 @@ export const AG_GRID_ERRORS = {
         'Detail grids can not use a different theme to the master grid, the `theme` detail grid option will be ignored.' as const,
     268: () => "Transactions aren't supported with tree data when using treeDataChildrenField" as const,
     269: () => "When `masterSelects: 'detail'`, detail grids must be configured with multi-row selection" as const,
+    270: ({ id, parentId }: { id: string; parentId: string }) =>
+        `Cycle detected for row with id='${id}' and parent id='${parentId}'. Resetting the parent for row with id='${id}' and showing it as a root-level node.` as const,
+    271: ({ id, parentId }: { id: string; parentId: string }) =>
+        `Parent row not found for row with id='${id}' and parent id='${parentId}'. Showing row with id='${id}' as a root-level node.` as const,
 };
 
 export type ErrorMap = typeof AG_GRID_ERRORS;

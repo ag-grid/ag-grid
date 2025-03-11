@@ -1,7 +1,7 @@
 import type { Rect } from 'ag-charts-types/scene';
 
 import type { AgChartsExports } from '../../../../../agChartsExports';
-import type { MiniChartSelector, ThemeTemplateParameters } from '../../miniChartsContainer';
+import type { MiniChartSelector } from '../../miniChartsContainer';
 import { accumulateData } from '../miniChartHelpers';
 import { MiniChartWithAxes } from '../miniChartWithAxes';
 
@@ -15,29 +15,26 @@ export class MiniWaterfallClass extends MiniChartWithAxes {
         agChartsExports: AgChartsExports,
         fills: string[],
         strokes: string[],
-        themeTemplate: ThemeTemplateParameters,
         isCustomTheme: boolean
     ) {
         super(container, agChartsExports, 'waterfallTooltip');
 
         this.bars = this.createWaterfall(this.root, this.data, this.size, this.padding, 'vertical').bars;
-        this.updateColors(fills, strokes, themeTemplate, isCustomTheme);
+        this.updateColors(fills, strokes, isCustomTheme);
     }
 
-    updateColors(fills: string[], strokes: string[], themeTemplate?: ThemeTemplateParameters, isCustomTheme?: boolean) {
+    updateColors(fills: string[], strokes: string[], isCustomTheme?: boolean) {
         const {
             data,
-            agChartsExports: {
-                _Theme: { themeSymbols },
-            },
+            agChartsExports: { _Theme },
         } = this;
         const positive = {
-            fill: isCustomTheme ? fills[0] : themeTemplate?.get(themeSymbols.PALETTE_ALT_UP_FILL),
-            stroke: isCustomTheme ? strokes[0] : themeTemplate?.get(themeSymbols.PALETTE_ALT_UP_STROKE),
+            fill: isCustomTheme ? fills[0] : _Theme.resolveOperation({ $palette: 'altUp.fill' }),
+            stroke: isCustomTheme ? strokes[0] : _Theme.resolveOperation({ $palette: 'altUp.stroke' }),
         };
         const negative = {
-            fill: isCustomTheme ? fills[1] : themeTemplate?.get(themeSymbols.PALETTE_ALT_DOWN_FILL),
-            stroke: isCustomTheme ? strokes[1] : themeTemplate?.get(themeSymbols.PALETTE_ALT_DOWN_STROKE),
+            fill: isCustomTheme ? fills[1] : _Theme.resolveOperation({ $palette: 'altDown.fill' }),
+            stroke: isCustomTheme ? strokes[1] : _Theme.resolveOperation({ $palette: 'altDown.stroke' }),
         };
         this.bars.forEach((bar, i) => {
             const isPositive = data[i] >= 0;

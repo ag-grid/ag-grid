@@ -1,0 +1,75 @@
+@use 'design-system' as *;
+
+.numberContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex-shrink: 0;
+}
+
+.verticalLine {
+    width: 1px;
+    height: calc(100% - 32px);
+    background-color: var(--color-border-secondary);
+    margin-top: 8px;
+}
+
+.number {
+    background-color: #e5e9eda9;
+    height: var(--number-size);
+    width: var(--number-size);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: var(--radius-md);
+    font-weight: var(--text-semibold);
+    font-size: 14px;
+    color: color-mix(in srgb, var(--color-text-secondary), var(--color-bg-primary) 20%);
+    flex-shrink: 0;
+
+    #{$selector-darkmode} & {
+        background-color: #e5e9ed26;
+    }
+}
+
+.numberHeading {
+    --number-size: 28px;
+    --number-gap: 32px;
+
+    display: flex;
+    margin-top: 24px;
+    margin-bottom: 24px;
+    gap: var(--number-gap);
+
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+        margin-top: 2px;
+    }
+
+    @media (max-width: 768px) {
+        --number-gap: 16px;
+
+        flex-direction: column;
+
+        .numberContainer {
+            justify-content: left;
+            width: 32px;
+        }
+
+        .content {
+            padding: 0;
+        }
+    }
+}
+
+.content {
+    width: 100%;
+
+    @media (min-width: 768px) {
+        max-width: calc(100% - var(--number-size) - var(--number-gap));
+    }
+}

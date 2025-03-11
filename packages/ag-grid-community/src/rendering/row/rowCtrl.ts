@@ -39,7 +39,7 @@ import { _isBrowserSafari } from '../../utils/browser';
 import { _addOrRemoveAttribute, _isElementChildOfClass, _isFocusableFormField, _isVisible } from '../../utils/dom';
 import { _isStopPropagationForAgGrid } from '../../utils/event';
 import { _findNextFocusableElement } from '../../utils/focus';
-import { _executeNextVMTurn } from '../../utils/function';
+import { _batchCall } from '../../utils/function';
 import { _exists, _makeNull } from '../../utils/generic';
 import { _escapeString } from '../../utils/string';
 import type { Component } from '../../widgets/component';
@@ -329,7 +329,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
 
         const shouldSlide = this.slideInAnimation[containerType];
         if (shouldSlide) {
-            _executeNextVMTurn(() => {
+            _batchCall(() => {
                 this.onTopChanged();
             });
             this.slideInAnimation[containerType] = false;
@@ -337,7 +337,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
 
         const shouldFade = this.fadeInAnimation[containerType];
         if (shouldFade) {
-            _executeNextVMTurn(() => {
+            _batchCall(() => {
                 gui.rowComp.addOrRemoveCssClass('ag-opacity-zero', false);
             });
             this.fadeInAnimation[containerType] = false;
@@ -961,7 +961,21 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
             ? false
             : this.isFullWidth() && event.rowIndex === node.rowIndex && event.rowPinned == node.rowPinned;
 
-        const element = this.fullWidthGui ? this.fullWidthGui.element : this.centerGui?.element;
+        let element: HTMLElement | undefined;
+
+        if (this.fullWidthGui) {
+            element = this.fullWidthGui.element;
+        } else {
+            const column = this.beans.colModel.getCol(event?.column);
+            const pinned = column?.pinned;
+
+            if (pinned) {
+                element = pinned === 'right' ? this.rightGui?.element : this.leftGui?.element;
+            } else {
+                element = this.centerGui?.element;
+            }
+        }
+
         if (!element) {
             return;
         } // can happen with react ui, comp not yet ready
@@ -1141,8 +1155,6 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
             fullWidth: true,
             data: rowNode.data,
             node: rowNode,
-            // if this gets changed for groupRows to support the actual value (and formatted value),
-            // need to update the corresponding logic in `FindService.refresh()`
             value: rowNode.key,
             valueFormatted: rowNode.key,
             // these need to be taken out, as part of 'afterAttached' now
@@ -1163,6 +1175,10 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
             case 'FullWidthDetail':
                 return _getFullWidthDetailCellRendererDetails(compFactory, params)!;
             case 'FullWidthGroup':
+                params.value = rowNode.groupValue;
+                params.valueFormatted = rowNode.rowGroupColumn
+                    ? this.beans.valueSvc.formatValue(rowNode.rowGroupColumn, rowNode, params.value)
+                    : params.value;
                 return _getFullWidthGroupCellRendererDetails(compFactory, params)!;
             case 'FullWidthLoading':
                 return _getFullWidthLoadingCellRendererDetails(compFactory, params)!;

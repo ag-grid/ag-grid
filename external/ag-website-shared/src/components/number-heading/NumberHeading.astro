@@ -1,0 +1,15 @@
+---
+import { NumberHeading } from './NumberHeading';
+
+interface Props {
+    number: string;
+    title: string;
+    level: 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6';
+}
+
+const { number, title, level } = Astro.props as Props;
+---
+
+<NumberHeading client:load number={number} title={title} level={level}>
+    <slot />
+</NumberHeading>

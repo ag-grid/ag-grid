@@ -130,7 +130,7 @@ export class AdvancedFilterBuilderComp extends Component<AdvancedFilterBuilderEv
         this.eList.appendChild(virtualList.getGui());
 
         virtualList.setModel({
-            getRowCount: () => this.items.length,
+            getRowCount: () => this.items?.length || 0,
             getRow: (index: number) => this.items[index],
             areRowsEqual: (oldRow: AdvancedFilterBuilderItem, newRow: AdvancedFilterBuilderItem) => oldRow === newRow,
         });

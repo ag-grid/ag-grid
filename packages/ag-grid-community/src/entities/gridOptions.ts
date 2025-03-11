@@ -1255,6 +1255,14 @@ export interface GridOptions<TData = any> {
     treeDataChildrenField?: string;
 
     /**
+     * The name of the field to use in a data item to find the parent node of a node when using treeData=true.
+     * The tree will be constructed via relationships between nodes using this field.
+     * getRowId callback need to be provided as well for this to work.
+     * It supports accessing nested fields using the dot notation.
+     */
+    treeDataParentIdField?: string;
+
+    /**
      * Set to `true` to suppress sort indicators and actions from the row group panel.
      * @default false
      */
@@ -1435,7 +1443,8 @@ export interface GridOptions<TData = any> {
      */
     suppressScrollWhenPopupsAreOpen?: boolean;
     /**
-     * When `true`, the grid will not use animation frames when drawing rows while scrolling. Use this if the grid is working fast enough that you don't need animation frames and you don't want the grid to flicker.
+     * When `true`, the grid will not use animation frames when drawing rows while scrolling. Use this if and only if the grid is working fast enough on all users machines and you want to avoid the temporarily empty rows.
+     * **Note:** It is not recommended to set suppressAnimationFrame to `true` in most use cases as this can seriously degrade the user experience as all cells are rendered synchronously blocking the UI thread from scrolling.
      * @default false
      * @initial
      */
