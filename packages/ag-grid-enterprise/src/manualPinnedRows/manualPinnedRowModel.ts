@@ -110,10 +110,17 @@ export class ManualPinnedRowModel extends BeanStub implements IPinnedRowModel {
     private bottom = new OrderedSet();
 
     public postConstruct(): void {
+        const filterManager = this.beans.filterManager;
+        const hideFilteredNodes = (node: RowNode) =>
+            filterManager ? !filterManager.doesRowPassFilter({ rowNode: node }) : false;
+
         this.addManagedEventListeners({
             gridStylesChanged: this.onGridStylesChanges.bind(this),
             modelUpdated: () => {
-                this.forContainers((container) => container.sort());
+                this.forContainers((container) => {
+                    container.hide(hideFilteredNodes);
+                    container.sort();
+                });
                 this.refreshRowPositions();
             },
             columnRowGroupChanged: () => {
