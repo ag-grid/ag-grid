@@ -3,6 +3,6 @@
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "testing/module-size",
   "projectType": "app",
-  "tags": ["module-size"],
+  "tags": ["module-size", "no-sharding"],
   "implicitDependencies": ["ag-grid-react"]
 }
