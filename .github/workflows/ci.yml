@@ -206,7 +206,7 @@ jobs:
           #            else
           #              count=0
           #            fi
-               count=0
+               count=$(yarn -s nx show projects --affected --base ${{ steps.setup.outputs.base }} -t test:e2e | wc -l)
                
                matrix=$(node ./external/ag-shared/scripts/shard/calculate-shards.js eval --zero ${count})
                echo "matrix=${matrix}" >> $GITHUB_OUTPUT
