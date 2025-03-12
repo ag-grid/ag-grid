@@ -68,7 +68,6 @@ export class ScatterChartProxy extends CartesianChartProxy<'scatter' | 'bubble'>
         params: UpdateParams
     ): (AgScatterSeriesOptions | AgBubbleSeriesOptions)[] {
         const { data } = params;
-        const palette = this.getChartPalette();
 
         const filteredOutKey = (key: string) => `${key}-filtered-out`;
 
@@ -91,13 +90,7 @@ export class ScatterChartProxy extends CartesianChartProxy<'scatter' | 'bubble'>
             return undefined;
         };
 
-        const updatePrimarySeries = <T extends AgScatterSeriesOptions | AgBubbleSeriesOptions>(
-            series: T,
-            idx: number
-        ): T => {
-            const fill = palette?.fills?.[idx];
-            const stroke = palette?.strokes?.[idx];
-
+        const updatePrimarySeries = <T extends AgScatterSeriesOptions | AgBubbleSeriesOptions>(series: T): T => {
             let markerDomain: [number, number] | undefined = undefined;
             if (series.type === 'bubble') {
                 const { sizeKey } = series;
@@ -106,8 +99,6 @@ export class ScatterChartProxy extends CartesianChartProxy<'scatter' | 'bubble'>
 
             return {
                 ...series,
-                fill,
-                stroke,
                 domain: markerDomain,
                 highlightStyle: { item: { fill: 'yellow' } },
                 listeners: {
@@ -130,8 +121,12 @@ export class ScatterChartProxy extends CartesianChartProxy<'scatter' | 'bubble'>
                 ...alteredSizeKey,
                 yKey: filteredOutKey(yKey!),
                 xKey: filteredOutKey(xKey!),
-                fillOpacity: 0.3,
-                strokeOpacity: 0.3,
+                fill: {
+                    $mix: [{ $path: '../0/fill' }, { $ref: 'backgroundColor' }, 0.7],
+                },
+                stroke: {
+                    $mix: [{ $path: '../0/stroke' }, { $ref: 'backgroundColor' }, 0.7],
+                },
                 showInLegend: false,
                 listeners: {
                     ...series.listeners,
@@ -148,7 +143,7 @@ export class ScatterChartProxy extends CartesianChartProxy<'scatter' | 'bubble'>
                         this.crossFilterCallback(filterableEvent);
                     },
                 },
-            };
+            } as T;
         };
 
         const updatedSeries = series.map(updatePrimarySeries);

@@ -85,18 +85,14 @@ const gridOptions = {
 ```
 
 ## Omit Function Name in Header
-To omit the aggregation function name from the column header, set the `suppressAggFuncInHeader` option in the 
-column definition.
+To omit the aggregation function name from the column header, set the `suppressAggFuncInHeader` grid option to `true`.
 
 {% gridExampleRunner title="Suppress Aggregation Function in Header" name="suppress-func-name" /%}
 
 The example above demonstrates the following configuration:
 ```{% frameworkTransform=true %}
 const gridOptions = {
-    columnDefs: [
-        { field: 'total', suppressAggFuncInHeader: true },
-        // ... other column definitions
-    ],
+    suppressAggFuncInHeader: true,
 };
 ```
 
