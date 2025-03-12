@@ -2,6 +2,17 @@
   "name": "ag-grid-module-size-angular",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "testing/module-size-angular",
-  "projectType": "app",
+  "targets": {
+    "test:e2e": {
+      "executor": "nx:run-script",
+      "dependsOn": [
+        "ag-grid-community:build:types",
+        "ag-grid-community:build:package",
+        "ag-grid-angular:build"
+      ],
+      "options": {
+        "script": "test:e2e"
+      }
+    }  },
   "tags": ["module-size"]
 }

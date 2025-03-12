@@ -256,7 +256,7 @@ jobs:
       - name: nx test:e2e
         if: matrix.shard != 0
         id: test
-        run: yarn nx ${{ github.event.inputs.nx_command || 'affected' }} -t test:e2e --configuration=ci --exclude tag:no-sharding --exclude all
+        run: ls -l packages/ag-grid-community/dist/package packages/ag-grid-community/dist/types/src packages/ag-grid-enterprise/dist/package packages/ag-grid-enterprise/dist/types/src && yarn nx ${{ github.event.inputs.nx_command || 'affected' }} -t test:e2e --configuration=ci --exclude tag:no-sharding --exclude all
       - name: nx test:e2e (non-sharded)
         if: matrix.shard == 0
         id: test-no-shard
