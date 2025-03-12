@@ -202,6 +202,21 @@ export function _getActiveDomElement(beans: BeanCollection): Element | null {
     return _getRootNode(beans).activeElement;
 }
 
+export function _doesPopupHaveFocus(beans: BeanCollection, popupGui?: HTMLElement): boolean {
+    const activeElement = _getActiveDomElement(beans);
+    if (!activeElement) {
+        return false;
+    }
+
+    const popupHasFocus = popupGui?.contains(activeElement);
+    if (popupHasFocus) {
+        return true;
+    }
+
+    // check if focus is within a sub popup
+    return beans.popupSvc?.isElementWithinCustomPopup(activeElement as HTMLElement) ?? false;
+}
+
 export function _getPageBody(beans: BeanCollection): HTMLElement | ShadowRoot {
     let rootNode: Document | ShadowRoot | HTMLElement | null = null;
     let targetEl: HTMLElement | ShadowRoot | null = null;

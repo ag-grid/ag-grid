@@ -551,7 +551,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
             const { column } = this.beans.focusSvc.getFocusedCell()!;
             const focusedColInstanceId = (column as AgColumn).getInstanceId();
             const focusedCellCtrl = res.map[focusedColInstanceId];
-            if (!focusedCellCtrl) {
+            if (!focusedCellCtrl && column.getPinned() == pinned) {
                 const cellCtrl = this.getNewCellCtrl(column as AgColumn);
                 if (cellCtrl) {
                     addCell(focusedColInstanceId, cellCtrl);

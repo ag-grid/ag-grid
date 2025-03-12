@@ -654,6 +654,7 @@ export {
     _getRowHeightAsNumber,
     _shouldUpdateColVisibilityAfterGroup,
     _getActiveDomElement,
+    _doesPopupHaveFocus,
     _isNothingFocused,
     _getDocument,
     _getPageBody,

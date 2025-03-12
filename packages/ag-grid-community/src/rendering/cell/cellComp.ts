@@ -3,7 +3,7 @@ import type { PopupEditorWrapper } from '../../edit/cellEditors/popupEditorWrapp
 import type { AgColumn } from '../../entities/agColumn';
 import type { CellStyle } from '../../entities/colDef';
 import type { RowNode } from '../../entities/rowNode';
-import { _getActiveDomElement } from '../../gridOptionsUtils';
+import { _doesPopupHaveFocus, _getActiveDomElement } from '../../gridOptionsUtils';
 import type { ICellEditorComp, ICellEditorParams } from '../../interfaces/iCellEditor';
 import type { PopupPositionParams } from '../../interfaces/iPopup';
 import type { UserCompDetails } from '../../interfaces/iUserCompDetails';
@@ -289,17 +289,14 @@ export class CellComp extends Component {
         this.rendererVersion++;
     }
 
-    private doesPopupHaveFocus() {
-        return this.cellEditorPopupWrapper?.getGui().contains(_getActiveDomElement(this.beans));
-    }
-
     private destroyEditor(): void {
         const { context } = this.beans;
 
         // if leaving editor & editor is focused, ensure the cell remains
         // focused after the editor is destroyed
         const recoverFocus =
-            this.cellCtrl.isCellFocused() && (this.doesPopupHaveFocus() || this.cellCtrl.hasBrowserFocus());
+            this.cellCtrl.isCellFocused() &&
+            (_doesPopupHaveFocus(this.beans, this.cellEditorPopupWrapper?.getGui()) || this.cellCtrl.hasBrowserFocus());
         if (recoverFocus) {
             this.eCell.focus({ preventScroll: true });
         }

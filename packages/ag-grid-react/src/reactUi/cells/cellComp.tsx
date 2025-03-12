@@ -11,7 +11,7 @@ import type {
     ICellRendererComp,
     UserCompDetails,
 } from 'ag-grid-community';
-import { CssClassManager, _EmptyBean, _removeFromParent } from 'ag-grid-community';
+import { CssClassManager, _EmptyBean, _doesPopupHaveFocus, _removeFromParent } from 'ag-grid-community';
 
 import { CellEditorComponentProxy } from '../../shared/customComp/cellEditorComponentProxy';
 import { CustomContext } from '../../shared/customComp/customContext';
@@ -178,7 +178,8 @@ const CellComp = ({
     printLayout: boolean;
     editingRow: boolean;
 }) => {
-    const { context } = useContext(BeansContext);
+    const beans = useContext(BeansContext);
+    const { context } = beans;
     const { colIdSanitised, instanceId } = cellCtrl;
     const compBean = useRef<_EmptyBean>();
 
@@ -435,7 +436,8 @@ const CellComp = ({
                 } else {
                     // if leaving editor & cell is focused, ensure the cell remains
                     // focused after the editor is destroyed
-                    const recoverFocus = cellCtrl.isCellFocused() && cellCtrl.hasBrowserFocus();
+                    const recoverFocus =
+                        cellCtrl.isCellFocused() && (cellCtrl.hasBrowserFocus() || _doesPopupHaveFocus(beans as any));
                     if (recoverFocus) {
                         compProxy.getFocusableElement().focus({ preventScroll: true });
                     }

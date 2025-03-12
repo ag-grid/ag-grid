@@ -698,9 +698,34 @@ export class RowRenderer extends BeanStub implements NamedBean {
     }
 
     private findPositionToFocus(cellPosition: CellPosition): CellPosition | null {
+        const { pagination, pageBounds } = this.beans;
         let rowPosition: RowPosition | null = cellPosition;
 
+        // if the provided row isn't on the current page, focus first row of the current page
+        if (
+            rowPosition.rowPinned == null &&
+            pagination &&
+            pageBounds &&
+            !pagination.isRowInPage(rowPosition.rowIndex)
+        ) {
+            rowPosition = { rowPinned: null, rowIndex: pageBounds.getFirstRow() };
+        }
+
         while (rowPosition) {
+            // shortcut for pagination
+            if (rowPosition.rowPinned == null && pageBounds) {
+                // if row is before this page, get row above
+                if (rowPosition.rowIndex < pageBounds.getFirstRow()) {
+                    rowPosition = _getRowAbove(this.beans, { rowPinned: null, rowIndex: 0 });
+                    if (!rowPosition) {
+                        return null;
+                    }
+                } else if (rowPosition.rowIndex > pageBounds.getLastRow()) {
+                    // if row above this page, start from last row of this page
+                    rowPosition = { rowPinned: null, rowIndex: pageBounds.getLastRow() };
+                }
+            }
+
             const row = this.getRowByPosition(rowPosition);
             if (row?.isAlive()) {
                 return { ...row.getRowPosition(), column: cellPosition.column };
