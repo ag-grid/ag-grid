@@ -4,8 +4,10 @@ import type { BeanCollection } from '../context/context';
 import type { BaseBean, ComponentBean } from '../context/genericContext';
 import type { AgEvent } from '../events';
 import { CssClassManager } from '../rendering/cssClassManager';
+import type { ElementParams } from '../utils/dom';
 import {
     _copyNodeList,
+    _createElement,
     _isNodeOrElement,
     _iterateNamedNodeMap,
     _loadTemplate,
@@ -56,18 +58,14 @@ export class Component<TLocalEvent extends string = ComponentEvent>
 
     private cssClassManager: CssClassManager;
 
-    constructor(template?: string | HTMLElement, componentSelectors?: ComponentSelector[]) {
+    constructor(templateOrParams?: string | ElementParams, componentSelectors?: ComponentSelector[]) {
         super();
 
         this.cssClassManager = new CssClassManager(() => this.eGui);
 
         this.componentSelectors = new Map((componentSelectors ?? []).map((comp) => [comp.selector, comp]));
-        if (template) {
-            if (typeof template === 'string') {
-                this.setTemplate(template);
-            } else {
-                this.setTemplateFromElement(template);
-            }
+        if (templateOrParams) {
+            this.setTemplate(templateOrParams);
         }
     }
 
@@ -223,11 +221,17 @@ export class Component<TLocalEvent extends string = ComponentEvent>
     }
 
     public setTemplate(
-        template: string | null | undefined,
+        templateOfParams: ElementParams | string | null | undefined,
         componentSelectors?: ComponentSelector[],
         paramsMap?: { [key: string]: any }
     ): void {
-        const eGui = _loadTemplate(template as string);
+        let eGui: HTMLElement;
+        if (typeof templateOfParams === 'object' && templateOfParams != null) {
+            eGui = _createElement(templateOfParams);
+        } else {
+            eGui = _loadTemplate(templateOfParams as string);
+        }
+
         this.setTemplateFromElement(eGui, componentSelectors, paramsMap);
     }
 

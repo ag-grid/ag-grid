@@ -1,27 +1,26 @@
 import type { AgInputFieldParams } from '../interfaces/agFieldParams';
 import { _setAriaLabel } from '../utils/aria';
-import { _addOrRemoveAttribute, _createElement, _setDisabled, _setElementWidth } from '../utils/dom';
+import type { ElementParams } from '../utils/dom';
+import { _addOrRemoveAttribute, _setDisabled, _setElementWidth } from '../utils/dom';
 import type { AgAbstractFieldEvent, FieldElement } from './agAbstractField';
 import { AgAbstractField } from './agAbstractField';
 import { RefPlaceholder } from './component';
 
-function buildTemplate(displayFieldTag: keyof HTMLElementTagNameMap) {
-    const div = _createElement({
+function buildTemplate(displayFieldTag: keyof HTMLElementTagNameMap): ElementParams {
+    return {
         tag: 'div',
         role: 'presentation',
         children: [
-            _createElement({ tag: 'div', classes: ['ag-input-field-label'], ref: 'eLabel' }),
-            _createElement({
+            { tag: 'div', classes: ['ag-input-field-label'], ref: 'eLabel' },
+            {
                 tag: 'div',
                 classes: ['ag-wrapper', 'ag-input-wrapper'],
                 ref: 'eWrapper',
                 role: 'presentation',
-                children: [_createElement({ tag: displayFieldTag, classes: ['ag-input-field-input'], ref: 'eInput' })],
-            }),
+                children: [{ tag: displayFieldTag, classes: ['ag-input-field-input'], ref: 'eInput' }],
+            },
         ],
-    });
-
-    return div;
+    };
 }
 
 export type AgAbstractInputFieldEvent = AgAbstractFieldEvent;

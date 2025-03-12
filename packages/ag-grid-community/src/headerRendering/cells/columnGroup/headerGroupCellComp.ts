@@ -1,6 +1,6 @@
 import type { HeaderStyle } from '../../../entities/colDef';
 import type { UserCompDetails } from '../../../interfaces/iUserCompDetails';
-import { _addStylesToElement, _createElement, _setDisplayed } from '../../../utils/dom';
+import { _addStylesToElement, _setDisplayed } from '../../../utils/dom';
 import { RefPlaceholder } from '../../../widgets/component';
 import { AbstractHeaderCellComp } from '../abstractCell/abstractHeaderCellComp';
 import type { HeaderGroupCellCtrl, IHeaderGroupCellComp } from './headerGroupCellCtrl';
@@ -13,27 +13,28 @@ export class HeaderGroupCellComp extends AbstractHeaderCellComp<HeaderGroupCellC
     private headerGroupComp: IHeaderGroupComp | undefined;
 
     constructor(ctrl: HeaderGroupCellCtrl) {
-        const div = _createElement({
-            tag: 'div',
-            classes: ['ag-header-group-cell'],
-            role: 'columnheader',
-            children: [
-                _createElement({
-                    tag: 'div',
-                    classes: ['ag-header-cell-comp-wrapper'],
-                    role: 'presentation',
-                    ref: 'eHeaderCompWrapper',
-                }),
-                _createElement({
-                    tag: 'div',
-                    classes: ['ag-header-cell-resize'],
-                    role: 'presentation',
-                    ref: 'eResize',
-                }),
-            ],
-        });
-
-        super(div, ctrl);
+        super(
+            {
+                tag: 'div',
+                classes: ['ag-header-group-cell'],
+                role: 'columnheader',
+                children: [
+                    {
+                        tag: 'div',
+                        classes: ['ag-header-cell-comp-wrapper'],
+                        role: 'presentation',
+                        ref: 'eHeaderCompWrapper',
+                    },
+                    {
+                        tag: 'div',
+                        classes: ['ag-header-cell-resize'],
+                        role: 'presentation',
+                        ref: 'eResize',
+                    },
+                ],
+            },
+            ctrl
+        );
     }
 
     public postConstruct(): void {

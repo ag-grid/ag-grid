@@ -1,3 +1,5 @@
+import { AgComponentSelector } from 'ag-grid-community';
+
 import type { BeanCollection } from '../context/context';
 import type { CellStyle, HeaderStyle } from '../entities/colDef';
 import type { RowStyle } from '../entities/gridOptions';
@@ -576,18 +578,20 @@ export function _requestAnimationFrame(beans: BeanCollection, callback: any) {
 
 /** Just to avoid typos, add to as required */
 type RoleType = 'presentation' | 'columnheader';
+type TagName = keyof HTMLElementTagNameMap | Lowercase<AgComponentSelector>;
 
-type ElementParams<T extends keyof HTMLElementTagNameMap> = {
-    tag: T;
+export type ElementParams = {
+    tag: TagName;
     classes?: string[];
     role?: RoleType;
     ref?: string;
-    children?: HTMLElement[];
+    ariaHidden?: boolean;
+    children?: (ElementParams | null)[]; // nulls are allowed to allow for optional children
 };
 
-export function _createElement<T extends keyof HTMLElementTagNameMap>(params: ElementParams<T>): HTMLElement {
-    const { tag: tagname, role, ref: dataRef, classes: classList, children } = params;
-    const element = document.createElement<T>(tagname);
+export function _createElement(params: ElementParams): HTMLElement {
+    const { tag: tagname, role, ref: dataRef, classes: classList, ariaHidden, children } = params;
+    const element = document.createElement(tagname);
     if (role) {
         element.setAttribute('role', role);
     }
@@ -597,8 +601,15 @@ export function _createElement<T extends keyof HTMLElementTagNameMap>(params: El
     if (classList) {
         element.classList.add(...classList);
     }
+    if (ariaHidden) {
+        element.setAttribute('aria-hidden', 'true');
+    }
     if (children) {
-        element.append(...children);
+        for (const child of children) {
+            if (child) {
+                element.appendChild(_createElement(child));
+            }
+        }
     }
     return element;
 }

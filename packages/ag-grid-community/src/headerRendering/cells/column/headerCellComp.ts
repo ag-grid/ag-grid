@@ -1,7 +1,7 @@
 import type { HeaderStyle } from '../../../entities/colDef';
 import type { UserCompDetails } from '../../../interfaces/iUserCompDetails';
 import { _removeAriaSort, _setAriaSort } from '../../../utils/aria';
-import { _addStylesToElement, _createElement } from '../../../utils/dom';
+import { _addStylesToElement } from '../../../utils/dom';
 import { RefPlaceholder } from '../../../widgets/component';
 import { AbstractHeaderCellComp } from '../abstractCell/abstractHeaderCellComp';
 import type { HeaderCellCtrl, IHeaderCellComp } from './headerCellCtrl';
@@ -16,27 +16,28 @@ export class HeaderCellComp extends AbstractHeaderCellComp<HeaderCellCtrl> {
     private headerCompVersion = 0;
 
     constructor(ctrl: HeaderCellCtrl) {
-        const div = _createElement({
-            tag: 'div',
-            classes: ['ag-header-cell'],
-            role: 'columnheader',
-            children: [
-                _createElement({
-                    tag: 'div',
-                    classes: ['ag-header-cell-resize'],
-                    role: 'presentation',
-                    ref: 'eResize',
-                }),
-                _createElement({
-                    tag: 'div',
-                    classes: ['ag-header-cell-comp-wrapper'],
-                    role: 'presentation',
-                    ref: 'eHeaderCompWrapper',
-                }),
-            ],
-        });
-
-        super(div, ctrl);
+        super(
+            {
+                tag: 'div',
+                classes: ['ag-header-cell'],
+                role: 'columnheader',
+                children: [
+                    {
+                        tag: 'div',
+                        classes: ['ag-header-cell-resize'],
+                        role: 'presentation',
+                        ref: 'eResize',
+                    },
+                    {
+                        tag: 'div',
+                        classes: ['ag-header-cell-comp-wrapper'],
+                        role: 'presentation',
+                        ref: 'eHeaderCompWrapper',
+                    },
+                ],
+            },
+            ctrl
+        );
     }
 
     public postConstruct(): void {

@@ -1,35 +1,31 @@
 import type { AgColumn } from '../entities/agColumn';
 import { _isColumnsSortingCoupledToGroup } from '../gridOptionsUtils';
-import { _clearElement, _createElement, _setDisplayed } from '../utils/dom';
+import type { ElementParams } from '../utils/dom';
+import { _clearElement, _setDisplayed } from '../utils/dom';
 import type { IconName } from '../utils/icon';
 import { _createIconNoSpan } from '../utils/icon';
 import type { ComponentSelector } from '../widgets/component';
 import { Component, RefPlaceholder } from '../widgets/component';
 
-function makeSpan(dataRefSuffix: string, classSuffix: string): HTMLSpanElement {
-    const span = _createElement({
+function buildTemplate(): ElementParams {
+    const makeIconParams = (dataRefSuffix: string, classSuffix: string): ElementParams => ({
         tag: 'span',
         classes: ['ag-sort-indicator-icon', `ag-sort-${classSuffix}`, 'ag-hidden'],
         ref: `eSort${dataRefSuffix}`,
+        ariaHidden: true,
     });
 
-    span.setAttribute('aria-hidden', 'true');
-    return span;
-}
-
-function buildTemplate(): HTMLSpanElement {
-    const span = _createElement({
+    return {
         tag: 'span',
         classes: ['ag-sort-indicator-container'],
         children: [
-            makeSpan('Order', 'order'),
-            makeSpan('Asc', 'ascending-icon'),
-            makeSpan('Desc', 'descending-icon'),
-            makeSpan('Mixed', 'mixed-icon'),
-            makeSpan('None', 'none-icon'),
+            makeIconParams('Order', 'order'),
+            makeIconParams('Asc', 'ascending-icon'),
+            makeIconParams('Desc', 'descending-icon'),
+            makeIconParams('Mixed', 'mixed-icon'),
+            makeIconParams('None', 'none-icon'),
         ],
-    });
-    return span;
+    };
 }
 
 export class SortIndicatorComp extends Component {
@@ -46,7 +42,7 @@ export class SortIndicatorComp extends Component {
         super();
 
         if (!skipTemplate) {
-            this.setTemplateFromElement(buildTemplate());
+            this.setTemplate(buildTemplate());
         }
     }
 
