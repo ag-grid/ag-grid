@@ -73,7 +73,7 @@ export class SpannedCellCtrl extends CellCtrl {
         return this.focusedCellPosition ?? this.cellPosition;
     }
 
-    protected override isCellFocused(): boolean {
+    public override isCellFocused(): boolean {
         const focusedCell = this.beans.focusSvc.getFocusedCell();
         return !!focusedCell && this.cellSpan.doesSpanContain(focusedCell);
     }

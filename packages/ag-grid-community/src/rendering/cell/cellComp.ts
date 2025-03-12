@@ -289,8 +289,20 @@ export class CellComp extends Component {
         this.rendererVersion++;
     }
 
+    private doesPopupHaveFocus() {
+        return this.cellEditorPopupWrapper?.getGui().contains(_getActiveDomElement(this.beans));
+    }
+
     private destroyEditor(): void {
         const { context } = this.beans;
+
+        // if leaving editor & editor is focused, ensure the cell remains
+        // focused after the editor is destroyed
+        const recoverFocus =
+            this.cellCtrl.isCellFocused() && (this.doesPopupHaveFocus() || this.cellCtrl.hasBrowserFocus());
+        if (recoverFocus) {
+            this.eCell.focus({ preventScroll: true });
+        }
 
         this.hideEditorPopup?.();
 
@@ -452,7 +464,8 @@ export class CellComp extends Component {
 
         this.destroyRenderer();
         this.refreshWrapper(true);
-        this.clearParentOfValue();
+        // clear the parent of value element
+        _clearElement(this.getParentOfValue());
         if (this.cellEditorGui) {
             const eParent = this.getParentOfValue();
             eParent.appendChild(this.cellEditorGui);
@@ -531,17 +544,5 @@ export class CellComp extends Component {
         this.removeControls();
 
         super.destroy();
-    }
-
-    private clearParentOfValue(): void {
-        const { eCell, beans } = this;
-
-        // if focus is inside the cell, we move focus to the cell itself
-        // before removing it's contents, otherwise errors could be thrown.
-        if (eCell.contains(_getActiveDomElement(beans))) {
-            eCell.focus({ preventScroll: true });
-        }
-
-        _clearElement(this.getParentOfValue());
     }
 }

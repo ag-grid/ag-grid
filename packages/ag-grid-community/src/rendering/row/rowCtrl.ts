@@ -200,7 +200,8 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         containerType: RowContainerType,
         compBean: BeanStub<any> | undefined
     ): void {
-        compBean = setupCompBean(this, this.beans.context, compBean);
+        const { context, focusSvc } = this.beans;
+        compBean = setupCompBean(this, context, compBean);
 
         const gui: RowGui = { rowComp, element, containerType, compBean };
         this.allRowGuis.push(gui);
@@ -219,7 +220,6 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
             this.beans.rowRenderer.dispatchFirstDataRenderedEvent();
         }
 
-        const focusSvc = this.beans.focusSvc;
         const focusableElement = this.fullWidthGui?.element;
         if (focusableElement) {
             // when cell is created, if it should be focus the grid should take focus from the focused cell
@@ -544,6 +544,19 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
             }
 
             addCell(colInstanceId, cellCtrl);
+        }
+
+        // if this row is focused, force the row to render the cell that has focus
+        if (this.beans.focusSvc.isRowFocused(this.rowNode.rowIndex!, this.rowNode.rowPinned)) {
+            const { column } = this.beans.focusSvc.getFocusedCell()!;
+            const focusedColInstanceId = (column as AgColumn).getInstanceId();
+            const focusedCellCtrl = res.map[focusedColInstanceId];
+            if (!focusedCellCtrl) {
+                const cellCtrl = this.getNewCellCtrl(column as AgColumn);
+                if (cellCtrl) {
+                    addCell(focusedColInstanceId, cellCtrl);
+                }
+            }
         }
 
         for (const prevCellCtrl of prev.list) {

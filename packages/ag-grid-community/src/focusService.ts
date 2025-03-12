@@ -20,7 +20,6 @@ import type { HeaderPosition } from './interfaces/iHeaderPosition';
 import type { RowPinnedType } from './interfaces/iRowNode';
 import { getHeaderIndexToFocus } from './navigation/headerNavigationService';
 import type { NavigationService } from './navigation/navigationService';
-import { DOM_DATA_KEY_CELL_CTRL } from './rendering/cell/cellCtrl';
 import type { OverlayService } from './rendering/overlays/overlayService';
 import { DOM_DATA_KEY_ROW_CTRL } from './rendering/row/rowCtrl';
 import type { RowRenderer } from './rendering/rowRenderer';
@@ -89,12 +88,7 @@ export class FocusService extends BeanStub implements NamedBean {
             return true;
         }
 
-        const activeElement = _getActiveDomElement(this.beans);
-        const cellDomData = _getDomData(this.gos, activeElement, DOM_DATA_KEY_CELL_CTRL);
-        const rowDomData = _getDomData(this.gos, activeElement, DOM_DATA_KEY_ROW_CTRL);
-
-        const gridElementFocused = cellDomData || rowDomData;
-        return gridElementFocused;
+        return !this.isDomDataMissingInHierarchy(_getActiveDomElement(this.beans), DOM_DATA_KEY_ROW_CTRL);
     }
 
     public onColumnEverythingChanged(): void {

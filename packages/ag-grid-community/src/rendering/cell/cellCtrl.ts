@@ -122,6 +122,8 @@ export class CellCtrl extends BeanStub {
     public onCompAttachedFuncs: (() => void)[] = [];
     public onEditorAttachedFuncs: (() => void)[] = [];
 
+    private focusEventWhileNotReady: CellFocusedEvent | null = null;
+
     constructor(
         public readonly column: AgColumn,
         public readonly rowNode: RowNode,
@@ -345,7 +347,7 @@ export class CellCtrl extends BeanStub {
         // note: this happens because of a click outside of the grid or if the popupEditor
         // is closed with `Escape` key. if another cell was clicked, then the editing will
         // have already stopped and returned on the conditional above.
-        this.stopEditingAndFocus();
+        this.beans.editSvc?.stopRowOrCellEdit(this);
     }
 
     /**
@@ -477,12 +479,6 @@ export class CellCtrl extends BeanStub {
         // we do cellClassRules even if the value has not changed, so that users who have rules that
         // look at other parts of the row (where the other part of the row might of changed) will work.
         this.customStyleFeature?.applyCellClassRules();
-    }
-
-    // cell editors call this, when they want to stop for reasons other
-    // than what we pick up on. eg selecting from a dropdown ends editing.
-    public stopEditingAndFocus(suppressNavigateAfterEdit = false, shiftKey: boolean = false): void {
-        this.beans.editSvc?.stopEditingAndFocus(this, suppressNavigateAfterEdit, shiftKey);
     }
 
     public isCellEditable(): boolean {
@@ -618,12 +614,44 @@ export class CellCtrl extends BeanStub {
         });
     }
 
+    /**
+     * Restores focus to the cell, if it should have it
+     * @param waitForRender if the cell has just setComp, it may not be rendered yet, so we wait for the next render
+     */
+    private restoreFocus(waitForRender = false): void {
+        if (!this.comp || this.editing || !this.isCellFocused() || !this.beans.focusSvc.shouldTakeFocus()) {
+            return;
+        }
+
+        const focus = () => {
+            if (!this.isAlive()) {
+                return;
+            }
+            const focusableElement = this.comp.getFocusableElement();
+            if (this.isCellFocused()) {
+                focusableElement.focus({ preventScroll: true });
+            }
+        };
+
+        // if first render; wait for the component to mount to dom
+        if (waitForRender) {
+            setTimeout(focus, 0);
+            return;
+        }
+
+        focus();
+    }
+
     public onRowIndexChanged(): void {
         // when index changes, this influences items that need the index, so we update the
         // grid cell so they are working off the new index.
         this.createCellPosition();
         // when the index of the row changes, ie means the cell may have lost or gained focus
         this.onCellFocused();
+
+        // if row index changed, this cell may now need focus
+        this.restoreFocus();
+
         // check range selection
         this.rangeFeature?.onCellSelectionChanged();
     }
@@ -655,23 +683,28 @@ export class CellCtrl extends BeanStub {
         this.comp.addOrRemoveCssClass(CSS_CELL_LAST_LEFT_PINNED, lastLeftPinned);
     }
 
-    protected isCellFocused(): boolean {
+    public isCellFocused(): boolean {
         return this.beans.focusSvc.isCellFocused(this.cellPosition);
     }
 
     public setupFocus() {
         // when cell is created, if it should be focus the grid should take focus from the focused cell
-        if (!this.editing && this.isCellFocused() && this.beans.focusSvc.shouldTakeFocus()) {
-            const focusableElement = this.comp.getFocusableElement();
-            setTimeout(() => focusableElement.focus({ preventScroll: true }), 0);
-        }
-
-        this.onCellFocused();
+        this.restoreFocus(true);
+        this.onCellFocused(this.focusEventWhileNotReady ?? undefined);
     }
 
     public onCellFocused(event?: CellFocusedEvent): void {
         const { beans } = this;
         if (_isCellFocusSuppressed(beans)) {
+            return;
+        }
+
+        if (!this.comp) {
+            // scenario: focusing event on cell outside viewport causes cells to force render
+            // preserve event for when cell renders.
+            if (event) {
+                this.focusEventWhileNotReady = event;
+            }
             return;
         }
 
@@ -789,11 +822,15 @@ export class CellCtrl extends BeanStub {
         this.onEditorAttachedFuncs = [];
 
         // if this was focused; focus will need recovered
-        if (this.eGui === _getActiveDomElement(this.beans)) {
+        if (this.isCellFocused() && this.hasBrowserFocus()) {
             this.beans.focusSvc.needsFocusRestored = true;
         }
 
         super.destroy();
+    }
+
+    public hasBrowserFocus(): boolean {
+        return this.eGui?.contains(_getActiveDomElement(this.beans)) ?? false;
     }
 
     public createSelectionCheckbox(): CheckboxSelectionComponent | undefined {
