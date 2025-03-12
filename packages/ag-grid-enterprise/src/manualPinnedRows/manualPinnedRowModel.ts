@@ -26,30 +26,22 @@ class OrderedSet {
     private visible = new Set<RowNode>();
     /** Ordering of nodes in the pinned area */
     private order: RowNode[] = [];
-    /**
-     * We cache the row index of nodes to handle the case where they become not displayed (e.g
-     * collapsing a group). Their `rowIndex` then becomes `null` and pinned row order becomes
-     * unstable in a way that looks odd for users. In this case we fall back to their `rowIndex`
-     * when they were last displayed.
-     */
-    private indexCache = new Map<RowNode, number>();
 
     public size(): number {
         return this.visible.size;
     }
 
-    public add(item: RowNode): void {
+    public add(item: RowNode, beans: BeanCollection): void {
         this.all.add(item);
         this.visible.add(item);
         this.order.push(item);
-        this.sort();
+        this.sort(beans);
     }
 
     public delete(item: RowNode): void {
         this.all.delete(item);
         this.visible.delete(item);
         _removeFromArray(this.order, item);
-        this.indexCache.delete(item);
     }
 
     public has(item: RowNode): boolean {
@@ -73,35 +65,18 @@ class OrderedSet {
     public clear(): void {
         this.all.clear();
         this.visible.clear();
-        this.indexCache.clear();
         this.order.length = 0;
     }
 
-    public sort(): void {
-        this.order.sort((a, b) => {
-            const aOrig = a.pinnedSibling;
-            const bOrig = b.pinnedSibling;
-
-            if (!aOrig || !bOrig) return 0;
-
-            if (aOrig.displayed) {
-                this.indexCache.set(aOrig, aOrig.rowIndex!);
-            }
-            const aIndex = aOrig.rowIndex ?? this.indexCache.get(aOrig) ?? 0;
-
-            if (bOrig?.displayed) {
-                this.indexCache.set(bOrig, bOrig.rowIndex!);
-            }
-            const bIndex = bOrig.rowIndex ?? this.indexCache.get(bOrig) ?? 0;
-
-            return aIndex - bIndex;
-        });
+    public sort(beans: BeanCollection): void {
+        const sortOptions = beans.sortSvc?.getSortOptions() ?? [];
+        this.order = beans.rowNodeSorter?.doFullSort(this.order, sortOptions) ?? this.order;
     }
 
-    public hide(shouldHide: (node: RowNode) => boolean): void {
+    public hide(shouldHide: (node: RowNode) => boolean, beans: BeanCollection): void {
         this.all.forEach((node) => (shouldHide(node) ? this.visible.delete(node) : this.visible.add(node)));
         this.order = Array.from(this.visible);
-        this.sort();
+        this.sort(beans);
     }
 }
 
@@ -112,14 +87,17 @@ export class ManualPinnedRowModel extends BeanStub implements IPinnedRowModel {
     public postConstruct(): void {
         const filterManager = this.beans.filterManager;
         const hideFilteredNodes = (node: RowNode) =>
-            filterManager ? !filterManager.doesRowPassFilter({ rowNode: node }) : false;
+            filterManager
+                ? !filterManager.doesRowPassFilter({ rowNode: node }) ||
+                  !filterManager.doesRowPassAggregateFilters({ rowNode: node })
+                : false;
 
         this.addManagedEventListeners({
             gridStylesChanged: this.onGridStylesChanges.bind(this),
             modelUpdated: () => {
                 this.forContainers((container) => {
-                    container.hide(hideFilteredNodes);
-                    container.sort();
+                    container.hide(hideFilteredNodes, this.beans);
+                    container.sort(this.beans);
                 });
                 this.refreshRowPositions();
             },
@@ -131,7 +109,7 @@ export class ManualPinnedRowModel extends BeanStub implements IPinnedRowModel {
 
         this.addManagedPropertyListener('pivotMode', (event) => {
             const hideLeaves = (node: RowNode) => (event.currentValue ? !node.group : false);
-            this.forContainers((container) => container.hide(hideLeaves));
+            this.forContainers((container) => container.hide(hideLeaves, this.beans));
             this.dispatchRowPinnedEvents();
         });
     }
@@ -178,7 +156,7 @@ export class ManualPinnedRowModel extends BeanStub implements IPinnedRowModel {
         } else {
             // pinning
             const sibling = _createPinnedSibling(rowNode, this.beans, container);
-            this.getContainer(container).add(sibling);
+            this.getContainer(container).add(sibling, this.beans);
             this.refreshRowPositions(container);
 
             this.dispatchRowPinnedEvents(rowNode);
