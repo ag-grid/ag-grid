@@ -123,10 +123,10 @@ export class ScatterChartProxy extends CartesianChartProxy<'scatter' | 'bubble'>
                 xKey: filteredOutKey(xKey!),
                 fill: {
                     $mix: [{ $path: '../0/fill' }, { $ref: 'backgroundColor' }, 0.7],
-                } as any,
+                },
                 stroke: {
                     $mix: [{ $path: '../0/stroke' }, { $ref: 'backgroundColor' }, 0.7],
-                } as any,
+                },
                 showInLegend: false,
                 listeners: {
                     ...series.listeners,
@@ -143,7 +143,7 @@ export class ScatterChartProxy extends CartesianChartProxy<'scatter' | 'bubble'>
                         this.crossFilterCallback(filterableEvent);
                     },
                 },
-            };
+            } as T;
         };
 
         const updatedSeries = series.map(updatePrimarySeries);

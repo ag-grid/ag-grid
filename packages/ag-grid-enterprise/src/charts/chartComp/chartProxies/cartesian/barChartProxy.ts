@@ -61,15 +61,15 @@ export class BarChartProxy extends CartesianChartProxy<'bar'> {
                 showInLegend: false,
                 fill: {
                     $mix: [{ $path: `../${primaryIndex}/fill` }, { $ref: 'backgroundColor' }, 0.7],
-                } as any,
+                },
                 stroke: {
                     $mix: [{ $path: `../${primaryIndex}/stroke` }, { $ref: 'backgroundColor' }, 0.7],
-                } as any,
+                },
             };
 
             // for bar/column charts, proportion of whole is achieved as a stacked bar/column
             allSeries.push(primarySeries);
-            allSeries.push(filteredOutSeries);
+            allSeries.push(filteredOutSeries as unknown as AgBarSeriesOptions);
         }
         return allSeries;
     }
