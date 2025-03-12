@@ -251,8 +251,8 @@ jobs:
           cache_mode: ro
 
       - name: Check Dirs
-        run: ls -l dist
-          ls -l packages/ag-grid-community/dist
+        run: ls -l packages/ag-grid-community/dist
+             ls -l packages/ag-grid-enterprise/dist
 
       - name: nx test:e2e
         if: matrix.shard != 0
