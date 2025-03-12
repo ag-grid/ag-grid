@@ -218,6 +218,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
         }
 
         if (!column) {
+            // full width rows may not have a column assigned.
             return true;
         }
 
