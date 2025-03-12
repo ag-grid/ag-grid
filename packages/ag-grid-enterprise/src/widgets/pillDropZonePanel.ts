@@ -456,10 +456,12 @@ export abstract class PillDropZonePanel<TPill extends PillDragComp<TItem>, TItem
         const focusedIndex = this.getFocusedItem();
 
         const { eGridDiv } = this.beans;
-        let alternateElement = _findNextFocusableElement(this.beans, eGridDiv);
-
-        if (!alternateElement) {
-            alternateElement = _findNextFocusableElement(this.beans, eGridDiv, false, true);
+        const isKeyboardMode = _isKeyboardMode();
+        let alternateElement: HTMLElement | null = null;
+        if (isKeyboardMode) {
+            alternateElement =
+                _findNextFocusableElement(this.beans, eGridDiv) ??
+                _findNextFocusableElement(this.beans, eGridDiv, false, true);
         }
 
         this.toggleResizable(false);
@@ -480,7 +482,7 @@ export abstract class PillDropZonePanel<TPill extends PillDragComp<TItem>, TItem
         // focus should only be restored when keyboard mode
         // otherwise mouse clicks will cause containers to scroll
         // without no apparent reason.
-        if (_isKeyboardMode()) {
+        if (isKeyboardMode) {
             this.restoreFocus(focusedIndex, alternateElement!);
         }
     }
