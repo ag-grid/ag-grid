@@ -10,14 +10,14 @@ import { Component, RefPlaceholder } from '../widgets/component';
 function buildTemplate(): ElementParams {
     const makeIconParams = (dataRefSuffix: string, classSuffix: string): ElementParams => ({
         tag: 'span',
-        classes: ['ag-sort-indicator-icon', `ag-sort-${classSuffix}`, 'ag-hidden'],
+        class: `ag-sort-indicator-icon ag-sort-${classSuffix} ag-hidden`,
         ref: `eSort${dataRefSuffix}`,
         ariaHidden: true,
     });
 
     return {
         tag: 'span',
-        classes: ['ag-sort-indicator-container'],
+        class: 'ag-sort-indicator-container',
         children: [
             makeIconParams('Order', 'order'),
             makeIconParams('Asc', 'ascending-icon'),

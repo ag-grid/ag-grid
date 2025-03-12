@@ -11,13 +11,13 @@ function buildTemplate(displayFieldTag: keyof HTMLElementTagNameMap): ElementPar
         tag: 'div',
         role: 'presentation',
         children: [
-            { tag: 'div', classes: ['ag-input-field-label'], ref: 'eLabel' },
+            { tag: 'div', class: 'ag-input-field-label', ref: 'eLabel' },
             {
                 tag: 'div',
-                classes: ['ag-wrapper', 'ag-input-wrapper'],
+                class: 'ag-wrapper ag-input-wrapper',
                 ref: 'eWrapper',
                 role: 'presentation',
-                children: [{ tag: displayFieldTag, classes: ['ag-input-field-input'], ref: 'eInput' }],
+                children: [{ tag: displayFieldTag, class: 'ag-input-field-input', ref: 'eInput' }],
             },
         ],
     };

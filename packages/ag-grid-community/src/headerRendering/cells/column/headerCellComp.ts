@@ -19,18 +19,18 @@ export class HeaderCellComp extends AbstractHeaderCellComp<HeaderCellCtrl> {
         super(
             {
                 tag: 'div',
-                classes: ['ag-header-cell'],
+                class: 'ag-header-cell',
                 role: 'columnheader',
                 children: [
                     {
                         tag: 'div',
-                        classes: ['ag-header-cell-resize'],
+                        class: 'ag-header-cell-resize',
                         role: 'presentation',
                         ref: 'eResize',
                     },
                     {
                         tag: 'div',
-                        classes: ['ag-header-cell-comp-wrapper'],
+                        class: 'ag-header-cell-comp-wrapper',
                         role: 'presentation',
                         ref: 'eHeaderCompWrapper',
                     },

@@ -581,16 +581,23 @@ type RoleType = 'presentation' | 'columnheader';
 type TagName = keyof HTMLElementTagNameMap | Lowercase<AgComponentSelector>;
 
 export type ElementParams = {
+    /** The tag name to use, either one of div,span... or one of the AG Grid components such as ag-checkbox */
     tag: TagName;
-    classes?: string[];
+    /**
+     * Should be a single string of space-separated class names
+     * @example
+     * class: 'ag-header-cell ag-header-cell-sortable'
+     */
+    class?: string;
     role?: RoleType;
+    /** AG Grid data-ref attribute */
     ref?: string;
     ariaHidden?: boolean;
     children?: (ElementParams | null)[]; // nulls are allowed to allow for optional children
 };
 
 export function _createElement(params: ElementParams): HTMLElement {
-    const { tag: tagname, role, ref: dataRef, classes: classList, ariaHidden, children } = params;
+    const { tag: tagname, role, ref: dataRef, class: className, ariaHidden, children } = params;
     const element = document.createElement(tagname);
     if (role) {
         element.setAttribute('role', role);
@@ -598,8 +605,8 @@ export function _createElement(params: ElementParams): HTMLElement {
     if (dataRef) {
         element.setAttribute('data-ref', dataRef);
     }
-    if (classList) {
-        element.classList.add(...classList);
+    if (className) {
+        element.className = className;
     }
     if (ariaHidden) {
         element.setAttribute('aria-hidden', 'true');

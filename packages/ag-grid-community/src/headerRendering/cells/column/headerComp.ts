@@ -114,32 +114,32 @@ export interface IInnerHeaderComponent<
 function getHeaderCompElementParams(includeSortIndicator: boolean): ElementParams {
     return {
         tag: 'div',
-        classes: ['ag-cell-label-container'],
+        class: 'ag-cell-label-container',
         role: 'presentation',
         children: [
             {
                 tag: 'span',
                 ref: 'eMenu',
-                classes: ['ag-header-icon', 'ag-header-cell-menu-button'],
+                class: 'ag-header-icon ag-header-cell-menu-button',
                 ariaHidden: true,
             },
             {
                 tag: 'span',
                 ref: 'eFilterButton',
-                classes: ['ag-header-icon', 'ag-header-cell-filter-button'],
+                class: 'ag-header-icon ag-header-cell-filter-button',
                 ariaHidden: true,
             },
             {
                 tag: 'div',
                 ref: 'eLabel',
-                classes: ['ag-header-cell-label'],
+                class: 'ag-header-cell-label',
                 role: 'presentation',
                 children: [
-                    { tag: 'span', ref: 'eText', classes: ['ag-header-cell-text'] },
+                    { tag: 'span', ref: 'eText', class: 'ag-header-cell-text' },
                     {
                         tag: 'span',
                         ref: 'eFilter',
-                        classes: ['ag-header-icon', 'ag-header-label-icon', 'ag-filter-icon'],
+                        class: 'ag-header-icon ag-header-label-icon ag-filter-icon',
                         ariaHidden: true,
                     },
                     includeSortIndicator ? { tag: 'ag-sort-indicator', ref: 'eSortIndicator' } : null,

@@ -52,7 +52,7 @@ export interface IInnerHeaderGroupComponent<
 function buildExpandIcon(iconName: 'expanded' | 'collapsed', dataRef: 'agOpened' | 'agClosed'): ElementParams {
     return {
         tag: 'span',
-        classes: ['ag-header-icon', 'ag-header-expand-icon', `ag-header-expand-icon-${iconName}`],
+        class: `ag-header-icon ag-header-expand-icon ag-header-expand-icon-${iconName}`,
         ref: dataRef,
     };
 }
@@ -69,10 +69,10 @@ export class HeaderGroupComp extends Component implements IHeaderGroupComp {
     constructor() {
         super({
             tag: 'div',
-            classes: ['ag-header-group-cell-label'],
+            class: 'ag-header-group-cell-label',
             role: 'presentation',
             children: [
-                { tag: 'span', ref: 'agLabel', classes: ['ag-header-group-text'], role: 'presentation' },
+                { tag: 'span', ref: 'agLabel', class: 'ag-header-group-text', role: 'presentation' },
                 buildExpandIcon('expanded', 'agOpened'),
                 buildExpandIcon('collapsed', 'agClosed'),
             ],
