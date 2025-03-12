@@ -1,15 +1,3 @@
-import {
-    AgPromise,
-    BeanStub,
-    KeyCode,
-    _addGridCommonParams,
-    _loadTemplate,
-    _preserveRangesWhile,
-    _setAriaDisabled,
-    _setAriaExpanded,
-    _setAriaHasPopup,
-    _setAriaRole,
-} from 'ag-grid-community';
 import type {
     AgEvent,
     BeanCollection,
@@ -28,6 +16,18 @@ import type {
     UserCompDetails,
     UserComponentFactory,
     WithoutGridCommon,
+} from 'ag-grid-community';
+import {
+    AgPromise,
+    BeanStub,
+    KeyCode,
+    _addGridCommonParams,
+    _createElement,
+    _preserveRangesWhile,
+    _setAriaDisabled,
+    _setAriaExpanded,
+    _setAriaHasPopup,
+    _setAriaRole,
 } from 'ag-grid-community';
 
 import { AgMenuList } from './agMenuList';
@@ -178,7 +178,7 @@ export class AgMenuItemComponent extends BeanStub<AgMenuItemComponentEvent> {
 
         this.subMenuIsOpening = true;
 
-        const ePopup = _loadTemplate(/* html */ `<div class="ag-menu" role="presentation"></div>`);
+        const ePopup = _createElement({ tag: 'div', class: 'ag-menu', role: 'presentation' });
         this.eSubMenuGui = ePopup;
         let destroySubMenu: () => void;
         let afterGuiAttached = () => {

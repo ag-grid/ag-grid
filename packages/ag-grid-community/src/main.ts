@@ -1007,6 +1007,7 @@ export {
     _removeFromParent,
     _radioCssClass,
     _loadTemplate,
+    _createElement,
     _isVisible,
     _setFixedWidth,
     _setDisabled,

@@ -19,9 +19,7 @@ export class AgMenuItemRenderer extends Component implements IMenuItemComp {
     private cssClassPrefix: string;
 
     constructor() {
-        super();
-
-        this.setTemplate(/* html */ `<div></div>`);
+        super({ tag: 'div' });
     }
 
     public init(params: IMenuItemParams & AgMenuItemRendererParams): void {

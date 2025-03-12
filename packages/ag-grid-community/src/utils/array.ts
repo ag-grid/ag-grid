@@ -33,8 +33,10 @@ export function _areEqual<T>(
  * https://jsperf.app/for-for-of-for-in-foreach-comparison
  */
 export function _forAll<T>(array: T[] | undefined, callback: (value: T) => void) {
-    const arr = array ?? _EmptyArray;
-    for (const value of arr) {
+    if (!array) {
+        return;
+    }
+    for (const value of array) {
         callback(value);
     }
 }

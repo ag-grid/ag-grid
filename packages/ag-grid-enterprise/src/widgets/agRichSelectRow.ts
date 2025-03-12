@@ -38,7 +38,11 @@ export class RichSelectRow<TValue> extends Component {
     private shouldDisplayTooltip?: () => boolean;
 
     constructor(private readonly params: RichSelectParams<TValue>) {
-        super(/* html */ `<div class="ag-rich-select-row" role="presentation"></div>`);
+        super({
+            tag: 'div',
+            class: 'ag-rich-select-row',
+            role: 'presentation',
+        });
     }
 
     public postConstruct(): void {

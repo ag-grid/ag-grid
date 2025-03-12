@@ -28,7 +28,10 @@ export class MultiFloatingFilterComp extends Component implements IFloatingFilte
     private params: IFloatingFilterParams<MultiFilter>;
 
     constructor() {
-        super(/* html */ `<div class="ag-multi-floating-filter ag-floating-filter-input"></div>`);
+        super({
+            tag: 'div',
+            class: 'ag-multi-floating-filter ag-floating-filter-input',
+        });
     }
 
     public init(params: IFloatingFilterParams<MultiFilter>): AgPromise<void> {

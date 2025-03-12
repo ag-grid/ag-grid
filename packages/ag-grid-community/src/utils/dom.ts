@@ -407,9 +407,9 @@ export function _setElementWidth(element: HTMLElement, width: string | number) {
 
 export function _setFixedWidth(element: HTMLElement, width: string | number) {
     width = _formatSize(width);
-    element.style.width = width.toString();
-    element.style.maxWidth = width.toString();
-    element.style.minWidth = width.toString();
+    element.style.width = width;
+    element.style.maxWidth = width;
+    element.style.minWidth = width;
 }
 
 export function _setElementHeight(element: HTMLElement, height: string | number) {
@@ -425,17 +425,13 @@ export function _setElementHeight(element: HTMLElement, height: string | number)
 
 export function _setFixedHeight(element: HTMLElement, height: string | number) {
     height = _formatSize(height);
-    element.style.height = height.toString();
-    element.style.maxHeight = height.toString();
-    element.style.minHeight = height.toString();
+    element.style.height = height;
+    element.style.maxHeight = height;
+    element.style.minHeight = height;
 }
 
 export function _formatSize(size: number | string) {
-    if (typeof size === 'number') {
-        return `${size}px`;
-    }
-
-    return size;
+    return typeof size === 'number' ? `${size}px` : size.toString();
 }
 
 export function _isNodeOrElement(o: any): o is Node | Element {
@@ -478,13 +474,13 @@ export function _addOrRemoveAttribute(element: HTMLElement, name: string, value:
     }
 }
 
-export function _nodeListForEach<T extends Node>(nodeList: NodeListOf<T> | null, action: (value: T) => void): void {
+function _nodeListForEach<T extends Node>(nodeList: NodeListOf<T> | null, action: (value: T) => void): void {
     if (nodeList == null) {
         return;
     }
 
-    for (let i = 0; i < nodeList.length; i++) {
-        action(nodeList[i]);
+    for (const node of nodeList) {
+        action(node);
     }
 }
 

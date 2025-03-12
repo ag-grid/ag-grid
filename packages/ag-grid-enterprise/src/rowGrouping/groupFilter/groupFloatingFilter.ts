@@ -28,9 +28,12 @@ export class GroupFloatingFilterComp extends Component implements IFloatingFilte
     private haveAddedColumnListeners: boolean = false;
 
     constructor() {
-        super(/* html */ `
-            <div data-ref="eFloatingFilter" class="ag-group-floating-filter ag-floating-filter-input" role="presentation"></div>
-        `);
+        super({
+            tag: 'div',
+            class: 'ag-group-floating-filter ag-floating-filter-input',
+            ref: 'eFloatingFilter',
+            role: 'presentation',
+        });
     }
 
     public init(params: IFloatingFilterParams<GroupFilter>): AgPromise<void> {
