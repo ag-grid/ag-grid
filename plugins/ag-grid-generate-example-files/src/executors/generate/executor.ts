@@ -16,7 +16,6 @@ import type { ExampleConfig, GeneratedContents, GridOptionsType, InternalFramewo
 import { FRAMEWORKS, TYPESCRIPT_INTERNAL_FRAMEWORKS } from './generator/types';
 import {
     convertTsxToJsx,
-    formatFile,
     getBoilerPlateFiles,
     getEntryFileName,
     getIsEnterprise,
@@ -26,6 +25,7 @@ import {
     getProvidedExampleFolder,
     getTransformTsFileExt,
 } from './generator/utils/fileUtils';
+import { formatFile } from './generator/utils/fileFormatUtils';
 import { frameworkFilesGenerator } from './generator/utils/frameworkFilesGenerator';
 import { getOtherScriptFiles, getUseFetchJsonFile } from './generator/utils/getOtherScriptFiles';
 import { getPackageJson } from './generator/utils/getPackageJson';

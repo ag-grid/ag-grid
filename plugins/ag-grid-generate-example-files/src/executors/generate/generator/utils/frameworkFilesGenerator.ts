@@ -13,7 +13,8 @@ import {
 import type { InternalFramework, ParsedBindings } from '../types';
 import type { ExampleConfig, FileContents } from '../types';
 import { deepCloneObject } from './deepCloneObject';
-import { convertTsxToJsx, formatFile, getBoilerPlateFiles, getEntryFileName, getMainFileName } from './fileUtils';
+import { convertTsxToJsx, getBoilerPlateFiles, getEntryFileName, getMainFileName } from './fileUtils';
+import { formatFile } from './fileFormatUtils';
 
 interface FrameworkFiles {
     files: FileContents;
