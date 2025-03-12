@@ -147,7 +147,7 @@ export class HeaderRowContainerCtrl extends BeanStub implements ScrollPartner {
 
     public getHeaderCtrlForColumn(column: AgColumn | AgColumnGroup): AbstractHeaderCellCtrl | undefined {
         if (isColumn(column)) {
-            return this.columnsRowCtrl?.getHeaderCellCtrl(column);
+            return this.columnsRowCtrl?.findHeaderCellCtrl(column);
         }
 
         if (this.groupsRowCtrls.length === 0) {
@@ -155,7 +155,7 @@ export class HeaderRowContainerCtrl extends BeanStub implements ScrollPartner {
         }
 
         for (let i = 0; i < this.groupsRowCtrls.length; i++) {
-            const ctrl = this.groupsRowCtrls[i].getHeaderCellCtrl(column);
+            const ctrl = this.groupsRowCtrls[i].findHeaderCellCtrl(column);
 
             if (ctrl) {
                 return ctrl;
