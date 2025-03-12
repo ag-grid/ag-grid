@@ -144,6 +144,10 @@ export function _getRowAbove(beans: BeanCollection, rowPosition: RowPosition): R
         return { rowIndex: pageBounds.getLastRow(), rowPinned: null };
     }
 
+    if (index === 0) {
+        return null;
+    }
+
     const rowNode = pinned ? undefined : rowModel.getRow(index);
     return getNextStickyPosition(beans, rowNode, true) ?? { rowIndex: index - 1, rowPinned: pinned };
 }
