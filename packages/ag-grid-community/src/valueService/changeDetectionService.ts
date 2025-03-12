@@ -52,6 +52,9 @@ export class ChangeDetectionService extends BeanStub implements NamedBean {
             // add all nodes impacted by aggregation, as they need refreshed also.
             changedPath.forEachChangedNodeDepthFirst((rowNode) => {
                 nodesToRefresh.push(rowNode);
+                if (rowNode.sibling) {
+                    nodesToRefresh.push(rowNode.sibling);
+                }
             });
         }
 

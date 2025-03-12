@@ -85,6 +85,8 @@ import type {
     FilterChangedEvent,
     FilterModifiedEvent,
     FilterOpenedEvent,
+    FindChangedEvent,
+    FindOptions,
     FirstDataRenderedEvent,
     FocusGridInnerElementParams,
     FullWidthCellKeyDownEvent,
@@ -664,6 +666,12 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * @initial
      */
     @Input() public excelStyles: ExcelStyle[] | undefined = undefined;
+    /** Text to find within the grid.
+     */
+    @Input() public findSearchValue: string | undefined = undefined;
+    /** Options for the Find feature.
+     */
+    @Input() public findOptions: FindOptions | undefined = undefined;
     /** Rows are filtered using this text as a Quick Filter.
      * Only supported for Client-Side Row Model.
      */
@@ -1192,6 +1200,12 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * It supports accessing nested fields using the dot notation.
      */
     @Input() public treeDataChildrenField: string | undefined = undefined;
+    /** The name of the field to use in a data item to find the parent node of a node when using treeData=true.
+     * The tree will be constructed via relationships between nodes using this field.
+     * getRowId callback need to be provided as well for this to work.
+     * It supports accessing nested fields using the dot notation.
+     */
+    @Input() public treeDataParentIdField: string | undefined = undefined;
     /** Set to `true` to suppress sort indicators and actions from the row group panel.
      * @default false
      */
@@ -1324,7 +1338,8 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * @default false
      */
     @Input({ transform: booleanAttribute }) public suppressScrollWhenPopupsAreOpen: boolean | undefined = undefined;
-    /** When `true`, the grid will not use animation frames when drawing rows while scrolling. Use this if the grid is working fast enough that you don't need animation frames and you don't want the grid to flicker.
+    /** When `true`, the grid will not use animation frames when drawing rows while scrolling. Use this if and only if the grid is working fast enough on all users machines and you want to avoid the temporarily empty rows.
+     *     **Note:** It is not recommended to set suppressAnimationFrame to `true` in most use cases as this can seriously degrade the user experience as all cells are rendered synchronously blocking the UI thread from scrolling.
      * @default false
      * @initial
      */
@@ -1510,6 +1525,15 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * @see https://developer.mozilla.org/en-US/docs/Web/CSS/@layer
      */
     @Input() public themeCssLayer: string | undefined = undefined;
+    /** The nonce attribute to set on style elements added to the document by
+     * themes. If "foo" is passed to this property, the grid can use the Content
+     * Security Policy `style-src 'nonce-foo'`, instead of the less secure
+     * `style-src 'unsafe-inline'`.
+     *
+     * Note: CSP nonces are global to a page, where a page has multiple grids,
+     * every one must have the same styleNonce set.
+     */
+    @Input() public styleNonce: string | undefined = undefined;
     /** An element to insert style elements into when injecting styles into the
      * grid. If undefined, styles will be added to the document head for grids
      * rendered in the main document fragment, or to the grid wrapper element
@@ -1925,6 +1949,9 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Output() public advancedFilterBuilderVisibleChanged: EventEmitter<
         AdvancedFilterBuilderVisibleChangedEvent<TData>
     > = new EventEmitter<AdvancedFilterBuilderVisibleChangedEvent<TData>>();
+    /** Find details have changed (e.g. Find search value, active match, or updates to grid cells).
+     */
+    @Output() public findChanged: EventEmitter<FindChangedEvent<TData>> = new EventEmitter<FindChangedEvent<TData>>();
     /** A chart has been created.
      */
     @Output() public chartCreated: EventEmitter<ChartCreatedEvent<TData>> = new EventEmitter<
@@ -2110,7 +2137,8 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     /** Row is selected or deselected. The event contains the node in question, so call the node's `isSelected()` method to see if it was just selected or deselected.
      */
     @Output() public rowSelected: EventEmitter<RowSelectedEvent<TData>> = new EventEmitter<RowSelectedEvent<TData>>();
-    /** Row selection is changed. Use the grid API `getSelectedNodes()` or `getSelectedRows()` to get the new list of selected nodes / row data.
+    /** Row selection is changed. Use the `selectedNodes` field to get the list of selected nodes at the time of the event. When using the SSRM, `selectedNodes` will be `null`
+     * when selecting all nodes. Instead, refer to the `serverSideState` field.
      */
     @Output() public selectionChanged: EventEmitter<SelectionChangedEvent<TData>> = new EventEmitter<
         SelectionChangedEvent<TData>

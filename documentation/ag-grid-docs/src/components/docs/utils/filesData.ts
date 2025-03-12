@@ -24,7 +24,7 @@ interface PageImages {
 }
 
 function ignoreUnderscoreFiles(page: DocsPage) {
-    const pageFolders = page.slug.split('/');
+    const pageFolders = page.id.split('/');
     const pageName = pageFolders[pageFolders.length - 1];
     return pageName && !pageName.startsWith('_');
 }
@@ -57,7 +57,7 @@ export const getInternalFrameworkExamples = async ({
     pages: DocsPage[];
 }): Promise<InternalFrameworkExample[]> => {
     const examplePromises = pages.map(async (page) => {
-        const pageName = page.slug;
+        const pageName = page.id;
         const docsExamplesPath = getExamplesPath({
             pageName,
         });

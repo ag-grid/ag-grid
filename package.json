@@ -1,15 +1,13 @@
 {
   "name": "ag-grid",
-  "version": "33.1.0",
+  "version": "33.1.1",
   "license": "MIT",
   "scripts": {
     "compressVideo": "tsx external/ag-website-shared/scripts/compress-video",
-    "build-generators": "nx run-many -p ag-grid-generate-code-reference-files,ag-grid-task-autogen,ag-grid-generate-example-files -t build && npm run build:css",
+    "build-generators": "nx run-many -p ag-grid-generate-code-reference-files,ag-grid-task-autogen,ag-grid-generate-example-files -t build && nx run-many -t build:css",
     "subrepo": "tsx external/ag-shared/scripts/subrepo",
     "postinstall": "patch-package && yarn run build-generators",
-    "bootstrap": "SHARP_IGNORE_GLOBAL_LIBVIPS=true YARN_REGISTRY=\"http://52.50.158.57:4873\" yarn",
-    "build:css": "tsx scripts/build-css.ts",
-    "build:css-debug": "CSS_DEBUG=1 tsx scripts/build-css.ts"
+    "bootstrap": "SHARP_IGNORE_GLOBAL_LIBVIPS=true YARN_REGISTRY=\"http://52.50.158.57:4873\" yarn"
   },
   "private": true,
   "engines": {
@@ -83,7 +81,7 @@
     "typescript": "~5.2.2",
     "typescript-eslint": "^7.9.0",
     "vite": "~5.0.13",
-    "vitest": "^2.0.5"
+    "vitest": "2.1.6"
   },
   "workspaces": {
     "packages": [

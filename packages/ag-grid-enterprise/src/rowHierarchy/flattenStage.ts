@@ -1,24 +1,21 @@
 import type {
     ClientSideRowModelStage,
-    GetGroupIncludeFooterParams,
     GridOptions,
     IRowNodeStage,
     NamedBean,
     RowNode,
     StageExecuteParams,
-    WithoutGridCommon,
 } from 'ag-grid-community';
-import { BeanStub, _getGrandTotalRow, _getGroupTotalRowCallback, _isGroupMultiAutoColumn } from 'ag-grid-community';
+import { BeanStub } from 'ag-grid-community';
 
 import { _createRowNodeFooter, _destroyRowNodeFooter } from '../aggregation/footerUtils';
-
-interface FlattenDetails {
-    hideOpenParents: boolean;
-    groupHideParentOfSingleChild: GridOptions['groupHideParentOfSingleChild'];
-    isGroupMultiAutoColumn: boolean;
-    grandTotalRow: 'top' | 'bottom' | undefined;
-    groupTotalRow: (params: WithoutGridCommon<GetGroupIncludeFooterParams<any, any>>) => 'top' | 'bottom' | undefined;
-}
+import type { FlattenDetails } from './flattenUtils';
+import {
+    _getFlattenDetails,
+    _isRemovedLowestSingleChildrenGroup,
+    _isRemovedSingleChildrenGroup,
+    _shouldRowBeRendered,
+} from './flattenUtils';
 
 export class FlattenStage extends BeanStub implements IRowNodeStage<RowNode[]>, NamedBean {
     beanName = 'flattenStage' as const;
@@ -44,7 +41,7 @@ export class FlattenStage extends BeanStub implements IRowNodeStage<RowNode[]>, 
         const showRootNode = skipLeafNodes && rootNode.leafGroup;
         const topList = showRootNode ? [rootNode] : rootNode.childrenAfterSort;
 
-        const details = this.getFlattenDetails();
+        const details = _getFlattenDetails(this.gos);
 
         this.recursivelyAddToRowsToDisplay(details, topList, result, skipLeafNodes, 0);
 
@@ -66,23 +63,6 @@ export class FlattenStage extends BeanStub implements IRowNodeStage<RowNode[]>, 
         return result;
     }
 
-    private getFlattenDetails(): FlattenDetails {
-        let groupHideParentOfSingleChild = this.gos.get('groupHideParentOfSingleChild');
-        if (!groupHideParentOfSingleChild) {
-            groupHideParentOfSingleChild = this.gos.get('groupRemoveSingleChildren');
-            if (!groupHideParentOfSingleChild && this.gos.get('groupRemoveLowestSingleChildren')) {
-                groupHideParentOfSingleChild = 'leafGroupsOnly';
-            }
-        }
-        return {
-            groupHideParentOfSingleChild,
-            isGroupMultiAutoColumn: _isGroupMultiAutoColumn(this.gos),
-            hideOpenParents: this.gos.get('groupHideOpenParents'),
-            grandTotalRow: _getGrandTotalRow(this.gos),
-            groupTotalRow: _getGroupTotalRowCallback(this.gos),
-        };
-    }
-
     private recursivelyAddToRowsToDisplay(
         details: FlattenDetails,
         rowsToFlatten: RowNode[] | null,
@@ -100,30 +80,18 @@ export class FlattenStage extends BeanStub implements IRowNodeStage<RowNode[]>, 
             // check all these cases, for working out if this row should be included in the final mapped list
             const isParent = rowNode.hasChildren();
 
-            const isSkippedLeafNode = skipLeafNodes && !isParent;
+            const isRemovedSingleChildrenGroup = _isRemovedSingleChildrenGroup(details, rowNode, isParent);
 
-            const isRemovedSingleChildrenGroup =
-                details.groupHideParentOfSingleChild === true && isParent && rowNode.childrenAfterGroup!.length === 1;
+            const isRemovedLowestSingleChildrenGroup = _isRemovedLowestSingleChildrenGroup(details, rowNode, isParent);
 
-            const isRemovedLowestSingleChildrenGroup =
-                details.groupHideParentOfSingleChild === 'leafGroupsOnly' &&
-                isParent &&
-                rowNode.leafGroup &&
-                rowNode.childrenAfterGroup!.length === 1;
-
-            // hide open parents means when group is open, we don't show it. we also need to make sure the
-            // group is expandable in the first place (as leaf groups are not expandable if pivot mode is on).
-            // the UI will never allow expanding leaf  groups, however the user might via the API (or menu option 'expand all row groups')
-            const neverAllowToExpand = skipLeafNodes && rowNode.leafGroup;
-
-            const isHiddenOpenParent =
-                details.hideOpenParents && rowNode.expanded && !rowNode.master && !neverAllowToExpand;
-
-            const thisRowShouldBeRendered =
-                !isSkippedLeafNode &&
-                !isHiddenOpenParent &&
-                !isRemovedSingleChildrenGroup &&
-                !isRemovedLowestSingleChildrenGroup;
+            const thisRowShouldBeRendered = _shouldRowBeRendered(
+                details,
+                rowNode,
+                isParent,
+                skipLeafNodes,
+                isRemovedSingleChildrenGroup,
+                isRemovedLowestSingleChildrenGroup
+            );
 
             if (thisRowShouldBeRendered) {
                 this.addRowNodeToRowsToDisplay(details, rowNode, result, uiLevel);

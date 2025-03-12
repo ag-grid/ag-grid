@@ -604,13 +604,7 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
     }
 
     public getSelectionState(): string[] | null {
-        const selectedIds: string[] = [];
-        this.selectedNodes.forEach((node) => {
-            if (node?.id) {
-                selectedIds.push(node.id);
-            }
-        });
-        return selectedIds.length ? selectedIds : null;
+        return this.isEmpty() ? null : Array.from(this.selectedNodes.keys());
     }
 
     public setSelectionState(
@@ -783,6 +777,15 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
             default:
                 break;
         }
+    }
+
+    private dispatchSelectionChanged(source: SelectionEventSourceType): void {
+        this.eventSvc.dispatchEvent({
+            type: 'selectionChanged',
+            source,
+            selectedNodes: this.getSelectedNodes(),
+            serverSideState: null,
+        });
     }
 }
 

@@ -13,10 +13,8 @@ function resolvePath(srcPath) {
 
 export default getViteConfig({
     root: __dirname,
-    cacheDir: '../../node_modules/.vite/test',
     test: {
         globals: true,
-        cacheDir: '../../node_modules/.vitest',
         environment: 'node',
         include: ['src/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}'],
         reporters: ['default'],

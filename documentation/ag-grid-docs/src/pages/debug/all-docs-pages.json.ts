@@ -23,9 +23,9 @@ function getAllPathsRecursively(menuSection: MenuSection) {
 }
 
 async function getAllMenuPages() {
-    const { data: headerData } = await getEntry('site-header', 'siteHeader');
-    const { data: apiNavData } = await getEntry('api-nav', 'apiNav');
-    const { data: docsNavData } = await getEntry('docs-nav', 'docsNav');
+    const { data: headerData } = await getEntry('siteHeader', 'header');
+    const { data: apiNavData } = await getEntry('apiNav', 'nav');
+    const { data: docsNavData } = await getEntry('docsNav', 'nav');
 
     const menuPages = {
         header: getAllPathsRecursively(headerData),

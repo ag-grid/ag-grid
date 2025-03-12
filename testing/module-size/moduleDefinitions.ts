@@ -47,11 +47,11 @@ export const AllGridCommunityModules: Record<`${CommunityModuleName}Module`, num
     UndoRedoEditModule: 23.5,
     ValidationModule: 74.31,
     ValueCacheModule: 0.65,
-    CellSpanModule: 6.99,
+    CellSpanModule: 8.08,
 };
 export const AllEnterpriseModules: Record<`${EnterpriseModuleName}Module`, number> = {
     AdvancedFilterModule: 200,
-    AllEnterpriseModule: 1310,
+    AllEnterpriseModule: 1357.11,
     CellSelectionModule: 53,
     ClipboardModule: 46,
     ColumnMenuModule: 147,
@@ -59,17 +59,18 @@ export const AllEnterpriseModules: Record<`${EnterpriseModuleName}Module`, numbe
     ContextMenuModule: 70,
     ExcelExportModule: 84,
     FiltersToolPanelModule: 116,
+    FindModule: 14.51,
     GridChartsModule: 67,
     IntegratedChartsModule: 385.33,
     GroupFilterModule: 93,
     MasterDetailModule: 82,
     MenuModule: 153,
     MultiFilterModule: 121,
-    PivotModule: 91,
+    PivotModule: 87.97,
     RangeSelectionModule: 53,
     RichSelectModule: 77,
     RowNumbersModule: 26,
-    RowGroupingModule: 78,
+    RowGroupingModule: 74.88,
     RowGroupingPanelModule: 71,
     ServerSideRowModelApiModule: 19,
     ServerSideRowModelModule: 147,
@@ -77,7 +78,7 @@ export const AllEnterpriseModules: Record<`${EnterpriseModuleName}Module`, numbe
     SideBarModule: 32,
     SparklinesModule: 20,
     StatusBarModule: 27,
-    TreeDataModule: 87,
+    TreeDataModule: 91.6,
     ViewportRowModelModule: 26,
 };
 
@@ -115,19 +116,19 @@ const commonFeatureSets: ModuleTest[] = [
 const chartModules: ModuleTest[] = [
     {
         modules: ['AgChartsCommunityModule' as any, 'IntegratedChartsModule'],
-        expectedSize: 1170,
+        expectedSize: 1209.02,
     },
     {
         modules: ['AgChartsEnterpriseModule' as any, 'IntegratedChartsModule'],
-        expectedSize: 1840,
+        expectedSize: 1917.52,
     },
     {
         modules: ['AgChartsCommunityModule' as any, 'SparklinesModule'],
-        expectedSize: 808,
+        expectedSize: 834.4,
     },
     {
         modules: ['AgChartsEnterpriseModule' as any, 'SparklinesModule'],
-        expectedSize: 1500,
+        expectedSize: 1549.16,
     },
 ];
 

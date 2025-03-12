@@ -12,5 +12,5 @@ const Heading = `h${level}`;
 
 <Heading id={id}>
     <slot />
-    <LinkIcon href={`#${id}`} />
+    <LinkIcon href={`#${id}`} client:load />
 </Heading>

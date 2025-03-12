@@ -25,7 +25,6 @@ ModuleRegistry.registerModules([
 ]);
 
 const GridExample = () => {
-    const [rowData, setRowData] = useState<any[]>();
     const columnDefs = useMemo<ColDef[]>(
         () => [
             {
@@ -50,15 +49,7 @@ const GridExample = () => {
         []
     );
 
-    const onGridReady = (params: GridReadyEvent) => {
-        const updateData = (data: any[]) => {
-            setRowData(data);
-        };
-
-        fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
-            .then((resp) => resp.json())
-            .then((data) => updateData(data));
-    };
+    const { data, loading } = useFetchJson<IOlympicData>('https://www.ag-grid.com/example-assets/olympic-winners.json');
 
     const defaultColDef = useMemo(
         () => ({
@@ -81,10 +72,10 @@ const GridExample = () => {
                 </div>
                 <div id="myGrid" style={{ height: '100%', width: '100%' }}>
                     <AgGridReact
-                        rowData={rowData}
+                        rowData={data}
+                        loading={loading}
                         columnDefs={columnDefs}
                         defaultColDef={defaultColDef}
-                        onGridReady={onGridReady}
                     />
                 </div>
                 <div className="form-container">

@@ -47,6 +47,10 @@
                 defaultExtension: 'js',
                 format: 'cjs',
             },
+            'ag-charts-core': {
+                defaultExtension: 'js',
+                format: 'cjs',
+            },
             'ag-charts-community': {
                 defaultExtension: 'js',
                 format: 'cjs',

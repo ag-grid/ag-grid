@@ -9,15 +9,22 @@ import { BeanStub, _error, _isMultiRowSelection, _isUsingNewRowSelectionAPI, _wa
 import type { ISelectionStrategy } from './iSelectionStrategy';
 
 interface SelectedState {
+    /** Base selection state for all nodes, whether they have been loaded or not */
     selectAll: boolean;
+    /** RowNode IDs of those nodes whose selection state differs from the base state */
     toggledNodes: Set<string>;
 }
 
 export class DefaultStrategy extends BeanStub implements ISelectionStrategy {
     private selectedState: SelectedState = { selectAll: false, toggledNodes: new Set() };
 
-    private selectAllUsed: boolean = false;
-    // this is to prevent regressions, default selectionSvc retains reference of clicked nodes.
+    /**
+     * Whether select-all functionality has ever been used. Used only to print warnings in `getSelectedNodes` for users.
+     * We print a warning even if not currently selecting all because we want users to be aware of the potential
+     * for unexpected behaviour when these two features are used together.
+     */
+    private selectAllUsed = false;
+    /** This is to prevent regressions, default selectionSvc retains reference of selected nodes. */
     private selectedNodes: { [key: string]: RowNode } = {};
 
     public getSelectedState(): IServerSideSelectionState {
@@ -147,15 +154,24 @@ export class DefaultStrategy extends BeanStub implements ISelectionStrategy {
         return this.selectedState.selectAll ? !isToggled : isToggled;
     }
 
-    public getSelectedNodes(): RowNode<any>[] {
-        if (this.selectAllUsed) {
+    public getSelectedNodes(nullWhenSelectAll = false, warnWhenSelectAll = true): RowNode<any>[] | null {
+        const {
+            selectedState: { selectAll },
+            selectedNodes,
+            selectAllUsed,
+        } = this;
+
+        // We warn when select all has ever been used, even if not currently active, to help users avoid this codepath
+        // early in their devloop.
+        if (warnWhenSelectAll && selectAllUsed) {
             _warn(199);
         }
-        return Object.values(this.selectedNodes);
+
+        return nullWhenSelectAll && selectAll ? null : Object.values(selectedNodes);
     }
 
     public getSelectedRows(): any[] {
-        return this.getSelectedNodes().map((node) => node.data);
+        return (this.getSelectedNodes() ?? []).map((node) => node.data);
     }
 
     public getSelectionCount(): number {
@@ -170,14 +186,18 @@ export class DefaultStrategy extends BeanStub implements ISelectionStrategy {
     }
 
     public selectAllRowNodes(): void {
-        this.selectedState = { selectAll: true, toggledNodes: new Set() };
-        this.selectedNodes = {};
-        this.selectAllUsed = true;
+        this.reset(true);
     }
 
     public deselectAllRowNodes(): void {
-        this.selectedState = { selectAll: false, toggledNodes: new Set() };
+        this.reset(false);
+    }
+
+    private reset(selectAll: boolean): void {
+        this.selectedState = { selectAll, toggledNodes: new Set() };
         this.selectedNodes = {};
+        // If we have ever used select-all, we keep this flag true.
+        this.selectAllUsed ||= selectAll;
     }
 
     public getSelectAllState(): boolean | null {

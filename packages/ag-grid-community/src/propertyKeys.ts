@@ -54,6 +54,7 @@ const STRING_GRID_OPTIONS: KeysWithType<string>[] = [
     'groupDisplayType',
     'treeDataDisplayType',
     'treeDataChildrenField',
+    'treeDataParentIdField',
     'colResizeDefault',
     'tooltipTrigger',
     'serverSidePivotResultFieldSeparator',
@@ -61,6 +62,8 @@ const STRING_GRID_OPTIONS: KeysWithType<string>[] = [
     'tooltipShowMode',
     'grandTotalRow',
     'themeCssLayer',
+    'findSearchValue',
+    'styleNonce',
 ];
 
 // only used internally
@@ -100,6 +103,7 @@ const OBJECT_GRID_OPTIONS: KeysLike<object | HTMLElement>[] = [
     'initialState',
     'autoSizeStrategy',
     'selectionColumnDef',
+    'findOptions',
 ];
 
 // only used internally

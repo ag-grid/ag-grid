@@ -39,7 +39,7 @@ import { _isBrowserSafari } from '../../utils/browser';
 import { _addOrRemoveAttribute, _isElementChildOfClass, _isFocusableFormField, _isVisible } from '../../utils/dom';
 import { _isStopPropagationForAgGrid } from '../../utils/event';
 import { _findNextFocusableElement } from '../../utils/focus';
-import { _executeNextVMTurn } from '../../utils/function';
+import { _batchCall } from '../../utils/function';
 import { _exists, _makeNull } from '../../utils/generic';
 import { _escapeString } from '../../utils/string';
 import type { Component } from '../../widgets/component';
@@ -209,8 +209,9 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         this.initialiseRowComp(gui);
 
         const isSsrmLoadingRow = this.rowType === 'FullWidthLoading' || this.rowNode.stub;
+        const isIrmLoadingRow = !this.rowNode.data && this.beans.rowModel.getType() === 'infinite';
         // pinned rows render before the main grid body in the SSRM, only fire the event after the main body has rendered.
-        if (!isSsrmLoadingRow && !this.rowNode.rowPinned) {
+        if (!isSsrmLoadingRow && !isIrmLoadingRow && !this.rowNode.rowPinned) {
             // this is fired within setComp as we know that the component renderer is now trying to render.
             // linked with the fact the function implementation queues behind requestAnimationFrame should allow
             // us to be certain that all rendering is done by the time the event fires.
@@ -273,7 +274,8 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
             this.beans.animationFrameSvc!.createTask(
                 this.addHoverFunctionality.bind(this, gui),
                 this.rowNode.rowIndex!,
-                'createTasksP2'
+                'p2',
+                false
             );
         } else {
             this.addHoverFunctionality(gui);
@@ -327,7 +329,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
 
         const shouldSlide = this.slideInAnimation[containerType];
         if (shouldSlide) {
-            _executeNextVMTurn(() => {
+            _batchCall(() => {
                 this.onTopChanged();
             });
             this.slideInAnimation[containerType] = false;
@@ -335,7 +337,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
 
         const shouldFade = this.fadeInAnimation[containerType];
         if (shouldFade) {
-            _executeNextVMTurn(() => {
+            _batchCall(() => {
                 gui.rowComp.addOrRemoveCssClass('ag-opacity-zero', false);
             });
             this.fadeInAnimation[containerType] = false;
@@ -444,8 +446,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         }
 
         const { animationFrameSvc } = this.beans;
-        const noAnimation =
-            !animationFrameSvc || suppressAnimationFrame || this.gos.get('suppressAnimationFrame') || this.printLayout;
+        const noAnimation = !animationFrameSvc?.active || suppressAnimationFrame || this.printLayout;
 
         if (noAnimation) {
             this.updateColumnListsImpl(useFlushSync);
@@ -463,7 +464,8 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
                 this.updateColumnListsImpl(true);
             },
             this.rowNode.rowIndex!,
-            'createTasksP1'
+            'p1',
+            false
         );
         this.updateColumnListsPending = true;
     }
@@ -855,10 +857,6 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         this.allRowGuis.forEach((gui) => gui.rowComp.addOrRemoveCssClass('ag-row-dragging', dragging));
     }
 
-    public verifyCells(): void {
-        this.onDisplayedColumnsChanged();
-    }
-
     private onDisplayedColumnsChanged(): void {
         // we skip animations for onDisplayedColumnChanged, as otherwise the client could remove columns and
         // then set data, and any old valueGetter's (ie from cols that were removed) would still get called.
@@ -963,7 +961,21 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
             ? false
             : this.isFullWidth() && event.rowIndex === node.rowIndex && event.rowPinned == node.rowPinned;
 
-        const element = this.fullWidthGui ? this.fullWidthGui.element : this.centerGui?.element;
+        let element: HTMLElement | undefined;
+
+        if (this.fullWidthGui) {
+            element = this.fullWidthGui.element;
+        } else {
+            const column = this.beans.colModel.getCol(event?.column);
+            const pinned = column?.pinned;
+
+            if (pinned) {
+                element = pinned === 'right' ? this.rightGui?.element : this.leftGui?.element;
+            } else {
+                element = this.centerGui?.element;
+            }
+        }
+
         if (!element) {
             return;
         } // can happen with react ui, comp not yet ready
@@ -1163,6 +1175,10 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
             case 'FullWidthDetail':
                 return _getFullWidthDetailCellRendererDetails(compFactory, params)!;
             case 'FullWidthGroup':
+                params.value = rowNode.groupValue;
+                params.valueFormatted = rowNode.rowGroupColumn
+                    ? this.beans.valueSvc.formatValue(rowNode.rowGroupColumn, rowNode, params.value)
+                    : params.value;
                 return _getFullWidthGroupCellRendererDetails(compFactory, params)!;
             case 'FullWidthLoading':
                 return _getFullWidthLoadingCellRendererDetails(compFactory, params)!;

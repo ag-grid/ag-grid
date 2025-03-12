@@ -56,6 +56,7 @@ import type {
     FilterChangedEvent,
     FilterModifiedEvent,
     FilterOpenedEvent,
+    FindChangedEvent,
     FirstDataRenderedEvent,
     FullWidthCellKeyDownEvent,
     GridColumnsChangedEvent,
@@ -159,6 +160,7 @@ import type { Column } from '../interfaces/iColumn';
 import type { AgGridCommon } from '../interfaces/iCommon';
 import type { IDatasource } from '../interfaces/iDatasource';
 import type { ExcelExportParams, ExcelStyle } from '../interfaces/iExcelCreator';
+import type { FindOptions } from '../interfaces/iFind';
 import type { HeaderPosition } from '../interfaces/iHeaderPosition';
 import type { ILoadingCellRendererParams } from '../interfaces/iLoadingCellRenderer';
 import type { IRowDragItem } from '../interfaces/iRowDragItem';
@@ -554,6 +556,16 @@ export interface GridOptions<TData = any> {
      * @initial
      */
     excelStyles?: ExcelStyle[];
+
+    // *** Find *** //
+    /**
+     * Text to find within the grid.
+     */
+    findSearchValue?: string;
+    /**
+     * Options for the Find feature.
+     */
+    findOptions?: FindOptions;
 
     // *** Filter *** //
     /**
@@ -1243,6 +1255,14 @@ export interface GridOptions<TData = any> {
     treeDataChildrenField?: string;
 
     /**
+     * The name of the field to use in a data item to find the parent node of a node when using treeData=true.
+     * The tree will be constructed via relationships between nodes using this field.
+     * getRowId callback need to be provided as well for this to work.
+     * It supports accessing nested fields using the dot notation.
+     */
+    treeDataParentIdField?: string;
+
+    /**
      * Set to `true` to suppress sort indicators and actions from the row group panel.
      * @default false
      */
@@ -1423,7 +1443,8 @@ export interface GridOptions<TData = any> {
      */
     suppressScrollWhenPopupsAreOpen?: boolean;
     /**
-     * When `true`, the grid will not use animation frames when drawing rows while scrolling. Use this if the grid is working fast enough that you don't need animation frames and you don't want the grid to flicker.
+     * When `true`, the grid will not use animation frames when drawing rows while scrolling. Use this if and only if the grid is working fast enough on all users machines and you want to avoid the temporarily empty rows.
+     * **Note:** It is not recommended to set suppressAnimationFrame to `true` in most use cases as this can seriously degrade the user experience as all cells are rendered synchronously blocking the UI thread from scrolling.
      * @default false
      * @initial
      */
@@ -1677,6 +1698,17 @@ export interface GridOptions<TData = any> {
      * @see https://developer.mozilla.org/en-US/docs/Web/CSS/@layer
      */
     themeCssLayer?: string;
+
+    /**
+     * The nonce attribute to set on style elements added to the document by
+     * themes. If "foo" is passed to this property, the grid can use the Content
+     * Security Policy `style-src 'nonce-foo'`, instead of the less secure
+     * `style-src 'unsafe-inline'`.
+     *
+     * Note: CSP nonces are global to a page, where a page has multiple grids,
+     * every one must have the same styleNonce set.
+     */
+    styleNonce?: string;
 
     /**
      * An element to insert style elements into when injecting styles into the
@@ -2147,6 +2179,11 @@ export interface GridOptions<TData = any> {
      */
     onAdvancedFilterBuilderVisibleChanged?(event: AdvancedFilterBuilderVisibleChangedEvent<TData>): void;
 
+    /**
+     * Find details have changed (e.g. Find search value, active match, or updates to grid cells).
+     */
+    onFindChanged?(event: FindChangedEvent<TData>): void;
+
     // *** Integrated Charts *** //
     /**
      * A chart has been created.
@@ -2340,7 +2377,8 @@ export interface GridOptions<TData = any> {
      */
     onRowSelected?(event: RowSelectedEvent<TData>): void;
     /**
-     * Row selection is changed. Use the grid API `getSelectedNodes()` or `getSelectedRows()` to get the new list of selected nodes / row data.
+     * Row selection is changed. Use the `selectedNodes` field to get the list of selected nodes at the time of the event. When using the SSRM, `selectedNodes` will be `null`
+     * when selecting all nodes. Instead, refer to the `serverSideState` field.
      */
     onSelectionChanged?(event: SelectionChangedEvent<TData>): void;
     /**

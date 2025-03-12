@@ -93,9 +93,8 @@ const gridOptions = {
 }
 ```
 {% note %}
-When exporting or copying custom footers with custom group cell values, the custom content must also be added
-using [processRowGroupCallback](./excel-export-customising-content/) for export or
-[processCellForClipboard](./clipboard/#processing-individual-cells) for copying to clipboard.
+When exporting, copying custom footers, or using Find with custom group cell values, the custom content must also be added
+using [processRowGroupCallback](./excel-export-customising-content/) for export, [processCellForClipboard](./clipboard/#processing-individual-cells) for copying to clipboard, or [getFindText](./find/#using-find-with-cell-components) for Find.
 {% /note %}
 
 ## Suppress Sticky Rows

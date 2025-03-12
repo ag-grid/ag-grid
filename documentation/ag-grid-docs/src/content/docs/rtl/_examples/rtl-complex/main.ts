@@ -603,7 +603,7 @@ function pseudoRandom() {
 }
 
 function selectionChanged(event: SelectionChangedEvent) {
-    console.log('Callback selectionChanged: selection count = ' + gridApi!.getSelectedNodes().length);
+    console.log('Callback selectionChanged: selection count = ' + event.selectedNodes?.length);
 }
 
 function rowSelected(event: RowSelectedEvent) {

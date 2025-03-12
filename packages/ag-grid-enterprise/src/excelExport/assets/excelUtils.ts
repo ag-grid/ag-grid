@@ -135,6 +135,10 @@ export const getExcelColumnName = (colIdx: number): string => {
     return getExcelColumnName(pos) + fromCharCode(startCode + tableIdx - 1);
 };
 
+export const sanitizeTableName = (name: string): string => {
+    return name.replaceAll('\n', '_x000a_');
+};
+
 export const replaceInvisibleCharacters = (str: string | null): string | null => {
     if (str == null) {
         return null;

@@ -52,9 +52,9 @@ import type { IContextMenuService } from '../interfaces/iContextMenu';
 import type { ICsvCreator } from '../interfaces/iCsvCreator';
 import type { IExcelCreator } from '../interfaces/iExcelCreator';
 import type { IExpansionService } from '../interfaces/iExpansionService';
+import type { IFindService } from '../interfaces/iFind';
 import type { IFooterService } from '../interfaces/iFooterService';
 import type { IFrameworkOverrides } from '../interfaces/iFrameworkOverrides';
-import type { IGroupHideOpenParentsService } from '../interfaces/iGroupHideOpenParentsService';
 import type { IMenuFactory } from '../interfaces/iMenuFactory';
 import type { IPivotColDefService } from '../interfaces/iPivotColDefService';
 import type { IPivotResultColsService } from '../interfaces/iPivotResultColsService';
@@ -124,7 +124,9 @@ export type DynamicBeanName =
     | 'headerFilterCellCtrl'
     | 'headerGroupCellCtrl'
     | 'rangeHandle'
-    | 'tooltipFeature';
+    | 'tooltipFeature'
+    | 'groupStrategy'
+    | 'treeParentIdStrategy';
 
 export type UserComponentName =
     | 'agDragAndDropImage'
@@ -174,7 +176,8 @@ export type UserComponentName =
     | 'agSelectedRowCountComponent'
     | 'agTotalRowCountComponent'
     | 'agFilteredRowCountComponent'
-    | 'agTotalAndFilteredRowCountComponent';
+    | 'agTotalAndFilteredRowCountComponent'
+    | 'agFindCellRenderer';
 
 export type ClassImp = new (...args: []) => object;
 export type ComponentMeta =
@@ -292,7 +295,6 @@ export interface CoreBeanCollection {
     renderStatus?: IRenderStatusService;
     rowDragSvc?: RowDragService;
     stickyRowSvc?: IStickyRowService;
-    groupHideOpenParentsSvc?: IGroupHideOpenParentsService;
     filterValueSvc?: FilterValueService;
     csrmNodeSvc?: IClientSideNodeManager;
     csrmPathTreeNodeSvc?: IClientSideNodeManager;
@@ -307,6 +309,7 @@ export interface CoreBeanCollection {
     touchSvc?: TouchService;
     rowSpanSvc?: RowSpanService;
     spannedRowRenderer?: SpannedRowRenderer;
+    findSvc?: IFindService;
 }
 
 export type BeanCollection = CoreBeanCollection & {
@@ -405,6 +408,7 @@ export type BeanName =
     | 'filterMenuFactory'
     | 'filterStage'
     | 'filterValueSvc'
+    | 'findSvc'
     | 'flashCellSvc'
     | 'flattenStage'
     | 'focusSvc'
@@ -424,7 +428,6 @@ export type BeanName =
     | 'gos'
     | 'gridOptionsWrapper'
     | 'gridSerializer'
-    | 'groupHideOpenParentsSvc'
     | 'groupStage'
     | 'headerNavigation'
     | 'horizontalResizeSvc'

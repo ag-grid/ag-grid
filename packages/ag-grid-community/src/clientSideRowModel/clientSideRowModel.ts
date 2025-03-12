@@ -6,7 +6,13 @@ import type { GridOptions } from '../entities/gridOptions';
 import type { RowHighlightPosition } from '../entities/rowNode';
 import { ROW_ID_PREFIX_ROW_GROUP, RowNode } from '../entities/rowNode';
 import type { CssVariablesChanged, FilterChangedEvent } from '../events';
-import { _getGroupSelectsDescendants, _getRowHeightForNode, _isAnimateRows, _isDomLayout } from '../gridOptionsUtils';
+import {
+    _getGroupSelectsDescendants,
+    _getGroupingApproach,
+    _getRowHeightForNode,
+    _isAnimateRows,
+    _isDomLayout,
+} from '../gridOptionsUtils';
 import type { IClientSideNodeManager } from '../interfaces/iClientSideNodeManager';
 import type {
     ClientSideRowModelStage,
@@ -136,15 +142,14 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
 
     private getNewNodeManager(): IClientSideNodeManager<any> {
         const { gos, beans } = this;
-        let nodeManager: IClientSideNodeManager<any> | undefined;
-        if (gos.get('treeData')) {
-            if (gos.get('treeDataChildrenField')) {
-                nodeManager = beans.csrmChildrenTreeNodeSvc;
-            } else {
-                nodeManager = beans.csrmPathTreeNodeSvc;
-            }
+        switch (_getGroupingApproach(gos)) {
+            case 'treeNested':
+                return beans.csrmChildrenTreeNodeSvc ?? beans.csrmNodeSvc!;
+            case 'treePath':
+                return beans.csrmPathTreeNodeSvc ?? beans.csrmNodeSvc!;
+            default:
+                return beans.csrmNodeSvc!;
         }
-        return nodeManager ?? beans.csrmNodeSvc!;
     }
 
     private addPropertyListeners() {
@@ -271,19 +276,15 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         };
 
         const rowDataChanged = changedProps.has('rowData');
-        const treeDataChanged = changedProps.has('treeData');
-
         const oldNodeManager = this.nodeManager;
         const nodeManager = this.getNewNodeManager();
 
         const reset =
-            oldNodeManager !== nodeManager || (changedProps.has('treeDataChildrenField') && gos.get('treeData'));
+            oldNodeManager !== nodeManager ||
+            (rowDataChanged && changedProps.has('treeData') && gos.get('treeData')) ||
+            (changedProps.has('treeDataChildrenField') && gos.get('treeData'));
 
         let newRowData: any[] | null | undefined;
-
-        if (treeDataChanged) {
-            params.step = 'group';
-        }
 
         if (reset || rowDataChanged) {
             newRowData = gos.get('rowData');
@@ -614,6 +615,33 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         } else {
             return getDefaultIndex(topLevelIndex);
         }
+    }
+
+    /**
+     * The opposite of `getTopLevelRowDisplayedIndex`
+     */
+    public getTopLevelIndexFromDisplayedIndex(displayedIndex: number): number {
+        const { rootNode, rowsToDisplay } = this;
+        const showingRootNode = !rootNode || !rowsToDisplay.length || rowsToDisplay[0] === rootNode;
+
+        if (showingRootNode) {
+            return displayedIndex;
+        }
+
+        let node = this.getRow(displayedIndex);
+
+        if (node.footer) {
+            node = node.sibling;
+        }
+
+        // find the top level node
+        while (node.parent && node.parent !== rootNode) {
+            node = node.parent;
+        }
+
+        const topLevelIndex = rootNode.childrenAfterSort?.findIndex((childNode) => childNode === node);
+
+        return topLevelIndex === -1 ? displayedIndex : topLevelIndex ?? displayedIndex;
     }
 
     public getRowBounds(index: number): RowBounds | null {
@@ -1008,7 +1036,6 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
     }
 
     private doSort(changedRowNodes: IChangedRowNodes | undefined, changedPath: ChangedPath) {
-        const { groupHideOpenParentsSvc } = this.beans;
         if (this.sortStage) {
             this.sortStage.execute({
                 rowNode: this.rootNode!,
@@ -1017,17 +1044,11 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
             });
         } else {
             changedPath.forEachChangedNodeDepthFirst((rowNode) => {
-                // this needs to run before sorting
-                groupHideOpenParentsSvc?.pullDownGroupDataForHideOpenParents(rowNode.childrenAfterAggFilter, true);
-
                 rowNode.childrenAfterSort = rowNode.childrenAfterAggFilter!.slice(0);
 
                 updateRowNodeAfterSort(rowNode);
             });
         }
-
-        // this needs to run after sorting
-        groupHideOpenParentsSvc?.updateGroupDataForHideOpenParents(changedPath);
     }
 
     private doRowGrouping(
@@ -1036,26 +1057,26 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         rowNodesOrderChanged: boolean,
         afterColumnsChanged: boolean
     ) {
-        const treeData = this.nodeManager.treeData;
         const rootNode: ClientSideRowModelRootNode = this.rootNode!;
-        if (!treeData) {
-            const groupStage = this.groupStage;
-            if (groupStage) {
-                groupStage.execute({
-                    rowNode: rootNode,
-                    changedPath,
-                    changedRowNodes,
-                    rowNodesOrderChanged,
-                    afterColumnsChanged,
-                });
-            } else {
-                const sibling: ClientSideRowModelRootNode = rootNode.sibling;
-                rootNode.childrenAfterGroup = rootNode.allLeafChildren;
-                if (sibling) {
-                    sibling.childrenAfterGroup = rootNode.childrenAfterGroup;
-                }
-                rootNode.updateHasChildren();
+
+        const groupStageExecuted = this.groupStage?.execute({
+            rowNode: rootNode,
+            changedPath,
+            changedRowNodes,
+            rowNodesOrderChanged,
+            afterColumnsChanged,
+        });
+
+        if (
+            !groupStageExecuted &&
+            !this.nodeManager.treeData // managed by the node manager
+        ) {
+            const sibling: ClientSideRowModelRootNode = rootNode.sibling;
+            rootNode.childrenAfterGroup = rootNode.allLeafChildren;
+            if (sibling) {
+                sibling.childrenAfterGroup = rootNode.childrenAfterGroup;
             }
+            rootNode.updateHasChildren();
         }
 
         if (this.rowNodesCountReady) {

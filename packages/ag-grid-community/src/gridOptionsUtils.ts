@@ -352,11 +352,11 @@ export function _getGroupTotalRowCallback(
 }
 
 export function _isGroupMultiAutoColumn(gos: GridOptionsService) {
-    if (gos.exists('groupDisplayType')) {
-        return gos.get('groupDisplayType') === 'multipleColumns';
+    const isHideOpenParents = !!gos.get('groupHideOpenParents');
+    if (isHideOpenParents) {
+        return true;
     }
-    // if we are doing hideOpenParents we also show multiple columns, otherwise hideOpenParents would not work
-    return gos.get('groupHideOpenParents');
+    return gos.get('groupDisplayType') === 'multipleColumns';
 }
 
 export function _isGroupUseEntireRow(gos: GridOptionsService, pivotMode: boolean): boolean {
@@ -720,4 +720,19 @@ export function _addGridCommonParams<T extends AgGridCommon<TData, TContext>, TD
     params: WithoutGridCommon<T>
 ): T {
     return gos.addGridCommonParams(params);
+}
+
+export type GroupingApproach = 'group' | 'treeSelfRef' | 'treeNested' | 'treePath';
+
+export function _getGroupingApproach(gos: GridOptionsService): GroupingApproach {
+    if (gos.get('treeData')) {
+        if (gos.get('treeDataParentIdField')) {
+            return 'treeSelfRef';
+        }
+        if (gos.get('treeDataChildrenField')) {
+            return 'treeNested';
+        }
+        return 'treePath';
+    }
+    return 'group';
 }

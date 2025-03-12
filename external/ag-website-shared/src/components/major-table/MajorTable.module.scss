@@ -1,0 +1,50 @@
+@use 'design-system' as *;
+
+.majorTable {
+    vertical-align: baseline;
+
+    tr {
+        transition: background-color $transition-default-timing;
+
+        &:hover {
+            background-color: var(--color-util-brand-50);
+
+            #{$selector-darkmode} & {
+                background-color: var(--color-util-gray-200);
+            }
+        }
+    }
+
+    td:nth-child(n + 2) {
+        text-align: right;
+    }
+
+    svg {
+        --icon-size: 20px;
+
+        margin-top: -2px;
+        transition: transform $transition-default-timing;
+    }
+
+    a:hover svg {
+        transform: translateX(3px);
+    }
+}
+
+.isMajor {
+    .version {
+        color: var(--color-gray-950);
+
+        #{$selector-darkmode} & {
+            color: var(--color-white);
+        }
+    }
+
+    .versionType {
+        margin-right: -8px;
+        padding: 2px 8px;
+        border-radius: var(--radius-4xl);
+        border: 1px solid var(--color-logo-orange);
+        color: var(--color-logo-orange);
+    }
+}

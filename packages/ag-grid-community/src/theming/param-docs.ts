@@ -90,6 +90,10 @@ const docs: Record<AllThemeParams, string> = {
     dragHandleColor: 'Color of the drag handle on draggable rows and column markers',
     dropdownShadow: 'Default shadow for dropdown menus',
     filterToolPanelGroupIndent: 'How much to indent child columns in the filters tool panel relative to their parent',
+    findMatchColor: 'Color of matches used in Find',
+    findMatchBackgroundColor: 'Background color of matches used in Find',
+    findActiveMatchColor: 'Color of the active match used in Find',
+    findActiveMatchBackgroundColor: 'Background color of the active match used in Find',
     focusShadow:
         'Shadow around UI controls that have focus e.g. text inputs and buttons. The value must a valid CSS box-shadow.',
     fontFamily: 'Font family used for all text.',

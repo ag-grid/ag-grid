@@ -95,3 +95,26 @@ There are however some differences with updating Row Data (with Row IDs) and Tra
 For the reasons mentioned above, if you have large data sets (thousands of rows) and are looking for ways to make things go faster, consider using [Transaction Update](./data-update-transactions/).
 
 If you have smaller data sets (hundreds of rows) then everything should work without any noticeable lag.
+
+{% if isFramework("vue") %}
+
+## Two Way Binding
+
+If you want to have row data changes done within the grid - i.e. from the Grid back up to the parent component - then you'll need to make use of `v-model` instead of binding to `rowData`.
+
+For example:
+
+```jsx
+<template>
+    <ag-grid-vue style="width: 500px; height: 500px;"
+                 @grid-ready="onGridReady"
+                 :columnDefs="columnDefs"
+                 v-model="rowData">
+    </ag-grid-vue>
+</template>
+```
+
+{% note %}
+`v-model` is only possible when `ClientSideRowModel` is used, and either the `AllCommunityModule` or the `ClientSideRowModelApiModule` module is registered.
+{% /note %}
+{% /if %}

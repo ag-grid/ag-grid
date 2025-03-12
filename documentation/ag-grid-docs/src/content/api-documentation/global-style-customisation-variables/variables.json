@@ -484,6 +484,22 @@
         "--ag-row-loading-skeleton-effect-color": {
             "description": "Colour of the skeleton loading effect used in the SSRM",
             "type": "CSS color (e.g. `red` or `#fff`)"
+        },
+        "--ag-find-match-color": {
+            "description": "Colour of matches used in Find",
+            "type": "CSS color (e.g. `red` or `#fff`)"
+        },
+        "--ag-find-match-background-color": {
+            "description": "Background colour of matches used in Find",
+            "type": "CSS color (e.g. `red` or `#fff`)"
+        },
+        "--ag-find-active-match-color": {
+            "description": "Colour of the active match used in Find",
+            "type": "CSS color (e.g. `red` or `#fff`)"
+        },
+        "--ag-find-active-match-background-color": {
+            "description": "Background colour of the active match used in Find",
+            "type": "CSS color (e.g. `red` or `#fff`)"
         }
     }
 }

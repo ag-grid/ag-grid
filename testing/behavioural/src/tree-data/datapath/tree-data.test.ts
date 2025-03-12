@@ -363,6 +363,82 @@ describe('ag-grid tree data', () => {
             · · · └── H LEAF id:h ag-Grid-AutoColumn:"H" groupType:"Provided"
         `);
     });
+
+    test('changing group columns updates the row groups', async () => {
+        const rowData = [
+            { id: 'A', x: 'a', z: 1, path: ['A'] },
+            { id: 'B', x: 'a-b', z: 2, path: ['A', 'B'] },
+            { id: 'C', x: 'c', z: 3, path: ['C'] },
+            { id: 'D', x: 'c-d', z: 4, path: ['C', 'D'] },
+            { id: 'E', x: 'e', z: 5, path: ['E'] },
+            { id: 'F', x: 'e-f', z: 6, path: ['E', 'F'] },
+            { id: 'G', x: 'e-f-g', z: 7, path: ['E', 'F', 'G'] },
+            { id: 'H', x: 'e-f-g-h', z: 8, path: ['E', 'F', 'G', 'H'] },
+        ];
+
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: [{ field: 'x' }],
+            animateRows: false,
+            groupDefaultExpanded: -1,
+            rowData,
+            autoGroupColumnDef: { headerName: 'H', colId: 'zzz' },
+            getRowId: (params) => params.data.id,
+            treeData: true,
+            getDataPath: (data) => data.path,
+        });
+
+        const gridRowsOptions = {
+            columns: true,
+            checkDom: true,
+        };
+
+        const gridRows = new GridRows(api, 'data', gridRowsOptions);
+
+        await gridRows.check(`
+                ROOT id:ROOT_NODE_ID
+                ├─┬ A GROUP id:A ag-Grid-AutoColumn:"A" x:"a"
+                │ └── B LEAF id:B ag-Grid-AutoColumn:"B" x:"a-b"
+                ├─┬ C GROUP id:C ag-Grid-AutoColumn:"C" x:"c"
+                │ └── D LEAF id:D ag-Grid-AutoColumn:"D" x:"c-d"
+                └─┬ E GROUP id:E ag-Grid-AutoColumn:"E" x:"e"
+                · └─┬ F GROUP id:F ag-Grid-AutoColumn:"F" x:"e-f"
+                · · └─┬ G GROUP id:G ag-Grid-AutoColumn:"G" x:"e-f-g"
+                · · · └── H LEAF id:H ag-Grid-AutoColumn:"H" x:"e-f-g-h"
+            `);
+
+        api.updateGridOptions({
+            columnDefs: [{ field: 'x' }, { field: 'id' }, { field: 'z' }],
+            autoGroupColumnDef: { headerName: 'X', field: 'x' },
+        });
+
+        await gridRows.check(`
+                ROOT id:ROOT_NODE_ID
+                ├─┬ A GROUP id:A ag-Grid-AutoColumn:"a" x:"a" id:"A" z:1
+                │ └── B LEAF id:B ag-Grid-AutoColumn:"a-b" x:"a-b" id:"B" z:2
+                ├─┬ C GROUP id:C ag-Grid-AutoColumn:"c" x:"c" id:"C" z:3
+                │ └── D LEAF id:D ag-Grid-AutoColumn:"c-d" x:"c-d" id:"D" z:4
+                └─┬ E GROUP id:E ag-Grid-AutoColumn:"e" x:"e" id:"E" z:5
+                · └─┬ F GROUP id:F ag-Grid-AutoColumn:"e-f" x:"e-f" id:"F" z:6
+                · · └─┬ G GROUP id:G ag-Grid-AutoColumn:"e-f-g" x:"e-f-g" id:"G" z:7
+                · · · └── H LEAF id:H ag-Grid-AutoColumn:"e-f-g-h" x:"e-f-g-h" id:"H" z:8
+            `);
+
+        api.updateGridOptions({
+            autoGroupColumnDef: { headerName: 'X', field: 'z' },
+        });
+
+        await gridRows.check(`
+                ROOT id:ROOT_NODE_ID
+                ├─┬ A GROUP id:A ag-Grid-AutoColumn:1 x:"a" id:"A" z:1
+                │ └── B LEAF id:B ag-Grid-AutoColumn:2 x:"a-b" id:"B" z:2
+                ├─┬ C GROUP id:C ag-Grid-AutoColumn:3 x:"c" id:"C" z:3
+                │ └── D LEAF id:D ag-Grid-AutoColumn:4 x:"c-d" id:"D" z:4
+                └─┬ E GROUP id:E ag-Grid-AutoColumn:5 x:"e" id:"E" z:5
+                · └─┬ F GROUP id:F ag-Grid-AutoColumn:6 x:"e-f" id:"F" z:6
+                · · └─┬ G GROUP id:G ag-Grid-AutoColumn:7 x:"e-f-g" id:"G" z:7
+                · · · └── H LEAF id:H ag-Grid-AutoColumn:8 x:"e-f-g-h" id:"H" z:8
+            `);
+    });
 });
 
 function hierarchyWithInvertedOrderRowSnapshot(): RowSnapshot[] {

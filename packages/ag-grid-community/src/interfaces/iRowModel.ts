@@ -20,6 +20,7 @@ export interface IRowModel {
 
     getTopLevelRowCount(): number;
     getTopLevelRowDisplayedIndex(topLevelIndex: number): number;
+    getTopLevelIndexFromDisplayedIndex?(displayedIndex: number): number;
 
     /** Returns the row index at the given pixel */
     getRowIndexAtPixel(pixel: number): number;

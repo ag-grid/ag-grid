@@ -207,6 +207,7 @@ export {
     ISimpleFilterParams,
     SimpleFilterParams,
     ISimpleFilterModel,
+    ISimpleFilterModelType,
     ICombinedSimpleModel,
     JoinOperator,
     IFilterPlaceholderFunctionParams,
@@ -264,6 +265,21 @@ export { IAdvancedFilterCtrl } from './interfaces/iAdvancedFilterCtrl';
 export { IAdvancedFilterBuilderParams } from './interfaces/iAdvancedFilterBuilderParams';
 export { IAdvancedFilterService } from './interfaces/iAdvancedFilterService';
 
+export {
+    FindMatch,
+    IFindService,
+    FindOptions,
+    FindCellParams,
+    FindCellValueParams,
+    FindPart,
+    GetFindMatches,
+    GetFindMatchesParams,
+    FindDetailCellRendererParams,
+    FindDetailGridCellRendererParams,
+    FindFullWidthCellRendererParams,
+    FindGroupRowRendererParams,
+} from './interfaces/iFind';
+
 // gridPanel
 export { GridBodyCtrl, IGridBodyComp, RowAnimationCssClasses } from './gridBodyComp/gridBodyCtrl';
 export type { ScrollVisibleService } from './gridBodyComp/scrollVisibleService';
@@ -309,7 +325,6 @@ export {
 } from './headerRendering/headerUtils';
 
 // misc
-export { _requestAnimationFrame } from './misc/animationFrameService';
 export type { AnimationFrameService } from './misc/animationFrameService';
 export { AlignedGrid } from './interfaces/iAlignedGrid';
 export type { MenuService } from './misc/menu/menuService';
@@ -446,7 +461,6 @@ export {
 } from './interfaces/iClientSideRowModel';
 export { IClientSideNodeManager, ClientSideNodeManagerUpdateRowDataResult } from './interfaces/iClientSideNodeManager';
 export { AbstractClientSideNodeManager } from './clientSideRowModel/abstractClientSideNodeManager';
-export { IGroupHideOpenParentsService } from './interfaces/iGroupHideOpenParentsService';
 export type { RowAutoHeightService } from './rendering/row/rowAutoHeightService';
 
 export { ColumnVO } from './interfaces/iColumnVO';
@@ -611,6 +625,7 @@ export {
     _MasterDetailGridApi,
     _StatusBarGridApi,
     _AdvancedFilterGridApi,
+    _FindApi,
 } from './api/gridApi';
 export { _getClientSideRowModel, _getServerSideRowModel } from './api/rowModelApiUtils';
 export { AgEventType, AgPublicEventType, _ALL_EVENTS, _PUBLIC_EVENTS } from './eventTypes'; // TODO: remove _ALL_EVENTS, _PUBLIC_EVENTS if not required by VUE
@@ -662,7 +677,9 @@ export {
     _isUsingNewRowSelectionAPI,
     _isUsingNewCellSelectionAPI,
     _isGroupRowsSticky,
+    _getGroupingApproach,
 } from './gridOptionsUtils';
+export type { GroupingApproach } from './gridOptionsUtils';
 export { LocalEventService } from './localEventService';
 export type { EventService } from './eventService';
 export type { RowNodeSorter } from './sort/rowNodeSorter';
@@ -722,6 +739,8 @@ export {
     _isSameRow,
     _getRowNode,
     _getCellByPosition,
+    _getRowAbove,
+    _getRowBelow,
 } from './entities/positionUtils';
 export { RowPosition } from './interfaces/iRowPosition';
 export { HeaderPosition } from './interfaces/iHeaderPosition';
@@ -788,6 +807,8 @@ export {
     KeyCreatorParams,
     SortDirection,
     NestedFieldPaths,
+    GetFindTextParams,
+    GetFindTextFunc,
 } from './entities/colDef';
 export {
     DataTypeDefinition,
@@ -890,7 +911,12 @@ export {
     MouseShowContextMenuParams,
     TouchShowContextMenuParam,
 } from './interfaces/iContextMenu';
-export { IRowNodeStage, StageExecuteParams } from './interfaces/iRowNodeStage';
+export {
+    IRowNodeStage,
+    IRowGroupingStrategy,
+    RowGroupingRowNode,
+    StageExecuteParams,
+} from './interfaces/iRowNodeStage';
 export { IDateParams, IDate, IDateComp, BaseDate, BaseDateParams } from './interfaces/dateComponent';
 export { IAfterGuiAttachedParams, ContainerType } from './interfaces/iAfterGuiAttachedParams';
 export { IComponent } from './interfaces/iComponent';
@@ -924,7 +950,6 @@ export {
     _getShouldDisplayTooltip,
     _isShowTooltipWhenTruncated,
 } from './tooltip/tooltipFeature';
-export { IAggregationStage } from './interfaces/iAggregationStage';
 export { IFooterService } from './interfaces/iFooterService';
 export {
     MenuItemLeafDef,
@@ -970,7 +995,7 @@ export {
     _setAriaHidden,
     _getAriaPosInSet,
 } from './utils/aria';
-export { _EmptyArray, _removeFromArray, _last, _areEqual } from './utils/array';
+export { _EmptyArray, _removeFromArray, _last, _areEqual, _flatten } from './utils/array';
 export { _isIOSUserAgent } from './utils/browser';
 export { ChangedPath } from './utils/changedPath';
 export { _serialiseDate, _parseDateTimeFromString } from './utils/date';
@@ -992,10 +1017,11 @@ export {
     _isNodeOrElement,
     _observeResize,
     _preserveRangesWhile,
+    _requestAnimationFrame,
 } from './utils/dom';
 export { _selectAllCells } from './utils/selection';
 export { _stopPropagationForAgGrid, _isStopPropagationForAgGrid, _isElementInEventPath } from './utils/event';
-export { _warnOnce, _debounce, _doOnce, _waitUntil } from './utils/function';
+export { _warnOnce, _debounce, _doOnce, _waitUntil, _batchCall } from './utils/function';
 export { _warn, _error, _errMsg, _preInitErrMsg } from './validation/logging';
 export { _createIcon, _createIconNoSpan, IconName } from './utils/icon';
 export { _fuzzySuggestions } from './utils/fuzzyMatch';

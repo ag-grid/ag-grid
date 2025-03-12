@@ -10,6 +10,7 @@ export const ENTERPRISE_MODULE_NAMES: Record<EnterpriseModuleName, 1> = {
     ContextMenu: 1,
     ExcelExport: 1,
     FiltersToolPanel: 1,
+    Find: 1,
     GridCharts: 1,
     IntegratedCharts: 1,
     GroupFilter: 1,

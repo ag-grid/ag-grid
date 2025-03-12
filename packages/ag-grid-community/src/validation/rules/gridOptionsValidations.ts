@@ -177,6 +177,9 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => {
                 rowDragEntireRow: { required: [false, undefined] },
             },
         },
+        findSearchValue: {
+            module: 'Find',
+        },
         rowNumbers: {
             module: 'RowNumbers',
         },
@@ -409,12 +412,25 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => {
                 const rowModel = options.rowModelType ?? 'clientSide';
                 switch (rowModel) {
                     case 'clientSide': {
-                        const { treeDataChildrenField, getDataPath } = options;
-                        if (!treeDataChildrenField && !getDataPath) {
-                            return "treeData requires either 'treeDataChildrenField' or 'getDataPath' in the clientSide row model.";
+                        const { treeDataChildrenField, treeDataParentIdField, getDataPath, getRowId } = options;
+                        if (!treeDataChildrenField && !treeDataParentIdField && !getDataPath) {
+                            return "treeData requires either 'treeDataChildrenField' or 'treeDataParentIdField' or 'getDataPath' in the clientSide row model.";
                         }
-                        if (treeDataChildrenField && getDataPath) {
-                            return "Cannot use both 'treeDataChildrenField' and 'getDataPath' at the same time.";
+                        if (treeDataChildrenField) {
+                            if (getDataPath) {
+                                return "Cannot use both 'treeDataChildrenField' and 'getDataPath' at the same time.";
+                            }
+                            if (treeDataParentIdField) {
+                                return "Cannot use both 'treeDataChildrenField' and 'treeDataParentIdField' at the same time.";
+                            }
+                        }
+                        if (treeDataParentIdField) {
+                            if (!getRowId) {
+                                return 'getRowId callback not provided, tree data with parent id cannot be built.';
+                            }
+                            if (getDataPath) {
+                                return "Cannot use both 'treeDataParentIdField' and 'getDataPath' at the same time.";
+                            }
                         }
                         return null;
                     }
@@ -427,6 +443,9 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => {
             },
         },
         treeDataChildrenField: {
+            module: 'SharedTreeData',
+        },
+        treeDataParentIdField: {
             module: 'SharedTreeData',
         },
         undoRedoCellEditing: { module: 'UndoRedoEdit' },
@@ -452,6 +471,17 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => {
         },
         enableCellSpan: {
             module: 'CellSpan',
+        },
+        autoGroupColumnDef: {
+            validate({ autoGroupColumnDef, showOpenedGroup }) {
+                if (autoGroupColumnDef?.field && showOpenedGroup) {
+                    return 'autoGroupColumnDef.field and showOpenedGroup are not supported when used together.';
+                }
+                if (autoGroupColumnDef?.valueGetter && showOpenedGroup) {
+                    return 'autoGroupColumnDef.valueGetter and showOpenedGroup are not supported when used together.';
+                }
+                return null;
+            },
         },
     };
     const validations: Validations<GridOptions> = {};

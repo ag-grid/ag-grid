@@ -33,6 +33,10 @@
     --ag-advanced-filter-column-pill-color: #a6e194;
     --ag-advanced-filter-option-pill-color: #f3c08b;
     --ag-advanced-filter-value-pill-color: #85c0e4;
+    --ag-find-match-color: var(--ag-foreground-color);
+    --ag-find-match-background-color: #ffff00;
+    --ag-find-active-match-color: var(--ag-foreground-color);
+    --ag-find-active-match-background-color: #ffa500;
 
     // derived colours (no color blending - these are shared by alpine-dark)
     --ag-checkbox-background-color: var(--ag-background-color);
@@ -120,6 +124,8 @@
     --ag-advanced-filter-column-pill-color: #355f2d;
     --ag-advanced-filter-option-pill-color: #5a3168;
     --ag-advanced-filter-value-pill-color: #374c86;
+    --ag-find-match-color: var(--ag-background-color);
+    --ag-find-active-match-color: var(--ag-background-color);
 
     --ag-row-loading-skeleton-effect-color: #{color.change(#cacbcc, $alpha: 0.4)};
 

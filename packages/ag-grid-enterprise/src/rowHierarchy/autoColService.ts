@@ -243,6 +243,7 @@ export class AutoColService extends BeanStub implements NamedBean, IColumnCollec
 
         const res: ColDef = {
             headerName: localeTextFunc('group', 'Group'),
+            showRowGroup: rowGroupCol?.getColId() ?? true,
         };
 
         const userHasProvidedGroupCellRenderer = userDef && (userDef.cellRenderer || userDef.cellRendererSelector);
@@ -250,26 +251,12 @@ export class AutoColService extends BeanStub implements NamedBean, IColumnCollec
         // only add the default group cell renderer if user hasn't provided one
         if (!userHasProvidedGroupCellRenderer) {
             res.cellRenderer = 'agGroupCellRenderer';
+            this.beans.findSvc?.setupGroupCol(res);
         }
 
         if (rowGroupCol) {
-            const colDef = rowGroupCol.getColDef();
-            Object.assign(res, {
-                headerName: this.beans.colNames.getDisplayNameForColumn(rowGroupCol, 'header'),
-                headerValueGetter: colDef.headerValueGetter,
-            });
-
-            if (colDef.cellRenderer) {
-                Object.assign(res, {
-                    cellRendererParams: {
-                        innerRenderer: colDef.cellRenderer,
-                        innerRendererParams: colDef.cellRendererParams,
-                    },
-                });
-            }
-            res.showRowGroup = rowGroupCol.getColId();
-        } else {
-            res.showRowGroup = true;
+            res.headerName = this.beans.colNames.getDisplayNameForColumn(rowGroupCol, 'header') ?? undefined;
+            res.headerValueGetter = rowGroupCol.colDef.headerValueGetter;
         }
 
         return res;

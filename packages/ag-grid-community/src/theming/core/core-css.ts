@@ -202,6 +202,26 @@ export type CoreParams = {
     filterToolPanelGroupIndent: LengthValue;
 
     /**
+     * Color of matches used in Find
+     */
+    findMatchColor: ColorValue;
+
+    /**
+     * Background color of matches used in Find
+     */
+    findMatchBackgroundColor: ColorValue;
+
+    /**
+     * Color of the active match used in Find
+     */
+    findActiveMatchColor: ColorValue;
+
+    /**
+     * Background color of the active match used in Find
+     */
+    findActiveMatchBackgroundColor: ColorValue;
+
+    /**
      * Shadow around UI controls that have focus e.g. text inputs and buttons. The value must a valid CSS box-shadow.
      */
     focusShadow: ShadowValue;
@@ -1037,6 +1057,10 @@ export const coreDefaults: Readonly<CoreParams> = {
     advancedFilterBuilderColumnPillColor: '#a6e194',
     advancedFilterBuilderOptionPillColor: '#f3c08b',
     advancedFilterBuilderValuePillColor: '#85c0e4',
+    findMatchColor: foregroundColor,
+    findMatchBackgroundColor: '#ffff00',
+    findActiveMatchColor: foregroundColor,
+    findActiveMatchBackgroundColor: '#ffa500',
     filterToolPanelGroupIndent: {
         ref: 'spacing',
     },

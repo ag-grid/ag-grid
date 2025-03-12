@@ -1,0 +1,69 @@
+.example-wrapper {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+#myGrid {
+    flex: 1 1 0px;
+    width: 100%;
+}
+
+.example-header {
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    font-size: 13px;
+    margin-bottom: 5px;
+}
+
+.example-controls {
+    margin-bottom: 4px;
+}
+
+.example-controls > *:not(:last-child) {
+    margin-right: 8px;
+}
+
+.full-width-panel {
+    /* undo the white-space setting Fresh puts in */
+    white-space: normal;
+    height: 100%;
+    width: 100%;
+    border: 2px solid grey;
+    border-style: ridge;
+    box-sizing: border-box;
+    padding: 5px;
+    background-color: #99999944;
+}
+
+.full-width-flag {
+    float: left;
+    padding: 6px;
+}
+
+.full-width-summary {
+    float: left;
+    margin-right: 10px;
+}
+
+.full-width-panel label {
+    padding-top: 3px;
+    display: inline-block;
+    font-size: 12px;
+}
+
+.full-width-center {
+    overflow-y: scroll;
+    border: 1px solid grey;
+    padding: 2px;
+    height: 100%;
+    box-sizing: border-box;
+    font-family: cursive;
+    background-color: #99999944;
+}
+
+.full-width-center p {
+    margin-top: 0px;
+}
+.full-width-title {
+    font-size: 20px;
+}

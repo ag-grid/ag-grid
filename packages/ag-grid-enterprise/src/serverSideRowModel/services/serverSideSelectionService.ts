@@ -1,5 +1,7 @@
 import type {
     ISelectionService,
+    IServerSideGroupSelectionState,
+    IServerSideSelectionState,
     ISetNodesSelectedParams,
     NamedBean,
     RowNode,
@@ -102,7 +104,7 @@ export class ServerSideSelectionService extends BaseSelectionService implements 
             });
         }
 
-        this.shotgunResetNodeSelectionState();
+        this.shotgunResetNodeSelectionState(source);
         this.dispatchSelectionChanged(source);
 
         return updatedRows;
@@ -186,7 +188,7 @@ export class ServerSideSelectionService extends BaseSelectionService implements 
     }
 
     public getSelectedNodes(): RowNode<any>[] {
-        return this.selectionStrategy.getSelectedNodes();
+        return this.selectionStrategy.getSelectedNodes() ?? [];
     }
 
     public getSelectedRows(): any[] {
@@ -315,6 +317,21 @@ export class ServerSideSelectionService extends BaseSelectionService implements 
                 source: 'selectableChanged',
             });
         }
+    }
+
+    private dispatchSelectionChanged(source: SelectionEventSourceType): void {
+        this.eventSvc.dispatchEvent({
+            type: 'selectionChanged',
+            source,
+            selectedNodes:
+                this.selectionStrategy instanceof GroupSelectsChildrenStrategy
+                    ? null
+                    : this.selectionStrategy.getSelectedNodes(true, false),
+            serverSideState: this.getSelectionState() as
+                | IServerSideSelectionState
+                | IServerSideGroupSelectionState
+                | null,
+        });
     }
 
     public updateSelectableAfterGrouping(): void {

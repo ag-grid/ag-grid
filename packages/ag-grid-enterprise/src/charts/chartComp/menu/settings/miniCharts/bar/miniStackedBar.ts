@@ -1,6 +1,8 @@
+import { _flatten } from 'ag-grid-community';
+
 import type { AgChartsExports } from '../../../../../agChartsExports';
 import type { ChartTranslationKey } from '../../../../services/chartTranslationService';
-import type { MiniChartSelector, ThemeTemplateParameters } from '../../miniChartsContainer';
+import type { MiniChartSelector } from '../../miniChartsContainer';
 import { MiniChartWithAxes } from '../miniChartWithAxes';
 
 export const miniStackedBarData = [
@@ -17,7 +19,6 @@ export class MiniStackedBarClass extends MiniChartWithAxes {
         agChartsExports: AgChartsExports,
         fills: string[],
         strokes: string[],
-        _themeTemplateParameters: ThemeTemplateParameters,
         _isCustomTheme: boolean,
         data = miniStackedBarData,
         xScaleDomain = [0, 16],
@@ -57,7 +58,7 @@ export class MiniStackedBarClass extends MiniChartWithAxes {
         );
 
         this.updateColors(fills, strokes);
-        this.root.append(([] as any[]).concat.apply([], this.bars));
+        this.root.append(_flatten(this.bars));
     }
 
     updateColors(fills: string[], strokes: string[]) {

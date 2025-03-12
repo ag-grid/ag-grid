@@ -8,6 +8,7 @@ import type {
 } from 'ag-grid-community';
 import {
     CellStyleModule,
+    ClientSideRowModelApiModule,
     ClientSideRowModelModule,
     HighlightChangesModule,
     ModuleRegistry,
@@ -24,6 +25,7 @@ ModuleRegistry.registerModules([
     TextEditorModule,
     RowSelectionModule,
     CellStyleModule,
+    ClientSideRowModelApiModule,
     ClientSideRowModelModule,
     RowGroupingModule,
     HighlightChangesModule,

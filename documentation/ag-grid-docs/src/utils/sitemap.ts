@@ -13,6 +13,20 @@ const isDebugPage = (page: string) => {
 };
 
 /*
+ * Error pages
+ */
+const isErrorPage = (page: string) => {
+    return page.includes('/errors/');
+};
+
+/*
+ * Test pages for testing
+ */
+export const isTestPage = (page: string) => {
+    return page.endsWith('-test/') || page.endsWith('-test') || page.endsWith('/benchmarks');
+};
+
+/*
  * Documentation redirect pages
  */
 const isRedirectPage = (page: string) => {
@@ -33,7 +47,14 @@ const isNonPublicContent = (page: string) => {
 };
 
 const filterIgnoredPages = (page: string) => {
-    return !isExamplePage(page) && !isDebugPage(page) && !isRedirectPage(page) && !isNonPublicContent(page);
+    return (
+        !isExamplePage(page) &&
+        !isDebugPage(page) &&
+        !isRedirectPage(page) &&
+        !isNonPublicContent(page) &&
+        !isTestPage(page) &&
+        !isErrorPage(page)
+    );
 };
 
 export function getSitemapConfig() {

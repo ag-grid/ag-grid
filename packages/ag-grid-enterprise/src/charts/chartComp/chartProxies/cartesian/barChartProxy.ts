@@ -67,8 +67,8 @@ export class BarChartProxy extends CartesianChartProxy<'bar'> {
             return {
                 ...seriesOptions,
                 yKey,
-                fill: hexToRGBA(seriesOptions.fill!, '0.3'),
-                stroke: hexToRGBA(seriesOptions.stroke!, '0.3'),
+                fill: hexToRGBA(seriesOptions.fill as string, '0.3'),
+                stroke: hexToRGBA(seriesOptions.stroke as string, '0.3'),
                 showInLegend: false,
             };
         };

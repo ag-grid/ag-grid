@@ -30,6 +30,7 @@ export class HierarchicalChartProxy<TSeries extends 'sunburst' | 'treemap'> exte
                 gradient: {
                     preferredLength: 200,
                 },
+                position: 'right',
             },
         };
     }

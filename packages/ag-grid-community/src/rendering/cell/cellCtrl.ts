@@ -18,12 +18,11 @@ import type { ICellRangeFeature } from '../../interfaces/iCellRangeFeature';
 import type { CellChangedEvent } from '../../interfaces/iRowNode';
 import type { RowPosition } from '../../interfaces/iRowPosition';
 import type { UserCompDetails } from '../../interfaces/iUserCompDetails';
-import { _requestAnimationFrame } from '../../misc/animationFrameService';
 import type { CheckboxSelectionComponent } from '../../selection/checkboxSelectionComponent';
 import type { CellCustomStyleFeature } from '../../styling/cellCustomStyleFeature';
 import type { TooltipFeature } from '../../tooltip/tooltipFeature';
 import { _setAriaColIndex } from '../../utils/aria';
-import { _addOrRemoveAttribute } from '../../utils/dom';
+import { _addOrRemoveAttribute, _requestAnimationFrame } from '../../utils/dom';
 import { _getCtrlForEventTarget } from '../../utils/event';
 import { _findFocusableElements, _isCellFocusSuppressed } from '../../utils/focus';
 import { _makeNull } from '../../utils/generic';
@@ -270,15 +269,22 @@ export class CellCtrl extends BeanStub {
         // if node is stub, and no group data for this node (groupSelectsChildren can populate group data)
         const isSsrmLoading = rowNode.stub && rowNode.groupData?.[column.getId()] == null;
         const colDef = column.getColDef();
-        const isCellRenderer = this.isCellRenderer();
 
-        if (isSsrmLoading || isCellRenderer) {
+        if (isSsrmLoading || this.isCellRenderer()) {
             const params = this.createCellRendererParams();
             if (!isSsrmLoading || isRowNumberCol(column)) {
                 compDetails = _getCellRendererDetails(userCompFactory, colDef, params);
             } else {
                 compDetails = _getLoadingCellRendererDetails(userCompFactory, colDef, params);
             }
+        }
+        if (!compDetails && !isSsrmLoading && beans.findSvc?.isMatch(rowNode, column)) {
+            const params = this.createCellRendererParams();
+            compDetails = _getCellRendererDetails(
+                userCompFactory,
+                { ...column.getColDef(), cellRenderer: 'agFindCellRenderer' },
+                params
+            );
         }
 
         this.comp.setRenderDetails(compDetails, valueToDisplay, forceNewCellRendererInstance);

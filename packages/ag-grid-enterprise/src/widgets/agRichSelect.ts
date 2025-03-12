@@ -542,7 +542,6 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
                 inputValue: searchValue,
                 allSuggestions: valueList,
                 hideIrrelevant: true,
-                addSequentialWeight: true,
             });
             suggestions = fuzzySearchResult.values;
 
@@ -678,7 +677,10 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
                 this.setValue(values, false, true, true);
             }
         } else {
-            this.setValue(listComponent.getLastItemHovered(), false, true);
+            const lastItemHovered = listComponent.getLastItemHovered();
+            if (lastItemHovered) {
+                this.setValue(lastItemHovered, false, true);
+            }
         }
         this.hidePicker();
     }

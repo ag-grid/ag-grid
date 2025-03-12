@@ -1,5 +1,6 @@
 import type { ColDef, GetRowIdParams, GridApi, GridOptions } from 'ag-grid-community';
 import {
+    ClientSideRowModelApiModule,
     ClientSideRowModelModule,
     ModuleRegistry,
     RowSelectionModule,
@@ -7,7 +8,12 @@ import {
     createGrid,
 } from 'ag-grid-community';
 
-ModuleRegistry.registerModules([RowSelectionModule, ClientSideRowModelModule, ValidationModule /* Development Only */]);
+ModuleRegistry.registerModules([
+    RowSelectionModule,
+    ClientSideRowModelModule,
+    ClientSideRowModelApiModule,
+    ValidationModule /* Development Only */,
+]);
 
 interface ICar {
     id: string;

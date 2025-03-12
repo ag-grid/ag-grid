@@ -11,14 +11,15 @@
     max-width: 420px;
     border-radius: var(--radius-md);
     border-radius: var(--radius-sm);
-    background-color: var(--color-bg-primary);
+
     gap: $spacing-size-3;
 
     svg {
         height: 24px;
         width: 24px;
-        fill: var(--color-fg-secondary);
+        fill: white;
         opacity: 0.8;
+        transition: none;
     }
 
     @media screen and (min-width: 740px) {
@@ -30,7 +31,7 @@
         --height: #{$spacing-size-16};
         --icon-size: #{$spacing-size-10};
 
-        font-size: var(--text-fs-xl);
+        font-size: 20px;
     }
 
     #{$selector-darkmode} & {
@@ -42,7 +43,7 @@
 
 .option {
     --color-link: var(--color-fg-primary);
-    --color-link-hover: var(--color-fg-primary);
+    --color-link-hover: white;
 
     display: flex;
     position: relative;
@@ -53,9 +54,10 @@
     padding: calc((var(--height) - var(--icon-size)) / 2) var(--x-padding);
     text-decoration: none;
     outline: none;
-    background: var(--color-button-tertiary-bg-hover);
+    background: rgba(0, 0, 0, 0.1);
     border-radius: var(--radius-md);
-    transition: background-color 0.5s;
+    transition: background-color 0.1s;
+    color: white;
 
     img {
         width: var(--icon-size);
@@ -67,17 +69,20 @@
         display: none;
         margin-left: 4px;
         font-size: var(--text-fs-base);
-        transition: opacity $transition-default-timing;
     }
 
     &:hover,
     &:focus-visible {
         text-decoration: none;
-        background-color: var(--color-brand-100);
-        transition: background-color 0.5s;
+        background: rgba(255, 255, 255, 0.1);
 
-        #{$selector-darkmode} & {
-            background: color-mix(in srgb, var(--color-button-tertiary-bg-hover), var(--color-brand-100) 20%);
+        a {
+            color: white;
+        }
+
+        svg {
+            fill: white;
+            transition: none;
         }
     }
 

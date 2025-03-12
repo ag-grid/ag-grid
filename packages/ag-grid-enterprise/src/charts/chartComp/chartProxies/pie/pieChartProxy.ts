@@ -1,5 +1,7 @@
 import type {
     AgDonutSeriesOptions,
+    AgFillType,
+    AgGradientFill,
     AgPieSeriesOptions,
     AgPolarChartOptions,
     AgPolarSeriesOptions,
@@ -138,11 +140,26 @@ export class PieChartProxy extends ChartProxy<AgPolarChartOptions, 'pie' | 'donu
         return this.chartType === 'pie' ? params.fields.slice(0, 1) : params.fields;
     }
 
-    private changeOpacity(fills: string[], alpha: number) {
+    private changeOpacity<T extends AgFillType>(fills: T[], alpha: number): T[] {
         const Color = this.agChartsExports._Util.Color;
         return fills.map((fill) => {
-            const c = Color.fromString(fill);
-            return new Color(c.r, c.g, c.b, alpha).toHexString();
+            if (typeof fill === 'string') {
+                const c = Color.fromString(fill);
+                return new Color(c.r, c.g, c.b, alpha).toHexString() as T;
+            }
+
+            return {
+                ...(fill as AgGradientFill),
+                colorStops: fill.colorStops?.map((stop) => {
+                    if (stop.color == null) return stop;
+
+                    const c = Color.fromString(stop.color);
+                    return {
+                        ...stop,
+                        color: new Color(c.r, c.g, c.b, alpha).toHexString(),
+                    };
+                }),
+            } as T;
         });
     }
 }

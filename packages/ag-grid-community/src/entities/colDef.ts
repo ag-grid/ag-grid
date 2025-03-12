@@ -398,6 +398,21 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
      * Only applies if `floatingFilter = true`.
      */
     suppressFloatingFilterButton?: boolean;
+    /**
+     * Custom date selection component to be used in Date Filters and Date Floating Filters for this column.
+     * See [Custom Selection Component](https://www.ag-grid.com/javascript-data-grid/filter-date/#custom-selection-component) for framework specific implementation detail.
+     */
+    dateComponent?: any;
+    /** The parameters to be passed to the `dateComponent`. */
+    dateComponentParams?: any;
+
+    // *** Find *** //
+    /**
+     * When using Find with custom cell renderers, this allows providing a custom value to search within.
+     * E.g. if the cell renderer is displaying text that is different from the cell formatted value.
+     * Returning `null` means Find will not search within the cell.
+     */
+    getFindText?: GetFindTextFunc<TData, TValue>;
 
     // *** Column Headers *** //
     /**
@@ -818,17 +833,33 @@ export interface HeaderCheckboxSelectionCallback<TData = any, TValue = any> {
     (params: HeaderCheckboxSelectionCallbackParams<TData, TValue>): boolean;
 }
 
-export interface GetQuickFilterTextParams<TData = any, TValue = any> extends AgGridCommon<TData, any> {
+interface GetTextParams<TData = any, TValue = any> extends AgGridCommon<TData, any> {
     /** Value for the cell. */
     value: TValue | null | undefined;
     /** Row node for the given row */
     node: IRowNode<TData>;
     /** Row data associated with the node. */
     data: TData;
-    /** Column for this callback */
+}
+
+export interface GetQuickFilterTextParams<TData = any, TValue = any> extends GetTextParams<TData, TValue> {
+    /** Column for this callback. */
     column: Column<TValue>;
-    /** ColDef provided for this column */
+    /** ColDef provided for this column. */
     colDef: ColDef<TData, TValue>;
+}
+
+export interface GetFindTextParams<TData = any, TValue = any> extends GetTextParams<TData, TValue> {
+    /** Column for this callback. `null` for `groupRows`. */
+    column: Column<TValue> | null;
+    /** ColDef provided for this column. `null` for `groupRows`. */
+    colDef: ColDef<TData, TValue> | null;
+    /** Get formatted value for the cell (or `null` if no `valueFormatter`) */
+    getValueFormatted: () => string | null;
+}
+
+export interface GetFindTextFunc<TData = any, TValue = any> {
+    (params: GetFindTextParams<TData, TValue>): string | null;
 }
 
 export type ColumnMenuTab = 'filterMenuTab' | 'generalMenuTab' | 'columnsMenuTab';

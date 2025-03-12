@@ -13,6 +13,26 @@ import { themeQuartz } from './theming/parts/theme/themes';
 import { _observeResize } from './utils/dom';
 import { _error, _warn } from './validation/logging';
 
+const CELL_HORIZONTAL_PADDING: Variable = {
+    cssName: '--ag-cell-horizontal-padding',
+    changeKey: 'cellHorizontalPaddingChanged',
+    defaultValue: 16,
+};
+
+const INDENTATION_LEVEL: Variable = {
+    cssName: '--ag-indentation-level',
+    changeKey: 'indentationLevelChanged',
+    defaultValue: 0,
+    noWarn: true,
+    cacheDefault: true,
+};
+
+const ROW_GROUP_INDENT_SIZE: Variable = {
+    cssName: '--ag-row-group-indent-size',
+    changeKey: 'rowGroupIndentSizeChanged',
+    defaultValue: 0,
+};
+
 const ROW_HEIGHT: Variable = {
     cssName: '--ag-row-height',
     changeKey: 'rowHeightChanged',
@@ -43,6 +63,7 @@ export class Environment extends BeanStub implements NamedBean {
     private eGridDiv: HTMLElement;
     public eStyleContainer: HTMLElement;
     public cssLayer: string | undefined;
+    public styleNonce: string | undefined;
     private mutationObserver: MutationObserver;
 
     public wireBeans(beans: BeanCollection): void {
@@ -52,6 +73,7 @@ export class Environment extends BeanStub implements NamedBean {
         this.eStyleContainer =
             gridOptions.themeStyleContainer ?? (eGridDiv.getRootNode() === document ? document.head : eGridDiv);
         this.cssLayer = gridOptions.themeCssLayer;
+        this.styleNonce = gridOptions.styleNonce;
     }
 
     private sizeEls = new Map<Variable, HTMLElement>();
@@ -89,6 +111,34 @@ export class Environment extends BeanStub implements NamedBean {
 
     public getDefaultHeaderHeight(): number {
         return this.getCSSVariablePixelValue(HEADER_HEIGHT);
+    }
+
+    public getDefaultCellHorizontalPadding(): number {
+        return this.getCSSVariablePixelValue(CELL_HORIZONTAL_PADDING);
+    }
+
+    public getDefaultIndentation(): number {
+        return this.getCSSVariablePixelValue(INDENTATION_LEVEL);
+    }
+
+    public getDefaultRowGroupIndentSize(): number {
+        return this.getCSSVariablePixelValue(ROW_GROUP_INDENT_SIZE);
+    }
+
+    public getCellPaddingLeft(): number {
+        // calc(var(--ag-cell-horizontal-padding) - 1px + var(--ag-row-group-indent-size)*var(--ag-indentation-level))
+        const cellHorizontalPadding = this.getDefaultCellHorizontalPadding();
+        const indentationLevel = this.getDefaultIndentation();
+        const rowGroupIndentSize = this.getDefaultRowGroupIndentSize();
+        return cellHorizontalPadding - 1 + rowGroupIndentSize * indentationLevel;
+    }
+
+    public getCellPaddingRight(): number {
+        return this.getDefaultCellHorizontalPadding() - 1;
+    }
+
+    public getCellPadding(): number {
+        return this.getCellPaddingLeft() + this.getCellPaddingRight();
     }
 
     public getDefaultColumnMinWidth(): number {
@@ -171,7 +221,7 @@ export class Environment extends BeanStub implements NamedBean {
 
     public addGlobalCSS(css: string, debugId: string): void {
         if (this.gridTheme) {
-            _injectGlobalCSS(css, this.eStyleContainer, debugId, this.cssLayer, 0);
+            _injectGlobalCSS(css, this.eStyleContainer, debugId, this.cssLayer, 0, this.styleNonce);
         } else {
             this.globalCSS.push([css, debugId]);
         }
@@ -184,6 +234,9 @@ export class Environment extends BeanStub implements NamedBean {
         }
         const measurement = this.measureSizeEl(variable);
         if (measurement === 'detached' || measurement === 'no-styles') {
+            if (variable.cacheDefault) {
+                this.lastKnownValues.set(variable, variable.defaultValue);
+            }
             return variable.defaultValue;
         }
         this.lastKnownValues.set(variable, measurement);
@@ -219,7 +272,7 @@ export class Environment extends BeanStub implements NamedBean {
         const container = this.getMeasurementContainer();
 
         sizeEl = document.createElement('div');
-        const { border } = variable;
+        const { border, noWarn } = variable;
         if (border) {
             sizeEl.className = 'ag-measurement-element-border';
             sizeEl.style.setProperty(
@@ -234,7 +287,7 @@ export class Environment extends BeanStub implements NamedBean {
 
         let lastMeasurement = this.measureSizeEl(variable);
 
-        if (lastMeasurement === 'no-styles') {
+        if (lastMeasurement === 'no-styles' && !noWarn) {
             // No value for the variable
             _warn(9, { variable });
         }
@@ -287,9 +340,9 @@ export class Environment extends BeanStub implements NamedBean {
         if (newGridTheme !== oldGridTheme) {
             if (newGridTheme) {
                 _registerGridUsingThemingAPI(this);
-                _injectCoreAndModuleCSS(this.eStyleContainer, this.cssLayer);
+                _injectCoreAndModuleCSS(this.eStyleContainer, this.cssLayer, this.styleNonce);
                 for (const [css, debugId] of globalCSS) {
-                    _injectGlobalCSS(css, this.eStyleContainer, debugId, this.cssLayer, 0);
+                    _injectGlobalCSS(css, this.eStyleContainer, debugId, this.cssLayer, 0, this.styleNonce);
                 }
                 globalCSS.length = 0;
             }
@@ -298,10 +351,15 @@ export class Environment extends BeanStub implements NamedBean {
                 loadThemeGoogleFonts: gos.get('loadThemeGoogleFonts'),
                 styleContainer: this.eStyleContainer,
                 cssLayer: this.cssLayer,
+                nonce: this.styleNonce,
             });
             let eParamsStyle = this.eParamsStyle;
             if (!eParamsStyle) {
                 eParamsStyle = this.eParamsStyle = document.createElement('style');
+                const styleNonce = this.gos.get('styleNonce');
+                if (styleNonce) {
+                    eParamsStyle.setAttribute('nonce', styleNonce);
+                }
                 eGridDiv.appendChild(eParamsStyle);
             }
             if (!IS_SSR) {
@@ -331,6 +389,8 @@ type Variable = {
     changeKey: ChangeKey;
     defaultValue: number;
     border?: boolean;
+    noWarn?: boolean;
+    cacheDefault?: boolean;
 };
 
 type ChangeKey =
@@ -338,6 +398,9 @@ type ChangeKey =
     | 'headerHeightChanged'
     | 'rowHeightChanged'
     | 'listItemHeightChanged'
-    | 'rowBorderWidthChanged';
+    | 'rowBorderWidthChanged'
+    | 'cellHorizontalPaddingChanged'
+    | 'indentationLevelChanged'
+    | 'rowGroupIndentSizeChanged';
 
 const NO_VALUE_SENTINEL = 15538;

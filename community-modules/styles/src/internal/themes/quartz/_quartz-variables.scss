@@ -23,6 +23,10 @@
     --ag-advanced-filter-value-pill-color: #85c0e4;
     --ag-header-column-resize-handle-color: var(--ag-secondary-border-color);
     --ag-icon-font-color: color-mix(in srgb, transparent, var(--ag-foreground-color) 90%);
+    --ag-find-match-color: var(--ag-foreground-color);
+    --ag-find-match-background-color: #ffff00;
+    --ag-find-active-match-color: var(--ag-foreground-color);
+    --ag-find-active-match-background-color: #ffa500;
 
     --ag-panel-background-color: color-mix(in srgb, var(--ag-background-color), var(--ag-foreground-color) 3%);
     --ag-panel-border-color: color-mix(in srgb, transparent, var(--ag-foreground-color) 20%);
@@ -129,6 +133,8 @@
     --ag-advanced-filter-column-pill-color: #355f2d;
     --ag-advanced-filter-option-pill-color: #5a3168;
     --ag-advanced-filter-value-pill-color: #374c86;
+    --ag-find-match-color: var(--ag-background-color);
+    --ag-find-active-match-color: var(--ag-background-color);
 
     --ag-popup-shadow: 0 0px 20px rgba(0, 0, 0, 0.3);
 

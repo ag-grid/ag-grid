@@ -25,6 +25,16 @@ export class CellSpan {
         this.addSpannedNode(firstNode);
     }
 
+    /**
+     * Reset the span leaving only the head.
+     * Head is used as a comparison as this is the row used to render this cell
+     * Even if the row data changes, the cell will properly reflect the correct value.
+     */
+    public reset(): void {
+        this.spannedNodes.clear();
+        this.addSpannedNode(this.firstNode);
+    }
+
     public addSpannedNode(node: RowNode): void {
         this.spannedNodes.add(node);
         this.lastNode = node;
@@ -91,10 +101,11 @@ export class RowSpanCache extends BeanStub {
     public buildCache(pinned: 'top' | 'center' | 'bottom'): void {
         const {
             column,
-            beans: { gos, pinnedRowModel, rowModel, valueSvc },
+            beans: { gos, pinnedRowModel, rowModel, valueSvc, pagination },
         } = this;
         const { colDef } = column;
 
+        const oldMap = this[`${pinned}ValueNodeMap`];
         const newMap = new Map();
 
         const isFullWidthCellFunc = gos.getCallback('isFullWidthRow');
@@ -159,7 +170,11 @@ export class RowSpanCache extends BeanStub {
             }
 
             if (!spanData) {
-                spanData = new CellSpan(column, lastNode);
+                const oldSpan = oldMap?.get(lastNode);
+                if (oldSpan) {
+                    oldSpan.reset();
+                }
+                spanData = oldSpan ?? new CellSpan(column, lastNode);
                 newMap.set(lastNode, spanData);
             }
             spanData.addSpannedNode(node);
@@ -168,7 +183,13 @@ export class RowSpanCache extends BeanStub {
 
         switch (pinned) {
             case 'center':
-                rowModel.forEachDisplayedNode?.(checkNodeForCache);
+                rowModel.forEachDisplayedNode?.((node: RowNode) => {
+                    const isNodeInPage = !pagination || pagination.isRowInPage(node.rowIndex!);
+                    if (!isNodeInPage) {
+                        return;
+                    }
+                    checkNodeForCache(node);
+                });
                 break;
             case 'top':
                 pinnedRowModel?.forEachPinnedRow('top', checkNodeForCache);

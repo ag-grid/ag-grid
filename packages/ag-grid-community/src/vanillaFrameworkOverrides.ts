@@ -6,7 +6,8 @@ import { setValidationDocLink } from './validation/logging';
 
 /** The base frameworks, eg React & Angular, override this bean with implementations specific to their requirement. */
 export class VanillaFrameworkOverrides implements IFrameworkOverrides {
-    public renderingEngine: 'vanilla' | 'react' = 'vanilla';
+    public readonly renderingEngine: 'vanilla' | 'react' = 'vanilla';
+    public readonly batchFrameworkComps: boolean = false;
     private baseDocLink: string;
 
     constructor(private frameworkName: 'javascript' | 'angular' | 'react' | 'vue' = 'javascript') {

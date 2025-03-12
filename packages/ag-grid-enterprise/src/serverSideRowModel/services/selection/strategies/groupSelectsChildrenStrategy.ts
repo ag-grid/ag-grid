@@ -45,13 +45,14 @@ export class GroupSelectsChildrenStrategy extends BeanStub implements ISelection
     }
 
     public getSelectedState(): IServerSideGroupSelectionState {
-        const treeData = this.gos.get('treeData');
+        const { gos, rowGroupColsSvc, selectedState } = this;
+        const treeData = gos.get('treeData');
         const recursivelySerializeState = (state: SelectionState, level: number, nodeId?: string) => {
             const normalisedState: IServerSideGroupSelectionState = {
                 nodeId,
             };
 
-            if (treeData || (this.rowGroupColsSvc && level <= this.rowGroupColsSvc?.columns.length)) {
+            if (treeData || (rowGroupColsSvc && level <= rowGroupColsSvc.columns.length)) {
                 normalisedState.selectAllChildren = state.selectAllChildren;
             }
 
@@ -67,7 +68,7 @@ export class GroupSelectsChildrenStrategy extends BeanStub implements ISelection
 
             return normalisedState;
         };
-        return recursivelySerializeState(this.selectedState, 0);
+        return recursivelySerializeState(selectedState, 0);
     }
 
     public setSelectedState(state: IServerSideSelectionState | IServerSideGroupSelectionState): void {
@@ -316,8 +317,11 @@ export class GroupSelectsChildrenStrategy extends BeanStub implements ISelection
         }
     }
 
-    public getSelectedNodes(): RowNode<any>[] {
+    public getSelectedNodes(nullWhenSelectAll = false): RowNode<any>[] | null {
         _warn(202);
+        if (this.selectedState.selectAllChildren && nullWhenSelectAll) {
+            return null;
+        }
 
         const selectedNodes: RowNode[] = [];
         this.rowModel.forEachNode((node) => {
@@ -333,7 +337,7 @@ export class GroupSelectsChildrenStrategy extends BeanStub implements ISelection
     }
 
     public getSelectedRows(): any[] {
-        return this.getSelectedNodes().map((node) => node.data);
+        return this.getSelectedNodes()?.map((node) => node.data) ?? [];
     }
 
     public getSelectionCount(): number {
@@ -345,11 +349,15 @@ export class GroupSelectsChildrenStrategy extends BeanStub implements ISelection
     }
 
     public selectAllRowNodes(): void {
-        this.selectedState = { selectAllChildren: true, toggledNodes: new Map() };
+        this.reset(true);
     }
 
     public deselectAllRowNodes(): void {
-        this.selectedState = { selectAllChildren: false, toggledNodes: new Map() };
+        this.reset(false);
+    }
+
+    private reset(selectAllChildren: boolean): void {
+        this.selectedState = { selectAllChildren, toggledNodes: new Map() };
     }
 
     public getSelectAllState(): boolean | null {

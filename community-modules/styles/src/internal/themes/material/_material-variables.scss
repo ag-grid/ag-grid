@@ -35,6 +35,10 @@
     --ag-advanced-filter-column-pill-color: #a6e194;
     --ag-advanced-filter-option-pill-color: #f3c08b;
     --ag-advanced-filter-value-pill-color: #85c0e4;
+    --ag-find-match-color: var(--ag-foreground-color);
+    --ag-find-match-background-color: #ffff00;
+    --ag-find-active-match-color: var(--ag-foreground-color);
+    --ag-find-active-match-background-color: #ffa500;
 
     // derived colours (no color blending)
     --ag-range-selection-border-color: var(--ag-material-primary-color);
@@ -86,6 +90,8 @@
     --ag-material-accent-color: #bb86fcff;
 
     --ag-range-selection-border-color: var(--ag-material-accent-color);
+    --ag-find-match-color: var(--ag-background-color);
+    --ag-find-active-match-color: var(--ag-background-color);
 
     --ag-background-color: #121212ff;
     --ag-foreground-color: #ffffffff;

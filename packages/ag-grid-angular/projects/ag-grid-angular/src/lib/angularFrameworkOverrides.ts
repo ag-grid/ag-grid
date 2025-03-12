@@ -11,6 +11,8 @@ import { AngularFrameworkEventListenerService } from './angularFrameworkEventLis
 
 @Injectable()
 export class AngularFrameworkOverrides extends VanillaFrameworkOverrides {
+    public override readonly batchFrameworkComps: boolean = true;
+
     // Flag used to control Zone behaviour when running tests as many test features rely on Zone.
     private isRunningWithinTestZone: boolean = false;
 
@@ -91,13 +93,16 @@ export class AngularFrameworkOverrides extends VanillaFrameworkOverrides {
             return false;
         }
         const prototype = comp.prototype;
-        const isAngularComp = prototype && 'agInit' in prototype;
-        return isAngularComp;
+        return prototype && 'agInit' in prototype;
     }
 
     runInsideAngular<T>(callback: () => T): T {
+        if (!this._ngZone || NgZone.isInAngularZone()) {
+            return callback();
+        }
+
         // Check for _ngZone existence as it is not present when Zoneless
-        return this._ngZone ? this._ngZone.run(callback) : callback();
+        return this._ngZone.run(callback);
     }
 
     runOutsideAngular<T>(callback: () => T, source?: FrameworkOverridesIncomingSource): T {

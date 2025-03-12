@@ -1,6 +1,6 @@
 {
   "name": "ag-grid-enterprise",
-  "version": "33.1.0",
+  "version": "33.1.1",
   "description": "Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue",
   "main": "./dist/package/main.cjs.js",
   "types": "./dist/types/src/main.d.ts",
@@ -44,9 +44,6 @@
     "./styles/agGridQuartzFont.min.css": "./styles/agGridQuartzFont.min.css",
     "./styles": "./styles/_index.scss"
   },
-  "scripts": {
-    "build:css": "tsx ../../scripts/build-css.ts --package ag-grid-enterprise"
-  },
   "sideEffects": false,
   "repository": {
     "type": "git",
@@ -85,16 +82,16 @@
   ],
   "homepage": "https://www.ag-grid.com/",
   "dependencies": {
-    "ag-grid-community": "33.1.0"
+    "ag-grid-community": "33.1.1"
   },
   "optionalDependencies": {
-    "ag-charts-community": "11.1.0-beta.20250216",
-    "ag-charts-enterprise": "11.1.0-beta.20250216"
+    "ag-charts-community": "11.1.1-beta.20250310",
+    "ag-charts-enterprise": "11.1.1-beta.20250310"
   },
   "devDependencies": {
     "source-map-loader": "^5.0.0",
-    "ag-charts-community": "11.1.0-beta.20250216",
-    "ag-charts-enterprise": "11.1.0-beta.20250216",
+    "ag-charts-community": "11.1.1-beta.20250310",
+    "ag-charts-enterprise": "11.1.1-beta.20250310",
     "ts-loader": "^9.5.1",
     "style-loader": "^3.3.4",
     "css-loader": "^6.10.0",

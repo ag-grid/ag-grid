@@ -242,7 +242,7 @@ export class TooltipStateManager extends BeanStub {
 
     private isLastTooltipHiddenRecently(): boolean {
         // return true if <1000ms since last time we hid a tooltip
-        const now = new Date().getTime();
+        const now = Date.now();
         const then = lastTooltipHideTime;
 
         return now - then < SHOW_QUICK_TOOLTIP_DIFF;
@@ -317,7 +317,7 @@ export class TooltipStateManager extends BeanStub {
         // one, the instance may not be back yet
         if (this.tooltipComp) {
             this.destroyTooltipComp();
-            lastTooltipHideTime = new Date().getTime();
+            lastTooltipHideTime = Date.now();
         }
 
         this.eventSvc.dispatchEvent({

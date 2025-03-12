@@ -50,4 +50,5 @@ export const USER_COMP_MODULES: Record<UserComponentName, ValidationModuleName> 
     agTotalRowCountComponent: 'StatusBar',
     agFilteredRowCountComponent: 'StatusBar',
     agTotalAndFilteredRowCountComponent: 'StatusBar',
+    agFindCellRenderer: 'Find',
 };

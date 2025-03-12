@@ -48,6 +48,8 @@ export class RowNode<TData = any>
 
     /** If using row grouping, contains the group values for this group. */
     public groupData: { [key: string]: any | null } | null;
+    /** When using group rows, contains the value without casting to string */
+    public groupValue: any;
 
     /** If using row grouping and aggregation, contains the aggregation data. */
     public aggData: any;
@@ -305,7 +307,7 @@ export class RowNode<TData = any>
     }
 
     private setDataCommon(data: TData, update: boolean): void {
-        const { valueCache, selectionSvc, rowSpanSvc } = this.beans;
+        const { valueCache, selectionSvc, eventSvc } = this.beans;
         const oldData = this.data;
 
         this.data = data;
@@ -317,7 +319,7 @@ export class RowNode<TData = any>
         const event: DataChangedEvent<TData> = this.createDataChangedEvent(data, oldData, update);
 
         this.__localEventService?.dispatchEvent(event);
-        rowSpanSvc?.onRowDataUpdated(this);
+        eventSvc.dispatchEvent({ type: 'rowNodeDataChanged', node: this });
     }
 
     // when we are doing master / detail, the detail node is lazy created, but then kept around.
@@ -474,7 +476,7 @@ export class RowNode<TData = any>
         // the cell knows about the change given it's in charge of the editing.
         // this method is for the client to call, so the cell listens for the change
         // event, and also flashes the cell when the change occurs.
-        const { colModel, valueSvc, gos, selectionSvc, rowSpanSvc } = this.beans;
+        const { colModel, valueSvc, gos, selectionSvc } = this.beans;
 
         // if in pivot mode, grid columns wont include primary columns
         const column = typeof colKey !== 'string' ? colKey : colModel.getCol(colKey) ?? colModel.getColDefCol(colKey);
@@ -511,7 +513,6 @@ export class RowNode<TData = any>
 
         this.dispatchCellChangedEvent(column, newValue, oldValue);
         selectionSvc?.updateRowSelectable(this);
-        rowSpanSvc?.onRowDataUpdated(this);
 
         return valueChanged;
     }

@@ -399,14 +399,6 @@ export class ChartController extends BeanStub<ChartControllerEvent> {
         });
     }
 
-    public getThemeTemplateParameters(): Map<any, any>[] {
-        const themes = this.getThemes();
-
-        return themes.map((theme) => {
-            return theme.getTemplateParameters();
-        });
-    }
-
     public getValueColState(): ColState[] {
         return this.model.valueColState.map(this.displayNameMapper.bind(this));
     }

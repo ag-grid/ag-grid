@@ -81,12 +81,14 @@ function getPropertyBindings(
     bindings: ParsedBindings,
     rowDataType: string,
     componentFileNames: string[],
-    vueComponents
+    vueComponents,
+    vue3VModel: boolean = false
 ): [string[], string[], string[], string[]] {
     const propertyAssignments = [];
     const propertyAttributes = [];
     const propertyNames = [];
 
+    const rowBindAttribute = vue3VModel ? 'v-model' : ':rowData';
     bindings.properties
         .filter((property) => property.name !== 'onGridReady')
         .forEach((property) => {
@@ -109,7 +111,7 @@ function getPropertyBindings(
         });
 
     if (!propertyAttributes.find((item) => item.indexOf(':rowData') >= 0)) {
-        propertyAttributes.push(':rowData="rowData"');
+        propertyAttributes.push(`${rowBindAttribute}="rowData"`);
         propertyNames.push('rowData');
     }
 
@@ -118,8 +120,8 @@ function getPropertyBindings(
     }
 
     if (bindings.data && bindings.data.callback.indexOf("gridApi.setGridOption('rowData',") >= 0) {
-        if (propertyAttributes.filter((item) => item.indexOf(':rowData') >= 0).length === 0) {
-            propertyAttributes.push(':rowData="rowData"');
+        if (propertyAttributes.filter((item) => item.indexOf(rowBindAttribute) >= 0).length === 0) {
+            propertyAttributes.push(`${rowBindAttribute}="rowData"`);
             propertyNames.push('rowData');
         }
     }
@@ -218,7 +220,8 @@ export function vanillaToVue3(
             bindings,
             rowDataType,
             componentFileNames,
-            vueComponents
+            vueComponents,
+            exampleConfig.vue3VModel
         );
         const template = getTemplate(bindings, exampleConfig, propertyAttributes.concat(eventAttributes));
 

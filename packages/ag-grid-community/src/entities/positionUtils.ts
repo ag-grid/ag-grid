@@ -1,8 +1,10 @@
 import type { BeanCollection } from '../context/context';
+import { _isGroupRowsSticky } from '../gridOptionsUtils';
 import type { CellPosition } from '../interfaces/iCellPosition';
 import type { RowPinnedType } from '../interfaces/iRowNode';
 import type { RowPosition } from '../interfaces/iRowPosition';
 import type { CellCtrl } from '../rendering/cell/cellCtrl';
+import type { RowCtrl } from '../rendering/row/rowCtrl';
 import { _exists } from '../utils/generic';
 import type { AgColumn } from './agColumn';
 import type { RowNode } from './rowNode';
@@ -122,4 +124,84 @@ export function _getCellByPosition(beans: BeanCollection, cellPosition: CellPosi
     }
 
     return rowCtrl.getCellCtrl(cellPosition.column as AgColumn);
+}
+
+export function _getRowAbove(beans: BeanCollection, rowPosition: RowPosition): RowPosition | null {
+    const { rowIndex: index, rowPinned: pinned } = rowPosition;
+    const { pageBounds, pinnedRowModel, rowModel } = beans;
+
+    if (pinned === 'top' && index === 0) {
+        return null;
+    }
+
+    if (pinned == null && index === pageBounds.getFirstRow()) {
+        return pinnedRowModel?.isRowsToRender('top')
+            ? { rowIndex: pinnedRowModel.getPinnedTopRowCount() - 1, rowPinned: 'top' }
+            : null;
+    }
+
+    if (pinned === 'bottom' && index === 0 && rowModel.isRowsToRender()) {
+        return { rowIndex: pageBounds.getLastRow(), rowPinned: null };
+    }
+
+    const rowNode = pinned ? undefined : rowModel.getRow(index);
+    return getNextStickyPosition(beans, rowNode, true) ?? { rowIndex: index - 1, rowPinned: pinned };
+}
+
+export function _getRowBelow(beans: BeanCollection, rowPosition: RowPosition): RowPosition | null {
+    const { rowIndex: index, rowPinned: pinned } = rowPosition;
+    const { pageBounds, pinnedRowModel, rowModel } = beans;
+
+    if (isLastRowInContainer(beans, rowPosition)) {
+        if (pinned === 'bottom') {
+            return null;
+        }
+
+        if (pinned === 'top' && rowModel.isRowsToRender()) {
+            return { rowIndex: pageBounds.getFirstRow(), rowPinned: null };
+        }
+
+        return pinnedRowModel?.isRowsToRender('bottom') ? { rowIndex: 0, rowPinned: 'bottom' } : null;
+    }
+
+    const rowNode = pinned ? undefined : rowModel.getRow(index);
+    return getNextStickyPosition(beans, rowNode) ?? { rowIndex: index + 1, rowPinned: pinned };
+}
+
+function getNextStickyPosition(beans: BeanCollection, rowNode?: RowNode, up?: boolean): RowPosition | undefined {
+    const { gos, rowRenderer } = beans;
+
+    if (!rowNode?.sticky || !_isGroupRowsSticky(gos)) {
+        return;
+    }
+
+    const stickyRowCtrls = up ? rowRenderer.getStickyTopRowCtrls() : rowRenderer.getStickyBottomRowCtrls();
+
+    let nextCtrl: RowCtrl | undefined;
+    for (let i = 0; i < stickyRowCtrls.length; i++) {
+        if (stickyRowCtrls[i].rowNode.rowIndex === rowNode.rowIndex) {
+            nextCtrl = stickyRowCtrls[i + (up ? -1 : 1)];
+            break;
+        }
+    }
+
+    return nextCtrl ? { rowIndex: nextCtrl.rowNode.rowIndex!, rowPinned: null } : undefined;
+}
+
+function isLastRowInContainer(beans: BeanCollection, rowPosition: RowPosition): boolean {
+    const { rowPinned, rowIndex } = rowPosition;
+    const { pinnedRowModel, pageBounds } = beans;
+
+    if (rowPinned === 'top') {
+        const lastTopIndex = (pinnedRowModel?.getPinnedTopRowCount() ?? 0) - 1;
+        return lastTopIndex <= rowIndex;
+    }
+
+    if (rowPinned === 'bottom') {
+        const lastBottomIndex = (pinnedRowModel?.getPinnedBottomRowCount() ?? 0) - 1;
+        return lastBottomIndex <= rowIndex;
+    }
+
+    const lastBodyIndex = pageBounds.getLastRow();
+    return lastBodyIndex <= rowIndex;
 }

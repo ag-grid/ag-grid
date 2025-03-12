@@ -54,6 +54,29 @@ This is demonstrated in the following example, note that:
 
 {% gridExampleRunner title="Conditional Cell Editing" name="conditional-editing" /%}
 
+{% if isFramework("vue") %}
+
+## Two Way Binding
+
+If you want to have row data changes done within the grid - i.e. from the Grid back up to the parent component - then you'll need to make use of `v-model` instead of binding to `rowData`.
+
+For example:
+
+```jsx
+<template>
+    <ag-grid-vue style="width: 500px; height: 500px;"
+                 @grid-ready="onGridReady"
+                 :columnDefs="columnDefs"
+                 v-model="rowData">
+    </ag-grid-vue>
+</template>
+```
+
+{% note %}
+`v-model` is only possible when `ClientSideRowModel` is used, and either the `AllCommunityModule` or the `ClientSideRowModelApiModule` module is registered.
+{% /note %}
+{% /if %}
+
 ## Editing Events
 
 Cell editing results in the following events.

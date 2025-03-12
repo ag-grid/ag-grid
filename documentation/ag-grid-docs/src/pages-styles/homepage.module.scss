@@ -466,8 +466,8 @@ body {
     display: flex;
     justify-content: center;
     gap: $spacing-size-4;
-    margin-bottom: $spacing-size-16;
-    margin-top: $spacing-size-4;
+    margin-bottom: $spacing-size-8;
+    margin-top: $spacing-size-12;
 
     a {
         height: 48px;
@@ -487,16 +487,7 @@ body {
     border-radius: var(--radius-md);
     height: 48px;
     padding: 0px 12px 0px 2px;
-    background-color: rgba(0, 0, 0, 0.1);
     transition: all 0.3s;
-
-    #{$selector-darkmode} & {
-        background-color: rgba(0, 0, 0, 0.1);
-    }
-    &:hover {
-        background-color: rgba(0, 0, 0, 0.15);
-        transition: all 0.3s;
-    }
 }
 
 .heroSectioncta1 {
@@ -505,21 +496,6 @@ body {
     align-items: center;
     gap: 8px;
     transition: opacity 0.3s;
-    background-color: var(--color-white);
-    color: var(--color-brand-500);
-
-    svg path {
-        fill: var(--color-brand-500);
-    }
-
-    #{$selector-darkmode} & {
-        background-color: var(--color-white);
-        &:hover {
-            opacity: 0.8;
-            transition: opacity 0.3s;
-            color: var(--color-brand-500);
-        }
-    }
 }
 
 .heroSectioncta1 svg {
@@ -527,6 +503,7 @@ body {
     width: 24px;
     fill: var(--color-fg-secondary);
     opacity: 0.8;
+    margin-top: -12px;
 }
 
 .heroButton {

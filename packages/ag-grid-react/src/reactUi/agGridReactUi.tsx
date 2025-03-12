@@ -437,10 +437,10 @@ const DetailCellRenderer = forwardRef((props: IDetailCellRendererParams, ref: an
 
 class ReactFrameworkOverrides extends VanillaFrameworkOverrides {
     private queueUpdates = false;
+    public override readonly renderingEngine = 'react';
 
     constructor(private readonly processQueuedUpdates: () => void) {
         super('react');
-        this.renderingEngine = 'react';
     }
 
     private frameworkComponents: any = {

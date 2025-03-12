@@ -1,5 +1,9 @@
 [
     {
+        "version": "33.1.1",
+        "date": "February 20th 2025"
+    },
+    {
         "version": "33.1.0",
         "date": "February 12th 2025",
         "landingPageHighlight": "Row Numbers, Row Spanning, Master/Detail Selection, Tree Data Children",

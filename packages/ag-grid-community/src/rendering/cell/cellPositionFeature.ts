@@ -64,7 +64,7 @@ export class CellPositionFeature extends BeanStub {
         if (cellSpan) {
             this.refreshSpanHeight(cellSpan);
             this.addManagedListeners(this.beans.eventSvc, {
-                modelUpdated: this.refreshSpanHeight.bind(this, cellSpan),
+                paginationChanged: this.refreshSpanHeight.bind(this, cellSpan),
                 recalculateRowBounds: this.refreshSpanHeight.bind(this, cellSpan),
             });
         }

@@ -1,5 +1,5 @@
 import type { AgChartsExports } from '../../../../../agChartsExports';
-import type { MiniChartSelector, ThemeTemplateParameters } from '../../miniChartsContainer';
+import type { MiniChartSelector } from '../../miniChartsContainer';
 import { MiniStackedBarClass } from './miniStackedBar';
 
 const miniNormalizedBarData = [
@@ -14,7 +14,6 @@ export class MiniNormalizedBarClass extends MiniStackedBarClass {
         agChartsExports: AgChartsExports,
         fills: string[],
         strokes: string[],
-        themeTemplateParameters: ThemeTemplateParameters,
         isCustomTheme: boolean
     ) {
         super(
@@ -22,7 +21,6 @@ export class MiniNormalizedBarClass extends MiniStackedBarClass {
             agChartsExports,
             fills,
             strokes,
-            themeTemplateParameters,
             isCustomTheme,
             miniNormalizedBarData,
             [0, 10],

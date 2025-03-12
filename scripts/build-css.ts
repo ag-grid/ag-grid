@@ -9,7 +9,12 @@ import cssRtl from 'postcss-rtlcss';
 import cssUrl from 'postcss-url';
 
 const packageArg = process.argv.indexOf('--package');
-const packageFolder = (packageArg >= 0 && process.argv[packageArg + 1]) || '*';
+const packageFolder = packageArg >= 0 && process.argv[packageArg + 1];
+
+if (!packageFolder) {
+    console.error('Please provide a package name with --package');
+    process.exit(1);
+}
 
 const srcFolders = join(__dirname, '../packages', packageFolder, 'src');
 const DEV_MODE = process.env.CSS_DEBUG != null;

@@ -10,27 +10,27 @@ function getProjectBuildTargets(project) {
     }
 
     switch (project) {
-        case 'ag-charts-locale':
         case 'ag-charts-types':
             return [
-                [project, ['build'], 'watch'],
                 [project, ['docs-resolved-interfaces'], 'watch'],
-                ['ag-charts-community', ['build'], 'watch'],
-                ['ag-charts-enterprise', ['build'], 'watch'],
+                ['ag-charts-community', ['build:types'], 'watch'],
+                ['ag-charts-enterprise', ['build:types'], 'watch'],
+                [project, ['build'], 'watch'],
             ];
+        case 'ag-charts-locale':
         case 'ag-charts-core':
             return [
+                ['ag-charts-community', ['build:umd', 'build'], 'watch'],
+                ['ag-charts-enterprise', ['build:umd', 'build'], 'watch'],
                 [project, ['build'], 'watch'],
-                ['ag-charts-community', ['build'], 'watch'],
-                ['ag-charts-enterprise', ['build'], 'watch'],
             ];
         case 'ag-charts-community':
             return [
-                [project, ['build'], 'watch'],
-                ['ag-charts-enterprise', ['build'], 'watch'],
+                ['ag-charts-enterprise', ['build:umd', 'build'], 'watch'],
+                [project, ['build:umd', 'build'], 'watch'],
             ];
         case 'ag-charts-enterprise':
-            return [[project, ['build'], 'watch']];
+            return [[project, ['build:umd', 'build'], 'watch']];
     }
 
     return [[project, ['build'], undefined]];
@@ -38,5 +38,6 @@ function getProjectBuildTargets(project) {
 
 module.exports = {
     ignoredProjects: IGNORED_PROJECTS,
+    devServerReloadTargets: ['generate', 'docs-resolved-interfaces', 'build:package', 'build:umd'],
     getProjectBuildTargets,
 };

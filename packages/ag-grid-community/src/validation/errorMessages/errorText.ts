@@ -273,8 +273,7 @@ export const AG_GRID_ERRORS = {
         `A template was provided for Header Group Comp - templates are only supported for Header Comps (not groups)` as const,
     90: () => `datasource is missing getRows method` as const,
     91: () => 'Filter is missing method doesFilterPass' as const,
-    92: ({ methodName }: { methodName: string }) =>
-        `AnimationFrameService.${methodName} called but animation frames are off` as const,
+    92: () => `AnimationFrameService called but animation frames are off` as const,
     93: () => 'cannot add multiple ranges when `cellSelection.suppressMultiRanges = true`' as const,
     94: ({
         paginationPageSizeOption,
@@ -641,6 +640,10 @@ export const AG_GRID_ERRORS = {
         'Detail grids can not use a different theme to the master grid, the `theme` detail grid option will be ignored.' as const,
     268: () => "Transactions aren't supported with tree data when using treeDataChildrenField" as const,
     269: () => "When `masterSelects: 'detail'`, detail grids must be configured with multi-row selection" as const,
+    270: ({ id, parentId }: { id: string; parentId: string }) =>
+        `Cycle detected for row with id='${id}' and parent id='${parentId}'. Resetting the parent for row with id='${id}' and showing it as a root-level node.` as const,
+    271: ({ id, parentId }: { id: string; parentId: string }) =>
+        `Parent row not found for row with id='${id}' and parent id='${parentId}'. Showing row with id='${id}' as a root-level node.` as const,
 };
 
 export type ErrorMap = typeof AG_GRID_ERRORS;

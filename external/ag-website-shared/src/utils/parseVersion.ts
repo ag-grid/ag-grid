@@ -4,6 +4,7 @@ export interface ParsedVersion {
     patch: string;
     patchNum: number;
     patchBeta: string;
+    versionType: string;
     isMajor: boolean;
 }
 
@@ -15,7 +16,8 @@ export const parseVersion = (version: string): ParsedVersion => {
     const patchSplit = patch.split('-');
     const patchNum = Number(patchSplit[0]);
     const patchBeta = patchSplit[1];
+    const versionType = patchNum !== 0 ? 'Patch' : minor !== 0 ? 'Minor' : 'Major';
     const isMajor = !minor && patch === '0';
 
-    return { major, minor, patch, patchNum, patchBeta, isMajor };
+    return { major, minor, patch, patchNum, patchBeta, versionType, isMajor };
 };

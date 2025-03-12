@@ -24,6 +24,8 @@ const EVENT_NAME = {
     reactLandingPageCustomStylesTemplate: 'React Landing Page - Custom Styles Template',
     reactLandingPageIntegratedChartsTemplate: 'React Landing Page - Integrated Charts Template',
     reactLandingPageFaqExpand: 'React Landing Page - FAQ Expand',
+    trialLicenseFormSuccess: 'Trial License Form - Success',
+    trialLicenseFormError: 'Trial License Form - Error',
 };
 
 const trackPlausible = ({ eventName, props }: { eventName: string; props?: object }) => {
@@ -137,3 +139,27 @@ const trackDownloadDS = (props: object) => {
 };
 
 export const trackOnceDownloadDS = createTrackPlausibleOnce(EVENT_NAME.downloadDS, trackDownloadDS);
+
+export const trackTrialLicenseFormSuccess = (props: object) => {
+    trackPlausible({
+        eventName: EVENT_NAME.trialLicenseFormSuccess,
+        props,
+    });
+};
+
+export const trackOnceTrialLicenseFormSuccess = createTrackPlausibleOnce(
+    EVENT_NAME.trialLicenseFormSuccess,
+    trackTrialLicenseFormSuccess
+);
+
+export const trackTrialLicenseFormError = (props: object) => {
+    trackPlausible({
+        eventName: EVENT_NAME.trialLicenseFormError,
+        props,
+    });
+};
+
+export const trackOnceTrialLicenseFormError = createTrackPlausibleOnce(
+    EVENT_NAME.trialLicenseFormError,
+    trackTrialLicenseFormError
+);

@@ -1,0 +1,54 @@
+---
+import { getEntry, type CollectionEntry } from 'astro:content';
+import { urlWithPrefix } from '@utils/urlWithPrefix';
+import { parseVersion } from '@ag-website-shared/utils/parseVersion';
+
+import { Icon } from '@ag-website-shared/components/icon/Icon';
+import styles from './MajorTable.module.scss';
+
+interface Props {
+    library: String;
+    major: Number;
+}
+
+const { library, major } = Astro.props as Props;
+
+const isGrid = library === 'grid';
+
+const { framework } = Astro.params as Params;
+const { data: allVersions } = (await getEntry(
+    'versions',
+    isGrid ? 'ag-grid-versions' : 'ag-charts-versions'
+)) as CollectionEntry<'versions'>;
+
+const filterMigrations = (version) => {
+    return parseVersion(version.version).major === major && version.notesPath;
+};
+
+const versions = allVersions.filter(filterMigrations);
+---
+
+<table class={styles.majorTable}>
+    {
+        versions.map((version) => {
+            const { isMajor, versionType } = parseVersion(version.version);
+            const guideUrl = urlWithPrefix({ framework, url: version.notesPath });
+
+            return (
+                <tr class={isMajor ? styles.isMajor : ''}>
+                    <td class:list={[styles.version, 'text-monospace ', 'text-semibold']}>{version.version}</td>
+                    <td>{version.date}</td>
+                    <td>
+                        <span class={styles.versionType}>{versionType}</span>
+                    </td>
+                    <td>
+                        <a href={guideUrl}>
+                            <span class={'text-monospace'}>{version.version}</span> Migration guide{' '}
+                            <Icon name="arrowRight" />
+                        </a>
+                    </td>
+                </tr>
+            );
+        })
+    }
+</table>

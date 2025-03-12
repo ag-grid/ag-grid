@@ -97,6 +97,7 @@ export const _PUBLIC_EVENTS = [
     'rowDragLeave',
     'rowDragEnd',
     'rowDragCancel',
+    'findChanged',
 ] as const;
 
 // events that are internal to AG Grid and should not be exposed to users via documentation or generated framework components
@@ -150,6 +151,7 @@ export const _INTERNAL_EVENTS = [
     'stickyTopOffsetChanged',
     'overlayExclusiveChanged',
     'beforeRefreshModel',
+    'rowNodeDataChanged',
 ] as const;
 
 export const _ALL_EVENTS = [..._PUBLIC_EVENTS, ..._INTERNAL_EVENTS] as const;

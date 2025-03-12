@@ -17,6 +17,31 @@ export interface PivotColDefServiceResult {
 }
 
 const PIVOT_ROW_TOTAL_PREFIX = 'PivotRowTotal_';
+
+const headerNameComparator = (
+    { headerName: a }: ColGroupDef | ColDef,
+    { headerName: b }: ColGroupDef | ColDef
+): number => {
+    if (a && !b) {
+        return 1;
+    } else if (!a && b) {
+        return -1;
+    } else if (!a && !b) {
+        return 0;
+    }
+    if (a! < b!) {
+        return -1;
+    } else if (a! > b!) {
+        return 1;
+    } else {
+        return 0;
+    }
+};
+
+const convertToHeaderNameComparator =
+    (comparator: (valueA: string, valueB: string) => number) => (a: ColGroupDef | ColDef, b: ColGroupDef | ColDef) =>
+        comparator(a.headerName!, b.headerName!);
+
 export class PivotColDefService extends BeanStub implements NamedBean, IPivotColDefService {
     beanName = 'pivotColDefSvc' as const;
 
@@ -49,7 +74,7 @@ export class PivotColDefService extends BeanStub implements NamedBean, IPivotCol
         });
     }
 
-    public createPivotColumnDefs(uniqueValues: any): PivotColDefServiceResult {
+    public createPivotColumnDefs(uniqueValues: Map<string, any>): PivotColDefServiceResult {
         // this is passed to the colModel, to configure the columns and groups we show
 
         const pivotColumnGroupDefs: (ColDef | ColGroupDef)[] = this.createPivotColumnsFromUniqueValues(uniqueValues);
@@ -86,7 +111,7 @@ export class PivotColDefService extends BeanStub implements NamedBean, IPivotCol
         };
     }
 
-    private createPivotColumnsFromUniqueValues(uniqueValues: any): (ColDef | ColGroupDef)[] {
+    private createPivotColumnsFromUniqueValues(uniqueValues: Map<string, any>): (ColDef | ColGroupDef)[] {
         const pivotColumns = this.pivotColsSvc?.columns ?? [];
         const maxDepth = pivotColumns.length;
 
@@ -102,21 +127,21 @@ export class PivotColDefService extends BeanStub implements NamedBean, IPivotCol
 
     private recursivelyBuildGroup(
         index: number,
-        uniqueValue: any,
+        uniqueValue: Map<string, any>,
         pivotKeys: string[],
         maxDepth: number,
         primaryPivotColumns: AgColumn[]
     ): ColGroupDef[] | ColDef[] {
-        const measureColumns = this.valueColsSvc?.columns;
         if (index >= maxDepth) {
             // Base case - build the measure columns
             return this.buildMeasureCols(pivotKeys);
         }
 
         // sort by either user provided comparator, or our own one
-        const primaryPivotColumnDefs = primaryPivotColumns[index].getColDef();
-        const comparator = this.headerNameComparator.bind(this, primaryPivotColumnDefs.pivotComparator);
+        const { pivotComparator } = primaryPivotColumns[index].getColDef();
+        const comparator = pivotComparator ? convertToHeaderNameComparator(pivotComparator) : headerNameComparator;
 
+        const measureColumns = this.valueColsSvc?.columns;
         // Base case for the compact layout, instead of recursing build the last layer of groups as measure columns instead
         if (
             measureColumns?.length === 1 &&
@@ -125,7 +150,7 @@ export class PivotColDefService extends BeanStub implements NamedBean, IPivotCol
         ) {
             const leafCols: ColDef[] = [];
 
-            for (const key of Object.keys(uniqueValue)) {
+            for (const key of uniqueValue.keys()) {
                 const newPivotKeys = [...pivotKeys, key];
                 const colDef = this.createColDef(measureColumns[0], key, newPivotKeys);
                 colDef.columnGroupShow = 'open';
@@ -134,9 +159,10 @@ export class PivotColDefService extends BeanStub implements NamedBean, IPivotCol
             leafCols.sort(comparator);
             return leafCols;
         }
+
         // Recursive case
         const groups: ColGroupDef[] = [];
-        for (const key of Object.keys(uniqueValue)) {
+        for (const key of uniqueValue.keys()) {
             // expand group by default based on depth of group. (pivotDefaultExpanded provides desired level of depth for expanding group by default)
             const openByDefault = this.pivotDefaultExpanded === -1 || index < this.pivotDefaultExpanded;
 
@@ -144,7 +170,7 @@ export class PivotColDefService extends BeanStub implements NamedBean, IPivotCol
             groups.push({
                 children: this.recursivelyBuildGroup(
                     index + 1,
-                    uniqueValue[key],
+                    uniqueValue.get(key),
                     newPivotKeys,
                     maxDepth,
                     primaryPivotColumns
@@ -152,7 +178,7 @@ export class PivotColDefService extends BeanStub implements NamedBean, IPivotCol
                 headerName: key,
                 pivotKeys: newPivotKeys,
                 columnGroupShow: 'open',
-                openByDefault: openByDefault,
+                openByDefault,
                 groupId: this.generateColumnGroupId(newPivotKeys),
             });
         }
@@ -408,40 +434,6 @@ export class PivotColDefService extends BeanStub implements NamedBean, IPivotCol
             }
         }
         return true;
-    }
-
-    private headerNameComparator(
-        userComparator: (a: string | undefined, b: string | undefined) => number,
-        a: ColGroupDef | ColDef,
-        b: ColGroupDef | ColDef
-    ): number {
-        if (userComparator) {
-            return userComparator(a.headerName, b.headerName);
-        } else {
-            if (a.headerName && !b.headerName) {
-                return 1;
-            } else if (!a.headerName && b.headerName) {
-                return -1;
-            }
-
-            // slightly naff here - just to satify typescript
-            // really should be &&, but if so ts complains
-            // the above if/else checks would deal with either being falsy, so at this stage if either are falsy, both are
-            // ..still naff though
-            if (!a.headerName || !b.headerName) {
-                return 0;
-            }
-
-            if (a.headerName < b.headerName) {
-                return -1;
-            }
-
-            if (a.headerName > b.headerName) {
-                return 1;
-            }
-
-            return 0;
-        }
     }
 
     private merge(m1: Map<string, string[]>, m2: Map<any, any>) {

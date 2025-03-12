@@ -765,6 +765,18 @@
                 "include": ["RowNumbersOptions"]
             }
         },
+        "findSearchValue": {
+            "more": {
+                "name": "Find",
+                "url": "./find/"
+            }
+        },
+        "findOptions": {
+            "more": {
+                "name": "Customising Find",
+                "url": "./find/#customising-find"
+            }
+        },
         "valueCache": {
             "more": {
                 "name": "Value Cache",
@@ -1358,6 +1370,12 @@
                 "url": "./tree-data/"
             }
         },
+        "treeDataParentIdField": {
+            "more": {
+                "name": "Tree Data",
+                "url": "./tree-data/"
+            }
+        },
         "autoGroupColumnDef": {
             "more": {
                 "name": "Group Column Configuration",
@@ -1841,6 +1859,12 @@
             "more": {
                 "name": "CSS Layers",
                 "url": "./theming-css/#css-layers"
+            }
+        },
+        "styleNonce": {
+            "more": {
+                "name": "Security",
+                "url": "./security/#style-src"
             }
         }
     },

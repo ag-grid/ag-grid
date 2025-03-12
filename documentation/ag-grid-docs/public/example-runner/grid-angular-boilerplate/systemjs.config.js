@@ -1,5 +1,5 @@
 (function (global) {
-    var ANGULAR_VERSION = '^19';
+    var ANGULAR_VERSION = '19.1.7';
     window.ENABLE_PROD_MODE = true;
 
     System.config({
@@ -77,6 +77,10 @@
             'ag-grid-angular': {
                 main: './fesm2022/ag-grid-angular.mjs',
                 defaultExtension: 'mjs',
+            },
+            'ag-charts-core': {
+                defaultExtension: 'js',
+                format: 'cjs',
             },
             'ag-charts-community': {
                 defaultExtension: 'js',

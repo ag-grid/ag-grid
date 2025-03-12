@@ -90,17 +90,15 @@ export class SortStage extends BeanStub implements NamedBean, IRowNodeStage {
         changedPath: ChangedPath | undefined,
         sortContainsGroupColumns: boolean
     ): void {
-        const { gos, colModel, rowGroupColsSvc, groupHideOpenParentsSvc, rowNodeSorter } = beans;
+        const { gos, colModel, rowGroupColsSvc, rowNodeSorter, rowRenderer, showRowGroupCols } = beans;
         const groupMaintainOrder = gos.get('groupMaintainOrder');
         const groupColumnsPresent = colModel.getCols().some((c) => c.isRowGroupActive());
 
         const isPivotMode = colModel.isPivotMode();
         const postSortFunc = gos.getCallback('postSortRows');
 
+        let hasAnyFirstChildChanged = false;
         const callback = (rowNode: RowNode) => {
-            // we clear out the 'pull down open parents' first, as the values mix up the sorting
-            groupHideOpenParentsSvc?.pullDownGroupDataForHideOpenParents(rowNode.childrenAfterAggFilter, true);
-
             // It's pointless to sort rows which aren't being displayed. in pivot mode we don't need to sort the leaf group children.
             const skipSortingPivotLeafs = isPivotMode && rowNode.leafGroup;
 
@@ -134,6 +132,9 @@ export class SortStage extends BeanStub implements NamedBean, IRowNodeStage {
             } else {
                 newChildrenAfterSort = rowNodeSorter!.doFullSort(rowNode.childrenAfterAggFilter!, sortOptions);
             }
+
+            hasAnyFirstChildChanged ||= rowNode.childrenAfterSort?.[0] !== newChildrenAfterSort[0];
+
             rowNode.childrenAfterSort = newChildrenAfterSort;
 
             updateRowNodeAfterSort(rowNode);
@@ -145,6 +146,16 @@ export class SortStage extends BeanStub implements NamedBean, IRowNodeStage {
         };
 
         changedPath?.forEachChangedNodeDepthFirst(callback);
+
+        // if using group hide open parents and a sort has happened, refresh the group cells as the first child
+        // displays the parent grouping - it's cheaper here to refresh all cells in col rather than fire events for every potential
+        // child cell
+        if (hasAnyFirstChildChanged && this.gos.get('groupHideOpenParents')) {
+            const columns = showRowGroupCols?.getShowRowGroupCols();
+            if (columns?.length) {
+                rowRenderer.refreshCells({ columns });
+            }
+        }
     }
 }
 

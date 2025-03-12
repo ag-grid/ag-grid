@@ -226,6 +226,7 @@ export class ColumnFilterService extends BeanStub implements NamedBean {
     }
 
     public disableColumnFilters(): boolean {
+        this.initialFilterModel = {};
         const { allColumnFilters } = this;
         if (allColumnFilters.size) {
             allColumnFilters.forEach((filterWrapper) =>

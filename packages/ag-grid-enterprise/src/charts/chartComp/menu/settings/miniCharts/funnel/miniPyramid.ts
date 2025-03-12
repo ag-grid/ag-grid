@@ -1,6 +1,6 @@
 import type { AgChartsExports } from '../../../../../agChartsExports';
 import type { ChartTranslationKey } from '../../../../services/chartTranslationService';
-import type { MiniChartSelector, ThemeTemplateParameters } from '../../miniChartsContainer';
+import type { MiniChartSelector } from '../../miniChartsContainer';
 import type { XYCoordShape } from '../miniChartApi';
 import { MiniFunnelClass } from './miniFunnel';
 
@@ -30,20 +30,10 @@ export class MiniPyramidClass extends MiniFunnelClass {
         agChartsExports: AgChartsExports,
         fills: string[],
         strokes: string[],
-        _themeTemplateParameters: ThemeTemplateParameters,
         _isCustomTheme: boolean,
         tooltipName: ChartTranslationKey = 'pyramidTooltip'
     ) {
-        super(
-            container,
-            agChartsExports,
-            fills,
-            strokes,
-            _themeTemplateParameters,
-            _isCustomTheme,
-            tooltipName,
-            PYRAMID_SHAPES
-        );
+        super(container, agChartsExports, fills, strokes, _isCustomTheme, tooltipName, PYRAMID_SHAPES);
     }
 
     override updateColors(fills: string[], strokes: string[]): void {

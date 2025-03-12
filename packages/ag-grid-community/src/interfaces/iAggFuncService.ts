@@ -7,4 +7,5 @@ export interface IAggFuncService {
     getDefaultAggFunc(column: AgColumn): string | null;
     getFuncNames(column: AgColumn): string[];
     getDefaultFuncLabel(fctName: string): string;
+    getAggFunc(name: string): IAggFunc;
 }

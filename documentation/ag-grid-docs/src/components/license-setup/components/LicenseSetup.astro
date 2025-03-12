@@ -1,11 +1,11 @@
 ---
 import { LicenseSetup } from '@components/license-setup/components/LicenseSetup';
 import { getFrameworkFromPath } from '@components/docs/utils/urlPaths';
-import { getEntry } from 'astro:content';
+import { getEntry, type CollectionEntry } from 'astro:content';
 
 const { pathname } = Astro.url;
 const framework = getFrameworkFromPath(pathname);
-const { data: seedRepos } = await getEntry('seed-projects', 'grid-seed-projects');
+const { data: seedRepos } = (await getEntry('seedProjects', 'grid-seed-projects')) as CollectionEntry<'seedProjects'>;
 ---
 
 <LicenseSetup client:only="react" library="grid" framework={framework} path={pathname} seedRepos={seedRepos} />

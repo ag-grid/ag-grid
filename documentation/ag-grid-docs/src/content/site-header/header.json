@@ -1,0 +1,40 @@
+{
+    "header": {
+        "items": [
+            {
+                "title": "AG Charts",
+                "url": "https://www.ag-grid.com/charts",
+                "isCollapsed": true
+            },
+            {
+                "title": "Demos",
+                "path": "/example"
+            },
+            {
+                "title": "Theme Builder",
+                "path": "/theme-builder"
+            },
+            {
+                "title": "Docs",
+                "path": "./getting-started"
+            },
+            {
+                "title": "API",
+                "path": "./reference"
+            },
+            {
+                "title": "Community",
+                "path": "/community"
+            },
+            {
+                "title": "Pricing",
+                "path": "/license-pricing"
+            },
+            {
+                "title": "GitHub",
+                "url": "https://github.com/ag-grid/ag-grid",
+                "icon": "github"
+            }
+        ]
+    }
+}

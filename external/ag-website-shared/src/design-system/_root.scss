@@ -1,7 +1,7 @@
 @use './core' as *;
 
 :root,
-[data-is-homepage] .site-header:not(.header-scrolled) {
+[data-is-homepage='true'] .site-header:not(.header-scrolled) {
     // Layout
     --layout-gap: 32px;
     --layout-max-width: 1800px;

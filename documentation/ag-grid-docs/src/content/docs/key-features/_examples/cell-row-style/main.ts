@@ -3,8 +3,6 @@ import { AllCommunityModule, ModuleRegistry, createGrid } from 'ag-grid-communit
 
 ModuleRegistry.registerModules([AllCommunityModule]);
 
-let gridApi: GridApi;
-
 const ragCellClassRules: CellClassRules = {
     // apply green to electric cars
     'rag-green': (params) => params.value === true,
@@ -51,5 +49,8 @@ const gridOptions: GridOptions = {
     },
 };
 
-const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
-gridApi = createGrid(gridDiv, gridOptions);
+// setup the grid after the page has finished loading
+document.addEventListener('DOMContentLoaded', function () {
+    const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
+    const gridApi = createGrid(gridDiv, gridOptions);
+});

@@ -1,5 +1,5 @@
 (function (global) {
-    var ANGULAR_VERSION = '^19';
+    var ANGULAR_VERSION = '19.1.7';
     window.ENABLE_PROD_MODE = false;
 
     System.config({
@@ -78,6 +78,11 @@
                 defaultExtension: 'mjs',
             },
             'ag-charts-types': {
+                main: './dist/package/main.cjs.js',
+                defaultExtension: 'js',
+                format: 'cjs',
+            },
+            'ag-charts-core': {
                 main: './dist/package/main.cjs.js',
                 defaultExtension: 'js',
                 format: 'cjs',

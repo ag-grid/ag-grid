@@ -193,11 +193,12 @@
     color: var(--color-fg-primary);
 
     &:hover .linkIcon {
-        opacity: 0.5;
+        opacity: 1;
     }
 
     .linkIcon {
         margin-left: 0;
+        transform: translateY(-7px);
 
         &:hover {
             opacity: 1;
@@ -206,6 +207,7 @@
         svg {
             width: $spacing-size-4;
             height: $spacing-size-4;
+            transform: translate(5px, -1px);
         }
     }
 

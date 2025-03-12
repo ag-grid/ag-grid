@@ -196,11 +196,25 @@ function processWatchOutput({ project: rawProject, getProjectBuildTargets }) {
     scheduleBuild();
 }
 
+function countReloadTargets() {
+    const reloadableTargets = new Set(config.devServerReloadTargets);
+
+    let count = 0;
+    for (const [, , target] of buildBuffer) {
+        if (reloadableTargets.has(target)) {
+            count++;
+        }
+    }
+
+    return count;
+}
+
 let buildRunning = false;
 async function build() {
     if (buildRunning) return;
     buildRunning = true;
 
+    const beforeReloadableCount = countReloadTargets();
     const [, config, target] = buildBuffer.at(0);
     const newBuildBuffer = [];
     const projects = new Set();
@@ -212,6 +226,7 @@ async function build() {
         }
     }
     buildBuffer = newBuildBuffer;
+    const afterReloadableCount = countReloadTargets();
 
     let targetMsg = [...projects.values()].slice(0, PROJECT_ECHO_LIMIT).join(' ');
     if (projects.size > PROJECT_ECHO_LIMIT) {
@@ -226,9 +241,12 @@ async function build() {
         timeManager.stop(`${targetMsg} build`);
         info(timeManager.timeString(`${targetMsg} build`));
 
-        if (buildBuffer.length === 0) {
+        if (beforeReloadableCount > 0 && afterReloadableCount === 0) {
+            success(`Reloading dev server...`);
             await touchBuildQueueEmptyFile();
+        }
 
+        if (buildBuffer.length === 0) {
             timeManager.stop('Total build time');
             info('Last build buffer times...');
             timeManager

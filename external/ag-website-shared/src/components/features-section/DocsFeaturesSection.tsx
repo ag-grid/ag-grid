@@ -3,7 +3,6 @@ import { useFrameworkFromStore } from '@utils/hooks/useFrameworkFromStore';
 import { urlWithPrefix } from '@utils/urlWithPrefix';
 import type { FunctionComponent } from 'react';
 
-import { Icon } from '../icon/Icon';
 import data from './DocsFeaturesSection.json';
 import styles from './features.module.scss';
 
@@ -18,11 +17,7 @@ function Section({ index, feature }) {
 
     return hasLink ? (
         <a key={index} className={styles.card} href={urlWithPrefix({ framework, url: feature.link })}>
-            <h4 className={styles.title}>
-                {feature.title}
-
-                <Icon name="chevronRight"></Icon>
-            </h4>
+            <h4 className={styles.title}>{feature.title}</h4>
             <p className={styles.description}>{feature.description}</p>
         </a>
     ) : (

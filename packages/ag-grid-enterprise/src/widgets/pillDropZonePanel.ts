@@ -82,7 +82,6 @@ export abstract class PillDropZonePanel<TPill extends PillDragComp<TItem>, TItem
         this.addElementClasses(this.getGui());
         this.ePillDropList = document.createElement('div');
         this.addElementClasses(this.ePillDropList, 'list');
-        _setAriaRole(this.ePillDropList, 'listbox');
         this.registerCSS(pillDropZonePanelCSS);
     }
 
@@ -165,12 +164,45 @@ export abstract class PillDropZonePanel<TPill extends PillDragComp<TItem>, TItem
             return;
         }
 
-        const el = _findNextFocusableElement(this.beans, this.getFocusableElement(), false, isPrevious);
+        e.preventDefault();
 
-        if (el) {
-            e.preventDefault();
-            el.focus();
+        if (e.shiftKey) {
+            this.moveFocusedItem(isPrevious);
+        } else {
+            const el = _findNextFocusableElement(this.beans, this.getFocusableElement(), false, isPrevious);
+
+            if (el) {
+                el.focus();
+            }
         }
+    }
+
+    private moveFocusedItem(isPrevious: boolean): void {
+        const currentItemIndex = this.getFocusedItem();
+
+        if (currentItemIndex === -1) {
+            return;
+        }
+
+        const diff = isPrevious ? -1 : 1;
+        const changed = this.normalizeAndUpdateInsertIndex(currentItemIndex, currentItemIndex + diff);
+
+        if (!changed) {
+            return;
+        }
+
+        const comp = this.childPillComponents[currentItemIndex];
+
+        if (!comp.isMovable()) {
+            return;
+        }
+
+        const currentItem = comp.getItem();
+
+        // this will focus the target position before we call rearrangeItems
+        // rearrange items will then call refresh which will refocus the target index.
+        this.focusItemAtIndex(this.insertIndex);
+        this.rearrangeItems([currentItem], true);
     }
 
     protected addElementClasses(el: Element, suffix?: string) {
@@ -206,10 +238,14 @@ export abstract class PillDropZonePanel<TPill extends PillDragComp<TItem>, TItem
             return false;
         }
 
-        const minimumAllowedIndex = this.minimumAllowedNewInsertIndex();
-        const newAdjustedIndex = Math.max(minimumAllowedIndex, newIndex);
+        return this.normalizeAndUpdateInsertIndex(this.insertIndex, newIndex);
+    }
 
-        const changed = newAdjustedIndex !== this.insertIndex;
+    private normalizeAndUpdateInsertIndex(currentIndex: number, index: number): boolean {
+        const minimumAllowedIndex = this.minimumAllowedNewInsertIndex();
+        const newAdjustedIndex = Math.max(minimumAllowedIndex, index);
+
+        const changed = newAdjustedIndex !== currentIndex;
 
         if (changed) {
             this.insertIndex = newAdjustedIndex;
@@ -385,8 +421,15 @@ export abstract class PillDropZonePanel<TPill extends PillDragComp<TItem>, TItem
         this.refreshGui();
     }
 
-    private rearrangeItems(itemsToAdd: TItem[]): boolean {
-        const newItemList = this.getNonGhostItems().slice();
+    private rearrangeItems(itemsToAdd: TItem[], fromKeyboard?: boolean): boolean {
+        let newItemList: TItem[];
+
+        if (!fromKeyboard) {
+            newItemList = this.getNonGhostItems().slice();
+        } else {
+            newItemList = this.getExistingItems().filter((item) => itemsToAdd.indexOf(item) === -1);
+        }
+
         _insertArrayIntoArray(newItemList, itemsToAdd, this.insertIndex);
 
         if (_areEqual(newItemList, this.getExistingItems())) {
@@ -404,7 +447,11 @@ export abstract class PillDropZonePanel<TPill extends PillDragComp<TItem>, TItem
         // out the list which sets scroll to zero. so the user could be just
         // reordering the list - we want to prevent the resetting of the scroll.
         // this is relevant for vertical display only (as horizontal has no scroll)
-        const scrollTop = this.ePillDropList.scrollTop;
+        let scrollTop = 0;
+
+        if (!this.horizontal) {
+            scrollTop = this.ePillDropList.scrollTop;
+        }
         const resizeEnabled = this.resizeEnabled;
         const focusedIndex = this.getFocusedItem();
 
@@ -422,7 +469,7 @@ export abstract class PillDropZonePanel<TPill extends PillDragComp<TItem>, TItem
         this.addEmptyMessageToGui();
         this.addItemsToGui();
 
-        if (!this.horizontal) {
+        if (scrollTop !== 0) {
             this.ePillDropList.scrollTop = scrollTop;
         }
 
@@ -449,6 +496,18 @@ export abstract class PillDropZonePanel<TPill extends PillDragComp<TItem>, TItem
         const items = Array.from(eGui.querySelectorAll('.ag-column-drop-cell'));
 
         return items.indexOf(activeElement as HTMLElement);
+    }
+
+    private focusItemAtIndex(index: number): void {
+        const eGui = this.getGui();
+        const items = Array.from(eGui.querySelectorAll('.ag-column-drop-cell'));
+        const item = items[index] as HTMLElement;
+
+        if (!item) {
+            return;
+        }
+
+        item.focus({ preventScroll: true });
     }
 
     private restoreFocus(index: number, alternateElement: HTMLElement): void {
@@ -512,11 +571,17 @@ export abstract class PillDropZonePanel<TPill extends PillDragComp<TItem>, TItem
     }
 
     private addAriaLabelsToComponents(): void {
-        this.childPillComponents.forEach((comp, idx) => {
+        const { childPillComponents, ePillDropList } = this;
+        const len = childPillComponents.length;
+
+        _setAriaRole(ePillDropList, len === 0 ? 'presentation' : 'listbox');
+
+        for (let i = 0; i < len; i++) {
+            const comp = childPillComponents[i];
             const eGui = comp.getGui();
-            _setAriaPosInSet(eGui, idx + 1);
-            _setAriaSetSize(eGui, this.childPillComponents.length);
-        });
+            _setAriaPosInSet(eGui, i + 1);
+            _setAriaSetSize(eGui, len);
+        }
     }
 
     private createItemComponent(item: TItem, ghost: boolean): TPill {

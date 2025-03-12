@@ -17,6 +17,7 @@ packages=(
     ag-charts-vue3
     ag-charts-react
     ag-charts-types
+    ag-charts-core
     ag-charts-locale
     ag-charts-community
     ag-charts-enterprise

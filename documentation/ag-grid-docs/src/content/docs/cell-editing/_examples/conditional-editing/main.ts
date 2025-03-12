@@ -1,6 +1,7 @@
 import type { CellClassParams, EditableCallbackParams, GridApi, GridOptions } from 'ag-grid-community';
 import {
     CellStyleModule,
+    ClientSideRowModelApiModule,
     ClientSideRowModelModule,
     ModuleRegistry,
     NumberEditorModule,
@@ -15,6 +16,7 @@ ModuleRegistry.registerModules([
     NumberEditorModule,
     TextEditorModule,
     CellStyleModule,
+    ClientSideRowModelApiModule,
     ClientSideRowModelModule,
     ValidationModule /* Development Only */,
 ]);

@@ -98,13 +98,6 @@ export abstract class BaseSelectionService extends BeanStub {
         this.beans.ariaAnnounce?.announceValue(label, 'rowSelection');
     }
 
-    protected dispatchSelectionChanged(source: SelectionEventSourceType): void {
-        this.eventSvc.dispatchEvent({
-            type: 'selectionChanged',
-            source,
-        });
-    }
-
     public updateGroupsFromChildrenSelections?(source: SelectionEventSourceType, changedPath?: ChangedPath): boolean;
 
     public abstract setNodesSelected(params: ISetNodesSelectedParams): number;

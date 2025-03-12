@@ -1,6 +1,6 @@
 import { createPart } from '../../Part';
 import { defaultLightColorSchemeParams } from '../../core/core-css';
-import { accentMix, foregroundBackgroundMix } from '../../theme-utils';
+import { accentMix, backgroundColor, foregroundBackgroundMix } from '../../theme-utils';
 
 const makeColorSchemeLightTreeShakeable = () =>
     createPart({
@@ -51,6 +51,8 @@ const darkParams = () =>
         advancedFilterBuilderColumnPillColor: '#355f2d',
         advancedFilterBuilderOptionPillColor: '#5a3168',
         advancedFilterBuilderValuePillColor: '#374c86',
+        findMatchColor: backgroundColor,
+        findActiveMatchColor: backgroundColor,
         checkboxUncheckedBorderColor: foregroundBackgroundMix(0.4),
         toggleButtonOffBackgroundColor: foregroundBackgroundMix(0.4),
     }) as const;

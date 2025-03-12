@@ -4,6 +4,7 @@ import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
 import type { CtrlsService } from '../ctrlsService';
 import type { AgColumn } from '../entities/agColumn';
+import { _getRowAbove } from '../entities/positionUtils';
 import type { RowNode } from '../entities/rowNode';
 import type { BodyScrollEvent, CellFocusedEvent, PaginationChangedEvent } from '../events';
 import type { FocusService } from '../focusService';
@@ -17,6 +18,7 @@ import {
     _isCellSelectionEnabled,
     _isDomLayout,
 } from '../gridOptionsUtils';
+import { getFocusHeaderRowCount } from '../headerRendering/headerUtils';
 import type { RenderedRowEvent } from '../interfaces/iCallbackParams';
 import type { CellPosition } from '../interfaces/iCellPosition';
 import type { RefreshCellsParams } from '../interfaces/iCellsParams';
@@ -25,10 +27,10 @@ import type { IRowModel } from '../interfaces/iRowModel';
 import type { IRowNode, RowPinnedType } from '../interfaces/iRowNode';
 import type { RowPosition } from '../interfaces/iRowPosition';
 import type { IStickyRowFeature } from '../interfaces/iStickyRows';
-import { _requestAnimationFrame } from '../misc/animationFrameService';
 import type { PageBoundsService } from '../pagination/pageBoundsService';
 import type { PinnedRowModel } from '../pinnedRowModel/pinnedRowModel';
 import { _removeFromArray } from '../utils/array';
+import { _requestAnimationFrame } from '../utils/dom';
 import { _exists } from '../utils/generic';
 import { _errMsg } from '../validation/logging';
 import type { CellCtrl } from './cell/cellCtrl';
@@ -154,7 +156,16 @@ export class RowRenderer extends BeanStub implements NamedBean {
             }
         });
 
-        const { stickyRowSvc, gos } = this.beans;
+        const { stickyRowSvc, gos, showRowGroupCols } = this.beans;
+        if (showRowGroupCols) {
+            this.addManagedPropertyListener('showOpenedGroup', () => {
+                const columns = showRowGroupCols.getShowRowGroupCols();
+                if (columns.length) {
+                    this.refreshCells({ columns });
+                }
+            });
+        }
+
         if (stickyRowSvc) {
             this.stickyRowFeature = stickyRowSvc.createStickyRowFeature(
                 this,
@@ -670,21 +681,51 @@ export class RowRenderer extends BeanStub implements NamedBean {
             return;
         }
 
-        this.focusSvc.restoreFocusedCell(cellPosition, () => {
-            // we don't wish to dispatch an event as the rowRenderer is not capable of changing the selected cell,
-            // so we mock a change event for the full width rows and cells to ensure they update to the newly selected state
+        const cellToFocus = this.findPositionToFocus(cellPosition);
 
-            this.onCellFocusChanged(
-                _addGridCommonParams<CellFocusedEvent>(this.gos, {
-                    rowIndex: cellPosition.rowIndex,
+        if (!cellToFocus) {
+            this.focusSvc.focusHeaderPosition({
+                headerPosition: {
+                    headerRowIndex: getFocusHeaderRowCount(this.beans) - 1,
                     column: cellPosition.column,
-                    rowPinned: cellPosition.rowPinned,
-                    forceBrowserFocus: true,
-                    preventScrollOnBrowserFocus: true,
-                    type: 'cellFocused',
-                })
-            );
-        });
+                },
+            });
+        } else {
+            const params = {
+                ...cellToFocus,
+                preventScrollOnBrowserFocus: true,
+                forceBrowserFocus: true,
+            };
+            if (cellPosition.rowIndex !== cellToFocus.rowIndex || cellPosition.rowPinned != cellToFocus.rowPinned) {
+                this.focusSvc.setFocusedCell(params);
+            } else {
+                this.focusSvc.restoreFocusedCell(cellToFocus, () => {
+                    // we don't wish to dispatch an event as the rowRenderer is not capable of changing the selected cell,
+                    // so we mock a change event for the full width rows and cells to ensure they update to the newly selected state
+
+                    this.onCellFocusChanged(
+                        _addGridCommonParams<CellFocusedEvent>(this.gos, {
+                            ...params,
+                            type: 'cellFocused',
+                        })
+                    );
+                });
+            }
+        }
+    }
+
+    private findPositionToFocus(cellPosition: CellPosition): CellPosition | null {
+        let rowPosition: RowPosition | null = cellPosition;
+
+        while (rowPosition) {
+            const row = this.getRowByPosition(rowPosition);
+            if (row?.isAlive()) {
+                return { ...row.getRowPosition(), column: cellPosition.column };
+            }
+            rowPosition = _getRowAbove(this.beans, rowPosition);
+        }
+
+        return null;
     }
 
     public getAllCellCtrls(): CellCtrl[] {
@@ -1021,8 +1062,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
 
         if (rowsToRecycle) {
             const { animationFrameSvc } = this.beans;
-            const useAnimationFrame =
-                animationFrameSvc && afterScroll && !this.gos.get('suppressAnimationFrame') && !this.printLayout;
+            const useAnimationFrame = animationFrameSvc?.active && afterScroll && !this.printLayout;
             if (useAnimationFrame) {
                 animationFrameSvc.addDestroyTask(() => {
                     this.destroyRowCtrls(rowsToRecycle, animate);
@@ -1372,7 +1412,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
         if (!this.rowModel.isRowPresent(rowNode)) {
             return false;
         }
-        return this.beans.pagination?.isRowPresent(rowNode) ?? true;
+        return this.beans.pagination?.isRowInPage(rowNode.rowIndex!) ?? true;
     }
 
     private createRowCon(rowNode: RowNode, animate: boolean, afterScroll: boolean): RowCtrl {
@@ -1388,9 +1428,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
         // we only do the animation frames after scrolling, as this is where we want the smooth user experience.
         // having animation frames for other times makes the grid look 'jumpy'.
 
-        const suppressAnimationFrame = this.gos.get('suppressAnimationFrame');
-        const useAnimationFrameForCreate =
-            afterScroll && !suppressAnimationFrame && !this.printLayout && !!this.beans.animationFrameSvc;
+        const useAnimationFrameForCreate = afterScroll && !this.printLayout && !!this.beans.animationFrameSvc?.active;
 
         const res = new RowCtrl(rowNode, this.beans, animate, useAnimationFrameForCreate, this.printLayout);
 

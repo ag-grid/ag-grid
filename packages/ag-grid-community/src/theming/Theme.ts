@@ -59,6 +59,7 @@ type GridThemeUseArgs = {
     loadThemeGoogleFonts: boolean | undefined;
     styleContainer: HTMLElement;
     cssLayer: string | undefined;
+    nonce: string | undefined;
 };
 
 export class ThemeImpl {
@@ -91,26 +92,26 @@ export class ThemeImpl {
      * the theme's parts into document head, or the shadow DOM if the provided
      * container is within a shadow root.
      */
-    _startUse({ styleContainer, cssLayer, loadThemeGoogleFonts }: GridThemeUseArgs): void {
+    _startUse({ styleContainer, cssLayer, nonce, loadThemeGoogleFonts }: GridThemeUseArgs): void {
         if (IS_SSR) return;
 
         if (FORCE_LEGACY_THEMES) return;
 
         uninstallLegacyCSS();
 
-        _injectCoreAndModuleCSS(styleContainer, cssLayer);
+        _injectCoreAndModuleCSS(styleContainer, cssLayer, nonce);
 
         const googleFontsUsed = getGoogleFontsUsed(this);
         if (googleFontsUsed.length > 0) {
             for (const googleFont of googleFontsUsed) {
                 if (loadThemeGoogleFonts) {
-                    loadGoogleFont(googleFont);
+                    loadGoogleFont(googleFont, nonce);
                 }
             }
         }
 
         for (const part of this.parts) {
-            part.use(styleContainer, cssLayer);
+            part.use(styleContainer, cssLayer, nonce);
         }
     }
 
@@ -123,7 +124,7 @@ export class ThemeImpl {
         if (FORCE_LEGACY_THEMES) return 'ag-theme-quartz';
 
         return (this._cssClassCache ??= deduplicatePartsByFeature(this.parts)
-            .map((part) => part.use(undefined, undefined))
+            .map((part) => part.use(undefined, undefined, undefined))
             .filter(Boolean)
             .join(' '));
     }
@@ -295,12 +296,12 @@ const uninstallLegacyCSS = () => {
 
 const googleFontsLoaded = new Set<string>();
 
-const loadGoogleFont = async (font: string) => {
+const loadGoogleFont = async (font: string, nonce: string | undefined) => {
     googleFontsLoaded.add(font);
     const css = `@import url('https://${googleFontsDomain}/css2?family=${encodeURIComponent(font)}:wght@100;200;300;400;500;600;700;800;900&display=swap');\n`;
     // fonts are always installed in the document head, they are inherited in
     // shadow DOM without the need for separate installation
-    _injectGlobalCSS(css, document.head, `googleFont:${font}`, undefined, 0);
+    _injectGlobalCSS(css, document.head, `googleFont:${font}`, undefined, 0, nonce);
 };
 
 const googleFontsDomain = 'fonts.googleapis.com';

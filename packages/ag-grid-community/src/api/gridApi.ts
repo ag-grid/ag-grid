@@ -41,6 +41,7 @@ import type { IContextMenuParams } from '../interfaces/iContextMenu';
 import type { ExcelExportMultipleSheetParams, ExcelExportParams } from '../interfaces/iExcelCreator';
 import type { FilterModel, IFilter } from '../interfaces/iFilter';
 import type { IFiltersToolPanel } from '../interfaces/iFiltersToolPanel';
+import type { FindCellParams, FindCellValueParams, FindMatch, FindPart } from '../interfaces/iFind';
 import type { RedrawRowsParams } from '../interfaces/iRedrawRowsParams';
 import type { IRowNode, RowPinnedType } from '../interfaces/iRowNode';
 import type { LoadSuccessParams, RefreshServerSideParams } from '../interfaces/iServerSideRowModel';
@@ -737,6 +738,40 @@ export interface _QuickFilterGridApi {
     resetQuickFilter(): void;
 }
 
+export interface _FindApi<TData> {
+    /** Go to the next match. */
+    findNext(): void;
+    /** Go to the previous match. */
+    findPrevious(): void;
+    /** Get the total number of matches. */
+    findGetTotalMatches(): number;
+    /**
+     * Go to the provided match (first match is `1`).
+     * By default, if the provided match is already active, this will do nothing.
+     * If `force` is set to `true`, this will instead reset the active match to that provided
+     * (e.g. scroll the grid).
+     */
+    findGoTo(match: number, force?: boolean): void;
+    /** Clear the active match. */
+    findClearActive(): void;
+    /** Get the active match, or `undefined` if no active match. */
+    findGetActiveMatch(): FindMatch<TData> | undefined;
+    /** Get the number of matches within the provided cell. */
+    findGetNumMatches(params: FindCellParams<TData>): number;
+    /**
+     * Get the parts of a cell value, including matches and active match.
+     * Used for custom cell components.
+     */
+    findGetParts(params: FindCellValueParams<TData>): FindPart[];
+    /**
+     * This will re-run the search with the current value. This is normally done automatically.
+     *
+     * This should only be called in situations where data is mutated outside of the grid,
+     * and `api.refreshCells()` or `api.redrawRows()` are being used (`api.findRefresh()` should be called after these).
+     */
+    findRefresh(): void;
+}
+
 export interface _StateGridApi {
     /** Get the current state of the grid. Can be used in conjunction with the `initialState` grid option to save and restore grid state. */
     getState(): GridState;
@@ -1199,6 +1234,7 @@ export interface GridApi<TData = any>
         _FilterGridApi,
         _ColumnFilterGridApi,
         _QuickFilterGridApi,
+        _FindApi<TData>,
         _PaginationGridApi,
         _CsrmSsrmSharedGridApi,
         _SsrmInfiniteSharedGridApi,

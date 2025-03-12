@@ -12,8 +12,7 @@ import { VERSION } from '../version';
 import { AgGridHeaderDropZonesSelector } from './columnDropZones/agGridHeaderDropZones';
 import { GroupFilter } from './groupFilter/groupFilter';
 import { GroupFloatingFilterComp } from './groupFilter/groupFloatingFilter';
-import { GroupHideOpenParentsService } from './groupHideOpenParentsService';
-import { GroupStage } from './groupStage/groupStage';
+import { GroupStrategy } from './groupStrategy/groupStrategy';
 import {
     addRowGroupColumns,
     getRowGroupColumns,
@@ -28,7 +27,6 @@ import {
 export const SharedRowGroupingModule: _ModuleWithApi<_RowGroupingGridApi> = {
     moduleName: 'SharedRowGrouping',
     version: VERSION,
-    beans: [GroupHideOpenParentsService],
     apiFunctions: {
         setRowGroupColumns,
         removeRowGroupColumns,
@@ -46,7 +44,7 @@ export const SharedRowGroupingModule: _ModuleWithApi<_RowGroupingGridApi> = {
 export const RowGroupingModule: _ModuleWithoutApi = {
     moduleName: 'RowGrouping',
     version: VERSION,
-    beans: [GroupStage],
+    dynamicBeans: { groupStrategy: GroupStrategy },
     rowModels: ['clientSide'],
     dependsOn: [SharedRowGroupingModule, AggregationModule, ClientSideRowModelHierarchyModule],
 };
