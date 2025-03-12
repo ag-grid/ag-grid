@@ -166,101 +166,101 @@ jobs:
             reports/
             packages/**/__diff_output__/*
 
-    e2e_init:
-      runs-on: ubuntu-latest
-      name: E2E Test Setup
-      outputs:
-        nx_base: ${{ steps.setup.outputs.base }}
-        matrix: ${{ steps.matrix.outputs.matrix }}
-        count: ${{ steps.matrix.outputs.count }}
-      steps:
-        - name: Checkout
-          id: checkout
-          uses: actions/checkout@v4
-          with:
-            fetch-depth: 1
+  e2e_init:
+    runs-on: ubuntu-latest
+    name: E2E Test Setup
+    outputs:
+      nx_base: ${{ steps.setup.outputs.base }}
+      matrix: ${{ steps.matrix.outputs.matrix }}
+      count: ${{ steps.matrix.outputs.count }}
+    steps:
+      - name: Checkout
+        id: checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
 
-        - name: Fetch Refs
-          run: |
-            git fetch origin --depth 1 latest
-            git fetch origin --depth 1 tag latest-success
+      - name: Fetch Refs
+        run: |
+          git fetch origin --depth 1 latest
+          git fetch origin --depth 1 tag latest-success
 
-        - name: Setup
-          id: setup
-          uses: ./.github/actions/setup-nx
-          with:
-            cache_mode: ro
+      - name: Setup
+        id: setup
+        uses: ./.github/actions/setup-nx
+        with:
+          cache_mode: ro
 
-        - name: build
-          run: yarn nx run-many -t build -p tag:package --parallel=3
-        - name: build examples
-          run: yarn nx run-many -t generate --parallel=3
+      - name: build
+        run: yarn nx run-many -t build -p tag:package --parallel=3
+      - name: build examples
+        run: yarn nx run-many -t generate --parallel=3
 
-        - name: calculate matrix
-          id: matrix
-          run: |
-#            not currently applicable to the grid - so commented out
-#            nx_count=$(yarn -s nx show projects --affected --base ${{ steps.setup.outputs.base }} -t test:e2e | wc -l)
-#            if [[ ${nx_count} -gt 0 ]] ; then
-#              count=$(cd packages/ag-charts-website/ ; npx playwright test --list | grep -v '!!!SKIPPED!!!' | wc -l)
-#            else
-#              count=0
-#            fi
-            count=0
-                 
-            matrix=$(node ./external/ag-shared/scripts/shard/calculate-shards.js eval --zero ${count})
-            echo "matrix=${matrix}" >> $GITHUB_OUTPUT
-            echo "count=${count}" >> $GITHUB_OUTPUT
-            echo "E2E matrix determined to be: ${matrix}"
+      - name: calculate matrix
+        id: matrix
+        run: |
+          #            not currently applicable to the grid - so commented out
+          #            nx_count=$(yarn -s nx show projects --affected --base ${{ steps.setup.outputs.base }} -t test:e2e | wc -l)
+          #            if [[ ${nx_count} -gt 0 ]] ; then
+          #              count=$(cd packages/ag-charts-website/ ; npx playwright test --list | grep -v '!!!SKIPPED!!!' | wc -l)
+          #            else
+          #              count=0
+          #            fi
+               count=0
+               
+               matrix=$(node ./external/ag-shared/scripts/shard/calculate-shards.js eval --zero ${count})
+               echo "matrix=${matrix}" >> $GITHUB_OUTPUT
+               echo "count=${count}" >> $GITHUB_OUTPUT
+               echo "E2E matrix determined to be: ${matrix}"
 
-        - name: Perist build outputs
-          if: always()
-          uses: actions/upload-artifact@v4
-          with:
-            name: e2e-init-outputs
-            path: |
-              dist/
-              packages/*/dist/
+      - name: Perist build outputs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: e2e-init-outputs
+          path: |
+            dist/
+            packages/*/dist/
 
-    e2e:
-      runs-on: ubuntu-latest
-      name: E2E Tests (${{ matrix.shard }}/${{ strategy.job-total }})
-      needs: [e2e_init]
-      if: needs.e2e_init.outputs.count > 0
-      strategy:
-        fail-fast: false
-        matrix: ${{ fromJson(needs.e2e_init.outputs.matrix )}}
-      env:
-        NX_BASE: ${{ needs.e2e_init.outputs.nx_base }}
-      steps:
-        - name: Checkout
-          id: checkout
-          uses: actions/checkout@v4
+  e2e:
+    runs-on: ubuntu-latest
+    name: E2E Tests (${{ matrix.shard }}/${{ strategy.job-total }})
+    needs: [ e2e_init ]
+    if: needs.e2e_init.outputs.count > 0
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJson(needs.e2e_init.outputs.matrix )}}
+    env:
+      NX_BASE: ${{ needs.e2e_init.outputs.nx_base }}
+    steps:
+      - name: Checkout
+        id: checkout
+        uses: actions/checkout@v4
 
-        - name: Restore Init Build Outputs
-          uses: actions/download-artifact@v4
-          with:
-            name: e2e-init-outputs
+      - name: Restore Init Build Outputs
+        uses: actions/download-artifact@v4
+        with:
+          name: e2e-init-outputs
 
-        - name: Setup
-          id: setup
-          uses: ./.github/actions/setup-nx
-          with:
-            yarn_postinstall: false
-            nx_restore: false # Restored in previous step.
-            cache_mode: ro
+      - name: Setup
+        id: setup
+        uses: ./.github/actions/setup-nx
+        with:
+          yarn_postinstall: false
+          nx_restore: false # Restored in previous step.
+          cache_mode: ro
 
-        - name: nx test:e2e
-          id: test_e2e
-          run: yarn nx ${{ github.event.inputs.nx_command || 'affected' }} -t test:e2e --configuration=ci --shard=${{ matrix.shard }}/$((${{ strategy.job-total }} - 1))
+      - name: nx test:e2e
+        id: test_e2e
+        run: yarn nx ${{ github.event.inputs.nx_command || 'affected' }} -t test:e2e --configuration=ci --shard=${{ matrix.shard }}/$((${{ strategy.job-total }} - 1))
 
-        - name: Perist test results
-          if: always()
-          uses: actions/upload-artifact@v4
-          with:
-            name: test-results-e2e-shard-${{matrix.shard}}
-            path: |
-              reports/
+      - name: Perist test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results-e2e-shard-${{matrix.shard}}
+          path: |
+            reports/
 
   report:
     runs-on: ubuntu-24.04
@@ -344,12 +344,12 @@ jobs:
           echo "$GIT_LOG" >> $GITHUB_ENV
           echo "EOF" >> $GITHUB_ENV
 
-#      - name: Tag Latest Successful Commit
-#        if: success() && github.ref == 'refs/heads/latest' && steps.lastJobStatus.outputs.workflowStatus != 'failure'
-#        uses: EndBug/latest-tag@latest
-#        with:
-#          ref: latest-success
-#          description: Latest commit to pass GitHub Actions workflow on latest branch.
+      #      - name: Tag Latest Successful Commit
+      #        if: success() && github.ref == 'refs/heads/latest' && steps.lastJobStatus.outputs.workflowStatus != 'failure'
+      #        uses: EndBug/latest-tag@latest
+      #        with:
+      #          ref: latest-success
+      #          description: Latest commit to pass GitHub Actions workflow on latest branch.
 
       - name: Slack Notification
         uses: rtCamp/action-slack-notify@v2
