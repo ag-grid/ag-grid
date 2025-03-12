@@ -252,7 +252,7 @@ jobs:
 
       - name: nx test:e2e
         id: test_e2e
-        run: yarn nx ${{ github.event.inputs.nx_command || 'affected' }} -t test:e2e --configuration=ci --shard=${{ matrix.shard }}/$((${{ strategy.job-total }} - 1))
+        run: yarn nx ${{ github.event.inputs.nx_command || 'affected' }} -t test:e2e --configuration=ci
 
       - name: Perist test results
         if: always()
@@ -264,7 +264,7 @@ jobs:
 
   report:
     runs-on: ubuntu-24.04
-    needs: [ build_lint, test ]
+    needs: [ build_lint, test, e2e ]
     if: cancelled() != true
     steps:
       - name: Checkout
