@@ -193,8 +193,8 @@ jobs:
 
       - name: build
         run: yarn nx run-many -t build -p tag:package --parallel=3
-      - name: build examples
-        run: yarn nx run-many -t generate --parallel=3
+      #- name: build examples
+      #  run: yarn nx run-many -t generate --parallel=3
 
       - name: calculate matrix
         id: matrix
@@ -249,6 +249,10 @@ jobs:
           yarn_postinstall: false
           nx_restore: false # Restored in previous step.
           cache_mode: ro
+
+      - name: Check Dirs
+        run: ls -l dist
+          ls -l packages/ag-grid-community/dist
 
       - name: nx test:e2e
         if: matrix.shard != 0
