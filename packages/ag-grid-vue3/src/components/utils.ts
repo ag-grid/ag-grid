@@ -1043,9 +1043,9 @@ export interface Props<TData> {
     pinnedBottomRowData?: any[] | undefined,
     /** Determines whether manual row pinning is enabled via the row context menu.
          *
-         * Set to `true` to allow pinning rows to both top and bottom pinned row containers.
-         * Set to `'top'` to allow pinning rows to the top pinned row container only.
-         * Set to `'bottom'` to allow pinning rows to the bottom pinned row container only.
+         * Set to `true` to allow pinning rows to top or bottom.
+         * Set to `'top'` to allow pinning rows to the top only.
+         * Set to `'bottom'` to allow pinning rows to the bottom only.
          */
     enableRowPinning?: boolean | 'top' | 'bottom' | undefined,
     /** Return `true` if the grid should allow the row to be manually pinned.
