@@ -21,10 +21,18 @@ export class CheckboxCellRenderer extends Component implements ICellRenderer {
 
     constructor() {
         super(
-            /* html*/ `
-            <div class="ag-cell-wrapper ag-checkbox-cell" role="presentation">
-                <ag-checkbox role="presentation" data-ref="eCheckbox"></ag-checkbox>
-            </div>`,
+            {
+                tag: 'div',
+                class: 'ag-cell-wrapper ag-checkbox-cell',
+                role: 'presentation',
+                children: [
+                    {
+                        tag: 'ag-checkbox',
+                        role: 'presentation',
+                        ref: 'eCheckbox',
+                    },
+                ],
+            },
             [AgCheckboxSelector]
         );
         this.registerCSS(checkboxCellRendererCSS);

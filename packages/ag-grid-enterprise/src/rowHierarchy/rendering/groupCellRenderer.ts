@@ -8,16 +8,6 @@ import { Component, RefPlaceholder, _setAriaRole, _setDisplayed } from 'ag-grid-
 
 import { GroupCellRendererCtrl } from './groupCellRendererCtrl';
 
-const groupTemplate =
-    /* html */
-    `<span class="ag-cell-wrapper">
-        <span class="ag-group-expanded" data-ref="eExpanded"></span>
-        <span class="ag-group-contracted" data-ref="eContracted"></span>
-        <span class="ag-group-checkbox ag-invisible" data-ref="eCheckbox"></span>
-        <span class="ag-group-value" data-ref="eValue"></span>
-        <span class="ag-group-child-count" data-ref="eChildCount"></span>
-    </span>`;
-
 export class GroupCellRenderer extends Component implements ICellRendererComp {
     private readonly eExpanded: HTMLElement = RefPlaceholder;
     private readonly eContracted: HTMLElement = RefPlaceholder;
@@ -29,7 +19,17 @@ export class GroupCellRenderer extends Component implements ICellRendererComp {
     private innerCellRenderer: ICellRendererComp;
 
     constructor() {
-        super(groupTemplate);
+        super({
+            tag: 'span',
+            class: 'ag-cell-wrapper',
+            children: [
+                { tag: 'span', class: 'ag-group-expanded', ref: 'eExpanded' },
+                { tag: 'span', class: 'ag-group-contracted', ref: 'eContracted' },
+                { tag: 'span', class: 'ag-group-checkbox ag-invisible', ref: 'eCheckbox' },
+                { tag: 'span', class: 'ag-group-value', ref: 'eValue' },
+                { tag: 'span', class: 'ag-group-child-count', ref: 'eChildCount' },
+            ],
+        });
     }
 
     public init(params: GroupCellRendererParams): void {

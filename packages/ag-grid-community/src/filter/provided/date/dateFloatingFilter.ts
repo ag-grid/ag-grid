@@ -28,11 +28,22 @@ export class DateFloatingFilter extends SimpleFloatingFilter {
 
     constructor() {
         super(
-            /* html */ `
-            <div class="ag-floating-filter-input" role="presentation">
-                <ag-input-text-field data-ref="eReadOnlyText"></ag-input-text-field>
-                <div data-ref="eDateWrapper" style="display: flex;"></div>
-            </div>`,
+            {
+                tag: 'div',
+                class: 'ag-floating-filter-input',
+                role: 'presentation',
+                children: [
+                    {
+                        tag: 'ag-input-text-field',
+                        ref: 'eReadOnlyText',
+                    },
+                    {
+                        tag: 'div',
+                        ref: 'eDateWrapper',
+                        class: 'ag-date-floating-filter-wrapper',
+                    },
+                ],
+            },
             [AgInputTextFieldSelector]
         );
     }

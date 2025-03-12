@@ -17,9 +17,11 @@ export class HeaderRowComp extends Component {
     private headerComps: { [key: HeaderCellCtrlInstanceId]: AbstractHeaderCellComp<AbstractHeaderCellCtrl> } = {};
 
     constructor(private readonly ctrl: HeaderRowCtrl) {
-        super();
-
-        this.setTemplate(/* html */ `<div class="${this.ctrl.headerRowClass}" role="row"></div>`);
+        super({
+            tag: 'div',
+            role: 'row',
+            class: ctrl.headerRowClass,
+        });
     }
 
     public postConstruct(): void {

@@ -3,7 +3,7 @@ import { Component, _getDocument, _setAriaLabel, _setAriaLabelledBy } from 'ag-g
 
 export class SkeletonCellRenderer extends Component implements ILoadingCellRendererComp {
     constructor() {
-        super(/* html */ `<div class="ag-skeleton-container"></div>`);
+        super({ tag: 'div', class: 'ag-skeleton-container' });
     }
 
     public init(params: ILoadingCellRendererParams): void {

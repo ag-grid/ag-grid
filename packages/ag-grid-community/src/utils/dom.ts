@@ -577,7 +577,7 @@ export function _requestAnimationFrame(beans: BeanCollection, callback: any) {
 }
 
 /** Just to avoid typos, add to as required */
-type RoleType = 'presentation' | 'columnheader';
+type RoleType = 'presentation' | 'columnheader' | 'gridcell' | 'row';
 type TagName = keyof HTMLElementTagNameMap | Lowercase<AgComponentSelector>;
 
 export type ElementParams = {
@@ -593,12 +593,16 @@ export type ElementParams = {
     /** AG Grid data-ref attribute */
     ref?: string;
     ariaHidden?: boolean;
+    /** The type of input field */
+    inputType?: string;
+    tabindex?: string;
     children?: (ElementParams | null)[]; // nulls are allowed to allow for optional children
 };
 
-export function _createElement(params: ElementParams): HTMLElement {
-    const { tag: tagname, role, ref: dataRef, class: className, ariaHidden, children } = params;
-    const element = document.createElement(tagname);
+export function _createElement(params: ElementParams) {
+    const { ariaHidden, children, class: className, inputType, ref: dataRef, role, tabindex, tag } = params;
+
+    const element = document.createElement(tag);
     if (role) {
         element.setAttribute('role', role);
     }
@@ -610,6 +614,12 @@ export function _createElement(params: ElementParams): HTMLElement {
     }
     if (ariaHidden) {
         element.setAttribute('aria-hidden', 'true');
+    }
+    if (inputType) {
+        element.setAttribute('type', inputType);
+    }
+    if (tabindex) {
+        element.setAttribute('tabindex', tabindex);
     }
     if (children) {
         for (const child of children) {
