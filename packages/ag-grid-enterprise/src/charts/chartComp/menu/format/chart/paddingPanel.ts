@@ -67,7 +67,7 @@ export class PaddingPanel extends Component {
     private updateTopPadding(chartOptions: AgChartThemeOverrides) {
         // keep 'top' padding in sync with chart as toggling chart title on / off change the 'top' padding
         const topPadding = [...this.chartController.getChartSeriesTypes(), 'common']
-            .map((seriesType: ChartThemeOverridesSeriesType) => chartOptions[seriesType]?.padding?.top)
+            .map((seriesType: ChartThemeOverridesSeriesType) => chartOptions?.[seriesType]?.padding?.top)
             .find((value) => value != null);
         if (topPadding != null) {
             this.paddingTopSlider.setValue(`${topPadding}`);
