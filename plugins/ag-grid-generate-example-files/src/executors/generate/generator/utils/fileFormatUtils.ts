@@ -1,7 +1,7 @@
 import prettier from 'prettier';
 
-import type {InternalFramework} from '../types';
-import {TYPESCRIPT_INTERNAL_FRAMEWORKS} from '../types';
+import type { InternalFramework } from '../types';
+import { TYPESCRIPT_INTERNAL_FRAMEWORKS } from '../types';
 
 // extracted to a separate file as prettier does a dynamic import which jest doesn't like without the addition of
 // experimental flags

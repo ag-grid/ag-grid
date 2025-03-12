@@ -14,6 +14,7 @@ import {
 } from './generator/transformation-scripts/parser-utils';
 import type { ExampleConfig, GeneratedContents, GridOptionsType, InternalFramework } from './generator/types';
 import { FRAMEWORKS, TYPESCRIPT_INTERNAL_FRAMEWORKS } from './generator/types';
+import { formatFile } from './generator/utils/fileFormatUtils';
 import {
     convertTsxToJsx,
     getBoilerPlateFiles,
@@ -25,7 +26,6 @@ import {
     getProvidedExampleFolder,
     getTransformTsFileExt,
 } from './generator/utils/fileUtils';
-import { formatFile } from './generator/utils/fileFormatUtils';
 import { frameworkFilesGenerator } from './generator/utils/frameworkFilesGenerator';
 import { getOtherScriptFiles, getUseFetchJsonFile } from './generator/utils/getOtherScriptFiles';
 import { getPackageJson } from './generator/utils/getPackageJson';
