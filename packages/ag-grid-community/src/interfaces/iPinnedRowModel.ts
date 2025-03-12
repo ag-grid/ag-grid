@@ -28,4 +28,6 @@ export interface IPinnedRowModel {
     getPinnedRowById(id: string, container: NonNullable<RowPinnedType>): RowNode | undefined;
 
     forEachPinnedRow(container: NonNullable<RowPinnedType>, callback: (node: RowNode, index: number) => void): void;
+
+    populatePinnedState(top: string[], bottom: string[]): void;
 }

@@ -768,18 +768,7 @@ export class StateService extends BeanStub implements NamedBean {
     }
 
     private setRowPinningState(state: RowPinningState): void {
-        const { rowModel, pinnedRowModel } = this.beans;
-        function pinRows(container: NonNullable<RowPinnedType>) {
-            state[container].forEach((id) => {
-                const node = rowModel.getRowNode(id);
-                if (node) {
-                    pinnedRowModel?.pinRow(node, container);
-                }
-            });
-        }
-
-        pinRows('top');
-        pinRows('bottom');
+        this.beans.pinnedRowModel?.populatePinnedState(state.top, state.bottom);
     }
 
     private setRowGroupExpansionState(rowGroupExpansionState: RowGroupExpansionState): void {

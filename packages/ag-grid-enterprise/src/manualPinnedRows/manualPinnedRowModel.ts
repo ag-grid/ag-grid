@@ -83,6 +83,10 @@ class OrderedSet {
 export class ManualPinnedRowModel extends BeanStub implements IPinnedRowModel {
     private top = new OrderedSet();
     private bottom = new OrderedSet();
+    private queued = {
+        top: new Set<string>(),
+        bottom: new Set<string>(),
+    };
 
     public postConstruct(): void {
         const filterManager = this.beans.filterManager;
@@ -95,6 +99,7 @@ export class ManualPinnedRowModel extends BeanStub implements IPinnedRowModel {
         this.addManagedEventListeners({
             gridStylesChanged: this.onGridStylesChanges.bind(this),
             modelUpdated: () => {
+                this.tryToEmptyQueues();
                 this.forContainers((container) => {
                     container.hide(hideFilteredNodes, this.beans);
                     container.sort(this.beans);
@@ -243,6 +248,47 @@ export class ManualPinnedRowModel extends BeanStub implements IPinnedRowModel {
         callback: (node: RowNode, index: number) => void
     ): void {
         this.getContainer(floating).forEach(callback);
+    }
+
+    public populatePinnedState(top: string[], bottom: string[]): void {
+        const pinRows = (ids: string[], container: NonNullable<RowPinnedType>) => {
+            ids.forEach((id) => {
+                const node = this.beans.rowModel.getRowNode(id);
+                if (node) {
+                    this.pinRow(node, container);
+                } else {
+                    this.queued[container].add(id);
+                }
+            });
+        };
+
+        pinRows(top, 'top');
+        pinRows(bottom, 'bottom');
+    }
+
+    private tryToEmptyQueues(): void {
+        const emptyQueue = (container: NonNullable<RowPinnedType>) => {
+            const nodesToPin = new Set<RowNode>();
+            const queued = this.queued[container];
+
+            queued.forEach((id) => {
+                const node = this.beans.rowModel.getRowNode(id);
+                if (node) {
+                    nodesToPin.add(node);
+                }
+            });
+
+            nodesToPin.forEach((node) => {
+                if (queued.has(node.id!)) {
+                    queued.delete(node.id!);
+                }
+
+                this.pinRow(node, container);
+            });
+        };
+
+        emptyQueue('top');
+        emptyQueue('bottom');
     }
 
     private onGridStylesChanges(e: CssVariablesChanged) {

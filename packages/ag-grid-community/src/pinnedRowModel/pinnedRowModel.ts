@@ -203,6 +203,10 @@ export class PinnedRowModel extends BeanStub implements NamedBean, IPinnedRowMod
     private getCache(floating: RowPinnedType): OrderedCache<RowNode> {
         return floating === 'top' ? this.pinnedTopRows : this.pinnedBottomRows;
     }
+
+    public populatePinnedState(): void {
+        // Not implemented for legacy pinned rows
+    }
 }
 
 function getTotalHeight(rowNodes: OrderedCache<RowNode>): number {
