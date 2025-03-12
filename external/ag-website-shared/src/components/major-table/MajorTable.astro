@@ -50,9 +50,11 @@ const versions = isMigration ? allVersions.filter(filterMigrations) : allVersion
             return (
                 <tr class={isMajor ? styles.isMajor : ''}>
                     <td class:list={[styles.version, 'text-monospace ', 'text-semibold']}>{version.version}</td>
-                    <td>{version.date}</td>
-                    <td>
-                        <span class={styles.versionType}>{versionType}</span>
+
+                    <td class={styles.dateCol}>{version.date}</td>
+
+                    <td class={styles.versionType}>
+                        <span>{versionType}</span>
                     </td>
 
                     {isMigration && (
@@ -66,7 +68,7 @@ const versions = isMigration ? allVersions.filter(filterMigrations) : allVersion
 
                     {!isMigration && (
                         <>
-                            <td>
+                            <td class={styles.changelog}>
                                 <a href={changelogUrl}>
                                     Changelog
                                     <Icon name="arrowRight" />
