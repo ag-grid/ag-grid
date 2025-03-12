@@ -579,3 +579,29 @@ export function _createElement<T extends keyof HTMLElementTagNameMap>(
     }
     return element;
 }
+
+type ElementParams<T extends keyof HTMLElementTagNameMap> = {
+    tag: T;
+    classes?: string[];
+    role?: RoleType;
+    ref?: string;
+    children?: HTMLElement[];
+};
+
+export function _createElement2<T extends keyof HTMLElementTagNameMap>(params: ElementParams<T>): HTMLElement {
+    const { tag: tagname, role, ref: dataRef, classes: classList, children } = params;
+    const element = document.createElement<T>(tagname);
+    if (role) {
+        element.setAttribute('role', role);
+    }
+    if (dataRef) {
+        element.setAttribute('data-ref', dataRef);
+    }
+    if (classList) {
+        element.classList.add(...classList);
+    }
+    if (children) {
+        element.append(...children);
+    }
+    return element;
+}

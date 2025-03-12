@@ -1,7 +1,7 @@
 import type { HeaderStyle } from '../../../entities/colDef';
 import type { UserCompDetails } from '../../../interfaces/iUserCompDetails';
 import { _removeAriaSort, _setAriaSort } from '../../../utils/aria';
-import { _addStylesToElement, _createElement } from '../../../utils/dom';
+import { _addStylesToElement, _createElement, _createElement2 } from '../../../utils/dom';
 import { RefPlaceholder } from '../../../widgets/component';
 import { AbstractHeaderCellComp } from '../abstractCell/abstractHeaderCellComp';
 import type { HeaderCellCtrl, IHeaderCellComp } from './headerCellCtrl';
@@ -26,6 +26,26 @@ export class HeaderCellComp extends AbstractHeaderCellComp<HeaderCellCtrl> {
         );
         div.appendChild(resize);
         div.appendChild(headerCompWrapper);
+
+        const div2 = _createElement2({
+            tag: 'div',
+            classes: ['ag-header-cell'],
+            role: 'columnheader',
+            children: [
+                _createElement2({
+                    tag: 'div',
+                    classes: ['ag-header-cell-resize'],
+                    role: 'presentation',
+                    ref: 'eResize',
+                }),
+                _createElement2({
+                    tag: 'div',
+                    classes: ['ag-header-cell-comp-wrapper'],
+                    role: 'presentation',
+                    ref: 'eHeaderCompWrapper',
+                }),
+            ],
+        });
 
         super(div, ctrl);
     }
