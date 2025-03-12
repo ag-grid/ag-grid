@@ -146,6 +146,15 @@ export class ManualPinnedRowModel extends BeanStub implements IPinnedRowModel {
     }
 
     public pinRow(rowNode: RowNode, container: RowPinnedType, column?: AgColumn | null): void {
+        // May have been called on either the pinned row or the source row, check both
+        const currentContainer = rowNode.rowPinned ?? rowNode.pinnedSibling?.rowPinned;
+
+        // We're only switching if neither the current nor the target container are null
+        const switching = currentContainer != null && container != null && container != currentContainer;
+        if (switching) {
+            this.pinRow(rowNode, null, column);
+        }
+
         // cell-span pinning/unpinning
         const spannedRows = column && getSpannedRows(this.beans, rowNode, column);
         if (spannedRows) {
@@ -155,17 +164,17 @@ export class ManualPinnedRowModel extends BeanStub implements IPinnedRowModel {
 
         // unpinning
         if (container == null) {
-            // Want to act on the pinned row, not the original row
+            // Want to act on the pinned row, not the source row
             const node = rowNode.rowPinned ? rowNode : rowNode.pinnedSibling!;
             const found = this.findPinnedRowNode(node);
             if (!found) return;
 
             found.delete(node);
-            const original = node.pinnedSibling!;
+            const source = node.pinnedSibling!;
             _destroyRowNodeSibling(node);
             this.refreshRowPositions(container);
 
-            this.dispatchRowPinnedEvents(original);
+            this.dispatchRowPinnedEvents(source);
         } else {
             // pinning
             const sibling = _createPinnedSibling(rowNode, this.beans, container);
