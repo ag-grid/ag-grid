@@ -73,7 +73,8 @@ export class SortService extends BeanStub implements NamedBean {
         const allSortedCols = this.getColumnsWithSortingOrdered();
 
         // reset sort index on everything
-        colModel.getAllCols().forEach((col) => this.setColSortIndex(col, null));
+        colModel.forAllCols((col) => this.setColSortIndex(col, null));
+
         const allSortedColsWithoutChangesOrGroups = allSortedCols.filter((col) => {
             if (isCoupled && col.getColDef().showRowGroup) {
                 return false;
@@ -94,9 +95,13 @@ export class SortService extends BeanStub implements NamedBean {
 
     public isSortActive(): boolean {
         // pull out all the columns that have sorting set
-        const allCols = this.beans.colModel.getAllCols();
-        const sortedCols = allCols.filter((column) => !!column.getSort());
-        return sortedCols && sortedCols.length > 0;
+        let isSorting = false;
+        this.beans.colModel.forAllCols((col) => {
+            if (col.getSort()) {
+                isSorting = true;
+            }
+        });
+        return isSorting;
     }
 
     public dispatchSortChangedEvents(source: string, columns?: AgColumn[]): void {
@@ -113,7 +118,7 @@ export class SortService extends BeanStub implements NamedBean {
 
     private clearSortBarTheseColumns(columnsToSkip: AgColumn[], source: ColumnEventType): AgColumn[] {
         const clearedColumns: AgColumn[] = [];
-        this.beans.colModel.getAllCols().forEach((columnToClear) => {
+        this.beans.colModel.forAllCols((columnToClear) => {
             // Do not clear if either holding shift, or if column in question was clicked
             if (!columnsToSkip.includes(columnToClear)) {
                 // add to list of cleared cols when sort direction is set
@@ -147,7 +152,12 @@ export class SortService extends BeanStub implements NamedBean {
     private getIndexedSortMap(): Map<AgColumn, number> {
         const { gos, colModel, showRowGroupCols, rowGroupColsSvc } = this.beans;
         // pull out all the columns that have sorting set
-        let allSortedCols = colModel.getAllCols().filter((col) => !!col.getSort());
+        let allSortedCols: AgColumn[] = [];
+        colModel.forAllCols((col) => {
+            if (col.getSort()) {
+                allSortedCols.push(col);
+            }
+        });
 
         if (colModel.isPivotMode()) {
             const isSortingLinked = _isColumnsSortingCoupledToGroup(gos);
@@ -214,12 +224,7 @@ export class SortService extends BeanStub implements NamedBean {
 
     public getColumnsWithSortingOrdered(): AgColumn[] {
         // pull out all the columns that have sorting set
-        return (
-            [...this.getIndexedSortMap().entries()]
-                // eslint-disable-next-line @typescript-eslint/no-unused-vars
-                .sort(([col1, idx1], [col2, idx2]) => idx1 - idx2)
-                .map(([col]) => col)
-        );
+        return [...this.getIndexedSortMap().entries()].sort(([, idx1], [, idx2]) => idx1 - idx2).map(([col]) => col);
     }
 
     // used by server side row models, to sent sort to server

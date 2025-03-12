@@ -346,8 +346,6 @@ export function _compareColumnStatesAndDispatchEvents(beans: BeanCollection, sou
     });
 
     return () => {
-        const colsForState = colModel.getAllCols();
-
         // dispatches generic ColumnEvents where all columns are returned rather than what has changed
         const dispatchWhenListsDifferent = (
             eventType: 'columnPivotChanged' | 'columnRowGroupChanged',
@@ -386,7 +384,7 @@ export function _compareColumnStatesAndDispatchEvents(beans: BeanCollection, sou
         const getChangedColumns = (changedPredicate: (cs: ColumnState, c: AgColumn) => boolean): AgColumn[] => {
             const changedColumns: AgColumn[] = [];
 
-            colsForState.forEach((column) => {
+            colModel.forAllCols((column) => {
                 const colStateBefore = columnStateBeforeMap[column.getColId()];
                 if (colStateBefore && changedPredicate(colStateBefore, column)) {
                     changedColumns.push(column);
@@ -456,9 +454,9 @@ export function _getColumnState(beans: BeanCollection): ColumnState[] {
         return [];
     }
 
-    const colsForState = colModel.getAllCols();
     const rowGroupColumns = rowGroupColsSvc?.columns;
     const pivotColumns = pivotColsSvc?.columns;
+    const res: ColumnState[] = [];
 
     const createStateItemFromColumn = (column: AgColumn) => {
         const rowGroupIndex = column.isRowGroupActive() && rowGroupColumns ? rowGroupColumns.indexOf(column) : null;
@@ -468,7 +466,7 @@ export function _getColumnState(beans: BeanCollection): ColumnState[] {
         const sort = column.getSort() != null ? column.getSort() : null;
         const sortIndex = column.getSortIndex() != null ? column.getSortIndex() : null;
 
-        const res: ColumnState = {
+        res.push({
             colId: column.getColId(),
             width: column.getActualWidth(),
             hide: !column.isVisible(),
@@ -481,12 +479,9 @@ export function _getColumnState(beans: BeanCollection): ColumnState[] {
             pivot: column.isPivotActive(),
             pivotIndex: pivotIndex,
             flex: column.getFlex() ?? null,
-        };
-
-        return res;
+        });
     };
-
-    const res = colsForState.map((col) => createStateItemFromColumn(col));
+    colModel.forAllCols((col) => createStateItemFromColumn(col));
 
     // for fast looking, store the index of each column
     const colIdToGridIndexMap = new Map<string, number>(
