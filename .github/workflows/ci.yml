@@ -271,94 +271,94 @@ jobs:
           path: |
             reports/
 
-  report:
-    runs-on: ubuntu-24.04
-    needs: [ build_lint, test, e2e ]
-    if: cancelled() != true
-    steps:
-      - name: Checkout
-        id: checkout
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 1
-
-      - name: Fetch Refs
-        run: |
-          git fetch origin --depth 1 latest
-          git fetch origin --depth 1 tag latest-success
-
-      - uses: actions/download-artifact@v4
-        with:
-          path: test-results/
-
-      - name: Merge JUnit Report XMLs
-        run: |
-          yarn global add junit-report-merger
-          reports=$(find test-results/ -name \*.xml -type f -exec basename \{\} \; | sort | uniq)
-          mkdir -p reports/
-          echo "$reports" | (while read name ; do
-            yarn exec -s jrm reports/${name} "test-results/**/${name}"
-          done)
-
-      - name: Test Report
-        uses: dorny/test-reporter@v1
-        if: needs.test.result == 'success' || needs.test.result == 'failure'
-        id: testReport
-        continue-on-error: true
-        with:
-          name: 'Tests Results'
-          path: reports/*.xml
-          reporter: jest-junit
-
-      - name: Check last job status
-        id: lastJobStatus
-        if: always() && github.ref == 'refs/heads/latest'
-        run: |
-          WORKFLOW_STATUS="success"
-          if [[ "${{ needs.build_lint.result }}" == "failure" ]] ; then
-            WORKFLOW_STATUS="failure"
-          elif [ "${{ needs.test.result }}" == "failure" ] ; then
-            WORKFLOW_STATUS="failure"
-          elif [ "${{ needs.e2e.result }}" == "failure" ] ; then
-            WORKFLOW_STATUS="failure"
-          elif [ "${{ needs.fw_pkg_test.result }}" == "failure" ] ; then
-            WORKFLOW_STATUS="failure"
-          elif [ "${{ needs.sonarqube.result }}" == "failure" ] ; then
-            WORKFLOW_STATUS="partial"
-          fi
-          echo "workflowStatus=${WORKFLOW_STATUS}" >> $GITHUB_OUTPUT
-          
-          LAST_WORKFLOW_STATUS=$(gh run list --workflow .github/workflows/ci.yml -b latest | grep -oh "completed.*" | grep -v "cancelled" | head -1 | awk '{print $2}')
-          if [ "$GITHUB_RUN_ATTEMPT" -ge 2 ]; then
-            # Handle re-run cases - there is no way to query the previous run status, so we assume the most
-            # common scenario will be re-run after failure.
-            LAST_WORKFLOW_STATUS="failure"
-          fi
-          if [ "$LAST_WORKFLOW_STATUS" != "$WORKFLOW_STATUS" ]; then
-            echo "status changed from $LAST_WORKFLOW_STATUS to $WORKFLOW_STATUS"
-            echo "changedState=true" >> $GITHUB_OUTPUT
-          else
-            echo "status is still $WORKFLOW_STATUS"
-            echo "changedState=false" >> $GITHUB_OUTPUT
-          fi
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Commit History
-        id: commits
-        if: always() && job.status != 'cancelled' # && github.ref == 'refs/heads/latest' && steps.lastJobStatus.outputs.changedState == 'true '
-        run: |
-          GIT_LOG=$(git log HEAD ^${{ needs.build_lint.outputs.nx_base }} --format="%an (%h) %s")
-          echo "GIT_LOG<<EOF" >> $GITHUB_ENV
-          echo "$GIT_LOG" >> $GITHUB_ENV
-          echo "EOF" >> $GITHUB_ENV
-
-      #      - name: Tag Latest Successful Commit
-      #        if: success() && github.ref == 'refs/heads/latest' && steps.lastJobStatus.outputs.workflowStatus != 'failure'
-      #        uses: EndBug/latest-tag@latest
-      #        with:
-      #          ref: latest-success
-      #          description: Latest commit to pass GitHub Actions workflow on latest branch.
+#  report:
+#    runs-on: ubuntu-24.04
+#    needs: [ build_lint, test, e2e ]
+#    if: cancelled() != true
+#    steps:
+#      - name: Checkout
+#        id: checkout
+#        uses: actions/checkout@v4
+#        with:
+#          fetch-depth: 1
+#
+#      - name: Fetch Refs
+#        run: |
+#          git fetch origin --depth 1 latest
+#          git fetch origin --depth 1 tag latest-success
+#
+#      - uses: actions/download-artifact@v4
+#        with:
+#          path: test-results/
+#
+#      - name: Merge JUnit Report XMLs
+#        run: |
+#          yarn global add junit-report-merger
+#          reports=$(find test-results/ -name \*.xml -type f -exec basename \{\} \; | sort | uniq)
+#          mkdir -p reports/
+#          echo "$reports" | (while read name ; do
+#            yarn exec -s jrm reports/${name} "test-results/**/${name}"
+#          done)
+#
+#      - name: Test Report
+#        uses: dorny/test-reporter@v1
+#        if: needs.test.result == 'success' || needs.test.result == 'failure'
+#        id: testReport
+#        continue-on-error: true
+#        with:
+#          name: 'Tests Results'
+#          path: reports/*.xml
+#          reporter: jest-junit
+#
+#      - name: Check last job status
+#        id: lastJobStatus
+#        if: always() && github.ref == 'refs/heads/latest'
+#        run: |
+#          WORKFLOW_STATUS="success"
+#          if [[ "${{ needs.build_lint.result }}" == "failure" ]] ; then
+#            WORKFLOW_STATUS="failure"
+#          elif [ "${{ needs.test.result }}" == "failure" ] ; then
+#            WORKFLOW_STATUS="failure"
+#          elif [ "${{ needs.e2e.result }}" == "failure" ] ; then
+#            WORKFLOW_STATUS="failure"
+#          elif [ "${{ needs.fw_pkg_test.result }}" == "failure" ] ; then
+#            WORKFLOW_STATUS="failure"
+#          elif [ "${{ needs.sonarqube.result }}" == "failure" ] ; then
+#            WORKFLOW_STATUS="partial"
+#          fi
+#          echo "workflowStatus=${WORKFLOW_STATUS}" >> $GITHUB_OUTPUT
+#
+#          LAST_WORKFLOW_STATUS=$(gh run list --workflow .github/workflows/ci.yml -b latest | grep -oh "completed.*" | grep -v "cancelled" | head -1 | awk '{print $2}')
+#          if [ "$GITHUB_RUN_ATTEMPT" -ge 2 ]; then
+#            # Handle re-run cases - there is no way to query the previous run status, so we assume the most
+#            # common scenario will be re-run after failure.
+#            LAST_WORKFLOW_STATUS="failure"
+#          fi
+#          if [ "$LAST_WORKFLOW_STATUS" != "$WORKFLOW_STATUS" ]; then
+#            echo "status changed from $LAST_WORKFLOW_STATUS to $WORKFLOW_STATUS"
+#            echo "changedState=true" >> $GITHUB_OUTPUT
+#          else
+#            echo "status is still $WORKFLOW_STATUS"
+#            echo "changedState=false" >> $GITHUB_OUTPUT
+#          fi
+#        env:
+#          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#
+#      - name: Commit History
+#        id: commits
+#        if: always() && job.status != 'cancelled' # && github.ref == 'refs/heads/latest' && steps.lastJobStatus.outputs.changedState == 'true '
+#        run: |
+#          GIT_LOG=$(git log HEAD ^${{ needs.build_lint.outputs.nx_base }} --format="%an (%h) %s")
+#          echo "GIT_LOG<<EOF" >> $GITHUB_ENV
+#          echo "$GIT_LOG" >> $GITHUB_ENV
+#          echo "EOF" >> $GITHUB_ENV
+#
+#      #      - name: Tag Latest Successful Commit
+#      #        if: success() && github.ref == 'refs/heads/latest' && steps.lastJobStatus.outputs.workflowStatus != 'failure'
+#      #        uses: EndBug/latest-tag@latest
+#      #        with:
+#      #          ref: latest-success
+#      #          description: Latest commit to pass GitHub Actions workflow on latest branch.
 
 #      - name: Slack Notification
 #        uses: rtCamp/action-slack-notify@v2
