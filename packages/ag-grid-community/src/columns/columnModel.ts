@@ -11,7 +11,7 @@ import { _shouldMaintainColumnOrder } from '../gridOptionsUtils';
 import type { Column } from '../interfaces/iColumn';
 import type { IColumnCollectionService } from '../interfaces/iColumnCollectionService';
 import type { IPivotResultColsService } from '../interfaces/iPivotResultColsService';
-import { _areEqual } from '../utils/array';
+import { _areEqual, _flatten } from '../utils/array';
 import { _createColumnTree } from './columnFactoryUtils';
 import { _applyColumnState, _compareColumnStatesAndDispatchEvents } from './columnStateUtils';
 import type { ColumnState } from './columnStateUtils';
@@ -467,13 +467,13 @@ export class ColumnModel extends BeanStub implements NamedBean {
     // returns colDefCols, pivotResultCols and autoCols
     public getAllCols(): AgColumn[] {
         const { pivotResultCols, autoColSvc, selectionColSvc } = this.beans;
-        const pivotResultColsList = pivotResultCols?.getPivotResultCols()?.list;
-        return [
+
+        return _flatten([
             this.colDefCols?.list ?? [],
             autoColSvc?.columns?.list ?? [],
             selectionColSvc?.columns?.list ?? [],
-            pivotResultColsList ?? [],
-        ].flat();
+            pivotResultCols?.getPivotResultCols()?.list ?? [],
+        ]);
     }
 
     public getColsForKeys(keys: ColKey[]): AgColumn[] {

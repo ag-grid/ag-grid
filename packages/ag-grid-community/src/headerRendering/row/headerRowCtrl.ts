@@ -192,12 +192,16 @@ export class HeaderRowCtrl extends BeanStub {
     }
 
     private onVirtualColumnsChanged(afterScroll: boolean = false): void {
-        const ctrlsToDisplay = this.getHeaderCtrls();
+        const ctrlsToDisplay = this.getUpdatedHeaderCtrls();
         const forceOrder = this.isEnsureDomOrder || this.isPrintLayout;
         this.comp.setHeaderCtrls(ctrlsToDisplay, forceOrder, afterScroll);
     }
 
-    public getHeaderCtrls() {
+    /**
+     * Recycles the header cell ctrls and creates new ones for the columns in the viewport
+     * @returns The updated header cell ctrls
+     */
+    public getUpdatedHeaderCtrls() {
         const oldCtrls = this.headerCellCtrls;
         this.headerCellCtrls = new Map();
         const columns = this.getColumnsInViewport();
@@ -232,7 +236,8 @@ export class HeaderRowCtrl extends BeanStub {
         return this.getHeaderCellCtrls();
     }
 
-    private getHeaderCellCtrls(): AbstractHeaderCellCtrl[] {
+    /** Get the current header cell ctrls */
+    public getHeaderCellCtrls(): AbstractHeaderCellCtrl[] {
         return Array.from(this.headerCellCtrls?.values() ?? []);
     }
 

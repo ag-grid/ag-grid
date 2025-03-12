@@ -1,6 +1,5 @@
 import type { ColumnModel } from '../columns/columnModel';
 import type { BeanCollection } from '../context/context';
-import type { HeaderGroupCellCtrl } from './cells/columnGroup/headerGroupCellCtrl';
 import type { HeaderRowCtrl } from './row/headerRowCtrl';
 
 // + gridPanel -> for resizing the body and setting top margin
@@ -40,37 +39,30 @@ export function getGroupRowsHeight(beans: BeanCollection): number[] {
 }
 
 function getColumnGroupHeaderRowHeight(beans: BeanCollection, headerRowCtrl: HeaderRowCtrl): number {
-    const defaultHeight: number = (
-        beans.colModel.isPivotMode() ? getPivotGroupHeaderHeight(beans) : getGroupHeaderHeight(beans)
-    ) as number;
-
-    let displayedHeights = 0;
-    const headerRowCellCtrls = headerRowCtrl.getHeaderCtrls() as HeaderGroupCellCtrl[];
+    const defaultHeight = beans.colModel.isPivotMode() ? getPivotGroupHeaderHeight(beans) : getGroupHeaderHeight(beans);
+    let maxDisplayedHeight = defaultHeight;
+    const headerRowCellCtrls = headerRowCtrl.getHeaderCellCtrls();
     for (const headerCellCtrl of headerRowCellCtrls) {
         const { column } = headerCellCtrl;
-        if (column.isAutoHeaderHeight()) {
-            const height = column.getAutoHeaderHeight();
-            if (height != null && height > displayedHeights) {
-                displayedHeights = height;
-            }
+        const height = column.getAutoHeaderHeight();
+        if (height != null && height > maxDisplayedHeight && column.isAutoHeaderHeight()) {
+            maxDisplayedHeight = height;
         }
     }
-
-    return Math.max(defaultHeight, displayedHeights);
+    return maxDisplayedHeight;
 }
 
 export function getColumnHeaderRowHeight(beans: BeanCollection): number {
-    const defaultHeight: number = (
-        beans.colModel.isPivotMode() ? getPivotHeaderHeight(beans) : getHeaderHeight(beans)
-    ) as number;
-
-    const allDisplayedCols = beans.visibleCols.allCols;
-
-    const displayedHeights = allDisplayedCols
-        .filter((col) => col.isAutoHeaderHeight())
-        .map((col) => col.getAutoHeaderHeight() || 0);
-
-    return Math.max(defaultHeight, ...displayedHeights);
+    const defaultHeight = beans.colModel.isPivotMode() ? getPivotHeaderHeight(beans) : getHeaderHeight(beans);
+    let maxDisplayedHeight = defaultHeight;
+    const cols = beans.colModel.getAllCols();
+    for (const col of cols) {
+        const height = col.getAutoHeaderHeight();
+        if (height != null && height > maxDisplayedHeight && col.isAutoHeaderHeight()) {
+            maxDisplayedHeight = height;
+        }
+    }
+    return maxDisplayedHeight;
 }
 
 export function getHeaderHeight(beans: BeanCollection): number {

@@ -1,3 +1,5 @@
+import { _flatten } from 'ag-grid-community';
+
 import type { AgChartsExports } from '../../../../../agChartsExports';
 import type { ChartTranslationKey } from '../../../../services/chartTranslationService';
 import type { MiniChartSelector } from '../../miniChartsContainer';
@@ -56,7 +58,7 @@ export class MiniStackedBarClass extends MiniChartWithAxes {
         );
 
         this.updateColors(fills, strokes);
-        this.root.append(([] as any[]).concat.apply([], this.bars));
+        this.root.append(_flatten(this.bars));
     }
 
     updateColors(fills: string[], strokes: string[]) {
