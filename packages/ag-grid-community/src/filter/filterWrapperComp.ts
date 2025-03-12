@@ -17,7 +17,7 @@ export class FilterWrapperComp extends Component {
         private readonly column: AgColumn,
         private readonly source: FilterRequestSource
     ) {
-        super(_createElement('div', ['ag-filter']));
+        super(_createElement({ tag: 'div', classes: ['ag-filter'] }));
     }
 
     public postConstruct(): void {

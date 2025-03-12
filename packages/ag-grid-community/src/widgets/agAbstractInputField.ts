@@ -6,15 +6,21 @@ import { AgAbstractField } from './agAbstractField';
 import { RefPlaceholder } from './component';
 
 function buildTemplate(displayFieldTag: keyof HTMLElementTagNameMap) {
-    const div = _createElement('div', undefined, 'presentation');
+    const div = _createElement({
+        tag: 'div',
+        role: 'presentation',
+        children: [
+            _createElement({ tag: 'div', classes: ['ag-input-field-label'], ref: 'eLabel' }),
+            _createElement({
+                tag: 'div',
+                classes: ['ag-wrapper', 'ag-input-wrapper'],
+                ref: 'eWrapper',
+                role: 'presentation',
+                children: [_createElement({ tag: displayFieldTag, classes: ['ag-input-field-input'], ref: 'eInput' })],
+            }),
+        ],
+    });
 
-    const eLabel = _createElement('div', ['ag-input-field-label'], undefined, 'eLabel');
-    const eWrapper = _createElement('div', ['ag-wrapper', 'ag-input-wrapper'], 'presentation', 'eWrapper');
-    const eInput = _createElement(displayFieldTag, ['ag-input-field-input'], undefined, 'eInput');
-    eWrapper.appendChild(eInput);
-
-    div.appendChild(eLabel);
-    div.appendChild(eWrapper);
     return div;
 }
 

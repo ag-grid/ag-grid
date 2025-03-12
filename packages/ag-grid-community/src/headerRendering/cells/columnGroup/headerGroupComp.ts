@@ -49,12 +49,11 @@ export interface IInnerHeaderGroupComponent<
         IHeaderGroup {}
 
 function buildExpandIcon(iconName: 'expanded' | 'collapsed', dataRef: 'agOpened' | 'agClosed'): HTMLElement {
-    return _createElement(
-        'span',
-        ['ag-header-icon', 'ag-header-expand-icon', `ag-header-expand-icon-${iconName}`],
-        undefined,
-        dataRef
-    );
+    return _createElement({
+        tag: 'span',
+        classes: ['ag-header-icon', 'ag-header-expand-icon', `ag-header-expand-icon-${iconName}`],
+        ref: dataRef,
+    });
 }
 export class HeaderGroupComp extends Component implements IHeaderGroupComp {
     private params: IHeaderGroupParams;
@@ -67,9 +66,19 @@ export class HeaderGroupComp extends Component implements IHeaderGroupComp {
     private isLoadingInnerComponent: boolean = false;
 
     constructor() {
-        const div = _createElement('div', ['ag-header-group-cell-label'], 'presentation');
-
-        div.appendChild(_createElement('span', ['ag-header-group-text'], 'presentation', 'agLabel'));
+        const div = _createElement({
+            tag: 'div',
+            classes: ['ag-header-group-cell-label'],
+            role: 'presentation',
+            children: [
+                _createElement({
+                    tag: 'span',
+                    classes: ['ag-header-group-text'],
+                    role: 'presentation',
+                    ref: 'agLabel',
+                }),
+            ],
+        });
 
         div.appendChild(buildExpandIcon('expanded', 'agOpened'));
         div.appendChild(buildExpandIcon('collapsed', 'agClosed'));

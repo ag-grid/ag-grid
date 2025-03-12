@@ -13,17 +13,25 @@ export class HeaderGroupCellComp extends AbstractHeaderCellComp<HeaderGroupCellC
     private headerGroupComp: IHeaderGroupComp | undefined;
 
     constructor(ctrl: HeaderGroupCellCtrl) {
-        const div = _createElement('div', ['ag-header-group-cell'], 'columnheader');
-        const headerCompWrapper = _createElement(
-            'div',
-            ['ag-header-cell-comp-wrapper'],
-            'presentation',
-            'eHeaderCompWrapper'
-        );
-        const resize = _createElement('div', ['ag-header-cell-resize'], 'presentation', 'eResize');
-
-        div.appendChild(headerCompWrapper);
-        div.appendChild(resize);
+        const div = _createElement({
+            tag: 'div',
+            classes: ['ag-header-group-cell'],
+            role: 'columnheader',
+            children: [
+                _createElement({
+                    tag: 'div',
+                    classes: ['ag-header-cell-comp-wrapper'],
+                    role: 'presentation',
+                    ref: 'eHeaderCompWrapper',
+                }),
+                _createElement({
+                    tag: 'div',
+                    classes: ['ag-header-cell-resize'],
+                    role: 'presentation',
+                    ref: 'eResize',
+                }),
+            ],
+        });
 
         super(div, ctrl);
     }

@@ -577,25 +577,6 @@ export function _requestAnimationFrame(beans: BeanCollection, callback: any) {
 /** Just to avoid typos, add to as required */
 type RoleType = 'presentation' | 'columnheader';
 
-export function _createElement<T extends keyof HTMLElementTagNameMap>(
-    tagname: T,
-    classList?: string[],
-    role?: RoleType,
-    dataRef?: string
-): HTMLElement {
-    const element = document.createElement<T>(tagname);
-    if (role) {
-        element.setAttribute('role', role);
-    }
-    if (dataRef) {
-        element.setAttribute('data-ref', dataRef);
-    }
-    if (classList) {
-        element.classList.add(...classList);
-    }
-    return element;
-}
-
 type ElementParams<T extends keyof HTMLElementTagNameMap> = {
     tag: T;
     classes?: string[];
@@ -604,7 +585,7 @@ type ElementParams<T extends keyof HTMLElementTagNameMap> = {
     children?: HTMLElement[];
 };
 
-export function _createElement2<T extends keyof HTMLElementTagNameMap>(params: ElementParams<T>): HTMLElement {
+export function _createElement<T extends keyof HTMLElementTagNameMap>(params: ElementParams<T>): HTMLElement {
     const { tag: tagname, role, ref: dataRef, classes: classList, children } = params;
     const element = document.createElement<T>(tagname);
     if (role) {

@@ -7,24 +7,28 @@ import type { ComponentSelector } from '../widgets/component';
 import { Component, RefPlaceholder } from '../widgets/component';
 
 function makeSpan(dataRefSuffix: string, classSuffix: string): HTMLSpanElement {
-    const span = _createElement(
-        'span',
-        ['ag-sort-indicator-icon', `ag-sort-${classSuffix}`, 'ag-hidden'],
-        undefined,
-        `eSort${dataRefSuffix}`
-    );
+    const span = _createElement({
+        tag: 'span',
+        classes: ['ag-sort-indicator-icon', `ag-sort-${classSuffix}`, 'ag-hidden'],
+        ref: `eSort${dataRefSuffix}`,
+    });
 
     span.setAttribute('aria-hidden', 'true');
     return span;
 }
 
 function buildTemplate(): HTMLSpanElement {
-    const span = _createElement('span', ['ag-sort-indicator-container']);
-    span.appendChild(makeSpan('Order', 'order'));
-    span.appendChild(makeSpan('Asc', 'ascending-icon'));
-    span.appendChild(makeSpan('Desc', 'descending-icon'));
-    span.appendChild(makeSpan('Mixed', 'mixed-icon'));
-    span.appendChild(makeSpan('None', 'none-icon'));
+    const span = _createElement({
+        tag: 'span',
+        classes: ['ag-sort-indicator-container'],
+        children: [
+            makeSpan('Order', 'order'),
+            makeSpan('Asc', 'ascending-icon'),
+            makeSpan('Desc', 'descending-icon'),
+            makeSpan('Mixed', 'mixed-icon'),
+            makeSpan('None', 'none-icon'),
+        ],
+    });
     return span;
 }
 

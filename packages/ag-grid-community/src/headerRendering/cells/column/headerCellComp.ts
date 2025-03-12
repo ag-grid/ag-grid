@@ -1,7 +1,7 @@
 import type { HeaderStyle } from '../../../entities/colDef';
 import type { UserCompDetails } from '../../../interfaces/iUserCompDetails';
 import { _removeAriaSort, _setAriaSort } from '../../../utils/aria';
-import { _addStylesToElement, _createElement, _createElement2 } from '../../../utils/dom';
+import { _addStylesToElement, _createElement } from '../../../utils/dom';
 import { RefPlaceholder } from '../../../widgets/component';
 import { AbstractHeaderCellComp } from '../abstractCell/abstractHeaderCellComp';
 import type { HeaderCellCtrl, IHeaderCellComp } from './headerCellCtrl';
@@ -16,29 +16,18 @@ export class HeaderCellComp extends AbstractHeaderCellComp<HeaderCellCtrl> {
     private headerCompVersion = 0;
 
     constructor(ctrl: HeaderCellCtrl) {
-        const div = _createElement('div', ['ag-header-cell'], 'columnheader');
-        const resize = _createElement('div', ['ag-header-cell-resize'], 'presentation', 'eResize');
-        const headerCompWrapper = _createElement(
-            'div',
-            ['ag-header-cell-comp-wrapper'],
-            'presentation',
-            'eHeaderCompWrapper'
-        );
-        div.appendChild(resize);
-        div.appendChild(headerCompWrapper);
-
-        const div2 = _createElement2({
+        const div = _createElement({
             tag: 'div',
             classes: ['ag-header-cell'],
             role: 'columnheader',
             children: [
-                _createElement2({
+                _createElement({
                     tag: 'div',
                     classes: ['ag-header-cell-resize'],
                     role: 'presentation',
                     ref: 'eResize',
                 }),
-                _createElement2({
+                _createElement({
                     tag: 'div',
                     classes: ['ag-header-cell-comp-wrapper'],
                     role: 'presentation',
