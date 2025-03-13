@@ -11,6 +11,9 @@ export class PinnedRowModel extends BeanStub implements NamedBean, IPinnedRowMod
     public postConstruct(): void {
         const initialiseRowModel = () => {
             const enableRowPinning = this.gos.get('enableRowPinning');
+            if (this.inner) {
+                this.destroyBean(this.inner as any);
+            }
             this.inner = this.createManagedBean(
                 enableRowPinning ? new ManualPinnedRowModel() : new LegacyPinnedRowModel()
             );
