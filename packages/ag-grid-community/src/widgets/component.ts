@@ -7,10 +7,8 @@ import { CssClassManager } from '../rendering/cssClassManager';
 import type { ElementParams } from '../utils/dom';
 import {
     DataRefAttribute,
-    _copyNodeList,
     _createElement,
     _isNodeOrElement,
-    _iterateNamedNodeMap,
     _loadTemplate,
     _setDisplayed,
     _setVisible,
@@ -132,7 +130,10 @@ export class Component<TLocalEvent extends string = ComponentEvent>
     private createChildComponentsFromTags(parentNode: Element, paramsMap?: { [key: string]: any }): void {
         // we MUST take a copy of the list first, as the 'swapComponentForNode' adds comments into the DOM
         // which messes up the traversal order of the children.
-        const childNodeList: Node[] = _copyNodeList(parentNode.childNodes);
+        const childNodeList: Node[] = [];
+        for (const childNode of parentNode.childNodes ?? []) {
+            childNodeList.push(childNode);
+        }
 
         childNodeList.forEach((childNode) => {
             if (!(childNode instanceof HTMLElement)) {
@@ -146,7 +147,9 @@ export class Component<TLocalEvent extends string = ComponentEvent>
                     // wll be carried across
                     const childGui = childComp.getGui();
                     if (childGui) {
-                        this.copyAttributesFromNode(childNode, childComp.getGui());
+                        for (const attr of childNode.attributes ?? []) {
+                            childGui.setAttribute(attr.name, attr.value);
+                        }
                     }
                 },
                 paramsMap
@@ -194,10 +197,6 @@ export class Component<TLocalEvent extends string = ComponentEvent>
         this.applyElementsToComponent(element, elementRef, paramsMap, newComponent);
 
         return newComponent;
-    }
-
-    private copyAttributesFromNode(source: Element, dest: Element): void {
-        _iterateNamedNodeMap(source.attributes, (name, value) => dest.setAttribute(name, value));
     }
 
     private swapComponentForNode(newComponent: Component, parentNode: Element, childNode: Node): void {
