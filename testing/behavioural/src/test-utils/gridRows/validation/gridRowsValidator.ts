@@ -479,9 +479,21 @@ export class GridRowsValidator {
         const allLeafChildrenSet = new Set(row.allLeafChildren);
 
         if (allLeafChildrenSet.size !== allLeafsSet.size) {
-            this.errors
-                .get(row)
-                .add('allLeafChildren does not match. ' + allLeafChildrenSet.size + ' !== ' + allLeafsSet.size);
+            this.errors.get(row).add(
+                'allLeafChildren does not match. ' +
+                    allLeafChildrenSet.size +
+                    '!==' +
+                    allLeafsSet.size +
+                    ' : [' +
+                    Array.from(allLeafChildrenSet)
+                        .map((n) => n.id)
+                        .join(', ') +
+                    '] !== [' +
+                    Array.from(allLeafsSet)
+                        .map((n) => n.id)
+                        .join(', ') +
+                    ']'
+            );
         }
 
         for (const child of allLeafChildrenSet) {
