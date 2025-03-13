@@ -1,14 +1,17 @@
-import { Component, _escapeString, _exists } from 'ag-grid-community';
+import { Component, _div, _escapeString, _exists } from 'ag-grid-community';
+
+const AgAutocompleteRowElement = _div({
+    cls: 'ag-autocomplete-row',
+    attrs: { role: 'presentation' },
+    children: [_div({ cls: 'ag-autocomplete-row-label' })],
+});
 
 export class AgAutocompleteRow extends Component {
     private value: string;
     private hasHighlighting = false;
 
     constructor() {
-        super(/* html */ `
-        <div class="ag-autocomplete-row" role="presentation">
-            <div class="ag-autocomplete-row-label"></div>
-        </div>`);
+        super(AgAutocompleteRowElement);
     }
 
     public setState(value: string, selected: boolean): void {

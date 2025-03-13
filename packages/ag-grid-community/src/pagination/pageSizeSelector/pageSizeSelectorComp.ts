@@ -2,7 +2,7 @@ import type { BeanCollection } from '../../context/context';
 import type { PaginationChangedEvent } from '../../events';
 import type { WithoutGridCommon } from '../../interfaces/iCommon';
 import { _areEqual } from '../../utils/array';
-import { _clearElement } from '../../utils/dom';
+import { _clearElement, _span } from '../../utils/dom';
 import { _warn } from '../../validation/logging';
 import type { ListOption } from '../../widgets/agList';
 import { AgSelect } from '../../widgets/agSelect';
@@ -11,7 +11,7 @@ import { Component } from '../../widgets/component';
 import type { PaginationService } from '../paginationService';
 
 const paginationPageSizeSelector = 'paginationPageSizeSelector';
-
+const PageSizeSelectorCompElement = _span({ cls: 'ag-paging-page-size' });
 export class PageSizeSelectorComp extends Component {
     private pagination: PaginationService;
 
@@ -24,7 +24,7 @@ export class PageSizeSelectorComp extends Component {
     private pageSizeOptions?: (string | number)[];
 
     constructor() {
-        super(/* html */ `<span class="ag-paging-page-size"></span>`);
+        super(PageSizeSelectorCompElement);
     }
 
     public postConstruct() {

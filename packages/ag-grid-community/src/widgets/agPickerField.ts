@@ -2,7 +2,7 @@ import { KeyCode } from '../constants/keyCode';
 import { _isNothingFocused } from '../gridOptionsUtils';
 import type { AgPickerFieldParams } from '../interfaces/agFieldParams';
 import { _setAriaExpanded, _setAriaRole } from '../utils/aria';
-import { _formatSize, _getAbsoluteWidth, _getInnerHeight, _setElementWidth } from '../utils/dom';
+import { _div, _formatSize, _getAbsoluteWidth, _getInnerHeight, _setElementWidth } from '../utils/dom';
 import type { IconName } from '../utils/icon';
 import { _createIconNoSpan } from '../utils/icon';
 import type { AgAbstractFieldEvent } from './agAbstractField';
@@ -13,6 +13,23 @@ import { RefPlaceholder } from './component';
 import type { AddPopupParams } from './popupService';
 
 export type AgPickerFieldEvent = AgAbstractFieldEvent;
+
+const AgPickerFieldElement = _div({
+    cls: 'ag-picker-field',
+    attrs: { role: 'presentation' },
+    children: [
+        _div({ ref: 'eLabel' }),
+        _div({
+            ref: 'eWrapper',
+            cls: 'ag-wrapper ag-picker-field-wrapper ag-picker-collapsed',
+            children: [
+                _div({ ref: 'eDisplayField', cls: 'ag-picker-field-display' }),
+                _div({ ref: 'eIcon', cls: 'ag-picker-field-icon', attrs: { 'aria-hidden': 'true' } }),
+            ],
+        }),
+    ],
+});
+
 export abstract class AgPickerField<
     TValue,
     TConfig extends AgPickerFieldParams = AgPickerFieldParams,
@@ -43,20 +60,7 @@ export abstract class AgPickerField<
     private readonly eIcon: HTMLButtonElement = RefPlaceholder;
 
     constructor(config?: TConfig) {
-        super(
-            config,
-            config?.template ||
-                /* html */ `
-            <div class="ag-picker-field" role="presentation">
-                <div data-ref="eLabel"></div>
-                <div data-ref="eWrapper" class="ag-wrapper ag-picker-field-wrapper ag-picker-collapsed">
-                    <div data-ref="eDisplayField" class="ag-picker-field-display"></div>
-                    <div data-ref="eIcon" class="ag-picker-field-icon" aria-hidden="true"></div>
-                </div>
-            </div>`,
-            config?.agComponents || [],
-            config?.className
-        );
+        super(config, config?.template || AgPickerFieldElement, config?.agComponents || [], config?.className);
         this.registerCSS(agPickerFieldCSS);
 
         this.ariaRole = config?.ariaRole;

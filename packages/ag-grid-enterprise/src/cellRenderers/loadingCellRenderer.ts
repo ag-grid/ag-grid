@@ -1,15 +1,19 @@
 import type { ILoadingCellRendererComp, ILoadingCellRendererParams } from 'ag-grid-community';
-import { Component, RefPlaceholder, _createIconNoSpan } from 'ag-grid-community';
+import { Component, RefPlaceholder, _createIconNoSpan, _div, _span } from 'ag-grid-community';
 
+const LoadingCellRendererElement = _div({
+    cls: 'ag-loading',
+    children: [
+        _span({ cls: 'ag-loading-icon', ref: 'eLoadingIcon' }),
+        _span({ cls: 'ag-loading-text', ref: 'eLoadingText' }),
+    ],
+});
 export class LoadingCellRenderer extends Component implements ILoadingCellRendererComp {
     private readonly eLoadingIcon: HTMLElement = RefPlaceholder;
     private readonly eLoadingText: HTMLElement = RefPlaceholder;
 
     constructor() {
-        super(/* html */ `<div class="ag-loading">
-            <span class="ag-loading-icon" data-ref="eLoadingIcon"></span>
-            <span class="ag-loading-text" data-ref="eLoadingText"></span>
-        </div>`);
+        super(LoadingCellRendererElement);
     }
 
     public init(params: ILoadingCellRendererParams): void {

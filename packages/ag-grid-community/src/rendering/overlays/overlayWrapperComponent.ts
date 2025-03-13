@@ -4,7 +4,7 @@ import { _addGridCommonParams, _getActiveDomElement, _isNothingFocused } from '.
 import type { LayoutView, UpdateLayoutClassesParams } from '../../styling/layoutFeature';
 import { LayoutCssClasses, LayoutFeature } from '../../styling/layoutFeature';
 import { _last } from '../../utils/array';
-import { _clearElement } from '../../utils/dom';
+import { _clearElement, _div } from '../../utils/dom';
 import { _isStopPropagationForAgGrid } from '../../utils/event';
 import { _findNextFocusableElement, _focusInto, _focusNextGridCoreContainer } from '../../utils/focus';
 import type { AgPromise } from '../../utils/promise';
@@ -12,6 +12,24 @@ import type { ComponentSelector } from '../../widgets/component';
 import { Component, RefPlaceholder } from '../../widgets/component';
 import type { IOverlayComp } from './overlayComponent';
 import { overlayWrapperComponentCSS } from './overlayWrapperComponent.css-GENERATED';
+
+const OverlayWrapperElement = _div({
+    cls: 'ag-overlay',
+    attrs: { role: 'presentation' },
+    children: [
+        _div({
+            cls: 'ag-overlay-panel',
+            attrs: { role: 'presentation' },
+            children: [
+                _div({
+                    cls: 'ag-overlay-wrapper',
+                    ref: 'eOverlayWrapper',
+                    attrs: { role: 'presentation' },
+                }),
+            ],
+        }),
+    ],
+});
 
 export class OverlayWrapperComponent extends Component implements LayoutView {
     private readonly eOverlayWrapper: HTMLElement = RefPlaceholder;
@@ -24,12 +42,7 @@ export class OverlayWrapperComponent extends Component implements LayoutView {
 
     constructor() {
         // wrapping in outer div, and wrapper, is needed to center the loading icon
-        super(/* html */ `
-            <div class="ag-overlay" role="presentation">
-                <div class="ag-overlay-panel" role="presentation">
-                    <div class="ag-overlay-wrapper" data-ref="eOverlayWrapper" role="presentation"></div>
-                </div>
-            </div>`);
+        super(OverlayWrapperElement);
         this.registerCSS(overlayWrapperComponentCSS);
     }
 
