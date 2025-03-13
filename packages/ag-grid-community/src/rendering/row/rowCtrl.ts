@@ -827,13 +827,11 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         });
     }
 
+    /** Should only ever be triggered on source rows (i.e. not on pinned siblings) */
     private onRowPinned(): void {
-        this.allRowGuis.forEach((gui) => {
-            gui.rowComp.addOrRemoveCssClass(
-                'ag-row-pinned-target',
-                !!(this.rowNode.pinnedSibling && !this.rowNode.rowPinned)
-            );
-        });
+        for (const gui of this.allRowGuis) {
+            gui.rowComp.addOrRemoveCssClass('ag-row-pinned-target', !!this.rowNode.pinnedSibling);
+        }
     }
 
     private onRowNodeDataChanged(event: DataChangedEvent): void {

@@ -70,7 +70,13 @@ export class ManualPinnedRowModel extends BeanStub implements IPinnedRowModel {
         // We're only switching if neither the current nor the target container are null
         const switching = currentContainer != null && container != null && container != currentContainer;
         if (switching) {
-            this.pinRow(rowNode, null, column);
+            // call unpin on pinned row, re-pin on source row, since we always want to dispatch events
+            // on the source rows
+            const pinned = rowNode.rowPinned ? rowNode : rowNode.pinnedSibling!;
+            const source = rowNode.rowPinned ? rowNode.pinnedSibling! : rowNode;
+            this.pinRow(pinned, null, column);
+            this.pinRow(source, container, column);
+            return;
         }
 
         // cell-span pinning/unpinning
