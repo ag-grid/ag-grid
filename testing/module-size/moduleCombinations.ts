@@ -8,15 +8,20 @@ const results: { modules: string[]; expectedSize: number; selfSize: number; file
 const updateModulesScript = path.join(__dirname, 'moduleUpdater.ts');
 let baseSize = 0;
 
+console.log(process.argv.length, process.argv);
 let moduleCombinationsToProcess = moduleCombinations;
-if (process.argv.length === 3 && process.argv[2].startsWith('--shard')) {
-    console.log('*************************');
-    console.log('* Running in shard mode *');
-    console.log('*************************');
-    const [currentShard, shards] = process.argv[2]
+
+const chard = process.argv.filter((arg) => arg.startsWith('--shard'));
+if (chard && chard.length > 0) {
+    const [currentShard, shards] = chard[0]
         .replace('--shard=', '')
         .split('/')
         .map((arg) => parseInt(arg));
+
+    console.log('*************************');
+    console.log('* Running in shard mode *');
+    console.log(`* Shard 1${currentShard} / ${shards}           *`);
+    console.log('*************************');
 
     const segmentSize = Math.ceil(moduleCombinations.length / shards);
 
