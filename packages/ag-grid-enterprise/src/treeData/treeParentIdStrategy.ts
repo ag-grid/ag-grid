@@ -263,22 +263,14 @@ const updateAllLeafChildren = <TData>(
     }
     let writeIdx = 0;
     for (const child of row.childrenAfterGroup!) {
-        const childAllLeafChildren = child.allLeafChildren!;
-        const childAllLeafChildrenLen = childAllLeafChildren.length;
-        if (childAllLeafChildrenLen === 0) {
-            if (changed || allLeafChildren[writeIdx] !== child) {
-                allLeafChildren[writeIdx] = child;
-                changed = true;
-            }
-            ++writeIdx;
+        const childLeafChildren = child.allLeafChildren!;
+        if (childLeafChildren.length === 0) {
+            changed ||= allLeafChildren[writeIdx] !== child;
+            allLeafChildren[writeIdx++] = child;
         } else {
-            for (let i = 0; i < childAllLeafChildrenLen; ++i) {
-                const leaf = childAllLeafChildren[i];
-                if (changed || allLeafChildren[writeIdx] !== leaf) {
-                    allLeafChildren[writeIdx] = leaf;
-                    changed = true;
-                }
-                ++writeIdx;
+            for (const leaf of childLeafChildren) {
+                changed ||= allLeafChildren[writeIdx] !== leaf;
+                allLeafChildren[writeIdx++] = leaf;
             }
         }
     }
