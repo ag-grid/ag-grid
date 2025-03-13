@@ -4,7 +4,7 @@
   "version": "33.1.1",
   "scripts": {
     "dev": "vite",
-    "cp-app": "cp ./src/App_src.tsx ./src/App_AUTO.tsx",
+    "cp-app": "cp ./src/App_Src.tsx ./src/App_AUTO.tsx",
     "build-app": "vite build",
     "build": "run-s cp-app build-app",
     "preview": "vite preview",
