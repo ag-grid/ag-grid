@@ -4,9 +4,20 @@ import type {
     IGroupCellRenderer,
     UserCompDetails,
 } from 'ag-grid-community';
-import { Component, RefPlaceholder, _setAriaRole, _setDisplayed } from 'ag-grid-community';
+import { Component, RefPlaceholder, _setAriaRole, _setDisplayed, _span } from 'ag-grid-community';
 
 import { GroupCellRendererCtrl } from './groupCellRendererCtrl';
+
+const GroupCellRendererElement = _span({
+    cls: 'ag-cell-wrapper',
+    children: [
+        _span({ cls: 'ag-group-expanded', ref: 'eExpanded' }),
+        _span({ cls: 'ag-group-contracted', ref: 'eContracted' }),
+        _span({ cls: 'ag-group-checkbox ag-invisible', ref: 'eCheckbox' }),
+        _span({ cls: 'ag-group-value', ref: 'eValue' }),
+        _span({ cls: 'ag-group-child-count', ref: 'eChildCount' }),
+    ],
+});
 
 export class GroupCellRenderer extends Component implements ICellRendererComp {
     private readonly eExpanded: HTMLElement = RefPlaceholder;
@@ -19,17 +30,7 @@ export class GroupCellRenderer extends Component implements ICellRendererComp {
     private innerCellRenderer: ICellRendererComp;
 
     constructor() {
-        super({
-            tag: 'span',
-            cls: 'ag-cell-wrapper',
-            children: [
-                { tag: 'span', cls: 'ag-group-expanded', ref: 'eExpanded' },
-                { tag: 'span', cls: 'ag-group-contracted', ref: 'eContracted' },
-                { tag: 'span', cls: 'ag-group-checkbox ag-invisible', ref: 'eCheckbox' },
-                { tag: 'span', cls: 'ag-group-value', ref: 'eValue' },
-                { tag: 'span', cls: 'ag-group-child-count', ref: 'eChildCount' },
-            ],
-        });
+        super(GroupCellRendererElement);
     }
 
     public init(params: GroupCellRendererParams): void {

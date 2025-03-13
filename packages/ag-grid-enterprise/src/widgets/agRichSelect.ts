@@ -4,6 +4,7 @@ import type {
     AriaAnnouncementService,
     BeanCollection,
     FieldPickerValueSelectedEvent,
+    ICellRendererComp,
     IRichCellEditorRendererParams,
     ITooltipCtrl,
     Registry,
@@ -20,7 +21,6 @@ import {
     KeyCode,
     RefPlaceholder,
     _addGridCommonParams,
-    _bindCellRendererToHtmlElement,
     _clearElement,
     _createIconNoSpan,
     _debounce,
@@ -832,4 +832,27 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
 
         super.destroy();
     }
+}
+
+/**
+ * cell renderers are used in a few places. they bind to dom slightly differently to other cell renders as they
+ * can return back strings (instead of html element) in the getGui() method. common code placed here to handle that.
+ * @param {AgPromise<ICellRendererComp>} cellRendererPromise
+ * @param {HTMLElement} eTarget
+ */
+export function _bindCellRendererToHtmlElement(
+    cellRendererPromise: AgPromise<ICellRendererComp>,
+    eTarget: HTMLElement
+) {
+    cellRendererPromise.then((cellRenderer) => {
+        const gui: HTMLElement | string = cellRenderer!.getGui();
+
+        if (gui != null) {
+            if (typeof gui === 'object') {
+                eTarget.appendChild(gui);
+            } else {
+                eTarget.innerHTML = gui;
+            }
+        }
+    });
 }

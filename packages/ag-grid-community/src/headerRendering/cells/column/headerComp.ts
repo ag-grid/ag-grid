@@ -9,7 +9,7 @@ import type { IComponent } from '../../../interfaces/iComponent';
 import type { SortIndicatorComp } from '../../../sort/sortIndicatorComp';
 import type { SortService } from '../../../sort/sortService';
 import type { ElementParams } from '../../../utils/dom';
-import { _removeFromParent, _setDisplayed } from '../../../utils/dom';
+import { _div, _removeFromParent, _setDisplayed, _span } from '../../../utils/dom';
 import type { IconName } from '../../../utils/icon';
 import { _createIconNoSpan } from '../../../utils/icon';
 import { _mergeDeep } from '../../../utils/object';
@@ -112,42 +112,39 @@ export interface IInnerHeaderComponent<
         IHeader {}
 
 function getHeaderCompElementParams(includeSortIndicator: boolean): ElementParams {
-    return {
-        tag: 'div',
+    return _div({
         cls: 'ag-cell-label-container',
         attrs: { role: 'presentation' },
         children: [
-            {
-                tag: 'span',
+            _span({
                 ref: 'eMenu',
                 cls: 'ag-header-icon ag-header-cell-menu-button',
                 attrs: { 'aria-hidden': 'true' },
-            },
-            {
-                tag: 'span',
+            }),
+            _span({
                 ref: 'eFilterButton',
                 cls: 'ag-header-icon ag-header-cell-filter-button',
                 attrs: { 'aria-hidden': 'true' },
-            },
-            {
-                tag: 'div',
+            }),
+            _div({
                 ref: 'eLabel',
                 cls: 'ag-header-cell-label',
                 attrs: { role: 'presentation' },
                 children: [
-                    { tag: 'span', ref: 'eText', cls: 'ag-header-cell-text' },
-                    {
-                        tag: 'span',
+                    _span({ ref: 'eText', cls: 'ag-header-cell-text' }),
+                    _span({
                         ref: 'eFilter',
                         cls: 'ag-header-icon ag-header-label-icon ag-filter-icon',
                         attrs: { 'aria-hidden': 'true' },
-                    },
+                    }),
                     includeSortIndicator ? { tag: 'ag-sort-indicator', ref: 'eSortIndicator' } : null,
                 ],
-            },
+            }),
         ],
-    };
+    });
 }
+const HeaderCompElement = getHeaderCompElementParams(true);
+const HeaderCompElementNoSort = getHeaderCompElementParams(false);
 
 export class HeaderComp extends Component implements IHeaderComp {
     private eFilter: HTMLElement = RefPlaceholder;
@@ -214,7 +211,7 @@ export class HeaderComp extends Component implements IHeaderComp {
             this.currentParamsTemplate = paramsTemplate;
             this.setTemplate(paramsTemplate?.trim(), sortComp);
         } else {
-            this.setTemplate(getHeaderCompElementParams(!!sortComp), sortComp);
+            this.setTemplate(sortComp ? HeaderCompElement : HeaderCompElementNoSort, sortComp);
         }
     }
 

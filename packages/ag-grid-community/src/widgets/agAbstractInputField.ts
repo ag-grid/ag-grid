@@ -1,26 +1,24 @@
 import type { AgInputFieldParams } from '../interfaces/agFieldParams';
 import { _setAriaLabel } from '../utils/aria';
 import type { ElementParams } from '../utils/dom';
-import { _addOrRemoveAttribute, _setDisabled, _setElementWidth } from '../utils/dom';
+import { _addOrRemoveAttribute, _div, _setDisabled, _setElementWidth } from '../utils/dom';
 import type { AgAbstractFieldEvent, FieldElement } from './agAbstractField';
 import { AgAbstractField } from './agAbstractField';
 import { RefPlaceholder } from './component';
 
 function buildTemplate(displayFieldTag: keyof HTMLElementTagNameMap): ElementParams {
-    return {
-        tag: 'div',
+    return _div({
         attrs: { role: 'presentation' },
         children: [
-            { tag: 'div', cls: 'ag-input-field-label', ref: 'eLabel' },
-            {
-                tag: 'div',
+            _div({ cls: 'ag-input-field-label', ref: 'eLabel' }),
+            _div({
                 cls: 'ag-wrapper ag-input-wrapper',
                 ref: 'eWrapper',
                 attrs: { role: 'presentation' },
                 children: [{ tag: displayFieldTag, cls: 'ag-input-field-input', ref: 'eInput' }],
-            },
+            }),
         ],
-    };
+    });
 }
 
 export type AgAbstractInputFieldEvent = AgAbstractFieldEvent;

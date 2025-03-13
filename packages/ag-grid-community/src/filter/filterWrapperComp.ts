@@ -2,13 +2,15 @@ import type { AgColumn } from '../entities/agColumn';
 import type { FilterDestroyedEvent } from '../events';
 import type { IAfterGuiAttachedParams } from '../interfaces/iAfterGuiAttachedParams';
 import type { IFilterComp } from '../interfaces/iFilter';
-import { _clearElement } from '../utils/dom';
+import { _clearElement, _div } from '../utils/dom';
 import { _exists } from '../utils/generic';
 import { AgPromise } from '../utils/promise';
 import { _warn } from '../validation/logging';
 import { Component } from '../widgets/component';
 import type { FilterWrapper } from './columnFilterService';
 import type { FilterRequestSource } from './iColumnFilter';
+
+const FilterWrapperElement = _div({ cls: 'ag-filter' });
 
 export class FilterWrapperComp extends Component {
     private filterWrapper: FilterWrapper | null = null;
@@ -17,7 +19,7 @@ export class FilterWrapperComp extends Component {
         private readonly column: AgColumn,
         private readonly source: FilterRequestSource
     ) {
-        super({ tag: 'div', cls: 'ag-filter' });
+        super(FilterWrapperElement);
     }
 
     public postConstruct(): void {

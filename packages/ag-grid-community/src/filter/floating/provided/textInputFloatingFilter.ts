@@ -1,6 +1,6 @@
 import { KeyCode } from '../../../constants/keyCode';
 import type { FilterChangedEvent } from '../../../events';
-import { _clearElement } from '../../../utils/dom';
+import { _clearElement, _div } from '../../../utils/dom';
 import { _debounce } from '../../../utils/function';
 import { RefPlaceholder } from '../../../widgets/component';
 import type { NumberFilterModel } from '../../provided/number/iNumberFilter';
@@ -15,6 +15,12 @@ import { getDebounceMs, isUseApplyButton } from './providedFilterUtils';
 import { SimpleFloatingFilter } from './simpleFloatingFilter';
 
 type ModelUnion = TextFilterModel | NumberFilterModel;
+
+const TextInputFloatingFilterElement = _div({
+    cls: 'ag-floating-filter-input',
+    ref: 'eFloatingFilterInputContainer',
+    attrs: { role: 'presentation' },
+});
 export abstract class TextInputFloatingFilter<M extends ModelUnion> extends SimpleFloatingFilter {
     private readonly eFloatingFilterInputContainer: HTMLElement = RefPlaceholder;
     private inputSvc: FloatingFilterInputService;
@@ -28,12 +34,7 @@ export abstract class TextInputFloatingFilter<M extends ModelUnion> extends Simp
     ): FloatingFilterInputService;
 
     public postConstruct(): void {
-        this.setTemplate({
-            tag: 'div',
-            cls: 'ag-floating-filter-input',
-            ref: 'eFloatingFilterInputContainer',
-            attrs: { role: 'presentation' },
-        });
+        this.setTemplate(TextInputFloatingFilterElement);
     }
     protected override defaultDebounceMs: number = 500;
 

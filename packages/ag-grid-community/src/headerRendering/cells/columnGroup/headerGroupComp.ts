@@ -6,7 +6,7 @@ import type { ColumnGroup } from '../../../interfaces/iColumn';
 import type { AgGridCommon } from '../../../interfaces/iCommon';
 import type { IComponent } from '../../../interfaces/iComponent';
 import type { ElementParams } from '../../../utils/dom';
-import { _setDisplayed } from '../../../utils/dom';
+import { _div, _setDisplayed, _span } from '../../../utils/dom';
 import { _isStopPropagationForAgGrid, _stopPropagationForAgGrid } from '../../../utils/event';
 import { _exists } from '../../../utils/generic';
 import type { IconName } from '../../../utils/icon';
@@ -49,13 +49,21 @@ export interface IInnerHeaderGroupComponent<
 > extends IComponent<TParams>,
         IHeaderGroup {}
 
-function buildExpandIcon(iconName: 'expanded' | 'collapsed', dataRef: 'agOpened' | 'agClosed'): ElementParams {
-    return {
-        tag: 'span',
-        cls: `ag-header-icon ag-header-expand-icon ag-header-expand-icon-${iconName}`,
-        ref: dataRef,
-    };
-}
+const HeaderGroupCompElement = _div({
+    cls: 'ag-header-group-cell-label',
+    attrs: { role: 'presentation' },
+    children: [
+        _span({ ref: 'agLabel', cls: 'ag-header-group-text', attrs: { role: 'presentation' } }),
+        _span({
+            cls: `ag-header-icon ag-header-expand-icon ag-header-expand-icon-expanded`,
+            ref: 'agOpened',
+        }),
+        _span({
+            cls: `ag-header-icon ag-header-expand-icon ag-header-expand-icon-collapsed`,
+            ref: 'agClosed',
+        }),
+    ],
+});
 
 export class HeaderGroupComp extends Component implements IHeaderGroupComp {
     private params: IHeaderGroupParams;
@@ -68,16 +76,7 @@ export class HeaderGroupComp extends Component implements IHeaderGroupComp {
     private isLoadingInnerComponent: boolean = false;
 
     constructor() {
-        super({
-            tag: 'div',
-            cls: 'ag-header-group-cell-label',
-            attrs: { role: 'presentation' },
-            children: [
-                { tag: 'span', ref: 'agLabel', cls: 'ag-header-group-text', attrs: { role: 'presentation' } },
-                buildExpandIcon('expanded', 'agOpened'),
-                buildExpandIcon('collapsed', 'agClosed'),
-            ],
-        });
+        super(HeaderGroupCompElement);
     }
 
     public init(params: IHeaderGroupParams): void {

@@ -1,9 +1,13 @@
 import type { ILoadingCellRendererComp, ILoadingCellRendererParams } from 'ag-grid-community';
-import { Component, _getDocument, _setAriaLabel, _setAriaLabelledBy } from 'ag-grid-community';
+import { Component, _div, _getDocument, _setAriaLabel, _setAriaLabelledBy } from 'ag-grid-community';
+
+const SkeletonCellRendererElement = _div({
+    cls: 'ag-skeleton-container',
+});
 
 export class SkeletonCellRenderer extends Component implements ILoadingCellRendererComp {
     constructor() {
-        super({ tag: 'div', cls: 'ag-skeleton-container' });
+        super(SkeletonCellRendererElement);
     }
 
     public init(params: ILoadingCellRendererParams): void {

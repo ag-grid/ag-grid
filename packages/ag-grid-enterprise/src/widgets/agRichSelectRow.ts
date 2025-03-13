@@ -12,7 +12,7 @@ import type {
 import {
     Component,
     _addGridCommonParams,
-    _bindCellRendererToHtmlElement,
+    _div,
     _escapeString,
     _exists,
     _getDocument,
@@ -22,7 +22,12 @@ import {
 } from 'ag-grid-community';
 
 import type { AgRichSelect } from './agRichSelect';
+import { _bindCellRendererToHtmlElement } from './agRichSelect';
 
+const RichSelectRowElement = _div({
+    cls: 'ag-rich-select-row',
+    attrs: { role: 'presentation' },
+});
 export class RichSelectRow<TValue> extends Component {
     private userCompFactory: UserComponentFactory;
     private registry: Registry;
@@ -38,11 +43,7 @@ export class RichSelectRow<TValue> extends Component {
     private shouldDisplayTooltip?: () => boolean;
 
     constructor(private readonly params: RichSelectParams<TValue>) {
-        super({
-            tag: 'div',
-            cls: 'ag-rich-select-row',
-            attrs: { role: 'presentation' },
-        });
+        super(RichSelectRowElement);
     }
 
     public postConstruct(): void {

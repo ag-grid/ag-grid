@@ -2,6 +2,7 @@ import { GROUP_AUTO_COLUMN_ID } from '../../columns/columnUtils';
 import { KeyCode } from '../../constants/keyCode';
 import { _getActiveDomElement } from '../../gridOptionsUtils';
 import { _getAriaCheckboxStateName, _setAriaLive } from '../../utils/aria';
+import { _div } from '../../utils/dom';
 import { _stopPropagationForAgGrid } from '../../utils/event';
 import type { AgCheckbox } from '../../widgets/agCheckbox';
 import { AgCheckboxSelector } from '../../widgets/agCheckbox';
@@ -15,26 +16,24 @@ export interface ICheckboxCellRendererParams<TData = any, TContext = any>
     disabled?: boolean;
 }
 
+const CheckboxCellRendererElement = _div({
+    cls: 'ag-cell-wrapper ag-checkbox-cell',
+    attrs: { role: 'presentation' },
+    children: [
+        {
+            tag: 'ag-checkbox',
+            attrs: { role: 'presentation' },
+            ref: 'eCheckbox',
+        },
+    ],
+});
+
 export class CheckboxCellRenderer extends Component implements ICellRenderer {
     private readonly eCheckbox: AgCheckbox = RefPlaceholder;
     private params: ICheckboxCellRendererParams;
 
     constructor() {
-        super(
-            {
-                tag: 'div',
-                cls: 'ag-cell-wrapper ag-checkbox-cell',
-                attrs: { role: 'presentation' },
-                children: [
-                    {
-                        tag: 'ag-checkbox',
-                        attrs: { role: 'presentation' },
-                        ref: 'eCheckbox',
-                    },
-                ],
-            },
-            [AgCheckboxSelector]
-        );
+        super(CheckboxCellRendererElement, [AgCheckboxSelector]);
         this.registerCSS(checkboxCellRendererCSS);
     }
 

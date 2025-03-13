@@ -1,10 +1,23 @@
-import { _clearElement } from '../../utils/dom';
+import { _clearElement, _span } from '../../utils/dom';
 import { _exists } from '../../utils/generic';
 import { Component, RefPlaceholder } from '../../widgets/component';
 import type { ICellRenderer } from './iCellRenderer';
 
 const ARROW_UP = '\u2191';
 const ARROW_DOWN = '\u2193';
+
+const AnimateShowChangeCellRendererElement = _span({
+    children: [
+        _span({
+            cls: 'ag-value-change-delta',
+            ref: 'eDelta',
+        }),
+        _span({
+            cls: 'ag-value-change-value',
+            ref: 'eValue',
+        }),
+    ],
+});
 
 export class AnimateShowChangeCellRenderer extends Component implements ICellRenderer {
     private lastValue: number;
@@ -15,21 +28,7 @@ export class AnimateShowChangeCellRenderer extends Component implements ICellRen
     private refreshCount = 0;
 
     constructor() {
-        super({
-            tag: 'span',
-            children: [
-                {
-                    tag: 'span',
-                    cls: 'ag-value-change-delta',
-                    ref: 'eDelta',
-                },
-                {
-                    tag: 'span',
-                    cls: 'ag-value-change-value',
-                    ref: 'eValue',
-                },
-            ],
-        });
+        super(AnimateShowChangeCellRendererElement);
     }
 
     public init(params: any): void {

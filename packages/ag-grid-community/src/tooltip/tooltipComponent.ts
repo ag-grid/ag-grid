@@ -3,6 +3,7 @@ import type { Column, ColumnGroup } from '../interfaces/iColumn';
 import type { AgGridCommon } from '../interfaces/iCommon';
 import type { IComponent } from '../interfaces/iComponent';
 import type { IRowNode } from '../interfaces/iRowNode';
+import { _div } from '../utils/dom';
 import { _escapeString } from '../utils/string';
 import { PopupComponent } from '../widgets/popupComponent';
 
@@ -45,9 +46,13 @@ export interface ITooltipParams<TData = any, TValue = any, TContext = any> exten
 
 export interface ITooltipComp extends IComponent<ITooltipParams> {}
 
+const TooltipComponentElement = _div({
+    cls: 'ag-tooltip',
+});
+
 export class TooltipComponent extends PopupComponent implements ITooltipComp {
     constructor() {
-        super({ tag: 'div', cls: 'ag-tooltip' });
+        super(TooltipComponentElement);
     }
 
     // will need to type params

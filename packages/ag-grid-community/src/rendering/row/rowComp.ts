@@ -2,13 +2,14 @@ import type { BeanCollection } from '../../context/context';
 import type { RowStyle } from '../../entities/gridOptions';
 import type { RowContainerType } from '../../gridBodyComp/rowContainer/rowContainerCtrl';
 import type { UserCompDetails } from '../../interfaces/iUserCompDetails';
-import { _addStylesToElement, _createElement, _setDomChildOrder } from '../../utils/dom';
+import { _addStylesToElement, _createElement, _div, _setDomChildOrder } from '../../utils/dom';
 import { Component } from '../../widgets/component';
 import { CellComp } from '../cell/cellComp';
 import type { CellCtrl, CellCtrlInstanceId } from '../cell/cellCtrl';
 import type { ICellRendererComp } from '../cellRenderers/iCellRenderer';
 import type { IRowComp, RowCtrl } from './rowCtrl';
 
+const RowCompElement = _div({ attrs: { role: 'row' } });
 export class RowComp extends Component {
     private fullWidthCellRenderer: ICellRendererComp | null | undefined;
 
@@ -23,7 +24,7 @@ export class RowComp extends Component {
         this.beans = beans;
         this.rowCtrl = ctrl;
 
-        const rowDiv = _createElement({ tag: 'div', attrs: { role: 'row' } });
+        const rowDiv = _createElement(RowCompElement);
         rowDiv.setAttribute('comp-id', `${this.getCompId()}`);
         this.setInitialStyle(rowDiv, containerType);
         this.setTemplateFromElement(rowDiv);

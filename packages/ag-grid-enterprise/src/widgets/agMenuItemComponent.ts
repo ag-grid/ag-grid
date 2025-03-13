@@ -23,6 +23,7 @@ import {
     KeyCode,
     _addGridCommonParams,
     _createElement,
+    _div,
     _preserveRangesWhile,
     _setAriaDisabled,
     _setAriaExpanded,
@@ -64,6 +65,7 @@ const MenuItemComponent: ComponentType<IMenuItemComp> = {
     name: 'menuItem',
     optionalMethods: ['setActive', 'select', 'setExpanded', 'configureDefaults'],
 };
+const MenuItemElement = _div({ cls: 'ag-menu', attrs: { role: 'presentation' } });
 
 export class AgMenuItemComponent extends BeanStub<AgMenuItemComponentEvent> {
     private popupSvc?: PopupService;
@@ -178,7 +180,7 @@ export class AgMenuItemComponent extends BeanStub<AgMenuItemComponentEvent> {
 
         this.subMenuIsOpening = true;
 
-        const ePopup = _createElement({ tag: 'div', cls: 'ag-menu', attrs: { role: 'presentation' } });
+        const ePopup = _createElement(MenuItemElement);
         this.eSubMenuGui = ePopup;
         let destroySubMenu: () => void;
         let afterGuiAttached = () => {

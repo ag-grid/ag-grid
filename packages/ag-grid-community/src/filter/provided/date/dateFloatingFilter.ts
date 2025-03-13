@@ -2,7 +2,7 @@ import type { FilterChangedEvent } from '../../../events';
 import { _addGridCommonParams } from '../../../gridOptionsUtils';
 import type { IDateParams } from '../../../interfaces/dateComponent';
 import { _parseDateTimeFromString, _serialiseDate } from '../../../utils/date';
-import { _setDisplayed } from '../../../utils/dom';
+import { _div, _setDisplayed } from '../../../utils/dom';
 import { _debounce } from '../../../utils/function';
 import type { AgInputTextField } from '../../../widgets/agInputTextField';
 import { AgInputTextFieldSelector } from '../../../widgets/agInputTextField';
@@ -17,6 +17,21 @@ import { DEFAULT_DATE_FILTER_OPTIONS } from './dateFilterConstants';
 import { DateFilterModelFormatter } from './dateFilterModelFormatter';
 import type { DateFilterModel, DateFilterParams } from './iDateFilter';
 
+const DateFloatingFilterElement = _div({
+    cls: 'ag-floating-filter-input',
+    attrs: { role: 'presentation' },
+    children: [
+        {
+            tag: 'ag-input-text-field',
+            ref: 'eReadOnlyText',
+        },
+        _div({
+            ref: 'eDateWrapper',
+            cls: 'ag-date-floating-filter-wrapper',
+        }),
+    ],
+});
+
 export class DateFloatingFilter extends SimpleFloatingFilter {
     private readonly eReadOnlyText: AgInputTextField = RefPlaceholder;
     private readonly eDateWrapper: HTMLInputElement = RefPlaceholder;
@@ -27,25 +42,7 @@ export class DateFloatingFilter extends SimpleFloatingFilter {
     protected filterModelFormatter: DateFilterModelFormatter;
 
     constructor() {
-        super(
-            {
-                tag: 'div',
-                cls: 'ag-floating-filter-input',
-                attrs: { role: 'presentation' },
-                children: [
-                    {
-                        tag: 'ag-input-text-field',
-                        ref: 'eReadOnlyText',
-                    },
-                    {
-                        tag: 'div',
-                        ref: 'eDateWrapper',
-                        cls: 'ag-date-floating-filter-wrapper',
-                    },
-                ],
-            },
-            [AgInputTextFieldSelector]
-        );
+        super(DateFloatingFilterElement, [AgInputTextFieldSelector]);
     }
 
     protected getDefaultOptions(): string[] {

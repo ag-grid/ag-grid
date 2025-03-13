@@ -1,10 +1,27 @@
 import type { HeaderStyle } from '../../../entities/colDef';
 import type { UserCompDetails } from '../../../interfaces/iUserCompDetails';
-import { _addStylesToElement, _setDisplayed } from '../../../utils/dom';
+import { _addStylesToElement, _div, _setDisplayed } from '../../../utils/dom';
 import { RefPlaceholder } from '../../../widgets/component';
 import { AbstractHeaderCellComp } from '../abstractCell/abstractHeaderCellComp';
 import type { HeaderGroupCellCtrl, IHeaderGroupCellComp } from './headerGroupCellCtrl';
 import type { IHeaderGroupComp } from './headerGroupComp';
+
+const HeaderGroupCellCompElement = _div({
+    cls: 'ag-header-group-cell',
+    attrs: { role: 'columnheader' },
+    children: [
+        _div({
+            cls: 'ag-header-cell-comp-wrapper',
+            attrs: { role: 'presentation' },
+            ref: 'eHeaderCompWrapper',
+        }),
+        _div({
+            cls: 'ag-header-cell-resize',
+            attrs: { role: 'presentation' },
+            ref: 'eResize',
+        }),
+    ],
+});
 
 export class HeaderGroupCellComp extends AbstractHeaderCellComp<HeaderGroupCellCtrl> {
     private eResize: HTMLElement = RefPlaceholder;
@@ -13,28 +30,7 @@ export class HeaderGroupCellComp extends AbstractHeaderCellComp<HeaderGroupCellC
     private headerGroupComp: IHeaderGroupComp | undefined;
 
     constructor(ctrl: HeaderGroupCellCtrl) {
-        super(
-            {
-                tag: 'div',
-                cls: 'ag-header-group-cell',
-                attrs: { role: 'columnheader' },
-                children: [
-                    {
-                        tag: 'div',
-                        cls: 'ag-header-cell-comp-wrapper',
-                        attrs: { role: 'presentation' },
-                        ref: 'eHeaderCompWrapper',
-                    },
-                    {
-                        tag: 'div',
-                        cls: 'ag-header-cell-resize',
-                        attrs: { role: 'presentation' },
-                        ref: 'eResize',
-                    },
-                ],
-            },
-            ctrl
-        );
+        super(HeaderGroupCellCompElement, ctrl);
     }
 
     public postConstruct(): void {

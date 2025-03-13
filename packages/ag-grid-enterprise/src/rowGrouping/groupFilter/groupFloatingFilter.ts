@@ -7,9 +7,15 @@ import type {
     IFloatingFilterComp,
     IFloatingFilterParams,
 } from 'ag-grid-community';
-import { AgInputTextField, AgPromise, Component, RefPlaceholder, _clearElement } from 'ag-grid-community';
+import { AgInputTextField, AgPromise, Component, RefPlaceholder, _clearElement, _div } from 'ag-grid-community';
 
 import type { GroupFilter } from './groupFilter';
+
+const GroupFloatingFilterElement = _div({
+    cls: 'ag-group-floating-filter ag-floating-filter-input',
+    ref: 'eFloatingFilter',
+    attrs: { role: 'presentation' },
+});
 
 export class GroupFloatingFilterComp extends Component implements IFloatingFilterComp<GroupFilter> {
     private filterManager?: FilterManager;
@@ -28,12 +34,7 @@ export class GroupFloatingFilterComp extends Component implements IFloatingFilte
     private haveAddedColumnListeners: boolean = false;
 
     constructor() {
-        super({
-            tag: 'div',
-            cls: 'ag-group-floating-filter ag-floating-filter-input',
-            ref: 'eFloatingFilter',
-            attrs: { role: 'presentation' },
-        });
+        super(GroupFloatingFilterElement);
     }
 
     public init(params: IFloatingFilterParams<GroupFilter>): AgPromise<void> {
