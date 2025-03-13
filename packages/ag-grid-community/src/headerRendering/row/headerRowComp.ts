@@ -19,8 +19,8 @@ export class HeaderRowComp extends Component {
     constructor(private readonly ctrl: HeaderRowCtrl) {
         super({
             tag: 'div',
-            role: 'row',
-            class: ctrl.headerRowClass,
+            ats: { role: 'row' },
+            cls: ctrl.headerRowClass,
         });
     }
 

@@ -30,9 +30,9 @@ export class GroupFloatingFilterComp extends Component implements IFloatingFilte
     constructor() {
         super({
             tag: 'div',
-            class: 'ag-group-floating-filter ag-floating-filter-input',
+            cls: 'ag-group-floating-filter ag-floating-filter-input',
             ref: 'eFloatingFilter',
-            role: 'presentation',
+            ats: { role: 'presentation' },
         });
     }
 

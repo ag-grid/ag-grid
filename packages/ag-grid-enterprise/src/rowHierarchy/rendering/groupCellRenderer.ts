@@ -21,13 +21,13 @@ export class GroupCellRenderer extends Component implements ICellRendererComp {
     constructor() {
         super({
             tag: 'span',
-            class: 'ag-cell-wrapper',
+            cls: 'ag-cell-wrapper',
             children: [
-                { tag: 'span', class: 'ag-group-expanded', ref: 'eExpanded' },
-                { tag: 'span', class: 'ag-group-contracted', ref: 'eContracted' },
-                { tag: 'span', class: 'ag-group-checkbox ag-invisible', ref: 'eCheckbox' },
-                { tag: 'span', class: 'ag-group-value', ref: 'eValue' },
-                { tag: 'span', class: 'ag-group-child-count', ref: 'eChildCount' },
+                { tag: 'span', cls: 'ag-group-expanded', ref: 'eExpanded' },
+                { tag: 'span', cls: 'ag-group-contracted', ref: 'eContracted' },
+                { tag: 'span', cls: 'ag-group-checkbox ag-invisible', ref: 'eCheckbox' },
+                { tag: 'span', cls: 'ag-group-value', ref: 'eValue' },
+                { tag: 'span', cls: 'ag-group-child-count', ref: 'eChildCount' },
             ],
         });
     }

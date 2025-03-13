@@ -28,8 +28,8 @@ export class SetFloatingFilterComp<V = string> extends Component implements IFlo
         super(
             {
                 tag: 'div',
-                class: 'ag-floating-filter-input ag-set-floating-filter-input',
-                role: 'presentation',
+                cls: 'ag-floating-filter-input ag-set-floating-filter-input',
+                ats: { role: 'presentation' },
                 children: [
                     {
                         tag: 'ag-input-text-field',

@@ -7,26 +7,23 @@ import { _createIconNoSpan } from '../utils/icon';
 import type { ComponentSelector } from '../widgets/component';
 import { Component, RefPlaceholder } from '../widgets/component';
 
-function buildTemplate(): ElementParams {
-    const makeIconParams = (dataRefSuffix: string, classSuffix: string): ElementParams => ({
-        tag: 'span',
-        class: `ag-sort-indicator-icon ag-sort-${classSuffix} ag-hidden`,
-        ref: `eSort${dataRefSuffix}`,
-        ariaHidden: true,
-    });
-
-    return {
-        tag: 'span',
-        class: 'ag-sort-indicator-container',
-        children: [
-            makeIconParams('Order', 'order'),
-            makeIconParams('Asc', 'ascending-icon'),
-            makeIconParams('Desc', 'descending-icon'),
-            makeIconParams('Mixed', 'mixed-icon'),
-            makeIconParams('None', 'none-icon'),
-        ],
-    };
-}
+const makeIconParams = (dataRefSuffix: string, classSuffix: string): ElementParams => ({
+    tag: 'span',
+    cls: `ag-sort-indicator-icon ag-sort-${classSuffix} ag-hidden`,
+    ref: `eSort${dataRefSuffix}`,
+    ats: { 'aria-hidden': 'true' },
+});
+const elementParams: ElementParams = {
+    tag: 'span',
+    cls: 'ag-sort-indicator-container',
+    children: [
+        makeIconParams('Order', 'order'),
+        makeIconParams('Asc', 'ascending-icon'),
+        makeIconParams('Desc', 'descending-icon'),
+        makeIconParams('Mixed', 'mixed-icon'),
+        makeIconParams('None', 'none-icon'),
+    ],
+};
 
 export class SortIndicatorComp extends Component {
     private eSortOrder: HTMLElement = RefPlaceholder;
@@ -42,7 +39,7 @@ export class SortIndicatorComp extends Component {
         super();
 
         if (!skipTemplate) {
-            this.setTemplate(buildTemplate());
+            this.setTemplate(elementParams);
         }
     }
 

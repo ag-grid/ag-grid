@@ -257,7 +257,7 @@ export function _createIconNoSpan(
         }
         const cssClass = iconValue ?? iconName;
 
-        span.setAttribute('class', `ag-icon ag-icon-${cssClass}`);
+        span.className = `ag-icon ag-icon-${cssClass}`;
         span.setAttribute('unselectable', 'on');
         _setAriaRole(span, 'presentation');
 

@@ -196,10 +196,8 @@ export class HeaderRowCtrl extends BeanStub {
         this.ctrlsById = new Map();
         const columns = this.getColumnsInViewport();
 
-        if (this.ctrlsById) {
-            for (const child of columns) {
-                this.recycleAndCreateHeaderCtrls(child, oldCtrls);
-            }
+        for (const child of columns) {
+            this.recycleAndCreateHeaderCtrls(child, this.ctrlsById, oldCtrls);
         }
 
         // we want to keep columns that are focused, otherwise keyboard navigation breaks
@@ -236,6 +234,7 @@ export class HeaderRowCtrl extends BeanStub {
 
     private recycleAndCreateHeaderCtrls(
         headerColumn: AgColumn | AgColumnGroup,
+        currCtrls: Map<HeaderColumnId, AbstractHeaderCellCtrl>,
         oldCtrls?: Map<HeaderColumnId, AbstractHeaderCellCtrl>
     ): void {
         // skip groups that have no displayed children. this can happen when the group is broken,
@@ -293,8 +292,7 @@ export class HeaderRowCtrl extends BeanStub {
                     break;
             }
         }
-        // Method only called when this.headerCellCtrls is defined
-        this.ctrlsById!.set(idOfChild, headerCtrl);
+        currCtrls.set(idOfChild, headerCtrl);
     }
 
     private getColumnsInViewport(): (AgColumn | AgColumnGroup)[] {
@@ -328,15 +326,8 @@ export class HeaderRowCtrl extends BeanStub {
         return this.beans.colViewport.getHeadersToRender(this.pinned, this.getActualDepth());
     }
 
-    public findHeaderCellCtrl(
-        column: AgColumn | AgColumnGroup | ((cellCtrl: AbstractHeaderCellCtrl) => boolean)
-    ): AbstractHeaderCellCtrl | undefined {
-        const allCtrls = this.allCtrls;
-        return typeof column === 'function' ? allCtrls.find(column) : allCtrls.find((ctrl) => ctrl.column == column);
-    }
-
     public focusHeader(column: AgColumn | AgColumnGroup, event?: KeyboardEvent): boolean {
-        const ctrl = this.findHeaderCellCtrl(column);
+        const ctrl = this.allCtrls.find((ctrl) => ctrl.column == column);
 
         if (!ctrl) {
             return false;
@@ -348,10 +339,7 @@ export class HeaderRowCtrl extends BeanStub {
     }
 
     public override destroy(): void {
-        for (const ctrl of this.allCtrls) {
-            this.destroyBean(ctrl);
-        }
-        this.allCtrls = [];
+        this.allCtrls = this.destroyBeans(this.allCtrls);
         this.ctrlsById = undefined;
         super.destroy();
     }

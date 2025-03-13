@@ -30,8 +30,8 @@ export class DateFloatingFilter extends SimpleFloatingFilter {
         super(
             {
                 tag: 'div',
-                class: 'ag-floating-filter-input',
-                role: 'presentation',
+                cls: 'ag-floating-filter-input',
+                ats: { role: 'presentation' },
                 children: [
                     {
                         tag: 'ag-input-text-field',
@@ -40,7 +40,7 @@ export class DateFloatingFilter extends SimpleFloatingFilter {
                     {
                         tag: 'div',
                         ref: 'eDateWrapper',
-                        class: 'ag-date-floating-filter-wrapper',
+                        cls: 'ag-date-floating-filter-wrapper',
                     },
                 ],
             },

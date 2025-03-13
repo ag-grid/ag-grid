@@ -30,7 +30,7 @@ export class MultiFloatingFilterComp extends Component implements IFloatingFilte
     constructor() {
         super({
             tag: 'div',
-            class: 'ag-multi-floating-filter ag-floating-filter-input',
+            cls: 'ag-multi-floating-filter ag-floating-filter-input',
         });
     }
 

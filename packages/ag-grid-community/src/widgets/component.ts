@@ -6,6 +6,7 @@ import type { AgEvent } from '../events';
 import { CssClassManager } from '../rendering/cssClassManager';
 import type { ElementParams } from '../utils/dom';
 import {
+    DataRefAttribute,
     _copyNodeList,
     _createElement,
     _isNodeOrElement,
@@ -90,7 +91,7 @@ export class Component<TLocalEvent extends string = ComponentEvent>
 
     private getDataRefAttribute(element: Element): string | null {
         if (element.getAttribute) {
-            return element.getAttribute('data-ref');
+            return element.getAttribute(DataRefAttribute);
         }
         // Plain text nodes don't have attributes or getAttribute method
         return null;

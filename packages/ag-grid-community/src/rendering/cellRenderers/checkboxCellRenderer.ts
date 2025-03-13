@@ -23,12 +23,12 @@ export class CheckboxCellRenderer extends Component implements ICellRenderer {
         super(
             {
                 tag: 'div',
-                class: 'ag-cell-wrapper ag-checkbox-cell',
-                role: 'presentation',
+                cls: 'ag-cell-wrapper ag-checkbox-cell',
+                ats: { role: 'presentation' },
                 children: [
                     {
                         tag: 'ag-checkbox',
-                        role: 'presentation',
+                        ats: { role: 'presentation' },
                         ref: 'eCheckbox',
                     },
                 ],

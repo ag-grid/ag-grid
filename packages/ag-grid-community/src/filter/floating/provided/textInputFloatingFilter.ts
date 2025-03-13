@@ -30,9 +30,9 @@ export abstract class TextInputFloatingFilter<M extends ModelUnion> extends Simp
     public postConstruct(): void {
         this.setTemplate({
             tag: 'div',
-            class: 'ag-floating-filter-input',
-            role: 'presentation',
+            cls: 'ag-floating-filter-input',
             ref: 'eFloatingFilterInputContainer',
+            ats: { role: 'presentation' },
         });
     }
     protected override defaultDebounceMs: number = 500;

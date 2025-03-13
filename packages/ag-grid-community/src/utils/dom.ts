@@ -571,8 +571,7 @@ export function _requestAnimationFrame(beans: BeanCollection, callback: any) {
     }
 }
 
-/** Just to avoid typos, add to as required */
-type RoleType = 'presentation' | 'columnheader' | 'gridcell' | 'row';
+export type Attributes = { [key: string]: string };
 type TagName = keyof HTMLElementTagNameMap | Lowercase<AgComponentSelector>;
 
 export type ElementParams = {
@@ -581,41 +580,42 @@ export type ElementParams = {
     /**
      * Should be a single string of space-separated class names
      * @example
-     * class: 'ag-header-cell ag-header-cell-sortable'
+     * cls: 'ag-header-cell ag-header-cell-sortable'
      */
-    class?: string;
-    role?: RoleType;
-    /** AG Grid data-ref attribute */
+    cls?: string;
+    /** AG Grid data-ref attribute, should match a property on the class that uses the same name and is initialised with RefPlaceholder
+     * @example
+     * ref: 'eLabel'
+     * private eLabel: HTMLElement = RefPlaceholder;
+     */
     ref?: string;
-    ariaHidden?: boolean;
-    /** The type of input field */
-    inputType?: string;
-    tabindex?: string;
+
+    /** Key Value pair of attributes to add to the dom element via `element.setAttribute(key,value)` */
+    ats?: Attributes;
+
     children?: (ElementParams | null)[]; // nulls are allowed to allow for optional children
 };
 
-export function _createElement(params: ElementParams) {
-    const { ariaHidden, children, class: className, inputType, ref: dataRef, role, tabindex, tag } = params;
+/** AG Grid attribute used to automatically assign DOM Elements to class properties */
+export const DataRefAttribute = 'data-ref';
 
+export function _createElement(params: ElementParams): HTMLElement {
+    const { ats: attributes, children, cls: className, ref: dataRef, tag } = params;
     const element = document.createElement(tag);
-    if (role) {
-        element.setAttribute('role', role);
-    }
-    if (dataRef) {
-        element.setAttribute('data-ref', dataRef);
-    }
+
     if (className) {
         element.className = className;
     }
-    if (ariaHidden) {
-        element.setAttribute('aria-hidden', 'true');
+    if (dataRef) {
+        element.setAttribute(DataRefAttribute, dataRef);
     }
-    if (inputType) {
-        element.setAttribute('type', inputType);
+
+    if (attributes) {
+        for (const key of Object.keys(attributes)) {
+            element.setAttribute(key, attributes[key]);
+        }
     }
-    if (tabindex) {
-        element.setAttribute('tabindex', tabindex);
-    }
+
     if (children) {
         for (const child of children) {
             if (child) {

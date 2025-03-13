@@ -17,8 +17,8 @@ export class ReadOnlyFloatingFilter extends Component implements IFloatingFilter
         super(
             {
                 tag: 'div',
-                class: 'ag-floating-filter-input',
-                role: 'presentation',
+                cls: 'ag-floating-filter-input',
+                ats: { role: 'presentation' },
                 children: [
                     {
                         tag: 'ag-input-text-field',

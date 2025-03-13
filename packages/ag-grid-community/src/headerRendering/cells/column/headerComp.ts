@@ -114,33 +114,33 @@ export interface IInnerHeaderComponent<
 function getHeaderCompElementParams(includeSortIndicator: boolean): ElementParams {
     return {
         tag: 'div',
-        class: 'ag-cell-label-container',
-        role: 'presentation',
+        cls: 'ag-cell-label-container',
+        ats: { role: 'presentation' },
         children: [
             {
                 tag: 'span',
                 ref: 'eMenu',
-                class: 'ag-header-icon ag-header-cell-menu-button',
-                ariaHidden: true,
+                cls: 'ag-header-icon ag-header-cell-menu-button',
+                ats: { 'aria-hidden': 'true' },
             },
             {
                 tag: 'span',
                 ref: 'eFilterButton',
-                class: 'ag-header-icon ag-header-cell-filter-button',
-                ariaHidden: true,
+                cls: 'ag-header-icon ag-header-cell-filter-button',
+                ats: { 'aria-hidden': 'true' },
             },
             {
                 tag: 'div',
                 ref: 'eLabel',
-                class: 'ag-header-cell-label',
-                role: 'presentation',
+                cls: 'ag-header-cell-label',
+                ats: { role: 'presentation' },
                 children: [
-                    { tag: 'span', ref: 'eText', class: 'ag-header-cell-text' },
+                    { tag: 'span', ref: 'eText', cls: 'ag-header-cell-text' },
                     {
                         tag: 'span',
                         ref: 'eFilter',
-                        class: 'ag-header-icon ag-header-label-icon ag-filter-icon',
-                        ariaHidden: true,
+                        cls: 'ag-header-icon ag-header-label-icon ag-filter-icon',
+                        ats: { 'aria-hidden': 'true' },
                     },
                     includeSortIndicator ? { tag: 'ag-sort-indicator', ref: 'eSortIndicator' } : null,
                 ],
@@ -208,12 +208,11 @@ export class HeaderComp extends Component implements IHeaderComp {
     }
 
     private setupTemplate(paramsTemplate?: string, sortSvc?: SortService) {
-        const template = paramsTemplate;
         const sortComp = sortSvc ? [sortSvc.getSortIndicatorSelector()] : undefined;
-        if (template) {
+        if (paramsTemplate) {
             // take account of any newlines & whitespace before/after the actual template
-            this.currentParamsTemplate = template;
-            this.setTemplate(template?.trim(), sortComp);
+            this.currentParamsTemplate = paramsTemplate;
+            this.setTemplate(paramsTemplate?.trim(), sortComp);
         } else {
             this.setTemplate(getHeaderCompElementParams(!!sortComp), sortComp);
         }

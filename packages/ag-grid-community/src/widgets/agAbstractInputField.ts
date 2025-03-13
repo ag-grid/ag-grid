@@ -9,15 +9,15 @@ import { RefPlaceholder } from './component';
 function buildTemplate(displayFieldTag: keyof HTMLElementTagNameMap): ElementParams {
     return {
         tag: 'div',
-        role: 'presentation',
+        ats: { role: 'presentation' },
         children: [
-            { tag: 'div', class: 'ag-input-field-label', ref: 'eLabel' },
+            { tag: 'div', cls: 'ag-input-field-label', ref: 'eLabel' },
             {
                 tag: 'div',
-                class: 'ag-wrapper ag-input-wrapper',
+                cls: 'ag-wrapper ag-input-wrapper',
                 ref: 'eWrapper',
-                role: 'presentation',
-                children: [{ tag: displayFieldTag, class: 'ag-input-field-input', ref: 'eInput' }],
+                ats: { role: 'presentation' },
+                children: [{ tag: displayFieldTag, cls: 'ag-input-field-input', ref: 'eInput' }],
             },
         ],
     };

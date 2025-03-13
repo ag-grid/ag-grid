@@ -47,7 +47,7 @@ export interface ITooltipComp extends IComponent<ITooltipParams> {}
 
 export class TooltipComponent extends PopupComponent implements ITooltipComp {
     constructor() {
-        super({ tag: 'div', class: 'ag-tooltip' });
+        super({ tag: 'div', cls: 'ag-tooltip' });
     }
 
     // will need to type params

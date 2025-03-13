@@ -178,7 +178,7 @@ export class AgMenuItemComponent extends BeanStub<AgMenuItemComponentEvent> {
 
         this.subMenuIsOpening = true;
 
-        const ePopup = _createElement({ tag: 'div', class: 'ag-menu', role: 'presentation' });
+        const ePopup = _createElement({ tag: 'div', cls: 'ag-menu', ats: { role: 'presentation' } });
         this.eSubMenuGui = ePopup;
         let destroySubMenu: () => void;
         let afterGuiAttached = () => {

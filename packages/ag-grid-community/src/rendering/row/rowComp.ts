@@ -2,8 +2,7 @@ import type { BeanCollection } from '../../context/context';
 import type { RowStyle } from '../../entities/gridOptions';
 import type { RowContainerType } from '../../gridBodyComp/rowContainer/rowContainerCtrl';
 import type { UserCompDetails } from '../../interfaces/iUserCompDetails';
-import { _setAriaRole } from '../../utils/aria';
-import { _addStylesToElement, _setDomChildOrder } from '../../utils/dom';
+import { _addStylesToElement, _createElement, _setDomChildOrder } from '../../utils/dom';
 import { Component } from '../../widgets/component';
 import { CellComp } from '../cell/cellComp';
 import type { CellCtrl, CellCtrlInstanceId } from '../cell/cellCtrl';
@@ -24,15 +23,13 @@ export class RowComp extends Component {
         this.beans = beans;
         this.rowCtrl = ctrl;
 
-        const rowDiv = document.createElement('div');
+        const rowDiv = _createElement({ tag: 'div', ats: { role: 'row' } });
         rowDiv.setAttribute('comp-id', `${this.getCompId()}`);
         this.setInitialStyle(rowDiv, containerType);
         this.setTemplateFromElement(rowDiv);
 
-        const eGui = this.getGui();
-        const style = eGui.style;
+        const style = rowDiv.style;
         this.domOrder = this.rowCtrl.getDomOrder();
-        _setAriaRole(eGui, 'row');
 
         const compProxy: IRowComp = {
             setDomOrder: (domOrder) => (this.domOrder = domOrder),
@@ -40,12 +37,12 @@ export class RowComp extends Component {
             showFullWidth: (compDetails) => this.showFullWidth(compDetails),
             getFullWidthCellRenderer: () => this.fullWidthCellRenderer,
             addOrRemoveCssClass: (name, on) => this.addOrRemoveCssClass(name, on),
-            setUserStyles: (styles: RowStyle | undefined) => _addStylesToElement(eGui, styles),
+            setUserStyles: (styles: RowStyle | undefined) => _addStylesToElement(rowDiv, styles),
             setTop: (top) => (style.top = top),
             setTransform: (transform) => (style.transform = transform),
-            setRowIndex: (rowIndex) => eGui.setAttribute('row-index', rowIndex),
-            setRowId: (rowId: string) => eGui.setAttribute('row-id', rowId),
-            setRowBusinessKey: (businessKey) => eGui.setAttribute('row-business-key', businessKey),
+            setRowIndex: (rowIndex) => rowDiv.setAttribute('row-index', rowIndex),
+            setRowId: (rowId: string) => rowDiv.setAttribute('row-id', rowId),
+            setRowBusinessKey: (businessKey) => rowDiv.setAttribute('row-business-key', businessKey),
             refreshFullWidth: (getUpdatedParams) => this.fullWidthCellRenderer?.refresh?.(getUpdatedParams()) ?? false,
         };
 

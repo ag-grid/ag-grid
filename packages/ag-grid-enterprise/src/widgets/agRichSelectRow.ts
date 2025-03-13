@@ -40,8 +40,8 @@ export class RichSelectRow<TValue> extends Component {
     constructor(private readonly params: RichSelectParams<TValue>) {
         super({
             tag: 'div',
-            class: 'ag-rich-select-row',
-            role: 'presentation',
+            cls: 'ag-rich-select-row',
+            ats: { role: 'presentation' },
         });
     }
 
