@@ -101,7 +101,6 @@ export class ManualPinnedRowModel extends BeanStub implements IPinnedRowModel {
             this.dispatchRowPinnedEvents(source);
         } else {
             // pinning
-
             const sibling = _createPinnedSibling(this.beans, rowNode, container);
             this.getContainer(container).add(sibling);
             this.refreshRowPositions(container);
@@ -194,14 +193,14 @@ export class ManualPinnedRowModel extends BeanStub implements IPinnedRowModel {
 
     public populatePinnedState(state: { top: string[]; bottom: string[] }): void {
         this.forContainers((pinned, container) => {
-            state[container].forEach((id) => {
+            for (const id of state[container]) {
                 const node = this.beans.rowModel.getRowNode(id);
                 if (node) {
                     this.pinRow(node, container);
                 } else {
                     pinned.queue(id);
                 }
-            });
+            }
         });
     }
 
@@ -216,10 +215,10 @@ export class ManualPinnedRowModel extends BeanStub implements IPinnedRowModel {
                 }
             });
 
-            nodesToPin.forEach((node) => {
+            for (const node of nodesToPin) {
                 pinned.unqueue(node.id!);
                 this.pinRow(node, container);
-            });
+            }
         });
     }
 
@@ -228,8 +227,7 @@ export class ManualPinnedRowModel extends BeanStub implements IPinnedRowModel {
             const estimateRowHeight = (rowNode: RowNode) => {
                 rowNode.setRowHeight(rowNode.rowHeight, true);
             };
-            this.bottom.forEach(estimateRowHeight);
-            this.top.forEach(estimateRowHeight);
+            this.forContainers((container) => container.forEach(estimateRowHeight));
         }
     }
 
@@ -243,8 +241,8 @@ export class ManualPinnedRowModel extends BeanStub implements IPinnedRowModel {
     }
 
     private refreshRowPositions(container?: RowPinnedType): void {
-        const sets = container == null ? ['top' as const, 'bottom' as const] : [container];
-        sets.forEach((float) => refreshRowPositions(this.beans, this.getContainer(float)));
+        const refreshAll = (pinned: PinnedRows) => refreshRowPositions(this.beans, pinned);
+        return container == null ? this.forContainers(refreshAll) : refreshAll(this.getContainer(container));
     }
 
     private forContainers(fn: (container: PinnedRows, name: NonNullable<RowPinnedType>) => void): void {
