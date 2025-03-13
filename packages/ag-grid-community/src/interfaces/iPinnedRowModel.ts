@@ -1,5 +1,6 @@
 import type { AgColumn } from '../entities/agColumn';
 import type { RowNode } from '../entities/rowNode';
+import type { RowPinningState } from './gridState';
 import type { RowPinnedType } from './iRowNode';
 
 export interface IPinnedRowModel {
@@ -29,5 +30,5 @@ export interface IPinnedRowModel {
 
     forEachPinnedRow(container: NonNullable<RowPinnedType>, callback: (node: RowNode, index: number) => void): void;
 
-    populatePinnedState(top: string[], bottom: string[]): void;
+    populatePinnedState(state: RowPinningState): void;
 }

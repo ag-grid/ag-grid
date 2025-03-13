@@ -1,4 +1,4 @@
-import type { AgColumn, IPinnedRowModel, NamedBean, RowNode, RowPinnedType } from 'ag-grid-community';
+import type { AgColumn, IPinnedRowModel, NamedBean, RowNode, RowPinnedType, RowPinningState } from 'ag-grid-community';
 import { BeanStub, PinnedRowModel as LegacyPinnedRowModel } from 'ag-grid-community';
 
 import { ManualPinnedRowModel } from './manualPinnedRowModel';
@@ -79,7 +79,7 @@ export class PinnedRowModel extends BeanStub implements NamedBean, IPinnedRowMod
         return this.inner.forEachPinnedRow(container, callback);
     }
 
-    public populatePinnedState(top: string[], bottom: string[]): void {
-        return this.inner.populatePinnedState(top, bottom);
+    public populatePinnedState(state: RowPinningState): void {
+        return this.inner.populatePinnedState(state);
     }
 }

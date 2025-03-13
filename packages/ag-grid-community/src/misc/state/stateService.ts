@@ -768,7 +768,7 @@ export class StateService extends BeanStub implements NamedBean {
     }
 
     private setRowPinningState(state: RowPinningState): void {
-        this.beans.pinnedRowModel?.populatePinnedState(state.top, state.bottom);
+        this.beans.pinnedRowModel?.populatePinnedState(state);
     }
 
     private setRowGroupExpansionState(rowGroupExpansionState: RowGroupExpansionState): void {

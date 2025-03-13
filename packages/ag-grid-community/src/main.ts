@@ -726,6 +726,7 @@ export {
     RangeSelectionState,
     RowGroupExpansionState,
     RowGroupState,
+    RowPinningState,
     ScrollState,
     SideBarState,
     SortState,
