@@ -8,12 +8,12 @@ const results: { modules: string[]; expectedSize: number; selfSize: number; file
 const updateModulesScript = path.join(__dirname, 'moduleUpdater.ts');
 let baseSize = 0;
 
-console.log(process.argv.length, process.argv[2] );
+console.log(process.argv.length, process.argv[2]);
 let moduleCombinationsToProcess = moduleCombinations;
 if (process.argv.length === 3 && process.argv[2].startsWith('--shard')) {
-    console.log("*************************");
-    console.log("* Running in shard mode *");
-    console.log("*************************");
+    console.log('*************************');
+    console.log('* Running in shard mode *');
+    console.log('*************************');
     const [currentShard, shards] = process.argv[2]
         .replace('--shard=', '')
         .split('/')
@@ -89,4 +89,4 @@ function runCombination(index) {
 }
 
 // Start running combinations
-// runCombination(0);
+runCombination(0);
