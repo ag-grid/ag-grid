@@ -296,7 +296,7 @@ export function _isVisible(element: HTMLElement) {
  * @param {string} template
  * @returns {HTMLElement}
  */
-export function _loadTemplate(template: string): HTMLElement {
+export function _loadTemplate(template: string | undefined | null): HTMLElement {
     const tempDiv = document.createElement('div');
     tempDiv.innerHTML = (template || '').trim();
 

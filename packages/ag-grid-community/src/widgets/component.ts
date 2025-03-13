@@ -230,7 +230,7 @@ export class Component<TLocalEvent extends string = ComponentEvent>
         if (typeof templateOfParams === 'object' && templateOfParams != null) {
             eGui = _createElement(templateOfParams);
         } else {
-            eGui = _loadTemplate(templateOfParams as string);
+            eGui = _loadTemplate(templateOfParams);
         }
 
         this.setTemplateFromElement(eGui, componentSelectors, paramsMap);
