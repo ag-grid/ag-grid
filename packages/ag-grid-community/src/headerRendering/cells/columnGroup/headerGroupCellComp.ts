@@ -17,18 +17,18 @@ export class HeaderGroupCellComp extends AbstractHeaderCellComp<HeaderGroupCellC
             {
                 tag: 'div',
                 cls: 'ag-header-group-cell',
-                ats: { role: 'columnheader' },
+                attrs: { role: 'columnheader' },
                 children: [
                     {
                         tag: 'div',
                         cls: 'ag-header-cell-comp-wrapper',
-                        ats: { role: 'presentation' },
+                        attrs: { role: 'presentation' },
                         ref: 'eHeaderCompWrapper',
                     },
                     {
                         tag: 'div',
                         cls: 'ag-header-cell-resize',
-                        ats: { role: 'presentation' },
+                        attrs: { role: 'presentation' },
                         ref: 'eResize',
                     },
                 ],

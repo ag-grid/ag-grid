@@ -11,7 +11,7 @@ const makeIconParams = (dataRefSuffix: string, classSuffix: string): ElementPara
     tag: 'span',
     cls: `ag-sort-indicator-icon ag-sort-${classSuffix} ag-hidden`,
     ref: `eSort${dataRefSuffix}`,
-    ats: { 'aria-hidden': 'true' },
+    attrs: { 'aria-hidden': 'true' },
 });
 const elementParams: ElementParams = {
     tag: 'span',

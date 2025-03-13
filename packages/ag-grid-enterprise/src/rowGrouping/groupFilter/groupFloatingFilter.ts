@@ -32,7 +32,7 @@ export class GroupFloatingFilterComp extends Component implements IFloatingFilte
             tag: 'div',
             cls: 'ag-group-floating-filter ag-floating-filter-input',
             ref: 'eFloatingFilter',
-            ats: { role: 'presentation' },
+            attrs: { role: 'presentation' },
         });
     }
 

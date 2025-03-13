@@ -33,7 +33,7 @@ export class RowDragComp extends Component {
             this.setTemplate({
                 tag: 'div',
                 cls: 'ag-drag-handle ag-row-drag',
-                ats: { 'aria-hidden': 'true' },
+                attrs: { 'aria-hidden': 'true' },
             });
             this.getGui().appendChild(_createIconNoSpan('rowDrag', beans, null)!);
             this.addDragSource();

@@ -41,7 +41,7 @@ export class RichSelectRow<TValue> extends Component {
         super({
             tag: 'div',
             cls: 'ag-rich-select-row',
-            ats: { role: 'presentation' },
+            attrs: { role: 'presentation' },
         });
     }
 

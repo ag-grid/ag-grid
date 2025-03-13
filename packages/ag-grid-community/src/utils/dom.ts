@@ -591,7 +591,7 @@ export type ElementParams = {
     ref?: string;
 
     /** Key Value pair of attributes to add to the dom element via `element.setAttribute(key,value)` */
-    ats?: Attributes;
+    attrs?: Attributes;
 
     children?: (ElementParams | null)[]; // nulls are allowed to allow for optional children
 };
@@ -600,7 +600,7 @@ export type ElementParams = {
 export const DataRefAttribute = 'data-ref';
 
 export function _createElement(params: ElementParams): HTMLElement {
-    const { ats: attributes, children, cls: className, ref: dataRef, tag } = params;
+    const { attrs: attributes, children, cls: className, ref: dataRef, tag } = params;
     const element = document.createElement(tag);
 
     if (className) {

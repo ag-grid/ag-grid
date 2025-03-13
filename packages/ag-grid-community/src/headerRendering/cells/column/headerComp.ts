@@ -115,32 +115,32 @@ function getHeaderCompElementParams(includeSortIndicator: boolean): ElementParam
     return {
         tag: 'div',
         cls: 'ag-cell-label-container',
-        ats: { role: 'presentation' },
+        attrs: { role: 'presentation' },
         children: [
             {
                 tag: 'span',
                 ref: 'eMenu',
                 cls: 'ag-header-icon ag-header-cell-menu-button',
-                ats: { 'aria-hidden': 'true' },
+                attrs: { 'aria-hidden': 'true' },
             },
             {
                 tag: 'span',
                 ref: 'eFilterButton',
                 cls: 'ag-header-icon ag-header-cell-filter-button',
-                ats: { 'aria-hidden': 'true' },
+                attrs: { 'aria-hidden': 'true' },
             },
             {
                 tag: 'div',
                 ref: 'eLabel',
                 cls: 'ag-header-cell-label',
-                ats: { role: 'presentation' },
+                attrs: { role: 'presentation' },
                 children: [
                     { tag: 'span', ref: 'eText', cls: 'ag-header-cell-text' },
                     {
                         tag: 'span',
                         ref: 'eFilter',
                         cls: 'ag-header-icon ag-header-label-icon ag-filter-icon',
-                        ats: { 'aria-hidden': 'true' },
+                        attrs: { 'aria-hidden': 'true' },
                     },
                     includeSortIndicator ? { tag: 'ag-sort-indicator', ref: 'eSortIndicator' } : null,
                 ],

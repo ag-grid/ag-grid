@@ -32,7 +32,7 @@ export abstract class TextInputFloatingFilter<M extends ModelUnion> extends Simp
             tag: 'div',
             cls: 'ag-floating-filter-input',
             ref: 'eFloatingFilterInputContainer',
-            ats: { role: 'presentation' },
+            attrs: { role: 'presentation' },
         });
     }
     protected override defaultDebounceMs: number = 500;

@@ -21,24 +21,24 @@ export class HeaderFilterCellComp extends AbstractHeaderCellComp<HeaderFilterCel
             {
                 tag: 'div',
                 cls: 'ag-header-cell ag-floating-filter',
-                ats: { role: 'gridcell' },
+                attrs: { role: 'gridcell' },
                 children: [
                     {
                         tag: 'div',
                         ref: 'eFloatingFilterBody',
-                        ats: { role: 'presentation' },
+                        attrs: { role: 'presentation' },
                     },
                     {
                         tag: 'div',
                         ref: 'eButtonWrapper',
                         cls: 'ag-floating-filter-button ag-hidden',
-                        ats: { role: 'presentation' },
+                        attrs: { role: 'presentation' },
                         children: [
                             {
                                 tag: 'button',
                                 ref: 'eButtonShowMainFilter',
                                 cls: 'ag-button ag-floating-filter-button-button',
-                                ats: { type: 'button', tabindex: '-1' },
+                                attrs: { type: 'button', tabindex: '-1' },
                             },
                         ],
                     },

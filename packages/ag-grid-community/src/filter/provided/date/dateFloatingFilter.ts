@@ -31,7 +31,7 @@ export class DateFloatingFilter extends SimpleFloatingFilter {
             {
                 tag: 'div',
                 cls: 'ag-floating-filter-input',
-                ats: { role: 'presentation' },
+                attrs: { role: 'presentation' },
                 children: [
                     {
                         tag: 'ag-input-text-field',

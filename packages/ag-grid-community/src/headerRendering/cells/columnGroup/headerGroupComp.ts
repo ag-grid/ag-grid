@@ -71,9 +71,9 @@ export class HeaderGroupComp extends Component implements IHeaderGroupComp {
         super({
             tag: 'div',
             cls: 'ag-header-group-cell-label',
-            ats: { role: 'presentation' },
+            attrs: { role: 'presentation' },
             children: [
-                { tag: 'span', ref: 'agLabel', cls: 'ag-header-group-text', ats: { role: 'presentation' } },
+                { tag: 'span', ref: 'agLabel', cls: 'ag-header-group-text', attrs: { role: 'presentation' } },
                 buildExpandIcon('expanded', 'agOpened'),
                 buildExpandIcon('collapsed', 'agClosed'),
             ],

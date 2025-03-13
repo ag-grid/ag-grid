@@ -20,18 +20,18 @@ export class HeaderCellComp extends AbstractHeaderCellComp<HeaderCellCtrl> {
             {
                 tag: 'div',
                 cls: 'ag-header-cell',
-                ats: { role: 'columnheader' },
+                attrs: { role: 'columnheader' },
                 children: [
                     {
                         tag: 'div',
                         cls: 'ag-header-cell-resize',
-                        ats: { role: 'presentation' },
+                        attrs: { role: 'presentation' },
                         ref: 'eResize',
                     },
                     {
                         tag: 'div',
                         cls: 'ag-header-cell-comp-wrapper',
-                        ats: { role: 'presentation' },
+                        attrs: { role: 'presentation' },
                         ref: 'eHeaderCompWrapper',
                     },
                 ],

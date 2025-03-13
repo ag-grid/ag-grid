@@ -6,7 +6,7 @@ import { HeaderRowContainerComp } from './rowContainer/headerRowContainerComp';
 
 export class GridHeaderComp extends Component {
     constructor() {
-        super({ tag: 'div', cls: 'ag-header', ats: { role: 'presentation' } });
+        super({ tag: 'div', cls: 'ag-header', attrs: { role: 'presentation' } });
     }
 
     public postConstruct(): void {

@@ -25,11 +25,11 @@ export class CheckboxSelectionComponent extends Component {
             {
                 tag: 'div',
                 cls: 'ag-selection-checkbox',
-                ats: { role: 'presentation' },
+                attrs: { role: 'presentation' },
                 children: [
                     {
                         tag: 'ag-checkbox',
-                        ats: { role: 'presentation' },
+                        attrs: { role: 'presentation' },
                         ref: 'eCheckbox',
                     },
                 ],
