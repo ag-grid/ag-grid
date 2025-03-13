@@ -102,10 +102,13 @@ export class TreeParentIdStrategy<TData = any> extends BeanStub implements IRowG
                 if (processNode(child, level)) {
                     allLeafChildrenChanged = true;
                 }
-                allLeafChildrenLen += child.allLeafChildren!.length;
+                allLeafChildrenLen += child.allLeafChildren!.length || 1;
             }
 
-            const allLeafChildren = (row.allLeafChildren ??= _EmptyArray);
+            let allLeafChildren = row.allLeafChildren;
+            if (!allLeafChildren || allLeafChildren === row.childrenAfterGroup) {
+                allLeafChildren = row.allLeafChildren = _EmptyArray;
+            }
             if (allLeafChildrenChanged || allLeafChildren.length !== allLeafChildrenLen) {
                 allLeafChildrenChanged = updateAllLeafChildren(row, allLeafChildren, allLeafChildrenLen);
             }
@@ -260,12 +263,23 @@ const updateAllLeafChildren = <TData>(
     }
     let writeIdx = 0;
     for (const child of row.childrenAfterGroup!) {
-        for (const leaf of child.allLeafChildren!) {
-            if (changed || allLeafChildren[writeIdx] !== leaf) {
-                allLeafChildren[writeIdx] = leaf;
+        const childAllLeafChildren = child.allLeafChildren!;
+        const childAllLeafChildrenLen = childAllLeafChildren.length;
+        if (childAllLeafChildrenLen === 0) {
+            if (changed || allLeafChildren[writeIdx] !== child) {
+                allLeafChildren[writeIdx] = child;
                 changed = true;
             }
             ++writeIdx;
+        } else {
+            for (let i = 0; i < childAllLeafChildrenLen; ++i) {
+                const leaf = childAllLeafChildren[i];
+                if (changed || allLeafChildren[writeIdx] !== leaf) {
+                    allLeafChildren[writeIdx] = leaf;
+                    changed = true;
+                }
+                ++writeIdx;
+            }
         }
     }
     return changed;
