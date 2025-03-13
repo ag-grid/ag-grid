@@ -1,18 +1,18 @@
 import type { ColumnPinnedType } from '../../interfaces/iColumn';
-import { _ensureDomOrder } from '../../utils/dom';
+import { _div, _ensureDomOrder } from '../../utils/dom';
 import { Component, RefPlaceholder } from '../../widgets/component';
 import { HeaderRowComp } from '../row/headerRowComp';
 import type { HeaderRowCtrl, HeaderRowCtrlInstanceId } from '../row/headerRowCtrl';
 import type { IHeaderRowContainerComp } from './headerRowContainerCtrl';
 import { HeaderRowContainerCtrl } from './headerRowContainerCtrl';
 
-const PINNED_LEFT_TEMPLATE = /* html */ `<div class="ag-pinned-left-header" role="rowgroup"></div>`;
-
-const PINNED_RIGHT_TEMPLATE = /* html */ `<div class="ag-pinned-right-header" role="rowgroup"></div>`;
-
-const CENTER_TEMPLATE = /* html */ `<div class="ag-header-viewport" role="presentation" tabindex="-1">
-        <div class="ag-header-container" data-ref="eCenterContainer" role="rowgroup"></div>
-    </div>`;
+const PinnedLeftElement = _div({ cls: 'ag-pinned-left-header', attrs: { role: 'rowgroup' } });
+const PinnedRightElement = _div({ cls: 'ag-pinned-right-header', attrs: { role: 'rowgroup' } });
+const CenterElement = _div({
+    cls: 'ag-header-viewport',
+    attrs: { role: 'presentation', tabindex: '-1' },
+    children: [_div({ cls: 'ag-header-container', ref: 'eCenterContainer', attrs: { role: 'rowgroup' } })],
+});
 
 export class HeaderRowContainerComp extends Component {
     private eCenterContainer: HTMLElement = RefPlaceholder;
@@ -57,7 +57,7 @@ export class HeaderRowContainerComp extends Component {
         const pinnedLeft = this.pinned == 'left';
         const pinnedRight = this.pinned == 'right';
 
-        const template = pinnedLeft ? PINNED_LEFT_TEMPLATE : pinnedRight ? PINNED_RIGHT_TEMPLATE : CENTER_TEMPLATE;
+        const template = pinnedLeft ? PinnedLeftElement : pinnedRight ? PinnedRightElement : CenterElement;
 
         this.setTemplate(template);
 
