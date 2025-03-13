@@ -221,6 +221,46 @@ jobs:
           path: |
             reports/
 
+  docs:
+    runs-on: ubuntu-latest
+    name: Docs Example Generation & Link Checker
+    needs: build_lint
+    if: needs.build_lint.result == "success"
+    strategy:
+      fail-fast: false
+    env:
+      NX_BASE: ${{ needs.build_lint.outputs.nx_base }}
+    steps:
+      - name: Checkout
+        id: checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1 # shallow copy
+
+      - name: Fetch Refs
+        run: |
+          git fetch origin --depth 1 latest
+          git fetch origin --depth 1 tag latest-success
+
+      - name: Setup
+        id: setup
+        uses: ./.github/actions/setup-nx
+        with:
+          cache_mode: ro
+
+      - name: build examples
+        run: yarn nx run-many -t generate --parallel=3
+      - name: docs build and link checker
+        run: CHECK_LINKS=true CHECK_REDIRECTS=true yarn nx run ag-grid-docs:build -c staging
+
+      - name: Perist test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results-docs
+          path: |
+            reports/
+
   report:
     runs-on: ubuntu-24.04
     needs: [ build_lint, test, e2e ]
