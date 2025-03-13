@@ -10,6 +10,9 @@ let baseSize = 0;
 
 let moduleCombinationsToProcess = moduleCombinations;
 if (process.argv.length === 3 && process.argv[2].startsWith('--shard')) {
+    console.log("*************************");
+    console.log("* Running in shard mode *");
+    console.log("*************************");
     const [currentShard, shards] = process.argv[2]
         .replace('--shard=', '')
         .split('/')
