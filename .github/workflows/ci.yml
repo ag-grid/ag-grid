@@ -111,6 +111,7 @@ jobs:
 
           e2e_count=$(yarn -s nx show projects --affected --base ${{ steps.setup.outputs.base }} -t test:e2e | wc -l)
 
+  node ./scripts/test/calculate-shards.js eval --ratio 1 --zero 3 --max 1
           e2e_matrix=$(node ./scripts/test/calculate-shards.js eval --ratio 1 --zero ${e2e_count} --max 1)
           echo "e2e_test_matrix=${e2e_matrix}" >> $GITHUB_OUTPUT
           echo "e2e_test_count=${e2e_count}" >> $GITHUB_OUTPUT
@@ -207,11 +208,11 @@ jobs:
       - name: nx test:e2e
         if: matrix.shard != 0
         id: test
-        run: yarn nx ${{ github.event.inputs.nx_command || 'affected' }} -t test:e2e --configuration=ci --exclude tag:no-sharding --exclude all
+        run: yarn nx ${{ github.event.inputs.nx_command || 'affected' }} -t test:e2e --configuration=ci --include tag:sharding --exclude all --shard=${{ matrix.shard }}/$((${{ strategy.job-total }} - 1))
       - name: nx test:e2e (non-sharded)
         if: matrix.shard == 0
         id: test-no-shard
-        run: yarn nx ${{ github.event.inputs.nx_command || 'affected' }} -t test:e2e --configuration=ci --exclude '*,!tag:no-sharding'
+        run: yarn nx ${{ github.event.inputs.nx_command || 'affected' }} -t test:e2e --configuration=ci --exclude '*,!tag:sharding'
 
       - name: Perist test results
         if: always()
@@ -223,7 +224,7 @@ jobs:
 
   docs:
     runs-on: ubuntu-latest
-    name: Docs Example Generation & Link Checker
+    name: Docs Build & Link Checker
     needs: build_lint
     if: needs.build_lint.result == 'success'
     strategy:
@@ -248,8 +249,6 @@ jobs:
         with:
           cache_mode: ro
 
-      - name: build examples
-        run: yarn nx run-many -t generate --parallel=3
       - name: docs build and link checker
         run: CHECK_LINKS=true CHECK_REDIRECTS=true yarn nx run ag-grid-docs:build -c staging
 

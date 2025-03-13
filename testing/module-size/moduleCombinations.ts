@@ -8,8 +8,22 @@ const results: { modules: string[]; expectedSize: number; selfSize: number; file
 const updateModulesScript = path.join(__dirname, 'moduleUpdater.ts');
 let baseSize = 0;
 
+let moduleCombinationsToProcess = moduleCombinations;
+if(process.argv.length === 3 && process.argv[2].startsWith("--shard")) {
+    const [currentShard, shards] = process.argv[2]
+        .replace('--shard=','')
+        .split("/")
+        .map(arg => parseInt(arg))
+
+    const segmentSize = Math.ceil(moduleCombinations.length / shards);
+
+    const startIndex = (currentShard - 1) * segmentSize;
+    const endIndex = startIndex + segmentSize;
+    moduleCombinationsToProcess = moduleCombinations.slice(startIndex, endIndex);
+}
+
 function runCombination(index) {
-    if (index >= moduleCombinations.length) {
+    if (index >= moduleCombinationsToProcess.length) {
         // Save results to a JSON file
         fs.writeFileSync('module-size-results.json', JSON.stringify(results, null, 2));
         console.log(`Results (${results.length}) saved to module-size-results.json`);
@@ -28,7 +42,7 @@ function runCombination(index) {
         return;
     }
 
-    const { modules, expectedSize } = moduleCombinations[index];
+    const { modules, expectedSize } = moduleCombinationsToProcess[index];
     const command = `ts-node ${updateModulesScript} ${modules.join(' ')}`;
 
     exec(command, (err, stdout, stderr) => {

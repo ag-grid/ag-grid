@@ -17,6 +17,6 @@
       }
     }
   },
-  "tags": ["module-size", "no-sharding"],
+  "tags": ["module-size", "sharding"],
   "implicitDependencies": ["ag-grid-react"]
 }

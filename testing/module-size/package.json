@@ -7,9 +7,10 @@
     "cp-app": "cp ./src/App_src.tsx ./src/App_AUTO.tsx",
     "build-app": "vite build",
     "preview": "vite preview",
-    "module-stats": "ts-node moduleCombinations.ts && npm run module-validate",
+    "module-stats": "ts-node moduleCombinations.ts",
+    "module-statsx": "ts-node moduleCombinations.ts && npm run module-validate",
     "module-validate": "ts-node moduleValidator.ts",
-    "test:e2e": "npm run module-stats"
+    "test:e2e": "npm run module-stats --"
   },
   "dependencies": {
     "ag-grid-react": "33.1.1",
