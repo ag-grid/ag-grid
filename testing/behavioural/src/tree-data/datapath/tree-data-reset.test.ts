@@ -645,4 +645,68 @@ describe('ag-grid tree data reset', () => {
             · └── N LEAF id:10
         `);
     });
+
+    test('can reorder two leafs without changing references', async () => {
+        const rowData = [
+            { id: 'A', path: ['A'] },
+            { id: 'B', path: ['A', 'B'] },
+            { id: 'C', path: ['A', 'C'] },
+            { id: 'D', path: ['A', 'B', 'D'] },
+            { id: 'E', path: ['A', 'B', 'E'] },
+            { id: 'F', path: ['A', 'B', 'F'] },
+        ];
+
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: [],
+            autoGroupColumnDef: { headerName: 'path' },
+            treeData: true,
+            animateRows: false,
+            groupDefaultExpanded: -1,
+            rowData,
+            getDataPath: (data) => data.path,
+            getRowId: (params) => params.data.id,
+        });
+
+        await new GridRows(api, 'update 0', defaultGridRowsOptions).check(`
+            ROOT id:ROOT_NODE_ID
+            └─┬ A GROUP id:A
+            · ├─┬ B GROUP id:B
+            · │ ├── D LEAF id:D
+            · │ ├── E LEAF id:E
+            · │ └── F LEAF id:F
+            · └── C LEAF id:C
+        `);
+
+        const rowData1 = rowData.slice();
+        // Swap D and F
+        rowData1[3] = rowData[5];
+        rowData1[5] = rowData[3];
+        api.setGridOption('rowData', rowData1);
+
+        await new GridRows(api, 'update 1', defaultGridRowsOptions).check(`
+            ROOT id:ROOT_NODE_ID
+            └─┬ A GROUP id:A
+            · ├─┬ B GROUP id:B
+            · │ ├── F LEAF id:F
+            · │ ├── E LEAF id:E
+            · │ └── D LEAF id:D
+            · └── C LEAF id:C
+        `);
+
+        const rowData2 = rowData1.slice();
+        // Swap B and C
+        rowData2[1] = rowData1[4];
+        rowData2[4] = rowData1[1];
+        api.setGridOption('rowData', rowData2);
+
+        await new GridRows(api, 'update 1', defaultGridRowsOptions).check(`
+            ROOT id:ROOT_NODE_ID
+            └─┬ A GROUP id:A
+            · ├── C LEAF id:C
+            · └─┬ B GROUP id:B
+            · · ├── E LEAF id:E
+            · · ├── F LEAF id:F
+            · · └── D LEAF id:D
+        `);
+    });
 });
