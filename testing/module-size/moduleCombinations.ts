@@ -8,6 +8,7 @@ const results: { modules: string[]; expectedSize: number; selfSize: number; file
 const updateModulesScript = path.join(__dirname, 'moduleUpdater.ts');
 let baseSize = 0;
 
+console.log(process.argv.length, process.argv[2] );
 let moduleCombinationsToProcess = moduleCombinations;
 if (process.argv.length === 3 && process.argv[2].startsWith('--shard')) {
     console.log("*************************");
@@ -88,4 +89,4 @@ function runCombination(index) {
 }
 
 // Start running combinations
-runCombination(0);
+// runCombination(0);
