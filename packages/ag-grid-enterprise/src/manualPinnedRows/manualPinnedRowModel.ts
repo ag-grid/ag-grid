@@ -11,82 +11,14 @@ import {
     _ROW_ID_PREFIX_BOTTOM_PINNED,
     _ROW_ID_PREFIX_TOP_PINNED,
     _getRowHeightForNode,
-    _removeFromArray,
 } from 'ag-grid-community';
 
 import { _createRowNodeSibling } from '../misc/rowNodeSiblingUtils';
-
-class OrderedSet {
-    /** Canonical set of all pinned nodes */
-    private all = new Set<RowNode>();
-    /**
-     * Set of nodes that should currently be visible given the context of the grid.
-     * This is currently used for hiding leaf nodes in pivot mode.
-     */
-    private visible = new Set<RowNode>();
-    /** Ordering of nodes in the pinned area */
-    private order: RowNode[] = [];
-
-    public size(): number {
-        return this.visible.size;
-    }
-
-    public add(item: RowNode, beans: BeanCollection): void {
-        this.all.add(item);
-        this.visible.add(item);
-        this.order.push(item);
-        this.sort(beans);
-    }
-
-    public delete(item: RowNode): void {
-        this.all.delete(item);
-        this.visible.delete(item);
-        _removeFromArray(this.order, item);
-    }
-
-    public has(item: RowNode): boolean {
-        return this.visible.has(item);
-    }
-
-    public forEach(fn: (node: RowNode, i: number) => void): void {
-        this.order.forEach(fn);
-    }
-
-    public getByIndex(i: number): RowNode | undefined {
-        return this.order[i];
-    }
-
-    public getById(id: string): RowNode | undefined {
-        for (const node of this.visible) {
-            if (node.id == id) return node;
-        }
-    }
-
-    public clear(): void {
-        this.all.clear();
-        this.visible.clear();
-        this.order.length = 0;
-    }
-
-    public sort(beans: BeanCollection): void {
-        const sortOptions = beans.sortSvc?.getSortOptions() ?? [];
-        this.order = beans.rowNodeSorter?.doFullSort(this.order, sortOptions) ?? this.order;
-    }
-
-    public hide(shouldHide: (node: RowNode) => boolean, beans: BeanCollection): void {
-        this.all.forEach((node) => (shouldHide(node) ? this.visible.delete(node) : this.visible.add(node)));
-        this.order = Array.from(this.visible);
-        this.sort(beans);
-    }
-}
+import * as u from './manualPinnedRowUtils';
 
 export class ManualPinnedRowModel extends BeanStub implements IPinnedRowModel {
-    private top = new OrderedSet();
-    private bottom = new OrderedSet();
-    private queued = {
-        top: new Set<string>(),
-        bottom: new Set<string>(),
-    };
+    private top = u.createPinnedRows();
+    private bottom = u.createPinnedRows();
 
     public postConstruct(): void {
         const filterManager = this.beans.filterManager;
@@ -101,8 +33,8 @@ export class ManualPinnedRowModel extends BeanStub implements IPinnedRowModel {
             modelUpdated: () => {
                 this.tryToEmptyQueues();
                 this.forContainers((container) => {
-                    container.hide(hideFilteredNodes, this.beans);
-                    container.sort(this.beans);
+                    u.hide(this.beans, container, hideFilteredNodes);
+                    u.sort(this.beans, container);
                 });
                 this.refreshRowPositions();
             },
@@ -114,15 +46,15 @@ export class ManualPinnedRowModel extends BeanStub implements IPinnedRowModel {
 
         this.addManagedPropertyListener('pivotMode', (event) => {
             const hideLeaves = (node: RowNode) => (event.currentValue ? !node.group : false);
-            this.forContainers((container) => container.hide(hideLeaves, this.beans));
+            this.forContainers((container) => u.hide(this.beans, container, hideLeaves));
             this.dispatchRowPinnedEvents();
         });
     }
 
     public override destroy(): void {
         this.forContainers((container) => {
-            container.forEach(_destroyRowNodeSibling);
-            container.clear();
+            u.forEach(container, _destroyRowNodeSibling);
+            u.clear(container);
         });
 
         super.destroy();
@@ -152,7 +84,7 @@ export class ManualPinnedRowModel extends BeanStub implements IPinnedRowModel {
             const found = this.findPinnedRowNode(node);
             if (!found) return;
 
-            found.delete(node);
+            u._delete(found, node);
             const source = node.pinnedSibling!;
             _destroyRowNodeSibling(node);
             this.refreshRowPositions(container);
@@ -161,7 +93,7 @@ export class ManualPinnedRowModel extends BeanStub implements IPinnedRowModel {
         } else {
             // pinning
             const sibling = _createPinnedSibling(rowNode, this.beans, container);
-            this.getContainer(container).add(sibling, this.beans);
+            u.add(this.beans, this.getContainer(container), sibling);
             this.refreshRowPositions(container);
 
             this.dispatchRowPinnedEvents(rowNode);
@@ -173,7 +105,7 @@ export class ManualPinnedRowModel extends BeanStub implements IPinnedRowModel {
     }
 
     public isEmpty(floating: NonNullable<RowPinnedType>): boolean {
-        return this.getContainer(floating).size() === 0;
+        return u.size(this.getContainer(floating)) === 0;
     }
 
     public isRowsToRender(floating: NonNullable<RowPinnedType>): boolean {
@@ -192,9 +124,9 @@ export class ManualPinnedRowModel extends BeanStub implements IPinnedRowModel {
                 anyChange = true;
             }
         };
-        this.bottom.forEach(updateRowHeight);
+        u.forEach(this.bottom, updateRowHeight);
         rowTop = 0;
-        this.top.forEach(updateRowHeight);
+        u.forEach(this.top, updateRowHeight);
 
         this.eventSvc.dispatchEvent({
             type: 'pinnedHeightChanged',
@@ -204,50 +136,50 @@ export class ManualPinnedRowModel extends BeanStub implements IPinnedRowModel {
     }
 
     public getPinnedTopTotalHeight(): number {
-        const size = this.top.size();
+        const size = u.size(this.top);
         if (size === 0) return 0;
 
-        const node = this.top.getByIndex(size - 1);
+        const node = u.getByIndex(this.top, size - 1);
         if (node === undefined) return 0;
 
         return node.rowTop! + node.rowHeight!;
     }
 
     public getPinnedBottomTotalHeight(): number {
-        const size = this.bottom.size();
+        const size = u.size(this.bottom);
         if (size === 0) return 0;
 
-        const node = this.bottom.getByIndex(size - 1);
+        const node = u.getByIndex(this.bottom, size - 1);
         if (node === undefined) return 0;
 
         return node.rowTop! + node.rowHeight!;
     }
 
     public getPinnedTopRowCount(): number {
-        return this.top.size();
+        return u.size(this.top);
     }
 
     public getPinnedBottomRowCount(): number {
-        return this.bottom.size();
+        return u.size(this.bottom);
     }
 
     public getPinnedTopRow(index: number): RowNode | undefined {
-        return this.top.getByIndex(index);
+        return u.getByIndex(this.top, index);
     }
 
     public getPinnedBottomRow(index: number): RowNode | undefined {
-        return this.bottom.getByIndex(index);
+        return u.getByIndex(this.bottom, index);
     }
 
     public getPinnedRowById(id: string, floating: NonNullable<RowPinnedType>): RowNode | undefined {
-        return this.getContainer(floating).getById(id);
+        return u.getById(this.getContainer(floating), id);
     }
 
     public forEachPinnedRow(
         floating: NonNullable<RowPinnedType>,
         callback: (node: RowNode, index: number) => void
     ): void {
-        this.getContainer(floating).forEach(callback);
+        u.forEach(this.getContainer(floating), callback);
     }
 
     public populatePinnedState(top: string[], bottom: string[]): void {
@@ -257,7 +189,7 @@ export class ManualPinnedRowModel extends BeanStub implements IPinnedRowModel {
                 if (node) {
                     this.pinRow(node, container);
                 } else {
-                    this.queued[container].add(id);
+                    u.queue(this.getContainer(container), id);
                 }
             });
         };
@@ -269,9 +201,9 @@ export class ManualPinnedRowModel extends BeanStub implements IPinnedRowModel {
     private tryToEmptyQueues(): void {
         const emptyQueue = (container: NonNullable<RowPinnedType>) => {
             const nodesToPin = new Set<RowNode>();
-            const queued = this.queued[container];
+            const pinned = this.getContainer(container);
 
-            queued.forEach((id) => {
+            u.forEachQueued(pinned, (id) => {
                 const node = this.beans.rowModel.getRowNode(id);
                 if (node) {
                     nodesToPin.add(node);
@@ -279,10 +211,7 @@ export class ManualPinnedRowModel extends BeanStub implements IPinnedRowModel {
             });
 
             nodesToPin.forEach((node) => {
-                if (queued.has(node.id!)) {
-                    queued.delete(node.id!);
-                }
-
+                u.unqueue(pinned, node.id!);
                 this.pinRow(node, container);
             });
         };
@@ -296,18 +225,18 @@ export class ManualPinnedRowModel extends BeanStub implements IPinnedRowModel {
             const estimateRowHeight = (rowNode: RowNode) => {
                 rowNode.setRowHeight(rowNode.rowHeight, true);
             };
-            this.bottom.forEach(estimateRowHeight);
-            this.top.forEach(estimateRowHeight);
+            u.forEach(this.bottom, estimateRowHeight);
+            u.forEach(this.top, estimateRowHeight);
         }
     }
 
-    private getContainer(container: NonNullable<RowPinnedType>): OrderedSet {
+    private getContainer(container: NonNullable<RowPinnedType>): u.PinnedRows {
         return container === 'top' ? this.top : this.bottom;
     }
 
-    private findPinnedRowNode(node: RowNode): OrderedSet | undefined {
-        if (this.top.has(node)) return this.top;
-        if (this.bottom.has(node)) return this.bottom;
+    private findPinnedRowNode(node: RowNode): u.PinnedRows | undefined {
+        if (u.has(this.top, node)) return this.top;
+        if (u.has(this.bottom, node)) return this.top;
     }
 
     private refreshRowPositions(container?: RowPinnedType): void {
@@ -315,7 +244,7 @@ export class ManualPinnedRowModel extends BeanStub implements IPinnedRowModel {
         sets.forEach((float) => refreshRowPositions(this.beans, this.getContainer(float)));
     }
 
-    private forContainers(fn: (container: OrderedSet) => void): void {
+    private forContainers(fn: (container: u.PinnedRows) => void): void {
         fn(this.top);
         fn(this.bottom);
     }
@@ -326,9 +255,9 @@ export class ManualPinnedRowModel extends BeanStub implements IPinnedRowModel {
     }
 }
 
-function refreshRowPositions(beans: BeanCollection, container: OrderedSet) {
+function refreshRowPositions(beans: BeanCollection, container: u.PinnedRows) {
     let rowTop = 0;
-    container.forEach((node, index) => {
+    u.forEach(container, (node, index) => {
         node.setRowTop(rowTop);
         node.setRowHeight(_getRowHeightForNode(beans, node).height);
         node.setRowIndex(index);
@@ -379,17 +308,16 @@ function _destroyRowNodeSibling(rowNode: RowNode): void {
     }
 }
 
-function removeGroupRows(set: OrderedSet) {
+function removeGroupRows(set: u.PinnedRows) {
     const rowsToRemove = new Set<RowNode>();
-    set.forEach((node) => {
+
+    u.forEach(set, (node) => {
         if (node.group) {
             rowsToRemove.add(node);
         }
     });
 
-    rowsToRemove.forEach((node) => {
-        set.delete(node);
-    });
+    rowsToRemove.forEach((node) => u._delete(set, node));
 }
 
 function getSpannedRows(beans: BeanCollection, rowNode: RowNode, column: AgColumn) {
