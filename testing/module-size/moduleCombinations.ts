@@ -9,11 +9,11 @@ const updateModulesScript = path.join(__dirname, 'moduleUpdater.ts');
 let baseSize = 0;
 
 let moduleCombinationsToProcess = moduleCombinations;
-if(process.argv.length === 3 && process.argv[2].startsWith("--shard")) {
+if (process.argv.length === 3 && process.argv[2].startsWith('--shard')) {
     const [currentShard, shards] = process.argv[2]
-        .replace('--shard=','')
-        .split("/")
-        .map(arg => parseInt(arg))
+        .replace('--shard=', '')
+        .split('/')
+        .map((arg) => parseInt(arg));
 
     const segmentSize = Math.ceil(moduleCombinations.length / shards);
 
