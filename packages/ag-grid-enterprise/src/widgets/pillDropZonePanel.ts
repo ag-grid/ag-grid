@@ -7,6 +7,7 @@ import {
     _areEqual,
     _clearElement,
     _createIconNoSpan,
+    _div,
     _findFocusableElements,
     _findNextFocusableElement,
     _getActiveDomElement,
@@ -37,7 +38,7 @@ function _insertArrayIntoArray<T>(dest: T[], src: T[], toIndex: number) {
 
     dest.splice(toIndex, 0, ...src);
 }
-
+const PillDropZonePanelElement = _div({ cls: 'ag-unselectable', attrs: { role: 'presentation' } });
 export abstract class PillDropZonePanel<TPill extends PillDragComp<TItem>, TItem> extends Component {
     private state: PillState = 'notDragging';
 
@@ -78,7 +79,7 @@ export abstract class PillDropZonePanel<TPill extends PillDragComp<TItem>, TItem
     protected abstract isInterestedIn(type: DragSourceType): boolean;
 
     constructor(protected readonly horizontal: boolean) {
-        super(/* html */ `<div class="ag-unselectable" role="presentation"></div>`);
+        super(PillDropZonePanelElement);
         this.addElementClasses(this.getGui());
         this.ePillDropList = document.createElement('div');
         this.addElementClasses(this.ePillDropList, 'list');
@@ -616,7 +617,7 @@ export abstract class PillDropZonePanel<TPill extends PillDragComp<TItem>, TItem
         if (!this.horizontal) {
             const eTitle = document.createElement('span');
             this.addElementClasses(eTitle, 'title');
-            eTitle.innerHTML = title;
+            eTitle.textContent = title;
 
             eTitleBar.appendChild(eTitle);
         }
@@ -635,7 +636,7 @@ export abstract class PillDropZonePanel<TPill extends PillDragComp<TItem>, TItem
         }
 
         const eMessage = document.createElement('span');
-        eMessage.innerHTML = emptyMessage;
+        eMessage.textContent = emptyMessage;
         this.addElementClasses(eMessage, 'empty-message');
         this.ePillDropList.appendChild(eMessage);
     }

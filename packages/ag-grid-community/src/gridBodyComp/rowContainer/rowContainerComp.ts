@@ -1,7 +1,8 @@
 import type { BeanCollection } from '../../context/context';
 import { RowComp } from '../../rendering/row/rowComp';
 import type { RowCtrl, RowCtrlInstanceId } from '../../rendering/row/rowCtrl';
-import { _ensureDomOrder } from '../../utils/dom';
+import type { ElementParams } from '../../utils/dom';
+import { _div, _ensureDomOrder } from '../../utils/dom';
 import type { ComponentSelector } from '../../widgets/component';
 import { Component, RefPlaceholder } from '../../widgets/component';
 import type { IRowContainerComp, RowContainerName, RowContainerOptions } from './rowContainerCtrl';
@@ -13,21 +14,30 @@ import {
     _getRowViewportClass,
 } from './rowContainerCtrl';
 
-function templateFactory(name: RowContainerName, options: RowContainerOptions, beans: BeanCollection): string {
+function getElementParams(name: RowContainerName, options: RowContainerOptions, beans: BeanCollection): ElementParams {
     const isCellSpanning = !!beans.gos.get('enableCellSpan') && !!options.getSpannedRowCtrls;
 
-    const containerClass = _getRowContainerClass(name);
-    const eContainerTemplate = `<div class="${containerClass}" data-ref="eContainer" role="rowgroup"></div>`;
+    const eContainerElement = _div({
+        cls: _getRowContainerClass(name),
+        ref: 'eContainer',
+        attrs: { role: 'rowgroup' },
+    });
+
     if (options.type === 'center' || isCellSpanning) {
-        const spannedCellsContainerClass = _getRowSpanContainerClass(name);
-        const viewportClass = _getRowViewportClass(name);
-        const eSpannedContainerTemplate = `<div class="ag-spanning-container ${spannedCellsContainerClass}" data-ref="eSpannedContainer" role="rowgroup"></div>`;
-        return `<div class="ag-viewport ${viewportClass}" data-ref="eViewport" role="presentation">
-                ${eContainerTemplate}
-                ${isCellSpanning ? eSpannedContainerTemplate : ''}
-            </div>`;
+        const eSpannedContainerElement = _div({
+            cls: `ag-spanning-container ${_getRowSpanContainerClass(name)}`,
+            ref: 'eSpannedContainer',
+            attrs: { role: 'rowgroup' },
+        });
+
+        return _div({
+            cls: `ag-viewport ${_getRowViewportClass(name)}`,
+            ref: 'eViewport',
+            attrs: { role: 'presentation' },
+            children: [eContainerElement, isCellSpanning ? eSpannedContainerElement : null],
+        });
     }
-    return eContainerTemplate;
+    return eContainerElement;
 }
 
 export class RowContainerComp extends Component {
@@ -53,7 +63,7 @@ export class RowContainerComp extends Component {
     }
 
     public postConstruct(): void {
-        this.setTemplate(templateFactory(this.name, this.options, this.beans));
+        this.setTemplate(getElementParams(this.name, this.options, this.beans));
 
         const compProxy: IRowContainerComp = {
             setHorizontalScroll: (offset: number) => (this.eViewport.scrollLeft = offset),

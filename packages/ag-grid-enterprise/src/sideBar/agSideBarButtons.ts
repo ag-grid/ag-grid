@@ -3,6 +3,7 @@ import {
     Component,
     KeyCode,
     _clearElement,
+    _div,
     _focusNextGridCoreContainer,
     _stopPropagationForAgGrid,
 } from 'ag-grid-community';
@@ -14,11 +15,13 @@ export interface SideBarButtonClickedEvent extends AgEvent<'sideBarButtonClicked
 }
 
 export type AgSideBarButtonsEvent = 'sideBarButtonClicked';
+
+const SideBarElement = _div({ cls: 'ag-side-buttons', attrs: { role: 'tablist' } });
 export class AgSideBarButtons extends Component<AgSideBarButtonsEvent> {
     private buttonComps: SideBarButtonComp[] = [];
 
     constructor() {
-        super(/* html */ `<div class="ag-side-buttons" role="tablist"></div>`);
+        super(SideBarElement);
     }
 
     public postConstruct(): void {

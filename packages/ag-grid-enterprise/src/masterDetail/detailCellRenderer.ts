@@ -8,11 +8,25 @@ import type {
     IDetailCellRenderer,
     IDetailCellRendererParams,
 } from 'ag-grid-community';
-import { Component, RefPlaceholder, _getGridRegisteredModules, _missing, _warn, createGrid } from 'ag-grid-community';
+import {
+    Component,
+    RefPlaceholder,
+    _div,
+    _getGridRegisteredModules,
+    _missing,
+    _warn,
+    createGrid,
+} from 'ag-grid-community';
 
 import { DetailCellRendererCtrl } from './detailCellRendererCtrl';
 import { DetailFrameworkComponentWrapper } from './detailFrameworkComponentWrapper';
 
+const PinnedDetailCellRendererElement = _div({ cls: 'ag-details-row' });
+const DetailCellRendererElement = _div({
+    cls: 'ag-details-row',
+    attrs: { role: 'gridcell' },
+    children: [_div({ ref: 'eDetailGrid', cls: 'ag-details-grid', attrs: { role: 'presentation' } })],
+});
 export class DetailCellRenderer extends Component implements ICellRenderer {
     private eDetailGrid: HTMLElement = RefPlaceholder;
 
@@ -49,14 +63,12 @@ export class DetailCellRenderer extends Component implements ICellRenderer {
     private selectAndSetTemplate(): void {
         const params = this.params;
         if (params.pinned) {
-            this.setTemplate(/* html*/ `<div class="ag-details-row"></div>`);
+            this.setTemplate(PinnedDetailCellRendererElement);
             return;
         }
 
         const setDefaultTemplate = () => {
-            this.setTemplate(/* html */ `<div class="ag-details-row" role="gridcell">
-                <div data-ref="eDetailGrid" class="ag-details-grid" role="presentation"></div>
-            </div>`);
+            this.setTemplate(DetailCellRendererElement);
         };
 
         if (_missing(params.template)) {
