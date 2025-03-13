@@ -227,10 +227,10 @@ export abstract class SimpleFilter<
 
     protected setModelIntoUi(
         model: ISimpleFilterModel | ICombinedSimpleModel<M> | null,
-        silent?: boolean
+        isInitialLoad?: boolean
     ): AgPromise<void> {
         if (model == null) {
-            return this.resetUiToDefaults(silent);
+            return this.resetUiToDefaults(isInitialLoad);
         }
         const isCombined = (model as any).operator;
 
@@ -277,7 +277,7 @@ export abstract class SimpleFilter<
 
         this.createMissingConditionsAndOperators();
 
-        if (!silent) {
+        if (!isInitialLoad) {
             this.onUiChanged();
         }
 

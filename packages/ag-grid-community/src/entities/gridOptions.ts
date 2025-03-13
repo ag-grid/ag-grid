@@ -56,9 +56,10 @@ import type {
     FilterChangedEvent,
     FilterModifiedEvent,
     FilterOpenedEvent,
+    FilterUiChangedEvent,
     FindChangedEvent,
     FirstDataRenderedEvent,
-    FloatingFilterModifiedEvent,
+    FloatingFilterUiChangedEvent,
     FullWidthCellKeyDownEvent,
     GridColumnsChangedEvent,
     GridPreDestroyedEvent,
@@ -2168,9 +2169,14 @@ export interface GridOptions<TData = any> {
      */
     onFilterModified?(event: FilterModifiedEvent<TData>): void;
     /**
+     * TODO - update
+     */
+    onFilterUiChanged?(event: FilterUiChangedEvent<TData>): void;
+    /**
+     * TODO - update
      * Floating filter modified. Only used when `reactiveFloatingFilters` is enabled.
      */
-    onFloatingFilterModified?(event: FloatingFilterModifiedEvent<TData>): void;
+    onFloatingFilterUiChanged?(event: FloatingFilterUiChangedEvent<TData>): void;
     /**
      * Advanced Filter Builder visibility has changed (opened or closed).
      */

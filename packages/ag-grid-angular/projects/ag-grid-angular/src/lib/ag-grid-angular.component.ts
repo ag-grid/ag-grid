@@ -85,10 +85,11 @@ import type {
     FilterChangedEvent,
     FilterModifiedEvent,
     FilterOpenedEvent,
+    FilterUiChangedEvent,
     FindChangedEvent,
     FindOptions,
     FirstDataRenderedEvent,
-    FloatingFilterModifiedEvent,
+    FloatingFilterUiChangedEvent,
     FocusGridInnerElementParams,
     FullWidthCellKeyDownEvent,
     GetChartMenuItems,
@@ -1939,10 +1940,16 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Output() public filterModified: EventEmitter<FilterModifiedEvent<TData>> = new EventEmitter<
         FilterModifiedEvent<TData>
     >();
-    /** Floating filter modified. Only used when `reactiveFloatingFilters` is enabled.
+    /** TODO - update
      */
-    @Output() public floatingFilterModified: EventEmitter<FloatingFilterModifiedEvent<TData>> = new EventEmitter<
-        FloatingFilterModifiedEvent<TData>
+    @Output() public filterUiChanged: EventEmitter<FilterUiChangedEvent<TData>> = new EventEmitter<
+        FilterUiChangedEvent<TData>
+    >();
+    /** TODO - update
+     * Floating filter modified. Only used when `reactiveFloatingFilters` is enabled.
+     */
+    @Output() public floatingFilterUiChanged: EventEmitter<FloatingFilterUiChangedEvent<TData>> = new EventEmitter<
+        FloatingFilterUiChangedEvent<TData>
     >();
     /** Advanced Filter Builder visibility has changed (opened or closed).
      */

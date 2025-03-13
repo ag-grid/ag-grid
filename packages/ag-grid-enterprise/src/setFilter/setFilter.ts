@@ -10,6 +10,7 @@ import type {
     SetFilterModel,
     SetFilterModelValue,
     SetFilterParams,
+    SetFilterUi,
     TextFormatter,
 } from 'ag-grid-community';
 import {
@@ -43,7 +44,7 @@ import { TreeSetDisplayValueModel } from './treeSetDisplayValueModel';
 /** @param V type of value in the Set Filter */
 export class SetFilter<V = string>
     extends ProvidedFilter<SetFilterModel, V, ISetFilterParams<any, V> & FilterDisplayParams<any, any, SetFilterModel>>
-    implements ISetFilter<V>
+    implements ISetFilter<V>, SetFilterUi
 {
     public readonly filterType = 'set' as const;
 
@@ -147,7 +148,7 @@ export class SetFilter<V = string>
             if (this.displayValueModel instanceof TreeSetDisplayValueModel) {
                 this.displayValueModel.updateParams(treeListPathGetter, treeListFormatter);
             }
-            this.refreshFilterValues();
+            this.evaluator.refreshFilterValues();
         });
     }
 
@@ -303,8 +304,10 @@ export class SetFilter<V = string>
         });
     }
 
-    protected setModelIntoUi(model: SetFilterModel | null): AgPromise<void> {
-        this.setMiniFilter(null);
+    protected setModelIntoUi(model: SetFilterModel | null, isInitialLoad?: boolean): AgPromise<void> {
+        if (!isInitialLoad) {
+            this.setMiniFilter(null);
+        }
 
         const values = model == null ? null : model.values;
         return this.setModelAndRefresh(values);
@@ -667,42 +670,37 @@ export class SetFilter<V = string>
         return this.params.excelMode ? model == null || model.values.length > 0 : true;
     }
 
+    /**
+     * @deprecated TODO
+     */
     public override onNewRowsLoaded(): void {
         // do nothing
     }
 
     /**
-     * Public method provided so the user can change the value of the filter once
-     * the filter has been already started
-     * @param values The values to use.
+     * @deprecated TODO
      */
     public setFilterValues(values: (V | null)[]): void {
-        this.evaluator.valueModel.overrideValues(values).then(() => {
-            this.refreshFilterValues();
-        });
+        this.evaluator.setFilterValues(values);
     }
 
     /**
-     * Public method provided so the user can reset the values of the filter once that it has started.
+     * @deprecated TODO
      */
     public resetFilterValues(): void {
-        this.evaluator.resetValues();
+        this.evaluator.resetFilterValues();
     }
 
+    /**
+     * @deprecated TODO
+     */
     public refreshFilterValues(): void {
-        // the model is still being initialised
-        if (!this.evaluator.valueModel.isInitialised()) {
-            return;
-        }
-
-        this.evaluator.refreshValues().then(() => {
-            if (this.isAlive()) {
-                // TODO - do we want this now?
-                this.onUiChanged();
-            }
-        });
+        this.evaluator.refreshFilterValues();
     }
 
+    /**
+     * @deprecated TODO
+     */
     public onAnyFilterChanged(): void {
         // do nothing
     }
@@ -712,24 +710,21 @@ export class SetFilter<V = string>
             return;
         }
 
-        const { applyMiniFilterWhileTyping, readOnly } = this.params;
-        if (!readOnly && applyMiniFilterWhileTyping) {
-            this.filterOnAllVisibleValues(false);
-        } else {
-            this.updateUiAfterMiniFilterChange();
-        }
+        const { applyMiniFilterWhileTyping, readOnly, excelMode } = this.params;
+
+        const updateSelections = !readOnly && (applyMiniFilterWhileTyping || !!excelMode);
+        const apply = applyMiniFilterWhileTyping && !readOnly ? 'debounce' : undefined;
+
+        this.updateUiAfterMiniFilterChange(updateSelections, apply);
     }
 
-    private updateUiAfterMiniFilterChange(): void {
-        const { excelMode, readOnly } = this.params;
-        if (excelMode == null || !!readOnly) {
-            this.checkAndRefreshVirtualList();
-        } else if (this.miniFilterText == null) {
-            this.resetUiToActiveModel(this.getModel());
-        } else {
+    private updateUiAfterMiniFilterChange(updateSelections: boolean, apply?: 'immediately' | 'debounce'): void {
+        if (updateSelections) {
             this.selectAllMatchingMiniFilter(true);
-            this.checkAndRefreshVirtualList();
-            this.onUiChanged();
+        }
+        this.checkAndRefreshVirtualList();
+        if (updateSelections) {
+            this.onUiChanged(false, apply);
         }
 
         this.showOrHideResults();
@@ -772,15 +767,8 @@ export class SetFilter<V = string>
     private onMiniFilterKeyDown(e: KeyboardEvent): void {
         const { excelMode, readOnly } = this.params;
         if (e.key === KeyCode.ENTER && !excelMode && !readOnly) {
-            this.filterOnAllVisibleValues();
+            this.updateUiAfterMiniFilterChange(true, 'immediately');
         }
-    }
-
-    private filterOnAllVisibleValues(applyImmediately = true): void {
-        this.selectAllMatchingMiniFilter(true);
-        this.checkAndRefreshVirtualList();
-        this.onUiChanged(false, applyImmediately ? 'immediately' : 'debounce');
-        this.showOrHideResults();
     }
 
     private focusRowIfAlive(rowIndex: number | null): Promise<void> {
@@ -878,7 +866,7 @@ export class SetFilter<V = string>
     }
 
     /** Sets mini filter value. Returns true if it changed from last value, otherwise false. */
-    private doSetMiniFilter(value?: string | null): boolean {
+    private doSetMiniFilter(value: string | null | undefined): boolean {
         value = _makeNull(value);
 
         if (this.miniFilterText === value) {
@@ -901,6 +889,12 @@ export class SetFilter<V = string>
         return this.miniFilterText;
     }
 
+    protected override getUiChangeEventParams(): any {
+        return {
+            miniFilterValue: this.miniFilterText,
+        };
+    }
+
     private checkAndRefreshVirtualList() {
         this.virtualList.refresh(!this.hardRefreshVirtualList);
 
@@ -909,18 +903,31 @@ export class SetFilter<V = string>
         }
     }
 
+    /**
+     * @deprecated TODO
+     */
     public getFilterKeys(): SetFilterModelValue {
-        return Array.from(this.evaluator.valueModel.allValues.keys());
+        return this.evaluator.getFilterKeys();
     }
 
+    /**
+     * @deprecated TODO
+     */
     public getFilterValues(): (V | null)[] {
-        return Array.from(this.evaluator.valueModel.allValues.values());
+        return this.evaluator.getFilterValues();
     }
 
+    /**
+     * @deprecated TODO
+     */
     public getValues(): SetFilterModelValue {
         return this.getFilterKeys();
     }
 
+    // just make this private
+    /**
+     * @deprecated TODO
+     */
     public refreshVirtualList(): void {
         if (this.params.refreshValuesOnOpen) {
             this.refreshFilterValues();

@@ -65,7 +65,7 @@ export abstract class ProvidedFilter<
     protected abstract createBodyTemplate(): string;
     protected abstract getAgComponents(): ComponentSelector[];
     protected abstract getCssIdentifier(): string;
-    protected abstract setModelIntoUi(model: M | null, silent?: boolean): AgPromise<void>;
+    protected abstract setModelIntoUi(model: M | null, isInitialLoad?: boolean): AgPromise<void>;
     protected abstract areModelsEqual(a: M, b: M): boolean;
 
     /** Used to get the filter type for filter models. */
@@ -428,7 +428,7 @@ export abstract class ProvidedFilter<
      */
     protected onUiChanged(fromFloatingFilter = false, apply?: 'immediately' | 'debounce' | 'prevent'): void {
         this.updateUiVisibility();
-        this.params.onUiChange();
+        this.params.onUiChange(this.getUiChangeEventParams());
 
         if (this.applyActive && !this.isReadOnly()) {
             const isValid = this.canApply(this.getModelFromUi()!);
@@ -443,6 +443,10 @@ export abstract class ProvidedFilter<
         } else if ((!this.applyActive && !apply) || apply === 'debounce') {
             this.onBtApplyDebounce();
         }
+    }
+
+    protected getUiChangeEventParams(): any {
+        return undefined;
     }
 
     public afterGuiAttached(params?: IAfterGuiAttachedParams): void {

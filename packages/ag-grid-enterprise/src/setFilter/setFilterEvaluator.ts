@@ -1,10 +1,10 @@
 import type {
     AgColumn,
-    AgPromise,
     FilterEvaluator,
     FilterEvaluatorFuncParams,
     FilterEvaluatorParams,
     IRowNode,
+    SetFilterEvaluator as ISetFilterEvaluator,
     ISetFilterParams,
     KeyCreatorParams,
     RowNode,
@@ -32,7 +32,7 @@ export type SetFilterEvaluatorEventType = 'anyFilterChanged' | 'dataChanged' | '
 
 export class SetFilterEvaluator<TValue = string>
     extends BeanStub<SetFilterEvaluatorEventType>
-    implements FilterEvaluator<any, any, SetFilterModel, ISetFilterParams<any, TValue>>
+    implements FilterEvaluator<any, any, SetFilterModel, ISetFilterParams<any, TValue>>, ISetFilterEvaluator<TValue>
 {
     public params: FilterEvaluatorParams<any, any, SetFilterModel, ISetFilterParams<any, TValue>>;
     /**
@@ -194,16 +194,34 @@ export class SetFilterEvaluator<TValue = string>
         this.syncAfterDataChange();
     }
 
-    public resetValues(): void {
+    public setFilterValues(values: (TValue | null)[]): void {
+        this.valueModel.overrideValues(values).then(() => {
+            this.refreshFilterValues();
+        });
+    }
+
+    public resetFilterValues(): void {
         this.valueModel.valuesType = SetFilterModelValuesType.TAKEN_FROM_GRID_VALUES;
         this.syncAfterDataChange();
     }
 
-    public refreshValues(): AgPromise<void> {
-        return this.valueModel.refreshAll().then(() => {
+    public refreshFilterValues(): void {
+        // the model is still being initialised
+        if (!this.valueModel.isInitialised()) {
+            return;
+        }
+        this.valueModel.refreshAll().then(() => {
             this.dispatchLocalEvent({ type: 'dataChanged', hardRefresh: true });
             this.validateModel(this.params);
         });
+    }
+
+    public getFilterKeys(): SetFilterModelValue {
+        return Array.from(this.valueModel.allValues.keys());
+    }
+
+    public getFilterValues(): (TValue | null)[] {
+        return Array.from(this.valueModel.allValues.values());
     }
 
     public isTreeDataOrGrouping(): boolean {

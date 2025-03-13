@@ -89,8 +89,9 @@ export type AgEventTypeParams<TData = any, TContext = any> = BuildEventTypeMap<
         cellMouseOut: CellMouseOutEvent<TData, TContext>;
         filterChanged: FilterChangedEvent<TData, TContext>;
         filterModified: FilterModifiedEvent<TData, TContext>;
+        filterUiChanged: FilterUiChangedEvent<TData, TContext>;
         filterOpened: FilterOpenedEvent<TData, TContext>;
-        floatingFilterModified: FloatingFilterModifiedEvent<TData, TContext>;
+        floatingFilterUiChanged: FloatingFilterUiChangedEvent<TData, TContext>;
         advancedFilterBuilderVisibleChanged: AdvancedFilterBuilderVisibleChangedEvent<TData, TContext>;
         sortChanged: SortChangedEvent<TData, TContext>;
         virtualRowRemoved: VirtualRowRemovedEvent<TData, TContext>;
@@ -375,6 +376,11 @@ export interface FilterModifiedEvent<TData = any, TContext = any>
     column: Column;
 }
 
+export interface FilterUiChangedEvent<TData = any, TContext = any>
+    extends AgGlobalEvent<'filterUiChanged', TData, TContext> {
+    column: Column;
+}
+
 export interface FilterOpenedEvent<TData = any, TContext = any> extends AgGlobalEvent<'filterOpened', TData, TContext> {
     /** Column / ProvidedColumnGroup that contains the filter */
     column: Column | ProvidedColumnGroup;
@@ -384,8 +390,8 @@ export interface FilterOpenedEvent<TData = any, TContext = any> extends AgGlobal
     eGui: HTMLElement;
 }
 
-export interface FloatingFilterModifiedEvent<TData = any, TContext = any>
-    extends AgGlobalEvent<'floatingFilterModified', TData, TContext> {
+export interface FloatingFilterUiChangedEvent<TData = any, TContext = any>
+    extends AgGlobalEvent<'floatingFilterUiChanged', TData, TContext> {
     column: Column;
 }
 

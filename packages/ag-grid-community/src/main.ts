@@ -190,6 +190,9 @@ export {
     SetFilterValuesFunc,
     SetFilterValuesFuncParams,
     ISetFilterTreeListTooltipParams,
+    SetFilterEvaluator,
+    SetFilterUi,
+    SetFilterUiChangedEvent,
 } from './interfaces/iSetFilter';
 export type { FilterManager } from './filter/filterManager';
 export type { FilterValueService } from './filter/filterValueService';
