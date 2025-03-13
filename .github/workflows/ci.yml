@@ -109,10 +109,10 @@ jobs:
           echo "test_count=${count}" >> $GITHUB_OUTPUT
           echo "Test matrix determined to be: ${matrix}"
 
-          e2e_count=$(yarn -s nx show projects --affected --base ${{ steps.setup.outputs.base }} -t test:e2e | wc -l)
+          # only ag-grid-module-size is the only e2e to shard - and 3 is optimal atm for it
+          e2e_count=3
 
-  node ./scripts/test/calculate-shards.js eval --ratio 1 --zero 3 --max 1
-          e2e_matrix=$(node ./scripts/test/calculate-shards.js eval --ratio 1 --zero ${e2e_count} --max 1)
+          e2e_matrix=$(node ./scripts/test/calculate-shards.js eval --ratio 1 --zero ${e2e_count})
           echo "e2e_test_matrix=${e2e_matrix}" >> $GITHUB_OUTPUT
           echo "e2e_test_count=${e2e_count}" >> $GITHUB_OUTPUT
           echo "e2e Test matrix determined to be: ${e2e_matrix}"
