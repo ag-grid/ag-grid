@@ -6,6 +6,7 @@
     "dev": "vite",
     "cp-app": "cp ./src/App_src.tsx ./src/App_AUTO.tsx",
     "build-app": "vite build",
+    "build": "run-s cp-app build-app",
     "preview": "vite preview",
     "module-combinations": "ts-node moduleCombinations.ts",
     "module-stats": "ts-node moduleCombinations.ts && npm run module-validate",
