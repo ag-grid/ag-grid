@@ -1,9 +1,12 @@
 import type { ICellRenderer, ICellRendererParams } from 'ag-grid-community';
-import { Component, _clearElement, _escapeString } from 'ag-grid-community';
+import { Component, _clearElement, _escapeString, _span } from 'ag-grid-community';
 
+const FindCellRendererElement = _span({
+    cls: 'ag-find-cell',
+});
 export class FindCellRenderer extends Component implements ICellRenderer {
     constructor() {
-        super(/* html */ `<span class="ag-find-cell"></span>`);
+        super(FindCellRendererElement);
     }
 
     public init(params: ICellRendererParams): void {
