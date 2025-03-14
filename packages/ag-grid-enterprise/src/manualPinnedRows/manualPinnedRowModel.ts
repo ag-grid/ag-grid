@@ -14,7 +14,7 @@ import {
 } from 'ag-grid-community';
 
 import { _createRowNodeSibling } from '../misc/rowNodeSiblingUtils';
-import { PinnedRows } from './manualPinnedRowUtils';
+import { PinnedRows, _isDisplayedAfterFilter } from './manualPinnedRowUtils';
 
 export class ManualPinnedRowModel extends BeanStub implements IPinnedRowModel {
     private top: PinnedRows;
@@ -24,12 +24,7 @@ export class ManualPinnedRowModel extends BeanStub implements IPinnedRowModel {
         this.top = new PinnedRows(this.beans);
         this.bottom = new PinnedRows(this.beans);
 
-        const filterManager = this.beans.filterManager;
-        const hideFilteredNodes = (node: RowNode) =>
-            filterManager
-                ? !filterManager.doesRowPassFilter({ rowNode: node }) ||
-                  !filterManager.doesRowPassAggregateFilters({ rowNode: node })
-                : false;
+        const hideFilteredNodes = (node: RowNode) => !_isDisplayedAfterFilter(node.pinnedSibling!);
 
         this.addManagedEventListeners({
             gridStylesChanged: this.onGridStylesChanges.bind(this),

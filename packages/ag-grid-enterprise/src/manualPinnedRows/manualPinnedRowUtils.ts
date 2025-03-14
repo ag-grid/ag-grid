@@ -84,3 +84,15 @@ export class PinnedRows {
         this.queued.forEach(fn);
     }
 }
+
+export function _isDisplayedAfterFilter(node: RowNode): boolean {
+    if (node.level === -1) return true;
+
+    const parent = node.parent;
+
+    if (parent?.childrenAfterSort?.some((child) => child == node)) {
+        return _isDisplayedAfterFilter(parent);
+    }
+
+    return false;
+}
