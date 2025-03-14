@@ -1,5 +1,5 @@
 import type { BeanCollection, RowNode } from 'ag-grid-community';
-import { _removeFromArray } from 'ag-grid-community';
+import { _isServerSideRowModel, _removeFromArray } from 'ag-grid-community';
 
 export class PinnedRows {
     /** Canonical set of pinned nodes */
@@ -53,8 +53,9 @@ export class PinnedRows {
     }
 
     public clear(): void {
-        const { all, visible, order } = this;
+        const { all, visible, order, queued } = this;
         all.clear();
+        queued.clear();
         visible.clear();
         order.length = 0;
     }
@@ -85,13 +86,39 @@ export class PinnedRows {
     }
 }
 
-export function _isDisplayedAfterFilter(node: RowNode): boolean {
+/**
+ * Recursively check the parent node's `childrenAfterSort`.
+ * For CSRM, this is currently the "least bad" way to check whether a node is
+ * displayed after filtering, accounting for both normal filters and aggregate filters.
+ */
+function _isDisplayedAfterFilterCSRM(node: RowNode): boolean {
     if (node.level === -1) return true;
 
     const parent = node.parent;
 
     if (parent?.childrenAfterSort?.some((child) => child == node)) {
-        return _isDisplayedAfterFilter(parent);
+        _isDisplayedAfterFilterCSRM(parent);
+    }
+
+    return false;
+}
+
+/** Expect to be passed the source node, not the pinned node */
+export function _shouldHidePinnedRows(beans: BeanCollection, node: RowNode): boolean {
+    const { gos, rowModel, filterManager } = beans;
+
+    if (_isServerSideRowModel(gos, rowModel)) {
+        // For SSRM the best we can do for now is check if the node is in the cache.
+        // This will let us display the node when a group is collapsed.
+        return !rowModel.getRowNode(node.id!);
+    }
+
+    if (filterManager?.isAnyFilterPresent()) {
+        return !_isDisplayedAfterFilterCSRM(node);
+    }
+
+    if (gos.get('pivotMode')) {
+        return !node.group;
     }
 
     return false;

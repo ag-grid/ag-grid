@@ -14,7 +14,7 @@ import {
 } from 'ag-grid-community';
 
 import { _createRowNodeSibling } from '../misc/rowNodeSiblingUtils';
-import { PinnedRows, _isDisplayedAfterFilter } from './manualPinnedRowUtils';
+import { PinnedRows, _shouldHidePinnedRows } from './manualPinnedRowUtils';
 
 export class ManualPinnedRowModel extends BeanStub implements IPinnedRowModel {
     private top: PinnedRows;
@@ -24,14 +24,14 @@ export class ManualPinnedRowModel extends BeanStub implements IPinnedRowModel {
         this.top = new PinnedRows(this.beans);
         this.bottom = new PinnedRows(this.beans);
 
-        const hideFilteredNodes = (node: RowNode) => !_isDisplayedAfterFilter(node.pinnedSibling!);
+        const shouldHide = (node: RowNode) => _shouldHidePinnedRows(this.beans, node.pinnedSibling!);
 
         this.addManagedEventListeners({
             gridStylesChanged: this.onGridStylesChanges.bind(this),
             modelUpdated: () => {
                 this.tryToEmptyQueues();
                 this.forContainers((container) => {
-                    container.hide(hideFilteredNodes);
+                    container.hide(shouldHide);
                     container.sort();
                 });
                 this.refreshRowPositions();
@@ -42,9 +42,8 @@ export class ManualPinnedRowModel extends BeanStub implements IPinnedRowModel {
             },
         });
 
-        this.addManagedPropertyListener('pivotMode', (event) => {
-            const hideLeaves = (node: RowNode) => (event.currentValue ? !node.group : false);
-            this.forContainers((container) => container.hide(hideLeaves));
+        this.addManagedPropertyListener('pivotMode', () => {
+            this.forContainers((container) => container.hide(shouldHide));
             this.dispatchRowPinnedEvents();
         });
     }
