@@ -63,7 +63,7 @@ export const AllEnterpriseModules: Record<`${EnterpriseModuleName}Module`, numbe
     GridChartsModule: 67,
     IntegratedChartsModule: 385.33,
     GroupFilterModule: 93,
-    ManualPinnedRowModule: 0,
+    ManualPinnedRowModule: 475.21,
     MasterDetailModule: 82,
     MenuModule: 153,
     MultiFilterModule: 121,
