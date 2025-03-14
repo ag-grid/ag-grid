@@ -41,14 +41,14 @@ export class ToolPanelColumnGroupComp extends Component {
     private eDragHandle: Element;
 
     public readonly columnGroup: AgProvidedColumnGroup;
-    private readonly columnDepth: number;
+    public readonly columnDepth: number;
 
     private readonly displayName: string | null;
     private processingColumnStateChange = false;
     private tooltipFeature?: TooltipFeature;
 
     constructor(
-        private readonly modelItem: ColumnModelItem,
+        public readonly modelItem: ColumnModelItem,
         private readonly allowDragging: boolean,
         private readonly eventType: ColumnEventType,
         private readonly focusWrapper: HTMLElement
@@ -74,16 +74,7 @@ export class ToolPanelColumnGroupComp extends Component {
             [AgCheckboxSelector]
         );
 
-        const {
-            beans,
-            cbSelect,
-            eLabel,
-            displayName,
-            columnDepth: columnDept,
-            modelItem,
-            focusWrapper,
-            columnGroup,
-        } = this;
+        const { beans, cbSelect, eLabel, displayName, columnDepth, modelItem, focusWrapper, columnGroup } = this;
         const { registry, gos } = beans;
 
         const eDragHandle = _createIconNoSpan('columnDrag', beans)!;
@@ -99,8 +90,8 @@ export class ToolPanelColumnGroupComp extends Component {
         eLabel.innerHTML = displayName ?? '';
         this.setupExpandContract();
 
-        this.addCssClass('ag-column-select-indent-' + columnDept);
-        this.getGui().style.setProperty('--ag-indentation-level', String(columnDept));
+        this.addCssClass('ag-column-select-indent-' + columnDepth);
+        this.getGui().style.setProperty('--ag-indentation-level', String(columnDepth));
 
         this.tooltipFeature = this.createOptionalManagedBean(
             registry.createDynamicBean<TooltipFeature>('tooltipFeature', false, {

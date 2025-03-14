@@ -4,6 +4,9 @@
     vertical-align: baseline;
 
     tr {
+        display: flex;
+        justify-content: space-between;
+        gap: $spacing-size-10;
         transition: background-color $transition-default-timing;
 
         &:hover {
@@ -15,8 +18,12 @@
         }
     }
 
-    td:nth-child(n + 2) {
-        text-align: right;
+    a span {
+        margin-right: $spacing-size-2;
+
+        @media screen and (max-width: 620px) {
+            display: none;
+        }
     }
 
     svg {
@@ -40,11 +47,26 @@
         }
     }
 
-    .versionType {
+    .versionType span {
         margin-right: -8px;
         padding: 2px 8px;
         border-radius: var(--radius-4xl);
         border: 1px solid var(--color-logo-orange);
         color: var(--color-logo-orange);
+    }
+}
+
+.versionType,
+.changelog {
+    @media screen and (max-width: 540px) {
+        display: none;
+    }
+}
+
+.dateCol {
+    margin-right: auto;
+
+    @media screen and (max-width: 820px) {
+        display: none;
     }
 }

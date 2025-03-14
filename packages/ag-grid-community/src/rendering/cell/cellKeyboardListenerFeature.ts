@@ -125,7 +125,7 @@ export class CellKeyboardListenerFeature extends BeanStub {
     private onEnterKeyDown(e: KeyboardEvent): void {
         const { cellCtrl, beans } = this;
         if (cellCtrl.editing || this.rowCtrl.editing) {
-            cellCtrl.stopEditingAndFocus(false, e.shiftKey);
+            this.beans.editSvc?.stopRowOrCellEdit(cellCtrl, false, false, e.shiftKey);
         } else {
             if (beans.gos.get('enterNavigatesVertically')) {
                 const key = e.shiftKey ? KeyCode.UP : KeyCode.DOWN;
@@ -155,7 +155,6 @@ export class CellKeyboardListenerFeature extends BeanStub {
         const { cellCtrl, beans } = this;
         if (cellCtrl.editing) {
             beans.editSvc?.stopRowOrCellEdit(cellCtrl, true);
-            cellCtrl.focusCell(true);
         }
     }
 

@@ -116,6 +116,36 @@ alongside a custom theme, and are unaffected by the settings in the custom theme
 
 {% gridExampleRunner title="Custom Chart Theme" name="custom-chart-theme"  exampleHeight=660 /%}
 
+## Label Formatting
+
+Custom label formatting can also be applied to the chart axes. This can be done by providing a suitable formatter.
+
+```{% frameworkTransform=true spaceBetweenProperties=true %}
+const gridOptions = {
+    chartThemeOverrides: {
+        common: {
+            axes: {
+                number: {
+                    label: {
+                        formatter: function(params) {
+                            // prefix with dollar sign
+                            return '$' + params.value;
+                        },
+                    },
+                },
+            },
+        },
+    },
+}
+```
+
+The example below shows:
+* A custom label formatter being used with the vertical axis to display SI units for the data. Additionally,
+this example demonstrates the use of the `domain` property passed through to the formatter to provide a consistent scale across the value range.
+* A custom title formatter using `boundSeries` property passed through to the formatter for the vertical axis to display which series the axes are representing.
+
+{% gridExampleRunner title="Label Formatting" name="label-formatting"  exampleHeight=660 /%}
+
 ## Next Up
 
 Continue to the next section to learn about [Chart Events](./integrated-charts-events/).

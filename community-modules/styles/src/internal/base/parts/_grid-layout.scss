@@ -125,36 +125,33 @@
         }
     }
 
-    .ag-row-selected::before {
-        content: '';
-        background-color: var(--ag-selected-row-background-color);
-        display: block;
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-    }
-
-    .ag-row-hover:not(.ag-full-width-row)::before,
-    .ag-row-hover.ag-full-width-row.ag-row-group::before {
-        // add a background on hover - use an absolutely positioned rectangle instead of
-        // a `background-color` so that `--ag-row-hover-color: transparent` doesn't remove
-        // an existing background color
+    // Add a background on hover - use an absolutely positioned rectangle instead of
+    // a `background-color` so that `--ag-row-hover-color: transparent` doesn't remove
+    // an existing background color. Always create the pseudo-element, and show it on
+    // demand, to improve rendering performance on hover
+    .ag-row::before {
         content: '';
         background-color: var(--ag-row-hover-color);
         display: block;
         position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
+        inset: 0;
         pointer-events: none;
+        visibility: hidden;
+    }
+
+    .ag-row-hover:not(.ag-full-width-row)::before,
+    .ag-row-hover.ag-full-width-row.ag-row-group::before {
+        visibility: visible;
+    }
+
+    .ag-row-selected::before {
+        visibility: visible;
+        background-color: var(--ag-selected-row-background-color);
     }
 
     // Default the content position to relative so that it doesn't
     // appear under the background
-    .ag-row-hover.ag-full-width-row.ag-row-group > * {
+    .ag-row.ag-full-width-row.ag-row-group > * {
         position: relative;
     }
 

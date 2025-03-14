@@ -7,7 +7,6 @@ import type { BeanCollection } from './context/context';
 import type { AgColumn } from './entities/agColumn';
 import type { AgColumnGroup } from './entities/agColumnGroup';
 import { _areCellsEqual, _getFirstRow, _getLastRow, _getRowNode } from './entities/positionUtils';
-import type { RowNode } from './entities/rowNode';
 import type { CellFocusedParams, CommonCellFocusParams } from './events';
 import type { FilterManager } from './filter/filterManager';
 import { _getActiveDomElement, _getDomData } from './gridOptionsUtils';
@@ -24,7 +23,6 @@ import type { NavigationService } from './navigation/navigationService';
 import type { OverlayService } from './rendering/overlays/overlayService';
 import { DOM_DATA_KEY_ROW_CTRL } from './rendering/row/rowCtrl';
 import type { RowRenderer } from './rendering/rowRenderer';
-import type { CellSpan } from './rendering/spanning/rowSpanCache';
 import { _last } from './utils/array';
 import {
     _focusInto,
@@ -55,12 +53,11 @@ export class FocusService extends BeanStub implements NamedBean {
     }
 
     private focusedCell: CellPosition | null;
-    private restoredFocusedCell: CellPosition | null;
     public focusedHeader: HeaderPosition | null;
     /** the column that had focus before it moved into the advanced filter */
     private advFilterFocusColumn: AgColumn | undefined;
-
-    private awaitRestoreFocusedCell: boolean;
+    /** If a cell was destroyed that previously had focus, focus needs restored when the cell reappears */
+    public needsFocusRestored = false;
 
     public postConstruct(): void {
         const clearFocusedCellListener = this.clearFocusedCell.bind(this);
@@ -73,6 +70,25 @@ export class FocusService extends BeanStub implements NamedBean {
         });
 
         this.addDestroyFunc(_registerKeyboardFocusEvents(this.beans));
+    }
+
+    /**
+     * Specifies whether to take focus, as grid either already has focus, or lost it due
+     * to a destroyed cell
+     * @returns true if the grid should re-take focus, otherwise false
+     */
+    public shouldTakeFocus(): boolean {
+        if (this.gos.get('suppressFocusAfterRefresh')) {
+            this.needsFocusRestored = false;
+            return false;
+        }
+
+        if (this.needsFocusRestored) {
+            this.needsFocusRestored = false;
+            return true;
+        }
+
+        return !this.isDomDataMissingInHierarchy(_getActiveDomElement(this.beans), DOM_DATA_KEY_ROW_CTRL);
     }
 
     public onColumnEverythingChanged(): void {
@@ -146,57 +162,6 @@ export class FocusService extends BeanStub implements NamedBean {
         return this.focusedCell;
     }
 
-    public shouldRestoreFocus(cell: CellPosition | CellSpan): boolean {
-        if (this.isCellRestoreFocused(cell)) {
-            setTimeout(() => {
-                // Clear the restore focused cell position after the timeout to avoid
-                // the cell being focused again and stealing focus from another part of the app.
-                this.restoredFocusedCell = null;
-            }, 0);
-            return true;
-        }
-        return false;
-    }
-
-    public clearRestoreFocus(): void {
-        this.restoredFocusedCell = null;
-        this.awaitRestoreFocusedCell = false;
-    }
-
-    public restoreFocusedCell(cellPosition: CellPosition, setFocusCallback: () => void): void {
-        this.awaitRestoreFocusedCell = true;
-
-        // this should be done asynchronously to work with React Renderers.
-        setTimeout(() => {
-            // if the cell has lost focus (react events are async), we don't want to restore
-            if (!this.awaitRestoreFocusedCell) {
-                return;
-            }
-            this.setRestoreFocusedCell(cellPosition);
-
-            setFocusCallback();
-        });
-    }
-
-    private isCellRestoreFocused(cellPosition: CellPosition | CellSpan): boolean {
-        if (this.restoredFocusedCell == null) {
-            return false;
-        }
-
-        if ('cellSpan' in cellPosition) {
-            return cellPosition.doesSpanContain(this.restoredFocusedCell);
-        }
-        return _areCellsEqual(cellPosition, this.restoredFocusedCell);
-    }
-
-    public setRestoreFocusedCell(cellPosition: CellPosition): void {
-        if (this.beans.frameworkOverrides.renderingEngine === 'react') {
-            // The restoredFocusedCellPosition is used in the React Rendering engine as we have to be able
-            // to support restoring focus after an async rendering.
-            this.restoredFocusedCell = cellPosition;
-        }
-    }
-
     private getFocusEventParams(focusedCellPosition: CellPosition): CommonCellFocusParams {
         const { rowIndex, rowPinned, column } = focusedCellPosition;
 
@@ -217,7 +182,6 @@ export class FocusService extends BeanStub implements NamedBean {
     }
 
     public clearFocusedCell(): void {
-        this.restoredFocusedCell = null;
         if (this.focusedCell == null) {
             return;
         }
@@ -265,10 +229,6 @@ export class FocusService extends BeanStub implements NamedBean {
         }
 
         return _areCellsEqual(cellPosition, this.focusedCell);
-    }
-
-    public isRowNodeFocused(rowNode: RowNode): boolean {
-        return this.isRowFocused(rowNode.rowIndex!, rowNode.rowPinned);
     }
 
     public isHeaderWrapperFocused(headerCtrl: HeaderCellCtrl): boolean {

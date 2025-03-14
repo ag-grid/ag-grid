@@ -1,3 +1,5 @@
+import type { AgFillType } from 'ag-charts-types';
+
 import type { BeanCollection, ChartGroupsDef, ChartType } from 'ag-grid-community';
 import { Component, KeyCode, _setAriaLabel, _warn } from 'ag-grid-community';
 
@@ -150,7 +152,7 @@ export class MiniChartsContainer extends Component {
         this.chartTranslation = beans.chartTranslation as ChartTranslationService;
     }
 
-    private readonly fills: string[];
+    private readonly fills: AgFillType[];
     private readonly strokes: string[];
     private readonly isCustomTheme: boolean;
     private wrappers: Map<ChartType, HTMLElement> = new Map();
@@ -160,7 +162,7 @@ export class MiniChartsContainer extends Component {
 
     constructor(
         chartController: ChartController,
-        fills: string[],
+        fills: AgFillType[],
         strokes: string[],
         isCustomTheme: boolean,
         chartGroups: ChartGroupsDef = DEFAULT_CHART_GROUPS

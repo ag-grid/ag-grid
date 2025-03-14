@@ -134,15 +134,6 @@ export class EditService extends BeanStub implements NamedBean {
         }
     }
 
-    public stopEditingAndFocus(cellCtrl: CellCtrl, suppressNavigateAfterEdit = false, shiftKey: boolean = false): void {
-        this.stopRowOrCellEdit(cellCtrl);
-        cellCtrl.focusCell(true);
-
-        if (!suppressNavigateAfterEdit) {
-            this.navigateAfterEdit(shiftKey, cellCtrl.cellPosition);
-        }
-    }
-
     public createPopupEditorWrapper(params: ICellEditorParams): PopupEditorWrapper {
         return new PopupEditorWrapper(params);
     }
@@ -271,11 +262,20 @@ export class EditService extends BeanStub implements NamedBean {
     }
 
     // pass in 'true' to cancel the editing.
-    public stopRowOrCellEdit(cellCtrl: CellCtrl, cancel: boolean = false) {
+    public stopRowOrCellEdit(
+        cellCtrl: CellCtrl,
+        cancel: boolean = false,
+        suppressNavigateAfterEdit: boolean = false,
+        shiftKey: boolean = false
+    ): void {
         if (this.gos.get('editType') === 'fullRow') {
             this.stopRowEditing(cellCtrl.rowCtrl, cancel);
         } else {
             this.stopEditing(cellCtrl, cancel);
+        }
+
+        if (!suppressNavigateAfterEdit) {
+            this.navigateAfterEdit(shiftKey, cellCtrl.cellPosition);
         }
     }
 
@@ -300,7 +300,7 @@ export class EditService extends BeanStub implements NamedBean {
             data: rowNode.data,
             cellStartedEdit: cellStartedEdit,
             onKeyDown: cellCtrl.onKeyDown.bind(cellCtrl),
-            stopEditing: cellCtrl.stopEditingAndFocus.bind(cellCtrl),
+            stopEditing: this.stopRowOrCellEdit.bind(this, cellCtrl, false),
             eGridCell: cellCtrl.eGui,
             parseValue: (newValue: any) => valueSvc.parseValue(column, rowNode, newValue, cellCtrl.value),
             formatValue: cellCtrl.formatValue.bind(cellCtrl),

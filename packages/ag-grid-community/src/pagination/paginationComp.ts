@@ -258,7 +258,7 @@ export class PaginationComp extends TabGuardComp implements FocusableContainer {
             const firstRow = this.rowModel.getRow(0);
 
             // a group node with no group or agg data will not be visible to users
-            const hiddenGroupRow = firstRow && firstRow.group && !(firstRow.groupData || firstRow.aggData);
+            const hiddenGroupRow = firstRow?.level === -1;
             if (hiddenGroupRow) {
                 this.setTotalLabelsToZero();
                 return;

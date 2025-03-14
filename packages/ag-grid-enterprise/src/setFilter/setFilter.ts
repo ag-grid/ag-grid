@@ -26,6 +26,7 @@ import {
     RefPlaceholder,
     _areEqual,
     _createIconNoSpan,
+    _debounce,
     _error,
     _getActiveDomElement,
     _last,
@@ -450,11 +451,12 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
             this.syncAfterDataChange();
         });
 
+        const syncAfterDataChangeDebounced = _debounce(this, this.syncAfterDataChange.bind(this), 0);
         this.addManagedEventListeners({
             cellValueChanged: (event) => {
                 // only interested in changes to do with this column
                 if (event.column === this.setFilterParams.column) {
-                    this.syncAfterDataChange();
+                    syncAfterDataChangeDebounced();
                 }
             },
         });

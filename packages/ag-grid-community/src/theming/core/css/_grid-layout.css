@@ -222,26 +222,28 @@
     background-color: var(--ag-odd-row-background-color);
 }
 
-/* row selection and hover colors are added on a ::before pseudo element so
-      that they overlay on top of the alternating row backgrounds rather than
-      replacing them */
-.ag-row-selected::before {
-    content: '';
-    background-color: var(--ag-selected-row-background-color);
-    display: block;
-    position: absolute;
-    inset: 0;
-    pointer-events: none;
-}
-
-.ag-row-hover:not(.ag-full-width-row)::before,
-.ag-row-hover.ag-full-width-row.ag-row-group::before {
+/* Row selection and hover colors are added on a ::before pseudo element so that
+      they overlay on top of the alternating row backgrounds rather than
+      replacing them. Always create the pseudo-element, and show it on demand,
+      to improve rendering performance on hover */
+.ag-row::before {
     content: '';
     background-color: var(--ag-row-hover-color);
     display: block;
     position: absolute;
     inset: 0;
     pointer-events: none;
+    visibility: hidden;
+}
+
+.ag-row-hover:not(.ag-full-width-row)::before,
+.ag-row-hover.ag-full-width-row.ag-row-group::before {
+    visibility: visible;
+}
+
+.ag-row-selected::before {
+    visibility: hidden;
+    background-color: var(--ag-selected-row-background-color);
 }
 
 .ag-row-hover.ag-row-selected::before {
@@ -253,7 +255,7 @@
 }
 
 /* Default the content position to relative so that it doesn't appear under the background */
-.ag-row-hover.ag-full-width-row.ag-row-group > * {
+.ag-row.ag-full-width-row.ag-row-group > * {
     position: relative;
 }
 
