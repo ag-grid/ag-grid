@@ -361,8 +361,8 @@ export class ColumnGroupService extends BeanStub implements NamedBean {
 
     public balanceColumnTree(
         unbalancedTree: (AgColumn | AgProvidedColumnGroup)[],
-        currentDept: number,
-        columnDept: number,
+        currentDepth: number,
+        columnDepth: number,
         columnKeyCreator: ColumnKeyCreator
     ): (AgColumn | AgProvidedColumnGroup)[] {
         const result: (AgColumn | AgProvidedColumnGroup)[] = [];
@@ -376,8 +376,8 @@ export class ColumnGroupService extends BeanStub implements NamedBean {
                 const originalGroup = child;
                 const newChildren = this.balanceColumnTree(
                     originalGroup.getChildren(),
-                    currentDept + 1,
-                    columnDept,
+                    currentDepth + 1,
+                    columnDepth,
                     columnKeyCreator
                 );
                 originalGroup.setChildren(newChildren);
@@ -388,11 +388,11 @@ export class ColumnGroupService extends BeanStub implements NamedBean {
                 let currentPaddedGroup: AgProvidedColumnGroup | undefined;
 
                 // this for loop will NOT run any loops if no padded column groups are needed
-                for (let j = columnDept - 1; j >= currentDept; j--) {
+                for (let j = columnDepth - 1; j >= currentDepth; j--) {
                     const newColId = columnKeyCreator.getUniqueKey(null, null);
                     const colGroupDefMerged = this.createMergedColGroupDef(null, newColId);
 
-                    const paddedGroup = new AgProvidedColumnGroup(colGroupDefMerged, newColId, true, currentDept);
+                    const paddedGroup = new AgProvidedColumnGroup(colGroupDefMerged, newColId, true, currentDepth);
                     this.createBean(paddedGroup);
 
                     if (currentPaddedGroup) {

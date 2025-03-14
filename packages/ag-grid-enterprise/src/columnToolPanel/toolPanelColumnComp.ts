@@ -24,14 +24,14 @@ export class ToolPanelColumnComp extends Component {
     private readonly cbSelect: AgCheckbox = RefPlaceholder;
 
     public readonly column: AgColumn;
-    private readonly columnDept: number;
+    public readonly columnDepth: number;
     private eDragHandle: Element;
     private readonly displayName: string | null;
     private processingColumnStateChange = false;
     private tooltipFeature?: TooltipFeature;
 
     constructor(
-        modelItem: ColumnModelItem,
+        public modelItem: ColumnModelItem,
         private readonly allowDragging: boolean,
         private readonly groupsExist: boolean,
         private readonly focusWrapper: HTMLElement
@@ -39,7 +39,7 @@ export class ToolPanelColumnComp extends Component {
         super();
         const { column, depth, displayName } = modelItem;
         this.column = column;
-        this.columnDept = depth;
+        this.columnDepth = depth;
         this.displayName = displayName;
     }
 
@@ -57,7 +57,7 @@ export class ToolPanelColumnComp extends Component {
             cbSelect,
             displayName,
             eLabel,
-            columnDept: indent,
+            columnDepth: indent,
             groupsExist,
             column,
             gos,

@@ -64,16 +64,6 @@ export class SpannedCellCtrl extends CellCtrl {
         _setAriaRowSpan(this.eGui, this.cellSpan.spannedNodes.size);
     }
 
-    public override shouldRestoreFocus(): boolean {
-        // Used in React to determine if the cell should restore focus after re-rendering
-        return this.beans.focusSvc.shouldRestoreFocus(this.cellSpan);
-    }
-
-    public override onFocusOut(): void {
-        this.focusedCellPosition = undefined;
-        super.onFocusOut();
-    }
-
     // not ideal, for tabbing need to force the focused position
     public override setFocusedCellPosition(cellPos: CellPosition): void {
         this.focusedCellPosition = cellPos;
@@ -83,7 +73,7 @@ export class SpannedCellCtrl extends CellCtrl {
         return this.focusedCellPosition ?? this.cellPosition;
     }
 
-    protected override isCellFocused(): boolean {
+    public override isCellFocused(): boolean {
         const focusedCell = this.beans.focusSvc.getFocusedCell();
         return !!focusedCell && this.cellSpan.doesSpanContain(focusedCell);
     }
