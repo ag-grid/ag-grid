@@ -1,4 +1,4 @@
-import { moduleCombinations } from './moduleDefinitions';
+import {baseModule, moduleCombinations} from './moduleDefinitions';
 
 const fs = require('fs');
 const { exec } = require('child_process');
@@ -8,7 +8,6 @@ const results: { modules: string[]; expectedSize: number; selfSize: number; file
 const updateModulesScript = path.join(__dirname, 'moduleUpdater.ts');
 let baseSize = 0;
 
-console.log(process.argv.length, process.argv);
 let moduleCombinationsToProcess = moduleCombinations;
 
 const chard = process.argv.filter((arg) => arg.startsWith('--shard'));
@@ -20,7 +19,7 @@ if (chard && chard.length > 0) {
 
     console.log('*************************');
     console.log('* Running in shard mode *');
-    console.log(`* Shard 1${currentShard} / ${shards}           *`);
+    console.log(`* Shard ${currentShard} / ${shards}           *`);
     console.log('*************************');
 
     const segmentSize = Math.ceil(moduleCombinations.length / shards);
@@ -29,6 +28,10 @@ if (chard && chard.length > 0) {
     const endIndex = startIndex + segmentSize;
     moduleCombinationsToProcess = moduleCombinations.slice(startIndex, endIndex);
 }
+
+// the base module determines the size of the app with no modules
+// we want this to be included in every run so that we can calculate the size of each module againts this base size
+moduleCombinationsToProcess.unshift(baseModule);
 
 function runCombination(index) {
     if (index >= moduleCombinationsToProcess.length) {
