@@ -188,6 +188,12 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => {
         },
         isRowPinnable: {
             module: 'ManualPinnedRow',
+            validate({ isRowPinnable, pinnedTopRowData, pinnedBottomRowData }) {
+                if (isRowPinnable && (pinnedTopRowData || pinnedBottomRowData)) {
+                    return 'Manual row pinning cannot be used together with pinned row data. Either remove `isRowPinnable`, or remove `pinnedTopRowData` and `pinnedBottomRowData`.';
+                }
+                return null;
+            },
         },
         findSearchValue: {
             module: 'Find',
