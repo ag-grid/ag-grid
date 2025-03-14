@@ -24,6 +24,10 @@ export class PinnedRowModel extends BeanStub implements NamedBean, IPinnedRowMod
         initialiseRowModel();
     }
 
+    public reset(): void {
+        return this.inner.reset();
+    }
+
     public isEmpty(container: NonNullable<RowPinnedType>): boolean {
         return this.inner.isEmpty(container);
     }

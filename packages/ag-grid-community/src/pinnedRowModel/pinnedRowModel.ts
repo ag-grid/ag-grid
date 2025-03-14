@@ -33,6 +33,10 @@ export class PinnedRowModel extends BeanStub implements NamedBean, IPinnedRowMod
         this.addManagedEventListeners({ gridStylesChanged: this.onGridStylesChanges.bind(this) });
     }
 
+    public reset(): void {
+        // do nothing
+    }
+
     public isEmpty(floating: RowPinnedType): boolean {
         return this.getCache(floating).order.length === 0;
     }

@@ -333,8 +333,15 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
                 // no need to invalidate cache, as the cache is stored on the rowNode,
                 // so new rowNodes means the cache is wiped anyway.
 
+                const { selectionSvc, pinnedRowModel } = this.beans;
+
                 // - clears selection, done before we set row data to ensure it isn't readded via `selectionSvc.syncInOldRowNode`
-                this.beans.selectionSvc?.reset('rowDataChanged');
+                selectionSvc?.reset('rowDataChanged');
+
+                // only clear pinned rows if using manual pinning
+                if (pinnedRowModel?.isManual()) {
+                    pinnedRowModel.reset();
+                }
 
                 this.rowNodesCountReady = true;
                 nodeManager.setNewRowData(newRowData);

@@ -4,6 +4,8 @@ import type { RowPinningState } from './gridState';
 import type { RowPinnedType } from './iRowNode';
 
 export interface IPinnedRowModel {
+    reset(): void;
+
     pinRow(node: RowNode, container: RowPinnedType, column?: AgColumn | null): void;
 
     isManual(): boolean;
