@@ -57,15 +57,18 @@ export class ManualPinnedRowModel extends BeanStub implements IPinnedRowModel {
     }
 
     public override destroy(): void {
-        this.reset();
+        this.reset(false);
         super.destroy();
     }
 
-    public reset(): void {
+    public reset(dispatch = true): void {
         this.forContainers((container) => {
             container.forEach(_destroyRowNodeSibling);
             container.clear();
         });
+        if (dispatch) {
+            this.dispatchRowPinnedEvents();
+        }
     }
 
     public pinRow(rowNode: RowNode, container: RowPinnedType, column?: AgColumn | null): void {
