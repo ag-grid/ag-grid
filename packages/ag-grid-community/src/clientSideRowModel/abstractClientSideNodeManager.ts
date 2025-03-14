@@ -176,6 +176,9 @@ export abstract class AbstractClientSideNodeManager<TData = any>
                 if (node.isSelected()) {
                     nodesToUnselect.push(node);
                 }
+                if (node.pinnedSibling) {
+                    this.beans.pinnedRowModel?.pinRow(node.pinnedSibling, null);
+                }
                 this.rowNodeDeleted(node);
                 changedRowNodes.remove(node);
             }
