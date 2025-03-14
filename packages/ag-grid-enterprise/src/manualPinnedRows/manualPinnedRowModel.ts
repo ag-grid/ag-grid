@@ -40,6 +40,14 @@ export class ManualPinnedRowModel extends BeanStub implements IPinnedRowModel {
                 this.forContainers(removeGroupRows);
                 this.refreshRowPositions();
             },
+            rowNodeDataChanged: ({ node }) => {
+                const isRowPinnable = this.gos.get('isRowPinnable');
+                const pinnable = isRowPinnable?.(node) ?? true;
+
+                if (!pinnable) {
+                    this.pinRow(node, null);
+                }
+            },
         });
 
         this.addManagedPropertyListener('pivotMode', () => {
