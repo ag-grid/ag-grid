@@ -9,14 +9,13 @@ import type { CellCtrl, CellCtrlInstanceId } from '../cell/cellCtrl';
 import type { ICellRendererComp } from '../cellRenderers/iCellRenderer';
 import type { IRowComp, RowCtrl } from './rowCtrl';
 
-const RowCompElement = _div({ attrs: { role: 'row' } });
 export class RowComp extends Component {
     private fullWidthCellRenderer: ICellRendererComp | null | undefined;
 
     private rowCtrl: RowCtrl;
 
     private domOrder: boolean;
-    private cellComps: { [key: CellCtrlInstanceId]: CellComp | null } = {};
+    private cellComps: Map<CellCtrlInstanceId, CellComp | null> = new Map();
 
     constructor(ctrl: RowCtrl, beans: BeanCollection, containerType: RowContainerType) {
         super();
@@ -24,8 +23,7 @@ export class RowComp extends Component {
         this.beans = beans;
         this.rowCtrl = ctrl;
 
-        const rowDiv = _createElement(RowCompElement);
-        rowDiv.setAttribute('comp-id', `${this.getCompId()}`);
+        const rowDiv = _createElement(_div({ attrs: { role: 'row', 'comp-id': `${this.getCompId()}` } }));
         this.setInitialStyle(rowDiv, containerType);
         this.setTemplateFromElement(rowDiv);
 
@@ -85,20 +83,19 @@ export class RowComp extends Component {
     }
 
     private setCellCtrls(cellCtrls: CellCtrl[]): void {
-        const cellsToRemove = Object.assign({}, this.cellComps);
+        const cellsToRemove = new Map(this.cellComps);
 
-        cellCtrls.forEach((cellCtrl) => {
+        for (const cellCtrl of cellCtrls) {
             const key = cellCtrl.instanceId;
-            const existingCellComp = this.cellComps[key];
 
-            if (existingCellComp == null) {
+            if (!this.cellComps.has(key)) {
                 this.newCellComp(cellCtrl);
             } else {
-                cellsToRemove[key] = null;
+                cellsToRemove.delete(key);
             }
-        });
+        }
 
-        this.destroyCells(Object.values(cellsToRemove) as CellComp[]);
+        this.destroyCells(cellsToRemove);
         this.ensureDomOrder(cellCtrls);
     }
 
@@ -108,12 +105,12 @@ export class RowComp extends Component {
         }
 
         const elementsInOrder: HTMLElement[] = [];
-        cellCtrls.forEach((cellCtrl) => {
-            const cellComp = this.cellComps[cellCtrl.instanceId];
+        for (const cellCtrl of cellCtrls) {
+            const cellComp = this.cellComps.get(cellCtrl.instanceId);
             if (cellComp) {
                 elementsInOrder.push(cellComp.getGui());
             }
-        });
+        }
 
         _setDomChildOrder(this.getGui(), elementsInOrder);
     }
@@ -126,14 +123,14 @@ export class RowComp extends Component {
             this.getGui(),
             this.rowCtrl.editing
         );
-        this.cellComps[cellCtrl.instanceId] = cellComp;
+        this.cellComps.set(cellCtrl.instanceId, cellComp);
         this.getGui().appendChild(cellComp.getGui());
     }
 
     public override destroy(): void {
         super.destroy();
         // Destroy all cells
-        this.destroyCells(Object.values(this.cellComps) as CellComp[]);
+        this.destroyCells(this.cellComps);
     }
 
     private setFullWidthRowComp(fullWidthRowComponent: ICellRendererComp): void {
@@ -143,8 +140,8 @@ export class RowComp extends Component {
         });
     }
 
-    private destroyCells(cellComps: CellComp[]): void {
-        cellComps.forEach((cellComp) => {
+    private destroyCells(cellComps: Map<CellCtrlInstanceId, CellComp | null>): void {
+        for (const cellComp of cellComps.values()) {
             // could be old reference, ie removed cell
             if (!cellComp) {
                 return;
@@ -152,13 +149,13 @@ export class RowComp extends Component {
 
             // check cellComp belongs in this container
             const instanceId = cellComp.cellCtrl.instanceId;
-            if (this.cellComps[instanceId] !== cellComp) {
+            if (this.cellComps.get(instanceId) !== cellComp) {
                 return;
             }
 
             cellComp.detach();
             cellComp.destroy();
-            this.cellComps[instanceId] = null;
-        });
+            this.cellComps.delete(instanceId);
+        }
     }
 }
