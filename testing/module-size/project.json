@@ -2,17 +2,27 @@
   "name": "ag-grid-module-size",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "testing/module-size",
-  "projectType": "app",
   "targets": {
-    "test": {
-      "executor": "nx:run-commands",
-      "inputs": [],
-      "outputs": [],
+    "build": {
+      "executor": "nx:run-script",
       "options": {
-        "cwd": "testing/module-size",
-        "commands": ["npm run test"]
+        "script": "build"
+      }
+    },
+    "test:e2e": {
+      "executor": "nx:run-script",
+      "dependsOn": [
+        "ag-grid-community:build:types",
+        "ag-grid-community:build:package",
+        "ag-grid-enterprise:build:types",
+        "ag-grid-enterprise:build:package",
+        "ag-grid-react:build"
+      ],
+      "options": {
+        "script": "test:e2e"
       }
     }
   },
-  "tags": ["module-size"]
+  "tags": ["module-size", "sharding"],
+  "implicitDependencies": ["ag-grid-react"]
 }

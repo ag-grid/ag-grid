@@ -4,19 +4,21 @@
   "version": "33.1.1",
   "scripts": {
     "dev": "vite",
-    "cp-app": "cp ./src/App_src.tsx ./src/App_AUTO.tsx",
+    "cp-app": "cp ./src/App_Src.tsx ./src/App_AUTO.tsx",
     "build-app": "vite build",
+    "build": "run-s cp-app build-app",
     "preview": "vite preview",
+    "module-combinations": "ts-node moduleCombinations.ts",
     "module-stats": "ts-node moduleCombinations.ts && npm run module-validate",
     "module-validate": "ts-node moduleValidator.ts",
-    "test": "npm run module-stats"
+    "test:e2e": "run-s \"module-combinations -- {1}\" module-validate --"
   },
   "dependencies": {
     "ag-grid-react": "33.1.1",
     "ag-grid-community": "33.1.1",
     "ag-grid-enterprise": "33.1.1",
-    "ag-charts-community": "11.1.1-beta.20250313",
-    "ag-charts-enterprise": "11.1.1-beta.20250313",
+    "ag-charts-community": "11.1.1-beta.20250314",
+    "ag-charts-enterprise": "11.1.1-beta.20250314",
     "react": "^18.3.1",
     "react-dom": "^18.3.1"
   },
@@ -31,6 +33,7 @@
     "terser": "^5.36.0",
     "typescript": "^5.5.3",
     "typescript-eslint": "^8.0.1",
-    "vite": "^5.4.1"
+    "vite": "^5.4.1",
+    "npm-run-all": "4.1.5"
   }
 }

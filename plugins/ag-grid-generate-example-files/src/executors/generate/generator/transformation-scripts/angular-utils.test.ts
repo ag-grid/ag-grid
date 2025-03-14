@@ -1,9 +1,10 @@
+import type { EventHandler, Property } from '../types';
 import { convertTemplate, getImport, toAssignment, toConst, toInput, toMember, toOutput } from './angular-utils';
 
 describe('toInput', () => {
     it('returns input definition', () => {
         const property = { name: 'foo' };
-        const inputDefinition = toInput(property);
+        const inputDefinition = toInput(property as Property);
 
         expect(inputDefinition).toBe('[foo]="foo"');
     });
@@ -12,7 +13,7 @@ describe('toInput', () => {
 describe('toConst', () => {
     it('returns const definition', () => {
         const property = { name: 'foo', value: 'bar' };
-        const constDefinition = toConst(property);
+        const constDefinition = toConst(property as Property);
 
         expect(constDefinition).toBe('[foo]="bar"');
     });
@@ -21,7 +22,7 @@ describe('toConst', () => {
 describe('toOutput', () => {
     it('returns output definition', () => {
         const event = { name: 'foo', handlerName: 'fooHandler' };
-        const outputDefinition = toOutput(event);
+        const outputDefinition = toOutput(event as EventHandler);
 
         expect(outputDefinition).toBe('(foo)="fooHandler($event)"');
     });
@@ -30,7 +31,7 @@ describe('toOutput', () => {
 describe('toMember', () => {
     it('returns member definition', () => {
         const event = { name: 'foo' };
-        const memberDefinition = toMember(event);
+        const memberDefinition = toMember(event as Property);
 
         expect(memberDefinition).toBe('foo;');
     });
@@ -38,8 +39,8 @@ describe('toMember', () => {
 
 describe('toAssignment', () => {
     it('returns assignment definition', () => {
-        const event = { name: 'foo', value: 123 };
-        const assignmentDefinition = toAssignment(event);
+        const event = { name: 'foo', value: '123' };
+        const assignmentDefinition = toAssignment(event as Property);
 
         expect(assignmentDefinition).toBe('this.foo = 123');
     });

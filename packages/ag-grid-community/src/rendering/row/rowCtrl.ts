@@ -548,11 +548,16 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
 
         // if this row is focused, force the row to render the cell that has focus
         if (this.beans.focusSvc.isRowFocused(this.rowNode.rowIndex!, this.rowNode.rowPinned)) {
-            const { column } = this.beans.focusSvc.getFocusedCell()!;
-            const focusedColInstanceId = (column as AgColumn).getInstanceId();
+            const column = this.beans.focusSvc.getFocusedCell()!.column as AgColumn;
+            const focusedColInstanceId = column.getInstanceId();
             const focusedCellCtrl = res.map[focusedColInstanceId];
-            if (!focusedCellCtrl && column.getPinned() == pinned) {
-                const cellCtrl = this.getNewCellCtrl(column as AgColumn);
+            // if the focused col belongs in this pinned viewport and hasn't been rendered, then force it to render
+            if (
+                !focusedCellCtrl &&
+                column.getPinned() == pinned &&
+                this.beans.visibleCols.allCols.includes(column) // need to make sure focused col is still meant to be visible
+            ) {
+                const cellCtrl = this.getNewCellCtrl(column);
                 if (cellCtrl) {
                     addCell(focusedColInstanceId, cellCtrl);
                 }
@@ -644,10 +649,15 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
             return REMOVE_CELL;
         }
 
+        // if cell is in wrong span container, remove it
+        if (this.shouldRecreateCellCtrl(cellCtrl)) {
+            return REMOVE_CELL;
+        }
+
         // we want to try and keep editing and focused cells
-        const { editing, cellPosition } = cellCtrl;
-        const { focusSvc, visibleCols } = this.beans;
-        const focused = focusSvc.isCellFocused(cellPosition);
+        const { editing } = cellCtrl;
+        const { visibleCols } = this.beans;
+        const focused = cellCtrl.isCellFocused();
 
         const mightWantToKeepCell = editing || focused;
 

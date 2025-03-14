@@ -18,7 +18,7 @@ if (swcJestConfig.swcrc === undefined) {
 
 const pathToGlob = (path: string) => path.replace('./', '**/');
 
-const tests = glob.sync('plugins/ag-grid-generate-example-files/src/**/*.test.ts');
+const tests = glob.sync('packages/ag-grid-community/src/**/*.test.ts');
 const unitTests = tests.map(pathToGlob); //.filter((path) => !e2eTests.includes(path));
 
 const commonConfig = {
@@ -36,15 +36,15 @@ const commonConfig = {
 
 const reporters: any[] = [['default', { summaryThreshold: Infinity }]];
 if (process.env.CI != null || process.env.NX_TASK_TARGET_CONFIGURATION === 'ci') {
-    reporters.push(['jest-junit', { outputDirectory: 'reports', outputName: 'ag-grid-generate-example-files.xml' }]);
+    reporters.push(['jest-junit', { outputDirectory: 'reports', outputName: 'ag-grid-community.xml' }]);
 }
 
-const pathFix = (v: string) => v.replace('plugins/ag-grid-generate-example-files/', '**/');
+const pathFix = (v: string) => v.replace('packages/ag-grid-community/', '**/');
 export default {
     reporters,
     projects: [
         {
-            displayName: 'ag-grid-generate-example-files - unit',
+            displayName: 'ag-grid-community - unit',
             testMatch: unitTests.map(pathFix),
             ...commonConfig,
         },

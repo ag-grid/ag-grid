@@ -61,7 +61,9 @@ runs:
               node_modules/
               packages/*/node_modules/
               plugins/*/node_modules/
-              libraries/*/node_modules/
+              community-modules/*/node_modules/
+              testing/*/node_modules/
+              documentation/*/node_modules/
               external/*/node_modules/
             key: node_modules-${{ runner.os }}-${{hashFiles('yarn.lock','patches/*.patch', 'packages/*/package.json', 'plugins/*/package.json', 'community-modules/*/package.json', 'documentation/*/package.json', 'testing/*/package.json', 'external/*/package.json')}}
             restore-keys: node_modules-${{ runner.os }}- # Take any latest cache if failed to find it for current yarn.lock
@@ -87,8 +89,8 @@ runs:
           uses: actions/cache@v4
           with:
               path: |
-                  .nx/cache
-                  .nx/workspace-data
+                .nx/cache
+                .nx/workspace-data
               key: cache-nx-v20-${{ hashFiles('yarn.lock','patches/*.patch', 'packages/*/package.json', 'plugins/*/package.json', 'documentation/*/package.json', 'testing/*/package.json', 'community-modules/*/package.json') }}-${{ github.sha }}
               restore-keys: cache-nx-v20-${{ hashFiles('yarn.lock','patches/*.patch', 'packages/*/package.json', 'plugins/*/package.json', 'documentation/*/package.json', 'testing/*/package.json', 'community-modules/*/package.json') }}-
 
@@ -99,7 +101,7 @@ runs:
             path: |
               .nx/cache
               .nx/workspace-data
-                          key: cache-nx-v20-${{ hashFiles('yarn.lock','patches/*.patch', 'packages/*/package.json', 'plugins/*/package.json', 'documentation/*/package.json', 'testing/*/package.json', 'community-modules/*/package.json') }}-${{ github.sha }}
+            key: cache-nx-v20-${{ hashFiles('yarn.lock','patches/*.patch', 'packages/*/package.json', 'plugins/*/package.json', 'documentation/*/package.json', 'testing/*/package.json', 'community-modules/*/package.json') }}-${{ github.sha }}
             restore-keys: cache-nx-v20-${{ hashFiles('yarn.lock','patches/*.patch', 'packages/*/package.json', 'plugins/*/package.json', 'documentation/*/package.json', 'testing/*/package.json', 'community-modules/*/package.json') }}-
 
         #- name: Tidy Nx Cache (Post Job) 

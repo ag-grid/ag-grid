@@ -48,6 +48,7 @@ BUILD_GRID_VERSION=${gridNewVersion}
 BUILD_CHARTS_VERSION=${chartsDependencyVersion}
 ENV=${environment}
 NX_BATCH_MODE=true
+NX_ADD_PLUGINS=false
 BUILD_FWS=1
 `;
     fs.writeFileSync('./.env', data, 'utf-8');

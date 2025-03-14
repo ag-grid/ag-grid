@@ -16,7 +16,7 @@
         "loose": true
     },
     "module": {
-        "type": "commonjs"
+        "type": "es6"
     },
     "sourceMaps": "inline",
     "exclude": [

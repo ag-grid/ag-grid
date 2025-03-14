@@ -6,7 +6,13 @@
   "targets": {
     "build": {
       "outputs": ["{projectRoot}/dist"],
-      "dependsOn": ["build:copy-styles", "generate-doc-references", "generate-examples", "^build"],
+      "dependsOn": [
+        "build:copy-styles",
+        "generate-doc-references",
+        "generate-examples",
+        "ag-grid-react:build",
+        "^build"
+      ],
       "inputs": [
         "^production",
         "production",
