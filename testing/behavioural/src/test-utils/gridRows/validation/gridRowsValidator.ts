@@ -186,6 +186,10 @@ export class GridRowsValidator {
 
         this.verifyLeafs(gridRows, row);
 
+        if (row.level >= 0) {
+            this.verifyAllLeafChildrenWithChildrenAfterGroup(gridRows, row);
+        }
+
         if (row.detail && gridRows.isRowDisplayed(row)) {
             const detailGridInfo = row.detailGridInfo;
             if (!detailGridInfo) {
@@ -284,6 +288,7 @@ export class GridRowsValidator {
         if (duplicatesCount > 0) {
             parentErrors.add(`${name} has ${duplicatesCount} duplicates.`);
         }
+
         return set as any;
     }
 
@@ -436,5 +441,73 @@ export class GridRowsValidator {
         };
         this.#allLeafsMap.set(row, result);
         return result;
+    }
+
+    private verifyAllLeafChildrenWithChildrenAfterGroup(gridRows: GridRows<any>, row: RowNode<any>) {
+        const allLeafsSet = new Set<RowNode>();
+        const processed = new Set<RowNode>();
+
+        const traverse = (node: RowNode<any>) => {
+            if (!(node instanceof RowNode)) {
+                this.errors.get(row).add('Invalid child in childrenAfterGroup');
+                return;
+            }
+            if (processed.has(node)) {
+                this.errors.get(row).add('Circular reference in childrenAfterGroup ' + node.id);
+                return;
+            }
+            processed.add(node);
+            if (!node.childrenAfterGroup?.length) {
+                if (node.data) {
+                    allLeafsSet.add(node);
+                }
+                return;
+            }
+            if (node.childrenAfterGroup) {
+                for (const child of node.childrenAfterGroup) {
+                    traverse(child);
+                }
+            }
+        };
+
+        if (row.childrenAfterGroup) {
+            for (const child of row.childrenAfterGroup) {
+                traverse(child);
+            }
+        }
+
+        const allLeafChildrenSet = new Set(row.allLeafChildren);
+
+        if (allLeafChildrenSet.size !== allLeafsSet.size) {
+            this.errors.get(row).add(
+                'allLeafChildren does not match. ' +
+                    allLeafChildrenSet.size +
+                    '!==' +
+                    allLeafsSet.size +
+                    ' : [' +
+                    Array.from(allLeafChildrenSet)
+                        .map((n) => n.id)
+                        .join(', ') +
+                    '] !== [' +
+                    Array.from(allLeafsSet)
+                        .map((n) => n.id)
+                        .join(', ') +
+                    ']'
+            );
+        }
+
+        for (const child of allLeafChildrenSet) {
+            if (!allLeafsSet.has(child)) {
+                this.errors.get(row).add('allLeafChildren does not match childrenAfterGroup');
+                break;
+            }
+        }
+
+        for (const child of allLeafsSet) {
+            if (!allLeafChildrenSet.has(child)) {
+                this.errors.get(row).add('allLeafChildren does not match childrenAfterGroup');
+                break;
+            }
+        }
     }
 }

@@ -27,7 +27,7 @@ export class AgList<TEventType extends string = AgListEvent, TValue = string> ex
         private readonly cssIdentifier = 'default',
         private readonly unFocusable: boolean = false
     ) {
-        super(/* html */ `<div class="ag-list ag-${cssIdentifier}-list" role="listbox"></div>`);
+        super(/* html */ `<div class="ag-list ag-${cssIdentifier}-list"></div>`);
     }
 
     public postConstruct(): void {
@@ -135,10 +135,18 @@ export class AgList<TEventType extends string = AgListEvent, TValue = string> ex
             _removeFromParent(itemEl);
         });
         this.itemEls = [];
+        this.refreshAriaRole();
+    }
+
+    private refreshAriaRole(): void {
+        const eGui = this.getGui();
+
+        _setAriaRole(eGui, this.options.length === 0 ? 'presentation' : 'listbox');
     }
 
     private updateIndices(): void {
         const options = this.getGui().querySelectorAll('.ag-list-item');
+        this.refreshAriaRole();
         options.forEach((option: HTMLElement, idx) => {
             _setAriaPosInSet(option, idx + 1);
             _setAriaSetSize(option, options.length);

@@ -85,7 +85,7 @@ export class VirtualList<
             handleKeyDown: (e) => this.handleKeyDown(e),
         });
 
-        this.setAriaProperties();
+        this.refreshAriaProperties();
         this.addManagedEventListeners({ gridStylesChanged: this.onGridStylesChanged.bind(this) });
     }
 
@@ -96,12 +96,12 @@ export class VirtualList<
         }
     }
 
-    private setAriaProperties(): void {
+    private refreshAriaProperties(): void {
         const translate = this.getLocaleTextFunc();
         const listName = translate('ariaDefaultListName', this.listName || 'List');
         const ariaEl = this.eContainer;
 
-        _setAriaRole(ariaEl, this.ariaRole);
+        _setAriaRole(ariaEl, this.model?.getRowCount() > 0 ? this.ariaRole : 'presentation');
         _setAriaLabel(ariaEl, listName);
     }
 
@@ -349,6 +349,8 @@ export class VirtualList<
 
         const rowCount = this.model.getRowCount();
         this.eContainer.style.height = `${rowCount * this.rowHeight}px`;
+
+        this.refreshAriaProperties();
 
         // ensure height is applied before attempting to redraw rows
         this.awaitStable(() => {

@@ -510,7 +510,11 @@ export function _bindCellRendererToHtmlElement(
     });
 }
 
-export function _observeResize(beans: BeanCollection, element: HTMLElement, callback: () => void): () => void {
+export function _observeResize(
+    beans: BeanCollection,
+    element: HTMLElement,
+    callback: ResizeObserverCallback
+): () => void {
     const win = _getWindow(beans);
     const ResizeObserverImpl = win.ResizeObserver;
     const resizeObserver = ResizeObserverImpl ? new ResizeObserverImpl(callback) : null;
@@ -555,5 +559,17 @@ export function _preserveRangesWhile(beans: BeanCollection, fn: () => void): voi
     selection?.removeAllRanges();
     for (const range of ranges) {
         selection?.addRange(range);
+    }
+}
+
+export function _requestAnimationFrame(beans: BeanCollection, callback: any) {
+    const win = _getWindow(beans);
+
+    if (win.requestAnimationFrame) {
+        win.requestAnimationFrame(callback);
+    } else if ((win as any).webkitRequestAnimationFrame) {
+        (win as any).webkitRequestAnimationFrame(callback);
+    } else {
+        win.setTimeout(callback, 0);
     }
 }

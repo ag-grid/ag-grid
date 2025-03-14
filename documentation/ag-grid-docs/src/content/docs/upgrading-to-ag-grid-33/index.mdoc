@@ -22,85 +22,52 @@ Therefore we are launching Long-Term Support (LTS) versions of AG Grid (v32-lts)
 
 ## Changes to Modules / Packages
 
-Version {% migrationVersion() %} introduces a major change to how modules work to allow for smaller bundle sizes. Previously AG Grid supported two approaches - modules and packages. These have now been merged together to allow for simpler configuration and greater optimisation of bundle size.
+Version {% migrationVersion() %} introduces a major change in how feature modules are set up to reduce the bundle size. Previously there were two separate ways to include AG Grid in your project - via AG Grid Modules or AG Grid Packages. These have now been unified to simplify configuration whilst also introducing more fine-grained modules to reduce bundle size.
+ 
+
+To take full advantage of the new modules, use the [Module Selector](./modules/) to work out which modules you require for the AG Grid features you need.
 
 {% if isFramework("javascript") %}
-If you are using the UMD bundle, then you do not need to make any changes as all modules are automatically registered. Otherwise, see the steps below.
+If you are using the UMD bundle, you do not need to make any changes as all modules are automatically registered. Otherwise, see the steps below.
 {% /if %}
 
-### Migrating from AG Grid Community
+## Migrating from Modules
 
-To match the existing behaviour simply register the _AllCommunityModule_ bundle via the ModuleRegistry before any grid is created. This module contains all the features that were previously included as part of _ag-grid-community_.
+npm packages: `@ag-grid-community/**` / `@ag-grid-enterprise/**`
 
-Most users will want to set `{ theme: "legacy" }` if not already using the new Theming Api, see [Theming](#theming) for more details.
+In previous versions separate npm packages were required to achieve tree shaking of grid features to reduce the bundle size. The improvements made in version {% migrationVersion() %} remove the need for separate npm packages to achieve tree shaking.
 
-```js
-import { AllCommunityModule, ModuleRegistry, provideGlobalGridOptions } from 'ag-grid-community';
+As a result all feature modules have been collapsed into either _ag-grid-community_ or _ag-grid-enterprise_ and all _@ag-grid-community/**_ and _@ag-grid-enterprise/**_ npm packages are removed as of version 33.0.
 
-// Register all community features
-ModuleRegistry.registerModules([AllCommunityModule]);
-
-// Mark all grids as using legacy themes
-provideGlobalGridOptions({ theme: "legacy"});
-```
-
-### Migrating from AG Grid Enterprise
-
-To match the existing behaviour simply register the _AllEnterpriseModule_ bundle via the ModuleRegistry alongside your LicenseManager.
-
-If you are using Integrated Charts or Sparklines, see the [migration steps](#migrating-integrated-charts) below.
-
-
-Most users will want to set `{ theme: "legacy" }` if not already using the new Theming Api, see [Theming](#theming) for more details.
-
-```js
-import { ModuleRegistry, provideGlobalGridOptions } from 'ag-grid-community';
-import { AllEnterpriseModule, LicenseManager } from 'ag-grid-enterprise';
-
-LicenseManager.setLicenseKey('your License Key');
-
-// Register all enterprise features
-ModuleRegistry.registerModules([AllEnterpriseModule]);
-
-// Mark all grids as using legacy themes
-provideGlobalGridOptions({ theme: "legacy"});
-```
-
-### Migrating from AG Grid Modules
-
-`@ag-grid-community/**` / `@ag-grid-enterprise/**`
-
-
-In version {% migrationVersion() %} there is no longer a requirement for separate NPM feature modules to achieve tree shaking. This means we can simply export all the modules from either _ag-grid-community_ or _ag-grid-enterprise_ as follows:
-
+The changes can be summarised as follows:
 
 {% if isFramework("react") %}
 * `@ag-grid-community/react` is replaced with `ag-grid-react`
-* `@ag-grid-community/**` packages are replaced with `ag-grid-community`
-  * Apart from `@ag-grid-community/locale` which remains unchanged.
-  * `@ag-grid-enterprise/**` packages are replaced with `ag-grid-enterprise`.
+* All individual `@ag-grid-community/**` packages are replaced by a single tree-shakable package `ag-grid-community`
+  * Exception - the `@ag-grid-community/locale` package remains unchanged.
+* All individual `@ag-grid-enterprise/**` packages are replaced by a single tree-shakable package `ag-grid-enterprise`.
 {% /if %}
 {% if isFramework("angular") %}
 * `@ag-grid-community/angular` is replaced with `ag-grid-angular`
-* `@ag-grid-community/**` packages are replaced with `ag-grid-community`
-  * Apart from `@ag-grid-community/locale` which remains unchanged.
-  * `@ag-grid-enterprise/**` packages are replaced with `ag-grid-enterprise`.
+* All individual `@ag-grid-community/** packages` are replaced by a single tree-shakable package `ag-grid-community`
+  * Exception - the `@ag-grid-community/locale` package remains unchanged.
+* All individual `@ag-grid-enterprise/**` packages are replaced by a single tree-shakable package `ag-grid-enterprise`.
 {% /if %}
 {% if isFramework("javascript") %}
-* `@ag-grid-community/**` packages are replaced with `ag-grid-community`
-  * Apart from `@ag-grid-community/locale` which remains unchanged.
-  * `@ag-grid-enterprise/**` packages are replaced with `ag-grid-enterprise`.
+* All individual `@ag-grid-community/** packages` are replaced by a single tree-shakable package `ag-grid-community`
+  * Exception - the `@ag-grid-community/locale` package remains unchanged.
+* All individual `@ag-grid-enterprise/**` packages are replaced by a single tree-shakable package `ag-grid-enterprise`.
 {% /if %}
 {% if isFramework("vue") %}
 * `@ag-grid-community/vue3` is replaced with `ag-grid-vue3`
-* `@ag-grid-community/**` packages are replaced with `ag-grid-community`
-  * Apart from `@ag-grid-community/locale` which remains unchanged.
-  * `@ag-grid-enterprise/**` packages are replaced with `ag-grid-enterprise`.
+* All individual `@ag-grid-community/** packages` are replaced by a single tree-shakable package `ag-grid-community`
+  * Exception - the `@ag-grid-community/locale` package remains unchanged.
+* All individual `@ag-grid-enterprise/**` packages are replaced by a single tree-shakable package `ag-grid-enterprise`.
 {% /if %}
 
 Here is an example of a typical package.json diff for the migration:
 
-AG Grid Community
+**AG Grid Community**
 
 {% if isFramework("react") %}
 ```diff
@@ -145,15 +112,13 @@ AG Grid Community
 ```
 {% /if %}
 
-AG Grid Enterprise
+**AG Grid Enterprise**
 
 {% if isFramework("react") %}
 ```diff
 "dependencies": {
 -    "@ag-grid-community/react": "^32.3.0",
 -    "@ag-grid-community/client-side-row-model": "^32.3.0",
--    "@ag-grid-community/csv-export": "^32.3.0",
--    "@ag-grid-enterprise/clipboard": "^32.3.0",
 -    "@ag-grid-enterprise/master-detail": "^32.3.0",
 -    "@ag-grid-enterprise/row-grouping": "^32.3.0",
 +    "ag-grid-react": "~{% migrationVersionPatch() %}",
@@ -166,8 +131,6 @@ AG Grid Enterprise
 "dependencies": {
 -    "@ag-grid-community/angular": "^32.3.0",
 -    "@ag-grid-community/client-side-row-model": "^32.3.0",
--    "@ag-grid-community/csv-export": "^32.3.0",
--    "@ag-grid-enterprise/clipboard": "^32.3.0",
 -    "@ag-grid-enterprise/master-detail": "^32.3.0",
 -    "@ag-grid-enterprise/row-grouping": "^32.3.0",
 +    "ag-grid-angular": "~{% migrationVersionPatch() %}",
@@ -179,8 +142,6 @@ AG Grid Enterprise
 ```diff
 "dependencies": {
 -    "@ag-grid-community/client-side-row-model": "^32.3.0",
--    "@ag-grid-community/csv-export": "^32.3.0",
--    "@ag-grid-enterprise/clipboard": "^32.3.0",
 -    "@ag-grid-enterprise/master-detail": "^32.3.0",
 -    "@ag-grid-enterprise/row-grouping": "^32.3.0",
 +    "ag-grid-enterprise": "~{% migrationVersionPatch() %}",
@@ -191,8 +152,6 @@ AG Grid Enterprise
 ```diff
 "dependencies": {
 -    "@ag-grid-community/vue3": "^32.3.0",
--    "@ag-grid-community/client-side-row-model": "^32.3.0",
--    "@ag-grid-community/csv-export": "^32.3.0",
 -    "@ag-grid-enterprise/clipboard": "^32.3.0",
 -    "@ag-grid-enterprise/master-detail": "^32.3.0",
 -    "@ag-grid-enterprise/row-grouping": "^32.3.0",
@@ -201,16 +160,14 @@ AG Grid Enterprise
 }
 ```
 {% /if %}
+
+The codemod for version {% migrationVersion() %} will automatically update all your import paths and module registration to ensure backwards compatibility.
 
 {% note %}
 After updating your package.json file, we recommend using the Codmod to assist your migration as it will update all your applications import paths and module registration to ensure backwards compatibility.
 
 `npx @ag-grid-devtools/cli@33.0 migrate --from=$FROM_VERSION`
 {% /note %}
-
-### Validation Module
-
-To help identify missing modules and configuration issues at development time, we recommend including the _ValidationModule_ in your development build. This will provide helpful details on missing modules for a particular feature. This is provided as a separate module so that it can be excluded from production builds saving even more bundle size. It is included in the _AllCommunityModule_.
 
 ### Changes to Existing Modules
 
@@ -233,9 +190,50 @@ The following changes have been made to the existing modules to ensure that each
   The codemod will include the new modules to match the existing behaviour of v32 module dependencies. For example, if you were importing the ExcelExportModule in v32 then the codemod will automatically include the CsvExportModule in v33.
   {% /note %}
 
-### Optimizing Bundle Size
+### Validation Module
 
-To take full advantage of the new modules you may wish to use the [Module Selector](./modules/) to work out which modules you require for a give set of features.
+To help identify configuration issues we strongly recommend including the `ValidationModule` in your development build. This module enables AG Grid to validate your configuration and provide extended error diagnosis to help you resolve issues quickly.
+
+Ensure you’re not including the ValidationModule in your production build to avoid increasing bundle size unnecessarily. Note if you are using either `AllCommunityModule` or `AllEnterpriseModule` it is included by default.
+
+## Migrating from Packages
+
+npm packages: `ag-grid-community` / `ag-grid-enterprise` / `ag-grid-charts-enterprise`
+
+If you are currently using AG Grid packages, which did not support tree shaking, then you can match the existing behaviour by registering either `AllCommunityModule` or `AllEnterpriseModule` via the ModuleRegistry before any grid is created.
+
+{% warning %}
+Using the `AllCommunityModule` / `AllEnterpriseModule` will prevent tree shaking. In order to reduce the bundle size, use the [Module Selector](./modules/) to only register the modules you require instead of all modules.
+{% /warning %}
+
+Most users will also want to set `{ theme: "legacy" }` if not already using the new Theming Api. See [Theming](#theming) for more details.
+
+**AG Grid Community**
+```js
+import { AllCommunityModule, ModuleRegistry, provideGlobalGridOptions } from 'ag-grid-community';
+
+// Register all community features
+ModuleRegistry.registerModules([AllCommunityModule]);
+
+// Mark all grids as using legacy themes
+provideGlobalGridOptions({ theme: "legacy"});
+```
+
+**AG Grid Enterprise**
+```js
+import { ModuleRegistry, provideGlobalGridOptions } from 'ag-grid-community';
+import { AllEnterpriseModule, LicenseManager } from 'ag-grid-enterprise';
+
+LicenseManager.setLicenseKey('your License Key');
+
+// Register all enterprise features
+ModuleRegistry.registerModules([AllEnterpriseModule]);
+
+// Mark all grids as using legacy themes
+provideGlobalGridOptions({ theme: "legacy"});
+```
+
+
 
 ## Integrated Charts / Sparklines
 
@@ -243,7 +241,7 @@ AG Grid Enterprise no longer includes AG Charts as part of its distribution to a
 
 ### Integrated Charts / Sparklines Migration Steps
 
-For an application using Integrated Charts / Sparklines via the _AllEnterpriseModule_ bundle with the Enterprise version of AG Charts first add _ag-charts-enterprise_ to your package.json dependencies.
+For an application using Integrated Charts / Sparklines via the `AllEnterpriseModule` bundle with the Enterprise version of AG Charts first add `ag-charts-enterprise` to your package.json dependencies.
 
 ```diff
 "dependencies": {
@@ -252,7 +250,7 @@ For an application using Integrated Charts / Sparklines via the _AllEnterpriseMo
 }
 ```
 
-Then pass the _AgChartsEnterpriseModule_ to the _AllEnterpriseModule_ to activate the charting features.
+Then pass the `AgChartsEnterpriseModule` to the `AllEnterpriseModule` to activate the charting features.
 
 ```js
 import { AllEnterpriseModule, LicenseManager, ModuleRegistry } from 'ag-grid-enterprise';
@@ -264,7 +262,7 @@ ModuleRegistry.registerModules([
 LicenseManager.setLicenseKey('your License Key');
 ```
 
-If you are using AG Grid Modules, then both the `IntegratedChartsModule` and `SparklinesModule` also require the AG Charts module to be registered when they are used.
+If you are using AG Grid Modules instead of `AllCommunityModule` or `AllEnterpriseModule`, then both the `IntegratedChartsModule` and `SparklinesModule` also require the AG Charts module to be registered when they are used.
 
 ```js
 import { IntegratedChartsModule, SparklinesModule, LicenseManager, ModuleRegistry } from 'ag-grid-enterprise';
@@ -330,11 +328,11 @@ AG Grid version {% migrationVersion() %} includes the following breaking changes
 
 ### Changes To Modules / Packages
 
-Changes outline above in the [Changes to Modules / Packages section](./upgrading-to-ag-grid-33/#changes-to-modules).
+Changes outline above in the [Changes to Modules / Packages section](./upgrading-to-ag-grid-33/#changes-to-modules--packages).
 
 ### Integrated Charts / Sparklines
 
-Changes outline above in the [Integrated Charts / Sparklines section](./upgrading-to-ag-grid-33/#migrating-integrated-charts)
+Changes outline above in the [Integrated Charts / Sparklines section](./upgrading-to-ag-grid-33/#integrated-charts--sparklines)
 
 {% if isFramework("angular") %}
 ### Angular Minimum Version

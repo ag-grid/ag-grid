@@ -13,6 +13,13 @@ const isDebugPage = (page: string) => {
 };
 
 /*
+ * Error pages
+ */
+const isErrorPage = (page: string) => {
+    return page.includes('/errors/');
+};
+
+/*
  * Test pages for testing
  */
 export const isTestPage = (page: string) => {
@@ -45,7 +52,8 @@ const filterIgnoredPages = (page: string) => {
         !isDebugPage(page) &&
         !isRedirectPage(page) &&
         !isNonPublicContent(page) &&
-        !isTestPage(page)
+        !isTestPage(page) &&
+        !isErrorPage(page)
     );
 };
 

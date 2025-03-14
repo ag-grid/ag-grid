@@ -1,7 +1,5 @@
 import type {
     AgDonutSeriesOptions,
-    AgFillType,
-    AgGradientFill,
     AgPieSeriesOptions,
     AgPolarChartOptions,
     AgPolarSeriesOptions,
@@ -70,15 +68,12 @@ export class PieChartProxy extends ChartProxy<AgPolarChartOptions, 'pie' | 'donu
                         outerRadiusOffset,
                         innerRadiusOffset,
                         ...title,
-                        calloutLine: {
-                            colors: this.getChartPalette()?.strokes,
-                        },
                     };
                 }
 
                 return options;
             }
-        );
+        ) as (AgPieSeriesOptions | AgDonutSeriesOptions)[];
 
         return this.crossFiltering ? this.extractCrossFilterSeries(series) : series;
     }
@@ -97,69 +92,39 @@ export class PieChartProxy extends ChartProxy<AgPolarChartOptions, 'pie' | 'donu
     }
 
     private extractCrossFilterSeries(series: (AgPieSeriesOptions | AgDonutSeriesOptions)[]) {
-        const palette = this.getChartPalette();
-
-        const primaryOptions = (seriesOptions: AgPieSeriesOptions | AgDonutSeriesOptions) => {
-            return {
-                ...seriesOptions,
-                legendItemKey: seriesOptions.calloutLabelKey,
-                calloutLabel: { enabled: false }, // hide labels on primary series
-                highlightStyle: { item: { fill: undefined } },
-                radiusKey: seriesOptions.angleKey,
-                angleKey: seriesOptions.angleKey + '-total',
-                radiusMin: 0,
-                radiusMax: 1,
-                listeners: {
-                    nodeClick: this.crossFilterCallback,
-                },
-            };
-        };
-
-        const filteredOutOptions = (seriesOptions: AgPieSeriesOptions | AgDonutSeriesOptions, angleKey: string) => {
-            return {
-                ...primaryOpts,
-                radiusKey: angleKey + '-filtered-out',
-                fills: this.changeOpacity(seriesOptions.fills ?? palette?.fills ?? [], 0.3),
-                strokes: this.changeOpacity(seriesOptions.strokes ?? palette?.strokes ?? [], 0.3),
-                showInLegend: false,
-            };
-        };
-
-        // currently, only single 'donut' cross-filter series are supported
         const primarySeries = series[0];
-
-        // update primary series
         const angleKey = primarySeries.angleKey!;
-        const primaryOpts = primaryOptions(primarySeries);
 
-        return [filteredOutOptions(primaryOptions(primarySeries), angleKey), primaryOpts];
+        const primaryOptions = {
+            ...primarySeries,
+            legendItemKey: primarySeries.calloutLabelKey,
+            calloutLabel: { enabled: false }, // hide labels on primary series
+            radiusKey: angleKey,
+            angleKey: `${angleKey}-total`,
+            radiusMin: 0,
+            radiusMax: 1,
+            listeners: {
+                nodeClick: this.crossFilterCallback,
+            },
+        };
+
+        const filteredOutOptions = {
+            ...primaryOptions,
+            radiusKey: `${angleKey!}-filtered-out`,
+            showInLegend: false,
+            fills: {
+                $map: [{ $mix: [{ $value: '$1' }, { $ref: 'backgroundColor' }, 0.7] }, { $path: '../1/fills' }],
+            },
+            strokes: {
+                $map: [{ $mix: [{ $value: '$1' }, { $ref: 'backgroundColor' }, 0.7] }, { $path: '../1/strokes' }],
+            },
+        };
+
+        return [filteredOutOptions, primaryOptions] as (AgPieSeriesOptions | AgDonutSeriesOptions)[];
     }
 
     private getFields(params: UpdateParams): FieldDefinition[] {
         // pie charts only support a single series, donut charts support multiple series
         return this.chartType === 'pie' ? params.fields.slice(0, 1) : params.fields;
-    }
-
-    private changeOpacity<T extends AgFillType>(fills: T[], alpha: number): T[] {
-        const Color = this.agChartsExports._Util.Color;
-        return fills.map((fill) => {
-            if (typeof fill === 'string') {
-                const c = Color.fromString(fill);
-                return new Color(c.r, c.g, c.b, alpha).toHexString() as T;
-            }
-
-            return {
-                ...(fill as AgGradientFill),
-                colorStops: fill.colorStops?.map((stop) => {
-                    if (stop.color == null) return stop;
-
-                    const c = Color.fromString(stop.color);
-                    return {
-                        ...stop,
-                        color: new Color(c.r, c.g, c.b, alpha).toHexString(),
-                    };
-                }),
-            } as T;
-        });
     }
 }

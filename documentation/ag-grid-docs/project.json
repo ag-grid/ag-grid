@@ -117,7 +117,8 @@
       "dependsOn": [],
       "options": {
         "cwd": "{projectRoot}",
-        "config": "vitest.config.mjs"
+        "config": "vitest.config.mjs",
+        "watch": false
       },
       "configurations": {
         "ci": {

@@ -34,6 +34,16 @@
                         {
                             "title": "Installing Enterprise Licence",
                             "path": "license-install"
+                        },
+                        {
+                            "type": "item",
+                            "title": "Migration",
+                            "path": "migration"
+                        },
+                        {
+                            "type": "item",
+                            "title": "Codemods",
+                            "path": "codemods"
                         }
                     ]
                 },
@@ -1697,78 +1707,6 @@
                             "title": "NgZone",
                             "path": "angular-ngzone",
                             "frameworks": ["angular"]
-                        }
-                    ]
-                }
-            ]
-        },
-        {
-            "type": "item",
-            "title": "Miscellaneous",
-            "children": [
-                {
-                    "type": "group",
-                    "title": "Migration",
-                    "children": [
-                        {
-                            "type": "item",
-                            "title": "Upgrading to AG Grid 33.1",
-                            "path": "upgrading-to-ag-grid-33-1"
-                        },
-                        {
-                            "type": "item",
-                            "title": "Upgrading to AG Grid 33",
-                            "path": "upgrading-to-ag-grid-33"
-                        },
-                        {
-                            "type": "item",
-                            "title": "Upgrading to AG Grid 32.3",
-                            "path": "upgrading-to-ag-grid-32-3"
-                        },
-                        {
-                            "type": "item",
-                            "title": "Upgrading to AG Grid 32.2.1",
-                            "path": "upgrading-to-ag-grid-32-2-1"
-                        },
-                        {
-                            "type": "item",
-                            "title": "Upgrading to AG Grid 32.1",
-                            "path": "upgrading-to-ag-grid-32-1"
-                        },
-                        {
-                            "type": "item",
-                            "title": "Upgrading to AG Grid 32",
-                            "path": "upgrading-to-ag-grid-32"
-                        },
-                        {
-                            "type": "item",
-                            "title": "Upgrading to AG Grid 31.3",
-                            "path": "upgrading-to-ag-grid-31-3"
-                        },
-                        {
-                            "type": "item",
-                            "title": "Upgrading to AG Grid 31.2",
-                            "path": "upgrading-to-ag-grid-31-2"
-                        },
-                        {
-                            "type": "item",
-                            "title": "Upgrading to AG Grid 31.1",
-                            "path": "upgrading-to-ag-grid-31-1"
-                        },
-                        {
-                            "type": "item",
-                            "title": "Upgrading to AG Grid 31",
-                            "path": "upgrading-to-ag-grid-31"
-                        },
-                        {
-                            "type": "item",
-                            "title": "Upgrading to Older Versions",
-                            "path": "upgrading-to-older-versions"
-                        },
-                        {
-                            "type": "item",
-                            "title": "Codemods",
-                            "path": "codemods"
                         }
                     ]
                 }

@@ -59,7 +59,7 @@ export const AllEnterpriseModules: Record<`${EnterpriseModuleName}Module`, numbe
     ContextMenuModule: 70,
     ExcelExportModule: 84,
     FiltersToolPanelModule: 116,
-    FindModule: 12.91,
+    FindModule: 14.51,
     GridChartsModule: 67,
     IntegratedChartsModule: 385.33,
     GroupFilterModule: 93,
@@ -78,7 +78,7 @@ export const AllEnterpriseModules: Record<`${EnterpriseModuleName}Module`, numbe
     SideBarModule: 32,
     SparklinesModule: 20,
     StatusBarModule: 27,
-    TreeDataModule: 87,
+    TreeDataModule: 91.6,
     ViewportRowModelModule: 26,
 };
 
@@ -116,7 +116,7 @@ const commonFeatureSets: ModuleTest[] = [
 const chartModules: ModuleTest[] = [
     {
         modules: ['AgChartsCommunityModule' as any, 'IntegratedChartsModule'],
-        expectedSize: 1170,
+        expectedSize: 1209.02,
     },
     {
         modules: ['AgChartsEnterpriseModule' as any, 'IntegratedChartsModule'],
@@ -124,7 +124,7 @@ const chartModules: ModuleTest[] = [
     },
     {
         modules: ['AgChartsCommunityModule' as any, 'SparklinesModule'],
-        expectedSize: 808,
+        expectedSize: 834.4,
     },
     {
         modules: ['AgChartsEnterpriseModule' as any, 'SparklinesModule'],

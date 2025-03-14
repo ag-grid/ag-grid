@@ -325,7 +325,6 @@ export {
 } from './headerRendering/headerUtils';
 
 // misc
-export { _requestAnimationFrame } from './misc/animationFrameService';
 export type { AnimationFrameService } from './misc/animationFrameService';
 export { AlignedGrid } from './interfaces/iAlignedGrid';
 export type { MenuService } from './misc/menu/menuService';
@@ -996,7 +995,7 @@ export {
     _setAriaHidden,
     _getAriaPosInSet,
 } from './utils/aria';
-export { _EmptyArray, _removeFromArray, _last, _areEqual } from './utils/array';
+export { _EmptyArray, _removeFromArray, _last, _areEqual, _flatten } from './utils/array';
 export { _isIOSUserAgent } from './utils/browser';
 export { ChangedPath } from './utils/changedPath';
 export { _serialiseDate, _parseDateTimeFromString } from './utils/date';
@@ -1018,10 +1017,11 @@ export {
     _isNodeOrElement,
     _observeResize,
     _preserveRangesWhile,
+    _requestAnimationFrame,
 } from './utils/dom';
 export { _selectAllCells } from './utils/selection';
 export { _stopPropagationForAgGrid, _isStopPropagationForAgGrid, _isElementInEventPath } from './utils/event';
-export { _warnOnce, _debounce, _doOnce, _waitUntil } from './utils/function';
+export { _warnOnce, _debounce, _doOnce, _waitUntil, _batchCall } from './utils/function';
 export { _warn, _error, _errMsg, _preInitErrMsg } from './validation/logging';
 export { _createIcon, _createIconNoSpan, IconName } from './utils/icon';
 export { _fuzzySuggestions } from './utils/fuzzyMatch';

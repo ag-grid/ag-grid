@@ -8381,16 +8381,6 @@
     chai "^5.1.2"
     tinyrainbow "^1.2.0"
 
-"@vitest/expect@2.1.8":
-  version "2.1.8"
-  resolved "http://52.50.158.57:4873/@vitest/expect/-/expect-2.1.8.tgz#13fad0e8d5a0bf0feb675dcf1d1f1a36a1773bc1"
-  integrity sha512-8ytZ/fFHq2g4PJVAtDX57mayemKgDR6X3Oa2Foro+EygiOJHUXhCqBAAKQYYajZpFoIfvBCF1j6R6IYRSIUFuw==
-  dependencies:
-    "@vitest/spy" "2.1.8"
-    "@vitest/utils" "2.1.8"
-    chai "^5.1.2"
-    tinyrainbow "^1.2.0"
-
 "@vitest/expect@2.1.9":
   version "2.1.9"
   resolved "http://52.50.158.57:4873/@vitest/expect/-/expect-2.1.9.tgz#b566ea20d58ea6578d8dc37040d6c1a47ebe5ff8"
@@ -8410,15 +8400,6 @@
     estree-walker "^3.0.3"
     magic-string "^0.30.12"
 
-"@vitest/mocker@2.1.8":
-  version "2.1.8"
-  resolved "http://52.50.158.57:4873/@vitest/mocker/-/mocker-2.1.8.tgz#51dec42ac244e949d20009249e033e274e323f73"
-  integrity sha512-7guJ/47I6uqfttp33mgo6ga5Gr1VnL58rcqYKyShoRK9ebu8T5Rs6HN3s1NABiBeVTdWNrwUMcHH54uXZBN4zA==
-  dependencies:
-    "@vitest/spy" "2.1.8"
-    estree-walker "^3.0.3"
-    magic-string "^0.30.12"
-
 "@vitest/mocker@2.1.9":
   version "2.1.9"
   resolved "http://52.50.158.57:4873/@vitest/mocker/-/mocker-2.1.9.tgz#36243b27351ca8f4d0bbc4ef91594ffd2dc25ef5"
@@ -8432,13 +8413,6 @@
   version "2.1.6"
   resolved "http://52.50.158.57:4873/@vitest/pretty-format/-/pretty-format-2.1.6.tgz#9bc642047a3efc637b41492b1f222c43be3822e4"
   integrity sha512-exZyLcEnHgDMKc54TtHca4McV4sKT+NKAe9ix/yhd/qkYb/TP8HTyXRFDijV19qKqTZM0hPL4753zU/U8L/gAA==
-  dependencies:
-    tinyrainbow "^1.2.0"
-
-"@vitest/pretty-format@2.1.8", "@vitest/pretty-format@^2.1.8":
-  version "2.1.8"
-  resolved "http://52.50.158.57:4873/@vitest/pretty-format/-/pretty-format-2.1.8.tgz#88f47726e5d0cf4ba873d50c135b02e4395e2bca"
-  integrity sha512-9HiSZ9zpqNLKlbIDRWOnAWqgcA7xu+8YxXSekhr0Ykab7PAYFkhkwoqVArPOtJhPmYeE2YHgKZlj3CP36z2AJQ==
   dependencies:
     tinyrainbow "^1.2.0"
 
@@ -8464,14 +8438,6 @@
   integrity sha512-SjkRGSFyrA82m5nz7To4CkRSEVWn/rwQISHoia/DB8c6IHIhaE/UNAo+7UfeaeJRE979XceGl00LNkIz09RFsA==
   dependencies:
     "@vitest/utils" "2.1.6"
-    pathe "^1.1.2"
-
-"@vitest/runner@2.1.8":
-  version "2.1.8"
-  resolved "http://52.50.158.57:4873/@vitest/runner/-/runner-2.1.8.tgz#b0e2dd29ca49c25e9323ea2a45a5125d8729759f"
-  integrity sha512-17ub8vQstRnRlIU5k50bG+QOMLHRhYPAna5tw8tYbj+jzjcspnwnwtPtiOlkuKC4+ixDPTuLZiqiWWQ2PSXHVg==
-  dependencies:
-    "@vitest/utils" "2.1.8"
     pathe "^1.1.2"
 
 "@vitest/runner@2.1.9":
@@ -8500,15 +8466,6 @@
     magic-string "^0.30.12"
     pathe "^1.1.2"
 
-"@vitest/snapshot@2.1.8":
-  version "2.1.8"
-  resolved "http://52.50.158.57:4873/@vitest/snapshot/-/snapshot-2.1.8.tgz#d5dc204f4b95dc8b5e468b455dfc99000047d2de"
-  integrity sha512-20T7xRFbmnkfcmgVEz+z3AU/3b0cEzZOt/zmnvZEctg64/QZbSDJEVm9fLnnlSi74KibmRsO9/Qabi+t0vCRPg==
-  dependencies:
-    "@vitest/pretty-format" "2.1.8"
-    magic-string "^0.30.12"
-    pathe "^1.1.2"
-
 "@vitest/snapshot@2.1.9":
   version "2.1.9"
   resolved "http://52.50.158.57:4873/@vitest/snapshot/-/snapshot-2.1.9.tgz#24260b93f798afb102e2dcbd7e61c6dfa118df91"
@@ -8529,13 +8486,6 @@
   version "2.1.6"
   resolved "http://52.50.158.57:4873/@vitest/spy/-/spy-2.1.6.tgz#229f9d48b90b8bdd6573723bdec0699915598080"
   integrity sha512-oTFObV8bd4SDdRka5O+mSh5w9irgx5IetrD5i+OsUUsk/shsBoHifwCzy45SAORzAhtNiprUVaK3hSCCzZh1jQ==
-  dependencies:
-    tinyspy "^3.0.2"
-
-"@vitest/spy@2.1.8":
-  version "2.1.8"
-  resolved "http://52.50.158.57:4873/@vitest/spy/-/spy-2.1.8.tgz#bc41af3e1e6a41ae3b67e51f09724136b88fa447"
-  integrity sha512-5swjf2q95gXeYPevtW0BLk6H8+bPlMb4Vw/9Em4hFxDcaOxS+e0LOX4yqNxoHzMR2akEB2xfpnWUzkZokmgWDg==
   dependencies:
     tinyspy "^3.0.2"
 
@@ -8575,15 +8525,6 @@
   integrity sha512-ixNkFy3k4vokOUTU2blIUvOgKq/N2PW8vKIjZZYsGJCMX69MRa9J2sKqX5hY/k5O5Gty3YJChepkqZ3KM9LyIQ==
   dependencies:
     "@vitest/pretty-format" "2.1.6"
-    loupe "^3.1.2"
-    tinyrainbow "^1.2.0"
-
-"@vitest/utils@2.1.8":
-  version "2.1.8"
-  resolved "http://52.50.158.57:4873/@vitest/utils/-/utils-2.1.8.tgz#f8ef85525f3362ebd37fd25d268745108d6ae388"
-  integrity sha512-dwSoui6djdwbfFmIgbIjX2ZhIoG7Ex/+xpxyiEgIGzjliY8xGkcpITKTlp6B4MgtGkF2ilvm97cPM96XZaAgcA==
-  dependencies:
-    "@vitest/pretty-format" "2.1.8"
     loupe "^3.1.2"
     tinyrainbow "^1.2.0"
 
@@ -9166,61 +9107,61 @@ adm-zip@^0.5.10:
   resolved "http://52.50.158.57:4873/adm-zip/-/adm-zip-0.5.16.tgz#0b5e4c779f07dedea5805cdccb1147071d94a909"
   integrity sha512-TGw5yVi4saajsSEgz25grObGHEUaDrniwvA2qwSC060KfqGPdglhvPMA2lPIoxs3PQIItj2iag35fONcQqgUaQ==
 
-ag-charts-angular@11.1.1-beta.20250304:
-  version "11.1.1-beta.20250304"
-  resolved "http://52.50.158.57:4873/ag-charts-angular/-/ag-charts-angular-11.1.1-beta.20250304.tgz#aae1824b0c050b4fb922ba535c0d253aa09bf92e"
-  integrity sha512-M/nzohzi6XrLdsvD4nw/887hHK36Yp3wpzRPu/b+pPxmXyHFyOmGCFbaqjNs5uf2l5iCEqCFyYMHHsupIqp25Q==
+ag-charts-angular@11.1.1-beta.20250313:
+  version "11.1.1-beta.20250313"
+  resolved "http://52.50.158.57:4873/ag-charts-angular/-/ag-charts-angular-11.1.1-beta.20250313.tgz#98787c83977d8bf66a1d811ec0b38094f912a6fc"
+  integrity sha512-OYXuvfKt1g6EHQ9B0PkQnlCZbDDySXSNvftDjEmABlUJI6N/4SL2Y2wL6QjdMcvfgroEktf/V6gmS1p05/tTew==
   dependencies:
-    ag-charts-community "11.1.1-beta.20250304"
+    ag-charts-community "11.1.1-beta.20250313"
     tslib "^2.3.0"
 
-ag-charts-community@11.1.1-beta.20250304:
-  version "11.1.1-beta.20250304"
-  resolved "http://52.50.158.57:4873/ag-charts-community/-/ag-charts-community-11.1.1-beta.20250304.tgz#150235d7131b0cb8c1b772268e8a20548373c5d8"
-  integrity sha512-maa4CGSillQw0aYK/GQRVoAz0Xp0uYQOvWzbJWTSfEjjx9BXUDfmuqmLpaVKpkTOFj+3m/Y2HJboVjd9v6Q+Vg==
+ag-charts-community@11.1.1-beta.20250313:
+  version "11.1.1-beta.20250313"
+  resolved "http://52.50.158.57:4873/ag-charts-community/-/ag-charts-community-11.1.1-beta.20250313.tgz#6eca398f12b6d62463e0da8403a6f0ef6802a111"
+  integrity sha512-8B7o7F2V/HK2v86C1LOnDc1wrC4v7RPVFkUqmoTP9gEBnVw0iWNUrWUFW7uW7Eh4fTX0RvuB4+487TxnE5M1BQ==
   dependencies:
-    ag-charts-core "11.1.1-beta.20250304"
-    ag-charts-locale "11.1.1-beta.20250304"
-    ag-charts-types "11.1.1-beta.20250304"
+    ag-charts-core "11.1.1-beta.20250313"
+    ag-charts-locale "11.1.1-beta.20250313"
+    ag-charts-types "11.1.1-beta.20250313"
 
-ag-charts-core@11.1.1-beta.20250304:
-  version "11.1.1-beta.20250304"
-  resolved "http://52.50.158.57:4873/ag-charts-core/-/ag-charts-core-11.1.1-beta.20250304.tgz#477b7ad14e5c4ba9592f9e9e346b77aa3f7047a0"
-  integrity sha512-vPrg2I6IA2h2QGQLLLISWO46aDvYnY3xH1JiFpmer4WuLdHHqS0dKrVodwf1seC7eZmbn4wM5SCc9DNN0ttLug==
+ag-charts-core@11.1.1-beta.20250313:
+  version "11.1.1-beta.20250313"
+  resolved "http://52.50.158.57:4873/ag-charts-core/-/ag-charts-core-11.1.1-beta.20250313.tgz#bf1b60c3fb5cdd6db66b13d71f6506167d9964e5"
+  integrity sha512-ku2U4S7Ici/4hBYFmhP52jM53gQdRlsRc0yiWADC4JcBgwF0ORsXGcnGVCx9NyeEjFyRIkPvJ/WAk+YqN2RWfg==
   dependencies:
-    ag-charts-types "11.1.1-beta.20250304"
+    ag-charts-types "11.1.1-beta.20250313"
 
-ag-charts-enterprise@11.1.1-beta.20250304:
-  version "11.1.1-beta.20250304"
-  resolved "http://52.50.158.57:4873/ag-charts-enterprise/-/ag-charts-enterprise-11.1.1-beta.20250304.tgz#29188b670834531afea05fa88e7ffe0e97e1093d"
-  integrity sha512-qpZJtWjV8BLAipLOOmqrN4k79sQ3GKjg3SyHPw1vPhd+thBUNK9NDrnK17LeBvDKiN9CD1nKHOHT5t8VRD68KA==
+ag-charts-enterprise@11.1.1-beta.20250313:
+  version "11.1.1-beta.20250313"
+  resolved "http://52.50.158.57:4873/ag-charts-enterprise/-/ag-charts-enterprise-11.1.1-beta.20250313.tgz#63d507b3564faeb27afadc0e94d6f4dc2c567d27"
+  integrity sha512-px6jrf2ohFfHbanxYvPR1iS0warYdxS6ScYdiSpnljg/Qg2a5T+rFRlNWwND+u02ZkjqtMC/TIbGP6MqJaQ6kw==
   dependencies:
-    ag-charts-community "11.1.1-beta.20250304"
-    ag-charts-core "11.1.1-beta.20250304"
+    ag-charts-community "11.1.1-beta.20250313"
+    ag-charts-core "11.1.1-beta.20250313"
 
-ag-charts-locale@11.1.1-beta.20250304:
-  version "11.1.1-beta.20250304"
-  resolved "http://52.50.158.57:4873/ag-charts-locale/-/ag-charts-locale-11.1.1-beta.20250304.tgz#3ba0527e04ad9590a868b4d0232267051591cc11"
-  integrity sha512-Awl3Rhlym4KvVmq5YYhHqNlrX7EHbwvcr+3GFl2ql4oxtm2pCFZ8JuqU9mpNdrZUltda9dKgjGc/sjfgUWqj+w==
+ag-charts-locale@11.1.1-beta.20250313:
+  version "11.1.1-beta.20250313"
+  resolved "http://52.50.158.57:4873/ag-charts-locale/-/ag-charts-locale-11.1.1-beta.20250313.tgz#03650feea35b7d3a2af0efcca1872c0374ee3d3b"
+  integrity sha512-RY+2d5ePfGArfvSZexT7plpfb7UBSzfDweCLJKbNGlHiLd407sDTMpeOoXXkJ8YgY0JTUiR8ZBD5Mx9iV4Jgxw==
 
-ag-charts-react@11.1.1-beta.20250304:
-  version "11.1.1-beta.20250304"
-  resolved "http://52.50.158.57:4873/ag-charts-react/-/ag-charts-react-11.1.1-beta.20250304.tgz#6400d5c6588e089cd44f6c86482bebff67501cd9"
-  integrity sha512-UyxGbltIS31K2P8IPGUpbHVp6Hdw9rLRiTt/FUcF7wWrO2Vq9HneJy7zAzvxxoa2smrJHS7hg6OdnCP1eQpILg==
+ag-charts-react@11.1.1-beta.20250313:
+  version "11.1.1-beta.20250313"
+  resolved "http://52.50.158.57:4873/ag-charts-react/-/ag-charts-react-11.1.1-beta.20250313.tgz#7a3631e976d088aac856ed881950f316b193daef"
+  integrity sha512-NJUoihTPJIC+q2LhTu/KkZJ9gEiQD8B1PegR3YM3q8EmXwKtPUJ7CJuSpZCr+/x21g3RnRzhLBTvXdO+tifeGQ==
   dependencies:
-    ag-charts-community "11.1.1-beta.20250304"
+    ag-charts-community "11.1.1-beta.20250313"
 
-ag-charts-types@11.1.1-beta.20250304:
-  version "11.1.1-beta.20250304"
-  resolved "http://52.50.158.57:4873/ag-charts-types/-/ag-charts-types-11.1.1-beta.20250304.tgz#8158f1d82e4c5d607b36f19e3a577b6235794463"
-  integrity sha512-/DhgAyx95dLf2WLSjXfXOS18MNhAWC2Ema06MWLuXNi4CD/Nzhl6U1pD+9XQrxgef8NKvQXdVaVkNURtgvzK3A==
+ag-charts-types@11.1.1-beta.20250313:
+  version "11.1.1-beta.20250313"
+  resolved "http://52.50.158.57:4873/ag-charts-types/-/ag-charts-types-11.1.1-beta.20250313.tgz#73acba4e10589bd083667a5041bad53cd0cfa3ce"
+  integrity sha512-69q75eV6lrsazG7LmhnrP96sVOIcAyLEIqeIg4+nAYVRiZ+/O/U3OJKNQ1GAgTa5KMpFagL6sfZa15yEavtTxQ==
 
-ag-charts-vue3@11.1.1-beta.20250304:
-  version "11.1.1-beta.20250304"
-  resolved "http://52.50.158.57:4873/ag-charts-vue3/-/ag-charts-vue3-11.1.1-beta.20250304.tgz#6a2865fbd3180ce86811268d0f1bdc66268c94ba"
-  integrity sha512-92vepKeUEPa/sek5fNTwCZgFYmZTGrWAsIDU2LYOqopTrHoJdyIj1Myb8JxSxVng3H+aBplPteJPMqWc5NxTDA==
+ag-charts-vue3@11.1.1-beta.20250313:
+  version "11.1.1-beta.20250313"
+  resolved "http://52.50.158.57:4873/ag-charts-vue3/-/ag-charts-vue3-11.1.1-beta.20250313.tgz#4655c719098c877bb7a86056d9a8604cf223fd0c"
+  integrity sha512-7sxojO4+9iIVRdurlbiUXMipVoMFilT6TpMrU34WxqzW9uxL5/TgvBZ9arJLTi0eltZmrInrRKw+qA/4JopbPA==
   dependencies:
-    ag-charts-community "11.1.1-beta.20250304"
+    ag-charts-community "11.1.1-beta.20250313"
 
 agent-base@4, agent-base@^4.1.0, agent-base@^4.3.0:
   version "4.3.0"
@@ -29705,17 +29646,6 @@ vite-node@2.1.6:
     pathe "^1.1.2"
     vite "^5.0.0 || ^6.0.0"
 
-vite-node@2.1.8:
-  version "2.1.8"
-  resolved "http://52.50.158.57:4873/vite-node/-/vite-node-2.1.8.tgz#9495ca17652f6f7f95ca7c4b568a235e0c8dbac5"
-  integrity sha512-uPAwSr57kYjAUux+8E2j0q0Fxpn8M9VoyfGiRI8Kfktz9NcYMCenwY5RnZxnF1WTu3TGiYipirIzacLL3VVGFg==
-  dependencies:
-    cac "^6.7.14"
-    debug "^4.3.7"
-    es-module-lexer "^1.5.4"
-    pathe "^1.1.2"
-    vite "^5.0.0"
-
 vite-node@2.1.9:
   version "2.1.9"
   resolved "http://52.50.158.57:4873/vite-node/-/vite-node-2.1.9.tgz#549710f76a643f1c39ef34bdb5493a944e4f895f"
@@ -29915,32 +29845,6 @@ vitest@^1.6.0:
     vite "^5.0.0"
     vite-node "1.6.0"
     why-is-node-running "^2.2.2"
-
-vitest@^2.0.5:
-  version "2.1.8"
-  resolved "http://52.50.158.57:4873/vitest/-/vitest-2.1.8.tgz#2e6a00bc24833574d535c96d6602fb64163092fa"
-  integrity sha512-1vBKTZskHw/aosXqQUlVWWlGUxSJR8YtiyZDJAFeW2kPAeX6S3Sool0mjspO+kXLuxVWlEDDowBAeqeAQefqLQ==
-  dependencies:
-    "@vitest/expect" "2.1.8"
-    "@vitest/mocker" "2.1.8"
-    "@vitest/pretty-format" "^2.1.8"
-    "@vitest/runner" "2.1.8"
-    "@vitest/snapshot" "2.1.8"
-    "@vitest/spy" "2.1.8"
-    "@vitest/utils" "2.1.8"
-    chai "^5.1.2"
-    debug "^4.3.7"
-    expect-type "^1.1.0"
-    magic-string "^0.30.12"
-    pathe "^1.1.2"
-    std-env "^3.8.0"
-    tinybench "^2.9.0"
-    tinyexec "^0.3.1"
-    tinypool "^1.0.1"
-    tinyrainbow "^1.2.0"
-    vite "^5.0.0"
-    vite-node "2.1.8"
-    why-is-node-running "^2.3.0"
 
 vm-browserify@^1.0.0:
   version "1.1.2"

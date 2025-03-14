@@ -1,6 +1,6 @@
 import type { AgChartsExports } from '../../../../../agChartsExports';
 import type { ChartTranslationKey } from '../../../../services/chartTranslationService';
-import type { MiniChartSelector, ThemeTemplateParameters } from '../../miniChartsContainer';
+import type { MiniChartSelector } from '../../miniChartsContainer';
 import { normalizeStackData } from '../miniChartHelpers';
 import { MiniStackedAreaClass, miniStackedAreaData } from './miniStackedArea';
 
@@ -11,12 +11,11 @@ export class MiniNormalizedAreaClass extends MiniStackedAreaClass {
         agChartsExports: AgChartsExports,
         fills: string[],
         strokes: string[],
-        themeTemplateParameters: ThemeTemplateParameters,
         isCustomTheme: boolean,
         data: number[][] = miniNormalizedAreaData,
         tooltipName: ChartTranslationKey = 'normalizedAreaTooltip'
     ) {
-        super(container, agChartsExports, fills, strokes, themeTemplateParameters, isCustomTheme, data, tooltipName);
+        super(container, agChartsExports, fills, strokes, isCustomTheme, data, tooltipName);
     }
 }
 
