@@ -5,7 +5,6 @@ import type { AgColumnGroup } from '../../../entities/agColumnGroup';
 import type { ColumnGroup } from '../../../interfaces/iColumn';
 import type { AgGridCommon } from '../../../interfaces/iCommon';
 import type { IComponent } from '../../../interfaces/iComponent';
-import type { ElementParams } from '../../../utils/dom';
 import { _div, _setDisplayed, _span } from '../../../utils/dom';
 import { _isStopPropagationForAgGrid, _stopPropagationForAgGrid } from '../../../utils/event';
 import { _exists } from '../../../utils/generic';

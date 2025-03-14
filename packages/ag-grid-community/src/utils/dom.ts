@@ -2,11 +2,9 @@ import type { BeanCollection } from '../context/context';
 import type { CellStyle, HeaderStyle } from '../entities/colDef';
 import type { RowStyle } from '../entities/gridOptions';
 import { _getRootNode, _getWindow } from '../gridOptionsUtils';
-import type { ICellRendererComp } from '../rendering/cellRenderers/iCellRenderer';
 import type { AgComponentSelector } from '../widgets/component';
 import { _setAriaHidden } from './aria';
 import { _isBrowserChrome, _isBrowserFirefox, _isBrowserSafari } from './browser';
-import type { AgPromise } from './promise';
 
 let rtlNegativeScroll: boolean;
 
