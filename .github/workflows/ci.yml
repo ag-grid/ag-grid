@@ -265,7 +265,7 @@ jobs:
 
   report:
     runs-on: ubuntu-24.04
-    needs: [ build_lint, test, docs ]
+    needs: [ build_lint, test, e2e, docs ]
     if: cancelled() != true
     steps:
       - name: Checkout

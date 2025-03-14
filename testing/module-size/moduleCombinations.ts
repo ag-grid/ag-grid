@@ -1,4 +1,4 @@
-import {baseModule, moduleCombinations} from './moduleDefinitions';
+import { baseModule, moduleCombinations } from './moduleDefinitions';
 
 const fs = require('fs');
 const { exec } = require('child_process');
