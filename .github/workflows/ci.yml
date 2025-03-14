@@ -255,13 +255,13 @@ jobs:
       - name: docs build and link checker
         run: CHECK_LINKS=true CHECK_REDIRECTS=true yarn nx run ag-grid-docs:build -c staging
 
-      - name: Perist test results
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: test-results-docs
-          path: |
-            reports/
+#      - name: Perist test results
+#        if: always()
+#        uses: actions/upload-artifact@v4
+#        with:
+#          name: test-results-docs
+#          path: |
+#            reports/
 
   report:
     runs-on: ubuntu-24.04
