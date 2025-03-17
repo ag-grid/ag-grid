@@ -45,7 +45,7 @@ export const AllGridCommunityModules: Record<`${CommunityModuleName}Module`, num
     TextFilterModule: 104,
     TooltipModule: 22.24,
     UndoRedoEditModule: 23.5,
-    ValidationModule: 74.31,
+    ValidationModule: 76.83,
     ValueCacheModule: 0.65,
     CellSpanModule: 8.08,
 };
@@ -63,7 +63,7 @@ export const AllEnterpriseModules: Record<`${EnterpriseModuleName}Module`, numbe
     GridChartsModule: 67,
     IntegratedChartsModule: 385.33,
     GroupFilterModule: 93,
-    ManualPinnedRowModule: 475.21,
+    ManualPinnedRowModule: 16.79,
     MasterDetailModule: 82,
     MenuModule: 153,
     MultiFilterModule: 121,
