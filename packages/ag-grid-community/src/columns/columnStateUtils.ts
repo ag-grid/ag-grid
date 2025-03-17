@@ -306,10 +306,7 @@ export function _resetColumnState(beans: BeanCollection, source: ColumnEventType
 
     autoColSvc?.getColumns()?.forEach(addColState);
     selectionColSvc?.getColumns()?.forEach(addColState);
-
-    if (primaryColumns) {
-        primaryCols.forEach(addColState);
-    }
+    primaryColumns?.forEach(addColState);
 
     // apply state before ordering, as changes in row grouping will introduce new columns
     _applyColumnState(beans, { state: columnStates }, source);
