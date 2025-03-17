@@ -9,7 +9,7 @@ import type { PopupPositionParams } from '../../interfaces/iPopup';
 import type { UserCompDetails } from '../../interfaces/iUserCompDetails';
 import { _getLocaleTextFunc } from '../../misc/locale/localeUtils';
 import type { CheckboxSelectionComponent } from '../../selection/checkboxSelectionComponent';
-import { _addStylesToElement, _clearElement, _createElement, _div, _removeFromParent, _span } from '../../utils/dom';
+import { _addStylesToElement, _clearElement, _createElement, _removeFromParent } from '../../utils/dom';
 import { _missing } from '../../utils/generic';
 import { _escapeString } from '../../utils/string';
 import { _warn } from '../../validation/logging';
@@ -73,15 +73,14 @@ export class CellComp extends Component {
         this.rowNode = cellCtrl.rowNode;
         this.eRow = eRow;
 
-        const cellDiv = _createElement(
-            _div({
-                attrs: {
-                    'comp-id': `${this.getCompId()}`,
-                    role: cellCtrl.getCellAriaRole(),
-                    'col-id': cellCtrl.colIdSanitised,
-                },
-            })
-        );
+        const cellDiv = _createElement({
+            tag: 'div',
+            attrs: {
+                'comp-id': `${this.getCompId()}`,
+                role: cellCtrl.getCellAriaRole(),
+                'col-id': cellCtrl.colIdSanitised,
+            },
+        });
 
         this.eCell = cellDiv;
 
@@ -90,7 +89,11 @@ export class CellComp extends Component {
         // if doing a cell span, need to wrap the cell in a container with background-color to avoid
         // transparent cells displaying row lines
         if (cellCtrl.isCellSpanning()) {
-            wrapperDiv = _createElement(_div({ cls: 'ag-spanned-cell-wrapper', attrs: { role: 'presentation' } }));
+            wrapperDiv = _createElement({
+                tag: 'div',
+                cls: 'ag-spanned-cell-wrapper',
+                attrs: { role: 'presentation' },
+            });
             wrapperDiv.appendChild(cellDiv);
 
             this.setTemplateFromElement(wrapperDiv);
@@ -190,12 +193,7 @@ export class CellComp extends Component {
 
         const putWrapperIn = usingWrapper && this.eCellWrapper == null;
         if (putWrapperIn) {
-            this.eCellWrapper = _createElement(
-                _div({
-                    attrs: { role: 'presentation' },
-                    cls: 'ag-cell-wrapper',
-                })
-            );
+            this.eCellWrapper = _createElement({ tag: 'div', attrs: { role: 'presentation' }, cls: 'ag-cell-wrapper' });
             this.eCell.appendChild(this.eCellWrapper);
         }
         const takeWrapperOut = !usingWrapper && this.eCellWrapper != null;
@@ -209,12 +207,7 @@ export class CellComp extends Component {
         const usingCellValue = !editing && usingWrapper;
         const putCellValueIn = usingCellValue && this.eCellValue == null;
         if (putCellValueIn) {
-            this.eCellValue = _createElement(
-                _span({
-                    attrs: { role: 'presentation' },
-                    cls: 'ag-cell-value',
-                })
-            );
+            this.eCellValue = _createElement({ tag: 'span', attrs: { role: 'presentation' }, cls: 'ag-cell-value' });
             this.eCellWrapper!.appendChild(this.eCellValue);
         }
         const takeCellValueOut = !usingCellValue && this.eCellValue != null;

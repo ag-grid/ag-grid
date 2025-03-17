@@ -1,22 +1,22 @@
 import type { HeaderStyle } from '../../../entities/colDef';
 import type { IFloatingFilterComp } from '../../../filter/floating/floatingFilter';
 import type { UserCompDetails } from '../../../interfaces/iUserCompDetails';
-import { _addStylesToElement, _div, _setDisplayed } from '../../../utils/dom';
+import type { ElementParams } from '../../../utils/dom';
+import { _addStylesToElement, _setDisplayed } from '../../../utils/dom';
 import type { AgPromise } from '../../../utils/promise';
 import { RefPlaceholder } from '../../../widgets/component';
 import { AbstractHeaderCellComp } from '../abstractCell/abstractHeaderCellComp';
 import type { HeaderFilterCellCtrl } from './headerFilterCellCtrl';
 import type { IHeaderFilterCellComp } from './iHeaderFilterCellComp';
 
-const HeaderFilterCellCompElement = _div({
+const HeaderFilterCellCompElement: ElementParams = {
+    tag: 'div',
     cls: 'ag-header-cell ag-floating-filter',
     attrs: { role: 'gridcell' },
     children: [
-        _div({
-            ref: 'eFloatingFilterBody',
-            attrs: { role: 'presentation' },
-        }),
-        _div({
+        { tag: 'div', ref: 'eFloatingFilterBody', attrs: { role: 'presentation' } },
+        {
+            tag: 'div',
             ref: 'eButtonWrapper',
             cls: 'ag-floating-filter-button ag-hidden',
             attrs: { role: 'presentation' },
@@ -28,9 +28,9 @@ const HeaderFilterCellCompElement = _div({
                     attrs: { type: 'button', tabindex: '-1' },
                 },
             ],
-        }),
+        },
     ],
-});
+};
 
 export class HeaderFilterCellComp extends AbstractHeaderCellComp<HeaderFilterCellCtrl> {
     private readonly eFloatingFilterBody: HTMLElement = RefPlaceholder;

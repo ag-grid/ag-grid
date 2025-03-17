@@ -1,4 +1,4 @@
-import { _span } from '../../utils/dom';
+import type { ElementParams } from '../../utils/dom';
 import { _makeNull } from '../../utils/generic';
 import type { IOverlay, IOverlayComp, IOverlayParams } from './overlayComponent';
 import { OverlayComponent } from './overlayComponent';
@@ -11,10 +11,11 @@ export interface ILoadingOverlay<TData = any, TContext = any>
 export interface ILoadingOverlayComp<TData = any, TContext = any>
     extends IOverlayComp<TData, TContext, ILoadingOverlayParams<TData, TContext>> {}
 
-const LoadingOverlayElement = _span({
+const LoadingOverlayElement: ElementParams = {
+    tag: 'span',
     cls: 'ag-overlay-loading-center',
     attrs: { 'aria-live': 'polite', 'aria-atomic': 'true' },
-});
+};
 export class LoadingOverlayComponent
     extends OverlayComponent<any, any, ILoadingOverlayParams>
     implements ILoadingOverlayComp<any, any>

@@ -1,27 +1,21 @@
 import type { HeaderStyle } from '../../../entities/colDef';
 import type { UserCompDetails } from '../../../interfaces/iUserCompDetails';
-import { _addStylesToElement, _div, _setDisplayed } from '../../../utils/dom';
+import type { ElementParams } from '../../../utils/dom';
+import { _addStylesToElement, _setDisplayed } from '../../../utils/dom';
 import { RefPlaceholder } from '../../../widgets/component';
 import { AbstractHeaderCellComp } from '../abstractCell/abstractHeaderCellComp';
 import type { HeaderGroupCellCtrl, IHeaderGroupCellComp } from './headerGroupCellCtrl';
 import type { IHeaderGroupComp } from './headerGroupComp';
 
-const HeaderGroupCellCompElement = _div({
+const HeaderGroupCellCompElement: ElementParams = {
+    tag: 'div',
     cls: 'ag-header-group-cell',
     attrs: { role: 'columnheader' },
     children: [
-        _div({
-            cls: 'ag-header-cell-comp-wrapper',
-            attrs: { role: 'presentation' },
-            ref: 'eHeaderCompWrapper',
-        }),
-        _div({
-            cls: 'ag-header-cell-resize',
-            attrs: { role: 'presentation' },
-            ref: 'eResize',
-        }),
+        { tag: 'div', cls: 'ag-header-cell-comp-wrapper', attrs: { role: 'presentation' }, ref: 'eHeaderCompWrapper' },
+        { tag: 'div', cls: 'ag-header-cell-resize', attrs: { role: 'presentation' }, ref: 'eResize' },
     ],
-});
+};
 
 export class HeaderGroupCellComp extends AbstractHeaderCellComp<HeaderGroupCellCtrl> {
     private eResize: HTMLElement = RefPlaceholder;

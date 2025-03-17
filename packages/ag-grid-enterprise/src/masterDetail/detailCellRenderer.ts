@@ -1,6 +1,7 @@
 import type {
     BeanCollection,
     Context,
+    ElementParams,
     GridApi,
     GridOptions,
     GridParams,
@@ -8,25 +9,18 @@ import type {
     IDetailCellRenderer,
     IDetailCellRendererParams,
 } from 'ag-grid-community';
-import {
-    Component,
-    RefPlaceholder,
-    _div,
-    _getGridRegisteredModules,
-    _missing,
-    _warn,
-    createGrid,
-} from 'ag-grid-community';
+import { Component, RefPlaceholder, _getGridRegisteredModules, _missing, _warn, createGrid } from 'ag-grid-community';
 
 import { DetailCellRendererCtrl } from './detailCellRendererCtrl';
 import { DetailFrameworkComponentWrapper } from './detailFrameworkComponentWrapper';
 
-const PinnedDetailCellRendererElement = _div({ cls: 'ag-details-row' });
-const DetailCellRendererElement = _div({
+const PinnedDetailCellRendererElement: ElementParams = { tag: 'div', cls: 'ag-details-row' };
+const DetailCellRendererElement: ElementParams = {
+    tag: 'div',
     cls: 'ag-details-row',
     attrs: { role: 'gridcell' },
-    children: [_div({ ref: 'eDetailGrid', cls: 'ag-details-grid', attrs: { role: 'presentation' } })],
-});
+    children: [{ tag: 'div', ref: 'eDetailGrid', cls: 'ag-details-grid', attrs: { role: 'presentation' } }],
+};
 export class DetailCellRenderer extends Component implements ICellRenderer {
     private eDetailGrid: HTMLElement = RefPlaceholder;
 

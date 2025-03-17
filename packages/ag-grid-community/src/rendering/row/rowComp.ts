@@ -2,7 +2,7 @@ import type { BeanCollection } from '../../context/context';
 import type { RowStyle } from '../../entities/gridOptions';
 import type { RowContainerType } from '../../gridBodyComp/rowContainer/rowContainerCtrl';
 import type { UserCompDetails } from '../../interfaces/iUserCompDetails';
-import { _addStylesToElement, _createElement, _div, _setDomChildOrder } from '../../utils/dom';
+import { _addStylesToElement, _createElement, _setDomChildOrder } from '../../utils/dom';
 import { Component } from '../../widgets/component';
 import { CellComp } from '../cell/cellComp';
 import type { CellCtrl, CellCtrlInstanceId } from '../cell/cellCtrl';
@@ -23,7 +23,7 @@ export class RowComp extends Component {
         this.beans = beans;
         this.rowCtrl = ctrl;
 
-        const rowDiv = _createElement(_div({ attrs: { role: 'row', 'comp-id': `${this.getCompId()}` } }));
+        const rowDiv = _createElement({ tag: 'div', attrs: { role: 'row', 'comp-id': `${this.getCompId()}` } });
         this.setInitialStyle(rowDiv, containerType);
         this.setTemplateFromElement(rowDiv);
 

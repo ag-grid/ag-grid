@@ -3,16 +3,18 @@ import type {
     AgInputTextField,
     BeanCollection,
     ColumnNameService,
+    ElementParams,
     IFloatingFilter,
     IFloatingFilterParams,
     SetFilterModel,
 } from 'ag-grid-community';
-import { AgInputTextFieldSelector, Component, RefPlaceholder, _div, _error } from 'ag-grid-community';
+import { AgInputTextFieldSelector, Component, RefPlaceholder, _error } from 'ag-grid-community';
 
 import { SetFilter } from './setFilter';
 import { SetFilterModelFormatter } from './setFilterModelFormatter';
 
-const SetFloatingFilterElement = _div({
+const SetFloatingFilterElement: ElementParams = {
+    tag: 'div',
     cls: 'ag-floating-filter-input ag-set-floating-filter-input',
     attrs: { role: 'presentation' },
     children: [
@@ -21,7 +23,7 @@ const SetFloatingFilterElement = _div({
             ref: 'eFloatingFilterText',
         },
     ],
-});
+};
 
 export class SetFloatingFilterComp<V = string> extends Component implements IFloatingFilter {
     private colNames: ColumnNameService;

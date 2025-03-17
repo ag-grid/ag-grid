@@ -2,7 +2,7 @@ import { KeyCode } from '../constants/keyCode';
 import { _getDocument } from '../gridOptionsUtils';
 import type { ITooltipCtrl, TooltipFeature } from '../tooltip/tooltipFeature';
 import { _setAriaPosInSet, _setAriaRole, _setAriaSelected, _setAriaSetSize } from '../utils/aria';
-import { _div, _isVisible, _removeFromParent } from '../utils/dom';
+import { _isVisible, _removeFromParent } from '../utils/dom';
 import { Component } from './component';
 
 export interface ListOption<TValue = string> {
@@ -27,7 +27,7 @@ export class AgList<TEventType extends string = AgListEvent, TValue = string> ex
         private readonly cssIdentifier = 'default',
         private readonly unFocusable: boolean = false
     ) {
-        super(_div({ cls: `ag-list ag-${cssIdentifier}-list` }));
+        super({ tag: 'div', cls: `ag-list ag-${cssIdentifier}-list` });
     }
 
     public postConstruct(): void {

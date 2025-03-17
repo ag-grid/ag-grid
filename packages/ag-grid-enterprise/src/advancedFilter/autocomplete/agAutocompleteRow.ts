@@ -1,10 +1,12 @@
-import { Component, _div, _escapeString, _exists } from 'ag-grid-community';
+import type { ElementParams } from 'ag-grid-community';
+import { Component, _escapeString, _exists } from 'ag-grid-community';
 
-const AgAutocompleteRowElement = _div({
+const AgAutocompleteRowElement: ElementParams = {
+    tag: 'div',
     cls: 'ag-autocomplete-row',
     attrs: { role: 'presentation' },
-    children: [_div({ cls: 'ag-autocomplete-row-label' })],
-});
+    children: [{ tag: 'div', cls: 'ag-autocomplete-row-label' }],
+};
 
 export class AgAutocompleteRow extends Component {
     private value: string;

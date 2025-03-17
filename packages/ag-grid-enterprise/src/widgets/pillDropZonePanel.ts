@@ -1,4 +1,11 @@
-import type { DragAndDropIcon, DragItem, DragSourceType, DraggingEvent, DropTarget } from 'ag-grid-community';
+import type {
+    DragAndDropIcon,
+    DragItem,
+    DragSourceType,
+    DraggingEvent,
+    DropTarget,
+    ElementParams,
+} from 'ag-grid-community';
 import {
     Component,
     KeyCode,
@@ -7,7 +14,6 @@ import {
     _areEqual,
     _clearElement,
     _createIconNoSpan,
-    _div,
     _findFocusableElements,
     _findNextFocusableElement,
     _getActiveDomElement,
@@ -38,7 +44,7 @@ function _insertArrayIntoArray<T>(dest: T[], src: T[], toIndex: number) {
 
     dest.splice(toIndex, 0, ...src);
 }
-const PillDropZonePanelElement = _div({ cls: 'ag-unselectable', attrs: { role: 'presentation' } });
+const PillDropZonePanelElement: ElementParams = { tag: 'div', cls: 'ag-unselectable', attrs: { role: 'presentation' } };
 export abstract class PillDropZonePanel<TPill extends PillDragComp<TItem>, TItem> extends Component {
     private state: PillState = 'notDragging';
 

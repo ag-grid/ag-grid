@@ -2,7 +2,8 @@ import { KeyCode } from '../constants/keyCode';
 import { _isNothingFocused } from '../gridOptionsUtils';
 import type { AgPickerFieldParams } from '../interfaces/agFieldParams';
 import { _setAriaExpanded, _setAriaRole } from '../utils/aria';
-import { _div, _formatSize, _getAbsoluteWidth, _getInnerHeight, _setElementWidth } from '../utils/dom';
+import type { ElementParams } from '../utils/dom';
+import { _formatSize, _getAbsoluteWidth, _getInnerHeight, _setElementWidth } from '../utils/dom';
 import type { IconName } from '../utils/icon';
 import { _createIconNoSpan } from '../utils/icon';
 import type { AgAbstractFieldEvent } from './agAbstractField';
@@ -14,21 +15,23 @@ import type { AddPopupParams } from './popupService';
 
 export type AgPickerFieldEvent = AgAbstractFieldEvent;
 
-const AgPickerFieldElement = _div({
+const AgPickerFieldElement: ElementParams = {
+    tag: 'div',
     cls: 'ag-picker-field',
     attrs: { role: 'presentation' },
     children: [
-        _div({ ref: 'eLabel' }),
-        _div({
+        { tag: 'div', ref: 'eLabel' },
+        {
+            tag: 'div',
             ref: 'eWrapper',
             cls: 'ag-wrapper ag-picker-field-wrapper ag-picker-collapsed',
             children: [
-                _div({ ref: 'eDisplayField', cls: 'ag-picker-field-display' }),
-                _div({ ref: 'eIcon', cls: 'ag-picker-field-icon', attrs: { 'aria-hidden': 'true' } }),
+                { tag: 'div', ref: 'eDisplayField', cls: 'ag-picker-field-display' },
+                { tag: 'div', ref: 'eIcon', cls: 'ag-picker-field-icon', attrs: { 'aria-hidden': 'true' } },
             ],
-        }),
+        },
     ],
-});
+};
 
 export abstract class AgPickerField<
     TValue,

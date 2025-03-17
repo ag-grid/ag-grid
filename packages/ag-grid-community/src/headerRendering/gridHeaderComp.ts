@@ -1,11 +1,11 @@
-import { _div } from '../utils/dom';
+import type { ElementParams } from '../utils/dom';
 import type { ComponentSelector } from '../widgets/component';
 import { Component } from '../widgets/component';
 import type { IGridHeaderComp } from './gridHeaderCtrl';
 import { GridHeaderCtrl } from './gridHeaderCtrl';
 import { HeaderRowContainerComp } from './rowContainer/headerRowContainerComp';
 
-const GridHeaderElement = _div({ cls: 'ag-header', attrs: { role: 'presentation' } });
+const GridHeaderElement: ElementParams = { tag: 'div', cls: 'ag-header', attrs: { role: 'presentation' } };
 export class GridHeaderComp extends Component {
     constructor() {
         super(GridHeaderElement);

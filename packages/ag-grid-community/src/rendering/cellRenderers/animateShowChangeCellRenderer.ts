@@ -1,4 +1,5 @@
-import { _clearElement, _span } from '../../utils/dom';
+import type { ElementParams } from '../../utils/dom';
+import { _clearElement } from '../../utils/dom';
 import { _exists } from '../../utils/generic';
 import { Component, RefPlaceholder } from '../../widgets/component';
 import type { ICellRenderer } from './iCellRenderer';
@@ -6,18 +7,13 @@ import type { ICellRenderer } from './iCellRenderer';
 const ARROW_UP = '\u2191';
 const ARROW_DOWN = '\u2193';
 
-const AnimateShowChangeCellRendererElement = _span({
+const AnimateShowChangeCellRendererElement: ElementParams = {
+    tag: 'span',
     children: [
-        _span({
-            cls: 'ag-value-change-delta',
-            ref: 'eDelta',
-        }),
-        _span({
-            cls: 'ag-value-change-value',
-            ref: 'eValue',
-        }),
+        { tag: 'span', cls: 'ag-value-change-delta', ref: 'eDelta' },
+        { tag: 'span', cls: 'ag-value-change-value', ref: 'eValue' },
     ],
-});
+};
 
 export class AnimateShowChangeCellRenderer extends Component implements ICellRenderer {
     private lastValue: number;

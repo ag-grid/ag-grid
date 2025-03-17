@@ -2,11 +2,11 @@ import type { AgColumn } from '../entities/agColumn';
 import type { DndSourceOnRowDragParams } from '../entities/colDef';
 import type { RowNode } from '../entities/rowNode';
 import { _addGridCommonParams } from '../gridOptionsUtils';
-import { _div } from '../utils/dom';
+import type { ElementParams } from '../utils/dom';
 import { _createIconNoSpan } from '../utils/icon';
 import { Component } from '../widgets/component';
 
-const DndSourceElement = _div({ cls: 'ag-drag-handle ag-row-drag', attrs: { draggable: 'true' } });
+const DndSourceElement: ElementParams = { tag: 'div', cls: 'ag-drag-handle ag-row-drag', attrs: { draggable: 'true' } };
 export class DndSourceComp extends Component {
     constructor(
         private readonly rowNode: RowNode,

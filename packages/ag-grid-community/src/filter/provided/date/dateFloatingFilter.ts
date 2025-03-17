@@ -2,7 +2,8 @@ import type { FilterChangedEvent } from '../../../events';
 import { _addGridCommonParams } from '../../../gridOptionsUtils';
 import type { IDateParams } from '../../../interfaces/dateComponent';
 import { _parseDateTimeFromString, _serialiseDate } from '../../../utils/date';
-import { _div, _setDisplayed } from '../../../utils/dom';
+import type { ElementParams } from '../../../utils/dom';
+import { _setDisplayed } from '../../../utils/dom';
 import { _debounce } from '../../../utils/function';
 import type { AgInputTextField } from '../../../widgets/agInputTextField';
 import { AgInputTextFieldSelector } from '../../../widgets/agInputTextField';
@@ -17,7 +18,8 @@ import { DEFAULT_DATE_FILTER_OPTIONS } from './dateFilterConstants';
 import { DateFilterModelFormatter } from './dateFilterModelFormatter';
 import type { DateFilterModel, DateFilterParams } from './iDateFilter';
 
-const DateFloatingFilterElement = _div({
+const DateFloatingFilterElement: ElementParams = {
+    tag: 'div',
     cls: 'ag-floating-filter-input',
     attrs: { role: 'presentation' },
     children: [
@@ -25,12 +27,9 @@ const DateFloatingFilterElement = _div({
             tag: 'ag-input-text-field',
             ref: 'eReadOnlyText',
         },
-        _div({
-            ref: 'eDateWrapper',
-            cls: 'ag-date-floating-filter-wrapper',
-        }),
+        { tag: 'div', ref: 'eDateWrapper', cls: 'ag-date-floating-filter-wrapper' },
     ],
-});
+};
 
 export class DateFloatingFilter extends SimpleFloatingFilter {
     private readonly eReadOnlyText: AgInputTextField = RefPlaceholder;

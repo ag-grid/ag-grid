@@ -2,7 +2,7 @@ import type { BeanCollection } from '../../context/context';
 import { RowComp } from '../../rendering/row/rowComp';
 import type { RowCtrl, RowCtrlInstanceId } from '../../rendering/row/rowCtrl';
 import type { ElementParams } from '../../utils/dom';
-import { _div, _ensureDomOrder } from '../../utils/dom';
+import { _ensureDomOrder } from '../../utils/dom';
 import type { ComponentSelector } from '../../widgets/component';
 import { Component, RefPlaceholder } from '../../widgets/component';
 import type { IRowContainerComp, RowContainerName, RowContainerOptions } from './rowContainerCtrl';
@@ -17,25 +17,28 @@ import {
 function getElementParams(name: RowContainerName, options: RowContainerOptions, beans: BeanCollection): ElementParams {
     const isCellSpanning = !!beans.gos.get('enableCellSpan') && !!options.getSpannedRowCtrls;
 
-    const eContainerElement = _div({
+    const eContainerElement: ElementParams = {
+        tag: 'div',
         cls: _getRowContainerClass(name),
         ref: 'eContainer',
         attrs: { role: 'rowgroup' },
-    });
+    };
 
     if (options.type === 'center' || isCellSpanning) {
-        const eSpannedContainerElement = _div({
+        const eSpannedContainerElement: ElementParams = {
+            tag: 'div',
             cls: `ag-spanning-container ${_getRowSpanContainerClass(name)}`,
             ref: 'eSpannedContainer',
             attrs: { role: 'rowgroup' },
-        });
+        };
 
-        return _div({
+        return {
+            tag: 'div',
             cls: `ag-viewport ${_getRowViewportClass(name)}`,
             ref: 'eViewport',
             attrs: { role: 'presentation' },
             children: [eContainerElement, isCellSpanning ? eSpannedContainerElement : null],
-        });
+        };
     }
     return eContainerElement;
 }

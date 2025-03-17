@@ -1,9 +1,8 @@
-import type { AgEvent, ComponentSelector, ToolPanelDef } from 'ag-grid-community';
+import type { AgEvent, ComponentSelector, ElementParams, ToolPanelDef } from 'ag-grid-community';
 import {
     Component,
     KeyCode,
     _clearElement,
-    _div,
     _focusNextGridCoreContainer,
     _stopPropagationForAgGrid,
 } from 'ag-grid-community';
@@ -16,7 +15,7 @@ export interface SideBarButtonClickedEvent extends AgEvent<'sideBarButtonClicked
 
 export type AgSideBarButtonsEvent = 'sideBarButtonClicked';
 
-const SideBarElement = _div({ cls: 'ag-side-buttons', attrs: { role: 'tablist' } });
+const SideBarElement: ElementParams = { tag: 'div', cls: 'ag-side-buttons', attrs: { role: 'tablist' } };
 export class AgSideBarButtons extends Component<AgSideBarButtonsEvent> {
     private buttonComps: SideBarButtonComp[] = [];
 

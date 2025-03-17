@@ -4,7 +4,8 @@ import { _addGridCommonParams, _getActiveDomElement, _isNothingFocused } from '.
 import type { LayoutView, UpdateLayoutClassesParams } from '../../styling/layoutFeature';
 import { LayoutCssClasses, LayoutFeature } from '../../styling/layoutFeature';
 import { _last } from '../../utils/array';
-import { _clearElement, _div } from '../../utils/dom';
+import type { ElementParams } from '../../utils/dom';
+import { _clearElement } from '../../utils/dom';
 import { _isStopPropagationForAgGrid } from '../../utils/event';
 import { _findNextFocusableElement, _focusInto, _focusNextGridCoreContainer } from '../../utils/focus';
 import type { AgPromise } from '../../utils/promise';
@@ -13,23 +14,21 @@ import { Component, RefPlaceholder } from '../../widgets/component';
 import type { IOverlayComp } from './overlayComponent';
 import { overlayWrapperComponentCSS } from './overlayWrapperComponent.css-GENERATED';
 
-const OverlayWrapperElement = _div({
+const OverlayWrapperElement: ElementParams = {
+    tag: 'div',
     cls: 'ag-overlay',
     attrs: { role: 'presentation' },
     children: [
-        _div({
+        {
+            tag: 'div',
             cls: 'ag-overlay-panel',
             attrs: { role: 'presentation' },
             children: [
-                _div({
-                    cls: 'ag-overlay-wrapper',
-                    ref: 'eOverlayWrapper',
-                    attrs: { role: 'presentation' },
-                }),
+                { tag: 'div', cls: 'ag-overlay-wrapper', ref: 'eOverlayWrapper', attrs: { role: 'presentation' } },
             ],
-        }),
+        },
     ],
-});
+};
 
 export class OverlayWrapperComponent extends Component implements LayoutView {
     private readonly eOverlayWrapper: HTMLElement = RefPlaceholder;

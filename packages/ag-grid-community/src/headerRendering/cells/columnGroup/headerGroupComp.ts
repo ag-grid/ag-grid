@@ -5,7 +5,8 @@ import type { AgColumnGroup } from '../../../entities/agColumnGroup';
 import type { ColumnGroup } from '../../../interfaces/iColumn';
 import type { AgGridCommon } from '../../../interfaces/iCommon';
 import type { IComponent } from '../../../interfaces/iComponent';
-import { _div, _setDisplayed, _span } from '../../../utils/dom';
+import type { ElementParams } from '../../../utils/dom';
+import { _setDisplayed } from '../../../utils/dom';
 import { _isStopPropagationForAgGrid, _stopPropagationForAgGrid } from '../../../utils/event';
 import { _exists } from '../../../utils/generic';
 import type { IconName } from '../../../utils/icon';
@@ -48,21 +49,16 @@ export interface IInnerHeaderGroupComponent<
 > extends IComponent<TParams>,
         IHeaderGroup {}
 
-const HeaderGroupCompElement = _div({
+const HeaderGroupCompElement: ElementParams = {
+    tag: 'div',
     cls: 'ag-header-group-cell-label',
     attrs: { role: 'presentation' },
     children: [
-        _span({ ref: 'agLabel', cls: 'ag-header-group-text', attrs: { role: 'presentation' } }),
-        _span({
-            cls: `ag-header-icon ag-header-expand-icon ag-header-expand-icon-expanded`,
-            ref: 'agOpened',
-        }),
-        _span({
-            cls: `ag-header-icon ag-header-expand-icon ag-header-expand-icon-collapsed`,
-            ref: 'agClosed',
-        }),
+        { tag: 'span', ref: 'agLabel', cls: 'ag-header-group-text', attrs: { role: 'presentation' } },
+        { tag: 'span', cls: `ag-header-icon ag-header-expand-icon ag-header-expand-icon-expanded`, ref: 'agOpened' },
+        { tag: 'span', cls: `ag-header-icon ag-header-expand-icon ag-header-expand-icon-collapsed`, ref: 'agClosed' },
     ],
-});
+};
 
 export class HeaderGroupComp extends Component implements IHeaderGroupComp {
     private params: IHeaderGroupParams;

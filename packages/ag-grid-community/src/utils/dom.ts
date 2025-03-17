@@ -526,20 +526,6 @@ export type ElementParams = {
 
     children?: (ElementParams | null)[]; // nulls are allowed to allow for optional children
 };
-/**
- * Build a div element with the provided parameters
- * @returns ElementParams for a div element
- */
-export function _div(params: Omit<ElementParams, 'tag'>): ElementParams {
-    return { ...params, tag: 'div' };
-}
-/**
- * Build a span element with the provided parameters
- * @returns ElementParams for a span element
- */
-export function _span(params: Omit<ElementParams, 'tag'>): ElementParams {
-    return { ...params, tag: 'span' };
-}
 
 /** AG Grid attribute used to automatically assign DOM Elements to class properties */
 export const DataRefAttribute = 'data-ref';

@@ -1,7 +1,6 @@
 import { KeyCode } from '../../constants/keyCode';
 import type { DefaultProvidedCellEditorParams, ICellEditorComp, ICellEditorParams } from '../../interfaces/iCellEditor';
 import { _isBrowserSafari } from '../../utils/browser';
-import { _div } from '../../utils/dom';
 import type { AgInputTextField } from '../../widgets/agInputTextField';
 import { RefPlaceholder } from '../../widgets/component';
 import { PopupComponent } from '../../widgets/popupComponent';
@@ -22,10 +21,7 @@ export class SimpleCellEditor<
 
     constructor(protected cellEditorInput: CellEditorInput<TValue, P, I>) {
         super(
-            _div({
-                cls: 'ag-cell-edit-wrapper',
-                children: [cellEditorInput.getTemplate()],
-            }),
+            { tag: 'div', cls: 'ag-cell-edit-wrapper', children: [cellEditorInput.getTemplate()] },
             cellEditorInput.getAgComponents()
         );
     }

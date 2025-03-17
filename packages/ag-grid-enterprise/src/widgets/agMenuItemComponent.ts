@@ -3,6 +3,7 @@ import type {
     BeanCollection,
     Component,
     ComponentType,
+    ElementParams,
     IComponent,
     IMenuActionParams,
     IMenuConfigParams,
@@ -23,7 +24,6 @@ import {
     KeyCode,
     _addGridCommonParams,
     _createElement,
-    _div,
     _preserveRangesWhile,
     _setAriaDisabled,
     _setAriaExpanded,
@@ -65,7 +65,7 @@ const MenuItemComponent: ComponentType<IMenuItemComp> = {
     name: 'menuItem',
     optionalMethods: ['setActive', 'select', 'setExpanded', 'configureDefaults'],
 };
-const MenuItemElement = _div({ cls: 'ag-menu', attrs: { role: 'presentation' } });
+const MenuItemElement: ElementParams = { tag: 'div', cls: 'ag-menu', attrs: { role: 'presentation' } };
 
 export class AgMenuItemComponent extends BeanStub<AgMenuItemComponentEvent> {
     private popupSvc?: PopupService;

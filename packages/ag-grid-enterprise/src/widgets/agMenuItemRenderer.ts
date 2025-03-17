@@ -1,8 +1,7 @@
-import type { IMenuItemComp, IMenuItemParams } from 'ag-grid-community';
+import type { ElementParams, IMenuItemComp, IMenuItemParams } from 'ag-grid-community';
 import {
     Component,
     _createIconNoSpan,
-    _div,
     _isNodeOrElement,
     _loadTemplate,
     _setAriaChecked,
@@ -14,7 +13,7 @@ interface AgMenuItemRendererParams {
     cssClassPrefix?: string;
     isCompact?: boolean;
 }
-const MenuItemElement = _div({});
+const MenuItemElement: ElementParams = { tag: 'div' };
 export class AgMenuItemRenderer extends Component implements IMenuItemComp {
     private params: IMenuItemParams & AgMenuItemRendererParams;
     private cssClassPrefix: string;

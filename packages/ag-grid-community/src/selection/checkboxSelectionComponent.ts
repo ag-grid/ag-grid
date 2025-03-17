@@ -4,13 +4,14 @@ import type { RowNode } from '../entities/rowNode';
 import { _getCheckboxes, _getHideDisabledCheckboxes, _getIsRowSelectable } from '../gridOptionsUtils';
 import type { GroupCheckboxSelectionCallback } from '../interfaces/groupCellRenderer';
 import { _getAriaCheckboxStateName } from '../utils/aria';
-import { _div } from '../utils/dom';
+import type { ElementParams } from '../utils/dom';
 import { _stopPropagationForAgGrid } from '../utils/event';
 import type { AgCheckbox } from '../widgets/agCheckbox';
 import { AgCheckboxSelector } from '../widgets/agCheckbox';
 import { Component, RefPlaceholder } from '../widgets/component';
 
-const CheckboxSelectionComponentElement = _div({
+const CheckboxSelectionComponentElement: ElementParams = {
+    tag: 'div',
     cls: 'ag-selection-checkbox',
     attrs: { role: 'presentation' },
     children: [
@@ -20,7 +21,7 @@ const CheckboxSelectionComponentElement = _div({
             ref: 'eCheckbox',
         },
     ],
-});
+};
 
 export class CheckboxSelectionComponent extends Component {
     private readonly eCheckbox: AgCheckbox = RefPlaceholder;

@@ -1,6 +1,7 @@
 import type {
     AgPromise,
     BeanCollection,
+    ElementParams,
     IRichCellEditorRendererParams,
     ITooltipCtrl,
     Registry,
@@ -12,7 +13,6 @@ import type {
 import {
     Component,
     _addGridCommonParams,
-    _div,
     _escapeString,
     _exists,
     _getDocument,
@@ -24,10 +24,7 @@ import {
 import type { AgRichSelect } from './agRichSelect';
 import { _bindCellRendererToHtmlElement } from './agRichSelect';
 
-const RichSelectRowElement = _div({
-    cls: 'ag-rich-select-row',
-    attrs: { role: 'presentation' },
-});
+const RichSelectRowElement: ElementParams = { tag: 'div', cls: 'ag-rich-select-row', attrs: { role: 'presentation' } };
 export class RichSelectRow<TValue> extends Component {
     private userCompFactory: UserComponentFactory;
     private registry: Registry;

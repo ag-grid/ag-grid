@@ -1,28 +1,22 @@
 import type { HeaderStyle } from '../../../entities/colDef';
 import type { UserCompDetails } from '../../../interfaces/iUserCompDetails';
 import { _removeAriaSort, _setAriaSort } from '../../../utils/aria';
-import { _addStylesToElement, _div } from '../../../utils/dom';
+import type { ElementParams } from '../../../utils/dom';
+import { _addStylesToElement } from '../../../utils/dom';
 import { RefPlaceholder } from '../../../widgets/component';
 import { AbstractHeaderCellComp } from '../abstractCell/abstractHeaderCellComp';
 import type { HeaderCellCtrl, IHeaderCellComp } from './headerCellCtrl';
 import type { IHeaderComp } from './headerComp';
 
-const HeaderCellElement = _div({
+const HeaderCellElement: ElementParams = {
+    tag: 'div',
     cls: 'ag-header-cell',
     attrs: { role: 'columnheader' },
     children: [
-        _div({
-            cls: 'ag-header-cell-resize',
-            attrs: { role: 'presentation' },
-            ref: 'eResize',
-        }),
-        _div({
-            cls: 'ag-header-cell-comp-wrapper',
-            attrs: { role: 'presentation' },
-            ref: 'eHeaderCompWrapper',
-        }),
+        { tag: 'div', cls: 'ag-header-cell-resize', attrs: { role: 'presentation' }, ref: 'eResize' },
+        { tag: 'div', cls: 'ag-header-cell-comp-wrapper', attrs: { role: 'presentation' }, ref: 'eHeaderCompWrapper' },
     ],
-});
+};
 export class HeaderCellComp extends AbstractHeaderCellComp<HeaderCellCtrl> {
     private readonly eResize: HTMLElement = RefPlaceholder;
     private readonly eHeaderCompWrapper: HTMLElement = RefPlaceholder;

@@ -1,14 +1,11 @@
 import type { AgColumn } from '../../entities/agColumn';
 import { _setDomData } from '../../gridOptionsUtils';
 import type { ICellEditorParams } from '../../interfaces/iCellEditor';
-import { _div } from '../../utils/dom';
+import type { ElementParams } from '../../utils/dom';
 import { _isUserSuppressingKeyboardEvent } from '../../utils/keyboard';
 import { PopupComponent } from '../../widgets/popupComponent';
 
-const PopupEditorElement = _div({
-    cls: 'ag-popup-editor',
-    attrs: { tabindex: '-1' },
-});
+const PopupEditorElement: ElementParams = { tag: 'div', cls: 'ag-popup-editor', attrs: { tabindex: '-1' } };
 export class PopupEditorWrapper extends PopupComponent {
     constructor(private readonly params: ICellEditorParams) {
         super(PopupEditorElement);

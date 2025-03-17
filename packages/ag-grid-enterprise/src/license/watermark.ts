@@ -1,13 +1,14 @@
-import type { BeanCollection, ComponentSelector } from 'ag-grid-community';
-import { Component, RefPlaceholder, _div } from 'ag-grid-community';
+import type { BeanCollection, ComponentSelector, ElementParams } from 'ag-grid-community';
+import { Component, RefPlaceholder } from 'ag-grid-community';
 
 import type { GridLicenseManager as LicenseManager } from './gridLicenseManager';
 import { watermarkCSS } from './watermark.css-GENERATED';
 
-const WatermarkElement = _div({
+const WatermarkElement: ElementParams = {
+    tag: 'div',
     cls: 'ag-watermark',
-    children: [_div({ ref: 'eLicenseTextRef', cls: 'ag-watermark-text' })],
-});
+    children: [{ tag: 'div', ref: 'eLicenseTextRef', cls: 'ag-watermark-text' }],
+};
 export class AgWatermark extends Component {
     licenseManager: LicenseManager;
 

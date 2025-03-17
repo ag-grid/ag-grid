@@ -1,6 +1,6 @@
 import { KeyCode } from '../../constants/keyCode';
 import type { ICellEditorComp } from '../../interfaces/iCellEditor';
-import { _div } from '../../utils/dom';
+import type { ElementParams } from '../../utils/dom';
 import { _exists } from '../../utils/generic';
 import type { AgInputTextArea } from '../../widgets/agInputTextArea';
 import { AgInputTextAreaSelector } from '../../widgets/agInputTextArea';
@@ -8,7 +8,8 @@ import { RefPlaceholder } from '../../widgets/component';
 import { PopupComponent } from '../../widgets/popupComponent';
 import type { ILargeTextEditorParams } from './iLargeTextCellEditor';
 
-const LargeTextCellElement = _div({
+const LargeTextCellElement: ElementParams = {
+    tag: 'div',
     cls: 'ag-large-text',
     children: [
         {
@@ -17,7 +18,7 @@ const LargeTextCellElement = _div({
             ref: 'eTextArea',
         },
     ],
-});
+};
 export class LargeTextCellEditor extends PopupComponent implements ICellEditorComp {
     private readonly eTextArea: AgInputTextArea = RefPlaceholder;
     private params: ILargeTextEditorParams;

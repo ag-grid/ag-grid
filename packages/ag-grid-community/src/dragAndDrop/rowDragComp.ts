@@ -3,16 +3,17 @@ import type { AgColumn } from '../entities/agColumn';
 import type { RowNode } from '../entities/rowNode';
 import type { AgEventType } from '../eventTypes';
 import type { IRowDragItem } from '../interfaces/iRowDragItem';
-import { _div } from '../utils/dom';
+import type { ElementParams } from '../utils/dom';
 import { _createIconNoSpan } from '../utils/icon';
 import { Component } from '../widgets/component';
 import type { DragSource } from './dragAndDropService';
 import { DragSourceType } from './dragAndDropService';
 
-const RowDragElement = _div({
+const RowDragElement: ElementParams = {
+    tag: 'div',
     cls: 'ag-drag-handle ag-row-drag',
     attrs: { 'aria-hidden': 'true' },
-});
+};
 
 export class RowDragComp extends Component {
     private dragSource: DragSource | null = null;

@@ -3,13 +3,14 @@ import type { IDateComp, IDateParams } from '../../../interfaces/dateComponent';
 import type { IAfterGuiAttachedParams } from '../../../interfaces/iAfterGuiAttachedParams';
 import { _isBrowserSafari } from '../../../utils/browser';
 import { _dateToFormattedString, _parseDateTimeFromString, _serialiseDate } from '../../../utils/date';
-import { _div } from '../../../utils/dom';
+import type { ElementParams } from '../../../utils/dom';
 import { _warn } from '../../../validation/logging';
 import type { AgInputTextField } from '../../../widgets/agInputTextField';
 import { AgInputTextFieldSelector } from '../../../widgets/agInputTextField';
 import { Component, RefPlaceholder } from '../../../widgets/component';
 
-const DefaultDateElement = _div({
+const DefaultDateElement: ElementParams = {
+    tag: 'div',
     cls: 'ag-filter-filter',
     children: [
         {
@@ -18,7 +19,7 @@ const DefaultDateElement = _div({
             ref: 'eDateInput',
         },
     ],
-});
+};
 export class DefaultDateComponent extends Component implements IDateComp {
     private readonly eDateInput: AgInputTextField = RefPlaceholder;
 

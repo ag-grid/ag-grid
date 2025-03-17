@@ -1,6 +1,7 @@
 import { KeyCode } from '../../../constants/keyCode';
 import type { FilterChangedEvent } from '../../../events';
-import { _clearElement, _div } from '../../../utils/dom';
+import type { ElementParams } from '../../../utils/dom';
+import { _clearElement } from '../../../utils/dom';
 import { _debounce } from '../../../utils/function';
 import { RefPlaceholder } from '../../../widgets/component';
 import type { NumberFilterModel } from '../../provided/number/iNumberFilter';
@@ -16,11 +17,12 @@ import { SimpleFloatingFilter } from './simpleFloatingFilter';
 
 type ModelUnion = TextFilterModel | NumberFilterModel;
 
-const TextInputFloatingFilterElement = _div({
+const TextInputFloatingFilterElement: ElementParams = {
+    tag: 'div',
     cls: 'ag-floating-filter-input',
     ref: 'eFloatingFilterInputContainer',
     attrs: { role: 'presentation' },
-});
+};
 export abstract class TextInputFloatingFilter<M extends ModelUnion> extends SimpleFloatingFilter {
     private readonly eFloatingFilterInputContainer: HTMLElement = RefPlaceholder;
     private inputSvc: FloatingFilterInputService;

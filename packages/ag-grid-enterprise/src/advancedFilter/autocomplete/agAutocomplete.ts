@@ -3,6 +3,7 @@ import type {
     AgInputTextField,
     BeanCollection,
     ComponentSelector,
+    ElementParams,
     PopupPositionParams,
     PopupService,
 } from 'ag-grid-community';
@@ -11,7 +12,6 @@ import {
     Component,
     KeyCode,
     RefPlaceholder,
-    _div,
     _isNothingFocused,
     _makeNull,
 } from 'ag-grid-community';
@@ -47,7 +47,8 @@ export type AgAutocompleteEvent =
     | 'eventOptionSelected'
     | 'eventValidChanged';
 
-const AgAutocompleteElement = _div({
+const AgAutocompleteElement: ElementParams = {
+    tag: 'div',
     cls: 'ag-autocomplete',
     attrs: { role: 'presentation' },
     children: [
@@ -56,7 +57,7 @@ const AgAutocompleteElement = _div({
             ref: 'eAutocompleteInput',
         },
     ],
-});
+};
 
 export class AgAutocomplete extends Component<AgAutocompleteEvent> {
     private popupSvc: PopupService;

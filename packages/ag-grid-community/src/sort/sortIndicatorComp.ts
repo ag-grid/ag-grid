@@ -1,19 +1,20 @@
 import type { AgColumn } from '../entities/agColumn';
 import { _isColumnsSortingCoupledToGroup } from '../gridOptionsUtils';
 import type { ElementParams } from '../utils/dom';
-import { _clearElement, _setDisplayed, _span } from '../utils/dom';
+import { _clearElement, _setDisplayed } from '../utils/dom';
 import type { IconName } from '../utils/icon';
 import { _createIconNoSpan } from '../utils/icon';
 import type { ComponentSelector } from '../widgets/component';
 import { Component, RefPlaceholder } from '../widgets/component';
 
-const makeIconParams = (dataRefSuffix: string, classSuffix: string): ElementParams =>
-    _span({
-        cls: `ag-sort-indicator-icon ag-sort-${classSuffix} ag-hidden`,
-        ref: `eSort${dataRefSuffix}`,
-        attrs: { 'aria-hidden': 'true' },
-    });
-const elementParams: ElementParams = _span({
+const makeIconParams = (dataRefSuffix: string, classSuffix: string): ElementParams => ({
+    tag: 'span',
+    cls: `ag-sort-indicator-icon ag-sort-${classSuffix} ag-hidden`,
+    ref: `eSort${dataRefSuffix}`,
+    attrs: { 'aria-hidden': 'true' },
+});
+const elementParams: ElementParams = {
+    tag: 'span',
     cls: 'ag-sort-indicator-container',
     children: [
         makeIconParams('Order', 'order'),
@@ -22,7 +23,7 @@ const elementParams: ElementParams = _span({
         makeIconParams('Mixed', 'mixed-icon'),
         makeIconParams('None', 'none-icon'),
     ],
-});
+};
 
 export class SortIndicatorComp extends Component {
     private eSortOrder: HTMLElement = RefPlaceholder;

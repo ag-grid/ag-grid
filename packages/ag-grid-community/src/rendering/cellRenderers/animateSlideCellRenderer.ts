@@ -1,17 +1,14 @@
-import { _clearElement, _createElement, _span } from '../../utils/dom';
+import type { ElementParams } from '../../utils/dom';
+import { _clearElement, _createElement } from '../../utils/dom';
 import { _exists, _missing } from '../../utils/generic';
 import { Component, RefPlaceholder } from '../../widgets/component';
 import { animateSlideCellRendererCSS } from './animateSlideCellRenderer.css-GENERATED';
 import type { ICellRenderer } from './iCellRenderer';
 
-const AnimateSlideCellRendererElement = _span({
-    children: [
-        _span({
-            ref: 'eCurrent',
-            cls: 'ag-value-slide-current',
-        }),
-    ],
-});
+const AnimateSlideCellRendererElement: ElementParams = {
+    tag: 'span',
+    children: [{ tag: 'span', ref: 'eCurrent', cls: 'ag-value-slide-current' }],
+};
 
 export class AnimateSlideCellRenderer extends Component implements ICellRenderer {
     private eCurrent: HTMLElement = RefPlaceholder;
@@ -45,7 +42,7 @@ export class AnimateSlideCellRenderer extends Component implements ICellRenderer
         }
 
         const { beans, eCurrent } = this;
-        const prevElement = _createElement(_span({ cls: 'ag-value-slide-previous ag-value-slide-out' }));
+        const prevElement = _createElement({ tag: 'span', cls: 'ag-value-slide-previous ag-value-slide-out' });
         this.ePrevious = prevElement;
 
         prevElement.textContent = eCurrent.textContent;
