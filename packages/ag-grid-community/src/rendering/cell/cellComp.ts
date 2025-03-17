@@ -75,9 +75,9 @@ export class CellComp extends Component {
 
         const cellDiv = _createElement({
             tag: 'div',
+            role: cellCtrl.getCellAriaRole() as any,
             attrs: {
                 'comp-id': `${this.getCompId()}`,
-                role: cellCtrl.getCellAriaRole(),
                 'col-id': cellCtrl.colIdSanitised,
             },
         });
@@ -92,7 +92,7 @@ export class CellComp extends Component {
             wrapperDiv = _createElement({
                 tag: 'div',
                 cls: 'ag-spanned-cell-wrapper',
-                attrs: { role: 'presentation' },
+                role: 'presentation',
             });
             wrapperDiv.appendChild(cellDiv);
 
@@ -193,7 +193,7 @@ export class CellComp extends Component {
 
         const putWrapperIn = usingWrapper && this.eCellWrapper == null;
         if (putWrapperIn) {
-            this.eCellWrapper = _createElement({ tag: 'div', attrs: { role: 'presentation' }, cls: 'ag-cell-wrapper' });
+            this.eCellWrapper = _createElement({ tag: 'div', cls: 'ag-cell-wrapper', role: 'presentation' });
             this.eCell.appendChild(this.eCellWrapper);
         }
         const takeWrapperOut = !usingWrapper && this.eCellWrapper != null;
@@ -207,7 +207,7 @@ export class CellComp extends Component {
         const usingCellValue = !editing && usingWrapper;
         const putCellValueIn = usingCellValue && this.eCellValue == null;
         if (putCellValueIn) {
-            this.eCellValue = _createElement({ tag: 'span', attrs: { role: 'presentation' }, cls: 'ag-cell-value' });
+            this.eCellValue = _createElement({ tag: 'span', cls: 'ag-cell-value', role: 'presentation' });
             this.eCellWrapper!.appendChild(this.eCellValue);
         }
         const takeCellValueOut = !usingCellValue && this.eCellValue != null;

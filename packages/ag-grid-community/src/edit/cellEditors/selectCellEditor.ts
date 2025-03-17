@@ -23,8 +23,8 @@ const SelectCellElement: ElementParams = {
     children: [
         {
             tag: 'ag-select',
-            cls: 'ag-cell-editor',
             ref: 'eSelect',
+            cls: 'ag-cell-editor',
         },
     ],
 };

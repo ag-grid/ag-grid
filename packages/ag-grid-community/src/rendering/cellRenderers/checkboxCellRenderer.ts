@@ -19,12 +19,12 @@ export interface ICheckboxCellRendererParams<TData = any, TContext = any>
 const CheckboxCellRendererElement: ElementParams = {
     tag: 'div',
     cls: 'ag-cell-wrapper ag-checkbox-cell',
-    attrs: { role: 'presentation' },
+    role: 'presentation',
     children: [
         {
             tag: 'ag-checkbox',
-            attrs: { role: 'presentation' },
             ref: 'eCheckbox',
+            role: 'presentation',
         },
     ],
 };

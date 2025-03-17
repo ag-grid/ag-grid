@@ -14,8 +14,8 @@ const LargeTextCellElement: ElementParams = {
     children: [
         {
             tag: 'ag-input-text-area',
-            cls: 'ag-large-text-input',
             ref: 'eTextArea',
+            cls: 'ag-large-text-input',
         },
     ],
 };

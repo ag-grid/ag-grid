@@ -7,13 +7,14 @@ import type { HeaderRowCtrl, HeaderRowCtrlInstanceId } from '../row/headerRowCtr
 import type { IHeaderRowContainerComp } from './headerRowContainerCtrl';
 import { HeaderRowContainerCtrl } from './headerRowContainerCtrl';
 
-const PinnedLeftElement: ElementParams = { tag: 'div', cls: 'ag-pinned-left-header', attrs: { role: 'rowgroup' } };
-const PinnedRightElement: ElementParams = { tag: 'div', cls: 'ag-pinned-right-header', attrs: { role: 'rowgroup' } };
+const PinnedLeftElement: ElementParams = { tag: 'div', cls: 'ag-pinned-left-header', role: 'rowgroup' };
+const PinnedRightElement: ElementParams = { tag: 'div', cls: 'ag-pinned-right-header', role: 'rowgroup' };
 const CenterElement: ElementParams = {
     tag: 'div',
     cls: 'ag-header-viewport',
-    attrs: { role: 'presentation', tabindex: '-1' },
-    children: [{ tag: 'div', cls: 'ag-header-container', ref: 'eCenterContainer', attrs: { role: 'rowgroup' } }],
+    role: 'presentation',
+    attrs: { tabindex: '-1' },
+    children: [{ tag: 'div', ref: 'eCenterContainer', cls: 'ag-header-container', role: 'rowgroup' }],
 };
 
 export class HeaderRowContainerComp extends Component {

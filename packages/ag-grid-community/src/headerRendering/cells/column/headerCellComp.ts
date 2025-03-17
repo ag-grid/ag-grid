@@ -11,10 +11,10 @@ import type { IHeaderComp } from './headerComp';
 const HeaderCellElement: ElementParams = {
     tag: 'div',
     cls: 'ag-header-cell',
-    attrs: { role: 'columnheader' },
+    role: 'columnheader',
     children: [
-        { tag: 'div', cls: 'ag-header-cell-resize', attrs: { role: 'presentation' }, ref: 'eResize' },
-        { tag: 'div', cls: 'ag-header-cell-comp-wrapper', attrs: { role: 'presentation' }, ref: 'eHeaderCompWrapper' },
+        { tag: 'div', ref: 'eResize', cls: 'ag-header-cell-resize', role: 'presentation' },
+        { tag: 'div', ref: 'eHeaderCompWrapper', cls: 'ag-header-cell-comp-wrapper', role: 'presentation' },
     ],
 };
 export class HeaderCellComp extends AbstractHeaderCellComp<HeaderCellCtrl> {

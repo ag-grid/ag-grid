@@ -14,9 +14,9 @@ import type { GroupFilter } from './groupFilter';
 
 const GroupFloatingFilterElement: ElementParams = {
     tag: 'div',
-    cls: 'ag-group-floating-filter ag-floating-filter-input',
     ref: 'eFloatingFilter',
-    attrs: { role: 'presentation' },
+    cls: 'ag-group-floating-filter ag-floating-filter-input',
+    role: 'presentation',
 };
 
 export class GroupFloatingFilterComp extends Component implements IFloatingFilterComp<GroupFilter> {

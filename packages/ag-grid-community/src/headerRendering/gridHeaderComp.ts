@@ -5,7 +5,7 @@ import type { IGridHeaderComp } from './gridHeaderCtrl';
 import { GridHeaderCtrl } from './gridHeaderCtrl';
 import { HeaderRowContainerComp } from './rowContainer/headerRowContainerComp';
 
-const GridHeaderElement: ElementParams = { tag: 'div', cls: 'ag-header', attrs: { role: 'presentation' } };
+const GridHeaderElement: ElementParams = { tag: 'div', cls: 'ag-header', role: 'presentation' };
 export class GridHeaderComp extends Component {
     constructor() {
         super(GridHeaderElement);

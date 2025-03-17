@@ -5,8 +5,8 @@ const LoadingCellRendererElement: ElementParams = {
     tag: 'div',
     cls: 'ag-loading',
     children: [
-        { tag: 'span', cls: 'ag-loading-icon', ref: 'eLoadingIcon' },
-        { tag: 'span', cls: 'ag-loading-text', ref: 'eLoadingText' },
+        { tag: 'span', ref: 'eLoadingIcon', cls: 'ag-loading-icon' },
+        { tag: 'span', ref: 'eLoadingText', cls: 'ag-loading-text' },
     ],
 };
 export class LoadingCellRenderer extends Component implements ILoadingCellRendererComp {

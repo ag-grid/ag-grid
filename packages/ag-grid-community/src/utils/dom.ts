@@ -502,24 +502,29 @@ export function _requestAnimationFrame(beans: BeanCollection, callback: any) {
 
 export type Attributes = { [key: string]: string };
 type TagName = keyof HTMLElementTagNameMap | Lowercase<AgComponentSelector>;
+/** Type to help avoid typos, add new roles as required. */
+type RoleType = 'presentation' | 'rowgroup' | 'columnheader' | 'gridcell' | 'row' | 'tablist';
 
 export type ElementParams = {
     /** The tag name to use for the element, either browser tag or one of the AG Grid components such as ag-checkbox
      * For span and div consider using the _span() and _div() helper functions instead to save bundle size.
      */
     tag: TagName;
-    /**
-     * Should be a single string of space-separated class names
-     * @example
-     * cls: 'ag-header-cell ag-header-cell-sortable'
-     */
-    cls?: string;
     /** AG Grid data-ref attribute, should match a property on the class that uses the same name and is initialised with RefPlaceholder
      * @example
      * ref: 'eLabel'
      * private eLabel: HTMLElement = RefPlaceholder;
      */
     ref?: string;
+    /**
+     * Should be a single string of space-separated class names
+     * @example
+     * cls: 'ag-header-cell ag-header-cell-sortable'
+     */
+    cls?: string;
+
+    /** The role attribute to add to the dom element */
+    role?: RoleType;
 
     /** Key Value pair of attributes to add to the dom element via `element.setAttribute(key,value)` */
     attrs?: Attributes;
@@ -531,19 +536,22 @@ export type ElementParams = {
 export const DataRefAttribute = 'data-ref';
 
 export function _createElement(params: ElementParams): HTMLElement {
-    const { attrs: attributes, children, cls: className, ref: dataRef, tag } = params;
+    const { attrs, children, cls, ref, role, tag } = params;
     const element = document.createElement(tag);
 
-    if (className) {
-        element.className = className;
+    if (cls) {
+        element.className = cls;
     }
-    if (dataRef) {
-        element.setAttribute(DataRefAttribute, dataRef);
+    if (ref) {
+        element.setAttribute(DataRefAttribute, ref);
+    }
+    if (role) {
+        element.setAttribute('role', role);
     }
 
-    if (attributes) {
-        for (const key of Object.keys(attributes)) {
-            element.setAttribute(key, attributes[key]);
+    if (attrs) {
+        for (const key of Object.keys(attrs)) {
+            element.setAttribute(key, attrs[key]);
         }
     }
 

@@ -10,10 +10,10 @@ import type { IHeaderGroupComp } from './headerGroupComp';
 const HeaderGroupCellCompElement: ElementParams = {
     tag: 'div',
     cls: 'ag-header-group-cell',
-    attrs: { role: 'columnheader' },
+    role: 'columnheader',
     children: [
-        { tag: 'div', cls: 'ag-header-cell-comp-wrapper', attrs: { role: 'presentation' }, ref: 'eHeaderCompWrapper' },
-        { tag: 'div', cls: 'ag-header-cell-resize', attrs: { role: 'presentation' }, ref: 'eResize' },
+        { tag: 'div', ref: 'eHeaderCompWrapper', cls: 'ag-header-cell-comp-wrapper', role: 'presentation' },
+        { tag: 'div', ref: 'eResize', cls: 'ag-header-cell-resize', role: 'presentation' },
     ],
 };
 

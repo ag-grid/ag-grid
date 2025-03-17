@@ -7,7 +7,6 @@ import type { Column } from '../../../interfaces/iColumn';
 import type { AgGridCommon } from '../../../interfaces/iCommon';
 import type { IComponent } from '../../../interfaces/iComponent';
 import type { SortIndicatorComp } from '../../../sort/sortIndicatorComp';
-import type { SortService } from '../../../sort/sortService';
 import type { ElementParams } from '../../../utils/dom';
 import { _removeFromParent, _setDisplayed } from '../../../utils/dom';
 import type { IconName } from '../../../utils/icon';
@@ -115,7 +114,7 @@ function getHeaderCompElementParams(includeSortIndicator: boolean): ElementParam
     return {
         tag: 'div',
         cls: 'ag-cell-label-container',
-        attrs: { role: 'presentation' },
+        role: 'presentation',
         children: [
             {
                 tag: 'span',
@@ -133,7 +132,7 @@ function getHeaderCompElementParams(includeSortIndicator: boolean): ElementParam
                 tag: 'div',
                 ref: 'eLabel',
                 cls: 'ag-header-cell-label',
-                attrs: { role: 'presentation' },
+                role: 'presentation',
                 children: [
                     { tag: 'span', ref: 'eText', cls: 'ag-header-cell-text' },
                     {

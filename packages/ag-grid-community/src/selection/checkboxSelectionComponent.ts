@@ -13,12 +13,12 @@ import { Component, RefPlaceholder } from '../widgets/component';
 const CheckboxSelectionComponentElement: ElementParams = {
     tag: 'div',
     cls: 'ag-selection-checkbox',
-    attrs: { role: 'presentation' },
+    role: 'presentation',
     children: [
         {
             tag: 'ag-checkbox',
-            attrs: { role: 'presentation' },
             ref: 'eCheckbox',
+            role: 'presentation',
         },
     ],
 };

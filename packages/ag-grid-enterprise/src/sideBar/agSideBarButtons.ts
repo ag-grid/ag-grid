@@ -15,7 +15,7 @@ export interface SideBarButtonClickedEvent extends AgEvent<'sideBarButtonClicked
 
 export type AgSideBarButtonsEvent = 'sideBarButtonClicked';
 
-const SideBarElement: ElementParams = { tag: 'div', cls: 'ag-side-buttons', attrs: { role: 'tablist' } };
+const SideBarElement: ElementParams = { tag: 'div', cls: 'ag-side-buttons', role: 'tablist' };
 export class AgSideBarButtons extends Component<AgSideBarButtonsEvent> {
     private buttonComps: SideBarButtonComp[] = [];
 

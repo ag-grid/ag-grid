@@ -44,7 +44,7 @@ function _insertArrayIntoArray<T>(dest: T[], src: T[], toIndex: number) {
 
     dest.splice(toIndex, 0, ...src);
 }
-const PillDropZonePanelElement: ElementParams = { tag: 'div', cls: 'ag-unselectable', attrs: { role: 'presentation' } };
+const PillDropZonePanelElement: ElementParams = { tag: 'div', cls: 'ag-unselectable', role: 'presentation' };
 export abstract class PillDropZonePanel<TPill extends PillDragComp<TItem>, TItem> extends Component {
     private state: PillState = 'notDragging';
 

@@ -24,7 +24,7 @@ import {
 import type { AgRichSelect } from './agRichSelect';
 import { _bindCellRendererToHtmlElement } from './agRichSelect';
 
-const RichSelectRowElement: ElementParams = { tag: 'div', cls: 'ag-rich-select-row', attrs: { role: 'presentation' } };
+const RichSelectRowElement: ElementParams = { tag: 'div', cls: 'ag-rich-select-row', role: 'presentation' };
 export class RichSelectRow<TValue> extends Component {
     private userCompFactory: UserComponentFactory;
     private registry: Registry;

@@ -21,7 +21,7 @@ import type { DateFilterModel, DateFilterParams } from './iDateFilter';
 const DateFloatingFilterElement: ElementParams = {
     tag: 'div',
     cls: 'ag-floating-filter-input',
-    attrs: { role: 'presentation' },
+    role: 'presentation',
     children: [
         {
             tag: 'ag-input-text-field',

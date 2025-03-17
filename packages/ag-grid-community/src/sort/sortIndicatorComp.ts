@@ -9,8 +9,8 @@ import { Component, RefPlaceholder } from '../widgets/component';
 
 const makeIconParams = (dataRefSuffix: string, classSuffix: string): ElementParams => ({
     tag: 'span',
-    cls: `ag-sort-indicator-icon ag-sort-${classSuffix} ag-hidden`,
     ref: `eSort${dataRefSuffix}`,
+    cls: `ag-sort-indicator-icon ag-sort-${classSuffix} ag-hidden`,
     attrs: { 'aria-hidden': 'true' },
 });
 const elementParams: ElementParams = {

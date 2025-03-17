@@ -17,7 +17,7 @@ export class HeaderRowComp extends Component {
     private headerComps: { [key: HeaderCellCtrlInstanceId]: AbstractHeaderCellComp<AbstractHeaderCellCtrl> } = {};
 
     constructor(private readonly ctrl: HeaderRowCtrl) {
-        super({ tag: 'div', attrs: { role: 'row' }, cls: ctrl.headerRowClass });
+        super({ tag: 'div', cls: ctrl.headerRowClass, role: 'row' });
     }
 
     public postConstruct(): void {

@@ -15,8 +15,8 @@ const DefaultDateElement: ElementParams = {
     children: [
         {
             tag: 'ag-input-text-field',
-            cls: 'ag-date-filter',
             ref: 'eDateInput',
+            cls: 'ag-date-filter',
         },
     ],
 };

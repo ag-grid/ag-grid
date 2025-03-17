@@ -19,9 +19,9 @@ type ModelUnion = TextFilterModel | NumberFilterModel;
 
 const TextInputFloatingFilterElement: ElementParams = {
     tag: 'div',
-    cls: 'ag-floating-filter-input',
     ref: 'eFloatingFilterInputContainer',
-    attrs: { role: 'presentation' },
+    cls: 'ag-floating-filter-input',
+    role: 'presentation',
 };
 export abstract class TextInputFloatingFilter<M extends ModelUnion> extends SimpleFloatingFilter {
     private readonly eFloatingFilterInputContainer: HTMLElement = RefPlaceholder;

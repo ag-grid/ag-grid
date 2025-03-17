@@ -12,14 +12,14 @@ import type { IHeaderFilterCellComp } from './iHeaderFilterCellComp';
 const HeaderFilterCellCompElement: ElementParams = {
     tag: 'div',
     cls: 'ag-header-cell ag-floating-filter',
-    attrs: { role: 'gridcell' },
+    role: 'gridcell',
     children: [
-        { tag: 'div', ref: 'eFloatingFilterBody', attrs: { role: 'presentation' } },
+        { tag: 'div', ref: 'eFloatingFilterBody', role: 'presentation' },
         {
             tag: 'div',
             ref: 'eButtonWrapper',
             cls: 'ag-floating-filter-button ag-hidden',
-            attrs: { role: 'presentation' },
+            role: 'presentation',
             children: [
                 {
                     tag: 'button',

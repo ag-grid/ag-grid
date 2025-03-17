@@ -18,7 +18,7 @@ export type AgPickerFieldEvent = AgAbstractFieldEvent;
 const AgPickerFieldElement: ElementParams = {
     tag: 'div',
     cls: 'ag-picker-field',
-    attrs: { role: 'presentation' },
+    role: 'presentation',
     children: [
         { tag: 'div', ref: 'eLabel' },
         {

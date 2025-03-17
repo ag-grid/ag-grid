@@ -12,8 +12,8 @@ const CheckboxCellEditorElement: ElementParams = {
     children: [
         {
             tag: 'ag-checkbox',
-            attrs: { role: 'presentation' },
             ref: 'eCheckbox',
+            role: 'presentation',
         },
     ],
 };

@@ -19,24 +19,24 @@ function getElementParams(name: RowContainerName, options: RowContainerOptions, 
 
     const eContainerElement: ElementParams = {
         tag: 'div',
-        cls: _getRowContainerClass(name),
         ref: 'eContainer',
-        attrs: { role: 'rowgroup' },
+        cls: _getRowContainerClass(name),
+        role: 'rowgroup',
     };
 
     if (options.type === 'center' || isCellSpanning) {
         const eSpannedContainerElement: ElementParams = {
             tag: 'div',
-            cls: `ag-spanning-container ${_getRowSpanContainerClass(name)}`,
             ref: 'eSpannedContainer',
-            attrs: { role: 'rowgroup' },
+            cls: `ag-spanning-container ${_getRowSpanContainerClass(name)}`,
+            role: 'rowgroup',
         };
 
         return {
             tag: 'div',
-            cls: `ag-viewport ${_getRowViewportClass(name)}`,
             ref: 'eViewport',
-            attrs: { role: 'presentation' },
+            cls: `ag-viewport ${_getRowViewportClass(name)}`,
+            role: 'presentation',
             children: [eContainerElement, isCellSpanning ? eSpannedContainerElement : null],
         };
     }

@@ -16,7 +16,7 @@ import { SetFilterModelFormatter } from './setFilterModelFormatter';
 const SetFloatingFilterElement: ElementParams = {
     tag: 'div',
     cls: 'ag-floating-filter-input ag-set-floating-filter-input',
-    attrs: { role: 'presentation' },
+    role: 'presentation',
     children: [
         {
             tag: 'ag-input-text-field',

@@ -9,7 +9,7 @@ import type { IFloatingFilterComp, IFloatingFilterParams, IFloatingFilterParent 
 const ReadOnlyFloatingFilterElement: ElementParams = {
     tag: 'div',
     cls: 'ag-floating-filter-input',
-    attrs: { role: 'presentation' },
+    role: 'presentation',
     children: [
         {
             tag: 'ag-input-text-field',

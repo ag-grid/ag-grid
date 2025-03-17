@@ -50,7 +50,7 @@ export type AgAutocompleteEvent =
 const AgAutocompleteElement: ElementParams = {
     tag: 'div',
     cls: 'ag-autocomplete',
-    attrs: { role: 'presentation' },
+    role: 'presentation',
     children: [
         {
             tag: 'ag-input-text-field',

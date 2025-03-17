@@ -52,11 +52,11 @@ export interface IInnerHeaderGroupComponent<
 const HeaderGroupCompElement: ElementParams = {
     tag: 'div',
     cls: 'ag-header-group-cell-label',
-    attrs: { role: 'presentation' },
+    role: 'presentation',
     children: [
-        { tag: 'span', ref: 'agLabel', cls: 'ag-header-group-text', attrs: { role: 'presentation' } },
-        { tag: 'span', cls: `ag-header-icon ag-header-expand-icon ag-header-expand-icon-expanded`, ref: 'agOpened' },
-        { tag: 'span', cls: `ag-header-icon ag-header-expand-icon ag-header-expand-icon-collapsed`, ref: 'agClosed' },
+        { tag: 'span', ref: 'agLabel', cls: 'ag-header-group-text', role: 'presentation' },
+        { tag: 'span', ref: 'agOpened', cls: `ag-header-icon ag-header-expand-icon ag-header-expand-icon-expanded` },
+        { tag: 'span', ref: 'agClosed', cls: `ag-header-icon ag-header-expand-icon ag-header-expand-icon-collapsed` },
     ],
 };
 

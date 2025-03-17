@@ -17,15 +17,13 @@ import { overlayWrapperComponentCSS } from './overlayWrapperComponent.css-GENERA
 const OverlayWrapperElement: ElementParams = {
     tag: 'div',
     cls: 'ag-overlay',
-    attrs: { role: 'presentation' },
+    role: 'presentation',
     children: [
         {
             tag: 'div',
             cls: 'ag-overlay-panel',
-            attrs: { role: 'presentation' },
-            children: [
-                { tag: 'div', cls: 'ag-overlay-wrapper', ref: 'eOverlayWrapper', attrs: { role: 'presentation' } },
-            ],
+            role: 'presentation',
+            children: [{ tag: 'div', ref: 'eOverlayWrapper', cls: 'ag-overlay-wrapper', role: 'presentation' }],
         },
     ],
 };

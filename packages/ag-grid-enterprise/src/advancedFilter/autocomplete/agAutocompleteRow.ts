@@ -4,7 +4,7 @@ import { Component, _escapeString, _exists } from 'ag-grid-community';
 const AgAutocompleteRowElement: ElementParams = {
     tag: 'div',
     cls: 'ag-autocomplete-row',
-    attrs: { role: 'presentation' },
+    role: 'presentation',
     children: [{ tag: 'div', cls: 'ag-autocomplete-row-label' }],
 };
 

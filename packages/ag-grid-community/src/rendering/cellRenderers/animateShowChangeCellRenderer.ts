@@ -10,8 +10,8 @@ const ARROW_DOWN = '\u2193';
 const AnimateShowChangeCellRendererElement: ElementParams = {
     tag: 'span',
     children: [
-        { tag: 'span', cls: 'ag-value-change-delta', ref: 'eDelta' },
-        { tag: 'span', cls: 'ag-value-change-value', ref: 'eValue' },
+        { tag: 'span', ref: 'eDelta', cls: 'ag-value-change-delta' },
+        { tag: 'span', ref: 'eValue', cls: 'ag-value-change-value' },
     ],
 };
 

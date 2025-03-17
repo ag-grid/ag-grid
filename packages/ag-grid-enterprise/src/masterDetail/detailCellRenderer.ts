@@ -18,8 +18,8 @@ const PinnedDetailCellRendererElement: ElementParams = { tag: 'div', cls: 'ag-de
 const DetailCellRendererElement: ElementParams = {
     tag: 'div',
     cls: 'ag-details-row',
-    attrs: { role: 'gridcell' },
-    children: [{ tag: 'div', ref: 'eDetailGrid', cls: 'ag-details-grid', attrs: { role: 'presentation' } }],
+    role: 'gridcell',
+    children: [{ tag: 'div', ref: 'eDetailGrid', cls: 'ag-details-grid', role: 'presentation' }],
 };
 export class DetailCellRenderer extends Component implements ICellRenderer {
     private eDetailGrid: HTMLElement = RefPlaceholder;
