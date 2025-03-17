@@ -18,5 +18,5 @@
       }
     }
   },
-  "tags": ["module-size"]
+  "tags": ["module-size", "non-sharding"]
 }
