@@ -228,7 +228,7 @@ jobs:
           cache_mode: ro
 
       - name: nx test:e2e
-        id: unit tests
+        id: unit_tests
         run: yarn nx ${{ github.event.inputs.nx_command || 'affected' }} -t test:e2e --configuration=ci --exclude 'tag:module-size' --exclude all
 
   #      - name: Persist test results
