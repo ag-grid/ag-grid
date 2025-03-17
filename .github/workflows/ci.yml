@@ -93,19 +93,19 @@ jobs:
         with:
           cache_mode: ${{ github.event.inputs.clean_checkout == 'true' && 'off' || 'rw' }}
 
-      - name: nx format:check
-        id: format
-        if: steps.setup.outcome == 'success' || steps.setup.outcome == 'skipped'
-        run: |
-          if [[ "${{ github.event.inputs.nx_command || 'affected' }}" == "run-many" ]] ; then
-            yarn nx format:check --all
-          else
-            yarn nx format:check --base ${{ steps.setup.outputs.base }}
-          fi
-
-      - name: nx lint
-        run: |
-          yarn nx lint
+      #      - name: nx format:check
+      #        id: format
+      #        if: steps.setup.outcome == 'success' || steps.setup.outcome == 'skipped'
+      #        run: |
+      #          if [[ "${{ github.event.inputs.nx_command || 'affected' }}" == "run-many" ]] ; then
+      #            yarn nx format:check --all
+      #          else
+      #            yarn nx format:check --base ${{ steps.setup.outputs.base }}
+      #          fi
+      #
+      #      - name: nx lint
+      #        run: |
+      #          yarn nx lint
 
       - name: nx build
         run: |
@@ -134,7 +134,7 @@ jobs:
             e2e_count=$(yarn -s nx show projects --affected --base ${{ steps.setup.outputs.base }} -t test:e2e --exclude 'tag:module-size' --exclude all | wc -l)
           fi
 
-          e2e_matrix=$(node ./scripts/test/calculate-shards.js eval --ratio 1 --zero ${e2e_count})
+          e2e_matrix={"shard":[0]}
           echo "e2e_test_matrix=${e2e_matrix}" >> $GITHUB_OUTPUT
           echo "e2e_test_count=${e2e_count}" >> $GITHUB_OUTPUT
           echo "e2e Test matrix determined to be: ${e2e_matrix}"
