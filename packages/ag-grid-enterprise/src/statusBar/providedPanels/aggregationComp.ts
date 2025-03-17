@@ -73,6 +73,22 @@ export class AggregationComp extends Component implements IStatusPanelComp {
     }
 
     public init(params: AggregationStatusPanelParams) {
+        const valueFormatter =
+            params.valueFormatter ??
+            (({ value }) => _formatNumberTwoDecimalPlacesAndCommas(value, this.getLocaleTextFunc.bind(this)));
+
+        const { avgAggregationComp, countAggregationComp, minAggregationComp, maxAggregationComp, sumAggregationComp } =
+            this;
+
+        for (const comp of [
+            avgAggregationComp,
+            countAggregationComp,
+            minAggregationComp,
+            maxAggregationComp,
+            sumAggregationComp,
+        ]) {
+            comp.setValueFormatter(valueFormatter);
+        }
         this.refresh(params);
     }
 
@@ -89,9 +105,7 @@ export class AggregationComp extends Component implements IStatusPanelComp {
     ) {
         const statusBarValueComponent = this.getAllowedAggregationValueComponent(aggFuncName);
         if (_exists(statusBarValueComponent) && statusBarValueComponent) {
-            statusBarValueComponent.setValue(
-                _formatNumberTwoDecimalPlacesAndCommas(value!, this.getLocaleTextFunc.bind(this))
-            );
+            statusBarValueComponent.setValue(value!);
             statusBarValueComponent.setDisplayed(visible);
         } else {
             // might have previously been visible, so hide now

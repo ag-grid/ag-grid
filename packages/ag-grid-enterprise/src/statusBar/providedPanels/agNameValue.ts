@@ -1,9 +1,10 @@
-import type { ComponentSelector } from 'ag-grid-community';
+import type { ComponentSelector, IProvidedStatusPanelValueFormatter } from 'ag-grid-community';
 import { Component, RefPlaceholder } from 'ag-grid-community';
 
 export class AgNameValue extends Component {
     private readonly eLabel: HTMLElement = RefPlaceholder;
     private readonly eValue: HTMLElement = RefPlaceholder;
+    private valueFormatter: IProvidedStatusPanelValueFormatter;
 
     constructor() {
         super(/* html */ `<div class="ag-status-name-value">
@@ -20,8 +21,12 @@ export class AgNameValue extends Component {
         this.eLabel.innerHTML = localeTextFunc(key, defaultValue);
     }
 
-    public setValue(value: string): void {
-        this.eValue.textContent = value;
+    public setValue(value: number, totalRows?: number): void {
+        this.eValue.textContent = this.valueFormatter({ value, totalRows, key: AgNameValue.name });
+    }
+
+    public setValueFormatter(fn: IProvidedStatusPanelValueFormatter): void {
+        this.valueFormatter = fn;
     }
 }
 export const AgNameValueSelector: ComponentSelector = {

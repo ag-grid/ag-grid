@@ -1,4 +1,9 @@
-import type { IClientSideRowModel, IStatusPanelComp } from 'ag-grid-community';
+import type {
+    IClientSideRowModel,
+    IProvidedStatusPanelParams,
+    IStatusPanelComp,
+    IStatusPanelParams,
+} from 'ag-grid-community';
 import { _formatNumberCommas, _isClientSideRowModel, _warn } from 'ag-grid-community';
 
 import { AgNameValue } from './agNameValue';
@@ -20,7 +25,6 @@ export class FilteredRowsComp extends AgNameValue implements IStatusPanelComp {
 
         const listener = this.onDataChanged.bind(this);
         this.addManagedEventListeners({ modelUpdated: listener });
-        listener();
     }
 
     private onDataChanged() {
@@ -28,11 +32,17 @@ export class FilteredRowsComp extends AgNameValue implements IStatusPanelComp {
         const totalRowCountValue = _getTotalRowCount(rowModel);
         const filteredRowCountValue = _getFilteredRowCount(rowModel as IClientSideRowModel);
 
-        this.setValue(_formatNumberCommas(filteredRowCountValue, this.getLocaleTextFunc.bind(this)));
+        this.setValue(filteredRowCountValue);
         this.setDisplayed(totalRowCountValue !== filteredRowCountValue);
     }
 
-    public init() {}
+    public init(params: IStatusPanelParams & IProvidedStatusPanelParams) {
+        const valueFormatter =
+            params.valueFormatter ?? (({ value }) => _formatNumberCommas(value, this.getLocaleTextFunc.bind(this)));
+
+        this.setValueFormatter(valueFormatter);
+        this.onDataChanged();
+    }
 
     public refresh(): boolean {
         return true;
