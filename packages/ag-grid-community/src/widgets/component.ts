@@ -221,15 +221,15 @@ export class Component<TLocalEvent extends string = ComponentEvent>
     }
 
     public setTemplate(
-        templateOfParams: ElementParams | string | null | undefined,
+        templateOrParams: ElementParams | string | null | undefined,
         componentSelectors?: ComponentSelector[],
         paramsMap?: { [key: string]: any }
     ): void {
         let eGui: HTMLElement;
-        if (typeof templateOfParams === 'object' && templateOfParams != null) {
-            eGui = _createElement(templateOfParams);
+        if (typeof templateOrParams === 'string' || templateOrParams == null) {
+            eGui = _loadTemplate(templateOrParams);
         } else {
-            eGui = _loadTemplate(templateOfParams);
+            eGui = _createElement(templateOrParams);
         }
 
         this.setTemplateFromElement(eGui, componentSelectors, paramsMap);
