@@ -68,8 +68,8 @@ jobs:
       format: ${{ steps.format.outcome || '' }}
       test_count: ${{ steps.matrix.outputs.test_count }}
       test_matrix: ${{ steps.matrix.outputs.test_matrix }}
-      #e2e_test_count: ${{ steps.matrix.outputs.e2e_test_count }}
-      #e2e_test_matrix: ${{ steps.matrix.outputs.e2e_test_matrix }}
+      e2e_test_count: ${{ steps.matrix.outputs.e2e_test_count }}
+      e2e_test_matrix: ${{ steps.matrix.outputs.e2e_test_matrix }}
       bundle_test_count: ${{ steps.matrix.outputs.bundle_test_count }}
       bundle_test_matrix: ${{ steps.matrix.outputs.bundle_test_matrix }}
       #      test_pkg_matrix: ${{ steps.matrix.outputs.pkg_matrix }}
@@ -128,6 +128,17 @@ jobs:
           echo "test_count=${count}" >> $GITHUB_OUTPUT
           echo "Test matrix determined to be: ${matrix}"
 
+          if [[ "${{ github.event.inputs.nx_command || 'affected' }}" == "run-many" ]] ; then
+            e2e_count=10
+          else
+            e2e_count=$(yarn -s nx show projects --affected --base ${{ steps.setup.outputs.base }} -t test:e2e --exclude 'tag:module-size' --exclude all | wc -l)
+          fi
+
+          e2e_matrix=$(node ./scripts/test/calculate-shards.js eval --ratio 1 --zero ${e2e_count})
+          echo "e2e_test_matrix=${e2e_matrix}" >> $GITHUB_OUTPUT
+          echo "e2e_test_count=${e2e_count}" >> $GITHUB_OUTPUT
+          echo "e2e Test matrix determined to be: ${e2e_matrix}"
+
           # 3 is optimal atm for bundle tests
           bundle_count=3
 
@@ -135,17 +146,6 @@ jobs:
           echo "bundle_test_matrix=${bundle_matrix}" >> $GITHUB_OUTPUT
           echo "bundle_test_count=${bundle_count}" >> $GITHUB_OUTPUT
           echo "bundle Test matrix determined to be: ${bundle_matrix}"
-
-  #          if [[ "${{ github.event.inputs.nx_command || 'affected' }}" == "run-many" ]] ; then
-  #            e2e_count=10
-  #          else
-  #            e2e_count=$(yarn -s nx show projects --affected --base ${{ steps.setup.outputs.base }} -t test:e2e --exclude 'tag:module-size' --exclude all | wc -l)
-  #          fi
-
-  #          e2e_matrix=$(node ./scripts/test/calculate-shards.js eval --ratio 1 --zero ${e2e_count})
-  #          echo "e2e_test_matrix=${e2e_matrix}" >> $GITHUB_OUTPUT
-  #          echo "e2e_test_count=${e2e_count}" >> $GITHUB_OUTPUT
-  #          echo "e2e Test matrix determined to be: ${e2e_matrix}"
 
   #          pkg_matrix=$(node ./scripts/test/calculate-pkg-shards.js)
   #          echo "pkg_matrix=${pkg_matrix}" >> $GITHUB_OUTPUT
@@ -206,9 +206,9 @@ jobs:
     runs-on: ubuntu-latest
     name: e2e Tests
     needs: build_lint
-    #    if: needs.build_lint.outputs.e2e_test_count > 0
+    if: needs.build_lint.outputs.e2e_test_count > 0
     strategy:
-      #      matrix: ${{ fromJson(needs.build_lint.outputs.e2e_test_matrix )}}
+      matrix: ${{ fromJson(needs.build_lint.outputs.e2e_test_matrix )}}
       fail-fast: false
     env:
       NX_PARALLEL: 1
@@ -231,7 +231,6 @@ jobs:
         with:
           cache_mode: ro
 
-      # no sharding for these
       - name: nx test:e2e
         id: test
         run: yarn nx ${{ github.event.inputs.nx_command || 'affected' }} -t test:e2e --configuration=ci --exclude 'tag:module-size' --exclude all
