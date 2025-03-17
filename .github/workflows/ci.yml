@@ -72,7 +72,6 @@ jobs:
       e2e_test_matrix: ${{ steps.matrix.outputs.e2e_test_matrix }}
       bundle_test_count: ${{ steps.matrix.outputs.bundle_test_count }}
       bundle_test_matrix: ${{ steps.matrix.outputs.bundle_test_matrix }}
-      #      test_pkg_matrix: ${{ steps.matrix.outputs.pkg_matrix }}
       build_type: ${{ steps.setup.outputs.type }}
     runs-on: ubuntu-latest
     steps:
@@ -93,26 +92,25 @@ jobs:
         with:
           cache_mode: ${{ github.event.inputs.clean_checkout == 'true' && 'off' || 'rw' }}
 
-      #      - name: nx format:check
-      #        id: format
-      #        if: steps.setup.outcome == 'success' || steps.setup.outcome == 'skipped'
-      #        run: |
-      #          if [[ "${{ github.event.inputs.nx_command || 'affected' }}" == "run-many" ]] ; then
-      #            yarn nx format:check --all
-      #          else
-      #            yarn nx format:check --base ${{ steps.setup.outputs.base }}
-      #          fi
-      #
-      #      - name: nx lint
-      #        run: |
-      #          yarn nx lint
+            - name: nx format:check
+              id: format
+              if: steps.setup.outcome == 'success' || steps.setup.outcome == 'skipped'
+              run: |
+                if [[ "${{ github.event.inputs.nx_command || 'affected' }}" == "run-many" ]] ; then
+                  yarn nx format:check --all
+                else
+                  yarn nx format:check --base ${{ steps.setup.outputs.base }}
+                fi
+
+            - name: nx lint
+              run: |
+                yarn nx lint
 
       - name: nx build
         run: |
           yarn nx generate-doc-references  
           yarn nx generate-examples
           yarn nx run-many --t build --exclude ag-grid-docs --exclude all
-          # yarn nx build 
 
       - name: calculate matrix
         id: matrix
@@ -134,6 +132,7 @@ jobs:
             e2e_count=$(yarn -s nx show projects --affected --base ${{ steps.setup.outputs.base }} -t test:e2e --exclude 'tag:module-size' --exclude all | wc -l)
           fi
 
+          # not enough non-bundle size e2e tests to shard atm
           e2e_matrix={"shard":[0]}
           echo "e2e_test_matrix=${e2e_matrix}" >> $GITHUB_OUTPUT
           echo "e2e_test_count=${e2e_count}" >> $GITHUB_OUTPUT
@@ -146,10 +145,6 @@ jobs:
           echo "bundle_test_matrix=${bundle_matrix}" >> $GITHUB_OUTPUT
           echo "bundle_test_count=${bundle_count}" >> $GITHUB_OUTPUT
           echo "bundle Test matrix determined to be: ${bundle_matrix}"
-
-  #          pkg_matrix=$(node ./scripts/test/calculate-pkg-shards.js)
-  #          echo "pkg_matrix=${pkg_matrix}" >> $GITHUB_OUTPUT
-  #          echo "Package test matrix determined to be: ${pkg_matrix}"
 
   test:
     runs-on: ubuntu-24.04
