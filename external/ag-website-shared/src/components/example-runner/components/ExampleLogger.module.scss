@@ -1,0 +1,46 @@
+@use 'design-system' as *;
+
+$logger-height: 100px;
+
+.logger {
+    height: $logger-height;
+    padding: $spacing-size-2;
+    margin: 0;
+    overflow-y: auto;
+    overflow-x: hidden;
+    display: flex;
+    flex-direction: column;
+    color: var(--color-text-primary);
+    background-color: var(--color-bg-secondary);
+    border: 1px solid var(--color-border-primary);
+    border-top: none;
+    border-radius: 0 0 var(--radius-md) var(--radius-md);
+
+    div {
+        padding: $spacing-size-2;
+        border-top: 1px solid var(--color-border-secondary);
+
+        &:first-child {
+            border-top: none;
+            padding-top: 0;
+        }
+
+        &:last-child {
+            padding-bottom: 0;
+        }
+
+        &::before {
+            content: '> ';
+            color: var(--color-text-secondary);
+        }
+    }
+
+    #{$selector-darkmode} & {
+        background-color: var(--color-gray-900);
+        color: var(--color-text-secondary);
+    }
+}
+
+.noLogs {
+    font-style: italic;
+}
