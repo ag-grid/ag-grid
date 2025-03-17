@@ -3,6 +3,7 @@ import type { SelectAllMode } from '../entities/gridOptions';
 import type { RowNode } from '../entities/rowNode';
 import type { SelectionEventSourceType } from '../events';
 import type { IRowNode } from '../interfaces/iRowNode';
+import { _isManualPinnedRow } from '../pinnedRowModel/pinnedRowUtils';
 import { _warn } from '../validation/logging';
 
 export function setNodesSelected(
@@ -10,7 +11,7 @@ export function setNodesSelected(
     params: { nodes: IRowNode[]; newValue: boolean; source?: SelectionEventSourceType }
 ) {
     const allNodesValid = params.nodes.every((node) => {
-        if (node.rowPinned) {
+        if (node.rowPinned && !_isManualPinnedRow(node as RowNode)) {
             _warn(59);
             return false;
         }
