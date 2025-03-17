@@ -148,7 +148,7 @@ jobs:
 
   test:
     runs-on: ubuntu-24.04
-    name: Unit & Integration Tests (${{ matrix.shard }}/${{ strategy.job-total }})
+    name: Unit Tests (${{ matrix.shard }}/${{ strategy.job-total }})
     needs: build_lint
     if: needs.build_lint.outputs.test_count > 0
     strategy:
