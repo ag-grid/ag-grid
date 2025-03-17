@@ -22,28 +22,6 @@ function containsIgnoredMessage(log: Log) {
     );
 }
 
-function safeStringify(obj: object, space: number = 2) {
-    const seen = new WeakSet();
-    return JSON.stringify(
-        obj,
-        (_, value) => {
-            if (typeof value === 'object' && value !== null) {
-                if (seen.has(value)) {
-                    return '[Circular]';
-                }
-                seen.add(value);
-            }
-            return value;
-        },
-        space
-    );
-}
-
-function safeLogData(data: unknown) {
-    if (typeof data === 'string' || typeof data === 'number') return data;
-    return safeStringify(data as object);
-}
-
 export const ExampleLogger: FunctionComponent<Props> = ({ exampleName, bufferSize = 10 }) => {
     const containerRef = useRef<HTMLPreElement>(null);
     const [logs, setLogs] = useState<Log[]>([]);
@@ -76,7 +54,7 @@ export const ExampleLogger: FunctionComponent<Props> = ({ exampleName, bufferSiz
         <pre ref={containerRef} className={styles.logger}>
             {logs.length === 0 && <div className={styles.noLogs}>Console logs from the example shown here...</div>}
             {logs.map((log, i) => (
-                <div key={i}>{safeLogData(log.data)}</div>
+                <div key={i}>{log.data.join(', ')}</div>
             ))}
         </pre>
     );
