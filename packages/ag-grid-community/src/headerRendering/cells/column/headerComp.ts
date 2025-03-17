@@ -171,7 +171,7 @@ export class HeaderComp extends Component implements IHeaderComp {
     public params: IHeaderParams;
 
     private currentDisplayName: string;
-    private currentParamsTemplate: string | null | undefined;
+    private currentTemplate: ElementParams | string | null | undefined;
     private currentShowMenu: boolean;
     private currentSuppressMenuHide: boolean;
     private currentSort: boolean | undefined;
@@ -181,13 +181,12 @@ export class HeaderComp extends Component implements IHeaderComp {
 
     public refresh(params: IHeaderParams): boolean {
         const oldParams = this.params;
-
         this.params = params;
 
         // if template changed, then recreate the whole comp, the code required to manage
         // a changing template is to difficult for what it's worth.
         if (
-            params.template != this.currentParamsTemplate ||
+            this.workOutTemplate(params, !!this.beans?.sortSvc) != this.currentTemplate ||
             this.workOutShowMenu() != this.currentShowMenu ||
             params.enableSorting != this.currentSort ||
             (this.currentSuppressMenuHide != null && this.shouldSuppressMenuHide() != this.currentSuppressMenuHide) ||
@@ -199,7 +198,7 @@ export class HeaderComp extends Component implements IHeaderComp {
 
         if (this.innerHeaderComponent) {
             // Mimic the merging of params that happens during init of _getInnerHeaderCompDetails(userCompFactory, params, params);
-            const mergedParams = { ...this.params };
+            const mergedParams = { ...params };
             _mergeDeep(mergedParams, params.innerHeaderComponentParams);
             this.innerHeaderComponent.refresh?.(mergedParams);
         } else {
@@ -209,14 +208,13 @@ export class HeaderComp extends Component implements IHeaderComp {
         return true;
     }
 
-    private setupTemplate(paramsTemplate?: string, sortSvc?: SortService) {
-        const sortComp = sortSvc ? [sortSvc.getSortIndicatorSelector()] : undefined;
+    private workOutTemplate(params: IHeaderParams, isSorting: boolean): string | ElementParams {
+        const paramsTemplate = params.template;
         if (paramsTemplate) {
             // take account of any newlines & whitespace before/after the actual template
-            this.currentParamsTemplate = paramsTemplate;
-            this.setTemplate(paramsTemplate?.trim(), sortComp);
+            return paramsTemplate?.trim ? paramsTemplate.trim() : paramsTemplate;
         } else {
-            this.setTemplate(sortComp ? HeaderCompElement : HeaderCompElementNoSort, sortComp);
+            return isSorting ? HeaderCompElement : HeaderCompElementNoSort;
         }
     }
 
@@ -224,8 +222,9 @@ export class HeaderComp extends Component implements IHeaderComp {
         this.params = params;
 
         const { sortSvc, touchSvc, rowNumbersSvc, userCompFactory } = this.beans;
-
-        this.setupTemplate(params.template, sortSvc);
+        const sortComp = sortSvc?.getSortIndicatorSelector();
+        this.currentTemplate = this.workOutTemplate(params, !!sortComp);
+        this.setTemplate(this.currentTemplate, sortComp ? [sortComp] : undefined);
 
         touchSvc?.setupForHeader(this);
 
