@@ -111,6 +111,7 @@ export interface IInnerHeaderComponent<
         IHeader {}
 
 function getHeaderCompElementParams(includeSortIndicator: boolean): ElementParams {
+    const hiddenAttrs = { 'aria-hidden': 'true' };
     return {
         tag: 'div',
         cls: 'ag-cell-label-container',
@@ -120,13 +121,13 @@ function getHeaderCompElementParams(includeSortIndicator: boolean): ElementParam
                 tag: 'span',
                 ref: 'eMenu',
                 cls: 'ag-header-icon ag-header-cell-menu-button',
-                attrs: { 'aria-hidden': 'true' },
+                attrs: hiddenAttrs,
             },
             {
                 tag: 'span',
                 ref: 'eFilterButton',
                 cls: 'ag-header-icon ag-header-cell-filter-button',
-                attrs: { 'aria-hidden': 'true' },
+                attrs: hiddenAttrs,
             },
             {
                 tag: 'div',
@@ -139,7 +140,7 @@ function getHeaderCompElementParams(includeSortIndicator: boolean): ElementParam
                         tag: 'span',
                         ref: 'eFilter',
                         cls: 'ag-header-icon ag-header-label-icon ag-filter-icon',
-                        attrs: { 'aria-hidden': 'true' },
+                        attrs: hiddenAttrs,
                     },
                     includeSortIndicator ? { tag: 'ag-sort-indicator', ref: 'eSortIndicator' } : null,
                 ],

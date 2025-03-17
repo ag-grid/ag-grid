@@ -13,7 +13,7 @@ const makeIconParams = (dataRefSuffix: string, classSuffix: string): ElementPara
     cls: `ag-sort-indicator-icon ag-sort-${classSuffix} ag-hidden`,
     attrs: { 'aria-hidden': 'true' },
 });
-const elementParams: ElementParams = {
+const SortIndicatorElement: ElementParams = {
     tag: 'span',
     cls: 'ag-sort-indicator-container',
     children: [
@@ -39,7 +39,7 @@ export class SortIndicatorComp extends Component {
         super();
 
         if (!skipTemplate) {
-            this.setTemplate(elementParams);
+            this.setTemplate(SortIndicatorElement);
         }
     }
 
