@@ -67,9 +67,7 @@ export class CellPositionFeature extends BeanStub {
             this.addManagedListeners(this.beans.eventSvc, {
                 paginationChanged: refreshSpanHeight,
                 recalculateRowBounds: refreshSpanHeight,
-                // XXX: This might be too eager but there are cases where pinning spanned
-                // rows doesn't fire 'recalculateRowBounds'
-                displayedRowsChanged: refreshSpanHeight,
+                pinnedHeightChanged: refreshSpanHeight,
             });
         }
     }
@@ -92,7 +90,7 @@ export class CellPositionFeature extends BeanStub {
     }
 
     private onDisplayColumnsChanged(): void {
-        const colsSpanning: AgColumn[] = this.getColSpanningList();
+        const colsSpanning = this.getColSpanningList();
 
         if (!_areEqual(this.colsSpanning, colsSpanning)) {
             this.colsSpanning = colsSpanning;
