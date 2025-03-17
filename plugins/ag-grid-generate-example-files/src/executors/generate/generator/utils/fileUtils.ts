@@ -174,3 +174,7 @@ export function convertTsxToJsx(fileStr: string): string {
     jsxFile = jsxFile.replaceAll('// empty line', '');
     return jsxFile;
 }
+
+export const getHasExampleConsoleLog = ({ entryFile }: { entryFile: string }) => {
+    return entryFile?.includes('console.log');
+};

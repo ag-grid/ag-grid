@@ -17,7 +17,31 @@ interface Props {
 const IGNORED_MESSAGES = ['Angular is running in development mode.'];
 
 function containsIgnoredMessage(log: Log) {
-    return log.data.some((message) => IGNORED_MESSAGES.some((ignoredMessage) => message.includes(ignoredMessage)));
+    return log.data.some((message) =>
+        IGNORED_MESSAGES.some((ignoredMessage) => typeof message === 'string' && message.includes(ignoredMessage))
+    );
+}
+
+function safeStringify(obj: object, space: number = 2) {
+    const seen = new WeakSet();
+    return JSON.stringify(
+        obj,
+        (_, value) => {
+            if (typeof value === 'object' && value !== null) {
+                if (seen.has(value)) {
+                    return '[Circular]';
+                }
+                seen.add(value);
+            }
+            return value;
+        },
+        space
+    );
+}
+
+function safeLogData(data: unknown) {
+    if (typeof data === 'string' || typeof data === 'number') return data;
+    return safeStringify(data as object);
 }
 
 export const ExampleLogger: FunctionComponent<Props> = ({ exampleName, bufferSize = 10 }) => {
@@ -52,7 +76,7 @@ export const ExampleLogger: FunctionComponent<Props> = ({ exampleName, bufferSiz
         <pre ref={containerRef} className={styles.logger}>
             {logs.length === 0 && <div className={styles.noLogs}>Console logs from the example shown here...</div>}
             {logs.map((log, i) => (
-                <div key={i}>{log.data}</div>
+                <div key={i}>{safeLogData(log.data)}</div>
             ))}
         </pre>
     );

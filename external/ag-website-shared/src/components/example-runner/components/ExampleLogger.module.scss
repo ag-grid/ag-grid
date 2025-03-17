@@ -5,7 +5,7 @@ $logger-height: 100px;
 .logger {
     height: $logger-height;
     padding: $spacing-size-2;
-    margin: 0;
+    margin: $spacing-size-1 0 0 0;
     overflow-y: auto;
     overflow-x: hidden;
     display: flex;
@@ -13,8 +13,7 @@ $logger-height: 100px;
     color: var(--color-text-primary);
     background-color: var(--color-bg-secondary);
     border: 1px solid var(--color-border-primary);
-    border-top: none;
-    border-radius: 0 0 var(--radius-md) var(--radius-md);
+    border-radius: var(--radius-md);
 
     div {
         padding: $spacing-size-2;

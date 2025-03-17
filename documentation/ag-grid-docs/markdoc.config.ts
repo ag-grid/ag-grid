@@ -107,6 +107,7 @@ export default defineMarkdocConfig({
                 typescriptOnly: { type: Boolean },
                 suppressDarkMode: { type: Boolean },
                 exampleHeight: { type: Number },
+                consoleBufferSize: { type: Number },
             },
         },
         apiDocumentation: {

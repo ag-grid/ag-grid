@@ -19,6 +19,7 @@ import {
     convertTsxToJsx,
     getBoilerPlateFiles,
     getEntryFileName,
+    getHasExampleConsoleLog,
     getIsEnterprise,
     getIsLocale,
     getMainFileName,
@@ -27,6 +28,8 @@ import {
     getTransformTsFileExt,
 } from './generator/utils/fileUtils';
 import { frameworkFilesGenerator } from './generator/utils/frameworkFilesGenerator';
+import type { TransformEntryFile } from './generator/utils/frameworkFilesGenerator';
+import { getConsoleLogSnippet } from './generator/utils/getConsoleLogSnippet';
 import { getOtherScriptFiles, getUseFetchJsonFile } from './generator/utils/getOtherScriptFiles';
 import { getPackageJson } from './generator/utils/getPackageJson';
 import { getStyleFiles } from './generator/utils/getStyleFiles';
@@ -92,6 +95,9 @@ async function getProvidedFiles(folderPath: string) {
 export async function generateFiles(options: ExecutorOptions, gridOptionsTypes: Record<string, GridOptionsType>) {
     const isDev = options.mode === 'dev';
     const folderPath = options.examplePath;
+    const folders = folderPath.split('/');
+    const pageName = folders[folders.length - 3];
+    const exampleName = folders[folders.length - 1];
 
     const sourceFileList = await getSourceFileList(folderPath);
     if (sourceFileList === undefined) {
@@ -112,6 +118,7 @@ export async function generateFiles(options: ExecutorOptions, gridOptionsTypes: 
 
     const isEnterprise = getIsEnterprise({ entryFile });
     const isLocale = getIsLocale({ entryFile });
+    const hasExampleConsoleLog = getHasExampleConsoleLog({ entryFile });
     const frameworkProvidedExamples = sourceFileList.includes('provided') ? await getProvidedFiles(folderPath) : {};
 
     const { bindings, typedBindings } = gridVanillaSrcParser(
@@ -162,6 +169,17 @@ export async function generateFiles(options: ExecutorOptions, gridOptionsTypes: 
             ...exampleConfig,
             ...(provideFrameworkFiles ? provideFrameworkFiles['exampleConfig.json'] : {}),
         };
+
+        const transformEntryFile: TransformEntryFile = ({ entryFile }) => {
+            let transformedEntryFile = entryFile;
+
+            if (hasExampleConsoleLog) {
+                transformedEntryFile = transformedEntryFile + '\n' + getConsoleLogSnippet({ pageName, exampleName });
+            }
+
+            return transformedEntryFile;
+        };
+
         const [otherScriptFiles, componentScriptFiles] = await getOtherScriptFiles({
             folderPath,
             sourceFileList,
@@ -183,6 +201,7 @@ export async function generateFiles(options: ExecutorOptions, gridOptionsTypes: 
                 otherScriptFiles,
                 styleFiles,
                 ignoreDarkMode: false,
+                transformEntryFile,
                 isDev,
                 exampleConfig: frameworkExampleConfig,
             });
@@ -195,6 +214,7 @@ export async function generateFiles(options: ExecutorOptions, gridOptionsTypes: 
                 entryFileName,
                 provideFrameworkFiles,
                 mergedStyleFiles,
+                transformEntryFile,
                 isDev,
                 isIntegratedCharts,
                 mainFileName,
@@ -220,6 +240,7 @@ export async function generateFiles(options: ExecutorOptions, gridOptionsTypes: 
             isEnterprise,
             isLocale,
             isIntegratedCharts,
+            hasExampleConsoleLog,
             entryFileName,
             mainFileName,
             scriptFiles: scriptFiles!,
@@ -249,6 +270,7 @@ async function processProvidedFiles(
     entryFileName: string,
     provideFrameworkFiles: any,
     mergedStyleFiles: { [x: string]: string },
+    transformEntryFile: TransformEntryFile,
     isDev: boolean,
     isIntegratedCharts: boolean,
     mainFileName: string,
@@ -335,6 +357,10 @@ async function processProvidedFiles(
                 code
             );
         }
+
+        provideFrameworkFiles[writeToFileName] = transformEntryFile({
+            entryFile: provideFrameworkFiles[writeToFileName],
+        });
     }
     return scriptFiles;
 }
