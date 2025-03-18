@@ -104,15 +104,11 @@ jobs:
 #        run: |
 #          yarn nx lint
 
-      - name: update base url
-        run: node scripts/deployments/prep_and_archive/updateBaseUrl.js staging
       - name: nx build
         run: |
           yarn nx generate-doc-references
           yarn nx generate-examples
           yarn nx run-many --t build --exclude ag-grid-docs --exclude all
-      - name: validate base url
-        run: node scripts/deployments/sanityCheckBaseUrl.js staging
 
       - name: calculate matrix
         id: matrix
@@ -324,12 +320,25 @@ jobs:
         with:
           cache_mode: ro
 
+      - name: update base url
+#        if: ${{ github.ref == 'refs/heads/latest' }}
+        run: node scripts/deployments/prep_and_archive/updateBaseUrl.js staging
+      - name: build
+#        if: ${{ github.ref == 'refs/heads/latest' }}
+        run: |
+          yarn nx generate-doc-references
+          yarn nx generate-examples
+          yarn nx run-many --t build --exclude ag-grid-docs --exclude all
+      - name: validate base url
+#        if: ${{ github.ref == 'refs/heads/latest' }}
+        run: node scripts/deployments/sanityCheckBaseUrl.js staging
       - name: validate grid modules
         run: node scripts/deployments/validateGridModulesList.js
       - name: docs build and link checker
         run: CHECK_LINKS=true CHECK_REDIRECTS=true yarn nx run ag-grid-docs:build -c staging
 
       - name: Deploy to Staging
+        if: ${{ github.ref == 'refs/heads/latest' }}
         env:
           SSH_PRIVATE_KEY: |
             ${{ secrets.STAGING_SSH_KEY }}
