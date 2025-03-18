@@ -22,7 +22,7 @@ function containsIgnoredMessage(log: Log) {
     );
 }
 
-export const ExampleLogger: FunctionComponent<Props> = ({ exampleName, bufferSize = 10 }) => {
+export const ExampleLogger: FunctionComponent<Props> = ({ exampleName, bufferSize = 20 }) => {
     const containerRef = useRef<HTMLPreElement>(null);
     const [logs, setLogs] = useState<Log[]>([]);
 
