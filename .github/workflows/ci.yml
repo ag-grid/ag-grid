@@ -80,13 +80,13 @@ jobs:
           SSH_HOST: ${{ secrets.STAGING_HOST }}
           SSH_USER: ubuntu
           SSH_KEY_LOCATION: ${{ github.workspace }}/staging.pem
+          WWW_ROOT_DIR: ${{ vars.WWW_ROOT_DIR }}
         run: |
           echo "$SSH_PRIVATE_KEY" > $SSH_KEY_LOCATION
           echo "Test String" > test.txt
           chmod 400 $SSH_KEY_LOCATION
           echo "rootDir: $WWW_ROOT_DIR"
-          ssh -i $SSH_KEY_LOCATION -o StrictHostKeyChecking=no $SSH_USER@$SSH_HOST "ls -l"
-          scp -i $SSH_KEY_LOCATION -o StrictHostKeyChecking=no test.txt $SSH_USER@$SSH_HOST:/var/www/
+#          scp -i $SSH_KEY_LOCATION -o StrictHostKeyChecking=no test.txt $SSH_USER@$SSH_HOST:/var/www/
 #          ./scripts/deployments/createAndDeployDocsToTCGH.sh
 
 #      - name: Checkout
