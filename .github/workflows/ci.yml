@@ -322,8 +322,9 @@ jobs:
             ${{ secrets.STAGING_SSH_KEY }}
           SSH_HOST: ${{ secrets.STAGING_HOST }}
           SSH_USER: ubuntu
-          SSH_KEY_LOCATION: $GITHUB_WORKSPACE/staging.pem
+          SSH_KEY_LOCATION: ${{ github.workspace }}/staging.pem
         run: |
+          echo $SSH_KEY_LOCATION
           echo $GITHUB_WORKSPACE
           echo ${{ GITHUB_WORKSPACE }}
 #          pwd
