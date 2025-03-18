@@ -62,7 +62,7 @@ export class TreeNode implements ITreeNode {
     public childrenAfterGroup: TreeRow[] = _EmptyArray;
 
     /** We keep the row.allLeafChildren here, we just swap arrays when we do post order commit */
-    public allLeafChildren: TreeRow[] = _EmptyArray;
+    public allLeafChildren: TreeRow[] | null = null;
 
     /** Indicates whether childrenAfterGroup might need to be recomputed and sorted. Reset during commit. */
     public childrenChanged: boolean = false;
@@ -213,7 +213,7 @@ export class TreeNode implements ITreeNode {
         duplicateRows.add(newRow);
         newRow.treeNode = this;
         newRow.childrenAfterGroup = _EmptyArray;
-        newRow.allLeafChildren = _EmptyArray;
+        newRow.allLeafChildren = null;
         return true;
     }
 
@@ -398,16 +398,14 @@ export class TreeNode implements ITreeNode {
         const childrenAfterGroupLen = childrenAfterGroup.length;
         if (childrenAfterGroupLen === 0) {
             // No children, no leaf nodes.
-            nodesChanged = this.allLeafChildren.length !== 0;
-            this.allLeafChildren = _EmptyArray;
+            if (this.allLeafChildren) {
+                nodesChanged ||= this.allLeafChildren.length !== 0;
+                this.allLeafChildren = null;
+            }
         } else {
             // We need to rebuild the allLeafChildren array, we use children allLeafChildren arrays
 
-            let allLeafChildren = this.allLeafChildren;
-            if (allLeafChildren === _EmptyArray) {
-                allLeafChildren = [];
-                this.allLeafChildren = allLeafChildren;
-            }
+            const allLeafChildren = (this.allLeafChildren ??= []);
             const oldAllLeafChildrenLength = allLeafChildren.length;
 
             let writeIdx = 0;

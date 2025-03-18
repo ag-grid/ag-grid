@@ -102,14 +102,14 @@ export class TreeParentIdStrategy<TData = any> extends BeanStub implements IRowG
                 if (processNode(child, level)) {
                     allLeafChildrenChanged = true;
                 }
-                allLeafChildrenLen += child.allLeafChildren!.length + 1;
+                allLeafChildrenLen += (child.allLeafChildren?.length ?? 0) + 1;
             }
 
             let allLeafChildren = row.allLeafChildren;
-            if (!allLeafChildren || allLeafChildren === row.childrenAfterGroup) {
-                allLeafChildren = row.allLeafChildren = _EmptyArray;
+            if (allLeafChildren === childrenAfterGroup || allLeafChildren === undefined) {
+                allLeafChildren = row.allLeafChildren = null;
             }
-            if (allLeafChildrenChanged || allLeafChildren.length !== allLeafChildrenLen) {
+            if (allLeafChildrenChanged || (allLeafChildren?.length ?? 0) !== allLeafChildrenLen) {
                 allLeafChildrenChanged = updateAllLeafChildren(row, allLeafChildren, allLeafChildrenLen);
             }
 
@@ -231,6 +231,7 @@ const updateRootArrays = <TData>(rootNode: TreeRow<TData>, rootChildrenAfterGrou
 };
 
 const updateRowArrays = <TData>(row: TreeRow<TData>, childrenAfterGroup: TreeRow<TData>[]) => {
+    row.allLeafChildren ??= null;
     row.childrenAfterFilter ??= childrenAfterGroup;
     row.childrenAfterAggFilter ??= childrenAfterGroup;
     row.childrenAfterSort ??= childrenAfterGroup;
@@ -246,29 +247,38 @@ const updateRowArrays = <TData>(row: TreeRow<TData>, childrenAfterGroup: TreeRow
 
 const updateAllLeafChildren = <TData>(
     row: TreeRow<TData>,
-    allLeafChildren: TreeRow<TData>[],
+    allLeafChildren: TreeRow<TData>[] | null,
     newAllLeafChildrenLen: number
 ): boolean => {
-    let changed = allLeafChildren.length !== newAllLeafChildrenLen;
-    if (changed) {
+    let changed = true;
+    if (!allLeafChildren) {
         if (newAllLeafChildrenLen === 0) {
-            row.allLeafChildren = _EmptyArray;
+            return false;
+        }
+        allLeafChildren = row.allLeafChildren = new Array(newAllLeafChildrenLen);
+    } else if (allLeafChildren.length !== newAllLeafChildrenLen) {
+        if (newAllLeafChildrenLen === 0) {
+            row.allLeafChildren = null;
             return true;
         }
-        if (allLeafChildren === _EmptyArray) {
-            row.allLeafChildren = allLeafChildren = new Array(newAllLeafChildrenLen);
-        } else {
-            allLeafChildren.length = newAllLeafChildrenLen;
-        }
+        allLeafChildren.length = newAllLeafChildrenLen;
+    } else {
+        changed = false;
     }
+
     let writeIdx = 0;
-    for (const child of row.childrenAfterGroup!) {
-        const childLeafChildren = child.allLeafChildren!;
-        changed ||= allLeafChildren[writeIdx] !== child;
-        allLeafChildren[writeIdx++] = child;
-        for (const leaf of childLeafChildren) {
-            changed ||= allLeafChildren[writeIdx] !== leaf;
-            allLeafChildren[writeIdx++] = leaf;
+    const childrenAfterGroup = row.childrenAfterGroup;
+    if (childrenAfterGroup) {
+        for (const child of childrenAfterGroup) {
+            changed ||= allLeafChildren[writeIdx] !== child;
+            allLeafChildren[writeIdx++] = child;
+            const childLeafChildren = child.allLeafChildren;
+            if (childLeafChildren) {
+                for (const leaf of childLeafChildren) {
+                    changed ||= allLeafChildren[writeIdx] !== leaf;
+                    allLeafChildren[writeIdx++] = leaf;
+                }
+            }
         }
     }
     return changed;

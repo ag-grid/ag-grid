@@ -307,7 +307,7 @@ describe('ag-grid grouping treeData is reactive', () => {
                 },
                 {
                     allChildrenCount: null,
-                    allLeafChildren: [],
+                    allLeafChildren: null,
                     childIndex: 0,
                     childrenAfterFilter: [],
                     childrenAfterGroup: [],
@@ -363,7 +363,7 @@ describe('ag-grid grouping treeData is reactive', () => {
                 },
                 {
                     allChildrenCount: null,
-                    allLeafChildren: [],
+                    allLeafChildren: null,
                     childIndex: 0,
                     childrenAfterFilter: [],
                     childrenAfterGroup: [],
