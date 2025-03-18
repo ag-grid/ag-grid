@@ -325,7 +325,7 @@ jobs:
         run: |
           echo "$SSH_PRIVATE_KEY" > ./staging.pem
           chmod 400 ./staging.pem
-          ssh -i ./staging.pem -o StrictHostKeyChecking=no ${{ env.SSH_USER }}@${{ SSH_HOST }} "ls -l"
+          ssh -i ./staging.pem -o StrictHostKeyChecking=no ${{ env.SSH_USER }}@${{ env.SSH_HOST }} "ls -l"
 
   #      - name: Persist test results
   #        if: always()
