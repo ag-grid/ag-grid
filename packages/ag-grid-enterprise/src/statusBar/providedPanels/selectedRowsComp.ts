@@ -51,6 +51,7 @@ export class SelectedRowsComp extends AgNameValue implements IStatusPanelComp {
             valueFormatter ??
             (({ value }) => {
                 if (value < 0) {
+                    this.getLocaleTextFunc()('statusBarLastRowUnknown', '?');
                     return '?';
                 }
                 return _formatNumberCommas(value, this.getLocaleTextFunc.bind(this));
