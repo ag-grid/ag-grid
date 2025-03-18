@@ -1,0 +1,20 @@
+#wrapper {
+    height: 100%;
+    width: 100%;
+    display: grid;
+    grid-template-columns: 100%;
+    grid-template-rows: 75% 25%;
+    box-sizing: border-box;
+}
+
+#charts {
+    height: 100%;
+    width: 100%;
+    display: grid;
+    grid-template-columns: 50% 50%;
+    grid-template-rows: 50% 50%;
+    gap: 10px;
+    padding-bottom: 20px;
+    padding-right: 10px;
+    box-sizing: border-box;
+}
