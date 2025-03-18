@@ -73,101 +73,85 @@ jobs:
       build_type: ${{ steps.setup.outputs.type }}
     runs-on: ubuntu-latest
     steps:
-      - name: Deploy to Staging
-        env:
-          SSH_PRIVATE_KEY: |
-            ${{ secrets.STAGING_SSH_KEY }}
-          SSH_HOST: ${{ secrets.STAGING_HOST }}
-          SSH_USER: ubuntu
-          SSH_KEY_LOCATION: ${{ github.workspace }}/staging.pem
-          WWW_ROOT_DIR: ${{ vars.WWW_ROOT_DIR }}
-        run: |
-          echo "$SSH_PRIVATE_KEY" > $SSH_KEY_LOCATION
-          echo "Test String" > test.txt
-          chmod 400 $SSH_KEY_LOCATION
-          echo "rootDir: $WWW_ROOT_DIR"
-#          scp -i $SSH_KEY_LOCATION -o StrictHostKeyChecking=no test.txt $SSH_USER@$SSH_HOST:/var/www/
-#          ./scripts/deployments/createAndDeployDocsToTCGH.sh
+      - name: Checkout
+        id: checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1 # shallow copy
 
-#      - name: Checkout
-#        id: checkout
-#        uses: actions/checkout@v4
-#        with:
-#          fetch-depth: 1 # shallow copy
-#
-#      - name: Fetch Refs
-#        run: |
-#          git fetch origin --depth 1 latest
-#          git fetch origin --depth 1 tag latest-success
-#
-#      - name: Setup
-#        id: setup
-#        uses: ./.github/actions/setup-nx
-#        with:
-#          cache_mode: ${{ github.event.inputs.clean_checkout == 'true' && 'off' || 'rw' }}
-#
-##      - name: nx format:check
-##        id: format
-##        if: steps.setup.outcome == 'success' || steps.setup.outcome == 'skipped'
-##        run: |
-##          if [[ "${{ github.event.inputs.nx_command || 'affected' }}" == "run-many" ]] ; then
-##            yarn nx format:check --all
-##          else
-##            yarn nx format:check --base ${{ steps.setup.outputs.base }}
-##          fi
-##
-##      - name: nx lint
-##        run: |
-##          yarn nx lint
-#
-#      - name: nx build
-#        run: |
-#          yarn nx generate-doc-references
-#          yarn nx generate-examples
-#          yarn nx run-many --t build --exclude ag-grid-docs --exclude all
-#
-#      - name: calculate matrix
-#        id: matrix
-#        run: |
-#          if [[ "${{ github.event.inputs.nx_command || 'affected' }}" == "run-many" ]] ; then
-#            count=10
-#          else
-#            count=$(yarn -s nx show projects --affected --base ${{ steps.setup.outputs.base }} -t test | wc -l)
-#          fi
-#
-#          matrix=$(node ./scripts/test/calculate-shards.js eval --ratio 1 --zero ${count} --max 1)
-#          echo "test_matrix=${matrix}" >> $GITHUB_OUTPUT
-#          echo "test_count=${count}" >> $GITHUB_OUTPUT
-#          echo "Test matrix determined to be: ${matrix}"
-#
-#          if [[ "${{ github.event.inputs.nx_command || 'affected' }}" == "run-many" ]] ; then
-#            e2e_count=10
-#          else
-#            e2e_count=$(yarn -s nx show projects --affected --base ${{ steps.setup.outputs.base }} -t test:e2e --exclude 'tag:module-size' --exclude all | wc -l)
-#          fi
-#
-#          # not enough non-bundle size e2e tests to shard atm
-#          e2e_matrix={"shard":[0]}
-#          echo "e2e_test_matrix=${e2e_matrix}" >> $GITHUB_OUTPUT
-#          echo "e2e_test_count=${e2e_count}" >> $GITHUB_OUTPUT
-#          echo "e2e Test matrix determined to be: ${e2e_matrix}"
-#
-#          # 3 is optimal atm for bundle tests
-#          bundle_count=3
-#
-#          bundle_matrix=$(node ./scripts/test/calculate-shards.js eval --ratio 1 --zero ${bundle_count})
-#          echo "bundle_test_matrix=${bundle_matrix}" >> $GITHUB_OUTPUT
-#          echo "bundle_test_count=${bundle_count}" >> $GITHUB_OUTPUT
-#          echo "bundle Test matrix determined to be: ${bundle_matrix}"
-#
-#      - name: Perist build outputs
-#        if: always()
-#        uses: actions/upload-artifact@v4
-#        with:
-#            name: build-outputs
-#            path: |
-#                dist/
-#                packages/*/dist/
+      - name: Fetch Refs
+        run: |
+          git fetch origin --depth 1 latest
+          git fetch origin --depth 1 tag latest-success
+
+      - name: Setup
+        id: setup
+        uses: ./.github/actions/setup-nx
+        with:
+          cache_mode: ${{ github.event.inputs.clean_checkout == 'true' && 'off' || 'rw' }}
+
+      #      - name: nx format:check
+      #        id: format
+      #        if: steps.setup.outcome == 'success' || steps.setup.outcome == 'skipped'
+      #        run: |
+      #          if [[ "${{ github.event.inputs.nx_command || 'affected' }}" == "run-many" ]] ; then
+      #            yarn nx format:check --all
+      #          else
+      #            yarn nx format:check --base ${{ steps.setup.outputs.base }}
+      #          fi
+      #
+      #      - name: nx lint
+      #        run: |
+      #          yarn nx lint
+
+      - name: nx build
+        run: |
+          yarn nx generate-doc-references
+          yarn nx generate-examples
+          yarn nx run-many --t build --exclude ag-grid-docs --exclude all
+
+      - name: calculate matrix
+        id: matrix
+        run: |
+          if [[ "${{ github.event.inputs.nx_command || 'affected' }}" == "run-many" ]] ; then
+            count=10
+          else
+            count=$(yarn -s nx show projects --affected --base ${{ steps.setup.outputs.base }} -t test | wc -l)
+          fi
+          
+          matrix=$(node ./scripts/test/calculate-shards.js eval --ratio 1 --zero ${count} --max 1)
+          echo "test_matrix=${matrix}" >> $GITHUB_OUTPUT
+          echo "test_count=${count}" >> $GITHUB_OUTPUT
+          echo "Test matrix determined to be: ${matrix}"
+          
+          if [[ "${{ github.event.inputs.nx_command || 'affected' }}" == "run-many" ]] ; then
+            e2e_count=10
+          else
+            e2e_count=$(yarn -s nx show projects --affected --base ${{ steps.setup.outputs.base }} -t test:e2e --exclude 'tag:module-size' --exclude all | wc -l)
+          fi
+          
+          # not enough non-bundle size e2e tests to shard atm
+          e2e_matrix={"shard":[0]}
+          echo "e2e_test_matrix=${e2e_matrix}" >> $GITHUB_OUTPUT
+          echo "e2e_test_count=${e2e_count}" >> $GITHUB_OUTPUT
+          echo "e2e Test matrix determined to be: ${e2e_matrix}"
+          
+          # 3 is optimal atm for bundle tests
+          bundle_count=3
+          
+          bundle_matrix=$(node ./scripts/test/calculate-shards.js eval --ratio 1 --zero ${bundle_count})
+          echo "bundle_test_matrix=${bundle_matrix}" >> $GITHUB_OUTPUT
+          echo "bundle_test_count=${bundle_count}" >> $GITHUB_OUTPUT
+          echo "bundle Test matrix determined to be: ${bundle_matrix}"
+
+      - name: Perist build outputs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-outputs
+          path: |
+            dist/
+            packages/*/dist/
 
   #  test:
   #    runs-on: ubuntu-24.04
@@ -304,67 +288,82 @@ jobs:
   #        id: test
   #        run: yarn nx ${{ github.event.inputs.nx_command || 'affected' }}  -t test:e2e --configuration=ci --exclude '!tag:module-size' --exclude 'tag:non-sharding' --exclude all --shard=${{ matrix.shard }}/$((${{ strategy.job-total }} - 1))
 
-#  docs:
-#    runs-on: ubuntu-latest
-#    name: Docs Build & Link Checker
-#    needs: build_lint
-#    if: needs.build_lint.result == 'success' && ${{ github.event.inputs.run_docs }}
-#    strategy:
-#      fail-fast: false
-#    env:
-#      NX_BASE: ${{ needs.build_lint.outputs.nx_base }}
-#    steps:
-#      - name: Checkout
-#        id: checkout
-#        uses: actions/checkout@v4
-#        with:
-#          fetch-depth: 1 # shallow copy
-#
-#      - name: Fetch Refs
-#        run: |
-#          git fetch origin --depth 1 latest
-#          git fetch origin --depth 1 tag latest-success
-#
-#      - name: Restore Init Build Outputs
-#        uses: actions/download-artifact@v4
-#        with:
-#            name: build-outputs
-#
-#      - name: Setup
-#        id: setup
-#        uses: ./.github/actions/setup-nx
-#        with:
-#          cache_mode: ro
-#
-#      - name: update base url
-##        if: ${{ github.ref == 'refs/heads/latest' }}
-#        run: node scripts/deployments/prep_and_archive/updateBaseUrl.js staging
-#      - name: build
-##        if: ${{ github.ref == 'refs/heads/latest' }}
-#        run: |
-#          yarn nx generate-doc-references
-#          yarn nx generate-examples
-#          yarn nx run-many --t build --exclude ag-grid-docs --exclude all
-#      - name: validate base url
-##        if: ${{ github.ref == 'refs/heads/latest' }}
-#        run: node scripts/deployments/sanityCheckBaseUrl.js staging
-#      - name: validate grid modules
-#        run: node scripts/deployments/validateGridModulesList.js
-#      - name: docs build and link checker
-#        run: CHECK_LINKS=true CHECK_REDIRECTS=true yarn nx run ag-grid-docs:build -c staging
-#
-#      - name: Deploy to Staging
-##        if: ${{ github.ref == 'refs/heads/latest' }}
-#        env:
-#          SSH_PRIVATE_KEY: |
-#            ${{ secrets.STAGING_SSH_KEY }}
-#          SSH_HOST: ${{ secrets.STAGING_HOST }}
-#          SSH_USER: ubuntu
-#          SSH_KEY_LOCATION: ${{ github.workspace }}/staging.pem
-#        run: |
-#          echo "$SSH_PRIVATE_KEY" > $SSH_KEY_LOCATION
-#          chmod 400 $SSH_KEY_LOCATION
-#          ./scripts/deployments/createAndDeployDocsToTCGH.sh
+  docs:
+    runs-on: ubuntu-latest
+    name: Docs Build & Link Checker
+    needs: build_lint
+    if: needs.build_lint.result == 'success' && ${{ github.event.inputs.run_docs }}
+    strategy:
+      fail-fast: false
+    env:
+      NX_BASE: ${{ needs.build_lint.outputs.nx_base }}
+    steps:
+      - name: Checkout
+        id: checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1 # shallow copy
+
+      - name: Fetch Refs
+        run: |
+          git fetch origin --depth 1 latest
+          git fetch origin --depth 1 tag latest-success
+
+      - name: Restore Init Build Outputs
+        uses: actions/download-artifact@v4
+        with:
+          name: build-outputs
+
+      - name: Setup
+        id: setup
+        uses: ./.github/actions/setup-nx
+        with:
+          cache_mode: ro
+
+      - name: update base url
+        #        if: ${{ github.ref == 'refs/heads/latest' }}
+        run: node scripts/deployments/prep_and_archive/updateBaseUrl.js staging
+      - name: build
+        #        if: ${{ github.ref == 'refs/heads/latest' }}
+        run: |
+          yarn nx generate-doc-references
+          yarn nx generate-examples
+          yarn nx run-many --t build --exclude ag-grid-docs --exclude all
+      - name: validate base url
+        #        if: ${{ github.ref == 'refs/heads/latest' }}
+        run: node scripts/deployments/sanityCheckBaseUrl.js staging
+      - name: validate grid modules
+        run: node scripts/deployments/validateGridModulesList.js
+      - name: docs build and link checker
+        run: CHECK_LINKS=true CHECK_REDIRECTS=true yarn nx run ag-grid-docs:build -c staging
+
+      - name: Deploy to Staging
+        #        if: ${{ github.ref == 'refs/heads/latest' }}
+        env:
+          SSH_PRIVATE_KEY: |
+            ${{ secrets.STAGING_SSH_KEY }}
+          SSH_HOST: ${{ secrets.STAGING_HOST }}
+          SSH_USER: ubuntu
+          SSH_KEY_LOCATION: ${{ github.workspace }}/staging.pem
+          WWW_ROOT_DIR: ${{ vars.WWW_ROOT_DIR }}
+        run: |
+          echo "$SSH_PRIVATE_KEY" > $SSH_KEY_LOCATION
+          chmod 400 $SSH_KEY_LOCATION
+          ./scripts/deployments/createAndDeployDocsToTCGH.sh
+
+      - name: Deploy to Staging
+        env:
+          SSH_PRIVATE_KEY: |
+            ${{ secrets.STAGING_SSH_KEY }}
+          SSH_HOST: ${{ secrets.STAGING_HOST }}
+          SSH_USER: ubuntu
+          SSH_KEY_LOCATION: ${{ github.workspace }}/staging.pem
+        run: |
+          echo "$SSH_PRIVATE_KEY" > $SSH_KEY_LOCATION
+          echo "Test String" > test.txt
+          chmod 400 $SSH_KEY_LOCATION
+          echo "rootDir: $WWW_ROOT_DIR"
+          ./scripts/deployments/createAndDeployDocsToTCGH.sh
 
   #      - name: Persist test results
   #        if: always()
