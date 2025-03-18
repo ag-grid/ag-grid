@@ -37,9 +37,7 @@ export class TotalAndFilteredRowsComp extends AgNameValue implements IStatusPane
     }
 
     public init(params: IStatusPanelParams & IProvidedStatusPanelParams) {
-        const { key, valueFormatter } = params;
-        this.key = key;
-        this.updateValueFormatter(valueFormatter);
+        this.refresh(params);
         this.onDataChanged();
     }
 
@@ -61,7 +59,9 @@ export class TotalAndFilteredRowsComp extends AgNameValue implements IStatusPane
     }
 
     public refresh(params: IStatusPanelParams & IProvidedStatusPanelParams): boolean {
-        this.updateValueFormatter(params.valueFormatter);
+        const { key, valueFormatter } = params;
+        this.key = key;
+        this.updateValueFormatter(valueFormatter);
         return true;
     }
 }

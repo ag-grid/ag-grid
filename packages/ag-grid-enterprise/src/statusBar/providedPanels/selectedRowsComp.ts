@@ -42,10 +42,7 @@ export class SelectedRowsComp extends AgNameValue implements IStatusPanelComp {
     }
 
     public init(params: IStatusPanelParams & IProvidedStatusPanelParams) {
-        const { key, valueFormatter } = params;
-        this.key = key;
-
-        this.updateValueFormatter(valueFormatter);
+        this.refresh(params);
         this.onRowSelectionChanged();
     }
 
@@ -61,7 +58,9 @@ export class SelectedRowsComp extends AgNameValue implements IStatusPanelComp {
     }
 
     public refresh(params: IStatusPanelParams & IProvidedStatusPanelParams): boolean {
-        this.updateValueFormatter(params.valueFormatter);
+        const { key, valueFormatter } = params;
+        this.key = key;
+        this.updateValueFormatter(valueFormatter);
         return true;
     }
 }
