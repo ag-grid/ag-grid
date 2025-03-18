@@ -5,7 +5,7 @@ import type { FirstDataRenderedEvent, GridApi, GridOptions, GridReadyEvent } fro
 import { ClientSideRowModelModule, ModuleRegistry, ValidationModule, createGrid } from 'ag-grid-community';
 import { ColumnMenuModule, ContextMenuModule, IntegratedChartsModule, RowGroupingModule } from 'ag-grid-enterprise';
 
-import { getData } from './data';
+import { data } from './data';
 
 ModuleRegistry.registerModules([
     ClientSideRowModelModule,
@@ -17,9 +17,9 @@ ModuleRegistry.registerModules([
 ]);
 
 const titleFormatter = (params: AgAxisCaptionFormatterParams) =>
-    `Amount (${params.boundSeries.map((s) => s.name).join(', ')})`;
+    `Power (${params.boundSeries.map((s) => s.name).join(', ')})`;
 
-function createSIFormatter(precision = 0) {
+function createSIFormatter(units = '', precision = 0) {
     const SI_UNITS = ['', 'K', 'M', 'G'];
     let tier: number | undefined;
 
@@ -37,7 +37,7 @@ function createSIFormatter(precision = 0) {
         const suffix = SI_UNITS[tier] || '';
         const scaled = value / 10 ** (tier * 3);
 
-        return `${scaled.toFixed(precision)}${suffix}`;
+        return `${scaled.toFixed(precision)}${suffix}${units}`;
     }
 
     return (params: AgAxisLabelFormatterParams) => {
@@ -46,14 +46,19 @@ function createSIFormatter(precision = 0) {
     };
 }
 
+const siFormatter = createSIFormatter('W', 2);
+
+const isEfficiencySeries = (params: any) => params.boundSeries.find((s: any) => s.key === 'efficiency');
+
 let gridApi: GridApi;
 
 const gridOptions: GridOptions = {
     columnDefs: [
-        { field: 'country', width: 150, chartDataType: 'category' },
-        { field: 'early', chartDataType: 'series', cellDataType: 'number' },
-        { field: 'mid', chartDataType: 'series', cellDataType: 'number' },
-        { field: 'end', chartDataType: 'series', cellDataType: 'number' },
+        { field: 'year', width: 150, chartDataType: 'category' },
+        { field: 'generated', chartDataType: 'series', cellDataType: 'number' },
+        { field: 'consumed', chartDataType: 'series', cellDataType: 'number' },
+        { field: 'surplus', chartDataType: 'series', cellDataType: 'number' },
+        { field: 'efficiency', chartDataType: 'series', cellDataType: 'number' },
     ],
     defaultColDef: {
         flex: 1,
@@ -68,17 +73,21 @@ const gridOptions: GridOptions = {
                 number: {
                     title: {
                         enabled: true,
-                        formatter: titleFormatter,
+                        formatter: (params) => {
+                            return isEfficiencySeries(params) ? 'Efficiency (%)' : titleFormatter(params);
+                        },
                     },
                     label: {
-                        formatter: createSIFormatter(2),
+                        formatter: (params) => {
+                            return isEfficiencySeries(params) ? `${params.value}%` : siFormatter(params);
+                        },
                     },
                 },
             },
         },
     },
     onGridReady: (params: GridReadyEvent) => {
-        getData().then((rowData) => params.api.setGridOption('rowData', rowData));
+        params.api.setGridOption('rowData', data);
     },
     onFirstDataRendered,
 };
@@ -88,12 +97,13 @@ function onFirstDataRendered(params: FirstDataRenderedEvent) {
         cellRange: {
             rowStartIndex: 0,
             rowEndIndex: 4,
-            columns: ['country', 'early', 'mid', 'end'],
+            columns: ['year', 'generated', 'consumed', 'surplus', 'efficiency'],
         },
         seriesChartTypes: [
-            { colId: 'early', chartType: 'groupedColumn', secondaryAxis: false },
-            { colId: 'mid', chartType: 'column', secondaryAxis: true },
-            { colId: 'end', chartType: 'groupedColumn', secondaryAxis: false },
+            { colId: 'generated', chartType: 'groupedColumn', secondaryAxis: false },
+            { colId: 'consumed', chartType: 'groupedColumn', secondaryAxis: false },
+            { colId: 'surplus', chartType: 'groupedColumn', secondaryAxis: false },
+            { colId: 'efficiency', chartType: 'line', secondaryAxis: true },
         ],
         chartType: 'columnLineCombo',
         aggFunc: 'sum',

@@ -269,7 +269,7 @@ export function _applyColumnState(
 }
 
 export function _resetColumnState(beans: BeanCollection, source: ColumnEventType): void {
-    const { colModel, autoColSvc } = beans;
+    const { colModel, autoColSvc, selectionColSvc } = beans;
     const primaryCols = colModel.getColDefCols();
     if (!primaryCols?.length) {
         return;
@@ -290,8 +290,6 @@ export function _resetColumnState(beans: BeanCollection, source: ColumnEventType
     let letRowGroupIndex = 1000;
     let letPivotIndex = 1000;
 
-    const groupAutoCols = autoColSvc?.getColumns();
-
     const addColState = (col: AgColumn) => {
         const stateItem = getColumnStateFromColDef(col);
 
@@ -306,19 +304,16 @@ export function _resetColumnState(beans: BeanCollection, source: ColumnEventType
         columnStates.push(stateItem);
     };
 
-    if (groupAutoCols) {
-        groupAutoCols.forEach(addColState);
-    }
-
-    if (primaryColumns) {
-        primaryCols.forEach(addColState);
-    }
+    autoColSvc?.getColumns()?.forEach(addColState);
+    selectionColSvc?.getColumns()?.forEach(addColState);
+    primaryColumns?.forEach(addColState);
 
     // apply state before ordering, as changes in row grouping will introduce new columns
     _applyColumnState(beans, { state: columnStates }, source);
 
-    const newAutoCols = autoColSvc?.getColumns() ?? [];
-    const orderedCols = [...newAutoCols, ...primaryCols];
+    const autoCols = autoColSvc?.getColumns() ?? [];
+    const selectionCols = selectionColSvc?.getColumns() ?? [];
+    const orderedCols = [...selectionCols, ...autoCols, ...primaryCols];
     const orderedColState = orderedCols.map((col) => ({ colId: col.colId }));
 
     // apply the new order when all the cols have been created & are available

@@ -31,6 +31,7 @@ export abstract class BaseColsService extends BeanStub implements IColsService {
     columnOrdering: ColumnOrdering;
 
     public columns: AgColumn[] = [];
+    public columnIndexMap: { [key: string]: number } = {};
 
     public wireBeans(beans: BeanCollection): void {
         this.colModel = beans.colModel;
@@ -40,6 +41,7 @@ export abstract class BaseColsService extends BeanStub implements IColsService {
 
     public sortColumns(compareFn?: (a: AgColumn, b: AgColumn) => number): void {
         this.columns.sort(compareFn);
+        this.updateIndexMap();
     }
 
     public setColumns(colKeys: ColKey[] | undefined, source: ColumnEventType): void {
@@ -53,6 +55,15 @@ export abstract class BaseColsService extends BeanStub implements IColsService {
     public removeColumns(colKeys: ColKey[] | undefined, source: ColumnEventType): void {
         this.updateColList(colKeys, this.columns, false, true, this.columnProcessors!.remove, this.eventName, source);
     }
+
+    public getColumnIndex(colId: string): number | undefined {
+        return this.columnIndexMap[colId];
+    }
+
+    protected updateIndexMap = (): void => {
+        this.columnIndexMap = {};
+        this.columns.forEach((col, index) => (this.columnIndexMap[col.getId()] = index));
+    };
 
     protected setColList(
         colKeys: ColKey[] = [],
@@ -100,6 +111,8 @@ export abstract class BaseColsService extends BeanStub implements IColsService {
             // otherwise remove this col, as it's unchanged.
             changes.delete(col);
         });
+
+        this.updateIndexMap();
 
         const primaryCols = this.colModel.getColDefCols();
         (primaryCols || []).forEach((column) => {
@@ -164,6 +177,8 @@ export abstract class BaseColsService extends BeanStub implements IColsService {
         if (!atLeastOne) {
             return;
         }
+
+        this.updateIndexMap();
 
         if (autoGroupsNeedBuilding) {
             this.colModel.refreshCols(false);
@@ -296,7 +311,9 @@ export abstract class BaseColsService extends BeanStub implements IColsService {
             }
         });
 
-        return (this.columns = res);
+        this.columns = res;
+        this.updateIndexMap();
+        return this.columns;
     }
 
     public abstract syncColumnWithState(

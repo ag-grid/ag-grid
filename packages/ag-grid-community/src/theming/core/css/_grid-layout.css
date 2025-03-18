@@ -242,7 +242,7 @@
 }
 
 .ag-row-selected::before {
-    visibility: hidden;
+    visibility: visible;
     background-color: var(--ag-selected-row-background-color);
 }
 

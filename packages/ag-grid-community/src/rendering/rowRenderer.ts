@@ -152,7 +152,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
             this.addManagedPropertyListener('showOpenedGroup', () => {
                 const columns = showRowGroupCols.getShowRowGroupCols();
                 if (columns.length) {
-                    this.refreshCells({ columns });
+                    this.refreshCells({ columns, force: true });
                 }
             });
         }
@@ -217,8 +217,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
             return false;
         }
 
-        if (!column) {
-            // full width rows may not have a column assigned.
+        if (rowCtrl.isFullWidth() || !column) {
             return true;
         }
 
@@ -807,6 +806,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
             cellFocused = this.beans.focusSvc?.getFocusCellToUseAfterRefresh() || null;
         }
 
+        let rowRedrawn = false;
         for (const rowCtrl of this.getRowCtrls(rowNodes)) {
             if (!rowCtrl.isFullWidth()) {
                 continue;
@@ -814,11 +814,14 @@ export class RowRenderer extends BeanStub implements NamedBean {
 
             const refreshed = rowCtrl.refreshFullWidth();
             if (!refreshed) {
+                rowRedrawn = true;
                 this.redrawRow(rowCtrl.rowNode, true);
             }
         }
 
-        this.dispatchDisplayedRowsChanged(false);
+        if (rowRedrawn) {
+            this.dispatchDisplayedRowsChanged(false);
+        }
 
         if (cellFocused) {
             this.restoreFocusedCell(cellFocused);

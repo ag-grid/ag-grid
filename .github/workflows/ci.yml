@@ -22,6 +22,14 @@ on:
         options:
           - 'true'
           - 'false'
+      run_bundle_size:
+        description: 'Skip bundle size tests'
+        type: 'choice'
+        required: true
+        default: 'true'
+        options:
+          - 'true'
+          - 'false'
       clean_checkout:
         description: 'Disable all caching'
         type: 'choice'
@@ -38,9 +46,7 @@ on:
           - 'affected'
           - 'run-many'
 env:
-  #NX_REJECT_UNKNOWN_LOCAL_CACHE: 0
   NX_NO_CLOUD: true
-  # NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
   NX_BRANCH: ${{ github.ref }}
   BRANCH_NAME: ${{ github.head_ref || github.ref_name }}
   SHARP_IGNORE_GLOBAL_LIBVIPS: true
@@ -62,7 +68,8 @@ jobs:
       test_matrix: ${{ steps.matrix.outputs.test_matrix }}
       e2e_test_count: ${{ steps.matrix.outputs.e2e_test_count }}
       e2e_test_matrix: ${{ steps.matrix.outputs.e2e_test_matrix }}
-      #      test_pkg_matrix: ${{ steps.matrix.outputs.pkg_matrix }}
+      bundle_test_count: ${{ steps.matrix.outputs.bundle_test_count }}
+      bundle_test_matrix: ${{ steps.matrix.outputs.bundle_test_matrix }}
       build_type: ${{ steps.setup.outputs.type }}
     runs-on: ubuntu-latest
     steps:
@@ -94,15 +101,16 @@ jobs:
           fi
 
       - name: nx lint
+        id: lint
         run: |
           yarn nx lint
 
       - name: nx build
+        id: build
         run: |
-          yarn nx generate-doc-references  
-          yarn nx generate-examples
-          yarn nx run-many --t build --exclude ag-grid-docs --exclude all
-          # yarn nx build 
+          yarn nx generate-doc-references
+          yarn nx generate-examples -c staging
+          yarn nx run-many --t build -c staging --exclude ag-grid-docs --exclude all
 
       - name: calculate matrix
         id: matrix
@@ -112,27 +120,35 @@ jobs:
           else
             count=$(yarn -s nx show projects --affected --base ${{ steps.setup.outputs.base }} -t test | wc -l)
           fi
-
+          
           matrix=$(node ./scripts/test/calculate-shards.js eval --ratio 1 --zero ${count} --max 1)
           echo "test_matrix=${matrix}" >> $GITHUB_OUTPUT
           echo "test_count=${count}" >> $GITHUB_OUTPUT
           echo "Test matrix determined to be: ${matrix}"
-
-          # only ag-grid-module-size is the only e2e to shard - and 3 is optimal atm for it
-          e2e_count=3
-
-          e2e_matrix=$(node ./scripts/test/calculate-shards.js eval --ratio 1 --zero ${e2e_count})
+          
+          if [[ "${{ github.event.inputs.nx_command || 'affected' }}" == "run-many" ]] ; then
+            e2e_count=10
+          else
+            e2e_count=$(yarn -s nx show projects --affected --base ${{ steps.setup.outputs.base }} -t test:e2e --exclude 'tag:module-size' --exclude all | wc -l)
+          fi
+          
+          # not enough non-bundle size e2e tests to shard atm
+          e2e_matrix={"shard":[0]}
           echo "e2e_test_matrix=${e2e_matrix}" >> $GITHUB_OUTPUT
           echo "e2e_test_count=${e2e_count}" >> $GITHUB_OUTPUT
           echo "e2e Test matrix determined to be: ${e2e_matrix}"
-
-  #          pkg_matrix=$(node ./scripts/test/calculate-pkg-shards.js)
-  #          echo "pkg_matrix=${pkg_matrix}" >> $GITHUB_OUTPUT
-  #          echo "Package test matrix determined to be: ${pkg_matrix}"
+          
+          # 3 is optimal atm for bundle tests
+          bundle_count=3
+          
+          bundle_matrix=$(node ./scripts/test/calculate-shards.js eval --ratio 1 --zero ${bundle_count})
+          echo "bundle_test_matrix=${bundle_matrix}" >> $GITHUB_OUTPUT
+          echo "bundle_test_count=${bundle_count}" >> $GITHUB_OUTPUT
+          echo "bundle Test matrix determined to be: ${bundle_matrix}"
 
   test:
     runs-on: ubuntu-24.04
-    name: Unit & Integration Tests (${{ matrix.shard }}/${{ strategy.job-total }})
+    name: Unit Tests (${{ matrix.shard }}/${{ strategy.job-total }})
     needs: build_lint
     if: needs.build_lint.outputs.test_count > 0
     strategy:
@@ -167,15 +183,16 @@ jobs:
         if: matrix.shard == 0
         id: test-no-shard
         run: yarn nx ${{ github.event.inputs.nx_command || 'affected' }} -t test --configuration=ci --exclude '*,!tag:no-sharding'
-      #           - name: nx benchmark
-      #             if: matrix.shard == 0
-      #             id: benchmark
-      #             run: yarn nx ${{ github.event.inputs.nx_command || 'affected' }} -t benchmark --configuration=ci --exclude all
       - name: nx pack:verify
         if: matrix.shard == 0
         id: pack-verify
         run: |
-          yarn nx ${{ github.event.inputs.nx_command || 'affected' }} -t pack:verify
+          yarn nx ${{ github.event.inputs.nx_command || 'affected' }} -t pack:verify --prod
+      - name: andrew checker
+        if: matrix.shard == 0
+        id: andrew
+        run: |
+          ./scripts/andrewChecker.sh
       - name: Persist test results
         if: always()
         uses: actions/upload-artifact@v4
@@ -187,7 +204,7 @@ jobs:
 
   e2e:
     runs-on: ubuntu-latest
-    name: E2E Tests
+    name: e2e Tests
     needs: build_lint
     if: needs.build_lint.outputs.e2e_test_count > 0
     strategy:
@@ -215,27 +232,60 @@ jobs:
           cache_mode: ro
 
       - name: nx test:e2e
-        if: matrix.shard != 0
-        id: test
-        run: yarn nx ${{ github.event.inputs.nx_command || 'affected' }} -t test:e2e --configuration=ci --exclude '!tag:sharding' --exclude all --shard=${{ matrix.shard }}/$((${{ strategy.job-total }} - 1))
-      - name: nx test:e2e (non-sharded)
+        id: tests
+        run: yarn nx ${{ github.event.inputs.nx_command || 'affected' }} -t test:e2e --configuration=ci --exclude 'tag:module-size' --exclude all
+
+      - name: Persist test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results-e2e-shard-${{matrix.shard}}
+          path: |
+            reports/
+
+  bundle_size:
+    runs-on: ubuntu-latest
+    name: Bundle Size Tests
+    needs: build_lint
+    if: needs.build_lint.result == 'success' && ${{ github.event.inputs.run_bundle_size_tests }}
+    strategy:
+      matrix: ${{ fromJson(needs.build_lint.outputs.bundle_test_matrix )}}
+      fail-fast: false
+    env:
+      NX_PARALLEL: 1
+      NX_BASE: ${{ needs.build_lint.outputs.nx_base }}
+    steps:
+      - name: Checkout
+        id: checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1 # shallow copy
+
+      - name: Fetch Refs
+        run: |
+          git fetch origin --depth 1 latest
+          git fetch origin --depth 1 tag latest-success
+
+      - name: Setup
+        id: setup
+        uses: ./.github/actions/setup-nx
+        with:
+          cache_mode: ro
+
+      - name: module-size tests (non-sharded)
         if: matrix.shard == 0
         id: test-no-shard
-        run: yarn nx ${{ github.event.inputs.nx_command || 'affected' }} -t test:e2e --configuration=ci --exclude 'tag:sharding' --exclude all
-
-  #      - name: Persist test results
-  #        if: always()
-  #        uses: actions/upload-artifact@v4
-  #        with:
-  #          name: test-results-e2e-shard-${{matrix.shard}}
-  #          path: |
-  #            reports/
+        run: yarn nx ${{ github.event.inputs.nx_command || 'affected' }} -t test:e2e --configuration=ci --exclude '!tag:module-size' --exclude 'tag:sharding' --exclude all
+      - name: module-size tests
+        if: matrix.shard != 0
+        id: test
+        run: yarn nx ${{ github.event.inputs.nx_command || 'affected' }}  -t test:e2e --configuration=ci --exclude '!tag:module-size' --exclude 'tag:non-sharding' --exclude all --shard=${{ matrix.shard }}/$((${{ strategy.job-total }} - 1))
 
   docs:
     runs-on: ubuntu-latest
     name: Docs Build & Link Checker
     needs: build_lint
-    if: needs.build_lint.result == 'success' && ${{ github.event.inputs.run_e2e }}
+    if: needs.build_lint.result == 'success' && ${{ github.event.inputs.run_docs }}
     strategy:
       fail-fast: false
     env:
@@ -258,20 +308,40 @@ jobs:
         with:
           cache_mode: ro
 
+      - name: update base url
+        if: ${{ github.ref == 'refs/heads/latest' }}
+        run: node scripts/deployments/prep_and_archive/updateBaseUrl.js staging
+      - name: build
+        if: ${{ github.ref == 'refs/heads/latest' }}
+        run: |
+          yarn nx generate-doc-references
+          yarn nx generate-examples -c staging
+          yarn nx run-many --t build -c staging --exclude ag-grid-docs --exclude all
+      - name: validate base url
+        if: ${{ github.ref == 'refs/heads/latest' }}
+        run: node scripts/deployments/sanityCheckBaseUrl.js staging
+      - name: validate grid modules
+        run: node scripts/deployments/validateGridModulesList.js
       - name: docs build and link checker
         run: CHECK_LINKS=true CHECK_REDIRECTS=true yarn nx run ag-grid-docs:build -c staging
 
-  #      - name: Persist test results
-  #        if: always()
-  #        uses: actions/upload-artifact@v4
-  #        with:
-  #          name: test-results-docs
-  #          path: |
-  #            reports/
+      - name: Deploy to Staging
+        if: ${{ github.ref == 'refs/heads/latest' }}
+        env:
+          SSH_PRIVATE_KEY: |
+            ${{ secrets.STAGING_SSH_KEY }}
+          SSH_HOST: ${{ secrets.STAGING_HOST }}
+          SSH_USER: ubuntu
+          SSH_KEY_LOCATION: ${{ github.workspace }}/staging.pem
+          WWW_ROOT_DIR: ${{ vars.WWW_ROOT_DIR }}
+        run: |
+          echo "$SSH_PRIVATE_KEY" > $SSH_KEY_LOCATION
+          chmod 400 $SSH_KEY_LOCATION
+          ./scripts/deployments/createAndDeployDocsToTCGH.sh
 
   report:
     runs-on: ubuntu-24.04
-    needs: [ build_lint, test, e2e, docs ]
+    needs: [ build_lint, test, e2e, docs, bundle_size ]
     if: cancelled() != true
     steps:
       - name: Checkout
@@ -319,10 +389,10 @@ jobs:
             WORKFLOW_STATUS="failure"
           elif [ "${{ needs.e2e.result }}" == "failure" ] ; then
             WORKFLOW_STATUS="failure"
-          elif [ "${{ needs.fw_pkg_test.result }}" == "failure" ] ; then
+          elif [ "${{ needs.docs.result }}" == "failure" ] ; then
             WORKFLOW_STATUS="failure"
-          elif [ "${{ needs.sonarqube.result }}" == "failure" ] ; then
-            WORKFLOW_STATUS="partial"
+          elif [ "${{ needs.bundle_size.result }}" == "failure" ] ; then
+            WORKFLOW_STATUS="failure"
           fi
           echo "workflowStatus=${WORKFLOW_STATUS}" >> $GITHUB_OUTPUT
 
@@ -342,40 +412,40 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      #      - name: Commit History
-      #        id: commits
-      #        if: always() && job.status != 'cancelled' # && github.ref == 'refs/heads/latest' && steps.lastJobStatus.outputs.changedState == 'true '
-      #        run: |
-      #          GIT_LOG=$(git log HEAD ^${{ needs.build_lint.outputs.nx_base }} --format="%an (%h) %s")
-      #          echo "GIT_LOG<<EOF" >> $GITHUB_ENV
-      #          echo "$GIT_LOG" >> $GITHUB_ENV
-      #          echo "EOF" >> $GITHUB_ENV
+      - name: Commit History
+        id: commits
+        if: always() && job.status != 'cancelled' && github.ref == 'refs/heads/latest' && steps.lastJobStatus.outputs.changedState == 'true '
+        run: |
+          GIT_LOG=$(git log HEAD ^${{ needs.build_lint.outputs.nx_base }} --format="%an (%h) %s")
+          echo "GIT_LOG<<EOF" >> $GITHUB_ENV
+          echo "$GIT_LOG" >> $GITHUB_ENV
+          echo "EOF" >> $GITHUB_ENV
 
-      #      - name: Tag Latest Successful Commit
-      #        if: success() && github.ref == 'refs/heads/latest' && steps.lastJobStatus.outputs.workflowStatus != 'failure'
-      #        uses: EndBug/latest-tag@latest
-      #        with:
-      #          ref: latest-success
-      #          description: Latest commit to pass GitHub Actions workflow on latest branch.
+      - name: Tag Latest Successful Commit
+        if: success() && github.ref == 'refs/heads/latest' && steps.lastJobStatus.outputs.workflowStatus != 'failure'
+        uses: EndBug/latest-tag@latest
+        with:
+          ref: latest-success
+          description: Latest commit to pass GitHub Actions workflow on latest branch.
 
-#      - name: Slack Notification
-#        uses: rtCamp/action-slack-notify@v2
-#        if: always() && job.status != 'cancelled' #&& github.ref == 'refs/heads/latest' && steps.lastJobStatus.outputs.changedState == 'true'
-#        env:
-#          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
-#          SLACK_COLOR: ${{ steps.lastJobStatus.outputs.workflowStatus != 'failure' && 'success' || 'failure' }}
-#          SLACK_ICON: https://avatars.slack-edge.com/2020-11-25/1527503386626_319578f21381f9641cd8_192.png
-#          SLACK_USERNAME: ag-grid CI
-#          SLACK_FOOTER: ''
-#          SLACK_MESSAGE: >
-#            Build: ${{ needs.build_lint.outputs.build == 'success' && '✅' || needs.build_lint.outputs.build == 'failure' && '❌' || 'NA' }}
-#            Lint: ${{ needs.build_lint.outputs.lint == 'success' && '✅' || needs.build_lint.outputs.lint == 'failure' && '❌' || 'NA' }}
-#            Format: ${{ needs.build_lint.outputs.format == 'success' && '✅' || needs.build_lint.outputs.format == 'failure' && '❌' || 'NA' }}
-#            Test: ${{ needs.test.result == 'success' && '✅' || needs.test.result == 'failure' && '❌' || 'NA' }}
-#            E2E: ${{ needs.e2e.result == 'success' && '✅' || needs.e2e.result == 'failure' && '❌' || 'NA' }}
-#            FW Pkg: ${{ needs.fw_pkg_test.result == 'success' && '✅' || needs.fw_pkg_test.result == 'failure' && '❌' || 'NA' }}
-#            Sonar: ${{ needs.sonarqube.result == 'success' && '✅' || needs.sonarqube.result == 'failure' && '❌' || 'NA' }}
-#
-#            *Changes:*
-#
-#            ${{ env.GIT_LOG }}
+      - name: Slack Notification
+        uses: rtCamp/action-slack-notify@v2
+        if: always() && job.status != 'cancelled' && github.ref == 'refs/heads/latest' && steps.lastJobStatus.outputs.changedState == 'true'
+        env:
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+          SLACK_COLOR: ${{ steps.lastJobStatus.outputs.workflowStatus != 'failure' && 'success' || 'failure' }}
+          SLACK_ICON: https://avatars.slack-edge.com/2020-11-25/1527503386626_319578f21381f9641cd8_192.png
+          SLACK_USERNAME: ag-grid CI
+          SLACK_FOOTER: ''
+          SLACK_MESSAGE: >
+            Build: ${{ needs.build_lint.outputs.build == 'success' && '✅' || needs.build_lint.outputs.build == 'failure' && '❌' || 'NA' }}
+            Lint: ${{ needs.build_lint.outputs.lint == 'success' && '✅' || needs.build_lint.outputs.lint == 'failure' && '❌' || 'NA' }}
+            Format: ${{ needs.build_lint.outputs.format == 'success' && '✅' || needs.build_lint.outputs.format == 'failure' && '❌' || 'NA' }}
+            Test: ${{ needs.test.result == 'success' && '✅' || needs.test.result == 'failure' && '❌' || 'NA' }}
+            E2E: ${{ needs.e2e.result == 'success' && '✅' || needs.e2e.result == 'failure' && '❌' || 'NA' }}
+            Docs: ${{ needs.docs.result == 'success' && '✅' || needs.docs.result == 'failure' && '❌' || 'NA' }}
+            Bundle: ${{ needs.bundle_size.result == 'success' && '✅' || needs.bundle_size.result == 'failure' && '❌' || 'NA' }}
+
+            *Changes:*
+
+            ${{ env.GIT_LOG }}

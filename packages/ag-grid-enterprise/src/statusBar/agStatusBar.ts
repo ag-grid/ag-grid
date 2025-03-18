@@ -135,7 +135,10 @@ export class AgStatusBar extends Component {
                 const key = statusPanelConfig.key ?? statusPanelConfig.statusPanel;
                 const existingStatusPanel = this.statusBarSvc.getStatusPanel(key);
                 if (existingStatusPanel?.refresh) {
-                    const newParams = _addGridCommonParams(this.gos, statusPanelConfig.statusPanelParams ?? {});
+                    const newParams: IStatusPanelParams = _addGridCommonParams(this.gos, {
+                        ...(statusPanelConfig.statusPanelParams ?? {}),
+                        key,
+                    });
                     const hasRefreshed = existingStatusPanel.refresh(newParams);
                     if (hasRefreshed) {
                         existingStatusPanelsToReuse.set(key, existingStatusPanel);
@@ -189,7 +192,7 @@ export class AgStatusBar extends Component {
                 const compDetails = getStatusPanelCompDetails(
                     this.userCompFactory,
                     componentConfig,
-                    _addGridCommonParams(this.gos, {})
+                    _addGridCommonParams(this.gos, { key })
                 );
 
                 if (compDetails == null) {

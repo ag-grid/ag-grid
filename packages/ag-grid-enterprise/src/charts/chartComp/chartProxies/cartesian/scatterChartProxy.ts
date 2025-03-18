@@ -121,12 +121,6 @@ export class ScatterChartProxy extends CartesianChartProxy<'scatter' | 'bubble'>
                 ...alteredSizeKey,
                 yKey: filteredOutKey(yKey!),
                 xKey: filteredOutKey(xKey!),
-                fill: {
-                    $mix: [{ $path: '../0/fill' }, { $ref: 'backgroundColor' }, 0.7],
-                },
-                stroke: {
-                    $mix: [{ $path: '../0/stroke' }, { $ref: 'backgroundColor' }, 0.7],
-                },
                 showInLegend: false,
                 listeners: {
                     ...series.listeners,
