@@ -67,8 +67,6 @@ export interface AddPopupResult {
     hideFunc: (params?: PopupEventParams) => void;
 }
 
-const WAIT_FOR_POPUP_CONTENT_RESIZE: number = 200;
-
 interface Position {
     initialDiff: number;
     lastDiff: number;
