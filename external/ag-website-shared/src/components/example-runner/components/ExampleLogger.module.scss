@@ -1,19 +1,21 @@
 @use 'design-system' as *;
 
-$logger-height: 100px;
+$logger-height: 150px;
 
 .logger {
     height: $logger-height;
-    padding: $spacing-size-2;
-    margin: $spacing-size-1 0 0 0;
+    padding: 0;
+    margin: 0;
     overflow-y: auto;
     overflow-x: hidden;
     display: flex;
     flex-direction: column;
     color: var(--color-text-primary);
-    background-color: var(--color-bg-secondary);
+    background-color: var(--color-bg-primary);
     border: 1px solid var(--color-border-primary);
     border-radius: var(--radius-md);
+    font-size: 13px;
+    margin-top: $spacing-size-4;
 
     div {
         padding: $spacing-size-2;
@@ -29,7 +31,6 @@ $logger-height: 100px;
         }
 
         &::before {
-            content: '> ';
             color: var(--color-text-secondary);
         }
     }
@@ -40,6 +41,32 @@ $logger-height: 100px;
     }
 }
 
+.logger > div:nth-child(even) {
+    background-color: var(--color-bg-secondary);
+
+    #{$selector-darkmode} & {
+        background-color: color-mix(in srgb, var(--color-bg-secondary), var(--color-bg-primary) 90%);
+    }
+}
+
 .noLogs {
-    font-style: italic;
+    margin-top: $spacing-size-4;
+    margin-left: $spacing-size-2;
+}
+
+.consoleHeader {
+    top: 0;
+    position: sticky;
+    font-size: 12px;
+    background-color: var(--color-bg-primary);
+    padding-top: 8px !important;
+    border-bottom: 1px solid var(--color-border-secondary);
+    font-weight: 600;
+
+    span {
+        background: var(--color-bg-primary);
+        border-radius: var(--radius-lg);
+        padding: 0 $spacing-size-1;
+        color: var(--color-fg-secondary);
+    }
 }
