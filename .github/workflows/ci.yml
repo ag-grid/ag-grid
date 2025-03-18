@@ -144,6 +144,15 @@ jobs:
           echo "bundle_test_count=${bundle_count}" >> $GITHUB_OUTPUT
           echo "bundle Test matrix determined to be: ${bundle_matrix}"
 
+      - name: Perist build outputs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+            name: build-outputs
+            path: |
+                dist/
+                packages/*/dist/
+
   #  test:
   #    runs-on: ubuntu-24.04
   #    name: Unit Tests (${{ matrix.shard }}/${{ strategy.job-total }})
@@ -299,6 +308,11 @@ jobs:
         run: |
           git fetch origin --depth 1 latest
           git fetch origin --depth 1 tag latest-success
+
+      - name: Restore Init Build Outputs
+        uses: actions/download-artifact@v4
+        with:
+            name: build-outputs
 
       - name: Setup
         id: setup
