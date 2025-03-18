@@ -20,7 +20,7 @@ zip -qr ../../../$FILENAME *
 
 cd ../../../
 
-scp -i $SSH_KEY_LOCATION StrictHostKeyChecking=no $FILENAME $SSH_USER@$SSH_HOST:$WWW_ROOT_DIR
+scp -i $SSH_KEY_LOCATION -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null $FILENAME $SSH_USER@$SSH_HOST:$WWW_ROOT_DIR
 #echo "Backing up branch builds"
 #ssh -i ./staging.pem $SSH_HOST "chmod +x $WWW_ROOT_DIR/switchReleaseRemote.sh"
 #cp -R /var/www/html/branch-builds /var/www/

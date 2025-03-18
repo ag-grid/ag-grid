@@ -351,19 +351,6 @@ jobs:
           chmod 400 $SSH_KEY_LOCATION
           ./scripts/deployments/createAndDeployDocsToTCGH.sh
 
-      - name: Deploy to Staging
-        env:
-          SSH_PRIVATE_KEY: |
-            ${{ secrets.STAGING_SSH_KEY }}
-          SSH_HOST: ${{ secrets.STAGING_HOST }}
-          SSH_USER: ubuntu
-          SSH_KEY_LOCATION: ${{ github.workspace }}/staging.pem
-        run: |
-          echo "$SSH_PRIVATE_KEY" > $SSH_KEY_LOCATION
-          echo "Test String" > test.txt
-          chmod 400 $SSH_KEY_LOCATION
-          echo "rootDir: $WWW_ROOT_DIR"
-          ./scripts/deployments/createAndDeployDocsToTCGH.sh
 
   #      - name: Persist test results
   #        if: always()
