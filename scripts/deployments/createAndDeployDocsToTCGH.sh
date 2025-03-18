@@ -1,0 +1,36 @@
+#!/usr/bin/env bash
+
+# once tested this script will replace createAndDeployDocsToTC.sh
+
+ZIP_PREFIX=`date +%Y%m%d`
+
+echo "Deploying Docs to Build Server"
+
+if [ ! -d "documentation/ag-grid-docs/dist" ];
+then
+  echo "documentation/ag-grid-docs/dist does NOT EXIST. Exiting with error."
+  exit 1
+fi
+
+cd documentation/ag-grid-docs/dist
+
+FILENAME=release_"$ZIP_PREFIX"_v"$ZIP_PREFIX".zip
+echo "Creating $FILENAME"
+zip -qr ../../../$FILENAME *
+
+cd ../../../
+
+scp -i $./staging.pem -P $SSH_PORT $FILENAME $HOST:$WWW_ROOT_DIR
+#echo "Backing up branch builds"
+#ssh -i ./staging.pem $SSH_HOST "chmod +x $WWW_ROOT_DIR/switchReleaseRemote.sh"
+#cp -R /var/www/html/branch-builds /var/www/
+#
+#echo "Cleaning current grid staging"
+#rm -rf /var/www/html/*
+#mv $FILENAME /var/www/html/
+#
+#echo "Unzipping new grid staging"
+#unzip -q /var/www/html/$FILENAME -d /var/www/html/
+#
+#echo "Restoring branch builds"
+#cp -R /var/www/branch-builds /var/www/html/
