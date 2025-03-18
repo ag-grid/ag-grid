@@ -501,7 +501,7 @@ function hierarchyWithInvertedOrderRowSnapshot(): RowSnapshot[] {
         },
         {
             allChildrenCount: 2,
-            allLeafChildren: ['E'],
+            allLeafChildren: ['D', 'E'],
             childIndex: 1,
             childrenAfterFilter: ['D'],
             childrenAfterGroup: ['D'],

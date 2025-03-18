@@ -415,6 +415,14 @@ export class TreeNode implements ITreeNode {
                 const childRow = childrenAfterGroup[i];
                 const childAllLeafChildren = (childRow.treeNode as TreeNode | null)?.allLeafChildren;
                 const childAllLeafChildrenLen = childAllLeafChildren?.length;
+                if (childRow.data) {
+                    // Not a filler node
+                    if (writeIdx >= oldAllLeafChildrenLength || allLeafChildren[writeIdx] !== childRow) {
+                        allLeafChildren[writeIdx] = childRow;
+                        nodesChanged = true;
+                    }
+                    ++writeIdx;
+                }
                 if (childAllLeafChildrenLen) {
                     for (let j = 0; j < childAllLeafChildrenLen; ++j) {
                         const leaf = childAllLeafChildren[j];
@@ -424,12 +432,6 @@ export class TreeNode implements ITreeNode {
                         }
                         ++writeIdx;
                     }
-                } else if (childRow.data) {
-                    if (writeIdx >= oldAllLeafChildrenLength || allLeafChildren[writeIdx] !== childRow) {
-                        allLeafChildren[writeIdx] = childRow;
-                        nodesChanged = true;
-                    }
-                    ++writeIdx;
                 }
             }
             if (oldAllLeafChildrenLength !== writeIdx) {

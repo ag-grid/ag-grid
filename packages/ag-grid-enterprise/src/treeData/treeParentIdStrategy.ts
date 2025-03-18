@@ -102,7 +102,7 @@ export class TreeParentIdStrategy<TData = any> extends BeanStub implements IRowG
                 if (processNode(child, level)) {
                     allLeafChildrenChanged = true;
                 }
-                allLeafChildrenLen += child.allLeafChildren!.length || 1;
+                allLeafChildrenLen += child.allLeafChildren!.length + 1;
             }
 
             let allLeafChildren = row.allLeafChildren;
@@ -264,14 +264,11 @@ const updateAllLeafChildren = <TData>(
     let writeIdx = 0;
     for (const child of row.childrenAfterGroup!) {
         const childLeafChildren = child.allLeafChildren!;
-        if (childLeafChildren.length === 0) {
-            changed ||= allLeafChildren[writeIdx] !== child;
-            allLeafChildren[writeIdx++] = child;
-        } else {
-            for (const leaf of childLeafChildren) {
-                changed ||= allLeafChildren[writeIdx] !== leaf;
-                allLeafChildren[writeIdx++] = leaf;
-            }
+        changed ||= allLeafChildren[writeIdx] !== child;
+        allLeafChildren[writeIdx++] = child;
+        for (const leaf of childLeafChildren) {
+            changed ||= allLeafChildren[writeIdx] !== leaf;
+            allLeafChildren[writeIdx++] = leaf;
         }
     }
     return changed;

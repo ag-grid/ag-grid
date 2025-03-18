@@ -457,11 +457,8 @@ export class GridRowsValidator {
                 return;
             }
             processed.add(node);
-            if (!node.childrenAfterGroup?.length) {
-                if (node.data) {
-                    allLeafsSet.add(node);
-                }
-                return;
+            if (node.data) {
+                allLeafsSet.add(node); // Not a group, not a filler node
             }
             if (node.childrenAfterGroup) {
                 for (const child of node.childrenAfterGroup) {
