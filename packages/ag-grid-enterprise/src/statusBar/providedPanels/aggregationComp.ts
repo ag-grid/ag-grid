@@ -23,6 +23,7 @@ import {
 
 import type { AgNameValue } from './agNameValue';
 import { AgNameValueSelector } from './agNameValue';
+import { _getTotalRowCount } from './utils';
 
 function _formatNumberTwoDecimalPlacesAndCommas(value: number, getLocaleTextFunc: () => LocaleTextFunc): string {
     if (typeof value !== 'number') {
@@ -73,21 +74,20 @@ export class AggregationComp extends Component implements IStatusPanelComp {
     }
 
     public init(params: AggregationStatusPanelParams) {
+        this.params = params;
+
         const valueFormatter =
             params.valueFormatter ??
             (({ value }) => _formatNumberTwoDecimalPlacesAndCommas(value, this.getLocaleTextFunc.bind(this)));
 
-        const { avgAggregationComp, countAggregationComp, minAggregationComp, maxAggregationComp, sumAggregationComp } =
-            this;
+        const aggFuncNames: AggregationStatusPanelAggFunc[] = ['avg', 'count', 'min', 'max', 'sum'];
+        for (const key of aggFuncNames) {
+            const comp = this.getAllowedAggregationValueComponent(key);
 
-        for (const comp of [
-            avgAggregationComp,
-            countAggregationComp,
-            minAggregationComp,
-            maxAggregationComp,
-            sumAggregationComp,
-        ]) {
-            comp.setValueFormatter(valueFormatter);
+            if (comp) {
+                comp.key = key;
+                comp.setValueFormatter(valueFormatter);
+            }
         }
         this.refresh(params);
     }
@@ -104,8 +104,9 @@ export class AggregationComp extends Component implements IStatusPanelComp {
         visible: boolean
     ) {
         const statusBarValueComponent = this.getAllowedAggregationValueComponent(aggFuncName);
+        const totalRow = _getTotalRowCount(this.beans.rowModel);
         if (_exists(statusBarValueComponent) && statusBarValueComponent) {
-            statusBarValueComponent.setValue(value!);
+            statusBarValueComponent.setValue(value!, totalRow);
             statusBarValueComponent.setDisplayed(visible);
         } else {
             // might have previously been visible, so hide now

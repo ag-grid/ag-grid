@@ -22,10 +22,12 @@ export class TotalRowsComp extends AgNameValue implements IStatusPanelComp {
     }
 
     private onDataChanged() {
-        this.setValue(_getTotalRowCount(this.beans.rowModel));
+        const totalRow = _getTotalRowCount(this.beans.rowModel);
+        this.setValue(totalRow, totalRow);
     }
 
     public init(params: IStatusPanelParams & IProvidedStatusPanelParams) {
+        this.key = params.key;
         const valueFormatter =
             params.valueFormatter ?? (({ value }) => _formatNumberCommas(value, this.getLocaleTextFunc.bind(this)));
 

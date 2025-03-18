@@ -2,6 +2,7 @@ import type { IProvidedStatusPanelParams, IStatusPanelComp, IStatusPanelParams }
 import { _formatNumberCommas, _isClientSideRowModel, _isServerSideRowModel, _warn } from 'ag-grid-community';
 
 import { AgNameValue } from './agNameValue';
+import { _getTotalRowCount } from './utils';
 
 export class SelectedRowsComp extends AgNameValue implements IStatusPanelComp {
     public postConstruct(): void {
@@ -21,8 +22,11 @@ export class SelectedRowsComp extends AgNameValue implements IStatusPanelComp {
     }
 
     private onRowSelectionChanged() {
-        const selectedRowCount = this.beans.selectionSvc?.getSelectionCount() ?? 0;
-        this.setValue(selectedRowCount);
+        const { selectionSvc, rowModel } = this.beans;
+        const selectedRowCount = selectionSvc?.getSelectionCount() ?? 0;
+        const totalRowCount = _getTotalRowCount(rowModel);
+
+        this.setValue(selectedRowCount, totalRowCount);
 
         if (selectedRowCount < 0) {
             this.setDisplayed(true);
@@ -33,6 +37,7 @@ export class SelectedRowsComp extends AgNameValue implements IStatusPanelComp {
     }
 
     public init(params: IStatusPanelParams & IProvidedStatusPanelParams) {
+        this.key = params.key;
         const valueFormatter =
             params.valueFormatter ??
             (({ value }) => {

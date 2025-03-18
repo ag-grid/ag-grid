@@ -1,10 +1,11 @@
-import type { ComponentSelector, IProvidedStatusPanelValueFormatter } from 'ag-grid-community';
+import type { ComponentSelector, IStatusPanelValueFormatterParams } from 'ag-grid-community';
 import { Component, RefPlaceholder } from 'ag-grid-community';
 
 export class AgNameValue extends Component {
     private readonly eLabel: HTMLElement = RefPlaceholder;
     private readonly eValue: HTMLElement = RefPlaceholder;
-    private valueFormatter: IProvidedStatusPanelValueFormatter;
+    private valueFormatter: (params: IStatusPanelValueFormatterParams) => string;
+    public key: string;
 
     constructor() {
         super(/* html */ `<div class="ag-status-name-value">
@@ -21,11 +22,11 @@ export class AgNameValue extends Component {
         this.eLabel.innerHTML = localeTextFunc(key, defaultValue);
     }
 
-    public setValue(value: number, totalRows?: number): void {
-        this.eValue.textContent = this.valueFormatter({ value, totalRows, key: AgNameValue.name });
+    public setValue(value: number, totalRows: number): void {
+        this.eValue.textContent = this.valueFormatter({ value, totalRows, key: this.key });
     }
 
-    public setValueFormatter(fn: IProvidedStatusPanelValueFormatter): void {
+    public setValueFormatter(fn: (params: IStatusPanelValueFormatterParams) => string): void {
         this.valueFormatter = fn;
     }
 }

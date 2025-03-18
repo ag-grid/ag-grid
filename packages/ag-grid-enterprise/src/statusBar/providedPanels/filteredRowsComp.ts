@@ -32,11 +32,12 @@ export class FilteredRowsComp extends AgNameValue implements IStatusPanelComp {
         const totalRowCountValue = _getTotalRowCount(rowModel);
         const filteredRowCountValue = _getFilteredRowCount(rowModel as IClientSideRowModel);
 
-        this.setValue(filteredRowCountValue);
+        this.setValue(filteredRowCountValue, totalRowCountValue);
         this.setDisplayed(totalRowCountValue !== filteredRowCountValue);
     }
 
     public init(params: IStatusPanelParams & IProvidedStatusPanelParams) {
+        this.key = params.key;
         const valueFormatter =
             params.valueFormatter ?? (({ value }) => _formatNumberCommas(value, this.getLocaleTextFunc.bind(this)));
 

@@ -32,14 +32,11 @@ export class TotalAndFilteredRowsComp extends AgNameValue implements IStatusPane
         const rowCount = _getFilteredRowCount(rowModel as IClientSideRowModel);
         const totalRowCount = _getTotalRowCount(rowModel);
 
-        if (rowCount === totalRowCount) {
-            this.setValue(rowCount);
-        } else {
-            this.setValue(rowCount, totalRowCount);
-        }
+        this.setValue(rowCount, totalRowCount);
     }
 
     public init(params: IStatusPanelParams & IProvidedStatusPanelParams) {
+        this.key = params.key;
         const valueFormatter =
             params.valueFormatter ??
             (({ value, totalRows }) => {
@@ -47,7 +44,7 @@ export class TotalAndFilteredRowsComp extends AgNameValue implements IStatusPane
                 const rowCount = _formatNumberCommas(value, getLocaleTextFunc);
                 const totalRowCount = _formatNumberCommas(totalRows ?? value, getLocaleTextFunc);
 
-                if (totalRows === undefined || value === totalRows) {
+                if (value === totalRows) {
                     return rowCount;
                 }
 
