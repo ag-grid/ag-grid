@@ -192,7 +192,11 @@ export type ComponentMeta =
           classImp: ClassImp;
           /** Default params for provided components */
           params?: any;
+          /** Update params for provided components before they are created */
+          processParams?: ProcessParamsFunc;
       };
+
+export type ProcessParamsFunc<TParams = any> = (params: TParams) => TParams;
 
 export interface CoreBeanCollection {
     context: Context;

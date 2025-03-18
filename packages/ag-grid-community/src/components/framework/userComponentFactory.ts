@@ -1,6 +1,6 @@
 import type { NamedBean } from '../../context/bean';
 import { BeanStub } from '../../context/beanStub';
-import type { BeanCollection } from '../../context/context';
+import type { BeanCollection, ProcessParamsFunc } from '../../context/context';
 import type { CellEditorSelectorFunc, CellEditorSelectorResult, CellRendererSelectorFunc } from '../../entities/colDef';
 import type { GridOptions } from '../../entities/gridOptions';
 import type { AgGridCommon } from '../../interfaces/iCommon';
@@ -122,6 +122,7 @@ export class UserComponentFactory extends BeanStub implements NamedBean {
 
         // for grid-provided comps only
         let defaultCompParams: any;
+        let defaultCompProcessParams: ProcessParamsFunc | undefined;
 
         const lookupFromRegistry = (key: string) => {
             const item = this.registry.getUserComponent(name, key);
@@ -129,6 +130,7 @@ export class UserComponentFactory extends BeanStub implements NamedBean {
                 jsComp = !item.componentFromFramework ? item.component : undefined;
                 fwComp = item.componentFromFramework ? item.component : undefined;
                 defaultCompParams = item.params;
+                defaultCompProcessParams = item.processParams;
             }
         };
 
@@ -179,7 +181,14 @@ export class UserComponentFactory extends BeanStub implements NamedBean {
             return;
         }
 
-        const paramsMerged = this.mergeParams(defObject, type, params, paramsFromSelector, defaultCompParams);
+        const paramsMerged = this.mergeParams(
+            defObject,
+            type,
+            params,
+            paramsFromSelector,
+            defaultCompParams,
+            defaultCompProcessParams
+        );
 
         const componentFromFramework = jsComp == null;
         const componentClass = jsComp ?? fwComp;
@@ -236,7 +245,8 @@ export class UserComponentFactory extends BeanStub implements NamedBean {
         type: ComponentType,
         paramsFromGrid: AgGridCommon<any, any>,
         paramsFromSelector: any = null,
-        defaultCompParams?: any
+        defaultCompParams?: any,
+        defaultCompProcessParams?: ProcessParamsFunc
     ): any {
         const params = { ...paramsFromGrid, ...defaultCompParams };
 
@@ -253,6 +263,6 @@ export class UserComponentFactory extends BeanStub implements NamedBean {
 
         _mergeDeep(params, paramsFromSelector);
 
-        return params;
+        return defaultCompProcessParams ? defaultCompProcessParams(params) : params;
     }
 }

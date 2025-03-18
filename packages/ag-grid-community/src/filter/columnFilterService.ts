@@ -16,14 +16,16 @@ import type {
     DateStringDataTypeDefinition,
 } from '../entities/dataType';
 import type { RowNode } from '../entities/rowNode';
-import type { ColumnEventType, FilterChangedEventSourceType } from '../events';
+import type { AgEvent, ColumnEventType, FilterChangedEventSourceType } from '../events';
 import { _addGridCommonParams, _getGroupAggFiltering, _isSetFilterByDefault } from '../gridOptionsUtils';
 import type { Column } from '../interfaces/iColumn';
 import type { WithoutGridCommon } from '../interfaces/iCommon';
 import type {
     BaseFilterParams,
+    FilterButtonType,
     FilterDisplayComp,
     FilterDisplayParams,
+    FilterDisplayState,
     FilterEvaluator,
     FilterEvaluatorGeneratorFunc,
     FilterEvaluatorParams,
@@ -108,7 +110,18 @@ interface EvaluatorDoesFilterPassWrapper {
 
 type DoesFilterPassWrapper = CompDoesFilterPassWrapper | EvaluatorDoesFilterPassWrapper;
 
-export class ColumnFilterService extends BeanStub implements NamedBean {
+export interface FilterDisplayWrapper {
+    comp: IFilterComp | FilterDisplayComp;
+    params: IFilterParams | FilterDisplayParams;
+    isEvaluator: boolean;
+}
+
+export interface FilterParamsChangedEvent extends AgEvent<'filterParamsChanged'> {
+    column: AgColumn;
+    params: IFilterParams | FilterDisplayParams;
+}
+
+export class ColumnFilterService extends BeanStub<'filterParamsChanged'> implements NamedBean {
     beanName: BeanName = 'colFilter';
 
     private allColumnFilters = new Map<string, FilterWrapper>();
@@ -130,6 +143,8 @@ export class ColumnFilterService extends BeanStub implements NamedBean {
     private initialFilterModel: FilterModel;
     /** This may not contain the model for non-evaluator columns */
     private model: FilterModel;
+    /** This contains the UI state for evaluator columns */
+    private state: Map<string, FilterDisplayState> = new Map();
 
     public postConstruct(): void {
         this.addManagedEventListeners({
@@ -582,6 +597,22 @@ export class ColumnFilterService extends BeanStub implements NamedBean {
         return filterWrapper ? getFilterUiFromWrapper(filterWrapper) : null;
     }
 
+    public getFilterUiForDisplay(column: AgColumn): AgPromise<FilterDisplayWrapper> | null {
+        const filterWrapper = this.getOrCreateFilterWrapper(column);
+        if (!filterWrapper) {
+            return null;
+        }
+        const compPromise = getFilterUiFromWrapper(filterWrapper);
+        if (!compPromise) {
+            return null;
+        }
+        return compPromise.then((comp) => ({
+            comp: comp!,
+            params: filterWrapper.filterUi!.filterParams,
+            isEvaluator: filterWrapper.isEvaluator,
+        }));
+    }
+
     public getEvaluator(column: AgColumn): FilterEvaluator | undefined {
         const filterWrapper = this.cachedFilter(column);
         return filterWrapper?.isEvaluator ? filterWrapper.evaluator : undefined;
@@ -739,9 +770,6 @@ export class ColumnFilterService extends BeanStub implements NamedBean {
     ): BaseFilterParams {
         const colDef = column.getColDef();
         const filterChangedCallback = this.filterChangedCallbackFactory(column);
-        const filterModifiedCallback = forFloatingFilter
-            ? () => {}
-            : (additionalEventAttributes?: any) => this.filterUiChanged(column, additionalEventAttributes);
 
         const params: IFilterParams = _addGridCommonParams(this.gos, {
             column,
@@ -752,24 +780,40 @@ export class ColumnFilterService extends BeanStub implements NamedBean {
                 : (node) =>
                       this.beans.filterManager?.doesRowPassOtherFilters(column.getColId(), node as RowNode) ?? true,
             // to avoid breaking changes to `filterParams` defined as functions
-            // we need to provide these options even though they are not valid for evaluators
+            // we need to provide the below options even though they are not valid for evaluators
             rowModel: this.beans.rowModel,
             filterChangedCallback,
-            filterModifiedCallback,
+            filterModifiedCallback: forFloatingFilter
+                ? () => {}
+                : (additionalEventAttributes?: any) => this.filterUiChanged(column, additionalEventAttributes),
         });
 
         if (useEvaluator) {
             const displayParams = params as unknown as FilterDisplayParams;
-            displayParams.model = this.getModelForEvaluator(column);
+            const model = this.getModelForEvaluator(column);
+            displayParams.model = model;
             const colId = column.getColId();
-            displayParams.onModelChange = (model, additionalEventAttributes?: any) => {
+            displayParams.state = this.state.get(colId) ?? {
+                model,
+            };
+            displayParams.onModelChange = (model, additionalEventAttributes) => {
                 this.model[colId] = model;
                 this.refreshEvaluatorAndUi(column, model, 'ui').then(() => {
                     filterChangedCallback({ ...additionalEventAttributes, source: 'columnFilter' });
                 });
             };
+            const filterStateCallback = (additionalEventAttributes?: any) =>
+                this.eventSvc.dispatchEvent({
+                    type: 'filterUiChanged',
+                    column,
+                    ...additionalEventAttributes,
+                });
+            displayParams.onStateChange = (state, additionalEventAttributes) => {
+                this.state.set(colId, state);
+                filterStateCallback(additionalEventAttributes);
+            };
             displayParams.getEvaluator = () => this.getOrCreateEvaluator(column)!;
-            displayParams.onUiChange = filterModifiedCallback;
+            displayParams.onUiChange = filterStateCallback;
             displayParams.source = source;
         }
 
@@ -1217,6 +1261,12 @@ export class ColumnFilterService extends BeanStub implements NamedBean {
             // framework wrapper always implements optional methods, but returns null if no underlying method
             if (shouldRefreshFilter === false) {
                 this.destroyFilterUi(filterWrapper, column, compDetails, createFilterUi);
+            } else {
+                this.dispatchLocalEvent({
+                    type: 'filterParamsChanged',
+                    column,
+                    params: newFilterParams,
+                } as FilterParamsChangedEvent);
             }
         });
     }
@@ -1577,11 +1627,16 @@ export class ColumnFilterService extends BeanStub implements NamedBean {
         });
     }
 
+    public updateModel(column: AgColumn, action: FilterButtonType): void {
+        // TODO
+    }
+
     public override destroy() {
         super.destroy();
         this.allColumnFilters.forEach((filterWrapper) => this.disposeFilterWrapper(filterWrapper, 'gridDestroyed'));
         // don't need to destroy the listeners as they are managed listeners
         this.allColumnListeners.clear();
+        this.state.clear();
     }
 }
 

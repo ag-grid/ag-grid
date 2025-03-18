@@ -1,6 +1,7 @@
 import type { _ColumnFilterGridApi, _FilterGridApi, _QuickFilterGridApi } from '../api/gridApi';
 import { FilterStage } from '../clientSideRowModel/filterStage';
 import { HeaderFilterCellCtrl } from '../headerRendering/cells/floatingFilter/headerFilterCellCtrl';
+import type { FilterWrapperParams } from '../interfaces/iFilter';
 import type { _ModuleWithApi } from '../interfaces/iModule';
 import type { _ModuleWithoutApi } from '../interfaces/iModule';
 import { SharedMenuModule } from '../misc/menu/sharedMenuModule';
@@ -115,7 +116,12 @@ export const TextFilterModule: _ModuleWithoutApi = {
     version: VERSION,
     dependsOn: [ColumnFilterModule],
     userComponents: {
-        agTextColumnFilter: TextFilter,
+        agTextColumnFilter: {
+            classImp: TextFilter,
+            params: {
+                useForm: true,
+            } as FilterWrapperParams,
+        },
         agTextColumnFloatingFilter: TextFloatingFilter,
     },
     dynamicBeans: {
@@ -131,7 +137,12 @@ export const NumberFilterModule: _ModuleWithoutApi = {
     version: VERSION,
     dependsOn: [ColumnFilterModule],
     userComponents: {
-        agNumberColumnFilter: NumberFilter,
+        agNumberColumnFilter: {
+            classImp: NumberFilter,
+            params: {
+                useForm: true,
+            } as FilterWrapperParams,
+        },
         agNumberColumnFloatingFilter: NumberFloatingFilter,
     },
     dynamicBeans: {
@@ -147,7 +158,12 @@ export const DateFilterModule: _ModuleWithoutApi = {
     version: VERSION,
     dependsOn: [ColumnFilterModule],
     userComponents: {
-        agDateColumnFilter: DateFilter,
+        agDateColumnFilter: {
+            classImp: DateFilter,
+            params: {
+                useForm: true,
+            } as FilterWrapperParams,
+        },
         agDateInput: DefaultDateComponent,
         agDateColumnFloatingFilter: DateFloatingFilter,
     },

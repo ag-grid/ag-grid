@@ -126,12 +126,13 @@ export abstract class SimpleFilter<
 
         this.createFilterListOptions();
 
+        const eGui = this.getGui();
         if (this.isReadOnly()) {
             // only do this when read only (so no other focusable elements), otherwise the tab order breaks
             // as the tabbed layout managed focus feature will focus the body when it shouldn't
-            this.eFilterBody.setAttribute('tabindex', '-1');
+            eGui.setAttribute('tabindex', '-1');
         } else {
-            this.eFilterBody.removeAttribute('tabindex');
+            eGui.removeAttribute('tabindex');
         }
     }
 
@@ -305,14 +306,15 @@ export abstract class SimpleFilter<
     }
 
     private createOption(): void {
+        const eGui = this.getGui();
         const eType = this.createManagedBean(new AgSelect());
         this.eTypes.push(eType);
         eType.addCssClass('ag-filter-select');
-        this.eFilterBody.appendChild(eType.getGui());
+        eGui.appendChild(eType.getGui());
 
         const eConditionBody = this.createValueElement();
         this.eConditionBodies.push(eConditionBody);
-        this.eFilterBody.appendChild(eConditionBody);
+        eGui.appendChild(eConditionBody);
 
         this.putOptionsIntoDropdown(eType);
         this.resetType(eType);
@@ -329,7 +331,7 @@ export abstract class SimpleFilter<
         const eJoinOperatorAnd = this.createJoinOperator(this.eJoinOperatorsAnd, eJoinOperatorPanel, 'and');
         const eJoinOperatorOr = this.createJoinOperator(this.eJoinOperatorsOr, eJoinOperatorPanel, 'or');
 
-        this.eFilterBody.appendChild(eJoinOperatorPanel);
+        this.getGui().appendChild(eJoinOperatorPanel);
 
         const index = this.eJoinOperatorPanels.length - 1;
         const uniqueGroupId = this.joinOperatorId++;
@@ -513,7 +515,6 @@ export abstract class SimpleFilter<
         this.resetPlaceholder();
 
         if (!params?.suppressFocus) {
-            const { eFilterBody, eTypes } = this;
             let elementToFocus: HTMLElement | undefined;
             if (!this.isReadOnly()) {
                 const firstInput = this.getInputs(0)[0];
@@ -521,11 +522,11 @@ export abstract class SimpleFilter<
                     elementToFocus = firstInput.getInputElement();
                 } else {
                     // focus the dropdown instead
-                    elementToFocus = eTypes[0]?.getFocusableElement();
+                    elementToFocus = this.eTypes[0]?.getFocusableElement();
                 }
             }
             // something needs focus otherwise keyboard navigation breaks, so focus the filter body if missing
-            (elementToFocus ?? eFilterBody).focus({ preventScroll: true });
+            (elementToFocus ?? this.getGui()).focus({ preventScroll: true });
         }
     }
 

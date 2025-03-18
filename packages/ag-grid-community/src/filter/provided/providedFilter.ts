@@ -3,11 +3,9 @@ import type { ContainerType, IAfterGuiAttachedParams } from '../../interfaces/iA
 import type { FilterDisplayParams, IDoesFilterPassParams, IFilterComp } from '../../interfaces/iFilter';
 import type { PopupEventParams } from '../../interfaces/iPopup';
 import { PositionableFeature } from '../../rendering/features/positionableFeature';
-import { _clearElement, _loadTemplate, _removeFromParent, _setDisabled } from '../../utils/dom';
+import { _setDisabled } from '../../utils/dom';
 import { _debounce } from '../../utils/function';
-import { _jsonEquals } from '../../utils/generic';
 import { AgPromise } from '../../utils/promise';
-import { _warn } from '../../validation/logging';
 import type { ComponentSelector } from '../../widgets/component';
 import { Component, RefPlaceholder } from '../../widgets/component';
 import { ManagedFocusFeature } from '../../widgets/managedFocusFeature';
@@ -51,10 +49,8 @@ export abstract class ProvidedFilter<
 
     private positionableFeature: PositionableFeature | undefined;
 
-    protected readonly eFilterBody: HTMLElement = RefPlaceholder;
-
-    private eButtonsPanel: HTMLElement;
-    private buttonListeners: (() => null)[] = [];
+    /** @deprecated TODO */
+    private readonly eFilterBody: HTMLElement = RefPlaceholder;
 
     constructor(private readonly filterNameKey: keyof typeof FILTER_LOCALE_TEXT) {
         super();
@@ -147,10 +143,8 @@ export abstract class ProvidedFilter<
         return AgPromise.resolve();
     }
 
-    private commonUpdateParams(newParams: P, oldParams?: P): void {
+    private commonUpdateParams(newParams: P, _oldParams?: P): void {
         this.applyActive = isUseApplyButton(newParams);
-
-        this.resetButtonsPanel(newParams, oldParams);
     }
 
     public doesFilterPass(params: IDoesFilterPassParams): boolean {
@@ -167,107 +161,16 @@ export abstract class ProvidedFilter<
     }
 
     protected resetTemplate(paramsMap?: any) {
-        let eGui = this.getGui();
-
-        if (eGui) {
-            eGui.removeEventListener('submit', this.onFormSubmit);
-        }
         const templateString = /* html */ `
-            <form class="ag-filter-wrapper">
                 <div class="ag-filter-body-wrapper ag-${this.getCssIdentifier()}-body-wrapper" data-ref="eFilterBody">
                     ${this.createBodyTemplate()}
-                </div>
-            </form>`;
+                </div>`;
 
         this.setTemplate(templateString, this.getAgComponents(), paramsMap);
-
-        eGui = this.getGui();
-        eGui?.addEventListener('submit', this.onFormSubmit);
     }
 
     protected isReadOnly(): boolean {
         return !!this.params.readOnly;
-    }
-
-    private resetButtonsPanel(newParams: P, oldParams?: P): void {
-        const { buttons: oldButtons, readOnly: oldReadOnly } = oldParams ?? {};
-        const { buttons, readOnly } = newParams;
-        if (oldReadOnly === readOnly && _jsonEquals(oldButtons, buttons)) {
-            return;
-        }
-
-        const hasButtons = buttons && buttons.length > 0 && !this.isReadOnly();
-
-        if (!this.eButtonsPanel) {
-            // Only create the buttons panel if we need to
-            if (hasButtons) {
-                this.eButtonsPanel = document.createElement('div');
-                this.eButtonsPanel.classList.add('ag-filter-apply-panel');
-            }
-        } else {
-            // Always empty the buttons panel before adding new buttons
-            _clearElement(this.eButtonsPanel);
-            this.buttonListeners.forEach((destroyFunc) => destroyFunc());
-            this.buttonListeners = [];
-        }
-
-        if (!hasButtons) {
-            // The case when we need to hide the buttons panel because there are no buttons
-            if (this.eButtonsPanel) {
-                _removeFromParent(this.eButtonsPanel);
-            }
-
-            return;
-        }
-
-        // At this point we know we have a buttons and a buttons panel has been created.
-
-        // Instead of appending each button to the DOM individually, we create a fragment and append that
-        // to the DOM once. This is much faster than appending each button individually.
-        const fragment = document.createDocumentFragment();
-
-        const addButton = (type: 'apply' | 'clear' | 'reset' | 'cancel'): void => {
-            let clickListener: (e?: Event) => void;
-            const text = type ? this.translate(`${type}Filter`) : undefined;
-            switch (type) {
-                case 'apply':
-                    clickListener = (e) => this.onBtApply(false, false, e);
-                    break;
-                case 'clear':
-                    clickListener = () => this.onBtClear();
-                    break;
-                case 'reset':
-                    clickListener = () => this.onBtReset();
-                    break;
-                case 'cancel':
-                    clickListener = (e) => {
-                        this.onBtCancel(e!);
-                    };
-                    break;
-                default:
-                    _warn(75);
-                    return;
-            }
-
-            const buttonType = type === 'apply' ? 'submit' : 'button';
-            const button = _loadTemplate(
-                /* html */
-                `<button
-                    type="${buttonType}"
-                    data-ref="${type}FilterButton"
-                    class="ag-button ag-standard-button ag-filter-apply-panel-button"
-                >${text}
-                </button>`
-            );
-
-            this.buttonListeners.push(...this.addManagedElementListeners(button, { click: clickListener }));
-            fragment.append(button);
-        };
-
-        buttons.forEach((type) => addButton(type));
-
-        this.eButtonsPanel.append(fragment);
-        this.getGui().appendChild(this.eButtonsPanel);
     }
 
     // subclasses can override this to provide alternative debounce defaults
@@ -377,10 +280,6 @@ export abstract class ProvidedFilter<
         return true;
     }
 
-    private onFormSubmit(e: Event): void {
-        e.preventDefault();
-    }
-
     protected onBtApply(afterFloatingFilter = false, afterDataChange = false, e?: Event): void {
         // Prevent form submission
         if (e) {
@@ -428,6 +327,9 @@ export abstract class ProvidedFilter<
      */
     protected onUiChanged(fromFloatingFilter = false, apply?: 'immediately' | 'debounce' | 'prevent'): void {
         this.updateUiVisibility();
+        this.params.onStateChange({
+            model: this.getModelFromUi(),
+        });
         this.params.onUiChange(this.getUiChangeEventParams());
 
         if (this.applyActive && !this.isReadOnly()) {
@@ -487,11 +389,6 @@ export abstract class ProvidedFilter<
     }
 
     public override destroy(): void {
-        const eGui = this.getGui();
-
-        if (eGui) {
-            eGui.removeEventListener('submit', this.onFormSubmit);
-        }
         this.hidePopup = null;
 
         if (this.positionableFeature) {
@@ -507,6 +404,6 @@ export abstract class ProvidedFilter<
 
     // override to control positionable feature
     protected getPositionableElement(): HTMLElement {
-        return this.eFilterBody;
+        return this.getGui();
     }
 }

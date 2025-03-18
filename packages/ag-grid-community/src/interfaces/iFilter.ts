@@ -178,6 +178,15 @@ export interface IDoesFilterPassParams<TData = any> {
     data: TData;
 }
 
+export type FilterButtonType = 'apply' | 'clear' | 'reset' | 'cancel';
+
+export interface FilterWrapperParams {
+    useForm?: boolean;
+    buttons?: FilterButtonType[];
+    closeOnApply?: boolean;
+    readOnly?: boolean;
+}
+
 export interface SharedFilterParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
     /** The column this filter is for. */
     column: Column;
@@ -233,18 +242,34 @@ export interface IFilterParams<TData = any, TContext = any> extends BaseFilterPa
     filterModifiedCallback: (additionalEventAttributes?: any) => void;
 }
 
-export interface FilterDisplayParams<TData = any, TContext = any, TModel = any>
-    extends SharedFilterParams<TData, TContext> {
-    /** The current filter model for the component. */
+export interface FilterDisplayState<TModel = any, TState = any> {
+    /** The current filter model to be displayed in the UI. */
     model: TModel | null;
+    /**
+     * If there is additional UI state not represented in the filter model,
+     * this will be stored here.
+     */
+    state?: TState;
+}
+
+export interface FilterDisplayParams<TData = any, TContext = any, TModel = any, TState = any>
+    extends SharedFilterParams<TData, TContext> {
+    /** The parent element of the filter (which also contains filter buttons, if defined). */
+    eWrapper: HTMLElement;
+    /** The current applied filter model for the component. */
+    model: TModel | null;
+    /** The current state to display in the component. */
+    state: FilterDisplayState<TModel, TState>;
     /** Callback that should be called every time the model in the component changes. */
     onModelChange: (model: TModel | null, additionalEventAttributes?: any) => void;
+    /** If using the filter with apply buttons, callback that should be called every time the unapplied model in the component changes. */
+    onStateChange: (componentState: FilterDisplayState<TModel, TState>, additionalEventAttributes?: any) => void;
     /**
      * Callback that can be optionally called every time the filter UI changes.
      * The grid will respond with emitting a FilterModifiedEvent.
      * Apart from emitting the event, the grid takes no further action.
      * The callback takes one optional parameter which, if included,
-     * will get merged to the FilterModifiedEvent object.
+     * will get merged to the FilterUiChangedEvent object.
      */
     onUiChange: (additionalEventAttributes?: any) => void;
     getEvaluator: () => FilterEvaluator<TData, TContext, TModel>;

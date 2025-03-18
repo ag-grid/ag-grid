@@ -179,6 +179,8 @@ export {
     FilterEvaluatorGeneratorFunc,
     FilterEvaluatorGeneratorFuncParams,
     FilterEvaluatorParams,
+    FilterDisplayState,
+    FilterWrapperParams,
 } from './interfaces/iFilter';
 export {
     ISetFilter,

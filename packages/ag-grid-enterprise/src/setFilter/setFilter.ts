@@ -38,7 +38,7 @@ import type {
     SetFilterListItemSelectionChangedEvent,
 } from './setFilterListItem';
 import { SetFilterListItem } from './setFilterListItem';
-import { applyExcelModeOptions, translateForSetFilter } from './setFilterUtils';
+import { translateForSetFilter } from './setFilterUtils';
 import { TreeSetDisplayValueModel } from './treeSetDisplayValueModel';
 
 /** @param V type of value in the Set Filter */
@@ -81,7 +81,6 @@ export class SetFilter<V = string>
     protected override setParams(
         params: ISetFilterParams<any, V> & FilterDisplayParams<any, any, SetFilterModel>
     ): void {
-        applyExcelModeOptions(params);
         super.setParams(params);
 
         const evaluator = this.updateEvaluator(params.getEvaluator() as unknown as SetFilterEvaluator<V>);
@@ -121,7 +120,6 @@ export class SetFilter<V = string>
             // too hard to refresh when tree list changes, just destroy
             return false;
         }
-        applyExcelModeOptions(legacyNewParams);
         this.updateEvaluator(
             (
                 legacyNewParams as unknown as ISetFilterParams<any, V> & FilterDisplayParams<any, any, SetFilterModel>
