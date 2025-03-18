@@ -397,6 +397,8 @@ export {
     AggregationStatusPanelAggFunc,
     IAggregationStatusPanelParams,
     AggregationStatusPanelParams,
+    IProvidedStatusPanelParams,
+    IStatusPanelValueFormatterParams,
 } from './interfaces/iStatusPanel';
 
 // tool panel components

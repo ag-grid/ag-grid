@@ -251,20 +251,6 @@ export class PaginationComp extends TabGuardComp implements FocusableContainer {
         const masterRowCount = this.pagination.getMasterRowCount();
         const rowCount = lastPageFound ? masterRowCount : null;
 
-        // When `pivotMode=true` and no grouping or value columns exist, a single 'hidden' group row (root node) is in
-        // the grid and the pagination totals will correctly display total = 1. However this is confusing to users as
-        // they can't see it. To address this UX issue we simply set the totals to zero in the pagination panel.
-        if (rowCount === 1) {
-            const firstRow = this.rowModel.getRow(0);
-
-            // a group node with no group or agg data will not be visible to users
-            const hiddenGroupRow = firstRow?.level === -1;
-            if (hiddenGroupRow) {
-                this.setTotalLabelsToZero();
-                return;
-            }
-        }
-
         const currentPage = this.pagination.getCurrentPage();
         const pageSize = this.pagination.getPageSize();
 

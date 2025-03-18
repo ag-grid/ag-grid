@@ -23,6 +23,7 @@ import {
 
 import type { AgNameValue } from './agNameValue';
 import { AgNameValueSelector } from './agNameValue';
+import { _getTotalRowCount } from './utils';
 
 function _formatNumberTwoDecimalPlacesAndCommas(value: number, getLocaleTextFunc: () => LocaleTextFunc): string {
     if (typeof value !== 'number') {
@@ -78,6 +79,21 @@ export class AggregationComp extends Component implements IStatusPanelComp {
 
     public refresh(params: AggregationStatusPanelParams): boolean {
         this.params = params;
+
+        const valueFormatter =
+            params.valueFormatter ??
+            (({ value }) => _formatNumberTwoDecimalPlacesAndCommas(value, this.getLocaleTextFunc.bind(this)));
+
+        const aggFuncNames: AggregationStatusPanelAggFunc[] = ['avg', 'count', 'min', 'max', 'sum'];
+        for (const key of aggFuncNames) {
+            const comp = this.getAllowedAggregationValueComponent(key);
+
+            if (comp) {
+                comp.key = key;
+                comp.valueFormatter = valueFormatter.bind(this);
+            }
+        }
+
         this.onCellSelectionChanged();
         return true;
     }
@@ -88,10 +104,9 @@ export class AggregationComp extends Component implements IStatusPanelComp {
         visible: boolean
     ) {
         const statusBarValueComponent = this.getAllowedAggregationValueComponent(aggFuncName);
+        const totalRow = _getTotalRowCount(this.beans.rowModel);
         if (_exists(statusBarValueComponent) && statusBarValueComponent) {
-            statusBarValueComponent.setValue(
-                _formatNumberTwoDecimalPlacesAndCommas(value!, this.getLocaleTextFunc.bind(this))
-            );
+            statusBarValueComponent.setValue(value!, totalRow);
             statusBarValueComponent.setDisplayed(visible);
         } else {
             // might have previously been visible, so hide now

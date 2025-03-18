@@ -127,11 +127,11 @@ function createCrossFilterThemeOverrides(
                 series: {
                     fills: {
                         $if: [
-                            { $isEven: [{ $value: '$index' }] },
+                            { $eq: [{ $value: '$index' }, 0] },
                             {
                                 $map: [
                                     { $mix: [{ $value: '$1' }, { $ref: 'backgroundColor' }, 0.7] },
-                                    { $path: ['../$prevIndex/fills', { $palette: 'fills' }] },
+                                    { $palette: 'fills' },
                                 ],
                             },
                             { $palette: 'fills' },
@@ -139,11 +139,11 @@ function createCrossFilterThemeOverrides(
                     },
                     strokes: {
                         $if: [
-                            { $isEven: [{ $value: '$index' }] },
+                            { $eq: [{ $value: '$index' }, 0] },
                             {
                                 $map: [
                                     { $mix: [{ $value: '$1' }, { $ref: 'backgroundColor' }, 0.7] },
-                                    { $path: ['../$prevIndex/strokes', { $palette: 'strokes' }] },
+                                    { $palette: 'strokes' },
                                 ],
                             },
                             { $palette: 'strokes' },
