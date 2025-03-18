@@ -323,7 +323,7 @@ jobs:
           SSH_HOST: ${{ secrets.STAGING_HOST }}
           SSH_USER: ubuntu
         run: |
-          echo $vars.STAGING_SSH_KEY
+           echo "${{ vars.STAGING_SSH_KEY }}"
 #          echo "$SSH_PRIVATE_KEY" > $STAGING_SSH_KEY
 #          chmod 400 $STAGING_SSH_KEY
 #          ssh -i $STAGING_SSH_KEY -o StrictHostKeyChecking=no $SSH_USER@$SSH_HOST "ls -l"
