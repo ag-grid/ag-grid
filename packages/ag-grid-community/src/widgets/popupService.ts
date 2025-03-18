@@ -720,7 +720,8 @@ export class PopupService extends BeanStub implements NamedBean {
             let rafId: number;
 
             const updatePopupPosition = (timestamp: number) => {
-                // play around with timestamp to adjust frametime if needed
+                // play around with timestamp to adjust frametime if needed.
+                // Currently we use monitor's refresh rate
                 const pRect = eParent.getBoundingClientRect();
                 const sRect = element.getBoundingClientRect();
 
