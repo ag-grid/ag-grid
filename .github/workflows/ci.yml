@@ -59,92 +59,92 @@ concurrency:
   cancel-in-progress: ${{ github.ref != 'refs/heads/latest' }}
 
 jobs:
-#  build_lint:
-#    name: Build & Lint
-#    outputs:
-#      nx_base: ${{ steps.setup.outputs.base }}
-#      build: ${{ steps.build.outcome || '' }}
-#      lint: ${{ steps.lint.outcome || '' }}
-#      format: ${{ steps.format.outcome || '' }}
-#      test_count: ${{ steps.matrix.outputs.test_count }}
-#      test_matrix: ${{ steps.matrix.outputs.test_matrix }}
-#      e2e_test_count: ${{ steps.matrix.outputs.e2e_test_count }}
-#      e2e_test_matrix: ${{ steps.matrix.outputs.e2e_test_matrix }}
-#      bundle_test_count: ${{ steps.matrix.outputs.bundle_test_count }}
-#      bundle_test_matrix: ${{ steps.matrix.outputs.bundle_test_matrix }}
-#      build_type: ${{ steps.setup.outputs.type }}
-#    runs-on: ubuntu-latest
-#    steps:
-#      - name: Checkout
-#        id: checkout
-#        uses: actions/checkout@v4
-#        with:
-#          fetch-depth: 1 # shallow copy
-#
-#      - name: Fetch Refs
-#        run: |
-#          git fetch origin --depth 1 latest
-#          git fetch origin --depth 1 tag latest-success
-#
-#      - name: Setup
-#        id: setup
-#        uses: ./.github/actions/setup-nx
-#        with:
-#          cache_mode: ${{ github.event.inputs.clean_checkout == 'true' && 'off' || 'rw' }}
-#
-#            - name: nx format:check
-#              id: format
-#              if: steps.setup.outcome == 'success' || steps.setup.outcome == 'skipped'
-#              run: |
-#                if [[ "${{ github.event.inputs.nx_command || 'affected' }}" == "run-many" ]] ; then
-#                  yarn nx format:check --all
-#                else
-#                  yarn nx format:check --base ${{ steps.setup.outputs.base }}
-#                fi
-#
-#            - name: nx lint
-#              run: |
-#                yarn nx lint
-#
-#      - name: nx build
-#        run: |
-#          yarn nx generate-doc-references
-#          yarn nx generate-examples
-#          yarn nx run-many --t build --exclude ag-grid-docs --exclude all
-#
-#      - name: calculate matrix
-#        id: matrix
-#        run: |
-#          if [[ "${{ github.event.inputs.nx_command || 'affected' }}" == "run-many" ]] ; then
-#            count=10
-#          else
-#            count=$(yarn -s nx show projects --affected --base ${{ steps.setup.outputs.base }} -t test | wc -l)
-#          fi
-#
-#          matrix=$(node ./scripts/test/calculate-shards.js eval --ratio 1 --zero ${count} --max 1)
-#          echo "test_matrix=${matrix}" >> $GITHUB_OUTPUT
-#          echo "test_count=${count}" >> $GITHUB_OUTPUT
-#          echo "Test matrix determined to be: ${matrix}"
-#
-#          if [[ "${{ github.event.inputs.nx_command || 'affected' }}" == "run-many" ]] ; then
-#            e2e_count=10
-#          else
-#            e2e_count=$(yarn -s nx show projects --affected --base ${{ steps.setup.outputs.base }} -t test:e2e --exclude 'tag:module-size' --exclude all | wc -l)
-#          fi
-#
-#          # not enough non-bundle size e2e tests to shard atm
-#          e2e_matrix={"shard":[0]}
-#          echo "e2e_test_matrix=${e2e_matrix}" >> $GITHUB_OUTPUT
-#          echo "e2e_test_count=${e2e_count}" >> $GITHUB_OUTPUT
-#          echo "e2e Test matrix determined to be: ${e2e_matrix}"
-#
-#          # 3 is optimal atm for bundle tests
-#          bundle_count=3
-#
-#          bundle_matrix=$(node ./scripts/test/calculate-shards.js eval --ratio 1 --zero ${bundle_count})
-#          echo "bundle_test_matrix=${bundle_matrix}" >> $GITHUB_OUTPUT
-#          echo "bundle_test_count=${bundle_count}" >> $GITHUB_OUTPUT
-#          echo "bundle Test matrix determined to be: ${bundle_matrix}"
+  #  build_lint:
+  #    name: Build & Lint
+  #    outputs:
+  #      nx_base: ${{ steps.setup.outputs.base }}
+  #      build: ${{ steps.build.outcome || '' }}
+  #      lint: ${{ steps.lint.outcome || '' }}
+  #      format: ${{ steps.format.outcome || '' }}
+  #      test_count: ${{ steps.matrix.outputs.test_count }}
+  #      test_matrix: ${{ steps.matrix.outputs.test_matrix }}
+  #      e2e_test_count: ${{ steps.matrix.outputs.e2e_test_count }}
+  #      e2e_test_matrix: ${{ steps.matrix.outputs.e2e_test_matrix }}
+  #      bundle_test_count: ${{ steps.matrix.outputs.bundle_test_count }}
+  #      bundle_test_matrix: ${{ steps.matrix.outputs.bundle_test_matrix }}
+  #      build_type: ${{ steps.setup.outputs.type }}
+  #    runs-on: ubuntu-latest
+  #    steps:
+  #      - name: Checkout
+  #        id: checkout
+  #        uses: actions/checkout@v4
+  #        with:
+  #          fetch-depth: 1 # shallow copy
+  #
+  #      - name: Fetch Refs
+  #        run: |
+  #          git fetch origin --depth 1 latest
+  #          git fetch origin --depth 1 tag latest-success
+  #
+  #      - name: Setup
+  #        id: setup
+  #        uses: ./.github/actions/setup-nx
+  #        with:
+  #          cache_mode: ${{ github.event.inputs.clean_checkout == 'true' && 'off' || 'rw' }}
+  #
+  #            - name: nx format:check
+  #              id: format
+  #              if: steps.setup.outcome == 'success' || steps.setup.outcome == 'skipped'
+  #              run: |
+  #                if [[ "${{ github.event.inputs.nx_command || 'affected' }}" == "run-many" ]] ; then
+  #                  yarn nx format:check --all
+  #                else
+  #                  yarn nx format:check --base ${{ steps.setup.outputs.base }}
+  #                fi
+  #
+  #            - name: nx lint
+  #              run: |
+  #                yarn nx lint
+  #
+  #      - name: nx build
+  #        run: |
+  #          yarn nx generate-doc-references
+  #          yarn nx generate-examples
+  #          yarn nx run-many --t build --exclude ag-grid-docs --exclude all
+  #
+  #      - name: calculate matrix
+  #        id: matrix
+  #        run: |
+  #          if [[ "${{ github.event.inputs.nx_command || 'affected' }}" == "run-many" ]] ; then
+  #            count=10
+  #          else
+  #            count=$(yarn -s nx show projects --affected --base ${{ steps.setup.outputs.base }} -t test | wc -l)
+  #          fi
+  #
+  #          matrix=$(node ./scripts/test/calculate-shards.js eval --ratio 1 --zero ${count} --max 1)
+  #          echo "test_matrix=${matrix}" >> $GITHUB_OUTPUT
+  #          echo "test_count=${count}" >> $GITHUB_OUTPUT
+  #          echo "Test matrix determined to be: ${matrix}"
+  #
+  #          if [[ "${{ github.event.inputs.nx_command || 'affected' }}" == "run-many" ]] ; then
+  #            e2e_count=10
+  #          else
+  #            e2e_count=$(yarn -s nx show projects --affected --base ${{ steps.setup.outputs.base }} -t test:e2e --exclude 'tag:module-size' --exclude all | wc -l)
+  #          fi
+  #
+  #          # not enough non-bundle size e2e tests to shard atm
+  #          e2e_matrix={"shard":[0]}
+  #          echo "e2e_test_matrix=${e2e_matrix}" >> $GITHUB_OUTPUT
+  #          echo "e2e_test_count=${e2e_count}" >> $GITHUB_OUTPUT
+  #          echo "e2e Test matrix determined to be: ${e2e_matrix}"
+  #
+  #          # 3 is optimal atm for bundle tests
+  #          bundle_count=3
+  #
+  #          bundle_matrix=$(node ./scripts/test/calculate-shards.js eval --ratio 1 --zero ${bundle_count})
+  #          echo "bundle_test_matrix=${bundle_matrix}" >> $GITHUB_OUTPUT
+  #          echo "bundle_test_count=${bundle_count}" >> $GITHUB_OUTPUT
+  #          echo "bundle Test matrix determined to be: ${bundle_matrix}"
 
   #  test:
   #    runs-on: ubuntu-24.04
@@ -284,8 +284,8 @@ jobs:
   docs:
     runs-on: ubuntu-latest
     name: Docs Build & Link Checker
-#    needs: build_lint
-#    if: needs.build_lint.result == 'success' && ${{ github.event.inputs.run_docs }}
+    #    needs: build_lint
+    #    if: needs.build_lint.result == 'success' && ${{ github.event.inputs.run_docs }}
     strategy:
       fail-fast: false
     env:
@@ -325,10 +325,9 @@ jobs:
           SSH_USER: ubuntu
           SSH_KEY_LOCATION: ${{ github.workspace }}/staging.pem
         run: |
-          echo "$SSH_PRIVATE_KEY" > $SSH_KEY_LOCATION
-          chmod 400 $SSH_KEY_LOCATION
-#          ssh -i $SSH_KEY_LOCATION -o StrictHostKeyChecking=no $SSH_USER@$SSH_HOST "ls -l"
-          ./scripts/deployments/createAndDeployDocsToTCGH.sh
+               echo "$SSH_PRIVATE_KEY" > $SSH_KEY_LOCATION
+               chmod 400 $SSH_KEY_LOCATION
+               ./scripts/deployments/createAndDeployDocsToTCGH.sh
 
   #      - name: Persist test results
   #        if: always()
