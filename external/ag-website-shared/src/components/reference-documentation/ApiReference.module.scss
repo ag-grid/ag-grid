@@ -183,36 +183,21 @@
 
     display: flex;
     align-items: center;
-    gap: $spacing-size-2;
+    gap: $spacing-size-1;
     position: relative;
     padding-right: $spacing-size-2;
     font-family: var(--text-monospace-font-family);
-    font-size: 15px;
     line-height: var(--text-lh-xs);
     font-weight: 700;
     color: var(--color-fg-primary);
 
+    > span {
+        flex-grow: 0;
+        line-height: 1;
+    }
+
     &:hover .linkIcon {
         opacity: 1;
-    }
-
-    .linkIcon {
-        margin-left: 0;
-        transform: none;
-
-        &:hover {
-            opacity: 1;
-        }
-
-        svg {
-            width: $spacing-size-4;
-            height: $spacing-size-4;
-            transform: translate(5px, -1px);
-        }
-    }
-
-    @container (min-width: #{$breakpoint-table-small}) {
-        font-size: 15px;
     }
 }
 

@@ -37,6 +37,13 @@
 }
 
 .pageSections article {
+    > h2,
+    > h3,
+    > h3 {
+        display: flex;
+        gap: $spacing-size-2;
+    }
+
     > h2 {
         margin-top: $spacing-size-12;
     }

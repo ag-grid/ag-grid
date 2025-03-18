@@ -47,6 +47,9 @@
     h4,
     h5,
     h6 {
+        display: flex;
+        align-items: center;
+        gap: $spacing-size-2;
         margin-top: 2px;
     }
 
