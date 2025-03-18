@@ -324,8 +324,10 @@ jobs:
           SSH_USER: ubuntu
           SSH_KEY_LOCATION: $GITHUB_WORKSPACE/staging.pem
         run: |
-          pwd
-          echo "$SSH_KEY_LOCATION"
+          echo $GITHUB_WORKSPACE
+          echo ${{ GITHUB_WORKSPACE }}
+#          pwd
+#          echo "$SSH_KEY_LOCATION"
 #          echo "$SSH_PRIVATE_KEY" > $SSH_KEY_LOCATION
 #          chmod 400 $SSH_KEY_LOCATION
 #          ssh -i $SSH_KEY_LOCATION -o StrictHostKeyChecking=no $SSH_USER@$SSH_HOST "ls -l"
