@@ -187,7 +187,13 @@ interface GroupRowNode<TData = any> {
 
     /** `true` if this node is a group and the group is the bottom level in the tree. */
     leafGroup: boolean | undefined;
-    /** All lowest level nodes beneath this node, no groups. */
+    /**
+     * All the nodes that have user provided data below this node. Can be null if empty.
+     * This excludes:
+     * - filler nodes when using treeData and getDataPath
+     * - group nodes when using grouping
+     * - header and footer nodes
+     */
     allLeafChildren: IRowNode<TData>[] | null;
     /** Number of children and grand children. */
     allChildrenCount: number | null;
