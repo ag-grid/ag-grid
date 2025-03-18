@@ -397,7 +397,7 @@ export class PopupService extends BeanStub implements NamedBean {
             // reposition the popup after initial updates to the size of the contents
             const resizeObserverDestroyFunc = _observeResize(this.beans, ePopup, () => updatePopupPosition(true));
             // Only need to reposition when first open, so can clean up after a bit of time
-            setTimeout(() => resizeObserverDestroyFunc(), WAIT_FOR_POPUP_CONTENT_RESIZE);
+            requestAnimationFrame(resizeObserverDestroyFunc);
         }
     }
 
@@ -605,7 +605,7 @@ export class PopupService extends BeanStub implements NamedBean {
 
         // if we add these listeners now, then the current mouse
         // click will be included, which we don't want
-        window.setTimeout(() => {
+        requestAnimationFrame(() => {
             if (closeOnEsc) {
                 eDocument.addEventListener('keydown', hidePopupOnKeyboardEvent);
             }
@@ -616,7 +616,7 @@ export class PopupService extends BeanStub implements NamedBean {
                 eDocument.addEventListener('touchstart', hidePopupOnTouchEvent);
                 eDocument.addEventListener('contextmenu', hidePopupOnMouseEvent);
             }
-        }, 0);
+        });
 
         return removeListeners;
     }
@@ -702,7 +702,7 @@ export class PopupService extends BeanStub implements NamedBean {
 
         const extractFromPixelValue = (pxSize: string) => parseInt(pxSize.substring(0, pxSize.length - 1), 10);
         const createPosition = (prop: 'top' | 'left', direction: DIRECTION) => {
-            const initialDiff = parentRect[prop] - sourceRect[prop];
+            const initialDiff = Number((parentRect[prop] - sourceRect[prop]).toFixed(0));
             const initial = extractFromPixelValue(ePopup.style[prop]);
             return {
                 initialDiff,
@@ -717,50 +717,52 @@ export class PopupService extends BeanStub implements NamedBean {
 
         const fwOverrides = this.beans.frameworkOverrides;
         return new AgPromise<() => void>((resolve) => {
+            let rafId: number;
+
+            const updatePopupPosition = (timestamp: number) => {
+                // play around with timestamp to adjust frametime if needed
+                const pRect = eParent.getBoundingClientRect();
+                const sRect = element.getBoundingClientRect();
+
+                const elementNotInDom = sRect.top == 0 && sRect.left == 0 && sRect.height == 0 && sRect.width == 0;
+                if (elementNotInDom) {
+                    params.hidePopup();
+                    return;
+                }
+                const calculateNewPosition = (position: Position, prop: 'top' | 'left') => {
+                    const current = extractFromPixelValue(ePopup.style[prop]);
+                    if (position.last !== current) {
+                        // some other process has moved the popup
+                        position.initial = current;
+                        position.last = current;
+                    }
+                    const currentDiff = Number((pRect[prop] - sRect[prop]).toFixed(0));
+                    if (currentDiff != position.lastDiff) {
+                        const newValue = this.keepXYWithinBounds(
+                            ePopup,
+                            position.initial + position.initialDiff - currentDiff,
+                            position.direction
+                        );
+                        ePopup.style[prop] = `${newValue}px`;
+                        position.last = newValue;
+                    }
+                    position.lastDiff = currentDiff;
+                };
+                calculateNewPosition(topPosition, 'top');
+                calculateNewPosition(leftPosition, 'left');
+
+                rafId = requestAnimationFrame(updatePopupPosition);
+            };
+
             fwOverrides.wrapIncoming(() => {
-                fwOverrides
-                    .setInterval(() => {
-                        const pRect = eParent.getBoundingClientRect();
-                        const sRect = element.getBoundingClientRect();
+                rafId = requestAnimationFrame(updatePopupPosition);
 
-                        const elementNotInDom =
-                            sRect.top == 0 && sRect.left == 0 && sRect.height == 0 && sRect.width == 0;
-                        if (elementNotInDom) {
-                            params.hidePopup();
-                            return;
-                        }
-
-                        const calculateNewPosition = (position: Position, prop: 'top' | 'left') => {
-                            const current = extractFromPixelValue(ePopup.style[prop]);
-                            if (position.last !== current) {
-                                // some other process has moved the popup
-                                position.initial = current;
-                                position.last = current;
-                            }
-
-                            const currentDiff = pRect[prop] - sRect[prop];
-                            if (currentDiff != position.lastDiff) {
-                                const newValue = this.keepXYWithinBounds(
-                                    ePopup,
-                                    position.initial + position.initialDiff - currentDiff,
-                                    position.direction
-                                );
-                                ePopup.style[prop] = `${newValue}px`;
-                                position.last = newValue;
-                            }
-                            position.lastDiff = currentDiff;
-                        };
-                        calculateNewPosition(topPosition, 'top');
-                        calculateNewPosition(leftPosition, 'left');
-                    }, 200)
-                    .then((intervalId) => {
-                        const result = () => {
-                            if (intervalId != null) {
-                                window.clearInterval(intervalId);
-                            }
-                        };
-                        resolve(result);
-                    });
+                const result = () => {
+                    if (rafId != null) {
+                        cancelAnimationFrame(rafId);
+                    }
+                };
+                resolve(result);
             }, 'popupPositioning');
         });
     }
