@@ -322,11 +322,11 @@ jobs:
             ${{ secrets.STAGING_SSH_KEY }}
           SSH_HOST: ${{ secrets.STAGING_HOST }}
           SSH_USER: ubuntu
+          SSH_KEY_LOCATION: ${{ vars.STAGING_SSH_KEY }}
         run: |
-           echo "${{ vars.STAGING_SSH_KEY }}"
-#          echo "$SSH_PRIVATE_KEY" > $STAGING_SSH_KEY
-#          chmod 400 $STAGING_SSH_KEY
-#          ssh -i $STAGING_SSH_KEY -o StrictHostKeyChecking=no $SSH_USER@$SSH_HOST "ls -l"
+          echo "$SSH_PRIVATE_KEY" > $SSH_KEY_LOCATION
+          chmod 400 $SSH_KEY_LOCATION
+          ssh -i $SSH_KEY_LOCATION -o StrictHostKeyChecking=no $SSH_USER@$SSH_HOST "ls -l"
 
   #      - name: Persist test results
   #        if: always()
