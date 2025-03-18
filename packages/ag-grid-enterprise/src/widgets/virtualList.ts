@@ -1,4 +1,11 @@
-import type { BeanCollection, Component, ComponentEvent, CssVariablesChanged, Environment } from 'ag-grid-community';
+import type {
+    BeanCollection,
+    Component,
+    ComponentEvent,
+    CssVariablesChanged,
+    ElementParams,
+    Environment,
+} from 'ag-grid-community';
 import {
     KeyCode,
     RefPlaceholder,
@@ -24,13 +31,19 @@ interface VirtualListParams<C> {
     moveItemCallback?: (item: C, isUp: boolean) => void;
 }
 
-function getVirtualListTemplate(cssIdentifier: string) {
-    return (
-        /* html */
-        `<div class="ag-virtual-list-viewport ag-${cssIdentifier}-virtual-list-viewport" role="presentation">
-            <div class="ag-virtual-list-container ag-${cssIdentifier}-virtual-list-container" data-ref="eContainer"></div>
-        </div>`
-    );
+function getVirtualListTemplate(cssIdentifier: string): ElementParams {
+    return {
+        tag: 'div',
+        cls: `ag-virtual-list-viewport ag-${cssIdentifier}-virtual-list-viewport`,
+        role: 'presentation',
+        children: [
+            {
+                tag: 'div',
+                ref: 'eContainer',
+                cls: `ag-virtual-list-container ag-${cssIdentifier}-virtual-list-container`,
+            },
+        ],
+    };
 }
 
 export class VirtualList<

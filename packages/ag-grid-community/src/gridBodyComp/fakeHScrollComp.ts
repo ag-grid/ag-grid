@@ -1,5 +1,6 @@
 import type { VisibleColsService } from '../columns/visibleColsService';
 import type { BeanCollection } from '../context/context';
+import type { ElementParams } from '../utils/dom';
 import { _getScrollLeft, _isVisible, _setFixedHeight, _setFixedWidth, _setScrollLeft } from '../utils/dom';
 import type { ComponentSelector } from '../widgets/component';
 import { RefPlaceholder } from '../widgets/component';
@@ -7,6 +8,21 @@ import { AbstractFakeScrollComp } from './abstractFakeScrollComp';
 import { CenterWidthFeature } from './centerWidthFeature';
 import type { ScrollVisibleService } from './scrollVisibleService';
 
+const FakeHScrollElement: ElementParams = {
+    tag: 'div',
+    cls: 'ag-body-horizontal-scroll',
+    attrs: { 'aria-hidden': 'true' },
+    children: [
+        { tag: 'div', ref: 'eLeftSpacer', cls: 'ag-horizontal-left-spacer' },
+        {
+            tag: 'div',
+            ref: 'eViewport',
+            cls: 'ag-body-horizontal-scroll-viewport',
+            children: [{ tag: 'div', ref: 'eContainer', cls: 'ag-body-horizontal-scroll-container' }],
+        },
+        { tag: 'div', ref: 'eRightSpacer', cls: 'ag-horizontal-right-spacer' },
+    ],
+};
 export class FakeHScrollComp extends AbstractFakeScrollComp {
     private visibleCols: VisibleColsService;
     private scrollVisibleSvc: ScrollVisibleService;
@@ -22,16 +38,7 @@ export class FakeHScrollComp extends AbstractFakeScrollComp {
     private enableRtl: boolean;
 
     constructor() {
-        super(
-            /* html */ `<div class="ag-body-horizontal-scroll" aria-hidden="true">
-            <div class="ag-horizontal-left-spacer" data-ref="eLeftSpacer"></div>
-            <div class="ag-body-horizontal-scroll-viewport" data-ref="eViewport">
-                <div class="ag-body-horizontal-scroll-container" data-ref="eContainer"></div>
-            </div>
-            <div class="ag-horizontal-right-spacer" data-ref="eRightSpacer"></div>
-        </div>`,
-            'horizontal'
-        );
+        super(FakeHScrollElement, 'horizontal');
     }
 
     public override postConstruct(): void {

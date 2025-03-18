@@ -503,7 +503,20 @@ export function _requestAnimationFrame(beans: BeanCollection, callback: any) {
 export type Attributes = { [key: string]: string };
 type TagName = keyof HTMLElementTagNameMap | Lowercase<AgComponentSelector>;
 /** Type to help avoid typos, add new roles as required. */
-type RoleType = 'presentation' | 'rowgroup' | 'columnheader' | 'gridcell' | 'row' | 'tablist';
+type RoleType =
+    | 'button'
+    | 'columnheader'
+    | 'gridcell'
+    | 'menu'
+    | 'option'
+    | 'presentation'
+    | 'role'
+    | 'row'
+    | 'rowgroup'
+    | 'status'
+    | 'tab'
+    | 'tablist'
+    | 'tabpanel';
 
 export type ElementParams = {
     /** The tag name to use for the element, either browser tag or one of the AG Grid components such as ag-checkbox
@@ -529,7 +542,7 @@ export type ElementParams = {
     /** Key Value pair of attributes to add to the dom element via `element.setAttribute(key,value)` */
     attrs?: Attributes;
 
-    children?: (ElementParams | null)[]; // nulls are allowed to allow for optional children
+    children?: (ElementParams | null | undefined)[]; // nulls are allowed to allow for optional children
 };
 
 /** AG Grid attribute used to automatically assign DOM Elements to class properties */

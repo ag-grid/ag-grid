@@ -1,3 +1,4 @@
+import type { ElementParams } from 'ag-grid-community';
 import { RefPlaceholder } from 'ag-grid-community';
 import { Component } from 'ag-grid-community';
 
@@ -6,17 +7,30 @@ export interface PillConfig {
     onButtonClick?: (e?: MouseEvent) => void;
 }
 
+const AgPillElement: ElementParams = {
+    tag: 'div',
+    cls: 'ag-pill',
+    role: 'option',
+    children: [
+        {
+            tag: 'span',
+            ref: 'eText',
+            cls: 'ag-pill-text',
+        },
+        {
+            tag: 'span',
+            ref: 'eButton',
+            cls: 'ag-button ag-pill-button',
+            role: 'presentation',
+        },
+    ],
+};
 export class AgPill extends Component {
     private readonly eText: HTMLElement = RefPlaceholder;
     private readonly eButton: HTMLElement = RefPlaceholder;
 
     constructor(private readonly config: PillConfig) {
-        super(/* html */ `
-            <div class="ag-pill" role="option">
-                <span class="ag-pill-text" data-ref="eText"></span>
-                <span class="ag-button ag-pill-button" data-ref="eButton" role="presentation"></span>
-            </div>
-        `);
+        super(AgPillElement);
     }
 
     public postConstruct() {

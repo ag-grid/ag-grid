@@ -1,4 +1,4 @@
-import type { ColDef, ColGroupDef, ColumnEventType, ComponentSelector } from 'ag-grid-community';
+import type { ColDef, ColGroupDef, ColumnEventType, ComponentSelector, ElementParams } from 'ag-grid-community';
 import { Component, PositionableFeature, RefPlaceholder } from 'ag-grid-community';
 
 import { agPrimaryColsCSS } from './agPrimaryCols.css-GENERATED';
@@ -8,6 +8,14 @@ import type { AgPrimaryColsList } from './agPrimaryColsList';
 import { AgPrimaryColsListSelector } from './agPrimaryColsList';
 import type { ToolPanelColumnCompParams } from './columnToolPanel';
 
+const AgPrimaryColsElement: ElementParams = {
+    tag: 'div',
+    cls: 'ag-column-select',
+    children: [
+        { tag: 'ag-primary-cols-header', ref: 'primaryColsHeaderPanel' },
+        { tag: 'ag-primary-cols-list', ref: 'primaryColsListPanel' },
+    ],
+};
 export class AgPrimaryCols extends Component {
     private readonly primaryColsHeaderPanel: AgPrimaryColsHeader = RefPlaceholder;
     private readonly primaryColsListPanel: AgPrimaryColsList = RefPlaceholder;
@@ -15,13 +23,7 @@ export class AgPrimaryCols extends Component {
     private positionableFeature: PositionableFeature;
 
     constructor() {
-        super(
-            /* html */ `<div class="ag-column-select">
-            <ag-primary-cols-header data-ref="primaryColsHeaderPanel"></ag-primary-cols-header>
-            <ag-primary-cols-list data-ref="primaryColsListPanel"></ag-primary-cols-list>
-        </div>`,
-            [AgPrimaryColsHeaderSelector, AgPrimaryColsListSelector]
-        );
+        super(AgPrimaryColsElement, [AgPrimaryColsHeaderSelector, AgPrimaryColsListSelector]);
         this.registerCSS(agPrimaryColsCSS);
     }
 

@@ -2,6 +2,7 @@ import type {
     AgColumn,
     AggregationStatusPanelAggFunc,
     AggregationStatusPanelParams,
+    ElementParams,
     IStatusPanelComp,
     LocaleTextFunc,
     RowPosition,
@@ -32,6 +33,32 @@ function _formatNumberTwoDecimalPlacesAndCommas(value: number, getLocaleTextFunc
     return _formatNumberCommas(Math.round(value * 100) / 100, getLocaleTextFunc);
 }
 
+const AggregationCompElement: ElementParams = {
+    tag: 'div',
+    cls: 'ag-status-panel ag-status-panel-aggregations',
+    children: [
+        {
+            tag: 'ag-name-value',
+            ref: 'avgAggregationComp',
+        },
+        {
+            tag: 'ag-name-value',
+            ref: 'countAggregationComp',
+        },
+        {
+            tag: 'ag-name-value',
+            ref: 'minAggregationComp',
+        },
+        {
+            tag: 'ag-name-value',
+            ref: 'maxAggregationComp',
+        },
+        {
+            tag: 'ag-name-value',
+            ref: 'sumAggregationComp',
+        },
+    ],
+};
 export class AggregationComp extends Component implements IStatusPanelComp {
     private readonly sumAggregationComp: AgNameValue = RefPlaceholder;
     private readonly countAggregationComp: AgNameValue = RefPlaceholder;
@@ -42,16 +69,7 @@ export class AggregationComp extends Component implements IStatusPanelComp {
     private params!: AggregationStatusPanelParams;
 
     constructor() {
-        super(
-            /* html */ `<div class="ag-status-panel ag-status-panel-aggregations">
-            <ag-name-value data-ref="avgAggregationComp"></ag-name-value>
-            <ag-name-value data-ref="countAggregationComp"></ag-name-value>
-            <ag-name-value data-ref="minAggregationComp"></ag-name-value>
-            <ag-name-value data-ref="maxAggregationComp"></ag-name-value>
-            <ag-name-value data-ref="sumAggregationComp"></ag-name-value>
-        </div>`,
-            [AgNameValueSelector]
-        );
+        super(AggregationCompElement, [AgNameValueSelector]);
     }
 
     public postConstruct(): void {

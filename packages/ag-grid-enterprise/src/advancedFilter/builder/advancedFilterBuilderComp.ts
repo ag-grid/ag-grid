@@ -2,6 +2,7 @@ import type {
     AdvancedFilterModel,
     BeanCollection,
     ColumnAdvancedFilterModel,
+    ElementParams,
     FilterManager,
     ITooltipCtrl,
     JoinAdvancedFilterModel,
@@ -25,6 +26,37 @@ import type {
     AdvancedFilterBuilderRemoveEvent,
 } from './iAdvancedFilterBuilder';
 
+const AdvancedFilterBuilderElement: ElementParams = {
+    tag: 'div',
+    cls: 'ag-advanced-filter-builder',
+    role: 'presentation',
+    attrs: { tabindex: '-1' },
+    children: [
+        {
+            tag: 'div',
+            ref: 'eList',
+            cls: 'ag-advanced-filter-builder-list',
+            role: 'presentation',
+        },
+        {
+            tag: 'div',
+            cls: 'ag-advanced-filter-builder-button-panel',
+            role: 'presentation',
+            children: [
+                {
+                    tag: 'button',
+                    ref: 'eApplyFilterButton',
+                    cls: 'ag-button ag-standard-button ag-advanced-filter-builder-apply-button',
+                },
+                {
+                    tag: 'button',
+                    ref: 'eCancelFilterButton',
+                    cls: 'ag-button ag-standard-button ag-advanced-filter-builder-cancel-button',
+                },
+            ],
+        },
+    ],
+};
 export class AdvancedFilterBuilderComp extends Component<AdvancedFilterBuilderEvents> {
     private filterManager?: FilterManager;
     private advancedFilter: AdvancedFilterService;
@@ -52,14 +84,7 @@ export class AdvancedFilterBuilderComp extends Component<AdvancedFilterBuilderEv
     private validationMessage: string | null = null;
 
     constructor() {
-        super(/* html */ `
-            <div role="presentation" class="ag-advanced-filter-builder" tabindex="-1">
-                <div role="presentation" class="ag-advanced-filter-builder-list" data-ref="eList"></div>
-                <div role="presentation" class="ag-advanced-filter-builder-button-panel">
-                    <button class="ag-button ag-standard-button ag-advanced-filter-builder-apply-button" data-ref="eApplyFilterButton"></button>
-                    <button class="ag-button ag-standard-button ag-advanced-filter-builder-cancel-button" data-ref="eCancelFilterButton"></button>
-                </div>
-            </div>`);
+        super(AdvancedFilterBuilderElement);
     }
 
     public postConstruct(): void {

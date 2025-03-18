@@ -601,9 +601,7 @@ class ColumnContextMenu extends Component implements EnterpriseColumnMenu {
         private readonly restoreFocusParams: MenuRestoreFocusParams,
         private readonly sourceElement?: HTMLElement
     ) {
-        super(/* html */ `
-            <div data-ref="eColumnMenu" role="presentation" class="ag-menu ag-column-menu"></div>
-        `);
+        super({ tag: 'div', ref: 'eColumnMenu', cls: 'ag-menu ag-column-menu', role: 'presentation' });
     }
 
     public postConstruct(): void {

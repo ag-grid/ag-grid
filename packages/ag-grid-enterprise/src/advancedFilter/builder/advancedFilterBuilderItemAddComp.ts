@@ -1,5 +1,6 @@
 import type {
     BeanCollection,
+    ElementParams,
     FieldPickerValueSelectedEvent,
     ITooltipCtrl,
     Registry,
@@ -17,6 +18,32 @@ import type {
     AdvancedFilterBuilderItem,
 } from './iAdvancedFilterBuilder';
 
+const ItemAddElement: ElementParams = {
+    tag: 'div',
+    cls: 'ag-advanced-filter-builder-item-wrapper',
+    role: 'presentation',
+    children: [
+        {
+            tag: 'div',
+            ref: 'eItem',
+            cls: 'ag-advanced-filter-builder-item',
+            role: 'presentation',
+            children: [
+                {
+                    tag: 'div',
+                    cls: 'ag-advanced-filter-builder-item-tree-lines',
+                    attrs: { 'aria-hidden': 'true' },
+                    children: [
+                        {
+                            tag: 'div',
+                            cls: 'ag-advanced-filter-builder-item-tree-line-vertical-top ag-advanced-filter-builder-item-tree-line-horizontal',
+                        },
+                    ],
+                },
+            ],
+        },
+    ],
+};
 export class AdvancedFilterBuilderItemAddComp extends Component<AdvancedFilterBuilderEvents> {
     private advFilterExpSvc: AdvancedFilterExpressionService;
     private registry: Registry;
@@ -32,15 +59,7 @@ export class AdvancedFilterBuilderItemAddComp extends Component<AdvancedFilterBu
         private readonly item: AdvancedFilterBuilderItem,
         private readonly focusWrapper: HTMLElement
     ) {
-        super(/* html */ `
-            <div class="ag-advanced-filter-builder-item-wrapper" role="presentation">
-                <div data-ref="eItem" class="ag-advanced-filter-builder-item" role="presentation">
-                    <div class="ag-advanced-filter-builder-item-tree-lines" aria-hidden="true">
-                        <div class="ag-advanced-filter-builder-item-tree-line-vertical-top ag-advanced-filter-builder-item-tree-line-horizontal"></div>
-                    </div>
-                </div>
-            </div>
-        `);
+        super(ItemAddElement);
     }
 
     public postConstruct(): void {

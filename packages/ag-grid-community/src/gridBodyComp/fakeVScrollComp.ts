@@ -1,19 +1,26 @@
 import type { CtrlsService } from '../ctrlsService';
+import type { ElementParams } from '../utils/dom';
 import { _isVisible, _setFixedWidth } from '../utils/dom';
 import type { ComponentSelector } from '../widgets/component';
 import { AbstractFakeScrollComp } from './abstractFakeScrollComp';
 import { SetHeightFeature } from './rowContainer/setHeightFeature';
 
+const FakeVScrollElement: ElementParams = {
+    tag: 'div',
+    cls: 'ag-body-vertical-scroll',
+    attrs: { 'aria-hidden': 'true' },
+    children: [
+        {
+            tag: 'div',
+            ref: 'eViewport',
+            cls: 'ag-body-vertical-scroll-viewport',
+            children: [{ tag: 'div', ref: 'eContainer', cls: 'ag-body-vertical-scroll-container' }],
+        },
+    ],
+};
 export class FakeVScrollComp extends AbstractFakeScrollComp {
     constructor() {
-        super(
-            /* html */ `<div class="ag-body-vertical-scroll" aria-hidden="true">
-            <div class="ag-body-vertical-scroll-viewport" data-ref="eViewport">
-                <div class="ag-body-vertical-scroll-container" data-ref="eContainer"></div>
-            </div>
-        </div>`,
-            'vertical'
-        );
+        super(FakeVScrollElement, 'vertical');
     }
 
     public override postConstruct(): void {

@@ -1,4 +1,4 @@
-import type { IAfterGuiAttachedParams } from 'ag-grid-community';
+import type { ElementParams, IAfterGuiAttachedParams } from 'ag-grid-community';
 import {
     KeyCode,
     RefPlaceholder,
@@ -22,11 +22,20 @@ interface TabbedItemWrapper {
     eHeaderButton: HTMLElement;
 }
 
-function getTabbedLayoutTemplate(cssClass?: string) {
-    return /* html */ `<div class="ag-tabs ${cssClass}">
-        <div data-ref="eHeader"></div>
-        <div data-ref="eBody" role="presentation" class="ag-tabs-body ${cssClass ? `${cssClass}-body` : ''}"></div>
-    </div>`;
+function getTabbedLayoutTemplate(cssClass?: string): ElementParams {
+    return {
+        tag: 'div',
+        cls: `ag-tabs ${cssClass}`,
+        children: [
+            { tag: 'div', ref: 'eHeader' },
+            {
+                tag: 'div',
+                ref: 'eBody',
+                role: 'presentation',
+                cls: `ag-tabs-body ${cssClass ? `${cssClass}-body` : ''}`,
+            },
+        ],
+    };
 }
 
 export class TabbedLayout extends TabGuardComp {

@@ -1,4 +1,4 @@
-import type { BeanCollection, FieldValueEvent, WithoutGridCommon } from 'ag-grid-community';
+import type { BeanCollection, ElementParams, FieldValueEvent, WithoutGridCommon } from 'ag-grid-community';
 import {
     AgInputDateField,
     AgInputNumberField,
@@ -16,6 +16,27 @@ import {
 import type { AdvancedFilterExpressionService } from '../advancedFilterExpressionService';
 
 export type InputPillCompEvent = 'fieldValueChanged';
+
+const InputPillElement: ElementParams = {
+    tag: 'div',
+    cls: 'ag-advanced-filter-builder-pill-wrapper',
+    role: 'presentation',
+    children: [
+        {
+            tag: 'div',
+            ref: 'ePill',
+            cls: 'ag-advanced-filter-builder-pill',
+            role: 'button',
+            children: [
+                {
+                    tag: 'span',
+                    ref: 'eLabel',
+                    cls: 'ag-advanced-filter-builder-pill-display',
+                },
+            ],
+        },
+    ],
+};
 export class InputPillComp extends Component<InputPillCompEvent> {
     private advFilterExpSvc: AdvancedFilterExpressionService;
 
@@ -39,13 +60,7 @@ export class InputPillComp extends Component<InputPillCompEvent> {
             ariaLabel: string;
         }
     ) {
-        super(/* html */ `
-            <div class="ag-advanced-filter-builder-pill-wrapper" role="presentation">
-                <div data-ref="ePill" class="ag-advanced-filter-builder-pill" role="button">
-                    <span data-ref="eLabel" class="ag-advanced-filter-builder-pill-display"></span>
-                </div>
-            </div>
-        `);
+        super(InputPillElement);
         const { value, valueFormatter } = params;
         this.value = value;
         this.displayValue = valueFormatter(value);

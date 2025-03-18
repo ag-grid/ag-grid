@@ -439,7 +439,7 @@ class ContextMenu extends Component<ContextMenuEvent> {
         private readonly node: RowNode | null,
         private readonly value: any
     ) {
-        super(/* html */ `<div class="${CSS_MENU}" role="presentation"></div>`);
+        super({ tag: 'div', cls: CSS_MENU, role: 'presentation' });
     }
 
     public postConstruct(): void {

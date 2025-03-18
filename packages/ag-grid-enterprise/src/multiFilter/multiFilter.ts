@@ -17,11 +17,11 @@ import {
     KeyCode,
     ProvidedFilter,
     TabGuardComp,
+    _createElement,
     _focusInto,
     _getActiveDomElement,
     _getFilterDetails,
     _isNothingFocused,
-    _loadTemplate,
     _removeFromArray,
     _setAriaRole,
 } from 'ag-grid-community';
@@ -76,7 +76,7 @@ export class MultiFilter extends TabGuardComp implements IFilterComp, IMultiFilt
     private afterFiltersReadyFuncs: (() => void)[] = [];
 
     constructor() {
-        super(/* html */ `<div class="ag-multi-filter ag-menu-list-compact"></div>`);
+        super({ tag: 'div', cls: 'ag-multi-filter ag-menu-list-compact' });
     }
 
     public postConstruct() {
@@ -152,7 +152,7 @@ export class MultiFilter extends TabGuardComp implements IFilterComp, IMultiFilt
         ).then((filterGuis) => {
             filterGuis!.forEach((filterGui, index) => {
                 if (index > 0) {
-                    this.appendChild(_loadTemplate(/* html */ `<div class="ag-filter-separator"></div>`));
+                    this.appendChild(_createElement({ tag: 'div', cls: 'ag-filter-separator' }));
                 }
                 this.appendChild(filterGui!);
             });

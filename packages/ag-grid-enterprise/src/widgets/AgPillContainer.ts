@@ -1,3 +1,4 @@
+import type { ElementParams } from 'ag-grid-community';
 import {
     Component,
     KeyCode,
@@ -22,14 +23,16 @@ export interface PillRendererParams<TValue> {
     setValue: (value: TValue[] | null) => void;
 }
 
+const AgPillContainerElement: ElementParams = {
+    tag: 'div',
+    cls: 'ag-pill-container',
+};
 export class AgPillContainer<TValue> extends Component {
     private params: PillRendererParams<TValue>;
     private pills: AgPill[] = [];
 
     constructor() {
-        super(/* html */ `
-            <div class="ag-pill-container"></div>
-            `);
+        super(AgPillContainerElement);
     }
 
     public init(params: PillRendererParams<TValue>) {

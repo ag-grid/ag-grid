@@ -3,6 +3,7 @@ import type {
     AgPromise,
     AriaAnnouncementService,
     BeanCollection,
+    ElementParams,
     FieldPickerValueSelectedEvent,
     ICellRendererComp,
     IRichCellEditorRendererParams,
@@ -42,6 +43,31 @@ import type { AgRichSelectListEvent } from './agRichSelectList';
 import { AgRichSelectList } from './agRichSelectList';
 
 export type AgRichSelectEvent = AgRichSelectListEvent;
+
+const AgRichSelectElement: ElementParams = {
+    tag: 'div',
+    cls: 'ag-picker-field',
+    role: 'presentation',
+    children: [
+        { tag: 'div', ref: 'eLabel' },
+        {
+            tag: 'div',
+            ref: 'eWrapper',
+            cls: 'ag-wrapper ag-picker-field-wrapper ag-rich-select-value ag-picker-collapsed',
+            children: [
+                { tag: 'span', ref: 'eDisplayField', cls: 'ag-picker-field-display' },
+                { tag: 'ag-input-text-field', ref: 'eInput', cls: 'ag-rich-select-field-input' },
+                {
+                    tag: 'span',
+                    ref: 'eDeselect',
+                    cls: 'ag-rich-select-deselect-button ag-picker-field-icon',
+                    role: 'presentation',
+                },
+                { tag: 'span', ref: 'eIcon', cls: 'ag-picker-field-icon', attrs: { 'aria-hidden': 'true' } },
+            ],
+        },
+    ],
+};
 export class AgRichSelect<TValue = any> extends AgPickerField<
     TValue[] | TValue,
     RichSelectParams<TValue>,
@@ -83,18 +109,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
             className: 'ag-rich-select',
             pickerIcon: 'richSelectOpen',
             ariaRole: 'combobox',
-            template:
-                config?.template ??
-                /* html */ `
-            <div class="ag-picker-field" role="presentation">
-                <div data-ref="eLabel"></div>
-                <div data-ref="eWrapper" class="ag-wrapper ag-picker-field-wrapper ag-rich-select-value ag-picker-collapsed">
-                    <span data-ref="eDisplayField" class="ag-picker-field-display"></span>
-                    <ag-input-text-field data-ref="eInput" class="ag-rich-select-field-input"></ag-input-text-field>
-                    <span data-ref="eDeselect" class="ag-rich-select-deselect-button ag-picker-field-icon" role="presentation"></span>
-                    <span data-ref="eIcon" class="ag-picker-field-icon" aria-hidden="true"></span>
-                </div>
-            </div>`,
+            template: config?.template ?? AgRichSelectElement,
             agComponents: [AgInputTextFieldSelector],
             modalPicker: false,
             ...config,

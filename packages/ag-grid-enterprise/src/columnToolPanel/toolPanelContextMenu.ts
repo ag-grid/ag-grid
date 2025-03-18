@@ -30,7 +30,7 @@ export class ToolPanelContextMenu extends Component {
         private readonly mouseEvent: MouseEvent,
         private readonly parentEl: HTMLElement
     ) {
-        super(/* html */ `<div class="ag-menu"></div>`);
+        super({ tag: 'div', cls: 'ag-menu' });
     }
 
     public postConstruct(): void {
