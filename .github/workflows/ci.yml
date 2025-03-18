@@ -338,7 +338,7 @@ jobs:
         run: CHECK_LINKS=true CHECK_REDIRECTS=true yarn nx run ag-grid-docs:build -c staging
 
       - name: Deploy to Staging
-        if: ${{ github.ref == 'refs/heads/latest' }}
+#        if: ${{ github.ref == 'refs/heads/latest' }}
         env:
           SSH_PRIVATE_KEY: |
             ${{ secrets.STAGING_SSH_KEY }}
