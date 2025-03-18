@@ -327,7 +327,8 @@ jobs:
           chmod 400 ./staging.pem
           head -5 ./staging.pem
           ls -l ./staging.pem
-          ssh -i ./staging.pem  ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "ls -l"
+          ssh -i ./staging.pem ubuntu@52.50.158.57 "ls -l"
+#          ssh -i ./staging.pem ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "ls -l"
 
   #      - name: Persist test results
   #        if: always()
