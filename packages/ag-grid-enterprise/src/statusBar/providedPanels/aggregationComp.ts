@@ -74,6 +74,10 @@ export class AggregationComp extends Component implements IStatusPanelComp {
     }
 
     public init(params: AggregationStatusPanelParams) {
+        this.refresh(params);
+    }
+
+    public refresh(params: AggregationStatusPanelParams): boolean {
         this.params = params;
 
         const valueFormatter =
@@ -86,14 +90,10 @@ export class AggregationComp extends Component implements IStatusPanelComp {
 
             if (comp) {
                 comp.key = key;
-                comp.setValueFormatter(valueFormatter);
+                comp.valueFormatter = valueFormatter.bind(this);
             }
         }
-        this.refresh(params);
-    }
 
-    public refresh(params: AggregationStatusPanelParams): boolean {
-        this.params = params;
         this.onCellSelectionChanged();
         return true;
     }

@@ -4,7 +4,8 @@ import { Component, RefPlaceholder } from 'ag-grid-community';
 export class AgNameValue extends Component {
     private readonly eLabel: HTMLElement = RefPlaceholder;
     private readonly eValue: HTMLElement = RefPlaceholder;
-    private valueFormatter: (params: IStatusPanelValueFormatterParams) => string;
+    public valueFormatter: (params: IStatusPanelValueFormatterParams) => string;
+
     public key: string;
 
     constructor() {
@@ -24,10 +25,6 @@ export class AgNameValue extends Component {
 
     public setValue(value: number, totalRows: number): void {
         this.eValue.textContent = this.valueFormatter({ value, totalRows, key: this.key });
-    }
-
-    public setValueFormatter(fn: (params: IStatusPanelValueFormatterParams) => string): void {
-        this.valueFormatter = fn;
     }
 }
 export const AgNameValueSelector: ComponentSelector = {

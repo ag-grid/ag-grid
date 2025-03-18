@@ -3,6 +3,7 @@ import type {
     IProvidedStatusPanelParams,
     IStatusPanelComp,
     IStatusPanelParams,
+    IStatusPanelValueFormatterParams,
 } from 'ag-grid-community';
 import { _formatNumberCommas, _isClientSideRowModel, _warn } from 'ag-grid-community';
 
@@ -36,9 +37,15 @@ export class TotalAndFilteredRowsComp extends AgNameValue implements IStatusPane
     }
 
     public init(params: IStatusPanelParams & IProvidedStatusPanelParams) {
-        this.key = params.key;
-        const valueFormatter =
-            params.valueFormatter ??
+        const { key, valueFormatter } = params;
+        this.key = key;
+        this.updateValueFormatter(valueFormatter);
+        this.onDataChanged();
+    }
+
+    private updateValueFormatter(valueFormatter?: (params: IStatusPanelValueFormatterParams) => string): void {
+        this.valueFormatter =
+            valueFormatter ??
             (({ value, totalRows }) => {
                 const getLocaleTextFunc = this.getLocaleTextFunc.bind(this);
                 const rowCount = _formatNumberCommas(value, getLocaleTextFunc);
@@ -51,12 +58,10 @@ export class TotalAndFilteredRowsComp extends AgNameValue implements IStatusPane
                 const localeTextFunc = getLocaleTextFunc();
                 return `${rowCount} ${localeTextFunc('of', 'of')} ${totalRowCount}`;
             });
-
-        this.setValueFormatter(valueFormatter);
-        this.onDataChanged();
     }
 
-    public refresh(): boolean {
+    public refresh(params: IStatusPanelParams & IProvidedStatusPanelParams): boolean {
+        this.updateValueFormatter(params.valueFormatter);
         return true;
     }
 }

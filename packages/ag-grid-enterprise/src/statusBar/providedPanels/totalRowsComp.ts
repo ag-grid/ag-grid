@@ -1,4 +1,9 @@
-import type { IProvidedStatusPanelParams, IStatusPanelComp, IStatusPanelParams } from 'ag-grid-community';
+import type {
+    IProvidedStatusPanelParams,
+    IStatusPanelComp,
+    IStatusPanelParams,
+    IStatusPanelValueFormatterParams,
+} from 'ag-grid-community';
 import { _formatNumberCommas, _isClientSideRowModel, _warn } from 'ag-grid-community';
 
 import { AgNameValue } from './agNameValue';
@@ -27,15 +32,20 @@ export class TotalRowsComp extends AgNameValue implements IStatusPanelComp {
     }
 
     public init(params: IStatusPanelParams & IProvidedStatusPanelParams) {
-        this.key = params.key;
-        const valueFormatter =
-            params.valueFormatter ?? (({ value }) => _formatNumberCommas(value, this.getLocaleTextFunc.bind(this)));
+        const { key, valueFormatter } = params;
 
-        this.setValueFormatter(valueFormatter);
+        this.key = key;
+        this.updateValueFormatter(valueFormatter);
         this.onDataChanged();
     }
 
-    public refresh(): boolean {
+    private updateValueFormatter(valueFormatter?: (params: IStatusPanelValueFormatterParams) => string): void {
+        this.valueFormatter =
+            valueFormatter ?? (({ value }) => _formatNumberCommas(value, this.getLocaleTextFunc.bind(this)));
+    }
+
+    public refresh(params: IStatusPanelParams & IProvidedStatusPanelParams): boolean {
+        this.updateValueFormatter(params.valueFormatter);
         return true;
     }
 }
