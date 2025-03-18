@@ -1,7 +1,7 @@
 import type { IAfterGuiAttachedParams } from '../../interfaces/iAfterGuiAttachedParams';
 import type { IDoesFilterPassParams, IFilterOptionDef } from '../../interfaces/iFilter';
 import { _areEqual } from '../../utils/array';
-import { _removeFromParent, _setDisabled, _setDisplayed } from '../../utils/dom';
+import { _createElement, _removeFromParent, _setDisabled, _setDisplayed } from '../../utils/dom';
 import { AgPromise } from '../../utils/promise';
 import { _warn } from '../../validation/logging';
 import { AgAbstractInputField } from '../../widgets/agAbstractInputField';
@@ -381,9 +381,8 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputT
     }
 
     private createJoinOperatorPanel(): void {
-        const eJoinOperatorPanel = document.createElement('div');
+        const eJoinOperatorPanel = _createElement({ tag: 'div', cls: 'ag-filter-condition' });
         this.eJoinOperatorPanels.push(eJoinOperatorPanel);
-        eJoinOperatorPanel.classList.add('ag-filter-condition');
 
         const eJoinOperatorAnd = this.createJoinOperator(this.eJoinOperatorsAnd, eJoinOperatorPanel, 'and');
         const eJoinOperatorOr = this.createJoinOperator(this.eJoinOperatorsOr, eJoinOperatorPanel, 'or');

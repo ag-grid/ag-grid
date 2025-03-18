@@ -10,7 +10,7 @@ import {
     _unregisterGridUsingThemingAPI,
 } from './theming/inject';
 import { themeQuartz } from './theming/parts/theme/themes';
-import { _observeResize } from './utils/dom';
+import { _createElement, _observeResize } from './utils/dom';
 import { _error, _warn } from './validation/logging';
 
 const CELL_HORIZONTAL_PADDING: Variable = {
@@ -257,8 +257,7 @@ export class Environment extends BeanStub implements NamedBean {
     private getMeasurementContainer(): HTMLElement {
         let container = this.eMeasurementContainer;
         if (!container) {
-            container = this.eMeasurementContainer = document.createElement('div');
-            container.className = 'ag-measurement-container';
+            container = this.eMeasurementContainer = _createElement({ tag: 'div', cls: 'ag-measurement-container' });
             this.eGridDiv.appendChild(container);
         }
         return container;
@@ -271,7 +270,7 @@ export class Environment extends BeanStub implements NamedBean {
         }
         const container = this.getMeasurementContainer();
 
-        sizeEl = document.createElement('div');
+        sizeEl = _createElement({ tag: 'div' });
         const { border, noWarn } = variable;
         if (border) {
             sizeEl.className = 'ag-measurement-element-border';
@@ -355,7 +354,7 @@ export class Environment extends BeanStub implements NamedBean {
             });
             let eParamsStyle = this.eParamsStyle;
             if (!eParamsStyle) {
-                eParamsStyle = this.eParamsStyle = document.createElement('style');
+                eParamsStyle = this.eParamsStyle = _createElement<HTMLStyleElement>({ tag: 'style' });
                 const styleNonce = this.gos.get('styleNonce');
                 if (styleNonce) {
                     eParamsStyle.setAttribute('nonce', styleNonce);

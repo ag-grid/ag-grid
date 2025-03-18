@@ -10,6 +10,7 @@ import {
     KeyCode,
     RefPlaceholder,
     TabGuardComp,
+    _createElement,
     _getAriaPosInSet,
     _observeResize,
     _requestAnimationFrame,
@@ -455,13 +456,16 @@ export class VirtualList<
 
     private insertRow(rowIndex: number): void {
         const value = this.model.getRow(rowIndex);
-        const eDiv = document.createElement('div');
+        const role = this.ariaRole === 'tree' ? 'treeitem' : 'option';
+        const eDiv = _createElement<HTMLDivElement>({
+            tag: 'div',
+            cls: `ag-virtual-list-item ag-${this.cssIdentifier}-virtual-list-item`,
+            role,
+            attrs: { tabindex: '-1' },
+        });
 
-        eDiv.classList.add('ag-virtual-list-item', `ag-${this.cssIdentifier}-virtual-list-item`);
-        _setAriaRole(eDiv, this.ariaRole === 'tree' ? 'treeitem' : 'option');
         _setAriaSetSize(eDiv, this.model.getRowCount());
         _setAriaPosInSet(eDiv, rowIndex + 1);
-        eDiv.setAttribute('tabindex', '-1');
 
         eDiv.style.height = `${this.rowHeight}px`;
         eDiv.style.top = `${this.rowHeight * rowIndex}px`;

@@ -185,7 +185,7 @@ export function _createIcon(iconName: IconName, beans: BeanCollection, column: A
         }
     }
 
-    const eResult = document.createElement('span');
+    const eResult = _createElement({ tag: 'span' });
     eResult.appendChild(iconContents!);
 
     return eResult;

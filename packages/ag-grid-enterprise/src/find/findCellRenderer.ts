@@ -1,5 +1,5 @@
 import type { ElementParams, ICellRenderer, ICellRendererParams } from 'ag-grid-community';
-import { Component, _clearElement, _escapeString } from 'ag-grid-community';
+import { Component, _clearElement, _createElement, _escapeString } from 'ag-grid-community';
 
 const FindCellRendererElement: ElementParams = { tag: 'span', cls: 'ag-find-cell' };
 export class FindCellRenderer extends Component implements ICellRenderer {
@@ -27,9 +27,8 @@ export class FindCellRenderer extends Component implements ICellRenderer {
         for (const { value: partValue, match, activeMatch } of parts) {
             const content = _escapeString(partValue, true) ?? '';
             if (match) {
-                const element = document.createElement('mark');
+                const element = _createElement({ tag: 'mark', cls: 'ag-find-match' });
                 element.textContent = content;
-                element.classList.add('ag-find-match');
                 if (activeMatch) {
                     element.classList.add('ag-find-active-match');
                     hasActiveMatch = true;

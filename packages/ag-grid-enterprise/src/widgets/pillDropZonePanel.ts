@@ -13,6 +13,7 @@ import {
     PositionableFeature,
     _areEqual,
     _clearElement,
+    _createElement,
     _createIconNoSpan,
     _findFocusableElements,
     _findNextFocusableElement,
@@ -87,7 +88,7 @@ export abstract class PillDropZonePanel<TPill extends PillDragComp<TItem>, TItem
     constructor(protected readonly horizontal: boolean) {
         super(PillDropZonePanelElement);
         this.addElementClasses(this.getGui());
-        this.ePillDropList = document.createElement('div');
+        this.ePillDropList = _createElement({ tag: 'div' });
         this.addElementClasses(this.ePillDropList, 'list');
         this.registerCSS(pillDropZonePanelCSS);
     }
@@ -612,7 +613,7 @@ export abstract class PillDropZonePanel<TPill extends PillDragComp<TItem>, TItem
         if (!title || !eGroupIcon) {
             return;
         }
-        const eTitleBar = document.createElement('div');
+        const eTitleBar = _createElement({ tag: 'div' });
         _setAriaHidden(eTitleBar, true);
         this.addElementClasses(eTitleBar, 'title-bar');
         this.addElementClasses(eGroupIcon, 'icon');
@@ -621,7 +622,7 @@ export abstract class PillDropZonePanel<TPill extends PillDragComp<TItem>, TItem
         eTitleBar.appendChild(eGroupIcon);
 
         if (!this.horizontal) {
-            const eTitle = document.createElement('span');
+            const eTitle = _createElement({ tag: 'span' });
             this.addElementClasses(eTitle, 'title');
             eTitle.textContent = title;
 
@@ -641,7 +642,7 @@ export abstract class PillDropZonePanel<TPill extends PillDragComp<TItem>, TItem
             return;
         }
 
-        const eMessage = document.createElement('span');
+        const eMessage = _createElement({ tag: 'span' });
         eMessage.textContent = emptyMessage;
         this.addElementClasses(eMessage, 'empty-message');
         this.ePillDropList.appendChild(eMessage);

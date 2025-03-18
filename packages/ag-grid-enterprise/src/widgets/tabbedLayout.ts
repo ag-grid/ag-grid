@@ -4,6 +4,7 @@ import {
     RefPlaceholder,
     TabGuardComp,
     _clearElement,
+    _createElement,
     _createIconNoSpan,
     _findNextFocusableElement,
     _focusInto,
@@ -233,12 +234,13 @@ export class TabbedLayout extends TabGuardComp {
     }
 
     private addItem(item: TabbedItem): void {
-        const eHeaderButton = document.createElement('span');
-
-        _setAriaRole(eHeaderButton, 'tab');
-        eHeaderButton.setAttribute('tabindex', '-1');
+        const eHeaderButton = _createElement({
+            tag: 'span',
+            cls: 'ag-tab',
+            role: 'tab',
+            attrs: { tabindex: '-1' },
+        });
         eHeaderButton.appendChild(item.title);
-        eHeaderButton.classList.add('ag-tab');
 
         this.eTabHeader.appendChild(eHeaderButton);
         _setAriaLabel(eHeaderButton, item.titleLabel);

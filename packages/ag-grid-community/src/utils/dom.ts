@@ -516,7 +516,8 @@ type RoleType =
     | 'status'
     | 'tab'
     | 'tablist'
-    | 'tabpanel';
+    | 'tabpanel'
+    | 'treeitem';
 
 export type ElementParams = {
     /** The tag name to use for the element, either browser tag or one of the AG Grid components such as ag-checkbox
@@ -548,7 +549,7 @@ export type ElementParams = {
 /** AG Grid attribute used to automatically assign DOM Elements to class properties */
 export const DataRefAttribute = 'data-ref';
 
-export function _createElement(params: ElementParams): HTMLElement {
+export function _createElement<T extends HTMLElement = HTMLElement>(params: ElementParams): T {
     const { attrs, children, cls, ref, role, tag } = params;
     const element = document.createElement(tag);
 
@@ -575,5 +576,5 @@ export function _createElement(params: ElementParams): HTMLElement {
             }
         }
     }
-    return element;
+    return element as T;
 }

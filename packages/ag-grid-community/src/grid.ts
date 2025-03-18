@@ -22,6 +22,7 @@ import {
     _isModuleRegistered,
     _registerModule,
 } from './modules/moduleRegistry';
+import { _createElement } from './utils/dom';
 import { _missing } from './utils/generic';
 import { _mergeDeep } from './utils/object';
 import { _error, _logPreInitErr, baseDocLink } from './validation/logging';
@@ -143,7 +144,7 @@ export function createGrid<TData>(
         // the theme class on it. JS users calling createGrid directly are
         // passing an element owned by their application, so we can't set a
         // class name on it and must create a wrapper.
-        const newGridDiv = document.createElement('div');
+        const newGridDiv = _createElement({ tag: 'div' });
         newGridDiv.style.height = '100%';
         eGridDiv.appendChild(newGridDiv);
         eGridDiv = newGridDiv;

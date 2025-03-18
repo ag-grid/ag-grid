@@ -15,6 +15,7 @@ import {
     KeyCode,
     RefPlaceholder,
     TabGuardComp,
+    _createElement,
     _createIconNoSpan,
     _removeAriaExpanded,
     _setAriaDisabled,
@@ -133,9 +134,10 @@ export class AdvancedFilterBuilderItemComp extends TabGuardComp<AdvancedFilterBu
         this.eDragHandle.insertAdjacentElement('afterend', this.ePillWrapper.getGui());
 
         if (level === 0) {
-            const eTreeLine = document.createElement('div');
-            eTreeLine.classList.add('ag-advanced-filter-builder-item-tree-line-vertical-bottom');
-            eTreeLine.classList.add('ag-advanced-filter-builder-item-tree-line-root');
+            const eTreeLine = _createElement({
+                tag: 'div',
+                cls: 'ag-advanced-filter-builder-item-tree-line-vertical-bottom ag-advanced-filter-builder-item-tree-line-root',
+            });
             this.eTreeLines.appendChild(eTreeLine);
 
             _setDisplayed(this.eDragHandle, false);
@@ -209,8 +211,7 @@ export class AdvancedFilterBuilderItemComp extends TabGuardComp<AdvancedFilterBu
 
     private setupTreeLines(level: number): void {
         for (let i = 0; i < level; i++) {
-            const eTreeLine = document.createElement('div');
-            this.eTreeLines.appendChild(eTreeLine);
+            this.eTreeLines.appendChild(_createElement({ tag: 'div' }));
         }
     }
 

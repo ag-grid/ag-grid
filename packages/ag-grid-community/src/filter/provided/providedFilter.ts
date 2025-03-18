@@ -4,7 +4,7 @@ import type { IDoesFilterPassParams, IFilterComp } from '../../interfaces/iFilte
 import type { PopupEventParams } from '../../interfaces/iPopup';
 import type { IRowNode } from '../../interfaces/iRowNode';
 import { PositionableFeature } from '../../rendering/features/positionableFeature';
-import { _clearElement, _loadTemplate, _removeFromParent, _setDisabled } from '../../utils/dom';
+import { _clearElement, _createElement, _loadTemplate, _removeFromParent, _setDisabled } from '../../utils/dom';
 import { _debounce } from '../../utils/function';
 import { _jsonEquals } from '../../utils/generic';
 import type { AgPromise } from '../../utils/promise';
@@ -159,8 +159,7 @@ export abstract class ProvidedFilter<M, V> extends Component implements IProvide
         if (!this.eButtonsPanel) {
             // Only create the buttons panel if we need to
             if (hasButtons) {
-                this.eButtonsPanel = document.createElement('div');
-                this.eButtonsPanel.classList.add('ag-filter-apply-panel');
+                this.eButtonsPanel = _createElement({ tag: 'div', cls: 'ag-filter-apply-panel' });
             }
         } else {
             // Always empty the buttons panel before adding new buttons

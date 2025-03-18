@@ -1,4 +1,4 @@
-import { _setAriaRole } from '../../../utils/aria';
+import { _createElement } from '../../../utils/dom';
 import { _makeNull } from '../../../utils/generic';
 import { AgInputNumberField } from '../../../widgets/agInputNumberField';
 import { AgInputTextField } from '../../../widgets/agInputTextField';
@@ -82,9 +82,7 @@ export class NumberFilter extends ScalarFilter<NumberFilterModel, number> {
     protected createValueElement(): HTMLElement {
         const allowedCharPattern = getAllowedCharPattern(this.numberFilterParams);
 
-        const eCondition = document.createElement('div');
-        eCondition.classList.add('ag-filter-body');
-        _setAriaRole(eCondition, 'presentation');
+        const eCondition = _createElement({ tag: 'div', cls: 'ag-filter-body', role: 'presentation' });
 
         this.createFromToElement(eCondition, this.eValuesFrom, 'from', allowedCharPattern);
         this.createFromToElement(eCondition, this.eValuesTo, 'to', allowedCharPattern);
