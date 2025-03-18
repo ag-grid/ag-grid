@@ -6,6 +6,7 @@ import type { FocusableContainer } from '../interfaces/iFocusableContainer';
 import type { IRowModel } from '../interfaces/iRowModel';
 import type { AriaAnnouncementService } from '../rendering/ariaAnnouncementService';
 import { _setAriaDisabled } from '../utils/aria';
+import type { ElementParams } from '../utils/dom';
 import { _addFocusableContainerListener, _focusGridInnerElement } from '../utils/focus';
 import { _createIconNoSpan } from '../utils/icon';
 import { _formatNumberCommas } from '../utils/number';
@@ -161,40 +162,114 @@ export class PaginationComp extends TabGuardComp implements FocusableContainer {
         return _formatNumberCommas(value, this.getLocaleTextFunc.bind(this));
     }
 
-    private getTemplate(): string {
+    private getTemplate(): ElementParams {
         const localeTextFunc = this.getLocaleTextFunc();
+        const idPrefix = `ag-${this.getCompId()}`;
 
-        const strPage = localeTextFunc('page', 'Page');
-        const strTo = localeTextFunc('to', 'to');
-        const strOf = localeTextFunc('of', 'of');
-        const strFirst = localeTextFunc('firstPage', 'First Page');
-        const strPrevious = localeTextFunc('previousPage', 'Previous Page');
-        const strNext = localeTextFunc('nextPage', 'Next Page');
-        const strLast = localeTextFunc('lastPage', 'Last Page');
-        const compId = this.getCompId();
-
-        return /* html */ `<div class="ag-paging-panel ag-unselectable" id="ag-${compId}">
-                <ag-page-size-selector data-ref="pageSizeComp"></ag-page-size-selector>
-                <span class="ag-paging-row-summary-panel">
-                    <span id="ag-${compId}-first-row" data-ref="lbFirstRowOnPage" class="ag-paging-row-summary-panel-number"></span>
-                    <span id="ag-${compId}-to">${strTo}</span>
-                    <span id="ag-${compId}-last-row" data-ref="lbLastRowOnPage" class="ag-paging-row-summary-panel-number"></span>
-                    <span id="ag-${compId}-of">${strOf}</span>
-                    <span id="ag-${compId}-row-count" data-ref="lbRecordCount" class="ag-paging-row-summary-panel-number"></span>
-                </span>
-                <span class="ag-paging-page-summary-panel" role="presentation">
-                    <div data-ref="btFirst" class="ag-button ag-paging-button" role="button" aria-label="${strFirst}"></div>
-                    <div data-ref="btPrevious" class="ag-button ag-paging-button" role="button" aria-label="${strPrevious}"></div>
-                    <span class="ag-paging-description">
-                        <span id="ag-${compId}-start-page">${strPage}</span>
-                        <span id="ag-${compId}-start-page-number" data-ref="lbCurrent" class="ag-paging-number"></span>
-                        <span id="ag-${compId}-of-page">${strOf}</span>
-                        <span id="ag-${compId}-of-page-number" data-ref="lbTotal" class="ag-paging-number"></span>
-                    </span>
-                    <div data-ref="btNext" class="ag-button ag-paging-button" role="button" aria-label="${strNext}"></div>
-                    <div data-ref="btLast" class="ag-button ag-paging-button" role="button" aria-label="${strLast}"></div>
-                </span>
-            </div>`;
+        return {
+            tag: 'div',
+            cls: 'ag-paging-panel ag-unselectable',
+            attrs: { id: `${idPrefix}` },
+            children: [
+                {
+                    tag: 'ag-page-size-selector',
+                    ref: 'pageSizeComp',
+                },
+                {
+                    tag: 'span',
+                    cls: 'ag-paging-row-summary-panel',
+                    children: [
+                        {
+                            tag: 'span',
+                            ref: 'lbFirstRowOnPage',
+                            cls: 'ag-paging-row-summary-panel-number',
+                            attrs: { id: `${idPrefix}-first-row` },
+                        },
+                        { tag: 'span', attrs: { id: `${idPrefix}-to` }, children: localeTextFunc('to', 'to') },
+                        {
+                            tag: 'span',
+                            ref: 'lbLastRowOnPage',
+                            cls: 'ag-paging-row-summary-panel-number',
+                            attrs: { id: `${idPrefix}-last-row` },
+                        },
+                        { tag: 'span', attrs: { id: `${idPrefix}-of` }, children: localeTextFunc('of', 'of') },
+                        {
+                            tag: 'span',
+                            ref: 'lbRecordCount',
+                            cls: 'ag-paging-row-summary-panel-number',
+                            attrs: { id: `${idPrefix}-row-count` },
+                        },
+                    ],
+                },
+                {
+                    tag: 'span',
+                    cls: 'ag-paging-page-summary-panel',
+                    role: 'presentation',
+                    children: [
+                        {
+                            tag: 'div',
+                            ref: 'btFirst',
+                            cls: 'ag-button ag-paging-button',
+                            role: 'button',
+                            attrs: { 'aria-label': localeTextFunc('firstPage', 'First Page') },
+                        },
+                        {
+                            tag: 'div',
+                            ref: 'btPrevious',
+                            cls: 'ag-button ag-paging-button',
+                            role: 'button',
+                            attrs: { 'aria-label': localeTextFunc('previousPage', 'Previous Page') },
+                        },
+                        {
+                            tag: 'span',
+                            cls: 'ag-paging-description',
+                            children: [
+                                {
+                                    tag: 'span',
+                                    attrs: {
+                                        id: `${idPrefix}-start-page`,
+                                    },
+                                    children: localeTextFunc('page', 'Page'),
+                                },
+                                {
+                                    tag: 'span',
+                                    ref: 'lbCurrent',
+                                    cls: 'ag-paging-number',
+                                    attrs: { id: `${idPrefix}-start-page-number` },
+                                },
+                                {
+                                    tag: 'span',
+                                    attrs: {
+                                        id: `${idPrefix}-of-page`,
+                                    },
+                                    children: localeTextFunc('of', 'of'),
+                                },
+                                {
+                                    tag: 'span',
+                                    ref: 'lbTotal',
+                                    cls: 'ag-paging-number',
+                                    attrs: { id: `${idPrefix}-of-page-number` },
+                                },
+                            ],
+                        },
+                        {
+                            tag: 'div',
+                            ref: 'btNext',
+                            cls: 'ag-button ag-paging-button',
+                            role: 'button',
+                            attrs: { 'aria-label': localeTextFunc('nextPage', 'Next Page') },
+                        },
+                        {
+                            tag: 'div',
+                            ref: 'btLast',
+                            cls: 'ag-button ag-paging-button',
+                            role: 'button',
+                            attrs: { 'aria-label': localeTextFunc('lastPage', 'Last Page') },
+                        },
+                    ],
+                },
+            ],
+        };
     }
 
     private onBtNext() {

@@ -543,7 +543,12 @@ export type ElementParams = {
     /** Key Value pair of attributes to add to the dom element via `element.setAttribute(key,value)` */
     attrs?: Attributes;
 
-    children?: (ElementParams | null | undefined)[]; // nulls are allowed to allow for optional children
+    /**
+     * Child elements to add to the element. Can be a string for text nodes or an array of ElementParams for nested elements.
+     * Nulls are allowed to allow for optional children.
+     * If a string is passed it will be set via `element.textContent = string` to be safe.
+     */
+    children?: (ElementParams | null | undefined)[] | string;
 };
 
 /** AG Grid attribute used to automatically assign DOM Elements to class properties */
@@ -570,9 +575,13 @@ export function _createElement<T extends HTMLElement = HTMLElement>(params: Elem
     }
 
     if (children) {
-        for (const child of children) {
-            if (child) {
-                element.appendChild(_createElement(child));
+        if (typeof children === 'string') {
+            element.textContent = children;
+        } else {
+            for (const child of children) {
+                if (child) {
+                    element.appendChild(_createElement(child));
+                }
             }
         }
     }
