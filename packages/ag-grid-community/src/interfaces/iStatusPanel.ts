@@ -8,7 +8,7 @@ export interface StatusPanelDef {
     statusPanelParams?: any;
 }
 
-export interface IStatusPanelValueFormatterParams {
+export interface IStatusPanelValueFormatterParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
     value: number;
     totalRows: number;
     key: string;

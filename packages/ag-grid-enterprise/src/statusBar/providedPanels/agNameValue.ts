@@ -1,5 +1,5 @@
 import type { ComponentSelector, IStatusPanelValueFormatterParams } from 'ag-grid-community';
-import { Component, RefPlaceholder } from 'ag-grid-community';
+import { Component, RefPlaceholder, _addGridCommonParams } from 'ag-grid-community';
 
 export class AgNameValue extends Component {
     private readonly eLabel: HTMLElement = RefPlaceholder;
@@ -24,7 +24,9 @@ export class AgNameValue extends Component {
     }
 
     public setValue(value: number, totalRows: number): void {
-        this.eValue.textContent = this.valueFormatter({ value, totalRows, key: this.key });
+        this.eValue.textContent = this.valueFormatter(
+            _addGridCommonParams(this.gos, { value, totalRows, key: this.key })
+        );
     }
 }
 export const AgNameValueSelector: ComponentSelector = {
