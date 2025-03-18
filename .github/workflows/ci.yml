@@ -318,15 +318,16 @@ jobs:
       #        run: CHECK_LINKS=true CHECK_REDIRECTS=true yarn nx run ag-grid-docs:build -c staging
       - name: Deploy to Staging
         env:
-          SSH_PRIVATE_KEY: ${{ secrets.STAGING_SSH_KEY }}
+          SSH_PRIVATE_KEY: |
+            ${{ secrets.STAGING_SSH_KEY }}
           SSH_HOST: ${{ secrets.STAGING_HOST }}
           SSH_USER: ubuntu
         run: |
           echo "$STAGING_SSH_KEY" > staging.pem
           chmod 400 ./staging.pem
-          head ./staging.pem
-          ls ./staging.pem
-          ssh -i ./staging.pem  ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "ls -l"
+          head -1 ./staging.pem
+          ls -l ./staging.pem
+#          ssh -i ./staging.pem  ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "ls -l"
 
   #      - name: Persist test results
   #        if: always()
