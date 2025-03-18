@@ -291,31 +291,32 @@ jobs:
     env:
       NX_BASE: ${{ needs.build_lint.outputs.nx_base }}
     steps:
-#      - name: Checkout
-#        id: checkout
-#        uses: actions/checkout@v4
-#        with:
-#          fetch-depth: 1 # shallow copy
-#
-#      - name: Fetch Refs
-#        run: |
-#          git fetch origin --depth 1 latest
-#          git fetch origin --depth 1 tag latest-success
-#
-#      - name: Setup
-#        id: setup
-#        uses: ./.github/actions/setup-nx
-#        with:
-#          cache_mode: ro
+      - name: Checkout
+        id: checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1 # shallow copy
 
-      #      - name: update base url
-      #        run: node scripts/deployments/prep_and_archive/updateBaseUrl.js staging
-      #      - name: validate base url
-      #        run: node scripts/deployments/sanityCheckBaseUrl.js staging
-      #      - name: validate grid modules
-      #        run: node scripts/deployments/validateGridModulesList.js
-      #      - name: docs build and link checker
-      #        run: CHECK_LINKS=true CHECK_REDIRECTS=true yarn nx run ag-grid-docs:build -c staging
+      - name: Fetch Refs
+        run: |
+          git fetch origin --depth 1 latest
+          git fetch origin --depth 1 tag latest-success
+
+      - name: Setup
+        id: setup
+        uses: ./.github/actions/setup-nx
+        with:
+          cache_mode: ro
+
+      - name: update base url
+        run: node scripts/deployments/prep_and_archive/updateBaseUrl.js staging
+      - name: validate base url
+        run: node scripts/deployments/sanityCheckBaseUrl.js staging
+      - name: validate grid modules
+        run: node scripts/deployments/validateGridModulesList.js
+      - name: docs build and link checker
+        run: CHECK_LINKS=true CHECK_REDIRECTS=true yarn nx run ag-grid-docs:build -c staging
+
       - name: Deploy to Staging
         env:
           SSH_PRIVATE_KEY: |
@@ -326,7 +327,8 @@ jobs:
         run: |
           echo "$SSH_PRIVATE_KEY" > $SSH_KEY_LOCATION
           chmod 400 $SSH_KEY_LOCATION
-          ssh -i $SSH_KEY_LOCATION -o StrictHostKeyChecking=no $SSH_USER@$SSH_HOST "ls -l"
+#          ssh -i $SSH_KEY_LOCATION -o StrictHostKeyChecking=no $SSH_USER@$SSH_HOST "ls -l"
+          ./scripts/deployments/createAndDeployDocsToTCGH.sh
 
   #      - name: Persist test results
   #        if: always()
