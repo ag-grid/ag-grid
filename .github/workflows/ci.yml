@@ -85,7 +85,7 @@ jobs:
           echo "Test String" > test.txt
           chmod 400 $SSH_KEY_LOCATION
           echo "rootDir: $WWW_ROOT_DIR"
-          scp -i $SSH_KEY_LOCATION test.txt $SSH_USER@$SSH_HOST:$WWW_ROOT_DIR
+          scp -i $SSH_KEY_LOCATION test.txt $SSH_USER@$SSH_HOST:/var/www/
 #          ./scripts/deployments/createAndDeployDocsToTCGH.sh
 
 #      - name: Checkout
