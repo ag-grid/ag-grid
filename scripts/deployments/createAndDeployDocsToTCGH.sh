@@ -21,16 +21,7 @@ zip -qr ../../../$FILENAME *
 cd ../../../
 
 scp -i $SSH_KEY_LOCATION -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null $FILENAME $SSH_USER@$SSH_HOST:$WWW_ROOT_DIR
-#echo "Backing up branch builds"
-#ssh -i ./staging.pem $SSH_HOST "chmod +x $WWW_ROOT_DIR/switchReleaseRemote.sh"
-#cp -R /var/www/html/branch-builds /var/www/
-#
-#echo "Cleaning current grid staging"
-#rm -rf /var/www/html/*
-#mv $FILENAME /var/www/html/
-#
-#echo "Unzipping new grid staging"
-#unzip -q /var/www/html/$FILENAME -d /var/www/html/
-#
-#echo "Restoring branch builds"
-#cp -R /var/www/branch-builds /var/www/html/
+
+sed "s#\@WWW_ROOT_DIR\@#$WWW_ROOT_DIR#g" ./scripts/deployments/updateGridStagingRemote.sh |  sed "s#\@FILENAME\@#$FILENAME#g" > /tmp/updateGridStagingRemote.sh
+
+scp -i $SSH_KEY_LOCATION -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null /tmp/updateGridStagingRemote.sh $SSH_USER@$SSH_HOST:$WWW_ROOT_DIR
