@@ -1,6 +1,7 @@
 import type { IAfterGuiAttachedParams } from '../../interfaces/iAfterGuiAttachedParams';
 import type { IDoesFilterPassParams, IFilterOptionDef } from '../../interfaces/iFilter';
 import { _areEqual } from '../../utils/array';
+import type { ElementParams } from '../../utils/dom';
 import { _createElement, _removeFromParent, _setDisabled, _setDisplayed } from '../../utils/dom';
 import { AgPromise } from '../../utils/promise';
 import { _warn } from '../../validation/logging';
@@ -446,9 +447,9 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputT
         };
     }
 
-    protected createBodyTemplate(): string {
+    protected createBodyTemplate(): ElementParams | null {
         // created dynamically
-        return '';
+        return null;
     }
     protected getAgComponents(): ComponentSelector[] {
         // created dynamically

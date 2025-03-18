@@ -4,6 +4,7 @@ import type { IDoesFilterPassParams, IFilterComp } from '../../interfaces/iFilte
 import type { PopupEventParams } from '../../interfaces/iPopup';
 import type { IRowNode } from '../../interfaces/iRowNode';
 import { PositionableFeature } from '../../rendering/features/positionableFeature';
+import type { ElementParams } from '../../utils/dom';
 import { _clearElement, _createElement, _loadTemplate, _removeFromParent, _setDisabled } from '../../utils/dom';
 import { _debounce } from '../../utils/function';
 import { _jsonEquals } from '../../utils/generic';
@@ -57,7 +58,7 @@ export abstract class ProvidedFilter<M, V> extends Component implements IProvide
 
     protected abstract updateUiVisibility(): void;
 
-    protected abstract createBodyTemplate(): string;
+    protected abstract createBodyTemplate(): ElementParams | null;
     protected abstract getAgComponents(): ComponentSelector[];
     protected abstract getCssIdentifier(): string;
     protected abstract resetUiToDefaults(silent?: boolean): AgPromise<void>;
@@ -101,17 +102,22 @@ export abstract class ProvidedFilter<M, V> extends Component implements IProvide
     protected resetTemplate(paramsMap?: any) {
         let eGui = this.getGui();
 
-        if (eGui) {
-            eGui.removeEventListener('submit', this.onFormSubmit);
-        }
-        const templateString = /* html */ `
-            <form class="ag-filter-wrapper">
-                <div class="ag-filter-body-wrapper ag-${this.getCssIdentifier()}-body-wrapper" data-ref="eFilterBody">
-                    ${this.createBodyTemplate()}
-                </div>
-            </form>`;
+        eGui?.removeEventListener('submit', this.onFormSubmit);
 
-        this.setTemplate(templateString, this.getAgComponents(), paramsMap);
+        const element: ElementParams = {
+            tag: 'form',
+            cls: 'ag-filter-wrapper',
+            children: [
+                {
+                    tag: 'div',
+                    ref: 'eFilterBody',
+                    cls: `ag-filter-body-wrapper ag-${this.getCssIdentifier()}-body-wrapper`,
+                    children: [this.createBodyTemplate()],
+                },
+            ],
+        };
+
+        this.setTemplate(element, this.getAgComponents(), paramsMap);
 
         eGui = this.getGui();
         eGui?.addEventListener('submit', this.onFormSubmit);
