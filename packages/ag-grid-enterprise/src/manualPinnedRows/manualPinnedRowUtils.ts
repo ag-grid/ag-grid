@@ -63,6 +63,8 @@ export class PinnedRows {
     public sort(): void {
         const { sortSvc, rowNodeSorter } = this.beans;
         const sortOptions = sortSvc?.getSortOptions() ?? [];
+        // pre-sort by existing row-index otherwise we'll fall back to order in which rows are pinned
+        this.order.sort((a, b) => (a.pinnedSibling?.rowIndex ?? 0) - (b.pinnedSibling?.rowIndex ?? 0));
         this.order = rowNodeSorter?.doFullSort(this.order, sortOptions) ?? this.order;
     }
 
