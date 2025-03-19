@@ -1,5 +1,6 @@
 import fs from 'fs';
 import { json2xml } from 'xml-js';
+import { dirname } from 'path';
 
 export class TestCase {
     classname: string;
@@ -110,6 +111,7 @@ export class TestSuites {
             spaces: 4,
             fullTagEmptyElement: true,
         });
+        fs.mkdirSync(dirname(outputPath), { recursive: true });
         fs.writeFileSync(outputPath, result, 'utf8');
     }
 
