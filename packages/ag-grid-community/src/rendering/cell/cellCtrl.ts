@@ -12,6 +12,7 @@ import type { GridOptionsService } from '../../gridOptionsService';
 import {
     _addGridCommonParams,
     _getActiveDomElement,
+    _getCheckboxLocation,
     _getCheckboxes,
     _isCellSelectionEnabled,
     _setDomData,
@@ -324,6 +325,7 @@ export class CellCtrl extends BeanStub {
         return (
             colDef.checkboxSelection ||
             (isColumnSelectionCol(this.column) &&
+                _getCheckboxLocation(rowSelection) == 'selectionColumn' &&
                 rowSelection &&
                 typeof rowSelection !== 'string' &&
                 _getCheckboxes(rowSelection))
