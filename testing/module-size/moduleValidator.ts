@@ -22,7 +22,7 @@ function validateSizes() {
 
     results.forEach((result) => {
         const testCaseName = result.modules.length === 0 ? 'default' : result.modules.join(', ');
-        const testCase = new TestCase(testCaseName, testCaseName, 1.0);
+        const testCase = new TestCase(testCaseName, testCaseName, 0.0);
 
         // validate that all results their selfSize is less than the expectedSize + 2%
 

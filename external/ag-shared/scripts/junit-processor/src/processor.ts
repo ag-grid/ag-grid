@@ -81,6 +81,7 @@ export class TestSuites {
                 _attributes: {
                     name: this.name,
                     tests: this.testSuites.reduce((acc, testSuite) => acc + testSuite.testCases.length, 0),
+                    time: this.testSuites.reduce((acc, testSuite) => acc + testSuite.testCases.reduce((acc, testCase) => acc + testCase.time, 0), 0),
                     failures: this.testSuites.reduce(
                         (acc, testSuite) => acc + testSuite.testCases.filter((testCase) => testCase.failure).length,
                         0
@@ -91,11 +92,13 @@ export class TestSuites {
                         name: testSuite.name,
                         failures: testSuite.testCases.filter((testCase) => testCase.failure).length,
                         tests: testSuite.testCases.length,
+                        time: testSuite.testCases.reduce((acc, testCase) => acc + testCase.time, 0),
                     },
                     testcase: testSuite.testCases.map((testCase) => ({
                         _attributes: {
                             classname: testCase.classname,
                             name: testCase.name,
+                            time: testCase.time
                         },
                         [testCase.failure ? 'failure' : '']: testCase.failure,
                     })),

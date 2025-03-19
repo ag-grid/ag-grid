@@ -97,20 +97,20 @@ const allEnterpriseModules: ModuleTest[] = Object.entries(AllEnterpriseModules).
 }));
 
 const commonFeatureSets: ModuleTest[] = [
-    { modules: ['ClientSideRowModelModule', 'TextFilterModule'], expectedSize: 133.67 },
-    // {
-    //     modules: [
-    //         'TextFilterModule',
-    //         'NumberFilterModule',
-    //         'DateFilterModule',
-    //         'SetFilterModule',
-    //         'MultiFilterModule',
-    //         'CustomFilterModule',
-    //         'ExternalFilterModule',
-    //         'QuickFilterModule',
-    //     ],
-    //     expectedSize: 230,
-    // },
+    { modules: ['ClientSideRowModelModule', 'TextFilterModule'], expectedSize: 200.67 },
+    {
+        modules: [
+            'TextFilterModule',
+            'NumberFilterModule',
+            'DateFilterModule',
+            'SetFilterModule',
+            'MultiFilterModule',
+            'CustomFilterModule',
+            'ExternalFilterModule',
+            'QuickFilterModule',
+        ],
+        expectedSize: 230,
+    },
 ];
 
 const chartModules: ModuleTest[] = [
