@@ -335,7 +335,7 @@ export function _getGroupAggFiltering(
     return undefined;
 }
 
-export function _getGrandTotalRow(gos: GridOptionsService): 'top' | 'bottom' | undefined {
+export function _getGrandTotalRow(gos: GridOptionsService): GridOptions['grandTotalRow'] {
     return gos.get('grandTotalRow');
 }
 

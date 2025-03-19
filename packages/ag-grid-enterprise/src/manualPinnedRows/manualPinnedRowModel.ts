@@ -2,6 +2,8 @@ import type {
     AgColumn,
     BeanCollection,
     CssVariablesChanged,
+    GridOptions,
+    IClientSideRowModel,
     IPinnedRowModel,
     RowNode,
     RowPinnedType,
@@ -10,7 +12,9 @@ import {
     BeanStub,
     _ROW_ID_PREFIX_BOTTOM_PINNED,
     _ROW_ID_PREFIX_TOP_PINNED,
+    _getGrandTotalRow,
     _getRowHeightForNode,
+    _isClientSideRowModel,
 } from 'ag-grid-community';
 
 import { _createRowNodeSibling } from '../misc/rowNodeSiblingUtils';
@@ -21,10 +25,24 @@ export class ManualPinnedRowModel extends BeanStub implements IPinnedRowModel {
     private bottom: PinnedRows;
 
     public postConstruct(): void {
-        this.top = new PinnedRows(this.beans);
-        this.bottom = new PinnedRows(this.beans);
+        const { gos, beans } = this;
+        this.top = new PinnedRows(beans);
+        this.bottom = new PinnedRows(beans);
 
-        const shouldHide = (node: RowNode) => _shouldHidePinnedRows(this.beans, node.pinnedSibling!);
+        const pinGrandTotalRow = (grandTotalRow: GridOptions['grandTotalRow']) => {
+            const rowModel = beans.rowModel;
+            if (!_isClientSideRowModel(gos, rowModel)) return;
+
+            const sibling = rowModel.rootNode!.sibling;
+
+            if (grandTotalRow === 'pinnedBottom') {
+                this.pinRow(sibling, 'bottom');
+            } else if (grandTotalRow === 'pinnedTop') {
+                this.pinRow(sibling, 'top');
+            }
+        };
+
+        const shouldHide = (node: RowNode) => _shouldHidePinnedRows(beans, node.pinnedSibling!);
 
         this.addManagedEventListeners({
             gridStylesChanged: this.onGridStylesChanges.bind(this),
@@ -41,19 +59,22 @@ export class ManualPinnedRowModel extends BeanStub implements IPinnedRowModel {
                 this.refreshRowPositions();
             },
             rowNodeDataChanged: ({ node }) => {
-                const isRowPinnable = this.gos.get('isRowPinnable');
+                const isRowPinnable = gos.get('isRowPinnable');
                 const pinnable = isRowPinnable?.(node) ?? true;
 
                 if (!pinnable) {
                     this.pinRow(node, null);
                 }
             },
+            firstDataRendered: () => pinGrandTotalRow(_getGrandTotalRow(gos)),
         });
 
         this.addManagedPropertyListener('pivotMode', () => {
             this.forContainers((container) => container.hide(shouldHide));
             this.dispatchRowPinnedEvents();
         });
+
+        this.addManagedPropertyListener('grandTotalRow', (e) => pinGrandTotalRow(e.currentValue));
     }
 
     public override destroy(): void {
@@ -72,6 +93,9 @@ export class ManualPinnedRowModel extends BeanStub implements IPinnedRowModel {
     }
 
     public pinRow(rowNode: RowNode, container: RowPinnedType, column?: AgColumn | null): void {
+        // Forbid pinning group footers
+        if (rowNode.footer && rowNode.level > -1) return;
+
         // May have been called on either the pinned row or the source row, check both
         const currentContainer = rowNode.rowPinned ?? rowNode.pinnedSibling?.rowPinned;
 
@@ -114,6 +138,10 @@ export class ManualPinnedRowModel extends BeanStub implements IPinnedRowModel {
             this.refreshRowPositions(container);
 
             this.dispatchRowPinnedEvents(rowNode);
+        }
+
+        if (rowNode.footer && rowNode.level === -1) {
+            (this.beans.rowModel as IClientSideRowModel).refreshModel({ step: 'map' });
         }
     }
 

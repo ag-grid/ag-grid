@@ -9,6 +9,7 @@ import type {
 import { BeanStub } from 'ag-grid-community';
 
 import { _createRowNodeFooter, _destroyRowNodeFooter } from '../aggregation/footerUtils';
+import { _isSourceRowPinned } from '../manualPinnedRows/manualPinnedRowUtils';
 import type { FlattenDetails } from './flattenUtils';
 import {
     _getFlattenDetails,
@@ -42,22 +43,29 @@ export class FlattenStage extends BeanStub implements IRowNodeStage<RowNode[]>, 
         const topList = showRootNode ? [rootNode] : rootNode.childrenAfterSort;
 
         const details = _getFlattenDetails(this.gos);
+        const grandTotalRow = details.grandTotalRow;
 
         this.recursivelyAddToRowsToDisplay(details, topList, result, skipLeafNodes, 0);
 
-        // we do not want the footer total if the gris is empty
+        // we do not want the footer total if the grid is empty
         const atLeastOneRowPresent = result.length > 0;
 
         const includeGrandTotalRow =
             !showRootNode &&
             // don't show total footer when showRootNode is true (i.e. in pivot mode and no groups)
             atLeastOneRowPresent &&
-            details.grandTotalRow;
+            grandTotalRow;
 
         if (includeGrandTotalRow) {
             _createRowNodeFooter(rootNode, this.beans);
-            const addToTop = details.grandTotalRow === 'top';
-            this.addRowNodeToRowsToDisplay(details, rootNode.sibling, result, 0, addToTop);
+            const addToTop = grandTotalRow === 'top';
+            if (
+                grandTotalRow !== 'pinnedBottom' &&
+                grandTotalRow !== 'pinnedTop' &&
+                !_isSourceRowPinned(this.beans, rootNode.sibling)
+            ) {
+                this.addRowNodeToRowsToDisplay(details, rootNode.sibling, result, 0, addToTop);
+            }
         }
 
         return result;

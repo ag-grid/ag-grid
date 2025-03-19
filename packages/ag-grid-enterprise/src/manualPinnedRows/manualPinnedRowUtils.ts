@@ -22,6 +22,7 @@ export class PinnedRows {
 
     public add(item: RowNode): void {
         const { all, visible, order } = this;
+        if (all.has(item)) return;
         all.add(item);
         visible.add(item);
         order.push(item);
@@ -124,4 +125,19 @@ export function _shouldHidePinnedRows(beans: BeanCollection, node: RowNode): boo
     }
 
     return false;
+}
+
+export function _isSourceRowPinned(beans: BeanCollection, _node: RowNode): boolean {
+    const { pinnedRowModel } = beans;
+
+    const node = _node.rowPinned ? _node : _node.pinnedSibling;
+
+    if (!pinnedRowModel?.isManual() || !node || !node.rowPinned) return false;
+
+    let result = false;
+    const isPinned = (rowNode: RowNode) => (result ||= rowNode === node);
+    pinnedRowModel?.forEachPinnedRow('top', isPinned);
+    pinnedRowModel?.forEachPinnedRow('bottom', isPinned);
+
+    return result;
 }
