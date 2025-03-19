@@ -67,6 +67,8 @@ export interface AddPopupResult {
     hideFunc: (params?: PopupEventParams) => void;
 }
 
+const WAIT_FOR_POPUP_CONTENT_RESIZE: number = 200;
+
 interface Position {
     initialDiff: number;
     lastDiff: number;
@@ -395,7 +397,7 @@ export class PopupService extends BeanStub implements NamedBean {
             // reposition the popup after initial updates to the size of the contents
             const resizeObserverDestroyFunc = _observeResize(this.beans, ePopup, () => updatePopupPosition(true));
             // Only need to reposition when first open, so can clean up after a bit of time
-            requestAnimationFrame(resizeObserverDestroyFunc);
+            setTimeout(() => resizeObserverDestroyFunc(), WAIT_FOR_POPUP_CONTENT_RESIZE);
         }
     }
 
@@ -603,7 +605,7 @@ export class PopupService extends BeanStub implements NamedBean {
 
         // if we add these listeners now, then the current mouse
         // click will be included, which we don't want
-        requestAnimationFrame(() => {
+        window.setTimeout(() => {
             if (closeOnEsc) {
                 eDocument.addEventListener('keydown', hidePopupOnKeyboardEvent);
             }
@@ -614,7 +616,7 @@ export class PopupService extends BeanStub implements NamedBean {
                 eDocument.addEventListener('touchstart', hidePopupOnTouchEvent);
                 eDocument.addEventListener('contextmenu', hidePopupOnMouseEvent);
             }
-        });
+        }, 0);
 
         return removeListeners;
     }
