@@ -20,13 +20,11 @@ ModuleRegistry.registerModules([
 
 const VueExample = defineComponent({
     template: `
-        <div style="height: 100%">
         <ag-grid-vue
             class="myGrid"
             :gridOptions="gridOptions"
             :rowData="rowData">
         </ag-grid-vue>
-        </div>
     `,
     components: {
         'ag-grid-vue': AgGridVue,

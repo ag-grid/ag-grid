@@ -109,7 +109,7 @@ const DragAndDropGrid = () => {
 const root = createRoot(document.getElementById('root')!);
 root.render(
     <StrictMode>
-        <div id="myGrid">
+        <div className="myGrid">
             <DragAndDropGrid />
         </div>
     </StrictMode>
