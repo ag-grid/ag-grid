@@ -7,8 +7,6 @@ const isCI = process.env.NX_TASK_TARGET_CONFIGURATION === 'ci';
 
 function validateSizes() {
     const testSuites = new TestSuites('Module Size Tests');
-    const testSuite = new TestSuite('Module Size Tests');
-    testSuites.addTestSuite(testSuite);
 
     console.log('Running module size tests...');
 
@@ -21,8 +19,11 @@ function validateSizes() {
     }
 
     results.forEach((result) => {
-        const testCaseName = result.modules.length === 0 ? 'default' : result.modules.join(', ');
-        const testCase = new TestCase(testCaseName, testCaseName, 0.0);
+        const testName = result.modules.length === 0 ? 'default' : result.modules.join(', ');
+        const testSuite = new TestSuite(testName);
+        testSuites.addTestSuite(testSuite);
+
+        const testCase = new TestCase(testName, testName, 0.0);
 
         // validate that all results their selfSize is less than the expectedSize + 2%
 
