@@ -491,7 +491,7 @@ export const AG_GRID_LOCALE_PL = {
     // ARIA
     ariaAdvancedFilterBuilderItem: '${variable}. Poziom ${variable}. Naciśnij ENTER, aby edytować',
     ariaAdvancedFilterBuilderItemValidation:
-    '${variable}. Poziom ${variable}. ${variable} Naciśnij ENTER, aby edytować.',
+        '${variable}. Poziom ${variable}. ${variable} Naciśnij ENTER, aby edytować.',
     ariaAdvancedFilterBuilderList: 'Zaawansowana Lista Kreatora Filtrów',
     ariaAdvancedFilterBuilderFilterItem: 'Warunek Filtra',
     ariaAdvancedFilterBuilderGroupItem: 'Grupa Filtrów',

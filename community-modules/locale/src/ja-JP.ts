@@ -491,7 +491,7 @@ export const AG_GRID_LOCALE_JP = {
     // ARIA
     ariaAdvancedFilterBuilderItem: '${variable}。 レベル ${variable}。 編集するにはENTERを押してください。',
     ariaAdvancedFilterBuilderItemValidation:
-    '${variable}。 レベル ${variable}。 ${variable} 編集するにはENTERを押してください。',
+        '${variable}。 レベル ${variable}。 ${variable} 編集するにはENTERを押してください。',
     ariaAdvancedFilterBuilderList: '高度なフィルタービルダリスト',
     ariaAdvancedFilterBuilderFilterItem: 'フィルター条件',
     ariaAdvancedFilterBuilderGroupItem: 'フィルターグループ',

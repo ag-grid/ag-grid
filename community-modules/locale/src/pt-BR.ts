@@ -572,7 +572,7 @@ export const AG_GRID_LOCALE_BR = {
     ariaLabelAdvancedFilterBuilderColumnSelectField: 'Selecionar Campo da Coluna no Construtor de Filtro Avançado',
     ariaLabelAdvancedFilterBuilderOptionSelectField: 'Selecionar Campo de Opção no Construtor de Filtro Avançado',
     ariaLabelAdvancedFilterBuilderJoinSelectField:
-    'Selecionar Campo do Operador de Junção no Construtor de Filtro Avançado',
+        'Selecionar Campo do Operador de Junção no Construtor de Filtro Avançado',
 
     // ARIA Labels for the Side Bar
     ariaColumnPanelList: 'Lista de Colunas',
