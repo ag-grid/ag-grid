@@ -21,7 +21,7 @@ import { TreeDataModule } from 'ag-grid-enterprise';
 import { getData } from './data';
 import { FileCellRenderer } from './fileCellRenderer_typescript';
 import { moveFiles } from './fileUtils';
-import type { IFile } from './interfaces';
+import type { IFile } from './fileUtils';
 
 /** Custom user data attached to the grid */
 interface MyGridContext {
@@ -40,42 +40,47 @@ ModuleRegistry.registerModules([
 ]);
 
 /** Called when row dragging start */
-function rowDragEnter(event: RowDragEnterEvent<IFile, MyGridContext>): void {
+function onRowDragEnter(event: RowDragEnterEvent<IFile, MyGridContext>): void {
     // Store the original row data to restore it the drag is cancelled in a custom property in the context
-    // event.context.rowDataDragging = event.api.getGridOption('rowData');
+    event.context.rowDataDragging = event.api.getGridOption('rowData');
 }
 
-/** Called both when dragging and dropping */
-function rowDragOrDrop(event: RowDragMoveEvent<IFile>): void {
-    // let target = event.overNode?.data;
-    // const source = event.node.data;
-    // const rowData = event.api.getGridOption('rowData');
-    // if (rowData && source && source !== target) {
-    //     const reorderOnly = event.event?.shiftKey;
-    //     const newRowData = moveFiles(rowData, source, target, reorderOnly);
-    //     if (newRowData !== rowData) {
-    //         event.api.setGridOption('rowData', newRowData);
-    //     }
-    // }
+/** Called both when dragging and dropping (drag end) */
+function rowDragOrDrop(event: RowDragMoveEvent<IFile, MyGridContext> | RowDragEndEvent<IFile, MyGridContext>): void {
+    let target = event.overNode?.data;
+    const source = event.node.data;
+    const rowData = event.api.getGridOption('rowData');
+    if (rowData && source && source !== target) {
+        const reorderOnly = event.event?.shiftKey;
+        const newRowData = moveFiles(rowData, source, target, reorderOnly);
+        if (newRowData !== rowData) {
+            event.api.setGridOption('rowData', newRowData);
+        }
+    }
 }
 
-// /** Called when row dragging end */
-// RowDragEndEvent<IFile> |
-// function onRowDragEnd(event: RowDragEndEvent<IFile>): void {
-//     onRowDragOrDrop(event);
-//     event.api.clearFocusedCell();
-//     event.context.rowDataDragging = null;
-// }
+/** Called both when dragging and dropping (drag end) */
+function onRowDragMove(event: RowDragMoveEvent<IFile, MyGridContext> | RowDragEndEvent<IFile, MyGridContext>): void {
+    rowDragOrDrop(event);
+}
+
+/** Called when row dragging end, and the operation need to be committed */
+function onRowDragEnd(event: RowDragEndEvent<IFile, MyGridContext>): void {
+    rowDragOrDrop(event);
+    event.api.clearFocusedCell();
+    event.context.rowDataDragging = null;
+}
 
 /** Called when row dragging is cancelled, for example, ESC key is pressed */
-// function onRowDragCancel(event: RowDragCancelEvent<IFile, MyGridContext>): void {
-//     if (event.context.rowDataDragging) {
-//         event.api.setGridOption('rowData', event.context.rowDataDragging);
-//         event.context.rowDataDragging = null;
-//     }
-// }
+function onRowDragCancel(event: RowDragCancelEvent<IFile, MyGridContext>): void {
+    if (event.context.rowDataDragging) {
+        // Restore the original row data before the drag started
+        event.api.setGridOption('rowData', event.context.rowDataDragging);
+        event.context.rowDataDragging = null;
+    }
+}
 
-const gridOptions: GridOptions = {
+const gridOptions: GridOptions<IFile> = {
     columnDefs: [
         { field: 'dateModified' },
         {
@@ -95,11 +100,11 @@ const gridOptions: GridOptions = {
     rowData: getData(),
     getDataPath: (data: IFile) => data.filePath,
     getRowId: (params: GetRowIdParams) => params.data.id,
-    // context: { rowDataDragging: null },
-    onRowDragEnter: rowDragEnter,
-    // onRowDragMove: rowDragOrDrop,
-    // onRowDragEnd: onRowDragEnd,
-    // onRowDragCancel: onRowDragCancel,
+    context: { rowDataDragging: null },
+    onRowDragEnter: onRowDragEnter,
+    onRowDragMove: onRowDragMove,
+    onRowDragEnd: onRowDragEnd,
+    onRowDragCancel: onRowDragCancel,
 };
 
 // wait for the document to be loaded, otherwise

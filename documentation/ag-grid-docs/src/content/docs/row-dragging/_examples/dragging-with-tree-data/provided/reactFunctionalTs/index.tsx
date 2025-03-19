@@ -10,7 +10,7 @@ import {
     RowDragModule,
     ValidationModule,
 } from 'ag-grid-community';
-import type { GridOptions, RowDragEndEvent, RowDragEnterEvent, RowDragMoveEvent } from 'ag-grid-community';
+import type { GridOptions, RowDragEndEvent, RowDragMoveEvent } from 'ag-grid-community';
 import { TreeDataModule } from 'ag-grid-enterprise';
 import { AgGridReact } from 'ag-grid-react';
 
@@ -20,17 +20,12 @@ import { type IFile, moveFiles } from './fileUtils';
 import './style.css';
 
 ModuleRegistry.registerModules([
-    RowDragModule,
     ClientSideRowModelApiModule,
     ClientSideRowModelModule,
+    RowDragModule,
     TreeDataModule,
     ValidationModule /* Development Only */,
 ]);
-
-interface MyGridContext {
-    /** The original row data before dragging started */
-    rowDataDragging: IFile[] | null | undefined;
-}
 
 const STATIC_GRID_OPTIONS: GridOptions<IFile> = {
     columnDefs: [
@@ -54,20 +49,21 @@ const STATIC_GRID_OPTIONS: GridOptions<IFile> = {
 };
 
 const DragAndDropGrid = () => {
+    // The row data is stored in a state variable
     const [rowData, setRowData] = useState<any[]>(getData);
 
-    /** Called when row dragging start */
-    const rowDragEnter = useCallback(
-        (event: RowDragEnterEvent<IFile, MyGridContext>) => {
-            // Store the original row data to restore it the drag is cancelled in a custom property in the context
-            event.context.rowDataDragging = rowData;
-        },
-        [rowData]
-    );
+    // This will store a copy of rowData to perform cancel operation when user presses ESC while dragging
+    const [rowDataDragging, setRowDataDragging] = useState<IFile[] | null>(null);
 
-    // /** Called both when dragging and dropping */
-    const rowDragOrDrop = useCallback(
-        (event: RowDragMoveEvent<IFile, MyGridContext> | RowDragEndEvent<IFile, MyGridContext>) => {
+    /** Called when row dragging start */
+    const onRowDragEnter = useCallback(() => {
+        // Store the original row data to restore it the drag is cancelled in a custom property in the context
+        setRowDataDragging(rowData);
+    }, [rowData]);
+
+    /** Called both when dragging and dropping (drag end) */
+    const onRowDragMove = useCallback(
+        (event: RowDragMoveEvent<IFile> | RowDragEndEvent<IFile>) => {
             let target = event.overNode?.data;
             const source = event.node.data;
             if (rowData && source && source !== target) {
@@ -79,22 +75,33 @@ const DragAndDropGrid = () => {
         [rowData]
     );
 
-    const rowDragEnd = useCallback(
-        (event: RowDragEndEvent<IFile, MyGridContext>) => {
+    /** Called when row dragging end, and the operation need to be committed */
+    const onRowDragEnd = useCallback(
+        (event: RowDragEndEvent<IFile>) => {
             event.api.clearFocusedCell();
-            event.context.rowDataDragging = null;
-            rowDragOrDrop(event);
+            setRowDataDragging(null);
+            onRowDragMove(event);
         },
-        [rowDragOrDrop]
+        [onRowDragMove]
     );
+
+    /** Called when row dragging is cancelled, for example, ESC key is pressed */
+    const onRowDragCancel = useCallback(() => {
+        if (rowDataDragging) {
+            // Restore the original row data before the drag started
+            setRowData(rowDataDragging);
+            setRowDataDragging(null);
+        }
+    }, [rowDataDragging]);
 
     return (
         <AgGridReact<IFile>
             gridOptions={STATIC_GRID_OPTIONS}
             rowData={rowData}
-            onRowDragEnter={rowDragEnter}
-            onRowDragMove={rowDragOrDrop}
-            onRowDragEnd={rowDragEnd}
+            onRowDragEnter={onRowDragEnter}
+            onRowDragMove={onRowDragMove}
+            onRowDragEnd={onRowDragEnd}
+            onRowDragCancel={onRowDragCancel}
         />
     );
 };

@@ -76,7 +76,8 @@
     "react-shadow": "^20.4.0",
     "sass": "^1.77.8",
     "typescript": "^5.3.3",
-    "vite-plugin-svgr": "^4.2.0"
+    "vite-plugin-svgr": "^4.2.0",
+    "vue": "^3.5.13"
   },
   "devDependencies": {
     "@trivago/prettier-plugin-sort-imports": "^4.3.0",
