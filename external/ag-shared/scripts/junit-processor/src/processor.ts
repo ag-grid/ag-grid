@@ -1,6 +1,6 @@
 import fs from 'fs';
-import { json2xml } from 'xml-js';
 import { dirname } from 'path';
+import { json2xml } from 'xml-js';
 
 export class TestCase {
     classname: string;
