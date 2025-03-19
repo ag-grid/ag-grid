@@ -120,7 +120,7 @@ describe('getModuleMappingsSnippet', () => {
 
               ModuleRegistry.registerModules([
                   AllCommunityModule,
-                  SparklinesModule.with(AgChartsCommunityModule),
+                  SparklinesModule.with(AgChartsCommunityModule), ClipboardModule, ContextMenuModule,
               ]);"
             `);
         });
@@ -181,7 +181,7 @@ describe('getModuleMappingsSnippet', () => {
               } from 'ag-grid-enterprise';
 
               ModuleRegistry.registerModules([
-                  SparklinesModule.with(AgChartsEnterpriseModule),
+                  SparklinesModule.with(AgChartsCommunityModule), ClipboardModule, ContextMenuModule,
                   IntegratedChartsModule.with(AgChartsEnterpriseModule),
               ]);"
             `);
@@ -206,7 +206,7 @@ describe('getModuleMappingsSnippet', () => {
 
               ModuleRegistry.registerModules([
                   AllCommunityModule,
-                  SparklinesModule.with(AgChartsEnterpriseModule),
+                  SparklinesModule.with(AgChartsCommunityModule), ClipboardModule, ContextMenuModule,
                   IntegratedChartsModule.with(AgChartsEnterpriseModule),
               ]);"
             `);

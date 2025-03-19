@@ -18,6 +18,7 @@ import 'ag-grid-community/styles/ag-theme-quartz.css';
 import {
     AdvancedFilterModule,
     CellSelectionModule,
+    ClipboardModule,
     ColumnMenuModule,
     ColumnsToolPanelModule,
     ContextMenuModule,
@@ -112,6 +113,7 @@ ModuleRegistry.registerModules([
     StatusBarModule,
     IntegratedChartsModule.with(AgChartsEnterpriseModule),
     SparklinesModule.with(AgChartsEnterpriseModule),
+    ClipboardModule,
 ]);
 
 const numberFormatter: ValueFormatterFunc = ({ value }) => {

@@ -2,13 +2,15 @@ import { AgChartsCommunityModule } from 'ag-charts-community';
 
 import type { GridApi, GridOptions } from 'ag-grid-community';
 import { ClientSideRowModelModule, ModuleRegistry, ValidationModule, createGrid } from 'ag-grid-community';
-import { SparklinesModule } from 'ag-grid-enterprise';
+import { ClipboardModule, ContextMenuModule, SparklinesModule } from 'ag-grid-enterprise';
 
 import { getData } from './data';
 
 ModuleRegistry.registerModules([
     ClientSideRowModelModule,
     SparklinesModule.with(AgChartsCommunityModule),
+    ClipboardModule,
+    ContextMenuModule,
     ValidationModule /* Development Only */,
 ]);
 
