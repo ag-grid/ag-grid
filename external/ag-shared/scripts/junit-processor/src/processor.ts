@@ -111,7 +111,12 @@ export class TestSuites {
             spaces: 4,
             fullTagEmptyElement: true,
         });
-        fs.mkdirSync(dirname(outputPath), { recursive: true });
+        const dirRes = fs.mkdirSync(dirname(outputPath), { recursive: true });
+        console.log("dirRes", dirRes);
+        console.log("dirRes", dirRes);
+        console.log("dirRes", dirRes);
+        console.log("dirRes", dirRes);
+        console.log("dirRes", dirRes);
         fs.writeFileSync(outputPath, result, 'utf8');
     }
 

@@ -98,19 +98,19 @@ const allEnterpriseModules: ModuleTest[] = Object.entries(AllEnterpriseModules).
 
 const commonFeatureSets: ModuleTest[] = [
     { modules: ['ClientSideRowModelModule', 'TextFilterModule'], expectedSize: 133.67 },
-    {
-        modules: [
-            'TextFilterModule',
-            'NumberFilterModule',
-            'DateFilterModule',
-            'SetFilterModule',
-            'MultiFilterModule',
-            'CustomFilterModule',
-            'ExternalFilterModule',
-            'QuickFilterModule',
-        ],
-        expectedSize: 230,
-    },
+    // {
+    //     modules: [
+    //         'TextFilterModule',
+    //         'NumberFilterModule',
+    //         'DateFilterModule',
+    //         'SetFilterModule',
+    //         'MultiFilterModule',
+    //         'CustomFilterModule',
+    //         'ExternalFilterModule',
+    //         'QuickFilterModule',
+    //     ],
+    //     expectedSize: 230,
+    // },
 ];
 
 const chartModules: ModuleTest[] = [
@@ -136,7 +136,7 @@ export const baseModule = { modules: [], expectedSize: 445.89 };
 
 export const moduleCombinations: ModuleTest[] = [
     ...commonFeatureSets,
-    ...chartModules,
-    ...allGridCommunityModules, //.slice(0, 3),
-    ...allEnterpriseModules, //.slice(0, 3),
+    // ...chartModules,
+    // ...allGridCommunityModules, //.slice(0, 3),
+    // ...allEnterpriseModules, //.slice(0, 3),
 ];

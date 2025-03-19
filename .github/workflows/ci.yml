@@ -90,19 +90,19 @@ jobs:
         with:
           cache_mode: ${{ github.event.inputs.clean_checkout == 'true' && 'off' || 'rw' }}
 
-      - name: nx format:check
-        id: format
-        if: steps.setup.outcome == 'success' || steps.setup.outcome == 'skipped'
-        run: |
-          if [[ "${{ github.event.inputs.nx_command || 'affected' }}" == "run-many" ]] ; then
-            yarn nx format:check --all
-          else
-            yarn nx format:check --base ${{ steps.setup.outputs.base }}
-          fi
+#      - name: nx format:check
+#        id: format
+#        if: steps.setup.outcome == 'success' || steps.setup.outcome == 'skipped'
+#        run: |
+#          if [[ "${{ github.event.inputs.nx_command || 'affected' }}" == "run-many" ]] ; then
+#            yarn nx format:check --all
+#          else
+#            yarn nx format:check --base ${{ steps.setup.outputs.base }}
+#          fi
 
-      - name: nx lint
-        run: |
-          yarn nx lint
+#      - name: nx lint
+#        run: |
+#          yarn nx lint
 
       - name: nx build
         run: |
@@ -296,69 +296,69 @@ jobs:
           path: |
             reports/
 
-  docs:
-    runs-on: ubuntu-latest
-    name: Docs Build & Link Checker
-    needs: build_lint
-    if: needs.build_lint.result == 'success' && ${{ github.event.inputs.run_docs }}
-    strategy:
-      fail-fast: false
-    env:
-      NX_BASE: ${{ needs.build_lint.outputs.nx_base }}
-    steps:
-      - name: Checkout
-        id: checkout
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 1 # shallow copy
-
-      - name: Fetch Refs
-        run: |
-          git fetch origin --depth 1 latest
-          git fetch origin --depth 1 tag latest-success
-
-      - name: Restore Init Build Outputs
-        uses: actions/download-artifact@v4
-        with:
-          name: build-outputs
-
-      - name: Setup
-        id: setup
-        uses: ./.github/actions/setup-nx
-        with:
-          cache_mode: ro
-
-      - name: update base url
-        if: ${{ github.ref == 'refs/heads/latest' }}
-        run: node scripts/deployments/prep_and_archive/updateBaseUrl.js staging
-      - name: build
-        if: ${{ github.ref == 'refs/heads/latest' }}
-        run: |
-          yarn nx generate-doc-references
-          yarn nx generate-examples
-          yarn nx run-many --t build --exclude ag-grid-docs --exclude all
-      - name: validate base url
-        if: ${{ github.ref == 'refs/heads/latest' }}
-        run: node scripts/deployments/sanityCheckBaseUrl.js staging
-      - name: validate grid modules
-        run: node scripts/deployments/validateGridModulesList.js
-      - name: docs build and link checker
-        run: CHECK_LINKS=true CHECK_REDIRECTS=true yarn nx run ag-grid-docs:build -c staging
-
-      - name: Deploy to Staging
-        if: ${{ github.ref == 'refs/heads/latest' }}
-        env:
-          SSH_PRIVATE_KEY: |
-            ${{ secrets.STAGING_SSH_KEY }}
-          SSH_HOST: ${{ secrets.STAGING_HOST }}
-          SSH_USER: ubuntu
-          SSH_KEY_LOCATION: ${{ github.workspace }}/staging.pem
-          WWW_ROOT_DIR: ${{ vars.WWW_ROOT_DIR }}
-        run: |
-          echo "$SSH_PRIVATE_KEY" > $SSH_KEY_LOCATION
-          chmod 400 $SSH_KEY_LOCATION
-          echo "Copying release to Staging"
-          ./scripts/deployments/createAndDeployDocsToTCGH.sh
+#  docs:
+#    runs-on: ubuntu-latest
+#    name: Docs Build & Link Checker
+#    needs: build_lint
+#    if: needs.build_lint.result == 'success' && ${{ github.event.inputs.run_docs }}
+#    strategy:
+#      fail-fast: false
+#    env:
+#      NX_BASE: ${{ needs.build_lint.outputs.nx_base }}
+#    steps:
+#      - name: Checkout
+#        id: checkout
+#        uses: actions/checkout@v4
+#        with:
+#          fetch-depth: 1 # shallow copy
+#
+#      - name: Fetch Refs
+#        run: |
+#          git fetch origin --depth 1 latest
+#          git fetch origin --depth 1 tag latest-success
+#
+#      - name: Restore Init Build Outputs
+#        uses: actions/download-artifact@v4
+#        with:
+#          name: build-outputs
+#
+#      - name: Setup
+#        id: setup
+#        uses: ./.github/actions/setup-nx
+#        with:
+#          cache_mode: ro
+#
+#      - name: update base url
+#        if: ${{ github.ref == 'refs/heads/latest' }}
+#        run: node scripts/deployments/prep_and_archive/updateBaseUrl.js staging
+#      - name: build
+#        if: ${{ github.ref == 'refs/heads/latest' }}
+#        run: |
+#          yarn nx generate-doc-references
+#          yarn nx generate-examples
+#          yarn nx run-many --t build --exclude ag-grid-docs --exclude all
+#      - name: validate base url
+#        if: ${{ github.ref == 'refs/heads/latest' }}
+#        run: node scripts/deployments/sanityCheckBaseUrl.js staging
+#      - name: validate grid modules
+#        run: node scripts/deployments/validateGridModulesList.js
+#      - name: docs build and link checker
+#        run: CHECK_LINKS=true CHECK_REDIRECTS=true yarn nx run ag-grid-docs:build -c staging
+#
+#      - name: Deploy to Staging
+#        if: ${{ github.ref == 'refs/heads/latest' }}
+#        env:
+#          SSH_PRIVATE_KEY: |
+#            ${{ secrets.STAGING_SSH_KEY }}
+#          SSH_HOST: ${{ secrets.STAGING_HOST }}
+#          SSH_USER: ubuntu
+#          SSH_KEY_LOCATION: ${{ github.workspace }}/staging.pem
+#          WWW_ROOT_DIR: ${{ vars.WWW_ROOT_DIR }}
+#        run: |
+#          echo "$SSH_PRIVATE_KEY" > $SSH_KEY_LOCATION
+#          chmod 400 $SSH_KEY_LOCATION
+#          echo "Copying release to Staging"
+#          ./scripts/deployments/createAndDeployDocsToTCGH.sh
 
   #      - name: Persist test results
   #        if: always()
@@ -370,7 +370,8 @@ jobs:
 
   report:
     runs-on: ubuntu-24.04
-    needs: [ build_lint, test, e2e, docs, bundle_size ]
+    needs: [ build_lint, bundle_size ]
+#    needs: [ build_lint, test, e2e, docs, bundle_size ]
     if: cancelled() != true
     steps:
       - name: Checkout

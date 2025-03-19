@@ -58,13 +58,13 @@ function validateSizes() {
             testCase.setFailure(errors.join('\n'));
         }
         testSuite.addTestCase(testCase);
-
-        if (testSuites.hasFailures()) {
-            testSuites.getFailures().forEach((failure) => console.log(failure));
-        } else {
-            console.log(`All modules (${results.length}) passed size validation.`);
-        }
     });
+
+    if (testSuites.hasFailures()) {
+        testSuites.getFailures().forEach((failure) => console.log(failure));
+    } else {
+        console.log(`All modules (${results.length}) passed size validation.`);
+    }
 
     if (isCI) {
         testSuites.writeJunitReport(path.resolve(__dirname, '../../reports/ag-grid-module-size.xml'));
