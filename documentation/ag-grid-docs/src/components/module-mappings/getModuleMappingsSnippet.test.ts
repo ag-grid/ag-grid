@@ -181,7 +181,7 @@ describe('getModuleMappingsSnippet', () => {
               } from 'ag-grid-enterprise';
 
               ModuleRegistry.registerModules([
-                  SparklinesModule.with(AgChartsEnterpriseModule), ClipboardModule, ContextMenuModule,
+                  SparklinesModule.with(AgChartsEnterpriseModule),
                   IntegratedChartsModule.with(AgChartsEnterpriseModule),
               ]);"
             `);
@@ -206,7 +206,7 @@ describe('getModuleMappingsSnippet', () => {
 
               ModuleRegistry.registerModules([
                   AllCommunityModule,
-                  SparklinesModule.with(AgChartsEnterpriseModule), ClipboardModule, ContextMenuModule,
+                  SparklinesModule.with(AgChartsEnterpriseModule),
                   IntegratedChartsModule.with(AgChartsEnterpriseModule),
               ]);"
             `);
