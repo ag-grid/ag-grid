@@ -225,9 +225,9 @@ export const AG_GRID_LOCALE_KR = {
     pieChart: '파이',
     pie: '파이',
     donut: '도넛',
-    lineChart: '선',
-    stackedLine: '누적',
-    normalizedLine: '100% 누적',
+    lineChart: '‘꺾은선형’',
+    stackedLine: '‘누적’',
+    normalizedLine: '‘100% 누적’',
     xyChart: 'X Y (산점도)',
     scatter: '산점도',
     bubble: '버블',
@@ -401,8 +401,8 @@ export const AG_GRID_LOCALE_KR = {
     pieTooltip: '파이',
     donutTooltip: '도넛',
     lineTooltip: '라인',
-    stackedLineTooltip: '누적선',
-    normalizedLineTooltip: '100% 누적',
+    stackedLineTooltip: '스택',
+    normalizedLineTooltip: '100% 스택',
     groupedAreaTooltip: '면적',
     stackedAreaTooltip: '스택',
     normalizedAreaTooltip: '100% 스택',
@@ -486,7 +486,7 @@ export const AG_GRID_LOCALE_KR = {
     pyramidTooltip: '피라미드',
     dropOff: '이탈',
     stageLabels: '단계 레이블',
-    reverse: '반전',
+    reverse: '역방향',
 
     // ARIA
     ariaAdvancedFilterBuilderItem: '${variable}. 레벨 ${variable}. 편집하려면 ENTER를 누르세요',
@@ -556,7 +556,7 @@ export const AG_GRID_LOCALE_KR = {
     ariaLabelColumnFilter: '컬럼 필터',
     ariaLabelCellEditor: '셀 편집기',
     ariaLabelSelectField: '필드 선택',
-    ariaLabelLoadingContextMenu: '컨텍스트 메뉴 로딩 중',
+    ariaLabelLoadingContextMenu: '로드 중인 컨텍스트 메뉴',
 
     // aria labels for rich select
     ariaLabelRichSelectField: '리치 선택 필드',

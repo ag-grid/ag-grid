@@ -485,13 +485,13 @@ export const AG_GRID_LOCALE_DE = {
     coneFunnelTooltip: 'Kegeltrichter',
     pyramidTooltip: 'Pyramide',
     dropOff: 'Abfall',
-    stageLabels: 'Stufenbeschriftungen',
+    stageLabels: 'Phasenbeschriftungen',
     reverse: 'Umkehren',
 
     // ARIA
     ariaAdvancedFilterBuilderItem: '${variable}. Ebene ${variable}. Drücken Sie ENTER, um zu bearbeiten.',
     ariaAdvancedFilterBuilderItemValidation:
-        '${variable}. Ebene ${variable}. ${variable} Drücken Sie ENTER, um zu bearbeiten.',
+    '${variable}. Ebene ${variable}. ${variable} Drücken Sie ENTER, um zu bearbeiten.',
     ariaAdvancedFilterBuilderList: 'Erweiterte Filter-Builder-Liste',
     ariaAdvancedFilterBuilderFilterItem: 'Filterbedingung',
     ariaAdvancedFilterBuilderGroupItem: 'Filtergruppe',
@@ -504,7 +504,7 @@ export const AG_GRID_LOCALE_DE = {
     ariaColumn: 'Spalte',
     ariaColumnGroup: 'Spaltengruppe',
     ariaColumnFiltered: 'Spalte gefiltert',
-    ariaColumnSelectAll: 'Alle Spalten sichtbar umschalten',
+    ariaColumnSelectAll: 'Alle Spalten ein-/ausblenden',
     ariaDateFilterInput: 'Datum-Filtereingang',
     ariaDefaultListName: 'Liste',
     ariaFilterColumnsInput: 'Filterspalteneingang',
@@ -521,7 +521,7 @@ export const AG_GRID_LOCALE_DE = {
     ariaMenuColumn: 'Drücken Sie ALT NACH UNTEN, um das Spaltenmenü zu öffnen',
     ariaFilterColumn: 'Drücken Sie STRG EINGABETASTE, um den Filter zu öffnen',
     ariaRowDeselect: 'Drücken Sie LEERTASTE, um diese Zeile abzuwaehlen',
-    ariaHeaderSelection: 'Spalte mit Kopfzeilenauswahl',
+    ariaHeaderSelection: 'Spalte mit Header-Auswahl',
     ariaSelectAllCells: 'Drücken Sie die Leertaste, um alle Zellen auszuwählen',
     ariaRowSelectAll: 'Drücken Sie LEERTASTE, um die Auswahl aller Zeilen umzuschalten',
     ariaRowToggleSelection: 'Drücken Sie LEERTASTE, um die Zeilenauswahl umzuschalten',
@@ -557,7 +557,7 @@ export const AG_GRID_LOCALE_DE = {
     ariaLabelColumnFilter: 'Spaltenfilter',
     ariaLabelCellEditor: 'Zelleneditor',
     ariaLabelSelectField: 'Feld auswählen',
-    ariaLabelLoadingContextMenu: 'Laden des Kontextmenüs',
+    ariaLabelLoadingContextMenu: 'Lade Kontextmenü',
 
     // aria labels for rich select
     ariaLabelRichSelectField: 'Rich-Select-Feld',

@@ -226,8 +226,8 @@ export const AG_GRID_LOCALE_BR = {
     pie: 'Pizza',
     donut: 'Rosca',
     lineChart: 'Linha',
-    stackedLine: 'Empilhada',
-    normalizedLine: '100% Empilhada',
+    stackedLine: 'Empilhado',
+    normalizedLine: '100% Empilhado',
     xyChart: 'X Y (Dispersão)',
     scatter: 'Dispersão',
     bubble: 'Bolha',
@@ -478,14 +478,14 @@ export const AG_GRID_LOCALE_BR = {
     normalizedAreaFull: 'Área Empilhada 100%',
     customCombo: 'Combinação Personalizada',
     funnel: 'Funil',
-    coneFunnel: 'Funil em Cone',
+    coneFunnel: 'Funil de Cone',
     pyramid: 'Pirâmide',
     funnelGroup: 'Funil',
     funnelTooltip: 'Funil',
-    coneFunnelTooltip: 'Funil em Cone',
+    coneFunnelTooltip: 'Funil de Cone',
     pyramidTooltip: 'Pirâmide',
     dropOff: 'Queda',
-    stageLabels: 'Rótulos de Estágio',
+    stageLabels: 'Rótulos de Etapas',
     reverse: 'Inverter',
 
     // ARIA
@@ -572,7 +572,7 @@ export const AG_GRID_LOCALE_BR = {
     ariaLabelAdvancedFilterBuilderColumnSelectField: 'Selecionar Campo da Coluna no Construtor de Filtro Avançado',
     ariaLabelAdvancedFilterBuilderOptionSelectField: 'Selecionar Campo de Opção no Construtor de Filtro Avançado',
     ariaLabelAdvancedFilterBuilderJoinSelectField:
-        'Selecionar Campo do Operador de Junção no Construtor de Filtro Avançado',
+    'Selecionar Campo do Operador de Junção no Construtor de Filtro Avançado',
 
     // ARIA Labels for the Side Bar
     ariaColumnPanelList: 'Lista de Colunas',

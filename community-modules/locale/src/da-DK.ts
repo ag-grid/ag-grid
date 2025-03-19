@@ -402,7 +402,7 @@ export const AG_GRID_LOCALE_DK = {
     donutTooltip: 'Donut',
     lineTooltip: 'Linje',
     stackedLineTooltip: 'Stablet',
-    normalizedLineTooltip: '100% Stablet',
+    normalizedLineTooltip: '100% stablet',
     groupedAreaTooltip: 'Areal',
     stackedAreaTooltip: 'Stablet',
     normalizedAreaTooltip: '100% Stablet',
@@ -485,13 +485,13 @@ export const AG_GRID_LOCALE_DK = {
     coneFunnelTooltip: 'Kegletragt',
     pyramidTooltip: 'Pyramide',
     dropOff: 'Frafald',
-    stageLabels: 'Trin Etiketter',
+    stageLabels: 'Trinmærkater',
     reverse: 'Omvendt',
 
     // ARIA
     ariaAdvancedFilterBuilderItem: '${variable}. Niveau ${variable}. Tryk på ENTER for at redigere.',
     ariaAdvancedFilterBuilderItemValidation:
-        '${variable}. Niveau ${variable}. ${variable} Tryk på ENTER for at redigere.',
+    '${variable}. Niveau ${variable}. ${variable} Tryk på ENTER for at redigere.',
     ariaAdvancedFilterBuilderList: 'Avanceret Filter Builder Liste',
     ariaAdvancedFilterBuilderFilterItem: 'Filterbetingelse',
     ariaAdvancedFilterBuilderGroupItem: 'Filtergruppe',
@@ -521,7 +521,7 @@ export const AG_GRID_LOCALE_DK = {
     ariaMenuColumn: 'Tryk på ALT NED for at åbne kolonnemenu',
     ariaFilterColumn: 'Tryk på CTRL ENTER for at åbne filter',
     ariaRowDeselect: 'Tryk på MELLEMRUM for at fravælge denne række',
-    ariaHeaderSelection: 'Kolonne med overskriftvalg',
+    ariaHeaderSelection: 'Kolonne med hovedvalg',
     ariaSelectAllCells: 'Tryk på mellemrumstasten for at vælge alle celler',
     ariaRowSelectAll: 'Tryk på MELLEMRUM for at skifte alle rækkers valg',
     ariaRowToggleSelection: 'Tryk på MELLEMRUM for at skifte rækkes valg',

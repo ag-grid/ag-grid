@@ -226,8 +226,8 @@ export const AG_GRID_LOCALE_TR = {
     pie: 'Pasta',
     donut: 'Halka',
     lineChart: 'Çizgi',
-    stackedLine: 'Yığılmış',
-    normalizedLine: '100% Yığılmış',
+    stackedLine: 'Yığın',
+    normalizedLine: '100% Yığın',
     xyChart: 'X Y (Serpme)',
     scatter: 'Serpme',
     bubble: 'Baloncuk',
@@ -491,7 +491,7 @@ export const AG_GRID_LOCALE_TR = {
     // ARIA
     ariaAdvancedFilterBuilderItem: '${variable}. Seviye ${variable}. Düzenlemek için ENTER tuşuna basın',
     ariaAdvancedFilterBuilderItemValidation:
-        '${variable}. Seviye ${variable}. ${variable} Düzenlemek için ENTER tuşuna basın.',
+    '${variable}. Seviye ${variable}. ${variable} Düzenlemek için ENTER tuşuna basın.',
     ariaAdvancedFilterBuilderList: 'Gelişmiş Filtre Oluşturucu Listesi',
     ariaAdvancedFilterBuilderFilterItem: 'Filtre Koşulu',
     ariaAdvancedFilterBuilderGroupItem: 'Filtre Grubu',
@@ -521,7 +521,7 @@ export const AG_GRID_LOCALE_TR = {
     ariaMenuColumn: 'Sütun menüsünü açmak için ALT AŞAĞI tuşlarına basın',
     ariaFilterColumn: 'Filtreyi açmak için CTRL ENTER tuşlarına basın',
     ariaRowDeselect: 'Bu satırın seçimini kaldırmak için SPACE tuşuna basın',
-    ariaHeaderSelection: 'Başlık Seçimine Sahip Sütun',
+    ariaHeaderSelection: 'Başlık Seçimi Olan Sütun',
     ariaSelectAllCells: 'Tüm hücreleri seçmek için Boşluk tuşuna basın',
     ariaRowSelectAll: 'Tüm satırların seçimini değiştirmek için Boşluk tuşuna basın',
     ariaRowToggleSelection: 'Satır seçimini değiştirmek için Boşluk tuşuna basın',

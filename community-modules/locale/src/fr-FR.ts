@@ -95,7 +95,7 @@ export const AG_GRID_LOCALE_FR = {
     advancedFilterValidationInvalidDate: "La valeur n'est pas une date valide",
     advancedFilterValidationMissingCondition: 'La condition est manquante',
     advancedFilterValidationJoinOperatorMismatch:
-        "Les opérateurs de jonction au sein d'une condition doivent être identiques",
+    "Les opérateurs de jonction au sein d'une condition doivent être identiques",
     advancedFilterValidationInvalidJoinOperator: 'Opérateur de jonction non trouvé',
     advancedFilterValidationMissingEndBracket: 'Guillemet de fin manquante',
     advancedFilterValidationExtraEndBracket: 'Trop de crochets de fin',
@@ -479,20 +479,20 @@ export const AG_GRID_LOCALE_FR = {
     normalizedAreaFull: 'Zone 100% empilée',
     customCombo: 'Combinaison personnalisée',
     funnel: 'Entonnoir',
-    coneFunnel: 'Entonnoir conique',
+    coneFunnel: 'Entonnoir Cône',
     pyramid: 'Pyramide',
     funnelGroup: 'Entonnoir',
     funnelTooltip: 'Entonnoir',
-    coneFunnelTooltip: 'Entonnoir conique',
+    coneFunnelTooltip: 'Entonnoir Cône',
     pyramidTooltip: 'Pyramide',
     dropOff: 'Abandon',
-    stageLabels: 'Étiquettes de phase',
+    stageLabels: 'Étiquettes de Stade',
     reverse: 'Inverser',
 
     // ARIA
     ariaAdvancedFilterBuilderItem: '${variable}. Niveau ${variable}. Appuyez sur ENTER pour éditer.',
     ariaAdvancedFilterBuilderItemValidation:
-        '${variable}. Niveau ${variable}. ${variable} Appuyez sur ENTER pour éditer.',
+    '${variable}. Niveau ${variable}. ${variable} Appuyez sur ENTER pour éditer.',
     ariaAdvancedFilterBuilderList: 'Liste de cadre de filtre avancé',
     ariaAdvancedFilterBuilderFilterItem: 'Condition de filtre',
     ariaAdvancedFilterBuilderGroupItem: 'Groupe de filtre',
@@ -522,7 +522,7 @@ export const AG_GRID_LOCALE_FR = {
     ariaMenuColumn: 'Appuyez sur ALT BAS pour ouvrir le menu de colonne',
     ariaFilterColumn: 'Appuyez sur CTRL ENTER pour ouvrir le filtre',
     ariaRowDeselect: 'Appuyez sur ESPACE pour désélectionner cette ligne',
-    ariaHeaderSelection: "Colonne avec sélection de l'en-tête",
+    ariaHeaderSelection: 'Colonne avec sélection d\'en-tête',
     ariaSelectAllCells: 'Appuyez sur Espace pour sélectionner toutes les cellules',
     ariaRowSelectAll: 'Appuyez sur ESPACE pour basculer la sélection de toutes les lignes',
     ariaRowToggleSelection: 'Appuyez sur ESPACE pour basculer la sélection de la ligne',
@@ -574,7 +574,7 @@ export const AG_GRID_LOCALE_FR = {
     ariaLabelAdvancedFilterBuilderColumnSelectField: 'Filtre avancé constructeur Sélectionnez le champ de colonne',
     ariaLabelAdvancedFilterBuilderOptionSelectField: "Filtre avancé constructeur Sélectionnez le champ d'option",
     ariaLabelAdvancedFilterBuilderJoinSelectField:
-        "Filtre avancé constructeur Sélectionnez le champ de l'opérateur de jointure",
+    "Filtre avancé constructeur Sélectionnez le champ de l'opérateur de jointure",
 
     // ARIA Labels for the Side Bar
     ariaColumnPanelList: 'Liste des colonnes',

@@ -176,7 +176,7 @@ export const AG_GRID_LOCALE_PT = {
     excelExport: 'Exportação Excel',
     columnFilter: 'Filtro de Coluna',
     columnChooser: 'Escolher Colunas',
-    chooseColumns: 'Escolher colunas',
+    chooseColumns: 'Escolher Colunas',
     sortAscending: 'Ordenar Ascendente',
     sortDescending: 'Ordenar Descendente',
     sortUnSort: 'Limpar Ordenação',
@@ -402,7 +402,7 @@ export const AG_GRID_LOCALE_PT = {
     donutTooltip: 'Rosquinha',
     lineTooltip: 'Linha',
     stackedLineTooltip: 'Empilhado',
-    normalizedLineTooltip: 'Empilhado 100%',
+    normalizedLineTooltip: '100% Empilhado',
     groupedAreaTooltip: 'Área',
     stackedAreaTooltip: 'Empilhada',
     normalizedAreaTooltip: '100% Empilhada',
@@ -478,15 +478,15 @@ export const AG_GRID_LOCALE_PT = {
     normalizedAreaFull: 'Área 100% Empilhada',
     customCombo: 'Combinação Personalizada',
     funnel: 'Funil',
-    coneFunnel: 'Funil Cone',
+    coneFunnel: 'Funil de Cone',
     pyramid: 'Pirâmide',
     funnelGroup: 'Funil',
     funnelTooltip: 'Funil',
-    coneFunnelTooltip: 'Funil Cone',
+    coneFunnelTooltip: 'Funil de Cone',
     pyramidTooltip: 'Pirâmide',
-    dropOff: 'Queda',
-    stageLabels: 'Rótulos de Estágio',
-    reverse: 'Inverter',
+    dropOff: 'Desistência',
+    stageLabels: 'Rótulos de Etapa',
+    reverse: 'Reverter',
 
     // ARIA
     ariaAdvancedFilterBuilderItem: '${variable}. Nível ${variable}. Pressione ENTER para editar.',
@@ -503,7 +503,7 @@ export const AG_GRID_LOCALE_PT = {
     ariaColumn: 'Coluna',
     ariaColumnGroup: 'Grupo de Colunas',
     ariaColumnFiltered: 'Coluna Filtrada',
-    ariaColumnSelectAll: 'Alternar a visibilidade de todas as colunas',
+    ariaColumnSelectAll: 'Alternar visibilidade de todas as colunas',
     ariaDateFilterInput: 'Entrada de Filtro de Data',
     ariaDefaultListName: 'Lista',
     ariaFilterColumnsInput: 'Entrada de Filtro de Colunas',
@@ -578,8 +578,8 @@ export const AG_GRID_LOCALE_PT = {
     ariaFilterPanelList: 'Lista de Filtros',
 
     // Number Format (Status Bar, Pagination Panel)
-    thousandSeparator: ',',
-    decimalSeparator: '.',
+    thousandSeparator: '.',
+    decimalSeparator: ',',
 
     // Data types
     true: 'Verdadeiro',
