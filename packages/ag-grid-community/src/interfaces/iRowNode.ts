@@ -125,8 +125,8 @@ interface BaseRowNode<TData = any> {
 
     /**
      * `true` if this node has children.
-     * - In case of grouping, this is `true` for group nodes. Group nodes are row nodes that have children.
-     * - In case of treeData, this is `true` for nodes that have children, both true for filler nodes and user provided row nodes with children.
+     * - In case of grouping, this is `true` for group nodes. Group nodes are generated and do not have a data field.
+     * - In case of treeData, this is `true` for any kind of node that have children. Filler nodes or user provided nodes with children.
      */
     group: boolean | undefined;
 
