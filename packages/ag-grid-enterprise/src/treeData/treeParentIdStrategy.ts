@@ -250,20 +250,21 @@ const updateAllLeafChildren = <TData>(
     allLeafChildren: TreeRow<TData>[] | null,
     newAllLeafChildrenLen: number
 ): boolean => {
-    let changed = true;
-    if (!allLeafChildren) {
-        if (newAllLeafChildrenLen === 0) {
-            return false;
-        }
-        allLeafChildren = row.allLeafChildren = new Array(newAllLeafChildrenLen);
-    } else if (allLeafChildren.length !== newAllLeafChildrenLen) {
-        if (newAllLeafChildrenLen === 0) {
+    if (newAllLeafChildrenLen === 0) {
+        if (allLeafChildren) {
             row.allLeafChildren = null;
-            return true;
+            return !!allLeafChildren?.length;
         }
+        return false;
+    }
+
+    let changed = false;
+    if (!allLeafChildren) {
+        allLeafChildren = row.allLeafChildren = new Array(newAllLeafChildrenLen);
+        changed = true;
+    } else if (allLeafChildren.length !== newAllLeafChildrenLen) {
         allLeafChildren.length = newAllLeafChildrenLen;
-    } else {
-        changed = false;
+        changed = true;
     }
 
     let writeIdx = 0;

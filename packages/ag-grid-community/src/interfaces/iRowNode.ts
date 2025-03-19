@@ -123,7 +123,11 @@ interface BaseRowNode<TData = any> {
     /** The row top position in pixels. */
     rowTop: number | null;
 
-    /** `true` if this node is a group node (i.e. it has children) */
+    /**
+     * `true` if this node has children.
+     * - In case of grouping, this is `true` for group nodes. Group nodes are row nodes that have children.
+     * - In case of treeData, this is `true` for nodes that have children, both true for filler nodes and user provided row nodes with children.
+     */
     group: boolean | undefined;
 
     /** @deprecated v33 Use `rowNode.parent?.childrenAfterSort?.[0] === rowNode` instead. */
@@ -188,11 +192,11 @@ interface GroupRowNode<TData = any> {
     /** `true` if this node is a group and the group is the bottom level in the tree. */
     leafGroup: boolean | undefined;
     /**
-     * All the nodes that have user provided data below this node. Can be null if empty.
+     * All the row nodes that have user provided data below this node. Can be null if empty.
      * This excludes:
      * - filler nodes when using treeData and getDataPath
      * - group nodes when using grouping
-     * - header and footer nodes
+     * - footer nodes
      */
     allLeafChildren: IRowNode<TData>[] | null;
     /** Number of children and grand children. */
