@@ -176,7 +176,7 @@ export const AG_GRID_LOCALE_BG = {
     excelExport: 'Експортиране в Excel',
     columnFilter: 'Филтър на колона',
     columnChooser: 'Избор на колони',
-    chooseColumns: 'Избор на колони',
+    chooseColumns: 'Изберете колони',
     sortAscending: 'Сортиране във възходящ ред',
     sortDescending: 'Сортиране в низходящ ред',
     sortUnSort: 'Изчистване на сортирането',
@@ -205,6 +205,7 @@ export const AG_GRID_LOCALE_BG = {
     previousPage: 'Предишна Страница',
     pageSizeSelectorLabel: 'Размер на Страницата:',
     footerTotal: 'Общо',
+    statusBarLastRowUnknown: '?',
 
     // Pivoting
     pivotColumnGroupTotals: 'Общо',
@@ -224,7 +225,9 @@ export const AG_GRID_LOCALE_BG = {
     pieChart: 'Кръгова диаграма',
     pie: 'Кръг',
     donut: 'Ринг',
-    line: 'Линия',
+    lineChart: 'Линия',
+    stackedLine: 'Натрупан',
+    normalizedLine: '100% Натрупан',
     xyChart: 'X Y (Разпръснато)',
     scatter: 'Разпръснато',
     bubble: 'Мехурчеста',
@@ -398,6 +401,8 @@ export const AG_GRID_LOCALE_BG = {
     pieTooltip: 'Пай',
     donutTooltip: 'Поничка',
     lineTooltip: 'Линия',
+    stackedLineTooltip: 'Натрупана',
+    normalizedLineTooltip: '100% Натрупана',
     groupedAreaTooltip: 'Област',
     stackedAreaTooltip: 'Слоена',
     normalizedAreaTooltip: '100% Слоена',
@@ -472,11 +477,21 @@ export const AG_GRID_LOCALE_BG = {
     stackedAreaFull: 'Слоена Област',
     normalizedAreaFull: '100% Слоена Област',
     customCombo: 'Персонализирана Комбинация',
+    funnel: 'Фуния',
+    coneFunnel: 'Конус Фуния',
+    pyramid: 'Пирамида',
+    funnelGroup: 'Фуния',
+    funnelTooltip: 'Фуния',
+    coneFunnelTooltip: 'Конус Фуния',
+    pyramidTooltip: 'Пирамида',
+    dropOff: 'Отпадане',
+    stageLabels: 'Етапни Надписи',
+    reverse: 'Обратно',
 
     // ARIA
     ariaAdvancedFilterBuilderItem: '${variable}. Ниво ${variable}. Натиснете ENTER за редактиране',
     ariaAdvancedFilterBuilderItemValidation:
-        '${variable}. Ниво ${variable}. ${variable} Натиснете ENTER за редактиране.',
+    '${variable}. Ниво ${variable}. ${variable} Натиснете ENTER за редактиране.',
     ariaAdvancedFilterBuilderList: 'Разширен списък за създаване на филтри',
     ariaAdvancedFilterBuilderFilterItem: 'Условие за филтриране',
     ariaAdvancedFilterBuilderGroupItem: 'Група за филтриране',
@@ -489,7 +504,7 @@ export const AG_GRID_LOCALE_BG = {
     ariaColumn: 'Колона',
     ariaColumnGroup: 'Група колони',
     ariaColumnFiltered: 'Колоната е филтрирана',
-    ariaColumnSelectAll: 'Превключване за избор на всички колони',
+    ariaColumnSelectAll: 'Превключване видимостта на всички колони',
     ariaDateFilterInput: 'Вход за филтър по дата',
     ariaDefaultListName: 'Списък',
     ariaFilterColumnsInput: 'Вход за филтриране на колони',
@@ -506,6 +521,8 @@ export const AG_GRID_LOCALE_BG = {
     ariaMenuColumn: 'Натиснете ALT + СТРЕЛКА НАДОЛУ, за да отворите менюто на колоната',
     ariaFilterColumn: 'Натиснете CTRL + ENTER, за да отворите филтъра',
     ariaRowDeselect: 'Натиснете SPACE, за да отмаркирате този ред',
+    ariaHeaderSelection: 'Колона с избор на заглавка',
+    ariaSelectAllCells: 'Натиснете Space, за да изберете всички клетки',
     ariaRowSelectAll: 'Натиснете SPACE, за да превключите избора на всички редове',
     ariaRowToggleSelection: 'Натиснете SPACE, за да превключите избора на реда',
     ariaRowSelect: 'Натиснете SPACE, за да изберете този ред',
@@ -540,6 +557,7 @@ export const AG_GRID_LOCALE_BG = {
     ariaLabelColumnFilter: 'Филтър на колона',
     ariaLabelCellEditor: 'Редактор на клетка',
     ariaLabelSelectField: 'Избор на поле',
+    ariaLabelLoadingContextMenu: 'Зареждане на контекстното меню',
 
     // aria labels for rich select
     ariaLabelRichSelectField: 'Поле за богато избиране',
@@ -555,7 +573,7 @@ export const AG_GRID_LOCALE_BG = {
     ariaLabelAdvancedFilterBuilderColumnSelectField: 'Разширен конструктор на филтри - Избиране на поле за колона',
     ariaLabelAdvancedFilterBuilderOptionSelectField: 'Разширен конструктор на филтри - Избиране на поле за опция',
     ariaLabelAdvancedFilterBuilderJoinSelectField:
-        'Разширен конструктор на филтри - Избиране на оператор за иницииране',
+    'Разширен конструктор на филтри - Избиране на оператор за иницииране',
 
     // ARIA Labels for the Side Bar
     ariaColumnPanelList: 'Списък с колони',

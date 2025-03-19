@@ -205,6 +205,7 @@ export const AG_GRID_LOCALE_BR = {
     previousPage: 'Página Anterior',
     pageSizeSelectorLabel: 'Tamanho da Página:',
     footerTotal: 'Total',
+    statusBarLastRowUnknown: '?',
 
     // Pivoting
     pivotColumnGroupTotals: 'Total',
@@ -224,7 +225,9 @@ export const AG_GRID_LOCALE_BR = {
     pieChart: 'Pizza',
     pie: 'Pizza',
     donut: 'Rosca',
-    line: 'Linha',
+    lineChart: 'Linha',
+    stackedLine: 'Empilhada',
+    normalizedLine: '100% Empilhada',
     xyChart: 'X Y (Dispersão)',
     scatter: 'Dispersão',
     bubble: 'Bolha',
@@ -398,6 +401,8 @@ export const AG_GRID_LOCALE_BR = {
     pieTooltip: 'Pizza',
     donutTooltip: 'Rosquinha',
     lineTooltip: 'Linha',
+    stackedLineTooltip: 'Empilhado',
+    normalizedLineTooltip: '100% Empilhado',
     groupedAreaTooltip: 'Área',
     stackedAreaTooltip: 'Empilhado',
     normalizedAreaTooltip: 'Empilhado 100%',
@@ -472,6 +477,16 @@ export const AG_GRID_LOCALE_BR = {
     stackedAreaFull: 'Área Empilhada',
     normalizedAreaFull: 'Área Empilhada 100%',
     customCombo: 'Combinação Personalizada',
+    funnel: 'Funil',
+    coneFunnel: 'Funil em Cone',
+    pyramid: 'Pirâmide',
+    funnelGroup: 'Funil',
+    funnelTooltip: 'Funil',
+    coneFunnelTooltip: 'Funil em Cone',
+    pyramidTooltip: 'Pirâmide',
+    dropOff: 'Queda',
+    stageLabels: 'Rótulos de Estágio',
+    reverse: 'Inverter',
 
     // ARIA
     ariaAdvancedFilterBuilderItem: '${variable}. Nível ${variable}. Pressione ENTER para editar.',
@@ -488,7 +503,7 @@ export const AG_GRID_LOCALE_BR = {
     ariaColumn: 'Coluna',
     ariaColumnGroup: 'Grupo de Colunas',
     ariaColumnFiltered: 'Coluna Filtrada',
-    ariaColumnSelectAll: 'Alternar Selecionar Todas as Colunas',
+    ariaColumnSelectAll: 'Alternar Visibilidade de Todas as Colunas',
     ariaDateFilterInput: 'Entrada de Filtro de Data',
     ariaDefaultListName: 'Lista',
     ariaFilterColumnsInput: 'Entrada de Colunas de Filtro',
@@ -505,6 +520,8 @@ export const AG_GRID_LOCALE_BR = {
     ariaMenuColumn: 'Pressione ALT PARA BAIXO para abrir o menu da coluna',
     ariaFilterColumn: 'Pressione CTRL ENTER para abrir o filtro',
     ariaRowDeselect: 'Pressione SPACE para desselecionar esta linha',
+    ariaHeaderSelection: 'Coluna com Seleção de Cabeçalho',
+    ariaSelectAllCells: 'Pressione Espaço para selecionar todas as células',
     ariaRowSelectAll: 'Pressione SPACE para alternar a seleção de todas as linhas',
     ariaRowToggleSelection: 'Pressione SPACE para alternar a seleção da linha',
     ariaRowSelect: 'Pressione SPACE para selecionar esta linha',
@@ -539,6 +556,7 @@ export const AG_GRID_LOCALE_BR = {
     ariaLabelColumnFilter: 'Filtro de Coluna',
     ariaLabelCellEditor: 'Editor de Célula',
     ariaLabelSelectField: 'Selecionar Campo',
+    ariaLabelLoadingContextMenu: 'Carregando Menu de Contexto',
 
     // aria labels for rich select
     ariaLabelRichSelectField: 'Campo de Seleção Rica',
@@ -554,7 +572,7 @@ export const AG_GRID_LOCALE_BR = {
     ariaLabelAdvancedFilterBuilderColumnSelectField: 'Selecionar Campo da Coluna no Construtor de Filtro Avançado',
     ariaLabelAdvancedFilterBuilderOptionSelectField: 'Selecionar Campo de Opção no Construtor de Filtro Avançado',
     ariaLabelAdvancedFilterBuilderJoinSelectField:
-        'Selecionar Campo do Operador de Junção no Construtor de Filtro Avançado',
+    'Selecionar Campo do Operador de Junção no Construtor de Filtro Avançado',
 
     // ARIA Labels for the Side Bar
     ariaColumnPanelList: 'Lista de Colunas',

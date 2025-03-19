@@ -95,7 +95,7 @@ export const AG_GRID_LOCALE_ES = {
     advancedFilterValidationInvalidDate: 'El valor no es una fecha válida',
     advancedFilterValidationMissingCondition: 'Falta la condición',
     advancedFilterValidationJoinOperatorMismatch:
-        'Los operadores de unión dentro de una condición deben ser los mismos',
+    'Los operadores de unión dentro de una condición deben ser los mismos',
     advancedFilterValidationInvalidJoinOperator: 'Operador de unión no encontrado',
     advancedFilterValidationMissingEndBracket: 'Falta paréntesis de cierre',
     advancedFilterValidationExtraEndBracket: 'Demasiados paréntesis de cierre',
@@ -206,6 +206,7 @@ export const AG_GRID_LOCALE_ES = {
     previousPage: 'Página Anterior',
     pageSizeSelectorLabel: 'Tamaño de Página:',
     footerTotal: 'Total',
+    statusBarLastRowUnknown: '?',
 
     // Pivoting
     pivotColumnGroupTotals: 'Total',
@@ -225,7 +226,9 @@ export const AG_GRID_LOCALE_ES = {
     pieChart: 'Circular',
     pie: 'Circular',
     donut: 'Rosquilla',
-    line: 'Línea',
+    lineChart: 'Línea',
+    stackedLine: 'Apilada',
+    normalizedLine: '100% Apilada',
     xyChart: 'X Y (Dispersión)',
     scatter: 'Dispersión',
     bubble: 'Burbuja',
@@ -399,6 +402,8 @@ export const AG_GRID_LOCALE_ES = {
     pieTooltip: 'Torta',
     donutTooltip: 'Donut',
     lineTooltip: 'Línea',
+    stackedLineTooltip: 'Apilado',
+    normalizedLineTooltip: '100% Apilado',
     groupedAreaTooltip: 'Área',
     stackedAreaTooltip: 'Apilada',
     normalizedAreaTooltip: '100% Apilada',
@@ -473,6 +478,16 @@ export const AG_GRID_LOCALE_ES = {
     stackedAreaFull: 'Área Apilada',
     normalizedAreaFull: 'Área 100% Apilada',
     customCombo: 'Combinación Personalizada',
+    funnel: 'Embudo',
+    coneFunnel: 'Embudo de Cono',
+    pyramid: 'Pirámide',
+    funnelGroup: 'Embudo',
+    funnelTooltip: 'Embudo',
+    coneFunnelTooltip: 'Embudo de Cono',
+    pyramidTooltip: 'Pirámide',
+    dropOff: 'Pérdida',
+    stageLabels: 'Etiquetas de Etapa',
+    reverse: 'Invertir',
 
     // ARIA
     ariaAdvancedFilterBuilderItem: '${variable}. Nivel ${variable}. Presiona ENTER para editar.',
@@ -489,7 +504,7 @@ export const AG_GRID_LOCALE_ES = {
     ariaColumn: 'Columna',
     ariaColumnGroup: 'Grupo de Columnas',
     ariaColumnFiltered: 'Columna Filtrada',
-    ariaColumnSelectAll: 'Alternar Selección de Todas las Columnas',
+    ariaColumnSelectAll: 'Alternar la visibilidad de todas las columnas',
     ariaDateFilterInput: 'Entrada de Filtro de Fecha',
     ariaDefaultListName: 'Lista',
     ariaFilterColumnsInput: 'Entrada de Filtrado de Columnas',
@@ -506,6 +521,8 @@ export const AG_GRID_LOCALE_ES = {
     ariaMenuColumn: 'Presiona ALT ABAJO para abrir el menú de la columna',
     ariaFilterColumn: 'Presiona CTRL ENTER para abrir el filtro',
     ariaRowDeselect: 'Presiona SPACE para anular la selección de esta fila',
+    ariaHeaderSelection: 'Columna con selección de encabezado',
+    ariaSelectAllCells: 'Presione Espacio para seleccionar todas las celdas',
     ariaRowSelectAll: 'Presiona SPACE para alternar la selección de todas las filas',
     ariaRowToggleSelection: 'Presiona SPACE para alternar la selección de la fila',
     ariaRowSelect: 'Presiona SPACE para seleccionar esta fila',
@@ -540,6 +557,7 @@ export const AG_GRID_LOCALE_ES = {
     ariaLabelColumnFilter: 'Filtro de Columna',
     ariaLabelCellEditor: 'Editor de Celda',
     ariaLabelSelectField: 'Seleccionar Campo',
+    ariaLabelLoadingContextMenu: 'Cargando menú contextual',
 
     // aria labels for rich select
     ariaLabelRichSelectField: 'Campo de selección enriquecido',
@@ -555,7 +573,7 @@ export const AG_GRID_LOCALE_ES = {
     ariaLabelAdvancedFilterBuilderColumnSelectField: 'Campo de selección de columna del generador de filtro avanzado',
     ariaLabelAdvancedFilterBuilderOptionSelectField: 'Campo de selección de opción del generador de filtro avanzado',
     ariaLabelAdvancedFilterBuilderJoinSelectField:
-        'Campo de selección de operador de unión del generador de filtro avanzado',
+    'Campo de selección de operador de unión del generador de filtro avanzado',
 
     // ARIA Labels for the Side Bar
     ariaColumnPanelList: 'Lista de columnas',
