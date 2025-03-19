@@ -60,7 +60,10 @@ const versions = isMigration ? allVersions.filter(filterMigrations) : allVersion
                     {isMigration && (
                         <td>
                             <a href={guideUrl}>
-                                <span class={'text-monospace'}>{version.version}</span> Migration guide{' '}
+                                <span class:list={['text-monospace', !isMajor ? styles.pad : '']}>
+                                    {version.version}
+                                </span>
+                                {isMajor ? 'Migration Guide' : `Release Notes`}
                                 <Icon name="arrowRight" />
                             </a>
                         </td>
