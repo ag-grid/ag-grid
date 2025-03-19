@@ -1,9 +1,15 @@
 const fs = require('fs');
-const { exec } = require('child_process');
 const path = require('path');
 const resultsFilePath = path.resolve(__dirname, 'module-size-results.json');
+const { TestSuites, TestSuite, TestCase } = require('ag-shared/processor');
+
+const isCI = process.env.NX_TASK_TARGET_CONFIGURATION === 'ci';
 
 function validateSizes() {
+    const testSuites = new TestSuites('Module Size Tests');
+    const testSuite = new TestSuite('Module Size Tests');
+    testSuites.addTestSuite(testSuite);
+
     console.log('Running module size tests...');
 
     // Read and parse the module-size-results.json file
@@ -14,51 +20,58 @@ function validateSizes() {
         process.exit(1);
     }
 
-    // validate that all results their selfSize is less than the expectedSize + 2%
+    results.forEach((result) => {
+        const testCaseName = result.modules.length === 0 ? 'default' : result.modules.join(', ');
+        const testCase = new TestCase(testCaseName, testCaseName, 1.0);
 
-    // Some modules are very small and the expected size is very close to the actual size
-    const bufferSize = (expected) => Math.max(expected * 0.03, 1);
+        // validate that all results their selfSize is less than the expectedSize + 2%
 
-    const failuresTooBig = results.filter(
-        (result) => result.selfSize > result.expectedSize + bufferSize(result.expectedSize)
-    );
+        // Some modules are very small and the expected size is very close to the actual size
+        const bufferSize = (expected) => Math.max(expected * 0.03, 1);
 
-    // We should reduce the expected size if the module is smaller than expected
-    const failuresTooSmall = results.filter(
-        (result) => result.selfSize < result.expectedSize - bufferSize(result.expectedSize)
-    );
+        const tooBig = result.selfSize > result.expectedSize + bufferSize(result.expectedSize);
 
-    const tooBig = failuresTooBig.length > 0;
-    const tooSmall = failuresTooSmall.length > 0;
+        // We should reduce the expected size if the module is smaller than expected
+        const tooSmall = result.selfSize < result.expectedSize - bufferSize(result.expectedSize);
 
-    if (tooBig || tooSmall) {
-        if (tooBig) {
-            console.error(
-                'Validation failed for the following modules which are too large compared to their expected size:'
-            );
-            failuresTooBig.forEach((failure) => {
-                console.error(
-                    `Module: [${failure.modules.join()}], selfSize: ${failure.selfSize}, expectedSize: ${failure.expectedSize} + (${bufferSize(failure.expectedSize)})`
+        if (tooBig || tooSmall) {
+            const errors = [];
+            if (tooBig) {
+                errors.push(
+                    'Validation failed for the following modules which are too large compared to their expected size:'
                 );
-            });
-        }
-        if (tooSmall) {
-            console.error(
-                'Validation failed for the following modules which are too small compared to their expected size:'
-            );
-            console.error(
-                'Is the expected size too high in moduleDefinitions? Or have the module dependencies changed?'
-            );
-            failuresTooSmall.forEach((failure) => {
-                console.error(
-                    `Module: [${failure.modules.join()}], selfSize: ${failure.selfSize}, expectedSize: ${failure.expectedSize} + (${bufferSize(failure.expectedSize)})`
+                errors.push(
+                    `Module: [${result.modules.join()}], selfSize: ${result.selfSize}, expectedSize: ${result.expectedSize} + (${bufferSize(result.expectedSize)})`
                 );
-            });
+            }
+            if (tooSmall) {
+                errors.push(
+                    'Validation failed for the following modules which are too small compared to their expected size:'
+                );
+                errors.push(
+                    'Is the expected size too high in moduleDefinitions? Or have the module dependencies changed?'
+                );
+                errors.push(
+                    `Module: [${result.modules.join()}], selfSize: ${result.selfSize}, expectedSize: ${result.expectedSize} + (${bufferSize(result.expectedSize)})`
+                );
+            }
+            testCase.setFailure(errors.join('\n'));
         }
-        process.exit(1); // Return a non-zero exit code
-    } else {
-        console.log(`All modules (${results.length}) passed size validation.`);
+        testSuite.addTestCase(testCase);
+
+        if (testSuites.hasFailures()) {
+            testSuites.getFailures().forEach((failure) => console.log(failure));
+        } else {
+            console.log(`All modules (${results.length}) passed size validation.`);
+        }
+    });
+
+    if (isCI) {
+        testSuites.writeJunitReport(path.resolve(__dirname, '../../reports/ag-grid-module-size.xml'));
     }
+
+    // testSuites.print();
+    process.exit(testSuites.hasFailures() ? 1 : 0); // Return a non-zero exit code
 }
 
 validateSizes();

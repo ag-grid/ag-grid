@@ -20,6 +20,9 @@
       ],
       "options": {
         "script": "test:e2e"
+      },
+      "configurations": {
+        "ci": {}
       }
     }
   },

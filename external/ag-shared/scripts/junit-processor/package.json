@@ -1,0 +1,25 @@
+{
+  "name": "processor",
+  "version": "0.0.1",
+  "description": "junit data processor",
+  "main": "src/processor.ts",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ag-grid/ag-website-shared.git"
+  },
+  "keywords": [
+    "git",
+    "junit",
+    "jest"
+  ],
+  "author": "Sean Landsman <sean@thelandsmans.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ag-grid/ag-website-shared/issues"
+  },
+  "homepage": "https://github.com/ag-grid/ag-website-shared#readme",
+  "devDependencies": {
+    "tsx": "^4.7.2"
+  },
+  "dependencies": {}
+}

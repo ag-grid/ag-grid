@@ -11,14 +11,15 @@
     "module-combinations": "ts-node moduleCombinations.ts",
     "module-stats": "ts-node moduleCombinations.ts && npm run module-validate",
     "module-validate": "ts-node moduleValidator.ts",
-    "test:e2e": "run-s \"module-combinations -- {1}\" module-validate --"
+    "test:e2e": "run-s \"module-combinations -- {1}\" \"module-validate -- {1}\" --"
   },
   "dependencies": {
     "ag-grid-react": "33.1.1",
     "ag-grid-community": "33.1.1",
     "ag-grid-enterprise": "33.1.1",
-    "ag-charts-community": "11.1.1-beta.20250313",
-    "ag-charts-enterprise": "11.1.1-beta.20250313",
+    "ag-charts-community": "11.1.1-beta.20250318",
+    "ag-charts-enterprise": "11.1.1-beta.20250318",
+    "ag-shared": "0.0.1",
     "react": "^18.3.1",
     "react-dom": "^18.3.1"
   },
