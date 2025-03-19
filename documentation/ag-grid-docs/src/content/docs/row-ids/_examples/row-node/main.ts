@@ -35,7 +35,6 @@ function getAllRows() {
         console.log(`height = ${rowNode.rowHeight}px`);
         console.log(`isSelected = ${rowNode.isSelected()}`);
     });
-    window.alert('Row details printed to developers console');
 }
 
 function getRowById() {
@@ -44,7 +43,6 @@ function getRowById() {
         console.log(`################ Got Row Node C2`);
         console.log(`data = ${JSON.stringify(rowNode.data)}`);
     }
-    window.alert('Row details printed to developers console');
 }
 
 let gridApi: GridApi;

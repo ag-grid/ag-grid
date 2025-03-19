@@ -241,7 +241,7 @@ function getContextMenuItems(params: GetContextMenuItemsParams): (string | MenuI
         //shortcut: 'Alt + M',
         action: () => {
             const value = params.value ? params.value : '<empty>';
-            window.alert('You clicked a custom menu item on cell ' + value);
+            console.log('You clicked a custom menu item on cell ' + value);
         },
     });
 

@@ -56,9 +56,9 @@ function getContextMenuItems(
     const result: (DefaultMenuItem | MenuItemDef)[] = [
         {
             // custom item
-            name: 'Alert ' + params.value,
+            name: 'Log ' + params.value,
             action: () => {
-                window.alert('Alerting about ' + params.value);
+                console.log('Logging about ' + params.value);
             },
             cssClasses: ['red', 'bold'],
         },
