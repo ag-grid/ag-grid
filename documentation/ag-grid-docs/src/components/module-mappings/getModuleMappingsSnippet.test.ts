@@ -120,7 +120,7 @@ describe('getModuleMappingsSnippet', () => {
 
               ModuleRegistry.registerModules([
                   AllCommunityModule,
-                  SparklinesModule.with(AgChartsCommunityModule), ClipboardModule, ContextMenuModule,
+                  SparklinesModule.with(AgChartsCommunityModule),
               ]);"
             `);
         });
