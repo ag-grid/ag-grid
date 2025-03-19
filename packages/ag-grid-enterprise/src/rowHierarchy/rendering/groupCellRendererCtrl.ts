@@ -174,36 +174,16 @@ export class GroupCellRendererCtrl extends BeanStub implements IGroupCellRendere
      */
     private addGroupValue(): void {
         const {
-            params: { column, value },
+            params: { column, value, valueFormatted },
             node,
             displayedNode,
             beans,
         } = this;
         // if no formatted value and node key is '', then we replace this group with (Blanks)
         // this does not propagate down for [showOpenedGroup]
-        const formattedValue = this.getFormattedValue() ?? _getGroupValue(column, node, displayedNode, beans);
+        const formattedValue = valueFormatted ?? _getGroupValue(column, node, displayedNode, beans);
         const innerCompDetails = this.getInnerCompDetails();
         this.comp.setInnerRenderer(innerCompDetails, formattedValue ?? value ?? null);
-    }
-
-    /**
-     * Get the formatted value for the cell, prioritises provided formatted value (autoGroupColDef.valueFormatter)
-     * otherwise checks if grouped col can format the value.
-     */
-    private getFormattedValue(): any {
-        const { valueSvc } = this.beans;
-        const { value, valueFormatted, column } = this.params;
-        const { rowGroupColumn } = this.displayedNode;
-
-        if (!rowGroupColumn) {
-            return valueFormatted;
-        }
-
-        if (!column?.isRowGroupDisplayed(rowGroupColumn.getId())) {
-            return null;
-        }
-
-        return valueSvc.formatValue(rowGroupColumn, this.node, value);
     }
 
     /**
@@ -211,21 +191,20 @@ export class GroupCellRendererCtrl extends BeanStub implements IGroupCellRendere
      */
     private addFooterValue(): void {
         const { expressionSvc, footerSvc } = this.beans;
-        const { totalValueGetter, column, node, value } = this.params;
-        const valueFormatted =
-            this.getFormattedValue() ?? _getGroupValue(column, node as RowNode, node as RowNode, this.beans);
+        const { totalValueGetter, column, node, value, valueFormatted } = this.params;
+        const formattedValue = valueFormatted ?? _getGroupValue(column, node as RowNode, node as RowNode, this.beans);
         let footerValue: string | undefined = '';
 
         if (totalValueGetter) {
             if (typeof totalValueGetter === 'function') {
-                footerValue = totalValueGetter({ ...this.params, valueFormatted });
+                footerValue = totalValueGetter({ ...this.params, valueFormatted: formattedValue });
             } else if (typeof totalValueGetter === 'string') {
-                footerValue = expressionSvc?.evaluate(totalValueGetter, { ...this.params, valueFormatted });
+                footerValue = expressionSvc?.evaluate(totalValueGetter, { ...this.params, formattedValue });
             } else {
                 _warn(179);
             }
         } else {
-            footerValue = footerSvc?.getTotalValue(valueFormatted ?? value);
+            footerValue = footerSvc?.getTotalValue(formattedValue ?? value);
         }
 
         const innerCompDetails = this.getInnerCompDetails();

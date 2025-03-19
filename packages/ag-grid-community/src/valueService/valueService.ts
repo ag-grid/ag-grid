@@ -77,13 +77,46 @@ export class ValueService extends BeanStub implements NamedBean {
     }
 
     /**
-     * Use this function to get a displayable cell value.
-     *
-     * The values from this function are not used for sorting, filtering, or aggregation purposes.
-     *
-     * Handles: groupHideOpenParents, showOpenedGroup and groupSuppressBlankHeader behaviours
+     * Gets formatted value to be displayed; inherits formatting for auto cols
      */
-    public getValueForDisplay(column: AgColumn, node: IRowNode) {
+    private getFormattedValueForDisplay(column: AgColumn, node: IRowNode, value: any): string | null {
+        const groupedCol = node.rowGroupColumn as AgColumn;
+        const isShowingGroupCell =
+            column.colDef.showRowGroup && groupedCol && column.isRowGroupDisplayed(groupedCol.colId);
+        if (isShowingGroupCell) {
+            return this.formatValue(groupedCol, node, value);
+        }
+        return this.formatValue(column, node, value);
+    }
+
+    /**
+     * Use this function to get a displayable cell value.
+     * The values from this function are not used for sorting, filtering, or aggregation purposes.
+     * Handles: groupHideOpenParents, showOpenedGroup and groupSuppressBlankHeader behaviours
+     *
+     * @returns the unformatted cell value
+     */
+    public getValueForDisplay(column: AgColumn, node: IRowNode, includeFormattedValue?: false): any;
+    /**
+     * Use this function to get a displayable cell value.
+     * The values from this function are not used for sorting, filtering, or aggregation purposes.
+     * Handles: groupHideOpenParents, showOpenedGroup and groupSuppressBlankHeader behaviours
+     *
+     * @returns a tuple where the first item is unformatted, and the second item is formatted.
+     */
+    public getValueForDisplay(column: AgColumn, node: IRowNode, includeFormattedValue: true): [any, string];
+    public getValueForDisplay(
+        column: AgColumn,
+        node: IRowNode,
+        includeFormattedValue?: boolean
+    ): any | [any, string | null] {
+        const formatIfNeeded = (node: IRowNode, value: any): any | [any, string | null] => {
+            if (includeFormattedValue) {
+                return [value, this.getFormattedValueForDisplay(column, node, value)];
+            }
+            return value;
+        };
+
         const rowGroupColId = column.getColDef().showRowGroup;
         if (rowGroupColId != null) {
             // when using multiple columns, special handling
@@ -91,7 +124,7 @@ export class ValueService extends BeanStub implements NamedBean {
                 // groupHideOpenParents > cell value > showOpenedGroup
                 const hideOpenParentsNode = this.getDisplayedNode(node, column, true);
                 if (hideOpenParentsNode) {
-                    return this.getValue(column, hideOpenParentsNode);
+                    return formatIfNeeded(hideOpenParentsNode, this.getValue(column, hideOpenParentsNode));
                 }
             }
 
@@ -101,10 +134,11 @@ export class ValueService extends BeanStub implements NamedBean {
                 // showOpenedGroup
                 const displayedNode = this.getDisplayedNode(node, column);
                 if (displayedNode) {
-                    return this.getValue(column, displayedNode);
+                    formatIfNeeded(displayedNode, this.getValue(column, displayedNode));
                 }
             }
-            return value;
+
+            return formatIfNeeded(node, value);
         }
 
         // when in pivot mode, leafGroups cannot be expanded
@@ -116,7 +150,7 @@ export class ValueService extends BeanStub implements NamedBean {
         // if doing grouping and footers, we don't want to include the agg value
         // in the header when the group is open
         const ignoreAggData = isOpenedGroup && !groupShowsAggData;
-        return this.getValue(column, node, ignoreAggData);
+        return formatIfNeeded(node, this.getValue(column, node, ignoreAggData));
     }
 
     public getValue(column: AgColumn, rowNode?: IRowNode | null, ignoreAggData = false): any {
