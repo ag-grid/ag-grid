@@ -1,0 +1,26 @@
+{
+  "name": "ag-grid-snapshot",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "testing/snapshot",
+  "targets": {
+    "build": {
+      "executor": "nx:run-script",
+      "options": {
+        "script": "build"
+      }
+    },
+    "test:e2e": {
+      "executor": "nx:run-script",
+      "dependsOn": [
+        "ag-grid-community:build:types",
+        "ag-grid-community:build:package",
+        "ag-grid-enterprise:build:types",
+        "ag-grid-enterprise:build:package"
+      ],
+      "options": {
+        "script": "test:e2e"
+      }
+    }
+  },
+  "tags": ["snapshot", "sharding"]
+}

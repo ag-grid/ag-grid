@@ -1,0 +1,30 @@
+{
+  "name": "ag-grid-snapshot",
+  "private": true,
+  "version": "33.1.1",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "test": "vitest"
+  },
+  "dependencies": {
+    "ag-grid-community": "33.1.1",
+    "ag-grid-enterprise": "33.1.1",
+    "ag-charts-community": "11.1.1-beta.20250318",
+    "ag-charts-enterprise": "11.1.1-beta.20250318"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.9.0",
+    "prettier": "3.2.5",
+    "prettier-plugin-organize-attributes": "1.0.0",
+    "eslint": "^9.9.0",
+    "glob": "^11.0.0",
+    "globals": "^15.9.0",
+    "terser": "^5.36.0",
+    "typescript": "^5.5.3",
+    "typescript-eslint": "^8.0.1",
+    "vite": "^5.4.1",
+    "vitest": "3.0.9",
+    "npm-run-all": "4.1.5"
+  }
+}

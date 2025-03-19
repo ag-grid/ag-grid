@@ -93,6 +93,7 @@
     "ag-grid-react": "33.1.1",
     "ag-grid-vue3": "33.1.1",
     "prettier-plugin-astro": "^0.12.3",
+    "prettier-plugin-organize-attributes": "^1.0.0",
     "vite-plugin-mkcert": "^1.17.2",
     "vitest": "2.1.6"
   }
