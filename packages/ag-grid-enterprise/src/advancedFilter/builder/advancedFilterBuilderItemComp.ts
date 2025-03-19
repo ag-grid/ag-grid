@@ -3,6 +3,7 @@ import type {
     BeanCollection,
     DragAndDropService,
     DragSource,
+    ElementParams,
     FieldPickerValueSelectedEvent,
     FieldValueEvent,
     ITooltipCtrl,
@@ -14,6 +15,7 @@ import {
     KeyCode,
     RefPlaceholder,
     TabGuardComp,
+    _createElement,
     _createIconNoSpan,
     _removeAriaExpanded,
     _setAriaDisabled,
@@ -45,6 +47,49 @@ import { InputPillComp } from './inputPillComp';
 import { JoinPillWrapperComp } from './joinPillWrapperComp';
 import { SelectPillComp } from './selectPillComp';
 
+const AdvancedFilterBuilderItemElement: ElementParams = {
+    tag: 'div',
+    cls: 'ag-advanced-filter-builder-item-wrapper',
+    role: 'presentation',
+    children: [
+        {
+            tag: 'div',
+            cls: 'ag-advanced-filter-builder-item',
+            role: 'presentation',
+            children: [
+                {
+                    tag: 'div',
+                    ref: 'eTreeLines',
+                    cls: 'ag-advanced-filter-builder-item-tree-lines',
+                    attrs: { 'aria-hidden': 'true' },
+                },
+                {
+                    tag: 'span',
+                    ref: 'eDragHandle',
+                    cls: 'ag-drag-handle',
+                    attrs: { 'aria-hidden': 'true' },
+                },
+                {
+                    tag: 'span',
+                    ref: 'eValidation',
+                    cls: 'ag-advanced-filter-builder-item-button ag-advanced-filter-builder-invalid',
+                    attrs: { 'aria-hidden': 'true' },
+                },
+            ],
+        },
+        {
+            tag: 'div',
+            ref: 'eButtons',
+            cls: 'ag-advanced-filter-builder-item-buttons',
+            children: [
+                { tag: 'span', ref: 'eMoveUpButton', cls: 'ag-advanced-filter-builder-item-button', role: 'button' },
+                { tag: 'span', ref: 'eMoveDownButton', cls: 'ag-advanced-filter-builder-item-button', role: 'button' },
+                { tag: 'div', ref: 'eAddButton', role: 'presentation' },
+                { tag: 'span', ref: 'eRemoveButton', cls: 'ag-advanced-filter-builder-item-button', role: 'button' },
+            ],
+        },
+    ],
+};
 export class AdvancedFilterBuilderItemComp extends TabGuardComp<AdvancedFilterBuilderEvents> {
     private dragAndDrop: DragAndDropService;
     private advFilterExpSvc: AdvancedFilterExpressionService;
@@ -77,21 +122,7 @@ export class AdvancedFilterBuilderItemComp extends TabGuardComp<AdvancedFilterBu
         private readonly dragFeature: AdvancedFilterBuilderDragFeature,
         private readonly focusWrapper: HTMLElement
     ) {
-        super(/* html */ `
-            <div class="ag-advanced-filter-builder-item-wrapper" role="presentation">
-                <div class="ag-advanced-filter-builder-item" role="presentation">
-                    <div data-ref="eTreeLines" class="ag-advanced-filter-builder-item-tree-lines" aria-hidden="true"></div>
-                    <span data-ref="eDragHandle" class="ag-drag-handle" aria-hidden="true"></span>
-                    <span data-ref="eValidation" class="ag-advanced-filter-builder-item-button ag-advanced-filter-builder-invalid" aria-hidden="true"></span>
-                </div>
-                <div data-ref="eButtons" class="ag-advanced-filter-builder-item-buttons">
-                    <span data-ref="eMoveUpButton" class="ag-advanced-filter-builder-item-button" role="button"></span>
-                    <span data-ref="eMoveDownButton" class="ag-advanced-filter-builder-item-button" role="button"></span>
-                    <div data-ref="eAddButton" role="presentation"></div>
-                    <span data-ref="eRemoveButton" class="ag-advanced-filter-builder-item-button" role="button"></span>
-                </div>
-            </div>
-        `);
+        super(AdvancedFilterBuilderItemElement);
     }
 
     public postConstruct(): void {
@@ -103,9 +134,10 @@ export class AdvancedFilterBuilderItemComp extends TabGuardComp<AdvancedFilterBu
         this.eDragHandle.insertAdjacentElement('afterend', this.ePillWrapper.getGui());
 
         if (level === 0) {
-            const eTreeLine = document.createElement('div');
-            eTreeLine.classList.add('ag-advanced-filter-builder-item-tree-line-vertical-bottom');
-            eTreeLine.classList.add('ag-advanced-filter-builder-item-tree-line-root');
+            const eTreeLine = _createElement({
+                tag: 'div',
+                cls: 'ag-advanced-filter-builder-item-tree-line-vertical-bottom ag-advanced-filter-builder-item-tree-line-root',
+            });
             this.eTreeLines.appendChild(eTreeLine);
 
             _setDisplayed(this.eDragHandle, false);
@@ -179,8 +211,7 @@ export class AdvancedFilterBuilderItemComp extends TabGuardComp<AdvancedFilterBu
 
     private setupTreeLines(level: number): void {
         for (let i = 0; i < level; i++) {
-            const eTreeLine = document.createElement('div');
-            this.eTreeLines.appendChild(eTreeLine);
+            this.eTreeLines.appendChild(_createElement({ tag: 'div' }));
         }
     }
 

@@ -6,6 +6,7 @@ import type {
     DragSource,
     DragSourceType,
     DropTarget,
+    ElementParams,
     ITooltipCtrl,
     TooltipFeature,
 } from 'ag-grid-community';
@@ -21,6 +22,21 @@ import {
 } from 'ag-grid-community';
 
 export type PillDragCompEvent = 'columnRemove';
+
+const PillDragCompElement: ElementParams = {
+    tag: 'span',
+    role: 'option',
+    children: [
+        {
+            tag: 'span',
+            ref: 'eDragHandle',
+            cls: 'ag-drag-handle ag-column-drop-cell-drag-handle',
+            role: 'presentation',
+        },
+        { tag: 'span', ref: 'eText', cls: 'ag-column-drop-cell-text', attrs: { 'aria-hidden': 'true' } },
+        { tag: 'span', ref: 'eButton', cls: 'ag-column-drop-cell-button', role: 'presentation' },
+    ],
+};
 export abstract class PillDragComp<TItem> extends Component<PillDragCompEvent> {
     private readonly eText: HTMLElement = RefPlaceholder;
     private readonly eDragHandle: HTMLElement = RefPlaceholder;
@@ -40,23 +56,14 @@ export abstract class PillDragComp<TItem> extends Component<PillDragCompEvent> {
         private dragSourceDropTarget: DropTarget,
         private ghost: boolean,
         private horizontal: boolean,
-        protected template?: string,
+        protected template?: ElementParams,
         protected agComponents?: ComponentSelector[]
     ) {
         super();
     }
 
     public postConstruct(): void {
-        this.setTemplate(
-            this.template ??
-                /* html */ `
-            <span role="option">
-              <span data-ref="eDragHandle" class="ag-drag-handle ag-column-drop-cell-drag-handle" role="presentation"></span>
-              <span data-ref="eText" class="ag-column-drop-cell-text" aria-hidden="true"></span>
-              <span data-ref="eButton" class="ag-column-drop-cell-button" role="presentation"></span>
-            </span>`,
-            this.agComponents
-        );
+        this.setTemplate(this.template ?? PillDragCompElement, this.agComponents);
         const eGui = this.getGui();
 
         const { beans, eDragHandle, eText, eButton } = this;

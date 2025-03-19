@@ -1,10 +1,21 @@
-import type { Component } from 'ag-grid-community';
+import type { Component, ElementParams } from 'ag-grid-community';
 import { KeyCode, PopupComponent, RefPlaceholder, _exists, _fuzzySuggestions } from 'ag-grid-community';
 
 import { VirtualList } from '../../widgets/virtualList';
 import { AgAutocompleteRow } from './agAutocompleteRow';
 import type { AutocompleteEntry } from './autocompleteParams';
 
+const AgAutocompleteListElement: ElementParams = {
+    tag: 'div',
+    cls: 'ag-autocomplete-list-popup',
+    children: [
+        {
+            tag: 'div',
+            ref: 'eList',
+            cls: 'ag-autocomplete-list',
+        },
+    ],
+};
 export class AgAutocompleteList extends PopupComponent {
     private readonly eList: HTMLElement = RefPlaceholder;
 
@@ -25,9 +36,7 @@ export class AgAutocompleteList extends PopupComponent {
             forceLastSelection?: (lastSelection: AutocompleteEntry, searchString: string) => boolean;
         }
     ) {
-        super(/* html */ `<div class="ag-autocomplete-list-popup">
-            <div data-ref="eList" class="ag-autocomplete-list"></div>
-        <div>`);
+        super(AgAutocompleteListElement);
     }
 
     public postConstruct(): void {

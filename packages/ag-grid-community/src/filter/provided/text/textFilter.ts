@@ -1,5 +1,5 @@
 import type { IDoesFilterPassParams } from '../../../interfaces/iFilter';
-import { _setAriaRole } from '../../../utils/aria';
+import { _createElement } from '../../../utils/dom';
 import { _makeNull } from '../../../utils/generic';
 import { AgInputTextField } from '../../../widgets/agInputTextField';
 import type { ISimpleFilterModel, ISimpleFilterModelType, Tuple } from '../iSimpleFilter';
@@ -130,9 +130,7 @@ export class TextFilter extends SimpleFilter<TextFilterModel, string> {
     }
 
     protected createValueElement(): HTMLElement {
-        const eCondition = document.createElement('div');
-        eCondition.classList.add('ag-filter-body');
-        _setAriaRole(eCondition, 'presentation');
+        const eCondition = _createElement({ tag: 'div', cls: 'ag-filter-body', role: 'presentation' });
 
         this.createFromToElement(eCondition, this.eValuesFrom, 'from');
         this.createFromToElement(eCondition, this.eValuesTo, 'to');

@@ -1,12 +1,17 @@
-import { _getDocument } from '../../gridOptionsUtils';
-import { _clearElement } from '../../utils/dom';
+import type { ElementParams } from '../../utils/dom';
+import { _clearElement, _createElement } from '../../utils/dom';
 import { _exists, _missing } from '../../utils/generic';
-import { Component } from '../../widgets/component';
+import { Component, RefPlaceholder } from '../../widgets/component';
 import { animateSlideCellRendererCSS } from './animateSlideCellRenderer.css-GENERATED';
 import type { ICellRenderer } from './iCellRenderer';
 
+const AnimateSlideCellRendererElement: ElementParams = {
+    tag: 'span',
+    children: [{ tag: 'span', ref: 'eCurrent', cls: 'ag-value-slide-current' }],
+};
+
 export class AnimateSlideCellRenderer extends Component implements ICellRenderer {
-    private eCurrent: HTMLElement;
+    private eCurrent: HTMLElement = RefPlaceholder;
     private ePrevious: HTMLElement | null;
 
     private lastValue: any;
@@ -14,16 +19,8 @@ export class AnimateSlideCellRenderer extends Component implements ICellRenderer
     private refreshCount = 0;
 
     constructor() {
-        super();
+        super(AnimateSlideCellRendererElement);
 
-        const template = document.createElement('span');
-        const slide = document.createElement('span');
-        slide.setAttribute('class', 'ag-value-slide-current');
-        template.appendChild(slide);
-
-        this.setTemplateFromElement(template);
-
-        this.eCurrent = this.queryForHtmlElement('.ag-value-slide-current');
         this.registerCSS(animateSlideCellRendererCSS);
     }
 
@@ -45,8 +42,7 @@ export class AnimateSlideCellRenderer extends Component implements ICellRenderer
         }
 
         const { beans, eCurrent } = this;
-        const prevElement = _getDocument(beans).createElement('span');
-        prevElement.setAttribute('class', 'ag-value-slide-previous ag-value-slide-out');
+        const prevElement = _createElement({ tag: 'span', cls: 'ag-value-slide-previous ag-value-slide-out' });
         this.ePrevious = prevElement;
 
         prevElement.textContent = eCurrent.textContent;

@@ -1,17 +1,22 @@
-import type { AgCheckbox } from 'ag-grid-community';
+import type { AgCheckbox, ElementParams } from 'ag-grid-community';
 import { AgToggleButtonSelector, Component, RefPlaceholder } from 'ag-grid-community';
 
+const PivotModePanelElement: ElementParams = {
+    tag: 'div',
+    cls: 'ag-pivot-mode-panel',
+    children: [
+        {
+            tag: 'ag-toggle-button',
+            ref: 'cbPivotMode',
+            cls: 'ag-pivot-mode-select',
+        },
+    ],
+};
 export class PivotModePanel extends Component {
     private readonly cbPivotMode: AgCheckbox = RefPlaceholder;
 
-    private createTemplate(): string {
-        return /* html */ `<div class="ag-pivot-mode-panel">
-                <ag-toggle-button data-ref="cbPivotMode" class="ag-pivot-mode-select"></ag-toggle-button>
-            </div>`;
-    }
-
     public postConstruct(): void {
-        this.setTemplate(this.createTemplate(), [AgToggleButtonSelector]);
+        this.setTemplate(PivotModePanelElement, [AgToggleButtonSelector]);
 
         const cbPivotMode = this.cbPivotMode;
         const { colModel, ctrlsSvc, gos } = this.beans;

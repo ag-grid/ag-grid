@@ -34,16 +34,11 @@ export class SparklineCellRenderer extends Component implements ICellRenderer {
     private env: Environment;
 
     constructor() {
-        super();
-
-        // Manually construct DOM to avoid costly HTML parsing on fast-scrolling.
-        const wrapper = document.createElement('div');
-        wrapper.classList.add('ag-sparkline-wrapper');
-        const eSparkline = document.createElement('span');
-        eSparkline.dataset.ref = 'eSparkline';
-        wrapper.appendChild(eSparkline);
-
-        this.setTemplateFromElement(wrapper);
+        super({
+            tag: 'div',
+            cls: 'ag-sparkline-wrapper',
+            children: [{ tag: 'span', ref: 'eSparkline' }],
+        });
     }
 
     postConstruct(): void {

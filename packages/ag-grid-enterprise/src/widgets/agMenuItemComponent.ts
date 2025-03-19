@@ -1,20 +1,9 @@
-import {
-    AgPromise,
-    BeanStub,
-    KeyCode,
-    _addGridCommonParams,
-    _loadTemplate,
-    _preserveRangesWhile,
-    _setAriaDisabled,
-    _setAriaExpanded,
-    _setAriaHasPopup,
-    _setAriaRole,
-} from 'ag-grid-community';
 import type {
     AgEvent,
     BeanCollection,
     Component,
     ComponentType,
+    ElementParams,
     IComponent,
     IMenuActionParams,
     IMenuConfigParams,
@@ -28,6 +17,18 @@ import type {
     UserCompDetails,
     UserComponentFactory,
     WithoutGridCommon,
+} from 'ag-grid-community';
+import {
+    AgPromise,
+    BeanStub,
+    KeyCode,
+    _addGridCommonParams,
+    _createElement,
+    _preserveRangesWhile,
+    _setAriaDisabled,
+    _setAriaExpanded,
+    _setAriaHasPopup,
+    _setAriaRole,
 } from 'ag-grid-community';
 
 import { AgMenuList } from './agMenuList';
@@ -64,6 +65,7 @@ const MenuItemComponent: ComponentType<IMenuItemComp> = {
     name: 'menuItem',
     optionalMethods: ['setActive', 'select', 'setExpanded', 'configureDefaults'],
 };
+const MenuItemElement: ElementParams = { tag: 'div', cls: 'ag-menu', role: 'presentation' };
 
 export class AgMenuItemComponent extends BeanStub<AgMenuItemComponentEvent> {
     private popupSvc?: PopupService;
@@ -178,7 +180,7 @@ export class AgMenuItemComponent extends BeanStub<AgMenuItemComponentEvent> {
 
         this.subMenuIsOpening = true;
 
-        const ePopup = _loadTemplate(/* html */ `<div class="ag-menu" role="presentation"></div>`);
+        const ePopup = _createElement(MenuItemElement);
         this.eSubMenuGui = ePopup;
         let destroySubMenu: () => void;
         let afterGuiAttached = () => {

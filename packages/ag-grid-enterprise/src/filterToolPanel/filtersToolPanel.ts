@@ -1,6 +1,7 @@
 import type {
     ColDef,
     ColGroupDef,
+    ElementParams,
     FiltersToolPanelState,
     IFiltersToolPanel,
     IToolPanelComp,
@@ -19,6 +20,14 @@ export interface ToolPanelFiltersCompParams<TData = any, TContext = any>
     extends IToolPanelParams<TData, TContext, FiltersToolPanelState>,
         IToolPanelFiltersCompParams {}
 
+const FiltersToolPanelElement: ElementParams = {
+    tag: 'div',
+    cls: 'ag-filter-toolpanel',
+    children: [
+        { tag: 'ag-filters-tool-panel-header', ref: 'filtersToolPanelHeaderPanel' },
+        { tag: 'ag-filters-tool-panel-list', ref: 'filtersToolPanelListPanel' },
+    ],
+};
 export class FiltersToolPanel extends Component implements IFiltersToolPanel, IToolPanelComp {
     private readonly filtersToolPanelHeaderPanel: AgFiltersToolPanelHeader = RefPlaceholder;
     private readonly filtersToolPanelListPanel: AgFiltersToolPanelList = RefPlaceholder;
@@ -28,13 +37,7 @@ export class FiltersToolPanel extends Component implements IFiltersToolPanel, IT
     private listenerDestroyFuncs: (() => void)[] = [];
 
     constructor() {
-        super(
-            /* html */ `<div class="ag-filter-toolpanel">
-            <ag-filters-tool-panel-header data-ref="filtersToolPanelHeaderPanel"></ag-filters-tool-panel-header>
-            <ag-filters-tool-panel-list data-ref="filtersToolPanelListPanel"></ag-filters-tool-panel-list>
-         </div>`,
-            [AgFiltersToolPanelHeaderSelector, AgFiltersToolPanelListSelector]
-        );
+        super(FiltersToolPanelElement, [AgFiltersToolPanelHeaderSelector, AgFiltersToolPanelListSelector]);
         this.registerCSS(filtersToolPanelCSS);
     }
 

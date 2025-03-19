@@ -1,4 +1,4 @@
-import type { AgEvent, ComponentSelector, ToolPanelDef } from 'ag-grid-community';
+import type { AgEvent, ComponentSelector, ElementParams, ToolPanelDef } from 'ag-grid-community';
 import {
     Component,
     KeyCode,
@@ -14,11 +14,13 @@ export interface SideBarButtonClickedEvent extends AgEvent<'sideBarButtonClicked
 }
 
 export type AgSideBarButtonsEvent = 'sideBarButtonClicked';
+
+const SideBarElement: ElementParams = { tag: 'div', cls: 'ag-side-buttons', role: 'tablist' };
 export class AgSideBarButtons extends Component<AgSideBarButtonsEvent> {
     private buttonComps: SideBarButtonComp[] = [];
 
     constructor() {
-        super(/* html */ `<div class="ag-side-buttons" role="tablist"></div>`);
+        super(SideBarElement);
     }
 
     public postConstruct(): void {

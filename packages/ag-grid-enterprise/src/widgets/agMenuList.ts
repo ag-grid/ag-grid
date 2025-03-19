@@ -1,10 +1,10 @@
-import type { BeanStub, IMenuActionParams, MenuItemDef, WithoutGridCommon } from 'ag-grid-community';
+import type { BeanStub, ElementParams, IMenuActionParams, MenuItemDef, WithoutGridCommon } from 'ag-grid-community';
 import {
     AgPromise,
     KeyCode,
     TabGuardComp,
+    _createElement,
     _last,
-    _loadTemplate,
     _preserveRangesWhile,
     _stopPropagationForAgGrid,
     _warn,
@@ -24,7 +24,7 @@ export class AgMenuList extends TabGuardComp<AgMenuListEvent> {
         private readonly level = 0,
         params?: WithoutGridCommon<IMenuActionParams>
     ) {
-        super(/* html */ `<div class="ag-menu-list" role="menu"></div>`);
+        super({ tag: 'div', cls: 'ag-menu-list', role: 'menu' });
         this.params = params ?? {
             column: null,
             node: null,
@@ -181,15 +181,15 @@ export class AgMenuList extends TabGuardComp<AgMenuListEvent> {
     }
 
     private createSeparator(): HTMLElement {
-        const separatorHtml = /* html */ `
-            <div class="ag-menu-separator" aria-hidden="true">
-                <div class="ag-menu-separator-part"></div>
-                <div class="ag-menu-separator-part"></div>
-                <div class="ag-menu-separator-part"></div>
-                <div class="ag-menu-separator-part"></div>
-            </div>`;
-
-        return _loadTemplate(separatorHtml);
+        const part: ElementParams = { tag: 'div', cls: 'ag-menu-separator-part' };
+        return _createElement({
+            tag: 'div',
+            cls: 'ag-menu-separator',
+            attrs: {
+                'aria-hidden': 'true',
+            },
+            children: [part, part, part, part],
+        });
     }
 
     private handleNavKey(key: string): void {

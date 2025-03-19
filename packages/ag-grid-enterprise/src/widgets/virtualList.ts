@@ -1,8 +1,16 @@
-import type { BeanCollection, Component, ComponentEvent, CssVariablesChanged, Environment } from 'ag-grid-community';
+import type {
+    BeanCollection,
+    Component,
+    ComponentEvent,
+    CssVariablesChanged,
+    ElementParams,
+    Environment,
+} from 'ag-grid-community';
 import {
     KeyCode,
     RefPlaceholder,
     TabGuardComp,
+    _createElement,
     _getAriaPosInSet,
     _observeResize,
     _requestAnimationFrame,
@@ -24,13 +32,19 @@ interface VirtualListParams<C> {
     moveItemCallback?: (item: C, isUp: boolean) => void;
 }
 
-function getVirtualListTemplate(cssIdentifier: string) {
-    return (
-        /* html */
-        `<div class="ag-virtual-list-viewport ag-${cssIdentifier}-virtual-list-viewport" role="presentation">
-            <div class="ag-virtual-list-container ag-${cssIdentifier}-virtual-list-container" data-ref="eContainer"></div>
-        </div>`
-    );
+function getVirtualListTemplate(cssIdentifier: string): ElementParams {
+    return {
+        tag: 'div',
+        cls: `ag-virtual-list-viewport ag-${cssIdentifier}-virtual-list-viewport`,
+        role: 'presentation',
+        children: [
+            {
+                tag: 'div',
+                ref: 'eContainer',
+                cls: `ag-virtual-list-container ag-${cssIdentifier}-virtual-list-container`,
+            },
+        ],
+    };
 }
 
 export class VirtualList<
@@ -442,13 +456,16 @@ export class VirtualList<
 
     private insertRow(rowIndex: number): void {
         const value = this.model.getRow(rowIndex);
-        const eDiv = document.createElement('div');
+        const role = this.ariaRole === 'tree' ? 'treeitem' : 'option';
+        const eDiv = _createElement<HTMLDivElement>({
+            tag: 'div',
+            cls: `ag-virtual-list-item ag-${this.cssIdentifier}-virtual-list-item`,
+            role,
+            attrs: { tabindex: '-1' },
+        });
 
-        eDiv.classList.add('ag-virtual-list-item', `ag-${this.cssIdentifier}-virtual-list-item`);
-        _setAriaRole(eDiv, this.ariaRole === 'tree' ? 'treeitem' : 'option');
         _setAriaSetSize(eDiv, this.model.getRowCount());
         _setAriaPosInSet(eDiv, rowIndex + 1);
-        eDiv.setAttribute('tabindex', '-1');
 
         eDiv.style.height = `${this.rowHeight}px`;
         eDiv.style.top = `${this.rowHeight * rowIndex}px`;

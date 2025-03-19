@@ -7,6 +7,7 @@ import type { Column } from '../../../interfaces/iColumn';
 import type { AgGridCommon } from '../../../interfaces/iCommon';
 import type { IComponent } from '../../../interfaces/iComponent';
 import type { SortIndicatorComp } from '../../../sort/sortIndicatorComp';
+import type { ElementParams } from '../../../utils/dom';
 import { _removeFromParent, _setDisplayed } from '../../../utils/dom';
 import type { IconName } from '../../../utils/icon';
 import { _createIconNoSpan } from '../../../utils/icon';
@@ -109,17 +110,46 @@ export interface IInnerHeaderComponent<
 > extends IComponent<TParams>,
         IHeader {}
 
-function getHeaderCompTemplate(includeSortIndicator: boolean): string {
-    return /* html */ `<div class="ag-cell-label-container" role="presentation">
-        <span data-ref="eMenu" class="ag-header-icon ag-header-cell-menu-button" aria-hidden="true"></span>
-        <span data-ref="eFilterButton" class="ag-header-icon ag-header-cell-filter-button" aria-hidden="true"></span>
-        <div data-ref="eLabel" class="ag-header-cell-label" role="presentation">
-            <span data-ref="eText" class="ag-header-cell-text"></span>
-            <span data-ref="eFilter" class="ag-header-icon ag-header-label-icon ag-filter-icon" aria-hidden="true"></span>
-            ${includeSortIndicator ? '<ag-sort-indicator data-ref="eSortIndicator"></ag-sort-indicator>' : ''}
-        </div>
-    </div>`;
+function getHeaderCompElementParams(includeSortIndicator: boolean): ElementParams {
+    const hiddenAttrs = { 'aria-hidden': 'true' };
+    return {
+        tag: 'div',
+        cls: 'ag-cell-label-container',
+        role: 'presentation',
+        children: [
+            {
+                tag: 'span',
+                ref: 'eMenu',
+                cls: 'ag-header-icon ag-header-cell-menu-button',
+                attrs: hiddenAttrs,
+            },
+            {
+                tag: 'span',
+                ref: 'eFilterButton',
+                cls: 'ag-header-icon ag-header-cell-filter-button',
+                attrs: hiddenAttrs,
+            },
+            {
+                tag: 'div',
+                ref: 'eLabel',
+                cls: 'ag-header-cell-label',
+                role: 'presentation',
+                children: [
+                    { tag: 'span', ref: 'eText', cls: 'ag-header-cell-text' },
+                    {
+                        tag: 'span',
+                        ref: 'eFilter',
+                        cls: 'ag-header-icon ag-header-label-icon ag-filter-icon',
+                        attrs: hiddenAttrs,
+                    },
+                    includeSortIndicator ? { tag: 'ag-sort-indicator', ref: 'eSortIndicator' } : null,
+                ],
+            },
+        ],
+    };
 }
+const HeaderCompElement = getHeaderCompElementParams(true);
+const HeaderCompElementNoSort = getHeaderCompElementParams(false);
 
 export class HeaderComp extends Component implements IHeaderComp {
     private eFilter: HTMLElement = RefPlaceholder;
@@ -141,7 +171,7 @@ export class HeaderComp extends Component implements IHeaderComp {
     public params: IHeaderParams;
 
     private currentDisplayName: string;
-    private currentTemplate: string | null | undefined;
+    private currentTemplate: ElementParams | string | null | undefined;
     private currentShowMenu: boolean;
     private currentSuppressMenuHide: boolean;
     private currentSort: boolean | undefined;
@@ -151,13 +181,12 @@ export class HeaderComp extends Component implements IHeaderComp {
 
     public refresh(params: IHeaderParams): boolean {
         const oldParams = this.params;
-
         this.params = params;
 
         // if template changed, then recreate the whole comp, the code required to manage
         // a changing template is to difficult for what it's worth.
         if (
-            this.workOutTemplate() != this.currentTemplate ||
+            this.workOutTemplate(params, !!this.beans?.sortSvc) != this.currentTemplate ||
             this.workOutShowMenu() != this.currentShowMenu ||
             params.enableSorting != this.currentSort ||
             (this.currentSuppressMenuHide != null && this.shouldSuppressMenuHide() != this.currentSuppressMenuHide) ||
@@ -169,7 +198,7 @@ export class HeaderComp extends Component implements IHeaderComp {
 
         if (this.innerHeaderComponent) {
             // Mimic the merging of params that happens during init of _getInnerHeaderCompDetails(userCompFactory, params, params);
-            const mergedParams = { ...this.params };
+            const mergedParams = { ...params };
             _mergeDeep(mergedParams, params.innerHeaderComponentParams);
             this.innerHeaderComponent.refresh?.(mergedParams);
         } else {
@@ -179,21 +208,24 @@ export class HeaderComp extends Component implements IHeaderComp {
         return true;
     }
 
-    private workOutTemplate(): string | null | undefined {
-        const { params, beans } = this;
-        const template: string | null | undefined = params.template ?? getHeaderCompTemplate(!!beans.sortSvc);
-
-        // take account of any newlines & whitespace before/after the actual template
-        return template?.trim ? template.trim() : template;
+    private workOutTemplate(params: IHeaderParams, isSorting: boolean): string | ElementParams {
+        const paramsTemplate = params.template;
+        if (paramsTemplate) {
+            // take account of any newlines & whitespace before/after the actual template
+            return paramsTemplate?.trim ? paramsTemplate.trim() : paramsTemplate;
+        } else {
+            return isSorting ? HeaderCompElement : HeaderCompElementNoSort;
+        }
     }
 
     public init(params: IHeaderParams): void {
         this.params = params;
 
         const { sortSvc, touchSvc, rowNumbersSvc, userCompFactory } = this.beans;
+        const sortComp = sortSvc?.getSortIndicatorSelector();
+        this.currentTemplate = this.workOutTemplate(params, !!sortComp);
+        this.setTemplate(this.currentTemplate, sortComp ? [sortComp] : undefined);
 
-        this.currentTemplate = this.workOutTemplate();
-        this.setTemplate(this.currentTemplate, sortSvc ? [sortSvc.getSortIndicatorSelector()] : undefined);
         touchSvc?.setupForHeader(this);
 
         this.setMenu();

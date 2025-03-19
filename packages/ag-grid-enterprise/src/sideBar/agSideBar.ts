@@ -1,5 +1,6 @@
 import type {
     ComponentSelector,
+    ElementParams,
     ISideBar,
     IToolPanel,
     IToolPanelParams,
@@ -31,6 +32,16 @@ import { parseSideBarDef } from './sideBarDefParser';
 import type { SideBarService } from './sideBarService';
 import { ToolPanelWrapper } from './toolPanelWrapper';
 
+const AgSideBarElement: ElementParams = {
+    tag: 'div',
+    cls: 'ag-side-bar ag-unselectable',
+    children: [
+        {
+            tag: 'ag-side-bar-buttons',
+            ref: 'sideBarButtons',
+        },
+    ],
+};
 export class AgSideBar extends Component implements ISideBar {
     private readonly sideBarButtons: AgSideBarButtons = RefPlaceholder;
 
@@ -39,13 +50,7 @@ export class AgSideBar extends Component implements ISideBar {
     private position: 'left' | 'right';
 
     constructor() {
-        super(
-            /* html */
-            `<div class="ag-side-bar ag-unselectable">
-                <ag-side-bar-buttons data-ref="sideBarButtons"></ag-side-bar-buttons>
-            </div>`,
-            [AgSideBarButtonsSelector]
-        );
+        super(AgSideBarElement, [AgSideBarButtonsSelector]);
         this.registerCSS(agSideBarCSS);
     }
 

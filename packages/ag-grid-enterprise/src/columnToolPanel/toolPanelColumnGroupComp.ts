@@ -5,6 +5,7 @@ import type {
     ColumnEventType,
     DragItem,
     DragSource,
+    ElementParams,
     IAggFunc,
     ITooltipCtrl,
     TooltipFeature,
@@ -29,6 +30,24 @@ import {
 import type { ColumnModelItem } from './columnModelItem';
 import { createPivotState, selectAllChildren, updateColumns } from './modelItemUtils';
 import { ToolPanelContextMenu } from './toolPanelContextMenu';
+
+const ToolPanelColumnGroupElement: ElementParams = {
+    tag: 'div',
+    cls: 'ag-column-select-column-group',
+    children: [
+        {
+            tag: 'span',
+            ref: 'eColumnGroupIcons',
+            cls: 'ag-column-group-icons',
+            children: [
+                { tag: 'span', ref: 'eGroupClosedIcon', cls: 'ag-column-group-closed-icon' },
+                { tag: 'span', ref: 'eGroupOpenedIcon', cls: 'ag-column-group-opened-icon' },
+            ],
+        },
+        { tag: 'ag-checkbox', ref: 'cbSelect', cls: 'ag-column-select-checkbox' },
+        { tag: 'span', ref: 'eLabel', cls: 'ag-column-select-column-label' },
+    ],
+};
 
 export class ToolPanelColumnGroupComp extends Component {
     private readonly cbSelect: AgCheckbox = RefPlaceholder;
@@ -61,18 +80,7 @@ export class ToolPanelColumnGroupComp extends Component {
     }
 
     public postConstruct(): void {
-        this.setTemplate(
-            /* html */
-            `<div class="ag-column-select-column-group">
-                <span class="ag-column-group-icons" data-ref="eColumnGroupIcons" >
-                    <span class="ag-column-group-closed-icon" data-ref="eGroupClosedIcon"></span>
-                    <span class="ag-column-group-opened-icon" data-ref="eGroupOpenedIcon"></span>
-                </span>
-                <ag-checkbox data-ref="cbSelect" class="ag-column-select-checkbox"></ag-checkbox>
-                <span class="ag-column-select-column-label" data-ref="eLabel"></span>
-            </div>`,
-            [AgCheckboxSelector]
-        );
+        this.setTemplate(ToolPanelColumnGroupElement, [AgCheckboxSelector]);
 
         const { beans, cbSelect, eLabel, displayName, columnDepth, modelItem, focusWrapper, columnGroup } = this;
         const { registry, gos } = beans;

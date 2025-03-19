@@ -1,4 +1,4 @@
-import type { AgColumn, AgEvent, AgInputTextField, ComponentSelector } from 'ag-grid-community';
+import type { AgColumn, AgEvent, AgInputTextField, ComponentSelector, ElementParams } from 'ag-grid-community';
 import {
     AgInputTextFieldSelector,
     Component,
@@ -16,6 +16,24 @@ export enum EXPAND_STATE {
     INDETERMINATE,
 }
 export type AgFiltersToolPanelHeaderEvent = 'collapseAll' | 'expandAll' | 'searchChanged';
+
+const AgFiltersToolPanelHeaderElement: ElementParams = {
+    tag: 'div',
+    cls: 'ag-filter-toolpanel-search',
+    role: 'presentation',
+    children: [
+        {
+            tag: 'div',
+            ref: 'eExpand',
+            cls: 'ag-filter-toolpanel-expand',
+        },
+        {
+            tag: 'ag-input-text-field',
+            ref: 'eFilterTextField',
+            cls: 'ag-filter-toolpanel-search-input',
+        },
+    ],
+};
 export class AgFiltersToolPanelHeader extends Component<AgFiltersToolPanelHeaderEvent> {
     private readonly eExpand: Element = RefPlaceholder;
     private readonly eFilterTextField: AgInputTextField = RefPlaceholder;
@@ -31,14 +49,7 @@ export class AgFiltersToolPanelHeader extends Component<AgFiltersToolPanelHeader
     private params: ToolPanelFiltersCompParams;
 
     public postConstruct(): void {
-        this.setTemplate(
-            /* html */
-            `<div class="ag-filter-toolpanel-search" role="presentation">
-                <div data-ref="eExpand" class="ag-filter-toolpanel-expand"></div>
-                <ag-input-text-field data-ref="eFilterTextField" class="ag-filter-toolpanel-search-input"></ag-input-text-field>
-            </div>`,
-            [AgInputTextFieldSelector]
-        );
+        this.setTemplate(AgFiltersToolPanelHeaderElement, [AgInputTextFieldSelector]);
 
         const translate = this.getLocaleTextFunc();
 

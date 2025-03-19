@@ -2,10 +2,9 @@ import type { BeanCollection } from '../context/context';
 import type { CellStyle, HeaderStyle } from '../entities/colDef';
 import type { RowStyle } from '../entities/gridOptions';
 import { _getRootNode, _getWindow } from '../gridOptionsUtils';
-import type { ICellRendererComp } from '../rendering/cellRenderers/iCellRenderer';
+import type { AgComponentSelector } from '../widgets/component';
 import { _setAriaHidden } from './aria';
 import { _isBrowserChrome, _isBrowserFirefox, _isBrowserSafari } from './browser';
-import type { AgPromise } from './promise';
 
 let rtlNegativeScroll: boolean;
 
@@ -71,7 +70,10 @@ export function _setDisabled(element: HTMLElement, disabled: boolean) {
 
     addOrRemoveDisabledAttribute(element);
 
-    _nodeListForEach(element.querySelectorAll('input'), (input) => addOrRemoveDisabledAttribute(input));
+    const inputs = element.querySelectorAll('input') ?? [];
+    for (const input of inputs) {
+        addOrRemoveDisabledAttribute(input as HTMLElement);
+    }
 }
 
 export function _isElementChildOfClass(
@@ -295,7 +297,7 @@ export function _isVisible(element: HTMLElement) {
  * @param {string} template
  * @returns {HTMLElement}
  */
-export function _loadTemplate(template: string): HTMLElement {
+export function _loadTemplate(template: string | undefined | null): HTMLElement {
     const tempDiv = document.createElement('div');
     tempDiv.innerHTML = (template || '').trim();
 
@@ -406,67 +408,24 @@ export function _setElementWidth(element: HTMLElement, width: string | number) {
 
 export function _setFixedWidth(element: HTMLElement, width: string | number) {
     width = _formatSize(width);
-    element.style.width = width.toString();
-    element.style.maxWidth = width.toString();
-    element.style.minWidth = width.toString();
-}
-
-export function _setElementHeight(element: HTMLElement, height: string | number) {
-    if (height === 'flex') {
-        element.style.removeProperty('height');
-        element.style.removeProperty('minHeight');
-        element.style.removeProperty('maxHeight');
-        element.style.flex = '1 1 auto';
-    } else {
-        _setFixedHeight(element, height);
-    }
+    element.style.width = width;
+    element.style.maxWidth = width;
+    element.style.minWidth = width;
 }
 
 export function _setFixedHeight(element: HTMLElement, height: string | number) {
     height = _formatSize(height);
-    element.style.height = height.toString();
-    element.style.maxHeight = height.toString();
-    element.style.minHeight = height.toString();
+    element.style.height = height;
+    element.style.maxHeight = height;
+    element.style.minHeight = height;
 }
 
 export function _formatSize(size: number | string) {
-    if (typeof size === 'number') {
-        return `${size}px`;
-    }
-
-    return size;
+    return typeof size === 'number' ? `${size}px` : size;
 }
 
 export function _isNodeOrElement(o: any): o is Node | Element {
     return o instanceof Node || o instanceof HTMLElement;
-}
-
-/**
- * Makes a copy of a node list into a list
- * @param {NodeList} nodeList
- * @returns {Node[]}
- */
-export function _copyNodeList(nodeList: NodeListOf<Node> | null): Node[] {
-    if (nodeList == null) {
-        return [];
-    }
-
-    const result: Node[] = [];
-
-    _nodeListForEach(nodeList, (node) => result.push(node));
-
-    return result;
-}
-
-export function _iterateNamedNodeMap(map: NamedNodeMap, callback: (key: string, value: string) => void): void {
-    if (!map) {
-        return;
-    }
-
-    for (let i = 0; i < map.length; i++) {
-        const attr = map[i];
-        callback(attr.name, attr.value);
-    }
 }
 
 export function _addOrRemoveAttribute(element: HTMLElement, name: string, value: string | number | null | undefined) {
@@ -475,39 +434,6 @@ export function _addOrRemoveAttribute(element: HTMLElement, name: string, value:
     } else {
         element.setAttribute(name, value.toString());
     }
-}
-
-export function _nodeListForEach<T extends Node>(nodeList: NodeListOf<T> | null, action: (value: T) => void): void {
-    if (nodeList == null) {
-        return;
-    }
-
-    for (let i = 0; i < nodeList.length; i++) {
-        action(nodeList[i]);
-    }
-}
-
-/**
- * cell renderers are used in a few places. they bind to dom slightly differently to other cell renders as they
- * can return back strings (instead of html element) in the getGui() method. common code placed here to handle that.
- * @param {AgPromise<ICellRendererComp>} cellRendererPromise
- * @param {HTMLElement} eTarget
- */
-export function _bindCellRendererToHtmlElement(
-    cellRendererPromise: AgPromise<ICellRendererComp>,
-    eTarget: HTMLElement
-) {
-    cellRendererPromise.then((cellRenderer) => {
-        const gui: HTMLElement | string = cellRenderer!.getGui();
-
-        if (gui != null) {
-            if (typeof gui === 'object') {
-                eTarget.appendChild(gui);
-            } else {
-                eTarget.innerHTML = gui;
-            }
-        }
-    });
 }
 
 export function _observeResize(
@@ -522,7 +448,7 @@ export function _observeResize(
     return () => resizeObserver?.disconnect();
 }
 
-export function _getTextSelectionRanges(beans: BeanCollection): { selection: Selection | null; ranges: Range[] } {
+function _getTextSelectionRanges(beans: BeanCollection): { selection: Selection | null; ranges: Range[] } {
     const rootNode = _getRootNode(beans);
     const selection = 'getSelection' in rootNode ? (rootNode.getSelection() as Selection) : null;
     const ranges: Range[] = [];
@@ -572,4 +498,92 @@ export function _requestAnimationFrame(beans: BeanCollection, callback: any) {
     } else {
         win.setTimeout(callback, 0);
     }
+}
+
+export type Attributes = { [key: string]: string };
+type TagName = keyof HTMLElementTagNameMap | Lowercase<AgComponentSelector>;
+/** Type to help avoid typos, add new roles as required. */
+type RoleType =
+    | 'button'
+    | 'columnheader'
+    | 'gridcell'
+    | 'menu'
+    | 'option'
+    | 'presentation'
+    | 'role'
+    | 'row'
+    | 'rowgroup'
+    | 'status'
+    | 'tab'
+    | 'tablist'
+    | 'tabpanel'
+    | 'treeitem';
+
+export type ElementParams = {
+    /** The tag name to use for the element, either browser tag or one of the AG Grid components such as ag-checkbox
+     * For span and div consider using the _span() and _div() helper functions instead to save bundle size.
+     */
+    tag: TagName;
+    /** AG Grid data-ref attribute, should match a property on the class that uses the same name and is initialised with RefPlaceholder
+     * @example
+     * ref: 'eLabel'
+     * private eLabel: HTMLElement = RefPlaceholder;
+     */
+    ref?: string;
+    /**
+     * Should be a single string of space-separated class names
+     * @example
+     * cls: 'ag-header-cell ag-header-cell-sortable'
+     */
+    cls?: string;
+
+    /** The role attribute to add to the dom element */
+    role?: RoleType;
+
+    /** Key Value pair of attributes to add to the dom element via `element.setAttribute(key,value)` */
+    attrs?: Attributes;
+
+    /**
+     * Child elements to add to the element. Can be a string for text nodes or an array of ElementParams for nested elements.
+     * Nulls are allowed to allow for optional children.
+     * If a string is passed it will be set via `element.textContent = string` to be safe.
+     */
+    children?: (ElementParams | null | undefined)[] | string;
+};
+
+/** AG Grid attribute used to automatically assign DOM Elements to class properties */
+export const DataRefAttribute = 'data-ref';
+
+export function _createElement<T extends HTMLElement = HTMLElement>(params: ElementParams): T {
+    const { attrs, children, cls, ref, role, tag } = params;
+    const element = document.createElement(tag);
+
+    if (cls) {
+        element.className = cls;
+    }
+    if (ref) {
+        element.setAttribute(DataRefAttribute, ref);
+    }
+    if (role) {
+        element.setAttribute('role', role);
+    }
+
+    if (attrs) {
+        for (const key of Object.keys(attrs)) {
+            element.setAttribute(key, attrs[key]);
+        }
+    }
+
+    if (children) {
+        if (typeof children === 'string') {
+            element.textContent = children;
+        } else {
+            for (const child of children) {
+                if (child) {
+                    element.appendChild(_createElement(child));
+                }
+            }
+        }
+    }
+    return element as T;
 }

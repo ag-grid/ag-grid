@@ -1,5 +1,5 @@
 import type { AgColumn, DragAndDropIcon, DragItem, DropTarget, SortIndicatorComp } from 'ag-grid-community';
-import { Component, DragSourceType, KeyCode, RefPlaceholder, _loadTemplate } from 'ag-grid-community';
+import { Component, DragSourceType, KeyCode, RefPlaceholder, _createElement } from 'ag-grid-community';
 
 import { PillDragComp } from '../../widgets/pillDragComp';
 import { VirtualList } from '../../widgets/virtualList';
@@ -24,14 +24,21 @@ export class DropZoneColumnComp extends PillDragComp<AgColumn> {
 
     public override postConstruct(): void {
         const { sortSvc, colNames } = this.beans;
-        this.template = /* html */ `
-            <span role="option">
-                <span data-ref="eDragHandle" class="ag-drag-handle ag-column-drop-cell-drag-handle" role="presentation"></span>
-                <span data-ref="eText" class="ag-column-drop-cell-text" aria-hidden="true"></span>
-                ${sortSvc ? '<ag-sort-indicator data-ref="eSortIndicator"></ag-sort-indicator>' : ''}
-                <span data-ref="eButton" class="ag-column-drop-cell-button" role="presentation"></span>
-            </span>
-        `;
+        this.template = {
+            tag: 'span',
+            role: 'option',
+            children: [
+                {
+                    tag: 'span',
+                    ref: 'eDragHandle',
+                    cls: 'ag-drag-handle ag-column-drop-cell-drag-handle',
+                    role: 'presentation',
+                },
+                { tag: 'span', ref: 'eText', cls: 'ag-column-drop-cell-text', attrs: { 'aria-hidden': 'true' } },
+                sortSvc ? { tag: 'ag-sort-indicator', ref: 'eSortIndicator' } : undefined,
+                { tag: 'span', ref: 'eButton', cls: 'ag-column-drop-cell-button', role: 'presentation' },
+            ],
+        };
         if (sortSvc) {
             this.agComponents = [sortSvc.getSortIndicatorSelector()];
         }
@@ -230,7 +237,7 @@ export class DropZoneColumnComp extends PillDragComp<AgColumn> {
 
         this.createBean(virtualList);
 
-        const ePopup = _loadTemplate(/* html*/ `<div class="ag-select-agg-func-popup"></div>`);
+        const ePopup = _createElement({ tag: 'div', cls: 'ag-select-agg-func-popup' });
         ePopup.style.top = '0px';
         ePopup.style.left = '0px';
         ePopup.appendChild(virtualListGui);
@@ -347,7 +354,7 @@ class AggItemComp extends Component {
     public selectItem: () => void;
 
     constructor(itemSelected: () => void, value: string) {
-        super(/* html */ `<div class="ag-select-agg-func-item"/>`);
+        super({ tag: 'div', cls: 'ag-select-agg-func-item' });
         this.selectItem = itemSelected;
         // eslint-disable-next-line no-restricted-properties -- Could swap to textContent, but could be a breaking change
         this.getGui().innerText = value;

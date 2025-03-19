@@ -2,6 +2,7 @@ import { KeyCode } from '../../constants/keyCode';
 import type { BeanCollection } from '../../context/context';
 import type { AgColumn } from '../../entities/agColumn';
 import type { ICellEditorComp, ICellEditorParams } from '../../interfaces/iCellEditor';
+import type { ElementParams } from '../../utils/dom';
 import { _missing } from '../../utils/generic';
 import { _warn } from '../../validation/logging';
 import type { ValueService } from '../../valueService/valueService';
@@ -16,6 +17,17 @@ interface SelectCellEditorParams<TData = any, TValue = any, TContext = any>
     extends ISelectCellEditorParams<TValue>,
         ICellEditorParams<TData, TValue, TContext> {}
 
+const SelectCellElement: ElementParams = {
+    tag: 'div',
+    cls: 'ag-cell-edit-wrapper',
+    children: [
+        {
+            tag: 'ag-select',
+            ref: 'eSelect',
+            cls: 'ag-cell-editor',
+        },
+    ],
+};
 export class SelectCellEditor extends PopupComponent implements ICellEditorComp {
     private focusAfterAttached: boolean;
 
@@ -30,13 +42,7 @@ export class SelectCellEditor extends PopupComponent implements ICellEditorComp 
     private startedByEnter: boolean = false;
 
     constructor() {
-        super(
-            /* html */
-            `<div class="ag-cell-edit-wrapper">
-                <ag-select class="ag-cell-editor" data-ref="eSelect"></ag-select>
-            </div>`,
-            [AgSelectSelector]
-        );
+        super(SelectCellElement, [AgSelectSelector]);
     }
 
     public init(params: SelectCellEditorParams): void {

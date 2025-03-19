@@ -2,7 +2,7 @@ import type { NamedBean } from '../../context/bean';
 import { BeanStub } from '../../context/beanStub';
 import type { ComponentType } from '../../interfaces/iUserCompDetails';
 import type { ICellRendererComp, ICellRendererParams } from '../../rendering/cellRenderers/iCellRenderer';
-import { _loadTemplate } from '../../utils/dom';
+import { _createElement, _loadTemplate } from '../../utils/dom';
 
 export class AgComponentUtils extends BeanStub implements NamedBean {
     beanName = 'agCompUtils' as const;
@@ -31,7 +31,7 @@ export class AgComponentUtils extends BeanStub implements NamedBean {
                     return;
                 }
                 if (callbackResult == null) {
-                    this.eGui = _loadTemplate('<span></span>');
+                    this.eGui = _createElement({ tag: 'span' });
                     return;
                 }
                 this.eGui = callbackResult as HTMLElement;

@@ -1,4 +1,4 @@
-import type { PositionableOptions, ResizableStructure } from 'ag-grid-community';
+import type { ElementParams, PositionableOptions, ResizableStructure } from 'ag-grid-community';
 import {
     Component,
     PositionableFeature,
@@ -21,18 +21,38 @@ export interface PanelOptions extends PositionableOptions {
     title?: string | null;
     cssIdentifier?: string | null;
 }
-function getTemplate(config: PanelOptions) {
+function getTemplate(config: PanelOptions): ElementParams {
     const cssIdentifier = config.cssIdentifier || 'default';
-    return /* html */ `<div class="ag-panel ag-${cssIdentifier}-panel" tabindex="-1">
-        <div data-ref="eTitleBar" class="ag-panel-title-bar ag-${cssIdentifier}-panel-title-bar ag-unselectable">
-            <span data-ref="eTitle" class="ag-panel-title-bar-title ag-${cssIdentifier}-panel-title-bar-title"></span>
-            <div data-ref="eTitleBarButtons" class="ag-panel-title-bar-buttons ag-${cssIdentifier}-panel-title-bar-buttons"></div>
-        </div>
-        <div data-ref="eContentWrapper" class="ag-panel-content-wrapper ag-${cssIdentifier}-panel-content-wrapper"></div>
-    </div>`;
+    return {
+        tag: 'div',
+        cls: `ag-panel ag-${cssIdentifier}-panel`,
+        attrs: { tabindex: '-1' },
+        children: [
+            {
+                tag: 'div',
+                ref: 'eTitleBar',
+                cls: `ag-panel-title-bar ag-${cssIdentifier}-panel-title-bar ag-unselectable`,
+                children: [
+                    {
+                        tag: 'span',
+                        ref: 'eTitle',
+                        cls: `ag-panel-title-bar-title ag-${cssIdentifier}-panel-title-bar-title`,
+                    },
+                    {
+                        tag: 'div',
+                        ref: 'eTitleBarButtons',
+                        cls: `ag-panel-title-bar-buttons ag-${cssIdentifier}-panel-title-bar-buttons`,
+                    },
+                ],
+            },
+            {
+                tag: 'div',
+                ref: 'eContentWrapper',
+                cls: `ag-panel-content-wrapper ag-${cssIdentifier}-panel-content-wrapper`,
+            },
+        ],
+    };
 }
-
-const CLOSE_BTN_TEMPLATE = /* html */ `<div class="ag-button"></div>`;
 
 export class AgPanel<TConfig extends PanelOptions = PanelOptions> extends Component {
     protected closable = true;
@@ -161,7 +181,7 @@ export class AgPanel<TConfig extends PanelOptions = PanelOptions> extends Compon
         }
 
         if (closable) {
-            const closeButtonComp = (this.closeButtonComp = new Component(CLOSE_BTN_TEMPLATE));
+            const closeButtonComp = (this.closeButtonComp = new Component({ tag: 'div', cls: 'ag-button' }));
             this.createBean(closeButtonComp);
 
             const eGui = closeButtonComp.getGui();

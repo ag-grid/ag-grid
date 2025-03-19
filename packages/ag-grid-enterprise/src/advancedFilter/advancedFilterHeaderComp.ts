@@ -1,4 +1,4 @@
-import type { BeanCollection, ColumnModel, CtrlsService, FocusService } from 'ag-grid-community';
+import type { BeanCollection, ColumnModel, CtrlsService, ElementParams, FocusService } from 'ag-grid-community';
 import {
     Component,
     KeyCode,
@@ -16,6 +16,11 @@ import {
 
 import { AdvancedFilterComp } from './advancedFilterComp';
 
+const AdvancedFilterHeaderElement: ElementParams = {
+    tag: 'div',
+    cls: 'ag-advanced-filter-header',
+    role: 'row',
+};
 export class AdvancedFilterHeaderComp extends Component {
     private colModel: ColumnModel;
     private focusSvc: FocusService;
@@ -31,9 +36,7 @@ export class AdvancedFilterHeaderComp extends Component {
     private height: number;
 
     constructor(private enabled: boolean) {
-        super(/* html */ `
-            <div class="ag-advanced-filter-header" role="row">
-            </div>`);
+        super(AdvancedFilterHeaderElement);
     }
 
     public postConstruct(): void {

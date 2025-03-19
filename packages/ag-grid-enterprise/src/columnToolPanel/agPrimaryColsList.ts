@@ -66,7 +66,7 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
     private skipRefocus: boolean = false;
 
     constructor() {
-        super(/* html */ `<div class="${PRIMARY_COLS_LIST_PANEL_CLASS}" role="presentation"></div>`);
+        super({ tag: 'div', cls: PRIMARY_COLS_LIST_PANEL_CLASS, role: 'presentation' });
     }
 
     public override destroy(): void {

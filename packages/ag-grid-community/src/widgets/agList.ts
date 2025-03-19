@@ -27,7 +27,7 @@ export class AgList<TEventType extends string = AgListEvent, TValue = string> ex
         private readonly cssIdentifier = 'default',
         private readonly unFocusable: boolean = false
     ) {
-        super(/* html */ `<div class="ag-list ag-${cssIdentifier}-list"></div>`);
+        super({ tag: 'div', cls: `ag-list ag-${cssIdentifier}-list` });
     }
 
     public postConstruct(): void {

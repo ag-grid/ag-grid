@@ -1,5 +1,5 @@
 import type { ComponentSelector } from 'ag-grid-community';
-import { Component, _setAriaRole } from 'ag-grid-community';
+import { Component, _createElement } from 'ag-grid-community';
 
 import { PivotDropZonePanel } from './pivotDropZonePanel';
 import { RowGroupDropZonePanel } from './rowGroupDropZonePanel';
@@ -26,10 +26,7 @@ export class AgGridHeaderDropZones extends Component {
     }
 
     private createNorthPanel(): HTMLElement {
-        const topPanelGui = document.createElement('div');
-
-        topPanelGui.classList.add('ag-column-drop-wrapper');
-        _setAriaRole(topPanelGui, 'presentation');
+        const topPanelGui = _createElement({ tag: 'div', cls: 'ag-column-drop-wrapper', role: 'presentation' });
 
         const rowGroupComp = new RowGroupDropZonePanel(true);
         this.rowGroupComp = this.createManagedBean(rowGroupComp);

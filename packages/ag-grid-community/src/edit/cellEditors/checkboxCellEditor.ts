@@ -1,19 +1,25 @@
 import type { ICellEditorComp, ICellEditorParams } from '../../interfaces/iCellEditor';
 import { _getAriaCheckboxStateName } from '../../utils/aria';
+import type { ElementParams } from '../../utils/dom';
 import type { AgCheckbox } from '../../widgets/agCheckbox';
 import { AgCheckboxSelector } from '../../widgets/agCheckbox';
 import { RefPlaceholder } from '../../widgets/component';
 import { PopupComponent } from '../../widgets/popupComponent';
 
+const CheckboxCellEditorElement: ElementParams = {
+    tag: 'div',
+    cls: 'ag-cell-wrapper ag-cell-edit-wrapper ag-checkbox-edit',
+    children: [
+        {
+            tag: 'ag-checkbox',
+            ref: 'eCheckbox',
+            role: 'presentation',
+        },
+    ],
+};
 export class CheckboxCellEditor extends PopupComponent implements ICellEditorComp {
     constructor() {
-        super(
-            /* html */ `
-            <div class="ag-cell-wrapper ag-cell-edit-wrapper ag-checkbox-edit">
-                <ag-checkbox role="presentation" data-ref="eCheckbox"></ag-checkbox>
-            </div>`,
-            [AgCheckboxSelector]
-        );
+        super(CheckboxCellEditorElement, [AgCheckboxSelector]);
     }
 
     private readonly eCheckbox: AgCheckbox = RefPlaceholder;

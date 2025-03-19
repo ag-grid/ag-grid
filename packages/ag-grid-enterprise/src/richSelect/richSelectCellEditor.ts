@@ -17,7 +17,7 @@ export class RichSelectCellEditor<TData = any, TValue = any> extends PopupCompon
     private isAsync: boolean = false;
 
     constructor() {
-        super(/* html */ `<div class="ag-cell-edit-wrapper"></div>`);
+        super({ tag: 'div', cls: 'ag-cell-edit-wrapper' });
     }
 
     public init(params: RichCellEditorParams<TData, TValue>): void {

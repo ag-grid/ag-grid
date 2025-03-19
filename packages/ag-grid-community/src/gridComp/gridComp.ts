@@ -4,6 +4,7 @@ import type { FocusableContainer } from '../interfaces/iFocusableContainer';
 import type { ISideBar } from '../interfaces/iSideBar';
 import type { UpdateLayoutClassesParams } from '../styling/layoutFeature';
 import { LayoutCssClasses } from '../styling/layoutFeature';
+import type { ElementParams } from '../utils/dom';
 import { _isVisible } from '../utils/dom';
 import { _logIfDebug } from '../utils/function';
 import type { ComponentSelector } from '../widgets/component';
@@ -83,29 +84,40 @@ export class GridComp extends TabGuardComp {
         this.addOrRemoveCssClass(PRINT, print);
     }
 
-    private createTemplate(params: OptionalGridComponents): string {
-        const dropZones = params.gridHeaderDropZonesSelector
-            ? '<ag-grid-header-drop-zones></ag-grid-header-drop-zones>'
-            : '';
-        const sideBar = params.sideBarSelector ? '<ag-side-bar data-ref="sideBar"></ag-side-bar>' : '';
-        const statusBar = params.statusBarSelector ? '<ag-status-bar></ag-status-bar>' : '';
-        const watermark = params.watermarkSelector ? '<ag-watermark></ag-watermark>' : '';
-        const pagination = params.paginationSelector ? '<ag-pagination data-ref="pagination"></ag-pagination>' : '';
+    private createTemplate(params: OptionalGridComponents): ElementParams {
+        const dropZones: ElementParams | null = params.gridHeaderDropZonesSelector
+            ? { tag: 'ag-grid-header-drop-zones' }
+            : null;
+        const sideBar: ElementParams | null = params.sideBarSelector
+            ? {
+                  tag: 'ag-side-bar',
+                  ref: 'sideBar',
+              }
+            : null;
+        const statusBar: ElementParams | null = params.statusBarSelector ? { tag: 'ag-status-bar' } : null;
+        const watermark: ElementParams | null = params.watermarkSelector ? { tag: 'ag-watermark' } : null;
+        const pagination: ElementParams | null = params.paginationSelector
+            ? { tag: 'ag-pagination', ref: 'pagination' }
+            : null;
 
-        const template =
-            /* html */
-            `<div class="ag-root-wrapper" role="presentation">
-                ${dropZones}
-                <div class="ag-root-wrapper-body" data-ref="rootWrapperBody" role="presentation">
-                    <ag-grid-body data-ref="gridBody"></ag-grid-body>
-                    ${sideBar}
-                </div>
-                ${statusBar}
-                ${pagination}
-                ${watermark}
-            </div>`;
-
-        return template;
+        return {
+            tag: 'div',
+            cls: 'ag-root-wrapper',
+            role: 'presentation',
+            children: [
+                dropZones,
+                {
+                    tag: 'div',
+                    ref: 'rootWrapperBody',
+                    cls: 'ag-root-wrapper-body',
+                    role: 'presentation',
+                    children: [{ tag: 'ag-grid-body', ref: 'gridBody' }, sideBar],
+                },
+                statusBar,
+                pagination,
+                watermark,
+            ],
+        };
     }
 
     public override getFocusableElement(): HTMLElement {

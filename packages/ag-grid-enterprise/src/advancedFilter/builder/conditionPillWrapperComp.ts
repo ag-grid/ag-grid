@@ -36,9 +36,7 @@ export class ConditionPillWrapperComp extends Component<AdvancedFilterBuilderEve
     private validationMessage: string | null = null;
 
     constructor() {
-        super(/* html */ `
-            <div class="ag-advanced-filter-builder-item-condition" role="presentation"></div>
-        `);
+        super({ tag: 'div', cls: 'ag-advanced-filter-builder-item-condition', role: 'presentation' });
     }
 
     public init(params: {

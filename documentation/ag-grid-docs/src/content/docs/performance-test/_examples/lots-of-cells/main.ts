@@ -22,7 +22,7 @@ const cols: ColDef[] = [
 let gridApi: GridApi<IOlympicData>;
 
 const gridOptions: GridOptions<IOlympicData> = {
-    columnDefs: repeat(cols, 10),
+    columnDefs: [],
     suppressColumnVirtualisation: true,
     rowBuffer: 300,
     defaultColDef: {
@@ -43,7 +43,10 @@ function onClearData() {
     requestIdleCallback(() => {
         outputText(Math.round(performance.now() - start));
     });
-    gridApi!.setGridOption('rowData', []);
+    gridApi!.updateGridOptions({
+        columnDefs: [],
+        rowData: [],
+    });
 }
 
 function onSetData() {
@@ -52,7 +55,10 @@ function onSetData() {
     requestIdleCallback(() => {
         outputText(performance.now() - start);
     });
-    gridApi!.setGridOption('rowData', repeat(data, 100));
+    gridApi!.updateGridOptions({
+        columnDefs: repeat(cols, 10),
+        rowData: repeat(data, 100),
+    });
 }
 
 function onScroll() {

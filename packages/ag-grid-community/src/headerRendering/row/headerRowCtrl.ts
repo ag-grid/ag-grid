@@ -28,7 +28,9 @@ export class HeaderRowCtrl extends BeanStub {
     private comp: IHeaderRowComp;
     public headerRowClass: string;
 
-    private headerCellCtrls: Map<HeaderColumnId, AbstractHeaderCellCtrl> | undefined;
+    // Maintain a map and corresponding array of the header cell ctrls for performance
+    private ctrlsById: Map<HeaderColumnId, AbstractHeaderCellCtrl> | undefined;
+    private allCtrls: AbstractHeaderCellCtrl[] = [];
 
     private isPrintLayout: boolean;
     private isEnsureDomOrder: boolean;
@@ -61,7 +63,7 @@ export class HeaderRowCtrl extends BeanStub {
         if (!this.comp) {
             return false;
         }
-        return this.getHeaderCellCtrls().every((ctrl) => ctrl.eGui != null);
+        return this.allCtrls.every((ctrl) => ctrl.eGui != null);
     }
 
     /**
@@ -114,18 +116,6 @@ export class HeaderRowCtrl extends BeanStub {
             ],
             onHeightChanged
         );
-    }
-
-    public getHeaderCellCtrl(column: AgColumn | AgColumnGroup): AbstractHeaderCellCtrl | undefined {
-        if (!this.headerCellCtrls) {
-            return;
-        }
-        for (const cellCtrl of this.headerCellCtrls.values()) {
-            if (cellCtrl.column === column) {
-                return cellCtrl;
-            }
-        }
-        return undefined;
     }
 
     private onDisplayedColumnsChanged(): void {
@@ -202,12 +192,12 @@ export class HeaderRowCtrl extends BeanStub {
      * @returns The updated header cell ctrls
      */
     public getUpdatedHeaderCtrls() {
-        const oldCtrls = this.headerCellCtrls;
-        this.headerCellCtrls = new Map();
+        const oldCtrls = this.ctrlsById;
+        this.ctrlsById = new Map();
         const columns = this.getColumnsInViewport();
 
         for (const child of columns) {
-            this.recycleAndCreateHeaderCtrls(child, oldCtrls);
+            this.recycleAndCreateHeaderCtrls(child, this.ctrlsById, oldCtrls);
         }
 
         // we want to keep columns that are focused, otherwise keyboard navigation breaks
@@ -226,28 +216,27 @@ export class HeaderRowCtrl extends BeanStub {
             for (const [id, oldCtrl] of oldCtrls) {
                 const keepCtrl = isFocusedAndDisplayed(oldCtrl as HeaderCellCtrl);
                 if (keepCtrl) {
-                    this.headerCellCtrls.set(id, oldCtrl);
+                    this.ctrlsById.set(id, oldCtrl);
                 } else {
                     this.destroyBean(oldCtrl);
                 }
             }
         }
 
-        return this.getHeaderCellCtrls();
+        this.allCtrls = Array.from(this.ctrlsById.values());
+        return this.allCtrls;
     }
 
     /** Get the current header cell ctrls */
     public getHeaderCellCtrls(): AbstractHeaderCellCtrl[] {
-        return Array.from(this.headerCellCtrls?.values() ?? []);
+        return this.allCtrls;
     }
 
     private recycleAndCreateHeaderCtrls(
         headerColumn: AgColumn | AgColumnGroup,
+        currCtrls: Map<HeaderColumnId, AbstractHeaderCellCtrl>,
         oldCtrls?: Map<HeaderColumnId, AbstractHeaderCellCtrl>
     ): void {
-        if (!this.headerCellCtrls) {
-            return;
-        }
         // skip groups that have no displayed children. this can happen when the group is broken,
         // and this section happens to have nothing to display for the open / closed state.
         // (a broken group is one that is split, ie columns in the group have a non-group column
@@ -303,8 +292,7 @@ export class HeaderRowCtrl extends BeanStub {
                     break;
             }
         }
-
-        this.headerCellCtrls.set(idOfChild, headerCtrl);
+        currCtrls.set(idOfChild, headerCtrl);
     }
 
     private getColumnsInViewport(): (AgColumn | AgColumnGroup)[] {
@@ -338,27 +326,8 @@ export class HeaderRowCtrl extends BeanStub {
         return this.beans.colViewport.getHeadersToRender(this.pinned, this.getActualDepth());
     }
 
-    public findHeaderCellCtrl(
-        column: AgColumn | AgColumnGroup | ((cellCtrl: AbstractHeaderCellCtrl) => boolean)
-    ): AbstractHeaderCellCtrl | undefined {
-        if (!this.headerCellCtrls) {
-            return;
-        }
-
-        const allCtrls = this.getHeaderCellCtrls();
-        let ctrl: AbstractHeaderCellCtrl | undefined;
-
-        if (typeof column === 'function') {
-            ctrl = allCtrls.find(column);
-        } else {
-            ctrl = allCtrls.find((ctrl) => ctrl.column == column);
-        }
-
-        return ctrl;
-    }
-
     public focusHeader(column: AgColumn | AgColumnGroup, event?: KeyboardEvent): boolean {
-        const ctrl = this.findHeaderCellCtrl(column);
+        const ctrl = this.allCtrls.find((ctrl) => ctrl.column == column);
 
         if (!ctrl) {
             return false;
@@ -370,10 +339,8 @@ export class HeaderRowCtrl extends BeanStub {
     }
 
     public override destroy(): void {
-        this.headerCellCtrls?.forEach((ctrl) => {
-            this.destroyBean(ctrl);
-        });
-        this.headerCellCtrls = undefined;
+        this.allCtrls = this.destroyBeans(this.allCtrls);
+        this.ctrlsById = undefined;
         super.destroy();
     }
 }

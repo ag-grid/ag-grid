@@ -5,6 +5,7 @@ import type { AgColumnGroup } from '../../../entities/agColumnGroup';
 import type { ColumnGroup } from '../../../interfaces/iColumn';
 import type { AgGridCommon } from '../../../interfaces/iCommon';
 import type { IComponent } from '../../../interfaces/iComponent';
+import type { ElementParams } from '../../../utils/dom';
 import { _setDisplayed } from '../../../utils/dom';
 import { _isStopPropagationForAgGrid, _stopPropagationForAgGrid } from '../../../utils/event';
 import { _exists } from '../../../utils/generic';
@@ -48,6 +49,17 @@ export interface IInnerHeaderGroupComponent<
 > extends IComponent<TParams>,
         IHeaderGroup {}
 
+const HeaderGroupCompElement: ElementParams = {
+    tag: 'div',
+    cls: 'ag-header-group-cell-label',
+    role: 'presentation',
+    children: [
+        { tag: 'span', ref: 'agLabel', cls: 'ag-header-group-text', role: 'presentation' },
+        { tag: 'span', ref: 'agOpened', cls: `ag-header-icon ag-header-expand-icon ag-header-expand-icon-expanded` },
+        { tag: 'span', ref: 'agClosed', cls: `ag-header-icon ag-header-expand-icon ag-header-expand-icon-collapsed` },
+    ],
+};
+
 export class HeaderGroupComp extends Component implements IHeaderGroupComp {
     private params: IHeaderGroupParams;
 
@@ -59,11 +71,7 @@ export class HeaderGroupComp extends Component implements IHeaderGroupComp {
     private isLoadingInnerComponent: boolean = false;
 
     constructor() {
-        super(/* html */ `<div class="ag-header-group-cell-label" role="presentation">
-            <span data-ref="agLabel" class="ag-header-group-text" role="presentation"></span>
-            <span data-ref="agOpened" class="ag-header-icon ag-header-expand-icon ag-header-expand-icon-expanded"></span>
-            <span data-ref="agClosed" class="ag-header-icon ag-header-expand-icon ag-header-expand-icon-collapsed"></span>
-        </div>`);
+        super(HeaderGroupCompElement);
     }
 
     public init(params: IHeaderGroupParams): void {

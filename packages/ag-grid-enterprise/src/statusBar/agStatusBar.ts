@@ -2,6 +2,7 @@ import type {
     BeanCollection,
     ComponentSelector,
     ComponentType,
+    ElementParams,
     IStatusPanelComp,
     IStatusPanelParams,
     StatusPanelDef,
@@ -26,6 +27,30 @@ const StatusPanelComponent: ComponentType = {
     optionalMethods: ['refresh'],
 };
 
+const AgStatusBarElement: ElementParams = {
+    tag: 'div',
+    cls: 'ag-status-bar',
+    children: [
+        {
+            tag: 'div',
+            ref: 'eStatusBarLeft',
+            cls: 'ag-status-bar-left',
+            role: 'status',
+        },
+        {
+            tag: 'div',
+            ref: 'eStatusBarCenter',
+            cls: 'ag-status-bar-center',
+            role: 'status',
+        },
+        {
+            tag: 'div',
+            ref: 'eStatusBarRight',
+            cls: 'ag-status-bar-right',
+            role: 'status',
+        },
+    ],
+};
 export class AgStatusBar extends Component {
     private userCompFactory: UserComponentFactory;
     private statusBarSvc: StatusBarService;
@@ -44,11 +69,7 @@ export class AgStatusBar extends Component {
     private compDestroyFunctions: { [key: string]: () => void } = {};
 
     constructor() {
-        super(/* html */ `<div class="ag-status-bar">
-            <div data-ref="eStatusBarLeft" class="ag-status-bar-left" role="status"></div>
-            <div data-ref="eStatusBarCenter" class="ag-status-bar-center" role="status"></div>
-            <div data-ref="eStatusBarRight" class="ag-status-bar-right" role="status"></div>
-        </div>`);
+        super(AgStatusBarElement);
         this.registerCSS(agStatusBarCSS);
     }
 

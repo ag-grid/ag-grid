@@ -1,6 +1,7 @@
 import type {
     AgPromise,
     BeanCollection,
+    ElementParams,
     IRichCellEditorRendererParams,
     ITooltipCtrl,
     Registry,
@@ -12,7 +13,6 @@ import type {
 import {
     Component,
     _addGridCommonParams,
-    _bindCellRendererToHtmlElement,
     _escapeString,
     _exists,
     _getDocument,
@@ -22,7 +22,9 @@ import {
 } from 'ag-grid-community';
 
 import type { AgRichSelect } from './agRichSelect';
+import { _bindCellRendererToHtmlElement } from './agRichSelect';
 
+const RichSelectRowElement: ElementParams = { tag: 'div', cls: 'ag-rich-select-row', role: 'presentation' };
 export class RichSelectRow<TValue> extends Component {
     private userCompFactory: UserComponentFactory;
     private registry: Registry;
@@ -38,7 +40,7 @@ export class RichSelectRow<TValue> extends Component {
     private shouldDisplayTooltip?: () => boolean;
 
     constructor(private readonly params: RichSelectParams<TValue>) {
-        super(/* html */ `<div class="ag-rich-select-row" role="presentation"></div>`);
+        super(RichSelectRowElement);
     }
 
     public postConstruct(): void {

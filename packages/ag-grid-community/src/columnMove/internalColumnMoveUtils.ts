@@ -6,7 +6,7 @@ import type { AgColumnGroup } from '../entities/agColumnGroup';
 import type { AgProvidedColumnGroup } from '../entities/agProvidedColumnGroup';
 import type { GridOptionsService } from '../gridOptionsService';
 import type { ColumnPinnedType } from '../interfaces/iColumn';
-import { _areEqual, _last, _sortNumerically } from '../utils/array';
+import { _areEqual, _last } from '../utils/array';
 import type { ColumnMoveService } from './columnMoveService';
 
 export interface ColumnMoveParams {
@@ -198,7 +198,7 @@ export function attemptMoveColumns(
 // each other. if the cols are not beside each other, then returns null
 function calculateOldIndex(movingCols: AgColumn[], colModel: ColumnModel): number | null {
     const gridCols: AgColumn[] = colModel.getCols();
-    const indexes = _sortNumerically(movingCols.map((col) => gridCols.indexOf(col)));
+    const indexes = movingCols.map((col) => gridCols.indexOf(col)).sort((a, b) => a - b);
     const firstIndex = indexes[0];
     const lastIndex = _last(indexes);
     const spread = lastIndex - firstIndex;

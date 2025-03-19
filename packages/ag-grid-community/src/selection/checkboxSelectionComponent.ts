@@ -4,10 +4,24 @@ import type { RowNode } from '../entities/rowNode';
 import { _getCheckboxes, _getHideDisabledCheckboxes, _getIsRowSelectable } from '../gridOptionsUtils';
 import type { GroupCheckboxSelectionCallback } from '../interfaces/groupCellRenderer';
 import { _getAriaCheckboxStateName } from '../utils/aria';
+import type { ElementParams } from '../utils/dom';
 import { _stopPropagationForAgGrid } from '../utils/event';
 import type { AgCheckbox } from '../widgets/agCheckbox';
 import { AgCheckboxSelector } from '../widgets/agCheckbox';
 import { Component, RefPlaceholder } from '../widgets/component';
+
+const CheckboxSelectionComponentElement: ElementParams = {
+    tag: 'div',
+    cls: 'ag-selection-checkbox',
+    role: 'presentation',
+    children: [
+        {
+            tag: 'ag-checkbox',
+            ref: 'eCheckbox',
+            role: 'presentation',
+        },
+    ],
+};
 
 export class CheckboxSelectionComponent extends Component {
     private readonly eCheckbox: AgCheckbox = RefPlaceholder;
@@ -21,13 +35,7 @@ export class CheckboxSelectionComponent extends Component {
     };
 
     constructor() {
-        super(
-            /* html*/ `
-            <div class="ag-selection-checkbox" role="presentation">
-                <ag-checkbox role="presentation" data-ref="eCheckbox"></ag-checkbox>
-            </div>`,
-            [AgCheckboxSelector]
-        );
+        super(CheckboxSelectionComponentElement, [AgCheckboxSelector]);
     }
 
     public postConstruct(): void {
