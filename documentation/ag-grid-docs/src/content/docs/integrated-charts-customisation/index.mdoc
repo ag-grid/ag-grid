@@ -144,6 +144,12 @@ The example below shows:
 this example demonstrates the use of the `domain` property passed through to the formatter to provide a consistent scale across the value range.
 * A custom title formatter using `boundSeries` property passed through to the formatter for the vertical axis to display which series the axes are representing.
 
+{% note %}
+The `valueFormatter` is not automatically applied to the chart axes. If you wish to use the grid's value formatters, you must apply them manually.
+{% /note %}
+
+For more information on the `formatter` property for axes labels, see AG Charts Axis Labels [Label Text Formatting](https://www.ag-grid.com/charts/javascript/axes-labels/#label-text-formatting).
+
 {% gridExampleRunner title="Label Formatting" name="label-formatting"  exampleHeight=660 /%}
 
 ## Next Up
