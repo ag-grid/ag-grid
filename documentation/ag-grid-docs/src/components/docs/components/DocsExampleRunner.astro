@@ -5,6 +5,7 @@ import { getIsDev } from '@utils/env';
 import { DocsExampleRunner } from './DocsExampleRunner';
 import { DISABLE_EXAMPLE_RUNNER } from '@constants';
 import { getGeneratedContents } from '@components/example-generator';
+import { getSupportedFrameworks } from '@components/docs/utils/filesData';
 
 interface Props {
     title: string;
@@ -20,9 +21,11 @@ const { title, name, exampleHeight, typescriptOnly, suppressDarkMode, consoleBuf
 const pageName = getPageNameFromPath(Astro.url.pathname);
 const isDev = getIsDev();
 
+const supportedFrameworks = await getSupportedFrameworks({ pageName, exampleName: name });
 const generatedExampleParams = {
     type: 'docs',
-    framework: 'vanilla', // Should be the same for all frameworks
+    // If there are supported frameworks, take the first one, otherwise the contents should be the same as vanilla
+    framework: supportedFrameworks?.values().next().value || 'vanilla',
     pageName,
     exampleName: name,
 };
