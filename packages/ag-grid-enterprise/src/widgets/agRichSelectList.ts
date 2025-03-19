@@ -318,7 +318,7 @@ export class AgRichSelectList<TValue, TEventType extends string = AgRichSelectLi
         const scrollTop = this.getScrollTop();
         const mouseY = e.clientY - rect.top + scrollTop;
 
-        return Math.floor(mouseY / this.getRowHeight());
+        return Math.min(Math.floor(mouseY / this.getRowHeight()), this.model.getRowCount() - 1);
     }
 
     private onMouseMove(e: MouseEvent): void {

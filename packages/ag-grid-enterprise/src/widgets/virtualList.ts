@@ -62,7 +62,7 @@ export class VirtualList<
     private readonly ariaRole: string;
     private listName?: string;
 
-    private model: VirtualListModel;
+    protected model: VirtualListModel;
     private renderedRows = new Map<number, { rowComponent: C; eDiv: HTMLDivElement; value: V }>();
     private componentCreator: (value: V, listItemElement: HTMLElement) => C;
     private componentUpdater: (value: V, component: C) => void;
