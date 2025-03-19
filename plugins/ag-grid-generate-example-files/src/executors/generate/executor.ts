@@ -14,9 +14,9 @@ import {
 } from './generator/transformation-scripts/parser-utils';
 import type { ExampleConfig, GeneratedContents, GridOptionsType, InternalFramework } from './generator/types';
 import { FRAMEWORKS, TYPESCRIPT_INTERNAL_FRAMEWORKS } from './generator/types';
+import { formatFile } from './generator/utils/fileFormatUtils';
 import {
     convertTsxToJsx,
-    formatFile,
     getBoilerPlateFiles,
     getEntryFileName,
     getIsEnterprise,

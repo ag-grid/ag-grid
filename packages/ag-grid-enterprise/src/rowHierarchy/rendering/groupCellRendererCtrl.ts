@@ -192,11 +192,15 @@ export class GroupCellRendererCtrl extends BeanStub implements IGroupCellRendere
      */
     private getFormattedValue(): any {
         const { valueSvc } = this.beans;
-        const { value, valueFormatted, colDef } = this.params;
+        const { value, valueFormatted, column } = this.params;
         const { rowGroupColumn } = this.displayedNode;
 
-        if (!rowGroupColumn || colDef?.valueFormatter) {
+        if (!rowGroupColumn) {
             return valueFormatted;
+        }
+
+        if (!column?.isRowGroupDisplayed(rowGroupColumn.getId())) {
+            return null;
         }
 
         return valueSvc.formatValue(rowGroupColumn, this.node, value);

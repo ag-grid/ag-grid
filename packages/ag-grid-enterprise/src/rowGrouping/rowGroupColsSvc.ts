@@ -51,6 +51,8 @@ export class RowGroupColsSvc extends BaseColsService implements NamedBean, ICols
         this.columns.splice(fromIndex, 1);
         this.columns.splice(toIndex, 0, column);
 
+        this.updateIndexMap();
+
         this.eventSvc.dispatchEvent({
             type: this.eventName,
             columns: impactedColumns,

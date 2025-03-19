@@ -256,12 +256,28 @@ describe('ag-grid parentId tree aggregation and filter', () => {
             checkDom: true,
         };
 
+        await new GridRows(api, 'initial', gridRowsOptions).check(`
+            ROOT id:ROOT_NODE_ID y:134
+            └─┬ 0 GROUP id:0 n:"A" y:134
+            · ├─┬ 1 GROUP id:1 n:"B" y:14
+            · │ ├─┬ 2 GROUP id:2 n:"C" y:8
+            · │ │ ├── 11 LEAF id:11 n:"K" y:4
+            · │ │ └── 3 LEAF id:3 n:"D" y:4
+            · │ └── 5 LEAF id:5 n:"E" y:6
+            · ├─┬ 4 GROUP id:4 n:"E" y:103
+            · │ ├── 6 LEAF id:6 n:"F" y:51
+            · │ └── 7 LEAF id:7 n:"G" y:52
+            · └─┬ 8 GROUP id:8 n:"H" y:17
+            · · ├── 9 LEAF id:9 n:"I" y:8
+            · · └── 10 LEAF id:10 n:"J" y:9
+        `);
+
         // Set filter: only show rows with y > 4
         api.setFilterModel({
             y: { filterType: 'number', type: 'lessThan', filter: 50 },
         });
 
-        await new GridRows(api, 'initial', gridRowsOptions).check(`
+        await new GridRows(api, 'initial filtered', gridRowsOptions).check(`
             ROOT id:ROOT_NODE_ID y:31
             └─┬ 0 GROUP id:0 n:"A" y:31
             · ├─┬ 1 GROUP id:1 n:"B" y:14

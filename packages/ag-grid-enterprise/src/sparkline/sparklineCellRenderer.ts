@@ -88,7 +88,7 @@ export class SparklineCellRenderer extends Component implements ICellRenderer {
             const refresh = this.refresh.bind(this);
 
             if (batch) {
-                _batchCall(refresh);
+                _batchCall(() => this.isAlive() && refresh());
             } else {
                 refresh();
             }

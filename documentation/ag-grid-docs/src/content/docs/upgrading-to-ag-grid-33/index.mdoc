@@ -37,7 +37,7 @@ npm packages: `@ag-grid-community/**` / `@ag-grid-enterprise/**`
 
 In previous versions separate npm packages were required to achieve tree shaking of grid features to reduce the bundle size. The improvements made in version {% migrationVersion() %} remove the need for separate npm packages to achieve tree shaking.
 
-As a result all feature modules have been collapsed into either _ag-grid-community_ or _ag-grid-enterprise_ and all _@ag-grid-community/**_ and _@ag-grid-enterprise/**_ npm packages are removed as of version 33.0.
+As a result all feature modules have been collapsed into either `ag-grid-community` or `ag-grid-enterprise` and all `@ag-grid-community/**` and `@ag-grid-enterprise/**` npm packages are removed as of version 33.0.
 
 The changes can be summarised as follows:
 
@@ -49,18 +49,18 @@ The changes can be summarised as follows:
 {% /if %}
 {% if isFramework("angular") %}
 * `@ag-grid-community/angular` is replaced with `ag-grid-angular`
-* All individual `@ag-grid-community/** packages` are replaced by a single tree-shakable package `ag-grid-community`
+* All individual `@ag-grid-community/**` packages are replaced by a single tree-shakable package `ag-grid-community`
   * Exception - the `@ag-grid-community/locale` package remains unchanged.
 * All individual `@ag-grid-enterprise/**` packages are replaced by a single tree-shakable package `ag-grid-enterprise`.
 {% /if %}
 {% if isFramework("javascript") %}
-* All individual `@ag-grid-community/** packages` are replaced by a single tree-shakable package `ag-grid-community`
+* All individual `@ag-grid-community/**` packages are replaced by a single tree-shakable package `ag-grid-community`
   * Exception - the `@ag-grid-community/locale` package remains unchanged.
 * All individual `@ag-grid-enterprise/**` packages are replaced by a single tree-shakable package `ag-grid-enterprise`.
 {% /if %}
 {% if isFramework("vue") %}
 * `@ag-grid-community/vue3` is replaced with `ag-grid-vue3`
-* All individual `@ag-grid-community/** packages` are replaced by a single tree-shakable package `ag-grid-community`
+* All individual `@ag-grid-community/**` packages are replaced by a single tree-shakable package `ag-grid-community`
   * Exception - the `@ag-grid-community/locale` package remains unchanged.
 * All individual `@ag-grid-enterprise/**` packages are replaced by a single tree-shakable package `ag-grid-enterprise`.
 {% /if %}
@@ -194,7 +194,7 @@ The following changes have been made to the existing modules to ensure that each
 
 To help identify configuration issues we strongly recommend including the `ValidationModule` in your development build. This module enables AG Grid to validate your configuration and provide extended error diagnosis to help you resolve issues quickly.
 
-Ensure you’re not including the ValidationModule in your production build to avoid increasing bundle size unnecessarily. Note if you are using either `AllCommunityModule` or `AllEnterpriseModule` it is included by default.
+Ensure you’re not including the `ValidationModule` in your production build to avoid increasing bundle size unnecessarily. Note if you are using either `AllCommunityModule` or `AllEnterpriseModule` it is included by default.
 
 ## Migrating from Packages
 
@@ -203,7 +203,7 @@ npm packages: `ag-grid-community` / `ag-grid-enterprise` / `ag-grid-charts-enter
 If you are currently using AG Grid packages, which did not support tree shaking, then you can match the existing behaviour by registering either `AllCommunityModule` or `AllEnterpriseModule` via the ModuleRegistry before any grid is created.
 
 {% warning %}
-Using the `AllCommunityModule` / `AllEnterpriseModule` will prevent tree shaking. In order to reduce the bundle size, use the [Module Selector](./modules/) to only register the modules you require instead of all modules.
+Using the `AllCommunityModule` / `AllEnterpriseModule` will prevent tree shaking and includes the `ValidationModule` which should only be used in your development build. In order to reduce the bundle size, use the [Module Selector](./modules/) to only register the modules you require instead of all modules.
 {% /warning %}
 
 Most users will also want to set `{ theme: "legacy" }` if not already using the new Theming Api. See [Theming](#theming) for more details.

@@ -5,8 +5,9 @@
 
     tr {
         display: flex;
+        align-items: center;
         justify-content: space-between;
-        gap: $spacing-size-10;
+        gap: $spacing-size-6;
         transition: background-color $transition-default-timing;
 
         &:hover {
@@ -16,6 +17,11 @@
                 background-color: var(--color-util-gray-200);
             }
         }
+    }
+
+    td {
+        padding: $spacing-size-4 $spacing-size-2;
+        line-height: var(--text-lh-tight);
     }
 
     a span {

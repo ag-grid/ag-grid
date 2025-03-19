@@ -153,7 +153,7 @@ export class SortStage extends BeanStub implements NamedBean, IRowNodeStage {
         if (hasAnyFirstChildChanged && this.gos.get('groupHideOpenParents')) {
             const columns = showRowGroupCols?.getShowRowGroupCols();
             if (columns?.length) {
-                rowRenderer.refreshCells({ columns });
+                rowRenderer.refreshCells({ columns, force: true });
             }
         }
     }

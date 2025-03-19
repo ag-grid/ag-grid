@@ -294,12 +294,16 @@ export class CellComp extends Component {
 
         // if leaving editor & editor is focused, ensure the cell remains
         // focused after the editor is destroyed
-        const recoverFocus =
-            this.cellCtrl.isCellFocused() &&
-            (this.cellEditorPopupWrapper?.getGui().contains(_getActiveDomElement(this.beans)) ||
-                this.cellCtrl.hasBrowserFocus());
-        if (recoverFocus) {
-            this.eCell.focus({ preventScroll: true });
+        const hasFocus =
+            this.cellEditorPopupWrapper?.getGui().contains(_getActiveDomElement(this.beans)) ||
+            this.cellCtrl.hasBrowserFocus();
+        if (hasFocus) {
+            if (this.cellCtrl.isCellFocused()) {
+                this.eCell.focus({ preventScroll: true });
+            } else {
+                // if destroying this editor will cause the grid to lose focus, grid should try to recapture focus
+                this.beans.focusSvc.needsFocusRestored = true;
+            }
         }
 
         this.hideEditorPopup?.();

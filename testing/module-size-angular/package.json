@@ -5,7 +5,7 @@
     "ng": "ng",
     "start": "ng serve",
     "build": "ng build",
-    "test": "ng build",
+    "test:e2e": "ng build",
     "watch": "ng build --watch --configuration development",
     "analyze": "ng build && source-map-explorer dist/angular-19/**/*.js"
   },
@@ -23,8 +23,8 @@
     "ag-grid-angular": "33.1.1",
     "ag-grid-community": "33.1.1",
     "ag-grid-enterprise": "33.1.1",
-    "ag-charts-community": "11.1.1-beta.20250313",
-    "ag-charts-enterprise": "11.1.1-beta.20250313",
+    "ag-charts-community": "11.1.1-beta.20250319",
+    "ag-charts-enterprise": "11.1.1-beta.20250319",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0",
     "zone.js": "~0.15.0"

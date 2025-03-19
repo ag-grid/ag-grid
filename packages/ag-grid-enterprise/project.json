@@ -34,6 +34,8 @@
     },
     "build:copy-styles": {
       "dependsOn": ["@ag-grid-community/styles:build"],
+      "inputs": ["{workspaceRoot}/community-modules/styles/*.*css"],
+      "outputs": ["{projectRoot}/styles/**/*"],
       "cache": true,
       "command": "rsync -r ../../community-modules/styles/*.*css --delete styles",
       "options": {
@@ -170,11 +172,12 @@
       }
     },
     "test": {
-      "dependsOn": ["ag-grid-community:build"],
       "executor": "@nx/jest:jest",
-      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "dependsOn": ["ag-grid-community:build"],
+      "outputs": ["{workspaceRoot}/coverage/{projectRoot}", "{workspaceRoot}/reports/ag-grid-enterprise.xml"],
+      "parallelism": false,
       "options": {
-        "jestConfig": "packages/ag-grid-enterprise/jest.config.js"
+        "jestConfig": "{projectRoot}/jest.config.ts"
       }
     }
   },

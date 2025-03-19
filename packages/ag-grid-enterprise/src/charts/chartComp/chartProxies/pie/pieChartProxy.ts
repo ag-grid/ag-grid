@@ -112,12 +112,6 @@ export class PieChartProxy extends ChartProxy<AgPolarChartOptions, 'pie' | 'donu
             ...primaryOptions,
             radiusKey: `${angleKey!}-filtered-out`,
             showInLegend: false,
-            fills: {
-                $map: [{ $mix: [{ $value: '$1' }, { $ref: 'backgroundColor' }, 0.7] }, { $path: '../1/fills' }],
-            },
-            strokes: {
-                $map: [{ $mix: [{ $value: '$1' }, { $ref: 'backgroundColor' }, 0.7] }, { $path: '../1/strokes' }],
-            },
         };
 
         return [filteredOutOptions, primaryOptions] as (AgPieSeriesOptions | AgDonutSeriesOptions)[];

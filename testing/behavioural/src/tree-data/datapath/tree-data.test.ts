@@ -473,7 +473,7 @@ function hierarchyWithInvertedOrderRowSnapshot(): RowSnapshot[] {
         },
         {
             allChildrenCount: null,
-            allLeafChildren: [],
+            allLeafChildren: null,
             childIndex: 0,
             childrenAfterFilter: [],
             childrenAfterGroup: [],
@@ -501,7 +501,7 @@ function hierarchyWithInvertedOrderRowSnapshot(): RowSnapshot[] {
         },
         {
             allChildrenCount: 2,
-            allLeafChildren: ['E'],
+            allLeafChildren: ['D', 'E'],
             childIndex: 1,
             childrenAfterFilter: ['D'],
             childrenAfterGroup: ['D'],
@@ -557,7 +557,7 @@ function hierarchyWithInvertedOrderRowSnapshot(): RowSnapshot[] {
         },
         {
             allChildrenCount: null,
-            allLeafChildren: [],
+            allLeafChildren: null,
             childIndex: 0,
             childrenAfterFilter: [],
             childrenAfterGroup: [],

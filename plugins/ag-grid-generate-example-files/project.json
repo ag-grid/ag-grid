@@ -57,14 +57,13 @@
     },
     "test": {
       "executor": "@nx/jest:jest",
-      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "outputs": [
+        "{workspaceRoot}/coverage/{projectRoot}",
+        "{workspaceRoot}/reports/ag-grid-generate-example-files.xml"
+      ],
+      "parallelism": false,
       "options": {
-        "jestConfig": "plugins/ag-grid-generate-example-files/jest.config.ts"
-      },
-      "configurations": {
-        "update": {
-          "updateSnapshot": true
-        }
+        "jestConfig": "{projectRoot}/jest.config.ts"
       }
     }
   },
