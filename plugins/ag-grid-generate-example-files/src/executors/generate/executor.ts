@@ -58,6 +58,17 @@ export default async function (
     }
 }
 
+const getExampleFolderParts = ({ exampleFolder }: { exampleFolder: string }) => {
+    const folders = exampleFolder.split('/');
+    const pageName = folders[folders.length - 3];
+    const exampleName = folders[folders.length - 1];
+
+    return {
+        pageName,
+        exampleName,
+    };
+};
+
 async function getSourceFileList(folderPath: string): Promise<string[]> {
     const sourceFileList = await fs.readdir(folderPath);
     if (!sourceFileList.includes(SOURCE_ENTRY_FILE_NAME)) {
@@ -95,9 +106,11 @@ async function getProvidedFiles(folderPath: string) {
 export async function generateFiles(options: ExecutorOptions, gridOptionsTypes: Record<string, GridOptionsType>) {
     const isDev = options.mode === 'dev';
     const folderPath = options.examplePath;
-    const folders = folderPath.split('/');
-    const pageName = folders[folders.length - 3];
-    const exampleName = folders[folders.length - 1];
+    const { pageName, exampleName } = getExampleFolderParts({ exampleFolder: folderPath });
+
+    if (!pageName || !exampleName) {
+        throw new Error('Invalid example folder path: ' + folderPath);
+    }
 
     const sourceFileList = await getSourceFileList(folderPath);
     if (sourceFileList === undefined) {
