@@ -26,8 +26,8 @@ $logger-height: 150px;
             padding-top: 0;
         }
 
-        &:last-child {
-            padding-bottom: 0;
+        &:nth-child(2) {
+            border-top: none;
         }
 
         &::before {
