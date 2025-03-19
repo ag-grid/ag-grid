@@ -179,6 +179,7 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => {
         },
         enableRowPinning: {
             module: 'ManualPinnedRow',
+            supportedRowModels: ['clientSide'],
             validate({ enableRowPinning, pinnedTopRowData, pinnedBottomRowData }) {
                 if (enableRowPinning && (pinnedTopRowData || pinnedBottomRowData)) {
                     return 'Manual row pinning cannot be used together with pinned row data. Either set `enableRowPinning` to `false`, or remove `pinnedTopRowData` and `pinnedBottomRowData`.';
@@ -188,6 +189,7 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => {
         },
         isRowPinnable: {
             module: 'ManualPinnedRow',
+            supportedRowModels: ['clientSide'],
             validate({ isRowPinnable, pinnedTopRowData, pinnedBottomRowData }) {
                 if (isRowPinnable && (pinnedTopRowData || pinnedBottomRowData)) {
                     return 'Manual row pinning cannot be used together with pinned row data. Either remove `isRowPinnable`, or remove `pinnedTopRowData` and `pinnedBottomRowData`.';
