@@ -360,13 +360,13 @@ jobs:
           echo "Copying release to Staging"
           ./scripts/deployments/createAndDeployDocsToTCGH.sh
 
-        - name: Persist test results
-          if: always()
-          uses: actions/upload-artifact@v4
-          with:
-            name: test-results-docs
-            path: |
-              reports/
+          - name: Persist test results
+            if: always()
+            uses: actions/upload-artifact@v4
+            with:
+              name: test-results-docs
+              path: |
+                reports/
 
   report:
     runs-on: ubuntu-24.04
@@ -400,7 +400,7 @@ jobs:
       - name: Test Report
         uses: dorny/test-reporter@v1
         if: |
-        needs.test.result == 'success' || needs.test.result == 'failure' || 
+        needs.test.result == 'success' || needs.test.result == 'failure' ||
         needs.e2e.result == 'success' || needs.e2e.result == 'failure' ||
         needs.bundle_size.result == 'success' || needs.bundle_size.result == 'failure'
         id: testReport
