@@ -2,18 +2,18 @@ import fs from 'fs';
 import { json2xml } from 'xml-js';
 
 export class TestCase {
-    classname: String;
-    name: String;
-    time: Number;
-    failure?: String;
+    classname: string;
+    name: string;
+    time: number;
+    failure?: string;
 
-    constructor(classname: String, name: String, time: Number) {
+    constructor(classname: string, name: string, time: number) {
         this.classname = classname;
         this.name = name;
         this.time = time;
     }
 
-    setFailure(failure: String) {
+    setFailure(failure: string) {
         this.failure = failure;
     }
 
@@ -23,10 +23,10 @@ export class TestCase {
 }
 
 export class TestSuite {
-    name: String;
+    name: string;
     testCases: TestCase[] = [];
 
-    constructor(name: String) {
+    constructor(name: string) {
         this.name = name;
     }
 
@@ -36,11 +36,11 @@ export class TestSuite {
 }
 
 export class TestSuites {
-    private name: String;
+    private name: string;
 
     private testSuites: TestSuite[] = [];
 
-    constructor(name: String) {
+    constructor(name: string) {
         this.name = name;
     }
 
@@ -57,7 +57,7 @@ export class TestSuites {
     }
 
     public getFailures() {
-        const failures: String[] = [];
+        const failures: string[] = [];
         this.testSuites.forEach((testSuite) => {
             testSuite.testCases
                 .filter((testCase) => testCase.failure)
