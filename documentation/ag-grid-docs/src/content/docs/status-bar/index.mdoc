@@ -80,6 +80,38 @@ The Status Bar sizes its height to fit content. When no panels are visible, the 
 }
 ```
 
+## Value Formatting
+
+Each Status Bar Panel can now have its displayed values customized using a **valueFormatter** function. This allows for formatting values before they are rendered in the UI.
+
+The `valueFormatter` function is provided in the `statusPanelParams` object.
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    statusBar: {
+        statusPanels: [
+            { 
+                statusPanel: 'agTotalAndFilteredRowCountComponent',
+                statusPanelParams: {
+                    valueFormatter: (statusPanelValueFormatterParams) => {
+                        const { value } = statusPanelValueFormatterParams;
+                        if (value > 1000) {
+                            return value / 1000 + ' K';
+                        }
+                        return String(value);
+                    }
+                }
+            },
+        ]
+    }
+}
+```
+### IProvidedStatusPanelParams
+
+{% interfaceDocumentation interfaceName="IProvidedStatusPanelParams" /%}
+
+{% gridExampleRunner title="Custom Value Formatter" name="status-bar-value-formatter" /%}
+
 ## Custom Panels
 
 Applications that are using [Server-side Data](./row-models/) or which require bespoke Status Bar Panels can provide their own custom Status Bar panels.

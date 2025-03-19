@@ -9,8 +9,11 @@ export interface StatusPanelDef {
 }
 
 export interface IStatusPanelValueFormatterParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
+    /* The value of the current Status Bar Panel */
     value: number;
+    /* The total row count of the grid. */
     totalRows: number;
+    /* The name of the current Status Bar Panel */
     key: string;
 }
 export interface IProvidedStatusPanelParams {
