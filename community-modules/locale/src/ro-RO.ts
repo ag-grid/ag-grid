@@ -491,7 +491,7 @@ export const AG_GRID_LOCALE_RO = {
     // ARIA
     ariaAdvancedFilterBuilderItem: '${variable}. Nivel ${variable}. Apăsați ENTER pentru a edita.',
     ariaAdvancedFilterBuilderItemValidation:
-    '${variable}. Nivel ${variable}. ${variable} Apăsați ENTER pentru a edita.',
+        '${variable}. Nivel ${variable}. ${variable} Apăsați ENTER pentru a edita.',
     ariaAdvancedFilterBuilderList: 'Lista Constructorului de Filtre Avansate',
     ariaAdvancedFilterBuilderFilterItem: 'Condiție de Filtrare',
     ariaAdvancedFilterBuilderGroupItem: 'Grup de Filtre',

@@ -491,7 +491,7 @@ export const AG_GRID_LOCALE_TR = {
     // ARIA
     ariaAdvancedFilterBuilderItem: '${variable}. Seviye ${variable}. Düzenlemek için ENTER tuşuna basın',
     ariaAdvancedFilterBuilderItemValidation:
-    '${variable}. Seviye ${variable}. ${variable} Düzenlemek için ENTER tuşuna basın.',
+        '${variable}. Seviye ${variable}. ${variable} Düzenlemek için ENTER tuşuna basın.',
     ariaAdvancedFilterBuilderList: 'Gelişmiş Filtre Oluşturucu Listesi',
     ariaAdvancedFilterBuilderFilterItem: 'Filtre Koşulu',
     ariaAdvancedFilterBuilderGroupItem: 'Filtre Grubu',

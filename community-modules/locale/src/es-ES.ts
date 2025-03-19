@@ -95,7 +95,7 @@ export const AG_GRID_LOCALE_ES = {
     advancedFilterValidationInvalidDate: 'El valor no es una fecha válida',
     advancedFilterValidationMissingCondition: 'Falta la condición',
     advancedFilterValidationJoinOperatorMismatch:
-    'Los operadores de unión dentro de una condición deben ser los mismos',
+        'Los operadores de unión dentro de una condición deben ser los mismos',
     advancedFilterValidationInvalidJoinOperator: 'Operador de unión no encontrado',
     advancedFilterValidationMissingEndBracket: 'Falta paréntesis de cierre',
     advancedFilterValidationExtraEndBracket: 'Demasiados paréntesis de cierre',
@@ -573,7 +573,7 @@ export const AG_GRID_LOCALE_ES = {
     ariaLabelAdvancedFilterBuilderColumnSelectField: 'Campo de selección de columna del generador de filtro avanzado',
     ariaLabelAdvancedFilterBuilderOptionSelectField: 'Campo de selección de opción del generador de filtro avanzado',
     ariaLabelAdvancedFilterBuilderJoinSelectField:
-    'Campo de selección de operador de unión del generador de filtro avanzado',
+        'Campo de selección de operador de unión del generador de filtro avanzado',
 
     // ARIA Labels for the Side Bar
     ariaColumnPanelList: 'Lista de columnas',

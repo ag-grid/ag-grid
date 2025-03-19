@@ -491,7 +491,7 @@ export const AG_GRID_LOCALE_NL = {
     // ARIA
     ariaAdvancedFilterBuilderItem: '${variable}. Niveau ${variable}. Druk op ENTER om te bewerken',
     ariaAdvancedFilterBuilderItemValidation:
-    '${variable}. Niveau ${variable}. ${variable} Druk op ENTER om te bewerken.',
+        '${variable}. Niveau ${variable}. ${variable} Druk op ENTER om te bewerken.',
     ariaAdvancedFilterBuilderList: 'Geavanceerde Filter Builder Lijst',
     ariaAdvancedFilterBuilderFilterItem: 'Filter Voorwaarde',
     ariaAdvancedFilterBuilderGroupItem: 'Filter Groep',

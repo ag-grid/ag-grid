@@ -95,7 +95,7 @@ export const AG_GRID_LOCALE_IT = {
     advancedFilterValidationInvalidDate: 'Il valore non è una data valida',
     advancedFilterValidationMissingCondition: 'Condizione mancante',
     advancedFilterValidationJoinOperatorMismatch:
-    "Gli operatori di unione all'interno di una condizione devono essere uguali",
+        "Gli operatori di unione all'interno di una condizione devono essere uguali",
     advancedFilterValidationInvalidJoinOperator: 'Operatore di unione non trovato',
     advancedFilterValidationMissingEndBracket: 'Parentesi di chiusura mancante',
     advancedFilterValidationExtraEndBracket: 'Troppe parentesi di chiusura',
@@ -492,7 +492,7 @@ export const AG_GRID_LOCALE_IT = {
     // ARIA
     ariaAdvancedFilterBuilderItem: '${variable}. Livello ${variable}. Premi INVIO per modificare.',
     ariaAdvancedFilterBuilderItemValidation:
-    '${variable}. Livello ${variable}. ${variable} Premi INVIO per modificare.',
+        '${variable}. Livello ${variable}. ${variable} Premi INVIO per modificare.',
     ariaAdvancedFilterBuilderList: 'Lista di Costruzione Filtro Avanzato',
     ariaAdvancedFilterBuilderFilterItem: 'Condizione del Filtro',
     ariaAdvancedFilterBuilderGroupItem: 'Gruppo di Filtri',
@@ -522,7 +522,7 @@ export const AG_GRID_LOCALE_IT = {
     ariaMenuColumn: 'Premi ALT GIÙ per aprire il menu della colonna',
     ariaFilterColumn: 'Premi CTRL INVIO per aprire il filtro',
     ariaRowDeselect: 'Premi SPAZIO per deselezionare questa riga',
-    ariaHeaderSelection: 'Colonna con selezione dell\'intestazione',
+    ariaHeaderSelection: "Colonna con selezione dell'intestazione",
     ariaSelectAllCells: 'Premi Spazio per selezionare tutte le celle',
     ariaRowSelectAll: 'Premi SPAZIO per attivare/disattivare la selezione di tutte le righe',
     ariaRowToggleSelection: 'Premi SPAZIO per attivare/disattivare la selezione della riga',

@@ -491,7 +491,7 @@ export const AG_GRID_LOCALE_GR = {
     // ARIA
     ariaAdvancedFilterBuilderItem: '${variable}. Επίπεδο ${variable}. Πατήστε ENTER για επεξεργασία',
     ariaAdvancedFilterBuilderItemValidation:
-    '${variable}. Επίπεδο ${variable}. ${variable} Πατήστε ENTER για επεξεργασία.',
+        '${variable}. Επίπεδο ${variable}. ${variable} Πατήστε ENTER για επεξεργασία.',
     ariaAdvancedFilterBuilderList: 'Λίστα Προχωρημένου Κατασκευαστή Φίλτρων',
     ariaAdvancedFilterBuilderFilterItem: 'Συνθήκη Φίλτρου',
     ariaAdvancedFilterBuilderGroupItem: 'Ομάδα Φίλτρου',
