@@ -12,14 +12,14 @@ import { getFileCssIcon } from './fileUtils';
     imports: [CommonModule],
     template: `
         <span class="filename">
-            <i [ngClass]="fileIconClass"></i>
-            {{ value }}
+            <i [ngClass]="fileIconClass()"></i>
+            {{ value() }}
         </span>
     `,
 })
 export class FileCellRenderer implements ICellRendererAngularComp {
-    public value: string = '';
-    public fileIconClass: string = '';
+    public value = signal('');
+    public fileIconClass = signal('');
 
     agInit(params: ICellRendererParams): void {
         this.setParams(params);
@@ -31,7 +31,7 @@ export class FileCellRenderer implements ICellRendererAngularComp {
     }
 
     private setParams({ value, data }: ICellRendererParams): void {
-        this.value = value;
-        this.fileIconClass = getFileCssIcon(data?.type, value);
+        this.value.set(value);
+        this.fileIconClass.set(getFileCssIcon(data?.type, value));
     }
 }
