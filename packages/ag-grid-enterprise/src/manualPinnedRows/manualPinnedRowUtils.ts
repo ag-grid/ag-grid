@@ -99,7 +99,7 @@ function _isDisplayedAfterFilterCSRM(node: RowNode): boolean {
     const parent = node.parent;
 
     if (parent?.childrenAfterSort?.some((child) => child == node)) {
-        _isDisplayedAfterFilterCSRM(parent);
+        return _isDisplayedAfterFilterCSRM(parent);
     }
 
     return false;
