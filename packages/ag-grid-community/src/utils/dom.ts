@@ -582,19 +582,20 @@ export function _createElement<T extends HTMLElement = HTMLElement>(params: Elem
         if (typeof children === 'string') {
             element.textContent = children;
         } else {
-            let firstWhitespaceAdded = false;
+            let addFirstWhitespace = true;
             for (let i = 0; i < children.length; i++) {
                 const child = children[i];
                 if (child) {
                     if (typeof child === 'string') {
                         element.appendChild(document.createTextNode(child));
+                        addFirstWhitespace = false;
                     } else {
                         // NOTE: To match the previous behaviour of when component templates where defined on multi line strings we need
                         // to add a whitespace node before and after each child element.
                         // Ideally we would not do this but this reduces the chance of breaking changes.
-                        if (!firstWhitespaceAdded) {
+                        if (addFirstWhitespace) {
                             element.appendChild(whitespaceNode.cloneNode());
-                            firstWhitespaceAdded = true;
+                            addFirstWhitespace = false;
                         }
                         element.append(_createElement(child));
                         element.appendChild(whitespaceNode.cloneNode());
