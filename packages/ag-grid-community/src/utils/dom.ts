@@ -557,7 +557,13 @@ export type ElementParams = {
 
 /** AG Grid attribute used to automatically assign DOM Elements to class properties */
 export const DataRefAttribute = 'data-ref';
-const whitespaceNode = document.createTextNode(' ');
+
+let whitespaceNode: Node | null;
+function getWhitespaceNode() {
+    // Cloning is slightly faster than creating a new node each time
+    whitespaceNode ??= document.createTextNode(' ');
+    return whitespaceNode.cloneNode();
+}
 export function _createElement<T extends HTMLElement = HTMLElement>(params: ElementParams): T {
     const { attrs, children, cls, ref, role, tag } = params;
     const element = document.createElement(tag);
@@ -593,11 +599,11 @@ export function _createElement<T extends HTMLElement = HTMLElement>(params: Elem
                         // to add a whitespace node before and after each child element.
                         // Ideally we would not do this but this reduces the chance of breaking changes.
                         if (addFirstWhitespace) {
-                            element.appendChild(whitespaceNode.cloneNode());
+                            element.appendChild(getWhitespaceNode());
                             addFirstWhitespace = false;
                         }
                         element.append(_createElement(child));
-                        element.appendChild(whitespaceNode.cloneNode());
+                        element.appendChild(getWhitespaceNode());
                     }
                 }
             }
