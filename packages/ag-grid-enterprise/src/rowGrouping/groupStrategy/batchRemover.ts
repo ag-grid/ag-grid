@@ -60,35 +60,31 @@ export class BatchRemover {
         for (const parent of allSets.keys()) {
             const nodeDetails = allSets.get(parent);
             if (nodeDetails) {
-                const { childrenAfterGroup, allLeafChildren } = parent;
                 const { fromChildrenAfterGroup, fromAllLeafChildren } = nodeDetails;
+                const { childrenAfterGroup, allLeafChildren } = parent;
 
-                if (fromChildrenAfterGroup && childrenAfterGroup) {
-                    let writeIdx = 0;
-                    for (let i = 0, len = childrenAfterGroup.length; i < len; ++i) {
-                        const child = childrenAfterGroup[i];
-                        if (!fromChildrenAfterGroup.has(child)) {
-                            childrenAfterGroup[writeIdx++] = child;
-                        }
-                    }
-                    childrenAfterGroup.length = writeIdx;
+                if (childrenAfterGroup && fromChildrenAfterGroup) {
+                    filterRowNodesInPlace(childrenAfterGroup, fromChildrenAfterGroup);
+                    parent.updateHasChildren();
                 }
 
-                if (fromAllLeafChildren && allLeafChildren) {
-                    let writeIdx = 0;
-                    for (let i = 0, len = allLeafChildren.length; i < len; ++i) {
-                        const child = allLeafChildren[i];
-                        if (!fromAllLeafChildren.has(child)) {
-                            allLeafChildren[writeIdx++] = child;
-                        }
-                    }
-                    allLeafChildren.length = writeIdx;
+                if (allLeafChildren && fromAllLeafChildren) {
+                    filterRowNodesInPlace(allLeafChildren, fromAllLeafChildren);
                 }
-
-                parent.updateHasChildren();
             }
         }
 
         allSets.clear();
     }
+}
+
+function filterRowNodesInPlace(array: GroupRow[], removals: ReadonlySet<GroupRow>): void {
+    let writeIdx = 0;
+    for (let i = 0, len = array.length; i < len; ++i) {
+        const item = array[i];
+        if (!removals.has(item)) {
+            array[writeIdx++] = item;
+        }
+    }
+    array.length = writeIdx;
 }

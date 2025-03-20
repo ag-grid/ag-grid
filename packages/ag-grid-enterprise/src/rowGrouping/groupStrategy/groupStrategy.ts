@@ -165,7 +165,7 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
             }
         }
 
-        const parentsWithChildrenRemoved = batchRemover.getAllParents().slice();
+        const parentsWithChildrenRemoved = batchRemover.getAllParents();
         batchRemover.flush();
         this.removeEmptyGroups(parentsWithChildrenRemoved, details);
 
