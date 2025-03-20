@@ -578,7 +578,8 @@ export function _createElement<T extends HTMLElement = HTMLElement>(params: Elem
         if (typeof children === 'string') {
             element.textContent = children;
         } else {
-            // To match the previous behaviour of when component templates where defined on multi line strings we need to put whitespace between elements that maintain it.
+            // NOTE: To match the previous behaviour of when component templates where defined on multi line strings we need to put whitespace between elements that maintain it.
+            // Ideally we would not do this and just create the elements as they are given to us, but this is maybe a breaking change.
             let prevMaintainsWhitespace: boolean = false;
             const lastIndex = children.length - 1;
 
