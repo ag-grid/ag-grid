@@ -553,7 +553,7 @@ export type ElementParams = {
 
 /** AG Grid attribute used to automatically assign DOM Elements to class properties */
 export const DataRefAttribute = 'data-ref';
-
+const tagMaintainsWhiteSpace = new Set(['span', 'button']);
 export function _createElement<T extends HTMLElement = HTMLElement>(params: ElementParams): T {
     const { attrs, children, cls, ref, role, tag } = params;
     const element = document.createElement(tag);
@@ -578,10 +578,28 @@ export function _createElement<T extends HTMLElement = HTMLElement>(params: Elem
         if (typeof children === 'string') {
             element.textContent = children;
         } else {
-            for (const child of children) {
+            // To match the previous behaviour of when component templates where defined on multi line strings we need to put whitespace between elements that maintain it.
+            let prevMaintainsWhitespace: boolean = false;
+            const lastIndex = children.length - 1;
+
+            for (let i = 0; i < children.length; i++) {
+                const child = children[i];
                 if (child) {
-                    const node = typeof child === 'string' ? document.createTextNode(child) : _createElement(child);
-                    element.appendChild(node);
+                    if (typeof child === 'string') {
+                        element.appendChild(document.createTextNode(child));
+                    } else {
+                        const currTagMaintainsSpace = tagMaintainsWhiteSpace.has(child.tag);
+                        if (prevMaintainsWhitespace || currTagMaintainsSpace) {
+                            element.appendChild(document.createTextNode(' '));
+                        }
+
+                        element.appendChild(_createElement(child));
+
+                        if (currTagMaintainsSpace && i === lastIndex) {
+                            element.appendChild(document.createTextNode(' '));
+                        }
+                        prevMaintainsWhitespace = currTagMaintainsSpace;
+                    }
                 }
             }
         }
