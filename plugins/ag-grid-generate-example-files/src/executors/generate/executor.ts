@@ -385,16 +385,24 @@ async function writeContents(
 ) {
     if (options.writeFiles) {
         for (const file in result.files) {
-            await writeFile(path.join(options.outputPath, internalFramework, file), result.files[file]);
+            const value = result.files[file];
+            if (value !== undefined && typeof value !== 'string') {
+                await writeFile(path.join(options.outputPath, internalFramework, file), value);
+            }
         }
     }
     const outputPath = path.join(options.outputPath, internalFramework, 'contents.json');
     await writeFile(outputPath, JSON.stringify(result));
 
+    const errors: string[] = [];
     for (const name in result.files) {
-        if (typeof result.files[name] !== 'string') {
-            throw new Error(`${outputPath}: non-string file content`);
+        const value = result.files[name];
+        if (value !== undefined && typeof value !== 'string') {
+            errors.push(`${outputPath}: non-string file content, ${name} ${typeof value}`);
         }
+    }
+    if (errors.length > 0) {
+        throw new Error(errors.join('\n'));
     }
 }
 
