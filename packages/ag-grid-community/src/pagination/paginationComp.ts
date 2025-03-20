@@ -201,7 +201,6 @@ export class PaginationComp extends TabGuardComp implements FocusableContainer {
                         },
                     ],
                 },
-
                 {
                     tag: 'span',
                     cls: 'ag-paging-page-summary-panel',
