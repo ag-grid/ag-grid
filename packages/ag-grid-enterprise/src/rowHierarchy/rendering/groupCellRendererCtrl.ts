@@ -556,12 +556,13 @@ export class GroupCellRendererCtrl extends BeanStub implements IGroupCellRendere
             return;
         }
 
-        const node = this.params.node as RowNode;
+        const { node, column } = this.params;
         const rowSelection = this.gos.get('rowSelection');
-        const checkboxLocation = _getCheckboxLocation(rowSelection);
+        const isGroupColumn = column?.getColDef().showRowGroup != null;
+        const isCheckboxLocationHere = isGroupColumn && _getCheckboxLocation(rowSelection) === 'autoGroupColumn';
         const checkboxes =
             typeof rowSelection === 'object'
-                ? checkboxLocation === 'autoGroupColumn' && _getCheckboxes(rowSelection)
+                ? isCheckboxLocationHere && _getCheckboxes(rowSelection)
                 : this.params.checkbox;
         const userWantsSelected = typeof checkboxes === 'function' || checkboxes === true;
 
@@ -581,8 +582,8 @@ export class GroupCellRendererCtrl extends BeanStub implements IGroupCellRendere
             this.createBean(cbSelectionComponent);
 
             cbSelectionComponent.init({
-                rowNode: node, // when groupHideOpenParents = true and group expanded, we want the checkbox to refer to leaf node state (not group node state)
-                column: this.params.column as AgColumn,
+                rowNode: node as RowNode, // when groupHideOpenParents = true and group expanded, we want the checkbox to refer to leaf node state (not group node state)
+                column: column as AgColumn,
                 overrides: {
                     isVisible: checkboxes,
                     callbackParams: this.params,

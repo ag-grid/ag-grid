@@ -26,7 +26,7 @@ import type { AgNameValue } from './agNameValue';
 import { AgNameValueSelector } from './agNameValue';
 import { _getTotalRowCount } from './utils';
 
-function _formatNumberTwoDecimalPlacesAndCommas(value: number, getLocaleTextFunc: () => LocaleTextFunc): string {
+function _formatNumberTwoDecimalPlacesAndCommas(value: number | null, getLocaleTextFunc: () => LocaleTextFunc): string {
     if (typeof value !== 'number') {
         return '';
     }

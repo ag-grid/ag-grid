@@ -1652,7 +1652,8 @@
         overflow: hidden;
     }
 
-    .ag-status-panel {
+    .ag-status-panel,
+    .ag-status-panel.ag-status-panel-aggregations .ag-status-name-value {
         display: inline-flex;
     }
 

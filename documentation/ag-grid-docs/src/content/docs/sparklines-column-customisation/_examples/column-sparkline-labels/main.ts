@@ -42,7 +42,7 @@ const gridOptions: GridOptions = {
                     },
                     axis: {
                         type: 'category',
-                        stroke: '##cccccc',
+                        stroke: '#cccccc',
                         strokeWidth: 2,
                     },
                     highlightStyle: {

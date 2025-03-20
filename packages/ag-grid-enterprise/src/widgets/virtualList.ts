@@ -421,11 +421,18 @@ export class VirtualList<
         const gui = this.getGui();
         const topPixel = gui.scrollTop;
         const bottomPixel = topPixel + gui.offsetHeight;
-        const firstRow = Math.floor(topPixel / this.rowHeight);
-        const lastRow = Math.floor(bottomPixel / this.rowHeight);
-        this.pageSize = Math.floor((bottomPixel - topPixel) / this.rowHeight);
 
-        this.ensureRowsRendered(firstRow, lastRow, softRefresh);
+        // if topPixel is the same as bottom, it means the list
+        // has not size (is hidden), so we should remove the rows.
+        if (topPixel === bottomPixel) {
+            this.clearVirtualRows();
+        } else {
+            const firstRow = Math.floor(topPixel / this.rowHeight);
+            const lastRow = Math.floor(bottomPixel / this.rowHeight);
+            this.pageSize = Math.floor((bottomPixel - topPixel) / this.rowHeight);
+
+            this.ensureRowsRendered(firstRow, lastRow, softRefresh);
+        }
     }
 
     private ensureRowsRendered(start: number, finish: number, softRefresh?: boolean) {
