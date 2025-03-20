@@ -206,7 +206,6 @@ export class PaginationComp extends TabGuardComp implements FocusableContainer {
                     cls: 'ag-paging-page-summary-panel',
                     role: 'presentation',
                     children: [
-                        ' ',
                         {
                             tag: 'div',
                             ref: 'btFirst',
@@ -267,7 +266,6 @@ export class PaginationComp extends TabGuardComp implements FocusableContainer {
                             role: 'button',
                             attrs: { 'aria-label': localeTextFunc('lastPage', 'Last Page') },
                         },
-                        ' ',
                     ],
                 },
             ],
