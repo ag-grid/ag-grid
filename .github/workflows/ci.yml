@@ -108,8 +108,6 @@ jobs:
       - name: nx build
         id: build
         run: |
-          yarn nx reset 
-          yarn nx build ag-shared
           yarn nx generate-doc-references
           yarn nx generate-examples -c staging
           yarn nx run-many --t build -c staging --exclude ag-grid-docs --exclude all
