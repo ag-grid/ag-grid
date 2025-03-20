@@ -124,22 +124,24 @@ export class TestSuites {
 
         // if onlyFailures is set it could be there aren't - we ensure that the expected
         // testsuites >testsuite > testcase hierarchy is maintained and some useful context added
-        if(result.testsuites.testsuite.length === 0) {
+        if (result.testsuites.testsuite.length === 0) {
             result.testsuites.testsuite.push(<any>{
                 _attributes: {
                     name: `${result.testsuites._attributes.name}: (${result.testsuites._attributes.tests} tests run and passed)`,
                     failures: result.testsuites._attributes.failures,
                     tests: result.testsuites._attributes.tests,
-                    time: result.testsuites._attributes.time
+                    time: result.testsuites._attributes.time,
                 },
-                testcase: [{
-                    _attributes: {
-                        classname: result.testsuites._attributes.name,
-                        name: result.testsuites._attributes.name,
-                        time: 0
-                    }
-                }]
-            })
+                testcase: [
+                    {
+                        _attributes: {
+                            classname: result.testsuites._attributes.name,
+                            name: result.testsuites._attributes.name,
+                            time: 0,
+                        },
+                    },
+                ],
+            });
         }
 
         return result;
