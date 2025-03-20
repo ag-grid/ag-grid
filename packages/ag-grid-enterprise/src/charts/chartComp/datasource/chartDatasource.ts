@@ -379,7 +379,18 @@ export class ChartDatasource extends BeanStub {
         while (rowNode && rowNode.level !== 0) {
             rowNode = rowNode.parent;
             if (rowNode) {
-                labels.push(rowNode.key!);
+                if (rowNode.group) {
+                    // for group nodes we need to resolve the group column value to get the label
+                    // just like we do for the initialLabel
+                    const groupColumn = this.colModel.getCol('ag-Grid-AutoColumn');
+                    if (groupColumn) {
+                        const valueObject = this.valueSvc.getValue(groupColumn, rowNode);
+                        const valueString = valueObject?.toString ? String(valueObject.toString()) : '';
+                        labels.push(valueString);
+                    }
+                } else {
+                    labels.push(rowNode.key!);
+                }
             }
         }
         return labels;
