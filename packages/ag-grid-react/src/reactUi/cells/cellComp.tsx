@@ -436,13 +436,9 @@ const CellComp = ({
                 } else {
                     // if leaving editor & cell is focused, ensure the cell remains
                     // focused after the editor is destroyed
-                    const recoverFocus = cellCtrl.hasBrowserFocus();
+                    const recoverFocus = cellCtrl.isCellFocused() && cellCtrl.hasBrowserFocus();
                     if (recoverFocus) {
-                        if (cellCtrl.isCellFocused()) {
-                            compProxy.getFocusableElement().focus({ preventScroll: true });
-                        } else {
-                            beans.focusSvc.needsFocusRestored = true;
-                        }
+                        compProxy.getFocusableElement().focus({ preventScroll: true });
                     }
                     // stop editing
                     setEditDetails((editDetails) => {
