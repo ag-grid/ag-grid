@@ -3,6 +3,7 @@ import type {
     AgColumn,
     AgEvent,
     ColDef,
+    ElementParams,
     ICellRendererComp,
     ISetFilterCellRendererParams,
     ITooltipCtrl,
@@ -65,6 +66,31 @@ export interface SetFilterListItemParams<V> {
 
 export type SetFilterListItemEvent = 'selectionChanged' | 'expandedChanged';
 /** @param V type of value in the Set Filter */
+
+const SetFilterGroupElement: ElementParams = {
+    tag: 'div',
+    cls: 'ag-set-filter-item',
+    attrs: { 'aria-hidden': 'true' },
+    children: [
+        {
+            tag: 'span',
+            cls: 'ag-set-filter-group-icons',
+            children: [
+                { tag: 'span', ref: 'eGroupClosedIcon', cls: 'ag-set-filter-group-closed-icon' },
+                { tag: 'span', ref: 'eGroupOpenedIcon', cls: 'ag-set-filter-group-opened-icon' },
+                { tag: 'span', ref: 'eGroupIndeterminateIcon', cls: 'ag-set-filter-group-indeterminate-icon' },
+            ],
+        },
+        { tag: 'ag-checkbox', ref: 'eCheckbox', cls: 'ag-set-filter-item-checkbox' },
+    ],
+};
+
+const SetFilterElement: ElementParams = {
+    tag: 'div',
+    cls: 'ag-set-filter-item',
+    children: [{ tag: 'ag-checkbox', ref: 'eCheckbox', cls: 'ag-set-filter-item-checkbox' }],
+};
+
 export class SetFilterListItem<V> extends Component<SetFilterListItemEvent> {
     private readonly eCheckbox: AgCheckbox = RefPlaceholder;
 
@@ -97,23 +123,7 @@ export class SetFilterListItem<V> extends Component<SetFilterListItemEvent> {
     private formattedValue: string | null = null;
 
     constructor(params: SetFilterListItemParams<V>) {
-        super(
-            params.isGroup
-                ? /* html */ `
-            <div class="ag-set-filter-item" aria-hidden="true">
-                <span class="ag-set-filter-group-icons">
-                    <span class="ag-set-filter-group-closed-icon" data-ref="eGroupClosedIcon"></span>
-                    <span class="ag-set-filter-group-opened-icon" data-ref="eGroupOpenedIcon"></span>
-                    <span class="ag-set-filter-group-indeterminate-icon" data-ref="eGroupIndeterminateIcon"></span>
-                </span>
-                <ag-checkbox data-ref="eCheckbox" class="ag-set-filter-item-checkbox"></ag-checkbox>
-            </div>`
-                : /* html */ `
-            <div class="ag-set-filter-item">
-                <ag-checkbox data-ref="eCheckbox" class="ag-set-filter-item-checkbox"></ag-checkbox>
-            </div>`,
-            [AgCheckboxSelector]
-        );
+        super(params.isGroup ? SetFilterGroupElement : SetFilterElement, [AgCheckboxSelector]);
         this.focusWrapper = params.focusWrapper;
         this.value = params.value;
         this.params = params.params;

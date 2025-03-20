@@ -1,9 +1,9 @@
-import type { IMenuItemComp, IMenuItemParams } from 'ag-grid-community';
+import type { ElementParams, IMenuItemComp, IMenuItemParams } from 'ag-grid-community';
 import {
     Component,
+    _createElement,
     _createIconNoSpan,
     _isNodeOrElement,
-    _loadTemplate,
     _setAriaChecked,
     _setAriaExpanded,
     _warn,
@@ -13,15 +13,13 @@ interface AgMenuItemRendererParams {
     cssClassPrefix?: string;
     isCompact?: boolean;
 }
-
+const MenuItemElement: ElementParams = { tag: 'div' };
 export class AgMenuItemRenderer extends Component implements IMenuItemComp {
     private params: IMenuItemParams & AgMenuItemRendererParams;
     private cssClassPrefix: string;
 
     constructor() {
-        super();
-
-        this.setTemplate(/* html */ `<div></div>`);
+        super(MenuItemElement);
     }
 
     public init(params: IMenuItemParams & AgMenuItemRendererParams): void {
@@ -57,10 +55,13 @@ export class AgMenuItemRenderer extends Component implements IMenuItemComp {
         if (this.params.isCompact) {
             return;
         }
-        const iconWrapper = _loadTemplate(
-            /* html */
-            `<span data-ref="eIcon" class="${this.getClassName('part')} ${this.getClassName('icon')}" role="presentation"></span>`
-        );
+
+        const iconWrapper = _createElement({
+            tag: 'span',
+            ref: 'eIcon',
+            cls: `${this.getClassName('part')} ${this.getClassName('icon')}`,
+            role: 'presentation',
+        });
 
         const { checked, icon } = this.params;
 
@@ -80,10 +81,12 @@ export class AgMenuItemRenderer extends Component implements IMenuItemComp {
     }
 
     private addName(): void {
-        const name = _loadTemplate(
-            /* html */
-            `<span data-ref="eName" class="${this.getClassName('part')} ${this.getClassName('text')}">${this.params.name || ''}</span>`
-        );
+        const name = _createElement({
+            tag: 'span',
+            ref: 'eName',
+            cls: `${this.getClassName('part')} ${this.getClassName('text')}`,
+            children: this.params.name || '',
+        });
 
         this.getGui().appendChild(name);
     }
@@ -92,19 +95,22 @@ export class AgMenuItemRenderer extends Component implements IMenuItemComp {
         if (this.params.isCompact) {
             return;
         }
-        const shortcut = _loadTemplate(
-            /* html */
-            `<span data-ref="eShortcut" class="${this.getClassName('part')} ${this.getClassName('shortcut')}">${this.params.shortcut || ''}</span>`
-        );
 
+        const shortcut = _createElement({
+            tag: 'span',
+            ref: 'eShortcut',
+            cls: `${this.getClassName('part')} ${this.getClassName('shortcut')}`,
+            children: this.params.shortcut || '',
+        });
         this.getGui().appendChild(shortcut);
     }
 
     private addSubMenu(): void {
-        const pointer = _loadTemplate(
-            /* html */
-            `<span data-ref="ePopupPointer" class="${this.getClassName('part')} ${this.getClassName('popup-pointer')}"></span>`
-        );
+        const pointer = _createElement({
+            tag: 'span',
+            ref: 'ePopupPointer',
+            cls: `${this.getClassName('part')} ${this.getClassName('popup-pointer')}`,
+        });
 
         const eGui = this.getGui();
 

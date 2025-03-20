@@ -1,4 +1,4 @@
-import type { RichSelectParams } from 'ag-grid-community';
+import type { ElementParams, RichSelectParams } from 'ag-grid-community';
 import {
     AgInputTextFieldSelector,
     _setAriaLabel,
@@ -15,20 +15,35 @@ export interface AddDropdownCompParams extends RichSelectParams<AutocompleteEntr
     ariaLabel: string;
 }
 
+const AddDropdownCompElement: ElementParams = {
+    tag: 'div',
+    cls: 'ag-picker-field',
+    role: 'presentation',
+    children: [
+        { tag: 'div', ref: 'eLabel' },
+        {
+            tag: 'div',
+            ref: 'eWrapper',
+            cls: 'ag-wrapper ag-picker-collapsed',
+            children: [
+                { tag: 'div', ref: 'eDisplayField', cls: 'ag-picker-field-display' },
+                { tag: 'ag-input-text-field', ref: 'eInput', cls: 'ag-rich-select-field-input' },
+                {
+                    tag: 'span',
+                    ref: 'eDeselect',
+                    cls: 'ag-rich-select-deselect-button ag-picker-field-icon',
+                    role: 'presentation',
+                },
+                { tag: 'div', ref: 'eIcon', cls: 'ag-picker-field-icon', attrs: { 'aria-hidden': 'true' } },
+            ],
+        },
+    ],
+};
 export class AddDropdownComp extends AgRichSelect {
     constructor(private readonly params: AddDropdownCompParams) {
         super({
             ...params,
-            template: /* html */ `
-                <div class="ag-picker-field" role="presentation">
-                    <div data-ref="eLabel"></div>
-                    <div data-ref="eWrapper" class="ag-wrapper ag-picker-collapsed">
-                        <div data-ref="eDisplayField" class="ag-picker-field-display"></div>
-                        <ag-input-text-field data-ref="eInput" class="ag-rich-select-field-input"></ag-input-text-field>
-                        <span data-ref="eDeselect" class="ag-rich-select-deselect-button ag-picker-field-icon" role="presentation"></span>
-                        <div data-ref="eIcon" class="ag-picker-field-icon" aria-hidden="true"></div>
-                    </div>
-                </div>`,
+            template: AddDropdownCompElement,
             agComponents: [AgInputTextFieldSelector],
         });
     }

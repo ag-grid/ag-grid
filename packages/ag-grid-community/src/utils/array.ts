@@ -28,8 +28,17 @@ export function _areEqual<T>(
     );
 }
 
-export function _sortNumerically(array: number[]): number[] {
-    return array.sort((a, b) => a - b);
+/**
+ * Utility that uses the fastest looping approach to apply a callback to each element of the array
+ * https://jsperf.app/for-for-of-for-in-foreach-comparison
+ */
+export function _forAll<T>(array: T[] | undefined, callback: (value: T) => void) {
+    if (!array) {
+        return;
+    }
+    for (const value of array) {
+        callback(value);
+    }
 }
 
 export function _removeFromArray<T>(array: T[], object: T) {
@@ -56,6 +65,5 @@ export function _moveInArray<T>(array: T[], objectsToMove: T[], toIndex: number)
 
 export function _flatten<T>(arrays: Array<T[]>): T[] {
     // Currently the fastest way to flatten an array according to https://jsbench.me/adlib26t2y/2
-    // eslint-disable-next-line prefer-spread
     return ([] as T[]).concat.apply([], arrays);
 }

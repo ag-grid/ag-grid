@@ -8,11 +8,25 @@ export interface StatusPanelDef {
     statusPanelParams?: any;
 }
 
-export interface IStatusPanelParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {}
+export interface IStatusPanelValueFormatterParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
+    /* The value of the current Status Bar Panel */
+    value: number | null;
+    /* The total row count of the grid. */
+    totalRows: number;
+    /* The name of the current Status Bar Panel */
+    key: string;
+}
+export interface IProvidedStatusPanelParams {
+    valueFormatter?: (params: IStatusPanelValueFormatterParams) => string;
+}
+
+export interface IStatusPanelParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
+    key: string;
+}
 
 export type AggregationStatusPanelAggFunc = 'count' | 'sum' | 'min' | 'max' | 'avg';
 
-export interface IAggregationStatusPanelParams {
+export interface IAggregationStatusPanelParams extends IProvidedStatusPanelParams {
     aggFuncs: AggregationStatusPanelAggFunc[];
 }
 

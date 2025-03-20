@@ -1,17 +1,42 @@
-import type { AgColumn, FilterOpenedEvent, IFilterComp, IconName } from 'ag-grid-community';
+import type { AgColumn, ElementParams, FilterOpenedEvent, IFilterComp, IconName } from 'ag-grid-community';
 import {
     Component,
     FilterWrapperComp,
     KeyCode,
     RefPlaceholder,
     _clearElement,
+    _createElement,
     _createIconNoSpan,
-    _loadTemplate,
     _setAriaExpanded,
     _setDisplayed,
 } from 'ag-grid-community';
 
 export type ToolPanelFilterCompEvent = 'filterChanged';
+
+const ToolPanelFilterElement: ElementParams = {
+    tag: 'div',
+    cls: 'ag-filter-toolpanel-instance',
+    children: [
+        {
+            tag: 'div',
+            ref: 'eFilterToolPanelHeader',
+            cls: 'ag-filter-toolpanel-header ag-filter-toolpanel-instance-header',
+            role: 'button',
+            attrs: { 'aria-expanded': 'false' },
+            children: [
+                { tag: 'div', ref: 'eExpand', cls: 'ag-filter-toolpanel-expand' },
+                { tag: 'span', ref: 'eFilterName', cls: 'ag-header-cell-text' },
+                {
+                    tag: 'span',
+                    ref: 'eFilterIcon',
+                    cls: 'ag-header-icon ag-filter-icon ag-filter-toolpanel-instance-header-icon',
+                    attrs: { 'aria-hidden': 'true' },
+                },
+            ],
+        },
+        { tag: 'div', ref: 'agFilterToolPanelBody', cls: 'ag-filter-toolpanel-instance-body ag-filter' },
+    ],
+};
 export class ToolPanelFilterComp extends Component<ToolPanelFilterCompEvent> {
     private readonly eFilterToolPanelHeader: HTMLElement = RefPlaceholder;
     private readonly eFilterName: HTMLElement = RefPlaceholder;
@@ -30,15 +55,7 @@ export class ToolPanelFilterComp extends Component<ToolPanelFilterCompEvent> {
         private hideHeader: boolean,
         private readonly expandedCallback: () => void
     ) {
-        super(/* html */ `
-            <div class="ag-filter-toolpanel-instance">
-                <div class="ag-filter-toolpanel-header ag-filter-toolpanel-instance-header" data-ref="eFilterToolPanelHeader" role="button" aria-expanded="false">
-                    <div data-ref="eExpand" class="ag-filter-toolpanel-expand"></div>
-                    <span data-ref="eFilterName" class="ag-header-cell-text"></span>
-                    <span data-ref="eFilterIcon" class="ag-header-icon ag-filter-icon ag-filter-toolpanel-instance-header-icon" aria-hidden="true"></span>
-                </div>
-                <div class="ag-filter-toolpanel-instance-body ag-filter" data-ref="agFilterToolPanelBody"></div>
-            </div>`);
+        super(ToolPanelFilterElement);
     }
 
     public postConstruct() {
@@ -146,7 +163,7 @@ export class ToolPanelFilterComp extends Component<ToolPanelFilterCompEvent> {
     }
 
     private addFilterElement(suppressFocus?: boolean): void {
-        const filterPanelWrapper = _loadTemplate(/* html */ `<div class="ag-filter-toolpanel-instance-filter"></div>`);
+        const filterPanelWrapper = _createElement({ tag: 'div', cls: 'ag-filter-toolpanel-instance-filter' });
         const comp = this.createManagedBean(new FilterWrapperComp(this.column, 'TOOLBAR'));
         this.filterWrapperComp = comp;
 

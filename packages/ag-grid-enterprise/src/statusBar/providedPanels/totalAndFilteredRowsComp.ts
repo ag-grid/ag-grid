@@ -1,4 +1,10 @@
-import type { IClientSideRowModel, IStatusPanelComp } from 'ag-grid-community';
+import type {
+    IClientSideRowModel,
+    IProvidedStatusPanelParams,
+    IStatusPanelComp,
+    IStatusPanelParams,
+    IStatusPanelValueFormatterParams,
+} from 'ag-grid-community';
 import { _formatNumberCommas, _isClientSideRowModel, _warn } from 'ag-grid-community';
 
 import { AgNameValue } from './agNameValue';
@@ -19,26 +25,43 @@ export class TotalAndFilteredRowsComp extends AgNameValue implements IStatusPane
         this.setDisplayed(true);
 
         this.addManagedEventListeners({ modelUpdated: this.onDataChanged.bind(this) });
-        this.onDataChanged();
     }
 
     private onDataChanged() {
         const { rowModel } = this.beans;
-        const getLocaleTextFunc = this.getLocaleTextFunc.bind(this);
-        const rowCount = _formatNumberCommas(_getFilteredRowCount(rowModel as IClientSideRowModel), getLocaleTextFunc);
-        const totalRowCount = _formatNumberCommas(_getTotalRowCount(rowModel), getLocaleTextFunc);
 
-        if (rowCount === totalRowCount) {
-            this.setValue(rowCount);
-        } else {
-            const localeTextFunc = this.getLocaleTextFunc();
-            this.setValue(`${rowCount} ${localeTextFunc('of', 'of')} ${totalRowCount}`);
-        }
+        const rowCount = _getFilteredRowCount(rowModel as IClientSideRowModel);
+        const totalRowCount = _getTotalRowCount(rowModel);
+
+        this.setValue(rowCount, totalRowCount);
     }
 
-    public init() {}
+    public init(params: IStatusPanelParams & IProvidedStatusPanelParams) {
+        this.refresh(params);
+        this.onDataChanged();
+    }
 
-    public refresh(): boolean {
+    private updateValueFormatter(valueFormatter?: (params: IStatusPanelValueFormatterParams) => string): void {
+        this.valueFormatter =
+            valueFormatter ??
+            (({ value, totalRows }) => {
+                const getLocaleTextFunc = this.getLocaleTextFunc.bind(this);
+                const rowCount = _formatNumberCommas(value, getLocaleTextFunc);
+                const totalRowCount = _formatNumberCommas(totalRows ?? value, getLocaleTextFunc);
+
+                if (value === totalRows) {
+                    return rowCount;
+                }
+
+                const localeTextFunc = getLocaleTextFunc();
+                return `${rowCount} ${localeTextFunc('of', 'of')} ${totalRowCount}`;
+            });
+    }
+
+    public refresh(params: IStatusPanelParams & IProvidedStatusPanelParams): boolean {
+        const { key, valueFormatter } = params;
+        this.key = key;
+        this.updateValueFormatter(valueFormatter);
         return true;
     }
 }

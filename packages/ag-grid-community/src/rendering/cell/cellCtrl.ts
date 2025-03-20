@@ -12,6 +12,7 @@ import type { GridOptionsService } from '../../gridOptionsService';
 import {
     _addGridCommonParams,
     _getActiveDomElement,
+    _getCheckboxLocation,
     _getCheckboxes,
     _isCellSelectionEnabled,
     _setDomData,
@@ -122,6 +123,8 @@ export class CellCtrl extends BeanStub {
     public onEditorAttachedFuncs: (() => void)[] = [];
 
     private focusEventWhileNotReady: CellFocusedEvent | null = null;
+    // if cell has been focused, check if it's focused when destroyed
+    private hasBeenFocused = false;
 
     constructor(
         public readonly column: AgColumn,
@@ -322,6 +325,7 @@ export class CellCtrl extends BeanStub {
         return (
             colDef.checkboxSelection ||
             (isColumnSelectionCol(this.column) &&
+                _getCheckboxLocation(rowSelection) == 'selectionColumn' &&
                 rowSelection &&
                 typeof rowSelection !== 'string' &&
                 _getCheckboxes(rowSelection))
@@ -682,8 +686,17 @@ export class CellCtrl extends BeanStub {
         this.comp.addOrRemoveCssClass(CSS_CELL_LAST_LEFT_PINNED, lastLeftPinned);
     }
 
-    public isCellFocused(): boolean {
+    /**
+     * Returns whether cell is focused by the focusSvc, overridden by spannedCellCtrl
+     */
+    protected checkCellFocused(): boolean {
         return this.beans.focusSvc.isCellFocused(this.cellPosition);
+    }
+
+    public isCellFocused(): boolean {
+        const isFocused = this.checkCellFocused();
+        this.hasBeenFocused ||= isFocused;
+        return isFocused;
     }
 
     public setupFocus() {
@@ -820,9 +833,9 @@ export class CellCtrl extends BeanStub {
         this.onCompAttachedFuncs = [];
         this.onEditorAttachedFuncs = [];
 
-        // if this was focused; focus will need recovered
+        // if this was focused; (e.g cell span status changes) then we need to restore focus
         if (this.isCellFocused() && this.hasBrowserFocus()) {
-            this.beans.focusSvc.needsFocusRestored = true;
+            this.beans.focusSvc.attemptToRecoverFocus();
         }
 
         super.destroy();

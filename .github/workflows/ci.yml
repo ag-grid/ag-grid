@@ -101,14 +101,18 @@ jobs:
           fi
 
       - name: nx lint
+        id: lint
         run: |
           yarn nx lint
 
       - name: nx build
+        id: build
         run: |
+          yarn nx reset 
+          yarn nx build ag-shared
           yarn nx generate-doc-references
-          yarn nx generate-examples
-          yarn nx run-many --t build --exclude ag-grid-docs --exclude all
+          yarn nx generate-examples -c staging
+          yarn nx run-many --t build -c staging --exclude ag-grid-docs --exclude all
 
       - name: calculate matrix
         id: matrix
@@ -143,15 +147,6 @@ jobs:
           echo "bundle_test_matrix=${bundle_matrix}" >> $GITHUB_OUTPUT
           echo "bundle_test_count=${bundle_count}" >> $GITHUB_OUTPUT
           echo "bundle Test matrix determined to be: ${bundle_matrix}"
-
-      - name: Perist build outputs
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: build-outputs
-          path: |
-            dist/
-            packages/*/dist/
 
   test:
     runs-on: ubuntu-24.04
@@ -194,14 +189,14 @@ jobs:
         if: matrix.shard == 0
         id: pack-verify
         run: |
-          yarn nx ${{ github.event.inputs.nx_command || 'affected' }} -t pack:verify
+          yarn nx ${{ github.event.inputs.nx_command || 'affected' }} -t pack:verify --prod
       - name: andrew checker
         if: matrix.shard == 0
         id: andrew
         run: |
           ./scripts/andrewChecker.sh
       - name: Persist test results
-        if: always()
+        if: always() && matrix.shard != 0
         uses: actions/upload-artifact@v4
         with:
           name: test-results-${{matrix.shard}}
@@ -243,7 +238,7 @@ jobs:
         run: yarn nx ${{ github.event.inputs.nx_command || 'affected' }} -t test:e2e --configuration=ci --exclude 'tag:module-size' --exclude all
 
       - name: Persist test results
-        if: always()
+        if: always() && matrix.shard != 0
         uses: actions/upload-artifact@v4
         with:
           name: test-results-e2e-shard-${{matrix.shard}}
@@ -289,7 +284,7 @@ jobs:
         run: yarn nx ${{ github.event.inputs.nx_command || 'affected' }}  -t test:e2e --configuration=ci --exclude '!tag:module-size' --exclude 'tag:non-sharding' --exclude all --shard=${{ matrix.shard }}/$((${{ strategy.job-total }} - 1))
 
       - name: Persist test results
-        if: always()
+        if: always() && matrix.shard != 0
         uses: actions/upload-artifact@v4
         with:
           name: test-results-bundle-shard-${{matrix.shard}}
@@ -317,11 +312,6 @@ jobs:
           git fetch origin --depth 1 latest
           git fetch origin --depth 1 tag latest-success
 
-      - name: Restore Init Build Outputs
-        uses: actions/download-artifact@v4
-        with:
-          name: build-outputs
-
       - name: Setup
         id: setup
         uses: ./.github/actions/setup-nx
@@ -335,8 +325,8 @@ jobs:
         if: ${{ github.ref == 'refs/heads/latest' }}
         run: |
           yarn nx generate-doc-references
-          yarn nx generate-examples
-          yarn nx run-many --t build --exclude ag-grid-docs --exclude all
+          yarn nx generate-examples -c staging
+          yarn nx run-many --t build -c staging --exclude ag-grid-docs --exclude all
       - name: validate base url
         if: ${{ github.ref == 'refs/heads/latest' }}
         run: node scripts/deployments/sanityCheckBaseUrl.js staging
@@ -345,28 +335,27 @@ jobs:
       - name: docs build and link checker
         run: CHECK_LINKS=true CHECK_REDIRECTS=true yarn nx run ag-grid-docs:build -c staging
 
-      - name: Deploy to Staging
-        if: ${{ github.ref == 'refs/heads/latest' }}
-        env:
-          SSH_PRIVATE_KEY: |
-            ${{ secrets.STAGING_SSH_KEY }}
-          SSH_HOST: ${{ secrets.STAGING_HOST }}
-          SSH_USER: ubuntu
-          SSH_KEY_LOCATION: ${{ github.workspace }}/staging.pem
-          WWW_ROOT_DIR: ${{ vars.WWW_ROOT_DIR }}
-        run: |
-          echo "$SSH_PRIVATE_KEY" > $SSH_KEY_LOCATION
-          chmod 400 $SSH_KEY_LOCATION
-          echo "Copying release to Staging"
-          ./scripts/deployments/createAndDeployDocsToTCGH.sh
+#      - name: Deploy to Staging
+#        if: ${{ github.ref == 'refs/heads/latest' }}
+#        env:
+#          SSH_PRIVATE_KEY: |
+#            ${{ secrets.STAGING_SSH_KEY }}
+#          SSH_HOST: ${{ secrets.STAGING_HOST }}
+#          SSH_USER: ubuntu
+#          SSH_KEY_LOCATION: ${{ github.workspace }}/staging.pem
+#          WWW_ROOT_DIR: ${{ vars.WWW_ROOT_DIR }}
+#        run: |
+#          echo "$SSH_PRIVATE_KEY" > $SSH_KEY_LOCATION
+#          chmod 400 $SSH_KEY_LOCATION
+#          ./scripts/deployments/createAndDeployDocsToTCGH.sh
 
-          - name: Persist test results
-            if: always()
-            uses: actions/upload-artifact@v4
-            with:
-              name: test-results-docs
-              path: |
-                reports/
+      - name: Persist test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results-docs
+          path: |
+            reports/
 
   report:
     runs-on: ubuntu-24.04
@@ -420,10 +409,10 @@ jobs:
             WORKFLOW_STATUS="failure"
           elif [ "${{ needs.e2e.result }}" == "failure" ] ; then
             WORKFLOW_STATUS="failure"
-          elif [ "${{ needs.fw_pkg_test.result }}" == "failure" ] ; then
+          elif [ "${{ needs.docs.result }}" == "failure" ] ; then
             WORKFLOW_STATUS="failure"
-          elif [ "${{ needs.sonarqube.result }}" == "failure" ] ; then
-            WORKFLOW_STATUS="partial"
+          elif [ "${{ needs.bundle_size.result }}" == "failure" ] ; then
+            WORKFLOW_STATUS="failure"
           fi
           echo "workflowStatus=${WORKFLOW_STATUS}" >> $GITHUB_OUTPUT
 

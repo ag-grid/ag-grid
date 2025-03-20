@@ -7,6 +7,7 @@ import {
     _applyColumnState,
     _areColIdsEqual,
     _convertColumnEventSourceType,
+    _createElement,
     _debounce,
     _destroyColumnTree,
     _getRowNode,
@@ -256,8 +257,7 @@ export class RowNumbersService extends BeanStub implements NamedBean, IRowNumber
     }
 
     private createDummyElement(column: AgColumn): HTMLDivElement {
-        const div = document.createElement('div');
-        div.classList.add('ag-cell-value', 'ag-cell');
+        const div = _createElement<HTMLDivElement>({ tag: 'div', cls: 'ag-cell-value ag-cell' });
 
         let value = String(this.beans.rowModel.getRowCount() + 1);
 

@@ -1,8 +1,16 @@
-import type { BeanCollection, Component, ComponentEvent, CssVariablesChanged, Environment } from 'ag-grid-community';
+import type {
+    BeanCollection,
+    Component,
+    ComponentEvent,
+    CssVariablesChanged,
+    ElementParams,
+    Environment,
+} from 'ag-grid-community';
 import {
     KeyCode,
     RefPlaceholder,
     TabGuardComp,
+    _createElement,
     _getAriaPosInSet,
     _observeResize,
     _requestAnimationFrame,
@@ -24,13 +32,19 @@ interface VirtualListParams<C> {
     moveItemCallback?: (item: C, isUp: boolean) => void;
 }
 
-function getVirtualListTemplate(cssIdentifier: string) {
-    return (
-        /* html */
-        `<div class="ag-virtual-list-viewport ag-${cssIdentifier}-virtual-list-viewport" role="presentation">
-            <div class="ag-virtual-list-container ag-${cssIdentifier}-virtual-list-container" data-ref="eContainer"></div>
-        </div>`
-    );
+function getVirtualListTemplate(cssIdentifier: string): ElementParams {
+    return {
+        tag: 'div',
+        cls: `ag-virtual-list-viewport ag-${cssIdentifier}-virtual-list-viewport`,
+        role: 'presentation',
+        children: [
+            {
+                tag: 'div',
+                ref: 'eContainer',
+                cls: `ag-virtual-list-container ag-${cssIdentifier}-virtual-list-container`,
+            },
+        ],
+    };
 }
 
 export class VirtualList<
@@ -48,7 +62,7 @@ export class VirtualList<
     private readonly ariaRole: string;
     private listName?: string;
 
-    private model: VirtualListModel;
+    protected model: VirtualListModel;
     private renderedRows = new Map<number, { rowComponent: C; eDiv: HTMLDivElement; value: V }>();
     private componentCreator: (value: V, listItemElement: HTMLElement) => C;
     private componentUpdater: (value: V, component: C) => void;
@@ -407,11 +421,18 @@ export class VirtualList<
         const gui = this.getGui();
         const topPixel = gui.scrollTop;
         const bottomPixel = topPixel + gui.offsetHeight;
-        const firstRow = Math.floor(topPixel / this.rowHeight);
-        const lastRow = Math.floor(bottomPixel / this.rowHeight);
-        this.pageSize = Math.floor((bottomPixel - topPixel) / this.rowHeight);
 
-        this.ensureRowsRendered(firstRow, lastRow, softRefresh);
+        // if topPixel is the same as bottom, it means the list
+        // has not size (is hidden), so we should remove the rows.
+        if (topPixel === bottomPixel) {
+            this.clearVirtualRows();
+        } else {
+            const firstRow = Math.floor(topPixel / this.rowHeight);
+            const lastRow = Math.floor(bottomPixel / this.rowHeight);
+            this.pageSize = Math.floor((bottomPixel - topPixel) / this.rowHeight);
+
+            this.ensureRowsRendered(firstRow, lastRow, softRefresh);
+        }
     }
 
     private ensureRowsRendered(start: number, finish: number, softRefresh?: boolean) {
@@ -442,13 +463,16 @@ export class VirtualList<
 
     private insertRow(rowIndex: number): void {
         const value = this.model.getRow(rowIndex);
-        const eDiv = document.createElement('div');
+        const role = this.ariaRole === 'tree' ? 'treeitem' : 'option';
+        const eDiv = _createElement<HTMLDivElement>({
+            tag: 'div',
+            cls: `ag-virtual-list-item ag-${this.cssIdentifier}-virtual-list-item`,
+            role,
+            attrs: { tabindex: '-1' },
+        });
 
-        eDiv.classList.add('ag-virtual-list-item', `ag-${this.cssIdentifier}-virtual-list-item`);
-        _setAriaRole(eDiv, this.ariaRole === 'tree' ? 'treeitem' : 'option');
         _setAriaSetSize(eDiv, this.model.getRowCount());
         _setAriaPosInSet(eDiv, rowIndex + 1);
-        eDiv.setAttribute('tabindex', '-1');
 
         eDiv.style.height = `${this.rowHeight}px`;
         eDiv.style.top = `${this.rowHeight * rowIndex}px`;

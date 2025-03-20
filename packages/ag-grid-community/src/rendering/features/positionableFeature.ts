@@ -1,7 +1,9 @@
 import { BeanStub } from '../../context/beanStub';
 import type { BeanCollection } from '../../context/context';
 import type { DragListenerParams, DragService } from '../../dragAndDrop/dragService';
+import type { ElementParams } from '../../utils/dom';
 import {
+    _createElement,
     _getAbsoluteHeight,
     _getAbsoluteWidth,
     _isVisible,
@@ -11,21 +13,36 @@ import {
 } from '../../utils/dom';
 import type { PopupService } from '../../widgets/popupService';
 
+type ResizerRefPrefix =
+    | 'eTopLeft'
+    | 'eTop'
+    | 'eTopRight'
+    | 'eRight'
+    | 'eBottomRight'
+    | 'eBottom'
+    | 'eBottomLeft'
+    | 'eLeft';
+
 const RESIZE_CONTAINER_STYLE = 'ag-resizer-wrapper';
-const makeDiv = (dataRefPrefix: string, classSuffix: string) =>
-    `<div data-ref="${dataRefPrefix}Resizer" class="ag-resizer ag-resizer-${classSuffix}"></div>`;
-const RESIZE_TEMPLATE =
-    /* html */
-    `<div class="${RESIZE_CONTAINER_STYLE}">
-        ${makeDiv('eTopLeft', 'topLeft')}
-        ${makeDiv('eTop', 'top')}
-        ${makeDiv('eTopRight', 'topRight')}
-        ${makeDiv('eRight', 'right')}
-        ${makeDiv('eBottomRight', 'bottomRight')}
-        ${makeDiv('eBottom', 'bottom')}
-        ${makeDiv('eBottomLeft', 'bottomLeft')}
-        ${makeDiv('eLeft', 'left')}
-    </div>`;
+const makeDiv = (dataRefPrefix: ResizerRefPrefix, classSuffix: string): ElementParams => ({
+    tag: 'div',
+    ref: `${dataRefPrefix}Resizer`,
+    cls: `ag-resizer ag-resizer-${classSuffix}`,
+});
+const RESIZE_TEMPLATE: ElementParams = {
+    tag: 'div',
+    cls: RESIZE_CONTAINER_STYLE,
+    children: [
+        makeDiv('eTopLeft', 'topLeft'),
+        makeDiv('eTop', 'top'),
+        makeDiv('eTopRight', 'topRight'),
+        makeDiv('eRight', 'right'),
+        makeDiv('eBottomRight', 'bottomRight'),
+        makeDiv('eBottom', 'bottom'),
+        makeDiv('eBottomLeft', 'bottomLeft'),
+        makeDiv('eLeft', 'left'),
+    ],
+};
 
 export interface PositionableOptions {
     popup?: boolean;
@@ -580,17 +597,19 @@ export class PositionableFeature extends BeanStub<PositionableFeatureEvent> {
     }
 
     private createResizeMap() {
-        const eGui = this.element;
+        const getElement = (ref: ResizerRefPrefix) => ({
+            element: this.element.querySelector(`[data-ref=${ref}Resizer]`) as HTMLElement,
+        });
 
         this.resizerMap = {
-            topLeft: { element: eGui.querySelector('[data-ref=eTopLeftResizer]') as HTMLElement },
-            top: { element: eGui.querySelector('[data-ref=eTopResizer]') as HTMLElement },
-            topRight: { element: eGui.querySelector('[data-ref=eTopRightResizer]') as HTMLElement },
-            right: { element: eGui.querySelector('[data-ref=eRightResizer]') as HTMLElement },
-            bottomRight: { element: eGui.querySelector('[data-ref=eBottomRightResizer]') as HTMLElement },
-            bottom: { element: eGui.querySelector('[data-ref=eBottomResizer]') as HTMLElement },
-            bottomLeft: { element: eGui.querySelector('[data-ref=eBottomLeftResizer]') as HTMLElement },
-            left: { element: eGui.querySelector('[data-ref=eLeftResizer]') as HTMLElement },
+            topLeft: getElement('eTopLeft'),
+            top: getElement('eTop'),
+            topRight: getElement('eTopRight'),
+            right: getElement('eRight'),
+            bottomRight: getElement('eBottomRight'),
+            bottom: getElement('eBottom'),
+            bottomLeft: getElement('eBottomLeft'),
+            left: getElement('eLeft'),
         };
     }
 
@@ -605,10 +624,7 @@ export class PositionableFeature extends BeanStub<PositionableFeatureEvent> {
             return;
         }
 
-        const parser = new DOMParser();
-        const resizers = parser.parseFromString(RESIZE_TEMPLATE, 'text/html').body;
-
-        eGui.appendChild(resizers.firstChild!);
+        eGui.appendChild(_createElement(RESIZE_TEMPLATE));
         this.createResizeMap();
         this.resizersAdded = true;
     }

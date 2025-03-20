@@ -95,29 +95,27 @@ export class PieChartProxy extends ChartProxy<AgPolarChartOptions, 'pie' | 'donu
         const primarySeries = series[0];
         const angleKey = primarySeries.angleKey!;
 
-        const primaryOptions = {
+        const commonOptions = {
             ...primarySeries,
-            legendItemKey: primarySeries.calloutLabelKey,
-            calloutLabel: { enabled: false }, // hide labels on primary series
-            radiusKey: angleKey,
-            angleKey: `${angleKey}-total`,
             radiusMin: 0,
             radiusMax: 1,
             listeners: {
                 nodeClick: this.crossFilterCallback,
             },
+            legendItemKey: primarySeries.calloutLabelKey,
+            angleKey: `${angleKey}-total`,
+        };
+
+        const primaryOptions = {
+            ...commonOptions,
+            radiusKey: angleKey,
+            sectorLabelKey: `${angleKey}-total`,
         };
 
         const filteredOutOptions = {
-            ...primaryOptions,
+            ...commonOptions,
             radiusKey: `${angleKey!}-filtered-out`,
             showInLegend: false,
-            fills: {
-                $map: [{ $mix: [{ $value: '$1' }, { $ref: 'backgroundColor' }, 0.7] }, { $path: '../1/fills' }],
-            },
-            strokes: {
-                $map: [{ $mix: [{ $value: '$1' }, { $ref: 'backgroundColor' }, 0.7] }, { $path: '../1/strokes' }],
-            },
         };
 
         return [filteredOutOptions, primaryOptions] as (AgPieSeriesOptions | AgDonutSeriesOptions)[];

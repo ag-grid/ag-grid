@@ -4,6 +4,7 @@ import type {
     BeanCollection,
     ComponentSelector,
     DataTypeService,
+    ElementParams,
     IAfterGuiAttachedParams,
     IColsService,
     IDoesFilterPassParams,
@@ -98,17 +99,30 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
     // maybe this method belongs in abstractSimpleFilter???
     protected updateUiVisibility(): void {}
 
-    protected createBodyTemplate(): string {
-        return /* html */ `
-            <div class="ag-set-filter">
-                <div data-ref="eFilterLoading" class="ag-filter-loading ag-loading ag-hidden">
-                    <span data-ref="eFilterLoadingIcon" class="ag-loading-icon"></span>
-                    <span class="ag-loading-text">${this.translateForSetFilter('loadingOoo')}</span>
-                </div>
-                <ag-input-text-field class="ag-mini-filter" data-ref="eMiniFilter"></ag-input-text-field>
-                <div data-ref="eFilterNoMatches" class="ag-filter-no-matches ag-hidden">${this.translateForSetFilter('noMatches')}</div>
-                <div data-ref="eSetFilterList" class="ag-set-filter-list" role="presentation"></div>
-            </div>`;
+    protected createBodyTemplate(): ElementParams | null {
+        return {
+            tag: 'div',
+            cls: 'ag-set-filter',
+            children: [
+                {
+                    tag: 'div',
+                    ref: 'eFilterLoading',
+                    cls: 'ag-filter-loading ag-loading ag-hidden',
+                    children: [
+                        { tag: 'span', ref: 'eFilterLoadingIcon', cls: 'ag-loading-icon' },
+                        { tag: 'span', cls: 'ag-loading-text', children: this.translateForSetFilter('loadingOoo') },
+                    ],
+                },
+                { tag: 'ag-input-text-field', ref: 'eMiniFilter', cls: 'ag-mini-filter' },
+                {
+                    tag: 'div',
+                    ref: 'eFilterNoMatches',
+                    cls: 'ag-filter-no-matches ag-hidden',
+                    children: this.translateForSetFilter('noMatches'),
+                },
+                { tag: 'div', ref: 'eSetFilterList', cls: 'ag-set-filter-list', role: 'presentation' },
+            ],
+        };
     }
     protected getAgComponents(): ComponentSelector[] {
         return [AgInputTextFieldSelector];

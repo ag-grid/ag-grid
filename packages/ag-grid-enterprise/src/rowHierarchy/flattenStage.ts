@@ -38,7 +38,7 @@ export class FlattenStage extends BeanStub implements IRowNodeStage<RowNode[]>, 
         const skipLeafNodes = this.beans.colModel.isPivotMode();
         // if we are reducing, and not grouping, then we want to show the root node, as that
         // is where the pivot values are
-        const showRootNode = skipLeafNodes && rootNode.leafGroup;
+        const showRootNode = skipLeafNodes && rootNode.leafGroup && rootNode.aggData;
         const topList = showRootNode ? [rootNode] : rootNode.childrenAfterSort;
 
         const details = _getFlattenDetails(this.gos);

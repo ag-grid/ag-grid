@@ -1,3 +1,8 @@
-.my-tooltip-class {
-    border: 4px solid black;
+#wrapper {
+    display: grid;
+    grid-template-columns: 100%;
+    grid-template-rows: 33% calc(66% - 10px);
+    width: 100%;
+    height: 100%;
+    gap: 10px;
 }

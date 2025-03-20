@@ -1,15 +1,6 @@
 #wrapper {
     height: 100%;
-    display: flex;
-    flex-direction: column;
-}
-
-#pieChart {
-    height: 20px;
-    flex: 1 1 auto;
-}
-
-#myGrid {
-    height: 20px;
-    flex: 1 1 auto;
+    width: 100%;
+    display: grid;
+    grid-template-rows: 50% 50%;
 }

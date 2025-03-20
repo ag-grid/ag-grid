@@ -239,7 +239,7 @@ export class GridRowsValidator {
 
         if (!children) {
             if (gridRows.treeData) {
-                if (!gridRows.isDuplicateIdRow(parentRow)) {
+                if (!gridRows.isDuplicateIdRow(parentRow) && name !== 'allLeafChildren') {
                     this.errors.get(parentRow).add(`${name} is missing`);
                 }
             } else if (parentRow.group && (name === 'childrenAfterGroup' || name === 'allLeafChildren')) {
@@ -457,11 +457,8 @@ export class GridRowsValidator {
                 return;
             }
             processed.add(node);
-            if (!node.childrenAfterGroup?.length) {
-                if (node.data) {
-                    allLeafsSet.add(node);
-                }
-                return;
+            if (node.data) {
+                allLeafsSet.add(node); // Not a group, not a filler node
             }
             if (node.childrenAfterGroup) {
                 for (const child of node.childrenAfterGroup) {
@@ -508,6 +505,10 @@ export class GridRowsValidator {
                 this.errors.get(row).add('allLeafChildren does not match childrenAfterGroup');
                 break;
             }
+        }
+
+        if (row.level >= 0 && row.allLeafChildren?.length === 0) {
+            this.errors.get(row).add('allLeafChildren should not be zero, should be null');
         }
     }
 }

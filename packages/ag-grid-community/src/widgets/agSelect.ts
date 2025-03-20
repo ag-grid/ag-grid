@@ -169,7 +169,7 @@ export class AgSelect<TValue = string | null> extends AgPickerField<
 
     public clearOptions(): this {
         this.listComponent?.clearOptions();
-
+        this.setValue(undefined, true);
         return this;
     }
 

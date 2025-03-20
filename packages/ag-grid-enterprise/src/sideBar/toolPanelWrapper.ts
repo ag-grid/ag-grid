@@ -1,5 +1,6 @@
 import type {
     ComponentType,
+    ElementParams,
     IToolPanelComp,
     IToolPanelParams,
     ToolPanelDef,
@@ -23,6 +24,11 @@ const ToolPanelComponent: ComponentType = {
     optionalMethods: ['refresh', 'getState'],
 };
 
+const ToolPanelElement: ElementParams = {
+    tag: 'div',
+    cls: 'ag-tool-panel-wrapper',
+    role: 'tabpanel',
+};
 export class ToolPanelWrapper extends Component {
     private toolPanelCompInstance: IToolPanelComp | undefined;
     private toolPanelId: string;
@@ -31,7 +37,7 @@ export class ToolPanelWrapper extends Component {
     private params: IToolPanelParams;
 
     constructor() {
-        super(/* html */ `<div class="ag-tool-panel-wrapper" role="tabpanel"/>`);
+        super(ToolPanelElement);
     }
 
     public postConstruct(): void {

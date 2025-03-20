@@ -1,9 +1,10 @@
-import type { IAfterGuiAttachedParams } from 'ag-grid-community';
+import type { ElementParams, IAfterGuiAttachedParams } from 'ag-grid-community';
 import {
     KeyCode,
     RefPlaceholder,
     TabGuardComp,
     _clearElement,
+    _createElement,
     _createIconNoSpan,
     _findNextFocusableElement,
     _focusInto,
@@ -22,11 +23,20 @@ interface TabbedItemWrapper {
     eHeaderButton: HTMLElement;
 }
 
-function getTabbedLayoutTemplate(cssClass?: string) {
-    return /* html */ `<div class="ag-tabs ${cssClass}">
-        <div data-ref="eHeader"></div>
-        <div data-ref="eBody" role="presentation" class="ag-tabs-body ${cssClass ? `${cssClass}-body` : ''}"></div>
-    </div>`;
+function getTabbedLayoutTemplate(cssClass?: string): ElementParams {
+    return {
+        tag: 'div',
+        cls: `ag-tabs ${cssClass}`,
+        children: [
+            { tag: 'div', ref: 'eHeader' },
+            {
+                tag: 'div',
+                ref: 'eBody',
+                role: 'presentation',
+                cls: `ag-tabs-body ${cssClass ? `${cssClass}-body` : ''}`,
+            },
+        ],
+    };
 }
 
 export class TabbedLayout extends TabGuardComp {
@@ -224,12 +234,13 @@ export class TabbedLayout extends TabGuardComp {
     }
 
     private addItem(item: TabbedItem): void {
-        const eHeaderButton = document.createElement('span');
-
-        _setAriaRole(eHeaderButton, 'tab');
-        eHeaderButton.setAttribute('tabindex', '-1');
+        const eHeaderButton = _createElement({
+            tag: 'span',
+            cls: 'ag-tab',
+            role: 'tab',
+            attrs: { tabindex: '-1' },
+        });
         eHeaderButton.appendChild(item.title);
-        eHeaderButton.classList.add('ag-tab');
 
         this.eTabHeader.appendChild(eHeaderButton);
         _setAriaLabel(eHeaderButton, item.titleLabel);

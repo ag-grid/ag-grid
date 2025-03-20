@@ -53,18 +53,11 @@ export class BarChartProxy extends CartesianChartProxy<'bar'> {
         const allSeries: AgBarSeriesOptions[] = [];
         for (let i = 0; i < series.length; i++) {
             const primarySeries = series[i];
-            const primaryIndex = i * 2;
 
             const filteredOutSeries = {
                 ...primarySeries,
                 yKey: `${primarySeries.yKey}-filtered-out`,
                 showInLegend: false,
-                fill: {
-                    $mix: [{ $path: `../${primaryIndex}/fill` }, { $ref: 'backgroundColor' }, 0.7],
-                },
-                stroke: {
-                    $mix: [{ $path: `../${primaryIndex}/stroke` }, { $ref: 'backgroundColor' }, 0.7],
-                },
             };
 
             // for bar/column charts, proportion of whole is achieved as a stacked bar/column

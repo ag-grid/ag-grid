@@ -1,5 +1,6 @@
 import { KeyCode } from '../../constants/keyCode';
 import { _isBrowserSafari } from '../../utils/browser';
+import type { ElementParams } from '../../utils/dom';
 import { _exists } from '../../utils/generic';
 import type { AgInputNumberField } from '../../widgets/agInputNumberField';
 import { AgInputNumberFieldSelector } from '../../widgets/agInputNumberField';
@@ -7,12 +8,17 @@ import type { CellEditorInput } from './iCellEditorInput';
 import type { INumberCellEditorParams } from './iNumberCellEditor';
 import { SimpleCellEditor } from './simpleCellEditor';
 
+const NumberCellElement: ElementParams = {
+    tag: 'ag-input-number-field',
+    ref: 'eInput',
+    cls: 'ag-cell-editor',
+};
 class NumberCellEditorInput implements CellEditorInput<number, INumberCellEditorParams, AgInputNumberField> {
     private eInput: AgInputNumberField;
     private params: INumberCellEditorParams;
 
-    public getTemplate() {
-        return /* html */ `<ag-input-number-field class="ag-cell-editor" data-ref="eInput"></ag-input-number-field>`;
+    public getTemplate(): ElementParams {
+        return NumberCellElement;
     }
     public getAgComponents() {
         return [AgInputNumberFieldSelector];

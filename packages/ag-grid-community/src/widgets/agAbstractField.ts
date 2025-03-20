@@ -1,5 +1,6 @@
 import type { AgFieldParams } from '../interfaces/agFieldParams';
 import { _getAriaLabel, _setAriaLabel, _setAriaLabelledBy } from '../utils/aria';
+import type { ElementParams } from '../utils/dom';
 import { _setFixedWidth } from '../utils/dom';
 import { AgAbstractLabel } from './agAbstractLabel';
 import type { ComponentSelector } from './component';
@@ -17,7 +18,7 @@ export abstract class AgAbstractField<
 
     constructor(
         config?: TConfig,
-        template?: string,
+        template?: string | ElementParams,
         components?: ComponentSelector[],
         protected readonly className?: string
     ) {

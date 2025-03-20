@@ -397,6 +397,8 @@ export {
     AggregationStatusPanelAggFunc,
     IAggregationStatusPanelParams,
     AggregationStatusPanelParams,
+    IProvidedStatusPanelParams,
+    IStatusPanelValueFormatterParams,
 } from './interfaces/iStatusPanel';
 
 // tool panel components
@@ -1007,11 +1009,12 @@ export {
     _removeFromParent,
     _radioCssClass,
     _loadTemplate,
+    _createElement,
+    ElementParams,
     _isVisible,
     _setFixedWidth,
     _setDisabled,
     _setVisible,
-    _bindCellRendererToHtmlElement,
     _getInnerHeight,
     _getInnerWidth,
     _isNodeOrElement,

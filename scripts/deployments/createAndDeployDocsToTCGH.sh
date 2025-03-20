@@ -28,4 +28,4 @@ sed "s#\@WWW_ROOT_DIR\@#$WWW_ROOT_DIR#g" ./scripts/deployments/updateGridStaging
 scp -i $SSH_KEY_LOCATION -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null /tmp/updateGridStagingRemote.sh $SSH_USER@$SSH_HOST:$WWW_ROOT_DIR/
 
 echo "Updating Grid Staging with $FILENAME"
-ssh -i $SSH_KEY_LOCATION -o StrictHostKeyChecking=no "cd $WWW_ROOT_DIR && chmod +x updateGridStagingRemote.sh && ./updateGridStagingRemote.sh"
+ssh -i $SSH_KEY_LOCATION -o StrictHostKeyChecking=no $SSH_USER@$SSH_HOST "cd $WWW_ROOT_DIR && chmod +x updateGridStagingRemote.sh && ./updateGridStagingRemote.sh"

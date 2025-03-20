@@ -51,6 +51,25 @@ export const getFolderPath = ({ pageName, exampleName }: { pageName: string; exa
     return new URL(exampleFolderPath, import.meta.url);
 };
 
+export const getSupportedFrameworks = async ({ pageName, exampleName }: { pageName: string; exampleName: string }) => {
+    const exampleDir = await readdir(getFolderPath({ pageName, exampleName }));
+    const hasExampleConfig = exampleDir.includes('exampleConfig.json');
+
+    let supportedFrameworks: Set<InternalFramework> | undefined = undefined;
+    if (hasExampleConfig) {
+        const exampleConfig = await readFile(
+            path.join(getExamplesPath({ pageName }), exampleName, 'exampleConfig.json'),
+            'utf-8'
+        );
+        const exampleConfigJson = JSON.parse(exampleConfig);
+        supportedFrameworks = exampleConfigJson.supportedFrameworks
+            ? new Set(exampleConfigJson.supportedFrameworks)
+            : undefined;
+    }
+
+    return supportedFrameworks;
+};
+
 export const getInternalFrameworkExamples = async ({
     pages,
 }: {
@@ -64,21 +83,7 @@ export const getInternalFrameworkExamples = async ({
         const examples = await getFolders(docsExamplesPath);
 
         const exampleDirs = examples.flatMap(async (exampleName) => {
-            //const exampleDir = existsSync(path.join(docsExamplesPath, exampleName, 'exampleConfig.json'));
-            const exampleDir = await readdir(path.join(docsExamplesPath, exampleName));
-            const hasExampleConfig = exampleDir.includes('exampleConfig.json');
-
-            let supportedFrameworks: Set<InternalFramework> | undefined = undefined;
-            if (hasExampleConfig) {
-                const exampleConfig = await readFile(
-                    path.join(docsExamplesPath, exampleName, 'exampleConfig.json'),
-                    'utf-8'
-                );
-                const exampleConfigJson = JSON.parse(exampleConfig);
-                supportedFrameworks = exampleConfigJson.supportedFrameworks
-                    ? new Set(exampleConfigJson.supportedFrameworks)
-                    : undefined;
-            }
+            const supportedFrameworks = await getSupportedFrameworks({ pageName, exampleName });
 
             return INTERNAL_FRAMEWORKS.map((internalFramework) => {
                 return {

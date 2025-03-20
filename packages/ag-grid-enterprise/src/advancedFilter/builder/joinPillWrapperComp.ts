@@ -21,9 +21,11 @@ export class JoinPillWrapperComp extends Component<AdvancedFilterBuilderEvents> 
     private ePill: SelectPillComp | InputPillComp;
 
     constructor() {
-        super(/* html */ `
-            <div class="ag-advanced-filter-builder-item-condition" role="presentation"></div>
-        `);
+        super({
+            tag: 'div',
+            cls: 'ag-advanced-filter-builder-item-condition',
+            role: 'presentation',
+        });
     }
 
     public init(params: {

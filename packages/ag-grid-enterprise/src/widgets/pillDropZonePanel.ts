@@ -1,4 +1,11 @@
-import type { DragAndDropIcon, DragItem, DragSourceType, DraggingEvent, DropTarget } from 'ag-grid-community';
+import type {
+    DragAndDropIcon,
+    DragItem,
+    DragSourceType,
+    DraggingEvent,
+    DropTarget,
+    ElementParams,
+} from 'ag-grid-community';
 import {
     Component,
     KeyCode,
@@ -6,6 +13,7 @@ import {
     PositionableFeature,
     _areEqual,
     _clearElement,
+    _createElement,
     _createIconNoSpan,
     _findFocusableElements,
     _findNextFocusableElement,
@@ -37,7 +45,7 @@ function _insertArrayIntoArray<T>(dest: T[], src: T[], toIndex: number) {
 
     dest.splice(toIndex, 0, ...src);
 }
-
+const PillDropZonePanelElement: ElementParams = { tag: 'div', cls: 'ag-unselectable', role: 'presentation' };
 export abstract class PillDropZonePanel<TPill extends PillDragComp<TItem>, TItem> extends Component {
     private state: PillState = 'notDragging';
 
@@ -78,9 +86,9 @@ export abstract class PillDropZonePanel<TPill extends PillDragComp<TItem>, TItem
     protected abstract isInterestedIn(type: DragSourceType): boolean;
 
     constructor(protected readonly horizontal: boolean) {
-        super(/* html */ `<div class="ag-unselectable" role="presentation"></div>`);
+        super(PillDropZonePanelElement);
         this.addElementClasses(this.getGui());
-        this.ePillDropList = document.createElement('div');
+        this.ePillDropList = _createElement({ tag: 'div' });
         this.addElementClasses(this.ePillDropList, 'list');
         this.registerCSS(pillDropZonePanelCSS);
     }
@@ -456,10 +464,12 @@ export abstract class PillDropZonePanel<TPill extends PillDragComp<TItem>, TItem
         const focusedIndex = this.getFocusedItem();
 
         const { eGridDiv } = this.beans;
-        let alternateElement = _findNextFocusableElement(this.beans, eGridDiv);
-
-        if (!alternateElement) {
-            alternateElement = _findNextFocusableElement(this.beans, eGridDiv, false, true);
+        const isKeyboardMode = _isKeyboardMode();
+        let alternateElement: HTMLElement | null = null;
+        if (isKeyboardMode) {
+            alternateElement =
+                _findNextFocusableElement(this.beans, eGridDiv) ??
+                _findNextFocusableElement(this.beans, eGridDiv, false, true);
         }
 
         this.toggleResizable(false);
@@ -480,7 +490,7 @@ export abstract class PillDropZonePanel<TPill extends PillDragComp<TItem>, TItem
         // focus should only be restored when keyboard mode
         // otherwise mouse clicks will cause containers to scroll
         // without no apparent reason.
-        if (_isKeyboardMode()) {
+        if (isKeyboardMode) {
             this.restoreFocus(focusedIndex, alternateElement!);
         }
     }
@@ -603,7 +613,7 @@ export abstract class PillDropZonePanel<TPill extends PillDragComp<TItem>, TItem
         if (!title || !eGroupIcon) {
             return;
         }
-        const eTitleBar = document.createElement('div');
+        const eTitleBar = _createElement({ tag: 'div' });
         _setAriaHidden(eTitleBar, true);
         this.addElementClasses(eTitleBar, 'title-bar');
         this.addElementClasses(eGroupIcon, 'icon');
@@ -612,9 +622,9 @@ export abstract class PillDropZonePanel<TPill extends PillDragComp<TItem>, TItem
         eTitleBar.appendChild(eGroupIcon);
 
         if (!this.horizontal) {
-            const eTitle = document.createElement('span');
+            const eTitle = _createElement({ tag: 'span' });
             this.addElementClasses(eTitle, 'title');
-            eTitle.innerHTML = title;
+            eTitle.textContent = title;
 
             eTitleBar.appendChild(eTitle);
         }
@@ -632,8 +642,8 @@ export abstract class PillDropZonePanel<TPill extends PillDragComp<TItem>, TItem
             return;
         }
 
-        const eMessage = document.createElement('span');
-        eMessage.innerHTML = emptyMessage;
+        const eMessage = _createElement({ tag: 'span' });
+        eMessage.textContent = emptyMessage;
         this.addElementClasses(eMessage, 'empty-message');
         this.ePillDropList.appendChild(eMessage);
     }

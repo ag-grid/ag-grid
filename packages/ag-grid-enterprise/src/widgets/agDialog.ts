@@ -238,7 +238,7 @@ export class AgDialog extends AgPanel<DialogOptions> implements FocusableContain
 
     private buildMaximizeAndMinimizeElements(): Component {
         const maximizeButtonComp = (this.maximizeButtonComp = this.createBean(
-            new Component(/* html */ `<div class="ag-dialog-button"></span>`)
+            new Component({ tag: 'div', cls: 'ag-dialog-button' })
         ));
 
         const eGui = maximizeButtonComp.getGui();

@@ -1,4 +1,9 @@
-import type { IStatusPanelComp } from 'ag-grid-community';
+import type {
+    IProvidedStatusPanelParams,
+    IStatusPanelComp,
+    IStatusPanelParams,
+    IStatusPanelValueFormatterParams,
+} from 'ag-grid-community';
 import { _formatNumberCommas, _isClientSideRowModel, _warn } from 'ag-grid-community';
 
 import { AgNameValue } from './agNameValue';
@@ -19,16 +24,27 @@ export class TotalRowsComp extends AgNameValue implements IStatusPanelComp {
         this.setDisplayed(true);
 
         this.addManagedEventListeners({ modelUpdated: this.onDataChanged.bind(this) });
-        this.onDataChanged();
     }
 
     private onDataChanged() {
-        this.setValue(_formatNumberCommas(_getTotalRowCount(this.beans.rowModel), this.getLocaleTextFunc.bind(this)));
+        const totalRow = _getTotalRowCount(this.beans.rowModel);
+        this.setValue(totalRow, totalRow);
     }
 
-    public init() {}
+    public init(params: IStatusPanelParams & IProvidedStatusPanelParams) {
+        this.refresh(params);
+        this.onDataChanged();
+    }
 
-    public refresh(): boolean {
+    private updateValueFormatter(valueFormatter?: (params: IStatusPanelValueFormatterParams) => string): void {
+        this.valueFormatter =
+            valueFormatter ?? (({ value }) => _formatNumberCommas(value, this.getLocaleTextFunc.bind(this)));
+    }
+
+    public refresh(params: IStatusPanelParams & IProvidedStatusPanelParams): boolean {
+        const { key, valueFormatter } = params;
+        this.key = key;
+        this.updateValueFormatter(valueFormatter);
         return true;
     }
 }

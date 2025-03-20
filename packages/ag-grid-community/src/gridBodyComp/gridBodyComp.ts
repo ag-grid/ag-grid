@@ -2,6 +2,7 @@ import { _isCellSelectionEnabled, _isMultiRowSelection } from '../gridOptionsUti
 import { GridHeaderSelector } from '../headerRendering/gridHeaderComp';
 import { LayoutCssClasses } from '../styling/layoutFeature';
 import { _setAriaColCount, _setAriaMultiSelectable, _setAriaRole, _setAriaRowCount } from '../utils/aria';
+import type { ElementParams } from '../utils/dom';
 import { _observeResize } from '../utils/dom';
 import type { ComponentSelector } from '../widgets/component';
 import { Component, RefPlaceholder } from '../widgets/component';
@@ -12,45 +13,94 @@ import { CSS_CLASS_FORCE_VERTICAL_SCROLL, GridBodyCtrl } from './gridBodyCtrl';
 import { RowContainerSelector } from './rowContainer/rowContainerComp';
 import type { RowContainerName } from './rowContainer/rowContainerCtrl';
 
-function makeRowContainers(paramsMap: Record<string, { name: string }>, names: RowContainerName[]): string {
-    return names
-        .map((name) => {
-            const refName = `e${name[0].toUpperCase() + name.substring(1)}RowContainer`;
-            paramsMap[refName] = { name };
-            return /* html */ `<ag-row-container name="${name}" data-ref="${refName}"></ag-row-container>`;
-        })
-        .join('');
+function makeRowContainers(paramsMap: Record<string, { name: string }>, names: RowContainerName[]): ElementParams[] {
+    return names.map((name) => {
+        const refName = `e${name[0].toUpperCase() + name.substring(1)}RowContainer`;
+        paramsMap[refName] = { name };
+        return {
+            tag: 'ag-row-container',
+            ref: refName,
+            attrs: { name },
+        };
+    });
 }
 
 function getGridBodyTemplate(includeOverlay?: boolean): {
     paramsMap: Record<string, { name: string }>;
-    template: string;
+    elementParams: ElementParams;
 } {
     const paramsMap: Record<string, { name: string }> = {};
-    const template = /* html */ `<div class="ag-root ag-unselectable" data-ref="eGridRoot">
-        <ag-header-root></ag-header-root>
-        <div class="ag-floating-top" data-ref="eTop" role="presentation">
-            ${makeRowContainers(paramsMap, ['topLeft', 'topCenter', 'topRight', 'topFullWidth'])}
-        </div>
-        <div class="ag-body" data-ref="eBody" role="presentation">
-            <div class="ag-body-viewport" data-ref="eBodyViewport" role="presentation">
-            ${makeRowContainers(paramsMap, ['left', 'center', 'right', 'fullWidth'])}
-            </div>
-            <ag-fake-vertical-scroll></ag-fake-vertical-scroll>
-        </div>
-        <div class="ag-sticky-top" data-ref="eStickyTop" role="presentation">
-            ${makeRowContainers(paramsMap, ['stickyTopLeft', 'stickyTopCenter', 'stickyTopRight', 'stickyTopFullWidth'])}
-        </div>
-        <div class="ag-sticky-bottom" data-ref="eStickyBottom" role="presentation">
-            ${makeRowContainers(paramsMap, ['stickyBottomLeft', 'stickyBottomCenter', 'stickyBottomRight', 'stickyBottomFullWidth'])}
-        </div>
-        <div class="ag-floating-bottom" data-ref="eBottom" role="presentation">
-            ${makeRowContainers(paramsMap, ['bottomLeft', 'bottomCenter', 'bottomRight', 'bottomFullWidth'])}
-        </div>
-        <ag-fake-horizontal-scroll></ag-fake-horizontal-scroll>
-        ${includeOverlay ? /* html */ `<ag-overlay-wrapper></ag-overlay-wrapper>` : ''}
-    </div>`;
-    return { paramsMap, template };
+
+    const elementParams: ElementParams = {
+        tag: 'div',
+        ref: 'eGridRoot',
+        cls: 'ag-root ag-unselectable',
+        children: [
+            { tag: 'ag-header-root' },
+            {
+                tag: 'div',
+                ref: 'eTop',
+                cls: 'ag-floating-top',
+                role: 'presentation',
+                children: makeRowContainers(paramsMap, ['topLeft', 'topCenter', 'topRight', 'topFullWidth']),
+            },
+            {
+                tag: 'div',
+                ref: 'eBody',
+                cls: 'ag-body',
+                role: 'presentation',
+                children: [
+                    {
+                        tag: 'div',
+                        ref: 'eBodyViewport',
+                        cls: 'ag-body-viewport',
+                        role: 'presentation',
+                        children: makeRowContainers(paramsMap, ['left', 'center', 'right', 'fullWidth']),
+                    },
+                    { tag: 'ag-fake-vertical-scroll' },
+                ],
+            },
+            {
+                tag: 'div',
+                ref: 'eStickyTop',
+                cls: 'ag-sticky-top',
+                role: 'presentation',
+                children: makeRowContainers(paramsMap, [
+                    'stickyTopLeft',
+                    'stickyTopCenter',
+                    'stickyTopRight',
+                    'stickyTopFullWidth',
+                ]),
+            },
+            {
+                tag: 'div',
+                ref: 'eStickyBottom',
+                cls: 'ag-sticky-bottom',
+                role: 'presentation',
+                children: makeRowContainers(paramsMap, [
+                    'stickyBottomLeft',
+                    'stickyBottomCenter',
+                    'stickyBottomRight',
+                    'stickyBottomFullWidth',
+                ]),
+            },
+            {
+                tag: 'div',
+                ref: 'eBottom',
+                cls: 'ag-floating-bottom',
+                role: 'presentation',
+                children: makeRowContainers(paramsMap, [
+                    'bottomLeft',
+                    'bottomCenter',
+                    'bottomRight',
+                    'bottomFullWidth',
+                ]),
+            },
+            { tag: 'ag-fake-horizontal-scroll' },
+            includeOverlay ? { tag: 'ag-overlay-wrapper' } : null,
+        ],
+    };
+    return { paramsMap, elementParams };
 }
 
 export class GridBodyComp extends Component {
@@ -68,10 +118,10 @@ export class GridBodyComp extends Component {
         const { overlays, rangeSvc } = this.beans;
         const overlaySelector = overlays?.getOverlayWrapperSelector();
 
-        const { paramsMap, template } = getGridBodyTemplate(!!overlaySelector);
+        const { paramsMap, elementParams } = getGridBodyTemplate(!!overlaySelector);
 
         this.setTemplate(
-            template,
+            elementParams,
             [
                 ...(overlaySelector ? [overlaySelector] : []),
                 FakeHScrollSelector,
@@ -110,11 +160,11 @@ export class GridBodyComp extends Component {
             updateLayoutClasses: (cssClass, params) => {
                 const classLists = [this.eBodyViewport.classList, this.eBody.classList];
 
-                classLists.forEach((classList) => {
+                for (const classList of classLists) {
                     classList.toggle(LayoutCssClasses.AUTO_HEIGHT, params.autoHeight);
                     classList.toggle(LayoutCssClasses.NORMAL, params.normal);
                     classList.toggle(LayoutCssClasses.PRINT, params.print);
-                });
+                }
 
                 this.addOrRemoveCssClass(LayoutCssClasses.AUTO_HEIGHT, params.autoHeight);
                 this.addOrRemoveCssClass(LayoutCssClasses.NORMAL, params.normal);

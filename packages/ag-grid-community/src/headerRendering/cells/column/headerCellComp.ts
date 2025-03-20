@@ -1,12 +1,22 @@
 import type { HeaderStyle } from '../../../entities/colDef';
 import type { UserCompDetails } from '../../../interfaces/iUserCompDetails';
 import { _removeAriaSort, _setAriaSort } from '../../../utils/aria';
+import type { ElementParams } from '../../../utils/dom';
 import { _addStylesToElement } from '../../../utils/dom';
 import { RefPlaceholder } from '../../../widgets/component';
 import { AbstractHeaderCellComp } from '../abstractCell/abstractHeaderCellComp';
 import type { HeaderCellCtrl, IHeaderCellComp } from './headerCellCtrl';
 import type { IHeaderComp } from './headerComp';
 
+const HeaderCellElement: ElementParams = {
+    tag: 'div',
+    cls: 'ag-header-cell',
+    role: 'columnheader',
+    children: [
+        { tag: 'div', ref: 'eResize', cls: 'ag-header-cell-resize', role: 'presentation' },
+        { tag: 'div', ref: 'eHeaderCompWrapper', cls: 'ag-header-cell-comp-wrapper', role: 'presentation' },
+    ],
+};
 export class HeaderCellComp extends AbstractHeaderCellComp<HeaderCellCtrl> {
     private readonly eResize: HTMLElement = RefPlaceholder;
     private readonly eHeaderCompWrapper: HTMLElement = RefPlaceholder;
@@ -16,13 +26,7 @@ export class HeaderCellComp extends AbstractHeaderCellComp<HeaderCellCtrl> {
     private headerCompVersion = 0;
 
     constructor(ctrl: HeaderCellCtrl) {
-        super(
-            /* html */ `<div class="ag-header-cell" role="columnheader">
-            <div data-ref="eResize" class="ag-header-cell-resize" role="presentation"></div>
-            <div data-ref="eHeaderCompWrapper" class="ag-header-cell-comp-wrapper" role="presentation"></div>
-        </div>`,
-            ctrl
-        );
+        super(HeaderCellElement, ctrl);
     }
 
     public postConstruct(): void {

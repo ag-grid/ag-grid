@@ -988,6 +988,10 @@
         flex: none;
     }
 
+    .ag-date-floating-filter-wrapper {
+        display: flex;
+    }
+
     .ag-set-floating-filter-input input[disabled] {
         pointer-events: none;
     }
@@ -1648,7 +1652,8 @@
         overflow: hidden;
     }
 
-    .ag-status-panel {
+    .ag-status-panel,
+    .ag-status-panel.ag-status-panel-aggregations .ag-status-name-value {
         display: inline-flex;
     }
 

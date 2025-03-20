@@ -110,7 +110,7 @@ validatePackages()
 
       expected_umd=4
       current_dist=$current_root_dir/dist
-      count=`find $current_dist -maxdepth 1 -name *.js | wc -l | tr -d ' '`
+      count=`find $current_dist -maxdepth 1 -name "*.js" | wc -l | tr -d ' '`
       if [[ $count -ne $expected_umd ]]
       then
         echo "ERROR: $current_dist should have $expected_umd umd files"

@@ -10,19 +10,19 @@ The basic information on Content Security Policy can be found on the [MDN web do
 
 ### script-src
 
-Some optional grid features compile string expressions into code, and if you're using these then the `script-src 'unsafe-eval'` directive is required. But it is possible to avoid this.
+Some optional grid features compile string expressions into code, and if you're using these then the `script-src 'unsafe-eval'` directive is required. However, it is possible to avoid this requirement as listed below:
 
 1. Using expressions instead of functions is an option for many grid properties such as [Cell Class Rules](./cell-styles/#cell-class-rules) and [Value Getters](./value-getters/). For example, in the `cellClassRules` property of a column definition:
-    * `{ 'is-negative': 'value < 0' }` requires unsafe-inline so that `'value < 0'` can be compiled into a function.
+    * `{ 'is-negative': 'value < 0' }` requires `script-src 'unsafe-eval'` so that `'value < 0'` can be compiled into a function.
     * `{ 'is-negative': params => params.value < 0 }` does not because you have provided a function.
 
-2. By default, [Advanced Filter](./filter-advanced) also requires `script-src 'unsafe-eval'`, however this can be disabled by [Suppressing Advanced Filter Function Evaluation](./filter-advanced/#suppress-advanced-filter-function-evaluation).
+2. By default, [Advanced Filter](./filter-advanced) also requires `script-src 'unsafe-eval'`, but this can be avoided by [Suppressing Advanced Filter Function Evaluation](./filter-advanced/#suppress-advanced-filter-function-evaluation).
 
 ### style-src
 
 [Themes](./theming) work by injecting CSS styles into the DOM when the grid initialises. By default this requires a `style-src 'unsafe-inline'` directive in your CSP.
 
-You can avoid this using the `styleNonce` grid option.
+You can avoid this requirement using the `styleNonce` grid option.
 
 ```{% frameworkTransform=true %}
 const gridOptions = {
@@ -33,7 +33,7 @@ const gridOptions = {
 
 This sets the nonce attribute on the style tag, so the grid will now work with the CSP directive `style-src 'nonce-416d1177'`.
 
-CSP nonces are global to a page, where a page has multiple grids, every one must have the same styleNonce set. Consider using [global grid options](./grid-interface/#global-grid-options).
+CSP nonces are global to a page, so when a page has multiple grids, all grid must have the same styleNonce set. Consider using [global grid options](./grid-interface/#global-grid-options) to set the styleNonce property to all grids.
 
 ### img-src
 
@@ -47,7 +47,7 @@ If you use the `loadThemeGoogleFonts` grid option, fonts will be loaded from the
 
 ### Example locked-down CSP
 
-This example CSP allows the grid to be run in a secure manner.
+This example CSP below allows the grid to be run in a secure manner:
 
 ```html
 <meta http-equiv="Content-Security-Policy"
@@ -58,7 +58,7 @@ It assumes:
 
 1. The application loads assets from the same server (`'self'`)
 2. You do not use string expressions in grid options
-3. You are using Theming API not legacy themes, and are not using `loadThemeGoogleFonts`
+3. You are using [Theming API](./theming/) instead of [legacy themes](./theming-v32/), and are not using loadThemeGoogleFonts
 4. The random string passed to `gridOptions.styleNonce` on this page load is "123xyz"
 
 ## Security Vulnerability Testing

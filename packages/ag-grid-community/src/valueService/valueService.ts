@@ -78,18 +78,27 @@ export class ValueService extends BeanStub implements NamedBean {
 
     /**
      * Use this function to get a displayable cell value.
-     * This hides values in expanded group rows which are instead displayed by the footer row.
+     *
+     * The values from this function are not used for sorting, filtering, or aggregation purposes.
+     *
+     * Handles: groupHideOpenParents, showOpenedGroup and groupSuppressBlankHeader behaviours
      */
     public getValueForDisplay(column: AgColumn, node: IRowNode) {
-        // when in pivot mode, leafGroups cannot be expanded
-        const lockedClosedGroup = node.leafGroup && this.colModel.isPivotMode();
-        const isOpenGroup = node.group && node.expanded && !node.footer && !lockedClosedGroup;
+        const rowGroupColId = column.getColDef().showRowGroup;
+        if (rowGroupColId != null) {
+            // when using multiple columns, special handling
+            if (typeof rowGroupColId === 'string') {
+                // groupHideOpenParents > cell value > showOpenedGroup
+                const hideOpenParentsNode = this.getDisplayedNode(node, column, true);
+                if (hideOpenParentsNode) {
+                    return this.getValue(column, hideOpenParentsNode);
+                }
+            }
 
-        // checks if we show header data regardless of footer
-        const groupAlwaysShowAggData = this.gos.get('groupSuppressBlankHeader');
-        if (!isOpenGroup || groupAlwaysShowAggData) {
+            // cell value > showOpenedGroup
             const value = this.getValue(column, node);
             if (value == null) {
+                // showOpenedGroup
                 const displayedNode = this.getDisplayedNode(node, column);
                 if (displayedNode) {
                     return this.getValue(column, displayedNode);
@@ -98,26 +107,16 @@ export class ValueService extends BeanStub implements NamedBean {
             return value;
         }
 
-        let includeFooter = false;
-        const groupIncludeFooterOpt = this.gos.get('groupTotalRow');
-        if (typeof groupIncludeFooterOpt !== 'function') {
-            includeFooter = !!groupIncludeFooterOpt;
-        } else {
-            const groupIncludeFooterCb: any = this.gos.getCallback('groupTotalRow' as any);
-            includeFooter = !!groupIncludeFooterCb({ node: this });
-        }
+        // when in pivot mode, leafGroups cannot be expanded
+        const isPivotLeaf = node.leafGroup && this.colModel.isPivotMode();
+        const isOpenedGroup = node.group && node.expanded && !node.footer && !isPivotLeaf;
+        // checks if we show header data
+        const groupShowsAggData = this.gos.get('groupSuppressBlankHeader') || !node.sibling;
 
         // if doing grouping and footers, we don't want to include the agg value
         // in the header when the group is open
-        const ignoreAggData = isOpenGroup && includeFooter;
-        const value = this.getValue(column, node, ignoreAggData);
-        if (value == null) {
-            const displayedNode = this.getDisplayedNode(node, column);
-            if (displayedNode) {
-                return this.getValue(column, displayedNode);
-            }
-        }
-        return value;
+        const ignoreAggData = isOpenedGroup && !groupShowsAggData;
+        return this.getValue(column, node, ignoreAggData);
     }
 
     public getValue(column: AgColumn, rowNode?: IRowNode | null, ignoreAggData = false): any {
@@ -138,6 +137,16 @@ export class ValueService extends BeanStub implements NamedBean {
         const data = rowNode.data;
 
         let result: any;
+
+        // when using multiple columns, the group column should have no value higher than its level
+        const rowGroupColId = colDef.showRowGroup;
+        if (typeof rowGroupColId === 'string') {
+            // if multiple columns, don't show values in cells grouped at a higher level
+            const colRowGroupIndex = this.beans.rowGroupColsSvc?.getColumnIndex(rowGroupColId) ?? -1;
+            if (colRowGroupIndex > rowNode.level) {
+                return null;
+            }
+        }
 
         // if there is a value getter, this gets precedence over a field
         const groupDataExists = rowNode.groupData && rowNode.groupData[colId] !== undefined;
@@ -262,10 +271,10 @@ export class ValueService extends BeanStub implements NamedBean {
      * @param column column to get the displayed node for
      * @returns a parent node of node to display the value from, or undefined if no value will be inherited
      */
-    public getDisplayedNode(node: IRowNode, column: AgColumn): RowNode | undefined {
+    public getDisplayedNode(node: IRowNode, column: AgColumn, onlyHideOpenParents = false): RowNode | undefined {
         const gos = this.gos;
         const isGroupHideOpenParents = gos.get('groupHideOpenParents');
-        const isShowOpenedGroupValue = gos.get('showOpenedGroup');
+        const isShowOpenedGroupValue = gos.get('showOpenedGroup') && !onlyHideOpenParents;
 
         // don't traverse tree if neither starts enabled
         if (!isGroupHideOpenParents && !isShowOpenedGroupValue) {
@@ -283,7 +292,7 @@ export class ValueService extends BeanStub implements NamedBean {
 
         let pointer: RowNode | null = node as RowNode;
         while (pointer && pointer.rowGroupColumn?.getId() != showRowGroup) {
-            const isFirstChild = node === node.parent?.childrenAfterSort?.[0];
+            const isFirstChild = pointer === pointer.parent?.childrenAfterSort?.[0];
             if (!isShowOpenedGroupValue && !isFirstChild) {
                 // if not first child and not showOpenedGroup then groupHideOpenParents doesn't
                 // display the parent value

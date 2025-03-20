@@ -18,6 +18,10 @@ export class TestCase {
         this.failure = failure;
     }
 
+    hasFailure() {
+        return this.failure !== undefined;
+    }
+
     print() {
         console.log(`Testcase: ${this.name}`);
     }
@@ -33,6 +37,10 @@ export class TestSuite {
 
     public addTestCase(testCase: TestCase) {
         this.testCases.push(testCase);
+    }
+
+    hasFailure() {
+        return this.testCases.some((testCase) => testCase.hasFailure());
     }
 }
 
@@ -69,7 +77,7 @@ export class TestSuites {
         return failures;
     }
 
-    toJson() {
+    toJson(onlyFailures: boolean) {
         return {
             _declaration: {
                 _attributes: {
@@ -86,32 +94,37 @@ export class TestSuites {
                         0
                     ),
                     failures: this.testSuites.reduce(
-                        (acc, testSuite) => acc + testSuite.testCases.filter((testCase) => testCase.failure).length,
+                        (acc, testSuite) =>
+                            acc + testSuite.testCases.filter((testCase) => testCase.hasFailure()).length,
                         0
                     ),
                 },
-                testsuite: this.testSuites.map((testSuite) => ({
-                    _attributes: {
-                        name: testSuite.name,
-                        failures: testSuite.testCases.filter((testCase) => testCase.failure).length,
-                        tests: testSuite.testCases.length,
-                        time: testSuite.testCases.reduce((acc, testCase) => acc + testCase.time, 0),
-                    },
-                    testcase: testSuite.testCases.map((testCase) => ({
+                testsuite: this.testSuites
+                    .filter((testSuite) => (onlyFailures ? testSuite.hasFailure() : true))
+                    .map((testSuite) => ({
                         _attributes: {
-                            classname: testCase.classname,
-                            name: testCase.name,
-                            time: testCase.time,
+                            name: testSuite.name,
+                            failures: testSuite.testCases.filter((testCase) => testCase.hasFailure()).length,
+                            tests: testSuite.testCases.length,
+                            time: testSuite.testCases.reduce((acc, testCase) => acc + testCase.time, 0),
                         },
-                        [testCase.failure ? 'failure' : '']: testCase.failure,
+                        testcase: testSuite.testCases
+                            .filter((testCase) => (onlyFailures ? testCase.hasFailure() : true))
+                            .map((testCase) => ({
+                                _attributes: {
+                                    classname: testCase.classname,
+                                    name: testCase.name,
+                                    time: testCase.time,
+                                },
+                                [testCase.hasFailure() ? 'failure' : '']: testCase.failure,
+                            })),
                     })),
-                })),
             },
         };
     }
 
-    writeJunitReport(outputPath: string) {
-        const result = json2xml(JSON.stringify(this.toJson()).replace('<></>', ''), {
+    writeJunitReport(outputPath: string, onlyFailures = false) {
+        const result = json2xml(JSON.stringify(this.toJson(onlyFailures)).replace('<></>', ''), {
             compact: true,
             ignoreComment: true,
             spaces: 4,
@@ -122,6 +135,6 @@ export class TestSuites {
     }
 
     print() {
-        console.log(JSON.stringify(this.toJson()));
+        console.log(JSON.stringify(this.toJson(false)));
     }
 }

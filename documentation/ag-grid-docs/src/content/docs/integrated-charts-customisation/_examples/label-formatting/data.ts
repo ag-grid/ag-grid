@@ -1,43 +1,65 @@
-export async function getData(delay: number = 100): Promise<any[]> {
-    return new Promise((resolve) => setTimeout(() => resolve(generateData()), delay));
-}
-
-const scales = [10_000_000, 100_000_000, 1_000_000_000];
-
-function generateData(): any[] {
-    const countries = [
-        'Ireland',
-        'Spain',
-        'United Kingdom',
-        'France',
-        'Germany',
-        'Luxembourg',
-        'Sweden',
-        'Norway',
-        'Italy',
-        'Greece',
-        'Iceland',
-        'Portugal',
-        'Malta',
-        'Brazil',
-        'Argentina',
-        'Colombia',
-        'Peru',
-        'Venezuela',
-        'Uruguay',
-        'Belgium',
-    ];
-
-    function randomData(): number {
-        return Math.round(
-            Math.random() * (scales[Math.round((Math.random() * 10) % (scales.length - 1))] - 150_000_000)
-        );
-    }
-
-    return countries.map((country) => ({
-        country,
-        early: randomData(),
-        mid: randomData(),
-        end: randomData(),
-    }));
-}
+export const data = [
+    {
+        year: 2016,
+        generated: 318157080,
+        consumed: 309000000,
+        surplus: 9157080,
+        efficiency: 97.1,
+    },
+    {
+        year: 2017,
+        generated: 120000000,
+        consumed: 10000000,
+        surplus: 10000000,
+        efficiency: 8.33,
+    },
+    {
+        year: 2018,
+        generated: 900000000,
+        consumed: 815000000,
+        surplus: 85000000,
+        efficiency: 68.33,
+    },
+    {
+        year: 2019,
+        generated: 330000000,
+        consumed: 320000000,
+        surplus: 10000000,
+        efficiency: 96.97,
+    },
+    {
+        year: 2020,
+        generated: 340000000,
+        consumed: 330000000,
+        surplus: 10000000,
+        efficiency: 97.06,
+    },
+    {
+        year: 2021,
+        generated: 350000000,
+        consumed: 340000000,
+        surplus: 10000000,
+        efficiency: 97.14,
+    },
+    {
+        year: 2022,
+        generated: 360000000,
+        consumed: 350000000,
+        surplus: 10000000,
+        efficiency: 97.22,
+    },
+    {
+        year: 2023,
+        generated: 370000000,
+        consumed: 360000000,
+        surplus: 10000000,
+        efficiency: 97.3,
+    },
+    {
+        year: 2024,
+        generated: 380000000,
+        consumed: 370000000,
+        surplus: 10000000,
+        efficiency: 97.37,
+    },
+];

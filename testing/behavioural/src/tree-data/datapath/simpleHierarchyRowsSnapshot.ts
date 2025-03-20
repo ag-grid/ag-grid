@@ -32,7 +32,7 @@ export function simpleHierarchyRowsSnapshot(): RowSnapshot[] {
         },
         {
             allChildrenCount: null,
-            allLeafChildren: [],
+            allLeafChildren: null,
             childIndex: 0,
             childrenAfterFilter: [],
             childrenAfterGroup: [],
@@ -88,7 +88,7 @@ export function simpleHierarchyRowsSnapshot(): RowSnapshot[] {
         },
         {
             allChildrenCount: null,
-            allLeafChildren: [],
+            allLeafChildren: null,
             childIndex: 0,
             childrenAfterFilter: [],
             childrenAfterGroup: [],
@@ -200,7 +200,7 @@ export function simpleHierarchyRowsSnapshot(): RowSnapshot[] {
         },
         {
             allChildrenCount: null,
-            allLeafChildren: [],
+            allLeafChildren: null,
             childIndex: 0,
             childrenAfterFilter: [],
             childrenAfterGroup: [],

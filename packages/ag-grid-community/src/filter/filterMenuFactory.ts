@@ -7,8 +7,7 @@ import { _isColumnMenuAnchoringEnabled, _isLegacyMenuEnabled } from '../gridOpti
 import type { ContainerType } from '../interfaces/iAfterGuiAttachedParams';
 import type { IMenuFactory } from '../interfaces/iMenuFactory';
 import { _setColMenuVisible } from '../misc/menu/menuService';
-import { _setAriaRole } from '../utils/aria';
-import { _isVisible } from '../utils/dom';
+import { _createElement, _isVisible } from '../utils/dom';
 import { _findNextFocusableElement, _findTabbableParent, _focusInto } from '../utils/focus';
 import { _error } from '../validation/logging';
 import type { PopupService } from '../widgets/popupService';
@@ -108,13 +107,11 @@ export class FilterMenuFactory extends BeanStub implements NamedBean, IMenuFacto
             return;
         }
 
-        const eMenu = document.createElement('div');
-
-        _setAriaRole(eMenu, 'presentation');
-        eMenu.classList.add('ag-menu');
-        if (!isLegacyMenuEnabled) {
-            eMenu.classList.add('ag-filter-menu');
-        }
+        const eMenu = _createElement({
+            tag: 'div',
+            cls: `ag-menu${!isLegacyMenuEnabled ? ' ag-filter-menu' : ''}`,
+            role: 'presentation',
+        });
 
         [this.tabListener] = this.addManagedElementListeners(eMenu, {
             keydown: (e: KeyboardEvent) => this.trapFocusWithin(e, eMenu),

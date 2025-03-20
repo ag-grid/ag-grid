@@ -1,5 +1,6 @@
 import type { AgGridCommon } from '../interfaces/iCommon';
 import type { IComponent } from '../interfaces/iComponent';
+import type { ElementParams } from '../utils/dom';
 import { _clearElement } from '../utils/dom';
 import type { IconName } from '../utils/icon';
 import { _createIcon } from '../utils/icon';
@@ -23,6 +24,21 @@ export interface IDragAndDropImageComponent<
 > extends IComponent<TParams>,
         IDragAndDropImage {}
 
+// the wrapper div has no class - the drag and drop service adds the theme class to it
+const DragAndDropElement: ElementParams = {
+    tag: 'div',
+    children: [
+        {
+            tag: 'div',
+            ref: 'eGhost',
+            cls: 'ag-dnd-ghost ag-unselectable',
+            children: [
+                { tag: 'span', ref: 'eIcon', cls: 'ag-dnd-ghost-icon ag-shake-left-to-right' },
+                { tag: 'div', ref: 'eLabel', cls: 'ag-dnd-ghost-label' },
+            ],
+        },
+    ],
+};
 export class DragAndDropImageComponent extends Component implements IDragAndDropImageComponent<any, any> {
     private dragSource: DragSource | null = null;
 
@@ -55,16 +71,7 @@ export class DragAndDropImageComponent extends Component implements IDragAndDrop
     public init(params: IDragAndDropImageParams): void {
         this.dragSource = params.dragSource;
 
-        this.setTemplate(
-            // the wrapper div has no class - the drag and drop service adds the theme class to it
-            /* html */
-            `<div>
-                <div class="ag-dnd-ghost ag-unselectable" data-ref="eGhost">
-                    <span data-ref="eIcon" class="ag-dnd-ghost-icon ag-shake-left-to-right"></span>
-                    <div data-ref="eLabel" class="ag-dnd-ghost-label"></div>
-                </div>
-            </div>`
-        );
+        this.setTemplate(DragAndDropElement);
         // also apply theme class to the ghost element for backwards compatibility
         // with themes that use .ag-theme-classname.ag-dnd-ghost, which used to be
         // required before the theme class was also set on the wrapper.

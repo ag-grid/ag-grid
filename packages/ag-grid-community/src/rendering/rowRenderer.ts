@@ -9,7 +9,13 @@ import type { RowNode } from '../entities/rowNode';
 import type { BodyScrollEvent, CellFocusedEvent, PaginationChangedEvent } from '../events';
 import type { FocusService } from '../focusService';
 import type { GridBodyCtrl } from '../gridBodyComp/gridBodyCtrl';
-import { _getRowHeightAsNumber, _isAnimateRows, _isCellSelectionEnabled, _isDomLayout } from '../gridOptionsUtils';
+import {
+    _addGridCommonParams,
+    _getRowHeightAsNumber,
+    _isAnimateRows,
+    _isCellSelectionEnabled,
+    _isDomLayout,
+} from '../gridOptionsUtils';
 import { getFocusHeaderRowCount } from '../headerRendering/headerUtils';
 import type { RenderedRowEvent } from '../interfaces/iCallbackParams';
 import type { CellPosition } from '../interfaces/iCellPosition';
@@ -152,7 +158,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
             this.addManagedPropertyListener('showOpenedGroup', () => {
                 const columns = showRowGroupCols.getShowRowGroupCols();
                 if (columns.length) {
-                    this.refreshCells({ columns });
+                    this.refreshCells({ columns, force: true });
                 }
             });
         }
@@ -217,8 +223,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
             return false;
         }
 
-        if (!column) {
-            // full width rows may not have a column assigned.
+        if (rowCtrl.isFullWidth() || !column) {
             return true;
         }
 
@@ -676,7 +681,6 @@ export class RowRenderer extends BeanStub implements NamedBean {
 
         const cellToFocus = this.findPositionToFocus(cellPosition);
         if (!cellToFocus) {
-            focusSvc.needsFocusRestored = true;
             focusSvc.focusHeaderPosition({
                 headerPosition: {
                     headerRowIndex: getFocusHeaderRowCount(this.beans) - 1,
@@ -688,12 +692,24 @@ export class RowRenderer extends BeanStub implements NamedBean {
 
         // if focus has changed (e.g, if row has been removed, so focus moved up) focus new cell
         if (cellPosition.rowIndex !== cellToFocus.rowIndex || cellPosition.rowPinned != cellToFocus.rowPinned) {
-            focusSvc.needsFocusRestored = true;
             focusSvc.setFocusedCell({
                 ...cellToFocus,
                 preventScrollOnBrowserFocus: true,
                 forceBrowserFocus: true,
             });
+            return;
+        }
+
+        // if the grid lost focus, we need to try to bring it back
+        if (!focusSvc.doesRowOrCellHaveBrowserFocus()) {
+            this.onCellFocusChanged(
+                _addGridCommonParams<CellFocusedEvent>(this.gos, {
+                    ...cellToFocus,
+                    forceBrowserFocus: true,
+                    preventScrollOnBrowserFocus: true,
+                    type: 'cellFocused',
+                })
+            );
         }
     }
 
@@ -807,6 +823,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
             cellFocused = this.beans.focusSvc?.getFocusCellToUseAfterRefresh() || null;
         }
 
+        let rowRedrawn = false;
         for (const rowCtrl of this.getRowCtrls(rowNodes)) {
             if (!rowCtrl.isFullWidth()) {
                 continue;
@@ -814,11 +831,14 @@ export class RowRenderer extends BeanStub implements NamedBean {
 
             const refreshed = rowCtrl.refreshFullWidth();
             if (!refreshed) {
+                rowRedrawn = true;
                 this.redrawRow(rowCtrl.rowNode, true);
             }
         }
 
-        this.dispatchDisplayedRowsChanged(false);
+        if (rowRedrawn) {
+            this.dispatchDisplayedRowsChanged(false);
+        }
 
         if (cellFocused) {
             this.restoreFocusedCell(cellFocused);

@@ -1,4 +1,11 @@
-import type { BeanCollection, FilterManager, ITooltipCtrl, Registry, TooltipFeature } from 'ag-grid-community';
+import type {
+    BeanCollection,
+    ElementParams,
+    FilterManager,
+    ITooltipCtrl,
+    Registry,
+    TooltipFeature,
+} from 'ag-grid-community';
 import { Component, RefPlaceholder, _createIconNoSpan, _makeNull, _setDisabled } from 'ag-grid-community';
 
 import type { AdvancedFilterExpressionService } from './advancedFilterExpressionService';
@@ -15,6 +22,29 @@ import type { AutocompleteEntry, AutocompleteListParams } from './autocomplete/a
 import type { FilterExpressionParser } from './filterExpressionParser';
 import type { AutocompleteUpdate } from './filterExpressionUtils';
 
+const AdvancedFilterElement: ElementParams = {
+    tag: 'div',
+    cls: 'ag-advanced-filter',
+    role: 'presentation',
+    attrs: { tabindex: '-1' },
+    children: [
+        { tag: 'ag-autocomplete', ref: 'eAutocomplete' },
+        {
+            tag: 'button',
+            ref: 'eApplyFilterButton',
+            cls: 'ag-button ag-standard-button ag-advanced-filter-apply-button',
+        },
+        {
+            tag: 'button',
+            ref: 'eBuilderFilterButton',
+            cls: 'ag-button ag-advanced-filter-builder-button',
+            children: [
+                { tag: 'span', ref: 'eBuilderFilterButtonIcon', attrs: { 'aria-hidden': 'true' } },
+                { tag: 'span', ref: 'eBuilderFilterButtonLabel', cls: 'ag-advanced-filter-builder-button-label' },
+            ],
+        },
+    ],
+};
 export class AdvancedFilterComp extends Component {
     private advancedFilter: AdvancedFilterService;
     private advFilterExpSvc: AdvancedFilterExpressionService;
@@ -40,18 +70,7 @@ export class AdvancedFilterComp extends Component {
     private tooltipFeature?: TooltipFeature;
 
     constructor() {
-        super(
-            /* html */ `
-            <div class="ag-advanced-filter" role="presentation" tabindex="-1">
-                <ag-autocomplete data-ref="eAutocomplete"></ag-autocomplete>
-                <button class="ag-button ag-standard-button ag-advanced-filter-apply-button" data-ref="eApplyFilterButton"></button>
-                <button class="ag-button ag-advanced-filter-builder-button" data-ref="eBuilderFilterButton">
-                    <span data-ref="eBuilderFilterButtonIcon" aria-hidden="true"></span>
-                    <span class="ag-advanced-filter-builder-button-label" data-ref="eBuilderFilterButtonLabel"></span>
-                </button>
-            </div>`,
-            [AgAutocompleteSelector]
-        );
+        super(AdvancedFilterElement, [AgAutocompleteSelector]);
     }
 
     public postConstruct(): void {

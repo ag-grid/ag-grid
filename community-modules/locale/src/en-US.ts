@@ -195,6 +195,7 @@ export const AG_GRID_LOCALE_EN = {
     previousPage: 'Previous Page',
     pageSizeSelectorLabel: 'Page Size:',
     footerTotal: 'Total',
+    statusBarLastRowUnknown: '?',
 
     // Pivoting
     pivotColumnGroupTotals: 'Total',

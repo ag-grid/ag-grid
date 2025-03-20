@@ -203,7 +203,8 @@ class PivotMenuItemMapper implements MenuItemBuilder<PivotMenuOptionName> {
             enterprise = false
         ) => {
             return {
-                name: localeTextFunc(localeKey, defaultText),
+                // will have a LRM character appended to ensure correct display in RTL languages
+                name: localeTextFunc(localeKey, defaultText + '\u200E'),
                 action: () => this.chartSvc.createPivotChart({ chartType }),
                 _key: key,
                 _enterprise: enterprise,
@@ -217,89 +218,84 @@ class PivotMenuItemMapper implements MenuItemBuilder<PivotMenuOptionName> {
                     _key: 'pivotColumnChart',
                     name: localeTextFunc('columnChart', 'Column'),
                     subMenu: [
-                        getMenuItem('groupedColumn', 'Grouped&lrm;', 'groupedColumn', 'pivotGroupedColumn'),
-                        getMenuItem('stackedColumn', 'Stacked&lrm;', 'stackedColumn', 'pivotStackedColumn'),
-                        getMenuItem(
-                            'normalizedColumn',
-                            '100% Stacked&lrm;',
-                            'normalizedColumn',
-                            'pivotNormalizedColumn'
-                        ),
+                        getMenuItem('groupedColumn', 'Grouped', 'groupedColumn', 'pivotGroupedColumn'),
+                        getMenuItem('stackedColumn', 'Stacked', 'stackedColumn', 'pivotStackedColumn'),
+                        getMenuItem('normalizedColumn', '100% Stacked', 'normalizedColumn', 'pivotNormalizedColumn'),
                     ],
                 },
                 {
                     _key: 'pivotBarChart',
                     name: localeTextFunc('barChart', 'Bar'),
                     subMenu: [
-                        getMenuItem('groupedBar', 'Grouped&lrm;', 'groupedBar', 'pivotGroupedBar'),
-                        getMenuItem('stackedBar', 'Stacked&lrm;', 'stackedBar', 'pivotStackedBar'),
-                        getMenuItem('normalizedBar', '100% Stacked&lrm;', 'normalizedBar', 'pivotNormalizedBar'),
+                        getMenuItem('groupedBar', 'Grouped', 'groupedBar', 'pivotGroupedBar'),
+                        getMenuItem('stackedBar', 'Stacked', 'stackedBar', 'pivotStackedBar'),
+                        getMenuItem('normalizedBar', '100% Stacked', 'normalizedBar', 'pivotNormalizedBar'),
                     ],
                 },
                 {
                     _key: 'pivotPieChart',
                     name: localeTextFunc('pieChart', 'Pie'),
                     subMenu: [
-                        getMenuItem('pie', 'Pie&lrm;', 'pie', 'pivotPie'),
-                        getMenuItem('donut', 'Donut&lrm;', 'donut', 'pivotDonut'),
+                        getMenuItem('pie', 'Pie', 'pie', 'pivotPie'),
+                        getMenuItem('donut', 'Donut', 'donut', 'pivotDonut'),
                     ],
                 },
                 {
                     _key: 'pivotLineChart',
                     name: localeTextFunc('lineChart', 'Line'),
                     subMenu: [
-                        getMenuItem('lineChart', 'Line&lrm;', 'line', 'pivotLineChart'),
-                        getMenuItem('stackedLine', 'Stacked&lrm;', 'stackedLine', 'pivotStackedLine'),
-                        getMenuItem('normalizedLine', '100% Stacked&lrm;', 'normalizedLine', 'pivotNormalizedLine'),
+                        getMenuItem('lineChart', 'Line', 'line', 'pivotLineChart'),
+                        getMenuItem('stackedLine', 'Stacked', 'stackedLine', 'pivotStackedLine'),
+                        getMenuItem('normalizedLine', '100% Stacked', 'normalizedLine', 'pivotNormalizedLine'),
                     ],
                 },
                 {
                     _key: 'pivotAreaChart',
                     name: localeTextFunc('areaChart', 'Area'),
                     subMenu: [
-                        getMenuItem('areaChart', 'Area&lrm;', 'area', 'pivotArea'),
-                        getMenuItem('stackedArea', 'Stacked&lrm;', 'stackedArea', 'pivotStackedArea'),
-                        getMenuItem('normalizedArea', '100% Stacked&lrm;', 'normalizedArea', 'pivotNormalizedArea'),
+                        getMenuItem('areaChart', 'Area', 'area', 'pivotArea'),
+                        getMenuItem('stackedArea', 'Stacked', 'stackedArea', 'pivotStackedArea'),
+                        getMenuItem('normalizedArea', '100% Stacked', 'normalizedArea', 'pivotNormalizedArea'),
                     ],
                 },
                 {
                     _key: 'pivotXYChart',
                     name: localeTextFunc('xyChart', 'X Y (Scatter)'),
                     subMenu: [
-                        getMenuItem('scatter', 'Scatter&lrm;', 'scatter', 'pivotScatter'),
-                        getMenuItem('bubble', 'Bubble&lrm;', 'bubble', 'pivotBubble'),
+                        getMenuItem('scatter', 'Scatter', 'scatter', 'pivotScatter'),
+                        getMenuItem('bubble', 'Bubble', 'bubble', 'pivotBubble'),
                     ],
                 },
                 {
                     _key: 'pivotStatisticalChart',
                     _enterprise: false, // histogram chart is available in both community and enterprise distributions
                     name: localeTextFunc('statisticalChart', 'Statistical'),
-                    subMenu: [getMenuItem('histogramChart', 'Histogram&lrm;', 'histogram', 'pivotHistogram', false)],
+                    subMenu: [getMenuItem('histogramChart', 'Histogram', 'histogram', 'pivotHistogram', false)],
                 },
                 {
                     _key: 'pivotHierarchicalChart',
                     _enterprise: true,
                     name: localeTextFunc('hierarchicalChart', 'Hierarchical'),
                     subMenu: [
-                        getMenuItem('treemapChart', 'Treemap&lrm;', 'treemap', 'pivotTreemap', true),
-                        getMenuItem('sunburstChart', 'Sunburst&lrm;', 'sunburst', 'pivotSunburst', true),
+                        getMenuItem('treemapChart', 'Treemap', 'treemap', 'pivotTreemap', true),
+                        getMenuItem('sunburstChart', 'Sunburst', 'sunburst', 'pivotSunburst', true),
                     ],
                 },
                 {
                     _key: 'pivotFunnel',
                     name: localeTextFunc('funnel', 'Funnel'),
                     subMenu: [
-                        getMenuItem('funnel', 'Funnel&lrm;', 'funnel', 'pivotFunnel'),
-                        getMenuItem('coneFunnel', 'Cone Funnel&lrm;', 'coneFunnel', 'pivotConeFunnel'),
-                        getMenuItem('pyramid', 'Pyramid&lrm;', 'pyramid', 'pivotPyramid'),
+                        getMenuItem('funnel', 'Funnel', 'funnel', 'pivotFunnel'),
+                        getMenuItem('coneFunnel', 'Cone Funnel', 'coneFunnel', 'pivotConeFunnel'),
+                        getMenuItem('pyramid', 'Pyramid', 'pyramid', 'pivotPyramid'),
                     ],
                 },
                 {
                     _key: 'pivotCombinationChart',
                     name: localeTextFunc('combinationChart', 'Combination'),
                     subMenu: [
-                        getMenuItem('columnLineCombo', 'Column & Line&lrm;', 'columnLineCombo', 'pivotColumnLineCombo'),
-                        getMenuItem('AreaColumnCombo', 'Area & Column&lrm;', 'areaColumnCombo', 'pivotAreaColumnCombo'),
+                        getMenuItem('columnLineCombo', 'Column & Line', 'columnLineCombo', 'pivotColumnLineCombo'),
+                        getMenuItem('AreaColumnCombo', 'Area & Column', 'areaColumnCombo', 'pivotAreaColumnCombo'),
                     ],
                 },
             ],
@@ -455,68 +451,63 @@ class RangeMenuItemMapper implements MenuItemBuilder<RangeMenuOptionName> {
                 {
                     name: localeTextFunc('columnChart', 'Column'),
                     subMenu: [
-                        getMenuItem('groupedColumn', 'Grouped&lrm;', 'groupedColumn', 'rangeGroupedColumn'),
-                        getMenuItem('stackedColumn', 'Stacked&lrm;', 'stackedColumn', 'rangeStackedColumn'),
-                        getMenuItem(
-                            'normalizedColumn',
-                            '100% Stacked&lrm;',
-                            'normalizedColumn',
-                            'rangeNormalizedColumn'
-                        ),
+                        getMenuItem('groupedColumn', 'Grouped', 'groupedColumn', 'rangeGroupedColumn'),
+                        getMenuItem('stackedColumn', 'Stacked', 'stackedColumn', 'rangeStackedColumn'),
+                        getMenuItem('normalizedColumn', '100% Stacked', 'normalizedColumn', 'rangeNormalizedColumn'),
                     ],
                     _key: 'rangeColumnChart',
                 },
                 {
                     name: localeTextFunc('barChart', 'Bar'),
                     subMenu: [
-                        getMenuItem('groupedBar', 'Grouped&lrm;', 'groupedBar', 'rangeGroupedBar'),
-                        getMenuItem('stackedBar', 'Stacked&lrm;', 'stackedBar', 'rangeStackedBar'),
-                        getMenuItem('normalizedBar', '100% Stacked&lrm;', 'normalizedBar', 'rangeNormalizedBar'),
+                        getMenuItem('groupedBar', 'Grouped', 'groupedBar', 'rangeGroupedBar'),
+                        getMenuItem('stackedBar', 'Stacked', 'stackedBar', 'rangeStackedBar'),
+                        getMenuItem('normalizedBar', '100% Stacked', 'normalizedBar', 'rangeNormalizedBar'),
                     ],
                     _key: 'rangeBarChart',
                 },
                 {
                     name: localeTextFunc('pieChart', 'Pie'),
                     subMenu: [
-                        getMenuItem('pie', 'Pie&lrm;', 'pie', 'rangePie'),
-                        getMenuItem('donut', 'Donut&lrm;', 'donut', 'rangeDonut'),
+                        getMenuItem('pie', 'Pie', 'pie', 'rangePie'),
+                        getMenuItem('donut', 'Donut', 'donut', 'rangeDonut'),
                     ],
                     _key: 'rangePieChart',
                 },
                 {
                     name: localeTextFunc('lineChart', 'Line'),
                     subMenu: [
-                        getMenuItem('lineChart', 'Line&lrm;', 'line', 'rangeLineChart'),
-                        getMenuItem('stackedLine', 'Stacked&lrm;', 'stackedLine', 'rangeStackedLine'),
-                        getMenuItem('normalizedLine', '100% Stacked&lrm;', 'normalizedLine', 'rangeNormalizedLine'),
+                        getMenuItem('lineChart', 'Line', 'line', 'rangeLineChart'),
+                        getMenuItem('stackedLine', 'Stacked', 'stackedLine', 'rangeStackedLine'),
+                        getMenuItem('normalizedLine', '100% Stacked', 'normalizedLine', 'rangeNormalizedLine'),
                     ],
                     _key: 'rangeLineChart',
                 },
                 {
                     name: localeTextFunc('areaChart', 'Area'),
                     subMenu: [
-                        getMenuItem('areaChart', 'Area&lrm;', 'area', 'rangeArea'),
-                        getMenuItem('stackedArea', 'Stacked&lrm;', 'stackedArea', 'rangeStackedArea'),
-                        getMenuItem('normalizedArea', '100% Stacked&lrm;', 'normalizedArea', 'rangeNormalizedArea'),
+                        getMenuItem('areaChart', 'Area', 'area', 'rangeArea'),
+                        getMenuItem('stackedArea', 'Stacked', 'stackedArea', 'rangeStackedArea'),
+                        getMenuItem('normalizedArea', '100% Stacked', 'normalizedArea', 'rangeNormalizedArea'),
                     ],
                     _key: 'rangeAreaChart',
                 },
                 {
                     name: localeTextFunc('xyChart', 'X Y (Scatter)'),
                     subMenu: [
-                        getMenuItem('scatter', 'Scatter&lrm;', 'scatter', 'rangeScatter'),
-                        getMenuItem('bubble', 'Bubble&lrm;', 'bubble', 'rangeBubble'),
+                        getMenuItem('scatter', 'Scatter', 'scatter', 'rangeScatter'),
+                        getMenuItem('bubble', 'Bubble', 'bubble', 'rangeBubble'),
                     ],
                     _key: 'rangeXYChart',
                 },
                 {
                     name: localeTextFunc('polarChart', 'Polar'),
                     subMenu: [
-                        getMenuItem('radarLine', 'Radar Line&lrm;', 'radarLine', 'rangeRadarLine'),
-                        getMenuItem('radarArea', 'Radar Area&lrm;', 'radarArea', 'rangeRadarArea'),
-                        getMenuItem('nightingale', 'Nightingale&lrm;', 'nightingale', 'rangeNightingale'),
-                        getMenuItem('radialColumn', 'Radial Column&lrm;', 'radialColumn', 'rangeRadialColumn'),
-                        getMenuItem('radialBar', 'Radial Bar&lrm;', 'radialBar', 'rangeRadialBar'),
+                        getMenuItem('radarLine', 'Radar Line', 'radarLine', 'rangeRadarLine'),
+                        getMenuItem('radarArea', 'Radar Area', 'radarArea', 'rangeRadarArea'),
+                        getMenuItem('nightingale', 'Nightingale', 'nightingale', 'rangeNightingale'),
+                        getMenuItem('radialColumn', 'Radial Column', 'radialColumn', 'rangeRadialColumn'),
+                        getMenuItem('radialBar', 'Radial Bar', 'radialBar', 'rangeRadialBar'),
                     ],
                     _key: 'rangePolarChart',
                     _enterprise: true,
@@ -524,10 +515,10 @@ class RangeMenuItemMapper implements MenuItemBuilder<RangeMenuOptionName> {
                 {
                     name: localeTextFunc('statisticalChart', 'Statistical'),
                     subMenu: [
-                        getMenuItem('boxPlot', 'Box Plot&lrm;', 'boxPlot', 'rangeBoxPlot', true),
-                        getMenuItem('histogramChart', 'Histogram&lrm;', 'histogram', 'rangeHistogram', false),
-                        getMenuItem('rangeBar', 'Range Bar&lrm;', 'rangeBar', 'rangeRangeBar', true),
-                        getMenuItem('rangeArea', 'Range Area&lrm;', 'rangeArea', 'rangeRangeArea', true),
+                        getMenuItem('boxPlot', 'Box Plot', 'boxPlot', 'rangeBoxPlot', true),
+                        getMenuItem('histogramChart', 'Histogram', 'histogram', 'rangeHistogram', false),
+                        getMenuItem('rangeBar', 'Range Bar', 'rangeBar', 'rangeRangeBar', true),
+                        getMenuItem('rangeArea', 'Range Area', 'rangeArea', 'rangeRangeArea', true),
                     ],
                     _key: 'rangeStatisticalChart',
                     _enterprise: false, // histogram chart is available in both community and enterprise distributions
@@ -535,8 +526,8 @@ class RangeMenuItemMapper implements MenuItemBuilder<RangeMenuOptionName> {
                 {
                     name: localeTextFunc('hierarchicalChart', 'Hierarchical'),
                     subMenu: [
-                        getMenuItem('treemap', 'Treemap&lrm;', 'treemap', 'rangeTreemap'),
-                        getMenuItem('sunburst', 'Sunburst&lrm;', 'sunburst', 'rangeSunburst'),
+                        getMenuItem('treemap', 'Treemap', 'treemap', 'rangeTreemap'),
+                        getMenuItem('sunburst', 'Sunburst', 'sunburst', 'rangeSunburst'),
                     ],
                     _key: 'rangeHierarchicalChart',
                     _enterprise: true,
@@ -544,8 +535,8 @@ class RangeMenuItemMapper implements MenuItemBuilder<RangeMenuOptionName> {
                 {
                     name: localeTextFunc('specializedChart', 'Specialized'),
                     subMenu: [
-                        getMenuItem('heatmap', 'Heatmap&lrm;', 'heatmap', 'rangeHeatmap'),
-                        getMenuItem('waterfall', 'Waterfall&lrm;', 'waterfall', 'rangeWaterfall'),
+                        getMenuItem('heatmap', 'Heatmap', 'heatmap', 'rangeHeatmap'),
+                        getMenuItem('waterfall', 'Waterfall', 'waterfall', 'rangeWaterfall'),
                     ],
                     _key: 'rangeSpecializedChart',
                     _enterprise: true,
@@ -553,9 +544,9 @@ class RangeMenuItemMapper implements MenuItemBuilder<RangeMenuOptionName> {
                 {
                     name: localeTextFunc('funnel', 'Funnel'),
                     subMenu: [
-                        getMenuItem('funnel', 'Funnel&lrm;', 'funnel', 'rangeFunnel'),
-                        getMenuItem('coneFunnel', 'Cone Funnel&lrm;', 'coneFunnel', 'rangeConeFunnel'),
-                        getMenuItem('pyramid', 'Pyramid&lrm;', 'pyramid', 'rangePyramid'),
+                        getMenuItem('funnel', 'Funnel', 'funnel', 'rangeFunnel'),
+                        getMenuItem('coneFunnel', 'Cone Funnel', 'coneFunnel', 'rangeConeFunnel'),
+                        getMenuItem('pyramid', 'Pyramid', 'pyramid', 'rangePyramid'),
                     ],
                     _key: 'rangeFunnel',
                     _enterprise: true,
@@ -563,8 +554,8 @@ class RangeMenuItemMapper implements MenuItemBuilder<RangeMenuOptionName> {
                 {
                     name: localeTextFunc('combinationChart', 'Combination'),
                     subMenu: [
-                        getMenuItem('columnLineCombo', 'Column & Line&lrm;', 'columnLineCombo', 'rangeColumnLineCombo'),
-                        getMenuItem('AreaColumnCombo', 'Area & Column&lrm;', 'areaColumnCombo', 'rangeAreaColumnCombo'),
+                        getMenuItem('columnLineCombo', 'Column & Line', 'columnLineCombo', 'rangeColumnLineCombo'),
+                        getMenuItem('AreaColumnCombo', 'Area & Column', 'areaColumnCombo', 'rangeAreaColumnCombo'),
                     ],
                     _key: 'rangeCombinationChart',
                 },

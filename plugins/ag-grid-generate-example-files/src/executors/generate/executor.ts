@@ -19,6 +19,7 @@ import {
     convertTsxToJsx,
     getBoilerPlateFiles,
     getEntryFileName,
+    getHasExampleConsoleLog,
     getIsEnterprise,
     getIsLocale,
     getMainFileName,
@@ -27,6 +28,8 @@ import {
     getTransformTsFileExt,
 } from './generator/utils/fileUtils';
 import { frameworkFilesGenerator } from './generator/utils/frameworkFilesGenerator';
+import type { TransformEntryFile } from './generator/utils/frameworkFilesGenerator';
+import { getConsoleLogSnippet } from './generator/utils/getConsoleLogSnippet';
 import { getOtherScriptFiles, getUseFetchJsonFile } from './generator/utils/getOtherScriptFiles';
 import { getPackageJson } from './generator/utils/getPackageJson';
 import { getStyleFiles } from './generator/utils/getStyleFiles';
@@ -54,6 +57,17 @@ export default async function (
         return { success: false };
     }
 }
+
+const getExampleFolderParts = ({ exampleFolder }: { exampleFolder: string }) => {
+    const folders = exampleFolder.split('/');
+    const pageName = folders[folders.length - 3];
+    const exampleName = folders[folders.length - 1];
+
+    return {
+        pageName,
+        exampleName,
+    };
+};
 
 async function getSourceFileList(folderPath: string): Promise<string[]> {
     const sourceFileList = await fs.readdir(folderPath);
@@ -92,6 +106,11 @@ async function getProvidedFiles(folderPath: string) {
 export async function generateFiles(options: ExecutorOptions, gridOptionsTypes: Record<string, GridOptionsType>) {
     const isDev = options.mode === 'dev';
     const folderPath = options.examplePath;
+    const { pageName, exampleName } = getExampleFolderParts({ exampleFolder: folderPath });
+
+    if (!pageName || !exampleName) {
+        throw new Error('Invalid example folder path: ' + folderPath);
+    }
 
     const sourceFileList = await getSourceFileList(folderPath);
     if (sourceFileList === undefined) {
@@ -112,6 +131,7 @@ export async function generateFiles(options: ExecutorOptions, gridOptionsTypes: 
 
     const isEnterprise = getIsEnterprise({ entryFile });
     const isLocale = getIsLocale({ entryFile });
+    const hasExampleConsoleLog = getHasExampleConsoleLog({ entryFile });
     const frameworkProvidedExamples = sourceFileList.includes('provided') ? await getProvidedFiles(folderPath) : {};
 
     const { bindings, typedBindings } = gridVanillaSrcParser(
@@ -162,6 +182,17 @@ export async function generateFiles(options: ExecutorOptions, gridOptionsTypes: 
             ...exampleConfig,
             ...(provideFrameworkFiles ? provideFrameworkFiles['exampleConfig.json'] : {}),
         };
+
+        const transformEntryFile: TransformEntryFile = ({ entryFile }) => {
+            let transformedEntryFile = entryFile;
+
+            if (hasExampleConsoleLog) {
+                transformedEntryFile = transformedEntryFile + '\n' + getConsoleLogSnippet({ pageName, exampleName });
+            }
+
+            return transformedEntryFile;
+        };
+
         const [otherScriptFiles, componentScriptFiles] = await getOtherScriptFiles({
             folderPath,
             sourceFileList,
@@ -183,6 +214,7 @@ export async function generateFiles(options: ExecutorOptions, gridOptionsTypes: 
                 otherScriptFiles,
                 styleFiles,
                 ignoreDarkMode: false,
+                transformEntryFile,
                 isDev,
                 exampleConfig: frameworkExampleConfig,
             });
@@ -195,6 +227,7 @@ export async function generateFiles(options: ExecutorOptions, gridOptionsTypes: 
                 entryFileName,
                 provideFrameworkFiles,
                 mergedStyleFiles,
+                transformEntryFile,
                 isDev,
                 isIntegratedCharts,
                 mainFileName,
@@ -220,6 +253,7 @@ export async function generateFiles(options: ExecutorOptions, gridOptionsTypes: 
             isEnterprise,
             isLocale,
             isIntegratedCharts,
+            hasExampleConsoleLog,
             entryFileName,
             mainFileName,
             scriptFiles: scriptFiles!,
@@ -249,6 +283,7 @@ async function processProvidedFiles(
     entryFileName: string,
     provideFrameworkFiles: any,
     mergedStyleFiles: { [x: string]: string },
+    transformEntryFile: TransformEntryFile,
     isDev: boolean,
     isIntegratedCharts: boolean,
     mainFileName: string,
@@ -335,6 +370,10 @@ async function processProvidedFiles(
                 code
             );
         }
+
+        provideFrameworkFiles[writeToFileName] = transformEntryFile({
+            entryFile: provideFrameworkFiles[writeToFileName],
+        });
     }
     return scriptFiles;
 }
@@ -346,16 +385,24 @@ async function writeContents(
 ) {
     if (options.writeFiles) {
         for (const file in result.files) {
-            await writeFile(path.join(options.outputPath, internalFramework, file), result.files[file]);
+            const value = result.files[file];
+            if (value !== undefined) {
+                await writeFile(path.join(options.outputPath, internalFramework, file), value);
+            }
         }
     }
     const outputPath = path.join(options.outputPath, internalFramework, 'contents.json');
     await writeFile(outputPath, JSON.stringify(result));
 
+    const errors: string[] = [];
     for (const name in result.files) {
-        if (typeof result.files[name] !== 'string') {
-            throw new Error(`${outputPath}: non-string file content`);
+        const value = result.files[name];
+        if (value !== undefined && typeof value !== 'string') {
+            errors.push(`${outputPath}: non-string file content, ${name} ${typeof value}`);
         }
+    }
+    if (errors.length > 0) {
+        throw new Error(errors.join('\n'));
     }
 }
 

@@ -16,15 +16,32 @@ const ExtensionMap = {
     json: 'js',
 };
 
+export const CONSOLE_LOG_START = '/** CONSOLE LOG START **/';
+export const CONSOLE_LOG_END = '/** CONSOLE LOG END **/';
+
+function getSnippetRegex({ startDelimiter, endDelimiter }: { startDelimiter: string; endDelimiter: string }) {
+    const escapedStart = startDelimiter.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const escapedEnd = endDelimiter.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const regex = new RegExp(`\\s*${escapedStart}[\\s\\S]*?${escapedEnd}\\s*`, 'g');
+
+    return regex;
+}
+
 export function stripOutExampleGeneratorCode(files: FileContents) {
     const mainFiles = ['main.js', 'main.ts', 'index.tsx', 'index.jsx', 'app.component.ts'];
+    const consoleLogRegex = getSnippetRegex({
+        startDelimiter: CONSOLE_LOG_START,
+        endDelimiter: CONSOLE_LOG_END,
+    });
+
     mainFiles.forEach((mainFile) => {
         if (files[mainFile]) {
             // hide integrated theme switcher
-            files[mainFile] = files[mainFile]?.replace(
-                /\/\*\* DARK INTEGRATED START \*\*\/([\s\S]*?)\/\*\* DARK INTEGRATED END \*\*\//g,
-                ''
-            );
+            files[mainFile] =
+                files[mainFile]
+                    ?.replace(/\/\*\* DARK INTEGRATED START \*\*\/([\s\S]*?)\/\*\* DARK INTEGRATED END \*\*\//g, '')
+                    .replace(consoleLogRegex, '')
+                    .trim() + '\n';
 
             // hide React tear down example code
             if (mainFile === 'index.tsx') {

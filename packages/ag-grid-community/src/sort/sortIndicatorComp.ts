@@ -1,22 +1,30 @@
 import type { AgColumn } from '../entities/agColumn';
 import { _isColumnsSortingCoupledToGroup } from '../gridOptionsUtils';
+import type { ElementParams } from '../utils/dom';
 import { _clearElement, _setDisplayed } from '../utils/dom';
 import type { IconName } from '../utils/icon';
 import { _createIconNoSpan } from '../utils/icon';
 import type { ComponentSelector } from '../widgets/component';
 import { Component, RefPlaceholder } from '../widgets/component';
 
-function makeSpan(dataRefSuffix: string, classSuffix: string) {
-    return /* html */ `<span data-ref="eSort${dataRefSuffix}" class="ag-sort-indicator-icon ag-sort-${classSuffix} ag-hidden" aria-hidden="true"></span>`;
-}
+const makeIconParams = (dataRefSuffix: string, classSuffix: string): ElementParams => ({
+    tag: 'span',
+    ref: `eSort${dataRefSuffix}`,
+    cls: `ag-sort-indicator-icon ag-sort-${classSuffix} ag-hidden`,
+    attrs: { 'aria-hidden': 'true' },
+});
+const SortIndicatorElement: ElementParams = {
+    tag: 'span',
+    cls: 'ag-sort-indicator-container',
+    children: [
+        makeIconParams('Order', 'order'),
+        makeIconParams('Asc', 'ascending-icon'),
+        makeIconParams('Desc', 'descending-icon'),
+        makeIconParams('Mixed', 'mixed-icon'),
+        makeIconParams('None', 'none-icon'),
+    ],
+};
 
-const SortIndicatorTemplate = /* html */ `<span class="ag-sort-indicator-container">
-        ${makeSpan('Order', 'order')}
-        ${makeSpan('Asc', 'ascending-icon')}
-        ${makeSpan('Desc', 'descending-icon')}
-        ${makeSpan('Mixed', 'mixed-icon')}
-        ${makeSpan('None', 'none-icon')}
-    </span>`;
 export class SortIndicatorComp extends Component {
     private eSortOrder: HTMLElement = RefPlaceholder;
     private eSortAsc: HTMLElement = RefPlaceholder;
@@ -31,7 +39,7 @@ export class SortIndicatorComp extends Component {
         super();
 
         if (!skipTemplate) {
-            this.setTemplate(SortIndicatorTemplate);
+            this.setTemplate(SortIndicatorElement);
         }
     }
 

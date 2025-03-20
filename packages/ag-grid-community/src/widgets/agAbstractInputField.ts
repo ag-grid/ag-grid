@@ -1,9 +1,27 @@
 import type { AgInputFieldParams } from '../interfaces/agFieldParams';
 import { _setAriaLabel } from '../utils/aria';
+import type { ElementParams } from '../utils/dom';
 import { _addOrRemoveAttribute, _setDisabled, _setElementWidth } from '../utils/dom';
 import type { AgAbstractFieldEvent, FieldElement } from './agAbstractField';
 import { AgAbstractField } from './agAbstractField';
 import { RefPlaceholder } from './component';
+
+function buildTemplate(displayFieldTag: keyof HTMLElementTagNameMap): ElementParams {
+    return {
+        tag: 'div',
+        role: 'presentation',
+        children: [
+            { tag: 'div', ref: 'eLabel', cls: 'ag-input-field-label' },
+            {
+                tag: 'div',
+                ref: 'eWrapper',
+                cls: 'ag-wrapper ag-input-wrapper',
+                role: 'presentation',
+                children: [{ tag: displayFieldTag, ref: 'eInput', cls: 'ag-input-field-input' }],
+            },
+        ],
+    };
+}
 
 export type AgAbstractInputFieldEvent = AgAbstractFieldEvent;
 export abstract class AgAbstractInputField<
@@ -20,21 +38,9 @@ export abstract class AgAbstractInputField<
         config?: TConfig,
         className?: string,
         private readonly inputType: string | null = 'text',
-        private readonly displayFieldTag = 'input'
+        private readonly displayFieldTag: keyof HTMLElementTagNameMap = 'input'
     ) {
-        super(
-            config,
-            config?.template ??
-                /* html */ `
-            <div role="presentation">
-                <div data-ref="eLabel" class="ag-input-field-label"></div>
-                <div data-ref="eWrapper" class="ag-wrapper ag-input-wrapper" role="presentation">
-                    <${displayFieldTag} data-ref="eInput" class="ag-input-field-input"></${displayFieldTag}>
-                </div>
-            </div>`,
-            [],
-            className
-        );
+        super(config, config?.template ?? buildTemplate(displayFieldTag), [], className);
     }
 
     public override postConstruct() {

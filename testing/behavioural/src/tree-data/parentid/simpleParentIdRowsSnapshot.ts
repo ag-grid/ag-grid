@@ -32,7 +32,7 @@ export function simpleParentIdRowsSnapshot(): RowSnapshot[] {
         },
         {
             allChildrenCount: null,
-            allLeafChildren: [],
+            allLeafChildren: null,
             childIndex: 0,
             childrenAfterFilter: [],
             childrenAfterGroup: [],
@@ -88,7 +88,7 @@ export function simpleParentIdRowsSnapshot(): RowSnapshot[] {
         },
         {
             allChildrenCount: null,
-            allLeafChildren: [],
+            allLeafChildren: null,
             childIndex: 0,
             childrenAfterFilter: [],
             childrenAfterGroup: [],
@@ -116,7 +116,7 @@ export function simpleParentIdRowsSnapshot(): RowSnapshot[] {
         },
         {
             allChildrenCount: 3,
-            allLeafChildren: ['H'],
+            allLeafChildren: ['F', 'G', 'H'],
             childIndex: 2,
             childrenAfterFilter: ['F'],
             childrenAfterGroup: ['F'],
@@ -144,7 +144,7 @@ export function simpleParentIdRowsSnapshot(): RowSnapshot[] {
         },
         {
             allChildrenCount: 2,
-            allLeafChildren: ['H'],
+            allLeafChildren: ['G', 'H'],
             childIndex: 0,
             childrenAfterFilter: ['G'],
             childrenAfterGroup: ['G'],
@@ -200,7 +200,7 @@ export function simpleParentIdRowsSnapshot(): RowSnapshot[] {
         },
         {
             allChildrenCount: null,
-            allLeafChildren: [],
+            allLeafChildren: null,
             childIndex: 0,
             childrenAfterFilter: [],
             childrenAfterGroup: [],

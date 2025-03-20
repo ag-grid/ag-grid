@@ -27,6 +27,8 @@ interface Props {
     isDev: boolean;
     typescriptOnly?: boolean;
     suppressDarkMode?: boolean;
+    hasExampleConsoleLog?: boolean;
+    consoleBufferSize?: number;
 }
 
 const getInternalFramework = (
@@ -63,6 +65,8 @@ const DocsExampleRunnerInner = ({
     suppressDarkMode,
     pageName,
     isDev,
+    hasExampleConsoleLog,
+    consoleBufferSize,
 }: Props) => {
     const exampleName = name;
     const id = `example-${name}`;
@@ -157,6 +161,7 @@ const DocsExampleRunnerInner = ({
         <ExampleRunner
             id={id}
             title={title}
+            exampleName={exampleName}
             exampleUrl={urls.exampleUrl}
             exampleRunnerExampleUrl={urls.exampleRunnerExampleUrl}
             exampleHeight={exampleHeight}
@@ -167,6 +172,8 @@ const DocsExampleRunnerInner = ({
             loadingIFrameId={loadingIFrameId}
             supportedFrameworks={supportedFrameworks}
             suppressDarkMode={suppressDarkMode}
+            hasExampleConsoleLog={hasExampleConsoleLog}
+            consoleBufferSize={consoleBufferSize}
         />
     ) : null;
 };

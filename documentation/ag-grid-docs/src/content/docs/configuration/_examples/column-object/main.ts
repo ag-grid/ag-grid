@@ -22,7 +22,6 @@ const rowData = [
 
 function getAllColumns() {
     console.log(gridApi!.getColumns());
-    window.alert("Columns printed to developer's console");
 }
 
 function getAllColumnIds() {
@@ -30,7 +29,6 @@ function getAllColumnIds() {
     if (columns) {
         console.log(columns.map((col) => col.getColId()));
     }
-    window.alert("Column IDs printed to developer's console");
 }
 let gridApi: GridApi;
 

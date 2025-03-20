@@ -89,6 +89,10 @@
     flex: none;
 }
 
+.ag-date-floating-filter-wrapper {
+    display: flex;
+}
+
 .ag-set-floating-filter-input [disabled] {
     pointer-events: none;
 }

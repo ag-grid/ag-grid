@@ -55,13 +55,12 @@ function getColumnGroupHeaderRowHeight(beans: BeanCollection, headerRowCtrl: Hea
 export function getColumnHeaderRowHeight(beans: BeanCollection): number {
     const defaultHeight = beans.colModel.isPivotMode() ? getPivotHeaderHeight(beans) : getHeaderHeight(beans);
     let maxDisplayedHeight = defaultHeight;
-    const cols = beans.colModel.getAllCols();
-    for (const col of cols) {
+    beans.colModel.forAllCols((col) => {
         const height = col.getAutoHeaderHeight();
         if (height != null && height > maxDisplayedHeight && col.isAutoHeaderHeight()) {
             maxDisplayedHeight = height;
         }
-    }
+    });
     return maxDisplayedHeight;
 }
 

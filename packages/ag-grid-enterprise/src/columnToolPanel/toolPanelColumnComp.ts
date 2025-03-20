@@ -1,4 +1,12 @@
-import type { AgCheckbox, AgColumn, DragItem, DragSource, ITooltipCtrl, TooltipFeature } from 'ag-grid-community';
+import type {
+    AgCheckbox,
+    AgColumn,
+    DragItem,
+    DragSource,
+    ElementParams,
+    ITooltipCtrl,
+    TooltipFeature,
+} from 'ag-grid-community';
 import {
     AgCheckboxSelector,
     Component,
@@ -19,6 +27,14 @@ import type { ColumnModelItem } from './columnModelItem';
 import { createPivotState, setAllColumns, updateColumns } from './modelItemUtils';
 import { ToolPanelContextMenu } from './toolPanelContextMenu';
 
+const ToolPanelColumnElement: ElementParams = {
+    tag: 'div',
+    cls: 'ag-column-select-column',
+    children: [
+        { tag: 'ag-checkbox', ref: 'cbSelect', cls: 'ag-column-select-checkbox' },
+        { tag: 'span', ref: 'eLabel', cls: 'ag-column-select-column-label' },
+    ],
+};
 export class ToolPanelColumnComp extends Component {
     private readonly eLabel: HTMLElement = RefPlaceholder;
     private readonly cbSelect: AgCheckbox = RefPlaceholder;
@@ -44,14 +60,7 @@ export class ToolPanelColumnComp extends Component {
     }
 
     public postConstruct(): void {
-        this.setTemplate(
-            /* html */
-            `<div class="ag-column-select-column">
-                <ag-checkbox data-ref="cbSelect" class="ag-column-select-checkbox"></ag-checkbox>
-                <span class="ag-column-select-column-label" data-ref="eLabel"></span>
-            </div>`,
-            [AgCheckboxSelector]
-        );
+        this.setTemplate(ToolPanelColumnElement, [AgCheckboxSelector]);
         const {
             beans,
             cbSelect,

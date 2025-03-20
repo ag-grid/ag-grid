@@ -55,6 +55,13 @@
         "update": {}
       }
     },
+    "test:e2e": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": ["nx run-many -t test:e2e --exclude all"]
+      },
+      "cache": false
+    },
     "pack": {
       "executor": "nx:noop",
       "dependsOn": ["^pack"],

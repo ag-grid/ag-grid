@@ -1,3 +1,4 @@
+import type { ElementParams } from '../../utils/dom';
 import { _makeNull } from '../../utils/generic';
 import type { IOverlay, IOverlayComp, IOverlayParams } from './overlayComponent';
 import { OverlayComponent } from './overlayComponent';
@@ -8,6 +9,7 @@ export interface INoRowsOverlay<TData = any, TContext = any> extends IOverlay<TD
 
 export interface INoRowsOverlayComp<TData = any, TContext = any>
     extends IOverlayComp<TData, TContext, INoRowsOverlayParams<TData, TContext>> {}
+const NoRowsOverlayElement: ElementParams = { tag: 'span', cls: 'ag-overlay-no-rows-center' };
 
 export class NoRowsOverlayComponent
     extends OverlayComponent<any, any, INoRowsOverlayParams>
@@ -16,7 +18,7 @@ export class NoRowsOverlayComponent
     public init(): void {
         const customTemplate = _makeNull(this.gos.get('overlayNoRowsTemplate')?.trim());
 
-        this.setTemplate(customTemplate ?? /* html */ `<span class="ag-overlay-no-rows-center"></span>`);
+        this.setTemplate(customTemplate ?? NoRowsOverlayElement);
 
         if (!customTemplate) {
             const localeTextFunc = this.getLocaleTextFunc();

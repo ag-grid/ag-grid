@@ -9,7 +9,7 @@ export class AgRangeHandle extends AbstractSelectionHandle {
     private rangeFixed: boolean = false;
 
     constructor() {
-        super(/* html */ `<div class="ag-range-handle"></div>`);
+        super({ tag: 'div', cls: 'ag-range-handle' });
     }
 
     protected onDrag(_: MouseEvent) {
