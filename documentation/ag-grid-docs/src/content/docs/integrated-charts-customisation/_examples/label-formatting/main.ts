@@ -106,6 +106,7 @@ function onFirstDataRendered(params: FirstDataRenderedEvent) {
             { colId: 'efficiency', chartType: 'line', secondaryAxis: true },
         ],
         chartType: 'columnLineCombo',
+        chartContainer: document.querySelector('#myChart') as any,
         aggFunc: 'sum',
     });
 }
