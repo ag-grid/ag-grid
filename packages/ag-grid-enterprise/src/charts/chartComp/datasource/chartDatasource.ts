@@ -13,7 +13,14 @@ import type {
     SortService,
     ValueService,
 } from 'ag-grid-community';
-import { BeanStub, _isClientSideRowModel, _isServerSideRowModel, _last, _warn } from 'ag-grid-community';
+import {
+    BeanStub,
+    GROUP_AUTO_COLUMN_ID,
+    _isClientSideRowModel,
+    _isServerSideRowModel,
+    _last,
+    _warn,
+} from 'ag-grid-community';
 
 import { _aggregateValues } from '../../../aggregation/aggUtils';
 import type { ColState } from '../model/chartDataModel';
@@ -382,7 +389,7 @@ export class ChartDatasource extends BeanStub {
                 if (rowNode.group) {
                     // for group nodes we need to resolve the group column value to get the label
                     // just like we do for the initialLabel
-                    const groupColumn = this.colModel.getCol('ag-Grid-AutoColumn');
+                    const groupColumn = this.colModel.getCol(GROUP_AUTO_COLUMN_ID);
                     if (groupColumn) {
                         const valueObject = this.valueSvc.getValue(groupColumn, rowNode);
                         const valueString = valueObject?.toString ? String(valueObject.toString()) : '';
