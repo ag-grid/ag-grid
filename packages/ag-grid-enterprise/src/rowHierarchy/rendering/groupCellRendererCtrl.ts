@@ -558,8 +558,8 @@ export class GroupCellRendererCtrl extends BeanStub implements IGroupCellRendere
 
         const { node, column } = this.params;
         const rowSelection = this.gos.get('rowSelection');
-        const isAutoGroupColumn = column?.getColDef().showRowGroup != null;
-        const isCheckboxLocationHere = isAutoGroupColumn && _getCheckboxLocation(rowSelection) === 'autoGroupColumn';
+        const isGroupColumn = column?.getColDef().showRowGroup != null;
+        const isCheckboxLocationHere = isGroupColumn && _getCheckboxLocation(rowSelection) === 'autoGroupColumn';
         const checkboxes =
             typeof rowSelection === 'object'
                 ? isCheckboxLocationHere && _getCheckboxes(rowSelection)
