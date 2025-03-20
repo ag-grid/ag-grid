@@ -175,37 +175,46 @@ export class PaginationComp extends TabGuardComp implements FocusableContainer {
                     tag: 'ag-page-size-selector',
                     ref: 'pageSizeComp',
                 },
+                ' ',
                 {
                     tag: 'span',
                     cls: 'ag-paging-row-summary-panel',
                     children: [
+                        ' ',
                         {
                             tag: 'span',
                             ref: 'lbFirstRowOnPage',
                             cls: 'ag-paging-row-summary-panel-number',
                             attrs: { id: `${idPrefix}-first-row` },
                         },
+                        ' ',
                         { tag: 'span', attrs: { id: `${idPrefix}-to` }, children: localeTextFunc('to', 'to') },
+                        ' ',
                         {
                             tag: 'span',
                             ref: 'lbLastRowOnPage',
                             cls: 'ag-paging-row-summary-panel-number',
                             attrs: { id: `${idPrefix}-last-row` },
                         },
+                        ' ',
                         { tag: 'span', attrs: { id: `${idPrefix}-of` }, children: localeTextFunc('of', 'of') },
+                        ' ',
                         {
                             tag: 'span',
                             ref: 'lbRecordCount',
                             cls: 'ag-paging-row-summary-panel-number',
                             attrs: { id: `${idPrefix}-row-count` },
                         },
+                        ' ',
                     ],
                 },
+                ' ',
                 {
                     tag: 'span',
                     cls: 'ag-paging-page-summary-panel',
                     role: 'presentation',
                     children: [
+                        ' ',
                         {
                             tag: 'div',
                             ref: 'btFirst',
@@ -224,6 +233,7 @@ export class PaginationComp extends TabGuardComp implements FocusableContainer {
                             tag: 'span',
                             cls: 'ag-paging-description',
                             children: [
+                                ' ',
                                 {
                                     tag: 'span',
                                     attrs: {
@@ -231,12 +241,14 @@ export class PaginationComp extends TabGuardComp implements FocusableContainer {
                                     },
                                     children: localeTextFunc('page', 'Page'),
                                 },
+                                ' ',
                                 {
                                     tag: 'span',
                                     ref: 'lbCurrent',
                                     cls: 'ag-paging-number',
                                     attrs: { id: `${idPrefix}-start-page-number` },
                                 },
+                                ' ',
                                 {
                                     tag: 'span',
                                     attrs: {
@@ -244,14 +256,17 @@ export class PaginationComp extends TabGuardComp implements FocusableContainer {
                                     },
                                     children: localeTextFunc('of', 'of'),
                                 },
+                                ' ',
                                 {
                                     tag: 'span',
                                     ref: 'lbTotal',
                                     cls: 'ag-paging-number',
                                     attrs: { id: `${idPrefix}-of-page-number` },
                                 },
+                                ' ',
                             ],
                         },
+                        ' ',
                         {
                             tag: 'div',
                             ref: 'btNext',
@@ -266,6 +281,7 @@ export class PaginationComp extends TabGuardComp implements FocusableContainer {
                             role: 'button',
                             attrs: { 'aria-label': localeTextFunc('lastPage', 'Last Page') },
                         },
+                        ' ',
                     ],
                 },
             ],

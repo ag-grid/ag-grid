@@ -548,7 +548,7 @@ export type ElementParams = {
      * Nulls are allowed to allow for optional children.
      * If a string is passed it will be set via `element.textContent = string` to be safe.
      */
-    children?: (ElementParams | null | undefined)[] | string;
+    children?: (ElementParams | string | null | undefined)[] | string;
 };
 
 /** AG Grid attribute used to automatically assign DOM Elements to class properties */
@@ -580,7 +580,8 @@ export function _createElement<T extends HTMLElement = HTMLElement>(params: Elem
         } else {
             for (const child of children) {
                 if (child) {
-                    element.appendChild(_createElement(child));
+                    const node = typeof child === 'string' ? document.createTextNode(child) : _createElement(child);
+                    element.appendChild(node);
                 }
             }
         }
