@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <testsuites name="Link Checker Tests" tests="3127" time="0" failures="0">
-    <testsuite name="Link Checker Tests" errors="0" failures="0" skipped="0" time="0" tests="3127">
-        <testcase classname="Link Checker Tests" name="Link Checker Tests" time="0">
-        </testcase>
+    <testsuite name="Link Checker Tests: (3127 tests run and passed)" failures="0" tests="3127" time="0">
+        <testcase classname="Link Checker Tests" name="Link Checker Tests" time="0"></testcase>
     </testsuite>
 </testsuites>
