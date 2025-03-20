@@ -1564,8 +1564,8 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         }
 
         // if this was focused; focus will need recovered
-        if (this.fullWidthGui?.element === _getActiveDomElement(this.beans)) {
-            this.beans.focusSvc.needsFocusRestored = true;
+        if (this.fullWidthGui?.element.contains(_getActiveDomElement(this.beans))) {
+            this.beans.focusSvc.attemptToRecoverFocus();
         }
 
         rowNode.setHovered(false);

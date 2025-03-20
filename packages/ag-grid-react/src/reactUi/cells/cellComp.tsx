@@ -434,9 +434,8 @@ const CellComp = ({
                         setRenderDetails(undefined);
                     }
                 } else {
-                    // if leaving editor & cell is focused, ensure the cell remains
-                    // focused after the editor is destroyed
-                    const recoverFocus = cellCtrl.isCellFocused() && cellCtrl.hasBrowserFocus();
+                    // if leaving editor & editor is focused, move focus to the cell
+                    const recoverFocus = cellCtrl.hasBrowserFocus();
                     if (recoverFocus) {
                         compProxy.getFocusableElement().focus({ preventScroll: true });
                     }

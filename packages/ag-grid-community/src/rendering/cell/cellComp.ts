@@ -291,12 +291,10 @@ export class CellComp extends Component {
     private destroyEditor(): void {
         const { context } = this.beans;
 
-        // if leaving editor & editor is focused, ensure the cell remains
-        // focused after the editor is destroyed
+        // if leaving editor & editor is focused, move focus to the cell
         const recoverFocus =
-            this.cellCtrl.isCellFocused() &&
-            (this.cellEditorPopupWrapper?.getGui().contains(_getActiveDomElement(this.beans)) ||
-                this.cellCtrl.hasBrowserFocus());
+            this.cellEditorPopupWrapper?.getGui().contains(_getActiveDomElement(this.beans)) ||
+            this.cellCtrl.hasBrowserFocus();
         if (recoverFocus) {
             this.eCell.focus({ preventScroll: true });
         }

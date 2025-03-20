@@ -831,9 +831,9 @@ export class CellCtrl extends BeanStub {
         this.onCompAttachedFuncs = [];
         this.onEditorAttachedFuncs = [];
 
-        // if this was focused; focus will need recovered
-        if (this.hasBeenFocused && this.hasBrowserFocus()) {
-            this.beans.focusSvc.needsFocusRestored = true;
+        // if this was focused; (e.g cell span status changes) then we need to restore focus
+        if (this.isCellFocused() && this.hasBrowserFocus()) {
+            this.beans.focusSvc.attemptToRecoverFocus();
         }
 
         super.destroy();
