@@ -181,9 +181,9 @@ jobs:
         if: matrix.shard != 0
         id: test
         run: |
-        yarn nx ${{ github.event.inputs.nx_command || 'affected' }} -t test --configuration=ci --exclude tag:no-sharding --exclude all --shard=${{ matrix.shard }}/$((${{ strategy.job-total }} - 1))
-        mkdir reports
-        cp ag-grid-docs-links.xml reports/
+          yarn nx ${{ github.event.inputs.nx_command || 'affected' }} -t test --configuration=ci --exclude tag:no-sharding --exclude all --shard=${{ matrix.shard }}/$((${{ strategy.job-total }} - 1))
+          mkdir reports
+          cp ag-grid-docs-links.xml reports/
       - name: nx test (non-sharded)
         if: matrix.shard == 0
         id: test-no-shard
