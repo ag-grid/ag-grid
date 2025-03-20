@@ -13,67 +13,82 @@ import type { GroupRow } from './groupRow';
 // it took about 20 seconds to delete. with the BathRemoved, the reduced to less than 1 second.
 
 interface RemoveDetails {
-    removeFromChildrenAfterGroup: { [id: string]: boolean };
-    removeFromAllLeafChildren: { [id: string]: boolean };
+    fromChildrenAfterGroup: Set<GroupRow> | null;
+    fromAllLeafChildren: Set<GroupRow> | null;
 }
 
 export class BatchRemover {
-    private allSets: { [parentId: string]: RemoveDetails } = {};
-    private allParents: RowNode[] = [];
+    private allSets = new Map<GroupRow, RemoveDetails>();
 
     public removeFromChildrenAfterGroup(parent: RowNode, child: RowNode): void {
         const set = this.getSet(parent);
-        set.removeFromChildrenAfterGroup[child.id!] = true;
+        (set.fromChildrenAfterGroup ??= new Set()).add(child);
     }
 
     public isRemoveFromAllLeafChildren(parent: RowNode, child: RowNode): boolean {
-        const set = this.getSet(parent);
-        return !!set.removeFromAllLeafChildren[child.id!];
+        return !!this.allSets.get(parent)?.fromAllLeafChildren?.has(child);
     }
 
     public preventRemoveFromAllLeafChildren(parent: RowNode, child: RowNode): void {
-        const set = this.getSet(parent);
-        delete set.removeFromAllLeafChildren[child.id!];
+        this.allSets.get(parent)?.fromAllLeafChildren?.delete(child);
     }
 
     public removeFromAllLeafChildren(parent: RowNode, child: RowNode): void {
         const set = this.getSet(parent);
-        set.removeFromAllLeafChildren[child.id!] = true;
+        (set.fromAllLeafChildren ??= new Set()).add(child);
     }
 
     private getSet(parent: RowNode): RemoveDetails {
-        if (!this.allSets[parent.id!]) {
-            this.allSets[parent.id!] = {
-                removeFromAllLeafChildren: {},
-                removeFromChildrenAfterGroup: {},
+        let set = this.allSets.get(parent);
+        if (!set) {
+            set = {
+                fromChildrenAfterGroup: null,
+                fromAllLeafChildren: null,
             };
-            this.allParents.push(parent);
+            this.allSets.set(parent, set);
         }
-        return this.allSets[parent.id!];
+        return set;
     }
 
     public getAllParents(): RowNode[] {
-        return this.allParents;
+        return Array.from(this.allSets.keys());
     }
 
     public flush(): void {
-        this.allParents.forEach((parent: GroupRow) => {
-            const nodeDetails = this.allSets[parent.id!];
+        const allSets = this.allSets;
 
-            parent.childrenAfterGroup = parent.childrenAfterGroup!.filter(
-                (child) => !nodeDetails.removeFromChildrenAfterGroup[child.id!]
-            );
-            parent.allLeafChildren =
-                parent.allLeafChildren?.filter((child) => !nodeDetails.removeFromAllLeafChildren[child.id!]) ?? null;
-            parent.updateHasChildren();
+        for (const parent of allSets.keys()) {
+            const nodeDetails = allSets.get(parent);
+            if (nodeDetails) {
+                const { childrenAfterGroup, allLeafChildren } = parent;
+                const { fromChildrenAfterGroup, fromAllLeafChildren } = nodeDetails;
 
-            const sibling: GroupRow = parent.sibling;
-            if (sibling) {
-                sibling.childrenAfterGroup = parent.childrenAfterGroup;
-                sibling.allLeafChildren = parent.allLeafChildren;
+                if (fromChildrenAfterGroup && childrenAfterGroup) {
+                    let writeIdx = 0;
+                    for (let i = 0, len = childrenAfterGroup.length; i < len; ++i) {
+                        const child = childrenAfterGroup[i];
+                        if (!fromChildrenAfterGroup.has(child)) {
+                            childrenAfterGroup[writeIdx++] = child;
+                        }
+                    }
+                    childrenAfterGroup.length = writeIdx;
+                }
+
+                if (fromAllLeafChildren && allLeafChildren) {
+                    let writeIdx = 0;
+                    for (let i = 0, len = allLeafChildren.length; i < len; ++i) {
+                        const child = allLeafChildren[i];
+                        if (!fromAllLeafChildren.has(child)) {
+                            allLeafChildren[writeIdx++] = child;
+                        }
+                    }
+                    allLeafChildren.length = writeIdx;
+                }
+
+                parent.updateHasChildren();
             }
-        });
-        this.allSets = {};
-        this.allParents.length = 0;
+        }
+
+        allSets.clear();
     }
 }
