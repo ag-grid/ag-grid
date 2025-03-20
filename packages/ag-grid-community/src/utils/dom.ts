@@ -544,16 +544,20 @@ export type ElementParams = {
     attrs?: Attributes;
 
     /**
-     * Child elements to add to the element. Can be a string for text nodes or an array of ElementParams for nested elements.
-     * Nulls are allowed to allow for optional children.
-     * If a string is passed it will be set via `element.textContent = string` to be safe.
+     * A single string can be passed to the children property and this will call `element.textContent = children` on the element.
+     *
+     * Otherwise an array of children is passed.
+     * A child element can be an ElementParams / string / null/undefined.
+     *  - If an ElementParams is passed it will be created and appended to the parent element.
+     *  - If a string is passed it will be appended as a text node.
+     *  - If null or undefined is passed it will be ignored.
      */
     children?: (ElementParams | string | null | undefined)[] | string;
 };
 
 /** AG Grid attribute used to automatically assign DOM Elements to class properties */
 export const DataRefAttribute = 'data-ref';
-const tagMaintainsWhiteSpace = new Set(['span', 'button']);
+const whitespaceNode = document.createTextNode(' ');
 export function _createElement<T extends HTMLElement = HTMLElement>(params: ElementParams): T {
     const { attrs, children, cls, ref, role, tag } = params;
     const element = document.createElement(tag);
@@ -578,28 +582,18 @@ export function _createElement<T extends HTMLElement = HTMLElement>(params: Elem
         if (typeof children === 'string') {
             element.textContent = children;
         } else {
-            // NOTE: To match the previous behaviour of when component templates where defined on multi line strings we need to put whitespace between elements that maintain it.
-            // Ideally we would not do this and just create the elements as they are given to us, but this is maybe a breaking change.
-            let prevMaintainsWhitespace: boolean = false;
-            const lastIndex = children.length - 1;
-
             for (let i = 0; i < children.length; i++) {
                 const child = children[i];
                 if (child) {
                     if (typeof child === 'string') {
                         element.appendChild(document.createTextNode(child));
                     } else {
-                        const currTagMaintainsSpace = tagMaintainsWhiteSpace.has(child.tag);
-                        if (prevMaintainsWhitespace || currTagMaintainsSpace) {
-                            element.appendChild(document.createTextNode(' '));
-                        }
-
-                        element.appendChild(_createElement(child));
-
-                        if (currTagMaintainsSpace && i === lastIndex) {
-                            element.appendChild(document.createTextNode(' '));
-                        }
-                        prevMaintainsWhitespace = currTagMaintainsSpace;
+                        // NOTE: To match the previous behaviour of when component templates where defined on multi line strings we need
+                        // to add a whitespace node before and after each child element.
+                        // Ideally we would not do this but this reduces the chance of breaking changes.
+                        element.appendChild(whitespaceNode.cloneNode());
+                        element.append(_createElement(child));
+                        element.appendChild(whitespaceNode.cloneNode());
                     }
                 }
             }
