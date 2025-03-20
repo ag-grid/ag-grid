@@ -583,8 +583,7 @@ export function _createElement<T extends HTMLElement = HTMLElement>(params: Elem
             element.textContent = children;
         } else {
             let addFirstWhitespace = true;
-            for (let i = 0; i < children.length; i++) {
-                const child = children[i];
+            for (const child of children) {
                 if (child) {
                     if (typeof child === 'string') {
                         element.appendChild(document.createTextNode(child));
