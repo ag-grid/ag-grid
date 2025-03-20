@@ -591,7 +591,9 @@ export function _createElement<T extends HTMLElement = HTMLElement>(params: Elem
                         // NOTE: To match the previous behaviour of when component templates where defined on multi line strings we need
                         // to add a whitespace node before and after each child element.
                         // Ideally we would not do this but this reduces the chance of breaking changes.
-                        element.appendChild(whitespaceNode.cloneNode());
+                        if (i === 0) {
+                            element.appendChild(whitespaceNode.cloneNode());
+                        }
                         element.append(_createElement(child));
                         element.appendChild(whitespaceNode.cloneNode());
                     }
