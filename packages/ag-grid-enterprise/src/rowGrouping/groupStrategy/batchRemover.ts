@@ -56,24 +56,20 @@ export class BatchRemover {
 
     public flush(): void {
         const allSets = this.allSets;
-
         for (const parent of allSets.keys()) {
             const nodeDetails = allSets.get(parent);
             if (nodeDetails) {
                 const { fromChildrenAfterGroup, fromAllLeafChildren } = nodeDetails;
                 const { childrenAfterGroup, allLeafChildren } = parent;
-
                 if (childrenAfterGroup && fromChildrenAfterGroup) {
                     filterRowNodesInPlace(childrenAfterGroup, fromChildrenAfterGroup);
                     parent.updateHasChildren();
                 }
-
                 if (allLeafChildren && fromAllLeafChildren) {
                     filterRowNodesInPlace(allLeafChildren, fromAllLeafChildren);
                 }
             }
         }
-
         allSets.clear();
     }
 }
