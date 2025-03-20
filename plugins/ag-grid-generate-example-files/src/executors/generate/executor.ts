@@ -386,7 +386,7 @@ async function writeContents(
     if (options.writeFiles) {
         for (const file in result.files) {
             const value = result.files[file];
-            if (value !== undefined && typeof value !== 'string') {
+            if (value !== undefined) {
                 await writeFile(path.join(options.outputPath, internalFramework, file), value);
             }
         }
