@@ -22,7 +22,6 @@ import {
     _setAriaExpanded,
     _stopPropagationForAgGrid,
     _warn,
-    isColumnGroupAutoCol,
 } from 'ag-grid-community';
 
 import { _getGroupValue, _isHiddenParent } from '../rowHierarchyUtils';
@@ -559,8 +558,7 @@ export class GroupCellRendererCtrl extends BeanStub implements IGroupCellRendere
 
         const { node, column } = this.params;
         const rowSelection = this.gos.get('rowSelection');
-        const isAutoGroupColumn =
-            column?.getColDef().showRowGroup != null || (column && isColumnGroupAutoCol(column as AgColumn));
+        const isAutoGroupColumn = column?.getColDef().showRowGroup != null;
         const isCheckboxLocationHere = isAutoGroupColumn && _getCheckboxLocation(rowSelection) === 'autoGroupColumn';
         const checkboxes =
             typeof rowSelection === 'object'
