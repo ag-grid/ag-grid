@@ -548,7 +548,7 @@ export type ElementParams = {
      *
      * Otherwise an array of children is passed.
      * A child element can be an ElementParams / string / null/undefined.
-     *  - If an ElementParams is passed it will be created and appended to the parent element.
+     *  - If an ElementParams is passed it will be created and appended to the parent element. It will be wrapped with whitespace to mimic the previous behaviour of multi line strings.
      *  - If a string is passed it will be appended as a text node.
      *  - If null or undefined is passed it will be ignored.
      */
@@ -582,6 +582,7 @@ export function _createElement<T extends HTMLElement = HTMLElement>(params: Elem
         if (typeof children === 'string') {
             element.textContent = children;
         } else {
+            let firstWhitespaceAdded = false;
             for (let i = 0; i < children.length; i++) {
                 const child = children[i];
                 if (child) {
@@ -591,8 +592,9 @@ export function _createElement<T extends HTMLElement = HTMLElement>(params: Elem
                         // NOTE: To match the previous behaviour of when component templates where defined on multi line strings we need
                         // to add a whitespace node before and after each child element.
                         // Ideally we would not do this but this reduces the chance of breaking changes.
-                        if (i === 0) {
+                        if (!firstWhitespaceAdded) {
                             element.appendChild(whitespaceNode.cloneNode());
+                            firstWhitespaceAdded = true;
                         }
                         element.append(_createElement(child));
                         element.appendChild(whitespaceNode.cloneNode());
