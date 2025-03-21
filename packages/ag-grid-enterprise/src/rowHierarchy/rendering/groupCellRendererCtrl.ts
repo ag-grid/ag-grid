@@ -544,11 +544,6 @@ export class GroupCellRendererCtrl extends BeanStub implements IGroupCellRendere
             return;
         }
 
-        const isMultiAutoCol = typeof column?.getColDef().showRowGroup === 'string';
-        if (isMultiAutoCol && !this.isExpandable()) {
-            return;
-        }
-
         this.addManagedPropertyListener('rowSelection', ({ currentValue, previousValue }) => {
             const curr = typeof currentValue === 'object' ? currentValue : undefined;
             const prev = typeof previousValue === 'object' ? previousValue : undefined;
@@ -591,6 +586,13 @@ export class GroupCellRendererCtrl extends BeanStub implements IGroupCellRendere
             return;
         }
 
+        // if user wants checkboxes, but this cell is wrong, add extra alignment padding
+        const isMultiAutoCol = typeof column?.getColDef().showRowGroup === 'string';
+        if (isMultiAutoCol && !this.isExpandable()) {
+            this.comp.setCheckboxSpacing(true);
+            return;
+        }
+
         const cbSelectionComponent = selectionSvc.createCheckboxSelectionComponent();
         this.cbComp = cbSelectionComponent;
         this.createBean(cbSelectionComponent);
@@ -609,6 +611,7 @@ export class GroupCellRendererCtrl extends BeanStub implements IGroupCellRendere
     }
 
     private destroyCheckbox(): void {
+        this.comp.setCheckboxSpacing(false);
         this.comp.setCheckboxVisible(false);
         this.cbComp && this.eCheckbox.removeChild(this.cbComp.getGui());
         this.cbComp = this.destroyBean(this.cbComp);

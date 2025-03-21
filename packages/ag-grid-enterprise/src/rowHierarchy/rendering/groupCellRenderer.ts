@@ -43,6 +43,7 @@ export class GroupCellRenderer extends Component implements ICellRendererComp {
             setContractedDisplayed: (expanded) => _setDisplayed(this.eContracted, expanded),
             setExpandedDisplayed: (expanded) => _setDisplayed(this.eExpanded, expanded),
             setCheckboxVisible: (visible) => this.eCheckbox.classList.toggle('ag-invisible', !visible),
+            setCheckboxSpacing: (add) => this.eCheckbox.classList.toggle('ag-group-checkbox-spacing', add),
         };
 
         const ctrl = this.createManagedBean(new GroupCellRendererCtrl());

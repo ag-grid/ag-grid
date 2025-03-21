@@ -70,6 +70,7 @@ export interface IGroupCellRenderer {
     setInnerRenderer(compDetails: UserCompDetails | undefined, valueToDisplay: any): void;
     setChildCount(count: string): void;
     setCheckboxVisible(value: boolean): void;
+    setCheckboxSpacing(add: boolean): void;
     setExpandedDisplayed(value: boolean): void;
     setContractedDisplayed(value: boolean): void;
     addOrRemoveCssClass(cssClassName: string, on: boolean): void;
