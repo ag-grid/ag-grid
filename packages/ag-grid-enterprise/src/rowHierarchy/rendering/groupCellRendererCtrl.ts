@@ -99,7 +99,6 @@ export class GroupCellRendererCtrl extends BeanStub implements IGroupCellRendere
             // if this isn't the column we are showing the group for, then we don't show anything
             return;
         }
-        this.setupCheckbox();
         this.addFooterValue();
         this.setupIndent();
 
