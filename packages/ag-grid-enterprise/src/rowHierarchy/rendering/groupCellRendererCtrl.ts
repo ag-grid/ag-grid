@@ -575,7 +575,7 @@ export class GroupCellRendererCtrl extends BeanStub implements IGroupCellRendere
         const isFullWidthGroupRow = !column && node.group;
 
         // might have checkbox if `checkboxLocation=autoGroupColumn` or if cell is not for grouping
-        const allowCheckboxForColumn = isShowCheckboxInAutoCol || (!isGroupColumn && !isFullWidthGroupRow);
+        const allowCheckboxForColumn = isShowCheckboxInAutoCol && (isGroupColumn || isFullWidthGroupRow);
         if (!allowCheckboxForColumn) {
             return;
         }
