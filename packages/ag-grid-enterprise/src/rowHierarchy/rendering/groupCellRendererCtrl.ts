@@ -570,14 +570,18 @@ export class GroupCellRendererCtrl extends BeanStub implements IGroupCellRendere
         const { node, column } = this.params;
         const rowSelection = this.gos.get('rowSelection');
 
-        const isShowCheckboxInAutoCol = _getCheckboxLocation(rowSelection) === 'autoGroupColumn';
-        const isGroupColumn = column?.getColDef().showRowGroup != null;
-        const isFullWidthGroupRow = !column && node.group;
-
-        // might have checkbox if `checkboxLocation=autoGroupColumn` or if cell is not for grouping
-        const allowCheckboxForColumn = isShowCheckboxInAutoCol && (isGroupColumn || isFullWidthGroupRow);
-        if (!allowCheckboxForColumn) {
+        const checkboxLocation = _getCheckboxLocation(rowSelection);
+        if (checkboxLocation === 'selectionColumn') {
             return;
+        }
+
+        if (checkboxLocation === 'autoGroupColumn') {
+            const isGroupColumn = column?.getColDef().showRowGroup != null;
+            const isFullWidthGroupRow = !column && node.group;
+            const isApplicableCell = isGroupColumn || isFullWidthGroupRow;
+            if (!isApplicableCell) {
+                return;
+            }
         }
 
         const checkboxes = typeof rowSelection === 'object' ? _getCheckboxes(rowSelection) : this.params.checkbox;
