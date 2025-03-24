@@ -233,7 +233,6 @@ export class RowRenderer extends BeanStub implements NamedBean {
     /**
      * Notifies all row and cell controls of any change in focused cell.
      * @param event cell focused event
-     * @param skipRenderCheck skips the check to ensure cell is rendered
      */
     private onCellFocusChanged(event?: CellFocusedEvent) {
         // if the focused cell has not been rendered, need to render cell so focus can be captured.
