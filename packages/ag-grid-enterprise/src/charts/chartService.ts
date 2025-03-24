@@ -9,6 +9,7 @@ import type {
     ChartParamsCellRange,
     ChartRef,
     ChartType,
+    Column,
     CreateCrossFilterChartParams,
     CreatePivotChartParams,
     CreateRangeChartParams,
@@ -320,7 +321,31 @@ export class ChartService extends BeanStub implements NamedBean, IChartService {
 
     private getSelectedRange(): PartialCellRange {
         const ranges = this.rangeSvc?.getCellRanges() ?? [];
-        return ranges.length > 0 ? ranges[0] : { columns: [] };
+        if (ranges.length === 0) {
+            return { columns: [] };
+        }
+
+        const columns = ranges.reduce((cols, range) => cols.concat(range.columns), [] as Column[]);
+        let startRow = -1;
+        let endRow = -1;
+        ranges.forEach((range) => {
+            if (range.startRow && range.endRow) {
+                startRow = startRow === -1 ? range.startRow.rowIndex : Math.min(startRow, range.startRow.rowIndex);
+                endRow = endRow === -1 ? range.endRow.rowIndex : Math.max(endRow, range.endRow.rowIndex);
+            }
+        });
+        return {
+            columns,
+            startColumn: columns[0],
+            startRow: {
+                rowIndex: startRow,
+                rowPinned: undefined,
+            },
+            endRow: {
+                rowIndex: endRow,
+                rowPinned: undefined,
+            },
+        };
     }
 
     private generateId(): string {
