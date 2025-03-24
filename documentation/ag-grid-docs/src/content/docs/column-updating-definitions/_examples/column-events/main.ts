@@ -40,35 +40,35 @@ function getColumnDefs(): ColDef[] {
 }
 
 function onSortChanged(e: SortChangedEvent) {
-    console.log('Event Sort Changed', e);
+    console.log('Event: ', e.type);
 }
 
 function onColumnResized(e: ColumnResizedEvent) {
-    console.log('Event Column Resized', e);
+    console.log('Event: ', e.type);
 }
 
 function onColumnVisible(e: ColumnVisibleEvent) {
-    console.log('Event Column Visible', e);
+    console.log('Event: ', e.type);
 }
 
 function onColumnPivotChanged(e: ColumnPivotChangedEvent) {
-    console.log('Event Pivot Changed', e);
+    console.log('Event: ', e.type);
 }
 
 function onColumnRowGroupChanged(e: ColumnRowGroupChangedEvent) {
-    console.log('Event Row Group Changed', e);
+    console.log('Event: ', e.type);
 }
 
 function onColumnValueChanged(e: ColumnValueChangedEvent) {
-    console.log('Event Value Changed', e);
+    console.log('Event: ', e.type);
 }
 
 function onColumnMoved(e: ColumnMovedEvent) {
-    console.log('Event Column Moved', e);
+    console.log('Event: ', e.type);
 }
 
 function onColumnPinned(e: ColumnPinnedEvent) {
-    console.log('Event Column Pinned', e);
+    console.log('Event: ', e.type);
 }
 
 let gridApi: GridApi<IOlympicData>;
@@ -133,7 +133,7 @@ function onBtWidthNormal() {
 function onBtHide() {
     const columnDefs: ColDef[] = getColumnDefs();
     columnDefs.forEach((colDef) => {
-        if (colDef.field === 'age' || colDef.field === 'athlete') {
+        if (colDef.field === 'age' || colDef.field === 'gold') {
             colDef.hide = true;
         }
     });
