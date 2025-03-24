@@ -1,0 +1,16 @@
+label,
+.row {
+    box-sizing: border-box;
+    display: block;
+    padding: 2px;
+}
+
+.row label {
+    display: inline;
+    padding: 0;
+}
+
+button {
+    display: inline-block;
+    font-weight: bold;
+}
