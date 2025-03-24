@@ -465,14 +465,18 @@ export class GroupCellRendererCtrl extends BeanStub implements IGroupCellRendere
             return true;
         }
 
-        // in non showRowGroup cols hide chevrons on group rows - only useful for master-detail on leaf nodes
-        if (node.group && !colDef?.showRowGroup) {
-            return false;
-        }
+        const hasChildren = (node as RowNode).hasChildren();
+        if (hasChildren && colDef) {
+            const { showRowGroup } = colDef;
+            // if col has grouping/tree data children then only showRowGroup cols are expandable
+            if (!showRowGroup) {
+                return false;
+            }
 
-        // single group column, so we show expand / contract on every group cell
-        if (column?.getColDef().showRowGroup === true && node.group) {
-            return true;
+            // if single auto col, this is the correct col for displaying chevron
+            if (showRowGroup === true) {
+                return true;
+            }
         }
 
         // if not showing adjusted node for [groupHideOpenParents]
