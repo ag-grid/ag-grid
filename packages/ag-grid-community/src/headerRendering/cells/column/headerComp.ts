@@ -152,12 +152,13 @@ const HeaderCompElement = getHeaderCompElementParams(true);
 const HeaderCompElementNoSort = getHeaderCompElementParams(false);
 
 export class HeaderComp extends Component implements IHeaderComp {
-    private eFilter: HTMLElement = RefPlaceholder;
+    // All the elements are optional, as they are not guaranteed to be present if the user provides a custom template
+    private eFilter?: HTMLElement = RefPlaceholder;
     public eFilterButton?: HTMLElement = RefPlaceholder;
-    private eSortIndicator: SortIndicatorComp = RefPlaceholder;
+    private eSortIndicator?: SortIndicatorComp = RefPlaceholder;
     public eMenu?: HTMLElement = RefPlaceholder;
-    private eLabel: HTMLElement = RefPlaceholder;
-    private eText: HTMLElement = RefPlaceholder;
+    private eLabel?: HTMLElement = RefPlaceholder;
+    private eText?: HTMLElement = RefPlaceholder;
 
     /**
      * Selectors for custom headers templates
@@ -255,7 +256,9 @@ export class HeaderComp extends Component implements IHeaderComp {
 
             if (this.isAlive()) {
                 this.innerHeaderComponent = comp;
-                this.eText.appendChild(comp.getGui());
+                if (this.eText) {
+                    this.eText.appendChild(comp.getGui());
+                }
             } else {
                 this.destroyBean(comp);
             }
@@ -267,7 +270,12 @@ export class HeaderComp extends Component implements IHeaderComp {
         const oldDisplayName = this.currentDisplayName;
         this.currentDisplayName = displayName;
 
-        if (oldDisplayName === displayName || this.innerHeaderComponent || this.isLoadingInnerComponent) {
+        if (
+            !this.eText ||
+            oldDisplayName === displayName ||
+            this.innerHeaderComponent ||
+            this.isLoadingInnerComponent
+        ) {
             return;
         }
         const displayNameSanitised = _escapeString(displayName, true);
@@ -383,7 +391,11 @@ export class HeaderComp extends Component implements IHeaderComp {
         if (!eFilter) {
             return;
         }
-        this.configureFilter(params.enableFilterIcon, eFilter, this.onFilterChangedIcon.bind(this), 'filterActive');
+        const onFilterChangedIcon = () => {
+            const filterPresent = this.params.column.isFilterActive();
+            _setDisplayed(eFilter, filterPresent, { skipAriaHidden: true });
+        };
+        this.configureFilter(params.enableFilterIcon, eFilter, onFilterChangedIcon, 'filterActive');
     }
 
     private setupFilterButton(): void {
@@ -423,11 +435,6 @@ export class HeaderComp extends Component implements IHeaderComp {
         this.addManagedListeners(column, { filterChanged: filterChangedCallback });
         filterChangedCallback();
         return true;
-    }
-
-    private onFilterChangedIcon(): void {
-        const filterPresent = this.params.column.isFilterActive();
-        _setDisplayed(this.eFilter, filterPresent, { skipAriaHidden: true });
     }
 
     private onFilterChangedButton(): void {
