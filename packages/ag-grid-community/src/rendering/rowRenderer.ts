@@ -218,22 +218,25 @@ export class RowRenderer extends BeanStub implements NamedBean {
     }
 
     private isCellRendered(rowIndex: number, column?: AgColumn): boolean {
-        const allRowCtrls = this.getAllRowCtrls();
-        for (const rowCtrl of allRowCtrls) {
-            if (rowCtrl.rowNode.rowPinned || rowCtrl.rowNode.rowIndex !== rowIndex) {
-                // cannot return early if index is different; as the grid holds multiple row ctrls for the same row
-                continue;
-            }
+        const rowCtrl = this.rowCtrlsByRowIndex[rowIndex];
 
-            if (rowCtrl.isFullWidth() || !column) {
-                return true;
-            }
-
-            if (rowCtrl.getCellCtrl(column)) {
-                return true;
-            }
+        // if no column, simply check for row ctrl
+        if (!column) {
+            return !!rowCtrl;
         }
-        return false;
+
+        if (rowCtrl && rowCtrl.isFullWidth()) {
+            return true;
+        }
+
+        // check if this is spanned, if it has been rendered by the span renderer
+        const spannedCell = this.beans.spannedRowRenderer?.getCellByPosition({ rowIndex, column, rowPinned: null });
+        if (spannedCell) {
+            return true;
+        }
+
+        // otherwise, check if the cell is rendered
+        return !!rowCtrl?.getCellCtrl(column);
     }
 
     /**
