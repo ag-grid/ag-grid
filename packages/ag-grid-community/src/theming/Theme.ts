@@ -12,7 +12,7 @@ import { paramValueToCss } from './theme-types';
 import { paramToVariableName } from './theme-utils';
 
 // For testing, if true, only Vanilla examples will work and they will use legacy themes.
-export const FORCE_LEGACY_THEMES = false;
+export const FORCE_LEGACY_THEMES = true;
 
 export type Theme<TParams = unknown> = {
     /**
