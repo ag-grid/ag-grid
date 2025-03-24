@@ -218,7 +218,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
     }
 
     private isCellRendered(rowIndex: number, column?: AgColumn): boolean {
-        const rowCtrl = this.rowCtrlsByRowIndex[rowIndex!];
+        const rowCtrl = this.getRowByPosition({ rowIndex, rowPinned: null });
         if (!rowCtrl) {
             return false;
         }
@@ -230,9 +230,14 @@ export class RowRenderer extends BeanStub implements NamedBean {
         return !!rowCtrl.getCellCtrl(column, false);
     }
 
-    private onCellFocusChanged(event?: CellFocusedEvent) {
+    /**
+     * Notifies all row and cell controls of any change in focused cell.
+     * @param event cell focused event
+     * @param skipRenderCheck skips the check to ensure cell is rendered
+     */
+    private onCellFocusChanged(event?: CellFocusedEvent, skipRenderCheck?: boolean) {
         // if the focused cell has not been rendered, need to render cell so focus can be captured.
-        if (event && event.rowIndex != null && !event.rowPinned) {
+        if (!skipRenderCheck && event && event.rowIndex != null && !event.rowPinned) {
             const col = this.beans.colModel.getCol(event.column) ?? undefined;
             if (!this.isCellRendered(event.rowIndex, col)) {
                 this.redrawAfterModelUpdate();
@@ -708,7 +713,8 @@ export class RowRenderer extends BeanStub implements NamedBean {
                     forceBrowserFocus: true,
                     preventScrollOnBrowserFocus: true,
                     type: 'cellFocused',
-                })
+                }),
+                true
             );
         }
     }
