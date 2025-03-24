@@ -71,6 +71,9 @@ const GridExample = () => {
         if (params.event.code !== 'Enter') {
             return;
         }
+        if (params.node.level === 0) {
+            return;
+        }
         if (params.colDef.showRowGroup) {
             params.node.setExpanded(!params.node.expanded);
         }
