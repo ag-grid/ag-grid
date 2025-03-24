@@ -33,10 +33,7 @@ ModuleRegistry.registerModules([
 
 function changeSize(value: string) {
     const sizes = ['large', 'normal', 'compact'];
-
-    const el = document.getElementById('myGrid')!;
-
-    sizes.forEach((size) => el.classList.toggle(size, size === value));
+    sizes.forEach((size) => document.body.classList.toggle(size, size === value));
 }
 
 const columnDefs: ColDef[] = [
