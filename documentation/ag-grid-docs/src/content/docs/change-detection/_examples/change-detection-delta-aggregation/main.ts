@@ -5,6 +5,7 @@ import {
     ClientSideRowModelModule,
     HighlightChangesModule,
     ModuleRegistry,
+    NumberEditorModule,
     NumberFilterModule,
     TextEditorModule,
     ValidationModule,
@@ -20,6 +21,7 @@ ModuleRegistry.registerModules([
     SetFilterModule,
     HighlightChangesModule,
     NumberFilterModule,
+    NumberEditorModule,
     TextEditorModule,
     ValidationModule /* Development Only */,
 ]);
@@ -60,7 +62,6 @@ const gridOptions: GridOptions = {
             cellClass: 'number-cell',
             cellRenderer: 'agAnimateShowChangeCellRenderer',
             filter: 'agNumberColumnFilter',
-            valueParser: numberValueParser,
         },
         totalColumn: {
             cellRenderer: 'agAnimateShowChangeCellRenderer',
@@ -121,12 +122,6 @@ function createRowItem(i: number, j: number, k: number) {
         rowDataItem.group = 'Group A' + j;
     }
     return rowDataItem;
-}
-
-// converts strings to numbers
-function numberValueParser(params: ValueParserParams) {
-    console.log('=> updating to ' + params.newValue);
-    return Number(params.newValue);
 }
 
 function updateOneRecord() {

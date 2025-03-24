@@ -4,6 +4,7 @@ import {
     ClientSideRowModelModule,
     HighlightChangesModule,
     ModuleRegistry,
+    NumberEditorModule,
     NumberFilterModule,
     TextEditorModule,
     TextFilterModule,
@@ -18,6 +19,7 @@ ModuleRegistry.registerModules([
     CellStyleModule,
     ClientSideRowModelModule,
     NumberFilterModule,
+    NumberEditorModule,
     ValidationModule /* Development Only */,
 ]);
 
@@ -46,7 +48,6 @@ const gridOptions: GridOptions = {
         valueColumn: {
             minWidth: 90,
             editable: true,
-            valueParser: 'Number(newValue)',
             filter: 'agNumberColumnFilter',
         },
     },
