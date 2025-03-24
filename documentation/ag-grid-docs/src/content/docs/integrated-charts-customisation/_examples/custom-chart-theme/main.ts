@@ -1,4 +1,4 @@
-import { AgChartsEnterpriseModule } from 'ag-charts-enterprise';
+import { AgChartsEnterpriseModule, type AgThemeOverrides } from 'ag-charts-enterprise';
 
 import type { FirstDataRenderedEvent, GridApi, GridOptions, GridReadyEvent } from 'ag-grid-community';
 import { ClientSideRowModelModule, ModuleRegistry, ValidationModule, createGrid } from 'ag-grid-community';
@@ -17,7 +17,7 @@ ModuleRegistry.registerModules([
 
 let gridApi: GridApi;
 
-const commonThemeProperties = {
+const commonThemeProperties: { overrides: AgThemeOverrides } = {
     overrides: {
         common: {
             legend: {
@@ -50,18 +50,16 @@ const commonThemeProperties = {
                     line: {
                         width: 2,
                     },
-                    rotation: 0,
+                    label: {
+                        rotation: 0,
+                    },
                 },
             },
         },
     },
 };
 
-const myCustomThemeLight = deepMerge(commonThemeProperties, {
-    palette: {
-        fills: ['#42a5f5', '#ffa726', '#81c784'],
-        strokes: ['#000000', '#424242'],
-    },
+const myCustomOverridesLight: { overrides: AgThemeOverrides } = {
     overrides: {
         common: {
             background: {
@@ -108,13 +106,17 @@ const myCustomThemeLight = deepMerge(commonThemeProperties, {
             },
         },
     },
-});
+};
 
-const myCustomThemeDark = deepMerge(commonThemeProperties, {
+const myCustomThemeLight = deepMerge(commonThemeProperties, {
     palette: {
         fills: ['#42a5f5', '#ffa726', '#81c784'],
-        strokes: ['#ffffff', '#B0BEC5'],
+        strokes: ['#000000', '#424242'],
     },
+    myCustomOverrides: myCustomOverridesLight,
+});
+
+const myCustomOverridesDark: { overrides: AgThemeOverrides } = {
     overrides: {
         common: {
             background: {
@@ -161,6 +163,14 @@ const myCustomThemeDark = deepMerge(commonThemeProperties, {
             },
         },
     },
+};
+
+const myCustomThemeDark = deepMerge(commonThemeProperties, {
+    palette: {
+        fills: ['#42a5f5', '#ffa726', '#81c784'],
+        strokes: ['#ffffff', '#B0BEC5'],
+    },
+    myCustomOverridesDark,
 });
 
 const gridOptions: GridOptions = {
