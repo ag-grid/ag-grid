@@ -328,6 +328,7 @@ const isUseMemoProp = (propName) =>
         'rowClass',
         'rowClassRules',
         'rowStyle',
+        'detailCellRendererParams',
     ].includes(propName);
 
 const isUseCallbackProp = (propName) => ['getDataPath', 'getRowId', 'getRowClass', 'getRowStyle'].includes(propName);
