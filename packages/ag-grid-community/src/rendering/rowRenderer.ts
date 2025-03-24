@@ -218,16 +218,22 @@ export class RowRenderer extends BeanStub implements NamedBean {
     }
 
     private isCellRendered(rowIndex: number, column?: AgColumn): boolean {
-        const rowCtrl = this.getRowByPosition({ rowIndex, rowPinned: null });
-        if (!rowCtrl) {
-            return false;
-        }
+        const allRowCtrls = this.getAllRowCtrls();
+        for (const rowCtrl of allRowCtrls) {
+            if (rowCtrl.rowNode.rowPinned || rowCtrl.rowNode.rowIndex !== rowIndex) {
+                // cannot return early if index is different; as the grid holds multiple row ctrls for the same row
+                continue;
+            }
 
-        if (rowCtrl.isFullWidth() || !column) {
-            return true;
-        }
+            if (rowCtrl.isFullWidth() || !column) {
+                return true;
+            }
 
-        return !!rowCtrl.getCellCtrl(column, false);
+            if (rowCtrl.getCellCtrl(column)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
