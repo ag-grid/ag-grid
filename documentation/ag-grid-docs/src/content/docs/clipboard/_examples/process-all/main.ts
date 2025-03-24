@@ -37,10 +37,10 @@ const gridOptions: GridOptions = {
         flex: 1,
 
         cellClassRules: {
-            'cell-green': 'value.startsWith("Green")',
-            'cell-blue': 'value.startsWith("Blue")',
-            'cell-red': 'value.startsWith("Red")',
-            'cell-yellow': 'value.startsWith("Yellow")',
+            'cell-green': 'value && value.startsWith("Green")',
+            'cell-blue': 'value && value.startsWith("Blue")',
+            'cell-red': 'value && value.startsWith("Red")',
+            'cell-yellow': 'value && value.startsWith("Yellow")',
         },
     },
 
