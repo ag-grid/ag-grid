@@ -181,13 +181,11 @@ export class ChartDatasource extends BeanStub {
 
                         // Reuse previously created value object if it already exists
                         const groupingKey = groupingValue.toString();
+                        const cachedGroupingValue = groupingCache[groupingKey];
 
-                        if (groupingCache[groupingKey]) {
-                            data[colId] = groupingCache[groupingKey];
-                        } else {
-                            groupingCache[groupingKey] = groupingValue;
-                            data[colId] = groupingValue;
-                        }
+                        data[colId] = cachedGroupingValue
+                            ? cachedGroupingValue
+                            : (groupingCache[groupingKey] = groupingValue);
 
                         // keep track of group node indexes, so they can be padded when other groups are expanded
                         if (rowNode.group) {
