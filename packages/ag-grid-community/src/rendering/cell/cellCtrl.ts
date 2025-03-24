@@ -321,14 +321,20 @@ export class CellCtrl extends BeanStub {
     }
 
     private isCheckboxSelection(colDef: ColDef): boolean | CheckboxSelectionCallback | undefined {
-        const { rowSelection } = this.beans.gridOptions;
+        const { rowSelection, groupDisplayType } = this.beans.gridOptions;
+        const checkboxLocation = _getCheckboxLocation(rowSelection);
+        const isSelectionColumn = isColumnSelectionCol(this.column);
+
+        // Specific check for custom group display type here because we assume one of the non-selection
+        // columns will have `showRowGroup != null` and so in this case we will be rendering the checkbox
+        // in the group cell rather than here (the selection column)
+        if (groupDisplayType === 'custom' && checkboxLocation !== 'selectionColumn' && isSelectionColumn) {
+            return false;
+        }
+
         return (
             colDef.checkboxSelection ||
-            (isColumnSelectionCol(this.column) &&
-                _getCheckboxLocation(rowSelection) == 'selectionColumn' &&
-                rowSelection &&
-                typeof rowSelection !== 'string' &&
-                _getCheckboxes(rowSelection))
+            (isSelectionColumn && typeof rowSelection === 'object' && _getCheckboxes(rowSelection))
         );
     }
 

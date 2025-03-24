@@ -1,0 +1,4 @@
+.ag-group-checkbox-spacing {
+    width: var(--ag-icon-size);
+    margin-right: var(--ag-cell-widget-spacing);
+}

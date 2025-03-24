@@ -35,6 +35,8 @@
     > div {
         padding: $spacing-size-2;
         border-bottom: 1px solid var(--color-border-secondary);
+        white-space: pre-wrap;
+        line-height: var(--text-lh-base);
 
         &:nth-child(odd) {
             background-color: color-mix(in srgb, var(--color-bg-primary) 66.66%, transparent);
