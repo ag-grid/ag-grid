@@ -1,4 +1,5 @@
-import { AgChartsEnterpriseModule, type AgThemeOverrides } from 'ag-charts-enterprise';
+import { AgChartsEnterpriseModule } from 'ag-charts-enterprise';
+import type { AgThemeOverrides } from 'ag-charts-enterprise';
 
 import type { FirstDataRenderedEvent, GridApi, GridOptions, GridReadyEvent } from 'ag-grid-community';
 import { ClientSideRowModelModule, ModuleRegistry, ValidationModule, createGrid } from 'ag-grid-community';
