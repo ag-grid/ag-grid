@@ -181,8 +181,9 @@ export class ChartDatasource extends BeanStub {
 
                         // Reuse previously created value object if it already exists
                         const groupingKey = groupingValue.toString();
-                        if (groupingCache[groupingKey]) {
-                            data[colId] = groupingCache[groupingKey];
+                        const cachedGroupingValue = groupingCache[groupingKey];
+                        if (cachedGroupingValue) {
+                            data[colId] = cachedGroupingValue;
                         } else {
                             groupingCache[groupingKey] = groupingValue;
                         }
