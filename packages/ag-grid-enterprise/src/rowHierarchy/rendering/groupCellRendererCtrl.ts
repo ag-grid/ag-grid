@@ -537,7 +537,7 @@ export class GroupCellRendererCtrl extends BeanStub implements IGroupCellRendere
      * Selection checkboxes
      */
     private setupCheckbox(): void {
-        const { column, node } = this.params;
+        const { node } = this.params;
 
         const isRowSelectable = !node.footer && !node.rowPinned && !node.detail;
         if (!isRowSelectable) {
