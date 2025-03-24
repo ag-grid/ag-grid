@@ -35,13 +35,7 @@ If you are only interested in restoring Column State on grid initialisation, you
 There are two API methods provided for getting and setting Column State. `api.getColumnState()` gets the current
 column state and `api.applyColumnState(params)` sets the column state.
 
-```{% frameworkTransform=true %}
-// save the column state
-const savedState = api.getColumnState();
-
-// restore the column state
-api.applyColumnState({ state: savedState });
-```
+{% apiDocumentation source="grid-api/api.json" section="state" names=["getColumnState", "applyColumnState"] /%}
 
 The example below demonstrates saving and restoring column state. Try the following:
 
