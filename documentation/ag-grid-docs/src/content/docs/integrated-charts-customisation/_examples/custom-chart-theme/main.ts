@@ -114,7 +114,7 @@ const myCustomThemeLight = deepMerge(commonThemeProperties, {
         fills: ['#42a5f5', '#ffa726', '#81c784'],
         strokes: ['#000000', '#424242'],
     },
-    myCustomOverrides: myCustomOverridesLight,
+    ...myCustomOverridesLight,
 });
 
 const myCustomOverridesDark: { overrides: AgThemeOverrides } = {
@@ -171,7 +171,7 @@ const myCustomThemeDark = deepMerge(commonThemeProperties, {
         fills: ['#42a5f5', '#ffa726', '#81c784'],
         strokes: ['#ffffff', '#B0BEC5'],
     },
-    myCustomOverridesDark,
+    ...myCustomOverridesDark,
 });
 
 const gridOptions: GridOptions = {
