@@ -1,10 +1,11 @@
 [
     {
-        "version": "33.2.1"
+        "version": "33.2.1",
+        "date": "March 24th, 2025"
     },
     {
         "version": "33.2.0",
-        "date": "March 25th, 2025",
+        "date": "March 24th, 2025",
         "landingPageHighlight": "Find, Tree Data Self-Referencing Records, Status Bar Value Formatting, Row Spanning Pagination Support",
         "highlights": [
             {
@@ -29,9 +30,6 @@
         ],
         "notesPath": "./upgrading-to-ag-grid-33-2",
         "hideBlogPostLink": false
-    },
-    {
-        "version": "33.2.1"
     },
     {
         "version": "33.1.1",
