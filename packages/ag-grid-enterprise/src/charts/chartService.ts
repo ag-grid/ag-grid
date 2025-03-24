@@ -326,14 +326,16 @@ export class ChartService extends BeanStub implements NamedBean, IChartService {
         }
 
         const columns = ranges.reduce((cols, range) => cols.concat(range.columns), [] as Column[]);
-        let startRow = -1;
-        let endRow = -1;
+        let startRow = Number.MAX_VALUE;
+        let endRow = Number.MIN_VALUE;
+
         ranges.forEach((range) => {
             if (range.startRow && range.endRow) {
-                startRow = startRow === -1 ? range.startRow.rowIndex : Math.min(startRow, range.startRow.rowIndex);
-                endRow = endRow === -1 ? range.endRow.rowIndex : Math.max(endRow, range.endRow.rowIndex);
+                startRow = Math.min(startRow, range.startRow.rowIndex);
+                endRow = Math.max(endRow, range.endRow.rowIndex);
             }
         });
+
         return {
             columns,
             startColumn: columns[0],
