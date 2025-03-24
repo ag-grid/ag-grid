@@ -30,7 +30,7 @@ The example below shows configuring a Detail Grid with some additional Grid Opti
 
 Row data is provided to the Detail Grid by implementing the `getDetailRowData` callback of the Detail Cell Renderer Params. The interface of this callback is as follows:
 
-{% interfaceDocumentation interfaceName="IDetailCellRendererParams" names=["getDetailRowData"] config={"overrideBottomMargin":"1rem"} /%}
+{% interfaceDocumentation interfaceName="IDetailCellRendererParams" names=["getDetailRowData"] config={"overrideBottomMargin":"1rem", "description": ""} /%}
 
 The `successCallback` can be called immediately in a synchronous fashion (typical if the data is already available) or asynchronously at a later time (typical if the data needs to be fetched remotely).
 
