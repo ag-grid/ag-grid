@@ -1,20 +1,14 @@
 .wrapper {
-    display: flex;
-    flex-direction: column;
-    height: calc(100% - 50px);
-    margin-top: 5px;
+    display: grid;
+    grid-template-rows: 50px 300px 400px;
+    gap: 10px;
+    padding: 10px;
+}
+
+#buttonRow {
+    grid-row: 1;
 }
 
 #axisBtn {
     text-transform: capitalize;
-}
-
-#myGrid {
-    height: 300px;
-    flex: none;
-}
-
-.my-chart {
-    height: 400px;
-    flex: none;
 }

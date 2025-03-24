@@ -325,6 +325,7 @@ const isUseMemoProp = (propName) =>
         'statusBar',
         'autoSizeStrategy',
         'rowNumbers',
+        'detailCellRendererParams',
     ].includes(propName);
 
 const isUseCallbackProp = (propName) => ['getDataPath'].includes(propName);

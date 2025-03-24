@@ -179,7 +179,7 @@ First we need to hook into the `gridReady` event by adding `(gridReady)="onGridR
     [rowData]="rowData"
     [columnDefs]="colDefs"
     (gridReady)="onGridReady($event)"
-    />
+/>
 ```
 
 _Note: [Grid Events](./deep-dive/#handle-grid-events) are covered in more detail later on_
@@ -422,15 +422,15 @@ The example above demonstrates how to configure a single column. To apply this c
         <ag-grid-angular
             ...
             [defaultColDef]="defaultColDef"
-            />
+        />
     </div>
     `,
     // ...
 })
 
 export class AppComponent {
-    // Default Column Definitions: Apply configuration across all columns
-    defaultColDef: ColDef = {
+// Default Column Definitions: Apply configuration across all columns
+defaultColDef: ColDef = {
         filter: true
     }
     // ...
@@ -556,7 +556,7 @@ Grid Options are passed to the grid via attributes on the `ag-grid-angular` comp
 <ag-grid-angular
     ...
     [pagination]="true"
-    />
+/>
 ```
 
 We should now see Pagination has been enabled on the grid:
@@ -992,7 +992,7 @@ Let's try this out by enabling cell editing with `editable: true` on the Default
 
 ```ts
 // Default Column Definitions: Apply configuration across all columns
-    defaultColDef: ColDef = {
+defaultColDef: ColDef = {
     editable: true
     // ...
 }
@@ -1014,7 +1014,7 @@ Finally, let's add the `gridReady` attribute to the `ag-grid-angular` component,
 <ag-grid-angular
     (gridReady)="onGridReady($event)"
     ...
-    />
+/>
 ```
 
 Now, when we click on a cell we should be able to edit it and see the new value logged to the console:
