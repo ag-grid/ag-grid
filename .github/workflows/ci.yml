@@ -432,7 +432,7 @@ jobs:
 
       - name: Commit History
         id: commits
-        if: always() && job.status != 'cancelled' && github.ref == 'refs/heads/latest' && steps.lastJobStatus.outputs.changedState == 'true '
+        if: always() && job.status != 'cancelled' && github.ref == 'refs/heads/latest' && steps.lastJobStatus.outputs.changedState == 'true'
         run: |
           GIT_LOG=$(git log HEAD ^${{ needs.build_lint.outputs.nx_base }} --format="%an (%h) %s")
           echo "GIT_LOG<<EOF" >> $GITHUB_ENV
