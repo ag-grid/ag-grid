@@ -30,20 +30,20 @@ export class SpannedRowCtrl extends RowCtrl {
         return new SpannedCellCtrl(cellSpan, this, this.beans);
     }
 
-    protected override shouldRecreateCellCtrl(cell: CellCtrl): boolean {
+    protected override isCorrectCtrlForSpan(cell: CellCtrl): boolean {
         // spanned cells, if handled as a spanned cell of another row, ignore this.
         const cellSpan = this.beans.rowSpanSvc?.getCellSpan(cell.column, this.rowNode);
         if (!cellSpan) {
-            return true;
+            return false;
         }
 
         // only render cell in first row of span
         const firstRowOfSpan = cellSpan.firstNode !== this.rowNode;
         if (firstRowOfSpan) {
-            return true;
+            return false;
         }
 
-        return (cell as SpannedCellCtrl).getCellSpan() !== cellSpan;
+        return (cell as SpannedCellCtrl).getCellSpan() === cellSpan;
     }
 
     /**
