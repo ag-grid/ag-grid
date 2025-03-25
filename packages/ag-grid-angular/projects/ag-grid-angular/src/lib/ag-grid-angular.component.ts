@@ -1142,7 +1142,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     /** When provided, an extra grand total row will be inserted into the grid at the specified position.
      * This row displays the aggregate totals of all rows in the grid.
      */
-    @Input() public grandTotalRow: 'top' | 'bottom' | undefined = undefined;
+    @Input() public grandTotalRow: 'top' | 'bottom' | 'pinnedTop' | 'pinnedBottom' | undefined = undefined;
     /** Suppress the sticky behaviour of the total rows, can be suppressed individually by passing `'grand'` or `'group'`.
      */
     @Input() public suppressStickyTotalRow: boolean | 'grand' | 'group' | undefined = undefined;

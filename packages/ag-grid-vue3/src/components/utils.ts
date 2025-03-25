@@ -961,7 +961,7 @@ export interface Props<TData> {
     /** When provided, an extra grand total row will be inserted into the grid at the specified position.
          * This row displays the aggregate totals of all rows in the grid.
          */
-    grandTotalRow?: 'top' | 'bottom' | undefined,
+    grandTotalRow?: 'top' | 'bottom' | 'pinnedTop' | 'pinnedBottom' | undefined,
     /** Suppress the sticky behaviour of the total rows, can be suppressed individually by passing `'grand'` or `'group'`.
          */
     suppressStickyTotalRow?: boolean | 'grand' | 'group' | undefined,
