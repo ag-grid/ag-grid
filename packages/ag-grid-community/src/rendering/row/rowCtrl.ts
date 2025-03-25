@@ -502,28 +502,6 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         return !this.beans.rowSpanSvc?.isCellSpanning(cell.column, this.rowNode);
     }
 
-    /**
-     * Overridden by SpannedRowCtrl, should this row ctrl own the focused cell ctrl
-     */
-    protected isFocusedCtrl(pinned: ColumnPinnedType): boolean {
-        const { focusSvc } = this.beans;
-        const focusedCell = focusSvc.getFocusedCell();
-        if (!focusedCell) {
-            return false;
-        }
-
-        if (focusedCell.column.getPinned() != pinned) {
-            return false;
-        }
-
-        const { rowIndex, rowPinned } = this.rowNode;
-        return focusSvc.isCellFocused({
-            rowIndex: rowIndex!,
-            rowPinned,
-            column: focusedCell.column,
-        });
-    }
-
     private createCellCtrls(
         prev: CellCtrlListAndMap,
         cols: AgColumn[],
