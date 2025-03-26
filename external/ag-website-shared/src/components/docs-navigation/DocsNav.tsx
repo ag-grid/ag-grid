@@ -51,7 +51,10 @@ function Item({ itemData, framework, pageName }: { itemData?: any; framework: Fr
         : itemData.frameworks.filter((f) => {
               return f === framework;
           }).length > 0;
-    const isActive = (itemData.childPaths && itemData.childPaths.includes(pageName)) || pageName === itemData.path;
+    const isActive =
+        !isExternalURL &&
+        linkUrl &&
+        ((itemData.childPaths && itemData.childPaths.includes(pageName)) || pageName === itemData.path);
 
     const className = classnames(styles.item, itemData.icon ? styles.hasIcon : '', isActive ? styles.isActive : '');
 

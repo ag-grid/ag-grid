@@ -16,8 +16,6 @@ export async function getStaticPaths() {
     return getDocsPages(pages);
 }
 
-const pageName = Astro.params.pageName as Framework;
-
 const { data: docsNavData } = (await getEntry('docsNav', 'nav')) as CollectionEntry<'docsNav'>;
 
 const versionsContent = await getEntry('versions', 'ag-grid-versions');
@@ -46,7 +44,7 @@ const headings = [
     showSearchBar={true}
 >
     <div class:list={[docsStyles.contentViewport, 'layout-grid']}>
-        <DocsNavFromLocalStorage client:load menuData={docsNavData} pageName={pageName} />
+        <DocsNavFromLocalStorage client:load menuData={docsNavData} pageName={'documentation-archive'} />
 
         <div id="doc-content" class={docsStyles.docPage}>
             <h1>Documentation Archive</h1>

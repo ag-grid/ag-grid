@@ -15,7 +15,6 @@ import { AgGridReact } from 'ag-grid-react';
 import type { IOlympicData } from './interfaces';
 import NumberFilterComponent from './numberFilterComponent';
 import NumberFloatingFilterComponent from './numberFloatingFilterComponent';
-import './styles.css';
 
 ModuleRegistry.registerModules([
     TextFilterModule,

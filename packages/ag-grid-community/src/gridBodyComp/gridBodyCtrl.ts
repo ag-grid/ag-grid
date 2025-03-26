@@ -27,9 +27,9 @@ export interface IGridBodyComp extends LayoutView {
     setColumnMovingCss(cssClass: string, on: boolean): void;
     setCellSelectableCss(cssClass: string | null, on: boolean): void;
     setTopHeight(height: number): void;
-    setTopDisplay(display: string): void;
+    setTopInvisible(invisible: boolean): void;
     setBottomHeight(height: number): void;
-    setBottomDisplay(display: string): void;
+    setBottomInvisible(invisible: boolean): void;
     setStickyTopHeight(height: string): void;
     setStickyTopTop(offsetTop: string): void;
     setStickyTopWidth(width: string): void;
@@ -432,8 +432,8 @@ export class GridBodyCtrl extends BeanStub {
         const floatingBottomHeight = pinnedRowModel?.getPinnedBottomTotalHeight() ?? 0;
         this.comp.setTopHeight(floatingTopHeight);
         this.comp.setBottomHeight(floatingBottomHeight);
-        this.comp.setTopDisplay(floatingTopHeight ? 'inherit' : 'none');
-        this.comp.setBottomDisplay(floatingBottomHeight ? 'inherit' : 'none');
+        this.comp.setTopInvisible(floatingTopHeight <= 0);
+        this.comp.setBottomInvisible(floatingBottomHeight <= 0);
         this.setStickyTopOffsetTop();
         this.setStickyBottomOffsetBottom();
     }
