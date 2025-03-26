@@ -4,15 +4,26 @@ import type { RowPinningState } from './gridState';
 import type { RowPinnedType } from './iRowNode';
 
 export interface IPinnedRowModel {
+    /** Reset the pinned row state. This is a no-op for the static pinned row model. */
     reset(): void;
 
-    pinRow(node: RowNode, container: RowPinnedType, column?: AgColumn | null): void;
+    /**
+     * Pin a row from the main viewport into one of the floating containers. Pass a `column`
+     * to have the model check for spanned cells.
+     *
+     * This is a no-op for the static pinned row model.
+     */
+    pinRow(node: RowNode, float: RowPinnedType, column?: AgColumn | null): void;
 
+    /**
+     * Returns `true` when the underlying implementation is the manual row pinning model.
+     * Otherwise `false`.
+     */
     isManual(): boolean;
 
-    isEmpty(container: NonNullable<RowPinnedType>): boolean;
+    isEmpty(float: NonNullable<RowPinnedType>): boolean;
 
-    isRowsToRender(container: NonNullable<RowPinnedType>): boolean;
+    isRowsToRender(float: NonNullable<RowPinnedType>): boolean;
 
     ensureRowHeightsValid(): boolean;
 
@@ -28,9 +39,16 @@ export interface IPinnedRowModel {
 
     getPinnedBottomRow(index: number): RowNode | undefined;
 
-    getPinnedRowById(id: string, container: NonNullable<RowPinnedType>): RowNode | undefined;
+    getPinnedRowById(id: string, float: NonNullable<RowPinnedType>): RowNode | undefined;
 
-    forEachPinnedRow(container: NonNullable<RowPinnedType>, callback: (node: RowNode, index: number) => void): void;
+    /** Iterate over the pinned rows in a particular floating container. */
+    forEachPinnedRow(float: NonNullable<RowPinnedType>, callback: (node: RowNode, index: number) => void): void;
 
+    /**
+     * Setup the pinned row state based on a state object.
+     * Used to allow pinned state to be populated from initial state.
+     *
+     * This is a no-op for the static pinned row model.
+     */
     populatePinnedState(state: RowPinningState): void;
 }

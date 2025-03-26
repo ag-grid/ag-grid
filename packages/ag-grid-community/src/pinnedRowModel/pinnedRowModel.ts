@@ -34,7 +34,7 @@ export class PinnedRowModel extends BeanStub implements NamedBean, IPinnedRowMod
     }
 
     public reset(): void {
-        // do nothing
+        // Not implemented for static pinned row model
     }
 
     public isEmpty(floating: RowPinnedType): boolean {
@@ -50,7 +50,7 @@ export class PinnedRowModel extends BeanStub implements NamedBean, IPinnedRowMod
     }
 
     public pinRow(_node: RowNode<any>, _container: RowPinnedType): void {
-        // do nothing
+        // Not implemented for static pinned row model
     }
 
     private onGridStylesChanges(e: CssVariablesChanged) {
@@ -209,7 +209,7 @@ export class PinnedRowModel extends BeanStub implements NamedBean, IPinnedRowMod
     }
 
     public populatePinnedState(): void {
-        // Not implemented for legacy pinned rows
+        // Not implemented for static pinned row model
     }
 }
 

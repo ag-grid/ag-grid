@@ -211,6 +211,7 @@ export class GridSerializer extends BeanStub implements NamedBean {
                     .map((position) => this.pinnedRowModel?.getPinnedTopRow(position.rowIndex))
                     .forEach(processRow);
             } else if (!this.pinnedRowModel?.isManual()) {
+                // only process pinned rows if they are statically pinned
                 this.pinnedRowModel?.forEachPinnedRow('top', processRow);
             }
             return gridSerializingSession;
@@ -340,6 +341,7 @@ export class GridSerializer extends BeanStub implements NamedBean {
                     .map((position) => this.pinnedRowModel?.getPinnedBottomRow(position.rowIndex))
                     .forEach(processRow);
             } else if (!this.pinnedRowModel?.isManual()) {
+                // only process pinned rows if they are statically pinned
                 this.pinnedRowModel?.forEachPinnedRow('bottom', processRow);
             }
             return gridSerializingSession;
