@@ -52,8 +52,9 @@ function Item({ itemData, framework, pageName }: { itemData?: any; framework: Fr
               return f === framework;
           }).length > 0;
     const isActive =
-        (pageName !== undefined && itemData.childPaths && itemData.childPaths.includes(pageName)) ||
-        pageName === itemData.path;
+        !isExternalURL &&
+        linkUrl &&
+        ((itemData.childPaths && itemData.childPaths.includes(pageName)) || pageName === itemData.path);
 
     const className = classnames(styles.item, itemData.icon ? styles.hasIcon : '', isActive ? styles.isActive : '');
 
