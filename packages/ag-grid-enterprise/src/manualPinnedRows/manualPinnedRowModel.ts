@@ -3,7 +3,6 @@ import type {
     BeanCollection,
     CssVariablesChanged,
     GridOptions,
-    IClientSideRowModel,
     IPinnedRowModel,
     RowNode,
     RowPinnedType,
@@ -155,8 +154,13 @@ export class ManualPinnedRowModel extends BeanStub implements IPinnedRowModel {
             this.dispatchRowPinnedEvents(rowNode);
         }
 
+        // When pinning the grand total row (i.e. the footer of the root node) we refresh the model
+        // so the original grand total row is hidden. This is the only case in which pinned rows are
+        // not duplicates of rows in the main viewport.
         if (rowNode.footer && rowNode.level === -1) {
-            (this.beans.rowModel as IClientSideRowModel).refreshModel({ step: 'map' });
+            if (_isClientSideRowModel(this.gos, this.beans.rowModel)) {
+                this.beans.rowModel.refreshModel({ step: 'map' });
+            }
         }
     }
 

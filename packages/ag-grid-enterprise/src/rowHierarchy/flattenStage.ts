@@ -9,7 +9,7 @@ import type {
 import { BeanStub } from 'ag-grid-community';
 
 import { _createRowNodeFooter, _destroyRowNodeFooter } from '../aggregation/footerUtils';
-import { _isSourceRowPinned } from '../manualPinnedRows/manualPinnedRowUtils';
+import { _getComputedFooterLocation } from '../manualPinnedRows/manualPinnedRowUtils';
 import type { FlattenDetails } from './flattenUtils';
 import {
     _getFlattenDetails,
@@ -43,12 +43,12 @@ export class FlattenStage extends BeanStub implements IRowNodeStage<RowNode[]>, 
         const topList = showRootNode ? [rootNode] : rootNode.childrenAfterSort;
 
         const details = _getFlattenDetails(this.gos);
-        const grandTotalRow = details.grandTotalRow;
 
         this.recursivelyAddToRowsToDisplay(details, topList, result, skipLeafNodes, 0);
 
         // we do not want the footer total if the grid is empty
         const atLeastOneRowPresent = result.length > 0;
+        const grandTotalRow = details.grandTotalRow;
 
         const includeGrandTotalRow =
             !showRootNode &&
@@ -58,12 +58,9 @@ export class FlattenStage extends BeanStub implements IRowNodeStage<RowNode[]>, 
 
         if (includeGrandTotalRow) {
             _createRowNodeFooter(rootNode, this.beans);
-            const addToTop = grandTotalRow === 'top';
-            if (
-                grandTotalRow !== 'pinnedBottom' &&
-                grandTotalRow !== 'pinnedTop' &&
-                !_isSourceRowPinned(this.beans, rootNode.sibling)
-            ) {
+            const location = _getComputedFooterLocation(this.beans, rootNode.sibling, grandTotalRow);
+            const addToTop = location === 'top';
+            if (addToTop || location == 'bottom') {
                 this.addRowNodeToRowsToDisplay(details, rootNode.sibling, result, 0, addToTop);
             }
         }
