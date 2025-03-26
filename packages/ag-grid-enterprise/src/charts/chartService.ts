@@ -20,12 +20,13 @@ import type {
     NamedBean,
     OpenChartToolPanelParams,
     PartialCellRange,
+    RowPosition,
     SeriesChartType,
     SeriesGroupType,
     UpdateChartParams,
     VisibleColsService,
 } from 'ag-grid-community';
-import { BeanStub, _focusInto, _warn } from 'ag-grid-community';
+import { BeanStub, _focusInto, _uniq, _warn } from 'ag-grid-community';
 
 import { VERSION as GRID_VERSION } from '../version';
 import type { AgChartsExports } from './agChartsExports';
@@ -325,28 +326,26 @@ export class ChartService extends BeanStub implements NamedBean, IChartService {
             return { columns: [] };
         }
 
-        const columns = ranges.reduce((cols, range) => cols.concat(range.columns), [] as Column[]);
-        let startRow = Number.MAX_VALUE;
-        let endRow = Number.MIN_VALUE;
+        const columns = _uniq(ranges.reduce((cols, range) => cols.concat(range.columns), [] as Column[]));
+        const startRow: RowPosition = { rowIndex: Number.MAX_VALUE, rowPinned: undefined };
+        const endRow: RowPosition = { rowIndex: Number.MIN_VALUE, rowPinned: undefined };
 
         ranges.forEach((range) => {
             if (range.startRow && range.endRow) {
-                startRow = Math.min(startRow, range.startRow.rowIndex);
-                endRow = Math.max(endRow, range.endRow.rowIndex);
+                if (range.startRow.rowPinned || range.endRow.rowPinned) {
+                    // pinned rows are not supported in chart ranges
+                    return;
+                }
+                startRow.rowIndex = Math.min(startRow.rowIndex, range.startRow.rowIndex);
+                endRow.rowIndex = Math.max(endRow.rowIndex, range.endRow.rowIndex);
             }
         });
 
         return {
             columns,
             startColumn: columns[0],
-            startRow: {
-                rowIndex: startRow,
-                rowPinned: undefined,
-            },
-            endRow: {
-                rowIndex: endRow,
-                rowPinned: undefined,
-            },
+            startRow,
+            endRow,
         };
     }
 
