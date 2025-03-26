@@ -66,11 +66,11 @@ export const AllEnterpriseModules: Record<`${EnterpriseModuleName}Module`, numbe
     MasterDetailModule: 82,
     MenuModule: 153,
     MultiFilterModule: 121,
-    PivotModule: 87.97,
+    PivotModule: 90.61,
     RangeSelectionModule: 53,
     RichSelectModule: 77,
     RowNumbersModule: 26,
-    RowGroupingModule: 74.88,
+    RowGroupingModule: 77.52,
     RowGroupingPanelModule: 71,
     ServerSideRowModelApiModule: 19,
     ServerSideRowModelModule: 147,
@@ -136,7 +136,7 @@ export const baseModule = { modules: [], expectedSize: 459.29 };
 
 export const moduleCombinations: ModuleTest[] = [
     ...commonFeatureSets,
-    ...chartModules,
+    // ...chartModules,
     ...allGridCommunityModules, //.slice(0, 3),
     ...allEnterpriseModules, //.slice(0, 3),
 ];

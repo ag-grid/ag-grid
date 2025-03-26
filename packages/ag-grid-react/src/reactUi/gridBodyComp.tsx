@@ -36,8 +36,8 @@ const GridBodyComp = () => {
     const [stickyBottomHeight, setStickyBottomHeight] = useState<string>('0px');
     const [stickyBottomBottom, setStickyBottomBottom] = useState<string>('0px');
     const [stickyBottomWidth, setStickyBottomWidth] = useState<string>('100%');
-    const [topDisplay, setTopDisplay] = useState<string>('');
-    const [bottomDisplay, setBottomDisplay] = useState<string>('');
+    const [topInvisible, setTopInvisible] = useState<boolean>(true);
+    const [bottomInvisible, setBottomInvisible] = useState<boolean>(true);
 
     const [forceVerticalScrollClass, setForceVerticalScrollClass] = useState<string | null>(null);
     const [topAndBottomOverflowY, setTopAndBottomOverflowY] = useState<string>('');
@@ -126,8 +126,8 @@ const GridBodyComp = () => {
             setStickyTopHeight,
             setStickyTopTop,
             setStickyTopWidth,
-            setTopDisplay,
-            setBottomDisplay,
+            setTopInvisible,
+            setBottomInvisible,
             setColumnMovingCss: (cssClass: string, flag: boolean) =>
                 cssClassManager.current!.addOrRemoveCssClass(cssClass, flag),
             updateLayoutClasses: setLayoutClass,
@@ -177,22 +177,27 @@ const GridBodyComp = () => {
         [rowAnimationClass, layoutClass, forceVerticalScrollClass, cellSelectableCss]
     );
     const bodyClasses = useMemo(() => classesList('ag-body', layoutClass), [layoutClass]);
-    const topClasses = useMemo(() => classesList('ag-floating-top', cellSelectableCss), [cellSelectableCss]);
+    const topClasses = useMemo(
+        () => classesList('ag-floating-top', topInvisible ? 'ag-invisible' : null, cellSelectableCss),
+        [cellSelectableCss, topInvisible]
+    );
     const stickyTopClasses = useMemo(() => classesList('ag-sticky-top', cellSelectableCss), [cellSelectableCss]);
     const stickyBottomClasses = useMemo(
-        () => classesList('ag-sticky-bottom', stickyBottomHeight === '0px' ? 'ag-hidden' : null, cellSelectableCss),
+        () => classesList('ag-sticky-bottom', stickyBottomHeight === '0px' ? 'ag-invisible' : null, cellSelectableCss),
         [cellSelectableCss, stickyBottomHeight]
     );
-    const bottomClasses = useMemo(() => classesList('ag-floating-bottom', cellSelectableCss), [cellSelectableCss]);
+    const bottomClasses = useMemo(
+        () => classesList('ag-floating-bottom', bottomInvisible ? 'ag-invisible' : null, cellSelectableCss),
+        [cellSelectableCss, bottomInvisible]
+    );
 
     const topStyle: React.CSSProperties = useMemo(
         () => ({
             height: topHeight,
             minHeight: topHeight,
-            display: topDisplay,
             overflowY: topAndBottomOverflowY as any,
         }),
-        [topHeight, topDisplay, topAndBottomOverflowY]
+        [topHeight, topAndBottomOverflowY]
     );
 
     const stickyTopStyle: React.CSSProperties = useMemo(
@@ -217,10 +222,9 @@ const GridBodyComp = () => {
         () => ({
             height: bottomHeight,
             minHeight: bottomHeight,
-            display: bottomDisplay,
             overflowY: topAndBottomOverflowY as any,
         }),
-        [bottomHeight, bottomDisplay, topAndBottomOverflowY]
+        [bottomHeight, topAndBottomOverflowY]
     );
 
     const createRowContainer = (container: RowContainerName) => (

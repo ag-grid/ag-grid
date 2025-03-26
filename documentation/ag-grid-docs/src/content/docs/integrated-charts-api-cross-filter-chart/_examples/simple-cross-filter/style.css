@@ -3,4 +3,7 @@
     width: 100%;
     display: grid;
     grid-template-rows: 50% 50%;
+    gap: 10px;
+    padding: 10px;
+    box-sizing: border-box;
 }

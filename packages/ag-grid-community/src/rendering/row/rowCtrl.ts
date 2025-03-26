@@ -498,8 +498,8 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
     /**
      * Overridden by SpannedRowCtrl, if span context changes cell needs rebuilt
      */
-    protected shouldRecreateCellCtrl(cell: CellCtrl): boolean {
-        return !!this.beans.rowSpanSvc?.isCellSpanning(cell.column, this.rowNode);
+    protected isCorrectCtrlForSpan(cell: CellCtrl): boolean {
+        return !this.beans.rowSpanSvc?.isCellSpanning(cell.column, this.rowNode);
     }
 
     private createCellCtrls(
@@ -530,7 +530,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
             let cellCtrl: CellCtrl | undefined = prev.map[colInstanceId];
 
             // for spanned cells, if the span ref has changed, need to hard refresh cell
-            if (cellCtrl && this.shouldRecreateCellCtrl(cellCtrl)) {
+            if (cellCtrl && !this.isCorrectCtrlForSpan(cellCtrl)) {
                 cellCtrl.destroy();
                 cellCtrl = undefined;
             }
@@ -544,24 +544,6 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
             }
 
             addCell(colInstanceId, cellCtrl);
-        }
-
-        // if this row is focused, force the row to render the cell that has focus
-        if (this.beans.focusSvc.isRowFocused(this.rowNode.rowIndex!, this.rowNode.rowPinned)) {
-            const column = this.beans.focusSvc.getFocusedCell()!.column as AgColumn;
-            const focusedColInstanceId = column.getInstanceId();
-            const focusedCellCtrl = res.map[focusedColInstanceId];
-            // if the focused col belongs in this pinned viewport and hasn't been rendered, then force it to render
-            if (
-                !focusedCellCtrl &&
-                column.getPinned() == pinned &&
-                this.beans.visibleCols.allCols.includes(column) // need to make sure focused col is still meant to be visible
-            ) {
-                const cellCtrl = this.getNewCellCtrl(column);
-                if (cellCtrl) {
-                    addCell(focusedColInstanceId, cellCtrl);
-                }
-            }
         }
 
         for (const prevCellCtrl of prev.list) {
@@ -590,7 +572,52 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
             }
         }
 
+        const { focusSvc, visibleCols } = this.beans;
+        const focusedCell = focusSvc.getFocusedCell();
+        // if a cell is focused, might need to be force rendered if it belongs to this pinned section
+        if (focusedCell && focusedCell.column.getPinned() == pinned) {
+            const focusedColInstanceId = (focusedCell.column as AgColumn).getInstanceId();
+            const focusedCellCtrl = res.map[focusedColInstanceId];
+
+            // if focused col is visible, and there's no cell here for it, try to create one
+            if (!focusedCellCtrl && visibleCols.allCols.includes(focusedCell.column as AgColumn)) {
+                const cellCtrl = this.createFocusedCellCtrl();
+                if (cellCtrl) {
+                    const index = res.list.findIndex((ctrl) => ctrl.column.getLeft()! > cellCtrl.column.getLeft()!);
+                    const normalisedIndex = index === -1 ? undefined : Math.max(index - 1, 0);
+                    addCell(focusedColInstanceId, cellCtrl, normalisedIndex);
+                }
+            }
+        }
+
         return res;
+    }
+
+    /**
+     * Creates a new cell ctrl for the focused cell, if this is the correct row ctrl.
+     * @returns a CellCtrl for the focused cell, if required.
+     */
+    private createFocusedCellCtrl(): CellCtrl | undefined {
+        const { focusSvc, rowSpanSvc } = this.beans;
+        const focusedCell = focusSvc.getFocusedCell();
+        if (!focusedCell) {
+            return undefined;
+        }
+
+        const focusedSpan = rowSpanSvc?.getCellSpan(focusedCell.column as AgColumn, this.rowNode);
+        if (focusedSpan) {
+            // if span is focused, and the focused row is not the first in this span, don't create ctrl
+            if (focusedSpan.firstNode !== this.rowNode || !focusedSpan.doesSpanContain(focusedCell)) {
+                return undefined;
+            }
+        } else {
+            // if no span, and the focused cell is not in this row, don't create ctrl
+            if (!focusSvc.isRowFocused(this.rowNode.rowIndex!, this.rowNode.rowPinned)) {
+                return undefined;
+            }
+        }
+
+        return this.getNewCellCtrl(focusedCell.column as AgColumn);
     }
 
     private updateColumnListsImpl(useFlushSync: boolean): void {
@@ -650,7 +677,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         }
 
         // if cell is in wrong span container, remove it
-        if (this.shouldRecreateCellCtrl(cellCtrl)) {
+        if (!this.isCorrectCtrlForSpan(cellCtrl)) {
             return REMOVE_CELL;
         }
 

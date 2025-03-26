@@ -8,7 +8,6 @@ import { AgGridReact } from 'ag-grid-react';
 
 import CustomGroupCellRenderer from './customGroupCellRenderer';
 import { getData } from './data';
-import './styles.css';
 
 ModuleRegistry.registerModules([ClientSideRowModelModule, TreeDataModule, ValidationModule /* Development Only */]);
 
@@ -69,6 +68,9 @@ const GridExample = () => {
             return;
         }
         if (params.event.code !== 'Enter') {
+            return;
+        }
+        if (params.node.level === 0) {
             return;
         }
         if (params.colDef.showRowGroup) {

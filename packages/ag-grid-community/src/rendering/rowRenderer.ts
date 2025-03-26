@@ -218,24 +218,37 @@ export class RowRenderer extends BeanStub implements NamedBean {
     }
 
     private isCellRendered(rowIndex: number, column?: AgColumn): boolean {
-        const rowCtrl = this.rowCtrlsByRowIndex[rowIndex!];
-        if (!rowCtrl) {
-            return false;
+        const rowCtrl = this.rowCtrlsByRowIndex[rowIndex];
+
+        // if no column, simply check for row ctrl
+        if (!column) {
+            return !!rowCtrl;
         }
 
-        if (rowCtrl.isFullWidth() || !column) {
+        if (rowCtrl && rowCtrl.isFullWidth()) {
             return true;
         }
 
-        return !!rowCtrl.getCellCtrl(column, false);
+        // check if this is spanned, if it has been rendered by the span renderer
+        const spannedCell = this.beans.spannedRowRenderer?.getCellByPosition({ rowIndex, column, rowPinned: null });
+        if (spannedCell) {
+            return true;
+        }
+
+        // otherwise, check if the cell is rendered
+        return !!rowCtrl?.getCellCtrl(column);
     }
 
+    /**
+     * Notifies all row and cell controls of any change in focused cell.
+     * @param event cell focused event
+     */
     private onCellFocusChanged(event?: CellFocusedEvent) {
         // if the focused cell has not been rendered, need to render cell so focus can be captured.
         if (event && event.rowIndex != null && !event.rowPinned) {
             const col = this.beans.colModel.getCol(event.column) ?? undefined;
             if (!this.isCellRendered(event.rowIndex, col)) {
-                this.redrawAfterModelUpdate();
+                this.redraw();
             }
         }
 

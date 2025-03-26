@@ -7,7 +7,7 @@ Configure the initial expanded group row state when using Tree Data.
 ## Expanding by Group Level
 
 When providing a hierarchy, all levels will default to a collapsed state. This can be configured by setting the `groupDefaultExpanded`
-grid option, providing a number will expand all groups down to that level, or providing -1 will expand all groups.
+grid option. Providing a number will expand all groups down to that level, or providing -1 will expand all groups.
 
 {% gridExampleRunner title="Group Default Expanded" name="group-default-expanded" /%}
 
@@ -65,7 +65,7 @@ When expanding rows via the API, the `setRowNodeExpanded` function can be used t
 
 {% gridExampleRunner title="Expand to Row" name="expand-collapse-api" /%}
 
-The example above uses [Row IDs](./row-ids/#row-ids) to demonstrate the following configuration to expand all of the 'Proposal.docx' rows ancestors:
+The example above uses [Row IDs](./row-ids/#row-ids) to demonstrate the following configuration to expand all of the 'Proposal.docx' row's ancestors:
 
 ```
 const expandToRow = () => {

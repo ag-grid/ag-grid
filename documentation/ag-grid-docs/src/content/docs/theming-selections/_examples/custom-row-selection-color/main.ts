@@ -4,8 +4,12 @@ import { AllCommunityModule, ModuleRegistry, createGrid, themeQuartz } from 'ag-
 ModuleRegistry.registerModules([AllCommunityModule]);
 
 const myTheme = themeQuartz.withParams({
-    /* bright green, 10% opacity */
+    // bright green, 10% opacity
     selectedRowBackgroundColor: 'rgba(0, 255, 0, 0.1)',
+
+    // alternating row colors will be visible through the semi-transparent
+    // selection background color
+    oddRowBackgroundColor: '#8881',
 });
 
 const columnDefs: ColDef[] = [
@@ -33,7 +37,13 @@ const gridOptions: GridOptions<IOlympicData> = {
     },
     onFirstDataRendered: (params) => {
         params.api.forEachNode((node) => {
-            if (node.rowIndex === 2 || node.rowIndex === 3 || node.rowIndex === 4) {
+            if (
+                node.rowIndex === 2 ||
+                node.rowIndex === 3 ||
+                node.rowIndex === 4 ||
+                node.rowIndex === 5 ||
+                node.rowIndex === 6
+            ) {
                 node.setSelected(true);
             }
         });

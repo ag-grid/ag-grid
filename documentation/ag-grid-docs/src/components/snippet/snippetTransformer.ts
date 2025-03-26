@@ -325,9 +325,13 @@ const isUseMemoProp = (propName) =>
         'statusBar',
         'autoSizeStrategy',
         'rowNumbers',
+        'rowClass',
+        'rowClassRules',
+        'rowStyle',
+        'detailCellRendererParams',
     ].includes(propName);
 
-const isUseCallbackProp = (propName) => ['getDataPath'].includes(propName);
+const isUseCallbackProp = (propName) => ['getDataPath', 'getRowId', 'getRowClass', 'getRowStyle'].includes(propName);
 
 // removes a tab spacing from the beginning of each line after first
 const decreaseIndent = (codeBlock, times = 1) => {
