@@ -140,7 +140,13 @@ export class FakeHScrollComp extends AbstractFakeScrollComp {
             _setFixedHeight(this.getGui(), scrollContainerSize);
             _setFixedHeight(this.eViewport, scrollContainerSize);
             _setFixedHeight(this.eContainer, scrollContainerSize);
-            this.setDisplayed(hScrollShowing, { skipAriaHidden: true });
+
+            if (!scrollContainerSize) {
+                // the container needs a min-height of 1px to be
+                // able to sync scroll position while hidden
+                this.eContainer.style.setProperty('min-height', '1px');
+            }
+            this.setVisible(hScrollShowing, { skipAriaHidden: true });
         };
         window.clearTimeout(this.setScrollVisibleDebounce);
         if (!hScrollShowing) {
