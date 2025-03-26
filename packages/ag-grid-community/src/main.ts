@@ -850,6 +850,7 @@ export {
     IsRowSelectable,
     IsRowFilterable,
     IsRowPinnable,
+    IsRowPinned,
     GetMainMenuItems,
     GetRowNodeIdFunc,
     GetRowIdFunc,

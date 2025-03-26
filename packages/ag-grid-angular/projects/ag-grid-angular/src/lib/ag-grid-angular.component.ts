@@ -121,6 +121,7 @@ import type {
     IsRowFilterable,
     IsRowMaster,
     IsRowPinnable,
+    IsRowPinned,
     IsRowSelectable,
     IsServerSideGroup,
     IsServerSideGroupOpenByDefaultParams,
@@ -1235,6 +1236,12 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * When not defined, all rows default to pinnable.
      */
     @Input() public isRowPinnable: IsRowPinnable<TData> | undefined = undefined;
+    /** Called for every row in the grid.
+     *
+     * Return `true` if the row should be pinned initially. Return `false` otherwise.
+     * User interactions can subsequently still change the pinned state of a row.
+     */
+    @Input() public isRowPinned: IsRowPinned<TData> | undefined = undefined;
     /** Sets the row model type.
      * @default 'clientSide'
      * @initial

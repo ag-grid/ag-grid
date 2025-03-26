@@ -45,6 +45,7 @@ import type {
     IsRowFilterable,
     IsRowMaster,
     IsRowPinnable,
+    IsRowPinned,
     IsRowSelectable,
     IsServerSideGroup,
     IsServerSideGroupOpenByDefaultParams,
@@ -1054,6 +1055,12 @@ export interface Props<TData> {
          * When not defined, all rows default to pinnable.
          */
     isRowPinnable?: IsRowPinnable<TData> | undefined,
+    /** Called for every row in the grid.
+         *
+         * Return `true` if the row should be pinned initially. Return `false` otherwise.
+         * User interactions can subsequently still change the pinned state of a row.
+         */
+    isRowPinned?: IsRowPinned<TData> | undefined,
     /** Sets the row model type.
          * @default 'clientSide'
          * @initial
@@ -1838,6 +1845,7 @@ export function getProps() {
         pinnedBottomRowData: undefined,
         enableRowPinning: undefined,
         isRowPinnable: undefined,
+        isRowPinned: undefined,
         rowModelType: undefined,
         rowData: undefined,
         asyncTransactionWaitMillis: undefined,
