@@ -7,6 +7,7 @@ import type { AgColumn } from '../../../entities/agColumn';
 import type { HeaderClassParams, SortDirection } from '../../../entities/colDef';
 import { _addGridCommonParams, _getActiveDomElement, _isLegacyMenuEnabled } from '../../../gridOptionsUtils';
 import { ColumnHighlightPosition } from '../../../interfaces/iColumn';
+import type { IHeader, IHeaderParams } from '../../../interfaces/iHeader';
 import type { UserCompDetails } from '../../../interfaces/iUserCompDetails';
 import { SetLeftFeature } from '../../../rendering/features/setLeftFeature';
 import type { SelectAllFeature } from '../../../selection/selectAllFeature';
@@ -20,7 +21,7 @@ import { getColumnHeaderRowHeight, getGroupRowsHeight } from '../../headerUtils'
 import type { IAbstractHeaderCellComp } from '../abstractCell/abstractHeaderCellCtrl';
 import { AbstractHeaderCellCtrl } from '../abstractCell/abstractHeaderCellCtrl';
 import { _getHeaderClassesFromColDef } from '../cssClassApplier';
-import type { HeaderComp, IHeader, IHeaderParams } from './headerComp';
+import type { HeaderComp } from './headerComp';
 
 export interface IHeaderCellComp extends IAbstractHeaderCellComp {
     setWidth(width: string): void;
