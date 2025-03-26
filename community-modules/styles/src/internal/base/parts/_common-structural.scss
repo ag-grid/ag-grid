@@ -246,12 +246,14 @@
         z-index: 1;
     }
 
-    // the sticky containers need at least one 1px height
+    // the sticky and pinned containers need at least one 1px height
     // so we can set the scrollLeft position when there are
     // no rows within, otherwise scrollLeft will always be 0
     // and then making a row sticky causes the grid to scroll.
     .ag-sticky-top-container,
-    .ag-sticky-bottom-container {
+    .ag-sticky-bottom-container,
+    .ag-floating-top-container,
+    .ag-floating-bottom-container {
         min-height: 1px;
     }
 
