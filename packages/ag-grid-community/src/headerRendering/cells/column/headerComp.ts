@@ -185,10 +185,6 @@ export class HeaderComp extends Component implements IHeaderComp {
     }
 
     private addInIcon(iconName: IconName, eParent: HTMLElement, column: AgColumn): void {
-        if (eParent == null) {
-            return;
-        }
-
         const eIcon = _createIconNoSpan(iconName, this.beans, column);
         if (eIcon) {
             eParent.appendChild(eIcon);
@@ -294,7 +290,7 @@ export class HeaderComp extends Component implements IHeaderComp {
             return;
         }
         const onFilterChangedIcon = () => {
-            const filterPresent = this.params.column.isFilterActive();
+            const filterPresent = params.column.isFilterActive();
             _setDisplayed(eFilter, filterPresent, { skipAriaHidden: true });
         };
         this.configureFilter(params.enableFilterIcon, eFilter, onFilterChangedIcon, 'filterActive');
