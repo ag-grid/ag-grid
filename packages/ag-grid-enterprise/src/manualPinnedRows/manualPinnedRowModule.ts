@@ -13,7 +13,7 @@ import { PinnedRowModel } from './pinnedRowModel';
 
 /**
  * @feature Rows -> Manual Row Pinning
- * @gridOption enableRowPinning
+ * @gridOption enableRowPinning, isRowPinnable, isRowPinned
  */
 export const ManualPinnedRowModule: _ModuleWithApi<_PinnedRowGridApi> = {
     moduleName: 'ManualPinnedRow',
