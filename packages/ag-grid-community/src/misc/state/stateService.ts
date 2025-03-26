@@ -28,7 +28,6 @@ import type {
     SortState,
 } from '../../interfaces/gridState';
 import type { FilterModel } from '../../interfaces/iFilter';
-import type { RowPinnedType } from '../../interfaces/iRowNode';
 import type { SortModelItem } from '../../interfaces/iSortModelItem';
 import type { ServerSideRowGroupSelectionState, ServerSideRowSelectionState } from '../../interfaces/selectionState';
 import { _debounce } from '../../utils/function';
@@ -754,21 +753,12 @@ export class StateService extends BeanStub implements NamedBean {
             : undefined;
     }
 
-    private getRowPinningState(): RowPinningState {
-        const buildState = (container: NonNullable<RowPinnedType>) => {
-            const list: string[] = [];
-            this.beans.pinnedRowModel?.forEachPinnedRow(container, (node) => list.push(node.pinnedSibling!.id!));
-            return list;
-        };
-
-        return {
-            top: buildState('top'),
-            bottom: buildState('bottom'),
-        };
+    private getRowPinningState(): RowPinningState | undefined {
+        return this.beans.pinnedRowModel?.getPinnedState();
     }
 
     private setRowPinningState(state: RowPinningState): void {
-        this.beans.pinnedRowModel?.populatePinnedState(state);
+        this.beans.pinnedRowModel?.setPinnedState(state);
     }
 
     private setRowGroupExpansionState(rowGroupExpansionState: RowGroupExpansionState): void {

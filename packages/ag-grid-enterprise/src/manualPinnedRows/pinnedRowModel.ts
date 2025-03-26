@@ -83,7 +83,11 @@ export class PinnedRowModel extends BeanStub implements NamedBean, IPinnedRowMod
         return this.inner.forEachPinnedRow(container, callback);
     }
 
-    public populatePinnedState(state: RowPinningState): void {
-        return this.inner.populatePinnedState(state);
+    public getPinnedState(): RowPinningState {
+        return this.inner.getPinnedState();
+    }
+
+    public setPinnedState(state: RowPinningState): void {
+        return this.inner.setPinnedState(state);
     }
 }

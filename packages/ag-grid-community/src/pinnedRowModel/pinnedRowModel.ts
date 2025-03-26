@@ -3,6 +3,7 @@ import { BeanStub } from '../context/beanStub';
 import { ROW_ID_PREFIX_BOTTOM_PINNED, ROW_ID_PREFIX_TOP_PINNED, RowNode } from '../entities/rowNode';
 import type { CssVariablesChanged } from '../events';
 import { _getRowHeightForNode, _getRowIdCallback } from '../gridOptionsUtils';
+import type { RowPinningState } from '../interfaces/gridState';
 import type { IPinnedRowModel } from '../interfaces/iPinnedRowModel';
 import type { RowPinnedType } from '../interfaces/iRowNode';
 import { _warn } from '../validation/logging';
@@ -208,7 +209,12 @@ export class PinnedRowModel extends BeanStub implements NamedBean, IPinnedRowMod
         return floating === 'top' ? this.pinnedTopRows : this.pinnedBottomRows;
     }
 
-    public populatePinnedState(): void {
+    public getPinnedState(): RowPinningState {
+        // Not implemented for static pinned row model
+        return { top: [], bottom: [] };
+    }
+
+    public setPinnedState(): void {
         // Not implemented for static pinned row model
     }
 }

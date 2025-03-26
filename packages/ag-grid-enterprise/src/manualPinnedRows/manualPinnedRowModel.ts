@@ -7,6 +7,7 @@ import type {
     IPinnedRowModel,
     RowNode,
     RowPinnedType,
+    RowPinningState,
 } from 'ag-grid-community';
 import {
     BeanStub,
@@ -241,7 +242,20 @@ export class ManualPinnedRowModel extends BeanStub implements IPinnedRowModel {
         this.getContainer(floating).forEach(callback);
     }
 
-    public populatePinnedState(state: { top: string[]; bottom: string[] }): void {
+    public getPinnedState(): RowPinningState {
+        const buildState = (container: NonNullable<RowPinnedType>) => {
+            const list: string[] = [];
+            this.forEachPinnedRow(container, (node) => list.push(node.pinnedSibling!.id!));
+            return list;
+        };
+
+        return {
+            top: buildState('top'),
+            bottom: buildState('bottom'),
+        };
+    }
+
+    public setPinnedState(state: RowPinningState): void {
         this.forContainers((pinned, container) => {
             for (const id of state[container]) {
                 const node = this.beans.rowModel.getRowNode(id);

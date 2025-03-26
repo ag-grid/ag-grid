@@ -44,11 +44,14 @@ export interface IPinnedRowModel {
     /** Iterate over the pinned rows in a particular floating container. */
     forEachPinnedRow(float: NonNullable<RowPinnedType>, callback: (node: RowNode, index: number) => void): void;
 
+    /** Used by the state service. This is a no-op for the static pinned row model. */
+    getPinnedState(): RowPinningState;
+
     /**
      * Setup the pinned row state based on a state object.
      * Used to allow pinned state to be populated from initial state.
      *
      * This is a no-op for the static pinned row model.
      */
-    populatePinnedState(state: RowPinningState): void;
+    setPinnedState(state: RowPinningState): void;
 }
