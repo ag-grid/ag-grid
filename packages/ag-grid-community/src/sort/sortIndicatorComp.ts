@@ -26,11 +26,12 @@ const SortIndicatorElement: ElementParams = {
 };
 
 export class SortIndicatorComp extends Component {
-    private eSortOrder: HTMLElement = RefPlaceholder;
-    private eSortAsc: HTMLElement = RefPlaceholder;
-    private eSortDesc: HTMLElement = RefPlaceholder;
-    private eSortMixed: HTMLElement = RefPlaceholder;
-    private eSortNone: HTMLElement = RefPlaceholder;
+    // Elements might by undefined when the user provides a custom template
+    private eSortOrder?: HTMLElement = RefPlaceholder;
+    private eSortAsc?: HTMLElement = RefPlaceholder;
+    private eSortDesc?: HTMLElement = RefPlaceholder;
+    private eSortMixed?: HTMLElement = RefPlaceholder;
+    private eSortNone?: HTMLElement = RefPlaceholder;
 
     private column: AgColumn;
     private suppressOrder: boolean;
@@ -44,11 +45,11 @@ export class SortIndicatorComp extends Component {
     }
 
     public attachCustomElements(
-        eSortOrder: HTMLElement,
-        eSortAsc: HTMLElement,
-        eSortDesc: HTMLElement,
-        eSortMixed: HTMLElement,
-        eSortNone: HTMLElement
+        eSortOrder: HTMLElement | undefined,
+        eSortAsc: HTMLElement | undefined,
+        eSortDesc: HTMLElement | undefined,
+        eSortMixed: HTMLElement | undefined,
+        eSortNone: HTMLElement | undefined
     ) {
         this.eSortOrder = eSortOrder;
         this.eSortAsc = eSortAsc;
@@ -85,7 +86,7 @@ export class SortIndicatorComp extends Component {
         this.onSortChanged();
     }
 
-    private addInIcon(iconName: IconName, eParent: HTMLElement, column: AgColumn): void {
+    private addInIcon(iconName: IconName, eParent: HTMLElement | undefined, column: AgColumn): void {
         if (eParent == null) {
             return;
         }

@@ -923,13 +923,8 @@ export { IDateParams, IDate, IDateComp, BaseDate, BaseDateParams } from './inter
 export { IAfterGuiAttachedParams, ContainerType } from './interfaces/iAfterGuiAttachedParams';
 export { IComponent } from './interfaces/iComponent';
 export { IEventEmitter, IEventListener } from './interfaces/iEventEmitter';
-export {
-    HeaderComp as _HeaderComp,
-    IHeaderParams,
-    IHeaderComp,
-    IHeader,
-    IInnerHeaderComponent,
-} from './headerRendering/cells/column/headerComp';
+export { HeaderComp as _HeaderComp } from './headerRendering/cells/column/headerComp';
+export { IHeaderParams, IHeaderComp, IHeader, IInnerHeaderComponent } from './interfaces/iHeader';
 export {
     IHeaderGroupParams,
     IHeaderGroup,
