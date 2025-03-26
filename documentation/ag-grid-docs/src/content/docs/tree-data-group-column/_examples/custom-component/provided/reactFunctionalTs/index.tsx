@@ -8,7 +8,6 @@ import { AgGridReact } from 'ag-grid-react';
 
 import CustomGroupCellRenderer from './customGroupCellRenderer';
 import { getData } from './data';
-import './styles.css';
 
 ModuleRegistry.registerModules([ClientSideRowModelModule, TreeDataModule, ValidationModule /* Development Only */]);
 
