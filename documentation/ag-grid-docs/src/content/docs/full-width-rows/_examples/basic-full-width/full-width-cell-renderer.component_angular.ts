@@ -6,9 +6,9 @@ import type { ICellRendererParams } from 'ag-grid-community';
 @Component({
     standalone: true,
     changeDetection: ChangeDetectionStrategy.OnPush,
-    template: ` <div [class]="cssClass">
+    template: ` <div [class]="cssClass()">
         <button (click)="clicked()">Click</button>
-        {{ message }}
+        {{ message() }}
     </div>`,
 })
 export class FullWidthCellRenderer implements ICellRendererAngularComp {

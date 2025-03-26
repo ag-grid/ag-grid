@@ -65,7 +65,7 @@ function onSortChanged() {
     // suppress row drag if either sort or filter is active
     const suppressRowDrag = sortActive || filterActive;
     console.log(
-        'sortActive = ' + sortActive + ', filterActive = ' + filterActive + ', allowRowDrag = ' + suppressRowDrag
+        'sortActive = ' + sortActive + ', filterActive = ' + filterActive + ', suppressRowDrag = ' + suppressRowDrag
     );
     gridApi!.setGridOption('suppressRowDrag', suppressRowDrag);
 }
@@ -76,7 +76,7 @@ function onFilterChanged() {
     // suppress row drag if either sort or filter is active
     const suppressRowDrag = sortActive || filterActive;
     console.log(
-        'sortActive = ' + sortActive + ', filterActive = ' + filterActive + ', allowRowDrag = ' + suppressRowDrag
+        'sortActive = ' + sortActive + ', filterActive = ' + filterActive + ', suppressRowDrag = ' + suppressRowDrag
     );
     gridApi!.setGridOption('suppressRowDrag', suppressRowDrag);
 }

@@ -1,3 +1,7 @@
 body {
     --ag-value-change-value-highlight-background-color: #cc222244;
 }
+
+.align-right {
+    text-align: right;
+}

@@ -1,0 +1,27 @@
+.bold-row {
+    font-weight: bold;
+}
+.example-wrapper {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.top {
+    flex: 1 1 auto;
+}
+
+.top .ag-root-wrapper {
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+}
+
+.bottom {
+    flex: none;
+    height: 60px;
+}
+
+.bottom .ag-root-wrapper {
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+}

@@ -70,6 +70,8 @@ const GroupCellRenderer = forwardRef((props: GroupCellRendererParams, ref) => {
             setExpandedDisplayed: (displayed) =>
                 setExpandedCssClasses((prev) => prev.setClass('ag-hidden', !displayed)),
             setCheckboxVisible: (visible) => setCheckboxCssClasses((prev) => prev.setClass('ag-invisible', !visible)),
+            setCheckboxSpacing: (add) =>
+                setCheckboxCssClasses((prev) => prev.setClass('ag-group-checkbox-spacing', add)),
         };
 
         const groupCellRendererCtrl = registry.createDynamicBean<IGroupCellRendererCtrl>('groupCellRendererCtrl', true);

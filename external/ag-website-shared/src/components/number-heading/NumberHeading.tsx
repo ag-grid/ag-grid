@@ -26,7 +26,7 @@ export const NumberHeading: FunctionComponent<Props> = ({ level, title, number, 
                 <Heading id={headingId}>
                     {title} <LinkIcon href={`#${headingId}`} />
                 </Heading>
-                <div>{children}</div>
+                <div className={styles.sectionContent}>{children}</div>
             </div>
         </div>
     );

@@ -54,7 +54,7 @@ function safeStringify(obj, space = 2) {
             const valueType = getType(value);
             let newValue = value;
             if (valueType === 'object') {
-                newValue = getObjectValue();
+                newValue = getObjectValue(newValue);
             } else if (valueType === 'array') {
                 newValue = value.map((item) => {
                     return getType(item === 'object') ? getObjectValue(item) : item;

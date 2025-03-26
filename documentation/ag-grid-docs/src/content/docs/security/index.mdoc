@@ -12,7 +12,7 @@ The basic information on Content Security Policy can be found on the [MDN web do
 
 Some optional grid features compile string expressions into code, and if you're using these then the `script-src 'unsafe-eval'` directive is required. However, it is possible to avoid this requirement as listed below:
 
-1. Using expressions instead of functions is an option for many grid properties such as [Cell Class Rules](./cell-styles/#cell-class-rules) and [Value Getters](./value-getters/). For example, in the `cellClassRules` property of a column definition:
+1. Many grid properties such as [Cell Class Rules](./cell-styles/#cell-class-rules) and [Value Getters](./value-getters/) allow using expressions. However, this requires `script-src 'unsafe-eval'`. In order to avoid this requirement, replace expressions with functions as shown in the example below for the cellClassRules property of a column definition:
     * `{ 'is-negative': 'value < 0' }` requires `script-src 'unsafe-eval'` so that `'value < 0'` can be compiled into a function.
     * `{ 'is-negative': params => params.value < 0 }` does not because you have provided a function.
 
@@ -22,18 +22,17 @@ Some optional grid features compile string expressions into code, and if you're 
 
 [Themes](./theming) work by injecting CSS styles into the DOM when the grid initialises. By default this requires a `style-src 'unsafe-inline'` directive in your CSP.
 
-You can avoid this requirement using the `styleNonce` grid option.
+However, you can avoid this requirement using the `styleNonce` grid option as shown below. The `styleNonce` property should be set to a random value that changes with each page load.
 
 ```{% frameworkTransform=true %}
 const gridOptions = {
-    // The nonce should be a random value that changes with each page load.
     styleNonce: "416d1177"
 }
 ```
 
-This sets the nonce attribute on the style tag, so the grid will now work with the CSP directive `style-src 'nonce-416d1177'`.
+This sets the nonce attribute on the style tag, so the grid will now work with the CSP directive `style-src 'nonce-416d1177'` without the need for `'unsafe-inline'`.
 
-CSP nonces are global to a page, so when a page has multiple grids, all grid must have the same styleNonce set. Consider using [global grid options](./grid-interface/#global-grid-options) to set the styleNonce property to all grids.
+CSP nonces are global to a page, so when a page has multiple grids, all grids must have the same styleNonce set. Consider using [global grid options](./grid-interface/#global-grid-options) to set the styleNonce property to all grids.
 
 ### img-src
 

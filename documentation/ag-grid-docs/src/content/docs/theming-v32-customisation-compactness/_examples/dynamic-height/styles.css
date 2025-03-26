@@ -1,10 +1,10 @@
-.large {
+.large .ag-theme-quartz {
     --ag-grid-size: 10px;
     --ag-list-item-height: 40px;
     --ag-font-size: 32px;
 }
 
-.compact {
+.compact .ag-theme-quartz {
     --ag-grid-size: 3px;
     --ag-list-item-height: 20px;
     --ag-font-size: 10px;

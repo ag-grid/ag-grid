@@ -22,7 +22,6 @@ The example below shows configuring a Detail Grid with some additional Grid Opti
 * The `detailGridOptions` is provided inside the `detailCellRendererParams`.
 * The Detail Grid Options has the following properties set: `rowSelection={mode: 'multiRow', headerCheckbox: false}`, `pagination=true` and `paginationAutoPageSize=true`.
 * The Detail Grid Options is provided with a Default Column Definition (`defaultColDef`) that makes all columns use Flex for sizing.
-* The first Column Definition is configured to use Checkbox Selection.
 
 {% gridExampleRunner title="Detail Grid Options" name="grid-options" /%}
 
@@ -30,7 +29,7 @@ The example below shows configuring a Detail Grid with some additional Grid Opti
 
 Row data is provided to the Detail Grid by implementing the `getDetailRowData` callback of the Detail Cell Renderer Params. The interface of this callback is as follows:
 
-{% interfaceDocumentation interfaceName="IDetailCellRendererParams" names=["getDetailRowData"] config={"overrideBottomMargin":"1rem"} /%}
+{% interfaceDocumentation interfaceName="IDetailCellRendererParams" names=["getDetailRowData"] config={"overrideBottomMargin":"1rem", "description": ""} /%}
 
 The `successCallback` can be called immediately in a synchronous fashion (typical if the data is already available) or asynchronously at a later time (typical if the data needs to be fetched remotely).
 
@@ -124,7 +123,7 @@ The example below demonstrates keeping Detail Rows. Note the following:
 
 The pattern of setting components such as Cell Renderers and providing parameters to those components is consistent across the grid and explained in [Grid Components](./components/).
 
-As with all components, the parameters object (in this case `detailCellRendererParams`) can either be a JSON Object, or it can be a function that returns a JSON Object. The latter allows providing different parameters for each Detail Grid, allowing Detail Grids to be configured differently.
+As with all components, the parameters object (in this case `detailCellRendererParams`) can either be an Object, or it can be a function that returns an Object. The latter allows providing different parameters for each Detail Grid, allowing Detail Grids to be configured differently.
 
 ## Row Selection
 By default, selecting rows in the Master Grid has no effect on any of the Detail Grids. In order to have the selection state of the Master Grid be reflected in the Detail Grids (and vice-versa), users should use the `rowSelection.masterSelects` grid option:
