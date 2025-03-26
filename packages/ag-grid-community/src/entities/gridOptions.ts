@@ -165,7 +165,7 @@ import type { HeaderPosition } from '../interfaces/iHeaderPosition';
 import type { ILoadingCellRendererParams } from '../interfaces/iLoadingCellRenderer';
 import type { IRowDragItem } from '../interfaces/iRowDragItem';
 import type { RowModelType } from '../interfaces/iRowModel';
-import type { IRowNode } from '../interfaces/iRowNode';
+import type { IRowNode, RowPinnedType } from '../interfaces/iRowNode';
 import type { IServerSideDatasource } from '../interfaces/iServerSideDatasource';
 import type { SideBarDef } from '../interfaces/iSideBar';
 import type { StatusPanelDef } from '../interfaces/iStatusPanel';
@@ -1299,6 +1299,13 @@ export interface GridOptions<TData = any> {
      * When not defined, all rows default to pinnable.
      */
     isRowPinnable?: IsRowPinnable<TData>;
+    /**
+     * Called for every row in the grid.
+     *
+     * Return `true` if the row should be pinned initially. Return `false` otherwise.
+     * User interactions can subsequently still change the pinned state of a row.
+     */
+    isRowPinned?: IsRowPinned<TData>;
     // *** Row Model *** //
     /**
      * Sets the row model type.
@@ -2464,6 +2471,10 @@ export interface IsRowSelectable<TData = any> {
 
 export interface IsRowPinnable<TData = any> {
     (node: IRowNode<TData>): boolean;
+}
+
+export interface IsRowPinned<TData = any> {
+    (node: IRowNode<TData>): RowPinnedType;
 }
 
 export interface RowClassRules<TData = any> {

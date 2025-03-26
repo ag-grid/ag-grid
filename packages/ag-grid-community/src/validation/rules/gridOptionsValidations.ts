@@ -197,6 +197,16 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => {
                 return null;
             },
         },
+        isRowPinned: {
+            module: 'ManualPinnedRow',
+            supportedRowModels: ['clientSide'],
+            validate({ isRowPinned, pinnedTopRowData, pinnedBottomRowData }) {
+                if (isRowPinned && (pinnedTopRowData || pinnedBottomRowData)) {
+                    return 'Manual row pinning cannot be used together with pinned row data. Either remove `isRowPinned`, or remove `pinnedTopRowData` and `pinnedBottomRowData`.';
+                }
+                return null;
+            },
+        },
         findSearchValue: {
             module: 'Find',
         },

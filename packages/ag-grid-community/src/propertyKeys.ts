@@ -379,6 +379,7 @@ export const _FUNCTION_GRID_OPTIONS: (CallbackKeys | FunctionKeys)[] = [
     'groupTotalRow',
     'alwaysPassFilter',
     'isRowPinnable',
+    'isRowPinned',
 ];
 
 // angular generation of component

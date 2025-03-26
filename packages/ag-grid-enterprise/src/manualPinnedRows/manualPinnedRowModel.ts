@@ -66,7 +66,21 @@ export class ManualPinnedRowModel extends BeanStub implements IPinnedRowModel {
                     this.pinRow(node, null);
                 }
             },
-            firstDataRendered: () => pinGrandTotalRow(_getGrandTotalRow(gos)),
+            firstDataRendered: () => {
+                // Initialise pinning of grand total row
+                pinGrandTotalRow(_getGrandTotalRow(gos));
+
+                // Initialise pinned rows
+                const isRowPinned = gos.get('isRowPinned');
+                if (isRowPinned) {
+                    beans.rowModel.forEachNode((node) => {
+                        const float = isRowPinned(node);
+                        if (float) {
+                            this.pinRow(node, float);
+                        }
+                    });
+                }
+            },
         });
 
         this.addManagedPropertyListener('pivotMode', () => {
