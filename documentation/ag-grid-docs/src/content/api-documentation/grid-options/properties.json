@@ -1412,14 +1412,32 @@
         },
         "pinnedTopRowData": {
             "more": {
-                "name": "Row Pinning",
-                "url": "./row-pinning/"
+                "name": "Static Row Pinning",
+                "url": "./row-pinning-static/"
             }
         },
         "pinnedBottomRowData": {
             "more": {
-                "name": "Row Pinning",
-                "url": "./row-pinning/"
+                "name": "Static Row Pinning",
+                "url": "./row-pinning-static/"
+            }
+        },
+        "enableRowPinning": {
+            "more": {
+                "name": "Manual Row Pinning",
+                "url": "./row-pinning-manual/#enabling-manual-row-pinning"
+            }
+        },
+        "isRowPinnable": {
+            "more": {
+                "name": "Manual Row Pinning",
+                "url": "./row-pinning-manual/#preventing-rows-from-being-pinned"
+            }
+        },
+        "isRowPinned": {
+            "more": {
+                "name": "Manual Row Pinning",
+                "url": "./row-pinning-manual/#pinning-rows-on-first-render"
             }
         }
     },

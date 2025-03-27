@@ -596,7 +596,20 @@
                         {
                             "type": "item",
                             "title": "Row Pinning",
-                            "path": "row-pinning"
+                            "path": "row-pinning",
+                            "children": [
+                                {
+                                    "type": "item",
+                                    "title": "Static Row Pinning",
+                                    "path": "row-pinning-static"
+                                },
+                                {
+                                    "type": "item",
+                                    "title": "Manual Row Pinning",
+                                    "path": "row-pinning-manual",
+                                    "isEnterprise": true
+                                }
+                            ]
                         },
                         {
                             "type": "item",
