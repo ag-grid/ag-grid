@@ -106,34 +106,34 @@ export class ManualPinnedRowModel extends BeanStub implements IPinnedRowModel {
         }
     }
 
-    public pinRow(rowNode: RowNode, container: RowPinnedType, column?: AgColumn | null): void {
+    public pinRow(rowNode: RowNode, float: RowPinnedType, column?: AgColumn | null): void {
         // Forbid pinning group footers
         if (rowNode.footer && rowNode.level > -1) return;
 
         // May have been called on either the pinned row or the source row, check both
-        const currentContainer = rowNode.rowPinned ?? rowNode.pinnedSibling?.rowPinned;
+        const currentFloat = rowNode.rowPinned ?? rowNode.pinnedSibling?.rowPinned;
 
         // We're only switching if neither the current nor the target container are null
-        const switching = currentContainer != null && container != null && container != currentContainer;
+        const switching = currentFloat != null && float != null && float != currentFloat;
         if (switching) {
             // call unpin on pinned row, re-pin on source row, since we always want to dispatch events
             // on the source rows
             const pinned = rowNode.rowPinned ? rowNode : rowNode.pinnedSibling!;
             const source = rowNode.rowPinned ? rowNode.pinnedSibling! : rowNode;
             this.pinRow(pinned, null, column);
-            this.pinRow(source, container, column);
+            this.pinRow(source, float, column);
             return;
         }
 
         // cell-span pinning/unpinning
         const spannedRows = column && getSpannedRows(this.beans, rowNode, column);
         if (spannedRows) {
-            spannedRows.forEach((node) => this.pinRow(node, container));
+            spannedRows.forEach((node) => this.pinRow(node, float));
             return;
         }
 
         // unpinning
-        if (container == null) {
+        if (float == null) {
             // Want to act on the pinned row, not the source row
             const node = rowNode.rowPinned ? rowNode : rowNode.pinnedSibling!;
             const found = this.findPinnedRowNode(node);
@@ -142,14 +142,20 @@ export class ManualPinnedRowModel extends BeanStub implements IPinnedRowModel {
             found.delete(node);
             const source = node.pinnedSibling!;
             _destroyRowNodeSibling(node);
-            this.refreshRowPositions(container);
+            this.refreshRowPositions(float);
 
             this.dispatchRowPinnedEvents(source);
         } else {
             // pinning
-            const sibling = _createPinnedSibling(this.beans, rowNode, container);
-            this.getContainer(container).add(sibling);
-            this.refreshRowPositions(container);
+            const sibling = _createPinnedSibling(this.beans, rowNode, float);
+            const container = this.getContainer(float);
+            container.add(sibling);
+            // Check if we should hide this row -- covers us for some asynchronicities
+            // between (e.g.) applying filters and pinning rows.
+            if (_shouldHidePinnedRows(this.beans, rowNode)) {
+                container.hide((node) => _shouldHidePinnedRows(this.beans, node.pinnedSibling!));
+            }
+            this.refreshRowPositions(float);
 
             this.dispatchRowPinnedEvents(rowNode);
         }
@@ -247,9 +253,9 @@ export class ManualPinnedRowModel extends BeanStub implements IPinnedRowModel {
     }
 
     public getPinnedState(): RowPinningState {
-        const buildState = (container: NonNullable<RowPinnedType>) => {
+        const buildState = (floating: NonNullable<RowPinnedType>) => {
             const list: string[] = [];
-            this.forEachPinnedRow(container, (node) => list.push(node.pinnedSibling!.id!));
+            this.forEachPinnedRow(floating, (node) => list.push(node.pinnedSibling!.id!));
             return list;
         };
 
@@ -260,11 +266,11 @@ export class ManualPinnedRowModel extends BeanStub implements IPinnedRowModel {
     }
 
     public setPinnedState(state: RowPinningState): void {
-        this.forContainers((pinned, container) => {
-            for (const id of state[container]) {
+        this.forContainers((pinned, floating) => {
+            for (const id of state[floating]) {
                 const node = this.beans.rowModel.getRowNode(id);
                 if (node) {
-                    this.pinRow(node, container);
+                    this.pinRow(node, floating);
                 } else {
                     pinned.queue(id);
                 }
@@ -299,8 +305,8 @@ export class ManualPinnedRowModel extends BeanStub implements IPinnedRowModel {
         }
     }
 
-    private getContainer(container: NonNullable<RowPinnedType>): PinnedRows {
-        return container === 'top' ? this.top : this.bottom;
+    private getContainer(floating: NonNullable<RowPinnedType>): PinnedRows {
+        return floating === 'top' ? this.top : this.bottom;
     }
 
     private findPinnedRowNode(node: RowNode): PinnedRows | undefined {
@@ -308,12 +314,12 @@ export class ManualPinnedRowModel extends BeanStub implements IPinnedRowModel {
         if (this.bottom.has(node)) return this.bottom;
     }
 
-    private refreshRowPositions(container?: RowPinnedType): void {
+    private refreshRowPositions(floating?: RowPinnedType): void {
         const refreshAll = (pinned: PinnedRows) => refreshRowPositions(this.beans, pinned);
-        return container == null ? this.forContainers(refreshAll) : refreshAll(this.getContainer(container));
+        return floating == null ? this.forContainers(refreshAll) : refreshAll(this.getContainer(floating));
     }
 
-    private forContainers(fn: (container: PinnedRows, name: NonNullable<RowPinnedType>) => void): void {
+    private forContainers(fn: (container: PinnedRows, floating: NonNullable<RowPinnedType>) => void): void {
         fn(this.top, 'top');
         fn(this.bottom, 'bottom');
     }
@@ -334,7 +340,7 @@ function refreshRowPositions(beans: BeanCollection, container: PinnedRows) {
     });
 }
 
-function _createPinnedSibling(beans: BeanCollection, rowNode: RowNode, container: NonNullable<RowPinnedType>): RowNode {
+function _createPinnedSibling(beans: BeanCollection, rowNode: RowNode, floating: NonNullable<RowPinnedType>): RowNode {
     // only create sibling node once, otherwise we have daemons and
     // the animate screws up with the daemons hanging around
     if (rowNode.pinnedSibling) {
@@ -345,11 +351,11 @@ function _createPinnedSibling(beans: BeanCollection, rowNode: RowNode, container
 
     sibling.setRowTop(null);
     sibling.setRowIndex(null);
-    sibling.rowPinned = container;
+    sibling.rowPinned = floating;
 
-    const prefix = container === 'top' ? _ROW_ID_PREFIX_TOP_PINNED : _ROW_ID_PREFIX_BOTTOM_PINNED;
+    const prefix = floating === 'top' ? _ROW_ID_PREFIX_TOP_PINNED : _ROW_ID_PREFIX_BOTTOM_PINNED;
 
-    sibling.id = `${prefix}${container}-${rowNode.id}`;
+    sibling.id = `${prefix}${floating}-${rowNode.id}`;
 
     // get both header and footer to reference each other as siblings
     sibling.pinnedSibling = rowNode;
