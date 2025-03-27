@@ -85,9 +85,8 @@ export class TabbedLayout extends TabGuardComp {
         };
         if (enableCloseButton) {
             this.setupCloseButton(addCssClasses);
-            this.eTabHeader = _getDocument(this.beans).createElement('div');
+            this.eTabHeader = _createElement({ tag: 'div', role: 'presentation' });
             addCssClasses(this.eHeader, 'header-wrapper');
-            _setAriaRole(this.eHeader, 'presentation');
             this.eHeader.appendChild(this.eTabHeader);
         } else {
             this.eTabHeader = this.eHeader;
@@ -97,16 +96,14 @@ export class TabbedLayout extends TabGuardComp {
     }
 
     private setupCloseButton(addCssClasses: (el: HTMLElement, suffix: string) => void): void {
-        const eDocument = _getDocument(this.beans);
-        const eCloseButton = eDocument.createElement('button');
+        const eCloseButton = _createElement({ tag: 'button' });
         addCssClasses(eCloseButton, 'close-button');
         const eIcon = _createIconNoSpan('close', this.beans)!;
         _setAriaLabel(eCloseButton, this.params.closeButtonAriaLabel);
         eCloseButton.appendChild(eIcon);
         this.addManagedElementListeners(eCloseButton, { click: () => this.params.onCloseClicked?.() });
-        const eCloseButtonWrapper = eDocument.createElement('div');
+        const eCloseButtonWrapper = _createElement({ tag: 'div', role: 'presentation' });
         addCssClasses(eCloseButtonWrapper, 'close-button-wrapper');
-        _setAriaRole(eCloseButtonWrapper, 'presentation');
         eCloseButtonWrapper.appendChild(eCloseButton);
         this.eHeader.appendChild(eCloseButtonWrapper);
         this.eCloseButton = eCloseButton;
