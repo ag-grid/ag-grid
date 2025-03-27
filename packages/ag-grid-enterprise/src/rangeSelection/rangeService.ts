@@ -614,6 +614,8 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
             return;
         }
 
+        // when creating a new range via API we should reset the selection mode
+        this.setSelectionMode(false);
         const newRange = this.createCellRangeFromCellRangeParams(params);
 
         if (newRange) {
