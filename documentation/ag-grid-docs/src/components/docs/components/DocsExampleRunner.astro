@@ -36,9 +36,7 @@ const generatedExampleParams = {
 const contents = await getGeneratedContents(generatedExampleParams);
 // Get whether example has console log component at build time, so that we
 // can show it on page load.
-// const hasExampleConsoleLog = contents?.hasExampleConsoleLog;
-// TODO: Turn example console log back on, when ready
-const hasExampleConsoleLog = false;
+const hasExampleConsoleLog = contents?.hasExampleConsoleLog;
 ---
 
 {

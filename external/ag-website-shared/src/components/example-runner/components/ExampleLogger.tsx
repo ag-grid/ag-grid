@@ -1,3 +1,4 @@
+import ReactJsonView from '@microlink/react-json-view';
 import { type FunctionComponent, useEffect, useLayoutEffect, useRef, useState } from 'react';
 
 import styles from './ExampleLogger.module.scss';
@@ -22,7 +23,14 @@ interface Props {
     bufferSize?: number;
 }
 
-const SEE_DEV_CONSOLE_MESSAGE = '[Object] - see developer console';
+const REACT_JSON_VIEW_CONFIG = {
+    collapsed: 1,
+    name: false,
+    enableClipboard: false,
+    displayDataTypes: false,
+    displayObjectSize: false,
+    displayArrayKey: false,
+};
 const IGNORED_MESSAGES = ['Angular is running in development mode.'];
 
 function containsIgnoredMessage(log: Log) {
@@ -32,26 +40,35 @@ function containsIgnoredMessage(log: Log) {
 }
 
 function getLoggableData(data: LogData[]) {
-    const isLoggable = data.every((logItem: LogData) => {
+    return data.map((logItem: LogData) => {
         const consoleLogObject = logItem as LogObject;
-        return consoleLogObject?.__consoleLogObject ? consoleLogObject.isLoggable : true;
+        if (logItem && consoleLogObject.__consoleLogObject) {
+            return JSON.parse(consoleLogObject.safeString);
+        } else if (logItem === null) {
+            return 'null';
+        } else if (logItem === undefined) {
+            return 'undefined';
+        } else {
+            return logItem;
+        }
     });
-
-    return isLoggable
-        ? data.map((logItem: LogData) => {
-              const consoleLogObject = logItem as LogObject;
-              if (logItem && consoleLogObject.__consoleLogObject) {
-                  return consoleLogObject.safeString;
-              } else if (logItem === null) {
-                  return 'null';
-              } else if (logItem === undefined) {
-                  return 'undefined';
-              } else {
-                  return logItem;
-              }
-          })
-        : [SEE_DEV_CONSOLE_MESSAGE];
 }
+
+const DataItem = ({ data }: { data: LogData[] }) => {
+    return (
+        <>
+            <div>
+                {data.map((datum, i) => {
+                    return typeof datum === 'object' ? (
+                        <ReactJsonView key={i} src={datum} {...REACT_JSON_VIEW_CONFIG} />
+                    ) : (
+                        <span key={i}>{datum?.toString()}</span>
+                    );
+                })}
+            </div>
+        </>
+    );
+};
 
 export const ExampleLogger: FunctionComponent<Props> = ({ exampleName, bufferSize = 20 }) => {
     const containerRef = useRef<HTMLPreElement>(null);
@@ -91,7 +108,7 @@ export const ExampleLogger: FunctionComponent<Props> = ({ exampleName, bufferSiz
             <pre ref={containerRef} className={styles.loggerPre}>
                 {logs.length === 0 && <div>Console logs from the example shown here...</div>}
                 {logs.map((log, i) => (
-                    <div key={i}>{log.data.join(' ')}</div>
+                    <DataItem key={i} data={log.data}></DataItem>
                 ))}
             </pre>
         </div>
