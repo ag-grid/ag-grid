@@ -18,7 +18,7 @@ export abstract class AgAbstractField<
 
     constructor(
         config?: TConfig,
-        template?: string | ElementParams,
+        template?: ElementParams,
         components?: ComponentSelector[],
         protected readonly className?: string
     ) {

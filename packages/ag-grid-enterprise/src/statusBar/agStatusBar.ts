@@ -156,9 +156,9 @@ export class AgStatusBar extends Component {
     }
 
     resetStatusBar(): void {
-        this.eStatusBarLeft.innerHTML = '';
-        this.eStatusBarCenter.innerHTML = '';
-        this.eStatusBarRight.innerHTML = '';
+        this.eStatusBarLeft.textContent = '';
+        this.eStatusBarCenter.textContent = '';
+        this.eStatusBarRight.textContent = '';
 
         this.destroyComponents();
         this.statusBarSvc.unregisterAllComponents();

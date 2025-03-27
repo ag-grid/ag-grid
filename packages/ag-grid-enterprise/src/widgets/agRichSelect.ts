@@ -25,7 +25,6 @@ import {
     _clearElement,
     _createIconNoSpan,
     _debounce,
-    _escapeString,
     _exists,
     _fuzzySuggestions,
     _getActiveDomElement,
@@ -273,7 +272,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
             } else {
                 const { placeholder } = config;
                 if (_exists(placeholder)) {
-                    eDisplayField.innerHTML = `${_escapeString(placeholder)}`;
+                    eDisplayField.textContent = placeholder;
                     eDisplayField.classList.add('ag-display-as-placeholder');
                 } else {
                     _clearElement(eDisplayField);
@@ -866,6 +865,7 @@ export function _bindCellRendererToHtmlElement(
             if (typeof gui === 'object') {
                 eTarget.appendChild(gui);
             } else {
+                // eslint-disable-next-line no-restricted-properties -- no other way to parse custom HTML strings from the user
                 eTarget.innerHTML = gui;
             }
         }

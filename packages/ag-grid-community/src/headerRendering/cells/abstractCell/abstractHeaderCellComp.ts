@@ -5,7 +5,7 @@ import type { AbstractHeaderCellCtrl } from './abstractHeaderCellCtrl';
 export abstract class AbstractHeaderCellComp<T extends AbstractHeaderCellCtrl> extends Component {
     protected ctrl: T;
 
-    constructor(template: string | ElementParams, ctrl: T) {
+    constructor(template: ElementParams, ctrl: T) {
         super(template);
         this.ctrl = ctrl;
     }

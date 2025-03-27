@@ -222,12 +222,14 @@ export function _isRtlNegativeScroll(): boolean {
     template.style.top = '0px';
     template.style.overflow = 'hidden';
     template.dir = 'rtl';
-    template.innerHTML =
-        /* html */
-        `<div style="width: 2px">
-            <span style="display: inline-block; width: 1px"></span>
-            <span style="display: inline-block; width: 1px"></span>
-        </div>`;
+
+    const spanElement: ElementParams = { tag: 'span', attrs: { style: 'display: inline-block; width: 1px' } };
+    const child = _createElement({
+        tag: 'div',
+        attrs: { style: 'width: 2px' },
+        children: [spanElement, spanElement],
+    });
+    template.appendChild(child);
 
     document.body.appendChild(template);
 
@@ -292,13 +294,14 @@ export function _isVisible(element: HTMLElement) {
 }
 
 /**
- * Loads the template and returns it as an element. makes up for no simple way in
- * the dom api to load html directly, eg we cannot do this: document.createElement(template)
+ * Loads the template and returns it as an element.
+ * NOTE: Prefer _createElement
  * @param {string} template
  * @returns {HTMLElement}
  */
 export function _loadTemplate(template: string | undefined | null): HTMLElement {
     const tempDiv = document.createElement('div');
+    // eslint-disable-next-line no-restricted-properties -- no other way to parse custom HTML strings from the user
     tempDiv.innerHTML = (template || '').trim();
 
     return tempDiv.firstChild as HTMLElement;
