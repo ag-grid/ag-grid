@@ -20,6 +20,14 @@ const gridOptions: GridOptions<IOlympicData> = {
     rowData: null,
     enableRowPinning: true,
     isRowPinned: (node) => (!node.data?.country ? 'top' : null),
+    rowSelection: {
+        mode: 'multiRow',
+    },
+    onFirstDataRendered() {
+        ['1', '3', '5'].forEach((id) => {
+            gridApi.getRowNode(id)?.setSelected(true);
+        });
+    },
 };
 
 // setup the grid after the page has finished loading

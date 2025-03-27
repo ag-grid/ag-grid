@@ -1,14 +1,20 @@
 import type { ColDef, GridApi, GridOptions } from 'ag-grid-community';
 import { ClientSideRowModelModule, ModuleRegistry, ValidationModule, createGrid } from 'ag-grid-community';
-import { ManualPinnedRowModule } from 'ag-grid-enterprise';
+import { ManualPinnedRowModule, RowGroupingModule } from 'ag-grid-enterprise';
 
 ModuleRegistry.registerModules([
     ManualPinnedRowModule,
     ClientSideRowModelModule,
+    RowGroupingModule,
     ValidationModule /* Development Only */,
 ]);
 
-const columnDefs: ColDef[] = [{ field: 'athlete' }, { field: 'country' }, { field: 'sport' }];
+const columnDefs: ColDef[] = [
+    { field: 'athlete' },
+    { field: 'country', rowGroup: true, hide: true },
+    { field: 'sport' },
+    { field: 'gold', aggFunc: 'sum' },
+];
 
 let gridApi: GridApi<IOlympicData>;
 
@@ -16,10 +22,15 @@ const gridOptions: GridOptions<IOlympicData> = {
     defaultColDef: {
         flex: 1,
     },
-    columnDefs: columnDefs,
+    autoGroupColumnDef: {
+        headerName: 'Country',
+    },
+    columnDefs,
     rowData: null,
     enableRowPinning: true,
-    isRowPinned: (node) => (!node.data?.country ? 'top' : null),
+    onFirstDataRendered() {
+        setGrandTotalRow(getGrandTotalRow());
+    },
 };
 
 // setup the grid after the page has finished loading
@@ -31,3 +42,11 @@ document.addEventListener('DOMContentLoaded', function () {
         .then((response) => response.json())
         .then((data: IOlympicData[]) => gridApi!.setGridOption('rowData', data));
 });
+
+function getGrandTotalRow() {
+    return document.querySelector<HTMLSelectElement>('#select-grand-total-row')?.value as GridOptions['grandTotalRow'];
+}
+
+function setGrandTotalRow(value: GridOptions['grandTotalRow']) {
+    gridApi.setGridOption('grandTotalRow', value);
+}
