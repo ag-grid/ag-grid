@@ -311,6 +311,12 @@ export class CellCtrl extends BeanStub {
         return this.beans.gos.get('enableCellTextSelection') || this.column.isAutoHeight();
     }
 
+    /**
+     * Wrapper providing general conditions under which control elements (e.g. checkboxes and drag handles)
+     * are rendered for a particular cell.
+     * @param value Whether to render the control in the specific context of the caller
+     * @param allowManuallyPinned Whether manually pinned rows are permitted this form of control element
+     */
     // eslint-disable-next-line @typescript-eslint/ban-types
     private isIncludeControl(value: boolean | Function | undefined, allowManuallyPinned = false): boolean {
         const rowUnpinned = this.rowNode.rowPinned == null;
