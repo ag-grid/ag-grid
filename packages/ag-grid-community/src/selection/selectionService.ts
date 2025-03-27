@@ -514,12 +514,12 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
         }
 
         const nodes: RowNode[] = [];
-        const push = (node: RowNode) => nodes.push(node);
+        const addToResult = (node: RowNode) => nodes.push(node);
 
         if (selectAll === 'currentPage') {
             this.forEachNodeOnPage((node) => {
                 if (!node.group) {
-                    push(node);
+                    addToResult(node);
                     return;
                 }
 
@@ -527,7 +527,7 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
                     // even with groupSelectsChildren, do this recursively as only the filtered children
                     // are considered as the current page
                     const recursivelyAddChildren = (child: RowNode) => {
-                        push(child);
+                        addToResult(child);
                         child.childrenAfterFilter?.forEach(recursivelyAddChildren);
                     };
                     recursivelyAddChildren(node);
@@ -536,7 +536,7 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
 
                 // if the group node is expanded, the pagination proxy will include the visible nodes to select
                 if (!this.groupSelectsDescendants) {
-                    push(node);
+                    addToResult(node);
                 }
             });
             return nodes;
@@ -544,11 +544,11 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
 
         const clientSideRowModel = this.beans.rowModel as IClientSideRowModel;
         if (selectAll === 'filtered') {
-            clientSideRowModel.forEachNodeAfterFilter(push);
+            clientSideRowModel.forEachNodeAfterFilter(addToResult);
             return nodes;
         }
 
-        clientSideRowModel.forEachNode(push);
+        clientSideRowModel.forEachNode(addToResult);
         return nodes;
     }
 
