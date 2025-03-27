@@ -219,6 +219,7 @@ export class GridChartComp extends Component {
             chartOptionsToRestore: this.params.chartOptionsToRestore,
             chartPaletteToRestore: this.params.chartPaletteToRestore,
             seriesChartTypes: this.chartController.getSeriesChartTypes(),
+            suppressFieldDotNotation: this.gos.get('suppressFieldDotNotation'),
             translate: (toTranslate: ChartTranslationKey) => this.chartTranslation.translate(toTranslate),
         };
 
