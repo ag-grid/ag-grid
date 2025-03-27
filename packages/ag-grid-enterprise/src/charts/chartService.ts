@@ -26,7 +26,7 @@ import type {
     UpdateChartParams,
     VisibleColsService,
 } from 'ag-grid-community';
-import { BeanStub, _focusInto, _uniq, _warn } from 'ag-grid-community';
+import { BeanStub, _focusInto, _uniq, _uniqBy, _warn } from 'ag-grid-community';
 
 import { VERSION as GRID_VERSION } from '../version';
 import type { AgChartsExports } from './agChartsExports';
@@ -321,7 +321,7 @@ export class ChartService extends BeanStub implements NamedBean, IChartService {
     }
 
     private getSelectedRange(): PartialCellRange {
-        const ranges = this.rangeSvc?.getCellRanges() ?? [];
+        const ranges = _uniqBy(this.rangeSvc?.getCellRanges() ?? [], 'id');
         if (ranges.length === 0) {
             return { columns: [] };
         }
@@ -331,17 +331,44 @@ export class ChartService extends BeanStub implements NamedBean, IChartService {
         const endRow: RowPosition = { rowIndex: Number.MIN_VALUE, rowPinned: undefined };
 
         ranges.forEach((range) => {
-            if (range.startRow && range.endRow) {
-                if (range.startRow.rowPinned || range.endRow.rowPinned) {
-                    // pinned rows are not supported in chart ranges
-                    return;
-                }
-                startRow.rowIndex = Math.min(startRow.rowIndex, range.startRow.rowIndex);
-                endRow.rowIndex = Math.max(endRow.rowIndex, range.endRow.rowIndex);
+            if (!(range.startRow && range.endRow)) {
+                return;
+            }
+
+            // set start/end ranges assuming rows aren't pinned
+            let sIndex = range.startRow.rowIndex;
+            let eIndex = range.endRow.rowIndex;
+
+            // if range crosses pinned rows, adjust the start/end row indexes to exclude pinned rows
+            // pinned rows aren't part of the main row model and:
+            //   * aren't easily accessible during chart data extraction
+            //   * aren't included in aggregation functions
+            //   * can have completely bespoke data shapes
+            //
+            if (range.startRow.rowPinned === 'top' && range.endRow.rowPinned !== 'top') {
+                // range crosses pinned top boundary, so start at first row in the row model
+                sIndex = 0;
+            }
+            if (range.endRow.rowPinned === 'bottom' && range.startRow.rowPinned !== 'bottom') {
+                // range crosses pinned bottom boundary, so end at last row in the row model
+                eIndex = this.beans.pageBounds.getLastRow();
+            }
+
+            if (sIndex !== undefined) {
+                startRow.rowIndex = Math.min(startRow.rowIndex, sIndex);
+            }
+            if (eIndex !== undefined) {
+                endRow.rowIndex = Math.max(endRow.rowIndex, eIndex);
             }
         });
 
+        if (startRow.rowIndex === Number.MAX_VALUE || endRow.rowIndex === Number.MIN_VALUE) {
+            // if we didn't find any valid ranges, return an empty range
+            return { columns: [] };
+        }
+
         return {
+            id: this.generateId(),
             columns,
             startColumn: columns[0],
             startRow,
