@@ -41,6 +41,7 @@
     "@emotion/react": "^11.11.4",
     "@emotion/styled": "^11.11.5",
     "@floating-ui/react": "^0.26.11",
+    "@microlink/react-json-view": "^1.26.1",
     "@nanostores/persistent": "^0.9.1",
     "@nanostores/react": "^0.7.1",
     "@radix-ui/react-accordion": "^1.1.2",
