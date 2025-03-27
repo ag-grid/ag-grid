@@ -113,7 +113,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
         this.addManagedEventListeners({
             paginationChanged: this.onPageLoaded.bind(this),
             pinnedRowDataChanged: this.onPinnedRowDataChanged.bind(this),
-            rowPinnedChanged: this.onRowPinnedChanged.bind(this),
+            pinnedRowsChanged: this.onPinnedRowsChanged.bind(this),
             displayedColumnsChanged: this.onDisplayedColumnsChanged.bind(this),
             bodyScroll: this.onBodyScroll.bind(this),
             bodyHeightChanged: this.redraw.bind(this, {}),
@@ -517,7 +517,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
         this.redrawAfterModelUpdate(params);
     }
 
-    private onRowPinnedChanged(): void {
+    private onPinnedRowsChanged(): void {
         this.redrawAfterModelUpdate({ recycleRows: true });
     }
 

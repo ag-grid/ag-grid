@@ -325,7 +325,7 @@ export class ManualPinnedRowModel extends BeanStub implements IPinnedRowModel {
     }
 
     private dispatchRowPinnedEvents(node?: RowNode): void {
-        this.eventSvc.dispatchEvent({ type: 'rowPinnedChanged' });
+        this.eventSvc.dispatchEvent({ type: 'pinnedRowsChanged' });
         node?.dispatchRowEvent('rowPinned');
     }
 }

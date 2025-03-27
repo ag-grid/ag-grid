@@ -267,7 +267,7 @@ export class StateService extends BeanStub implements NamedBean {
                 }
             },
             bodyScrollEnd: () => updateCachedState('scroll', this.getScrollState()),
-            rowPinnedChanged: () => updateCachedState('rowPinning', this.getRowPinningState()),
+            pinnedRowsChanged: () => updateCachedState('rowPinning', this.getRowPinningState()),
         });
     }
 

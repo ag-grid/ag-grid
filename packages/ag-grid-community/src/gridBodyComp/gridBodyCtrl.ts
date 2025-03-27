@@ -143,7 +143,7 @@ export class GridBodyCtrl extends BeanStub {
             scrollGapChanged: this.updateScrollingClasses.bind(this),
             pinnedRowDataChanged: setFloatingHeights,
             pinnedHeightChanged: setFloatingHeights,
-            rowPinnedChanged: setFloatingHeights,
+            pinnedRowsChanged: setFloatingHeights,
             headerHeightChanged: this.setStickyTopOffsetTop.bind(this),
             columnRowGroupChanged: setGridRootRole,
             columnPivotChanged: setGridRootRole,
