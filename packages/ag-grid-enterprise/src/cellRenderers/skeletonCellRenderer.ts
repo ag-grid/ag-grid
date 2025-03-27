@@ -19,8 +19,7 @@ export class SkeletonCellRenderer extends Component implements ILoadingCellRende
 
     private setupFailed(): void {
         const localeTextFunc = this.getLocaleTextFunc();
-        // eslint-disable-next-line no-restricted-properties -- Could swap to textContent, but could be a breaking change
-        this.getGui().innerText = localeTextFunc('loadingError', 'ERR');
+        this.getGui().textContent = localeTextFunc('loadingError', 'ERR');
 
         const ariaFailed = localeTextFunc('ariaSkeletonCellLoadingFailed', 'Row failed to load');
         _setAriaLabel(this.getGui(), ariaFailed);
