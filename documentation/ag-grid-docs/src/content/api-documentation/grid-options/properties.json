@@ -1431,7 +1431,7 @@
         "isRowPinnable": {
             "more": {
                 "name": "Manual Row Pinning",
-                "url": "./row-pinning-manual/#preventing-rows-from-being-pinned"
+                "url": "./row-pinning-manual/#preventing-rows-from-being-pinnable"
             }
         },
         "isRowPinned": {
