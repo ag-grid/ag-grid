@@ -276,6 +276,7 @@ function createDragItem(column: AgColumn): DragItem {
     return {
         columns: [column],
         visibleState: visibleState,
+        containerType: column.pinned,
     };
 }
 
@@ -313,5 +314,6 @@ function createDragItemForGroup(columnGroup: AgColumnGroup, allCols: AgColumn[])
         columns: allColumnsCurrentOrder,
         columnsInSplit,
         visibleState: visibleState,
+        containerType: columnsInSplit[0]?.pinned,
     };
 }
