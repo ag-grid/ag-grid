@@ -10,11 +10,15 @@ type Params = Record<string, string>;
 function cleanParams(params: Params) {
     return Object.fromEntries(
         Object.entries(params).map(([key, value]) => {
-            let cleanParam = value;
+            let cleanParam: string | boolean = value;
 
             // Clean up serialised strings
             if (cleanParam.startsWith('"') && cleanParam.endsWith('"')) {
                 cleanParam = cleanParam.slice(1, cleanParam.length - 1).replaceAll('\\"', '"');
+            }
+            // Ensure false is correctly handled as a boolean
+            if (cleanParam === 'false') {
+                cleanParam = false;
             }
 
             return [key, cleanParam];
