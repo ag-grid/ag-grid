@@ -1,5 +1,4 @@
 import type { _ModuleWithApi, _PinnedRowGridApi } from 'ag-grid-community';
-import { PinnedRowModule } from 'ag-grid-community';
 
 import { VERSION } from '../version';
 import { manualPinnedRowCSS } from './manualPinnedRow.css-GENERATED';
@@ -19,7 +18,6 @@ export const ManualPinnedRowModule: _ModuleWithApi<_PinnedRowGridApi> = {
     moduleName: 'ManualPinnedRow',
     version: VERSION,
     beans: [PinnedRowModel],
-    dependsOn: [PinnedRowModule],
     css: [manualPinnedRowCSS],
     apiFunctions: {
         getPinnedTopRowCount,
