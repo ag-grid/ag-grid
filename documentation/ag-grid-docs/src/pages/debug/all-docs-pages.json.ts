@@ -4,8 +4,8 @@ import { getCollection, getEntry } from 'astro:content';
 async function getAllDocsPages() {
     const pages = await getCollection('docs');
 
-    return pages.map(({ slug }) => {
-        return slug;
+    return pages.map(({ id }) => {
+        return id;
     });
 }
 
