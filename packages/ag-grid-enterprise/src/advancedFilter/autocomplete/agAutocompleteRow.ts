@@ -1,5 +1,5 @@
 import type { ElementParams } from 'ag-grid-community';
-import { Component, _createElement, _exists } from 'ag-grid-community';
+import { Component, _clearElement, _createElement, _exists } from 'ag-grid-community';
 
 const AgAutocompleteRowElement: ElementParams = {
     tag: 'div',
@@ -38,8 +38,8 @@ export class AgAutocompleteRow extends Component {
                 this.hasHighlighting = true;
                 const highlightEndIndex = index + searchString.length;
 
-                const child = this.getGui().lastElementChild!;
-                child.textContent = null; // Clear the content
+                const child = this.getGui().lastElementChild! as HTMLElement;
+                _clearElement(child);
                 child.append(
                     // Start part
                     value.slice(0, index),

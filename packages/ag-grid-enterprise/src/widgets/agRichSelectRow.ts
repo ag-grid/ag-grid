@@ -13,6 +13,7 @@ import type {
 import {
     Component,
     _addGridCommonParams,
+    _clearElement,
     _createElement,
     _escapeString,
     _exists,
@@ -80,7 +81,7 @@ export class RichSelectRow<TValue> extends Component {
 
                 const child = this.getGui().querySelector('span');
                 if (child) {
-                    child.textContent = null; // Clear the content
+                    _clearElement(child);
                     child.append(
                         // Start part
                         parsedValue.slice(0, index),
