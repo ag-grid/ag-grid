@@ -11,11 +11,11 @@ export const CONSOLE_LOG_END = '/** CONSOLE LOG END **/';
  */
 export const getConsoleLogSnippet = ({ pageName, exampleName }: Params) =>
     `${CONSOLE_LOG_START}
-const PRIMITIVE_TYPES = ["string", "number", "boolean", "undefined", "null", "NaN", "symbol"];
+const PRIMITIVE_TYPES = ["string", "number", "boolean", "undefined", "null", "nan", "symbol"];
 
 function getType(value) {
     if (value === null) return "null";
-    if (Number.isNaN(value)) return "NaN";
+    if (Number.isNaN(value)) return "nan";
     if (Array.isArray(value)) return "array";
     if (value instanceof Date) return "date";
     if (value instanceof RegExp) return "regexp";

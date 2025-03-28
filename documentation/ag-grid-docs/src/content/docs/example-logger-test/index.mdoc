@@ -1,0 +1,45 @@
+---
+title: Example Logger Test
+---
+
+This is an internal page that contains examples that can be used to test the example logger.
+
+{% gridExampleRunner title="Console logs" name="console-logs" /%}
+
+
+
+## Code Syntax Highlighting
+
+```js
+console.log('string');
+console.log(23);
+console.log(null);
+console.log(undefined);
+console.log(NaN);
+console.log(true, false);
+console.log('string', 23, null, undefined, true, false);
+console.log([]);
+console.log(['string']);
+console.log(['string', 23, null, undefined, true, false]);
+console.log([{ a: 'string', b: 23, c: null }, 23, null, undefined, true, false]);
+console.log([{}]);
+console.log({ a: 'string', b: 23, c: null });
+console.log({ a: undefined, b: NaN, c: null });
+
+console.log({ a: 'more', b: 'here', c: 'now', d: 'more' });
+
+console.log(
+    'string',
+    23,
+    null,
+    undefined,
+    true,
+    false,
+    { a: 'more', b: 'here', c: 'now', d: 'more' },
+    { a: 'more', b: 'here', c: 'now', d: 'more' },
+    { a: 'more', b: 'here', c: 'now', d: 'more' },
+    { a: 'more', b: 'here', c: 'now', d: 'more' },
+    { a: 'more', b: 'here', c: 'now', d: 'more' },
+    'asdfasdfsadfsadfds asdfasdfsadfsadfds asdfasdfsadfsadfds asdfasdfsadfsadfds asdfasdfsadfsadfds asdfasdfsadfsadfds asdfasdfsadfsadfds asdfasdfsadfsadfds'
+);
+```

@@ -1,3 +1,4 @@
+import { getType } from '@ag-website-shared/components/example-runner/utils/getType';
 import ReactJsonView from '@microlink/react-json-view';
 import { type FunctionComponent, useEffect, useLayoutEffect, useRef, useState } from 'react';
 
@@ -9,7 +10,8 @@ type LogObject = {
     argType: string;
     safeString: string;
 };
-type LogData = string | number | undefined | null | LogObject;
+type SimpleValue = string | number | boolean | null | undefined;
+type LogData = SimpleValue | LogObject;
 
 interface Log {
     type: 'console-log';
@@ -25,7 +27,7 @@ interface Props {
 
 const REACT_JSON_VIEW_CONFIG = {
     collapsed: 1,
-    name: false,
+    name: null,
     enableClipboard: false,
     displayDataTypes: false,
     displayObjectSize: false,
@@ -44,25 +46,32 @@ function getLoggableData(data: LogData[]) {
         const consoleLogObject = logItem as LogObject;
         if (logItem && consoleLogObject.__consoleLogObject) {
             return JSON.parse(consoleLogObject.safeString);
-        } else if (logItem === null) {
-            return 'null';
-        } else if (logItem === undefined) {
-            return 'undefined';
         } else {
             return logItem;
         }
     });
 }
 
+const SimpleValueDisplay = ({ value }: { value: SimpleValue }) => {
+    const valueType = getType(value);
+    let displayValue = value;
+    if (['null', 'undefined'].includes(valueType)) {
+        displayValue = valueType;
+    }
+
+    return <span className={`type-${valueType}`}>{displayValue?.toString()}</span>;
+};
+
 const DataItem = ({ data }: { data: LogData[] }) => {
     return (
         <>
             <div>
-                {data.map((datum, i) => {
-                    return typeof datum === 'object' ? (
-                        <ReactJsonView key={i} src={datum} {...REACT_JSON_VIEW_CONFIG} />
+                {data.map((value, i) => {
+                    const isJSonViewable = ['object', 'array'].includes(getType(value));
+                    return isJSonViewable ? (
+                        <ReactJsonView key={i} src={value as object} {...REACT_JSON_VIEW_CONFIG} />
                     ) : (
-                        <span key={i}>{datum?.toString()}</span>
+                        <SimpleValueDisplay key={i} value={value as SimpleValue} />
                     );
                 })}
             </div>
