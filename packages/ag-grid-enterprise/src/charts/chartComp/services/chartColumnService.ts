@@ -145,6 +145,11 @@ export class ChartColumnService extends BeanStub implements NamedBean {
             cellValue = cellValue.toNumber();
         }
 
+        // unwrap value object if present
+        if (cellValue !== null && typeof cellValue.value === 'number') {
+            cellValue = cellValue.value;
+        }
+
         const isNumber =
             typeof cellValue === 'number' ||
             col.colDef.cellDataType === 'number' ||

@@ -216,8 +216,12 @@ export class ChartDatasource extends BeanStub {
 
                     // add data value to value column
                     const value = this.valueSvc.getValue(col, rowNode);
-                    const actualValue =
-                        value != null && typeof value.toNumber === 'function' ? value.toNumber() : value;
+                    let actualValue = value != null && typeof value.toNumber === 'function' ? value.toNumber() : value;
+
+                    // unwrap value object if present
+                    if (actualValue && typeof actualValue.value === 'number') {
+                        actualValue = actualValue.value;
+                    }
 
                     if (filteredNodes[rowNode.id as string]) {
                         data[colId] = actualValue;
@@ -229,6 +233,11 @@ export class ChartDatasource extends BeanStub {
                 } else {
                     // add data value to value column
                     let value = this.valueSvc.getValue(col, rowNode);
+
+                    // unwrap value object if present
+                    if (value && typeof value.value === 'number') {
+                        value = value.value;
+                    }
 
                     // aggregated value
                     if (value && Object.prototype.hasOwnProperty.call(value, 'toString')) {
