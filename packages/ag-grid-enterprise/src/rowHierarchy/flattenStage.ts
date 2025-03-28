@@ -9,10 +9,10 @@ import type {
 import { BeanStub } from 'ag-grid-community';
 
 import { _createRowNodeFooter, _destroyRowNodeFooter } from '../aggregation/footerUtils';
-import { _getComputedFooterLocation } from '../manualPinnedRows/manualPinnedRowUtils';
 import type { FlattenDetails } from './flattenUtils';
 import {
     _getFlattenDetails,
+    _getFooterLocationWithFallback,
     _isRemovedLowestSingleChildrenGroup,
     _isRemovedSingleChildrenGroup,
     _shouldRowBeRendered,
@@ -58,10 +58,17 @@ export class FlattenStage extends BeanStub implements IRowNodeStage<RowNode[]>, 
 
         if (includeGrandTotalRow) {
             _createRowNodeFooter(rootNode, this.beans);
-            const location = _getComputedFooterLocation(this.beans, rootNode.sibling, grandTotalRow);
-            const addToTop = location === 'top';
-            if (addToTop || location == 'bottom') {
-                this.addRowNodeToRowsToDisplay(details, rootNode.sibling, result, 0, addToTop);
+            const grandTotalPinned = this.beans.pinnedRowModel?.getGrandTotalPinned();
+            const location = _getFooterLocationWithFallback(grandTotalRow, grandTotalPinned);
+            // If pinning the grand total row, skip adding the footer to the displayed rows
+            if (!grandTotalPinned) {
+                const addToTop = location === 'top';
+                if (addToTop || location == 'bottom') {
+                    this.addRowNodeToRowsToDisplay(details, rootNode.sibling, result, 0, addToTop);
+                } else {
+                    // if the footer location is `pinnedXXXX` then flag the footer for pinning
+                    this.beans.pinnedRowModel?.setGrandTotalPinned(location === 'pinnedBottom' ? 'bottom' : 'top');
+                }
             }
         }
 

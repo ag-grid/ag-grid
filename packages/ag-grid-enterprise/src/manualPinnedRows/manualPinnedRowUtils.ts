@@ -1,4 +1,4 @@
-import type { BeanCollection, GridOptions, RowNode } from 'ag-grid-community';
+import type { BeanCollection, RowNode } from 'ag-grid-community';
 import { _isServerSideRowModel, _removeFromArray } from 'ag-grid-community';
 
 export class PinnedRows {
@@ -20,12 +20,12 @@ export class PinnedRows {
         return this.visible.size;
     }
 
-    public add(item: RowNode): void {
+    public add(node: RowNode): void {
         const { all, visible, order } = this;
-        if (all.has(item)) return;
-        all.add(item);
-        visible.add(item);
-        order.push(item);
+        if (all.has(node)) return;
+        all.add(node);
+        visible.add(node);
+        order.push(node);
         this.sort();
     }
 
@@ -125,40 +125,4 @@ export function _shouldHidePinnedRows(beans: BeanCollection, node: RowNode): boo
     }
 
     return false;
-}
-
-function _isSourceRowPinned(beans: BeanCollection, node: RowNode): boolean {
-    const { pinnedRowModel } = beans;
-
-    // `rowPinned` is only set on pinned sibling nodes
-    const rowPinned = node.rowPinned ?? node.pinnedSibling?.rowPinned;
-
-    return !!(pinnedRowModel?.isManual() && rowPinned);
-}
-
-/**
- * We need to handle the case where `grandTotalRow = 'pinnedXXXX'` and then is unpinned.
- *
- * In this case, we fallback to 'top'/'bottom'.
- */
-export function _getComputedFooterLocation(
-    beans: BeanCollection,
-    node: RowNode,
-    grandTotalRow: GridOptions['grandTotalRow']
-): GridOptions['grandTotalRow'] {
-    if (_isSourceRowPinned(beans, node)) {
-        // For pinned rows, we don't display the non-pinned footer as well.
-        // This is different than for all other manually pinned rows
-        return;
-    }
-
-    switch (grandTotalRow) {
-        case 'top':
-        case 'bottom':
-            return grandTotalRow;
-        case 'pinnedBottom':
-            return 'bottom';
-        case 'pinnedTop':
-            return 'top';
-    }
 }
