@@ -33,6 +33,7 @@ import type { IRowModel, RowModelType } from './interfaces/iRowModel';
 import type { IRowNode } from './interfaces/iRowNode';
 import type { IServerSideRowModel } from './interfaces/iServerSideRowModel';
 import { _getElementRectWithOffset } from './utils/dom';
+import { _doOnce } from './utils/function';
 import { _exists, _missing } from './utils/generic';
 import { _warn } from './validation/logging';
 
@@ -386,7 +387,8 @@ export function _getRowIdCallback<TData = any>(
         let id = getRowId(params);
 
         if (typeof id !== 'string') {
-            _warn(25, { id });
+            // Avoid logging for every row if the user is returning a non-string value, could be thousands of rows
+            _doOnce(() => _warn(25, { id }), 'getRowIdString');
             id = String(id);
         }
 
