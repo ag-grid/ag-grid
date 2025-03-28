@@ -16,6 +16,7 @@ const gridModulesMap: { [gridId: string]: ModuleStore } = {};
 let currentModuleVersion: string;
 let areGridScopedModules = false;
 let isUmd = false;
+let userHasProvidedModules = false;
 
 function isValidModuleVersion(module: Module): boolean {
     const [moduleMajor, moduleMinor] = module.version.split('.') || [];
@@ -49,7 +50,15 @@ function runVersionChecks(module: Module) {
     }
 }
 
-export function _registerModule(module: Module, gridId: string | undefined): void {
+export function _hasUserRegisteredModules(): boolean {
+    return userHasProvidedModules;
+}
+
+export function _registerModule(module: Module, gridId: string | undefined, isInternalRegistration = false): void {
+    if (!isInternalRegistration) {
+        userHasProvidedModules = true;
+    }
+
     runVersionChecks(module);
     const rowModels = module.rowModels ?? ['all'];
 
@@ -72,9 +81,7 @@ export function _registerModule(module: Module, gridId: string | undefined): voi
         moduleStore[rowModel]![module.moduleName] = module;
     });
 
-    if (module.dependsOn) {
-        module.dependsOn.forEach((dependency) => _registerModule(dependency, gridId));
-    }
+    module.dependsOn?.forEach((dependency) => _registerModule(dependency, gridId, isInternalRegistration));
 }
 
 export function _unRegisterGridModules(gridId: string): void {
@@ -133,4 +140,12 @@ export class ModuleRegistry {
     public static registerModules(modules: Module[]): void {
         modules.forEach((module) => _registerModule(module, undefined));
     }
+}
+
+/**
+ * Globally register the given modules for all grids.
+ * @param modules - modules to register
+ */
+export function registerModules(modules: Module[]): void {
+    modules.forEach((module) => _registerModule(module, undefined));
 }

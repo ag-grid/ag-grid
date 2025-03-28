@@ -14,6 +14,15 @@ import { baseDocLink, getErrorLink } from '../logging';
 import { resolveModuleNames } from '../resolvableModuleNames';
 import { USER_COMP_MODULES } from '../rules/userCompValidations';
 
+export const NoModulesRegisteredError = () =>
+    `No AG Grid feature modules are registered. Did you forget to register modules?
+                    
+    import { AllCommunityModule, ModuleRegistry } from 'ag-grid-community';
+    
+    ModuleRegistry.registerModules([ AllCommunityModule ]);
+    
+    ` as const;
+
 export const moduleImportMsg = (moduleNames: ModuleName[]) => {
     const imports = moduleNames.map(
         (moduleName) =>
@@ -644,6 +653,7 @@ export const AG_GRID_ERRORS = {
         `Cycle detected for row with id='${id}' and parent id='${parentId}'. Resetting the parent for row with id='${id}' and showing it as a root-level node.` as const,
     271: ({ id, parentId }: { id: string; parentId: string }) =>
         `Parent row not found for row with id='${id}' and parent id='${parentId}'. Showing row with id='${id}' as a root-level node.` as const,
+    272: () => NoModulesRegisteredError(),
 };
 
 export type ErrorMap = typeof AG_GRID_ERRORS;

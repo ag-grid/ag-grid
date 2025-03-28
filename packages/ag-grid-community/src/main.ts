@@ -1066,7 +1066,7 @@ export { RowSpanningAccumulator, GridSerializingParams, RowAccumulator } from '.
 
 // modules
 export { Module, ModuleValidationResult, _ModuleWithApi, _ModuleWithoutApi, ModuleName } from './interfaces/iModule';
-export { ModuleRegistry, _getGridRegisteredModules, _setUmd } from './modules/moduleRegistry';
+export { ModuleRegistry, _getGridRegisteredModules, _setUmd, registerModules } from './modules/moduleRegistry';
 
 export { ValidationModule } from './validation/validationModule';
 export { ColumnMoveModule as _ColumnMoveModule } from './columnMove/columnMoveModule';
@@ -1133,7 +1133,7 @@ export { TooltipModule } from './tooltip/tooltipModule';
 export { LocaleModule } from './misc/locale/localeModule';
 export { RowAutoHeightModule } from './rendering/row/rowAutoHeightModule';
 export { SharedExportModule as _SharedExportModule } from './export/exportModule';
-export { AllCommunityModule } from './allCommunityModule';
+export { AllCommunityModule, registerAllCommunityModules } from './allCommunityModule';
 
 //  events
 export * from './events';

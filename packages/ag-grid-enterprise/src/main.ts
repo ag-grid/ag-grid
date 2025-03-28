@@ -32,6 +32,6 @@ export { ManualPinnedRowModule } from './manualPinnedRows/manualPinnedRowModule'
 
 export { GridChartsModule, IntegratedChartsModule } from './charts/integratedChartsModule';
 
-export { AllEnterpriseModule } from './allEnterpriseModule';
+export { AllEnterpriseModule, registerAllEnterpriseModules } from './allEnterpriseModule';
 
 export * from 'ag-grid-community';

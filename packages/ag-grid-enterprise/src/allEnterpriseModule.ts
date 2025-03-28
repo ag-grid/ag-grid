@@ -1,7 +1,7 @@
 import type { IntegratedModule } from 'ag-charts-types';
 
 import type { ModuleName, _ModuleWithoutApi } from 'ag-grid-community';
-import { AllCommunityModule } from 'ag-grid-community';
+import { AllCommunityModule, ModuleRegistry } from 'ag-grid-community';
 
 import { AdvancedFilterModule } from './advancedFilter/advancedFilterModule';
 import { IntegratedChartsModule } from './charts/integratedChartsModule';
@@ -89,3 +89,8 @@ export const AllEnterpriseModule: AllEnterpriseModuleType = {
     version: VERSION,
     dependsOn: dependsOn,
 };
+
+export function registerAllEnterpriseModules(agChartsModule?: IntegratedModule) {
+    const module = agChartsModule ? AllEnterpriseModule.with(agChartsModule) : AllEnterpriseModule;
+    ModuleRegistry.registerModules([module]);
+}

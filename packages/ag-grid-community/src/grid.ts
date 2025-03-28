@@ -19,12 +19,14 @@ import type { RowModelType } from './interfaces/iRowModel';
 import {
     _areModulesGridScoped,
     _getRegisteredModules,
+    _hasUserRegisteredModules,
     _isModuleRegistered,
     _registerModule,
 } from './modules/moduleRegistry';
 import { _createElement } from './utils/dom';
 import { _missing } from './utils/generic';
 import { _mergeDeep } from './utils/object';
+import { NoModulesRegisteredError } from './validation/errorMessages/errorText';
 import { _error, _logPreInitErr, baseDocLink } from './validation/logging';
 import { VanillaFrameworkOverrides } from './vanillaFrameworkOverrides';
 
@@ -221,7 +223,7 @@ export class GridCoreCreator {
     }
 
     private getRegisteredModules(params: GridParams | undefined, gridId: string, rowModelType: RowModelType): Module[] {
-        _registerModule(CommunityCoreModule, undefined);
+        _registerModule(CommunityCoreModule, undefined, true);
 
         params?.modules?.forEach((m) => _registerModule(m, gridId));
 
@@ -289,6 +291,11 @@ export class GridCoreCreator {
             return;
         }
 
+        if (!_hasUserRegisteredModules()) {
+            _logPreInitErr(272, undefined, NoModulesRegisteredError());
+            return;
+        }
+
         if (!_isModuleRegistered(rowModuleModelName, gridId, rowModelType)) {
             _logPreInitErr(
                 200,
@@ -299,7 +306,7 @@ export class GridCoreCreator {
                     gridId,
                     rowModelType,
                 },
-                `Missing module ${rowModuleModelName}Module for rowModelType ${rowModelType}. \nIf upgrading from before v33, see ${baseDocLink}/upgrading-to-ag-grid-33/#changes-to-modules/`
+                `Missing module ${rowModuleModelName}Module for rowModelType ${rowModelType}. \n\nIf upgrading from before v33, see ${baseDocLink}/upgrading-to-ag-grid-33/#changes-to-modules/\n\n`
             );
             return;
         }
