@@ -90,11 +90,11 @@ jobs:
         with:
           branch: "latest"
           workflow: "ci"
-          verify: true
+          verify: false
 
       - name: Test Outputs
         run: |
           echo "Current SHA: ${{ github.sha }}"
-          echo "Latest Success SHA: ${{ steps.find_latest_sha.outputs.latest_success_sha }}"
+          echo "Latest Success SHA: ${{ steps.find_latest_sha.outputs.sha }}"
           echo "Current Branch: ${{ env.BRANCH_NAME }}"
           echo "Current Workflow: ${{ github.workflow }}"
