@@ -469,6 +469,7 @@ jobs:
             ${{ env.GIT_LOG }}
 
       - name: Find matching workflow
+        if: github.ref == 'refs/heads/latest'
         id: find_latest_sha
         uses: SamhammerAG/last-successful-build-action@v4
         with:
@@ -484,25 +485,6 @@ jobs:
           WEBSITE_STATUS_CHANNEL: ${{ secrets.WEBSITE_STATUS_CHANNEL }}
           SLACK_BOT_OAUTH_TOKEN: ${{ secrets.SLACK_BOT_OAUTH_TOKEN }}
           SLACK_DEBUG_CHANNEL: ${{ secrets.SLACK_DEBUG_CHANNEL }}
-          WORKFLOW: ${{ github.workflow }}
-          BRANCH: ${{ env.BRANCH_NAME }}
-          CURRENT_SHA: ${{ github.sha }}
-          LAST_SUCCESSFUL_SHA: ${{ steps.find_latest_sha.outputs.sha }}
-          RUN_ID: ${{ github.run_id }}
-          STATUS: ${{ steps.lastJobStatus.outputs.workflowStatus }}
-          PROJECT: "AgGrid"
-          REPORT_JOB_ID: ${{ steps.testReport.outputs.url }}
-          DEPLOY_TO_STAGING: ${{ needs.docs.result == 'success' }}
-          JOB_STATUSES: >
-            { 
-              Build: "success", 
-              Lint: "success", 
-              Format: "success", 
-              Test: "success", 
-              e2e: "success", 
-              Docs: "success", 
-              Bundle: "success" 
-            }
           RUN_CONTEXT: >
             {
               workflow: ${{ github.workflow }}
@@ -537,5 +519,5 @@ jobs:
             }
 
         run: |
-          ts-node ./scripts/agBotSlackMessage.ts --run-context "$RUN_CONTEXT"
+          npx ts-node ./scripts/agBotSlackMessage.ts --run-context "$RUN_CONTEXT"
 

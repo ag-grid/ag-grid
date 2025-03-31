@@ -16,6 +16,8 @@ const args = yargs(hideBin(process.argv))
 console.log('----------------------------');
 console.log(process.argv);
 console.log(args.runContext);
+console.log('----------------------------');
+console.log(JSON.parse(args.runContext));
 // const args = yargs(hideBin(process.argv))
 //     .usage(
 //         'Usage: $0 [package path] --auth-token [auth-token] -grid-channel [grid-channel] --charts-channel [charts-channel] --website-status-channel [website-status-channel] --slack-bot-oauth-token [slack-bot-oauth-token] --debug-channel [debug-channel]'
