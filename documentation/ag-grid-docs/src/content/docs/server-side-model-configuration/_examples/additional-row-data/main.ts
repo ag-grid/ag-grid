@@ -78,7 +78,7 @@ function createServerSideDatasource(server: any): IServerSideDatasource {
             // get data for request from our fake server
             const response = server.getData(params.request);
 
-            // simulating real server call with a 500ms delay
+            // simulating real server call with a 1000ms delay
             setTimeout(() => {
                 if (response.success) {
                     // supply rows for requested block to grid
