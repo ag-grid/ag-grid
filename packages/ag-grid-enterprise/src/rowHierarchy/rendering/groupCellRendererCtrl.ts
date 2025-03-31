@@ -460,6 +460,11 @@ export class GroupCellRendererCtrl extends BeanStub implements IGroupCellRendere
             return false;
         }
 
+        // Manually pinned group rows cannot be expanded
+        if (node.rowPinned) {
+            return false;
+        }
+
         const isFullWidth = !column;
         if (isFullWidth) {
             return true;

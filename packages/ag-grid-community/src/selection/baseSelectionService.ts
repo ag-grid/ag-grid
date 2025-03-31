@@ -20,6 +20,7 @@ import {
 } from '../gridOptionsUtils';
 import type { IRowNode } from '../interfaces/iRowNode';
 import type { ISetNodesSelectedParams } from '../interfaces/iSelectionService';
+import { _isManualPinnedRow } from '../pinnedRowModel/pinnedRowUtils';
 import type { RowCtrl, RowGui } from '../rendering/row/rowCtrl';
 import { _setAriaSelected } from '../utils/aria';
 import type { ChangedPath } from '../utils/changedPath';
@@ -33,7 +34,7 @@ export abstract class BaseSelectionService extends BeanStub {
 
     public postConstruct(): void {
         const { gos, beans } = this;
-        this.selectionCtx = new RowRangeSelectionContext(beans.rowModel);
+        this.selectionCtx = new RowRangeSelectionContext(beans.rowModel, beans.pinnedRowModel);
 
         this.addManagedPropertyListeners(['isRowSelectable', 'rowSelection'], () => {
             const callback = _getIsRowSelectable(gos);
@@ -105,7 +106,7 @@ export abstract class BaseSelectionService extends BeanStub {
     protected abstract updateSelectable(changedPath?: ChangedPath): void;
 
     protected isRowSelectionBlocked(rowNode: RowNode): boolean {
-        return !rowNode.selectable || !!rowNode.rowPinned || !_isRowSelection(this.gos);
+        return !rowNode.selectable || (rowNode.rowPinned && !_isManualPinnedRow(rowNode)) || !_isRowSelection(this.gos);
     }
 
     public updateRowSelectable(rowNode: RowNode, suppressSelectionUpdate?: boolean): boolean {
@@ -212,6 +213,11 @@ export abstract class BaseSelectionService extends BeanStub {
         const sibling = rowNode.sibling;
         if (sibling && sibling.footer && sibling.__localEventService) {
             sibling.dispatchRowEvent('rowSelected');
+        }
+
+        const pinnedSibling = rowNode.pinnedSibling;
+        if (pinnedSibling && pinnedSibling.rowPinned && pinnedSibling.__localEventService) {
+            pinnedSibling.dispatchRowEvent('rowSelected');
         }
 
         this.eventSvc.dispatchEvent({

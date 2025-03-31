@@ -209,8 +209,8 @@ export class FilterManager extends BeanStub implements NamedBean {
         );
     }
 
-    public doesRowPassOtherFilters(filterToSkip: IFilterComp, node: any): boolean {
-        return this.doesRowPassFilter({ rowNode: node, filterInstanceToSkip: filterToSkip });
+    public doesRowPassOtherFilters(filterToSkip: IFilterComp, node: IRowNode): boolean {
+        return this.doesRowPassFilter({ rowNode: node as RowNode, filterInstanceToSkip: filterToSkip });
     }
 
     public doesRowPassAggregateFilters(params: { rowNode: RowNode; filterInstanceToSkip?: IFilterComp }): boolean {

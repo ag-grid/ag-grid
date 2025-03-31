@@ -176,6 +176,9 @@ export abstract class AbstractClientSideNodeManager<TData = any>
                 if (node.isSelected()) {
                     nodesToUnselect.push(node);
                 }
+                if (node.pinnedSibling) {
+                    this.beans.pinnedRowModel?.pinRow(node.pinnedSibling, null);
+                }
                 this.rowNodeDeleted(node);
                 changedRowNodes.remove(node);
             }
@@ -348,6 +351,11 @@ export abstract class AbstractClientSideNodeManager<TData = any>
 
             if (rowNode.isSelected()) {
                 nodesToUnselect.push(rowNode);
+            }
+
+            // If a row has been manually pinned, ensure its sibling is also removed
+            if (rowNode.pinnedSibling) {
+                this.beans.pinnedRowModel?.pinRow(rowNode.pinnedSibling, null);
             }
 
             // so row renderer knows to fade row out (and not reposition it)

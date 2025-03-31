@@ -4,6 +4,7 @@ import type { BuildEventTypeMap } from './iEventEmitter';
 
 export type RowNodeEventType =
     | 'rowSelected'
+    | 'rowPinned'
     | 'selectableChanged'
     | 'displayedChanged'
     | 'dataChanged'
@@ -29,6 +30,7 @@ export type RowNodeEventTypeMap<TData = any> = BuildEventTypeMap<
     RowNodeEventType,
     {
         rowSelected: RowNodeSelectedEvent<TData>;
+        rowPinned: RowNodePinnedEvent<TData>;
         selectableChanged: SelectableChangedEvent<TData>;
         displayedChanged: DisplayedChangedEvent<TData>;
         dataChanged: DataChangedEvent<TData>;
@@ -61,6 +63,7 @@ export interface RowNodeEvent<T extends RowNodeEventType, TData = any> extends A
 }
 
 export interface RowNodeSelectedEvent<TData = any> extends RowNodeEvent<'rowSelected', TData> {}
+export interface RowNodePinnedEvent<TData = any> extends RowNodeEvent<'rowPinned', TData> {}
 export interface MouseEnterEvent<TData = any> extends RowNodeEvent<'mouseEnter', TData> {}
 export interface MouseLeaveEvent<TData = any> extends RowNodeEvent<'mouseLeave', TData> {}
 export interface HeightChangedEvent<TData = any> extends RowNodeEvent<'heightChanged', TData> {}

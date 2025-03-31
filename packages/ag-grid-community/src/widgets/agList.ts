@@ -118,7 +118,7 @@ export class AgList<TEventType extends string = AgListEvent, TValue = string> ex
 
     public addOption(listOption: ListOption<TValue>): this {
         const { value, text } = listOption;
-        const valueToRender = text || (value as any);
+        const valueToRender = text ?? (value as any);
 
         this.options.push({ value, text: valueToRender });
         this.renderOption(value, valueToRender);

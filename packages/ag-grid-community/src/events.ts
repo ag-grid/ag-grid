@@ -48,6 +48,7 @@ export type AgEventTypeParams<TData = any, TContext = any> = BuildEventTypeMap<
         rowGroupOpened: RowGroupOpenedEvent<TData, TContext>;
         rowDataUpdated: RowDataUpdatedEvent<TData, TContext>;
         pinnedRowDataChanged: PinnedRowDataChangedEvent<TData, TContext>;
+        pinnedRowsChanged: PinnedRowsChangedEvent<TData, TContext>;
         rangeSelectionChanged: RangeSelectionChangedEvent<TData, TContext>;
         cellSelectionChanged: CellSelectionChangedEvent<TData, TContext>;
         chartCreated: ChartCreatedEvent<TData, TContext>;
@@ -294,6 +295,9 @@ export interface PinnedRowDataChangedEvent<TData = any, TContext = any>
     extends AgGlobalEvent<'pinnedRowDataChanged', TData, TContext> {}
 export interface PinnedHeightChangedEvent<TData = any, TContext = any>
     extends AgGlobalEvent<'pinnedHeightChanged', TData, TContext> {}
+
+export interface PinnedRowsChangedEvent<TData = any, TContext = any>
+    extends AgGlobalEvent<'pinnedRowsChanged', TData, TContext> {}
 
 /**
  * - `api` - from API method

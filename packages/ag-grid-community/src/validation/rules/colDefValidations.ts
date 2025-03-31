@@ -100,6 +100,12 @@ const COLUMN_DEFINITION_VALIDATIONS: () => Validations<ColDef | ColGroupDef> = (
         }
         return { module: 'ColumnFilter' };
     },
+    flex: (_options, gridOptions) => {
+        if (gridOptions.autoSizeStrategy) {
+            return 'flex is not supported with the autoSizeStrategy grid option';
+        }
+        return null;
+    },
     floatingFilter: { module: 'ColumnFilter' },
     headerCheckboxSelection: {
         supportedRowModels: ['clientSide', 'serverSide'],

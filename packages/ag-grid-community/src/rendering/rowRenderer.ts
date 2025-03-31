@@ -21,12 +21,12 @@ import type { RenderedRowEvent } from '../interfaces/iCallbackParams';
 import type { CellPosition } from '../interfaces/iCellPosition';
 import type { RefreshCellsParams } from '../interfaces/iCellsParams';
 import type { IEventListener } from '../interfaces/iEventEmitter';
+import type { IPinnedRowModel } from '../interfaces/iPinnedRowModel';
 import type { IRowModel } from '../interfaces/iRowModel';
 import type { IRowNode, RowPinnedType } from '../interfaces/iRowNode';
 import type { RowPosition } from '../interfaces/iRowPosition';
 import type { IStickyRowFeature } from '../interfaces/iStickyRows';
 import type { PageBoundsService } from '../pagination/pageBoundsService';
-import type { PinnedRowModel } from '../pinnedRowModel/pinnedRowModel';
 import { _removeFromArray } from '../utils/array';
 import { _requestAnimationFrame } from '../utils/dom';
 import { _exists } from '../utils/generic';
@@ -51,7 +51,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
 
     private pageBounds: PageBoundsService;
     private colModel: ColumnModel;
-    private pinnedRowModel?: PinnedRowModel;
+    private pinnedRowModel?: IPinnedRowModel;
     private rowModel: IRowModel;
     private focusSvc: FocusService;
     private rowContainerHeight: RowContainerHeightService;
@@ -113,6 +113,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
         this.addManagedEventListeners({
             paginationChanged: this.onPageLoaded.bind(this),
             pinnedRowDataChanged: this.onPinnedRowDataChanged.bind(this),
+            pinnedRowsChanged: this.onPinnedRowsChanged.bind(this),
             displayedColumnsChanged: this.onDisplayedColumnsChanged.bind(this),
             bodyScroll: this.onBodyScroll.bind(this),
             bodyHeightChanged: this.redraw.bind(this, {}),
@@ -517,6 +518,10 @@ export class RowRenderer extends BeanStub implements NamedBean {
         };
 
         this.redrawAfterModelUpdate(params);
+    }
+
+    private onPinnedRowsChanged(): void {
+        this.redrawAfterModelUpdate({ recycleRows: true });
     }
 
     public redrawRow(rowNode: RowNode, suppressEvent = false) {

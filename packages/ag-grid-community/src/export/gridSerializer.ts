@@ -20,8 +20,8 @@ import type {
     ProcessGroupHeaderForExportParams,
     ShouldRowBeSkippedParams,
 } from '../interfaces/exportParams';
+import type { IPinnedRowModel } from '../interfaces/iPinnedRowModel';
 import type { IRowModel } from '../interfaces/iRowModel';
-import type { PinnedRowModel } from '../pinnedRowModel/pinnedRowModel';
 import { _last } from '../utils/array';
 import type { GridSerializingSession, RowAccumulator, RowSpanningAccumulator } from './iGridSerializer';
 
@@ -33,7 +33,7 @@ export class GridSerializer extends BeanStub implements NamedBean {
     private visibleCols: VisibleColsService;
     private colModel: ColumnModel;
     private rowModel: IRowModel;
-    private pinnedRowModel?: PinnedRowModel;
+    private pinnedRowModel?: IPinnedRowModel;
 
     public wireBeans(beans: BeanCollection): void {
         this.visibleCols = beans.visibleCols;
@@ -102,7 +102,7 @@ export class GridSerializer extends BeanStub implements NamedBean {
             return;
         }
 
-        const shouldRowBeSkipped: boolean = rowSkipper(_addGridCommonParams(this.gos, { node }));
+        const shouldRowBeSkipped = rowSkipper(_addGridCommonParams(this.gos, { node }));
 
         if (shouldRowBeSkipped) {
             return;
@@ -210,7 +210,8 @@ export class GridSerializer extends BeanStub implements NamedBean {
                     .sort((a, b) => a.rowIndex - b.rowIndex)
                     .map((position) => this.pinnedRowModel?.getPinnedTopRow(position.rowIndex))
                     .forEach(processRow);
-            } else {
+            } else if (!this.pinnedRowModel?.isManual()) {
+                // only process pinned rows if they are statically pinned
                 this.pinnedRowModel?.forEachPinnedRow('top', processRow);
             }
             return gridSerializingSession;
@@ -331,6 +332,7 @@ export class GridSerializer extends BeanStub implements NamedBean {
     ): (gridSerializingSession: GridSerializingSession<T>) => GridSerializingSession<T> {
         return (gridSerializingSession) => {
             const processRow = this.processRow.bind(this, gridSerializingSession, params, columnsToExport);
+
             if (params.rowPositions) {
                 params.rowPositions
                     // only pinnedBottom rows, other models are processed by `processRows` and `processPinnedTopRows`
@@ -338,7 +340,8 @@ export class GridSerializer extends BeanStub implements NamedBean {
                     .sort((a, b) => a.rowIndex - b.rowIndex)
                     .map((position) => this.pinnedRowModel?.getPinnedBottomRow(position.rowIndex))
                     .forEach(processRow);
-            } else {
+            } else if (!this.pinnedRowModel?.isManual()) {
+                // only process pinned rows if they are statically pinned
                 this.pinnedRowModel?.forEachPinnedRow('bottom', processRow);
             }
             return gridSerializingSession;

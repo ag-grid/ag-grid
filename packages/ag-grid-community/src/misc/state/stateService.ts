@@ -22,6 +22,7 @@ import type {
     PivotState,
     RowGroupExpansionState,
     RowGroupState,
+    RowPinningState,
     ScrollState,
     SideBarState,
     SortState,
@@ -231,6 +232,7 @@ export class StateService extends BeanStub implements NamedBean {
             cellSelection: cellSelectionState,
             focusedCell: focusedCellState,
             columnOrder: columnOrderState,
+            rowPinning,
         } = this.getInitialState();
         if (focusedCellState) {
             this.setFocusedCellState(focusedCellState);
@@ -240,6 +242,9 @@ export class StateService extends BeanStub implements NamedBean {
         }
         if (scrollState) {
             this.setScrollState(scrollState);
+        }
+        if (rowPinning) {
+            this.setRowPinningState(rowPinning);
         }
         this.setColumnPivotState(!!columnOrderState?.orderedColIds);
 
@@ -262,6 +267,7 @@ export class StateService extends BeanStub implements NamedBean {
                 }
             },
             bodyScrollEnd: () => updateCachedState('scroll', this.getScrollState()),
+            pinnedRowsChanged: () => updateCachedState('rowPinning', this.getRowPinningState()),
         });
     }
 
@@ -745,6 +751,14 @@ export class StateService extends BeanStub implements NamedBean {
                   expandedRowGroupIds: expandedRowGroups,
               }
             : undefined;
+    }
+
+    private getRowPinningState(): RowPinningState | undefined {
+        return this.beans.pinnedRowModel?.getPinnedState();
+    }
+
+    private setRowPinningState(state: RowPinningState): void {
+        this.beans.pinnedRowModel?.setPinnedState(state);
     }
 
     private setRowGroupExpansionState(rowGroupExpansionState: RowGroupExpansionState): void {

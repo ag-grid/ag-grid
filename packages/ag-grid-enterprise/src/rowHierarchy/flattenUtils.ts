@@ -11,7 +11,7 @@ export interface FlattenDetails {
     hideOpenParents: boolean;
     groupHideParentOfSingleChild: GridOptions['groupHideParentOfSingleChild'];
     isGroupMultiAutoColumn: boolean;
-    grandTotalRow: 'top' | 'bottom' | undefined;
+    grandTotalRow: GridOptions['grandTotalRow'];
     groupTotalRow: (params: WithoutGridCommon<GetGroupIncludeFooterParams<any, any>>) => 'top' | 'bottom' | undefined;
 }
 

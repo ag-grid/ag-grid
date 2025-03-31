@@ -333,8 +333,15 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
                 // no need to invalidate cache, as the cache is stored on the rowNode,
                 // so new rowNodes means the cache is wiped anyway.
 
+                const { selectionSvc, pinnedRowModel } = this.beans;
+
                 // - clears selection, done before we set row data to ensure it isn't readded via `selectionSvc.syncInOldRowNode`
-                this.beans.selectionSvc?.reset('rowDataChanged');
+                selectionSvc?.reset('rowDataChanged');
+
+                // only clear pinned rows if using manual pinning
+                if (pinnedRowModel?.isManual()) {
+                    pinnedRowModel.reset();
+                }
 
                 this.rowNodesCountReady = true;
                 nodeManager.setNewRowData(newRowData);
@@ -358,7 +365,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
     }
 
     private setRowTopAndRowIndex(): Set<string> {
-        const { beans } = this;
+        const { beans, rowsToDisplay } = this;
         const defaultRowHeight = beans.environment.getDefaultRowHeight();
         let nextRowTop = 0;
 
@@ -372,7 +379,6 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         // with these two layouts.
         const allowEstimate = _isDomLayout(this.gos, 'normal');
 
-        const rowsToDisplay = this.rowsToDisplay;
         for (let i = 0, len = rowsToDisplay.length; i < len; ++i) {
             const rowNode = rowsToDisplay[i];
 

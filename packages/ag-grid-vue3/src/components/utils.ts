@@ -44,6 +44,8 @@ import type {
     IsGroupOpenByDefaultParams,
     IsRowFilterable,
     IsRowMaster,
+    IsRowPinnable,
+    IsRowPinned,
     IsRowSelectable,
     IsServerSideGroup,
     IsServerSideGroupOpenByDefaultParams,
@@ -960,7 +962,7 @@ export interface Props<TData> {
     /** When provided, an extra grand total row will be inserted into the grid at the specified position.
          * This row displays the aggregate totals of all rows in the grid.
          */
-    grandTotalRow?: 'top' | 'bottom' | undefined,
+    grandTotalRow?: 'top' | 'bottom' | 'pinnedTop' | 'pinnedBottom' | undefined,
     /** Suppress the sticky behaviour of the total rows, can be suppressed individually by passing `'grand'` or `'group'`.
          */
     suppressStickyTotalRow?: boolean | 'grand' | 'group' | undefined,
@@ -1040,6 +1042,25 @@ export interface Props<TData> {
     /** Data to be displayed as pinned bottom rows in the grid.
          */
     pinnedBottomRowData?: any[] | undefined,
+    /** Determines whether manual row pinning is enabled via the row context menu.
+         *
+         * Set to `true` to allow pinning rows to top or bottom.
+         * Set to `'top'` to allow pinning rows to the top only.
+         * Set to `'bottom'` to allow pinning rows to the bottom only.
+         */
+    enableRowPinning?: boolean | 'top' | 'bottom' | undefined,
+    /** Return `true` if the grid should allow the row to be manually pinned.
+         * Return `false` if the grid should prevent the row from being pinned
+         *
+         * When not defined, all rows default to pinnable.
+         */
+    isRowPinnable?: IsRowPinnable<TData> | undefined,
+    /** Called for every row in the grid.
+         *
+         * Return `true` if the row should be pinned initially. Return `false` otherwise.
+         * User interactions can subsequently still change the pinned state of a row.
+         */
+    isRowPinned?: IsRowPinned<TData> | undefined,
     /** Sets the row model type.
          * @default 'clientSide'
          * @initial
@@ -1822,6 +1843,9 @@ export function getProps() {
         suppressGroupRowsSticky: undefined,
         pinnedTopRowData: undefined,
         pinnedBottomRowData: undefined,
+        enableRowPinning: undefined,
+        isRowPinnable: undefined,
+        isRowPinned: undefined,
         rowModelType: undefined,
         rowData: undefined,
         asyncTransactionWaitMillis: undefined,

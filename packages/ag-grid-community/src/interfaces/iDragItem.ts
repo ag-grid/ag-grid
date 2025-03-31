@@ -1,5 +1,5 @@
 import type { IAggFunc } from '../entities/colDef';
-import type { Column } from './iColumn';
+import type { Column, ColumnPinnedType } from './iColumn';
 import type { IRowNode } from './iRowNode';
 
 export interface DragItem<TValue = any> {
@@ -20,6 +20,9 @@ export interface DragItem<TValue = any> {
 
     /** When dragging columns, this contains the visible state of the columns */
     visibleState?: { [key: string]: boolean };
+
+    /** The pinned type of the container that created the Drag Item */
+    containerType?: ColumnPinnedType;
 
     /** When dragging columns, this contains the pivot state of the columns. This is only populated/used in column tool panel */
     pivotState?: {

@@ -25,6 +25,7 @@ import type { ICellRangeFeature } from '../../interfaces/iCellRangeFeature';
 import type { CellChangedEvent } from '../../interfaces/iRowNode';
 import type { RowPosition } from '../../interfaces/iRowPosition';
 import type { UserCompDetails } from '../../interfaces/iUserCompDetails';
+import { _isManualPinnedRow } from '../../pinnedRowModel/pinnedRowUtils';
 import type { CheckboxSelectionComponent } from '../../selection/checkboxSelectionComponent';
 import type { CellCustomStyleFeature } from '../../styling/cellCustomStyleFeature';
 import type { TooltipFeature } from '../../tooltip/tooltipFeature';
@@ -296,7 +297,7 @@ export class CellCtrl extends BeanStub {
 
     private setupControlComps(): void {
         const colDef = this.column.getColDef();
-        this.includeSelection = this.isIncludeControl(this.isCheckboxSelection(colDef));
+        this.includeSelection = this.isIncludeControl(this.isCheckboxSelection(colDef), true);
         this.includeRowDrag = this.isIncludeControl(colDef.rowDrag);
         this.includeDndSource = this.isIncludeControl(colDef.dndSource);
 
@@ -307,17 +308,19 @@ export class CellCtrl extends BeanStub {
 
     public isForceWrapper(): boolean {
         // text selection requires the value to be wrapped in another element
-        const forceWrapper = this.beans.gos.get('enableCellTextSelection') || this.column.isAutoHeight();
-        return forceWrapper;
+        return this.beans.gos.get('enableCellTextSelection') || this.column.isAutoHeight();
     }
 
+    /**
+     * Wrapper providing general conditions under which control elements (e.g. checkboxes and drag handles)
+     * are rendered for a particular cell.
+     * @param value Whether to render the control in the specific context of the caller
+     * @param allowManuallyPinned Whether manually pinned rows are permitted this form of control element
+     */
     // eslint-disable-next-line @typescript-eslint/ban-types
-    private isIncludeControl(value: boolean | Function | undefined): boolean {
-        const rowNodePinned = this.rowNode.rowPinned != null;
-        const isFunc = typeof value === 'function';
-        const res = rowNodePinned ? false : isFunc || value === true;
-
-        return res;
+    private isIncludeControl(value: boolean | Function | undefined, allowManuallyPinned = false): boolean {
+        const rowUnpinned = this.rowNode.rowPinned == null;
+        return (rowUnpinned || (allowManuallyPinned && _isManualPinnedRow(this.rowNode))) && !!value;
     }
 
     private isCheckboxSelection(colDef: ColDef): boolean | CheckboxSelectionCallback | undefined {
@@ -340,7 +343,7 @@ export class CellCtrl extends BeanStub {
 
     private refreshShouldDestroy(): boolean {
         const colDef = this.column.getColDef();
-        const selectionChanged = this.includeSelection != this.isIncludeControl(this.isCheckboxSelection(colDef));
+        const selectionChanged = this.includeSelection != this.isIncludeControl(this.isCheckboxSelection(colDef), true);
         const rowDragChanged = this.includeRowDrag != this.isIncludeControl(colDef.rowDrag);
         const dndSourceChanged = this.includeDndSource != this.isIncludeControl(colDef.dndSource);
         // auto height uses wrappers, so need to destroy

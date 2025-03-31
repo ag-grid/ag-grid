@@ -792,6 +792,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
             rowHighlightChanged: this.onRowNodeHighlightChanged.bind(this),
             draggingChanged: this.postProcessRowDragging.bind(this),
             uiLevelChanged: this.onUiLevelChanged.bind(this),
+            rowPinned: this.onRowPinned.bind(this),
         });
 
         this.addManagedListeners(this.beans.eventSvc, {
@@ -851,6 +852,13 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
                 this.getAllCellCtrls().forEach((cellCtrl) => cellCtrl.onCellChanged(event));
             },
         });
+    }
+
+    /** Should only ever be triggered on source rows (i.e. not on pinned siblings) */
+    private onRowPinned(): void {
+        for (const gui of this.allRowGuis) {
+            gui.rowComp.addOrRemoveCssClass('ag-row-pinned-target', !!this.rowNode.pinnedSibling);
+        }
     }
 
     private onRowNodeDataChanged(event: DataChangedEvent): void {
@@ -1389,6 +1397,11 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
 
         if (rowNode.isRowPinned()) {
             classes.push('ag-row-pinned');
+        }
+
+        // Only the source of the pinned row gets this class
+        if (!rowNode.isRowPinned() && rowNode.pinnedSibling) {
+            classes.push('ag-row-pinned-target');
         }
 
         if (rowNode.isSelected()) {

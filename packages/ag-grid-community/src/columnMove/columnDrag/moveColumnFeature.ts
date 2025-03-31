@@ -51,8 +51,8 @@ export class MoveColumnFeature extends BeanStub implements DropListener {
 
     public getIconName(): DragAndDropIcon {
         const { pinned, lastDraggingEvent } = this;
-
-        const columns = lastDraggingEvent?.dragItem.columns ?? [];
+        const { dragItem } = lastDraggingEvent || {};
+        const columns = dragItem?.columns ?? [];
 
         for (const col of columns) {
             const colPinned = col.getPinned();
@@ -65,13 +65,14 @@ export class MoveColumnFeature extends BeanStub implements DropListener {
             }
             // if the column pinned state is the same as the container's, or
             // when `unpinning` a column, set the icon to move
-            if (colPinned === pinned || !pinned) {
+            const initialPinnedState = dragItem?.containerType;
+            if (initialPinnedState === pinned || !pinned) {
                 return 'move';
             }
 
             // moving an unpinned column to a pinned container
             // set the icon to pinned
-            if (!colPinned && pinned) {
+            if (pinned && (!colPinned || initialPinnedState !== pinned)) {
                 return 'pinned';
             }
         }
@@ -150,6 +151,7 @@ export class MoveColumnFeature extends BeanStub implements DropListener {
     public onDragLeave(): void {
         this.ensureIntervalCleared();
         this.clearHighlighted();
+        this.updateDragItemContainerType();
         this.lastMovedInfo = null;
     }
 
@@ -185,6 +187,21 @@ export class MoveColumnFeature extends BeanStub implements DropListener {
         const { columns, toIndex } = lastMovedInfo;
 
         this.beans.colMoves!.moveColumns(columns, toIndex, 'uiColumnMoved', true);
+    }
+
+    private updateDragItemContainerType(): void {
+        const { lastDraggingEvent } = this;
+        if (this.gos.get('suppressMoveWhenColumnDragging') || !lastDraggingEvent) {
+            return;
+        }
+
+        const dragItem = lastDraggingEvent.dragItem;
+
+        if (!dragItem) {
+            return;
+        }
+
+        dragItem.containerType = this.pinned;
     }
 
     private handleColumnDragWhileSuppressingMovement(

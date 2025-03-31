@@ -1,5 +1,7 @@
 import type { RowNode } from '../entities/rowNode';
 import type { IRowModel } from '../interfaces/iRowModel';
+import type { IPinnedRowModel } from '../main-umd-noStyles';
+import { _getNodesInRangeForSelection } from '../pinnedRowModel/pinnedRowUtils';
 
 interface RangePartition {
     keep: readonly RowNode[];
@@ -9,9 +11,9 @@ interface RangePartition {
 /**
  * The context of a row range selection operation.
  *
- * Used to model the stateful range selection behaviour found in Excel, where
- * a given cell/row represents the "root" of a selection range, and subsequent
- * selections are based off that root.
+ * Used to model the stateful range selection behaviour found in things like Excel and
+ * various file explorers, in particular Windows File Explorer, where a given cell/row
+ * represents the "root" of a selection range, and subsequent selections are based off that root.
  *
  * See AG-9620 for more
  */
@@ -26,7 +28,10 @@ export class RowRangeSelectionContext {
     private endId: string | null = null;
     private cachedRange: RowNode[] = [];
 
-    constructor(private readonly rowModel: IRowModel) {}
+    constructor(
+        private readonly rowModel: IRowModel,
+        private readonly pinnedRowModel?: IPinnedRowModel
+    ) {}
 
     public reset(): void {
         this.rootId = null;
@@ -54,7 +59,7 @@ export class RowRangeSelectionContext {
                 return this.cachedRange;
             }
 
-            this.cachedRange = this.rowModel.getNodesInRangeForSelection(root, end) ?? [];
+            this.cachedRange = this.getNodesInRange(root, end) ?? [];
         }
 
         return this.cachedRange;
@@ -68,22 +73,35 @@ export class RowRangeSelectionContext {
         return this.getRange().some((nodeInRange) => nodeInRange.id === node.id);
     }
 
-    public getRoot(fallback?: RowNode): RowNode | null {
+    public getRoot(fallback?: RowNode): RowNode | undefined {
         if (this.rootId) {
-            return this.rowModel.getRowNode(this.rootId) ?? null;
+            return this.getRowNode(this.rootId);
         }
         if (fallback) {
             this.setRoot(fallback);
             return fallback;
         }
-        return null;
     }
 
-    private getEnd(): RowNode | null {
+    private getEnd(): RowNode | undefined {
         if (this.endId) {
-            return this.rowModel.getRowNode(this.endId) ?? null;
+            return this.getRowNode(this.endId);
         }
-        return null;
+    }
+
+    private getRowNode(id: string): RowNode | undefined {
+        let node: RowNode | undefined;
+
+        const { rowModel, pinnedRowModel } = this;
+
+        node ??= rowModel.getRowNode(id);
+
+        if (pinnedRowModel?.isManual()) {
+            node ??= pinnedRowModel.getPinnedRowById(id, 'top');
+            node ??= pinnedRowModel.getPinnedRowById(id, 'bottom');
+        }
+
+        return node;
     }
 
     /**
@@ -140,7 +158,7 @@ export class RowRangeSelectionContext {
             return { keep, discard: [] };
         }
 
-        const newRange = this.rowModel.getNodesInRangeForSelection(root, node);
+        const newRange = this.getNodesInRange(root, node);
         if (!newRange) {
             this.setRoot(node);
             return { keep: [node], discard: [] };
@@ -157,5 +175,76 @@ export class RowRangeSelectionContext {
             this.setEndRange(node);
             return { keep: this.getRange(), discard };
         }
+    }
+
+    private getNodesInRange(root: RowNode, node: RowNode): RowNode[] | null {
+        const { pinnedRowModel, rowModel } = this;
+
+        // 1. No manual row pinning: just look at row model
+        if (!pinnedRowModel?.isManual()) {
+            return rowModel.getNodesInRangeForSelection(root, node);
+        }
+
+        // 2. start node is pinned top, end node is main view
+        if (root.rowPinned === 'top' && !node.rowPinned) {
+            const pinnedRange = _getNodesInRangeForSelection(pinnedRowModel, 'top', root, undefined);
+            return pinnedRange.concat(rowModel.getNodesInRangeForSelection(rowModel.getRow(0)!, node) ?? []);
+        }
+
+        // 3. start node is pinned bottom, end node is main view
+        if (root.rowPinned === 'bottom' && !node.rowPinned) {
+            const pinnedRange = _getNodesInRangeForSelection(pinnedRowModel, 'bottom', undefined, root);
+            const count = rowModel.getRowCount();
+            const lastMain = rowModel.getRow(count - 1)!;
+            return (rowModel.getNodesInRangeForSelection(node, lastMain) ?? []).concat(pinnedRange);
+        }
+
+        // 4. start node is main view, end node is main view
+        if (!root.rowPinned && !node.rowPinned) {
+            return rowModel.getNodesInRangeForSelection(root, node);
+        }
+
+        // 5. start node is pinned top, end node is pinned top
+        if (root.rowPinned === 'top' && node.rowPinned === 'top') {
+            return _getNodesInRangeForSelection(pinnedRowModel, 'top', root, node);
+        }
+
+        // 6. start node is pinned bottom, end node is pinned top
+        if (root.rowPinned === 'bottom' && node.rowPinned === 'top') {
+            const top = _getNodesInRangeForSelection(pinnedRowModel, 'top', node, undefined);
+            const bottom = _getNodesInRangeForSelection(pinnedRowModel, 'bottom', undefined, root);
+            const first = rowModel.getRow(0)!;
+            const last = rowModel.getRow(rowModel.getRowCount() - 1)!;
+            return top.concat(rowModel.getNodesInRangeForSelection(first, last) ?? []).concat(bottom);
+        }
+
+        // 7. start node is main view, end node is pinned top
+        if (!root.rowPinned && node.rowPinned === 'top') {
+            const pinned = _getNodesInRangeForSelection(pinnedRowModel, 'top', node, undefined);
+            return pinned.concat(rowModel.getNodesInRangeForSelection(rowModel.getRow(0)!, node) ?? []);
+        }
+
+        // 8. start node is pinned top, end node is pinned bottom
+        if (root.rowPinned === 'top' && node.rowPinned === 'bottom') {
+            const top = _getNodesInRangeForSelection(pinnedRowModel, 'top', root, undefined);
+            const bottom = _getNodesInRangeForSelection(pinnedRowModel, 'bottom', undefined, node);
+            const first = rowModel.getRow(0)!;
+            const last = rowModel.getRow(rowModel.getRowCount() - 1)!;
+            return top.concat(rowModel.getNodesInRangeForSelection(first, last) ?? []).concat(bottom);
+        }
+
+        // 9. start node is pinned bottom, end node is pinned bottom
+        if (root.rowPinned === 'bottom' && node.rowPinned === 'bottom') {
+            return _getNodesInRangeForSelection(pinnedRowModel, 'bottom', root, node);
+        }
+
+        // 10. start node is main view, end node is pinned bottom
+        if (!root.rowPinned && node.rowPinned === 'bottom') {
+            const pinned = _getNodesInRangeForSelection(pinnedRowModel, 'bottom', undefined, node);
+            const last = rowModel.getRow(rowModel.getRowCount())!;
+            return (rowModel.getNodesInRangeForSelection(root, last) ?? []).concat(pinned);
+        }
+
+        return null;
     }
 }

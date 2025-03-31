@@ -360,13 +360,14 @@ export class RowContainerCtrl extends BeanStub implements ScrollPartner {
 
     private addListeners(): void {
         const { spannedRowRenderer, gos } = this.beans;
+        const onDisplayedColumnsChanged = this.onDisplayedColumnsChanged.bind(this);
         this.addManagedEventListeners({
-            displayedColumnsChanged: this.onDisplayedColumnsChanged.bind(this),
-            displayedColumnsWidthChanged: this.onDisplayedColumnsChanged.bind(this),
+            displayedColumnsChanged: onDisplayedColumnsChanged,
+            displayedColumnsWidthChanged: onDisplayedColumnsChanged,
             displayedRowsChanged: (params) => this.onDisplayedRowsChanged(params.afterScroll),
         });
 
-        this.onDisplayedColumnsChanged();
+        onDisplayedColumnsChanged();
         this.onDisplayedRowsChanged();
 
         if (spannedRowRenderer && this.options.getSpannedRowCtrls && gos.get('enableCellSpan')) {
