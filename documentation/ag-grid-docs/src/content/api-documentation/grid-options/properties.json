@@ -1430,14 +1430,14 @@
         },
         "pinnedTopRowData": {
             "more": {
-                "name": "Static Row Pinning",
-                "url": "./row-pinning-static/"
+                "name": "Row Pinning",
+                "url": "./row-pinning/#providing-pinned-row-data"
             }
         },
         "pinnedBottomRowData": {
             "more": {
-                "name": "Static Row Pinning",
-                "url": "./row-pinning-static/"
+                "name": "Row Pinning",
+                "url": "./row-pinning/#providing-pinned-row-data"
             }
         }
     },
