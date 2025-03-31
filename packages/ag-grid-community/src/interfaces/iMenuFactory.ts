@@ -4,14 +4,14 @@ import type { ContainerType } from './iAfterGuiAttachedParams';
 
 export interface IMenuFactory {
     showMenuAfterButtonClick(
-        column: AgColumn | undefined,
+        column: AgColumn | AgProvidedColumnGroup | undefined,
         eventSource: HTMLElement,
         containerType: ContainerType,
         onClosedCallback?: () => void,
         filtersOnly?: boolean
     ): void;
     showMenuAfterMouseEvent(
-        column: AgColumn | undefined,
+        column: AgColumn | AgProvidedColumnGroup | undefined,
         mouseEvent: MouseEvent | Touch,
         containerType: ContainerType,
         onClosedCallback?: () => void,
