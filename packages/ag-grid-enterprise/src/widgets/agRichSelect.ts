@@ -860,15 +860,10 @@ export function _bindCellRendererToHtmlElement(
     eTarget: HTMLElement
 ) {
     cellRendererPromise.then((cellRenderer) => {
-        const gui: HTMLElement | string = cellRenderer!.getGui();
+        const gui = cellRenderer!.getGui();
 
         if (gui != null) {
-            if (typeof gui === 'object') {
-                eTarget.appendChild(gui);
-            } else {
-                // eslint-disable-next-line no-restricted-properties -- no other way to parse custom HTML strings from the user
-                eTarget.innerHTML = gui;
-            }
+            eTarget.appendChild(gui);
         }
     });
 }
