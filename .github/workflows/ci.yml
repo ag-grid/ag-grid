@@ -512,6 +512,16 @@ jobs:
               run_id: ${{ github.run_id }}
               status: ${{ steps.lastJobStatus.outputs.workflowStatus }}
               project: "AgGrid"
+              report_job_id: ${{ steps.testReport.outputs.url_html }}
+              deploy_to_staging: ${{ needs.docs.result == 'success' }}
+              job_statuses: >
+              workflow: ${{ github.workflow }}
+              branch: ${{ env.BRANCH_NAME }}
+              current_sha: ${{ github.sha }}
+              last_successful_sha: ${{ steps.find_latest_sha.outputs.sha }}
+              run_id: ${{ github.run_id }}
+              status: ${{ steps.lastJobStatus.outputs.workflowStatus }}
+              project: "AgGrid"
               report_job_id: ${{ steps.testReport.outputs.url }}
               deploy_to_staging: ${{ needs.docs.result == 'success' }}
               job_statuses: >
@@ -527,20 +537,5 @@ jobs:
             }
 
         run: |
-          echo $RUN_CONTEXT
-#            echo $AUTH_TOKEN
-#            echo $CHARTS_TEAM_CITY_CHANNEL
-#            echo $GRID_TEAM_CITY_CHANNEL
-#            echo $WEBSITE_STATUS_CHANNEL
-#            echo $SLACK_BOT_OAUTH_TOKEN
-#            echo $SLACK_DEBUG_CHANNEL
-#            echo $WORKFLOW
-#            echo $BRANCH
-#            echo $CURRENT_SHA
-#            echo $LAST_SUCCESSFUL_SHA
-#            echo $RUN_ID
-#            echo $STATUS
-#            echo $PROJECT
-#            echo $REPORT_JOB_ID
-#            echo $DEPLOY_TO_STAGING
-#            echo $JOB_STATUSES
+          ts-node ./scripts/agBotSlackMessage.ts --run-context "$RUN_CONTEXT"
+
