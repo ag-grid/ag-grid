@@ -128,14 +128,23 @@ jobs:
             }
           RUN_CONTEXT: >
             {
-              WORKFLOW: $WORKFLOW
-              BRANCH: $BRANCH
-              CURRENT_SHA: $CURRENT_SHA
-              LAST_SUCCESSFUL_SHA: $LAST_SUCCESSFUL_SHA
-              RUN_ID: $RUN_ID
-              STATUS: $STATUS
-              PROJECT: $PROJECT
-              JOB_STATUSES: $JOB_STATUSES
+              WORKFLOW: ${{ github.workflow }}
+              BRANCH: ${{ env.BRANCH_NAME }}
+              CURRENT_SHA: ${{ github.sha }}
+              LAST_SUCCESSFUL_SHA: ${{ steps.find_latest_sha.outputs.sha }}
+              RUN_ID: ${{ github.run_id }}
+              STATUS: ${{ steps.lastJobStatus.outputs.workflowStatus }}
+              PROJECT: "AgGrid"
+              JOB_STATUSES: >
+                { 
+                  Build: "success", 
+                  Lint: "success", 
+                  Format: "success", 
+                  Test: "success", 
+                  e2e: "success", 
+                  Docs: "success", 
+                  Bundle: "success" 
+                }
             }
 
 #            Build: ${{ needs.build_lint.outputs.build }}
