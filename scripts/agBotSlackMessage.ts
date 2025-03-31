@@ -5,18 +5,15 @@ const yargs = require('yargs/yargs');
 const { hideBin } = require('yargs/helpers');
 
 const args = yargs(hideBin(process.argv))
-    .usage(
-        'Usage: $0 [package path] --run-context [run-context]'
-    )
+    .usage('Usage: $0 [package path] --run-context [run-context]')
     .options({
         'run-context': {
             demandOption: true,
-        }
+        },
     })
     .parse();
 
-
-console.log("----------------------------");
+console.log('----------------------------');
 console.log(process.argv);
 console.log(args.runContext);
 // const args = yargs(hideBin(process.argv))
