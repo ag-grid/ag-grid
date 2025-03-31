@@ -123,10 +123,21 @@ jobs:
               Format: "success", 
               Test: "success", 
               e2e: "success", 
-              Docs: 
-              "success", 
+              Docs: "success", 
               Bundle: "success" 
             }
+          RUN_CONTEXT: >
+            {
+              WORKFLOW: $WORKFLOW
+              BRANCH: $BRANCH
+              CURRENT_SHA: $CURRENT_SHA
+              LAST_SUCCESSFUL_SHA: $LAST_SUCCESSFUL_SHA
+              RUN_ID: $RUN_ID
+              STATUS: $STATUS
+              PROJECT: $PROJECT
+              JOB_STATUSES: $JOB_STATUSES
+            }
+
 #            Build: ${{ needs.build_lint.outputs.build }}
 #            Lint: ${{ needs.build_lint.outputs.lint }}
 #            Format: ${{ needs.build_lint.outputs.format }}
@@ -135,19 +146,20 @@ jobs:
 #            Docs: ${{ needs.docs.result }}
 #            Bundle: ${{ needs.bundle_size.result }}
         run: |
-          echo $AUTH_TOKEN
-            echo $CHARTS_TEAM_CITY_CHANNEL
-            echo $GRID_TEAM_CITY_CHANNEL
-            echo $WEBSITE_STATUS_CHANNEL
-            echo $SLACK_BOT_OAUTH_TOKEN
-            echo $SLACK_DEBUG_CHANNEL
-            echo $WORKFLOW
-            echo $BRANCH
-            echo $CURRENT_SHA
-            echo $LAST_SUCCESSFUL_SHA
-            echo $RUN_ID
-            echo $STATUS
-            echo $PROJECT
-            echo $REPORT_JOB_ID
-            echo $DEPLOY_TO_STAGING
-            echo $JOB_STATUSES
+          echo $RUN_CONTEXT
+#            echo $AUTH_TOKEN
+#            echo $CHARTS_TEAM_CITY_CHANNEL
+#            echo $GRID_TEAM_CITY_CHANNEL
+#            echo $WEBSITE_STATUS_CHANNEL
+#            echo $SLACK_BOT_OAUTH_TOKEN
+#            echo $SLACK_DEBUG_CHANNEL
+#            echo $WORKFLOW
+#            echo $BRANCH
+#            echo $CURRENT_SHA
+#            echo $LAST_SUCCESSFUL_SHA
+#            echo $RUN_ID
+#            echo $STATUS
+#            echo $PROJECT
+#            echo $REPORT_JOB_ID
+#            echo $DEPLOY_TO_STAGING
+#            echo $JOB_STATUSES
