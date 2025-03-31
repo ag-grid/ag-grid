@@ -292,6 +292,7 @@ export class RowNumbersService extends BeanStub implements NamedBean, IRowNumber
             ...this.rowNumberOverrides,
             // non-overridable properties
             colId: ROW_NUMBERS_COLUMN_ID,
+            chartDataType: 'excluded',
             suppressHeaderMenuButton: true,
             sortable: false,
             suppressMovable: true,

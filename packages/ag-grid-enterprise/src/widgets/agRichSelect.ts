@@ -809,8 +809,9 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
                 this.onEnterKeyDown(e);
                 break;
             case KeyCode.SPACE:
+                e.preventDefault();
+
                 if (isPickerDisplayed && multiSelect && listComponent) {
-                    e.preventDefault();
                     const lastItemHovered = listComponent.getLastItemHovered();
 
                     if (lastItemHovered) {

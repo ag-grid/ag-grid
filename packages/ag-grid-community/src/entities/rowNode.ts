@@ -109,6 +109,13 @@ export class RowNode<TData = any>
      */
     public rowPinned: RowPinnedType;
 
+    /**
+     * If using manual row pinning, a reference to the sibling node.
+     * If this node is in the pinned section, `pinnedSibling` will be the source row.
+     * If this node is in the main viewport, `pinnedSibling` will be the pinned row.
+     */
+    public pinnedSibling?: RowNode<TData>;
+
     /** When true, this row will appear in the top */
     public sticky: boolean;
 
@@ -577,6 +584,10 @@ export class RowNode<TData = any>
         // for footers, we just return what our sibling selected state is, as cannot select a footer
         if (this.footer) {
             return this.sibling.isSelected();
+        }
+        // similarly for manually pinned rows
+        if (this.rowPinned && this.pinnedSibling) {
+            return this.pinnedSibling.isSelected();
         }
 
         return this.__selected;

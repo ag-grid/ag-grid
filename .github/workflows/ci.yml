@@ -463,7 +463,7 @@ jobs:
             E2E: ${{ needs.e2e.result == 'success' && '✅' || needs.e2e.result == 'failure' && '❌' || 'NA' }}
             Docs: ${{ needs.docs.result == 'success' && '✅' || needs.docs.result == 'failure' && '❌' || 'NA' }}
             Bundle: ${{ needs.bundle_size.result == 'success' && '✅' || needs.bundle_size.result == 'failure' && '❌' || 'NA' }}
-
+            
             *Changes:*
 
             ${{ env.GIT_LOG }}

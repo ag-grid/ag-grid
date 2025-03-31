@@ -17,6 +17,7 @@ import type { IClientSideRowModel } from '../interfaces/iClientSideRowModel';
 import type { IRowNode } from '../interfaces/iRowNode';
 import type { ISelectionService, ISetNodesSelectedParams } from '../interfaces/iSelectionService';
 import type { ServerSideRowGroupSelectionState, ServerSideRowSelectionState } from '../interfaces/selectionState';
+import { _isManualPinnedRow } from '../pinnedRowModel/pinnedRowUtils';
 import { ChangedPath } from '../utils/changedPath';
 import { _error, _warn } from '../validation/logging';
 import { BaseSelectionService } from './baseSelectionService';
@@ -135,7 +136,7 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
             // here, otherwise the updatedCount would include it.
             const skipThisNode = this.groupSelectsFiltered && node.group;
 
-            if (node.rowPinned) {
+            if (node.rowPinned && !_isManualPinnedRow(node)) {
                 _warn(59);
                 continue;
             }
@@ -513,10 +514,12 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
         }
 
         const nodes: RowNode[] = [];
+        const addToResult = (node: RowNode) => nodes.push(node);
+
         if (selectAll === 'currentPage') {
             this.forEachNodeOnPage((node) => {
                 if (!node.group) {
-                    nodes.push(node);
+                    addToResult(node);
                     return;
                 }
 
@@ -524,10 +527,8 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
                     // even with groupSelectsChildren, do this recursively as only the filtered children
                     // are considered as the current page
                     const recursivelyAddChildren = (child: RowNode) => {
-                        nodes.push(child);
-                        if (child.childrenAfterFilter?.length) {
-                            child.childrenAfterFilter.forEach(recursivelyAddChildren);
-                        }
+                        addToResult(child);
+                        child.childrenAfterFilter?.forEach(recursivelyAddChildren);
                     };
                     recursivelyAddChildren(node);
                     return;
@@ -535,7 +536,7 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
 
                 // if the group node is expanded, the pagination proxy will include the visible nodes to select
                 if (!this.groupSelectsDescendants) {
-                    nodes.push(node);
+                    addToResult(node);
                 }
             });
             return nodes;
@@ -543,15 +544,11 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
 
         const clientSideRowModel = this.beans.rowModel as IClientSideRowModel;
         if (selectAll === 'filtered') {
-            clientSideRowModel.forEachNodeAfterFilter((node) => {
-                nodes.push(node);
-            });
+            clientSideRowModel.forEachNodeAfterFilter(addToResult);
             return nodes;
         }
 
-        clientSideRowModel.forEachNode((node) => {
-            nodes.push(node);
-        });
+        clientSideRowModel.forEachNode(addToResult);
         return nodes;
     }
 
@@ -791,7 +788,7 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
 
 /** Selection state of footer nodes is a clone of their siblings, so always act on sibling rather than footer */
 function _normaliseFooterRef(node: RowNode): RowNode {
-    return node.footer ? node.sibling : node;
+    return _isManualPinnedRow(node) ? node.pinnedSibling! : node.footer ? node.sibling : node;
 }
 
 function _isAllSelected(api: GridApi): boolean | undefined {

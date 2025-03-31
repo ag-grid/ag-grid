@@ -37,6 +37,7 @@ export interface ChartProxyParams {
     chartOptionsToRestore?: AgChartThemeOverrides;
     chartPaletteToRestore?: AgChartThemePalette;
     seriesChartTypes: SeriesChartType[];
+    suppressFieldDotNotation?: boolean;
     translate: (toTranslate: string, defaultText?: string) => string;
 }
 
@@ -195,6 +196,12 @@ export abstract class ChartProxy<
             ...existingOptions,
             mode: 'integrated',
         } as const;
+
+        // propagate setting if set
+        if (this.chartProxyParams.suppressFieldDotNotation !== undefined) {
+            newOptions.suppressFieldDotNotation = this.chartProxyParams.suppressFieldDotNotation;
+        }
+
         newOptions.theme = theme;
         newOptions.container = this.chartProxyParams.parentElement;
         return newOptions;

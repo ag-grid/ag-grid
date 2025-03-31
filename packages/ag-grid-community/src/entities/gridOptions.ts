@@ -165,7 +165,7 @@ import type { HeaderPosition } from '../interfaces/iHeaderPosition';
 import type { ILoadingCellRendererParams } from '../interfaces/iLoadingCellRenderer';
 import type { IRowDragItem } from '../interfaces/iRowDragItem';
 import type { RowModelType } from '../interfaces/iRowModel';
-import type { IRowNode } from '../interfaces/iRowNode';
+import type { IRowNode, RowPinnedType } from '../interfaces/iRowNode';
 import type { IServerSideDatasource } from '../interfaces/iServerSideDatasource';
 import type { SideBarDef } from '../interfaces/iSideBar';
 import type { StatusPanelDef } from '../interfaces/iStatusPanel';
@@ -1175,7 +1175,7 @@ export interface GridOptions<TData = any> {
      * When provided, an extra grand total row will be inserted into the grid at the specified position.
      * This row displays the aggregate totals of all rows in the grid.
      */
-    grandTotalRow?: 'top' | 'bottom';
+    grandTotalRow?: 'top' | 'bottom' | 'pinnedTop' | 'pinnedBottom';
 
     /**
      * Suppress the sticky behaviour of the total rows, can be suppressed individually by passing `'grand'` or `'group'`.
@@ -1284,7 +1284,28 @@ export interface GridOptions<TData = any> {
      * Data to be displayed as pinned bottom rows in the grid.
      */
     pinnedBottomRowData?: any[];
-
+    /**
+     * Determines whether manual row pinning is enabled via the row context menu.
+     *
+     * Set to `true` to allow pinning rows to top or bottom.
+     * Set to `'top'` to allow pinning rows to the top only.
+     * Set to `'bottom'` to allow pinning rows to the bottom only.
+     */
+    enableRowPinning?: boolean | 'top' | 'bottom';
+    /**
+     * Return `true` if the grid should allow the row to be manually pinned.
+     * Return `false` if the grid should prevent the row from being pinned
+     *
+     * When not defined, all rows default to pinnable.
+     */
+    isRowPinnable?: IsRowPinnable<TData>;
+    /**
+     * Called for every row in the grid.
+     *
+     * Return `true` if the row should be pinned initially. Return `false` otherwise.
+     * User interactions can subsequently still change the pinned state of a row.
+     */
+    isRowPinned?: IsRowPinned<TData>;
     // *** Row Model *** //
     /**
      * Sets the row model type.
@@ -2446,6 +2467,14 @@ export interface IsRowMaster<TData = any> {
 
 export interface IsRowSelectable<TData = any> {
     (node: IRowNode<TData>): boolean;
+}
+
+export interface IsRowPinnable<TData = any> {
+    (node: IRowNode<TData>): boolean;
+}
+
+export interface IsRowPinned<TData = any> {
+    (node: IRowNode<TData>): RowPinnedType;
 }
 
 export interface RowClassRules<TData = any> {

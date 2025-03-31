@@ -177,6 +177,36 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => {
                 rowDragEntireRow: { required: [false, undefined] },
             },
         },
+        enableRowPinning: {
+            module: 'ManualPinnedRow',
+            supportedRowModels: ['clientSide'],
+            validate({ enableRowPinning, pinnedTopRowData, pinnedBottomRowData }) {
+                if (enableRowPinning && (pinnedTopRowData || pinnedBottomRowData)) {
+                    return 'Manual row pinning cannot be used together with pinned row data. Either set `enableRowPinning` to `false`, or remove `pinnedTopRowData` and `pinnedBottomRowData`.';
+                }
+                return null;
+            },
+        },
+        isRowPinnable: {
+            module: 'ManualPinnedRow',
+            supportedRowModels: ['clientSide'],
+            validate({ isRowPinnable, pinnedTopRowData, pinnedBottomRowData }) {
+                if (isRowPinnable && (pinnedTopRowData || pinnedBottomRowData)) {
+                    return 'Manual row pinning cannot be used together with pinned row data. Either remove `isRowPinnable`, or remove `pinnedTopRowData` and `pinnedBottomRowData`.';
+                }
+                return null;
+            },
+        },
+        isRowPinned: {
+            module: 'ManualPinnedRow',
+            supportedRowModels: ['clientSide'],
+            validate({ isRowPinned, pinnedTopRowData, pinnedBottomRowData }) {
+                if (isRowPinned && (pinnedTopRowData || pinnedBottomRowData)) {
+                    return 'Manual row pinning cannot be used together with pinned row data. Either remove `isRowPinned`, or remove `pinnedTopRowData` and `pinnedBottomRowData`.';
+                }
+                return null;
+            },
+        },
         findSearchValue: {
             module: 'Find',
         },

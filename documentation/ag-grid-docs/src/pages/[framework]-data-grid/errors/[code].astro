@@ -34,7 +34,7 @@ export async function getStaticPaths() {
     return FRAMEWORKS.flatMap((framework: Framework) => {
         return Object.keys(AG_GRID_ERRORS).map((codeNum) => {
             const code = codeNum.toString();
-            const errorPage = errors.find(({ slug }) => slug === code);
+            const errorPage = errors.find(({ id }) => id === code);
             return {
                 params: {
                     framework,

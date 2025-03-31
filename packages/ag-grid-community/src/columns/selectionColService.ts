@@ -156,6 +156,7 @@ export class SelectionColService extends BeanStub implements NamedBean, IColumnC
             ...filteredSelColDef,
             // non-overridable properties
             colId: SELECTION_COLUMN_ID,
+            chartDataType: 'excluded',
         };
     }
 

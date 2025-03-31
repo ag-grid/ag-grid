@@ -145,6 +145,8 @@ export class ChartDatasource extends BeanStub {
 
         let id = 0;
 
+        const groupingCache: Record<string, any> = {};
+
         for (let i = 0; i < numRows; i++) {
             const rowNode = crossFiltering ? allRowNodes[i] : this.gridRowModel.getRow(i + startRow)!;
 
@@ -170,12 +172,20 @@ export class ChartDatasource extends BeanStub {
                         const labels = this.getGroupLabels(rowNode, valueString);
                         const value = labels.slice().reverse();
 
-                        data[colId] = {
+                        const groupingValue = {
                             value,
                             // this is needed so that standalone can handle animations properly when data updates
                             id: id++,
                             toString: () => value.filter(Boolean).join(' - '),
                         };
+
+                        // Reuse previously created value object if it already exists
+                        const groupingKey = groupingValue.toString();
+                        const cachedGroupingValue = groupingCache[groupingKey];
+
+                        data[colId] = cachedGroupingValue
+                            ? cachedGroupingValue
+                            : (groupingCache[groupingKey] = groupingValue);
 
                         // keep track of group node indexes, so they can be padded when other groups are expanded
                         if (rowNode.group) {
