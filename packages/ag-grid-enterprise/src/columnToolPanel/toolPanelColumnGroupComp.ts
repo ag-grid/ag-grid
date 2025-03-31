@@ -95,7 +95,7 @@ export class ToolPanelColumnGroupComp extends Component {
         checkboxGui.insertAdjacentElement('afterend', eDragHandle);
         checkboxInput.setAttribute('tabindex', '-1');
 
-        eLabel.innerHTML = displayName ?? '';
+        eLabel.textContent = displayName ?? '';
         this.setupExpandContract();
 
         this.addCssClass('ag-column-select-indent-' + columnDepth);

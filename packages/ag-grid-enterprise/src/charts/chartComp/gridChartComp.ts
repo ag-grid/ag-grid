@@ -501,14 +501,12 @@ export class GridChartComp extends Component {
         }
 
         if (pivotModeDisabled) {
-            // eslint-disable-next-line no-restricted-properties -- Could swap to textContent, but could be a breaking change
-            this.eEmpty.innerText = this.chartTranslation.translate('pivotChartRequiresPivotMode');
+            this.eEmpty.textContent = this.chartTranslation.translate('pivotChartRequiresPivotMode');
             return true;
         }
 
         if (isEmptyChart) {
-            // eslint-disable-next-line no-restricted-properties -- Could swap to textContent, but could be a breaking change
-            this.eEmpty.innerText = this.chartTranslation.translate('noDataToChart');
+            this.eEmpty.textContent = this.chartTranslation.translate('noDataToChart');
             return true;
         }
 

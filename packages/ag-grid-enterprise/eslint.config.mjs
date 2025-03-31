@@ -33,6 +33,7 @@ export default [
             'no-restricted-properties': [
                 'warn',
                 { property: 'innerText', message: 'Prefer textContent where possible.' },
+                { property: 'innerHTML', message: 'Prefer textContent where possible.' },
                 {
                     object: 'Object',
                     property: 'entries',
@@ -42,6 +43,11 @@ export default [
             'no-restricted-syntax': [
                 'error',
                 'ForInStatement',
+                {
+                    selector: 'Literal[value=/^&(w*);$/i]',
+                    message:
+                        "Prefer unicode characters as they don't have to be parsed into HTML to display correctly.",
+                },
                 {
                     selector: 'ImportDeclaration[specifiers.length = 0][source.value=ag-grid-community]',
                     message:

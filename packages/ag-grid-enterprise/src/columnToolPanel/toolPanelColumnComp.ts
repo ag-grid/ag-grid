@@ -14,7 +14,6 @@ import {
     KeyCode,
     RefPlaceholder,
     _createIconNoSpan,
-    _escapeString,
     _getShouldDisplayTooltip,
     _getToolPanelClassesFromColDef,
     _setAriaDescribedBy,
@@ -82,8 +81,7 @@ export class ToolPanelColumnComp extends Component {
         checkboxGui.insertAdjacentElement('afterend', eDragHandle);
         checkboxInput.setAttribute('tabindex', '-1');
 
-        const displayNameSanitised: any = _escapeString(displayName);
-        eLabel.innerHTML = displayNameSanitised;
+        eLabel.textContent = displayName;
 
         // if grouping, we add an extra level of indent, to cater for expand/contract icons we need to indent for
         if (groupsExist) {

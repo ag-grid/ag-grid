@@ -354,10 +354,8 @@ class AggItemComp extends Component {
     public selectItem: () => void;
 
     constructor(itemSelected: () => void, value: string) {
-        super({ tag: 'div', cls: 'ag-select-agg-func-item' });
+        super({ tag: 'div', cls: 'ag-select-agg-func-item', children: value });
         this.selectItem = itemSelected;
-        // eslint-disable-next-line no-restricted-properties -- Could swap to textContent, but could be a breaking change
-        this.getGui().innerText = value;
         this.addGuiEventListener('click', this.selectItem);
     }
 }

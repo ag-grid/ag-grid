@@ -30,10 +30,19 @@ export default [
             '@typescript-eslint/no-unnecessary-type-constraint': 'error',
             '@typescript-eslint/no-this-alias': 'off',
             '@typescript-eslint/no-for-in-array': 'error',
-            'no-restricted-syntax': ['error', 'ForInStatement'],
+            'no-restricted-syntax': [
+                'error',
+                'ForInStatement',
+                {
+                    selector: 'Literal[value=/^&(w*);$/i]',
+                    message:
+                        "Prefer unicode characters as they don't have to be parsed into HTML to display correctly.",
+                },
+            ],
             'no-restricted-properties': [
                 'warn',
                 { property: 'innerText', message: 'Prefer textContent where possible' },
+                { property: 'innerHTML', message: 'Prefer textContent where possible' },
                 {
                     object: 'Object',
                     property: 'entries',

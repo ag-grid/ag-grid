@@ -120,8 +120,7 @@ export class AdvancedFilterComp extends Component {
     }
 
     private setupApplyButton(): void {
-        // eslint-disable-next-line no-restricted-properties -- Could swap to textContent, but could be a breaking change
-        this.eApplyFilterButton.innerText = this.advFilterExpSvc.translate('advancedFilterApply');
+        this.eApplyFilterButton.textContent = this.advFilterExpSvc.translate('advancedFilterApply');
         this.activateTabIndex([this.eApplyFilterButton]);
         this.addManagedElementListeners(this.eApplyFilterButton, {
             click: () => this.onValueConfirmed(this.eAutocomplete.isValid()),
@@ -131,8 +130,7 @@ export class AdvancedFilterComp extends Component {
 
     private setupBuilderButton(): void {
         this.eBuilderFilterButtonIcon.appendChild(_createIconNoSpan('advancedFilterBuilder', this.beans)!);
-        // eslint-disable-next-line no-restricted-properties -- Could swap to textContent, but could be a breaking change
-        this.eBuilderFilterButtonLabel.innerText = this.advFilterExpSvc.translate('advancedFilterBuilder');
+        this.eBuilderFilterButtonLabel.textContent = this.advFilterExpSvc.translate('advancedFilterBuilder');
         this.activateTabIndex([this.eBuilderFilterButton]);
         this.addManagedElementListeners(this.eBuilderFilterButton, { click: () => this.openBuilder() });
         this.addManagedListeners(this.advancedFilter.getCtrl(), {

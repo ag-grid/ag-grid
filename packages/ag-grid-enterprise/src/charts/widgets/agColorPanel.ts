@@ -365,11 +365,12 @@ export class AgColorPanel extends Component {
 
     private initRecentColors() {
         const recentColors = sharedRecentColors;
-        const innerHtml = recentColors.map((color: string, index: number) => {
+        const colorsHtmlStr = recentColors.map((color: string, index: number) => {
             return /* html */ `<div class="ag-recent-color" id=${index} style="background-color: ${color}; width: 15px; height: 15px;" recent-color="${color}" tabIndex="${this.tabIndex}"></div>`;
         });
 
-        this.recentColors.innerHTML = innerHtml.join('');
+        // eslint-disable-next-line no-restricted-properties -- safe use as we are in total control of the string
+        this.recentColors.innerHTML = colorsHtmlStr.join('');
         _setDisplayed(this.recentColors, !!recentColors.length);
     }
 

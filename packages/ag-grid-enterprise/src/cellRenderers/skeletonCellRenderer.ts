@@ -1,5 +1,5 @@
 import type { ElementParams, ILoadingCellRendererComp, ILoadingCellRendererParams } from 'ag-grid-community';
-import { Component, _getDocument, _setAriaLabel, _setAriaLabelledBy } from 'ag-grid-community';
+import { Component, _createElement, _setAriaLabel, _setAriaLabelledBy } from 'ag-grid-community';
 
 const SkeletonCellRendererElement: ElementParams = { tag: 'div', cls: 'ag-skeleton-container' };
 
@@ -19,17 +19,17 @@ export class SkeletonCellRenderer extends Component implements ILoadingCellRende
 
     private setupFailed(): void {
         const localeTextFunc = this.getLocaleTextFunc();
-        // eslint-disable-next-line no-restricted-properties -- Could swap to textContent, but could be a breaking change
-        this.getGui().innerText = localeTextFunc('loadingError', 'ERR');
+        this.getGui().textContent = localeTextFunc('loadingError', 'ERR');
 
         const ariaFailed = localeTextFunc('ariaSkeletonCellLoadingFailed', 'Row failed to load');
         _setAriaLabel(this.getGui(), ariaFailed);
     }
 
     private setupLoading(params: ILoadingCellRendererParams): void {
-        const eDocument = _getDocument(this.beans);
-        const skeletonEffect = eDocument.createElement('div');
-        skeletonEffect.classList.add('ag-skeleton-effect');
+        const skeletonEffect = _createElement({
+            tag: 'div',
+            cls: 'ag-skeleton-effect',
+        });
 
         // Use the row index to derive a width value for the skeleton cell
         // to avoid them having uniform width when rendering

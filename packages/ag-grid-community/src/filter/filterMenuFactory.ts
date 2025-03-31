@@ -3,6 +3,7 @@ import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
 import type { AgColumn } from '../entities/agColumn';
+import type { AgProvidedColumnGroup } from '../entities/agProvidedColumnGroup';
 import { _isColumnMenuAnchoringEnabled, _isLegacyMenuEnabled } from '../gridOptionsUtils';
 import type { ContainerType } from '../interfaces/iAfterGuiAttachedParams';
 import type { IMenuFactory } from '../interfaces/iMenuFactory';
@@ -31,11 +32,15 @@ export class FilterMenuFactory extends BeanStub implements NamedBean, IMenuFacto
     }
 
     public showMenuAfterMouseEvent(
-        column: AgColumn | undefined,
+        column: AgColumn | AgProvidedColumnGroup | undefined,
         mouseEvent: MouseEvent | Touch,
         containerType: ContainerType,
         onClosedCallback?: () => void
     ): void {
+        if (column && !column.isColumn) {
+            // not supported
+            return;
+        }
         this.showPopup(
             column,
             (eMenu) => {
@@ -54,11 +59,15 @@ export class FilterMenuFactory extends BeanStub implements NamedBean, IMenuFacto
     }
 
     public showMenuAfterButtonClick(
-        column: AgColumn | undefined,
+        column: AgColumn | AgProvidedColumnGroup | undefined,
         eventSource: HTMLElement,
         containerType: ContainerType,
         onClosedCallback?: () => void
     ): void {
+        if (column && !column.isColumn) {
+            // not supported
+            return;
+        }
         let multiplier = -1;
         let alignSide: 'left' | 'right' = 'left';
 
