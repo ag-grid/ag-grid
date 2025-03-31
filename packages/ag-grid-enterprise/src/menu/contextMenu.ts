@@ -97,7 +97,8 @@ export class ContextMenuService extends BeanStub implements NamedBean, IContextM
 
             const enableRowPinning = gos.get('enableRowPinning');
             const isRowPinnable = gos.get('isRowPinnable');
-            if (enableRowPinning) {
+            const grandTotalRow = gos.get('grandTotalRow');
+            if (enableRowPinning && grandTotalRow !== 'pinnedBottom' && grandTotalRow !== 'pinnedTop') {
                 const pinnable = isRowPinnable?.(node) ?? true;
                 if (pinnable) {
                     defaultMenuOptions.push('pinRowSubMenu');

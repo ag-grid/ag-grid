@@ -3,7 +3,6 @@ import type {
     GridOptions,
     GridOptionsService,
     RowNode,
-    RowPinnedType,
     WithoutGridCommon,
 } from 'ag-grid-community';
 import { _getGrandTotalRow, _getGroupTotalRowCallback, _isGroupMultiAutoColumn } from 'ag-grid-community';
@@ -73,24 +72,4 @@ export function _shouldRowBeRendered(
         !isRemovedSingleChildrenGroup &&
         !isRemovedLowestSingleChildrenGroup
     );
-}
-
-/**
- * We need to handle the case where `grandTotalRow = 'pinnedTop' | 'pinnedBottom'` and then is unpinned.
- *
- * In this case, we fallback to 'top'/'bottom', respectively.
- */
-export function _getFooterLocationWithFallback(
-    grandTotalRow: GridOptions['grandTotalRow'],
-    grandTotalPinned: RowPinnedType
-): GridOptions['grandTotalRow'] {
-    switch (grandTotalRow) {
-        case 'top':
-        case 'bottom':
-            return grandTotalRow;
-        case 'pinnedBottom':
-            return !grandTotalPinned ? 'bottom' : grandTotalRow;
-        case 'pinnedTop':
-            return !grandTotalPinned ? 'top' : grandTotalRow;
-    }
 }
