@@ -1,5 +1,6 @@
-import type { GridOptions, IFooterService, NamedBean, RowNode } from 'ag-grid-community';
-import { BeanStub, _getGrandTotalRow, _getGroupTotalRowCallback } from 'ag-grid-community';
+import type { GridOptions, IFooterService, IRowNode, NamedBean, RowNode } from 'ag-grid-community';
+import { BeanStub, _addGridCommonParams, _getGrandTotalRow, _getGroupTotalRowCallback, _warn } from 'ag-grid-community';
+import type { AgColumn } from 'ag-grid-community';
 
 import { _createRowNodeFooter } from './footerUtils';
 
@@ -59,6 +60,44 @@ export class FooterService extends BeanStub implements NamedBean, IFooterService
         }
 
         return getDefaultIndex(adjustedIndex);
+    }
+
+    public doesCellShowTotalPrefix(node: IRowNode, col: AgColumn): boolean {
+        if (!node.footer) {
+            return false;
+        }
+        // if grand total row footer, heading shown in first group column
+        if (node.level === -1) {
+            return this.beans.showRowGroupCols?.getShowRowGroupCols()[0] === col;
+        }
+
+        // otherwise, show in relevant group column
+        return !!node.rowGroupColumn && col && col.isRowGroupDisplayed(node.rowGroupColumn.getId());
+    }
+
+    public applyTotalPrefix(value: any, formattedValue: string | null, node: IRowNode, column: AgColumn): string {
+        const totalValueGetter = column.colDef.cellRendererParams?.totalValueGetter;
+        if (totalValueGetter) {
+            const getterType = typeof totalValueGetter;
+            if (getterType === 'function') {
+                return totalValueGetter(_addGridCommonParams(this.gos, { column, node, value, formattedValue }));
+            }
+
+            if (typeof totalValueGetter === 'string') {
+                return this.beans.expressionSvc?.evaluate(
+                    totalValueGetter,
+                    _addGridCommonParams(this.gos, { column, node, value, formattedValue })
+                );
+            }
+            _warn(179);
+        }
+
+        // grand total row only displays the 'Total' value
+        if (node.level === -1) {
+            return this.getLocaleTextFunc()('footerTotal', 'Total') + ' ';
+        }
+
+        return this.getTotalValue(formattedValue ?? value) ?? '';
     }
 
     public getTotalValue(value: any): string {

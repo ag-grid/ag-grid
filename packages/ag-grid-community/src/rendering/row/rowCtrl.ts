@@ -1246,12 +1246,12 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         switch (this.rowType) {
             case 'FullWidthDetail':
                 return _getFullWidthDetailCellRendererDetails(compFactory, params)!;
-            case 'FullWidthGroup':
-                params.value = rowNode.groupValue;
-                params.valueFormatted = rowNode.rowGroupColumn
-                    ? this.beans.valueSvc.formatValue(rowNode.rowGroupColumn, rowNode, params.value)
-                    : params.value;
+            case 'FullWidthGroup': {
+                const { value, formattedValue } = this.beans.valueSvc.getValueForDisplay(undefined, this.rowNode, true);
+                params.value = value;
+                params.valueFormatted = formattedValue;
                 return _getFullWidthGroupCellRendererDetails(compFactory, params)!;
+            }
             case 'FullWidthLoading':
                 return _getFullWidthLoadingCellRendererDetails(compFactory, params)!;
             default:

@@ -21,10 +21,9 @@ import {
     _removeAriaExpanded,
     _setAriaExpanded,
     _stopPropagationForAgGrid,
-    _warn,
 } from 'ag-grid-community';
 
-import { _getGroupValue, _isHiddenParent } from '../rowHierarchyUtils';
+import { _isHiddenParent } from '../rowHierarchyUtils';
 
 export class GroupCellRendererCtrl extends BeanStub implements IGroupCellRendererCtrl {
     private params: GroupCellRendererParams;
@@ -83,7 +82,8 @@ export class GroupCellRendererCtrl extends BeanStub implements IGroupCellRendere
             return;
         }
 
-        this.displayedNode = this.beans.valueSvc.getDisplayedNode(node, column as AgColumn) ?? this.node;
+        this.displayedNode =
+            (this.beans.showRowGroupColValueSvc?.getDisplayedNode(node, column as AgColumn) as RowNode) ?? this.node;
         this.setupExpand();
         this.setupCheckbox();
         this.addGroupValue();
@@ -91,17 +91,11 @@ export class GroupCellRendererCtrl extends BeanStub implements IGroupCellRendere
     }
 
     private initFooterCell(): void {
-        const { node, column } = this.params;
-        const isGrandTotal = node.level === -1;
-        // is this nodes group column displaying here
-        const isThisCol = node.rowGroupColumn && column && column.isRowGroupDisplayed(node.rowGroupColumn.getId());
-        if (!isThisCol && !isGrandTotal) {
-            // if this isn't the column we are showing the group for, then we don't show anything
-            return;
-        }
-        this.addFooterValue();
+        const { node } = this.params;
+        this.addGroupValue();
         this.setupIndent();
 
+        const isGrandTotal = node.level === -1;
         if (!isGrandTotal) {
             this.comp.addOrRemoveCssClass('ag-row-group-leaf-indent', true);
         }
@@ -177,63 +171,12 @@ export class GroupCellRendererCtrl extends BeanStub implements IGroupCellRendere
      */
     private addGroupValue(): void {
         const {
-            params: { column, value },
-            node,
-            displayedNode,
-            beans,
+            params: { value, valueFormatted },
         } = this;
         // if no formatted value and node key is '', then we replace this group with (Blanks)
         // this does not propagate down for [showOpenedGroup]
-        const formattedValue = this.getFormattedValue() ?? _getGroupValue(column, node, displayedNode, beans);
-        const innerCompDetails = this.getInnerCompDetails(formattedValue);
-        this.comp.setInnerRenderer(innerCompDetails, formattedValue ?? value ?? null);
-    }
-
-    /**
-     * Get the formatted value for the cell, prioritises provided formatted value (autoGroupColDef.valueFormatter)
-     * otherwise checks if grouped col can format the value.
-     */
-    private getFormattedValue(): any {
-        const { valueSvc } = this.beans;
-        const { value, valueFormatted, column } = this.params;
-        const { rowGroupColumn } = this.displayedNode;
-
-        // full width rows and non-grouped cols use formatted value
-        if (!rowGroupColumn || !column) {
-            return valueFormatted;
-        }
-
-        if (!column?.isRowGroupDisplayed(rowGroupColumn.getId())) {
-            return null;
-        }
-
-        return valueSvc.formatValue(rowGroupColumn, this.node, value);
-    }
-
-    /**
-     * Wraps and displays footer value with `totalValueGetter`
-     */
-    private addFooterValue(): void {
-        const { expressionSvc, footerSvc } = this.beans;
-        const { totalValueGetter, column, node, value } = this.params;
-        const valueFormatted =
-            this.getFormattedValue() ?? _getGroupValue(column, node as RowNode, node as RowNode, this.beans);
-        let footerValue: string | undefined = '';
-
-        if (totalValueGetter) {
-            if (typeof totalValueGetter === 'function') {
-                footerValue = totalValueGetter({ ...this.params, valueFormatted });
-            } else if (typeof totalValueGetter === 'string') {
-                footerValue = expressionSvc?.evaluate(totalValueGetter, { ...this.params, valueFormatted });
-            } else {
-                _warn(179);
-            }
-        } else {
-            footerValue = footerSvc?.getTotalValue(valueFormatted ?? value);
-        }
-
-        const innerCompDetails = this.getInnerCompDetails(valueFormatted);
-        this.comp.setInnerRenderer(innerCompDetails, footerValue ?? '');
+        const innerCompDetails = this.getInnerCompDetails();
+        this.comp.setInnerRenderer(innerCompDetails, valueFormatted ?? value ?? null);
     }
 
     /**
@@ -339,12 +282,9 @@ export class GroupCellRendererCtrl extends BeanStub implements IGroupCellRendere
      * 5. Inner renderer of the grouped column
      * 6. agFindCellRenderer for find results
      */
-    private getInnerCompDetails(formattedValue: any): UserCompDetails | undefined {
+    private getInnerCompDetails(): UserCompDetails | undefined {
         const { userCompFactory, findSvc } = this.beans;
-        const params: GroupCellRendererParams = {
-            ...this.params,
-            valueFormatted: formattedValue,
-        };
+        const params = this.params;
 
         // full width rows do not inherit the child group column renderer
         if (params.fullWidth) {
