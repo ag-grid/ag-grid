@@ -462,7 +462,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
             allLeafChildren.splice(Math.max(indexAtPixelNow + increment, 0) + idx, 0, rowNode);
         });
 
-        rowNodes.forEach((rowNode: ClientSideRowModelRowNode, index) => {
+        allLeafChildren.forEach((rowNode: ClientSideRowModelRowNode, index) => {
             rowNode.sourceRowIndex = index; // Update all the sourceRowIndex to reflect the new positions
         });
 
