@@ -67,7 +67,7 @@ export class ManualPinnedRowModel extends BeanStub implements IPinnedRowModel {
                         if (float) {
                             this.pinRow(node, float);
                         }
-                    });
+                    }, true);
                 }
             },
         });
