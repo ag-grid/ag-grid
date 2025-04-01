@@ -520,7 +520,6 @@ jobs:
                 }
             }
         run: |
-          echo "$TEST"
           npx ts-node ./scripts/agBotSlackMessage.ts --auth-token "$SLACK_BOT_OAUTH_TOKEN" \
             --grid-channel "$GRID_TEAM_CITY_CHANNEL" \
             --charts-channel "$CHARTS_TEAM_CITY_CHANNEL" \
