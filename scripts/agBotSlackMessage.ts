@@ -256,7 +256,7 @@ const SLACK_GITHUB_MAPPING: GH_MAPPING[] = [
     // }
 ];
 
-const JIRA_BASE_URL = 'https://ag-grid.atlassian.net/jira/software/c/projects/AG'; //Deno.env.get("jiraBaseUrl")!;
+const JIRA_BASE_URL = 'https://ag-grid.atlassian.net/jira/software/c/projects/AG';
 
 const SLACK_POST_MESSAGE_URL = 'https://slack.com/api/chat.postMessage';
 const SLACK_POST_EPHEMERAL_URL = 'https://slack.com/api/chat.postEphemeral';
@@ -535,6 +535,7 @@ ${getJobStatusSummary(runContext)}` + `\n${changesText}`;
 }
 
 async function sendCodeSlackMessage({ channel, code, threadTs }: { channel: string; code: string; threadTs: string }) {
+    console.log('Sending code slack message');
     const text = `Generated from teamcity response:\n\`\`\`${code}\n\`\`\``;
 
     const res = await sendSlackMessage({
@@ -545,6 +546,7 @@ async function sendCodeSlackMessage({ channel, code, threadTs }: { channel: stri
         },
     });
 
+    console.log(res.json());
     return res.json();
 }
 
@@ -599,6 +601,7 @@ async function notifySlackDebug(changes: GitChange[], runContext: RunContext, ch
     const userDisplayType: UserDisplayType = 'debug';
     let slackDebugMessage;
 
+    console.log('status', status);
     if (status === 'failure') {
         slackDebugMessage = sendFailureSlackMessage(changes, runContext, channel, userDisplayType);
     } else if (status === 'success') {
@@ -606,8 +609,10 @@ async function notifySlackDebug(changes: GitChange[], runContext: RunContext, ch
         slackDebugMessage = sendSuccessSlackMessage(changes, runContext, channel, userDisplayType);
     }
 
+    console.log('first slack sent', slackDebugMessage);
     const slackDebugResponse = slackDebugMessage ? await slackDebugMessage : undefined;
 
+    console.log('code?', THREAD_TEAMCITY_RESPONSE && slackDebugResponse?.ts);
     if (THREAD_TEAMCITY_RESPONSE && slackDebugResponse?.ts) {
         await sendCodeSlackMessage({
             channel,
