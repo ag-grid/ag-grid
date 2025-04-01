@@ -327,10 +327,10 @@ export class ChartService extends BeanStub implements NamedBean, IChartService {
 
         const uCols = new Set<Column>();
 
-        let sRdx = Number.MAX_VALUE;
-        let eRdx = -Number.MAX_VALUE;
+        let startRowIndex = Number.MAX_VALUE;
+        let endRowIndex = -Number.MAX_VALUE;
 
-        ranges.forEach(({ startRow: sr, endRow: er, columns: cols, id }) => {
+        ranges.forEach(({ startRow: sr, endRow: er, columns: cols }) => {
             if (!(sr && er)) {
                 return;
             }
@@ -338,8 +338,8 @@ export class ChartService extends BeanStub implements NamedBean, IChartService {
             cols.forEach((col) => uCols.add(col));
 
             // set start/end ranges assuming rows aren't pinned
-            let { rowIndex: sIdx, rowPinned: sRp } = sr;
-            let { rowIndex: eIdx, rowPinned: eRp } = er;
+            let { rowIndex: sRowIndex, rowPinned: startRowPinned } = sr;
+            let { rowIndex: eRowIndex, rowPinned: endRowPinned } = er;
 
             // if range crosses pinned rows, adjust the start/end row indexes to exclude pinned rows
             // pinned rows aren't part of the main row model and:
@@ -347,32 +347,32 @@ export class ChartService extends BeanStub implements NamedBean, IChartService {
             //   * aren't included in aggregation functions
             //   * can have completely bespoke data shapes
             //
-            if (sRp === 'top') {
-                if (eRp === 'top') {
+            if (startRowPinned === 'top') {
+                if (endRowPinned === 'top') {
                     // range is fully pinned, ignore it
                     return;
                 }
                 // range crosses pinned top boundary, so start at first row in the row model
-                sIdx = 0;
+                sRowIndex = 0;
             }
-            if (eRp === 'bottom') {
-                if (sRp === 'bottom') {
+            if (endRowPinned === 'bottom') {
+                if (startRowPinned === 'bottom') {
                     // range is fully pinned, ignore it
                     return;
                 }
                 // range crosses pinned bottom boundary, so end at last row in the row model
-                eIdx = this.beans.pageBounds.getLastRow();
+                eRowIndex = this.beans.pageBounds.getLastRow();
             }
 
-            if (sIdx !== undefined) {
-                sRdx = Math.min(sRdx, sIdx);
+            if (sRowIndex !== undefined) {
+                startRowIndex = Math.min(startRowIndex, sRowIndex);
             }
-            if (eIdx !== undefined) {
-                eRdx = Math.max(eRdx, eIdx);
+            if (eRowIndex !== undefined) {
+                endRowIndex = Math.max(endRowIndex, eRowIndex);
             }
         });
 
-        if (sRdx === Number.MAX_VALUE || eRdx === -Number.MAX_VALUE) {
+        if (startRowIndex === Number.MAX_VALUE || endRowIndex === -Number.MAX_VALUE) {
             // if we didn't find any valid ranges, return an empty range
             return { columns: [] };
         }
@@ -385,11 +385,11 @@ export class ChartService extends BeanStub implements NamedBean, IChartService {
             columns,
             startColumn: columns[0],
             startRow: {
-                rowIndex: sRdx,
+                rowIndex: startRowIndex,
                 rowPinned: undefined,
             },
             endRow: {
-                rowIndex: eRdx,
+                rowIndex: endRowIndex,
                 rowPinned: undefined,
             },
         };
