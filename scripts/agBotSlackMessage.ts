@@ -616,7 +616,7 @@ async function notifySlackDebug(changes: GitChange[], runContext: RunContext, ch
             threadTs: slackDebugResponse.ts,
         });
 
-         await sendCodeSlackMessage({
+        await sendCodeSlackMessage({
             channel,
             code: JSON.stringify(changes, null, 2),
             threadTs: slackDebugResponse.ts,
