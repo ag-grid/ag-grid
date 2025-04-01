@@ -535,7 +535,6 @@ ${getJobStatusSummary(runContext)}` + `\n${changesText}`;
 }
 
 async function sendCodeSlackMessage({ channel, code, threadTs }: { channel: string; code: string; threadTs: string }) {
-    console.log('Sending code slack message');
     const text = `Generated from teamcity response:\n\`\`\`${code}\n\`\`\``;
 
     const res = await sendSlackMessage({
@@ -546,7 +545,6 @@ async function sendCodeSlackMessage({ channel, code, threadTs }: { channel: stri
         },
     });
 
-    console.log(res.json());
     return res.json();
 }
 
@@ -601,7 +599,6 @@ async function notifySlackDebug(changes: GitChange[], runContext: RunContext, ch
     const userDisplayType: UserDisplayType = 'debug';
     let slackDebugMessage;
 
-    console.log('status', status);
     if (status === 'failure') {
         slackDebugMessage = sendFailureSlackMessage(changes, runContext, channel, userDisplayType);
     } else if (status === 'success') {
@@ -609,10 +606,8 @@ async function notifySlackDebug(changes: GitChange[], runContext: RunContext, ch
         slackDebugMessage = sendSuccessSlackMessage(changes, runContext, channel, userDisplayType);
     }
 
-    console.log('first slack sent', slackDebugMessage);
     const slackDebugResponse = slackDebugMessage ? await slackDebugMessage : undefined;
 
-    console.log('code?', THREAD_TEAMCITY_RESPONSE && slackDebugResponse?.ts);
     if (THREAD_TEAMCITY_RESPONSE && slackDebugResponse?.ts) {
         await sendCodeSlackMessage({
             channel,
@@ -676,25 +671,21 @@ async function processChanges(runContext: RunContext, userDisplayType: UserDispl
         const { project, currentSha, lastSuccessfulSha } = runContext;
         const changes = getGitChanges(currentSha, lastSuccessfulSha);
 
-        console.log('changes', changes);
-
         // Notify slack debugging
         await notifySlackDebug(changes, runContext, SLACK_DEBUG_CHANNEL);
 
-        console.log('notification done');
-
         // Notify slack of build failures
-        // if (project === "AgGrid") {
-        //     await notifyBuildFailure(changes, runContext, GRID_TEAM_CITY_CHANNEL, "slack");
-        // } else if (project === "AgCharts") {
-        //     await notifyBuildFailure(changes, runContext, CHARTS_TEAM_CITY_CHANNEL, "slack");
-        // }
-        //
-        // // Notify user when deployment to staging is done
-        // await notifyIndividualStagingDeploy(runContext, changes, userDisplayType);
-        //
-        // // Notify website status when staging deploy is finished
-        // await notifyStagingDeploy(runContext, changes, userDisplayType, WEBSITE_STATUS_CHANNEL);
+        if (project === 'AgGrid') {
+            await notifyBuildFailure(changes, runContext, GRID_TEAM_CITY_CHANNEL, 'slack');
+        } else if (project === 'AgCharts') {
+            await notifyBuildFailure(changes, runContext, CHARTS_TEAM_CITY_CHANNEL, 'slack');
+        }
+
+        // Notify user when deployment to staging is done
+        await notifyIndividualStagingDeploy(runContext, changes, userDisplayType);
+
+        // Notify website status when staging deploy is finished
+        await notifyStagingDeploy(runContext, changes, userDisplayType, WEBSITE_STATUS_CHANNEL);
     } catch (e) {
         console.log(e);
     }

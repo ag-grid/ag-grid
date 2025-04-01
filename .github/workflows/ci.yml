@@ -475,7 +475,7 @@ jobs:
             ${{ env.GIT_LOG }}
 
       - name: Find matching workflow
-        #        if: always() && job.status != 'cancelled' && github.ref == 'refs/heads/latest' && steps.lastJobStatus.outputs.changedState == 'true'
+        if: always() && job.status != 'cancelled' && github.ref == 'refs/heads/latest' && steps.lastJobStatus.outputs.changedState == 'true'
         id: find_latest_sha
         uses: SamhammerAG/last-successful-build-action@v4
         with:
@@ -484,7 +484,7 @@ jobs:
           verify: false
 
       - name: SlackBot
-        #        if: always() && job.status != 'cancelled' && github.ref == 'refs/heads/latest' && steps.lastJobStatus.outputs.changedState == 'true'
+        if: always() && job.status != 'cancelled' && github.ref == 'refs/heads/latest' && steps.lastJobStatus.outputs.changedState == 'true'
         env:
           GRID_TEAM_CITY_CHANNEL: ${{ secrets.GRID_TEAM_CITY_CHANNEL }}
           CHARTS_TEAM_CITY_CHANNEL: ${{ secrets.CHARTS_TEAM_CITY_CHANNEL }}
