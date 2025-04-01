@@ -9,7 +9,14 @@ import type {
     UserCompDetails,
     UserComponentFactory,
 } from 'ag-grid-community';
-import { AgPromise, Component, RefPlaceholder, _addGridCommonParams, _removeFromParent } from 'ag-grid-community';
+import {
+    AgPromise,
+    Component,
+    RefPlaceholder,
+    _addGridCommonParams,
+    _clearElement,
+    _removeFromParent,
+} from 'ag-grid-community';
 
 import { agStatusBarCSS } from './agStatusBar.css-GENERATED';
 import type { StatusBarService } from './statusBarService';
@@ -156,9 +163,9 @@ export class AgStatusBar extends Component {
     }
 
     resetStatusBar(): void {
-        this.eStatusBarLeft.innerHTML = '';
-        this.eStatusBarCenter.innerHTML = '';
-        this.eStatusBarRight.innerHTML = '';
+        _clearElement(this.eStatusBarLeft);
+        _clearElement(this.eStatusBarCenter);
+        _clearElement(this.eStatusBarRight);
 
         this.destroyComponents();
         this.statusBarSvc.unregisterAllComponents();

@@ -111,11 +111,10 @@ describe('ag-grid grouping with transactions', () => {
 
         await executeTransactionsAsync(
             [
-                // TODO: AG-14411 - fix this, removing and adding in the same transaction results in an invalid allLeafChildren with the row missing
-                // {
-                //     remove: [{ id: '6' }],
-                //     add: [{ id: '6', country: 'Italy', year: 1900, name: 'unknown 2' }],
-                // },
+                {
+                    remove: [{ id: '6' }],
+                    add: [{ id: '6', country: 'Italy', year: 1900, name: 'unknown 2' }],
+                },
                 {
                     update: [{ id: '6', country: 'Italy', year: 1901, name: 'unknown 3' }],
                 },

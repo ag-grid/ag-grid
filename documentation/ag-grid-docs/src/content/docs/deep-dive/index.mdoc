@@ -36,7 +36,6 @@ Complete our [Quick Start](./getting-started/) (or open the example below in Cod
 
 {% gridExampleRunner title="Basic Example" name="basic-example"  exampleHeight=220 /%}
 
-***
 {% /if %}
 
 {% if isFramework("react") %}
@@ -53,7 +52,6 @@ Complete our [Quick Start](./getting-started/) (or open the example below in Cod
 
 _Note: `rowData` and `columnDefs` arrays use the `useState` hook. We recommend `useState` if the data is mutable, otherwise `useMemo` is preferable. Read our [Best Practices](./react-hooks/) guide to learn more about using React hooks with AG Grid._
 
-***
 {% /if %}
 
 {% if isFramework("angular") %}
@@ -67,7 +65,6 @@ Complete our [Quick Start](./getting-started/) (or open the example below in Cod
 
 {% gridExampleRunner title="Basic Example" name="basic-example"  exampleHeight=220 /%}
 
-***
 {% /if %}
 
 {% if isFramework("vue") %}
@@ -81,7 +78,6 @@ Complete our [Quick Start](./getting-started/) (or open the example below in Cod
 
 {% gridExampleRunner title="Basic Example" name="basic-example"  exampleHeight=220 /%}
 
-***
 {% /if %}
 
 ## Load New Data
@@ -120,7 +116,7 @@ When we run our application, we should see a grid with ~1,400 rows of new data, 
 
 _Note: There are a large number of APIs available. See our [API Docs](./grid-api/) for an exhaustive list._
 
-***
+
 {% /if %}
 
 {% if isFramework("react") %}
@@ -162,7 +158,7 @@ When we run our application, we should see a grid with ~1,400 rows of new data, 
 
 _Note: All properties that are not tagged as 'initial' are reactive. See our [API docs](./grid-options/) for a complete list._
 
-***
+
 {% /if %}
 
 {% if isFramework("angular") %}
@@ -179,7 +175,7 @@ First we need to hook into the `gridReady` event by adding `(gridReady)="onGridR
     [rowData]="rowData"
     [columnDefs]="colDefs"
     (gridReady)="onGridReady($event)"
-    />
+/>
 ```
 
 _Note: [Grid Events](./deep-dive/#handle-grid-events) are covered in more detail later on_
@@ -220,7 +216,7 @@ When we run our application, we should see a grid with ~1,400 rows of new data, 
 
 _Note: All [Grid Option](./grid-options/) properties tagged as 'managed' are automatically updated when their value changes._
 
-***
+
 {% /if %}
 
 {% if isFramework("vue") %}
@@ -267,7 +263,7 @@ When we run our application, we should see a grid with ~1,400 rows of new data, 
 
 Note: All [Grid Option](./grid-options/) properties tagged as 'managed' are automatically updated when their value changes.
 
-***
+
 {% /if %}
 
 ## Configure Columns
@@ -378,7 +374,7 @@ The grid should now allow filtering on all columns:
 
 _Note: Column Definitions take precedence over Default Column Definitions_
 
-***
+
 {% /if %}
 
 {% if isFramework("react") %}
@@ -406,7 +402,7 @@ The grid should now allow filtering on all columns:
 
 _Note: Column Definitions take precedence over Default Column Definitions_
 
-***
+
 {% /if %}
 
 {% if isFramework("angular") %}
@@ -422,15 +418,15 @@ The example above demonstrates how to configure a single column. To apply this c
         <ag-grid-angular
             ...
             [defaultColDef]="defaultColDef"
-            />
+        />
     </div>
     `,
     // ...
 })
 
 export class AppComponent {
-    // Default Column Definitions: Apply configuration across all columns
-    defaultColDef: ColDef = {
+// Default Column Definitions: Apply configuration across all columns
+defaultColDef: ColDef = {
         filter: true
     }
     // ...
@@ -443,7 +439,7 @@ The grid should now allow filtering on all columns:
 
 _Note: Column Definitions take precedence over Default Column Definitions_
 
-***
+
 {% /if %}
 
 {% if isFramework("vue") %}
@@ -491,7 +487,7 @@ The grid should now allow filtering on all columns:
 
 _Note: Column Definitions take precedence over Default Column Definitions_
 
-***
+
 {% /if %}
 
 ## Configure The Grid
@@ -516,7 +512,7 @@ We should now see Pagination has been enabled on the grid:
 
 _Refer to our detailed [Grid Options](./grid-options/) documentation for a full list of options._
 
-***
+
 {% /if %}
 
 {% if isFramework("react") %}
@@ -541,7 +537,7 @@ We should now see Pagination has been enabled on the grid:
 
 _Refer to our detailed [Grid Options](./grid-options/) documentation for a full list of options._
 
-***
+
 {% /if %}
 
 {% if isFramework("angular") %}
@@ -556,7 +552,7 @@ Grid Options are passed to the grid via attributes on the `ag-grid-angular` comp
 <ag-grid-angular
     ...
     [pagination]="true"
-    />
+/>
 ```
 
 We should now see Pagination has been enabled on the grid:
@@ -565,7 +561,7 @@ We should now see Pagination has been enabled on the grid:
 
 _Refer to our detailed [Grid Options](./grid-options/) documentation for a full list of options._
 
-***
+
 {% /if %}
 
 {% if isFramework("vue") %}
@@ -599,7 +595,7 @@ We should now see Pagination has been enabled on the grid:
 
 _Refer to our detailed [Grid Options](./grid-options/) documentation for a full list of options._
 
-***
+
 {% /if %}
 
 ## Format Cell Values
@@ -627,7 +623,7 @@ The grid should now show the formatted value in the 'price' column:
 
 _Note: Read our [Value Formatter](./value-formatters/) page for more information on formatting cell values_
 
-***
+
 {% /if %}
 
 {% if isFramework("react") %}
@@ -654,7 +650,7 @@ The grid should now show the formatted value in the 'price' column:
 
 _Note: Read our [Value Formatter](./value-formatters/) page for more information on formatting cell values_
 
-***
+
 {% /if %}
 
 {% if isFramework("angular") %}
@@ -680,7 +676,7 @@ The grid should now show the formatted value in the 'price' column:
 
 _Note: Read our [Value Formatter](./value-formatters/) page for more information on formatting cell values_
 
-***
+
 {% /if %}
 
 {% if isFramework("vue") %}
@@ -763,7 +759,7 @@ Now, when we run the grid, we should see a company logo next to the name:
 
 _Note: Read our [Cell Components](./component-cell-renderer/) page for more information on using custom components in cells_
 
-***
+
 {% /if %}
 
 {% if isFramework("react") %}
@@ -801,7 +797,7 @@ Now, when we run the grid, we should see a company logo next to the name:
 
 _Note: Read our [Cell Components](./component-cell-renderer/) page for more information on using custom components in cells_
 
-***
+
 {% /if %}
 
 {% if isFramework("angular") %}
@@ -855,7 +851,7 @@ Now, when we run the grid, we should see a company logo next to the name:
 
 _Note: Read our [Cell Components](./component-cell-renderer/) page for more information on using custom components in cells_
 
-***
+
 {% /if %}
 
 {% if isFramework("vue") %}
@@ -912,7 +908,7 @@ Now, when we run the grid, we should see a company logo next to the name:
 
 _Note: Read our [Cell Components](./component-cell-renderer/) page for more information on using custom components in cells_
 
-***
+
 {% /if %}
 
 ## Handle Grid Events
@@ -947,7 +943,7 @@ Now, when we click on a cell we should be able to edit it and see the new value 
 
 _Refer to our [Grid Events](./grid-events/) documentation for a full list of events raised by the grid_
 
-***
+
 {% /if %}
 
 {% if isFramework("react") %}
@@ -978,7 +974,7 @@ Now, when we click on a cell we should be able to edit it and see the new value 
 
 _Refer to our [Grid Events](./grid-events/) documentation for a full list of events raised by the grid_
 
-***
+
 {% /if %}
 
 {% if isFramework("angular") %}
@@ -992,7 +988,7 @@ Let's try this out by enabling cell editing with `editable: true` on the Default
 
 ```ts
 // Default Column Definitions: Apply configuration across all columns
-    defaultColDef: ColDef = {
+defaultColDef: ColDef = {
     editable: true
     // ...
 }
@@ -1014,7 +1010,7 @@ Finally, let's add the `gridReady` attribute to the `ag-grid-angular` component,
 <ag-grid-angular
     (gridReady)="onGridReady($event)"
     ...
-    />
+/>
 ```
 
 Now, when we click on a cell we should be able to edit it and see the new value logged to the console:
@@ -1023,7 +1019,7 @@ Now, when we click on a cell we should be able to edit it and see the new value 
 
 _Refer to our [Grid Events](./grid-events/) documentation for a full list of events raised by the grid_
 
-***
+
 {% /if %}
 
 {% if isFramework("vue") %}
@@ -1095,8 +1091,6 @@ Let's put what you've learned so far into action by modifying the grid:
 Once complete, your grid should look like the example below. If you're stuck, check out the source code to see how its done:
 
 {% gridExampleRunner title="Testing Example" name="testing-example"  exampleHeight=550 /%}
-
-***
 
 ## Summary
 <!-- Summary-->

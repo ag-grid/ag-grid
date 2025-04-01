@@ -15,9 +15,11 @@ export class RowSpanService extends BeanStub<'spannedCellsUpdated'> implements N
 
     public postConstruct(): void {
         const onRowDataUpdated = this.onRowDataUpdated.bind(this);
+        const buildPinnedCaches = this.buildPinnedCaches.bind(this);
         this.addManagedEventListeners({
             paginationChanged: this.buildModelCaches.bind(this),
-            pinnedRowDataChanged: this.buildPinnedCaches.bind(this),
+            pinnedRowDataChanged: buildPinnedCaches,
+            pinnedRowsChanged: buildPinnedCaches,
             rowNodeDataChanged: onRowDataUpdated,
             cellValueChanged: onRowDataUpdated,
         });
@@ -182,7 +184,7 @@ export class RowSpanService extends BeanStub<'spannedCellsUpdated'> implements N
      * @param rowNode a node that may be spanned at this position
      * @returns the CellSpan object if one exists
      */
-    public getCellSpan(col: AgColumn, rowNode: RowNode) {
+    public getCellSpan(col: AgColumn, rowNode: RowNode): CellSpan | undefined {
         const cache = this.spanningColumns.get(col);
         if (!cache) {
             return undefined;

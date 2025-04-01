@@ -47,12 +47,10 @@ export class SideBarButtonComp extends Component<SideBarButtonCompEvent> {
     }
 
     private setLabel(): void {
-        const translate = this.getLocaleTextFunc();
         const def = this.toolPanelDef;
-        const label = translate(def.labelKey, def.labelDefault);
+        const label = this.getLocaleTextFunc()(def.labelKey, def.labelDefault);
 
-        // eslint-disable-next-line no-restricted-properties -- Could swap to textContent, but could be a breaking change
-        this.eLabel.innerText = label;
+        this.eLabel.textContent = label;
     }
 
     private setIcon(): void {

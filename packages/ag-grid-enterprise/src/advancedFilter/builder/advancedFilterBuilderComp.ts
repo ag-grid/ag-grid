@@ -164,8 +164,7 @@ export class AdvancedFilterBuilderComp extends Component<AdvancedFilterBuilderEv
     }
 
     private setupButtons(): void {
-        // eslint-disable-next-line no-restricted-properties -- Could swap to textContent, but could be a breaking change
-        this.eApplyFilterButton.innerText = this.advFilterExpSvc.translate('advancedFilterBuilderApply');
+        this.eApplyFilterButton.textContent = this.advFilterExpSvc.translate('advancedFilterBuilderApply');
         this.activateTabIndex([this.eApplyFilterButton]);
         this.addManagedElementListeners(this.eApplyFilterButton, {
             click: () => {
@@ -192,8 +191,7 @@ export class AdvancedFilterBuilderComp extends Component<AdvancedFilterBuilderEv
             mouseleave: () => mouseListener(false),
         });
 
-        // eslint-disable-next-line no-restricted-properties -- Could swap to textContent, but could be a breaking change
-        this.eCancelFilterButton.innerText = this.advFilterExpSvc.translate('advancedFilterBuilderCancel');
+        this.eCancelFilterButton.textContent = this.advFilterExpSvc.translate('advancedFilterBuilderCancel');
         this.activateTabIndex([this.eCancelFilterButton]);
         this.addManagedElementListeners(this.eCancelFilterButton, { click: () => this.close() });
     }

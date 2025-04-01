@@ -362,6 +362,8 @@ The example below demonstrates this in action. Note the following:
 
 {% gridExampleRunner title="Multiple Values" name="multiple-values" /%}
 
+If the cell value contains an array, [Cell Data Types](./cell-data-types/) will automatically infer the type as `'object'` and provide a `comparator` that uses the column/data type value formatter. As the cell value type (the array) and filter value type (the content of the array) are different, an additional `comparator` needs to be provided for the Set Filter in the `filterParams` as described in [Sorting Filter Lists](#sorting-filter-lists) above.
+
 ## Default State
 
 By default, when the Set Filter is created all values are selected. If you would prefer to invert this behaviour and have everything de-selected by default, you can use the following:

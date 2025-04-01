@@ -120,6 +120,8 @@ import type {
     IsGroupOpenByDefaultParams,
     IsRowFilterable,
     IsRowMaster,
+    IsRowPinnable,
+    IsRowPinned,
     IsRowSelectable,
     IsServerSideGroup,
     IsServerSideGroupOpenByDefaultParams,
@@ -1141,7 +1143,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     /** When provided, an extra grand total row will be inserted into the grid at the specified position.
      * This row displays the aggregate totals of all rows in the grid.
      */
-    @Input() public grandTotalRow: 'top' | 'bottom' | undefined = undefined;
+    @Input() public grandTotalRow: 'top' | 'bottom' | 'pinnedTop' | 'pinnedBottom' | undefined = undefined;
     /** Suppress the sticky behaviour of the total rows, can be suppressed individually by passing `'grand'` or `'group'`.
      */
     @Input() public suppressStickyTotalRow: boolean | 'grand' | 'group' | undefined = undefined;
@@ -1221,6 +1223,25 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     /** Data to be displayed as pinned bottom rows in the grid.
      */
     @Input() public pinnedBottomRowData: any[] | undefined = undefined;
+    /** Determines whether manual row pinning is enabled via the row context menu.
+     *
+     * Set to `true` to allow pinning rows to top or bottom.
+     * Set to `'top'` to allow pinning rows to the top only.
+     * Set to `'bottom'` to allow pinning rows to the bottom only.
+     */
+    @Input() public enableRowPinning: boolean | 'top' | 'bottom' | undefined = undefined;
+    /** Return `true` if the grid should allow the row to be manually pinned.
+     * Return `false` if the grid should prevent the row from being pinned
+     *
+     * When not defined, all rows default to pinnable.
+     */
+    @Input() public isRowPinnable: IsRowPinnable<TData> | undefined = undefined;
+    /** Called for every row in the grid.
+     *
+     * Return `true` if the row should be pinned initially. Return `false` otherwise.
+     * User interactions can subsequently still change the pinned state of a row.
+     */
+    @Input() public isRowPinned: IsRowPinned<TData> | undefined = undefined;
     /** Sets the row model type.
      * @default 'clientSide'
      * @initial

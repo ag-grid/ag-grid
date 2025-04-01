@@ -10,7 +10,7 @@
     const eMessage = document.createElement('div');
     let eBox = document.querySelector('#__ag__message');
 
-    eMessage.innerHTML = msg;
+    eMessage.textContent = msg;
 
     if (!eBox) {
         const template = `<div id="__ag__message" style="display: inline-block; position: absolute; top: 0px; left: 0px; color: white; background-color: black; z-index: 20; padding: 2px; border: 1px solid darkred; height: 200px; overflow-y: auto;"></div>`;

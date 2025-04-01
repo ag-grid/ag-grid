@@ -9,7 +9,7 @@ const args = yargs(hideBin(process.argv))
         'Usage: $0 --auth-token [auth-token] -grid-channel [grid-channel] --charts-channel [charts-channel] --website-status-channel [website-status-channel] --slack-bot-oauth-token [slack-bot-oauth-token] --debug-channel [debug-channel] --run-context [run-context]'
     )
     .options({
-        'auth-token': {
+        "auth-token": {
             demandOption: true,
         },
         'grid-channel': {
@@ -31,9 +31,9 @@ const args = yargs(hideBin(process.argv))
     .parse();
 
 const SLACK_BOT_OAUTH_TOKEN = args.authToken;
-const GRID_TEAM_CITY_CHANNEL = args.gridChannel;
-const CHARTS_TEAM_CITY_CHANNEL = args.chartsChannel;
-const WEBSITE_STATUS_CHANNEL = args.websiteStatusChannel;
+const GRID_TEAM_CITY_CHANNEL = args.debugChannel; //args.gridChannel;
+const CHARTS_TEAM_CITY_CHANNEL = args.debugChannel; //args.chartsChannel;
+const WEBSITE_STATUS_CHANNEL = args.debugChannel; //args.websiteStatusChannel;
 const SLACK_DEBUG_CHANNEL = args.debugChannel;
 
 type GH_MAPPING = {
@@ -50,7 +50,7 @@ type JobStatus = 'success' | 'failure' | 'n/a';
 type RunContext = {
     runId: number;
     workflow: string;
-    branch: string;
+    ref: string;
     currentSha: string;
     lastSuccessfulSha: string;
     status: 'success' | 'failure';
@@ -317,12 +317,12 @@ function getStagingUrl(project: AgProject) {
 }
 
 function getBranchLink(runContext: RunContext) {
-    const branchName = runContext.branch;
+    const branchName = runContext.ref;
     const baseUrl = getGithubBaseUrl(runContext.project);
 
     if (branchName === undefined) {
         return '';
-    } else if (branchName === 'latest') {
+    } else if (branchName === 'refs/heads/latest') {
         return `<${baseUrl}/tree/latest|latest>`;
     } else if (branchName.startsWith('pull/')) {
         return `<${baseUrl}/${branchName}|PR #${branchName.slice('pull/'.length)}>`;
@@ -454,7 +454,7 @@ function getJobStatusSummary(runContext: RunContext) {
     const getStatus = (status: JobStatus) => `${status === 'success' ? '✅' : status === 'failure' ? '❌' : '➖'}`;
     return `${Object.entries(runContext.jobStatuses)
         .map(([job, status]) => `${job}: ${getStatus(status)}`)
-        .join(' ')}`;
+        .join(' | ')}`;
 }
 
 function buildFailureSlackMessageBlocks(
@@ -467,6 +467,7 @@ function buildFailureSlackMessageBlocks(
     const { currentSha, lastSuccessfulSha, runId, project, workflow, reportUrl } = runContext;
     const { changesText } = getChangesData(currentSha, lastSuccessfulSha, project, changes, userDisplayType);
 
+    const testReportUrl = reportUrl ? `(<${reportUrl}|Test Results>)` : '';
     const emoji = getEmoji(project);
     const webUrl = `https://github.com/ag-grid/ag-grid/actions/runs/${runId}`;
     return [
@@ -474,7 +475,7 @@ function buildFailureSlackMessageBlocks(
             type: 'section',
             text: {
                 type: 'mrkdwn',
-                text: `:x: ${emoji} ${project} / <${webUrl} | ${workflow} #${runId}>${branchDetails} *failed* (<${reportUrl}|Test Results>)
+                text: `:x: ${emoji} ${project} / <${webUrl} | ${workflow} #${runId}>${branchDetails} *failed* ${testReportUrl}
 ${getJobStatusSummary(runContext)}`,
             },
         },
@@ -606,16 +607,15 @@ async function notifySlackDebug(changes: GitChange[], runContext: RunContext, ch
         slackDebugMessage = sendSuccessSlackMessage(changes, runContext, channel, userDisplayType);
     }
 
-    let slackDebugResponse = slackDebugMessage ? await slackDebugMessage : undefined;
+    const slackDebugResponse = slackDebugMessage ? await slackDebugMessage : undefined;
 
     if (THREAD_TEAMCITY_RESPONSE && slackDebugResponse?.ts) {
-        slackDebugMessage = sendCodeSlackMessage({
+        await sendCodeSlackMessage({
             channel,
             code: JSON.stringify(runContext, null, 2),
             threadTs: slackDebugResponse.ts,
         });
 
-        slackDebugResponse = slackDebugMessage ? await slackDebugMessage : undefined;
         await sendCodeSlackMessage({
             channel,
             code: JSON.stringify(changes, null, 2),
@@ -645,7 +645,9 @@ async function notifyStagingDeploy(
 
     let slackMessage;
 
+    console.log('deployToStaging', deployToStaging);
     if (deployToStaging) {
+        console.log('sending docs status update!!!');
         const { changesText } = getChangesData(currentSha, lastSuccessfulSha, project, changes, userDisplayType);
         const webUrl = `https://github.com/ag-grid/ag-grid/actions/runs/${runId}`;
         const stagingUrl = getStagingUrl(project);
@@ -669,17 +671,25 @@ async function notifyStagingDeploy(
 
 async function processChanges(runContext: RunContext, userDisplayType: UserDisplayType) {
     try {
-        const { project, currentSha, lastSuccessfulSha } = runContext;
+        const { project, currentSha, lastSuccessfulSha, status } = runContext;
         const changes = getGitChanges(currentSha, lastSuccessfulSha);
 
         // Notify slack debugging
         await notifySlackDebug(changes, runContext, SLACK_DEBUG_CHANNEL);
 
         // Notify slack of build failures
-        if (project === 'AgGrid') {
-            await notifyBuildFailure(changes, runContext, GRID_TEAM_CITY_CHANNEL, 'slack');
-        } else if (project === 'AgCharts') {
-            await notifyBuildFailure(changes, runContext, CHARTS_TEAM_CITY_CHANNEL, 'slack');
+        let buildStatusChannel = GRID_TEAM_CITY_CHANNEL;
+        if (project === 'AgCharts') {
+            buildStatusChannel = CHARTS_TEAM_CITY_CHANNEL;
+        }
+
+        // we'll update slack regardless of whether state has changed
+        // the calling context (ie in the CI github action) will detemine if this needs to be called, typically
+        // on a build state change (ie success to failure or vice versa)
+        if (status === 'failure') {
+            await sendFailureSlackMessage(changes, runContext, buildStatusChannel, userDisplayType);
+        } else if (status === 'success') {
+            await sendSuccessSlackMessage(changes, runContext, buildStatusChannel, userDisplayType);
         }
 
         // Notify user when deployment to staging is done

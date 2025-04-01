@@ -169,6 +169,7 @@ export type EnterpriseModuleName =
     | 'GridCharts'
     | 'IntegratedCharts'
     | 'GroupFilter'
+    | 'ManualPinnedRow'
     | 'MasterDetail'
     | 'Menu'
     | 'MultiFilter'

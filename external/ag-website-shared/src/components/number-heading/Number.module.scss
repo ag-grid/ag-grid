@@ -56,11 +56,17 @@
     @media (max-width: 768px) {
         --number-gap: 16px;
 
-        flex-direction: column;
+        .sectionContent {
+            margin-left: -48px;
+        }
 
         .numberContainer {
             justify-content: left;
             width: 32px;
+        }
+
+        .verticalLine {
+            display: none;
         }
 
         .content {
@@ -72,7 +78,5 @@
 .content {
     width: 100%;
 
-    @media (min-width: 768px) {
-        max-width: calc(100% - var(--number-size) - var(--number-gap));
-    }
+    max-width: calc(100% - var(--number-size) - var(--number-gap));
 }

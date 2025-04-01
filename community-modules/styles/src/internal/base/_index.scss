@@ -23,6 +23,7 @@
 @use './parts/native-inputs';
 @use './parts/advanced-filter';
 @use './parts/row-numbers';
+@use './parts/manual-row-pinning';
 
 @mixin general-styles() {
     .ag-measurement-container {

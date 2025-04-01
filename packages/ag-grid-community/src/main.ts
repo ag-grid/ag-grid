@@ -133,7 +133,13 @@ export { Column, ColumnPinnedType, ColumnGroup, ProvidedColumnGroup, ColumnGroup
 export { AgColumn, isColumn } from './entities/agColumn';
 export { AgColumnGroup, isColumnGroup } from './entities/agColumnGroup';
 export { AgProvidedColumnGroup, isProvidedColumnGroup } from './entities/agProvidedColumnGroup';
-export { type ITreeNode, RowNode, ROW_ID_PREFIX_ROW_GROUP as _ROW_ID_PREFIX_ROW_GROUP } from './entities/rowNode';
+export {
+    type ITreeNode,
+    RowNode,
+    ROW_ID_PREFIX_ROW_GROUP as _ROW_ID_PREFIX_ROW_GROUP,
+    ROW_ID_PREFIX_TOP_PINNED as _ROW_ID_PREFIX_TOP_PINNED,
+    ROW_ID_PREFIX_BOTTOM_PINNED as _ROW_ID_PREFIX_BOTTOM_PINNED,
+} from './entities/rowNode';
 export { _createGlobalRowEvent } from './entities/rowNodeUtils';
 export {
     RowPinnedType,
@@ -451,7 +457,7 @@ export type { CheckboxCellRenderer } from './rendering/cellRenderers/checkboxCel
 export { ICheckboxCellRendererParams } from './rendering/cellRenderers/checkboxCellRenderer';
 
 // row models
-export type { PinnedRowModel } from './pinnedRowModel/pinnedRowModel';
+export { PinnedRowModel } from './pinnedRowModel/pinnedRowModel';
 export { RowNodeTransaction } from './interfaces/rowNodeTransaction';
 export { RowDataTransaction } from './interfaces/rowDataTransaction';
 export {
@@ -627,6 +633,7 @@ export {
     _MasterDetailGridApi,
     _StatusBarGridApi,
     _AdvancedFilterGridApi,
+    _PinnedRowGridApi,
     _FindApi,
 } from './api/gridApi';
 export { _getClientSideRowModel, _getServerSideRowModel } from './api/rowModelApiUtils';
@@ -719,6 +726,7 @@ export {
     RangeSelectionState,
     RowGroupExpansionState,
     RowGroupState,
+    RowPinningState,
     ScrollState,
     SideBarState,
     SortState,
@@ -841,6 +849,8 @@ export {
     IsRowMaster,
     IsRowSelectable,
     IsRowFilterable,
+    IsRowPinnable,
+    IsRowPinned,
     GetMainMenuItems,
     GetRowNodeIdFunc,
     GetRowIdFunc,
@@ -919,17 +929,13 @@ export {
     RowGroupingRowNode,
     StageExecuteParams,
 } from './interfaces/iRowNodeStage';
+export { IPinnedRowModel } from './interfaces/iPinnedRowModel';
 export { IDateParams, IDate, IDateComp, BaseDate, BaseDateParams } from './interfaces/dateComponent';
 export { IAfterGuiAttachedParams, ContainerType } from './interfaces/iAfterGuiAttachedParams';
 export { IComponent } from './interfaces/iComponent';
 export { IEventEmitter, IEventListener } from './interfaces/iEventEmitter';
-export {
-    HeaderComp as _HeaderComp,
-    IHeaderParams,
-    IHeaderComp,
-    IHeader,
-    IInnerHeaderComponent,
-} from './headerRendering/cells/column/headerComp';
+export { HeaderComp as _HeaderComp } from './headerRendering/cells/column/headerComp';
+export { IHeaderParams, IHeaderComp, IHeader, IInnerHeaderComponent } from './interfaces/iHeader';
 export {
     IHeaderGroupParams,
     IHeaderGroup,
@@ -1060,7 +1066,7 @@ export { RowSpanningAccumulator, GridSerializingParams, RowAccumulator } from '.
 
 // modules
 export { Module, ModuleValidationResult, _ModuleWithApi, _ModuleWithoutApi, ModuleName } from './interfaces/iModule';
-export { ModuleRegistry, _getGridRegisteredModules, _setUmd } from './modules/moduleRegistry';
+export { ModuleRegistry, _registerModule, _getGridRegisteredModules, _setUmd } from './modules/moduleRegistry';
 
 export { ValidationModule } from './validation/validationModule';
 export { ColumnMoveModule as _ColumnMoveModule } from './columnMove/columnMoveModule';

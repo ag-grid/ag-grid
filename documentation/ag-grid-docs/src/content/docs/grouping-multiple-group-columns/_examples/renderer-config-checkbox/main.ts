@@ -18,7 +18,12 @@ ModuleRegistry.registerModules([
 let gridApi: GridApi<IOlympicData>;
 
 const gridOptions: GridOptions<IOlympicData> = {
-    columnDefs: [{ field: 'country', rowGroup: true }, { field: 'athlete' }, { field: 'year' }, { field: 'sport' }],
+    columnDefs: [
+        { field: 'country', rowGroup: true, hide: true },
+        { field: 'sport', rowGroup: true, hide: true },
+        { field: 'athlete' },
+        { field: 'year' },
+    ],
     defaultColDef: {
         flex: 1,
         minWidth: 100,

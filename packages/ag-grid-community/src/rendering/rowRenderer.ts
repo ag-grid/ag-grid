@@ -21,12 +21,12 @@ import type { RenderedRowEvent } from '../interfaces/iCallbackParams';
 import type { CellPosition } from '../interfaces/iCellPosition';
 import type { RefreshCellsParams } from '../interfaces/iCellsParams';
 import type { IEventListener } from '../interfaces/iEventEmitter';
+import type { IPinnedRowModel } from '../interfaces/iPinnedRowModel';
 import type { IRowModel } from '../interfaces/iRowModel';
 import type { IRowNode, RowPinnedType } from '../interfaces/iRowNode';
 import type { RowPosition } from '../interfaces/iRowPosition';
 import type { IStickyRowFeature } from '../interfaces/iStickyRows';
 import type { PageBoundsService } from '../pagination/pageBoundsService';
-import type { PinnedRowModel } from '../pinnedRowModel/pinnedRowModel';
 import { _removeFromArray } from '../utils/array';
 import { _requestAnimationFrame } from '../utils/dom';
 import { _exists } from '../utils/generic';
@@ -51,7 +51,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
 
     private pageBounds: PageBoundsService;
     private colModel: ColumnModel;
-    private pinnedRowModel?: PinnedRowModel;
+    private pinnedRowModel?: IPinnedRowModel;
     private rowModel: IRowModel;
     private focusSvc: FocusService;
     private rowContainerHeight: RowContainerHeightService;
@@ -113,6 +113,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
         this.addManagedEventListeners({
             paginationChanged: this.onPageLoaded.bind(this),
             pinnedRowDataChanged: this.onPinnedRowDataChanged.bind(this),
+            pinnedRowsChanged: this.onPinnedRowsChanged.bind(this),
             displayedColumnsChanged: this.onDisplayedColumnsChanged.bind(this),
             bodyScroll: this.onBodyScroll.bind(this),
             bodyHeightChanged: this.redraw.bind(this, {}),
@@ -218,24 +219,37 @@ export class RowRenderer extends BeanStub implements NamedBean {
     }
 
     private isCellRendered(rowIndex: number, column?: AgColumn): boolean {
-        const rowCtrl = this.rowCtrlsByRowIndex[rowIndex!];
-        if (!rowCtrl) {
-            return false;
+        const rowCtrl = this.rowCtrlsByRowIndex[rowIndex];
+
+        // if no column, simply check for row ctrl
+        if (!column) {
+            return !!rowCtrl;
         }
 
-        if (rowCtrl.isFullWidth() || !column) {
+        if (rowCtrl && rowCtrl.isFullWidth()) {
             return true;
         }
 
-        return !!rowCtrl.getCellCtrl(column, false);
+        // check if this is spanned, if it has been rendered by the span renderer
+        const spannedCell = this.beans.spannedRowRenderer?.getCellByPosition({ rowIndex, column, rowPinned: null });
+        if (spannedCell) {
+            return true;
+        }
+
+        // otherwise, check if the cell is rendered
+        return !!rowCtrl?.getCellCtrl(column);
     }
 
+    /**
+     * Notifies all row and cell controls of any change in focused cell.
+     * @param event cell focused event
+     */
     private onCellFocusChanged(event?: CellFocusedEvent) {
         // if the focused cell has not been rendered, need to render cell so focus can be captured.
         if (event && event.rowIndex != null && !event.rowPinned) {
             const col = this.beans.colModel.getCol(event.column) ?? undefined;
             if (!this.isCellRendered(event.rowIndex, col)) {
-                this.redrawAfterModelUpdate();
+                this.redraw();
             }
         }
 
@@ -504,6 +518,10 @@ export class RowRenderer extends BeanStub implements NamedBean {
         };
 
         this.redrawAfterModelUpdate(params);
+    }
+
+    private onPinnedRowsChanged(): void {
+        this.redrawAfterModelUpdate({ recycleRows: true });
     }
 
     public redrawRow(rowNode: RowNode, suppressEvent = false) {
@@ -817,12 +835,6 @@ export class RowRenderer extends BeanStub implements NamedBean {
             return;
         }
 
-        let cellFocused: CellPosition | null = null;
-
-        if (this.stickyRowFeature) {
-            cellFocused = this.beans.focusSvc?.getFocusCellToUseAfterRefresh() || null;
-        }
-
         let rowRedrawn = false;
         for (const rowCtrl of this.getRowCtrls(rowNodes)) {
             if (!rowCtrl.isFullWidth()) {
@@ -838,10 +850,6 @@ export class RowRenderer extends BeanStub implements NamedBean {
 
         if (rowRedrawn) {
             this.dispatchDisplayedRowsChanged(false);
-        }
-
-        if (cellFocused) {
-            this.restoreFocusedCell(cellFocused);
         }
     }
 

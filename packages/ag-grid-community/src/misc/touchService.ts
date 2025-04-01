@@ -1,6 +1,7 @@
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { AgColumn } from '../entities/agColumn';
+import type { AgProvidedColumnGroup } from '../entities/agProvidedColumnGroup';
 import type { GridBodyCtrl } from '../gridBodyComp/gridBodyCtrl';
 import { _isEventFromThisGrid } from '../gridBodyComp/mouseEventUtils';
 import type { RowContainerEventsFeature } from '../gridBodyComp/rowContainer/rowContainerEventsFeature';
@@ -69,7 +70,7 @@ export class TouchService extends BeanStub implements NamedBean {
     }
 
     public setupForHeader(comp: HeaderComp): void {
-        const { gos, sortSvc } = this.beans;
+        const { gos, sortSvc, menuSvc } = this.beans;
 
         if (gos.get('suppressTouch')) {
             return;
@@ -78,10 +79,10 @@ export class TouchService extends BeanStub implements NamedBean {
 
         const touchListener = new TouchListener(comp.getGui(), true);
         const suppressMenuHide = comp.shouldSuppressMenuHide();
-        const tapMenuButton = suppressMenuHide && _exists(eMenu);
+        const tapMenuButton = suppressMenuHide && _exists(eMenu) && params.enableMenu;
         const menuTouchListener = tapMenuButton ? new TouchListener(eMenu, true) : touchListener;
 
-        if (params.enableMenu) {
+        if (params.enableMenu || menuSvc?.isHeaderContextMenuEnabled(params.column as AgColumn)) {
             const eventType: TouchListenerEvent = tapMenuButton ? 'tap' : 'longTap';
             const showMenuFn = (event: TapEvent | LongTapEvent) =>
                 params.showColumnMenuAfterMouseClick(event.touchStart);
@@ -120,7 +121,21 @@ export class TouchService extends BeanStub implements NamedBean {
         }
     }
 
-    public setupForHeaderGroup(
+    public setupForHeaderGroup(comp: HeaderGroupComp): void {
+        const params = comp.params;
+        if (
+            this.beans.menuSvc?.isHeaderContextMenuEnabled(
+                params.columnGroup.getProvidedColumnGroup() as AgProvidedColumnGroup
+            )
+        ) {
+            const touchListener = new TouchListener(params.eGridHeader, true);
+            const showMenuFn = (event: LongTapEvent) => params.showColumnMenuAfterMouseClick(event.touchStart);
+            comp.addManagedListeners(touchListener, { longTap: showMenuFn });
+            comp.addDestroyFunc(() => touchListener.destroy());
+        }
+    }
+
+    public setupForHeaderGroupElement(
         comp: HeaderGroupComp,
         eElement: HTMLElement,
         action: (event: MouseEvent) => void

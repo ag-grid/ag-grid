@@ -22,8 +22,32 @@ In the above hierarchy, the 'A' row is the parent of 'B', and 'B' is the parent 
 {% note %}
 Each path is a unique identifier which the grid uses to determine the hierarchy of the data.
 
-Refer to [Displayed Values](./tree-data-group-column/#displayed-values) to learn how to represent identical siblings.
+Refer to [Displayed Values](./tree-data-paths/#providing-group-values) to learn how to represent identical siblings.
 {% /note %}
+
+## Providing Group Values
+
+The Group Column cells are populated by the path keys as a default. As these keys must be unique, it can be preferable to display a different value.
+This can be overridden by providing a `field` or `valueGetter` in the `autoGroupColumnDef` grid option.
+
+{% gridExampleRunner title="Displayed Values" name="duplicate-paths" exampleHeight=250 /%}
+
+The above example uses the following configuration to show two 'Bob Stevens' working within the same team, where the path is comprised of unique employee IDs:
+```{% frameworkTransform=true %}
+const gridOptions = {
+    treeData: true,
+    rowData: [
+        { employeeId: '1', name: 'Alice Johnson', path: ['1'] },
+        { employeeId: '2', name: 'Bob Stevens', path: ['1', '2'] },
+        { employeeId: '3', name: 'Bob Stevens', path: ['1', '3'] },
+        { employeeId: '4', name: 'Jessica Adams', path: ['1', '4'] },
+    ],
+    getDataPath: data => data.path,
+    autoGroupColumnDef: {
+        field: 'name', // display the name instead of the path key
+    },
+}
+```
 
 ## Filler Groups
 

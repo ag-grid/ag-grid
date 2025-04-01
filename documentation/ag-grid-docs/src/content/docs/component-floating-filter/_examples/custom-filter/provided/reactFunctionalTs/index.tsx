@@ -7,7 +7,6 @@ import { AgGridReact } from 'ag-grid-react';
 
 import type { IOlympicData } from './interfaces';
 import NumberFilterComponent from './numberFilterComponent';
-import './styles.css';
 
 ModuleRegistry.registerModules([CustomFilterModule, ClientSideRowModelModule, ValidationModule /* Development Only */]);
 

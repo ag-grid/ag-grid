@@ -293,7 +293,13 @@ export type FontFamilyValue =
     | { ref: string };
 
 export const fontFamilyValueToCss = (value: FontFamilyValue): string | false => {
-    if (typeof value === 'string') return value;
+    // normally string values are passed through as CSS without modification,
+    // but for fonts this means you need to add internal quotes around font
+    // names like `fontFamily: '"Times New Roman"'` which is a bit awkward. So
+    // we add the quotes, unless a comma is present in which case we assume that
+    // it's a list of correctly quoted font names
+    if (typeof value === 'string') return value.includes(',') ? value : quoteUnsafeChars(value);
+
     if (value && 'googleFont' in value) return fontFamilyValueToCss(value.googleFont);
     if (value && 'ref' in value) return paramToVariableExpression(value.ref);
     if (Array.isArray(value)) {

@@ -2,6 +2,8 @@ import type { GridApi, GridOptions, Module, Params } from 'ag-grid-community';
 import { AllCommunityModule, createGrid } from 'ag-grid-community';
 import { ServerSideRowModelApiModule } from 'ag-grid-enterprise';
 
+import { mockGridLayout } from './polyfills/mockGridLayout';
+
 export interface TestGridManagerOptions {
     /** The modules to register when a grid gets created */
     modules?: Module[] | null | undefined;
@@ -34,6 +36,7 @@ export class TestGridsManager {
 
     public constructor(options: TestGridManagerOptions = {}) {
         this.modulesToRegister = options.modules;
+        mockGridLayout.init();
     }
 
     public getGrid<TData = any>(eGridDiv: HTMLElement): GridApi<TData> | undefined {

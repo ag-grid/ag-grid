@@ -215,6 +215,9 @@ export class ClientSideChildrenTreeNodeManager<TData>
                 if (node) {
                     const data = row.data;
                     if (data && !processedData.has(data)) {
+                        if (row.pinnedSibling) {
+                            this.beans.pinnedRowModel?.pinRow(row.pinnedSibling, null);
+                        }
                         changedRowNodes.remove(row);
                         this.treeRemove(node, row);
                     }

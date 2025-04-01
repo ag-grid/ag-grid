@@ -5,7 +5,7 @@ import type { PopupEventParams } from '../../interfaces/iPopup';
 import type { IRowNode } from '../../interfaces/iRowNode';
 import { PositionableFeature } from '../../rendering/features/positionableFeature';
 import type { ElementParams } from '../../utils/dom';
-import { _clearElement, _createElement, _loadTemplate, _removeFromParent, _setDisabled } from '../../utils/dom';
+import { _clearElement, _createElement, _removeFromParent, _setDisabled } from '../../utils/dom';
 import { _debounce } from '../../utils/function';
 import { _jsonEquals } from '../../utils/generic';
 import type { AgPromise } from '../../utils/promise';
@@ -213,15 +213,13 @@ export abstract class ProvidedFilter<M, V> extends Component implements IProvide
             }
 
             const buttonType = type === 'apply' ? 'submit' : 'button';
-            const button = _loadTemplate(
-                /* html */
-                `<button
-                    type="${buttonType}"
-                    data-ref="${type}FilterButton"
-                    class="ag-button ag-standard-button ag-filter-apply-panel-button"
-                >${text}
-                </button>`
-            );
+            const button = _createElement({
+                tag: 'button',
+                attrs: { type: buttonType },
+                ref: `${type}FilterButton`,
+                cls: 'ag-button ag-standard-button ag-filter-apply-panel-button',
+                children: text,
+            });
 
             this.buttonListeners.push(...this.addManagedElementListeners(button, { click: clickListener }));
             fragment.append(button);

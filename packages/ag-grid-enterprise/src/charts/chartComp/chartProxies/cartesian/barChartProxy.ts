@@ -40,9 +40,6 @@ export class BarChartProxy extends CartesianChartProxy<'bar'> {
                     xName: category.name,
                     yKey: f.colId,
                     yName: f.displayName,
-                    listeners: {
-                        nodeClick: this.crossFilterCallback,
-                    },
                 }) as AgBarSeriesOptions
         );
 
@@ -52,7 +49,14 @@ export class BarChartProxy extends CartesianChartProxy<'bar'> {
     private extractCrossFilterSeries(series: AgBarSeriesOptions[]): AgBarSeriesOptions[] {
         const allSeries: AgBarSeriesOptions[] = [];
         for (let i = 0; i < series.length; i++) {
-            const primarySeries = series[i];
+            const commonSeries = series[i];
+
+            const primarySeries = {
+                ...commonSeries,
+                listeners: {
+                    nodeClick: this.crossFilterCallback,
+                },
+            };
 
             const filteredOutSeries = {
                 ...primarySeries,

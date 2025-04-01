@@ -94,6 +94,17 @@ export class ContextMenuService extends BeanStub implements NamedBean, IContextM
             if (anyExport) {
                 defaultMenuOptions.push('export');
             }
+
+            const enableRowPinning = gos.get('enableRowPinning');
+            const isRowPinnable = gos.get('isRowPinnable');
+            if (enableRowPinning) {
+                const pinnable = isRowPinnable?.(node) ?? true;
+                if (pinnable) {
+                    defaultMenuOptions.push('pinRowSubMenu');
+                } else if (node.rowPinned) {
+                    defaultMenuOptions.push('unpinRow');
+                }
+            }
         }
 
         const defaultItems = defaultMenuOptions.length ? defaultMenuOptions : undefined;
@@ -452,7 +463,8 @@ class ContextMenu extends Component<ContextMenuEvent> {
         );
         const menuItemsMapped = (this.beans.menuItemMapper as MenuItemMapper).mapWithStockItems(
             this.menuItems,
-            null,
+            this.column,
+            this.node,
             () => this.getGui(),
             'contextMenu'
         );

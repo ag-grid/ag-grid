@@ -171,6 +171,7 @@ export const _BOOLEAN_MIXED_GRID_OPTIONS: KeysWithType<boolean>[] = [
     'groupAggFiltering',
     'suppressStickyTotalRow',
     'groupHideParentOfSingleChild',
+    'enableRowPinning',
 ];
 
 // Used in validations to check type of pure boolean inputs
@@ -377,6 +378,8 @@ export const _FUNCTION_GRID_OPTIONS: (CallbackKeys | FunctionKeys)[] = [
     'chartMenuItems',
     'groupTotalRow',
     'alwaysPassFilter',
+    'isRowPinnable',
+    'isRowPinned',
 ];
 
 // angular generation of component

@@ -16,7 +16,6 @@ import {
     RefPlaceholder,
     TouchListener,
     _createIconNoSpan,
-    _escapeString,
     _setAriaLabel,
     _setDisplayed,
 } from 'ag-grid-community';
@@ -162,7 +161,7 @@ export abstract class PillDragComp<TItem> extends Component<PillDragCompEvent> {
     }
 
     protected setupComponents(): void {
-        this.setTextValue();
+        this.eText.textContent = this.getDisplayValue();
         this.setupRemove();
 
         if (this.ghost) {
@@ -212,13 +211,6 @@ export abstract class PillDragComp<TItem> extends Component<PillDragCompEvent> {
 
     protected getDisplayValue(): string {
         return this.getDisplayName();
-    }
-
-    private setTextValue(): void {
-        const displayValue = this.getDisplayValue();
-        const displayValueSanitised: any = _escapeString(displayValue);
-
-        this.eText.innerHTML = displayValueSanitised;
     }
 
     private addElementClasses(el: HTMLElement, suffix?: string) {

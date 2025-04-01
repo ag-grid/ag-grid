@@ -2,7 +2,6 @@ import type { IDragAndDropImageComponent, IDragAndDropImageParams } from '../../
 import type { ColDef } from '../../entities/colDef';
 import type { IFloatingFilterComp, IFloatingFilterParams } from '../../filter/floating/floatingFilter';
 import type { ISimpleFilter } from '../../filter/provided/iSimpleFilter';
-import type { IHeaderComp, IHeaderParams, IInnerHeaderComponent } from '../../headerRendering/cells/column/headerComp';
 import type {
     IHeaderGroupComp,
     IHeaderGroupParams,
@@ -13,6 +12,7 @@ import type { ICellEditorComp, ICellEditorParams } from '../../interfaces/iCellE
 import type { AgGridCommon } from '../../interfaces/iCommon';
 import type { IFilterComp, IFilterDef, IFilterParams } from '../../interfaces/iFilter';
 import type { IFrameworkOverrides } from '../../interfaces/iFrameworkOverrides';
+import type { IHeaderComp, IHeaderParams, IInnerHeaderComponent } from '../../interfaces/iHeader';
 import type { ILoadingCellRendererComp } from '../../interfaces/iLoadingCellRenderer';
 import type { ComponentType, UserCompDetails } from '../../interfaces/iUserCompDetails';
 import type { ICellRendererComp, ICellRendererParams } from '../../rendering/cellRenderers/iCellRenderer';

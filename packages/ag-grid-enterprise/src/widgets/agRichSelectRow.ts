@@ -13,9 +13,10 @@ import type {
 import {
     Component,
     _addGridCommonParams,
+    _clearElement,
+    _createElement,
     _escapeString,
     _exists,
-    _getDocument,
     _getEditorRendererDetails,
     _setAriaSelected,
     _shouldDisplayTooltip,
@@ -65,9 +66,9 @@ export class RichSelectRow<TValue> extends Component {
     }
 
     public highlightString(matchString: string): void {
-        const { parsedValue } = this;
+        const { parsedValue, params } = this;
 
-        if (this.params.cellRenderer || !_exists(parsedValue)) {
+        if (params.cellRenderer || !_exists(parsedValue)) {
             return;
         }
 
@@ -77,12 +78,23 @@ export class RichSelectRow<TValue> extends Component {
             const index = parsedValue?.toLocaleLowerCase().indexOf(matchString.toLocaleLowerCase());
             if (index >= 0) {
                 const highlightEndIndex = index + matchString.length;
-                const startPart = _escapeString(parsedValue.slice(0, index), true);
-                const highlightedPart = _escapeString(parsedValue.slice(index, highlightEndIndex), true);
-                const endPart = _escapeString(parsedValue.slice(highlightEndIndex));
-                this.renderValueWithoutRenderer(
-                    /* html */ `${startPart}<span class="ag-rich-select-row-text-highlight">${highlightedPart}</span>${endPart}`
-                );
+
+                const child = this.getGui().querySelector('span');
+                if (child) {
+                    _clearElement(child);
+                    child.append(
+                        // Start part
+                        parsedValue.slice(0, index),
+                        // Highlighted part wrapped in bold tag
+                        _createElement({
+                            tag: 'span',
+                            cls: 'ag-rich-select-row-text-highlight',
+                            children: parsedValue.slice(index, highlightEndIndex),
+                        }),
+                        // End part
+                        parsedValue.slice(highlightEndIndex)
+                    );
+                }
             } else {
                 hasMatch = false;
             }
@@ -109,10 +121,9 @@ export class RichSelectRow<TValue> extends Component {
     }
 
     private populateWithoutRenderer(value: any, valueFormatted: any) {
-        const eDocument = _getDocument(this.beans);
         const eGui = this.getGui();
 
-        const span = eDocument.createElement('span');
+        const span = _createElement({ tag: 'span' });
         span.style.overflow = 'hidden';
         span.style.textOverflow = 'ellipsis';
         const parsedValue = _escapeString(_exists(valueFormatted) ? valueFormatted : value, true);
@@ -129,7 +140,7 @@ export class RichSelectRow<TValue> extends Component {
         if (!span) {
             return;
         }
-        span.innerHTML = _exists(value) ? value : '&nbsp;';
+        span.textContent = _exists(value) ? value : '\u00A0';
     }
 
     private populateWithRenderer(value: TValue, valueFormatted: string): boolean {

@@ -1215,7 +1215,7 @@
                                 },
                                 {
                                     "type": "item",
-                                    "title": "Self Referential Records",
+                                    "title": "Self-Referential Records",
                                     "path": "tree-data-self-referential",
                                     "isEnterprise": true
                                 }

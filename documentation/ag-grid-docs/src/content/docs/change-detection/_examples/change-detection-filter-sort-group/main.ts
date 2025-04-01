@@ -5,6 +5,7 @@ import {
     ClientSideRowModelModule,
     HighlightChangesModule,
     ModuleRegistry,
+    NumberEditorModule,
     NumberFilterModule,
     TextEditorModule,
     ValidationModule,
@@ -20,6 +21,7 @@ ModuleRegistry.registerModules([
     SetFilterModule,
     HighlightChangesModule,
     NumberFilterModule,
+    NumberEditorModule,
     TextEditorModule,
     ValidationModule /* Development Only */,
 ]);
@@ -53,7 +55,6 @@ const gridOptions: GridOptions = {
             minWidth: 90,
             editable: true,
             aggFunc: 'sum',
-            valueParser: 'Number(newValue)',
             cellClass: 'number-cell',
             cellRenderer: 'agAnimateShowChangeCellRenderer',
             filter: 'agNumberColumnFilter',
