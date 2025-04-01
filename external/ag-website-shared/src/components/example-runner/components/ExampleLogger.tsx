@@ -35,6 +35,33 @@ const REACT_JSON_VIEW_CONFIG = {
 };
 const IGNORED_MESSAGES = ['Angular is running in development mode.'];
 
+// Styles using base16: https://github.com/chriskempson/base16/blob/main/styling.md
+const JSON_VIEWER_THEME = {
+    base00: 'rgba(0, 0, 0, 0)',
+    base01: 'rgb(245, 245, 245)',
+    // Selection Background
+    base02: 'rgba(0, 0, 0, 0)',
+    base03: '#93a1a1',
+    base04: 'rgba(0, 0, 0, 0.3)',
+    base05: '#586e75',
+    base06: '#073642',
+    base07: '#002b36',
+    base08: '#d33682',
+    // Integers, Boolean, Constants, XML Attributes, Markup Link Url
+    base09: 'var(--color-code-string)',
+    // Classes, Markup Bold, Search Text Background
+    base0A: 'var(--color-code-keyword)',
+    // Strings, Inherited Class, Markup Code, Diff Inserted
+    base0B: 'var(--color-code-string)',
+    // Support, Regular Expressions, Escape Characters, Markup Quotes
+    base0C: 'var(--color-code-property)',
+    base0D: '#586e75',
+    // Keywords, Storage, Selector, Markup Italic, Diff Changed
+    base0E: 'var(--color-code-symbol)',
+    // Deprecated, Opening/Closing Embedded Language Tags, e.g. <?php ?>
+    base0F: 'var(--color-code-symbol)',
+};
+
 function containsIgnoredMessage(log: Log) {
     return log.data.some((message) =>
         IGNORED_MESSAGES.some((ignoredMessage) => typeof message === 'string' && message.includes(ignoredMessage))
@@ -69,7 +96,12 @@ const DataItem = ({ data }: { data: LogData[] }) => {
                 {data.map((value, i) => {
                     const isJSonViewable = ['object', 'array'].includes(getType(value));
                     return isJSonViewable ? (
-                        <ReactJsonView key={i} src={value as object} {...REACT_JSON_VIEW_CONFIG} />
+                        <ReactJsonView
+                            key={i}
+                            src={value as object}
+                            theme={JSON_VIEWER_THEME}
+                            {...REACT_JSON_VIEW_CONFIG}
+                        />
                     ) : (
                         <SimpleValueDisplay key={i} value={value as SimpleValue} />
                     );
