@@ -216,11 +216,15 @@ export class ChartDatasource extends BeanStub {
 
                     // add data value to value column
                     const value = this.valueSvc.getValue(col, rowNode);
-                    let actualValue = value != null && typeof value.toNumber === 'function' ? value.toNumber() : value;
+                    let actualValue = value;
 
-                    // unwrap value object if present
-                    if (actualValue && typeof actualValue.value === 'number') {
-                        actualValue = actualValue.value;
+                    // unwrap value objects if present
+                    if (value != null) {
+                        if (typeof value.toNumber === 'function') {
+                            actualValue = value.toNumber();
+                        } else if (typeof value.value === 'number') {
+                            actualValue = value.value;
+                        }
                     }
 
                     if (filteredNodes[rowNode.id as string]) {
