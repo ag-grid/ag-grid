@@ -6,7 +6,7 @@ const {hideBin} = require('yargs/helpers');
 
 const args = yargs(hideBin(process.argv))
     .usage(
-        'Usage: $0 [package path] --auth-token [auth-token] -grid-channel [grid-channel] --charts-channel [charts-channel] --website-status-channel [website-status-channel] --slack-bot-oauth-token [slack-bot-oauth-token] --debug-channel [debug-channel] --run-context [run-context]'
+        'Usage: $0 --auth-token [auth-token] -grid-channel [grid-channel] --charts-channel [charts-channel] --website-status-channel [website-status-channel] --slack-bot-oauth-token [slack-bot-oauth-token] --debug-channel [debug-channel] --run-context [run-context]'
     )
     .options({
         'auth-token': {
