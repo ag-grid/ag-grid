@@ -1,4 +1,4 @@
-import type { ColDef, GridApi, GridOptions } from 'ag-grid-community';
+import type { ColDef, GridApi, GridOptions, RowPinnedType } from 'ag-grid-community';
 import { ClientSideRowModelModule, ModuleRegistry, ValidationModule, createGrid } from 'ag-grid-community';
 import { ContextMenuModule, ManualPinnedRowModule, RowGroupingModule } from 'ag-grid-enterprise';
 
@@ -50,4 +50,21 @@ function getGrandTotalRow() {
 
 function setGrandTotalRow(value: GridOptions['grandTotalRow']) {
     gridApi.setGridOption('grandTotalRow', value);
+}
+
+function setIsRowPinned(value: RowPinnedType) {
+    gridApi.setGridOption('isRowPinned', (node) => {
+        if (node.level === -1 && node.footer) {
+            return value;
+        }
+    });
+}
+
+function update(value: GridOptions['grandTotalRow'] | 'isRowPinned') {
+    if (value === 'isRowPinned') {
+        setGrandTotalRow('bottom');
+        setIsRowPinned('top');
+    } else {
+        setGrandTotalRow(value);
+    }
 }

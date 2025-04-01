@@ -72,7 +72,7 @@ The [Grand Total Rows](./aggregation-total-rows/#enabling-a-grand-total-row) can
 
 1. Setting the value of the `grandTotalRow` grid option to either `'pinnedTop'` or `'pinnedBottom'`.
 2. Manually pin the grand total row via the context menu when `grandTotalRow` is either `'top'` or `'bottom'`.
-3. Return `true` from the `isRowPinned` callback when it's called on the grand total row node.
+3. Return `'top'` or `'bottom'` from the `isRowPinned` callback when it's called on the grand total row node.
 
 {% gridExampleRunner title="Pinning Grand Total Row" name="pinning-grand-total" exampleHeight=650 /%}
 
