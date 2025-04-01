@@ -1,4 +1,4 @@
-import type { BeanCollection, RowNode } from 'ag-grid-community';
+import type { BeanCollection, RowNode, RowPinnedType } from 'ag-grid-community';
 import { _isServerSideRowModel, _removeFromArray } from 'ag-grid-community';
 
 export class PinnedRows {
@@ -14,7 +14,10 @@ export class PinnedRows {
     /** IDs of nodes that need to be pinned once they are available from the row model (SSRM) */
     private queued = new Set<string>();
 
-    constructor(private readonly beans: BeanCollection) {}
+    constructor(
+        private readonly beans: BeanCollection,
+        public readonly floating: NonNullable<RowPinnedType>
+    ) {}
 
     public size(): number {
         return this.visible.size;
@@ -32,6 +35,7 @@ export class PinnedRows {
     public delete(item: RowNode): void {
         this.all.delete(item);
         this.visible.delete(item);
+        this.queued.delete(item.id!);
         _removeFromArray(this.order, item);
     }
 
@@ -67,6 +71,18 @@ export class PinnedRows {
         // pre-sort by existing row-index otherwise we'll fall back to order in which rows are pinned
         this.order.sort((a, b) => (a.pinnedSibling?.rowIndex ?? 0) - (b.pinnedSibling?.rowIndex ?? 0));
         this.order = rowNodeSorter?.doFullSort(this.order, sortOptions) ?? this.order;
+        // post-sort to move the grand total rows to the correct place
+        const grandTotalRow = this.beans.gos.get('grandTotalRow');
+        this.order.sort((a, b) => {
+            if (_isPinnedNodeGrandTotal(a) && _isPinnedNodeGrandTotal(b)) return 0;
+            if (_isPinnedNodeGrandTotal(a)) {
+                return grandTotalRow === 'bottom' || grandTotalRow === 'pinnedBottom' ? 1 : -1;
+            }
+            if (_isPinnedNodeGrandTotal(b)) {
+                return grandTotalRow === 'bottom' || grandTotalRow === 'pinnedBottom' ? -1 : 1;
+            }
+            return 0;
+        });
     }
 
     public hide(shouldHide: (node: RowNode) => boolean): void {
@@ -125,4 +141,12 @@ export function _shouldHidePinnedRows(beans: BeanCollection, node: RowNode): boo
     }
 
     return false;
+}
+
+function _isNodeGrandTotal(node: RowNode): boolean {
+    return !!node.footer && node.level === -1;
+}
+
+function _isPinnedNodeGrandTotal(node: RowNode): boolean {
+    return !!node.pinnedSibling && _isNodeGrandTotal(node.pinnedSibling);
 }

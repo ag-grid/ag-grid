@@ -29,20 +29,26 @@ export class ManualPinnedRowModel extends BeanStub implements IPinnedRowModel {
 
     public postConstruct(): void {
         const { gos, beans } = this;
-        this.top = new PinnedRows(beans);
-        this.bottom = new PinnedRows(beans);
+        this.top = new PinnedRows(beans, 'top');
+        this.bottom = new PinnedRows(beans, 'bottom');
 
         const shouldHide = (node: RowNode) => _shouldHidePinnedRows(beans, node.pinnedSibling!);
+
+        const runIsRowPinned = () => {
+            const isRowPinned = gos.get('isRowPinned');
+            if (isRowPinned) {
+                beans.rowModel.forEachNode((node) => this.pinRow(node, isRowPinned(node)), true);
+            }
+            this.refreshRowPositions();
+            this.dispatchRowPinnedEvents();
+        };
 
         this.addManagedEventListeners({
             gridStylesChanged: this.onGridStylesChanges.bind(this),
             modelUpdated: () => {
                 this.tryToEmptyQueues();
                 this.pinGrandTotalRow();
-                this.forContainers((container) => {
-                    container.hide(shouldHide);
-                    container.sort();
-                });
+                this.forContainers((container) => container.hide(shouldHide));
                 this.refreshRowPositions();
                 this.dispatchRowPinnedEvents();
             },
@@ -58,18 +64,7 @@ export class ManualPinnedRowModel extends BeanStub implements IPinnedRowModel {
                     this.pinRow(node, null);
                 }
             },
-            firstDataRendered: () => {
-                // Initialise pinned rows
-                const isRowPinned = gos.get('isRowPinned');
-                if (isRowPinned) {
-                    beans.rowModel.forEachNode((node) => {
-                        const float = isRowPinned(node);
-                        if (float) {
-                            this.pinRow(node, float);
-                        }
-                    }, true);
-                }
-            },
+            firstDataRendered: runIsRowPinned,
         });
 
         this.addManagedPropertyListener('pivotMode', () => {
@@ -81,6 +76,8 @@ export class ManualPinnedRowModel extends BeanStub implements IPinnedRowModel {
             this._grandTotalPinned =
                 currentValue === 'pinnedBottom' ? 'bottom' : currentValue === 'pinnedTop' ? 'top' : null;
         });
+
+        this.addManagedPropertyListener('isRowPinned', runIsRowPinned);
     }
 
     public override destroy(): void {
@@ -319,13 +316,15 @@ export class ManualPinnedRowModel extends BeanStub implements IPinnedRowModel {
             _destroyRowNodeSibling(pinnedSibling);
         } else {
             // pin
-            if (container) {
+            if (container && container.floating !== float) {
                 // already have pinned grand total row, need to unpin first
                 container.delete(pinnedSibling);
                 _destroyRowNodeSibling(pinnedSibling);
             }
-            const newPinnedSibling = _createPinnedSibling(this.beans, sibling, float);
-            this.getContainer(float).add(newPinnedSibling);
+            if (!container || container.floating !== float) {
+                const newPinnedSibling = _createPinnedSibling(this.beans, sibling, float);
+                this.getContainer(float).add(newPinnedSibling);
+            }
         }
     }
 
