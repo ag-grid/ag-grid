@@ -2,7 +2,7 @@ import fs from 'fs';
 import { JSDOM, VirtualConsole } from 'jsdom';
 
 import type { AlgoliaRecord } from '../types/algolia';
-import { API_FILE_PATH, DIST_DIR, MENU_FILE_PATH } from '../utils/constants';
+import { API_FILE_PATH, DIST_DIR, HEADING_EXCLUDE_TAGS, MENU_FILE_PATH } from '../utils/constants';
 import { logWarning } from '../utils/output';
 
 const virtualConsole = new VirtualConsole();
@@ -22,6 +22,17 @@ export const getAllDocPages = (): FlattenedMenuItem[] => {
 
     return [...flattenedApiMenuItems, ...flattenedDocMenuItems];
 };
+
+function getHeadingContent(heading: Element) {
+    const cleanHeading = heading.cloneNode(true);
+    for (const child of cleanHeading.children) {
+        if (HEADING_EXCLUDE_TAGS.includes(child.nodeName.toLowerCase())) {
+            cleanHeading.removeChild(child);
+        }
+    }
+
+    return cleanHeading.textContent?.trim() || '';
+}
 
 export const parseDocPage = async (item: FlattenedMenuItem) => {
     const filePath = `${DIST_DIR}${item.path}/index.html`;
@@ -86,7 +97,7 @@ export const parseDocPage = async (item: FlattenedMenuItem) => {
                     // split records based on H2 and H3 tags
                     case 'H2': {
                         createPreviousRecord();
-                        heading = currentTag.textContent?.trim();
+                        heading = getHeadingContent(currentTag);
                         subHeading = undefined;
                         text = '';
                         break;
@@ -95,7 +106,7 @@ export const parseDocPage = async (item: FlattenedMenuItem) => {
                     case 'H3':
                     case 'H4': {
                         createPreviousRecord();
-                        subHeading = currentTag.textContent?.trim();
+                        subHeading = getHeadingContent(currentTag);
                         text = '';
                         break;
                     }
