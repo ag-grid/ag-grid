@@ -334,20 +334,20 @@ jobs:
       - name: docs build and link checker
         run: CHECK_LINKS=true CHECK_REDIRECTS=true yarn nx run ag-grid-docs:build -c staging
 
-      - name: Deploy to Staging
-        id: deploy_to_staging
-        if: ${{ github.ref == 'refs/heads/latest' }}
-        env:
-          SSH_PRIVATE_KEY: |
-            ${{ secrets.STAGING_SSH_KEY }}
-          SSH_HOST: ${{ secrets.STAGING_HOST }}
-          SSH_USER: ubuntu
-          SSH_KEY_LOCATION: ${{ github.workspace }}/staging.pem
-          WWW_ROOT_DIR: ${{ vars.WWW_ROOT_DIR }}
-        run: |
-          echo "$SSH_PRIVATE_KEY" > $SSH_KEY_LOCATION
-          chmod 400 $SSH_KEY_LOCATION
-          ./scripts/deployments/createAndDeployDocsToTCGH.sh
+#      - name: Deploy to Staging
+#        id: deploy_to_staging
+#        if: ${{ github.ref == 'refs/heads/latest' }}
+#        env:
+#          SSH_PRIVATE_KEY: |
+#            ${{ secrets.STAGING_SSH_KEY }}
+#          SSH_HOST: ${{ secrets.STAGING_HOST }}
+#          SSH_USER: ubuntu
+#          SSH_KEY_LOCATION: ${{ github.workspace }}/staging.pem
+#          WWW_ROOT_DIR: ${{ vars.WWW_ROOT_DIR }}
+#        run: |
+#          echo "$SSH_PRIVATE_KEY" > $SSH_KEY_LOCATION
+#          chmod 400 $SSH_KEY_LOCATION
+#          ./scripts/deployments/createAndDeployDocsToTCGH.sh
 
       - name: Persist test results
         if: always()
@@ -406,7 +406,8 @@ jobs:
 
       - name: Check last job status
         id: lastJobStatus
-        if: always() && github.ref == 'refs/heads/latest'
+        if: always() && github.ref == 'refs/heads/seanlandsman-patch-9'
+#        if: always() && github.ref == 'refs/heads/latest'
         run: |
           WORKFLOW_STATUS="success"
           if [[ "${{ needs.build_lint.result }}" == "failure" ]] ; then
@@ -477,7 +478,8 @@ jobs:
 #            ${{ env.GIT_LOG }}
 #
       - name: Find matching workflow
-        #if: always() && job.status != 'cancelled' && github.ref == 'refs/heads/latest' && steps.lastJobStatus.outputs.changedState == 'true'
+        if: always() && job.status != 'cancelled' && github.ref == 'refs/heads/seanlandsman-patch-9' && steps.lastJobStatus.outputs.changedState == 'true'
+#        if: always() && job.status != 'cancelled' && github.ref == 'refs/heads/latest' && steps.lastJobStatus.outputs.changedState == 'true'
         id: find_latest_sha
         uses: SamhammerAG/last-successful-build-action@v4
         with:
@@ -486,7 +488,8 @@ jobs:
           verify: false
 
       - name: SlackBot
-        #if: always() && job.status != 'cancelled' && github.ref == 'refs/heads/latest' && steps.lastJobStatus.outputs.changedState == 'true'
+        if: always() && job.status != 'cancelled' && github.ref == 'refs/heads/seanlandsman-patch-9' && steps.lastJobStatus.outputs.changedState == 'true'
+#        if: always() && job.status != 'cancelled' && github.ref == 'refs/heads/latest' && steps.lastJobStatus.outputs.changedState == 'true'
         env:
           GRID_TEAM_CITY_CHANNEL: ${{ secrets.GRID_TEAM_CITY_CHANNEL }}
           CHARTS_TEAM_CITY_CHANNEL: ${{ secrets.CHARTS_TEAM_CITY_CHANNEL }}
