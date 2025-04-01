@@ -322,7 +322,7 @@ function getBranchLink(runContext: RunContext) {
 
     if (branchName === undefined) {
         return '';
-    } else if (branchName === 'refs/heads/latest') {
+    } else if (branchName === 'latest') {
         return `<${baseUrl}/tree/latest|latest>`;
     } else if (branchName.startsWith('pull/')) {
         return `<${baseUrl}/${branchName}|PR #${branchName.slice('pull/'.length)}>`;
@@ -606,15 +606,16 @@ async function notifySlackDebug(changes: GitChange[], runContext: RunContext, ch
         slackDebugMessage = sendSuccessSlackMessage(changes, runContext, channel, userDisplayType);
     }
 
-    const slackDebugResponse = slackDebugMessage ? await slackDebugMessage : undefined;
+    let slackDebugResponse = slackDebugMessage ? await slackDebugMessage : undefined;
 
     if (THREAD_TEAMCITY_RESPONSE && slackDebugResponse?.ts) {
-        await sendCodeSlackMessage({
+        slackDebugMessage = sendCodeSlackMessage({
             channel,
             code: JSON.stringify(runContext, null, 2),
             threadTs: slackDebugResponse.ts,
         });
 
+        slackDebugResponse = slackDebugMessage ? await slackDebugMessage : undefined;
         await sendCodeSlackMessage({
             channel,
             code: JSON.stringify(changes, null, 2),
