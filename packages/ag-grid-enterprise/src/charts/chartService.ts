@@ -20,13 +20,12 @@ import type {
     NamedBean,
     OpenChartToolPanelParams,
     PartialCellRange,
-    RowPosition,
     SeriesChartType,
     SeriesGroupType,
     UpdateChartParams,
     VisibleColsService,
 } from 'ag-grid-community';
-import { BeanStub, _focusInto, _uniq, _uniqBy, _warn } from 'ag-grid-community';
+import { BeanStub, _focusInto, _warn } from 'ag-grid-community';
 
 import { VERSION as GRID_VERSION } from '../version';
 import type { AgChartsExports } from './agChartsExports';
@@ -321,23 +320,32 @@ export class ChartService extends BeanStub implements NamedBean, IChartService {
     }
 
     private getSelectedRange(): PartialCellRange {
-        const ranges = _uniqBy(this.rangeSvc?.getCellRanges() ?? [], 'id');
-        if (ranges.length === 0) {
+        const ranges = this.rangeSvc?.getCellRanges();
+        if (!ranges || ranges.length === 0) {
             return { columns: [] };
         }
 
-        const columns = _uniq(ranges.reduce((cols, range) => cols.concat(range.columns), [] as Column[]));
-        const startRow: RowPosition = { rowIndex: Number.MAX_VALUE, rowPinned: undefined };
-        const endRow: RowPosition = { rowIndex: Number.MIN_VALUE, rowPinned: undefined };
+        const uRange = new Set<string | undefined>();
+        const uCols = new Set<Column>();
 
-        ranges.forEach((range) => {
-            if (!(range.startRow && range.endRow)) {
+        let sRdx = Number.MAX_VALUE;
+        let eRdx = -Number.MAX_VALUE;
+
+        ranges.forEach(({ startRow: sr, endRow: er, columns: cols, id }) => {
+            if (!(sr && er)) {
                 return;
             }
 
+            if (uRange.has(id)) {
+                return;
+            }
+            uRange.add(id);
+
+            cols.forEach((col) => uCols.add(col));
+
             // set start/end ranges assuming rows aren't pinned
-            let sIndex = range.startRow.rowIndex;
-            let eIndex = range.endRow.rowIndex;
+            let { rowIndex: sIdx, rowPinned: sRp } = sr;
+            let { rowIndex: eIdx, rowPinned: eRp } = er;
 
             // if range crosses pinned rows, adjust the start/end row indexes to exclude pinned rows
             // pinned rows aren't part of the main row model and:
@@ -345,34 +353,51 @@ export class ChartService extends BeanStub implements NamedBean, IChartService {
             //   * aren't included in aggregation functions
             //   * can have completely bespoke data shapes
             //
-            if (range.startRow.rowPinned === 'top' && range.endRow.rowPinned !== 'top') {
+            if (sRp === 'top') {
+                if (eRp === 'top') {
+                    // range is fully pinned, ignore it
+                    return;
+                }
                 // range crosses pinned top boundary, so start at first row in the row model
-                sIndex = 0;
+                sIdx = 0;
             }
-            if (range.endRow.rowPinned === 'bottom' && range.startRow.rowPinned !== 'bottom') {
+            if (eRp === 'bottom') {
+                if (sRp === 'bottom') {
+                    // range is fully pinned, ignore it
+                    return;
+                }
                 // range crosses pinned bottom boundary, so end at last row in the row model
-                eIndex = this.beans.pageBounds.getLastRow();
+                eIdx = this.beans.pageBounds.getLastRow();
             }
 
-            if (sIndex !== undefined) {
-                startRow.rowIndex = Math.min(startRow.rowIndex, sIndex);
+            if (sIdx !== undefined) {
+                sRdx = Math.min(sRdx, sIdx);
             }
-            if (eIndex !== undefined) {
-                endRow.rowIndex = Math.max(endRow.rowIndex, eIndex);
+            if (eIdx !== undefined) {
+                eRdx = Math.max(eRdx, eIdx);
             }
         });
 
-        if (startRow.rowIndex === Number.MAX_VALUE || endRow.rowIndex === Number.MIN_VALUE) {
+        if (sRdx === Number.MAX_VALUE || eRdx === -Number.MAX_VALUE) {
             // if we didn't find any valid ranges, return an empty range
             return { columns: [] };
         }
 
+        const columns = Array.from(uCols);
+
         return {
-            id: this.generateId(),
+            // Don't specify id here, as it should be chart-specific
+            // but we don't have that context yet
             columns,
             startColumn: columns[0],
-            startRow,
-            endRow,
+            startRow: {
+                rowIndex: sRdx,
+                rowPinned: undefined,
+            },
+            endRow: {
+                rowIndex: eRdx,
+                rowPinned: undefined,
+            },
         };
     }
 

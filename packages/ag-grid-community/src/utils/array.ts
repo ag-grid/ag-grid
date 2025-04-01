@@ -67,19 +67,3 @@ export function _flatten<T>(arrays: Array<T[]>): T[] {
     // Currently the fastest way to flatten an array according to https://jsbench.me/adlib26t2y/2
     return ([] as T[]).concat.apply([], arrays);
 }
-
-export function _uniq(array: any[]): any[] {
-    return [...new Set(array)];
-}
-
-export function _uniqBy<T>(array: T[], iteratee: ((value: T) => any) | string): T[] {
-    const seen = new Map();
-    return array.filter((value) => {
-        const key = typeof iteratee === 'function' ? iteratee(value) : (value as any)?.[iteratee];
-        if (seen.has(key)) {
-            return false;
-        }
-        seen.set(key, true);
-        return true;
-    });
-}
