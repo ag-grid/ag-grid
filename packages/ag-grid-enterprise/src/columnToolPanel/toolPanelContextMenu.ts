@@ -217,11 +217,7 @@ export class ToolPanelContextMenu extends Component {
                 ret.push({
                     name: val.deactivateLabel(displayName!),
                     icon: _createIconNoSpan(val.removeIcon, beans, null),
-                    action: () => {
-                        if (val.deActivateFunction) {
-                            val.deActivateFunction();
-                        }
-                    },
+                    action: () => val.deActivateFunction?.(),
                 });
             }
         }
