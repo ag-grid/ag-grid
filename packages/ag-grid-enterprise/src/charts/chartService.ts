@@ -325,7 +325,6 @@ export class ChartService extends BeanStub implements NamedBean, IChartService {
             return { columns: [] };
         }
 
-        const uRange = new Set<string | undefined>();
         const uCols = new Set<Column>();
 
         let sRdx = Number.MAX_VALUE;
@@ -335,11 +334,6 @@ export class ChartService extends BeanStub implements NamedBean, IChartService {
             if (!(sr && er)) {
                 return;
             }
-
-            if (uRange.has(id)) {
-                return;
-            }
-            uRange.add(id);
 
             cols.forEach((col) => uCols.add(col));
 
