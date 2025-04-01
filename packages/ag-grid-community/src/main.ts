@@ -1066,7 +1066,7 @@ export { RowSpanningAccumulator, GridSerializingParams, RowAccumulator } from '.
 
 // modules
 export { Module, ModuleValidationResult, _ModuleWithApi, _ModuleWithoutApi, ModuleName } from './interfaces/iModule';
-export { ModuleRegistry, _getGridRegisteredModules, _setUmd } from './modules/moduleRegistry';
+export { ModuleRegistry, _registerModule, _getGridRegisteredModules, _setUmd } from './modules/moduleRegistry';
 
 export { ValidationModule } from './validation/validationModule';
 export { ColumnMoveModule as _ColumnMoveModule } from './columnMove/columnMoveModule';
