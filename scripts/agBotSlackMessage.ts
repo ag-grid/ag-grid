@@ -21,9 +21,6 @@ const args = yargs(hideBin(process.argv))
         'website-status-channel': {
             demandOption: true,
         },
-        'slack-bot-oauth-token': {
-            demandOption: true,
-        },
         'debug-channel': {
             demandOption: true,
         },
@@ -33,12 +30,11 @@ const args = yargs(hideBin(process.argv))
     })
     .parse();
 
+const SLACK_BOT_OAUTH_TOKEN = args.authToken;
 const GRID_TEAM_CITY_CHANNEL = args.gridChannel;
 const CHARTS_TEAM_CITY_CHANNEL = args.chartsChannel;
 const WEBSITE_STATUS_CHANNEL = args.websiteStatusChannel;
-const SLACK_BOT_OAUTH_TOKEN = args.slackBotOauthToken;
 const SLACK_DEBUG_CHANNEL = args.debugChannel;
-
 
 type GH_MAPPING = {
     id: string;
