@@ -517,6 +517,6 @@ jobs:
             --grid-channel "$GRID_TEAM_CITY_CHANNEL" \
             --charts-channel "$CHARTS_TEAM_CITY_CHANNEL" \
             --website-status-channel "$WEBSITE_STATUS_CHANNEL" \
-            --debug-channel "SLACK_DEBUG_CHANNEL" \
+            --debug-channel "$SLACK_DEBUG_CHANNEL" \
             --run-context "$RUN_CONTEXT"
 
