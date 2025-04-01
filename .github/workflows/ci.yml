@@ -499,7 +499,7 @@ jobs:
               "lastSuccessfulSha": "${{ steps.find_latest_sha.outputs.sha }}",
               "runId": "${{ github.run_id }}",
               "project": "AgGrid",
-              "reportJobId": "${{ steps.testReport.outputs.url_html }}",
+              "reportUrl": "${{ steps.testReport.outputs.url_html }}",
               "deployToStaging": "${{ needs.docs.result == 'success' }}",
               "jobStatuses": 
                 { 

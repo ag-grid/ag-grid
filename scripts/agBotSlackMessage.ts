@@ -55,7 +55,7 @@ type RunContext = {
     lastSuccessfulSha: string;
     status: 'success' | 'failure';
     project: AgProject;
-    reportJobId: number;
+    reportUrl: number;
     jobStatuses: { [key: string]: JobStatus };
     deployToStaging: boolean;
 };
@@ -464,12 +464,11 @@ function buildFailureSlackMessageBlocks(
 ) {
     const branchLink = getBranchLink(runContext);
     const branchDetails = branchLink ? ` (on ${branchLink})` : '';
-    const { currentSha, lastSuccessfulSha, runId, project, workflow, reportJobId } = runContext;
+    const { currentSha, lastSuccessfulSha, runId, project, workflow, reportUrl } = runContext;
     const { changesText } = getChangesData(currentSha, lastSuccessfulSha, project, changes, userDisplayType);
 
     const emoji = getEmoji(project);
     const webUrl = `https://github.com/ag-grid/ag-grid/actions/runs/${runId}`;
-    const reportUrl = `https://github.com/ag-grid/ag-grid/actions/runs/${runId}/job/${reportJobId}`;
     return [
         {
             type: 'section',
