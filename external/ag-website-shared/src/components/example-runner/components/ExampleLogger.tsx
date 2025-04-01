@@ -59,7 +59,7 @@ const SimpleValueDisplay = ({ value }: { value: SimpleValue }) => {
         displayValue = valueType;
     }
 
-    return <span className={`type-${valueType}`}>{displayValue?.toString()}</span>;
+    return <span className={styles[`type-${valueType}`]}>{displayValue?.toString()}</span>;
 };
 
 const DataItem = ({ data }: { data: LogData[] }) => {

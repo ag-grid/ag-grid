@@ -47,3 +47,24 @@
         }
     }
 }
+
+.type-null,
+.type-undefined {
+    color: var(--color-code-keyword);
+}
+
+.type-string {
+    color: var(--color-code-string);
+}
+
+.type-symbol,
+.type-boolean,
+.type-number,
+.type-nan,
+.type-date {
+    color: var(--color-code-symbol);
+}
+
+.type-regex {
+    color: var(--color-code-property);
+}
