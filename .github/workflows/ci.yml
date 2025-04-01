@@ -371,6 +371,12 @@ jobs:
           git fetch origin --depth 1 latest
           git fetch origin --depth 1 tag latest-success
 
+      - name: Setup
+        id: setup
+        uses: ./.github/actions/setup-nx
+        with:
+          cache_mode: ro
+
       - uses: actions/download-artifact@v4
         with:
           path: test-results/
