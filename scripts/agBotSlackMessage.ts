@@ -609,19 +609,19 @@ async function notifySlackDebug(changes: GitChange[], runContext: RunContext, ch
 
     const slackDebugResponse = slackDebugMessage ? await slackDebugMessage : undefined;
 
-    let threadedSlackResponse;
     if (THREAD_TEAMCITY_RESPONSE && slackDebugResponse?.ts) {
-        threadedSlackResponse = await sendCodeSlackMessage({
+        await sendCodeSlackMessage({
+            channel,
+            code: JSON.stringify(runContext, null, 2),
+            threadTs: slackDebugResponse.ts,
+        });
+
+         await sendCodeSlackMessage({
             channel,
             code: JSON.stringify(changes, null, 2),
             threadTs: slackDebugResponse.ts,
         });
     }
-
-    return {
-        slackDebugResponse,
-        threadedSlackResponse,
-    };
 }
 
 async function notifyBuildFailure(

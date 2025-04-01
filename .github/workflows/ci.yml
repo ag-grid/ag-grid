@@ -496,12 +496,12 @@ jobs:
               "workflow": "${{ github.workflow }}",
               "branch": "${{ env.BRANCH_NAME }}",
               "current_sha": "${{ github.sha }}",
-              "last_successful_sha": "${{ steps.find_latest_sha.outputs.sha }}",
-              "run_id": "${{ github.run_id }}",
+              "lastSuccessfulSha": "${{ steps.find_latest_sha.outputs.sha }}",
+              "runId": "${{ github.run_id }}",
               "project": "AgGrid",
-              "report_job_id": "${{ steps.testReport.outputs.url_html }}",
-              "deploy_to_staging": "${{ needs.docs.result == 'success' }}",
-              "job_statuses": 
+              "reportJobId": "${{ steps.testReport.outputs.url_html }}",
+              "deployToStaging": "${{ needs.docs.result == 'success' }}",
+              "jobStatuses": 
                 { 
                     "Build": "${{ needs.build_lint.outputs.build }}",
                     "Lint": "${{ needs.build_lint.outputs.lint }}",
