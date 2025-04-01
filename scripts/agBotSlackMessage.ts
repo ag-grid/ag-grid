@@ -68,7 +68,7 @@ console.log(JSON.parse(args.runContext));
 // //     directNotification?: boolean;
 // // }
 // //
-// // type JobStatus = "SUCCESS" | "FAILURE" | "N/A";
+// // type JobStatus = "success" | "failure" | "n/a";
 // //
 // // type RunContext = {
 // //     runId: number,
@@ -76,7 +76,7 @@ console.log(JSON.parse(args.runContext));
 // //     branch: string,
 // //     currentSha: string,
 // //     lastSuccessfulSha: string,
-// //     status: "SUCCESS" | "FAILURE",
+// //     status: "success" | "failure",
 // //     project: AgProject,
 // //     reportJobId: number,
 // //     jobStatuses: { [key: string]: JobStatus },
@@ -470,7 +470,7 @@ console.log(JSON.parse(args.runContext));
 // // }
 // //
 // // function getJobStatusSummary(runContext: RunContext) {
-// //     const getStatus = (status: JobStatus) => `${status === "SUCCESS" ? '✅' : status === "FAILURE" ? '❌' : '➖'}`;
+// //     const getStatus = (status: JobStatus) => `${status === "success" ? '✅' : status === "failure" ? '❌' : '➖'}`;
 // //     return `${Object.entries(runContext.jobStatuses).map(([job, status]) => `${job}: ${getStatus(status)}`).join(' ')}`
 // // }
 // //
@@ -612,9 +612,9 @@ console.log(JSON.parse(args.runContext));
 // //     const userDisplayType: UserDisplayType = "debug";
 // //     let slackDebugMessage;
 // //
-// //     if (status === "FAILURE") {
+// //     if (status === "failure") {
 // //         slackDebugMessage = sendFailureSlackMessage(changes, runContext, channel, userDisplayType);
-// //     } else if (status === "SUCCESS") {
+// //     } else if (status === "success") {
 // //         // NOTE: Don't use slack username, so that it doesn't notify
 // //         slackDebugMessage = sendSuccessSlackMessage(changes, runContext, channel, userDisplayType);
 // //     }
@@ -637,7 +637,7 @@ console.log(JSON.parse(args.runContext));
 // // }
 // //
 // // async function notifyBuildFailure(changes: GitChange[], runContext: RunContext, channel: string, userDisplayType: UserDisplayType) {
-// //     if (runContext.status === "FAILURE") {
+// //     if (runContext.status === "failure") {
 // //         await sendFailureSlackMessage(changes, runContext, channel, userDisplayType);
 // //     }
 // // }
@@ -678,6 +678,7 @@ console.log(JSON.parse(args.runContext));
 // //
 // // async function processChanges(runContext: RunContext, userDisplayType: UserDisplayType) {
 // //     try {
+//            runContext.status = runContext.jobStatuses.some((status) => status === "failure") ? "failure" : "success"
 // //         const {project, currentSha, lastSuccessfulSha} = runContext;
 // //         const changes = getGitChanges(currentSha, lastSuccessfulSha);
 // //
@@ -713,14 +714,14 @@ console.log(JSON.parse(args.runContext));
 // //         currentSha: "2724e9fcde4dd8dfc8b67bfa76f85b2a9044aba2",
 // //         lastSuccessfulSha: "latest",
 // //         branch: "refs/heads/latest",
-// //         status: "FAILURE",
+// //         status: "failure",
 // //         project: "AgGrid",
 // //         reportJobId: 38782994283,
 // //         deployToStaging: true,
 // //         jobStatuses: {
-// //             "Build": "SUCCESS",
-// //             "Lint": "SUCCESS",
-// //             "Format": "FAILURE",
+// //             "Build": "success",
+// //             "Lint": "success",
+// //             "Format": "failure",
 // //             "Test": "N/A",
 // //             "e2e": "N/A",
 // //             "Docs": "N/A",
