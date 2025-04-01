@@ -671,12 +671,12 @@ async function processChanges(runContext: RunContext, userDisplayType: UserDispl
         const { project, currentSha, lastSuccessfulSha } = runContext;
         const changes = getGitChanges(currentSha, lastSuccessfulSha);
 
-        console.log("changes", changes);
+        console.log('changes', changes);
 
         // Notify slack debugging
         await notifySlackDebug(changes, runContext, SLACK_DEBUG_CHANNEL);
 
-        console.log("notification done");
+        console.log('notification done');
 
         // Notify slack of build failures
         // if (project === "AgGrid") {
@@ -696,12 +696,12 @@ async function processChanges(runContext: RunContext, userDisplayType: UserDispl
 }
 
 (async () => {
-    console.log("Starting");
+    console.log('Starting');
     const runContext: RunContext = JSON.parse(args.runContext);
     runContext.status = Object.values(runContext.jobStatuses).every((status) => status === 'success')
         ? 'success'
         : 'failure';
 
-    console.log("runContext", runContext);
+    console.log('runContext', runContext);
     await processChanges(runContext, 'slack');
 })();
