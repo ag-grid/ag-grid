@@ -43,6 +43,7 @@
     "@swc/helpers": "0.5.15",
     "@types/jest": "29.5.14",
     "@types/node": "18.16.9",
+    "@types/node-fetch": "2.5.10",
     "@types/prompts": "^2.4.9",
     "@typescript-eslint/eslint-plugin": "7.18.0",
     "@typescript-eslint/parser": "7.18.0",
