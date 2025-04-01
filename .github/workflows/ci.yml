@@ -498,21 +498,10 @@ jobs:
               current_sha: "${{ github.sha }}
               last_successful_sha: "${{ steps.find_latest_sha.outputs.sha }}"
               run_id: "${{ github.run_id }}"
-              status: "${{ steps.lastJobStatus.outputs.workflowStatus }}"
               project: "AgGrid"
               report_job_id: "${{ steps.testReport.outputs.url_html }}"
               deploy_to_staging: "${{ needs.docs.result == 'success' }}"
-              job_statuses: >
-              workflow: "${{ github.workflow }}"
-              branch: "${{ env.BRANCH_NAME }}"
-              current_sha: "${{ github.sha }}"
-              last_successful_sha: "${{ steps.find_latest_sha.outputs.sha }}"
-              run_id: "${{ github.run_id }}"
-              status: "${{ steps.lastJobStatus.outputs.workflowStatus }}"
-              project: "AgGrid"
-              report_job_id: "${{ steps.testReport.outputs.url }}"
-              deploy_to_staging: "${{ needs.docs.result == 'success' }}"
-              job_statuses: >
+              job_statuses: 
                 { 
                     Build: "${{ needs.build_lint.outputs.build }}"
                     Lint: "${{ needs.build_lint.outputs.lint }}"
