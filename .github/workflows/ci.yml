@@ -496,7 +496,7 @@ jobs:
             {
               "workflow": "${{ github.workflow }}",
               "branch": "${{ env.BRANCH_NAME }}",
-              "current_sha": "${{ github.sha }},
+              "current_sha": "${{ github.sha }}",
               "last_successful_sha": "${{ steps.find_latest_sha.outputs.sha }}",
               "run_id": "${{ github.run_id }}",
               "project": "AgGrid",
