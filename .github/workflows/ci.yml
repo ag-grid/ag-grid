@@ -334,19 +334,20 @@ jobs:
       - name: docs build and link checker
         run: CHECK_LINKS=true CHECK_REDIRECTS=true yarn nx run ag-grid-docs:build -c staging
 
-#      - name: Deploy to Staging
-#        id: deploy_to_staging
-#        if: ${{ github.ref == 'refs/heads/latest' }}
-#        env:
-#          SSH_PRIVATE_KEY: |
-#            ${{ secrets.STAGING_SSH_KEY }}
-#          SSH_HOST: ${{ secrets.STAGING_HOST }}
-#          SSH_USER: ubuntu
-#          SSH_KEY_LOCATION: ${{ github.workspace }}/staging.pem
-#          WWW_ROOT_DIR: ${{ vars.WWW_ROOT_DIR }}
-#        run: |
-#          echo "$SSH_PRIVATE_KEY" > $SSH_KEY_LOCATION
-#          chmod 400 $SSH_KEY_LOCATION
+      - name: Deploy to Staging
+        id: deploy_to_staging
+        if: ${{ github.ref == 'refs/heads/latest' }}
+        env:
+          SSH_PRIVATE_KEY: |
+            ${{ secrets.STAGING_SSH_KEY }}
+          SSH_HOST: ${{ secrets.STAGING_HOST }}
+          SSH_USER: ubuntu
+          SSH_KEY_LOCATION: ${{ github.workspace }}/staging.pem
+          WWW_ROOT_DIR: ${{ vars.WWW_ROOT_DIR }}
+        run: |
+          echo "$SSH_PRIVATE_KEY" > $SSH_KEY_LOCATION
+          chmod 400 $SSH_KEY_LOCATION
+          echo "Happy Days"
 #          ./scripts/deployments/createAndDeployDocsToTCGH.sh
 
       - name: Persist test results
