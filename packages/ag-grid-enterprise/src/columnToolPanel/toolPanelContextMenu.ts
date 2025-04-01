@@ -99,7 +99,7 @@ export class ToolPanelContextMenu extends Component {
                 }
             },
             deActivateFunction: () => {},
-            addIcon: 'accordionClosed',
+            addIcon: 'ensureColumnVisible',
         });
 
         menuItemMap.set('rowGroup', {

@@ -17,6 +17,7 @@ export const ColumnsToolPanelModule: _ModuleWithoutApi = {
     beans: [ColumnToolPanelFactory],
     userComponents: { agColumnsToolPanel: ColumnToolPanel },
     icons: {
+        ensureColumnVisible: 'column-arrow',
         // column tool panel tab
         columnsToolPanel: 'columns',
         // "Group by {column-name}" item in column header menu

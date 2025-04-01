@@ -68,6 +68,7 @@ const nameToCodepoint = {
     minus: 0xf137,
     'menu-alt': 0xf138,
     settings: 0xf139,
+    'column-arrow': 0xf13a,
 };
 
 function generateFontFile(fontName) {

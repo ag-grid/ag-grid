@@ -209,3 +209,7 @@
 .ag-icon-settings::before {
     mask-image: url('./material-svg-icons/settings.svg');
 }
+
+.ag-icon-column-arrow::before {
+    mask-image: url('./material-svg-icons/column-arrow.svg');
+}

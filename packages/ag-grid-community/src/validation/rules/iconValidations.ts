@@ -59,6 +59,7 @@ export const ICON_VALUES: Record<IconValue, 1> = {
     'radio-button-on': 1,
     'radio-button-off': 1,
     eye: 1,
+    'column-arrow': 1,
 };
 
 export const ICON_MODULES: Record<IconName, ValidationModuleName | ValidationModuleName[]> = {
@@ -99,6 +100,7 @@ export const ICON_MODULES: Record<IconName, ValidationModuleName | ValidationMod
     columnMoveValue: 'SharedDragAndDrop',
     columnMovePivot: 'SharedDragAndDrop',
     dropNotAllowed: 'SharedDragAndDrop',
+    ensureColumnVisible: ['ColumnsToolPanel', 'ColumnMenu'],
     groupContracted: 'GroupCellRenderer',
     groupExpanded: 'GroupCellRenderer',
     setFilterGroupClosed: 'SetFilter',
