@@ -1,8 +1,7 @@
 import { KeyCode } from '../constants/keyCode';
-import { _getDocument } from '../gridOptionsUtils';
 import type { ITooltipCtrl, TooltipFeature } from '../tooltip/tooltipFeature';
 import { _setAriaPosInSet, _setAriaRole, _setAriaSelected, _setAriaSetSize } from '../utils/aria';
-import { _isVisible, _removeFromParent } from '../utils/dom';
+import { _createElement, _isVisible, _removeFromParent } from '../utils/dom';
 import { Component } from './component';
 
 export interface ListOption<TValue = string> {
@@ -154,14 +153,17 @@ export class AgList<TEventType extends string = AgListEvent, TValue = string> ex
     }
 
     private renderOption(value: TValue, text: string): void {
-        const eDocument = _getDocument(this.beans);
-        const itemEl = eDocument.createElement('div');
+        const itemEl = _createElement({
+            tag: 'div',
+            cls: `ag-list-item ag-${this.cssIdentifier}-list-item`,
+            attrs: { role: 'option' },
+        });
 
-        _setAriaRole(itemEl, 'option');
-        itemEl.classList.add('ag-list-item', `ag-${this.cssIdentifier}-list-item`);
-        const span = eDocument.createElement('span');
+        const span = _createElement({
+            tag: 'span',
+            children: text,
+        });
         itemEl.appendChild(span);
-        span.textContent = text;
 
         if (!this.unFocusable) {
             itemEl.tabIndex = -1;

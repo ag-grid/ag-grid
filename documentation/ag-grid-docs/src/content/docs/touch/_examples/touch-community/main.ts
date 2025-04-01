@@ -1,18 +1,16 @@
-import type { ColDef, GridApi, GridOptions } from 'ag-grid-community';
+import type { ColDef, ColGroupDef, GridApi, GridOptions } from 'ag-grid-community';
 import { ClientSideRowModelModule, ModuleRegistry, ValidationModule, createGrid } from 'ag-grid-community';
-import { ColumnMenuModule } from 'ag-grid-enterprise';
 
-ModuleRegistry.registerModules([ClientSideRowModelModule, ColumnMenuModule, ValidationModule /* Development Only */]);
+ModuleRegistry.registerModules([ClientSideRowModelModule, ValidationModule /* Development Only */]);
 
-const columnDefs: ColDef[] = [
+const columnDefs: (ColDef | ColGroupDef)[] = [
     { field: 'athlete', minWidth: 200 },
-    { field: 'age' },
-    { field: 'country', minWidth: 200 },
     { field: 'year' },
     { field: 'sport' },
-    { field: 'gold' },
-    { field: 'silver' },
-    { field: 'bronze' },
+    {
+        headerName: 'Medals',
+        children: [{ field: 'gold' }, { field: 'silver' }, { field: 'bronze' }],
+    },
 ];
 
 let gridApi: GridApi<IOlympicData>;
@@ -23,7 +21,6 @@ const gridOptions: GridOptions<IOlympicData> = {
         minWidth: 100,
         flex: 1,
     },
-    columnMenu: 'legacy',
 };
 
 // setup the grid after the page has finished loading

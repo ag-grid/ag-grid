@@ -13,6 +13,7 @@
     :where(.ag-cell-editor) .ag-wrapper,
     :where(.ag-cell-editor) .ag-input-field-input {
         height: 100%;
+        min-height: 100%;
         width: 100%;
         line-height: normal;
     }

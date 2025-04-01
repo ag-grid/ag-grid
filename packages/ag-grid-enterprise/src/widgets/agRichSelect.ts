@@ -25,7 +25,6 @@ import {
     _clearElement,
     _createIconNoSpan,
     _debounce,
-    _escapeString,
     _exists,
     _fuzzySuggestions,
     _getActiveDomElement,
@@ -273,7 +272,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
             } else {
                 const { placeholder } = config;
                 if (_exists(placeholder)) {
-                    eDisplayField.innerHTML = `${_escapeString(placeholder)}`;
+                    eDisplayField.textContent = placeholder;
                     eDisplayField.classList.add('ag-display-as-placeholder');
                 } else {
                     _clearElement(eDisplayField);
@@ -861,14 +860,10 @@ export function _bindCellRendererToHtmlElement(
     eTarget: HTMLElement
 ) {
     cellRendererPromise.then((cellRenderer) => {
-        const gui: HTMLElement | string = cellRenderer!.getGui();
+        const gui = cellRenderer!.getGui();
 
         if (gui != null) {
-            if (typeof gui === 'object') {
-                eTarget.appendChild(gui);
-            } else {
-                eTarget.innerHTML = gui;
-            }
+            eTarget.appendChild(gui);
         }
     });
 }

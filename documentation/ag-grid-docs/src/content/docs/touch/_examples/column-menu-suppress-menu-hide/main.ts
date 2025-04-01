@@ -23,6 +23,7 @@ const gridOptions: GridOptions<IOlympicData> = {
         minWidth: 100,
         flex: 1,
     },
+    suppressMenuHide: true,
     columnMenu: 'legacy',
 };
 

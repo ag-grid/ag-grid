@@ -42297,7 +42297,7 @@
         "key": "AG-2995",
         "issueType": "Bug",
         "componentsByName": ["Grid"],
-        "summary": "Docs - Remove/Adapt docs around enableGroupEdit to reflect that is going to be deprecated",
+        "summary": "[Docs] Remove grid option enableGroupEdit from the docs API page",
         "versions": ["21.1.0"],
         "status": "Done",
         "resolution": "Done",

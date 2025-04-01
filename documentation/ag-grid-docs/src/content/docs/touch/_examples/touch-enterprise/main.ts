@@ -1,18 +1,20 @@
 import type { ColDef, GridApi, GridOptions } from 'ag-grid-community';
 import { ClientSideRowModelModule, ModuleRegistry, ValidationModule, createGrid } from 'ag-grid-community';
-import { ColumnMenuModule } from 'ag-grid-enterprise';
+import { ColumnsToolPanelModule, PivotModule, RowGroupingPanelModule } from 'ag-grid-enterprise';
 
-ModuleRegistry.registerModules([ClientSideRowModelModule, ColumnMenuModule, ValidationModule /* Development Only */]);
+ModuleRegistry.registerModules([
+    ClientSideRowModelModule,
+    PivotModule,
+    RowGroupingPanelModule,
+    ColumnsToolPanelModule,
+    ValidationModule /* Development Only */,
+]);
 
 const columnDefs: ColDef[] = [
-    { field: 'athlete', minWidth: 200 },
-    { field: 'age' },
-    { field: 'country', minWidth: 200 },
-    { field: 'year' },
-    { field: 'sport' },
-    { field: 'gold' },
-    { field: 'silver' },
-    { field: 'bronze' },
+    { field: 'country', rowGroup: true },
+    { field: 'sport', pivot: true },
+    { field: 'year', pivot: true },
+    { field: 'gold', aggFunc: 'sum' },
 ];
 
 let gridApi: GridApi<IOlympicData>;
@@ -21,9 +23,15 @@ const gridOptions: GridOptions<IOlympicData> = {
     columnDefs: columnDefs,
     defaultColDef: {
         minWidth: 100,
-        flex: 1,
+        enableValue: true,
+        enableRowGroup: true,
+        enablePivot: true,
     },
-    columnMenu: 'legacy',
+    sideBar: 'columns',
+    allowDragFromColumnsToolPanel: true,
+    pivotMode: true,
+    rowGroupPanelShow: 'always',
+    pivotPanelShow: 'always',
 };
 
 // setup the grid after the page has finished loading

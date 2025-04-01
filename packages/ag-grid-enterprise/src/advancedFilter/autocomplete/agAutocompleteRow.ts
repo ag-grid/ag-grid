@@ -1,5 +1,5 @@
 import type { ElementParams } from 'ag-grid-community';
-import { Component, _escapeString, _exists } from 'ag-grid-community';
+import { Component, _clearElement, _createElement, _exists } from 'ag-grid-community';
 
 const AgAutocompleteRowElement: ElementParams = {
     tag: 'div',
@@ -9,7 +9,7 @@ const AgAutocompleteRowElement: ElementParams = {
 };
 
 export class AgAutocompleteRow extends Component {
-    private value: string;
+    private value: string | undefined;
     private hasHighlighting = false;
 
     constructor() {
@@ -30,16 +30,24 @@ export class AgAutocompleteRow extends Component {
 
     public setSearchString(searchString: string): void {
         let keepHighlighting = false;
-        if (_exists(searchString)) {
-            const index = this.value?.toLocaleLowerCase().indexOf(searchString.toLocaleLowerCase());
+        const { value } = this;
+        if (value && _exists(searchString)) {
+            const index = value.toLocaleLowerCase().indexOf(searchString.toLocaleLowerCase());
             if (index >= 0) {
                 keepHighlighting = true;
                 this.hasHighlighting = true;
                 const highlightEndIndex = index + searchString.length;
-                const startPart = _escapeString(this.value.slice(0, index));
-                const highlightedPart = _escapeString(this.value.slice(index, highlightEndIndex));
-                const endPart = _escapeString(this.value.slice(highlightEndIndex));
-                this.getGui().lastElementChild!.innerHTML = `${startPart}<b>${highlightedPart}</b>${endPart}`;
+
+                const child = this.getGui().lastElementChild! as HTMLElement;
+                _clearElement(child);
+                child.append(
+                    // Start part
+                    value.slice(0, index),
+                    // Highlighted part wrapped in bold tag
+                    _createElement({ tag: 'b', children: value.slice(index, highlightEndIndex) }),
+                    // End part
+                    value.slice(highlightEndIndex)
+                );
             }
         }
         if (!keepHighlighting && this.hasHighlighting) {
@@ -50,6 +58,6 @@ export class AgAutocompleteRow extends Component {
 
     private render() {
         // putting in blank if missing, so at least the user can click on it
-        this.getGui().lastElementChild!.innerHTML = _escapeString(this.value) ?? '&nbsp;';
+        this.getGui().lastElementChild!.textContent = this.value ?? '\u00A0';
     }
 }
