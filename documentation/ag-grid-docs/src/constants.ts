@@ -14,8 +14,16 @@ export const DEFAULT_INTERNAL_FRAMEWORK: InternalFramework = 'reactFunctional';
 
 export const USE_PACKAGES = true; // process.env?.USE_PACKAGES ?? false;
 
+export const ALL_INTERNAL_FRAMEWORKS: readonly InternalFramework[] = [
+    'vanilla',
+    'typescript',
+    'reactFunctional',
+    'reactFunctionalTs',
+    'angular',
+    'vue3',
+];
 export const INTERNAL_FRAMEWORKS: readonly InternalFramework[] = USE_PACKAGES
-    ? ['vanilla', 'typescript', 'reactFunctional', 'reactFunctionalTs', 'angular', 'vue3']
+    ? ALL_INTERNAL_FRAMEWORKS
     : (['typescript', 'reactFunctional', 'reactFunctionalTs', 'angular', 'vue3'] as const);
 
 export const FRAMEWORK_DISPLAY_TEXT: Record<Framework, string> = {

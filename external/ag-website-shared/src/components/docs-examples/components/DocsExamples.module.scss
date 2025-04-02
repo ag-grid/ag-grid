@@ -1,0 +1,13 @@
+@use 'design-system' as *;
+
+.exampleRow {
+    &:hover {
+        background-color: var(--color-bg-secondary);
+    }
+}
+
+.frameworkCell {
+    display: flex;
+    flex-direction: row;
+    gap: $spacing-size-2;
+}
