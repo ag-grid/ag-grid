@@ -163,7 +163,8 @@
         "getPinnedTopRowCount": {},
         "getPinnedBottomRowCount": {},
         "getPinnedTopRow": {},
-        "getPinnedBottomRow": {}
+        "getPinnedBottomRow": {},
+        "forEachPinnedRow": {}
     },
     "rowNodes": {
         "meta": {

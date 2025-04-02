@@ -3,6 +3,7 @@ import type { _ModuleWithApi, _PinnedRowGridApi } from 'ag-grid-community';
 import { VERSION } from '../version';
 import { manualPinnedRowCSS } from './manualPinnedRow.css-GENERATED';
 import {
+    forEachPinnedRow,
     getPinnedBottomRow,
     getPinnedBottomRowCount,
     getPinnedTopRow,
@@ -24,5 +25,6 @@ export const ManualPinnedRowModule: _ModuleWithApi<_PinnedRowGridApi> = {
         getPinnedBottomRowCount,
         getPinnedTopRow,
         getPinnedBottomRow,
+        forEachPinnedRow,
     },
 };
