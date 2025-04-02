@@ -68,21 +68,19 @@ export class PinnedRows {
     public sort(): void {
         const { sortSvc, rowNodeSorter } = this.beans;
         const sortOptions = sortSvc?.getSortOptions() ?? [];
+        // first remove the grand total row so it doesn't get sorted
+        const grandTotalNode = _removeGrandTotalRow(this.order);
         // pre-sort by existing row-index otherwise we'll fall back to order in which rows are pinned
         this.order.sort((a, b) => (a.pinnedSibling?.rowIndex ?? 0) - (b.pinnedSibling?.rowIndex ?? 0));
         this.order = rowNodeSorter?.doFullSort(this.order, sortOptions) ?? this.order;
-        // post-sort to move the grand total rows to the correct place
+        // post-sort re-insert the grand total row in the correct place
+        if (!grandTotalNode) return;
         const grandTotalRow = this.beans.gos.get('grandTotalRow');
-        this.order.sort((a, b) => {
-            if (_isPinnedNodeGrandTotal(a) && _isPinnedNodeGrandTotal(b)) return 0;
-            if (_isPinnedNodeGrandTotal(a)) {
-                return grandTotalRow === 'bottom' || grandTotalRow === 'pinnedBottom' ? 1 : -1;
-            }
-            if (_isPinnedNodeGrandTotal(b)) {
-                return grandTotalRow === 'bottom' || grandTotalRow === 'pinnedBottom' ? -1 : 1;
-            }
-            return 0;
-        });
+        if (grandTotalRow === 'bottom' || grandTotalRow === 'pinnedBottom') {
+            this.order.push(grandTotalNode);
+        } else {
+            this.order.unshift(grandTotalNode);
+        }
     }
 
     public hide(shouldHide: (node: RowNode) => boolean): void {
@@ -149,4 +147,11 @@ function _isNodeGrandTotal(node: RowNode): boolean {
 
 function _isPinnedNodeGrandTotal(node: RowNode): boolean {
     return !!node.pinnedSibling && _isNodeGrandTotal(node.pinnedSibling);
+}
+
+function _removeGrandTotalRow(order: RowNode[]): RowNode | undefined {
+    const index = order.findIndex(_isPinnedNodeGrandTotal);
+    if (index > -1) {
+        return order.splice(index, 1)?.[0];
+    }
 }
