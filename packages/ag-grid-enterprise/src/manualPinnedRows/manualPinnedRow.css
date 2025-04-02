@@ -1,3 +1,15 @@
 .ag-row-pinned-target {
     color: var(--ag-input-disabled-text-color);
 }
+
+/* .ag-floating-top-container > .ag-row:last-child {
+    border-bottom-color: var(--floating-top-border-bottom-color);
+    border-bottom-width: 2px;
+    border-bottom-style: solid;
+}
+
+.ag-floating-bottom-container > .ag-row:first-child {
+    border-top-color: var(--floating-top-border-bottom-color);
+    border-top-width: 2px;
+    border-top-style: solid;
+} */
