@@ -1,9 +1,9 @@
 .ag-body-viewport {
-    --ag-pinned-source-row-colour: var(--ag-input-disabled-text-color);
+    --ag-pinned-source-row-color: var(--ag-input-disabled-text-color);
 }
 
 .ag-row-pinned-source {
-    color: var(--ag-pinned-source-row-colour);
+    color: var(--ag-pinned-source-row-color);
 }
 
 [data-ag-theme-mode='light'] {
