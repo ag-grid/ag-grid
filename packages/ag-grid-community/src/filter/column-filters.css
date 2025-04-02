@@ -93,6 +93,8 @@
     display: flex;
 }
 
+/* stylelint-disable selector-max-specificity -- this is a targeted fix for a
+    firefox bug that users shouldn't be overriding */
 .ag-set-floating-filter-input input[disabled] {
     pointer-events: none;
 }
