@@ -29,8 +29,8 @@ const gridOptions: GridOptions<IOlympicData> = {
     columnDefs,
     rowData: null,
     enableRowPinning: true,
-    onFirstDataRendered() {
-        setGrandTotalRow(getGrandTotalRow());
+    onFirstDataRendered: () => {
+        update();
     },
 };
 
@@ -45,26 +45,29 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 function getGrandTotalRow() {
-    return document.querySelector<HTMLSelectElement>('#select-grand-total-row')?.value as GridOptions['grandTotalRow'];
+    return document.querySelector<HTMLSelectElement>('#select-grand-total-row')?.value as
+        | GridOptions['grandTotalRow']
+        | 'isRowPinned';
 }
 
-function setGrandTotalRow(value: GridOptions['grandTotalRow']) {
-    gridApi.setGridOption('grandTotalRow', value);
+function setGrandTotalRow(api: GridApi<IOlympicData>, value: GridOptions['grandTotalRow']) {
+    api.setGridOption('grandTotalRow', value);
 }
 
-function setIsRowPinned(value: RowPinnedType) {
-    gridApi.setGridOption('isRowPinned', (node) => {
+function setIsRowPinned(api: GridApi<IOlympicData>, value: RowPinnedType) {
+    api.setGridOption('isRowPinned', (node) => {
         if (node.level === -1 && node.footer) {
             return value;
         }
     });
 }
 
-function update(value: GridOptions['grandTotalRow'] | 'isRowPinned') {
+function update() {
+    const value = getGrandTotalRow();
     if (value === 'isRowPinned') {
-        setGrandTotalRow('bottom');
-        setIsRowPinned('top');
+        setGrandTotalRow(gridApi, 'bottom');
+        setIsRowPinned(gridApi, 'top');
     } else {
-        setGrandTotalRow(value);
+        setGrandTotalRow(gridApi, value);
     }
 }

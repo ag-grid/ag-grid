@@ -1,10 +1,19 @@
 import type { ColDef, GridApi, GridOptions } from 'ag-grid-community';
-import { ClientSideRowModelModule, ModuleRegistry, ValidationModule, createGrid } from 'ag-grid-community';
+import {
+    ClientSideRowModelModule,
+    ModuleRegistry,
+    RowApiModule,
+    RowSelectionModule,
+    ValidationModule,
+    createGrid,
+} from 'ag-grid-community';
 import { ContextMenuModule, ManualPinnedRowModule } from 'ag-grid-enterprise';
 
 ModuleRegistry.registerModules([
     ManualPinnedRowModule,
     ClientSideRowModelModule,
+    RowSelectionModule,
+    RowApiModule,
     ContextMenuModule,
     ValidationModule /* Development Only */,
 ]);
@@ -24,7 +33,7 @@ const gridOptions: GridOptions<IOlympicData> = {
     rowSelection: {
         mode: 'multiRow',
     },
-    onFirstDataRendered() {
+    onFirstDataRendered: () => {
         ['1', '3', '5'].forEach((id) => {
             gridApi.getRowNode(id)?.setSelected(true);
         });

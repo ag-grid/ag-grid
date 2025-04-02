@@ -1,11 +1,19 @@
 import type { ColDef, GridApi, GridOptions } from 'ag-grid-community';
-import { ClientSideRowModelModule, ModuleRegistry, ValidationModule, createGrid } from 'ag-grid-community';
-import { ContextMenuModule, ManualPinnedRowModule } from 'ag-grid-enterprise';
+import {
+    ClientSideRowModelModule,
+    ColumnApiModule,
+    ModuleRegistry,
+    ValidationModule,
+    createGrid,
+} from 'ag-grid-community';
+import { ContextMenuModule, ManualPinnedRowModule, SetFilterModule } from 'ag-grid-enterprise';
 
 ModuleRegistry.registerModules([
     ManualPinnedRowModule,
     ClientSideRowModelModule,
     ContextMenuModule,
+    SetFilterModule,
+    ColumnApiModule,
     ValidationModule /* Development Only */,
 ]);
 
@@ -37,15 +45,15 @@ document.addEventListener('DOMContentLoaded', function () {
         .then((response) => response.json())
         .then((data: IOlympicData[]) => {
             gridApi!.setGridOption('rowData', data);
-            filterSwimming();
-            sortGold();
+            filterSwimming(gridApi);
+            sortGold(gridApi);
         });
 });
 
-function filterSwimming() {
-    gridApi.setColumnFilterModel('sport', { values: ['Swimming'] }).then(() => gridApi.onFilterChanged());
+function filterSwimming(api: GridApi<IOlympicData>) {
+    api.setColumnFilterModel('sport', { values: ['Swimming'] }).then(() => api.onFilterChanged());
 }
 
-function sortGold() {
-    gridApi.applyColumnState({ state: [{ colId: 'gold', sort: 'desc' }] });
+function sortGold(api: GridApi<IOlympicData>) {
+    api.applyColumnState({ state: [{ colId: 'gold', sort: 'desc' }] });
 }
