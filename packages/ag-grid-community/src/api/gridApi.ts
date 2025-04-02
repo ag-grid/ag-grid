@@ -226,7 +226,7 @@ export interface _RowGridApi<TData> {
      * Iterates through each node (row) in the grid and calls the callback for each node.
      * This works similar to the `forEach` method on a JavaScript array.
      * This is called for every node, ignoring any filtering or sorting applied within the grid.
-     * It is _not_ called on any pinned row nodes.
+     * It is not called on any pinned row nodes.
      * If using the Infinite Row Model, then this gets called for each page loaded in the page cache.
      */
     forEachNode(callback: (rowNode: IRowNode<TData>, index: number) => void, includeFooterNodes?: boolean): void;
