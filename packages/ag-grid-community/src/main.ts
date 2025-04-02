@@ -181,6 +181,7 @@ export {
     FilterEvaluatorParams,
     FilterDisplayState,
     FilterWrapperParams,
+    FilterAction,
 } from './interfaces/iFilter';
 export {
     ISetFilter,

@@ -1,19 +1,21 @@
 import type { AgEvent } from '../events';
-import type { FilterButtonType } from '../interfaces/iFilter';
-import { _clearElement, _loadTemplate } from '../utils/dom';
+import type { FilterAction } from '../interfaces/iFilter';
+import { _clearElement, _loadTemplate, _setDisabled } from '../utils/dom';
 import { _warn } from '../validation/logging';
 import { Component } from '../widgets/component';
 import { FILTER_LOCALE_TEXT } from './filterLocaleText';
 import { isUseApplyButton } from './floating/provided/providedFilterUtils';
 
-export interface FilterButtonEvent extends AgEvent<FilterButtonType> {
+export interface FilterButtonEvent extends AgEvent<FilterAction> {
     event?: Event;
     applyActive: boolean;
+    additionalEventAttributes?: any;
 }
 
-export class FilterButtonComp extends Component<FilterButtonType> {
-    private buttons: FilterButtonType[];
+export class FilterButtonComp extends Component<FilterAction> {
+    private buttons: FilterAction[];
     private buttonListeners: (() => void)[] = [];
+    private eApplyButton?: HTMLElement;
 
     constructor() {
         super(/* html */ `
@@ -22,7 +24,7 @@ export class FilterButtonComp extends Component<FilterButtonType> {
         `);
     }
 
-    public refresh(buttons: FilterButtonType[]): void {
+    public updateButtons(buttons: FilterAction[]): void {
         const oldButtons = this.buttons;
         this.buttons = buttons;
 
@@ -32,6 +34,7 @@ export class FilterButtonComp extends Component<FilterButtonType> {
 
         const eGui = this.getGui();
         _clearElement(eGui);
+        let eApplyButton: HTMLElement | undefined;
         this.buttonListeners.forEach((destroyFunc) => destroyFunc());
         this.buttonListeners = [];
 
@@ -43,21 +46,22 @@ export class FilterButtonComp extends Component<FilterButtonType> {
 
         const applyActive = isUseApplyButton({ buttons } as any);
 
-        const addButton = (type: FilterButtonType): void => {
+        const addButton = (type: FilterAction): void => {
             const localeKey = `${type}Filter` as const;
             const text = type ? translate(localeKey, FILTER_LOCALE_TEXT[localeKey]) : undefined;
             const clickListener = (event?: Event) => {
-                this.localEventService?.dispatchEvent({
+                this.dispatchLocalEvent<FilterButtonEvent>({
                     type,
                     event,
                     applyActive,
-                } as FilterButtonEvent);
+                });
             };
             if (!['apply', 'clear', 'reset', 'cancel'].includes(type)) {
                 _warn(75);
             }
 
-            const buttonType = type === 'apply' ? 'submit' : 'button';
+            const isApply = type === 'apply';
+            const buttonType = isApply ? 'submit' : 'button';
             const button = _loadTemplate(
                 /* html */
                 `<button
@@ -67,6 +71,9 @@ export class FilterButtonComp extends Component<FilterButtonType> {
                 >${text}
                 </button>`
             );
+            if (isApply) {
+                eApplyButton = button;
+            }
 
             button.addEventListener('click', clickListener);
             this.buttonListeners.push(() => button.removeEventListener('click', clickListener));
@@ -75,7 +82,29 @@ export class FilterButtonComp extends Component<FilterButtonType> {
 
         buttons.forEach((type) => addButton(type));
 
+        this.eApplyButton = eApplyButton;
+
         eGui.append(fragment);
+    }
+
+    public updateValidity(valid?: boolean): void {
+        const eApplyButton = this.eApplyButton;
+        if (!eApplyButton) {
+            return;
+        }
+        _setDisabled(eApplyButton, valid === false);
+    }
+
+    public performAction(action: FilterAction, event?: KeyboardEvent, additionalEventAttributes?: any): void {
+        const buttons = this.buttons;
+        if (buttons.includes(action)) {
+            this.dispatchLocalEvent<FilterButtonEvent>({
+                type: action,
+                event,
+                applyActive: isUseApplyButton({ buttons } as any),
+                additionalEventAttributes,
+            });
+        }
     }
 
     private destroyListeners(): void {

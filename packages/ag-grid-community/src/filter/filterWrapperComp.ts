@@ -9,7 +9,12 @@ import { _exists, _jsonEquals } from '../utils/generic';
 import { AgPromise } from '../utils/promise';
 import { _warn } from '../validation/logging';
 import { Component } from '../widgets/component';
-import type { FilterDisplayWrapper, FilterParamsChangedEvent } from './columnFilterService';
+import type {
+    FilterActionEvent,
+    FilterDisplayWrapper,
+    FilterParamsChangedEvent,
+    FilterStateChangedEvent,
+} from './columnFilterService';
 import type { FilterButtonEvent } from './filterButtonComp';
 import { FilterButtonComp } from './filterButtonComp';
 import type { FilterRequestSource } from './iColumnFilter';
@@ -116,6 +121,18 @@ export class FilterWrapperComp extends Component {
                     this.resetButtonsPanel(eventParams as FilterWrapperParams, this.params);
                 }
             },
+            filterStateChanged: (event: FilterStateChangedEvent) => {
+                const { column, state } = event;
+                if (column === this.column) {
+                    this.eButtonsPanel?.updateValidity(state.valid);
+                }
+            },
+            filterAction: (event: FilterActionEvent) => {
+                const { column, action, event: keyboardEvent, additionalEventAttributes } = event;
+                if (column === this.column) {
+                    this.eButtonsPanel?.performAction(action, keyboardEvent, additionalEventAttributes);
+                }
+            },
         });
         return eWrapper;
     }
@@ -137,23 +154,24 @@ export class FilterWrapperComp extends Component {
                 const colFilter = this.beans.colFilter;
                 const column = this.column;
                 eButtonsPanel?.addManagedListeners(eButtonsPanel, {
-                    apply: ({ event, applyActive }: FilterButtonEvent) => {
+                    apply: ({ event, applyActive, additionalEventAttributes }: FilterButtonEvent) => {
                         // Prevent form submission
                         event?.preventDefault();
-                        colFilter?.updateModel(column, 'apply');
+                        colFilter?.updateModel(column, 'apply', additionalEventAttributes);
                         if (this.params?.closeOnApply && applyActive) {
                             this.close(event);
                         }
                     },
-                    clear: () => colFilter?.updateModel(column, 'clear'),
-                    reset: ({ applyActive }: FilterButtonEvent) => {
-                        colFilter?.updateModel(column, 'reset');
+                    clear: ({ additionalEventAttributes }) =>
+                        colFilter?.updateModel(column, 'clear', additionalEventAttributes),
+                    reset: ({ applyActive, additionalEventAttributes }: FilterButtonEvent) => {
+                        colFilter?.updateModel(column, 'reset', additionalEventAttributes);
                         if (this.params?.closeOnApply && applyActive) {
                             this.close();
                         }
                     },
-                    cancel: ({ event }: FilterButtonEvent) => {
-                        colFilter?.updateModel(column, 'cancel');
+                    cancel: ({ event, additionalEventAttributes }: FilterButtonEvent) => {
+                        colFilter?.updateModel(column, 'cancel', additionalEventAttributes);
                         if (this.params?.closeOnApply) {
                             this.close(event);
                         }
@@ -161,7 +179,7 @@ export class FilterWrapperComp extends Component {
                 });
                 this.eButtonsPanel = eButtonsPanel;
             }
-            eButtonsPanel.refresh(buttons);
+            eButtonsPanel.updateButtons(buttons);
         } else {
             if (eButtonsPanel) {
                 _removeFromParent(eButtonsPanel.getGui());

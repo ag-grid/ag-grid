@@ -22,7 +22,7 @@ import type { Column } from '../interfaces/iColumn';
 import type { WithoutGridCommon } from '../interfaces/iCommon';
 import type {
     BaseFilterParams,
-    FilterButtonType,
+    FilterAction,
     FilterDisplayComp,
     FilterDisplayParams,
     FilterDisplayState,
@@ -121,7 +121,22 @@ export interface FilterParamsChangedEvent extends AgEvent<'filterParamsChanged'>
     params: IFilterParams | FilterDisplayParams;
 }
 
-export class ColumnFilterService extends BeanStub<'filterParamsChanged'> implements NamedBean {
+export interface FilterStateChangedEvent extends AgEvent<'filterStateChanged'> {
+    column: AgColumn;
+    state: FilterDisplayState;
+}
+
+export interface FilterActionEvent extends AgEvent<'filterAction'> {
+    column: AgColumn;
+    action: FilterAction;
+    event?: KeyboardEvent;
+    additionalEventAttributes?: any;
+}
+
+export class ColumnFilterService
+    extends BeanStub<'filterParamsChanged' | 'filterStateChanged' | 'filterAction'>
+    implements NamedBean
+{
     beanName: BeanName = 'colFilter';
 
     private allColumnFilters = new Map<string, FilterWrapper>();
@@ -809,8 +824,18 @@ export class ColumnFilterService extends BeanStub<'filterParamsChanged'> impleme
                     ...additionalEventAttributes,
                 });
             displayParams.onStateChange = (state, additionalEventAttributes) => {
-                this.state.set(colId, state);
+                this.updateState(column, state);
                 filterStateCallback(additionalEventAttributes);
+                this.updateOrRefreshFilterUi(column);
+            };
+            displayParams.onAction = (action, additionalEventAttributes, event) => {
+                this.dispatchLocalEvent<FilterActionEvent>({
+                    type: 'filterAction',
+                    column,
+                    action,
+                    event,
+                    additionalEventAttributes,
+                });
             };
             displayParams.getEvaluator = () => this.getOrCreateEvaluator(column)!;
             displayParams.onUiChange = filterStateCallback;
@@ -1277,7 +1302,8 @@ export class ColumnFilterService extends BeanStub<'filterParamsChanged'> impleme
         source: 'ui' | 'api' | 'colDef' | 'floating' | 'evaluator',
         createIfMissing?: boolean
     ): AgPromise<void> {
-        const filterWrapper = this.allColumnFilters.get(column.getColId());
+        const colId = column.getColId();
+        const filterWrapper = this.allColumnFilters.get(colId);
 
         if (!filterWrapper) {
             if (createIfMissing) {
@@ -1311,6 +1337,7 @@ export class ColumnFilterService extends BeanStub<'filterParamsChanged'> impleme
             evaluator,
             evaluatorParams,
             model,
+            this.state.get(colId) ?? { model },
             source
         );
     }
@@ -1627,8 +1654,81 @@ export class ColumnFilterService extends BeanStub<'filterParamsChanged'> impleme
         });
     }
 
-    public updateModel(column: AgColumn, action: FilterButtonType): void {
-        // TODO
+    public updateModel(column: AgColumn, action: FilterAction, additionalEventAttributes?: any): void {
+        const colId = column.getColId();
+        let state: FilterDisplayState;
+        let updateModel = false;
+        let model: any;
+
+        switch (action) {
+            case 'apply': {
+                const oldState = this.state.get(colId);
+                model = oldState?.model ?? null;
+                state = {
+                    // keep the other UI state
+                    state: oldState?.state,
+                    model,
+                };
+                updateModel = true;
+                break;
+            }
+            case 'clear': {
+                state = {
+                    // wipe other UI state
+                    model: null,
+                };
+                break;
+            }
+            case 'reset': {
+                state = {
+                    // wipe other UI state
+                    model: null,
+                };
+                updateModel = true;
+                model = null;
+                break;
+            }
+            case 'cancel': {
+                state = {
+                    // wipe other UI state
+                    model: this.model[colId] ?? null,
+                };
+                break;
+            }
+        }
+
+        this.updateState(column, state);
+        this.updateOrRefreshFilterUi(column, updateModel, model, additionalEventAttributes);
+    }
+
+    private updateOrRefreshFilterUi(
+        column: AgColumn,
+        updateModel?: boolean,
+        model?: any,
+        additionalEventAttributes?: any
+    ): void {
+        const filterWrapper = this.cachedFilter(column);
+        const filterUi = filterWrapper?.filterUi as FilterUi<FilterDisplayComp, FilterDisplayParams> | undefined;
+        if (updateModel) {
+            filterUi?.filterParams?.onModelChange(model, additionalEventAttributes);
+        } else {
+            if (filterUi?.created) {
+                filterUi.promise.then((filter) => {
+                    const colId = column.getColId();
+                    const model = this.model[colId] ?? null;
+                    _refreshUi(filter!, filterUi.filterParams, model, this.state.get(colId) ?? { model }, 'ui');
+                });
+            }
+        }
+    }
+
+    private updateState(column: AgColumn, state: FilterDisplayState): void {
+        this.state.set(column.getColId(), state);
+        this.dispatchLocalEvent<FilterStateChangedEvent>({
+            type: 'filterStateChanged',
+            column,
+            state,
+        });
     }
 
     public override destroy() {
@@ -1714,6 +1814,7 @@ export function _refreshEvaluatorAndUi(
     evaluator: FilterEvaluator,
     evaluatorParams: FilterEvaluatorParams,
     model: any,
+    state: FilterDisplayState,
     source: 'ui' | 'api' | 'colDef' | 'floating' | 'evaluator'
 ): AgPromise<void> {
     evaluator.refresh?.({ ...evaluatorParams, model, source });
@@ -1721,12 +1822,23 @@ export function _refreshEvaluatorAndUi(
     return getFilterUi().then((filterUi) => {
         if (filterUi) {
             const { filter, filterParams } = filterUi;
-            filter?.refresh?.({
-                ...filterParams,
-                model,
-                source,
-            });
+            _refreshUi(filter, filterParams, model, state, source);
         }
+    });
+}
+
+function _refreshUi(
+    filter: FilterDisplayComp,
+    filterParams: FilterDisplayParams,
+    model: any,
+    state: FilterDisplayState,
+    source: 'ui' | 'api' | 'colDef' | 'floating' | 'evaluator'
+): void {
+    filter?.refresh?.({
+        ...filterParams,
+        model,
+        state,
+        source,
     });
 }
 

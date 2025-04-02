@@ -178,11 +178,11 @@ export interface IDoesFilterPassParams<TData = any> {
     data: TData;
 }
 
-export type FilterButtonType = 'apply' | 'clear' | 'reset' | 'cancel';
+export type FilterAction = 'apply' | 'clear' | 'reset' | 'cancel';
 
 export interface FilterWrapperParams {
     useForm?: boolean;
-    buttons?: FilterButtonType[];
+    buttons?: FilterAction[];
     closeOnApply?: boolean;
     readOnly?: boolean;
 }
@@ -250,6 +250,8 @@ export interface FilterDisplayState<TModel = any, TState = any> {
      * this will be stored here.
      */
     state?: TState;
+    /** If `false` and apply button is present, apply button will be disabled. */
+    valid?: boolean;
 }
 
 export interface FilterDisplayParams<TData = any, TContext = any, TModel = any, TState = any>
@@ -264,6 +266,8 @@ export interface FilterDisplayParams<TData = any, TContext = any, TModel = any, 
     onModelChange: (model: TModel | null, additionalEventAttributes?: any) => void;
     /** If using the filter with apply buttons, callback that should be called every time the unapplied model in the component changes. */
     onStateChange: (componentState: FilterDisplayState<TModel, TState>, additionalEventAttributes?: any) => void;
+    /** TODO */
+    onAction: (action: FilterAction, additionalEventAttributes?: any, event?: KeyboardEvent) => void;
     /**
      * Callback that can be optionally called every time the filter UI changes.
      * The grid will respond with emitting a FilterModifiedEvent.

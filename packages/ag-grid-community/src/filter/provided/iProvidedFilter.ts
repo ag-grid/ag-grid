@@ -1,4 +1,4 @@
-import type { IFilter, IFilterParams } from '../../interfaces/iFilter';
+import type { FilterAction, IFilter, IFilterParams } from '../../interfaces/iFilter';
 
 /**
  * Parameters provided by the grid to the `init` method of a `ProvidedFilter`.
@@ -19,7 +19,7 @@ export interface IProvidedFilterParams {
      *  - `'reset'`: The Reset button will clear the details of the filter and any active filters on that column.
      *  - `'cancel'`: The Cancel button will discard any changes that have been made to the filter in the UI, restoring the applied model.
      */
-    buttons?: ('apply' | 'clear' | 'reset' | 'cancel')[];
+    buttons?: FilterAction[];
     /**
      * If the Apply button is present, the filter popup will be closed immediately when the Apply
      * or Reset button is clicked if this is set to `true`.

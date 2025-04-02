@@ -360,6 +360,7 @@ export class MultiFilter extends TabGuardComp implements IFilterComp, IMultiFilt
                         evaluator,
                         evaluatorParams!,
                         modelForFilter,
+                        { model: null }, // TODO
                         'api'
                     ).then(() => {
                         this.updateActiveListForEvaluator(index, modelForFilter);
@@ -540,6 +541,7 @@ export class MultiFilter extends TabGuardComp implements IFilterComp, IMultiFilt
                             wrapper.evaluator!,
                             wrapper.evaluatorParams!,
                             model,
+                            { model: null }, // TODO
                             'ui'
                         ).then(() => {
                             wrapper.model = model;

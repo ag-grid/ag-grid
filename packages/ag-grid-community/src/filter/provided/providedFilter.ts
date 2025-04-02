@@ -1,11 +1,14 @@
 import type { AgColumn } from '../../entities/agColumn';
 import type { ContainerType, IAfterGuiAttachedParams } from '../../interfaces/iAfterGuiAttachedParams';
-import type { FilterDisplayParams, IDoesFilterPassParams, IFilterComp } from '../../interfaces/iFilter';
-import type { PopupEventParams } from '../../interfaces/iPopup';
+import type {
+    FilterDisplayParams,
+    FilterDisplayState,
+    IDoesFilterPassParams,
+    IFilterComp,
+} from '../../interfaces/iFilter';
 import { PositionableFeature } from '../../rendering/features/positionableFeature';
-import { _setDisabled } from '../../utils/dom';
 import { _debounce } from '../../utils/function';
-import { AgPromise } from '../../utils/promise';
+import type { AgPromise } from '../../utils/promise';
 import type { ComponentSelector } from '../../widgets/component';
 import { Component, RefPlaceholder } from '../../widgets/component';
 import { ManagedFocusFeature } from '../../widgets/managedFocusFeature';
@@ -41,18 +44,21 @@ export abstract class ProvidedFilter<
 {
     protected params: P;
 
-    protected applyActive = false;
-    private hidePopup: ((params: PopupEventParams) => void) | null | undefined = null;
-    // a debounce of the onBtApply method
-    private onBtApplyDebounce: () => void;
+    private applyActive = false;
+    // a debounce of the apply method
+    private applyDebounced: () => void;
     private debouncePending = false;
+    protected state: FilterDisplayState<M>;
 
     private positionableFeature: PositionableFeature | undefined;
 
     /** @deprecated TODO */
     private readonly eFilterBody: HTMLElement = RefPlaceholder;
 
-    constructor(private readonly filterNameKey: keyof typeof FILTER_LOCALE_TEXT) {
+    constructor(
+        private readonly filterNameKey: keyof typeof FILTER_LOCALE_TEXT,
+        private readonly cssIdentifier: string
+    ) {
         super();
     }
 
@@ -60,15 +66,20 @@ export abstract class ProvidedFilter<
 
     protected abstract createBodyTemplate(): string;
     protected abstract getAgComponents(): ComponentSelector[];
-    protected abstract getCssIdentifier(): string;
     protected abstract setModelIntoUi(model: M | null, isInitialLoad?: boolean): AgPromise<void>;
-    protected abstract areModelsEqual(a: M, b: M): boolean;
+    protected abstract areNonNullModelsEqual(a: M, b: M): boolean;
 
     /** Used to get the filter type for filter models. */
     public abstract readonly filterType: 'text' | 'number' | 'date' | 'set' | 'multi';
 
     public postConstruct(): void {
-        this.resetTemplate(); // do this first to create the DOM
+        this.setTemplate(
+            /* html */ `
+            <div class="ag-filter-body-wrapper ag-${this.cssIdentifier}-body-wrapper" data-ref="eFilterBody">
+                ${this.createBodyTemplate()}
+            </div>`,
+            this.getAgComponents()
+        );
         this.createManagedBean(
             new ManagedFocusFeature(this.getFocusableElement(), {
                 handleKeyDown: this.handleKeyDown.bind(this),
@@ -92,9 +103,7 @@ export abstract class ProvidedFilter<
         const params = legacyParams as unknown as P;
         this.setParams(params);
 
-        this.initModel(params.model).then(() => {
-            this.setupOnBtApplyDebounce();
-        });
+        this.setModelIntoUi(params.state.model, true).then(() => this.updateUiVisibility());
     }
 
     public refresh(legacyNewParams: ProvidedFilterParams): boolean {
@@ -105,28 +114,15 @@ export abstract class ProvidedFilter<
 
         const source = newParams.source;
 
-        if (source === 'ui') {
-            // don't need to do anything
-            return true;
+        if (source === 'colDef') {
+            this.updateParams(newParams, oldParams);
         }
 
-        const updateModel = () =>
-            this.resetUiToActiveModel(
-                newParams.model,
-                () => {
-                    this.updateUiVisibility();
-                    this.setupOnBtApplyDebounce();
-                },
-                source === 'evaluator'
-            );
+        const newState = newParams.state;
 
-        if (source !== 'colDef') {
-            // just the model has changed
-            updateModel();
-            return true;
+        if (newState !== this.state) {
+            this.setModelIntoUi(newState.model);
         }
-
-        this.updateParams(newParams, oldParams).then(updateModel);
 
         return true;
     }
@@ -138,13 +134,13 @@ export abstract class ProvidedFilter<
     }
 
     /** Called on refresh only. Override in subclasses */
-    protected updateParams(newParams: P, oldParams: P): AgPromise<void> {
+    protected updateParams(newParams: P, oldParams: P): void {
         this.commonUpdateParams(newParams, oldParams);
-        return AgPromise.resolve();
     }
 
     private commonUpdateParams(newParams: P, _oldParams?: P): void {
         this.applyActive = isUseApplyButton(newParams);
+        this.setupApplyDebounced();
     }
 
     public doesFilterPass(params: IDoesFilterPassParams): boolean {
@@ -160,26 +156,13 @@ export abstract class ProvidedFilter<
         return this.params.model != null;
     }
 
-    protected resetTemplate(paramsMap?: any) {
-        const templateString = /* html */ `
-                <div class="ag-filter-body-wrapper ag-${this.getCssIdentifier()}-body-wrapper" data-ref="eFilterBody">
-                    ${this.createBodyTemplate()}
-                </div>`;
-
-        this.setTemplate(templateString, this.getAgComponents(), paramsMap);
-    }
-
-    protected isReadOnly(): boolean {
-        return !!this.params.readOnly;
-    }
-
     // subclasses can override this to provide alternative debounce defaults
     protected defaultDebounceMs: number = 0;
 
-    private setupOnBtApplyDebounce(): void {
+    private setupApplyDebounced(): void {
         const debounceMs = getDebounceMs(this.params, this.defaultDebounceMs);
         const debounceFunc = _debounce(this, this.checkApplyDebounce.bind(this), debounceMs);
-        this.onBtApplyDebounce = () => {
+        this.applyDebounced = () => {
             this.debouncePending = true;
             debounceFunc();
         };
@@ -189,7 +172,7 @@ export abstract class ProvidedFilter<
         if (this.debouncePending) {
             // May already have been applied, so don't apply again (e.g. closing filter before debounce timeout)
             this.debouncePending = false;
-            this.onBtApply();
+            this.doApplyModel(true);
         }
     }
 
@@ -202,149 +185,60 @@ export abstract class ProvidedFilter<
         return beans.colFilter!.setModelForColumnLegacy(params.column as AgColumn, model);
     }
 
-    private initModel(model: M | null): AgPromise<void> {
-        const promise = this.setModelIntoUi(model ?? null, true);
-
-        return promise.then(() => {
-            this.updateUiVisibility();
-
-            // we set the model from the GUI, rather than the provided model,
-            // so the model is consistent, e.g. handling of null/undefined will be the same,
-            // or if model is case-insensitive, then casing is removed.
-            this.doApplyModel('api');
-        });
-    }
-
-    private onBtCancel(e: Event): void {
-        this.resetUiToActiveModel(this.getModel(), () => {
-            this.handleCancelEnd(e);
-        });
-    }
-
-    protected handleCancelEnd(e: Event): void {
-        if (this.params.closeOnApply) {
-            this.close(e);
-        }
-    }
-
-    protected resetUiToActiveModel(
-        currentModel: M | null,
-        afterUiUpdatedFunc?: () => void,
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        fromEvaluator?: boolean
-    ): void {
-        const afterAppliedFunc = () => {
-            this.onUiChanged(false, 'prevent');
-
-            afterUiUpdatedFunc?.();
-        };
-
-        this.setModelIntoUi(currentModel ?? null).then(afterAppliedFunc);
-    }
-
-    private onBtClear(): void {
-        this.setModelIntoUi(null).then(() => this.onUiChanged());
-    }
-
-    private onBtReset(): void {
-        this.onBtClear();
-        this.onBtApply();
-    }
-
     /**
      * Applies changes made in the UI to the filter, and returns true if the model has changed.
      */
-    public applyModel(source: 'api' | 'ui' | 'rowDataUpdated' = 'api'): boolean {
-        return this.doApplyModel(source).changed;
+    public applyModel(_source: 'api' | 'ui' | 'rowDataUpdated' = 'api'): boolean {
+        return this.doApplyModel(false);
     }
 
-    protected doApplyModel(
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        source: 'api' | 'ui' | 'rowDataUpdated' = 'api'
-    ): { changed: boolean; model: M | null } {
-        const newModel = this.getModelFromUi();
-
-        if (!this.canApply(newModel!)) {
-            return { changed: false, model: null };
-        }
-
-        const previousModel = this.params.model;
-
-        // models can be same if user pasted same content into text field, or maybe just changed the case
-        // and it's a case insensitive filter
-        return { changed: !this.areModelsEqual(previousModel!, newModel!), model: newModel };
-    }
-
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    protected canApply(model: M): boolean {
+    protected canApply(_model: M | null): boolean {
         return true;
     }
 
-    protected onBtApply(afterFloatingFilter = false, afterDataChange = false, e?: Event): void {
-        // Prevent form submission
-        if (e) {
-            e.preventDefault();
-        }
-        const { changed, model } = this.doApplyModel(afterDataChange ? 'rowDataUpdated' : 'ui');
-
+    private doApplyModel(fromFilterUi: boolean, additionalEventAttributes?: any): boolean {
+        const changed = !this.areModelsEqual(this.params.model, this.state.model);
         if (changed) {
-            // the floating filter uses 'afterFloatingFilter' info, so it doesn't refresh after filter changed if change
-            // came from floating filter
-            this.params.onModelChange(model, { afterFloatingFilter, afterDataChange });
+            if (fromFilterUi) {
+                // filter is open, so can perform as if the apply button was clicked
+                this.params.onAction('apply', additionalEventAttributes);
+            } else {
+                // filter may not be open, so need to do the update directly
+                this.beans.colFilter?.updateModel(this.params.column as AgColumn, 'apply', additionalEventAttributes);
+            }
         }
-
-        const { closeOnApply } = this.params;
-
-        // only close if an apply button is visible, otherwise we'd be closing every time a change was made!
-        if (closeOnApply && this.applyActive && !afterFloatingFilter && !afterDataChange) {
-            this.close(e);
-        }
+        return changed;
     }
 
     public onNewRowsLoaded(): void {}
-
-    public close(e?: Event): void {
-        if (!this.hidePopup) {
-            return;
-        }
-
-        const keyboardEvent = e as KeyboardEvent;
-        const key = keyboardEvent && keyboardEvent.key;
-        let params: PopupEventParams;
-
-        if (key === 'Enter' || key === 'Space') {
-            params = { keyboardEvent };
-        }
-
-        this.hidePopup(params!);
-        this.hidePopup = null;
-    }
 
     /**
      * By default, if the change came from a floating filter it will be applied immediately, otherwise if there is no
      * apply button it will be applied after a debounce, otherwise it will not be applied at all. This behaviour can
      * be adjusted by using the apply parameter.
      */
-    protected onUiChanged(fromFloatingFilter = false, apply?: 'immediately' | 'debounce' | 'prevent'): void {
+    protected onUiChanged(apply?: 'immediately' | 'debounce' | 'prevent', afterFloatingFilter = false): void {
         this.updateUiVisibility();
-        this.params.onStateChange({
-            model: this.getModelFromUi(),
-        });
+        const model = this.getModelFromUi();
+        const state = {
+            model,
+            state: this.getState(),
+            valid: this.canApply(model),
+        };
+        this.state = state;
+        this.params.onStateChange(state);
         this.params.onUiChange(this.getUiChangeEventParams());
 
-        if (this.applyActive && !this.isReadOnly()) {
-            const isValid = this.canApply(this.getModelFromUi()!);
-            const applyFilterButton = this.queryForHtmlElement(`[data-ref="applyFilterButton"]`);
-            if (applyFilterButton) {
-                _setDisabled(applyFilterButton, !isValid);
-            }
+        apply ??= this.applyActive ? undefined : 'debounce';
+        if (apply === 'immediately') {
+            this.doApplyModel(!afterFloatingFilter, { afterFloatingFilter, afterDataChange: false });
+        } else if (apply === 'debounce') {
+            this.applyDebounced();
         }
+    }
 
-        if ((fromFloatingFilter && !apply) || apply === 'immediately') {
-            this.onBtApply(fromFloatingFilter);
-        } else if ((!this.applyActive && !apply) || apply === 'debounce') {
-            this.onBtApplyDebounce();
-        }
+    protected getState(): any {
+        return undefined;
     }
 
     protected getUiChangeEventParams(): any {
@@ -352,10 +246,6 @@ export abstract class ProvidedFilter<
     }
 
     public afterGuiAttached(params?: IAfterGuiAttachedParams): void {
-        if (params) {
-            this.hidePopup = params.hidePopup;
-        }
-
         this.refreshFilterResizer(params?.container);
     }
 
@@ -389,11 +279,7 @@ export abstract class ProvidedFilter<
     }
 
     public override destroy(): void {
-        this.hidePopup = null;
-
-        if (this.positionableFeature) {
-            this.positionableFeature = this.destroyBean(this.positionableFeature);
-        }
+        this.positionableFeature = this.destroyBean(this.positionableFeature);
 
         super.destroy();
     }
@@ -405,5 +291,19 @@ export abstract class ProvidedFilter<
     // override to control positionable feature
     protected getPositionableElement(): HTMLElement {
         return this.getGui();
+    }
+
+    private areModelsEqual(a: M | null, b: M | null): boolean {
+        // same or both missing
+        if (a === b || (a == null && b == null)) {
+            return true;
+        }
+
+        // one is missing, other present
+        if (a == null || b == null) {
+            return false;
+        }
+
+        return this.areNonNullModelsEqual(a, b);
     }
 }

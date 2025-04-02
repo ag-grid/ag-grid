@@ -72,10 +72,8 @@ export class SetFilter<V = string>
     /** Keys that have been selected for this filter. */
     private selectedKeys = new Set<string | null>();
 
-    private hasUnappliedModel: boolean = false;
-
     constructor() {
-        super('setFilter');
+        super('setFilter', 'set-filter');
     }
 
     protected override setParams(
@@ -131,23 +129,23 @@ export class SetFilter<V = string>
     protected override updateParams(
         newParams: ISetFilterParams<any, V> & FilterDisplayParams<any, any, SetFilterModel>,
         oldParams: ISetFilterParams<any, V> & FilterDisplayParams<any, any, SetFilterModel>
-    ): AgPromise<void> {
-        return super.updateParams(newParams, oldParams).then(() => {
-            this.updateMiniFilter();
+    ): void {
+        super.updateParams(newParams, oldParams);
 
-            if (newParams.suppressSelectAll !== oldParams.suppressSelectAll) {
-                this.createVirtualListModel(newParams);
-            }
+        this.updateMiniFilter();
 
-            const { textFormatter, treeListPathGetter, treeListFormatter } = newParams;
+        if (newParams.suppressSelectAll !== oldParams.suppressSelectAll) {
+            this.createVirtualListModel(newParams);
+        }
 
-            this.formatter = textFormatter ?? ((value) => value ?? null);
+        const { textFormatter, treeListPathGetter, treeListFormatter } = newParams;
 
-            if (this.displayValueModel instanceof TreeSetDisplayValueModel) {
-                this.displayValueModel.updateParams(treeListPathGetter, treeListFormatter);
-            }
-            this.evaluator.refreshFilterValues();
-        });
+        this.formatter = textFormatter ?? ((value) => value ?? null);
+
+        if (this.displayValueModel instanceof TreeSetDisplayValueModel) {
+            this.displayValueModel.updateParams(treeListPathGetter, treeListFormatter);
+        }
+        this.evaluator.refreshFilterValues();
     }
 
     private updateEvaluator(evaluator: SetFilterEvaluator<V>): SetFilterEvaluator<V> {
@@ -171,10 +169,7 @@ export class SetFilter<V = string>
                         evaluator.valueModel.allValuesPromise.then((values) => {
                             if (this.isAlive()) {
                                 this.updateDisplayedValues('reload', values ?? []);
-                                const modelValues = this.hasUnappliedModel
-                                    ? this.getSelectedModel()
-                                    : this.params.model?.values ?? null;
-                                this.setSelectedModel(modelValues);
+                                this.setSelectedModel(this.state.model?.values ?? null);
                                 if (hardRefresh) {
                                     this.hardRefreshVirtualList = true;
                                 }
@@ -220,24 +215,44 @@ export class SetFilter<V = string>
             return;
         }
 
+        const getComponentForKeyEvent = () => {
+            if (!this.eSetFilterList.contains(_getActiveDomElement(this.beans))) {
+                return;
+            }
+
+            const currentItem = this.virtualList.getLastFocusedRow();
+            if (currentItem == null) {
+                return;
+            }
+
+            const component = this.virtualList.getComponentAt(currentItem) as SetFilterListItem<V>;
+            if (component == null) {
+                return;
+            }
+
+            e.preventDefault();
+
+            const { readOnly } = this.params;
+            if (readOnly) {
+                return;
+            }
+            return component;
+        };
+
         switch (e.key) {
             case KeyCode.SPACE:
-                this.handleKeySpace(e);
+                getComponentForKeyEvent()?.toggleSelected();
                 break;
             case KeyCode.ENTER:
                 this.handleKeyEnter(e);
                 break;
             case KeyCode.LEFT:
-                this.handleKeyLeft(e);
+                getComponentForKeyEvent()?.setExpanded(false);
                 break;
             case KeyCode.RIGHT:
-                this.handleKeyRight(e);
+                getComponentForKeyEvent()?.setExpanded(true);
                 break;
         }
-    }
-
-    private handleKeySpace(e: KeyboardEvent): void {
-        this.getComponentForKeyEvent(e)?.toggleSelected();
     }
 
     private handleKeyEnter(e: KeyboardEvent): void {
@@ -249,48 +264,12 @@ export class SetFilter<V = string>
         e.preventDefault();
 
         // in Excel Mode, hitting Enter is the same as pressing the Apply button
-        this.onBtApply(false, false, e);
+        this.params.onAction('apply', e);
 
         if (this.params.excelMode === 'mac') {
             // in Mac version, select all the input text
             this.eMiniFilter.getInputElement().select();
         }
-    }
-
-    private handleKeyLeft(e: KeyboardEvent): void {
-        this.getComponentForKeyEvent(e)?.setExpanded(false);
-    }
-
-    private handleKeyRight(e: KeyboardEvent): void {
-        this.getComponentForKeyEvent(e)?.setExpanded(true);
-    }
-
-    private getComponentForKeyEvent(e: KeyboardEvent): SetFilterListItem<V> | undefined {
-        if (!this.eSetFilterList.contains(_getActiveDomElement(this.beans))) {
-            return;
-        }
-
-        const currentItem = this.virtualList.getLastFocusedRow();
-        if (currentItem == null) {
-            return;
-        }
-
-        const component = this.virtualList.getComponentAt(currentItem) as SetFilterListItem<V>;
-        if (component == null) {
-            return;
-        }
-
-        e.preventDefault();
-
-        const { readOnly } = this.params;
-        if (readOnly) {
-            return;
-        }
-        return component;
-    }
-
-    protected getCssIdentifier(): string {
-        return 'set-filter';
     }
 
     private setModelAndRefresh(values: SetFilterModelValue | null): AgPromise<void> {
@@ -302,10 +281,8 @@ export class SetFilter<V = string>
         });
     }
 
-    protected setModelIntoUi(model: SetFilterModel | null, isInitialLoad?: boolean): AgPromise<void> {
-        if (!isInitialLoad) {
-            this.setMiniFilter(null);
-        }
+    protected setModelIntoUi(model: SetFilterModel | null): AgPromise<void> {
+        this.setMiniFilter(this.params.state.state?.miniFilterValue ?? null);
 
         const values = model == null ? null : model.values;
         return this.setModelAndRefresh(values);
@@ -321,13 +298,8 @@ export class SetFilter<V = string>
         return { values, filterType: this.filterType };
     }
 
-    protected areModelsEqual(a: SetFilterModel, b: SetFilterModel): boolean {
-        // both are missing
-        if (a == null && b == null) {
-            return true;
-        }
-
-        return a != null && b != null && _areEqual(a.values, b.values);
+    protected areNonNullModelsEqual(a: SetFilterModel, b: SetFilterModel): boolean {
+        return _areEqual(a.values, b.values);
     }
 
     private setIsLoading(isLoading: boolean): void {
@@ -368,9 +340,7 @@ export class SetFilter<V = string>
             eSetFilterList.classList.add('ag-set-filter-tree-list');
         }
 
-        if (eSetFilterList) {
-            eSetFilterList.appendChild(virtualList.getGui());
-        }
+        eSetFilterList.appendChild(virtualList.getGui());
 
         const { cellHeight } = this.params;
 
@@ -639,32 +609,21 @@ export class SetFilter<V = string>
     public override afterGuiDetached(): void {
         super.afterGuiDetached();
 
+        const { excelMode, model, onStateChange } = this.params;
         // discard any unapplied UI state (reset to model)
-        if (this.params.excelMode) {
+        if (excelMode) {
             this.resetMiniFilter();
         }
-        if (this.params.excelMode || this.hasUnappliedModel) {
-            this.resetUiToActiveModel(this.params.model);
+        if (excelMode || model !== this.state.model) {
+            onStateChange({
+                model,
+                state: this.getState(),
+            });
             this.showOrHideResults();
         }
     }
 
-    protected override doApplyModel(source: 'api' | 'ui' | 'rowDataUpdated' = 'api'): {
-        changed: boolean;
-        model: SetFilterModel | null;
-    } {
-        if (this.params.excelMode && source !== 'rowDataUpdated' && this.isEverythingVisibleSelected()) {
-            // In Excel, if the filter is applied with all visible values selected, then any active filter on the
-            // column is removed. This ensures the filter is removed in this situation.
-            this.selectAllMatchingMiniFilter();
-        }
-
-        const result = super.doApplyModel(source);
-        this.hasUnappliedModel = false;
-        return result;
-    }
-
-    protected override canApply(model: SetFilterModel): boolean {
+    protected override canApply(model: SetFilterModel | null): boolean {
         return this.params.excelMode ? model == null || model.values.length > 0 : true;
     }
 
@@ -721,9 +680,7 @@ export class SetFilter<V = string>
             this.selectAllMatchingMiniFilter(true);
         }
         this.checkAndRefreshVirtualList();
-        if (updateSelections) {
-            this.onUiChanged(false, apply);
-        }
+        this.onUiChanged(updateSelections ? apply : 'prevent');
 
         this.showOrHideResults();
     }
@@ -738,28 +695,6 @@ export class SetFilter<V = string>
     private resetMiniFilter(): void {
         this.eMiniFilter.setValue(null, true);
         this.doSetMiniFilter(null);
-    }
-
-    protected override resetUiToActiveModel(
-        currentModel: SetFilterModel | null,
-        afterUiUpdatedFunc?: () => void,
-        fromEvaluator?: boolean
-    ): void {
-        // if from the evaluator, we don't want to reset unapplied state
-        const model = fromEvaluator && this.applyActive ? this.getModelFromUi() : currentModel;
-        // override the default behaviour as we don't always want to clear the mini filter
-        this.setModelAndRefresh(model == null ? null : model.values).then(() => {
-            if (this.isAlive()) {
-                this.onUiChanged(false, 'prevent');
-
-                afterUiUpdatedFunc?.();
-            }
-        });
-    }
-
-    protected override handleCancelEnd(e: Event): void {
-        this.setMiniFilter(null);
-        super.handleCancelEnd(e);
     }
 
     private onMiniFilterKeyDown(e: KeyboardEvent): void {
@@ -888,6 +823,12 @@ export class SetFilter<V = string>
     }
 
     protected override getUiChangeEventParams(): any {
+        return {
+            miniFilterValue: this.miniFilterText,
+        };
+    }
+
+    protected override getState(): any {
         return {
             miniFilterValue: this.miniFilterText,
         };
@@ -1070,13 +1011,9 @@ export class SetFilter<V = string>
     }
 
     private hasSelections(): boolean {
-        if (this.hasUnappliedModel) {
-            return this.params.defaultToNothingSelected
-                ? this.selectedKeys.size > 0
-                : this.evaluator.valueModel.allValues.size !== this.selectedKeys.size;
-        } else {
-            return this.params.model != null;
-        }
+        return this.params.defaultToNothingSelected
+            ? this.selectedKeys.size > 0
+            : this.evaluator.valueModel.allValues.size !== this.selectedKeys.size;
     }
 
     private isInWindowsExcelMode(): boolean {
@@ -1095,7 +1032,6 @@ export class SetFilter<V = string>
     }
 
     private selectAllMatchingMiniFilter(clearExistingSelection = false): void {
-        this.hasUnappliedModel = true;
         if (this.miniFilterText == null) {
             // ensure everything is selected
             this.selectedKeys = new Set(this.evaluator.valueModel.allValues.keys());
@@ -1110,7 +1046,6 @@ export class SetFilter<V = string>
     }
 
     private deselectAllMatchingMiniFilter(): void {
-        this.hasUnappliedModel = true;
         if (this.miniFilterText == null) {
             // ensure everything is deselected
             this.selectedKeys.clear();
@@ -1121,7 +1056,6 @@ export class SetFilter<V = string>
     }
 
     private setKeySelected(key: string | null, selected: boolean): void {
-        this.hasUnappliedModel = true;
         if (selected) {
             this.selectedKeys.add(key);
         } else {

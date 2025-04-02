@@ -76,7 +76,7 @@ export abstract class SimpleFilter<
         filterNameKey: keyof typeof FILTER_LOCALE_TEXT,
         private readonly helper: SimpleFilterHelper<M, V>
     ) {
-        super(filterNameKey);
+        super(filterNameKey, 'simple-filter');
     }
 
     protected abstract createValueElement(): HTMLElement;
@@ -110,12 +110,12 @@ export abstract class SimpleFilter<
         this.createMissingConditionsAndOperators();
     }
 
-    protected override updateParams(newParams: P, oldParams: P): AgPromise<void> {
+    protected override updateParams(newParams: P, oldParams: P): void {
         this.optionsFactory.refresh(newParams, this.helper.defaultOptions);
 
-        return super.updateParams(newParams, oldParams).then(() => {
-            this.commonUpdateSimpleParams(newParams);
-        });
+        super.updateParams(newParams, oldParams);
+
+        this.commonUpdateSimpleParams(newParams);
     }
 
     protected commonUpdateSimpleParams(params: P): void {
@@ -140,7 +140,7 @@ export abstract class SimpleFilter<
     public onFloatingFilterChanged(type: string | null | undefined, value: V | null): void {
         this.setTypeFromFloatingFilter(type);
         this.setValueFromFloatingFilter(value);
-        this.onUiChanged(true);
+        this.onUiChanged('immediately', true);
     }
 
     private setTypeFromFloatingFilter(type?: string | null): void {
@@ -185,17 +185,10 @@ export abstract class SimpleFilter<
               : 'AND';
     }
 
-    protected areModelsEqual(a: M | ICombinedSimpleModel<M>, b: M | ICombinedSimpleModel<M>): boolean {
-        // both are missing
-        if (!a && !b) {
-            return true;
-        }
-
-        // one is missing, other present
-        if ((!a && b) || (a && !b)) {
-            return false;
-        }
-
+    protected areNonNullModelsEqual(
+        a: M | ICombinedSimpleModel<M> | null,
+        b: M | ICombinedSimpleModel<M> | null
+    ): boolean {
         // one is combined, the other is not
         const aIsSimple = !(a as any).operator;
         const bIsSimple = !(b as any).operator;
@@ -231,7 +224,8 @@ export abstract class SimpleFilter<
         isInitialLoad?: boolean
     ): AgPromise<void> {
         if (model == null) {
-            return this.resetUiToDefaults(isInitialLoad);
+            this.resetUiToDefaults(isInitialLoad);
+            return AgPromise.resolve();
         }
         const isCombined = (model as any).operator;
 
@@ -278,8 +272,9 @@ export abstract class SimpleFilter<
 
         this.createMissingConditionsAndOperators();
 
+        this.updateUiVisibility();
         if (!isInitialLoad) {
-            this.onUiChanged();
+            this.params.onUiChange(this.getUiChangeEventParams());
         }
 
         return AgPromise.resolve();
@@ -397,10 +392,6 @@ export abstract class SimpleFilter<
     protected getAgComponents(): ComponentSelector[] {
         // created dynamically
         return [];
-    }
-
-    protected getCssIdentifier() {
-        return 'simple-filter';
     }
 
     protected updateUiVisibility(): void {
@@ -533,10 +524,10 @@ export abstract class SimpleFilter<
     public override afterGuiDetached(): void {
         super.afterGuiDetached();
 
-        const appliedModel = this.getModel();
-
         // Reset temporary UI state that was applied to the DOM but not committed to the model
-        this.resetUiToActiveModel(appliedModel);
+        this.params.onStateChange({
+            model: this.params.model,
+        });
 
         // remove incomplete positions
         let lastUiCompletePosition = -1;
@@ -744,7 +735,7 @@ export abstract class SimpleFilter<
         }
     }
 
-    private resetUiToDefaults(silent?: boolean): AgPromise<void> {
+    private resetUiToDefaults(silent?: boolean): void {
         this.removeConditionsAndOperators(this.isReadOnly() ? 1 : this.numAlwaysVisibleConditions);
 
         this.eTypes.forEach((eType) => this.resetType(eType));
@@ -765,11 +756,10 @@ export abstract class SimpleFilter<
 
         this.lastUiCompletePosition = null;
 
+        this.updateUiVisibility();
         if (!silent) {
-            this.onUiChanged();
+            this.params.onUiChange(this.getUiChangeEventParams());
         }
-
-        return AgPromise.resolve();
     }
 
     private resetType(eType: AgSelect): void {
@@ -867,5 +857,9 @@ export abstract class SimpleFilter<
 
     protected hasInvalidInputs(): boolean {
         return false;
+    }
+
+    private isReadOnly(): boolean {
+        return !!this.params.readOnly;
     }
 }
