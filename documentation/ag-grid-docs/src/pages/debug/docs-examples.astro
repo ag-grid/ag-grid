@@ -5,9 +5,15 @@ import { getDocsExamplePages } from '@components/docs/utils/pageData';
 import { ENABLE_GENERATE_DEBUG_PAGES } from '@constants';
 import type { InternalFramework } from '@ag-grid-types';
 import { DocsExamples } from '@ag-website-shared/components/docs-examples/components/DocsExamples';
+import { getGeneratedContents } from '@components/example-generator';
 
 type DocExamplePages = Awaited<ReturnType<typeof getDocsExamplePages>>;
-type DocExamplePage = DocExamplePages[number]['params'];
+type DocExamplePage = DocExamplePages[number]['params'] & {
+    isEnterprise: boolean;
+    isIntegratedCharts?: boolean;
+    isLocale?: boolean;
+    hasExampleConsoleLog?: boolean;
+};
 type DocFrameworkExamples = Record<InternalFramework, DocExamplePage>;
 
 const pages = await getCollection('docs');
@@ -18,18 +24,30 @@ if (ENABLE_GENERATE_DEBUG_PAGES) {
     });
 }
 
-const exampleCollection = examples.reduce(
-    (acc, example) => {
-        const { internalFramework, pageName, exampleName } = example.params;
-        const key = `${pageName}-${exampleName}`;
-        if (!acc[key]) {
-            acc[key] = {} as DocFrameworkExamples;
-        }
-        acc[key][internalFramework] = example.params;
-        return acc;
-    },
-    {} as Record<string, DocFrameworkExamples>
-);
+const exampleCollection: Record<string, DocFrameworkExamples> = {};
+const examplePromises = examples.map(async (example) => {
+    const { internalFramework, pageName, exampleName } = example.params;
+    const key = `${pageName}-${exampleName}`;
+    if (!exampleCollection[key]) {
+        exampleCollection[key] = {} as DocFrameworkExamples;
+    }
+    const generatedExampleParams = {
+        type: 'docs',
+        framework: internalFramework,
+        pageName,
+        exampleName,
+    };
+    const contents = await getGeneratedContents(generatedExampleParams);
+
+    exampleCollection[key][internalFramework] = {
+        isEnterprise: contents?.isEnterprise,
+        isIntegratedCharts: contents?.isIntegratedCharts,
+        isLocale: contents?.isLocale,
+        hasExampleConsoleLog: contents?.hasExampleConsoleLog,
+        ...example.params,
+    };
+});
+await Promise.all(examplePromises);
 ---
 
 <DebugLayout title={`Debug: Docs Example Pages`}>

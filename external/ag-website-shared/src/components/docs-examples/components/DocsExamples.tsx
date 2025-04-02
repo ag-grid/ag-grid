@@ -16,6 +16,22 @@ function getFirstAvailableExample(frameworkExamples: any) {
     return Object.values(frameworkExamples).find((example: any) => example);
 }
 
+const EnterpriseIcon = () => (
+    <span title="Enterprise">
+        <Icon name="enterprise" svgClasses={styles.icon} title="enterprise" />
+    </span>
+);
+const ChartsIcon = () => (
+    <span title="Integrated Charts">
+        <Icon name="chartsColumn" svgClasses={styles.icon} />
+    </span>
+);
+const ConsoleLogIcon = () => (
+    <span title="Has console.log">
+        <Icon name="terminal" svgClasses={styles.icon} />
+    </span>
+);
+
 export const DocsExamples: FunctionComponent<Props> = ({ exampleCollection }) => {
     return (
         <table>
@@ -23,6 +39,7 @@ export const DocsExamples: FunctionComponent<Props> = ({ exampleCollection }) =>
                 <th>No.</th>
                 <th>Page</th>
                 <th>Example</th>
+                <th>Properties</th>
                 {ALL_INTERNAL_FRAMEWORKS.map((internalFramework) => {
                     return (
                         <th>
@@ -34,12 +51,21 @@ export const DocsExamples: FunctionComponent<Props> = ({ exampleCollection }) =>
             <tbody>
                 {Object.values(exampleCollection).map((frameworkExamples, index) => {
                     // Since examples are written in typescript, that will be the default (as opposed to javascript)
-                    const { pageName, exampleName } = getFirstAvailableExample(frameworkExamples) || {};
+                    const { pageName, exampleName, isEnterprise, isIntegratedCharts, isLocale, hasExampleConsoleLog } =
+                        getFirstAvailableExample(frameworkExamples) || {};
                     return (
                         <tr className={styles.exampleRow}>
                             <td>{index + 1}</td>
                             <td>{pageName}</td>
                             <td>{exampleName}</td>
+                            <td>
+                                <span className={styles.propertiesCell}>
+                                    {isEnterprise ? <EnterpriseIcon /> : null}
+                                    {isIntegratedCharts ? <ChartsIcon /> : null}
+                                    {isLocale ? <span title="Has locale">L</span> : null}
+                                    {hasExampleConsoleLog ? <ConsoleLogIcon /> : null}
+                                </span>
+                            </td>
                             {ALL_INTERNAL_FRAMEWORKS.map((internalFramework) => {
                                 const titlePrefix = `${pageName} > ${exampleName} > ${internalFramework}`;
 
