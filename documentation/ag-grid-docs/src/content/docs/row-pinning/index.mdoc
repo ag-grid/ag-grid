@@ -98,6 +98,14 @@ Update the pinned rows using `api.setGridOption('pinnedTopRowData', rows)` and `
 
 {% apiDocumentation source="grid-options/properties.json" section="rowPinning" names=["pinnedTopRowData", "pinnedBottomRowData"] /%}
 
+### Unsupported Features
+When providing pinned row data directly via `pinnedTopRowData` and `pinnedBottomRowData`, the following are not possible:
+
+* **Sorting**: Pinned rows cannot be sorted.
+* **Filtering**: Pinned rows are not filtered.
+* **Row Grouping**: Pinned rows cannot be grouped.
+* **Row Selection**: Pinned rows cannot be selected.
+
 ## API Reference
 
 {% apiDocumentation source="grid-options/properties.json" section="rowPinning" names=["enableRowPinning", "isRowPinnable", "isRowPinned"] /%}
