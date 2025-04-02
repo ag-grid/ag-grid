@@ -30,7 +30,13 @@ const gridOptions: GridOptions<IOlympicData> = {
     rowData: null,
     enableRowPinning: true,
     onFirstDataRendered: () => {
-        update();
+        const value = getGrandTotalRow();
+        if (value === 'isRowPinned') {
+            setGrandTotalRow(gridApi, 'bottom');
+            setIsRowPinned(gridApi, 'top');
+        } else {
+            setGrandTotalRow(gridApi, value);
+        }
     },
 };
 
