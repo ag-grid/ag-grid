@@ -80,7 +80,7 @@ export abstract class ProvidedFilter<
             cls: `ag-filter-body-wrapper ag-${this.cssIdentifier}-body-wrapper`,
             children: [this.createBodyTemplate()],
         };
-        this.setTemplate(element);
+        this.setTemplate(element, this.getAgComponents());
         this.createManagedBean(
             new ManagedFocusFeature(this.getFocusableElement(), {
                 handleKeyDown: this.handleKeyDown.bind(this),
@@ -94,9 +94,7 @@ export abstract class ProvidedFilter<
         this.createBean(this.positionableFeature);
     }
 
-    // override
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    protected handleKeyDown(e: KeyboardEvent): void {}
+    protected handleKeyDown(_e: KeyboardEvent): void {}
 
     public abstract getModelFromUi(): M | null;
 
@@ -131,6 +129,7 @@ export abstract class ProvidedFilter<
     /** Called on init only. Override in subclasses */
     protected setParams(params: P): void {
         this.params = params;
+        this.state = params.state;
         this.commonUpdateParams(params);
     }
 
@@ -200,7 +199,7 @@ export abstract class ProvidedFilter<
     private doApplyModel(fromFilterUi: boolean, additionalEventAttributes?: any): boolean {
         const changed = !this.areModelsEqual(this.params.model, this.state.model);
         if (changed) {
-            if (fromFilterUi) {
+            if (fromFilterUi && this.applyActive) {
                 // filter is open, so can perform as if the apply button was clicked
                 this.params.onAction('apply', additionalEventAttributes);
             } else {
