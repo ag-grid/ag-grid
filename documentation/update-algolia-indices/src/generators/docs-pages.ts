@@ -6,7 +6,6 @@ import {
     API_FILE_PATH,
     DIST_DIR,
     DOC_SOURCE_DIR,
-    HEADING_EXCLUDE_TAGS,
     MENU_FILE_PATH,
     MIGRATION_DOC_BREADCRUMB_PREFIX,
     MIGRATION_DOC_PREFIX,
@@ -35,7 +34,10 @@ export const getAllDocPages = (): FlattenedMenuItem[] => {
 function getHeadingContent(heading: Element) {
     const cleanHeading = heading.cloneNode(true);
     for (const child of cleanHeading.children) {
-        if (HEADING_EXCLUDE_TAGS.includes(child.nodeName.toLowerCase())) {
+        if (
+            // Exclude `Copy` link in headings
+            child.textContent.trim() === 'Copy'
+        ) {
             cleanHeading.removeChild(child);
         }
     }
