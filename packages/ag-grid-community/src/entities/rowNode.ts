@@ -333,6 +333,15 @@ export class RowNode<TData = any>
         }
 
         eventSvc.dispatchEvent({ type: 'rowNodeDataChanged', node: this });
+
+        const pinnedSibling = this.pinnedSibling;
+        if (pinnedSibling) {
+            pinnedSibling.data = data;
+            pinnedSibling.__localEventService?.dispatchEvent(
+                pinnedSibling.createDataChangedEvent(data, oldData, update)
+            );
+            eventSvc.dispatchEvent({ type: 'rowNodeDataChanged', node: pinnedSibling });
+        }
     }
 
     // when we are doing master / detail, the detail node is lazy created, but then kept around.
