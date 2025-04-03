@@ -68,3 +68,42 @@
 .type-regex {
     color: var(--color-code-property);
 }
+
+:global {
+    .react-json-view {
+        font-size: 12px !important;
+
+        .variable-value {
+            text-transform: lowercase;
+
+            span:not(.string-value) {
+                text-transform: lowercase;
+            }
+
+            .string-value {
+                text-transform: none;
+            }
+
+            div {
+                font-size: 12px !important;
+                font-weight: 500 !important;
+            }
+        }
+
+        span {
+            font-weight: 500 !important;
+        }
+
+        .brace-row {
+            span {
+                font-weight: 500 !important;
+            }
+        }
+
+        .collapsed-icon {
+            svg {
+                fill: rgb(88, 110, 117);
+            }
+        }
+    }
+}
