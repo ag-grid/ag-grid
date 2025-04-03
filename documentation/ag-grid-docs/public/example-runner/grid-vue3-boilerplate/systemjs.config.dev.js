@@ -1,4 +1,5 @@
 (function (global) {
+    process = { env: { NODE_ENV: 'development' } };
     var sjsPaths = {};
     if (typeof systemJsPaths !== 'undefined') {
         sjsPaths = systemJsPaths;

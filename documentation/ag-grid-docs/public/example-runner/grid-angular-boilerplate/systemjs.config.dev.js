@@ -1,4 +1,5 @@
 (function (global) {
+    process = { env: { NODE_ENV: 'development' } };
     var ANGULAR_VERSION = '19.1.7';
     window.ENABLE_PROD_MODE = false;
 

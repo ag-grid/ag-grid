@@ -1,4 +1,5 @@
 (function (global) {
+    process = { env: { NODE_ENV: 'development' } };
     System.config({
         // DEMO ONLY! REAL CODE SHOULD NOT TRANSPILE IN THE BROWSER
         transpiler: 'ts',
