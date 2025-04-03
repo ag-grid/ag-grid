@@ -36,7 +36,7 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
     private colToolPanelFactory?: ColumnToolPanelFactory;
 
     constructor() {
-        super(/* html */ `<div class="ag-column-panel"></div>`);
+        super({ tag: 'div', cls: 'ag-column-panel' });
         this.registerCSS(columnToolPanelCSS);
     }
 

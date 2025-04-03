@@ -1,3 +1,4 @@
+import type { ElementParams } from 'ag-grid-community';
 import {
     Component,
     KeyCode,
@@ -7,6 +8,7 @@ import {
     _getActiveDomElement,
     _getDocument,
     _setAriaPosInSet,
+    _setAriaRole,
     _setAriaSetSize,
 } from 'ag-grid-community';
 
@@ -21,14 +23,16 @@ export interface PillRendererParams<TValue> {
     setValue: (value: TValue[] | null) => void;
 }
 
+const AgPillContainerElement: ElementParams = {
+    tag: 'div',
+    cls: 'ag-pill-container',
+};
 export class AgPillContainer<TValue> extends Component {
     private params: PillRendererParams<TValue>;
     private pills: AgPill[] = [];
 
     constructor() {
-        super(/* html */ `
-            <div class="ag-pill-container" role="listbox"></div>
-            `);
+        super(AgPillContainerElement);
     }
 
     public init(params: PillRendererParams<TValue>) {
@@ -52,6 +56,8 @@ export class AgPillContainer<TValue> extends Component {
 
         const valueFormatter = params.valueFormatter ?? ((v: TValue) => String(v));
         const len = values.length;
+
+        _setAriaRole(this.getGui(), len === 0 ? 'presentation' : 'listbox');
 
         for (let i = 0; i < len; i++) {
             const value = values[i];

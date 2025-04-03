@@ -7,7 +7,7 @@ import type { LocaleTextFunc } from '../misc/locale/localeUtils';
  * @param {number} value
  * @returns {string}
  */
-export function _formatNumberCommas(value: number, getLocaleTextFunc: () => LocaleTextFunc): string {
+export function _formatNumberCommas(value: number | null, getLocaleTextFunc: () => LocaleTextFunc): string {
     if (typeof value !== 'number') {
         return '';
     }

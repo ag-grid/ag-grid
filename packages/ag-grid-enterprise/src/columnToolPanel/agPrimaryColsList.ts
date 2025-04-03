@@ -6,27 +6,23 @@ import type {
     ColGroupDef,
     ColumnEventType,
     ColumnModel,
+    ColumnPanelItemDragStartEvent,
     ColumnToolPanelState,
     ComponentSelector,
 } from 'ag-grid-community';
-import {
-    Component,
-    _exists,
-    _last,
-    _setAriaLabel,
-    _setAriaLevel,
-    _warn,
-    isProvidedColumnGroup,
-} from 'ag-grid-community';
+import { Component, _exists, _setAriaLabel, _setAriaLevel, _warn, isProvidedColumnGroup } from 'ag-grid-community';
+import { DragSourceType } from 'ag-grid-community';
 
+import type { VirtualListDragItem } from '../features/iVirtualListDragFeature';
+import { VirtualListDragFeature } from '../features/virtualListDragFeature';
 import { syncLayoutWithGrid, toolPanelCreateColumnTree } from '../sideBar/common/toolPanelColDefService';
 import type { VirtualListModel } from '../widgets/iVirtualList';
 import { VirtualList } from '../widgets/virtualList';
 import { ExpandState } from './agPrimaryColsHeader';
 import { ColumnModelItem } from './columnModelItem';
+import { getCurrentColumnsBeingMoved, getCurrentDragValue, isMoveBlocked, moveItem } from './columnMoveUtils';
 import type { ToolPanelColumnCompParams } from './columnToolPanel';
 import { selectAllChildren } from './modelItemUtils';
-import { PrimaryColsListPanelItemDragFeature } from './primaryColsListPanelItemDragFeature';
 import { ToolPanelColumnComp } from './toolPanelColumnComp';
 import { ToolPanelColumnGroupComp } from './toolPanelColumnGroupComp';
 
@@ -70,7 +66,7 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
     private skipRefocus: boolean = false;
 
     constructor() {
-        super(/* html */ `<div class="${PRIMARY_COLS_LIST_PANEL_CLASS}" role="presentation"></div>`);
+        super({ tag: 'div', cls: PRIMARY_COLS_LIST_PANEL_CLASS, role: 'presentation' });
     }
 
     public override destroy(): void {
@@ -86,10 +82,11 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
 
     public init(params: ToolPanelColumnCompParams, allowDragging: boolean, eventType: ColumnEventType): void {
         this.params = params;
+        const { suppressSyncLayoutWithGrid, contractColumnSelection, suppressColumnMove } = params;
         this.allowDragging = allowDragging;
         this.eventType = eventType;
 
-        if (!params.suppressSyncLayoutWithGrid) {
+        if (!suppressSyncLayoutWithGrid) {
             this.addManagedEventListeners({ columnMoved: this.onColumnsChanged.bind(this) });
         }
 
@@ -107,13 +104,21 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
             newColumnsLoaded: listener,
         });
 
-        this.expandGroupsByDefault = !params.contractColumnSelection;
+        this.expandGroupsByDefault = !contractColumnSelection;
+
+        const isPreventMove = suppressColumnMove || suppressSyncLayoutWithGrid;
 
         const virtualList = this.createManagedBean(
             new VirtualList<ToolPanelColumnGroupComp | ToolPanelColumnComp, ColumnModelItem>({
                 cssIdentifier: 'column-select',
                 ariaRole: 'tree',
-                moveItemCallback: this.moveColumns.bind(this),
+                moveItemCallback: (item, isUp) => {
+                    if (isPreventMove) {
+                        return;
+                    }
+
+                    this.moveItems(item, isUp);
+                },
             })
         );
         this.virtualList = virtualList;
@@ -129,100 +134,74 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
             this.onColumnsChanged();
         }
 
-        if (params.suppressColumnMove) {
+        if (isPreventMove) {
             return;
         }
 
-        this.createManagedBean(new PrimaryColsListPanelItemDragFeature(this, virtualList));
+        this.createItemDragFeature();
     }
 
-    private moveColumns(item: ToolPanelColumnComp | ToolPanelColumnGroupComp, isUp: boolean): void {
-        const { colModel, colMoves } = this.beans;
-        const allColumns = colModel.getCols();
-        const isGroup = item instanceof ToolPanelColumnGroupComp;
-        const movingColumns = isGroup ? item.getColumns() : [item.getColumn()];
-        const currentIndex = this.getCurrentMovingIndex(allColumns, movingColumns, isUp);
+    private createItemDragFeature(): void {
+        const { gos, beans, eventSvc, virtualList } = this;
+        this.createManagedBean(
+            new VirtualListDragFeature<
+                AgPrimaryColsList,
+                ToolPanelColumnGroupComp | ToolPanelColumnComp,
+                AgColumn | AgProvidedColumnGroup,
+                ColumnPanelItemDragStartEvent
+            >(this, virtualList, {
+                dragSourceType: DragSourceType.ToolPanel,
+                listItemDragStartEvent: 'columnPanelItemDragStart',
+                listItemDragEndEvent: 'columnPanelItemDragEnd',
+                eventSource: eventSvc,
+                getCurrentDragValue: (listItemDragStartEvent: ColumnPanelItemDragStartEvent) =>
+                    getCurrentDragValue(listItemDragStartEvent),
+                isMoveBlocked: (currentDragValue: AgColumn | AgProvidedColumnGroup | null) =>
+                    isMoveBlocked(gos, beans, getCurrentColumnsBeingMoved(currentDragValue)),
+                getNumRows: (comp: AgPrimaryColsList) => comp.getDisplayedColsList().length,
+                moveItem: (
+                    currentDragValue: AgColumn | AgProvidedColumnGroup | null,
+                    lastHoveredListItem: VirtualListDragItem<ToolPanelColumnGroupComp | ToolPanelColumnComp> | null
+                ) => moveItem(beans, getCurrentColumnsBeingMoved(currentDragValue), lastHoveredListItem),
+            })
+        );
+    }
 
-        if (!colMoves || currentIndex === -1) {
+    private moveItems(item: ToolPanelColumnComp | ToolPanelColumnGroupComp, isUp: boolean): void {
+        const { gos, beans } = this;
+        const { modelItem } = item;
+        const { group, columnGroup, column, expanded } = modelItem;
+        const currentColumns = getCurrentColumnsBeingMoved(group ? columnGroup : column);
+
+        if (isMoveBlocked(gos, beans, currentColumns)) {
             return;
         }
 
-        const targetIndex = this.findValidTargetIndex(allColumns, movingColumns, currentIndex, isUp);
+        const currentIndex = this.displayedColsList.indexOf(modelItem);
+        const diff = isUp ? -1 : 1;
+        let movePadding = 0;
 
-        if (targetIndex === -1) {
-            return;
-        }
-
-        const currentColumnOrGroup = isGroup ? item.columnGroup : item.column;
-
-        // set skipRefocus to true, to prevent the `colMoves.moveColumns` from trying to refocus
-        // while columns are being moved, as that would attempt to fixed the previously focused row index.
-        this.skipRefocus = true;
-        colMoves.moveColumns(movingColumns, targetIndex, 'uiColumnMoved', true);
-
-        const newIndex = this.displayedColsList.findIndex((listItem) => {
-            if (currentColumnOrGroup.isColumn) {
-                return listItem.column === currentColumnOrGroup;
+        if (isUp) {
+            const children = item.columnDepth > 0 && column.getParent()?.getChildren();
+            if (children && children.length && column === children[0]) {
+                movePadding = -1;
             }
+        } else if (group) {
+            movePadding = expanded ? modelItem.children.length : 0;
+        }
 
-            return !!listItem.columnGroup && listItem.columnGroup.getGroupId() === currentColumnOrGroup.getGroupId();
+        const nextItem = Math.min(Math.max(currentIndex + movePadding + diff, 0), this.displayedColsList.length - 1);
+
+        this.skipRefocus = true;
+        moveItem(beans, currentColumns, {
+            rowIndex: nextItem,
+            position: isUp ? 'top' : 'bottom',
+            component: this.virtualList.getComponentAt(nextItem) as ToolPanelColumnComp | ToolPanelColumnGroupComp,
         });
 
-        this.focusRowIfAlive(newIndex).then(() => {
+        this.focusRowIfAlive(nextItem - movePadding).then(() => {
             this.skipRefocus = false;
         });
-    }
-
-    private getCurrentMovingIndex(allColumns: AgColumn[], movingColumns: AgColumn[], isUp: boolean): number {
-        const columnToUse = isUp ? movingColumns[0] : _last(movingColumns);
-        if (!columnToUse) {
-            return -1;
-        }
-
-        const currentIndex = allColumns.indexOf(columnToUse);
-
-        if ((isUp && currentIndex === 0) || (!isUp && currentIndex === allColumns.length - 1)) {
-            return -1;
-        }
-
-        const isSuppressMovableColumns = this.gos.get('suppressMovableColumns');
-
-        if (
-            isSuppressMovableColumns ||
-            movingColumns.some(({ colDef }) => colDef.suppressMovable || colDef.lockPosition)
-        ) {
-            return -1;
-        }
-
-        return currentIndex;
-    }
-
-    private findValidTargetIndex(
-        allColumns: AgColumn[],
-        movingColumns: AgColumn[],
-        currentIndex: number,
-        isUp: boolean
-    ): number {
-        const { colMoves } = this.beans;
-        const diff = isUp ? -1 : 1;
-        let targetIndex = currentIndex + diff;
-        let foundValidOrder = false;
-
-        while (targetIndex >= 0 && targetIndex < allColumns.length) {
-            const proposedColumnOrder = colMoves!.getProposedColumnOrder(movingColumns, targetIndex);
-            foundValidOrder = colMoves!.doesOrderPassRules(proposedColumnOrder);
-
-            if (foundValidOrder) {
-                break;
-            }
-            targetIndex += diff;
-        }
-
-        if (!foundValidOrder) {
-            return -1;
-        }
-
-        return targetIndex;
     }
 
     private createComponentFromItem(

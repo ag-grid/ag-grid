@@ -18,6 +18,7 @@ import { PopupEditorWrapper } from './cellEditors/popupEditorWrapper';
 export class EditService extends BeanStub implements NamedBean {
     beanName = 'editSvc' as const;
 
+    /** @return whether to prevent default on event */
     public startEditing(
         cellCtrl: CellCtrl,
         key: string | null = null,
@@ -25,7 +26,7 @@ export class EditService extends BeanStub implements NamedBean {
         event: KeyboardEvent | MouseEvent | null = null
     ): boolean {
         if (!cellCtrl.isCellEditable() || cellCtrl.editing) {
-            return true;
+            return false;
         }
 
         // because of async in React, the cellComp may not be set yet, if no cellComp then we are
@@ -130,15 +131,6 @@ export class EditService extends BeanStub implements NamedBean {
             // focus the cell instead
             cellCtrl.focusCell(true);
             cellCtrl.onEditorAttachedFuncs.push(() => cellComp.getCellEditor()?.focusIn?.());
-        }
-    }
-
-    public stopEditingAndFocus(cellCtrl: CellCtrl, suppressNavigateAfterEdit = false, shiftKey: boolean = false): void {
-        this.stopRowOrCellEdit(cellCtrl);
-        cellCtrl.focusCell(true);
-
-        if (!suppressNavigateAfterEdit) {
-            this.navigateAfterEdit(shiftKey, cellCtrl.cellPosition);
         }
     }
 
@@ -247,6 +239,7 @@ export class EditService extends BeanStub implements NamedBean {
     }
 
     // called by rowRenderer when user navigates via tab key
+    /** @return whether to prevent default on event */
     public startRowOrCellEdit(
         cellCtrl: CellCtrl,
         key?: string | null,
@@ -262,18 +255,27 @@ export class EditService extends BeanStub implements NamedBean {
         }
 
         if (this.gos.get('editType') === 'fullRow') {
-            return this.beans.rowEditSvc?.startEditing(cellCtrl.rowCtrl, key, cellCtrl) ?? true;
+            return this.beans.rowEditSvc?.startEditing(cellCtrl.rowCtrl, key, cellCtrl) ?? false;
         } else {
             return this.startEditing(cellCtrl, key, true, event);
         }
     }
 
     // pass in 'true' to cancel the editing.
-    public stopRowOrCellEdit(cellCtrl: CellCtrl, cancel: boolean = false) {
+    public stopRowOrCellEdit(
+        cellCtrl: CellCtrl,
+        cancel: boolean = false,
+        suppressNavigateAfterEdit: boolean = false,
+        shiftKey: boolean = false
+    ): void {
         if (this.gos.get('editType') === 'fullRow') {
             this.stopRowEditing(cellCtrl.rowCtrl, cancel);
         } else {
             this.stopEditing(cellCtrl, cancel);
+        }
+
+        if (!suppressNavigateAfterEdit) {
+            this.navigateAfterEdit(shiftKey, cellCtrl.cellPosition);
         }
     }
 
@@ -298,7 +300,7 @@ export class EditService extends BeanStub implements NamedBean {
             data: rowNode.data,
             cellStartedEdit: cellStartedEdit,
             onKeyDown: cellCtrl.onKeyDown.bind(cellCtrl),
-            stopEditing: cellCtrl.stopEditingAndFocus.bind(cellCtrl),
+            stopEditing: this.stopRowOrCellEdit.bind(this, cellCtrl, false),
             eGridCell: cellCtrl.eGui,
             parseValue: (newValue: any) => valueSvc.parseValue(column, rowNode, newValue, cellCtrl.value),
             formatValue: cellCtrl.formatValue.bind(cellCtrl),

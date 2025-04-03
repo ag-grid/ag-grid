@@ -84,7 +84,7 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
         const value =
             (!hideOpenParents || node.footer) && this.shouldRenderGroupSummaryCell(node, column, index)
                 ? this.createValueForGroupNode(column, node)
-                : this.valueSvc.getValue(column, node);
+                : this.valueSvc.getValueForDisplay(column, node);
 
         const processedValue = this.processCell({
             accumulatedRowIndex,

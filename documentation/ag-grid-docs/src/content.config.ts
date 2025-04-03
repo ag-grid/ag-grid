@@ -181,7 +181,7 @@ const versions = defineCollection({
     schema: z.array(
         z.object({
             version: z.string(),
-            date: z.string(),
+            date: z.string().optional(),
             landingPageHighlight: z.string().optional(),
             highlights: z
                 .array(

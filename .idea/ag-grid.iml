@@ -2,6 +2,8 @@
 <module type="JAVA_MODULE" version="4">
   <component name="NewModuleRootManager">
     <content url="file://$MODULE_DIR$">
+      <sourceFolder url="file://$MODULE_DIR$/packages/ag-grid-community/styles" isTestSource="false" generated="true" />
+      <sourceFolder url="file://$MODULE_DIR$/packages/ag-grid-enterprise/styles" isTestSource="false" generated="true" />
       <excludeFolder url="file://$MODULE_DIR$/.idea" />
       <excludeFolder url="file://$MODULE_DIR$/charts-community-modules/core/dist" />
       <excludeFolder url="file://$MODULE_DIR$/charts-community-modules/core/node_modules.nosync" />
@@ -158,7 +160,6 @@
       <excludeFolder url="file://$MODULE_DIR$/packages/ag-grid-charts-enterprise/dist" />
       <excludeFolder url="file://$MODULE_DIR$/packages/ag-grid-react/dist" />
       <excludeFolder url="file://$MODULE_DIR$/packages/ag-grid-angular/.angular" />
-      <excludeFolder url="file://$MODULE_DIR$/packages/ag-grid-community/styles" />
       <excludeFolder url="file://$MODULE_DIR$/plugins/ag-grid-generate-example-files/src/executors/generate/generator/_copiedFromCore" />
       <excludeFolder url="file://$MODULE_DIR$/packages/ag-grid-angular/dist" />
       <excludeFolder url="file://$MODULE_DIR$/packages/ag-grid-angular/.angular" />

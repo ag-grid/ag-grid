@@ -1,11 +1,92 @@
 ---
 title: "Row Pinning"
 ---
+Pinned rows appear either above or below the normal rows of a table. 
+This is sometimes also known as **Frozen Rows** or **Floating Rows**.
+Rows can be pinned via the [Context Menu](./context-menu).
 
-Pinned rows appear either above or below the normal rows of a table.
-This feature in other grids is also known as **Frozen Rows** or **Floating Rows**.
+## Enabling Row Pinning
 
-{% gridExampleRunner title="Simple Row Pinning" name="simple-pinning"  exampleHeight=580 /%}
+To enable row pinning, set `enableRowPinning` to `true`.
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    enableRowPinning: true,
+}
+```
+
+## Pinning Rows via the Context Menu
+To pin a row use right-click to bring up the [Context Menu](./context-menu) and select one of the options in the "Pin Row" submenu. In the example below, try the following:
+1. Pin a row to the top.
+2. Switch the row to being pinned to the bottom.
+3. Unpin the row.
+
+{% gridExampleRunner title="Simple Row Pinning" name="simple-pinning" /%}
+
+Note that rows that have been pinned also appear greyed-out in the main viewport.
+
+## Pinning Rows on First Render
+To have a row appear as pinned when the grid initially renders data, use the `isRowPinned` callback. As an example, the snippet below will pin all rows whose `country` field is `null` in the top container.
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    enableRowPinning: true,
+    isRowPinned: (rowNode) => {
+        return rowNode.data.country == null ? 'top' : null;
+    }
+}
+```
+
+This is illustrated in the example below.
+
+{% gridExampleRunner title="Pinning on First Render" name="pinning-on-render" /%}
+
+## Preventing Rows from being Pinnable
+To prevent a user from pinning a row via the context menu, use the `isRowPinnable` callback. As an example, the snippet below will prevent any rows being pinned where the `sport` field is `'Swimming'`.
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    enableRowPinning: true,
+    isRowPinnable: (rowNode) => {
+        return rowNode.data.sport != 'Swimming';
+    }
+}
+```
+
+This is illustrated in the example below. Note that the "Pin Rows" submenu does not appear in the context menu for rows whose `sport` field is `'Swimming'`.
+
+{% gridExampleRunner title="Prevent Rows from being Pinnable" name="prevent-pinning" /%}
+
+## Sorting and Filtering Pinned Rows
+When sorts and filters are applied to the grid, they will also be applied to pinned rows.
+
+{% gridExampleRunner title="Sorting and Filtering Pinned Rows" name="sorting-and-filtering" /%}
+
+## Selecting Pinned Rows
+Pinned rows can be selected just as normal rows can be selected. The selection state of a pinned row will mirror the selection state of the original row.
+
+{% gridExampleRunner title="Selecting Pinned Rows" name="selecting-pinned" /%}
+
+## Pinning the Grand Total Row
+The [Grand Total Rows](./aggregation-total-rows/#enabling-a-grand-total-row) can be pinned in two ways. 
+
+1. Setting the value of the `grandTotalRow` grid option to either `'pinnedTop'` or `'pinnedBottom'`.
+2. Manually pin the grand total row via the context menu when `grandTotalRow` is either `'top'` or `'bottom'`.
+3. Return `'top'` or `'bottom'` from the `isRowPinned` callback when it's called on the grand total row node.
+
+{% gridExampleRunner title="Pinning Grand Total Row" name="pinning-grand-total" exampleHeight=650 /%}
+
+Note that when `grandTotalRow` is `'pinnedTop'` or `'pinnedBottom'` and the user _unpins_ the grand total row, it will behave as if it were set to `'top'` and `'bottom'`, respectively.
+
+## Providing Pinned Row Data
+
+{% note %}
+This approach cannot be used at the same time as using `enableRowPinning`.
+{% /note %}
+
+Pinned row data may be provided directly to the grid via Grid Options. Providing pinned rows this way means they cannot be altered by end users.
+
+{% gridExampleRunner title="Pinned Row Data" name="pinned-row-data" /%}
 
 {% metaTag tags=["setPinnedBottomRowData"] /%}
 
@@ -17,18 +98,18 @@ Update the pinned rows using `api.setGridOption('pinnedTopRowData', rows)` and `
 
 {% apiDocumentation source="grid-options/properties.json" section="rowPinning" names=["pinnedTopRowData", "pinnedBottomRowData"] /%}
 
-## Cell Components
-
-Cell Components are shared between Pinned and non-Pinned rows. To have different Cell Components
-for Pinned vs non-Pinned, use a `cellRendererSelector`.
-
-{% gridExampleRunner title="Row Pinning" name="row-pinning"  exampleHeight=580 /%}
-
-## Non Supported Items
-
-Pinned rows are not part of the main row model. For this reason, the following is not possible:
+### Unsupported Features
+When providing pinned row data directly via `pinnedTopRowData` and `pinnedBottomRowData`, the following are not possible:
 
 * **Sorting**: Pinned rows cannot be sorted.
 * **Filtering**: Pinned rows are not filtered.
 * **Row Grouping**: Pinned rows cannot be grouped.
 * **Row Selection**: Pinned rows cannot be selected.
+
+## API Reference
+
+{% apiDocumentation source="grid-options/properties.json" section="rowPinning" names=["enableRowPinning", "isRowPinnable", "isRowPinned"] /%}
+
+## Next Up
+
+Continue to the next section to learn about [Row Height](./row-height)

@@ -47,7 +47,6 @@ const GridExample = () => {
     const defaultColDef: ColDef = useMemo(
         () => ({
             filter: true,
-            flex: 1,
             minWidth: 100,
         }),
         []

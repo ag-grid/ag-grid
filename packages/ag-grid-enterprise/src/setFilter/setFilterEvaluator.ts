@@ -16,6 +16,7 @@ import {
     BeanStub,
     GROUP_AUTO_COLUMN_ID,
     _addGridCommonParams,
+    _debounce,
     _error,
     _isClientSideRowModel,
     _last,
@@ -238,11 +239,12 @@ export class SetFilterEvaluator<TValue = string>
     private addEventListenersForDataChanges(): void {
         this.addManagedPropertyListeners(['groupAllowUnbalanced'], () => this.syncAfterDataChange());
 
+        const syncAfterDataChangeDebounced = _debounce(this, this.syncAfterDataChange.bind(this), 0);
         this.addManagedEventListeners({
             cellValueChanged: (event) => {
                 // only interested in changes to do with this column
                 if (event.column === this.params.column) {
-                    this.syncAfterDataChange();
+                    syncAfterDataChangeDebounced();
                 }
             },
         });

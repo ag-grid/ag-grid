@@ -14,7 +14,6 @@ interface Props {
 }
 
 const { site, versionsData } = Astro.props;
-const pageName = Astro.params.pageName as Framework;
 
 const { name, blogPrefix } = whatsNewData[site];
 
@@ -28,7 +27,7 @@ const { data: docsNavData } = (await getEntry('docsNav', 'nav')) as CollectionEn
     showSearchBar={true}
 >
     <div class:list={['contentViewport layout-grid']}>
-        <DocsNavFromLocalStorage client:load menuData={docsNavData} pageName={pageName} />
+        <DocsNavFromLocalStorage client:load menuData={docsNavData} pageName={'whats-new'} />
 
         <div class={styles.whatsNewContainer}>
             <h1>What's New in {name}</h1>

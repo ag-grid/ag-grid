@@ -2,6 +2,7 @@ import type {
     AgColumn,
     AggregationStatusPanelAggFunc,
     AggregationStatusPanelParams,
+    ElementParams,
     IStatusPanelComp,
     LocaleTextFunc,
     RowPosition,
@@ -23,8 +24,9 @@ import {
 
 import type { AgNameValue } from './agNameValue';
 import { AgNameValueSelector } from './agNameValue';
+import { _getTotalRowCount } from './utils';
 
-function _formatNumberTwoDecimalPlacesAndCommas(value: number, getLocaleTextFunc: () => LocaleTextFunc): string {
+function _formatNumberTwoDecimalPlacesAndCommas(value: number | null, getLocaleTextFunc: () => LocaleTextFunc): string {
     if (typeof value !== 'number') {
         return '';
     }
@@ -32,6 +34,32 @@ function _formatNumberTwoDecimalPlacesAndCommas(value: number, getLocaleTextFunc
     return _formatNumberCommas(Math.round(value * 100) / 100, getLocaleTextFunc);
 }
 
+const AggregationCompElement: ElementParams = {
+    tag: 'div',
+    cls: 'ag-status-panel ag-status-panel-aggregations',
+    children: [
+        {
+            tag: 'ag-name-value',
+            ref: 'avgAggregationComp',
+        },
+        {
+            tag: 'ag-name-value',
+            ref: 'countAggregationComp',
+        },
+        {
+            tag: 'ag-name-value',
+            ref: 'minAggregationComp',
+        },
+        {
+            tag: 'ag-name-value',
+            ref: 'maxAggregationComp',
+        },
+        {
+            tag: 'ag-name-value',
+            ref: 'sumAggregationComp',
+        },
+    ],
+};
 export class AggregationComp extends Component implements IStatusPanelComp {
     private readonly sumAggregationComp: AgNameValue = RefPlaceholder;
     private readonly countAggregationComp: AgNameValue = RefPlaceholder;
@@ -42,16 +70,7 @@ export class AggregationComp extends Component implements IStatusPanelComp {
     private params!: AggregationStatusPanelParams;
 
     constructor() {
-        super(
-            /* html */ `<div class="ag-status-panel ag-status-panel-aggregations">
-            <ag-name-value data-ref="avgAggregationComp"></ag-name-value>
-            <ag-name-value data-ref="countAggregationComp"></ag-name-value>
-            <ag-name-value data-ref="minAggregationComp"></ag-name-value>
-            <ag-name-value data-ref="maxAggregationComp"></ag-name-value>
-            <ag-name-value data-ref="sumAggregationComp"></ag-name-value>
-        </div>`,
-            [AgNameValueSelector]
-        );
+        super(AggregationCompElement, [AgNameValueSelector]);
     }
 
     public postConstruct(): void {
@@ -78,6 +97,21 @@ export class AggregationComp extends Component implements IStatusPanelComp {
 
     public refresh(params: AggregationStatusPanelParams): boolean {
         this.params = params;
+
+        const valueFormatter =
+            params.valueFormatter ??
+            (({ value }) => _formatNumberTwoDecimalPlacesAndCommas(value, this.getLocaleTextFunc.bind(this)));
+
+        const aggFuncNames: AggregationStatusPanelAggFunc[] = ['avg', 'count', 'min', 'max', 'sum'];
+        for (const key of aggFuncNames) {
+            const comp = this.getAllowedAggregationValueComponent(key);
+
+            if (comp) {
+                comp.key = key;
+                comp.valueFormatter = valueFormatter.bind(this);
+            }
+        }
+
         this.onCellSelectionChanged();
         return true;
     }
@@ -88,10 +122,9 @@ export class AggregationComp extends Component implements IStatusPanelComp {
         visible: boolean
     ) {
         const statusBarValueComponent = this.getAllowedAggregationValueComponent(aggFuncName);
+        const totalRow = _getTotalRowCount(this.beans.rowModel);
         if (_exists(statusBarValueComponent) && statusBarValueComponent) {
-            statusBarValueComponent.setValue(
-                _formatNumberTwoDecimalPlacesAndCommas(value!, this.getLocaleTextFunc.bind(this))
-            );
+            statusBarValueComponent.setValue(value!, totalRow);
             statusBarValueComponent.setDisplayed(visible);
         } else {
             // might have previously been visible, so hide now

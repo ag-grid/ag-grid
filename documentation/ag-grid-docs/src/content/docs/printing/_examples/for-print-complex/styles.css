@@ -1,0 +1,13 @@
+.ag-cell {
+    page-break-inside: avoid !important;
+}
+
+.ag-row-level-0 {
+    background-color: #999;
+}
+
+@media print {
+    body {
+        overflow: visible;
+    }
+}

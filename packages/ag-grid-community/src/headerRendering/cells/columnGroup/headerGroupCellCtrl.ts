@@ -153,7 +153,7 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
         }
 
         const highlighted = column.getHighlighted();
-        const isColumnMoveAtThisLevel = !!this.rowCtrl.findHeaderCellCtrl((ctrl) => {
+        const isColumnMoveAtThisLevel = !!this.rowCtrl.getHeaderCellCtrls().find((ctrl) => {
             return ctrl.column.isMoving();
         });
 
@@ -204,17 +204,34 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
     }
 
     private setupUserComp(): void {
-        const { colGroupSvc, userCompFactory, gos } = this.beans;
+        const { colGroupSvc, userCompFactory, gos, enterpriseMenuFactory } = this.beans;
+        const columnGroup = this.column;
+        const providedColumnGroup = columnGroup.getProvidedColumnGroup();
         const params: IHeaderGroupParams = _addGridCommonParams(gos, {
             displayName: this.displayName!,
-            columnGroup: this.column,
+            columnGroup,
             setExpanded: (expanded: boolean) => {
-                colGroupSvc!.setColumnGroupOpened(this.column.getProvidedColumnGroup(), expanded, 'gridInitializing');
+                colGroupSvc!.setColumnGroupOpened(providedColumnGroup, expanded, 'gridInitializing');
             },
             setTooltip: (value: string, shouldDisplayTooltip: () => boolean) => {
                 gos.assertModuleRegistered('Tooltip', 3);
                 this.setupTooltip(value, shouldDisplayTooltip);
             },
+            showColumnMenu: (buttonElement, onClosedCallback) =>
+                enterpriseMenuFactory?.showMenuAfterButtonClick(
+                    providedColumnGroup,
+                    buttonElement,
+                    'columnMenu',
+                    onClosedCallback
+                ),
+            showColumnMenuAfterMouseClick: (mouseEvent, onClosedCallback) =>
+                enterpriseMenuFactory?.showMenuAfterMouseEvent(
+                    providedColumnGroup,
+                    mouseEvent,
+                    'columnMenu',
+                    onClosedCallback
+                ),
+            eGridHeader: this.eGui,
         });
 
         const compDetails = _getHeaderGroupCompDetails(userCompFactory, params);

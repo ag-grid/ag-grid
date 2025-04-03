@@ -57,6 +57,7 @@ import type { IFooterService } from '../interfaces/iFooterService';
 import type { IFrameworkOverrides } from '../interfaces/iFrameworkOverrides';
 import type { IGroupFilterService } from '../interfaces/iGroupFilterService';
 import type { IMenuFactory } from '../interfaces/iMenuFactory';
+import type { IPinnedRowModel } from '../interfaces/iPinnedRowModel';
 import type { IPivotColDefService } from '../interfaces/iPivotColDefService';
 import type { IPivotResultColsService } from '../interfaces/iPivotResultColsService';
 import type { IRowChildrenService } from '../interfaces/iRowChildrenService';
@@ -85,7 +86,6 @@ import type { PageBoundsService } from '../pagination/pageBoundsService';
 import type { PaginationAutoPageSizeService } from '../pagination/paginationAutoPageSizeService';
 import type { PaginationService } from '../pagination/paginationService';
 import type { PinnedColumnService } from '../pinnedColumns/pinnedColumnService';
-import type { PinnedRowModel } from '../pinnedRowModel/pinnedRowModel';
 import type { AriaAnnouncementService } from '../rendering/ariaAnnouncementService';
 import type { AutoWidthCalculator } from '../rendering/autoWidthCalculator';
 import type { CellFlashService } from '../rendering/cell/cellFlashService';
@@ -126,6 +126,8 @@ export type DynamicBeanName =
     | 'headerGroupCellCtrl'
     | 'rangeHandle'
     | 'tooltipFeature'
+    | 'groupStrategy'
+    | 'treeParentIdStrategy'
     | 'agSetColumnFilterEvaluator'
     | 'agMultiColumnFilterEvaluator'
     | 'agGroupColumnFilterEvaluator'
@@ -259,7 +261,7 @@ export interface CoreBeanCollection {
     globalSyncListener: AgGlobalEventListener;
     stateSvc?: StateService;
     overlays?: OverlayService;
-    pinnedRowModel?: PinnedRowModel;
+    pinnedRowModel?: IPinnedRowModel;
     menuSvc?: MenuService;
     apiEventSvc?: ApiEventService;
     undoRedo?: UndoRedoService;

@@ -2,7 +2,7 @@ import type { Shape } from 'ag-charts-types/scene';
 
 import type { AgChartsExports } from '../../../../../agChartsExports';
 import type { ChartTranslationKey } from '../../../../services/chartTranslationService';
-import type { MiniChartSelector, ThemeTemplateParameters } from '../../miniChartsContainer';
+import type { MiniChartSelector } from '../../miniChartsContainer';
 import { MiniChart } from '../miniChart';
 import type { XYCoordShape } from '../miniChartApi';
 import { createShapePaths } from '../miniChartHelpers';
@@ -36,7 +36,6 @@ export class MiniFunnelClass extends MiniChart {
         agChartsExports: AgChartsExports,
         fills: string[],
         strokes: string[],
-        _themeTemplateParameters: ThemeTemplateParameters,
         _isCustomTheme: boolean,
         tooltipName: ChartTranslationKey = 'funnelTooltip',
         data: XYCoordShape[] = FUNNEL_SHAPES

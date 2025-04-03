@@ -7,22 +7,37 @@ interface Props {
     exampleHeight?: number;
     pageName: string;
     exampleName: string;
+    hasExampleConsoleLog?: boolean;
 }
 
 const DEFAULT_HEIGHT = 500;
 const FRAME_WRAPPER_HEIGHT = 48 + 26;
 
-const { exampleHeight = DEFAULT_HEIGHT, pageName, exampleName } = Astro.props as Props;
-const minHeight = exampleHeight + FRAME_WRAPPER_HEIGHT;
+const { exampleHeight = DEFAULT_HEIGHT, pageName, exampleName, hasExampleConsoleLog } = Astro.props as Props;
+const EXAMPLE_CONSOLE_LOG_HEIGHT = hasExampleConsoleLog ? 100 : 0;
+const minHeight = exampleHeight + FRAME_WRAPPER_HEIGHT + EXAMPLE_CONSOLE_LOG_HEIGHT;
 const loadingLogoId = getLoadingLogoId({ pageName, exampleName });
 ---
 
-<div class="container example-runner-outer" style={{ minHeight: `${minHeight}px` }}>
+<div
+    class:list={[
+        'container',
+        'example-runner-outer',
+        {
+            hasExampleConsoleLog,
+        },
+    ]}
+    style={{ minHeight: `${minHeight}px` }}
+>
     <LoadingLogo id={loadingLogoId} />
     <slot />
 </div>
 
 <style lang="scss">
+    @use 'sass:math';
+
+    $half-logger-height: math.div(100px, 2);
+
     .container {
         position: relative;
 
@@ -31,6 +46,10 @@ const loadingLogoId = getLoadingLogoId({ pageName, exampleName });
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%) scale(2);
+        }
+
+        &:global(.hasExampleConsoleLog) :global(.logomark) {
+            transform: translate(-50%, calc(-100% - #{$half-logger-height})) scale(2);
         }
     }
 </style>

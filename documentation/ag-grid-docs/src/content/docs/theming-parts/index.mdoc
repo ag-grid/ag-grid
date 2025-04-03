@@ -28,11 +28,13 @@ This example demonstrates mixing and matching any built-in theme, icon set, and 
 The following parts are available:
 
 * `colorScheme` feature:
+    * `colorSchemeVariable` - the default color scheme for all our [built-in themes](./themes/#built-in-themes). By default it appears light, but can be adjusted using [theme modes](./theming-colors/#theme-modes).
     * `colorSchemeLight` - neutral light scheme
     * `colorSchemeLightCold` - light scheme with subtle cold tint used by Balham theme
     * `colorSchemeLightWarm` - light scheme with subtle warm tint
     * `colorSchemeDark` - neutral dark scheme
     * `colorSchemeDarkBlue` - our preferred dark scheme used on this website
+    * `colorSchemeDarkWarm` - dark scheme with subtle warm tint
     * `colorSchemeDarkWarm` - dark scheme with subtle warm tint
 * `iconSet` feature:
     * `iconSetQuartz` - our default icon set
@@ -76,4 +78,4 @@ After removing the built-in part, this example uses CSS in a separate style shee
 
 {% gridExampleRunner title="Configuring Theme Parts" name="removing-parts" /%}
 
-The above example uses an empty part to disable the default checkbox styles and adds its own checkbox styles in the application style sheet. If you want to distribute the checkbox style as a library, you can add the new styles to the part itself, see [Distributing Shared Themes & Parts](./theming-distribution/#creating-your-own-parts).
+The above example uses `theme.withoutPart("checkboxStyle")` to disable the default checkbox styles and adds its own checkbox styles in the application style sheet. If you want to distribute the checkbox style as a library, you can create your own `checkboxStyle` part, see [Distributing Shared Themes & Parts](./theming-distribution/#creating-your-own-parts).

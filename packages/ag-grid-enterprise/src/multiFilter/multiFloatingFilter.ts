@@ -1,5 +1,6 @@
 import type {
     AgColumn,
+    ElementParams,
     FilterChangedEvent,
     FloatingFilterDisplayParams,
     IFilter,
@@ -26,13 +27,18 @@ import type { MultiFilterEvaluator } from './multiFilterEvaluator';
 import { MultiFilterUi } from './multiFilterUi';
 import { getMultiFilterDefs, getUpdatedMultiFilterModel } from './multiFilterUtil';
 
+const MultiFloatingFilterElement: ElementParams = {
+    tag: 'div',
+    cls: 'ag-multi-floating-filter ag-floating-filter-input',
+};
+
 export class MultiFloatingFilterComp extends Component implements IFloatingFilterComp<MultiFilter | MultiFilterUi> {
     private floatingFilters: IFloatingFilterComp[] = [];
     private compDetailsList: UserCompDetails[] = [];
     private params: IFloatingFilterParams<MultiFilter | MultiFilterUi>;
 
     constructor() {
-        super(/* html */ `<div class="ag-multi-floating-filter ag-floating-filter-input"></div>`);
+        super(MultiFloatingFilterElement);
     }
 
     public init(params: IFloatingFilterParams<MultiFilter | MultiFilterUi>): AgPromise<void> {

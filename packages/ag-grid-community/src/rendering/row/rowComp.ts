@@ -2,8 +2,7 @@ import type { BeanCollection } from '../../context/context';
 import type { RowStyle } from '../../entities/gridOptions';
 import type { RowContainerType } from '../../gridBodyComp/rowContainer/rowContainerCtrl';
 import type { UserCompDetails } from '../../interfaces/iUserCompDetails';
-import { _setAriaRole } from '../../utils/aria';
-import { _addStylesToElement, _setDomChildOrder } from '../../utils/dom';
+import { _addStylesToElement, _createElement, _setDomChildOrder } from '../../utils/dom';
 import { Component } from '../../widgets/component';
 import { CellComp } from '../cell/cellComp';
 import type { CellCtrl, CellCtrlInstanceId } from '../cell/cellCtrl';
@@ -16,7 +15,7 @@ export class RowComp extends Component {
     private rowCtrl: RowCtrl;
 
     private domOrder: boolean;
-    private cellComps: { [key: CellCtrlInstanceId]: CellComp | null } = {};
+    private cellComps: Map<CellCtrlInstanceId, CellComp | null> = new Map();
 
     constructor(ctrl: RowCtrl, beans: BeanCollection, containerType: RowContainerType) {
         super();
@@ -24,15 +23,12 @@ export class RowComp extends Component {
         this.beans = beans;
         this.rowCtrl = ctrl;
 
-        const rowDiv = document.createElement('div');
-        rowDiv.setAttribute('comp-id', `${this.getCompId()}`);
+        const rowDiv = _createElement({ tag: 'div', role: 'row', attrs: { 'comp-id': `${this.getCompId()}` } });
         this.setInitialStyle(rowDiv, containerType);
         this.setTemplateFromElement(rowDiv);
 
-        const eGui = this.getGui();
-        const style = eGui.style;
+        const style = rowDiv.style;
         this.domOrder = this.rowCtrl.getDomOrder();
-        _setAriaRole(eGui, 'row');
 
         const compProxy: IRowComp = {
             setDomOrder: (domOrder) => (this.domOrder = domOrder),
@@ -40,12 +36,12 @@ export class RowComp extends Component {
             showFullWidth: (compDetails) => this.showFullWidth(compDetails),
             getFullWidthCellRenderer: () => this.fullWidthCellRenderer,
             addOrRemoveCssClass: (name, on) => this.addOrRemoveCssClass(name, on),
-            setUserStyles: (styles: RowStyle | undefined) => _addStylesToElement(eGui, styles),
+            setUserStyles: (styles: RowStyle | undefined) => _addStylesToElement(rowDiv, styles),
             setTop: (top) => (style.top = top),
             setTransform: (transform) => (style.transform = transform),
-            setRowIndex: (rowIndex) => eGui.setAttribute('row-index', rowIndex),
-            setRowId: (rowId: string) => eGui.setAttribute('row-id', rowId),
-            setRowBusinessKey: (businessKey) => eGui.setAttribute('row-business-key', businessKey),
+            setRowIndex: (rowIndex) => rowDiv.setAttribute('row-index', rowIndex),
+            setRowId: (rowId: string) => rowDiv.setAttribute('row-id', rowId),
+            setRowBusinessKey: (businessKey) => rowDiv.setAttribute('row-business-key', businessKey),
             refreshFullWidth: (getUpdatedParams) => this.fullWidthCellRenderer?.refresh?.(getUpdatedParams()) ?? false,
         };
 
@@ -87,20 +83,19 @@ export class RowComp extends Component {
     }
 
     private setCellCtrls(cellCtrls: CellCtrl[]): void {
-        const cellsToRemove = Object.assign({}, this.cellComps);
+        const cellsToRemove = new Map(this.cellComps);
 
-        cellCtrls.forEach((cellCtrl) => {
+        for (const cellCtrl of cellCtrls) {
             const key = cellCtrl.instanceId;
-            const existingCellComp = this.cellComps[key];
 
-            if (existingCellComp == null) {
+            if (!this.cellComps.has(key)) {
                 this.newCellComp(cellCtrl);
             } else {
-                cellsToRemove[key] = null;
+                cellsToRemove.delete(key);
             }
-        });
+        }
 
-        this.destroyCells(Object.values(cellsToRemove) as CellComp[]);
+        this.destroyCells(cellsToRemove);
         this.ensureDomOrder(cellCtrls);
     }
 
@@ -110,12 +105,12 @@ export class RowComp extends Component {
         }
 
         const elementsInOrder: HTMLElement[] = [];
-        cellCtrls.forEach((cellCtrl) => {
-            const cellComp = this.cellComps[cellCtrl.instanceId];
+        for (const cellCtrl of cellCtrls) {
+            const cellComp = this.cellComps.get(cellCtrl.instanceId);
             if (cellComp) {
                 elementsInOrder.push(cellComp.getGui());
             }
-        });
+        }
 
         _setDomChildOrder(this.getGui(), elementsInOrder);
     }
@@ -128,14 +123,14 @@ export class RowComp extends Component {
             this.getGui(),
             this.rowCtrl.editing
         );
-        this.cellComps[cellCtrl.instanceId] = cellComp;
+        this.cellComps.set(cellCtrl.instanceId, cellComp);
         this.getGui().appendChild(cellComp.getGui());
     }
 
     public override destroy(): void {
         super.destroy();
         // Destroy all cells
-        this.destroyCells(Object.values(this.cellComps) as CellComp[]);
+        this.destroyCells(this.cellComps);
     }
 
     private setFullWidthRowComp(fullWidthRowComponent: ICellRendererComp): void {
@@ -145,8 +140,8 @@ export class RowComp extends Component {
         });
     }
 
-    private destroyCells(cellComps: CellComp[]): void {
-        cellComps.forEach((cellComp) => {
+    private destroyCells(cellComps: Map<CellCtrlInstanceId, CellComp | null>): void {
+        for (const cellComp of cellComps.values()) {
             // could be old reference, ie removed cell
             if (!cellComp) {
                 return;
@@ -154,13 +149,13 @@ export class RowComp extends Component {
 
             // check cellComp belongs in this container
             const instanceId = cellComp.cellCtrl.instanceId;
-            if (this.cellComps[instanceId] !== cellComp) {
+            if (this.cellComps.get(instanceId) !== cellComp) {
                 return;
             }
 
             cellComp.detach();
             cellComp.destroy();
-            this.cellComps[instanceId] = null;
-        });
+            this.cellComps.delete(instanceId);
+        }
     }
 }

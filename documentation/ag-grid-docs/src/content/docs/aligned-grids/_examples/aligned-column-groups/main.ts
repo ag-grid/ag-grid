@@ -51,7 +51,6 @@ let bottomApi: GridApi;
 const gridOptionsTop: GridOptions = {
     defaultColDef: {
         filter: true,
-        flex: 1,
         minWidth: 120,
     },
     columnDefs: columnDefs,

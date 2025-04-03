@@ -18,7 +18,6 @@ import type {
     IRowModel,
     NamedBean,
     PartialCellRange,
-    PinnedRowModel,
     RowPinnedType,
     RowPosition,
     ValueService,
@@ -63,7 +62,6 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
     private colModel: ColumnModel;
     private visibleCols: VisibleColsService;
     private cellNavigation: CellNavigationService;
-    private pinnedRowModel?: PinnedRowModel;
     private ctrlsSvc: CtrlsService;
     private valueSvc: ValueService;
     private selectionMode: SelectionMode;
@@ -74,7 +72,6 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
         this.colModel = beans.colModel;
         this.visibleCols = beans.visibleCols;
         this.cellNavigation = beans.cellNavigation!;
-        this.pinnedRowModel = beans.pinnedRowModel;
         this.ctrlsSvc = beans.ctrlsSvc;
         this.valueSvc = beans.valueSvc;
     }
@@ -325,7 +322,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
             return _isRowBefore(cellRange.startRow, cellRange.endRow) ? cellRange.startRow : cellRange.endRow;
         }
 
-        const pinnedTopRowCount = this.pinnedRowModel?.getPinnedTopRowCount() ?? 0;
+        const pinnedTopRowCount = this.beans.pinnedRowModel?.getPinnedTopRowCount() ?? 0;
         const rowPinned = pinnedTopRowCount > 0 ? 'top' : null;
 
         return { rowIndex: 0, rowPinned };
@@ -336,7 +333,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
             return _isRowBefore(cellRange.startRow, cellRange.endRow) ? cellRange.endRow : cellRange.startRow;
         }
 
-        const pinnedBottomRowCount = this.pinnedRowModel?.getPinnedBottomRowCount() ?? 0;
+        const pinnedBottomRowCount = this.beans.pinnedRowModel?.getPinnedBottomRowCount() ?? 0;
         const pinnedBottom = pinnedBottomRowCount > 0;
 
         if (pinnedBottom) {
@@ -617,6 +614,8 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
             return;
         }
 
+        // when creating a new range via API we should reset the selection mode
+        this.setSelectionMode(false);
         const newRange = this.createCellRangeFromCellRangeParams(params);
 
         if (newRange) {
@@ -922,7 +921,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
     }
 
     private verifyCellRanges(gos: GridOptionsService): boolean {
-        const invalid = _isUsingNewCellSelectionAPI(gos) && _getSuppressMultiRanges(gos) && this.cellRanges.length > 0;
+        const invalid = _isUsingNewCellSelectionAPI(gos) && _getSuppressMultiRanges(gos) && this.cellRanges.length > 1;
         if (invalid) {
             _warn(93);
         }

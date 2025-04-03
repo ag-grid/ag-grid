@@ -5,12 +5,11 @@ import type { CtrlsService } from '../ctrlsService';
 import type { FilterManager } from '../filter/filterManager';
 import { _isAnimateRows, _isDomLayout } from '../gridOptionsUtils';
 import type { IColsService } from '../interfaces/iColsService';
-import { _requestAnimationFrame } from '../misc/animationFrameService';
-import type { PinnedRowModel } from '../pinnedRowModel/pinnedRowModel';
+import type { IPinnedRowModel } from '../interfaces/iPinnedRowModel';
 import type { LayoutView } from '../styling/layoutFeature';
 import { LayoutFeature } from '../styling/layoutFeature';
 import { _isInvisibleScrollbar } from '../utils/browser';
-import { _isElementChildOfClass, _isVerticalScrollShowing } from '../utils/dom';
+import { _isElementChildOfClass, _isVerticalScrollShowing, _requestAnimationFrame } from '../utils/dom';
 import type { PopupService } from '../widgets/popupService';
 import { GridBodyScrollFeature } from './gridBodyScrollFeature';
 import { _isEventFromThisGrid } from './mouseEventUtils';
@@ -28,9 +27,9 @@ export interface IGridBodyComp extends LayoutView {
     setColumnMovingCss(cssClass: string, on: boolean): void;
     setCellSelectableCss(cssClass: string | null, on: boolean): void;
     setTopHeight(height: number): void;
-    setTopDisplay(display: string): void;
+    setTopInvisible(invisible: boolean): void;
     setBottomHeight(height: number): void;
-    setBottomDisplay(display: string): void;
+    setBottomInvisible(invisible: boolean): void;
     setStickyTopHeight(height: string): void;
     setStickyTopTop(offsetTop: string): void;
     setStickyTopWidth(width: string): void;
@@ -52,7 +51,7 @@ export class GridBodyCtrl extends BeanStub {
     private colModel: ColumnModel;
     private scrollVisibleSvc: ScrollVisibleService;
     private rowGroupColsSvc?: IColsService;
-    private pinnedRowModel?: PinnedRowModel;
+    private pinnedRowModel?: IPinnedRowModel;
     private filterManager?: FilterManager;
 
     public wireBeans(beans: BeanCollection): void {
@@ -144,6 +143,7 @@ export class GridBodyCtrl extends BeanStub {
             scrollGapChanged: this.updateScrollingClasses.bind(this),
             pinnedRowDataChanged: setFloatingHeights,
             pinnedHeightChanged: setFloatingHeights,
+            pinnedRowsChanged: setFloatingHeights,
             headerHeightChanged: this.setStickyTopOffsetTop.bind(this),
             columnRowGroupChanged: setGridRootRole,
             columnPivotChanged: setGridRootRole,
@@ -433,8 +433,8 @@ export class GridBodyCtrl extends BeanStub {
         const floatingBottomHeight = pinnedRowModel?.getPinnedBottomTotalHeight() ?? 0;
         this.comp.setTopHeight(floatingTopHeight);
         this.comp.setBottomHeight(floatingBottomHeight);
-        this.comp.setTopDisplay(floatingTopHeight ? 'inherit' : 'none');
-        this.comp.setBottomDisplay(floatingBottomHeight ? 'inherit' : 'none');
+        this.comp.setTopInvisible(floatingTopHeight <= 0);
+        this.comp.setBottomInvisible(floatingBottomHeight <= 0);
         this.setStickyTopOffsetTop();
         this.setStickyBottomOffsetBottom();
     }

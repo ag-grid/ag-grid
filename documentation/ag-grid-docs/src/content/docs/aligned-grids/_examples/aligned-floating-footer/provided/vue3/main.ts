@@ -83,7 +83,6 @@ const VueExample = defineComponent({
             alignedGrids: () => [this.$refs.bottomGrid],
             defaultColDef: {
                 filter: true,
-                flex: 1,
                 minWidth: 100,
             },
             suppressHorizontalScroll: true,

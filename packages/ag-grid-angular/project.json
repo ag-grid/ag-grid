@@ -21,9 +21,9 @@
         "script": "build"
       }
     },
-    "test": {
+    "test:e2e": {
       "executor": "nx:run-script",
-      "dependsOn": ["build"],
+      "dependsOn": ["^build"],
       "inputs": ["allOutputs"],
       "options": {
         "script": "test:e2e"

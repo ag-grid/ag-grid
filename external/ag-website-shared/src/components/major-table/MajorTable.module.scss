@@ -1,0 +1,82 @@
+@use 'design-system' as *;
+
+.majorTable {
+    vertical-align: baseline;
+
+    tr {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: $spacing-size-6;
+        transition: background-color $transition-default-timing;
+
+        &:hover {
+            background-color: var(--color-util-brand-50);
+
+            #{$selector-darkmode} & {
+                background-color: var(--color-util-gray-200);
+            }
+        }
+    }
+
+    td {
+        padding: $spacing-size-4 $spacing-size-2;
+        line-height: var(--text-lh-tight);
+    }
+
+    a span {
+        margin-right: $spacing-size-2;
+
+        @media screen and (max-width: 620px) {
+            display: none;
+        }
+    }
+
+    svg {
+        --icon-size: 20px;
+
+        margin-top: -2px;
+        transition: transform $transition-default-timing;
+    }
+
+    a:hover svg {
+        transform: translateX(3px);
+    }
+}
+
+.pad {
+    padding-right: 12px;
+}
+
+.isMajor {
+    .version {
+        color: var(--color-gray-950);
+
+        #{$selector-darkmode} & {
+            color: var(--color-white);
+        }
+    }
+
+    .versionType span {
+        margin-right: -8px;
+        padding: 2px 8px;
+        border-radius: var(--radius-4xl);
+        border: 1px solid var(--color-logo-orange);
+        color: var(--color-logo-orange);
+    }
+}
+
+.versionType,
+.changelog {
+    @media screen and (max-width: 540px) {
+        display: none;
+    }
+}
+
+.dateCol {
+    margin-right: auto;
+
+    @media screen and (max-width: 820px) {
+        display: none;
+    }
+}

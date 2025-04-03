@@ -55,10 +55,10 @@ describe('getTransformTsFileExt', () => {
         ${'other'}             | ${'.js'}
         ${'vanilla'}           | ${'.js'}
         ${'typescript'}        | ${undefined}
-        ${'reactFunctional'}   | ${'.js'}
+        ${'reactFunctional'}   | ${'.jsx'}
         ${'reactFunctionalTs'} | ${'.tsx'}
         ${'angular'}           | ${undefined}
-        ${'vue3'}              | ${'.js'}
+        ${'vue3'}              | ${undefined}
     `('$internalFramework is $expected', ({ internalFramework, expected }) => {
         expect(getTransformTsFileExt(internalFramework)).toEqual(expected);
     });

@@ -9,6 +9,7 @@ import type {
     ChartParamsCellRange,
     ChartRef,
     ChartType,
+    Column,
     CreateCrossFilterChartParams,
     CreatePivotChartParams,
     CreateRangeChartParams,
@@ -319,8 +320,79 @@ export class ChartService extends BeanStub implements NamedBean, IChartService {
     }
 
     private getSelectedRange(): PartialCellRange {
-        const ranges = this.rangeSvc?.getCellRanges() ?? [];
-        return ranges.length > 0 ? ranges[0] : { columns: [] };
+        const ranges = this.rangeSvc?.getCellRanges();
+        if (!ranges || ranges.length === 0) {
+            return { columns: [] };
+        }
+
+        const uCols = new Set<Column>();
+
+        let startRowIndex = Number.MAX_VALUE;
+        let endRowIndex = -Number.MAX_VALUE;
+
+        ranges.forEach(({ startRow: sr, endRow: er, columns: cols }) => {
+            if (!(sr && er)) {
+                return;
+            }
+
+            cols.forEach((col) => uCols.add(col));
+
+            // set start/end ranges assuming rows aren't pinned
+            let { rowIndex: sRowIndex, rowPinned: startRowPinned } = sr;
+            let { rowIndex: eRowIndex, rowPinned: endRowPinned } = er;
+
+            // if range crosses pinned rows, adjust the start/end row indexes to exclude pinned rows
+            // pinned rows aren't part of the main row model and:
+            //   * aren't easily accessible during chart data extraction
+            //   * aren't included in aggregation functions
+            //   * can have completely bespoke data shapes
+            //
+            if (startRowPinned === 'top') {
+                if (endRowPinned === 'top') {
+                    // range is fully pinned, ignore it
+                    return;
+                }
+                // range crosses pinned top boundary, so start at first row in the row model
+                sRowIndex = 0;
+            }
+            if (endRowPinned === 'bottom') {
+                if (startRowPinned === 'bottom') {
+                    // range is fully pinned, ignore it
+                    return;
+                }
+                // range crosses pinned bottom boundary, so end at last row in the row model
+                eRowIndex = this.beans.pageBounds.getLastRow();
+            }
+
+            if (sRowIndex !== undefined) {
+                startRowIndex = Math.min(startRowIndex, sRowIndex);
+            }
+            if (eRowIndex !== undefined) {
+                endRowIndex = Math.max(endRowIndex, eRowIndex);
+            }
+        });
+
+        if (startRowIndex === Number.MAX_VALUE || endRowIndex === -Number.MAX_VALUE) {
+            // if we didn't find any valid ranges, return an empty range
+            return { columns: [] };
+        }
+
+        const columns = Array.from(uCols);
+
+        return {
+            // Don't specify id here, as it should be chart-specific
+            // but we don't have that context yet
+            columns,
+            startColumn: columns[0],
+            startRow: {
+                rowIndex: startRowIndex,
+                rowPinned: undefined,
+            },
+            endRow: {
+                rowIndex: endRowIndex,
+                rowPinned: undefined,
+            },
+        };
     }
 
     private generateId(): string {

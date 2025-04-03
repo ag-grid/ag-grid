@@ -8,8 +8,10 @@ import { VERSION } from '../version';
 import { AutoColService } from './autoColService';
 import { ClientSideExpansionService } from './clientSideExpansionService';
 import { FlattenStage } from './flattenStage';
+import { GroupStage } from './groupStage';
 import { GroupCellRenderer } from './rendering/groupCellRenderer';
 import { GroupCellRendererCtrl } from './rendering/groupCellRendererCtrl';
+import { groupCellStylesCSS } from './rendering/groupCellStyles.css-GENERATED';
 import { ShowRowGroupColsService } from './showRowGroupColsService';
 import { StickyRowService } from './stickyRowService';
 
@@ -30,6 +32,7 @@ export const GroupCellRendererModule: _ModuleWithoutApi = {
         // shown on row group when expanded (click to contract)
         groupExpanded: 'tree-open',
     },
+    css: [groupCellStylesCSS],
     dependsOn: [EnterpriseCoreModule],
 };
 
@@ -51,7 +54,7 @@ export const ClientSideRowModelHierarchyModule: _ModuleWithoutApi = {
     moduleName: 'ClientSideRowModelHierarchy',
     version: VERSION,
     rowModels: ['clientSide'],
-    beans: [FlattenStage, ClientSideExpansionService],
+    beans: [GroupStage, FlattenStage, ClientSideExpansionService],
     dependsOn: [EnterpriseCoreModule],
 };
 

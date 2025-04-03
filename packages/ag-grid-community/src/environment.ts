@@ -10,8 +10,28 @@ import {
     _unregisterGridUsingThemingAPI,
 } from './theming/inject';
 import { themeQuartz } from './theming/parts/theme/themes';
-import { _observeResize } from './utils/dom';
+import { _createElement, _observeResize } from './utils/dom';
 import { _error, _warn } from './validation/logging';
+
+const CELL_HORIZONTAL_PADDING: Variable = {
+    cssName: '--ag-cell-horizontal-padding',
+    changeKey: 'cellHorizontalPaddingChanged',
+    defaultValue: 16,
+};
+
+const INDENTATION_LEVEL: Variable = {
+    cssName: '--ag-indentation-level',
+    changeKey: 'indentationLevelChanged',
+    defaultValue: 0,
+    noWarn: true,
+    cacheDefault: true,
+};
+
+const ROW_GROUP_INDENT_SIZE: Variable = {
+    cssName: '--ag-row-group-indent-size',
+    changeKey: 'rowGroupIndentSizeChanged',
+    defaultValue: 0,
+};
 
 const ROW_HEIGHT: Variable = {
     cssName: '--ag-row-height',
@@ -91,6 +111,34 @@ export class Environment extends BeanStub implements NamedBean {
 
     public getDefaultHeaderHeight(): number {
         return this.getCSSVariablePixelValue(HEADER_HEIGHT);
+    }
+
+    public getDefaultCellHorizontalPadding(): number {
+        return this.getCSSVariablePixelValue(CELL_HORIZONTAL_PADDING);
+    }
+
+    public getDefaultIndentation(): number {
+        return this.getCSSVariablePixelValue(INDENTATION_LEVEL);
+    }
+
+    public getDefaultRowGroupIndentSize(): number {
+        return this.getCSSVariablePixelValue(ROW_GROUP_INDENT_SIZE);
+    }
+
+    public getCellPaddingLeft(): number {
+        // calc(var(--ag-cell-horizontal-padding) - 1px + var(--ag-row-group-indent-size)*var(--ag-indentation-level))
+        const cellHorizontalPadding = this.getDefaultCellHorizontalPadding();
+        const indentationLevel = this.getDefaultIndentation();
+        const rowGroupIndentSize = this.getDefaultRowGroupIndentSize();
+        return cellHorizontalPadding - 1 + rowGroupIndentSize * indentationLevel;
+    }
+
+    public getCellPaddingRight(): number {
+        return this.getDefaultCellHorizontalPadding() - 1;
+    }
+
+    public getCellPadding(): number {
+        return this.getCellPaddingLeft() + this.getCellPaddingRight();
     }
 
     public getDefaultColumnMinWidth(): number {
@@ -186,6 +234,9 @@ export class Environment extends BeanStub implements NamedBean {
         }
         const measurement = this.measureSizeEl(variable);
         if (measurement === 'detached' || measurement === 'no-styles') {
+            if (variable.cacheDefault) {
+                this.lastKnownValues.set(variable, variable.defaultValue);
+            }
             return variable.defaultValue;
         }
         this.lastKnownValues.set(variable, measurement);
@@ -206,8 +257,7 @@ export class Environment extends BeanStub implements NamedBean {
     private getMeasurementContainer(): HTMLElement {
         let container = this.eMeasurementContainer;
         if (!container) {
-            container = this.eMeasurementContainer = document.createElement('div');
-            container.className = 'ag-measurement-container';
+            container = this.eMeasurementContainer = _createElement({ tag: 'div', cls: 'ag-measurement-container' });
             this.eGridDiv.appendChild(container);
         }
         return container;
@@ -220,13 +270,13 @@ export class Environment extends BeanStub implements NamedBean {
         }
         const container = this.getMeasurementContainer();
 
-        sizeEl = document.createElement('div');
-        const { border } = variable;
+        sizeEl = _createElement({ tag: 'div' });
+        const { border, noWarn } = variable;
         if (border) {
             sizeEl.className = 'ag-measurement-element-border';
             sizeEl.style.setProperty(
                 '--ag-internal-measurement-border',
-                `var(${variable.cssName}, solid ${NO_VALUE_SENTINEL}px`
+                `var(${variable.cssName}, solid ${NO_VALUE_SENTINEL}px)`
             );
         } else {
             sizeEl.style.width = `var(${variable.cssName}, ${NO_VALUE_SENTINEL}px)`;
@@ -236,7 +286,7 @@ export class Environment extends BeanStub implements NamedBean {
 
         let lastMeasurement = this.measureSizeEl(variable);
 
-        if (lastMeasurement === 'no-styles') {
+        if (lastMeasurement === 'no-styles' && !noWarn) {
             // No value for the variable
             _warn(9, { variable });
         }
@@ -304,7 +354,7 @@ export class Environment extends BeanStub implements NamedBean {
             });
             let eParamsStyle = this.eParamsStyle;
             if (!eParamsStyle) {
-                eParamsStyle = this.eParamsStyle = document.createElement('style');
+                eParamsStyle = this.eParamsStyle = _createElement<HTMLStyleElement>({ tag: 'style' });
                 const styleNonce = this.gos.get('styleNonce');
                 if (styleNonce) {
                     eParamsStyle.setAttribute('nonce', styleNonce);
@@ -338,6 +388,8 @@ type Variable = {
     changeKey: ChangeKey;
     defaultValue: number;
     border?: boolean;
+    noWarn?: boolean;
+    cacheDefault?: boolean;
 };
 
 type ChangeKey =
@@ -345,6 +397,9 @@ type ChangeKey =
     | 'headerHeightChanged'
     | 'rowHeightChanged'
     | 'listItemHeightChanged'
-    | 'rowBorderWidthChanged';
+    | 'rowBorderWidthChanged'
+    | 'cellHorizontalPaddingChanged'
+    | 'indentationLevelChanged'
+    | 'rowGroupIndentSizeChanged';
 
 const NO_VALUE_SENTINEL = 15538;

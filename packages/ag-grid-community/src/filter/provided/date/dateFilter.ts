@@ -1,8 +1,9 @@
-import { _addGridCommonParams, _getDocument } from '../../../gridOptionsUtils';
+import { _addGridCommonParams } from '../../../gridOptionsUtils';
 import type { IDateParams } from '../../../interfaces/dateComponent';
 import type { IAfterGuiAttachedParams } from '../../../interfaces/iAfterGuiAttachedParams';
 import type { FilterDisplayParams } from '../../../interfaces/iFilter';
 import { _parseDateTimeFromString, _serialiseDate } from '../../../utils/date';
+import { _createElement } from '../../../utils/dom';
 import { _warn } from '../../../validation/logging';
 import type { FILTER_LOCALE_TEXT } from '../../filterLocaleText';
 import type { ICombinedSimpleModel, Tuple } from '../iSimpleFilter';
@@ -114,9 +115,7 @@ export class DateFilter extends SimpleFilter<DateFilterModel, Date, DateCompWrap
     }
 
     protected createValueElement(): HTMLElement {
-        const eDocument = _getDocument(this.beans);
-        const eCondition = eDocument.createElement('div');
-        eCondition.classList.add('ag-filter-body');
+        const eCondition = _createElement({ tag: 'div', cls: 'ag-filter-body' });
 
         this.createFromToElement(eCondition, this.eConditionPanelsFrom, this.dateConditionFromComps, 'from');
         this.createFromToElement(eCondition, this.eConditionPanelsTo, this.dateConditionToComps, 'to');
@@ -130,10 +129,7 @@ export class DateFilter extends SimpleFilter<DateFilterModel, Date, DateCompWrap
         dateConditionComps: DateCompWrapper[],
         fromTo: string
     ): void {
-        const eDocument = _getDocument(this.beans);
-        const eConditionPanel = eDocument.createElement('div');
-        eConditionPanel.classList.add(`ag-filter-${fromTo}`);
-        eConditionPanel.classList.add(`ag-filter-date-${fromTo}`);
+        const eConditionPanel = _createElement({ tag: 'div', cls: `ag-filter-${fromTo} ag-filter-date-${fromTo}` });
         eConditionPanels.push(eConditionPanel);
         eCondition.appendChild(eConditionPanel);
         dateConditionComps.push(this.createDateCompWrapper(eConditionPanel));

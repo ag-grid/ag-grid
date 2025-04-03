@@ -1,4 +1,5 @@
 import type { InternalFramework } from '@ag-grid-types';
+import { ExampleLogger } from '@ag-website-shared/components/example-runner/components/ExampleLogger';
 import { Icon } from '@ag-website-shared/components/icon/Icon';
 import { OpenInCTA } from '@ag-website-shared/components/open-in-cta/OpenInCTA';
 import type { FileContents } from '@components/example-generator/types';
@@ -12,6 +13,7 @@ import styles from './ExampleRunner.module.scss';
 interface Props {
     id: string;
     title: string;
+    exampleName: string;
     exampleUrl?: string;
     exampleRunnerExampleUrl?: string;
     externalLinks?: ReactElement;
@@ -23,6 +25,8 @@ interface Props {
     loadingIFrameId: string;
     supportedFrameworks: InternalFramework[];
     suppressDarkMode?: boolean;
+    hasExampleConsoleLog?: boolean;
+    consoleBufferSize?: number;
 }
 
 const DEFAULT_HEIGHT = 500;
@@ -30,6 +34,7 @@ const DEFAULT_HEIGHT = 500;
 export const ExampleRunner: FunctionComponent<Props> = ({
     id,
     title,
+    exampleName,
     exampleUrl,
     exampleRunnerExampleUrl,
     externalLinks,
@@ -41,6 +46,8 @@ export const ExampleRunner: FunctionComponent<Props> = ({
     loadingIFrameId,
     supportedFrameworks,
     suppressDarkMode,
+    hasExampleConsoleLog,
+    consoleBufferSize,
 }) => {
     const [showCode, setShowCode] = useState(false);
 
@@ -49,7 +56,9 @@ export const ExampleRunner: FunctionComponent<Props> = ({
         <div id={id} className={styles.exampleOuter}>
             <div className={styles.tabsContainer}>
                 <div
-                    className={styles.content}
+                    className={classnames(styles.content, {
+                        [styles.hasExampleConsoleLog]: hasExampleConsoleLog,
+                    })}
                     role="tabpanel"
                     aria-labelledby={`${showCode ? 'Preview' : 'Code'} tab`}
                     style={{ height: exampleHeight, width: '100%' }}
@@ -73,6 +82,7 @@ export const ExampleRunner: FunctionComponent<Props> = ({
                         />
                     )}
                 </div>
+                {hasExampleConsoleLog && <ExampleLogger exampleName={exampleName} bufferSize={consoleBufferSize} />}
                 <footer className={styles.footer}>
                     <button
                         className={classnames(styles.previewCodeToggle, 'button-secondary')}

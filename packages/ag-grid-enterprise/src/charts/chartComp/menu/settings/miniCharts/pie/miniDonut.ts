@@ -2,7 +2,7 @@ import type { Sector } from 'ag-charts-types/scene';
 
 import type { AgChartsExports } from '../../../../../agChartsExports';
 import type { ChartTranslationKey } from '../../../../services/chartTranslationService';
-import type { MiniChartSelector, ThemeTemplateParameters } from '../../miniChartsContainer';
+import type { MiniChartSelector } from '../../miniChartsContainer';
 import { MiniChart } from '../miniChart';
 
 export class MiniDonutClass extends MiniChart {
@@ -13,7 +13,6 @@ export class MiniDonutClass extends MiniChart {
         agChartsExports: AgChartsExports,
         fills: string[],
         strokes: string[],
-        _themeTemplateParameters: ThemeTemplateParameters,
         _isCustomTheme: boolean,
         centerRadiusScaler = 0.6,
         tooltipName: ChartTranslationKey = 'donutTooltip'

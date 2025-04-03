@@ -19,6 +19,7 @@ import {
     Component,
     FilterWrapperComp,
     RefPlaceholder,
+    _createElement,
     _createIconNoSpan,
     _error,
     _focusInto,
@@ -543,8 +544,7 @@ class TabbedColumnMenu extends BeanStub<TabbedColumnMenuEvent> implements Enterp
     }
 
     private createColumnsPanel(): TabbedItem {
-        const eWrapperDiv = document.createElement('div');
-        eWrapperDiv.classList.add('ag-menu-column-select-wrapper');
+        const eWrapperDiv = _createElement({ tag: 'div', cls: 'ag-menu-column-select-wrapper' });
 
         const { beans, column } = this;
         const columnSelectPanel = (beans.colChooserFactory as ColumnChooserFactory).createColumnSelectPanel(
@@ -601,9 +601,7 @@ class ColumnContextMenu extends Component implements EnterpriseColumnMenu {
         private readonly restoreFocusParams: MenuRestoreFocusParams,
         private readonly sourceElement?: HTMLElement
     ) {
-        super(/* html */ `
-            <div data-ref="eColumnMenu" role="presentation" class="ag-menu ag-column-menu"></div>
-        `);
+        super({ tag: 'div', ref: 'eColumnMenu', cls: 'ag-menu ag-column-menu', role: 'presentation' });
     }
 
     public postConstruct(): void {

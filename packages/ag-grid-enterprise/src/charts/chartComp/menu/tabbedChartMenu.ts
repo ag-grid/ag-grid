@@ -1,5 +1,5 @@
 import type { BeanCollection, ChartToolPanelMenuOptions } from 'ag-grid-community';
-import { AgPromise, Component } from 'ag-grid-community';
+import { AgPromise, Component, _createElement } from 'ag-grid-community';
 
 import type { TabbedItem } from '../../../widgets/iTabbedLayout';
 import { TabbedLayout } from '../../../widgets/tabbedLayout';
@@ -58,17 +58,14 @@ export class TabbedChartMenu extends Component<TabbedChartMenuEvent> {
     }
 
     private createTab(name: ChartToolPanelMenuOptions, title: ChartTranslationKey, panelComp: Component): TabbedItem {
-        const eWrapperDiv = document.createElement('div');
-        eWrapperDiv.classList.add('ag-chart-tab', `ag-chart-${title}`);
+        const eWrapperDiv = _createElement({ tag: 'div', cls: `ag-chart-tab ag-chart-${title}` });
 
         this.createBean(panelComp);
 
         eWrapperDiv.appendChild(panelComp.getGui());
 
-        const titleEl = document.createElement('div');
         const translatedTitle = this.chartTranslation.translate(title);
-        // eslint-disable-next-line no-restricted-properties -- Could swap to textContent, but could be a breaking change
-        titleEl.innerText = translatedTitle;
+        const titleEl = _createElement({ tag: 'div', children: translatedTitle });
 
         return {
             title: titleEl,

@@ -25,12 +25,13 @@
       }
     },
     "test:vitest": {
-      "executor": "@nx/vite:test",
+      "command": "npx vitest",
       "outputs": ["{workspaceRoot}/reports/ag-website-shared.xml"],
       "dependsOn": [],
       "options": {
         "cwd": "{projectRoot}",
-        "config": "{projectRoot}/vitest.config.mjs"
+        "config": "vitest.config.mjs",
+        "watch": false
       },
       "configurations": {
         "ci": {

@@ -1,7 +1,30 @@
-import type { IconName, ToolPanelDef } from 'ag-grid-community';
+import type { ElementParams, IconName, ToolPanelDef } from 'ag-grid-community';
 import { Component, RefPlaceholder, _createIconNoSpan, _setAriaExpanded } from 'ag-grid-community';
 
 export type SideBarButtonCompEvent = 'toggleButtonClicked';
+const SideBarButtonElement: ElementParams = {
+    tag: 'div',
+    cls: 'ag-side-button',
+    role: 'presentation',
+    children: [
+        {
+            tag: 'button',
+            ref: 'eToggleButton',
+            cls: 'ag-button ag-side-button-button',
+            role: 'tab',
+            attrs: { type: 'button', tabindex: '-1', 'aria-expanded': 'false' },
+            children: [
+                {
+                    tag: 'div',
+                    ref: 'eIconWrapper',
+                    cls: 'ag-side-button-icon-wrapper',
+                    attrs: { 'aria-hidden': 'true' },
+                },
+                { tag: 'span', ref: 'eLabel', cls: 'ag-side-button-label' },
+            ],
+        },
+    ],
+};
 export class SideBarButtonComp extends Component<SideBarButtonCompEvent> {
     public readonly eToggleButton: HTMLButtonElement = RefPlaceholder;
     private readonly eIconWrapper: HTMLElement = RefPlaceholder;
@@ -16,33 +39,18 @@ export class SideBarButtonComp extends Component<SideBarButtonCompEvent> {
     }
 
     public postConstruct(): void {
-        const template = this.createTemplate();
-        this.setTemplate(template, []);
+        this.setTemplate(SideBarButtonElement, []);
         this.setLabel();
         this.setIcon();
         this.addManagedElementListeners(this.eToggleButton, { click: this.onButtonPressed.bind(this) });
         this.eToggleButton.setAttribute('id', `ag-${this.getCompId()}-button`);
     }
 
-    private createTemplate(): string {
-        const res =
-            /* html */
-            `<div class="ag-side-button" role="presentation">
-                <button type="button" data-ref="eToggleButton" tabindex="-1" role="tab" aria-expanded="false" class="ag-button ag-side-button-button">
-                    <div data-ref="eIconWrapper" class="ag-side-button-icon-wrapper" aria-hidden="true"></div>
-                    <span data-ref="eLabel" class="ag-side-button-label"></span>
-                </button>
-            </div>`;
-        return res;
-    }
-
     private setLabel(): void {
-        const translate = this.getLocaleTextFunc();
         const def = this.toolPanelDef;
-        const label = translate(def.labelKey, def.labelDefault);
+        const label = this.getLocaleTextFunc()(def.labelKey, def.labelDefault);
 
-        // eslint-disable-next-line no-restricted-properties -- Could swap to textContent, but could be a breaking change
-        this.eLabel.innerText = label;
+        this.eLabel.textContent = label;
     }
 
     private setIcon(): void {

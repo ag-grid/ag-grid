@@ -4,10 +4,11 @@ import type { BeanCollection } from '../context/context';
 import type { BaseBean, ComponentBean } from '../context/genericContext';
 import type { AgEvent } from '../events';
 import { CssClassManager } from '../rendering/cssClassManager';
+import type { ElementParams } from '../utils/dom';
 import {
-    _copyNodeList,
+    DataRefAttribute,
+    _createElement,
     _isNodeOrElement,
-    _iterateNamedNodeMap,
     _loadTemplate,
     _setDisplayed,
     _setVisible,
@@ -56,14 +57,14 @@ export class Component<TLocalEvent extends string = ComponentEvent>
 
     private cssClassManager: CssClassManager;
 
-    constructor(template?: string, componentSelectors?: ComponentSelector[]) {
+    constructor(templateOrParams?: string | ElementParams, componentSelectors?: ComponentSelector[]) {
         super();
 
         this.cssClassManager = new CssClassManager(() => this.eGui);
 
         this.componentSelectors = new Map((componentSelectors ?? []).map((comp) => [comp.selector, comp]));
-        if (template) {
-            this.setTemplate(template);
+        if (templateOrParams) {
+            this.setTemplate(templateOrParams);
         }
     }
 
@@ -88,7 +89,7 @@ export class Component<TLocalEvent extends string = ComponentEvent>
 
     private getDataRefAttribute(element: Element): string | null {
         if (element.getAttribute) {
-            return element.getAttribute('data-ref');
+            return element.getAttribute(DataRefAttribute);
         }
         // Plain text nodes don't have attributes or getAttribute method
         return null;
@@ -129,7 +130,10 @@ export class Component<TLocalEvent extends string = ComponentEvent>
     private createChildComponentsFromTags(parentNode: Element, paramsMap?: { [key: string]: any }): void {
         // we MUST take a copy of the list first, as the 'swapComponentForNode' adds comments into the DOM
         // which messes up the traversal order of the children.
-        const childNodeList: Node[] = _copyNodeList(parentNode.childNodes);
+        const childNodeList: Node[] = [];
+        for (const childNode of parentNode.childNodes ?? []) {
+            childNodeList.push(childNode);
+        }
 
         childNodeList.forEach((childNode) => {
             if (!(childNode instanceof HTMLElement)) {
@@ -143,7 +147,9 @@ export class Component<TLocalEvent extends string = ComponentEvent>
                     // wll be carried across
                     const childGui = childComp.getGui();
                     if (childGui) {
-                        this.copyAttributesFromNode(childNode, childComp.getGui());
+                        for (const attr of childNode.attributes ?? []) {
+                            childGui.setAttribute(attr.name, attr.value);
+                        }
                     }
                 },
                 paramsMap
@@ -193,10 +199,6 @@ export class Component<TLocalEvent extends string = ComponentEvent>
         return newComponent;
     }
 
-    private copyAttributesFromNode(source: Element, dest: Element): void {
-        _iterateNamedNodeMap(source.attributes, (name, value) => dest.setAttribute(name, value));
-    }
-
     private swapComponentForNode(newComponent: Component, parentNode: Element, childNode: Node): void {
         const eComponent = newComponent.getGui();
         parentNode.replaceChild(eComponent, childNode);
@@ -219,11 +221,17 @@ export class Component<TLocalEvent extends string = ComponentEvent>
     }
 
     public setTemplate(
-        template: string | null | undefined,
+        templateOrParams: ElementParams | string | null | undefined,
         componentSelectors?: ComponentSelector[],
         paramsMap?: { [key: string]: any }
     ): void {
-        const eGui = _loadTemplate(template as string);
+        let eGui: HTMLElement;
+        if (typeof templateOrParams === 'string' || templateOrParams == null) {
+            eGui = _loadTemplate(templateOrParams);
+        } else {
+            eGui = _createElement(templateOrParams);
+        }
+
         this.setTemplateFromElement(eGui, componentSelectors, paramsMap);
     }
 

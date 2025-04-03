@@ -55,6 +55,13 @@
         "update": {}
       }
     },
+    "test:e2e": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": ["nx run-many -t test:e2e --exclude all"]
+      },
+      "cache": false
+    },
     "pack": {
       "executor": "nx:noop",
       "dependsOn": ["^pack"],
@@ -167,7 +174,7 @@
       }
     },
     "clean": {
-      "command": "rimraf -g dist/ 'packages/*/dist/' 'plugins/*/dist/' 'testing/*/dist/' 'documentation/*/dist/' 'documentation/ag-grid-docs/node_modules/.vite/' 'documentation/ag-grid-docs/.astro/' 'community-modules/locale/umd/'"
+      "command": "rimraf -g dist/ 'packages/*/dist/' 'plugins/*/dist/' 'testing/*/dist/' 'documentation/*/dist/' 'documentation/ag-grid-docs/node_modules/.vite/' 'documentation/ag-grid-docs/.astro/' 'community-modules/locale/umd/' 'packages/ag-grid-community/styles' 'packages/ag-grid-enterprise/styles' 'reports' 'packages/*/coverage/'"
     },
     "generate-examples": {
       "dependsOn": ["^generate-examples"],

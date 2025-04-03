@@ -53,7 +53,6 @@ export class AppComponent {
     rowData!: any[];
     topOptions: GridOptions = {
         defaultColDef: {
-            flex: 1,
             minWidth: 120,
         },
         autoSizeStrategy: {

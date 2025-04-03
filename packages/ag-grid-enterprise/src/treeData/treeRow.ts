@@ -10,6 +10,7 @@ import type { ITreeNode, RowNode } from 'ag-grid-community';
  * - treeNodeFlags
  */
 export interface TreeRow<TData = any> extends RowNode<TData> {
+    parent: TreeRow<TData> | null;
     allLeafChildren: TreeRow<TData>[] | null;
     childrenAfterGroup: TreeRow<TData>[] | null;
     treeNode: ITreeNode | null;

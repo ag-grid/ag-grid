@@ -1,7 +1,7 @@
 import type { Group } from 'ag-charts-types/scene';
 
 import type { AgChartsExports } from '../../../../../agChartsExports';
-import type { MiniChartSelector, ThemeTemplateParameters } from '../../miniChartsContainer';
+import type { MiniChartSelector } from '../../miniChartsContainer';
 import { MiniChartWithAxes } from '../miniChartWithAxes';
 
 export class MiniBoxPlotClass extends MiniChartWithAxes {
@@ -12,7 +12,6 @@ export class MiniBoxPlotClass extends MiniChartWithAxes {
         agChartsExports: AgChartsExports,
         fills: string[],
         strokes: string[],
-        themeTemplateParameters: ThemeTemplateParameters,
         isCustomTheme: boolean
     ) {
         super(container, agChartsExports, 'boxPlotTooltip');
@@ -90,27 +89,19 @@ export class MiniBoxPlotClass extends MiniChartWithAxes {
             return boxPlotGroup;
         });
 
-        this.updateColors(fills, strokes, themeTemplateParameters, isCustomTheme);
+        this.updateColors(fills, strokes, isCustomTheme);
         this.root.append(this.boxPlotGroups);
     }
 
-    updateColors(
-        fills: string[],
-        strokes: string[],
-        themeTemplateParameters?: ThemeTemplateParameters,
-        isCustomTheme?: boolean
-    ) {
-        const {
-            agChartsExports: { _Util, _Theme },
-        } = this;
-        const themeBackgroundColor = themeTemplateParameters?.get(_Theme.themeSymbols.DEFAULT_BACKGROUND_COLOUR);
-        const backgroundFill =
-            (Array.isArray(themeBackgroundColor) ? themeBackgroundColor[0] : themeBackgroundColor) ?? 'white';
+    updateColors(fills: string[], strokes: string[], isCustomTheme?: boolean) {
+        const { _Theme } = this.agChartsExports;
 
         this.boxPlotGroups.forEach((group, i) => {
             for (const node of group.children() as Iterable<any>) {
                 const fill = fills[i % fills.length];
-                node.fill = isCustomTheme ? fill : _Util.interpolateColor(fill, backgroundFill)(0.7);
+                node.fill = isCustomTheme
+                    ? fill
+                    : _Theme.resolveOperation({ $mix: [fill, { $ref: 'backgroundColor' }, 0.7] });
                 node.stroke = strokes[i % strokes.length];
             }
         });

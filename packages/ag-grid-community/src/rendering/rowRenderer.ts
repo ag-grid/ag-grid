@@ -11,8 +11,6 @@ import type { FocusService } from '../focusService';
 import type { GridBodyCtrl } from '../gridBodyComp/gridBodyCtrl';
 import {
     _addGridCommonParams,
-    _getActiveDomElement,
-    _getDomData,
     _getRowHeightAsNumber,
     _isAnimateRows,
     _isCellSelectionEnabled,
@@ -23,20 +21,19 @@ import type { RenderedRowEvent } from '../interfaces/iCallbackParams';
 import type { CellPosition } from '../interfaces/iCellPosition';
 import type { RefreshCellsParams } from '../interfaces/iCellsParams';
 import type { IEventListener } from '../interfaces/iEventEmitter';
+import type { IPinnedRowModel } from '../interfaces/iPinnedRowModel';
 import type { IRowModel } from '../interfaces/iRowModel';
 import type { IRowNode, RowPinnedType } from '../interfaces/iRowNode';
 import type { RowPosition } from '../interfaces/iRowPosition';
 import type { IStickyRowFeature } from '../interfaces/iStickyRows';
-import { _requestAnimationFrame } from '../misc/animationFrameService';
 import type { PageBoundsService } from '../pagination/pageBoundsService';
-import type { PinnedRowModel } from '../pinnedRowModel/pinnedRowModel';
 import { _removeFromArray } from '../utils/array';
+import { _requestAnimationFrame } from '../utils/dom';
 import { _exists } from '../utils/generic';
 import { _errMsg } from '../validation/logging';
 import type { CellCtrl } from './cell/cellCtrl';
-import { DOM_DATA_KEY_CELL_CTRL } from './cell/cellCtrl';
 import type { RowCtrlInstanceId } from './row/rowCtrl';
-import { DOM_DATA_KEY_ROW_CTRL, RowCtrl } from './row/rowCtrl';
+import { RowCtrl } from './row/rowCtrl';
 import type { RowContainerHeightService } from './rowContainerHeightService';
 
 type RowCtrlIdMap = Record<RowCtrlInstanceId, RowCtrl>;
@@ -54,7 +51,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
 
     private pageBounds: PageBoundsService;
     private colModel: ColumnModel;
-    private pinnedRowModel?: PinnedRowModel;
+    private pinnedRowModel?: IPinnedRowModel;
     private rowModel: IRowModel;
     private focusSvc: FocusService;
     private rowContainerHeight: RowContainerHeightService;
@@ -116,6 +113,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
         this.addManagedEventListeners({
             paginationChanged: this.onPageLoaded.bind(this),
             pinnedRowDataChanged: this.onPinnedRowDataChanged.bind(this),
+            pinnedRowsChanged: this.onPinnedRowsChanged.bind(this),
             displayedColumnsChanged: this.onDisplayedColumnsChanged.bind(this),
             bodyScroll: this.onBodyScroll.bind(this),
             bodyHeightChanged: this.redraw.bind(this, {}),
@@ -161,7 +159,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
             this.addManagedPropertyListener('showOpenedGroup', () => {
                 const columns = showRowGroupCols.getShowRowGroupCols();
                 if (columns.length) {
-                    this.refreshCells({ columns });
+                    this.refreshCells({ columns, force: true });
                 }
             });
         }
@@ -220,7 +218,41 @@ export class RowRenderer extends BeanStub implements NamedBean {
         }
     }
 
+    private isCellRendered(rowIndex: number, column?: AgColumn): boolean {
+        const rowCtrl = this.rowCtrlsByRowIndex[rowIndex];
+
+        // if no column, simply check for row ctrl
+        if (!column) {
+            return !!rowCtrl;
+        }
+
+        if (rowCtrl && rowCtrl.isFullWidth()) {
+            return true;
+        }
+
+        // check if this is spanned, if it has been rendered by the span renderer
+        const spannedCell = this.beans.spannedRowRenderer?.getCellByPosition({ rowIndex, column, rowPinned: null });
+        if (spannedCell) {
+            return true;
+        }
+
+        // otherwise, check if the cell is rendered
+        return !!rowCtrl?.getCellCtrl(column);
+    }
+
+    /**
+     * Notifies all row and cell controls of any change in focused cell.
+     * @param event cell focused event
+     */
     private onCellFocusChanged(event?: CellFocusedEvent) {
+        // if the focused cell has not been rendered, need to render cell so focus can be captured.
+        if (event && event.rowIndex != null && !event.rowPinned) {
+            const col = this.beans.colModel.getCol(event.column) ?? undefined;
+            if (!this.isCellRendered(event.rowIndex, col)) {
+                this.redraw();
+            }
+        }
+
         this.getAllCellCtrls().forEach((cellCtrl) => cellCtrl.onCellFocused(event));
         this.getFullWidthRowCtrls().forEach((rowCtrl) => rowCtrl.onFullWidthRowFocused(event));
     }
@@ -488,6 +520,10 @@ export class RowRenderer extends BeanStub implements NamedBean {
         this.redrawAfterModelUpdate(params);
     }
 
+    private onPinnedRowsChanged(): void {
+        this.redrawAfterModelUpdate({ recycleRows: true });
+    }
+
     public redrawRow(rowNode: RowNode, suppressEvent = false) {
         if (rowNode.sticky) {
             this.stickyRowFeature?.refreshStickyNode(rowNode);
@@ -543,28 +579,6 @@ export class RowRenderer extends BeanStub implements NamedBean {
         this.redrawAfterModelUpdate();
     }
 
-    private getCellToRestoreFocusToAfterRefresh(params?: RefreshViewParams): CellPosition | null {
-        const focusedCell = params?.suppressKeepFocus ? null : this.focusSvc.getFocusCellToUseAfterRefresh();
-
-        if (focusedCell == null) {
-            return null;
-        }
-
-        // if the dom is not actually focused on a cell, then we don't try to refocus. the problem this
-        // solves is with editing - if the user is editing, eg focus is on a text field, and not on the
-        // cell itself, then the cell can be registered as having focus, however it's the text field that
-        // has the focus and not the cell div. therefore, when the refresh is finished, the grid will focus
-        // the cell, and not the textfield. that means if the user is in a text field, and the grid refreshes,
-        // the focus is lost from the text field. we do not want this.
-        const activeElement = _getActiveDomElement(this.beans);
-        const cellDomData = _getDomData(this.gos, activeElement, DOM_DATA_KEY_CELL_CTRL);
-        const rowDomData = _getDomData(this.gos, activeElement, DOM_DATA_KEY_ROW_CTRL);
-
-        const gridElementFocused = cellDomData || rowDomData;
-
-        return gridElementFocused ? focusedCell : null;
-    }
-
     // gets called from:
     // +) initialisation (in registerGridComp) params = null
     // +) onDomLayoutChanged, params = null
@@ -574,7 +588,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
     private redrawAfterModelUpdate(params: RefreshViewParams = {}): void {
         this.getLockOnRefresh();
 
-        const focusedCell = this.getCellToRestoreFocusToAfterRefresh(params);
+        const focusedCell = this.beans.focusSvc?.getFocusCellToUseAfterRefresh();
 
         this.updateContainerHeights();
         this.scrollToTopIfNewData(params);
@@ -681,43 +695,71 @@ export class RowRenderer extends BeanStub implements NamedBean {
             return;
         }
 
-        const cellToFocus = this.findPositionToFocus(cellPosition);
+        const focusSvc = this.beans.focusSvc;
 
+        const cellToFocus = this.findPositionToFocus(cellPosition);
         if (!cellToFocus) {
-            this.focusSvc.focusHeaderPosition({
+            focusSvc.focusHeaderPosition({
                 headerPosition: {
                     headerRowIndex: getFocusHeaderRowCount(this.beans) - 1,
                     column: cellPosition.column,
                 },
             });
-        } else {
-            const params = {
+            return;
+        }
+
+        // if focus has changed (e.g, if row has been removed, so focus moved up) focus new cell
+        if (cellPosition.rowIndex !== cellToFocus.rowIndex || cellPosition.rowPinned != cellToFocus.rowPinned) {
+            focusSvc.setFocusedCell({
                 ...cellToFocus,
                 preventScrollOnBrowserFocus: true,
                 forceBrowserFocus: true,
-            };
-            if (cellPosition.rowIndex !== cellToFocus.rowIndex || cellPosition.rowPinned != cellToFocus.rowPinned) {
-                this.focusSvc.setFocusedCell(params);
-            } else {
-                this.focusSvc.restoreFocusedCell(cellToFocus, () => {
-                    // we don't wish to dispatch an event as the rowRenderer is not capable of changing the selected cell,
-                    // so we mock a change event for the full width rows and cells to ensure they update to the newly selected state
+            });
+            return;
+        }
 
-                    this.onCellFocusChanged(
-                        _addGridCommonParams<CellFocusedEvent>(this.gos, {
-                            ...params,
-                            type: 'cellFocused',
-                        })
-                    );
-                });
-            }
+        // if the grid lost focus, we need to try to bring it back
+        if (!focusSvc.doesRowOrCellHaveBrowserFocus()) {
+            this.onCellFocusChanged(
+                _addGridCommonParams<CellFocusedEvent>(this.gos, {
+                    ...cellToFocus,
+                    forceBrowserFocus: true,
+                    preventScrollOnBrowserFocus: true,
+                    type: 'cellFocused',
+                })
+            );
         }
     }
 
     private findPositionToFocus(cellPosition: CellPosition): CellPosition | null {
+        const { pagination, pageBounds } = this.beans;
         let rowPosition: RowPosition | null = cellPosition;
 
+        // if the provided row isn't on the current page, focus first row of the current page
+        if (
+            rowPosition.rowPinned == null &&
+            pagination &&
+            pageBounds &&
+            !pagination.isRowInPage(rowPosition.rowIndex)
+        ) {
+            rowPosition = { rowPinned: null, rowIndex: pageBounds.getFirstRow() };
+        }
+
         while (rowPosition) {
+            // shortcut for pagination
+            if (rowPosition.rowPinned == null && pageBounds) {
+                // if row is before this page, get row above
+                if (rowPosition.rowIndex < pageBounds.getFirstRow()) {
+                    rowPosition = _getRowAbove(this.beans, { rowPinned: null, rowIndex: 0 });
+                    if (!rowPosition) {
+                        return null;
+                    }
+                } else if (rowPosition.rowIndex > pageBounds.getLastRow()) {
+                    // if row above this page, start from last row of this page
+                    rowPosition = { rowPinned: null, rowIndex: pageBounds.getLastRow() };
+                }
+            }
+
             const row = this.getRowByPosition(rowPosition);
             if (row?.isAlive()) {
                 return { ...row.getRowPosition(), column: cellPosition.column };
@@ -793,12 +835,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
             return;
         }
 
-        let cellFocused: CellPosition | null = null;
-
-        if (this.stickyRowFeature) {
-            cellFocused = this.getCellToRestoreFocusToAfterRefresh() || null;
-        }
-
+        let rowRedrawn = false;
         for (const rowCtrl of this.getRowCtrls(rowNodes)) {
             if (!rowCtrl.isFullWidth()) {
                 continue;
@@ -806,14 +843,13 @@ export class RowRenderer extends BeanStub implements NamedBean {
 
             const refreshed = rowCtrl.refreshFullWidth();
             if (!refreshed) {
+                rowRedrawn = true;
                 this.redrawRow(rowCtrl.rowNode, true);
             }
         }
 
-        this.dispatchDisplayedRowsChanged(false);
-
-        if (cellFocused) {
-            this.restoreFocusedCell(cellFocused);
+        if (rowRedrawn) {
+            this.dispatchDisplayedRowsChanged(false);
         }
     }
 
@@ -925,6 +961,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
     // 2) grid scrolled to new position
     // 3) ensure index visible (which is a scroll)
     public redraw(params: { afterScroll?: boolean } = {}) {
+        const { focusSvc, animationFrameSvc } = this.beans;
         const { afterScroll } = params;
         let cellFocused: CellPosition | undefined;
 
@@ -932,7 +969,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
         // only try to refocus cells shifting in and out of sticky container
         // if the browser supports focus ({ preventScroll })
         if (stickyRowFeature) {
-            cellFocused = this.getCellToRestoreFocusToAfterRefresh() || undefined;
+            cellFocused = focusSvc?.getFocusCellToUseAfterRefresh() || undefined;
         }
 
         const oldFirstRow = this.firstRenderedRow;
@@ -965,10 +1002,10 @@ export class RowRenderer extends BeanStub implements NamedBean {
         this.dispatchDisplayedRowsChanged(afterScroll && !hasStickyRowChanges);
 
         if (cellFocused != null) {
-            const newFocusedCell = this.getCellToRestoreFocusToAfterRefresh();
+            const newFocusedCell = focusSvc?.getFocusCellToUseAfterRefresh();
 
             if (cellFocused != null && newFocusedCell == null) {
-                this.beans.animationFrameSvc?.flushAllFrames();
+                animationFrameSvc?.flushAllFrames();
                 this.restoreFocusedCell(cellFocused);
             }
         }
@@ -992,9 +1029,20 @@ export class RowRenderer extends BeanStub implements NamedBean {
             indexesToDraw.push(i);
         }
 
+        const pagination = this.beans.pagination;
+        // if focus should be on a row, ensure the row is rendered.
+        const focusedRow = this.beans.focusSvc?.getFocusedCell()?.rowIndex;
+        if (
+            focusedRow != null &&
+            (focusedRow < this.firstRenderedRow || focusedRow > this.lastRenderedRow) &&
+            (!pagination || pagination.isRowInPage(focusedRow))
+        ) {
+            indexesToDraw.push(focusedRow);
+        }
+
         const checkRowToDraw = (rowComp: RowCtrl) => {
             const index = rowComp.rowNode.rowIndex;
-            if (index == null) {
+            if (index == null || index === focusedRow) {
                 return;
             }
             if (index < this.firstRenderedRow || index > this.lastRenderedRow) {
@@ -1390,7 +1438,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
         const KEEP_ROW: boolean = true;
         const rowNode = rowCtrl.rowNode;
 
-        const rowHasFocus = this.focusSvc.isRowNodeFocused(rowNode);
+        const rowHasFocus = this.focusSvc.isRowFocused(rowNode.rowIndex!, rowNode.rowPinned);
         const rowIsEditing = rowCtrl.editing;
         const rowIsDetail = rowNode.detail;
 
@@ -1557,7 +1605,6 @@ class RowCtrlCache {
 export interface RefreshViewParams {
     recycleRows?: boolean;
     animate?: boolean;
-    suppressKeepFocus?: boolean;
     onlyBody?: boolean;
     // when new data, grid scrolls back to top
     newData?: boolean;

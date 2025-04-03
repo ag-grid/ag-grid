@@ -1,7 +1,8 @@
 import type { IAfterGuiAttachedParams } from '../../interfaces/iAfterGuiAttachedParams';
 import type { FilterDisplayParams } from '../../interfaces/iFilter';
 import { _areEqual } from '../../utils/array';
-import { _removeFromParent, _setDisabled, _setDisplayed } from '../../utils/dom';
+import type { ElementParams } from '../../utils/dom';
+import { _createElement, _removeFromParent, _setDisabled, _setDisplayed } from '../../utils/dom';
 import { AgPromise } from '../../utils/promise';
 import { _warn } from '../../validation/logging';
 import { AgAbstractInputField } from '../../widgets/agAbstractInputField';
@@ -319,9 +320,8 @@ export abstract class SimpleFilter<
     }
 
     private createJoinOperatorPanel(): void {
-        const eJoinOperatorPanel = document.createElement('div');
+        const eJoinOperatorPanel = _createElement({ tag: 'div', cls: 'ag-filter-condition' });
         this.eJoinOperatorPanels.push(eJoinOperatorPanel);
-        eJoinOperatorPanel.classList.add('ag-filter-condition');
 
         const eJoinOperatorAnd = this.createJoinOperator(this.eJoinOperatorsAnd, eJoinOperatorPanel, 'and');
         const eJoinOperatorOr = this.createJoinOperator(this.eJoinOperatorsOr, eJoinOperatorPanel, 'or');
@@ -385,9 +385,9 @@ export abstract class SimpleFilter<
         };
     }
 
-    protected createBodyTemplate(): string {
+    protected createBodyTemplate(): ElementParams | null {
         // created dynamically
-        return '';
+        return null;
     }
     protected getAgComponents(): ComponentSelector[] {
         // created dynamically

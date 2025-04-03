@@ -1,5 +1,6 @@
 import type { GridApi } from '../api/gridApi';
-import type { ColDef } from '../entities/colDef';
+import type { ColDef, GetFindTextFunc } from '../entities/colDef';
+import type { ICellRendererParams } from '../rendering/cellRenderers/iCellRenderer';
 import type { Column } from './iColumn';
 import type { IRowNode } from './iRowNode';
 
@@ -35,6 +36,8 @@ export interface IFindService {
     setupGroupCol(colDef: ColDef): void;
 
     registerDetailGrid(node: IRowNode, api: GridApi): void;
+
+    getDisplayValue(params: ICellRendererParams): string | undefined;
 
     refresh(maintainActive: boolean): void;
 }
@@ -112,4 +115,13 @@ export interface FindFullWidthCellRendererParams<TData = any> {
      * the number of matches that would be within the full width row.
      */
     getFindMatches?: GetFindMatches<TData>;
+}
+
+export interface FindGroupRowRendererParams<TData = any, TValue = any> {
+    /**
+     * When using Find with a custom group row renderer, this allows providing a custom value to search within.
+     * E.g. if the group row renderer is displaying text that is different from the formatted value.
+     * Returning `null` means Find will not search within the group row.
+     */
+    getFindText?: GetFindTextFunc<TData, TValue>;
 }

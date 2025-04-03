@@ -39,7 +39,7 @@ import { _isBrowserSafari } from '../../utils/browser';
 import { _addOrRemoveAttribute, _isElementChildOfClass, _isFocusableFormField, _isVisible } from '../../utils/dom';
 import { _isStopPropagationForAgGrid } from '../../utils/event';
 import { _findNextFocusableElement } from '../../utils/focus';
-import { _executeNextVMTurn } from '../../utils/function';
+import { _batchCall } from '../../utils/function';
 import { _exists, _makeNull } from '../../utils/generic';
 import { _escapeString } from '../../utils/string';
 import type { Component } from '../../widgets/component';
@@ -200,7 +200,8 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         containerType: RowContainerType,
         compBean: BeanStub<any> | undefined
     ): void {
-        compBean = setupCompBean(this, this.beans.context, compBean);
+        const { context, focusSvc } = this.beans;
+        compBean = setupCompBean(this, context, compBean);
 
         const gui: RowGui = { rowComp, element, containerType, compBean };
         this.allRowGuis.push(gui);
@@ -208,14 +209,27 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
 
         this.initialiseRowComp(gui);
 
-        const isSsrmLoadingRow = this.rowType === 'FullWidthLoading' || this.rowNode.stub;
-        const isIrmLoadingRow = !this.rowNode.data && this.beans.rowModel.getType() === 'infinite';
+        const rowNode = this.rowNode;
+        const isSsrmLoadingRow = this.rowType === 'FullWidthLoading' || rowNode.stub;
+        const isIrmLoadingRow = !rowNode.data && this.beans.rowModel.getType() === 'infinite';
         // pinned rows render before the main grid body in the SSRM, only fire the event after the main body has rendered.
-        if (!isSsrmLoadingRow && !isIrmLoadingRow && !this.rowNode.rowPinned) {
+        if (!isSsrmLoadingRow && !isIrmLoadingRow && !rowNode.rowPinned) {
             // this is fired within setComp as we know that the component renderer is now trying to render.
             // linked with the fact the function implementation queues behind requestAnimationFrame should allow
             // us to be certain that all rendering is done by the time the event fires.
             this.beans.rowRenderer.dispatchFirstDataRenderedEvent();
+        }
+
+        const focusableElement = this.fullWidthGui?.element;
+        if (focusableElement) {
+            // when cell is created, if it should be focus the grid should take focus from the focused cell
+            if (
+                !this.editing &&
+                focusSvc.isRowFocused(rowNode.rowIndex!, rowNode.rowPinned) &&
+                focusSvc.shouldTakeFocus()
+            ) {
+                setTimeout(() => focusableElement.focus({ preventScroll: true }), 0);
+            }
         }
     }
 
@@ -329,7 +343,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
 
         const shouldSlide = this.slideInAnimation[containerType];
         if (shouldSlide) {
-            _executeNextVMTurn(() => {
+            _batchCall(() => {
                 this.onTopChanged();
             });
             this.slideInAnimation[containerType] = false;
@@ -337,7 +351,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
 
         const shouldFade = this.fadeInAnimation[containerType];
         if (shouldFade) {
-            _executeNextVMTurn(() => {
+            _batchCall(() => {
                 gui.rowComp.addOrRemoveCssClass('ag-opacity-zero', false);
             });
             this.fadeInAnimation[containerType] = false;
@@ -484,8 +498,8 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
     /**
      * Overridden by SpannedRowCtrl, if span context changes cell needs rebuilt
      */
-    protected shouldRecreateCellCtrl(cell: CellCtrl): boolean {
-        return !!this.beans.rowSpanSvc?.isCellSpanning(cell.column, this.rowNode);
+    protected isCorrectCtrlForSpan(cell: CellCtrl): boolean {
+        return !this.beans.rowSpanSvc?.isCellSpanning(cell.column, this.rowNode);
     }
 
     private createCellCtrls(
@@ -516,7 +530,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
             let cellCtrl: CellCtrl | undefined = prev.map[colInstanceId];
 
             // for spanned cells, if the span ref has changed, need to hard refresh cell
-            if (cellCtrl && this.shouldRecreateCellCtrl(cellCtrl)) {
+            if (cellCtrl && !this.isCorrectCtrlForSpan(cellCtrl)) {
                 cellCtrl.destroy();
                 cellCtrl = undefined;
             }
@@ -558,7 +572,52 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
             }
         }
 
+        const { focusSvc, visibleCols } = this.beans;
+        const focusedCell = focusSvc.getFocusedCell();
+        // if a cell is focused, might need to be force rendered if it belongs to this pinned section
+        if (focusedCell && focusedCell.column.getPinned() == pinned) {
+            const focusedColInstanceId = (focusedCell.column as AgColumn).getInstanceId();
+            const focusedCellCtrl = res.map[focusedColInstanceId];
+
+            // if focused col is visible, and there's no cell here for it, try to create one
+            if (!focusedCellCtrl && visibleCols.allCols.includes(focusedCell.column as AgColumn)) {
+                const cellCtrl = this.createFocusedCellCtrl();
+                if (cellCtrl) {
+                    const index = res.list.findIndex((ctrl) => ctrl.column.getLeft()! > cellCtrl.column.getLeft()!);
+                    const normalisedIndex = index === -1 ? undefined : Math.max(index - 1, 0);
+                    addCell(focusedColInstanceId, cellCtrl, normalisedIndex);
+                }
+            }
+        }
+
         return res;
+    }
+
+    /**
+     * Creates a new cell ctrl for the focused cell, if this is the correct row ctrl.
+     * @returns a CellCtrl for the focused cell, if required.
+     */
+    private createFocusedCellCtrl(): CellCtrl | undefined {
+        const { focusSvc, rowSpanSvc } = this.beans;
+        const focusedCell = focusSvc.getFocusedCell();
+        if (!focusedCell) {
+            return undefined;
+        }
+
+        const focusedSpan = rowSpanSvc?.getCellSpan(focusedCell.column as AgColumn, this.rowNode);
+        if (focusedSpan) {
+            // if span is focused, and the focused row is not the first in this span, don't create ctrl
+            if (focusedSpan.firstNode !== this.rowNode || !focusedSpan.doesSpanContain(focusedCell)) {
+                return undefined;
+            }
+        } else {
+            // if no span, and the focused cell is not in this row, don't create ctrl
+            if (!focusSvc.isRowFocused(this.rowNode.rowIndex!, this.rowNode.rowPinned)) {
+                return undefined;
+            }
+        }
+
+        return this.getNewCellCtrl(focusedCell.column as AgColumn);
     }
 
     private updateColumnListsImpl(useFlushSync: boolean): void {
@@ -617,10 +676,15 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
             return REMOVE_CELL;
         }
 
+        // if cell is in wrong span container, remove it
+        if (!this.isCorrectCtrlForSpan(cellCtrl)) {
+            return REMOVE_CELL;
+        }
+
         // we want to try and keep editing and focused cells
-        const { editing, cellPosition } = cellCtrl;
-        const { focusSvc, visibleCols } = this.beans;
-        const focused = focusSvc.isCellFocused(cellPosition);
+        const { editing } = cellCtrl;
+        const { visibleCols } = this.beans;
+        const focused = cellCtrl.isCellFocused();
 
         const mightWantToKeepCell = editing || focused;
 
@@ -728,6 +792,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
             rowHighlightChanged: this.onRowNodeHighlightChanged.bind(this),
             draggingChanged: this.postProcessRowDragging.bind(this),
             uiLevelChanged: this.onUiLevelChanged.bind(this),
+            rowPinned: this.onRowPinned.bind(this),
         });
 
         this.addManagedListeners(this.beans.eventSvc, {
@@ -787,6 +852,13 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
                 this.getAllCellCtrls().forEach((cellCtrl) => cellCtrl.onCellChanged(event));
             },
         });
+    }
+
+    /** Should only ever be triggered on source rows (i.e. not on pinned siblings) */
+    private onRowPinned(): void {
+        for (const gui of this.allRowGuis) {
+            gui.rowComp.addOrRemoveCssClass('ag-row-pinned-target', !!this.rowNode.pinnedSibling);
+        }
     }
 
     private onRowNodeDataChanged(event: DataChangedEvent): void {
@@ -961,7 +1033,21 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
             ? false
             : this.isFullWidth() && event.rowIndex === node.rowIndex && event.rowPinned == node.rowPinned;
 
-        const element = this.fullWidthGui ? this.fullWidthGui.element : this.centerGui?.element;
+        let element: HTMLElement | undefined;
+
+        if (this.fullWidthGui) {
+            element = this.fullWidthGui.element;
+        } else {
+            const column = this.beans.colModel.getCol(event?.column);
+            const pinned = column?.pinned;
+
+            if (pinned) {
+                element = pinned === 'right' ? this.rightGui?.element : this.leftGui?.element;
+            } else {
+                element = this.centerGui?.element;
+            }
+        }
+
         if (!element) {
             return;
         } // can happen with react ui, comp not yet ready
@@ -1141,8 +1227,6 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
             fullWidth: true,
             data: rowNode.data,
             node: rowNode,
-            // if this gets changed for groupRows to support the actual value (and formatted value),
-            // need to update the corresponding logic in `FindService.refresh()`
             value: rowNode.key,
             valueFormatted: rowNode.key,
             // these need to be taken out, as part of 'afterAttached' now
@@ -1163,6 +1247,10 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
             case 'FullWidthDetail':
                 return _getFullWidthDetailCellRendererDetails(compFactory, params)!;
             case 'FullWidthGroup':
+                params.value = rowNode.groupValue;
+                params.valueFormatted = rowNode.rowGroupColumn
+                    ? this.beans.valueSvc.formatValue(rowNode.rowGroupColumn, rowNode, params.value)
+                    : params.value;
                 return _getFullWidthGroupCellRendererDetails(compFactory, params)!;
             case 'FullWidthLoading':
                 return _getFullWidthLoadingCellRendererDetails(compFactory, params)!;
@@ -1309,6 +1397,11 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
 
         if (rowNode.isRowPinned()) {
             classes.push('ag-row-pinned');
+        }
+
+        // Only the source of the pinned row gets this class
+        if (!rowNode.isRowPinned() && rowNode.pinnedSibling) {
+            classes.push('ag-row-pinned-target');
         }
 
         if (rowNode.isSelected()) {
@@ -1508,6 +1601,11 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
             } else {
                 this.allRowGuis.forEach((gui) => gui.rowComp.addOrRemoveCssClass('ag-opacity-zero', true));
             }
+        }
+
+        // if this was focused; focus will need recovered
+        if (this.fullWidthGui?.element.contains(_getActiveDomElement(this.beans))) {
+            this.beans.focusSvc.attemptToRecoverFocus();
         }
 
         rowNode.setHovered(false);

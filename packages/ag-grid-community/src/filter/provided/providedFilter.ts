@@ -7,6 +7,7 @@ import type {
     IFilterComp,
 } from '../../interfaces/iFilter';
 import { PositionableFeature } from '../../rendering/features/positionableFeature';
+import type { ElementParams } from '../../utils/dom';
 import { _debounce } from '../../utils/function';
 import type { AgPromise } from '../../utils/promise';
 import type { ComponentSelector } from '../../widgets/component';
@@ -64,7 +65,7 @@ export abstract class ProvidedFilter<
 
     protected abstract updateUiVisibility(): void;
 
-    protected abstract createBodyTemplate(): string;
+    protected abstract createBodyTemplate(): ElementParams | null;
     protected abstract getAgComponents(): ComponentSelector[];
     protected abstract setModelIntoUi(model: M | null, isInitialLoad?: boolean): AgPromise<void>;
     protected abstract areNonNullModelsEqual(a: M, b: M): boolean;
@@ -73,13 +74,13 @@ export abstract class ProvidedFilter<
     public abstract readonly filterType: 'text' | 'number' | 'date' | 'set' | 'multi';
 
     public postConstruct(): void {
-        this.setTemplate(
-            /* html */ `
-            <div class="ag-filter-body-wrapper ag-${this.cssIdentifier}-body-wrapper" data-ref="eFilterBody">
-                ${this.createBodyTemplate()}
-            </div>`,
-            this.getAgComponents()
-        );
+        const element: ElementParams = {
+            tag: 'div',
+            ref: 'eFilterBody',
+            cls: `ag-filter-body-wrapper ag-${this.cssIdentifier}-body-wrapper`,
+            children: [this.createBodyTemplate()],
+        };
+        this.setTemplate(element);
         this.createManagedBean(
             new ManagedFocusFeature(this.getFocusableElement(), {
                 handleKeyDown: this.handleKeyDown.bind(this),

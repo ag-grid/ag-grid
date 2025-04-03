@@ -19,12 +19,15 @@ import type { RowModelType } from './interfaces/iRowModel';
 import {
     _areModulesGridScoped,
     _getRegisteredModules,
+    _hasUserRegistered,
     _isModuleRegistered,
     _registerModule,
 } from './modules/moduleRegistry';
+import { _createElement } from './utils/dom';
 import { _missing } from './utils/generic';
 import { _mergeDeep } from './utils/object';
-import { _error, _logPreInitErr, baseDocLink } from './validation/logging';
+import { NoModulesRegisteredError } from './validation/errorMessages/errorText';
+import { _error, _logPreInitErr } from './validation/logging';
 import { VanillaFrameworkOverrides } from './vanillaFrameworkOverrides';
 
 export interface GridParams {
@@ -143,7 +146,7 @@ export function createGrid<TData>(
         // the theme class on it. JS users calling createGrid directly are
         // passing an element owned by their application, so we can't set a
         // class name on it and must create a wrapper.
-        const newGridDiv = document.createElement('div');
+        const newGridDiv = _createElement({ tag: 'div' });
         newGridDiv.style.height = '100%';
         eGridDiv.appendChild(newGridDiv);
         eGridDiv = newGridDiv;
@@ -220,7 +223,7 @@ export class GridCoreCreator {
     }
 
     private getRegisteredModules(params: GridParams | undefined, gridId: string, rowModelType: RowModelType): Module[] {
-        _registerModule(CommunityCoreModule, undefined);
+        _registerModule(CommunityCoreModule, undefined, true);
 
         params?.modules?.forEach((m) => _registerModule(m, gridId));
 
@@ -288,6 +291,11 @@ export class GridCoreCreator {
             return;
         }
 
+        if (!_hasUserRegistered()) {
+            _logPreInitErr(272, undefined, NoModulesRegisteredError());
+            return;
+        }
+
         if (!_isModuleRegistered(rowModuleModelName, gridId, rowModelType)) {
             _logPreInitErr(
                 200,
@@ -298,7 +306,7 @@ export class GridCoreCreator {
                     gridId,
                     rowModelType,
                 },
-                `Missing module ${rowModuleModelName}Module for rowModelType ${rowModelType}. \nIf upgrading from before v33, see ${baseDocLink}/upgrading-to-ag-grid-33/#changes-to-modules/`
+                `Missing module ${rowModuleModelName}Module for rowModelType ${rowModelType}.`
             );
             return;
         }

@@ -116,6 +116,42 @@ alongside a custom theme, and are unaffected by the settings in the custom theme
 
 {% gridExampleRunner title="Custom Chart Theme" name="custom-chart-theme"  exampleHeight=660 /%}
 
+## Label Formatting
+
+{% note %}
+The `valueFormatter` is not automatically applied to the chart axes. If you wish to use the grid's value formatters, you must apply them manually.
+{% /note %}
+
+Custom label formatting can be applied to the chart axes by providing suitable formatters.
+
+```{% frameworkTransform=true spaceBetweenProperties=true %}
+const gridOptions = {
+    chartThemeOverrides: {
+        common: {
+            axes: {
+                number: {
+                    label: {
+                        formatter: function(params) {
+                            // prefix with dollar sign
+                            return '$' + params.value;
+                        },
+                    },
+                },
+            },
+        },
+    },
+}
+```
+
+The example below shows:
+* A custom label formatter being used with the vertical axis to display SI units for the data. Additionally,
+this example demonstrates the use of the `domain` property passed through to the formatter to provide a consistent scale across the value range.
+* A custom title formatter using `boundSeries` property passed through to the formatter for the vertical axis to display which series the axes are representing.
+
+{% gridExampleRunner title="Label Formatting" name="label-formatting"  exampleHeight=660 /%}
+
+For more information on the `formatter` property for axes labels, see AG Charts Axis Labels [Label Text Formatting](https://www.ag-grid.com/charts/javascript/axes-labels/#label-text-formatting).
+
 ## Next Up
 
 Continue to the next section to learn about [Chart Events](./integrated-charts-events/).

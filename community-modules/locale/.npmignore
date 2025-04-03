@@ -17,3 +17,6 @@ jest.config.ts
 .swcrc
 eslint.config.mjs
 tsconfig.types.test.json
+coverage
+
+

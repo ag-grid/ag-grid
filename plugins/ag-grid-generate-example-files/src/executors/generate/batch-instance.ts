@@ -16,8 +16,11 @@ export default async function processor(msg: Message) {
 
     let result: BatchExecutorTaskResult;
     try {
-        await generateFiles(options, {} as ExecutorContext, gridOptionsTypes);
-        result = { task: taskName, result: { success: true, terminalOutput: '' } };
+        const fileResults = await generateFiles(options, {} as ExecutorContext, gridOptionsTypes);
+        result = {
+            task: taskName,
+            result: { success: fileResults.success, terminalOutput: fileResults.terminalOutput ?? '' },
+        };
     } catch (e) {
         result = { task: taskName, result: { success: false, terminalOutput: `${e}` } };
     }

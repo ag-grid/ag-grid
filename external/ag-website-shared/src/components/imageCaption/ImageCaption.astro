@@ -90,7 +90,7 @@ const imageId = id ? id : `image-${imagePath}`;
     }
     const image = document.getElementById(imageId);
     globalThis.addDarkmodeOnChange((darkMode) => {
-        if (darkMode) {
+        if (darkModeImageSrc && darkMode) {
             image.src = darkModeImageSrc;
         } else {
             image.src = imageSrc;

@@ -111,15 +111,90 @@ function createCrossFilterThemeOverrides(
         },
     };
 
+    const common = {
+        tooltip: {
+            delay: 500,
+        },
+        legend,
+        listeners: {
+            click: (e: any) => chartProxyParams.crossFilterCallback(e, true),
+        },
+    };
+
+    if (seriesType === 'pie' || seriesType === 'donut') {
+        return {
+            [seriesType]: {
+                series: {
+                    fills: {
+                        $if: [
+                            { $eq: [{ $value: '$index' }, 0] },
+                            {
+                                $map: [
+                                    { $mix: [{ $value: '$1' }, { $ref: 'backgroundColor' }, 0.7] },
+                                    { $palette: 'fills' },
+                                ],
+                            },
+                            { $palette: 'fills' },
+                        ],
+                    },
+                    strokes: {
+                        $if: [
+                            { $eq: [{ $value: '$index' }, 0] },
+                            {
+                                $map: [
+                                    { $mix: [{ $value: '$1' }, { $ref: 'backgroundColor' }, 0.7] },
+                                    { $palette: 'strokes' },
+                                ],
+                            },
+                            { $palette: 'strokes' },
+                        ],
+                    },
+                },
+                ...common,
+            },
+        };
+    }
+
+    const fill: { fill?: object } = {};
+    if (seriesType !== 'line') {
+        fill.fill = {
+            $if: [
+                { $isEven: [{ $value: '$index' }] },
+                { $palette: 'fill' },
+                {
+                    $mix: [
+                        {
+                            $path: ['../$prevIndex/fill', { $palette: 'fill' }],
+                        },
+                        { $ref: 'backgroundColor' },
+                        0.7,
+                    ],
+                },
+            ],
+        };
+    }
+
     return {
         [seriesType]: {
-            tooltip: {
-                delay: 500,
+            series: {
+                stroke: {
+                    $if: [
+                        { $isEven: [{ $value: '$index' }] },
+                        { $palette: 'stroke' },
+                        {
+                            $mix: [
+                                {
+                                    $path: ['../$prevIndex/fill', { $palette: 'stroke' }],
+                                },
+                                { $ref: 'backgroundColor' },
+                                0.7,
+                            ],
+                        },
+                    ],
+                },
+                ...fill,
             },
-            legend,
-            listeners: {
-                click: (e: any) => chartProxyParams.crossFilterCallback(e, true),
-            },
+            ...common,
         },
     };
 }
@@ -142,7 +217,6 @@ function inbuiltStockThemeOverrides(params: ChartProxyParams, isEnterprise: bool
                 bottom: extraPadding.includes('bottom') ? 40 : 20,
                 left: extraPadding.includes('left') ? 30 : 20,
             },
-            suppressFieldDotNotation: true,
         },
     };
 }

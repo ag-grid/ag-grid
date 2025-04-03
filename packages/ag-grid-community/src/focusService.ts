@@ -7,7 +7,6 @@ import type { BeanCollection } from './context/context';
 import type { AgColumn } from './entities/agColumn';
 import type { AgColumnGroup } from './entities/agColumnGroup';
 import { _areCellsEqual, _getFirstRow, _getLastRow, _getRowNode } from './entities/positionUtils';
-import type { RowNode } from './entities/rowNode';
 import type { CellFocusedParams, CommonCellFocusParams } from './events';
 import type { FilterManager } from './filter/filterManager';
 import { _getActiveDomElement, _getDomData } from './gridOptionsUtils';
@@ -21,10 +20,10 @@ import type { HeaderPosition } from './interfaces/iHeaderPosition';
 import type { RowPinnedType } from './interfaces/iRowNode';
 import { getHeaderIndexToFocus } from './navigation/headerNavigationService';
 import type { NavigationService } from './navigation/navigationService';
+import { DOM_DATA_KEY_CELL_CTRL } from './rendering/cell/cellCtrl';
 import type { OverlayService } from './rendering/overlays/overlayService';
 import { DOM_DATA_KEY_ROW_CTRL } from './rendering/row/rowCtrl';
 import type { RowRenderer } from './rendering/rowRenderer';
-import type { CellSpan } from './rendering/spanning/rowSpanCache';
 import { _last } from './utils/array';
 import {
     _focusInto,
@@ -55,12 +54,13 @@ export class FocusService extends BeanStub implements NamedBean {
     }
 
     private focusedCell: CellPosition | null;
-    private restoredFocusedCell: CellPosition | null;
     public focusedHeader: HeaderPosition | null;
     /** the column that had focus before it moved into the advanced filter */
     private advFilterFocusColumn: AgColumn | undefined;
 
-    private awaitRestoreFocusedCell: boolean;
+    /** If a cell was destroyed that previously had focus, focus needs restored when the cell reappears */
+    private focusFallbackTimeout: number | null = null;
+    private needsFocusRestored = false;
 
     public postConstruct(): void {
         const clearFocusedCellListener = this.clearFocusedCell.bind(this);
@@ -73,6 +73,45 @@ export class FocusService extends BeanStub implements NamedBean {
         });
 
         this.addDestroyFunc(_registerKeyboardFocusEvents(this.beans));
+    }
+
+    public attemptToRecoverFocus() {
+        this.needsFocusRestored = true;
+
+        if (this.focusFallbackTimeout != null) {
+            clearTimeout(this.focusFallbackTimeout);
+        }
+
+        // fallback; don't want to leave this flag hanging for a long time as the grid may steal focus later
+        // if this doesn't get consumed
+        this.focusFallbackTimeout = window.setTimeout(this.setFocusRecovered.bind(this), 100);
+    }
+
+    private setFocusRecovered() {
+        this.needsFocusRestored = false;
+        if (this.focusFallbackTimeout != null) {
+            clearTimeout(this.focusFallbackTimeout);
+            this.focusFallbackTimeout = null;
+        }
+    }
+
+    /**
+     * Specifies whether to take focus, as grid either already has focus, or lost it due
+     * to a destroyed cell
+     * @returns true if the grid should re-take focus, otherwise false
+     */
+    public shouldTakeFocus(): boolean {
+        if (this.gos.get('suppressFocusAfterRefresh')) {
+            this.setFocusRecovered();
+            return false;
+        }
+
+        if (this.needsFocusRestored) {
+            this.setFocusRecovered();
+            return true;
+        }
+
+        return this.doesRowOrCellHaveBrowserFocus();
     }
 
     public onColumnEverythingChanged(): void {
@@ -105,7 +144,7 @@ export class FocusService extends BeanStub implements NamedBean {
         // we check that the browser is actually focusing on the grid, if it is not, then
         // we have nothing to worry about. we check for ROW data, as this covers both focused Rows (for Full Width Rows)
         // and Cells (covers cells as cells live in rows)
-        if (this.isDomDataMissingInHierarchy(_getActiveDomElement(this.beans), DOM_DATA_KEY_ROW_CTRL)) {
+        if (!this.doesRowOrCellHaveBrowserFocus()) {
             return null;
         }
 
@@ -119,82 +158,45 @@ export class FocusService extends BeanStub implements NamedBean {
 
         // we check that the browser is actually focusing on the grid, if it is not, then
         // we have nothing to worry about
-        if (this.isDomDataMissingInHierarchy(_getActiveDomElement(this.beans), DOM_DATA_KEY_HEADER_CTRL)) {
+        if (!this.isDomDataPresentInHierarchy(_getActiveDomElement(this.beans), DOM_DATA_KEY_HEADER_CTRL)) {
             return null;
         }
 
         return this.focusedHeader;
     }
 
-    private isDomDataMissingInHierarchy(eBrowserCell: Node | null, key: string): boolean {
+    /**
+     * Check for both cells and rows, as a row might be destroyed and the dom data removed before the cell if the
+     * row is animating out.
+     */
+    public doesRowOrCellHaveBrowserFocus() {
+        const activeElement = _getActiveDomElement(this.beans);
+        // check for cell first
+        if (this.isDomDataPresentInHierarchy(activeElement, DOM_DATA_KEY_CELL_CTRL)) {
+            return true;
+        }
+        // otherwise rows
+        return this.isDomDataPresentInHierarchy(activeElement, DOM_DATA_KEY_ROW_CTRL);
+    }
+
+    private isDomDataPresentInHierarchy(eBrowserCell: Node | null, key: string): boolean {
         let ePointer = eBrowserCell;
 
         while (ePointer) {
             const data = _getDomData(this.gos, ePointer, key);
 
             if (data) {
-                return false;
+                return true;
             }
 
             ePointer = ePointer.parentNode;
         }
 
-        return true;
+        return false;
     }
 
     public getFocusedCell(): CellPosition | null {
         return this.focusedCell;
-    }
-
-    public shouldRestoreFocus(cell: CellPosition | CellSpan): boolean {
-        if (this.isCellRestoreFocused(cell)) {
-            setTimeout(() => {
-                // Clear the restore focused cell position after the timeout to avoid
-                // the cell being focused again and stealing focus from another part of the app.
-                this.restoredFocusedCell = null;
-            }, 0);
-            return true;
-        }
-        return false;
-    }
-
-    public clearRestoreFocus(): void {
-        this.restoredFocusedCell = null;
-        this.awaitRestoreFocusedCell = false;
-    }
-
-    public restoreFocusedCell(cellPosition: CellPosition, setFocusCallback: () => void): void {
-        this.awaitRestoreFocusedCell = true;
-
-        // this should be done asynchronously to work with React Renderers.
-        setTimeout(() => {
-            // if the cell has lost focus (react events are async), we don't want to restore
-            if (!this.awaitRestoreFocusedCell) {
-                return;
-            }
-            this.setRestoreFocusedCell(cellPosition);
-
-            setFocusCallback();
-        });
-    }
-
-    private isCellRestoreFocused(cellPosition: CellPosition | CellSpan): boolean {
-        if (this.restoredFocusedCell == null) {
-            return false;
-        }
-
-        if ('cellSpan' in cellPosition) {
-            return cellPosition.doesSpanContain(this.restoredFocusedCell);
-        }
-        return _areCellsEqual(cellPosition, this.restoredFocusedCell);
-    }
-
-    public setRestoreFocusedCell(cellPosition: CellPosition): void {
-        if (this.beans.frameworkOverrides.renderingEngine === 'react') {
-            // The restoredFocusedCellPosition is used in the React Rendering engine as we have to be able
-            // to support restoring focus after an async rendering.
-            this.restoredFocusedCell = cellPosition;
-        }
     }
 
     private getFocusEventParams(focusedCellPosition: CellPosition): CommonCellFocusParams {
@@ -217,7 +219,6 @@ export class FocusService extends BeanStub implements NamedBean {
     }
 
     public clearFocusedCell(): void {
-        this.restoredFocusedCell = null;
         if (this.focusedCell == null) {
             return;
         }
@@ -233,6 +234,9 @@ export class FocusService extends BeanStub implements NamedBean {
     }
 
     public setFocusedCell(params: CellFocusedParams): void {
+        // as focus has been set, reset the flag
+        this.setFocusRecovered();
+
         const { column, rowIndex, rowPinned, forceBrowserFocus = false, preventScrollOnBrowserFocus = false } = params;
 
         const gridColumn = this.colModel.getCol(column!);
@@ -267,10 +271,6 @@ export class FocusService extends BeanStub implements NamedBean {
         return _areCellsEqual(cellPosition, this.focusedCell);
     }
 
-    public isRowNodeFocused(rowNode: RowNode): boolean {
-        return this.isRowFocused(rowNode.rowIndex!, rowNode.rowPinned);
-    }
-
     public isHeaderWrapperFocused(headerCtrl: HeaderCellCtrl): boolean {
         if (this.focusedHeader == null) {
             return false;
@@ -297,6 +297,9 @@ export class FocusService extends BeanStub implements NamedBean {
         fromCell?: boolean;
         rowWithoutSpanValue?: number;
     }): boolean {
+        // focusing header has been attempted; don't try to recover focus
+        this.setFocusRecovered();
+
         if (_isHeaderFocusSuppressed(this.beans)) {
             return false;
         }

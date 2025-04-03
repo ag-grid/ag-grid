@@ -7,6 +7,7 @@ import type {
     LocaleTextFunc,
     MenuItemDef,
     NamedBean,
+    RowNode,
 } from 'ag-grid-community';
 import {
     BeanStub,
@@ -45,6 +46,7 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
     public mapWithStockItems(
         originalList: (MenuItemDef | DefaultMenuItem)[],
         column: AgColumn | null,
+        node: RowNode | null,
         sourceElement: () => HTMLElement,
         source: ColumnEventType
     ): (MenuItemDef | 'separator')[] {
@@ -74,6 +76,7 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
             sortSvc,
             chartMenuItemMapper,
             valueColsSvc,
+            pinnedRowModel,
         } = beans;
 
         const getStockMenuItem = (
@@ -115,6 +118,53 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
                               name: localeTextFunc('noPin', 'No Pin'),
                               action: () => pinnedCols.setColsPinned([column], null, source),
                               checked: !!column && !column.isPinned(),
+                          }
+                        : null;
+                case 'pinRowSubMenu': {
+                    const enableRowPinning = gos.get('enableRowPinning');
+                    const subMenu: string[] = [];
+                    const pinned = node?.rowPinned ?? node?.pinnedSibling?.rowPinned;
+                    if (enableRowPinning && enableRowPinning !== 'bottom' && pinned != 'top') {
+                        subMenu.push('pinTop');
+                    }
+
+                    if (enableRowPinning && enableRowPinning !== 'top' && pinned != 'bottom') {
+                        subMenu.push('pinBottom');
+                    }
+
+                    if (pinned) {
+                        subMenu.push('unpinRow');
+                    }
+
+                    return pinnedRowModel?.isManual()
+                        ? {
+                              name: localeTextFunc('pinRow', 'Pin Row'),
+                              subMenu,
+                          }
+                        : null;
+                }
+                case 'pinTop':
+                    return pinnedRowModel?.isManual()
+                        ? {
+                              name: localeTextFunc('pinTop', 'Pin to Top'),
+                              action: ({ node, column }) =>
+                                  node && pinnedRowModel.pinRow(node as RowNode, 'top', column as AgColumn | null),
+                          }
+                        : null;
+                case 'pinBottom':
+                    return pinnedRowModel?.isManual()
+                        ? {
+                              name: localeTextFunc('pinBottom', 'Pin to Bottom'),
+                              action: ({ node, column }) =>
+                                  node && pinnedRowModel.pinRow(node as RowNode, 'bottom', column as AgColumn | null),
+                          }
+                        : null;
+                case 'unpinRow':
+                    return pinnedRowModel?.isManual()
+                        ? {
+                              name: localeTextFunc('unpinRow', 'Unpin Row'),
+                              action: ({ node, column }) =>
+                                  node && pinnedRowModel.pinRow(node as RowNode, null, column as AgColumn | null),
                           }
                         : null;
                 case 'valueAggSubMenu':
@@ -314,7 +364,7 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
                           }
                         : null;
                 case 'separator':
-                    return 'separator';
+                    return key;
                 case 'pivotChart':
                 case 'chartRange':
                     return (chartMenuItemMapper as ChartMenuItemMapper).getChartItems(key);
@@ -399,6 +449,7 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
                 resultDef.subMenu = this.mapWithStockItems(
                     subMenu as (DefaultMenuItem | MenuItemDef)[],
                     column,
+                    node,
                     sourceElement,
                     source
                 );

@@ -1,11 +1,11 @@
 {
   "name": "ag-grid-module-size-angular",
-  "version": "33.1.1",
+  "version": "33.2.1",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
     "build": "ng build",
-    "test": "ng build",
+    "test:e2e": "ng build",
     "watch": "ng build --watch --configuration development",
     "analyze": "ng build && source-map-explorer dist/angular-19/**/*.js"
   },
@@ -20,11 +20,11 @@
     "@angular/platform-browser": "^19.0.0",
     "@angular/platform-browser-dynamic": "^19.0.0",
     "@angular/router": "^19.0.0",
-    "ag-grid-angular": "33.1.1",
-    "ag-grid-community": "33.1.1",
-    "ag-grid-enterprise": "33.1.1",
-    "ag-charts-community": "11.1.1-beta.20250302",
-    "ag-charts-enterprise": "11.1.1-beta.20250302",
+    "ag-grid-angular": "33.2.1",
+    "ag-grid-community": "33.2.1",
+    "ag-grid-enterprise": "33.2.1",
+    "ag-charts-community": "11.2.1-beta.20250330",
+    "ag-charts-enterprise": "11.2.1-beta.20250330",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0",
     "zone.js": "~0.15.0"

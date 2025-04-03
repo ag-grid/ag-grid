@@ -323,7 +323,10 @@ export class ServerSideSelectionService extends BaseSelectionService implements 
         this.eventSvc.dispatchEvent({
             type: 'selectionChanged',
             source,
-            selectedNodes: this.selectionStrategy.getSelectedNodes(true, false),
+            selectedNodes:
+                this.selectionStrategy instanceof GroupSelectsChildrenStrategy
+                    ? null
+                    : this.selectionStrategy.getSelectedNodes(true, false),
             serverSideState: this.getSelectionState() as
                 | IServerSideSelectionState
                 | IServerSideGroupSelectionState

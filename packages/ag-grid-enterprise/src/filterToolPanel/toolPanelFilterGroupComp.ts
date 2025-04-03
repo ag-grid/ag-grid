@@ -43,9 +43,11 @@ export class ToolPanelFilterGroupComp extends Component {
             direction: 'vertical',
         };
         this.setTemplate(
-            /* html */ `<div class="ag-filter-toolpanel-group-wrapper">
-            <ag-group-component data-ref="filterGroupComp"></ag-group-component>
-        </div>`,
+            {
+                tag: 'div',
+                cls: 'ag-filter-toolpanel-group-wrapper',
+                children: [{ tag: 'ag-group-component', ref: 'filterGroupComp' }],
+            },
             [AgGroupComponentSelector],
             { filterGroupComp: groupParams }
         );

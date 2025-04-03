@@ -130,18 +130,18 @@ export function _getRowAbove(beans: BeanCollection, rowPosition: RowPosition): R
     const { rowIndex: index, rowPinned: pinned } = rowPosition;
     const { pageBounds, pinnedRowModel, rowModel } = beans;
 
-    if (pinned === 'top' && index === 0) {
-        return null;
-    }
+    if (index === 0) {
+        if (pinned === 'top') {
+            return null;
+        }
 
-    if (pinned == null && index === pageBounds.getFirstRow()) {
+        if (pinned === 'bottom' && rowModel.isRowsToRender()) {
+            return { rowIndex: pageBounds.getLastRow(), rowPinned: null };
+        }
+
         return pinnedRowModel?.isRowsToRender('top')
             ? { rowIndex: pinnedRowModel.getPinnedTopRowCount() - 1, rowPinned: 'top' }
             : null;
-    }
-
-    if (pinned === 'bottom' && index === 0 && rowModel.isRowsToRender()) {
-        return { rowIndex: pageBounds.getLastRow(), rowPinned: null };
     }
 
     const rowNode = pinned ? undefined : rowModel.getRow(index);
@@ -193,12 +193,12 @@ function isLastRowInContainer(beans: BeanCollection, rowPosition: RowPosition): 
     const { pinnedRowModel, pageBounds } = beans;
 
     if (rowPinned === 'top') {
-        const lastTopIndex = pinnedRowModel?.getPinnedTopRowCount() ?? 0 - 1;
+        const lastTopIndex = (pinnedRowModel?.getPinnedTopRowCount() ?? 0) - 1;
         return lastTopIndex <= rowIndex;
     }
 
     if (rowPinned === 'bottom') {
-        const lastBottomIndex = pinnedRowModel?.getPinnedBottomRowCount() ?? 0 - 1;
+        const lastBottomIndex = (pinnedRowModel?.getPinnedBottomRowCount() ?? 0) - 1;
         return lastBottomIndex <= rowIndex;
     }
 

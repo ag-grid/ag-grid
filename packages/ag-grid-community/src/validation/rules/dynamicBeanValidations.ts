@@ -10,6 +10,8 @@ export const DYNAMIC_BEAN_MODULES: Record<DynamicBeanName, ValidationModuleName>
     headerGroupCellCtrl: 'ColumnGroup',
     rangeHandle: 'CellSelection',
     tooltipFeature: 'Tooltip',
+    groupStrategy: 'RowGrouping',
+    treeParentIdStrategy: 'TreeData',
     agSetColumnFilterEvaluator: 'SetFilter',
     agMultiColumnFilterEvaluator: 'MultiFilter',
     agGroupColumnFilterEvaluator: 'GroupFilter',

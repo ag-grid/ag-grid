@@ -17,6 +17,8 @@ updateMainTsWithCoreExports.js
 webpackBuild.sh
 eslint.config.mjs
 gulpfile.js
-jest.config.js
-jest.setup.js
+jest.config.ts
+jest.setup.ts
+jest.jsdom-env.cjs
 scripts
+coverage

@@ -473,7 +473,7 @@ export class NavigationService extends BeanStub implements NamedBean {
                 res = this.moveToNextEditingCell(previous as CellCtrl, backwards, event);
             }
         } else {
-            res = this.moveToNextCellNotEditing(previous, backwards);
+            res = this.moveToNextCellNotEditing(previous, backwards, event);
         }
 
         if (res === null) {
@@ -567,7 +567,11 @@ export class NavigationService extends BeanStub implements NamedBean {
     }
 
     // returns null if no navigation should be performed
-    private moveToNextCellNotEditing(previousCell: CellCtrl | RowCtrl, backwards: boolean): boolean | null {
+    private moveToNextCellNotEditing(
+        previousCell: CellCtrl | RowCtrl,
+        backwards: boolean,
+        event?: KeyboardEvent
+    ): boolean | null {
         const displayedColumns = this.beans.visibleCols.allCols;
         let cellPos: CellPosition;
 
@@ -576,6 +580,13 @@ export class NavigationService extends BeanStub implements NamedBean {
                 ...previousCell.getRowPosition(),
                 column: backwards ? displayedColumns[0] : _last(displayedColumns),
             };
+
+            if (this.gos.get('embedFullWidthRows') && event) {
+                const focusedContainer = previousCell.findFullWidthInfoForEvent(event);
+                if (focusedContainer) {
+                    cellPos.column = focusedContainer.column;
+                }
+            }
         } else {
             cellPos = previousCell.getFocusedCellPosition();
         }
@@ -590,7 +601,7 @@ export class NavigationService extends BeanStub implements NamedBean {
         if (nextCell instanceof CellCtrl) {
             nextCell.focusCell(true);
         } else if (nextCell) {
-            return this.tryToFocusFullWidthRow(nextCell.getRowPosition(), backwards);
+            return this.tryToFocusFullWidthRow(nextCell, backwards);
         }
 
         return _exists(nextCell);
@@ -604,7 +615,7 @@ export class NavigationService extends BeanStub implements NamedBean {
         previousPosition: CellPosition,
         backwards: boolean,
         startEditing: boolean
-    ): CellCtrl | RowCtrl | null | false {
+    ): CellCtrl | CellPosition | null | false {
         let nextPosition: CellPosition | null | undefined = previousPosition;
         const beans = this.beans;
         const { cellNavigation, gos, focusSvc, rowRenderer, rangeSvc } = beans;
@@ -689,7 +700,8 @@ export class NavigationService extends BeanStub implements NamedBean {
                 if (!row || !row.isFullWidth() || startEditing) {
                     continue;
                 }
-                return row;
+
+                return { ...row.getRowPosition(), column: nextPosition?.column };
             }
 
             if (cellNavigation!.isSuppressNavigable(nextCell.column, nextCell.rowNode)) {

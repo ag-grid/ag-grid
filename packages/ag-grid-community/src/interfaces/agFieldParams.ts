@@ -1,3 +1,4 @@
+import type { ElementParams } from '../utils/dom';
 import type { ComponentSelector } from '../widgets/component';
 
 export type LabelAlignment = 'left' | 'right' | 'top';
@@ -23,7 +24,7 @@ export interface AgPickerFieldParams extends AgFieldParams {
     maxPickerHeight?: number | string;
     pickerAriaLabelKey: string;
     pickerAriaLabelValue: string;
-    template?: string;
+    template?: ElementParams;
     agComponents?: ComponentSelector[];
     className?: string;
     pickerIcon?: string;
@@ -41,7 +42,7 @@ export interface AgFieldParams extends AgLabelParams {
 export interface AgInputFieldParams extends AgFieldParams {
     inputName?: string;
     inputWidth?: number | 'flex';
-    template?: string;
+    template?: ElementParams;
 }
 
 export interface AgCheckboxParams extends AgInputFieldParams {

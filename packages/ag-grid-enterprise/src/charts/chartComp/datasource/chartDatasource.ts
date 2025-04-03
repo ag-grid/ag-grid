@@ -13,7 +13,14 @@ import type {
     SortService,
     ValueService,
 } from 'ag-grid-community';
-import { BeanStub, _isClientSideRowModel, _isServerSideRowModel, _last, _warn } from 'ag-grid-community';
+import {
+    BeanStub,
+    GROUP_AUTO_COLUMN_ID,
+    _isClientSideRowModel,
+    _isServerSideRowModel,
+    _last,
+    _warn,
+} from 'ag-grid-community';
 
 import { _aggregateValues } from '../../../aggregation/aggUtils';
 import type { ColState } from '../model/chartDataModel';
@@ -138,6 +145,8 @@ export class ChartDatasource extends BeanStub {
 
         let id = 0;
 
+        const groupingCache: Record<string, any> = {};
+
         for (let i = 0; i < numRows; i++) {
             const rowNode = crossFiltering ? allRowNodes[i] : this.gridRowModel.getRow(i + startRow)!;
 
@@ -163,12 +172,20 @@ export class ChartDatasource extends BeanStub {
                         const labels = this.getGroupLabels(rowNode, valueString);
                         const value = labels.slice().reverse();
 
-                        data[colId] = {
+                        const groupingValue = {
                             value,
                             // this is needed so that standalone can handle animations properly when data updates
                             id: id++,
                             toString: () => value.filter(Boolean).join(' - '),
                         };
+
+                        // Reuse previously created value object if it already exists
+                        const groupingKey = groupingValue.toString();
+                        const cachedGroupingValue = groupingCache[groupingKey];
+
+                        data[colId] = cachedGroupingValue
+                            ? cachedGroupingValue
+                            : (groupingCache[groupingKey] = groupingValue);
 
                         // keep track of group node indexes, so they can be padded when other groups are expanded
                         if (rowNode.group) {
@@ -199,8 +216,16 @@ export class ChartDatasource extends BeanStub {
 
                     // add data value to value column
                     const value = this.valueSvc.getValue(col, rowNode);
-                    const actualValue =
-                        value != null && typeof value.toNumber === 'function' ? value.toNumber() : value;
+                    let actualValue = value;
+
+                    // unwrap value objects if present
+                    if (value != null) {
+                        if (typeof value.toNumber === 'function') {
+                            actualValue = value.toNumber();
+                        } else if (typeof value.value === 'number') {
+                            actualValue = value.value;
+                        }
+                    }
 
                     if (filteredNodes[rowNode.id as string]) {
                         data[colId] = actualValue;
@@ -212,6 +237,11 @@ export class ChartDatasource extends BeanStub {
                 } else {
                     // add data value to value column
                     let value = this.valueSvc.getValue(col, rowNode);
+
+                    // unwrap value object if present
+                    if (value && typeof value.value === 'number') {
+                        value = value.value;
+                    }
 
                     // aggregated value
                     if (value && Object.prototype.hasOwnProperty.call(value, 'toString')) {
@@ -379,7 +409,18 @@ export class ChartDatasource extends BeanStub {
         while (rowNode && rowNode.level !== 0) {
             rowNode = rowNode.parent;
             if (rowNode) {
-                labels.push(rowNode.key!);
+                if (rowNode.group) {
+                    // for group nodes we need to resolve the group column value to get the label
+                    // just like we do for the initialLabel
+                    const groupColumn = this.colModel.getCol(GROUP_AUTO_COLUMN_ID);
+                    if (groupColumn) {
+                        const valueObject = this.valueSvc.getValue(groupColumn, rowNode);
+                        const valueString = valueObject?.toString ? String(valueObject.toString()) : '';
+                        labels.push(valueString);
+                    }
+                } else {
+                    labels.push(rowNode.key!);
+                }
             }
         }
         return labels;

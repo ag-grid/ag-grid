@@ -1,7 +1,7 @@
 import type { Component, RichSelectParams } from 'ag-grid-community';
 import {
     KeyCode,
-    _getDocument,
+    _createElement,
     _requestAnimationFrame,
     _setAriaActiveDescendant,
     _setAriaControls,
@@ -40,7 +40,12 @@ export class AgRichSelectList<TValue, TEventType extends string = AgRichSelectLi
 
     public override postConstruct(): void {
         super.postConstruct();
-        this.createLoadingElement();
+
+        this.eLoading = _createElement({
+            tag: 'div',
+            cls: 'ag-loading-text',
+            children: this.getLocaleTextFunc()('loadingOoo', 'Loading...'),
+        });
 
         const { cellRowHeight, pickerAriaLabelKey, pickerAriaLabelValue } = this.params;
 
@@ -285,17 +290,6 @@ export class AgRichSelectList<TValue, TEventType extends string = AgRichSelectLi
         }
     }
 
-    private createLoadingElement(): void {
-        const eDocument = _getDocument(this.beans);
-        const translate = this.getLocaleTextFunc();
-        const el = eDocument.createElement('div');
-
-        el.classList.add('ag-loading-text');
-        // eslint-disable-next-line no-restricted-properties -- Could swap to textContent, but could be a breaking change
-        el.innerText = translate('loadingOoo', 'Loading...');
-        this.eLoading = el;
-    }
-
     private createRowComponent(value: TValue, listItemElement: HTMLElement): Component<AgRichSelectListEvent> {
         const row = new RichSelectRow<TValue>(this.params);
         listItemElement.setAttribute('id', `${ROW_COMPONENT_NAME}-${row.getCompId()}`);
@@ -318,7 +312,7 @@ export class AgRichSelectList<TValue, TEventType extends string = AgRichSelectLi
         const scrollTop = this.getScrollTop();
         const mouseY = e.clientY - rect.top + scrollTop;
 
-        return Math.floor(mouseY / this.getRowHeight());
+        return Math.min(Math.floor(mouseY / this.getRowHeight()), this.model.getRowCount() - 1);
     }
 
     private onMouseMove(e: MouseEvent): void {

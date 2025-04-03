@@ -226,6 +226,7 @@ export interface _RowGridApi<TData> {
      * Iterates through each node (row) in the grid and calls the callback for each node.
      * This works similar to the `forEach` method on a JavaScript array.
      * This is called for every node, ignoring any filtering or sorting applied within the grid.
+     * It is not called on any pinned row nodes.
      * If using the Infinite Row Model, then this gets called for each page loaded in the page cache.
      */
     forEachNode(callback: (rowNode: IRowNode<TData>, index: number) => void, includeFooterNodes?: boolean): void;
@@ -826,8 +827,15 @@ export interface _PinnedRowGridApi {
 
     /** Gets the top pinned row with the specified index. */
     getPinnedTopRow<TPinnedData = any>(index: number): IRowNode<TPinnedData> | undefined;
+
     /** Gets the bottom pinned row with the specified index. */
     getPinnedBottomRow<TPinnedData = any>(index: number): IRowNode<TPinnedData> | undefined;
+
+    /** Iterates over each pinned row, calling the provided callback for each row */
+    forEachPinnedRow<TPinnedData = any>(
+        floating: NonNullable<RowPinnedType>,
+        callback: (rowNode: IRowNode<TPinnedData>) => void
+    ): void;
 }
 
 export interface _RenderGridApi<TData> {

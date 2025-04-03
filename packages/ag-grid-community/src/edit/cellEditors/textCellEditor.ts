@@ -1,3 +1,4 @@
+import type { ElementParams } from '../../utils/dom';
 import { _exists } from '../../utils/generic';
 import type { AgInputTextField } from '../../widgets/agInputTextField';
 import { AgInputTextFieldSelector } from '../../widgets/agInputTextField';
@@ -5,14 +6,19 @@ import type { CellEditorInput } from './iCellEditorInput';
 import type { ITextCellEditorParams } from './iTextCellEditor';
 import { SimpleCellEditor } from './simpleCellEditor';
 
+const TextCellEditorElement: ElementParams = {
+    tag: 'ag-input-text-field',
+    ref: 'eInput',
+    cls: 'ag-cell-editor',
+};
 class TextCellEditorInput<TValue = any>
     implements CellEditorInput<TValue, ITextCellEditorParams<any, TValue>, AgInputTextField>
 {
     private eInput: AgInputTextField;
     private params: ITextCellEditorParams<any, TValue>;
 
-    public getTemplate() {
-        return /* html */ `<ag-input-text-field class="ag-cell-editor" data-ref="eInput"></ag-input-text-field>`;
+    public getTemplate(): ElementParams {
+        return TextCellEditorElement;
     }
     public getAgComponents() {
         return [AgInputTextFieldSelector];

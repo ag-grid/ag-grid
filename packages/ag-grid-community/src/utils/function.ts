@@ -1,4 +1,6 @@
+import type { BeanCollection } from '../context/context';
 import type { GridOptionsService } from '../gridOptionsService';
+import { _requestAnimationFrame } from './dom';
 
 const doOnceFlags: { [key: string]: boolean } = {};
 
@@ -32,23 +34,48 @@ export function _errorOnce(msg: string, ...args: any[]) {
     _doOnce(() => console.error('AG Grid: ' + msg, ...args), msg + args?.join(''));
 }
 
-const executeNextVMTurnFuncs: ((...args: any[]) => any)[] = [];
-let executeNextVMTurnPending = false;
+type BatchedCalls = {
+    pending: boolean;
+    funcs: Array<(...args: any[]) => any>;
+};
 
-export function _executeNextVMTurn(func: () => void): void {
-    executeNextVMTurnFuncs.push(func);
+const batchedCallsSetTimeout: BatchedCalls = {
+    pending: false,
+    funcs: [],
+};
+const batchedCallsRaf: BatchedCalls = {
+    pending: false,
+    funcs: [],
+};
 
-    if (executeNextVMTurnPending) {
+/*
+ * Batch calls to execute after the next macro task (mode = setTimeout) / or in the next requestAnimationFrame.
+ * @param {Function} func The function to be batched
+ */
+export function _batchCall(func: () => void): void;
+export function _batchCall(func: () => void, mode: 'raf', beans: BeanCollection): void;
+export function _batchCall(func: () => void, mode: 'setTimeout' | 'raf' = 'setTimeout', beans?: BeanCollection): void {
+    const batch = mode === 'raf' ? batchedCallsRaf : batchedCallsSetTimeout;
+
+    batch.funcs.push(func);
+
+    if (batch.pending) {
         return;
     }
 
-    executeNextVMTurnPending = true;
-    window.setTimeout(() => {
-        const funcsCopy = executeNextVMTurnFuncs.slice();
-        executeNextVMTurnFuncs.length = 0;
-        executeNextVMTurnPending = false;
+    batch.pending = true;
+    const runBatch = () => {
+        const funcsCopy = batch.funcs.slice();
+        batch.funcs.length = 0;
+        batch.pending = false;
         funcsCopy.forEach((func) => func());
-    }, 0);
+    };
+
+    if (mode === 'raf') {
+        _requestAnimationFrame(beans!, runBatch);
+    } else {
+        window.setTimeout(runBatch, 0);
+    }
 }
 
 /**

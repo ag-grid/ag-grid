@@ -49,7 +49,7 @@ export class AgFiltersToolPanelList extends Component<AgFiltersToolPanelListEven
     private onColumnsChangedPending: boolean = false;
 
     constructor() {
-        super(/* html */ `<div class="ag-filter-list-panel"></div>`);
+        super({ tag: 'div', cls: 'ag-filter-list-panel' });
     }
 
     public init(params: ToolPanelFiltersCompParams): void {

@@ -1,0 +1,93 @@
+---
+import { getEntry, type CollectionEntry } from 'astro:content';
+import { urlWithPrefix } from '@utils/urlWithPrefix';
+import { parseVersion } from '@ag-website-shared/utils/parseVersion';
+import { getChangelogUrl } from '@ag-website-shared/utils/getChangelogUrl';
+import { getDocumentationArchiveUrl } from '@ag-website-shared/utils/getArchiveUrl';
+
+import { Icon } from '@ag-website-shared/components/icon/Icon';
+import styles from './MajorTable.module.scss';
+
+interface Props {
+    library: 'grid' | 'charts';
+    major: Number;
+    type: 'migration' | 'archive';
+}
+
+const { library, major, type } = Astro.props as Props;
+
+const isGrid = library === 'grid';
+const isMigration = type === 'migration';
+
+const { framework } = Astro.params as Params;
+const { data: allVersions } = (await getEntry(
+    'versions',
+    isGrid ? 'ag-grid-versions' : 'ag-charts-versions'
+)) as CollectionEntry<'versions'>;
+
+const filterMigrations = (version) => {
+    return parseVersion(version.version).major === major && version.notesPath;
+};
+
+const filterArchives = (version) => {
+    return parseVersion(version.version).major === major && !version.noDocs;
+};
+
+const versions = isMigration ? allVersions.filter(filterMigrations) : allVersions.filter(filterArchives);
+---
+
+<table class={styles.majorTable}>
+    {
+        versions.map((version) => {
+            const { isMajor, versionType } = parseVersion(version.version);
+
+            const guideUrl = isMigration ? urlWithPrefix({ framework, url: version.notesPath }) : null;
+            const changelogUrl = !isMigration ? getChangelogUrl({ site: library, version: version.version }) : null;
+            const docsUrl = !isMigration
+                ? getDocumentationArchiveUrl({ site: library, version: version.version })
+                : null;
+
+            return (
+                <tr class={isMajor ? styles.isMajor : ''}>
+                    <td class:list={[styles.version, 'text-monospace ', 'text-semibold']}>{version.version}</td>
+
+                    <td class={styles.dateCol}>{version.date}</td>
+
+                    <td class={styles.versionType}>
+                        <span>{versionType}</span>
+                    </td>
+
+                    {isMigration && (
+                        <td>
+                            <a href={guideUrl}>
+                                <span class:list={['text-monospace', !isMajor ? styles.pad : '']}>
+                                    {version.version}
+                                </span>
+                                {isMajor ? 'Migration Guide' : `Release Notes`}
+                                <Icon name="arrowRight" />
+                            </a>
+                        </td>
+                    )}
+
+                    {!isMigration && (
+                        <>
+                            <td class={styles.changelog}>
+                                <a href={changelogUrl}>
+                                    Changelog
+                                    <Icon name="arrowRight" />
+                                </a>
+                            </td>
+
+                            <td>
+                                <a href={docsUrl}>
+                                    <span class={'text-monospace'}>{version.version}</span> Documentation{' '}
+                                    <Icon name="arrowRight" />
+                                </a>
+                            </td>
+                        </>
+                    )}
+                </tr>
+            );
+        })
+    }
+</table>

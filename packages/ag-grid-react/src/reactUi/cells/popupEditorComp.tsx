@@ -1,7 +1,7 @@
-import React, { memo, useContext, useState } from 'react';
+import React, { memo, useContext, useLayoutEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 
-import { _getLocaleTextFunc } from 'ag-grid-community';
+import { _getActiveDomElement, _getLocaleTextFunc } from 'ag-grid-community';
 import type { CellCtrl, PopupEditorWrapper } from 'ag-grid-community';
 
 import { BeansContext } from '../beansContext';
@@ -17,10 +17,11 @@ const PopupEditorComp = (props: {
 }) => {
     const [popupEditorWrapper, setPopupEditorWrapper] = useState<PopupEditorWrapper>();
 
-    const { context, popupSvc, localeSvc, gos, editSvc } = useContext(BeansContext);
+    const beans = useContext(BeansContext);
+    const { context, popupSvc, localeSvc, gos, editSvc } = beans;
+    const { editDetails, cellCtrl, eParentCell } = props;
 
     useEffectOnce(() => {
-        const { editDetails, cellCtrl, eParentCell } = props;
         const { compDetails } = editDetails;
 
         const useModelPopup = gos.get('stopEditingWhenCellsLoseFocus');
@@ -73,6 +74,15 @@ const PopupEditorComp = (props: {
             context.destroyBean(wrapper);
         };
     });
+
+    // when unmounting the component, if the popup had focus, move focus to the parent cell
+    useLayoutEffect(() => {
+        return () => {
+            if (cellCtrl.isCellFocused() && popupEditorWrapper?.getGui().contains(_getActiveDomElement(beans as any))) {
+                eParentCell.focus({ preventScroll: true });
+            }
+        };
+    }, [popupEditorWrapper]);
 
     return (
         <>

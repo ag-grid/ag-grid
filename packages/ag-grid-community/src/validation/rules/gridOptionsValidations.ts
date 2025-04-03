@@ -177,6 +177,36 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => {
                 rowDragEntireRow: { required: [false, undefined] },
             },
         },
+        enableRowPinning: {
+            module: 'ManualPinnedRow',
+            supportedRowModels: ['clientSide'],
+            validate({ enableRowPinning, pinnedTopRowData, pinnedBottomRowData }) {
+                if (enableRowPinning && (pinnedTopRowData || pinnedBottomRowData)) {
+                    return 'Manual row pinning cannot be used together with pinned row data. Either set `enableRowPinning` to `false`, or remove `pinnedTopRowData` and `pinnedBottomRowData`.';
+                }
+                return null;
+            },
+        },
+        isRowPinnable: {
+            module: 'ManualPinnedRow',
+            supportedRowModels: ['clientSide'],
+            validate({ isRowPinnable, pinnedTopRowData, pinnedBottomRowData }) {
+                if (isRowPinnable && (pinnedTopRowData || pinnedBottomRowData)) {
+                    return 'Manual row pinning cannot be used together with pinned row data. Either remove `isRowPinnable`, or remove `pinnedTopRowData` and `pinnedBottomRowData`.';
+                }
+                return null;
+            },
+        },
+        isRowPinned: {
+            module: 'ManualPinnedRow',
+            supportedRowModels: ['clientSide'],
+            validate({ isRowPinned, pinnedTopRowData, pinnedBottomRowData }) {
+                if (isRowPinned && (pinnedTopRowData || pinnedBottomRowData)) {
+                    return 'Manual row pinning cannot be used together with pinned row data. Either remove `isRowPinned`, or remove `pinnedTopRowData` and `pinnedBottomRowData`.';
+                }
+                return null;
+            },
+        },
         findSearchValue: {
             module: 'Find',
         },
@@ -412,12 +442,25 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => {
                 const rowModel = options.rowModelType ?? 'clientSide';
                 switch (rowModel) {
                     case 'clientSide': {
-                        const { treeDataChildrenField, getDataPath } = options;
-                        if (!treeDataChildrenField && !getDataPath) {
-                            return "treeData requires either 'treeDataChildrenField' or 'getDataPath' in the clientSide row model.";
+                        const { treeDataChildrenField, treeDataParentIdField, getDataPath, getRowId } = options;
+                        if (!treeDataChildrenField && !treeDataParentIdField && !getDataPath) {
+                            return "treeData requires either 'treeDataChildrenField' or 'treeDataParentIdField' or 'getDataPath' in the clientSide row model.";
                         }
-                        if (treeDataChildrenField && getDataPath) {
-                            return "Cannot use both 'treeDataChildrenField' and 'getDataPath' at the same time.";
+                        if (treeDataChildrenField) {
+                            if (getDataPath) {
+                                return "Cannot use both 'treeDataChildrenField' and 'getDataPath' at the same time.";
+                            }
+                            if (treeDataParentIdField) {
+                                return "Cannot use both 'treeDataChildrenField' and 'treeDataParentIdField' at the same time.";
+                            }
+                        }
+                        if (treeDataParentIdField) {
+                            if (!getRowId) {
+                                return 'getRowId callback not provided, tree data with parent id cannot be built.';
+                            }
+                            if (getDataPath) {
+                                return "Cannot use both 'treeDataParentIdField' and 'getDataPath' at the same time.";
+                            }
                         }
                         return null;
                     }
@@ -430,6 +473,9 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => {
             },
         },
         treeDataChildrenField: {
+            module: 'SharedTreeData',
+        },
+        treeDataParentIdField: {
             module: 'SharedTreeData',
         },
         undoRedoCellEditing: { module: 'UndoRedoEdit' },

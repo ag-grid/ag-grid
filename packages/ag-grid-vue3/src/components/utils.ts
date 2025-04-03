@@ -44,6 +44,8 @@ import type {
     IsGroupOpenByDefaultParams,
     IsRowFilterable,
     IsRowMaster,
+    IsRowPinnable,
+    IsRowPinned,
     IsRowSelectable,
     IsServerSideGroup,
     IsServerSideGroupOpenByDefaultParams,
@@ -963,7 +965,7 @@ export interface Props<TData> {
     /** When provided, an extra grand total row will be inserted into the grid at the specified position.
          * This row displays the aggregate totals of all rows in the grid.
          */
-    grandTotalRow?: 'top' | 'bottom' | undefined,
+    grandTotalRow?: 'top' | 'bottom' | 'pinnedTop' | 'pinnedBottom' | undefined,
     /** Suppress the sticky behaviour of the total rows, can be suppressed individually by passing `'grand'` or `'group'`.
          */
     suppressStickyTotalRow?: boolean | 'grand' | 'group' | undefined,
@@ -1022,6 +1024,12 @@ export interface Props<TData> {
          * It supports accessing nested fields using the dot notation.
          */
     treeDataChildrenField?: string | undefined,
+    /** The name of the field to use in a data item to find the parent node of a node when using treeData=true.
+         * The tree will be constructed via relationships between nodes using this field.
+         * getRowId callback need to be provided as well for this to work.
+         * It supports accessing nested fields using the dot notation.
+         */
+    treeDataParentIdField?: string | undefined,
     /** Set to `true` to suppress sort indicators and actions from the row group panel.
          * @default false
          */
@@ -1037,6 +1045,25 @@ export interface Props<TData> {
     /** Data to be displayed as pinned bottom rows in the grid.
          */
     pinnedBottomRowData?: any[] | undefined,
+    /** Determines whether manual row pinning is enabled via the row context menu.
+         *
+         * Set to `true` to allow pinning rows to top or bottom.
+         * Set to `'top'` to allow pinning rows to the top only.
+         * Set to `'bottom'` to allow pinning rows to the bottom only.
+         */
+    enableRowPinning?: boolean | 'top' | 'bottom' | undefined,
+    /** Return `true` if the grid should allow the row to be manually pinned.
+         * Return `false` if the grid should prevent the row from being pinned
+         *
+         * When not defined, all rows default to pinnable.
+         */
+    isRowPinnable?: IsRowPinnable<TData> | undefined,
+    /** Called for every row in the grid.
+         *
+         * Return `true` if the row should be pinned initially. Return `false` otherwise.
+         * User interactions can subsequently still change the pinned state of a row.
+         */
+    isRowPinned?: IsRowPinned<TData> | undefined,
     /** Sets the row model type.
          * @default 'clientSide'
          * @initial
@@ -1152,7 +1179,8 @@ export interface Props<TData> {
          * @default false
          */
     suppressScrollWhenPopupsAreOpen?: boolean | undefined,
-    /** When `true`, the grid will not use animation frames when drawing rows while scrolling. Use this if the grid is working fast enough that you don't need animation frames and you don't want the grid to flicker.
+    /** When `true`, the grid will not use animation frames when drawing rows while scrolling. Use this if and only if the grid is working fast enough on all users machines and you want to avoid the temporarily empty rows.
+         *     **Note:** It is not recommended to set suppressAnimationFrame to `true` in most use cases as this can seriously degrade the user experience as all cells are rendered synchronously blocking the UI thread from scrolling.
          * @default false
          * @initial
          */
@@ -1816,10 +1844,14 @@ export function getProps() {
         groupRowRendererParams: undefined,
         treeData: undefined,
         treeDataChildrenField: undefined,
+        treeDataParentIdField: undefined,
         rowGroupPanelSuppressSort: undefined,
         suppressGroupRowsSticky: undefined,
         pinnedTopRowData: undefined,
         pinnedBottomRowData: undefined,
+        enableRowPinning: undefined,
+        isRowPinnable: undefined,
+        isRowPinned: undefined,
         rowModelType: undefined,
         rowData: undefined,
         asyncTransactionWaitMillis: undefined,

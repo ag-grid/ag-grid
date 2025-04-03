@@ -56,7 +56,7 @@ export interface IFrameworkOverrides {
     /**
      * Allows Angular to batch render Cell Components all within a single Angular ngZone.run().
      */
-    readonly batchFrameworkComponents: boolean;
+    readonly batchFrameworkComps: boolean;
 
     /**
      * Which rendering engine is used for the grid components. Can be either 'vanilla' or 'react'.

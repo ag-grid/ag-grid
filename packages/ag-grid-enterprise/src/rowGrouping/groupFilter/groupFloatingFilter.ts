@@ -1,6 +1,7 @@
 import type {
     AgColumn,
     ColumnEvent,
+    ElementParams,
     FilterChangedEvent,
     FloatingFilterDisplayParams,
     IFloatingFilterComp,
@@ -10,6 +11,13 @@ import { AgInputTextField, AgPromise, Component, RefPlaceholder, _clearElement }
 
 import type { GroupFilter } from './groupFilter';
 import type { GroupFilterEvaluator } from './groupFilterEvaluator';
+
+const GroupFloatingFilterElement: ElementParams = {
+    tag: 'div',
+    ref: 'eFloatingFilter',
+    cls: 'ag-group-floating-filter ag-floating-filter-input',
+    role: 'presentation',
+};
 
 export class GroupFloatingFilterComp extends Component implements IFloatingFilterComp<GroupFilter> {
     private readonly eFloatingFilter: HTMLElement = RefPlaceholder;
@@ -22,9 +30,7 @@ export class GroupFloatingFilterComp extends Component implements IFloatingFilte
     private haveAddedColumnListeners: boolean = false;
 
     constructor() {
-        super(/* html */ `
-            <div data-ref="eFloatingFilter" class="ag-group-floating-filter ag-floating-filter-input" role="presentation"></div>
-        `);
+        super(GroupFloatingFilterElement);
     }
 
     public init(params: IFloatingFilterParams<GroupFilter>): AgPromise<void> {

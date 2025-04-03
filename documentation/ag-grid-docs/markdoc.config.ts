@@ -14,7 +14,9 @@ import { idea } from '@ag-website-shared/markdoc/tags/idea';
 import { image } from '@ag-website-shared/markdoc/tags/image';
 import { imageCaption } from '@ag-website-shared/markdoc/tags/imageCaption';
 import { kbd } from '@ag-website-shared/markdoc/tags/kbd';
+import { majorTable } from '@ag-website-shared/markdoc/tags/majorTable';
 import { note } from '@ag-website-shared/markdoc/tags/note';
+import { numberHeading } from '@ag-website-shared/markdoc/tags/numberHeading';
 import { oneTrustCookies } from '@ag-website-shared/markdoc/tags/oneTrustCookies';
 import { openInCTA } from '@ag-website-shared/markdoc/tags/openInCTA';
 import { tabItem, tabs } from '@ag-website-shared/markdoc/tags/tabs';
@@ -90,6 +92,7 @@ export default defineMarkdocConfig({
         changelogSection: getChangelogSection('grid'),
         trialLicenceForm,
         enterpriseIcon,
+        numberHeading,
         video,
         gettingStarted,
         featuresSection,
@@ -104,6 +107,7 @@ export default defineMarkdocConfig({
                 typescriptOnly: { type: Boolean },
                 suppressDarkMode: { type: Boolean },
                 exampleHeight: { type: Number },
+                consoleBufferSize: { type: Number },
             },
         },
         apiDocumentation: {
@@ -219,5 +223,6 @@ export default defineMarkdocConfig({
         moduleMappings: {
             render: component('./src/components/module-mappings/ModuleMappings.astro'),
         },
+        majorTable,
     },
 });

@@ -32,6 +32,15 @@ The grid's rendering uses AG Grid's own internal rendering engine which does not
 the grid switches context into an Angular application. This context switching can be time consuming when done multiple times (i.e. each cell).
 
 Consider using JavaScript Cell Renderers instead of Angular Cell Renderers to see if it makes your rendering faster.
+
+## Optimising Angular Cell Renderers
+
+If you are using Angular Components as Cell Renderers, consider using [OnPush](https://angular.dev/api/core/ChangeDetectionStrategy) change detection strategy. This is recommend by Angular as outlined in their docs: [Best Practices > Performance](https://angular.dev/best-practices/skipping-subtrees).
+
+{% note %}
+Angular supports coalescing of multiple change detection cycles into a single cycle which can lead to significant performance improvements. This can be achieved via `provideZoneChangeDetection` as described [here](./angular-ngzone/#recommended-ngzoneoptions).
+{% /note %}
+
 {% /if %}
 
 {% if isFramework("vue") %}

@@ -62,10 +62,12 @@ export class CellPositionFeature extends BeanStub {
         }
 
         if (cellSpan) {
-            this.refreshSpanHeight(cellSpan);
+            const refreshSpanHeight = this.refreshSpanHeight.bind(this, cellSpan);
+            refreshSpanHeight();
             this.addManagedListeners(this.beans.eventSvc, {
-                paginationChanged: this.refreshSpanHeight.bind(this, cellSpan),
-                recalculateRowBounds: this.refreshSpanHeight.bind(this, cellSpan),
+                paginationChanged: refreshSpanHeight,
+                recalculateRowBounds: refreshSpanHeight,
+                pinnedHeightChanged: refreshSpanHeight,
             });
         }
     }
@@ -88,7 +90,7 @@ export class CellPositionFeature extends BeanStub {
     }
 
     private onDisplayColumnsChanged(): void {
-        const colsSpanning: AgColumn[] = this.getColSpanningList();
+        const colsSpanning = this.getColSpanningList();
 
         if (!_areEqual(this.colsSpanning, colsSpanning)) {
             this.colsSpanning = colsSpanning;

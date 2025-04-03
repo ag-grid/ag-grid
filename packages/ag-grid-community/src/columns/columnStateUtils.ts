@@ -269,7 +269,7 @@ export function _applyColumnState(
 }
 
 export function _resetColumnState(beans: BeanCollection, source: ColumnEventType): void {
-    const { colModel, autoColSvc } = beans;
+    const { colModel, autoColSvc, selectionColSvc } = beans;
     const primaryCols = colModel.getColDefCols();
     if (!primaryCols?.length) {
         return;
@@ -290,18 +290,8 @@ export function _resetColumnState(beans: BeanCollection, source: ColumnEventType
     let letRowGroupIndex = 1000;
     let letPivotIndex = 1000;
 
-    let colsToProcess: AgColumn[] = [];
-    const groupAutoCols = autoColSvc?.getColumns();
-    if (groupAutoCols) {
-        colsToProcess = colsToProcess.concat(groupAutoCols);
-    }
-
-    if (primaryColumns) {
-        colsToProcess = colsToProcess.concat(primaryColumns);
-    }
-
-    colsToProcess.forEach((column) => {
-        const stateItem = getColumnStateFromColDef(column);
+    const addColState = (col: AgColumn) => {
+        const stateItem = getColumnStateFromColDef(col);
 
         if (_missing(stateItem.rowGroupIndex) && stateItem.rowGroup) {
             stateItem.rowGroupIndex = letRowGroupIndex++;
@@ -312,9 +302,22 @@ export function _resetColumnState(beans: BeanCollection, source: ColumnEventType
         }
 
         columnStates.push(stateItem);
-    });
+    };
 
-    _applyColumnState(beans, { state: columnStates, applyOrder: true }, source);
+    autoColSvc?.getColumns()?.forEach(addColState);
+    selectionColSvc?.getColumns()?.forEach(addColState);
+    primaryColumns?.forEach(addColState);
+
+    // apply state before ordering, as changes in row grouping will introduce new columns
+    _applyColumnState(beans, { state: columnStates }, source);
+
+    const autoCols = autoColSvc?.getColumns() ?? [];
+    const selectionCols = selectionColSvc?.getColumns() ?? [];
+    const orderedCols = [...selectionCols, ...autoCols, ...primaryCols];
+    const orderedColState = orderedCols.map((col) => ({ colId: col.colId }));
+
+    // apply the new order when all the cols have been created & are available
+    _applyColumnState(beans, { state: orderedColState, applyOrder: true }, source);
 }
 
 /**
@@ -338,8 +341,6 @@ export function _compareColumnStatesAndDispatchEvents(beans: BeanCollection, sou
     });
 
     return () => {
-        const colsForState = colModel.getAllCols();
-
         // dispatches generic ColumnEvents where all columns are returned rather than what has changed
         const dispatchWhenListsDifferent = (
             eventType: 'columnPivotChanged' | 'columnRowGroupChanged',
@@ -378,7 +379,7 @@ export function _compareColumnStatesAndDispatchEvents(beans: BeanCollection, sou
         const getChangedColumns = (changedPredicate: (cs: ColumnState, c: AgColumn) => boolean): AgColumn[] => {
             const changedColumns: AgColumn[] = [];
 
-            colsForState.forEach((column) => {
+            colModel.forAllCols((column) => {
                 const colStateBefore = columnStateBeforeMap[column.getColId()];
                 if (colStateBefore && changedPredicate(colStateBefore, column)) {
                     changedColumns.push(column);
@@ -448,9 +449,9 @@ export function _getColumnState(beans: BeanCollection): ColumnState[] {
         return [];
     }
 
-    const colsForState = colModel.getAllCols();
     const rowGroupColumns = rowGroupColsSvc?.columns;
     const pivotColumns = pivotColsSvc?.columns;
+    const res: ColumnState[] = [];
 
     const createStateItemFromColumn = (column: AgColumn) => {
         const rowGroupIndex = column.isRowGroupActive() && rowGroupColumns ? rowGroupColumns.indexOf(column) : null;
@@ -460,7 +461,7 @@ export function _getColumnState(beans: BeanCollection): ColumnState[] {
         const sort = column.getSort() != null ? column.getSort() : null;
         const sortIndex = column.getSortIndex() != null ? column.getSortIndex() : null;
 
-        const res: ColumnState = {
+        res.push({
             colId: column.getColId(),
             width: column.getActualWidth(),
             hide: !column.isVisible(),
@@ -473,12 +474,9 @@ export function _getColumnState(beans: BeanCollection): ColumnState[] {
             pivot: column.isPivotActive(),
             pivotIndex: pivotIndex,
             flex: column.getFlex() ?? null,
-        };
-
-        return res;
+        });
     };
-
-    const res = colsForState.map((col) => createStateItemFromColumn(col));
+    colModel.forAllCols((col) => createStateItemFromColumn(col));
 
     // for fast looking, store the index of each column
     const colIdToGridIndexMap = new Map<string, number>(

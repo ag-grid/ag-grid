@@ -11,7 +11,13 @@ import type { WithoutGridCommon } from '../interfaces/iCommon';
 import type { PopupEventParams, PopupPositionParams } from '../interfaces/iPopup';
 import type { IRowNode } from '../interfaces/iRowNode';
 import { _setAriaLabel, _setAriaRole } from '../utils/aria';
-import { _getAbsoluteHeight, _getAbsoluteWidth, _getElementRectWithOffset, _observeResize } from '../utils/dom';
+import {
+    _createElement,
+    _getAbsoluteHeight,
+    _getAbsoluteWidth,
+    _getElementRectWithOffset,
+    _observeResize,
+} from '../utils/dom';
 import { _isElementInEventPath, _isStopPropagationForAgGrid } from '../utils/event';
 import { _exists } from '../utils/generic';
 import { AgPromise } from '../utils/promise';
@@ -507,8 +513,8 @@ export class PopupService extends BeanStub implements NamedBean {
 
         // add env CSS class to child, in case user provided a popup parent, which means
         // theme class may be missing
-        const eWrapper = document.createElement('div');
         const { environment, gos } = this.beans;
+        const eWrapper = _createElement({ tag: 'div' });
         environment.applyThemeClasses(eWrapper);
 
         eWrapper.classList.add('ag-popup');

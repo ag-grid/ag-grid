@@ -1,6 +1,7 @@
 import type { AgEvent } from '../events';
 import type { FilterAction } from '../interfaces/iFilter';
-import { _clearElement, _loadTemplate, _setDisabled } from '../utils/dom';
+import type { ElementParams } from '../utils/dom';
+import { _clearElement, _createElement, _setDisabled } from '../utils/dom';
 import { _warn } from '../validation/logging';
 import { Component } from '../widgets/component';
 import { FILTER_LOCALE_TEXT } from './filterLocaleText';
@@ -12,16 +13,18 @@ export interface FilterButtonEvent extends AgEvent<FilterAction> {
     additionalEventAttributes?: any;
 }
 
+const FilterButtonCompElement: ElementParams = {
+    tag: 'div',
+    cls: 'ag-filter-apply-panel',
+};
+
 export class FilterButtonComp extends Component<FilterAction> {
     private buttons: FilterAction[];
     private buttonListeners: (() => void)[] = [];
     private eApplyButton?: HTMLElement;
 
     constructor() {
-        super(/* html */ `
-            <div class="ag-filter-apply-panel">
-            </div>
-        `);
+        super(FilterButtonCompElement);
     }
 
     public updateButtons(buttons: FilterAction[]): void {
@@ -62,15 +65,13 @@ export class FilterButtonComp extends Component<FilterAction> {
 
             const isApply = type === 'apply';
             const buttonType = isApply ? 'submit' : 'button';
-            const button = _loadTemplate(
-                /* html */
-                `<button
-                    type="${buttonType}"
-                    data-ref="${type}FilterButton"
-                    class="ag-button ag-standard-button ag-filter-apply-panel-button"
-                >${text}
-                </button>`
-            );
+            const button = _createElement({
+                tag: 'button',
+                attrs: { type: buttonType },
+                ref: `${type}FilterButton`,
+                cls: 'ag-button ag-standard-button ag-filter-apply-panel-button',
+                children: text,
+            });
             if (isApply) {
                 eApplyButton = button;
             }

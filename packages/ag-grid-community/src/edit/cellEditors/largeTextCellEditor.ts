@@ -1,5 +1,6 @@
 import { KeyCode } from '../../constants/keyCode';
 import type { ICellEditorComp } from '../../interfaces/iCellEditor';
+import type { ElementParams } from '../../utils/dom';
 import { _exists } from '../../utils/generic';
 import type { AgInputTextArea } from '../../widgets/agInputTextArea';
 import { AgInputTextAreaSelector } from '../../widgets/agInputTextArea';
@@ -7,18 +8,24 @@ import { RefPlaceholder } from '../../widgets/component';
 import { PopupComponent } from '../../widgets/popupComponent';
 import type { ILargeTextEditorParams } from './iLargeTextCellEditor';
 
+const LargeTextCellElement: ElementParams = {
+    tag: 'div',
+    cls: 'ag-large-text',
+    children: [
+        {
+            tag: 'ag-input-text-area',
+            ref: 'eTextArea',
+            cls: 'ag-large-text-input',
+        },
+    ],
+};
 export class LargeTextCellEditor extends PopupComponent implements ICellEditorComp {
     private readonly eTextArea: AgInputTextArea = RefPlaceholder;
     private params: ILargeTextEditorParams;
     private focusAfterAttached: boolean;
 
     constructor() {
-        super(
-            /* html */ `<div class="ag-large-text">
-        <ag-input-text-area data-ref="eTextArea" class="ag-large-text-input"></ag-input-text-area>
-        </div>`,
-            [AgInputTextAreaSelector]
-        );
+        super(LargeTextCellElement, [AgInputTextAreaSelector]);
     }
 
     public init(params: ILargeTextEditorParams): void {

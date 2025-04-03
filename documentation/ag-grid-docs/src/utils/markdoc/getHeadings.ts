@@ -19,6 +19,7 @@ const TABS_TAG_NAME = 'tabs';
 const TAB_ITEM_TAG_NAME = 'tabItem';
 const API_DOC_HEADINGS_ATTR_NAME = '__apiDocumentationHeadings';
 const HEADING_ATTR_NAME = '__heading';
+const NUMBER_HEADING_ATTR_NAME = '__numberHeading';
 
 function isTabsTag({ tag, type }: Node) {
     return type === 'tag' && tag === TABS_TAG_NAME;
@@ -56,6 +57,10 @@ function hasApiDocsHeadingAttribute(node?: Node) {
 
 function hasHeadingAttribute(node?: Node) {
     return node?.attributes?.[HEADING_ATTR_NAME];
+}
+
+function hasNumberHeadingAttribute(node: Node) {
+    return node?.attributes?.[NUMBER_HEADING_ATTR_NAME];
 }
 
 function addAttributeToNode({ node, name, value }: { node: Node; name: string; value: any }) {
@@ -152,6 +157,7 @@ async function transformRenderTreeWithReferenceHeadings({
     renderTree: RenderableTreeNode;
     skipHeading?: (node: HeadingData) => boolean;
 }) {
+    const slugger = new Slugger();
     const renderTreeChildren = skipHeading
         ? renderTree!.children.filter((node) => {
               if (hasHeadingAttribute(node)) {
@@ -182,6 +188,11 @@ async function transformRenderTreeWithReferenceHeadings({
         } else if (hasHeadingAttribute(node)) {
             const { level, id, text } = node.attributes[HEADING_ATTR_NAME];
             return createHeadingRenderableNode({ level, id, text });
+        } else if (hasNumberHeadingAttribute(node)) {
+            const { title, level: headingLevel } = node.attributes;
+            const id = slugger.slug(title);
+            const level = parseInt(headingLevel.replace(/\D/g, ''), 10);
+            return createHeadingRenderableNode({ level, id, text: title });
         } else {
             return node;
         }

@@ -1,7 +1,10 @@
 import type {
     AgColumn,
     BeanCollection,
+    ElementParams,
+    FilterDestroyedEvent,
     FilterDisplayParams,
+    FilterManager,
     IAfterGuiAttachedParams,
     IFilterComp,
     IFilterParams,
@@ -13,7 +16,7 @@ import {
     RefPlaceholder,
     TabGuardComp,
     _clearElement,
-    _loadTemplate,
+    _createElement,
     _setDisplayed,
     _warn,
 } from 'ag-grid-community';
@@ -27,6 +30,15 @@ interface FilterColumnPair {
 }
 
 export type GroupFilterEvent = 'columnsChanged';
+
+const GroupFilterElement: ElementParams = {
+    tag: 'div',
+    cls: 'ag-group-filter',
+    children: [
+        { tag: 'div', ref: 'eGroupField' },
+        { tag: 'div', ref: 'eUnderlyingFilter' },
+    ],
+};
 export class GroupFilter extends TabGuardComp<GroupFilterEvent> implements IFilterComp {
     public readonly filterType = 'group' as const;
 
@@ -44,12 +56,7 @@ export class GroupFilter extends TabGuardComp<GroupFilterEvent> implements IFilt
     private filterWrapperComp?: FilterWrapperComp;
 
     constructor() {
-        super(/* html */ `
-            <div class="ag-group-filter">
-                <div data-ref="eGroupField"></div>
-                <div data-ref="eUnderlyingFilter"></div>
-            </div>
-        `);
+        super(GroupFilterElement);
     }
 
     public wireBeans(beans: BeanCollection): void {
@@ -128,7 +135,7 @@ export class GroupFilter extends TabGuardComp<GroupFilterEvent> implements IFilt
         if (hasMultipleColumns && sourceColumns) {
             this.createGroupFieldSelectElement(sourceColumns, selectedColumn!);
             eGroupField.appendChild(this.eGroupFieldSelect.getGui());
-            eGroupField.appendChild(_loadTemplate(/* html */ `<div class="ag-filter-separator"></div>`));
+            eGroupField.appendChild(_createElement({ tag: 'div', cls: 'ag-filter-separator' }));
         }
         _setDisplayed(eGroupField, hasMultipleColumns);
         return { sourceColumns, selectedColumn };

@@ -644,4 +644,86 @@ describe('ag-grid grouping simple data', () => {
             └── LEAF id:3 value:3
         `);
     });
+
+    test('changing group columns updates the row groups', async () => {
+        const rowData = [
+            { id: 'A', x: 'a', z: 1, group: 'Group1' },
+            { id: 'B', x: 'a-b', z: 2, group: 'Group1' },
+            { id: 'C', x: 'c', z: 3, group: 'Group2' },
+            { id: 'D', x: 'c-d', z: 4, group: 'Group2' },
+            { id: 'E', x: 'e', z: 5, group: 'Group3' },
+            { id: 'F', x: 'e-f', z: 6, group: 'Group3' },
+            { id: 'G', x: 'e-f-g', z: 7, group: 'Group3' },
+            { id: 'H', x: 'e-f-g-h', z: 8, group: 'Group3' },
+        ];
+
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: [{ field: 'group', rowGroup: true, hide: true }, { field: 'x' }, { field: 'z' }],
+            animateRows: false,
+            groupDefaultExpanded: -1,
+            autoGroupColumnDef: { headerName: 'Group', colId: 'zzz' },
+            rowData,
+            getRowId: (params) => params.data.id,
+        });
+
+        const gridRowsOptions = {
+            columns: true,
+            checkDom: true,
+        };
+
+        const gridRows = new GridRows(api, 'data', gridRowsOptions);
+
+        await gridRows.check(`
+            ROOT id:ROOT_NODE_ID
+            ├─┬ filler id:row-group-group-Group1 ag-Grid-AutoColumn:"Group1"
+            │ ├── LEAF id:A ag-Grid-AutoColumn:undefined group:"Group1" x:"a" z:1
+            │ └── LEAF id:B ag-Grid-AutoColumn:undefined group:"Group1" x:"a-b" z:2
+            ├─┬ filler id:row-group-group-Group2 ag-Grid-AutoColumn:"Group2"
+            │ ├── LEAF id:C ag-Grid-AutoColumn:undefined group:"Group2" x:"c" z:3
+            │ └── LEAF id:D ag-Grid-AutoColumn:undefined group:"Group2" x:"c-d" z:4
+            └─┬ filler id:row-group-group-Group3 ag-Grid-AutoColumn:"Group3"
+            · ├── LEAF id:E ag-Grid-AutoColumn:undefined group:"Group3" x:"e" z:5
+            · ├── LEAF id:F ag-Grid-AutoColumn:undefined group:"Group3" x:"e-f" z:6
+            · ├── LEAF id:G ag-Grid-AutoColumn:undefined group:"Group3" x:"e-f-g" z:7
+            · └── LEAF id:H ag-Grid-AutoColumn:undefined group:"Group3" x:"e-f-g-h" z:8
+        `);
+
+        api.updateGridOptions({
+            autoGroupColumnDef: { headerName: 'Group', field: 'group', colId: 'xxx' },
+        });
+
+        await gridRows.check(`
+            ROOT id:ROOT_NODE_ID
+            ├─┬ filler id:row-group-group-Group1 ag-Grid-AutoColumn:"Group1"
+            │ ├── LEAF id:A ag-Grid-AutoColumn:"Group1" group:"Group1" x:"a" z:1
+            │ └── LEAF id:B ag-Grid-AutoColumn:"Group1" group:"Group1" x:"a-b" z:2
+            ├─┬ filler id:row-group-group-Group2 ag-Grid-AutoColumn:"Group2"
+            │ ├── LEAF id:C ag-Grid-AutoColumn:"Group2" group:"Group2" x:"c" z:3
+            │ └── LEAF id:D ag-Grid-AutoColumn:"Group2" group:"Group2" x:"c-d" z:4
+            └─┬ filler id:row-group-group-Group3 ag-Grid-AutoColumn:"Group3"
+            · ├── LEAF id:E ag-Grid-AutoColumn:"Group3" group:"Group3" x:"e" z:5
+            · ├── LEAF id:F ag-Grid-AutoColumn:"Group3" group:"Group3" x:"e-f" z:6
+            · ├── LEAF id:G ag-Grid-AutoColumn:"Group3" group:"Group3" x:"e-f-g" z:7
+            · └── LEAF id:H ag-Grid-AutoColumn:"Group3" group:"Group3" x:"e-f-g-h" z:8
+        `);
+
+        api.updateGridOptions({
+            autoGroupColumnDef: { headerName: 'Group', field: 'z', colId: 'yyy' },
+        });
+
+        await gridRows.check(`
+            ROOT id:ROOT_NODE_ID
+            ├─┬ filler id:row-group-group-Group1 ag-Grid-AutoColumn:"Group1"
+            │ ├── LEAF id:A ag-Grid-AutoColumn:1 group:"Group1" x:"a" z:1
+            │ └── LEAF id:B ag-Grid-AutoColumn:2 group:"Group1" x:"a-b" z:2
+            ├─┬ filler id:row-group-group-Group2 ag-Grid-AutoColumn:"Group2"
+            │ ├── LEAF id:C ag-Grid-AutoColumn:3 group:"Group2" x:"c" z:3
+            │ └── LEAF id:D ag-Grid-AutoColumn:4 group:"Group2" x:"c-d" z:4
+            └─┬ filler id:row-group-group-Group3 ag-Grid-AutoColumn:"Group3"
+            · ├── LEAF id:E ag-Grid-AutoColumn:5 group:"Group3" x:"e" z:5
+            · ├── LEAF id:F ag-Grid-AutoColumn:6 group:"Group3" x:"e-f" z:6
+            · ├── LEAF id:G ag-Grid-AutoColumn:7 group:"Group3" x:"e-f-g" z:7
+            · └── LEAF id:H ag-Grid-AutoColumn:8 group:"Group3" x:"e-f-g-h" z:8
+        `);
+    });
 });

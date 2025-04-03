@@ -11,7 +11,7 @@ import { AngularFrameworkEventListenerService } from './angularFrameworkEventLis
 
 @Injectable()
 export class AngularFrameworkOverrides extends VanillaFrameworkOverrides {
-    public override readonly batchFrameworkComponents: boolean = true;
+    public override readonly batchFrameworkComps: boolean = true;
 
     // Flag used to control Zone behaviour when running tests as many test features rely on Zone.
     private isRunningWithinTestZone: boolean = false;

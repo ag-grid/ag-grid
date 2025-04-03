@@ -9,8 +9,7 @@ import type { PopupPositionParams } from '../../interfaces/iPopup';
 import type { UserCompDetails } from '../../interfaces/iUserCompDetails';
 import { _getLocaleTextFunc } from '../../misc/locale/localeUtils';
 import type { CheckboxSelectionComponent } from '../../selection/checkboxSelectionComponent';
-import { _setAriaRole } from '../../utils/aria';
-import { _addStylesToElement, _clearElement, _removeFromParent } from '../../utils/dom';
+import { _addStylesToElement, _clearElement, _createElement, _removeFromParent } from '../../utils/dom';
 import { _missing } from '../../utils/generic';
 import { _escapeString } from '../../utils/string';
 import { _warn } from '../../validation/logging';
@@ -74,8 +73,15 @@ export class CellComp extends Component {
         this.rowNode = cellCtrl.rowNode;
         this.eRow = eRow;
 
-        const cellDiv = document.createElement('div');
-        cellDiv.setAttribute('comp-id', `${this.getCompId()}`);
+        const cellDiv = _createElement({
+            tag: 'div',
+            role: cellCtrl.getCellAriaRole() as any,
+            attrs: {
+                'comp-id': `${this.getCompId()}`,
+                'col-id': cellCtrl.colIdSanitised,
+            },
+        });
+
         this.eCell = cellDiv;
 
         let wrapperDiv: HTMLElement | undefined;
@@ -83,10 +89,12 @@ export class CellComp extends Component {
         // if doing a cell span, need to wrap the cell in a container with background-color to avoid
         // transparent cells displaying row lines
         if (cellCtrl.isCellSpanning()) {
-            wrapperDiv = document.createElement('div');
-            wrapperDiv.className = 'ag-spanned-cell-wrapper';
+            wrapperDiv = _createElement({
+                tag: 'div',
+                cls: 'ag-spanned-cell-wrapper',
+                role: 'presentation',
+            });
             wrapperDiv.appendChild(cellDiv);
-            _setAriaRole(wrapperDiv, 'presentation');
 
             this.setTemplateFromElement(wrapperDiv);
         } else {
@@ -98,9 +106,6 @@ export class CellComp extends Component {
         this.forceWrapper = cellCtrl.isForceWrapper();
 
         this.refreshWrapper(false);
-
-        _setAriaRole(cellDiv, cellCtrl.getCellAriaRole());
-        cellDiv.setAttribute('col-id', cellCtrl.colIdSanitised);
 
         const compProxy: ICellComp = {
             addOrRemoveCssClass: (cssClassName, on) => this.cellCssClassManager.addOrRemoveCssClass(cssClassName, on),
@@ -188,10 +193,7 @@ export class CellComp extends Component {
 
         const putWrapperIn = usingWrapper && this.eCellWrapper == null;
         if (putWrapperIn) {
-            const wrapperDiv = document.createElement('div');
-            wrapperDiv.setAttribute('role', 'presentation');
-            wrapperDiv.setAttribute('class', 'ag-cell-wrapper');
-            this.eCellWrapper = wrapperDiv;
+            this.eCellWrapper = _createElement({ tag: 'div', cls: 'ag-cell-wrapper', role: 'presentation' });
             this.eCell.appendChild(this.eCellWrapper);
         }
         const takeWrapperOut = !usingWrapper && this.eCellWrapper != null;
@@ -205,10 +207,7 @@ export class CellComp extends Component {
         const usingCellValue = !editing && usingWrapper;
         const putCellValueIn = usingCellValue && this.eCellValue == null;
         if (putCellValueIn) {
-            const cellSpan = document.createElement('span');
-            cellSpan.setAttribute('role', 'presentation');
-            cellSpan.setAttribute('class', 'ag-cell-value');
-            this.eCellValue = cellSpan;
+            this.eCellValue = _createElement({ tag: 'span', cls: 'ag-cell-value', role: 'presentation' });
             this.eCellWrapper!.appendChild(this.eCellValue);
         }
         const takeCellValueOut = !usingCellValue && this.eCellValue != null;
@@ -291,6 +290,14 @@ export class CellComp extends Component {
 
     private destroyEditor(): void {
         const { context } = this.beans;
+
+        // if leaving editor & editor is focused, move focus to the cell
+        const recoverFocus =
+            this.cellEditorPopupWrapper?.getGui().contains(_getActiveDomElement(this.beans)) ||
+            this.cellCtrl.hasBrowserFocus();
+        if (recoverFocus) {
+            this.eCell.focus({ preventScroll: true });
+        }
 
         this.hideEditorPopup?.();
 
@@ -452,7 +459,8 @@ export class CellComp extends Component {
 
         this.destroyRenderer();
         this.refreshWrapper(true);
-        this.clearParentOfValue();
+        // clear the parent of value element
+        _clearElement(this.getParentOfValue());
         if (this.cellEditorGui) {
             const eParent = this.getParentOfValue();
             eParent.appendChild(this.cellEditorGui);
@@ -531,17 +539,5 @@ export class CellComp extends Component {
         this.removeControls();
 
         super.destroy();
-    }
-
-    private clearParentOfValue(): void {
-        const { eCell, beans } = this;
-
-        // if focus is inside the cell, we move focus to the cell itself
-        // before removing it's contents, otherwise errors could be thrown.
-        if (eCell.contains(_getActiveDomElement(beans))) {
-            eCell.focus({ preventScroll: true });
-        }
-
-        _clearElement(this.getParentOfValue());
     }
 }

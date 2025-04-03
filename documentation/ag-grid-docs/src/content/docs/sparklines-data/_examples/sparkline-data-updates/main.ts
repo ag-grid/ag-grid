@@ -8,7 +8,7 @@ import {
     ValidationModule,
     createGrid,
 } from 'ag-grid-community';
-import { SparklinesModule } from 'ag-grid-enterprise';
+import { ClipboardModule, ContextMenuModule, SparklinesModule } from 'ag-grid-enterprise';
 
 import { getData } from './data';
 
@@ -16,6 +16,8 @@ ModuleRegistry.registerModules([
     ClientSideRowModelApiModule,
     ClientSideRowModelModule,
     SparklinesModule.with(AgChartsCommunityModule),
+    ClipboardModule,
+    ContextMenuModule,
     ValidationModule /* Development Only */,
 ]);
 

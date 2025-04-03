@@ -1,10 +1,10 @@
 import type { AgColumn } from '../entities/agColumn';
 import type { FilterDestroyedEvent } from '../events';
-import { _getDocument } from '../gridOptionsUtils';
 import type { IAfterGuiAttachedParams } from '../interfaces/iAfterGuiAttachedParams';
 import type { FilterWrapperParams, IFilterComp } from '../interfaces/iFilter';
 import type { PopupEventParams } from '../interfaces/iPopup';
-import { _clearElement, _removeFromParent } from '../utils/dom';
+import type { ElementParams } from '../utils/dom';
+import { _clearElement, _createElement, _removeFromParent } from '../utils/dom';
 import { _exists, _jsonEquals } from '../utils/generic';
 import { AgPromise } from '../utils/promise';
 import { _warn } from '../validation/logging';
@@ -19,6 +19,8 @@ import type { FilterButtonEvent } from './filterButtonComp';
 import { FilterButtonComp } from './filterButtonComp';
 import type { FilterRequestSource } from './iColumnFilter';
 
+const FilterWrapperElement: ElementParams = { tag: 'div', cls: 'ag-filter' };
+
 export class FilterWrapperComp extends Component {
     private filterWrapper: AgPromise<FilterDisplayWrapper> | null = null;
 
@@ -31,7 +33,7 @@ export class FilterWrapperComp extends Component {
         private readonly column: AgColumn,
         private readonly source: FilterRequestSource
     ) {
-        super(/* html */ `<div class="ag-filter"></div>`);
+        super(FilterWrapperElement);
     }
 
     public postConstruct(): void {
@@ -104,9 +106,10 @@ export class FilterWrapperComp extends Component {
         const params = originalParams as FilterWrapperParams;
         const useForm = params.useForm;
         const tag = useForm ? 'form' : 'div';
-        const eDocument = _getDocument(beans);
-        const eWrapper = eDocument.createElement(tag);
-        eWrapper.className = 'ag-filter-wrapper';
+        const eWrapper = _createElement({
+            tag,
+            cls: 'ag-filter-wrapper',
+        });
         if (useForm) {
             this.addManagedElementListeners(eWrapper, { submit: (e) => e?.preventDefault() });
         }

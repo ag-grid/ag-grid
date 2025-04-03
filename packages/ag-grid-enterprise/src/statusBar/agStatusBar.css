@@ -8,7 +8,8 @@
     line-height: 1.5;
 }
 
-.ag-status-panel {
+.ag-status-panel,
+:where(.ag-status-panel.ag-status-panel-aggregations .ag-status-name-value) {
     display: inline-flex;
 }
 

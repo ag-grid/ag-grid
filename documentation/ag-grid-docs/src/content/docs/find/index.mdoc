@@ -133,6 +133,20 @@ The following example demonstrates Find with Full Width Rows:
 
 {% gridExampleRunner title="Find with Full Width Rows" name="find-full-width" /%}
 
+## Find with Custom Group Row Component
+
+Using Find with a [Custom Group Row Inner Component](./grouping-group-rows/#custom-inner-renderer) (`groupRowRendererParams.innerRenderer`) or a [Custom Group Row Component](./grouping-group-rows/#custom-cell-renderer) (`groupRowRenderer`) is similar to using [Using Find with Cell Components](#using-find-with-cell-components). If the component displays text that does not appear in the cell value, the `getFindText` callback can be implemented on the `groupRowRendererParams` grid option. Find will search within this value for matches.
+
+{% interfaceDocumentation interfaceName="FindGroupRowRendererParams" config={"description":""} /%}
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    groupRowRendererParams: {
+        getFindText: params => `Group value is ${params.value}`,
+    }
+}
+```
+
 ## Content to Search
 
 Find is designed to search within "visible" cell contents.

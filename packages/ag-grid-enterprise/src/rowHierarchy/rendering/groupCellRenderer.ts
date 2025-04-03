@@ -1,4 +1,5 @@
 import type {
+    ElementParams,
     GroupCellRendererParams,
     ICellRendererComp,
     IGroupCellRenderer,
@@ -8,15 +9,17 @@ import { Component, RefPlaceholder, _setAriaRole, _setDisplayed } from 'ag-grid-
 
 import { GroupCellRendererCtrl } from './groupCellRendererCtrl';
 
-const groupTemplate =
-    /* html */
-    `<span class="ag-cell-wrapper">
-        <span class="ag-group-expanded" data-ref="eExpanded"></span>
-        <span class="ag-group-contracted" data-ref="eContracted"></span>
-        <span class="ag-group-checkbox ag-invisible" data-ref="eCheckbox"></span>
-        <span class="ag-group-value" data-ref="eValue"></span>
-        <span class="ag-group-child-count" data-ref="eChildCount"></span>
-    </span>`;
+const GroupCellRendererElement: ElementParams = {
+    tag: 'span',
+    cls: 'ag-cell-wrapper',
+    children: [
+        { tag: 'span', ref: 'eExpanded', cls: 'ag-group-expanded ag-hidden' },
+        { tag: 'span', ref: 'eContracted', cls: 'ag-group-contracted ag-hidden' },
+        { tag: 'span', ref: 'eCheckbox', cls: 'ag-group-checkbox ag-invisible' },
+        { tag: 'span', ref: 'eValue', cls: 'ag-group-value' },
+        { tag: 'span', ref: 'eChildCount', cls: 'ag-group-child-count' },
+    ],
+};
 
 export class GroupCellRenderer extends Component implements ICellRendererComp {
     private readonly eExpanded: HTMLElement = RefPlaceholder;
@@ -29,7 +32,7 @@ export class GroupCellRenderer extends Component implements ICellRendererComp {
     private innerCellRenderer: ICellRendererComp;
 
     constructor() {
-        super(groupTemplate);
+        super(GroupCellRendererElement);
     }
 
     public init(params: GroupCellRendererParams): void {
@@ -40,6 +43,7 @@ export class GroupCellRenderer extends Component implements ICellRendererComp {
             setContractedDisplayed: (expanded) => _setDisplayed(this.eContracted, expanded),
             setExpandedDisplayed: (expanded) => _setDisplayed(this.eExpanded, expanded),
             setCheckboxVisible: (visible) => this.eCheckbox.classList.toggle('ag-invisible', !visible),
+            setCheckboxSpacing: (add) => this.eCheckbox.classList.toggle('ag-group-checkbox-spacing', add),
         };
 
         const ctrl = this.createManagedBean(new GroupCellRendererCtrl());

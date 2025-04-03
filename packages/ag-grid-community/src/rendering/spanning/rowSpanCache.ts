@@ -171,10 +171,12 @@ export class RowSpanCache extends BeanStub {
 
             if (!spanData) {
                 const oldSpan = oldMap?.get(lastNode);
-                if (oldSpan) {
+                if (oldSpan?.firstNode === lastNode) {
                     oldSpan.reset();
+                    spanData = oldSpan;
+                } else {
+                    spanData = new CellSpan(column, lastNode);
                 }
-                spanData = oldSpan ?? new CellSpan(column, lastNode);
                 newMap.set(lastNode, spanData);
             }
             spanData.addSpannedNode(node);

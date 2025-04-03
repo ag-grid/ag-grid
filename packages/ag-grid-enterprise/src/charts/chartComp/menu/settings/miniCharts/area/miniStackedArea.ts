@@ -1,6 +1,6 @@
 import type { AgChartsExports } from '../../../../../agChartsExports';
 import type { ChartTranslationKey } from '../../../../services/chartTranslationService';
-import type { MiniChartSelector, ThemeTemplateParameters } from '../../miniChartsContainer';
+import type { MiniChartSelector } from '../../miniChartsContainer';
 import { stackData } from '../miniChartHelpers';
 import { MiniAreaClass, miniAreaData } from './miniArea';
 
@@ -12,22 +12,11 @@ export class MiniStackedAreaClass extends MiniAreaClass {
         agChartsExports: AgChartsExports,
         fills: string[],
         strokes: string[],
-        _themeTemplateParameters: ThemeTemplateParameters,
         _isCustomTheme: boolean,
         data: number[][] = miniStackedAreaData,
         tooltipName: ChartTranslationKey = 'stackedAreaTooltip'
     ) {
-        super(
-            container,
-            agChartsExports,
-            fills,
-            strokes,
-            _themeTemplateParameters,
-            _isCustomTheme,
-            data,
-            tooltipName,
-            true
-        );
+        super(container, agChartsExports, fills, strokes, _isCustomTheme, data, tooltipName, true);
     }
 
     override updateColors(fills: string[], strokes: string[]) {

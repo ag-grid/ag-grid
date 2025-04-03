@@ -9,6 +9,8 @@ const args = yargs(hideBin(process.argv))
     .usage('Usage: $0 [package path] --private-key-path <path>')
     .demandOption(['app-id', 'installation-id', 'private-key-path'])
     .demandOption(['release-version', 'release-branch', 'artifacts-path'])
+    .boolean(['latest'])
+    .default({ latest: true })
     .parse();
 
 const CREATED_STATUS = 201;
@@ -72,6 +74,7 @@ async function createGitHubRelease() {
     const creationResult = await octokit.request('POST /repos/ag-grid/ag-grid/releases', {
         owner: 'ag-grid',
         repo: 'ag-grid',
+        make_latest: args.latest ? 'true' : 'false',
         tag_name: ghReleaseVersion,
         target_commitish: releaseBranch,
         name: ghReleaseVersion,

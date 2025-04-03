@@ -50,7 +50,6 @@ const VueExample = defineComponent({
                 alignedGrids: () => [this.$refs.bottomGrid],
                 defaultColDef: {
                     filter: true,
-                    flex: 1,
                     minWidth: 120,
                 },
                 autoSizeStrategy: {
@@ -61,7 +60,6 @@ const VueExample = defineComponent({
                 alignedGrids: () => [this.$refs.topGrid],
                 defaultColDef: {
                     filter: true,
-                    flex: 1,
                     minWidth: 120,
                 },
             },

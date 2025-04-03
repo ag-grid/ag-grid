@@ -253,7 +253,7 @@
 }
 
 /* Default the content position to relative so that it doesn't appear under the background */
-.ag-row-hover.ag-full-width-row.ag-row-group > * {
+.ag-row.ag-full-width-row.ag-row-group > * {
     position: relative;
 }
 

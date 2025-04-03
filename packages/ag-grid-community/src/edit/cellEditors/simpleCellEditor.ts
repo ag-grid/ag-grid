@@ -21,10 +21,7 @@ export class SimpleCellEditor<
 
     constructor(protected cellEditorInput: CellEditorInput<TValue, P, I>) {
         super(
-            /* html */ `
-            <div class="ag-cell-edit-wrapper">
-                ${cellEditorInput.getTemplate()}
-            </div>`,
+            { tag: 'div', cls: 'ag-cell-edit-wrapper', children: [cellEditorInput.getTemplate()] },
             cellEditorInput.getAgComponents()
         );
     }

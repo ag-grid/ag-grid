@@ -1,7 +1,7 @@
 import type { Rect } from 'ag-charts-types/scene';
 
 import type { AgChartsExports } from '../../../../../agChartsExports';
-import type { MiniChartSelector, ThemeTemplateParameters } from '../../miniChartsContainer';
+import type { MiniChartSelector } from '../../miniChartsContainer';
 import { MiniChart } from '../miniChart';
 
 export class MiniHeatmapClass extends MiniChart {
@@ -12,7 +12,6 @@ export class MiniHeatmapClass extends MiniChart {
         agChartsExports: AgChartsExports,
         fills: string[],
         strokes: string[],
-        themeTemplate: ThemeTemplateParameters,
         isCustomTheme: boolean
     ) {
         super(container, agChartsExports, 'heatmapTooltip');
@@ -64,7 +63,7 @@ export class MiniHeatmapClass extends MiniChart {
             return rects;
         }, [] as Rect[]);
 
-        this.updateColors(fills, strokes, themeTemplate, isCustomTheme);
+        this.updateColors(fills, strokes, isCustomTheme);
 
         const rectGroup = new _Scene.Group();
         rectGroup.setClipRect(new _Scene.BBox(padding, padding, size - padding, size - padding));
@@ -72,15 +71,13 @@ export class MiniHeatmapClass extends MiniChart {
         this.root.append(rectGroup);
     }
 
-    updateColors(fills: string[], strokes: string[], themeTemplate?: ThemeTemplateParameters, isCustomTheme?: boolean) {
+    updateColors(fills: string[], strokes: string[], isCustomTheme?: boolean) {
         const { _Theme, _Util } = this.agChartsExports;
-        const defaultColorRange = themeTemplate?.get(_Theme.themeSymbols.DEFAULT_DIVERGING_SERIES_COLOR_RANGE);
-        const defaultBackgroundColor = themeTemplate?.get(_Theme.themeSymbols.DEFAULT_BACKGROUND_COLOUR);
-        const backgroundFill =
-            (Array.isArray(defaultBackgroundColor) ? defaultBackgroundColor[0] : defaultBackgroundColor) ?? 'white';
 
-        const colorRange = isCustomTheme ? [fills[0], fills[1]] : defaultColorRange;
-        const stroke = isCustomTheme ? strokes[0] : backgroundFill;
+        const colorRange = isCustomTheme
+            ? [fills[0], fills[1]]
+            : _Theme.resolveOperation({ $palette: 'divergingColors' });
+        const stroke = isCustomTheme ? strokes[0] : _Theme.resolveOperation({ $ref: 'backgroundColor' });
 
         const fillFn = _Util.interpolateColor(colorRange[0], colorRange[1]);
         this.rects.forEach((rect, i) => {

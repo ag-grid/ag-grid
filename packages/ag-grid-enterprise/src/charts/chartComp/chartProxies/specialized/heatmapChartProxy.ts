@@ -80,6 +80,7 @@ export class HeatmapChartProxy extends ChartProxy<AgCartesianChartOptions, 'heat
                 gradient: {
                     preferredLength: 200,
                 },
+                position: 'right',
             },
             series: {
                 tooltip: {

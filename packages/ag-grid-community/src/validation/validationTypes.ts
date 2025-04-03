@@ -17,13 +17,9 @@ export type Deprecations<T extends object> = Partial<{
     [key in keyof T]: { version: string; message?: string };
 }>;
 
-// Util, if array, type of array. Else T.
-type TypeOfArray<T> = NonNullable<T extends Array<infer U> ? U : T>;
-
 // Validation rules, either sub-validator, function returning rules, or rules.
 export type Validations<T extends object> = Partial<{
     [key in keyof T]:
-        | (TypeOfArray<T[key]> extends object ? () => OptionsValidator<TypeOfArray<T[key]>> : never)
         | ((options: T, gridOptions: GridOptions, beans: BeanCollection) => OptionsValidation<T> | null)
         | OptionsValidation<T>
         | undefined;

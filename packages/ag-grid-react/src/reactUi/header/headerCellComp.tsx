@@ -35,7 +35,7 @@ const HeaderCellComp = ({ ctrl }: { ctrl: HeaderCellCtrl }) => {
     const setRef = useCallback((eRef: HTMLDivElement | null) => {
         eGui.current = eRef;
         compBean.current = eRef ? context.createBean(new _EmptyBean()) : context.destroyBean(compBean.current);
-        if (!eRef || !isAlive) {
+        if (!eRef || !ctrl.isAlive()) {
             return;
         }
 

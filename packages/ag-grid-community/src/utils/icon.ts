@@ -1,8 +1,7 @@
 import type { BeanCollection } from '../context/context';
 import type { AgColumn } from '../entities/agColumn';
 import { _warn } from '../validation/logging';
-import { _setAriaRole } from './aria';
-import { _isNodeOrElement, _loadTemplate } from './dom';
+import { _createElement, _isNodeOrElement, _loadTemplate } from './dom';
 
 //
 // IMPORTANT NOTE!
@@ -102,6 +101,7 @@ export type IconName =
     | 'chartsThemePrevious'
     | 'chartsThemeNext'
     | 'chartsDownload'
+    | 'ensureColumnVisible'
     | 'checkboxChecked' // deprecated v33
     | 'checkboxIndeterminate' // deprecated v33
     | 'checkboxUnchecked' // deprecated v33
@@ -165,7 +165,8 @@ export type IconValue =
     | 'checkbox-unchecked'
     | 'radio-button-on'
     | 'radio-button-off'
-    | 'eye';
+    | 'eye'
+    | 'column-arrow';
 
 /**
  * If icon provided, use this (either a string, or a function callback).
@@ -186,7 +187,7 @@ export function _createIcon(iconName: IconName, beans: BeanCollection, column: A
         }
     }
 
-    const eResult = document.createElement('span');
+    const eResult = _createElement({ tag: 'span' });
     eResult.appendChild(iconContents!);
 
     return eResult;
@@ -250,17 +251,16 @@ export function _createIconNoSpan(
         _warn(133, { iconName });
         return undefined;
     } else {
-        const span = document.createElement('span');
         const iconValue = beans.registry.getIcon(iconName as IconName);
         if (!iconValue) {
             beans.validation?.validateIcon(iconName);
         }
-        const cssClass = iconValue ?? iconName;
 
-        span.setAttribute('class', `ag-icon ag-icon-${cssClass}`);
-        span.setAttribute('unselectable', 'on');
-        _setAriaRole(span, 'presentation');
-
-        return span;
+        return _createElement({
+            tag: 'span',
+            cls: `ag-icon ag-icon-${iconValue ?? iconName}`,
+            role: 'presentation',
+            attrs: { unselectable: 'on' },
+        });
     }
 }

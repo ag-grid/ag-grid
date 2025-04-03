@@ -1,7 +1,7 @@
 import { BeanStub } from '../context/beanStub';
 import { _getDocument } from '../gridOptionsUtils';
 import { _setAriaRole } from '../utils/aria';
-import { _clearElement, _isNodeOrElement } from '../utils/dom';
+import { _clearElement, _isNodeOrElement, _removeFromParent } from '../utils/dom';
 import type { Component } from './component';
 import type { ITabGuard } from './tabGuardCtrl';
 import { TabGuardClassNames, TabGuardCtrl } from './tabGuardCtrl';
@@ -151,9 +151,9 @@ export class TabGuardFeature extends BeanStub {
     public override destroy(): void {
         // in some places (`AgMenuPanel`) the lifecycle on the tab guard feature doesn't match
         // the lifecycle of the component gui, so remove the tab guards on destroy
-        const { eFocusableElement, eTopGuard, eBottomGuard } = this;
-        eFocusableElement.removeChild(eTopGuard);
-        eFocusableElement.removeChild(eBottomGuard);
+        const { eTopGuard, eBottomGuard } = this;
+        _removeFromParent(eTopGuard);
+        _removeFromParent(eBottomGuard);
         super.destroy();
     }
 }

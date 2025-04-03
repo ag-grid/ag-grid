@@ -133,7 +133,13 @@ export { Column, ColumnPinnedType, ColumnGroup, ProvidedColumnGroup, ColumnGroup
 export { AgColumn, isColumn } from './entities/agColumn';
 export { AgColumnGroup, isColumnGroup } from './entities/agColumnGroup';
 export { AgProvidedColumnGroup, isProvidedColumnGroup } from './entities/agProvidedColumnGroup';
-export { type ITreeNode, RowNode, ROW_ID_PREFIX_ROW_GROUP as _ROW_ID_PREFIX_ROW_GROUP } from './entities/rowNode';
+export {
+    type ITreeNode,
+    RowNode,
+    ROW_ID_PREFIX_ROW_GROUP as _ROW_ID_PREFIX_ROW_GROUP,
+    ROW_ID_PREFIX_TOP_PINNED as _ROW_ID_PREFIX_TOP_PINNED,
+    ROW_ID_PREFIX_BOTTOM_PINNED as _ROW_ID_PREFIX_BOTTOM_PINNED,
+} from './entities/rowNode';
 export { _createGlobalRowEvent } from './entities/rowNodeUtils';
 export {
     RowPinnedType,
@@ -297,6 +303,7 @@ export {
     FindDetailCellRendererParams,
     FindDetailGridCellRendererParams,
     FindFullWidthCellRendererParams,
+    FindGroupRowRendererParams,
 } from './interfaces/iFind';
 
 // gridPanel
@@ -344,7 +351,6 @@ export {
 } from './headerRendering/headerUtils';
 
 // misc
-export { _requestAnimationFrame } from './misc/animationFrameService';
 export type { AnimationFrameService } from './misc/animationFrameService';
 export { AlignedGrid } from './interfaces/iAlignedGrid';
 export type { MenuService } from './misc/menu/menuService';
@@ -417,6 +423,8 @@ export {
     AggregationStatusPanelAggFunc,
     IAggregationStatusPanelParams,
     AggregationStatusPanelParams,
+    IProvidedStatusPanelParams,
+    IStatusPanelValueFormatterParams,
 } from './interfaces/iStatusPanel';
 
 // tool panel components
@@ -469,7 +477,7 @@ export type { CheckboxCellRenderer } from './rendering/cellRenderers/checkboxCel
 export { ICheckboxCellRendererParams } from './rendering/cellRenderers/checkboxCellRenderer';
 
 // row models
-export type { PinnedRowModel } from './pinnedRowModel/pinnedRowModel';
+export { PinnedRowModel } from './pinnedRowModel/pinnedRowModel';
 export { RowNodeTransaction } from './interfaces/rowNodeTransaction';
 export { RowDataTransaction } from './interfaces/rowDataTransaction';
 export {
@@ -645,6 +653,7 @@ export {
     _MasterDetailGridApi,
     _StatusBarGridApi,
     _AdvancedFilterGridApi,
+    _PinnedRowGridApi,
     _FindApi,
 } from './api/gridApi';
 export { _getClientSideRowModel, _getServerSideRowModel } from './api/rowModelApiUtils';
@@ -697,7 +706,9 @@ export {
     _isUsingNewRowSelectionAPI,
     _isUsingNewCellSelectionAPI,
     _isGroupRowsSticky,
+    _getGroupingApproach,
 } from './gridOptionsUtils';
+export type { GroupingApproach } from './gridOptionsUtils';
 export { LocalEventService } from './localEventService';
 export type { EventService } from './eventService';
 export type { RowNodeSorter } from './sort/rowNodeSorter';
@@ -735,6 +746,7 @@ export {
     RangeSelectionState,
     RowGroupExpansionState,
     RowGroupState,
+    RowPinningState,
     ScrollState,
     SideBarState,
     SortState,
@@ -826,6 +838,7 @@ export {
     SortDirection,
     NestedFieldPaths,
     GetFindTextParams,
+    GetFindTextFunc,
 } from './entities/colDef';
 export {
     DataTypeDefinition,
@@ -856,6 +869,8 @@ export {
     IsRowMaster,
     IsRowSelectable,
     IsRowFilterable,
+    IsRowPinnable,
+    IsRowPinned,
     GetMainMenuItems,
     GetRowNodeIdFunc,
     GetRowIdFunc,
@@ -928,18 +943,19 @@ export {
     MouseShowContextMenuParams,
     TouchShowContextMenuParam,
 } from './interfaces/iContextMenu';
-export { IRowNodeStage, StageExecuteParams } from './interfaces/iRowNodeStage';
+export {
+    IRowNodeStage,
+    IRowGroupingStrategy,
+    RowGroupingRowNode,
+    StageExecuteParams,
+} from './interfaces/iRowNodeStage';
+export { IPinnedRowModel } from './interfaces/iPinnedRowModel';
 export { IDateParams, IDate, IDateComp, BaseDate, BaseDateParams } from './interfaces/dateComponent';
 export { IAfterGuiAttachedParams, ContainerType } from './interfaces/iAfterGuiAttachedParams';
 export { IComponent } from './interfaces/iComponent';
 export { IEventEmitter, IEventListener } from './interfaces/iEventEmitter';
-export {
-    HeaderComp as _HeaderComp,
-    IHeaderParams,
-    IHeaderComp,
-    IHeader,
-    IInnerHeaderComponent,
-} from './headerRendering/cells/column/headerComp';
+export { HeaderComp as _HeaderComp } from './headerRendering/cells/column/headerComp';
+export { IHeaderParams, IHeaderComp, IHeader, IInnerHeaderComponent } from './interfaces/iHeader';
 export {
     IHeaderGroupParams,
     IHeaderGroup,
@@ -1007,7 +1023,7 @@ export {
     _setAriaHidden,
     _getAriaPosInSet,
 } from './utils/aria';
-export { _EmptyArray, _removeFromArray, _last, _areEqual } from './utils/array';
+export { _EmptyArray, _removeFromArray, _last, _areEqual, _flatten } from './utils/array';
 export { _isIOSUserAgent } from './utils/browser';
 export { ChangedPath } from './utils/changedPath';
 export { _serialiseDate, _parseDateTimeFromString } from './utils/date';
@@ -1019,20 +1035,22 @@ export {
     _removeFromParent,
     _radioCssClass,
     _loadTemplate,
+    _createElement,
+    ElementParams,
     _isVisible,
     _setFixedWidth,
     _setDisabled,
     _setVisible,
-    _bindCellRendererToHtmlElement,
     _getInnerHeight,
     _getInnerWidth,
     _isNodeOrElement,
     _observeResize,
     _preserveRangesWhile,
+    _requestAnimationFrame,
 } from './utils/dom';
 export { _selectAllCells } from './utils/selection';
 export { _stopPropagationForAgGrid, _isStopPropagationForAgGrid, _isElementInEventPath } from './utils/event';
-export { _warnOnce, _debounce, _doOnce, _waitUntil } from './utils/function';
+export { _warnOnce, _debounce, _doOnce, _waitUntil, _batchCall } from './utils/function';
 export { _warn, _error, _errMsg, _preInitErrMsg } from './validation/logging';
 export { _createIcon, _createIconNoSpan, IconName } from './utils/icon';
 export { _fuzzySuggestions } from './utils/fuzzyMatch';
@@ -1068,7 +1086,7 @@ export { RowSpanningAccumulator, GridSerializingParams, RowAccumulator } from '.
 
 // modules
 export { Module, ModuleValidationResult, _ModuleWithApi, _ModuleWithoutApi, ModuleName } from './interfaces/iModule';
-export { ModuleRegistry, _getGridRegisteredModules, _setUmd } from './modules/moduleRegistry';
+export { ModuleRegistry, _registerModule, _getGridRegisteredModules, _setUmd } from './modules/moduleRegistry';
 
 export { ValidationModule } from './validation/validationModule';
 export { ColumnMoveModule as _ColumnMoveModule } from './columnMove/columnMoveModule';

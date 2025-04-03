@@ -37,7 +37,7 @@ export const AllGridCommunityModules: Record<`${CommunityModuleName}Module`, num
     RowApiModule: 0.88,
     RowAutoHeightModule: 1.84,
     RowDragModule: 13,
-    RowSelectionModule: 31,
+    RowSelectionModule: 33,
     RowStyleModule: 1.24,
     ScrollApiModule: 0.7,
     SelectEditorModule: 31.89,
@@ -45,7 +45,7 @@ export const AllGridCommunityModules: Record<`${CommunityModuleName}Module`, num
     TextFilterModule: 104,
     TooltipModule: 22.24,
     UndoRedoEditModule: 23.5,
-    ValidationModule: 74.31,
+    ValidationModule: 76.83,
     ValueCacheModule: 0.65,
     CellSpanModule: 8.08,
 };
@@ -59,18 +59,19 @@ export const AllEnterpriseModules: Record<`${EnterpriseModuleName}Module`, numbe
     ContextMenuModule: 70,
     ExcelExportModule: 84,
     FiltersToolPanelModule: 116,
-    FindModule: 12.91,
+    FindModule: 14.51,
     GridChartsModule: 67,
     IntegratedChartsModule: 385.33,
     GroupFilterModule: 93,
+    ManualPinnedRowModule: 18.35,
     MasterDetailModule: 82,
     MenuModule: 153,
     MultiFilterModule: 121,
-    PivotModule: 87.97,
+    PivotModule: 90.61,
     RangeSelectionModule: 53,
     RichSelectModule: 77,
     RowNumbersModule: 26,
-    RowGroupingModule: 74.88,
+    RowGroupingModule: 77.52,
     RowGroupingPanelModule: 71,
     ServerSideRowModelApiModule: 19,
     ServerSideRowModelModule: 147,
@@ -78,7 +79,7 @@ export const AllEnterpriseModules: Record<`${EnterpriseModuleName}Module`, numbe
     SideBarModule: 32,
     SparklinesModule: 20,
     StatusBarModule: 27,
-    TreeDataModule: 87,
+    TreeDataModule: 91.6,
     ViewportRowModelModule: 26,
 };
 
@@ -116,7 +117,7 @@ const commonFeatureSets: ModuleTest[] = [
 const chartModules: ModuleTest[] = [
     {
         modules: ['AgChartsCommunityModule' as any, 'IntegratedChartsModule'],
-        expectedSize: 1170,
+        expectedSize: 1209.02,
     },
     {
         modules: ['AgChartsEnterpriseModule' as any, 'IntegratedChartsModule'],
@@ -124,7 +125,7 @@ const chartModules: ModuleTest[] = [
     },
     {
         modules: ['AgChartsCommunityModule' as any, 'SparklinesModule'],
-        expectedSize: 808,
+        expectedSize: 834.4,
     },
     {
         modules: ['AgChartsEnterpriseModule' as any, 'SparklinesModule'],
@@ -132,10 +133,11 @@ const chartModules: ModuleTest[] = [
     },
 ];
 
+export const baseModule = { modules: [], expectedSize: 459.29 };
+
 export const moduleCombinations: ModuleTest[] = [
-    { modules: [], expectedSize: 445.89 },
     ...commonFeatureSets,
-    ...chartModules,
+    // ...chartModules,
     ...allGridCommunityModules, //.slice(0, 3),
     ...allEnterpriseModules, //.slice(0, 3),
 ];

@@ -1,8 +1,7 @@
 import { KeyCode } from '../constants/keyCode';
-import { _getDocument } from '../gridOptionsUtils';
 import type { ITooltipCtrl, TooltipFeature } from '../tooltip/tooltipFeature';
 import { _setAriaPosInSet, _setAriaRole, _setAriaSelected, _setAriaSetSize } from '../utils/aria';
-import { _isVisible, _removeFromParent } from '../utils/dom';
+import { _createElement, _isVisible, _removeFromParent } from '../utils/dom';
 import { Component } from './component';
 
 export interface ListOption<TValue = string> {
@@ -27,7 +26,7 @@ export class AgList<TEventType extends string = AgListEvent, TValue = string> ex
         private readonly cssIdentifier = 'default',
         private readonly unFocusable: boolean = false
     ) {
-        super(/* html */ `<div class="ag-list ag-${cssIdentifier}-list" role="listbox"></div>`);
+        super({ tag: 'div', cls: `ag-list ag-${cssIdentifier}-list` });
     }
 
     public postConstruct(): void {
@@ -118,7 +117,7 @@ export class AgList<TEventType extends string = AgListEvent, TValue = string> ex
 
     public addOption(listOption: ListOption<TValue>): this {
         const { value, text } = listOption;
-        const valueToRender = text || (value as any);
+        const valueToRender = text ?? (value as any);
 
         this.options.push({ value, text: valueToRender });
         this.renderOption(value, valueToRender);
@@ -135,10 +134,18 @@ export class AgList<TEventType extends string = AgListEvent, TValue = string> ex
             _removeFromParent(itemEl);
         });
         this.itemEls = [];
+        this.refreshAriaRole();
+    }
+
+    private refreshAriaRole(): void {
+        const eGui = this.getGui();
+
+        _setAriaRole(eGui, this.options.length === 0 ? 'presentation' : 'listbox');
     }
 
     private updateIndices(): void {
         const options = this.getGui().querySelectorAll('.ag-list-item');
+        this.refreshAriaRole();
         options.forEach((option: HTMLElement, idx) => {
             _setAriaPosInSet(option, idx + 1);
             _setAriaSetSize(option, options.length);
@@ -146,14 +153,17 @@ export class AgList<TEventType extends string = AgListEvent, TValue = string> ex
     }
 
     private renderOption(value: TValue, text: string): void {
-        const eDocument = _getDocument(this.beans);
-        const itemEl = eDocument.createElement('div');
+        const itemEl = _createElement({
+            tag: 'div',
+            cls: `ag-list-item ag-${this.cssIdentifier}-list-item`,
+            attrs: { role: 'option' },
+        });
 
-        _setAriaRole(itemEl, 'option');
-        itemEl.classList.add('ag-list-item', `ag-${this.cssIdentifier}-list-item`);
-        const span = eDocument.createElement('span');
+        const span = _createElement({
+            tag: 'span',
+            children: text,
+        });
         itemEl.appendChild(span);
-        span.textContent = text;
 
         if (!this.unFocusable) {
             itemEl.tabIndex = -1;

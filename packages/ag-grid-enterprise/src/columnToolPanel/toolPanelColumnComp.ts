@@ -1,4 +1,12 @@
-import type { AgCheckbox, AgColumn, DragItem, DragSource, ITooltipCtrl, TooltipFeature } from 'ag-grid-community';
+import type {
+    AgCheckbox,
+    AgColumn,
+    DragItem,
+    DragSource,
+    ElementParams,
+    ITooltipCtrl,
+    TooltipFeature,
+} from 'ag-grid-community';
 import {
     AgCheckboxSelector,
     Component,
@@ -6,7 +14,6 @@ import {
     KeyCode,
     RefPlaceholder,
     _createIconNoSpan,
-    _escapeString,
     _getShouldDisplayTooltip,
     _getToolPanelClassesFromColDef,
     _setAriaDescribedBy,
@@ -19,19 +26,27 @@ import type { ColumnModelItem } from './columnModelItem';
 import { createPivotState, setAllColumns, updateColumns } from './modelItemUtils';
 import { ToolPanelContextMenu } from './toolPanelContextMenu';
 
+const ToolPanelColumnElement: ElementParams = {
+    tag: 'div',
+    cls: 'ag-column-select-column',
+    children: [
+        { tag: 'ag-checkbox', ref: 'cbSelect', cls: 'ag-column-select-checkbox' },
+        { tag: 'span', ref: 'eLabel', cls: 'ag-column-select-column-label' },
+    ],
+};
 export class ToolPanelColumnComp extends Component {
     private readonly eLabel: HTMLElement = RefPlaceholder;
     private readonly cbSelect: AgCheckbox = RefPlaceholder;
 
     public readonly column: AgColumn;
-    private readonly columnDept: number;
+    public readonly columnDepth: number;
     private eDragHandle: Element;
     private readonly displayName: string | null;
     private processingColumnStateChange = false;
     private tooltipFeature?: TooltipFeature;
 
     constructor(
-        modelItem: ColumnModelItem,
+        public modelItem: ColumnModelItem,
         private readonly allowDragging: boolean,
         private readonly groupsExist: boolean,
         private readonly focusWrapper: HTMLElement
@@ -39,25 +54,18 @@ export class ToolPanelColumnComp extends Component {
         super();
         const { column, depth, displayName } = modelItem;
         this.column = column;
-        this.columnDept = depth;
+        this.columnDepth = depth;
         this.displayName = displayName;
     }
 
     public postConstruct(): void {
-        this.setTemplate(
-            /* html */
-            `<div class="ag-column-select-column">
-                <ag-checkbox data-ref="cbSelect" class="ag-column-select-checkbox"></ag-checkbox>
-                <span class="ag-column-select-column-label" data-ref="eLabel"></span>
-            </div>`,
-            [AgCheckboxSelector]
-        );
+        this.setTemplate(ToolPanelColumnElement, [AgCheckboxSelector]);
         const {
             beans,
             cbSelect,
             displayName,
             eLabel,
-            columnDept: indent,
+            columnDepth: indent,
             groupsExist,
             column,
             gos,
@@ -73,8 +81,7 @@ export class ToolPanelColumnComp extends Component {
         checkboxGui.insertAdjacentElement('afterend', eDragHandle);
         checkboxInput.setAttribute('tabindex', '-1');
 
-        const displayNameSanitised: any = _escapeString(displayName);
-        eLabel.innerHTML = displayNameSanitised;
+        eLabel.textContent = displayName;
 
         // if grouping, we add an extra level of indent, to cater for expand/contract icons we need to indent for
         if (groupsExist) {

@@ -19,6 +19,7 @@ import {
     _addGridCommonParams,
     _anchorElementToMouseMoveEvent,
     _areCellsEqual,
+    _createElement,
     _createIconNoSpan,
     _exists,
     _focusInto,
@@ -92,6 +93,18 @@ export class ContextMenuService extends BeanStub implements NamedBean, IContextM
             const anyExport = !onIPad && (!suppressExcel || !suppressCsv);
             if (anyExport) {
                 defaultMenuOptions.push('export');
+            }
+
+            const enableRowPinning = gos.get('enableRowPinning');
+            const isRowPinnable = gos.get('isRowPinnable');
+            const grandTotalRow = gos.get('grandTotalRow');
+            if (enableRowPinning && grandTotalRow !== 'pinnedBottom' && grandTotalRow !== 'pinnedTop') {
+                const pinnable = isRowPinnable?.(node) ?? true;
+                if (pinnable) {
+                    defaultMenuOptions.push('pinRowSubMenu');
+                } else if (node.rowPinned) {
+                    defaultMenuOptions.push('unpinRow');
+                }
             }
         }
 
@@ -240,8 +253,7 @@ export class ContextMenuService extends BeanStub implements NamedBean, IContextM
         const { beans } = this;
         const translate = this.getLocaleTextFunc();
         const loadingIcon = _createIconNoSpan('loadingMenuItems', beans) as HTMLElement;
-        const wrapperEl = document.createElement('div');
-        wrapperEl.classList.add(CSS_CONTEXT_MENU_LOADING_ICON);
+        const wrapperEl = _createElement({ tag: 'div', cls: CSS_CONTEXT_MENU_LOADING_ICON });
         wrapperEl.appendChild(loadingIcon);
 
         const rootNode = _getRootNode(beans);
@@ -439,7 +451,7 @@ class ContextMenu extends Component<ContextMenuEvent> {
         private readonly node: RowNode | null,
         private readonly value: any
     ) {
-        super(/* html */ `<div class="${CSS_MENU}" role="presentation"></div>`);
+        super({ tag: 'div', cls: CSS_MENU, role: 'presentation' });
     }
 
     public postConstruct(): void {
@@ -452,7 +464,8 @@ class ContextMenu extends Component<ContextMenuEvent> {
         );
         const menuItemsMapped = (this.beans.menuItemMapper as MenuItemMapper).mapWithStockItems(
             this.menuItems,
-            null,
+            this.column,
+            this.node,
             () => this.getGui(),
             'contextMenu'
         );

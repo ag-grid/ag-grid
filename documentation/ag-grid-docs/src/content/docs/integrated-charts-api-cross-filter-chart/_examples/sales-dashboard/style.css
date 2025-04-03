@@ -1,35 +1,18 @@
 #wrapper {
     height: 100%;
     width: 100%;
-    display: flex;
-    flex-direction: column;
+    display: grid;
+    grid-template-rows: 300px 300px auto;
+    grid-template-columns: 50% 50%;
     gap: 10px;
     padding: 10px;
     box-sizing: border-box;
 }
 
-#top {
-    display: flex;
-    gap: 10px;
-    min-height: 300px;
-    max-height: 300px;
-}
-
-#columnChart {
-    width: 50%;
-    height: 100%;
-}
-
-#pieChart {
-    width: 50%;
-    height: 100%;
-}
-
 #barChart {
-    min-height: 300px;
-    max-height: 300px;
+    grid-column: span 2;
 }
 
-#myGrid {
-    height: 25%;
+#wrapper > div:last-child {
+    grid-column: span 2;
 }

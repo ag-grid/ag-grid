@@ -56,13 +56,14 @@
       },
       "cache": true
     },
-    "lint": {
+    "eslint": {
       "command": "eslint",
       "options": {
         "cwd": "{projectRoot}"
-      }
+      },
+      "cache": true
     },
-    "test": {
+    "stylelint": {
       "executor": "nx:run-commands",
       "inputs": [],
       "outputs": [],
@@ -70,11 +71,26 @@
         "cwd": "community-modules/styles",
         "commands": [
           "stylelint --formatter unix --config stylelint-config-scss.js 'src/**/*.scss' '*.scss'",
-          "stylelint --formatter unix --config stylelint-config-css.js '*.css'",
-          "sass test/test.scss"
+          "stylelint --formatter unix --config stylelint-config-css.js '*.css'"
         ]
+      },
+      "cache": true
+    },
+    "lint": {
+      "executor": "nx:noop",
+      "dependsOn": ["eslint", "stylelint"],
+      "inputs": [],
+      "outputs": []
+    },
+    "test": {
+      "executor": "nx:run-commands",
+      "inputs": [],
+      "outputs": [],
+      "options": {
+        "cwd": "community-modules/styles",
+        "commands": ["sass test/test.scss"]
       }
     }
   },
-  "tags": ["module", "community", "styles"]
+  "tags": ["module", "community", "styles", "no-sharding"]
 }

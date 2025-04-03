@@ -100,6 +100,14 @@ const COLUMN_DEFINITION_VALIDATIONS: () => Validations<ColDef | ColGroupDef> = (
         }
         return { module: 'ColumnFilter' };
     },
+    flex: {
+        validate: (_options, gridOptions) => {
+            if (gridOptions.autoSizeStrategy) {
+                return 'colDef.flex is not supported with gridOptions.autoSizeStrategy';
+            }
+            return null;
+        },
+    },
     floatingFilter: { module: 'ColumnFilter' },
     headerCheckboxSelection: {
         supportedRowModels: ['clientSide', 'serverSide'],
@@ -209,8 +217,8 @@ const COLUMN_DEFINITION_VALIDATIONS: () => Validations<ColDef | ColGroupDef> = (
         dependencies: {
             editable: { required: [false, undefined] },
             rowDrag: { required: [false, undefined] },
-            colSpan: { required: [false, undefined] },
-            rowSpan: { required: [false, undefined] },
+            colSpan: { required: [undefined] },
+            rowSpan: { required: [undefined] },
         },
         validate: (
             _options,

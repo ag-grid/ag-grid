@@ -65,7 +65,6 @@ export class AppComponent {
     topOptions: GridOptions = {
         defaultColDef: {
             filter: true,
-            flex: 1,
             minWidth: 100,
         },
         suppressHorizontalScroll: true,

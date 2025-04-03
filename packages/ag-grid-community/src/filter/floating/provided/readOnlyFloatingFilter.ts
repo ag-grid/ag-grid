@@ -1,5 +1,6 @@
 import type { AgColumn } from '../../../entities/agColumn';
 import type { IFilter } from '../../../interfaces/iFilter';
+import type { ElementParams } from '../../../utils/dom';
 import type { AgInputTextField } from '../../../widgets/agInputTextField';
 import { AgInputTextFieldSelector } from '../../../widgets/agInputTextField';
 import { Component, RefPlaceholder } from '../../../widgets/component';
@@ -10,6 +11,18 @@ import type {
     IFloatingFilterParent,
 } from '../floatingFilter';
 
+const ReadOnlyFloatingFilterElement: ElementParams = {
+    tag: 'div',
+    cls: 'ag-floating-filter-input',
+    role: 'presentation',
+    children: [
+        {
+            tag: 'ag-input-text-field',
+            ref: 'eFloatingFilterText',
+        },
+    ],
+};
+
 // optional floating filter for user provided filters - instead of providing a floating filter,
 // they can provide a getModelAsString() method on the filter instead. this class just displays
 // the string returned from getModelAsString()
@@ -19,13 +32,7 @@ export class ReadOnlyFloatingFilter extends Component implements IFloatingFilter
     private params: IFloatingFilterParams;
 
     constructor() {
-        super(
-            /* html */ `
-            <div class="ag-floating-filter-input" role="presentation">
-                <ag-input-text-field data-ref="eFloatingFilterText"></ag-input-text-field>
-            </div>`,
-            [AgInputTextFieldSelector]
-        );
+        super(ReadOnlyFloatingFilterElement, [AgInputTextFieldSelector]);
     }
 
     public init(params: IFloatingFilterParams): void {

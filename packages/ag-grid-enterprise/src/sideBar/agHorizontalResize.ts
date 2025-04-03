@@ -8,7 +8,7 @@ export class AgHorizontalResize extends Component {
     public maxWidth: number | null = null;
 
     constructor() {
-        super(/* html */ `<div class="ag-tool-panel-horizontal-resize"></div>`);
+        super({ tag: 'div', cls: 'ag-tool-panel-horizontal-resize' });
     }
 
     public postConstruct(): void {

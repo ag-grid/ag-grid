@@ -1,0 +1,47 @@
+export const getData = async (delay = 100): Promise<any[]> =>
+    new Promise((resolve) => setTimeout(() => resolve(generateData()), delay));
+
+const numRows = 500;
+const names = [
+    'Aden Moreno',
+    'Alton Watson',
+    'Caleb Scott',
+    'Cathy Wilkins',
+    'Charlie Dodd',
+    'Jermaine Price',
+    'Reis Vasquez',
+];
+
+export const phones = [
+    { handset: 'Huawei P40', price: 599 },
+    { handset: 'Google Pixel 5', price: 589 },
+    { handset: 'Apple iPhone 12', price: 849 },
+    { handset: 'Samsung Galaxy S10', price: 499 },
+    { handset: 'Motorola Edge', price: 549 },
+    { handset: 'Sony Xperia', price: 279 },
+];
+
+const generateData = () => {
+    return Array.from({ length: numRows }, () => {
+        const handsetIndex = getRandomNumber(0, phones.length - 1);
+        const { handset, price } = phones[handsetIndex];
+        const saleDate = randomDate(new Date(2020, 0, 1), new Date(2020, 11, 31));
+        const quarterIndex = Math.floor((saleDate.getMonth() + 3) / 3);
+        const quarter = `Q${quarterIndex}`;
+
+        return {
+            salesRep: names[getRandomNumber(0, names.length - 1)],
+            handset,
+            handsetIndex: handsetIndex + 10,
+            quarterIndex,
+            sale: price,
+            saleDate,
+            quarter,
+        };
+    });
+};
+
+const getRandomNumber = (min: number, max: number): number => Math.floor(Math.random() * (max - min + 1) + min);
+
+const randomDate = (start: Date, end: Date): Date =>
+    new Date(start.getTime() + Math.random() * (end.getTime() - start.getTime()));

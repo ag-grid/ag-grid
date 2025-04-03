@@ -187,23 +187,7 @@ perhaps retrieve, alter and then re-apply the modified columns.
 
 The current column definitions can be retrieved with `getColumnDefs`:
 
-{% if isFramework("javascript") %}
-```js
-api.getColumnDefs();
-```
-{% /if %}
-
-{% if isFramework("angular", "vue") %}
-```js
-this.gridApi.getColumnDefs();
-```
-{% /if %}
-
-{% if isFramework("react") %}
-```js
-gridApi.getColumnDefs();
-```
-{% /if %}
+{% apiDocumentation source="grid-api/api.json" section="columns" names=["getColumnDefs"] /%}
 
 ## Column Groups
 

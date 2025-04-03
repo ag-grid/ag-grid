@@ -3,6 +3,7 @@ import type {
     CellCtrl,
     CellPosition,
     CellRange,
+    ElementParams,
     FillOperationParams,
     RowNode,
     RowPosition,
@@ -38,7 +39,10 @@ interface ValueContext {
 }
 
 type FillDirection = 'x' | 'y';
-
+const FillHandleElement: ElementParams = {
+    tag: 'div',
+    cls: 'ag-fill-handle',
+};
 export class AgFillHandle extends AbstractSelectionHandle {
     private initialPosition: CellPosition | undefined;
     private initialXY: { x: number; y: number } | null;
@@ -54,7 +58,7 @@ export class AgFillHandle extends AbstractSelectionHandle {
     protected type = SelectionHandleType.FILL;
 
     constructor() {
-        super(/* html */ `<div class="ag-fill-handle"></div>`);
+        super(FillHandleElement);
     }
 
     protected override updateValuesOnMove(e: MouseEvent) {

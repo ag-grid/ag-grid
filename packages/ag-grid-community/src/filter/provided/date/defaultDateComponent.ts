@@ -1,24 +1,29 @@
-import { _getActiveDomElement } from '../../../gridOptionsUtils';
 import type { IDateComp, IDateParams } from '../../../interfaces/dateComponent';
 import type { IAfterGuiAttachedParams } from '../../../interfaces/iAfterGuiAttachedParams';
 import { _isBrowserSafari } from '../../../utils/browser';
 import { _dateToFormattedString, _parseDateTimeFromString, _serialiseDate } from '../../../utils/date';
+import type { ElementParams } from '../../../utils/dom';
 import { _warn } from '../../../validation/logging';
 import type { AgInputTextField } from '../../../widgets/agInputTextField';
 import { AgInputTextFieldSelector } from '../../../widgets/agInputTextField';
 import { Component, RefPlaceholder } from '../../../widgets/component';
 
+const DefaultDateElement: ElementParams = {
+    tag: 'div',
+    cls: 'ag-filter-filter',
+    children: [
+        {
+            tag: 'ag-input-text-field',
+            ref: 'eDateInput',
+            cls: 'ag-date-filter',
+        },
+    ],
+};
 export class DefaultDateComponent extends Component implements IDateComp {
     private readonly eDateInput: AgInputTextField = RefPlaceholder;
 
     constructor() {
-        super(
-            /* html */ `
-            <div class="ag-filter-filter">
-                <ag-input-text-field class="ag-date-filter" data-ref="eDateInput"></ag-input-text-field>
-            </div>`,
-            [AgInputTextFieldSelector]
-        );
+        super(DefaultDateElement, [AgInputTextFieldSelector]);
     }
 
     private params: IDateParams;
@@ -47,10 +52,7 @@ export class DefaultDateComponent extends Component implements IDateComp {
         });
     }
 
-    private handleInput(isChange: boolean, e: InputEvent): void {
-        if (e.target !== _getActiveDomElement(this.beans)) {
-            return;
-        }
+    private handleInput(isChange: boolean): void {
         if (this.eDateInput.isDisabled()) {
             return;
         }

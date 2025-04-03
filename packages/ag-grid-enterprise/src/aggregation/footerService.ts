@@ -1,4 +1,4 @@
-import type { IFooterService, NamedBean, RowNode } from 'ag-grid-community';
+import type { GridOptions, IFooterService, NamedBean, RowNode } from 'ag-grid-community';
 import { BeanStub, _getGrandTotalRow, _getGroupTotalRowCallback } from 'ag-grid-community';
 
 import { _createRowNodeFooter } from './footerUtils';
@@ -18,7 +18,7 @@ export class FooterService extends BeanStub implements NamedBean, IFooterService
 
         if (isRootNode) {
             const grandTotal = includeFooterNodes && _getGrandTotalRow(this.gos);
-            if (grandTotal === position) {
+            if (_positionMatchesGrandTotalRow(position, grandTotal)) {
                 _createRowNodeFooter(node, this.beans);
                 callback(node.sibling, index++);
             }
@@ -63,5 +63,21 @@ export class FooterService extends BeanStub implements NamedBean, IFooterService
 
     public getTotalValue(value: any): string {
         return this.getLocaleTextFunc()('footerTotal', 'Total') + ' ' + (value ?? '');
+    }
+}
+
+function _positionMatchesGrandTotalRow(
+    position: 'top' | 'bottom',
+    grandTotaRow: GridOptions['grandTotalRow'] | false
+): boolean {
+    switch (grandTotaRow) {
+        case 'top':
+        case 'pinnedTop':
+            return position === 'top';
+        case 'bottom':
+        case 'pinnedBottom':
+            return position === 'bottom';
+        default:
+            return false;
     }
 }

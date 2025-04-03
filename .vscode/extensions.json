@@ -21,6 +21,8 @@
     // markdoc
     "stripe.markdoc-language-support",
     // vitest test runner, used for behavioural tests
-    "vitest.explorer"
+    "vitest.explorer",
+    // Stylelint plugin used for linting CSS in the Theming API
+    "stylelint.vscode-stylelint"
   ]
 }

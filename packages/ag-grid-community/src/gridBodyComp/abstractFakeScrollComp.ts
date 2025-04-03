@@ -1,6 +1,6 @@
-import { _requestAnimationFrame } from '../misc/animationFrameService';
 import { _isIOSUserAgent, _isInvisibleScrollbar, _isMacOsUserAgent } from '../utils/browser';
-import { _isVisible } from '../utils/dom';
+import type { ElementParams } from '../utils/dom';
+import { _isVisible, _requestAnimationFrame } from '../utils/dom';
 import { _waitUntil } from '../utils/function';
 import { Component, RefPlaceholder } from '../widgets/component';
 import type { ScrollPartner } from './gridBodyScrollFeature';
@@ -17,7 +17,7 @@ export abstract class AbstractFakeScrollComp extends Component implements Scroll
     public abstract setScrollPosition(value: number): void;
 
     constructor(
-        template: string,
+        template: ElementParams,
         private readonly direction: 'horizontal' | 'vertical'
     ) {
         super();

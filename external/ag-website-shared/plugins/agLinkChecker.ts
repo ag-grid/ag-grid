@@ -1,7 +1,11 @@
+import junitProcessor from 'ag-shared/processor';
 import type { AstroIntegration } from 'astro';
 import fs, { readdirSync } from 'node:fs';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import path from 'path';
+
+const { TestSuites, TestSuite, TestCase } = junitProcessor;
 
 type Options = {
     include: boolean;
@@ -9,6 +13,9 @@ type Options = {
 };
 
 const IGNORED_PATHS = ['/archive'];
+
+const isCI =
+    process.env.NX_TASK_TARGET_CONFIGURATION === 'ci' || process.env.NX_TASK_TARGET_CONFIGURATION === 'staging';
 
 const findAllFiles = (dir: string): string[] => {
     const results: string[] = [];
@@ -44,6 +51,24 @@ const filePathsString = (filePaths: Set<string>, options: Options): string => {
 
     return [...new Set(pageNames)].join(', ');
 };
+
+function outputJunitReport(validationResults: any) {
+    const testSuites = new TestSuites('Link Checker Tests');
+    Object.keys(validationResults).forEach((link) => {
+        const testSuite = new TestSuite(link);
+        testSuites.addTestSuite(testSuite);
+
+        const testCase = new TestCase(link, link, 0.0);
+        if (validationResults[link].error) {
+            testCase.setFailure(validationResults[link].error);
+        }
+        testSuite.addTestCase(testCase);
+    });
+
+    if (isCI) {
+        testSuites.writeJunitReport(path.resolve('../../reports/ag-grid-docs-links.xml'), true);
+    }
+}
 
 const checkLinks = async (dir: string, files: string[], options: Options) => {
     const anchors = new Set<string>();
@@ -130,10 +155,15 @@ const checkLinks = async (dir: string, files: string[], options: Options) => {
         });
     }
 
+    // for junit reporting
+    const validationResults = {};
+
     const errors: string[] = [];
     // validate the unchecked links
     Object.entries(linksToValidate).forEach(([link, { filePaths }]) => {
         if (IGNORED_PATHS.includes(link)) return;
+
+        validationResults[link] = {};
 
         const originalLink = link;
         if (prefix != null && link.startsWith(prefix)) {
@@ -148,7 +178,10 @@ const checkLinks = async (dir: string, files: string[], options: Options) => {
             const fileExtRegex = /\.[a-zA-Z]+$/;
             if (fileExtRegex.test(link)) {
                 if (!files.includes(link)) {
-                    errors.push(`File link to ${link} does not exist.`);
+                    const error = `File link to ${link} does not exist.`;
+                    errors.push(error);
+
+                    validationResults[link] = { error };
                 }
                 return;
             }
@@ -164,7 +197,10 @@ const checkLinks = async (dir: string, files: string[], options: Options) => {
                 return;
             }
 
-            errors.push(`Link to ${link} could not be resolved (${filePathsString(filePaths, options)}).`);
+            const error = `Link to ${link} could not be resolved (${filePathsString(filePaths, options)}).`;
+            errors.push(error);
+
+            validationResults[link] = { error };
             return;
         } else {
             // check if the hash exists in the file
@@ -175,6 +211,8 @@ const checkLinks = async (dir: string, files: string[], options: Options) => {
             }
         }
     });
+
+    outputJunitReport(validationResults);
 
     if (errors.length) {
         throw new Error(`

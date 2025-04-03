@@ -28,7 +28,7 @@ function formatDate(isoString) {
     const options = { month: 'long', year: 'numeric' };
     const formattedDate = date.toLocaleDateString('en-US', options);
 
-    return `${formattedDate.split(' ')[0]} ${day}${suffix} ${formattedDate.split(' ')[1]}`;
+    return `${formattedDate.split(' ')[0]} ${day}${suffix}, ${formattedDate.split(' ')[1]}`;
 }
 
 function main(mode) {

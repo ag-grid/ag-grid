@@ -1,23 +1,8 @@
 import type { ColDef, GridApi, GridOptions } from 'ag-grid-community';
-import {
-    ClientSideRowModelModule,
-    ModuleRegistry,
-    NumberFilterModule,
-    TextFilterModule,
-    ValidationModule,
-    createGrid,
-} from 'ag-grid-community';
-import { ColumnMenuModule, ColumnsToolPanelModule, ContextMenuModule } from 'ag-grid-enterprise';
+import { ClientSideRowModelModule, ModuleRegistry, ValidationModule, createGrid } from 'ag-grid-community';
+import { ColumnMenuModule } from 'ag-grid-enterprise';
 
-ModuleRegistry.registerModules([
-    TextFilterModule,
-    NumberFilterModule,
-    ClientSideRowModelModule,
-    ColumnsToolPanelModule,
-    ColumnMenuModule,
-    ContextMenuModule,
-    ValidationModule /* Development Only */,
-]);
+ModuleRegistry.registerModules([ClientSideRowModelModule, ColumnMenuModule, ValidationModule /* Development Only */]);
 
 const columnDefs: ColDef[] = [
     { field: 'athlete', minWidth: 200 },
@@ -36,9 +21,8 @@ const gridOptions: GridOptions<IOlympicData> = {
     columnDefs: columnDefs,
     defaultColDef: {
         minWidth: 100,
-        filter: true,
+        flex: 1,
     },
-    suppressMenuHide: true,
     columnMenu: 'legacy',
 };
 

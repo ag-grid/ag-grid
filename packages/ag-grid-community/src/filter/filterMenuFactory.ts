@@ -3,12 +3,12 @@ import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
 import type { AgColumn } from '../entities/agColumn';
+import type { AgProvidedColumnGroup } from '../entities/agProvidedColumnGroup';
 import { _isColumnMenuAnchoringEnabled, _isLegacyMenuEnabled } from '../gridOptionsUtils';
 import type { ContainerType } from '../interfaces/iAfterGuiAttachedParams';
 import type { IMenuFactory } from '../interfaces/iMenuFactory';
 import { _setColMenuVisible } from '../misc/menu/menuService';
-import { _setAriaRole } from '../utils/aria';
-import { _isVisible } from '../utils/dom';
+import { _createElement, _isVisible } from '../utils/dom';
 import { _findNextFocusableElement, _findTabbableParent, _focusInto } from '../utils/focus';
 import { _error } from '../validation/logging';
 import type { PopupService } from '../widgets/popupService';
@@ -32,11 +32,15 @@ export class FilterMenuFactory extends BeanStub implements NamedBean, IMenuFacto
     }
 
     public showMenuAfterMouseEvent(
-        column: AgColumn | undefined,
+        column: AgColumn | AgProvidedColumnGroup | undefined,
         mouseEvent: MouseEvent | Touch,
         containerType: ContainerType,
         onClosedCallback?: () => void
     ): void {
+        if (column && !column.isColumn) {
+            // not supported
+            return;
+        }
         this.showPopup(
             column,
             (eMenu) => {
@@ -55,11 +59,15 @@ export class FilterMenuFactory extends BeanStub implements NamedBean, IMenuFacto
     }
 
     public showMenuAfterButtonClick(
-        column: AgColumn | undefined,
+        column: AgColumn | AgProvidedColumnGroup | undefined,
         eventSource: HTMLElement,
         containerType: ContainerType,
         onClosedCallback?: () => void
     ): void {
+        if (column && !column.isColumn) {
+            // not supported
+            return;
+        }
         let multiplier = -1;
         let alignSide: 'left' | 'right' = 'left';
 
@@ -108,13 +116,11 @@ export class FilterMenuFactory extends BeanStub implements NamedBean, IMenuFacto
             return;
         }
 
-        const eMenu = document.createElement('div');
-
-        _setAriaRole(eMenu, 'presentation');
-        eMenu.classList.add('ag-menu');
-        if (!isLegacyMenuEnabled) {
-            eMenu.classList.add('ag-filter-menu');
-        }
+        const eMenu = _createElement({
+            tag: 'div',
+            cls: `ag-menu${!isLegacyMenuEnabled ? ' ag-filter-menu' : ''}`,
+            role: 'presentation',
+        });
 
         [this.tabListener] = this.addManagedElementListeners(eMenu, {
             keydown: (e: KeyboardEvent) => this.trapFocusWithin(e, eMenu),

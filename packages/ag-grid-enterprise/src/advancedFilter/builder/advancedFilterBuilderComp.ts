@@ -2,6 +2,7 @@ import type {
     AdvancedFilterModel,
     BeanCollection,
     ColumnAdvancedFilterModel,
+    ElementParams,
     FilterManager,
     ITooltipCtrl,
     JoinAdvancedFilterModel,
@@ -25,6 +26,37 @@ import type {
     AdvancedFilterBuilderRemoveEvent,
 } from './iAdvancedFilterBuilder';
 
+const AdvancedFilterBuilderElement: ElementParams = {
+    tag: 'div',
+    cls: 'ag-advanced-filter-builder',
+    role: 'presentation',
+    attrs: { tabindex: '-1' },
+    children: [
+        {
+            tag: 'div',
+            ref: 'eList',
+            cls: 'ag-advanced-filter-builder-list',
+            role: 'presentation',
+        },
+        {
+            tag: 'div',
+            cls: 'ag-advanced-filter-builder-button-panel',
+            role: 'presentation',
+            children: [
+                {
+                    tag: 'button',
+                    ref: 'eApplyFilterButton',
+                    cls: 'ag-button ag-standard-button ag-advanced-filter-builder-apply-button',
+                },
+                {
+                    tag: 'button',
+                    ref: 'eCancelFilterButton',
+                    cls: 'ag-button ag-standard-button ag-advanced-filter-builder-cancel-button',
+                },
+            ],
+        },
+    ],
+};
 export class AdvancedFilterBuilderComp extends Component<AdvancedFilterBuilderEvents> {
     private filterManager?: FilterManager;
     private advancedFilter: AdvancedFilterService;
@@ -52,14 +84,7 @@ export class AdvancedFilterBuilderComp extends Component<AdvancedFilterBuilderEv
     private validationMessage: string | null = null;
 
     constructor() {
-        super(/* html */ `
-            <div role="presentation" class="ag-advanced-filter-builder" tabindex="-1">
-                <div role="presentation" class="ag-advanced-filter-builder-list" data-ref="eList"></div>
-                <div role="presentation" class="ag-advanced-filter-builder-button-panel">
-                    <button class="ag-button ag-standard-button ag-advanced-filter-builder-apply-button" data-ref="eApplyFilterButton"></button>
-                    <button class="ag-button ag-standard-button ag-advanced-filter-builder-cancel-button" data-ref="eCancelFilterButton"></button>
-                </div>
-            </div>`);
+        super(AdvancedFilterBuilderElement);
     }
 
     public postConstruct(): void {
@@ -130,7 +155,7 @@ export class AdvancedFilterBuilderComp extends Component<AdvancedFilterBuilderEv
         this.eList.appendChild(virtualList.getGui());
 
         virtualList.setModel({
-            getRowCount: () => this.items.length,
+            getRowCount: () => this.items?.length || 0,
             getRow: (index: number) => this.items[index],
             areRowsEqual: (oldRow: AdvancedFilterBuilderItem, newRow: AdvancedFilterBuilderItem) => oldRow === newRow,
         });
@@ -139,8 +164,7 @@ export class AdvancedFilterBuilderComp extends Component<AdvancedFilterBuilderEv
     }
 
     private setupButtons(): void {
-        // eslint-disable-next-line no-restricted-properties -- Could swap to textContent, but could be a breaking change
-        this.eApplyFilterButton.innerText = this.advFilterExpSvc.translate('advancedFilterBuilderApply');
+        this.eApplyFilterButton.textContent = this.advFilterExpSvc.translate('advancedFilterBuilderApply');
         this.activateTabIndex([this.eApplyFilterButton]);
         this.addManagedElementListeners(this.eApplyFilterButton, {
             click: () => {
@@ -167,8 +191,7 @@ export class AdvancedFilterBuilderComp extends Component<AdvancedFilterBuilderEv
             mouseleave: () => mouseListener(false),
         });
 
-        // eslint-disable-next-line no-restricted-properties -- Could swap to textContent, but could be a breaking change
-        this.eCancelFilterButton.innerText = this.advFilterExpSvc.translate('advancedFilterBuilderCancel');
+        this.eCancelFilterButton.textContent = this.advFilterExpSvc.translate('advancedFilterBuilderCancel');
         this.activateTabIndex([this.eCancelFilterButton]);
         this.addManagedElementListeners(this.eCancelFilterButton, { click: () => this.close() });
     }

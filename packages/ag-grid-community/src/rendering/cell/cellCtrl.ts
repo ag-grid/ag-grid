@@ -9,7 +9,14 @@ import type { RowNode } from '../../entities/rowNode';
 import type { AgEventType } from '../../eventTypes';
 import type { CellContextMenuEvent, CellEvent, CellFocusedEvent } from '../../events';
 import type { GridOptionsService } from '../../gridOptionsService';
-import { _addGridCommonParams, _getCheckboxes, _isCellSelectionEnabled, _setDomData } from '../../gridOptionsUtils';
+import {
+    _addGridCommonParams,
+    _getActiveDomElement,
+    _getCheckboxLocation,
+    _getCheckboxes,
+    _isCellSelectionEnabled,
+    _setDomData,
+} from '../../gridOptionsUtils';
 import { refreshFirstAndLastStyles } from '../../headerRendering/cells/cssClassApplier';
 import type { BrandedType } from '../../interfaces/brandedType';
 import type { ICellEditor } from '../../interfaces/iCellEditor';
@@ -18,12 +25,12 @@ import type { ICellRangeFeature } from '../../interfaces/iCellRangeFeature';
 import type { CellChangedEvent } from '../../interfaces/iRowNode';
 import type { RowPosition } from '../../interfaces/iRowPosition';
 import type { UserCompDetails } from '../../interfaces/iUserCompDetails';
-import { _requestAnimationFrame } from '../../misc/animationFrameService';
+import { _isManualPinnedRow } from '../../pinnedRowModel/pinnedRowUtils';
 import type { CheckboxSelectionComponent } from '../../selection/checkboxSelectionComponent';
 import type { CellCustomStyleFeature } from '../../styling/cellCustomStyleFeature';
 import type { TooltipFeature } from '../../tooltip/tooltipFeature';
 import { _setAriaColIndex } from '../../utils/aria';
-import { _addOrRemoveAttribute } from '../../utils/dom';
+import { _addOrRemoveAttribute, _requestAnimationFrame } from '../../utils/dom';
 import { _getCtrlForEventTarget } from '../../utils/event';
 import { _findFocusableElements, _isCellFocusSuppressed } from '../../utils/focus';
 import { _makeNull } from '../../utils/generic';
@@ -88,8 +95,6 @@ export class CellCtrl extends BeanStub {
     public comp: ICellComp;
     public editCompDetails?: UserCompDetails;
 
-    protected focusEventToRestore: CellFocusedEvent | undefined;
-
     public printLayout: boolean;
 
     public value: any;
@@ -118,6 +123,10 @@ export class CellCtrl extends BeanStub {
     public onCompAttachedFuncs: (() => void)[] = [];
     public onEditorAttachedFuncs: (() => void)[] = [];
 
+    private focusEventWhileNotReady: CellFocusedEvent | null = null;
+    // if cell has been focused, check if it's focused when destroyed
+    private hasBeenFocused = false;
+
     constructor(
         public readonly column: AgColumn,
         public readonly rowNode: RowNode,
@@ -134,16 +143,6 @@ export class CellCtrl extends BeanStub {
 
         this.createCellPosition();
         this.updateAndFormatValue(false);
-    }
-
-    public shouldRestoreFocus(): boolean {
-        // Used in React to determine if the cell should restore focus after re-rendering
-        return this.beans.focusSvc.shouldRestoreFocus(this.cellPosition);
-    }
-
-    public onFocusOut(): void {
-        // Used in React
-        this.beans.focusSvc.clearRestoreFocus();
     }
 
     private addFeatures(): void {
@@ -212,7 +211,7 @@ export class CellCtrl extends BeanStub {
 
         this.onSuppressCellFocusChanged(this.beans.gos.get('suppressCellFocus'));
 
-        this.onCellFocused(this.focusEventToRestore);
+        this.setupFocus();
         this.applyStaticCssClasses();
         this.setWrapText();
 
@@ -298,7 +297,7 @@ export class CellCtrl extends BeanStub {
 
     private setupControlComps(): void {
         const colDef = this.column.getColDef();
-        this.includeSelection = this.isIncludeControl(this.isCheckboxSelection(colDef));
+        this.includeSelection = this.isIncludeControl(this.isCheckboxSelection(colDef), true);
         this.includeRowDrag = this.isIncludeControl(colDef.rowDrag);
         this.includeDndSource = this.isIncludeControl(colDef.dndSource);
 
@@ -309,33 +308,42 @@ export class CellCtrl extends BeanStub {
 
     public isForceWrapper(): boolean {
         // text selection requires the value to be wrapped in another element
-        const forceWrapper = this.beans.gos.get('enableCellTextSelection') || this.column.isAutoHeight();
-        return forceWrapper;
+        return this.beans.gos.get('enableCellTextSelection') || this.column.isAutoHeight();
     }
 
+    /**
+     * Wrapper providing general conditions under which control elements (e.g. checkboxes and drag handles)
+     * are rendered for a particular cell.
+     * @param value Whether to render the control in the specific context of the caller
+     * @param allowManuallyPinned Whether manually pinned rows are permitted this form of control element
+     */
     // eslint-disable-next-line @typescript-eslint/ban-types
-    private isIncludeControl(value: boolean | Function | undefined): boolean {
-        const rowNodePinned = this.rowNode.rowPinned != null;
-        const isFunc = typeof value === 'function';
-        const res = rowNodePinned ? false : isFunc || value === true;
-
-        return res;
+    private isIncludeControl(value: boolean | Function | undefined, allowManuallyPinned = false): boolean {
+        const rowUnpinned = this.rowNode.rowPinned == null;
+        return (rowUnpinned || (allowManuallyPinned && _isManualPinnedRow(this.rowNode))) && !!value;
     }
 
     private isCheckboxSelection(colDef: ColDef): boolean | CheckboxSelectionCallback | undefined {
-        const { rowSelection } = this.beans.gridOptions;
+        const { rowSelection, groupDisplayType } = this.beans.gridOptions;
+        const checkboxLocation = _getCheckboxLocation(rowSelection);
+        const isSelectionColumn = isColumnSelectionCol(this.column);
+
+        // Specific check for custom group display type here because we assume one of the non-selection
+        // columns will have `showRowGroup != null` and so in this case we will be rendering the checkbox
+        // in the group cell rather than here (the selection column)
+        if (groupDisplayType === 'custom' && checkboxLocation !== 'selectionColumn' && isSelectionColumn) {
+            return false;
+        }
+
         return (
             colDef.checkboxSelection ||
-            (isColumnSelectionCol(this.column) &&
-                rowSelection &&
-                typeof rowSelection !== 'string' &&
-                _getCheckboxes(rowSelection))
+            (isSelectionColumn && typeof rowSelection === 'object' && _getCheckboxes(rowSelection))
         );
     }
 
     private refreshShouldDestroy(): boolean {
         const colDef = this.column.getColDef();
-        const selectionChanged = this.includeSelection != this.isIncludeControl(this.isCheckboxSelection(colDef));
+        const selectionChanged = this.includeSelection != this.isIncludeControl(this.isCheckboxSelection(colDef), true);
         const rowDragChanged = this.includeRowDrag != this.isIncludeControl(colDef.rowDrag);
         const dndSourceChanged = this.includeDndSource != this.isIncludeControl(colDef.dndSource);
         // auto height uses wrappers, so need to destroy
@@ -351,7 +359,7 @@ export class CellCtrl extends BeanStub {
         // note: this happens because of a click outside of the grid or if the popupEditor
         // is closed with `Escape` key. if another cell was clicked, then the editing will
         // have already stopped and returned on the conditional above.
-        this.stopEditingAndFocus();
+        this.beans.editSvc?.stopRowOrCellEdit(this);
     }
 
     /**
@@ -483,12 +491,6 @@ export class CellCtrl extends BeanStub {
         // we do cellClassRules even if the value has not changed, so that users who have rules that
         // look at other parts of the row (where the other part of the row might of changed) will work.
         this.customStyleFeature?.applyCellClassRules();
-    }
-
-    // cell editors call this, when they want to stop for reasons other
-    // than what we pick up on. eg selecting from a dropdown ends editing.
-    public stopEditingAndFocus(suppressNavigateAfterEdit = false, shiftKey: boolean = false): void {
-        this.beans.editSvc?.stopEditingAndFocus(this, suppressNavigateAfterEdit, shiftKey);
     }
 
     public isCellEditable(): boolean {
@@ -624,12 +626,44 @@ export class CellCtrl extends BeanStub {
         });
     }
 
+    /**
+     * Restores focus to the cell, if it should have it
+     * @param waitForRender if the cell has just setComp, it may not be rendered yet, so we wait for the next render
+     */
+    private restoreFocus(waitForRender = false): void {
+        if (!this.comp || this.editing || !this.isCellFocused() || !this.beans.focusSvc.shouldTakeFocus()) {
+            return;
+        }
+
+        const focus = () => {
+            if (!this.isAlive()) {
+                return;
+            }
+            const focusableElement = this.comp.getFocusableElement();
+            if (this.isCellFocused()) {
+                focusableElement.focus({ preventScroll: true });
+            }
+        };
+
+        // if first render; wait for the component to mount to dom
+        if (waitForRender) {
+            setTimeout(focus, 0);
+            return;
+        }
+
+        focus();
+    }
+
     public onRowIndexChanged(): void {
         // when index changes, this influences items that need the index, so we update the
         // grid cell so they are working off the new index.
         this.createCellPosition();
         // when the index of the row changes, ie means the cell may have lost or gained focus
         this.onCellFocused();
+
+        // if row index changed, this cell may now need focus
+        this.restoreFocus();
+
         // check range selection
         this.rangeFeature?.onCellSelectionChanged();
     }
@@ -661,8 +695,23 @@ export class CellCtrl extends BeanStub {
         this.comp.addOrRemoveCssClass(CSS_CELL_LAST_LEFT_PINNED, lastLeftPinned);
     }
 
-    protected isCellFocused(): boolean {
+    /**
+     * Returns whether cell is focused by the focusSvc, overridden by spannedCellCtrl
+     */
+    protected checkCellFocused(): boolean {
         return this.beans.focusSvc.isCellFocused(this.cellPosition);
+    }
+
+    public isCellFocused(): boolean {
+        const isFocused = this.checkCellFocused();
+        this.hasBeenFocused ||= isFocused;
+        return isFocused;
+    }
+
+    public setupFocus() {
+        // when cell is created, if it should be focus the grid should take focus from the focused cell
+        this.restoreFocus(true);
+        this.onCellFocused(this.focusEventWhileNotReady ?? undefined);
     }
 
     public onCellFocused(event?: CellFocusedEvent): void {
@@ -671,17 +720,16 @@ export class CellCtrl extends BeanStub {
             return;
         }
 
-        const cellFocused = this.isCellFocused();
         if (!this.comp) {
-            if (cellFocused && event?.forceBrowserFocus) {
-                // The cell comp has not been rendered yet, but the browser focus is being forced for this cell
-                // so lets save the event to apply it when setComp is called in the next turn.
-                this.focusEventToRestore = event;
+            // scenario: focusing event on cell outside viewport causes cells to force render
+            // preserve event for when cell renders.
+            if (event) {
+                this.focusEventWhileNotReady = event;
             }
             return;
         }
-        // Clear the saved focus event
-        this.focusEventToRestore = undefined;
+
+        const cellFocused = this.isCellFocused();
 
         this.comp.addOrRemoveCssClass(CSS_CELL_FOCUS, cellFocused);
 
@@ -793,7 +841,17 @@ export class CellCtrl extends BeanStub {
     public override destroy(): void {
         this.onCompAttachedFuncs = [];
         this.onEditorAttachedFuncs = [];
+
+        // if this was focused; (e.g cell span status changes) then we need to restore focus
+        if (this.isCellFocused() && this.hasBrowserFocus()) {
+            this.beans.focusSvc.attemptToRecoverFocus();
+        }
+
         super.destroy();
+    }
+
+    public hasBrowserFocus(): boolean {
+        return this.eGui?.contains(_getActiveDomElement(this.beans)) ?? false;
     }
 
     public createSelectionCheckbox(): CheckboxSelectionComponent | undefined {

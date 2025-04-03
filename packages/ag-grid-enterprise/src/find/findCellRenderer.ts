@@ -1,9 +1,10 @@
-import type { ICellRenderer, ICellRendererParams } from 'ag-grid-community';
-import { Component, _clearElement, _escapeString } from 'ag-grid-community';
+import type { ElementParams, ICellRenderer, ICellRendererParams } from 'ag-grid-community';
+import { Component, _clearElement, _createElement, _escapeString } from 'ag-grid-community';
 
+const FindCellRendererElement: ElementParams = { tag: 'span', cls: 'ag-find-cell' };
 export class FindCellRenderer extends Component implements ICellRenderer {
     constructor() {
-        super(/* html */ `<span class="ag-find-cell"></span>`);
+        super(FindCellRendererElement);
     }
 
     public init(params: ICellRendererParams): void {
@@ -11,9 +12,9 @@ export class FindCellRenderer extends Component implements ICellRenderer {
     }
 
     public refresh(params: ICellRendererParams): boolean {
-        const { node, column, valueFormatted, value } = params;
-        const { footerSvc, findSvc } = this.beans;
-        const displayValue = (node.footer ? footerSvc?.getTotalValue(value) : valueFormatted ?? value) ?? '';
+        const { node, column } = params;
+        const findSvc = this.beans.findSvc;
+        const displayValue = findSvc?.getDisplayValue(params) ?? '';
         const eGui = this.getGui();
         _clearElement(eGui);
         const parts = findSvc?.getParts({ value: displayValue, node, column: column ?? null });
@@ -26,9 +27,8 @@ export class FindCellRenderer extends Component implements ICellRenderer {
         for (const { value: partValue, match, activeMatch } of parts) {
             const content = _escapeString(partValue, true) ?? '';
             if (match) {
-                const element = document.createElement('mark');
+                const element = _createElement({ tag: 'mark', cls: 'ag-find-match' });
                 element.textContent = content;
-                element.classList.add('ag-find-match');
                 if (activeMatch) {
                     element.classList.add('ag-find-active-match');
                     hasActiveMatch = true;

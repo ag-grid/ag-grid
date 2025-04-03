@@ -289,9 +289,26 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
         // avoid divide by zero
         const allDisplayedColumns = this.beans.visibleCols.allCols;
 
-        const doColumnsAlreadyFit = gridWidth === getWidthOfColsInList(allDisplayedColumns);
-        if (gridWidth <= 0 || !allDisplayedColumns.length || doColumnsAlreadyFit) {
+        if (gridWidth <= 0 || !allDisplayedColumns.length) {
             return;
+        }
+
+        const doColumnsAlreadyFit = gridWidth === getWidthOfColsInList(allDisplayedColumns);
+        if (doColumnsAlreadyFit) {
+            // if all columns fit, check they are within the min and max widths - if so, can quit early.
+            const doAllColumnsSatisfyConstraints = allDisplayedColumns.every((column) => {
+                if (column.colDef.suppressSizeToFit) {
+                    return true;
+                }
+                const widthOverride = limitsMap?.[column.getId()];
+                const minWidth = widthOverride?.minWidth ?? params?.defaultMinWidth;
+                const maxWidth = widthOverride?.maxWidth ?? params?.defaultMaxWidth;
+                const colWidth = column.getActualWidth();
+                return (minWidth == null || colWidth >= minWidth) && (maxWidth == null || colWidth <= maxWidth);
+            });
+            if (doAllColumnsSatisfyConstraints) {
+                return;
+            }
         }
 
         const colsToSpread: AgColumn[] = [];

@@ -1,12 +1,30 @@
 import type { IColor, _IUtil } from 'ag-charts-types';
 
-import type { AgInputTextFieldParams, BeanCollection, ComponentSelector } from 'ag-grid-community';
+import type { AgInputTextFieldParams, BeanCollection, ComponentSelector, ElementParams } from 'ag-grid-community';
 import { AgInputTextField, RefPlaceholder } from 'ag-grid-community';
 
 import type { AgChartsExports } from '../agChartsExports';
 import type { ChartTranslationService } from '../chartComp/services/chartTranslationService';
 
 export type AgColorInputEvent = 'colorChanged';
+const AgColorInputElement: ElementParams = {
+    tag: 'div',
+    cls: 'ag-color-input',
+    role: 'presentation',
+    children: [
+        { tag: 'div', ref: 'eLabel', cls: 'ag-input-field-label' },
+        {
+            tag: 'div',
+            ref: 'eWrapper',
+            cls: 'ag-wrapper ag-input-wrapper',
+            role: 'presentation',
+            children: [
+                { tag: 'input', ref: 'eInput', cls: 'ag-input-field-input' },
+                { tag: 'div', ref: 'eColor', cls: 'ag-color-input-color' },
+            ],
+        },
+    ],
+};
 export class AgColorInput extends AgInputTextField<AgInputTextFieldParams, AgColorInputEvent> {
     private chartTranslation: ChartTranslationService;
     private color: _IUtil['Color'];
@@ -19,14 +37,7 @@ export class AgColorInput extends AgInputTextField<AgInputTextFieldParams, AgCol
 
     constructor() {
         super({
-            template: /* html */ `
-            <div role="presentation" class="ag-color-input">
-                <div data-ref="eLabel" class="ag-input-field-label"></div>
-                <div data-ref="eWrapper" class="ag-wrapper ag-input-wrapper" role="presentation">
-                    <input data-ref="eInput" class="ag-input-field-input">
-                    <div data-ref="eColor" class="ag-color-input-color"></div>
-                </div>
-            </div>`,
+            template: AgColorInputElement,
         });
     }
 

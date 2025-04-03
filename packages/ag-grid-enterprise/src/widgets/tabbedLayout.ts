@@ -1,9 +1,10 @@
-import type { IAfterGuiAttachedParams } from 'ag-grid-community';
+import type { ElementParams, IAfterGuiAttachedParams } from 'ag-grid-community';
 import {
     KeyCode,
     RefPlaceholder,
     TabGuardComp,
     _clearElement,
+    _createElement,
     _createIconNoSpan,
     _findNextFocusableElement,
     _focusInto,
@@ -22,11 +23,20 @@ interface TabbedItemWrapper {
     eHeaderButton: HTMLElement;
 }
 
-function getTabbedLayoutTemplate(cssClass?: string) {
-    return /* html */ `<div class="ag-tabs ${cssClass}">
-        <div data-ref="eHeader"></div>
-        <div data-ref="eBody" role="presentation" class="ag-tabs-body ${cssClass ? `${cssClass}-body` : ''}"></div>
-    </div>`;
+function getTabbedLayoutTemplate(cssClass?: string): ElementParams {
+    return {
+        tag: 'div',
+        cls: `ag-tabs ${cssClass}`,
+        children: [
+            { tag: 'div', ref: 'eHeader' },
+            {
+                tag: 'div',
+                ref: 'eBody',
+                role: 'presentation',
+                cls: `ag-tabs-body ${cssClass ? `${cssClass}-body` : ''}`,
+            },
+        ],
+    };
 }
 
 export class TabbedLayout extends TabGuardComp {
@@ -75,9 +85,8 @@ export class TabbedLayout extends TabGuardComp {
         };
         if (enableCloseButton) {
             this.setupCloseButton(addCssClasses);
-            this.eTabHeader = _getDocument(this.beans).createElement('div');
+            this.eTabHeader = _createElement({ tag: 'div', role: 'presentation' });
             addCssClasses(this.eHeader, 'header-wrapper');
-            _setAriaRole(this.eHeader, 'presentation');
             this.eHeader.appendChild(this.eTabHeader);
         } else {
             this.eTabHeader = this.eHeader;
@@ -87,16 +96,14 @@ export class TabbedLayout extends TabGuardComp {
     }
 
     private setupCloseButton(addCssClasses: (el: HTMLElement, suffix: string) => void): void {
-        const eDocument = _getDocument(this.beans);
-        const eCloseButton = eDocument.createElement('button');
+        const eCloseButton = _createElement({ tag: 'button' });
         addCssClasses(eCloseButton, 'close-button');
         const eIcon = _createIconNoSpan('close', this.beans)!;
         _setAriaLabel(eCloseButton, this.params.closeButtonAriaLabel);
         eCloseButton.appendChild(eIcon);
         this.addManagedElementListeners(eCloseButton, { click: () => this.params.onCloseClicked?.() });
-        const eCloseButtonWrapper = eDocument.createElement('div');
+        const eCloseButtonWrapper = _createElement({ tag: 'div', role: 'presentation' });
         addCssClasses(eCloseButtonWrapper, 'close-button-wrapper');
-        _setAriaRole(eCloseButtonWrapper, 'presentation');
         eCloseButtonWrapper.appendChild(eCloseButton);
         this.eHeader.appendChild(eCloseButtonWrapper);
         this.eCloseButton = eCloseButton;
@@ -224,12 +231,13 @@ export class TabbedLayout extends TabGuardComp {
     }
 
     private addItem(item: TabbedItem): void {
-        const eHeaderButton = document.createElement('span');
-
-        _setAriaRole(eHeaderButton, 'tab');
-        eHeaderButton.setAttribute('tabindex', '-1');
+        const eHeaderButton = _createElement({
+            tag: 'span',
+            cls: 'ag-tab',
+            role: 'tab',
+            attrs: { tabindex: '-1' },
+        });
         eHeaderButton.appendChild(item.title);
-        eHeaderButton.classList.add('ag-tab');
 
         this.eTabHeader.appendChild(eHeaderButton);
         _setAriaLabel(eHeaderButton, item.titleLabel);

@@ -1,3 +1,5 @@
+import type { AgColorType } from 'ag-charts-types';
+
 import type { BeanCollection, ChartGroupsDef, ChartType } from 'ag-grid-community';
 import { Component, KeyCode, _setAriaLabel, _warn } from 'ag-grid-community';
 
@@ -44,8 +46,6 @@ import {
 } from './miniCharts/index';
 // please leave this as is - we want it to be explicit for build reasons
 import type { MiniChart } from './miniCharts/miniChart';
-
-export type ThemeTemplateParameters = Map<any, any>;
 
 type MiniChartMenuMapping = {
     [K in keyof ChartGroupsDef]-?: MiniChartMenuGroup<K>;
@@ -152,9 +152,8 @@ export class MiniChartsContainer extends Component {
         this.chartTranslation = beans.chartTranslation as ChartTranslationService;
     }
 
-    private readonly fills: string[];
+    private readonly fills: AgColorType[];
     private readonly strokes: string[];
-    private readonly themeTemplateParameters: ThemeTemplateParameters;
     private readonly isCustomTheme: boolean;
     private wrappers: Map<ChartType, HTMLElement> = new Map();
     private chartController: ChartController;
@@ -163,9 +162,8 @@ export class MiniChartsContainer extends Component {
 
     constructor(
         chartController: ChartController,
-        fills: string[],
+        fills: AgColorType[],
         strokes: string[],
-        themeTemplateParameters: ThemeTemplateParameters,
         isCustomTheme: boolean,
         chartGroups: ChartGroupsDef = DEFAULT_CHART_GROUPS
     ) {
@@ -174,7 +172,6 @@ export class MiniChartsContainer extends Component {
         this.chartController = chartController;
         this.fills = fills;
         this.strokes = strokes;
-        this.themeTemplateParameters = themeTemplateParameters;
         this.isCustomTheme = isCustomTheme;
         this.chartGroups = { ...chartGroups };
     }
@@ -277,14 +274,7 @@ export class MiniChartsContainer extends Component {
                 this.wrappers.set(miniClassChartType, miniWrapper);
 
                 this.createBean(
-                    new MiniClass(
-                        miniWrapper,
-                        this.beans.agChartsExports,
-                        this.fills,
-                        this.strokes,
-                        this.themeTemplateParameters,
-                        this.isCustomTheme
-                    )
+                    new MiniClass(miniWrapper, this.beans.agChartsExports, this.fills, this.strokes, this.isCustomTheme)
                 );
                 groupComponent.addItem(miniWrapper);
             }

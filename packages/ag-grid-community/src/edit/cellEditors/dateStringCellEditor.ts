@@ -1,6 +1,7 @@
 import type { DataTypeService } from '../../columns/dataTypeService';
 import type { AgColumn } from '../../entities/agColumn';
 import { _parseDateTimeFromString, _serialiseDate } from '../../utils/date';
+import type { ElementParams } from '../../utils/dom';
 import { _exists } from '../../utils/generic';
 import type { AgInputDateField } from '../../widgets/agInputDateField';
 import { AgInputDateFieldSelector } from '../../widgets/agInputDateField';
@@ -8,14 +9,19 @@ import type { CellEditorInput } from './iCellEditorInput';
 import type { IDateStringCellEditorParams } from './iDateStringCellEditor';
 import { SimpleCellEditor } from './simpleCellEditor';
 
+const DateStringCellElement: ElementParams = {
+    tag: 'ag-input-date-field',
+    ref: 'eInput',
+    cls: 'ag-cell-editor',
+};
 class DateStringCellEditorInput implements CellEditorInput<string, IDateStringCellEditorParams, AgInputDateField> {
     private eInput: AgInputDateField;
     private params: IDateStringCellEditorParams;
 
     constructor(private getDataTypeService: () => DataTypeService | undefined) {}
 
-    public getTemplate() {
-        return /* html */ `<ag-input-date-field class="ag-cell-editor" data-ref="eInput"></ag-input-date-field>`;
+    public getTemplate(): ElementParams {
+        return DateStringCellElement;
     }
     public getAgComponents() {
         return [AgInputDateFieldSelector];

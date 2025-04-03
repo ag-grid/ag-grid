@@ -1,5 +1,5 @@
 import type { AgPickerFieldParams, ComponentSelector } from 'ag-grid-community';
-import { AgPickerField, _getDocument } from 'ag-grid-community';
+import { AgPickerField, _createElement } from 'ag-grid-community';
 
 import { AgDialog } from '../../widgets/agDialog';
 import type { AgChartsExports } from '../agChartsExports';
@@ -29,13 +29,16 @@ export class AgColorPicker extends AgPickerField<string, AgColorPickerParams & A
     }
 
     public override postConstruct() {
-        const eDocument = _getDocument(this.beans);
-        this.eDisplayFieldColor = eDocument.createElement('span');
-        this.eDisplayFieldColor.classList.add('ag-color-picker-color');
-        this.eDisplayFieldText = eDocument.createElement('span');
-        this.eDisplayFieldText.classList.add('ag-color-picker-value');
-        this.eDisplayField.appendChild(this.eDisplayFieldColor);
-        this.eDisplayField.appendChild(this.eDisplayFieldText);
+        this.eDisplayFieldColor = _createElement({
+            tag: 'span',
+            cls: 'ag-color-picker-color',
+        });
+        this.eDisplayFieldText = _createElement({
+            tag: 'span',
+            cls: 'ag-color-picker-value',
+        });
+
+        this.eDisplayField.append(this.eDisplayFieldColor, this.eDisplayFieldText);
 
         super.postConstruct();
 

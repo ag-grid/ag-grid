@@ -313,6 +313,7 @@ export class ColumnFilterService
     }
 
     public disableFilters(): boolean {
+        this.initialFilterModel = {};
         const { allColumnFilters } = this;
         if (allColumnFilters.size) {
             allColumnFilters.forEach((filterWrapper) =>

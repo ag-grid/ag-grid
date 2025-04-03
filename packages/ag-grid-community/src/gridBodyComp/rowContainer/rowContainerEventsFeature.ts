@@ -158,8 +158,8 @@ export class RowContainerEventsFeature extends BeanStub {
         }
     }
 
-    private processFullWidthRowKeyboardEvent(rowComp: RowCtrl, eventName: string, keyboardEvent: KeyboardEvent) {
-        const { rowNode } = rowComp;
+    private processFullWidthRowKeyboardEvent(rowCtrl: RowCtrl, eventName: string, keyboardEvent: KeyboardEvent) {
+        const { rowNode } = rowCtrl;
         const { focusSvc, navigation } = this.beans;
         const focusedCell = focusSvc.getFocusedCell();
         const column = (focusedCell && focusedCell.column) as AgColumn;
@@ -176,12 +176,18 @@ export class RowContainerEventsFeature extends BeanStub {
                         navigation?.handlePageScrollingKey(keyboardEvent, true);
                         break;
 
+                    case KeyCode.LEFT:
+                    case KeyCode.RIGHT:
+                        if (!this.gos.get('embedFullWidthRows')) {
+                            break;
+                        }
+                    /* eslint-ignore: no-fallthrough */
                     case KeyCode.UP:
                     case KeyCode.DOWN:
-                        rowComp.onKeyboardNavigate(keyboardEvent);
+                        rowCtrl.onKeyboardNavigate(keyboardEvent);
                         break;
                     case KeyCode.TAB:
-                        rowComp.onTabKeyDown(keyboardEvent);
+                        rowCtrl.onTabKeyDown(keyboardEvent);
                         break;
                     default:
                 }
@@ -189,7 +195,7 @@ export class RowContainerEventsFeature extends BeanStub {
         }
 
         if (eventName === 'keydown') {
-            this.eventSvc.dispatchEvent(rowComp.createRowEvent('cellKeyDown', keyboardEvent));
+            this.eventSvc.dispatchEvent(rowCtrl.createRowEvent('cellKeyDown', keyboardEvent));
         }
     }
 

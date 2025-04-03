@@ -154,6 +154,7 @@ export const _INTERNAL_EVENTS = [
     'overlayExclusiveChanged',
     'beforeRefreshModel',
     'rowNodeDataChanged',
+    'pinnedRowsChanged',
 ] as const;
 
 export const _ALL_EVENTS = [..._PUBLIC_EVENTS, ..._INTERNAL_EVENTS] as const;
