@@ -1,5 +1,19 @@
-// NOTE: This import is required for the JS parser
-import { ClientSideRowModelModule } from 'ag-grid-community';
+import type { GridApi, GridOptions } from 'ag-grid-community';
+import { AllCommunityModule, ModuleRegistry, createGrid } from 'ag-grid-community';
+
+ModuleRegistry.registerModules([AllCommunityModule]);
+
+let gridApi: GridApi;
+
+const gridOptions: GridOptions = {
+    rowData: [],
+    columnDefs: [],
+    onGridReady: () => {
+        generateControls();
+    },
+};
+// Create Grid, to simplify example generation
+gridApi = createGrid(document.querySelector<HTMLElement>('#myGrid')!, gridOptions);
 
 const CONSOLE_LOG_ARGS = [
     ['string'],
@@ -76,17 +90,7 @@ function stringify(value: any) {
     }
 }
 
-function sendInitMessage() {
-    const loadedEvent = {
-        type: 'init',
-        pageName: 'example-logger-test',
-        exampleName: 'console-logs',
-    };
-    window.parent?.postMessage(loadedEvent);
-}
-
-document.addEventListener('DOMContentLoaded', () => {
-    // Logger
+function generateControls() {
     const controls = document.querySelector<HTMLElement>('#controls')!;
 
     const logControls = CONSOLE_LOG_ARGS.map((args) => {
@@ -109,7 +113,4 @@ document.addEventListener('DOMContentLoaded', () => {
     logControls.forEach((control) => {
         controls.appendChild(control);
     });
-
-    // Remove loading spinner
-    sendInitMessage();
-});
+}
