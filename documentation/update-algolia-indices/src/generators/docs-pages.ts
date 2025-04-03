@@ -2,7 +2,15 @@ import fs from 'fs';
 import { JSDOM, VirtualConsole } from 'jsdom';
 
 import type { AlgoliaRecord } from '../types/algolia';
-import { API_FILE_PATH, DIST_DIR, HEADING_EXCLUDE_TAGS, MENU_FILE_PATH } from '../utils/constants';
+import {
+    API_FILE_PATH,
+    DIST_DIR,
+    DOC_SOURCE_DIR,
+    HEADING_EXCLUDE_TAGS,
+    MENU_FILE_PATH,
+    MIGRATION_DOC_BREADCRUMB_PREFIX,
+    MIGRATION_DOC_PREFIX,
+} from '../utils/constants';
 import { logWarning } from '../utils/output';
 
 const virtualConsole = new VirtualConsole();
@@ -18,9 +26,10 @@ export const getAllDocPages = (): FlattenedMenuItem[] => {
     pageRank = 0;
 
     const flattenedDocMenuItems = getFlattenedMenuItems(docsMenu.sections);
+    const flattenedDocMigrationItems = getFlattenedDocMigrationItems();
     const flattenedApiMenuItems = getFlattenedMenuItems(apiMenu.sections);
 
-    return [...flattenedApiMenuItems, ...flattenedDocMenuItems];
+    return [...flattenedApiMenuItems, ...flattenedDocMigrationItems, ...flattenedDocMenuItems];
 };
 
 function getHeadingContent(heading: Element) {
@@ -155,6 +164,31 @@ const getDocsMenuData = () => {
     const docsMenuData = JSON.parse(file);
 
     return docsMenuData;
+};
+
+function extractMigrationTitle(fileContents: string) {
+    const regex = /^title:\s+"(.*)"$/m;
+    const match = fileContents.match(regex);
+    return match ? match[1] : null;
+}
+
+const getFlattenedDocMigrationItems = (): FlattenedMenuItem[] => {
+    const entries = fs.readdirSync(DOC_SOURCE_DIR, { withFileTypes: true });
+
+    return entries
+        .filter((entry) => entry.isDirectory() && entry.name.startsWith(MIGRATION_DOC_PREFIX))
+        .map((entry) => {
+            const filePath = `${DOC_SOURCE_DIR}/${entry.name}/index.mdoc`;
+            const fileContents = fs.readFileSync(filePath, 'utf-8');
+            const title = extractMigrationTitle(fileContents) || entry.name;
+
+            return {
+                title,
+                path: entry.name,
+                rank: pageRank++,
+                breadcrumb: `${MIGRATION_DOC_BREADCRUMB_PREFIX} > ${title}`,
+            };
+        });
 };
 
 const getApiMenuData = () => {
