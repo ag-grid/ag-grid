@@ -18,7 +18,6 @@ NOTE: This will not show if the current library version is the same as the migra
 {% documentationArchiveSection version=migrationVersionPatch() /%}
 
 ## Breaking Changes
-{% metaTag tags=["cellRendererFramework", "frameworkComponent", "CellKeyPress", "FullWidthCellKeyPress", "spacePressed", "deleteKeyPressed", "charPress", "cellEditorFramework", "agPopupTextCellEditor", "agPopupSelectCellEditor", "tooltipComponentFramework", "headerComponentFramework", "headerGroupComponentFramework", "spanHeaderHeight", "stickyLabel", "getOriginalColumnGroup", "clipboardDeliminator", "frameworkComponents", "loadingCellRendererFramework", "detailCellRendererFramework", "loadingOverlayComponentFramework", "noRowsOverlayComponentFramework", "fullWidthCellRendererFramework", "groupRowRendererFramework", "stopEditingWhenGridLosesFocus", "isFullWidthCell", "serverSideFilterAllLevels", "excludeHiddenColumnsFromQuickFilter", "groupMultiAutoColumn", "groupUseEntireRow", "defaultGroupOrderComparator", "groupRowAggNodes", "groupRowsSticky", "suppressAggAtRootLevel", "immutableData", "getRowNodeId", "localeTextFunc", "suppressCellSelection", "postSort", "reactUI", "enableMultiRowDragging", "toolPanelVisibleChanged", "setIsFullWidthCell", "setGroupRowAggNodes", "setDefaultGroupOrderComparator", "setGetRowNodeId", "setPostSort", "setSelected", "test", "hideFilterInput", "cellRendererFramework", "toolPanelFramework", "statusPanelFramework", "innerRendererFramework", "filterFramework", "floatingFilterComponentFramework", "AgNodeBaseClickEvent", "AgSeriesNodeClickParams", "AgAxisCategoryTickOptions", "flipXY", "label", "callout", "labelKey", "labelName", "labelValue", "value", "AgPieSeriesOptions", "AgPieSeriesLabelFormatterParams", "AgPieSeriesTooltipRendererParams", "enterMovesDown", "enterMovesDownAfterEdit" ] /%}
 
 {% if isFramework("angular") %}
 **Angular Upgrade**
@@ -90,6 +89,7 @@ See [Cell Data Types](https://www.ag-grid.com/archive/30.0.0/javascript-data-gri
 * Disabling the navigator now clears any zoom/scroll applied, rather than leaving it present. Re-enabling restores the previous zoom/scroll state.
 
 ## Removal of Deprecated APIs
+{% metaTag tags=["cellRendererFramework", "frameworkComponent", "CellKeyPress", "FullWidthCellKeyPress", "spacePressed", "deleteKeyPressed", "charPress", "cellEditorFramework", "agPopupTextCellEditor", "agPopupSelectCellEditor", "tooltipComponentFramework", "headerComponentFramework", "headerGroupComponentFramework", "spanHeaderHeight", "stickyLabel", "getOriginalColumnGroup", "clipboardDeliminator", "frameworkComponents", "loadingCellRendererFramework", "detailCellRendererFramework", "loadingOverlayComponentFramework", "noRowsOverlayComponentFramework", "fullWidthCellRendererFramework", "groupRowRendererFramework", "stopEditingWhenGridLosesFocus", "isFullWidthCell", "serverSideFilterAllLevels", "excludeHiddenColumnsFromQuickFilter", "groupMultiAutoColumn", "groupUseEntireRow", "defaultGroupOrderComparator", "groupRowAggNodes", "groupRowsSticky", "suppressAggAtRootLevel", "immutableData", "getRowNodeId", "localeTextFunc", "suppressCellSelection", "postSort", "reactUI", "enableMultiRowDragging", "toolPanelVisibleChanged", "setIsFullWidthCell", "setGroupRowAggNodes", "setDefaultGroupOrderComparator", "setGetRowNodeId", "setPostSort", "setSelected", "test", "hideFilterInput", "cellRendererFramework", "toolPanelFramework", "statusPanelFramework", "innerRendererFramework", "filterFramework", "floatingFilterComponentFramework", "AgNodeBaseClickEvent", "AgSeriesNodeClickParams", "maxSpacing", "AgAxisCategoryTickOptions", "flipXY", "label", "callout", "labelKey", "labelName", "labelValue", "value", "AgPieSeriesOptions", "AgPieSeriesLabelFormatterParams", "IFilterOptionDef", "ISetFilterParams", "ToolPanelDef", "AgPieSeriesTooltipRendererParams", "StatusPanelDef", "IGroupCellRendererParams", "IMultiFilterDef" ] /%}
 The following API members were previously deprecated and have now been removed.
 {% expandingSection headerText="Removed Deprecated APIs" %}
 
@@ -116,11 +116,11 @@ The following API members were previously deprecated and have now been removed.
 
 **Header Height**
 
-* `colDef.spanHeaderHeight` removed and made default, use `colDef.suppressSpanHeaderHeight` to suppress.
+* `spanHeaderHeight` removed and made default, use `suppressSpanHeaderHeight` to suppress.
 
 **ColumnGroup**
 
-* `colGroupDef.stickyLabel` removed and made default, use `colGroupDef.suppressStickyLabel` to suppress.
+* `stickyLabel` removed and made default, use `suppressStickyLabel` to suppress.
 * `getOriginalColumnGroup` - removed, use `getProvidedColumnGroup` instead.
 
 ### Column Api
@@ -290,6 +290,7 @@ The following methods were previously deprecated and have now been removed.
 {% /expandingSection %}
 
 ## Deprecations
+{% metaTag tags=[ "enterMovesDown", "enterMovesDownAfterEdit" ] /%}
 
 {% expandingSection headerText="Deprecations" %}
 
