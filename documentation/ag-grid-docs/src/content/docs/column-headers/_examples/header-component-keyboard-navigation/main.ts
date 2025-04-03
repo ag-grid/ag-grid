@@ -9,7 +9,11 @@ import {
 
 import { CustomHeader } from './customHeader_typescript';
 
-ModuleRegistry.registerModules([TextFilterModule, ClientSideRowModelModule, ValidationModule /* Development Only */]);
+ModuleRegistry.registerModules([
+    TextFilterModule,
+    ClientSideRowModelModule,
+    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
+]);
 
 const GRID_CELL_CLASSNAME = 'ag-header-cell';
 

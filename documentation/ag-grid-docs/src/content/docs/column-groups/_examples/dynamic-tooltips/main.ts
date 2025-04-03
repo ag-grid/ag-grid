@@ -9,7 +9,11 @@ import {
 
 import { CustomHeaderGroup } from './customHeaderGroup_typescript';
 
-ModuleRegistry.registerModules([ClientSideRowModelModule, TooltipModule, ValidationModule /* Development Only */]);
+ModuleRegistry.registerModules([
+    ClientSideRowModelModule,
+    TooltipModule,
+    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
+]);
 
 const columnDefs: ColGroupDef[] = [
     {

@@ -1,7 +1,10 @@
 import type { GridApi, GridOptions, ValueGetterParams } from 'ag-grid-community';
 import { ClientSideRowModelModule, ModuleRegistry, ValidationModule, createGrid } from 'ag-grid-community';
 
-ModuleRegistry.registerModules([ClientSideRowModelModule, ValidationModule /* Development Only */]);
+ModuleRegistry.registerModules([
+    ClientSideRowModelModule,
+    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
+]);
 
 function hashValueGetter(params: ValueGetterParams) {
     return params.node ? Number(params.node.id) : null;

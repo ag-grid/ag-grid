@@ -19,7 +19,11 @@ import { getData, getLatinText } from './data';
 import FullWidthCellRenderer from './fullWidthCellRenderer';
 import './styles.css';
 
-ModuleRegistry.registerModules([FindModule, ClientSideRowModelModule, ValidationModule /* Development Only */]);
+ModuleRegistry.registerModules([
+    FindModule,
+    ClientSideRowModelModule,
+    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
+]);
 
 const VueExample = defineComponent({
     template: `
