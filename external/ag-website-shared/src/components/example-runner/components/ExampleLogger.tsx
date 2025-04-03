@@ -45,7 +45,7 @@ const JSON_VIEWER_THEME = {
     base04: 'rgba(0, 0, 0, 0.3)',
     base05: '#586e75',
     base06: '#073642',
-    base07: '#002b36',
+    base07: 'var(--color-code-punctuation)',
     base08: '#d33682',
     // Integers, Boolean, Constants, XML Attributes, Markup Link Url
     base09: 'var(--color-code-string)',
