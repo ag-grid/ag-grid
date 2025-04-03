@@ -35,6 +35,10 @@ export class SelectionColService extends BeanStub implements NamedBean, IColumnC
         });
 
         this.addManagedPropertyListener('selectionColumnDef', this.updateColumns.bind(this));
+
+        this.addManagedEventListeners({
+            displayedColumnsChanged: () => this.refreshVisibility('gridInitializing'),
+        });
     }
 
     public addColumns(cols: ColumnCollections): void {
