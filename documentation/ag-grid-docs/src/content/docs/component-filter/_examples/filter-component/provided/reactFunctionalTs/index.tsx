@@ -21,7 +21,7 @@ ModuleRegistry.registerModules([
     TextEditorModule,
     CustomFilterModule,
     ClientSideRowModelModule,
-    ValidationModule /* Development Only */,
+    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 
 const GridExample = () => {

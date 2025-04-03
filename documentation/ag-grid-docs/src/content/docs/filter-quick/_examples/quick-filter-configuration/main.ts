@@ -18,7 +18,7 @@ ModuleRegistry.registerModules([
     NumberEditorModule,
     TextEditorModule,
     ClientSideRowModelModule,
-    ValidationModule /* Development Only */,
+    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 
 const getMedalString = function ({ gold, silver, bronze }: { gold: number; silver: number; bronze: number }) {

@@ -33,7 +33,7 @@ ModuleRegistry.registerModules([
     ServerSideRowModelModule,
     ServerSideRowModelApiModule,
     RowGroupingPanelModule,
-    ValidationModule /* Development Only */,
+    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 
 const columnDefs: ColDef[] = [

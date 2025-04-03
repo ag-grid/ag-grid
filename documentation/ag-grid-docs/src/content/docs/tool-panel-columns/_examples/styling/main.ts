@@ -24,7 +24,7 @@ ModuleRegistry.registerModules([
     SetFilterModule,
     PivotModule,
     RowGroupingPanelModule,
-    ValidationModule /* Development Only */,
+    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 
 const columnDefs: ColDef[] = [

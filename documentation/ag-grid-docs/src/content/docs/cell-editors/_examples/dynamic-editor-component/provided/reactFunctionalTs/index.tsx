@@ -34,7 +34,7 @@ ModuleRegistry.registerModules([
     ContextMenuModule,
     ColumnsToolPanelModule,
     RichSelectModule,
-    ValidationModule /* Development Only */,
+    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 
 const cellEditorSelector: (params: ICellEditorParams<IRow>) => CellEditorSelectorResult | undefined = (

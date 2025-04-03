@@ -16,7 +16,7 @@ ModuleRegistry.registerModules([
     HighlightChangesModule,
     ClientSideRowModelModule,
     NumberEditorModule,
-    ValidationModule /* Development Only */,
+    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 
 ///// left table

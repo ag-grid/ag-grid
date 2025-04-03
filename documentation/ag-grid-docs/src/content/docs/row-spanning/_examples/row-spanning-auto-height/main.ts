@@ -12,7 +12,7 @@ ModuleRegistry.registerModules([
     CellSpanModule,
     ClientSideRowModelModule,
     RowAutoHeightModule,
-    ValidationModule /* Development Only */,
+    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 
 const lorem = `Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.`;

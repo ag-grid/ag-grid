@@ -10,7 +10,7 @@ import {
 ModuleRegistry.registerModules([
     ClientSideRowModelModule,
     CheckboxEditorModule,
-    ValidationModule /* Development Only */,
+    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 
 const columnDefs: ColDef[] = [

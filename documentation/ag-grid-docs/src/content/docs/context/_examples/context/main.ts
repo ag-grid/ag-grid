@@ -12,7 +12,7 @@ ModuleRegistry.registerModules([
     RenderApiModule,
     HighlightChangesModule,
     ClientSideRowModelModule,
-    ValidationModule /* Development Only */,
+    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 
 const gbpFormatter = new Intl.NumberFormat('en-US', {

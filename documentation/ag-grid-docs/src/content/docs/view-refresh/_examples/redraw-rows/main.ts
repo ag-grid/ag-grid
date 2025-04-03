@@ -12,7 +12,7 @@ ModuleRegistry.registerModules([
     RowApiModule,
     RowStyleModule,
     ClientSideRowModelModule,
-    ValidationModule /* Development Only */,
+    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 
 let colorIndex = 0;

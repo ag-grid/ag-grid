@@ -31,7 +31,7 @@ ModuleRegistry.registerModules([
     RowSelectionModule,
     CsvExportModule,
     ExcelExportModule,
-    ValidationModule /* Development Only */,
+    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 
 const SportRenderer = defineComponent({

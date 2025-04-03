@@ -23,7 +23,7 @@ ModuleRegistry.registerModules([
     ColumnAutoSizeModule,
     AlignedGridsModule,
     ClientSideRowModelModule,
-    ValidationModule /* Development Only */,
+    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 
 @Component({

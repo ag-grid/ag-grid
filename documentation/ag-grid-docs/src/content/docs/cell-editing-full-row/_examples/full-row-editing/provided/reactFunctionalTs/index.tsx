@@ -24,7 +24,7 @@ ModuleRegistry.registerModules([
     ContextMenuModule,
     CustomEditorModule,
     TextEditorModule,
-    ValidationModule /* Development Only */,
+    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 
 function getRowData(): any[] {

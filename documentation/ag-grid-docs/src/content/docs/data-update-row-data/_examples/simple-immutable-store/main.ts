@@ -20,7 +20,7 @@ ModuleRegistry.registerModules([
     CellSelectionModule,
     RowGroupingModule,
     StatusBarModule,
-    ValidationModule /* Development Only */,
+    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 
 function getInitialData() {

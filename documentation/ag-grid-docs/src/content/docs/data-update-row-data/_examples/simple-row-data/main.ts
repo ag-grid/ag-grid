@@ -12,7 +12,7 @@ ModuleRegistry.registerModules([
     RowSelectionModule,
     ClientSideRowModelModule,
     ClientSideRowModelApiModule,
-    ValidationModule /* Development Only */,
+    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 
 interface ICar {

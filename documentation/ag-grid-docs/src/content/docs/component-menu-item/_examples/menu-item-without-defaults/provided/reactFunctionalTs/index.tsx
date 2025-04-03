@@ -31,7 +31,7 @@ ModuleRegistry.registerModules([
     ExcelExportModule,
     CellSelectionModule,
     ClipboardModule,
-    ValidationModule /* Development Only */,
+    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 
 const GridExample = () => {

@@ -19,7 +19,7 @@ ModuleRegistry.registerModules([
     RowGroupingModule,
     RowGroupingPanelModule,
     HighlightChangesModule,
-    ValidationModule /* Development Only */,
+    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 
 const UPDATE_COUNT = 500;

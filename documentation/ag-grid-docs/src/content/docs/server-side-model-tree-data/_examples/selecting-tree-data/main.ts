@@ -17,7 +17,7 @@ ModuleRegistry.registerModules([
     ContextMenuModule,
     TreeDataModule,
     ServerSideRowModelModule,
-    ValidationModule /* Development Only */,
+    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 
 interface FakeServer {

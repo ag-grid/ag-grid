@@ -30,7 +30,7 @@ ModuleRegistry.registerModules([
     RowDragModule,
     RowStyleModule,
     ClientSideRowModelModule,
-    ValidationModule /* Development Only */,
+    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 
 const columns: ColDef[] = [

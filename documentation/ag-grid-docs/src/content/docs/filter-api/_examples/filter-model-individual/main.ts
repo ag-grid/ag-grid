@@ -31,7 +31,7 @@ ModuleRegistry.registerModules([
     SetFilterModule,
     TextFilterModule,
     NumberFilterModule,
-    ValidationModule /* Development Only */,
+    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 
 const filterParams: IDateFilterParams = {

@@ -23,7 +23,7 @@ ModuleRegistry.registerModules([
     ClientSideRowModelModule,
     PivotModule,
     HighlightChangesModule,
-    ValidationModule /* Development Only */,
+    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 
 interface Student {

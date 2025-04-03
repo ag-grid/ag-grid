@@ -14,7 +14,7 @@ ModuleRegistry.registerModules([
     TextEditorModule,
     TextFilterModule,
     ClientSideRowModelModule,
-    ValidationModule /* Development Only */,
+    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 
 interface IAthlete {
