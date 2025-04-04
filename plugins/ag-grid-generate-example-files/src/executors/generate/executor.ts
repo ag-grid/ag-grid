@@ -131,7 +131,7 @@ export async function generateFiles(options: ExecutorOptions, gridOptionsTypes: 
 
     const isEnterprise = getIsEnterprise({ entryFile });
     const isLocale = getIsLocale({ entryFile });
-    const hasExampleConsoleLog = getHasExampleConsoleLog({ entryFile });
+
     const frameworkProvidedExamples = sourceFileList.includes('provided') ? await getProvidedFiles(folderPath) : {};
 
     const { bindings, typedBindings } = gridVanillaSrcParser(
@@ -183,6 +183,20 @@ export async function generateFiles(options: ExecutorOptions, gridOptionsTypes: 
             ...(provideFrameworkFiles ? provideFrameworkFiles['exampleConfig.json'] : {}),
         };
 
+        const [otherScriptFiles, componentScriptFiles] = await getOtherScriptFiles({
+            folderPath,
+            sourceFileList,
+            transformTsFileExt: getTransformTsFileExt(internalFramework),
+            internalFramework,
+        });
+        const hasExampleConsoleLog = [
+            entryFile,
+            ...Object.values(otherScriptFiles),
+            ...Object.values(componentScriptFiles),
+        ].some((file: string) => {
+            return getHasExampleConsoleLog({ contents: file });
+        });
+
         const transformEntryFile: TransformEntryFile = ({ entryFile }) => {
             let transformedEntryFile = entryFile;
 
@@ -192,13 +206,6 @@ export async function generateFiles(options: ExecutorOptions, gridOptionsTypes: 
 
             return transformedEntryFile;
         };
-
-        const [otherScriptFiles, componentScriptFiles] = await getOtherScriptFiles({
-            folderPath,
-            sourceFileList,
-            transformTsFileExt: getTransformTsFileExt(internalFramework),
-            internalFramework,
-        });
 
         let files = {};
         let scriptFiles = [];
