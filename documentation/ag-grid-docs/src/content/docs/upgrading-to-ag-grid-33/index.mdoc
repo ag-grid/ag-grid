@@ -196,6 +196,13 @@ To help identify configuration issues we strongly recommend including the `Valid
 
 Ensure you’re not including the `ValidationModule` in your production build to avoid increasing bundle size unnecessarily. Note if you are using either `AllCommunityModule` or `AllEnterpriseModule` it is included by default.
 
+```js
+// via process.env.NODE_ENV
+if(process.env.NODE_ENV !== 'production') {
+    ModuleRegistry.registerModules([ValidationModule]);
+}
+```
+
 ## Migrating from Packages
 
 npm packages: `ag-grid-community` / `ag-grid-enterprise` / `ag-grid-charts-enterprise`

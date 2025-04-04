@@ -55,11 +55,18 @@ To work out which modules are required, select the features of the grid that you
 
 {% note %}The code snippet above shows registering modules globally. It is also possible to [Provide Modules To Individual Grids](#providing-modules-to-individual-grids){% /note %}
 
-## Validation
+## Development Validations
 
-The `ValidationModule` adds helpful console warnings/errors, including if a feature has been enabled and the relevant module is missing. It is recommended to include it in your development build. It is automatically included if using one of the bundles (`AllCommunityModule`/`AllEnterpriseModule`).
+The `ValidationModule` adds helpful console warnings/errors that can help identify bad configuration during development. When using Modules it is recommended to only include it in your development build to ensure your production build is as small as possible.
 
-`ModuleRegistry.registerModules()` can be called multiple times to register additional modules, so `ModuleRegistry.registerModules([ValidationModule])` can be run when in development.
+```js
+// via process.env.NODE_ENV
+if(process.env.NODE_ENV !== 'production') {
+    ModuleRegistry.registerModules([ValidationModule]);
+}
+```
+
+ If using the bundles (`AllCommunityModule`/`AllEnterpriseModule`), the `ValidationModule` is included by default.
 
 ## Registering AG Grid Modules
 
