@@ -480,6 +480,11 @@ export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSi
         });
         this.pauseStoreUpdateListening = false;
         this.onStoreUpdated();
+
+        this.eventSvc.dispatchEvent({
+            type: 'expandOrCollapseAll',
+            source: value ? 'expandAll' : 'collapseAll',
+        });
     }
 
     public refreshAfterFilter(
