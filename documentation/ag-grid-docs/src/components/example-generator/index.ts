@@ -5,7 +5,7 @@ import path from 'node:path';
 
 import type { GeneratedContents, InternalFramework } from './types';
 
-type GeneratedExampleParams = ExampleParams & DocsExampleParams;
+export type GeneratedExampleParams = ExampleParams & DocsExampleParams;
 
 type ExampleParams = {
     exampleName: string;

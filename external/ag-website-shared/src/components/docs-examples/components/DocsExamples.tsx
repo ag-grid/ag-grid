@@ -9,7 +9,7 @@ import type { FunctionComponent } from 'react';
 import styles from './DocsExamples.module.scss';
 
 interface Props {
-    exampleCollection: Record<string, any>;
+    exampleContents: Record<string, any>;
 }
 
 function getFirstAvailableExample(frameworkExamples: any) {
@@ -32,7 +32,7 @@ const ConsoleLogIcon = () => (
     </span>
 );
 
-export const DocsExamples: FunctionComponent<Props> = ({ exampleCollection }) => {
+export const DocsExamples: FunctionComponent<Props> = ({ exampleContents }) => {
     return (
         <table>
             <thead>
@@ -49,7 +49,7 @@ export const DocsExamples: FunctionComponent<Props> = ({ exampleCollection }) =>
                 })}
             </thead>
             <tbody>
-                {Object.values(exampleCollection).map((frameworkExamples, index) => {
+                {Object.values(exampleContents).map((frameworkExamples, index) => {
                     // Since examples are written in typescript, that will be the default (as opposed to javascript)
                     const { pageName, exampleName, isEnterprise, isIntegratedCharts, isLocale, hasExampleConsoleLog } =
                         getFirstAvailableExample(frameworkExamples) || {};

@@ -1,53 +1,16 @@
 ---
 import { getCollection } from 'astro:content';
 import DebugLayout from '@layouts/DebugLayout.astro';
-import { getDocsExamplePages } from '@components/docs/utils/pageData';
-import type { InternalFramework } from '@ag-grid-types';
-import { DocsExamples } from '@ag-website-shared/components/docs-examples/components/DocsExamples';
-import { getGeneratedContents } from '@components/example-generator';
+import { getDocsExampleContents } from '@components/docs/utils/pageData';
 
-type DocExamplePages = Awaited<ReturnType<typeof getDocsExamplePages>>;
-type DocExamplePage = DocExamplePages[number]['params'] & {
-    isEnterprise: boolean;
-    isIntegratedCharts?: boolean;
-    isLocale?: boolean;
-    hasExampleConsoleLog?: boolean;
-};
-type DocFrameworkExamples = Record<InternalFramework, DocExamplePage>;
+import { DocsExamples } from '@ag-website-shared/components/docs-examples/components/DocsExamples';
 
 const pages = await getCollection('docs');
-const examples = await getDocsExamplePages({
-    pages,
-});
-
-const exampleCollection: Record<string, DocFrameworkExamples> = {};
-const examplePromises = examples.map(async (example) => {
-    const { internalFramework, pageName, exampleName } = example.params;
-    const key = `${pageName}-${exampleName}`;
-    if (!exampleCollection[key]) {
-        exampleCollection[key] = {} as DocFrameworkExamples;
-    }
-    const generatedExampleParams = {
-        type: 'docs',
-        framework: internalFramework,
-        pageName,
-        exampleName,
-    };
-    const contents = await getGeneratedContents(generatedExampleParams);
-
-    exampleCollection[key][internalFramework] = {
-        isEnterprise: contents?.isEnterprise,
-        isIntegratedCharts: contents?.isIntegratedCharts,
-        isLocale: contents?.isLocale,
-        hasExampleConsoleLog: contents?.hasExampleConsoleLog,
-        ...example.params,
-    };
-});
-await Promise.all(examplePromises);
+const exampleContents = await getDocsExampleContents({ pages });
 ---
 
 <DebugLayout title={`Debug: Docs Example Pages`}>
     <h1>Docs Example Pages</h1>
-    <p>{pages.length} pages, {Object.keys(exampleCollection).length} examples, {examples.length} framework examples</p>
-    <DocsExamples exampleCollection={exampleCollection} />
+    <p>{pages.length} pages, {Object.keys(exampleContents).length} examples</p>
+    <DocsExamples exampleContents={exampleContents} />
 </DebugLayout>
