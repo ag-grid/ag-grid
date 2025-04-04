@@ -77,7 +77,7 @@ function setModel(type: string) {
 }
 
 function getModel(type: string) {
-    alert(JSON.stringify(gridApi!.getColumnFilterModel(FILTER_TYPES[type]), null, 2));
+    console.log(JSON.stringify(gridApi!.getColumnFilterModel(FILTER_TYPES[type]), null, 2));
 }
 
 function setFilterValues(type: string) {
@@ -90,7 +90,7 @@ function setFilterValues(type: string) {
 
 function getValues(type: string) {
     gridApi!.getColumnFilterInstance<ISetFilter>(FILTER_TYPES[type]).then((instance) => {
-        alert(JSON.stringify(instance!.getFilterValues(), null, 2));
+        console.log(JSON.stringify(instance!.getFilterValues(), null, 2));
     });
 }
 

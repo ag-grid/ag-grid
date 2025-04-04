@@ -16,7 +16,7 @@ export default defineComponent({
             return true;
         },
         onClick() {
-            alert(`${this.params.name} clicked`);
+            console.log(`${this.params.name} clicked`);
         },
     },
 });

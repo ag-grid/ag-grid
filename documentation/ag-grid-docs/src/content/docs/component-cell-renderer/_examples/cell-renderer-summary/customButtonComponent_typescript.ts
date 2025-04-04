@@ -8,7 +8,7 @@ export class CustomButtonComponent {
         const eButton = document.createElement('button');
         eButton.className = 'btn-simple';
         eButton.textContent = 'Launch!';
-        this.eventListener = () => alert('Software Launched');
+        this.eventListener = () => console.log('Software Launched');
         eButton.addEventListener('click', this.eventListener);
         this.eGui.appendChild(eButton);
     }

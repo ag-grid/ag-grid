@@ -92,12 +92,9 @@ const GridExample = () => {
         });
     }, []);
 
-    const getModel = useCallback(
-        (type: string) => {
-            alert(JSON.stringify(gridRef.current!.api.getColumnFilterModel(FILTER_TYPES[type]), null, 2));
-        },
-        [alert]
-    );
+    const getModel = useCallback((type: string) => {
+        console.log(JSON.stringify(gridRef.current!.api.getColumnFilterModel(FILTER_TYPES[type]), null, 2));
+    }, []);
 
     const setFilterValues = useCallback((type: string) => {
         gridRef.current!.api.getColumnFilterInstance<ISetFilter>(FILTER_TYPES[type]).then((instance) => {
@@ -107,14 +104,11 @@ const GridExample = () => {
         });
     }, []);
 
-    const getValues = useCallback(
-        (type: string) => {
-            gridRef.current!.api.getColumnFilterInstance<ISetFilter>(FILTER_TYPES[type]).then((instance) => {
-                alert(JSON.stringify(instance!.getFilterValues(), null, 2));
-            });
-        },
-        [alert]
-    );
+    const getValues = useCallback((type: string) => {
+        gridRef.current!.api.getColumnFilterInstance<ISetFilter>(FILTER_TYPES[type]).then((instance) => {
+            console.log(JSON.stringify(instance!.getFilterValues(), null, 2));
+        });
+    }, []);
 
     const reset = useCallback((type: string) => {
         gridRef.current!.api.getColumnFilterInstance<ISetFilter>(FILTER_TYPES[type]).then((instance) => {
