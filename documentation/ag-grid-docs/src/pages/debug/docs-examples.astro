@@ -2,7 +2,6 @@
 import { getCollection } from 'astro:content';
 import DebugLayout from '@layouts/DebugLayout.astro';
 import { getDocsExamplePages } from '@components/docs/utils/pageData';
-import { ENABLE_GENERATE_DEBUG_PAGES } from '@constants';
 import type { InternalFramework } from '@ag-grid-types';
 import { DocsExamples } from '@ag-website-shared/components/docs-examples/components/DocsExamples';
 import { getGeneratedContents } from '@components/example-generator';
@@ -17,12 +16,9 @@ type DocExamplePage = DocExamplePages[number]['params'] & {
 type DocFrameworkExamples = Record<InternalFramework, DocExamplePage>;
 
 const pages = await getCollection('docs');
-let examples: DocExamplePages = [];
-if (ENABLE_GENERATE_DEBUG_PAGES) {
-    examples = await getDocsExamplePages({
-        pages,
-    });
-}
+const examples = await getDocsExamplePages({
+    pages,
+});
 
 const exampleCollection: Record<string, DocFrameworkExamples> = {};
 const examplePromises = examples.map(async (example) => {

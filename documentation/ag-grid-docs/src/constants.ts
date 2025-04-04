@@ -94,11 +94,6 @@ export const PRODUCTION_SITE_URLS = ['https://ag-grid.com', 'https://www.ag-grid
 export const USE_PUBLISHED_PACKAGES = isTruthy(import.meta.env?.PUBLIC_USE_PUBLISHED_PACKAGES);
 
 /**
- * Enable debug pages to be built
- */
-export const ENABLE_GENERATE_DEBUG_PAGES = import.meta.env?.ENABLE_GENERATE_DEBUG_PAGES;
-
-/**
  * Show debug logs
  */
 export const SHOW_DEBUG_LOGS = import.meta.env?.SHOW_DEBUG_LOGS;
