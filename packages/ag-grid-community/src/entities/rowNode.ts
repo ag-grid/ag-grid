@@ -536,6 +536,13 @@ export class RowNode<TData = any>
         this.dispatchCellChangedEvent(column, newValue, oldValue);
         selectionSvc?.updateRowSelectable(this);
 
+        const pinnedSibling = this.pinnedSibling;
+        if (pinnedSibling) {
+            valueSvc.setValue(pinnedSibling, column, newValue, eventSource);
+            pinnedSibling.dispatchCellChangedEvent(column, newValue, oldValue);
+            selectionSvc?.updateRowSelectable(pinnedSibling);
+        }
+
         return valueChanged;
     }
 
