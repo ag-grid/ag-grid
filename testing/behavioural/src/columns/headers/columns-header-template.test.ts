@@ -29,7 +29,7 @@ const columns: ColDef[] = [
     },
 ];
 
-test.only('Headers Rendered', async () => {
+test('Headers Rendered', async () => {
     const gridOptions: GridOptions = {
         columnDefs: columns,
         rowData: data,
