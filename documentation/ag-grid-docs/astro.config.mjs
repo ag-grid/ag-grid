@@ -128,6 +128,7 @@ console.log(
             ENABLE_GENERATE_DEBUG_PAGES,
             SHOW_DEBUG_LOGS,
             HTACCESS,
+            CHECK_LINKS,
             CHECK_REDIRECTS,
             QUICK_BUILD_PAGES,
             DISABLE_EXAMPLE_RUNNER,
