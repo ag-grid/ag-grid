@@ -42,7 +42,7 @@ export const DocsExamples: FunctionComponent<Props> = ({ exampleCollection }) =>
                 <th>Properties</th>
                 {ALL_INTERNAL_FRAMEWORKS.map((internalFramework) => {
                     return (
-                        <th>
+                        <th key={internalFramework}>
                             <FrameworkLogo internalFramework={internalFramework} />
                         </th>
                     );
@@ -54,7 +54,7 @@ export const DocsExamples: FunctionComponent<Props> = ({ exampleCollection }) =>
                     const { pageName, exampleName, isEnterprise, isIntegratedCharts, isLocale, hasExampleConsoleLog } =
                         getFirstAvailableExample(frameworkExamples) || {};
                     return (
-                        <tr className={styles.exampleRow}>
+                        <tr key={index} className={styles.exampleRow}>
                             <td>{index + 1}</td>
                             <td>{pageName}</td>
                             <td>{exampleName}</td>
@@ -71,7 +71,7 @@ export const DocsExamples: FunctionComponent<Props> = ({ exampleCollection }) =>
 
                                 if (frameworkExamples[internalFramework]) {
                                     return (
-                                        <td>
+                                        <td key={internalFramework}>
                                             <span className={styles.frameworkCell}>
                                                 <a
                                                     href={urlWithPrefix({
