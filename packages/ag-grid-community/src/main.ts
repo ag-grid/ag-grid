@@ -1065,7 +1065,14 @@ export { _downloadFile } from './export/downloader';
 export { RowSpanningAccumulator, GridSerializingParams, RowAccumulator } from './export/iGridSerializer';
 
 // modules
-export { Module, ModuleValidationResult, _ModuleWithApi, _ModuleWithoutApi, ModuleName } from './interfaces/iModule';
+export {
+    Module,
+    ModuleValidationResult,
+    _ModuleWithApi,
+    _ModuleWithoutApi,
+    ModuleName,
+    ValidationModuleName as _ValidationModuleName,
+} from './interfaces/iModule';
 export { ModuleRegistry, _registerModule, _getGridRegisteredModules, _setUmd } from './modules/moduleRegistry';
 
 export { ValidationModule } from './validation/validationModule';

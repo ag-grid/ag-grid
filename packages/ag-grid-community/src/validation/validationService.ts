@@ -7,7 +7,6 @@ import type { GridOptions } from '../entities/gridOptions';
 import { INITIAL_GRID_OPTION_KEYS } from '../gridOptionsInitial';
 import type { PropertyChangedSource } from '../gridOptionsService';
 import type { RowNodeEventType } from '../interfaces/iRowNode';
-import type { DefaultMenuItem } from '../interfaces/menuItem';
 import { _areModulesGridScoped } from '../modules/moduleRegistry';
 import { _warnOnce } from '../utils/function';
 import { _fuzzySuggestions } from '../utils/fuzzyMatch';
@@ -19,7 +18,6 @@ import { _error, _warn, provideValidationServiceLogger } from './logging';
 import { COL_DEF_VALIDATORS } from './rules/colDefValidations';
 import { GRID_OPTIONS_VALIDATORS } from './rules/gridOptionsValidations';
 import { DEPRECATED_ICONS_V33, ICON_MODULES, ICON_VALUES } from './rules/iconValidations';
-import { MENU_ITEM_MODULES } from './rules/menuItemValidations';
 import { USER_COMP_MODULES } from './rules/userCompValidations';
 import type { DependentValues, OptionsValidation, OptionsValidator, RequiredOptions } from './validationTypes';
 
@@ -104,13 +102,6 @@ export class ValidationService extends BeanStub implements NamedBean {
         _warn(134, { iconName });
     }
 
-    public validateMenuItem(key: string): void {
-        const moduleName = MENU_ITEM_MODULES[key as DefaultMenuItem];
-        if (moduleName) {
-            this.gos.assertModuleRegistered(moduleName, `menu item '${key}'`);
-        }
-    }
-
     public isProvidedUserComp(compName: string): boolean {
         return !!USER_COMP_MODULES[compName as UserComponentName];
     }
@@ -140,28 +131,30 @@ export class ValidationService extends BeanStub implements NamedBean {
             const rulesOrGetter = validations[key];
             if (!rulesOrGetter) {
                 return;
-            } else if (typeof rulesOrGetter === 'function') {
-                const fromGetter = rulesOrGetter(options, this.gridOptions, this.beans);
-                if (!fromGetter) {
-                    return;
-                }
+            }
+            // else if (typeof rulesOrGetter === 'function') {
+            //     const fromGetter = rulesOrGetter(options, this.gridOptions, this.beans);
+            //     if (!fromGetter) {
+            //         return;
+            //     }
 
-                // this is a sub validator.
-                if ('objectName' in fromGetter) {
-                    const subValidator = fromGetter as OptionsValidator<T>;
-                    const value = options[key];
-                    if (Array.isArray(value)) {
-                        value.forEach((item) => {
-                            this.processOptions(item, subValidator);
-                        });
-                        return;
-                    }
-                    this.processOptions(options[key] as any, subValidator);
-                    return;
-                }
+            //     // this is a sub validator.
+            //     if ('objectName' in fromGetter) {
+            //         const subValidator = fromGetter as OptionsValidator<T>;
+            //         const value = options[key];
+            //         if (Array.isArray(value)) {
+            //             value.forEach((item) => {
+            //                 this.processOptions(item, subValidator);
+            //             });
+            //             return;
+            //         }
+            //         this.processOptions(options[key] as any, subValidator);
+            //         return;
+            //     }
 
-                return fromGetter;
-            } else {
+            //     return fromGetter;
+            // }
+            else {
                 return rulesOrGetter;
             }
         };
@@ -185,7 +178,7 @@ export class ValidationService extends BeanStub implements NamedBean {
                 return;
             }
 
-            const { module, dependencies, validate, supportedRowModels, expectedType } = rules;
+            const { dependencies, validate, supportedRowModels, expectedType } = rules;
 
             if (expectedType) {
                 const actualType = typeof value;
@@ -207,20 +200,20 @@ export class ValidationService extends BeanStub implements NamedBean {
                 }
             }
 
-            if (module) {
-                const modules = Array.isArray(module) ? module : [module];
+            // if (module) {
+            //     const modules = Array.isArray(module) ? module : [module];
 
-                let allRegistered = true;
-                modules.forEach((m) => {
-                    if (!this.gos.assertModuleRegistered(m, String(key))) {
-                        allRegistered = false;
-                    }
-                });
+            //     let allRegistered = true;
+            //     modules.forEach((m) => {
+            //         if (!this.gos.assertModuleRegistered(m, String(key))) {
+            //             allRegistered = false;
+            //         }
+            //     });
 
-                if (!allRegistered) {
-                    return;
-                }
-            }
+            //     if (!allRegistered) {
+            //         return;
+            //     }
+            // }
 
             if (dependencies) {
                 const warning = this.checkForRequiredDependencies(key, dependencies, options);
