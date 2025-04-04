@@ -386,7 +386,7 @@ export const _FUNCTION_GRID_OPTIONS: (CallbackKeys | FunctionKeys)[] = [
 // validation of properties
 // Vue Runtime prop changes
 // example generation
-export const _ALL_GRID_OPTIONS: GridOptionKey[] = [
+export const _ALL_GRID_OPTIONS: () => GridOptionKey[] = () => [
     ...ARRAY_GRID_OPTIONS,
     ...OBJECT_GRID_OPTIONS,
     ...STRING_GRID_OPTIONS,

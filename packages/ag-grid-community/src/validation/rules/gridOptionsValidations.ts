@@ -501,7 +501,7 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => {
 
 export const GRID_OPTIONS_VALIDATORS: () => OptionsValidator<GridOptions> = () => ({
     objectName: 'gridOptions',
-    allProperties: [..._ALL_GRID_OPTIONS, ..._ALL_EVENTS.map((event) => _getCallbackForEvent(event))],
+    allProperties: [..._ALL_GRID_OPTIONS(), ..._ALL_EVENTS().map((event) => _getCallbackForEvent(event))],
     propertyExceptions: ['api'],
     docsUrl: 'grid-options/',
     deprecations: GRID_OPTION_DEPRECATIONS(),
