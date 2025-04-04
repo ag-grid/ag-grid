@@ -2,7 +2,7 @@ import type { UserComponentName } from '../../context/context';
 import type { AbstractColDef, ColDef, ColGroupDef, ColumnMenuTab } from '../../entities/colDef';
 import { DEFAULT_SORTING_ORDER } from '../../sort/sortService';
 import { _errMsg, toStringWithNullUndefined } from '../logging';
-import type { Deprecations, OptionsValidator, ValidationModule, Validations } from '../validationTypes';
+import type { Deprecations, ModuleValidation, OptionsValidator, Validations } from '../validationTypes';
 import { USER_COMP_MODULES } from './userCompValidations';
 
 const COLUMN_DEFINITION_DEPRECATIONS: () => Deprecations<ColDef | ColGroupDef> = () => ({
@@ -25,81 +25,68 @@ const COLUMN_DEFINITION_DEPRECATIONS: () => Deprecations<ColDef | ColGroupDef> =
     },
 });
 
-export const COLUMN_DEFINITION_MOD_VALIDATIONS: () => ValidationModule<ColDef | ColGroupDef> = () => {
-    const modValidations: ValidationModule<ColDef | ColGroupDef> = {
-        aggFunc: 'SharedAggregation',
-        autoHeight: 'RowAutoHeight',
-        cellClass: 'CellStyle',
-        cellClassRules: 'CellStyle',
-        cellEditor: ({ cellEditor, editable }) => {
-            if (!editable) {
-                return null;
-            }
-            if (typeof cellEditor === 'string') {
-                const module = USER_COMP_MODULES[cellEditor as UserComponentName];
-                if (module) {
-                    return module;
-                }
-            }
-            return 'CustomEditor';
-        },
-        cellRenderer: ({ cellRenderer }) => {
-            if (typeof cellRenderer !== 'string') {
-                return null;
-            }
-            const module = USER_COMP_MODULES[cellRenderer as UserComponentName];
-            if (module) {
-                return module;
-            }
+export const COLUMN_DEFINITION_MOD_VALIDATIONS: ModuleValidation<ColDef | ColGroupDef> = {
+    aggFunc: 'SharedAggregation',
+    autoHeight: 'RowAutoHeight',
+    cellClass: 'CellStyle',
+    cellClassRules: 'CellStyle',
+    cellEditor: ({ cellEditor, editable }: ColDef) => {
+        if (!editable) {
             return null;
-        },
-        cellStyle: 'CellStyle',
-        columnChooserParams: 'ColumnMenu',
-        contextMenuItems: 'ContextMenu',
-        dndSource: 'DragAndDrop',
-        dndSourceOnRowDrag: 'DragAndDrop',
-        editable: ({ editable, cellEditor }) => {
-            if (editable && !cellEditor) {
-                return 'TextEditor';
-            }
+        }
+        if (typeof cellEditor === 'string') {
+            return USER_COMP_MODULES[cellEditor as UserComponentName] ?? 'CustomEditor';
+        }
+        return 'CustomEditor';
+    },
+    cellRenderer: ({ cellRenderer }: ColDef) => {
+        if (typeof cellRenderer !== 'string') {
             return null;
-        },
-        enableCellChangeFlash: 'HighlightChanges',
-        enablePivot: 'SharedPivot',
-        enableRowGroup: 'SharedRowGrouping',
-        enableValue: 'SharedAggregation',
-        filter: ({ filter }) => {
-            if (filter && typeof filter !== 'string' && typeof filter !== 'boolean') {
-                return 'CustomFilter';
-            }
-            if (typeof filter === 'string') {
-                const module = USER_COMP_MODULES[filter as UserComponentName];
-                if (module) {
-                    return module;
-                }
-            }
-            return 'ColumnFilter';
-        },
-        floatingFilter: 'ColumnFilter',
-        headerTooltip: 'Tooltip',
-        mainMenuItems: 'ColumnMenu',
-        menuTabs: (options) => {
-            const enterpriseMenuTabs: ColumnMenuTab[] = ['columnsMenuTab', 'generalMenuTab'];
-            if (options.menuTabs?.some((tab) => enterpriseMenuTabs.includes(tab))) {
-                return 'ColumnMenu';
-            }
-            return null;
-        },
-        pivot: 'SharedPivot',
-        pivotIndex: 'SharedPivot',
-        rowDrag: 'RowDrag',
-        rowGroup: 'SharedRowGrouping',
-        rowGroupIndex: 'SharedRowGrouping',
-        tooltipField: 'Tooltip',
-        tooltipValueGetter: 'Tooltip',
-        spanRows: 'CellSpan',
-    };
-    return modValidations;
+        }
+        return USER_COMP_MODULES[cellRenderer as UserComponentName];
+    },
+    cellStyle: 'CellStyle',
+    columnChooserParams: 'ColumnMenu',
+    contextMenuItems: 'ContextMenu',
+    dndSource: 'DragAndDrop',
+    dndSourceOnRowDrag: 'DragAndDrop',
+    editable: ({ editable, cellEditor }: ColDef) => {
+        if (editable && !cellEditor) {
+            return 'TextEditor';
+        }
+        return null;
+    },
+    enableCellChangeFlash: 'HighlightChanges',
+    enablePivot: 'SharedPivot',
+    enableRowGroup: 'SharedRowGrouping',
+    enableValue: 'SharedAggregation',
+    filter: ({ filter }: ColDef) => {
+        if (filter && typeof filter !== 'string' && typeof filter !== 'boolean') {
+            return 'CustomFilter';
+        }
+        if (typeof filter === 'string') {
+            return USER_COMP_MODULES[filter as UserComponentName] ?? 'ColumnFilter';
+        }
+        return 'ColumnFilter';
+    },
+    floatingFilter: 'ColumnFilter',
+    headerTooltip: 'Tooltip',
+    mainMenuItems: 'ColumnMenu',
+    menuTabs: (options: ColDef) => {
+        const enterpriseMenuTabs: ColumnMenuTab[] = ['columnsMenuTab', 'generalMenuTab'];
+        if (options.menuTabs?.some((tab) => enterpriseMenuTabs.includes(tab))) {
+            return 'ColumnMenu';
+        }
+        return null;
+    },
+    pivot: 'SharedPivot',
+    pivotIndex: 'SharedPivot',
+    rowDrag: 'RowDrag',
+    rowGroup: 'SharedRowGrouping',
+    rowGroupIndex: 'SharedRowGrouping',
+    tooltipField: 'Tooltip',
+    tooltipValueGetter: 'Tooltip',
+    spanRows: 'CellSpan',
 };
 
 const COLUMN_DEFINITION_VALIDATIONS: () => Validations<ColDef | ColGroupDef> = () => {

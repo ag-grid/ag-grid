@@ -12,15 +12,20 @@ export interface OptionsValidator<T extends object> {
     validations: Validations<T>;
 }
 
-// Deprecations, if renamed then old value is copied.
 export type Deprecations<T extends object> = Partial<{
     [key in keyof T]: { version: string; message?: string };
 }>;
 
-export type ValidationModule<T extends object> = {
-    [key in keyof T]?:
-        | ((options: T, gridOptions: GridOptions, beans: BeanCollection) => ValidationModuleName | null)
-        | ValidationModuleName;
+export type GetRequiredModule<T extends object> = (
+    options: T,
+    gridOptions: GridOptions,
+    beans: BeanCollection
+) => ValidationModuleName | null;
+
+export type RequiredModule<T extends object> = GetRequiredModule<T> | ValidationModuleName;
+
+export type ModuleValidation<T extends object> = {
+    [key in keyof T]?: RequiredModule<T>;
 };
 
 // Validation rules, either sub-validator, function returning rules, or rules.

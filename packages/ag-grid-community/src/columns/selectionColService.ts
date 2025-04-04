@@ -167,7 +167,7 @@ export class SelectionColService extends BeanStub implements NamedBean, IColumnC
 
         const colDef = this.createSelectionColDef();
         const colId = colDef.colId!;
-        this.beans.validation?.validateColDef(colDef, colId, true);
+        this.gos.validateColDef(colDef, colId, true);
         const col = new AgColumn(colDef, null, colId, false);
         this.createBean(col);
         return [col];
