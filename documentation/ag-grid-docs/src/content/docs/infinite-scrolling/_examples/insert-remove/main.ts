@@ -26,7 +26,7 @@ ModuleRegistry.registerModules([
     ScrollApiModule,
     RowStyleModule,
     InfiniteRowModelModule,
-    ValidationModule /* Development Only */,
+    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 
 const valueFormatter = function (params: ValueFormatterParams) {

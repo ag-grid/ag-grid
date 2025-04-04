@@ -4,7 +4,11 @@ import { RowGroupingModule, ServerSideRowModelModule } from 'ag-grid-enterprise'
 
 import { CustomLoadingCellRenderer } from './customLoadingCellRenderer_typescript';
 
-ModuleRegistry.registerModules([ServerSideRowModelModule, RowGroupingModule, ValidationModule /* Development Only */]);
+ModuleRegistry.registerModules([
+    ServerSideRowModelModule,
+    RowGroupingModule,
+    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
+]);
 
 let gridApi: GridApi<IOlympicData>;
 

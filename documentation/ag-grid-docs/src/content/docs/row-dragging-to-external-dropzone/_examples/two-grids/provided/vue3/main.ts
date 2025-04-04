@@ -22,7 +22,7 @@ ModuleRegistry.registerModules([
     TextFilterModule,
     RowStyleModule,
     ClientSideRowModelModule,
-    ValidationModule /* Development Only */,
+    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 
 let rowIdSequence = 100;

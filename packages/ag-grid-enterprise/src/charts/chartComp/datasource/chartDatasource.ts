@@ -166,7 +166,7 @@ export class ChartDatasource extends BeanStub {
 
                     // when grouping we also need to build up multi category labels for charts
                     if (grouping) {
-                        const valueString = valueObject?.toString ? String(valueObject.toString()) : '';
+                        const valueString = valueObject?.toString ? String(valueObject.toString()) : ' ';
 
                         // traverse parents to extract group label path
                         const labels = this.getGroupLabels(rowNode, valueString);
@@ -216,8 +216,16 @@ export class ChartDatasource extends BeanStub {
 
                     // add data value to value column
                     const value = this.valueSvc.getValue(col, rowNode);
-                    const actualValue =
-                        value != null && typeof value.toNumber === 'function' ? value.toNumber() : value;
+                    let actualValue = value;
+
+                    // unwrap value objects if present
+                    if (value != null) {
+                        if (typeof value.toNumber === 'function') {
+                            actualValue = value.toNumber();
+                        } else if (typeof value.value === 'number') {
+                            actualValue = value.value;
+                        }
+                    }
 
                     if (filteredNodes[rowNode.id as string]) {
                         data[colId] = actualValue;
@@ -229,6 +237,11 @@ export class ChartDatasource extends BeanStub {
                 } else {
                     // add data value to value column
                     let value = this.valueSvc.getValue(col, rowNode);
+
+                    // unwrap value object if present
+                    if (value && typeof value.value === 'number') {
+                        value = value.value;
+                    }
 
                     // aggregated value
                     if (value && Object.prototype.hasOwnProperty.call(value, 'toString')) {
@@ -402,7 +415,7 @@ export class ChartDatasource extends BeanStub {
                     const groupColumn = this.colModel.getCol(GROUP_AUTO_COLUMN_ID);
                     if (groupColumn) {
                         const valueObject = this.valueSvc.getValue(groupColumn, rowNode);
-                        const valueString = valueObject?.toString ? String(valueObject.toString()) : '';
+                        const valueString = valueObject?.toString ? String(valueObject.toString()) : ' ';
                         labels.push(valueString);
                     }
                 } else {

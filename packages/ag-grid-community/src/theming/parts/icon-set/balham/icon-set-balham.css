@@ -208,3 +208,7 @@
 .ag-icon-settings::before {
     mask-image: url('./balham-svg-icons/settings.svg');
 }
+
+.ag-icon-column-arrow::before {
+    mask-image: url('./balham-svg-icons/column-arrow.svg');
+}

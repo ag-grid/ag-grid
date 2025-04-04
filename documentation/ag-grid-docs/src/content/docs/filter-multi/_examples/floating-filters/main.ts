@@ -26,7 +26,7 @@ ModuleRegistry.registerModules([
     NumberFilterModule,
     DateFilterModule,
     TextFilterModule,
-    ValidationModule /* Development Only */,
+    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 
 const dateFilterParams: IMultiFilterParams = {

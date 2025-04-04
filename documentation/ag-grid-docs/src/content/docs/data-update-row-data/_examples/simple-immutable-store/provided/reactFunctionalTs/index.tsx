@@ -21,7 +21,7 @@ ModuleRegistry.registerModules([
     RowGroupingModule,
     StatusBarModule,
     CellSelectionModule,
-    ValidationModule /* Development Only */,
+    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 
 // creates a unique symbol, eg 'ADG' or 'ZJD'

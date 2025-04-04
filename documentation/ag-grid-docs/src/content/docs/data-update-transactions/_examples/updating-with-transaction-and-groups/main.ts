@@ -20,7 +20,7 @@ ModuleRegistry.registerModules([
     RowStyleModule,
     ClientSideRowModelModule,
     RowGroupingModule,
-    ValidationModule /* Development Only */,
+    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 
 function poundFormatter(params: ValueFormatterParams) {

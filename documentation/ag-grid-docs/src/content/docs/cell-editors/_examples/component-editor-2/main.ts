@@ -22,7 +22,7 @@ ModuleRegistry.registerModules([
     NumberEditorModule,
     TextEditorModule,
     CustomEditorModule,
-    ValidationModule /* Development Only */,
+    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 
 const columnDefs: ColDef[] = [

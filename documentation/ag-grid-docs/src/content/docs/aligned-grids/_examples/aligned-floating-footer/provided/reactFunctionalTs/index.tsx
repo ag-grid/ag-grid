@@ -23,7 +23,7 @@ ModuleRegistry.registerModules([
     RowStyleModule,
     AlignedGridsModule,
     ClientSideRowModelModule,
-    ValidationModule /* Development Only */,
+    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 
 const bottomData = [
@@ -47,7 +47,6 @@ const GridExample = () => {
     const defaultColDef: ColDef = useMemo(
         () => ({
             filter: true,
-            flex: 1,
             minWidth: 100,
         }),
         []

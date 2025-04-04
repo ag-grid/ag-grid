@@ -23,7 +23,7 @@ ModuleRegistry.registerModules([
     NumberFilterModule,
     NumberEditorModule,
     TextEditorModule,
-    ValidationModule /* Development Only */,
+    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 
 let rowIdCounter = 0;

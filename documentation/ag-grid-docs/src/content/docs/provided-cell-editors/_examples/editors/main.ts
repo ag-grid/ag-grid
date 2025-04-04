@@ -27,7 +27,7 @@ ModuleRegistry.registerModules([
     SelectEditorModule,
     TextEditorModule,
     LargeTextEditorModule,
-    ValidationModule /* Development Only */,
+    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 
 const columnDefs: ColDef[] = [

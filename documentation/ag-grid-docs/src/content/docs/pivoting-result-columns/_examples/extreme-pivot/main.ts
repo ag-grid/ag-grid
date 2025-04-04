@@ -8,7 +8,7 @@ ModuleRegistry.registerModules([
     ColumnsToolPanelModule,
     FiltersToolPanelModule,
     PivotModule,
-    ValidationModule /* Development Only */,
+    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 
 let gridApi: GridApi<IOlympicData>;

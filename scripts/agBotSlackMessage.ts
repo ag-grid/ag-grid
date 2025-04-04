@@ -31,9 +31,9 @@ const args = yargs(hideBin(process.argv))
     .parse();
 
 const SLACK_BOT_OAUTH_TOKEN = args.authToken;
-const GRID_TEAM_CITY_CHANNEL = args.debugChannel; //args.gridChannel;
-const CHARTS_TEAM_CITY_CHANNEL = args.debugChannel; //args.chartsChannel;
-const WEBSITE_STATUS_CHANNEL = args.debugChannel; //args.websiteStatusChannel;
+const GRID_TEAM_CITY_CHANNEL = args.gridChannel;
+const CHARTS_TEAM_CITY_CHANNEL = args.chartsChannel;
+const WEBSITE_STATUS_CHANNEL = args.websiteStatusChannel;
 const SLACK_DEBUG_CHANNEL = args.debugChannel;
 
 type GH_MAPPING = {
@@ -54,6 +54,7 @@ type RunContext = {
     currentSha: string;
     lastSuccessfulSha: string;
     status: 'success' | 'failure';
+    changedState: boolean;
     project: AgProject;
     reportUrl: number;
     jobStatuses: { [key: string]: JobStatus };
@@ -374,7 +375,20 @@ function findUserByEmail(testEmail: string): GH_MAPPING | undefined {
 }
 
 function getGitChanges(currentSha: string, lastSuccessfulSha: string): GitChange[] {
-    const rawChanges = execSync(`git log ${currentSha}...${lastSuccessfulSha} --format="%ae||%an||%h||%s"`, {
+    const firstAfterSuccess = execSync(
+        `git log  --reverse --ancestry-path --pretty=%H ${lastSuccessfulSha}..HEAD | head -1`,
+        {
+            stdio: 'pipe',
+            encoding: 'utf-8',
+        }
+    );
+
+    const gitCommand =
+        firstAfterSuccess.length === 0 || firstAfterSuccess === currentSha
+            ? `git log ${currentSha} --format="%ae||%an||%h||%s" | head -1`
+            : `git log ${currentSha}...${firstAfterSuccess} --format="%ae||%an||%h||%s" | head -1`;
+
+    const rawChanges = execSync(`${gitCommand}`, {
         stdio: 'pipe',
         encoding: 'utf-8',
     });
@@ -404,8 +418,8 @@ function getChangesData(
     const baseGithubUrl = getGithubBaseUrl(project);
     const githubUrl =
         gitChanges.length > 1
-            ? `${baseGithubUrl}/compare/${lastChangeSha}~1...${firstChangeSha}`
-            : `${baseGithubUrl}/commit/${firstChangeSha}`;
+            ? `${baseGithubUrl}/compare/${lastChangeSha}...${firstChangeSha}`
+            : `${baseGithubUrl}/commit/${currentSha}`;
 
     const changesLimit = MANY_CHANGES_LIMIT;
     const tooManyChanges = gitChanges.length > changesLimit;
@@ -415,7 +429,6 @@ function getChangesData(
     const allOtherUsers = allUsers.slice(changesLimit);
     const uniqueUsers: string[] = [...new Set(allUsers)] as string[];
 
-    uniqueUsers.push('seanlandsman');
     // Only show the name if there are too many changes, display setting is `slack` and there is more than 1 user with changes
     const userDisplayType =
         tooManyChanges && userDisplayTypeSetting === 'slack' && uniqueUsers.length > 1
@@ -624,17 +637,6 @@ async function notifySlackDebug(changes: GitChange[], runContext: RunContext, ch
     }
 }
 
-async function notifyBuildFailure(
-    changes: GitChange[],
-    runContext: RunContext,
-    channel: string,
-    userDisplayType: UserDisplayType
-) {
-    if (runContext.status === 'failure') {
-        await sendFailureSlackMessage(changes, runContext, channel, userDisplayType);
-    }
-}
-
 async function notifyStagingDeploy(
     runContext: RunContext,
     changes: GitChange[],
@@ -669,25 +671,24 @@ async function notifyStagingDeploy(
 
 async function processChanges(runContext: RunContext, userDisplayType: UserDisplayType) {
     try {
-        const { project, currentSha, lastSuccessfulSha, status } = runContext;
+        const { project, currentSha, lastSuccessfulSha, status, changedState } = runContext;
         const changes = getGitChanges(currentSha, lastSuccessfulSha);
 
         // Notify slack debugging
         await notifySlackDebug(changes, runContext, SLACK_DEBUG_CHANNEL);
 
-        // Notify slack of build failures
-        let buildStatusChannel = GRID_TEAM_CITY_CHANNEL;
-        if (project === 'AgCharts') {
-            buildStatusChannel = CHARTS_TEAM_CITY_CHANNEL;
-        }
+        if (changedState) {
+            // Notify slack of build failures
+            let buildStatusChannel = GRID_TEAM_CITY_CHANNEL;
+            if (project === 'AgCharts') {
+                buildStatusChannel = CHARTS_TEAM_CITY_CHANNEL;
+            }
 
-        // we'll update slack regardless of whether state has changed
-        // the calling context (ie in the CI github action) will detemine if this needs to be called, typically
-        // on a build state change (ie success to failure or vice versa)
-        if (status === 'failure') {
-            await sendFailureSlackMessage(changes, runContext, buildStatusChannel, userDisplayType);
-        } else if (status === 'success') {
-            await sendSuccessSlackMessage(changes, runContext, buildStatusChannel, userDisplayType);
+            if (status === 'failure') {
+                await sendFailureSlackMessage(changes, runContext, buildStatusChannel, userDisplayType);
+            } else if (status === 'success') {
+                await sendSuccessSlackMessage(changes, runContext, buildStatusChannel, userDisplayType);
+            }
         }
 
         // Notify user when deployment to staging is done
@@ -706,5 +707,7 @@ async function processChanges(runContext: RunContext, userDisplayType: UserDispl
         ? 'success'
         : 'failure';
 
+    // temporary - to facilitate testing while this new implementation is being tested
+    console.log(runContext);
     await processChanges(runContext, 'slack');
 })();

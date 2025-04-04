@@ -19,7 +19,7 @@ ModuleRegistry.registerModules([
     ClientSideRowModelModule,
     AlignedGridsModule,
     ColumnApiModule,
-    ValidationModule /* Development Only */,
+    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 
 @Component({
@@ -53,7 +53,6 @@ export class AppComponent {
     rowData!: any[];
     topOptions: GridOptions = {
         defaultColDef: {
-            flex: 1,
             minWidth: 120,
         },
         autoSizeStrategy: {

@@ -10,7 +10,11 @@ import {
 import { PersonFilter } from './personFilter_typescript';
 import { YearFilter } from './yearFilter_typescript';
 
-ModuleRegistry.registerModules([CustomFilterModule, ClientSideRowModelModule, ValidationModule /* Development Only */]);
+ModuleRegistry.registerModules([
+    CustomFilterModule,
+    ClientSideRowModelModule,
+    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
+]);
 
 const columnDefs: ColDef[] = [
     { field: 'athlete', minWidth: 150, filter: PersonFilter },

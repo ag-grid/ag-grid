@@ -1,7 +1,13 @@
 import type { _PinnedRowGridApi } from '../api/gridApi';
 import type { _ModuleWithApi } from '../interfaces/iModule';
 import { VERSION } from '../version';
-import { getPinnedBottomRow, getPinnedBottomRowCount, getPinnedTopRow, getPinnedTopRowCount } from './pinnedRowApi';
+import {
+    forEachPinnedRow,
+    getPinnedBottomRow,
+    getPinnedBottomRowCount,
+    getPinnedTopRow,
+    getPinnedTopRowCount,
+} from './pinnedRowApi';
 import { PinnedRowModel } from './pinnedRowModel';
 
 /**
@@ -17,5 +23,6 @@ export const PinnedRowModule: _ModuleWithApi<_PinnedRowGridApi> = {
         getPinnedBottomRowCount,
         getPinnedTopRow,
         getPinnedBottomRow,
+        forEachPinnedRow,
     },
 };

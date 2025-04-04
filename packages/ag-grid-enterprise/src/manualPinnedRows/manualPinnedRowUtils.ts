@@ -1,4 +1,4 @@
-import type { BeanCollection, GridOptions, RowNode } from 'ag-grid-community';
+import type { BeanCollection, RowNode, RowPinnedType } from 'ag-grid-community';
 import { _isServerSideRowModel, _removeFromArray } from 'ag-grid-community';
 
 export class PinnedRows {
@@ -14,24 +14,28 @@ export class PinnedRows {
     /** IDs of nodes that need to be pinned once they are available from the row model (SSRM) */
     private queued = new Set<string>();
 
-    constructor(private readonly beans: BeanCollection) {}
+    constructor(
+        private readonly beans: BeanCollection,
+        public readonly floating: NonNullable<RowPinnedType>
+    ) {}
 
     public size(): number {
         return this.visible.size;
     }
 
-    public add(item: RowNode): void {
+    public add(node: RowNode): void {
         const { all, visible, order } = this;
-        if (all.has(item)) return;
-        all.add(item);
-        visible.add(item);
-        order.push(item);
+        if (all.has(node)) return;
+        all.add(node);
+        visible.add(node);
+        order.push(node);
         this.sort();
     }
 
     public delete(item: RowNode): void {
         this.all.delete(item);
         this.visible.delete(item);
+        this.queued.delete(item.id!);
         _removeFromArray(this.order, item);
     }
 
@@ -64,9 +68,19 @@ export class PinnedRows {
     public sort(): void {
         const { sortSvc, rowNodeSorter } = this.beans;
         const sortOptions = sortSvc?.getSortOptions() ?? [];
+        // first remove the grand total row so it doesn't get sorted
+        const grandTotalNode = _removeGrandTotalRow(this.order);
         // pre-sort by existing row-index otherwise we'll fall back to order in which rows are pinned
         this.order.sort((a, b) => (a.pinnedSibling?.rowIndex ?? 0) - (b.pinnedSibling?.rowIndex ?? 0));
         this.order = rowNodeSorter?.doFullSort(this.order, sortOptions) ?? this.order;
+        // post-sort re-insert the grand total row in the correct place
+        if (!grandTotalNode) return;
+        const grandTotalRow = this.beans.gos.get('grandTotalRow');
+        if (grandTotalRow === 'bottom' || grandTotalRow === 'pinnedBottom') {
+            this.order.push(grandTotalNode);
+        } else {
+            this.order.unshift(grandTotalNode);
+        }
     }
 
     public hide(shouldHide: (node: RowNode) => boolean): void {
@@ -127,38 +141,17 @@ export function _shouldHidePinnedRows(beans: BeanCollection, node: RowNode): boo
     return false;
 }
 
-function _isSourceRowPinned(beans: BeanCollection, node: RowNode): boolean {
-    const { pinnedRowModel } = beans;
-
-    // `rowPinned` is only set on pinned sibling nodes
-    const rowPinned = node.rowPinned ?? node.pinnedSibling?.rowPinned;
-
-    return !!(pinnedRowModel?.isManual() && rowPinned);
+function _isNodeGrandTotal(node: RowNode): boolean {
+    return !!node.footer && node.level === -1;
 }
 
-/**
- * We need to handle the case where `grandTotalRow = 'pinnedXXXX'` and then is unpinned.
- *
- * In this case, we fallback to 'top'/'bottom'.
- */
-export function _getComputedFooterLocation(
-    beans: BeanCollection,
-    node: RowNode,
-    grandTotalRow: GridOptions['grandTotalRow']
-): GridOptions['grandTotalRow'] {
-    if (_isSourceRowPinned(beans, node)) {
-        // For pinned rows, we don't display the non-pinned footer as well.
-        // This is different than for all other manually pinned rows
-        return;
-    }
+function _isPinnedNodeGrandTotal(node: RowNode): boolean {
+    return !!node.pinnedSibling && _isNodeGrandTotal(node.pinnedSibling);
+}
 
-    switch (grandTotalRow) {
-        case 'top':
-        case 'bottom':
-            return grandTotalRow;
-        case 'pinnedBottom':
-            return 'bottom';
-        case 'pinnedTop':
-            return 'top';
+function _removeGrandTotalRow(order: RowNode[]): RowNode | undefined {
+    const index = order.findIndex(_isPinnedNodeGrandTotal);
+    if (index > -1) {
+        return order.splice(index, 1)?.[0];
     }
 }

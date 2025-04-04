@@ -8,7 +8,7 @@ ModuleRegistry.registerModules([
     HighlightChangesModule,
     RowGroupingModule,
     ServerSideRowModelModule,
-    ValidationModule /* Development Only */,
+    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 
 let versionCounter: number = 0;

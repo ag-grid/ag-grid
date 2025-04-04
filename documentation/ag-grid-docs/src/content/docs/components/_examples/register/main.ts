@@ -3,7 +3,10 @@ import { ClientSideRowModelModule, ModuleRegistry, ValidationModule, createGrid 
 
 import { MedalRenderer } from './medalRendererComponent_typescript';
 
-ModuleRegistry.registerModules([ClientSideRowModelModule, ValidationModule /* Development Only */]);
+ModuleRegistry.registerModules([
+    ClientSideRowModelModule,
+    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
+]);
 
 let gridApi: GridApi<IOlympicData>;
 

@@ -15,7 +15,7 @@ ModuleRegistry.registerModules([
     ClientSideRowModelModule,
     ColumnMenuModule,
     SetFilterModule,
-    ValidationModule /* Development Only */,
+    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 
 let countDownDirection = true;

@@ -9,7 +9,10 @@ import { ClientSideRowModelModule, ModuleRegistry, ValidationModule } from 'ag-g
 
 import './styles.css';
 
-ModuleRegistry.registerModules([ClientSideRowModelModule, ValidationModule /* Development Only */]);
+ModuleRegistry.registerModules([
+    ClientSideRowModelModule,
+    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
+]);
 
 @Component({
     standalone: true,

@@ -18,7 +18,7 @@ ModuleRegistry.registerModules([
     HighlightChangesModule,
     ServerSideRowModelModule,
     ServerSideRowModelApiModule,
-    ValidationModule /* Development Only */,
+    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 
 const columnDefs: ColDef[] = [{ field: 'tradeId' }, { field: 'portfolio' }, { field: 'book' }, { field: 'current' }];

@@ -90,4 +90,12 @@ export class PinnedRowModel extends BeanStub implements NamedBean, IPinnedRowMod
     public setPinnedState(state: RowPinningState): void {
         return this.inner.setPinnedState(state);
     }
+
+    public setGrandTotalPinned(value: RowPinnedType): void {
+        return this.inner.setGrandTotalPinned(value);
+    }
+
+    public getGrandTotalPinned(): RowPinnedType {
+        return this.inner.getGrandTotalPinned();
+    }
 }

@@ -101,6 +101,7 @@ export type IconName =
     | 'chartsThemePrevious'
     | 'chartsThemeNext'
     | 'chartsDownload'
+    | 'ensureColumnVisible'
     | 'checkboxChecked' // deprecated v33
     | 'checkboxIndeterminate' // deprecated v33
     | 'checkboxUnchecked' // deprecated v33
@@ -164,7 +165,8 @@ export type IconValue =
     | 'checkbox-unchecked'
     | 'radio-button-on'
     | 'radio-button-off'
-    | 'eye';
+    | 'eye'
+    | 'column-arrow';
 
 /**
  * If icon provided, use this (either a string, or a function callback).

@@ -33,7 +33,7 @@ ModuleRegistry.registerModules([
     CellStyleModule,
     ClientSideRowModelModule,
     RowGroupingModule,
-    ValidationModule /* Development Only */,
+    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 
 let callCount = 1;

@@ -33,7 +33,7 @@ ModuleRegistry.registerModules([
     ClientSideRowModelModule,
     RowGroupingModule,
     CustomFilterModule,
-    ValidationModule /* Development Only */,
+    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 
 let aggCallCount = 0;

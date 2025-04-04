@@ -17,7 +17,7 @@ ModuleRegistry.registerModules([
     SparklinesModule.with(AgChartsCommunityModule),
     ClipboardModule,
     ContextMenuModule,
-    ValidationModule /* Development Only */,
+    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 
 let gridApi: GridApi;

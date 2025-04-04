@@ -19,7 +19,7 @@ ModuleRegistry.registerModules([
     ContextMenuModule,
     RowGroupingModule,
     NumberFilterModule,
-    ValidationModule /* Development Only */,
+    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 
 const columnDefs: ColGroupDef[] = [

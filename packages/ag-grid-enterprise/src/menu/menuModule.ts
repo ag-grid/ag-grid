@@ -65,6 +65,7 @@ export const ColumnMenuModule: _ModuleWithApi<_ColumnChooserGridApi> = {
     version: VERSION,
     beans: [EnterpriseMenuFactory, ColumnMenuFactory, ColumnChooserFactory],
     icons: {
+        ensureColumnVisible: 'column-arrow',
         // menu tab icon in legacy tabbed enterprise column menu
         legacyMenu: 'menu',
         // filter tab icon in legacy tabbed enterprise column menu

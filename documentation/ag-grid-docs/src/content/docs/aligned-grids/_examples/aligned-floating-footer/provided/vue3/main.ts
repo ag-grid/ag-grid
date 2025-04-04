@@ -22,7 +22,7 @@ ModuleRegistry.registerModules([
     RowStyleModule,
     AlignedGridsModule,
     ClientSideRowModelModule,
-    ValidationModule /* Development Only */,
+    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 
 const VueExample = defineComponent({
@@ -83,7 +83,6 @@ const VueExample = defineComponent({
             alignedGrids: () => [this.$refs.bottomGrid],
             defaultColDef: {
                 filter: true,
-                flex: 1,
                 minWidth: 100,
             },
             suppressHorizontalScroll: true,

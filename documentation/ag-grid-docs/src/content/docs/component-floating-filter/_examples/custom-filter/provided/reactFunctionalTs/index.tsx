@@ -8,7 +8,11 @@ import { AgGridReact } from 'ag-grid-react';
 import type { IOlympicData } from './interfaces';
 import NumberFilterComponent from './numberFilterComponent';
 
-ModuleRegistry.registerModules([CustomFilterModule, ClientSideRowModelModule, ValidationModule /* Development Only */]);
+ModuleRegistry.registerModules([
+    CustomFilterModule,
+    ClientSideRowModelModule,
+    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
+]);
 
 const GridExample = () => {
     const containerStyle = useMemo(() => ({ width: '100%', height: '100%' }), []);

@@ -14,7 +14,7 @@ ModuleRegistry.registerModules([
     RowApiModule,
     CellStyleModule,
     ClientSideRowModelModule,
-    ValidationModule /* Development Only */,
+    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 
 function formatNumber(number: number) {

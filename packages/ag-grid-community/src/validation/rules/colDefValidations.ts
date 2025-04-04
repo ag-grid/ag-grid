@@ -100,11 +100,13 @@ const COLUMN_DEFINITION_VALIDATIONS: () => Validations<ColDef | ColGroupDef> = (
         }
         return { module: 'ColumnFilter' };
     },
-    flex: (_options, gridOptions) => {
-        if (gridOptions.autoSizeStrategy) {
-            return 'flex is not supported with the autoSizeStrategy grid option';
-        }
-        return null;
+    flex: {
+        validate: (_options, gridOptions) => {
+            if (gridOptions.autoSizeStrategy) {
+                return 'colDef.flex is not supported with gridOptions.autoSizeStrategy';
+            }
+            return null;
+        },
     },
     floatingFilter: { module: 'ColumnFilter' },
     headerCheckboxSelection: {
@@ -215,8 +217,8 @@ const COLUMN_DEFINITION_VALIDATIONS: () => Validations<ColDef | ColGroupDef> = (
         dependencies: {
             editable: { required: [false, undefined] },
             rowDrag: { required: [false, undefined] },
-            colSpan: { required: [false, undefined] },
-            rowSpan: { required: [false, undefined] },
+            colSpan: { required: [undefined] },
+            rowSpan: { required: [undefined] },
         },
         validate: (
             _options,

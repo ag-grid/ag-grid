@@ -5,7 +5,10 @@ import { AgGridVue } from 'ag-grid-vue3';
 
 import './styles.css';
 
-ModuleRegistry.registerModules([ClientSideRowModelModule, ValidationModule /* Development Only */]);
+ModuleRegistry.registerModules([
+    ClientSideRowModelModule,
+    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
+]);
 
 const colDefsMedalsIncluded = [
     { field: 'athlete' },

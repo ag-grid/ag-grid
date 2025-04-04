@@ -163,7 +163,8 @@
         "getPinnedTopRowCount": {},
         "getPinnedBottomRowCount": {},
         "getPinnedTopRow": {},
-        "getPinnedBottomRow": {}
+        "getPinnedBottomRow": {},
+        "forEachPinnedRow": {}
     },
     "rowNodes": {
         "meta": {
@@ -179,8 +180,7 @@
             "more": {
                 "name": "Iterating Rows",
                 "url": "./accessing-data/#iterating-rows"
-            },
-            "description": "Iterates through each node (row) in the grid and calls the callback for each node. This works similar to the `forEach` method on a JavaScript array. This is called for every node, ignoring any filtering or sorting applied within the grid. If using the [Infinite Row Model](./infinite-scrolling/), then this gets called for each page loaded in the page cache."
+            }
         },
         "forEachNodeAfterFilter": {
             "more": {

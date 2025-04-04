@@ -19,7 +19,7 @@ ModuleRegistry.registerModules([
     RowApiModule,
     QuickFilterModule,
     ClientSideRowModelModule,
-    ValidationModule /* Development Only */,
+    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 
 @Component({

@@ -148,14 +148,15 @@ export class ValidationService extends BeanStub implements NamedBean {
 
                 // this is a sub validator.
                 if ('objectName' in fromGetter) {
+                    const subValidator = fromGetter as OptionsValidator<T>;
                     const value = options[key];
                     if (Array.isArray(value)) {
                         value.forEach((item) => {
-                            this.processOptions(item, fromGetter);
+                            this.processOptions(item, subValidator);
                         });
                         return;
                     }
-                    this.processOptions(options[key] as any, fromGetter);
+                    this.processOptions(options[key] as any, subValidator);
                     return;
                 }
 

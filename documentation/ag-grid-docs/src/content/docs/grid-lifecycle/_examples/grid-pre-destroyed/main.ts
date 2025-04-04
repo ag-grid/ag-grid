@@ -10,7 +10,11 @@ import {
 import type { TAthlete } from './data';
 import { getDataSet } from './data';
 
-ModuleRegistry.registerModules([ColumnApiModule, ClientSideRowModelModule, ValidationModule /* Development Only */]);
+ModuleRegistry.registerModules([
+    ColumnApiModule,
+    ClientSideRowModelModule,
+    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
+]);
 
 interface ColumnWidth {
     field: string;

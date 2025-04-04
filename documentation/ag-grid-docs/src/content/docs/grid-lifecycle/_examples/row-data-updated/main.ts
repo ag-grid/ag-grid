@@ -4,7 +4,10 @@ import { ClientSideRowModelModule, ModuleRegistry, ValidationModule, createGrid 
 import type { TAthlete } from './data';
 import { fetchDataAsync } from './data';
 
-ModuleRegistry.registerModules([ClientSideRowModelModule, ValidationModule /* Development Only */]);
+ModuleRegistry.registerModules([
+    ClientSideRowModelModule,
+    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
+]);
 
 const updateRowCount = (id: string) => {
     const element = document.querySelector(`#${id} > .value`);

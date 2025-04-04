@@ -217,6 +217,15 @@ export class PinnedRowModel extends BeanStub implements NamedBean, IPinnedRowMod
     public setPinnedState(): void {
         // Not implemented for static pinned row model
     }
+
+    public getGrandTotalPinned(): RowPinnedType {
+        // Not implemented for static pinned row model
+        return;
+    }
+
+    public setGrandTotalPinned(): void {
+        // Not implemented for static pinned row model
+    }
 }
 
 function getTotalHeight(rowNodes: OrderedCache<RowNode>): number {

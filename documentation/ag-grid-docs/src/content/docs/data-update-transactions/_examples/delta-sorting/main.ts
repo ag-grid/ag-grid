@@ -12,7 +12,7 @@ ModuleRegistry.registerModules([
     ClientSideRowModelApiModule,
     ClientSideRowModelModule,
     RowGroupingModule,
-    ValidationModule /* Development Only */,
+    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 
 let lastGen = 0;

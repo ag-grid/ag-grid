@@ -18,7 +18,7 @@ ModuleRegistry.registerModules([
     NumberFilterModule,
     ClientSideRowModelModule,
     ColumnApiModule,
-    ValidationModule /* Development Only */,
+    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 
 let immutableStore: any[] = getData();

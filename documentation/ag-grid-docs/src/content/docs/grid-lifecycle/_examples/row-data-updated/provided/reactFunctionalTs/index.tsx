@@ -9,7 +9,10 @@ import { fetchDataAsync } from './data';
 import type { TAthlete } from './data';
 import './styles.css';
 
-ModuleRegistry.registerModules([ClientSideRowModelModule, ValidationModule /* Development Only */]);
+ModuleRegistry.registerModules([
+    ClientSideRowModelModule,
+    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
+]);
 
 const updateRowCount = (id: string) => {
     const element = document.querySelector(`#${id} > .value`);
