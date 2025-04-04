@@ -99,10 +99,11 @@ export class ContextMenuService extends BeanStub implements NamedBean, IContextM
             const isRowPinnable = gos.get('isRowPinnable');
             const grandTotalRow = gos.get('grandTotalRow');
             if (enableRowPinning) {
+                const isGroupTotalRow = node.level > -1 && node.footer;
                 const isGrandTotalRow = node.level === -1 && node.footer;
                 const isGrandTotalRowFixed = grandTotalRow === 'pinnedBottom' || grandTotalRow === 'pinnedTop';
 
-                if ((isGrandTotalRow && !isGrandTotalRowFixed) || !isGrandTotalRow) {
+                if ((isGrandTotalRow && !isGrandTotalRowFixed) || (!isGrandTotalRow && !isGroupTotalRow)) {
                     const pinnable = isRowPinnable?.(node) ?? true;
                     if (pinnable) {
                         defaultMenuOptions.push('pinRowSubMenu');
