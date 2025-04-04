@@ -4,6 +4,7 @@ import {
     addGenericInterfaceImport,
     findLocaleImport,
     getIntegratedDarkModeCode,
+    getPropertyInterfaces,
 } from './parser-utils';
 import { toTitleCase } from './string-utils';
 
@@ -12,47 +13,30 @@ export function getImport(filename: string) {
     return `import { ${toTitleCase(componentName)} } from './${componentName}';`;
 }
 
-function getPropertyInterfaces(properties) {
-    let propTypesUsed = [];
-    properties.forEach((prop) => {
-        if (prop.typings?.typesToInclude?.length > 0) {
-            propTypesUsed = [...propTypesUsed, ...prop.typings.typesToInclude];
-        }
-    });
-    return [...new Set(propTypesUsed)];
-}
-
-function getModuleImports(bindings: ParsedBindings): string[] {
+function getImports(bindings: ParsedBindings, currFile: string): string[] {
     const { imports: bindingImports, properties } = bindings;
-
     const imports = [];
 
-    const propertyInterfaces = getPropertyInterfaces(properties);
+    const localeImport = findLocaleImport(bindingImports);
+    if (localeImport) {
+        imports.push(`import { ${localeImport.imports[0]} } from '@ag-grid-community/locale';`);
+    }
+
     const bImports = [...(bindingImports || [])];
-    bImports.push({
-        module: `'ag-grid-community'`,
-        isNamespaced: false,
-        imports: [...propertyInterfaces],
-    });
+    const propertyInterfaces = getPropertyInterfaces(properties, currFile);
+    if (propertyInterfaces.length > 0) {
+        bImports.push({
+            module: `'ag-grid-community'`,
+            isNamespaced: false,
+            imports: [...propertyInterfaces],
+        });
+    }
 
     if (bImports.length > 0) {
         addBindingImports(bImports, imports, false);
     }
 
     addGenericInterfaceImport(imports, bindings.tData, bindings);
-
-    return imports;
-}
-
-function getImports(bindings: ParsedBindings): string[] {
-    const imports = [];
-
-    const localeImport = findLocaleImport(bindings.imports);
-    if (localeImport) {
-        imports.push(`import { ${localeImport.imports[0]} } from '@ag-grid-community/locale';`);
-    }
-
-    imports.push(...getModuleImports(bindings));
 
     return imports;
 }
@@ -88,7 +72,7 @@ export function vanillaToTypescript(bindings: ParsedBindings, mainFilePath: stri
     }
 
     return () => {
-        const importStrings = getImports(bindings);
+        const importStrings = getImports(bindings, unWrapped);
         const formattedImports = `${importStrings.join('\n')}\n`;
 
         // Remove the original import statements
