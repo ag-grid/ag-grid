@@ -24,17 +24,13 @@ Minimum version of Typescript for AG Grid v29 is v4.0.8.
 
 {% if isFramework("angular") %}
 **Angular Upgrade**
-{% /if %}
 
-{% if isFramework("angular") %}
 * The minimum Angular dependency supported by AG Grid v29 is now Angular v10 via legacy packages. Previous versions of Angular aren't supported by AG Grid v29. See [Angular Compatibility](https://www.ag-grid.com/archive/29.0.0/angular-data-grid/angular-compatibility/) for more information.
 {% /if %}
 
 {% if isFramework("react") %}
 **React Change Detection**
-{% /if %}
 
-{% if isFramework("react") %}
 In previous versions of AG Grid, we introduced a `DeepValueCheck` change detection strategy that performed an additional deep value comparison above and beyond reference equality. 
 This was to help React users who were unintentionally setting their `rowData` prop when the row data had not actually changed. 
 This resulted in additional grid re-renders as the grid reapplied the rows despite there being no real change. 
@@ -331,9 +327,7 @@ This release includes the following deprecations:
 
 {% if isFramework("react") %}
 **React Change Detection**
-{% /if %}
 
-{% if isFramework("react") %}
 * As the `DeepValueCheck` change detection strategy has been removed the `rowDataChangeDetectionStrategy` has now been deprecated as it no longer supports a different strategy then the default reference equals comparison.
 {% /if %}
 
