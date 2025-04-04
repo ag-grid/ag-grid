@@ -193,6 +193,7 @@ export async function generateFiles(options: ExecutorOptions, gridOptionsTypes: 
             entryFile,
             ...Object.values(otherScriptFiles),
             ...Object.values(componentScriptFiles),
+            ...(provideFrameworkFiles ? Object.values(provideFrameworkFiles) : []),
         ].some((file: string) => {
             return getHasExampleConsoleLog({ contents: file });
         });
@@ -275,7 +276,10 @@ export async function generateFiles(options: ExecutorOptions, gridOptionsTypes: 
     }
 }
 
-function getProvidedFrameworkFiles(internalFramework: string, frameworkProvidedExamples: any) {
+function getProvidedFrameworkFiles(
+    internalFramework: string,
+    frameworkProvidedExamples: any
+): Record<string, any> | undefined {
     const providedFramework = internalFramework === 'reactFunctional' ? 'reactFunctionalTs' : internalFramework;
     const provideFrameworkFiles = frameworkProvidedExamples[providedFramework]
         ? { ...frameworkProvidedExamples[providedFramework] }
@@ -377,11 +381,13 @@ async function processProvidedFiles(
                 code
             );
         }
-
-        provideFrameworkFiles[writeToFileName] = transformEntryFile({
-            entryFile: provideFrameworkFiles[writeToFileName],
-        });
     }
+
+    // Transform entry file
+    provideFrameworkFiles[entryFileName] = transformEntryFile({
+        entryFile: provideFrameworkFiles[entryFileName],
+    });
+
     return scriptFiles;
 }
 
