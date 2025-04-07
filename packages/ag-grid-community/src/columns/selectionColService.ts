@@ -1,7 +1,6 @@
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import { AgColumn } from '../entities/agColumn';
-import type { AgColumnGroup } from '../entities/agColumnGroup';
 import type { ColDef } from '../entities/colDef';
 import type { GridOptions, SelectionColumnDef } from '../entities/gridOptions';
 import type { ColumnEventType } from '../events';
@@ -199,63 +198,29 @@ export class SelectionColService extends BeanStub implements NamedBean, IColumnC
         super.destroy();
     }
 
-    public refreshVisibility(source: ColumnEventType): void {
+    public shouldHideCol(): boolean {
         if (!this.isSelectionColumnEnabled()) {
-            return;
+            return false;
         }
 
         const beans = this.beans;
         const visibleColumns = beans.visibleCols.allCols;
 
         if (visibleColumns.length === 0) {
-            return;
+            return false;
         }
 
         // check first: one or more columns showing -- none are selection column
-        if (!visibleColumns.some(isLeafColumnSelectionCol)) {
+        if (!visibleColumns.some(isColumnSelectionCol)) {
             const existingState = _getColumnState(beans).find((state) => isColumnSelectionCol(state.colId));
-
-            if (existingState) {
-                _applyColumnState(
-                    beans,
-                    {
-                        state: [{ colId: existingState.colId, hide: !existingState.hide }],
-                    },
-                    source
-                );
-            }
+            return existingState?.hide ?? false;
         }
 
         // lastly, check only one column showing -- selection column
         if (visibleColumns.length === 1) {
-            const firstColumn = visibleColumns[0];
-            const leafSelectionCol = getLeafColumnSelectionCol(firstColumn);
-
-            if (!leafSelectionCol) {
-                return;
-            }
-
-            _applyColumnState(beans, { state: [{ colId: leafSelectionCol.getColId(), hide: true }] }, source);
+            return true;
         }
+
+        return false;
     }
-}
-
-const isLeafColumnSelectionCol = (c: AgColumn | AgColumnGroup): boolean =>
-    c.isColumn ? isColumnSelectionCol(c) : c.getChildren()?.some(isLeafColumnSelectionCol) ?? false;
-
-function getLeafColumnSelectionCol(c: AgColumn | AgColumnGroup): AgColumn | null {
-    if (c.isColumn) {
-        return isColumnSelectionCol(c) ? c : null;
-    }
-
-    const children = c.getChildren() ?? [];
-
-    for (const child of children) {
-        const selCol = getLeafColumnSelectionCol(child);
-        if (selCol) {
-            return selCol;
-        }
-    }
-
-    return null;
 }

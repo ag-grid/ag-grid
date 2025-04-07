@@ -10,7 +10,6 @@ import type { ColumnPinnedType, HeaderColumnId } from '../interfaces/iColumn';
 import { _last } from '../utils/array';
 import type { ColumnGroupService, CreateGroupsParams } from './columnGroups/columnGroupService';
 import type { ColumnModel } from './columnModel';
-import { _getColumnState } from './columnStateUtils';
 import { getWidthOfColsInList, isColumnSelectionCol } from './columnUtils';
 import { GroupInstanceIdCreator } from './groupInstanceIdCreator';
 
@@ -79,14 +78,11 @@ export class VisibleColsService extends BeanStub implements NamedBean {
 
         pickCols();
 
-        if (selectionColSvc?.isSelectionColumnEnabled() && this.allCols.length) {
-            const selectionCols = this.allCols.filter(isColumnSelectionCol);
-            if (selectionCols.length === 0) {
-                const existingState = _getColumnState(this.beans).find((state) => isColumnSelectionCol(state.colId));
-                pickCols(!existingState?.hide);
-            } else if (this.allCols.length === 1) {
-                pickCols(true);
-            }
+        // Run `pickCols` first because SelectionColService needs the full list of columns first.
+        // If we need to act we just re-run `pickCols` (cheap)
+        const shouldHideCol = selectionColSvc?.shouldHideCol() ?? false;
+        if (shouldHideCol) {
+            pickCols(shouldHideCol);
         }
 
         this.setLeftValues(source);
