@@ -35,10 +35,6 @@ export class SelectionColService extends BeanStub implements NamedBean, IColumnC
         });
 
         this.addManagedPropertyListener('selectionColumnDef', this.updateColumns.bind(this));
-
-        this.addManagedEventListeners({
-            displayedColumnsChanged: (event) => this.refreshVisibility(event.source),
-        });
     }
 
     public addColumns(cols: ColumnCollections): void {
@@ -96,12 +92,11 @@ export class SelectionColService extends BeanStub implements NamedBean, IColumnC
 
     public updateColumns(event: PropertyValueChangedEvent<'selectionColumnDef'>): void {
         const source = _convertColumnEventSourceType(event.source);
-        const current = event.currentValue;
 
         this.columns?.list.forEach((col) => {
-            const newColDef = this.createSelectionColDef(current);
+            const newColDef = this.createSelectionColDef(event.currentValue);
             col.setColDef(newColDef, null, source);
-            _applyColumnState(this.beans, { state: [{ colId: col.getColId(), ...newColDef }] }, source);
+            _applyColumnState(this.beans, { state: [{ ...newColDef, colId: col.getColId() }] }, source);
         });
     }
 
@@ -210,7 +205,7 @@ export class SelectionColService extends BeanStub implements NamedBean, IColumnC
         }
 
         const beans = this.beans;
-        const visibleColumns = beans.visibleCols.getAllTrees() ?? [];
+        const visibleColumns = beans.visibleCols.allCols;
 
         if (visibleColumns.length === 0) {
             return;

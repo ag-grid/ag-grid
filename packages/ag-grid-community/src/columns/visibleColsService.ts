@@ -10,7 +10,8 @@ import type { ColumnPinnedType, HeaderColumnId } from '../interfaces/iColumn';
 import { _last } from '../utils/array';
 import type { ColumnGroupService, CreateGroupsParams } from './columnGroups/columnGroupService';
 import type { ColumnModel } from './columnModel';
-import { getWidthOfColsInList } from './columnUtils';
+import { _getColumnState } from './columnStateUtils';
+import { getWidthOfColsInList, isColumnSelectionCol } from './columnUtils';
 import { GroupInstanceIdCreator } from './groupInstanceIdCreator';
 
 function _removeAllFromUnorderedArray<T>(array: T[], toRemove: T[]) {
@@ -60,7 +61,7 @@ export class VisibleColsService extends BeanStub implements NamedBean {
     private ariaOrderColumns: AgColumn[];
 
     public refresh(source: ColumnEventType, skipTreeBuild = false): void {
-        const { colModel, colGroupSvc, colViewport } = this.beans;
+        const { colFlex, colModel, colGroupSvc, colViewport, selectionColSvc } = this.beans;
         // when we open/close col group, skipTreeBuild=false, as we know liveCols haven't changed
         if (!skipTreeBuild) {
             this.buildTrees(colModel, colGroupSvc);
@@ -68,20 +69,32 @@ export class VisibleColsService extends BeanStub implements NamedBean {
 
         colGroupSvc?.updateOpenClosedVisibility();
 
-        const leftCols = pickDisplayedCols(this.treeLeft);
-        this.leftCols = leftCols;
-        this.centerCols = pickDisplayedCols(this.treeCenter);
-        const rightCols = pickDisplayedCols(this.treeRight);
-        this.rightCols = rightCols;
+        const pickCols = (hideSelectionCol = false) => {
+            this.leftCols = pickDisplayedCols(this.treeLeft, hideSelectionCol);
+            this.centerCols = pickDisplayedCols(this.treeCenter, hideSelectionCol);
+            this.rightCols = pickDisplayedCols(this.treeRight, hideSelectionCol);
+            this.joinColsAriaOrder(colModel);
+            this.joinCols();
+        };
 
-        this.joinColsAriaOrder(colModel);
-        this.joinCols();
+        pickCols();
+
+        if (selectionColSvc?.isSelectionColumnEnabled() && this.allCols.length) {
+            const selectionCols = this.allCols.filter(isColumnSelectionCol);
+            if (selectionCols.length === 0) {
+                const existingState = _getColumnState(this.beans).find((state) => isColumnSelectionCol(state.colId));
+                pickCols(!existingState?.hide);
+            } else if (this.allCols.length === 1) {
+                pickCols(true);
+            }
+        }
+
         this.setLeftValues(source);
         this.autoHeightCols = this.allCols.filter((col) => col.isAutoHeight());
-        this.beans.colFlex?.refreshFlexedColumns();
+        colFlex?.refreshFlexedColumns();
         this.updateBodyWidths();
         colViewport.checkViewportColumns(false);
-        this.setFirstRightAndLastLeftPinned(colModel, leftCols, rightCols, source);
+        this.setFirstRightAndLastLeftPinned(colModel, this.leftCols, this.rightCols, source);
 
         this.eventSvc.dispatchEvent({
             type: 'displayedColumnsChanged',
@@ -517,10 +530,10 @@ export function depthFirstAllColumnTreeSearch(
     }
 }
 
-function pickDisplayedCols(tree: (AgColumn | AgColumnGroup)[]): AgColumn[] {
+function pickDisplayedCols(tree: (AgColumn | AgColumnGroup)[], hideSelectionCol = false): AgColumn[] {
     const res: AgColumn[] = [];
     depthFirstAllColumnTreeSearch(tree, true, (child) => {
-        if (isColumn(child)) {
+        if (isColumn(child) && (!isColumnSelectionCol(child) || (isColumnSelectionCol(child) && !hideSelectionCol))) {
             res.push(child);
         }
     });
