@@ -184,12 +184,12 @@ export interface GridOptions<TData = any> {
     // *** Accessories *** //
     /**
      * Specifies the status bar components to use in the status bar.
-     * @AG_Module `StatusBarModule`
+     * @agModule `StatusBarModule`
      */
     statusBar?: { statusPanels: StatusPanelDef[] };
     /**
      * Specifies the side bar components.
-     * @AG_Module `SideBarModule`
+     * @agModule `SideBarModule`
      */
     sideBar?: SideBarDef | string | string[] | boolean | null;
     /**
@@ -206,7 +206,7 @@ export interface GridOptions<TData = any> {
     /**
      * Allows context menu to show, even when `Ctrl` key is held down.
      * @default false
-     * @AG_Module `ContextMenuModule`
+     * @agModule `ContextMenuModule`
      */
     allowContextMenuWithControlKey?: boolean;
     /**
@@ -465,7 +465,7 @@ export interface GridOptions<TData = any> {
     /**
      * Auto-size the columns when the grid is loaded. Can size to fit the grid width, fit a provided width, or fit the cell contents.
      * @initial
-     * @AG_Module `ColumnAutoSizeModule`
+     * @agModule `ColumnAutoSizeModule`
      */
     autoSizeStrategy?:
         | SizeColumnsToFitGridStrategy
@@ -527,7 +527,7 @@ export interface GridOptions<TData = any> {
     /**
      * Set to `true` to enable Undo / Redo while editing.
      * @initial
-     * @AG_Module `UndoRedoEditModule`
+     * @agModule `UndoRedoEditModule`
      */
     undoRedoCellEditing?: boolean;
     /**
@@ -565,7 +565,7 @@ export interface GridOptions<TData = any> {
     // *** Find *** //
     /**
      * Text to find within the grid.
-     * @AG_Module `FindModule`
+     * @agModule `FindModule`
      */
     findSearchValue?: string;
     /**
@@ -577,7 +577,7 @@ export interface GridOptions<TData = any> {
     /**
      * Rows are filtered using this text as a Quick Filter.
      * Only supported for Client-Side Row Model.
-     * @AG_Module `QuickFilterModule`
+     * @agModule `QuickFilterModule`
      */
     quickFilterText?: string;
     /**
@@ -615,7 +615,7 @@ export interface GridOptions<TData = any> {
     /**
      * Set to true to enable the Advanced Filter.
      * @default false
-     * @AG_Module `AdvancedFilterModule`
+     * @agModule `AdvancedFilterModule`
      */
     enableAdvancedFilter?: boolean;
     /**
@@ -660,7 +660,7 @@ export interface GridOptions<TData = any> {
     /**
      * Set to `true` to Enable Charts.
      * @default false
-     * @AG_Module `IntegratedChartsModule`
+     * @agModule `IntegratedChartsModule`
      */
     enableCharts?: boolean;
     /**
@@ -710,7 +710,7 @@ export interface GridOptions<TData = any> {
     /**
      * A map of key->value pairs for localising text within the grid.
      * @initial
-     * @AG_Module `LocaleModule`
+     * @agModule `LocaleModule`
      */
     localeText?: { [key: string]: string };
 
@@ -718,7 +718,7 @@ export interface GridOptions<TData = any> {
     /**
      * Set to `true` to enable Master Detail.
      * @default false
-     * @AG_Module `MasterDetailModule` or `ServerSideRowModelModule`
+     * @agModule `MasterDetailModule` or `ServerSideRowModelModule`
      */
     masterDetail?: boolean;
     /**
@@ -776,7 +776,7 @@ export interface GridOptions<TData = any> {
      * A list of grids to treat as Aligned Grids.
      * Provide a list if the grids / apis already exist or return via a callback to allow the aligned grids to be retrieved asynchronously.
      * If grids are aligned then the columns and horizontal scrolling will be kept in sync.
-     * @AG_Module `AlignedGridsModule`
+     * @agModule `AlignedGridsModule`
      */
     alignedGrids?: AlignedGrid[] | (() => AlignedGrid[]);
     /**
@@ -795,7 +795,7 @@ export interface GridOptions<TData = any> {
      * Set to `true` to turn on the value cache.
      * @default false
      * @initial
-     * @AG_Module `ValueCacheModule`
+     * @agModule `ValueCacheModule`
      */
     valueCache?: boolean;
     /**
@@ -897,7 +897,7 @@ export interface GridOptions<TData = any> {
     /**
      * Set whether pagination is enabled.
      * @default false
-     * @AG_Module `PaginationModule`
+     * @agModule `PaginationModule`
      */
     pagination?: boolean;
     /**
@@ -937,14 +937,14 @@ export interface GridOptions<TData = any> {
     /**
      * Set to `true` to enable pivot mode.
      * @default false
-     * @AG_Module `PivotModule` or `ServerSideRowModelModule`
+     * @agModule `PivotModule` or `ServerSideRowModelModule`
      */
     pivotMode?: boolean;
     /**
      * When to show the 'pivot panel' (where you drag rows to pivot) at the top. Note that the pivot panel will never show if `pivotMode` is off.
      * @default 'never'
      * @initial
-     * @AG_Module `RowGroupingPanelModule`
+     * @agModule `RowGroupingPanelModule`
      */
     pivotPanelShow?: 'always' | 'onlyWhenPivoting' | 'never';
     /**
@@ -1056,7 +1056,7 @@ export interface GridOptions<TData = any> {
      * When `true`, enables the cell span feature allowing for the use of the `colDef.spanRows` property.
      * @default false
      * @initial
-     * @AG_Module `CellSpanModule`
+     * @agModule `CellSpanModule`
      */
     enableCellSpan?: boolean;
     /**
@@ -1089,7 +1089,7 @@ export interface GridOptions<TData = any> {
     /**
      * Set to `true` to enable Managed Row Dragging.
      * @default false
-     * @AG_Module `RowDragModule`
+     * @agModule `RowDragModule`
      */
     rowDragManaged?: boolean;
     /**
@@ -1187,14 +1187,14 @@ export interface GridOptions<TData = any> {
      * When provided, an extra row group total row will be inserted into row groups at the specified position, to display
      * when the group is expanded. This row will contain the aggregate values for the group. If a callback function is
      * provided, it can be used to selectively determine which groups will have a total row added.
-     * @AG_Module `RowGroupingModule` or `ServerSideRowModelModule`
+     * @agModule `RowGroupingModule` or `ServerSideRowModelModule`
      */
     groupTotalRow?: 'top' | 'bottom' | UseGroupTotalRow<TData>;
 
     /**
      * When provided, an extra grand total row will be inserted into the grid at the specified position.
      * This row displays the aggregate totals of all rows in the grid.
-     * @AG_Module `RowGroupingModule` or `ServerSideRowModelModule`
+     * @agModule `RowGroupingModule` or `ServerSideRowModelModule`
      */
     grandTotalRow?: 'top' | 'bottom' | 'pinnedTop' | 'pinnedBottom';
 
@@ -1250,7 +1250,7 @@ export interface GridOptions<TData = any> {
     /**
      * When to show the 'row group panel' (where you drag rows to group) at the top.
      * @default 'never'
-     * @AG_Module `RowGroupingPanelModule`
+     * @agModule `RowGroupingPanelModule`
      */
     rowGroupPanelShow?: 'always' | 'onlyWhenGrouping' | 'never';
     /**
@@ -1267,7 +1267,7 @@ export interface GridOptions<TData = any> {
      * Set to `true` to enable the Grid to work with Tree Data.
      * You must also implement the `getDataPath(data)` callback.
      * @default false
-     * @AG_Module `TreeDataModule`
+     * @agModule `TreeDataModule`
      */
     treeData?: boolean;
 
@@ -1301,12 +1301,12 @@ export interface GridOptions<TData = any> {
     // *** Row Pinning *** //
     /**
      * Data to be displayed as pinned top rows in the grid.
-     * @AG_Module `PinnedRowModule`
+     * @agModule `PinnedRowModule`
      */
     pinnedTopRowData?: any[];
     /**
      * Data to be displayed as pinned bottom rows in the grid.
-     * @AG_Module `PinnedRowModule`
+     * @agModule `PinnedRowModule`
      */
     pinnedBottomRowData?: any[];
     /**
@@ -1315,7 +1315,7 @@ export interface GridOptions<TData = any> {
      * Set to `true` to allow pinning rows to top or bottom.
      * Set to `'top'` to allow pinning rows to the top only.
      * Set to `'bottom'` to allow pinning rows to the bottom only.
-     * @AG_Module `ManualPinnedRowModule`
+     * @agModule `ManualPinnedRowModule`
      */
     enableRowPinning?: boolean | 'top' | 'bottom';
     /**
@@ -1323,7 +1323,7 @@ export interface GridOptions<TData = any> {
      * Return `false` if the grid should prevent the row from being pinned
      *
      * When not defined, all rows default to pinnable.
-     * @AG_Module `ManualPinnedRowModule`
+     * @agModule `ManualPinnedRowModule`
      */
     isRowPinnable?: IsRowPinnable<TData>;
     /**
@@ -1345,7 +1345,7 @@ export interface GridOptions<TData = any> {
     // changeable with impact
     /**
      * Set the data to be displayed as rows in the grid.
-     * @AG_Module `ClientSideRowModelModule`
+     * @agModule `ClientSideRowModelModule`
      */
     rowData?: TData[] | null;
     /**
@@ -1361,7 +1361,7 @@ export interface GridOptions<TData = any> {
     // *** Row Model: Infinite / Server-side *** //
     /**
      * Provide the datasource for infinite scrolling.
-     * @AG_Module `InfiniteRowModelModule`
+     * @agModule `InfiniteRowModelModule`
      */
     datasource?: IDatasource;
     /**
@@ -1417,7 +1417,7 @@ export interface GridOptions<TData = any> {
     purgeClosedRowNodes?: boolean;
     /**
      * Provide the `serverSideDatasource` for server side row model.
-     * @AG_Module `ServerSideRowModelModule`
+     * @agModule `ServerSideRowModelModule`
      */
     serverSideDatasource?: IServerSideDatasource;
 
@@ -1448,7 +1448,7 @@ export interface GridOptions<TData = any> {
     // *** Row Model: Viewport *** //
     /**
      * To use the viewport row model you need to provide the grid with a `viewportDatasource`.
-     * @AG_Module `ViewportRowModelModule`
+     * @agModule `ViewportRowModelModule`
      */
     viewportDatasource?: IViewportDatasource;
     /**
@@ -1521,12 +1521,12 @@ export interface GridOptions<TData = any> {
     // *** Selection *** //
     /**
      * Use the `RowSelectionOptions` object to configure row selection. The string values `'single'` and `'multiple'` are deprecated.
-     * @AG_Module `RowSelectionModule` or `ServerSideRowModelModule`
+     * @agModule `RowSelectionModule` or `ServerSideRowModelModule`
      */
     rowSelection?: RowSelectionOptions<TData> | 'single' | 'multiple';
     /**
      * Configure cell selection.
-     * @AG_Module `CellSelectionModule`
+     * @agModule `CellSelectionModule`
      */
     cellSelection?: boolean | CellSelectionOptions<TData>;
     /**
@@ -1567,7 +1567,7 @@ export interface GridOptions<TData = any> {
     /**
      * Configure the Row Numbers Feature.
      * @default false
-     * @AG_Module `RowNumbersModule`
+     * @agModule `RowNumbersModule`
      */
     rowNumbers?: boolean | RowNumbersOptions;
 
@@ -1588,7 +1588,7 @@ export interface GridOptions<TData = any> {
      * Set to `true` to enable Range Selection.
      * @default false
      * @deprecated v32.2 Use `cellSelection = true` instead
-     * @AG_Module `CellSelectionModule`
+     * @agModule `CellSelectionModule`
      */
     enableRangeSelection?: boolean;
     /**
@@ -1667,17 +1667,17 @@ export interface GridOptions<TData = any> {
     rowHeight?: number;
     /**
      * The style properties to apply to all rows. Set to an object of key (style names) and values (style values).
-     * @AG_Module `RowStyleModule`
+     * @agModule `RowStyleModule`
      */
     rowStyle?: RowStyle;
     /**
      * CSS class(es) for all rows. Provide either a string (class name) or array of strings (array of class names).
-     * @AG_Module `RowStyleModule`
+     * @agModule `RowStyleModule`
      */
     rowClass?: string | string[];
     /**
      * Rules which can be applied to include certain CSS classes.
-     * @AG_Module `RowStyleModule`
+     * @agModule `RowStyleModule`
      */
     rowClassRules?: RowClassRules<TData>;
     /**
@@ -1694,7 +1694,7 @@ export interface GridOptions<TData = any> {
     /**
      * Set to `true` to highlight columns by adding the `ag-column-hover` CSS class.
      * @default false
-     * @AG_Module `ColumnHoverModule`
+     * @agModule `ColumnHoverModule`
      */
     columnHoverHighlight?: boolean;
 
@@ -1722,7 +1722,7 @@ export interface GridOptions<TData = any> {
     /**
      * Initial state for the grid. Only read once on initialization. Can be used in conjunction with `api.getState()` to save and restore grid state.
      * @initial
-     * @AG_Module `GridStateModule`
+     * @agModule `GridStateModule`
      */
     initialState?: GridState;
 
@@ -1789,13 +1789,13 @@ export interface GridOptions<TData = any> {
     // *** Accessories *** //
     /**
      * For customising the context menu.
-     * @AG_Module `ContextMenuModule`
+     * @agModule `ContextMenuModule`
      */
     getContextMenuItems?: GetContextMenuItems<TData>;
     /**
      * For customising the main 'column header' menu.
      * @initial
-     * @AG_Module `ColumnMenuModule`
+     * @agModule `ColumnMenuModule`
      */
     getMainMenuItems?: GetMainMenuItems<TData>;
     /**
@@ -1840,12 +1840,12 @@ export interface GridOptions<TData = any> {
     // *** Filtering *** //
     /**
      * Grid calls this method to know if an external filter is present.
-     * @AG_Module `ExternalFilterModule`
+     * @agModule `ExternalFilterModule`
      */
     isExternalFilterPresent?: (params: IsExternalFilterPresentParams<TData>) => boolean;
     /**
      * Should return `true` if external filter passes, otherwise `false`.
-     * @AG_Module `ExternalFilterModule`
+     * @agModule `ExternalFilterModule`
      */
     doesExternalFilterPass?: (node: IRowNode<TData>) => boolean;
 
@@ -1892,7 +1892,7 @@ export interface GridOptions<TData = any> {
     /**
      * A callback for localising text within the grid.
      * @initial
-     * @AG_Module `LocaleModule`
+     * @agModule `LocaleModule`
      */
     getLocaleText?: (params: GetLocaleTextParams<TData>) => string;
 
@@ -2009,12 +2009,12 @@ export interface GridOptions<TData = any> {
     // *** Styling *** //
     /**
      * Callback version of property `rowStyle` to set style for each row individually. Function should return an object of CSS values or undefined for no styles.
-     * @AG_Module `RowStyleModule`
+     * @agModule `RowStyleModule`
      */
     getRowStyle?: (params: RowClassParams<TData>) => RowStyle | undefined;
     /**
      * Callback version of property `rowClass` to set class(es) for each row individually. Function should return either a string (class name), array of strings (array of class names) or undefined for no class.
-     * @AG_Module `RowStyleModule`
+     * @agModule `RowStyleModule`
      */
     getRowClass?: (params: RowClassParams<TData>) => string | string[] | undefined;
     /**
