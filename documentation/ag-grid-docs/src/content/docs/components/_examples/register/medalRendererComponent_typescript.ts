@@ -26,7 +26,7 @@ export class MedalRenderer implements ICellRendererComp {
     }
 
     buttonClicked() {
-        alert(`${this.total} medals won!`);
+        console.log(`${this.total} medals won!`);
     }
 
     getGui() {

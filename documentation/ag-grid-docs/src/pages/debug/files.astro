@@ -2,9 +2,8 @@
 import { getExtraFiles } from '@utils/pages';
 import { getExtraFileUrl } from '@utils/extraFileUrl';
 import DebugLayout from '@layouts/DebugLayout.astro';
-import { ENABLE_GENERATE_DEBUG_PAGES } from '@constants';
 
-const extraFiles = ENABLE_GENERATE_DEBUG_PAGES ? getExtraFiles() : [];
+const extraFiles = getExtraFiles();
 ---
 
 <DebugLayout title={`Debug: Extra Files`}>

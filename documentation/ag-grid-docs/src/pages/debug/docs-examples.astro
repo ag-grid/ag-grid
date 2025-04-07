@@ -1,60 +1,16 @@
 ---
 import { getCollection } from 'astro:content';
 import DebugLayout from '@layouts/DebugLayout.astro';
-import { getDocsExamplePages } from '@components/docs/utils/pageData';
-import { getExampleContentsUrl, getExampleUrl } from '@components/docs/utils/urlPaths';
-import { ENABLE_GENERATE_DEBUG_PAGES } from '@constants';
+import { getDocsExampleContents } from '@components/docs/utils/pageData';
 
-let examples: Awaited<ReturnType<typeof getDocsExamplePages>> = [];
-if (ENABLE_GENERATE_DEBUG_PAGES) {
-    const pages = await getCollection('docs');
-    examples = await getDocsExamplePages({
-        pages,
-    });
-}
+import { DocsExamples } from '@ag-website-shared/components/docs-examples/components/DocsExamples';
+
+const pages = await getCollection('docs');
+const exampleContents = await getDocsExampleContents({ pages });
 ---
 
 <DebugLayout title={`Debug: Docs Example Pages`}>
-    <h1>Example pages ({examples.length})</h1>
-    <table>
-        <thead>
-            <th>No.</th>
-            <th>Url</th>
-            <th>Contents</th>
-            <th><code>params.internalFramework</code></th>
-            <th><code>params.pageName</code></th>
-            <th><code>params.exampleName</code></th>
-        </thead>
-        <tbody>
-            {
-                examples.map((example, index) => {
-                    const { internalFramework, pageName, exampleName } = example.params;
-                    const url = getExampleUrl({
-                        internalFramework,
-                        pageName,
-                        exampleName,
-                    });
-                    const contentsUrl = getExampleContentsUrl({
-                        internalFramework,
-                        pageName,
-                        exampleName,
-                    });
-                    return (
-                        <tr>
-                            <td>{index + 1}</td>
-                            <td>
-                                <a href={url}>{url}</a>
-                            </td>
-                            <td>
-                                <a href={contentsUrl}>contents.json</a>
-                            </td>
-                            <td>{internalFramework}</td>
-                            <td>{pageName}</td>
-                            <td>{exampleName}</td>
-                        </tr>
-                    );
-                })
-            }
-        </tbody>
-    </table>
+    <h1>Docs Example Pages</h1>
+    <p>{pages.length} pages, {Object.keys(exampleContents).length} examples</p>
+    <DocsExamples exampleContents={exampleContents} />
 </DebugLayout>

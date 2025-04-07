@@ -12,7 +12,7 @@ export default ({ name, subMenu, buttonValue }: ButtonCustomMenuItemProps) => {
         configureDefaults: () => true,
     });
 
-    const onClick = () => alert(`${name} clicked`);
+    const onClick = () => console.log(`${name} clicked`);
 
     return (
         <div>

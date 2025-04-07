@@ -4,7 +4,7 @@ import type { CustomStatusPanelProps } from 'ag-grid-react';
 
 export default (props: CustomStatusPanelProps) => {
     const onClick = () => {
-        alert('Selected Row Count: ' + props.api.getSelectedRows().length);
+        console.log('Selected Row Count: ' + props.api.getSelectedRows().length);
     };
 
     return (

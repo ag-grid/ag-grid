@@ -40,6 +40,6 @@ export class MenuItem implements IMenuItemAngularComp {
     }
 
     onClick(): void {
-        alert(`${this.name} clicked`);
+        console.log(`${this.name} clicked`);
     }
 }

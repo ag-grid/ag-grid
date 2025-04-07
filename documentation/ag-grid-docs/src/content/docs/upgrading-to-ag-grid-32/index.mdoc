@@ -38,13 +38,8 @@ See the [Codemods](./codemods/) documentation for more details.
 
 {% if isFramework("react") %}
 ## Upgrading React Class-Based Components
-{% /if %}
 
-{% if isFramework("react") %}
 In order to enable class-based React components when `reactiveCustomComponents` is set, follow the guide for [Migrating to Use reactiveCustomComponents](./upgrading-to-ag-grid-31-1/#migrating-custom-components-to-use-reactivecustomcomponents-option). However, instead of using the hooks to register the callbacks, you will need to use the custom context (same for all component types). For example, for filters:
-{% /if %}
-
-{% if isFramework("react") %}
 
 ```bash
 static contextType = CustomComponentContext;
@@ -90,7 +85,7 @@ The following interfaces are deprecated and replaced with the equivalent interfa
 
 
 ## Breaking Changes
-{% metaTag tags=["ColumnAPI", "suppressParentsInRowNode", "enterMovesDown", "enterMovesDownAfterEdit", "excludeHiddenColumnsFromQuickFilter", "suppressAggAtRootLevel", "serverSideFilterAllLevels", "enableChartToolPanelsButton", "functionsPassive", "onColumnRowGroupChangeRequest", "onColumnPivotChangeRequest", "onColumnValueChangeRequest", "onColumnAggFuncChangeRequest", "CellFocusedEvent", "ChangeDetectionStategyType", "ICellRendererParams.rowIndex", "IProvidedColumn", "IHeaderColumn"] /%}
+{% metaTag tags=["ColumnAPI", "suppressParentsInRowNode", "enterMovesDown", "enterMovesDownAfterEdit", "excludeHiddenColumnsFromQuickFilter", "suppressAggAtRootLevel", "serverSideFilterAllLevels", "enableChartToolPanelsButton", "functionsPassive", "onColumnRowGroupChangeRequest", "onColumnPivotChangeRequest", "onColumnValueChangeRequest", "onColumnAggFuncChangeRequest", "CellFocusedEvent", "ChangeDetectionStategyType", "ICellRendererParams.rowIndex", "IProvidedColumn", "IHeaderColumn", "setPivotMode", "setPinnedTopRowData", "setPinnedBottomRowData", "setPopupParent", "setSuppressModelUpdateAfterUpdateTransaction", "setDataTypeDefinitions", "setPagination", "paginationSetPageSize", "setSideBar", "setSuppressClipboardPaste", "setGroupRemoveSingleChildren", "setGroupRemoveLowestSingleChildren", "setGroupDisplayType", "setGroupIncludeFooter", "setGroupIncludeTotalFooter", "setRowClass", "setDeltaSort", "setSuppressRowDrag", "setSuppressMoveWhenRowDragging", "setSuppressRowClickSelection", "setEnableAdvancedFilter", "setIncludeHiddenColumnsInAdvancedFilter", "setAdvancedFilterParent", "setAdvancedFilterBuilderParams", "setQuickFilter", "setExcludeHiddenColumnsFromQuickFilter", "setIncludeHiddenColumnsInQuickFilter", "setQuickFilterParser", "setQuickFilterMatcher", "setAlwaysShowHorizontalScroll", "setAlwaysShowVerticalScroll", "setFunctionsReadOnly", "setColumnDefs", "setAutoGroupColumnDef", "setDefaultColDef", "setColumnTypes", "setTreeData", "setServerSideDatasource", "setCacheBlockSize", "setDatasource", "setViewportDatasource", "setRowData", "setEnableCellTextSelection", "setHeaderHeight", "setDomLayout", "setFillHandleDirection", "setGroupHeaderHeight", "setFloatingFiltersHeight", "setPivotHeaderHeight", "setPivotGroupHeaderHeight", "setAnimateRows", "setIsExternalFilterPresent", "setDoesExternalFilterPass", "setNavigateToNextCell", "setTabToNextCell", "setTabToNextHeader", "setNavigateToNextHeader", "setRowGroupPanelShow", "setGetGroupRowAgg", "setGetBusinessKeyForNode", "setGetChildCount", "setProcessRowPostCreate", "setGetRowId", "setGetRowClass", "setIsFullWidthRow", "setIsRowSelectable", "setIsRowMaster", "setPostSortRows", "setGetDocument", "setGetContextMenuItems", "setGetMainMenuItems", "setProcessCellForClipboard", "setSendToClipboard", "setProcessCellFromClipboard", "setProcessPivotResultColDef", "setProcessPivotResultColGroupDef", "setPostProcessPopup", "setInitialGroupOrderComparator", "setGetChartToolbarItems", "setPaginationNumberFormatter", "setGetServerSideGroupLevelParams", "setIsServerSideGroupOpenByDefault", "setIsApplyServerSideTransaction", "setIsServerSideGroup", "setGetServerSideGroupKey", "setGetRowStyle", "setGetRowHeight", "autosizeThiscolumn", "auto-params-refresh", "autoParamsRefresh"] /%}
 
 ### Build Output
 
@@ -114,9 +109,7 @@ The minimum version of Angular you can use with AG Grid is now Angular 16.
 
 {% if isFramework("react") %}
 ### Custom Components
-{% /if %}
 
-{% if isFramework("react") %}
 `reactiveCustomComponents` now defaults to true. If your React custom components have been declared imperatively, you can continue using them by setting `reactiveCustomComponents` to false. Please plan to migrate to the new React custom component format as the imperative behaviour was deprecated in v31.1. See [Migrating to Use reactiveCustomComponents](./upgrading-to-ag-grid-31-1/#migrating-custom-components-to-use-reactivecustomcomponents-option).
 {% /if %}
 
@@ -271,8 +264,7 @@ Header and grid cells text wrapping uses `word-break:'break-word'` mode instead 
 
 {% if isFramework("vue") %}
 ### Vue
-{% /if %}
-{% if isFramework("vue") %}
+
 - Vue 2 is no longer supported. Please upgrade to Vue 3.
 
 - Storing the grid API in a `ref` is no longer supported. It must instead be stored in a `shallowRef`.

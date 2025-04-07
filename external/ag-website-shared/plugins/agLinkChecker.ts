@@ -13,6 +13,11 @@ type Options = {
 };
 
 const IGNORED_PATHS = ['/archive'];
+const HREF_PATTERNS_TO_IGNORE = [
+    '?', // Links with queries
+    '#reference-', // API references, as it is rendered client side
+    '#example-', // Example references, as they aren't headings
+];
 
 const isCI =
     process.env.NX_TASK_TARGET_CONFIGURATION === 'ci' || process.env.NX_TASK_TARGET_CONFIGURATION === 'staging';
@@ -131,11 +136,7 @@ const checkLinks = async (dir: string, files: string[], options: Options) => {
             const match = regex.exec(tag);
             if (match) {
                 const href = match[1];
-                if (href.includes('?')) {
-                    // ignore links with queries.
-                    return;
-                } else if (href.includes('#reference-')) {
-                    // ignore API references, as it is rendered client side
+                if (HREF_PATTERNS_TO_IGNORE.some((pattern) => href.includes(pattern))) {
                     return;
                 }
 

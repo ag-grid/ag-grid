@@ -33,6 +33,10 @@
     }
 
     > div {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        gap: $spacing-size-2;
         padding: $spacing-size-2;
         border-bottom: 1px solid var(--color-border-secondary);
         white-space: pre-wrap;
@@ -40,6 +44,71 @@
 
         &:nth-child(odd) {
             background-color: color-mix(in srgb, var(--color-bg-primary) 66.66%, transparent);
+        }
+    }
+}
+
+.type-null,
+.type-undefined {
+    color: var(--color-code-keyword);
+}
+
+.type-string {
+    color: var(--color-code-string);
+}
+
+.type-symbol,
+.type-boolean,
+.type-number,
+.type-nan,
+.type-date {
+    color: var(--color-code-symbol);
+}
+
+.type-regex {
+    color: var(--color-code-property);
+}
+
+:global {
+    .react-json-view {
+        font-size: 12px !important;
+
+        .variable-value {
+            text-transform: lowercase;
+
+            span:not(.string-value) {
+                text-transform: lowercase;
+            }
+
+            .string-value {
+                text-transform: none;
+            }
+
+            div {
+                font-size: 12px !important;
+                font-weight: 500 !important;
+            }
+        }
+
+        .node-ellipsis {
+            font-size: 12px !important;
+            font-weight: 500 !important;
+        }
+
+        span {
+            font-weight: 500 !important;
+        }
+
+        .brace-row {
+            span {
+                font-weight: 500 !important;
+            }
+        }
+
+        .collapsed-icon {
+            svg {
+                fill: rgb(88, 110, 117);
+            }
         }
     }
 }

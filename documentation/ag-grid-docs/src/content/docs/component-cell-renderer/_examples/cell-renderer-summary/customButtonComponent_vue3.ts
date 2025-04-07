@@ -6,7 +6,7 @@ export default {
     `,
     methods: {
         buttonClicked() {
-            alert('Software Launched');
+            console.log('Software Launched');
         },
     },
 };

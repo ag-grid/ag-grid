@@ -3,9 +3,9 @@ import { getExampleRootFileUrl } from '@utils/pages';
 import fs from 'node:fs/promises';
 import path from 'node:path';
 
-import type { InternalFramework } from './types';
+import type { GeneratedContents, InternalFramework } from './types';
 
-type GeneratedExampleParams = ExampleParams & DocsExampleParams;
+export type GeneratedExampleParams = ExampleParams & DocsExampleParams;
 
 type ExampleParams = {
     exampleName: string;
@@ -35,14 +35,6 @@ const getContentJsonPath = (params: GeneratedExampleParams) => {
     const folderPath = getFolderPath(params);
 
     return path.join(folderPath, 'contents.json');
-};
-
-type GeneratedContents = {
-    entryFileName: string;
-    files: Record<string, string>;
-    scriptFiles: string[];
-    boilerPlateFiles?: Record<string, string>;
-    extras?: string[];
 };
 
 const cacheKeys: Record<string, object> = {};

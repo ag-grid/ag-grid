@@ -216,8 +216,8 @@ export function _isRtlNegativeScroll(): boolean {
 
     const template = document.createElement('div');
     template.style.direction = 'rtl';
-    template.style.width = '1px';
-    template.style.height = '1px';
+    template.style.width = '10px';
+    template.style.height = '5px';
     template.style.position = 'fixed';
     template.style.top = '0px';
     template.style.overflow = 'hidden';
@@ -226,7 +226,7 @@ export function _isRtlNegativeScroll(): boolean {
     const spanElement: ElementParams = { tag: 'span', attrs: { style: 'display: inline-block; width: 1px' } };
     const child = _createElement({
         tag: 'div',
-        attrs: { style: 'width: 2px' },
+        attrs: { style: 'width: 20px' },
         children: [spanElement, spanElement],
     });
     template.appendChild(child);

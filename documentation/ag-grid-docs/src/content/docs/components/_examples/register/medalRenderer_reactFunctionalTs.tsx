@@ -9,7 +9,7 @@ export default (props: CustomCellRendererProps) => {
     return (
         <span className="total-value-renderer">
             <span>{country}</span>
-            <button onClick={() => alert(`${total} medals won!`)}>Push For Total</button>
+            <button onClick={() => console.log(`${total} medals won!`)}>Push For Total</button>
         </span>
     );
 };

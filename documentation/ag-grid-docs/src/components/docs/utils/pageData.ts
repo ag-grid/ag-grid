@@ -1,10 +1,11 @@
 import type { InternalFramework } from '@ag-grid-types';
+import { getGeneratedContents } from '@components/example-generator';
 import { FRAMEWORKS, QUICK_BUILD_PAGES, SHOW_DEBUG_LOGS } from '@constants';
 import { type DocsPage, getContentRootFileUrl } from '@utils/pages';
 import { pathJoin } from '@utils/pathJoin';
 
 import { getIsDev } from '../../../utils/env';
-import { getGeneratedContentsFileList } from '../../example-generator';
+import { type GeneratedExampleParams, getGeneratedContentsFileList } from '../../example-generator';
 import { getInternalFrameworkExamples, getPagesList } from './filesData';
 
 interface Example {
@@ -12,6 +13,15 @@ interface Example {
     pageName: string;
     exampleName: string;
 }
+
+type DocExamplePages = Awaited<ReturnType<typeof getDocsExamplePages>>;
+type DocExamplePage = DocExamplePages[number]['params'] & {
+    isEnterprise: boolean;
+    isIntegratedCharts?: boolean;
+    isLocale?: boolean;
+    hasExampleConsoleLog?: boolean;
+};
+type DocFrameworkExamples = Record<InternalFramework, DocExamplePage>;
 
 const isQuickBuild = QUICK_BUILD_PAGES && !getIsDev();
 
@@ -98,6 +108,39 @@ export async function getDocsExamplePages({ pages }: { pages: DocsPage[] }) {
             },
         };
     });
+}
+
+export async function getDocsExampleContents({ pages }: { pages: DocsPage[] }) {
+    const examples = await getDocsExamplePages({
+        pages,
+    });
+
+    const exampleContents: Record<string, DocFrameworkExamples> = {};
+    const examplePromises = examples.map(async (example) => {
+        const { internalFramework, pageName, exampleName } = example.params;
+        const key = `${pageName}-${exampleName}`;
+        if (!exampleContents[key]) {
+            exampleContents[key] = {} as DocFrameworkExamples;
+        }
+        const generatedExampleParams: GeneratedExampleParams = {
+            type: 'docs',
+            framework: internalFramework,
+            pageName,
+            exampleName,
+        };
+        const contents = await getGeneratedContents(generatedExampleParams);
+
+        exampleContents[key][internalFramework] = {
+            isEnterprise: contents?.isEnterprise,
+            isIntegratedCharts: contents?.isIntegratedCharts,
+            isLocale: contents?.isLocale,
+            hasExampleConsoleLog: contents?.hasExampleConsoleLog,
+            ...example.params,
+        };
+    });
+    await Promise.all(examplePromises);
+
+    return exampleContents;
 }
 
 export async function getDocExampleFiles({ pages }: { pages: DocsPage[] }) {

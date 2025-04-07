@@ -46,7 +46,7 @@ export default {
         },
 
         componentMethod(message) {
-            alert(`Alert from PartialMatchFilterComponent ${message}`);
+            console.log(`Alert from PartialMatchFilterComponent ${message}`);
         },
     },
     watch: {

@@ -41,7 +41,7 @@ function refreshData() {
     });
 }
 
-const onClick = () => alert('Mission Launched');
+const onClick = () => console.log('Mission Launched');
 const gridOptions: GridOptions<IRow> = {
     // Data to be displayed
     rowData: [],

@@ -20,7 +20,7 @@ export class MenuItem implements IMenuItemComp {
             </span>
         `;
         this.eButton = this.eGui.querySelector('.alert-button')!;
-        this.eventListener = () => alert(`${params.name} clicked`);
+        this.eventListener = () => console.log(`${params.name} clicked`);
         this.eButton.addEventListener('click', this.eventListener);
     }
 
