@@ -20,13 +20,17 @@ import {
 
 import './styles.css';
 
-// Register shared Modules globally
-ModuleRegistry.registerModules([
+const sharedModules = [
     ClientSideRowModelModule,
     ColumnMenuModule,
     ContextMenuModule,
     ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
-]);
+];
+const leftModules = [SetFilterModule, ClipboardModule, CsvExportModule];
+const rightModules = [TextFilterModule, NumberFilterModule, CsvExportModule, ExcelExportModule];
+
+// Register shared Modules globally
+ModuleRegistry.registerModules(sharedModules);
 
 @Component({
     selector: 'my-app',
@@ -55,8 +59,8 @@ ModuleRegistry.registerModules([
     `,
 })
 export class AppComponent {
-    leftModules = [SetFilterModule, ClipboardModule, CsvExportModule];
-    rightModules = [TextFilterModule, NumberFilterModule, CsvExportModule, ExcelExportModule];
+    leftModules = leftModules;
+    rightModules = rightModules;
     leftRowData: any[] = [];
     rightRowData: any[] = [];
 

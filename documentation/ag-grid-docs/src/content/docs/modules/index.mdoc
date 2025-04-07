@@ -225,6 +225,18 @@ To see the difference in features open the context menu and open the column filt
 
 {% gridExampleRunner title="Grids with Individual Registration" name="individual-registration" /%}
 
+### Check Module Registration
+
+To check if a specific module has been registered with a grid instance use the `api.isModuleRegistered(moduleName)` method.
+
+```js
+// Check if the SetFilter module is registered
+const isRegistered = api.isModuleRegistered('SetFilter');
+```
+
+{% apiDocumentation source="grid-api/api.json" section="miscellaneous" names=["isModuleRegistered"] /%}
+
+
 {% if isFramework("angular") %}
 ## Angular CLI Builders
 

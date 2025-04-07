@@ -16,13 +16,17 @@ import {
     SetFilterModule,
 } from 'ag-grid-enterprise';
 
-// Register shared Modules globally
-ModuleRegistry.registerModules([
+const sharedModules = [
     ClientSideRowModelModule,
     ColumnMenuModule,
     ContextMenuModule,
     ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
-]);
+];
+const leftModules = [SetFilterModule, ClipboardModule, CsvExportModule];
+const rightModules = [TextFilterModule, NumberFilterModule, CsvExportModule, ExcelExportModule];
+
+// Register shared Modules globally
+ModuleRegistry.registerModules(sharedModules);
 
 const columnDefs: ColDef[] = [{ field: 'id' }, { field: 'color' }, { field: 'value1' }];
 const defaultColDef = {
@@ -58,11 +62,9 @@ const rightGridOptions: GridOptions = {
 
 function loadGrid(side: string) {
     const grid = document.querySelector<HTMLElement>('#e' + side + 'Grid')!;
-    const modules =
-        side === 'Left'
-            ? [SetFilterModule, ClipboardModule, CsvExportModule]
-            : [TextFilterModule, NumberFilterModule, CsvExportModule, ExcelExportModule];
-    createGrid(grid, side === 'Left' ? leftGridOptions : rightGridOptions, { modules: modules });
+    const gridOptions = side === 'Left' ? leftGridOptions : rightGridOptions;
+    const modules = side === 'Left' ? leftModules : rightModules;
+    createGrid(grid, gridOptions, { modules: modules });
 }
 
 loadGrid('Left');
