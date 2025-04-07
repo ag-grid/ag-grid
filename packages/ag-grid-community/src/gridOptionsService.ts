@@ -2,6 +2,7 @@ import type { GridApi } from './api/gridApi';
 import type { NamedBean } from './context/bean';
 import { BeanStub } from './context/beanStub';
 import type { BeanCollection } from './context/context';
+import type { ColDef, ColGroupDef } from './entities/colDef';
 import type { GridOptions } from './entities/gridOptions';
 import type { AgEventType } from './eventTypes';
 import type { AgEvent } from './events';
@@ -19,7 +20,10 @@ import { _logIfDebug } from './utils/function';
 import { _exists } from './utils/generic';
 import type { MissingModuleErrors } from './validation/errorMessages/errorText';
 import { _error } from './validation/logging';
+import { COLUMN_DEFINITION_MOD_VALIDATIONS } from './validation/rules/colDefValidations';
+import { GRID_OPTIONS_MODULES } from './validation/rules/gridOptionsValidations';
 import type { ValidationService } from './validation/validationService';
+import type { RequiredModule } from './validation/validationTypes';
 
 type GetKeys<T, U> = {
     [K in keyof T]: T[K] extends U | undefined ? K : never;
@@ -108,6 +112,8 @@ export class GridOptionsService extends BeanStub implements NamedBean {
     private propEventSvc: LocalEventService<keyof GridOptions> = new LocalEventService();
 
     public postConstruct(): void {
+        this.validateGridOptions(this.gridOptions);
+
         this.eventSvc.addGlobalListener(this.globalEventHandlerFactory().bind(this), true);
         this.eventSvc.addGlobalListener(this.globalEventHandlerFactory(true).bind(this), false);
 
@@ -199,7 +205,7 @@ export class GridOptionsService extends BeanStub implements NamedBean {
             }
         }
 
-        validation?.processGridOptions(this.gridOptions);
+        this.validateGridOptions(this.gridOptions);
 
         // changeSet should just include the properties that have changed.
         changeSet.properties = events.map((event) => event.type);
@@ -254,6 +260,37 @@ export class GridOptionsService extends BeanStub implements NamedBean {
         (params as T).api = this.api;
         (params as T).context = this.gridOptionsContext;
         return params as T;
+    }
+
+    private assertModules<T extends object>(
+        requiredModule: RequiredModule<T> | null | undefined,
+        option: T,
+        key: string
+    ) {
+        const moduleToCheck =
+            typeof requiredModule === 'function'
+                ? requiredModule(option, this.gridOptions, this.beans)
+                : requiredModule;
+        if (moduleToCheck) {
+            this.assertModuleRegistered(moduleToCheck, key);
+        }
+    }
+
+    private validateGridOptions(gridOptions: GridOptions): void {
+        for (const key of Object.keys(gridOptions)) {
+            const requiredModule = GRID_OPTIONS_MODULES[key as keyof GridOptions];
+            this.assertModules(requiredModule, gridOptions, key);
+        }
+        this.validation?.processGridOptions(gridOptions);
+    }
+
+    public validateColDef(colDef: ColDef | ColGroupDef, colId: string, skipInferenceCheck?: boolean): void {
+        if (skipInferenceCheck || !this.beans.dataTypeSvc?.isColPendingInference(colId)) {
+            for (const key of Object.keys(colDef)) {
+                this.assertModules((COLUMN_DEFINITION_MOD_VALIDATIONS as any)[key], colDef, key);
+            }
+            this.validation?.validateColDef(colDef);
+        }
     }
 
     public assertModuleRegistered<

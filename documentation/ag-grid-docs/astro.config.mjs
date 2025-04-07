@@ -156,6 +156,11 @@ export default defineConfig({
                     /\.csb.app/,
                 ],
             },
+            headers: {
+                'Content-Security-Policy':
+                    "default-src 'self'; script-src 'self' https://*.ag-grid.com https://localhost:4610 'unsafe-inline'; style-src 'self' 'unsafe-inline';",
+                'X-Content-Type-Options': 'nosniff',
+            },
         },
         css: {
             preprocessorOptions: {

@@ -637,7 +637,7 @@ export {
     _FindApi,
 } from './api/gridApi';
 export { _getClientSideRowModel, _getServerSideRowModel } from './api/rowModelApiUtils';
-export { AgEventType, AgPublicEventType, _ALL_EVENTS, _PUBLIC_EVENTS } from './eventTypes'; // TODO: remove _ALL_EVENTS, _PUBLIC_EVENTS if not required by VUE
+export { AgEventType, AgPublicEventType, _GET_ALL_EVENTS, _PUBLIC_EVENTS } from './eventTypes'; // TODO: remove _GET_ALL_EVENTS, _PUBLIC_EVENTS if not required by VUE
 export type { FocusService } from './focusService';
 export type { GridOptionsService, PropertyValueChangedEvent } from './gridOptionsService';
 export { PropertyChangedEvent } from './gridOptionsService';
@@ -912,7 +912,7 @@ export {
 } from './interfaces/iCallbackParams';
 export { WithoutGridCommon } from './interfaces/iCommon';
 
-export { _ALL_GRID_OPTIONS, _BOOLEAN_MIXED_GRID_OPTIONS } from './propertyKeys';
+export { _GET_ALL_GRID_OPTIONS, _BOOLEAN_MIXED_GRID_OPTIONS } from './propertyKeys';
 export { IPivotColDefService } from './interfaces/iPivotColDefService';
 export { IViewportDatasource, IViewportDatasourceParams } from './interfaces/iViewportDatasource';
 export {
@@ -1066,12 +1066,13 @@ export { RowSpanningAccumulator, GridSerializingParams, RowAccumulator } from '.
 
 // modules
 export {
+    AgModuleName,
     Module,
     ModuleValidationResult,
     _ModuleWithApi,
     _ModuleWithoutApi,
     ModuleName,
-    AgModuleName,
+    ValidationModuleName as _ValidationModuleName,
 } from './interfaces/iModule';
 export { ModuleRegistry, _registerModule, _getGridRegisteredModules, _setUmd } from './modules/moduleRegistry';
 

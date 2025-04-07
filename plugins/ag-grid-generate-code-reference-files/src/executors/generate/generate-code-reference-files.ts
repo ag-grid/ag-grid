@@ -1,7 +1,7 @@
 import * as fs from 'fs';
 import ts from 'typescript';
 
-import { _ALL_EVENTS } from './_copiedFromCore/eventTypes';
+import { _GET_ALL_EVENTS } from './_copiedFromCore/eventTypes';
 import { getFormatterForTS } from './formatAST';
 
 const { formatNode, findNode, getFullJsDoc, getJsDoc } = getFormatterForTS(ts);
@@ -12,7 +12,7 @@ function _getCallbackForEvent(eventName: string): string {
     }
     return 'on' + eventName[0].toUpperCase() + eventName.substring(1);
 }
-const EVENT_LOOKUP = new Set(_ALL_EVENTS.map((event) => _getCallbackForEvent(event)));
+const EVENT_LOOKUP = new Set(_GET_ALL_EVENTS().map((event) => _getCallbackForEvent(event)));
 
 function findAllInNodesTree(node) {
     const kind = ts.SyntaxKind[node.kind];

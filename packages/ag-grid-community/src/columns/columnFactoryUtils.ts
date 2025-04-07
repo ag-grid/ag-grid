@@ -267,7 +267,7 @@ export function _addColumnDefaultAndTypes(
     colId: string,
     isAutoCol?: boolean
 ): ColDef {
-    const { gos, dataTypeSvc, validation } = beans;
+    const { gos, dataTypeSvc } = beans;
     // start with empty merged definition
     const res: ColDef = {} as ColDef;
 
@@ -297,7 +297,7 @@ export function _addColumnDefaultAndTypes(
     }
 
     dataTypeSvc?.validateColDef(res);
-    validation?.validateColDef(res, colId, isAutoCol);
+    gos.validateColDef(res, colId, isAutoCol);
 
     return res;
 }

@@ -1,7 +1,6 @@
-import type { ValidationModuleName } from '../../interfaces/iModule';
-import type { DefaultMenuItem } from '../../interfaces/menuItem';
+import type { DefaultMenuItem, GridOptionsService, _ValidationModuleName } from 'ag-grid-community';
 
-export const MENU_ITEM_MODULES: Record<DefaultMenuItem, ValidationModuleName | ValidationModuleName[]> = {
+const MENU_ITEM_MODULES: Record<DefaultMenuItem, _ValidationModuleName | _ValidationModuleName[]> = {
     pinSubMenu: 'PinnedColumn',
     pinLeft: 'PinnedColumn',
     pinRight: 'PinnedColumn',
@@ -35,3 +34,10 @@ export const MENU_ITEM_MODULES: Record<DefaultMenuItem, ValidationModuleName | V
     sortDescending: 'Sort',
     sortUnSort: 'Sort',
 };
+
+export function validateMenuItem(gos: GridOptionsService, key: string): void {
+    const moduleName = MENU_ITEM_MODULES[key as DefaultMenuItem];
+    if (moduleName) {
+        gos.assertModuleRegistered(moduleName, `menu item '${key}'`);
+    }
+}
