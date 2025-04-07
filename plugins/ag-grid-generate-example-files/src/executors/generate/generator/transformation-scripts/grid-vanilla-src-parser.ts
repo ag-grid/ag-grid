@@ -29,7 +29,7 @@ import {
 } from './parser-utils';
 
 export const templatePlaceholder = 'GRID_TEMPLATE_PLACEHOLDER';
-const PROPERTIES: any = _ALL_GRID_OPTIONS;
+const PROPERTIES: any = _ALL_GRID_OPTIONS();
 const FUNCTION_PROPERTIES: any = _FUNCTION_GRID_OPTIONS;
 
 function tsNodeIsDocumentContentLoaded(node) {
@@ -252,7 +252,7 @@ function internalParser(
 
     // all onXXX will be handled here
     // note: gridOptions = { onGridSizeChanged = function() {}  handled below
-    _ALL_EVENTS.forEach((eventName) => {
+    _ALL_EVENTS().forEach((eventName) => {
         const onEventName = 'on' + eventName.replace(/^\w/, (w) => w.toUpperCase());
         registered.push(onEventName);
 
@@ -268,7 +268,7 @@ function internalParser(
         });
     });
 
-    _ALL_EVENTS.forEach((eventName) => {
+    _ALL_EVENTS().forEach((eventName) => {
         const onEventName = 'on' + eventName.replace(/^\w/, (w) => w.toUpperCase());
         tsGridOptionsCollectors.push({
             // onGridReady is handled separately

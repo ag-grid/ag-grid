@@ -62,7 +62,7 @@ function generateAngularInputOutputs({ typeLookup, eventTypeLookup, docLookup })
     let propsToWrite = [];
     const typeKeysOrder = Object.keys(typeLookup);
 
-    _ALL_GRID_OPTIONS.forEach((property) => {
+    _ALL_GRID_OPTIONS().forEach((property) => {
         if (skippableProperties.includes(property)) return;
 
         const typeName = typeLookup[property];

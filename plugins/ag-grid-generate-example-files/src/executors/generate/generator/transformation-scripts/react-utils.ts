@@ -112,7 +112,7 @@ export const convertFunctionToConstCallbackTs = (code: string, callbackDependenc
     return `${code.replace(/function\s+([^(\s]+)\s*\(([^)]*)\)(:?\s+[^{]*)/, 'const $1 = useCallback(($2) $3 =>')}, [${callbackDependencies[functionName] || ''}])`;
 };
 
-export const EventAndCallbackNames = new Set([..._FUNCTION_GRID_OPTIONS, ..._ALL_EVENTS]);
+export const EventAndCallbackNames = new Set([..._FUNCTION_GRID_OPTIONS, ..._ALL_EVENTS()]);
 
 export function addChartsDarkModeIfRequired(bindings: ParsedBindings, imports: string[], useTypescript: boolean) {
     let darkModeWithGridRef = getIntegratedDarkModeCode(bindings.exampleName, useTypescript, 'gridRef.current?.api');
