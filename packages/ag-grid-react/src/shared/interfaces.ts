@@ -7,14 +7,26 @@ export interface AgGridReactProps<TData = any> extends GridOptions<TData> {
      * See [Providing Modules To Individual Grids](https://www.ag-grid.com/react-data-grid/modules/#providing-modules-to-individual-grids) for more information.
      */
     modules?: Module[];
+    /**
+     * The CSS style to be applied to the grid's outermost div element.
+     */
     containerStyle?: any;
+    /**
+     * The CSS class to be applied to the grid's outermost div element.
+     */
     className?: string;
+
+    /** @deprecated v33.3 It is expected that his property is not required and so will be removed in a future version. If you require this property please contact support. */
     componentWrappingElement?: string; // only used when putting React into JS
+    /** @deprecated v33.3 It is expected that his property is not required and so will be removed in a future version. If you require this property please contact support. */
     maxComponentCreationTimeMs?: number; // only used when putting React into JS
+    /** @deprecated v33.3 This method is not called and will be removed. To access the GridApi visit: https://ag-grid.com/react-data-grid/grid-interface/#grid-api */
+    setGridApi?: (gridApi: GridApi<TData>) => void;
+    /** @deprecated v33.3 AgGridReact does not accept children so this property will be removed. */
     children?: any;
 }
 
 export interface InternalAgGridReactProps<TData = any> extends AgGridReactProps<TData> {
-    /** Internally used prop to pass apis up to the top level class component */
-    setGridApi?: (gridApi: GridApi<TData>) => void;
+    /** Internal method to pass api to top level class component. */
+    passGridApi?: (gridApi: GridApi<TData>) => void;
 }

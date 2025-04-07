@@ -66,6 +66,7 @@ const reactPropsNotGridOptions: ReactCompProps = {
     containerStyle: undefined,
     className: undefined,
     setGridApi: undefined,
+    passGridApi: undefined,
     componentWrappingElement: undefined,
     maxComponentCreationTimeMs: undefined,
     children: undefined,
@@ -167,7 +168,7 @@ export const AgGridReactUi = <TData,>(props: InternalAgGridReactProps<TData>) =>
 
                     const api = apiRef.current;
                     if (api) {
-                        props.setGridApi?.(api);
+                        props.passGridApi?.(api);
                     }
                 }
             );
@@ -416,7 +417,7 @@ const DetailCellRenderer = forwardRef((props: IDetailCellRendererParams, ref: an
         }
     }, []);
 
-    const setGridApi = useCallback((api: GridApi) => {
+    const registerGridApi = useCallback((api: GridApi) => {
         ctrlRef.current?.registerDetailWithMaster(api);
     }, []);
 
@@ -428,7 +429,7 @@ const DetailCellRenderer = forwardRef((props: IDetailCellRendererParams, ref: an
                     {...detailGridOptions}
                     modules={parentModules}
                     rowData={detailRowData}
-                    setGridApi={setGridApi}
+                    passGridApi={registerGridApi}
                 />
             )}
         </div>
