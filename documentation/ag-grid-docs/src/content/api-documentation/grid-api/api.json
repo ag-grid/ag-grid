@@ -1053,7 +1053,7 @@
         "isModuleRegistered": {
             "interfaceHierarchyOverrides": {
                 "exclude": [],
-                "include": ["CommunityModuleName", "EnterpriseModuleName"]
+                "include": ["AgModuleName", "CommunityModuleName", "EnterpriseModuleName"]
             }
         },
         "isAnimationFrameQueueEmpty": {}
