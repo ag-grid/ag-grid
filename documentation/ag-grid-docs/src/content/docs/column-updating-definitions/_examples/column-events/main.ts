@@ -212,7 +212,7 @@ function onBtPinnedOn() {
         if (colDef.field === 'athlete') {
             colDef.pinned = 'left';
         }
-        if (colDef.field === 'age') {
+        if (colDef.field === 'sport') {
             colDef.pinned = 'right';
         }
     });
