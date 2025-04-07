@@ -104,7 +104,7 @@ export class GridBodyScrollFeature extends BeanStub {
     }
 
     public postConstruct(): void {
-        this.enableRtl = this.gos.get('enableRtl');
+        this.enableRtl = this.gos.getAsBool('enableRtl');
 
         const invalidateVerticalScroll = this.invalidateVerticalScroll.bind(this);
         const invalidateHorizontalScroll = this.invalidateHorizontalScroll.bind(this);

@@ -11,8 +11,8 @@ export class ValueCache extends BeanStub implements NamedBean {
 
     public postConstruct(): void {
         const gos = this.gos;
-        this.active = gos.get('valueCache');
-        this.neverExpires = gos.get('valueCacheNeverExpires');
+        this.active = gos.getAsBool('valueCache');
+        this.neverExpires = gos.getAsBool('valueCacheNeverExpires');
     }
 
     public onDataChanged(): void {

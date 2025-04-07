@@ -170,7 +170,7 @@ export class SetValueModel<V> implements IEventEmitter<SetValueModelEvent> {
         }
         this.keyComparator = (keyComparator as any) ?? _defaultComparator;
         this.caseSensitive = !!caseSensitive;
-        const groupAllowUnbalanced = gos.get('groupAllowUnbalanced');
+        const groupAllowUnbalanced = gos.getAsBool('groupAllowUnbalanced');
 
         if (_isClientSideRowModel(gos, rowModel)) {
             this.clientSideValuesExtractor = new ClientSideValuesExtractor(

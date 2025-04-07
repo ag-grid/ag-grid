@@ -209,7 +209,7 @@ export class CellCtrl extends BeanStub {
         this.addFeatures();
         compBean.addDestroyFunc(() => this.removeFeatures());
 
-        this.onSuppressCellFocusChanged(this.beans.gos.get('suppressCellFocus'));
+        this.onSuppressCellFocusChanged(this.beans.gos.getAsBool('suppressCellFocus'));
 
         this.setupFocus();
         this.applyStaticCssClasses();

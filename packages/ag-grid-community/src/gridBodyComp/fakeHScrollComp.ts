@@ -71,7 +71,7 @@ export class FakeHScrollComp extends AbstractFakeScrollComp {
             return;
         }
 
-        this.enableRtl = this.gos.get('enableRtl');
+        this.enableRtl = this.gos.getAsBool('enableRtl');
         super.initialiseInvisibleScrollbar();
 
         if (this.invisibleScrollbar) {

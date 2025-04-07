@@ -298,7 +298,7 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
 
         const { clientSideRowModel } = this;
         const rootNode = clientSideRowModel?.rootNode;
-        const changedPath = rootNode && new ChangedPath(gos.get('aggregateOnlyChangedColumns'), rootNode);
+        const changedPath = rootNode && new ChangedPath(gos.getAsBool('aggregateOnlyChangedColumns'), rootNode);
 
         const cellsToFlash = {} as any;
         const updatedRowNodes: RowNode[] = [];
@@ -698,11 +698,11 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
 
         // don't override 'includeHeaders' if it has been explicitly set to 'false'
         if (includeHeaders == null) {
-            includeHeaders = gos.get('copyHeadersToClipboard');
+            includeHeaders = gos.getAsBool('copyHeadersToClipboard');
         }
 
         if (includeGroupHeaders == null) {
-            includeGroupHeaders = gos.get('copyGroupHeadersToClipboard');
+            includeGroupHeaders = gos.getAsBool('copyGroupHeadersToClipboard');
         }
 
         const copyParams = { includeHeaders, includeGroupHeaders };

@@ -79,7 +79,7 @@ export class TooltipStateManager extends BeanStub {
         }
 
         this.tooltipTrigger = this.getTooltipTrigger();
-        this.tooltipMouseTrack = this.gos.get('tooltipMouseTrack');
+        this.tooltipMouseTrack = this.gos.getAsBool('tooltipMouseTrack');
 
         const el = this.tooltipCtrl.getGui();
 

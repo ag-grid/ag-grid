@@ -330,7 +330,7 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
         const keyCreator = newParams.keyCreator ?? newParams.colDef.keyCreator;
         this.setValueFormatter(newParams.valueFormatter, keyCreator, !!newParams.treeList, !!newParams.colDef.refData);
         const isGroupCol = newParams.column.getId().startsWith(GROUP_AUTO_COLUMN_ID);
-        this.treeDataTreeList = this.gos.get('treeData') && !!newParams.treeList && isGroupCol;
+        this.treeDataTreeList = this.gos.getAsBool('treeData') && !!newParams.treeList && isGroupCol;
         this.groupingTreeList = !!this.rowGroupColsSvc?.columns.length && !!newParams.treeList && isGroupCol;
         this.createKey = this.generateCreateKey(keyCreator, this.treeDataTreeList || this.groupingTreeList);
     };
@@ -906,7 +906,7 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
                 processDataPath(
                     (node as RowNode).getRoute() ?? [node.key ?? node.id!],
                     true,
-                    this.gos.get('groupAllowUnbalanced')
+                    this.gos.getAsBool('groupAllowUnbalanced')
                 ) as any
             ) as any
         );
@@ -918,7 +918,7 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
         );
         dataPath.push(this.getValueFromNode(node));
         return this.isInAppliedModel(
-            this.createKey(processDataPath(dataPath, false, this.gos.get('groupAllowUnbalanced')) as any) as any
+            this.createKey(processDataPath(dataPath, false, this.gos.getAsBool('groupAllowUnbalanced')) as any) as any
         );
     }
 

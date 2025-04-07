@@ -30,7 +30,7 @@ export class ClientSidePathTreeNodeManager<TData>
 
     public override get treeData(): boolean {
         const gos = this.gos;
-        return gos.get('treeData') && !!gos.get('getDataPath');
+        return gos.getAsBool('treeData') && !!gos.get('getDataPath');
     }
 
     public override refreshModel(params: RefreshModelParams<TData>, started: boolean): void {

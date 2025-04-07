@@ -44,7 +44,7 @@ export class ColumnViewportService extends BeanStub implements NamedBean {
     private suppressColumnVirtualisation: boolean;
 
     public postConstruct(): void {
-        this.suppressColumnVirtualisation = this.gos.get('suppressColumnVirtualisation');
+        this.suppressColumnVirtualisation = this.gos.getAsBool('suppressColumnVirtualisation');
     }
 
     public setScrollPosition(scrollWidth: number, scrollPosition: number, afterScroll: boolean = false): void {

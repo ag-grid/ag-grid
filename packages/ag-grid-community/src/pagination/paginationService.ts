@@ -31,7 +31,7 @@ export class PaginationService extends BeanStub implements NamedBean {
 
     public postConstruct() {
         const gos = this.gos;
-        this.active = gos.get('pagination');
+        this.active = gos.getAsBool('pagination');
         this.pageSizeFromGridOptions = gos.get('paginationPageSize');
         this.paginateChildRows = this.isPaginateChildRows();
 
@@ -53,11 +53,11 @@ export class PaginationService extends BeanStub implements NamedBean {
         if (shouldPaginate) {
             return true;
         }
-        return gos.get('paginateChildRows');
+        return gos.getAsBool('paginateChildRows');
     }
 
     private onPaginationGridOptionChanged(): void {
-        this.active = this.gos.get('pagination');
+        this.active = this.gos.getAsBool('pagination');
         this.calculatePages();
 
         // important to keep rendered rows, otherwise every time grid is resized,

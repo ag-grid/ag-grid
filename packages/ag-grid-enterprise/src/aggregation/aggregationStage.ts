@@ -80,7 +80,7 @@ export class AggregationStage extends BeanStub implements NamedBean, IRowNodeSta
         const pivotColumns = pivotActive && this.pivotColsSvc ? this.pivotColsSvc.columns : [];
 
         const aggDetails: AggregationDetails = {
-            alwaysAggregateAtRootLevel: this.gos.get('alwaysAggregateAtRootLevel'),
+            alwaysAggregateAtRootLevel: this.gos.getAsBool('alwaysAggregateAtRootLevel'),
             groupIncludeTotalFooter: !!_getGrandTotalRow(this.gos),
             changedPath: params.changedPath!,
             valueColumns: measureColumns ?? [],

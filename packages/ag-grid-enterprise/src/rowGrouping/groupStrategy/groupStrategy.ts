@@ -137,7 +137,7 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
             rowNodesOrderChanged: !!rowNodesOrderChanged,
             // if no transaction and not immutable row data set, then it's shotgun, changed path would be 'not active' at this point anyway
             changedPath: changedPath!,
-            groupAllowUnbalanced: this.gos.get('groupAllowUnbalanced'),
+            groupAllowUnbalanced: this.gos.getAsBool('groupAllowUnbalanced'),
             isGroupOpenByDefault: this.gos.getCallback('isGroupOpenByDefault') as any,
             initialGroupOrderComparator: this.gos.getCallback('initialGroupOrderComparator') as any,
             keyCreators: groupedCols?.map((column) => column.getColDef().keyCreator) ?? [],

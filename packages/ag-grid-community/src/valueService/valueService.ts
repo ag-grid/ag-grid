@@ -63,8 +63,8 @@ export class ValueService extends BeanStub implements NamedBean {
             ? this.executeValueGetterWithValueCache.bind(this)
             : this.executeValueGetterWithoutValueCache.bind(this);
         this.isSsrm = _isServerSideRowModel(this.gos);
-        this.cellExpressions = this.gos.get('enableCellExpressions');
-        this.isTreeData = this.gos.get('treeData');
+        this.cellExpressions = this.gos.getAsBool('enableCellExpressions');
+        this.isTreeData = this.gos.getAsBool('treeData');
         this.initialised = true;
 
         // We listen to our own event and use it to call the columnSpecific callback,

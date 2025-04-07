@@ -409,7 +409,7 @@ export class ExcelCreator
     }
 
     public isExportSuppressed(): boolean {
-        return this.gos.get('suppressExcelExport');
+        return this.gos.getAsBool('suppressExcelExport');
     }
 
     private packageCompressedFile(params: ExcelExportMultipleSheetParams): Promise<Blob | undefined> {

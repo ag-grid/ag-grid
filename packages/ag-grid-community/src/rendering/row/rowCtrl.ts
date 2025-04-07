@@ -152,7 +152,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         this.beans = beans;
         this.gos = beans.gos;
         this.paginationPage = beans.pagination?.getCurrentPage() ?? 0;
-        this.suppressRowTransform = this.gos.get('suppressRowTransform');
+        this.suppressRowTransform = this.gos.getAsBool('suppressRowTransform');
 
         this.instanceId = (rowNode.id + '-' + instanceIdSequence++) as RowCtrlInstanceId;
         this.rowId = _escapeString(rowNode.id);
@@ -239,7 +239,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
     }
 
     public isCacheable(): boolean {
-        return this.rowType === 'FullWidthDetail' && this.gos.get('keepDetailRows');
+        return this.rowType === 'FullWidthDetail' && this.gos.getAsBool('keepDetailRows');
     }
 
     public setCached(cached: boolean): void {
@@ -250,7 +250,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
     private initialiseRowComp(gui: RowGui): void {
         const gos = this.gos;
 
-        this.onSuppressCellFocusChanged(this.beans.gos.get('suppressCellFocus'));
+        this.onSuppressCellFocusChanged(this.beans.gos.getAsBool('suppressCellFocus'));
 
         this.listenOnDomOrder(gui);
         this.onRowHeightChanged(gui);

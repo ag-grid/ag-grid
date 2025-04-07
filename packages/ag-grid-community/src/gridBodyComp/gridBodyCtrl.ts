@@ -287,7 +287,7 @@ export class GridBodyCtrl extends BeanStub {
     }
 
     public isVerticalScrollShowing(): boolean {
-        const show = this.gos.get('alwaysShowVerticalScroll');
+        const show = this.gos.getAsBool('alwaysShowVerticalScroll');
         const cssClass = show ? CSS_CLASS_FORCE_VERTICAL_SCROLL : null;
         const allowVerticalScroll = _isDomLayout(this.gos, 'normal');
         this.comp.setAlwaysVerticalScrollClass(cssClass, show);

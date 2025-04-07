@@ -26,7 +26,7 @@ export function _getFlattenDetails(gos: GridOptionsService): FlattenDetails {
     return {
         groupHideParentOfSingleChild,
         isGroupMultiAutoColumn: _isGroupMultiAutoColumn(gos),
-        hideOpenParents: gos.get('groupHideOpenParents'),
+        hideOpenParents: gos.getAsBool('groupHideOpenParents'),
         grandTotalRow: _getGrandTotalRow(gos),
         groupTotalRow: _getGroupTotalRowCallback(gos),
     };
