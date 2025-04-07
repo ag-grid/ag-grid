@@ -155,6 +155,7 @@ export const _INTERNAL_EVENTS = [
     'pinnedRowsChanged',
 ] as const;
 
+// We define as a callback to help with tree shaking (esbuild)
 export const _ALL_EVENTS = () => [..._PUBLIC_EVENTS, ..._INTERNAL_EVENTS] as const;
 
 export type AgPublicEventType = (typeof _PUBLIC_EVENTS)[number];
