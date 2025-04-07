@@ -61,11 +61,6 @@ const {
     PUBLIC_HTTPS_SERVER = '1',
 
     /**
-     * Generate `/debug/*` pages
-     */
-    ENABLE_GENERATE_DEBUG_PAGES = '1',
-
-    /**
      * Show debug logs in the terminal
      *
      * Used to hide logs that are annoying for most other devs
@@ -125,9 +120,9 @@ console.log(
             PUBLIC_BASE_URL,
             PUBLIC_USE_PUBLISHED_PACKAGES,
             USE_PACKAGES,
-            ENABLE_GENERATE_DEBUG_PAGES,
             SHOW_DEBUG_LOGS,
             HTACCESS,
+            CHECK_LINKS,
             CHECK_REDIRECTS,
             QUICK_BUILD_PAGES,
             DISABLE_EXAMPLE_RUNNER,

@@ -91,8 +91,9 @@ export interface ParsedBindings {
 
 export interface GeneratedContents extends ExampleConfig {
     isEnterprise: boolean;
-    isIntegratedCharts: boolean;
-    hasExampleConsoleLog: boolean;
+    isIntegratedCharts?: boolean;
+    isLocale?: boolean;
+    hasExampleConsoleLog?: boolean;
     entryFileName: string;
     mainFileName: string;
     files: FileContents;

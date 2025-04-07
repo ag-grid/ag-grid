@@ -25,7 +25,7 @@ export class FullWidthCellRenderer implements ICellRendererAngularComp {
     }
 
     clicked() {
-        alert('button clicked');
+        console.log('button clicked');
     }
 
     refresh() {

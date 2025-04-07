@@ -53,7 +53,7 @@ export const ExampleRunner: FunctionComponent<Props> = ({
 
     const exampleHeight = initialExampleHeight || DEFAULT_HEIGHT;
     return (
-        <div id={id} className={styles.exampleOuter}>
+        <div className={styles.exampleOuter}>
             <div className={styles.tabsContainer}>
                 <div
                     className={classnames(styles.content, {

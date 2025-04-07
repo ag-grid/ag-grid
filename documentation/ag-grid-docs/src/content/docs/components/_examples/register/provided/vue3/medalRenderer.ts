@@ -19,7 +19,7 @@ export default defineComponent({
     },
     methods: {
         buttonClicked() {
-            alert(`${this.total} medals won!`);
+            console.log(`${this.total} medals won!`);
         },
     },
 });

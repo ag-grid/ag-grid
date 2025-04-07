@@ -22,6 +22,6 @@ export class ClickableStatusBarComponent implements IStatusPanelAngularComp {
     }
 
     onClick(): void {
-        alert('Selected Row Count: ' + this.params.api.getSelectedRows().length);
+        console.log('Selected Row Count: ' + this.params.api.getSelectedRows().length);
     }
 }

@@ -478,7 +478,8 @@
             {
                 "text": "Export Row Groups to Excel with Their Current Expanded State"
             }
-        ]
+        ],
+        "notesPath": "./upgrading-to-ag-grid-30"
     },
     {
         "version": "29.3.5",
@@ -554,7 +555,8 @@
     },
     {
         "version": "29.0.0",
-        "date": "January 13th, 2023"
+        "date": "January 13th, 2023",
+        "notesPath": "./upgrading-to-ag-grid-29"
     },
     {
         "version": "28.2.1",

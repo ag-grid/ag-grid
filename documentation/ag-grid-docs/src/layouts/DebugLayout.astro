@@ -1,14 +1,12 @@
 ---
 import Layout from '@layouts/Layout.astro';
-import { ENABLE_GENERATE_DEBUG_PAGES } from '@constants';
 
 const { title } = Astro.props;
 ---
 
 <Layout title={title}>
     <main id="debug-main" class="layout-page-max-width container">
-        {!ENABLE_GENERATE_DEBUG_PAGES && <p>Not generated.</p>}
-        {ENABLE_GENERATE_DEBUG_PAGES && <slot />}
+        <slot />
     </main>
 </Layout>
 

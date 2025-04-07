@@ -335,6 +335,12 @@ jobs:
       - name: docs build and link checker
         run: CHECK_LINKS=true CHECK_REDIRECTS=true yarn nx run ag-grid-docs:build -c staging
 
+      - name: Check Outputs
+        run: |
+          ls -l dist/generated-examples/ag-grid-docs/docs/column-definitions/_examples/simple/vanilla
+          ls -l documentation/ag-grid-docs/dist/examples/column-definitions/simple
+          ls -l documentation/ag-grid-docs/dist/examples/column-definitions/simple/vanilla
+
       - name: Deploy to Staging
         id: deploy_to_staging
         if: ${{ github.ref == 'refs/heads/latest' }}
