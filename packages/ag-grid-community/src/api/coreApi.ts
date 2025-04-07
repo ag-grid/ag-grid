@@ -1,6 +1,7 @@
 import type { BeanCollection } from '../context/context';
 import type { GridOptions } from '../entities/gridOptions';
 import type { ManagedGridOptionKey, ManagedGridOptions } from '../gridOptionsInitial';
+import type { CommunityModuleName, EnterpriseModuleName } from '../interfaces/iModule';
 
 export function getGridId(beans: BeanCollection): string {
     return beans.context.getGridId();
@@ -36,4 +37,11 @@ export function updateGridOptions<TDataUpdate = any>(
     // NOTE: The TDataUpdate generic is used to ensure that the update options match the generic passed into the GridApi above as TData.
     // This is required because if we just use TData directly then Typescript will get into an infinite loop due to callbacks which recursively include the GridApi.
     beans.gos.updateGridOptions({ options });
+}
+
+export function isModuleRegistered(
+    beans: BeanCollection,
+    moduleName: CommunityModuleName | EnterpriseModuleName
+): boolean {
+    return beans.gos.isModuleRegistered(moduleName);
 }
