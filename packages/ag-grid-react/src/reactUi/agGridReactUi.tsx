@@ -49,7 +49,7 @@ import { NoRowsOverlayComponentWrapper } from '../shared/customComp/noRowsOverla
 import { StatusPanelComponentWrapper } from '../shared/customComp/statusPanelComponentWrapper';
 import { ToolPanelComponentWrapper } from '../shared/customComp/toolPanelComponentWrapper';
 import { warnReactiveCustomComponents } from '../shared/customComp/util';
-import type { AgGridReactProps } from '../shared/interfaces';
+import type { AgGridReactProps, InternalAgGridReactProps } from '../shared/interfaces';
 import { PortalManager } from '../shared/portalManager';
 import { ReactComponent } from '../shared/reactComponent';
 import { BeansContext } from './beansContext';
@@ -57,7 +57,7 @@ import GridComp from './gridComp';
 import { RenderStatusService } from './renderStatusService';
 import { CssClasses, isReact19, runWithoutFlushSync } from './utils';
 
-type ReactCompProps = Omit<AgGridReactProps, keyof GridOptions>;
+type ReactCompProps = Omit<InternalAgGridReactProps, keyof GridOptions>;
 
 // Used to only pass gridOptions to the GridCoreCreator from the props
 const reactPropsNotGridOptions: ReactCompProps = {
@@ -72,7 +72,7 @@ const reactPropsNotGridOptions: ReactCompProps = {
 };
 const excludeReactCompProps = new Set(Object.keys(reactPropsNotGridOptions));
 
-export const AgGridReactUi = <TData,>(props: AgGridReactProps<TData>) => {
+export const AgGridReactUi = <TData,>(props: InternalAgGridReactProps<TData>) => {
     const apiRef = useRef<GridApi<TData>>();
     const eGui = useRef<HTMLDivElement | null>(null);
     const portalManager = useRef<PortalManager | null>(null);

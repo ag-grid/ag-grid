@@ -9,8 +9,12 @@ export interface AgGridReactProps<TData = any> extends GridOptions<TData> {
     modules?: Module[];
     containerStyle?: any;
     className?: string;
-    setGridApi?: (gridApi: GridApi<TData>) => void;
     componentWrappingElement?: string; // only used when putting React into JS
     maxComponentCreationTimeMs?: number; // only used when putting React into JS
     children?: any;
+}
+
+export interface InternalAgGridReactProps<TData = any> extends AgGridReactProps<TData> {
+    /** Internally used prop to pass apis up to the top level class component */
+    setGridApi?: (gridApi: GridApi<TData>) => void;
 }
