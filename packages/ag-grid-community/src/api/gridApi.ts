@@ -42,7 +42,7 @@ import type { ExcelExportMultipleSheetParams, ExcelExportParams } from '../inter
 import type { FilterModel, IFilter } from '../interfaces/iFilter';
 import type { IFiltersToolPanel } from '../interfaces/iFiltersToolPanel';
 import type { FindCellParams, FindCellValueParams, FindMatch, FindPart } from '../interfaces/iFind';
-import type { CommunityModuleName, EnterpriseModuleName } from '../interfaces/iModule';
+import type { AgModuleName } from '../interfaces/iModule';
 import type { RedrawRowsParams } from '../interfaces/iRedrawRowsParams';
 import type { IRowNode, RowPinnedType } from '../interfaces/iRowNode';
 import type { LoadSuccessParams, RefreshServerSideParams } from '../interfaces/iServerSideRowModel';
@@ -114,7 +114,7 @@ export interface _CoreGridApi<TData = any> {
     /**
      * Check if the provided AG Module is registered for the current grid.
      */
-    isModuleRegistered(moduleName: CommunityModuleName | EnterpriseModuleName): boolean;
+    isModuleRegistered(moduleName: AgModuleName): boolean;
 }
 
 export interface _RowSelectionGridApi<TData = any> {

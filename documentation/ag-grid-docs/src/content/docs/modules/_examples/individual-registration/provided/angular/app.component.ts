@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 
 import { AgGridAngular } from 'ag-grid-angular';
-import type { ColDef } from 'ag-grid-community';
+import type { AgModuleName, ColDef, GridReadyEvent } from 'ag-grid-community';
 import {
     ClientSideRowModelModule,
     CsvExportModule,
@@ -40,19 +40,23 @@ ModuleRegistry.registerModules(sharedModules);
         <div class="example-wrapper">
             <div class="inner-col">
                 <ag-grid-angular
+                    [gridId]="'Left'"
                     [defaultColDef]="defaultColDef"
                     [rowData]="leftRowData"
                     [modules]="leftModules"
                     [columnDefs]="columns"
+                    (gridReady)="onGridReady($event)"
                 />
             </div>
 
             <div class="inner-col">
                 <ag-grid-angular
+                    [gridId]="'Right'"
                     [defaultColDef]="defaultColDef"
                     [rowData]="leftRowData"
                     [modules]="rightModules"
                     [columnDefs]="columns"
+                    (gridReady)="onGridReady($event)"
                 />
             </div>
         </div>
@@ -76,6 +80,24 @@ export class AppComponent {
     constructor() {
         this.leftRowData = createRowBlock();
         this.rightRowData = createRowBlock();
+    }
+
+    onGridReady(event: GridReadyEvent) {
+        const api = event.api;
+        const moduleNames: AgModuleName[] = [
+            'Clipboard',
+            'ClientSideRowModel',
+            'ColumnMenu',
+            'ContextMenu',
+            'CsvExport',
+            'ExcelExport',
+            'NumberFilter',
+            'SetFilter',
+            'TextFilter',
+            'IntegratedCharts', // Not registered in this example
+        ];
+        const registered = moduleNames.filter((name) => api.isModuleRegistered(name));
+        console.log(api.getGridId(), 'registered:', registered.join());
     }
 }
 

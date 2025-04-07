@@ -1,7 +1,7 @@
 import type { BeanCollection } from '../context/context';
 import type { GridOptions } from '../entities/gridOptions';
 import type { ManagedGridOptionKey, ManagedGridOptions } from '../gridOptionsInitial';
-import type { CommunityModuleName, EnterpriseModuleName } from '../interfaces/iModule';
+import type { AgModuleName } from '../interfaces/iModule';
 
 export function getGridId(beans: BeanCollection): string {
     return beans.context.getGridId();
@@ -39,9 +39,6 @@ export function updateGridOptions<TDataUpdate = any>(
     beans.gos.updateGridOptions({ options });
 }
 
-export function isModuleRegistered(
-    beans: BeanCollection,
-    moduleName: CommunityModuleName | EnterpriseModuleName
-): boolean {
+export function isModuleRegistered(beans: BeanCollection, moduleName: AgModuleName): boolean {
     return beans.gos.isModuleRegistered(moduleName);
 }

@@ -188,7 +188,10 @@ export type EnterpriseModuleName =
     | 'TreeData'
     | 'ViewportRowModel';
 
-export type ModuleName = InternalModuleName | CommunityModuleName | EnterpriseModuleName;
+/** The names of all publicly available AG Grid modules */
+export type AgModuleName = CommunityModuleName | EnterpriseModuleName;
+/** INTERNAL: All public and internal module names */
+export type ModuleName = InternalModuleName | AgModuleName;
 
 /** These are the internal modules that we have mappings for to convert into exported modules */
 export type ResolvableModuleName = Extract<
