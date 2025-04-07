@@ -137,7 +137,7 @@ const batchTimeout: Ref<number | null> = ref(null);
 
 // setup up watches
 const propsAsRefs = toRefs<any>(props);
-_ALL_GRID_OPTIONS
+_ALL_GRID_OPTIONS()
     .filter((propertyName: string) => propertyName != 'gridOptions') // dealt with in AgGridVue itself
     .forEach((propertyName: string) => {
         watch(
@@ -274,8 +274,8 @@ onMounted(() => {
 
     const gridOptions = markRaw(
         _combineAttributesAndGridOptions(deepToRaw<GridOptions<TData>>(props.gridOptions), props, [
-            ..._ALL_GRID_OPTIONS,
-            ..._ALL_EVENTS.map((event) => _getCallbackForEvent(event)),
+            ..._ALL_GRID_OPTIONS(),
+            ..._ALL_EVENTS().map((event) => _getCallbackForEvent(event)),
         ])
     );
 

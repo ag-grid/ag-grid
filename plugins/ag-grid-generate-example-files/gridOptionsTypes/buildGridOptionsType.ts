@@ -44,7 +44,7 @@ function getTypeLookupFunc(fileName) {
         };
 
         const fullLookup = {};
-        _ALL_GRID_OPTIONS.forEach((prop) => {
+        _ALL_GRID_OPTIONS().forEach((prop) => {
             fullLookup[prop] = lookupType(prop as string);
         });
         return fullLookup;

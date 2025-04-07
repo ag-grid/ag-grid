@@ -12,7 +12,7 @@ function _getCallbackForEvent(eventName: string): string {
     }
     return 'on' + eventName[0].toUpperCase() + eventName.substring(1);
 }
-const EVENT_LOOKUP = new Set(_ALL_EVENTS.map((event) => _getCallbackForEvent(event)));
+const EVENT_LOOKUP = new Set(_ALL_EVENTS().map((event) => _getCallbackForEvent(event)));
 
 function findAllInNodesTree(node) {
     const kind = ts.SyntaxKind[node.kind];
