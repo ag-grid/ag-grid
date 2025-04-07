@@ -1,8 +1,8 @@
 import type { DomLayoutType, GridOptions } from '../../entities/gridOptions';
-import { _ALL_EVENTS } from '../../eventTypes';
+import { _GET_ALL_EVENTS } from '../../eventTypes';
 import { _getCallbackForEvent } from '../../gridOptionsUtils';
 import type { ValidationModuleName } from '../../interfaces/iModule';
-import { _ALL_GRID_OPTIONS, _BOOLEAN_GRID_OPTIONS, _NUMBER_GRID_OPTIONS } from '../../propertyKeys';
+import { _BOOLEAN_GRID_OPTIONS, _GET_ALL_GRID_OPTIONS, _NUMBER_GRID_OPTIONS } from '../../propertyKeys';
 import { DEFAULT_SORTING_ORDER } from '../../sort/sortService';
 import { _mergeDeep } from '../../utils/object';
 import { _errMsg, toStringWithNullUndefined } from '../logging';
@@ -501,7 +501,7 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => {
 
 export const GRID_OPTIONS_VALIDATORS: () => OptionsValidator<GridOptions> = () => ({
     objectName: 'gridOptions',
-    allProperties: [..._ALL_GRID_OPTIONS(), ..._ALL_EVENTS().map((event) => _getCallbackForEvent(event))],
+    allProperties: [..._GET_ALL_GRID_OPTIONS(), ..._GET_ALL_EVENTS().map((event) => _getCallbackForEvent(event))],
     propertyExceptions: ['api'],
     docsUrl: 'grid-options/',
     deprecations: GRID_OPTION_DEPRECATIONS(),
