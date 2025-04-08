@@ -113,7 +113,6 @@ export interface _CoreGridApi<TData = any> {
 
     /**
      * Check if a Module is registered with the current grid instance via its equivalent string name.
-     * For example, to check if the `SetFilterModule` has been registered: `api.isModuleRegistered("SetFilterModule")`
      */
     isModuleRegistered(moduleName: AgModuleName): boolean;
 }
