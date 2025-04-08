@@ -248,7 +248,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
         if (event && event.rowIndex != null && !event.rowPinned) {
             const col = this.beans.colModel.getCol(event.column) ?? undefined;
             if (!this.isCellRendered(event.rowIndex, col)) {
-                this.redrawAfterModelUpdate();
+                this.redraw();
             }
         }
 
