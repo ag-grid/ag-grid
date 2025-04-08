@@ -112,7 +112,8 @@ export interface _CoreGridApi<TData = any> {
     updateGridOptions<TDataUpdate extends TData>(options: ManagedGridOptions<TDataUpdate>): void;
 
     /**
-     * Check if the provided AG Module is registered for the current grid.
+     * Check if a Module is registered with the current grid instance via its equivalent string name.
+     * For example, to check if the `SetFilterModule` has been registered: `api.isModuleRegistered("SetFilterModule")`
      */
     isModuleRegistered(moduleName: AgModuleName): boolean;
 }
