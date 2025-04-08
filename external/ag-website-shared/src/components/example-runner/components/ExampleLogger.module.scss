@@ -1,7 +1,10 @@
 @use 'design-system' as *;
 
 .loggerOuter {
+    min-height: 34px;
     height: 154px;
+    max-height: 700px;
+    resize: vertical;
     display: flex;
     flex-direction: column;
     margin-top: $spacing-size-4;
