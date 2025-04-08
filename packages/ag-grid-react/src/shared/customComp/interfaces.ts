@@ -10,6 +10,7 @@ import type {
     BaseMenuItem,
     BaseMenuItemParams,
     BaseToolPanelParams,
+    FilterDisplayParams,
     ICellEditorParams,
     ICellRendererParams,
     IDetailCellRendererParams,
@@ -24,6 +25,7 @@ import type {
     INoRowsOverlayParams,
     IStatusPanelParams,
     ITooltipParams,
+    SharedFilterUi,
 } from 'ag-grid-community';
 
 import { CustomContext } from './customContext';
@@ -63,6 +65,10 @@ export interface CustomFilterProps<TData = any, TContext = any, TModel = any>
      */
     onUiChange: () => void;
 }
+
+/** TODO */
+export interface CustomFilterDisplayProps<TData = any, TContext = any, TModel = any>
+    extends FilterDisplayParams<TData, TContext, TModel> {}
 
 /** Props provided to custom floating filter components */
 export interface CustomFloatingFilterProps<P = IFilter, TData = any, TContext = any, TModel = any>
@@ -158,6 +164,9 @@ export interface CustomDateCallbacks extends BaseDate {}
 
 /** Callbacks for custom filter components */
 export interface CustomFilterCallbacks extends BaseFilter {}
+
+/** TODO */
+export interface CustomFilterDisplayCallbacks extends SharedFilterUi {}
 
 /** Callbacks for custom floating filter components */
 export interface CustomFloatingFilterCallbacks extends BaseFloatingFilter {}

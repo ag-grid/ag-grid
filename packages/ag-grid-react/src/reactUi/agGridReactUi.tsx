@@ -27,7 +27,7 @@ import {
     GridCoreCreator,
     VanillaFrameworkOverrides,
     _combineAttributesAndGridOptions,
-    _getGlobalGridOption,
+    _getGridOption,
     _getGridRegisteredModules,
     _isClientSideRowModel,
     _isServerSideRowModel,
@@ -41,6 +41,7 @@ import { CellRendererComponentWrapper } from '../shared/customComp/cellRendererC
 import { DateComponentWrapper } from '../shared/customComp/dateComponentWrapper';
 import { DragAndDropImageComponentWrapper } from '../shared/customComp/dragAndDropImageComponentWrapper';
 import { FilterComponentWrapper } from '../shared/customComp/filterComponentWrapper';
+import { FilterDisplayComponentWrapper } from '../shared/customComp/filterDisplayComponentWrapper';
 import { FloatingFilterComponentWrapper } from '../shared/customComp/floatingFilterComponentWrapper';
 import { InnerHeaderComponentWrapper } from '../shared/customComp/innerHeaderComponentWrapper';
 import { LoadingOverlayComponentWrapper } from '../shared/customComp/loadingOverlayComponentWrapper';
@@ -134,10 +135,7 @@ export const AgGridReactUi = <TData,>(props: AgGridReactProps<TData>) => {
         const renderStatus = new RenderStatusService();
         const gridParams: GridParams = {
             providedBeanInstances: {
-                frameworkCompWrapper: new ReactFrameworkComponentWrapper(
-                    portalManager.current,
-                    mergedGridOps.reactiveCustomComponents ?? _getGlobalGridOption('reactiveCustomComponents') ?? true
-                ),
+                frameworkCompWrapper: new ReactFrameworkComponentWrapper(portalManager.current, mergedGridOps),
                 renderStatus,
             },
             modules,
@@ -263,17 +261,20 @@ class ReactFrameworkComponentWrapper
 {
     constructor(
         private readonly parent: PortalManager,
-        private readonly reactiveCustomComponents?: boolean
+        private readonly gridOptions: GridOptions
     ) {
         super();
     }
 
     protected createWrapper(UserReactComponent: { new (): any }, componentType: ComponentType): WrappableInterface {
-        if (this.reactiveCustomComponents) {
+        const reactiveCustomComponents = _getGridOption(this.gridOptions, 'reactiveCustomComponents');
+        if (reactiveCustomComponents) {
             const getComponentClass = (propertyName: string) => {
                 switch (propertyName) {
                     case 'filter':
-                        return FilterComponentWrapper;
+                        return _getGridOption(this.gridOptions, 'enableFilterEvaluators')
+                            ? FilterDisplayComponentWrapper
+                            : FilterComponentWrapper;
                     case 'floatingFilterComponent':
                         return FloatingFilterComponentWrapper;
                     case 'dateComponent':

@@ -86,7 +86,7 @@ interface SharedFilter {
     onAnyFilterChanged?(): void;
 }
 
-interface SharedFilterUi extends SharedFilter {
+export interface SharedFilterUi extends SharedFilter {
     /**
      * Optional: A hook to perform any necessary operation just after the GUI for this component has been rendered on the screen.
      * If a parent popup is closed and reopened (e.g. for filters), this method is called each time the component is shown.

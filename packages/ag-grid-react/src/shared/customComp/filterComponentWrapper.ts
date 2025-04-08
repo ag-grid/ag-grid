@@ -54,7 +54,7 @@ export class FilterComponentWrapper
     }
 
     protected override getOptionalMethods(): string[] {
-        return ['afterGuiAttached', 'afterGuiDetached', 'onNewRowsLoaded', 'getModelAsString', 'onAnyFilterChanged'];
+        return ['afterGuiDetached', 'onNewRowsLoaded', 'getModelAsString', 'onAnyFilterChanged'];
     }
 
     protected override setMethods(methods: CustomFilterCallbacks): void {

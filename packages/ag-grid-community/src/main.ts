@@ -188,6 +188,8 @@ export {
     FilterDisplayState,
     FilterWrapperParams,
     FilterAction,
+    FilterDisplay,
+    SharedFilterUi,
 } from './interfaces/iFilter';
 export {
     ISetFilter,
@@ -623,15 +625,8 @@ export { AutoScrollService } from './autoScrollService';
 export { VanillaFrameworkOverrides } from './vanillaFrameworkOverrides';
 export type { CellNavigationService } from './navigation/cellNavigationService';
 export { KeyCode } from './constants/keyCode';
-export {
-    GridParams,
-    Params,
-    GridCoreCreator,
-    createGrid,
-    provideGlobalGridOptions,
-    GlobalGridOptionsMergeStrategy,
-    _getGlobalGridOption,
-} from './grid';
+export { GridParams, Params, GridCoreCreator, createGrid } from './grid';
+export { provideGlobalGridOptions, GlobalGridOptionsMergeStrategy, _getGlobalGridOption } from './globalGridOptions';
 export {
     GridApi,
     DetailGridInfo,
@@ -708,6 +703,7 @@ export {
     _isUsingNewCellSelectionAPI,
     _isGroupRowsSticky,
     _getGroupingApproach,
+    _getGridOption,
 } from './gridOptionsUtils';
 export type { GroupingApproach } from './gridOptionsUtils';
 export { LocalEventService } from './localEventService';
