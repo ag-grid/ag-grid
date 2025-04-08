@@ -102,7 +102,18 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
 
     public stoppingRowEdit: boolean;
     /** full row editing */
-    public editing: boolean;
+    public get editing(): boolean {
+        if (!this.gos?.get('experimentalEditingModeV2')) {
+            return this._editing;
+        }
+        return this.beans.rowEditingSvc?.isEditing(this.rowId!) ?? false;
+    }
+    public set editing(value: boolean) {
+        if (!this.gos?.get('experimentalEditingModeV2')) {
+            this._editing = value;
+        }
+    }
+    private _editing: boolean;
     private rowFocused: boolean;
 
     private centerCellCtrls: CellCtrlListAndMap = { list: [], map: {} };
@@ -1619,8 +1630,10 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
     public destroySecondPass(): void {
         this.allRowGuis.length = 0;
 
-        // if we are editing, destroying the row will stop editing
-        this.beans.editSvc?.stopRowEditing(this);
+        if (!this.gos.get('experimentalEditingModeV2')) {
+            // if we are editing, destroying the row will stop editing
+            this.beans.editSvc?.stopRowEditing(this);
+        }
 
         const destroyCellCtrls = (ctrls: CellCtrlListAndMap): CellCtrlListAndMap => {
             ctrls.list.forEach((c) => c.destroy());
@@ -1648,9 +1661,11 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
             this.setFocusedClasses();
         }
 
-        // if we are editing, then moving the focus out of a row will stop editing
-        if (!rowFocused && this.editing) {
-            editSvc?.stopRowEditing(this, false);
+        if (!this.gos.get('experimentalEditingModeV2')) {
+            // if we are editing, then moving the focus out of a row will stop editing
+            if (!rowFocused && this.editing) {
+                editSvc?.stopRowEditing(this, false);
+            }
         }
     }
 

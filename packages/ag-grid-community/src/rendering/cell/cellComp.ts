@@ -69,6 +69,7 @@ export class CellComp extends Component {
     ) {
         super();
         this.beans = beans;
+        this.gos = beans.gos;
         this.column = cellCtrl.column;
         this.rowNode = cellCtrl.rowNode;
         this.eRow = eRow;
@@ -532,7 +533,9 @@ export class CellComp extends Component {
     //
     // note - this is NOT called by context, as we don't wire / unwire the CellComp for performance reasons.
     public override destroy(): void {
-        this.cellCtrl.stopEditing();
+        if (!this.gos.get('experimentalEditingModeV2')) {
+            this.cellCtrl.stopEditing();
+        }
 
         this.destroyRenderer();
         this.destroyEditor();

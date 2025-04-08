@@ -108,6 +108,7 @@ import type {
     SizeColumnsToFitGridStrategy,
     SizeColumnsToFitProvidedWidthStrategy,
 } from '../interfaces/autoSize';
+import type { EditStrategyType } from '../interfaces/editStrategy';
 import type {
     CsvExportParams,
     ProcessCellForExportParams,
@@ -2476,6 +2477,15 @@ export interface GridOptions<TData = any> {
      * Sort has changed. The grid also listens for this and updates the model.
      */
     onSortChanged?(event: SortChangedEvent<TData>): void;
+
+    /**
+     * Experimental editing mode v2.
+     * @default false
+     */
+    experimentalEditingModeV2?: {
+        strategy: EditStrategyType;
+        strategyParams?: any;
+    };
 }
 
 export type RowGroupingDisplayType = 'singleColumn' | 'multipleColumns' | 'groupRows' | 'custom';
