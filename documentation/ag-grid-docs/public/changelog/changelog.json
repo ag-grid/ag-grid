@@ -3000,7 +3000,7 @@
         "issueType": "Bug",
         "manualEntry": true,
         "summary": "Placeholder for 32.3.5",
-        "versions": ["33.3.5"],
+        "versions": ["32.3.5"],
         "status": "Done",
         "resolution": "Done",
         "features": null,
