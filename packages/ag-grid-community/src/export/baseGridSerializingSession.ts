@@ -70,7 +70,14 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
         type: string,
         node: RowNode
     ): { value: any; valueFormatted?: string | null } {
-        // if user handling logic; use that
+        if (
+            this.processRowGroupCallback &&
+            (this.gos.get('treeData') || node.group) &&
+            (!node.rowGroupColumn || column.isRowGroupDisplayed(node.rowGroupColumn.getColId()))
+        ) {
+            return { value: this.processRowGroupCallback(_addGridCommonParams(this.gos, { column, node })) ?? '' };
+        }
+
         if (this.processCellCallback) {
             return {
                 value:
@@ -104,10 +111,6 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
         const isMultiAutoCol = column.colDef.showRowGroup === true && (node.group || isTreeData);
         // when using single auto group column or group row, create arrow separated string of group vals
         if (!isGrandTotalRow && (isFullWidthGroup || isMultiAutoCol)) {
-            if (this.processRowGroupCallback) {
-                return { value: this.processRowGroupCallback(_addGridCommonParams(this.gos, { column, node })) ?? '' };
-            }
-
             let concatenatedGroupValue: string = '';
             let pointer: RowNode | null = node;
             while (pointer && pointer.level !== -1) {
