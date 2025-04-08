@@ -216,15 +216,15 @@ export function _isRtlNegativeScroll(): boolean {
 
     const template = document.createElement('div');
     template.style.direction = 'rtl';
-    template.style.width = '1px';
-    template.style.height = '1px';
+    template.style.width = '10px';
+    template.style.height = '5px';
     template.style.position = 'fixed';
     template.style.top = '0px';
     template.style.overflow = 'hidden';
     template.dir = 'rtl';
     template.innerHTML =
         /* html */
-        `<div style="width: 2px">
+        `<div style="width: 20px">
             <span style="display: inline-block; width: 1px"></span>
             <span style="display: inline-block; width: 1px"></span>
         </div>`;
