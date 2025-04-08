@@ -1,4 +1,5 @@
 import type { _EditGridApi, _UndoRedoGridApi } from '../api/gridApi';
+import { EditingCoreModule } from '../editing/editingModule';
 import type { DefaultProvidedCellEditorParams } from '../interfaces/iCellEditor';
 import type { _ModuleWithApi, _ModuleWithoutApi } from '../interfaces/iModule';
 import { UndoRedoService } from '../undoRedo/undoRedoService';
@@ -38,7 +39,7 @@ export const EditCoreModule: _ModuleWithApi<_EditGridApi<any>> = {
         stopEditing,
         startEditingCell,
     },
-    dependsOn: [PopupModule],
+    dependsOn: [PopupModule, EditingCoreModule],
     css: [cellEditingCSS],
 };
 

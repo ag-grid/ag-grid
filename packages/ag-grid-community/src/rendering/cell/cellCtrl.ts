@@ -109,7 +109,20 @@ export class CellCtrl extends BeanStub {
     private keyboardListener: CellKeyboardListenerFeature | undefined = undefined;
 
     public cellPosition: CellPosition;
-    public editing: boolean;
+
+    private _editing: boolean;
+    public get editing(): boolean {
+        if (!this.gos?.get('experimentalEditingModeV2')) {
+            return this._editing;
+        }
+        return this.beans.editingSvc?.isEditing(this.rowCtrl.rowId!, this.column.colId) ?? false;
+    }
+
+    public set editing(editing: boolean) {
+        if (!this.gos?.get('experimentalEditingModeV2')) {
+            this._editing = editing;
+        }
+    }
 
     private includeSelection: boolean;
     private includeDndSource: boolean;
@@ -136,6 +149,7 @@ export class CellCtrl extends BeanStub {
     ) {
         super();
         this.beans = beans;
+        this.gos = beans.gos;
 
         const { colId } = column;
         // unique id to this instance, including the column ID to help with debugging in React as it's used in 'key'
@@ -364,10 +378,13 @@ export class CellCtrl extends BeanStub {
         if (!this.editing) {
             return;
         }
-        // note: this happens because of a click outside of the grid or if the popupEditor
-        // is closed with `Escape` key. if another cell was clicked, then the editing will
-        // have already stopped and returned on the conditional above.
-        this.beans.editSvc?.stopRowOrCellEdit(this);
+
+        if (!this.gos.get('experimentalEditingModeV2')) {
+            // note: this happens because of a click outside of the grid or if the popupEditor
+            // is closed with `Escape` key. if another cell was clicked, then the editing will
+            // have already stopped and returned on the conditional above.
+            this.beans.editSvc?.stopRowOrCellEdit(this);
+        }
     }
 
     /**

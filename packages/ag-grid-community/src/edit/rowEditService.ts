@@ -14,6 +14,10 @@ export class RowEditService extends BeanStub implements NamedBean {
         sourceRenderedCell: CellCtrl | null = null,
         event: KeyboardEvent | null = null
     ): boolean {
+        if (this.gos.get('experimentalEditingModeV2')) {
+            return this.beans.rowEditingSvc?.startEditing(rowCtrl, key, sourceRenderedCell, event) ?? false;
+        }
+
         // don't do it if already editing
         if (rowCtrl.editing) {
             return false;
@@ -39,6 +43,7 @@ export class RowEditService extends BeanStub implements NamedBean {
     }
 
     public setEditing(rowCtrl: RowCtrl, value: boolean): void {
+        console.warn('RowEditService: setEditing', value);
         rowCtrl.editing = value;
         rowCtrl.forEachGui(undefined, (gui) => gui.rowComp.toggleCss('ag-row-editing', value));
 

@@ -35,29 +35,13 @@ export function getCellEditorInstances<TData = any>(
 }
 
 export function getEditingCells(beans: BeanCollection): CellPosition[] {
-    if (beans.gos.get('experimentalEditingModeV2')) {
-        return beans.rowEditingSvc?.editingModel.getEditingCellPositions() ?? [];
-    }
-
-    const res: CellPosition[] = [];
-
-    beans.rowRenderer.getAllCellCtrls().forEach((cellCtrl) => {
-        if (cellCtrl.editing) {
-            const { cellPosition } = cellCtrl;
-            res.push(cellPosition);
-        }
-    });
-
-    return res;
+    return beans.rowEditingSvc?.editingModel.getEditingCellPositions() ?? [];
 }
 
 export function stopEditing(beans: BeanCollection, cancel: boolean = false): void {
-    if (beans.gos.get('experimentalEditingModeV2')) {
+    if (beans.rowEditingSvc?.isEditing()) {
         beans.editingSvc?.stopAllEditing(cancel);
-        return;
     }
-
-    beans.editSvc?.stopAllEditing(cancel);
 }
 
 export function startEditingCell(beans: BeanCollection, params: StartEditingCellParams): void {
@@ -69,7 +53,7 @@ export function startEditingCell(beans: BeanCollection, params: StartEditingCell
     const cellPosition: CellPosition = {
         rowIndex: params.rowIndex,
         rowPinned: params.rowPinned || null,
-        column: column,
+        column,
     };
     const notPinned = params.rowPinned == null;
     if (notPinned) {
@@ -82,7 +66,7 @@ export function startEditingCell(beans: BeanCollection, params: StartEditingCell
     if (!cell) {
         return;
     }
-    const { focusSvc, gos, editSvc } = beans;
+    const { focusSvc, gos, editingSvc } = beans;
     const isFocusWithinCell = () => {
         const activeElement = _getActiveDomElement(beans);
         const eCell = cell.eGui;
@@ -96,7 +80,7 @@ export function startEditingCell(beans: BeanCollection, params: StartEditingCell
             preventScrollOnBrowserFocus: true,
         });
     }
-    editSvc?.startRowOrCellEdit(cell, params.key);
+    editingSvc?.startRowOrCellEdit(cell, params.key);
 }
 
 export function getCurrentUndoSize(beans: BeanCollection): number {
