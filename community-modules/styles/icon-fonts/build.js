@@ -69,6 +69,11 @@ const nameToCodepoint = {
     'menu-alt': 0xf138,
     settings: 0xf139,
     'column-arrow': 0xf13a,
+    'un-pin': 0xf13b,
+    'pinned-left': 0xf13c,
+    'pinned-right': 0xf13d,
+    'pinned-bottom': 0xf13e,
+    'pinned-top': 0xf13f,
 };
 
 function generateFontFile(fontName) {

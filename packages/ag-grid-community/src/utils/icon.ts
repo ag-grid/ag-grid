@@ -166,7 +166,12 @@ export type IconValue =
     | 'radio-button-on'
     | 'radio-button-off'
     | 'eye'
-    | 'column-arrow';
+    | 'column-arrow'
+    | 'un-pin'
+    | 'pinned-left'
+    | 'pinned-right'
+    | 'pinned-bottom'
+    | 'pinned-top';
 
 /**
  * If icon provided, use this (either a string, or a function callback).

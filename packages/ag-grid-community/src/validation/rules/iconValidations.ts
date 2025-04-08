@@ -60,6 +60,11 @@ export const ICON_VALUES: Record<IconValue, 1> = {
     'radio-button-off': 1,
     eye: 1,
     'column-arrow': 1,
+    'un-pin': 1,
+    'pinned-left': 1,
+    'pinned-right': 1,
+    'pinned-top': 1,
+    'pinned-bottom': 1,
 };
 
 export const ICON_MODULES: Record<IconName, ValidationModuleName | ValidationModuleName[]> = {
