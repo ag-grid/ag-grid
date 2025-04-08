@@ -71,16 +71,16 @@ function loadGrid(side: string) {
 
 function logModuleRegisteredStatus(api: GridApi) {
     const moduleNames: AgModuleName[] = [
-        'Clipboard',
-        'ClientSideRowModel',
-        'ColumnMenu',
-        'ContextMenu',
-        'CsvExport',
-        'ExcelExport',
-        'NumberFilter',
-        'SetFilter',
-        'TextFilter',
-        'IntegratedCharts', // Not registered in this example
+        'ClipboardModule',
+        'ClientSideRowModelModule',
+        'ColumnMenuModule',
+        'ContextMenuModule',
+        'CsvExportModule',
+        'ExcelExportModule',
+        'NumberFilterModule',
+        'SetFilterModule',
+        'TextFilterModule',
+        'IntegratedChartsModule', // Not registered in this example
     ];
     const registered = moduleNames.filter((name) => api.isModuleRegistered(name));
     console.log(api.getGridId(), 'registered:', registered.join());
