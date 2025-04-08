@@ -221,7 +221,7 @@ class NonManagedVisibilityStrategy extends VisibilityStrategy {
 
     private workOutVisibility(): void {
         // only show the drag if both sort and filter are not present
-        const neverDisplayed = this.gos.getAsBool('suppressRowDrag');
+        const neverDisplayed = this.gos.get('suppressRowDrag');
         this.setDisplayedOrVisible(neverDisplayed);
     }
 }
@@ -258,8 +258,9 @@ class ManagedVisibilityStrategy extends VisibilityStrategy {
         // only show the drag if both sort and filter are not present
         const rowDragFeature = rowDragSvc!.rowDragFeature;
         const shouldPreventRowMove = rowDragFeature && rowDragFeature.shouldPreventRowMove();
+        const suppressRowDrag = gos.get('suppressRowDrag');
         const hasExternalDropZones = dragAndDrop!.hasExternalDropZones();
-        const neverDisplayed = (shouldPreventRowMove && !hasExternalDropZones) || gos.getAsBool('suppressRowDrag');
+        const neverDisplayed = (shouldPreventRowMove && !hasExternalDropZones) || suppressRowDrag;
 
         this.setDisplayedOrVisible(neverDisplayed);
     }

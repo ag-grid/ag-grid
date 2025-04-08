@@ -163,7 +163,7 @@ export abstract class PillDropZonePanel<TPill extends PillDragComp<TItem>, TItem
         let isPrevious = key === KeyCode.UP;
 
         if (!isVertical) {
-            const isRtl = this.gos.getAsBool('enableRtl');
+            const isRtl = this.gos.get('enableRtl');
             isNext = (!isRtl && key === KeyCode.RIGHT) || (isRtl && key === KeyCode.LEFT);
             isPrevious = (!isRtl && key === KeyCode.LEFT) || (isRtl && key === KeyCode.RIGHT);
         }

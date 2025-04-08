@@ -15,7 +15,7 @@ import type { ModuleName, ValidationModuleName } from './interfaces/iModule';
 import type { RowModelType } from './interfaces/iRowModel';
 import { LocalEventService } from './localEventService';
 import { _areModulesGridScoped, _isModuleRegistered, _isUmd } from './modules/moduleRegistry';
-import type { AnyGridOptions, BooleanGridOptions } from './propertyKeys';
+import type { AnyGridOptions } from './propertyKeys';
 import { _logIfDebug } from './utils/function';
 import { _exists } from './utils/generic';
 import type { MissingModuleErrors } from './validation/errorMessages/errorText';
@@ -128,7 +128,7 @@ export class GridOptionsService extends BeanStub implements NamedBean {
     }
 
     /**
-     * Get the raw value of the GridOptions property provided or the default value if not set.
+     * Get the raw value of the GridOptions property provided.
      * @param property
      */
     public get<K extends keyof GridOptions>(property: K): GridOptionOrDefault<K> {
@@ -136,14 +136,6 @@ export class GridOptionsService extends BeanStub implements NamedBean {
             this.gridOptions[property] ??
             (GRID_OPTION_DEFAULTS[property as keyof typeof GRID_OPTION_DEFAULTS] as GridOptionOrDefault<K>)
         );
-    }
-
-    /**
-     * Get the GridOption property as a boolean. This will coerce the value to a boolean.
-     * @param property
-     */
-    public getAsBool<K extends BooleanGridOptions>(property: K): boolean {
-        return !!this.get(property);
     }
 
     /**

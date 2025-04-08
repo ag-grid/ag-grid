@@ -27,7 +27,7 @@ export class MasterDetailService extends BeanStub implements NamedBean, IMasterD
     private isEnabled(): boolean {
         const gos = this.gos;
         return (
-            gos.getAsBool('masterDetail') &&
+            gos.get('masterDetail') &&
             // TODO: AG-1752: [Tree Data] Allow tree data leaf rows to serve as master rows for detail grids (Tree Data hosting Master/Detail)"
             !gos.get('treeData')
         );

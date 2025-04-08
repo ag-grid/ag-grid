@@ -51,7 +51,7 @@ export class AdvancedFilterService extends BeanStub implements NamedBean, IAdvan
     private isValid: boolean = true;
 
     public postConstruct(): void {
-        this.setEnabled(this.gos.getAsBool('enableAdvancedFilter'), true);
+        this.setEnabled(this.gos.get('enableAdvancedFilter'), true);
 
         this.ctrl = this.createManagedBean(new AdvancedFilterCtrl(this.enabled));
 

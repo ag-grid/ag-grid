@@ -28,7 +28,7 @@ function _isRangeHandleEnabled(gos: GridOptionsService): boolean {
     const useNewAPI = selection !== undefined;
 
     if (!useNewAPI) {
-        return gos.getAsBool('enableRangeHandle');
+        return gos.get('enableRangeHandle');
     }
 
     return typeof selection !== 'boolean' ? selection.handle?.mode === 'range' : false;
@@ -38,7 +38,7 @@ function _isFillHandleEnabled(gos: GridOptionsService): boolean {
     const useNewAPI = selection !== undefined;
 
     if (!useNewAPI) {
-        return gos.getAsBool('enableFillHandle');
+        return gos.get('enableFillHandle');
     }
 
     return typeof selection !== 'boolean' ? selection.handle?.mode === 'fill' : false;
