@@ -26,7 +26,7 @@ interface Props {
 }
 
 const REACT_JSON_VIEW_CONFIG = {
-    collapsed: 1,
+    collapsed: true,
     name: null,
     enableClipboard: false,
     displayDataTypes: false,
