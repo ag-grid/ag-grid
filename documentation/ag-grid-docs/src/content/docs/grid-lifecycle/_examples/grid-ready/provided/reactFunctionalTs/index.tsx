@@ -8,7 +8,11 @@ import { AgGridReact } from 'ag-grid-react';
 import { getData } from './data';
 import './styles.css';
 
-ModuleRegistry.registerModules([ColumnApiModule, ClientSideRowModelModule, ValidationModule /* Development Only */]);
+ModuleRegistry.registerModules([
+    ColumnApiModule,
+    ClientSideRowModelModule,
+    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
+]);
 
 const GridExample = () => {
     const gridRef = useRef<AgGridReact>(null);

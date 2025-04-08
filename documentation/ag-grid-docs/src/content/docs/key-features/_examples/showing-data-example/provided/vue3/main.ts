@@ -14,7 +14,7 @@ const CustomButtonComponent = defineComponent({
     `,
     methods: {
         buttonClicked() {
-            alert('clicked');
+            console.log('clicked');
         },
     },
 });

@@ -25,7 +25,7 @@ ModuleRegistry.registerModules([
     RowApiModule,
     ColumnAutoSizeModule,
     ClientSideRowModelModule,
-    ValidationModule /* Development Only */,
+    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 
 let minRowHeight = 25;

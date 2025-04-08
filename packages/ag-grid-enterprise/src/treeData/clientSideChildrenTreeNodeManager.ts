@@ -25,7 +25,7 @@ export class ClientSideChildrenTreeNodeManager<TData>
     private childrenGetter: DataFieldGetter<TData, TData[] | null | undefined> | null = null;
 
     public override get treeData(): boolean {
-        return this.gos.get('treeData');
+        return this.gos.getAsBool('treeData');
     }
 
     public override extractRowData(): TData[] | null | undefined {

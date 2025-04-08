@@ -24,7 +24,7 @@ ModuleRegistry.registerModules([
     ColumnMenuModule,
     ContextMenuModule,
     SetFilterModule,
-    ValidationModule /* Development Only */,
+    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 
 const valueGetter = function (params: ValueGetterParams) {

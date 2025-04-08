@@ -14,7 +14,7 @@ ModuleRegistry.registerModules([
     ColumnApiModule,
     PinnedRowModule,
     ClientSideRowModelModule,
-    ValidationModule /* Development Only */,
+    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 
 const rowData = createData(100, 'body');

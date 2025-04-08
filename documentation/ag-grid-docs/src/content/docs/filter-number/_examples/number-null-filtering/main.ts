@@ -12,7 +12,7 @@ ModuleRegistry.registerModules([
     TextFilterModule,
     ClientSideRowModelModule,
     NumberFilterModule,
-    ValidationModule /* Development Only */,
+    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 
 const originalColumnDefs: ColDef[] = [

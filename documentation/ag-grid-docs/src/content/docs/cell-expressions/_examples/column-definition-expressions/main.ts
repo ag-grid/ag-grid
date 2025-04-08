@@ -16,7 +16,7 @@ ModuleRegistry.registerModules([
     ColumnAutoSizeModule,
     ClientSideRowModelModule,
     NumberEditorModule,
-    ValidationModule /* Development Only */,
+    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 
 const columnDefs: ColDef[] = [

@@ -21,7 +21,7 @@ ModuleRegistry.registerModules([
     ContextMenuModule,
     ColumnsToolPanelModule,
     FiltersToolPanelModule,
-    ValidationModule /* Development Only */,
+    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 
 const colourCellRenderer = (props: CustomCellRendererProps) => {

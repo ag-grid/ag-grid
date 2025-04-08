@@ -1,6 +1,6 @@
 import ts from 'typescript';
 
-import { _ALL_GRID_OPTIONS } from '../src/executors/generate/generator/_copiedFromCore/propertyKeys';
+import { _GET_ALL_GRID_OPTIONS } from '../src/executors/generate/generator/_copiedFromCore/propertyKeys';
 
 function getTypes(node: ts.Node) {
     let typesToInclude: string[] = [];
@@ -44,7 +44,7 @@ function getTypeLookupFunc(fileName) {
         };
 
         const fullLookup = {};
-        _ALL_GRID_OPTIONS.forEach((prop) => {
+        _GET_ALL_GRID_OPTIONS().forEach((prop) => {
             fullLookup[prop] = lookupType(prop as string);
         });
         return fullLookup;

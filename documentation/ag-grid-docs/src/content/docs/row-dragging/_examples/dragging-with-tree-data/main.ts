@@ -36,7 +36,7 @@ ModuleRegistry.registerModules([
     ClientSideRowModelApiModule,
     ClientSideRowModelModule,
     TreeDataModule,
-    ValidationModule /* Development Only */,
+    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 
 /** Called when row dragging start */

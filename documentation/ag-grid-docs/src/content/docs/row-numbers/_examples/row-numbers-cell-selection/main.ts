@@ -6,7 +6,7 @@ ModuleRegistry.registerModules([
     ClientSideRowModelModule,
     RowNumbersModule,
     CellSelectionModule,
-    ValidationModule /* Development Only */,
+    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 
 const columnDefs: ColDef[] = [

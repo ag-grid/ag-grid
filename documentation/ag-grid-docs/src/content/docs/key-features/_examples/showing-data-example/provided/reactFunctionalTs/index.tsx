@@ -8,7 +8,7 @@ import { AgGridReact } from 'ag-grid-react';
 ModuleRegistry.registerModules([AllCommunityModule]);
 
 const CustomButtonComponent = () => {
-    return <button onClick={() => window.alert('clicked')}>Push Me!</button>;
+    return <button onClick={() => console.log('clicked')}>Push Me!</button>;
 };
 
 const GridExample = () => {

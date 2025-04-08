@@ -15,7 +15,7 @@ ModuleRegistry.registerModules([
     MasterDetailModule,
     ColumnMenuModule,
     ContextMenuModule,
-    ValidationModule /* Development Only */,
+    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 
 let gridApi: GridApi;

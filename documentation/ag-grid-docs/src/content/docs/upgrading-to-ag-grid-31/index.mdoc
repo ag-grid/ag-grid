@@ -42,9 +42,7 @@ This release includes the following breaking changes:
 
 {% if isFramework("react") %}
 ### React
-{% /if %}
 
-{% if isFramework("react") %}
 * `AgGridReactFire` is no longer exported from `ag-grid-react`. You should use `AgGridReact` instead.
 * The loading overlay is now displayed for all row models if column definitions are not provided when the grid is initialised. The rows will also not be created and rendered until the column definitions are provided.
 * Validation is now run when `gridOptions` are updated, meaning warnings may appear in console when changing grid options if an invalid configuration is reached.
@@ -65,9 +63,7 @@ If you are using Standalone Charts, please see changes to charts in the [AG Char
 
 {% if isFramework("angular") %}
 ### CommonJS
-{% /if %}
 
-{% if isFramework("angular") %}
 Angular 15 users with `"module": "commonjs"` will require a custom webpack configuration.
 
 You can resolve this as follows:

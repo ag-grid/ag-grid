@@ -1,7 +1,10 @@
 import type { ColDef, ColGroupDef, GridApi, GridOptions } from 'ag-grid-community';
 import { ClientSideRowModelModule, ModuleRegistry, ValidationModule, createGrid } from 'ag-grid-community';
 
-ModuleRegistry.registerModules([ClientSideRowModelModule, ValidationModule /* Development Only */]);
+ModuleRegistry.registerModules([
+    ClientSideRowModelModule,
+    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
+]);
 
 const columnDefs: (ColDef | ColGroupDef)[] = [
     { field: 'athlete', minWidth: 200 },

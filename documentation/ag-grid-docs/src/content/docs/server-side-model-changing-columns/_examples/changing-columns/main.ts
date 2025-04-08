@@ -26,7 +26,7 @@ ModuleRegistry.registerModules([
     RowGroupingModule,
     ServerSideRowModelModule,
     SetFilterModule,
-    ValidationModule /* Development Only */,
+    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 
 const colDefCountry: ColDef = { field: 'country', rowGroup: true };

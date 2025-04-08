@@ -19,7 +19,7 @@ ModuleRegistry.registerModules([
     ClientSideRowModelModule,
     CellSelectionModule,
     StatusBarModule,
-    ValidationModule /* Development Only */,
+    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 
 export interface IClickableStatusBar {

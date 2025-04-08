@@ -75,7 +75,7 @@ export class QuickFilterService extends BeanStub<QuickFilterServiceEvent> implem
     }
 
     public doesRowPass(node: RowNode): boolean {
-        const usingCache = this.gos.get('cacheQuickFilter');
+        const usingCache = this.gos.getAsBool('cacheQuickFilter');
 
         if (this.matcher) {
             return this.doesRowPassMatcher(usingCache, node);

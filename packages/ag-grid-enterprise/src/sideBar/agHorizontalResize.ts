@@ -21,7 +21,7 @@ export class AgHorizontalResize extends Component {
         });
 
         this.addDestroyFunc(finishedWithResizeFunc);
-        this.inverted = this.gos.get('enableRtl');
+        this.inverted = this.gos.getAsBool('enableRtl');
     }
 
     private dispatchResizeEvent(start: boolean, end: boolean, width: number) {

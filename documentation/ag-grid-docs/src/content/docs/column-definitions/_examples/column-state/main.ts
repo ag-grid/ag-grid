@@ -15,7 +15,7 @@ ModuleRegistry.registerModules([
     ClientSideRowModelModule,
     ColumnsToolPanelModule,
     RowGroupingModule,
-    ValidationModule /* Development Only */,
+    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 
 const columnDefs: ColDef[] = [{ field: 'athlete' }, { field: 'age' }, { field: 'country' }, { field: 'sport' }];

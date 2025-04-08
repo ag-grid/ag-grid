@@ -7,7 +7,11 @@ import {
     createGrid,
 } from 'ag-grid-community';
 
-ModuleRegistry.registerModules([ColumnHoverModule, ClientSideRowModelModule, ValidationModule /* Development Only */]);
+ModuleRegistry.registerModules([
+    ColumnHoverModule,
+    ClientSideRowModelModule,
+    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
+]);
 
 let gridApi: GridApi<IOlympicData>;
 

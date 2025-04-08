@@ -34,7 +34,7 @@ export default forwardRef(({ model, onModelChange, getValue }: CustomFilterProps
     useImperativeHandle(ref, () => {
         return {
             componentMethod(message: string) {
-                alert(`Alert from PartialMatchFilterComponent: ${message}`);
+                console.log(`Alert from PartialMatchFilterComponent: ${message}`);
             },
         };
     });

@@ -6,7 +6,11 @@ import { InfiniteRowModelModule, ModuleRegistry, RowSelectionModule, ValidationM
 import type { CustomCellRendererProps } from 'ag-grid-react';
 import { AgGridReact } from 'ag-grid-react';
 
-ModuleRegistry.registerModules([RowSelectionModule, InfiniteRowModelModule, ValidationModule /* Development Only */]);
+ModuleRegistry.registerModules([
+    RowSelectionModule,
+    InfiniteRowModelModule,
+    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
+]);
 
 const rowSelection: RowSelectionOptions = {
     mode: 'multiRow',

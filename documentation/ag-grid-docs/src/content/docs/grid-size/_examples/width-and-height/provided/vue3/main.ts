@@ -4,7 +4,10 @@ import type { ColDef, GridReadyEvent } from 'ag-grid-community';
 import { ClientSideRowModelModule, ModuleRegistry, ValidationModule } from 'ag-grid-community';
 import { AgGridVue } from 'ag-grid-vue3';
 
-ModuleRegistry.registerModules([ClientSideRowModelModule, ValidationModule /* Development Only */]);
+ModuleRegistry.registerModules([
+    ClientSideRowModelModule,
+    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
+]);
 
 const VueExample = {
     template: `

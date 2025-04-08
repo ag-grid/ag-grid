@@ -7,7 +7,11 @@ import {
     createGrid,
 } from 'ag-grid-community';
 
-ModuleRegistry.registerModules([ClientSideRowModelModule, SelectEditorModule, ValidationModule /* Development Only */]);
+ModuleRegistry.registerModules([
+    ClientSideRowModelModule,
+    SelectEditorModule,
+    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
+]);
 
 const languages = ['English', 'Spanish', 'French', 'Portuguese', '(other)'];
 

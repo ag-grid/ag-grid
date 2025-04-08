@@ -9,7 +9,7 @@ ModuleRegistry.registerModules([
     RowAutoHeightModule,
     RowGroupingModule,
     ServerSideRowModelModule,
-    ValidationModule /* Development Only */,
+    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 
 const columnDefs: ColDef[] = [

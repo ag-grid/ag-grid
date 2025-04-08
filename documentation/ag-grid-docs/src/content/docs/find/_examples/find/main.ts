@@ -2,7 +2,11 @@ import type { FindChangedEvent, GridApi, GridOptions } from 'ag-grid-community';
 import { ClientSideRowModelModule, ModuleRegistry, ValidationModule, createGrid } from 'ag-grid-community';
 import { FindModule } from 'ag-grid-enterprise';
 
-ModuleRegistry.registerModules([FindModule, ClientSideRowModelModule, ValidationModule /* Development Only */]);
+ModuleRegistry.registerModules([
+    FindModule,
+    ClientSideRowModelModule,
+    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
+]);
 
 let gridApi: GridApi;
 

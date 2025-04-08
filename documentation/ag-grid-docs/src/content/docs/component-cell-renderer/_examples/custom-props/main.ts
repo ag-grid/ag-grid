@@ -10,7 +10,11 @@ import {
 import { CustomButtonComponent } from './customButtonComponent_typescript';
 import { MissionResultRenderer } from './missionResultRenderer_typescript';
 
-ModuleRegistry.registerModules([RowApiModule, ClientSideRowModelModule, ValidationModule /* Development Only */]);
+ModuleRegistry.registerModules([
+    RowApiModule,
+    ClientSideRowModelModule,
+    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
+]);
 
 // Grid API: Access to Grid API methods
 let gridApi: GridApi;
@@ -37,7 +41,7 @@ function refreshData() {
     });
 }
 
-const onClick = () => alert('Mission Launched');
+const onClick = () => console.log('Mission Launched');
 const gridOptions: GridOptions<IRow> = {
     // Data to be displayed
     rowData: [],

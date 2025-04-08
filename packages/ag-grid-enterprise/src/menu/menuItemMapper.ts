@@ -22,6 +22,7 @@ import {
 import { isRowGroupColLocked } from '../rowGrouping/rowGroupingUtils';
 import type { ChartMenuItemMapper } from './chartMenuItemMapper';
 import type { ColumnChooserFactory } from './columnChooserFactory';
+import { validateMenuItem } from './menuItemValidations';
 
 export const MENU_ITEM_SEPARATOR = 'separator';
 
@@ -59,7 +60,6 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
         const localeTextFunc = this.getLocaleTextFunc();
         const { beans, gos } = this;
         const {
-            validation,
             pinnedCols,
             colAutosize,
             aggFuncSvc,
@@ -85,7 +85,7 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
             sourceElement: () => HTMLElement,
             source: ColumnEventType
         ): MenuItemDef | 'separator' | null => {
-            validation?.validateMenuItem(key);
+            validateMenuItem(gos, key);
 
             switch (key) {
                 case 'pinSubMenu':

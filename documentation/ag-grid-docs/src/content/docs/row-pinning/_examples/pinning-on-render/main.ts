@@ -6,7 +6,7 @@ ModuleRegistry.registerModules([
     ClientSideRowModelModule,
     ContextMenuModule,
     ManualPinnedRowModule,
-    ValidationModule /* Development Only */,
+    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 
 const columnDefs: ColDef[] = [{ field: 'athlete' }, { field: 'country' }, { field: 'sport' }];

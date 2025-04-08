@@ -28,6 +28,6 @@ export class MedalRenderer implements ICellRendererAngularComp {
     }
 
     buttonClicked() {
-        alert(`${this.total} medals won!`);
+        console.log(`${this.total} medals won!`);
     }
 }

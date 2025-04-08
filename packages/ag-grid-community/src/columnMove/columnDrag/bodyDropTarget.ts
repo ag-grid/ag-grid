@@ -70,7 +70,7 @@ export class BodyDropTarget extends BeanStub implements DropTarget {
     public isInterestedIn(type: DragSourceType): boolean {
         return (
             type === DragSourceType.HeaderCell ||
-            (type === DragSourceType.ToolPanel && this.gos.get('allowDragFromColumnsToolPanel'))
+            (type === DragSourceType.ToolPanel && this.gos.getAsBool('allowDragFromColumnsToolPanel'))
         );
     }
 

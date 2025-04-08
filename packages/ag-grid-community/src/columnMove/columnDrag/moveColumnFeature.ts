@@ -322,7 +322,7 @@ export class MoveColumnFeature extends BeanStub implements DropListener {
 
     private highlightHoveredColumn(movingColumns: AgColumn[], mouseX: number) {
         const { gos, colModel } = this.beans;
-        const isRtl = gos.get('enableRtl');
+        const isRtl = gos.getAsBool('enableRtl');
         const consideredColumns = colModel
             .getCols()
             .filter((col) => col.isVisible() && col.getPinned() === this.pinned);
@@ -402,7 +402,7 @@ export class MoveColumnFeature extends BeanStub implements DropListener {
         isAttemptingToPin: boolean
     ): { fromLeft: boolean; xPosition: number } | undefined {
         const { gos, visibleCols } = this.beans;
-        const isRtl = gos.get('enableRtl');
+        const isRtl = gos.getAsBool('enableRtl');
 
         const { firstMovingCol, column, position } = this.getColumnMoveAndTargetInfo(
             allMovingColumns,

@@ -45,7 +45,7 @@ export const AllGridCommunityModules: Record<`${CommunityModuleName}Module`, num
     TextFilterModule: 104,
     TooltipModule: 22.24,
     UndoRedoEditModule: 23.5,
-    ValidationModule: 76.83,
+    ValidationModule: 70,
     ValueCacheModule: 0.65,
     CellSpanModule: 8.08,
 };
@@ -56,7 +56,7 @@ export const AllEnterpriseModules: Record<`${EnterpriseModuleName}Module`, numbe
     ClipboardModule: 46,
     ColumnMenuModule: 147,
     ColumnsToolPanelModule: 146,
-    ContextMenuModule: 70,
+    ContextMenuModule: 72,
     ExcelExportModule: 84,
     FiltersToolPanelModule: 116,
     FindModule: 14.51,

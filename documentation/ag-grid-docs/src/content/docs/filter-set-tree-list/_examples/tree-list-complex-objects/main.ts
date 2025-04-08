@@ -19,7 +19,7 @@ ModuleRegistry.registerModules([
     ContextMenuModule,
     SetFilterModule,
     TreeDataModule,
-    ValidationModule /* Development Only */,
+    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 
 const pathLookup: { [key: string]: string } = getData().reduce((pathMap, row) => {

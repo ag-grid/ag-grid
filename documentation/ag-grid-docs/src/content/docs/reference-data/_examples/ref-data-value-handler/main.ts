@@ -34,7 +34,7 @@ ModuleRegistry.registerModules([
     SetFilterModule,
     SelectEditorModule,
     TextEditorModule,
-    ValidationModule /* Development Only */,
+    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 
 const carMappings = {

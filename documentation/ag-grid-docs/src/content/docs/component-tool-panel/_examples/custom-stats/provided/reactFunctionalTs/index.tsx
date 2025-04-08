@@ -34,7 +34,7 @@ ModuleRegistry.registerModules([
     SetFilterModule,
     RowApiModule,
     EventApiModule,
-    ValidationModule /* Development Only */,
+    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 
 const myTheme = themeQuartz.withPart(

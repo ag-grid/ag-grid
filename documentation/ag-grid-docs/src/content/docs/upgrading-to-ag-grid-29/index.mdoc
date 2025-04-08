@@ -1,0 +1,344 @@
+---
+title: "Upgrading to AG Grid 29"
+description: "See whats new in AG Grid, view a full list of changes and migrate your $framework Data Grid to v29 with our Codemods."
+migrationVersion: "29.0.0"
+---
+
+Server-side row model transaction support, set filter complex object support, export of row group and total footer rows to Excel.
+
+## What's New
+
+AG Grid {% migrationVersion() %} delivers many new features - [server-side row model transaction support](https://www.ag-grid.com/archive/29.0.0/react-data-grid/server-side-model-updating-transactions/), [tree list](https://www.ag-grid.com/archive/29.0.0/react-data-grid/filter-set-tree-list/) and [complex object support](https://www.ag-grid.com/archive/29.0.0/react-data-grid/filter-set-filter-list/#complex-objects) in set filters, exporting of row group and total footer rows to Excel, as described in the [release post](https://blog.ag-grid.com/whats-new-in-ag-grid-29/). These major improvements require certain breaking changes as listed below.
+
+<!-- 
+Documentation to the highest patch release of the major/minor
+NOTE: This will not show if the current library version is the same as the migration version
+-->
+{% documentationArchiveSection version=migrationVersionPatch() /%}
+
+## Breaking Changes
+
+**Typescript Upgrade**
+
+Minimum version of Typescript for AG Grid v29 is v4.0.8.
+
+{% if isFramework("angular") %}
+**Angular Upgrade**
+
+* The minimum Angular dependency supported by AG Grid v29 is now Angular v10 via legacy packages. Previous versions of Angular aren't supported by AG Grid v29. See [Angular Compatibility](https://www.ag-grid.com/archive/29.0.0/angular-data-grid/angular-compatibility/) for more information.
+{% /if %}
+
+{% if isFramework("react") %}
+**React Change Detection**
+
+In previous versions of AG Grid, we introduced a `DeepValueCheck` change detection strategy that performed an additional deep value comparison above and beyond reference equality. 
+This was to help React users who were unintentionally setting their `rowData` prop when the row data had not actually changed. 
+This resulted in additional grid re-renders as the grid reapplied the rows despite there being no real change. 
+However, the `DeepValueCheck` introduced a number of issues, as well as introducing an additional cost for users who correctly manage their grid state i.e only updating the `rowData` prop when there are real data changes. 
+When correctly using Hooks, i.e., `setState()` and dependency arrays, `DeepValueCheck` is not required and so it has been removed to avoid the issues described above. 
+If you now see additional re-renders, please check that you are only updating grid state properties when they have actually changed. 
+See [React Hooks](https://www.ag-grid.com/archive/29.0.0/react-data-grid/react-hooks/) for more information.
+{% /if %}
+
+**SSRM**
+
+* The `getCacheBlockState()` grid API function is no longer supported by the new default store type but will continue to work when `suppressServerSideInfiniteScroll=true`.
+
+**Set Filter**
+
+Set Filters now maintain the type of the values, instead of everything being converted to strings:
+
+* Primitive types (e.g. number, boolean, etc.) are strings when used as keys in the Filter Model, but maintain their type otherwise (e.g. for Value Formatters, Comparators, etc.).
+* Complex objects support separate keys and display values. Value Formatter is now mandatory. Supplied Values for the Filter List require the full complex object.
+* Key Creator is applied after splitting arrays for Multiple Values with complex objects, rather than before.
+* The old behavior of always converting all filter values to strings can be replicated by setting `filterParams.convertValuesToStrings=true` in the Column Definition.
+
+**Layout & Styling**
+
+* In AG Grid v28, we ported our grid layout system to use CSS variables. 
+AG Grid v27 and earlier used SASS. 
+In order to ease the upgrade to AG Grid v28, we continued to include the legacy Sass API and CSS stylesheets at their old file paths. 
+However, in AG Grid v29 SASS is now removed, and you need to change the import paths for CSS and SASS (.scss) files. 
+The v27 import paths are now invalid in v29, and the themes won't work. 
+For more details, see [Upgrading Styles to v28+](https://www.ag-grid.com/archive/29.0.0/javascript-data-grid/global-style-upgrading-to-v28/).
+
+* `--ag-borders-row` has been removed and will no longer work. Use the combination of `ag-row-border-style` and `ag-row-border-width` to replace it.
+
+## Behavior Changes
+
+**SSRM**
+
+* Infinite scrolling is now enabled by default. 
+To revert to the previous default, i.e., no infinite scrolling, please set `suppressServerSideInfiniteScroll=true`. 
+As a result of this change, `serverSideInfiniteScroll` no longer makes sense and has been removed. 
+Similarly, `ServerSideGroupLevelState.infiniteScroll` has also been replaced by `ServerSideGroupLevelState.suppressInfiniteScroll`.
+* When using SSRM and filtering or purging a level, only one loading row is displayed instead of all grid rows shown in the loading state.
+
+**Row Grouping**
+
+* Unbalanced groups have now been disabled by default. 
+Rows with empty strings / `undefined` / `null` values for the group column will now be grouped under a `(Blanks)` group unless unbalanced groups are explicitly enabled by setting `groupAllowUnbalanced=true`. 
+Also note that `' '` (one singular space) is no longer treated as equivalent to `null` and `undefined` when pivoting.
+
+**Integrated Charts**
+
+* Integrated charts display the chart tool button by default instead of the toolbar hamburger button. 
+In order to display the toolbar hamburger button, please set `suppressChartToolPanelsButton=true`.
+
+**Standalone Charts**
+
+* Treemap tile labels are now disabled by default, enable by specifying a `labelKey`.
+* The Treemap formatter and tooltip renderer `datum` property will now point to the actual object from the datum, depth and fill can now be accessed from the parameters object for these functions.
+
+## Removal of Deprecated APIs
+{% metaTag tags=[ 
+  "newValueHandler", "sortedAt", "pinnedRowCellRenderer", "pinnedRowCellRendererFramework", 
+  "pinnedRowCellRendererParams", "pinnedRowValueFormatter", "groupRowInnerRenderer", 
+  "groupRowInnerRendererFramework", "groupMultiAutoColumn", "groupUseEntireRow", 
+  "groupSuppressAutoColumn", "defaultGroupSortComparator", "deltaColumnMode", 
+  "immutableColumns", "applyColumnDefOrder", "suppressEnterpriseResetOnNewColumns", 
+  "suppressSetColumnStateEvents", "suppressColumnStateEvents", "colWidth", 
+  "minColWidth", "maxColWidth", "deprecatedEmbedFullWidthRows", "stopEditingWhenGridLosesFocus", 
+  "defaultExportParams", "suppressKeyboardEvent", "rowDeselection", "batchUpdateWaitMillis", 
+  "deltaRowDataMode", "setState", "setColumnState", "getState", "resetState", 
+  "hideColumn", "hideColumns", "columnGroupOpened", "getAggregationColumns", 
+  "addAggregationColumn", "addAggregationColumns", "removeAggregationColumn", 
+  "removeAggregationColumns", "setColumnAggFunction", "getDisplayNameForCol", 
+  "setFloatingTopRowData", "setFloatingBottomRowData", "getFloatingTopRowCount", 
+  "getFloatingBottomRowCount", "getFloatingTopRow", "getFloatingBottomRow", 
+  "selectIndex", "deselectIndex", "selectNode", "deselectNode", "getSelectedNodesById", 
+  "isNodeSelected", "getRangeSelections", "addRangeSelection", "onGroupExpandedOrCollapsed", 
+  "ensureColIndexVisible", "doLayout", "checkGridSize", "getFirstRenderedRow", 
+  "getLastRenderedRow", "addVirtualRowListener", "refreshInMemoryRowModel", 
+  "recomputeAggregates", "updateRowData", "batchUpdateRowData", "insertItemsAtIndex", 
+  "addItems", "removeItems", "refreshVirtualPageCache", "refreshInfinitePageCache", 
+  "purgeVirtualPageCache", "purgeInfinitePageCache", "getVirtualRowCount", 
+  "isMaxRowFound", "setVirtualRowCount", "setInfiniteRowCount", "getVirtualPageState", 
+  "getInfinitePageState", "setEnterpriseDatasource", "purgeEnterpriseCache", 
+  "purgeServerSideCache", "isLockPosition", "isLockVisible", "isLockPinned", 
+  "padding", "suppressRefresh", "autoHeight", "addRowCompListener", "key", 
+  "valueGetter", "DragEvent", "AgDragEvent", "getCacheBlockState", "serverSideInfiniteScroll", 
+  "ServerSideGroupLevelState", "infiniteScroll", "AgTreemapSeriesLabelsOptions.color", 
+  "AgTreemapSeriesOptions.colorParents", "AgSeriesHighlightStyle", "AgScatterSeriesOptions", 
+  "AgAreaSeriesOptions", "AgBarSeriesOptions"
+] /%}
+The following properties were previously deprecated and have now been removed.
+
+{% expandingSection headerText="Removed Deprecated APIs" %}
+
+### AG Grid Column Components
+
+* The framework column components (`ag-grid-column`, `AgGridColumn`) were previously deprecated and have now been removed. 
+Define your column definitions in code via `gridOptions.columnDefs` or set directly on the AG Grid Component via the `columnDefs` property.
+
+### ColDef ###
+
+* `newValueHandler()` - removed, use `valueSetter` instead.
+* `sortedAt` - removed, use `sortIndex` instead.
+* `pinnedRowCellRenderer` - removed, use `cellRendererSelector` instead and use `params.node.rowPinned` to distinguish.
+* `pinnedRowCellRendererFramework` - removed, use `cellRendererSelector` instead and use `params.node.rowPinned` to distinguish.
+* `pinnedRowCellRendererParams` - removed, use `cellRendererSelector` instead and use `params.node.rowPinned` to distinguish.
+* `pinnedRowValueFormatter` - removed, use `valueFormatter` instead and use `params.node.rowPinned` to distinguish.
+
+### GridOptions ###
+
+**Grouping**
+
+* `groupRowInnerRenderer` - removed, use `groupRowRendererParams.innerRenderer` instead.
+* `groupRowInnerRendererFramework` - removed, use `groupRowRendererParams.innerRenderer` instead.
+* `groupMultiAutoColumn` - removed, use `groupDisplayType = 'multipleColumns'` instead.
+* `groupUseEntireRow` - removed, use `groupDisplayType = 'groupRows'` instead.
+* `groupSuppressAutoColumn` - removed, use `groupDisplayType='custom'` instead.
+* `defaultGroupSortComparator` - removed, use `initialGroupOrderComparator` instead.
+
+**Column State**
+
+* `deltaColumnMode`, `immutableColumns`, `applyColumnDefOrder` - removed, the grid now works like this as default. To keep column order maintained, set grid property `maintainColumnOrder=true`.
+* `suppressEnterpriseResetOnNewColumns` - removed as no longer required.
+* `suppressSetColumnStateEvents`, `suppressColumnStateEvents` - removed, use `event.source = "api"` to identify events due to setting column state via the API.
+* `colWidth` - removed, use `defaultColDef.width` instead.
+* `minColWidth` - removed, use `defaultColDef.minWidth` instead.
+* `maxColWidth` - removed, use `defaultColDef.maxWidth` instead.
+
+**Full Width**
+
+* `deprecatedEmbedFullWidthRows` - removed, use `embedFullWidthRows` instead.
+
+**Editing**
+
+* `stopEditingWhenGridLosesFocus` - removed, use `stopEditingWhenCellsLoseFocus` instead.
+
+**Export**
+
+* `defaultExportParams` - removed, use `defaultCsvExportParams` for CSV or `defaultExcelExportParams` for Excel exports instead.
+
+**Keyboard**
+
+* `suppressKeyboardEvent` - removed, use `colDef.suppressKeyboardEvent` or for every column via `defaultColDef.suppressKeyboardEvent`.
+
+**Selection**
+
+* `rowDeselection` - removed. Now true by default and should be suppressed by using `suppressRowDeselection`.
+
+**Updating Data**
+
+* `batchUpdateWaitMillis` - removed, use `asyncTransactionWaitMillis` instead.
+* `deltaRowDataMode` - removed, use `getRowId()` callback to enable immutable data mode.
+
+### Column Api
+
+**Column State**
+
+* `setState`, `setColumnState` - removed, use `applyColumnState` instead.
+* `getState` - removed, use `getColumnState` instead.
+* `resetState` - removed, use `resetColumnState` instead.
+* `hideColumn`, `hideColumns` - removed, use `setColumnVisible`, `setColumnsVisible` instead.
+* `columnGroupOpened` - removed, use `setColumnGroupOpened` instead.
+
+**Aggregation**
+
+* `getAggregationColumns` - removed, use `getValueColumns` instead.
+* `addAggregationColumn`, `addAggregationColumns` - removed, use `addValueColumn`, `addValueColumns` instead.
+* `removeAggregationColumn`, `removeAggregationColumns` - removed, use `removeValueColumn`, `removeValueColumns` instead.
+* `resetState` - removed, use `resetColumnState` instead.
+* `setColumnAggFunction` - removed, use `setColumnAggFunc` instead.
+
+**Display**
+
+* `getDisplayNameForCol` - removed, use `getDisplayNameForColumn` instead.
+
+### Grid API
+
+**Pinned Rows**
+
+* `setFloatingTopRowData`, `setFloatingBottomRowData` - removed, use `setPinnedTopRowData`, `setPinnedBottomRowData` instead.
+* `getFloatingTopRowCount`, `getFloatingBottomRowCount` - removed, use `getPinnedTopRowCount`, `getPinnedBottomRowCount` instead.
+* `getFloatingTopRow`, `getFloatingBottomRow` - removed, use `getPinnedTopRow`, `getPinnedBottomRow` instead.
+
+**Selection**
+
+* `selectIndex`, `deselectIndex` - removed, use `rowNode.setSelected(isSelected)` instead.
+* `selectNode`, `deselectNode` - removed, use `rowNode.setSelected(isSelected)` instead.
+* `getSelectedNodesById` - removed, use `getSelectedNodes` instead.
+* `isNodeSelected` - removed, use `rowNode.isSelected` instead.
+* `getRangeSelections` - removed, use `getCellRanges` instead.
+* `addRangeSelection` - removed, use `addCellRange` instead.
+
+**Grouping**
+
+* `onGroupExpandedOrCollapsed(param)` - method no longer accepts an optional parameter.
+
+**Display**
+
+* `ensureColIndexVisible` - removed, use `ensureColumnVisible` instead.
+* `doLayout` - removed, no longer required as grid now responds to size changes.
+* `checkGridSize` - removed as was legacy and no longer required.
+* `getFirstRenderedRow`, `getLastRenderedRow` - removed, use `getFirstDisplayedRow`, `getLastDisplayedRow` instead.
+* `addVirtualRowListener` - removed, use `addRenderedRowListener` instead.
+
+**Client Side Row Model**
+
+* `refreshInMemoryRowModel` - removed, use `refreshClientSideRowModel(step)` instead.
+* `recomputeAggregates` - removed, use `refreshClientSideRowModel('aggregate')` instead.
+* `updateRowData` - removed, use `applyTransaction` instead.
+* `batchUpdateRowData`, `insertItemsAtIndex`, `addItems`, `removeItems` - removed, use `applyTransactionAsync` instead.
+
+**Infinite Row Model**
+
+* `refreshVirtualPageCache`, `refreshInfinitePageCache` - removed, use `refreshInfiniteCache` instead.
+* `purgeVirtualPageCache`, `purgeInfinitePageCache` - removed, use `purgeInfiniteCache` instead.
+* `getVirtualRowCount` - removed, use `getInfiniteRowCount` instead.
+* `isMaxRowFound` - removed, use `isLastRowIndexKnown` instead.
+* `setVirtualRowCount`, `setInfiniteRowCount` - removed, use `setRowCount` instead.
+* `getVirtualPageState`, `getInfinitePageState` - removed, use `getCacheBlockState` instead.
+
+**Server Side Row Model**
+
+* `setEnterpriseDatasource` - removed, use `setServerSideDatasource` instead.
+* `purgeEnterpriseCache`, `purgeServerSideCache` - removed, use `refreshServerSide({purge: true})` instead.
+
+**Column Object**
+
+* `isLockPosition()` removed, use `col.getColDef().lockPosition` instead.
+* `isLockVisible()` removed, use `col.getColDef().lockVisible` instead.
+* `isLockPinned()` - removed, use `col.getColDef().lockPinned` instead.
+
+**GroupCellRendererParams**
+
+* `padding` removed - instead use the `--ag-row-group-indent-size` CSS Variable instead.
+
+### Interfaces
+
+**IDetailCellRendererParams**
+
+* `suppressRefresh` removed - set `refreshStrategy='nothing'` instead.
+* `autoHeight` removed - set `gridOptions.detailRowAutoHeight=true` instead.
+
+**ICellRendererParams**
+
+* `addRowCompListener` removed - this method was originally provided as a workaround to know when cells were destroyed in AG Grid before custom Cell Renderers could be provided.
+
+**ICellEditorParams**
+
+* `key` removed - use `eventKey` instead.
+
+**IRowNode**
+
+* Typescript users may get type errors if accessing internal properties of RowNode following the introduction of IRowNode. 
+Please resolve this by casting to RowNode or updating your code to use properties available on IRowNode.
+
+**IFilterParams**
+
+* The `valueGetter` parameter is no longer available on any of the filter params interfaces (e.g., `ISetFilterParams`) used in `colDef.filterParams`. 
+Please use `colDef.filterValueGetter` instead.
+
+**Events**
+
+* Renamed the AG Grid event interface `DragEvent` to `AgDragEvent` to stop clashing with the browser `DragEvent`.
+
+### Standalone Charts
+
+* `AgTreemapSeriesLabelsOptions.color` has been replaced by `AgTreemapSeriesLabelsOptions.value.key`.
+* `AgTreemapSeriesOptions.colorParents` has been removed - use a `AgTreemapSeriesOptions.formatter` instead for finer-grained non-leaf-node rendering control.
+* `AgSeriesHighlightStyle` style properties have moved under `AgSeriesHighlightStyle.item`.
+* `AgScatterSeriesOptions` style properties have moved under `AgScatterSeriesOptions.marker`.
+* `AgAreaSeriesOptions` - use multiple series entries and singular property names:
+
+  * `yKeys` - use `yKey` instead.
+  * `yNames` - use `yName` instead.
+  * `fills` - use `fill` instead.
+  * `strokes` - use `stroke` instead.
+
+* `AgBarSeriesOptions` - use multiple series entries and singular property names:
+
+  * `yKeys` - use `yKey` instead.
+  * `yNames` - use `yName` instead.
+  * `fills` - use `fill` instead.
+  * `strokes` - use `stroke` instead.
+
+{% /expandingSection %}
+
+## Deprecations
+{% metaTag tags=[ "rowDataChangeDetectionStrategy", "DeepValueCheck", "convertValuesToStrings", "ISetFilter" ] /%}
+
+This release includes the following deprecations:
+
+{% expandingSection headerText="Deprecations" %}
+
+{% if isFramework("react") %}
+**React Change Detection**
+
+* As the `DeepValueCheck` change detection strategy has been removed the `rowDataChangeDetectionStrategy` has now been deprecated as it no longer supports a different strategy then the default reference equals comparison.
+{% /if %}
+
+**Filters**
+
+* `filterParams.convertValuesToStrings=true` in the Column Definition is deprecated. This is a new setting to enable the legacy behaviour for converting values in the Set Filter to strings. Instead, handle the values with the correct/original type, including the processing of complex objects.
+
+* `ISetFilter.getValues()` is deprecated, `getFilterValues` should be used to get the values in the Set Filter (e.g., complex objects if provided), or `getFilterKeys` to get the string keys.
+
+{% /expandingSection %}
+
+## Changes List
+
+If you would like to see the full list of changes in this release, please see the [Changelog](https://www.ag-grid.com/changelog/?fixVersion=29.0.0).

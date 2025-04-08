@@ -29,7 +29,7 @@ ModuleRegistry.registerModules([
     MultiFilterModule,
     SetFilterModule,
     TextFilterModule,
-    ValidationModule /* Development Only */,
+    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 
 let gridApi: GridApi<IOlympicData>;

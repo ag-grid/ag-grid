@@ -13,7 +13,11 @@ import { FindModule } from 'ag-grid-enterprise';
 import { getData, getLatinText } from './data';
 import { FullWidthCellRenderer } from './fullWidthCellRenderer';
 
-ModuleRegistry.registerModules([FindModule, ClientSideRowModelModule, ValidationModule /* Development Only */]);
+ModuleRegistry.registerModules([
+    FindModule,
+    ClientSideRowModelModule,
+    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
+]);
 
 let gridApi: GridApi;
 

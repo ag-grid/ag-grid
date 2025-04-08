@@ -106,7 +106,7 @@ export class SetFilterEvaluator<TValue = string>
         } = params;
         this.caseSensitive = !!caseSensitive;
         const isGroupCol = column.getId().startsWith(GROUP_AUTO_COLUMN_ID);
-        this.treeDataTreeList = this.gos.get('treeData') && !!treeList && isGroupCol;
+        this.treeDataTreeList = this.gos.getAsBool('treeData') && !!treeList && isGroupCol;
         this.groupingTreeList = !!this.beans.rowGroupColsSvc?.columns.length && !!treeList && isGroupCol;
         const resolvedKeyCreator = keyCreator ?? colDef.keyCreator;
         this.createKey = this.generateCreateKey(resolvedKeyCreator, this.isTreeDataOrGrouping());
@@ -313,7 +313,7 @@ export class SetFilterEvaluator<TValue = string>
                 processDataPath(
                     (node as RowNode).getRoute() ?? [node.key ?? node.id!],
                     true,
-                    gos.get('groupAllowUnbalanced')
+                    gos.getAsBool('groupAllowUnbalanced')
                 ) as any
             ) as any
         );
@@ -329,7 +329,7 @@ export class SetFilterEvaluator<TValue = string>
         const dataPath = (rowGroupColsSvc?.columns ?? []).map((groupCol) => valueSvc.getKeyForNode(groupCol, node));
         dataPath.push(params.getValue(node));
         return appliedModel.has(
-            this.createKey(processDataPath(dataPath, false, gos.get('groupAllowUnbalanced')) as any) as any
+            this.createKey(processDataPath(dataPath, false, gos.getAsBool('groupAllowUnbalanced')) as any) as any
         );
     }
 

@@ -18,7 +18,7 @@ ModuleRegistry.registerModules([
     CellStyleModule,
     ClientSideRowModelApiModule,
     ClientSideRowModelModule,
-    ValidationModule /* Development Only */,
+    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 
 let editableYear = 2012;

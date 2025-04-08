@@ -41,7 +41,7 @@ export class ReadOnlyFloatingFilter extends Component implements IFloatingFilter
         this.eFloatingFilterText
             .setDisabled(true)
             .setInputAriaLabel(`${displayName} ${this.getLocaleTextFunc()('ariaFilterInput', 'Filter Input')}`);
-        if (this.gos.get('reactiveFloatingFilters')) {
+        if (this.gos.getAsBool('reactiveFloatingFilters')) {
             const reactiveParams = params as unknown as FloatingFilterDisplayParams;
             const evaluator = reactiveParams.getEvaluator();
             if (evaluator.getModelAsString) {

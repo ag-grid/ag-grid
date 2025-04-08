@@ -34,7 +34,7 @@ ModuleRegistry.registerModules([
     RowGroupingModule,
     SetFilterModule,
     RowGroupingPanelModule,
-    ValidationModule /* Development Only */,
+    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 
 interface IOlympicDataTypes extends IOlympicData {

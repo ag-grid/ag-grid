@@ -96,6 +96,6 @@ export class CsvCreator
     }
 
     public isExportSuppressed(): boolean {
-        return this.gos.get('suppressCsvExport');
+        return this.gos.getAsBool('suppressCsvExport');
     }
 }

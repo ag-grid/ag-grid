@@ -40,7 +40,7 @@ ModuleRegistry.registerModules([
     SetFilterModule,
     CellSelectionModule,
     PivotModule,
-    ValidationModule /* Development Only */,
+    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 
 const VueExample = defineComponent({

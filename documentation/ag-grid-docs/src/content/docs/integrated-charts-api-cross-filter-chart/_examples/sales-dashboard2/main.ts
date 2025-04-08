@@ -46,7 +46,7 @@ ModuleRegistry.registerModules([
     NumberEditorModule,
     TextEditorModule,
     DateEditorModule,
-    ValidationModule /* Development Only */,
+    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 
 let gridApi: GridApi;

@@ -19,7 +19,7 @@ ModuleRegistry.registerModules([
     PinnedRowModule,
     NumberEditorModule,
     TextEditorModule,
-    ValidationModule /* Development Only */,
+    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 
 let gridApi: GridApi;

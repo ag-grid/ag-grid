@@ -4,7 +4,11 @@ import { FindModule } from 'ag-grid-enterprise';
 
 import { FindRenderer } from './findRenderer';
 
-ModuleRegistry.registerModules([FindModule, ClientSideRowModelModule, ValidationModule /* Development Only */]);
+ModuleRegistry.registerModules([
+    FindModule,
+    ClientSideRowModelModule,
+    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
+]);
 
 let gridApi: GridApi;
 

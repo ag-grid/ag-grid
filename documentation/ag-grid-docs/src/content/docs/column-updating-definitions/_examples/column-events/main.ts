@@ -24,7 +24,7 @@ ModuleRegistry.registerModules([
     ColumnApiModule,
     ClientSideRowModelModule,
     PivotModule,
-    ValidationModule /* Development Only */,
+    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 
 function getColumnDefs(): ColDef[] {
@@ -212,7 +212,7 @@ function onBtPinnedOn() {
         if (colDef.field === 'athlete') {
             colDef.pinned = 'left';
         }
-        if (colDef.field === 'age') {
+        if (colDef.field === 'sport') {
             colDef.pinned = 'right';
         }
     });

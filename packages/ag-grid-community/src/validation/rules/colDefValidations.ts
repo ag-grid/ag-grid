@@ -2,7 +2,7 @@ import type { UserComponentName } from '../../context/context';
 import type { AbstractColDef, ColDef, ColGroupDef, ColumnMenuTab } from '../../entities/colDef';
 import { DEFAULT_SORTING_ORDER } from '../../sort/sortService';
 import { _errMsg, toStringWithNullUndefined } from '../logging';
-import type { Deprecations, OptionsValidator, Validations } from '../validationTypes';
+import type { Deprecations, ModuleValidation, OptionsValidator, Validations } from '../validationTypes';
 import { USER_COMP_MODULES } from './userCompValidations';
 
 const COLUMN_DEFINITION_DEPRECATIONS: () => Deprecations<ColDef | ColGroupDef> = () => ({
@@ -25,237 +25,228 @@ const COLUMN_DEFINITION_DEPRECATIONS: () => Deprecations<ColDef | ColGroupDef> =
     },
 });
 
-const COLUMN_DEFINITION_VALIDATIONS: () => Validations<ColDef | ColGroupDef> = () => ({
-    aggFunc: { module: 'SharedAggregation' },
-    autoHeight: {
-        supportedRowModels: ['clientSide', 'serverSide'],
-        module: 'RowAutoHeight',
-    },
-    cellClass: { module: 'CellStyle' },
-    cellClassRules: { module: 'CellStyle' },
-    cellEditor: ({ cellEditor, editable }) => {
+export const COLUMN_DEFINITION_MOD_VALIDATIONS: ModuleValidation<ColDef | ColGroupDef> = {
+    aggFunc: 'SharedAggregation',
+    autoHeight: 'RowAutoHeight',
+    cellClass: 'CellStyle',
+    cellClassRules: 'CellStyle',
+    cellEditor: ({ cellEditor, editable }: ColDef) => {
         if (!editable) {
             return null;
         }
         if (typeof cellEditor === 'string') {
-            const module = USER_COMP_MODULES[cellEditor as UserComponentName];
-            if (module) {
-                return { module };
-            }
+            return USER_COMP_MODULES[cellEditor as UserComponentName] ?? 'CustomEditor';
         }
-        return { module: 'CustomEditor' };
+        return 'CustomEditor';
     },
-    cellRenderer: ({ cellRenderer }) => {
+    cellRenderer: ({ cellRenderer }: ColDef) => {
         if (typeof cellRenderer !== 'string') {
             return null;
         }
-        const module = USER_COMP_MODULES[cellRenderer as UserComponentName];
-        if (module) {
-            return { module };
-        }
-        return null;
+        return USER_COMP_MODULES[cellRenderer as UserComponentName];
     },
-    cellRendererParams: {
-        validate: (colDef) => {
-            const groupColumn =
-                colDef.rowGroup != null ||
-                colDef.rowGroupIndex != null ||
-                colDef.cellRenderer === 'agGroupCellRenderer';
-
-            if (groupColumn && 'checkbox' in colDef.cellRendererParams) {
-                return 'Since v33.0, `cellRendererParams.checkbox` has been deprecated. Use `rowSelection.checkboxLocation = "autoGroupColumn"` instead.';
-            }
-            return null;
-        },
-    },
-    cellStyle: { module: 'CellStyle' },
-    children: () => COL_DEF_VALIDATORS(),
-    columnChooserParams: {
-        module: 'ColumnMenu',
-    },
-    contextMenuItems: { module: 'ContextMenu' },
-    dndSource: { module: 'DragAndDrop' },
-    dndSourceOnRowDrag: { module: 'DragAndDrop' },
-    editable: ({ editable, cellEditor }) => {
+    cellStyle: 'CellStyle',
+    columnChooserParams: 'ColumnMenu',
+    contextMenuItems: 'ContextMenu',
+    dndSource: 'DragAndDrop',
+    dndSourceOnRowDrag: 'DragAndDrop',
+    editable: ({ editable, cellEditor }: ColDef) => {
         if (editable && !cellEditor) {
-            return {
-                module: 'TextEditor',
-            };
+            return 'TextEditor';
         }
         return null;
     },
-    enableCellChangeFlash: { module: 'HighlightChanges' },
-    enablePivot: { module: 'SharedPivot' },
-    enableRowGroup: { module: 'SharedRowGrouping' },
-    enableValue: { module: 'SharedAggregation' },
-    filter: ({ filter }) => {
+    enableCellChangeFlash: 'HighlightChanges',
+    enablePivot: 'SharedPivot',
+    enableRowGroup: 'SharedRowGrouping',
+    enableValue: 'SharedAggregation',
+    filter: ({ filter }: ColDef) => {
         if (filter && typeof filter !== 'string' && typeof filter !== 'boolean') {
-            return { module: 'CustomFilter' };
+            return 'CustomFilter';
         }
         if (typeof filter === 'string') {
-            const module = USER_COMP_MODULES[filter as UserComponentName];
-            if (module) {
-                return { module };
-            }
+            return USER_COMP_MODULES[filter as UserComponentName] ?? 'ColumnFilter';
         }
-        return { module: 'ColumnFilter' };
+        return 'ColumnFilter';
     },
-    flex: {
-        validate: (_options, gridOptions) => {
-            if (gridOptions.autoSizeStrategy) {
-                return 'colDef.flex is not supported with gridOptions.autoSizeStrategy';
-            }
-            return null;
-        },
-    },
-    floatingFilter: { module: 'ColumnFilter' },
-    headerCheckboxSelection: {
-        supportedRowModels: ['clientSide', 'serverSide'],
-        validate: (_options, { rowSelection }) =>
-            rowSelection === 'multiple' ? null : 'headerCheckboxSelection is only supported with rowSelection=multiple',
-    },
-    headerCheckboxSelectionCurrentPageOnly: {
-        supportedRowModels: ['clientSide'],
-        validate: (_options, { rowSelection }) =>
-            rowSelection === 'multiple'
-                ? null
-                : 'headerCheckboxSelectionCurrentPageOnly is only supported with rowSelection=multiple',
-    },
-    headerCheckboxSelectionFilteredOnly: {
-        supportedRowModels: ['clientSide'],
-        validate: (_options, { rowSelection }) =>
-            rowSelection === 'multiple'
-                ? null
-                : 'headerCheckboxSelectionFilteredOnly is only supported with rowSelection=multiple',
-    },
-    headerTooltip: { module: 'Tooltip' },
-    headerValueGetter: {
-        validate: (_options: AbstractColDef) => {
-            const headerValueGetter = _options.headerValueGetter;
-            if (typeof headerValueGetter === 'function' || typeof headerValueGetter === 'string') {
-                return null;
-            }
-            return 'headerValueGetter must be a function or a valid string expression';
-        },
-    },
-    icons: {
-        validate: ({ icons }) => {
-            if (icons) {
-                if (icons['smallDown']) {
-                    return _errMsg(262);
-                }
-                if (icons['smallLeft']) {
-                    return _errMsg(263);
-                }
-                if (icons['smallRight']) {
-                    return _errMsg(264);
-                }
-            }
-            return null;
-        },
-    },
-    mainMenuItems: { module: 'ColumnMenu' },
-    menuTabs: (options) => {
+    floatingFilter: 'ColumnFilter',
+    headerTooltip: 'Tooltip',
+    mainMenuItems: 'ColumnMenu',
+    menuTabs: (options: ColDef) => {
         const enterpriseMenuTabs: ColumnMenuTab[] = ['columnsMenuTab', 'generalMenuTab'];
         if (options.menuTabs?.some((tab) => enterpriseMenuTabs.includes(tab))) {
-            return {
-                module: 'ColumnMenu',
-            };
+            return 'ColumnMenu';
         }
         return null;
     },
-    pivot: { module: 'SharedPivot' },
-    pivotIndex: { module: 'SharedPivot' },
-    rowDrag: { module: 'RowDrag' },
-    rowGroup: { module: 'SharedRowGrouping' },
-    rowGroupIndex: { module: 'SharedRowGrouping' },
-    sortingOrder: {
-        validate: (_options) => {
-            const sortingOrder = _options.sortingOrder;
+    pivot: 'SharedPivot',
+    pivotIndex: 'SharedPivot',
+    rowDrag: 'RowDrag',
+    rowGroup: 'SharedRowGrouping',
+    rowGroupIndex: 'SharedRowGrouping',
+    tooltipField: 'Tooltip',
+    tooltipValueGetter: 'Tooltip',
+    spanRows: 'CellSpan',
+};
 
-            if (Array.isArray(sortingOrder) && sortingOrder.length > 0) {
-                const invalidItems = sortingOrder.filter((a) => !DEFAULT_SORTING_ORDER.includes(a));
-                if (invalidItems.length > 0) {
-                    return `sortingOrder must be an array with elements from [${DEFAULT_SORTING_ORDER.map(toStringWithNullUndefined).join()}], currently it includes [${invalidItems.map(toStringWithNullUndefined).join()}]`;
-                }
-            } else if (!Array.isArray(sortingOrder) || sortingOrder.length <= 0) {
-                return `sortingOrder must be an array with at least one element, currently it's ${sortingOrder}`;
-            }
-            return null;
+const COLUMN_DEFINITION_VALIDATIONS: () => Validations<ColDef | ColGroupDef> = () => {
+    const validations: Validations<ColDef | ColGroupDef> = {
+        autoHeight: {
+            supportedRowModels: ['clientSide', 'serverSide'],
         },
-    },
-    tooltipField: { module: 'Tooltip' },
-    tooltipValueGetter: { module: 'Tooltip' },
-    type: {
-        validate: (_options) => {
-            const type = _options.type;
+        cellRendererParams: {
+            validate: (colDef) => {
+                const groupColumn =
+                    colDef.rowGroup != null ||
+                    colDef.rowGroupIndex != null ||
+                    colDef.cellRenderer === 'agGroupCellRenderer';
 
-            if (type instanceof Array) {
-                const invalidArray = type.some((a) => typeof a !== 'string');
-                if (invalidArray) {
-                    return "if colDef.type is supplied an array it should be of type 'string[]'";
+                if (groupColumn && 'checkbox' in colDef.cellRendererParams) {
+                    return 'Since v33.0, `cellRendererParams.checkbox` has been deprecated. Use `rowSelection.checkboxLocation = "autoGroupColumn"` instead.';
                 }
                 return null;
-            }
-
-            if (typeof type === 'string') {
-                return null;
-            }
-            return "colDef.type should be of type 'string' | 'string[]'";
+            },
         },
-    },
-    rowSpan: {
-        validate: (_options, { suppressRowTransform }) => {
-            if (!suppressRowTransform) {
-                return 'colDef.rowSpan requires suppressRowTransform to be enabled.';
-            }
-            return null;
-        },
-    },
-    spanRows: {
-        module: 'CellSpan',
-        dependencies: {
-            editable: { required: [false, undefined] },
-            rowDrag: { required: [false, undefined] },
-            colSpan: { required: [undefined] },
-            rowSpan: { required: [undefined] },
-        },
-        validate: (
-            _options,
-            {
-                rowSelection,
-                cellSelection,
-                suppressRowTransform,
-                enableCellSpan,
-                rowDragEntireRow,
-                enableCellTextSelection,
-            }
-        ) => {
-            if (typeof rowSelection === 'object') {
-                if (rowSelection?.mode === 'singleRow' && rowSelection?.enableClickSelection) {
-                    return 'colDef.spanRows is not supported with rowSelection.clickSelection';
+        flex: {
+            validate: (_options, gridOptions) => {
+                if (gridOptions.autoSizeStrategy) {
+                    return 'colDef.flex is not supported with gridOptions.autoSizeStrategy';
                 }
-            }
-            if (cellSelection) {
-                return 'colDef.spanRows is not supported with cellSelection.';
-            }
-            if (suppressRowTransform) {
-                return 'colDef.spanRows is not supported with suppressRowTransform.';
-            }
-            if (!enableCellSpan) {
-                return 'colDef.spanRows requires enableCellSpan to be enabled.';
-            }
-            if (rowDragEntireRow) {
-                return 'colDef.spanRows is not supported with rowDragEntireRow.';
-            }
-            if (enableCellTextSelection) {
-                return 'colDef.spanRows is not supported with enableCellTextSelection.';
-            }
-
-            return null;
+                return null;
+            },
         },
-    },
-});
+        headerCheckboxSelection: {
+            supportedRowModels: ['clientSide', 'serverSide'],
+            validate: (_options, { rowSelection }) =>
+                rowSelection === 'multiple'
+                    ? null
+                    : 'headerCheckboxSelection is only supported with rowSelection=multiple',
+        },
+        headerCheckboxSelectionCurrentPageOnly: {
+            supportedRowModels: ['clientSide'],
+            validate: (_options, { rowSelection }) =>
+                rowSelection === 'multiple'
+                    ? null
+                    : 'headerCheckboxSelectionCurrentPageOnly is only supported with rowSelection=multiple',
+        },
+        headerCheckboxSelectionFilteredOnly: {
+            supportedRowModels: ['clientSide'],
+            validate: (_options, { rowSelection }) =>
+                rowSelection === 'multiple'
+                    ? null
+                    : 'headerCheckboxSelectionFilteredOnly is only supported with rowSelection=multiple',
+        },
+        headerValueGetter: {
+            validate: (_options: AbstractColDef) => {
+                const headerValueGetter = _options.headerValueGetter;
+                if (typeof headerValueGetter === 'function' || typeof headerValueGetter === 'string') {
+                    return null;
+                }
+                return 'headerValueGetter must be a function or a valid string expression';
+            },
+        },
+        icons: {
+            validate: ({ icons }) => {
+                if (icons) {
+                    if (icons['smallDown']) {
+                        return _errMsg(262);
+                    }
+                    if (icons['smallLeft']) {
+                        return _errMsg(263);
+                    }
+                    if (icons['smallRight']) {
+                        return _errMsg(264);
+                    }
+                }
+                return null;
+            },
+        },
+        sortingOrder: {
+            validate: (_options) => {
+                const sortingOrder = _options.sortingOrder;
+
+                if (Array.isArray(sortingOrder) && sortingOrder.length > 0) {
+                    const invalidItems = sortingOrder.filter((a) => !DEFAULT_SORTING_ORDER.includes(a));
+                    if (invalidItems.length > 0) {
+                        return `sortingOrder must be an array with elements from [${DEFAULT_SORTING_ORDER.map(toStringWithNullUndefined).join()}], currently it includes [${invalidItems.map(toStringWithNullUndefined).join()}]`;
+                    }
+                } else if (!Array.isArray(sortingOrder) || sortingOrder.length <= 0) {
+                    return `sortingOrder must be an array with at least one element, currently it's ${sortingOrder}`;
+                }
+                return null;
+            },
+        },
+        type: {
+            validate: (_options) => {
+                const type = _options.type;
+
+                if (type instanceof Array) {
+                    const invalidArray = type.some((a) => typeof a !== 'string');
+                    if (invalidArray) {
+                        return "if colDef.type is supplied an array it should be of type 'string[]'";
+                    }
+                    return null;
+                }
+
+                if (typeof type === 'string') {
+                    return null;
+                }
+                return "colDef.type should be of type 'string' | 'string[]'";
+            },
+        },
+        rowSpan: {
+            validate: (_options, { suppressRowTransform }) => {
+                if (!suppressRowTransform) {
+                    return 'colDef.rowSpan requires suppressRowTransform to be enabled.';
+                }
+                return null;
+            },
+        },
+        spanRows: {
+            dependencies: {
+                editable: { required: [false, undefined] },
+                rowDrag: { required: [false, undefined] },
+                colSpan: { required: [undefined] },
+                rowSpan: { required: [undefined] },
+            },
+            validate: (
+                _options,
+                {
+                    rowSelection,
+                    cellSelection,
+                    suppressRowTransform,
+                    enableCellSpan,
+                    rowDragEntireRow,
+                    enableCellTextSelection,
+                }
+            ) => {
+                if (typeof rowSelection === 'object') {
+                    if (rowSelection?.mode === 'singleRow' && rowSelection?.enableClickSelection) {
+                        return 'colDef.spanRows is not supported with rowSelection.clickSelection';
+                    }
+                }
+                if (cellSelection) {
+                    return 'colDef.spanRows is not supported with cellSelection.';
+                }
+                if (suppressRowTransform) {
+                    return 'colDef.spanRows is not supported with suppressRowTransform.';
+                }
+                if (!enableCellSpan) {
+                    return 'colDef.spanRows requires enableCellSpan to be enabled.';
+                }
+                if (rowDragEntireRow) {
+                    return 'colDef.spanRows is not supported with rowDragEntireRow.';
+                }
+                if (enableCellTextSelection) {
+                    return 'colDef.spanRows is not supported with enableCellTextSelection.';
+                }
+
+                return null;
+            },
+        },
+    };
+    return validations;
+};
 
 type ColOrGroupKey = keyof ColDef | keyof ColGroupDef;
 const colDefPropertyMap: Record<ColOrGroupKey, undefined> = {

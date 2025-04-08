@@ -14,7 +14,11 @@ import { AgGridVue } from 'ag-grid-vue3';
 import CustomGroupCellRenderer from './customGroupCellRendererVue';
 import { getData } from './data';
 
-ModuleRegistry.registerModules([ClientSideRowModelModule, TreeDataModule, ValidationModule /* Development Only */]);
+ModuleRegistry.registerModules([
+    ClientSideRowModelModule,
+    TreeDataModule,
+    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
+]);
 
 const VueExample = defineComponent({
     template: `

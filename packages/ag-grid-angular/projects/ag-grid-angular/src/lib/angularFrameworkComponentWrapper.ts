@@ -2,7 +2,7 @@ import type { ComponentRef } from '@angular/core';
 import { ViewContainerRef } from '@angular/core';
 import { Component, Injectable, inject } from '@angular/core';
 
-import type { FrameworkComponentWrapper, WrappableInterface } from 'ag-grid-community';
+import type { FrameworkComponentWrapper, IFilter, WrappableInterface } from 'ag-grid-community';
 import { BaseComponentWrapper, _removeFromParent } from 'ag-grid-community';
 
 import type { AngularFrameworkOverrides } from './angularFrameworkOverrides';
@@ -30,6 +30,12 @@ function createComponentContainers(vcr: ViewContainerRef): Map<number, Component
     }
     return containerMap;
 }
+
+/**
+ * These methods are called on a hot path for every row so we do not want to enter / exit NgZone each time.
+ * Also these methods should not be used to update the UI, so we don't need to run them inside Angular.
+ */
+const runOutsideMethods = new Set<keyof IFilter>(['doesFilterPass', 'isFilterActive']);
 
 @Injectable()
 export class AngularFrameworkComponentWrapper
@@ -75,9 +81,8 @@ export class AngularFrameworkComponentWrapper
             callMethod(name: string, args: IArguments): void {
                 const componentRef = this.getFrameworkComponentInstance();
                 const methodCall = componentRef[name];
-                // Special case for `doesFilterPass` as it's called very often and current implementation has
-                // this filter logic as part of the component when really it is just part of the filter model.
-                if (name === 'doesFilterPass') {
+
+                if (runOutsideMethods.has(name as any)) {
                     return methodCall.apply(componentRef, args);
                 }
                 return angularFrameworkOverrides.runInsideAngular(() => methodCall.apply(componentRef, args));

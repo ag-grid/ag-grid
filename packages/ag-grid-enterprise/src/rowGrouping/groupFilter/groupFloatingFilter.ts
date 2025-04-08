@@ -47,7 +47,7 @@ export class GroupFloatingFilterComp extends Component implements IFloatingFilte
                 resolve();
             }
         };
-        if (this.gos.get('reactiveFloatingFilters')) {
+        if (this.gos.getAsBool('reactiveFloatingFilters')) {
             return new AgPromise<void>((resolve) => setupFilterElement(resolve)).then(() => {
                 this.addEvaluatorListeners(params as any, onColChange);
             });
@@ -68,7 +68,7 @@ export class GroupFloatingFilterComp extends Component implements IFloatingFilte
     public refresh(params: IFloatingFilterParams<GroupFilter>): void {
         this.params = params;
         this.setParams();
-        if (this.gos.get('reactiveFloatingFilters')) {
+        if (this.gos.getAsBool('reactiveFloatingFilters')) {
             if (this.showingUnderlyingFloatingFilter) {
                 const column = this.getSelectedColumn()!;
                 const compDetails = this.beans.colFilter!.getFloatingFilterCompDetails(
@@ -147,7 +147,7 @@ export class GroupFloatingFilterComp extends Component implements IFloatingFilte
     }
 
     private getSelectedColumn(): AgColumn | undefined {
-        if (this.gos.get('reactiveFloatingFilters')) {
+        if (this.gos.getAsBool('reactiveFloatingFilters')) {
             const reactiveParams = this.params as unknown as FloatingFilterDisplayParams;
             return (reactiveParams.getEvaluator() as GroupFilterEvaluator).selectedColumn;
         } else {
@@ -200,7 +200,7 @@ export class GroupFloatingFilterComp extends Component implements IFloatingFilte
                 eFloatingFilterText.setDisplayed(true);
             }
         };
-        if (this.gos.get('reactiveFloatingFilters')) {
+        if (this.gos.getAsBool('reactiveFloatingFilters')) {
             updateText(colFilter.getEvaluator(column!));
         } else {
             colFilter.getOrCreateFilterUi(column!)?.then((filter) => {

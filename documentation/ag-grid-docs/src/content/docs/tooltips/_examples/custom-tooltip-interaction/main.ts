@@ -14,7 +14,7 @@ ModuleRegistry.registerModules([
     TooltipModule,
     ClientSideRowModelModule,
     RowApiModule,
-    ValidationModule /* Development Only */,
+    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 
 const columnDefs: ColDef[] = [

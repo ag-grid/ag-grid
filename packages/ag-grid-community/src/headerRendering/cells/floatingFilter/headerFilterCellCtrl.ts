@@ -305,7 +305,7 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl<IHeaderFilterCe
 
             compPromise.then((comp) => {
                 if (comp) {
-                    if (gos.get('reactiveFloatingFilters')) {
+                    if (gos.getAsBool('reactiveFloatingFilters')) {
                         const eventWithParams = event as FilterChangedEvent | null;
                         let source = 'filter';
                         if (eventWithParams?.afterFloatingFilter) {
@@ -423,7 +423,7 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl<IHeaderFilterCe
 
         this.comp.getFloatingFilterComp()?.then((floatingFilter) => {
             if (typeof floatingFilter?.refresh === 'function') {
-                if (this.gos.get('reactiveFloatingFilters')) {
+                if (this.gos.getAsBool('reactiveFloatingFilters')) {
                     // TODO - add source
                     params = {
                         ...params,

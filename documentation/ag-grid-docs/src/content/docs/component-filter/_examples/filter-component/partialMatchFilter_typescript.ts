@@ -59,6 +59,6 @@ export class PartialMatchFilter implements IFilterComp {
     }
 
     componentMethod(message: string): void {
-        alert(`Alert from PartialMatchFilterComponent: ${message}`);
+        console.log(`Alert from PartialMatchFilterComponent: ${message}`);
     }
 }

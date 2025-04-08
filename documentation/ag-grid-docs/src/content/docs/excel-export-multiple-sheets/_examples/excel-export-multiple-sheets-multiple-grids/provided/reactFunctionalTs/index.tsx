@@ -33,7 +33,7 @@ ModuleRegistry.registerModules([
     ClientSideRowModelModule,
     CsvExportModule,
     ExcelExportModule,
-    ValidationModule /* Development Only */,
+    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 
 const SportRenderer = (props: CustomCellRendererProps) => {

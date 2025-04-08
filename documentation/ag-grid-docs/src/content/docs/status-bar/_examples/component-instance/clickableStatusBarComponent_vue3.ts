@@ -15,7 +15,7 @@ export default {
     },
     methods: {
         onClick() {
-            alert('Selected Row Count: ' + this.params.api.getSelectedRows().length);
+            console.log('Selected Row Count: ' + this.params.api.getSelectedRows().length);
         },
         setVisible(visible) {
             this.visible = visible;

@@ -3,7 +3,10 @@ import { ClientSideRowModelModule, ModuleRegistry, ValidationModule, createGrid 
 
 import { MissionResultRenderer } from './missionResultRenderer_typescript';
 
-ModuleRegistry.registerModules([ClientSideRowModelModule, ValidationModule /* Development Only */]);
+ModuleRegistry.registerModules([
+    ClientSideRowModelModule,
+    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
+]);
 
 const repeat = (arr: any[], n: number) => Array(n).fill(arr).flat();
 

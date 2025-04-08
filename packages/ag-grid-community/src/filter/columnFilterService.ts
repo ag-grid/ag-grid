@@ -1067,7 +1067,7 @@ export class ColumnFilterService
         const defaultFloatingFilterType =
             _getDefaultFloatingFilterType(frameworkOverrides, colDef, () => this.getDefaultFloatingFilter(column)) ??
             'agReadOnlyFloatingFilter';
-        const isReactive = this.gos.get('reactiveFloatingFilters');
+        const isReactive = this.gos.getAsBool('reactiveFloatingFilters');
         const filterParams = _mergeFilterParamsWithApplicationProvidedParams(
             userCompFactory,
             colDef,

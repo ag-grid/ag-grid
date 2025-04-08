@@ -84,7 +84,7 @@ export abstract class SimpleFloatingFilter<TParams extends IFloatingFilterParams
 
     public init(params: TParams): void {
         this.params = params;
-        this.reactive = this.gos.get('reactiveFloatingFilters');
+        this.reactive = this.gos.getAsBool('reactiveFloatingFilters');
         this.setParams(params);
 
         if (this.reactive) {

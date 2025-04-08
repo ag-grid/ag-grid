@@ -6,7 +6,7 @@ export default forwardRef((props: CustomStatusPanelProps, ref) => {
     const [visible, setVisible] = useState(true);
 
     const onClick = () => {
-        alert('Selected Row Count: ' + props.api.getSelectedRows().length);
+        console.log('Selected Row Count: ' + props.api.getSelectedRows().length);
     };
 
     useImperativeHandle(ref, () => {

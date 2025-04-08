@@ -14,7 +14,7 @@ ModuleRegistry.registerModules([
     ClientSideRowModelModule,
     ColumnMenuModule,
     ContextMenuModule,
-    ValidationModule /* Development Only */,
+    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 
 interface IOlympicDataTypes extends IOlympicData {

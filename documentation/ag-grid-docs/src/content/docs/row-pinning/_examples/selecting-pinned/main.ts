@@ -15,7 +15,7 @@ ModuleRegistry.registerModules([
     RowSelectionModule,
     RowApiModule,
     ContextMenuModule,
-    ValidationModule /* Development Only */,
+    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 
 const columnDefs: ColDef[] = [{ field: 'athlete' }, { field: 'country' }, { field: 'sport' }];
