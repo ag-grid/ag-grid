@@ -752,7 +752,8 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * @initial
      */
     @Input({ transform: booleanAttribute }) public suppressSetFilterByDefault: boolean | undefined = undefined;
-    @Input({ transform: booleanAttribute }) public reactiveFloatingFilters: boolean | undefined = undefined;
+    /** TODO     */
+    @Input({ transform: booleanAttribute }) public enableFilterEvaluators: boolean | undefined = undefined;
     /** Set to `true` to Enable Charts.
      * @default false
      * @agModule `IntegratedChartsModule`
@@ -2021,7 +2022,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
         FilterUiChangedEvent<TData>
     >();
     /** TODO - update
-     * Floating filter modified. Only used when `reactiveFloatingFilters` is enabled.
+     * Floating filter modified. Only used when `enableFilterEvaluators` is enabled.
      */
     @Output() public floatingFilterUiChanged: EventEmitter<FloatingFilterUiChangedEvent<TData>> = new EventEmitter<
         FloatingFilterUiChangedEvent<TData>

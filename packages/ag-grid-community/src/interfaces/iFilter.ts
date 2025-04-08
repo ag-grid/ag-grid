@@ -181,6 +181,7 @@ export interface IDoesFilterPassParams<TData = any> {
 export type FilterAction = 'apply' | 'clear' | 'reset' | 'cancel';
 
 export interface FilterWrapperParams {
+    /** TODO */
     useForm?: boolean;
     buttons?: FilterAction[];
     closeOnApply?: boolean;

@@ -1,5 +1,6 @@
 import type { NamedBean } from '../../context/bean';
 import { BeanStub } from '../../context/beanStub';
+import { isComponentMetaFunc } from '../../context/context';
 import type { DynamicBeanName, ProcessParamsFunc, UserComponentName } from '../../context/context';
 import type { Module } from '../../interfaces/iModule';
 import type { IconName, IconValue } from '../../utils/icon';
@@ -48,7 +49,10 @@ export class Registry extends BeanStub implements NamedBean {
                 }
             };
             for (const name of Object.keys(userComponents) as UserComponentName[]) {
-                const comp = userComponents[name];
+                let comp = userComponents[name]!;
+                if (isComponentMetaFunc(comp)) {
+                    comp = comp.getComp(this.beans);
+                }
                 if (typeof comp === 'object') {
                     const { classImp, params, processParams } = comp;
                     registerUserComponent(name, classImp, params, processParams);

@@ -315,7 +315,7 @@ export const _BOOLEAN_GRID_OPTIONS: KeysWithType<boolean>[] = [
     'maintainColumnOrder',
     'enableStrictPivotColumnOrder',
     'suppressSetFilterByDefault',
-    'reactiveFloatingFilters',
+    'enableFilterEvaluators',
 ];
 
 export type BooleanGridOptions = (typeof _BOOLEAN_GRID_OPTIONS)[number];

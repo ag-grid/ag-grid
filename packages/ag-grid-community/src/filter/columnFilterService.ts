@@ -77,7 +77,7 @@ const MONTH_KEYS: (keyof typeof MONTH_LOCALE_TEXT)[] = [
 
 const EVALUATOR_MAP = {
     agSetColumnFilter: 'agSetColumnFilterEvaluator',
-    agMultiColumnFilterUi: 'agMultiColumnFilterEvaluator',
+    agMultiColumnFilter: 'agMultiColumnFilterEvaluator',
     agGroupColumnFilter: 'agGroupColumnFilterEvaluator',
     agNumberColumnFilter: 'agNumberColumnFilterEvaluator',
     agDateColumnFilter: 'agDateColumnFilterEvaluator',
@@ -159,6 +159,9 @@ export class ColumnFilterService
     private model: FilterModel;
     /** This contains the UI state for evaluator columns */
     private state: Map<string, FilterDisplayState> = new Map();
+    private evaluatorMap: { -readonly [K in keyof typeof EVALUATOR_MAP]?: (typeof EVALUATOR_MAP)[K] } = {
+        ...EVALUATOR_MAP,
+    };
 
     public postConstruct(): void {
         this.addManagedEventListeners({
@@ -178,6 +181,9 @@ export class ColumnFilterService
         this.model = {
             ...this.initialFilterModel,
         };
+        if (!this.gos.getAsBool('enableFilterEvaluators')) {
+            delete this.evaluatorMap['agMultiColumnFilter'];
+        }
     }
 
     public setModel(model: FilterModel | null, source: FilterChangedEventSourceType = 'api'): void {
@@ -1067,7 +1073,7 @@ export class ColumnFilterService
         const defaultFloatingFilterType =
             _getDefaultFloatingFilterType(frameworkOverrides, colDef, () => this.getDefaultFloatingFilter(column)) ??
             'agReadOnlyFloatingFilter';
-        const isReactive = this.gos.getAsBool('reactiveFloatingFilters');
+        const isReactive = this.gos.getAsBool('enableFilterEvaluators');
         const filterParams = _mergeFilterParamsWithApplicationProvidedParams(
             userCompFactory,
             colDef,

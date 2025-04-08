@@ -16,14 +16,18 @@ export const MultiFilterModule: _ModuleWithoutApi = {
     moduleName: 'MultiFilter',
     version: VERSION,
     userComponents: {
-        agMultiColumnFilter: MultiFilter,
-        agMultiColumnFloatingFilter: MultiFloatingFilterComp,
-        agMultiColumnFilterUi: {
-            classImp: MultiFilterUi,
-            params: {
-                useForm: true,
-            } as FilterWrapperParams,
+        agMultiColumnFilter: {
+            getComp: (beans) =>
+                beans.gos.getAsBool('enableFilterEvaluators')
+                    ? {
+                          classImp: MultiFilterUi,
+                          params: {
+                              useForm: true,
+                          } as FilterWrapperParams,
+                      }
+                    : MultiFilter,
         },
+        agMultiColumnFloatingFilter: MultiFloatingFilterComp,
     },
     dynamicBeans: {
         agMultiColumnFilterEvaluator: MultiFilterEvaluator,

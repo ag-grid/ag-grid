@@ -5,7 +5,6 @@ export const USER_COMP_MODULES: Record<UserComponentName, ValidationModuleName> 
     agSetColumnFilter: 'SetFilter',
     agSetColumnFloatingFilter: 'SetFilter',
     agMultiColumnFilter: 'MultiFilter',
-    agMultiColumnFilterUi: 'MultiFilter',
     agMultiColumnFloatingFilter: 'MultiFilter',
     agGroupColumnFilter: 'GroupFilter',
     agGroupColumnFloatingFilter: 'GroupFilter',

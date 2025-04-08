@@ -573,7 +573,8 @@ export interface Props<TData> {
          * @initial
          */
     suppressSetFilterByDefault?: boolean | undefined,
-    reactiveFloatingFilters?: boolean | undefined,
+    /** TODO     */
+    enableFilterEvaluators?: boolean | undefined,
     /** Set to `true` to Enable Charts.
          * @default false
          * @agModule `IntegratedChartsModule`
@@ -1785,7 +1786,7 @@ export function getProps() {
         advancedFilterBuilderParams: undefined,
         suppressAdvancedFilterEval: undefined,
         suppressSetFilterByDefault: undefined,
-        reactiveFloatingFilters: undefined,
+        enableFilterEvaluators: undefined,
         enableCharts: undefined,
         chartThemes: undefined,
         customChartThemes: undefined,

@@ -157,7 +157,6 @@ export type UserComponentName =
     | 'agNumberColumnFloatingFilter'
     | 'agDateColumnFloatingFilter'
     | 'agMultiColumnFilter'
-    | 'agMultiColumnFilterUi'
     | 'agMultiColumnFloatingFilter'
     | 'agGroupColumnFilter'
     | 'agGroupColumnFloatingFilter'
@@ -188,15 +187,25 @@ export type UserComponentName =
     | 'agFindCellRenderer';
 
 export type ClassImp = new (...args: []) => object;
-export type ComponentMeta =
-    | ClassImp
-    | {
-          classImp: ClassImp;
-          /** Default params for provided components */
-          params?: any;
-          /** Update params for provided components before they are created */
-          processParams?: ProcessParamsFunc;
-      };
+
+interface ComponentMetaWithParams {
+    classImp: ClassImp;
+    /** Default params for provided components */
+    params?: any;
+    /** Update params for provided components before they are created */
+    processParams?: ProcessParamsFunc;
+}
+interface ComponentMetaFunc {
+    getComp: (beans: BeanCollection) => ClassImp | ComponentMetaWithParams;
+}
+
+export function isComponentMetaFunc(
+    componentMeta: ClassImp | ComponentMetaWithParams | ComponentMetaFunc
+): componentMeta is ComponentMetaFunc {
+    return typeof componentMeta === 'object' && !!(componentMeta as ComponentMetaFunc).getComp;
+}
+
+export type ComponentMeta = ClassImp | ComponentMetaWithParams | ComponentMetaFunc;
 
 export type ProcessParamsFunc<TParams = any> = (params: TParams) => TParams;
 

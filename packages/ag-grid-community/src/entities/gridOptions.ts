@@ -657,7 +657,8 @@ export interface GridOptions<TData = any> {
      * @initial
      */
     suppressSetFilterByDefault?: boolean;
-    reactiveFloatingFilters?: boolean;
+    /** TODO */
+    enableFilterEvaluators?: boolean;
 
     // *** Integrated Charts *** //
     /**
@@ -2251,7 +2252,7 @@ export interface GridOptions<TData = any> {
     onFilterUiChanged?(event: FilterUiChangedEvent<TData>): void;
     /**
      * TODO - update
-     * Floating filter modified. Only used when `reactiveFloatingFilters` is enabled.
+     * Floating filter modified. Only used when `enableFilterEvaluators` is enabled.
      */
     onFloatingFilterUiChanged?(event: FloatingFilterUiChangedEvent<TData>): void;
     /**

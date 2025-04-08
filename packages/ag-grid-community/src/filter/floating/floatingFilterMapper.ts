@@ -19,7 +19,6 @@ export function _getDefaultFloatingFilterType(
         const floatingFilterTypeMap: { [p: string]: string } = {
             agSetColumnFilter: 'agSetColumnFloatingFilter',
             agMultiColumnFilter: 'agMultiColumnFloatingFilter',
-            agMultiColumnFilterUi: 'agMultiColumnFloatingFilter',
             agGroupColumnFilter: 'agGroupColumnFloatingFilter',
             agNumberColumnFilter: 'agNumberColumnFloatingFilter',
             agDateColumnFilter: 'agDateColumnFloatingFilter',
