@@ -122,7 +122,7 @@ const frameworksData = [
     </div>
 
     <div class={styles.homepageCustomers}>
-        <LandingPageSection client:load>
+        <LandingPageSection client:load id="customer-logos">
             <CustomerLogos client:load />
             <Quotes client:load data={quotesData} />
         </LandingPageSection>
@@ -130,6 +130,7 @@ const frameworksData = [
 
     <LandingPageSection
         client:load
+        id="fastest-data-grid"
         tag="Unbeatable Speed & Performance"
         heading="The Fastest Data Grid In The World"
         subHeading="Handle millions of rows, and thousands of updates per second out of the box, without compromising on performance"
@@ -148,6 +149,7 @@ const frameworksData = [
 
     <LandingPageSection
         client:load
+        id="custom-themes"
         tag="Fully Customisable & Extendable"
         heading="Custom Themes and Components"
         subHeading="Customise your Data Grid styles with our Theming API and extend functionality with your own custom components."
@@ -159,6 +161,7 @@ const frameworksData = [
 
     <LandingPageSection
         client:load
+        id="integrated-charting"
         tag="Built-in Charting"
         headingHtml="Integrated Charts, Powered by <a href='https://www.ag-grid.com/charts/' style='font-weight: 800'>AG Charts</a>"
         subHeadingHtml="<p>Let your users visualise data with charts directly from the Grid. Powered by AG Charts: our <a href='https://www.ag-grid.com/charts/'> JavaScript Charting Library</a></p>"
@@ -177,6 +180,7 @@ const frameworksData = [
 
     <LandingPageSection
         client:load
+        id="showcase-examples"
         tag="Unlimited Use-cases"
         heading="Trusted By Developers Everywhere"
         subHeading="AG Grid can be found in almost every industry, from Finance and AI, to Databases and Aerospace:"
@@ -188,6 +192,7 @@ const frameworksData = [
 
     <LandingPageSection
         client:load
+        id="whats-new"
         tag="Regular Updates & Improvements"
         headingHtml="Latest Features and Enhancements"
         subHeading="With minor releases every 6 weeks, and major releases every 6 months, stay up to date with all of the newest features and improvements to AG Grid Data Grids."
@@ -223,6 +228,7 @@ const frameworksData = [
 
     <LandingPageSection
         client:load
+        id="faq-section"
         tag="JavaScript Data Grid FAQs"
         heading="Frequently Asked Questions"
         subHeading="How many rows can AG Grid handle? How fast is AG Grid? Is AG Grid free? Answers to these common questions and more."

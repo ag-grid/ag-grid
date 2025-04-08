@@ -32,6 +32,7 @@ const FRAMEWORK_CONFIGS: Record<Framework, { Icon: any; name: string }> = {
 };
 
 interface Props {
+    id: string;
     tag: string;
     heading?: string;
     headingHtml?: string;
@@ -153,6 +154,7 @@ const CTAWithFrameworks: FunctionComponent<{ ctaTitle: string; ctaUrl: string }>
 };
 
 export const LandingPageSection: FunctionComponent<Props> = ({
+    id,
     tag,
     heading,
     headingHtml,
@@ -167,6 +169,7 @@ export const LandingPageSection: FunctionComponent<Props> = ({
 }) => {
     return (
         <div
+            id={id}
             className={classnames(styles.sectionContent, sectionClass, {
                 [styles.withBackgroundGradient]: showBackgroundGradient,
             })}
