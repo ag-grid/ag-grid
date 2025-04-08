@@ -172,7 +172,7 @@ export abstract class ProvidedFilter<
         if (this.debouncePending) {
             // May already have been applied, so don't apply again (e.g. closing filter before debounce timeout)
             this.debouncePending = false;
-            this.doApplyModel(true);
+            this.doApplyModel();
         }
     }
 
@@ -189,23 +189,17 @@ export abstract class ProvidedFilter<
      * Applies changes made in the UI to the filter, and returns true if the model has changed.
      */
     public applyModel(_source: 'api' | 'ui' | 'rowDataUpdated' = 'api'): boolean {
-        return this.doApplyModel(false);
+        return this.doApplyModel();
     }
 
     protected canApply(_model: M | null): boolean {
         return true;
     }
 
-    private doApplyModel(fromFilterUi: boolean, additionalEventAttributes?: any): boolean {
+    private doApplyModel(additionalEventAttributes?: any): boolean {
         const changed = !this.areModelsEqual(this.params.model, this.state.model);
         if (changed) {
-            if (fromFilterUi && this.applyActive) {
-                // filter is open, so can perform as if the apply button was clicked
-                this.params.onAction('apply', additionalEventAttributes);
-            } else {
-                // filter may not be open, so need to do the update directly
-                this.beans.colFilter?.updateModel(this.params.column as AgColumn, 'apply', additionalEventAttributes);
-            }
+            this.params.onAction('apply', additionalEventAttributes);
         }
         return changed;
     }
@@ -231,7 +225,7 @@ export abstract class ProvidedFilter<
 
         apply ??= this.applyActive ? undefined : 'debounce';
         if (apply === 'immediately') {
-            this.doApplyModel(!afterFloatingFilter, { afterFloatingFilter, afterDataChange: false });
+            this.doApplyModel({ afterFloatingFilter, afterDataChange: false });
         } else if (apply === 'debounce') {
             this.applyDebounced();
         }

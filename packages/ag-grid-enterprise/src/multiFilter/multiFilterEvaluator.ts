@@ -118,6 +118,10 @@ export class MultiFilterEvaluator
         return activeWrapper?.evaluator.getModelAsString?.(model.filterModels[lastActiveIndex]) ?? '';
     }
 
+    public getEvaluator(index: number): FilterEvaluator | undefined {
+        return this.evaluatorWrappers[index]?.evaluator;
+    }
+
     public override destroy(): void {
         this.evaluatorWrappers.forEach((wrapper) => this.destroyBean(wrapper?.evaluator));
         this.evaluatorWrappers.length = 0;

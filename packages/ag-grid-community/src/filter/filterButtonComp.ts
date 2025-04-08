@@ -5,12 +5,9 @@ import { _clearElement, _createElement, _setDisabled } from '../utils/dom';
 import { _warn } from '../validation/logging';
 import { Component } from '../widgets/component';
 import { FILTER_LOCALE_TEXT } from './filterLocaleText';
-import { isUseApplyButton } from './floating/provided/providedFilterUtils';
 
 export interface FilterButtonEvent extends AgEvent<FilterAction> {
     event?: Event;
-    applyActive: boolean;
-    additionalEventAttributes?: any;
 }
 
 const FilterButtonCompElement: ElementParams = {
@@ -47,8 +44,6 @@ export class FilterButtonComp extends Component<FilterAction> {
 
         const translate = this.getLocaleTextFunc();
 
-        const applyActive = isUseApplyButton({ buttons } as any);
-
         const addButton = (type: FilterAction): void => {
             const localeKey = `${type}Filter` as const;
             const text = type ? translate(localeKey, FILTER_LOCALE_TEXT[localeKey]) : undefined;
@@ -56,7 +51,6 @@ export class FilterButtonComp extends Component<FilterAction> {
                 this.dispatchLocalEvent<FilterButtonEvent>({
                     type,
                     event,
-                    applyActive,
                 });
             };
             if (!['apply', 'clear', 'reset', 'cancel'].includes(type)) {
@@ -94,18 +88,6 @@ export class FilterButtonComp extends Component<FilterAction> {
             return;
         }
         _setDisabled(eApplyButton, valid === false);
-    }
-
-    public performAction(action: FilterAction, event?: KeyboardEvent, additionalEventAttributes?: any): void {
-        const buttons = this.buttons;
-        if (buttons.includes(action)) {
-            this.dispatchLocalEvent<FilterButtonEvent>({
-                type: action,
-                event,
-                applyActive: isUseApplyButton({ buttons } as any),
-                additionalEventAttributes,
-            });
-        }
     }
 
     private destroyListeners(): void {

@@ -206,7 +206,7 @@ export {
 export type { FilterManager } from './filter/filterManager';
 export type { FilterValueService } from './filter/filterValueService';
 export { FilterRequestSource } from './filter/iColumnFilter';
-export { _refreshEvaluatorAndUi } from './filter/columnFilterService';
+export { _refreshEvaluatorAndUi, _updateFilterModel, _refreshFilterUi } from './filter/columnFilterService';
 export {
     IMultiFilter,
     IMultiFilterModel,
@@ -216,6 +216,7 @@ export {
     IMultiFilterDef,
 } from './interfaces/iMultiFilter';
 export { FilterWrapperComp } from './filter/filterWrapperComp';
+export { FilterDisplayComp } from './filter/filterDisplayComp';
 
 export {
     IProvidedFilter,

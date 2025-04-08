@@ -130,7 +130,6 @@ export interface FilterActionEvent extends AgEvent<'filterAction'> {
     column: AgColumn;
     action: FilterAction;
     event?: KeyboardEvent;
-    additionalEventAttributes?: any;
 }
 
 export class ColumnFilterService
@@ -778,18 +777,10 @@ export class ColumnFilterService
         };
     }
 
-    private createFilterCompParams(
-        column: AgColumn,
-        useEvaluator: boolean,
-        source: 'init' | 'colDef',
-        forFloatingFilter?: boolean
-    ): BaseFilterParams {
-        const colDef = column.getColDef();
-        const filterChangedCallback = this.filterChangedCallbackFactory(column);
-
-        const params: IFilterParams = _addGridCommonParams(this.gos, {
+    public createBaseFilterParams(column: AgColumn, forFloatingFilter?: boolean): BaseFilterParams {
+        return _addGridCommonParams(this.gos, {
             column,
-            colDef,
+            colDef: column.getColDef(),
             getValue: this.createGetValue(column),
             doesRowPassOtherFilter: forFloatingFilter
                 ? () => true
@@ -798,11 +789,22 @@ export class ColumnFilterService
             // to avoid breaking changes to `filterParams` defined as functions
             // we need to provide the below options even though they are not valid for evaluators
             rowModel: this.beans.rowModel,
-            filterChangedCallback,
-            filterModifiedCallback: forFloatingFilter
-                ? () => {}
-                : (additionalEventAttributes?: any) => this.filterUiChanged(column, additionalEventAttributes),
         });
+    }
+
+    private createFilterCompParams(
+        column: AgColumn,
+        useEvaluator: boolean,
+        source: 'init' | 'colDef',
+        forFloatingFilter?: boolean
+    ): BaseFilterParams {
+        const filterChangedCallback = this.filterChangedCallbackFactory(column);
+
+        const params: IFilterParams = this.createBaseFilterParams(column, forFloatingFilter) as IFilterParams;
+        params.filterChangedCallback = filterChangedCallback;
+        params.filterModifiedCallback = forFloatingFilter
+            ? () => {}
+            : (additionalEventAttributes?: any) => this.filterModified(column, additionalEventAttributes);
 
         if (useEvaluator) {
             const displayParams = params as unknown as FilterDisplayParams;
@@ -819,23 +821,19 @@ export class ColumnFilterService
                 });
             };
             const filterStateCallback = (additionalEventAttributes?: any) =>
-                this.eventSvc.dispatchEvent({
-                    type: 'filterUiChanged',
-                    column,
-                    ...additionalEventAttributes,
-                });
+                this.filterUiChanged(column, additionalEventAttributes);
             displayParams.onStateChange = (state, additionalEventAttributes) => {
                 this.updateState(column, state);
                 filterStateCallback(additionalEventAttributes);
                 this.updateOrRefreshFilterUi(column);
             };
             displayParams.onAction = (action, additionalEventAttributes, event) => {
+                this.updateModel(column, action, additionalEventAttributes);
                 this.dispatchLocalEvent<FilterActionEvent>({
                     type: 'filterAction',
                     column,
                     action,
                     event,
-                    additionalEventAttributes,
                 });
             };
             displayParams.getEvaluator = () => this.getOrCreateEvaluator(column)!;
@@ -1636,7 +1634,7 @@ export class ColumnFilterService
         });
     }
 
-    private filterUiChanged(column: AgColumn, additionalEventAttributes?: any): void {
+    private filterModified(column: AgColumn, additionalEventAttributes?: any): void {
         this.getOrCreateFilterUi(column)?.then((filterInstance) => {
             this.eventSvc.dispatchEvent({
                 type: 'filterModified',
@@ -1647,7 +1645,15 @@ export class ColumnFilterService
         });
     }
 
-    private floatingFilterUiChanged(column: AgColumn, additionalEventAttributes?: any): void {
+    public filterUiChanged(column: Column, additionalEventAttributes?: any): void {
+        this.eventSvc.dispatchEvent({
+            type: 'filterUiChanged',
+            column,
+            ...additionalEventAttributes,
+        });
+    }
+
+    private floatingFilterUiChanged(column: Column, additionalEventAttributes?: any): void {
         this.eventSvc.dispatchEvent({
             type: 'floatingFilterModified',
             column,
@@ -1657,70 +1663,23 @@ export class ColumnFilterService
 
     public updateModel(column: AgColumn, action: FilterAction, additionalEventAttributes?: any): void {
         const colId = column.getColId();
-        let state: FilterDisplayState;
-        let updateModel = false;
-        let model: any;
-
-        switch (action) {
-            case 'apply': {
-                const oldState = this.state.get(colId);
-                model = oldState?.model ?? null;
-                state = {
-                    // keep the other UI state
-                    state: oldState?.state,
-                    model,
-                };
-                updateModel = true;
-                break;
-            }
-            case 'clear': {
-                state = {
-                    // wipe other UI state
-                    model: null,
-                };
-                break;
-            }
-            case 'reset': {
-                state = {
-                    // wipe other UI state
-                    model: null,
-                };
-                updateModel = true;
-                model = null;
-                break;
-            }
-            case 'cancel': {
-                state = {
-                    // wipe other UI state
-                    model: this.model[colId] ?? null,
-                };
-                break;
-            }
-        }
-
-        this.updateState(column, state);
-        this.updateOrRefreshFilterUi(column, updateModel, model, additionalEventAttributes);
+        _updateFilterModel(
+            action,
+            () => this.cachedFilter(column)?.filterUi as FilterUi<FilterDisplayComp, FilterDisplayParams> | undefined,
+            () => this.model[colId] ?? null,
+            () => this.state.get(colId),
+            (state) => this.updateState(column, state),
+            additionalEventAttributes
+        );
     }
 
-    private updateOrRefreshFilterUi(
-        column: AgColumn,
-        updateModel?: boolean,
-        model?: any,
-        additionalEventAttributes?: any
-    ): void {
-        const filterWrapper = this.cachedFilter(column);
-        const filterUi = filterWrapper?.filterUi as FilterUi<FilterDisplayComp, FilterDisplayParams> | undefined;
-        if (updateModel) {
-            filterUi?.filterParams?.onModelChange(model, additionalEventAttributes);
-        } else {
-            if (filterUi?.created) {
-                filterUi.promise.then((filter) => {
-                    const colId = column.getColId();
-                    const model = this.model[colId] ?? null;
-                    _refreshUi(filter!, filterUi.filterParams, model, this.state.get(colId) ?? { model }, 'ui');
-                });
-            }
-        }
+    private updateOrRefreshFilterUi(column: AgColumn): void {
+        const colId = column.getColId();
+        updateOrRefreshFilterUi(
+            () => this.cachedFilter(column)?.filterUi as FilterUi<FilterDisplayComp, FilterDisplayParams> | undefined,
+            () => this.model[colId] ?? null,
+            () => this.state.get(colId)
+        );
     }
 
     private updateState(column: AgColumn, state: FilterDisplayState): void {
@@ -1823,17 +1782,17 @@ export function _refreshEvaluatorAndUi(
     return getFilterUi().then((filterUi) => {
         if (filterUi) {
             const { filter, filterParams } = filterUi;
-            _refreshUi(filter, filterParams, model, state, source);
+            _refreshFilterUi(filter, filterParams, model, state, source);
         }
     });
 }
 
-function _refreshUi(
+export function _refreshFilterUi(
     filter: FilterDisplayComp,
     filterParams: FilterDisplayParams,
     model: any,
     state: FilterDisplayState,
-    source: 'ui' | 'api' | 'colDef' | 'floating' | 'evaluator'
+    source: 'ui' | 'api' | 'colDef' | 'floating' | 'evaluator' | 'init'
 ): void {
     filter?.refresh?.({
         ...filterParams,
@@ -1845,4 +1804,78 @@ function _refreshUi(
 
 function isValidDate(value: any): boolean {
     return value instanceof Date && !isNaN(value.getTime());
+}
+
+function updateOrRefreshFilterUi(
+    getFilterUi: () => FilterUi<FilterDisplayComp, FilterDisplayParams> | undefined,
+    getModel: () => any,
+    getState: () => FilterDisplayState | undefined,
+    updateModel?: boolean,
+    model?: any,
+    additionalEventAttributes?: any
+): void {
+    const filterUi = getFilterUi();
+    if (updateModel) {
+        filterUi?.filterParams?.onModelChange(model, additionalEventAttributes);
+    } else {
+        if (filterUi?.created) {
+            filterUi.promise.then((filter) => {
+                const model = getModel();
+                _refreshFilterUi(filter!, filterUi.filterParams, model, getState() ?? { model }, 'ui');
+            });
+        }
+    }
+}
+
+export function _updateFilterModel(
+    action: FilterAction,
+    getFilterUi: () => FilterUi<FilterDisplayComp, FilterDisplayParams> | undefined,
+    getModel: () => any,
+    getState: () => FilterDisplayState | undefined,
+    updateState: (state: FilterDisplayState) => void,
+    additionalEventAttributes?: any
+): void {
+    let state: FilterDisplayState;
+    let updateModel = false;
+    let model: any;
+
+    switch (action) {
+        case 'apply': {
+            const oldState = getState();
+            model = oldState?.model ?? null;
+            state = {
+                // keep the other UI state
+                state: oldState?.state,
+                model,
+            };
+            updateModel = true;
+            break;
+        }
+        case 'clear': {
+            state = {
+                // wipe other UI state
+                model: null,
+            };
+            break;
+        }
+        case 'reset': {
+            state = {
+                // wipe other UI state
+                model: null,
+            };
+            updateModel = true;
+            model = null;
+            break;
+        }
+        case 'cancel': {
+            state = {
+                // wipe other UI state
+                model: getModel(),
+            };
+            break;
+        }
+    }
+
+    updateState(state);
+    updateOrRefreshFilterUi(getFilterUi, getModel, getState, updateModel, model, additionalEventAttributes);
 }

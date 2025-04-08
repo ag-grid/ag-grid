@@ -1,4 +1,4 @@
-import type { AgEvent, AgGridEvent } from './events';
+import type { AgEvent } from './events';
 import type { IEventEmitter, IEventListener, IGlobalEventListener } from './interfaces/iEventEmitter';
 import type { IFrameworkOverrides } from './interfaces/iFrameworkOverrides';
 
@@ -76,13 +76,11 @@ export class LocalEventService<TEventType extends string> implements IEventEmitt
         (async ? this.globalAsyncListeners : this.globalSyncListeners).delete(listener);
     }
 
-    public dispatchEvent(event: AgEvent<TEventType>): void {
-        const agEvent = event as AgGridEvent<any, any, TEventType>;
+    public dispatchEvent<TEvent extends AgEvent<TEventType>>(event: TEvent): void {
+        this.dispatchToListeners(event, true);
+        this.dispatchToListeners(event, false);
 
-        this.dispatchToListeners(agEvent, true);
-        this.dispatchToListeners(agEvent, false);
-
-        this.firedEvents[agEvent.type] = true;
+        this.firedEvents[event.type] = true;
     }
 
     public dispatchEventOnce(event: AgEvent<TEventType>): void {
@@ -91,7 +89,7 @@ export class LocalEventService<TEventType extends string> implements IEventEmitt
         }
     }
 
-    private dispatchToListeners(event: AgGridEvent<any, any, TEventType>, async: boolean) {
+    private dispatchToListeners(event: AgEvent<TEventType>, async: boolean) {
         const eventType = event.type;
 
         if (async && 'event' in event) {

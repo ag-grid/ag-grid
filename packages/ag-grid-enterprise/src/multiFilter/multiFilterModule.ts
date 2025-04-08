@@ -1,4 +1,4 @@
-import type { _ModuleWithoutApi } from 'ag-grid-community';
+import type { FilterWrapperParams, _ModuleWithoutApi } from 'ag-grid-community';
 import { _ColumnFilterModule } from 'ag-grid-community';
 
 import { EnterpriseCoreModule } from '../agGridEnterpriseModule';
@@ -18,7 +18,12 @@ export const MultiFilterModule: _ModuleWithoutApi = {
     userComponents: {
         agMultiColumnFilter: MultiFilter,
         agMultiColumnFloatingFilter: MultiFloatingFilterComp,
-        agMultiColumnFilterUi: MultiFilterUi,
+        agMultiColumnFilterUi: {
+            classImp: MultiFilterUi,
+            params: {
+                useForm: true,
+            } as FilterWrapperParams,
+        },
     },
     dynamicBeans: {
         agMultiColumnFilterEvaluator: MultiFilterEvaluator,

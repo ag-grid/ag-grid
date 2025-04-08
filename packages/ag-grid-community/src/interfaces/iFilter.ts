@@ -256,8 +256,6 @@ export interface FilterDisplayState<TModel = any, TState = any> {
 
 export interface FilterDisplayParams<TData = any, TContext = any, TModel = any, TState = any>
     extends SharedFilterParams<TData, TContext> {
-    /** The parent element of the filter (which also contains filter buttons, if defined). */
-    eWrapper: HTMLElement;
     /** The current applied filter model for the component. */
     model: TModel | null;
     /** The current state to display in the component. */
