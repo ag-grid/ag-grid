@@ -183,7 +183,9 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
     private selectRange(nodesToSelect: readonly RowNode[], value: boolean, source: SelectionEventSourceType): number {
         let updatedCount = 0;
 
-        nodesToSelect.forEach((rowNode) => {
+        nodesToSelect.forEach((node) => {
+            const rowNode = _normaliseFooterRef(node);
+
             if (rowNode.group && this.groupSelectsDescendants) {
                 return;
             }
