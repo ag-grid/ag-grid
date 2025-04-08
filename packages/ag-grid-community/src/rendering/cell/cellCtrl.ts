@@ -209,7 +209,7 @@ export class CellCtrl extends BeanStub {
         this.addFeatures();
         compBean.addDestroyFunc(() => this.removeFeatures());
 
-        this.onSuppressCellFocusChanged(this.beans.gos.getAsBool('suppressCellFocus'));
+        this.onSuppressCellFocusChanged(this.beans.gos.is('suppressCellFocus'));
 
         this.setupFocus();
         this.applyStaticCssClasses();
@@ -308,7 +308,7 @@ export class CellCtrl extends BeanStub {
 
     public isForceWrapper(): boolean {
         // text selection requires the value to be wrapped in another element
-        return this.beans.gos.get('enableCellTextSelection') || this.column.isAutoHeight();
+        return this.beans.gos.is('enableCellTextSelection') || this.column.isAutoHeight();
     }
 
     /**

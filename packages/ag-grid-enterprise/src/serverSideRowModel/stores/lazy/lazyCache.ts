@@ -128,7 +128,7 @@ export class LazyCache extends BeanStub {
 
         this.defaultNodeIdPrefix = this.blockUtils.createNodeIdPrefix(this.store.getParentNode());
         this.getRowIdFunc = _getRowIdCallback(this.gos);
-        this.isMasterDetail = this.gos.getAsBool('masterDetail');
+        this.isMasterDetail = this.gos.is('masterDetail');
     }
 
     public override destroy() {
@@ -163,7 +163,7 @@ export class LazyCache extends BeanStub {
             return node;
         }
 
-        const hideOpenGroups = this.gos.get('groupHideOpenParents') || this.gos.get('groupAllowUnbalanced');
+        const hideOpenGroups = this.gos.is('groupHideOpenParents') || this.gos.is('groupAllowUnbalanced');
         if (hideOpenGroups) {
             // if hiding open groups, the first node in this expanded store may not be
             // the first displayed node, as it could be hidden, so need to DFS first.
@@ -250,7 +250,7 @@ export class LazyCache extends BeanStub {
             this.nodeDisplayIndexMap.set(displayIndex, node);
         });
         // if group hide open parents we need to populate with the parent group data for the first stub node
-        if (storeIndex === 0 && this.gos.get('groupHideOpenParents')) {
+        if (storeIndex === 0 && this.gos.is('groupHideOpenParents')) {
             const parentGroupData = this.store.getParentNode().groupData;
             if (parentGroupData) {
                 for (const key of Object.keys(parentGroupData)) {
@@ -318,7 +318,7 @@ export class LazyCache extends BeanStub {
             const isFirstChild = numericIndex === 0;
             node.setFirstChild(isFirstChild);
             // if hiding open parents, then the first node should inherit the group values
-            if (isFirstChild && this.gos.get('groupHideOpenParents')) {
+            if (isFirstChild && this.gos.is('groupHideOpenParents')) {
                 const parentGroupData = this.store.getParentNode().groupData;
                 if (parentGroupData) {
                     for (const key of Object.keys(parentGroupData)) {
@@ -798,7 +798,7 @@ export class LazyCache extends BeanStub {
     }
 
     private isNodeCached(node: RowNode): boolean {
-        const isUnbalancedNode = this.gos.getAsBool('groupAllowUnbalanced') && node.key === '';
+        const isUnbalancedNode = this.gos.is('groupAllowUnbalanced') && node.key === '';
         return (node.isExpandable() && node.expanded) || this.isNodeFocused(node) || isUnbalancedNode;
     }
 

@@ -77,7 +77,7 @@ export class GridSerializer extends BeanStub implements NamedBean {
         // similarly, if specific rowNodes are provided we do the same. (the clipboard service uses rowNodes to define which rows to export)
         const isClipboardExport = params.rowPositions != null;
         const isExplicitExportSelection = isClipboardExport || !!params.onlySelected;
-        const hideOpenParents = this.gos.get('groupHideOpenParents') && !isExplicitExportSelection;
+        const hideOpenParents = this.gos.is('groupHideOpenParents') && !isExplicitExportSelection;
         const isLeafNode = this.colModel.isPivotMode() ? node.leafGroup : !node.group;
         const isFooter = !!node.footer;
         const shouldSkipCurrentGroup =
@@ -370,7 +370,7 @@ export class GridSerializer extends BeanStub implements NamedBean {
             return colModel.getColsForKeys(columnKeys).filter(filterSpecialColumns);
         }
 
-        const isTreeData = gos.get('treeData');
+        const isTreeData = gos.is('treeData');
 
         let columnsToExport: AgColumn[] = [];
 

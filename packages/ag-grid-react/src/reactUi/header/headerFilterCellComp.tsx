@@ -101,7 +101,7 @@ const HeaderFilterCellComp = ({ ctrl }: { ctrl: HeaderFilterCellCtrl }) => {
         return !!res;
     }, [userCompDetails]);
 
-    const reactiveCustomComponents = useMemo(() => gos.get('reactiveCustomComponents'), []);
+    const reactiveCustomComponents = useMemo(() => gos.is('reactiveCustomComponents'), []);
     const floatingFilterCompProxy = useMemo(() => {
         if (userCompDetails) {
             if (reactiveCustomComponents) {

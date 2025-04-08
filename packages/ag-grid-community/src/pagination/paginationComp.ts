@@ -57,7 +57,7 @@ export class PaginationComp extends TabGuardComp implements FocusableContainer {
     }
 
     public postConstruct(): void {
-        const isRtl = this.gos.get('enableRtl');
+        const isRtl = this.gos.is('enableRtl');
         this.setTemplate(this.getTemplate(), [PageSizeSelectorSelector]);
 
         const { btFirst, btPrevious, btNext, btLast } = this;
@@ -98,8 +98,8 @@ export class PaginationComp extends TabGuardComp implements FocusableContainer {
     }
 
     private onPaginationChanged(): void {
-        const isPaging = this.gos.getAsBool('pagination');
-        const paginationPanelEnabled = isPaging && !this.gos.get('suppressPaginationPanel');
+        const isPaging = this.gos.is('pagination');
+        const paginationPanelEnabled = isPaging && !this.gos.is('suppressPaginationPanel');
 
         this.setDisplayed(paginationPanelEnabled);
         if (!paginationPanelEnabled) {

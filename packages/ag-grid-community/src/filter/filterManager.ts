@@ -204,8 +204,7 @@ export class FilterManager extends BeanStub implements NamedBean {
 
     private shouldApplyQuickFilterAfterAgg(): boolean {
         return (
-            (this.aggFiltering || this.beans.colModel.isPivotMode()) &&
-            !this.gos.get('applyQuickFilterBeforePivotOrAgg')
+            (this.aggFiltering || this.beans.colModel.isPivotMode()) && !this.gos.is('applyQuickFilterBeforePivotOrAgg')
         );
     }
 

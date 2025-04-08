@@ -283,7 +283,7 @@ export abstract class AbstractHeaderCellCtrl<
             return;
         }
 
-        const isLeft = (e.key === KeyCode.LEFT) !== this.gos.get('enableRtl');
+        const isLeft = (e.key === KeyCode.LEFT) !== this.gos.is('enableRtl');
         const direction = isLeft ? 'left' : 'right';
 
         if (e.altKey) {
@@ -309,10 +309,10 @@ export abstract class AbstractHeaderCellCtrl<
 
     private getResizeDiff(e: KeyboardEvent): number {
         const { gos, column } = this;
-        let isLeft = (e.key === KeyCode.LEFT) !== gos.get('enableRtl');
+        let isLeft = (e.key === KeyCode.LEFT) !== gos.is('enableRtl');
 
         const pinned = column.getPinned();
-        const isRtl = gos.get('enableRtl');
+        const isRtl = gos.is('enableRtl');
         if (pinned) {
             if (isRtl !== (pinned === 'right')) {
                 isLeft = !isLeft;
@@ -389,7 +389,7 @@ export abstract class AbstractHeaderCellCtrl<
     ): void {
         const event = mouseEvent ?? touchEvent!;
         const { menuSvc, gos } = this.beans;
-        if (gos.get('preventDefaultOnContextMenu')) {
+        if (gos.is('preventDefaultOnContextMenu')) {
             event.preventDefault();
         }
         if (menuSvc?.isHeaderContextMenuEnabled(column)) {

@@ -97,7 +97,7 @@ export class DragAndDropImageComponent extends Component implements IDragAndDrop
 
         eIcon.classList.toggle('ag-shake-left-to-right', shake);
 
-        if (eIconChild === dropIconMap['hide'] && gos.get('suppressDragLeaveHidesColumns')) {
+        if (eIconChild === dropIconMap['hide'] && gos.is('suppressDragLeaveHidesColumns')) {
             return;
         }
         if (eIconChild) {

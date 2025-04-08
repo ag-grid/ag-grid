@@ -581,7 +581,7 @@ export class NavigationService extends BeanStub implements NamedBean {
                 column: backwards ? displayedColumns[0] : _last(displayedColumns),
             };
 
-            if (this.gos.get('embedFullWidthRows') && event) {
+            if (this.gos.is('embedFullWidthRows') && event) {
                 const focusedContainer = previousCell.findFullWidthInfoForEvent(event);
                 if (focusedContainer) {
                     cellPos.column = focusedContainer.column;
@@ -762,7 +762,7 @@ export class NavigationService extends BeanStub implements NamedBean {
             // if the current cell is spanning across multiple columns, we need to move
             // our current position to be the last cell on the right before finding the
             // the next target.
-            if (gos.get('enableRtl')) {
+            if (gos.is('enableRtl')) {
                 if (key === KeyCode.LEFT) {
                     nextCell = this.getLastCellOfColSpan(nextCell);
                 }

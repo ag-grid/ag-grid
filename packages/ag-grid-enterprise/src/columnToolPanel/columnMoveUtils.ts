@@ -53,7 +53,7 @@ const getMoveDiff = (allColumns: AgColumn[], currentColumns: AgColumn[] | null, 
 };
 
 export const isMoveBlocked = (gos: GridOptionsService, beans: BeanCollection, currentColumns: AgColumn[]): boolean => {
-    const preventMoving = gos.get('suppressMovableColumns') || beans.colModel.isPivotMode();
+    const preventMoving = gos.is('suppressMovableColumns') || beans.colModel.isPivotMode();
 
     if (preventMoving) {
         return true;

@@ -483,12 +483,12 @@ export class CellComp extends Component {
             ePopupGui.appendChild(this.cellEditorGui);
         }
 
-        const useModelPopup = gos.get('stopEditingWhenCellsLoseFocus');
+        const useModelPopup = gos.is('stopEditingWhenCellsLoseFocus');
 
         // see if position provided by colDef, if not then check old way of method on cellComp
         const positionToUse: 'over' | 'under' | undefined =
             position != null ? position : cellEditor.getPopupPosition?.() ?? 'over';
-        const isRtl = gos.get('enableRtl');
+        const isRtl = gos.is('enableRtl');
 
         const positionParams: PopupPositionParams & { type: string; eventSource: HTMLElement } = {
             ePopup: ePopupGui,

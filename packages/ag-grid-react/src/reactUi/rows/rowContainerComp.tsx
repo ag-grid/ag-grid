@@ -26,7 +26,7 @@ const RowContainerComp = ({ name }: { name: RowContainerName }) => {
     const prevRowCtrlsRef = useRef<RowCtrl[]>([]);
     const [rowCtrlsOrdered, setRowCtrlsOrdered] = useState<RowCtrl[]>(() => []);
 
-    const isSpanning = !!gos.get('enableCellSpan') && !!containerOptions.getSpannedRowCtrls;
+    const isSpanning = !!gos.is('enableCellSpan') && !!containerOptions.getSpannedRowCtrls;
     const spannedRowCtrlsRef = useRef<RowCtrl[]>([]);
     const prevSpannedRowCtrlsRef = useRef<RowCtrl[]>([]);
     const [spannedRowCtrlsOrdered, setSpannedRowCtrlsOrdered] = useState<RowCtrl[]>(() => []);

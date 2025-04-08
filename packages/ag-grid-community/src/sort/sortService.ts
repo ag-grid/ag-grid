@@ -48,7 +48,7 @@ export class SortService extends BeanStub implements NamedBean {
 
         columnsToUpdate.forEach((col) => this.setColSort(col, sort, source));
 
-        const doingMultiSort = (multiSort || gos.get('alwaysMultiSort')) && !gos.get('suppressMultiSort');
+        const doingMultiSort = (multiSort || gos.is('alwaysMultiSort')) && !gos.is('suppressMultiSort');
 
         // clear sort on all columns except those changed, and update the icons
         const updatedColumns: AgColumn[] = [];

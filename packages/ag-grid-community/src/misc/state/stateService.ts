@@ -687,7 +687,7 @@ export class StateService extends BeanStub implements NamedBean {
             return undefined;
         }
         const page = pagination.getCurrentPage();
-        const pageSize = !gos.get('paginationAutoPageSize') ? pagination.getPageSize() : undefined;
+        const pageSize = !gos.is('paginationAutoPageSize') ? pagination.getPageSize() : undefined;
 
         if (!page && !pageSize) {
             return;
@@ -700,7 +700,7 @@ export class StateService extends BeanStub implements NamedBean {
         if (!pagination) {
             return;
         }
-        if (paginationState.pageSize && !gos.get('paginationAutoPageSize')) {
+        if (paginationState.pageSize && !gos.is('paginationAutoPageSize')) {
             pagination.setPageSize(paginationState.pageSize, 'initialState');
         }
 

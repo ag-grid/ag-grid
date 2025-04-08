@@ -35,7 +35,7 @@ export class ClientSideExpansionService extends BaseExpansionService implements 
     public expandAll(expand: boolean): void {
         const { gos, colModel, eventSvc } = this.beans;
         const rowModel = this.rowModel;
-        const usingTreeData = gos.get('treeData');
+        const usingTreeData = gos.is('treeData');
         const usingPivotMode = colModel.isPivotActive();
 
         const recursiveExpandOrCollapse = (rowNodes: RowNode[] | null): void => {

@@ -183,7 +183,7 @@ export class PinnedColumnService extends BeanStub implements NamedBean {
 
             const hidden = width == 0;
             const hiddenChanged = ctrl.hidden !== hidden;
-            const isRtl = this.gos.get('enableRtl');
+            const isRtl = this.gos.is('enableRtl');
             const scrollbarWidth = scrollVisibleSvc.getScrollbarWidth();
 
             // if there is a scroll showing (and taking up space, so Windows, and not iOS)

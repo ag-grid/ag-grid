@@ -107,7 +107,7 @@ export class CellKeyboardListenerFeature extends BeanStub {
 
         eventSvc.dispatchEvent({ type: 'keyShortcutChangedCellStart' });
 
-        if (_isDeleteKey(key, gos.get('enableCellEditingOnBackspace'))) {
+        if (_isDeleteKey(key, gos.is('enableCellEditingOnBackspace'))) {
             if (rangeSvc && _isCellSelectionEnabled(gos)) {
                 rangeSvc.clearCellRangeCellValues({ dispatchWrapperEvents: true, wrapperEventSource: 'deleteKey' });
             } else if (cellCtrl.isCellEditable()) {
@@ -127,7 +127,7 @@ export class CellKeyboardListenerFeature extends BeanStub {
         if (cellCtrl.editing || this.rowCtrl.editing) {
             this.beans.editSvc?.stopRowOrCellEdit(cellCtrl, false, false, e.shiftKey);
         } else {
-            if (beans.gos.get('enterNavigatesVertically')) {
+            if (beans.gos.is('enterNavigatesVertically')) {
                 const key = e.shiftKey ? KeyCode.UP : KeyCode.DOWN;
                 beans.navigation?.navigateToNextCell(null, key, cellCtrl.cellPosition, false);
             } else {

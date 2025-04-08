@@ -15,7 +15,7 @@ import {
 } from './rowContainerCtrl';
 
 function getElementParams(name: RowContainerName, options: RowContainerOptions, beans: BeanCollection): ElementParams {
-    const isCellSpanning = !!beans.gos.get('enableCellSpan') && !!options.getSpannedRowCtrls;
+    const isCellSpanning = !!beans.gos.is('enableCellSpan') && !!options.getSpannedRowCtrls;
 
     const eContainerElement: ElementParams = {
         tag: 'div',

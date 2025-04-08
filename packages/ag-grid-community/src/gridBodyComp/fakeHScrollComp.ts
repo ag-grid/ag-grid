@@ -71,7 +71,7 @@ export class FakeHScrollComp extends AbstractFakeScrollComp {
             return;
         }
 
-        this.enableRtl = this.gos.getAsBool('enableRtl');
+        this.enableRtl = this.gos.is('enableRtl');
         super.initialiseInvisibleScrollbar();
 
         if (this.invisibleScrollbar) {
@@ -126,7 +126,7 @@ export class FakeHScrollComp extends AbstractFakeScrollComp {
     protected setScrollVisible(): void {
         const hScrollShowing = this.scrollVisibleSvc.horizontalScrollShowing;
         const invisibleScrollbar = this.invisibleScrollbar;
-        const isSuppressHorizontalScroll = this.gos.get('suppressHorizontalScroll');
+        const isSuppressHorizontalScroll = this.gos.is('suppressHorizontalScroll');
         const scrollbarWidth = hScrollShowing ? this.scrollVisibleSvc.getScrollbarWidth() || 0 : 0;
         const adjustedScrollbarWidth = scrollbarWidth === 0 && invisibleScrollbar ? 16 : scrollbarWidth;
         const scrollContainerSize = !isSuppressHorizontalScroll ? adjustedScrollbarWidth : 0;

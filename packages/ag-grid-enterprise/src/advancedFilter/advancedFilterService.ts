@@ -51,7 +51,7 @@ export class AdvancedFilterService extends BeanStub implements NamedBean, IAdvan
     private isValid: boolean = true;
 
     public postConstruct(): void {
-        this.setEnabled(this.gos.getAsBool('enableAdvancedFilter'), true);
+        this.setEnabled(this.gos.is('enableAdvancedFilter'), true);
 
         this.ctrl = this.createManagedBean(new AdvancedFilterCtrl(this.enabled));
 
@@ -195,7 +195,7 @@ export class AdvancedFilterService extends BeanStub implements NamedBean, IAdvan
         expressionFunction: FilterExpressionFunction;
         params: FilterExpressionFunctionParams;
     } {
-        if (this.gos.get('suppressAdvancedFilterEval')) {
+        if (this.gos.is('suppressAdvancedFilterEval')) {
             return expressionParser.getFunctionParsed();
         } else {
             const { functionString, params } = expressionParser.getFunctionString();

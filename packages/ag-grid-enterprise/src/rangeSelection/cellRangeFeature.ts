@@ -28,7 +28,7 @@ function _isRangeHandleEnabled(gos: GridOptionsService): boolean {
     const useNewAPI = selection !== undefined;
 
     if (!useNewAPI) {
-        return gos.getAsBool('enableRangeHandle');
+        return gos.is('enableRangeHandle');
     }
 
     return typeof selection !== 'boolean' ? selection.handle?.mode === 'range' : false;
@@ -38,7 +38,7 @@ function _isFillHandleEnabled(gos: GridOptionsService): boolean {
     const useNewAPI = selection !== undefined;
 
     if (!useNewAPI) {
-        return gos.getAsBool('enableFillHandle');
+        return gos.is('enableFillHandle');
     }
 
     return typeof selection !== 'boolean' ? selection.handle?.mode === 'fill' : false;
@@ -146,7 +146,7 @@ export class CellRangeFeature implements ICellRangeFeature {
         bottom: boolean;
         left: boolean;
     } {
-        const isRtl = this.beans.gos.get('enableRtl');
+        const isRtl = this.beans.gos.is('enableRtl');
 
         let top = false;
         let right = false;

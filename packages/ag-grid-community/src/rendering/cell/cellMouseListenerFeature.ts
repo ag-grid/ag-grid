@@ -76,8 +76,7 @@ export class CellMouseListenerFeature extends BeanStub {
             }, 0);
         }
 
-        const editOnSingleClick =
-            (gos.get('singleClickEdit') || colDef.singleClickEdit) && !gos.get('suppressClickEdit');
+        const editOnSingleClick = (gos.is('singleClickEdit') || colDef.singleClickEdit) && !gos.is('suppressClickEdit');
 
         // edit on single click, but not if extending a range
         if (editOnSingleClick && !(mouseEvent.shiftKey && rangeSvc?.getCellRanges().length != 0)) {
@@ -104,7 +103,7 @@ export class CellMouseListenerFeature extends BeanStub {
             }, 0);
         }
 
-        const editOnDoubleClick = !gos.get('singleClickEdit') && !gos.get('suppressClickEdit');
+        const editOnDoubleClick = !gos.is('singleClickEdit') && !gos.is('suppressClickEdit');
         if (editOnDoubleClick) {
             editSvc?.startRowOrCellEdit(cellCtrl, null, mouseEvent);
         }
@@ -136,7 +135,7 @@ export class CellMouseListenerFeature extends BeanStub {
         }
 
         if (!shiftKey || !hasRanges) {
-            const isEnableCellTextSelection = gos.get('enableCellTextSelection');
+            const isEnableCellTextSelection = gos.is('enableCellTextSelection');
             // when `enableCellTextSelection` is true, we call prevent default on `mousedown`
             // within the row dragger to block text selection while dragging, but the cell
             // should still be selected/focused.
@@ -208,7 +207,7 @@ export class CellMouseListenerFeature extends BeanStub {
         if (rangeSvc) {
             const cellInRange = rangeSvc.isCellInAnyRange(this.cellCtrl.cellPosition);
             const isRightClick =
-                mouseEvent.button === 2 || (mouseEvent.ctrlKey && this.beans.gos.get('allowContextMenuWithControlKey'));
+                mouseEvent.button === 2 || (mouseEvent.ctrlKey && this.beans.gos.is('allowContextMenuWithControlKey'));
 
             if (cellInRange && isRightClick) {
                 return true;

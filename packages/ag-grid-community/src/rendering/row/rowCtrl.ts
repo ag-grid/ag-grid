@@ -152,7 +152,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         this.beans = beans;
         this.gos = beans.gos;
         this.paginationPage = beans.pagination?.getCurrentPage() ?? 0;
-        this.suppressRowTransform = this.gos.getAsBool('suppressRowTransform');
+        this.suppressRowTransform = this.gos.is('suppressRowTransform');
 
         this.instanceId = (rowNode.id + '-' + instanceIdSequence++) as RowCtrlInstanceId;
         this.rowId = _escapeString(rowNode.id);
@@ -239,7 +239,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
     }
 
     public isCacheable(): boolean {
-        return this.rowType === 'FullWidthDetail' && this.gos.getAsBool('keepDetailRows');
+        return this.rowType === 'FullWidthDetail' && this.gos.is('keepDetailRows');
     }
 
     public setCached(cached: boolean): void {
@@ -250,7 +250,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
     private initialiseRowComp(gui: RowGui): void {
         const gos = this.gos;
 
-        this.onSuppressCellFocusChanged(this.beans.gos.getAsBool('suppressCellFocus'));
+        this.onSuppressCellFocusChanged(this.beans.gos.is('suppressCellFocus'));
 
         this.listenOnDomOrder(gui);
         this.onRowHeightChanged(gui);
@@ -299,7 +299,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
             this.setupFullWidth(gui);
         }
 
-        if (gos.get('rowDragEntireRow')) {
+        if (gos.is('rowDragEntireRow')) {
             this.addRowDraggerToRow(gui);
         }
 
@@ -378,7 +378,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
     }
 
     public getFullWidthCellRenderers(): (ICellRenderer<any> | null | undefined)[] {
-        if (this.gos.get('embedFullWidthRows')) {
+        if (this.gos.is('embedFullWidthRows')) {
             return this.allRowGuis.map((gui) => gui?.rowComp?.getFullWidthCellRenderer());
         }
         return [this.fullWidthGui?.rowComp?.getFullWidthCellRenderer()];
@@ -429,10 +429,10 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         // groupHideOpenParents implicitly disables full width loading
         const isStub =
             this.rowNode.stub &&
-            !this.gos.get('suppressServerSideFullWidthLoadingRow') &&
-            !this.gos.get('groupHideOpenParents');
+            !this.gos.is('suppressServerSideFullWidthLoadingRow') &&
+            !this.gos.is('groupHideOpenParents');
         const isFullWidthCell = this.isNodeFullWidthCell();
-        const isDetailCell = this.gos.get('masterDetail') && this.rowNode.detail;
+        const isDetailCell = this.gos.is('masterDetail') && this.rowNode.detail;
         const pivotMode = this.beans.colModel.isPivotMode();
         // we only use full width for groups, not footers. it wouldn't make sense to include footers if not looking
         // for totals. if users complain about this, then we should introduce a new property 'footerUseEntireRow'
@@ -698,7 +698,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
     }
 
     public getDomOrder(): boolean {
-        const isEnsureDomOrder = this.gos.get('ensureDomOrder');
+        const isEnsureDomOrder = this.gos.is('ensureDomOrder');
         return isEnsureDomOrder || _isDomLayout(this.gos, 'print');
     }
 
@@ -722,7 +722,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
 
         if (oldRowTopExists) {
             const { slideInAnimation } = this;
-            if (this.isFullWidth() && !this.gos.get('embedFullWidthRows')) {
+            if (this.isFullWidth() && !this.gos.is('embedFullWidthRows')) {
                 slideInAnimation.fullWidth = true;
                 return;
             }
@@ -733,7 +733,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
             slideInAnimation.right = pinningRight;
         } else {
             const { fadeInAnimation } = this;
-            if (this.isFullWidth() && !this.gos.get('embedFullWidthRows')) {
+            if (this.isFullWidth() && !this.gos.is('embedFullWidthRows')) {
                 fadeInAnimation.fullWidth = true;
                 return;
             }
@@ -830,7 +830,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         );
 
         this.addManagedPropertyListener('rowDragEntireRow', () => {
-            const useRowDragEntireRow = this.gos.get('rowDragEntireRow');
+            const useRowDragEntireRow = this.gos.is('rowDragEntireRow');
             if (useRowDragEntireRow) {
                 this.allRowGuis.forEach((gui) => {
                     this.addRowDraggerToRow(gui);
@@ -1507,7 +1507,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
                 // if hover turned off, we don't add the class. we do this here so that if the application
                 // toggles this property mid way, we remove the hover form the last row, but we stop
                 // adding hovers from that point onwards. Also, do not highlight while dragging elements around.
-                if (!beans.dragSvc?.dragging && !gos.get('suppressRowHoverHighlight')) {
+                if (!beans.dragSvc?.dragging && !gos.is('suppressRowHoverHighlight')) {
                     element.classList.add('ag-row-hover');
                     rowNode.setHovered(true);
                 }

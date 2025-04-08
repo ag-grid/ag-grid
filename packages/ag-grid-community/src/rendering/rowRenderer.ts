@@ -180,13 +180,13 @@ export class RowRenderer extends BeanStub implements NamedBean {
 
         this.initialiseCache();
         this.printLayout = _isDomLayout(gos, 'print');
-        this.embedFullWidthRows = this.printLayout || gos.getAsBool('embedFullWidthRows');
+        this.embedFullWidthRows = this.printLayout || gos.is('embedFullWidthRows');
 
         this.redrawAfterModelUpdate();
     }
 
     private initialiseCache(): void {
-        if (this.gos.get('keepDetailRows')) {
+        if (this.gos.is('keepDetailRows')) {
             const countProp = this.getKeepDetailRowsCount();
             const count = countProp != null ? countProp : 3;
             this.cachedRowCtrls = new RowCtrlCache(count);
@@ -402,7 +402,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
 
     private onDomLayoutChanged(): void {
         const printLayout = _isDomLayout(this.gos, 'print');
-        const embedFullWidthRows = printLayout || this.gos.getAsBool('embedFullWidthRows');
+        const embedFullWidthRows = printLayout || this.gos.is('embedFullWidthRows');
 
         // if moving towards or away from print layout, means we need to destroy all rows, as rows are not laid
         // out using absolute positioning when doing print layout
@@ -639,7 +639,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
 
     private scrollToTopIfNewData(params: RefreshViewParams): void {
         const scrollToTop = params.newData || params.newPage;
-        const suppressScrollToTop = this.gos.get('suppressScrollOnNewData');
+        const suppressScrollToTop = this.gos.is('suppressScrollOnNewData');
 
         if (scrollToTop && !suppressScrollToTop) {
             this.gridBodyCtrl.scrollFeature.scrollToTop();
@@ -1295,7 +1295,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
         } else {
             const bufferPixels = this.getRowBufferInPixels();
             const scrollFeature = this.ctrlsSvc.getScrollFeature();
-            const suppressRowVirtualisation = this.gos.get('suppressRowVirtualisation');
+            const suppressRowVirtualisation = this.gos.is('suppressRowVirtualisation');
 
             let rowHeightsChanged = false;
             let firstPixel: number;
@@ -1350,7 +1350,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
         // killing the browser, we limit the number of rows. just in case some use case we didn't think
         // of, we also have a property to not do this operation.
         const rowLayoutNormal = _isDomLayout(this.gos, 'normal');
-        const suppressRowCountRestriction = this.gos.get('suppressMaxRenderedRowRestriction');
+        const suppressRowCountRestriction = this.gos.is('suppressMaxRenderedRowRestriction');
         const rowBufferMaxSize = Math.max(this.getRowBuffer(), 500);
 
         if (rowLayoutNormal && !suppressRowCountRestriction) {

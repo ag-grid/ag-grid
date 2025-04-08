@@ -99,6 +99,6 @@ export class FilterStage extends BeanStub implements IRowNodeStage, NamedBean {
     }
 
     private doingTreeDataFiltering() {
-        return this.gos.get('treeData') && !this.gos.get('excludeChildrenWhenTreeDataFiltering');
+        return this.gos.is('treeData') && !this.gos.is('excludeChildrenWhenTreeDataFiltering');
     }
 }

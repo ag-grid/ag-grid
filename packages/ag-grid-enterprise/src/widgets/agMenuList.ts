@@ -206,7 +206,7 @@ export class AgMenuList extends TabGuardComp<AgMenuListEvent> {
             }
         }
 
-        const left = this.gos.get('enableRtl') ? KeyCode.RIGHT : KeyCode.LEFT;
+        const left = this.gos.is('enableRtl') ? KeyCode.RIGHT : KeyCode.LEFT;
 
         if (key === left) {
             this.closeIfIsChild();

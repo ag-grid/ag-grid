@@ -27,7 +27,7 @@ export class QuickFilterService extends BeanStub<QuickFilterServiceEvent> implem
             newColumnsLoaded: resetListener,
             columnRowGroupChanged: resetListener,
             columnVisible: () => {
-                if (!gos.get('includeHiddenColumnsInQuickFilter')) {
+                if (!gos.is('includeHiddenColumnsInQuickFilter')) {
                     this.resetCache();
                 }
             },
@@ -59,13 +59,13 @@ export class QuickFilterService extends BeanStub<QuickFilterServiceEvent> implem
         const providedCols = colModel.getColDefCols();
 
         let columnsForQuickFilter =
-            (pivotMode && !gos.get('applyQuickFilterBeforePivotOrAgg')
+            (pivotMode && !gos.is('applyQuickFilterBeforePivotOrAgg')
                 ? pivotResultCols?.getPivotResultCols()?.list
                 : providedCols) ?? [];
         if (groupAutoCols) {
             columnsForQuickFilter = columnsForQuickFilter.concat(groupAutoCols);
         }
-        this.colsToUse = gos.get('includeHiddenColumnsInQuickFilter')
+        this.colsToUse = gos.is('includeHiddenColumnsInQuickFilter')
             ? columnsForQuickFilter
             : columnsForQuickFilter.filter((col) => col.isVisible() || col.isRowGroupActive());
     }
@@ -75,7 +75,7 @@ export class QuickFilterService extends BeanStub<QuickFilterServiceEvent> implem
     }
 
     public doesRowPass(node: RowNode): boolean {
-        const usingCache = this.gos.getAsBool('cacheQuickFilter');
+        const usingCache = this.gos.is('cacheQuickFilter');
 
         if (this.matcher) {
             return this.doesRowPassMatcher(usingCache, node);

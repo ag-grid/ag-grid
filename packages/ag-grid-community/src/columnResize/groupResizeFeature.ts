@@ -50,7 +50,7 @@ export class GroupResizeFeature extends BeanStub implements IHeaderResizeFeature
 
         this.addDestroyFunc(finishedWithResizeFunc);
 
-        if (!gos.get('suppressAutoSize') && colAutosize) {
+        if (!gos.is('suppressAutoSize') && colAutosize) {
             this.addDestroyFunc(
                 colAutosize.addColumnGroupResize(this.eResize, this.columnGroup, () =>
                     this.resizeLeafColumnsToFit('uiColumnResized')
@@ -209,7 +209,7 @@ export class GroupResizeFeature extends BeanStub implements IHeaderResizeFeature
     private normaliseDragChange(dragChange: number): number {
         let result = dragChange;
 
-        if (this.gos.get('enableRtl')) {
+        if (this.gos.is('enableRtl')) {
             // for RTL, dragging left makes the col bigger, except when pinning left
             if (this.pinned !== 'left') {
                 result *= -1;

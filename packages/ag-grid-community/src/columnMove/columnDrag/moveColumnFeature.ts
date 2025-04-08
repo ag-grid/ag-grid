@@ -100,7 +100,7 @@ export class MoveColumnFeature extends BeanStub implements DropListener {
             this.setColumnsVisible(visibleColumns, true, 'uiColumnDragged');
         }
 
-        if (!this.gos.get('suppressMoveWhenColumnDragging')) {
+        if (!this.gos.is('suppressMoveWhenColumnDragging')) {
             this.attemptToPinColumns(columns, this.pinned);
         }
         this.onDragging(draggingEvent, true, true);
@@ -113,7 +113,7 @@ export class MoveColumnFeature extends BeanStub implements DropListener {
         finished = false
     ): void {
         const { gos, ctrlsSvc } = this.beans;
-        const isSuppressMoveWhenDragging = gos.get('suppressMoveWhenColumnDragging');
+        const isSuppressMoveWhenDragging = gos.is('suppressMoveWhenColumnDragging');
 
         if (finished && !isSuppressMoveWhenDragging) {
             this.finishColumnMoving();
@@ -191,7 +191,7 @@ export class MoveColumnFeature extends BeanStub implements DropListener {
 
     private updateDragItemContainerType(): void {
         const { lastDraggingEvent } = this;
-        if (this.gos.get('suppressMoveWhenColumnDragging') || !lastDraggingEvent) {
+        if (this.gos.is('suppressMoveWhenColumnDragging') || !lastDraggingEvent) {
             return;
         }
 
@@ -322,7 +322,7 @@ export class MoveColumnFeature extends BeanStub implements DropListener {
 
     private highlightHoveredColumn(movingColumns: AgColumn[], mouseX: number) {
         const { gos, colModel } = this.beans;
-        const isRtl = gos.getAsBool('enableRtl');
+        const isRtl = gos.is('enableRtl');
         const consideredColumns = colModel
             .getCols()
             .filter((col) => col.isVisible() && col.getPinned() === this.pinned);
@@ -402,7 +402,7 @@ export class MoveColumnFeature extends BeanStub implements DropListener {
         isAttemptingToPin: boolean
     ): { fromLeft: boolean; xPosition: number } | undefined {
         const { gos, visibleCols } = this.beans;
-        const isRtl = gos.getAsBool('enableRtl');
+        const isRtl = gos.is('enableRtl');
 
         const { firstMovingCol, column, position } = this.getColumnMoveAndTargetInfo(
             allMovingColumns,
@@ -479,7 +479,7 @@ export class MoveColumnFeature extends BeanStub implements DropListener {
     }
 
     private normaliseDirection(hDirection: HorizontalDirection): HorizontalDirection {
-        if (this.gos.get('enableRtl')) {
+        if (this.gos.is('enableRtl')) {
             switch (hDirection) {
                 case 'left':
                     return 'right';
@@ -572,7 +572,7 @@ export class MoveColumnFeature extends BeanStub implements DropListener {
 
         let needToMoveRight: boolean;
         let needToMoveLeft: boolean;
-        if (this.gos.get('enableRtl')) {
+        if (this.gos.is('enableRtl')) {
             needToMoveRight = xAdjustedForScroll < firstVisiblePixel + SCROLL_GAP_NEEDED_BEFORE_MOVE;
             needToMoveLeft = xAdjustedForScroll > lastVisiblePixel - SCROLL_GAP_NEEDED_BEFORE_MOVE;
         } else {
@@ -646,7 +646,7 @@ export class MoveColumnFeature extends BeanStub implements DropListener {
 
             dragAndDrop!.getDragAndDropImageComponent()?.setIcon('pinned', false);
 
-            if (!gos.get('suppressMoveWhenColumnDragging')) {
+            if (!gos.is('suppressMoveWhenColumnDragging')) {
                 const columns = this.lastDraggingEvent?.dragItem.columns as AgColumn[] | undefined;
                 this.attemptToPinColumns(columns, undefined, true);
             }

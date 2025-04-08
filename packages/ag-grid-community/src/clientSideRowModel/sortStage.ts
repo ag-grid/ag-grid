@@ -61,7 +61,7 @@ export class SortStage extends BeanStub implements NamedBean, IRowNodeStage {
             // on if transactions are present. it's off for now so that we can
             // selectively turn it on and test it with some select users before
             // rolling out to everyone.
-            this.gos.getAsBool('deltaSort');
+            this.gos.is('deltaSort');
 
         const sortContainsGroupColumns = sortOptions.some(({ column }) => {
             const isSortingCoupled = _isColumnsSortingCoupledToGroup(beans.gos);
@@ -91,7 +91,7 @@ export class SortStage extends BeanStub implements NamedBean, IRowNodeStage {
         sortContainsGroupColumns: boolean
     ): void {
         const { gos, colModel, rowGroupColsSvc, rowNodeSorter, rowRenderer, showRowGroupCols } = beans;
-        const groupMaintainOrder = gos.get('groupMaintainOrder');
+        const groupMaintainOrder = gos.is('groupMaintainOrder');
         const groupColumnsPresent = colModel.getCols().some((c) => c.isRowGroupActive());
 
         const isPivotMode = colModel.isPivotMode();
@@ -150,7 +150,7 @@ export class SortStage extends BeanStub implements NamedBean, IRowNodeStage {
         // if using group hide open parents and a sort has happened, refresh the group cells as the first child
         // displays the parent grouping - it's cheaper here to refresh all cells in col rather than fire events for every potential
         // child cell
-        if (hasAnyFirstChildChanged && this.gos.get('groupHideOpenParents')) {
+        if (hasAnyFirstChildChanged && this.gos.is('groupHideOpenParents')) {
             const columns = showRowGroupCols?.getShowRowGroupCols();
             if (columns?.length) {
                 rowRenderer.refreshCells({ columns, force: true });

@@ -29,7 +29,7 @@ export class PaginationAutoPageSizeService extends BeanStub implements NamedBean
     }
 
     private notActive(): boolean {
-        return !this.gos.get('paginationAutoPageSize') || this.centerRowsCtrl == null;
+        return !this.gos.is('paginationAutoPageSize') || this.centerRowsCtrl == null;
     }
 
     private onPaginationAutoSizeChanged(): void {

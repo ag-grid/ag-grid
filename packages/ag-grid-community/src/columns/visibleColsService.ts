@@ -136,7 +136,7 @@ export class VisibleColsService extends BeanStub implements NamedBean {
         let lastLeft: AgColumn | null;
         let firstRight: AgColumn | null;
 
-        if (this.gos.get('enableRtl')) {
+        if (this.gos.is('enableRtl')) {
             lastLeft = leftCols ? leftCols[0] : null;
             firstRight = rightCols ? _last(rightCols) : null;
         } else {
@@ -247,7 +247,7 @@ export class VisibleColsService extends BeanStub implements NamedBean {
         const allColumns = colModel.getCols().slice(0);
 
         // let totalColumnWidth = this.getWidthOfColsInList()
-        const doingRtl = this.gos.get('enableRtl');
+        const doingRtl = this.gos.is('enableRtl');
 
         [this.leftCols, this.rightCols, this.centerCols].forEach((columns) => {
             if (doingRtl) {
@@ -277,7 +277,7 @@ export class VisibleColsService extends BeanStub implements NamedBean {
     }
 
     private joinCols(): void {
-        if (this.gos.get('enableRtl')) {
+        if (this.gos.is('enableRtl')) {
             this.allCols = this.rightCols.concat(this.centerCols).concat(this.leftCols);
         } else {
             this.allCols = this.leftCols.concat(this.centerCols).concat(this.rightCols);
@@ -432,7 +432,7 @@ export class VisibleColsService extends BeanStub implements NamedBean {
     }
 
     public getFirstColumn(): AgColumn | null {
-        const isRtl = this.gos.get('enableRtl');
+        const isRtl = this.gos.is('enableRtl');
         const queryOrder: ('leftCols' | 'centerCols' | 'rightCols')[] = ['leftCols', 'centerCols', 'rightCols'];
 
         if (isRtl) {

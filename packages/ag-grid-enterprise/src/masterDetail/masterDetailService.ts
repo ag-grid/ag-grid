@@ -27,9 +27,9 @@ export class MasterDetailService extends BeanStub implements NamedBean, IMasterD
     private isEnabled(): boolean {
         const gos = this.gos;
         return (
-            gos.getAsBool('masterDetail') &&
+            gos.is('masterDetail') &&
             // TODO: AG-1752: [Tree Data] Allow tree data leaf rows to serve as master rows for detail grids (Tree Data hosting Master/Detail)"
-            !gos.get('treeData')
+            !gos.is('treeData')
         );
     }
 
@@ -145,7 +145,7 @@ export class MasterDetailService extends BeanStub implements NamedBean, IMasterD
 
     public setupDetailRowAutoHeight(rowCtrl: RowCtrl, eDetailGui: HTMLElement): void {
         const { gos, beans } = this;
-        if (!gos.get('detailRowAutoHeight')) {
+        if (!gos.is('detailRowAutoHeight')) {
             return;
         }
 

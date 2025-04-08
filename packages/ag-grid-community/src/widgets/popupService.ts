@@ -138,7 +138,7 @@ export class PopupService extends BeanStub implements NamedBean {
             // to the right, unless it doesn't fit and we then put it to the left. for RTL it's the other way around,
             // we try place it first to the left, and then if not to the right.
             let x: number;
-            if (this.gos.get('enableRtl')) {
+            if (this.gos.is('enableRtl')) {
                 // for RTL, try left first
                 x = xLeftPosition();
                 if (x < 0) {
@@ -518,7 +518,7 @@ export class PopupService extends BeanStub implements NamedBean {
         environment.applyThemeClasses(eWrapper);
 
         eWrapper.classList.add('ag-popup');
-        element.classList.add(gos.get('enableRtl') ? 'ag-rtl' : 'ag-ltr', 'ag-popup-child');
+        element.classList.add(gos.is('enableRtl') ? 'ag-rtl' : 'ag-ltr', 'ag-popup-child');
 
         if (!element.hasAttribute('role')) {
             _setAriaRole(element, 'dialog');

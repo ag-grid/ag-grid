@@ -163,7 +163,7 @@ export abstract class PillDropZonePanel<TPill extends PillDragComp<TItem>, TItem
         let isPrevious = key === KeyCode.UP;
 
         if (!isVertical) {
-            const isRtl = this.gos.getAsBool('enableRtl');
+            const isRtl = this.gos.is('enableRtl');
             isNext = (!isRtl && key === KeyCode.RIGHT) || (isRtl && key === KeyCode.LEFT);
             isPrevious = (!isRtl && key === KeyCode.LEFT) || (isRtl && key === KeyCode.RIGHT);
         }
@@ -276,7 +276,7 @@ export abstract class PillDropZonePanel<TPill extends PillDragComp<TItem>, TItem
 
         // not hovering a non-ghost component
         if (hoveredIndex === -1) {
-            const enableRtl = this.gos.get('enableRtl');
+            const enableRtl = this.gos.is('enableRtl');
 
             // if mouse is below or right of all components then new index should be placed last
             const isLast = boundsList.every((rect) => mouseLocation > (this.horizontal ? rect.right : rect.bottom));
@@ -652,7 +652,7 @@ export abstract class PillDropZonePanel<TPill extends PillDragComp<TItem>, TItem
         // only add the arrows if the layout is horizontal
         if (this.horizontal) {
             // for RTL it's a left arrow, otherwise it's a right arrow
-            const enableRtl = this.gos.get('enableRtl');
+            const enableRtl = this.gos.is('enableRtl');
             const icon = _createIconNoSpan(enableRtl ? 'panelDelimiterRtl' : 'panelDelimiter', this.beans)!;
             this.addElementClasses(icon, 'cell-separator');
             eParent.appendChild(icon);

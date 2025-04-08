@@ -72,7 +72,7 @@ export class FilterMenuFactory extends BeanStub implements NamedBean, IMenuFacto
         let alignSide: 'left' | 'right' = 'left';
 
         const isLegacyMenuEnabled = _isLegacyMenuEnabled(this.gos);
-        if (!isLegacyMenuEnabled && this.gos.get('enableRtl')) {
+        if (!isLegacyMenuEnabled && this.gos.is('enableRtl')) {
             multiplier = 1;
             alignSide = 'right';
         }

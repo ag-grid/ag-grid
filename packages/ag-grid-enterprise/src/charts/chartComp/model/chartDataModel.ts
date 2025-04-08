@@ -215,7 +215,7 @@ export class ChartDataModel extends BeanStub {
     }
 
     public isGrouping(): boolean {
-        const usingTreeData = this.gos.get('treeData');
+        const usingTreeData = this.gos.is('treeData');
         const groupedCols = usingTreeData ? null : this.chartColSvc.getRowGroupColumns();
         const isGroupActive = usingTreeData || (groupedCols && groupedCols.length > 0);
 

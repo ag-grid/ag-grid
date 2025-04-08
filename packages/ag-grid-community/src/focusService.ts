@@ -101,7 +101,7 @@ export class FocusService extends BeanStub implements NamedBean {
      * @returns true if the grid should re-take focus, otherwise false
      */
     public shouldTakeFocus(): boolean {
-        if (this.gos.get('suppressFocusAfterRefresh')) {
+        if (this.gos.is('suppressFocusAfterRefresh')) {
             this.setFocusRecovered();
             return false;
         }
@@ -137,7 +137,7 @@ export class FocusService extends BeanStub implements NamedBean {
     // grid cell will still be focused as far as the grid is concerned,
     // however the browser focus will have moved somewhere else.
     public getFocusCellToUseAfterRefresh(): CellPosition | null {
-        if (this.gos.get('suppressFocusAfterRefresh') || !this.focusedCell) {
+        if (this.gos.is('suppressFocusAfterRefresh') || !this.focusedCell) {
             return null;
         }
 
@@ -152,7 +152,7 @@ export class FocusService extends BeanStub implements NamedBean {
     }
 
     public getFocusHeaderToUseAfterRefresh(): HeaderPosition | null {
-        if (this.gos.get('suppressFocusAfterRefresh') || !this.focusedHeader) {
+        if (this.gos.is('suppressFocusAfterRefresh') || !this.focusedHeader) {
             return null;
         }
 
@@ -545,7 +545,7 @@ export class FocusService extends BeanStub implements NamedBean {
             }
 
             if (column.isSuppressNavigable(rowNode)) {
-                const isRtl = this.gos.get('enableRtl');
+                const isRtl = this.gos.is('enableRtl');
                 let key: string;
                 if (!event || event.key === KeyCode.TAB) {
                     key = isRtl ? KeyCode.LEFT : KeyCode.RIGHT;

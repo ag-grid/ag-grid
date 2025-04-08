@@ -254,8 +254,7 @@ function calculateValidMoves(params: {
     visibleCols: VisibleColsService;
 }): number[] {
     const { movingCols, draggingRight, xPosition, pinned, gos, colModel, visibleCols } = params;
-    const isMoveBlocked =
-        gos.get('suppressMovableColumns') || movingCols.some((col) => col.getColDef().suppressMovable);
+    const isMoveBlocked = gos.is('suppressMovableColumns') || movingCols.some((col) => col.getColDef().suppressMovable);
 
     if (isMoveBlocked) {
         return [];
@@ -395,7 +394,7 @@ export function normaliseX(params: {
     }
 
     // flip the coordinate if doing RTL
-    if (gos.get('enableRtl')) {
+    if (gos.is('enableRtl')) {
         if (useHeaderRow) {
             eViewport = eViewport.querySelector('.ag-header-row') as HTMLElement;
         }

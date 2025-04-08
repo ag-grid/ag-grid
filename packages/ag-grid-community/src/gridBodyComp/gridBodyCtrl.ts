@@ -107,7 +107,7 @@ export class GridBodyCtrl extends BeanStub {
             `.${_getRowContainerClass('stickyBottomFullWidth')}`
         ) as HTMLElement;
 
-        this.setCellTextSelection(this.gos.get('enableCellTextSelection'));
+        this.setCellTextSelection(this.gos.is('enableCellTextSelection'));
         this.addManagedPropertyListener('enableCellTextSelection', (props) =>
             this.setCellTextSelection(props.currentValue)
         );
@@ -176,7 +176,7 @@ export class GridBodyCtrl extends BeanStub {
     private setGridRootRole(): void {
         const { rowGroupColsSvc, colModel } = this;
 
-        let isTreeGrid = this.gos.get('treeData');
+        let isTreeGrid = this.gos.is('treeData');
 
         if (!isTreeGrid) {
             const isPivotActive = colModel.isPivotMode();
@@ -287,7 +287,7 @@ export class GridBodyCtrl extends BeanStub {
     }
 
     public isVerticalScrollShowing(): boolean {
-        const show = this.gos.getAsBool('alwaysShowVerticalScroll');
+        const show = this.gos.is('alwaysShowVerticalScroll');
         const cssClass = show ? CSS_CLASS_FORCE_VERTICAL_SCROLL : null;
         const allowVerticalScroll = _isDomLayout(this.gos, 'normal');
         this.comp.setAlwaysVerticalScrollClass(cssClass, show);
@@ -389,7 +389,7 @@ export class GridBodyCtrl extends BeanStub {
             return;
         }
 
-        if (this.gos.get('preventDefaultOnContextMenu')) {
+        if (this.gos.is('preventDefaultOnContextMenu')) {
             const event = (mouseEvent || touchEvent)!;
             event.preventDefault();
         }
@@ -409,7 +409,7 @@ export class GridBodyCtrl extends BeanStub {
     }
 
     private onBodyViewportWheel(popupSvc: PopupService, e: WheelEvent): void {
-        if (!this.gos.get('suppressScrollWhenPopupsAreOpen')) {
+        if (!this.gos.is('suppressScrollWhenPopupsAreOpen')) {
             return;
         }
 

@@ -240,7 +240,7 @@ export class ExcelSerializingSession extends BaseGridSerializingSession<ExcelRow
 
     private addRowOutlineIfNecessary(node: RowNode): void {
         const { gos, suppressRowOutline, rowGroupExpandState = 'expanded' } = this.config;
-        const isGroupHideOpenParents = gos.get('groupHideOpenParents');
+        const isGroupHideOpenParents = gos.is('groupHideOpenParents');
 
         if (isGroupHideOpenParents || suppressRowOutline || node.level == null) {
             return;

@@ -187,7 +187,7 @@ export class ColumnMenuFactory extends BeanStub implements NamedBean {
         if (
             expansionSvc &&
             _isClientSideRowModel(gos) &&
-            (gos.get('treeData') || rowGroupCount > (colModel.isPivotMode() ? 1 : 0))
+            (gos.is('treeData') || rowGroupCount > (colModel.isPivotMode() ? 1 : 0))
         ) {
             result.push('expandAll');
             result.push('contractAll');

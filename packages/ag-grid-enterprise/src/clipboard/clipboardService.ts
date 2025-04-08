@@ -170,7 +170,7 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
 
     public pasteFromClipboard(): void {
         // Method 1 - native clipboard API, available in modern chrome browsers
-        const allowNavigator = !this.gos.get('suppressClipboardApi');
+        const allowNavigator = !this.gos.is('suppressClipboardApi');
         // Some browsers (Firefox) do not allow Web Applications to read from
         // the clipboard so verify if not only the ClipboardAPI is available,
         // but also if the `readText` method is public.
@@ -253,7 +253,7 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
             return;
         }
 
-        if (this.gos.get('suppressLastEmptyLineOnPaste')) {
+        if (this.gos.is('suppressLastEmptyLineOnPaste')) {
             this.removeLastLineIfBlank(parsedData);
         }
 
@@ -298,7 +298,7 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
 
         const { clientSideRowModel } = this;
         const rootNode = clientSideRowModel?.rootNode;
-        const changedPath = rootNode && new ChangedPath(gos.getAsBool('aggregateOnlyChangedColumns'), rootNode);
+        const changedPath = rootNode && new ChangedPath(gos.is('aggregateOnlyChangedColumns'), rootNode);
 
         const cellsToFlash = {} as any;
         const updatedRowNodes: RowNode[] = [];
@@ -594,7 +594,7 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
 
         // if doing CSRM and NOT tree data, then it means groups are aggregates, which are read only,
         // so we should skip them when doing paste operations.
-        const skipGroupRows = this.clientSideRowModel != null && !gos.get('enableGroupEdit') && !gos.get('treeData');
+        const skipGroupRows = this.clientSideRowModel != null && !gos.is('enableGroupEdit') && !gos.is('treeData');
 
         const getNextGoodRowNode = () => {
             while (true) {
@@ -675,7 +675,7 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
     }
 
     public cutToClipboard(params: IClipboardCopyParams = {}, source: 'api' | 'ui' | 'contextMenu' = 'api'): void {
-        if (this.gos.get('suppressCutToClipboard')) {
+        if (this.gos.is('suppressCutToClipboard')) {
             return;
         }
 
@@ -698,11 +698,11 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
 
         // don't override 'includeHeaders' if it has been explicitly set to 'false'
         if (includeHeaders == null) {
-            includeHeaders = gos.getAsBool('copyHeadersToClipboard');
+            includeHeaders = gos.is('copyHeadersToClipboard');
         }
 
         if (includeGroupHeaders == null) {
-            includeGroupHeaders = gos.getAsBool('copyGroupHeadersToClipboard');
+            includeGroupHeaders = gos.is('copyGroupHeadersToClipboard');
         }
 
         const copyParams = { includeHeaders, includeGroupHeaders };
@@ -741,7 +741,7 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
             return !shouldCopyRowsInstead;
         } else {
             // If user is using the deprecated API, we preserve the previous behaviour
-            const suppressCopySingleCellRanges = gos.get('suppressCopySingleCellRanges');
+            const suppressCopySingleCellRanges = gos.is('suppressCopySingleCellRanges');
             const shouldSkip = !rangeSvc.isMoreThanOneCell() && suppressCopySingleCellRanges;
             return !shouldSkip;
         }
@@ -759,7 +759,7 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
             return rowSelection.copySelectedRows ?? false;
         } else {
             // If user is using the deprecated API, we preserve the previous behaviour
-            return !gos.get('suppressCopyRowsToClipboard');
+            return !gos.is('suppressCopyRowsToClipboard');
         }
     }
 
@@ -1047,7 +1047,7 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
 
     private getValueFromNode(node: IRowNode, column?: Column): string | null {
         const { gos, valueSvc } = this.beans;
-        const isTreeData = gos.get('treeData');
+        const isTreeData = gos.is('treeData');
         const isGroupRows = gos.get('groupDisplayType') === 'groupRows';
 
         // if not tree data then we get the value from the group data
@@ -1132,7 +1132,7 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
         }
 
         // method 2 - native clipboard API, available in modern chrome browsers
-        const allowNavigator = !this.gos.get('suppressClipboardApi');
+        const allowNavigator = !this.gos.is('suppressClipboardApi');
         if (allowNavigator && navigator.clipboard) {
             navigator.clipboard.writeText(data).catch((e) => {
                 _warn(40, { e, method: 'writeText' });

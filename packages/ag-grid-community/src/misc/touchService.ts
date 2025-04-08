@@ -72,7 +72,7 @@ export class TouchService extends BeanStub implements NamedBean {
     public setupForHeader(comp: HeaderComp): void {
         const { gos, sortSvc, menuSvc } = this.beans;
 
-        if (gos.get('suppressTouch')) {
+        if (gos.is('suppressTouch')) {
             return;
         }
         const { params, eMenu, eFilterButton } = comp;

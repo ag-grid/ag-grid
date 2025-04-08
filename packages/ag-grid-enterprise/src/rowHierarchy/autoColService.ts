@@ -60,11 +60,11 @@ export class AutoColService extends BeanStub implements NamedBean, IColumnCollec
         // to suppress auto-col for grouping only, and not pivot.
         // however if using Viewport RM or SSRM and user is providing the columns, the user may wish full control
         // of the group column in this instance.
-        const suppressAutoColumn = isPivotMode ? gos.get('pivotSuppressAutoColumn') : this.isSuppressAutoCol();
+        const suppressAutoColumn = isPivotMode ? gos.is('pivotSuppressAutoColumn') : this.isSuppressAutoCol();
 
         const rowGroupCols = rowGroupColsSvc?.columns;
 
-        const groupingActive = (rowGroupCols && rowGroupCols.length > 0) || gos.get('treeData');
+        const groupingActive = (rowGroupCols && rowGroupCols.length > 0) || gos.is('treeData');
 
         const noAutoCols = !groupingActive || suppressAutoColumn || groupFullWidthRow;
 
@@ -131,7 +131,7 @@ export class AutoColService extends BeanStub implements NamedBean, IColumnCollec
     private generateAutoCols(rowGroupCols: AgColumn[] = []): AgColumn[] {
         const autoCols: AgColumn[] = [];
 
-        const doingTreeData = this.gos.get('treeData');
+        const doingTreeData = this.gos.is('treeData');
         let doingMultiAutoColumn = _isGroupMultiAutoColumn(this.gos);
 
         if (doingTreeData && doingMultiAutoColumn) {
@@ -207,7 +207,7 @@ export class AutoColService extends BeanStub implements NamedBean, IColumnCollec
         res = _addColumnDefaultAndTypes(this.beans, res, colId, true);
 
         // For tree data the filter is always allowed
-        if (!this.gos.get('treeData')) {
+        if (!this.gos.is('treeData')) {
             // we would only allow filter if the user has provided field or value getter. otherwise the filter
             // would not be able to work.
             const noFieldOrValueGetter =

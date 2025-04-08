@@ -207,7 +207,7 @@ export abstract class AgPickerField<
     protected renderAndPositionPicker(): () => void {
         const ePicker = this.pickerComponent!.getGui();
 
-        if (!this.gos.get('suppressScrollWhenPopupsAreOpen')) {
+        if (!this.gos.is('suppressScrollWhenPopupsAreOpen')) {
             [this.destroyMouseWheelFunc] = this.addManagedEventListeners({
                 bodyScroll: () => {
                     this.hidePicker();
@@ -282,7 +282,7 @@ export abstract class AgPickerField<
             pickerComponent,
         } = this;
 
-        const alignSide = gos.get('enableRtl') ? 'right' : 'left';
+        const alignSide = gos.is('enableRtl') ? 'right' : 'left';
 
         popupSvc!.positionPopupByComponent({
             type: pickerType,

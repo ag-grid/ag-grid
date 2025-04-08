@@ -132,7 +132,7 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
     }
 
     private addHighlightListeners(compBean: BeanStub, columns: AgColumn[]): void {
-        if (!this.beans.gos.get('suppressMoveWhenColumnDragging')) {
+        if (!this.beans.gos.is('suppressMoveWhenColumnDragging')) {
             return;
         }
 
@@ -161,7 +161,7 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
         let afterOn = false;
 
         if (isColumnMoveAtThisLevel) {
-            const isRtl = this.beans.gos.get('enableRtl');
+            const isRtl = this.beans.gos.is('enableRtl');
             const isHighlightAfter = highlighted === ColumnHighlightPosition.After;
             const isHighlightBefore = highlighted === ColumnHighlightPosition.Before;
 
@@ -394,7 +394,7 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
     private isSuppressMoving(): boolean {
         // if any child is fixed, then don't allow moving
         return (
-            this.gos.get('suppressMovableColumns') ||
+            this.gos.is('suppressMovableColumns') ||
             this.column
                 .getLeafColumns()
                 .some((column) => column.getColDef().suppressMovable || column.getColDef().lockPosition)

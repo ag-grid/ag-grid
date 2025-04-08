@@ -80,7 +80,7 @@ export class AgPrimaryColsHeader extends Component<AgPrimaryColsHeaderEvent> {
     }
 
     private onFunctionsReadOnlyPropChanged(): void {
-        const readOnly = this.gos.getAsBool('functionsReadOnly');
+        const readOnly = this.gos.is('functionsReadOnly');
         this.eSelect.setReadOnly(readOnly);
         this.eSelect.addOrRemoveCssClass('ag-column-select-column-readonly', readOnly);
     }

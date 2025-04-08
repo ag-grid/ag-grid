@@ -191,7 +191,7 @@ export class HeaderNavigationService extends BeanStub implements NamedBean {
             this.currentHeaderRowWithoutSpan = focusedHeader.headerRowIndex;
         }
 
-        if ((direction === 'LEFT') !== gos.get('enableRtl')) {
+        if ((direction === 'LEFT') !== gos.is('enableRtl')) {
             normalisedDirection = 'Before';
             nextHeader = this.findHeader(focusedHeader, normalisedDirection)!;
         } else {

@@ -164,7 +164,7 @@ const RowComp = ({ rowCtrl, containerType }: { rowCtrl: RowCtrl; containerType: 
     const canRefreshFullWidthRef = useRef(false);
     useEffect(() => {
         canRefreshFullWidthRef.current =
-            reactFullWidthCellRendererStateless && !!fullWidthCompDetails && !!gos.get('reactiveCustomComponents');
+            reactFullWidthCellRendererStateless && !!fullWidthCompDetails && !!gos.is('reactiveCustomComponents');
     }, [reactFullWidthCellRendererStateless, fullWidthCompDetails]);
 
     const showCellsJsx = () =>

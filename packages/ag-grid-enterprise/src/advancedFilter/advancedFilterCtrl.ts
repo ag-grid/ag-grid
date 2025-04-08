@@ -190,7 +190,7 @@ export class AdvancedFilterCtrl extends BeanStub<AdvancedFilterCtrlEvent> implem
 
             this.environment.applyThemeClasses(eAdvancedFilterCompGui);
 
-            eAdvancedFilterCompGui.classList.add(this.gos.get('enableRtl') ? 'ag-rtl' : 'ag-ltr');
+            eAdvancedFilterCompGui.classList.add(this.gos.is('enableRtl') ? 'ag-rtl' : 'ag-ltr');
 
             advancedFilterParent.appendChild(eAdvancedFilterCompGui);
 

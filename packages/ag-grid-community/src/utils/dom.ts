@@ -478,7 +478,7 @@ function _getTextSelectionRanges(beans: BeanCollection): { selection: Selection 
  * we prefer in this case. This utility preserves whatever text selection exists before the given action is taken.
  */
 export function _preserveRangesWhile(beans: BeanCollection, fn: () => void): void {
-    const enableCellTextSelection = beans.gos.get('enableCellTextSelection');
+    const enableCellTextSelection = beans.gos.is('enableCellTextSelection');
     if (!enableCellTextSelection) {
         return fn();
     }

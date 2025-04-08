@@ -31,7 +31,7 @@ export class RowSpanService extends BeanStub<'spannedCellsUpdated'> implements N
      */
     public register(column: AgColumn): void {
         const { gos } = this.beans;
-        if (!gos.get('enableCellSpan')) {
+        if (!gos.is('enableCellSpan')) {
             return;
         }
         if (this.spanningColumns.has(column)) {

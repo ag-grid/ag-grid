@@ -139,7 +139,7 @@ export class MenuService extends BeanStub implements NamedBean {
 
     private isSuppressMenuHide(): boolean {
         const gos = this.gos;
-        const suppressMenuHide = gos.get('suppressMenuHide');
+        const suppressMenuHide = gos.is('suppressMenuHide');
         if (_isLegacyMenuEnabled(gos)) {
             // default to false for legacy
             return gos.exists('suppressMenuHide') ? suppressMenuHide : false;

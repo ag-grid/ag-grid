@@ -47,7 +47,7 @@ export class CellNavigationService extends BeanStub implements NamedBean {
             rowIndex = upKey ? pageBounds.getFirstRow() : pageBounds.getLastRow();
             column = focusedCell.column as AgColumn;
         } else {
-            const isRtl = gos.get('enableRtl');
+            const isRtl = gos.is('enableRtl');
             rowIndex = focusedCell.rowIndex;
             const allColumns = leftKey !== isRtl ? visibleCols.allCols : [...visibleCols.allCols].reverse();
 
@@ -87,10 +87,10 @@ export class CellNavigationService extends BeanStub implements NamedBean {
                     pointer = this.getCellBelow(pointer);
                     break;
                 case KeyCode.RIGHT:
-                    pointer = this.gos.get('enableRtl') ? this.getCellToLeft(pointer) : this.getCellToRight(pointer);
+                    pointer = this.gos.is('enableRtl') ? this.getCellToLeft(pointer) : this.getCellToRight(pointer);
                     break;
                 case KeyCode.LEFT:
-                    pointer = this.gos.get('enableRtl') ? this.getCellToRight(pointer) : this.getCellToLeft(pointer);
+                    pointer = this.gos.is('enableRtl') ? this.getCellToRight(pointer) : this.getCellToLeft(pointer);
                     break;
                 default:
                     pointer = null;

@@ -87,7 +87,7 @@ export function createXlsxExcel(
             newConfig.exportAsExcelTable = false;
         }
 
-        if (config.gos.get('masterDetail')) {
+        if (config.gos.is('masterDetail')) {
             showExcelTableNonCompatibleFeaturesWarning('master/detail');
             newConfig.exportAsExcelTable = false;
         }

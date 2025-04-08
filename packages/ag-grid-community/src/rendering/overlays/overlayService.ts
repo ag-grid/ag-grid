@@ -64,8 +64,8 @@ export class OverlayService extends BeanStub implements NamedBean {
         this.showInitialOverlay = false;
 
         const gos = this.gos;
-        const loading = gos.get('loading');
-        if (!loading && (loading !== undefined || gos.get('suppressLoadingOverlay'))) {
+        const loading = gos.is('loading');
+        if (!loading && (loading !== undefined || gos.is('suppressLoadingOverlay'))) {
             return;
         }
 
@@ -76,7 +76,7 @@ export class OverlayService extends BeanStub implements NamedBean {
         this.showInitialOverlay = false;
 
         const gos = this.gos;
-        if (gos.get('loading') || gos.get('suppressNoRowsOverlay')) {
+        if (gos.is('loading') || gos.is('suppressNoRowsOverlay')) {
             return;
         }
 
@@ -86,7 +86,7 @@ export class OverlayService extends BeanStub implements NamedBean {
     public hideOverlay(): void {
         this.showInitialOverlay = false;
 
-        if (this.gos.get('loading')) {
+        if (this.gos.is('loading')) {
             _warn(99);
             return;
         }
@@ -114,14 +114,14 @@ export class OverlayService extends BeanStub implements NamedBean {
             isServerSide,
             beans: { gos, colModel, rowModel },
         } = this;
-        let loading = this.gos.get('loading');
+        let loading = this.gos.is('loading');
 
         if (loading !== undefined) {
             // If loading is defined, we don't show the initial overlay.
             this.showInitialOverlay = false;
         }
 
-        if (this.showInitialOverlay && loading === undefined && !gos.get('suppressLoadingOverlay')) {
+        if (this.showInitialOverlay && loading === undefined && !gos.is('suppressLoadingOverlay')) {
             loading = !gos.get('columnDefs') || !colModel.ready || (!gos.get('rowData') && isClientSide);
         }
 
@@ -131,7 +131,7 @@ export class OverlayService extends BeanStub implements NamedBean {
             }
         } else {
             this.showInitialOverlay = false;
-            if (isClientSide && rowModel.isEmpty() && !gos.get('suppressNoRowsOverlay')) {
+            if (isClientSide && rowModel.isEmpty() && !gos.is('suppressNoRowsOverlay')) {
                 if (state !== OverlayServiceState.NoRows) {
                     this.doShowNoRowsOverlay();
                 }

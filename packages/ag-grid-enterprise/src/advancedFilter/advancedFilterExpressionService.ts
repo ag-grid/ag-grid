@@ -182,7 +182,7 @@ export class AdvancedFilterExpressionService extends BeanStub implements NamedBe
         }
         const columns = this.colModel.getColDefCols() ?? [];
         const entries: AutocompleteEntry[] = [];
-        const includeHiddenColumns = this.gos.get('includeHiddenColumnsInAdvancedFilter');
+        const includeHiddenColumns = this.gos.is('includeHiddenColumnsInAdvancedFilter');
         columns.forEach((column) => {
             if (
                 column.getColDef().filter &&

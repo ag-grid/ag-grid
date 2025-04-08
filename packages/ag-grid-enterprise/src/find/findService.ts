@@ -365,7 +365,7 @@ export class FindService extends BeanStub implements NamedBean, IFindService {
         const oldActiveMatch = maintainActive ? this.activeMatch : undefined;
         this.activeMatch = undefined;
 
-        const checkMasterDetail = gos.get('masterDetail') && findOptions?.searchDetail && masterDetailSvc;
+        const checkMasterDetail = gos.is('masterDetail') && findOptions?.searchDetail && masterDetailSvc;
 
         if (_missing(findSearchValue)) {
             // nothing to match, clear down results

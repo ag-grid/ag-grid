@@ -37,14 +37,14 @@ export class ColumnAnimationService extends BeanStub implements NamedBean {
 
         const { gos } = this;
 
-        if (gos.get('suppressColumnMoveAnimation')) {
+        if (gos.is('suppressColumnMoveAnimation')) {
             return;
         }
 
         // if doing RTL, we don't animate open / close as due to how the pixels are inverted,
         // the animation moves all the row the the right rather than to the left (ie it's the static
         // columns that actually get their coordinates updated)
-        if (gos.get('enableRtl')) {
+        if (gos.is('enableRtl')) {
             return;
         }
 

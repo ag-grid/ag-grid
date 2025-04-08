@@ -18,15 +18,15 @@ export interface FlattenDetails {
 export function _getFlattenDetails(gos: GridOptionsService): FlattenDetails {
     let groupHideParentOfSingleChild = gos.get('groupHideParentOfSingleChild');
     if (!groupHideParentOfSingleChild) {
-        groupHideParentOfSingleChild = gos.get('groupRemoveSingleChildren');
-        if (!groupHideParentOfSingleChild && gos.get('groupRemoveLowestSingleChildren')) {
+        groupHideParentOfSingleChild = gos.is('groupRemoveSingleChildren');
+        if (!groupHideParentOfSingleChild && gos.is('groupRemoveLowestSingleChildren')) {
             groupHideParentOfSingleChild = 'leafGroupsOnly';
         }
     }
     return {
         groupHideParentOfSingleChild,
         isGroupMultiAutoColumn: _isGroupMultiAutoColumn(gos),
-        hideOpenParents: gos.getAsBool('groupHideOpenParents'),
+        hideOpenParents: gos.is('groupHideOpenParents'),
         grandTotalRow: _getGrandTotalRow(gos),
         groupTotalRow: _getGroupTotalRowCallback(gos),
     };

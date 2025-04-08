@@ -408,7 +408,7 @@ export class ColumnFilterService extends BeanStub implements NamedBean {
     public isSuppressFlashingCellsBecauseFiltering(): boolean {
         // if user has elected to always flash cell changes, then always return false, otherwise we suppress flashing
         // changes when filtering
-        const allowShowChangeAfterFilter = this.gos.get('allowShowChangeAfterFilter') ?? false;
+        const allowShowChangeAfterFilter = this.gos.is('allowShowChangeAfterFilter') ?? false;
         return !allowShowChangeAfterFilter && this.processingFilterChange;
     }
 

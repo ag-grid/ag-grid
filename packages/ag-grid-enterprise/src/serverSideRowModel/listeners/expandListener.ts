@@ -34,7 +34,7 @@ export class ExpandListener extends BeanStub implements NamedBean {
                 const storeParams = this.serverSideRowModel.getParams();
                 rowNode.childStore = this.createBean(this.storeFactory.createStore(storeParams, rowNode));
             }
-        } else if (this.gos.get('purgeClosedRowNodes') && _exists(rowNode.childStore)) {
+        } else if (this.gos.is('purgeClosedRowNodes') && _exists(rowNode.childStore)) {
             rowNode.childStore = this.destroyBean(rowNode.childStore)!;
         }
 

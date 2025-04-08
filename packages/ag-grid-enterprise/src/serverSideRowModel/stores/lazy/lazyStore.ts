@@ -88,7 +88,7 @@ export class LazyStore extends BeanStub implements IServerSideStore {
         }
         this.cache = this.createManagedBean(new LazyCache(this, numberOfRows, false, this.storeParams));
 
-        const usingTreeData = this.gos.get('treeData');
+        const usingTreeData = this.gos.is('treeData');
 
         if (!usingTreeData && this.group && this.rowGroupColsSvc) {
             const groupColVo = this.ssrmParams.rowGroupCols[this.level];
@@ -170,7 +170,7 @@ export class LazyStore extends BeanStub implements IServerSideStore {
             removedNodes = this.cache.removeRowNodes(allUniqueIdsToRemove);
         }
 
-        const isClientSideSortingEnabled = this.gos.get('serverSideEnableClientSideSort');
+        const isClientSideSortingEnabled = this.gos.is('serverSideEnableClientSideSort');
 
         const isUpdateOrAdd = updatedNodes?.length || insertedNodes?.length;
         const isClientSideSort = allRowsLoaded && isClientSideSortingEnabled;
@@ -568,7 +568,7 @@ export class LazyStore extends BeanStub implements IServerSideStore {
             this.storeUtils.isServerRefreshNeeded(this.parentRowNode, this.ssrmParams.rowGroupCols, params)
         ) {
             const allRowsLoaded = this.cache.isStoreFullyLoaded();
-            const isClientSideSortingEnabled = this.gos.get('serverSideEnableClientSideSort');
+            const isClientSideSortingEnabled = this.gos.is('serverSideEnableClientSideSort');
 
             const isClientSideSort = allRowsLoaded && isClientSideSortingEnabled;
             if (!isClientSideSort) {

@@ -19,7 +19,7 @@ export function _doOnce(func: () => void, key: string) {
 }
 
 export function _logIfDebug(gos: GridOptionsService, message: string, ...args: any[]) {
-    if (gos.get('debug')) {
+    if (gos.is('debug')) {
         // eslint-disable-next-line no-console
         console.log('AG Grid: ' + message, ...args);
     }

@@ -52,7 +52,7 @@ export class AnimationFrameService extends BeanStub implements NamedBean {
     }
 
     public postConstruct(): void {
-        this.active = !this.gos.get('suppressAnimationFrame');
+        this.active = !this.gos.is('suppressAnimationFrame');
         this.batchFrameworkComps = this.beans.frameworkOverrides.batchFrameworkComps;
     }
 

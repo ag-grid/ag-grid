@@ -49,7 +49,7 @@ export class GridCtrl extends BeanStub {
 
         this.createManagedBean(new LayoutFeature(this.view));
 
-        this.view.setRtlClass(this.gos.get('enableRtl') ? 'ag-rtl' : 'ag-ltr');
+        this.view.setRtlClass(this.gos.is('enableRtl') ? 'ag-rtl' : 'ag-ltr');
 
         const unsubscribeFromResize = _observeResize(this.beans, this.eGridHostDiv, this.onGridSizeChanged.bind(this));
         this.addDestroyFunc(() => unsubscribeFromResize());

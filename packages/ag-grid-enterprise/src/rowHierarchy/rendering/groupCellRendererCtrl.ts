@@ -148,7 +148,7 @@ export class GroupCellRendererCtrl extends BeanStub implements IGroupCellRendere
      * @returns whether the cell should be skipped due to embedded full width rows
      */
     private isEmbeddedRowMismatch(): boolean {
-        if (!this.params.fullWidth || !this.gos.get('embedFullWidthRows')) {
+        if (!this.params.fullWidth || !this.gos.is('embedFullWidthRows')) {
             return false;
         }
 
@@ -158,7 +158,7 @@ export class GroupCellRendererCtrl extends BeanStub implements IGroupCellRendere
         const pinnedRightCell = this.params.pinned === 'right';
         const bodyCell = !pinnedLeftCell && !pinnedRightCell;
 
-        if (this.gos.get('enableRtl')) {
+        if (this.gos.is('enableRtl')) {
             if (visibleCols.isPinningLeft()) {
                 return !pinnedRightCell;
             }
@@ -302,7 +302,7 @@ export class GroupCellRendererCtrl extends BeanStub implements IGroupCellRendere
 
         const setupListeners = () => {
             // Cell double clicked
-            const isDoubleClickEdit = column?.isCellEditable(this.displayedNode) && this.gos.get('enableGroupEdit');
+            const isDoubleClickEdit = column?.isCellEditable(this.displayedNode) && this.gos.is('enableGroupEdit');
             if (!isDoubleClickEdit && !suppressDoubleClickExpand) {
                 this.addManagedListeners(eGridCell, { dblclick: this.onCellDblClicked.bind(this) });
             }
@@ -440,7 +440,7 @@ export class GroupCellRendererCtrl extends BeanStub implements IGroupCellRendere
         }
 
         // if [showOpenedGroup] and not [groupHideOpenParents], then no child count
-        const isRepresentingOtherNode = this.gos.get('showOpenedGroup') && this.displayedNode !== this.node;
+        const isRepresentingOtherNode = this.gos.is('showOpenedGroup') && this.displayedNode !== this.node;
         if (isRepresentingOtherNode && !_isHiddenParent(this.node, this.displayedNode, this.gos)) {
             return 0;
         }

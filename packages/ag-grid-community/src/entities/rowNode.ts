@@ -492,7 +492,7 @@ export class RowNode<TData = any>
         }
         const oldValue = valueSvc.getValueForDisplay(column, this);
 
-        if (gos.get('readOnlyEdit')) {
+        if (gos.is('readOnlyEdit')) {
             const {
                 beans: { eventSvc },
                 data,

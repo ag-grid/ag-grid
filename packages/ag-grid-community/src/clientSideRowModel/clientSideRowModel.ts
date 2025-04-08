@@ -114,7 +114,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
             afterColumnsChanged: true,
             keepRenderedRows: true,
             // we want animations cos sorting or filtering could be applied
-            animate: !this.gos.get('suppressAnimationFrame'),
+            animate: !this.gos.is('suppressAnimationFrame'),
         });
 
         this.addManagedEventListeners({
@@ -281,8 +281,8 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
 
         const reset =
             oldNodeManager !== nodeManager ||
-            (rowDataChanged && changedProps.has('treeData') && gos.get('treeData')) ||
-            (changedProps.has('treeDataChildrenField') && gos.get('treeData'));
+            (rowDataChanged && changedProps.has('treeData') && gos.is('treeData')) ||
+            (changedProps.has('treeDataChildrenField') && gos.is('treeData'));
 
         let newRowData: any[] | null | undefined;
 
@@ -318,11 +318,11 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
                 gos.exists('getRowId') &&
                 // this property is a backwards compatibility property, for those who want
                 // the old behaviour of Row IDs but NOT Immutable Data.
-                !gos.get('resetRowDataOnUpdate');
+                !gos.is('resetRowDataOnUpdate');
 
             if (immutable) {
                 params.keepRenderedRows = true;
-                params.animate = !this.gos.get('suppressAnimationFrame');
+                params.animate = !this.gos.is('suppressAnimationFrame');
                 params.changedRowNodes = new ChangedRowNodes();
 
                 nodeManager.setImmutableRowData(params, newRowData);
@@ -441,7 +441,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
     public ensureRowsAtPixel(rowNodes: RowNode[], pixel: number, increment: number = 0): boolean {
         const indexAtPixelNow = this.getRowIndexAtPixel(pixel);
         const rowNodeAtPixelNow = this.getRow(indexAtPixelNow);
-        const animate = !this.gos.get('suppressAnimationFrame');
+        const animate = !this.gos.is('suppressAnimationFrame');
 
         if (rowNodeAtPixelNow === rowNodes[0]) {
             return false;
@@ -605,7 +605,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         const getDefaultIndex = (adjustedIndex: number) => {
             let rowNode = childrenAfterSort![adjustedIndex];
 
-            if (this.gos.get('groupHideOpenParents')) {
+            if (this.gos.is('groupHideOpenParents')) {
                 // if hideOpenParents, then get lowest displayed descendent
                 while (rowNode.expanded && rowNode.childrenAfterSort && rowNode.childrenAfterSort.length > 0) {
                     rowNode = rowNode.childrenAfterSort[0];
@@ -715,7 +715,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
     }
 
     private isSuppressModelUpdateAfterUpdateTransaction(params: RefreshModelParams): boolean {
-        if (!this.gos.get('suppressModelUpdateAfterUpdateTransaction')) {
+        if (!this.gos.is('suppressModelUpdateAfterUpdateTransaction')) {
             return false; // Not suppressed
         }
 
@@ -1227,7 +1227,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
             rowDataUpdated: true,
             rowNodesOrderChanged,
             keepRenderedRows: true,
-            animate: !this.gos.get('suppressAnimationFrame'),
+            animate: !this.gos.is('suppressAnimationFrame'),
             changedRowNodes,
             changedPath: this.createChangePath(true),
         });

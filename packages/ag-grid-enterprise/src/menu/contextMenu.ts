@@ -68,14 +68,14 @@ export class ContextMenuService extends BeanStub implements NamedBean, IContextM
         if (_exists(node) && clipboardSvc) {
             if (column) {
                 // only makes sense if column exists, could have originated from a row
-                if (!gos.get('suppressCutToClipboard')) {
+                if (!gos.is('suppressCutToClipboard')) {
                     defaultMenuOptions.push('cut');
                 }
                 defaultMenuOptions.push('copy', 'copyWithHeaders', 'copyWithGroupHeaders', 'paste', 'separator');
             }
         }
 
-        if (gos.get('enableCharts') && chartSvc) {
+        if (gos.is('enableCharts') && chartSvc) {
             if (colModel.isPivotMode()) {
                 defaultMenuOptions.push('pivotChart');
             }
@@ -87,8 +87,8 @@ export class ContextMenuService extends BeanStub implements NamedBean, IContextM
 
         if (_exists(node)) {
             // if user clicks a cell
-            const suppressExcel = gos.get('suppressExcelExport') || !excelCreator;
-            const suppressCsv = gos.get('suppressCsvExport') || !csvCreator;
+            const suppressExcel = gos.is('suppressExcelExport') || !excelCreator;
+            const suppressCsv = gos.is('suppressCsvExport') || !csvCreator;
             const onIPad = _isIOSUserAgent();
             const anyExport = !onIPad && (!suppressExcel || !suppressCsv);
             if (anyExport) {
@@ -334,7 +334,7 @@ export class ContextMenuService extends BeanStub implements NamedBean, IContextM
             },
             click: mouseEvent,
             positionCallback: () => {
-                const isRtl = this.gos.get('enableRtl');
+                const isRtl = this.gos.is('enableRtl');
                 popupSvc?.positionPopupUnderMouseEvent({
                     ...positionParams,
                     nudgeX: isRtl ? (eMenuGui.offsetWidth + 1) * -1 : 1,

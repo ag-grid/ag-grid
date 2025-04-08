@@ -143,7 +143,7 @@ export class ToolPanelColumnComp extends Component {
     private onContextMenu(e: MouseEvent): void {
         const { column, gos } = this;
 
-        if (gos.get('functionsReadOnly')) {
+        if (gos.is('functionsReadOnly')) {
             return;
         }
 
@@ -165,7 +165,7 @@ export class ToolPanelColumnComp extends Component {
     }
 
     private onLabelClicked(): void {
-        if (this.gos.get('functionsReadOnly')) {
+        if (this.gos.is('functionsReadOnly')) {
             return;
         }
 
@@ -216,7 +216,7 @@ export class ToolPanelColumnComp extends Component {
         const beans = this.beans;
         const { gos, eventSvc, dragAndDrop } = beans;
 
-        let hideColumnOnExit = !gos.get('suppressDragLeaveHidesColumns');
+        let hideColumnOnExit = !gos.is('suppressDragLeaveHidesColumns');
         const dragSource: DragSource = {
             type: DragSourceType.ToolPanel,
             eElement: eDragHandle,
@@ -224,7 +224,7 @@ export class ToolPanelColumnComp extends Component {
             getDefaultIconName: () => (hideColumnOnExit ? 'hide' : 'notAllowed'),
             getDragItem: () => this.createDragItem(),
             onDragStarted: () => {
-                hideColumnOnExit = !gos.get('suppressDragLeaveHidesColumns');
+                hideColumnOnExit = !gos.is('suppressDragLeaveHidesColumns');
                 eventSvc.dispatchEvent({
                     type: 'columnPanelItemDragStart',
                     column: this.column,
@@ -287,7 +287,7 @@ export class ToolPanelColumnComp extends Component {
         if (isPivotMode) {
             // when in pivot mode, the item should be read only if:
             //  a) gui is not allowed make any changes
-            const functionsReadOnly = this.gos.get('functionsReadOnly');
+            const functionsReadOnly = this.gos.is('functionsReadOnly');
             //  b) column is not allow any functions on it
             const noFunctionsAllowed = !this.column.isAnyFunctionAllowed();
             canBeToggled = !functionsReadOnly && !noFunctionsAllowed;

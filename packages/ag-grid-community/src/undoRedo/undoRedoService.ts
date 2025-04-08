@@ -29,7 +29,7 @@ export class UndoRedoService extends BeanStub implements NamedBean {
 
     public postConstruct(): void {
         const { gos, ctrlsSvc } = this.beans;
-        if (!gos.get('undoRedoCellEditing')) {
+        if (!gos.is('undoRedoCellEditing')) {
             return;
         }
 

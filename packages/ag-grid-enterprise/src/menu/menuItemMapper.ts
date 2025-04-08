@@ -173,7 +173,7 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
                             name: localeTextFunc('valueAggregation', 'Value Aggregation'),
                             icon: _createIconNoSpan('menuValue', beans, null),
                             subMenu: createAggregationSubMenu(column!, aggFuncSvc, valueColsSvc, localeTextFunc),
-                            disabled: gos.get('functionsReadOnly'),
+                            disabled: gos.is('functionsReadOnly'),
                         };
                     } else {
                         return null;
@@ -182,14 +182,14 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
                     return colAutosize
                         ? {
                               name: localeTextFunc('autosizeThisColumn', 'Autosize This Column'),
-                              action: () => colAutosize.autoSizeColumn(column, source, gos.get('skipHeaderOnAutoSize')),
+                              action: () => colAutosize.autoSizeColumn(column, source, gos.is('skipHeaderOnAutoSize')),
                           }
                         : null;
                 case 'autoSizeAll':
                     return colAutosize
                         ? {
                               name: localeTextFunc('autosizeAllColumns', 'Autosize All Columns'),
-                              action: () => colAutosize.autoSizeAllColumns(source, gos.get('skipHeaderOnAutoSize')),
+                              action: () => colAutosize.autoSizeAllColumns(source, gos.is('skipHeaderOnAutoSize')),
                           }
                         : null;
                 case 'rowGroup':
@@ -200,7 +200,7 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
                                   ' ' +
                                   _escapeString(colNames.getDisplayNameForColumn(column, 'header')),
                               disabled:
-                                  gos.get('functionsReadOnly') ||
+                                  gos.is('functionsReadOnly') ||
                                   column?.isRowGroupActive() ||
                                   !column?.getColDef().enableRowGroup,
                               action: () => rowGroupColsSvc.addColumns([column], source),
@@ -218,7 +218,7 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
                         if (showRowGroup === true) {
                             name = localeTextFunc('ungroupAll', 'Un-Group All');
                             disabled =
-                                gos.get('functionsReadOnly') ||
+                                gos.is('functionsReadOnly') ||
                                 lockedGroups === -1 ||
                                 lockedGroups >= (rowGroupColsSvc.columns.length ?? 0);
                             action = () =>
@@ -231,7 +231,7 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
                                     ? _escapeString(colNames.getDisplayNameForColumn(underlyingColumn, 'header'))
                                     : showRowGroup;
                             name = localeTextFunc('ungroupBy', 'Un-Group by') + ' ' + ungroupByName;
-                            disabled = gos.get('functionsReadOnly') || isRowGroupColLocked(underlyingColumn, beans);
+                            disabled = gos.is('functionsReadOnly') || isRowGroupColLocked(underlyingColumn, beans);
                             action = () => {
                                 rowGroupColsSvc.removeColumns([showRowGroup], source);
                             };
@@ -242,7 +242,7 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
                                 ' ' +
                                 _escapeString(colNames.getDisplayNameForColumn(column, 'header'));
                             disabled =
-                                gos.get('functionsReadOnly') ||
+                                gos.is('functionsReadOnly') ||
                                 !column?.isRowGroupActive() ||
                                 !column?.getColDef().enableRowGroup ||
                                 isRowGroupColLocked(column, beans);
@@ -314,7 +314,7 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
                             name: localeTextFunc('cut', 'Cut'),
                             shortcut: localeTextFunc('ctrlX', 'Ctrl+X'),
                             icon: _createIconNoSpan('clipboardCut', beans, null),
-                            disabled: !isEditable || gos.get('suppressCutToClipboard'),
+                            disabled: !isEditable || gos.is('suppressCutToClipboard'),
                             action: () => clipboardSvc.cutToClipboard(undefined, 'contextMenu'),
                         };
                     } else {
@@ -333,10 +333,10 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
                 case 'export': {
                     const exportSubMenuItems: string[] = [];
 
-                    if (!gos.get('suppressCsvExport') && csvCreator) {
+                    if (!gos.is('suppressCsvExport') && csvCreator) {
                         exportSubMenuItems.push('csvExport');
                     }
-                    if (!gos.get('suppressExcelExport') && excelCreator) {
+                    if (!gos.is('suppressExcelExport') && excelCreator) {
                         exportSubMenuItems.push('excelExport');
                     }
                     return exportSubMenuItems.length

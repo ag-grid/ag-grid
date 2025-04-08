@@ -74,12 +74,12 @@ export class TooltipStateManager extends BeanStub {
     }
 
     public postConstruct(): void {
-        if (this.gos.get('tooltipInteraction')) {
+        if (this.gos.is('tooltipInteraction')) {
             this.interactionEnabled = true;
         }
 
         this.tooltipTrigger = this.getTooltipTrigger();
-        this.tooltipMouseTrack = this.gos.getAsBool('tooltipMouseTrack');
+        this.tooltipMouseTrack = this.gos.is('tooltipMouseTrack');
 
         const el = this.tooltipCtrl.getGui();
 

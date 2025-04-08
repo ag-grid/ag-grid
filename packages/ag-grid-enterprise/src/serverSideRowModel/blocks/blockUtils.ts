@@ -124,7 +124,7 @@ export class BlockUtils extends BeanStub implements NamedBean {
             }, 'SSBlock-BadKey');
         }
 
-        const isUnbalancedGroup = this.gos.get('groupAllowUnbalanced') && rowNode.key === '';
+        const isUnbalancedGroup = this.gos.is('groupAllowUnbalanced') && rowNode.key === '';
         if (isUnbalancedGroup) {
             const storeParams = this.serverSideRowModel.getParams();
             rowNode.childStore = this.createBean(this.storeFactory.createStore(storeParams, rowNode));
@@ -152,7 +152,7 @@ export class BlockUtils extends BeanStub implements NamedBean {
     public updateDataIntoRowNode(rowNode: RowNode, data: any): void {
         rowNode.updateData(data);
 
-        if (this.gos.get('treeData')) {
+        if (this.gos.is('treeData')) {
             this.setTreeGroupInfo(rowNode);
             this.setChildCountIntoRowNode(rowNode);
         } else if (rowNode.group) {
@@ -175,7 +175,7 @@ export class BlockUtils extends BeanStub implements NamedBean {
             // it's not possible for a node to change whether it's a group or not
             // when doing row grouping (as only rows at certain levels are groups),
             // so nothing to do here
-        } else if (this.gos.get('masterDetail')) {
+        } else if (this.gos.is('masterDetail')) {
             // this should be implemented, however it's not the use case i'm currently
             // programming, so leaving for another day. to test this, create an example
             // where whether a master row is expandable or not is dynamic
@@ -189,7 +189,7 @@ export class BlockUtils extends BeanStub implements NamedBean {
         cachedRowHeight: number | undefined
     ): void {
         rowNode.stub = false;
-        const treeData = this.gos.get('treeData');
+        const treeData = this.gos.is('treeData');
 
         rowNode.setDataAndId(data, defaultId);
 
@@ -197,7 +197,7 @@ export class BlockUtils extends BeanStub implements NamedBean {
             this.setTreeGroupInfo(rowNode);
         } else if (rowNode.group) {
             this.setRowGroupInfo(rowNode);
-        } else if (this.gos.get('masterDetail')) {
+        } else if (this.gos.is('masterDetail')) {
             this.setMasterDetailInfo(rowNode);
         }
 
@@ -228,7 +228,7 @@ export class BlockUtils extends BeanStub implements NamedBean {
         rowNode.groupValue = rowNode.key;
 
         const groupDisplayCols = this.showRowGroupCols?.getShowRowGroupCols() ?? [];
-        const usingTreeData = this.gos.get('treeData');
+        const usingTreeData = this.gos.is('treeData');
         groupDisplayCols.forEach((col) => {
             if (rowNode.groupData == null) {
                 rowNode.groupData = {};
@@ -262,8 +262,8 @@ export class BlockUtils extends BeanStub implements NamedBean {
         nextRowTop: { value: number },
         uiLevel: number
     ): void {
-        const isUnbalancedGroup = this.gos.get('groupAllowUnbalanced') && rowNode.group && rowNode.key === '';
-        const isHiddenOpenGroup = this.gos.get('groupHideOpenParents') && rowNode.group && rowNode.expanded;
+        const isUnbalancedGroup = this.gos.is('groupAllowUnbalanced') && rowNode.group && rowNode.key === '';
+        const isHiddenOpenGroup = this.gos.is('groupHideOpenParents') && rowNode.group && rowNode.expanded;
         if (isHiddenOpenGroup || isUnbalancedGroup) {
             rowNode.setRowIndex(null);
             rowNode.setRowTop(null);

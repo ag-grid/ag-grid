@@ -347,7 +347,7 @@ export class Environment extends BeanStub implements NamedBean {
             }
             this.gridTheme = newGridTheme;
             newGridTheme?._startUse({
-                loadThemeGoogleFonts: gos.get('loadThemeGoogleFonts'),
+                loadThemeGoogleFonts: gos.is('loadThemeGoogleFonts'),
                 styleContainer: this.eStyleContainer,
                 cssLayer: this.cssLayer,
                 nonce: this.styleNonce,

@@ -134,7 +134,7 @@ export function _shouldHidePinnedRows(beans: BeanCollection, node: RowNode): boo
         return !_isDisplayedAfterFilterCSRM(node);
     }
 
-    if (gos.get('pivotMode')) {
+    if (gos.is('pivotMode')) {
         return !node.group;
     }
 

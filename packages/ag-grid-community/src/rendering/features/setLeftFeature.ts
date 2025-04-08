@@ -32,7 +32,7 @@ export class SetLeftFeature extends BeanStub {
 
     public getColumnOrGroup(): AgColumn | AgColumnGroup {
         const { beans, colsSpanning } = this;
-        if (beans.gos.get('enableRtl') && colsSpanning) {
+        if (beans.gos.is('enableRtl') && colsSpanning) {
             return _last(colsSpanning);
         }
         return this.columnOrGroup;
@@ -53,7 +53,7 @@ export class SetLeftFeature extends BeanStub {
 
     private setLeftFirstTime(): void {
         const { gos, colAnimation } = this.beans;
-        const suppressMoveAnimation = gos.get('suppressColumnMoveAnimation');
+        const suppressMoveAnimation = gos.is('suppressColumnMoveAnimation');
         const oldLeftExists = _exists(this.columnOrGroup.getOldLeft());
         const animateColumnMove = colAnimation?.isActive() && oldLeftExists && !suppressMoveAnimation;
         if (animateColumnMove) {

@@ -80,7 +80,7 @@ export class AggregationStage extends BeanStub implements NamedBean, IRowNodeSta
         const pivotColumns = pivotActive && this.pivotColsSvc ? this.pivotColsSvc.columns : [];
 
         const aggDetails: AggregationDetails = {
-            alwaysAggregateAtRootLevel: this.gos.getAsBool('alwaysAggregateAtRootLevel'),
+            alwaysAggregateAtRootLevel: this.gos.is('alwaysAggregateAtRootLevel'),
             groupIncludeTotalFooter: !!_getGrandTotalRow(this.gos),
             changedPath: params.changedPath!,
             valueColumns: measureColumns ?? [],
@@ -94,7 +94,7 @@ export class AggregationStage extends BeanStub implements NamedBean, IRowNodeSta
 
     private isSuppressAggFilteredOnly() {
         const isGroupAggFiltering = _getGroupAggFiltering(this.gos) !== undefined;
-        return isGroupAggFiltering || this.gos.get('suppressAggFilteredOnly');
+        return isGroupAggFiltering || this.gos.is('suppressAggFilteredOnly');
     }
 
     private recursivelyCreateAggData(aggDetails: AggregationDetails) {

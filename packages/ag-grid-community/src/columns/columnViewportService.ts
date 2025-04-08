@@ -44,7 +44,7 @@ export class ColumnViewportService extends BeanStub implements NamedBean {
     private suppressColumnVirtualisation: boolean;
 
     public postConstruct(): void {
-        this.suppressColumnVirtualisation = this.gos.getAsBool('suppressColumnVirtualisation');
+        this.suppressColumnVirtualisation = this.gos.is('suppressColumnVirtualisation');
     }
 
     public setScrollPosition(scrollWidth: number, scrollPosition: number, afterScroll: boolean = false): void {
@@ -63,7 +63,7 @@ export class ColumnViewportService extends BeanStub implements NamedBean {
         // virtual columns again
         visibleCols.isBodyWidthDirty = true;
 
-        if (this.gos.get('enableRtl')) {
+        if (this.gos.is('enableRtl')) {
             const bodyWidth = visibleCols.bodyWidth;
             this.viewportLeft = bodyWidth - scrollPosition - scrollWidth;
             this.viewportRight = bodyWidth - scrollPosition;

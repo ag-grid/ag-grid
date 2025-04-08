@@ -63,9 +63,9 @@ export function _isGetRowHeightFunction(gos: GridOptionsService): boolean {
 
 export function _shouldMaintainColumnOrder(gos: GridOptionsService, isPivotColumns: boolean): boolean {
     if (isPivotColumns) {
-        return !gos.get('enableStrictPivotColumnOrder');
+        return !gos.is('enableStrictPivotColumnOrder');
     }
-    return gos.getAsBool('maintainColumnOrder');
+    return gos.is('maintainColumnOrder');
 }
 
 export function _getRowHeightForNode(
@@ -103,7 +103,7 @@ export function _getRowHeightForNode(
         }
     }
 
-    if (rowNode.detail && gos.get('masterDetail')) {
+    if (rowNode.detail && gos.is('masterDetail')) {
         return getMasterDetailRowHeight(gos);
     }
 
@@ -118,7 +118,7 @@ function getMasterDetailRowHeight(gos: GridOptionsService): { height: number; es
     // if autoHeight, we want the height to grow to the new height starting at 1, as otherwise a flicker would happen,
     // as the detail goes to the default (eg 200px) and then immediately shrink up/down to the new measured height
     // (due to auto height) which looks bad, especially if doing row animation.
-    if (gos.get('detailRowAutoHeight')) {
+    if (gos.is('detailRowAutoHeight')) {
         return { height: 1, estimated: false };
     }
 
@@ -299,15 +299,15 @@ export function _isNothingFocused(beans: BeanCollection): boolean {
 
 export function _isAnimateRows(gos: GridOptionsService) {
     // never allow animating if enforcing the row order
-    if (gos.get('ensureDomOrder')) {
+    if (gos.is('ensureDomOrder')) {
         return false;
     }
 
-    return gos.get('animateRows');
+    return gos.is('animateRows');
 }
 
 export function _isGroupRowsSticky(gos: GridOptionsService): boolean {
-    if (gos.get('paginateChildRows') || gos.get('groupHideOpenParents') || _isDomLayout(gos, 'print')) {
+    if (gos.is('paginateChildRows') || gos.is('groupHideOpenParents') || _isDomLayout(gos, 'print')) {
         return false;
     }
 
@@ -316,7 +316,7 @@ export function _isGroupRowsSticky(gos: GridOptionsService): boolean {
 
 export function _isColumnsSortingCoupledToGroup(gos: GridOptionsService): boolean {
     const autoGroupColumnDef = gos.get('autoGroupColumnDef');
-    return !autoGroupColumnDef?.comparator && !gos.get('treeData');
+    return !autoGroupColumnDef?.comparator && !gos.is('treeData');
 }
 
 export function _getGroupAggFiltering(
@@ -352,7 +352,7 @@ export function _getGroupTotalRowCallback(
 }
 
 export function _isGroupMultiAutoColumn(gos: GridOptionsService) {
-    const isHideOpenParents = gos.getAsBool('groupHideOpenParents');
+    const isHideOpenParents = gos.is('groupHideOpenParents');
     if (isHideOpenParents) {
         return true;
     }
@@ -404,10 +404,10 @@ export function _canSkipShowingRowGroup(gos: GridOptionsService, node: RowNode):
         return true;
     }
     // deprecated
-    if (gos.get('groupRemoveSingleChildren')) {
+    if (gos.is('groupRemoveSingleChildren')) {
         return true;
     }
-    if (gos.get('groupRemoveLowestSingleChildren') && node.leafGroup) {
+    if (gos.is('groupRemoveLowestSingleChildren') && node.leafGroup) {
         return true;
     }
     return false;
@@ -432,12 +432,12 @@ export function _shouldUpdateColVisibilityAfterGroup(gos: GridOptionsService, is
         return false;
     }
 
-    const legacySuppressOnGroup = gos.get('suppressRowGroupHidesColumns');
+    const legacySuppressOnGroup = gos.is('suppressRowGroupHidesColumns');
     if (isGrouped && legacySuppressOnGroup === true) {
         return false;
     }
 
-    const legacySuppressOnUngroup = gos.get('suppressMakeColumnVisibleAfterUnGroup');
+    const legacySuppressOnUngroup = gos.is('suppressMakeColumnVisibleAfterUnGroup');
     if (!isGrouped && legacySuppressOnUngroup === true) {
         return false;
     }
@@ -483,7 +483,7 @@ export function _getSuppressMultiRanges(gos: GridOptionsService): boolean {
     const useNewAPI = selection !== undefined;
 
     if (!useNewAPI) {
-        return gos.getAsBool('suppressMultiRangeSelection');
+        return gos.is('suppressMultiRangeSelection');
     }
 
     return typeof selection !== 'boolean' ? selection?.suppressMultiRanges ?? false : false;
@@ -493,7 +493,7 @@ export function _isCellSelectionEnabled(gos: GridOptionsService): boolean {
     const selection = gos.get('cellSelection');
     const useNewAPI = selection !== undefined;
 
-    return useNewAPI ? !!selection : gos.getAsBool('enableRangeSelection');
+    return useNewAPI ? !!selection : gos.is('enableRangeSelection');
 }
 
 export function _getFillHandle(gos: GridOptionsService): FillHandleOptions | undefined {
@@ -505,7 +505,7 @@ export function _getFillHandle(gos: GridOptionsService): FillHandleOptions | und
             mode: 'fill',
             setFillValue: gos.get('fillOperation'),
             direction: gos.get('fillHandleDirection'),
-            suppressClearOnFillReduction: gos.get('suppressClearOnFillReduction'),
+            suppressClearOnFillReduction: gos.is('suppressClearOnFillReduction'),
         };
     }
 
@@ -516,8 +516,8 @@ function _getEnableClickSelection(gos: GridOptionsService): NonNullable<RowSelec
     const selection = gos.get('rowSelection') ?? 'single';
 
     if (typeof selection === 'string') {
-        const suppressRowClickSelection = gos.get('suppressRowClickSelection');
-        const suppressRowDeselection = gos.get('suppressRowDeselection');
+        const suppressRowClickSelection = gos.is('suppressRowClickSelection');
+        const suppressRowDeselection = gos.is('suppressRowDeselection');
 
         if (suppressRowClickSelection && suppressRowDeselection) {
             return false;
@@ -595,7 +595,7 @@ export function _getEnableSelectionWithoutKeys(gos: GridOptionsService): boolean
     const selection = gos.get('rowSelection');
 
     if (typeof selection === 'string') {
-        return gos.getAsBool('rowMultiSelectWithClick');
+        return gos.is('rowMultiSelectWithClick');
     }
 
     return selection?.enableSelectionWithoutKeys ?? false;
@@ -605,8 +605,8 @@ export function _getGroupSelection(gos: GridOptionsService): GroupSelectionMode 
     const selection = gos.get('rowSelection');
 
     if (typeof selection === 'string') {
-        const groupSelectsChildren = gos.get('groupSelectsChildren');
-        const groupSelectsFiltered = gos.get('groupSelectsFiltered');
+        const groupSelectsChildren = gos.is('groupSelectsChildren');
+        const groupSelectsFiltered = gos.is('groupSelectsFiltered');
 
         if (groupSelectsChildren && groupSelectsFiltered) {
             return 'filteredDescendants';
@@ -641,7 +641,7 @@ export function _getMasterSelects(gos: GridOptionsService): MasterSelectionMode 
 }
 
 export function _isSetFilterByDefault(gos: GridOptionsService): boolean {
-    return gos.isModuleRegistered('SetFilter') && !gos.get('suppressSetFilterByDefault');
+    return gos.isModuleRegistered('SetFilter') && !gos.is('suppressSetFilterByDefault');
 }
 
 export function _isLegacyMenuEnabled(gos: GridOptionsService): boolean {
@@ -726,7 +726,7 @@ export function _addGridCommonParams<T extends AgGridCommon<TData, TContext>, TD
 export type GroupingApproach = 'group' | 'treeSelfRef' | 'treeNested' | 'treePath';
 
 export function _getGroupingApproach(gos: GridOptionsService): GroupingApproach {
-    if (gos.get('treeData')) {
+    if (gos.is('treeData')) {
         if (gos.get('treeDataParentIdField')) {
             return 'treeSelfRef';
         }

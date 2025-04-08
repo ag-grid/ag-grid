@@ -116,7 +116,7 @@ export class AgMenuItemRenderer extends Component implements IMenuItemComp {
         const eGui = this.getGui();
 
         if (this.params.subMenu) {
-            const iconName = this.gos.get('enableRtl') ? 'subMenuOpenRtl' : 'subMenuOpen';
+            const iconName = this.gos.is('enableRtl') ? 'subMenuOpenRtl' : 'subMenuOpen';
             pointer.appendChild(_createIconNoSpan(iconName, this.beans)!);
         }
 

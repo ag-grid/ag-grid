@@ -129,7 +129,7 @@ export class StickyRowFeature extends BeanStub implements IStickyRowFeature {
         };
 
         const suppressFootersSticky = this.areFooterRowsStickySuppressed();
-        const suppressGroupsSticky = this.gos.get('suppressGroupRowsSticky');
+        const suppressGroupsSticky = this.gos.is('suppressGroupRowsSticky');
         const isRowSticky = (row: RowNode) => {
             if (!row.displayed) {
                 return false;
@@ -247,7 +247,7 @@ export class StickyRowFeature extends BeanStub implements IStickyRowFeature {
     private canRowsBeSticky(): boolean {
         const isStickyEnabled = _isGroupRowsSticky(this.gos);
         const suppressFootersSticky = this.areFooterRowsStickySuppressed();
-        const suppressGroupsSticky = this.gos.get('suppressGroupRowsSticky');
+        const suppressGroupsSticky = this.gos.is('suppressGroupRowsSticky');
         return isStickyEnabled && (!suppressFootersSticky || !suppressGroupsSticky);
     }
 

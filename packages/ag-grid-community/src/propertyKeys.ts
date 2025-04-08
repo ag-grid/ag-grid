@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import type { GridOptions } from './entities/gridOptions';
 import type { AgGridCommon } from './interfaces/iCommon';
 
@@ -175,7 +176,9 @@ export const _BOOLEAN_MIXED_GRID_OPTIONS: KeysWithType<boolean>[] = [
 ];
 
 // Used in validations to check type of pure boolean inputs
-export const _BOOLEAN_GRID_OPTIONS: KeysWithType<boolean>[] = [
+// Used to type the gos.is() / gos.get() methods which is why there is no explicit type provided here
+// so that we can actually use the values to restrict the type of the gos.is() method
+export const _BOOLEAN_GRID_OPTIONS = [
     'loadThemeGoogleFonts',
     'suppressMakeColumnVisibleAfterUnGroup',
     'suppressRowClickSelection',
@@ -315,7 +318,12 @@ export const _BOOLEAN_GRID_OPTIONS: KeysWithType<boolean>[] = [
     'maintainColumnOrder',
     'enableStrictPivotColumnOrder',
     'suppressSetFilterByDefault',
-];
+] as const;
+
+type AreAllValidOptions<T extends readonly string[], TValid> = Exclude<T[number], TValid> extends never ? true : false;
+
+// validate that all the boolean options are actually boolean and also a grid option
+const areAllBooleanOptions: AreAllValidOptions<typeof _BOOLEAN_GRID_OPTIONS, KeysWithType<boolean>> = true;
 
 export type BooleanGridOptions = (typeof _BOOLEAN_GRID_OPTIONS)[number];
 

@@ -93,7 +93,7 @@ export class ColumnMoveService extends BeanStub implements NamedBean {
                 return position === 'left' || position === true ? MoveDirection.LEFT : MoveDirection.RIGHT;
             };
 
-            const isRtl = gos.get('enableRtl');
+            const isRtl = gos.is('enableRtl');
             let lastPlacement = isRtl ? MoveDirection.RIGHT : MoveDirection.LEFT;
             let rulePassed = true;
             proposedColumnOrder.forEach((col) => {
@@ -144,7 +144,7 @@ export class ColumnMoveService extends BeanStub implements NamedBean {
         const left = rect.left;
         const isGroup = isColumnGroup(column);
         const width = isGroup ? rect.width : column.getActualWidth();
-        const isLeft = (hDirection === 'left') !== gos.get('enableRtl');
+        const isLeft = (hDirection === 'left') !== gos.is('enableRtl');
 
         const xPosition = normaliseX({
             x: isLeft ? left - 20 : left + width + 20,
@@ -180,7 +180,7 @@ export class ColumnMoveService extends BeanStub implements NamedBean {
 
         ctrlsSvc.getScrollFeature().ensureColumnVisible(targetColumn, 'auto');
 
-        if ((!bean.isAlive() || gos.get('ensureDomOrder')) && headerPosition) {
+        if ((!bean.isAlive() || gos.is('ensureDomOrder')) && headerPosition) {
             let restoreFocusColumn: AgColumn | AgColumnGroup | undefined;
             if (isGroup) {
                 const groupId = column.getGroupId();
@@ -214,7 +214,7 @@ export class ColumnMoveService extends BeanStub implements NamedBean {
         displayName: string | null
     ): DragSource {
         const { gos, colModel, dragAndDrop, visibleCols } = this.beans;
-        let hideColumnOnExit = !gos.get('suppressDragLeaveHidesColumns');
+        let hideColumnOnExit = !gos.is('suppressDragLeaveHidesColumns');
         const isGroup = isColumnGroup(column);
         const columns = isGroup ? column.getProvidedColumnGroup().getLeafColumns() : [column];
         const getDragItem = isGroup
@@ -227,7 +227,7 @@ export class ColumnMoveService extends BeanStub implements NamedBean {
             getDragItem,
             dragItemName: displayName,
             onDragStarted: () => {
-                hideColumnOnExit = !gos.get('suppressDragLeaveHidesColumns');
+                hideColumnOnExit = !gos.is('suppressDragLeaveHidesColumns');
                 setColumnsMoving(columns, true);
             },
             onDragStopped: () => setColumnsMoving(columns, false),

@@ -86,7 +86,7 @@ export class AgColumnGroup<TValue = any> extends BeanStub<AgColumnGroupEvent> im
 
         // set our left based on first displayed column
         if (this.displayedChildren!.length > 0) {
-            if (this.gos.get('enableRtl')) {
+            if (this.gos.is('enableRtl')) {
                 const lastChild = _last(this.displayedChildren!);
                 const lastChildLeft = lastChild.getLeft();
                 this.setLeft(lastChildLeft);

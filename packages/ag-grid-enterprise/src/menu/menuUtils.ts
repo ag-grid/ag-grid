@@ -89,7 +89,7 @@ export class MenuUtils extends BeanStub implements NamedBean {
         const { mouseEvent, touchEvent, showMenuCallback, source } = params;
         // to allow us to debug in chrome, we ignore the event if ctrl is pressed.
         // not everyone wants this, so first 'if' below allows to turn this hack off.
-        if (!this.gos.get('allowContextMenuWithControlKey')) {
+        if (!this.gos.is('allowContextMenuWithControlKey')) {
             // then do the check
             if (mouseEvent && (mouseEvent.ctrlKey || mouseEvent.metaKey)) {
                 return;
@@ -102,7 +102,7 @@ export class MenuUtils extends BeanStub implements NamedBean {
             this.blockMiddleClickScrollsIfNeeded(mouseEvent);
         }
 
-        if (source === 'ui' && this.gos.get('suppressContextMenu')) {
+        if (source === 'ui' && this.gos.is('suppressContextMenu')) {
             return;
         }
 
@@ -158,7 +158,7 @@ export class MenuUtils extends BeanStub implements NamedBean {
         // will be consumed by the browser to mean 'scroll' (as you can scroll with the middle mouse
         // button in the browser). so this property allows the user to receive middle button clicks if
         // they want.
-        if (this.gos.get('suppressMiddleClickScrolls') && mouseEvent.which === 2) {
+        if (this.gos.is('suppressMiddleClickScrolls') && mouseEvent.which === 2) {
             mouseEvent.preventDefault();
         }
     }

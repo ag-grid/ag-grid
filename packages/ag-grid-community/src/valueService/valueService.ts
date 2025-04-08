@@ -63,8 +63,8 @@ export class ValueService extends BeanStub implements NamedBean {
             ? this.executeValueGetterWithValueCache.bind(this)
             : this.executeValueGetterWithoutValueCache.bind(this);
         this.isSsrm = _isServerSideRowModel(this.gos);
-        this.cellExpressions = this.gos.getAsBool('enableCellExpressions');
-        this.isTreeData = this.gos.getAsBool('treeData');
+        this.cellExpressions = this.gos.is('enableCellExpressions');
+        this.isTreeData = this.gos.is('treeData');
         this.initialised = true;
 
         // We listen to our own event and use it to call the columnSpecific callback,
@@ -111,7 +111,7 @@ export class ValueService extends BeanStub implements NamedBean {
         const isPivotLeaf = node.leafGroup && this.colModel.isPivotMode();
         const isOpenedGroup = node.group && node.expanded && !node.footer && !isPivotLeaf;
         // checks if we show header data
-        const groupShowsAggData = this.gos.get('groupSuppressBlankHeader') || !node.sibling;
+        const groupShowsAggData = this.gos.is('groupSuppressBlankHeader') || !node.sibling;
 
         // if doing grouping and footers, we don't want to include the agg value
         // in the header when the group is open
@@ -273,8 +273,8 @@ export class ValueService extends BeanStub implements NamedBean {
      */
     public getDisplayedNode(node: IRowNode, column: AgColumn, onlyHideOpenParents = false): RowNode | undefined {
         const gos = this.gos;
-        const isGroupHideOpenParents = gos.get('groupHideOpenParents');
-        const isShowOpenedGroupValue = gos.get('showOpenedGroup') && !onlyHideOpenParents;
+        const isGroupHideOpenParents = gos.is('groupHideOpenParents');
+        const isShowOpenedGroupValue = gos.is('showOpenedGroup') && !onlyHideOpenParents;
 
         // don't traverse tree if neither starts enabled
         if (!isGroupHideOpenParents && !isShowOpenedGroupValue) {

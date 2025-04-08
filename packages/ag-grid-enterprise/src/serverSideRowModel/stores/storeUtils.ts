@@ -93,10 +93,10 @@ export class StoreUtils extends BeanStub implements NamedBean {
     }
 
     public isServerSideSortAllLevels() {
-        return this.gos.get('serverSideSortAllLevels') && _isServerSideRowModel(this.gos);
+        return this.gos.is('serverSideSortAllLevels') && _isServerSideRowModel(this.gos);
     }
 
     public isServerSideOnlyRefreshFilteredGroups() {
-        return this.gos.get('serverSideOnlyRefreshFilteredGroups') && _isServerSideRowModel(this.gos);
+        return this.gos.is('serverSideOnlyRefreshFilteredGroups') && _isServerSideRowModel(this.gos);
     }
 }

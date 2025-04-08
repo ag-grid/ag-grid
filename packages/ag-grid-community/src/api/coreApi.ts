@@ -18,7 +18,7 @@ export function getGridOption<Key extends keyof GridOptions<TData>, TData = any>
     beans: BeanCollection,
     key: Key
 ): GridOptions<TData>[Key] {
-    return beans.gos.get(key);
+    return beans.gos.get(key as any);
 }
 
 export function setGridOption<Key extends ManagedGridOptionKey, TData = any>(

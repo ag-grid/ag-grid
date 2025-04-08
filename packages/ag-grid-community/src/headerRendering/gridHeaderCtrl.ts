@@ -123,7 +123,7 @@ export class GridHeaderCtrl extends BeanStub {
     }
 
     protected onTabKeyDown(e: KeyboardEvent): void {
-        const isRtl = this.gos.get('enableRtl');
+        const isRtl = this.gos.is('enableRtl');
         const backwards = e.shiftKey;
         const direction = backwards !== isRtl ? 'LEFT' : 'RIGHT';
         const { beans } = this;

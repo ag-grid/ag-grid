@@ -31,7 +31,7 @@ export class ChangeDetectionService extends BeanStub implements NamedBean {
         // this doChangeDetection would get called 100 times (once for each cell), instead clipboard
         // service executes the logic we have here once (in essence batching up all cell changes
         // into one change detection).
-        if (event.source === SOURCE_PASTE || gos.get('suppressChangeDetection')) {
+        if (event.source === SOURCE_PASTE || gos.is('suppressChangeDetection')) {
             return;
         }
 
@@ -44,7 +44,7 @@ export class ChangeDetectionService extends BeanStub implements NamedBean {
 
         // step 1 of change detection is to update the aggregated values
         if (rootNode && !rowNode.isRowPinned()) {
-            const onlyChangedColumns = gos.getAsBool('aggregateOnlyChangedColumns');
+            const onlyChangedColumns = gos.is('aggregateOnlyChangedColumns');
             const changedPath = new ChangedPath(onlyChangedColumns, rootNode);
             changedPath.addParentNode(rowNode.parent, [event.column as AgColumn]);
             clientSideRowModel.doAggregate(changedPath);

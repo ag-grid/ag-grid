@@ -72,7 +72,7 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
         // initialise with anything except 0 so that while loop executes at least once
         let changesThisTimeAround = -1;
 
-        const shouldSkipHeader = skipHeader != null ? skipHeader : this.gos.get('skipHeaderOnAutoSize');
+        const shouldSkipHeader = skipHeader != null ? skipHeader : this.gos.is('skipHeaderOnAutoSize');
         const shouldSkipHeaderGroups = skipHeaderGroups != null ? skipHeaderGroups : shouldSkipHeader;
 
         while (changesThisTimeAround !== 0) {
@@ -179,7 +179,7 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
     }
 
     public addColumnAutosize(element: HTMLElement, column: AgColumn): () => void {
-        const skipHeaderOnAutoSize = this.gos.get('skipHeaderOnAutoSize');
+        const skipHeaderOnAutoSize = this.gos.is('skipHeaderOnAutoSize');
 
         const autoSizeColListener = () => {
             this.autoSizeColumn(column, 'uiColumnResized', skipHeaderOnAutoSize);
@@ -197,7 +197,7 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
     }
 
     public addColumnGroupResize(element: HTMLElement, columnGroup: AgColumnGroup, callback: () => void): () => void {
-        const skipHeaderOnAutoSize = this.gos.get('skipHeaderOnAutoSize');
+        const skipHeaderOnAutoSize = this.gos.is('skipHeaderOnAutoSize');
 
         const listener = () => {
             // get list of all the column keys we are responsible for

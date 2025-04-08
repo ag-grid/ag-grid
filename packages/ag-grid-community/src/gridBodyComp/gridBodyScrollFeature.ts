@@ -104,7 +104,7 @@ export class GridBodyScrollFeature extends BeanStub {
     }
 
     public postConstruct(): void {
-        this.enableRtl = this.gos.getAsBool('enableRtl');
+        this.enableRtl = this.gos.is('enableRtl');
 
         const invalidateVerticalScroll = this.invalidateVerticalScroll.bind(this);
         const invalidateHorizontalScroll = this.invalidateHorizontalScroll.bind(this);
@@ -156,7 +156,7 @@ export class GridBodyScrollFeature extends BeanStub {
 
     private addVerticalScrollListeners(): void {
         const fakeVScrollComp = this.ctrlsSvc.get('fakeVScrollComp');
-        const isDebounce = this.gos.get('debounceVerticalScrollbar');
+        const isDebounce = this.gos.is('debounceVerticalScrollbar');
 
         const onVScroll = isDebounce
             ? _debounce(this, this.onVScroll.bind(this, VIEWPORT), SCROLL_DEBOUNCE_TIMEOUT)

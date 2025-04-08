@@ -117,7 +117,7 @@ export class TabbedLayout extends TabGuardComp {
                     return;
                 }
                 const isRightKey = e.key === KeyCode.RIGHT;
-                const isRtl = this.gos.get('enableRtl');
+                const isRtl = this.gos.is('enableRtl');
                 const currentPosition = this.items.indexOf(this.activeItem);
                 const nextPosition =
                     isRightKey !== isRtl

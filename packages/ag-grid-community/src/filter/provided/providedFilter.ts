@@ -415,7 +415,7 @@ export abstract class ProvidedFilter<M, V> extends Component implements IProvide
         if (isResizable) {
             positionableFeature.restoreLastSize();
             positionableFeature.setResizable(
-                gos.get('enableRtl')
+                gos.is('enableRtl')
                     ? { bottom: true, bottomLeft: true, left: true }
                     : { bottom: true, bottomRight: true, right: true }
             );

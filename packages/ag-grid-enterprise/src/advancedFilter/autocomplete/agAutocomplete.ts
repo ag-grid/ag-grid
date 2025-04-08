@@ -286,7 +286,7 @@ export class AgAutocomplete extends Component<AgAutocompleteEvent> {
             type: 'autocomplete',
             eventSource: this.getGui(),
             position: 'under',
-            alignSide: this.gos.get('enableRtl') ? 'right' : 'left',
+            alignSide: this.gos.is('enableRtl') ? 'right' : 'left',
             keepWithinBounds: true,
         };
 

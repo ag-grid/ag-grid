@@ -80,7 +80,7 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
         node: RowNode
     ): { value: any; valueFormatted?: string | null } {
         // we render the group summary text e.g. "-> Parent -> Child"...
-        const hideOpenParents = this.gos.get('groupHideOpenParents');
+        const hideOpenParents = this.gos.is('groupHideOpenParents');
         const value =
             (!hideOpenParents || node.footer) && this.shouldRenderGroupSummaryCell(node, column, index)
                 ? this.createValueForGroupNode(column, node)
@@ -100,7 +100,7 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
 
     private shouldRenderGroupSummaryCell(node: RowNode, column: AgColumn, currentColumnIndex: number): boolean {
         // only on group rows when grouping, and not for tree data group nodes
-        const isGroupNode = node.group && !this.gos.get('treeData');
+        const isGroupNode = node.group && !this.gos.is('treeData');
         if (!isGroupNode) {
             return false;
         }
@@ -146,7 +146,7 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
             return this.processRowGroupCallback(_addGridCommonParams(this.gos, { column, node }));
         }
 
-        const isTreeData = this.gos.get('treeData');
+        const isTreeData = this.gos.is('treeData');
 
         // if not tree data then we get the value from the group data
         const getValueFromNode = (node: RowNode) => {

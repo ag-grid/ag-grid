@@ -25,7 +25,7 @@ export class ClientSideChildrenTreeNodeManager<TData>
     private childrenGetter: DataFieldGetter<TData, TData[] | null | undefined> | null = null;
 
     public override get treeData(): boolean {
-        return this.gos.getAsBool('treeData');
+        return this.gos.is('treeData');
     }
 
     public override extractRowData(): TData[] | null | undefined {
@@ -110,7 +110,7 @@ export class ClientSideChildrenTreeNodeManager<TData>
         const rootNode = this.rootNode!;
         const childrenGetter = this.childrenGetter;
         const getRowIdFunc = _getRowIdCallback(gos)!;
-        const canReorder = !gos.get('suppressMaintainUnsortedOrder');
+        const canReorder = !gos.is('suppressMaintainUnsortedOrder');
 
         const processedData = new Map<TData, AbstractClientSideNodeManager.RowNode<TData>>();
 

@@ -178,7 +178,7 @@ export class RowContainerEventsFeature extends BeanStub {
 
                     case KeyCode.LEFT:
                     case KeyCode.RIGHT:
-                        if (!this.gos.get('embedFullWidthRows')) {
+                        if (!this.gos.is('embedFullWidthRows')) {
                             break;
                         }
                     /* eslint-ignore: no-fallthrough */
@@ -261,7 +261,7 @@ export class RowContainerEventsFeature extends BeanStub {
     }
 
     private onCtrlAndC(clipboardSvc: IClipboardService | undefined, event: KeyboardEvent): void {
-        if (!clipboardSvc || this.gos.get('enableCellTextSelection')) {
+        if (!clipboardSvc || this.gos.is('enableCellTextSelection')) {
             return;
         }
 
@@ -276,7 +276,7 @@ export class RowContainerEventsFeature extends BeanStub {
     }
 
     private onCtrlAndX(clipboardSvc: IClipboardService | undefined, event: KeyboardEvent): void {
-        if (!clipboardSvc || this.gos.get('enableCellTextSelection') || this.gos.get('suppressCutToClipboard')) {
+        if (!clipboardSvc || this.gos.is('enableCellTextSelection') || this.gos.is('suppressCutToClipboard')) {
             return;
         }
 
@@ -296,20 +296,20 @@ export class RowContainerEventsFeature extends BeanStub {
         if (cellCtrl?.editing || rowCtrl?.editing) {
             return;
         }
-        if (clipboardSvc && !this.gos.get('suppressClipboardPaste')) {
+        if (clipboardSvc && !this.gos.is('suppressClipboardPaste')) {
             clipboardSvc.pasteFromClipboard();
         }
     }
 
     private onCtrlAndD(clipboardSvc: IClipboardService | undefined, event: KeyboardEvent): void {
-        if (clipboardSvc && !this.gos.get('suppressClipboardPaste')) {
+        if (clipboardSvc && !this.gos.is('suppressClipboardPaste')) {
             clipboardSvc.copyRangeDown();
         }
         event.preventDefault();
     }
 
     private onCtrlAndZ(undoRedo: UndoRedoService | undefined, event: KeyboardEvent): void {
-        if (!this.gos.get('undoRedoCellEditing') || !undoRedo) {
+        if (!this.gos.is('undoRedoCellEditing') || !undoRedo) {
             return;
         }
         event.preventDefault();

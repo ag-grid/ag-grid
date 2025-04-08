@@ -384,7 +384,7 @@ const DetailCellRenderer = forwardRef((props: IDetailCellRendererParams, ref: an
 
         ctrlRef.current = ctrl;
 
-        if (gos.get('detailRowAutoHeight')) {
+        if (gos.is('detailRowAutoHeight')) {
             const checkRowSizeFunc = () => {
                 // when disposed, current is null, so nothing to do, and the resize observer will
                 // be disposed of soon

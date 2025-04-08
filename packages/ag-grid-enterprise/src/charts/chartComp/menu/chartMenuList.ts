@@ -61,7 +61,7 @@ export class ChartMenuListFactory extends BeanStub implements NamedBean {
         let multiplier = -1;
         let alignSide: 'left' | 'right' = 'left';
 
-        if (this.gos.get('enableRtl')) {
+        if (this.gos.is('enableRtl')) {
             multiplier = 1;
             alignSide = 'right';
         }

@@ -19,7 +19,7 @@ export function refreshClientSideRowModel(beans: BeanCollection, step?: ClientSi
         clientSideRowModel.refreshModel({
             step,
             keepRenderedRows: true,
-            animate: !beans.gos.get('suppressAnimationFrame'),
+            animate: !beans.gos.is('suppressAnimationFrame'),
         });
     }
 }

@@ -119,7 +119,7 @@ export class FilterAggregatesStage extends BeanStub implements NamedBean, IRowNo
             return;
         }
 
-        if (this.gos.get('treeData')) {
+        if (this.gos.is('treeData')) {
             this.setAllChildrenCountTreeData(rowNode);
         } else {
             this.setAllChildrenCountGridGrouping(rowNode);

@@ -50,7 +50,7 @@ export class EditService extends BeanStub implements NamedBean {
                 : colDef.cellEditorPopupPosition;
 
         setEditing(cellCtrl, true, compDetails);
-        cellCtrl.comp.setEditDetails(compDetails, popup, position, this.gos.get('reactiveCustomComponents'));
+        cellCtrl.comp.setEditDetails(compDetails, popup, position, this.gos.is('reactiveCustomComponents'));
 
         this.eventSvc.dispatchEvent(cellCtrl.createEvent(event, 'cellEditingStarted'));
 
@@ -174,7 +174,7 @@ export class EditService extends BeanStub implements NamedBean {
     }
 
     public addStopEditingWhenGridLosesFocus(viewports: HTMLElement[]): void {
-        if (!this.gos.get('stopEditingWhenCellsLoseFocus')) {
+        if (!this.gos.is('stopEditingWhenCellsLoseFocus')) {
             return;
         }
 
@@ -221,15 +221,15 @@ export class EditService extends BeanStub implements NamedBean {
     public isCellEditable(column: AgColumn, rowNode: IRowNode): boolean {
         if (rowNode.group) {
             // This is a group - it could be a tree group or a grouping group...
-            if (this.gos.get('treeData')) {
+            if (this.gos.is('treeData')) {
                 // tree - allow editing of groups with data by default.
                 // Allow editing filler nodes (node without data) only if enableGroupEdit is true.
-                if (!rowNode.data && !this.gos.get('enableGroupEdit')) {
+                if (!rowNode.data && !this.gos.is('enableGroupEdit')) {
                     return false;
                 }
             } else {
                 // grouping - allow editing of groups if the user has enableGroupEdit option enabled
-                if (!this.gos.get('enableGroupEdit')) {
+                if (!this.gos.is('enableGroupEdit')) {
                     return false;
                 }
             }
@@ -308,7 +308,7 @@ export class EditService extends BeanStub implements NamedBean {
     }
 
     private navigateAfterEdit(shiftKey: boolean, cellPosition: CellPosition): void {
-        const enterNavigatesVerticallyAfterEdit = this.gos.get('enterNavigatesVerticallyAfterEdit');
+        const enterNavigatesVerticallyAfterEdit = this.gos.is('enterNavigatesVerticallyAfterEdit');
 
         if (enterNavigatesVerticallyAfterEdit) {
             const key = shiftKey ? KeyCode.UP : KeyCode.DOWN;

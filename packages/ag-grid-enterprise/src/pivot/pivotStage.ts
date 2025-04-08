@@ -137,8 +137,8 @@ export class PivotStage extends BeanStub implements NamedBean, IRowNodeStage {
 
         const pivotRowTotals = this.gos.get('pivotRowTotals');
         const pivotColumnGroupTotals = this.gos.get('pivotColumnGroupTotals');
-        const suppressExpandablePivotGroups = this.gos.get('suppressExpandablePivotGroups');
-        const removePivotHeaderRowWhenSingleValueColumn = this.gos.get('removePivotHeaderRowWhenSingleValueColumn');
+        const suppressExpandablePivotGroups = this.gos.is('suppressExpandablePivotGroups');
+        const removePivotHeaderRowWhenSingleValueColumn = this.gos.is('removePivotHeaderRowWhenSingleValueColumn');
 
         const anyGridOptionsChanged =
             pivotRowTotals !== this.pivotRowTotalsLastTime ||

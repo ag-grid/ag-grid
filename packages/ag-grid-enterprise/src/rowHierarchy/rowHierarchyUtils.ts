@@ -15,7 +15,7 @@ export function _isHiddenParent(node: RowNode, ancestor: RowNode, gos: GridOptio
         return false;
     }
 
-    const isHideOpenParents = gos.get('groupHideOpenParents');
+    const isHideOpenParents = gos.is('groupHideOpenParents');
     if (!isHideOpenParents) {
         return false;
     }

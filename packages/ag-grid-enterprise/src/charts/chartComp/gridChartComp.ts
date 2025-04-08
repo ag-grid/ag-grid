@@ -141,7 +141,7 @@ export class GridChartComp extends Component {
             chartThemeName: this.getThemeName(),
         };
 
-        const isRtl = this.gos.get('enableRtl');
+        const isRtl = this.gos.is('enableRtl');
 
         this.eWrapper.classList.add(isRtl ? 'ag-rtl' : 'ag-ltr');
 
@@ -219,7 +219,7 @@ export class GridChartComp extends Component {
             chartOptionsToRestore: this.params.chartOptionsToRestore,
             chartPaletteToRestore: this.params.chartPaletteToRestore,
             seriesChartTypes: this.chartController.getSeriesChartTypes(),
-            suppressFieldDotNotation: this.gos.get('suppressFieldDotNotation'),
+            suppressFieldDotNotation: this.gos.is('suppressFieldDotNotation'),
             translate: (toTranslate: ChartTranslationKey) => this.chartTranslation.translate(toTranslate),
         };
 

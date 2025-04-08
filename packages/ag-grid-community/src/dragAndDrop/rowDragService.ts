@@ -54,9 +54,9 @@ export class RowDragService extends BeanStub implements NamedBean {
         suppressVisibilityChange?: boolean
     ): RowDragComp | undefined {
         const gos = this.gos;
-        if (gos.get('rowDragManaged')) {
+        if (gos.is('rowDragManaged')) {
             // row dragging only available in default row model and when not using pagination
-            if (!_isClientSideRowModel(gos) || gos.get('pagination')) {
+            if (!_isClientSideRowModel(gos) || gos.is('pagination')) {
                 return undefined;
             }
         }

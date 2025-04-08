@@ -18,7 +18,7 @@ export class BodyDropPivotTarget extends BeanStub implements DropListener {
         this.clearColumnsList();
 
         // in pivot mode, we don't accept any drops if functions are read only
-        if (this.gos.get('functionsReadOnly')) {
+        if (this.gos.is('functionsReadOnly')) {
             return;
         }
 

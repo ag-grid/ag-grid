@@ -265,7 +265,7 @@ export class DataTypeService extends BeanStub implements NamedBean {
         let value: any;
         const initialData = this.getInitialData();
         if (initialData) {
-            const fieldContainsDots = field.indexOf('.') >= 0 && !this.gos.get('suppressFieldDotNotation');
+            const fieldContainsDots = field.indexOf('.') >= 0 && !this.gos.is('suppressFieldDotNotation');
             value = _getValueUsingField(initialData, field, fieldContainsDots);
         } else {
             this.initWaitForRowData(colId);
@@ -689,12 +689,12 @@ function createGroupSafeValueFormatter(
             }
 
             // `groupRows` use the key as the value
-            if (gos.get('groupDisplayType') === 'groupRows' && !gos.get('treeData')) {
+            if (gos.get('groupDisplayType') === 'groupRows' && !gos.is('treeData')) {
                 // we don't want to double format the value
                 // as this is already formatted by using the valueFormatter as the keyCreator
                 return undefined as any;
             }
-        } else if (gos.get('groupHideOpenParents') && params.column.isRowGroupActive()) {
+        } else if (gos.is('groupHideOpenParents') && params.column.isRowGroupActive()) {
             // `groupHideOpenParents` passes leaf values in the group column, so need to format still.
             // If it's not a string, we know it hasn't been formatted. Otherwise check the data type matcher.
             if (typeof params.value === 'string' && !dataTypeDefinition.dataTypeMatcher?.(params.value)) {

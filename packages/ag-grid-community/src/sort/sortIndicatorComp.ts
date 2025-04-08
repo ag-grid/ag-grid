@@ -120,7 +120,7 @@ export class SortIndicatorComp extends Component {
         }
 
         if (eSortNone) {
-            const alwaysHideNoSort = !column.getColDef().unSortIcon && !gos.get('unSortIcon');
+            const alwaysHideNoSort = !column.getColDef().unSortIcon && !gos.is('unSortIcon');
             const isNone = sortDirection === null || sortDirection === undefined;
             _setDisplayed(eSortNone, !alwaysHideNoSort && isNone, { skipAriaHidden: true });
         }

@@ -131,7 +131,7 @@ export class GridOptionsService extends BeanStub implements NamedBean {
      * Get the raw value of the GridOptions property provided or the default value if not set.
      * @param property
      */
-    public get<K extends keyof GridOptions>(property: K): GridOptionOrDefault<K> {
+    public get<K extends keyof Omit<GridOptions, BooleanGridOptions>>(property: K): GridOptionOrDefault<K> {
         return (
             this.gridOptions[property] ??
             (GRID_OPTION_DEFAULTS[property as keyof typeof GRID_OPTION_DEFAULTS] as GridOptionOrDefault<K>)
@@ -142,8 +142,8 @@ export class GridOptionsService extends BeanStub implements NamedBean {
      * Get the GridOption property as a boolean. This will coerce the value to a boolean.
      * @param property
      */
-    public getAsBool<K extends BooleanGridOptions>(property: K): boolean {
-        return !!this.get(property);
+    public is<K extends BooleanGridOptions>(property: K): boolean {
+        return !!this.get(property as any);
     }
 
     /**

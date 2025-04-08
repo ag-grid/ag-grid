@@ -107,7 +107,7 @@ export class GroupFilter extends TabGuardComp<GroupFilterEvent> implements IFilt
 
     private getSourceColumns(): AgColumn[] {
         this.groupColumn = this.params.column as AgColumn;
-        if (this.gos.get('treeData')) {
+        if (this.gos.is('treeData')) {
             _warn(237);
             return [];
         }

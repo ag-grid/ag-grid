@@ -338,7 +338,7 @@ export class ExcelCreator
             suppressRowOutline: params.suppressRowOutline || params.skipRowGroups,
             headerRowHeight: params.headerRowHeight || params.rowHeight,
             baseExcelStyles: gos.get('excelStyles') || [],
-            rightToLeft: params.rightToLeft ?? gos.get('enableRtl'),
+            rightToLeft: params.rightToLeft ?? gos.is('enableRtl'),
             styleLinker: this.styleLinker.bind(this),
         };
 
@@ -409,7 +409,7 @@ export class ExcelCreator
     }
 
     public isExportSuppressed(): boolean {
-        return this.gos.getAsBool('suppressExcelExport');
+        return this.gos.is('suppressExcelExport');
     }
 
     private packageCompressedFile(params: ExcelExportMultipleSheetParams): Promise<Blob | undefined> {

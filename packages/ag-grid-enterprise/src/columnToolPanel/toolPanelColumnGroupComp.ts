@@ -171,7 +171,7 @@ export class ToolPanelColumnGroupComp extends Component {
     private onContextMenu(e: MouseEvent): void {
         const { columnGroup, gos } = this;
 
-        if (gos.get('functionsReadOnly')) {
+        if (gos.is('functionsReadOnly')) {
             return;
         }
 
@@ -204,7 +204,7 @@ export class ToolPanelColumnGroupComp extends Component {
         const beans = this.beans;
         const { gos, eventSvc, dragAndDrop } = beans;
 
-        let hideColumnOnExit = !gos.get('suppressDragLeaveHidesColumns');
+        let hideColumnOnExit = !gos.is('suppressDragLeaveHidesColumns');
         const dragSource: DragSource = {
             type: DragSourceType.ToolPanel,
             eElement: this.eDragHandle,
@@ -212,7 +212,7 @@ export class ToolPanelColumnGroupComp extends Component {
             getDefaultIconName: () => (hideColumnOnExit ? 'hide' : 'notAllowed'),
             getDragItem: () => this.createDragItem(),
             onDragStarted: () => {
-                hideColumnOnExit = !gos.get('suppressDragLeaveHidesColumns');
+                hideColumnOnExit = !gos.is('suppressDragLeaveHidesColumns');
                 eventSvc.dispatchEvent({
                     type: 'columnPanelItemDragStart',
                     column: this.columnGroup,

@@ -82,8 +82,8 @@ export class DropZoneColumnComp extends PillDragComp<AgColumn> {
         ariaInstructions: string[],
         translate: (key: string, defaultValue: string) => string
     ): void {
-        const isSortSuppressed = this.gos.get('rowGroupPanelSuppressSort');
-        const isFunctionsReadOnly = this.gos.get('functionsReadOnly');
+        const isSortSuppressed = this.gos.is('rowGroupPanelSuppressSort');
+        const isFunctionsReadOnly = this.gos.is('functionsReadOnly');
         if (this.isAggregationZone() && !isFunctionsReadOnly) {
             const aggregationMenuAria = translate(
                 'ariaDropZoneColumnValueItemDescription',
@@ -113,7 +113,7 @@ export class DropZoneColumnComp extends PillDragComp<AgColumn> {
     }
 
     private isReadOnly(): boolean {
-        return !this.isGroupingAndLocked() && !this.gos.get('functionsReadOnly');
+        return !this.isGroupingAndLocked() && !this.gos.is('functionsReadOnly');
     }
 
     protected getAriaDisplayName(): string {
@@ -126,7 +126,7 @@ export class DropZoneColumnComp extends PillDragComp<AgColumn> {
             desc: translate('ariaDropZoneColumnComponentSortDescending', 'descending'),
         };
         const columnSort = this.column.getSort();
-        const isSortSuppressed = this.gos.get('rowGroupPanelSuppressSort');
+        const isSortSuppressed = this.gos.is('rowGroupPanelSuppressSort');
         return [
             aggFuncName && `${aggFuncName}${aggSeparator}`,
             name,
@@ -156,7 +156,7 @@ export class DropZoneColumnComp extends PillDragComp<AgColumn> {
             return;
         }
 
-        if (!this.gos.get('rowGroupPanelSuppressSort')) {
+        if (!this.gos.is('rowGroupPanelSuppressSort')) {
             this.eSortIndicator.setupSort(this.column, true);
             const performSort = (event: MouseEvent | KeyboardEvent) => {
                 event.preventDefault();
@@ -192,7 +192,7 @@ export class DropZoneColumnComp extends PillDragComp<AgColumn> {
     protected override setupComponents(): void {
         super.setupComponents();
 
-        if (this.isAggregationZone() && !this.gos.get('functionsReadOnly')) {
+        if (this.isAggregationZone() && !this.gos.is('functionsReadOnly')) {
             this.addGuiEventListener('click', this.onShowAggFuncSelection.bind(this));
         }
     }
@@ -201,7 +201,7 @@ export class DropZoneColumnComp extends PillDragComp<AgColumn> {
         super.onKeyDown(e);
 
         const isEnter = e.key === KeyCode.ENTER;
-        if (isEnter && this.isAggregationZone() && !this.gos.get('functionsReadOnly')) {
+        if (isEnter && this.isAggregationZone() && !this.gos.is('functionsReadOnly')) {
             e.preventDefault();
             this.onShowAggFuncSelection();
         }

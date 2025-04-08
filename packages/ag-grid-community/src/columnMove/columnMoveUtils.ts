@@ -19,7 +19,7 @@ export function placeLockedColumns(cols: AgColumn[], gos: GridOptionsService): A
         }
     });
 
-    const isRtl = gos.get('enableRtl');
+    const isRtl = gos.is('enableRtl');
     if (isRtl) {
         return [...right, ...normal, ...left];
     }

@@ -145,7 +145,7 @@ export class PivotColDefService extends BeanStub implements NamedBean, IPivotCol
         // Base case for the compact layout, instead of recursing build the last layer of groups as measure columns instead
         if (
             measureColumns?.length === 1 &&
-            this.gos.get('removePivotHeaderRowWhenSingleValueColumn') &&
+            this.gos.is('removePivotHeaderRowWhenSingleValueColumn') &&
             index === maxDepth - 1
         ) {
             const leafCols: ColDef[] = [];
@@ -204,7 +204,7 @@ export class PivotColDefService extends BeanStub implements NamedBean, IPivotCol
     }
 
     private addExpandablePivotGroups(pivotColumnGroupDefs: (ColDef | ColGroupDef)[], pivotColumnDefs: ColDef[]) {
-        const isSuppressExpand = this.gos.get('suppressExpandablePivotGroups');
+        const isSuppressExpand = this.gos.is('suppressExpandablePivotGroups');
         if (isSuppressExpand || this.gos.get('pivotColumnGroupTotals')) {
             return;
         }
@@ -225,7 +225,7 @@ export class PivotColDefService extends BeanStub implements NamedBean, IPivotCol
 
                 const leafGroup = !def.children.some((child) => (child as ColGroupDef).children);
                 const hasCollapsedLeafGroup =
-                    leafGroup && valueCols.length === 1 && this.gos.get('removePivotHeaderRowWhenSingleValueColumn');
+                    leafGroup && valueCols.length === 1 && this.gos.is('removePivotHeaderRowWhenSingleValueColumn');
 
                 valueCols.forEach((valueColumn) => {
                     const columnName: string | null = this.colNames.getDisplayNameForColumn(valueColumn, 'header');
@@ -327,7 +327,7 @@ export class PivotColDefService extends BeanStub implements NamedBean, IPivotCol
             const totalColDef = this.createColDef(valueColumn, headerName, groupDef.pivotKeys, true);
             totalColDef.pivotTotalColumnIds = colIds;
             totalColDef.aggFunc = valueColumn.getAggFunc();
-            totalColDef.columnGroupShow = this.gos.get('suppressExpandablePivotGroups') ? 'open' : undefined;
+            totalColDef.columnGroupShow = this.gos.is('suppressExpandablePivotGroups') ? 'open' : undefined;
 
             // add total colDef to group and pivot colDefs array
             const children = (groupDef as ColGroupDef).children;
@@ -353,7 +353,7 @@ export class PivotColDefService extends BeanStub implements NamedBean, IPivotCol
             valueCols.reverse();
         }
 
-        const isCreateTotalGroups = valueCols.length > 1 || !this.gos.get('removePivotHeaderRowWhenSingleValueColumn');
+        const isCreateTotalGroups = valueCols.length > 1 || !this.gos.is('removePivotHeaderRowWhenSingleValueColumn');
         for (let i = 0; i < valueCols.length; i++) {
             const valueCol = valueCols[i];
 
@@ -515,7 +515,7 @@ export class PivotColDefService extends BeanStub implements NamedBean, IPivotCol
 
             // this is a bit sketchy. As the fields can be anything we just build groups as deep as the fields go.
             // nothing says user has to give us groups the same depth.
-            const collapseSingleChildren = this.gos.get('removePivotHeaderRowWhenSingleValueColumn');
+            const collapseSingleChildren = this.gos.is('removePivotHeaderRowWhenSingleValueColumn');
             if (collapseSingleChildren && children.length === 1 && 'colId' in children[0]) {
                 children[0].headerName = key;
                 return children[0];

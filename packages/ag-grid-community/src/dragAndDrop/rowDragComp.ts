@@ -45,7 +45,7 @@ export class RowDragComp extends Component {
         }
 
         if (!this.suppressVisibilityChange) {
-            const strategy = gos.get('rowDragManaged')
+            const strategy = gos.is('rowDragManaged')
                 ? new ManagedVisibilityStrategy(this, rowNode, column)
                 : new NonManagedVisibilityStrategy(this, rowNode, column);
 
@@ -62,7 +62,7 @@ export class RowDragComp extends Component {
 
     private getSelectedNodes(): RowNode[] {
         const rowNode = this.rowNode;
-        const isRowDragMultiRow = this.gos.get('rowDragMultiRow');
+        const isRowDragMultiRow = this.gos.is('rowDragMultiRow');
         if (!isRowDragMultiRow) {
             return [rowNode];
         }
@@ -100,7 +100,7 @@ export class RowDragComp extends Component {
 
         const eGui = this.getGui();
 
-        if (this.gos.get('enableCellTextSelection')) {
+        if (this.gos.is('enableCellTextSelection')) {
             this.removeMouseDownListener();
 
             this.mouseDownListener = this.addManagedElementListeners(eGui, {
@@ -221,7 +221,7 @@ class NonManagedVisibilityStrategy extends VisibilityStrategy {
 
     private workOutVisibility(): void {
         // only show the drag if both sort and filter are not present
-        const neverDisplayed = this.gos.getAsBool('suppressRowDrag');
+        const neverDisplayed = this.gos.is('suppressRowDrag');
         this.setDisplayedOrVisible(neverDisplayed);
     }
 }
@@ -259,7 +259,7 @@ class ManagedVisibilityStrategy extends VisibilityStrategy {
         const rowDragFeature = rowDragSvc!.rowDragFeature;
         const shouldPreventRowMove = rowDragFeature && rowDragFeature.shouldPreventRowMove();
         const hasExternalDropZones = dragAndDrop!.hasExternalDropZones();
-        const neverDisplayed = (shouldPreventRowMove && !hasExternalDropZones) || gos.getAsBool('suppressRowDrag');
+        const neverDisplayed = (shouldPreventRowMove && !hasExternalDropZones) || gos.is('suppressRowDrag');
 
         this.setDisplayedOrVisible(neverDisplayed);
     }

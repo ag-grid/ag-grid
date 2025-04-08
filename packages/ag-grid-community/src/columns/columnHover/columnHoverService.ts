@@ -30,7 +30,7 @@ export class ColumnHoverService extends BeanStub implements NamedBean {
     }
 
     public isHovered(column: AgColumn): boolean {
-        if (!this.gos.get('columnHoverHighlight')) {
+        if (!this.gos.is('columnHoverHighlight')) {
             return false;
         }
         const selectedColumns = this.selectedColumns;

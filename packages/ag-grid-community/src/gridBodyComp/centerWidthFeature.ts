@@ -46,7 +46,7 @@ export class CenterWidthFeature extends BeanStub {
             totalWidth = centerWidth;
 
             if (this.addSpacer) {
-                const relevantWidth = this.gos.get('enableRtl') ? leftWidth : rightWidth;
+                const relevantWidth = this.gos.is('enableRtl') ? leftWidth : rightWidth;
                 if (relevantWidth === 0 && scrollVisibleSvc.verticalScrollShowing) {
                     totalWidth += scrollVisibleSvc.getScrollbarWidth();
                 }

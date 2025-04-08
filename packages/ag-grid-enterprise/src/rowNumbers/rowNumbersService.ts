@@ -279,7 +279,7 @@ export class RowNumbersService extends BeanStub implements NamedBean, IRowNumber
 
     private createRowNumbersColDef(): ColDef {
         const { gos, contextMenuSvc } = this.beans;
-        const enableRTL = gos.get('enableRtl');
+        const enableRTL = gos.is('enableRtl');
 
         return {
             // overridable properties
@@ -384,7 +384,7 @@ export class RowNumbersService extends BeanStub implements NamedBean, IRowNumber
     private focusFirstRenderedCellAtRowPosition(rowPosition: RowPosition) {
         const { beans, gos } = this;
         const { visibleCols, colViewport } = beans;
-        const pinnedCols = gos.get('enableRtl') ? visibleCols.rightCols : visibleCols.leftCols;
+        const pinnedCols = gos.is('enableRtl') ? visibleCols.rightCols : visibleCols.leftCols;
         let columns: AgColumn[];
 
         if (pinnedCols.length == 1) {

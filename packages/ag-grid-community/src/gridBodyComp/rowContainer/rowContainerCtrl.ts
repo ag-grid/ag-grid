@@ -277,7 +277,7 @@ export class RowContainerCtrl extends BeanStub implements ScrollPartner {
     }
 
     public postConstruct(): void {
-        this.enableRtl = this.gos.getAsBool('enableRtl');
+        this.enableRtl = this.gos.is('enableRtl');
 
         this.forContainers(['center'], () => {
             this.viewportSizeFeature = this.createManagedBean(new ViewportSizeFeature(this));
@@ -370,7 +370,7 @@ export class RowContainerCtrl extends BeanStub implements ScrollPartner {
         onDisplayedColumnsChanged();
         this.onDisplayedRowsChanged();
 
-        if (spannedRowRenderer && this.options.getSpannedRowCtrls && gos.get('enableCellSpan')) {
+        if (spannedRowRenderer && this.options.getSpannedRowCtrls && gos.is('enableCellSpan')) {
             this.addManagedListeners(spannedRowRenderer, {
                 spannedRowsUpdated: () => {
                     const spannedCtrls = this.options.getSpannedRowCtrls!(spannedRowRenderer!);
@@ -392,7 +392,7 @@ export class RowContainerCtrl extends BeanStub implements ScrollPartner {
         }
 
         const listener = () => {
-            const isEnsureDomOrder = this.gos.get('ensureDomOrder');
+            const isEnsureDomOrder = this.gos.is('ensureDomOrder');
             const isPrintLayout = _isDomLayout(this.gos, 'print');
             this.comp.setDomOrder(isEnsureDomOrder || isPrintLayout);
         };
@@ -465,7 +465,7 @@ export class RowContainerCtrl extends BeanStub implements ScrollPartner {
     }
 
     public isHorizontalScrollShowing(): boolean {
-        const isAlwaysShowHorizontalScroll = this.gos.get('alwaysShowHorizontalScroll');
+        const isAlwaysShowHorizontalScroll = this.gos.is('alwaysShowHorizontalScroll');
         return isAlwaysShowHorizontalScroll || _isHorizontalScrollShowing(this.eViewport);
     }
 
@@ -507,7 +507,7 @@ export class RowContainerCtrl extends BeanStub implements ScrollPartner {
         }
 
         const printLayout = _isDomLayout(this.gos, 'print');
-        const embedFullWidthRows = this.gos.get('embedFullWidthRows');
+        const embedFullWidthRows = this.gos.is('embedFullWidthRows');
         const embedFW = embedFullWidthRows || printLayout;
 
         // this list contains either all pinned top, center or pinned bottom rows

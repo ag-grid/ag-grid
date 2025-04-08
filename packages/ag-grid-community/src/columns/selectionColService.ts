@@ -131,7 +131,7 @@ export class SelectionColService extends BeanStub implements NamedBean, IColumnC
     private createSelectionColDef(def?: SelectionColumnDef): ColDef {
         const { gos } = this.beans;
         const selectionColumnDef = def ?? gos.get('selectionColumnDef');
-        const enableRTL = gos.get('enableRtl');
+        const enableRTL = gos.is('enableRtl');
 
         // We don't support row spanning in the selection column
         const { rowSpan: _, spanRows: __, ...filteredSelColDef } = (selectionColumnDef ?? {}) as ColDef;

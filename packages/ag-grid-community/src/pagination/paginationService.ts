@@ -31,7 +31,7 @@ export class PaginationService extends BeanStub implements NamedBean {
 
     public postConstruct() {
         const gos = this.gos;
-        this.active = gos.getAsBool('pagination');
+        this.active = gos.is('pagination');
         this.pageSizeFromGridOptions = gos.get('paginationPageSize');
         this.paginateChildRows = this.isPaginateChildRows();
 
@@ -48,16 +48,16 @@ export class PaginationService extends BeanStub implements NamedBean {
         const shouldPaginate =
             gos.get('groupHideParentOfSingleChild') ||
             // following two properties deprecated v32.3.0
-            gos.get('groupRemoveSingleChildren') ||
-            gos.get('groupRemoveLowestSingleChildren');
+            gos.is('groupRemoveSingleChildren') ||
+            gos.is('groupRemoveLowestSingleChildren');
         if (shouldPaginate) {
             return true;
         }
-        return gos.getAsBool('paginateChildRows');
+        return gos.is('paginateChildRows');
     }
 
     private onPaginationGridOptionChanged(): void {
-        this.active = this.gos.getAsBool('pagination');
+        this.active = this.gos.is('pagination');
         this.calculatePages();
 
         // important to keep rendered rows, otherwise every time grid is resized,
@@ -139,7 +139,7 @@ export class PaginationService extends BeanStub implements NamedBean {
     private get pageSize(): number {
         // Explicitly check for autosize status as this can be set to false before the calculated value is cleared.
         // Due to a race condition in when event listeners are added.
-        if (_exists(this.pageSizeAutoCalculated) && this.gos.get('paginationAutoPageSize')) {
+        if (_exists(this.pageSizeAutoCalculated) && this.gos.is('paginationAutoPageSize')) {
             return this.pageSizeAutoCalculated;
         }
         if (_exists(this.pageSizeFromPageSizeSelector)) {
