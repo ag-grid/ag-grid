@@ -20,7 +20,7 @@ export interface AgGridReactProps<TData = any> extends GridOptions<TData> {
     componentWrappingElement?: string; // only used when putting React into JS
     /** @deprecated v33.3 It is expected that his property is not required and so will be removed in a future version. If you require this property please contact support. */
     maxComponentCreationTimeMs?: number; // only used when putting React into JS
-    /** @deprecated v33.3 This method is not called and will be removed. To access the GridApi visit: https://ag-grid.com/react-data-grid/grid-interface/#grid-api */
+    /** @deprecated v33.3 This method is not called and will be removed. To see how to access the GridApi visit: https://ag-grid.com/react-data-grid/grid-interface/#grid-api */
     setGridApi?: (gridApi: GridApi<TData>) => void;
     /** @deprecated v33.3 AgGridReact does not accept children so this property will be removed. */
     children?: any;
