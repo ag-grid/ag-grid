@@ -106,7 +106,7 @@ const VueExample = defineComponent({
                     'IntegratedChartsModule', // Not registered in this example
                 ];
                 const registered = moduleNames.filter((name) => api.isModuleRegistered(name));
-                console.log(api.getGridId(), 'registered:', registered.join());
+                console.log(api.getGridId(), 'registered:', registered.join(','));
             },
         };
     },
