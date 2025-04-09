@@ -2,6 +2,8 @@ export function getType(value: any) {
     if (value === null) return 'null';
     if (Number.isNaN(value)) return 'nan';
     if (Array.isArray(value)) return 'array';
+    if (value === Infinity) return 'infinity';
+    if (value === -Infinity) return 'negativeInfinity';
     if (value instanceof Date) return 'date';
     if (value instanceof RegExp) return 'regexp';
     if (value instanceof Map) return 'map';

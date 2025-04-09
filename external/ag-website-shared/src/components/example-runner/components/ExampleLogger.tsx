@@ -62,6 +62,14 @@ const JSON_VIEWER_THEME = {
     base0F: 'var(--color-code-symbol)',
 };
 
+const MATCH_TYPE_REGEXP = /\[TYPE:([^\]]+)]/g;
+const REPLACEMENT_TYPES_MAP: Record<string, any> = {
+    undefined: undefined,
+    nan: NaN,
+    infinity: Infinity,
+    negativeInfinity: -Infinity,
+};
+
 function containsIgnoredMessage(log: Log) {
     return log.data.some((message) =>
         IGNORED_MESSAGES.some((ignoredMessage) => typeof message === 'string' && message.includes(ignoredMessage))
@@ -72,11 +80,45 @@ function getLoggableData(data: LogData[]) {
     return data.map((logItem: LogData) => {
         const consoleLogObject = logItem as LogObject;
         if (logItem && consoleLogObject.__consoleLogObject) {
-            return JSON.parse(consoleLogObject.safeString);
+            const parsedObject = JSON.parse(consoleLogObject.safeString);
+            return updateWithTypeValues(parsedObject);
         } else {
             return logItem;
         }
     });
+}
+
+function getReplacementType(typeValue: string) {
+    const [replacementType] = Array.from(typeValue.matchAll(MATCH_TYPE_REGEXP), (m) => m[1]);
+    return replacementType;
+}
+
+/**
+ * Recursively update the values of an object or array with their replacement types.
+ *
+ * Due to the limitations of `JSON.stringify`, we need to store some values as special strings
+ * in the form `[TYPE:<type>]`, where `<type>` is a type that can't be deserialised. This
+ * needs to be extracted and converted back to the original value.
+ */
+function updateWithTypeValues(value: any) {
+    const valueType = getType(value);
+
+    if (valueType === 'string') {
+        const replacementType = getReplacementType(value);
+
+        const output = replacementType ? REPLACEMENT_TYPES_MAP[replacementType] : value;
+        return output;
+    } else if (valueType === 'array') {
+        return value.map((item: any) => updateWithTypeValues(item));
+    } else if (valueType === 'object') {
+        const obj = { ...value };
+        for (const key in value) {
+            obj[key] = updateWithTypeValues(value[key]);
+        }
+        return obj;
+    } else {
+        return value;
+    }
 }
 
 const SimpleValueDisplay = ({ value }: { value: SimpleValue }) => {

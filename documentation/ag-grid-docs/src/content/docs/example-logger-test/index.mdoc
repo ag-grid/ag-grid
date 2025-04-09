@@ -24,9 +24,10 @@ console.log(['string', 23, null, undefined, true, false]);
 console.log([{ a: 'string', b: 23, c: null }, 23, null, undefined, true, false]);
 console.log([{}]);
 console.log({ a: 'string', b: 23, c: null });
-console.log({ a: undefined, b: NaN, c: null });
+console.log({ c: 'string', b: 23, a: null });
+console.log({ undefined: undefined, nan: NaN, null: null, infinity: Infinity, negativeInfinity: -Infinity });
 
-console.log({ a: 'more', b: 'here', c: 'now', d: 'more' });
+console.log({ a: 'more', b: 'here', c: undefined, d: 'more' });
 
 console.log(
     'string',
