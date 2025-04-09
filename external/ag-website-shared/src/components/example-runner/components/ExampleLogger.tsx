@@ -115,7 +115,14 @@ function updateWithTypeValues(value: any) {
         for (const key in value) {
             obj[key] = updateWithTypeValues(value[key]);
         }
-        return obj;
+
+        const sortedKeys = Object.keys(obj).sort();
+        const sortedObj = Object.fromEntries(
+            sortedKeys.map((key) => {
+                return [key, obj[key]];
+            })
+        );
+        return sortedObj;
     } else {
         return value;
     }
