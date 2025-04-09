@@ -124,16 +124,17 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
                     const enableRowPinning = gos.get('enableRowPinning');
                     const subMenu: string[] = [];
                     const pinned = node?.rowPinned ?? node?.pinnedSibling?.rowPinned;
+
+                    if (pinned) {
+                        subMenu.push('unpinRow');
+                    }
+
                     if (enableRowPinning && enableRowPinning !== 'bottom' && pinned != 'top') {
                         subMenu.push('pinTop');
                     }
 
                     if (enableRowPinning && enableRowPinning !== 'top' && pinned != 'bottom') {
                         subMenu.push('pinBottom');
-                    }
-
-                    if (pinned) {
-                        subMenu.push('unpinRow');
                     }
 
                     return pinnedRowModel?.isManual()
