@@ -501,33 +501,9 @@
             "description": "Background colour of the active match used in Find",
             "type": "CSS color (e.g. `red` or `#fff`)"
         },
-        "--ag-pinned-source-row-color": {
-            "description": "Text colour of row that has been pinned to the top or bottom",
-            "type": "CSS color (e.g. `red` or `#fff`)"
-        },
-        "--ag-pinned-top-border-color": {
-            "description": "Colour of border separating top-pinned section from main viewport",
-            "type": "CSS color (e.g. `red` or `#fff`)"
-        },
-        "--ag-pinned-top-border-width": {
-            "description": "Width of border separating top-pinned section from main viewport",
+        "--ag-pinned-row-border-width": {
+            "description": "Width of border separating pinned row sections from main viewport",
             "type": "CSS length (e.g. `0`, `4px` or `50%`)"
-        },
-        "--ag-pinned-top-border-style": {
-            "description": "Colour of border separating top-pinned section from main viewport",
-            "type": "a CSS border style (e.g. `dotted`, `solid` or `none`)"
-        },
-        "--ag-pinned-bottom-border-color": {
-            "description": "Colour of border separating bottom-pinned section from main viewport",
-            "type": "CSS color (e.g. `red` or `#fff`)"
-        },
-        "--ag-pinned-bottom-border-width": {
-            "description": "Colour of border separating bottom-pinned section from main viewport",
-            "type": "CSS length (e.g. `0`, `4px` or `50%`)"
-        },
-        "--ag-pinned-bottom-border-style": {
-            "description": "Colour of border separating bottom-pinned section from main viewport",
-            "type": "a CSS border style (e.g. `dotted`, `solid` or `none`)"
         }
     }
 }

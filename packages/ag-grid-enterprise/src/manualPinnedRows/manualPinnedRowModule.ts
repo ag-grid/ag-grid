@@ -27,4 +27,10 @@ export const ManualPinnedRowModule: _ModuleWithApi<_PinnedRowGridApi> = {
         getPinnedBottomRow,
         forEachPinnedRow,
     },
+    icons: {
+        rowPin: 'pin',
+        rowPinTop: 'pinned-top',
+        rowPinBottom: 'pinned-bottom',
+        rowUnpin: 'un-pin',
+    },
 };

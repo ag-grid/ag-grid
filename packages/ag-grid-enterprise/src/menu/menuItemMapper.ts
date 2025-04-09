@@ -100,6 +100,7 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
                     return pinnedCols && column
                         ? {
                               name: localeTextFunc('pinLeft', 'Pin Left'),
+                              icon: _createIconNoSpan('pinLeft', beans, column),
                               action: () => pinnedCols.setColsPinned([column], 'left', source),
                               checked: !!column && column.isPinnedLeft(),
                           }
@@ -108,6 +109,7 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
                     return pinnedCols && column
                         ? {
                               name: localeTextFunc('pinRight', 'Pin Right'),
+                              icon: _createIconNoSpan('pinRight', beans, column),
                               action: () => pinnedCols.setColsPinned([column], 'right', source),
                               checked: !!column && column.isPinnedRight(),
                           }
@@ -116,6 +118,7 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
                     return pinnedCols && column
                         ? {
                               name: localeTextFunc('noPin', 'No Pin'),
+                              icon: _createIconNoSpan('columnUnpin', beans, column),
                               action: () => pinnedCols.setColsPinned([column], null, source),
                               checked: !!column && !column.isPinned(),
                           }
@@ -139,6 +142,7 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
                     return pinnedRowModel?.isManual()
                         ? {
                               name: localeTextFunc('pinRow', 'Pin Row'),
+                              icon: _createIconNoSpan('rowPin', beans, column),
                               subMenu,
                           }
                         : null;
@@ -147,6 +151,7 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
                     return pinnedRowModel?.isManual()
                         ? {
                               name: localeTextFunc('pinTop', 'Pin to Top'),
+                              icon: _createIconNoSpan('rowPinTop', beans, column),
                               action: ({ node, column }) =>
                                   node && pinnedRowModel.pinRow(node as RowNode, 'top', column as AgColumn | null),
                           }
@@ -155,6 +160,7 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
                     return pinnedRowModel?.isManual()
                         ? {
                               name: localeTextFunc('pinBottom', 'Pin to Bottom'),
+                              icon: _createIconNoSpan('rowPinBottom', beans, column),
                               action: ({ node, column }) =>
                                   node && pinnedRowModel.pinRow(node as RowNode, 'bottom', column as AgColumn | null),
                           }
@@ -163,6 +169,7 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
                     return pinnedRowModel?.isManual()
                         ? {
                               name: localeTextFunc('unpinRow', 'Unpin Row'),
+                              icon: _createIconNoSpan('rowUnpin', beans, column),
                               action: ({ node, column }) =>
                                   node && pinnedRowModel.pinRow(node as RowNode, null, column as AgColumn | null),
                           }

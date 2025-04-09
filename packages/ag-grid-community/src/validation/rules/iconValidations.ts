@@ -166,6 +166,13 @@ export const ICON_MODULES: Record<IconName, ValidationModuleName | ValidationMod
     checkboxUnchecked: 'CommunityCore',
     radioButtonOn: 'CommunityCore',
     radioButtonOff: 'CommunityCore',
+    rowPin: 'ManualPinnedRow',
+    rowUnpin: 'ManualPinnedRow',
+    rowPinBottom: 'ManualPinnedRow',
+    rowPinTop: 'ManualPinnedRow',
+    pinLeft: 'PinnedColumn',
+    pinRight: 'PinnedColumn',
+    columnUnpin: 'PinnedColumn',
 };
 
 export const DEPRECATED_ICONS_V33: Set<IconName> = new Set([
