@@ -62,9 +62,15 @@ export class FooterService extends BeanStub implements NamedBean, IFooterService
     }
 
     public doesCellShowTotalPrefix(node: IRowNode, col: AgColumn): boolean {
-        if (!node.footer) {
+        if (!node.footer || !col.colDef.showRowGroup) {
             return false;
         }
+
+        // if tree data and a footer, always include the footer prefix
+        if (this.gos.get('treeData')) {
+            return true;
+        }
+
         // if grand total row footer, heading shown in first group column
         if (node.level === -1) {
             return this.beans.showRowGroupCols?.getShowRowGroupCols()[0] === col;
