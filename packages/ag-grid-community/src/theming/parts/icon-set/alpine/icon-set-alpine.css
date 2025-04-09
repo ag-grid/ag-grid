@@ -226,8 +226,8 @@
     mask-image: url('./alpine-svg-icons/pinned-right.svg');
 }
 .ag-icon-pinned-top::before {
-    mask-image: url('./alpine-svg-icons/pinned-bottom.svg');
+    mask-image: url('./alpine-svg-icons/pinned-top.svg');
 }
-.ag-icon-pinned-left::before {
+.ag-icon-pinned-bottom::before {
     mask-image: url('./alpine-svg-icons/pinned-bottom.svg');
 }
