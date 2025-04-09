@@ -12,9 +12,4 @@ export const PinnedColumnModule: _ModuleWithoutApi = {
     version: VERSION,
     beans: [PinnedColumnService],
     css: [pinnedColumnModuleCSS],
-    icons: {
-        pinLeft: 'pinned-left',
-        pinRight: 'pinned-right',
-        columnUnpin: 'un-pin',
-    },
 };

@@ -100,7 +100,6 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
                     return pinnedCols && column
                         ? {
                               name: localeTextFunc('pinLeft', 'Pin Left'),
-                              icon: _createIconNoSpan('pinLeft', beans, column),
                               action: () => pinnedCols.setColsPinned([column], 'left', source),
                               checked: !!column && column.isPinnedLeft(),
                           }
@@ -109,7 +108,6 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
                     return pinnedCols && column
                         ? {
                               name: localeTextFunc('pinRight', 'Pin Right'),
-                              icon: _createIconNoSpan('pinRight', beans, column),
                               action: () => pinnedCols.setColsPinned([column], 'right', source),
                               checked: !!column && column.isPinnedRight(),
                           }
@@ -118,7 +116,6 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
                     return pinnedCols && column
                         ? {
                               name: localeTextFunc('noPin', 'No Pin'),
-                              icon: _createIconNoSpan('columnUnpin', beans, column),
                               action: () => pinnedCols.setColsPinned([column], null, source),
                               checked: !!column && !column.isPinned(),
                           }
