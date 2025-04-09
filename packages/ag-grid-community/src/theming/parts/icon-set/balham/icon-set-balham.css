@@ -224,9 +224,11 @@
 .ag-icon-pinned-right::before {
     mask-image: url('./balham-svg-icons/pinned-right.svg');
 }
+
 .ag-icon-pinned-top::before {
     mask-image: url('./balham-svg-icons/pinned-top.svg');
 }
+
 .ag-icon-pinned-bottom::before {
     mask-image: url('./balham-svg-icons/pinned-bottom.svg');
 }
