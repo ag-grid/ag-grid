@@ -14,8 +14,8 @@ export class FindCellRenderer extends Component implements ICellRenderer {
     public refresh(params: ICellRendererParams): boolean {
         const { node, column } = params;
         const { findSvc, valueSvc } = this.beans;
-        const { value, formattedValue } = valueSvc.getValueForDisplay(column as AgColumn | undefined, node, true);
-        const displayValue = formattedValue ?? value ?? '';
+        const { value, valueFormatted } = valueSvc.getValueForDisplay(column as AgColumn | undefined, node, true);
+        const displayValue = valueFormatted ?? value ?? '';
         const eGui = this.getGui();
         _clearElement(eGui);
         const parts = findSvc?.getParts({ value: displayValue, node, column: column ?? null });

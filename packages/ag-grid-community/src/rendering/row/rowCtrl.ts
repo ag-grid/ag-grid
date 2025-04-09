@@ -1247,9 +1247,9 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
             case 'FullWidthDetail':
                 return _getFullWidthDetailCellRendererDetails(compFactory, params)!;
             case 'FullWidthGroup': {
-                const { value, formattedValue } = this.beans.valueSvc.getValueForDisplay(undefined, this.rowNode, true);
+                const { value, valueFormatted } = this.beans.valueSvc.getValueForDisplay(undefined, this.rowNode, true);
                 params.value = value;
-                params.valueFormatted = formattedValue;
+                params.valueFormatted = valueFormatted;
                 return _getFullWidthGroupCellRendererDetails(compFactory, params)!;
             }
             case 'FullWidthLoading':

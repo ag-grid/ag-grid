@@ -447,14 +447,14 @@ export class FindService extends BeanStub implements NamedBean, IFindService {
                             column: null,
                             colDef: null,
                             getValueFormatted: () => {
-                                const { formattedValue } = valueSvc.getValueForDisplay(undefined, node, true);
-                                return formattedValue;
+                                const { valueFormatted } = valueSvc.getValueForDisplay(undefined, node, true);
+                                return valueFormatted;
                             },
                         })
                     );
                 } else {
-                    const { value, formattedValue } = valueSvc.getValueForDisplay(undefined, node, true);
-                    valueToFind = formattedValue ?? value;
+                    const { value, valueFormatted } = valueSvc.getValueForDisplay(undefined, node, true);
+                    valueToFind = valueFormatted ?? value;
                 }
 
                 const numMatches = getMatchesForValue(findSearchValue, caseFormat, valueToFind);
@@ -497,14 +497,14 @@ export class FindService extends BeanStub implements NamedBean, IFindService {
                             column,
                             colDef,
                             getValueFormatted: () => {
-                                const { formattedValue } = valueSvc.getValueForDisplay(column, node, true);
-                                return formattedValue;
+                                const { valueFormatted } = valueSvc.getValueForDisplay(column, node, true);
+                                return valueFormatted;
                             },
                         })
                     );
                 } else {
-                    const { value, formattedValue } = valueSvc.getValueForDisplay(column, node, true);
-                    valueToFind = formattedValue ?? value;
+                    const { value, valueFormatted } = valueSvc.getValueForDisplay(column, node, true);
+                    valueToFind = valueFormatted ?? value;
                 }
 
                 const numMatches = getMatchesForValue(findSearchValue, caseFormat, valueToFind);

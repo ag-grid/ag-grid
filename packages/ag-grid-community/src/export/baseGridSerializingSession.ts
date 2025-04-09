@@ -114,12 +114,12 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
             let concatenatedGroupValue: string = '';
             let pointer: RowNode | null = node;
             while (pointer && pointer.level !== -1) {
-                const { value, formattedValue } = valueService.getValueForDisplay(
+                const { value, valueFormatted } = valueService.getValueForDisplay(
                     isFullWidthGroup ? undefined : column, // full width group doesn't have a column
                     pointer,
                     true
                 );
-                concatenatedGroupValue = ` -> ${formattedValue ?? value ?? ''}${concatenatedGroupValue}`;
+                concatenatedGroupValue = ` -> ${valueFormatted ?? value ?? ''}${concatenatedGroupValue}`;
                 pointer = pointer.parent;
             }
 
@@ -129,10 +129,10 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
             };
         }
 
-        const { value, formattedValue } = valueService.getValueForDisplay(column, node, true);
+        const { value, valueFormatted } = valueService.getValueForDisplay(column, node, true);
         return {
             value: value ?? '',
-            valueFormatted: formattedValue,
+            valueFormatted,
         };
     }
 

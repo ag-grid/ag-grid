@@ -509,9 +509,9 @@ export class CellCtrl extends BeanStub {
         const oldValue = this.value;
         const oldValueFormatted = this.valueFormatted;
 
-        const { value, formattedValue } = this.beans.valueSvc.getValueForDisplay(this.column, this.rowNode, true);
+        const { value, valueFormatted } = this.beans.valueSvc.getValueForDisplay(this.column, this.rowNode, true);
         this.value = value;
-        this.valueFormatted = formattedValue;
+        this.valueFormatted = valueFormatted;
 
         if (compareValues) {
             return !this.valuesAreEqual(oldValue, this.value) || this.valueFormatted != oldValueFormatted;

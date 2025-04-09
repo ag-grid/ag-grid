@@ -84,11 +84,11 @@ export class ValueService extends BeanStub implements NamedBean {
     public getValueForDisplay(
         column: AgColumn | undefined,
         node: IRowNode,
-        includeFormattedValue: boolean = false,
+        includeValueFormatted: boolean = false,
         exporting: boolean = false
     ): {
         value: any;
-        formattedValue: string | null;
+        valueFormatted: string | null;
     } {
         const { showRowGroupColValueSvc } = this.beans;
         const isFullWidthGroup = !column && node.group;
@@ -104,21 +104,21 @@ export class ValueService extends BeanStub implements NamedBean {
             if (groupValue == null) {
                 return {
                     value: null,
-                    formattedValue: null,
+                    valueFormatted: null,
                 };
             }
 
-            if (!includeFormattedValue) {
+            if (!includeValueFormatted) {
                 return {
                     value: groupValue.value,
-                    formattedValue: null,
+                    valueFormatted: null,
                 };
             }
 
-            const formattedValue = showRowGroupColValueSvc.formatAndPrefixGroupColValue(groupValue, column, exporting);
+            const valueFormatted = showRowGroupColValueSvc.formatAndPrefixGroupColValue(groupValue, column, exporting);
             return {
                 value: groupValue.value,
-                formattedValue,
+                valueFormatted,
             };
         }
 
@@ -126,7 +126,7 @@ export class ValueService extends BeanStub implements NamedBean {
         if (!column) {
             return {
                 value: node.key,
-                formattedValue: null,
+                valueFormatted: null,
             };
         }
 
@@ -141,10 +141,10 @@ export class ValueService extends BeanStub implements NamedBean {
         const ignoreAggData = isOpenedGroup && !groupShowsAggData;
         const value = this.getValue(column, node, ignoreAggData);
 
-        const format = includeFormattedValue && !(exporting && column.colDef.useValueFormatterForExport === false);
+        const format = includeValueFormatted && !(exporting && column.colDef.useValueFormatterForExport === false);
         return {
             value,
-            formattedValue: format ? this.formatValue(column, node, value) : null,
+            valueFormatted: format ? this.formatValue(column, node, value) : null,
         };
     }
 
