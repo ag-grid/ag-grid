@@ -213,3 +213,21 @@
 .ag-icon-column-arrow::before {
     mask-image: url('./alpine-svg-icons/column-arrow.svg');
 }
+
+.ag-icon-un-pin::before {
+    mask-image: url('./alpine-svg-icons/un-pin.svg');
+}
+
+.ag-icon-pinned-left::before {
+    mask-image: url('./alpine-svg-icons/pinned-left.svg');
+}
+
+.ag-icon-pinned-right::before {
+    mask-image: url('./alpine-svg-icons/pinned-right.svg');
+}
+.ag-icon-pinned-top::before {
+    mask-image: url('./alpine-svg-icons/pinned-bottom.svg');
+}
+.ag-icon-pinned-left::before {
+    mask-image: url('./alpine-svg-icons/pinned-bottom.svg');
+}
