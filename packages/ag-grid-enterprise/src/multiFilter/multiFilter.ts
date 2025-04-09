@@ -348,7 +348,7 @@ export class MultiFilter extends BaseMultiFilter<MultiFilterWrapper> implements 
                             getModel,
                             () => wrapper?.state ?? { model: getModel() },
                             (state) => updateState(wrapper, state),
-                            additionalEventAttributes
+                            (newModel) => wrapper.filterParams?.onModelChange(newModel, additionalEventAttributes)
                         );
                     };
                     displayParams.onAction = (action, additionalEventAttributes, event) => {

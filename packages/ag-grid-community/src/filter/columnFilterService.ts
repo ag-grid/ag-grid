@@ -500,7 +500,7 @@ export class ColumnFilterService
     private callOnFilterChangedOutsideRenderCycle(params: {
         source: FilterChangedEventSourceType;
         additionalEventAttributes?: any;
-        column: AgColumn;
+        column?: AgColumn;
         columns: AgColumn[];
     }): void {
         const { rowRenderer, filterManager } = this.beans;
@@ -1669,19 +1669,55 @@ export class ColumnFilterService
 
     public updateModel(column: AgColumn, action: FilterAction, additionalEventAttributes?: any): void {
         const colId = column.getColId();
+        const getFilterUi = () =>
+            this.cachedFilter(column)?.filterUi as FilterUi<FilterDisplayComp, FilterDisplayParams> | undefined;
         _updateFilterModel(
             action,
-            () => this.cachedFilter(column)?.filterUi as FilterUi<FilterDisplayComp, FilterDisplayParams> | undefined,
+            getFilterUi,
             () => this.model[colId] ?? null,
             () => this.state.get(colId),
             (state) => this.updateState(column, state),
-            additionalEventAttributes
+            (model) => getFilterUi()?.filterParams?.onModelChange(model, additionalEventAttributes)
         );
+    }
+
+    public updateAllModels(action: FilterAction, additionalEventAttributes?: any): void {
+        const promises: AgPromise<void>[] = [];
+        this.allColumnFilters.forEach((filter, colId) => {
+            const column = this.beans.colModel.getColDefCol(colId);
+            if (column) {
+                _updateFilterModel(
+                    action,
+                    () => filter.filterUi as FilterUi<FilterDisplayComp, FilterDisplayParams> | undefined,
+                    () => this.model[colId] ?? null,
+                    () => this.state.get(colId),
+                    (state) => this.updateState(column, state),
+                    (model) => {
+                        this.model[colId] = model;
+                        this.dispatchLocalEvent<FilterActionEvent>({
+                            type: 'filterAction',
+                            column,
+                            action,
+                        });
+                        promises.push(this.refreshEvaluatorAndUi(column, model, 'ui'));
+                    }
+                );
+            }
+        });
+        if (promises.length) {
+            AgPromise.all(promises).then(() => {
+                this.callOnFilterChangedOutsideRenderCycle({
+                    source: 'columnFilter',
+                    additionalEventAttributes,
+                    columns: [],
+                });
+            });
+        }
     }
 
     private updateOrRefreshFilterUi(column: AgColumn): void {
         const colId = column.getColId();
-        updateOrRefreshFilterUi(
+        refreshFilterUi(
             () => this.cachedFilter(column)?.filterUi as FilterUi<FilterDisplayComp, FilterDisplayParams> | undefined,
             () => this.model[colId] ?? null,
             () => this.state.get(colId)
@@ -1812,24 +1848,17 @@ function isValidDate(value: any): boolean {
     return value instanceof Date && !isNaN(value.getTime());
 }
 
-function updateOrRefreshFilterUi(
+function refreshFilterUi(
     getFilterUi: () => FilterUi<FilterDisplayComp, FilterDisplayParams> | undefined,
     getModel: () => any,
-    getState: () => FilterDisplayState | undefined,
-    updateModel?: boolean,
-    model?: any,
-    additionalEventAttributes?: any
+    getState: () => FilterDisplayState | undefined
 ): void {
     const filterUi = getFilterUi();
-    if (updateModel) {
-        filterUi?.filterParams?.onModelChange(model, additionalEventAttributes);
-    } else {
-        if (filterUi?.created) {
-            filterUi.promise.then((filter) => {
-                const model = getModel();
-                _refreshFilterUi(filter!, filterUi.filterParams, model, getState() ?? { model }, 'ui');
-            });
-        }
+    if (filterUi?.created) {
+        filterUi.promise.then((filter) => {
+            const model = getModel();
+            _refreshFilterUi(filter!, filterUi.filterParams, model, getState() ?? { model }, 'ui');
+        });
     }
 }
 
@@ -1839,10 +1868,10 @@ export function _updateFilterModel(
     getModel: () => any,
     getState: () => FilterDisplayState | undefined,
     updateState: (state: FilterDisplayState) => void,
-    additionalEventAttributes?: any
+    updateModel: (model: any) => void
 ): void {
     let state: FilterDisplayState;
-    let updateModel = false;
+    let shouldUpdateModel = false;
     let model: any;
 
     switch (action) {
@@ -1854,7 +1883,7 @@ export function _updateFilterModel(
                 state: oldState?.state,
                 model,
             };
-            updateModel = true;
+            shouldUpdateModel = true;
             break;
         }
         case 'clear': {
@@ -1869,7 +1898,7 @@ export function _updateFilterModel(
                 // wipe other UI state
                 model: null,
             };
-            updateModel = true;
+            shouldUpdateModel = true;
             model = null;
             break;
         }
@@ -1883,5 +1912,9 @@ export function _updateFilterModel(
     }
 
     updateState(state);
-    updateOrRefreshFilterUi(getFilterUi, getModel, getState, updateModel, model, additionalEventAttributes);
+    if (shouldUpdateModel) {
+        updateModel(model);
+    } else {
+        refreshFilterUi(getFilterUi, getModel, getState);
+    }
 }

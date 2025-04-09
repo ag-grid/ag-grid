@@ -219,6 +219,7 @@ export {
 } from './interfaces/iMultiFilter';
 export { FilterWrapperComp } from './filter/filterWrapperComp';
 export { FilterDisplayComp } from './filter/filterDisplayComp';
+export { FilterButtonComp } from './filter/filterButtonComp';
 
 export {
     IProvidedFilter,
