@@ -250,11 +250,8 @@ export class SelectionColService extends BeanStub implements NamedBean, IColumnC
         // two conditions for which we hide selection column:
         //   1. Only selection column and row numbers column are visible
         //   2. Only selection column is visible
-        if (rowNumbersCol && numVisibleCols === 2) {
-            // the only visible columns are row numbers and selection col
-            hideSelectionCol();
-        } else if (!rowNumbersCol && numVisibleCols === 1) {
-            // the only visible column is selection col
+        const expectedNumCols = rowNumbersCol ? 2 : 1;
+        if (expectedNumCols === numVisibleCols) {
             hideSelectionCol();
         }
     }
