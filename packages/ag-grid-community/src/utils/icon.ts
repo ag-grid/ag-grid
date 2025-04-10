@@ -72,9 +72,6 @@ export type IconName =
     | 'rowPinTop'
     | 'rowPinBottom'
     | 'rowUnpin'
-    | 'pinLeft'
-    | 'pinRight'
-    | 'columnUnpin'
     | 'save'
     | 'csvExport'
     | 'excelExport'
@@ -175,8 +172,6 @@ export type IconValue =
     | 'eye'
     | 'column-arrow'
     | 'un-pin'
-    | 'pinned-left'
-    | 'pinned-right'
     | 'pinned-bottom'
     | 'pinned-top';
 

@@ -61,8 +61,6 @@ export const ICON_VALUES: Record<IconValue, 1> = {
     eye: 1,
     'column-arrow': 1,
     'un-pin': 1,
-    'pinned-left': 1,
-    'pinned-right': 1,
     'pinned-top': 1,
     'pinned-bottom': 1,
 };
@@ -170,9 +168,6 @@ export const ICON_MODULES: Record<IconName, ValidationModuleName | ValidationMod
     rowUnpin: 'ManualPinnedRow',
     rowPinBottom: 'ManualPinnedRow',
     rowPinTop: 'ManualPinnedRow',
-    pinLeft: 'PinnedColumn',
-    pinRight: 'PinnedColumn',
-    columnUnpin: 'PinnedColumn',
 };
 
 export const DEPRECATED_ICONS_V33: Set<IconName> = new Set([
