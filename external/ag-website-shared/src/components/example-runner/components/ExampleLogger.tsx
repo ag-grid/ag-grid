@@ -1,6 +1,6 @@
 import { getType } from '@ag-website-shared/components/example-runner/utils/getType';
 import ReactJsonView from '@microlink/react-json-view';
-import { type FunctionComponent, useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { type FunctionComponent, useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 
 import styles from './ExampleLogger.module.scss';
 
@@ -164,6 +164,10 @@ export const ExampleLogger: FunctionComponent<Props> = ({ exampleName, bufferSiz
     const containerRef = useRef<HTMLPreElement>(null);
     const [logs, setLogs] = useState<Log[]>([]);
 
+    const clearLogs = useCallback(() => {
+        setLogs([]);
+    }, []);
+
     useEffect(() => {
         const updateLogs = (event: MessageEvent) => {
             const log = event.data;
@@ -194,7 +198,12 @@ export const ExampleLogger: FunctionComponent<Props> = ({ exampleName, bufferSiz
 
     return (
         <div className={styles.loggerOuter}>
-            <div className={styles.loggerHeader}>Console</div>
+            <div className={styles.loggerHeader}>
+                <div>Console</div>
+                <button className="button-secondary" onClick={clearLogs}>
+                    Clear
+                </button>
+            </div>
             <pre ref={containerRef} className={styles.loggerPre}>
                 {logs.length === 0 && <div>Console logs from the example shown here...</div>}
                 {logs.map((log, i) => (
