@@ -11,6 +11,7 @@ import { _removeFromArray } from '../utils/array';
 import type { ColKey, ColumnCollections } from './columnModel';
 import { _applyColumnState } from './columnStateUtils';
 import {
+    ROW_NUMBERS_COLUMN_ID,
     SELECTION_COLUMN_ID,
     _areColIdsEqual,
     _columnsMatch,
@@ -18,7 +19,6 @@ import {
     _destroyColumnTree,
     _updateColsMap,
     isColumnSelectionCol,
-    isRowNumberCol,
 } from './columnUtils';
 
 export class SelectionColService extends BeanStub implements NamedBean, IColumnCollectionService {
@@ -213,45 +213,47 @@ export class SelectionColService extends BeanStub implements NamedBean, IColumnC
      * @param rightCols Visible columns in the right-pinned container
      */
     public refreshVisibility(leftCols: AgColumn[], centerCols: AgColumn[], rightCols: AgColumn[]): void {
-        if (!this.isSelectionColumnEnabled()) {
+        // columns list will only be populated if selection column is enabled
+        if (!this.columns?.list.length) {
             return;
         }
 
         const numVisibleCols = leftCols.length + centerCols.length + rightCols.length;
-
         if (numVisibleCols === 0) {
             return;
         }
 
-        const selectionColLeft = leftCols.find(isColumnSelectionCol);
-        const selectionColCenter = centerCols.find(isColumnSelectionCol);
-        const selectionColRight = rightCols.find(isColumnSelectionCol);
-        const selectionColPresent = selectionColLeft || selectionColCenter || selectionColRight;
+        // There's only one selection column
+        const column = this.columns.list[0]!;
 
-        const rowNumbersColLeft = leftCols.find(isRowNumberCol);
-        const rowNumbersColCenter = centerCols.find(isRowNumberCol);
-        const rowNumbersColRight = rightCols.find(isRowNumberCol);
-        const rowNumbersColPresent = rowNumbersColLeft || rowNumbersColCenter || rowNumbersColRight;
+        // If it's deliberately hidden, we needn't do anything
+        if (!column.isVisible()) return;
 
         const hideSelectionCol = () => {
-            if (selectionColLeft) {
-                _removeFromArray(leftCols, selectionColLeft);
+            let cols;
+            switch (column.pinned) {
+                case 'left':
+                case true:
+                    cols = leftCols;
+                    break;
+                case 'right':
+                    cols = rightCols;
+                    break;
+                default:
+                    cols = centerCols;
             }
-            if (selectionColCenter) {
-                _removeFromArray(centerCols, selectionColCenter);
-            }
-            if (selectionColRight) {
-                _removeFromArray(rightCols, selectionColRight);
-            }
+            cols && _removeFromArray(cols, column);
         };
+
+        const rowNumbersCol = this.beans.rowNumbersSvc?.getColumn(ROW_NUMBERS_COLUMN_ID);
 
         // two conditions for which we hide selection column:
         //   1. Only selection column and row numbers column are visible
         //   2. Only selection column is visible
-        if (rowNumbersColPresent && selectionColPresent && numVisibleCols === 2) {
+        if (rowNumbersCol && numVisibleCols === 2) {
             // the only visible columns are row numbers and selection col
             hideSelectionCol();
-        } else if (!rowNumbersColPresent && selectionColPresent && numVisibleCols === 1) {
+        } else if (!rowNumbersCol && numVisibleCols === 1) {
             // the only visible column is selection col
             hideSelectionCol();
         }
