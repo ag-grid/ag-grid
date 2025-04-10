@@ -137,7 +137,7 @@ export class MultiFloatingFilterComp extends Component implements IFloatingFilte
                             return;
                         }
 
-                        callback(child);
+                        callback(child as IFilter);
                     });
                 },
                 // return the parent model for the specific filter

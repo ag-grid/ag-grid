@@ -1,5 +1,5 @@
 import { ProvidedFilter } from 'ag-grid-community';
-import type { IFilterComp, IMultiFilterDef, IMultiFilterModel, IMultiFilterParams } from 'ag-grid-community';
+import type { IMultiFilterDef, IMultiFilterModel, IMultiFilterParams, SharedFilterUi } from 'ag-grid-community';
 
 export function getMultiFilterDefs(params: IMultiFilterParams): IMultiFilterDef[] {
     const { filters } = params;
@@ -19,7 +19,7 @@ export function forEachReverse<T>(list: T[] | null | undefined, action: (value: 
     }
 }
 
-export function getFilterTitle(filter: IFilterComp, filterDef: IMultiFilterDef): string {
+export function getFilterTitle(filter: SharedFilterUi, filterDef: IMultiFilterDef): string {
     if (filterDef.title != null) {
         return filterDef.title;
     }

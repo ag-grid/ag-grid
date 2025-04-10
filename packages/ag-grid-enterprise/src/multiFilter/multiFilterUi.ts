@@ -1,13 +1,14 @@
 import type {
     AgColumn,
+    FilterDisplayComp,
     FilterDisplayParams,
     FilterDisplayState,
     IComponent,
-    IFilterComp,
     IFilterDef,
     IMultiFilterModel,
     IMultiFilterParams,
     RowNode,
+    SharedFilterUi,
 } from 'ag-grid-community';
 import { AgPromise, _getFilterDetails, _refreshFilterUi } from 'ag-grid-community';
 
@@ -17,13 +18,13 @@ import type { MultiFilterEvaluator } from './multiFilterEvaluator';
 import { getMultiFilterDefs, getUpdatedMultiFilterModel } from './multiFilterUtil';
 
 export class MultiFilterUi
-    extends BaseMultiFilter<IFilterComp>
+    extends BaseMultiFilter<FilterDisplayComp>
     implements IComponent<IMultiFilterParams & FilterDisplayParams<any, any, IMultiFilterModel>>
 {
     public readonly filterType = 'multi' as const;
 
     private params: IMultiFilterParams & FilterDisplayParams<any, any, IMultiFilterModel>;
-    private filters: (IFilterComp | null)[] = [];
+    private filters: (FilterDisplayComp | null)[] = [];
     private filterParams: FilterDisplayParams[] = [];
     private validity: (boolean | undefined)[] = [];
     private allState: FilterDisplayState<IMultiFilterModel, any[]>;
@@ -34,7 +35,7 @@ export class MultiFilterUi
 
         this.allState = params.state;
 
-        const filterPromises: AgPromise<IFilterComp | null>[] = this.filterDefs.map((filterDef, index) =>
+        const filterPromises: AgPromise<FilterDisplayComp | null>[] = this.filterDefs.map((filterDef, index) =>
             this.createFilter(filterDef, index)
         );
 
@@ -76,8 +77,7 @@ export class MultiFilterUi
                 state: newAllStateState?.[index],
                 model: stateFilterModels?.[index] ?? null,
             };
-            // TODO - recheck typing
-            _refreshFilterUi(filter as any, filterParams[index], modelForFilter, stateForFilter, source);
+            _refreshFilterUi(filter, filterParams[index], modelForFilter, stateForFilter, source);
         });
         return true;
     }
@@ -86,7 +86,7 @@ export class MultiFilterUi
         return (this.params.getEvaluator() as MultiFilterEvaluator)?.getLastActiveFilterIndex?.() ?? null;
     }
 
-    public getChildFilterInstance(index: number): IFilterComp | undefined {
+    public getChildFilterInstance(index: number): FilterDisplayComp | undefined {
         return this.filters[index] ?? undefined;
     }
 
@@ -98,25 +98,29 @@ export class MultiFilterUi
         super.destroy();
     }
 
-    protected override getFilterWrappers(): (IFilterComp | null)[] {
+    protected override getFilterWrappers(): (FilterDisplayComp | null)[] {
         return this.filters;
     }
 
-    protected override getFilterFromWrapper(wrapper: IFilterComp): IFilterComp<any> {
+    protected override getFilterFromWrapper(wrapper: FilterDisplayComp): SharedFilterUi {
         return wrapper;
     }
 
-    protected override getCompFromWrapper(wrapper: IFilterComp<any>): BaseFilterComponent {
+    protected override getCompFromWrapper(wrapper: FilterDisplayComp): BaseFilterComponent {
         return wrapper;
     }
 
-    private createFilter(filterDef: IFilterDef, index: number): AgPromise<IFilterComp | null> {
+    private createFilter(filterDef: IFilterDef, index: number): AgPromise<FilterDisplayComp | null> {
         const userCompFactory = this.beans.userCompFactory;
 
         const filterParams = this.updateParams(filterDef, this.params, index);
 
-        // TODO - recheck typing
-        const compDetails = _getFilterDetails(userCompFactory, filterDef, filterParams as any, 'agTextColumnFilter');
+        const compDetails = _getFilterDetails<FilterDisplayComp>(
+            userCompFactory,
+            filterDef,
+            filterParams,
+            'agTextColumnFilter'
+        );
         if (!compDetails) {
             return AgPromise.resolve(null);
         }

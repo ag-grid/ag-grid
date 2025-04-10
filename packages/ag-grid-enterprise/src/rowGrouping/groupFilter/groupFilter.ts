@@ -10,7 +10,7 @@ import type {
 import {
     AgPromise,
     AgSelect,
-    FilterWrapperComp,
+    FilterComp,
     RefPlaceholder,
     TabGuardComp,
     _clearElement,
@@ -51,7 +51,7 @@ export class GroupFilter extends TabGuardComp<GroupFilterEvent> implements IFilt
     private filterColumnPairs: FilterColumnPair[] | undefined;
     private eGroupFieldSelect: AgSelect;
     private afterGuiAttachedParams: IAfterGuiAttachedParams | undefined;
-    private filterWrapperComp?: FilterWrapperComp;
+    private filterComp?: FilterComp;
 
     constructor() {
         super(GroupFilterElement);
@@ -199,8 +199,8 @@ export class GroupFilter extends TabGuardComp<GroupFilterEvent> implements IFilt
         if (!selectedColumn) {
             return AgPromise.resolve();
         }
-        const comp = this.createManagedBean(new FilterWrapperComp(selectedColumn, 'COLUMN_MENU'));
-        this.filterWrapperComp = comp;
+        const comp = this.createManagedBean(new FilterComp(selectedColumn, 'COLUMN_MENU'));
+        this.filterComp = comp;
         if (!comp.hasFilter()) {
             return AgPromise.resolve();
         }
@@ -224,8 +224,8 @@ export class GroupFilter extends TabGuardComp<GroupFilterEvent> implements IFilt
         if (!columnId) {
             return;
         }
-        this.filterWrapperComp?.afterGuiDetached();
-        this.destroyBean(this.filterWrapperComp);
+        this.filterComp?.afterGuiDetached();
+        this.destroyBean(this.filterComp);
         const selectedFilterColumnPair = this.getFilterColumnPair(columnId);
         const selectedColumn = selectedFilterColumnPair?.column;
         this.selectedFilter = selectedFilterColumnPair?.filter;

@@ -1,7 +1,7 @@
 import type { AgColumn, ElementParams, FilterOpenedEvent, IFilterComp, IconName } from 'ag-grid-community';
 import {
     Component,
-    FilterWrapperComp,
+    FilterComp,
     KeyCode,
     RefPlaceholder,
     _clearElement,
@@ -49,7 +49,7 @@ export class ToolPanelFilterComp extends Component<ToolPanelFilterCompEvent> {
     private column: AgColumn;
     private expanded: boolean = false;
     private underlyingFilter: IFilterComp | null;
-    private filterWrapperComp?: FilterWrapperComp;
+    private filterComp?: FilterComp;
 
     constructor(
         private hideHeader: boolean,
@@ -164,8 +164,8 @@ export class ToolPanelFilterComp extends Component<ToolPanelFilterCompEvent> {
 
     private addFilterElement(suppressFocus?: boolean): void {
         const filterPanelWrapper = _createElement({ tag: 'div', cls: 'ag-filter-toolpanel-instance-filter' });
-        const comp = this.createManagedBean(new FilterWrapperComp(this.column, 'TOOLBAR'));
-        this.filterWrapperComp = comp;
+        const comp = this.createManagedBean(new FilterComp(this.column, 'TOOLBAR'));
+        this.filterComp = comp;
 
         if (!comp.hasFilter()) {
             return;
@@ -197,9 +197,9 @@ export class ToolPanelFilterComp extends Component<ToolPanelFilterCompEvent> {
         _setDisplayed(this.eExpandChecked, false);
         _setDisplayed(this.eExpandUnchecked, true);
 
-        const filterWrapperComp = this.filterWrapperComp;
-        filterWrapperComp?.afterGuiDetached();
-        this.destroyBean(filterWrapperComp);
+        const filterComp = this.filterComp;
+        filterComp?.afterGuiDetached();
+        this.destroyBean(filterComp);
 
         this.expandedCallback();
     }

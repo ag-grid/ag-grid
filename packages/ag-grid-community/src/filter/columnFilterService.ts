@@ -1830,7 +1830,7 @@ export function _refreshEvaluatorAndUi(
 }
 
 export function _refreshFilterUi(
-    filter: FilterDisplayComp,
+    filter: FilterDisplayComp | null | undefined,
     filterParams: FilterDisplayParams,
     model: any,
     state: FilterDisplayState,

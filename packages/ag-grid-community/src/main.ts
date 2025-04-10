@@ -191,6 +191,7 @@ export {
     FilterAction,
     FilterDisplay,
     SharedFilterUi,
+    FilterDisplayComp,
 } from './interfaces/iFilter';
 export {
     ISetFilter,
@@ -218,8 +219,8 @@ export {
     MultiFilterParams,
     IMultiFilterDef,
 } from './interfaces/iMultiFilter';
+export { FilterComp } from './filter/filterComp';
 export { FilterWrapperComp } from './filter/filterWrapperComp';
-export { FilterDisplayComp } from './filter/filterDisplayComp';
 export { FilterButtonComp } from './filter/filterButtonComp';
 
 export {

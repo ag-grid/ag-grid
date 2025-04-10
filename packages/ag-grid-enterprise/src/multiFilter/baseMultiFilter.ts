@@ -1,4 +1,4 @@
-import type { ContainerType, IAfterGuiAttachedParams, IFilterComp, IMultiFilterDef } from 'ag-grid-community';
+import type { ContainerType, IAfterGuiAttachedParams, IMultiFilterDef, SharedFilterUi } from 'ag-grid-community';
 import {
     AgPromise,
     KeyCode,
@@ -35,7 +35,7 @@ export abstract class BaseMultiFilter<TFilterWrapper> extends TabGuardComp {
 
     protected abstract getFilterWrappers(): (TFilterWrapper | null)[];
 
-    protected abstract getFilterFromWrapper(wrapper: TFilterWrapper): IFilterComp;
+    protected abstract getFilterFromWrapper(wrapper: TFilterWrapper): SharedFilterUi;
     protected abstract getCompFromWrapper(wrapper: TFilterWrapper): BaseFilterComponent;
 
     public postConstruct() {
@@ -169,7 +169,7 @@ export abstract class BaseMultiFilter<TFilterWrapper> extends TabGuardComp {
             });
     }
 
-    private insertFilterGroup(filter: IFilterComp, comp: BaseFilterComponent, title: string): AgGroupComponent {
+    private insertFilterGroup(filter: SharedFilterUi, comp: BaseFilterComponent, title: string): AgGroupComponent {
         const group = this.createBean(
             new AgGroupComponent({
                 title,
@@ -280,7 +280,7 @@ export abstract class BaseMultiFilter<TFilterWrapper> extends TabGuardComp {
         super.destroy();
     }
 
-    private executeFunctionIfExists<T extends IFilterComp>(name: keyof T, ...params: any[]): void {
+    private executeFunctionIfExists<T extends SharedFilterUi>(name: keyof T, ...params: any[]): void {
         // The first filter is always the "dominant" one. By iterating in reverse order we ensure the first filter
         // always gets the last say
         forEachReverse(this.getFilterWrappers(), (wrapper) => {
@@ -290,7 +290,11 @@ export abstract class BaseMultiFilter<TFilterWrapper> extends TabGuardComp {
         });
     }
 
-    private executeFunctionIfExistsOnFilter<T extends IFilterComp>(filter: T, name: keyof T, ...params: any[]): void {
+    private executeFunctionIfExistsOnFilter<T extends SharedFilterUi>(
+        filter: T,
+        name: keyof T,
+        ...params: any[]
+    ): void {
         const func = filter[name];
 
         if (typeof func === 'function') {

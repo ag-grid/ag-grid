@@ -17,7 +17,7 @@ import type {
 } from 'ag-grid-community';
 import {
     AgPromise,
-    FilterDisplayComp,
+    FilterWrapperComp,
     LocalEventService,
     ProvidedFilter,
     _refreshEvaluatorAndUi,
@@ -388,7 +388,7 @@ export class MultiFilter extends BaseMultiFilter<MultiFilterWrapper> implements 
             }
             const filterParams = compDetails?.params;
             const comp = this.createManagedBean(
-                new FilterDisplayComp(
+                new FilterWrapperComp(
                     column,
                     {
                         comp: filter!,
