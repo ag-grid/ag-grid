@@ -46,7 +46,7 @@ export class SelectAllFeature extends BeanStub {
         this.headerCellCtrl = ctrl;
         const cbSelectAll = this.createManagedBean(new AgCheckbox());
         this.cbSelectAll = cbSelectAll;
-        cbSelectAll.addCssClass('ag-header-select-all');
+        cbSelectAll.addCss('ag-header-select-all');
         _setAriaRole(cbSelectAll.getGui(), 'presentation');
         this.showOrHideSelectAll();
 

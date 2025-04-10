@@ -64,7 +64,7 @@ const GroupCellRenderer = forwardRef((props: GroupCellRendererParams, ref) => {
                 setValue(valueToDisplay);
             },
             setChildCount: (count) => setChildCount(count),
-            addOrRemoveCssClass: (name, on) => setCssClasses((prev) => prev.setClass(name, on)),
+            toggleCss: (name, on) => setCssClasses((prev) => prev.setClass(name, on)),
             setContractedDisplayed: (displayed) =>
                 setContractedCssClasses((prev) => prev.setClass('ag-hidden', !displayed)),
             setExpandedDisplayed: (displayed) =>

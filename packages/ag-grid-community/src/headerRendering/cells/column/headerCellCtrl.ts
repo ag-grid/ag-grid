@@ -320,12 +320,12 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
                     oldClasses.delete(c);
                 } else {
                     // class new since last time, so apply it
-                    this.comp.addOrRemoveCssClass(c, true);
+                    this.comp.toggleCss(c, true);
                 }
             });
 
             // now old set only has classes that were applied last time, but not this time, so remove them
-            oldClasses.forEach((c) => this.comp.addOrRemoveCssClass(c, false));
+            oldClasses.forEach((c) => this.comp.toggleCss(c, false));
         };
 
         this.setRefreshFunction('headerClasses', refreshHeaderClasses);
@@ -439,7 +439,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
         const listener = () => {
             // this is what makes the header go dark when it is been moved (gives impression to
             // user that the column was picked up).
-            this.comp.addOrRemoveCssClass('ag-header-cell-moving', this.column.isMoving());
+            this.comp.toggleCss('ag-header-cell-moving', this.column.isMoving());
         };
 
         compBean.addManagedListeners(this.column, { movingChanged: listener });
@@ -448,7 +448,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
 
     private setupMenuClass(compBean: BeanStub): void {
         const listener = () => {
-            this.comp?.addOrRemoveCssClass('ag-column-menu-visible', this.column.isMenuVisible());
+            this.comp?.toggleCss('ag-column-menu-visible', this.column.isMenuVisible());
         };
 
         compBean.addManagedListeners(this.column, { menuVisibleChanged: listener });
@@ -457,7 +457,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
 
     private setupSortableClass(compBean: BeanStub): void {
         const updateSortableCssClass = () => {
-            this.comp.addOrRemoveCssClass('ag-header-cell-sortable', !!this.sortable);
+            this.comp.toggleCss('ag-header-cell-sortable', !!this.sortable);
         };
 
         updateSortableCssClass();
@@ -469,7 +469,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
     private setupFilterClass(compBean: BeanStub): void {
         const listener = () => {
             const isFilterActive = this.column.isFilterActive();
-            this.comp.addOrRemoveCssClass('ag-header-cell-filtered', isFilterActive);
+            this.comp.toggleCss('ag-header-cell-filtered', isFilterActive);
             this.refreshAria();
         };
 
@@ -480,7 +480,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
     private setupWrapTextClass() {
         const listener = () => {
             const wrapText = !!this.column.getColDef().wrapHeaderText;
-            this.comp.addOrRemoveCssClass('ag-header-cell-wrap-text', wrapText);
+            this.comp.toggleCss('ag-header-cell-wrap-text', wrapText);
         };
         listener();
         this.setRefreshFunction('wrapText', listener);
@@ -491,8 +491,8 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
         const beforeOn = highlighted === ColumnHighlightPosition.Before;
         const afterOn = highlighted === ColumnHighlightPosition.After;
 
-        this.comp.addOrRemoveCssClass('ag-header-highlight-before', beforeOn);
-        this.comp.addOrRemoveCssClass('ag-header-highlight-after', afterOn);
+        this.comp.toggleCss('ag-header-highlight-before', beforeOn);
+        this.comp.toggleCss('ag-header-highlight-after', afterOn);
     }
 
     protected override onDisplayedColumnsChanged(): void {
@@ -512,31 +512,31 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
         const groupHeaderHeight = getGroupRowsHeight(this.beans);
         const isZeroGroupHeight = groupHeaderHeight.reduce((total, next) => (total += next), 0) === 0;
 
-        comp.addOrRemoveCssClass('ag-header-parent-hidden', isZeroGroupHeight);
+        comp.toggleCss('ag-header-parent-hidden', isZeroGroupHeight);
 
         if (!column.isSpanHeaderHeight()) {
             eGui.style.removeProperty('top');
             eGui.style.removeProperty('height');
-            comp.addOrRemoveCssClass('ag-header-span-height', false);
-            comp.addOrRemoveCssClass('ag-header-span-total', false);
+            comp.toggleCss('ag-header-span-height', false);
+            comp.toggleCss('ag-header-span-total', false);
             return;
         }
 
         const { numberOfParents, isSpanningTotal } = this.column.getColumnGroupPaddingInfo();
 
-        comp.addOrRemoveCssClass('ag-header-span-height', numberOfParents > 0);
+        comp.toggleCss('ag-header-span-height', numberOfParents > 0);
 
         const headerHeight = getColumnHeaderRowHeight(beans);
 
         if (numberOfParents === 0) {
             // if spanning has stopped then need to reset these values.
-            comp.addOrRemoveCssClass('ag-header-span-total', false);
+            comp.toggleCss('ag-header-span-total', false);
             eGui.style.setProperty('top', `0px`);
             eGui.style.setProperty('height', `${headerHeight}px`);
             return;
         }
 
-        comp.addOrRemoveCssClass('ag-header-span-total', isSpanningTotal);
+        comp.toggleCss('ag-header-span-total', isSpanningTotal);
 
         let extraHeight = 0;
         for (let i = 0; i < numberOfParents; i++) {
@@ -649,7 +649,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
     }
 
     private setActiveHeader(active: boolean): void {
-        this.comp.addOrRemoveCssClass('ag-header-active', active);
+        this.comp.toggleCss('ag-header-active', active);
     }
 
     public getAnchorElementForMenu(isFilter?: boolean): HTMLElement {

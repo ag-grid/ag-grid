@@ -51,9 +51,9 @@ export const AllGridCommunityModules: Record<`${CommunityModuleName}Module`, num
 };
 export const AllEnterpriseModules: Record<`${EnterpriseModuleName}Module`, number> = {
     AdvancedFilterModule: 200,
-    AllEnterpriseModule: 1357.11,
+    AllEnterpriseModule: 1368,
     CellSelectionModule: 53,
-    ClipboardModule: 46,
+    ClipboardModule: 44.6,
     ColumnMenuModule: 147,
     ColumnsToolPanelModule: 146,
     ContextMenuModule: 72,
@@ -61,7 +61,7 @@ export const AllEnterpriseModules: Record<`${EnterpriseModuleName}Module`, numbe
     FiltersToolPanelModule: 116,
     FindModule: 14.51,
     GridChartsModule: 67,
-    IntegratedChartsModule: 385.33,
+    IntegratedChartsModule: 392,
     GroupFilterModule: 93,
     ManualPinnedRowModule: 18.35,
     MasterDetailModule: 82,
@@ -133,7 +133,7 @@ const chartModules: ModuleTest[] = [
     },
 ];
 
-export const baseModule = { modules: [], expectedSize: 459.29 };
+export const baseModule = { modules: [], expectedSize: 465 };
 
 export const moduleCombinations: ModuleTest[] = [
     ...commonFeatureSets,

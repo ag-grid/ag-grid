@@ -86,7 +86,7 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
         childDestroyFuncs.push(() => this.destroyBean(this.primaryColsPanel));
 
         primaryColsPanel.init(true, mergedParams, 'toolPanelUi');
-        primaryColsPanel.addCssClass('ag-column-panel-column-select');
+        primaryColsPanel.addCss('ag-column-panel-column-select');
         this.appendChild(primaryColsPanel);
 
         if (colToolPanelFactory) {

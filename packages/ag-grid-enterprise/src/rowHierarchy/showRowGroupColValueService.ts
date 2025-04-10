@@ -1,4 +1,4 @@
-import type { AgColumn, IRowNode, IShowRowGroupColsValueService, NamedBean } from 'ag-grid-community';
+import type { AgColumn, IRowNode, IShowRowGroupColsValueService, NamedBean, RowNode } from 'ag-grid-community';
 import { BeanStub } from 'ag-grid-community';
 
 /**
@@ -17,7 +17,7 @@ export class ShowRowGroupColValueService extends BeanStub implements NamedBean, 
             if (!node.group) {
                 return null;
             }
-            return { displayedNode: node, value: node.groupData };
+            return { displayedNode: node, value: (node as RowNode).groupValue };
         }
 
         const valueSvc = this.beans.valueSvc;

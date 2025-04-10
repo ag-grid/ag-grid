@@ -1,6 +1,6 @@
 import { getType } from '@ag-website-shared/components/example-runner/utils/getType';
 import ReactJsonView from '@microlink/react-json-view';
-import { type FunctionComponent, useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { type FunctionComponent, useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 
 import styles from './ExampleLogger.module.scss';
 
@@ -26,7 +26,7 @@ interface Props {
 }
 
 const REACT_JSON_VIEW_CONFIG = {
-    collapsed: 1,
+    collapsed: true,
     name: null,
     enableClipboard: false,
     displayDataTypes: false,
@@ -62,6 +62,14 @@ const JSON_VIEWER_THEME = {
     base0F: 'var(--color-code-symbol)',
 };
 
+const MATCH_TYPE_REGEXP = /\[TYPE:([^\]]+)]/g;
+const REPLACEMENT_TYPES_MAP: Record<string, any> = {
+    undefined: undefined,
+    nan: NaN,
+    infinity: Infinity,
+    negativeInfinity: -Infinity,
+};
+
 function containsIgnoredMessage(log: Log) {
     return log.data.some((message) =>
         IGNORED_MESSAGES.some((ignoredMessage) => typeof message === 'string' && message.includes(ignoredMessage))
@@ -72,11 +80,52 @@ function getLoggableData(data: LogData[]) {
     return data.map((logItem: LogData) => {
         const consoleLogObject = logItem as LogObject;
         if (logItem && consoleLogObject.__consoleLogObject) {
-            return JSON.parse(consoleLogObject.safeString);
+            const parsedObject = JSON.parse(consoleLogObject.safeString);
+            return updateWithTypeValues(parsedObject);
         } else {
             return logItem;
         }
     });
+}
+
+function getReplacementType(typeValue: string) {
+    const [replacementType] = Array.from(typeValue.matchAll(MATCH_TYPE_REGEXP), (m) => m[1]);
+    return replacementType;
+}
+
+/**
+ * Recursively update the values of an object or array with their replacement types.
+ *
+ * Due to the limitations of `JSON.stringify`, we need to store some values as special strings
+ * in the form `[TYPE:<type>]`, where `<type>` is a type that can't be deserialised. This
+ * needs to be extracted and converted back to the original value.
+ */
+function updateWithTypeValues(value: any) {
+    const valueType = getType(value);
+
+    if (valueType === 'string') {
+        const replacementType = getReplacementType(value);
+
+        const output = replacementType ? REPLACEMENT_TYPES_MAP[replacementType] : value;
+        return output;
+    } else if (valueType === 'array') {
+        return value.map((item: any) => updateWithTypeValues(item));
+    } else if (valueType === 'object') {
+        const obj = { ...value };
+        for (const key in value) {
+            obj[key] = updateWithTypeValues(value[key]);
+        }
+
+        const sortedKeys = Object.keys(obj).sort();
+        const sortedObj = Object.fromEntries(
+            sortedKeys.map((key) => {
+                return [key, obj[key]];
+            })
+        );
+        return sortedObj;
+    } else {
+        return value;
+    }
 }
 
 const SimpleValueDisplay = ({ value }: { value: SimpleValue }) => {
@@ -115,6 +164,10 @@ export const ExampleLogger: FunctionComponent<Props> = ({ exampleName, bufferSiz
     const containerRef = useRef<HTMLPreElement>(null);
     const [logs, setLogs] = useState<Log[]>([]);
 
+    const clearLogs = useCallback(() => {
+        setLogs([]);
+    }, []);
+
     useEffect(() => {
         const updateLogs = (event: MessageEvent) => {
             const log = event.data;
@@ -145,7 +198,12 @@ export const ExampleLogger: FunctionComponent<Props> = ({ exampleName, bufferSiz
 
     return (
         <div className={styles.loggerOuter}>
-            <div className={styles.loggerHeader}>Console</div>
+            <div className={styles.loggerHeader}>
+                <div>Console</div>
+                <button className={`button-secondary ${styles.clearButton}`} onClick={clearLogs}>
+                    Clear
+                </button>
+            </div>
             <pre ref={containerRef} className={styles.loggerPre}>
                 {logs.length === 0 && <div>Console logs from the example shown here...</div>}
                 {logs.map((log, i) => (

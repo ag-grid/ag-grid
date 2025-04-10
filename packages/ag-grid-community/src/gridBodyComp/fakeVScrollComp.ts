@@ -43,7 +43,7 @@ export class FakeVScrollComp extends AbstractFakeScrollComp {
         const scrollbarWidth = vScrollShowing ? scrollVisibleSvc.getScrollbarWidth() || 0 : 0;
         const adjustedScrollbarWidth = scrollbarWidth === 0 && invisibleScrollbar ? 16 : scrollbarWidth;
 
-        this.addOrRemoveCssClass('ag-scrollbar-invisible', invisibleScrollbar);
+        this.toggleCss('ag-scrollbar-invisible', invisibleScrollbar);
         _setFixedWidth(this.getGui(), adjustedScrollbarWidth);
         _setFixedWidth(this.eViewport, adjustedScrollbarWidth);
         _setFixedWidth(this.eContainer, adjustedScrollbarWidth);

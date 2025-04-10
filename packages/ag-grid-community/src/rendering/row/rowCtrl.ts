@@ -53,7 +53,7 @@ export type RowCtrlInstanceId = BrandedType<string, 'RowCtrlInstanceId'>;
 
 export interface IRowComp {
     setDomOrder(domOrder: boolean): void;
-    addOrRemoveCssClass(cssClassName: string, on: boolean): void;
+    toggleCss(cssClassName: string, on: boolean): void;
     setCellCtrls(cellCtrls: CellCtrl[], useFlushSync: boolean): void;
     showFullWidth(compDetails: UserCompDetails): void;
     getFullWidthCellRenderer(): ICellRenderer | null | undefined;
@@ -267,7 +267,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         const comp = gui.rowComp;
 
         const initialRowClasses = this.getInitialRowClasses(gui.containerType);
-        initialRowClasses.forEach((name) => comp.addOrRemoveCssClass(name, true));
+        initialRowClasses.forEach((name) => comp.toggleCss(name, true));
 
         this.executeSlideAndFadeAnimations(gui);
 
@@ -314,7 +314,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
                 if (!this.isAlive()) {
                     return;
                 }
-                gui.rowComp.addOrRemoveCssClass('ag-after-created', true);
+                gui.rowComp.toggleCss('ag-after-created', true);
             });
         }
 
@@ -352,7 +352,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         const shouldFade = this.fadeInAnimation[containerType];
         if (shouldFade) {
             _batchCall(() => {
-                gui.rowComp.addOrRemoveCssClass('ag-opacity-zero', false);
+                gui.rowComp.toggleCss('ag-opacity-zero', false);
             });
             this.fadeInAnimation[containerType] = false;
         }
@@ -857,7 +857,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
     /** Should only ever be triggered on source rows (i.e. not on pinned siblings) */
     private onRowPinned(): void {
         for (const gui of this.allRowGuis) {
-            gui.rowComp.addOrRemoveCssClass('ag-row-pinned-source', !!this.rowNode.pinnedSibling);
+            gui.rowComp.toggleCss('ag-row-pinned-source', !!this.rowNode.pinnedSibling);
         }
     }
 
@@ -919,14 +919,14 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         this.allRowGuis.forEach((gui) => {
             const aboveOn = highlighted === 'Above';
             const belowOn = highlighted === 'Below';
-            gui.rowComp.addOrRemoveCssClass('ag-row-highlight-above', aboveOn);
-            gui.rowComp.addOrRemoveCssClass('ag-row-highlight-below', belowOn);
+            gui.rowComp.toggleCss('ag-row-highlight-above', aboveOn);
+            gui.rowComp.toggleCss('ag-row-highlight-below', belowOn);
         });
     }
 
     private postProcessRowDragging(): void {
         const dragging = this.rowNode.dragging;
-        this.allRowGuis.forEach((gui) => gui.rowComp.addOrRemoveCssClass('ag-row-dragging', dragging));
+        this.allRowGuis.forEach((gui) => gui.rowComp.toggleCss('ag-row-dragging', dragging));
     }
 
     private onDisplayedColumnsChanged(): void {
@@ -1304,8 +1304,8 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
             const classToAdd = 'ag-row-level-' + newLevel;
             const classToRemove = 'ag-row-level-' + this.rowLevel;
             this.allRowGuis.forEach((gui) => {
-                gui.rowComp.addOrRemoveCssClass(classToAdd, true);
-                gui.rowComp.addOrRemoveCssClass(classToRemove, false);
+                gui.rowComp.toggleCss(classToAdd, true);
+                gui.rowComp.toggleCss(classToRemove, false);
             });
         }
         this.rowLevel = newLevel;
@@ -1325,11 +1325,11 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
 
         if (this.firstRowOnPage !== newFirst) {
             this.firstRowOnPage = newFirst;
-            this.allRowGuis.forEach((gui) => gui.rowComp.addOrRemoveCssClass('ag-row-first', newFirst));
+            this.allRowGuis.forEach((gui) => gui.rowComp.toggleCss('ag-row-first', newFirst));
         }
         if (this.lastRowOnPage !== newLast) {
             this.lastRowOnPage = newLast;
-            this.allRowGuis.forEach((gui) => gui.rowComp.addOrRemoveCssClass('ag-row-last', newLast));
+            this.allRowGuis.forEach((gui) => gui.rowComp.toggleCss('ag-row-last', newLast));
         }
     }
 
@@ -1349,7 +1349,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         }
 
         cssClasses.forEach((classStr) => {
-            this.allRowGuis.forEach((c) => c.rowComp.addOrRemoveCssClass(classStr, true));
+            this.allRowGuis.forEach((c) => c.rowComp.toggleCss(classStr, true));
         });
     }
 
@@ -1357,10 +1357,10 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         this.beans.rowStyleSvc?.processRowClassRules(
             this.rowNode,
             (className: string) => {
-                this.allRowGuis.forEach((gui) => gui.rowComp.addOrRemoveCssClass(className, true));
+                this.allRowGuis.forEach((gui) => gui.rowComp.toggleCss(className, true));
             },
             (className: string) => {
-                this.allRowGuis.forEach((gui) => gui.rowComp.addOrRemoveCssClass(className, false));
+                this.allRowGuis.forEach((gui) => gui.rowComp.toggleCss(className, false));
             }
         );
     }
@@ -1599,7 +1599,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
                 const rowTop = this.roundRowTopToBounds(rowNode.rowTop!);
                 this.setRowTop(rowTop);
             } else {
-                this.allRowGuis.forEach((gui) => gui.rowComp.addOrRemoveCssClass('ag-opacity-zero', true));
+                this.allRowGuis.forEach((gui) => gui.rowComp.toggleCss('ag-opacity-zero', true));
             }
         }
 
@@ -1635,8 +1635,8 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
 
     private setFocusedClasses(gui?: RowGui): void {
         this.forEachGui(gui, (gui) => {
-            gui.rowComp.addOrRemoveCssClass('ag-row-focus', this.rowFocused);
-            gui.rowComp.addOrRemoveCssClass('ag-row-no-focus', !this.rowFocused);
+            gui.rowComp.toggleCss('ag-row-focus', this.rowFocused);
+            gui.rowComp.toggleCss('ag-row-no-focus', !this.rowFocused);
         });
     }
 
@@ -1806,8 +1806,8 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
 
         this.forEachGui(gui, (c) => {
             c.rowComp.setRowIndex(rowIndexStr);
-            c.rowComp.addOrRemoveCssClass('ag-row-even', rowIsEven);
-            c.rowComp.addOrRemoveCssClass('ag-row-odd', !rowIsEven);
+            c.rowComp.toggleCss('ag-row-even', rowIsEven);
+            c.rowComp.toggleCss('ag-row-odd', !rowIsEven);
             _setAriaRowIndex(c.element, ariaRowIndex);
         });
     }

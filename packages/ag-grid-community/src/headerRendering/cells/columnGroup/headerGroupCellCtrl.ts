@@ -182,8 +182,8 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
             }
         }
 
-        this.comp.addOrRemoveCssClass('ag-header-highlight-before', beforeOn);
-        this.comp.addOrRemoveCssClass('ag-header-highlight-after', afterOn);
+        this.comp.toggleCss('ag-header-highlight-before', beforeOn);
+        this.comp.toggleCss('ag-header-highlight-after', afterOn);
     }
 
     protected resizeHeader(delta: number, shiftKey: boolean): void {
@@ -317,7 +317,7 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
             }
         }
 
-        classes.forEach((c) => this.comp.addOrRemoveCssClass(c, true));
+        classes.forEach((c) => this.comp.toggleCss(c, true));
     }
 
     private setupMovingCss(compBean: BeanStub): void {
@@ -328,7 +328,7 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
         // function adds or removes the moving css, based on if the col is moving.
         // this is what makes the header go dark when it is been moved (gives impression to
         // user that the column was picked up).
-        const listener = () => this.comp.addOrRemoveCssClass('ag-header-cell-moving', column.isMoving());
+        const listener = () => this.comp.toggleCss('ag-header-cell-moving', column.isMoving());
 
         leafColumns.forEach((col) => {
             compBean.addManagedListeners(col, { movingChanged: listener });

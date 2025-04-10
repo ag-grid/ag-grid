@@ -52,7 +52,7 @@ const CSS_CELL_NOT_INLINE_EDITING = 'ag-cell-not-inline-editing';
 const CSS_CELL_WRAP_TEXT = 'ag-cell-wrap-text';
 
 export interface ICellComp {
-    addOrRemoveCssClass(cssClassName: string, on: boolean): void;
+    toggleCss(cssClassName: string, on: boolean): void;
     setUserStyles(styles: CellStyle): void;
     getFocusableElement(): HTMLElement;
 
@@ -685,7 +685,7 @@ export class CellCtrl extends BeanStub {
             return;
         }
         const firstRightPinned = this.column.isFirstRightPinned();
-        this.comp.addOrRemoveCssClass(CSS_CELL_FIRST_RIGHT_PINNED, firstRightPinned);
+        this.comp.toggleCss(CSS_CELL_FIRST_RIGHT_PINNED, firstRightPinned);
     }
 
     public onLastLeftPinnedChanged(): void {
@@ -693,7 +693,7 @@ export class CellCtrl extends BeanStub {
             return;
         }
         const lastLeftPinned = this.column.isLastLeftPinned();
-        this.comp.addOrRemoveCssClass(CSS_CELL_LAST_LEFT_PINNED, lastLeftPinned);
+        this.comp.toggleCss(CSS_CELL_LAST_LEFT_PINNED, lastLeftPinned);
     }
 
     /**
@@ -732,7 +732,7 @@ export class CellCtrl extends BeanStub {
 
         const cellFocused = this.isCellFocused();
 
-        this.comp.addOrRemoveCssClass(CSS_CELL_FOCUS, cellFocused);
+        this.comp.toggleCss(CSS_CELL_FOCUS, cellFocused);
 
         // see if we need to force browser focus - this can happen if focus is programmatically set
         if (cellFocused && event && event.forceBrowserFocus) {
@@ -776,15 +776,15 @@ export class CellCtrl extends BeanStub {
     // CSS Classes that only get applied once, they never change
     protected applyStaticCssClasses(): void {
         const { comp } = this;
-        comp.addOrRemoveCssClass(CSS_CELL, true);
-        comp.addOrRemoveCssClass(CSS_CELL_NOT_INLINE_EDITING, true);
+        comp.toggleCss(CSS_CELL, true);
+        comp.toggleCss(CSS_CELL_NOT_INLINE_EDITING, true);
 
         // normal cells fill the height of the row. autoHeight cells have no height to let them
         // fit the height of content.
 
         const autoHeight = this.column.isAutoHeight() == true;
-        comp.addOrRemoveCssClass(CSS_AUTO_HEIGHT, autoHeight);
-        comp.addOrRemoveCssClass(CSS_NORMAL_HEIGHT, !autoHeight);
+        comp.toggleCss(CSS_AUTO_HEIGHT, autoHeight);
+        comp.toggleCss(CSS_NORMAL_HEIGHT, !autoHeight);
     }
 
     public onColumnHover(): void {
@@ -815,7 +815,7 @@ export class CellCtrl extends BeanStub {
     private setWrapText(): void {
         const value = this.column.getColDef().wrapText == true;
 
-        this.comp.addOrRemoveCssClass(CSS_CELL_WRAP_TEXT, value);
+        this.comp.toggleCss(CSS_CELL_WRAP_TEXT, value);
     }
 
     public dispatchCellContextMenuEvent(event: Event | null) {

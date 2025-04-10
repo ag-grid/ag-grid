@@ -73,7 +73,7 @@ export interface IGroupCellRenderer {
     setCheckboxSpacing(add: boolean): void;
     setExpandedDisplayed(value: boolean): void;
     setContractedDisplayed(value: boolean): void;
-    addOrRemoveCssClass(cssClassName: string, on: boolean): void;
+    toggleCss(cssClassName: string, on: boolean): void;
 }
 
 export interface IGroupCellRendererCtrl {

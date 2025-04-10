@@ -1,7 +1,10 @@
 @use 'design-system' as *;
 
 .loggerOuter {
+    min-height: 154px;
     height: 154px;
+    max-height: 700px;
+    resize: vertical;
     display: flex;
     flex-direction: column;
     margin-top: $spacing-size-4;
@@ -16,6 +19,13 @@
     font-size: var(--text-fs-xs);
     font-weight: var(--text-semibold);
     border-bottom: 1px solid var(--color-border-secondary);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    button {
+        padding: 0.08em 0.5em 0;
+    }
 }
 
 .loggerPre {
@@ -111,4 +121,9 @@
             }
         }
     }
+}
+
+.clearButton {
+    font-family: var(--text-monospace-font-family);
+    color: var(--color-button-secondary-fg);
 }

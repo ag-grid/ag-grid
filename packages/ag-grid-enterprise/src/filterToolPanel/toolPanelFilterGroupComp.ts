@@ -56,7 +56,7 @@ export class ToolPanelFilterGroupComp extends Component {
         const { filterGroupComp, depth, childFilterComps, gos } = this;
         filterGroupComp.setAlignItems('stretch');
 
-        filterGroupComp.addCssClass(`ag-filter-toolpanel-group-level-${depth}`);
+        filterGroupComp.addCss(`ag-filter-toolpanel-group-level-${depth}`);
         filterGroupComp.getGui().style.setProperty('--ag-indentation-level', String(depth));
         filterGroupComp.addCssClassToTitleBar(`ag-filter-toolpanel-group-level-${depth}-header`);
 
@@ -197,7 +197,7 @@ export class ToolPanelFilterGroupComp extends Component {
         const columns = this.getColumns();
 
         const anyChildFiltersActive = () => columns.some((col) => col.isFilterActive());
-        this.filterGroupComp.addOrRemoveCssClass('ag-has-filter', anyChildFiltersActive());
+        this.filterGroupComp.toggleCss('ag-has-filter', anyChildFiltersActive());
     }
 
     private onFilterOpened(event: FilterOpenedEvent): void {
