@@ -181,7 +181,7 @@ export class ColumnFilterService
         this.model = {
             ...this.initialFilterModel,
         };
-        if (!this.gos.getAsBool('enableFilterEvaluators')) {
+        if (!this.gos.get('enableFilterEvaluators')) {
             delete this.evaluatorMap['agMultiColumnFilter'];
         }
     }
@@ -1073,7 +1073,7 @@ export class ColumnFilterService
         const defaultFloatingFilterType =
             _getDefaultFloatingFilterType(frameworkOverrides, colDef, () => this.getDefaultFloatingFilter(column)) ??
             'agReadOnlyFloatingFilter';
-        const isReactive = this.gos.getAsBool('enableFilterEvaluators');
+        const isReactive = this.gos.get('enableFilterEvaluators');
         const filterParams = _mergeFilterParamsWithApplicationProvidedParams(
             userCompFactory,
             colDef,

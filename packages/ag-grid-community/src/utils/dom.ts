@@ -209,32 +209,35 @@ export function _getElementRectWithOffset(el: HTMLElement): {
     };
 }
 
+// In Right-to-Left (RTL) contexts, Firefox and Safari use negative scrollLeft values,
+// while Chrome and Edge use positive values (similar to Left-to-Right), leading to
+// inconsistent scrollbar behavior across browsers.
 export function _isRtlNegativeScroll(): boolean {
     if (typeof rtlNegativeScroll === 'boolean') {
         return rtlNegativeScroll;
     }
 
     const template = document.createElement('div');
-    template.style.direction = 'rtl';
-    template.style.width = '10px';
-    template.style.height = '5px';
-    template.style.position = 'fixed';
-    template.style.top = '0px';
-    template.style.overflow = 'hidden';
+    const templateStyle = template.style;
+    templateStyle.direction = 'rtl';
+    templateStyle.width = '10px';
+    templateStyle.height = '10px';
+    templateStyle.position = 'fixed';
+    templateStyle.top = '0px';
+    templateStyle.left = '0px';
+    templateStyle.overflow = 'hidden';
     template.dir = 'rtl';
 
-    const spanElement: ElementParams = { tag: 'span', attrs: { style: 'display: inline-block; width: 1px' } };
     const child = _createElement({
         tag: 'div',
-        attrs: { style: 'width: 20px' },
-        children: [spanElement, spanElement],
+        attrs: { style: 'position: absolute; right: 20px; width: 10px; height: 10px;' },
     });
-    template.appendChild(child);
 
+    template.appendChild(child);
     document.body.appendChild(template);
 
-    template.scrollLeft = 1;
-    rtlNegativeScroll = Math.floor(template.scrollLeft) === 0;
+    template.scrollLeft = -20;
+    rtlNegativeScroll = template.scrollLeft < 0;
     document.body.removeChild(template);
 
     return rtlNegativeScroll;
@@ -247,6 +250,9 @@ export function _getScrollLeft(element: HTMLElement, rtl: boolean): number {
         // Absolute value - for FF that reports RTL scrolls in negative numbers
         scrollLeft = Math.abs(scrollLeft);
 
+        // even though chrome is always meant to have positive scroll
+        // it is known to flip-flop this behavior across major versions
+        // so we keep this check just in case.
         if (_isBrowserChrome() && !_isRtlNegativeScroll()) {
             scrollLeft = element.scrollWidth - element.getBoundingClientRect().width - scrollLeft;
         }

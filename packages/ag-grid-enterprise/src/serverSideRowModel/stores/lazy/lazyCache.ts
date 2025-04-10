@@ -128,7 +128,7 @@ export class LazyCache extends BeanStub {
 
         this.defaultNodeIdPrefix = this.blockUtils.createNodeIdPrefix(this.store.getParentNode());
         this.getRowIdFunc = _getRowIdCallback(this.gos);
-        this.isMasterDetail = this.gos.getAsBool('masterDetail');
+        this.isMasterDetail = this.gos.get('masterDetail');
     }
 
     public override destroy() {
@@ -798,7 +798,7 @@ export class LazyCache extends BeanStub {
     }
 
     private isNodeCached(node: RowNode): boolean {
-        const isUnbalancedNode = this.gos.getAsBool('groupAllowUnbalanced') && node.key === '';
+        const isUnbalancedNode = this.gos.get('groupAllowUnbalanced') && node.key === '';
         return (node.isExpandable() && node.expanded) || this.isNodeFocused(node) || isUnbalancedNode;
     }
 

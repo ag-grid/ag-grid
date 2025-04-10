@@ -221,8 +221,8 @@ data() {
 The following example shows how you can configure individual grids using a combination of shared Global registrations as well as individual grid module registration. Note the following:
 
 * Globally registered modules:  `[ClientSideRowModelModule, ColumnMenuModule, ContextMenuModule]`.
-* Left Grid individually registers: `[SetFilterModule, ClipboardModule, CsvExportModule]`
-* Right Grid individually registers: `[TextFilterModule, NumberFilterModule, CsvExportModule, ExcelExportModule]`
+* Left Grid individually registers: `[ClipboardModule, CsvExportModule, SetFilterModule]`
+* Right Grid individually registers: `[ CsvExportModule, ExcelExportModule, NumberFilterModule, TextFilterModule]`
 
 To see the difference in features open the context menu and open the column filter:
 
@@ -231,6 +231,18 @@ To see the difference in features open the context menu and open the column filt
 * The left grid uses the Set Filter while the right grid uses the Text Filter or Number Filter depending on the cell data type.
 
 {% gridExampleRunner title="Grids with Individual Registration" name="individual-registration" /%}
+
+### Is Module Registered
+
+To check if a specific module has been registered with a grid instance use the `api.isModuleRegistered(moduleName)` method.
+
+```js
+// Check if the SetFilter module is registered
+const isRegistered = api.isModuleRegistered('SetFilterModule');
+```
+
+{% apiDocumentation source="grid-api/api.json" section="miscellaneous" names=["isModuleRegistered"] /%}
+
 
 {% if isFramework("angular") %}
 ## Angular CLI Builders

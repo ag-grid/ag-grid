@@ -1,4 +1,6 @@
 import type { RowNode } from '../entities/rowNode';
+import type { Column } from './iColumn';
+import type { IRowNode } from './iRowNode';
 
 export interface IFooterService {
     addTotalRows(
@@ -18,4 +20,6 @@ export interface IFooterService {
     ): number;
 
     getTotalValue(value: any): string;
+    doesCellShowTotalPrefix(node: IRowNode, col: any): boolean;
+    applyTotalPrefix(value: any, formattedValue: string | null, node: IRowNode, col: Column): string;
 }

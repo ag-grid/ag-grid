@@ -68,7 +68,7 @@ export function _shouldMaintainColumnOrder(gos: GridOptionsService, isPivotColum
     if (isPivotColumns) {
         return !gos.get('enableStrictPivotColumnOrder');
     }
-    return gos.getAsBool('maintainColumnOrder');
+    return gos.get('maintainColumnOrder');
 }
 
 export function _getRowHeightForNode(
@@ -355,7 +355,7 @@ export function _getGroupTotalRowCallback(
 }
 
 export function _isGroupMultiAutoColumn(gos: GridOptionsService) {
-    const isHideOpenParents = gos.getAsBool('groupHideOpenParents');
+    const isHideOpenParents = !!gos.get('groupHideOpenParents');
     if (isHideOpenParents) {
         return true;
     }
@@ -486,7 +486,7 @@ export function _getSuppressMultiRanges(gos: GridOptionsService): boolean {
     const useNewAPI = selection !== undefined;
 
     if (!useNewAPI) {
-        return gos.getAsBool('suppressMultiRangeSelection');
+        return gos.get('suppressMultiRangeSelection');
     }
 
     return typeof selection !== 'boolean' ? selection?.suppressMultiRanges ?? false : false;
@@ -496,7 +496,7 @@ export function _isCellSelectionEnabled(gos: GridOptionsService): boolean {
     const selection = gos.get('cellSelection');
     const useNewAPI = selection !== undefined;
 
-    return useNewAPI ? !!selection : gos.getAsBool('enableRangeSelection');
+    return useNewAPI ? !!selection : gos.get('enableRangeSelection');
 }
 
 export function _getFillHandle(gos: GridOptionsService): FillHandleOptions | undefined {
@@ -598,7 +598,7 @@ export function _getEnableSelectionWithoutKeys(gos: GridOptionsService): boolean
     const selection = gos.get('rowSelection');
 
     if (typeof selection === 'string') {
-        return gos.getAsBool('rowMultiSelectWithClick');
+        return gos.get('rowMultiSelectWithClick');
     }
 
     return selection?.enableSelectionWithoutKeys ?? false;

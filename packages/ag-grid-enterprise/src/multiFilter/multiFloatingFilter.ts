@@ -90,7 +90,7 @@ export class MultiFloatingFilterComp extends Component implements IFloatingFilte
                 const floatingFilter = this.floatingFilters[index] as IFloatingFilterComp<IFilter>;
                 floatingFilter.refresh?.(floatingFilterParams);
             });
-            if (this.gos.getAsBool('enableFilterEvaluators')) {
+            if (this.gos.get('enableFilterEvaluators')) {
                 const reactiveParams = params as unknown as FloatingFilterDisplayParams;
                 if (reactiveParams.model == null) {
                     this.floatingFilters.forEach((filter, i) => {
@@ -143,7 +143,7 @@ export class MultiFloatingFilterComp extends Component implements IFloatingFilte
                 // return the parent model for the specific filter
                 currentParentModel: () => currentParentModel()?.filterModels?.[index] ?? null,
             };
-            if (this.gos.getAsBool('enableFilterEvaluators')) {
+            if (this.gos.get('enableFilterEvaluators')) {
                 const reactiveParams = floatingFilterParams as unknown as FloatingFilterDisplayParams;
                 reactiveParams.model = reactiveParams.model?.filterModels?.[index] ?? null;
                 const onModelChange = reactiveParams.onModelChange;

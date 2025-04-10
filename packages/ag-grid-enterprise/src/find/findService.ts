@@ -1,6 +1,4 @@
 import type {
-    AgColumn,
-    ColDef,
     Column,
     FindCellValueParams,
     FindDetailCellRendererParams,
@@ -8,9 +6,7 @@ import type {
     FindGroupRowRendererParams,
     FindMatch,
     FindPart,
-    GetFindTextFunc,
     GridApi,
-    ICellRendererParams,
     IClientSideRowModel,
     IFindService,
     IRowNode,
@@ -37,7 +33,6 @@ import {
     _isRemovedSingleChildrenGroup,
     _shouldRowBeRendered,
 } from '../rowHierarchy/flattenUtils';
-import { _getGroupValue } from '../rowHierarchy/rowHierarchyUtils';
 
 function defaultCaseFormat(value?: string | null): string | undefined {
     return value?.toLocaleLowerCase();
@@ -249,11 +244,6 @@ export class FindService extends BeanStub implements NamedBean, IFindService {
         }
     }
 
-    // footer text is created in the group cell renderer rather the value service, so need to have specific handling for footers
-    public setupGroupCol(colDef: ColDef): void {
-        colDef.getFindText = this.createGroupFindText();
-    }
-
     // when a detail grid is created, we need to sync the matches
     public registerDetailGrid(node: IRowNode, api: GridApi): void {
         const gos = this.gos;
@@ -303,23 +293,6 @@ export class FindService extends BeanStub implements NamedBean, IFindService {
         if (isSearchDetail()) {
             api.setGridOption('findSearchValue', gos.get('findSearchValue'));
         }
-    }
-
-    public getDisplayValue(params: ICellRendererParams): string | undefined {
-        const { node, valueFormatted, value, column } = params;
-        const beans = this.beans;
-        if (node.footer) {
-            return beans.footerSvc?.getTotalValue(valueFormatted ?? value);
-        }
-        if (valueFormatted != null) {
-            return valueFormatted;
-        }
-        if (column?.getColDef().cellRenderer === 'agGroupCellRenderer' || (!column && node.group)) {
-            // inner renderer in a group column or group row - get the group value
-            const displayedNode = (column ? beans.valueSvc.getDisplayedNode(node, column as AgColumn) : node) ?? node;
-            return _getGroupValue(column, node as RowNode, displayedNode as RowNode, beans) ?? value;
-        }
-        return value;
     }
 
     // updates all the matches
@@ -459,31 +432,41 @@ export class FindService extends BeanStub implements NamedBean, IFindService {
                 }
                 return;
             }
+
+            // full width group rows
             if (node.group && !node.footer && _isGroupUseEntireRow(gos, pivotMode)) {
-                // full width group
-                const { groupValue, rowGroupColumn } = node;
                 let valueToFind: string | null;
-                if (rowGroupColumn) {
-                    const getFindText =
-                        (groupRowRendererParams as FindGroupRowRendererParams)?.getFindText ??
-                        this.createGroupFindText();
+                const getFindText = (groupRowRendererParams as FindGroupRowRendererParams)?.getFindText;
+                if (getFindText) {
+                    const value = valueSvc.getValueForDisplay(undefined, node).value;
                     valueToFind = getFindText(
                         _addGridCommonParams(gos, {
-                            value: groupValue,
+                            value,
                             node,
                             data,
                             column: null,
                             colDef: null,
-                            getValueFormatted: () => valueSvc.formatValue(rowGroupColumn, node, groupValue),
+                            getValueFormatted: () => {
+                                const { valueFormatted } = valueSvc.getValueForDisplay(undefined, node, true);
+                                return valueFormatted;
+                            },
                         })
                     );
                 } else {
-                    valueToFind = groupValue;
+                    const { value, valueFormatted } = valueSvc.getValueForDisplay(undefined, node, true);
+                    valueToFind = valueFormatted ?? value;
                 }
+
                 const numMatches = getMatchesForValue(findSearchValue, caseFormat, valueToFind);
                 addMatches(node, null, numMatches);
                 return;
             }
+
+            const nodeWillBeHiddenByOpenParent =
+                node.level > 0 &&
+                gos.get('groupHideOpenParents') &&
+                node.parent?.childrenAfterSort?.[0] === node &&
+                !node.parent?.expanded;
             for (const column of allCols) {
                 if (isRowNumberCol(column) || isColumnSelectionCol(column)) {
                     continue;
@@ -493,15 +476,19 @@ export class FindService extends BeanStub implements NamedBean, IFindService {
                     // only match on first row of span
                     continue;
                 }
-                // we don't want to call `getValueForDisplay` if the node is not actually displayed,
-                // as this can cause duplicate matches for things like `groupHideOpenParents`
-                const value = node.displayed
-                    ? valueSvc.getValueForDisplay(column, node)
-                    : valueSvc.getValue(column, node);
+
+                // if node will be hidden by open parent, don't match on showRowGroup cols
+                // as the cell does not have that value yet
+                if (column.colDef.showRowGroup && nodeWillBeHiddenByOpenParent) {
+                    continue;
+                }
+
                 let valueToFind: string | null;
+
                 const colDef = column.colDef;
                 const getFindText = colDef.getFindText;
                 if (getFindText) {
+                    const value = valueSvc.getValueForDisplay(column, node).value;
                     valueToFind = getFindText(
                         _addGridCommonParams(gos, {
                             value,
@@ -509,16 +496,21 @@ export class FindService extends BeanStub implements NamedBean, IFindService {
                             data,
                             column,
                             colDef,
-                            getValueFormatted: () => valueSvc.formatValue(column, node, value),
+                            getValueFormatted: () => {
+                                const { valueFormatted } = valueSvc.getValueForDisplay(column, node, true);
+                                return valueFormatted;
+                            },
                         })
                     );
                 } else {
-                    const valueFormatted = valueSvc.formatValue(column, node, value);
+                    const { value, valueFormatted } = valueSvc.getValueForDisplay(column, node, true);
                     valueToFind = valueFormatted ?? value;
                 }
+
                 const numMatches = getMatchesForValue(findSearchValue, caseFormat, valueToFind);
                 addMatches(node, column, numMatches);
             }
+
             if (node.master && checkMasterDetail) {
                 // add detail node after master has been processed
                 const detailNode = node.detailNode;
@@ -921,27 +913,6 @@ export class FindService extends BeanStub implements NamedBean, IFindService {
         return activeMatch != null && activeMatch.node === node && activeMatch.column === column
             ? activeMatch.numInMatch
             : 0;
-    }
-
-    private createGroupFindText(): GetFindTextFunc {
-        const beans = this.beans;
-        return (params) => {
-            const { node, column, value } = params;
-            const displayedNode = (column ? beans.valueSvc.getDisplayedNode(node, column as AgColumn) : node) ?? node;
-            const rowGroupColumn = displayedNode.rowGroupColumn;
-            const formatColumn =
-                rowGroupColumn && column?.isRowGroupDisplayed(rowGroupColumn.getId()) ? rowGroupColumn : column;
-            const valueFormatted = formatColumn
-                ? beans.valueSvc.formatValue(formatColumn as AgColumn, displayedNode, value)
-                : undefined;
-            if (node.footer) {
-                return beans.footerSvc?.getTotalValue(valueFormatted ?? value);
-            }
-            if (valueFormatted != null) {
-                return valueFormatted;
-            }
-            return _getGroupValue(column, node as RowNode, displayedNode as RowNode, beans) ?? value;
-        };
     }
 
     public override destroy(): void {

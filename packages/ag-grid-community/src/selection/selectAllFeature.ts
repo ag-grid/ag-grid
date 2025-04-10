@@ -50,12 +50,14 @@ export class SelectAllFeature extends BeanStub {
         _setAriaRole(cbSelectAll.getGui(), 'presentation');
         this.showOrHideSelectAll();
 
+        const updateStateOfCheckbox = this.updateStateOfCheckbox.bind(this);
+
         this.addManagedEventListeners({
             newColumnsLoaded: () => this.showOrHideSelectAll(),
             displayedColumnsChanged: this.onDisplayedColumnsChanged.bind(this),
-            selectionChanged: this.onSelectionChanged.bind(this),
-            paginationChanged: this.onSelectionChanged.bind(this),
-            modelUpdated: this.onModelChanged.bind(this),
+            selectionChanged: updateStateOfCheckbox,
+            paginationChanged: updateStateOfCheckbox,
+            modelUpdated: updateStateOfCheckbox,
         });
 
         this.addManagedPropertyListener('rowSelection', ({ currentValue, previousValue }) => {
@@ -66,6 +68,7 @@ export class SelectAllFeature extends BeanStub {
             if (getSelectAll(currentValue) !== getSelectAll(previousValue)) {
                 this.showOrHideSelectAll();
             }
+            this.updateStateOfCheckbox();
         });
 
         this.addManagedListeners(cbSelectAll, { fieldValueChanged: this.onCbSelectAll.bind(this) });
@@ -95,22 +98,8 @@ export class SelectAllFeature extends BeanStub {
         this.refreshSelectAllLabel(fromColumnMoved);
     }
 
-    private onModelChanged(): void {
-        if (!this.cbSelectAllVisible) {
-            return;
-        }
-        this.updateStateOfCheckbox();
-    }
-
-    private onSelectionChanged(): void {
-        if (!this.cbSelectAllVisible) {
-            return;
-        }
-        this.updateStateOfCheckbox();
-    }
-
     private updateStateOfCheckbox(): void {
-        if (this.processingEventFromCheckbox) {
+        if (!this.cbSelectAllVisible || this.processingEventFromCheckbox) {
             return;
         }
 

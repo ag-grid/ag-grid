@@ -55,7 +55,7 @@ export class SetFloatingFilterComp<V = string> extends Component implements IFlo
 
         this.eFloatingFilterText.setInputAriaLabel(`${displayName} ${translate('ariaFilterInput', 'Filter Input')}`);
 
-        if (this.gos.getAsBool('enableFilterEvaluators')) {
+        if (this.gos.get('enableFilterEvaluators')) {
             const reactiveParams = params as unknown as FloatingFilterDisplayParams;
             this.updateFloatingFilterText(reactiveParams.model);
         }
@@ -95,7 +95,7 @@ export class SetFloatingFilterComp<V = string> extends Component implements IFlo
                     ),
             });
         };
-        if (this.gos.getAsBool('enableFilterEvaluators')) {
+        if (this.gos.get('enableFilterEvaluators')) {
             addListener(
                 (this.params as unknown as FloatingFilterDisplayParams).getEvaluator() as SetFilterEvaluator<V>
             );
@@ -116,7 +116,7 @@ export class SetFloatingFilterComp<V = string> extends Component implements IFlo
         if (parentModel == null) {
             this.eFloatingFilterText.setValue('');
         } else {
-            if (this.gos.getAsBool('enableFilterEvaluators')) {
+            if (this.gos.get('enableFilterEvaluators')) {
                 this.eFloatingFilterText.setValue(
                     (this.params as unknown as FloatingFilterDisplayParams)
                         .getEvaluator()

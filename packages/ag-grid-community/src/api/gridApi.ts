@@ -42,6 +42,7 @@ import type { ExcelExportMultipleSheetParams, ExcelExportParams } from '../inter
 import type { FilterModel, IFilter } from '../interfaces/iFilter';
 import type { IFiltersToolPanel } from '../interfaces/iFiltersToolPanel';
 import type { FindCellParams, FindCellValueParams, FindMatch, FindPart } from '../interfaces/iFind';
+import type { AgModuleName } from '../interfaces/iModule';
 import type { RedrawRowsParams } from '../interfaces/iRedrawRowsParams';
 import type { IRowNode, RowPinnedType } from '../interfaces/iRowNode';
 import type { LoadSuccessParams, RefreshServerSideParams } from '../interfaces/iServerSideRowModel';
@@ -109,6 +110,11 @@ export interface _CoreGridApi<TData = any> {
      * Updates the provided subset of gridOptions with the provided values. (Cannot be used on `Initial` properties.)
      */
     updateGridOptions<TDataUpdate extends TData>(options: ManagedGridOptions<TDataUpdate>): void;
+
+    /**
+     * Check if a Module is registered with the current grid instance via its equivalent string name.
+     */
+    isModuleRegistered(moduleName: AgModuleName): boolean;
 }
 
 export interface _RowSelectionGridApi<TData = any> {

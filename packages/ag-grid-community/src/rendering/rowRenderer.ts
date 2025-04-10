@@ -180,7 +180,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
 
         this.initialiseCache();
         this.printLayout = _isDomLayout(gos, 'print');
-        this.embedFullWidthRows = this.printLayout || gos.getAsBool('embedFullWidthRows');
+        this.embedFullWidthRows = this.printLayout || gos.get('embedFullWidthRows');
 
         this.redrawAfterModelUpdate();
     }
@@ -402,7 +402,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
 
     private onDomLayoutChanged(): void {
         const printLayout = _isDomLayout(this.gos, 'print');
-        const embedFullWidthRows = printLayout || this.gos.getAsBool('embedFullWidthRows');
+        const embedFullWidthRows = printLayout || this.gos.get('embedFullWidthRows');
 
         // if moving towards or away from print layout, means we need to destroy all rows, as rows are not laid
         // out using absolute positioning when doing print layout

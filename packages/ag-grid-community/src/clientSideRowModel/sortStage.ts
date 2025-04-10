@@ -61,7 +61,7 @@ export class SortStage extends BeanStub implements NamedBean, IRowNodeStage {
             // on if transactions are present. it's off for now so that we can
             // selectively turn it on and test it with some select users before
             // rolling out to everyone.
-            this.gos.getAsBool('deltaSort');
+            this.gos.get('deltaSort');
 
         const sortContainsGroupColumns = sortOptions.some(({ column }) => {
             const isSortingCoupled = _isColumnsSortingCoupledToGroup(beans.gos);

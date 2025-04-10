@@ -44,7 +44,7 @@ export class ClientSideValuesExtractor<V> extends BeanStub {
         const treeData = this.isTreeData();
         const treeDataOrGrouping = this.isTreeDataOrGrouping();
         const groupedCols = this.beans.rowGroupColsSvc?.columns;
-        const groupAllowUnbalanced = this.gos.getAsBool('groupAllowUnbalanced');
+        const groupAllowUnbalanced = this.gos.get('groupAllowUnbalanced');
 
         const addValue = (unformattedKey: string | null, value: V | null | undefined) => {
             const formattedKey = this.caseFormat(unformattedKey);

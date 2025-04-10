@@ -18,7 +18,7 @@ export const MultiFilterModule: _ModuleWithoutApi = {
     userComponents: {
         agMultiColumnFilter: {
             getComp: (beans) =>
-                beans.gos.getAsBool('enableFilterEvaluators')
+                beans.gos.get('enableFilterEvaluators')
                     ? {
                           classImp: MultiFilterUi,
                           params: {

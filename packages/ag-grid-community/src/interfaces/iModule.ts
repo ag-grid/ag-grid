@@ -188,6 +188,94 @@ export type EnterpriseModuleName =
     | 'TreeData'
     | 'ViewportRowModel';
 
+/** The names of all publicly available AG Grid modules */
+
+export type AgModuleName =
+    | 'AlignedGridsModule'
+    | 'AllCommunityModule'
+    | 'CellApiModule'
+    | 'CellStyleModule'
+    | 'CheckboxEditorModule'
+    | 'ClientSideRowModelApiModule'
+    | 'ClientSideRowModelModule'
+    | 'ColumnApiModule'
+    | 'ColumnAutoSizeModule'
+    | 'ColumnHoverModule'
+    | 'CsvExportModule'
+    | 'CustomEditorModule'
+    | 'CustomFilterModule'
+    | 'DateEditorModule'
+    | 'DateFilterModule'
+    | 'DragAndDropModule'
+    | 'EventApiModule'
+    | 'ExternalFilterModule'
+    | 'GridStateModule'
+    | 'HighlightChangesModule'
+    | 'InfiniteRowModelModule'
+    | 'LargeTextEditorModule'
+    | 'LocaleModule'
+    | 'NumberEditorModule'
+    | 'NumberFilterModule'
+    | 'PaginationModule'
+    | 'PinnedRowModule'
+    | 'QuickFilterModule'
+    | 'RenderApiModule'
+    | 'RowApiModule'
+    | 'RowAutoHeightModule'
+    | 'RowDragModule'
+    | 'RowSelectionModule'
+    | 'RowStyleModule'
+    | 'ScrollApiModule'
+    | 'SelectEditorModule'
+    | 'TextEditorModule'
+    | 'TextFilterModule'
+    | 'TooltipModule'
+    | 'UndoRedoEditModule'
+    | 'ValidationModule'
+    | 'ValueCacheModule'
+    | 'CellSpanModule'
+    // Enterprise
+    | 'AdvancedFilterModule'
+    | 'AllEnterpriseModule'
+    | 'CellSelectionModule'
+    | 'ClipboardModule'
+    | 'ColumnMenuModule'
+    | 'ColumnsToolPanelModule'
+    | 'ContextMenuModule'
+    | 'ExcelExportModule'
+    | 'FiltersToolPanelModule'
+    | 'FindModule'
+    | 'GridChartsModule'
+    | 'IntegratedChartsModule'
+    | 'GroupFilterModule'
+    | 'ManualPinnedRowModule'
+    | 'MasterDetailModule'
+    | 'MenuModule'
+    | 'MultiFilterModule'
+    | 'PivotModule'
+    | 'RangeSelectionModule'
+    | 'RichSelectModule'
+    | 'RowNumbersModule'
+    | 'RowGroupingModule'
+    | 'RowGroupingPanelModule'
+    | 'ServerSideRowModelApiModule'
+    | 'ServerSideRowModelModule'
+    | 'SetFilterModule'
+    | 'SideBarModule'
+    | 'SparklinesModule'
+    | 'StatusBarModule'
+    | 'TreeDataModule'
+    | 'ViewportRowModelModule';
+
+// Types to ensure that our AgModuleName type with Module suffix is equivalent to the internal module names based on Community and Enterprise module names
+type AgModuleNameInternal = `${CommunityModuleName | EnterpriseModuleName}Module`;
+type ValidateTheSame = Exclude<AgModuleName, AgModuleNameInternal>;
+type ValidateTheSame2 = Exclude<AgModuleNameInternal, AgModuleName>;
+type ModuleTypesEquivalent = ValidateTheSame | ValidateTheSame2 extends never ? true : false;
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const validateTheSame: ModuleTypesEquivalent = true;
+
+/** INTERNAL: All public and internal module names */
 export type ModuleName = InternalModuleName | CommunityModuleName | EnterpriseModuleName;
 
 /** These are the internal modules that we have mappings for to convert into exported modules */

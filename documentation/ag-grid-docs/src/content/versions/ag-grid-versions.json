@@ -1,5 +1,9 @@
 [
     {
+        "version": "33.2.2",
+        "date": "April 9th, 2025"
+    },
+    {
         "version": "33.2.1",
         "date": "March 24th, 2025"
     },
@@ -106,6 +110,10 @@
         ],
         "notesPath": "./upgrading-to-ag-grid-33",
         "hideBlogPostLink": false
+    },
+    {
+        "version": "32.3.5",
+        "date": "April 9th, 2025"
     },
     {
         "version": "32.3.4",
