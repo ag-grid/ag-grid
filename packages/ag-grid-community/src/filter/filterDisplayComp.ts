@@ -1,3 +1,4 @@
+import { KeyCode } from '../constants/keyCode';
 import type { AgColumn } from '../entities/agColumn';
 import type { IAfterGuiAttachedParams } from '../interfaces/iAfterGuiAttachedParams';
 import type { IEventEmitter } from '../interfaces/iEventEmitter';
@@ -41,7 +42,12 @@ export class FilterDisplayComp extends Component {
             cls: 'ag-filter-wrapper',
         });
         if (useForm) {
-            this.addManagedElementListeners(this.getGui(), { submit: (e) => e?.preventDefault() });
+            this.addManagedElementListeners(this.getGui(), {
+                submit: (e) => {
+                    e?.preventDefault();
+                },
+                keydown: this.handleKeyDown.bind(this),
+            });
         }
         this.appendChild(comp.getGui());
         this.params = params;
@@ -76,7 +82,7 @@ export class FilterDisplayComp extends Component {
 
     private resetButtonsPanel(newParams: FilterWrapperParams, oldParams?: FilterWrapperParams): void {
         const { buttons: oldButtons, readOnly: oldReadOnly } = oldParams ?? {};
-        const { buttons, readOnly } = newParams;
+        const { buttons, readOnly, useForm } = newParams;
         if (oldReadOnly === readOnly && _jsonEquals(oldButtons, buttons)) {
             return;
         }
@@ -104,7 +110,7 @@ export class FilterDisplayComp extends Component {
                 });
                 this.eButtonsPanel = eButtonsPanel;
             }
-            eButtonsPanel.updateButtons(buttons);
+            eButtonsPanel.updateButtons(buttons, useForm);
         } else {
             this.applyActive = false;
             if (eButtonsPanel) {
@@ -123,7 +129,7 @@ export class FilterDisplayComp extends Component {
         const key = keyboardEvent && keyboardEvent.key;
         let params: PopupEventParams;
 
-        if (key === 'Enter' || key === 'Space') {
+        if (key === KeyCode.ENTER || key === KeyCode.SPACE) {
             params = { keyboardEvent };
         }
 
@@ -155,6 +161,14 @@ export class FilterDisplayComp extends Component {
                 }
                 break;
             }
+        }
+    }
+
+    private handleKeyDown(event: KeyboardEvent): void {
+        if (!event.defaultPrevented && event.key === KeyCode.ENTER && this.applyActive) {
+            // trigger apply. Can't do this via form submit as it will use click event, which prevents restoring focus on close
+            this.updateModel(this.column, 'apply');
+            this.afterAction('apply', event);
         }
     }
 

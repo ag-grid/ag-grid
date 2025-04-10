@@ -270,15 +270,15 @@ export class SetFilter<V = string>
     }
 
     private handleKeyEnter(e: KeyboardEvent): void {
+        e.preventDefault();
+
         const { excelMode, readOnly } = this.params;
         if (!excelMode || !!readOnly) {
             return;
         }
 
-        e.preventDefault();
-
         // in Excel Mode, hitting Enter is the same as pressing the Apply button
-        this.params.onAction('apply', e);
+        this.params.onAction('apply', undefined, e);
 
         if (this.params.excelMode === 'mac') {
             // in Mac version, select all the input text

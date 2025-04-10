@@ -1,3 +1,4 @@
+import { KeyCode } from '../constants/keyCode';
 import type { AgEvent } from '../events';
 import type { FilterAction } from '../interfaces/iFilter';
 import type { ElementParams } from '../utils/dom';
@@ -24,7 +25,7 @@ export class FilterButtonComp extends Component<FilterAction> {
         super(FilterButtonCompElement);
     }
 
-    public updateButtons(buttons: FilterAction[]): void {
+    public updateButtons(buttons: FilterAction[], useForm?: boolean): void {
         const oldButtons = this.buttons;
         this.buttons = buttons;
 
@@ -58,7 +59,7 @@ export class FilterButtonComp extends Component<FilterAction> {
             }
 
             const isApply = type === 'apply';
-            const buttonType = isApply ? 'submit' : 'button';
+            const buttonType = isApply && useForm ? 'submit' : 'button';
             const button = _createElement({
                 tag: 'button',
                 attrs: { type: buttonType },
@@ -71,6 +72,14 @@ export class FilterButtonComp extends Component<FilterAction> {
             }
 
             button.addEventListener('click', clickListener);
+            button.addEventListener('keydown', (event) => {
+                if (event.key === KeyCode.ENTER) {
+                    // this is needed to ensure a keyboard event is passed through, rather than a click event.
+                    // otherwise focus won't be restored if a popup is closed
+                    event.preventDefault();
+                    clickListener(event);
+                }
+            });
             this.buttonListeners.push(() => button.removeEventListener('click', clickListener));
             fragment.append(button);
         };
