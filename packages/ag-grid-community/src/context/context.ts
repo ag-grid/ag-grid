@@ -43,6 +43,7 @@ import type { GridOptionsService } from '../gridOptionsService';
 import type { RowNodeBlockLoader } from '../infiniteRowModel/rowNodeBlockLoader';
 import type { IChartService } from '../interfaces/IChartService';
 import type { IRangeService } from '../interfaces/IRangeService';
+import type { EditStrategyType } from '../interfaces/editStrategy';
 import type { IAdvancedFilterService } from '../interfaces/iAdvancedFilterService';
 import type { IAggColumnNameService } from '../interfaces/iAggColumnNameService';
 import type { IAggFuncService } from '../interfaces/iAggFuncService';
@@ -133,6 +134,7 @@ export type DynamicBeanName =
     | 'groupStrategy'
     | 'treeParentIdStrategy'
     | 'treeGroupStrategy'
+    | EditStrategyType
     | 'rowNumberRowResizer'
     | 'agSetColumnFilterHandler'
     | 'agMultiColumnFilterHandler'
