@@ -368,6 +368,10 @@ export function _isGroupUseEntireRow(gos: GridOptionsService, pivotMode: boolean
     return gos.get('groupDisplayType') === 'groupRows';
 }
 
+export function _isFullWidthGroupRow(gos: GridOptionsService, node: RowNode, pivotMode: boolean): boolean {
+    return !!node.group && !node.footer && _isGroupUseEntireRow(gos, pivotMode);
+}
+
 // AG-9259 Can't use `WrappedCallback<'getRowId', ...>` here because of a strange typescript bug
 export function _getRowIdCallback<TData = any>(
     gos: GridOptionsService

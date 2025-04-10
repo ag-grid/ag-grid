@@ -20,7 +20,7 @@ import {
     _debounce,
     _escapeString,
     _isClientSideRowModel,
-    _isGroupUseEntireRow,
+    _isFullWidthGroupRow,
     _jsonEquals,
     _missing,
     isColumnSelectionCol,
@@ -434,7 +434,7 @@ export class FindService extends BeanStub implements NamedBean, IFindService {
             }
 
             // full width group rows
-            if (node.group && !node.footer && _isGroupUseEntireRow(gos, pivotMode)) {
+            if (_isFullWidthGroupRow(gos, node, pivotMode)) {
                 let valueToFind: string | null;
                 const getFindText = (groupRowRendererParams as FindGroupRowRendererParams)?.getFindText;
                 if (getFindText) {

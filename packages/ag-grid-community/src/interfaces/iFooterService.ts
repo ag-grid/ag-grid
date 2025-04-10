@@ -20,6 +20,6 @@ export interface IFooterService {
     ): number;
 
     getTotalValue(value: any): string;
-    doesCellShowTotalPrefix(node: IRowNode, col: any): boolean;
+    doesCellShowTotalPrefix(node: IRowNode, col?: Column): boolean;
     applyTotalPrefix(value: any, formattedValue: string | null, node: IRowNode, col: Column): string;
 }

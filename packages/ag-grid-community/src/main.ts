@@ -659,6 +659,7 @@ export {
     _isClientSideRowModel,
     _isServerSideRowModel,
     _isGroupUseEntireRow,
+    _isFullWidthGroupRow,
     _canSkipShowingRowGroup,
     _getRowHeightAsNumber,
     _shouldUpdateColVisibilityAfterGroup,

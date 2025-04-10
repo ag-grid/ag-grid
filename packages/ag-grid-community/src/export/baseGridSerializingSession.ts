@@ -3,7 +3,7 @@ import type { ColumnNameService } from '../columns/columnNameService';
 import type { AgColumn } from '../entities/agColumn';
 import type { RowNode } from '../entities/rowNode';
 import type { GridOptionsService } from '../gridOptionsService';
-import { _addGridCommonParams, _isGroupUseEntireRow } from '../gridOptionsUtils';
+import { _addGridCommonParams, _isFullWidthGroupRow } from '../gridOptionsUtils';
 import type {
     ProcessCellForExportParams,
     ProcessGroupHeaderForExportParams,
@@ -107,7 +107,7 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
 
         const isGrandTotalRow = node.level === -1 && node.footer;
         const isFullWidthGroup =
-            currentColumnIndex === 0 && node.group && _isGroupUseEntireRow(this.gos, this.colModel.isPivotMode());
+            currentColumnIndex === 0 && _isFullWidthGroupRow(this.gos, node, this.colModel.isPivotMode());
         const isMultiAutoCol = column.colDef.showRowGroup === true && (node.group || isTreeData);
         // when using single auto group column or group row, create arrow separated string of group vals
         if (!isGrandTotalRow && (isFullWidthGroup || isMultiAutoCol)) {

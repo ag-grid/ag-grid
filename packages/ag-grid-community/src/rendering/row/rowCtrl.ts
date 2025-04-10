@@ -19,8 +19,8 @@ import {
     _getRowHeightForNode,
     _isAnimateRows,
     _isDomLayout,
+    _isFullWidthGroupRow,
     _isGetRowHeightFunction,
-    _isGroupUseEntireRow,
     _isRowSelection,
     _setDomData,
 } from '../../gridOptionsUtils';
@@ -434,12 +434,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         const isFullWidthCell = this.isNodeFullWidthCell();
         const isDetailCell = this.gos.get('masterDetail') && this.rowNode.detail;
         const pivotMode = this.beans.colModel.isPivotMode();
-        // we only use full width for groups, not footers. it wouldn't make sense to include footers if not looking
-        // for totals. if users complain about this, then we should introduce a new property 'footerUseEntireRow'
-        // so each can be set independently (as a customer complained about footers getting full width, hence
-        // introducing this logic)
-        const isGroupRow = !!this.rowNode.group && !this.rowNode.footer;
-        const isFullWidthGroup = isGroupRow && _isGroupUseEntireRow(this.gos, pivotMode);
+        const isFullWidthGroup = _isFullWidthGroupRow(this.gos, this.rowNode, pivotMode);
 
         if (isStub) {
             this.rowType = 'FullWidthLoading';
