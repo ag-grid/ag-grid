@@ -65,7 +65,7 @@ export class SideBarButtonComp extends Component<SideBarButtonCompEvent> {
     }
 
     public setSelected(selected: boolean): void {
-        this.addOrRemoveCssClass('ag-selected', selected);
+        this.updateCss('ag-selected', selected);
         _setAriaExpanded(this.eToggleButton, selected);
     }
 }

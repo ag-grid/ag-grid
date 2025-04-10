@@ -65,7 +65,7 @@ export class DetailCellRendererCtrl extends BeanStub implements IDetailCellRende
         const detailClass = autoHeight ? 'ag-details-grid-auto-height' : 'ag-details-grid-fixed-height';
 
         const comp = this.comp;
-        comp.addOrRemoveCssClass(parentClass, true);
+        comp.updateCss(parentClass, true);
         comp.addOrRemoveDetailGridCssClass(detailClass, true);
     }
 

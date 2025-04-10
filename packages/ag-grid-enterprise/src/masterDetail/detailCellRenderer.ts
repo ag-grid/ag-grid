@@ -38,7 +38,7 @@ export class DetailCellRenderer extends Component implements ICellRenderer {
         this.selectAndSetTemplate();
 
         const compProxy: IDetailCellRenderer = {
-            addOrRemoveCssClass: (cssClassName: string, on: boolean) => this.addOrRemoveCssClass(cssClassName, on),
+            updateCss: (cssClassName: string, on: boolean) => this.updateCss(cssClassName, on),
             addOrRemoveDetailGridCssClass: (cssClassName: string, on: boolean) =>
                 this.eDetailGrid.classList.toggle(cssClassName, on),
             setDetailGrid: (gridOptions) => this.setDetailGrid(gridOptions),

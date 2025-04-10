@@ -156,7 +156,7 @@ export class GridBodyComp extends Component {
             },
             setStickyBottomBottom: (bottom) => (this.eStickyBottom.style.bottom = bottom),
             setStickyBottomWidth: (width) => (this.eStickyBottom.style.width = width),
-            setColumnMovingCss: (cssClass, flag) => this.addOrRemoveCssClass(cssClass, flag),
+            setColumnMovingCss: (cssClass, flag) => this.updateCss(cssClass, flag),
             updateLayoutClasses: (cssClass, params) => {
                 const classLists = [this.eBodyViewport.classList, this.eBody.classList];
 
@@ -166,9 +166,9 @@ export class GridBodyComp extends Component {
                     classList.toggle(LayoutCssClasses.PRINT, params.print);
                 }
 
-                this.addOrRemoveCssClass(LayoutCssClasses.AUTO_HEIGHT, params.autoHeight);
-                this.addOrRemoveCssClass(LayoutCssClasses.NORMAL, params.normal);
-                this.addOrRemoveCssClass(LayoutCssClasses.PRINT, params.print);
+                this.updateCss(LayoutCssClasses.AUTO_HEIGHT, params.autoHeight);
+                this.updateCss(LayoutCssClasses.NORMAL, params.normal);
+                this.updateCss(LayoutCssClasses.PRINT, params.print);
             },
             setAlwaysVerticalScrollClass: (cssClass, on) =>
                 this.eBodyViewport.classList.toggle(CSS_CLASS_FORCE_VERTICAL_SCROLL, on),

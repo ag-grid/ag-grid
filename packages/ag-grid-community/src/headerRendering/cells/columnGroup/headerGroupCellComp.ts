@@ -36,7 +36,7 @@ export class HeaderGroupCellComp extends AbstractHeaderCellComp<HeaderGroupCellC
         eGui.setAttribute('col-id', this.ctrl.column.getUniqueId());
 
         const compProxy: IHeaderGroupCellComp = {
-            addOrRemoveCssClass: (cssClassName, on) => this.addOrRemoveCssClass(cssClassName, on),
+            updateCss: (cssClassName, on) => this.updateCss(cssClassName, on),
             setUserStyles: (styles: HeaderStyle) => _addStylesToElement(eGui, styles),
             setHeaderWrapperHidden: (hidden) => {
                 if (hidden) {

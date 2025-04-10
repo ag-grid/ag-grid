@@ -8,7 +8,7 @@ import type { FindDetailGridCellRendererParams } from './iFind';
 import type { IRowNode } from './iRowNode';
 
 export interface IDetailCellRenderer<TData = any> {
-    addOrRemoveCssClass(cssClassName: string, on: boolean): void;
+    updateCss(cssClassName: string, on: boolean): void;
     addOrRemoveDetailGridCssClass(cssClassName: string, on: boolean): void;
     setDetailGrid(gridOptions: GridOptions<TData>): void;
     setRowData(rowData: TData[]): void;

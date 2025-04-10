@@ -13,7 +13,7 @@ export class GridHeaderComp extends Component {
 
     public postConstruct(): void {
         const compProxy: IGridHeaderComp = {
-            addOrRemoveCssClass: (cssClassName, on) => this.addOrRemoveCssClass(cssClassName, on),
+            updateCss: (cssClassName, on) => this.updateCss(cssClassName, on),
             setHeightAndMinHeight: (height) => {
                 this.getGui().style.height = height;
                 this.getGui().style.minHeight = height;

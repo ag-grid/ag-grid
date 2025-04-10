@@ -19,8 +19,8 @@ export class SelectedRowsComp extends AgNameValue implements IStatusPanelComp {
 
         this.setLabel('selectedRows', 'Selected');
 
-        this.addCssClass('ag-status-panel');
-        this.addCssClass('ag-status-panel-selected-row-count');
+        this.addCss('ag-status-panel');
+        this.addCss('ag-status-panel-selected-row-count');
 
         const eventListener = this.onRowSelectionChanged.bind(this);
         this.addManagedEventListeners({ modelUpdated: eventListener, selectionChanged: eventListener });

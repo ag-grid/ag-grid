@@ -366,7 +366,7 @@ const DetailCellRenderer = forwardRef((props: IDetailCellRendererParams, ref: an
         }
 
         const compProxy: IDetailCellRenderer = {
-            addOrRemoveCssClass: (name: string, on: boolean) => setCssClasses((prev) => prev.setClass(name, on)),
+            updateCss: (name: string, on: boolean) => setCssClasses((prev) => prev.setClass(name, on)),
             addOrRemoveDetailGridCssClass: (name: string, on: boolean) =>
                 setGridCssClasses((prev) => prev.setClass(name, on)),
             setDetailGrid: (gridOptions) => setDetailGridOptions(gridOptions),

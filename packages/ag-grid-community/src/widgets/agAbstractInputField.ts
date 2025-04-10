@@ -51,7 +51,7 @@ export abstract class AgAbstractInputField<
         eLabel.classList.add(`${className}-label`);
         eWrapper.classList.add(`${className}-input-wrapper`);
         eInput.classList.add(`${className}-input`);
-        this.addCssClass('ag-input-field');
+        this.addCss('ag-input-field');
 
         eInput.id = eInput.id || `ag-${this.getCompId()}-input`;
 

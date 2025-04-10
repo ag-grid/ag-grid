@@ -30,7 +30,7 @@ export class AgWatermark extends Component {
         if (show) {
             this.eLicenseTextRef.textContent = this.licenseManager.getWatermarkMessage();
 
-            window.setTimeout(() => this.addCssClass('ag-opacity-zero'), 0);
+            window.setTimeout(() => this.addCss('ag-opacity-zero'), 0);
             window.setTimeout(() => this.setDisplayed(false), 5000);
         }
     }

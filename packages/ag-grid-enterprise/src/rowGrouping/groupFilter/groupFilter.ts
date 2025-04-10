@@ -169,7 +169,7 @@ export class GroupFilter extends TabGuardComp<GroupFilterEvent> implements IFilt
         );
         eGroupFieldSelect.setValue(this.selectedColumn!.getId());
         eGroupFieldSelect.onValueChange((newValue) => this.updateSelectedColumn(newValue));
-        eGroupFieldSelect.addCssClass('ag-group-filter-field-select-wrapper');
+        eGroupFieldSelect.addCss('ag-group-filter-field-select-wrapper');
         if (sourceColumns.length === 1) {
             eGroupFieldSelect.setDisabled(true);
         }

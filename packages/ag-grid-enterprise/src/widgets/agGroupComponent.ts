@@ -166,13 +166,13 @@ export class AgGroupComponent extends Component<AgGroupComponentEvent> {
 
     public setAlignItems(alignment: AgGroupComponentParams['alignItems']): this {
         if (this.alignItems !== alignment) {
-            this.removeCssClass(`ag-group-item-alignment-${this.alignItems}`);
+            this.removeCss(`ag-group-item-alignment-${this.alignItems}`);
         }
 
         this.alignItems = alignment;
         const newCls = `ag-group-item-alignment-${this.alignItems}`;
 
-        this.addCssClass(newCls);
+        this.addCss(newCls);
 
         return this;
     }
@@ -251,7 +251,7 @@ export class AgGroupComponent extends Component<AgGroupComponentEvent> {
     }
 
     public addCssClassToTitleBar(cssClass: string) {
-        this.eTitleBar?.addCssClass(cssClass);
+        this.eTitleBar?.addCss(cssClass);
     }
 
     private dispatchEnableChangeEvent(enabled: boolean): void {
@@ -345,8 +345,8 @@ export class AgGroupComponent extends Component<AgGroupComponentEvent> {
                 },
             })
         );
-        eToggle.addCssClass('ag-group-title-bar');
-        eToggle.addCssClass(`ag-${this.params.cssIdentifier ?? 'default'}-group-title-bar ag-unselectable`);
+        eToggle.addCss('ag-group-title-bar');
+        eToggle.addCss(`ag-${this.params.cssIdentifier ?? 'default'}-group-title-bar ag-unselectable`);
         this.eToggle = eToggle;
         this.toggleGroupExpand(this.enabled);
         return eToggle;

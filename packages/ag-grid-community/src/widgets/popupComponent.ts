@@ -7,7 +7,7 @@ export class PopupComponent extends Component implements IPopupComponent<any> {
     }
 
     override setParentComponent(container: Component) {
-        container.addCssClass('ag-has-popup');
+        container.addCss('ag-has-popup');
         super.setParentComponent(container);
     }
 

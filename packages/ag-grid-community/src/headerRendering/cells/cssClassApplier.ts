@@ -44,8 +44,8 @@ export function refreshFirstAndLastStyles(
     column: AgColumn | AgColumnGroup,
     presentedColsService: VisibleColsService
 ) {
-    comp.addOrRemoveCssClass(CSS_FIRST_COLUMN, presentedColsService.isColAtEdge(column, 'first'));
-    comp.addOrRemoveCssClass(CSS_LAST_COLUMN, presentedColsService.isColAtEdge(column, 'last'));
+    comp.updateCss(CSS_FIRST_COLUMN, presentedColsService.isColAtEdge(column, 'first'));
+    comp.updateCss(CSS_LAST_COLUMN, presentedColsService.isColAtEdge(column, 'last'));
 }
 
 function getClassParams<T extends HeaderClassParams | ToolPanelClassParams>(

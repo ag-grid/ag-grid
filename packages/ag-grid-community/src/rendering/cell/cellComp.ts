@@ -24,7 +24,7 @@ export class CellComp extends Component {
     private eCellWrapper: HTMLElement | undefined;
     private eCellValue: HTMLElement | undefined;
 
-    private cellCssClassManager: CssClassManager;
+    private cellCssManager: CssClassManager;
 
     private readonly column: AgColumn;
     private readonly rowNode: RowNode;
@@ -101,14 +101,14 @@ export class CellComp extends Component {
             this.setTemplateFromElement(cellDiv);
         }
 
-        this.cellCssClassManager = new CssClassManager(() => cellDiv);
+        this.cellCssManager = new CssClassManager(() => cellDiv);
 
         this.forceWrapper = cellCtrl.isForceWrapper();
 
         this.refreshWrapper(false);
 
         const compProxy: ICellComp = {
-            addOrRemoveCssClass: (cssClassName, on) => this.cellCssClassManager.addOrRemoveCssClass(cssClassName, on),
+            updateCss: (cssClassName, on) => this.cellCssManager.updateCss(cssClassName, on),
             setUserStyles: (styles: CellStyle) => _addStylesToElement(cellDiv, styles),
             getFocusableElement: () => cellDiv,
 
@@ -202,7 +202,7 @@ export class CellComp extends Component {
             this.eCellWrapper = undefined;
         }
 
-        this.cellCssClassManager.addOrRemoveCssClass('ag-cell-value', !usingWrapper);
+        this.cellCssManager.updateCss('ag-cell-value', !usingWrapper);
 
         const usingCellValue = !editing && usingWrapper;
         const putCellValueIn = usingCellValue && this.eCellValue == null;
@@ -440,10 +440,10 @@ export class CellComp extends Component {
     }
 
     private refreshEditStyles(editing: boolean, isPopup?: boolean): void {
-        const { cellCssClassManager } = this;
-        cellCssClassManager.addOrRemoveCssClass('ag-cell-inline-editing', editing && !isPopup);
-        cellCssClassManager.addOrRemoveCssClass('ag-cell-popup-editing', editing && !!isPopup);
-        cellCssClassManager.addOrRemoveCssClass('ag-cell-not-inline-editing', !editing || !!isPopup);
+        const { cellCssManager: cssManager } = this;
+        cssManager.updateCss('ag-cell-inline-editing', editing && !isPopup);
+        cssManager.updateCss('ag-cell-popup-editing', editing && !!isPopup);
+        cssManager.updateCss('ag-cell-not-inline-editing', !editing || !!isPopup);
 
         this.cellCtrl.setInlineEditingCss();
     }

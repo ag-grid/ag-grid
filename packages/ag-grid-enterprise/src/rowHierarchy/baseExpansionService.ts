@@ -60,9 +60,9 @@ export abstract class BaseExpansionService extends BeanStub {
 
         rowCtrl.forEachGui(undefined, (gui) => {
             const rowComp = gui.rowComp;
-            rowComp.addOrRemoveCssClass('ag-row-group', expandable);
-            rowComp.addOrRemoveCssClass('ag-row-group-expanded', expandable && expanded);
-            rowComp.addOrRemoveCssClass('ag-row-group-contracted', expandable && !expanded);
+            rowComp.updateCss('ag-row-group', expandable);
+            rowComp.updateCss('ag-row-group-expanded', expandable && expanded);
+            rowComp.updateCss('ag-row-group-contracted', expandable && !expanded);
             _setAriaExpanded(gui.element, expandable && expanded);
         });
     }

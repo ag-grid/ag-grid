@@ -40,7 +40,7 @@ export class ColumnHoverService extends BeanStub implements NamedBean {
     public addHeaderColumnHoverListener(compBean: BeanStub, comp: IHeaderCellComp, column: AgColumn): void {
         const listener = () => {
             const isHovered = this.isHovered(column);
-            comp.addOrRemoveCssClass('ag-column-hover', isHovered);
+            comp.updateCss('ag-column-hover', isHovered);
         };
 
         compBean.addManagedEventListeners({ columnHoverChanged: listener });
@@ -53,7 +53,7 @@ export class ColumnHoverService extends BeanStub implements NamedBean {
         }
 
         const isHovered = this.isHovered(column);
-        cellComp.addOrRemoveCssClass(CSS_COLUMN_HOVER, isHovered);
+        cellComp.updateCss(CSS_COLUMN_HOVER, isHovered);
     }
 
     public addHeaderFilterColumnHoverListener(
@@ -66,7 +66,7 @@ export class ColumnHoverService extends BeanStub implements NamedBean {
 
         const listener = () => {
             const hovered = this.isHovered(column);
-            comp.addOrRemoveCssClass('ag-column-hover', hovered);
+            comp.updateCss('ag-column-hover', hovered);
         };
 
         compBean.addManagedEventListeners({ columnHoverChanged: listener });
