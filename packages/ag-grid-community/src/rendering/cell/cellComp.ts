@@ -440,10 +440,10 @@ export class CellComp extends Component {
     }
 
     private refreshEditStyles(editing: boolean, isPopup?: boolean): void {
-        const { cellCssManager: cssManager } = this;
-        cssManager.updateCss('ag-cell-inline-editing', editing && !isPopup);
-        cssManager.updateCss('ag-cell-popup-editing', editing && !!isPopup);
-        cssManager.updateCss('ag-cell-not-inline-editing', !editing || !!isPopup);
+        const { cellCssManager } = this;
+        cellCssManager.updateCss('ag-cell-inline-editing', editing && !isPopup);
+        cellCssManager.updateCss('ag-cell-popup-editing', editing && !!isPopup);
+        cellCssManager.updateCss('ag-cell-not-inline-editing', !editing || !!isPopup);
 
         this.cellCtrl.setInlineEditingCss();
     }

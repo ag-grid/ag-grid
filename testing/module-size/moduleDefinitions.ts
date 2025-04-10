@@ -136,8 +136,8 @@ const chartModules: ModuleTest[] = [
 export const baseModule = { modules: [], expectedSize: 459.29 };
 
 export const moduleCombinations: ModuleTest[] = [
-    // ...commonFeatureSets,
-    // ...chartModules,
-    // ...allGridCommunityModules, //.slice(0, 3),
-    // ...allEnterpriseModules, //.slice(0, 3),
+    ...commonFeatureSets,
+    ...chartModules,
+    ...allGridCommunityModules, //.slice(0, 3),
+    ...allEnterpriseModules, //.slice(0, 3),
 ];
