@@ -1541,6 +1541,10 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         }
     }
 
+    public isRowRendered() {
+        return this.allRowGuis.length > 0;
+    }
+
     protected onRowHeightChanged(gui?: RowGui): void {
         // check for exists first - if the user is resetting the row height, then
         // it will be null (or undefined) momentarily until the next time the flatten
