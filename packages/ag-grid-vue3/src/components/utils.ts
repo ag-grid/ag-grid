@@ -13,6 +13,7 @@ import type {
     DataTypeDefinition,
     DefaultChartMenuItem,
     DomLayoutType,
+    EditStrategyType,
     ExcelExportParams,
     ExcelStyle,
     FillOperationParams,
@@ -1586,6 +1587,13 @@ export interface Props<TData> {
     /** Tells the grid if this row should be rendered as full width.
          */
     isFullWidthRow?: ((params: IsFullWidthRowParams<TData>) => boolean) | undefined,
+    /** Experimental editing mode v2.
+         * @default false
+         */
+    experimentalEditingModeV2?: {
+        strategy: EditStrategyType;
+        strategyParams?: any;
+    } | undefined,
 
     // @END_PROPS@
 
@@ -2012,6 +2020,7 @@ export function getProps() {
         getRowClass: undefined,
         getRowHeight: undefined,
         isFullWidthRow: undefined,
+        experimentalEditingModeV2: undefined,
 
 // @END_DEFAULTS@
 
