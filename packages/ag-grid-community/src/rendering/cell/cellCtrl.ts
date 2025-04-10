@@ -114,7 +114,7 @@ export class CellCtrl extends BeanStub {
         if (!this.gos?.get('experimentalEditingModeV2')) {
             return this._editing;
         }
-        return this.beans.editingSvc?.isEditing(this.rowCtrl.rowId!, this.column.colId) ?? false;
+        return this.beans.editingFcd?.isEditing(this.rowCtrl, this) ?? false;
     }
 
     public set editing(editing: boolean) {

@@ -15,7 +15,7 @@ export class RowEditService extends BeanStub implements NamedBean {
         event: KeyboardEvent | null = null
     ): boolean {
         if (this.gos.get('experimentalEditingModeV2')) {
-            return this.beans.rowEditingSvc?.startEditing(rowCtrl, key, sourceRenderedCell, event) ?? false;
+            return this.beans.editingFcd?.startEditing(rowCtrl, sourceRenderedCell!, key, false, event) ?? false;
         }
 
         // don't do it if already editing

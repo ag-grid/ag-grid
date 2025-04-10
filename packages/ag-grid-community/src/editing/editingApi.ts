@@ -35,12 +35,12 @@ export function getCellEditorInstances<TData = any>(
 }
 
 export function getEditingCells(beans: BeanCollection): CellPosition[] {
-    return beans.rowEditingSvc?.editingModel.getEditingCellPositions() ?? [];
+    return beans.editingFcd?.editingModel.getEditingCellPositions() ?? [];
 }
 
 export function stopEditing(beans: BeanCollection, cancel: boolean = false): void {
-    if (beans.rowEditingSvc?.isEditing()) {
-        beans.editingSvc?.stopAllEditing(cancel);
+    if (beans.editingFcd?.isEditing()) {
+        beans.editingFcd?.stopAllEditing(cancel);
     }
 }
 
@@ -66,7 +66,7 @@ export function startEditingCell(beans: BeanCollection, params: StartEditingCell
     if (!cell) {
         return;
     }
-    const { focusSvc, gos, editingSvc } = beans;
+    const { focusSvc, gos, editingFcd } = beans;
     const isFocusWithinCell = () => {
         const activeElement = _getActiveDomElement(beans);
         const eCell = cell.eGui;
@@ -80,7 +80,7 @@ export function startEditingCell(beans: BeanCollection, params: StartEditingCell
             preventScrollOnBrowserFocus: true,
         });
     }
-    editingSvc?.startRowOrCellEdit(cell, params.key);
+    editingFcd?.startEditing(cell.rowCtrl, cell, params.key);
 }
 
 export function getCurrentUndoSize(beans: BeanCollection): number {

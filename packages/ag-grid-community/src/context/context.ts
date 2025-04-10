@@ -26,8 +26,7 @@ import type { HorizontalResizeService } from '../dragAndDrop/horizontalResizeSer
 import type { RowDragService } from '../dragAndDrop/rowDragService';
 import type { EditService } from '../edit/editService';
 import type { RowEditService } from '../edit/rowEditService';
-import type { EditingService } from '../editing/editingService';
-import type { RowEditingService } from '../editing/rowEditingService';
+import type { EditingFacade } from '../editing/editingFacade';
 import type { GridOptions } from '../entities/gridOptions';
 import type { Environment } from '../environment';
 import type { EventService } from '../eventService';
@@ -43,7 +42,7 @@ import type { GridOptionsService } from '../gridOptionsService';
 import type { RowNodeBlockLoader } from '../infiniteRowModel/rowNodeBlockLoader';
 import type { IChartService } from '../interfaces/IChartService';
 import type { IRangeService } from '../interfaces/IRangeService';
-import type { EditStrategyType } from '../interfaces/editStrategy';
+import type { EditModeType } from '../interfaces/editModeType';
 import type { IAdvancedFilterService } from '../interfaces/iAdvancedFilterService';
 import type { IAggColumnNameService } from '../interfaces/iAggColumnNameService';
 import type { IAggFuncService } from '../interfaces/iAggFuncService';
@@ -131,7 +130,7 @@ export type DynamicBeanName =
     | 'tooltipFeature'
     | 'groupStrategy'
     | 'treeParentIdStrategy'
-    | EditStrategyType;
+    | EditModeType;
 
 export type UserComponentName =
     | 'agDragAndDropImage'
@@ -275,9 +274,8 @@ export interface CoreBeanCollection {
     enterpriseMenuFactory?: IMenuFactory;
     contextMenuSvc?: IContextMenuService;
     editSvc?: EditService;
-    editingSvc?: EditingService;
+    editingFcd?: EditingFacade;
     rowEditSvc?: RowEditService;
-    rowEditingSvc?: RowEditingService;
     alignedGridsSvc?: AlignedGridsService;
     paginationAutoPageSizeSvc?: PaginationAutoPageSizeService;
     pagination?: PaginationService;
@@ -403,7 +401,7 @@ export type BeanName =
     | 'dragAndDrop'
     | 'dragSvc'
     | 'editSvc'
-    | 'editingSvc'
+    | 'editingFcd'
     | 'excelCreator'
     | 'enterpriseMenuFactory'
     | 'environment'
@@ -467,7 +465,6 @@ export type BeanName =
     | 'rowContainerHeight'
     | 'rowDragSvc'
     | 'rowEditSvc'
-    | 'rowEditingSvc'
     | 'rowModel'
     | 'rowNodeBlockLoader'
     | 'rowNodeSorter'
