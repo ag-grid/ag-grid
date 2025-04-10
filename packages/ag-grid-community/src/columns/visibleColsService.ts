@@ -10,7 +10,7 @@ import type { ColumnPinnedType, HeaderColumnId } from '../interfaces/iColumn';
 import { _last } from '../utils/array';
 import type { ColumnGroupService, CreateGroupsParams } from './columnGroups/columnGroupService';
 import type { ColumnModel } from './columnModel';
-import { getWidthOfColsInList, isColumnSelectionCol } from './columnUtils';
+import { getWidthOfColsInList } from './columnUtils';
 import { GroupInstanceIdCreator } from './groupInstanceIdCreator';
 
 function _removeAllFromUnorderedArray<T>(array: T[], toRemove: T[]) {
@@ -518,10 +518,10 @@ export function depthFirstAllColumnTreeSearch(
     }
 }
 
-function pickDisplayedCols(tree: (AgColumn | AgColumnGroup)[], hideSelectionCol = false): AgColumn[] {
+function pickDisplayedCols(tree: (AgColumn | AgColumnGroup)[]): AgColumn[] {
     const res: AgColumn[] = [];
     depthFirstAllColumnTreeSearch(tree, true, (child) => {
-        if (isColumn(child) && (!isColumnSelectionCol(child) || (isColumnSelectionCol(child) && !hideSelectionCol))) {
+        if (isColumn(child)) {
             res.push(child);
         }
     });
