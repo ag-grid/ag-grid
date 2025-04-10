@@ -107,10 +107,11 @@ export class ContextMenuService extends BeanStub implements NamedBean, IContextM
                 // grand total rows that are not fixed in place, and normal rows that are not group total rows.
                 if ((isGrandTotalRow && !isGrandTotalRowFixed) || (!isGrandTotalRow && !isGroupTotalRow)) {
                     const pinnable = isRowPinnable?.(node) ?? true;
+                    // `pinnable` determines whether pinned status can be affected by the user via the context menu,
+                    // not whether the row may be pinned at all (via for example, the `isRowPinned` callback).
+                    // As-such if `pinnable` is falsy, don't show any context menu options for the end user.
                     if (pinnable) {
                         defaultMenuOptions.push('pinRowSubMenu');
-                    } else if (node.rowPinned) {
-                        defaultMenuOptions.push('unpinRow');
                     }
                 }
             }
