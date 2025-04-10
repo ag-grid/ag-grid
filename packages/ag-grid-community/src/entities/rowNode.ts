@@ -324,8 +324,14 @@ export class RowNode<TData = any>
         this.resetQuickFilterAggregateText();
 
         const event: DataChangedEvent<TData> = this.createDataChangedEvent(data, oldData, update);
-
         this.__localEventService?.dispatchEvent(event);
+
+        if (this.sibling) {
+            this.sibling.data = data;
+            const event: DataChangedEvent<TData> = this.sibling.createDataChangedEvent(data, oldData, update);
+            this.sibling.__localEventService?.dispatchEvent(event);
+        }
+
         eventSvc.dispatchEvent({ type: 'rowNodeDataChanged', node: this });
     }
 
