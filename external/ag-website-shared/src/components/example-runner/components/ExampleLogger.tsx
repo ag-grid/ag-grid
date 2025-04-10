@@ -34,6 +34,7 @@ const REACT_JSON_VIEW_CONFIG = {
     displayDataTypes: false,
     displayObjectSize: false,
     displayArrayKey: false,
+    quotesOnKeys: false,
 };
 const IGNORED_MESSAGES = ['Angular is running in development mode.'];
 
