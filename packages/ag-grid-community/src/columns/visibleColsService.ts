@@ -68,22 +68,14 @@ export class VisibleColsService extends BeanStub implements NamedBean {
 
         colGroupSvc?.updateOpenClosedVisibility();
 
-        const pickCols = (hideSelectionCol = false) => {
-            this.leftCols = pickDisplayedCols(this.treeLeft, hideSelectionCol);
-            this.centerCols = pickDisplayedCols(this.treeCenter, hideSelectionCol);
-            this.rightCols = pickDisplayedCols(this.treeRight, hideSelectionCol);
-            this.joinColsAriaOrder(colModel);
-            this.joinCols();
-        };
+        this.leftCols = pickDisplayedCols(this.treeLeft);
+        this.centerCols = pickDisplayedCols(this.treeCenter);
+        this.rightCols = pickDisplayedCols(this.treeRight);
 
-        pickCols();
+        selectionColSvc?.refreshVisibility(this.leftCols, this.centerCols, this.rightCols);
 
-        // Run `pickCols` first because SelectionColService needs the full list of columns first.
-        // If we need to act we just re-run `pickCols` (cheap)
-        const shouldHideCol = selectionColSvc?.shouldHideCol() ?? false;
-        if (shouldHideCol) {
-            pickCols(shouldHideCol);
-        }
+        this.joinColsAriaOrder(colModel);
+        this.joinCols();
 
         this.setLeftValues(source);
         this.autoHeightCols = this.allCols.filter((col) => col.isAutoHeight());

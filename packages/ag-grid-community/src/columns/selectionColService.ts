@@ -7,8 +7,9 @@ import type { ColumnEventType } from '../events';
 import type { PropertyValueChangedEvent } from '../gridOptionsService';
 import { _getCheckboxLocation, _getCheckboxes, _getHeaderCheckbox, _isRowSelection } from '../gridOptionsUtils';
 import type { IColumnCollectionService } from '../interfaces/iColumnCollectionService';
+import { _removeFromArray } from '../main-umd-noStyles';
 import type { ColKey, ColumnCollections } from './columnModel';
-import { _applyColumnState, _getColumnState } from './columnStateUtils';
+import { _applyColumnState } from './columnStateUtils';
 import {
     SELECTION_COLUMN_ID,
     _areColIdsEqual,
@@ -17,6 +18,7 @@ import {
     _destroyColumnTree,
     _updateColsMap,
     isColumnSelectionCol,
+    isRowNumberCol,
 } from './columnUtils';
 
 export class SelectionColService extends BeanStub implements NamedBean, IColumnCollectionService {
@@ -198,29 +200,60 @@ export class SelectionColService extends BeanStub implements NamedBean, IColumnC
         super.destroy();
     }
 
-    public shouldHideCol(): boolean {
+    /**
+     * Refreshes visibility of the selection column based on which columns are currently visible.
+     * Called by the VisibleColsService with the columns that are currently visible in left/center/right
+     * containers. This method *MUTATES* those arrays directly.
+     *
+     * The selection column should be visible if all of the following are true
+     * - The selection column is not disabled
+     * - The number of visible columns excluding the selection column and row numbers column is greater than 0
+     * @param leftCols Visible columns in the left-pinned container
+     * @param centerCols Visible columns in the center viewport
+     * @param rightCols Visible columns in the right-pinned container
+     */
+    public refreshVisibility(leftCols: AgColumn[], centerCols: AgColumn[], rightCols: AgColumn[]): void {
         if (!this.isSelectionColumnEnabled()) {
-            return false;
+            return;
         }
 
-        const beans = this.beans;
-        const visibleColumns = beans.visibleCols.allCols;
+        const numVisibleCols = leftCols.length + centerCols.length + rightCols.length;
 
-        if (visibleColumns.length === 0) {
-            return false;
+        if (numVisibleCols === 0) {
+            return;
         }
 
-        // check first: one or more columns showing -- none are selection column
-        if (!visibleColumns.some(isColumnSelectionCol)) {
-            const existingState = _getColumnState(beans).find((state) => isColumnSelectionCol(state.colId));
-            return existingState?.hide ?? false;
-        }
+        const selectionColLeft = leftCols.find(isColumnSelectionCol);
+        const selectionColCenter = centerCols.find(isColumnSelectionCol);
+        const selectionColRight = rightCols.find(isColumnSelectionCol);
+        const selectionColPresent = selectionColLeft || selectionColCenter || selectionColRight;
 
-        // lastly, check only one column showing -- selection column
-        if (visibleColumns.length === 1) {
-            return true;
-        }
+        const rowNumbersColLeft = leftCols.find(isRowNumberCol);
+        const rowNumbersColCenter = centerCols.find(isRowNumberCol);
+        const rowNumbersColRight = rightCols.find(isRowNumberCol);
+        const rowNumbersColPresent = rowNumbersColLeft || rowNumbersColCenter || rowNumbersColRight;
 
-        return false;
+        const hideSelectionCol = () => {
+            if (selectionColLeft) {
+                _removeFromArray(leftCols, selectionColLeft);
+            }
+            if (selectionColCenter) {
+                _removeFromArray(centerCols, selectionColCenter);
+            }
+            if (selectionColRight) {
+                _removeFromArray(rightCols, selectionColRight);
+            }
+        };
+
+        // two conditions for which we hide selection column:
+        //   1. Only selection column and row numbers column are visible
+        //   2. Only selection column is visible
+        if (rowNumbersColPresent && selectionColPresent && numVisibleCols === 2) {
+            // the only visible columns are row numbers and selection col
+            hideSelectionCol();
+        } else if (!rowNumbersColPresent && selectionColPresent && numVisibleCols === 1) {
+            // the only visible column is selection col
+            hideSelectionCol();
+        }
     }
 }
