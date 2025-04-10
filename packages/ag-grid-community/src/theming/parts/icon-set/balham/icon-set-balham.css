@@ -217,14 +217,6 @@
     mask-image: url('./balham-svg-icons/un-pin.svg');
 }
 
-.ag-icon-pinned-left::before {
-    mask-image: url('./balham-svg-icons/pinned-left.svg');
-}
-
-.ag-icon-pinned-right::before {
-    mask-image: url('./balham-svg-icons/pinned-right.svg');
-}
-
 .ag-icon-pinned-top::before {
     mask-image: url('./balham-svg-icons/pinned-top.svg');
 }

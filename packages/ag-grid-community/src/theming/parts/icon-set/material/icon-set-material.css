@@ -218,14 +218,6 @@
     mask-image: url('./material-svg-icons/un-pin.svg');
 }
 
-.ag-icon-pinned-left::before {
-    mask-image: url('./material-svg-icons/pinned-left.svg');
-}
-
-.ag-icon-pinned-right::before {
-    mask-image: url('./material-svg-icons/pinned-right.svg');
-}
-
 .ag-icon-pinned-top::before {
     mask-image: url('./material-svg-icons/pinned-top.svg');
 }
