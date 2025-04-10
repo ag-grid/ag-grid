@@ -41,21 +41,44 @@
         background-color: var(--color-gray-900);
         color: var(--color-text-secondary);
     }
+}
 
-    > div {
-        display: flex;
-        flex-direction: row;
-        flex-wrap: wrap;
-        gap: $spacing-size-2;
-        padding: $spacing-size-2;
-        border-bottom: 1px solid var(--color-border-secondary);
-        white-space: pre-wrap;
-        line-height: var(--text-lh-base);
+.logItem,
+.placeholder {
+    display: flex;
+    flex-direction: row;
+    gap: $spacing-size-2;
+    padding: $spacing-size-2;
+    border-bottom: 1px solid var(--color-border-secondary);
 
-        &:nth-child(odd) {
-            background-color: color-mix(in srgb, var(--color-bg-primary) 66.66%, transparent);
-        }
+    &:nth-child(odd) {
+        background-color: color-mix(in srgb, var(--color-bg-primary) 66.66%, transparent);
     }
+}
+
+.count {
+    background-color: var(--color-gray-200);
+    color: var(--color-gray-500);
+    border-radius: 50%;
+    padding: 2px 4px 0;
+    font-size: var(--text-fs-2xs);
+    min-width: 2em;
+    height: fit-content;
+    text-align: center;
+
+    #{$selector-darkmode} & {
+        background-color: var(--color-gray-700);
+        color: var(--color-gray-400);
+    }
+}
+
+.dataItem {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: $spacing-size-2;
+    white-space: pre-wrap;
+    line-height: var(--text-lh-base);
 }
 
 .type-null,
