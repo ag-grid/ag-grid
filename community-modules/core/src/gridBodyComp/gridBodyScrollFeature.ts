@@ -15,7 +15,7 @@ import type { PaginationService } from '../pagination/paginationService';
 import type { RowContainerHeightService } from '../rendering/rowContainerHeightService';
 import type { RowRenderer } from '../rendering/rowRenderer';
 import { _isIOSUserAgent } from '../utils/browser';
-import { _getInnerHeight, _getScrollLeft, _isRtlNegativeScroll, _setScrollLeft } from '../utils/dom';
+import { _getInnerHeight, _getScrollLeft, _setScrollLeft } from '../utils/dom';
 import { _debounce, _warnOnce } from '../utils/function';
 import type { RowContainerCtrl } from './rowContainer/rowContainerCtrl';
 
@@ -339,7 +339,7 @@ export class GridBodyScrollFeature extends BeanStub {
         const clientWidth = this.centerRowsCtrl.getCenterWidth();
         const { scrollWidth } = this.centerRowsCtrl.getViewportElement();
 
-        if (this.enableRtl && _isRtlNegativeScroll()) {
+        if (this.enableRtl) {
             if (scrollTo > 0) {
                 return true;
             }
@@ -390,7 +390,7 @@ export class GridBodyScrollFeature extends BeanStub {
         // if this is call is coming from the alignedGridsService, we don't need to validate the
         // scroll, because it has already been validated by the grid firing the scroll event.
         if (!fromAlignedGridsService && this.shouldBlockScrollUpdate(ScrollDirection.Horizontal, hScrollPosition)) {
-            if (this.enableRtl && _isRtlNegativeScroll()) {
+            if (this.enableRtl) {
                 hScrollPosition = hScrollPosition > 0 ? 0 : maxScrollLeft;
             } else {
                 hScrollPosition = Math.min(Math.max(hScrollPosition, minScrollLeft), maxScrollLeft);
