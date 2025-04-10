@@ -7,7 +7,7 @@ import type { ColumnEventType } from '../events';
 import type { PropertyValueChangedEvent } from '../gridOptionsService';
 import { _getCheckboxLocation, _getCheckboxes, _getHeaderCheckbox, _isRowSelection } from '../gridOptionsUtils';
 import type { IColumnCollectionService } from '../interfaces/iColumnCollectionService';
-import { _removeFromArray } from '../main-umd-noStyles';
+import { _removeFromArray } from '../utils/array';
 import type { ColKey, ColumnCollections } from './columnModel';
 import { _applyColumnState } from './columnStateUtils';
 import {
