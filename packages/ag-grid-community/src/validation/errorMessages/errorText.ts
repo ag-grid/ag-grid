@@ -1,4 +1,4 @@
-import type { UserComponentName } from '../../context/context';
+import type { DynamicBeanName, UserComponentName } from '../../context/context';
 import type { Column } from '../../interfaces/iColumn';
 import type {
     CommunityModuleName,
@@ -653,6 +653,8 @@ export const AG_GRID_ERRORS = {
     271: ({ id, parentId }: { id: string; parentId: string }) =>
         `Parent row not found for row with id='${id}' and parent id='${parentId}'. Showing row with id='${id}' as a root-level node.` as const,
     272: () => NoModulesRegisteredError(),
+    273: ({ name }: { name: DynamicBeanName }) =>
+        `Unable to create dynamic bean '${name}' during module init lifecycle, dynamic beans must be initialised on first use.` as const,
 };
 
 export type ErrorMap = typeof AG_GRID_ERRORS;

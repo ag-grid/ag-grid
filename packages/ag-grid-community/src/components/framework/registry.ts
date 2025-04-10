@@ -15,7 +15,7 @@ export class Registry extends BeanStub implements NamedBean {
 
     private jsComps: { [key: string]: any } = {};
 
-    private dynamicBeans: { [K in DynamicBeanName]?: new (args?: any[]) => object } = {};
+    private dynamicBeans: { [K in DynamicBeanName]?: new (args?: any[]) => object };
 
     private selectors: { [name in AgComponentSelector]?: ComponentSelector } = {};
 
@@ -51,6 +51,8 @@ export class Registry extends BeanStub implements NamedBean {
         }
 
         if (dynamicBeans) {
+            // initialise the dynamic beans registry on first use
+            this.dynamicBeans ??= {};
             for (const name of Object.keys(dynamicBeans) as DynamicBeanName[]) {
                 this.dynamicBeans[name] = dynamicBeans[name];
             }
@@ -104,6 +106,11 @@ export class Registry extends BeanStub implements NamedBean {
     }
 
     public createDynamicBean<T>(name: DynamicBeanName, mandatory: boolean, ...args: any[]): T | undefined {
+        if (!this.dynamicBeans) {
+            // this happens when a module tries to init a dynamic bean during module initialization lifecycle
+            throw new Error(_errMsg(273, { name }));
+        }
+
         const BeanClass = this.dynamicBeans[name];
 
         if (BeanClass == null) {
