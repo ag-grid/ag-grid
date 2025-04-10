@@ -78,6 +78,8 @@ export type InternalModuleName =
     | 'Drag'
     | 'EditCore'
     | 'EditingCore'
+    | 'EditingModel'
+    | 'EditingValidation'
     | 'EnterpriseCore'
     | 'Expression'
     | 'FilterCore'

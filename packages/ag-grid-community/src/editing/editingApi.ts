@@ -35,7 +35,7 @@ export function getCellEditorInstances<TData = any>(
 }
 
 export function getEditingCells(beans: BeanCollection): CellPosition[] {
-    return beans.editingFcd?.editingModel.getEditingCellPositions() ?? [];
+    return beans.editingFcd?.getEditingCellPositions() ?? [];
 }
 
 export function stopEditing(beans: BeanCollection, cancel: boolean = false): void {

@@ -6,23 +6,20 @@ import type { RowNode } from '../entities/rowNode';
 import { _addGridCommonParams } from '../gridOptionsUtils';
 import type { DefaultProvidedCellEditorParams, ICellEditorParams } from '../interfaces/iCellEditor';
 import type { IRowNode } from '../interfaces/iRowNode';
+import type { CellPosition } from '../main-umd-noStyles';
 import type { CellCtrl, ICellComp } from '../rendering/cell/cellCtrl';
 import type { RowCtrl } from '../rendering/row/rowCtrl';
 import type { IEditStrategy } from './mode/baseEditMode';
-import { GridEditingModel } from './model/gridEditingModel';
 
 export class EditingFacade extends BeanStub implements NamedBean {
     beanName = 'editingFcd' as const;
-    public editingModel: GridEditingModel;
     private editMode?: IEditStrategy;
 
     private createEditMode(): IEditStrategy {
         const { beans, gos } = this;
 
-        this.editingModel = new GridEditingModel(beans);
-
         const strategyName = gos.get('experimentalEditingModeV2')?.mode ?? 'cellEditMode';
-        const bean = beans.registry.createDynamicBean<IEditStrategy>(strategyName, true, this.editingModel);
+        const bean = beans.registry.createDynamicBean<IEditStrategy>(strategyName, true);
 
         this.createOptionalManagedBean(bean);
         return bean!;
@@ -32,7 +29,6 @@ export class EditingFacade extends BeanStub implements NamedBean {
         if (!this.editMode) {
             return;
         }
-        this.editingModel.destroy();
         this.destroyBean(this.editMode);
         this.editMode = undefined;
     }
@@ -137,6 +133,10 @@ export class EditingFacade extends BeanStub implements NamedBean {
         }
 
         return valueChanged;
+    }
+
+    public getEditingCellPositions(): CellPosition[] {
+        return this.beans.editingModelSvc?.getEditingCellPositions() ?? [];
     }
 
     // public handleColDefChanged(cellCtrl: CellCtrl): void {
