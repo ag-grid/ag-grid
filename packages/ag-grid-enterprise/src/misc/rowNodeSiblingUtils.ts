@@ -11,7 +11,7 @@ import { RowNode } from 'ag-grid-community';
  */
 export const IGNORED_SIBLING_PROPERTIES = new Set<
     keyof RowNode | '__localEventService' | '__autoHeights' | '__checkAutoHeightsDebounced'
->(['__localEventService', '__objectId', 'sticky', '__autoHeights', '__checkAutoHeightsDebounced']);
+>(['__localEventService', '__objectId', 'sticky', '__autoHeights', '__checkAutoHeightsDebounced', 'childStore']);
 
 export function _createRowNodeSibling(rowNode: RowNode, beans: BeanCollection): RowNode {
     const sibling = new RowNode(beans);
