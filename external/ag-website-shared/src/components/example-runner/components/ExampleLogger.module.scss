@@ -57,18 +57,19 @@
 }
 
 .count {
-    background-color: var(--color-gray-200);
-    color: var(--color-gray-500);
-    border-radius: 50%;
-    padding: 2px 4px 0;
+    min-width: $spacing-size-4;
+    height: $spacing-size-4;
+    padding: 4px 5px 0;
     font-size: var(--text-fs-2xs);
-    min-width: 2em;
-    height: fit-content;
-    text-align: center;
+    line-height: 1;
+    border-radius: $spacing-size-2;
+    background-color: var(--color-gray-300);
+    color: var(--color-gray-700);
+    opacity: 0.6666;
 
     #{$selector-darkmode} & {
-        background-color: var(--color-gray-700);
-        color: var(--color-gray-400);
+        background-color: var(--color-gray-600);
+        color: var(--color-gray-300);
     }
 }
 
