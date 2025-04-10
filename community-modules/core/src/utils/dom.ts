@@ -2,11 +2,8 @@ import type { CellStyle } from '../entities/colDef';
 import type { RowStyle } from '../entities/gridOptions';
 import type { ICellRendererComp } from '../rendering/cellRenderers/iCellRenderer';
 import { _setAriaHidden } from './aria';
-import { _isBrowserChrome, _isBrowserSafari } from './browser';
 import type { AgPromise } from './promise';
 import { _camelCaseToHyphenated } from './string';
-
-let rtlNegativeScroll: boolean;
 
 /**
  * This method adds a class to an element and remove that class from all siblings.
@@ -206,45 +203,11 @@ export function _getElementRectWithOffset(el: HTMLElement): {
     };
 }
 
-export function _isRtlNegativeScroll(): boolean {
-    if (typeof rtlNegativeScroll === 'boolean') {
-        return rtlNegativeScroll;
-    }
-
-    const template = document.createElement('div');
-    template.style.direction = 'rtl';
-    template.style.width = '10px';
-    template.style.height = '5px';
-    template.style.position = 'fixed';
-    template.style.top = '0px';
-    template.style.overflow = 'hidden';
-    template.dir = 'rtl';
-    template.innerHTML =
-        /* html */
-        `<div style="width: 20px">
-            <span style="display: inline-block; width: 1px"></span>
-            <span style="display: inline-block; width: 1px"></span>
-        </div>`;
-
-    document.body.appendChild(template);
-
-    template.scrollLeft = 1;
-    rtlNegativeScroll = Math.floor(template.scrollLeft) === 0;
-    document.body.removeChild(template);
-
-    return rtlNegativeScroll;
-}
-
 export function _getScrollLeft(element: HTMLElement, rtl: boolean): number {
     let scrollLeft = element.scrollLeft;
 
     if (rtl) {
-        // Absolute value - for FF that reports RTL scrolls in negative numbers
         scrollLeft = Math.abs(scrollLeft);
-
-        if (_isBrowserChrome() && !_isRtlNegativeScroll()) {
-            scrollLeft = element.scrollWidth - element.getBoundingClientRect().width - scrollLeft;
-        }
     }
 
     return scrollLeft;
@@ -252,12 +215,7 @@ export function _getScrollLeft(element: HTMLElement, rtl: boolean): number {
 
 export function _setScrollLeft(element: HTMLElement, value: number, rtl: boolean): void {
     if (rtl) {
-        // Chrome and Safari when doing RTL have the END position of the scroll as zero, not the start
-        if (_isRtlNegativeScroll()) {
-            value *= -1;
-        } else if (_isBrowserSafari() || _isBrowserChrome()) {
-            value = element.scrollWidth - element.getBoundingClientRect().width - value;
-        }
+        value *= -1;
     }
     element.scrollLeft = value;
 }
