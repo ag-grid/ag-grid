@@ -14,26 +14,33 @@ export class GridEditingModel {
     }
 
     public createEditModel(rowId: string, columnId: string) {
-        console.warn('EditingModel: createEditModel', columnId);
+        console.warn('GridEditingModel: createEditModel', columnId);
 
         const rowModel = this.rowModels[rowId]
             ? this.rowModels[rowId]
             : (this.rowModels[rowId] = new RowEditingModel(rowId));
         const cellModel = rowModel.getEditModel(columnId);
         if (!cellModel) {
-            const succedd = rowModel.createEditModel(columnId);
-            if (succedd) {
+            const success = rowModel.createEditModel(columnId);
+            if (success) {
                 this.editorCount++;
             }
         }
     }
 
-    public removeEditModel(rowId: string, columnId: string): void {
-        console.warn('EditingModel: removeEditModel', columnId);
+    public removeEditModel(rowId: string, columnId?: string): void {
+        console.warn('GridEditingModel: removeEditModel', rowId, columnId);
 
         const rowModel = this.rowModels[rowId];
 
         if (!rowModel) {
+            return;
+        }
+
+        if (!columnId) {
+            this.editorCount -= rowModel.getEditModelCount();
+            rowModel.destroy();
+            delete this.rowModels[rowId];
             return;
         }
 
@@ -81,5 +88,32 @@ export class GridEditingModel {
             return this.rowModels?.[rowId]?.isEditing(colId) ?? false;
         }
         return this.editorCount > 0;
+    }
+
+    public stopEditing(rowId?: string, colId?: string): void {
+        console.warn('GridEditingModel: stopEditing', rowId, colId);
+        if (rowId) {
+            const rowModel = this.rowModels[rowId];
+            if (rowModel) {
+                if (colId) {
+                    rowModel.removeEditModel(colId);
+                } else {
+                    rowModel.destroy();
+                    delete this.rowModels[rowId];
+                }
+            }
+        } else {
+            Object.keys(this.rowModels).forEach((key) => {
+                const rowModel = this.rowModels[key];
+                if (rowModel) {
+                    rowModel.destroy();
+                    delete this.rowModels[key];
+                }
+            });
+        }
+    }
+
+    public destroy(): void {
+        this.stopEditing();
     }
 }

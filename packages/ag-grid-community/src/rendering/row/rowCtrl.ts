@@ -106,7 +106,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         if (!this.gos?.get('experimentalEditingModeV2')) {
             return this._editing;
         }
-        return this.beans.rowEditingSvc?.isEditing(this.rowId!) ?? false;
+        return this.beans.editingFcd?.isEditing(this) ?? false;
     }
     public set editing(value: boolean) {
         if (!this.gos?.get('experimentalEditingModeV2')) {

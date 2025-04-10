@@ -1,7 +1,9 @@
 import type { _ModuleWithoutApi } from '../interfaces/iModule';
 import { VERSION } from '../version';
-import { EditingService } from './editingService';
-import { RowEditingService } from './rowEditingService';
+import { EditingFacade } from './editingFacade';
+import { BatchEditMode } from './mode/batchEditMode';
+import { FullRowEditMode } from './mode/fullRowEditMode';
+import { SingleCellEditMode } from './mode/singleCellEditMode';
 
 /**
  * @internal
@@ -9,7 +11,12 @@ import { RowEditingService } from './rowEditingService';
 export const EditingCoreModule: _ModuleWithoutApi = {
     moduleName: 'EditingCore',
     version: VERSION,
-    beans: [EditingService, RowEditingService],
+    beans: [EditingFacade],
+    dynamicBeans: {
+        cellEditMode: SingleCellEditMode,
+        rowEditMode: FullRowEditMode,
+        batchEditMode: BatchEditMode,
+    },
     dependsOn: [],
     css: [],
 };

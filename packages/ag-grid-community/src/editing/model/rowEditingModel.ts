@@ -55,4 +55,9 @@ export class RowEditingModel {
         }
         return this.editorCount > 0;
     }
+
+    destroy() {
+        console.warn('RowEditingModel: destroy', this.rowId);
+        Object.keys(this.editorModels).forEach((key) => this.removeEditModel(key));
+    }
 }
