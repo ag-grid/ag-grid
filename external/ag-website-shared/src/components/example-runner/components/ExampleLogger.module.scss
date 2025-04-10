@@ -66,6 +66,7 @@
     background-color: var(--color-gray-300);
     color: var(--color-gray-700);
     opacity: 0.6666;
+    flex-shrink: 0;
 
     #{$selector-darkmode} & {
         background-color: var(--color-gray-600);
