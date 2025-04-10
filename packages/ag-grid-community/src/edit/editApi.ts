@@ -36,7 +36,7 @@ export function getCellEditorInstances<TData = any>(
 
 export function getEditingCells(beans: BeanCollection): CellPosition[] {
     if (beans.gos.get('experimentalEditingModeV2')) {
-        return beans.editingFcd?.editingModel.getEditingCellPositions() ?? [];
+        return beans.editingModelSvc?.getEditingCellPositions() ?? [];
     }
 
     const res: CellPosition[] = [];

@@ -1,3 +1,4 @@
+import { EditingModelModule } from '../editing-model/editingModelModule';
 import type { _ModuleWithoutApi } from '../interfaces/iModule';
 import { VERSION } from '../version';
 import { EditingFacade } from './editingFacade';
@@ -17,6 +18,6 @@ export const EditingCoreModule: _ModuleWithoutApi = {
         rowEditMode: FullRowEditMode,
         batchEditMode: BatchEditMode,
     },
-    dependsOn: [],
+    dependsOn: [EditingModelModule],
     css: [],
 };

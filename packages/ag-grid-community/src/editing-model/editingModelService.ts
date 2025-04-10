@@ -1,20 +1,16 @@
-import type { BeanCollection } from '../../context/context';
-import type { CellPosition } from '../../interfaces/iCellPosition';
-import type { CellEditingModel } from './cellEditingModel';
-import { RowEditingModel } from './rowEditingModel';
+import type { NamedBean } from '../context/bean';
+import { BeanStub } from '../context/beanStub';
+import type { CellPosition } from '../interfaces/iCellPosition';
+import type { CellEditingModel } from './model/cellEditingModel';
+import { RowEditingModel } from './model/rowEditingModel';
 
-export class GridEditingModel {
+export class EditingModelService extends BeanStub implements NamedBean {
+    beanName = 'editingModelSvc' as const;
     private rowModels: Record<string, RowEditingModel> = {};
     private editorCount = 0;
 
-    private beans: BeanCollection;
-
-    constructor(beans: BeanCollection) {
-        this.beans = beans;
-    }
-
     public createEditModel(rowId: string, columnId: string) {
-        console.warn('GridEditingModel: createEditModel', columnId);
+        console.warn('EditingModelService: createEditModel', columnId);
 
         const rowModel = this.rowModels[rowId]
             ? this.rowModels[rowId]
@@ -29,7 +25,7 @@ export class GridEditingModel {
     }
 
     public removeEditModel(rowId: string, columnId?: string): void {
-        console.warn('GridEditingModel: removeEditModel', rowId, columnId);
+        console.warn('EditingModelService: removeEditModel', rowId, columnId);
 
         const rowModel = this.rowModels[rowId];
 
@@ -91,7 +87,7 @@ export class GridEditingModel {
     }
 
     public stopEditing(rowId?: string, colId?: string): void {
-        console.warn('GridEditingModel: stopEditing', rowId, colId);
+        console.warn('EditingModelService: stopEditing', rowId, colId);
         if (rowId) {
             const rowModel = this.rowModels[rowId];
             if (rowModel) {
@@ -113,7 +109,8 @@ export class GridEditingModel {
         }
     }
 
-    public destroy(): void {
+    public override destroy(): void {
+        super.destroy();
         this.stopEditing();
     }
 }
