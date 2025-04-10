@@ -196,6 +196,11 @@ export function useGridFilter(callbacks: CustomFilterCallbacks): void {
     return useGridCustomComponent(callbacks);
 }
 
+/** TODO */
+export function useGridFilterDisplay(callbacks: CustomFilterDisplayCallbacks): void {
+    return useGridCustomComponent(callbacks);
+}
+
 /** Hook to allow custom floating filter component callbacks to be provided to the grid */
 export function useGridFloatingFilter(callbacks: CustomFloatingFilterCallbacks): void {
     useGridCustomComponent(callbacks);

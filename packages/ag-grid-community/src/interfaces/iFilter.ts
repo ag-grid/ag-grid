@@ -161,8 +161,8 @@ export interface IFilter extends BaseFilter {
     refresh?(newParams: IFilterParams): boolean;
 }
 
-export interface FilterDisplay<TData = any, TContext = any, TModel = any> extends SharedFilterUi {
-    refresh(newParams: FilterDisplayParams<TData, TContext, TModel>): boolean;
+export interface FilterDisplay<TData = any, TContext = any, TModel = any, TState = any> extends SharedFilterUi {
+    refresh(newParams: FilterDisplayParams<TData, TContext, TModel, TState>): boolean;
 }
 
 export interface IFilterComp<TData = any> extends IComponent<IFilterParams<TData>>, IFilter {}

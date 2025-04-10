@@ -921,7 +921,7 @@ export class ColumnFilterService
         filterDef: IFilterDef,
         defaultFilter: string
     ): { filterEvaluator: FilterEvaluatorGeneratorFunc; evaluatorName?: EvaluatorName } | undefined {
-        let filterEvaluator = filterDef.filterEvaluator;
+        let filterEvaluator = this.gos.get('enableFilterEvaluators') ? filterDef.filterEvaluator : undefined;
         let evaluatorName: EvaluatorName | undefined;
         if (!filterEvaluator) {
             let filterName: string | undefined;

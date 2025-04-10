@@ -1,5 +1,5 @@
 .person-filter {
-    padding: 4px;
+    padding: 12px;
     width: 200px;
 }
 
@@ -16,7 +16,7 @@
 }
 
 .year-filter > * {
-    margin: 8px;
+    margin: 8px 12px;
 }
 
 .year-filter > div:first-child {
