@@ -108,7 +108,7 @@ export class CellComp extends Component {
         this.refreshWrapper(false);
 
         const compProxy: ICellComp = {
-            updateCss: (cssClassName, on) => this.cellCssManager.updateCss(cssClassName, on),
+            toggleCss: (cssClassName, on) => this.cellCssManager.toggleCss(cssClassName, on),
             setUserStyles: (styles: CellStyle) => _addStylesToElement(cellDiv, styles),
             getFocusableElement: () => cellDiv,
 
@@ -202,7 +202,7 @@ export class CellComp extends Component {
             this.eCellWrapper = undefined;
         }
 
-        this.cellCssManager.updateCss('ag-cell-value', !usingWrapper);
+        this.cellCssManager.toggleCss('ag-cell-value', !usingWrapper);
 
         const usingCellValue = !editing && usingWrapper;
         const putCellValueIn = usingCellValue && this.eCellValue == null;
@@ -441,9 +441,9 @@ export class CellComp extends Component {
 
     private refreshEditStyles(editing: boolean, isPopup?: boolean): void {
         const { cellCssManager } = this;
-        cellCssManager.updateCss('ag-cell-inline-editing', editing && !isPopup);
-        cellCssManager.updateCss('ag-cell-popup-editing', editing && !!isPopup);
-        cellCssManager.updateCss('ag-cell-not-inline-editing', !editing || !!isPopup);
+        cellCssManager.toggleCss('ag-cell-inline-editing', editing && !isPopup);
+        cellCssManager.toggleCss('ag-cell-popup-editing', editing && !!isPopup);
+        cellCssManager.toggleCss('ag-cell-not-inline-editing', !editing || !!isPopup);
 
         this.cellCtrl.setInlineEditingCss();
     }

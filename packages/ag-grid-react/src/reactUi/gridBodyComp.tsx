@@ -128,7 +128,7 @@ const GridBodyComp = () => {
             setStickyTopWidth,
             setTopInvisible,
             setBottomInvisible,
-            setColumnMovingCss: (cssClass: string, flag: boolean) => cssManager.current!.updateCss(cssClass, flag),
+            setColumnMovingCss: (cssClass: string, flag: boolean) => cssManager.current!.toggleCss(cssClass, flag),
             updateLayoutClasses: setLayoutClass,
             setAlwaysVerticalScrollClass: setForceVerticalScrollClass,
             setPinnedTopBottomOverflowY: setTopAndBottomOverflowY,

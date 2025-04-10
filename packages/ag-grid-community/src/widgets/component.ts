@@ -370,15 +370,15 @@ export class Component<TLocalEvent extends string = ComponentEvent>
     }
 
     public addCss(className: string): void {
-        this.cssManager.updateCss(className, true);
+        this.cssManager.toggleCss(className, true);
     }
 
     public removeCss(className: string): void {
-        this.cssManager.updateCss(className, false);
+        this.cssManager.toggleCss(className, false);
     }
 
-    public updateCss(className: string, addOrRemove: boolean): void {
-        this.cssManager.updateCss(className, addOrRemove);
+    public toggleCss(className: string, addOrRemove: boolean): void {
+        this.cssManager.toggleCss(className, addOrRemove);
     }
 
     protected registerCSS(css: string): void {

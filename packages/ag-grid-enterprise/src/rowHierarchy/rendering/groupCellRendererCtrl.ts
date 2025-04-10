@@ -97,7 +97,7 @@ export class GroupCellRendererCtrl extends BeanStub implements IGroupCellRendere
 
         const isGrandTotal = node.level === -1;
         if (!isGrandTotal) {
-            this.comp.updateCss('ag-row-group-leaf-indent', true);
+            this.comp.toggleCss('ag-row-group-leaf-indent', true);
         }
     }
 
@@ -218,15 +218,15 @@ export class GroupCellRendererCtrl extends BeanStub implements IGroupCellRendere
         const onExpandableChanged = () => {
             const expandable = this.isExpandable();
 
-            comp.updateCss('ag-cell-expandable', expandable);
-            comp.updateCss('ag-row-group', expandable);
+            comp.toggleCss('ag-cell-expandable', expandable);
+            comp.toggleCss('ag-row-group', expandable);
 
             // indent non-expandable cells so they correctly indent with expandable cells
             const pivotModeAndLeaf = !expandable && colModel.isPivotMode();
-            comp.updateCss('ag-pivot-leaf-group', pivotModeAndLeaf);
+            comp.toggleCss('ag-pivot-leaf-group', pivotModeAndLeaf);
             const normalModeNotTotalFooter =
                 !colModel.isPivotMode() && (!this.displayedNode.footer || this.displayedNode.level !== -1);
-            comp.updateCss('ag-row-group-leaf-indent', !expandable && normalModeNotTotalFooter);
+            comp.toggleCss('ag-row-group-leaf-indent', !expandable && normalModeNotTotalFooter);
 
             // update the child count component
             const count = this.getChildCount();
@@ -470,11 +470,11 @@ export class GroupCellRendererCtrl extends BeanStub implements IGroupCellRendere
 
             // if indent has already been set, remove it.
             if (this.indentClass) {
-                this.comp.updateCss(this.indentClass, false);
+                this.comp.toggleCss(this.indentClass, false);
             }
 
             this.indentClass = newIndentClass;
-            this.comp.updateCss(newIndentClass, true);
+            this.comp.toggleCss(newIndentClass, true);
             this.eGui.style.setProperty('--ag-indentation-level', String(level));
         };
 

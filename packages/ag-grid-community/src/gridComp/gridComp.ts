@@ -79,9 +79,9 @@ export class GridComp extends TabGuardComp {
         eRootWrapperBodyClassList.toggle(NORMAL, normal);
         eRootWrapperBodyClassList.toggle(PRINT, print);
 
-        this.updateCss(AUTO_HEIGHT, autoHeight);
-        this.updateCss(NORMAL, normal);
-        this.updateCss(PRINT, print);
+        this.toggleCss(AUTO_HEIGHT, autoHeight);
+        this.toggleCss(NORMAL, normal);
+        this.toggleCss(PRINT, print);
     }
 
     private createTemplate(params: OptionalGridComponents): ElementParams {

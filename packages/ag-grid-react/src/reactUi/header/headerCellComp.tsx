@@ -45,7 +45,7 @@ const HeaderCellComp = ({ ctrl }: { ctrl: HeaderCellCtrl }) => {
                     eGui.current.style.width = width;
                 }
             },
-            updateCss: (name: string, on: boolean) => cssManager.current!.updateCss(name, on),
+            toggleCss: (name: string, on: boolean) => cssManager.current!.toggleCss(name, on),
             setUserStyles: (styles: HeaderStyle) => setUserStyles(styles),
             setAriaSort: (sort?: ColumnSortState) => {
                 if (eGui.current) {

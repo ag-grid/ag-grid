@@ -197,7 +197,7 @@ export class ToolPanelFilterGroupComp extends Component {
         const columns = this.getColumns();
 
         const anyChildFiltersActive = () => columns.some((col) => col.isFilterActive());
-        this.filterGroupComp.updateCss('ag-has-filter', anyChildFiltersActive());
+        this.filterGroupComp.toggleCss('ag-has-filter', anyChildFiltersActive());
     }
 
     private onFilterOpened(event: FilterOpenedEvent): void {

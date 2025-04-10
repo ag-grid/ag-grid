@@ -101,7 +101,7 @@ const RowComp = ({ rowCtrl, containerType }: { rowCtrl: RowCtrl; containerType: 
 
             // i found using React for managing classes at the row level was to slow, as modifying classes caused a lot of
             // React code to execute, so avoiding React for managing CSS Classes made the grid go much faster.
-            updateCss: (name, on) => cssManager.current!.updateCss(name, on),
+            toggleCss: (name, on) => cssManager.current!.toggleCss(name, on),
 
             setDomOrder: (domOrder) => (domOrderRef.current = domOrder),
             setRowIndex,

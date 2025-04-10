@@ -387,7 +387,7 @@ const CellComp = ({
         }
 
         const compProxy: ICellComp = {
-            updateCss: (name, on) => cssManager.current!.updateCss(name, on),
+            toggleCss: (name, on) => cssManager.current!.toggleCss(name, on),
             setUserStyles: (styles: CellStyle) => setUserStyles(styles),
             getFocusableElement: () => eGui.current!,
 
@@ -485,10 +485,10 @@ const CellComp = ({
         if (!eGui.current) {
             return;
         }
-        cssManager.current!.updateCss('ag-cell-value', !showCellWrapper);
-        cssManager.current!.updateCss('ag-cell-inline-editing', !!editDetails && !editDetails.popup);
-        cssManager.current!.updateCss('ag-cell-popup-editing', !!editDetails && !!editDetails.popup);
-        cssManager.current!.updateCss('ag-cell-not-inline-editing', !editDetails || !!editDetails.popup);
+        cssManager.current!.toggleCss('ag-cell-value', !showCellWrapper);
+        cssManager.current!.toggleCss('ag-cell-inline-editing', !!editDetails && !editDetails.popup);
+        cssManager.current!.toggleCss('ag-cell-popup-editing', !!editDetails && !!editDetails.popup);
+        cssManager.current!.toggleCss('ag-cell-not-inline-editing', !editDetails || !!editDetails.popup);
         cellCtrl.setInlineEditingCss();
     });
 

@@ -184,7 +184,7 @@ export class AdvancedFilterBuilderComp extends Component<AdvancedFilterBuilderEv
         );
         this.validate();
 
-        const mouseListener = (isEnter: boolean) => this.updateCss('ag-advanced-filter-builder-validation', isEnter);
+        const mouseListener = (isEnter: boolean) => this.toggleCss('ag-advanced-filter-builder-validation', isEnter);
         this.addManagedListeners(this.eApplyFilterButton, {
             mouseenter: () => mouseListener(true),
             mouseleave: () => mouseListener(false),

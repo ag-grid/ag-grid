@@ -54,8 +54,8 @@ export class AgGridHeaderDropZones extends Component {
         const { rowGroupComp, pivotComp } = this;
         const bothDisplayed = rowGroupComp.isDisplayed() && pivotComp.isDisplayed();
         const classStr = 'ag-column-drop-horizontal-half-width';
-        rowGroupComp.updateCss(classStr, bothDisplayed);
-        pivotComp.updateCss(classStr, bothDisplayed);
+        rowGroupComp.toggleCss(classStr, bothDisplayed);
+        pivotComp.toggleCss(classStr, bothDisplayed);
     }
 
     private onRowGroupChanged(): void {

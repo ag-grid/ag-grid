@@ -126,7 +126,7 @@ export class ToolPanelColumnComp extends Component {
         this.setupTooltip();
 
         const classes = _getToolPanelClassesFromColDef(column.getColDef(), gos, column, null);
-        classes.forEach((c) => this.updateCss(c, true));
+        classes.forEach((c) => this.toggleCss(c, true));
     }
 
     public getColumn(): AgColumn {
@@ -302,7 +302,7 @@ export class ToolPanelColumnComp extends Component {
 
         this.cbSelect.setReadOnly(!canBeToggled);
         this.eDragHandle.classList.toggle('ag-column-select-column-readonly', !canBeDragged);
-        this.updateCss('ag-column-select-column-readonly', !canBeDragged && !canBeToggled);
+        this.toggleCss('ag-column-select-column-readonly', !canBeDragged && !canBeToggled);
 
         this.cbSelect.setPassive(false);
 

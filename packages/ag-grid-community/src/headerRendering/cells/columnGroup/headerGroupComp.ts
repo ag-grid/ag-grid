@@ -242,7 +242,7 @@ export class HeaderGroupComp extends Component implements IHeaderGroupComp {
             this.agLabel.textContent = displayNameSanitised!;
         }
 
-        this.updateCss('ag-sticky-label', !columnGroup.getColGroupDef()?.suppressStickyLabel);
+        this.toggleCss('ag-sticky-label', !columnGroup.getColGroupDef()?.suppressStickyLabel);
     }
 
     public override destroy(): void {

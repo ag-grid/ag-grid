@@ -9,7 +9,7 @@ export class CssClassManager {
         this.getGui = getGui;
     }
 
-    public updateCss(className: string, addOrRemove: boolean): void {
+    public toggleCss(className: string, addOrRemove: boolean): void {
         if (!className) {
             return;
         }
@@ -19,17 +19,14 @@ export class CssClassManager {
         if (className.indexOf(' ') >= 0) {
             const list = (className || '').split(' ');
             if (list.length > 1) {
-                list.forEach((cls) => this.updateCss(cls, addOrRemove));
+                list.forEach((cls) => this.toggleCss(cls, addOrRemove));
                 return;
             }
         }
 
         const updateNeeded = this.cssClassStates[className] !== addOrRemove;
         if (updateNeeded && className.length) {
-            const eGui = this.getGui();
-            if (eGui) {
-                eGui.classList.toggle(className, addOrRemove);
-            }
+            this.getGui()?.classList.toggle(className, addOrRemove);
 
             this.cssClassStates[className] = addOrRemove;
         }

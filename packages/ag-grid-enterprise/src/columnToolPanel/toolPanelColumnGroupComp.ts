@@ -128,7 +128,7 @@ export class ToolPanelColumnGroupComp extends Component {
         this.setupTooltip();
 
         const classes = _getToolPanelClassesFromColDef(columnGroup.getColGroupDef(), gos, null, columnGroup);
-        classes.forEach((c) => this.updateCss(c, true));
+        classes.forEach((c) => this.toggleCss(c, true));
     }
 
     public getColumns(): AgColumn[] {
@@ -349,7 +349,7 @@ export class ToolPanelColumnGroupComp extends Component {
         const cbSelect = this.cbSelect;
         cbSelect.setValue(selectedValue);
         cbSelect.setReadOnly(readOnlyValue);
-        this.updateCss('ag-column-select-column-group-readonly', readOnlyValue);
+        this.toggleCss('ag-column-select-column-group-readonly', readOnlyValue);
         this.processingColumnStateChange = false;
     }
 
