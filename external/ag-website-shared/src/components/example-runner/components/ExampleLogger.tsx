@@ -200,7 +200,7 @@ export const ExampleLogger: FunctionComponent<Props> = ({ exampleName, bufferSiz
         <div className={styles.loggerOuter}>
             <div className={styles.loggerHeader}>
                 <div>Console</div>
-                <button className="button-secondary" onClick={clearLogs}>
+                <button className={`button-secondary ${styles.clearButton}`} onClick={clearLogs}>
                     Clear
                 </button>
             </div>
