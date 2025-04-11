@@ -1,6 +1,7 @@
 import { KeyCode } from '../../constants/keyCode';
 import { BeanStub } from '../../context/beanStub';
 import type { BeanCollection } from '../../context/context';
+import { isEditing } from '../../editing/editingApi';
 import type { RowNode } from '../../entities/rowNode';
 import { _isCellSelectionEnabled, _isRowSelection } from '../../gridOptionsUtils';
 import { _isMacOsUserAgent } from '../../utils/browser';
@@ -124,7 +125,9 @@ export class CellKeyboardListenerFeature extends BeanStub {
 
     private onEnterKeyDown(e: KeyboardEvent): void {
         const { cellCtrl, beans } = this;
-        if (cellCtrl.editing || this.rowCtrl.editing) {
+        const editing = isEditing(this.beans, cellCtrl.rowCtrl, cellCtrl);
+
+        if (editing) {
             this.beans.editSvc?.stopRowOrCellEdit(cellCtrl, false, false, e.shiftKey);
         } else {
             if (beans.gos.get('enterNavigatesVertically')) {

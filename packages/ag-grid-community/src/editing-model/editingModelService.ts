@@ -1,6 +1,8 @@
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { CellPosition } from '../interfaces/iCellPosition';
+import type { CellCtrl } from '../rendering/cell/cellCtrl';
+import type { RowCtrl } from '../rendering/row/rowCtrl';
 import type { CellEditingModel } from './model/cellEditingModel';
 import { RowEditingModel } from './model/rowEditingModel';
 
@@ -79,9 +81,9 @@ export class EditingModelService extends BeanStub implements NamedBean {
         return positions;
     }
 
-    public isEditing(rowId?: string, colId?: string): boolean {
-        if (rowId) {
-            return this.rowModels?.[rowId]?.isEditing(colId) ?? false;
+    public isEditing(rowCtrl?: RowCtrl | null, cellCtrl?: CellCtrl | null): boolean {
+        if (rowCtrl) {
+            return this.rowModels[rowCtrl.rowId!]?.isEditing(cellCtrl?.column.colId) ?? false;
         }
         return this.editorCount > 0;
     }

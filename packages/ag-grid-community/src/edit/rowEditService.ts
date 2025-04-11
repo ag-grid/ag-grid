@@ -1,5 +1,6 @@
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
+import { isEditing } from '../editing/editingApi';
 import type { RowEditingStartedEvent, RowEditingStoppedEvent } from '../events';
 import type { CellCtrl } from '../rendering/cell/cellCtrl';
 import type { RowCtrl } from '../rendering/row/rowCtrl';
@@ -18,8 +19,10 @@ export class RowEditService extends BeanStub implements NamedBean {
             return this.beans.editingFcd?.startEditing(rowCtrl, sourceRenderedCell!, key, false, event) ?? false;
         }
 
+        const editing = isEditing(this.beans, rowCtrl);
+
         // don't do it if already editing
-        if (rowCtrl.editing) {
+        if (editing) {
             return false;
         }
 

@@ -22,7 +22,7 @@ export class SingleCellEditMode extends BaseEditMode {
     }
 
     public stopEditing(rowCtrl?: RowCtrl, cellCtrl?: CellCtrl, cancel?: boolean): boolean {
-        console.warn('SingleCellEditMode: stopEditing', cancel);
+        console.warn('SingleCellEditMode: stopEditing', rowCtrl, cellCtrl, cancel);
         if (rowCtrl) {
             this.beans.editingModelSvc?.stopEditing(rowCtrl!.rowId!, cellCtrl?.column.colId);
         } else {
@@ -32,6 +32,6 @@ export class SingleCellEditMode extends BaseEditMode {
     }
 
     public isEditing(rowCtrl?: RowCtrl, cellCtrl?: CellCtrl): boolean {
-        return this.beans.editingModelSvc?.isEditing(rowCtrl?.rowId ?? undefined, cellCtrl?.column.colId) ?? false;
+        return this.beans.editingModelSvc?.isEditing(rowCtrl, cellCtrl) ?? false;
     }
 }

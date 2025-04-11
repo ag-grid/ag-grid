@@ -1,4 +1,5 @@
 import type { BeanCollection } from '../../context/context';
+import { isEditing } from '../../editing/editingApi';
 import type { RowStyle } from '../../entities/gridOptions';
 import type { RowContainerType } from '../../gridBodyComp/rowContainer/rowContainerCtrl';
 import type { UserCompDetails } from '../../interfaces/iUserCompDetails';
@@ -116,13 +117,8 @@ export class RowComp extends Component {
     }
 
     private newCellComp(cellCtrl: CellCtrl): void {
-        const cellComp = new CellComp(
-            this.beans,
-            cellCtrl,
-            this.rowCtrl.printLayout,
-            this.getGui(),
-            this.rowCtrl.editing
-        );
+        const editing = isEditing(this.beans, cellCtrl.rowCtrl);
+        const cellComp = new CellComp(this.beans, cellCtrl, this.rowCtrl.printLayout, this.getGui(), editing);
         this.cellComps.set(cellCtrl.instanceId, cellComp);
         this.getGui().appendChild(cellComp.getGui());
     }

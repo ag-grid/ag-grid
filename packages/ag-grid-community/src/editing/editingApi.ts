@@ -7,6 +7,8 @@ import { _getCellByPosition } from '../entities/positionUtils';
 import { _getActiveDomElement } from '../gridOptionsUtils';
 import type { GetCellEditorInstancesParams, ICellEditor } from '../interfaces/iCellEditor';
 import type { CellPosition } from '../interfaces/iCellPosition';
+import type { CellCtrl } from '../rendering/cell/cellCtrl';
+import type { RowCtrl } from '../rendering/row/rowCtrl';
 import { _warn } from '../validation/logging';
 
 export function undoCellEditing(beans: BeanCollection): void {
@@ -42,6 +44,12 @@ export function stopEditing(beans: BeanCollection, cancel: boolean = false): voi
     if (beans.editingFcd?.isEditing()) {
         beans.editingFcd?.stopAllEditing(cancel);
     }
+}
+
+export function isEditing(beans: BeanCollection, rowCtrl?: RowCtrl | null, cellCtrl?: CellCtrl | null): boolean {
+    return beans.gos.get('experimentalEditingModeV2')
+        ? beans.editingFcd?.isEditing(rowCtrl ?? undefined, cellCtrl ?? undefined) ?? false
+        : rowCtrl?.editing || cellCtrl?.editing || false;
 }
 
 export function startEditingCell(beans: BeanCollection, params: StartEditingCellParams): void {
