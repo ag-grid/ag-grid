@@ -21,6 +21,11 @@ function cleanParams(params: Params) {
                 cleanParam = false;
             }
 
+            // Ensure false is correctly handled as a boolean
+            if (cleanParam === 'false') {
+                cleanParam = false;
+            }
+
             return [key, cleanParam];
         })
     );
