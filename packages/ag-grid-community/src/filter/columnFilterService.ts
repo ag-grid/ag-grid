@@ -821,16 +821,13 @@ export class ColumnFilterService
                 model,
             };
             displayParams.onModelChange = (model, additionalEventAttributes) => {
-                this.model[colId] = model;
+                this.updateStoredModel(colId, model);
                 this.refreshEvaluatorAndUi(column, model, 'ui').then(() => {
                     filterChangedCallback({ ...additionalEventAttributes, source: 'columnFilter' });
                 });
             };
-            const filterStateCallback = (additionalEventAttributes?: any) =>
-                this.filterUiChanged(column, additionalEventAttributes);
-            displayParams.onStateChange = (state, additionalEventAttributes) => {
+            displayParams.onStateChange = (state) => {
                 this.updateState(column, state);
-                filterStateCallback(additionalEventAttributes);
                 this.updateOrRefreshFilterUi(column);
             };
             displayParams.onAction = (action, additionalEventAttributes, event) => {
@@ -843,7 +840,8 @@ export class ColumnFilterService
                 });
             };
             displayParams.getEvaluator = () => this.getOrCreateEvaluator(column)!;
-            displayParams.onUiChange = filterStateCallback;
+            displayParams.onUiChange = (additionalEventAttributes?: any) =>
+                this.filterUiChanged(column, additionalEventAttributes);
             displayParams.source = source;
         }
 
@@ -1001,7 +999,7 @@ export class ColumnFilterService
             source,
             model: this.getModelForEvaluator(column),
             onModelChange: (newModel, additionalEventAttributes) => {
-                this.model[colId] = newModel;
+                this.updateStoredModel(colId, newModel);
                 this.refreshEvaluatorAndUi(column, newModel, 'evaluator').then(() => {
                     filterChangedCallback({ ...additionalEventAttributes, source: 'columnFilter' });
                 });
@@ -1096,7 +1094,7 @@ export class ColumnFilterService
                 this.floatingFilterUiChanged(column, additionalEventAttributes);
             displayParams.model = this.getModelForEvaluator(column);
             displayParams.onModelChange = (model, additionalEventAttributes) => {
-                this.model[colId] = model;
+                this.updateStoredModel(colId, model);
                 this.refreshEvaluatorAndUi(column, model, 'floating', true).then(() => {
                     filterChangedCallback({ ...additionalEventAttributes, source: 'columnFilter' });
                 });
@@ -1175,10 +1173,12 @@ export class ColumnFilterService
     ): AgPromise<boolean> {
         let isActive = false;
         const { column, isEvaluator, filterUi } = filterWrapper;
+        const colId = column.getColId();
         if (isEvaluator) {
             isActive = this.isEvaluatorActive(column);
             this.destroyBean(filterWrapper.evaluator);
-            delete this.model[column.getColId()];
+            delete this.model[colId];
+            this.state.delete(colId);
         }
         if (filterUi) {
             if (filterUi.created) {
@@ -1189,7 +1189,7 @@ export class ColumnFilterService
 
                     this.setColFilterActive(column, false, 'filterDestroyed');
 
-                    this.allColumnFilters.delete(column.getColId());
+                    this.allColumnFilters.delete(colId);
 
                     this.eventSvc.dispatchEvent({
                         type: 'filterDestroyed',
@@ -1607,11 +1607,7 @@ export class ColumnFilterService
             if (filterWrapper.isEvaluator) {
                 const column = filterWrapper.column;
                 const colId = column.getColId();
-                if (_exists(newModel)) {
-                    this.model[colId] = newModel;
-                } else {
-                    delete this.model[colId];
-                }
+                this.updateStoredModel(colId, newModel);
                 if (justCreated) {
                     // don't need to refresh as already has the new model
                     resolve();
@@ -1640,6 +1636,21 @@ export class ColumnFilterService
         });
     }
 
+    /** for evaluators only */
+    private updateStoredModel(colId: string, model: any): void {
+        if (_exists(model)) {
+            this.model[colId] = model;
+        } else {
+            delete this.model[colId];
+        }
+        const oldState = this.state.get(colId);
+        const newState = {
+            model,
+            state: oldState?.state,
+        };
+        this.state.set(colId, newState);
+    }
+
     private filterModified(column: AgColumn, additionalEventAttributes?: any): void {
         this.getOrCreateFilterUi(column)?.then((filterInstance) => {
             this.eventSvc.dispatchEvent({
@@ -1661,7 +1672,7 @@ export class ColumnFilterService
 
     private floatingFilterUiChanged(column: Column, additionalEventAttributes?: any): void {
         this.eventSvc.dispatchEvent({
-            type: 'floatingFilterModified',
+            type: 'floatingFilterUiChanged',
             column,
             ...additionalEventAttributes,
         });
@@ -1693,7 +1704,7 @@ export class ColumnFilterService
                     () => this.state.get(colId),
                     (state) => this.updateState(column, state),
                     (model) => {
-                        this.model[colId] = model;
+                        this.updateStoredModel(colId, model);
                         this.dispatchLocalEvent<FilterActionEvent>({
                             type: 'filterAction',
                             column,

@@ -170,7 +170,7 @@ export class MultiFilterUi
                     }
                 });
             },
-            onStateChange: (newState, additionalEventAttributes) => {
+            onStateChange: (newState) => {
                 const { model, state, valid } = newState;
                 const validity = this.validity;
                 validity[index] = valid;
@@ -185,7 +185,7 @@ export class MultiFilterUi
                     valid: allValid,
                 };
                 this.allState = newAllState;
-                onStateChange(newAllState, additionalEventAttributes);
+                onStateChange(newAllState);
             },
             getEvaluator: () => {
                 const multiFilterEvaluator = getEvaluator() as MultiFilterEvaluator;

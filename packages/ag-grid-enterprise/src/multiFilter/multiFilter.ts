@@ -312,13 +312,12 @@ export class MultiFilter extends BaseMultiFilter<MultiFilterWrapper> implements 
                         });
                         this;
                     };
-                    displayParams.onStateChange = (state, additionalEventAttributes) => {
+                    displayParams.onStateChange = (state) => {
                         const wrapper = this.wrappers[index];
                         if (!wrapper) {
                             return;
                         }
                         updateState(wrapper, state);
-                        this.beans.colFilter?.filterUiChanged(this.params.column, additionalEventAttributes);
                         _refreshFilterUi(
                             wrapper.filter as any,
                             wrapper.filterParams!,

@@ -264,7 +264,7 @@ export interface FilterDisplayParams<TData = any, TContext = any, TModel = any, 
     /** Callback that should be called every time the model in the component changes. */
     onModelChange: (model: TModel | null, additionalEventAttributes?: any) => void;
     /** If using the filter with apply buttons, callback that should be called every time the unapplied model in the component changes. */
-    onStateChange: (componentState: FilterDisplayState<TModel, TState>, additionalEventAttributes?: any) => void;
+    onStateChange: (componentState: FilterDisplayState<TModel, TState>) => void;
     /** TODO */
     onAction: (action: FilterAction, additionalEventAttributes?: any, event?: KeyboardEvent) => void;
     /**

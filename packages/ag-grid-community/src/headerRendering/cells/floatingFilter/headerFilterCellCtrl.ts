@@ -424,7 +424,6 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl<IHeaderFilterCe
         this.comp.getFloatingFilterComp()?.then((floatingFilter) => {
             if (typeof floatingFilter?.refresh === 'function') {
                 if (this.gos.get('enableFilterEvaluators')) {
-                    // TODO - add source
                     params = {
                         ...params,
                         model: this.beans.colFilter?.getModelForEvaluator(this.column),

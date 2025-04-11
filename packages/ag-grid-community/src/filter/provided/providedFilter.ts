@@ -118,8 +118,10 @@ export abstract class ProvidedFilter<
         }
 
         const newState = newParams.state;
+        const oldState = this.state;
+        this.state = newState;
 
-        if (newState !== this.state) {
+        if (newState.model !== oldState.model || newState.state !== oldState.state) {
             this.setModelIntoUi(newState.model);
         }
 
