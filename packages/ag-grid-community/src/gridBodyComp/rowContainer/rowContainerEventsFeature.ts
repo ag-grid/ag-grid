@@ -1,5 +1,6 @@
 import { KeyCode } from '../../constants/keyCode';
 import { BeanStub } from '../../context/beanStub';
+import { isEditing } from '../../editing/editingApi';
 import type { AgColumn } from '../../entities/agColumn';
 import { _getSelectAll, _isCellSelectionEnabled } from '../../gridOptionsUtils';
 import type { IClipboardService } from '../../interfaces/iClipboardService';
@@ -266,8 +267,9 @@ export class RowContainerEventsFeature extends BeanStub {
         }
 
         const { cellCtrl, rowCtrl } = this.getControlsForEventTarget(event.target);
+        const editing = isEditing(this.beans, rowCtrl, cellCtrl);
 
-        if (cellCtrl?.editing || rowCtrl?.editing) {
+        if (editing) {
             return;
         }
 
@@ -281,8 +283,9 @@ export class RowContainerEventsFeature extends BeanStub {
         }
 
         const { cellCtrl, rowCtrl } = this.getControlsForEventTarget(event.target);
+        const editing = isEditing(this.beans, rowCtrl, cellCtrl);
 
-        if (cellCtrl?.editing || rowCtrl?.editing) {
+        if (editing) {
             return;
         }
 
@@ -292,10 +295,12 @@ export class RowContainerEventsFeature extends BeanStub {
 
     private onCtrlAndV(clipboardSvc: IClipboardService | undefined, event: KeyboardEvent): void {
         const { cellCtrl, rowCtrl } = this.getControlsForEventTarget(event.target);
+        const editing = isEditing(this.beans, rowCtrl, cellCtrl);
 
-        if (cellCtrl?.editing || rowCtrl?.editing) {
+        if (editing) {
             return;
         }
+
         if (clipboardSvc && !this.gos.get('suppressClipboardPaste')) {
             clipboardSvc.pasteFromClipboard();
         }

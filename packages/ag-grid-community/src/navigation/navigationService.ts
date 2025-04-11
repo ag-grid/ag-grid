@@ -2,6 +2,7 @@ import { KeyCode } from '../constants/keyCode';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
+import { isEditing } from '../editing/editingApi';
 import type { AgColumn } from '../entities/agColumn';
 import { _getCellByPosition, _getRowNode, _isRowBefore } from '../entities/positionUtils';
 import type { RowNode } from '../entities/rowNode';
@@ -452,14 +453,17 @@ export class NavigationService extends BeanStub implements NamedBean {
         backwards: boolean,
         event?: KeyboardEvent
     ): boolean | null {
-        let editing = previous.editing;
+        let editing =
+            previous instanceof CellCtrl
+                ? isEditing(this.beans, previous.rowCtrl, previous)
+                : isEditing(this.beans, previous);
 
         // if cell is not editing, there is still chance row is editing if it's Full Row Editing
         if (!editing && previous instanceof CellCtrl) {
             const cell = previous as CellCtrl;
             const row = cell.rowCtrl;
             if (row) {
-                editing = row.editing;
+                editing = isEditing(this.beans, row);
             }
         }
 
