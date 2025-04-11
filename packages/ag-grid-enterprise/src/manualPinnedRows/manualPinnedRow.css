@@ -2,15 +2,14 @@
     color: var(--ag-input-disabled-text-color);
 }
 
-.ag-floating-top-viewport,
-.ag-floating-bottom-viewport {
+.ag-viewport {
     --ag-pinned-row-border-width: 2px;
 }
 
-.ag-floating-top-viewport {
+.ag-floating-top-border {
     border-bottom: var(--ag-pinned-row-border-width) solid var(--ag-border-color);
 }
 
-.ag-floating-bottom-viewport {
+.ag-floating-bottom-border {
     border-top: var(--ag-pinned-row-border-width) solid var(--ag-border-color);
 }
