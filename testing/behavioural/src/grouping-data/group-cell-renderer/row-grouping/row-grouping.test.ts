@@ -42,7 +42,8 @@ describe('ag-grid groupCellRenderer', () => {
     });
     const groupCellSnapshotter = (container: HTMLDivElement) => {
         const snap: string[] = [];
-        container.querySelectorAll('.ag-cell-group').forEach((el) => {
+        // auto group cell or full width row group cell
+        container.querySelectorAll('.ag-cell-group,.ag-full-width-row>.ag-row-group').forEach((el) => {
             // strip comp generated comp ids as they're too volatile
             snap.push(el.innerHTML.replaceAll(/id="ag-[0-9]+-[a-zA-Z]+"/g, ''));
         });
@@ -109,7 +110,7 @@ describe('ag-grid groupCellRenderer', () => {
 
         describe('correct renderer is used', () => {
             const testConcerns: TestPermutation[] = [
-                { property: 'groupDisplayType', values: ['singleColumn', 'multipleColumns'] },
+                { property: 'groupDisplayType', values: ['singleColumn', 'multipleColumns', 'groupRows'] },
                 {
                     property: 'groupHideOpenParents',
                     values: [true, false],
@@ -138,7 +139,7 @@ describe('ag-grid groupCellRenderer', () => {
 
         describe('correct values are displayed', () => {
             const testConcerns: TestPermutation[] = [
-                { property: 'groupDisplayType', values: ['singleColumn', 'multipleColumns'] },
+                { property: 'groupDisplayType', values: ['singleColumn', 'multipleColumns', 'groupRows'] },
                 {
                     property: 'groupHideOpenParents',
                     values: [true, false],

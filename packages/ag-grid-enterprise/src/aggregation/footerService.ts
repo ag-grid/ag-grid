@@ -1,4 +1,4 @@
-import type { AgColumn, GridOptions, IFooterService, IRowNode, NamedBean, RowNode } from 'ag-grid-community';
+import type { Column, GridOptions, IFooterService, IRowNode, NamedBean, RowNode } from 'ag-grid-community';
 import { BeanStub, _addGridCommonParams, _getGrandTotalRow, _getGroupTotalRowCallback, _warn } from 'ag-grid-community';
 
 import { _createRowNodeFooter } from './footerUtils';
@@ -61,8 +61,8 @@ export class FooterService extends BeanStub implements NamedBean, IFooterService
         return getDefaultIndex(adjustedIndex);
     }
 
-    public doesCellShowTotalPrefix(node: IRowNode, col: AgColumn): boolean {
-        if (!node.footer || !col.colDef.showRowGroup) {
+    public doesCellShowTotalPrefix(node: IRowNode, col?: Column): boolean {
+        if (!node.footer || !col?.getColDef().showRowGroup) {
             return false;
         }
 
@@ -80,8 +80,8 @@ export class FooterService extends BeanStub implements NamedBean, IFooterService
         return !!node.rowGroupColumn && col && col.isRowGroupDisplayed(node.rowGroupColumn.getId());
     }
 
-    public applyTotalPrefix(value: any, formattedValue: string | null, node: IRowNode, column: AgColumn): string {
-        const totalValueGetter = column.colDef.cellRendererParams?.totalValueGetter;
+    public applyTotalPrefix(value: any, formattedValue: string | null, node: IRowNode, column: Column): string {
+        const totalValueGetter = column.getColDef().cellRendererParams?.totalValueGetter;
         if (totalValueGetter) {
             const valueGetterParams = _addGridCommonParams(this.gos, { column, node, value, formattedValue });
             const getterType = typeof totalValueGetter;

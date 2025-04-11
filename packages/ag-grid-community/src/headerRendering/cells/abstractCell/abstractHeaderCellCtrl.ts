@@ -19,7 +19,7 @@ import { refreshFirstAndLastStyles } from '../cssClassApplier';
 let instanceIdSequence = 0;
 
 export interface IAbstractHeaderCellComp {
-    addOrRemoveCssClass(cssClassName: string, on: boolean): void;
+    toggleCss(cssClassName: string, on: boolean): void;
     setUserStyles(styles: HeaderStyle): void;
 }
 
@@ -196,7 +196,7 @@ export abstract class AbstractHeaderCellCtrl<
         const startMeasuring = () => {
             isMeasuring = true;
             measureHeight(0);
-            this.comp.addOrRemoveCssClass('ag-header-cell-auto-height', true);
+            this.comp.toggleCss('ag-header-cell-auto-height', true);
             stopResizeObserver = _observeResize(this.beans, wrapperElement, () => measureHeight(0));
         };
 
@@ -205,7 +205,7 @@ export abstract class AbstractHeaderCellCtrl<
             if (stopResizeObserver) {
                 stopResizeObserver();
             }
-            this.comp.addOrRemoveCssClass('ag-header-cell-auto-height', false);
+            this.comp.toggleCss('ag-header-cell-auto-height', false);
             stopResizeObserver = undefined;
         };
 

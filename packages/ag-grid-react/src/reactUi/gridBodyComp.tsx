@@ -50,9 +50,9 @@ const GridBodyComp = () => {
     // problem as the UI will finish initialising before we set data.
     const [layoutClass, setLayoutClass] = useState<string>('ag-layout-normal');
 
-    const cssClassManager = useRef<CssClassManager>();
-    if (!cssClassManager.current) {
-        cssClassManager.current = new CssClassManager(() => eRoot.current);
+    const cssManager = useRef<CssClassManager>();
+    if (!cssManager.current) {
+        cssManager.current = new CssClassManager(() => eRoot.current);
     }
 
     const eRoot = useRef<HTMLDivElement | null>(null);
@@ -128,8 +128,7 @@ const GridBodyComp = () => {
             setStickyTopWidth,
             setTopInvisible,
             setBottomInvisible,
-            setColumnMovingCss: (cssClass: string, flag: boolean) =>
-                cssClassManager.current!.addOrRemoveCssClass(cssClass, flag),
+            setColumnMovingCss: (cssClass: string, flag: boolean) => cssManager.current!.toggleCss(cssClass, flag),
             updateLayoutClasses: setLayoutClass,
             setAlwaysVerticalScrollClass: setForceVerticalScrollClass,
             setPinnedTopBottomOverflowY: setTopAndBottomOverflowY,

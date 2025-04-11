@@ -25,7 +25,7 @@ export class AgAutocompleteRow extends Component {
     }
 
     public updateSelected(selected: boolean): void {
-        this.addOrRemoveCssClass('ag-autocomplete-row-selected', selected);
+        this.toggleCss('ag-autocomplete-row-selected', selected);
     }
 
     public setSearchString(searchString: string): void {

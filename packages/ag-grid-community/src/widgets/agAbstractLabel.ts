@@ -27,7 +27,7 @@ export abstract class AgAbstractLabel<
     }
 
     public postConstruct() {
-        this.addCssClass('ag-labeled');
+        this.addCss('ag-labeled');
         this.eLabel.classList.add('ag-label');
 
         const { labelSeparator, label, labelWidth, labelAlignment, disabled } = this.config;

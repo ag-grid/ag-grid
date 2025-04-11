@@ -10,7 +10,7 @@ import { ManagedFocusFeature } from '../widgets/managedFocusFeature';
 import { getColumnHeaderRowHeight, getFloatingFiltersHeight, getGroupRowsHeight } from './headerUtils';
 
 export interface IGridHeaderComp {
-    addOrRemoveCssClass(cssClassName: string, on: boolean): void;
+    toggleCss(cssClassName: string, on: boolean): void;
     setHeightAndMinHeight(height: string): void;
 }
 
@@ -111,15 +111,15 @@ export class GridHeaderCtrl extends BeanStub {
     private onPivotModeChanged(beans: BeanCollection): void {
         const pivotMode = beans.colModel.isPivotMode();
 
-        this.comp.addOrRemoveCssClass('ag-pivot-on', pivotMode);
-        this.comp.addOrRemoveCssClass('ag-pivot-off', !pivotMode);
+        this.comp.toggleCss('ag-pivot-on', pivotMode);
+        this.comp.toggleCss('ag-pivot-off', !pivotMode);
     }
 
     private onDisplayedColumnsChanged(beans: BeanCollection): void {
         const columns = beans.visibleCols.allCols;
         const shouldAllowOverflow = columns.some((col) => col.isSpanHeaderHeight());
 
-        this.comp.addOrRemoveCssClass('ag-header-allow-overflow', shouldAllowOverflow);
+        this.comp.toggleCss('ag-header-allow-overflow', shouldAllowOverflow);
     }
 
     protected onTabKeyDown(e: KeyboardEvent): void {

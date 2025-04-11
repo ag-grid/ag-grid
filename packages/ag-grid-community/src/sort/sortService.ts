@@ -307,9 +307,9 @@ export class SortService extends BeanStub implements NamedBean {
 
         const onSortingChanged = () => {
             const sort = column.getSort();
-            comp.addOrRemoveCssClass('ag-header-cell-sorted-asc', sort === 'asc');
-            comp.addOrRemoveCssClass('ag-header-cell-sorted-desc', sort === 'desc');
-            comp.addOrRemoveCssClass('ag-header-cell-sorted-none', !sort);
+            comp.toggleCss('ag-header-cell-sorted-asc', sort === 'asc');
+            comp.toggleCss('ag-header-cell-sorted-desc', sort === 'desc');
+            comp.toggleCss('ag-header-cell-sorted-none', !sort);
 
             if (column.getColDef().showRowGroup) {
                 const sourceColumns = this.beans.showRowGroupCols?.getSourceColumnsForGroupColumn(column);
@@ -319,7 +319,7 @@ export class SortService extends BeanStub implements NamedBean {
                 );
                 const isMultiSorting = !sortDirectionsMatch;
 
-                comp.addOrRemoveCssClass('ag-header-cell-sorted-mixed', isMultiSorting);
+                comp.toggleCss('ag-header-cell-sorted-mixed', isMultiSorting);
             }
         };
         comp.addManagedEventListeners({

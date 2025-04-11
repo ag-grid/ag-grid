@@ -213,8 +213,8 @@ export class EditService extends BeanStub implements NamedBean {
     public setInlineEditingCss(rowCtrl: RowCtrl): void {
         const editing = rowCtrl.editing || rowCtrl.getAllCellCtrls().some((cellCtrl) => cellCtrl.editing);
         rowCtrl.forEachGui(undefined, (gui) => {
-            gui.rowComp.addOrRemoveCssClass('ag-row-inline-editing', editing);
-            gui.rowComp.addOrRemoveCssClass('ag-row-not-inline-editing', !editing);
+            gui.rowComp.toggleCss('ag-row-inline-editing', editing);
+            gui.rowComp.toggleCss('ag-row-not-inline-editing', !editing);
         });
     }
 

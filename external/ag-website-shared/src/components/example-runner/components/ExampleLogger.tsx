@@ -1,6 +1,6 @@
 import { getType } from '@ag-website-shared/components/example-runner/utils/getType';
 import ReactJsonView from '@microlink/react-json-view';
-import { type FunctionComponent, useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { type FunctionComponent, useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 
 import styles from './ExampleLogger.module.scss';
 
@@ -18,6 +18,8 @@ interface Log {
     pageName?: string;
     exampleName: string;
     data: LogData[];
+    rawData: LogData[];
+    count: number;
 }
 
 interface Props {
@@ -26,12 +28,13 @@ interface Props {
 }
 
 const REACT_JSON_VIEW_CONFIG = {
-    collapsed: 1,
+    collapsed: true,
     name: null,
     enableClipboard: false,
     displayDataTypes: false,
     displayObjectSize: false,
     displayArrayKey: false,
+    quotesOnKeys: false,
 };
 const IGNORED_MESSAGES = ['Angular is running in development mode.'];
 
@@ -62,6 +65,14 @@ const JSON_VIEWER_THEME = {
     base0F: 'var(--color-code-symbol)',
 };
 
+const MATCH_TYPE_REGEXP = /\[TYPE:([^\]]+)]/g;
+const REPLACEMENT_TYPES_MAP: Record<string, any> = {
+    undefined: undefined,
+    nan: NaN,
+    infinity: Infinity,
+    negativeInfinity: -Infinity,
+};
+
 function containsIgnoredMessage(log: Log) {
     return log.data.some((message) =>
         IGNORED_MESSAGES.some((ignoredMessage) => typeof message === 'string' && message.includes(ignoredMessage))
@@ -72,10 +83,67 @@ function getLoggableData(data: LogData[]) {
     return data.map((logItem: LogData) => {
         const consoleLogObject = logItem as LogObject;
         if (logItem && consoleLogObject.__consoleLogObject) {
-            return JSON.parse(consoleLogObject.safeString);
+            const parsedObject = JSON.parse(consoleLogObject.safeString);
+            return updateWithTypeValues(parsedObject);
         } else {
             return logItem;
         }
+    });
+}
+
+function getReplacementType(typeValue: string) {
+    const [replacementType] = Array.from(typeValue.matchAll(MATCH_TYPE_REGEXP), (m) => m[1]);
+    return replacementType;
+}
+
+/**
+ * Recursively update the values of an object or array with their replacement types.
+ *
+ * Due to the limitations of `JSON.stringify`, we need to store some values as special strings
+ * in the form `[TYPE:<type>]`, where `<type>` is a type that can't be deserialised. This
+ * needs to be extracted and converted back to the original value.
+ */
+function updateWithTypeValues(value: any) {
+    const valueType = getType(value);
+
+    if (valueType === 'string') {
+        const replacementType = getReplacementType(value);
+
+        const output = replacementType ? REPLACEMENT_TYPES_MAP[replacementType] : value;
+        return output;
+    } else if (valueType === 'array') {
+        return value.map((item: any) => updateWithTypeValues(item));
+    } else if (valueType === 'object') {
+        const obj = { ...value };
+        for (const key in value) {
+            obj[key] = updateWithTypeValues(value[key]);
+        }
+
+        const sortedKeys = Object.keys(obj).sort();
+        const sortedObj = Object.fromEntries(
+            sortedKeys.map((key) => {
+                return [key, obj[key]];
+            })
+        );
+        return sortedObj;
+    } else {
+        return value;
+    }
+}
+
+function isRepeatedLog({ prevLogs, log }: { prevLogs: Log[]; log: Log }) {
+    const lastLog = prevLogs[prevLogs.length - 1];
+    if (!lastLog || lastLog.data.length !== log.data.length) {
+        return false;
+    }
+
+    // NOTE: Compare `rawData` to avoid updates from `updateWithTypeValues`
+    return lastLog.rawData.every((value, index) => {
+        const logDataItem = log.data[index];
+
+        return (value as LogObject)?.__consoleLogObject
+            ? (value as LogObject).safeString === (logDataItem as LogObject)?.safeString
+            : value === logDataItem || (Number.isNaN(value) && Number.isNaN(logDataItem));
     });
 }
 
@@ -92,7 +160,7 @@ const SimpleValueDisplay = ({ value }: { value: SimpleValue }) => {
 const DataItem = ({ data }: { data: LogData[] }) => {
     return (
         <>
-            <div>
+            <div className={styles.dataItem}>
                 {data.map((value, i) => {
                     const isJSonViewable = ['object', 'array'].includes(getType(value));
                     return isJSonViewable ? (
@@ -115,18 +183,31 @@ export const ExampleLogger: FunctionComponent<Props> = ({ exampleName, bufferSiz
     const containerRef = useRef<HTMLPreElement>(null);
     const [logs, setLogs] = useState<Log[]>([]);
 
+    const clearLogs = useCallback(() => {
+        setLogs([]);
+    }, []);
+
     useEffect(() => {
         const updateLogs = (event: MessageEvent) => {
             const log = event.data;
             if (log?.type === 'console-log' && log.exampleName === exampleName && !containsIgnoredMessage(log)) {
                 setLogs((prevLogs) => {
-                    const bufferedLogs = prevLogs.length >= bufferSize ? prevLogs.slice(1) : prevLogs;
+                    if (isRepeatedLog({ prevLogs, log })) {
+                        const lastLog = prevLogs[prevLogs.length - 1];
+                        const updatedLogs = prevLogs.slice(0, -1);
 
-                    const newLog = {
-                        ...log,
-                        data: getLoggableData(log.data),
-                    };
-                    return [...bufferedLogs, newLog];
+                        return [...updatedLogs, { ...lastLog, count: lastLog.count + 1 }];
+                    } else {
+                        const bufferedLogs = prevLogs.length >= bufferSize ? prevLogs.slice(1) : prevLogs;
+
+                        const newLog = {
+                            ...log,
+                            data: getLoggableData(log.data),
+                            rawData: log.data,
+                            count: 1,
+                        };
+                        return [...bufferedLogs, newLog];
+                    }
                 });
             }
         };
@@ -145,11 +226,21 @@ export const ExampleLogger: FunctionComponent<Props> = ({ exampleName, bufferSiz
 
     return (
         <div className={styles.loggerOuter}>
-            <div className={styles.loggerHeader}>Console</div>
+            <div className={styles.loggerHeader}>
+                <div>Console</div>
+                <button className={`button-secondary ${styles.clearButton}`} onClick={clearLogs}>
+                    Clear
+                </button>
+            </div>
             <pre ref={containerRef} className={styles.loggerPre}>
-                {logs.length === 0 && <div>Console logs from the example shown here...</div>}
+                {logs.length === 0 && (
+                    <div className={styles.placeholder}>Console logs from the example shown here...</div>
+                )}
                 {logs.map((log, i) => (
-                    <DataItem key={i} data={log.data}></DataItem>
+                    <div key={i} className={styles.logItem}>
+                        {log.count > 1 && <div className={styles.count}>{log.count}</div>}
+                        <DataItem data={log.data}></DataItem>
+                    </div>
                 ))}
             </pre>
         </div>

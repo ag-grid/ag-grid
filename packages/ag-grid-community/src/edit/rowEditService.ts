@@ -40,7 +40,7 @@ export class RowEditService extends BeanStub implements NamedBean {
 
     public setEditing(rowCtrl: RowCtrl, value: boolean): void {
         rowCtrl.editing = value;
-        rowCtrl.forEachGui(undefined, (gui) => gui.rowComp.addOrRemoveCssClass('ag-row-editing', value));
+        rowCtrl.forEachGui(undefined, (gui) => gui.rowComp.toggleCss('ag-row-editing', value));
 
         const event: RowEditingStartedEvent | RowEditingStoppedEvent = value
             ? rowCtrl.createRowEvent('rowEditingStarted')

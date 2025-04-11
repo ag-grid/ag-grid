@@ -1,16 +1,17 @@
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import { AgColumn } from '../entities/agColumn';
-import type { AgColumnGroup } from '../entities/agColumnGroup';
 import type { ColDef } from '../entities/colDef';
 import type { GridOptions, SelectionColumnDef } from '../entities/gridOptions';
 import type { ColumnEventType } from '../events';
 import type { PropertyValueChangedEvent } from '../gridOptionsService';
 import { _getCheckboxLocation, _getCheckboxes, _getHeaderCheckbox, _isRowSelection } from '../gridOptionsUtils';
 import type { IColumnCollectionService } from '../interfaces/iColumnCollectionService';
+import { _removeFromArray } from '../utils/array';
 import type { ColKey, ColumnCollections } from './columnModel';
-import { _applyColumnState, _getColumnState } from './columnStateUtils';
+import { _applyColumnState } from './columnStateUtils';
 import {
+    ROW_NUMBERS_COLUMN_ID,
     SELECTION_COLUMN_ID,
     _areColIdsEqual,
     _columnsMatch,
@@ -92,12 +93,11 @@ export class SelectionColService extends BeanStub implements NamedBean, IColumnC
 
     public updateColumns(event: PropertyValueChangedEvent<'selectionColumnDef'>): void {
         const source = _convertColumnEventSourceType(event.source);
-        const current = event.currentValue;
 
         this.columns?.list.forEach((col) => {
-            const newColDef = this.createSelectionColDef(current);
+            const newColDef = this.createSelectionColDef(event.currentValue);
             col.setColDef(newColDef, null, source);
-            _applyColumnState(this.beans, { state: [{ colId: col.getColId(), ...newColDef }] }, source);
+            _applyColumnState(this.beans, { state: [{ ...newColDef, colId: col.getColId() }] }, source);
         });
     }
 
@@ -200,63 +200,59 @@ export class SelectionColService extends BeanStub implements NamedBean, IColumnC
         super.destroy();
     }
 
-    public refreshVisibility(source: ColumnEventType): void {
-        if (!this.isSelectionColumnEnabled()) {
+    /**
+     * Refreshes visibility of the selection column based on which columns are currently visible.
+     * Called by the VisibleColsService with the columns that are currently visible in left/center/right
+     * containers. This method *MUTATES* those arrays directly.
+     *
+     * The selection column should be visible if all of the following are true
+     * - The selection column is not disabled
+     * - The number of visible columns excluding the selection column and row numbers column is greater than 0
+     * @param leftCols Visible columns in the left-pinned container
+     * @param centerCols Visible columns in the center viewport
+     * @param rightCols Visible columns in the right-pinned container
+     */
+    public refreshVisibility(leftCols: AgColumn[], centerCols: AgColumn[], rightCols: AgColumn[]): void {
+        // columns list will only be populated if selection column is enabled
+        if (!this.columns?.list.length) {
             return;
         }
 
-        const beans = this.beans;
-        const visibleColumns = beans.visibleCols.getAllTrees() ?? [];
-
-        if (visibleColumns.length === 0) {
+        const numVisibleCols = leftCols.length + centerCols.length + rightCols.length;
+        if (numVisibleCols === 0) {
             return;
         }
 
-        // check first: one or more columns showing -- none are selection column
-        if (!visibleColumns.some(isLeafColumnSelectionCol)) {
-            const existingState = _getColumnState(beans).find((state) => isColumnSelectionCol(state.colId));
+        // There's only one selection column
+        const column = this.columns.list[0]!;
 
-            if (existingState) {
-                _applyColumnState(
-                    beans,
-                    {
-                        state: [{ colId: existingState.colId, hide: !existingState.hide }],
-                    },
-                    source
-                );
+        // If it's deliberately hidden, we needn't do anything
+        if (!column.isVisible()) return;
+
+        const hideSelectionCol = () => {
+            let cols;
+            switch (column.pinned) {
+                case 'left':
+                case true:
+                    cols = leftCols;
+                    break;
+                case 'right':
+                    cols = rightCols;
+                    break;
+                default:
+                    cols = centerCols;
             }
-        }
+            cols && _removeFromArray(cols, column);
+        };
 
-        // lastly, check only one column showing -- selection column
-        if (visibleColumns.length === 1) {
-            const firstColumn = visibleColumns[0];
-            const leafSelectionCol = getLeafColumnSelectionCol(firstColumn);
+        const rowNumbersCol = this.beans.rowNumbersSvc?.getColumn(ROW_NUMBERS_COLUMN_ID);
 
-            if (!leafSelectionCol) {
-                return;
-            }
-
-            _applyColumnState(beans, { state: [{ colId: leafSelectionCol.getColId(), hide: true }] }, source);
-        }
-    }
-}
-
-const isLeafColumnSelectionCol = (c: AgColumn | AgColumnGroup): boolean =>
-    c.isColumn ? isColumnSelectionCol(c) : c.getChildren()?.some(isLeafColumnSelectionCol) ?? false;
-
-function getLeafColumnSelectionCol(c: AgColumn | AgColumnGroup): AgColumn | null {
-    if (c.isColumn) {
-        return isColumnSelectionCol(c) ? c : null;
-    }
-
-    const children = c.getChildren() ?? [];
-
-    for (const child of children) {
-        const selCol = getLeafColumnSelectionCol(child);
-        if (selCol) {
-            return selCol;
+        // two conditions for which we hide selection column:
+        //   1. Only selection column and row numbers column are visible
+        //   2. Only selection column is visible
+        const expectedNumCols = rowNumbersCol ? 2 : 1;
+        if (expectedNumCols === numVisibleCols) {
+            hideSelectionCol();
         }
     }
-
-    return null;
 }

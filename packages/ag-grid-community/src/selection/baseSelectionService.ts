@@ -69,7 +69,7 @@ export abstract class BaseSelectionService extends BeanStub {
         // setting the required value
         const selected = !!rowCtrl.rowNode.isSelected();
         rowCtrl.forEachGui(gui, (gui) => {
-            gui.rowComp.addOrRemoveCssClass('ag-row-selected', selected);
+            gui.rowComp.toggleCss('ag-row-selected', selected);
             const element = gui.element;
             _setAriaSelected(element, selected);
 

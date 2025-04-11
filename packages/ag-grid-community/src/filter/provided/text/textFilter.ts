@@ -88,8 +88,8 @@ export class TextFilter extends SimpleFilter<TextFilterModel, string, AgInputTex
 
     private createFromToElement(eCondition: HTMLElement, eValues: AgInputTextField[], fromTo: string): void {
         const eValue = this.createManagedBean(new AgInputTextField());
-        eValue.addCssClass(`ag-filter-${fromTo}`);
-        eValue.addCssClass('ag-filter-filter');
+        eValue.addCss(`ag-filter-${fromTo}`);
+        eValue.addCss('ag-filter-filter');
         eValues.push(eValue);
         eCondition.appendChild(eValue.getGui());
     }

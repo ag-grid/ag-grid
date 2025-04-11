@@ -305,7 +305,7 @@ export abstract class SimpleFilter<
         const eGui = this.getGui();
         const eType = this.createManagedBean(new AgSelect());
         this.eTypes.push(eType);
-        eType.addCssClass('ag-filter-select');
+        eType.addCss('ag-filter-select');
         eGui.appendChild(eType.getGui());
 
         const eConditionBody = this.createValueElement();
@@ -347,8 +347,8 @@ export abstract class SimpleFilter<
         const eJoinOperator = this.createManagedBean(new AgRadioButton());
         eJoinOperators.push(eJoinOperator);
         const baseClass = 'ag-filter-condition-operator';
-        eJoinOperator.addCssClass(baseClass);
-        eJoinOperator.addCssClass(`${baseClass}-${andOr}`);
+        eJoinOperator.addCss(baseClass);
+        eJoinOperator.addCss(`${baseClass}-${andOr}`);
         eJoinOperatorPanel.appendChild(eJoinOperator.getGui());
         return eJoinOperator;
     }

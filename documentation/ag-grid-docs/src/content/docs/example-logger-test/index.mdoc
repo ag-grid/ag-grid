@@ -4,11 +4,25 @@ title: Example Logger Test
 
 This is an internal page that contains examples that can be used to test the example logger.
 
+## Usage
+
+The example logger is added to the bottom of the example runner, if any `console.log` is present in the example.
+
+Objects and arrays are shown as a collapsible component and are collapsed by default. It is recommended that you add a string as a label before logging any object or array, to give more context as to what is being logged eg,
+
+```
+// ❌
+console.log(rowObject);
+
+// ✅
+console.log('Row:', rowObject);
+```
+
+## Example Logger Demo
+
 {% gridExampleRunner title="Console logs" name="console-logs" /%}
 
-
-
-## Code Syntax Highlighting
+## A Comparison With Code Syntax Highlighting
 
 ```js
 console.log('string');
@@ -24,9 +38,10 @@ console.log(['string', 23, null, undefined, true, false]);
 console.log([{ a: 'string', b: 23, c: null }, 23, null, undefined, true, false]);
 console.log([{}]);
 console.log({ a: 'string', b: 23, c: null });
-console.log({ a: undefined, b: NaN, c: null });
+console.log({ c: 'string', b: 23, a: null });
+console.log({ undefined: undefined, nan: NaN, null: null, infinity: Infinity, negativeInfinity: -Infinity });
 
-console.log({ a: 'more', b: 'here', c: 'now', d: 'more' });
+console.log({ a: 'more', b: 'here', c: undefined, d: 'more' });
 
 console.log(
     'string',

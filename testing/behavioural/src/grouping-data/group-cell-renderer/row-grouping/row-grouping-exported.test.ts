@@ -43,8 +43,8 @@ describe('ag-grid exported group values', () => {
             };
         };
         const testConcerns: TestPermutation[] = [
+            { property: 'groupDisplayType', values: ['singleColumn', 'multipleColumns'] },
             { property: 'pivotMode', values: [true, false] },
-            { property: 'groupDisplayType', values: ['singleColumn', 'multipleColumns', 'groupRows'] },
             {
                 property: 'groupHideOpenParents',
                 values: [true, false],
@@ -84,6 +84,17 @@ describe('ag-grid exported group values', () => {
         ];
         createTests(testConcerns, {
             ...gridOptions,
+        });
+
+        // special case, include extra empty column to export the group row
+        describe('groupDisplayType=groupRows', () => {
+            // skip display type concern
+            const [, ...otherConcerns] = testConcerns;
+            createTests(otherConcerns, {
+                ...gridOptions,
+                groupDisplayType: 'groupRows',
+                columnDefs: [...gridOptions.columnDefs!, {}],
+            });
         });
     });
 });

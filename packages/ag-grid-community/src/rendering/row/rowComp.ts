@@ -35,7 +35,7 @@ export class RowComp extends Component {
             setCellCtrls: (cellCtrls) => this.setCellCtrls(cellCtrls),
             showFullWidth: (compDetails) => this.showFullWidth(compDetails),
             getFullWidthCellRenderer: () => this.fullWidthCellRenderer,
-            addOrRemoveCssClass: (name, on) => this.addOrRemoveCssClass(name, on),
+            toggleCss: (name, on) => this.toggleCss(name, on),
             setUserStyles: (styles: RowStyle | undefined) => _addStylesToElement(rowDiv, styles),
             setTop: (top) => (style.top = top),
             setTransform: (transform) => (style.transform = transform),
