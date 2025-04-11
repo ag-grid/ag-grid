@@ -248,7 +248,7 @@ export abstract class ProvidedFilter<
     private refreshFilterResizer(containerType?: ContainerType): void {
         // tool panel is scrollable, so don't need to size
         const { positionableFeature, gos } = this;
-        if (!positionableFeature || containerType === 'toolPanel') {
+        if (!positionableFeature) {
             return;
         }
 
