@@ -38,7 +38,7 @@ export class RowDragComp extends Component {
         const { beans, rowNode, column, gos } = this;
         if (!this.customGui) {
             this.setTemplate(RowDragElement);
-            this.getGui().appendChild(_createIconNoSpan('rowDrag', beans, null)!);
+            this.getGui().appendChild(_createIconNoSpan('rowDrag', beans, column)!);
             this.addDragSource();
         } else {
             this.setDragElement(this.customGui, this.dragStartPixels);
