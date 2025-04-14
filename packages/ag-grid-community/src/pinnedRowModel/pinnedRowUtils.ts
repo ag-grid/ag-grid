@@ -46,7 +46,7 @@ export function _getNodesInRangeForSelection(
         }
 
         if (started && node === end) {
-            finished = false;
+            finished = true;
             range.push(node);
             return;
         }
