@@ -155,23 +155,10 @@ export class BlockUtils extends BeanStub implements NamedBean {
         if (this.gos.get('treeData')) {
             this.setTreeGroupInfo(rowNode);
             this.setChildCountIntoRowNode(rowNode);
+            this.updateRowFooter(rowNode);
         } else if (rowNode.group) {
             this.setChildCountIntoRowNode(rowNode);
-
-            if (!rowNode.footer) {
-                const getGroupIncludeFooter = _getGroupTotalRowCallback(this.beans.gos);
-                const doesRowShowFooter = getGroupIncludeFooter({ node: rowNode });
-                if (doesRowShowFooter) {
-                    if (rowNode.sibling) {
-                        rowNode.sibling.updateData(data);
-                    } else {
-                        _createRowNodeFooter(rowNode, this.beans);
-                    }
-                } else if (rowNode.sibling) {
-                    _destroyRowNodeFooter(rowNode);
-                }
-            }
-
+            this.updateRowFooter(rowNode);
             // it's not possible for a node to change whether it's a group or not
             // when doing row grouping (as only rows at certain levels are groups),
             // so nothing to do here
@@ -179,6 +166,25 @@ export class BlockUtils extends BeanStub implements NamedBean {
             // this should be implemented, however it's not the use case i'm currently
             // programming, so leaving for another day. to test this, create an example
             // where whether a master row is expandable or not is dynamic
+        }
+    }
+
+    private updateRowFooter(rowNode: RowNode): void {
+        if (rowNode.footer) {
+            return;
+        }
+
+        if (rowNode.group) {
+            const getGroupIncludeFooter = _getGroupTotalRowCallback(this.beans.gos);
+            const shouldRowShowFooter = getGroupIncludeFooter({ node: rowNode });
+            if (shouldRowShowFooter && !rowNode.sibling) {
+                _createRowNodeFooter(rowNode, this.beans);
+                return;
+            }
+        }
+
+        if (rowNode.sibling) {
+            _destroyRowNodeFooter(rowNode);
         }
     }
 

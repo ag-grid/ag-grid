@@ -18,6 +18,8 @@ interface Log {
     pageName?: string;
     exampleName: string;
     data: LogData[];
+    rawData: LogData[];
+    count: number;
 }
 
 interface Props {
@@ -32,6 +34,7 @@ const REACT_JSON_VIEW_CONFIG = {
     displayDataTypes: false,
     displayObjectSize: false,
     displayArrayKey: false,
+    quotesOnKeys: false,
 };
 const IGNORED_MESSAGES = ['Angular is running in development mode.'];
 
@@ -128,6 +131,22 @@ function updateWithTypeValues(value: any) {
     }
 }
 
+function isRepeatedLog({ prevLogs, log }: { prevLogs: Log[]; log: Log }) {
+    const lastLog = prevLogs[prevLogs.length - 1];
+    if (!lastLog || lastLog.data.length !== log.data.length) {
+        return false;
+    }
+
+    // NOTE: Compare `rawData` to avoid updates from `updateWithTypeValues`
+    return lastLog.rawData.every((value, index) => {
+        const logDataItem = log.data[index];
+
+        return (value as LogObject)?.__consoleLogObject
+            ? (value as LogObject).safeString === (logDataItem as LogObject)?.safeString
+            : value === logDataItem || (Number.isNaN(value) && Number.isNaN(logDataItem));
+    });
+}
+
 const SimpleValueDisplay = ({ value }: { value: SimpleValue }) => {
     const valueType = getType(value);
     let displayValue = value;
@@ -141,7 +160,7 @@ const SimpleValueDisplay = ({ value }: { value: SimpleValue }) => {
 const DataItem = ({ data }: { data: LogData[] }) => {
     return (
         <>
-            <div>
+            <div className={styles.dataItem}>
                 {data.map((value, i) => {
                     const isJSonViewable = ['object', 'array'].includes(getType(value));
                     return isJSonViewable ? (
@@ -173,13 +192,22 @@ export const ExampleLogger: FunctionComponent<Props> = ({ exampleName, bufferSiz
             const log = event.data;
             if (log?.type === 'console-log' && log.exampleName === exampleName && !containsIgnoredMessage(log)) {
                 setLogs((prevLogs) => {
-                    const bufferedLogs = prevLogs.length >= bufferSize ? prevLogs.slice(1) : prevLogs;
+                    if (isRepeatedLog({ prevLogs, log })) {
+                        const lastLog = prevLogs[prevLogs.length - 1];
+                        const updatedLogs = prevLogs.slice(0, -1);
 
-                    const newLog = {
-                        ...log,
-                        data: getLoggableData(log.data),
-                    };
-                    return [...bufferedLogs, newLog];
+                        return [...updatedLogs, { ...lastLog, count: lastLog.count + 1 }];
+                    } else {
+                        const bufferedLogs = prevLogs.length >= bufferSize ? prevLogs.slice(1) : prevLogs;
+
+                        const newLog = {
+                            ...log,
+                            data: getLoggableData(log.data),
+                            rawData: log.data,
+                            count: 1,
+                        };
+                        return [...bufferedLogs, newLog];
+                    }
                 });
             }
         };
@@ -205,9 +233,14 @@ export const ExampleLogger: FunctionComponent<Props> = ({ exampleName, bufferSiz
                 </button>
             </div>
             <pre ref={containerRef} className={styles.loggerPre}>
-                {logs.length === 0 && <div>Console logs from the example shown here...</div>}
+                {logs.length === 0 && (
+                    <div className={styles.placeholder}>Console logs from the example shown here...</div>
+                )}
                 {logs.map((log, i) => (
-                    <DataItem key={i} data={log.data}></DataItem>
+                    <div key={i} className={styles.logItem}>
+                        {log.count > 1 && <div className={styles.count}>{log.count}</div>}
+                        <DataItem data={log.data}></DataItem>
+                    </div>
                 ))}
             </pre>
         </div>

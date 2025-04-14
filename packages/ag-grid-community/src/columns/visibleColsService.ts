@@ -60,7 +60,7 @@ export class VisibleColsService extends BeanStub implements NamedBean {
     private ariaOrderColumns: AgColumn[];
 
     public refresh(source: ColumnEventType, skipTreeBuild = false): void {
-        const { colModel, colGroupSvc, colViewport } = this.beans;
+        const { colFlex, colModel, colGroupSvc, colViewport, selectionColSvc } = this.beans;
         // when we open/close col group, skipTreeBuild=false, as we know liveCols haven't changed
         if (!skipTreeBuild) {
             this.buildTrees(colModel, colGroupSvc);
@@ -68,20 +68,21 @@ export class VisibleColsService extends BeanStub implements NamedBean {
 
         colGroupSvc?.updateOpenClosedVisibility();
 
-        const leftCols = pickDisplayedCols(this.treeLeft);
-        this.leftCols = leftCols;
+        this.leftCols = pickDisplayedCols(this.treeLeft);
         this.centerCols = pickDisplayedCols(this.treeCenter);
-        const rightCols = pickDisplayedCols(this.treeRight);
-        this.rightCols = rightCols;
+        this.rightCols = pickDisplayedCols(this.treeRight);
+
+        selectionColSvc?.refreshVisibility(this.leftCols, this.centerCols, this.rightCols);
 
         this.joinColsAriaOrder(colModel);
         this.joinCols();
+
         this.setLeftValues(source);
         this.autoHeightCols = this.allCols.filter((col) => col.isAutoHeight());
-        this.beans.colFlex?.refreshFlexedColumns();
+        colFlex?.refreshFlexedColumns();
         this.updateBodyWidths();
         colViewport.checkViewportColumns(false);
-        this.setFirstRightAndLastLeftPinned(colModel, leftCols, rightCols, source);
+        this.setFirstRightAndLastLeftPinned(colModel, this.leftCols, this.rightCols, source);
 
         this.eventSvc.dispatchEvent({
             type: 'displayedColumnsChanged',
