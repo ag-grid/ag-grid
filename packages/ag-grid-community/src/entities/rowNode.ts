@@ -538,8 +538,10 @@ export class RowNode<TData = any>
 
         const pinnedSibling = this.pinnedSibling;
         if (pinnedSibling) {
-            valueSvc.setValue(pinnedSibling, column, newValue, eventSource);
-            pinnedSibling.dispatchCellChangedEvent(column, newValue, oldValue);
+            // pinned sibling shares a reference to the same data object as the
+            if (valueChanged) {
+                pinnedSibling.dispatchCellChangedEvent(column, newValue, oldValue);
+            }
             // The pinned sibling mirrors the state of the source row, otherwise
             // we could potentially have siblings with different values of "selectable"
             if (selectable != null) {
