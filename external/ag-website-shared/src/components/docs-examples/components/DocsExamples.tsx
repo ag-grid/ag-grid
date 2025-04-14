@@ -1,131 +1,146 @@
-import { FrameworkLogo } from '@ag-website-shared/components/docs-examples/components/FrameworkLogo';
 import { Icon } from '@ag-website-shared/components/icon/Icon';
-import { getExampleContentsUrl, getExampleUrl } from '@components/docs/utils/urlPaths';
-import { ALL_INTERNAL_FRAMEWORKS } from '@constants';
-import { getFrameworkFromInternalFramework } from '@utils/framework';
-import { urlWithPrefix } from '@utils/urlWithPrefix';
+import { useMemo, useState } from 'react';
 import type { FunctionComponent } from 'react';
 
-import styles from './DocsExamples.module.scss';
+import type { ColDef } from 'ag-grid-community';
 
-interface Props {
+import styles from './DocsExamples.module.scss';
+import { ExampleCountComponent } from './cell-renderers/ExampleCountComponent';
+import { LinkCellRenderer } from './cell-renderers/LinkCellRenderer';
+import { PageCountComponent } from './cell-renderers/PageCountComponent';
+
+export interface DocsExamplesProps {
     exampleContents: Record<string, any>;
 }
 
-function getFirstAvailableExample(frameworkExamples: any) {
-    return Object.values(frameworkExamples).find((example: any) => example);
-}
+type Props = DocsExamplesProps & {
+    AgGrid: any;
+};
 
 const EnterpriseIcon = () => (
     <span title="Enterprise">
-        <Icon name="enterprise" svgClasses={styles.icon} title="enterprise" />
+        <Icon name="enterprise" svgClasses={styles.icon} />
     </span>
 );
+
 const ChartsIcon = () => (
     <span title="Integrated Charts">
         <Icon name="chartsColumn" svgClasses={styles.icon} />
     </span>
 );
-const ConsoleLogIcon = () => (
-    <span title="Has console.log">
-        <Icon name="terminal" svgClasses={styles.icon} />
-    </span>
-);
 
-export const DocsExamples: FunctionComponent<Props> = ({ exampleContents }) => {
+export const DocsExamples: FunctionComponent<Props> = ({ exampleContents, AgGrid }) => {
+    const [colDefs] = useState([
+        {
+            field: 'pageName',
+            rowGroup: true,
+            hide: true,
+        },
+        {
+            field: 'exampleName',
+            hide: true,
+        },
+        {
+            field: 'isEnterprise',
+            headerName: 'Enterprise',
+            headerComponent: EnterpriseIcon,
+            minWidth: 56,
+        },
+        {
+            field: 'isIntegratedCharts',
+            headerName: 'Charts',
+            headerComponent: ChartsIcon,
+            minWidth: 56,
+        },
+        {
+            field: 'isLocale',
+            headerName: 'Locale',
+            minWidth: 110,
+        },
+        {
+            field: 'hasExampleConsoleLog',
+            headerName: 'Log',
+            minWidth: 90,
+        },
+        {
+            headerName: 'React',
+            cellRenderer: LinkCellRenderer,
+            filter: false,
+            minWidth: 200,
+        },
+        {
+            headerName: 'React TS',
+            cellRenderer: LinkCellRenderer,
+            filter: false,
+            minWidth: 200,
+        },
+        {
+            headerName: 'Angular',
+            cellRenderer: LinkCellRenderer,
+            filter: false,
+            minWidth: 200,
+        },
+        {
+            headerName: 'Vue',
+            cellRenderer: LinkCellRenderer,
+            filter: false,
+            minWidth: 200,
+        },
+        {
+            headerName: 'JavaScript',
+            cellRenderer: LinkCellRenderer,
+            filter: false,
+            minWidth: 200,
+        },
+        {
+            headerName: 'Typescript',
+            cellRenderer: LinkCellRenderer,
+            filter: false,
+            minWidth: 200,
+        },
+    ]);
+
+    const defaultColDef: ColDef = {
+        flex: 1,
+        minWidth: 100,
+        filter: true,
+    };
+    const autoGroupColumnDef = useMemo(() => {
+        return {
+            headerName: 'Page Examples',
+            field: 'exampleName',
+            minWidth: 300,
+        };
+    }, []);
+    const sideBar = useMemo(() => {
+        return {
+            toolPanels: ['filters', 'columns'],
+        };
+    }, []);
+
+    const [statusBar] = useState({
+        statusPanels: [
+            {
+                statusPanel: PageCountComponent,
+            },
+            {
+                statusPanel: ExampleCountComponent,
+            },
+        ],
+    });
+
     return (
-        <table>
-            <thead>
-                <th>No.</th>
-                <th>Page</th>
-                <th>Example</th>
-                <th>Properties</th>
-                {ALL_INTERNAL_FRAMEWORKS.map((internalFramework) => {
-                    return (
-                        <th key={internalFramework}>
-                            <FrameworkLogo internalFramework={internalFramework} />
-                        </th>
-                    );
-                })}
-            </thead>
-            <tbody>
-                {Object.values(exampleContents).map((frameworkExamples, index) => {
-                    // Since examples are written in typescript, that will be the default (as opposed to javascript)
-                    const { pageName, exampleName, isEnterprise, isIntegratedCharts, isLocale, hasExampleConsoleLog } =
-                        getFirstAvailableExample(frameworkExamples) || {};
-                    return (
-                        <tr key={index} className={styles.exampleRow}>
-                            <td>{index + 1}</td>
-                            <td>{pageName}</td>
-                            <td>{exampleName}</td>
-                            <td>
-                                <span className={styles.propertiesCell}>
-                                    {isEnterprise ? <EnterpriseIcon /> : null}
-                                    {isIntegratedCharts ? <ChartsIcon /> : null}
-                                    {isLocale ? <span title="Has locale">L</span> : null}
-                                    {hasExampleConsoleLog ? <ConsoleLogIcon /> : null}
-                                </span>
-                            </td>
-                            {ALL_INTERNAL_FRAMEWORKS.map((internalFramework) => {
-                                const titlePrefix = `${pageName} > ${exampleName} > ${internalFramework}`;
-
-                                if (frameworkExamples[internalFramework]) {
-                                    return (
-                                        <td key={internalFramework}>
-                                            <span className={styles.frameworkCell}>
-                                                <a
-                                                    href={urlWithPrefix({
-                                                        framework: getFrameworkFromInternalFramework(internalFramework),
-                                                        url: `./${pageName}`,
-                                                    })}
-                                                    title={`${pageName} ${internalFramework} page`}
-                                                >
-                                                    <Icon name="pageResult" />
-                                                </a>
-                                                <a
-                                                    href={urlWithPrefix({
-                                                        framework: getFrameworkFromInternalFramework(internalFramework),
-                                                        url: `./${pageName}#example-${exampleName}`,
-                                                    })}
-                                                    title={`${titlePrefix} example on page`}
-                                                >
-                                                    <Icon name="executableProgram" />
-                                                </a>
-                                                <a
-                                                    href={getExampleUrl({
-                                                        internalFramework,
-                                                        pageName,
-                                                        exampleName,
-                                                    })}
-                                                    title={`${titlePrefix} example`}
-                                                >
-                                                    <Icon name="newTab" />
-                                                </a>
-                                                <a
-                                                    href={getExampleContentsUrl({
-                                                        internalFramework,
-                                                        pageName,
-                                                        exampleName,
-                                                    })}
-                                                    title={`${titlePrefix} contents.json`}
-                                                >
-                                                    <Icon name="codeResult" />
-                                                </a>
-                                            </span>
-                                        </td>
-                                    );
-                                } else {
-                                    return (
-                                        <td>
-                                            <span title={`No ${internalFramework} example available`}>-</span>
-                                        </td>
-                                    );
-                                }
-                            })}
-                        </tr>
-                    );
-                })}
-            </tbody>
-        </table>
+        <div className={styles.container}>
+            <AgGrid
+                rowData={exampleContents}
+                columnDefs={colDefs}
+                defaultColDef={defaultColDef}
+                statusBar={statusBar}
+                sideBar={sideBar}
+                autoGroupColumnDef={autoGroupColumnDef}
+                groupDisplayType="singleColumn"
+                groupDefaultExpanded={1}
+            />
+        </div>
     );
 };
