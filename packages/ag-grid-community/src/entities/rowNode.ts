@@ -534,13 +534,17 @@ export class RowNode<TData = any>
         const valueChanged = valueSvc.setValue(this, column, newValue, eventSource);
 
         this.dispatchCellChangedEvent(column, newValue, oldValue);
-        selectionSvc?.updateRowSelectable(this);
+        const selectable = selectionSvc?.updateRowSelectable(this);
 
         const pinnedSibling = this.pinnedSibling;
         if (pinnedSibling) {
             valueSvc.setValue(pinnedSibling, column, newValue, eventSource);
             pinnedSibling.dispatchCellChangedEvent(column, newValue, oldValue);
-            selectionSvc?.updateRowSelectable(pinnedSibling);
+            // The pinned sibling mirrors the state of the source row, otherwise
+            // we could potentially have siblings with different values of "selectable"
+            if (selectable != null) {
+                pinnedSibling.selectable = selectable;
+            }
         }
 
         return valueChanged;
