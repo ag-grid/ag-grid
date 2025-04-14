@@ -4,11 +4,9 @@ import DebugLayout from '@layouts/DebugLayout.astro';
 import { getDocsExampleContents } from '@components/docs/utils/pageData';
 
 import { GridDocsExample } from '@ag-website-shared/components/docs-examples/components/GridDocsExample';
-import { transformData } from '@ag-website-shared/components/docs-examples/utils/transformData';
 
 const pages = await getCollection('docs');
-const docsExampleContents = await getDocsExampleContents({ pages });
-const exampleContents = transformData(docsExampleContents);
+const exampleContents = await getDocsExampleContents({ pages });
 ---
 
 <DebugLayout title={`Debug: Docs Example Pages`}>
