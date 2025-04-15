@@ -28,7 +28,7 @@ export class EditingService extends BeanStub implements NamedBean {
     private createEditStrategy(): IEditStrategy {
         const { beans, gos, editStrategy } = this;
 
-        const strategyName: any = gos.get('experimentalEditingModeV2')?.mode ?? 'cellEditMode';
+        const strategyName: any = gos.get('experimentalEditingModeV2')?.strategy ?? 'cellEditMode';
 
         if (editStrategy) {
             if (editStrategy.beanName === strategyName) {
@@ -83,8 +83,9 @@ export class EditingService extends BeanStub implements NamedBean {
         this.editTrigger = this.createEditTrigger();
 
         const res = this.editTrigger.shouldStartEditing(rowCtrl, cellCtrl, key, event) ?? true;
-
-        console.warn('EditingService: shouldStartEditing', res);
+        if (res) {
+            console.warn('EditingService: shouldStartEditing', res);
+        }
 
         return res;
     }
@@ -107,7 +108,9 @@ export class EditingService extends BeanStub implements NamedBean {
 
         const res = this.editTrigger.shouldStopEditing?.(rowCtrl, cellCtrl, key, event) ?? false;
 
-        console.warn('EditingService: shouldStopEditing', res);
+        if (res) {
+            console.warn('EditingService: shouldStopEditing', res);
+        }
 
         return res;
     }

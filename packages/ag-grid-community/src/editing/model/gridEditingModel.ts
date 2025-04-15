@@ -12,7 +12,7 @@ export class GridEditingModel {
     constructor(private readonly beans: BeanCollection) {}
 
     public createEditModel(rowId: string, columnId: string) {
-        console.warn('EditingModelService: createEditModel', columnId);
+        console.warn('GridEditingModel: createEditModel', columnId);
 
         const rowModel = this.rowModels[rowId]
             ? this.rowModels[rowId]
@@ -26,7 +26,7 @@ export class GridEditingModel {
     }
 
     public removeEditModel(rowId: string, columnId?: string): void {
-        console.warn('EditingModelService: removeEditModel', rowId, columnId);
+        console.warn('GridEditingModel: removeEditModel', rowId, columnId);
 
         const rowModel = this.rowModels[rowId];
 
@@ -88,7 +88,7 @@ export class GridEditingModel {
     }
 
     public startEditing(rowId: string, columnId: string): EditingStateUpdates {
-        console.warn('EditingModelService: startEditing', rowId, columnId);
+        console.warn('GridEditingModel: startEditing', rowId, columnId);
         const rowModel = this.rowModels[rowId]
             ? this.rowModels[rowId]
             : (this.rowModels[rowId] = new RowEditingModel(rowId));
@@ -107,7 +107,7 @@ export class GridEditingModel {
     }
 
     public stopEditing(rowId?: string, colId?: string): EditingStateUpdates {
-        console.warn('EditingModelService: stopEditing', rowId, colId);
+        console.warn('GridEditingModel: stopEditing', rowId, colId);
 
         if (!this._isEditing(rowId, colId)) {
             return {};
@@ -161,7 +161,7 @@ export class GridEditingModel {
     }
 
     public cancelEditing(rowId?: string, colId?: string): EditingStateUpdates {
-        console.warn('EditingModelService: cancelEditing', rowId, colId);
+        console.warn('GridEditingModel: cancelEditing', rowId, colId);
 
         if (!this._isEditing(rowId, colId)) {
             return {};

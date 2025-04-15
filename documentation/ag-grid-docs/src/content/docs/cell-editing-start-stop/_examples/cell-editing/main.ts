@@ -60,7 +60,10 @@ const gridOptions: GridOptions = {
         console.log('cellEditingStopped');
     },
     experimentalEditingModeV2: {
-        mode: 'cellEditMode',
+        strategy: 'cellEditMode',
+    },
+    onCellValueChanged: (event) => {
+        console.log('Cell value changed', event);
     },
 };
 
