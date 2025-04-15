@@ -127,7 +127,8 @@ export type DynamicBeanName =
     | 'rangeHandle'
     | 'tooltipFeature'
     | 'groupStrategy'
-    | 'treeParentIdStrategy';
+    | 'treeParentIdStrategy'
+    | 'rowNumberRowResizer';
 
 export type UserComponentName =
     | 'agDragAndDropImage'

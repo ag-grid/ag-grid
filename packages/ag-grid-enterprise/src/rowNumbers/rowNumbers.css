@@ -11,6 +11,15 @@
     font-weight: var(--ag-header-font-weight);
 }
 
+.ag-row-numbers-resizer {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 2px;
+    width: 100%;
+    background-color: blue;
+}
+
 :where(.ag-row-number-header.ag-row-number-selection-enabled) {
     cursor: cell;
 }

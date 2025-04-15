@@ -877,7 +877,7 @@ export {
     UseGroupTotalRow,
     GetChartMenuItems,
 } from './entities/gridOptions';
-export type { RowNumbersOptions } from './interfaces/rowNumbers';
+export type { RowNumbersOptions, IRowNumbersRowResizeFeature } from './interfaces/rowNumbers';
 export type { ManagedGridOptionKey, ManagedGridOptions } from './gridOptionsInitial';
 
 export {
