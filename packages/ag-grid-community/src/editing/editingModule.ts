@@ -11,7 +11,6 @@ import type { _ModuleWithApi, _ModuleWithoutApi } from '../interfaces/iModule';
 import { UndoRedoService } from '../undoRedo/undoRedoService';
 import { VERSION } from '../version';
 import { getCurrentRedoSize, getCurrentUndoSize, redoCellEditing, undoCellEditing } from './editingApi';
-import { EditingModelService } from './editingModelService';
 import { EditingService } from './editingService';
 import { BatchEditMode } from './strategy/batchEditMode';
 import { FullRowEditMode } from './strategy/fullRowEditMode';
@@ -25,7 +24,7 @@ import { ProvidedEditTrigger } from './trigger/providedEditTrigger';
 export const EditingCoreModule: _ModuleWithoutApi = {
     moduleName: 'EditingCore',
     version: VERSION,
-    beans: [EditingModelService, EditingService],
+    beans: [EditingService],
     dynamicBeans: {
         cellEditMode: SingleCellEditMode,
         rowEditMode: FullRowEditMode,

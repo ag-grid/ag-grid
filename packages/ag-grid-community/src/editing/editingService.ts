@@ -11,13 +11,19 @@ import type { CellPosition } from '../main-umd-noStyles';
 import { CellCtrl } from '../rendering/cell/cellCtrl';
 import type { RowCtrl } from '../rendering/row/rowCtrl';
 import { _getTabIndex } from '../utils/browser';
+import { GridEditingModel } from './model/gridEditingModel';
 import type { IEditStrategy } from './strategy/iEditStrategy';
 import type { IEditTrigger } from './trigger/baseEditTrigger';
 
 export class EditingService extends BeanStub implements NamedBean {
     beanName = 'editingSvc' as const;
+    public editModel?: GridEditingModel;
     public editMode?: IEditStrategy;
     public editTrigger?: IEditTrigger;
+
+    postConstruct(): void {
+        this.editModel = new GridEditingModel(this.beans);
+    }
 
     private createEditMode(): IEditStrategy {
         const { beans, gos, editMode } = this;
@@ -170,7 +176,7 @@ export class EditingService extends BeanStub implements NamedBean {
     }
 
     public getEditingCellPositions(): CellPosition[] {
-        return this.beans.editingModelSvc?.getEditingCellPositions() ?? [];
+        return this.beans.editingSvc?.editModel?.getEditingCellPositions() ?? [];
     }
 
     public stopAllEditing(cancel: boolean = false): void {
@@ -295,6 +301,7 @@ export class EditingService extends BeanStub implements NamedBean {
 
     public override destroy(): void {
         this.destroyEditMode();
+        this.editModel?.destroy();
         super.destroy();
     }
 }

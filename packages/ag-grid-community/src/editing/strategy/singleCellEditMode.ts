@@ -13,14 +13,14 @@ export class SingleCellEditMode extends BaseEditMode {
         event?: KeyboardEvent | MouseEvent | null | undefined
     ): boolean {
         console.warn('SingleCellEditMode: startEditing', rowCtrl, cellCtrl, key, event);
-        if (this.beans.editingModelSvc?.isEditing()) {
+        if (this.beans.editingSvc?.editModel?.isEditing()) {
             this.stopEditing();
         }
 
         const rowId = rowCtrl.rowId!;
         const colId = cellCtrl?.column.getColId() ?? this.beans.visibleCols.getFirstColumn()!.getColId();
 
-        this.beans.editingModelSvc?.createEditModel(rowId, colId);
+        this.beans.editingSvc?.editModel?.createEditModel(rowId, colId);
 
         return true;
     }
@@ -35,9 +35,9 @@ export class SingleCellEditMode extends BaseEditMode {
         let updates: EditingStateUpdates | undefined;
 
         if (rowCtrl) {
-            updates = this.beans.editingModelSvc?.stopEditing(rowCtrl!.rowId!, cellCtrl?.column.colId);
+            updates = this.beans.editingSvc?.editModel?.stopEditing(rowCtrl!.rowId!, cellCtrl?.column.colId);
         } else {
-            updates = this.beans.editingModelSvc?.stopEditing();
+            updates = this.beans.editingSvc?.editModel?.stopEditing();
         }
 
         const { comp, column, rowNode } = cellCtrl!;
@@ -67,9 +67,9 @@ export class SingleCellEditMode extends BaseEditMode {
     public cancelEditing(rowCtrl?: RowCtrl | null, cellCtrl?: CellCtrl | null): boolean {
         console.warn('SingleCellEditMode: cancelEditing', rowCtrl, cellCtrl);
         if (rowCtrl) {
-            this.beans.editingModelSvc?.cancelEditing(rowCtrl!.rowId!, cellCtrl?.column.colId);
+            this.beans.editingSvc?.editModel?.cancelEditing(rowCtrl!.rowId!, cellCtrl?.column.colId);
         } else {
-            this.beans.editingModelSvc?.cancelEditing();
+            this.beans.editingSvc?.editModel?.cancelEditing();
         }
         return true;
     }

@@ -1,15 +1,15 @@
-import type { NamedBean } from '../context/bean';
-import { BeanStub } from '../context/beanStub';
-import type { CellPosition } from '../interfaces/iCellPosition';
-import type { CellCtrl } from '../rendering/cell/cellCtrl';
-import type { RowCtrl } from '../rendering/row/rowCtrl';
-import type { CellEditingModel } from './model/cellEditingModel';
-import { RowEditingModel } from './model/rowEditingModel';
-import type { EditingStateUpdates } from './strategy/iEditStrategy';
+import type { BeanCollection } from '../../context/context';
+import type { CellPosition } from '../../interfaces/iCellPosition';
+import type { CellCtrl } from '../../rendering/cell/cellCtrl';
+import type { RowCtrl } from '../../rendering/row/rowCtrl';
+import type { EditingStateUpdates } from '../strategy/iEditStrategy';
+import type { CellEditingModel } from './cellEditingModel';
+import { RowEditingModel } from './rowEditingModel';
 
-export class EditingModelService extends BeanStub implements NamedBean {
-    beanName = 'editingModelSvc' as const;
+export class GridEditingModel {
     private rowModels: Record<string, RowEditingModel> = {};
+
+    constructor(private readonly beans: BeanCollection) {}
 
     public createEditModel(rowId: string, columnId: string) {
         console.warn('EditingModelService: createEditModel', columnId);
@@ -208,8 +208,7 @@ export class EditingModelService extends BeanStub implements NamedBean {
         return locations;
     }
 
-    public override destroy(): void {
-        super.destroy();
+    public destroy(): void {
         this.stopEditing();
     }
 }

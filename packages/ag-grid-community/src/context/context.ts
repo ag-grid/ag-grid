@@ -27,8 +27,8 @@ import type { RowDragService } from '../dragAndDrop/rowDragService';
 import type { EditService } from '../edit/editService';
 import type { RowEditService } from '../edit/rowEditService';
 import type { EditingValidationService } from '../editing-validation/editingValidationService';
-import type { EditingModelService } from '../editing/editingModelService';
 import type { EditingService } from '../editing/editingService';
+import type { GridEditingModel } from '../editing/model/gridEditingModel';
 import type { GridOptions } from '../entities/gridOptions';
 import type { Environment } from '../environment';
 import type { EventService } from '../eventService';
@@ -301,7 +301,6 @@ export interface CoreBeanCollection {
     editSvc?: EditService;
     editingSvc?: EditingService;
     editingValidationSvc?: EditingValidationService;
-    editingModelSvc?: EditingModelService;
     rowEditSvc?: RowEditService;
     alignedGridsSvc?: AlignedGridsService;
     paginationAutoPageSizeSvc?: PaginationAutoPageSizeService;
@@ -431,7 +430,6 @@ export type BeanName =
     | 'dragSvc'
     | 'editSvc'
     | 'editingSvc'
-    | 'editingModelSvc'
     | 'editingValidationSvc'
     | 'excelCreator'
     | 'enterpriseMenuFactory'
