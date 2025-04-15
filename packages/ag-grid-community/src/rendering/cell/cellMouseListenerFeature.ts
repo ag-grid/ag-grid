@@ -77,8 +77,8 @@ export class CellMouseListenerFeature extends BeanStub {
             }, 0);
         }
 
-        if (this.beans.editingFcd?.shouldStartEditing(this.cellCtrl.rowCtrl, this.cellCtrl, null, mouseEvent)) {
-            this.beans.editingFcd?.startEditing(this.cellCtrl.rowCtrl, this.cellCtrl, null, true, mouseEvent);
+        if (this.beans.editingSvc?.shouldStartEditing(this.cellCtrl.rowCtrl, this.cellCtrl, null, mouseEvent)) {
+            this.beans.editingSvc?.startEditing(this.cellCtrl.rowCtrl, this.cellCtrl, null, true, mouseEvent);
         }
     }
 
@@ -101,8 +101,8 @@ export class CellMouseListenerFeature extends BeanStub {
             }, 0);
         }
 
-        if (this.beans.editingFcd?.shouldStartEditing(this.cellCtrl.rowCtrl, this.cellCtrl, null, mouseEvent)) {
-            this.beans.editingFcd?.startEditing(this.cellCtrl.rowCtrl, this.cellCtrl, null, true, mouseEvent);
+        if (this.beans.editingSvc?.shouldStartEditing(this.cellCtrl.rowCtrl, this.cellCtrl, null, mouseEvent)) {
+            this.beans.editingSvc?.startEditing(this.cellCtrl.rowCtrl, this.cellCtrl, null, true, mouseEvent);
         }
     }
 
@@ -160,8 +160,8 @@ export class CellMouseListenerFeature extends BeanStub {
                 const focusedCellCtrl = focusedRowCtrl?.getCellCtrl(column as AgColumn);
 
                 // if the focused cell is editing, need to stop editing first
-                if (this.beans.editingFcd?.isEditing(focusedRowCtrl, focusedCellCtrl)) {
-                    this.beans.editingFcd?.stopEditing(focusedRowCtrl, focusedCellCtrl);
+                if (this.beans.editingSvc?.isEditing(focusedRowCtrl, focusedCellCtrl)) {
+                    this.beans.editingSvc?.stopEditing(focusedRowCtrl, focusedCellCtrl);
                 }
 
                 // focus could have been lost, so restore it to the starting cell in the range if needed

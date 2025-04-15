@@ -11,11 +11,11 @@ import type { CellPosition } from '../main-umd-noStyles';
 import { CellCtrl } from '../rendering/cell/cellCtrl';
 import type { RowCtrl } from '../rendering/row/rowCtrl';
 import { _getTabIndex } from '../utils/browser';
-import type { IEditStrategy } from './mode/baseEditMode';
+import type { IEditStrategy } from './strategy/iEditStrategy';
 import type { IEditTrigger } from './trigger/baseEditTrigger';
 
-export class EditingFacade extends BeanStub implements NamedBean {
-    beanName = 'editingFcd' as const;
+export class EditingService extends BeanStub implements NamedBean {
+    beanName = 'editingSvc' as const;
     public editMode?: IEditStrategy;
     public editTrigger?: IEditTrigger;
 

@@ -240,7 +240,7 @@ export class CellCtrl extends BeanStub {
         this.rowResizeFeature?.refreshRowResizer();
 
         if (startEditing && this.isCellEditable()) {
-            this.beans.editingFcd?.startEditing(this.rowCtrl, this, undefined, true);
+            this.beans.editingSvc?.startEditing(this.rowCtrl, this, undefined, true);
         } else {
             // We can skip refreshing the range handle as this is done in this.rangeFeature.setComp above
             this.showValue(false, true);
@@ -363,14 +363,14 @@ export class CellCtrl extends BeanStub {
     }
 
     public onPopupEditorClosed(): void {
-        if (!this.beans.editingFcd?.isEditing(this.rowCtrl, this)) {
+        if (!this.beans.editingSvc?.isEditing(this.rowCtrl, this)) {
             return;
         }
 
         // note: this happens because of a click outside of the grid or if the popupEditor
         // is closed with `Escape` key. if another cell was clicked, then the editing will
         // have already stopped and returned on the conditional above.
-        this.beans.editingFcd?.stopEditing(this.rowCtrl, this);
+        this.beans.editingSvc?.stopEditing(this.rowCtrl, this);
     }
 
     /**
@@ -379,7 +379,7 @@ export class CellCtrl extends BeanStub {
      * @returns `True` if the value of the `GridCell` has been updated, otherwise `False`.
      */
     public stopEditing(cancel = false): boolean {
-        return this.beans.editingFcd?.stopEditing(this.rowCtrl, this, cancel) ?? false;
+        return this.beans.editingSvc?.stopEditing(this.rowCtrl, this, cancel) ?? false;
     }
 
     private createCellRendererParams(): ICellRendererParams {
@@ -450,7 +450,7 @@ export class CellCtrl extends BeanStub {
     // + rowRenderer: api softRefreshView() {}
     public refreshCell(params?: { suppressFlash?: boolean; newData?: boolean; forceRefresh?: boolean }) {
         // if we are in the middle of 'stopEditing', then we don't refresh here, as refresh gets called explicitly
-        if (this.suppressRefreshCell || this.beans.editingFcd?.isEditing(this.rowCtrl, this)) {
+        if (this.suppressRefreshCell || this.beans.editingSvc?.isEditing(this.rowCtrl, this)) {
             return;
         }
 
@@ -645,7 +645,7 @@ export class CellCtrl extends BeanStub {
     private restoreFocus(waitForRender = false): void {
         if (
             !this.comp ||
-            this.beans.editingFcd?.isEditing(this.rowCtrl, this) ||
+            this.beans.editingSvc?.isEditing(this.rowCtrl, this) ||
             !this.isCellFocused() ||
             !this.beans.focusSvc.shouldTakeFocus()
         ) {
@@ -749,7 +749,7 @@ export class CellCtrl extends BeanStub {
         }
 
         const cellFocused = this.isCellFocused();
-        const editing = beans.editingFcd?.isEditing(this.rowCtrl, this) ?? false;
+        const editing = beans.editingSvc?.isEditing(this.rowCtrl, this) ?? false;
 
         this.comp.refreshEditStyles(editing);
 
@@ -769,8 +769,8 @@ export class CellCtrl extends BeanStub {
             focusEl.focus({ preventScroll: !!event.preventScrollOnBrowserFocus });
         }
 
-        if (beans.editingFcd?.shouldStopEditing(this.rowCtrl, this)) {
-            beans.editingFcd?.stopEditing(this.rowCtrl, this, false);
+        if (beans.editingSvc?.shouldStopEditing(this.rowCtrl, this)) {
+            beans.editingSvc?.stopEditing(this.rowCtrl, this, false);
         }
 
         if (cellFocused) {
@@ -823,7 +823,7 @@ export class CellCtrl extends BeanStub {
 
         this.setWrapText();
 
-        if (!this.beans.editingFcd?.isEditing(this.rowCtrl, this)) {
+        if (!this.beans.editingSvc?.isEditing(this.rowCtrl, this)) {
             this.refreshOrDestroyCell({ forceRefresh: true, suppressFlash: true });
         } else {
             this.handleColDefChanged(this);
@@ -847,7 +847,7 @@ export class CellCtrl extends BeanStub {
             rowNode,
             cellPosition: { rowIndex },
         } = cellCtrl;
-        const { valueSvc, gos, editingFcd } = this.beans;
+        const { valueSvc, gos, editingSvc } = this.beans;
         return _addGridCommonParams(gos, {
             value: valueSvc.getValueForDisplay(column, rowNode),
             eventKey: key,
@@ -859,7 +859,7 @@ export class CellCtrl extends BeanStub {
             cellStartedEdit: cellStartedEdit,
             onKeyDown: cellCtrl.onKeyDown.bind(cellCtrl),
             stopEditing: (suppressNavigateAfterEdit?: boolean | undefined) =>
-                editingFcd!.stopEditing?.bind(this, cellCtrl.rowCtrl, cellCtrl, false),
+                editingSvc!.stopEditing?.bind(this, cellCtrl.rowCtrl, cellCtrl, false),
             eGridCell: cellCtrl.eGui,
             parseValue: (newValue: any) => valueSvc.parseValue(column, rowNode, newValue, cellCtrl.value),
             formatValue: cellCtrl.formatValue.bind(cellCtrl),

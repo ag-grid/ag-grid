@@ -996,7 +996,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
             return;
         }
 
-        const editing = this.beans.editingFcd?.isEditing(cellCtrl?.rowCtrl, cellCtrl);
+        const editing = this.beans.editingSvc?.isEditing(cellCtrl?.rowCtrl, cellCtrl);
 
         if (editing) {
             this.dragSvc.cancelDrag(eventTarget as HTMLElement);

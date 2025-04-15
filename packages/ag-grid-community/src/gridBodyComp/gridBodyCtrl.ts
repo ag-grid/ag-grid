@@ -265,7 +265,7 @@ export class GridBodyCtrl extends BeanStub {
     }
 
     private addStopEditingWhenGridLosesFocus(): void {
-        this.beans.editingFcd?.addStopEditingWhenGridLosesFocus([
+        this.beans.editingSvc?.addStopEditingWhenGridLosesFocus([
             this.eBodyViewport,
             this.eBottom,
             this.eTop,
