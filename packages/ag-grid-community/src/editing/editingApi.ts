@@ -37,17 +37,17 @@ export function getCellEditorInstances<TData = any>(
 }
 
 export function getEditingCells(beans: BeanCollection): CellPosition[] {
-    return beans.editingFcd?.getEditingCellPositions() ?? [];
+    return beans.editingSvc?.getEditingCellPositions() ?? [];
 }
 
 export function stopEditing(beans: BeanCollection, cancel: boolean = false): void {
-    if (beans.editingFcd?.isEditing()) {
-        beans.editingFcd?.stopAllEditing(cancel);
+    if (beans.editingSvc?.isEditing()) {
+        beans.editingSvc?.stopAllEditing(cancel);
     }
 }
 
 export function isEditing(beans: BeanCollection, rowCtrl?: RowCtrl | null, cellCtrl?: CellCtrl | null): boolean {
-    return beans.editingFcd?.isEditing(rowCtrl, cellCtrl) ?? false;
+    return beans.editingSvc?.isEditing(rowCtrl, cellCtrl) ?? false;
 }
 
 export function startEditingCell(beans: BeanCollection, params: StartEditingCellParams): void {
@@ -72,7 +72,7 @@ export function startEditingCell(beans: BeanCollection, params: StartEditingCell
     if (!cell) {
         return;
     }
-    const { focusSvc, gos, editingFcd } = beans;
+    const { focusSvc, gos, editingSvc } = beans;
     const isFocusWithinCell = () => {
         const activeElement = _getActiveDomElement(beans);
         const eCell = cell.eGui;
@@ -86,7 +86,7 @@ export function startEditingCell(beans: BeanCollection, params: StartEditingCell
             preventScrollOnBrowserFocus: true,
         });
     }
-    editingFcd?.startEditing(cell.rowCtrl, cell, params.key);
+    editingSvc?.startEditing(cell.rowCtrl, cell, params.key);
 }
 
 export function getCurrentUndoSize(beans: BeanCollection): number {

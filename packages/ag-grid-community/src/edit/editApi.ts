@@ -53,7 +53,7 @@ export function redoCellEditing(beans: BeanCollection): void {
 
 // export function stopEditing(beans: BeanCollection, cancel: boolean = false): void {
 //     if (beans.gos.get('experimentalEditingModeV2')) {
-//         beans.editingFcd?.stopAllEditing(cancel);
+//         beans.editingSvc?.stopAllEditing(cancel);
 //         return;
 //     }
 

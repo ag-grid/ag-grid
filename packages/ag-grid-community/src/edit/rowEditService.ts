@@ -16,7 +16,7 @@ export class RowEditService extends BeanStub implements NamedBean {
     //     event: KeyboardEvent | null = null
     // ): boolean {
     //     if (this.gos.get('experimentalEditingModeV2')) {
-    //         return this.beans.editingFcd?.startEditing(rowCtrl, sourceRenderedCell!, key, false, event) ?? false;
+    //         return this.beans.editingSvc?.startEditing(rowCtrl, sourceRenderedCell!, key, false, event) ?? false;
     //     }
 
     //     const editing = isEditing(this.beans, rowCtrl);

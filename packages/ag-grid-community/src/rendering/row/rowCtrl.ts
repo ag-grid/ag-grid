@@ -107,7 +107,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         if (!this.gos?.get('experimentalEditingModeV2')) {
             return this._editing;
         }
-        return this.beans.editingFcd?.isEditing(this) ?? false;
+        return this.beans.editingSvc?.isEditing(this) ?? false;
     }
     public set editing(value: boolean) {
         if (!this.gos?.get('experimentalEditingModeV2')) {
@@ -689,7 +689,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         }
 
         // we want to try and keep editing and focused cells
-        const editing = this.beans.editingFcd?.isEditing(cellCtrl.rowCtrl, cellCtrl);
+        const editing = this.beans.editingSvc?.isEditing(cellCtrl.rowCtrl, cellCtrl);
         const { visibleCols } = this.beans;
         const focused = cellCtrl.isCellFocused();
 

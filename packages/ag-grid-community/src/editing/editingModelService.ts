@@ -5,6 +5,7 @@ import type { CellCtrl } from '../rendering/cell/cellCtrl';
 import type { RowCtrl } from '../rendering/row/rowCtrl';
 import type { CellEditingModel } from './model/cellEditingModel';
 import { RowEditingModel } from './model/rowEditingModel';
+import type { EditingStateUpdates } from './strategy/iEditStrategy';
 
 export class EditingModelService extends BeanStub implements NamedBean {
     beanName = 'editingModelSvc' as const;
@@ -212,9 +213,3 @@ export class EditingModelService extends BeanStub implements NamedBean {
         this.stopEditing();
     }
 }
-
-type RowStatusUpdateRecord = {
-    status: boolean;
-    cells: Record<string, boolean>;
-};
-export type EditingStateUpdates = Record<string, RowStatusUpdateRecord>;

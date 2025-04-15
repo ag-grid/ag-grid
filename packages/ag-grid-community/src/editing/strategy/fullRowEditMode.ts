@@ -2,7 +2,8 @@ import type { CellFocusedEvent } from '../../events';
 import type { CellCtrl } from '../../rendering/cell/cellCtrl';
 import type { RowCtrl } from '../../rendering/row/rowCtrl';
 import { isEditing } from '../editingApi';
-import { BaseEditMode, _resolveControllers } from './baseEditMode';
+import { BaseEditMode } from './baseEditMode';
+import { _resolveControllers } from './utils';
 
 export class FullRowEditMode extends BaseEditMode {
     public setEditing(rowCtrl: RowCtrl): void {

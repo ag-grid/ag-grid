@@ -1,8 +1,9 @@
-import { EditingStateUpdates } from '../../editing-model/editingModelService';
 import type { CellFocusedEvent } from '../../events';
 import type { CellCtrl } from '../../rendering/cell/cellCtrl';
 import type { RowCtrl } from '../../rendering/row/rowCtrl';
-import { BaseEditMode, _resolveControllers, _saveNewValue, _takeValueFromCellEditor } from './baseEditMode';
+import { BaseEditMode } from './baseEditMode';
+import type { EditingStateUpdates } from './iEditStrategy';
+import { _resolveControllers, _saveNewValue, _takeValueFromCellEditor } from './utils';
 
 export class SingleCellEditMode extends BaseEditMode {
     public startEditing(

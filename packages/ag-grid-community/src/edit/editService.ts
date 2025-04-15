@@ -25,7 +25,7 @@ export class EditService extends BeanStub implements NamedBean {
     // ): boolean {
     //     if (this.gos.get('experimentalEditingModeV2')) {
     //         return (
-    //             this.beans.editingFcd?.startEditing(cellCtrl.rowCtrl, cellCtrl, key, cellStartedEdit, event) ?? false
+    //             this.beans.editingSvc?.startEditing(cellCtrl.rowCtrl, cellCtrl, key, cellStartedEdit, event) ?? false
     //         );
     //     }
 
@@ -68,7 +68,7 @@ export class EditService extends BeanStub implements NamedBean {
     //  */
     // public stopEditing(cellCtrl: CellCtrl, cancel: boolean = false): boolean {
     //     if (this.gos.get('experimentalEditingModeV2')) {
-    //         return this.beans.editingFcd?.stopEditing(cellCtrl.rowCtrl, cellCtrl, cancel) ?? false;
+    //         return this.beans.editingSvc?.stopEditing(cellCtrl.rowCtrl, cellCtrl, cancel) ?? false;
     //     }
 
     //     cellCtrl.onEditorAttachedFuncs = [];
@@ -107,7 +107,7 @@ export class EditService extends BeanStub implements NamedBean {
 
     // public stopRowEditing(rowCtrl: RowCtrl, cancel: boolean = false): void {
     //     if (this.gos.get('experimentalEditingModeV2')) {
-    //         this.beans.editingFcd?.stopRowEditing(rowCtrl, cancel) ?? false;
+    //         this.beans.editingSvc?.stopRowEditing(rowCtrl, cancel) ?? false;
     //         return;
     //     }
 
@@ -214,7 +214,7 @@ export class EditService extends BeanStub implements NamedBean {
     //     event: KeyboardEvent | MouseEvent | null = null
     // ): boolean {
     //     if (this.gos.get('experimentalEditingModeV2')) {
-    //         return this.beans.editingFcd?.startEditing(cellCtrl.rowCtrl, cellCtrl, key, false, event) ?? false;
+    //         return this.beans.editingSvc?.startEditing(cellCtrl.rowCtrl, cellCtrl, key, false, event) ?? false;
     //     }
 
     //     // because of async in React, the cellComp may not be set yet, if no cellComp then we are
@@ -241,7 +241,7 @@ export class EditService extends BeanStub implements NamedBean {
     //     shiftKey: boolean = false
     // ): void {
     //     if (this.gos.get('experimentalEditingModeV2')) {
-    //         this.beans.editingFcd?.stopEditing(cellCtrl.rowCtrl, cellCtrl, cancel);
+    //         this.beans.editingSvc?.stopEditing(cellCtrl.rowCtrl, cellCtrl, cancel);
     //         return;
     //     }
 

@@ -6,16 +6,16 @@ import { LargeTextCellEditor } from '../edit/cellEditors/largeTextCellEditor';
 import { NumberCellEditor } from '../edit/cellEditors/numberCellEditor';
 import { SelectCellEditor } from '../edit/cellEditors/selectCellEditor';
 import { TextCellEditor } from '../edit/cellEditors/textCellEditor';
-import { EditingModelModule } from '../editing-model/editingModelModule';
 import type { DefaultProvidedCellEditorParams } from '../interfaces/iCellEditor';
 import type { _ModuleWithApi, _ModuleWithoutApi } from '../interfaces/iModule';
 import { UndoRedoService } from '../undoRedo/undoRedoService';
 import { VERSION } from '../version';
 import { getCurrentRedoSize, getCurrentUndoSize, redoCellEditing, undoCellEditing } from './editingApi';
-import { EditingFacade } from './editingFacade';
-import { BatchEditMode } from './mode/batchEditMode';
-import { FullRowEditMode } from './mode/fullRowEditMode';
-import { SingleCellEditMode } from './mode/singleCellEditMode';
+import { EditingModelService } from './editingModelService';
+import { EditingService } from './editingService';
+import { BatchEditMode } from './strategy/batchEditMode';
+import { FullRowEditMode } from './strategy/fullRowEditMode';
+import { SingleCellEditMode } from './strategy/singleCellEditMode';
 import { CustomEditTrigger } from './trigger/customEditTrigger';
 import { ProvidedEditTrigger } from './trigger/providedEditTrigger';
 
@@ -25,7 +25,7 @@ import { ProvidedEditTrigger } from './trigger/providedEditTrigger';
 export const EditingCoreModule: _ModuleWithoutApi = {
     moduleName: 'EditingCore',
     version: VERSION,
-    beans: [EditingFacade],
+    beans: [EditingModelService, EditingService],
     dynamicBeans: {
         cellEditMode: SingleCellEditMode,
         rowEditMode: FullRowEditMode,
@@ -33,7 +33,7 @@ export const EditingCoreModule: _ModuleWithoutApi = {
         customEditTrigger: CustomEditTrigger,
         providedEditTrigger: ProvidedEditTrigger,
     },
-    dependsOn: [EditingModelModule],
+    dependsOn: [],
     css: [],
 };
 
