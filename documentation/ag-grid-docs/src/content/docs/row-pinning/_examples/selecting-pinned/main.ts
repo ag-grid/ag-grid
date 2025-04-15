@@ -2,16 +2,17 @@ import type { ColDef, GridApi, GridOptions } from 'ag-grid-community';
 import {
     ClientSideRowModelModule,
     ModuleRegistry,
+    PinnedRowModule,
     RowApiModule,
     RowSelectionModule,
     ValidationModule,
     createGrid,
 } from 'ag-grid-community';
-import { ContextMenuModule, ManualPinnedRowModule } from 'ag-grid-enterprise';
+import { ContextMenuModule } from 'ag-grid-enterprise';
 
 ModuleRegistry.registerModules([
-    ManualPinnedRowModule,
     ClientSideRowModelModule,
+    PinnedRowModule,
     RowSelectionModule,
     RowApiModule,
     ContextMenuModule,

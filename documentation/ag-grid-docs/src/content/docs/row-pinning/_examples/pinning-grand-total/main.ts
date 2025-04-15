@@ -1,12 +1,18 @@
 import type { ColDef, GridApi, GridOptions, RowPinnedType } from 'ag-grid-community';
-import { ClientSideRowModelModule, ModuleRegistry, ValidationModule, createGrid } from 'ag-grid-community';
-import { ContextMenuModule, ManualPinnedRowModule, RowGroupingModule } from 'ag-grid-enterprise';
+import {
+    ClientSideRowModelModule,
+    ModuleRegistry,
+    PinnedRowModule,
+    ValidationModule,
+    createGrid,
+} from 'ag-grid-community';
+import { ContextMenuModule, RowGroupingModule } from 'ag-grid-enterprise';
 
 ModuleRegistry.registerModules([
-    ManualPinnedRowModule,
     ClientSideRowModelModule,
     RowGroupingModule,
     ContextMenuModule,
+    PinnedRowModule,
     ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 

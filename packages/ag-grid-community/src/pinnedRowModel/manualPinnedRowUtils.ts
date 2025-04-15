@@ -1,5 +1,8 @@
-import type { BeanCollection, RowNode, RowPinnedType } from 'ag-grid-community';
-import { _isServerSideRowModel, _removeFromArray } from 'ag-grid-community';
+import type { BeanCollection } from '../context/context';
+import type { RowNode } from '../entities/rowNode';
+import { _isServerSideRowModel } from '../gridOptionsUtils';
+import type { RowPinnedType } from '../interfaces/iRowNode';
+import { _removeFromArray } from '../utils/array';
 
 export class PinnedRows {
     /** Canonical set of pinned nodes */

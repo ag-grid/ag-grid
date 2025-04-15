@@ -3,13 +3,14 @@ import {
     ClientSideRowModelModule,
     ColumnApiModule,
     ModuleRegistry,
+    PinnedRowModule,
     ValidationModule,
     createGrid,
 } from 'ag-grid-community';
-import { ContextMenuModule, ManualPinnedRowModule, SetFilterModule } from 'ag-grid-enterprise';
+import { ContextMenuModule, SetFilterModule } from 'ag-grid-enterprise';
 
 ModuleRegistry.registerModules([
-    ManualPinnedRowModule,
+    PinnedRowModule,
     ClientSideRowModelModule,
     ContextMenuModule,
     SetFilterModule,

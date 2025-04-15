@@ -164,10 +164,10 @@ export const ICON_MODULES: Record<IconName, ValidationModuleName | ValidationMod
     checkboxUnchecked: 'CommunityCore',
     radioButtonOn: 'CommunityCore',
     radioButtonOff: 'CommunityCore',
-    rowPin: 'ManualPinnedRow',
-    rowUnpin: 'ManualPinnedRow',
-    rowPinBottom: 'ManualPinnedRow',
-    rowPinTop: 'ManualPinnedRow',
+    rowPin: 'PinnedRow',
+    rowUnpin: 'PinnedRow',
+    rowPinBottom: 'PinnedRow',
+    rowPinTop: 'PinnedRow',
 };
 
 export const DEPRECATED_ICONS_V33: Set<IconName> = new Set([
