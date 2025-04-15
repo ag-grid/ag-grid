@@ -1,4 +1,3 @@
-import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import { ROW_ID_PREFIX_BOTTOM_PINNED, ROW_ID_PREFIX_TOP_PINNED, RowNode } from '../entities/rowNode';
 import type { CssVariablesChanged } from '../events';
@@ -18,9 +17,7 @@ interface OrderedCache<T extends { id: string | undefined }> {
     order: string[];
 }
 
-export class StaticPinnedRowModel extends BeanStub implements NamedBean, IPinnedRowModel {
-    beanName = 'pinnedRowModel' as const;
-
+export class StaticPinnedRowModel extends BeanStub implements IPinnedRowModel {
     private nextId = 0;
     private pinnedTopRows: OrderedCache<RowNode> = { cache: {}, order: [] };
     private pinnedBottomRows: OrderedCache<RowNode> = { cache: {}, order: [] };
