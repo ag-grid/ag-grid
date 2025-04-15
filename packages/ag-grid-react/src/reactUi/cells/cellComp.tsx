@@ -492,7 +492,6 @@ const CellComp = ({
         cssManager.current!.toggleCss('ag-cell-inline-editing', !!editDetails && !editDetails.popup);
         cssManager.current!.toggleCss('ag-cell-popup-editing', !!editDetails && !!editDetails.popup);
         cssManager.current!.toggleCss('ag-cell-not-inline-editing', !editDetails || !!editDetails.popup);
-        cellCtrl.setInlineEditingCss();
     });
 
     const showContents = () => (

@@ -77,7 +77,6 @@ export interface ICellComp {
         position?: 'over' | 'under',
         reactiveCustomComponents?: boolean
     ): void;
-    refreshEditStyles(editing: boolean, isPopup?: boolean): void;
 }
 
 export const DOM_DATA_KEY_CELL_CTRL = 'cellCtrl';
@@ -751,8 +750,6 @@ export class CellCtrl extends BeanStub {
         const cellFocused = this.isCellFocused();
         const editing = beans.editingSvc?.isEditing(this.rowCtrl, this) ?? false;
 
-        this.comp.refreshEditStyles(editing);
-
         this.comp.toggleCss(CSS_CELL_FOCUS, cellFocused);
 
         // see if we need to force browser focus - this can happen if focus is programmatically set
@@ -785,10 +782,6 @@ export class CellCtrl extends BeanStub {
             rowPinned: _makeNull(rowPinned),
             column: this.column,
         };
-    }
-
-    public setInlineEditingCss(editing: boolean): void {
-        this.comp.refreshEditStyles(editing);
     }
 
     // CSS Classes that only get applied once, they never change

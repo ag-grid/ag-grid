@@ -2,9 +2,7 @@ import { BeanStub } from '../../context/beanStub';
 import type { CellFocusedEvent } from '../../events';
 import type { CellCtrl } from '../../rendering/cell/cellCtrl';
 import type { RowCtrl } from '../../rendering/row/rowCtrl';
-import type { EditingStateUpdates } from './iEditStrategy';
 import type { IEditStrategy } from './iEditStrategy';
-import { _resolveCellController, _resolveRowController } from './utils';
 
 export abstract class BaseEditStrategy extends BeanStub implements IEditStrategy {
     postConstruct(): void {
@@ -55,30 +53,5 @@ export abstract class BaseEditStrategy extends BeanStub implements IEditStrategy
             cellCtrl.focusCell(true);
             cellCtrl.onEditorAttachedFuncs.push(() => cellComp.getCellEditor()?.focusIn?.());
         }
-    }
-
-    public updateRowStyle(rowCtrl?: RowCtrl, editing: boolean = false): void {
-        rowCtrl?.setInlineEditingCss(editing);
-    }
-
-    public updateCellStyle(cellCtrl?: CellCtrl, editing: boolean = false): void {
-        cellCtrl?.setInlineEditingCss(editing);
-    }
-
-    public updateStyles(editingStatusUpdate?: EditingStateUpdates): void {
-        if (!editingStatusUpdate) {
-            return;
-        }
-        Object.keys(editingStatusUpdate).forEach((rowId) => {
-            const rowCtrl = _resolveRowController(this.beans, { rowId });
-            const rowUpdate = editingStatusUpdate[rowId];
-            this.updateRowStyle(rowCtrl, rowUpdate.status);
-
-            Object.keys(rowUpdate.cells).forEach((columnId) => {
-                const cellCtrl = _resolveCellController(this.beans, { rowCtrl, colId: columnId });
-                const editing = rowUpdate.cells[columnId];
-                this.updateCellStyle(cellCtrl, editing);
-            });
-        });
     }
 }
