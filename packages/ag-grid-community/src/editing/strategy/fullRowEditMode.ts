@@ -34,7 +34,7 @@ export class FullRowEditMode extends BaseEditMode {
                 this.startEditing(rowCtrl, cellCtrl, key, event);
             });
         } else {
-            this.beans.editingModelSvc?.startEditing(rowCtrl.rowId!, cellCtrl.column.colId);
+            this.beans.editingSvc?.editModel?.startEditing(rowCtrl.rowId!, cellCtrl.column.colId);
         }
 
         return true;
@@ -43,9 +43,9 @@ export class FullRowEditMode extends BaseEditMode {
     public cancelEditing(rowCtrl?: RowCtrl | null, cellCtrl?: CellCtrl | null): boolean {
         console.warn('FullRowEditMode: cancelEditing', rowCtrl, cellCtrl);
         if (rowCtrl) {
-            this.beans.editingModelSvc?.cancelEditing(rowCtrl!.rowId!, cellCtrl?.column.colId);
+            this.beans.editingSvc?.editModel?.cancelEditing(rowCtrl!.rowId!, cellCtrl?.column.colId);
         } else {
-            this.beans.editingModelSvc?.cancelEditing();
+            this.beans.editingSvc?.editModel?.cancelEditing();
         }
 
         return true;
@@ -54,15 +54,15 @@ export class FullRowEditMode extends BaseEditMode {
     public stopEditing(rowCtrl?: RowCtrl | null, cellCtrl?: CellCtrl | null): boolean {
         console.warn('FullRowEditMode: stopEditing', rowCtrl, cellCtrl);
         if (rowCtrl) {
-            this.beans.editingModelSvc?.stopEditing(rowCtrl!.rowId!, cellCtrl?.column.colId);
+            this.beans.editingSvc?.editModel?.stopEditing(rowCtrl!.rowId!, cellCtrl?.column.colId);
         } else {
-            this.beans.editingModelSvc?.stopEditing();
+            this.beans.editingSvc?.editModel?.stopEditing();
         }
         return true;
     }
 
     public override isEditing(rowCtrl?: RowCtrl | null, cellCtrl?: CellCtrl | null): boolean {
-        return this.beans.editingModelSvc?.isEditing(rowCtrl, cellCtrl) ?? false;
+        return this.beans.editingSvc?.editModel?.isEditing(rowCtrl, cellCtrl) ?? false;
     }
 
     protected override onCellFocusChanged(event: CellFocusedEvent<any, any>): void {

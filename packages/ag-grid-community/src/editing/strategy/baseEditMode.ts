@@ -24,7 +24,7 @@ export abstract class BaseEditMode extends BeanStub implements IEditStrategy {
     ): boolean | null;
 
     public isEditing(rowCtrl?: RowCtrl | null, cellCtrl?: CellCtrl | null): boolean {
-        return this.beans.editingModelSvc?.isEditing(rowCtrl, cellCtrl) ?? false;
+        return this.beans.editingSvc?.editModel?.isEditing(rowCtrl, cellCtrl) ?? false;
     }
 
     setFocusOutOnEditor(cellCtrl: CellCtrl): void {

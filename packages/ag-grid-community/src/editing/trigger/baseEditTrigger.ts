@@ -35,7 +35,7 @@ export abstract class BaseEditTrigger extends BeanStub implements IEditTrigger {
         key?: string | null,
         event?: KeyboardEvent | MouseEvent | null
     ): boolean {
-        if (!this.beans.editingModelSvc?.isEditing(rowCtrl, cellCtrl)) {
+        if (!this.beans.editingSvc?.editModel?.isEditing(rowCtrl, cellCtrl)) {
             return true;
         }
 

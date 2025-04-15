@@ -56,7 +56,7 @@ export class ProvidedEditTrigger extends BaseEditTrigger {
         key?: string | null | undefined,
         event?: KeyboardEvent | MouseEvent | null | undefined
     ): boolean {
-        if (this.beans.editingModelSvc?.isEditing(rowCtrl, cellCtrl)) {
+        if (this.beans.editingSvc?.editModel?.isEditing(rowCtrl, cellCtrl)) {
             return true;
         }
 
