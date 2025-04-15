@@ -449,6 +449,15 @@ const CellComp = ({
                     });
                 }
             },
+            refreshEditStyles: (editing, isPopup) => {
+                if (!eGui.current) {
+                    return;
+                }
+                cssClassManager.current!.addOrRemoveCssClass('ag-cell-value', !showCellWrapper);
+                cssClassManager.current!.addOrRemoveCssClass('ag-cell-inline-editing', !!editing && !isPopup);
+                cssClassManager.current!.addOrRemoveCssClass('ag-cell-popup-editing', !!editing && !!isPopup);
+                cssClassManager.current!.addOrRemoveCssClass('ag-cell-not-inline-editing', !editing || !!isPopup);
+            },
         };
 
         const cellWrapperOrUndefined = eCellWrapper.current || undefined;
