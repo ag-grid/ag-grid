@@ -1,6 +1,7 @@
 import { isRowNumberCol } from '../../columns/columnUtils';
 import { BeanStub } from '../../context/beanStub';
 import type { BeanCollection } from '../../context/context';
+import { isEditing } from '../../editing/editingApi';
 import type { AgColumn } from '../../entities/agColumn';
 import type { CellClickedEvent, CellDoubleClickedEvent } from '../../events';
 import { _isBrowserSafari } from '../../utils/browser';
@@ -51,7 +52,7 @@ export class CellMouseListenerFeature extends BeanStub {
             return;
         }
 
-        const { eventSvc, rangeSvc, gos, editSvc } = this.beans;
+        const { eventSvc, rangeSvc } = this.beans;
         const isMultiKey = mouseEvent.ctrlKey || mouseEvent.metaKey;
 
         if (rangeSvc && isMultiKey) {
@@ -76,18 +77,14 @@ export class CellMouseListenerFeature extends BeanStub {
             }, 0);
         }
 
-        const editOnSingleClick =
-            (gos.get('singleClickEdit') || colDef.singleClickEdit) && !gos.get('suppressClickEdit');
-
-        // edit on single click, but not if extending a range
-        if (editOnSingleClick && !(mouseEvent.shiftKey && rangeSvc?.getCellRanges().length != 0)) {
-            editSvc?.startRowOrCellEdit(this.cellCtrl, undefined, mouseEvent);
+        if (this.beans.editingFcd?.shouldStartEditing(this.cellCtrl.rowCtrl, this.cellCtrl, null, mouseEvent)) {
+            this.beans.editingFcd?.startEditing(this.cellCtrl.rowCtrl, this.cellCtrl, null, true, mouseEvent);
         }
     }
 
     public onCellDoubleClicked(mouseEvent: MouseEvent) {
         const { column, beans, cellCtrl } = this;
-        const { eventSvc, frameworkOverrides, gos, editSvc } = beans;
+        const { eventSvc, frameworkOverrides } = beans;
 
         const colDef = column.getColDef();
         // always dispatch event to eventService
@@ -104,9 +101,8 @@ export class CellMouseListenerFeature extends BeanStub {
             }, 0);
         }
 
-        const editOnDoubleClick = !gos.get('singleClickEdit') && !gos.get('suppressClickEdit');
-        if (editOnDoubleClick) {
-            editSvc?.startRowOrCellEdit(cellCtrl, null, mouseEvent);
+        if (this.beans.editingFcd?.shouldStartEditing(this.cellCtrl.rowCtrl, this.cellCtrl, null, mouseEvent)) {
+            this.beans.editingFcd?.startEditing(this.cellCtrl.rowCtrl, this.cellCtrl, null, true, mouseEvent);
         }
     }
 
@@ -136,6 +132,7 @@ export class CellMouseListenerFeature extends BeanStub {
         }
 
         if (!shiftKey || !hasRanges) {
+            const editing = isEditing(beans, cellCtrl.rowCtrl, cellCtrl);
             const isEnableCellTextSelection = gos.get('enableCellTextSelection');
             // when `enableCellTextSelection` is true, we call prevent default on `mousedown`
             // within the row dragger to block text selection while dragging, but the cell
@@ -145,10 +142,7 @@ export class CellMouseListenerFeature extends BeanStub {
             // due to a click on a cell editor for example, otherwise cell selection within
             // an editor would be blocked.
             const forceBrowserFocus =
-                (_isBrowserSafari() || shouldFocus) &&
-                !cellCtrl.editing &&
-                !_isFocusableFormField(target) &&
-                !containsWidget;
+                (_isBrowserSafari() || shouldFocus) && !editing && !_isFocusableFormField(target) && !containsWidget;
 
             cellCtrl.focusCell(forceBrowserFocus);
         }
@@ -166,8 +160,8 @@ export class CellMouseListenerFeature extends BeanStub {
                 const focusedCellCtrl = focusedRowCtrl?.getCellCtrl(column as AgColumn);
 
                 // if the focused cell is editing, need to stop editing first
-                if (focusedCellCtrl?.editing) {
-                    focusedCellCtrl.stopEditing();
+                if (this.beans.editingFcd?.isEditing(focusedRowCtrl, focusedCellCtrl)) {
+                    this.beans.editingFcd?.stopEditing(focusedRowCtrl, focusedCellCtrl);
                 }
 
                 // focus could have been lost, so restore it to the starting cell in the range if needed

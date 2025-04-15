@@ -44,6 +44,9 @@ export class RowComp extends Component {
             setRowId: (rowId: string) => rowDiv.setAttribute('row-id', rowId),
             setRowBusinessKey: (businessKey) => rowDiv.setAttribute('row-business-key', businessKey),
             refreshFullWidth: (getUpdatedParams) => this.fullWidthCellRenderer?.refresh?.(getUpdatedParams()) ?? false,
+            refreshEditStyles: (editing) => {
+                this.refreshEditStyles(editing);
+            },
         };
 
         ctrl.setComp(compProxy, this.getGui(), containerType, undefined);
@@ -135,6 +138,8 @@ export class RowComp extends Component {
             this.fullWidthCellRenderer = this.beans.context.destroyBean(this.fullWidthCellRenderer);
         });
     }
+
+    private refreshEditStyles(editing: boolean): void {}
 
     private destroyCells(cellComps: Map<CellCtrlInstanceId, CellComp | null>): void {
         for (const cellComp of cellComps.values()) {

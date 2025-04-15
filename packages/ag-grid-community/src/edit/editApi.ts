@@ -17,87 +17,87 @@ export function redoCellEditing(beans: BeanCollection): void {
     beans.undoRedo?.redo('api');
 }
 
-export function getCellEditorInstances<TData = any>(
-    beans: BeanCollection,
-    params: GetCellEditorInstancesParams<TData> = {}
-): ICellEditor[] {
-    const res: ICellEditor[] = [];
+// export function getCellEditorInstances<TData = any>(
+//     beans: BeanCollection,
+//     params: GetCellEditorInstancesParams<TData> = {}
+// ): ICellEditor[] {
+//     const res: ICellEditor[] = [];
 
-    beans.rowRenderer.getCellCtrls(params.rowNodes, params.columns as AgColumn[]).forEach((cellCtrl) => {
-        const cellEditor = cellCtrl.comp?.getCellEditor() as ICellEditor;
+//     beans.rowRenderer.getCellCtrls(params.rowNodes, params.columns as AgColumn[]).forEach((cellCtrl) => {
+//         const cellEditor = cellCtrl.comp?.getCellEditor() as ICellEditor;
 
-        if (cellEditor) {
-            res.push(_unwrapUserComp(cellEditor));
-        }
-    });
+//         if (cellEditor) {
+//             res.push(_unwrapUserComp(cellEditor));
+//         }
+//     });
 
-    return res;
-}
+//     return res;
+// }
 
-export function getEditingCells(beans: BeanCollection): CellPosition[] {
-    if (beans.gos.get('experimentalEditingModeV2')) {
-        return beans.editingModelSvc?.getEditingCellPositions() ?? [];
-    }
+// export function getEditingCells(beans: BeanCollection): CellPosition[] {
+//     if (beans.gos.get('experimentalEditingModeV2')) {
+//         return beans.editingModelSvc?.getEditingCellPositions() ?? [];
+//     }
 
-    const res: CellPosition[] = [];
+//     const res: CellPosition[] = [];
 
-    beans.rowRenderer.getAllCellCtrls().forEach((cellCtrl) => {
-        if (cellCtrl.editing) {
-            const { cellPosition } = cellCtrl;
-            res.push(cellPosition);
-        }
-    });
+//     beans.rowRenderer.getAllCellCtrls().forEach((cellCtrl) => {
+//         if (cellCtrl.editing) {
+//             const { cellPosition } = cellCtrl;
+//             res.push(cellPosition);
+//         }
+//     });
 
-    return res;
-}
+//     return res;
+// }
 
-export function stopEditing(beans: BeanCollection, cancel: boolean = false): void {
-    if (beans.gos.get('experimentalEditingModeV2')) {
-        beans.editingFcd?.stopAllEditing(cancel);
-        return;
-    }
+// export function stopEditing(beans: BeanCollection, cancel: boolean = false): void {
+//     if (beans.gos.get('experimentalEditingModeV2')) {
+//         beans.editingFcd?.stopAllEditing(cancel);
+//         return;
+//     }
 
-    beans.editSvc?.stopAllEditing(cancel);
-}
+//     beans.editSvc?.stopAllEditing(cancel);
+// }
 
-export function startEditingCell(beans: BeanCollection, params: StartEditingCellParams): void {
-    const column = beans.colModel.getCol(params.colKey);
-    if (!column) {
-        _warn(12, { colKey: params.colKey });
-        return;
-    }
-    const cellPosition: CellPosition = {
-        rowIndex: params.rowIndex,
-        rowPinned: params.rowPinned || null,
-        column: column,
-    };
-    const notPinned = params.rowPinned == null;
-    if (notPinned) {
-        ensureIndexVisible(beans, params.rowIndex);
-    }
+// export function startEditingCell(beans: BeanCollection, params: StartEditingCellParams): void {
+//     const column = beans.colModel.getCol(params.colKey);
+//     if (!column) {
+//         _warn(12, { colKey: params.colKey });
+//         return;
+//     }
+//     const cellPosition: CellPosition = {
+//         rowIndex: params.rowIndex,
+//         rowPinned: params.rowPinned || null,
+//         column: column,
+//     };
+//     const notPinned = params.rowPinned == null;
+//     if (notPinned) {
+//         ensureIndexVisible(beans, params.rowIndex);
+//     }
 
-    ensureColumnVisible(beans, params.colKey);
+//     ensureColumnVisible(beans, params.colKey);
 
-    const cell = _getCellByPosition(beans, cellPosition);
-    if (!cell) {
-        return;
-    }
-    const { focusSvc, gos, editSvc } = beans;
-    const isFocusWithinCell = () => {
-        const activeElement = _getActiveDomElement(beans);
-        const eCell = cell.eGui;
-        return activeElement !== eCell && !!eCell?.contains(activeElement);
-    };
-    const forceBrowserFocus = gos.get('stopEditingWhenCellsLoseFocus') && isFocusWithinCell();
-    if (forceBrowserFocus || !focusSvc.isCellFocused(cellPosition)) {
-        focusSvc.setFocusedCell({
-            ...cellPosition,
-            forceBrowserFocus,
-            preventScrollOnBrowserFocus: true,
-        });
-    }
-    editSvc?.startRowOrCellEdit(cell, params.key);
-}
+//     const cell = _getCellByPosition(beans, cellPosition);
+//     if (!cell) {
+//         return;
+//     }
+//     const { focusSvc, gos, editSvc } = beans;
+//     const isFocusWithinCell = () => {
+//         const activeElement = _getActiveDomElement(beans);
+//         const eCell = cell.eGui;
+//         return activeElement !== eCell && !!eCell?.contains(activeElement);
+//     };
+//     const forceBrowserFocus = gos.get('stopEditingWhenCellsLoseFocus') && isFocusWithinCell();
+//     if (forceBrowserFocus || !focusSvc.isCellFocused(cellPosition)) {
+//         focusSvc.setFocusedCell({
+//             ...cellPosition,
+//             forceBrowserFocus,
+//             preventScrollOnBrowserFocus: true,
+//         });
+//     }
+//     editSvc?.startRowOrCellEdit(cell, params.key);
+// }
 
 export function getCurrentUndoSize(beans: BeanCollection): number {
     return beans.undoRedo?.getCurrentUndoStackSize() ?? 0;

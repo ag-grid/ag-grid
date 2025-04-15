@@ -1,4 +1,5 @@
 import { isColumnSelectionCol, isRowNumberCol } from '../../columns/columnUtils';
+import { _getCellEditorDetails } from '../../components/framework/userCompUtils';
 import { _getCellRendererDetails, _getLoadingCellRendererDetails } from '../../components/framework/userCompUtils';
 import { BeanStub } from '../../context/beanStub';
 import type { BeanCollection } from '../../context/context';
@@ -19,7 +20,7 @@ import {
 } from '../../gridOptionsUtils';
 import { refreshFirstAndLastStyles } from '../../headerRendering/cells/cssClassApplier';
 import type { BrandedType } from '../../interfaces/brandedType';
-import type { ICellEditor } from '../../interfaces/iCellEditor';
+import type { ICellEditor, ICellEditorParams } from '../../interfaces/iCellEditor';
 import type { CellPosition } from '../../interfaces/iCellPosition';
 import type { ICellRangeFeature } from '../../interfaces/iCellRangeFeature';
 import type { CellChangedEvent } from '../../interfaces/iRowNode';
@@ -76,6 +77,7 @@ export interface ICellComp {
         position?: 'over' | 'under',
         reactiveCustomComponents?: boolean
     ): void;
+    refreshEditStyles(editing: boolean, isPopup?: boolean): void;
 }
 
 export const DOM_DATA_KEY_CELL_CTRL = 'cellCtrl';
@@ -109,20 +111,6 @@ export class CellCtrl extends BeanStub {
     private keyboardListener: CellKeyboardListenerFeature | undefined = undefined;
 
     public cellPosition: CellPosition;
-
-    private _editing: boolean;
-    public get editing(): boolean {
-        if (!this.gos?.get('experimentalEditingModeV2')) {
-            return this._editing;
-        }
-        return this.beans.editingFcd?.isEditing(this.rowCtrl, this) ?? false;
-    }
-
-    public set editing(editing: boolean) {
-        if (!this.gos?.get('experimentalEditingModeV2')) {
-            this._editing = editing;
-        }
-    }
 
     private includeSelection: boolean;
     private includeDndSource: boolean;
@@ -252,7 +240,7 @@ export class CellCtrl extends BeanStub {
         this.rowResizeFeature?.refreshRowResizer();
 
         if (startEditing && this.isCellEditable()) {
-            this.beans.editSvc?.startEditing(this);
+            this.beans.editingFcd?.startEditing(this.rowCtrl, this, undefined, true);
         } else {
             // We can skip refreshing the range handle as this is done in this.rangeFeature.setComp above
             this.showValue(false, true);
@@ -375,16 +363,14 @@ export class CellCtrl extends BeanStub {
     }
 
     public onPopupEditorClosed(): void {
-        if (!this.editing) {
+        if (!this.beans.editingFcd?.isEditing(this.rowCtrl, this)) {
             return;
         }
 
-        if (!this.gos.get('experimentalEditingModeV2')) {
-            // note: this happens because of a click outside of the grid or if the popupEditor
-            // is closed with `Escape` key. if another cell was clicked, then the editing will
-            // have already stopped and returned on the conditional above.
-            this.beans.editSvc?.stopRowOrCellEdit(this);
-        }
+        // note: this happens because of a click outside of the grid or if the popupEditor
+        // is closed with `Escape` key. if another cell was clicked, then the editing will
+        // have already stopped and returned on the conditional above.
+        this.beans.editingFcd?.stopEditing(this.rowCtrl, this);
     }
 
     /**
@@ -393,7 +379,7 @@ export class CellCtrl extends BeanStub {
      * @returns `True` if the value of the `GridCell` has been updated, otherwise `False`.
      */
     public stopEditing(cancel = false): boolean {
-        return this.beans.editSvc?.stopEditing(this, cancel) ?? false;
+        return this.beans.editingFcd?.stopEditing(this.rowCtrl, this, cancel) ?? false;
     }
 
     private createCellRendererParams(): ICellRendererParams {
@@ -464,7 +450,7 @@ export class CellCtrl extends BeanStub {
     // + rowRenderer: api softRefreshView() {}
     public refreshCell(params?: { suppressFlash?: boolean; newData?: boolean; forceRefresh?: boolean }) {
         // if we are in the middle of 'stopEditing', then we don't refresh here, as refresh gets called explicitly
-        if (this.suppressRefreshCell || this.editing) {
+        if (this.suppressRefreshCell || this.beans.editingFcd?.isEditing(this.rowCtrl, this)) {
             return;
         }
 
@@ -657,7 +643,12 @@ export class CellCtrl extends BeanStub {
      * @param waitForRender if the cell has just setComp, it may not be rendered yet, so we wait for the next render
      */
     private restoreFocus(waitForRender = false): void {
-        if (!this.comp || this.editing || !this.isCellFocused() || !this.beans.focusSvc.shouldTakeFocus()) {
+        if (
+            !this.comp ||
+            this.beans.editingFcd?.isEditing(this.rowCtrl, this) ||
+            !this.isCellFocused() ||
+            !this.beans.focusSvc.shouldTakeFocus()
+        ) {
             return;
         }
 
@@ -758,6 +749,9 @@ export class CellCtrl extends BeanStub {
         }
 
         const cellFocused = this.isCellFocused();
+        const editing = beans.editingFcd?.isEditing(this.rowCtrl, this) ?? false;
+
+        this.comp.refreshEditStyles(editing);
 
         this.comp.toggleCss(CSS_CELL_FOCUS, cellFocused);
 
@@ -765,7 +759,7 @@ export class CellCtrl extends BeanStub {
         if (cellFocused && event && event.forceBrowserFocus) {
             let focusEl = this.comp.getFocusableElement();
 
-            if (this.editing) {
+            if (editing) {
                 const focusableEls = _findFocusableElements(focusEl, null, true);
                 if (focusableEls.length) {
                     focusEl = focusableEls[0];
@@ -775,11 +769,8 @@ export class CellCtrl extends BeanStub {
             focusEl.focus({ preventScroll: !!event.preventScrollOnBrowserFocus });
         }
 
-        // if another cell was focused, and we are editing, then stop editing
-        const fullRowEdit = beans.gos.get('editType') === 'fullRow';
-
-        if (!cellFocused && !fullRowEdit && this.editing) {
-            beans.editSvc?.stopRowOrCellEdit(this);
+        if (beans.editingFcd?.shouldStopEditing(this.rowCtrl, this)) {
+            beans.editingFcd?.stopEditing(this.rowCtrl, this, false);
         }
 
         if (cellFocused) {
@@ -796,8 +787,8 @@ export class CellCtrl extends BeanStub {
         };
     }
 
-    public setInlineEditingCss(): void {
-        this.beans.editSvc?.setInlineEditingCss(this.rowCtrl);
+    public setInlineEditingCss(editing: boolean): void {
+        this.comp.refreshEditStyles(editing);
     }
 
     // CSS Classes that only get applied once, they never change
@@ -832,11 +823,47 @@ export class CellCtrl extends BeanStub {
 
         this.setWrapText();
 
-        if (!this.editing) {
+        if (!this.beans.editingFcd?.isEditing(this.rowCtrl, this)) {
             this.refreshOrDestroyCell({ forceRefresh: true, suppressFlash: true });
         } else {
-            this.beans.editSvc?.handleColDefChanged(this);
+            this.handleColDefChanged(this);
         }
+    }
+
+    public handleColDefChanged(cellCtrl: CellCtrl): void {
+        const cellEditor = cellCtrl.comp?.getCellEditor();
+        if (cellEditor?.refresh) {
+            const { eventKey, cellStartedEdit } = cellCtrl.editCompDetails!.params;
+            const editorParams = this.createCellEditorParams(cellCtrl, eventKey, cellStartedEdit);
+            const colDef = cellCtrl.column.getColDef();
+            const compDetails = _getCellEditorDetails(this.beans.userCompFactory, colDef, editorParams);
+            cellEditor.refresh(compDetails!.params);
+        }
+    }
+
+    public createCellEditorParams(cellCtrl: CellCtrl, key: string | null, cellStartedEdit: boolean): ICellEditorParams {
+        const {
+            column,
+            rowNode,
+            cellPosition: { rowIndex },
+        } = cellCtrl;
+        const { valueSvc, gos, editingFcd } = this.beans;
+        return _addGridCommonParams(gos, {
+            value: valueSvc.getValueForDisplay(column, rowNode),
+            eventKey: key,
+            column,
+            colDef: column.getColDef(),
+            rowIndex,
+            node: rowNode,
+            data: rowNode.data,
+            cellStartedEdit: cellStartedEdit,
+            onKeyDown: cellCtrl.onKeyDown.bind(cellCtrl),
+            stopEditing: (suppressNavigateAfterEdit?: boolean | undefined) =>
+                editingFcd!.stopEditing?.bind(this, cellCtrl.rowCtrl, cellCtrl, false),
+            eGridCell: cellCtrl.eGui,
+            parseValue: (newValue: any) => valueSvc.parseValue(column, rowNode, newValue, cellCtrl.value),
+            formatValue: cellCtrl.formatValue.bind(cellCtrl),
+        });
     }
 
     private setWrapText(): void {

@@ -125,7 +125,8 @@ export class RowContainerEventsFeature extends BeanStub {
     }
 
     private processCellKeyboardEvent(cellCtrl: CellCtrl, eventName: string, keyboardEvent: KeyboardEvent): void {
-        const { rowNode, column, editing } = cellCtrl;
+        const { rowNode, column } = cellCtrl;
+        const editing = isEditing(this.beans, cellCtrl.rowCtrl, cellCtrl);
 
         const gridProcessingAllowed = !_isUserSuppressingKeyboardEvent(
             this.gos,
@@ -146,7 +147,7 @@ export class RowContainerEventsFeature extends BeanStub {
                 }
 
                 // perform clipboard and undo / redo operations
-                this.doGridOperations(keyboardEvent, cellCtrl.editing);
+                this.doGridOperations(keyboardEvent, editing);
 
                 if (_isEventFromPrintableCharacter(keyboardEvent)) {
                     cellCtrl.processCharacter(keyboardEvent);

@@ -47,9 +47,7 @@ export function stopEditing(beans: BeanCollection, cancel: boolean = false): voi
 }
 
 export function isEditing(beans: BeanCollection, rowCtrl?: RowCtrl | null, cellCtrl?: CellCtrl | null): boolean {
-    return beans.gos.get('experimentalEditingModeV2')
-        ? beans.editingFcd?.isEditing(rowCtrl ?? undefined, cellCtrl ?? undefined) ?? false
-        : rowCtrl?.editing || cellCtrl?.editing || false;
+    return beans.editingFcd?.isEditing(rowCtrl, cellCtrl) ?? false;
 }
 
 export function startEditingCell(beans: BeanCollection, params: StartEditingCellParams): void {

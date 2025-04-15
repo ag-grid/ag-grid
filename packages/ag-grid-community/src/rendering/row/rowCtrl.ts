@@ -64,6 +64,7 @@ export interface IRowComp {
     setRowBusinessKey(businessKey: string): void;
     setUserStyles(styles: RowStyle | undefined): void;
     refreshFullWidth(getUpdatedParams: () => ICellRendererParams): boolean;
+    refreshEditStyles(editing: boolean): void;
 }
 
 export interface RowGui {
@@ -688,7 +689,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         }
 
         // we want to try and keep editing and focused cells
-        const { editing } = cellCtrl;
+        const editing = this.beans.editingFcd?.isEditing(cellCtrl.rowCtrl, cellCtrl);
         const { visibleCols } = this.beans;
         const focused = cellCtrl.isCellFocused();
 
@@ -1633,11 +1634,6 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
     public destroySecondPass(): void {
         this.allRowGuis.length = 0;
 
-        if (!this.gos.get('experimentalEditingModeV2')) {
-            // if we are editing, destroying the row will stop editing
-            this.beans.editSvc?.stopRowEditing(this);
-        }
-
         const destroyCellCtrls = (ctrls: CellCtrlListAndMap): CellCtrlListAndMap => {
             ctrls.list.forEach((c) => c.destroy());
             return { list: [], map: {} };
@@ -1656,20 +1652,19 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
     }
 
     private onCellFocusChanged(): void {
-        const { focusSvc, editSvc } = this.beans;
+        const { focusSvc } = this.beans;
         const rowFocused = focusSvc.isRowFocused(this.rowNode.rowIndex!, this.rowNode.rowPinned);
 
         if (rowFocused !== this.rowFocused) {
             this.rowFocused = rowFocused;
             this.setFocusedClasses();
         }
+    }
 
-        if (!this.gos.get('experimentalEditingModeV2')) {
-            // if we are editing, then moving the focus out of a row will stop editing
-            if (!rowFocused && this.editing) {
-                editSvc?.stopRowEditing(this, false);
-            }
-        }
+    public setInlineEditingCss(editing: boolean): void {
+        this.forEachGui(undefined, (gui) => {
+            gui.rowComp.refreshEditStyles(editing);
+        });
     }
 
     private onPaginationChanged(): void {

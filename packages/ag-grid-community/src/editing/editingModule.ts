@@ -16,6 +16,8 @@ import { EditingFacade } from './editingFacade';
 import { BatchEditMode } from './mode/batchEditMode';
 import { FullRowEditMode } from './mode/fullRowEditMode';
 import { SingleCellEditMode } from './mode/singleCellEditMode';
+import { CustomEditTrigger } from './trigger/customEditTrigger';
+import { ProvidedEditTrigger } from './trigger/providedEditTrigger';
 
 /**
  * @internal
@@ -28,6 +30,8 @@ export const EditingCoreModule: _ModuleWithoutApi = {
         cellEditMode: SingleCellEditMode,
         rowEditMode: FullRowEditMode,
         batchEditMode: BatchEditMode,
+        customEditTrigger: CustomEditTrigger,
+        providedEditTrigger: ProvidedEditTrigger,
     },
     dependsOn: [EditingModelModule],
     css: [],
