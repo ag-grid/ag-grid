@@ -218,43 +218,55 @@ export class RowRenderer extends BeanStub implements NamedBean {
         }
     }
 
-    private isCellRendered(rowIndex: number, column?: AgColumn): boolean {
+    /**
+     * Checks if the cell is rendered or not. Also returns true if row ctrl is present but has not rendered
+     * cells yet.
+     * @returns true if cellCtrl is present, or if the row is present but has not rendered rows yet
+     */
+    private isCellBeingRendered(rowIndex: number, column?: AgColumn): boolean {
         const rowCtrl = this.rowCtrlsByRowIndex[rowIndex];
 
-        // if no column, simply check for row ctrl
-        if (!column) {
+        // if no column, simply check for row ctrl, if no rowCtrl then return false
+        if (!column || !rowCtrl) {
             return !!rowCtrl;
         }
 
-        if (rowCtrl && rowCtrl.isFullWidth()) {
+        if (rowCtrl.isFullWidth()) {
             return true;
         }
 
-        // check if this is spanned, if it has been rendered by the span renderer
+        // return true if:
+        // - spannedRowRenderer has a cell for this position,
+        // - or if the rowCtrl has a cell for this column
+        // - or if the row is not rendered yet, as it might try to render it
         const spannedCell = this.beans.spannedRowRenderer?.getCellByPosition({ rowIndex, column, rowPinned: null });
-        if (spannedCell) {
-            return true;
-        }
-
-        // otherwise, check if the cell is rendered
-        return !!rowCtrl?.getCellCtrl(column);
+        return !!spannedCell || !!rowCtrl.getCellCtrl(column) || !rowCtrl.isRowRendered();
     }
 
     /**
      * Notifies all row and cell controls of any change in focused cell.
      * @param event cell focused event
      */
-    private onCellFocusChanged(event?: CellFocusedEvent) {
+    private updateCellFocus(event?: CellFocusedEvent) {
+        this.getAllCellCtrls().forEach((cellCtrl) => cellCtrl.onCellFocused(event));
+        this.getFullWidthRowCtrls().forEach((rowCtrl) => rowCtrl.onFullWidthRowFocused(event));
+    }
+
+    /**
+     * Called when a new cell is focused in the grid
+     * - if the focused cell isn't rendered; re-draw rows to dry to render it
+     * - subsequently updates all cell and row controls with the new focused cell
+     * @param event cell focused event
+     */
+    private onCellFocusChanged(event: CellFocusedEvent) {
         // if the focused cell has not been rendered, need to render cell so focus can be captured.
         if (event && event.rowIndex != null && !event.rowPinned) {
             const col = this.beans.colModel.getCol(event.column) ?? undefined;
-            if (!this.isCellRendered(event.rowIndex, col)) {
+            if (!this.isCellBeingRendered(event.rowIndex, col)) {
                 this.redraw();
             }
         }
-
-        this.getAllCellCtrls().forEach((cellCtrl) => cellCtrl.onCellFocused(event));
-        this.getFullWidthRowCtrls().forEach((rowCtrl) => rowCtrl.onFullWidthRowFocused(event));
+        this.updateCellFocus(event);
     }
 
     private onSuppressCellFocusChanged(suppressCellFocus: boolean): void {
@@ -267,10 +279,8 @@ export class RowRenderer extends BeanStub implements NamedBean {
     // all active cells.
     private registerCellEventListeners(): void {
         this.addManagedEventListeners({
-            cellFocused: (event) => {
-                this.onCellFocusChanged(event);
-            },
-            cellFocusCleared: () => this.onCellFocusChanged(),
+            cellFocused: (event) => this.onCellFocusChanged(event),
+            cellFocusCleared: () => this.updateCellFocus(),
             flashCells: (event) => {
                 const { cellFlashSvc } = this.beans;
                 if (cellFlashSvc) {
@@ -720,7 +730,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
 
         // if the grid lost focus, we need to try to bring it back
         if (!focusSvc.doesRowOrCellHaveBrowserFocus()) {
-            this.onCellFocusChanged(
+            this.updateCellFocus(
                 _addGridCommonParams<CellFocusedEvent>(this.gos, {
                     ...cellToFocus,
                     forceBrowserFocus: true,

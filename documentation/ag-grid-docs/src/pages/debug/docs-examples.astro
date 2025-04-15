@@ -3,7 +3,7 @@ import { getCollection } from 'astro:content';
 import DebugLayout from '@layouts/DebugLayout.astro';
 import { getDocsExampleContents } from '@components/docs/utils/pageData';
 
-import { DocsExamples } from '@ag-website-shared/components/docs-examples/components/DocsExamples';
+import { GridDocsExample } from '@ag-website-shared/components/docs-examples/components/GridDocsExample';
 
 const pages = await getCollection('docs');
 const exampleContents = await getDocsExampleContents({ pages });
@@ -11,6 +11,5 @@ const exampleContents = await getDocsExampleContents({ pages });
 
 <DebugLayout title={`Debug: Docs Example Pages`}>
     <h1>Docs Example Pages</h1>
-    <p>{pages.length} pages, {Object.keys(exampleContents).length} examples</p>
-    <DocsExamples exampleContents={exampleContents} />
+    <GridDocsExample client:load exampleContents={exampleContents} />
 </DebugLayout>
