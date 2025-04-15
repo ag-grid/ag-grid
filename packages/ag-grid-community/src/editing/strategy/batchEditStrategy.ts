@@ -1,9 +1,9 @@
 import type { CellFocusedEvent } from '../../events';
 import type { CellCtrl } from '../../rendering/cell/cellCtrl';
 import type { RowCtrl } from '../../rendering/row/rowCtrl';
-import { BaseEditMode } from './baseEditMode';
+import { BaseEditStrategy } from './baseEditStrategy';
 
-export class BatchEditMode extends BaseEditMode {
+export class BatchEditStrategy extends BaseEditStrategy {
     protected override onCellFocusChanged(event: CellFocusedEvent<any, any>): void {
         // NOP
     }

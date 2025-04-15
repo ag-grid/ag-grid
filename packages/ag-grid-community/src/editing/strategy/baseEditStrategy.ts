@@ -6,7 +6,7 @@ import type { EditingStateUpdates } from './iEditStrategy';
 import type { IEditStrategy } from './iEditStrategy';
 import { _resolveCellController, _resolveRowController } from './utils';
 
-export abstract class BaseEditMode extends BeanStub implements IEditStrategy {
+export abstract class BaseEditStrategy extends BeanStub implements IEditStrategy {
     postConstruct(): void {
         this.addManagedListeners(this.beans.eventSvc, {
             cellFocused: this.onCellFocusChanged?.bind(this),

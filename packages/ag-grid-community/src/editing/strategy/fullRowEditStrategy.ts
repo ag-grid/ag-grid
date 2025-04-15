@@ -2,12 +2,12 @@ import type { CellFocusedEvent } from '../../events';
 import type { CellCtrl } from '../../rendering/cell/cellCtrl';
 import type { RowCtrl } from '../../rendering/row/rowCtrl';
 import { isEditing } from '../editingApi';
-import { BaseEditMode } from './baseEditMode';
+import { BaseEditStrategy } from './baseEditStrategy';
 import { _resolveControllers } from './utils';
 
-export class FullRowEditMode extends BaseEditMode {
+export class FullRowEditStrategy extends BaseEditStrategy {
     public setEditing(rowCtrl: RowCtrl): void {
-        console.warn('FullRowEditMode: setEditing');
+        console.warn('FullRowEditStrategy: setEditing');
         const editing = isEditing(this.beans, rowCtrl);
 
         rowCtrl.forEachGui(undefined, (gui) => gui.rowComp.addOrRemoveCssClass('ag-row-editing', editing));
@@ -25,7 +25,7 @@ export class FullRowEditMode extends BaseEditMode {
         key?: string | null | undefined,
         event?: KeyboardEvent | MouseEvent | null | undefined
     ): boolean {
-        console.warn('FullRowEditMode: startEditing', rowCtrl, cellCtrl, key, event);
+        console.warn('FullRowEditStrategy: startEditing', rowCtrl, cellCtrl, key, event);
 
         if (!cellCtrl) {
             // enable all cells in row
@@ -41,7 +41,7 @@ export class FullRowEditMode extends BaseEditMode {
     }
 
     public cancelEditing(rowCtrl?: RowCtrl | null, cellCtrl?: CellCtrl | null): boolean {
-        console.warn('FullRowEditMode: cancelEditing', rowCtrl, cellCtrl);
+        console.warn('FullRowEditStrategy: cancelEditing', rowCtrl, cellCtrl);
         if (rowCtrl) {
             this.beans.editingSvc?.editModel?.cancelEditing(rowCtrl!.rowId!, cellCtrl?.column.colId);
         } else {
@@ -52,7 +52,7 @@ export class FullRowEditMode extends BaseEditMode {
     }
 
     public stopEditing(rowCtrl?: RowCtrl | null, cellCtrl?: CellCtrl | null): boolean {
-        console.warn('FullRowEditMode: stopEditing', rowCtrl, cellCtrl);
+        console.warn('FullRowEditStrategy: stopEditing', rowCtrl, cellCtrl);
         if (rowCtrl) {
             this.beans.editingSvc?.editModel?.stopEditing(rowCtrl!.rowId!, cellCtrl?.column.colId);
         } else {
