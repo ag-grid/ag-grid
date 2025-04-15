@@ -3,7 +3,6 @@ import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
 import type { CtrlsService } from '../ctrlsService';
-import { isEditing } from '../editing/editingApi';
 import type { AgColumn } from '../entities/agColumn';
 import { _getRowAbove } from '../entities/positionUtils';
 import type { RowNode } from '../entities/rowNode';
@@ -1451,7 +1450,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
         const rowNode = rowCtrl.rowNode;
 
         const rowHasFocus = this.focusSvc.isRowFocused(rowNode.rowIndex!, rowNode.rowPinned);
-        const rowIsEditing = isEditing(this.beans, rowCtrl);
+        const rowIsEditing = this.beans.editingSvc?.isEditing(rowCtrl) ?? false;
         const rowIsDetail = rowNode.detail;
 
         const mightWantToKeepRow = rowHasFocus || rowIsEditing || rowIsDetail;

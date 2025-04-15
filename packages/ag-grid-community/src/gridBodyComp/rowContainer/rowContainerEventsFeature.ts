@@ -1,6 +1,5 @@
 import { KeyCode } from '../../constants/keyCode';
 import { BeanStub } from '../../context/beanStub';
-import { isEditing } from '../../editing/editingApi';
 import type { AgColumn } from '../../entities/agColumn';
 import { _getSelectAll, _isCellSelectionEnabled } from '../../gridOptionsUtils';
 import type { IClipboardService } from '../../interfaces/iClipboardService';
@@ -126,7 +125,7 @@ export class RowContainerEventsFeature extends BeanStub {
 
     private processCellKeyboardEvent(cellCtrl: CellCtrl, eventName: string, keyboardEvent: KeyboardEvent): void {
         const { rowNode, column } = cellCtrl;
-        const editing = isEditing(this.beans, cellCtrl.rowCtrl, cellCtrl);
+        const editing = this.beans.editingSvc?.isEditing(cellCtrl.rowCtrl, cellCtrl) ?? false;
 
         const gridProcessingAllowed = !_isUserSuppressingKeyboardEvent(
             this.gos,
@@ -268,7 +267,7 @@ export class RowContainerEventsFeature extends BeanStub {
         }
 
         const { cellCtrl, rowCtrl } = this.getControlsForEventTarget(event.target);
-        const editing = isEditing(this.beans, rowCtrl, cellCtrl);
+        const editing = this.beans.editingSvc?.isEditing(rowCtrl, cellCtrl);
 
         if (editing) {
             return;
@@ -284,7 +283,7 @@ export class RowContainerEventsFeature extends BeanStub {
         }
 
         const { cellCtrl, rowCtrl } = this.getControlsForEventTarget(event.target);
-        const editing = isEditing(this.beans, rowCtrl, cellCtrl);
+        const editing = this.beans.editingSvc?.isEditing(rowCtrl, cellCtrl);
 
         if (editing) {
             return;
@@ -296,7 +295,7 @@ export class RowContainerEventsFeature extends BeanStub {
 
     private onCtrlAndV(clipboardSvc: IClipboardService | undefined, event: KeyboardEvent): void {
         const { cellCtrl, rowCtrl } = this.getControlsForEventTarget(event.target);
-        const editing = isEditing(this.beans, rowCtrl, cellCtrl);
+        const editing = this.beans.editingSvc?.isEditing(rowCtrl, cellCtrl);
 
         if (editing) {
             return;

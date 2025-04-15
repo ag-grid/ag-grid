@@ -106,7 +106,7 @@ export class GridEditingModel {
         return locations;
     }
 
-    public stopEditing(rowId?: string, colId?: string): EditingStateUpdates {
+    public stopEditing(rowId?: string | null, colId?: string | null): EditingStateUpdates {
         console.warn('GridEditingModel: stopEditing', rowId, colId);
 
         if (!this._isEditing(rowId, colId)) {
@@ -160,7 +160,7 @@ export class GridEditingModel {
         return locations;
     }
 
-    public cancelEditing(rowId?: string, colId?: string): EditingStateUpdates {
+    public cancelEditing(rowId?: string | null, colId?: string | null): EditingStateUpdates {
         console.warn('GridEditingModel: cancelEditing', rowId, colId);
 
         if (!this._isEditing(rowId, colId)) {

@@ -1,7 +1,6 @@
 import { isRowNumberCol } from '../../columns/columnUtils';
 import { BeanStub } from '../../context/beanStub';
 import type { BeanCollection } from '../../context/context';
-import { isEditing } from '../../editing/editingApi';
 import type { AgColumn } from '../../entities/agColumn';
 import type { CellClickedEvent, CellDoubleClickedEvent } from '../../events';
 import { _isBrowserSafari } from '../../utils/browser';
@@ -77,9 +76,7 @@ export class CellMouseListenerFeature extends BeanStub {
             }, 0);
         }
 
-        if (this.beans.editingSvc?.shouldStartEditing(this.cellCtrl.rowCtrl, this.cellCtrl, null, mouseEvent)) {
-            this.beans.editingSvc?.startEditing(this.cellCtrl.rowCtrl, this.cellCtrl, null, true, mouseEvent);
-        }
+        this.beans.editingSvc?.startEditing(this.cellCtrl.rowCtrl, this.cellCtrl, null, undefined, mouseEvent);
     }
 
     public onCellDoubleClicked(mouseEvent: MouseEvent) {
@@ -101,9 +98,7 @@ export class CellMouseListenerFeature extends BeanStub {
             }, 0);
         }
 
-        if (this.beans.editingSvc?.shouldStartEditing(this.cellCtrl.rowCtrl, this.cellCtrl, null, mouseEvent)) {
-            this.beans.editingSvc?.startEditing(this.cellCtrl.rowCtrl, this.cellCtrl, null, true, mouseEvent);
-        }
+        this.beans.editingSvc?.startEditing(this.cellCtrl.rowCtrl, this.cellCtrl, null, undefined, mouseEvent);
     }
 
     private onMouseDown(mouseEvent: MouseEvent): void {
@@ -132,7 +127,7 @@ export class CellMouseListenerFeature extends BeanStub {
         }
 
         if (!shiftKey || !hasRanges) {
-            const editing = isEditing(beans, cellCtrl.rowCtrl, cellCtrl);
+            const editing = this.beans.editingSvc?.isEditing(cellCtrl.rowCtrl, cellCtrl);
             const isEnableCellTextSelection = gos.get('enableCellTextSelection');
             // when `enableCellTextSelection` is true, we call prevent default on `mousedown`
             // within the row dragger to block text selection while dragging, but the cell

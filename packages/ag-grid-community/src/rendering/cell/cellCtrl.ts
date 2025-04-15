@@ -379,7 +379,7 @@ export class CellCtrl extends BeanStub {
      * @returns `True` if the value of the `GridCell` has been updated, otherwise `False`.
      */
     public stopEditing(cancel = false): boolean {
-        return this.beans.editingSvc?.stopEditing(this.rowCtrl, this, cancel) ?? false;
+        return this.beans.editingSvc?.stopEditing(this.rowCtrl, this, undefined, undefined, cancel) ?? false;
     }
 
     private createCellRendererParams(): ICellRendererParams {
@@ -770,9 +770,7 @@ export class CellCtrl extends BeanStub {
             focusEl.focus({ preventScroll: !!event.preventScrollOnBrowserFocus });
         }
 
-        if (beans.editingSvc?.shouldStopEditing(this.rowCtrl, this)) {
-            beans.editingSvc?.stopEditing(this.rowCtrl, this, false);
-        }
+        beans.editingSvc?.stopEditing(this.rowCtrl, this);
 
         if (cellFocused) {
             this.rowCtrl.announceDescription();
@@ -856,7 +854,7 @@ export class CellCtrl extends BeanStub {
             cellStartedEdit: cellStartedEdit,
             onKeyDown: cellCtrl.onKeyDown.bind(cellCtrl),
             stopEditing: (suppressNavigateAfterEdit?: boolean | undefined) =>
-                editingSvc!.stopEditing?.bind(this, cellCtrl.rowCtrl, cellCtrl, false),
+                editingSvc!.stopEditing?.bind(this, cellCtrl.rowCtrl, cellCtrl),
             eGridCell: cellCtrl.eGui,
             parseValue: (newValue: any) => valueSvc.parseValue(column, rowNode, newValue, cellCtrl.value),
             formatValue: cellCtrl.formatValue.bind(cellCtrl),

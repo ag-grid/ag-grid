@@ -54,6 +54,8 @@ export class FocusService extends BeanStub implements NamedBean {
     }
 
     private focusedCell: CellPosition | null;
+    private previousCellFocusParams: CellFocusedParams | null;
+
     public focusedHeader: HeaderPosition | null;
     /** the column that had focus before it moved into the advanced filter */
     private advFilterFocusColumn: AgColumn | undefined;
@@ -256,12 +258,17 @@ export class FocusService extends BeanStub implements NamedBean {
             column: gridColumn,
         };
 
+        const focusEventParams = this.getFocusEventParams(this.focusedCell);
+
         this.eventSvc.dispatchEvent({
             type: 'cellFocused',
-            ...this.getFocusEventParams(this.focusedCell),
+            ...focusEventParams,
+            ...(this.previousCellFocusParams && { previousParams: this.previousCellFocusParams }),
             forceBrowserFocus,
             preventScrollOnBrowserFocus,
         });
+
+        this.previousCellFocusParams = focusEventParams;
     }
 
     public isCellFocused(cellPosition: CellPosition): boolean {
