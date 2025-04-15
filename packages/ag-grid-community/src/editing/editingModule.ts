@@ -12,9 +12,9 @@ import { UndoRedoService } from '../undoRedo/undoRedoService';
 import { VERSION } from '../version';
 import { getCurrentRedoSize, getCurrentUndoSize, redoCellEditing, undoCellEditing } from './editingApi';
 import { EditingService } from './editingService';
-import { BatchEditMode } from './strategy/batchEditMode';
-import { FullRowEditMode } from './strategy/fullRowEditMode';
-import { SingleCellEditMode } from './strategy/singleCellEditMode';
+import { BatchEditStrategy } from './strategy/batchEditStrategy';
+import { FullRowEditStrategy } from './strategy/fullRowEditStrategy';
+import { SingleCellEditStrategy } from './strategy/singleCellEditStrategy';
 import { CustomEditTrigger } from './trigger/customEditTrigger';
 import { ProvidedEditTrigger } from './trigger/providedEditTrigger';
 
@@ -26,9 +26,9 @@ export const EditingCoreModule: _ModuleWithoutApi = {
     version: VERSION,
     beans: [EditingService],
     dynamicBeans: {
-        cellEditMode: SingleCellEditMode,
-        rowEditMode: FullRowEditMode,
-        batchEditMode: BatchEditMode,
+        cellEditMode: SingleCellEditStrategy,
+        rowEditMode: FullRowEditStrategy,
+        batchEditMode: BatchEditStrategy,
         customEditTrigger: CustomEditTrigger,
         providedEditTrigger: ProvidedEditTrigger,
     },

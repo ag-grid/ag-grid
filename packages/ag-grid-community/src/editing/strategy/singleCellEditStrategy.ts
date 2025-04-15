@@ -1,18 +1,18 @@
 import type { CellFocusedEvent } from '../../events';
 import type { CellCtrl } from '../../rendering/cell/cellCtrl';
 import type { RowCtrl } from '../../rendering/row/rowCtrl';
-import { BaseEditMode } from './baseEditMode';
+import { BaseEditStrategy } from './baseEditStrategy';
 import type { EditingStateUpdates } from './iEditStrategy';
 import { _resolveControllers, _saveNewValue, _takeValueFromCellEditor } from './utils';
 
-export class SingleCellEditMode extends BaseEditMode {
+export class SingleCellEditStrategy extends BaseEditStrategy {
     public startEditing(
         rowCtrl: RowCtrl,
         cellCtrl?: CellCtrl,
         key?: string | null | undefined,
         event?: KeyboardEvent | MouseEvent | null | undefined
     ): boolean {
-        console.warn('SingleCellEditMode: startEditing', rowCtrl, cellCtrl, key, event);
+        console.warn('SingleCellEditStrategy: startEditing', rowCtrl, cellCtrl, key, event);
         if (this.beans.editingSvc?.editModel?.isEditing()) {
             this.stopEditing();
         }
@@ -30,7 +30,7 @@ export class SingleCellEditMode extends BaseEditMode {
             return false;
         }
 
-        console.warn('SingleCellEditMode: stopEditing', rowCtrl, cellCtrl);
+        console.warn('SingleCellEditStrategy: stopEditing', rowCtrl, cellCtrl);
 
         let updates: EditingStateUpdates | undefined;
 
@@ -65,7 +65,7 @@ export class SingleCellEditMode extends BaseEditMode {
     }
 
     public cancelEditing(rowCtrl?: RowCtrl | null, cellCtrl?: CellCtrl | null): boolean {
-        console.warn('SingleCellEditMode: cancelEditing', rowCtrl, cellCtrl);
+        console.warn('SingleCellEditStrategy: cancelEditing', rowCtrl, cellCtrl);
         if (rowCtrl) {
             this.beans.editingSvc?.editModel?.cancelEditing(rowCtrl!.rowId!, cellCtrl?.column.colId);
         } else {

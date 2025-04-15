@@ -18,27 +18,26 @@ import type { IEditTrigger } from './trigger/baseEditTrigger';
 export class EditingService extends BeanStub implements NamedBean {
     beanName = 'editingSvc' as const;
     public editModel?: GridEditingModel;
-    public editMode?: IEditStrategy;
+    public editStrategy?: IEditStrategy;
     public editTrigger?: IEditTrigger;
 
     postConstruct(): void {
         this.editModel = new GridEditingModel(this.beans);
     }
 
-    private createEditMode(): IEditStrategy {
-        const { beans, gos, editMode } = this;
+    private createEditStrategy(): IEditStrategy {
+        const { beans, gos, editStrategy } = this;
 
         const strategyName: any = gos.get('experimentalEditingModeV2')?.mode ?? 'cellEditMode';
 
-        if (editMode) {
-            if (editMode.beanName !== strategyName) {
-                editMode.destroy?.();
-            } else {
-                return editMode;
+        if (editStrategy) {
+            if (editStrategy.beanName === strategyName) {
+                return editStrategy;
             }
+            editStrategy.destroy?.();
         }
 
-        return (this.editMode = this.createOptionalManagedBean(
+        return (this.editStrategy = this.createOptionalManagedBean(
             beans.registry.createDynamicBean<IEditStrategy>(strategyName, true)
         )!);
     }
@@ -48,11 +47,10 @@ export class EditingService extends BeanStub implements NamedBean {
         const triggerName: any = gos.get('experimentalEditingModeV2')?.trigger ?? 'providedEditTrigger';
 
         if (editTrigger) {
-            if (editTrigger.beanName !== triggerName) {
-                editTrigger.destroy?.();
-            } else {
+            if (editTrigger.beanName === triggerName) {
                 return editTrigger;
             }
+            editTrigger.destroy?.();
         }
 
         return (this.editTrigger = this.createOptionalManagedBean(
@@ -60,16 +58,16 @@ export class EditingService extends BeanStub implements NamedBean {
         )!);
     }
 
-    private destroyEditMode(): void {
-        if (!this.editMode) {
+    private destroyEditStrategy(): void {
+        if (!this.editStrategy) {
             return;
         }
-        this.destroyBean(this.editMode);
-        this.editMode = undefined;
+        this.destroyBean(this.editStrategy);
+        this.editStrategy = undefined;
     }
 
     public isEditing(rowCtrl?: RowCtrl | null, cellCtrl?: CellCtrl | null): boolean {
-        return this.editMode?.isEditing?.(rowCtrl, cellCtrl) ?? false;
+        return this.editStrategy?.isEditing?.(rowCtrl, cellCtrl) ?? false;
     }
 
     public shouldStartEditing(
@@ -127,7 +125,7 @@ export class EditingService extends BeanStub implements NamedBean {
             return false;
         }
 
-        this.editMode = this.createEditMode();
+        this.editStrategy = this.createEditStrategy();
 
         // because of async in React, the cellComp may not be set yet, if no cellComp then we are
         // yet to initialise the cell, so we re-schedule this operation for when celLComp is attached
@@ -138,7 +136,7 @@ export class EditingService extends BeanStub implements NamedBean {
             return true;
         }
 
-        this.editMode!.startEditing?.(rowCtrl, cellCtrl, key, event) ?? true;
+        this.editStrategy!.startEditing?.(rowCtrl, cellCtrl, key, event) ?? true;
 
         const editorParams = this.createCellEditorParams(cellCtrl, key, cellStartedEdit);
         const colDef = cellCtrl.column.getColDef();
@@ -172,7 +170,7 @@ export class EditingService extends BeanStub implements NamedBean {
 
         cellCtrl.onEditorAttachedFuncs = [];
 
-        return this.editMode?.stopEditing?.(rowCtrl, cellCtrl) ?? false;
+        return this.editStrategy?.stopEditing?.(rowCtrl, cellCtrl) ?? false;
     }
 
     public getEditingCellPositions(): CellPosition[] {
@@ -182,7 +180,7 @@ export class EditingService extends BeanStub implements NamedBean {
     public stopAllEditing(cancel: boolean = false): void {
         console.warn('EditingService: stopAllEditing');
         if (this.isEditing()) {
-            this.editMode?.stopEditing?.();
+            this.editStrategy?.stopEditing?.();
         }
     }
 
@@ -251,7 +249,7 @@ export class EditingService extends BeanStub implements NamedBean {
 
         if (editing) {
             // if we are editing, we know it's not a Full Width Row (RowComp)
-            res = this.editMode?.moveToNextEditingCell(previous, backwards, event);
+            res = this.editStrategy?.moveToNextEditingCell(previous, backwards, event);
         }
 
         if (res === null) {
@@ -300,7 +298,7 @@ export class EditingService extends BeanStub implements NamedBean {
     }
 
     public override destroy(): void {
-        this.destroyEditMode();
+        this.destroyEditStrategy();
         this.editModel?.destroy();
         super.destroy();
     }
