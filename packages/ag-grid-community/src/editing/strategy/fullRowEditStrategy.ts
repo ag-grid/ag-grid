@@ -1,14 +1,13 @@
 import type { CellFocusedEvent } from '../../events';
 import type { CellCtrl } from '../../rendering/cell/cellCtrl';
 import type { RowCtrl } from '../../rendering/row/rowCtrl';
-import { isEditing } from '../editingApi';
 import { BaseEditStrategy } from './baseEditStrategy';
 import { _resolveControllers } from './utils';
 
 export class FullRowEditStrategy extends BaseEditStrategy {
     public setEditing(rowCtrl: RowCtrl): void {
         console.warn('FullRowEditStrategy: setEditing');
-        const editing = isEditing(this.beans, rowCtrl);
+        const editing = this.beans.editingSvc?.isEditing(rowCtrl) ?? false;
 
         rowCtrl.forEachGui(undefined, (gui) => gui.rowComp.addOrRemoveCssClass('ag-row-editing', editing));
 
@@ -34,7 +33,7 @@ export class FullRowEditStrategy extends BaseEditStrategy {
                 this.startEditing(rowCtrl, cellCtrl, key, event);
             });
         } else {
-            this.beans.editingSvc?.editModel?.startEditing(rowCtrl.rowId!, cellCtrl.column.colId);
+            this.editModel.startEditing(rowCtrl.rowId!, cellCtrl.column.colId);
         }
 
         this.setEditing(rowCtrl);
@@ -45,9 +44,9 @@ export class FullRowEditStrategy extends BaseEditStrategy {
     public cancelEditing(rowCtrl?: RowCtrl | null, cellCtrl?: CellCtrl | null): boolean {
         console.warn('FullRowEditStrategy: cancelEditing', rowCtrl, cellCtrl);
         if (rowCtrl) {
-            this.beans.editingSvc?.editModel?.cancelEditing(rowCtrl!.rowId!, cellCtrl?.column.colId);
+            this.editModel.cancelEditing(rowCtrl!.rowId!, cellCtrl?.column.colId);
         } else {
-            this.beans.editingSvc?.editModel?.cancelEditing();
+            this.editModel.cancelEditing();
         }
 
         this.setEditing(rowCtrl!);
@@ -58,9 +57,9 @@ export class FullRowEditStrategy extends BaseEditStrategy {
     public stopEditing(rowCtrl?: RowCtrl | null, cellCtrl?: CellCtrl | null): boolean {
         console.warn('FullRowEditStrategy: stopEditing', rowCtrl, cellCtrl);
         if (rowCtrl) {
-            this.beans.editingSvc?.editModel?.stopEditing(rowCtrl!.rowId!, cellCtrl?.column.colId);
+            this.editModel.stopEditing(rowCtrl!.rowId!, cellCtrl?.column.colId);
         } else {
-            this.beans.editingSvc?.editModel?.stopEditing();
+            this.editModel.stopEditing();
         }
 
         this.setEditing(rowCtrl!);
@@ -69,7 +68,7 @@ export class FullRowEditStrategy extends BaseEditStrategy {
     }
 
     public override isEditing(rowCtrl?: RowCtrl | null, cellCtrl?: CellCtrl | null): boolean {
-        return this.beans.editingSvc?.editModel?.isEditing(rowCtrl, cellCtrl) ?? false;
+        return this.editModel.isEditing(rowCtrl, cellCtrl) ?? false;
     }
 
     protected override onCellFocusChanged(event: CellFocusedEvent<any, any>): void {

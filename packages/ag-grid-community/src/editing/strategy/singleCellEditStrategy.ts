@@ -1,4 +1,5 @@
-import type { CellFocusedEvent } from '../../events';
+import type { CellFocusedEvent, CommonCellFocusParams } from '../../events';
+import { Column } from '../../interfaces/iColumn';
 import type { CellCtrl } from '../../rendering/cell/cellCtrl';
 import type { RowCtrl } from '../../rendering/row/rowCtrl';
 import { BaseEditStrategy } from './baseEditStrategy';
@@ -11,15 +12,15 @@ export class SingleCellEditStrategy extends BaseEditStrategy {
         key?: string | null | undefined,
         event?: KeyboardEvent | MouseEvent | null | undefined
     ): boolean {
-        console.warn('SingleCellEditStrategy: startEditing', rowCtrl, cellCtrl, key, event);
-        if (this.beans.editingSvc?.editModel?.isEditing()) {
-            this.stopEditing();
+        console.warn('SingleCellEditStrategy: startEditing', rowCtrl?.rowId, cellCtrl?.column.colId, key, event);
+        if (this.editModel.isEditing()) {
+            this.stopAllEditing();
         }
 
         const rowId = rowCtrl.rowId!;
         const colId = cellCtrl?.column.getColId() ?? this.beans.visibleCols.getFirstColumn()!.getColId();
 
-        this.beans.editingSvc?.editModel?.createEditModel(rowId, colId);
+        this.editModel.createEditModel(rowId, colId);
 
         return true;
     }
@@ -29,20 +30,37 @@ export class SingleCellEditStrategy extends BaseEditStrategy {
             return false;
         }
 
-        console.warn('SingleCellEditStrategy: stopEditing', rowCtrl, cellCtrl);
+        console.warn('SingleCellEditStrategy: stopEditing', rowCtrl?.rowId, cellCtrl?.column.colId);
 
-        if (rowCtrl) {
-            this.beans.editingSvc?.editModel?.stopEditing(rowCtrl!.rowId!, cellCtrl?.column.colId);
-        } else {
-            this.beans.editingSvc?.editModel?.stopEditing();
+        this.editModel.stopEditing(rowCtrl?.rowId, cellCtrl?.column.colId);
+
+        this.updateEditor(rowCtrl, cellCtrl, false);
+
+        return true;
+    }
+
+    public cancelEditing(rowCtrl?: RowCtrl | null, cellCtrl?: CellCtrl | null): boolean {
+        if (!this.isEditing(rowCtrl, cellCtrl)) {
+            return false;
         }
 
+        console.warn('SingleCellEditStrategy: cancelEditing', rowCtrl?.rowId, cellCtrl?.column.colId);
+
+        this.editModel.cancelEditing(rowCtrl?.rowId, cellCtrl?.column.colId);
+
+        this.updateEditor(rowCtrl, cellCtrl, true);
+
+        return true;
+    }
+
+    private updateEditor(rowCtrl?: RowCtrl | null, cellCtrl?: CellCtrl | null, cancel?: boolean): void {
         const { comp, column, rowNode } = cellCtrl!;
+
         const { newValue, newValueExists } = _takeValueFromCellEditor(false, comp);
         const oldValue = this.beans.valueSvc.getValueForDisplay(column, rowNode)?.value;
         let valueChanged = false;
 
-        if (newValueExists) {
+        if (!cancel && newValueExists) {
             valueChanged = _saveNewValue(cellCtrl!, oldValue, newValue, rowNode, column);
         }
 
@@ -61,32 +79,23 @@ export class SingleCellEditStrategy extends BaseEditStrategy {
         rowCtrl?.forEachGui(undefined, (gui) => {
             gui.rowComp.addOrRemoveCssClass('ag-row-editing', false);
         });
-
-        return true;
-    }
-
-    public cancelEditing(rowCtrl?: RowCtrl | null, cellCtrl?: CellCtrl | null): boolean {
-        console.warn('SingleCellEditStrategy: cancelEditing', rowCtrl, cellCtrl);
-        if (rowCtrl) {
-            this.beans.editingSvc?.editModel?.cancelEditing(rowCtrl!.rowId!, cellCtrl?.column.colId);
-        } else {
-            this.beans.editingSvc?.editModel?.cancelEditing();
-        }
-        return true;
     }
 
     protected override onCellFocusChanged(event: CellFocusedEvent<any, any>): void {
         const { rowIndex, column } = event;
+        const previous = (event as any)['previousParams']! as CommonCellFocusParams;
+
+        if (previous?.rowIndex === rowIndex && getColId(previous?.column) === getColId(column)) {
+            return;
+        }
 
         const { rowCtrl, cellCtrl } = _resolveControllers(this.beans, {
-            rowIndex,
-            column,
+            rowIndex: previous?.rowIndex,
+            column: previous?.column,
         });
 
-        // if we are editing, then moving the focus out of a row will stop editing
-        if (this.isEditing(rowCtrl!, cellCtrl)) {
-            this.stopEditing(rowCtrl!, cellCtrl);
-        }
+        // if we are editing, then moving the focus out of a cell will stop editing
+        this.stopEditing(rowCtrl, cellCtrl);
     }
 
     // returns null if no navigation should be performed
@@ -120,4 +129,15 @@ export class SingleCellEditStrategy extends BaseEditStrategy {
         nextCell.focusCell(false);
         return true;
     }
+}
+
+function getColId(column?: Column | string | null): string | undefined {
+    if (!column) {
+        return undefined;
+    }
+
+    if (typeof column === 'string') {
+        return column;
+    }
+    return column.getColId();
 }

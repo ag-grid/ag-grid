@@ -1,3 +1,4 @@
+import { KeyCode } from '../../constants/keyCode';
 import type { ColDef } from '../../entities/colDef';
 import type { CellCtrl } from '../../rendering/cell/cellCtrl';
 import type { RowCtrl } from '../../rendering/row/rowCtrl';
@@ -7,7 +8,7 @@ export class ProvidedEditTrigger extends BaseEditTrigger {
     beanName = 'providedEditTrigger' as const;
 
     override shouldStartEditing(
-        rowCtrl?: RowCtrl,
+        rowCtrl?: RowCtrl | null,
         cellCtrl?: CellCtrl,
         key?: string | null,
         event?: KeyboardEvent | MouseEvent | null
@@ -34,6 +35,32 @@ export class ProvidedEditTrigger extends BaseEditTrigger {
         return false;
     }
 
+    override shouldStopEditing(
+        rowCtrl?: RowCtrl | null,
+        cellCtrl?: CellCtrl | null,
+        key?: string | null | undefined,
+        event?: KeyboardEvent | MouseEvent | null | undefined
+    ): boolean {
+        if (event instanceof KeyboardEvent) {
+            return event.key === KeyCode.ENTER;
+        }
+
+        return false;
+    }
+
+    override shouldCancelEditing(
+        rowCtrl?: RowCtrl | null,
+        cellCtrl?: CellCtrl | null,
+        key?: string | null | undefined,
+        event?: KeyboardEvent | MouseEvent | null | undefined
+    ): boolean {
+        if (event instanceof KeyboardEvent) {
+            return event.key === KeyCode.ESCAPE;
+        }
+
+        return false;
+    }
+
     private deriveClickCount(colDef?: ColDef): number {
         const { gos } = this;
 
@@ -48,22 +75,5 @@ export class ProvidedEditTrigger extends BaseEditTrigger {
         const params = gos.get('experimentalEditingModeV2')?.params;
 
         return params?.clickCount ?? 2;
-    }
-
-    override shouldStopEditing(
-        rowCtrl?: RowCtrl | undefined,
-        cellCtrl?: CellCtrl | undefined,
-        key?: string | null | undefined,
-        event?: KeyboardEvent | MouseEvent | null | undefined
-    ): boolean {
-        if (this.beans.editingSvc?.editModel?.isEditing(rowCtrl, cellCtrl)) {
-            return true;
-        }
-
-        if (event instanceof KeyboardEvent) {
-            return event.key === 'Enter';
-        }
-
-        return false;
     }
 }

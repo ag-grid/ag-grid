@@ -1,7 +1,6 @@
 import { KeyCode } from '../../constants/keyCode';
 import { BeanStub } from '../../context/beanStub';
 import type { BeanCollection } from '../../context/context';
-import { isEditing } from '../../editing/editingApi';
 import type { RowNode } from '../../entities/rowNode';
 import { _isCellSelectionEnabled, _isRowSelection } from '../../gridOptionsUtils';
 import { _isMacOsUserAgent } from '../../utils/browser';
@@ -127,27 +126,21 @@ export class CellKeyboardListenerFeature extends BeanStub {
         const { rowCtrl, cellCtrl, beans } = this;
         const { editingSvc } = beans;
         const editing = editingSvc?.isEditing(rowCtrl, cellCtrl);
-
-        if (!editing && beans.gos.get('enterNavigatesVertically')) {
-            const key = e.shiftKey ? KeyCode.UP : KeyCode.DOWN;
-            beans.navigation?.navigateToNextCell(null, key, cellCtrl.cellPosition, false);
-        }
-
-        if (editingSvc?.shouldStopEditing(rowCtrl, cellCtrl, null, e)) {
-            editingSvc?.stopEditing(rowCtrl, cellCtrl, false);
-        }
-
-        if (
-            !beans.gos.get('enterNavigatesVertically') &&
-            editingSvc?.shouldStartEditing(rowCtrl, cellCtrl, KeyCode.ENTER, e)
-        ) {
-            const started = editingSvc?.startEditing(rowCtrl, cellCtrl, KeyCode.ENTER, true, e);
-            if (started) {
-                // if we started editing, then we need to prevent default, otherwise the Enter action can get
-                // applied to the cell editor. this happened, for example, with largeTextCellEditor where not
-                // preventing default results in a 'new line' character getting inserted in the text area
-                // when the editing was started
-                e.preventDefault();
+        if (editing) {
+            this.beans.editingSvc?.stopEditing(rowCtrl, cellCtrl, KeyCode.ENTER, e, e.shiftKey);
+        } else {
+            if (beans.gos.get('enterNavigatesVertically')) {
+                const key = e.shiftKey ? KeyCode.UP : KeyCode.DOWN;
+                beans.navigation?.navigateToNextCell(null, key, cellCtrl.cellPosition, false);
+            } else {
+                const started = beans.editingSvc?.startEditing(cellCtrl.rowCtrl, cellCtrl, KeyCode.ENTER, true, e);
+                if (started) {
+                    // if we started editing, then we need to prevent default, otherwise the Enter action can get
+                    // applied to the cell editor. this happened, for example, with largeTextCellEditor where not
+                    // preventing default results in a 'new line' character getting inserted in the text area
+                    // when the editing was started
+                    e.preventDefault();
+                }
             }
         }
     }
@@ -156,9 +149,7 @@ export class CellKeyboardListenerFeature extends BeanStub {
         const { cellCtrl, rowCtrl, beans } = this;
         const { editingSvc } = beans;
 
-        if (editingSvc?.shouldStartEditing(rowCtrl, cellCtrl, KeyCode.F2, event)) {
-            editingSvc?.startEditing(rowCtrl, cellCtrl, KeyCode.F2, true, event);
-        }
+        editingSvc?.startEditing(rowCtrl, cellCtrl, KeyCode.F2, true, event);
     }
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -166,9 +157,7 @@ export class CellKeyboardListenerFeature extends BeanStub {
         const { cellCtrl, rowCtrl, beans } = this;
         const { editingSvc } = beans;
 
-        if (editingSvc?.shouldStopEditing(rowCtrl, cellCtrl, KeyCode.ESCAPE, event)) {
-            editingSvc?.stopEditing(rowCtrl, cellCtrl, true);
-        }
+        editingSvc?.stopEditing(rowCtrl, cellCtrl, KeyCode.ESCAPE, event, true);
     }
 
     public processCharacter(event: KeyboardEvent): void {

@@ -3,7 +3,7 @@ import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import { PopupEditorWrapper } from '../edit/cellEditors/popupEditorWrapper';
 import type { AgColumn } from '../entities/agColumn';
-import type { RowNode } from '../entities/rowNode';
+import { CellFocusedEvent } from '../events';
 import { _isElementInThisGrid } from '../gridBodyComp/mouseEventUtils';
 import { _addGridCommonParams } from '../gridOptionsUtils';
 import type { DefaultProvidedCellEditorParams, ICellEditorParams } from '../interfaces/iCellEditor';
@@ -18,9 +18,9 @@ import type { IEditTrigger } from './trigger/baseEditTrigger';
 
 export class EditingService extends BeanStub implements NamedBean {
     beanName = 'editingSvc' as const;
-    public editModel?: GridEditingModel;
-    public editStrategy?: IEditStrategy;
-    public editTrigger?: IEditTrigger;
+    private editModel?: GridEditingModel;
+    private editStrategy?: IEditStrategy;
+    private editTrigger?: IEditTrigger;
 
     postConstruct(): void {
         this.editModel = new GridEditingModel(this.beans);
@@ -39,7 +39,7 @@ export class EditingService extends BeanStub implements NamedBean {
         }
 
         return (this.editStrategy = this.createOptionalManagedBean(
-            beans.registry.createDynamicBean<IEditStrategy>(strategyName, true)
+            beans.registry.createDynamicBean<IEditStrategy>(strategyName, true, this.editModel)
         )!);
     }
 
@@ -55,7 +55,7 @@ export class EditingService extends BeanStub implements NamedBean {
         }
 
         return (this.editTrigger = this.createOptionalManagedBean(
-            beans.registry.createDynamicBean<IEditTrigger>(triggerName, true)
+            beans.registry.createDynamicBean<IEditTrigger>(triggerName, true, this.editModel)
         )!);
     }
 
@@ -68,52 +68,7 @@ export class EditingService extends BeanStub implements NamedBean {
     }
 
     public isEditing(rowCtrl?: RowCtrl | null, cellCtrl?: CellCtrl | null): boolean {
-        return this.editStrategy?.isEditing?.(rowCtrl, cellCtrl) ?? false;
-    }
-
-    public shouldStartEditing(
-        rowCtrl: RowCtrl,
-        cellCtrl: CellCtrl,
-        key: string | null = null,
-        event: KeyboardEvent | MouseEvent | null = null
-    ): boolean {
-        if (!cellCtrl.isCellEditable()) {
-            return false;
-        }
-
-        this.editTrigger = this.createEditTrigger();
-
-        const res = this.editTrigger.shouldStartEditing(rowCtrl, cellCtrl, key, event) ?? true;
-        if (res) {
-            console.warn('EditingService: shouldStartEditing', res);
-        }
-
-        return res;
-    }
-
-    public shouldStopEditing(
-        rowCtrl: RowCtrl,
-        cellCtrl: CellCtrl,
-        key: string | null = null,
-        event: KeyboardEvent | MouseEvent | null = null
-    ): boolean {
-        if (!cellCtrl.isCellEditable()) {
-            return false;
-        }
-
-        if (!this.isEditing()) {
-            return false;
-        }
-
-        this.editTrigger = this.createEditTrigger();
-
-        const res = this.editTrigger.shouldStopEditing?.(rowCtrl, cellCtrl, key, event) ?? false;
-
-        if (res) {
-            console.warn('EditingService: shouldStopEditing', res);
-        }
-
-        return res;
+        return this.editModel?.isEditing?.(rowCtrl, cellCtrl) ?? false;
     }
 
     /** @return whether to prevent default on event */
@@ -124,12 +79,12 @@ export class EditingService extends BeanStub implements NamedBean {
         cellStartedEdit = false,
         event: KeyboardEvent | MouseEvent | null = null
     ): boolean {
-        console.warn('EditingService: startEditing');
         if (!cellCtrl.isCellEditable()) {
             return false;
         }
 
         this.editStrategy = this.createEditStrategy();
+        this.editTrigger = this.createEditTrigger();
 
         // because of async in React, the cellComp may not be set yet, if no cellComp then we are
         // yet to initialise the cell, so we re-schedule this operation for when celLComp is attached
@@ -139,6 +94,12 @@ export class EditingService extends BeanStub implements NamedBean {
             });
             return true;
         }
+
+        if (!this.editTrigger?.shouldStartEditing?.(rowCtrl, cellCtrl, key, event)) {
+            return false;
+        }
+
+        console.warn('EditingService: startEditing');
 
         this.editStrategy!.startEditing?.(rowCtrl, cellCtrl, key, event) ?? true;
 
@@ -166,15 +127,32 @@ export class EditingService extends BeanStub implements NamedBean {
      * @param cancel `True` if the edit process is being canceled.
      * @returns `True` if the value of the `GridCell` has been updated, otherwise `False`.
      */
-    public stopEditing(rowCtrl: RowCtrl | null, cellCtrl?: CellCtrl | null, cancel: boolean = false): boolean {
-        console.warn('EditingService: stopEditing');
+    public stopEditing(
+        rowCtrl: RowCtrl | null,
+        cellCtrl?: CellCtrl | null,
+        key?: string,
+        event?: KeyboardEvent | MouseEvent | null,
+        cancel: boolean = false
+    ): boolean {
         if (!this.isEditing(rowCtrl, cellCtrl) || !cellCtrl) {
             return false;
         }
 
         cellCtrl.onEditorAttachedFuncs = [];
 
-        return this.editStrategy?.stopEditing?.(rowCtrl, cellCtrl) ?? false;
+        this.editTrigger = this.createEditTrigger();
+
+        if (this.editTrigger.shouldStopEditing?.(rowCtrl, cellCtrl, key, event)) {
+            console.warn('EditingService: stopEditing');
+            return this.editStrategy?.stopEditing?.(rowCtrl, cellCtrl) ?? false;
+        }
+
+        if (this.editTrigger.shouldCancelEditing?.(rowCtrl, cellCtrl, key, event)) {
+            console.warn('EditingService: cancelEditing');
+            return this.editStrategy?.cancelEditing?.(rowCtrl, cellCtrl) ?? false;
+        }
+
+        return false;
     }
 
     public getEditingCellPositions(): CellPosition[] {
@@ -184,7 +162,7 @@ export class EditingService extends BeanStub implements NamedBean {
     public stopAllEditing(cancel: boolean = false): void {
         console.warn('EditingService: stopAllEditing');
         if (this.isEditing()) {
-            this.editStrategy?.stopEditing?.();
+            this.editStrategy?.stopAllEditing?.();
         }
     }
 
@@ -229,7 +207,7 @@ export class EditingService extends BeanStub implements NamedBean {
             data: rowNode.data,
             cellStartedEdit: cellStartedEdit,
             onKeyDown: cellCtrl.onKeyDown.bind(cellCtrl),
-            stopEditing: (suppressNavigateAfterEdit) => this.stopEditing.bind(this, cellCtrl.rowCtrl, cellCtrl, false),
+            stopEditing: (suppressNavigateAfterEdit) => this.stopEditing.bind(this, cellCtrl.rowCtrl, cellCtrl),
             eGridCell: cellCtrl.eGui,
             parseValue: (newValue: any) => valueSvc.parseValue(column, rowNode, newValue, cellCtrl.value),
             formatValue: cellCtrl.formatValue.bind(cellCtrl),

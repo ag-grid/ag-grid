@@ -2,15 +2,12 @@ import { BeanStub } from '../../context/beanStub';
 import type { CellFocusedEvent } from '../../events';
 import type { CellCtrl } from '../../rendering/cell/cellCtrl';
 import type { RowCtrl } from '../../rendering/row/rowCtrl';
+import type { GridEditingModel } from '../model/gridEditingModel';
 import type { IEditStrategy } from './iEditStrategy';
+import { _resolveCellController } from './utils';
 
 export abstract class BaseEditStrategy extends BeanStub implements IEditStrategy {
-    postConstruct(): void {
-        this.addManagedListeners(this.beans.eventSvc, {
-            cellFocused: this.onCellFocusChanged?.bind(this),
-            cellFocusCleared: this.onCellFocusChanged?.bind(this),
-        });
-    }
+    protected editModel: GridEditingModel;
 
     public abstract stopEditing?(rowCtrl?: RowCtrl, cellCtrl?: CellCtrl): boolean;
     public abstract cancelEditing?(rowCtrl?: RowCtrl, cellCtrl?: CellCtrl): boolean;
@@ -21,8 +18,37 @@ export abstract class BaseEditStrategy extends BeanStub implements IEditStrategy
         event?: KeyboardEvent
     ): boolean | null;
 
-    public isEditing(rowCtrl?: RowCtrl | null, cellCtrl?: CellCtrl | null): boolean {
-        return this.beans.editingSvc?.editModel?.isEditing(rowCtrl, cellCtrl) ?? false;
+    constructor(...args: any[]) {
+        super();
+        this.editModel = args[0];
+    }
+
+    postConstruct(): void {
+        this.addManagedListeners(this.beans.eventSvc, {
+            cellFocused: this.onCellFocusChanged?.bind(this),
+            cellFocusCleared: this.onCellFocusChanged?.bind(this),
+        });
+    }
+
+    protected isEditing(rowCtrl?: RowCtrl | null, cellCtrl?: CellCtrl | null): boolean {
+        return this.editModel.isEditing(rowCtrl, cellCtrl) ?? false;
+    }
+
+    public stopAllEditing(): void {
+        const editingCells = this.editModel.getEditingCellPositions();
+        if (editingCells.length === 0) {
+            return;
+        }
+        editingCells.forEach((cellPosition) => {
+            const cellCtrl = _resolveCellController(this.beans, {
+                rowIndex: cellPosition.rowIndex,
+                column: cellPosition.column,
+            });
+
+            if (cellCtrl) {
+                this.stopEditing?.(cellCtrl.rowCtrl, cellCtrl);
+            }
+        });
     }
 
     setFocusOutOnEditor(cellCtrl: CellCtrl): void {

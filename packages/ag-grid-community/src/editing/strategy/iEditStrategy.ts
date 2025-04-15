@@ -12,9 +12,9 @@ export interface IEditStrategy extends Bean {
 
     stopEditing?(rowCtrl?: RowCtrl | null, cellCtrl?: CellCtrl): boolean;
 
-    cancelEditing?(rowCtrl?: RowCtrl | null, cellCtrl?: CellCtrl): boolean;
+    stopAllEditing?(): void;
 
-    isEditing?(rowCtrl?: RowCtrl | null, cellCtrl?: CellCtrl | null): boolean;
+    cancelEditing?(rowCtrl?: RowCtrl | null, cellCtrl?: CellCtrl): boolean;
 
     moveToNextEditingCell(previousCell: CellCtrl, backwards: boolean, event?: KeyboardEvent): boolean | null;
 }
