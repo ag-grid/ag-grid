@@ -1098,7 +1098,7 @@ export {
     DateFilterModule,
     ExternalFilterModule,
 } from './filter/filterModule';
-export type { EditModeType } from './interfaces/editModeType';
+export type { EditModeType, EditTriggerType } from './interfaces/editModeType';
 export { EditingCoreModule as _EditingCoreModule } from './editing/editingModule';
 export {
     EditCoreModule as _EditCoreModule,

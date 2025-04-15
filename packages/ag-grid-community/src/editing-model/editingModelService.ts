@@ -9,7 +9,6 @@ import { RowEditingModel } from './model/rowEditingModel';
 export class EditingModelService extends BeanStub implements NamedBean {
     beanName = 'editingModelSvc' as const;
     private rowModels: Record<string, RowEditingModel> = {};
-    private editorCount = 0;
 
     public createEditModel(rowId: string, columnId: string) {
         console.warn('EditingModelService: createEditModel', columnId);
@@ -19,11 +18,10 @@ export class EditingModelService extends BeanStub implements NamedBean {
             : (this.rowModels[rowId] = new RowEditingModel(rowId));
         const cellModel = rowModel.getEditModel(columnId);
         if (!cellModel) {
-            const success = rowModel.createEditModel(columnId);
-            if (success) {
-                this.editorCount++;
-            }
+            rowModel.createEditModel(columnId);
         }
+
+        this.startEditing(rowId, columnId);
     }
 
     public removeEditModel(rowId: string, columnId?: string): void {
@@ -36,16 +34,12 @@ export class EditingModelService extends BeanStub implements NamedBean {
         }
 
         if (!columnId) {
-            this.editorCount -= rowModel.getEditModelCount();
             rowModel.destroy();
             delete this.rowModels[rowId];
             return;
         }
 
-        const success = rowModel.removeEditModel(columnId);
-        if (success) {
-            this.editorCount--;
-        }
+        rowModel.removeEditModel(columnId);
 
         if (rowModel.getEditModelCount() === 0) {
             delete this.rowModels[rowId];
@@ -82,33 +76,135 @@ export class EditingModelService extends BeanStub implements NamedBean {
     }
 
     public isEditing(rowCtrl?: RowCtrl | null, cellCtrl?: CellCtrl | null): boolean {
-        if (rowCtrl) {
-            return this.rowModels[rowCtrl.rowId!]?.isEditing(cellCtrl?.column.colId) ?? false;
-        }
-        return this.editorCount > 0;
+        return this._isEditing(rowCtrl?.rowId, cellCtrl?.column.colId);
     }
 
-    public stopEditing(rowId?: string, colId?: string): void {
+    private _isEditing(rowId?: string | null, colId?: string | null): boolean {
+        if (rowId) {
+            return this.rowModels[rowId!]?.isEditing(colId ?? undefined) ?? false;
+        }
+        return Object.keys(this.rowModels).length > 0;
+    }
+
+    public startEditing(rowId: string, columnId: string): EditingStateUpdates {
+        console.warn('EditingModelService: startEditing', rowId, columnId);
+        const rowModel = this.rowModels[rowId]
+            ? this.rowModels[rowId]
+            : (this.rowModels[rowId] = new RowEditingModel(rowId));
+        const cellModel = rowModel.getEditModel(columnId);
+
+        if (!cellModel) {
+            rowModel.createEditModel(columnId);
+        }
+        const locations: EditingStateUpdates = {};
+        locations[rowId] = {
+            status: true,
+            cells: {},
+        };
+        locations[rowId].cells[columnId] = true;
+        return locations;
+    }
+
+    public stopEditing(rowId?: string, colId?: string): EditingStateUpdates {
         console.warn('EditingModelService: stopEditing', rowId, colId);
+
+        if (!this._isEditing(rowId, colId)) {
+            return {};
+        }
+
+        const locations: EditingStateUpdates = {};
+
         if (rowId) {
             const rowModel = this.rowModels[rowId];
             if (rowModel) {
+                locations[rowId] = {
+                    status: false,
+                    cells: {},
+                };
                 if (colId) {
+                    locations[rowId].cells[colId] = false;
                     rowModel.removeEditModel(colId);
                 } else {
+                    rowModel.getEditModels().forEach(({ columnId }) => {
+                        locations[rowId].cells[columnId] = false;
+                    });
                     rowModel.destroy();
                     delete this.rowModels[rowId];
                 }
+
+                if (rowModel.getEditModelCount() === 0) {
+                    rowModel.destroy();
+                    delete this.rowModels[rowId];
+                }
+
+                locations[rowId].status = rowModel.isEditing();
             }
         } else {
             Object.keys(this.rowModels).forEach((key) => {
                 const rowModel = this.rowModels[key];
+                locations[key] = {
+                    status: false,
+                    cells: {},
+                };
                 if (rowModel) {
+                    rowModel.getEditModels().forEach(({ columnId }) => {
+                        locations[key].cells[columnId] = false;
+                    });
                     rowModel.destroy();
                     delete this.rowModels[key];
                 }
             });
         }
+
+        return locations;
+    }
+
+    public cancelEditing(rowId?: string, colId?: string): EditingStateUpdates {
+        console.warn('EditingModelService: cancelEditing', rowId, colId);
+
+        if (!this._isEditing(rowId, colId)) {
+            return {};
+        }
+
+        const locations: EditingStateUpdates = {};
+
+        if (rowId) {
+            const rowModel = this.rowModels[rowId];
+            locations[rowId] = {
+                status: false,
+                cells: {},
+            };
+            if (rowModel) {
+                if (colId) {
+                    locations[rowId].cells[colId] = false;
+                    rowModel.removeEditModel(colId);
+                } else {
+                    rowModel.getEditModels().forEach(({ columnId }) => {
+                        locations[rowId].cells[columnId] = false;
+                    });
+                    rowModel.destroy();
+                    delete this.rowModels[rowId];
+                }
+                locations[rowId].status = rowModel.isEditing();
+            }
+        } else {
+            Object.keys(this.rowModels).forEach((key) => {
+                const rowModel = this.rowModels[key];
+                locations[key] = {
+                    status: false,
+                    cells: {},
+                };
+                if (rowModel) {
+                    rowModel.getEditModels().forEach(({ columnId }) => {
+                        locations[key].cells[columnId] = false;
+                    });
+                    rowModel.destroy();
+                    delete this.rowModels[key];
+                }
+            });
+        }
+
+        return locations;
     }
 
     public override destroy(): void {
@@ -116,3 +212,9 @@ export class EditingModelService extends BeanStub implements NamedBean {
         this.stopEditing();
     }
 }
+
+type RowStatusUpdateRecord = {
+    status: boolean;
+    cells: Record<string, boolean>;
+};
+export type EditingStateUpdates = Record<string, RowStatusUpdateRecord>;

@@ -66,7 +66,7 @@ export class CellKeyboardListenerFeature extends BeanStub {
     }
 
     private onNavigationKeyDown(event: KeyboardEvent, key: string): void {
-        if (this.cellCtrl.editing) {
+        if (this.beans.editingFcd?.isEditing(this.rowCtrl, this.cellCtrl)) {
             return;
         }
 
@@ -99,10 +99,10 @@ export class CellKeyboardListenerFeature extends BeanStub {
     }
 
     private onBackspaceOrDeleteKeyDown(key: string, event: KeyboardEvent): void {
-        const { cellCtrl, beans, rowNode } = this;
-        const { gos, rangeSvc, eventSvc } = beans;
+        const { rowCtrl, cellCtrl, beans, rowNode } = this;
+        const { gos, rangeSvc, eventSvc, editingFcd } = beans;
 
-        if (cellCtrl.editing) {
+        if (editingFcd?.isEditing(this.rowCtrl, this.cellCtrl)) {
             return;
         }
 
@@ -117,47 +117,57 @@ export class CellKeyboardListenerFeature extends BeanStub {
                 rowNode.setDataValue(column, emptyValue, 'cellClear');
             }
         } else {
-            beans.editSvc?.startRowOrCellEdit(cellCtrl, key, event);
+            beans.editingFcd?.startEditing(rowCtrl, cellCtrl, key, true, event);
         }
 
         eventSvc.dispatchEvent({ type: 'keyShortcutChangedCellEnd' });
     }
 
     private onEnterKeyDown(e: KeyboardEvent): void {
-        const { cellCtrl, beans } = this;
-        const editing = isEditing(this.beans, cellCtrl.rowCtrl, cellCtrl);
+        const { rowCtrl, cellCtrl, beans } = this;
+        const { editingFcd } = beans;
+        const editing = editingFcd?.isEditing(rowCtrl, cellCtrl);
 
-        if (editing) {
-            this.beans.editSvc?.stopRowOrCellEdit(cellCtrl, false, false, e.shiftKey);
-        } else {
-            if (beans.gos.get('enterNavigatesVertically')) {
-                const key = e.shiftKey ? KeyCode.UP : KeyCode.DOWN;
-                beans.navigation?.navigateToNextCell(null, key, cellCtrl.cellPosition, false);
-            } else {
-                beans.editSvc?.startRowOrCellEdit(cellCtrl, KeyCode.ENTER, e);
-                if (cellCtrl.editing) {
-                    // if we started editing, then we need to prevent default, otherwise the Enter action can get
-                    // applied to the cell editor. this happened, for example, with largeTextCellEditor where not
-                    // preventing default results in a 'new line' character getting inserted in the text area
-                    // when the editing was started
-                    e.preventDefault();
-                }
+        if (!editing && beans.gos.get('enterNavigatesVertically')) {
+            const key = e.shiftKey ? KeyCode.UP : KeyCode.DOWN;
+            beans.navigation?.navigateToNextCell(null, key, cellCtrl.cellPosition, false);
+        }
+
+        if (editingFcd?.shouldStopEditing(rowCtrl, cellCtrl, null, e)) {
+            editingFcd?.stopEditing(rowCtrl, cellCtrl, false);
+        }
+
+        if (
+            !beans.gos.get('enterNavigatesVertically') &&
+            editingFcd?.shouldStartEditing(rowCtrl, cellCtrl, KeyCode.ENTER, e)
+        ) {
+            const started = editingFcd?.startEditing(rowCtrl, cellCtrl, KeyCode.ENTER, true, e);
+            if (started) {
+                // if we started editing, then we need to prevent default, otherwise the Enter action can get
+                // applied to the cell editor. this happened, for example, with largeTextCellEditor where not
+                // preventing default results in a 'new line' character getting inserted in the text area
+                // when the editing was started
+                e.preventDefault();
             }
         }
     }
 
     private onF2KeyDown(event: KeyboardEvent): void {
-        const { cellCtrl, beans } = this;
-        if (!cellCtrl.editing) {
-            beans.editSvc?.startRowOrCellEdit(cellCtrl, KeyCode.F2, event);
+        const { cellCtrl, rowCtrl, beans } = this;
+        const { editingFcd } = beans;
+
+        if (editingFcd?.shouldStartEditing(rowCtrl, cellCtrl, KeyCode.F2, event)) {
+            editingFcd?.startEditing(rowCtrl, cellCtrl, KeyCode.F2, true, event);
         }
     }
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     private onEscapeKeyDown(event: KeyboardEvent): void {
-        const { cellCtrl, beans } = this;
-        if (cellCtrl.editing) {
-            beans.editSvc?.stopRowOrCellEdit(cellCtrl, true);
+        const { cellCtrl, rowCtrl, beans } = this;
+        const { editingFcd } = beans;
+
+        if (editingFcd?.shouldStopEditing(rowCtrl, cellCtrl, KeyCode.ESCAPE, event)) {
+            editingFcd?.stopEditing(rowCtrl, cellCtrl, true);
         }
     }
 
@@ -166,8 +176,9 @@ export class CellKeyboardListenerFeature extends BeanStub {
         // in which cse we should not be listening for these key pressed
         const eventTarget = event.target;
         const eventOnChildComponent = eventTarget !== this.eGui;
+        const { cellCtrl, rowCtrl, beans } = this;
 
-        if (eventOnChildComponent || this.cellCtrl.editing) {
+        if (eventOnChildComponent || beans.editingFcd?.isEditing(rowCtrl, cellCtrl)) {
             return;
         }
 
@@ -175,7 +186,7 @@ export class CellKeyboardListenerFeature extends BeanStub {
         if (key === KeyCode.SPACE) {
             this.onSpaceKeyDown(event);
         } else {
-            if (this.beans.editSvc?.startRowOrCellEdit(this.cellCtrl, key, event)) {
+            if (beans.editingFcd?.startEditing(rowCtrl, cellCtrl, key, true, event)) {
                 // if we don't prevent default, then the event also gets applied to the text field
                 // (at least when doing the default editor), but we need to allow the editor to decide
                 // what it wants to do. we only do this IF editing was started - otherwise it messes
@@ -187,17 +198,14 @@ export class CellKeyboardListenerFeature extends BeanStub {
     }
 
     private onSpaceKeyDown(event: KeyboardEvent): void {
-        const { gos } = this.beans;
+        const { gos, editingFcd } = this.beans;
+        const { rowCtrl, cellCtrl } = this;
 
-        if (!this.cellCtrl.editing && _isRowSelection(gos)) {
+        if (!editingFcd?.isEditing(rowCtrl, cellCtrl) && _isRowSelection(gos)) {
             this.beans.selectionSvc?.handleSelectionEvent(event, this.rowNode, 'spaceKey');
         }
 
         // prevent default as space key, by default, moves browser scroll down
         event.preventDefault();
-    }
-
-    public override destroy(): void {
-        super.destroy();
     }
 }

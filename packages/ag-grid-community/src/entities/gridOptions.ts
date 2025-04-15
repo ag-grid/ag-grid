@@ -108,7 +108,7 @@ import type {
     SizeColumnsToFitGridStrategy,
     SizeColumnsToFitProvidedWidthStrategy,
 } from '../interfaces/autoSize';
-import type { EditModeType } from '../interfaces/editModeType';
+import type { EditModeType, EditTriggerType } from '../interfaces/editModeType';
 import type {
     CsvExportParams,
     ProcessCellForExportParams,
@@ -2484,6 +2484,7 @@ export interface GridOptions<TData = any> {
      */
     experimentalEditingModeV2?: {
         mode: EditModeType;
+        trigger?: EditTriggerType;
         params?: any;
     };
 }

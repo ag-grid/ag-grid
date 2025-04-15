@@ -14,13 +14,11 @@ import { NumberCellEditor } from './cellEditors/numberCellEditor';
 import { SelectCellEditor } from './cellEditors/selectCellEditor';
 import { TextCellEditor } from './cellEditors/textCellEditor';
 import {
-    getCellEditorInstances,
+    // getCellEditorInstances,
     getCurrentRedoSize,
-    getCurrentUndoSize,
-    getEditingCells,
-    redoCellEditing,
-    startEditingCell,
-    stopEditing,
+    getCurrentUndoSize, // getEditingCells,
+    redoCellEditing, // startEditingCell,
+    // stopEditing,
     undoCellEditing,
 } from './editApi';
 import { EditService } from './editService';
@@ -33,12 +31,12 @@ export const EditCoreModule: _ModuleWithApi<_EditGridApi<any>> = {
     moduleName: 'EditCore',
     version: VERSION,
     beans: [EditService, RowEditService],
-    apiFunctions: {
-        getCellEditorInstances,
-        getEditingCells,
-        stopEditing,
-        startEditingCell,
-    },
+    // apiFunctions: {
+    // getCellEditorInstances,
+    // getEditingCells,
+    // stopEditing,
+    // startEditingCell,
+    // },
     dependsOn: [PopupModule, EditingCoreModule],
     css: [cellEditingCSS],
 };

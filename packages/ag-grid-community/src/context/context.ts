@@ -44,7 +44,7 @@ import type { GridOptionsService } from '../gridOptionsService';
 import type { RowNodeBlockLoader } from '../infiniteRowModel/rowNodeBlockLoader';
 import type { IChartService } from '../interfaces/IChartService';
 import type { IRangeService } from '../interfaces/IRangeService';
-import type { EditModeType } from '../interfaces/editModeType';
+import type { EditModeType, EditTriggerType } from '../interfaces/editModeType';
 import type { IAdvancedFilterService } from '../interfaces/iAdvancedFilterService';
 import type { IAggColumnNameService } from '../interfaces/iAggColumnNameService';
 import type { IAggFuncService } from '../interfaces/iAggFuncService';
@@ -132,7 +132,8 @@ export type DynamicBeanName =
     | 'tooltipFeature'
     | 'groupStrategy'
     | 'treeParentIdStrategy'
-    | EditModeType;
+    | EditModeType
+    | EditTriggerType;
 
 export type UserComponentName =
     | 'agDragAndDropImage'

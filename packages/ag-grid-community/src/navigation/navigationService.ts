@@ -2,7 +2,6 @@ import { KeyCode } from '../constants/keyCode';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
-import { isEditing } from '../editing/editingApi';
 import type { AgColumn } from '../entities/agColumn';
 import { _getCellByPosition, _getRowNode, _isRowBefore } from '../entities/positionUtils';
 import type { RowNode } from '../entities/rowNode';
@@ -453,29 +452,13 @@ export class NavigationService extends BeanStub implements NamedBean {
         backwards: boolean,
         event?: KeyboardEvent
     ): boolean | null {
-        let editing =
-            previous instanceof CellCtrl
-                ? isEditing(this.beans, previous.rowCtrl, previous)
-                : isEditing(this.beans, previous);
-
-        // if cell is not editing, there is still chance row is editing if it's Full Row Editing
-        if (!editing && previous instanceof CellCtrl) {
-            const cell = previous as CellCtrl;
-            const row = cell.rowCtrl;
-            if (row) {
-                editing = isEditing(this.beans, row);
-            }
-        }
+        const beans = this.beans;
 
         let res: boolean | null;
 
-        if (editing) {
-            // if we are editing, we know it's not a Full Width Row (RowComp)
-            if (this.gos.get('editType') === 'fullRow') {
-                res = this.moveToNextEditingRow(previous as CellCtrl, backwards, event);
-            } else {
-                res = this.moveToNextEditingCell(previous as CellCtrl, backwards, event);
-            }
+        if (beans.editingFcd) {
+            const cellCtrl = previous as CellCtrl;
+            res = beans.editingFcd?.moveToNextCell(cellCtrl, backwards, event);
         } else {
             res = this.moveToNextCellNotEditing(previous, backwards, event);
         }
@@ -486,88 +469,6 @@ export class NavigationService extends BeanStub implements NamedBean {
 
         // if a cell wasn't found, it's possible that focus was moved to the header
         return res || !!this.beans.focusSvc.focusedHeader;
-    }
-
-    // returns null if no navigation should be performed
-    private moveToNextEditingCell(
-        previousCell: CellCtrl,
-        backwards: boolean,
-        event: KeyboardEvent | null = null
-    ): boolean | null {
-        const previousPos = previousCell.cellPosition;
-
-        // before we stop editing, we need to focus the cell element
-        // so the grid doesn't detect that focus has left the grid
-        previousCell.eGui.focus();
-
-        // need to do this before getting next cell to edit, in case the next cell
-        // has editable function (eg colDef.editable=func() ) and it depends on the
-        // result of this cell, so need to save updates from the first edit, in case
-        // the value is referenced in the function.
-        previousCell.stopEditing();
-
-        // find the next cell to start editing
-        const nextCell = this.findNextCellToFocusOn(previousPos, backwards, true) as CellCtrl | false;
-        if (nextCell === false) {
-            return null;
-        }
-        if (nextCell == null) {
-            return false;
-        }
-
-        // only prevent default if we found a cell. so if user is on last cell and hits tab, then we default
-        // to the normal tabbing so user can exit the grid.
-        this.beans.editSvc?.startEditing(nextCell, null, true, event);
-        nextCell.focusCell(false);
-        return true;
-    }
-
-    // returns null if no navigation should be performed
-    private moveToNextEditingRow(
-        previousCell: CellCtrl,
-        backwards: boolean,
-        event: KeyboardEvent | null = null
-    ): boolean | null {
-        const previousPos = previousCell.cellPosition;
-
-        // find the next cell to start editing
-        const nextCell = this.findNextCellToFocusOn(previousPos, backwards, true) as CellCtrl | false;
-        if (nextCell === false) {
-            return null;
-        }
-        if (nextCell == null) {
-            return false;
-        }
-
-        const nextPos = nextCell.cellPosition;
-
-        const previousEditable = this.isCellEditable(previousPos);
-        const nextEditable = this.isCellEditable(nextPos);
-
-        const rowsMatch =
-            nextPos && previousPos.rowIndex === nextPos.rowIndex && previousPos.rowPinned === nextPos.rowPinned;
-
-        const { editSvc, rowEditSvc } = this.beans;
-        if (previousEditable) {
-            editSvc?.setFocusOutOnEditor(previousCell);
-        }
-
-        if (!rowsMatch) {
-            const pRow = previousCell.rowCtrl;
-            editSvc?.stopRowEditing(pRow);
-
-            const nRow = nextCell.rowCtrl;
-            rowEditSvc?.startEditing(nRow, undefined, undefined, event);
-        }
-
-        if (nextEditable) {
-            editSvc?.setFocusInOnEditor(nextCell);
-            nextCell.focusCell();
-        } else {
-            nextCell.focusCell(true);
-        }
-
-        return true;
     }
 
     // returns null if no navigation should be performed
@@ -615,7 +516,7 @@ export class NavigationService extends BeanStub implements NamedBean {
      * called by the cell, when tab is pressed while editing.
      * @return: RenderedCell when navigation successful, false if navigation should not be performed, otherwise null
      */
-    private findNextCellToFocusOn(
+    public findNextCellToFocusOn(
         previousPosition: CellPosition,
         backwards: boolean,
         startEditing: boolean
