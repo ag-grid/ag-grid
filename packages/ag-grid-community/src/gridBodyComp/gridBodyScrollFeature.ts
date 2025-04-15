@@ -618,6 +618,12 @@ export class GridBodyScrollFeature extends BeanStub {
 
             // so when we return back to user, the cells have rendered
             this.animationFrameSvc?.flushAllFrames();
+
+            if (!this.beans.rowAutoHeight?.areRowsMeasured()) {
+                setTimeout(() => {
+                    this.ensureIndexVisible(index, position);
+                }, 0);
+            }
         });
     }
 

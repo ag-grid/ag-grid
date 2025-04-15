@@ -202,4 +202,24 @@ export class RowAutoHeightService extends BeanStub implements NamedBean {
     public setAutoHeightActive(cols: ColumnCollections): void {
         this.active = cols.list.some((col) => col.isVisible() && col.isAutoHeight());
     }
+
+    /**
+     * Determines if the row auto height service has cells to grow.
+     * @returns true if all of the rendered rows are at least as tall as their rendered cells.
+     */
+    public areRowsMeasured(): boolean {
+        if (!this.active) {
+            return true;
+        }
+        const cells = this.beans.rowRenderer.getAllCellCtrls();
+        return !cells.some((cell) => {
+            if (!cell.isAutoHeight) {
+                return false;
+            }
+            const rowNode = cell.rowNode;
+            const colId = cell.column.getColId();
+            const height = rowNode.__autoHeights?.[colId];
+            return !height || rowNode.rowHeight! < height;
+        });
+    }
 }
