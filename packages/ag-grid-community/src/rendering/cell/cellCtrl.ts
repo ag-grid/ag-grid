@@ -77,6 +77,7 @@ export interface ICellComp {
         position?: 'over' | 'under',
         reactiveCustomComponents?: boolean
     ): void;
+    refreshEditStyles: (editing: boolean, isPopup: boolean) => void;
 }
 
 export const DOM_DATA_KEY_CELL_CTRL = 'cellCtrl';
@@ -497,6 +498,9 @@ export class CellCtrl extends BeanStub {
         }
 
         this.tooltipFeature?.refreshTooltip();
+
+        const editing = this.beans.editingSvc?.isEditing(this.rowCtrl, this) ?? false;
+        this.comp.refreshEditStyles(editing, false);
 
         // we do cellClassRules even if the value has not changed, so that users who have rules that
         // look at other parts of the row (where the other part of the row might of changed) will work.

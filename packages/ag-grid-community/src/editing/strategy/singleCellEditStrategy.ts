@@ -58,6 +58,10 @@ export class SingleCellEditStrategy extends BaseEditStrategy {
             valueChanged,
         });
 
+        rowCtrl?.forEachGui(undefined, (gui) => {
+            gui.rowComp.addOrRemoveCssClass('ag-row-editing', false);
+        });
+
         return true;
     }
 
