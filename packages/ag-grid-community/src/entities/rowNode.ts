@@ -544,9 +544,7 @@ export class RowNode<TData = any>
             }
             // The pinned sibling mirrors the state of the source row, otherwise
             // we could potentially have siblings with different values of "selectable"
-            if (selectable != null) {
-                pinnedSibling.selectable = selectable;
-            }
+            pinnedSibling.selectable = selectable ?? true;
         }
 
         return valueChanged;
