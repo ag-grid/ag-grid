@@ -5,6 +5,7 @@ import {
     PinnedRowModule,
     ValidationModule,
     createGrid,
+    themeQuartz,
 } from 'ag-grid-community';
 import { ContextMenuModule } from 'ag-grid-enterprise';
 
@@ -26,6 +27,11 @@ const gridOptions: GridOptions<IOlympicData> = {
     columnDefs: columnDefs,
     rowData: null,
     enableRowPinning: true,
+    theme: themeQuartz.withParams({
+        pinnedRowBorder: {
+            width: 3,
+        },
+    }),
 };
 
 // setup the grid after the page has finished loading

@@ -11,21 +11,6 @@ import type { IPinnedRowModel } from '../interfaces/iPinnedRowModel';
 import type { RowPinnedType } from '../interfaces/iRowNode';
 import { PinnedRows, _shouldHidePinnedRows } from './manualPinnedRowUtils';
 
-// Use specific classes to target manual pinned rows only to prevent legacy
-// pinned rows from picking up the same styling.
-// If/when legaacy pinned rows are removed, these classes can be removed and simply applied
-// directly to the viewport container classes
-const FLOATING_TOP_VIEWPORT_CLASSNAME = 'ag-floating-top-border';
-const FLOATING_BOTTOM_VIEWPORT_CLASSNAME = 'ag-floating-bottom-border';
-
-function addClass(className: string, e?: HTMLElement) {
-    e?.classList.add(className);
-}
-
-function removeClass(className: string, e?: HTMLElement) {
-    e?.classList.remove(className);
-}
-
 export class ManualPinnedRowModel extends BeanStub implements IPinnedRowModel {
     private top: PinnedRows;
     private bottom: PinnedRows;
@@ -86,29 +71,10 @@ export class ManualPinnedRowModel extends BeanStub implements IPinnedRowModel {
         });
 
         this.addManagedPropertyListener('isRowPinned', runIsRowPinned);
-
-        beans.ctrlsSvc.whenReady(this, ({ topCenter, topLeft, topRight, bottomCenter, bottomLeft, bottomRight }) => {
-            for (const ctrl of [topCenter, topLeft, topRight]) {
-                addClass(FLOATING_TOP_VIEWPORT_CLASSNAME, ctrl.eViewport);
-            }
-
-            for (const ctrl of [bottomCenter, bottomLeft, bottomRight]) {
-                addClass(FLOATING_BOTTOM_VIEWPORT_CLASSNAME, ctrl.eViewport);
-            }
-        });
     }
 
     public override destroy(): void {
         this.reset(false);
-
-        const ctrlsSvc = this.beans.ctrlsSvc;
-        removeClass(FLOATING_TOP_VIEWPORT_CLASSNAME, ctrlsSvc.get('topCenter').eViewport);
-        removeClass(FLOATING_TOP_VIEWPORT_CLASSNAME, ctrlsSvc.get('topLeft')?.eViewport);
-        removeClass(FLOATING_TOP_VIEWPORT_CLASSNAME, ctrlsSvc.get('topRight')?.eViewport);
-        removeClass(FLOATING_BOTTOM_VIEWPORT_CLASSNAME, ctrlsSvc.get('bottomCenter').eViewport);
-        removeClass(FLOATING_BOTTOM_VIEWPORT_CLASSNAME, ctrlsSvc.get('bottomLeft')?.eViewport);
-        removeClass(FLOATING_BOTTOM_VIEWPORT_CLASSNAME, ctrlsSvc.get('bottomRight')?.eViewport);
-
         super.destroy();
     }
 

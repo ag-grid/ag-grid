@@ -7,6 +7,7 @@ import {
     RowSelectionModule,
     ValidationModule,
     createGrid,
+    themeQuartz,
 } from 'ag-grid-community';
 import { ContextMenuModule } from 'ag-grid-enterprise';
 
@@ -39,6 +40,11 @@ const gridOptions: GridOptions<IOlympicData> = {
             gridApi.getRowNode(id)?.setSelected(true);
         });
     },
+    theme: themeQuartz.withParams({
+        pinnedRowBorder: {
+            width: 3,
+        },
+    }),
 };
 
 // setup the grid after the page has finished loading
