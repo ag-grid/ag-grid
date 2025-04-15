@@ -17,8 +17,6 @@ export interface IEditStrategy extends Bean {
     isEditing?(rowCtrl?: RowCtrl | null, cellCtrl?: CellCtrl | null): boolean;
 
     moveToNextEditingCell(previousCell: CellCtrl, backwards: boolean, event?: KeyboardEvent): boolean | null;
-
-    updateStyles(editingStatusUpdate: EditingStateUpdates): void;
 }
 
 type RowStatusUpdateRecord = {

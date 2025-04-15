@@ -13,7 +13,8 @@ import type {
     DataTypeDefinition,
     DefaultChartMenuItem,
     DomLayoutType,
-    EditModeType,
+    EditStrategyType,
+    EditTriggerType,
     ExcelExportParams,
     ExcelStyle,
     FillOperationParams,
@@ -1591,7 +1592,8 @@ export interface Props<TData> {
          * @default false
          */
     experimentalEditingModeV2?: {
-        mode: EditModeType;
+        strategy: EditStrategyType;
+        trigger?: EditTriggerType;
         params?: any;
     } | undefined,
 

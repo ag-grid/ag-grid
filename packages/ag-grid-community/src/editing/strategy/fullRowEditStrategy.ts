@@ -37,6 +37,8 @@ export class FullRowEditStrategy extends BaseEditStrategy {
             this.beans.editingSvc?.editModel?.startEditing(rowCtrl.rowId!, cellCtrl.column.colId);
         }
 
+        this.setEditing(rowCtrl);
+
         return true;
     }
 
@@ -48,6 +50,8 @@ export class FullRowEditStrategy extends BaseEditStrategy {
             this.beans.editingSvc?.editModel?.cancelEditing();
         }
 
+        this.setEditing(rowCtrl!);
+
         return true;
     }
 
@@ -58,6 +62,9 @@ export class FullRowEditStrategy extends BaseEditStrategy {
         } else {
             this.beans.editingSvc?.editModel?.stopEditing();
         }
+
+        this.setEditing(rowCtrl!);
+
         return true;
     }
 

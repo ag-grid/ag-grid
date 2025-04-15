@@ -1,6 +1,7 @@
 import { _getCellEditorDetails } from '../components/framework/userCompUtils';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
+import { PopupEditorWrapper } from '../edit/cellEditors/popupEditorWrapper';
 import type { AgColumn } from '../entities/agColumn';
 import type { RowNode } from '../entities/rowNode';
 import { _isElementInThisGrid } from '../gridBodyComp/mouseEventUtils';
@@ -298,6 +299,10 @@ export class EditingService extends BeanStub implements NamedBean {
         };
 
         viewports.forEach((viewport) => this.addManagedElementListeners(viewport, { focusout: focusOutListener }));
+    }
+
+    public createPopupEditorWrapper(params: ICellEditorParams): PopupEditorWrapper {
+        return new PopupEditorWrapper(params);
     }
 
     public override destroy(): void {

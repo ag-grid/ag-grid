@@ -124,9 +124,6 @@ export class CellComp extends Component {
             getCellEditor: () => this.cellEditor || null,
             getCellRenderer: () => this.cellRenderer || null,
             getParentOfValue: () => this.getParentOfValue(),
-            refreshEditStyles: (editing, isPopup) => {
-                this.refreshEditStyles(editing, isPopup);
-            },
         };
 
         cellCtrl.setComp(compProxy, cellDiv, wrapperDiv, this.eCellWrapper, printLayout, editingRow, undefined);
@@ -155,7 +152,6 @@ export class CellComp extends Component {
 
         // if display template has changed, means any previous Cell Renderer is in the wrong location
         const controlWrapperChanged = this.refreshWrapper(false);
-        this.refreshEditStyles(false);
 
         // all of these have dependencies on the eGui, so only do them after eGui is set
         if (compDetails) {
@@ -443,7 +439,7 @@ export class CellComp extends Component {
         this.cellCtrl.cellEditorAttached();
     }
 
-    private refreshEditStyles(editing: boolean, isPopup?: boolean): void {
+    public refreshEditStyles(editing: boolean, isPopup?: boolean): void {
         // console.warn('cell edit styles', this, editing, isPopup);
         const { cellCssManager } = this;
         cellCssManager.toggleCss('ag-cell-inline-editing', editing && !isPopup);
@@ -470,12 +466,8 @@ export class CellComp extends Component {
         }
     }
 
-    public createPopupEditorWrapper(params: ICellEditorParams): PopupEditorWrapper {
-        return new PopupEditorWrapper(params);
-    }
-
     private addPopupCellEditor(params: ICellEditorParams, position?: 'over' | 'under'): void {
-        const { gos, context, popupSvc, localeSvc } = this.beans;
+        const { gos, context, popupSvc, localeSvc, editingSvc } = this.beans;
         if (gos.get('editType') === 'fullRow') {
             //popup cellEditor does not work with fullRowEdit
             _warn(98);
@@ -484,7 +476,7 @@ export class CellComp extends Component {
         const cellEditor = this.cellEditor!;
 
         // if a popup, then we wrap in a popup editor and return the popup
-        this.cellEditorPopupWrapper = context.createBean(this.createPopupEditorWrapper(params));
+        this.cellEditorPopupWrapper = context.createBean(editingSvc!.createPopupEditorWrapper(params));
         const ePopupGui = this.cellEditorPopupWrapper.getGui();
         if (this.cellEditorGui) {
             ePopupGui.appendChild(this.cellEditorGui);

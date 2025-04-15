@@ -64,7 +64,6 @@ export interface IRowComp {
     setRowBusinessKey(businessKey: string): void;
     setUserStyles(styles: RowStyle | undefined): void;
     refreshFullWidth(getUpdatedParams: () => ICellRendererParams): boolean;
-    refreshEditStyles(editing: boolean): void;
 }
 
 export interface RowGui {
@@ -1656,12 +1655,6 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
             this.rowFocused = rowFocused;
             this.setFocusedClasses();
         }
-    }
-
-    public setInlineEditingCss(editing: boolean): void {
-        this.forEachGui(undefined, (gui) => {
-            gui.rowComp.refreshEditStyles(editing);
-        });
     }
 
     private onPaginationChanged(): void {

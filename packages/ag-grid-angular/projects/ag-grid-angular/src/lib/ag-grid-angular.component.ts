@@ -76,7 +76,8 @@ import type {
     DragCancelledEvent,
     DragStartedEvent,
     DragStoppedEvent,
-    EditModeType,
+    EditStrategyType,
+    EditTriggerType,
     ExcelExportParams,
     ExcelStyle,
     ExpandOrCollapseAllEvent,
@@ -1801,7 +1802,8 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      */
     @Input() public experimentalEditingModeV2:
         | {
-              mode: EditModeType;
+              strategy: EditStrategyType;
+              trigger?: EditTriggerType;
               params?: any;
           }
         | undefined = undefined;

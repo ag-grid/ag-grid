@@ -2,7 +2,6 @@ import type { CellFocusedEvent } from '../../events';
 import type { CellCtrl } from '../../rendering/cell/cellCtrl';
 import type { RowCtrl } from '../../rendering/row/rowCtrl';
 import { BaseEditStrategy } from './baseEditStrategy';
-import type { EditingStateUpdates } from './iEditStrategy';
 import { _resolveControllers, _saveNewValue, _takeValueFromCellEditor } from './utils';
 
 export class SingleCellEditStrategy extends BaseEditStrategy {
@@ -32,12 +31,10 @@ export class SingleCellEditStrategy extends BaseEditStrategy {
 
         console.warn('SingleCellEditStrategy: stopEditing', rowCtrl, cellCtrl);
 
-        let updates: EditingStateUpdates | undefined;
-
         if (rowCtrl) {
-            updates = this.beans.editingSvc?.editModel?.stopEditing(rowCtrl!.rowId!, cellCtrl?.column.colId);
+            this.beans.editingSvc?.editModel?.stopEditing(rowCtrl!.rowId!, cellCtrl?.column.colId);
         } else {
-            updates = this.beans.editingSvc?.editModel?.stopEditing();
+            this.beans.editingSvc?.editModel?.stopEditing();
         }
 
         const { comp, column, rowNode } = cellCtrl!;
