@@ -64,11 +64,11 @@ export class AgRowNumbersRowResizer extends Component {
         }
 
         const currentSize = this.node?.rowHeight;
-        const newSize = initialHeight - (initialYPosition - clientY);
+        const newSize = Math.max(initialHeight - (initialYPosition - clientY), 1);
 
         this.cellCtrl.comp.toggleCss('ag-row-height-zero', newSize <= 2);
 
-        if (currentSize === newSize || newSize < 2) {
+        if (currentSize === newSize) {
             return;
         }
 
