@@ -497,6 +497,7 @@ export { IGetRowsParams, IDatasource } from './interfaces/iDatasource';
 
 // selection
 export { BaseSelectionService } from './selection/baseSelectionService';
+export type { RowRangeSelectionContext } from './selection/rowRangeSelectionContext';
 
 // styling
 export type { CellStyleService } from './styling/cellStyleService';
