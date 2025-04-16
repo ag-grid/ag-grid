@@ -320,7 +320,7 @@ always be 0 and then making a row sticky causes the grid to scroll. */
   * Rows
   ****************************
   */
-:where(.ag-row-animation) .ag-row {
+:where(.ag-row-animation:not(.ag-prevent-animation)) .ag-row {
     transition:
         transform 0.4s,
         top 0.4s,
