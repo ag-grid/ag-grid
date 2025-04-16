@@ -211,15 +211,33 @@ export class RowAutoHeightService extends BeanStub implements NamedBean {
         if (!this.active) {
             return true;
         }
-        const cells = this.beans.rowRenderer.getAllCellCtrls();
-        return !cells.some((cell) => {
-            if (!cell.isAutoHeight) {
+
+        const rowCtrls = this.beans.rowRenderer.getAllRowCtrls();
+        let renderedAutoHeightCols: AgColumn[] | null = null;
+        for (const { rowNode } of rowCtrls) {
+            // if colSpanActive is false, then all rows will have the same cols, so shortcut
+            // and avoid filtering the cols for each row
+            if (!renderedAutoHeightCols || this.beans.colModel.colSpanActive) {
+                const renderedCols = this.beans.colViewport.getColsWithinViewport(rowNode);
+                renderedAutoHeightCols = renderedCols.filter((col) => col.isAutoHeight());
+            }
+
+            if (renderedAutoHeightCols.length === 0) {
+                continue;
+            }
+
+            if (!rowNode.__autoHeights) {
                 return false;
             }
-            const rowNode = cell.rowNode;
-            const colId = cell.column.getColId();
-            const height = rowNode.__autoHeights?.[colId];
-            return !height || rowNode.rowHeight! < height;
-        });
+
+            for (const col of renderedAutoHeightCols) {
+                const cellHeight = rowNode.__autoHeights[col.getColId()];
+                if (!cellHeight || rowNode.rowHeight! < cellHeight) {
+                    return false;
+                }
+            }
+        }
+
+        return true;
     }
 }
