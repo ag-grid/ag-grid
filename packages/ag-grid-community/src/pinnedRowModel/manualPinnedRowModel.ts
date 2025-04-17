@@ -359,7 +359,9 @@ function refreshRowPositions(beans: BeanCollection, container: PinnedRows) {
     let rowTop = 0;
     container.forEach((node, index) => {
         node.setRowTop(rowTop);
-        node.setRowHeight(_getRowHeightForNode(beans, node).height);
+        if (node.rowHeightEstimated) {
+            node.setRowHeight(_getRowHeightForNode(beans, node).height);
+        }
         node.setRowIndex(index);
         rowTop += node.rowHeight!;
     });
