@@ -1,8 +1,9 @@
 import { getType } from '@ag-website-shared/components/example-runner/utils/getType';
-import ReactJsonView from '@microlink/react-json-view';
-import { type FunctionComponent, useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { type FunctionComponent, lazy, useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 
 import styles from './ExampleLogger.module.scss';
+
+const LazyReactJson = lazy(() => import('@microlink/react-json-view'));
 
 type LogObject = {
     __consoleLogObject: true;
@@ -164,7 +165,7 @@ const DataItem = ({ data }: { data: LogData[] }) => {
                 {data.map((value, i) => {
                     const isJSonViewable = ['object', 'array'].includes(getType(value));
                     return isJSonViewable ? (
-                        <ReactJsonView
+                        <LazyReactJson
                             key={i}
                             src={value as object}
                             theme={JSON_VIEWER_THEME}

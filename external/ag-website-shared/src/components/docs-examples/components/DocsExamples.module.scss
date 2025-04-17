@@ -4,9 +4,62 @@
     --layout-grid-header-height: 200px;
 
     height: calc(100vh - var(--layout-grid-header-height));
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-size-3;
+
+    :global(.ag-group-value) {
+        width: 100%;
+    }
 }
 
 svg.icon {
     width: 18px;
     height: 18px;
+}
+
+.frameworkLogo {
+    width: 16px;
+    height: 16px;
+    border-radius: 4px;
+}
+
+.exampleNameContainer {
+    display: flex;
+    align-items: center;
+    flex-direction: row;
+    justify-content: space-between;
+    gap: $spacing-size-3;
+}
+
+.frameworkLinks {
+    display: flex;
+    align-items: center;
+    flex-direction: row;
+    gap: $spacing-size-1;
+}
+
+.linksContainer {
+    display: flex;
+    align-items: center;
+    flex-direction: row;
+    gap: $spacing-size-4;
+}
+
+.iconContainer {
+    margin-top: 9px;
+}
+
+.controls {
+    display: flex;
+    align-items: center;
+    gap: $spacing-size-2;
+    justify-content: space-between;
+}
+
+.controlsState,
+.controlsFilter {
+    display: flex;
+    align-items: center;
+    gap: $spacing-size-2;
 }
