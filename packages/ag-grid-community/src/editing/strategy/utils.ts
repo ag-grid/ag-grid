@@ -14,6 +14,7 @@ type ResolveRowControllerType = {
 type ResolveCellControllerType = {
     colId?: string;
     column?: string | Column | null;
+    cellCtrl?: CellCtrl | null;
 };
 
 type ResolveControllerType = ResolveRowControllerType & ResolveCellControllerType;
@@ -42,6 +43,12 @@ export function _resolveRowController(beans: BeanCollection, inputs: ResolveRowC
 }
 
 export function _resolveCellController(beans: BeanCollection, inputs: ResolveControllerType): CellCtrl | undefined {
+    const { cellCtrl } = inputs;
+
+    if (cellCtrl) {
+        return cellCtrl;
+    }
+
     const { colId, column, rowIndex, rowId } = inputs;
     let { rowCtrl } = inputs;
     const { rowRenderer, colModel } = beans;

@@ -123,9 +123,7 @@ export class SingleCellEditStrategy extends BaseEditStrategy {
 
         // only prevent default if we found a cell. so if user is on last cell and hits tab, then we default
         // to the normal tabbing so user can exit the grid.
-        this.startEditing(nextCell.rowCtrl, nextCell, null, event);
-        event?.preventDefault();
-
+        this.beans.editingSvc?.startEditing(nextCell.rowCtrl, nextCell, null, true, event);
         nextCell.focusCell(false);
         return true;
     }

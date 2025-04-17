@@ -2,6 +2,7 @@ import { KeyCode } from '../constants/keyCode';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
+import { _resolveControllers } from '../editing/strategy/utils';
 import type { AgColumn } from '../entities/agColumn';
 import { _getCellByPosition, _getRowNode, _isRowBefore } from '../entities/positionUtils';
 import type { RowNode } from '../entities/rowNode';
@@ -452,13 +453,13 @@ export class NavigationService extends BeanStub implements NamedBean {
         backwards: boolean,
         event?: KeyboardEvent
     ): boolean | null {
-        const beans = this.beans;
+        const { editingSvc, focusSvc } = this.beans;
 
-        let res: boolean | null;
+        let res: boolean | null | undefined = undefined;
+        const cellCtrl = previous instanceof CellCtrl ? previous : undefined;
 
-        if (beans.editingSvc) {
-            const cellCtrl = previous as CellCtrl;
-            res = beans.editingSvc?.moveToNextCell(cellCtrl, backwards, event);
+        if (editingSvc?.isEditing()) {
+            res = editingSvc?.moveToNextCell(cellCtrl!, backwards, event);
         } else {
             res = this.moveToNextCellNotEditing(previous, backwards, event);
         }
@@ -468,7 +469,7 @@ export class NavigationService extends BeanStub implements NamedBean {
         }
 
         // if a cell wasn't found, it's possible that focus was moved to the header
-        return res || !!this.beans.focusSvc.focusedHeader;
+        return res || !!focusSvc.focusedHeader;
     }
 
     // returns null if no navigation should be performed

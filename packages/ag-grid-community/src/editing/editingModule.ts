@@ -33,7 +33,6 @@ import { ProvidedEditTrigger } from './trigger/providedEditTrigger';
  * @internal
  */
 export const EditingCoreModule: _ModuleWithApi<_EditingGridApi<any>> = {
-    experimental: true,
     moduleName: 'EditingCore',
     version: VERSION,
     beans: [EditingService],
