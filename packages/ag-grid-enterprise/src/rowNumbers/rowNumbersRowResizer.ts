@@ -8,10 +8,10 @@ const RowNumbersRowResizerElement: ElementParams = {
 
 export class AgRowNumbersRowResizer extends Component {
     private node: IRowNode | undefined;
+    private rowModel: IRowModel | IPinnedRowModel | undefined;
     private initialYPosition: number = -1;
     private initialHeight: number | null | undefined;
     private dragging = false;
-    private rowModel: IRowModel | IPinnedRowModel | undefined;
 
     constructor(private readonly cellCtrl: CellCtrl) {
         super(RowNumbersRowResizerElement);
@@ -30,8 +30,12 @@ export class AgRowNumbersRowResizer extends Component {
         });
 
         const rowPosition = cellCtrl.getRowPosition();
-        this.node = _getRowNode(this.beans, rowPosition);
+        const { rowHeight } = (this.node = _getRowNode(this.beans, rowPosition)!);
         this.rowModel = rowPosition.rowPinned ? pinnedRowModel : rowModel;
+
+        if (rowHeight != null) {
+            this.toggleRowNumberHeightZeroStyle(rowHeight);
+        }
     }
 
     private onDragStart(mouseEvent: MouseEvent | Touch): void {
@@ -66,7 +70,7 @@ export class AgRowNumbersRowResizer extends Component {
         const currentSize = this.node?.rowHeight;
         const newSize = Math.max(initialHeight - (initialYPosition - clientY), 1);
 
-        this.cellCtrl.comp.toggleCss('ag-row-height-zero', newSize <= 2);
+        this.toggleRowNumberHeightZeroStyle(newSize);
 
         if (currentSize === newSize) {
             return;
@@ -78,6 +82,10 @@ export class AgRowNumbersRowResizer extends Component {
         } else {
             (this.rowModel as any).onRowHeightChanged({ animate: false });
         }
+    }
+
+    private toggleRowNumberHeightZeroStyle(height: number): void {
+        this.cellCtrl.comp.toggleCss('ag-row-height-zero', height <= 2);
     }
 
     private onDragStop(mouseEvent: MouseEvent | Touch): void {
@@ -98,6 +106,7 @@ export class AgRowNumbersRowResizer extends Component {
     private clearDragDetails(): void {
         this.initialYPosition = -1;
         this.initialHeight = null;
+        this.dragging = false;
     }
 
     public override destroy(): void {
