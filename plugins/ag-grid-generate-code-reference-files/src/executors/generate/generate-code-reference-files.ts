@@ -14,6 +14,8 @@ function _getCallbackForEvent(eventName: string): string {
 }
 const EVENT_LOOKUP = new Set(_GET_ALL_EVENTS().map((event) => _getCallbackForEvent(event)));
 
+const EXPERIMENTAL_API = ['_EditingGridApi'];
+
 function findAllInNodesTree(node) {
     const kind = ts.SyntaxKind[node.kind];
     let interfaces = [];
@@ -617,7 +619,7 @@ export function getGridApi(gridApiFile: string) {
                 const typeName = formatNode(t.expression, srcFile);
                 const typeNode = findNode(typeName, srcFile);
 
-                const experimental = !!typeNode.members.find((node) => node?.name?.escapedText === 'experimental');
+                const experimental = EXPERIMENTAL_API.includes(typeName);
                 if (!typeNode) {
                     errors.push(`Could not find base interface for ${typeName}`);
                 } else {
