@@ -4,13 +4,19 @@ import { type AllHTMLAttributes, useEffect, useRef, useState } from 'react';
 
 import styles from './LinkIcon.module.scss';
 
-export function LinkIcon({ className, ...props }: AllHTMLAttributes<HTMLAnchorElement> & { children?: never }) {
+// TODO bring in styles from OpenIn CTA
+
+export function LinkIcon({
+    className,
+    exampleLink,
+    ...props
+}: AllHTMLAttributes<HTMLAnchorElement> & { children?: never; exampleLink?: Boolean }) {
     const [linkCopied, setLinkCopied] = useState(false);
     const [linkActive, setlinkActive] = useState(false);
     const copiedTimeoutRef = useRef(null);
     const activeTimeoutRef = useRef(null);
 
-    const onclick = (event) => {
+    const onClick = (event) => {
         event.preventDefault();
 
         const href = event.target.href;
@@ -47,12 +53,13 @@ export function LinkIcon({ className, ...props }: AllHTMLAttributes<HTMLAnchorEl
             aria-label="Heading link"
             {...props}
             className={classnames(
-                styles.docsHeaderIcon,
+                styles.linkIcon,
+                { [styles.docsHeaderIcon]: !exampleLink, ['button-secondary']: !exampleLink },
+                { [styles.exampleIcon]: exampleLink },
                 { [styles.active]: linkActive },
-                'button-secondary',
                 className
             )}
-            onClick={onclick}
+            onClick={onClick}
         >
             <span className={styles.tooltip}>{linkCopied ? 'Link copied!' : 'Copy'}</span>
             <Icon name="link" />
