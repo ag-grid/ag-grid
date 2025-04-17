@@ -5,11 +5,11 @@ import type { BeanCollection } from '../context/context';
 import type { AgColumn } from '../entities/agColumn';
 import { _getCellByPosition } from '../entities/positionUtils';
 import { _getActiveDomElement } from '../gridOptionsUtils';
+import type { EditStrategyType } from '../interfaces/editStrategyType';
 import type { GetCellEditorInstancesParams, ICellEditor } from '../interfaces/iCellEditor';
 import type { CellPosition } from '../interfaces/iCellPosition';
-import type { CellCtrl } from '../rendering/cell/cellCtrl';
-import type { RowCtrl } from '../rendering/row/rowCtrl';
 import { _warn } from '../validation/logging';
+import { _resolveControllers, _resolveRowController } from './strategy/utils';
 
 export function undoCellEditing(beans: BeanCollection): void {
     beans.undoRedo?.undo('api');
@@ -46,8 +46,14 @@ export function stopEditing(beans: BeanCollection, cancel: boolean = false): voi
     }
 }
 
-export function isEditing(beans: BeanCollection, rowCtrl?: RowCtrl | null, cellCtrl?: CellCtrl | null): boolean {
+export function isEditing(beans: BeanCollection, rowId?: string, colId?: string): boolean {
+    const { rowCtrl, cellCtrl } = _resolveControllers(beans, { rowId, colId });
     return beans.editingSvc?.isEditing(rowCtrl, cellCtrl) ?? false;
+}
+
+export function isRowEditing(beans: BeanCollection, rowId: string): boolean {
+    const rowCtrl = _resolveRowController(beans, { rowId });
+    return beans.editingSvc?.isEditing(rowCtrl) ?? false;
 }
 
 export function startEditingCell(beans: BeanCollection, params: StartEditingCellParams): void {
@@ -87,6 +93,29 @@ export function startEditingCell(beans: BeanCollection, params: StartEditingCell
         });
     }
     editingSvc?.startEditing(cell.rowCtrl, cell, params.key);
+}
+
+export function updateEditStrategy(beans: BeanCollection, editStrategy: string): void {
+    cancelEdits(beans);
+    beans.gos.updateGridOptions({
+        options: {
+            experimentalEditingModeV2: {
+                strategy: editStrategy as EditStrategyType,
+            },
+        },
+    });
+}
+
+export function commitEdits(beans: BeanCollection): void {
+    if (beans.editingSvc?.isEditing()) {
+        beans.editingSvc?.stopAllEditing(false);
+    }
+}
+
+export function cancelEdits(beans: BeanCollection): void {
+    if (beans.editingSvc?.isEditing()) {
+        beans.editingSvc?.stopAllEditing(true);
+    }
 }
 
 export function getCurrentUndoSize(beans: BeanCollection): number {

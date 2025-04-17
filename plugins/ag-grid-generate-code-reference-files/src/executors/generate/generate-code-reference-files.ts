@@ -582,16 +582,21 @@ export function getGridApi(gridApiFile: string) {
     let members = {};
 
     const errors: string[] = [];
+    const warnings: string[] = [];
 
     const apiToTypeMap = new Map<string, string>();
 
-    const addType = (typeName: string, n: ts.Node) => {
+    const addType = (typeName: string, n: ts.Node, experimental?: boolean) => {
         const typesFromNode = extractTypesFromNode(n, srcFile, false);
 
         for (const apiName of Object.keys(typesFromNode)) {
             const apiTypeName = apiToTypeMap.get(apiName);
             if (apiTypeName !== undefined && apiTypeName !== typeName) {
-                errors.push(`API ${apiName} already exists in both ${apiTypeName} and ${typeName}`);
+                if (experimental) {
+                    warnings.push(`API ${apiName} already exists in both ${apiTypeName} and ${typeName}`);
+                } else {
+                    errors.push(`API ${apiName} already exists in both ${apiTypeName} and ${typeName}`);
+                }
             } else {
                 apiToTypeMap.set(apiName, typeName);
             }
@@ -611,13 +616,15 @@ export function getGridApi(gridApiFile: string) {
             h.types.forEach((t) => {
                 const typeName = formatNode(t.expression, srcFile);
                 const typeNode = findNode(typeName, srcFile);
+
+                const experimental = !!typeNode.members.find((node) => node?.name?.escapedText === 'experimental');
                 if (!typeNode) {
                     errors.push(`Could not find base interface for ${typeName}`);
                 } else {
                     if (ts.isInterfaceDeclaration(typeNode)) {
                         processInterface(typeNode);
                     }
-                    ts.forEachChild(typeNode, (n) => addType(typeName, n));
+                    ts.forEachChild(typeNode, (n) => addType(typeName, n, experimental));
                 }
             });
         });
@@ -628,7 +635,9 @@ export function getGridApi(gridApiFile: string) {
     ts.forEachChild(gridApi, (n) => addType('GridApi', n));
 
     if (errors.length > 0) {
-        throw new Error('getGridApi validation failed:\n' + errors.join('\n'));
+        throw new Error(`getGridApi validation failures:\n  ${errors.join('\n  ')}`);
+    } else if (warnings.length > 0) {
+        console.warn(`getGridApi validation warnings:\n  ${warnings.join('\n  ')}`);
     }
 
     return members;

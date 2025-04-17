@@ -78,7 +78,6 @@ export type InternalModuleName =
     | 'Drag'
     | 'EditCore'
     | 'EditingCore'
-    | 'EditingModel'
     | 'EditingValidation'
     | 'EnterpriseCore'
     | 'Expression'
@@ -283,6 +282,7 @@ export type ModuleName = InternalModuleName | CommunityModuleName | EnterpriseMo
 export type ResolvableModuleName = Extract<
     InternalModuleName,
     | 'EditCore'
+    | `EditingCore`
     | 'MenuCore'
     | 'EnterpriseCore'
     | 'ColumnHeaderComp'
