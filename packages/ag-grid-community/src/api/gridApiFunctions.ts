@@ -220,7 +220,6 @@ export const gridApiFunctionsMap: Record<keyof GridApi, ValidationModuleName> = 
         startEditingCell: 0,
     }),
     ...mod<_EditingGridApi<any>>('EditingCore', {
-        experimental: 0,
         getCellEditorInstances: 0,
         getEditingCells: 0,
         stopEditing: 0,

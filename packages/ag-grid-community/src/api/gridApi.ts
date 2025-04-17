@@ -658,9 +658,6 @@ export interface _EditGridApi<TData> {
 }
 
 export interface _EditingGridApi<TData> {
-    /* Experimental Marker, not exported */
-    experimental?: true;
-
     /** Returns the list of active cell editor instances. Optionally provide parameters to restrict to certain columns / row nodes. */
     getCellEditorInstances(params?: GetCellEditorInstancesParams<TData>): ICellEditor[];
 
