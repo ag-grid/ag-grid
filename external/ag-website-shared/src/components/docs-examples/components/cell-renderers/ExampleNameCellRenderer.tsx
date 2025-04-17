@@ -6,10 +6,12 @@ import { useEffect, useState } from 'react';
 
 import type { CustomCellRendererProps } from 'ag-grid-react';
 
+import type { ExampleProperty } from '../DocsExamples';
 import styles from '../DocsExamples.module.scss';
 
 type Props = CustomCellRendererProps & {
     columnsVisible: Record<InternalFramework, boolean>;
+    properties: ExampleProperty[];
 };
 
 function FrameworkLink({ framework, link }: { framework: Framework; link: string }) {
@@ -20,10 +22,27 @@ function FrameworkLink({ framework, link }: { framework: Framework; link: string
     );
 }
 
-export function ExampleNameCellRenderer({ value, data, node, columnsVisible }: Props) {
+function DisplayValue({ value, node, properties }: { value: string; node: any; properties: ExampleProperty[] }) {
+    const nodeIsProperty = node.group && properties.includes(node.field);
+    if (nodeIsProperty) {
+        return (
+            <>
+                <span className={styles.propertyName}>
+                    {node.rowGroupColumn.userProvidedColDef.headerName ?? node.field}
+                </span>{' '}
+                = <code>{value.toString()}</code>
+            </>
+        );
+    }
+
+    return value;
+}
+
+export function ExampleNameCellRenderer({ value, data, node, columnsVisible, properties }: Props) {
     const isPage = node.group;
     const pageName = isPage ? value : data.pageName;
     const exampleName = data?.exampleName;
+
     const [frameworkVisible, setFrameworkVisible] = useState<Record<Framework, boolean>>({
         react: false,
         angular: false,
@@ -43,7 +62,9 @@ export function ExampleNameCellRenderer({ value, data, node, columnsVisible }: P
 
     return (
         <div className={styles.exampleNameContainer}>
-            <span>{value}</span>
+            <span>
+                <DisplayValue value={value} node={node} properties={properties} />
+            </span>
             {isPage && (
                 <span className={styles.frameworkLinks}>
                     {FRAMEWORKS.map((framework: Framework) => {

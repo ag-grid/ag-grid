@@ -187,12 +187,13 @@ export const DocsExamples: FunctionComponent<Props> = ({ properties = [], exampl
                 innerRenderer: ExampleNameCellRenderer,
                 innerRendererParams: {
                     columnsVisible,
+                    properties,
                 },
             },
             minWidth: 400,
             pinned: 'left',
         };
-    }, [columnsVisible]);
+    }, [columnsVisible, properties]);
     const rowGroupPanelShow = 'always';
     const groupDisplayType = 'singleColumn';
     const groupDefaultExpanded = 1;

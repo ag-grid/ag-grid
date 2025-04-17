@@ -32,6 +32,10 @@ svg.icon {
     gap: $spacing-size-3;
 }
 
+.propertyName {
+    font-style: italic;
+}
+
 .frameworkLinks {
     display: flex;
     align-items: center;
