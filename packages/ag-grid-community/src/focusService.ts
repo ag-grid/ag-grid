@@ -137,7 +137,8 @@ export class FocusService extends BeanStub implements NamedBean {
     // grid cell will still be focused as far as the grid is concerned,
     // however the browser focus will have moved somewhere else.
     public getFocusCellToUseAfterRefresh(): CellPosition | null {
-        if (this.gos.get('suppressFocusAfterRefresh') || !this.focusedCell) {
+        const { gos, focusedCell } = this;
+        if (gos.get('suppressFocusAfterRefresh') || gos.get('suppressCellFocus') || !focusedCell) {
             return null;
         }
 
@@ -148,7 +149,7 @@ export class FocusService extends BeanStub implements NamedBean {
             return null;
         }
 
-        return this.focusedCell;
+        return focusedCell;
     }
 
     public getFocusHeaderToUseAfterRefresh(): HeaderPosition | null {
