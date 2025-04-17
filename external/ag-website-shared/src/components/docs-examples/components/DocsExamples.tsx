@@ -4,7 +4,7 @@ import { type FunctionComponent, useCallback, useRef } from 'react';
 import { useMemo, useState } from 'react';
 
 import { AllCommunityModule } from 'ag-grid-community';
-import type { ColDef, ColGroupDef, ColumnState, ColumnVisibleEvent } from 'ag-grid-community';
+import type { ColDef, ColGroupDef, ColumnState, ColumnVisibleEvent, GridReadyEvent } from 'ag-grid-community';
 import {
     ColumnsToolPanelModule,
     FiltersToolPanelModule,
@@ -178,7 +178,7 @@ export const DocsExamples: FunctionComponent<Props> = ({ properties = [], exampl
         minWidth: 100,
         filter: true,
     };
-    const autoGroupColumnDef = useMemo(() => {
+    const autoGroupColumnDef = useMemo<ColDef>(() => {
         return {
             headerName: 'Page Examples',
             field: 'exampleName',
@@ -213,8 +213,8 @@ export const DocsExamples: FunctionComponent<Props> = ({ properties = [], exampl
         ],
     });
 
-    const onColumnVisible = useCallback(({ api }: ColumnVisibleEvent) => {
-        const newColumnsVisible: Record<InternalFramework, boolean> = {};
+    const onColumnVisible = useCallback(({ api }: ColumnVisibleEvent | GridReadyEvent) => {
+        const newColumnsVisible = {} as Record<InternalFramework, boolean>;
         INTERNAL_FRAMEWORKS.forEach((internalFramework: InternalFramework) => {
             newColumnsVisible[internalFramework] = Boolean(api.getColumn(internalFramework)?.isVisible());
         });
@@ -236,7 +236,8 @@ export const DocsExamples: FunctionComponent<Props> = ({ properties = [], exampl
             applyOrder: true,
         });
     }, [gridRef]);
-    const onGridReady = useCallback(() => {
+    const onGridReady = useCallback((event: GridReadyEvent) => {
+        onColumnVisible(event);
         applyLocalStorageColState();
     }, []);
 
