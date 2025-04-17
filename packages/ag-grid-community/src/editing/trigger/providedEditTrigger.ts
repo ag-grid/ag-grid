@@ -13,6 +13,10 @@ export class ProvidedEditTrigger extends BaseEditTrigger {
         key?: string | null,
         event?: KeyboardEvent | MouseEvent | null
     ): boolean {
+        if (this.editModel.isEditing() && event instanceof KeyboardEvent && event.key === KeyCode.TAB) {
+            return true;
+        }
+
         if (event instanceof KeyboardEvent) {
             return event.key === 'Enter';
         }
