@@ -1,4 +1,4 @@
-import type { _UndoRedoGridApi } from '../api/gridApi';
+import type { _EditingGridApi, _UndoRedoGridApi } from '../api/gridApi';
 import { CheckboxCellEditor } from '../edit/cellEditors/checkboxCellEditor';
 import { DateCellEditor } from '../edit/cellEditors/dateCellEditor';
 import { DateStringCellEditor } from '../edit/cellEditors/dateStringCellEditor';
@@ -10,7 +10,18 @@ import type { DefaultProvidedCellEditorParams } from '../interfaces/iCellEditor'
 import type { _ModuleWithApi, _ModuleWithoutApi } from '../interfaces/iModule';
 import { UndoRedoService } from '../undoRedo/undoRedoService';
 import { VERSION } from '../version';
-import { getCurrentRedoSize, getCurrentUndoSize, redoCellEditing, undoCellEditing } from './editingApi';
+import { cellEditingCSS } from './cell-editing.css-GENERATED';
+import {
+    getCellEditorInstances,
+    getCurrentRedoSize,
+    getCurrentUndoSize,
+    getEditingCells,
+    isEditing,
+    redoCellEditing,
+    startEditingCell,
+    stopEditing,
+    undoCellEditing,
+} from './editingApi';
 import { EditingService } from './editingService';
 import { BatchEditStrategy } from './strategy/batchEditStrategy';
 import { FullRowEditStrategy } from './strategy/fullRowEditStrategy';
@@ -21,10 +32,18 @@ import { ProvidedEditTrigger } from './trigger/providedEditTrigger';
 /**
  * @internal
  */
-export const EditingCoreModule: _ModuleWithoutApi = {
+export const EditingCoreModule: _ModuleWithApi<_EditingGridApi<any>> = {
+    experimental: true,
     moduleName: 'EditingCore',
     version: VERSION,
     beans: [EditingService],
+    apiFunctions: {
+        getEditingCells,
+        getCellEditorInstances,
+        startEditingCell,
+        stopEditing,
+        isEditing,
+    },
     dynamicBeans: {
         cellEditMode: SingleCellEditStrategy,
         rowEditMode: FullRowEditStrategy,
@@ -33,7 +52,7 @@ export const EditingCoreModule: _ModuleWithoutApi = {
         providedEditTrigger: ProvidedEditTrigger,
     },
     dependsOn: [],
-    css: [],
+    css: [cellEditingCSS],
 };
 
 /**

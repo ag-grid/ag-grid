@@ -3,7 +3,6 @@ import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import { PopupEditorWrapper } from '../edit/cellEditors/popupEditorWrapper';
 import type { AgColumn } from '../entities/agColumn';
-import { CellFocusedEvent } from '../events';
 import { _isElementInThisGrid } from '../gridBodyComp/mouseEventUtils';
 import { _addGridCommonParams } from '../gridOptionsUtils';
 import type { DefaultProvidedCellEditorParams, ICellEditorParams } from '../interfaces/iCellEditor';
@@ -76,7 +75,7 @@ export class EditingService extends BeanStub implements NamedBean {
         rowCtrl: RowCtrl,
         cellCtrl: CellCtrl,
         key: string | null = null,
-        cellStartedEdit = false,
+        cellStartedEdit = true,
         event: KeyboardEvent | MouseEvent | null = null
     ): boolean {
         if (!cellCtrl.isCellEditable()) {
@@ -101,8 +100,6 @@ export class EditingService extends BeanStub implements NamedBean {
 
         console.warn('EditingService: startEditing');
 
-        this.editStrategy!.startEditing?.(rowCtrl, cellCtrl, key, event) ?? true;
-
         const editorParams = this.createCellEditorParams(cellCtrl, key, cellStartedEdit);
         const colDef = cellCtrl.column.getColDef();
         const compDetails = _getCellEditorDetails(this.beans.userCompFactory, colDef, editorParams);
@@ -117,7 +114,10 @@ export class EditingService extends BeanStub implements NamedBean {
         cellCtrl.editCompDetails = compDetails;
         cellCtrl.comp.setEditDetails(compDetails, popup, position, this.gos.get('reactiveCustomComponents'));
 
+        this.editStrategy!.startEditing?.(rowCtrl, cellCtrl, key, event) ?? true;
+
         this.eventSvc.dispatchEvent(cellCtrl.createEvent(event, 'cellEditingStarted'));
+        event?.preventDefault();
 
         return !(compDetails?.params as DefaultProvidedCellEditorParams)?.suppressPreventDefault;
     }
@@ -162,7 +162,11 @@ export class EditingService extends BeanStub implements NamedBean {
     public stopAllEditing(cancel: boolean = false): void {
         console.warn('EditingService: stopAllEditing');
         if (this.isEditing()) {
-            this.editStrategy?.stopAllEditing?.();
+            if (cancel) {
+                this.editStrategy?.cancelEditing?.();
+            } else {
+                this.editStrategy?.stopAllEditing?.();
+            }
         }
     }
 
