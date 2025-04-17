@@ -599,7 +599,8 @@
     },
     {
         "version": "28.0.0",
-        "date": "July 6th, 2022"
+        "date": "July 6th, 2022",
+        "notesPath": "./upgrading-to-ag-grid-28"
     },
     {
         "version": "27.3.0",
@@ -624,7 +625,8 @@
     },
     {
         "version": "27.0.0",
-        "date": "February 8th, 2022"
+        "date": "February 8th, 2022",
+        "notesPath": "./upgrading-to-ag-grid-27"
     },
     {
         "version": "26.2.1",
@@ -641,7 +643,8 @@
     },
     {
         "version": "26.0.0",
-        "date": "August 18th, 2021"
+        "date": "August 18th, 2021",
+        "notesPath": "./upgrading-to-ag-grid-26"
     },
     {
         "version": "25.3.0",
