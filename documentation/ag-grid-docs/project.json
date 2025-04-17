@@ -66,6 +66,8 @@
     "dev": {
       "dependsOn": [
         "^build",
+        "generate-doc-references",
+        "generate-examples",
         "^docs-resolved-interfaces",
         "elapsedBuildTime",
         "ag-grid-react:build",
@@ -120,7 +122,7 @@
     "test:vitest": {
       "command": "npx vitest",
       "outputs": ["{workspaceRoot}/reports/ag-grid-website.xml"],
-      "dependsOn": [],
+      "dependsOn": ["ag-grid-community:build:css", "ag-grid-enterprise:build:css", "generate-doc-references"],
       "options": {
         "cwd": "{projectRoot}",
         "config": "vitest.config.mjs",
