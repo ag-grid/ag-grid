@@ -1,6 +1,7 @@
 interface Params {
     pageName: string;
     exampleName: string;
+    logError?: boolean;
 }
 
 export const CONSOLE_LOG_START = '/** CONSOLE LOG START **/';
@@ -19,7 +20,7 @@ export const CONSOLE_LOG_END = '/** CONSOLE LOG END **/';
  *     This is deserialised on the parent window to the correct value.
  *
  */
-export const getConsoleLogSnippet = ({ pageName, exampleName }: Params) =>
+export const getConsoleLogSnippet = ({ pageName, exampleName, logError }: Params) =>
     `${CONSOLE_LOG_START}
 
 function patchConsoleLog() {
@@ -115,8 +116,9 @@ function patchConsoleLog() {
                 exampleName: '${exampleName}',
                 data: getConsoleLogData(args),
             });
-        } catch {
-        // Posting is best-effort and shouldn't block normal console logging.
+        } catch(error) {
+            // Posting is best-effort and shouldn't block normal console logging.
+            ${logError ? 'console.error(error);' : undefined}
         }
         originalConsoleLog(...args);
     };
