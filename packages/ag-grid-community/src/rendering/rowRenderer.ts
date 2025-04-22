@@ -617,7 +617,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
 
         this.workOutFirstAndLastRowsToRender();
 
-        const { stickyRowFeature } = this;
+        const { stickyRowFeature, gos } = this;
         if (stickyRowFeature) {
             stickyRowFeature.checkStickyRows();
 
@@ -634,7 +634,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
         this.gridBodyCtrl.updateRowCount();
 
         if (!params.onlyBody) {
-            this.refreshFloatingRowComps(recycleRows);
+            this.refreshFloatingRowComps(gos.get('enableRowPinning') ? recycleRows : undefined);
         }
 
         this.dispatchDisplayedRowsChanged();
