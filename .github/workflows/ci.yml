@@ -366,7 +366,7 @@ jobs:
   fw_pkg_test:
     runs-on: ubuntu-24.04
     name: Framework Package Tests (${{ matrix.framework }})
-    needs: init
+    needs: build_lint
     strategy:
       fail-fast: false
       matrix: ${{ fromJson(needs.init.outputs.test_pkg_matrix )}}
