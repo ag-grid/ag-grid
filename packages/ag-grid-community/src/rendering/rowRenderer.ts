@@ -469,10 +469,10 @@ export class RowRenderer extends BeanStub implements NamedBean {
         return res;
     }
 
-    public refreshFloatingRowComps(): void {
-        this.refreshFloatingRows(this.topRowCtrls, 'top');
+    public refreshFloatingRowComps(recycleRows = true): void {
+        this.refreshFloatingRows(this.topRowCtrls, 'top', recycleRows);
 
-        this.refreshFloatingRows(this.bottomRowCtrls, 'bottom');
+        this.refreshFloatingRows(this.bottomRowCtrls, 'bottom', recycleRows);
     }
 
     /**
@@ -488,7 +488,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
      * @param rowCtrls The list of existing row controllers
      * @param rowNodes The canonical list of row nodes that should have associated controllers
      */
-    private refreshFloatingRows(rowCtrls: RowCtrl[], floating: NonNullable<RowPinnedType>): void {
+    private refreshFloatingRows(rowCtrls: RowCtrl[], floating: NonNullable<RowPinnedType>, recycleRows: boolean): void {
         const { pinnedRowModel, beans, printLayout } = this;
         const rowCtrlMap = Object.fromEntries(rowCtrls.map((ctrl) => [ctrl.rowNode.id!, ctrl]));
 
@@ -503,7 +503,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
                 rowCtrl.destroySecondPass();
             }
 
-            if (node.id! in rowCtrlMap) {
+            if (node.id! in rowCtrlMap && recycleRows) {
                 // ctrl exists already, re-use it
                 rowCtrls[i] = rowCtrlMap[node.id!];
                 delete rowCtrlMap[node.id!];
@@ -634,7 +634,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
         this.gridBodyCtrl.updateRowCount();
 
         if (!params.onlyBody) {
-            this.refreshFloatingRowComps();
+            this.refreshFloatingRowComps(recycleRows);
         }
 
         this.dispatchDisplayedRowsChanged();
