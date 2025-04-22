@@ -8,6 +8,7 @@ import type {
     IDoesFilterPassParams,
     IFilterComp,
     IFilterDef,
+    IFilterParams,
     IMultiFilter,
     IMultiFilterModel,
     IMultiFilterParams,
@@ -81,6 +82,14 @@ export class MultiFilter extends BaseMultiFilter<MultiFilterWrapper> implements 
             this.afterFiltersReadyFuncs.forEach((f) => f());
             this.afterFiltersReadyFuncs.length = 0;
         });
+    }
+
+    public refresh(params: IFilterParams): boolean {
+        // multi filter has never been reactive. Implementing this would require extracting
+        // even more logic from ColumnFilterService to determine if the filter has changed.
+        // Just update the params for the latest model.
+        this.params = params as unknown as MultiFilterDisplayParams;
+        return true;
     }
 
     public isFilterActive(): boolean {
@@ -245,6 +254,13 @@ export class MultiFilter extends BaseMultiFilter<MultiFilterWrapper> implements 
         return wrapper.comp;
     }
 
+    protected override executeOnWrapper(
+        wrapper: MultiFilterWrapper,
+        name: 'onAnyFilterChanged' | 'onNewRowsLoaded'
+    ): void {
+        wrapper.evaluator?.[name]?.();
+    }
+
     private createFilter(
         filterDef: IFilterDef,
         index: number,
@@ -257,7 +273,12 @@ export class MultiFilter extends BaseMultiFilter<MultiFilterWrapper> implements 
         let eventSvc: LocalEventService<'filterParamsChanged' | 'filterStateChanged' | 'filterAction'>;
         let updateModel: (column: AgColumn, action: FilterAction, additionalEventAttributes?: any) => void;
 
-        const { compDetails, evaluator, evaluatorParams, createFilterUi } = this.beans.colFilter!.createFilterInstance(
+        const {
+            compDetails,
+            evaluator,
+            evaluatorParams: originalEvaluatorParams,
+            createFilterUi,
+        } = this.beans.colFilter!.createFilterInstance(
             column,
             filterDef,
             'agTextColumnFilter',
@@ -368,10 +389,11 @@ export class MultiFilter extends BaseMultiFilter<MultiFilterWrapper> implements 
             return AgPromise.resolve(null);
         }
 
+        let evaluatorParams: FilterEvaluatorParams | undefined;
         if (evaluator) {
-            const { onModelChange, doesRowPassOtherFilter } = evaluatorParams!;
-            evaluator.init?.({
-                ...evaluatorParams!,
+            const { onModelChange, doesRowPassOtherFilter } = originalEvaluatorParams!;
+            evaluatorParams = {
+                ...originalEvaluatorParams!,
                 model: initialModelForFilter,
                 onModelChange: (newModel, additionalEventAttributes) =>
                     onModelChange(
@@ -380,7 +402,8 @@ export class MultiFilter extends BaseMultiFilter<MultiFilterWrapper> implements 
                     ),
                 doesRowPassOtherFilter: (node) =>
                     doesRowPassOtherFilter(node) && this.doesFilterPass({ node, data: node.data }, index),
-            });
+            };
+            evaluator.init?.(evaluatorParams);
         }
 
         return createFilterUi().then((filter) => {

@@ -266,11 +266,13 @@ export abstract class BaseMultiFilter<TFilterWrapper> extends TabGuardComp {
     }
 
     public onAnyFilterChanged(): void {
-        this.executeFunctionIfExists('onAnyFilterChanged');
+        this.executeFunctionIfExists('onAnyFilterChanged', (wrapper) =>
+            this.executeOnWrapper(wrapper, 'onAnyFilterChanged')
+        );
     }
 
     public onNewRowsLoaded(): void {
-        this.executeFunctionIfExists('onNewRowsLoaded');
+        this.executeFunctionIfExists('onNewRowsLoaded', (wrapper) => this.executeOnWrapper(wrapper, 'onNewRowsLoaded'));
     }
 
     public override destroy(): void {
@@ -280,12 +282,20 @@ export abstract class BaseMultiFilter<TFilterWrapper> extends TabGuardComp {
         super.destroy();
     }
 
-    private executeFunctionIfExists<T extends SharedFilterUi>(name: keyof T, ...params: any[]): void {
+    protected executeOnWrapper(_wrapper: TFilterWrapper, _name: 'onAnyFilterChanged' | 'onNewRowsLoaded'): void {
+        // only for MultiFilter
+    }
+
+    private executeFunctionIfExists<T extends SharedFilterUi>(
+        name: keyof T,
+        executeOnEvaluator?: (wrapper: TFilterWrapper) => void
+    ): void {
         // The first filter is always the "dominant" one. By iterating in reverse order we ensure the first filter
         // always gets the last say
         forEachReverse(this.getFilterWrappers(), (wrapper) => {
             if (wrapper) {
-                this.executeFunctionIfExistsOnFilter(this.getFilterFromWrapper(wrapper) as T, name, params);
+                executeOnEvaluator?.(wrapper);
+                this.executeFunctionIfExistsOnFilter(this.getFilterFromWrapper(wrapper) as T, name);
             }
         });
     }
