@@ -522,7 +522,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
     public highlightRow(rowNode: RowNode | null | undefined, highlight: RowHighlightPosition = 'Below'): void {
         const old = this.lastHighlightedRow;
         if (old !== rowNode || (rowNode && rowNode.highlighted !== highlight)) {
-            if (old) {
+            if (old && old !== rowNode) {
                 old.highlighted = null;
                 old.dispatchRowEvent('rowHighlightChanged');
             }
