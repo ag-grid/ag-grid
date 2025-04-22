@@ -11,16 +11,16 @@ import type { CellPosition } from '../main-umd-noStyles';
 import { CellCtrl } from '../rendering/cell/cellCtrl';
 import type { RowCtrl } from '../rendering/row/rowCtrl';
 import { _getTabIndex } from '../utils/browser';
+import { EditingTrigger } from './editingTrigger';
 import { GridEditingModel } from './model/gridEditingModel';
 import type { IEditStrategy } from './strategy/iEditStrategy';
 import { _resolveControllers } from './strategy/utils';
-import type { IEditTrigger } from './trigger/baseEditTrigger';
 
 export class EditingService extends BeanStub implements NamedBean {
     beanName = 'editingSvc' as const;
     private editModel?: GridEditingModel;
     private editStrategy?: IEditStrategy;
-    private editTrigger?: IEditTrigger;
+    private editTrigger?: EditingTrigger;
 
     postConstruct(): void {
         this.editModel = new GridEditingModel(this.beans);
@@ -31,19 +31,16 @@ export class EditingService extends BeanStub implements NamedBean {
             }
 
             const pStrategy = this.editStrategy;
-            const pTrigger = this.editTrigger;
             // will re-create if different
             this.createEditStrategy();
-            this.createEditTrigger();
 
-            if (
-                pStrategy?.beanName !== this.editStrategy?.beanName ||
-                pTrigger?.beanName !== this.editTrigger?.beanName
-            ) {
+            if (pStrategy?.beanName !== this.editStrategy?.beanName) {
                 this.editModel?.destroy();
                 this.editModel = new GridEditingModel(this.beans);
             }
         });
+
+        this.createEditTrigger();
     }
 
     private createEditStrategy(): IEditStrategy {
@@ -63,20 +60,8 @@ export class EditingService extends BeanStub implements NamedBean {
         )!);
     }
 
-    private createEditTrigger(): IEditTrigger {
-        const { beans, gos, editTrigger } = this;
-        const triggerName: any = gos.get('experimentalEditingModeV2')?.trigger ?? 'providedEditTrigger';
-
-        if (editTrigger) {
-            if (editTrigger.beanName === triggerName) {
-                return editTrigger;
-            }
-            editTrigger.destroy?.();
-        }
-
-        return (this.editTrigger = this.createOptionalManagedBean(
-            beans.registry.createDynamicBean<IEditTrigger>(triggerName, true, this.editModel)
-        )!);
+    private createEditTrigger(): EditingTrigger {
+        return new EditingTrigger(this.beans, this.editModel!);
     }
 
     private destroyEditStrategy(): void {
