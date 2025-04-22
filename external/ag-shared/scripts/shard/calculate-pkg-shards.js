@@ -6,10 +6,13 @@ const matches = {
     'ag-charts-angular': 'angular',
     'ag-charts-react': 'react',
     'ag-charts-vue3': 'vue',
+    'ag-grid-angular': 'angular',
+    'ag-grid-react': 'react',
+    'ag-grid-vue3': 'vue',
 };
 
 const result = { framework: [] };
-const affectedProjects = execSync('yarn nx show projects --affected -t pack', { encoding: 'utf-8' }).split('\n');
+const affectedProjects = execSync('yarn nx show projects -t pack', { encoding: 'utf-8' }).split('\n');
 
 for (const packageName in matches) {
     if (affectedProjects.includes(packageName)) {
