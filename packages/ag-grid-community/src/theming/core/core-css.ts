@@ -482,6 +482,11 @@ export type CoreParams = {
     pinnedRowBorder: BorderValue;
 
     /**
+     * Text colour for row in the main viewport that has been pinned to the top of bottom.
+     */
+    pinnedSourceRowTextColor: ColorValue;
+
+    /**
      * Default shadow for elements that float above the grid and are intended to appear separated from it e.g. dialogs and menus
      */
     popupShadow: ShadowValue;
@@ -1069,4 +1074,7 @@ export const coreDefaults: Readonly<CoreParams> = {
     statusBarLabelFontWeight: 500,
     statusBarValueColor: foregroundColor,
     statusBarValueFontWeight: 500,
+    pinnedSourceRowTextColor: {
+        ref: 'textColor',
+    },
 };

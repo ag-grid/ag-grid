@@ -31,6 +31,7 @@ const gridOptions: GridOptions<IOlympicData> = {
         pinnedRowBorder: {
             width: 3,
         },
+        pinnedSourceRowTextColor: '#919191',
     }),
 };
 
