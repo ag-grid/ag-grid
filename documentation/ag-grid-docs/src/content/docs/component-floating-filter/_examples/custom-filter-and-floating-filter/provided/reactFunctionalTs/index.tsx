@@ -21,7 +21,7 @@ ModuleRegistry.registerModules([
     CustomFilterModule,
     NumberFilterModule,
     ClientSideRowModelModule,
-    ValidationModule /* Development Only */,
+    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 
 const GridExample = () => {

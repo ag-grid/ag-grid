@@ -24,7 +24,7 @@ ModuleRegistry.registerModules([
     StatusBarModule,
     RowApiModule,
     EventApiModule,
-    ValidationModule /* Development Only */,
+    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 
 const columnDefs: ColDef[] = [

@@ -88,8 +88,9 @@ export function _applyColumnState(
         gos,
     } = beans;
 
-    const providedCols = colModel.getColDefCols() || [];
-    if (!providedCols?.length) {
+    const providedCols = colModel.getColDefCols() ?? [];
+    const selectionCols = selectionColSvc?.getColumns();
+    if (!providedCols?.length && !selectionCols?.length) {
         return false;
     }
 

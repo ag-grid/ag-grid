@@ -4,6 +4,15 @@
     margin: 0 0 6px;
 }
 
+.form h1,
+.form h2,
+.form h3,
+.form h4 {
+    display: flex;
+    align-items: center;
+    gap: $spacing-size-2;
+}
+
 .licenceWrapper {
     margin-top: $spacing-size-2;
     position: relative;

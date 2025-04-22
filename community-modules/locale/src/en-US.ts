@@ -196,6 +196,7 @@ export const AG_GRID_LOCALE_EN = {
     pageSizeSelectorLabel: 'Page Size:',
     footerTotal: 'Total',
     statusBarLastRowUnknown: '?',
+    scrollColumnIntoView: 'Scroll ${variable} into view',
 
     // Pivoting
     pivotColumnGroupTotals: 'Total',

@@ -68,7 +68,7 @@ export class AgDialog extends AgPanel<DialogOptions> implements FocusableContain
         const eGui = this.getGui();
         const { movable, resizable, maximizable, modal, postProcessPopupParams } = this.config;
 
-        this.addCssClass('ag-dialog');
+        this.addCss('ag-dialog');
 
         super.postConstruct();
 

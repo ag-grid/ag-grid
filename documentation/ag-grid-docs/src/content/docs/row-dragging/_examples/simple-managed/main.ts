@@ -14,7 +14,7 @@ ModuleRegistry.registerModules([
     NumberFilterModule,
     RowDragModule,
     ClientSideRowModelModule,
-    ValidationModule /* Development Only */,
+    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 
 let gridApi: GridApi<IOlympicData>;

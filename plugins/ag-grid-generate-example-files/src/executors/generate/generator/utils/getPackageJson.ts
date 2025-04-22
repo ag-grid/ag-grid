@@ -35,6 +35,9 @@ export function getPackageJson({ isLocale, internalFramework, isIntegratedCharts
     const packageJson = {
         name: `ag-grid-example`,
         dependencies: {},
+        devDependencies: {
+            '@types/node': '^22',
+        },
     };
 
     const addDependency = (name, version) => {

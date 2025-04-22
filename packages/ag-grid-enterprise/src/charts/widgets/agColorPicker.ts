@@ -75,7 +75,7 @@ export class AgColorPicker extends AgPickerField<string, AgColorPickerParams & A
         const pickerComponent = this.pickerComponent!;
         const colorPanel = this.createBean(new AgColorPanel({ picker: this }));
 
-        pickerComponent.addCssClass('ag-color-dialog');
+        pickerComponent.addCss('ag-color-dialog');
 
         colorPanel.addDestroyFunc(() => {
             if (pickerComponent.isAlive()) {

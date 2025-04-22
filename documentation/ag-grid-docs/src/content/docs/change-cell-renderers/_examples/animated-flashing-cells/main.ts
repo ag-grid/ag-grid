@@ -14,7 +14,7 @@ ModuleRegistry.registerModules([
     CellStyleModule,
     ClientSideRowModelModule,
     HighlightChangesModule,
-    ValidationModule /* Development Only */,
+    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 
 let gridApi: GridApi;

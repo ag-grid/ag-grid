@@ -51,11 +51,11 @@ describe('ag-grid parentId tree excel export', () => {
         api.exportDataAsExcel({ fileName: 'test.xlsx' });
 
         expect(await getExcelJsonData(await objectUrls.pullBlob())).toEqual([
-            { Group: 'grp-0', value: 'value-100' },
-            { Group: 'grp-1', value: 'value-200' },
-            { Group: 'grp-2', value: 'value-300' },
-            { Group: 'grp-3', value: 'value-400' },
-            { Group: 'grp-4', value: 'value-500' },
+            { Group: ' -> grp-0', value: 'value-100' },
+            { Group: ' -> grp-0 -> grp-1', value: 'value-200' },
+            { Group: ' -> grp-0 -> grp-1 -> grp-2', value: 'value-300' },
+            { Group: ' -> grp-0 -> grp-1 -> grp-3', value: 'value-400' },
+            { Group: ' -> grp-0 -> grp-4', value: 'value-500' },
         ]);
 
         // Try to disable tree data now

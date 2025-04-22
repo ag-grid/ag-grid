@@ -4,21 +4,22 @@ import { Component, _createIconNoSpan, _focusInto, isColumn, isProvidedColumnGro
 import { isRowGroupColLocked } from '../rowGrouping/rowGroupingUtils';
 import { AgMenuList } from '../widgets/agMenuList';
 
-type MenuItemName = 'rowGroup' | 'value' | 'pivot';
+type MenuItemName = 'scrollIntoView' | 'rowGroup' | 'value' | 'pivot';
 
 type MenuItemProperty = {
     allowedFunction: (col: AgColumn) => boolean;
     activeFunction: (col: AgColumn) => boolean;
     activateLabel: (name: string) => string;
-    deactivateLabel: (name: string) => string;
     activateFunction: () => void;
-    deActivateFunction: () => void;
+    deactivateLabel?: (name: string) => string;
+    deActivateFunction?: () => void;
     addIcon: IconName;
-    removeIcon: IconName;
+    removeIcon?: IconName;
 };
 
 export class ToolPanelContextMenu extends Component {
     private columns: AgColumn[];
+    private allowScrollIntoView: boolean;
     private allowGrouping: boolean;
     private allowValues: boolean;
     private allowPivoting: boolean;
@@ -70,6 +71,7 @@ export class ToolPanelContextMenu extends Component {
         }
         this.columns = columns;
 
+        this.allowScrollIntoView = columns.some((col) => col.isVisible());
         this.allowGrouping = columns.some((col) => col.isPrimary() && col.isAllowRowGroup());
         this.allowValues = columns.some((col) => col.isPrimary() && col.isAllowValue());
         this.allowPivoting =
@@ -83,6 +85,23 @@ export class ToolPanelContextMenu extends Component {
 
         const menuItemMap = new Map<MenuItemName, MenuItemProperty>();
         this.menuItemMap = menuItemMap;
+
+        menuItemMap.set('scrollIntoView', {
+            allowedFunction: (col) => col.isVisible() && !col.isPinned(),
+            activeFunction: () => false,
+            activateLabel: () =>
+                localeTextFunc('scrollColumnIntoView', `Scroll ${displayName} into view`, [displayName!]),
+            activateFunction: () => {
+                const firstVisibleColumn = this.columns.find((col) => col.isVisible());
+
+                if (firstVisibleColumn) {
+                    this.beans.ctrlsSvc.getScrollFeature().ensureColumnVisible(firstVisibleColumn);
+                }
+            },
+            deActivateFunction: () => {},
+            addIcon: 'ensureColumnVisible',
+        });
+
         menuItemMap.set('rowGroup', {
             allowedFunction: (col) => col.isPrimary() && col.isAllowRowGroup() && !isRowGroupColLocked(col, beans),
             activeFunction: (col) => col.isRowGroupActive(),
@@ -176,7 +195,7 @@ export class ToolPanelContextMenu extends Component {
     }
 
     private isActive(): boolean {
-        return this.allowGrouping || this.allowValues || this.allowPivoting;
+        return this.allowScrollIntoView || this.allowGrouping || this.allowValues || this.allowPivoting;
     }
 
     private getMappedMenuItems(): MenuItemDef[] {
@@ -194,11 +213,11 @@ export class ToolPanelContextMenu extends Component {
                 });
             }
 
-            if (isActive) {
+            if (isActive && val.removeIcon && val.deactivateLabel) {
                 ret.push({
                     name: val.deactivateLabel(displayName!),
                     icon: _createIconNoSpan(val.removeIcon, beans, null),
-                    action: () => val.deActivateFunction(),
+                    action: () => val.deActivateFunction?.(),
                 });
             }
         }

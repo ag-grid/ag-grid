@@ -44,6 +44,8 @@ const ICONS = [
     'not-allowed',
     'paste',
     'pin',
+    'pinned-bottom',
+    'pinned-top',
     'pivot',
     'plus',
     'previous',

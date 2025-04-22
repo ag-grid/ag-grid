@@ -28,7 +28,7 @@ ModuleRegistry.registerModules([
     TextFilterModule,
     RowSelectionModule,
     ClientSideRowModelModule,
-    ValidationModule /* Development Only */,
+    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 
 const SportRenderer = defineComponent({

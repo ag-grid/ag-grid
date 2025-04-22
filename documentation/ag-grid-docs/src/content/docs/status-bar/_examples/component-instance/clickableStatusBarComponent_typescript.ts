@@ -36,7 +36,7 @@ export class ClickableStatusBarComponent implements IStatusPanelComp {
     }
 
     onButtonClicked() {
-        alert('Selected Row Count: ' + this.params.api.getSelectedRows().length);
+        console.log('Selected Row Count: ' + this.params.api.getSelectedRows().length);
     }
 
     setVisible(visible: boolean) {

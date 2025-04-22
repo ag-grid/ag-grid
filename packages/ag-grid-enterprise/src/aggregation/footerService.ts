@@ -1,5 +1,5 @@
-import type { IFooterService, NamedBean, RowNode } from 'ag-grid-community';
-import { BeanStub, _getGrandTotalRow, _getGroupTotalRowCallback } from 'ag-grid-community';
+import type { Column, GridOptions, IFooterService, IRowNode, NamedBean, RowNode } from 'ag-grid-community';
+import { BeanStub, _addGridCommonParams, _getGrandTotalRow, _getGroupTotalRowCallback, _warn } from 'ag-grid-community';
 
 import { _createRowNodeFooter } from './footerUtils';
 
@@ -18,7 +18,7 @@ export class FooterService extends BeanStub implements NamedBean, IFooterService
 
         if (isRootNode) {
             const grandTotal = includeFooterNodes && _getGrandTotalRow(this.gos);
-            if (grandTotal === position) {
+            if (_positionMatchesGrandTotalRow(position, grandTotal)) {
                 _createRowNodeFooter(node, this.beans);
                 callback(node.sibling, index++);
             }
@@ -61,7 +61,65 @@ export class FooterService extends BeanStub implements NamedBean, IFooterService
         return getDefaultIndex(adjustedIndex);
     }
 
+    public doesCellShowTotalPrefix(node: IRowNode, col?: Column): boolean {
+        if (!node.footer || !col?.getColDef().showRowGroup) {
+            return false;
+        }
+
+        // if tree data and a footer, always include the footer prefix
+        if (this.gos.get('treeData')) {
+            return true;
+        }
+
+        // if grand total row footer, heading shown in first group column
+        if (node.level === -1) {
+            return this.beans.showRowGroupCols?.getShowRowGroupCols()[0] === col;
+        }
+
+        // otherwise, show in relevant group column
+        return !!node.rowGroupColumn && col && col.isRowGroupDisplayed(node.rowGroupColumn.getId());
+    }
+
+    public applyTotalPrefix(value: any, formattedValue: string | null, node: IRowNode, column: Column): string {
+        const totalValueGetter = column.getColDef().cellRendererParams?.totalValueGetter;
+        if (totalValueGetter) {
+            const valueGetterParams = _addGridCommonParams(this.gos, { column, node, value, formattedValue });
+            const getterType = typeof totalValueGetter;
+            if (getterType === 'function') {
+                return totalValueGetter(valueGetterParams);
+            }
+
+            if (typeof totalValueGetter === 'string') {
+                return this.beans.expressionSvc?.evaluate(totalValueGetter, valueGetterParams);
+            }
+            _warn(179);
+        }
+
+        // grand total row only displays the 'Total' value
+        if (node.level === -1) {
+            return this.getLocaleTextFunc()('footerTotal', 'Total') + ' ';
+        }
+
+        return this.getTotalValue(formattedValue ?? value) ?? '';
+    }
+
     public getTotalValue(value: any): string {
         return this.getLocaleTextFunc()('footerTotal', 'Total') + ' ' + (value ?? '');
+    }
+}
+
+function _positionMatchesGrandTotalRow(
+    position: 'top' | 'bottom',
+    grandTotaRow: GridOptions['grandTotalRow'] | false
+): boolean {
+    switch (grandTotaRow) {
+        case 'top':
+        case 'pinnedTop':
+            return position === 'top';
+        case 'bottom':
+        case 'pinnedBottom':
+            return position === 'bottom';
+        default:
+            return false;
     }
 }

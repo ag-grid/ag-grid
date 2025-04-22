@@ -7,7 +7,11 @@ import {
     createGrid,
 } from 'ag-grid-community';
 
-ModuleRegistry.registerModules([TextFilterModule, InfiniteRowModelModule, ValidationModule /* Development Only */]);
+ModuleRegistry.registerModules([
+    TextFilterModule,
+    InfiniteRowModelModule,
+    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
+]);
 
 let gridApi: GridApi<IOlympicData>;
 

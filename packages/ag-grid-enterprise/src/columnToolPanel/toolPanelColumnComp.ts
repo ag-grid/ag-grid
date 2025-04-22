@@ -85,9 +85,9 @@ export class ToolPanelColumnComp extends Component {
 
         // if grouping, we add an extra level of indent, to cater for expand/contract icons we need to indent for
         if (groupsExist) {
-            this.addCssClass('ag-column-select-add-group-indent');
+            this.addCss('ag-column-select-add-group-indent');
         }
-        this.addCssClass(`ag-column-select-indent-${indent}`);
+        this.addCss(`ag-column-select-indent-${indent}`);
         this.getGui().style.setProperty('--ag-indentation-level', String(indent));
 
         this.tooltipFeature = this.createOptionalManagedBean(
@@ -126,7 +126,7 @@ export class ToolPanelColumnComp extends Component {
         this.setupTooltip();
 
         const classes = _getToolPanelClassesFromColDef(column.getColDef(), gos, column, null);
-        classes.forEach((c) => this.addOrRemoveCssClass(c, true));
+        classes.forEach((c) => this.toggleCss(c, true));
     }
 
     public getColumn(): AgColumn {
@@ -302,7 +302,7 @@ export class ToolPanelColumnComp extends Component {
 
         this.cbSelect.setReadOnly(!canBeToggled);
         this.eDragHandle.classList.toggle('ag-column-select-column-readonly', !canBeDragged);
-        this.addOrRemoveCssClass('ag-column-select-column-readonly', !canBeDragged && !canBeToggled);
+        this.toggleCss('ag-column-select-column-readonly', !canBeDragged && !canBeToggled);
 
         this.cbSelect.setPassive(false);
 

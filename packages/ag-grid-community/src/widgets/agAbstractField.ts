@@ -40,7 +40,7 @@ export abstract class AgAbstractField<
         }
 
         if (this.className) {
-            this.addCssClass(this.className);
+            this.addCss(this.className);
         }
 
         this.refreshAriaLabelledBy();

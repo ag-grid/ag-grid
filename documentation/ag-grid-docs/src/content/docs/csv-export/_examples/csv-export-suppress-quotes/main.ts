@@ -17,7 +17,7 @@ ModuleRegistry.registerModules([
     ContextMenuModule,
     NumberEditorModule,
     TextEditorModule,
-    ValidationModule /* Development Only */,
+    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 
 let gridApi: GridApi;
@@ -54,7 +54,9 @@ function getParams() {
 function onBtnExport() {
     const params = getParams();
     if (params.suppressQuotes) {
-        alert('NOTE: you are downloading a file with non-standard quotes - it may not render correctly in Excel.');
+        console.log(
+            'NOTE: you are downloading a file with non-standard quotes - it may not render correctly in Excel.'
+        );
     }
     gridApi!.exportDataAsCsv(params);
 }

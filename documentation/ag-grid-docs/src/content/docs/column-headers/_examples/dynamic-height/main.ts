@@ -14,7 +14,7 @@ ModuleRegistry.registerModules([
     ClientSideRowModelModule,
     PivotModule,
     NumberFilterModule,
-    ValidationModule /* Development Only */,
+    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 
 const columnDefs: ColGroupDef[] = [

@@ -26,7 +26,7 @@ ModuleRegistry.registerModules([
     RowSelectionModule,
     PaginationModule,
     ClientSideRowModelModule,
-    ValidationModule /* Development Only */,
+    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 
 const columnDefs: ColDef[] = [

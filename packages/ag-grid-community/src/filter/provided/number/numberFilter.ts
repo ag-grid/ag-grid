@@ -99,8 +99,8 @@ export class NumberFilter extends ScalarFilter<NumberFilterModel, number> {
         const eValue = this.createManagedBean(
             allowedCharPattern ? new AgInputTextField({ allowedCharPattern }) : new AgInputNumberField()
         );
-        eValue.addCssClass(`ag-filter-${fromTo}`);
-        eValue.addCssClass('ag-filter-filter');
+        eValue.addCss(`ag-filter-${fromTo}`);
+        eValue.addCss('ag-filter-filter');
         eValues.push(eValue);
         eCondition.appendChild(eValue.getGui());
     }

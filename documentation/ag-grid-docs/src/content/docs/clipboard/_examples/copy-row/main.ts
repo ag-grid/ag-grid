@@ -19,7 +19,7 @@ ModuleRegistry.registerModules([
     ContextMenuModule,
     CellSelectionModule,
     RowSelectionModule,
-    ValidationModule /* Development Only */,
+    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 
 let gridApi: GridApi<IOlympicData>;

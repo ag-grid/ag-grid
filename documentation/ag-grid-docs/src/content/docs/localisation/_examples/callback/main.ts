@@ -61,7 +61,7 @@ ModuleRegistry.registerModules([
     TextFilterModule,
     NumberFilterModule,
     IntegratedChartsModule.with(AgChartsEnterpriseModule),
-    ValidationModule /* Development Only */,
+    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 
 class NodeIdRenderer implements ICellRendererComp {

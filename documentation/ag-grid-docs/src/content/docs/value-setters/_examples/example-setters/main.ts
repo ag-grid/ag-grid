@@ -21,7 +21,7 @@ ModuleRegistry.registerModules([
     TextEditorModule,
     NumberEditorModule,
     ClientSideRowModelModule,
-    ValidationModule /* Development Only */,
+    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 
 const columnDefs: ColDef[] = [

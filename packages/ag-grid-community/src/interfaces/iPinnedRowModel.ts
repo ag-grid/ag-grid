@@ -54,4 +54,16 @@ export interface IPinnedRowModel {
      * This is a no-op for the static pinned row model.
      */
     setPinnedState(state: RowPinningState): void;
+
+    /**
+     * Specific method for flagging the grand total row to be pinned, since the behaviour
+     * is different than for all other pinned rows. Used by `FlattenStage` only. End users
+     * and API calls should be routed through `pinRow` like normal.
+     *
+     * This is a no-op for the static pinned row model.
+     */
+    setGrandTotalPinned(value: RowPinnedType): void;
+
+    /** Which container should the grand total row be pinned to. This is a no-op for the static pinned row model. */
+    getGrandTotalPinned(): RowPinnedType;
 }

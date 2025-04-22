@@ -17,6 +17,7 @@ export type { ColumnMoveService } from './columnMove/columnMoveService';
 export type { ColumnNameService } from './columns/columnNameService';
 export { IAggColumnNameService } from './interfaces/iAggColumnNameService';
 export { IShowRowGroupColsService } from './interfaces/iShowRowGroupColsService';
+export { IShowRowGroupColsValueService } from './interfaces/iShowRowGroupColsValueService';
 export { IPivotResultColsService } from './interfaces/iPivotResultColsService';
 export { ColumnKeyCreator } from './columns/columnKeyCreator';
 export type { VisibleColsService } from './columns/visibleColsService';
@@ -140,7 +141,7 @@ export {
     ROW_ID_PREFIX_TOP_PINNED as _ROW_ID_PREFIX_TOP_PINNED,
     ROW_ID_PREFIX_BOTTOM_PINNED as _ROW_ID_PREFIX_BOTTOM_PINNED,
 } from './entities/rowNode';
-export { _createGlobalRowEvent } from './entities/rowNodeUtils';
+export { _createGlobalRowEvent, _createRowNodeSibling } from './entities/rowNodeUtils';
 export {
     RowPinnedType,
     IRowNode,
@@ -637,7 +638,7 @@ export {
     _FindApi,
 } from './api/gridApi';
 export { _getClientSideRowModel, _getServerSideRowModel } from './api/rowModelApiUtils';
-export { AgEventType, AgPublicEventType, _ALL_EVENTS, _PUBLIC_EVENTS } from './eventTypes'; // TODO: remove _ALL_EVENTS, _PUBLIC_EVENTS if not required by VUE
+export { AgEventType, AgPublicEventType, _GET_ALL_EVENTS, _PUBLIC_EVENTS } from './eventTypes'; // TODO: remove _GET_ALL_EVENTS, _PUBLIC_EVENTS if not required by VUE
 export type { FocusService } from './focusService';
 export type { GridOptionsService, PropertyValueChangedEvent } from './gridOptionsService';
 export { PropertyChangedEvent } from './gridOptionsService';
@@ -658,6 +659,7 @@ export {
     _isClientSideRowModel,
     _isServerSideRowModel,
     _isGroupUseEntireRow,
+    _isFullWidthGroupRow,
     _canSkipShowingRowGroup,
     _getRowHeightAsNumber,
     _shouldUpdateColVisibilityAfterGroup,
@@ -912,7 +914,7 @@ export {
 } from './interfaces/iCallbackParams';
 export { WithoutGridCommon } from './interfaces/iCommon';
 
-export { _ALL_GRID_OPTIONS, _BOOLEAN_MIXED_GRID_OPTIONS } from './propertyKeys';
+export { _GET_ALL_GRID_OPTIONS, _BOOLEAN_MIXED_GRID_OPTIONS } from './propertyKeys';
 export { IPivotColDefService } from './interfaces/iPivotColDefService';
 export { IViewportDatasource, IViewportDatasourceParams } from './interfaces/iViewportDatasource';
 export {
@@ -1065,8 +1067,16 @@ export { _downloadFile } from './export/downloader';
 export { RowSpanningAccumulator, GridSerializingParams, RowAccumulator } from './export/iGridSerializer';
 
 // modules
-export { Module, ModuleValidationResult, _ModuleWithApi, _ModuleWithoutApi, ModuleName } from './interfaces/iModule';
-export { ModuleRegistry, _getGridRegisteredModules, _setUmd } from './modules/moduleRegistry';
+export {
+    AgModuleName,
+    Module,
+    ModuleValidationResult,
+    _ModuleWithApi,
+    _ModuleWithoutApi,
+    ModuleName,
+    ValidationModuleName as _ValidationModuleName,
+} from './interfaces/iModule';
+export { ModuleRegistry, _registerModule, _getGridRegisteredModules, _setUmd } from './modules/moduleRegistry';
 
 export { ValidationModule } from './validation/validationModule';
 export { ColumnMoveModule as _ColumnMoveModule } from './columnMove/columnMoveModule';

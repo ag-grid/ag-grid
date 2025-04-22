@@ -9,7 +9,11 @@ import {
 
 import { NumberFilterComponent } from './numberFilterComponent_typescript';
 
-ModuleRegistry.registerModules([CustomFilterModule, ClientSideRowModelModule, ValidationModule /* Development Only */]);
+ModuleRegistry.registerModules([
+    CustomFilterModule,
+    ClientSideRowModelModule,
+    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
+]);
 
 const columnDefs: ColDef[] = [
     { field: 'athlete', width: 150, filter: false },

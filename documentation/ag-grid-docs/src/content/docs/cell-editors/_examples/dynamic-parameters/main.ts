@@ -21,7 +21,7 @@ ModuleRegistry.registerModules([
     RichSelectModule,
     TextEditorModule,
     LargeTextEditorModule,
-    ValidationModule /* Development Only */,
+    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 
 const cellCellEditorParams = (params: ICellEditorParams<IRow>) => {

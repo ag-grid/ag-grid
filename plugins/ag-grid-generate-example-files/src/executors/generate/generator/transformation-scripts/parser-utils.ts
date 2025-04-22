@@ -440,14 +440,19 @@ export function getImport(filename: string) {
     return `import { ${componentName} } from './${componentFileName}';`;
 }
 
-export function getPropertyInterfaces(properties) {
-    let propTypesUsed = [];
+export function getPropertyInterfaces(properties, fullFile?: string): string[] {
+    let propTypesUsed: string[] = [];
     properties.forEach((prop) => {
         if (prop.typings?.typesToInclude?.length > 0) {
             propTypesUsed = [...propTypesUsed, ...prop.typings.typesToInclude];
         }
     });
-    return [...new Set(propTypesUsed)];
+    // Rough way of organising imports by not adding interfaces that are not present in the code file
+    let imports = [...new Set(propTypesUsed)];
+    if (fullFile) {
+        imports = imports.filter((i) => new RegExp(`\\b${i}\\b`).test(fullFile));
+    }
+    return imports;
 }
 
 /**
@@ -530,7 +535,7 @@ export function addRelativeImports(bindings: ParsedBindings, imports: string[], 
 }
 
 export function removeModuleRegistration(code: string) {
-    return code.replace(/\b(agGrid\.)?ModuleRegistry\.registerModules(.|\n)*?]\)(;?)/g, '');
+    return code.replace(/\b(agGrid\.)?ModuleRegistry\.registerModules(.|\n)*?]\)(;)/g, '');
 }
 
 export function handleRowGenericInterface(fileTxt: string, tData: string): string {

@@ -73,9 +73,9 @@ const RowComp = ({ rowCtrl, containerType }: { rowCtrl: RowCtrl; containerType: 
         }
     }, [fullWidthCompDetails, autoHeightSetupAttempt]);
 
-    const cssClassManager = useRef<CssClassManager>();
-    if (!cssClassManager.current) {
-        cssClassManager.current = new CssClassManager(() => eGui.current);
+    const cssManager = useRef<CssClassManager>();
+    if (!cssManager.current) {
+        cssManager.current = new CssClassManager(() => eGui.current);
     }
     const setRef = useCallback((eRef: HTMLDivElement | null) => {
         eGui.current = eRef;
@@ -101,7 +101,7 @@ const RowComp = ({ rowCtrl, containerType }: { rowCtrl: RowCtrl; containerType: 
 
             // i found using React for managing classes at the row level was to slow, as modifying classes caused a lot of
             // React code to execute, so avoiding React for managing CSS Classes made the grid go much faster.
-            addOrRemoveCssClass: (name, on) => cssClassManager.current!.addOrRemoveCssClass(name, on),
+            toggleCss: (name, on) => cssManager.current!.toggleCss(name, on),
 
             setDomOrder: (domOrder) => (domOrderRef.current = domOrder),
             setRowIndex,

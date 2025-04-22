@@ -18,7 +18,7 @@ ModuleRegistry.registerModules([
     ColumnApiModule,
     AlignedGridsModule,
     ClientSideRowModelModule,
-    ValidationModule /* Development Only */,
+    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 
 const VueExample = defineComponent({
@@ -50,7 +50,6 @@ const VueExample = defineComponent({
                 alignedGrids: () => [this.$refs.bottomGrid],
                 defaultColDef: {
                     filter: true,
-                    flex: 1,
                     minWidth: 120,
                 },
                 autoSizeStrategy: {
@@ -61,7 +60,6 @@ const VueExample = defineComponent({
                 alignedGrids: () => [this.$refs.topGrid],
                 defaultColDef: {
                     filter: true,
-                    flex: 1,
                     minWidth: 120,
                 },
             },

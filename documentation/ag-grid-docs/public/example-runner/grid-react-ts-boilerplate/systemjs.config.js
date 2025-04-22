@@ -1,4 +1,5 @@
 (function (global) {
+    process = { env: { NODE_ENV: 'development' } };
     System.config({
         transpiler: 'ts',
         typescriptOptions: {

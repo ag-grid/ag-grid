@@ -19,8 +19,8 @@ export class TotalAndFilteredRowsComp extends AgNameValue implements IStatusPane
 
         this.setLabel('totalAndFilteredRows', 'Rows');
 
-        this.addCssClass('ag-status-panel');
-        this.addCssClass('ag-status-panel-total-and-filtered-row-count');
+        this.addCss('ag-status-panel');
+        this.addCss('ag-status-panel-total-and-filtered-row-count');
 
         this.setDisplayed(true);
 

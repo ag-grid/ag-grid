@@ -1,5 +1,13 @@
 [
     {
+        "version": "33.2.3",
+        "date": "April 11th, 2025"
+    },
+    {
+        "version": "33.2.2",
+        "date": "April 9th, 2025"
+    },
+    {
         "version": "33.2.1",
         "date": "March 24th, 2025"
     },
@@ -106,6 +114,10 @@
         ],
         "notesPath": "./upgrading-to-ag-grid-33",
         "hideBlogPostLink": false
+    },
+    {
+        "version": "32.3.5",
+        "date": "April 9th, 2025"
     },
     {
         "version": "32.3.4",
@@ -478,7 +490,8 @@
             {
                 "text": "Export Row Groups to Excel with Their Current Expanded State"
             }
-        ]
+        ],
+        "notesPath": "./upgrading-to-ag-grid-30"
     },
     {
         "version": "29.3.5",
@@ -554,7 +567,8 @@
     },
     {
         "version": "29.0.0",
-        "date": "January 13th, 2023"
+        "date": "January 13th, 2023",
+        "notesPath": "./upgrading-to-ag-grid-29"
     },
     {
         "version": "28.2.1",
@@ -585,7 +599,8 @@
     },
     {
         "version": "28.0.0",
-        "date": "July 6th, 2022"
+        "date": "July 6th, 2022",
+        "notesPath": "./upgrading-to-ag-grid-28"
     },
     {
         "version": "27.3.0",
@@ -610,7 +625,8 @@
     },
     {
         "version": "27.0.0",
-        "date": "February 8th, 2022"
+        "date": "February 8th, 2022",
+        "notesPath": "./upgrading-to-ag-grid-27"
     },
     {
         "version": "26.2.1",
@@ -627,7 +643,8 @@
     },
     {
         "version": "26.0.0",
-        "date": "August 18th, 2021"
+        "date": "August 18th, 2021",
+        "notesPath": "./upgrading-to-ag-grid-26"
     },
     {
         "version": "25.3.0",

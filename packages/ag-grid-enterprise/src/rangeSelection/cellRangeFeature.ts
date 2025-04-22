@@ -82,15 +82,15 @@ export class CellRangeFeature implements ICellRangeFeature {
         const hasChartRange = this.getHasChartRange();
         this.hasChartRange = hasChartRange;
 
-        cellComp.addOrRemoveCssClass(CSS_CELL_RANGE_SELECTED, rangeCount !== 0);
-        cellComp.addOrRemoveCssClass(`${CSS_CELL_RANGE_SELECTED}-1`, rangeCount === 1);
-        cellComp.addOrRemoveCssClass(`${CSS_CELL_RANGE_SELECTED}-2`, rangeCount === 2);
-        cellComp.addOrRemoveCssClass(`${CSS_CELL_RANGE_SELECTED}-3`, rangeCount === 3);
-        cellComp.addOrRemoveCssClass(`${CSS_CELL_RANGE_SELECTED}-4`, rangeCount >= 4);
-        cellComp.addOrRemoveCssClass(CSS_CELL_RANGE_CHART, hasChartRange);
+        cellComp.toggleCss(CSS_CELL_RANGE_SELECTED, rangeCount !== 0);
+        cellComp.toggleCss(`${CSS_CELL_RANGE_SELECTED}-1`, rangeCount === 1);
+        cellComp.toggleCss(`${CSS_CELL_RANGE_SELECTED}-2`, rangeCount === 2);
+        cellComp.toggleCss(`${CSS_CELL_RANGE_SELECTED}-3`, rangeCount === 3);
+        cellComp.toggleCss(`${CSS_CELL_RANGE_SELECTED}-4`, rangeCount >= 4);
+        cellComp.toggleCss(CSS_CELL_RANGE_CHART, hasChartRange);
 
         _setAriaSelected(eGui, rangeCount > 0 ? true : undefined);
-        cellComp.addOrRemoveCssClass(CSS_CELL_RANGE_SINGLE_CELL, this.isSingleCell());
+        cellComp.toggleCss(CSS_CELL_RANGE_SINGLE_CELL, this.isSingleCell());
 
         this.updateRangeBorders();
 
@@ -106,10 +106,10 @@ export class CellRangeFeature implements ICellRangeFeature {
         const isLeft = !isSingleCell && rangeBorders.left;
 
         const cellComp = this.cellComp;
-        cellComp.addOrRemoveCssClass(CSS_CELL_RANGE_TOP, isTop);
-        cellComp.addOrRemoveCssClass(CSS_CELL_RANGE_RIGHT, isRight);
-        cellComp.addOrRemoveCssClass(CSS_CELL_RANGE_BOTTOM, isBottom);
-        cellComp.addOrRemoveCssClass(CSS_CELL_RANGE_LEFT, isLeft);
+        cellComp.toggleCss(CSS_CELL_RANGE_TOP, isTop);
+        cellComp.toggleCss(CSS_CELL_RANGE_RIGHT, isRight);
+        cellComp.toggleCss(CSS_CELL_RANGE_BOTTOM, isBottom);
+        cellComp.toggleCss(CSS_CELL_RANGE_LEFT, isLeft);
     }
 
     private isSingleCell(): boolean {
@@ -230,7 +230,7 @@ export class CellRangeFeature implements ICellRangeFeature {
             this.addSelectionHandle();
         }
 
-        this.cellComp.addOrRemoveCssClass(CSS_CELL_RANGE_HANDLE, !!this.selectionHandle);
+        this.cellComp.toggleCss(CSS_CELL_RANGE_HANDLE, !!this.selectionHandle);
     }
 
     private shouldHaveSelectionHandle(): boolean {
@@ -255,7 +255,7 @@ export class CellRangeFeature implements ICellRangeFeature {
             const hasCategoryRange = cellRanges[0].type === CellRangeType.DIMENSION;
             const isCategoryCell = hasCategoryRange && rangeSvc.isCellInSpecificRange(cellPosition, cellRanges[0]);
 
-            this.cellComp.addOrRemoveCssClass(CSS_CELL_RANGE_CHART_CATEGORY, isCategoryCell);
+            this.cellComp.toggleCss(CSS_CELL_RANGE_CHART_CATEGORY, isCategoryCell);
             handleIsAvailable = cellRange.type === CellRangeType.VALUE;
         }
 

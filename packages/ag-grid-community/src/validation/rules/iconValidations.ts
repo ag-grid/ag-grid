@@ -59,6 +59,10 @@ export const ICON_VALUES: Record<IconValue, 1> = {
     'radio-button-on': 1,
     'radio-button-off': 1,
     eye: 1,
+    'column-arrow': 1,
+    'un-pin': 1,
+    'pinned-top': 1,
+    'pinned-bottom': 1,
 };
 
 export const ICON_MODULES: Record<IconName, ValidationModuleName | ValidationModuleName[]> = {
@@ -99,6 +103,7 @@ export const ICON_MODULES: Record<IconName, ValidationModuleName | ValidationMod
     columnMoveValue: 'SharedDragAndDrop',
     columnMovePivot: 'SharedDragAndDrop',
     dropNotAllowed: 'SharedDragAndDrop',
+    ensureColumnVisible: ['ColumnsToolPanel', 'ColumnMenu'],
     groupContracted: 'GroupCellRenderer',
     groupExpanded: 'GroupCellRenderer',
     setFilterGroupClosed: 'SetFilter',
@@ -159,6 +164,10 @@ export const ICON_MODULES: Record<IconName, ValidationModuleName | ValidationMod
     checkboxUnchecked: 'CommunityCore',
     radioButtonOn: 'CommunityCore',
     radioButtonOff: 'CommunityCore',
+    rowPin: 'PinnedRow',
+    rowUnpin: 'PinnedRow',
+    rowPinBottom: 'PinnedRow',
+    rowPinTop: 'PinnedRow',
 };
 
 export const DEPRECATED_ICONS_V33: Set<IconName> = new Set([

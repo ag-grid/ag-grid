@@ -12,27 +12,30 @@ export interface OptionsValidator<T extends object> {
     validations: Validations<T>;
 }
 
-// Deprecations, if renamed then old value is copied.
 export type Deprecations<T extends object> = Partial<{
     [key in keyof T]: { version: string; message?: string };
 }>;
 
-// Util, if array, type of array. Else T.
-type TypeOfArray<T> = NonNullable<T extends Array<infer U> ? U : T>;
+export type GetRequiredModule<T extends object> = (
+    options: T,
+    gridOptions: GridOptions,
+    beans: BeanCollection
+) => ValidationModuleName | null;
+
+export type RequiredModule<T extends object> = GetRequiredModule<T> | ValidationModuleName;
+
+export type ModuleValidation<T extends object> = {
+    [key in keyof T]?: RequiredModule<T>;
+};
 
 // Validation rules, either sub-validator, function returning rules, or rules.
-export type Validations<T extends object> = Partial<{
-    [key in keyof T]:
-        | (TypeOfArray<T[key]> extends object ? () => OptionsValidator<TypeOfArray<T[key]>> : never)
-        | ((options: T, gridOptions: GridOptions, beans: BeanCollection) => OptionsValidation<T> | null)
-        | OptionsValidation<T>
-        | undefined;
-}>;
+export type Validations<T extends object> = {
+    [key in keyof T]?: OptionsValidation<T>;
+};
 export type ValidationsRequired<T extends object> = Required<Validations<T>>;
 
 // Rules object, if present, module is required.
 export interface OptionsValidation<T extends object> {
-    module?: ValidationModuleName | ValidationModuleName[];
     supportedRowModels?: RowModelType[];
     dependencies?: RequiredOptions<T>;
     validate?: (options: T, gridOptions: GridOptions, beans: BeanCollection) => string | null;

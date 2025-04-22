@@ -3,7 +3,10 @@ import { ClientSideRowModelModule, ModuleRegistry, ValidationModule, createGrid 
 
 import { CustomInnerHeaderGroup } from './customInnerHeaderGroup_typescript';
 
-ModuleRegistry.registerModules([ClientSideRowModelModule, ValidationModule /* Development Only */]);
+ModuleRegistry.registerModules([
+    ClientSideRowModelModule,
+    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
+]);
 
 const columnDefs: ColGroupDef[] = [
     {

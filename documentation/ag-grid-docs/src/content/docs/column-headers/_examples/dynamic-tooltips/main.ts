@@ -20,7 +20,7 @@ ModuleRegistry.registerModules([
     NumberFilterModule,
     ClientSideRowModelModule,
     TooltipModule,
-    ValidationModule /* Development Only */,
+    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 
 const columnDefs: ColDef[] = [

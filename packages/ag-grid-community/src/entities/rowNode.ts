@@ -324,9 +324,24 @@ export class RowNode<TData = any>
         this.resetQuickFilterAggregateText();
 
         const event: DataChangedEvent<TData> = this.createDataChangedEvent(data, oldData, update);
-
         this.__localEventService?.dispatchEvent(event);
+
+        if (this.sibling) {
+            this.sibling.data = data;
+            const event: DataChangedEvent<TData> = this.sibling.createDataChangedEvent(data, oldData, update);
+            this.sibling.__localEventService?.dispatchEvent(event);
+        }
+
         eventSvc.dispatchEvent({ type: 'rowNodeDataChanged', node: this });
+
+        const pinnedSibling = this.pinnedSibling;
+        if (pinnedSibling) {
+            pinnedSibling.data = data;
+            pinnedSibling.__localEventService?.dispatchEvent(
+                pinnedSibling.createDataChangedEvent(data, oldData, update)
+            );
+            eventSvc.dispatchEvent({ type: 'rowNodeDataChanged', node: pinnedSibling });
+        }
     }
 
     // when we are doing master / detail, the detail node is lazy created, but then kept around.
@@ -490,7 +505,7 @@ export class RowNode<TData = any>
         if (!column) {
             return false;
         }
-        const oldValue = valueSvc.getValueForDisplay(column, this);
+        const oldValue = valueSvc.getValueForDisplay(column, this).value;
 
         if (gos.get('readOnlyEdit')) {
             const {
@@ -519,7 +534,18 @@ export class RowNode<TData = any>
         const valueChanged = valueSvc.setValue(this, column, newValue, eventSource);
 
         this.dispatchCellChangedEvent(column, newValue, oldValue);
-        selectionSvc?.updateRowSelectable(this);
+        const selectable = selectionSvc?.updateRowSelectable(this);
+
+        const pinnedSibling = this.pinnedSibling;
+        if (pinnedSibling) {
+            // pinned sibling shares a reference to the same data object as the
+            if (valueChanged) {
+                pinnedSibling.dispatchCellChangedEvent(column, newValue, oldValue);
+            }
+            // The pinned sibling mirrors the state of the source row, otherwise
+            // we could potentially have siblings with different values of "selectable"
+            pinnedSibling.selectable = selectable ?? true;
+        }
 
         return valueChanged;
     }

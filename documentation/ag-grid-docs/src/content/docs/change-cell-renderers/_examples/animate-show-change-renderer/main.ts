@@ -16,7 +16,7 @@ ModuleRegistry.registerModules([
     CellStyleModule,
     ClientSideRowModelModule,
     HighlightChangesModule,
-    ValidationModule /* Development Only */,
+    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 
 const columnDefs: ColDef[] = [

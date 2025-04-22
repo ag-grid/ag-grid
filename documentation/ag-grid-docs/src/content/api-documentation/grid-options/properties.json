@@ -1410,16 +1410,34 @@
             },
             "description": "Row data uses the [generic type](./typescript-generics) `TData` if provided via `GridOptions&lt;TData&gt;`. Otherwise `TData` will default to `any`."
         },
+        "enableRowPinning": {
+            "more": {
+                "name": "Row Pinning",
+                "url": "./row-pinning/#enabling-row-pinning"
+            }
+        },
+        "isRowPinnable": {
+            "more": {
+                "name": "Row Pinning",
+                "url": "./row-pinning/#preventing-rows-from-being-pinnable"
+            }
+        },
+        "isRowPinned": {
+            "more": {
+                "name": "Row Pinning",
+                "url": "./row-pinning/#pinning-rows-on-first-render"
+            }
+        },
         "pinnedTopRowData": {
             "more": {
                 "name": "Row Pinning",
-                "url": "./row-pinning/"
+                "url": "./row-pinning/#providing-pinned-row-data"
             }
         },
         "pinnedBottomRowData": {
             "more": {
                 "name": "Row Pinning",
-                "url": "./row-pinning/"
+                "url": "./row-pinning/#providing-pinned-row-data"
             }
         }
     },

@@ -298,6 +298,8 @@ jobs:
       fail-fast: false
     env:
       NX_BASE: ${{ needs.build_lint.outputs.nx_base }}
+    outputs:
+      docs_deployed: ${{ steps.deploy_to_staging.outcome }}
     steps:
       - name: Checkout
         id: checkout
@@ -333,19 +335,26 @@ jobs:
       - name: docs build and link checker
         run: CHECK_LINKS=true CHECK_REDIRECTS=true yarn nx run ag-grid-docs:build -c staging
 
-#      - name: Deploy to Staging
-#        if: ${{ github.ref == 'refs/heads/latest' }}
-#        env:
-#          SSH_PRIVATE_KEY: |
-#            ${{ secrets.STAGING_SSH_KEY }}
-#          SSH_HOST: ${{ secrets.STAGING_HOST }}
-#          SSH_USER: ubuntu
-#          SSH_KEY_LOCATION: ${{ github.workspace }}/staging.pem
-#          WWW_ROOT_DIR: ${{ vars.WWW_ROOT_DIR }}
-#        run: |
-#          echo "$SSH_PRIVATE_KEY" > $SSH_KEY_LOCATION
-#          chmod 400 $SSH_KEY_LOCATION
-#          ./scripts/deployments/createAndDeployDocsToTCGH.sh
+      - name: Check Outputs
+        run: |
+          ls -l dist/generated-examples/ag-grid-docs/docs/column-definitions/_examples/simple/vanilla
+          ls -l documentation/ag-grid-docs/dist/examples/column-definitions/simple
+          ls -l documentation/ag-grid-docs/dist/examples/column-definitions/simple/vanilla
+
+      - name: Deploy to Staging
+        id: deploy_to_staging
+        if: ${{ github.ref == 'refs/heads/latest' }}
+        env:
+          SSH_PRIVATE_KEY: |
+            ${{ secrets.STAGING_SSH_KEY }}
+          SSH_HOST: ${{ secrets.STAGING_HOST }}
+          SSH_USER: ubuntu
+          SSH_KEY_LOCATION: ${{ github.workspace }}/staging.pem
+          WWW_ROOT_DIR: ${{ vars.WWW_ROOT_DIR }}
+        run: |
+          echo "$SSH_PRIVATE_KEY" > $SSH_KEY_LOCATION
+          chmod 400 $SSH_KEY_LOCATION
+          ./scripts/deployments/createAndDeployDocsToTCGH.sh
 
       - name: Persist test results
         if: always()
@@ -371,6 +380,12 @@ jobs:
           git fetch origin --depth 1 latest
           git fetch origin --depth 1 tag latest-success
 
+      - name: Setup
+        id: setup
+        uses: ./.github/actions/setup-nx
+        with:
+          cache_mode: ro
+
       - uses: actions/download-artifact@v4
         with:
           path: test-results/
@@ -387,8 +402,8 @@ jobs:
       - name: Test Report
         uses: dorny/test-reporter@v1
         if: needs.test.result == 'success' || needs.test.result == 'failure' ||
-            needs.e2e.result == 'success' || needs.e2e.result == 'failure' ||
-            needs.bundle_size.result == 'success' || needs.bundle_size.result == 'failure'
+          needs.e2e.result == 'success' || needs.e2e.result == 'failure' ||
+          needs.bundle_size.result == 'success' || needs.bundle_size.result == 'failure'
         id: testReport
         continue-on-error: true
         with:
@@ -446,24 +461,50 @@ jobs:
           ref: latest-success
           description: Latest commit to pass GitHub Actions workflow on latest branch.
 
-      - name: Slack Notification
-        uses: rtCamp/action-slack-notify@v2
-        if: always() && job.status != 'cancelled' && github.ref == 'refs/heads/latest' && steps.lastJobStatus.outputs.changedState == 'true'
-        env:
-          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
-          SLACK_COLOR: ${{ steps.lastJobStatus.outputs.workflowStatus != 'failure' && 'success' || 'failure' }}
-          SLACK_ICON: https://avatars.slack-edge.com/2020-11-25/1527503386626_319578f21381f9641cd8_192.png
-          SLACK_USERNAME: ag-grid CI
-          SLACK_FOOTER: ''
-          SLACK_MESSAGE: >
-            Build: ${{ needs.build_lint.outputs.build == 'success' && '✅' || needs.build_lint.outputs.build == 'failure' && '❌' || 'NA' }}
-            Lint: ${{ needs.build_lint.outputs.lint == 'success' && '✅' || needs.build_lint.outputs.lint == 'failure' && '❌' || 'NA' }}
-            Format: ${{ needs.build_lint.outputs.format == 'success' && '✅' || needs.build_lint.outputs.format == 'failure' && '❌' || 'NA' }}
-            Test: ${{ needs.test.result == 'success' && '✅' || needs.test.result == 'failure' && '❌' || 'NA' }}
-            E2E: ${{ needs.e2e.result == 'success' && '✅' || needs.e2e.result == 'failure' && '❌' || 'NA' }}
-            Docs: ${{ needs.docs.result == 'success' && '✅' || needs.docs.result == 'failure' && '❌' || 'NA' }}
-            Bundle: ${{ needs.bundle_size.result == 'success' && '✅' || needs.bundle_size.result == 'failure' && '❌' || 'NA' }}
-            
-            *Changes:*
+      - name: Find matching workflow
+        if: always() && job.status != 'cancelled' && github.ref == 'refs/heads/latest'
+        id: find_latest_sha
+        uses: SamhammerAG/last-successful-build-action@v4
+        with:
+          branch: "latest"
+          workflow: "ci"
+          verify: false
 
-            ${{ env.GIT_LOG }}
+      - name: SlackBot
+        if: always() && job.status != 'cancelled' && github.ref == 'refs/heads/latest'
+        env:
+          GRID_TEAM_CITY_CHANNEL: ${{ secrets.GRID_TEAM_CITY_CHANNEL }}
+          CHARTS_TEAM_CITY_CHANNEL: ${{ secrets.CHARTS_TEAM_CITY_CHANNEL }}
+          WEBSITE_STATUS_CHANNEL: ${{ secrets.WEBSITE_STATUS_CHANNEL }}
+          SLACK_BOT_OAUTH_TOKEN: ${{ secrets.SLACK_BOT_OAUTH_TOKEN }}
+          SLACK_DEBUG_CHANNEL: ${{ secrets.SLACK_DEBUG_CHANNEL }}
+          RUN_CONTEXT: >
+            {
+              "workflow": "${{ github.workflow }}",
+              "ref": "${{ github.ref }}",
+              "currentSha": "${{ github.sha }}",
+              "lastSuccessfulSha": "${{ steps.find_latest_sha.outputs.sha }}",
+              "runId": "${{ github.run_id }}",
+              "project": "AgGrid",
+              "reportUrl": "${{ steps.testReport.outputs.url_html }}",
+              "deployToStaging": ${{ needs.docs.outputs.docs_deployed == 'success' }},
+              "changedState": ${{ steps.lastJobStatus.outputs.changedState == 'true' }},
+              "jobStatuses":
+                {
+                    "Build": "${{ needs.build_lint.outputs.build }}",
+                    "Lint": "${{ needs.build_lint.outputs.lint }}",
+                    "Format": "${{ needs.build_lint.outputs.format }}",
+                    "Test": "${{ needs.test.result }}",
+                    "e2e": "${{ needs.e2e.result }}",
+                    "Docs": "${{ needs.docs.result }}",
+                    "Bundle": "${{ needs.bundle_size.result }}"
+                }
+            }
+        run: |
+          npx ts-node ./scripts/agBotSlackMessage.ts --auth-token "$SLACK_BOT_OAUTH_TOKEN" \
+            --grid-channel "$GRID_TEAM_CITY_CHANNEL" \
+            --charts-channel "$CHARTS_TEAM_CITY_CHANNEL" \
+            --website-status-channel "$WEBSITE_STATUS_CHANNEL" \
+            --debug-channel "$SLACK_DEBUG_CHANNEL" \
+            --run-context "$RUN_CONTEXT"
+

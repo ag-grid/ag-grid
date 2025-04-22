@@ -25,7 +25,7 @@ ModuleRegistry.registerModules([
     PinnedRowModule,
     ClientSideRowModelModule,
     PaginationModule,
-    ValidationModule /* Development Only */,
+    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 
 @Component({

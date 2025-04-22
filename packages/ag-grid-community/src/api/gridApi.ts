@@ -42,6 +42,7 @@ import type { ExcelExportMultipleSheetParams, ExcelExportParams } from '../inter
 import type { FilterModel, IFilter } from '../interfaces/iFilter';
 import type { IFiltersToolPanel } from '../interfaces/iFiltersToolPanel';
 import type { FindCellParams, FindCellValueParams, FindMatch, FindPart } from '../interfaces/iFind';
+import type { AgModuleName } from '../interfaces/iModule';
 import type { RedrawRowsParams } from '../interfaces/iRedrawRowsParams';
 import type { IRowNode, RowPinnedType } from '../interfaces/iRowNode';
 import type { LoadSuccessParams, RefreshServerSideParams } from '../interfaces/iServerSideRowModel';
@@ -109,6 +110,11 @@ export interface _CoreGridApi<TData = any> {
      * Updates the provided subset of gridOptions with the provided values. (Cannot be used on `Initial` properties.)
      */
     updateGridOptions<TDataUpdate extends TData>(options: ManagedGridOptions<TDataUpdate>): void;
+
+    /**
+     * Check if a Module is registered with the current grid instance via its equivalent string name.
+     */
+    isModuleRegistered(moduleName: AgModuleName): boolean;
 }
 
 export interface _RowSelectionGridApi<TData = any> {
@@ -226,6 +232,7 @@ export interface _RowGridApi<TData> {
      * Iterates through each node (row) in the grid and calls the callback for each node.
      * This works similar to the `forEach` method on a JavaScript array.
      * This is called for every node, ignoring any filtering or sorting applied within the grid.
+     * It is not called on any pinned row nodes.
      * If using the Infinite Row Model, then this gets called for each page loaded in the page cache.
      */
     forEachNode(callback: (rowNode: IRowNode<TData>, index: number) => void, includeFooterNodes?: boolean): void;
@@ -826,8 +833,15 @@ export interface _PinnedRowGridApi {
 
     /** Gets the top pinned row with the specified index. */
     getPinnedTopRow<TPinnedData = any>(index: number): IRowNode<TPinnedData> | undefined;
+
     /** Gets the bottom pinned row with the specified index. */
     getPinnedBottomRow<TPinnedData = any>(index: number): IRowNode<TPinnedData> | undefined;
+
+    /** Iterates over each pinned row, calling the provided callback for each row */
+    forEachPinnedRow<TPinnedData = any>(
+        floating: NonNullable<RowPinnedType>,
+        callback: (rowNode: IRowNode<TPinnedData>) => void
+    ): void;
 }
 
 export interface _RenderGridApi<TData> {

@@ -25,7 +25,7 @@ ModuleRegistry.registerModules([
     ColumnApiModule,
     ClientSideRowModelModule,
     PivotModule,
-    ValidationModule /* Development Only */,
+    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 
 const columnDefs: ColDef[] = [
@@ -215,7 +215,7 @@ function onBtPinnedOn() {
     gridApi!.applyColumnState({
         state: [
             { colId: 'athlete', pinned: 'left' },
-            { colId: 'age', pinned: 'right' },
+            { colId: 'sport', pinned: 'right' },
         ],
     });
 }

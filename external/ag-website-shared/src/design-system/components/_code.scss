@@ -34,19 +34,6 @@ pre.code code,
 
 pre.code,
 #{$blog-code-selector} {
-    --comment-color: #5d6376;
-    --tag-color: #984f4e;
-    --string-color: #c33c3a;
-    --punctuation-color: #393a34;
-    --keyword-color: #b31ea7;
-    --symbol-color: #0e4491;
-    --function-color: #393a34;
-    --deleted-color: #f54946;
-    --selector-color: #0e4491;
-    --important-color: #e90;
-    --class-name-color: #0e4491;
-    --property-color: #2ea248;
-
     position: relative;
     margin-top: $spacing-size-5;
     margin-bottom: $spacing-size-5;
@@ -57,18 +44,6 @@ pre.code,
 
     #{$selector-darkmode} & {
         color-scheme: dark;
-        --comment-color: #7e8a9e;
-        --tag-color: #bf9fea;
-        --string-color: #bfda7f;
-        --punctuation-color: var(--color-fg-primary);
-        --keyword-color: #7ac1d1;
-        --symbol-color: #36d8d6;
-        --function-color: var(--color-fg-primary);
-        --deleted-color: #9a050f;
-        --selector-color: #36d8d6;
-        --important-color: #e90;
-        --class-name-color: #2b91af;
-        --property-color: #7ac1d1;
     }
 }
 
@@ -86,7 +61,7 @@ pre.code > code,
 
 pre.code > .language-bash,
 #{$blog-code-selector} > .language-bash {
-    color: var(--function-color);
+    color: var(--color-code-function);
 }
 
 pre.code.line-numbers.line-numbers code,
@@ -174,7 +149,7 @@ pre.code.line-numbers > code,
 .token.prolog,
 .token.doctype,
 .token.cdata {
-    color: var(--comment-color);
+    color: var(--color-code-comment);
     font-style: italic;
 }
 
@@ -183,12 +158,12 @@ pre.code.line-numbers > code,
 }
 
 .token.string {
-    color: var(--string-color);
+    color: var(--color-code-string);
 }
 
 .token.punctuation,
 .token.operator {
-    color: var(--punctuation-color);
+    color: var(--color-code-punctuation);
 }
 
 .token.url,
@@ -198,7 +173,7 @@ pre.code.line-numbers > code,
 .token.variable,
 .token.constant,
 .token.inserted {
-    color: var(--symbol-color);
+    color: var(--color-code-symbol);
 }
 
 .token.atrule,
@@ -208,20 +183,20 @@ pre.code.line-numbers > code,
 .language-json .token.boolean,
 .language-json .token.number,
 code[class*='language-css'] {
-    color: var(--keyword-color);
+    color: var(--color-code-keyword);
 }
 
 .token.function {
-    color: var(--function-color);
+    color: var(--color-code-function);
 }
 
 .token.deleted,
 .language-autohotkey .token.tag {
-    color: var(--deleted-color);
+    color: var(--color-code-deleted);
 }
 
 .token.important {
-    color: var(--important-color);
+    color: var(--color-code-important);
 }
 
 .token.important,
@@ -236,26 +211,26 @@ code[class*='language-css'] {
 .token.class-name,
 .token.builtin,
 .language-json .token.property {
-    color: var(--class-name-color);
+    color: var(--color-code-class-name);
 }
 
 .token.tag {
-    color: var(--tag-color);
+    color: var(--color-code-tag);
 }
 
 .token.selector {
-    color: var(--selector-color);
+    color: var(--color-code-selector);
 }
 
 .token.attr-name,
 .token.property,
 .token.regex,
 .token.entity {
-    color: var(--property-color);
+    color: var(--color-code-property);
 }
 
 .language-css .token.property {
-    color: var(--tag-color);
+    color: var(--color-code-tag);
 }
 
 .language-bash {
@@ -329,7 +304,7 @@ code[class*='language-css'] {
     }
 
     .token.tag {
-        // var(--tag-color) //
+        // var(--color-code-tag) //
         color: rgba(255, 255, 255, 0.9);
     }
 
@@ -349,7 +324,7 @@ code[class*='language-css'] {
     .token.variable,
     .token.constant,
     .token.inserted {
-        // var(--symbol-color) //
+        // var(--color-code-symbol) //
         color: #7dd3fc;
     }
 
@@ -363,7 +338,7 @@ code[class*='language-css'] {
 
     .token.deleted,
     .language-autohotkey .token.tag {
-        // var(--deleted-color) //
+        // var(--color-code-deleted) //
         color: #81869f;
     }
 
@@ -381,18 +356,18 @@ code[class*='language-css'] {
     .language-json .token.boolean,
     .language-json .token.number,
     code[class*='language-css'] {
-        // var(--keyword-color) //
+        // var(--color-code-keyword) //
         color: #f472b6;
     }
 
     .token.punctuation,
     .token.operator {
-        // var(--punctuation-color) //
+        // var(--color-code-punctuation) //
         color: #81869f;
     }
 
     .token.string {
-        // var(--string-color) //
+        // var(--color-code-string) //
         color: #7dd3fc;
     }
 }

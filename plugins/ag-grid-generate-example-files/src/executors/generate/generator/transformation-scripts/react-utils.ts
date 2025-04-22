@@ -1,6 +1,6 @@
 import * as JSON5 from 'json5';
 
-import { _ALL_EVENTS } from '../_copiedFromCore/eventTypes';
+import { _GET_ALL_EVENTS } from '../_copiedFromCore/eventTypes';
 import { _FUNCTION_GRID_OPTIONS } from '../_copiedFromCore/propertyKeys';
 import type { ParsedBindings } from '../types';
 import {
@@ -112,7 +112,7 @@ export const convertFunctionToConstCallbackTs = (code: string, callbackDependenc
     return `${code.replace(/function\s+([^(\s]+)\s*\(([^)]*)\)(:?\s+[^{]*)/, 'const $1 = useCallback(($2) $3 =>')}, [${callbackDependencies[functionName] || ''}])`;
 };
 
-export const EventAndCallbackNames = new Set([..._FUNCTION_GRID_OPTIONS, ..._ALL_EVENTS]);
+export const EventAndCallbackNames = new Set([..._FUNCTION_GRID_OPTIONS, ..._GET_ALL_EVENTS()]);
 
 export function addChartsDarkModeIfRequired(bindings: ParsedBindings, imports: string[], useTypescript: boolean) {
     let darkModeWithGridRef = getIntegratedDarkModeCode(bindings.exampleName, useTypescript, 'gridRef.current?.api');

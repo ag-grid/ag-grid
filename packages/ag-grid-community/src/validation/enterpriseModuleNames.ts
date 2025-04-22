@@ -14,7 +14,6 @@ export const ENTERPRISE_MODULE_NAMES: Record<EnterpriseModuleName, 1> = {
     GridCharts: 1,
     IntegratedCharts: 1,
     GroupFilter: 1,
-    ManualPinnedRow: 1,
     MasterDetail: 1,
     Menu: 1,
     MultiFilter: 1,

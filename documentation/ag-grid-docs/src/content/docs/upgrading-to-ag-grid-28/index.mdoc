@@ -1,0 +1,85 @@
+---
+title: "Upgrading to AG Grid 28"
+description: "See whats new in AG Grid, view a full list of changes and migrate your $framework Data Grid to v28 with our Codemods."
+migrationVersion: "28.0.0"
+---
+Angular Ivy Support, Sticky Group Rows, Column Headers Word Wrapping, Theming Using CSS Variables
+ 
+## What's New
+
+AG Grid {% migrationVersion() %} adds many new features - full Angular Ivy support, sticky group rows, column headers with word wrapping, theming using CSS variables, exporting row groups to Excel as expandable/collapsible and many more.
+
+<!-- 
+Documentation to the highest patch release of the major/minor
+NOTE: This will not show if the current library version is the same as the migration version
+-->
+{% documentationArchiveSection version="28.0.0" /%}
+
+## Breaking Changes
+{% metaTag tags=["appendContent", "prependContent", "getCustomContentBelowRow", "rowDataChanged"] /%}
+
+{% if isFramework("angular") %}
+* **Angular v12+**: Remove `.withxComponents()` from the module declaration of `AgGridModule` as this is no longer required.
+* **Angular v8-11**: Switch to the legacy version of the AG Grid Angular libraries.  
+  * For packages, switch to `ag-grid-angular-legacy`.
+  * For modules, switch to `@ag-grid-community/angular-legacy`.
+* Your applications will no longer compile with the default Angular libraries, which now have a minimum dependency of Angular v12. For full details, see: [Angular Compatibility](https://www.ag-grid.com/archive/28.0.0/angular-data-grid/angular-compatibility/).
+{% /if %}
+* `@ag-grid-community/all-modules` and `@ag-grid-enterprise/all-modules` have been removed. If using `@ag-grid-community/all-modules`, switch to using [Packages](https://ag-grid.com/changelog?fixVersion=28.0.0) instead. For smaller package sizes, use [Modules](https://www.ag-grid.com/javascript-data-grid/modules/).
+
+* In Client-side row model, sorting a group column now also sorts the individual columns and vice versa. Sort models saved prior to this change will behave differently, as sorted grouped columns now apply the sort to the group column.
+
+* The `length` getter and setter, as well as the `forEach` function, have been removed from the `IAggFuncParams`.  
+As a result aggregate functions expecting an array type as the parameter are no longer supported.
+
+* When using Server-side row model Infinite Scroll, filtering the grid selectively refreshes only the groups affected by the filter changes. 
+If using Server-side row model with tree data, filtering happens client-side. The old behavior of purging all rows from the root level on filter change is available by enabling the grid option `serverSideFilterAllLevels`.
+
+* The properties `appendContent`, `prependContent`, and `getCustomContentBelowRow` of the Excel Export now use the `ExcelRow[]` interface and no longer use `ExcelCell[][]`.
+
+* The grid no longer fires the `rowDataChanged` event, which is now deprecated. Instead, it fires `rowDataUpdated` on all occasions, as well as `filter.onNewRowsLoaded` on all occasions.
+
+
+## Deprecations
+
+This release includes the following deprecations:
+
+
+### Grid Options
+{% metaTag tags=["serverSideSortingAlwaysResets", "serverSideFilteringAlwaysResets", "processSecondaryColDef", "processSecondaryColGroupDef", "serverSideStoreType" ] /%}
+
+
+- `serverSideSortingAlwaysResets` is deprecated, use `serverSideSortAllLevels` instead
+- `serverSideFilteringAlwaysResets` is deprecated, use `serverSideFilterAllLevels` instead
+- `processSecondaryColDef()` is deprecated, use `processPivotResultColDef()` instead
+- `processSecondaryColGroupDef()` is deprecated, use `processPivotResultColGroupDef()` instead
+- `serverSideStoreType=full/partial` is deprecated, use `serverSideInfiniteScroll=true/false` instead
+
+### Column API
+{% metaTag tags=["getSecondaryPivotColumn", "setSecondaryColumns", "getPrimaryColumns" ] /%}
+
+- `getSecondaryPivotColumn()` is deprecated, use `getPivotResultColumn()` instead
+- `setSecondaryColumns()` is deprecated, use `setPivotResultColumns()` instead
+- `getPrimaryColumns()` is deprecated, use `getColumns()` instead
+
+### Grid API
+{% metaTag tags=["getServerSideStoreParams", "getServerSideStoreState", "refreshServerSideStore", "serverSideSortingAlwaysResets" ] /%}
+
+- `getServerSideStoreParams(GetServerSideStoreParamsParams)` is deprecated, use `getServerSideGroupLevelParams(GetServerSideGroupLevelParamsParams)` instead
+- `getServerSideStoreState()` is deprecated, use `getServerSideGroupLevelState()` instead
+- `refreshServerSideStore()` is deprecated, use `refreshServerSide()` instead
+- `serverSideSortingAlwaysResets` is deprecated, use `serverSideSortAllLevels` instead
+
+### Interfaces
+{% metaTag tags=["storeInfo"] /%}
+
+
+**IsApplyServerSideTransactionParams**
+- `storeInfo` is deprecated, use `groupLevelInfo` instead
+
+**LoadSuccessParams**
+- `storeInfo` is deprecated, use `groupLevelInfo` instead
+
+## Changes List
+
+If you would like to see the full list of changes in this release, please see the [Changelog](https://www.ag-grid.com/changelog/?fixVersion=28.0.0).

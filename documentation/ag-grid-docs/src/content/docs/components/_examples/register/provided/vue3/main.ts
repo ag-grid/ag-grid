@@ -7,7 +7,10 @@ import { AgGridVue } from 'ag-grid-vue3';
 import MedalRenderer from './medalRenderer';
 import './styles.css';
 
-ModuleRegistry.registerModules([ClientSideRowModelModule, ValidationModule /* Development Only */]);
+ModuleRegistry.registerModules([
+    ClientSideRowModelModule,
+    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
+]);
 
 const VueExample = defineComponent({
     template: `

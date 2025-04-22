@@ -20,7 +20,7 @@ ModuleRegistry.registerModules([
     ClientSideRowModelModule,
     NumberFilterModule,
     NumberEditorModule,
-    ValidationModule /* Development Only */,
+    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 
 let gridApi: GridApi;

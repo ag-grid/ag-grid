@@ -21,7 +21,7 @@ export class FullWidthCellRenderer implements ICellRendererComp {
 
         const eButton = this.eGui.querySelector('button')!;
         eButton.addEventListener('click', function () {
-            alert('button clicked');
+            console.log('button clicked');
         });
     }
 

@@ -12,7 +12,10 @@ import { ClientSideRowModelModule, ModuleRegistry, ValidationModule, createGrid 
 import { GenderRenderer } from './genderRenderer_typescript';
 import { MoodRenderer } from './moodRenderer_typescript';
 
-ModuleRegistry.registerModules([ClientSideRowModelModule, ValidationModule /* Development Only */]);
+ModuleRegistry.registerModules([
+    ClientSideRowModelModule,
+    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
+]);
 
 interface IRow {
     value: number | string;

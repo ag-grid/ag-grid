@@ -62,10 +62,18 @@ const iconNameToSvgFragment: Record<string, string | undefined> = {
 };
 
 const iconNameToFullSvg: Record<string, string | undefined> = {
+    'column-arrow':
+        '<svg xmlns="http://www.w3.org/2000/svg" class="ag-icon" fill="none" viewBox="0 0 32 32"><path fill-rule="evenodd" clip-rule="evenodd" d="M0 26C0 28.2092 1.79086 30 4 30H14C16.2091 30 18 28.2092 18 26V15H25.8786L24.4394 16.4393C23.8536 17.0251 23.8536 17.9749 24.4394 18.5607C25.0252 19.1464 25.9748 19.1464 26.5606 18.5607L30.5606 14.5607C31.1464 13.9749 31.1464 13.0251 30.5606 12.4393L26.5606 8.43934C25.9748 7.85356 25.0252 7.85356 24.4394 8.43934C23.8536 9.02512 23.8536 9.97488 24.4394 10.5607L25.8786 12H18V6C18 3.79086 16.2091 2 14 2H4C1.79086 2 0 3.79086 0 6V26ZM14 5H10.5V12H15V6C15 5.44772 14.5523 5 14 5ZM4 5H7.5V12H3V6C3 5.44772 3.44772 5 4 5ZM10.5 15H15V26C15 26.5522 14.5523 27 14 27H10.5V15ZM4 27H7.5V15H3V26C3 26.5522 3.44772 27 4 27Z" fill="currentColor"/></svg>',
     'small-down':
         '<svg xmlns="http://www.w3.org/2000/svg" class="ag-icon" fill="black" stroke="none" viewBox="0 0 32 32"><path d="M7.334 10.667 16 21.334l8.667-10.667H7.334Z"/></svg>',
     'small-up':
         '<svg xmlns="http://www.w3.org/2000/svg" class="ag-icon" fill="black" stroke="none" viewBox="0 0 32 32"><path d="M7.334 21.333 16 10.666l8.667 10.667H7.334Z"/></svg>',
+    'pinned-top':
+        '<svg xmlns="http://www.w3.org/2000/svg" class="ag-icon" fill="none" viewBox="0 0 16 16"><path fill="currentColor" d="M12.53 3.72A.75.75 0 0 1 12 5H4a.75.75 0 0 1 0-1.5h8a.75.75 0 0 1 .53.22ZM3.269 10.744a.75.75 0 0 1 .2-.524l4-4a.75.75 0 0 1 1.06 0l4 4a.75.75 0 1 1-1.06 1.06L8.75 8.56V14a.75.75 0 0 1-1.5 0V8.56l-2.72 2.72a.75.75 0 0 1-1.26-.536Z"/></svg>',
+    'pinned-bottom':
+        '<svg xmlns="http://www.w3.org/2000/svg" fill="none" class="ag-icon" viewBox="0 0 16 16"><path fill="currentColor" d="M3.47 12.28A.75.75 0 0 1 4 11h8a.75.75 0 0 1 0 1.5H4a.75.75 0 0 1-.53-.22ZM12.731 5.256a.75.75 0 0 1-.2.524l-4 4a.75.75 0 0 1-1.06 0l-4-4a.75.75 0 1 1 1.06-1.06l2.72 2.72V2a.75.75 0 0 1 1.5 0v5.44l2.72-2.72a.75.75 0 0 1 1.26.536Z"/></svg>',
+    'un-pin':
+        '<svg xmlns="http://www.w3.org/2000/svg" fill="none" class="ag-icon" viewBox="0 0 16 16"><path fill="currentColor" d="M8 11a.75.75 0 0 0-.75.75v3.333a.75.75 0 1 0 1.5 0V11.75A.75.75 0 0 0 8 11Z"/><path fill="currentColor" d="M13.11 1.436a.75.75 0 0 0-1.22-.872l-10 14a.75.75 0 1 0 1.22.872L5.207 12.5h7.376a.75.75 0 0 0 .75-.75v-1.174a2.08 2.08 0 0 0-1.153-1.863l-1.185-.599-.005-.002a.58.58 0 0 1-.323-.522V5.165a2.083 2.083 0 0 0 1.854-2.904l.589-.825Zm-3.943 5.52v.634a2.08 2.08 0 0 0 1.153 1.863l1.185.6.005.002a.58.58 0 0 1 .323.522V11H6.28l2.887-4.044ZM9.277 1H5.25a2.084 2.084 0 0 0-.083 4.165v1.676l1.5-2.132v-.292a.75.75 0 0 0-.75-.75H5.25a.584.584 0 0 1 0-1.167h2.972L9.277 1Z"/></svg>',
 };
 
 export const getQuartzIconsCss = (args: { strokeWidth?: number } = {}) => {

@@ -15,9 +15,9 @@ In the example below:
 const gridOptions = {
     columnDefs: [
         // simple currency formatter
-        { field: 'price', valueFormatter: p => '$' + params.value },
+        { field: 'price', valueFormatter: params => '$' + params.value },
         // simple UPPER CASE formatter
-        { field: 'code', valueFormatter: p => params.value.toUpperCase() }
+        { field: 'code', valueFormatter: params => params.value.toUpperCase() }
     ]
 }
 ```

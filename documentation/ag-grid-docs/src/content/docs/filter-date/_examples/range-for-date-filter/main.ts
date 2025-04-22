@@ -14,7 +14,7 @@ ModuleRegistry.registerModules([
     NumberFilterModule,
     ClientSideRowModelModule,
     DateFilterModule,
-    ValidationModule /* Development Only */,
+    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 
 const today = new Date();

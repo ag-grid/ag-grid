@@ -87,7 +87,7 @@ export class StickyRowFeature extends BeanStub implements IStickyRowFeature {
             return this.refreshNodesAndContainerHeight(container, new Set(), newStickyContainerHeight);
         }
 
-        const { rowModel, rowRenderer } = this.beans;
+        const { rowModel, rowRenderer, pinnedRowModel } = this.beans;
 
         const pixelAtContainerBoundary = isTop
             ? rowRenderer.firstVisibleVPixel - this.extraTopHeight
@@ -149,6 +149,9 @@ export class StickyRowFeature extends BeanStub implements IStickyRowFeature {
                     ? row.sibling.rowIndex + 1 === row.rowIndex
                     : false;
                 if (container === 'bottom' && isFooterFirstRowInGroup) {
+                    return false;
+                }
+                if (row.level === -1 && pinnedRowModel?.getGrandTotalPinned()) {
                     return false;
                 }
 

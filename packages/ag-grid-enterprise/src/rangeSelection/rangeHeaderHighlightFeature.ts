@@ -86,7 +86,7 @@ export class RangeHeaderHighlightFeature extends BeanStub {
             }
         }
 
-        this.comp.addOrRemoveCssClass('ag-header-range-highlight', hasRange && isAllColumnRange);
+        this.comp.toggleCss('ag-header-range-highlight', hasRange && isAllColumnRange);
     }
 
     public override destroy(): void {

@@ -93,7 +93,7 @@
     display: flex;
 }
 
-.ag-set-floating-filter-input [disabled] {
+.ag-set-floating-filter-input :where(input)[disabled] {
     pointer-events: none;
 }
 

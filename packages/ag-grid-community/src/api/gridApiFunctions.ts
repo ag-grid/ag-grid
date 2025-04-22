@@ -70,6 +70,7 @@ export const gridApiFunctionsMap: Record<keyof GridApi, ValidationModuleName> = 
         isDestroyed: 0,
         setGridOption: 0,
         updateGridOptions: 0,
+        isModuleRegistered: 0,
     }),
     ...mod<_StateGridApi>('GridState', {
         getState: 0,
@@ -136,6 +137,7 @@ export const gridApiFunctionsMap: Record<keyof GridApi, ValidationModuleName> = 
         getPinnedBottomRowCount: 0,
         getPinnedTopRow: 0,
         getPinnedBottomRow: 0,
+        forEachPinnedRow: 0,
     }),
     ...mod<_OverlayGridApi>('Overlay', {
         showLoadingOverlay: 0,

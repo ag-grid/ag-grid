@@ -5,7 +5,7 @@ import { CellSelectionModule } from 'ag-grid-enterprise';
 ModuleRegistry.registerModules([
     ClientSideRowModelModule,
     CellSelectionModule,
-    ValidationModule /* Development Only */,
+    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 
 let gridApi: GridApi<IOlympicData>;

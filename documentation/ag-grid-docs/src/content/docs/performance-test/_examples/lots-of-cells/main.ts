@@ -2,7 +2,10 @@ import type { ColDef, GridApi, GridOptions } from 'ag-grid-community';
 import { ModuleRegistry, ValidationModule, createGrid } from 'ag-grid-community';
 import { AllEnterpriseModule } from 'ag-grid-enterprise';
 
-ModuleRegistry.registerModules([AllEnterpriseModule, ValidationModule /* Development Only */]);
+ModuleRegistry.registerModules([
+    AllEnterpriseModule,
+    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
+]);
 
 const repeat = (arr: any[], n: number) => Array(n).fill(arr).flat();
 

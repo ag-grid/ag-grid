@@ -68,6 +68,10 @@ export type IconName =
     | 'valuePanel'
     | 'columnDrag'
     | 'rowDrag'
+    | 'rowPin'
+    | 'rowPinTop'
+    | 'rowPinBottom'
+    | 'rowUnpin'
     | 'save'
     | 'csvExport'
     | 'excelExport'
@@ -101,6 +105,7 @@ export type IconName =
     | 'chartsThemePrevious'
     | 'chartsThemeNext'
     | 'chartsDownload'
+    | 'ensureColumnVisible'
     | 'checkboxChecked' // deprecated v33
     | 'checkboxIndeterminate' // deprecated v33
     | 'checkboxUnchecked' // deprecated v33
@@ -164,7 +169,11 @@ export type IconValue =
     | 'checkbox-unchecked'
     | 'radio-button-on'
     | 'radio-button-off'
-    | 'eye';
+    | 'eye'
+    | 'column-arrow'
+    | 'un-pin'
+    | 'pinned-bottom'
+    | 'pinned-top';
 
 /**
  * If icon provided, use this (either a string, or a function callback).

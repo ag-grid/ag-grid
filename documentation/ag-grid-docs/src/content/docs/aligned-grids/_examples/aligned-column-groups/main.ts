@@ -16,7 +16,7 @@ ModuleRegistry.registerModules([
     ClientSideRowModelModule,
     AlignedGridsModule,
     ColumnApiModule,
-    ValidationModule /* Development Only */,
+    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 
 const columnDefs: ColGroupDef[] = [
@@ -51,7 +51,6 @@ let bottomApi: GridApi;
 const gridOptionsTop: GridOptions = {
     defaultColDef: {
         filter: true,
-        flex: 1,
         minWidth: 120,
     },
     columnDefs: columnDefs,

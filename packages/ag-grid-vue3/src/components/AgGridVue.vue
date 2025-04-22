@@ -113,10 +113,10 @@ import { getCurrentInstance, markRaw, onMounted, onUnmounted, ref, toRaw, toRefs
 import type { AgEventType, ColDef, GridApi, GridOptions, IRowNode } from 'ag-grid-community';
 import {
     ALWAYS_SYNC_GLOBAL_EVENTS,
-    ModuleRegistry,
+    _registerModule,
     RowApiModule,
-    _ALL_EVENTS,
-    _ALL_GRID_OPTIONS,
+    _GET_ALL_EVENTS,
+    _GET_ALL_GRID_OPTIONS,
     _combineAttributesAndGridOptions,
     _getCallbackForEvent,
     _processOnChange,
@@ -137,7 +137,7 @@ const batchTimeout: Ref<number | null> = ref(null);
 
 // setup up watches
 const propsAsRefs = toRefs<any>(props);
-_ALL_GRID_OPTIONS
+_GET_ALL_GRID_OPTIONS()
     .filter((propertyName: string) => propertyName != 'gridOptions') // dealt with in AgGridVue itself
     .forEach((propertyName: string) => {
         watch(
@@ -259,7 +259,7 @@ const getProvides = () => {
 
 onMounted(() => {
     // Row API module is required for getRowData to work
-    ModuleRegistry.registerModules([RowApiModule]);
+    _registerModule(RowApiModule,undefined, true);
     const frameworkComponentWrapper = new VueFrameworkComponentWrapper(getCurrentInstance(), getProvides());
 
     const gridParams = {
@@ -274,8 +274,8 @@ onMounted(() => {
 
     const gridOptions = markRaw(
         _combineAttributesAndGridOptions(deepToRaw<GridOptions<TData>>(props.gridOptions), props, [
-            ..._ALL_GRID_OPTIONS,
-            ..._ALL_EVENTS.map((event) => _getCallbackForEvent(event)),
+            ..._GET_ALL_GRID_OPTIONS(),
+            ..._GET_ALL_EVENTS().map((event) => _getCallbackForEvent(event)),
         ])
     );
 

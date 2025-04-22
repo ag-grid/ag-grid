@@ -136,7 +136,7 @@ export class FakeHScrollComp extends AbstractFakeScrollComp {
         // scrollbar may no longer be required
         const apply = () => {
             this.setScrollVisibleDebounce = 0;
-            this.addOrRemoveCssClass('ag-scrollbar-invisible', invisibleScrollbar);
+            this.toggleCss('ag-scrollbar-invisible', invisibleScrollbar);
             _setFixedHeight(this.getGui(), scrollContainerSize);
             _setFixedHeight(this.eViewport, scrollContainerSize);
             _setFixedHeight(this.eContainer, scrollContainerSize);

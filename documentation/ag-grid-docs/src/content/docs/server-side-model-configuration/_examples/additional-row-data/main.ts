@@ -5,7 +5,7 @@ import { ServerSideRowModelApiModule, ServerSideRowModelModule } from 'ag-grid-e
 ModuleRegistry.registerModules([
     ServerSideRowModelModule,
     ServerSideRowModelApiModule,
-    ValidationModule /* Development Only */,
+    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 
 let gridApi: GridApi<IOlympicData>;

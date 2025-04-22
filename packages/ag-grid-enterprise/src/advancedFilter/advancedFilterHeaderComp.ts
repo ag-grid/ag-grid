@@ -97,7 +97,7 @@ export class AdvancedFilterHeaderComp extends Component {
             // unmanaged as can be recreated
             this.eAdvancedFilter = this.createBean(new AdvancedFilterComp());
             const eAdvancedFilterGui = this.eAdvancedFilter.getGui();
-            this.eAdvancedFilter.addCssClass('ag-advanced-filter-header-cell');
+            this.eAdvancedFilter.addCss('ag-advanced-filter-header-cell');
 
             this.setEnabledHeight();
 

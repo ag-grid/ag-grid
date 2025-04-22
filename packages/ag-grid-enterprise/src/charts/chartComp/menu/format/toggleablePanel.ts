@@ -45,7 +45,7 @@ export class ToggleablePanel extends Component {
                 toggleableGroup: groupParams,
             }
         );
-        this.addOrRemoveCssClass(`ag-toggleable-group-panel-no-header`, !title);
+        this.toggleCss(`ag-toggleable-group-panel-no-header`, !title);
     }
 
     public addItem(comp: Component<any>, prepend?: boolean) {

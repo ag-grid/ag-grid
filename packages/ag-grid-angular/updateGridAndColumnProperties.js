@@ -5,7 +5,7 @@ const { EOL } = require('os');
 const ts = require('typescript');
 const { _getCallbackForEvent, _PUBLIC_EVENTS } = require('ag-grid-community');
 const { getFormatterForTS } = require('./../../scripts/formatAST');
-const { _ALL_GRID_OPTIONS } = require('ag-grid-community');
+const { _GET_ALL_GRID_OPTIONS } = require('ag-grid-community');
 const { formatNode, findNode, getFullJsDoc } = getFormatterForTS(ts);
 const prettier = require('prettier');
 
@@ -62,7 +62,7 @@ function generateAngularInputOutputs({ typeLookup, eventTypeLookup, docLookup })
     let propsToWrite = [];
     const typeKeysOrder = Object.keys(typeLookup);
 
-    _ALL_GRID_OPTIONS.forEach((property) => {
+    _GET_ALL_GRID_OPTIONS().forEach((property) => {
         if (skippableProperties.includes(property)) return;
 
         const typeName = typeLookup[property];

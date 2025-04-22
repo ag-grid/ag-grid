@@ -63,7 +63,7 @@ const HeaderFilterCellComp = ({ ctrl }: { ctrl: HeaderFilterCellCtrl }) => {
         });
 
         const compProxy: IHeaderFilterCellComp = {
-            addOrRemoveCssClass: (name, on) => setCssClasses((prev) => prev.setClass(name, on)),
+            toggleCss: (name, on) => setCssClasses((prev) => prev.setClass(name, on)),
             setUserStyles: (styles: HeaderStyle) => setUserStyles(styles),
             addOrRemoveBodyCssClass: (name, on) => setBodyCssClasses((prev) => prev.setClass(name, on)),
             setButtonWrapperDisplayed: (displayed) => {

@@ -46,8 +46,8 @@ export class CellCustomStyleFeature extends BeanStub {
             cellClassRules === this.cellClassRules ? undefined : this.cellClassRules,
             cellClassRules,
             cellClassParams,
-            (className) => cellComp.addOrRemoveCssClass(className, true),
-            (className) => cellComp.addOrRemoveCssClass(className, false)
+            (className) => cellComp.toggleCss(className, true),
+            (className) => cellComp.toggleCss(className, false)
         );
         this.cellClassRules = cellClassRules;
     }
@@ -80,12 +80,12 @@ export class CellCustomStyleFeature extends BeanStub {
         const colDef = column.colDef;
         const cellClassParams = this.getCellClassParams(column, colDef);
 
-        this.staticClasses.forEach((className) => cellComp.addOrRemoveCssClass(className, false));
+        this.staticClasses.forEach((className) => cellComp.toggleCss(className, false));
 
         const newStaticClasses = this.beans.cellStyles!.getStaticCellClasses(colDef, cellClassParams);
         this.staticClasses = newStaticClasses;
 
-        newStaticClasses.forEach((className) => cellComp.addOrRemoveCssClass(className, true));
+        newStaticClasses.forEach((className) => cellComp.toggleCss(className, true));
     }
 
     private getCellClassParams(column: AgColumn, colDef: ColDef): CellClassParams {

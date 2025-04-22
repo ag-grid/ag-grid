@@ -22,7 +22,7 @@ ModuleRegistry.registerModules([
     TextEditorModule,
     ClientSideRowModelModule,
     RichSelectModule,
-    ValidationModule /* Development Only */,
+    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 
 const valueFormatter = (params: ValueFormatterParams) => {

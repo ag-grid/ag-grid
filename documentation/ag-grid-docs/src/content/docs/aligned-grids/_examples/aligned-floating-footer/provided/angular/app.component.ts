@@ -23,7 +23,7 @@ ModuleRegistry.registerModules([
     RowStyleModule,
     AlignedGridsModule,
     ClientSideRowModelModule,
-    ValidationModule /* Development Only */,
+    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 
 @Component({
@@ -65,7 +65,6 @@ export class AppComponent {
     topOptions: GridOptions = {
         defaultColDef: {
             filter: true,
-            flex: 1,
             minWidth: 100,
         },
         suppressHorizontalScroll: true,

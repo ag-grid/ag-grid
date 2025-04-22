@@ -131,7 +131,7 @@ export async function generateFiles(options: ExecutorOptions, gridOptionsTypes: 
 
     const isEnterprise = getIsEnterprise({ entryFile });
     const isLocale = getIsLocale({ entryFile });
-    const hasExampleConsoleLog = getHasExampleConsoleLog({ entryFile });
+
     const frameworkProvidedExamples = sourceFileList.includes('provided') ? await getProvidedFiles(folderPath) : {};
 
     const { bindings, typedBindings } = gridVanillaSrcParser(
@@ -183,22 +183,31 @@ export async function generateFiles(options: ExecutorOptions, gridOptionsTypes: 
             ...(provideFrameworkFiles ? provideFrameworkFiles['exampleConfig.json'] : {}),
         };
 
-        const transformEntryFile: TransformEntryFile = ({ entryFile }) => {
-            let transformedEntryFile = entryFile;
-
-            if (hasExampleConsoleLog) {
-                transformedEntryFile = transformedEntryFile + '\n' + getConsoleLogSnippet({ pageName, exampleName });
-            }
-
-            return transformedEntryFile;
-        };
-
         const [otherScriptFiles, componentScriptFiles] = await getOtherScriptFiles({
             folderPath,
             sourceFileList,
             transformTsFileExt: getTransformTsFileExt(internalFramework),
             internalFramework,
         });
+        const hasExampleConsoleLog = [
+            entryFile,
+            ...Object.values(otherScriptFiles),
+            ...Object.values(componentScriptFiles),
+            ...(provideFrameworkFiles ? Object.values(provideFrameworkFiles) : []),
+        ].some((file: string) => {
+            return getHasExampleConsoleLog({ contents: file });
+        });
+
+        const transformEntryFile: TransformEntryFile = ({ entryFile }) => {
+            let transformedEntryFile = entryFile;
+
+            if (hasExampleConsoleLog) {
+                transformedEntryFile =
+                    getConsoleLogSnippet({ pageName, exampleName, logError: isDev }) + '\n' + transformedEntryFile;
+            }
+
+            return transformedEntryFile;
+        };
 
         let files = {};
         let scriptFiles = [];
@@ -268,7 +277,10 @@ export async function generateFiles(options: ExecutorOptions, gridOptionsTypes: 
     }
 }
 
-function getProvidedFrameworkFiles(internalFramework: string, frameworkProvidedExamples: any) {
+function getProvidedFrameworkFiles(
+    internalFramework: string,
+    frameworkProvidedExamples: any
+): Record<string, any> | undefined {
     const providedFramework = internalFramework === 'reactFunctional' ? 'reactFunctionalTs' : internalFramework;
     const provideFrameworkFiles = frameworkProvidedExamples[providedFramework]
         ? { ...frameworkProvidedExamples[providedFramework] }
@@ -370,11 +382,13 @@ async function processProvidedFiles(
                 code
             );
         }
-
-        provideFrameworkFiles[writeToFileName] = transformEntryFile({
-            entryFile: provideFrameworkFiles[writeToFileName],
-        });
     }
+
+    // Transform entry file
+    provideFrameworkFiles[entryFileName] = transformEntryFile({
+        entryFile: provideFrameworkFiles[entryFileName],
+    });
+
     return scriptFiles;
 }
 

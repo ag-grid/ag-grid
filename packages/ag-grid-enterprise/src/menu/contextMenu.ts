@@ -97,12 +97,22 @@ export class ContextMenuService extends BeanStub implements NamedBean, IContextM
 
             const enableRowPinning = gos.get('enableRowPinning');
             const isRowPinnable = gos.get('isRowPinnable');
+            const grandTotalRow = gos.get('grandTotalRow');
             if (enableRowPinning) {
-                const pinnable = isRowPinnable?.(node) ?? true;
-                if (pinnable) {
-                    defaultMenuOptions.push('pinRowSubMenu');
-                } else if (node.rowPinned) {
-                    defaultMenuOptions.push('unpinRow');
+                const isGroupTotalRow = node.level > -1 && node.footer;
+                const isGrandTotalRow = node.level === -1 && node.footer;
+                const isGrandTotalRowFixed = grandTotalRow === 'pinnedBottom' || grandTotalRow === 'pinnedTop';
+
+                // We do not allow pinning of group total rows. As such, only show pinning related menu options for
+                // grand total rows that are not fixed in place, and normal rows that are not group total rows.
+                if ((isGrandTotalRow && !isGrandTotalRowFixed) || (!isGrandTotalRow && !isGroupTotalRow)) {
+                    const pinnable = isRowPinnable?.(node) ?? true;
+                    // `pinnable` determines whether pinned status can be affected by the user via the context menu,
+                    // not whether the row may be pinned at all (via for example, the `isRowPinned` callback).
+                    // As-such if `pinnable` is falsy, don't show any context menu options for the end user.
+                    if (pinnable) {
+                        defaultMenuOptions.push('pinRowSubMenu');
+                    }
                 }
             }
         }
@@ -153,7 +163,7 @@ export class ContextMenuService extends BeanStub implements NamedBean, IContextM
         let { anchorToElement, value, source } = params;
 
         if (rowNode && column && value == null) {
-            value = this.beans.valueSvc.getValueForDisplay(column, rowNode);
+            value = this.beans.valueSvc.getValueForDisplay(column, rowNode).value;
         }
 
         if (anchorToElement == null) {

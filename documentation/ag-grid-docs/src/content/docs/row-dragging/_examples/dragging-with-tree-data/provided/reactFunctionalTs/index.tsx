@@ -24,7 +24,7 @@ ModuleRegistry.registerModules([
     ClientSideRowModelModule,
     RowDragModule,
     TreeDataModule,
-    ValidationModule /* Development Only */,
+    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 
 const STATIC_GRID_OPTIONS: GridOptions<IFile> = {

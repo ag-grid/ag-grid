@@ -8,7 +8,11 @@ import { AgGridReact } from 'ag-grid-react';
 import CustomElements from './customElements';
 import './styles.css';
 
-ModuleRegistry.registerModules([TextFilterModule, ClientSideRowModelModule, ValidationModule /* Development Only */]);
+ModuleRegistry.registerModules([
+    TextFilterModule,
+    ClientSideRowModelModule,
+    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
+]);
 
 const GRID_CELL_CLASSNAME = 'ag-cell';
 

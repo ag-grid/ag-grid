@@ -1,4 +1,4 @@
-import type { ElementParams, ICellRenderer, ICellRendererParams } from 'ag-grid-community';
+import type { AgColumn, ElementParams, ICellRenderer, ICellRendererParams } from 'ag-grid-community';
 import { Component, _clearElement, _createElement, _escapeString } from 'ag-grid-community';
 
 const FindCellRendererElement: ElementParams = { tag: 'span', cls: 'ag-find-cell' };
@@ -13,8 +13,9 @@ export class FindCellRenderer extends Component implements ICellRenderer {
 
     public refresh(params: ICellRendererParams): boolean {
         const { node, column } = params;
-        const findSvc = this.beans.findSvc;
-        const displayValue = findSvc?.getDisplayValue(params) ?? '';
+        const { findSvc, valueSvc } = this.beans;
+        const { value, valueFormatted } = valueSvc.getValueForDisplay(column as AgColumn | undefined, node, true);
+        const displayValue = valueFormatted ?? value ?? '';
         const eGui = this.getGui();
         _clearElement(eGui);
         const parts = findSvc?.getParts({ value: displayValue, node, column: column ?? null });

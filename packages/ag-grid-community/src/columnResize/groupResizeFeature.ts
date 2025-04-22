@@ -196,7 +196,7 @@ export class GroupResizeFeature extends BeanStub implements IHeaderResizeFeature
     }
 
     public toggleColumnResizing(resizing: boolean): void {
-        this.comp.addOrRemoveCssClass('ag-column-resizing', resizing);
+        this.comp.toggleCss('ag-column-resizing', resizing);
     }
 
     private getColumnsToResize(): AgColumn[] {

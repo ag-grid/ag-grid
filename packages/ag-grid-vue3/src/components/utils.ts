@@ -209,9 +209,11 @@ export interface Props<TData> {
 
 // @START_PROPS@
     /** Specifies the status bar components to use in the status bar.
+         * @agModule `StatusBarModule`
          */
     statusBar?: { statusPanels: StatusPanelDef[] } | undefined,
     /** Specifies the side bar components.
+         * @agModule `SideBarModule`
          */
     sideBar?: SideBarDef | string | string[] | boolean | null | undefined,
     /** Set to `true` to not show the context menu. Use if you don't want to use the default 'right click' context menu.
@@ -225,6 +227,7 @@ export interface Props<TData> {
     preventDefaultOnContextMenu?: boolean | undefined,
     /** Allows context menu to show, even when `Ctrl` key is held down.
          * @default false
+         * @agModule `ContextMenuModule`
          */
     allowContextMenuWithControlKey?: boolean | undefined,
     /** Changes the display type of the column menu.
@@ -424,6 +427,7 @@ export interface Props<TData> {
     skipHeaderOnAutoSize?: boolean | undefined,
     /** Auto-size the columns when the grid is loaded. Can size to fit the grid width, fit a provided width, or fit the cell contents.
          * @initial
+         * @agModule `ColumnAutoSizeModule`
          */
     autoSizeStrategy?: | SizeColumnsToFitGridStrategy
         | SizeColumnsToFitProvidedWidthStrategy
@@ -468,6 +472,7 @@ export interface Props<TData> {
     enableCellEditingOnBackspace?: boolean | undefined,
     /** Set to `true` to enable Undo / Redo while editing.
          * @initial
+         * @agModule `UndoRedoEditModule`
          */
     undoRedoCellEditing?: boolean | undefined,
     /** Set the size of the undo / redo stack.
@@ -494,6 +499,7 @@ export interface Props<TData> {
          */
     excelStyles?: ExcelStyle[] | undefined,
     /** Text to find within the grid.
+         * @agModule `FindModule`
          */
     findSearchValue?: string | undefined,
     /** Options for the Find feature.
@@ -501,6 +507,7 @@ export interface Props<TData> {
     findOptions?: FindOptions | undefined,
     /** Rows are filtered using this text as a Quick Filter.
          * Only supported for Client-Side Row Model.
+         * @agModule `QuickFilterModule`
          */
     quickFilterText?: string | undefined,
     /** Set to `true` to turn on the Quick Filter cache, used to improve performance when using the Quick Filter.
@@ -531,6 +538,7 @@ export interface Props<TData> {
     excludeChildrenWhenTreeDataFiltering?: boolean | undefined,
     /** Set to true to enable the Advanced Filter.
          * @default false
+         * @agModule `AdvancedFilterModule`
          */
     enableAdvancedFilter?: boolean | undefined,
     /** Allows rows to always be displayed, even if they don't match the applied filtering.
@@ -565,6 +573,7 @@ export interface Props<TData> {
     suppressSetFilterByDefault?: boolean | undefined,
     /** Set to `true` to Enable Charts.
          * @default false
+         * @agModule `IntegratedChartsModule`
          */
     enableCharts?: boolean | undefined,
     /** The list of chart themes that a user can choose from in the chart panel.
@@ -600,10 +609,12 @@ export interface Props<TData> {
     loadingCellRendererSelector?: LoadingCellRendererSelectorFunc<TData> | undefined,
     /** A map of key->value pairs for localising text within the grid.
          * @initial
+         * @agModule `LocaleModule`
          */
     localeText?: { [key: string]: string } | undefined,
     /** Set to `true` to enable Master Detail.
          * @default false
+         * @agModule `MasterDetailModule` or `ServerSideRowModelModule`
          */
     masterDetail?: boolean | undefined,
     /** Set to `true` to keep detail rows for when they are displayed again.
@@ -646,6 +657,7 @@ export interface Props<TData> {
          * A list of grids to treat as Aligned Grids.
          * Provide a list if the grids / apis already exist or return via a callback to allow the aligned grids to be retrieved asynchronously.
          * If grids are aligned then the columns and horizontal scrolling will be kept in sync.
+         * @agModule `AlignedGridsModule`
          */
     alignedGrids?: (AlignedGrid[] | (() => AlignedGrid[])) | undefined,
     /** Change this value to set the tabIndex order of the Grid within your application.
@@ -661,6 +673,7 @@ export interface Props<TData> {
     /** Set to `true` to turn on the value cache.
          * @default false
          * @initial
+         * @agModule `ValueCacheModule`
          */
     valueCache?: boolean | undefined,
     /** Set to `true` to configure the value cache to not expire after data updates.
@@ -697,6 +710,7 @@ export interface Props<TData> {
          */
     suppressChangeDetection?: boolean | undefined,
     /** Set this to `true` to enable debug information from the grid and related components. Will result in additional logging being output, but very useful when investigating problems.
+         * It is also recommended to register the `ValidationModule` to identify any misconfigurations.
          * @default false
          * @initial
          */
@@ -737,6 +751,7 @@ export interface Props<TData> {
     suppressNoRowsOverlay?: boolean | undefined,
     /** Set whether pagination is enabled.
          * @default false
+         * @agModule `PaginationModule`
          */
     pagination?: boolean | undefined,
     /** How many rows to load per page. If `paginationAutoPageSize` is specified, this property is ignored.
@@ -768,11 +783,13 @@ export interface Props<TData> {
     suppressPaginationPanel?: boolean | undefined,
     /** Set to `true` to enable pivot mode.
          * @default false
+         * @agModule `PivotModule` or `ServerSideRowModelModule`
          */
     pivotMode?: boolean | undefined,
     /** When to show the 'pivot panel' (where you drag rows to pivot) at the top. Note that the pivot panel will never show if `pivotMode` is off.
          * @default 'never'
          * @initial
+         * @agModule `RowGroupingPanelModule`
          */
     pivotPanelShow?: 'always' | 'onlyWhenPivoting' | 'never' | undefined,
     /** The maximum number of generated columns before the grid halts execution. Upon reaching this number, the grid halts generation of columns
@@ -859,6 +876,7 @@ export interface Props<TData> {
     /** When `true`, enables the cell span feature allowing for the use of the `colDef.spanRows` property.
          * @default false
          * @initial
+         * @agModule `CellSpanModule`
          */
     enableCellSpan?: boolean | undefined,
     /** Set to `true` to operate the grid in RTL (Right to Left) mode.
@@ -884,6 +902,7 @@ export interface Props<TData> {
     suppressRowVirtualisation?: boolean | undefined,
     /** Set to `true` to enable Managed Row Dragging.
          * @default false
+         * @agModule `RowDragModule`
          */
     rowDragManaged?: boolean | undefined,
     /** Set to `true` to suppress row dragging.
@@ -957,10 +976,12 @@ export interface Props<TData> {
     /** When provided, an extra row group total row will be inserted into row groups at the specified position, to display
          * when the group is expanded. This row will contain the aggregate values for the group. If a callback function is
          * provided, it can be used to selectively determine which groups will have a total row added.
+         * @agModule `RowGroupingModule` or `ServerSideRowModelModule`
          */
     groupTotalRow?: 'top' | 'bottom' | UseGroupTotalRow<TData> | undefined,
     /** When provided, an extra grand total row will be inserted into the grid at the specified position.
          * This row displays the aggregate totals of all rows in the grid.
+         * @agModule `RowGroupingModule` or `ServerSideRowModelModule`
          */
     grandTotalRow?: 'top' | 'bottom' | 'pinnedTop' | 'pinnedBottom' | undefined,
     /** Suppress the sticky behaviour of the total rows, can be suppressed individually by passing `'grand'` or `'group'`.
@@ -1003,6 +1024,7 @@ export interface Props<TData> {
     groupAllowUnbalanced?: boolean | undefined,
     /** When to show the 'row group panel' (where you drag rows to group) at the top.
          * @default 'never'
+         * @agModule `RowGroupingPanelModule`
          */
     rowGroupPanelShow?: 'always' | 'onlyWhenGrouping' | 'never' | undefined,
     /** Provide the Cell Renderer to use when `groupDisplayType = 'groupRows'`.
@@ -1015,6 +1037,7 @@ export interface Props<TData> {
     /** Set to `true` to enable the Grid to work with Tree Data.
          * You must also implement the `getDataPath(data)` callback.
          * @default false
+         * @agModule `TreeDataModule`
          */
     treeData?: boolean | undefined,
     /** The name of the field to use in a data item to retrieve the array of children nodes of a node when while using treeData=true.
@@ -1037,9 +1060,11 @@ export interface Props<TData> {
          */
     suppressGroupRowsSticky?: boolean | undefined,
     /** Data to be displayed as pinned top rows in the grid.
+         * @agModule `PinnedRowModule`
          */
     pinnedTopRowData?: any[] | undefined,
     /** Data to be displayed as pinned bottom rows in the grid.
+         * @agModule `PinnedRowModule`
          */
     pinnedBottomRowData?: any[] | undefined,
     /** Determines whether manual row pinning is enabled via the row context menu.
@@ -1047,12 +1072,14 @@ export interface Props<TData> {
          * Set to `true` to allow pinning rows to top or bottom.
          * Set to `'top'` to allow pinning rows to the top only.
          * Set to `'bottom'` to allow pinning rows to the bottom only.
+         * @agModule `ManualPinnedRowModule`
          */
     enableRowPinning?: boolean | 'top' | 'bottom' | undefined,
     /** Return `true` if the grid should allow the row to be manually pinned.
          * Return `false` if the grid should prevent the row from being pinned
          *
          * When not defined, all rows default to pinnable.
+         * @agModule `ManualPinnedRowModule`
          */
     isRowPinnable?: IsRowPinnable<TData> | undefined,
     /** Called for every row in the grid.
@@ -1067,6 +1094,7 @@ export interface Props<TData> {
          */
     rowModelType?: RowModelType | undefined,
     /** Set the data to be displayed as rows in the grid.
+         * @agModule `ClientSideRowModelModule`
          */
     rowData?: TData[] | null | undefined,
     /** How many milliseconds to wait before executing a batch of async transactions.
@@ -1077,6 +1105,7 @@ export interface Props<TData> {
          */
     suppressModelUpdateAfterUpdateTransaction?: boolean | undefined,
     /** Provide the datasource for infinite scrolling.
+         * @agModule `InfiniteRowModelModule`
          */
     datasource?: IDatasource | undefined,
     /** How many extra blank rows to display to the user at the end of the dataset, which sets the vertical scroll and then allows the grid to request viewing more rows of data.
@@ -1120,6 +1149,7 @@ export interface Props<TData> {
          */
     purgeClosedRowNodes?: boolean | undefined,
     /** Provide the `serverSideDatasource` for server side row model.
+         * @agModule `ServerSideRowModelModule`
          */
     serverSideDatasource?: IServerSideDatasource | undefined,
     /** When enabled, always refreshes top level groups regardless of which column was sorted. This property only applies when there is Row Grouping & sorting is handled on the server.
@@ -1141,6 +1171,7 @@ export interface Props<TData> {
          */
     serverSidePivotResultFieldSeparator?: string | undefined,
     /** To use the viewport row model you need to provide the grid with a `viewportDatasource`.
+         * @agModule `ViewportRowModelModule`
          */
     viewportDatasource?: IViewportDatasource | undefined,
     /** When using viewport row model, sets the page size for the viewport.
@@ -1196,9 +1227,11 @@ export interface Props<TData> {
          */
     scrollbarWidth?: number | undefined,
     /** Use the `RowSelectionOptions` object to configure row selection. The string values `'single'` and `'multiple'` are deprecated.
+         * @agModule `RowSelectionModule` or `ServerSideRowModelModule`
          */
     rowSelection?: RowSelectionOptions<TData> | 'single' | 'multiple' | undefined,
-    /** Configure cell selection
+    /** Configure cell selection.
+         * @agModule `CellSelectionModule`
          */
     cellSelection?: boolean | CellSelectionOptions<TData> | undefined,
     /** Set to `true` to allow multiple rows to be selected using single click.
@@ -1231,6 +1264,7 @@ export interface Props<TData> {
     selectionColumnDef?: SelectionColumnDef | undefined,
     /** Configure the Row Numbers Feature.
          * @default false
+         * @agModule `RowNumbersModule`
          */
     rowNumbers?: boolean | RowNumbersOptions | undefined,
     /** If `true`, only a single range can be selected.
@@ -1247,6 +1281,7 @@ export interface Props<TData> {
     /** Set to `true` to enable Range Selection.
          * @default false
          * @deprecated v32.2 Use `cellSelection = true` instead
+         * @agModule `CellSelectionModule`
          */
     enableRangeSelection?: boolean | undefined,
     /** Set to `true` to enable the Range Handle.
@@ -1307,12 +1342,15 @@ export interface Props<TData> {
          */
     rowHeight?: number | undefined,
     /** The style properties to apply to all rows. Set to an object of key (style names) and values (style values).
+         * @agModule `RowStyleModule`
          */
     rowStyle?: RowStyle | undefined,
     /** CSS class(es) for all rows. Provide either a string (class name) or array of strings (array of class names).
+         * @agModule `RowStyleModule`
          */
     rowClass?: string | string[] | undefined,
     /** Rules which can be applied to include certain CSS classes.
+         * @agModule `RowStyleModule`
          */
     rowClassRules?: RowClassRules<TData> | undefined,
     /** Set to `true` to not highlight rows by adding the `ag-row-hover` CSS class.
@@ -1326,6 +1364,7 @@ export interface Props<TData> {
     suppressRowTransform?: boolean | undefined,
     /** Set to `true` to highlight columns by adding the `ag-column-hover` CSS class.
          * @default false
+         * @agModule `ColumnHoverModule`
          */
     columnHoverHighlight?: boolean | undefined,
     /** Provide a custom `gridId` for this instance of the grid. Value will be set on the root DOM node using the attribute `grid-id` as well as being accessible via the `gridApi.getGridId()` method.
@@ -1343,6 +1382,7 @@ export interface Props<TData> {
     enableGroupEdit?: boolean | undefined,
     /** Initial state for the grid. Only read once on initialization. Can be used in conjunction with `api.getState()` to save and restore grid state.
          * @initial
+         * @agModule `GridStateModule`
          */
     initialState?: GridState | undefined,
     /** Theme to apply to the grid, or the string "legacy" to opt back into the
@@ -1382,10 +1422,12 @@ export interface Props<TData> {
          */
     themeStyleContainer?: HTMLElement | undefined,
     /** For customising the context menu.
+         * @agModule `ContextMenuModule`
          */
     getContextMenuItems?: GetContextMenuItems<TData> | undefined,
     /** For customising the main 'column header' menu.
          * @initial
+         * @agModule `ColumnMenuModule`
          */
     getMainMenuItems?: GetMainMenuItems<TData> | undefined,
     /** Allows user to process popups after they are created. Applications can use this if they want to, for example, reposition the popup.
@@ -1415,9 +1457,11 @@ export interface Props<TData> {
          */
     processDataFromClipboard?: ((params: ProcessDataFromClipboardParams<TData>) => string[][] | null) | undefined,
     /** Grid calls this method to know if an external filter is present.
+         * @agModule `ExternalFilterModule`
          */
     isExternalFilterPresent?: ((params: IsExternalFilterPresentParams<TData>) => boolean) | undefined,
     /** Should return `true` if external filter passes, otherwise `false`.
+         * @agModule `ExternalFilterModule`
          */
     doesExternalFilterPass?: ((node: IRowNode<TData>) => boolean) | undefined,
     /** Callback to be used to customise the chart toolbar items.
@@ -1450,6 +1494,7 @@ export interface Props<TData> {
     tabToNextCell?: ((params: TabToNextCellParams<TData>) => CellPosition | boolean) | undefined,
     /** A callback for localising text within the grid.
          * @initial
+         * @agModule `LocaleModule`
          */
     getLocaleText?: ((params: GetLocaleTextParams<TData>) => string) | undefined,
     /** Allows overriding what `document` is used. Currently used by Drag and Drop (may extend to other places in the future). Use this when you want the grid to use a different `document` than the one available on the global scope. This can happen if docking out components (something which Electron supports)
@@ -1528,9 +1573,11 @@ export interface Props<TData> {
          */
     postSortRows?: ((params: PostSortRowsParams<TData>) => void) | undefined,
     /** Callback version of property `rowStyle` to set style for each row individually. Function should return an object of CSS values or undefined for no styles.
+         * @agModule `RowStyleModule`
          */
     getRowStyle?: ((params: RowClassParams<TData>) => RowStyle | undefined) | undefined,
     /** Callback version of property `rowClass` to set class(es) for each row individually. Function should return either a string (class name), array of strings (array of class names) or undefined for no class.
+         * @agModule `RowStyleModule`
          */
     getRowClass?: ((params: RowClassParams<TData>) => string | string[] | undefined) | undefined,
     /** Callback version of property `rowHeight` to set height for each row individually. Function should return a positive number of pixels, or return `null`/`undefined` to use the default row height.

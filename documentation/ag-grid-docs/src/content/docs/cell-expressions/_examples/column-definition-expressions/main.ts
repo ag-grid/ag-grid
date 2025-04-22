@@ -16,7 +16,7 @@ ModuleRegistry.registerModules([
     ColumnAutoSizeModule,
     ClientSideRowModelModule,
     NumberEditorModule,
-    ValidationModule /* Development Only */,
+    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 
 const columnDefs: ColDef[] = [
@@ -58,7 +58,6 @@ let gridApi: GridApi;
 const gridOptions: GridOptions = {
     columnDefs: columnDefs,
     defaultColDef: {
-        flex: 1,
         sortable: false,
     },
     rowData: getData(),

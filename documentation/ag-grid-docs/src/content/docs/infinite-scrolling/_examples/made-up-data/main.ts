@@ -12,7 +12,7 @@ ModuleRegistry.registerModules([
     ColumnApiModule,
     RowSelectionModule,
     InfiniteRowModelModule,
-    ValidationModule /* Development Only */,
+    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 
 const ALPHABET = 'abcdefghijklmnopqrstuvwxyz'.split('');

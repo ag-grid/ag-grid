@@ -98,7 +98,7 @@ export class ToolPanelColumnGroupComp extends Component {
         eLabel.textContent = displayName ?? '';
         this.setupExpandContract();
 
-        this.addCssClass('ag-column-select-indent-' + columnDepth);
+        this.addCss('ag-column-select-indent-' + columnDepth);
         this.getGui().style.setProperty('--ag-indentation-level', String(columnDepth));
 
         this.tooltipFeature = this.createOptionalManagedBean(
@@ -128,7 +128,7 @@ export class ToolPanelColumnGroupComp extends Component {
         this.setupTooltip();
 
         const classes = _getToolPanelClassesFromColDef(columnGroup.getColGroupDef(), gos, null, columnGroup);
-        classes.forEach((c) => this.addOrRemoveCssClass(c, true));
+        classes.forEach((c) => this.toggleCss(c, true));
     }
 
     public getColumns(): AgColumn[] {
@@ -349,7 +349,7 @@ export class ToolPanelColumnGroupComp extends Component {
         const cbSelect = this.cbSelect;
         cbSelect.setValue(selectedValue);
         cbSelect.setReadOnly(readOnlyValue);
-        this.addOrRemoveCssClass('ag-column-select-column-group-readonly', readOnlyValue);
+        this.toggleCss('ag-column-select-column-group-readonly', readOnlyValue);
         this.processingColumnStateChange = false;
     }
 
