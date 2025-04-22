@@ -1,0 +1,25 @@
+.example-wrapper {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+button {
+    height: unset !important;
+}
+
+.example-button-row {
+    margin-bottom: 5px;
+    display: flex;
+    gap: 5px;
+    align-items: baseline;
+}
+
+.grid-wrapper {
+    flex: 1 1 0px;
+}
+
+#myGrid {
+    height: 100%;
+    width: 100%;
+}
