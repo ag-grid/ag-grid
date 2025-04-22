@@ -5,7 +5,6 @@ import type {
     GridOptions,
     RowEditingStartedEvent,
     RowEditingStoppedEvent,
-    RowPinnedType,
 } from 'ag-grid-community';
 import {
     ClientSideRowModelModule,
@@ -107,6 +106,22 @@ function updateTrigger(trigger: string) {
             trigger: trigger as any,
         },
     });
+}
+
+function enableBatchEditing() {
+    gridApi!.updateGridOptions({
+        experimentalEditingModeV2: {
+            strategy: 'batchEditMode',
+        },
+    });
+}
+
+function commitBatchEditing() {
+    gridApi!.commitEdits();
+}
+
+function cancelBatchEditing() {
+    gridApi!.cancelEdits();
 }
 
 // setup the grid after the page has finished loading
