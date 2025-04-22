@@ -430,6 +430,9 @@ always be 0 and then making a row sticky causes the grid to scroll. */
     width: 100%;
     position: relative;
     display: flex;
+}
+
+:where(.ag-floating-top:not(.ag-invisible)) {
     border-bottom: var(--ag-pinned-row-border);
 }
 
@@ -439,6 +442,9 @@ always be 0 and then making a row sticky causes the grid to scroll. */
     width: 100%;
     position: relative;
     display: flex;
+}
+
+:where(.ag-floating-bottom:not(.ag-invisible)) {
     border-top: var(--ag-pinned-row-border);
 }
 

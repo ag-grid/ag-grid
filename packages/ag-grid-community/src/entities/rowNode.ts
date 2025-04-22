@@ -333,6 +333,15 @@ export class RowNode<TData = any>
         }
 
         eventSvc.dispatchEvent({ type: 'rowNodeDataChanged', node: this });
+
+        const pinnedSibling = this.pinnedSibling;
+        if (pinnedSibling) {
+            pinnedSibling.data = data;
+            pinnedSibling.__localEventService?.dispatchEvent(
+                pinnedSibling.createDataChangedEvent(data, oldData, update)
+            );
+            eventSvc.dispatchEvent({ type: 'rowNodeDataChanged', node: pinnedSibling });
+        }
     }
 
     // when we are doing master / detail, the detail node is lazy created, but then kept around.
@@ -525,7 +534,18 @@ export class RowNode<TData = any>
         const valueChanged = valueSvc.setValue(this, column, newValue, eventSource);
 
         this.dispatchCellChangedEvent(column, newValue, oldValue);
-        selectionSvc?.updateRowSelectable(this);
+        const selectable = selectionSvc?.updateRowSelectable(this);
+
+        const pinnedSibling = this.pinnedSibling;
+        if (pinnedSibling) {
+            // pinned sibling shares a reference to the same data object as the
+            if (valueChanged) {
+                pinnedSibling.dispatchCellChangedEvent(column, newValue, oldValue);
+            }
+            // The pinned sibling mirrors the state of the source row, otherwise
+            // we could potentially have siblings with different values of "selectable"
+            pinnedSibling.selectable = selectable ?? true;
+        }
 
         return valueChanged;
     }

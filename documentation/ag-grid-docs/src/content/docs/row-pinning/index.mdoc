@@ -3,7 +3,7 @@ title: "Row Pinning"
 ---
 Pinned rows appear either above or below the normal rows of a table. 
 This is sometimes also known as **Frozen Rows** or **Floating Rows**.
-Rows can be pinned via the [Context Menu](./context-menu).
+Rows can be pinned via the [Context Menu](./context-menu) or Grid Options.
 
 ## Enabling Row Pinning
 
@@ -28,7 +28,17 @@ To pin a row use right-click to bring up the [Context Menu](./context-menu) and 
 
 {% gridExampleRunner title="Simple Row Pinning" name="simple-pinning" /%}
 
-Note that rows that have been pinned also appear greyed-out in the main viewport.
+Note that rows that have been pinned also appear greyed-out in the main viewport. All the examples on this page also apply additional styling to visually differentiate the pinned rows from the rows in the main viewport.
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    theme: themeQuartz.withParts({
+        pinnedRowBorder: { 
+            width: 3 
+        }
+    })
+}
+```
 
 ## Pinning Rows on First Render
 To have a row appear as pinned when the grid initially renders data, use the `isRowPinned` callback. As an example, the snippet below will pin all rows whose `country` field is `null` in the top container.

@@ -1,21 +1,14 @@
-import type {
-    AgColumn,
-    BeanCollection,
-    CssVariablesChanged,
-    IPinnedRowModel,
-    RowNode,
-    RowPinnedType,
-    RowPinningState,
-} from 'ag-grid-community';
-import {
-    BeanStub,
-    _ROW_ID_PREFIX_BOTTOM_PINNED,
-    _ROW_ID_PREFIX_TOP_PINNED,
-    _getRowHeightForNode,
-    _isClientSideRowModel,
-} from 'ag-grid-community';
-
-import { _createRowNodeSibling } from '../misc/rowNodeSiblingUtils';
+import { BeanStub } from '../context/beanStub';
+import type { BeanCollection } from '../context/context';
+import type { AgColumn } from '../entities/agColumn';
+import { ROW_ID_PREFIX_BOTTOM_PINNED, ROW_ID_PREFIX_TOP_PINNED } from '../entities/rowNode';
+import type { RowNode } from '../entities/rowNode';
+import { _createRowNodeSibling } from '../entities/rowNodeUtils';
+import type { CssVariablesChanged } from '../events';
+import { _getRowHeightForNode, _isClientSideRowModel } from '../gridOptionsUtils';
+import type { RowPinningState } from '../interfaces/gridState';
+import type { IPinnedRowModel } from '../interfaces/iPinnedRowModel';
+import type { RowPinnedType } from '../interfaces/iRowNode';
 import { PinnedRows, _shouldHidePinnedRows } from './manualPinnedRowUtils';
 
 export class ManualPinnedRowModel extends BeanStub implements IPinnedRowModel {
@@ -366,7 +359,9 @@ function refreshRowPositions(beans: BeanCollection, container: PinnedRows) {
     let rowTop = 0;
     container.forEach((node, index) => {
         node.setRowTop(rowTop);
-        node.setRowHeight(_getRowHeightForNode(beans, node).height);
+        if (node.rowHeightEstimated) {
+            node.setRowHeight(_getRowHeightForNode(beans, node).height);
+        }
         node.setRowIndex(index);
         rowTop += node.rowHeight!;
     });
@@ -385,7 +380,7 @@ function _createPinnedSibling(beans: BeanCollection, rowNode: RowNode, floating:
     sibling.setRowIndex(null);
     sibling.rowPinned = floating;
 
-    const prefix = floating === 'top' ? _ROW_ID_PREFIX_TOP_PINNED : _ROW_ID_PREFIX_BOTTOM_PINNED;
+    const prefix = floating === 'top' ? ROW_ID_PREFIX_TOP_PINNED : ROW_ID_PREFIX_BOTTOM_PINNED;
 
     sibling.id = `${prefix}${floating}-${rowNode.id}`;
 

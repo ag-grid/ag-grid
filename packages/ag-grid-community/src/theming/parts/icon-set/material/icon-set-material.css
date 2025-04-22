@@ -213,3 +213,15 @@
 .ag-icon-column-arrow::before {
     mask-image: url('./material-svg-icons/column-arrow.svg');
 }
+
+.ag-icon-un-pin::before {
+    mask-image: url('./material-svg-icons/un-pin.svg');
+}
+
+.ag-icon-pinned-top::before {
+    mask-image: url('./material-svg-icons/pinned-top.svg');
+}
+
+.ag-icon-pinned-bottom::before {
+    mask-image: url('./material-svg-icons/pinned-bottom.svg');
+}

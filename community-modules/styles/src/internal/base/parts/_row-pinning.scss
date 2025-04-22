@@ -1,0 +1,11 @@
+.ag-row.ag-row-pinned-source {
+    color: var(--ag-pinned-row-source-color);
+}
+
+.ag-floating-top-viewport {
+    border-bottom: var(--ag-pinned-row-border);
+}
+
+.ag-floating-bottom-viewport {
+    border-top: var(--ag-pinned-row-border);
+}

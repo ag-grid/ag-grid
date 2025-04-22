@@ -202,4 +202,42 @@ export class RowAutoHeightService extends BeanStub implements NamedBean {
     public setAutoHeightActive(cols: ColumnCollections): void {
         this.active = cols.list.some((col) => col.isVisible() && col.isAutoHeight());
     }
+
+    /**
+     * Determines if the row auto height service has cells to grow.
+     * @returns true if all of the rendered rows are at least as tall as their rendered cells.
+     */
+    public areRowsMeasured(): boolean {
+        if (!this.active) {
+            return true;
+        }
+
+        const rowCtrls = this.beans.rowRenderer.getAllRowCtrls();
+        let renderedAutoHeightCols: AgColumn[] | null = null;
+        for (const { rowNode } of rowCtrls) {
+            // if colSpanActive is false, then all rows will have the same cols, so shortcut
+            // and avoid filtering the cols for each row
+            if (!renderedAutoHeightCols || this.beans.colModel.colSpanActive) {
+                const renderedCols = this.beans.colViewport.getColsWithinViewport(rowNode);
+                renderedAutoHeightCols = renderedCols.filter((col) => col.isAutoHeight());
+            }
+
+            if (renderedAutoHeightCols.length === 0) {
+                continue;
+            }
+
+            if (!rowNode.__autoHeights) {
+                return false;
+            }
+
+            for (const col of renderedAutoHeightCols) {
+                const cellHeight = rowNode.__autoHeights[col.getColId()];
+                if (!cellHeight || rowNode.rowHeight! < cellHeight) {
+                    return false;
+                }
+            }
+        }
+
+        return true;
+    }
 }

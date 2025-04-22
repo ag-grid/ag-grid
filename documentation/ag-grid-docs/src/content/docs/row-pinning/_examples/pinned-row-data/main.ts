@@ -3,13 +3,9 @@ import {
     ClientSideRowModelModule,
     ModuleRegistry,
     PinnedRowModule,
-    RowClassParams,
-    RowStyle,
     ValidationModule,
     createGrid,
 } from 'ag-grid-community';
-
-import { CustomPinnedRowRenderer } from './customPinnedRowRenderer_typescript';
 
 ModuleRegistry.registerModules([
     PinnedRowModule,

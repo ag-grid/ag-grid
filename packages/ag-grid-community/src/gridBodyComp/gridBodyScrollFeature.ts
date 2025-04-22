@@ -530,7 +530,7 @@ export class GridBodyScrollFeature extends BeanStub {
     // eg if grid needs to scroll up, it scrolls until row is on top,
     //    if grid needs to scroll down, it scrolls until row is on bottom,
     //    if row is already in view, grid does not scroll
-    public ensureIndexVisible(index: number, position?: 'top' | 'bottom' | 'middle' | null) {
+    public ensureIndexVisible(index: number, position?: 'top' | 'bottom' | 'middle' | null, retry = 0) {
         // if for print or auto height, everything is always visible
         if (_isDomLayout(this.gos, 'print')) {
             return;
@@ -618,6 +618,12 @@ export class GridBodyScrollFeature extends BeanStub {
 
             // so when we return back to user, the cells have rendered
             this.animationFrameSvc?.flushAllFrames();
+
+            if (retry < 10 && !this.beans.rowAutoHeight?.areRowsMeasured()) {
+                setTimeout(() => {
+                    this.ensureIndexVisible(index, position, retry + 1);
+                }, 0);
+            }
         });
     }
 

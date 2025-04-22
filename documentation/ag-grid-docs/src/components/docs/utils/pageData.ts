@@ -110,6 +110,34 @@ export async function getDocsExamplePages({ pages }: { pages: DocsPage[] }) {
     });
 }
 
+function allPropertiesAreTruthy(entries: [string, DocExamplePage][], property: keyof DocExamplePage) {
+    return entries.every(([_, data]) => {
+        return data[property];
+    });
+}
+
+function flattenDocsExampleContents(data: Record<string, DocFrameworkExamples>) {
+    return Object.values(data).map((frameworkExamples) => {
+        const frameworkEntries = Object.entries(frameworkExamples);
+        const [_, { pageName, exampleName }] = frameworkEntries[0];
+        const isEnterprise = allPropertiesAreTruthy(frameworkEntries, 'isEnterprise');
+        const isIntegratedCharts = allPropertiesAreTruthy(frameworkEntries, 'isIntegratedCharts');
+        const isLocale = allPropertiesAreTruthy(frameworkEntries, 'isLocale');
+        const hasExampleConsoleLog = allPropertiesAreTruthy(frameworkEntries, 'hasExampleConsoleLog');
+
+        return {
+            id: `${pageName}-${exampleName}`,
+            pageName,
+            exampleName,
+            isEnterprise,
+            isIntegratedCharts,
+            isLocale,
+            hasExampleConsoleLog,
+            frameworkExamples,
+        };
+    });
+}
+
 export async function getDocsExampleContents({ pages }: { pages: DocsPage[] }) {
     const examples = await getDocsExamplePages({
         pages,
@@ -140,7 +168,7 @@ export async function getDocsExampleContents({ pages }: { pages: DocsPage[] }) {
     });
     await Promise.all(examplePromises);
 
-    return exampleContents;
+    return flattenDocsExampleContents(exampleContents);
 }
 
 export async function getDocExampleFiles({ pages }: { pages: DocsPage[] }) {
