@@ -306,7 +306,10 @@ const docs: Record<AllThemeParams, string> = {
     widgetVerticalSpacing: 'The spacing between widgets in containers arrange widgets vertically',
     wrapperBorder: 'Borders around the outside of the grid',
     wrapperBorderRadius: 'Corner radius of the outermost container around the grid.',
-    pinnedSourceRowTextColor: 'Text colour of the row in the main viewport that has been pinned to the top or bottom',
+    pinnedSourceRowTextColor: 'Text color for row in the main viewport that has been pinned to the top or bottom',
+    pinnedSourceRowBackgroundColor:
+        'Background color for the row in the main viewport that has been pinned to the top or bottom',
+    pinnedSourceRowFontFamily: 'Font-family for the row in the main viewport that has been pinned to the top or bottom',
 };
 
 export const getParamDocs = (param: string): string | undefined => {
