@@ -86,11 +86,6 @@ export function createXlsxExcel(
             showExcelTableNonCompatibleFeaturesWarning('pivot mode');
             newConfig.exportAsExcelTable = false;
         }
-
-        if (config.gos.get('masterDetail')) {
-            showExcelTableNonCompatibleFeaturesWarning('master/detail');
-            newConfig.exportAsExcelTable = false;
-        }
     }
 
     processTableConfig(worksheet, newConfig);

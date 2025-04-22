@@ -7,7 +7,6 @@ import type { GridOptions } from '../entities/gridOptions';
 import { INITIAL_GRID_OPTION_KEYS } from '../gridOptionsInitial';
 import type { PropertyChangedSource } from '../gridOptionsService';
 import type { RowNodeEventType } from '../interfaces/iRowNode';
-import type { DefaultMenuItem } from '../interfaces/menuItem';
 import { _areModulesGridScoped } from '../modules/moduleRegistry';
 import { _warnOnce } from '../utils/function';
 import { _fuzzySuggestions } from '../utils/fuzzyMatch';
@@ -19,9 +18,8 @@ import { _error, _warn, provideValidationServiceLogger } from './logging';
 import { COL_DEF_VALIDATORS } from './rules/colDefValidations';
 import { GRID_OPTIONS_VALIDATORS } from './rules/gridOptionsValidations';
 import { DEPRECATED_ICONS_V33, ICON_MODULES, ICON_VALUES } from './rules/iconValidations';
-import { MENU_ITEM_MODULES } from './rules/menuItemValidations';
 import { USER_COMP_MODULES } from './rules/userCompValidations';
-import type { DependentValues, OptionsValidation, OptionsValidator, RequiredOptions } from './validationTypes';
+import type { DependentValues, OptionsValidator, RequiredOptions } from './validationTypes';
 
 export class ValidationService extends BeanStub implements NamedBean {
     beanName = 'validation' as const;
@@ -31,10 +29,6 @@ export class ValidationService extends BeanStub implements NamedBean {
     public wireBeans(beans: BeanCollection): void {
         this.gridOptions = beans.gridOptions;
         provideValidationServiceLogger(this);
-    }
-
-    public postConstruct(): void {
-        this.processGridOptions(this.gridOptions);
     }
 
     public warnOnInitialPropertyUpdate(source: PropertyChangedSource, key: string): void {
@@ -104,21 +98,13 @@ export class ValidationService extends BeanStub implements NamedBean {
         _warn(134, { iconName });
     }
 
-    public validateMenuItem(key: string): void {
-        const moduleName = MENU_ITEM_MODULES[key as DefaultMenuItem];
-        if (moduleName) {
-            this.gos.assertModuleRegistered(moduleName, `menu item '${key}'`);
-        }
-    }
-
     public isProvidedUserComp(compName: string): boolean {
         return !!USER_COMP_MODULES[compName as UserComponentName];
     }
 
-    public validateColDef(colDef: ColDef | ColGroupDef, colId: string, skipInferenceCheck?: boolean): void {
-        if (skipInferenceCheck || !this.beans.dataTypeSvc?.isColPendingInference(colId)) {
-            this.processOptions(colDef, COL_DEF_VALIDATORS());
-        }
+    /** Should only be called via the GridOptionsService */
+    public validateColDef(colDef: ColDef | ColGroupDef): void {
+        this.processOptions(colDef, COL_DEF_VALIDATORS());
     }
 
     private processOptions<T extends object>(options: T, validator: OptionsValidator<T>): void {
@@ -136,36 +122,6 @@ export class ValidationService extends BeanStub implements NamedBean {
 
         const warnings = new Set<string>();
 
-        const getRules = (key: keyof T): OptionsValidation<T> | undefined => {
-            const rulesOrGetter = validations[key];
-            if (!rulesOrGetter) {
-                return;
-            } else if (typeof rulesOrGetter === 'function') {
-                const fromGetter = rulesOrGetter(options, this.gridOptions, this.beans);
-                if (!fromGetter) {
-                    return;
-                }
-
-                // this is a sub validator.
-                if ('objectName' in fromGetter) {
-                    const subValidator = fromGetter as OptionsValidator<T>;
-                    const value = options[key];
-                    if (Array.isArray(value)) {
-                        value.forEach((item) => {
-                            this.processOptions(item, subValidator);
-                        });
-                        return;
-                    }
-                    this.processOptions(options[key] as any, subValidator);
-                    return;
-                }
-
-                return fromGetter;
-            } else {
-                return rulesOrGetter;
-            }
-        };
-
         const optionKeys = Object.keys(options) as (keyof T)[];
         optionKeys.forEach((key: keyof T) => {
             const deprecation = deprecations[key];
@@ -180,12 +136,12 @@ export class ValidationService extends BeanStub implements NamedBean {
                 return;
             }
 
-            const rules = getRules(key);
+            const rules = validations[key];
             if (!rules) {
                 return;
             }
 
-            const { module, dependencies, validate, supportedRowModels, expectedType } = rules;
+            const { dependencies, validate, supportedRowModels, expectedType } = rules;
 
             if (expectedType) {
                 const actualType = typeof value;
@@ -203,21 +159,6 @@ export class ValidationService extends BeanStub implements NamedBean {
                     warnings.add(
                         `${String(key)} is not supported with the '${rowModel}' row model. It is only valid with: ${supportedRowModels.join(', ')}.`
                     );
-                    return;
-                }
-            }
-
-            if (module) {
-                const modules = Array.isArray(module) ? module : [module];
-
-                let allRegistered = true;
-                modules.forEach((m) => {
-                    if (!this.gos.assertModuleRegistered(m, String(key))) {
-                        allRegistered = false;
-                    }
-                });
-
-                if (!allRegistered) {
                     return;
                 }
             }

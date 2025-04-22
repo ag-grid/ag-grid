@@ -15,7 +15,7 @@ import { resolveModuleNames } from '../resolvableModuleNames';
 import { USER_COMP_MODULES } from '../rules/userCompValidations';
 
 export const NoModulesRegisteredError = () =>
-    `No AG Grid modules are registered! It is recommend to start with all Community features via the AllCommunityModule:
+    `No AG Grid modules are registered! It is recommended to start with all Community features via the AllCommunityModule:
                     
     import { ModuleRegistry, AllCommunityModule } from 'ag-grid-community';
     

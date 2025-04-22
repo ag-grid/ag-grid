@@ -488,10 +488,10 @@ export class ColumnGroupService extends BeanStub implements NamedBean {
 
     private createMergedColGroupDef(colGroupDef: ColGroupDef | null, groupId: string): ColGroupDef {
         const colGroupDefMerged: ColGroupDef = {} as ColGroupDef;
-        const { gos, validation } = this.beans;
+        const { gos } = this.beans;
         Object.assign(colGroupDefMerged, gos.get('defaultColGroupDef'));
         Object.assign(colGroupDefMerged, colGroupDef);
-        validation?.validateColDef(colGroupDefMerged, groupId);
+        gos.validateColDef(colGroupDefMerged, groupId);
 
         return colGroupDefMerged;
     }

@@ -18,7 +18,7 @@ export default {
     },
     methods: {
         clicked() {
-            alert('button clicked');
+            console.log('button clicked');
         },
     },
 };

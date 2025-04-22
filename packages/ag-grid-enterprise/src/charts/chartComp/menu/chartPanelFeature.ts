@@ -29,7 +29,7 @@ export class ChartPanelFeature extends BeanStub {
     public addComponent(component: Component): void {
         this.createBean(component);
         this.panels.push(component);
-        component.addCssClass(this.cssClass);
+        component.addCss(this.cssClass);
         this.eGui.appendChild(component.getGui());
     }
 

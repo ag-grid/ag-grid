@@ -12,7 +12,7 @@ export default (props: CustomCellRendererProps) => {
 
     return (
         <div className={cssClass}>
-            <button onClick={() => alert('button clicked')}>Click</button>
+            <button onClick={() => console.log('button clicked')}>Click</button>
             {message}
         </div>
     );

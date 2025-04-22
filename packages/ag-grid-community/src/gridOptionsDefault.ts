@@ -1,6 +1,9 @@
 import type { GridOptions } from './entities/gridOptions';
 
 // Leave untyped. so it can be inferred. Might be possible to type in the future with NoInfer<T>
+// Ideally we would not set all the false default values as this can save bundle size. However,
+// if we remove the false defaults then this will change the result of the api.getGridOption() method
+// when the user has not provided a value making this a breaking change.
 export const GRID_OPTION_DEFAULTS = {
     suppressContextMenu: false,
     preventDefaultOnContextMenu: false,

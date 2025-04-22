@@ -45,23 +45,23 @@ export const AllGridCommunityModules: Record<`${CommunityModuleName}Module`, num
     TextFilterModule: 104,
     TooltipModule: 22.24,
     UndoRedoEditModule: 23.5,
-    ValidationModule: 76.83,
+    ValidationModule: 70,
     ValueCacheModule: 0.65,
     CellSpanModule: 8.08,
 };
 export const AllEnterpriseModules: Record<`${EnterpriseModuleName}Module`, number> = {
     AdvancedFilterModule: 200,
-    AllEnterpriseModule: 1357.11,
+    AllEnterpriseModule: 1368,
     CellSelectionModule: 53,
-    ClipboardModule: 46,
+    ClipboardModule: 44.6,
     ColumnMenuModule: 147,
     ColumnsToolPanelModule: 146,
-    ContextMenuModule: 70,
+    ContextMenuModule: 72,
     ExcelExportModule: 84,
     FiltersToolPanelModule: 116,
     FindModule: 14.51,
     GridChartsModule: 67,
-    IntegratedChartsModule: 385.33,
+    IntegratedChartsModule: 392,
     GroupFilterModule: 93,
     ManualPinnedRowModule: 18.35,
     MasterDetailModule: 82,
@@ -79,7 +79,7 @@ export const AllEnterpriseModules: Record<`${EnterpriseModuleName}Module`, numbe
     SideBarModule: 32,
     SparklinesModule: 20,
     StatusBarModule: 27,
-    TreeDataModule: 91.6,
+    TreeDataModule: 94.81,
     ViewportRowModelModule: 26,
 };
 
@@ -133,7 +133,7 @@ const chartModules: ModuleTest[] = [
     },
 ];
 
-export const baseModule = { modules: [], expectedSize: 459.29 };
+export const baseModule = { modules: [], expectedSize: 465 };
 
 export const moduleCombinations: ModuleTest[] = [
     ...commonFeatureSets,

@@ -18,7 +18,7 @@ export class CustomButtonComponent implements ICellRendererAngularComp {
         return true;
     }
     buttonClicked() {
-        alert('clicked');
+        console.log('clicked');
     }
 }
 

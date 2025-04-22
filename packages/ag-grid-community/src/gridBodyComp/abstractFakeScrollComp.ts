@@ -29,7 +29,7 @@ export abstract class AbstractFakeScrollComp extends Component implements Scroll
             scrollVisibilityChanged: this.onScrollVisibilityChanged.bind(this),
         });
         this.onScrollVisibilityChanged();
-        this.addOrRemoveCssClass('ag-apple-scrollbar', _isMacOsUserAgent() || _isIOSUserAgent());
+        this.toggleCss('ag-apple-scrollbar', _isMacOsUserAgent() || _isIOSUserAgent());
     }
 
     public override destroy(): void {
@@ -53,8 +53,8 @@ export abstract class AbstractFakeScrollComp extends Component implements Scroll
 
     protected addActiveListenerToggles(): void {
         const eGui = this.getGui();
-        const onActivate = () => this.addOrRemoveCssClass('ag-scrollbar-active', true);
-        const onDeactivate = () => this.addOrRemoveCssClass('ag-scrollbar-active', false);
+        const onActivate = () => this.toggleCss('ag-scrollbar-active', true);
+        const onDeactivate = () => this.toggleCss('ag-scrollbar-active', false);
         this.addManagedListeners(eGui, {
             mouseenter: onActivate,
             mousedown: onActivate,
@@ -83,12 +83,12 @@ export abstract class AbstractFakeScrollComp extends Component implements Scroll
                         window.clearTimeout(this.hideTimeout);
                         this.hideTimeout = 0;
                     }
-                    this.addOrRemoveCssClass('ag-scrollbar-scrolling', true);
+                    this.toggleCss('ag-scrollbar-scrolling', true);
                 }
             },
             bodyScrollEnd: () => {
                 this.hideTimeout = window.setTimeout(() => {
-                    this.addOrRemoveCssClass('ag-scrollbar-scrolling', false);
+                    this.toggleCss('ag-scrollbar-scrolling', false);
                     this.hideTimeout = 0;
                 }, 400);
             },

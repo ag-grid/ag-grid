@@ -100,7 +100,7 @@ function getParams() {
 function onBtnExport() {
     const params = getParams();
     if (params.suppressQuotes || params.columnSeparator) {
-        alert(
+        console.log(
             'NOTE: you are downloading a file with non-standard quotes or separators - it may not render correctly in Excel.'
         );
     }

@@ -30,7 +30,7 @@ export class GridComp extends TabGuardComp {
     public postConstruct(): void {
         const compProxy: IGridComp = {
             destroyGridUi: () => this.destroyBean(this),
-            setRtlClass: (cssClass: string) => this.addCssClass(cssClass),
+            setRtlClass: (cssClass: string) => this.addCss(cssClass),
             forceFocusOutOfContainer: this.forceFocusOutOfContainer.bind(this),
             updateLayoutClasses: this.updateLayoutClasses.bind(this),
             getFocusableContainers: this.getFocusableContainers.bind(this),
@@ -79,9 +79,9 @@ export class GridComp extends TabGuardComp {
         eRootWrapperBodyClassList.toggle(NORMAL, normal);
         eRootWrapperBodyClassList.toggle(PRINT, print);
 
-        this.addOrRemoveCssClass(AUTO_HEIGHT, autoHeight);
-        this.addOrRemoveCssClass(NORMAL, normal);
-        this.addOrRemoveCssClass(PRINT, print);
+        this.toggleCss(AUTO_HEIGHT, autoHeight);
+        this.toggleCss(NORMAL, normal);
+        this.toggleCss(PRINT, print);
     }
 
     private createTemplate(params: OptionalGridComponents): ElementParams {

@@ -82,7 +82,7 @@ export class AgPrimaryColsHeader extends Component<AgPrimaryColsHeaderEvent> {
     private onFunctionsReadOnlyPropChanged(): void {
         const readOnly = this.gos.get('functionsReadOnly');
         this.eSelect.setReadOnly(readOnly);
-        this.eSelect.addOrRemoveCssClass('ag-column-select-column-readonly', readOnly);
+        this.eSelect.toggleCss('ag-column-select-column-readonly', readOnly);
     }
 
     public init(params: ToolPanelColumnCompParams): void {
@@ -90,7 +90,7 @@ export class AgPrimaryColsHeader extends Component<AgPrimaryColsHeaderEvent> {
 
         const readOnly = this.gos.get('functionsReadOnly');
         this.eSelect.setReadOnly(readOnly);
-        this.eSelect.addOrRemoveCssClass('ag-column-select-column-readonly', readOnly);
+        this.eSelect.toggleCss('ag-column-select-column-readonly', readOnly);
 
         if (this.beans.colModel.ready) {
             this.showOrHideOptions();

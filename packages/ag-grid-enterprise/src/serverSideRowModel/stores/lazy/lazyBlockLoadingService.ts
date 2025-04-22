@@ -57,7 +57,7 @@ export class LazyBlockLoadingService extends BeanStub implements NamedBean {
             return;
         }
         this.isCheckQueued = true;
-        window.queueMicrotask(() => {
+        setTimeout(() => {
             this.queueLoadAction();
             this.isCheckQueued = false;
         });

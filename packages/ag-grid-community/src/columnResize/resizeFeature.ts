@@ -108,7 +108,7 @@ export class ResizeFeature extends BeanStub implements IHeaderResizeFeature {
     }
 
     public toggleColumnResizing(resizing: boolean): void {
-        this.comp.addOrRemoveCssClass('ag-column-resizing', resizing);
+        this.comp.toggleCss('ag-column-resizing', resizing);
     }
 
     // optionally inverts the drag, depending on pinned and RTL

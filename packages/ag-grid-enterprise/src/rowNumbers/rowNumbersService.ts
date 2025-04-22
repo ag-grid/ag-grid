@@ -366,14 +366,14 @@ export class RowNumbersService extends BeanStub implements NamedBean, IRowNumber
     }
 
     private generateRowNumberCols(): AgColumn[] {
-        const { gos, beans } = this;
+        const { gos } = this;
         if (!gos.get('rowNumbers')) {
             return [];
         }
 
         const colDef = this.createRowNumbersColDef();
         const colId = colDef.colId!;
-        beans.validation?.validateColDef(colDef, colId, true);
+        gos.validateColDef(colDef, colId, true);
         const col = new AgColumn(colDef, null, colId, false);
         this.createBean(col);
         return [col];

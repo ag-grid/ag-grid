@@ -78,33 +78,56 @@ export class ValueService extends BeanStub implements NamedBean {
 
     /**
      * Use this function to get a displayable cell value.
-     *
      * The values from this function are not used for sorting, filtering, or aggregation purposes.
-     *
      * Handles: groupHideOpenParents, showOpenedGroup and groupSuppressBlankHeader behaviours
      */
-    public getValueForDisplay(column: AgColumn, node: IRowNode) {
-        const rowGroupColId = column.getColDef().showRowGroup;
-        if (rowGroupColId != null) {
-            // when using multiple columns, special handling
-            if (typeof rowGroupColId === 'string') {
-                // groupHideOpenParents > cell value > showOpenedGroup
-                const hideOpenParentsNode = this.getDisplayedNode(node, column, true);
-                if (hideOpenParentsNode) {
-                    return this.getValue(column, hideOpenParentsNode);
-                }
+    public getValueForDisplay(
+        column: AgColumn | undefined,
+        node: IRowNode,
+        includeValueFormatted: boolean = false,
+        exporting: boolean = false
+    ): {
+        value: any;
+        valueFormatted: string | null;
+    } {
+        const { showRowGroupColValueSvc } = this.beans;
+        const isFullWidthGroup = !column && node.group;
+        const isGroupCol = column?.colDef.showRowGroup;
+
+        // Tree data auto col acts as a traditional column, with the exception of footers, so only process footers with
+        // showRowGroupColValueSvc
+        const processTreeDataAsGroup = !this.isTreeData || node.footer;
+
+        // handle group cell value
+        if (showRowGroupColValueSvc && processTreeDataAsGroup && (isFullWidthGroup || isGroupCol)) {
+            const groupValue = showRowGroupColValueSvc.getGroupValue(node, column);
+            if (groupValue == null) {
+                return {
+                    value: null,
+                    valueFormatted: null,
+                };
             }
 
-            // cell value > showOpenedGroup
-            const value = this.getValue(column, node);
-            if (value == null) {
-                // showOpenedGroup
-                const displayedNode = this.getDisplayedNode(node, column);
-                if (displayedNode) {
-                    return this.getValue(column, displayedNode);
-                }
+            if (!includeValueFormatted) {
+                return {
+                    value: groupValue.value,
+                    valueFormatted: null,
+                };
             }
-            return value;
+
+            const valueFormatted = showRowGroupColValueSvc.formatAndPrefixGroupColValue(groupValue, column, exporting);
+            return {
+                value: groupValue.value,
+                valueFormatted,
+            };
+        }
+
+        // full width row, not full width group - probably should be supported by getValue
+        if (!column) {
+            return {
+                value: node.key,
+                valueFormatted: null,
+            };
         }
 
         // when in pivot mode, leafGroups cannot be expanded
@@ -116,7 +139,13 @@ export class ValueService extends BeanStub implements NamedBean {
         // if doing grouping and footers, we don't want to include the agg value
         // in the header when the group is open
         const ignoreAggData = isOpenedGroup && !groupShowsAggData;
-        return this.getValue(column, node, ignoreAggData);
+        const value = this.getValue(column, node, ignoreAggData);
+
+        const format = includeValueFormatted && !(exporting && column.colDef.useValueFormatterForExport === false);
+        return {
+            value,
+            valueFormatted: format ? this.formatValue(column, node, value) : null,
+        };
     }
 
     public getValue(column: AgColumn, rowNode?: IRowNode | null, ignoreAggData = false): any {
@@ -148,8 +177,11 @@ export class ValueService extends BeanStub implements NamedBean {
             }
         }
 
+        // don't retrieve group values from field or valueGetter for multiple auto cols
+        const allowUserValuesForCell = typeof rowGroupColId !== 'string' || !rowNode.group;
+
         // if there is a value getter, this gets precedence over a field
-        const groupDataExists = rowNode.groupData && rowNode.groupData[colId] !== undefined;
+        const groupDataExists = rowNode.groupData && colId in rowNode.groupData;
         const aggDataExists = !ignoreAggData && rowNode.aggData && rowNode.aggData[colId] !== undefined;
 
         // SSRM agg data comes from the data attribute, so ignore that instead
@@ -171,12 +203,18 @@ export class ValueService extends BeanStub implements NamedBean {
         } else if (aggDataExists) {
             result = rowNode.aggData[colId];
         } else if (colDef.valueGetter) {
+            if (!allowUserValuesForCell) {
+                return result;
+            }
             result = this.executeValueGetter(colDef.valueGetter, data, column, rowNode);
         } else if (ssrmFooterGroupCol) {
             // this is for group footers in SSRM, as the SSRM row won't have groupData, need to extract
             // the group value from the data using the row field
             result = _getValueUsingField(data, rowNode.field!, column.isFieldContainsDots());
         } else if (field && data && !ignoreSsrmAggData) {
+            if (!allowUserValuesForCell) {
+                return result;
+            }
             result = _getValueUsingField(data, field, column.isFieldContainsDots());
         }
 
@@ -213,7 +251,7 @@ export class ValueService extends BeanStub implements NamedBean {
 
     public getDeleteValue(column: AgColumn, rowNode: IRowNode): any {
         if (_exists(column.getColDef().valueParser)) {
-            return this.parseValue(column, rowNode, '', this.getValueForDisplay(column, rowNode)) ?? null;
+            return this.parseValue(column, rowNode, '', this.getValueForDisplay(column, rowNode).value) ?? null;
         }
         return null;
     }
@@ -260,52 +298,6 @@ export class ValueService extends BeanStub implements NamedBean {
         }
 
         return result;
-    }
-
-    /**
-     * Checks if the node has a value to inherit from the parent node for display in the given column
-     *
-     * This is used when [groupHideOpenParents] or [showOpenedGroup] are enabled
-     *
-     * @param node node to check for preferential nodes to display
-     * @param column column to get the displayed node for
-     * @returns a parent node of node to display the value from, or undefined if no value will be inherited
-     */
-    public getDisplayedNode(node: IRowNode, column: AgColumn, onlyHideOpenParents = false): RowNode | undefined {
-        const gos = this.gos;
-        const isGroupHideOpenParents = gos.get('groupHideOpenParents');
-        const isShowOpenedGroupValue = gos.get('showOpenedGroup') && !onlyHideOpenParents;
-
-        // don't traverse tree if neither starts enabled
-        if (!isGroupHideOpenParents && !isShowOpenedGroupValue) {
-            return undefined;
-        }
-
-        const showRowGroup = column.colDef.showRowGroup;
-        // single auto col can only showOpenedGroup for leaf rows
-        if (showRowGroup === true) {
-            if (node.group) {
-                return undefined;
-            }
-            return (node.parent as RowNode) ?? undefined;
-        }
-
-        let pointer: RowNode | null = node as RowNode;
-        while (pointer && pointer.rowGroupColumn?.getId() != showRowGroup) {
-            const isFirstChild = pointer === pointer.parent?.childrenAfterSort?.[0];
-            if (!isShowOpenedGroupValue && !isFirstChild) {
-                // if not first child and not showOpenedGroup then groupHideOpenParents doesn't
-                // display the parent value
-                return undefined;
-            }
-            pointer = pointer.parent;
-        }
-
-        if (pointer === node) {
-            return undefined;
-        }
-
-        return pointer ?? undefined;
     }
 
     /**

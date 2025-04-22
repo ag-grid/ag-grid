@@ -37,7 +37,7 @@ export class AgSlider extends AgAbstractLabel<AgSliderParams, AgSliderEvent> {
 
     public override postConstruct() {
         super.postConstruct();
-        this.eSlider.addCssClass('ag-slider-field');
+        this.eSlider.addCss('ag-slider-field');
         const { minValue, maxValue, textFieldWidth, step, value, onValueChange } = this.config;
         if (minValue != null) {
             this.setMinValue(minValue);

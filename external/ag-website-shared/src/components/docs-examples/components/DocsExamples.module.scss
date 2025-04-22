@@ -1,0 +1,25 @@
+@use 'design-system' as *;
+
+.exampleRow {
+    &:hover {
+        background-color: var(--color-bg-secondary);
+    }
+}
+
+svg.icon {
+    width: 20px;
+    height: 20px;
+}
+
+.frameworkCell {
+    display: flex;
+    flex-direction: row;
+    gap: $spacing-size-2;
+}
+
+.propertiesCell {
+    display: flex;
+    flex-direction: row;
+    gap: $spacing-size-1;
+    align-items: center;
+}

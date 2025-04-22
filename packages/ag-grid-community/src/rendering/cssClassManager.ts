@@ -9,24 +9,7 @@ export class CssClassManager {
         this.getGui = getGui;
     }
 
-    public addCssClass(className: string): void {
-        this.addOrRemoveCssClass(className, true);
-    }
-
-    public removeCssClass(className: string): void {
-        this.addOrRemoveCssClass(className, false);
-    }
-
-    public containsCssClass(className: string): boolean {
-        const eGui = this.getGui();
-        if (!eGui) {
-            return false;
-        }
-
-        return eGui.classList.contains(className);
-    }
-
-    public addOrRemoveCssClass(className: string, addOrRemove: boolean): void {
+    public toggleCss(className: string, addOrRemove: boolean): void {
         if (!className) {
             return;
         }
@@ -36,17 +19,14 @@ export class CssClassManager {
         if (className.indexOf(' ') >= 0) {
             const list = (className || '').split(' ');
             if (list.length > 1) {
-                list.forEach((cls) => this.addOrRemoveCssClass(cls, addOrRemove));
+                list.forEach((cls) => this.toggleCss(cls, addOrRemove));
                 return;
             }
         }
 
         const updateNeeded = this.cssClassStates[className] !== addOrRemove;
         if (updateNeeded && className.length) {
-            const eGui = this.getGui();
-            if (eGui) {
-                eGui.classList.toggle(className, addOrRemove);
-            }
+            this.getGui()?.classList.toggle(className, addOrRemove);
 
             this.cssClassStates[className] = addOrRemove;
         }

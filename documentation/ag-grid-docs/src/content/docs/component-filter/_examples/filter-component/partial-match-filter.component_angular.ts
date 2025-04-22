@@ -69,7 +69,7 @@ export class PartialMatchFilter implements IFilterAngularComp {
     }
 
     componentMethod(message: string): void {
-        alert(`Alert from PartialMatchFilterComponent: ${message}`);
+        console.log(`Alert from PartialMatchFilterComponent: ${message}`);
     }
 
     onChange(newValue: any): void {

@@ -242,11 +242,15 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
      * By default the grid uses `===` which should work for most use cases.
      */
     equals?: (valueA: TValue | null | undefined, valueB: TValue | null | undefined) => boolean;
-    /** The field of the tooltip to apply to the cell. */
+    /**
+     * The field of the tooltip to apply to the cell.
+     * @agModule `TooltipModule`
+     */
     tooltipField?: ColDefField<TData>;
     /**
      * Callback that should return the string to use for a tooltip, `tooltipField` takes precedence if set.
      * If using a custom `tooltipComponent` you may return any custom value to be passed to your tooltip component.
+     * @agModule `TooltipModule`
      */
     tooltipValueGetter?: (params: ITooltipParams<TData, TValue>) => string | any;
     /**
@@ -391,6 +395,7 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
     /**
      * Whether to display a floating filter for this column.
      * @default false
+     * @agModule `ColumnFilterModule`
      */
     floatingFilter?: boolean;
     /**
@@ -428,7 +433,10 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
      * This is used to figure out which menu tabs are present and in which order the tabs are shown.
      */
     menuTabs?: ColumnMenuTab[];
-    /** Params used to change the behaviour and appearance of the Column Chooser/Columns Menu tab. */
+    /**
+     * Params used to change the behaviour and appearance of the Column Chooser/Columns Menu tab.
+     * @agModule `ColumnMenuModule`
+     */
     columnChooserParams?: ColumnChooserParams;
 
     /**
@@ -448,6 +456,7 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
     mainMenuItems?: (DefaultMenuItem | MenuItemDef<TData>)[] | GetMainMenuItems<TData>;
     /**
      * Customise the list of menu items available in the context menu.
+     * @agModule `ContextMenuModule`
      */
     contextMenuItems?: (DefaultMenuItem | MenuItemDef<TData>)[] | GetContextMenuItems<TData>;
     /**
@@ -493,22 +502,28 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
 
     // *** Columns: Pivoting *** //
 
-    /** Set to true to pivot by this column. */
+    /**
+     * Set to true to pivot by this column.
+     * @agModule `PivotModule` / `ServerSideRowModelModule`
+     */
     pivot?: boolean;
     /**
      * Same as `pivot`, except only applied when creating a new column. Not applied when updating column definitions.
      * @initial
+     * @agModule `PivotModule` / `ServerSideRowModelModule`
      */
     initialPivot?: boolean;
     /**
      * Set this in columns you want to pivot by.
      * If only pivoting by one column, set this to any number (e.g. `0`).
      * If pivoting by multiple columns, set this to where you want this column to be in the order of pivots (e.g. `0` for first, `1` for second, and so on).
+     * @agModule `PivotModule` / `ServerSideRowModelModule`
      */
     pivotIndex?: number | null;
     /**
      * Same as `pivotIndex`, except only applied when creating a new column. Not applied when updating column definitions.
      * @initial
+     * @agModule `PivotModule` / `ServerSideRowModelModule`
      */
     initialPivotIndex?: number;
     /**
@@ -517,22 +532,31 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
      * Comparator to use when ordering the pivot columns, when this column is used to pivot on.
      * The values will always be strings, as the pivot service uses strings as keys for the pivot groups.
      * @initial
+     * @agModule `PivotModule`
      */
     pivotComparator?: (valueA: string, valueB: string) => number;
     /**
      * Set to `true` if you want to be able to pivot by this column via the GUI. This will not block the API or properties being used to achieve pivot.
      * @default false
+     * @agModule `PivotModule` / `ServerSideRowModelModule`
      */
     enablePivot?: boolean;
 
     // *** Columns: Rendering and Styling *** //
 
-    /** An object of CSS values / or function returning an object of CSS values for a particular cell. */
+    /**
+     * An object of CSS values / or function returning an object of CSS values for a particular cell.
+     * @agModule `CellStyleModule`
+     */
     cellStyle?: CellStyle | CellStyleFunc<TData, TValue>;
-    /** Class to use for the cell. Can be string, array of strings, or function that returns a string or array of strings. */
+    /**
+     * Class to use for the cell. Can be string, array of strings, or function that returns a string or array of strings.
+     * @agModule `CellStyleModule`
+     */
     cellClass?: string | string[] | CellClassFunc<TData, TValue>;
     /**
      * Rules which can be applied to include certain CSS classes.
+     * @agModule `CellStyleModule`
      */
     cellClassRules?: CellClassRules<TData, TValue>;
 
@@ -558,6 +582,7 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
     /**
      * Set to `true` to have the grid calculate the height of a row based on contents of this column.
      * @default false
+     * @agModule `RowAutoHeightModule`
      */
     autoHeight?: boolean;
     /**
@@ -568,6 +593,7 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
     /**
      * Set to `true` to flash a cell when it's refreshed.
      * @default false
+     * @agModule `HighlightChangesModule`
      */
     enableCellChangeFlash?: boolean;
 
@@ -576,6 +602,7 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
     /**
      * `boolean` or `Function`. Set to `true` (or return `true` from function) to allow row dragging.
      * @default false
+     * @agModule `RowDragModule`
      */
     rowDrag?: boolean | RowDragCallback<TData, TValue>;
 
@@ -589,10 +616,12 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
     /**
      * `boolean` or `Function`. Set to `true` (or return `true` from function) to allow dragging for native drag and drop.
      * @default false
+     * @agModule `DragAndDropModule`
      */
     dndSource?: boolean | DndSourceCallback<TData, TValue>;
     /**
      * Function to allow custom drag functionality for native drag and drop.
+     * @agModule `DragAndDropModule`
      */
     dndSourceOnRowDrag?: (params: DndSourceOnRowDragParams<TData>) => void;
 
@@ -601,37 +630,46 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
     /**
      * Set to `true` to row group by this column.
      * @default false
+     * @agModule `RowGroupingModule` / `ServerSideRowModelModule`
      */
     rowGroup?: boolean;
     /**
      * Same as `rowGroup`, except only applied when creating a new column. Not applied when updating column definitions.
      * @initial
+     * @agModule `RowGroupingModule` / `ServerSideRowModelModule`
      */
     initialRowGroup?: boolean;
     /**
      * Set this in columns you want to group by.
      * If only grouping by one column, set this to any number (e.g. `0`).
      * If grouping by multiple columns, set this to where you want this column to be in the group (e.g. `0` for first, `1` for second, and so on).
+     * @agModule `RowGroupingModule` / `ServerSideRowModelModule`
      */
     rowGroupIndex?: number | null;
     /**
      * Same as `rowGroupIndex`, except only applied when creating a new column. Not applied when updating column definitions.
      * @initial
+     * @agModule `RowGroupingModule` / `ServerSideRowModelModule`
      */
     initialRowGroupIndex?: number;
     /**
      * Set to `true` if you want to be able to row group by this column via the GUI.
      * This will not block the API or properties being used to achieve row grouping.
      * @default false
+     * @agModule `RowGroupingModule` / `ServerSideRowModelModule`
      */
     enableRowGroup?: boolean;
     /**
      * Set to `true` if you want to be able to aggregate by this column via the GUI.
      * This will not block the API or properties being used to achieve aggregation.
      * @default false
+     * @agModule `RowGroupingModule`/ `PivotModule` / `TreeDataModule` / `ServerSideRowModelModule`
      */
     enableValue?: boolean;
-    /** Name of function to use for aggregation. In-built options are: `sum`, `min`, `max`, `count`, `avg`, `first`, `last`. Also accepts a custom aggregation name or an aggregation function. */
+    /**
+     * Name of function to use for aggregation. In-built options are: `sum`, `min`, `max`, `count`, `avg`, `first`, `last`. Also accepts a custom aggregation name or an aggregation function.
+     * @agModule `RowGroupingModule`/ `PivotModule` / `TreeDataModule` / `ServerSideRowModelModule`
+     */
     aggFunc?: string | IAggFunc<TData, TValue> | null;
     /**
      * Same as `aggFunc`, except only applied when creating a new column. Not applied when updating column definitions.
@@ -715,6 +753,7 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
 
     /**
      * Set to `true` to automatically merge cells in this column with equal values. Provide a callback to specify custom merging logic.
+     * @agModule `CellSpanModule`
      */
     spanRows?: boolean | ((params: SpanRowsParams<TData, TValue>) => boolean);
 

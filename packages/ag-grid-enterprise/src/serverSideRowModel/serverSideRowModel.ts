@@ -140,7 +140,7 @@ export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSi
             ],
             resetListener
         );
-        this.addManagedPropertyListener('groupAllowUnbalanced', () => this.onStoreUpdated());
+        this.addManagedPropertyListeners(['groupAllowUnbalanced', 'groupTotalRow'], () => this.onStoreUpdated());
         this.addManagedPropertyListener('rowHeight', () => this.resetRowHeights());
         this.verifyProps();
 

@@ -111,5 +111,11 @@ export function gridBeanDestroyComparator(
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     bean2: GenericBean<BeanName, BeanCollection>
 ): number {
-    return bean1?.beanName === 'gridDestroySvc' ? -1 : 0;
+    if (bean1?.beanName === 'gridDestroySvc') {
+        return -1;
+    }
+    if (bean2?.beanName === 'gridDestroySvc') {
+        return 1;
+    }
+    return 0;
 }

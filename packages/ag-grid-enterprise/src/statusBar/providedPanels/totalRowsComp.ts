@@ -18,8 +18,8 @@ export class TotalRowsComp extends AgNameValue implements IStatusPanelComp {
             return;
         }
 
-        this.addCssClass('ag-status-panel');
-        this.addCssClass('ag-status-panel-total-row-count');
+        this.addCss('ag-status-panel');
+        this.addCss('ag-status-panel-total-row-count');
 
         this.setDisplayed(true);
 

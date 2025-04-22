@@ -65,6 +65,7 @@ import type { IRowNodeStage } from '../interfaces/iRowNodeStage';
 import type { ISelectionService } from '../interfaces/iSelectionService';
 import type { IServerSideTransactionManager } from '../interfaces/iServerSideRowModel';
 import type { IShowRowGroupColsService } from '../interfaces/iShowRowGroupColsService';
+import type { IShowRowGroupColsValueService } from '../interfaces/iShowRowGroupColsValueService';
 import type { ISideBarService } from '../interfaces/iSideBar';
 import type { IStickyRowService } from '../interfaces/iStickyRows';
 import type { IMasterDetailService } from '../interfaces/masterDetail';
@@ -244,6 +245,7 @@ export interface CoreBeanCollection {
     pivotColsSvc?: IColsService;
     quickFilter?: QuickFilterService;
     showRowGroupCols?: IShowRowGroupColsService;
+    showRowGroupColValueSvc?: IShowRowGroupColsValueService;
     dataTypeSvc?: DataTypeService;
     globalListener: AgGlobalEventListener;
     globalSyncListener: AgGlobalEventListener;
@@ -495,4 +497,5 @@ export type BeanName =
     | 'csrmPathTreeNodeSvc'
     | 'csrmChildrenTreeNodeSvc'
     | 'rowSpanSvc'
-    | 'spannedRowRenderer';
+    | 'spannedRowRenderer'
+    | 'showRowGroupColValueSvc';

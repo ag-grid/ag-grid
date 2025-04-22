@@ -329,6 +329,7 @@ const makeThemeMaterialTreeShakeable = () =>
                 color: 'transparent',
             },
             headerFontWeight: 600,
+            headerFontSize: { calc: 'fontSize - 1px' },
             checkboxBorderWidth: 2,
             checkboxBorderRadius: 2,
             toggleButtonWidth: 34,

@@ -12,6 +12,7 @@ import { GroupStage } from './groupStage';
 import { GroupCellRenderer } from './rendering/groupCellRenderer';
 import { GroupCellRendererCtrl } from './rendering/groupCellRendererCtrl';
 import { groupCellStylesCSS } from './rendering/groupCellStyles.css-GENERATED';
+import { ShowRowGroupColValueService } from './showRowGroupColValueService';
 import { ShowRowGroupColsService } from './showRowGroupColsService';
 import { StickyRowService } from './stickyRowService';
 
@@ -43,7 +44,14 @@ export const GroupCellRendererModule: _ModuleWithoutApi = {
 export const GroupColumnModule: _ModuleWithoutApi = {
     moduleName: 'GroupColumn',
     version: VERSION,
-    beans: [AutoColService, ShowRowGroupColsService, RowGroupColsSvc, PivotColsSvc, ValueColsSvc],
+    beans: [
+        AutoColService,
+        ShowRowGroupColsService,
+        ShowRowGroupColValueService,
+        RowGroupColsSvc,
+        PivotColsSvc,
+        ValueColsSvc,
+    ],
     dependsOn: [EnterpriseCoreModule, GroupCellRendererModule],
 };
 

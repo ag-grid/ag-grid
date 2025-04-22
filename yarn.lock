@@ -2036,6 +2036,13 @@
   dependencies:
     regenerator-runtime "^0.14.0"
 
+"@babel/runtime@^7.16.7", "@babel/runtime@^7.20.13":
+  version "7.27.0"
+  resolved "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.27.0.tgz#fbee7cf97c709518ecc1f590984481d5460d4762"
+  integrity sha512-VtPOkrdPHZsKc/clNqyi9WUA8TINkZ4cGk63UUE3u4pmB2k+ZMQRDuIOagv8UVd6j7k0T3+RRIb7beKTebNbcw==
+  dependencies:
+    regenerator-runtime "^0.14.0"
+
 "@babel/template@^7.23.9", "@babel/template@^7.24.0", "@babel/template@^7.24.7", "@babel/template@^7.25.0", "@babel/template@^7.25.9", "@babel/template@^7.3.3":
   version "7.25.9"
   resolved "http://52.50.158.57:4873/@babel/template/-/template-7.25.9.tgz#ecb62d81a8a6f5dc5fe8abfc3901fc52ddf15016"
@@ -4268,6 +4275,15 @@
   integrity sha512-fSh4P3Y4E7oaKYc2oNzSIJVPDto7SMzAuQN1Iyx53UxzleA6QzRdNWRxmiPqtVDaDi5dELd2yICoG91csrGrAw==
   optionalDependencies:
     "@types/markdown-it" "12.2.3"
+
+"@microlink/react-json-view@^1.26.1":
+  version "1.26.1"
+  resolved "https://registry.yarnpkg.com/@microlink/react-json-view/-/react-json-view-1.26.1.tgz#f5b372f737114752d327a324482cfe8b557459f0"
+  integrity sha512-2H5QCYdZlJi+oN4YBiUYPPFTNh/KLCN9i9yz8NwmSkRqXSRXYtEVIRffc9L34jdopKGK/tK21SeuzXVJHQLkfQ==
+  dependencies:
+    react-base16-styling "~0.9.0"
+    react-lifecycles-compat "~3.0.4"
+    react-textarea-autosize "~8.5.7"
 
 "@module-federation/bridge-react-webpack-plugin@0.7.6":
   version "0.7.6"
@@ -7046,6 +7062,11 @@
   dependencies:
     "@babel/types" "^7.20.7"
 
+"@types/base16@^1.0.2":
+  version "1.0.5"
+  resolved "https://registry.yarnpkg.com/@types/base16/-/base16-1.0.5.tgz#9a7df8eed525c6968d254dada2a2f653a28e73f6"
+  integrity sha512-OzOWrTluG9cwqidEzC/Q6FAmIPcnZfm8BFRlIx0+UIUqnuAmi5OS88O0RpT3Yz6qdmqObvUhasrbNsCofE4W9A==
+
 "@types/body-parser@*":
   version "1.19.5"
   resolved "http://52.50.158.57:4873/@types/body-parser/-/body-parser-1.19.5.tgz#04ce9a3b677dc8bd681a17da1ab9835dc9d3ede4"
@@ -7308,6 +7329,11 @@
   version "5.0.0"
   resolved "http://52.50.158.57:4873/@types/linkify-it/-/linkify-it-5.0.0.tgz#21413001973106cda1c3a9b91eedd4ccd5469d76"
   integrity sha512-sVDA58zAw4eWAffKOaQH5/5j3XeayukzDk+ewSsnv3p4yJEZHCCzMDiZM8e0OUrRvmpGZ85jf4yDHkHsgBNr9Q==
+
+"@types/lodash@^4.14.178":
+  version "4.17.16"
+  resolved "https://registry.yarnpkg.com/@types/lodash/-/lodash-4.17.16.tgz#94ae78fab4a38d73086e962d0b65c30d816bfb0a"
+  integrity sha512-HX7Em5NYQAXKW+1T+FiuG27NGwzJfCX3s1GjOa7ujxZa52kjJLOr4FUxT+giF6Tgxv1e+/czV/iTtBw27WTU9g==
 
 "@types/markdown-it@12.2.3":
   version "12.2.3"
@@ -8608,61 +8634,61 @@ adm-zip@^0.5.10:
   resolved "http://52.50.158.57:4873/adm-zip/-/adm-zip-0.5.16.tgz#0b5e4c779f07dedea5805cdccb1147071d94a909"
   integrity sha512-TGw5yVi4saajsSEgz25grObGHEUaDrniwvA2qwSC060KfqGPdglhvPMA2lPIoxs3PQIItj2iag35fONcQqgUaQ==
 
-ag-charts-angular@11.2.1-beta.20250403:
-  version "11.2.1-beta.20250403"
-  resolved "http://52.50.158.57:4873/ag-charts-angular/-/ag-charts-angular-11.2.1-beta.20250403.tgz#c9caa7df41e779f3a271a5a74010df9584cd5701"
-  integrity sha512-Aj5ARzZc7Pn4gA3b0gMW3ZmmUsh+8Z3BiVu0cgABpSH+9PeqI932xeViUVc7fnYm32GaBxKPKB4gTPOaqZHd3Q==
+ag-charts-angular@11.2.1-beta.20250413:
+  version "11.2.1-beta.20250413"
+  resolved "http://52.50.158.57:4873/ag-charts-angular/-/ag-charts-angular-11.2.1-beta.20250413.tgz#2ada30dbb56c77b01a8eae56865629db6ae63c80"
+  integrity sha512-OdLOVpQCBd1FQqp+hVZVczC+sheM5HSnNpqHyuiSROiF0cgK+DzIAZngxfJRTfeRoJ8vo22kym7joxRTDS6Olw==
   dependencies:
-    ag-charts-community "11.2.1-beta.20250403"
+    ag-charts-community "11.2.1-beta.20250413"
     tslib "^2.3.0"
 
-ag-charts-community@11.2.1-beta.20250403:
-  version "11.2.1-beta.20250403"
-  resolved "http://52.50.158.57:4873/ag-charts-community/-/ag-charts-community-11.2.1-beta.20250403.tgz#8d22b7536aa0bbf5add4591086a0a1daca70dcc2"
-  integrity sha512-+OC+lPwZD6uZA4b7F8FUZoOTJgOSc2qQt7v+ZncazORM5nHphfj4t9ZeFFVVL45lVCZbmF/d4HhJve5GM4VKaA==
+ag-charts-community@11.2.1-beta.20250413:
+  version "11.2.1-beta.20250413"
+  resolved "http://52.50.158.57:4873/ag-charts-community/-/ag-charts-community-11.2.1-beta.20250413.tgz#96fb71a4f8649184effc7a9c6c7080e4105bedf9"
+  integrity sha512-wij49wkrxv1l8S9w0lCUROiRxMCmCYG3j9BIwcMpeUvxoWSKo79aXr59wp/cz/Pnyn2SYzcVeSHqHb9njvaIpQ==
   dependencies:
-    ag-charts-core "11.2.1-beta.20250403"
-    ag-charts-locale "11.2.1-beta.20250403"
-    ag-charts-types "11.2.1-beta.20250403"
+    ag-charts-core "11.2.1-beta.20250413"
+    ag-charts-locale "11.2.1-beta.20250413"
+    ag-charts-types "11.2.1-beta.20250413"
 
-ag-charts-core@11.2.1-beta.20250403:
-  version "11.2.1-beta.20250403"
-  resolved "http://52.50.158.57:4873/ag-charts-core/-/ag-charts-core-11.2.1-beta.20250403.tgz#731d06d049b6d7ca725e75c17cdfeccfadf25155"
-  integrity sha512-h3QP9P8okJBT9Of1CX72gyQHkrbdrmmOJ0unUFgcFVS3yg10fvMHljBLar6kU21iSRVVSc+tXRjhD6kkl26X5w==
+ag-charts-core@11.2.1-beta.20250413:
+  version "11.2.1-beta.20250413"
+  resolved "http://52.50.158.57:4873/ag-charts-core/-/ag-charts-core-11.2.1-beta.20250413.tgz#c66c9f5346fd4da292103cbb98af7e53d1b5df29"
+  integrity sha512-gu5WBGOiO26enw/CEbFILQEz35wKqrDW+TGOnAaUA6izdV8vIRkFgYebEzUX9A4WhqOvRcpPNARPKTEJfTIBoQ==
   dependencies:
-    ag-charts-types "11.2.1-beta.20250403"
+    ag-charts-types "11.2.1-beta.20250413"
 
-ag-charts-enterprise@11.2.1-beta.20250403:
-  version "11.2.1-beta.20250403"
-  resolved "http://52.50.158.57:4873/ag-charts-enterprise/-/ag-charts-enterprise-11.2.1-beta.20250403.tgz#e46f73be707af13e07057be670eaa9c089b5f8fe"
-  integrity sha512-Jwnf53cVk9TsbMb5Aa+TadgggNNMYkQHYkhXqP7we04aTX8K78EBaVAMk2ffb6I0RP9o3hlmHhTKy16pq5j6Dg==
+ag-charts-enterprise@11.2.1-beta.20250413:
+  version "11.2.1-beta.20250413"
+  resolved "http://52.50.158.57:4873/ag-charts-enterprise/-/ag-charts-enterprise-11.2.1-beta.20250413.tgz#47674778de0dab74940182a1c53c228c05ebf7ef"
+  integrity sha512-neEhaCRpfkNG1GZjw7lL7wYNM2UmuGeB22cYkC44NgAkY8x2GfqjWHPnANWnEImIcUfXF5UXTo33ZpzfpYlzfA==
   dependencies:
-    ag-charts-community "11.2.1-beta.20250403"
-    ag-charts-core "11.2.1-beta.20250403"
+    ag-charts-community "11.2.1-beta.20250413"
+    ag-charts-core "11.2.1-beta.20250413"
 
-ag-charts-locale@11.2.1-beta.20250403:
-  version "11.2.1-beta.20250403"
-  resolved "http://52.50.158.57:4873/ag-charts-locale/-/ag-charts-locale-11.2.1-beta.20250403.tgz#f3c9300e3e2a6a773955d42a6acc36e2f01d4ecb"
-  integrity sha512-tkh3XTkJWs2waEIdef4JVbf0M5POJ95+y6bRpY3t9lMroAuAUQLJ/B+KojC/suBI1KA1+cF52HUWNWS13yK9oA==
+ag-charts-locale@11.2.1-beta.20250413:
+  version "11.2.1-beta.20250413"
+  resolved "http://52.50.158.57:4873/ag-charts-locale/-/ag-charts-locale-11.2.1-beta.20250413.tgz#775d2c6698fbc0d7a2b8dd0ddeaabd805378f941"
+  integrity sha512-pcsXcUn1UifhY2ulLQ6ZkBzUuPjypviMvldCmHmUibpLNV9tlFBfwm4KuLvoPOEB0w1RffI/Q3RGv1DG625OBg==
 
-ag-charts-react@11.2.1-beta.20250403:
-  version "11.2.1-beta.20250403"
-  resolved "http://52.50.158.57:4873/ag-charts-react/-/ag-charts-react-11.2.1-beta.20250403.tgz#20862f1d6281e3bd4c5b08834cf8eae1554edd72"
-  integrity sha512-gA3vDyGEkAJG9DP3Is+Hx1dZOXxGCFoypZdouPHbtkYPlnae43RLSR0Wjv9OR0Y4Vzivk3lf/qGsCFZJDUbd5w==
+ag-charts-react@11.2.1-beta.20250413:
+  version "11.2.1-beta.20250413"
+  resolved "http://52.50.158.57:4873/ag-charts-react/-/ag-charts-react-11.2.1-beta.20250413.tgz#515838673295a22949a07202b707074ba775578e"
+  integrity sha512-3JxvOEh2ERwxg1Pm9Ht278vq1zSBVMRwWDEIrKGMWwmLUHbVPZ+dpIDZ0pnh7SZxlrXEs30kP4EOQu1wx5audA==
   dependencies:
-    ag-charts-community "11.2.1-beta.20250403"
+    ag-charts-community "11.2.1-beta.20250413"
 
-ag-charts-types@11.2.1-beta.20250403:
-  version "11.2.1-beta.20250403"
-  resolved "http://52.50.158.57:4873/ag-charts-types/-/ag-charts-types-11.2.1-beta.20250403.tgz#7a6c14014fe31361017129b75405f10ed9db81af"
-  integrity sha512-SE/NGrR7vjLgA4M5EjJhchZUt5gTqb3VZ1XK72V24S3OB3G5kbr2ZL3JCvk2THNH3TV10MnVirhHza7GYlHF+Q==
+ag-charts-types@11.2.1-beta.20250413:
+  version "11.2.1-beta.20250413"
+  resolved "http://52.50.158.57:4873/ag-charts-types/-/ag-charts-types-11.2.1-beta.20250413.tgz#497547e923edc7f6106801437cb9c81ed2f89a44"
+  integrity sha512-P00QFlBVqimIbHobXw+urbuTRlIkG5SMAGx6TV7nT+fBA/AD8ahbnW29z8WD3IO0klLfWXx1zwpH3TbPreEgdg==
 
-ag-charts-vue3@11.2.1-beta.20250403:
-  version "11.2.1-beta.20250403"
-  resolved "http://52.50.158.57:4873/ag-charts-vue3/-/ag-charts-vue3-11.2.1-beta.20250403.tgz#71f447436c9d026104bfc4eb37729506ed01e566"
-  integrity sha512-7oIWzkoH3jNFLq5Me5zrZAV7I0e32b9Z/ijztEZH/YA234T7Vrh4i0SAa2jQsdWyBDbwu/cqIgL0ZJynDkV7TQ==
+ag-charts-vue3@11.2.1-beta.20250413:
+  version "11.2.1-beta.20250413"
+  resolved "http://52.50.158.57:4873/ag-charts-vue3/-/ag-charts-vue3-11.2.1-beta.20250413.tgz#792c4535d9a1ac20ef3da14f48c531d071ddf165"
+  integrity sha512-J0Ur/+bnT23HmhlyHAI+IiTxwEB6QXHw9y7IYmE0w0HQ+bIuzc6c6xRpUlF3CN/g6ru6N1S4vmLBGaMDba/Isg==
   dependencies:
-    ag-charts-community "11.2.1-beta.20250403"
+    ag-charts-community "11.2.1-beta.20250413"
 
 agent-base@4, agent-base@^4.1.0, agent-base@^4.3.0:
   version "4.3.0"
@@ -9558,6 +9584,11 @@ base-64@^1.0.0:
   version "1.0.0"
   resolved "http://52.50.158.57:4873/base-64/-/base-64-1.0.0.tgz#09d0f2084e32a3fd08c2475b973788eee6ae8f4a"
   integrity sha512-kwDPIFCGx0NZHog36dj+tHiwP4QMzsZ3AgMViUBKI0+V5n4U0ufTCUMhnQ04diaRI8EX/QcPfql7zlhZ7j4zgg==
+
+base16@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/base16/-/base16-1.0.0.tgz#e297f60d7ec1014a7a971a39ebc8a98c0b681e70"
+  integrity sha512-pNdYkNPiJUnEhnfXV56+sQy8+AaPcG3POZAUnwr4EeqCUZFz4u2PePbo3e5Gj4ziYPCWGUZT9RHisvJKnwFuBQ==
 
 base64-js@^1.3.1:
   version "1.5.1"
@@ -10652,7 +10683,7 @@ collection-visit@^1.0.0:
     map-visit "^1.0.0"
     object-visit "^1.0.0"
 
-color-convert@^1.9.0:
+color-convert@^1.9.0, color-convert@^1.9.3:
   version "1.9.3"
   resolved "http://52.50.158.57:4873/color-convert/-/color-convert-1.9.3.tgz#bb71850690e1f136567de629d2d5471deda4c1e8"
   integrity sha512-QfAUtd+vFdAtFQcC8CCyYt1fYWxSqAiK2cSD6zDB8N3cpsEBAvRxp9zOGg6G/SHHJYAT88/az/IuDGALsNVbGg==
@@ -10676,7 +10707,7 @@ color-name@^1.0.0, color-name@^1.1.4, color-name@~1.1.4:
   resolved "http://52.50.158.57:4873/color-name/-/color-name-1.1.4.tgz#c2a09a87acbde69543de6f63fa3995c826c536a2"
   integrity sha512-dOy+3AuW3a2wNbZHIuMZpTcgjGuLU/uBL/ubcZF9OXbDo8ff4O8yVp5Bf0efS8uEoYo5q4Fx7dY9OgQGXgAsQA==
 
-color-string@^1.9.0:
+color-string@^1.6.0, color-string@^1.9.0:
   version "1.9.1"
   resolved "http://52.50.158.57:4873/color-string/-/color-string-1.9.1.tgz#4467f9146f036f855b764dfb5bf8582bf342c7a4"
   integrity sha512-shrVawQFojnZv6xM40anx4CkoDP+fZsw/ZerEMsW/pyzsRbElpsL/DBVW7q3ExxwusdNXI3lXpuhEZkzs8p5Eg==
@@ -10688,6 +10719,14 @@ color-support@^1.1.2, color-support@^1.1.3:
   version "1.1.3"
   resolved "http://52.50.158.57:4873/color-support/-/color-support-1.1.3.tgz#93834379a1cc9a0c61f82f52f0d04322251bd5a2"
   integrity sha512-qiBjkpbMLO/HL68y+lh4q0/O1MZFj2RX6X/KmMa3+gJD3z+WwI1ZzDHysvqHGS3mP6mznPckpXmw1nI9cJjyRg==
+
+color@^3.2.1:
+  version "3.2.1"
+  resolved "https://registry.yarnpkg.com/color/-/color-3.2.1.tgz#3544dc198caf4490c3ecc9a790b54fe9ff45e164"
+  integrity sha512-aBl7dZI9ENN6fUGC7mWpMTPNHmWUSNan9tuWN6ahh5ZLNk9baLJOnSMlrQkHcrfFgz2/RigjUVAjdx36VcemKA==
+  dependencies:
+    color-convert "^1.9.3"
+    color-string "^1.6.0"
 
 color@^4.2.3:
   version "4.2.3"
@@ -11564,7 +11603,7 @@ cssstyle@^4.0.1:
     "@asamuzakjp/css-color" "^2.8.2"
     rrweb-cssom "^0.8.0"
 
-csstype@^3.0.2, csstype@^3.1.3:
+csstype@^3.0.10, csstype@^3.0.2, csstype@^3.1.3:
   version "3.1.3"
   resolved "http://52.50.158.57:4873/csstype/-/csstype-3.1.3.tgz#d80ff294d114fb0e6ac500fbf85b60137d7eff81"
   integrity sha512-M1uQkMl8rQK/szD0LNhtqxIPLpimGm8sOBwU7lLnCpSbTyY3yeU1Vc7l4KT5zT4s/yOxHH5O7tIuuLOCnLADRw==
@@ -17569,6 +17608,11 @@ lodash.clonedeepwith@4.5.0:
   resolved "http://52.50.158.57:4873/lodash.clonedeepwith/-/lodash.clonedeepwith-4.5.0.tgz#6ee30573a03a1a60d670a62ef33c10cf1afdbdd4"
   integrity sha512-QRBRSxhbtsX1nc0baxSkkK5WlVTTm/s48DSukcGcWZwIyI8Zz+lB+kFiELJXtzfH4Aj6kMWQ1VWW4U5uUDgZMA==
 
+lodash.curry@^4.1.1:
+  version "4.1.1"
+  resolved "https://registry.yarnpkg.com/lodash.curry/-/lodash.curry-4.1.1.tgz#248e36072ede906501d75966200a86dab8b23170"
+  integrity sha512-/u14pXGviLaweY5JI0IUzgzF2J6Ne8INyzAZjImcryjgkZ+ebruBxy2/JaOOkTqScddcYtakjhSaeemV8lR0tA==
+
 lodash.debounce@^4.0.8:
   version "4.0.8"
   resolved "http://52.50.158.57:4873/lodash.debounce/-/lodash.debounce-4.0.8.tgz#82d79bff30a67c4005ffd5e2515300ad9ca4d7af"
@@ -22247,6 +22291,19 @@ react-app-polyfill@^2.0.0:
     regenerator-runtime "^0.13.7"
     whatwg-fetch "^3.4.1"
 
+react-base16-styling@~0.9.0:
+  version "0.9.1"
+  resolved "https://registry.yarnpkg.com/react-base16-styling/-/react-base16-styling-0.9.1.tgz#4906b4c0a51636f2dca2cea8b682175aa8bd0c92"
+  integrity sha512-1s0CY1zRBOQ5M3T61wetEpvQmsYSNtWEcdYzyZNxKa8t7oDvaOn9d21xrGezGAHFWLM7SHcktPuPTrvoqxSfKw==
+  dependencies:
+    "@babel/runtime" "^7.16.7"
+    "@types/base16" "^1.0.2"
+    "@types/lodash" "^4.14.178"
+    base16 "^1.0.0"
+    color "^3.2.1"
+    csstype "^3.0.10"
+    lodash.curry "^4.1.1"
+
 react-colorful@^5.6.1:
   version "5.6.1"
   resolved "http://52.50.158.57:4873/react-colorful/-/react-colorful-5.6.1.tgz#7dc2aed2d7c72fac89694e834d179e32f3da563b"
@@ -22323,6 +22380,11 @@ react-is@^18.0.0:
   resolved "http://52.50.158.57:4873/react-is/-/react-is-18.3.1.tgz#e83557dc12eae63a99e003a46388b1dcbb44db7e"
   integrity sha512-/LLMVyas0ljjAtoYiPqYiL8VWXzUUdThrmU5+n20DZv+a+ClRoevUzw5JxU+Ieh5/c87ytoTBV9G1FiKfNJdmg==
 
+react-lifecycles-compat@~3.0.4:
+  version "3.0.4"
+  resolved "https://registry.yarnpkg.com/react-lifecycles-compat/-/react-lifecycles-compat-3.0.4.tgz#4f1a273afdfc8f3488a8c516bfda78f872352362"
+  integrity sha512-fBASbA6LnOU9dOU2eW7aQ8xmYBSXUIWr+UmF9b1efZBazGNO+rcXT/icdKnYm2pTwcRylVUYwW7H1PHfLekVzA==
+
 react-markdown@5.0.3:
   version "5.0.3"
   resolved "http://52.50.158.57:4873/react-markdown/-/react-markdown-5.0.3.tgz#41040ea7a9324b564b328fb81dd6c04f2a5373ac"
@@ -22377,6 +22439,15 @@ react-style-singleton@^2.2.1, react-style-singleton@^2.2.2:
   dependencies:
     get-nonce "^1.0.0"
     tslib "^2.0.0"
+
+react-textarea-autosize@~8.5.7:
+  version "8.5.8"
+  resolved "https://registry.yarnpkg.com/react-textarea-autosize/-/react-textarea-autosize-8.5.8.tgz#6206e8a2051a26d41db8fdee588e657c2d2587c0"
+  integrity sha512-iUiIj70JefrTuSJ4LbVFiSqWiHHss5L63L717bqaWHMgkm9sz6eEvro4vZ3uQfGJbevzwT6rHOszHKA8RkhRMg==
+  dependencies:
+    "@babel/runtime" "^7.20.13"
+    use-composed-ref "^1.3.0"
+    use-latest "^1.2.1"
 
 react@^16.9.0:
   version "16.14.0"
@@ -26335,6 +26406,23 @@ use-callback-ref@^1.3.3:
   integrity sha512-jQL3lRnocaFtu3V00JToYz/4QkNWswxijDaCVNZRiRTO3HQDLsdu1ZtmIUvV4yPp+rvWm5j0y0TG/S61cuijTg==
   dependencies:
     tslib "^2.0.0"
+
+use-composed-ref@^1.3.0:
+  version "1.4.0"
+  resolved "https://registry.yarnpkg.com/use-composed-ref/-/use-composed-ref-1.4.0.tgz#09e023bf798d005286ad85cd20674bdf5770653b"
+  integrity sha512-djviaxuOOh7wkj0paeO1Q/4wMZ8Zrnag5H6yBvzN7AKKe8beOaED9SF5/ByLqsku8NP4zQqsvM2u3ew/tJK8/w==
+
+use-isomorphic-layout-effect@^1.1.1:
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/use-isomorphic-layout-effect/-/use-isomorphic-layout-effect-1.2.0.tgz#afb292eb284c39219e8cb8d3d62d71999361a21d"
+  integrity sha512-q6ayo8DWoPZT0VdG4u3D3uxcgONP3Mevx2i2b0434cwWBoL+aelL1DzkXI6w3PhTZzUeR2kaVlZn70iCiseP6w==
+
+use-latest@^1.2.1:
+  version "1.3.0"
+  resolved "https://registry.yarnpkg.com/use-latest/-/use-latest-1.3.0.tgz#549b9b0d4c1761862072f0899c6f096eb379137a"
+  integrity sha512-mhg3xdm9NaM8q+gLT8KryJPnRFOz1/5XPBhmDEVZK1webPzDjrPk7f/mbpeLqTgB9msytYWANxgALOCJKnLvcQ==
+  dependencies:
+    use-isomorphic-layout-effect "^1.1.1"
 
 use-sidecar@^1.1.2:
   version "1.1.3"

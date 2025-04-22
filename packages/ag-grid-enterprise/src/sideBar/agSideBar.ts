@@ -235,8 +235,8 @@ export class AgSideBar extends Component implements ISideBar {
         const isLeft = position === 'left';
         const resizerSide = isLeft ? 'right' : 'left';
 
-        this.addOrRemoveCssClass('ag-side-bar-left', isLeft);
-        this.addOrRemoveCssClass('ag-side-bar-right', !isLeft);
+        this.toggleCss('ag-side-bar-left', isLeft);
+        this.toggleCss('ag-side-bar-right', !isLeft);
 
         this.toolPanelWrappers.forEach((wrapper) => {
             wrapper.setResizerSizerSide(resizerSide);

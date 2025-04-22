@@ -91,7 +91,7 @@ export class FontPanel extends Component {
                 colorPicker: chartMenuParamsFactory.getDefaultColorPickerParams(keyMapper('color')),
             }
         );
-        this.addOrRemoveCssClass('ag-font-panel-no-header', !title);
+        this.toggleCss('ag-font-panel-no-header', !title);
     }
 
     public addItem(comp: Component<any>, prepend?: boolean) {

@@ -117,28 +117,17 @@ export class Environment extends BeanStub implements NamedBean {
         return this.getCSSVariablePixelValue(CELL_HORIZONTAL_PADDING);
     }
 
-    public getDefaultIndentation(): number {
-        return this.getCSSVariablePixelValue(INDENTATION_LEVEL);
-    }
-
-    public getDefaultRowGroupIndentSize(): number {
-        return this.getCSSVariablePixelValue(ROW_GROUP_INDENT_SIZE);
-    }
-
-    public getCellPaddingLeft(): number {
+    private getCellPaddingLeft(): number {
         // calc(var(--ag-cell-horizontal-padding) - 1px + var(--ag-row-group-indent-size)*var(--ag-indentation-level))
         const cellHorizontalPadding = this.getDefaultCellHorizontalPadding();
-        const indentationLevel = this.getDefaultIndentation();
-        const rowGroupIndentSize = this.getDefaultRowGroupIndentSize();
+        const indentationLevel = this.getCSSVariablePixelValue(INDENTATION_LEVEL);
+        const rowGroupIndentSize = this.getCSSVariablePixelValue(ROW_GROUP_INDENT_SIZE);
         return cellHorizontalPadding - 1 + rowGroupIndentSize * indentationLevel;
     }
 
-    public getCellPaddingRight(): number {
-        return this.getDefaultCellHorizontalPadding() - 1;
-    }
-
     public getCellPadding(): number {
-        return this.getCellPaddingLeft() + this.getCellPaddingRight();
+        const cellPaddingRight = this.getDefaultCellHorizontalPadding() - 1;
+        return this.getCellPaddingLeft() + cellPaddingRight;
     }
 
     public getDefaultColumnMinWidth(): number {
@@ -152,10 +141,6 @@ export class Environment extends BeanStub implements NamedBean {
 
     public getDefaultListItemHeight(): number {
         return this.getCSSVariablePixelValue(LIST_ITEM_HEIGHT);
-    }
-
-    public getRowBorderWidth(): number {
-        return this.getCSSVariablePixelValue(ROW_BORDER_WIDTH);
     }
 
     public applyThemeClasses(el: HTMLElement) {

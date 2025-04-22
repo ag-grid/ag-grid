@@ -1,6 +1,6 @@
 import { createApp, defineComponent } from 'vue';
 
-import type { ColDef } from 'ag-grid-community';
+import type { AgModuleName, ColDef, GridReadyEvent } from 'ag-grid-community';
 import {
     ClientSideRowModelModule,
     CsvExportModule,
@@ -20,13 +20,17 @@ import { AgGridVue } from 'ag-grid-vue3';
 
 import './styles.css';
 
-// Register shared Modules globally
-ModuleRegistry.registerModules([
+const sharedModules = [
     ClientSideRowModelModule,
     ColumnMenuModule,
     ContextMenuModule,
     ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
-]);
+];
+const leftModules = [SetFilterModule, ClipboardModule, CsvExportModule];
+const rightModules = [TextFilterModule, NumberFilterModule, CsvExportModule, ExcelExportModule];
+
+// Register shared Modules globally
+ModuleRegistry.registerModules(sharedModules);
 
 let rowIdSequence = 100;
 const createRowBlock = () =>
@@ -44,10 +48,12 @@ const VueExample = defineComponent({
                 <div style="height: 100%;" class="inner-col">
                     <ag-grid-vue
                         style="height: 100%;"
+                        :gridId="'Left'"
                         :defaultColDef="defaultColDef"
                         :rowData="leftRowData"
                         :columnDefs="columns"
                         :modules="leftModules"
+                        @gridReady="onGridReady"
                         >
                     </ag-grid-vue>
                 </div>
@@ -57,10 +63,12 @@ const VueExample = defineComponent({
                 <div style="height: 100%;" class="inner-col">
                     <ag-grid-vue
                         style="height: 100%;"
+                        :gridId="'Right'"
                         :defaultColDef="defaultColDef"
                         :rowData="rightRowData"
                         :columnDefs="columns"
                         :modules="rightModules"
+                        @gridReady="onGridReady"
                         >
                     </ag-grid-vue>
                 </div>
@@ -72,10 +80,10 @@ const VueExample = defineComponent({
     },
     data: function () {
         return {
-            leftRowData: [],
-            rightRowData: [],
-            leftModules: [SetFilterModule, ClipboardModule, CsvExportModule],
-            rightModules: [TextFilterModule, NumberFilterModule, CsvExportModule, ExcelExportModule],
+            leftRowData: createRowBlock(),
+            rightRowData: createRowBlock(),
+            leftModules,
+            rightModules,
             defaultColDef: <ColDef>{
                 flex: 1,
                 minWidth: 100,
@@ -83,11 +91,24 @@ const VueExample = defineComponent({
                 floatingFilter: true,
             },
             columns: <ColDef[]>[{ field: 'id' }, { field: 'color' }, { field: 'value1' }],
+            onGridReady: (event: GridReadyEvent) => {
+                const api = event.api;
+                const moduleNames: AgModuleName[] = [
+                    'ClipboardModule',
+                    'ClientSideRowModelModule',
+                    'ColumnMenuModule',
+                    'ContextMenuModule',
+                    'CsvExportModule',
+                    'ExcelExportModule',
+                    'NumberFilterModule',
+                    'SetFilterModule',
+                    'TextFilterModule',
+                    'IntegratedChartsModule', // Not registered in this example
+                ];
+                const registered = moduleNames.filter((name) => api.isModuleRegistered(name));
+                console.log(api.getGridId(), 'registered:', registered.join(','));
+            },
         };
-    },
-    beforeMount() {
-        this.leftRowData = createRowBlock();
-        this.rightRowData = createRowBlock();
     },
 });
 

@@ -14,8 +14,16 @@ export const DEFAULT_INTERNAL_FRAMEWORK: InternalFramework = 'reactFunctional';
 
 export const USE_PACKAGES = true; // process.env?.USE_PACKAGES ?? false;
 
+export const ALL_INTERNAL_FRAMEWORKS: readonly InternalFramework[] = [
+    'vanilla',
+    'typescript',
+    'reactFunctional',
+    'reactFunctionalTs',
+    'angular',
+    'vue3',
+];
 export const INTERNAL_FRAMEWORKS: readonly InternalFramework[] = USE_PACKAGES
-    ? ['vanilla', 'typescript', 'reactFunctional', 'reactFunctionalTs', 'angular', 'vue3']
+    ? ALL_INTERNAL_FRAMEWORKS
     : (['typescript', 'reactFunctional', 'reactFunctionalTs', 'angular', 'vue3'] as const);
 
 export const FRAMEWORK_DISPLAY_TEXT: Record<Framework, string> = {
@@ -84,11 +92,6 @@ export const SITE_URL = import.meta.env?.SITE_URL || import.meta.env?.PUBLIC_SIT
 export const STAGING_SITE_URL = 'https://grid-staging.ag-grid.com';
 export const PRODUCTION_SITE_URLS = ['https://ag-grid.com', 'https://www.ag-grid.com'];
 export const USE_PUBLISHED_PACKAGES = isTruthy(import.meta.env?.PUBLIC_USE_PUBLISHED_PACKAGES);
-
-/**
- * Enable debug pages to be built
- */
-export const ENABLE_GENERATE_DEBUG_PAGES = import.meta.env?.ENABLE_GENERATE_DEBUG_PAGES;
 
 /**
  * Show debug logs

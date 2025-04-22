@@ -109,7 +109,7 @@ export class RichSelectRow<TValue> extends Component {
         const eGui = this.getGui();
         _setAriaSelected(eGui.parentElement!, selected);
 
-        this.addOrRemoveCssClass('ag-rich-select-row-selected', selected);
+        this.toggleCss('ag-rich-select-row-selected', selected);
     }
 
     public getValue(): TValue {
@@ -117,7 +117,7 @@ export class RichSelectRow<TValue> extends Component {
     }
 
     public toggleHighlighted(highlighted: boolean): void {
-        this.addOrRemoveCssClass('ag-rich-select-row-highlighted', highlighted);
+        this.toggleCss('ag-rich-select-row-highlighted', highlighted);
     }
 
     private populateWithoutRenderer(value: any, valueFormatted: any) {

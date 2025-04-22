@@ -42,7 +42,7 @@ const HeaderGroupCellComp = ({ ctrl }: { ctrl: HeaderGroupCellCtrl }) => {
                     eGui.current.style.width = width;
                 }
             },
-            addOrRemoveCssClass: (name: string, on: boolean) => setCssClasses((prev) => prev.setClass(name, on)),
+            toggleCss: (name: string, on: boolean) => setCssClasses((prev) => prev.setClass(name, on)),
             setUserStyles: (styles: HeaderStyle) => setUserStyles(styles),
             setHeaderWrapperHidden: (hidden: boolean) => {
                 const headerCompWrapper = eHeaderCompWrapper.current;

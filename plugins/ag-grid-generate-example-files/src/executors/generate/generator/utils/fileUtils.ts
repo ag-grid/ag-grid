@@ -175,6 +175,6 @@ export function convertTsxToJsx(fileStr: string): string {
     return jsxFile;
 }
 
-export const getHasExampleConsoleLog = ({ entryFile }: { entryFile: string }) => {
-    return entryFile?.includes('console.log');
+export const getHasExampleConsoleLog = ({ contents }: { contents: string }) => {
+    return contents?.includes('console.log');
 };
