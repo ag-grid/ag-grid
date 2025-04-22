@@ -18,10 +18,3 @@ export interface IEditStrategy extends Bean {
 
     moveToNextEditingCell(previousCell: CellCtrl, backwards: boolean, event?: KeyboardEvent): boolean | null;
 }
-
-type RowStatusUpdateRecord = {
-    status: boolean;
-    cells: Record<string, boolean>;
-};
-
-export type EditingStateUpdates = Record<string, RowStatusUpdateRecord>;

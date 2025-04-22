@@ -1,5 +1,5 @@
 import type { CellFocusedEvent, CommonCellFocusParams } from '../../events';
-import { Column } from '../../interfaces/iColumn';
+import type { Column } from '../../interfaces/iColumn';
 import type { CellCtrl } from '../../rendering/cell/cellCtrl';
 import type { RowCtrl } from '../../rendering/row/rowCtrl';
 import { BaseEditStrategy } from './baseEditStrategy';
@@ -13,14 +13,14 @@ export class SingleCellEditStrategy extends BaseEditStrategy {
         event?: KeyboardEvent | MouseEvent | null | undefined
     ): boolean {
         console.warn('SingleCellEditStrategy: startEditing', rowCtrl?.rowId, cellCtrl?.column.colId, key, event);
-        if (this.editModel.isEditing()) {
+        if (this.isEditing()) {
             this.stopAllEditing();
         }
 
         const rowId = rowCtrl.rowId!;
         const colId = cellCtrl?.column.getColId() ?? this.beans.visibleCols.getFirstColumn()!.getColId();
 
-        this.editModel.createEditModel(rowId, colId);
+        this.editModel.startEditing(rowId, colId);
 
         return true;
     }
