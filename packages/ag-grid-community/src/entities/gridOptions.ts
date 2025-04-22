@@ -2672,7 +2672,7 @@ export interface GridOptions<TData = any> {
      * @default false
      */
     experimentalEditingModeV2?: {
-        strategy: EditStrategyType;
+        strategy?: EditStrategyType;
         trigger?: EditTriggerType;
         params?: any;
     };

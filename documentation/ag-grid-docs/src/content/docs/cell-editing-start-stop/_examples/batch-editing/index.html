@@ -1,0 +1,24 @@
+<div class="example-wrapper">
+    <div class="example-buttons">
+        <div class="example-button-row">
+            <div>Edit Strategy:</div>
+            <button onclick="updateStrategy('singleCellStrategy')">Single Cell (default)</button>
+            <button onclick="updateStrategy('fullRowStrategy')">Full Row</button>
+            <button onclick="updateStrategy('batchStrategy')">Batch Edit</button>
+        </div>
+        <div class="example-button-row">
+            <span>Edit Trigger (provided): </span>
+            <button onclick="updateTrigger('defaultEditTrigger')">Default (full keyboard, double-click)</button>
+            <button onclick="updateTrigger('suppressClickEdit')">Suppress click Edit</button>
+            <button onclick="updateTrigger('singleClickEditTrigger')">Single-click Edit</button>
+            <button onclick="updateTrigger('doubleClickEditTrigger')">Double-click Edit</button>
+        </div>
+        <div class="example-button-row">
+            <span>Edit Trigger (custom): </span>
+            <button onclick="updateTrigger()">Middle-click Edit (custom)</button>
+        </div>
+    </div>
+    <div class="grid-wrapper">
+        <div id="myGrid"></div>
+    </div>
+</div>
