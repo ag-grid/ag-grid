@@ -59,12 +59,6 @@ const gridOptions: GridOptions = {
     onCellEditingStopped: (event: CellEditingStoppedEvent) => {
         console.log('cellEditingStopped');
     },
-    experimentalEditingModeV2: {
-        strategy: 'cellEditMode',
-    },
-    onCellValueChanged: (event) => {
-        console.log('Cell value changed', event);
-    },
 };
 
 function getPinnedTopData() {
