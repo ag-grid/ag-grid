@@ -1,14 +1,14 @@
 import type { GridApi, RowDragEndEvent, RowDragEvent, RowDragMoveEvent } from 'ag-grid-community';
 
-import './polyfills/dataTransfer';
 import { initDataTransferPolyfill } from './polyfills/dataTransfer';
 import { mockGridLayout } from './polyfills/mockGridLayout';
+import { TestGridsManager } from './testGridsManager';
 import { asyncSetTimeout } from './utils';
 
 export interface DragAndDropRowOptions {
     api: GridApi | null | undefined;
-    source: HTMLElement | null | undefined;
-    target: HTMLElement | null | undefined;
+    source: string | Element | null | undefined;
+    target: string | Element | null | undefined;
     sourceYOffsetPercent?: number;
     targetYOffsetPercent?: number;
     cancel?: boolean;
@@ -37,8 +37,19 @@ export async function dragAndDropRow({
         rowDragEndEvents,
     };
 
-    source = source?.classList.contains('ag-row') ? source : source?.closest('.ag-row') ?? source;
-    target = target?.classList.contains('ag-row') ? target : target?.closest('.ag-row') ?? target;
+    const gridElement = TestGridsManager.getHTMLElement(api);
+
+    if (typeof source === 'string') {
+        source = gridElement?.querySelector(`[row-id="${source}"]`);
+    } else {
+        source = source?.classList.contains('ag-row') ? source : source?.closest('.ag-row') ?? source;
+    }
+
+    if (typeof target === 'string') {
+        target = gridElement?.querySelector(`[row-id="${target}"]`);
+    } else {
+        target = target?.classList.contains('ag-row') ? target : target?.closest('.ag-row') ?? target;
+    }
 
     if (!source) {
         result.error = 'Drop source row not found';
@@ -92,13 +103,6 @@ export async function dragAndDropRow({
     });
 
     await fireMouseEvent(dragHandle, 'dragstart', { dataTransfer, clientX: startX, clientY: startY });
-
-    // await fireMouseEvent(target, 'mousemove', {
-    //     clientX: startX,
-    //     clientY: startY,
-    //     buttons: 1,
-    //     relatedTarget: dragHandle,
-    // });
 
     const targetRect = target.getBoundingClientRect();
     const endX = targetRect.left + Math.min(10, targetRect.width);
