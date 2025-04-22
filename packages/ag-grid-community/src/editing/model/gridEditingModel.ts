@@ -42,20 +42,28 @@ export class GridEditingModel {
         }
     }
 
-    public getEditModels(rowId: string, columnId?: string): CellEditingModel[] {
+    public getEditModels(rowId?: string, columnId?: string): CellEditingModel[] {
+        const models: CellEditingModel[] = [];
+        if (!rowId) {
+            this.rowModels.forEach((rowModel) => {
+                models.push(...rowModel.getEditModels());
+            });
+            return models;
+        }
+
         if (columnId) {
             const model = this.rowModels.get(rowId)?.getEditModel(columnId);
             if (model) {
-                return [model];
+                models.push(model);
             }
-            return [];
+            return models;
         }
 
         const cellModels = this.rowModels.get(rowId)?.getEditModels();
-        if (!cellModels) {
-            return [];
+        if (cellModels) {
+            models.push(...cellModels);
         }
-        return cellModels;
+        return models;
     }
 
     public getEditingCellPositions(): CellPosition[] {

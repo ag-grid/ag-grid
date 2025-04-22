@@ -13,6 +13,7 @@ import type { RowCtrl } from '../rendering/row/rowCtrl';
 import { _getTabIndex } from '../utils/browser';
 import { GridEditingModel } from './model/gridEditingModel';
 import type { IEditStrategy } from './strategy/iEditStrategy';
+import { _resolveControllers } from './strategy/utils';
 import type { IEditTrigger } from './trigger/baseEditTrigger';
 
 export class EditingService extends BeanStub implements NamedBean {
@@ -264,6 +265,17 @@ export class EditingService extends BeanStub implements NamedBean {
 
         // if a cell wasn't found, it's possible that focus was moved to the header
         return res || !!this.beans.focusSvc.focusedHeader;
+    }
+
+    public getCellDataValue(rowId?: string, colId?: string): any {
+        const { rowCtrl, cellCtrl } = _resolveControllers(this.beans, { rowId, colId });
+        if (this.isEditing(rowCtrl, cellCtrl)) {
+            return this.editModel?.getEditModels(rowId, colId)?.[0]?.newValue;
+        }
+
+        return rowCtrl?.rowNode && cellCtrl?.column
+            ? this.beans.valueSvc.getValue(cellCtrl?.column, rowCtrl?.rowNode)
+            : undefined;
     }
 
     public addStopEditingWhenGridLosesFocus(viewports: HTMLElement[]): void {
