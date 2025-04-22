@@ -1,18 +1,16 @@
-import type { GridApi, RowDragEndEvent, RowDragEvent, RowDragMoveEvent } from 'ag-grid-community';
+import type { GridApi, RowDragCancelEvent, RowDragEndEvent, RowDragEvent, RowDragMoveEvent } from 'ag-grid-community';
 
-import './polyfills/dataTransfer';
 import { initDataTransferPolyfill } from './polyfills/dataTransfer';
 import { mockGridLayout } from './polyfills/mockGridLayout';
 import { asyncSetTimeout } from './utils';
 
 export interface DragAndDropRowOptions {
-    api: GridApi | null | undefined;
+    api: GridApi;
     source: HTMLElement | null | undefined;
     target: HTMLElement | null | undefined;
     sourceYOffsetPercent?: number;
     targetYOffsetPercent?: number;
     cancel?: boolean;
-    onBeforeDrop?: () => void | Promise<void>;
 }
 
 export async function dragAndDropRow({
@@ -21,7 +19,6 @@ export async function dragAndDropRow({
     target,
     sourceYOffsetPercent = 0.5,
     targetYOffsetPercent = 0.5,
-    onBeforeDrop,
 }: DragAndDropRowOptions) {
     mockGridLayout.init();
     initDataTransferPolyfill();
@@ -29,12 +26,14 @@ export async function dragAndDropRow({
     const rowDragEnterEvents: RowDragEvent[] = [];
     const rowDragMoveEvents: RowDragMoveEvent[] = [];
     const rowDragEndEvents: RowDragEndEvent[] = [];
+    const rowDragCancelEvents: RowDragCancelEvent[] = [];
 
     const result = {
         error: null as null | string,
         rowDragEnterEvents,
         rowDragMoveEvents,
         rowDragEndEvents,
+        rowDragCancelEvents,
     };
 
     source = source?.classList.contains('ag-row') ? source : source?.closest('.ag-row') ?? source;
@@ -60,80 +59,82 @@ export async function dragAndDropRow({
         return result;
     }
 
+    let dragEndedPromise: Promise<void> | undefined;
+    let dragEndedPromiseResolved = () => {};
+
     const rowDragEnter = (event: RowDragEvent) => {
+        dragEndedPromise ??= new Promise<void>((resolve) => (dragEndedPromiseResolved = resolve));
         rowDragEnterEvents.push(event);
     };
 
     const rowDragMove = (event: RowDragMoveEvent) => {
+        dragEndedPromise ??= new Promise<void>((resolve) => (dragEndedPromiseResolved = resolve));
         rowDragMoveEvents.push(event);
     };
 
     const rowDragEnd = (event: RowDragEndEvent) => {
         rowDragEndEvents.push(event);
+        dragEndedPromiseResolved();
     };
 
-    if (api) {
-        api.addEventListener('rowDragEnter', rowDragEnter);
-        api.addEventListener('rowDragMove', rowDragMove);
-        api.addEventListener('rowDragEnd', rowDragEnd);
-    }
+    const rowDragCancel = (event: RowDragCancelEvent) => {
+        rowDragCancelEvents.push(event);
+        dragEndedPromiseResolved();
+    };
 
     const dataTransfer = new DataTransfer();
 
+    const fireMouseEvent = async (
+        element: Element | Document,
+        eventType: string,
+        options: MouseEventInit & { dataTransfer?: DataTransfer } = {}
+    ) => {
+        const event = new MouseEvent(eventType, { bubbles: true, cancelable: true, ...options });
+        element.dispatchEvent(event);
+        await asyncSetTimeout(0);
+    };
+
+    const sourceRect = source.getBoundingClientRect();
     const handleRect = dragHandle.getBoundingClientRect();
-    const startX = handleRect.left + handleRect.width / 2;
-    const startY = handleRect.top + linearInterpolation(0, handleRect.height, sourceYOffsetPercent);
-
-    await fireMouseEvent(dragHandle, 'mousedown', {
-        clientX: startX,
-        clientY: startY,
-        buttons: 1,
-        relatedTarget: dragHandle,
-    });
-
-    await fireMouseEvent(dragHandle, 'dragstart', { dataTransfer, clientX: startX, clientY: startY });
-
-    // await fireMouseEvent(target, 'mousemove', {
-    //     clientX: startX,
-    //     clientY: startY,
-    //     buttons: 1,
-    //     relatedTarget: dragHandle,
-    // });
-
     const targetRect = target.getBoundingClientRect();
+
+    const startX = handleRect.left + handleRect.width / 2;
+    let startY = handleRect.top + linearInterpolation(0, handleRect.height, sourceYOffsetPercent);
+
     const endX = targetRect.left + Math.min(10, targetRect.width);
-    const endY = targetRect.top + linearInterpolation(0, targetRect.height, targetYOffsetPercent);
-
-    await fireMouseEvent(target, 'dragover', { dataTransfer, clientX: endX, clientY: endY + 1 });
-
-    await fireMouseEvent(target, 'mousemove', {
-        clientX: endX,
-        clientY: endY,
-        buttons: 1,
-        relatedTarget: dragHandle,
-    });
-
-    if (onBeforeDrop) {
-        await onBeforeDrop();
+    let endY = targetRect.top + linearInterpolation(0, targetRect.height, targetYOffsetPercent);
+    if (endY === startY) {
+        endY += endY >= sourceRect.bottom - 5 ? -5 : 5;
     }
 
-    await fireMouseEvent(target, 'drop', { dataTransfer, clientX: endX, clientY: endY });
+    api.addEventListener('rowDragEnter', rowDragEnter);
+    api.addEventListener('rowDragMove', rowDragMove);
+    api.addEventListener('rowDragEnd', rowDragEnd);
+    api.addEventListener('rowDragCancel', rowDragCancel);
+    try {
+        await fireMouseEvent(dragHandle, 'mousedown', { clientX: startX, clientY: startY, buttons: 1 });
 
-    await fireMouseEvent(dragHandle, 'dragend', { dataTransfer, clientX: endX, clientY: endY });
+        startY += startY >= sourceRect.bottom - 5 ? -5 : 5;
 
-    await fireMouseEvent(document.body, 'mouseup', {
-        clientX: endX,
-        clientY: endY,
-        buttons: 0,
-        relatedTarget: dragHandle,
-    });
+        await fireMouseEvent(document, 'mousemove', { clientX: startX, clientY: startY, buttons: 1 });
+        await fireMouseEvent(dragHandle, 'dragstart', { dataTransfer, clientX: startX, clientY: startY });
+        await fireMouseEvent(source, 'dragenter', { dataTransfer, clientX: startX, clientY: startY });
+        await fireMouseEvent(source, 'dragover', { dataTransfer, clientX: startX, clientY: startY });
 
-    expect(source.classList.contains('ag-row-dragging')).toBe(false);
+        await fireMouseEvent(document, 'mousemove', { clientX: endX, clientY: endY, buttons: 1 });
+        await fireMouseEvent(source, 'dragleave', { dataTransfer, clientX: startX, clientY: startY });
+        await fireMouseEvent(target, 'dragenter', { dataTransfer, clientX: endX, clientY: endY });
+        await fireMouseEvent(target, 'dragover', { dataTransfer, clientX: endX, clientY: endY });
+        await fireMouseEvent(dragHandle, 'drag', { dataTransfer, clientX: startX, clientY: startY });
 
-    if (api) {
-        api.removeEventListener('rowDragEnter', rowDragEnter);
-        api.removeEventListener('rowDragMove', rowDragMove);
-        api.removeEventListener('rowDragEnd', rowDragEnd);
+        await fireMouseEvent(target, 'drop', { dataTransfer, clientX: endX, clientY: endY });
+        await fireMouseEvent(dragHandle, 'dragend', { dataTransfer, clientX: endX, clientY: endY });
+        await fireMouseEvent(document, 'mouseup', { clientX: endX, clientY: endY, buttons: 0 });
+
+        for (let repeat = 0; !dragEndedPromise && repeat < 50; ++repeat) {
+            await asyncSetTimeout(2);
+        }
+        await dragEndedPromise;
 
         if (rowDragEnterEvents.length > 1) {
             throw new Error('Row drag enter event fired more than once');
@@ -149,19 +150,17 @@ export async function dragAndDropRow({
             expect(rowDragEndEvents[0].node).toBe(rowDragEnterEvents[0].node);
             expect(rowDragEndEvents[0].nodes).toBe(rowDragEnterEvents[0].nodes);
         }
+
+        if (source.isConnected) {
+            expect(source.classList.contains('ag-row-dragging')).toBe(false);
+        }
+    } finally {
+        api.removeEventListener('rowDragEnter', rowDragEnter);
+        api.removeEventListener('rowDragMove', rowDragMove);
+        api.removeEventListener('rowDragEnd', rowDragEnd);
     }
 
     return result;
-}
-
-async function fireMouseEvent(
-    element: Element | Document,
-    eventType: string,
-    options: MouseEventInit & { dataTransfer?: DataTransfer } = {}
-) {
-    const event = new MouseEvent(eventType, { bubbles: true, cancelable: true, ...options });
-    element.dispatchEvent(event);
-    await asyncSetTimeout(0);
 }
 
 function linearInterpolation(start: number, end: number, amount: number) {
