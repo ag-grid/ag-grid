@@ -369,7 +369,7 @@ export class MultiFilter extends BaseMultiFilter<MultiFilterWrapper> implements 
         }
 
         if (evaluator) {
-            const onModelChange = evaluatorParams!.onModelChange;
+            const { onModelChange, doesRowPassOtherFilter } = evaluatorParams!;
             evaluator.init?.({
                 ...evaluatorParams!,
                 model: initialModelForFilter,
@@ -378,6 +378,8 @@ export class MultiFilter extends BaseMultiFilter<MultiFilterWrapper> implements 
                         getUpdatedMultiFilterModel(this.params.model, this.wrappers.length, newModel, index),
                         additionalEventAttributes
                     ),
+                doesRowPassOtherFilter: (node) =>
+                    doesRowPassOtherFilter(node) && this.doesFilterPass({ node, data: node.data }, index),
             });
         }
 
@@ -455,8 +457,9 @@ export class MultiFilter extends BaseMultiFilter<MultiFilterWrapper> implements 
                 return;
             }
 
-            const filter = wrapper.filter;
+            const { filter, evaluator } = wrapper;
 
+            evaluator?.onAnyFilterChanged?.();
             if (typeof filter.onAnyFilterChanged === 'function') {
                 filter.onAnyFilterChanged();
             }

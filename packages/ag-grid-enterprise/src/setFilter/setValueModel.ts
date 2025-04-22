@@ -212,6 +212,7 @@ export class SetValueModel<TValue> extends BeanStub<SetValueModelEvent> {
                     this.updateAvailableKeys(updatedKeys);
                     resolve(true);
                 });
+                return;
             }
             resolve(false);
         });

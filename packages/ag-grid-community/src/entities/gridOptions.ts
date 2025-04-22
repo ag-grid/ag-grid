@@ -657,7 +657,10 @@ export interface GridOptions<TData = any> {
      * @initial
      */
     suppressSetFilterByDefault?: boolean;
-    /** TODO */
+    /**
+     * TODO
+     * @initial
+     */
     enableFilterEvaluators?: boolean;
 
     // *** Integrated Charts *** //

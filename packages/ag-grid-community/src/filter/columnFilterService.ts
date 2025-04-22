@@ -932,7 +932,7 @@ export class ColumnFilterService
                     filterName = defaultFilter;
                 }
             }
-            evaluatorName = EVALUATOR_MAP[filterName as keyof typeof EVALUATOR_MAP];
+            evaluatorName = this.evaluatorMap[filterName as keyof typeof this.evaluatorMap];
             if (evaluatorName) {
                 filterEvaluator = () =>
                     this.createBean(

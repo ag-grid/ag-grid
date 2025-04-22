@@ -7,7 +7,6 @@ import type {
     IFilterDef,
     IMultiFilterModel,
     IMultiFilterParams,
-    RowNode,
     SharedFilterUi,
 } from 'ag-grid-community';
 import { AgPromise, _getFilterDetails, _refreshFilterUi } from 'ag-grid-community';
@@ -83,7 +82,7 @@ export class MultiFilterUi
     }
 
     public getLastActiveFilterIndex(): number | null {
-        return (this.params.getEvaluator() as MultiFilterEvaluator)?.getLastActiveFilterIndex?.() ?? null;
+        return this.getEvaluator().getLastActiveFilterIndex?.() ?? null;
     }
 
     public getChildFilterInstance(index: number): FilterDisplayComp | undefined {
@@ -137,7 +136,6 @@ export class MultiFilterUi
             doesRowPassOtherFilter,
             model,
             onModelChange,
-            getEvaluator,
             state,
             onStateChange,
             column,
@@ -152,11 +150,20 @@ export class MultiFilterUi
                   state: state.state?.[index],
               }
             : { model: filterModel };
+        const onAnyFilterChanged = () => {
+            this.filters.forEach((filter, otherIndex) => {
+                if (index !== otherIndex) {
+                    this.getEvaluator().getEvaluator(otherIndex)?.onAnyFilterChanged?.();
+                    filter?.onAnyFilterChanged?.();
+                }
+            });
+        };
         return {
             ...this.beans.colFilter!.createBaseFilterParams(column as AgColumn),
             ...filterDef,
-            doesRowPassOtherFilter: (node: RowNode) =>
-                doesRowPassOtherFilter(node) && this.doesOtherFilterPass(node, index),
+            doesRowPassOtherFilter: (node) =>
+                doesRowPassOtherFilter(node) &&
+                this.getEvaluator().doesFilterPass({ node, data: node.data, model: this.params.model }, index),
             model: filterModel,
             state: filterState,
             onModelChange: (childModel, additionalEventAttributes) => {
@@ -164,11 +171,7 @@ export class MultiFilterUi
                 const newModel = getUpdatedMultiFilterModel(params.model, filters.length, childModel, index);
                 this.updateActiveList(index, childModel);
                 onModelChange(newModel, additionalEventAttributes);
-                filters.forEach((filter, otherIndex) => {
-                    if (index !== otherIndex && typeof filter?.onAnyFilterChanged === 'function') {
-                        filter.onAnyFilterChanged();
-                    }
-                });
+                onAnyFilterChanged();
             },
             onStateChange: (newState) => {
                 const { model, state, valid } = newState;
@@ -187,40 +190,27 @@ export class MultiFilterUi
                 this.allState = newAllState;
                 onStateChange(newAllState);
             },
-            getEvaluator: () => {
-                const multiFilterEvaluator = getEvaluator() as MultiFilterEvaluator;
-                return multiFilterEvaluator.getEvaluator(index)!;
+            getEvaluator: () => this.getEvaluator().getEvaluator(index)!,
+            onAction: (action, additionalEventAttributes, event) => {
+                onAction(action, additionalEventAttributes, event);
+                if (action === 'apply' || action === 'reset') {
+                    onAnyFilterChanged();
+                }
             },
-            onAction,
             onUiChange,
             source,
         };
     }
 
-    private doesOtherFilterPass(node: RowNode, index: number): boolean {
-        const {
-            beans,
-            params: { column, model },
-        } = this;
-        const evaluator = beans.colFilter?.getEvaluator(column as AgColumn);
-        return (
-            !evaluator ||
-            evaluator.doesFilterPass({
-                node,
-                data: node.data,
-                model: model?.filterModels?.[index] ?? null,
-            })
-        );
+    private updateActiveList(index: number, childModel: any): void {
+        this.getEvaluator().updateActiveList?.(index, childModel);
     }
 
-    private updateActiveList(index: number, childModel: any): void {
-        const evaluator = this.params.getEvaluator();
-        if ((evaluator as MultiFilterEvaluator)?.updateActiveList) {
-            (evaluator as MultiFilterEvaluator).updateActiveList(index, childModel);
-        }
+    private getEvaluator(): MultiFilterEvaluator {
+        return this.params.getEvaluator() as MultiFilterEvaluator;
     }
 
     public getModelAsString(model: IMultiFilterModel): string {
-        return this.params.getEvaluator()?.getModelAsString?.(model) ?? '';
+        return this.getEvaluator().getModelAsString?.(model) ?? '';
     }
 }

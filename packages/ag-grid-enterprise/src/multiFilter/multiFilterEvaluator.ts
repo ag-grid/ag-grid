@@ -8,7 +8,7 @@ import type {
 } from 'ag-grid-community';
 import { BeanStub, _removeFromArray } from 'ag-grid-community';
 
-import { getMultiFilterDefs, getUpdatedMultiFilterModel } from './multiFilterUtil';
+import { forEachReverse, getMultiFilterDefs, getUpdatedMultiFilterModel } from './multiFilterUtil';
 
 export class MultiFilterEvaluator
     extends BeanStub
@@ -53,7 +53,7 @@ export class MultiFilterEvaluator
         model: IMultiFilterModel | null,
         index: number
     ): FilterEvaluatorParams {
-        const onModelChange = params.onModelChange;
+        const { onModelChange, doesRowPassOtherFilter } = params;
         return {
             ...params!,
             model: model?.filterModels?.[index] ?? null,
@@ -62,17 +62,20 @@ export class MultiFilterEvaluator
                     getUpdatedMultiFilterModel(this.params.model, this.evaluatorWrappers.length, newModel, index),
                     additionalEventAttributes
                 ),
+            doesRowPassOtherFilter: (node) =>
+                doesRowPassOtherFilter(node) &&
+                this.doesFilterPass({ node, data: node.data, model: this.params.model }, index),
         };
     }
 
-    public doesFilterPass(params: FilterEvaluatorFuncParams<any, IMultiFilterModel>): boolean {
+    public doesFilterPass(params: FilterEvaluatorFuncParams<any, IMultiFilterModel>, indexToSkip?: number): boolean {
         const filterModels = params.model?.filterModels;
         if (filterModels == null) {
             return true;
         }
         return this.evaluatorWrappers.every((wrapper, index) => {
             const model = filterModels[index];
-            if (model == null) {
+            if (model == null || (indexToSkip != null && index === indexToSkip)) {
                 return true;
             }
             const evaluator = wrapper?.evaluator;
@@ -120,6 +123,14 @@ export class MultiFilterEvaluator
 
     public getEvaluator(index: number): FilterEvaluator | undefined {
         return this.evaluatorWrappers[index]?.evaluator;
+    }
+
+    public onAnyFilterChanged(): void {
+        forEachReverse(this.evaluatorWrappers, (wrapper) => wrapper?.evaluator?.onAnyFilterChanged?.());
+    }
+
+    public onNewRowsLoaded(): void {
+        forEachReverse(this.evaluatorWrappers, (wrapper) => wrapper?.evaluator?.onNewRowsLoaded?.());
     }
 
     public override destroy(): void {
