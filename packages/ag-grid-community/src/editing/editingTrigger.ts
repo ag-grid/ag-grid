@@ -1,13 +1,17 @@
-import { KeyCode } from '../../constants/keyCode';
-import type { ColDef } from '../../entities/colDef';
-import type { CellCtrl } from '../../rendering/cell/cellCtrl';
-import type { RowCtrl } from '../../rendering/row/rowCtrl';
-import { BaseEditTrigger } from './baseEditTrigger';
+import { KeyCode } from '../constants/keyCode';
+import type { BeanCollection } from '../context/context';
+import type { ColDef } from '../entities/colDef';
+import type { CellCtrl } from '../rendering/cell/cellCtrl';
+import type { RowCtrl } from '../rendering/row/rowCtrl';
+import type { GridEditingModel } from './model/gridEditingModel';
 
-export class ProvidedEditTrigger extends BaseEditTrigger {
-    beanName = 'providedEditTrigger' as const;
+export class EditingTrigger {
+    constructor(
+        private beans: BeanCollection,
+        private editModel: GridEditingModel
+    ) {}
 
-    override shouldStartEditing(
+    shouldStartEditing(
         rowCtrl?: RowCtrl | null,
         cellCtrl?: CellCtrl,
         key?: string | null,
@@ -39,7 +43,7 @@ export class ProvidedEditTrigger extends BaseEditTrigger {
         return false;
     }
 
-    override shouldStopEditing(
+    shouldStopEditing(
         rowCtrl?: RowCtrl | null,
         cellCtrl?: CellCtrl | null,
         key?: string | null | undefined,
@@ -52,7 +56,7 @@ export class ProvidedEditTrigger extends BaseEditTrigger {
         return false;
     }
 
-    override shouldCancelEditing(
+    shouldCancelEditing(
         rowCtrl?: RowCtrl | null,
         cellCtrl?: CellCtrl | null,
         key?: string | null | undefined,
@@ -66,7 +70,7 @@ export class ProvidedEditTrigger extends BaseEditTrigger {
     }
 
     private deriveClickCount(colDef?: ColDef): number {
-        const { gos } = this;
+        const { gos } = this.beans;
 
         if (gos.get('suppressClickEdit') === true) {
             return 0;

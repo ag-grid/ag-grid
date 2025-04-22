@@ -100,14 +100,6 @@ function updateStrategy(strategy: string) {
     });
 }
 
-function updateTrigger(trigger: string) {
-    gridApi!.updateGridOptions({
-        experimentalEditingModeV2: {
-            trigger: trigger as any,
-        },
-    });
-}
-
 function enableBatchEditing() {
     gridApi!.updateGridOptions({
         experimentalEditingModeV2: {

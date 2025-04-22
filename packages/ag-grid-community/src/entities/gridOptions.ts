@@ -114,7 +114,7 @@ import type {
     SizeColumnsToFitGridStrategy,
     SizeColumnsToFitProvidedWidthStrategy,
 } from '../interfaces/autoSize';
-import type { EditStrategyType, EditTriggerType } from '../interfaces/editStrategyType';
+import type { EditStrategyType } from '../interfaces/editStrategyType';
 import type {
     CsvExportParams,
     ProcessCellForExportParams,
@@ -2673,7 +2673,6 @@ export interface GridOptions<TData = any> {
      */
     experimentalEditingModeV2?: {
         strategy?: EditStrategyType;
-        trigger?: EditTriggerType;
         params?: any;
     };
 }

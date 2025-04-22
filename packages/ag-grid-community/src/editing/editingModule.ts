@@ -28,8 +28,6 @@ import { EditingService } from './editingService';
 import { BatchEditStrategy } from './strategy/batchEditStrategy';
 import { FullRowEditStrategy } from './strategy/fullRowEditStrategy';
 import { SingleCellEditStrategy } from './strategy/singleCellEditStrategy';
-import { CustomEditTrigger } from './trigger/customEditTrigger';
-import { ProvidedEditTrigger } from './trigger/providedEditTrigger';
 
 /**
  * @internal
@@ -51,8 +49,6 @@ export const EditingCoreModule: _ModuleWithApi<_EditingGridApi<any>> = {
         cellEditMode: SingleCellEditStrategy,
         rowEditMode: FullRowEditStrategy,
         batchEditMode: BatchEditStrategy,
-        customEditTrigger: CustomEditTrigger,
-        providedEditTrigger: ProvidedEditTrigger,
     },
     dependsOn: [],
     css: [cellEditingCSS],

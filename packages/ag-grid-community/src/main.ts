@@ -1149,7 +1149,7 @@ export {
     DateFilterModule,
     ExternalFilterModule,
 } from './filter/filterModule';
-export type { EditStrategyType, EditTriggerType } from './interfaces/editStrategyType';
+export type { EditStrategyType } from './interfaces/editStrategyType';
 export { EditingCoreModule as _EditingCoreModule } from './editing/editingModule';
 export {
     EditCoreModule as _EditCoreModule,
