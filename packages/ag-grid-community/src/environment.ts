@@ -54,6 +54,12 @@ const ROW_BORDER_WIDTH: Variable = {
     defaultValue: 1,
     border: true,
 };
+const PINNED_BORDER_WIDTH: Variable = {
+    cssName: '--ag-pinned-row-border',
+    changeKey: 'pinnedRowBorderWidthChanged',
+    defaultValue: 1,
+    border: true,
+};
 
 let paramsId = 0;
 
@@ -95,6 +101,7 @@ export class Environment extends BeanStub implements NamedBean {
         this.getSizeEl(HEADER_HEIGHT);
         this.getSizeEl(LIST_ITEM_HEIGHT);
         this.getSizeEl(ROW_BORDER_WIDTH);
+        this.getSizeEl(PINNED_BORDER_WIDTH);
         this.refreshRowBorderWidthVariable();
 
         this.addDestroyFunc(() => _unregisterGridUsingThemingAPI(this));
@@ -103,6 +110,10 @@ export class Environment extends BeanStub implements NamedBean {
             this.fireGridStylesChangedEvent('themeChanged');
         });
         this.addDestroyFunc(() => this.mutationObserver.disconnect());
+    }
+
+    public getPinnedRowBorderWidth(): number {
+        return this.getCSSVariablePixelValue(PINNED_BORDER_WIDTH);
     }
 
     public getDefaultRowHeight(): number {
@@ -383,6 +394,7 @@ type ChangeKey =
     | 'rowHeightChanged'
     | 'listItemHeightChanged'
     | 'rowBorderWidthChanged'
+    | 'pinnedRowBorderWidthChanged'
     | 'cellHorizontalPaddingChanged'
     | 'indentationLevelChanged'
     | 'rowGroupIndentSizeChanged';
