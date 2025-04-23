@@ -427,14 +427,20 @@ export class GridBodyCtrl extends BeanStub {
     }
 
     private setFloatingHeights(): void {
-        const { pinnedRowModel } = this;
+        const { pinnedRowModel, beans } = this;
 
-        const floatingTopHeight = pinnedRowModel?.getPinnedTopTotalHeight() ?? 0;
-        const floatingBottomHeight = pinnedRowModel?.getPinnedBottomTotalHeight() ?? 0;
-        this.comp.setTopHeight(floatingTopHeight);
-        this.comp.setBottomHeight(floatingBottomHeight);
-        this.comp.setTopInvisible(floatingTopHeight <= 0);
-        this.comp.setBottomInvisible(floatingBottomHeight <= 0);
+        const borderWidth = beans.environment.getPinnedRowBorderWidth();
+        const floatingTopHeight = pinnedRowModel?.getPinnedTopTotalHeight();
+        const floatingBottomHeight = pinnedRowModel?.getPinnedBottomTotalHeight();
+
+        // We only add the border width if there's actually pinned rows visible
+        const normalisedFloatingTopHeight = !floatingTopHeight ? 0 : borderWidth + floatingTopHeight;
+        const normalisedFloatingBottomHeight = !floatingBottomHeight ? 0 : borderWidth + floatingBottomHeight;
+
+        this.comp.setTopHeight(normalisedFloatingTopHeight);
+        this.comp.setBottomHeight(normalisedFloatingBottomHeight);
+        this.comp.setTopInvisible(normalisedFloatingTopHeight <= 0);
+        this.comp.setBottomInvisible(normalisedFloatingBottomHeight <= 0);
         this.setStickyTopOffsetTop();
         this.setStickyBottomOffsetBottom();
     }
