@@ -2,19 +2,17 @@
 
 set -eu
 
-fw=react
-fw_package=react
+fw=vue3
+fw_package=vue
 dev_port=5173
-patch_subdir=basic
 
 function install_fw {
-    npm create -y vite@latest react-${version}-basic-test -- --template react-ts
+    echo ">>> npx create-vue"
+    npx create-vue --default --ts vue-${version}-test
 
-    cd react-${version}-basic-test
-    npm i react@${version} react-dom@${version}
+    cd vue-${version}-test
+    npm i vite-plugin-vue-devtools@7.7.2 # Workaround for https://github.com/vuejs/devtools/issues/861
     npm i
-
-#    git init
 }
 
 function build_fw {
@@ -24,10 +22,12 @@ function build_fw {
 
 function serve_fw {
     echo ">>> npm run dev"
-    npm run dev
+    npm run dev --host
 }
 
 function patch_fw {
+    echo ">>> vue css patch"
+    cp $patch_dir/assets/* src/assets/
 }
 
 # NOTE: This gets inlined when running in Docker for simplicity of execution.

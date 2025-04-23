@@ -152,6 +152,8 @@ for filename in ${patch_dir}/* ; do
     fi
 done
 
+patch_fw
+
 mv ../e2e ../playwright.config.ts ./
 
 export FW_VERSION=${version}

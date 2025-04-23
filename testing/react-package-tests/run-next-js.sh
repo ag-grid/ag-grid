@@ -23,5 +23,8 @@ function serve_fw {
     npm run dev
 }
 
+function patch_fw {
+}
+
 # NOTE: This gets inlined when running in Docker for simplicity of execution.
 source $(readlink -f $(dirname $0))/../shared/run.sh
