@@ -104,7 +104,7 @@ export class LocalEventService<TEventType extends string> implements IEventEmitt
         const { frameworkOverrides } = this;
 
         const runCallback = (func: () => void) => {
-            const callback = () => (frameworkOverrides ? frameworkOverrides.wrapIncoming(func) : func());
+            const callback = frameworkOverrides ? () => frameworkOverrides.wrapIncoming(func) : func;
             if (async) {
                 this.dispatchAsync(callback);
             } else {
