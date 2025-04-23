@@ -1222,7 +1222,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         super.destroy();
 
         // Forcefully deallocate memory
-        this.highlightRow();
+        this.highlightRow(null);
         this.started = false;
         this.rootNode = null;
         this.nodeManager = null!;

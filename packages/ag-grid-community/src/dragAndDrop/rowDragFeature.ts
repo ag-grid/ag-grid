@@ -72,7 +72,7 @@ export interface RowDropZoneParams extends RowDropZoneEvents {
 interface RowsMove {
     rows: RowNode[];
     target: RowNode | null | undefined;
-    position: 'Above' | 'Below';
+    position: RowHighlightPosition;
 }
 
 type RowDragEventType = 'rowDragEnter' | 'rowDragLeave' | 'rowDragMove' | 'rowDragEnd' | 'rowDragCancel';
@@ -314,19 +314,17 @@ export class RowDragFeature extends BeanStub implements DropTarget {
         };
     }
 
-    private moveRows(rowsMove: RowsMove | null): void {
-        if (rowsMove) {
-            // Get the focussed cell so we can ensure it remains focussed after the move
-            const focusSvc = this.beans.focusSvc;
-            const cellPosition = focusSvc.getFocusedCell();
-            const cellCtrl = cellPosition && _getCellByPosition(this.beans, cellPosition);
-            const { rows, target, position } = rowsMove;
-            if (this.moveRowNodes(rows, target, position)) {
-                if (cellCtrl) {
-                    cellCtrl.focusCell();
-                } else {
-                    focusSvc.clearFocusedCell();
-                }
+    private moveRows(rowsMove: RowsMove): void {
+        // Get the focussed cell so we can ensure it remains focussed after the move
+        const focusSvc = this.beans.focusSvc;
+        const cellPosition = focusSvc.getFocusedCell();
+        const cellCtrl = cellPosition && _getCellByPosition(this.beans, cellPosition);
+        const { rows, target, position } = rowsMove;
+        if (this.moveRowNodes(rows, target, position)) {
+            if (cellCtrl) {
+                cellCtrl.focusCell();
+            } else {
+                focusSvc.clearFocusedCell();
             }
         }
     }
