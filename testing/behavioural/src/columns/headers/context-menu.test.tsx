@@ -5,6 +5,8 @@ import React from 'react';
 import { ClientSideRowModelModule, ContextMenuModule, ValidationModule } from 'ag-grid-enterprise';
 import { AgGridReact } from 'ag-grid-react';
 
+import { ignoreConsoleLicenseKeyError } from '../../test-utils';
+
 // Enables testing the context menu with async data
 Object.defineProperty(HTMLElement.prototype, 'offsetParent', {
     get() {
@@ -13,6 +15,10 @@ Object.defineProperty(HTMLElement.prototype, 'offsetParent', {
 });
 
 describe('React Jsdom Context menu ', () => {
+    beforeEach(() => {
+        ignoreConsoleLicenseKeyError();
+    });
+
     it.each([true, false])('should trigger context menu action', async (isAsync) => {
         const cellValue = 'cell value';
         const contextOption = 'context option';
