@@ -9,7 +9,7 @@ import { LocalEventService } from './localEventService';
 export class EventService extends BeanStub<AgEventType> implements NamedBean, IEventEmitter<AgEventType> {
     beanName = 'eventSvc' as const;
 
-    private readonly globalEventService: LocalEventService<AgEventType> = new LocalEventService();
+    private readonly globalSvc: LocalEventService<AgEventType> = new LocalEventService();
 
     public postConstruct(): void {
         const { globalListener, globalSyncListener } = this.beans;
@@ -27,7 +27,7 @@ export class EventService extends BeanStub<AgEventType> implements NamedBean, IE
         listener: AgEventListener<any, any, TEventType>,
         async?: boolean
     ): void {
-        this.globalEventService.addEventListener(eventType, listener as any, async);
+        this.globalSvc.addEventListener(eventType, listener as any, async);
     }
 
     public override removeEventListener<TEventType extends AgEventType>(
@@ -35,15 +35,15 @@ export class EventService extends BeanStub<AgEventType> implements NamedBean, IE
         listener: AgEventListener<any, any, TEventType>,
         async?: boolean
     ): void {
-        this.globalEventService.removeEventListener(eventType, listener as any, async);
+        this.globalSvc.removeEventListener(eventType, listener as any, async);
     }
 
     public addGlobalListener(listener: AgGlobalEventListener, async = false): void {
-        this.globalEventService.addGlobalListener(listener, async);
+        this.globalSvc.addGlobalListener(listener, async);
     }
 
     public removeGlobalListener(listener: AgGlobalEventListener, async = false): void {
-        this.globalEventService.removeGlobalListener(listener, async);
+        this.globalSvc.removeGlobalListener(listener, async);
     }
 
     /** @deprecated DO NOT FIRE LOCAL EVENTS OFF THE EVENT SERVICE */
@@ -52,10 +52,10 @@ export class EventService extends BeanStub<AgEventType> implements NamedBean, IE
     }
 
     public dispatchEvent(event: AllEventsWithoutGridCommon): void {
-        this.globalEventService.dispatchEvent(_addGridCommonParams<any>(this.gos, event));
+        this.globalSvc.dispatchEvent(_addGridCommonParams<any>(this.gos, event));
     }
 
     public dispatchEventOnce(event: AllEventsWithoutGridCommon): void {
-        this.globalEventService.dispatchEventOnce(_addGridCommonParams<any>(this.gos, event));
+        this.globalSvc.dispatchEventOnce(_addGridCommonParams<any>(this.gos, event));
     }
 }
