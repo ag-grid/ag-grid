@@ -260,10 +260,6 @@ export class RowDragFeature extends BeanStub implements DropTarget {
             });
         }
 
-        this.clearRowHighlight();
-    }
-
-    private clearRowHighlight(): void {
         this.clientSideRowModel.highlightRow(null);
     }
 
@@ -485,7 +481,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
         this.stopDragging(draggingEvent);
 
         if (this.gos.get('rowDragManaged')) {
-            this.clearRowHighlight();
+            this.clientSideRowModel.highlightRow(null);
         }
     }
 
@@ -513,7 +509,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
             (gos.get('suppressMoveWhenRowDragging') || !this.isFromThisGrid(draggingEvent)) &&
             dragAndDrop!.isDropZoneWithinThisGrid(draggingEvent)
         ) {
-            this.clearRowHighlight();
+            this.clientSideRowModel.highlightRow(null);
         }
     }
 
