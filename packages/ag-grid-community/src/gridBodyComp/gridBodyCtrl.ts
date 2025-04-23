@@ -429,7 +429,7 @@ export class GridBodyCtrl extends BeanStub {
     private setFloatingHeights(): void {
         const { pinnedRowModel, beans } = this;
 
-        const borderWidth = beans.environment.getDefaultPinnedBorderWidth();
+        const borderWidth = beans.environment.getPinnedRowBorderWidth();
         const floatingTopHeight = pinnedRowModel?.getPinnedTopTotalHeight();
         const floatingBottomHeight = pinnedRowModel?.getPinnedBottomTotalHeight();
 

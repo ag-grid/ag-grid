@@ -112,7 +112,7 @@ export class Environment extends BeanStub implements NamedBean {
         this.addDestroyFunc(() => this.mutationObserver.disconnect());
     }
 
-    public getDefaultPinnedBorderWidth(): number {
+    public getPinnedRowBorderWidth(): number {
         return this.getCSSVariablePixelValue(PINNED_BORDER_WIDTH);
     }
 
