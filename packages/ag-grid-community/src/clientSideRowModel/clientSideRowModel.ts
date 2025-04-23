@@ -433,7 +433,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         recurse(this.rootNode);
     }
 
-    public highlightRow(rowNode: RowNode | null | undefined, highlight: RowHighlightPosition = 'Below'): void {
+    public highlightRow(rowNode: RowNode | null | undefined = null, highlight: RowHighlightPosition = 'Below'): void {
         const old = this.lastHighlightedRow;
         if (old !== rowNode || (rowNode && rowNode.highlighted !== highlight)) {
             if (old && old !== rowNode) {
@@ -444,7 +444,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
                 rowNode.highlighted = highlight;
                 rowNode.dispatchRowEvent('rowHighlightChanged');
             }
-            this.lastHighlightedRow = rowNode ?? null;
+            this.lastHighlightedRow = rowNode;
         }
     }
 
@@ -1222,12 +1222,11 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         super.destroy();
 
         // Forcefully deallocate memory
-        this.lastHighlightedRow = null;
+        this.highlightRow();
         this.started = false;
         this.rootNode = null;
         this.nodeManager = null!;
         this.rowDataTransactionBatch = null;
-        this.lastHighlightedRow = null;
         this.orderedStages = _EmptyArray;
         this.rowsToDisplay = _EmptyArray;
     }
