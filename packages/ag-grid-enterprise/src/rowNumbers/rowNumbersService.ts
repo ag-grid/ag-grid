@@ -46,6 +46,7 @@ export class RowNumbersService extends BeanStub implements NamedBean, IRowNumber
         this.addManagedEventListeners({
             modelUpdated: refreshCells_debounced,
             rangeSelectionChanged: () => this.refreshCells(true),
+            pinnedRowsChanged: refreshCells_debounced,
         });
 
         this.addManagedPropertyListeners(['rowNumbers', 'cellSelection'], (e: PropertyValueChangedEvent<any>) => {

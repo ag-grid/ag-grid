@@ -323,12 +323,10 @@ Please use `colDef.filterValueGetter` instead.
 
 This release includes the following deprecations:
 
-{% expandingSection headerText="Deprecations" %}
-
 {% if isFramework("react") %}
 **React Change Detection**
 
-* As the `DeepValueCheck` change detection strategy has been removed the `rowDataChangeDetectionStrategy` has now been deprecated as it no longer supports a different strategy then the default reference equals comparison.
+* As the `DeepValueCheck` change detection strategy has been removed, the `rowDataChangeDetectionStrategy` has now been deprecated as it no longer supports a different strategy then the default reference equals comparison.
 {% /if %}
 
 **Filters**
@@ -336,8 +334,6 @@ This release includes the following deprecations:
 * `filterParams.convertValuesToStrings=true` in the Column Definition is deprecated. This is a new setting to enable the legacy behaviour for converting values in the Set Filter to strings. Instead, handle the values with the correct/original type, including the processing of complex objects.
 
 * `ISetFilter.getValues()` is deprecated, `getFilterValues` should be used to get the values in the Set Filter (e.g., complex objects if provided), or `getFilterKeys` to get the string keys.
-
-{% /expandingSection %}
 
 ## Changes List
 

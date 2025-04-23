@@ -34,8 +34,6 @@ const gridOptions: GridOptions<IRow> = {
     defaultColDef: {
         flex: 10,
     },
-    // Data to be displayed
-    rowData: [],
     // Columns to be displayed (Should match rowData properties)
     columnDefs: [
         {

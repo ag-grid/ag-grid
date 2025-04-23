@@ -1,12 +1,19 @@
 import type { ColDef, GridApi, GridOptions, RowPinnedType } from 'ag-grid-community';
-import { ClientSideRowModelModule, ModuleRegistry, ValidationModule, createGrid } from 'ag-grid-community';
-import { ContextMenuModule, ManualPinnedRowModule, RowGroupingModule } from 'ag-grid-enterprise';
+import {
+    ClientSideRowModelModule,
+    ModuleRegistry,
+    PinnedRowModule,
+    ValidationModule,
+    createGrid,
+    themeQuartz,
+} from 'ag-grid-community';
+import { ContextMenuModule, RowGroupingModule } from 'ag-grid-enterprise';
 
 ModuleRegistry.registerModules([
-    ManualPinnedRowModule,
     ClientSideRowModelModule,
     RowGroupingModule,
     ContextMenuModule,
+    PinnedRowModule,
     ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 
@@ -38,6 +45,11 @@ const gridOptions: GridOptions<IOlympicData> = {
             setGrandTotalRow(gridApi, value);
         }
     },
+    theme: themeQuartz.withParams({
+        pinnedRowBorder: {
+            width: 3,
+        },
+    }),
 };
 
 // setup the grid after the page has finished loading

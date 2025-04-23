@@ -59,14 +59,18 @@
 .count {
     min-width: $spacing-size-4;
     height: $spacing-size-4;
-    padding: 4px 5px 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     font-size: var(--text-fs-2xs);
-    line-height: 1;
     border-radius: $spacing-size-2;
-    background-color: var(--color-gray-300);
-    color: var(--color-gray-700);
-    opacity: 0.6666;
+    background-color: var(--color-gray-200);
+    color: var(--color-gray-800);
+    opacity: 1;
     flex-shrink: 0;
+    font-weight: 600;
+    padding-left: 4px;
+    padding-right: 4px;
 
     #{$selector-darkmode} & {
         background-color: var(--color-gray-600);

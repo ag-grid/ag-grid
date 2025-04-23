@@ -1,42 +1,71 @@
 import type { AngularFrameworkOverrides } from './angularFrameworkOverrides';
 
+type EventTypeToWrap = string;
+
 export class AngularFrameworkEventListenerService<
     TEventListener extends (e: any) => void,
     TGlobalEventListener extends (name: string, e: any) => void,
 > {
     // Map from user listener to wrapped listener so we can remove listener provided by user
-    private wrappedListeners: Map<TEventListener, TEventListener> = new Map();
+    private wrappedListeners: Map<EventTypeToWrap, Map<TEventListener, TEventListener>> = new Map();
     private wrappedGlobalListeners: Map<TGlobalEventListener, TGlobalEventListener> = new Map();
 
     constructor(private frameworkOverrides: AngularFrameworkOverrides) {}
 
-    public wrap(userListener: TEventListener): TEventListener {
+    public wrap(eventType: EventTypeToWrap, userListener: TEventListener): TEventListener {
+        const { frameworkOverrides, wrappedListeners } = this;
         let listener: any = userListener;
-        if (this.frameworkOverrides.shouldWrapOutgoing) {
+
+        if (frameworkOverrides.shouldWrapOutgoing) {
             listener = (event: any) => {
-                this.frameworkOverrides.wrapOutgoing(() => userListener(event));
+                frameworkOverrides.wrapOutgoing(() => userListener(event));
             };
-            this.wrappedListeners.set(userListener, listener);
+
+            let eventListeners = wrappedListeners.get(eventType);
+            if (!eventListeners) {
+                eventListeners = new Map();
+                wrappedListeners.set(eventType, eventListeners);
+            }
+            eventListeners.set(userListener, listener);
         }
         return listener;
     }
 
     public wrapGlobal(userListener: TGlobalEventListener): TGlobalEventListener {
+        const { frameworkOverrides, wrappedGlobalListeners } = this;
         let listener: any = userListener;
 
-        if (this.frameworkOverrides.shouldWrapOutgoing) {
+        if (frameworkOverrides.shouldWrapOutgoing) {
             listener = (eventType: any, event: any) => {
-                this.frameworkOverrides.wrapOutgoing(() => userListener(eventType, event));
+                frameworkOverrides.wrapOutgoing(() => userListener(eventType, event));
             };
-            this.wrappedGlobalListeners.set(userListener, listener);
+            wrappedGlobalListeners.set(userListener, listener);
         }
         return listener;
     }
 
-    public unwrap(userListener: TEventListener): TEventListener {
-        return this.wrappedListeners.get(userListener) ?? userListener;
+    public unwrap(eventType: EventTypeToWrap, userListener: TEventListener): TEventListener {
+        const { wrappedListeners } = this;
+        const eventListeners = wrappedListeners.get(eventType);
+        if (eventListeners) {
+            const wrapped = eventListeners.get(userListener);
+            if (wrapped) {
+                eventListeners.delete(userListener);
+                if (eventListeners.size === 0) {
+                    wrappedListeners.delete(eventType);
+                }
+                return wrapped;
+            }
+        }
+        return userListener;
     }
     public unwrapGlobal(userListener: TGlobalEventListener): TGlobalEventListener {
-        return this.wrappedGlobalListeners.get(userListener) ?? userListener;
+        const { wrappedGlobalListeners } = this;
+        const wrapped = wrappedGlobalListeners.get(userListener);
+        if (wrapped) {
+            wrappedGlobalListeners.delete(userListener);
+            return wrapped;
+        }
+        return userListener;
     }
 }

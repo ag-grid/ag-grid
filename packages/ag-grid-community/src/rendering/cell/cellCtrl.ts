@@ -113,7 +113,7 @@ export class CellCtrl extends BeanStub {
     private includeSelection: boolean;
     private includeDndSource: boolean;
     private includeRowDrag: boolean;
-    private isAutoHeight: boolean;
+    public isAutoHeight: boolean;
 
     public suppressRefreshCell = false;
 

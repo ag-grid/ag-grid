@@ -29,12 +29,6 @@
                     "path": "row-pinning"
                 },
                 {
-                    "moduleName": "ManualPinnedRowModule",
-                    "name": "Manual Row Pinning",
-                    "path": "row-pinning",
-                    "isEnterprise": true
-                },
-                {
                     "moduleName": "RowAutoHeightModule",
                     "name": "Auto Row Height",
                     "path": "row-height/#auto-row-height"

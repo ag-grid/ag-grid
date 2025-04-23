@@ -43,8 +43,6 @@ function refreshData() {
 
 const onClick = () => console.log('Mission Launched');
 const gridOptions: GridOptions<IRow> = {
-    // Data to be displayed
-    rowData: [],
     // Columns to be displayed (Should match rowData properties)
     columnDefs: [
         {
