@@ -63,8 +63,6 @@ export class GridBodyScrollFeature extends BeanStub {
 
     private lastScrollSource: [VerticalScrollSource | null, HorizontalScrollSource | null] = [null, null];
 
-    private eBodyViewport: HTMLElement;
-
     private scrollLeft = -1;
     private nextScrollTop = -1;
     private scrollTop = -1;
@@ -85,9 +83,12 @@ export class GridBodyScrollFeature extends BeanStub {
 
     private centerRowsCtrl: RowContainerCtrl;
 
-    constructor(eBodyViewport: HTMLElement) {
+    constructor(
+        private readonly eBodyViewport: HTMLElement,
+        private readonly eTop: HTMLElement,
+        private readonly eBottom: HTMLElement
+    ) {
         super();
-        this.eBodyViewport = eBodyViewport;
         this.resetLastHScrollDebounced = _debounce(
             this,
             () => (this.lastScrollSource[ScrollDir.Horizontal] = null),
@@ -170,6 +171,12 @@ export class GridBodyScrollFeature extends BeanStub {
             : this.onVScroll.bind(this, FAKE_V_SCROLLBAR);
 
         this.addManagedElementListeners(this.eBodyViewport, { scroll: onVScroll });
+        this.addManagedElementListeners(this.eTop, {
+            wheel: (e) => {
+                console.log('wheeling', e);
+                onVScroll();
+            },
+        });
         this.registerScrollPartner(fakeVScrollComp, onFakeVScroll);
     }
 
