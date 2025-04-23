@@ -6,6 +6,9 @@ const matches = {
     'ag-charts-angular': 'angular',
     'ag-charts-react': 'react',
     'ag-charts-vue3': 'vue',
+    'ag-grid-angular': 'angular',
+    'ag-grid-react': 'react',
+    'ag-grid-vue3': 'vue',
 };
 
 const result = { framework: [] };

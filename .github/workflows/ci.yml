@@ -66,6 +66,7 @@ jobs:
       format: ${{ steps.format.outcome || '' }}
       test_count: ${{ steps.matrix.outputs.test_count }}
       test_matrix: ${{ steps.matrix.outputs.test_matrix }}
+      test_pkg_matrix: ${{ steps.matrix.outputs.pkg_matrix }}
       e2e_test_count: ${{ steps.matrix.outputs.e2e_test_count }}
       e2e_test_matrix: ${{ steps.matrix.outputs.e2e_test_matrix }}
       bundle_test_count: ${{ steps.matrix.outputs.bundle_test_count }}
@@ -145,6 +146,10 @@ jobs:
           echo "bundle_test_matrix=${bundle_matrix}" >> $GITHUB_OUTPUT
           echo "bundle_test_count=${bundle_count}" >> $GITHUB_OUTPUT
           echo "bundle Test matrix determined to be: ${bundle_matrix}"
+
+          pkg_matrix=$(node ./external/ag-shared/scripts/shard/calculate-pkg-shards.js)
+          echo "pkg_matrix=${pkg_matrix}" >> $GITHUB_OUTPUT
+          echo "Package test matrix determined to be: ${pkg_matrix}"
 
   test:
     runs-on: ubuntu-24.04
@@ -335,12 +340,6 @@ jobs:
       - name: docs build and link checker
         run: CHECK_LINKS=true CHECK_REDIRECTS=true yarn nx run ag-grid-docs:build -c staging
 
-      - name: Check Outputs
-        run: |
-          ls -l dist/generated-examples/ag-grid-docs/docs/column-definitions/_examples/simple/vanilla
-          ls -l documentation/ag-grid-docs/dist/examples/column-definitions/simple
-          ls -l documentation/ag-grid-docs/dist/examples/column-definitions/simple/vanilla
-
       - name: Deploy to Staging
         id: deploy_to_staging
         if: ${{ github.ref == 'refs/heads/latest' }}
@@ -364,9 +363,46 @@ jobs:
           path: |
             reports/
 
+  fw_pkg_test:
+    runs-on: ubuntu-24.04
+    name: Framework Package Tests (${{ matrix.framework }})
+    needs: build_lint
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJson(needs.build_lint.outputs.test_pkg_matrix )}}
+    if: (needs.build_lint.outputs.build_type == 'latest' || needs.build_lint.outputs.build_type == 'release')
+    env:
+      NX_BASE: ${{ needs.init.outputs.nx_base }}
+    steps:
+      - name: Checkout
+        id: checkout
+        if: matrix.framework != 'none'
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Fetch Refs
+        if: matrix.framework != 'none'
+        run: |
+          git fetch origin --depth 1 latest
+          git fetch origin --depth 1 tag latest-success
+
+      - name: Setup
+        id: setup
+        if: matrix.framework != 'none'
+        uses: ./.github/actions/setup-nx
+        with:
+          cache_mode: ro
+#          base_ref: ${{ github.event.pull_request.base.ref || github.event.base_ref }}
+
+      - name: nx package:test
+        id: package-test
+        if: matrix.framework != 'none'
+        run: yarn nx run-many -t test:package -p ${{ matrix.framework }}-package-tests --configuration=ci
+
   report:
     runs-on: ubuntu-24.04
-    needs: [ build_lint, test, e2e, docs, bundle_size ]
+    needs: [ build_lint, test, e2e, docs, bundle_size, fw_pkg_test ]
     if: cancelled() != true
     steps:
       - name: Checkout
@@ -423,6 +459,8 @@ jobs:
           elif [ "${{ needs.e2e.result }}" == "failure" ] ; then
             WORKFLOW_STATUS="failure"
           elif [ "${{ needs.docs.result }}" == "failure" ] ; then
+            WORKFLOW_STATUS="failure"
+          elif [ "${{ needs.fw_pkg_test.result }}" == "failure" ] ; then
             WORKFLOW_STATUS="failure"
           elif [ "${{ needs.bundle_size.result }}" == "failure" ] ; then
             WORKFLOW_STATUS="failure"
@@ -498,6 +536,7 @@ jobs:
                     "e2e": "${{ needs.e2e.result }}",
                     "Docs": "${{ needs.docs.result }}",
                     "Bundle": "${{ needs.bundle_size.result }}"
+                    "FW_Pkg": "${{ needs.fw_pkg_test.result }}"
                 }
             }
         run: |

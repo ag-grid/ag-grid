@@ -101,6 +101,9 @@
       "testing/behavioural",
       "testing/module-size",
       "testing/module-size-angular",
+      "testing/angular-package-tests",
+      "testing/react-package-tests",
+      "testing/vue-package-tests",
       "external/ag-shared"
     ],
     "nohoist": [

@@ -23,7 +23,7 @@ export class ApiEventService extends BeanStub<AgEventType> implements NamedBean 
     }
 
     public override addEventListener<T extends AgEventType>(eventType: T, userListener: AgEventListener): void {
-        const listener = this.wrapSvc?.wrap(userListener) ?? userListener;
+        const listener = this.wrapSvc?.wrap(eventType, userListener) ?? userListener;
 
         const async = !ALWAYS_SYNC_GLOBAL_EVENTS.has(eventType);
         const listeners = async ? this.asyncListeners : this.syncListeners;
@@ -34,7 +34,7 @@ export class ApiEventService extends BeanStub<AgEventType> implements NamedBean 
         this.eventSvc.addEventListener(eventType, listener, async);
     }
     public override removeEventListener<T extends AgEventType>(eventType: T, userListener: AgEventListener): void {
-        const listener = this.wrapSvc?.unwrap(userListener) ?? userListener;
+        const listener = this.wrapSvc?.unwrap(eventType, userListener) ?? userListener;
         const asyncListeners = this.asyncListeners.get(eventType);
         const hasAsync = !!asyncListeners?.delete(listener);
         if (!hasAsync) {

@@ -1,0 +1,74 @@
+{
+  "name": "angular-package-tests",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "testing/angular-package-tests",
+  "projectType": "",
+  "targets": {
+    "test:package": {
+      "executor": "nx:noop",
+      "inputs": [],
+      "outputs": [],
+      "dependsOn": [
+        "test:package:local-17",
+        "test:package:local-18",
+        "test:package:local-19",
+        "test:package:local-latest",
+        "test:package:production-19"
+      ],
+      "configurations": {
+        "update": {}
+      }
+    },
+    "test:package:local-17": {
+      "dependsOn": ["^pack"],
+      "command": "{projectRoot}/run.sh 17",
+      "configurations": {
+        "update": {
+          "command": "{projectRoot}/run.sh -u 17"
+        }
+      }
+    },
+    "test:package:local-18": {
+      "dependsOn": ["^pack"],
+      "command": "{projectRoot}/run.sh 18",
+      "configurations": {
+        "update": {
+          "command": "{projectRoot}/run.sh -u 18"
+        }
+      }
+    },
+    "test:package:local-19": {
+      "dependsOn": ["^pack"],
+      "command": "{projectRoot}/run.sh 19",
+      "configurations": {
+        "update": {
+          "command": "{projectRoot}/run.sh -u 19"
+        }
+      }
+    },
+    "test:package:production-19": {
+      "dependsOn": ["^pack"],
+      "command": "{projectRoot}/run.sh -p 19",
+      "cache": false,
+      "configurations": {
+        "update": {
+          "command": "{projectRoot}/run.sh -p -u 19"
+        }
+      }
+    },
+    "test:package:local-latest": {
+      "dependsOn": ["^pack"],
+      "command": "{projectRoot}/run.sh latest",
+      "configurations": {
+        "update": {
+          "command": "{projectRoot}/run.sh -u latest"
+        }
+      }
+    },
+    "test:package:editor": {
+      "dependsOn": ["^pack"],
+      "command": "{projectRoot}/run.sh -n -e latest"
+    }
+  },
+  "implicitDependencies": ["ag-grid-community", "ag-grid-enterprise", "ag-grid-angular"]
+}
