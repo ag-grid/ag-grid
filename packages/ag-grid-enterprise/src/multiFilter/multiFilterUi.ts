@@ -14,7 +14,7 @@ import { AgPromise, _getFilterDetails, _refreshFilterUi } from 'ag-grid-communit
 import type { BaseFilterComponent } from './baseMultiFilter';
 import { BaseMultiFilter } from './baseMultiFilter';
 import type { MultiFilterEvaluator } from './multiFilterEvaluator';
-import { getMultiFilterDefs, getUpdatedMultiFilterModel } from './multiFilterUtil';
+import { getFilterModelForIndex, getMultiFilterDefs, getUpdatedMultiFilterModel } from './multiFilterUtil';
 
 export class MultiFilterUi
     extends BaseMultiFilter<FilterDisplayComp>
@@ -66,15 +66,13 @@ export class MultiFilterUi
 
         this.allState = state;
 
-        const filterModels = model?.filterModels;
-        const stateFilterModels = state.model?.filterModels;
         const newAllStateState = state.state;
 
         this.filters.forEach((filter, index) => {
-            const modelForFilter = filterModels?.[index] ?? null;
+            const modelForFilter = getFilterModelForIndex(model, index);
             const stateForFilter = {
                 state: newAllStateState?.[index],
-                model: stateFilterModels?.[index] ?? null,
+                model: getFilterModelForIndex(state.model, index),
             };
             _refreshFilterUi(filter, filterParams[index], modelForFilter, stateForFilter, source);
         });
@@ -143,17 +141,18 @@ export class MultiFilterUi
             onAction,
             onUiChange,
         } = params;
-        const filterModel = model?.filterModels?.[index] ?? null;
+        const filterModel = getFilterModelForIndex(model, index);
         const filterState = state
             ? {
-                  model: state.model?.filterModels?.[index] ?? null,
+                  model: getFilterModelForIndex(state.model, index),
                   state: state.state?.[index],
               }
             : { model: filterModel };
         const onAnyFilterChanged = () => {
+            const evaluator = this.getEvaluator();
             this.filters.forEach((filter, otherIndex) => {
                 if (index !== otherIndex) {
-                    this.getEvaluator().getEvaluator(otherIndex)?.onAnyFilterChanged?.();
+                    evaluator.getEvaluator(otherIndex)?.onAnyFilterChanged?.();
                     filter?.onAnyFilterChanged?.();
                 }
             });
@@ -173,23 +172,7 @@ export class MultiFilterUi
                 onModelChange(newModel, additionalEventAttributes);
                 onAnyFilterChanged();
             },
-            onStateChange: (newState) => {
-                const { model, state, valid } = newState;
-                const validity = this.validity;
-                validity[index] = valid;
-                const allState = this.allState;
-                const newModel = getUpdatedMultiFilterModel(allState.model, this.filters.length, model, index);
-                const allValid = validity.every((filterValid) => filterValid !== false);
-                const allStateState = [...(allState.state ?? [])];
-                allStateState[index] = state;
-                const newAllState = {
-                    state: allStateState,
-                    model: newModel,
-                    valid: allValid,
-                };
-                this.allState = newAllState;
-                onStateChange(newAllState);
-            },
+            onStateChange: (newState) => this.onStateChange(onStateChange, index, newState),
             getEvaluator: () => this.getEvaluator().getEvaluator(index)!,
             onAction: (action, additionalEventAttributes, event) => {
                 onAction(action, additionalEventAttributes, event);
@@ -208,6 +191,28 @@ export class MultiFilterUi
 
     private getEvaluator(): MultiFilterEvaluator {
         return this.params.getEvaluator() as MultiFilterEvaluator;
+    }
+
+    private onStateChange(
+        onStateChange: (componentState: FilterDisplayState<IMultiFilterModel, any>) => void,
+        index: number,
+        newState: FilterDisplayState
+    ): void {
+        const { model, state, valid } = newState;
+        const validity = this.validity;
+        validity[index] = valid;
+        const allState = this.allState;
+        const newModel = getUpdatedMultiFilterModel(allState.model, this.filters.length, model, index);
+        const allValid = validity.every((filterValid) => filterValid !== false);
+        const allStateState = [...(allState.state ?? [])];
+        allStateState[index] = state;
+        const newAllState = {
+            state: allStateState,
+            model: newModel,
+            valid: allValid,
+        };
+        this.allState = newAllState;
+        onStateChange(newAllState);
     }
 
     public getModelAsString(model: IMultiFilterModel): string {

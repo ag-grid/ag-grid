@@ -460,6 +460,7 @@ export class ColumnFilterService
 
         const targetedFilters = targetAggregates ? this.activeAggregateFilters : this.activeColumnFilters;
         const targetedData = targetAggregates ? aggData : data;
+        const model = this.model;
         for (let i = 0; i < targetedFilters.length; i++) {
             const filter = targetedFilters[i];
             const { colId, isEvaluator } = filter;
@@ -469,9 +470,13 @@ export class ColumnFilterService
             }
 
             if (isEvaluator) {
-                const evaluator = filter.evaluator;
-                const model = this.model[colId] ?? null;
-                if (!evaluator.doesFilterPass({ node, data: targetedData, model })) {
+                if (
+                    !filter.evaluator.doesFilterPass({
+                        node,
+                        data: targetedData,
+                        model: model[colId] ?? null,
+                    })
+                ) {
                     return false;
                 }
             } else {

@@ -15,6 +15,7 @@ import type {
     MultiFilterParams,
     ProvidedFilterModel,
     RowNode,
+    UserCompDetails,
 } from 'ag-grid-community';
 import {
     AgPromise,
@@ -29,7 +30,7 @@ import {
 
 import type { BaseFilterComponent } from './baseMultiFilter';
 import { BaseMultiFilter } from './baseMultiFilter';
-import { getMultiFilterDefs, getUpdatedMultiFilterModel } from './multiFilterUtil';
+import { getFilterModelForIndex, getMultiFilterDefs, getUpdatedMultiFilterModel } from './multiFilterUtil';
 
 interface MultiFilterWrapper {
     filter: IFilterComp;
@@ -186,7 +187,7 @@ export class MultiFilter extends BaseMultiFilter<MultiFilterWrapper> implements 
             if (!wrapper) {
                 return;
             }
-            const modelForFilter = model?.filterModels?.[index] ?? null;
+            const modelForFilter = getFilterModelForIndex(model, index);
             const { filter, filterParams, evaluator, evaluatorParams, state } = wrapper;
             if (evaluator) {
                 promises.push(
@@ -269,9 +270,7 @@ export class MultiFilter extends BaseMultiFilter<MultiFilterWrapper> implements 
         const column = this.params.column as AgColumn;
 
         let initialModelForFilter: any = null;
-
-        let eventSvc: LocalEventService<'filterParamsChanged' | 'filterStateChanged' | 'filterAction'>;
-        let updateModel: (column: AgColumn, action: FilterAction, additionalEventAttributes?: any) => void;
+        let createWrapperComp: ((filter: IFilterComp<any> | null) => FilterWrapperComp) | undefined;
 
         const {
             compDetails,
@@ -297,89 +296,14 @@ export class MultiFilter extends BaseMultiFilter<MultiFilterWrapper> implements 
                         this.doesFilterPass({ node, data: node.data }, index),
                 };
                 if (isEvaluator) {
-                    const displayParams = updatedParams as unknown as FilterDisplayParams;
-                    initialModelForFilter = initialModel?.filterModels?.[index] ?? null;
-                    eventSvc = new LocalEventService();
-                    displayParams.model = initialModelForFilter;
-                    displayParams.state = { model: initialModelForFilter };
-                    displayParams.onModelChange = (model, additionalEventAttributes?: any) => {
-                        const wrapper = this.wrappers[index];
-                        if (!wrapper) {
-                            return;
-                        }
-                        _refreshEvaluatorAndUi(
-                            () =>
-                                AgPromise.resolve({
-                                    filter: wrapper.filter as any,
-                                    filterParams: wrapper.filterParams as any,
-                                }),
-                            wrapper.evaluator!,
-                            wrapper.evaluatorParams!,
-                            model,
-                            wrapper.state ?? { model },
-                            'ui'
-                        ).then(() => {
-                            wrapper.model = model;
-                            this.onEvaluatorModelChanged(index, model, additionalEventAttributes);
-                        });
-                    };
-                    displayParams.getEvaluator = () => evaluator!;
-                    const updateState = (wrapper: MultiFilterWrapper, state: FilterDisplayState) => {
-                        wrapper.state = state;
-                        eventSvc.dispatchEvent({
-                            type: 'filterStateChanged',
-                            column,
-                            state,
-                        });
-                        this;
-                    };
-                    displayParams.onStateChange = (state) => {
-                        const wrapper = this.wrappers[index];
-                        if (!wrapper) {
-                            return;
-                        }
-                        updateState(wrapper, state);
-                        _refreshFilterUi(
-                            wrapper.filter as any,
-                            wrapper.filterParams!,
-                            wrapper.model ?? null,
-                            state,
-                            'ui'
-                        );
-                    };
-                    updateModel = (_col, action, additionalEventAttributes) => {
-                        const wrapper = this.wrappers[index];
-                        if (!wrapper) {
-                            return;
-                        }
-                        const getModel = () => wrapper?.model ?? null;
-                        _updateFilterModel(
-                            action,
-                            () => {
-                                const promise = AgPromise.resolve(wrapper.filter as any);
-                                return {
-                                    created: true,
-                                    filterParams: wrapper.filterParams!,
-                                    compDetails: compDetails!,
-                                    create: () => promise,
-                                    promise,
-                                };
-                            },
-                            getModel,
-                            () => wrapper?.state ?? { model: getModel() },
-                            (state) => updateState(wrapper, state),
-                            (newModel) => wrapper.filterParams?.onModelChange(newModel, additionalEventAttributes)
-                        );
-                    };
-                    displayParams.onAction = (action, additionalEventAttributes, event) => {
-                        updateModel(column, action, additionalEventAttributes);
-                        eventSvc.dispatchEvent({
-                            type: 'filterAction',
-                            column,
-                            action,
-                            event,
-                        });
-                    };
+                    initialModelForFilter = getFilterModelForIndex(initialModel, index);
+                    createWrapperComp = this.updateDisplayParams(
+                        updatedParams as unknown as FilterDisplayParams,
+                        index,
+                        initialModelForFilter,
+                        () => compDetails,
+                        () => evaluator!
+                    );
                 }
                 return updatedParams;
             }
@@ -411,7 +335,106 @@ export class MultiFilter extends BaseMultiFilter<MultiFilterWrapper> implements 
                 return { filter: filter!, comp: filter! };
             }
             const filterParams = compDetails?.params;
-            const comp = this.createManagedBean(
+            const comp = createWrapperComp!(filter);
+            return {
+                filter: filter!,
+                comp,
+                filterParams,
+                evaluator,
+                evaluatorParams,
+                model: initialModelForFilter,
+            };
+        });
+    }
+
+    private updateDisplayParams(
+        displayParams: FilterDisplayParams,
+        index: number,
+        initialModelForFilter: any,
+        getCompDetails: () => UserCompDetails | null,
+        getEvaluator: () => FilterEvaluator
+    ): (filter: IFilterComp<any> | null) => FilterWrapperComp {
+        const column = this.params.column as AgColumn;
+        const eventSvc: LocalEventService<'filterParamsChanged' | 'filterStateChanged' | 'filterAction'> =
+            new LocalEventService();
+        displayParams.model = initialModelForFilter;
+        displayParams.state = { model: initialModelForFilter };
+        displayParams.onModelChange = (model, additionalEventAttributes?: any) => {
+            const wrapper = this.wrappers[index];
+            if (!wrapper) {
+                return;
+            }
+            _refreshEvaluatorAndUi(
+                () =>
+                    AgPromise.resolve({
+                        filter: wrapper.filter as any,
+                        filterParams: wrapper.filterParams as any,
+                    }),
+                wrapper.evaluator!,
+                wrapper.evaluatorParams!,
+                model,
+                wrapper.state ?? { model },
+                'ui'
+            ).then(() => {
+                wrapper.model = model;
+                this.onEvaluatorModelChanged(index, model, additionalEventAttributes);
+            });
+        };
+        displayParams.getEvaluator = getEvaluator;
+        const updateState = (wrapper: MultiFilterWrapper, state: FilterDisplayState) => {
+            wrapper.state = state;
+            eventSvc.dispatchEvent({
+                type: 'filterStateChanged',
+                column,
+                state,
+            });
+            this;
+        };
+        displayParams.onStateChange = (state) => {
+            const wrapper = this.wrappers[index];
+            if (!wrapper) {
+                return;
+            }
+            updateState(wrapper, state);
+            _refreshFilterUi(wrapper.filter as any, wrapper.filterParams!, wrapper.model ?? null, state, 'ui');
+        };
+        const updateModel = (_column: AgColumn, action: FilterAction, additionalEventAttributes?: any) => {
+            const wrapper = this.wrappers[index];
+            if (!wrapper) {
+                return;
+            }
+            const getModel = () => wrapper?.model ?? null;
+            _updateFilterModel(
+                action,
+                () => {
+                    const promise = AgPromise.resolve(wrapper.filter as any);
+                    return {
+                        created: true,
+                        filterParams: wrapper.filterParams!,
+                        compDetails: getCompDetails()!,
+                        create: () => promise,
+                        promise,
+                    };
+                },
+                getModel,
+                () => wrapper?.state ?? { model: getModel() },
+                (state) => updateState(wrapper, state),
+                (newModel) => wrapper.filterParams?.onModelChange(newModel, additionalEventAttributes)
+            );
+        };
+        displayParams.onAction = (action, additionalEventAttributes, event) => {
+            updateModel(column, action, additionalEventAttributes);
+            eventSvc.dispatchEvent({
+                type: 'filterAction',
+                column,
+                action,
+                event,
+            });
+        };
+
+        return (filter: IFilterComp<any> | null) => {
+            const filterParams = getCompDetails()?.params;
+            return this.createManagedBean(
                 new FilterWrapperComp(
                     column,
                     {
@@ -423,15 +446,7 @@ export class MultiFilter extends BaseMultiFilter<MultiFilterWrapper> implements 
                     updateModel
                 )
             );
-            return {
-                filter: filter!,
-                comp,
-                filterParams,
-                evaluator,
-                evaluatorParams,
-                model: initialModelForFilter,
-            };
-        });
+        };
     }
 
     private executeWhenAllFiltersReady(action: () => void): void {

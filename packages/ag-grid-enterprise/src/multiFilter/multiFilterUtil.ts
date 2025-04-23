@@ -45,3 +45,7 @@ export function getUpdatedMultiFilterModel(
               filterModels,
           };
 }
+
+export function getFilterModelForIndex<TModel = any>(model: IMultiFilterModel | null, index: number): TModel | null {
+    return model?.filterModels?.[index] ?? null;
+}
