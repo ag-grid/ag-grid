@@ -1,0 +1,99 @@
+{
+  "name": "react-package-tests",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "testing/react-package-tests",
+  "projectType": "",
+  "targets": {
+    "test:package": {
+      "executor": "nx:noop",
+      "inputs": [],
+      "outputs": [],
+      "dependsOn": [
+        "test:package:basic:local-18",
+        "test:package:basic:local-19",
+        "test:package:basic:local-latest",
+        "test:package:basic:production-18",
+        "test:package:basic:production-19",
+        "test:package:next-js:local-18",
+        "test:package:next-js:local-19"
+      ],
+      "configurations": {
+        "update": {}
+      }
+    },
+    "test:package:basic:local-18": {
+      "dependsOn": ["^pack"],
+      "command": "{projectRoot}/run-basic.sh 18",
+      "configurations": {
+        "update": {
+          "command": "{projectRoot}/run-basic.sh -u 18"
+        }
+      }
+    },
+    "test:package:basic:local-19": {
+      "dependsOn": ["^pack"],
+      "command": "{projectRoot}/run-basic.sh 19",
+      "configurations": {
+        "update": {
+          "command": "{projectRoot}/run-basic.sh -u 19"
+        }
+      }
+    },
+    "test:package:basic:local-latest": {
+      "dependsOn": ["^pack"],
+      "command": "{projectRoot}/run-basic.sh latest",
+      "configurations": {
+        "update": {
+          "command": "{projectRoot}/run-basic.sh -u latest"
+        }
+      }
+    },
+    "test:package:basic:production-18": {
+      "dependsOn": ["^pack"],
+      "command": "{projectRoot}/run-basic.sh -p 18",
+      "cache": false,
+      "configurations": {
+        "update": {
+          "command": "{projectRoot}/run-basic.sh -p -u 18"
+        }
+      }
+    },
+    "test:package:basic:production-19": {
+      "dependsOn": ["^pack"],
+      "command": "{projectRoot}/run-basic.sh -p 19",
+      "cache": false,
+      "configurations": {
+        "update": {
+          "command": "{projectRoot}/run-basic.sh -p -u 19"
+        }
+      }
+    },
+    "test:package:next-js:local-18": {
+      "dependsOn": ["^pack"],
+      "command": "{projectRoot}/run-next-js.sh 18",
+      "configurations": {
+        "update": {
+          "command": "{projectRoot}/run-next-js.sh -u 18"
+        }
+      }
+    },
+    "test:package:next-js:local-19": {
+      "dependsOn": ["^pack"],
+      "command": "{projectRoot}/run-next-js.sh 19",
+      "configurations": {
+        "update": {
+          "command": "{projectRoot}/run-next-js.sh -u 19"
+        }
+      }
+    },
+    "test:package:basic:editor": {
+      "dependsOn": ["^pack"],
+      "command": "{projectRoot}/run-basic.sh -n -e 19"
+    },
+    "test:package:next-js:editor": {
+      "dependsOn": ["^pack"],
+      "command": "{projectRoot}/run-next-js.sh -n -e 19"
+    }
+  },
+  "implicitDependencies": ["ag-grid-community", "ag-grid-enterprise", "ag-grid-react"]
+}

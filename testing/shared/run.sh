@@ -118,11 +118,6 @@ if [[ ${mode} == "docker" ]] ; then
     exit ${exitCode}
 fi
 
-#echo ">>> git config"
-#git config --global init.defaultBranch latest
-#git config --global user.email "me@ag-grid.com"
-#git config --global user.name "myself"
-
 cache_location="${project}/.npm-cache"
 echo "cache_location: $cache_location"
 install_fw
@@ -134,8 +129,6 @@ else
     echo ">>> npm i ../ag-grid*.tgz"
     npm i ../ag-grid-community.tgz ../ag-grid-enterprise.tgz ../ag-grid-${fw}.tgz @playwright/test@1.45.0 --cache ${cache_location} --registry http://52.50.158.57:4873
 fi
-#git add .
-#git commit -m "Initial commit"
 
 patch_dir=../patches
 if [[ "${patch_subdir:-}" != "" ]] ; then
