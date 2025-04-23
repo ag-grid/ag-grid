@@ -20,7 +20,7 @@ export const AllGridCommunityModules: Record<`${CommunityModuleName}Module`, num
     CustomFilterModule: 54.48,
     DateEditorModule: 22.02,
     DateFilterModule: 110,
-    DragAndDropModule: 1,
+    DragAndDropModule: 2.4,
     EventApiModule: 2.64,
     ExternalFilterModule: 13.69,
     GridStateModule: 13.24,
