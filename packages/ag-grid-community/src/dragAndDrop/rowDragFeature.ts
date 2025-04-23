@@ -1,7 +1,7 @@
 import { AutoScrollService } from '../autoScrollService';
 import { BeanStub } from '../context/beanStub';
 import { _getCellByPosition } from '../entities/positionUtils';
-import type { RowNode } from '../entities/rowNode';
+import type { RowHighlightPosition, RowNode } from '../entities/rowNode';
 import type {
     RowDragCancelEvent,
     RowDragEndEvent,
@@ -14,6 +14,7 @@ import { _getNormalisedMousePosition } from '../gridBodyComp/mouseEventUtils';
 import { _addGridCommonParams, _getRowIdCallback, _isClientSideRowModel } from '../gridOptionsUtils';
 import type { IClientSideRowModel } from '../interfaces/iClientSideRowModel';
 import { _last } from '../utils/array';
+import { ChangedPath } from '../utils/changedPath';
 import { _warn } from '../validation/logging';
 import type { DragAndDropIcon, DraggingEvent, DropTarget } from './dragAndDropService';
 import { DragSourceType } from './dragAndDropService';
@@ -31,6 +32,10 @@ export interface RowDropZoneEvents {
     /** Callback function that will be executed when the rowDrag drops rows within the target. */
     onDragStop?: (params: RowDragEndEvent) => void;
     onDragCancel?: (params: RowDragCancelEvent) => void;
+}
+
+interface WritableRowNode extends RowNode {
+    sourceRowIndex: number;
 }
 
 /** We actually have a different interface if we are passing params out of the grid and
@@ -313,11 +318,10 @@ export class RowDragFeature extends BeanStub implements DropTarget {
         if (rowsMove) {
             // Get the focussed cell so we can ensure it remains focussed after the move
             const focusSvc = this.beans.focusSvc;
-            const clientSideRowModel = this.clientSideRowModel;
             const cellPosition = focusSvc.getFocusedCell();
             const cellCtrl = cellPosition && _getCellByPosition(this.beans, cellPosition);
             const { rows, target, position } = rowsMove;
-            if (clientSideRowModel.moveRows(rows, target, position)) {
+            if (this.moveRowNodes(rows, target, position)) {
                 if (cellCtrl) {
                     cellCtrl.focusCell();
                 } else {
@@ -526,5 +530,119 @@ export class RowDragFeature extends BeanStub implements DropTarget {
             rowNode.dragging = dragging;
             rowNode.dispatchRowEvent('draggingChanged');
         }
+    }
+
+    /** Drag and drop. Returns false if at least a row was moved, otherwise true */
+    private moveRowNodes(rows: RowNode[], target: RowNode | null | undefined, position: RowHighlightPosition): boolean {
+        const rowsToMoveSet = this.getValidRowsToMove(rows);
+
+        if (!this.reorderLeafChildren(rowsToMoveSet, ...this.getMoveRowsBounds(rowsToMoveSet, target, position))) {
+            return false; // Nothing changed
+        }
+
+        this.clientSideRowModel.refreshModel({
+            step: 'group',
+            keepRenderedRows: true,
+            animate: !this.gos.get('suppressAnimationFrame'),
+            changedPath: new ChangedPath(false, this.clientSideRowModel.rootNode!),
+            rowNodesOrderChanged: true,
+        });
+        return true;
+    }
+
+    /** Creates a set of valid rows to move, filtering out rows that are not leafs or are not in the current model (deleted) */
+    private getValidRowsToMove(rows: RowNode[]): Set<RowNode> {
+        const clientSideRowModel = this.clientSideRowModel;
+        const rowsSet = new Set<RowNode>();
+        for (const row of rows) {
+            // Filter out rows that are not leafs
+            if (row.sourceRowIndex >= 0 && (row.rowTop !== null || row === clientSideRowModel.getRowNode(row.id!))) {
+                rowsSet.add(row);
+            }
+        }
+        return rowsSet;
+    }
+
+    /** For reorderLeafChildren, returns min index of the rows to move, the target index and the max index of the rows to move. */
+    private getMoveRowsBounds(
+        rows: Iterable<RowNode>,
+        target: RowNode | null | undefined,
+        position: RowHighlightPosition
+    ) {
+        const totalRows = this.clientSideRowModel.rootNode?.allLeafChildren!.length ?? 0;
+        let targetPositionIdx = target?.sourceRowIndex ?? -1;
+        if (targetPositionIdx < 0 || targetPositionIdx >= totalRows) {
+            targetPositionIdx = totalRows;
+        } else if (position === 'Below') {
+            ++targetPositionIdx;
+        }
+        let firstAffectedLeafIdx = targetPositionIdx;
+        let lastAffectedLeafIndex = Math.min(targetPositionIdx, totalRows - 1);
+        for (const { sourceRowIndex } of rows) {
+            if (sourceRowIndex < firstAffectedLeafIdx) firstAffectedLeafIdx = sourceRowIndex;
+            if (sourceRowIndex > lastAffectedLeafIndex) lastAffectedLeafIndex = sourceRowIndex;
+        }
+        return [firstAffectedLeafIdx, targetPositionIdx, lastAffectedLeafIndex] as const;
+    }
+
+    /** Reorders the children of the root node, so that the rows to move are in the correct order.
+     * @param rowsToMoveSet The valid set of rows to move, as returned by getValidRowsToMove
+     * @param firstAffectedLeafIdx The first index of the rows to move
+     * @param targetPositionIdx The target index, where the rows will be moved
+     * @param lastAffectedLeafIndex The last index of the rows to move
+     * @returns True if the order of the rows changed, false otherwise
+     */
+    private reorderLeafChildren(
+        rowsToMoveSet: ReadonlySet<WritableRowNode>,
+        firstAffectedLeafIdx: number,
+        targetPositionIdx: number,
+        lastAffectedLeafIndex: number
+    ): boolean {
+        let orderChanged = false;
+
+        const allLeafChildren: WritableRowNode[] | null | undefined = this.clientSideRowModel.rootNode?.allLeafChildren;
+        if (!rowsToMoveSet.size || !allLeafChildren) {
+            return false;
+        }
+
+        // First partition. Filter from left to right, so the middle can be overwritten
+        let writeIdxLeft = firstAffectedLeafIdx;
+        for (let readIdx = firstAffectedLeafIdx; readIdx < targetPositionIdx; ++readIdx) {
+            const row = allLeafChildren[readIdx];
+            if (!rowsToMoveSet.has(row)) {
+                if (row.sourceRowIndex !== writeIdxLeft) {
+                    row.sourceRowIndex = writeIdxLeft;
+                    allLeafChildren[writeIdxLeft] = row;
+                    orderChanged = true;
+                }
+                ++writeIdxLeft;
+            }
+        }
+
+        // Third partition. Filter from right to left, so the middle can be overwritten
+        let writeIdxRight = lastAffectedLeafIndex;
+        for (let readIdx = lastAffectedLeafIndex; readIdx >= targetPositionIdx; --readIdx) {
+            const row = allLeafChildren[readIdx];
+            if (!rowsToMoveSet.has(row)) {
+                if (row.sourceRowIndex !== writeIdxRight) {
+                    row.sourceRowIndex = writeIdxRight;
+                    allLeafChildren[writeIdxRight] = row;
+                    orderChanged = true;
+                }
+                --writeIdxRight;
+            }
+        }
+
+        // Second partition. Overwrites the middle between the other two filtered partitions
+        for (const row of rowsToMoveSet) {
+            if (row.sourceRowIndex !== writeIdxLeft) {
+                row.sourceRowIndex = writeIdxLeft;
+                allLeafChildren[writeIdxLeft] = row;
+                orderChanged = true;
+            }
+            ++writeIdxLeft;
+        }
+
+        return orderChanged;
     }
 }

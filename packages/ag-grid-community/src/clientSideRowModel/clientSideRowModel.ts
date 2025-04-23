@@ -37,10 +37,6 @@ interface ClientSideRowModelRootNode extends RowNode {
     childrenAfterGroup: RowNode[] | null;
 }
 
-interface ClientSideRowModelRowNode extends RowNode {
-    sourceRowIndex: number;
-}
-
 interface BatchTransactionItem<TData = any> {
     rowDataTransaction: RowDataTransaction<TData>;
     callback: ((res: RowNodeTransaction<TData>) => void) | undefined;
@@ -435,114 +431,6 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         };
 
         recurse(this.rootNode);
-    }
-
-    /** Drag and drop. Returns false if at least a row was moved, otherwise true */
-    public moveRows(rows: RowNode[], target: RowNode | null | undefined, position: RowHighlightPosition): boolean {
-        const rowsToMoveSet = this.getValidRowsToMove(rows);
-
-        if (!this.reorderLeafChildren(rowsToMoveSet, ...this.getMoveRowsBounds(rowsToMoveSet, target, position))) {
-            return false; // Nothing changed
-        }
-
-        this.refreshModel({
-            step: 'group',
-            keepRenderedRows: true,
-            animate: !this.gos.get('suppressAnimationFrame'),
-            changedPath: this.createChangePath(true),
-            rowNodesOrderChanged: true,
-        });
-        return true;
-    }
-
-    /** Creates a set of valid rows to move, filtering out rows that are not leafs or are not in the current model (deleted) */
-    private getValidRowsToMove(rows: RowNode[]): Set<ClientSideRowModelRowNode> {
-        const nodeManager = this.nodeManager;
-        const rowsSet = new Set<ClientSideRowModelRowNode>();
-        for (const row of rows) {
-            // Filter out rows that are not leafs
-            if (row.sourceRowIndex >= 0 && (row.rowTop !== null || row === nodeManager.getRowNode(row.id!))) {
-                rowsSet.add(row);
-            }
-        }
-        return rowsSet;
-    }
-
-    /** For reorderLeafChildren, returns min index of the rows to move, the target index and the max index of the rows to move. */
-    private getMoveRowsBounds(
-        rows: Iterable<RowNode>,
-        target: RowNode | null | undefined,
-        position: RowHighlightPosition
-    ) {
-        const totalRows = this.rootNode?.allLeafChildren!.length ?? 0;
-        let insertIdx = target?.sourceRowIndex ?? -1;
-        if (insertIdx < 0 || insertIdx >= totalRows) {
-            insertIdx = totalRows;
-        } else if (position === 'Below') {
-            ++insertIdx;
-        }
-        let minIdx = insertIdx;
-        let maxIdx = Math.min(insertIdx, totalRows - 1);
-        for (const { sourceRowIndex } of rows) {
-            if (sourceRowIndex < minIdx) minIdx = sourceRowIndex;
-            if (sourceRowIndex > maxIdx) maxIdx = sourceRowIndex;
-        }
-        return [minIdx, insertIdx, maxIdx] as const;
-    }
-
-    /** Reorders the children of the root node, so that the rows to move are in the correct order.
-     * @param rowsToMoveSet The valid set of rows to move, as returned by getValidRowsToMove
-     * @param minIdx The first index of the rows to move
-     * @param targetIdx The target index, where the rows will be moved
-     * @param maxIdx The last index of the rows to move
-     * @returns True if the order of the rows changed, false otherwise
-     */
-    private reorderLeafChildren(
-        rowsToMoveSet: ReadonlySet<ClientSideRowModelRowNode>,
-        minIdx: number,
-        targetIdx: number,
-        maxIdx: number
-    ): boolean {
-        const allLeafChildren: ClientSideRowModelRowNode[] = this.rootNode?.allLeafChildren ?? _EmptyArray;
-
-        let orderChanged = false;
-        // First partition. Filter from left to right, so the middle can be overwritten
-        for (let i = minIdx; i < targetIdx; ++i) {
-            const row: ClientSideRowModelRowNode = allLeafChildren[i];
-            if (!rowsToMoveSet.has(row)) {
-                if (row.sourceRowIndex !== minIdx) {
-                    row.sourceRowIndex = minIdx;
-                    allLeafChildren[minIdx] = row;
-                    orderChanged = true;
-                }
-                ++minIdx;
-            }
-        }
-
-        // Third partition. Filter from right to left, so the middle can be overwritten
-        for (let i = maxIdx; i >= targetIdx; --i) {
-            const row = allLeafChildren[i];
-            if (!rowsToMoveSet.has(row)) {
-                if (row.sourceRowIndex !== maxIdx) {
-                    row.sourceRowIndex = maxIdx;
-                    allLeafChildren[maxIdx] = row;
-                    orderChanged = true;
-                }
-                --maxIdx;
-            }
-        }
-
-        // Second partition. Overwrites the middle between the other two filtered partitions
-        for (const row of rowsToMoveSet) {
-            if (row.sourceRowIndex !== minIdx) {
-                row.sourceRowIndex = minIdx;
-                allLeafChildren[minIdx] = row;
-                orderChanged = true;
-            }
-            ++minIdx;
-        }
-
-        return orderChanged;
     }
 
     public highlightRow(rowNode: RowNode | null | undefined, highlight: RowHighlightPosition = 'Below'): void {
