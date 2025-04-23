@@ -119,7 +119,7 @@ export class LocalEventService<TEventType extends string> implements IEventEmitt
             for (const listener of listeners) {
                 if (!originalListeners?.has(listener)) {
                     // A listener could have been removed by a previously processed listener. In this case we don't want to call
-                    return;
+                    continue;
                 }
                 runCallback(() => listener(event));
             }
