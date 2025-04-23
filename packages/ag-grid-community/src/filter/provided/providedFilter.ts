@@ -146,8 +146,12 @@ export abstract class ProvidedFilter<
     }
 
     public doesFilterPass(params: IDoesFilterPassParams): boolean {
-        const { getEvaluator, model } = this.params;
-        return getEvaluator().doesFilterPass({ ...params, model });
+        const { getEvaluator, model, column } = this.params;
+        return getEvaluator().doesFilterPass({
+            ...params,
+            model,
+            evaluatorParams: this.beans.colFilter!.getEvaluatorParams(column)!,
+        });
     }
 
     public getFilterTitle(): string {

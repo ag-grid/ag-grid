@@ -11,16 +11,24 @@ import type { IRowNode } from './iRowNode';
 export type IFilterType = string | { new (): IFilterComp } | boolean;
 export type IFloatingFilterType = string | { new (): IFloatingFilterComp };
 
-export interface FilterEvaluatorFuncParams<TData = any, TModel = any> extends IDoesFilterPassParams<TData> {
+export interface FilterEvaluatorFuncParams<TData = any, TContext = any, TModel = any, TCustomParams = any>
+    extends IDoesFilterPassParams<TData> {
     model: TModel | null;
+    evaluatorParams: FilterEvaluatorBaseParams<TData, TContext, TModel, TCustomParams>;
 }
 
-export interface FilterEvaluatorParams<TData = any, TContext = any, TModel = any, TCustomParams = any>
+export interface FilterEvaluatorBaseParams<TData = any, TContext = any, TModel = any, TCustomParams = any>
     extends SharedFilterParams<TData, TContext> {
     filterParams: TCustomParams;
-    model: TModel | null;
     onModelChange: (model: TModel | null, additionalEventAttributes?: any) => void;
-    source: 'init' | 'ui' | 'api' | 'colDef' | 'floating' | 'evaluator';
+}
+
+export type FilterEvaluatorSource = 'init' | 'ui' | 'api' | 'colDef' | 'floating' | 'evaluator';
+
+export interface FilterEvaluatorParams<TData = any, TContext = any, TModel = any, TCustomParams = any>
+    extends FilterEvaluatorBaseParams<TData, TContext, TModel, TCustomParams> {
+    model: TModel | null;
+    source: FilterEvaluatorSource;
 }
 
 export interface FilterEvaluator<TData = any, TContext = any, TModel = any, TCustomParams = any>
@@ -28,7 +36,7 @@ export interface FilterEvaluator<TData = any, TContext = any, TModel = any, TCus
         ReadOnlyFloatingFilterParent<TModel> {
     init?(params: FilterEvaluatorParams<TData, TContext, TModel, TCustomParams>): void;
     refresh?(params: FilterEvaluatorParams<TData, TContext, TModel, TCustomParams>): void;
-    doesFilterPass(params: FilterEvaluatorFuncParams<TData, TModel>): boolean;
+    doesFilterPass(params: FilterEvaluatorFuncParams<TData, TContext, TModel, TCustomParams>): boolean;
     getModelAsString?(model: TModel | null): string;
     destroy?(): void;
 }
@@ -255,6 +263,8 @@ export interface FilterDisplayState<TModel = any, TState = any> {
     valid?: boolean;
 }
 
+export type FilterDisplaySource = 'init' | 'ui' | 'api' | 'colDef' | 'evaluator' | 'floating';
+
 export interface FilterDisplayParams<TData = any, TContext = any, TModel = any, TState = any>
     extends SharedFilterParams<TData, TContext> {
     /** The current applied filter model for the component. */
@@ -276,7 +286,7 @@ export interface FilterDisplayParams<TData = any, TContext = any, TModel = any, 
      */
     onUiChange: (additionalEventAttributes?: any) => void;
     getEvaluator: () => FilterEvaluator<TData, TContext, TModel>;
-    source: 'init' | 'ui' | 'api' | 'colDef' | 'evaluator' | 'floating';
+    source: FilterDisplaySource;
 }
 
 /**

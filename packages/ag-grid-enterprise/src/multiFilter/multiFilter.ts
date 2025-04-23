@@ -4,7 +4,7 @@ import type {
     FilterDisplayParams,
     FilterDisplayState,
     FilterEvaluator,
-    FilterEvaluatorParams,
+    FilterEvaluatorBaseParams,
     IDoesFilterPassParams,
     IFilterComp,
     IFilterDef,
@@ -38,7 +38,7 @@ interface MultiFilterWrapper {
     /** only set for evaluators */
     filterParams?: FilterDisplayParams;
     evaluator?: FilterEvaluator;
-    evaluatorParams?: FilterEvaluatorParams;
+    evaluatorParams?: FilterEvaluatorBaseParams;
     /** only set for evaluators */
     model?: any;
     state?: FilterDisplayState;
@@ -121,6 +121,7 @@ export class MultiFilter extends BaseMultiFilter<MultiFilterWrapper> implements 
                 return evaluator.doesFilterPass({
                     ...params,
                     model,
+                    evaluatorParams: wrapper.evaluatorParams!,
                 });
             }
             return !filter.isFilterActive() || filter.doesFilterPass(params);
@@ -313,12 +314,11 @@ export class MultiFilter extends BaseMultiFilter<MultiFilterWrapper> implements 
             return AgPromise.resolve(null);
         }
 
-        let evaluatorParams: FilterEvaluatorParams | undefined;
+        let evaluatorParams: FilterEvaluatorBaseParams | undefined;
         if (evaluator) {
             const { onModelChange, doesRowPassOtherFilter } = originalEvaluatorParams!;
             evaluatorParams = {
                 ...originalEvaluatorParams!,
-                model: initialModelForFilter,
                 onModelChange: (newModel, additionalEventAttributes) =>
                     onModelChange(
                         getUpdatedMultiFilterModel(this.params.model, this.wrappers.length, newModel, index),
@@ -327,7 +327,7 @@ export class MultiFilter extends BaseMultiFilter<MultiFilterWrapper> implements 
                 doesRowPassOtherFilter: (node) =>
                     doesRowPassOtherFilter(node) && this.doesFilterPass({ node, data: node.data }, index),
             };
-            evaluator.init?.(evaluatorParams);
+            evaluator.init?.({ ...evaluatorParams, model: initialModelForFilter, source: 'init' });
         }
 
         return createFilterUi().then((filter) => {

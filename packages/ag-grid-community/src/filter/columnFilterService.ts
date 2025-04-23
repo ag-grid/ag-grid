@@ -27,8 +27,8 @@ import type {
     FilterDisplayParams,
     FilterDisplayState,
     FilterEvaluator,
+    FilterEvaluatorBaseParams,
     FilterEvaluatorGeneratorFunc,
-    FilterEvaluatorParams,
     FilterModel,
     IFilter,
     IFilterComp,
@@ -106,6 +106,7 @@ interface EvaluatorDoesFilterPassWrapper {
     isEvaluator: true;
     colId: string;
     evaluator: FilterEvaluator;
+    evaluatorParams: FilterEvaluatorBaseParams;
 }
 
 type DoesFilterPassWrapper = CompDoesFilterPassWrapper | EvaluatorDoesFilterPassWrapper;
@@ -393,6 +394,7 @@ export class ColumnFilterService
                             colId,
                             isEvaluator: true,
                             evaluator: filterWrapper.evaluator,
+                            evaluatorParams: filterWrapper.evaluatorParams,
                         });
                     })
                 );
@@ -470,11 +472,13 @@ export class ColumnFilterService
             }
 
             if (isEvaluator) {
+                const { evaluator, evaluatorParams } = filter;
                 if (
-                    !filter.evaluator.doesFilterPass({
+                    !evaluator.doesFilterPass({
                         node,
                         data: targetedData,
                         model: model[colId] ?? null,
+                        evaluatorParams,
                     })
                 ) {
                     return false;
@@ -494,6 +498,11 @@ export class ColumnFilterService
         }
 
         return true;
+    }
+
+    public getEvaluatorParams(column: Column): FilterEvaluatorBaseParams | undefined {
+        const wrapper = this.allColumnFilters.get(column.getColId());
+        return wrapper?.isEvaluator ? wrapper.evaluatorParams : undefined;
     }
 
     // sometimes (especially in React) the filter can call onFilterChanged when we are in the middle
@@ -708,7 +717,7 @@ export class ColumnFilterService
         compDetails: UserCompDetails | null;
         evaluator?: FilterEvaluator;
         evaluatorGenerator?: FilterEvaluatorGeneratorFunc | EvaluatorName;
-        evaluatorParams?: FilterEvaluatorParams;
+        evaluatorParams?: FilterEvaluatorBaseParams;
         createFilterUi: ((update?: boolean) => AgPromise<IFilterComp | FilterDisplayComp>) | null;
     } {
         const defaultFilter = this.getDefaultFilter(column);
@@ -758,7 +767,7 @@ export class ColumnFilterService
         compDetails: UserCompDetails | null;
         evaluator?: FilterEvaluator;
         evaluatorGenerator?: FilterEvaluatorGeneratorFunc | EvaluatorName;
-        evaluatorParams?: FilterEvaluatorParams;
+        evaluatorParams?: FilterEvaluatorBaseParams;
         createFilterUi: ((update?: boolean) => AgPromise<IFilterComp>) | null;
     } {
         const { evaluator, evaluatorParams, evaluatorGenerator } =
@@ -890,7 +899,11 @@ export class ColumnFilterService
 
         if (evaluator) {
             delete this.initialFilterModel[column.getColId()];
-            evaluator.init?.(evaluatorParams!);
+            evaluator.init?.({
+                ...evaluatorParams!,
+                source: 'init',
+                model: this.getModelForEvaluator(column),
+            });
             return {
                 column,
                 isEvaluator: true,
@@ -958,7 +971,7 @@ export class ColumnFilterService
     ):
         | {
               evaluator: FilterEvaluator;
-              evaluatorParams: FilterEvaluatorParams;
+              evaluatorParams: FilterEvaluatorBaseParams;
               evaluatorGenerator: FilterEvaluatorGeneratorFunc | EvaluatorName;
           }
         | undefined {
@@ -980,18 +993,14 @@ export class ColumnFilterService
         column: AgColumn,
         filterEvaluator: FilterEvaluatorGeneratorFunc,
         filterParams: any
-    ): { evaluator: FilterEvaluator; evaluatorParams: FilterEvaluatorParams } {
+    ): { evaluator: FilterEvaluator; evaluatorParams: FilterEvaluatorBaseParams } {
         const colDef = column.getColDef();
         const evaluator = filterEvaluator(_addGridCommonParams(this.gos, { column, colDef }));
-        const evaluatorParams = this.createEvaluatorParams(column, 'init', filterParams);
+        const evaluatorParams = this.createEvaluatorParams(column, filterParams);
         return { evaluator, evaluatorParams };
     }
 
-    private createEvaluatorParams(
-        column: AgColumn,
-        source: 'init' | 'ui' | 'api' | 'colDef',
-        filterParams: any
-    ): FilterEvaluatorParams {
+    private createEvaluatorParams(column: AgColumn, filterParams: any): FilterEvaluatorBaseParams {
         const colDef = column.getColDef();
         const colId = column.getColId();
         const filterChangedCallback = this.filterChangedCallbackFactory(column);
@@ -1001,8 +1010,6 @@ export class ColumnFilterService
             getValue: this.createGetValue(column),
             doesRowPassOtherFilter: (node) =>
                 this.beans.filterManager?.doesRowPassOtherFilters(colId, node as RowNode) ?? true,
-            source,
-            model: this.getModelForEvaluator(column),
             onModelChange: (newModel, additionalEventAttributes) => {
                 this.updateStoredModel(colId, newModel);
                 this.refreshEvaluatorAndUi(column, newModel, 'evaluator').then(() => {
@@ -1268,10 +1275,14 @@ export class ColumnFilterService
                 // is listening to events on the evaluator and needs to resubscribe to the new one
                 this.destroyBean(oldEvaluator);
             } else {
-                const evaluatorParams = this.createEvaluatorParams(column, 'colDef', compDetails?.params);
+                const evaluatorParams = this.createEvaluatorParams(column, compDetails?.params);
                 // evaluator exists and is the same
                 filterWrapper.evaluatorParams = evaluatorParams;
-                filterWrapper.evaluator.refresh?.(evaluatorParams);
+                filterWrapper.evaluator.refresh?.({
+                    ...evaluatorParams,
+                    source: 'colDef',
+                    model: this.getModelForEvaluator(column),
+                });
             }
         }
 
@@ -1801,7 +1812,7 @@ interface EvaluatorFilterWrapper extends BaseFilterWrapper<FilterDisplayComp, Fi
     isEvaluator: true;
     evaluator: FilterEvaluator;
     evaluatorGenerator: FilterEvaluatorGeneratorFunc | EvaluatorName;
-    evaluatorParams: FilterEvaluatorParams;
+    evaluatorParams: FilterEvaluatorBaseParams;
 }
 
 type FilterWrapper = LegacyFilterWrapper | EvaluatorFilterWrapper;
@@ -1830,7 +1841,7 @@ function getFilterUiFromWrapper<TComp extends IFilterComp | FilterDisplayComp>(
 export function _refreshEvaluatorAndUi(
     getFilterUi: () => AgPromise<{ filter: FilterDisplayComp; filterParams: FilterDisplayParams } | undefined>,
     evaluator: FilterEvaluator,
-    evaluatorParams: FilterEvaluatorParams,
+    evaluatorParams: FilterEvaluatorBaseParams,
     model: any,
     state: FilterDisplayState,
     source: 'ui' | 'api' | 'colDef' | 'floating' | 'evaluator'

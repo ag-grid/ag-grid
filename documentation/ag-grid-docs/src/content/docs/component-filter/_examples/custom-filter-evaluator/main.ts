@@ -18,15 +18,14 @@ ModuleRegistry.registerModules([
 
 function personFilterEvaluator(): FilterEvaluator<any, any, string> {
     return {
-        doesFilterPass: (params) => {
-            const { data, model } = params;
+        doesFilterPass: ({ model, node, evaluatorParams }) => {
             // make sure each word passes separately, ie search for firstname, lastname
             let passed = true;
             model
                 ?.toLowerCase()
                 .split(' ')
                 .forEach((filterWord) => {
-                    const value = data.athlete;
+                    const value = evaluatorParams.getValue(node);
                     if (value.toString().toLowerCase().indexOf(filterWord) < 0) {
                         passed = false;
                     }
@@ -39,7 +38,7 @@ function personFilterEvaluator(): FilterEvaluator<any, any, string> {
 
 function yearFilterEvaluator(): FilterEvaluator<any, any, boolean> {
     return {
-        doesFilterPass: (params) => params.data.year >= 2010,
+        doesFilterPass: ({ model, node, evaluatorParams }) => (model ? evaluatorParams.getValue(node) >= 2010 : true),
     };
 }
 

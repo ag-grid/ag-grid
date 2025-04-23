@@ -157,12 +157,21 @@ export class MultiFilterUi
                 }
             });
         };
+        const colFilter = this.beans.colFilter!;
         return {
-            ...this.beans.colFilter!.createBaseFilterParams(column as AgColumn),
+            ...colFilter.createBaseFilterParams(column as AgColumn),
             ...filterDef,
             doesRowPassOtherFilter: (node) =>
                 doesRowPassOtherFilter(node) &&
-                this.getEvaluator().doesFilterPass({ node, data: node.data, model: this.params.model }, index),
+                this.getEvaluator().doesFilterPass(
+                    {
+                        node,
+                        data: node.data,
+                        model: this.params.model,
+                        evaluatorParams: colFilter.getEvaluatorParams(column)!,
+                    },
+                    index
+                ),
             model: filterModel,
             state: filterState,
             onModelChange: (childModel, additionalEventAttributes) => {

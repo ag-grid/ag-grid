@@ -1,6 +1,7 @@
 import type {
     AgColumn,
     FilterEvaluator,
+    FilterEvaluatorBaseParams,
     FilterEvaluatorFuncParams,
     FilterEvaluatorParams,
     IMultiFilterModel,
@@ -8,15 +9,24 @@ import type {
 } from 'ag-grid-community';
 import { BeanStub, _removeFromArray } from 'ag-grid-community';
 
-import { forEachReverse, getMultiFilterDefs, getUpdatedMultiFilterModel } from './multiFilterUtil';
+import {
+    forEachReverse,
+    getFilterModelForIndex,
+    getMultiFilterDefs,
+    getUpdatedMultiFilterModel,
+} from './multiFilterUtil';
+
+interface EvaluatorWrapper {
+    evaluator: FilterEvaluator;
+    evaluatorParams: FilterEvaluatorBaseParams;
+}
 
 export class MultiFilterEvaluator
     extends BeanStub
     implements FilterEvaluator<any, any, IMultiFilterModel, IMultiFilterParams>
 {
     private params: FilterEvaluatorParams<any, any, IMultiFilterModel, IMultiFilterParams>;
-    private evaluatorWrappers: ({ evaluator: FilterEvaluator; evaluatorParams: FilterEvaluatorParams } | undefined)[] =
-        [];
+    private evaluatorWrappers: (EvaluatorWrapper | undefined)[] = [];
     /** ui active. could still have null model */
     private activeFilterIndices: number[] = [];
 
@@ -32,31 +42,35 @@ export class MultiFilterEvaluator
                 return;
             }
             const { evaluator, evaluatorParams } = wrapper;
-            evaluator.init?.(this.updateEvaluatorParams(evaluatorParams!, params.model, index));
+            evaluator.init?.({
+                ...this.updateEvaluatorParams(evaluatorParams!, index),
+                model: getFilterModelForIndex(params.model, index),
+                source: 'init',
+            });
         });
         this.resetActiveList(params.model);
     }
 
     public refresh(params: FilterEvaluatorParams<any, any, IMultiFilterModel> & IMultiFilterParams): void {
         this.params = params;
+        const { model, source } = params;
 
-        this.evaluatorWrappers.forEach((wrapper, index) =>
-            wrapper?.evaluator.refresh?.(this.updateEvaluatorParams(params, params.model, index))
-        );
+        this.evaluatorWrappers.forEach((wrapper, index) => {
+            const updatedParams = this.updateEvaluatorParams(params, index);
+            if (wrapper) {
+                wrapper.evaluatorParams = updatedParams;
+                wrapper.evaluator.refresh?.({ ...updatedParams, model: getFilterModelForIndex(model, index), source });
+            }
+        });
         if (params.source !== 'floating' && params.source !== 'ui') {
             this.resetActiveList(params.model);
         }
     }
 
-    private updateEvaluatorParams(
-        params: FilterEvaluatorParams,
-        model: IMultiFilterModel | null,
-        index: number
-    ): FilterEvaluatorParams {
+    private updateEvaluatorParams(params: FilterEvaluatorBaseParams, index: number): FilterEvaluatorBaseParams {
         const { onModelChange, doesRowPassOtherFilter } = params;
-        return {
+        const evaluatorParams: FilterEvaluatorBaseParams = {
             ...params!,
-            model: model?.filterModels?.[index] ?? null,
             onModelChange: (newModel, additionalEventAttributes) =>
                 onModelChange(
                     getUpdatedMultiFilterModel(this.params.model, this.evaluatorWrappers.length, newModel, index),
@@ -64,8 +78,9 @@ export class MultiFilterEvaluator
                 ),
             doesRowPassOtherFilter: (node) =>
                 doesRowPassOtherFilter(node) &&
-                this.doesFilterPass({ node, data: node.data, model: this.params.model }, index),
+                this.doesFilterPass({ node, data: node.data, model: this.params.model, evaluatorParams }, index),
         };
+        return evaluatorParams;
     }
 
     public doesFilterPass(params: FilterEvaluatorFuncParams<any, IMultiFilterModel>, indexToSkip?: number): boolean {
@@ -79,7 +94,9 @@ export class MultiFilterEvaluator
                 return true;
             }
             const evaluator = wrapper?.evaluator;
-            return !evaluator || evaluator.doesFilterPass({ ...params, model });
+            return (
+                !evaluator || evaluator.doesFilterPass({ ...params, model, evaluatorParams: wrapper.evaluatorParams })
+            );
         });
     }
 
