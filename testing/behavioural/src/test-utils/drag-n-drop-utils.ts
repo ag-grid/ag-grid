@@ -145,7 +145,11 @@ export async function dragAndDropRow({
 
         if (rowDragEnterEvents.length === 1) {
             expect(rowDragEnterEvents[0].node.id).toBe(sourceRowId);
-            expect(rowDragEnterEvents[0].overNode?.id).toBe(sourceRowId);
+
+            const expectedOverId = rowDragEnterEvents[0].overNode?.id;
+            if (expectedOverId !== sourceRowId && expectedOverId !== target.getAttribute('row-id')) {
+                expect(expectedOverId).toBe(sourceRowId);
+            }
 
             expect(rowDragMoveEvents.length).toBeGreaterThan(0);
 

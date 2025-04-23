@@ -180,13 +180,20 @@ export class RowDragFeature extends BeanStub implements DropTarget {
         return dragSourceDomDataKey === this.gos.getDomDataKey();
     }
 
+    private getMouseY(draggingEvent: DraggingEvent): number {
+        const beans = this.beans;
+        const { pageFirstPixel } = beans.pageBounds.getCurrentPagePixelRange();
+        const yNormalised = _getNormalisedMousePosition(beans, draggingEvent).y;
+        return yNormalised + pageFirstPixel;
+    }
+
     private onEnterOrDragging(draggingEvent: DraggingEvent): void {
         // this event is fired for enter and move
         this.dispatchGridEvent('rowDragMove', draggingEvent);
 
         this.lastDraggingEvent = draggingEvent;
 
-        const pixel = _getNormalisedMousePosition(this.beans, draggingEvent).y;
+        const pixel = this.getMouseY(draggingEvent);
         const managedDrag = this.gos.get('rowDragManaged');
 
         if (managedDrag) {
@@ -225,7 +232,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
         const clientSideRowModel = this.clientSideRowModel;
         const lastHighlightedRowNode = clientSideRowModel.getLastHighlightedRowNode();
         const isBelow = lastHighlightedRowNode && lastHighlightedRowNode.highlighted === 'Below';
-        const pixel = _getNormalisedMousePosition(this.beans, draggingEvent).y;
+        const pixel = this.getMouseY(draggingEvent);
         const rowNodes = draggingEvent.dragItem.rowNodes as RowNode[];
 
         let increment = isBelow ? 1 : 0;
@@ -400,8 +407,8 @@ export class RowDragFeature extends BeanStub implements DropTarget {
     private draggingToRowDragEvent<T extends RowDragEventType>(type: T, draggingEvent: DraggingEvent): RowDragEvent<T> {
         const beans = this.beans;
         const { pageBounds, rowModel, gos } = beans;
-        const yNormalised = _getNormalisedMousePosition(beans, draggingEvent).y;
-        const mouseIsPastLastRow = yNormalised > pageBounds.getCurrentPageHeight();
+        const yNormalised = this.getMouseY(draggingEvent);
+        const mouseIsPastLastRow = yNormalised > pageBounds.getCurrentPagePixelRange().pageLastPixel;
 
         let overIndex = -1;
         let overNode: RowNode | undefined;

@@ -36,7 +36,7 @@ describe('ag-grid unmanaged drag and drop with pagination', () => {
             paginationPageSize: 20,
             pagination: true,
             animateRows: true,
-
+            getRowId: (params) => params.data.id,
             onRowDragMove: (event) => {
                 rowDragMoveEvents.push(event);
             },
@@ -49,15 +49,15 @@ describe('ag-grid unmanaged drag and drop with pagination', () => {
 
         await dragAndDropRow({ api, source: '4', target: '7' });
 
-        const lastEvent = rowDragMoveEvents[rowDragMoveEvents.length - 1];
-        expect(lastEvent).toBeTruthy();
+        const lastMoveEvent = rowDragMoveEvents[rowDragMoveEvents.length - 1];
+        expect(lastMoveEvent).toBeTruthy();
 
-        expect(lastEvent.node?.id).toBe('4');
-        expect(lastEvent.nodes.length).toBe(1);
-        expect(lastEvent.nodes[0].id).toBe('4');
+        expect(lastMoveEvent.node?.id).toBe('4');
+        expect(lastMoveEvent.nodes.length).toBe(1);
+        expect(lastMoveEvent.nodes[0].id).toBe('4');
 
-        expect(lastEvent.overNode?.id).toBe('7');
-        expect(lastEvent.overIndex).toBe(7);
+        expect(lastMoveEvent.overNode?.id).toBe('7');
+        expect(lastMoveEvent.overIndex).toBe(7);
     });
 
     test('correct overNode and overIndex in page 2', async () => {
@@ -71,7 +71,7 @@ describe('ag-grid unmanaged drag and drop with pagination', () => {
             paginationPageSize: 20,
             pagination: true,
             animateRows: true,
-
+            getRowId: (params) => params.data.id,
             onRowDragMove: (event) => {
                 rowDragMoveEvents.push(event);
             },
@@ -84,16 +84,16 @@ describe('ag-grid unmanaged drag and drop with pagination', () => {
         const rows = api.getRenderedNodes();
         expect(rows.length).toBe(20);
 
-        await dragAndDropRow({ api, source: '24', target: '27' });
+        await dragAndDropRow({ api, source: '24', target: '28' });
 
-        const lastEvent = rowDragMoveEvents[rowDragMoveEvents.length - 1];
-        expect(lastEvent).toBeTruthy();
+        const lastMoveEvent = rowDragMoveEvents[rowDragMoveEvents.length - 1];
+        expect(lastMoveEvent).toBeTruthy();
 
-        expect(lastEvent.node?.id).toBe('24');
-        expect(lastEvent.nodes.length).toBe(1);
-        expect(lastEvent.nodes[0].id).toBe('24');
+        expect(lastMoveEvent.node?.id).toBe('24');
+        expect(lastMoveEvent.nodes.length).toBe(1);
+        expect(lastMoveEvent.nodes[0].id).toBe('24');
 
-        expect(lastEvent.overNode?.id).toBe('27');
-        expect(lastEvent.overIndex).toBe(7);
+        expect(lastMoveEvent.overNode?.id).toBe('28');
+        expect(lastMoveEvent.overIndex).toBe(28);
     });
 });
