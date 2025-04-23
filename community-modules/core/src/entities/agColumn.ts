@@ -328,7 +328,7 @@ export class AgColumn<TValue = any> extends BeanStub<ColumnEventName> implements
             this.columnEventService.setFrameworkOverrides(this.frameworkOverrides);
             this.frameworkEventListenerService = new FrameworkEventListenerService(this.frameworkOverrides);
         }
-        const listener = this.frameworkEventListenerService?.wrap(userListener) ?? userListener;
+        const listener = this.frameworkEventListenerService?.wrap(eventType, userListener) ?? userListener;
 
         this.columnEventService.addEventListener(eventType, listener);
     }
@@ -337,7 +337,7 @@ export class AgColumn<TValue = any> extends BeanStub<ColumnEventName> implements
         eventType: T,
         userListener: (params: ColumnEvent<T>) => void
     ): void {
-        const listener = this.frameworkEventListenerService?.unwrap(userListener) ?? userListener;
+        const listener = this.frameworkEventListenerService?.unwrap(eventType, userListener) ?? userListener;
         this.columnEventService.removeEventListener(eventType, listener);
     }
 

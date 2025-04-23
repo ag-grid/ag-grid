@@ -1003,7 +1003,7 @@ export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IR
             this.frameworkEventListenerService = new FrameworkEventListenerService(this.beans.frameworkOverrides);
         }
 
-        const listener = this.frameworkEventListenerService?.wrap(userListener) ?? userListener;
+        const listener = this.frameworkEventListenerService?.wrap(eventType, userListener) ?? userListener;
         this.localEventService.addEventListener(eventType, listener);
     }
 
@@ -1016,7 +1016,7 @@ export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IR
             return;
         }
 
-        const listener = this.frameworkEventListenerService?.unwrap(userListener) ?? userListener;
+        const listener = this.frameworkEventListenerService?.unwrap(eventType, userListener) ?? userListener;
         this.localEventService.removeEventListener(eventType, listener);
         if (this.localEventService.noRegisteredListenersExist()) {
             this.localEventService = null;
