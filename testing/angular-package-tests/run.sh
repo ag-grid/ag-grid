@@ -31,6 +31,7 @@ function serve_fw {
 }
 
 function patch_fw {
+    echo ">>> angular css patch - noop"
 }
 
 # NOTE: This gets inlined when running in Docker for simplicity of execution.
