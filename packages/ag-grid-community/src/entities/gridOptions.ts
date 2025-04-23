@@ -162,6 +162,7 @@ import type { Column } from '../interfaces/iColumn';
 import type { AgGridCommon } from '../interfaces/iCommon';
 import type { IDatasource } from '../interfaces/iDatasource';
 import type { ExcelExportParams, ExcelStyle } from '../interfaces/iExcelCreator';
+import type { FilterEvaluatorGeneratorFunc } from '../interfaces/iFilter';
 import type { FindOptions } from '../interfaces/iFind';
 import type { HeaderPosition } from '../interfaces/iHeaderPosition';
 import type { ILoadingCellRendererParams } from '../interfaces/iLoadingCellRenderer';
@@ -662,6 +663,8 @@ export interface GridOptions<TData = any> {
      * @initial
      */
     enableFilterEvaluators?: boolean;
+    /** TODO */
+    filterEvaluators?: { [key: string]: FilterEvaluatorGeneratorFunc };
 
     // *** Integrated Charts *** //
     /**

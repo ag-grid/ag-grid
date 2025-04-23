@@ -69,7 +69,8 @@ export interface IFilterDef {
     filter?: any;
     /** Params to be passed to the filter component specified in `filter`. */
     filterParams?: any;
-    filterEvaluator?: FilterEvaluatorGeneratorFunc;
+    /** TODO */
+    filterEvaluator?: string | FilterEvaluatorGeneratorFunc;
 
     /**
      * The custom component to be used for rendering the floating filter.

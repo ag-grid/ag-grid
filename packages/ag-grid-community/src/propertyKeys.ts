@@ -104,6 +104,7 @@ const OBJECT_GRID_OPTIONS: KeysLike<object | HTMLElement>[] = [
     'autoSizeStrategy',
     'selectionColumnDef',
     'findOptions',
+    'filterEvaluators',
 ];
 
 // only used internally

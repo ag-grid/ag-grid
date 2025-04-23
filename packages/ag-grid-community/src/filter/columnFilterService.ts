@@ -937,11 +937,16 @@ export class ColumnFilterService
         filterDef: IFilterDef,
         defaultFilter: string
     ): { filterEvaluator: FilterEvaluatorGeneratorFunc; evaluatorName?: EvaluatorName } | undefined {
-        let filterEvaluator = this.gos.get('enableFilterEvaluators') ? filterDef.filterEvaluator : undefined;
+        const { gos, frameworkOverrides, registry } = this.beans;
+        const providedFilterEvaluator = gos.get('enableFilterEvaluators') ? filterDef.filterEvaluator : undefined;
+        let filterEvaluator =
+            typeof providedFilterEvaluator === 'string'
+                ? gos.get('filterEvaluators')?.[providedFilterEvaluator]
+                : providedFilterEvaluator;
         let evaluatorName: EvaluatorName | undefined;
         if (!filterEvaluator) {
             let filterName: string | undefined;
-            const { compName, jsComp, fwComp } = _getFilterCompKeys(this.beans.frameworkOverrides, filterDef);
+            const { compName, jsComp, fwComp } = _getFilterCompKeys(frameworkOverrides, filterDef);
             if (compName) {
                 filterName = compName;
             } else {
@@ -953,9 +958,7 @@ export class ColumnFilterService
             evaluatorName = this.evaluatorMap[filterName as keyof typeof this.evaluatorMap];
             if (evaluatorName) {
                 filterEvaluator = () =>
-                    this.createBean(
-                        this.beans.registry.createDynamicBean<FilterEvaluator & BeanStub>(evaluatorName!, true)!
-                    );
+                    this.createBean(registry.createDynamicBean<FilterEvaluator & BeanStub>(evaluatorName!, true)!);
             }
         }
         if (!filterEvaluator) {
