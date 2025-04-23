@@ -1,6 +1,10 @@
+import type { AgEventType } from '../eventTypes';
+import type { ColumnEventName } from '../interfaces/iColumn';
 import type { IFrameworkOverrides } from '../interfaces/iFrameworkOverrides';
+import type { RowNodeEventType } from '../interfaces/iRowNode';
 
-type EventTypeToWrap = string;
+type EventTypeToWrap = AgEventType | RowNodeEventType | ColumnEventName;
+
 export class FrameworkEventListenerService<
     TEventListener extends (e: any) => void,
     TGlobalEventListener extends (name: string, e: any) => void,
