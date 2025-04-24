@@ -11,7 +11,7 @@ import type { ColumnPinnedType, HeaderColumnId } from '../../interfaces/iColumn'
 import { _last } from '../../utils/array';
 import { _exists } from '../../utils/generic';
 import { _recursivelyCreateColumns, depthFirstOriginalTreeSearch } from '../columnFactoryUtils';
-import type { ColumnKeyCreator } from '../columnKeyCreator';
+import type { IColumnKeyCreator } from '../columnKeyCreator';
 import type { GroupInstanceIdCreator } from '../groupInstanceIdCreator';
 import { depthFirstAllColumnTreeSearch } from '../visibleColsService';
 
@@ -323,7 +323,7 @@ export class ColumnGroupService extends BeanStub implements NamedBean {
         colGroupDef: ColGroupDef,
         level: number,
         existingColumns: AgColumn[],
-        columnKeyCreator: ColumnKeyCreator,
+        columnKeyCreator: IColumnKeyCreator,
         existingGroups: AgProvidedColumnGroup[],
         source: ColumnEventType
     ): AgProvidedColumnGroup {
@@ -363,7 +363,7 @@ export class ColumnGroupService extends BeanStub implements NamedBean {
         unbalancedTree: (AgColumn | AgProvidedColumnGroup)[],
         currentDepth: number,
         columnDepth: number,
-        columnKeyCreator: ColumnKeyCreator
+        columnKeyCreator: IColumnKeyCreator
     ): (AgColumn | AgProvidedColumnGroup)[] {
         const result: (AgColumn | AgProvidedColumnGroup)[] = [];
 
@@ -486,7 +486,7 @@ export class ColumnGroupService extends BeanStub implements NamedBean {
         return tree;
     }
 
-    private createMergedColGroupDef(colGroupDef: ColGroupDef | null, groupId: string): ColGroupDef {
+    public createMergedColGroupDef(colGroupDef: ColGroupDef | null, groupId: string): ColGroupDef {
         const colGroupDefMerged: ColGroupDef = {} as ColGroupDef;
         const { gos } = this.beans;
         Object.assign(colGroupDefMerged, gos.get('defaultColGroupDef'));
