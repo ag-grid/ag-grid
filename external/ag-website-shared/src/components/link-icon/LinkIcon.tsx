@@ -5,8 +5,6 @@ import { type AllHTMLAttributes, useEffect, useRef, useState } from 'react';
 import ctaStyles from '../open-in-cta/OpenInCTA.module.scss';
 import linkStyles from './LinkIcon.module.scss';
 
-// TODO bring in styles from OpenIn CTA
-
 export function LinkIcon({
     className,
     exampleLink,
