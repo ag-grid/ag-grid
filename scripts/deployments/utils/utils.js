@@ -106,7 +106,11 @@ const getPackageInformation = () => {
     const packageInformation = {};
 
     packageDirectories.forEach((packageDirectory) => {
-        const projectPackageJson = readFile(`${packageDirectory}/package.json`);
+        const file = `${packageDirectory}/package.json`;
+        if(!fs.existsSync(file)) {
+            return;
+        }
+        const projectPackageJson = readFile(file);
 
         const dependencies = getAgDependencies(projectPackageJson);
         const peerDependencies = getAgPeerDependencies(projectPackageJson);

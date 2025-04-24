@@ -535,7 +535,7 @@ jobs:
                     "Test": "${{ needs.test.result }}",
                     "e2e": "${{ needs.e2e.result }}",
                     "Docs": "${{ needs.docs.result }}",
-                    "Bundle": "${{ needs.bundle_size.result }}"
+                    "Bundle": "${{ needs.bundle_size.result }}",
                     "FW_Pkg": "${{ needs.fw_pkg_test.result }}"
                 }
             }
