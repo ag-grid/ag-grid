@@ -1,3 +1,4 @@
+import type { BeanName } from '../../context/context';
 import type { CellFocusedEvent, CommonCellFocusParams } from '../../events';
 import type { Column } from '../../interfaces/iColumn';
 import type { CellCtrl } from '../../rendering/cell/cellCtrl';
@@ -6,15 +7,22 @@ import { BaseEditStrategy } from './baseEditStrategy';
 import { _resolveControllers } from './utils';
 
 export class SingleCellEditStrategy extends BaseEditStrategy {
-    beanName = 'cellEditMode' as const;
+    override beanName = 'cellEditMode' as BeanName | undefined;
 
     private rowId?: string | null;
     private colId?: string | null;
 
     public override shouldStopEditing(
         _rowCtrl?: RowCtrl | undefined,
-        _cellCtrl?: CellCtrl | undefined
+        _cellCtrl?: CellCtrl | undefined,
+        key?: string | null | undefined,
+        event?: KeyboardEvent | MouseEvent | null | undefined
     ): boolean | null {
+        const res = super.shouldStopEditing(_rowCtrl, _cellCtrl, key, event);
+        if (res) {
+            return res;
+        }
+
         return this.rowId !== _rowCtrl?.rowId || this.colId !== _cellCtrl?.column.getColId();
     }
 

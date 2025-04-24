@@ -12,13 +12,13 @@ import { _getTabIndex } from '../../utils/browser';
 
 type ResolveRowControllerType = {
     rowIndex?: number | null;
-    rowId?: string;
+    rowId?: string | null;
     rowCtrl?: RowCtrl | null;
     rowNode?: RowNode | null;
 };
 
 type ResolveCellControllerType = {
-    colId?: string;
+    colId?: string | null;
     column?: string | Column | AgColumn | null;
     cellCtrl?: CellCtrl | null;
 };
@@ -157,7 +157,7 @@ export function _createCellEditorParams(
     const { valueSvc, gos, editingSvc } = beans;
 
     return _addGridCommonParams(gos, {
-        value: valueSvc.getValueForDisplay(column, rowNode),
+        value: valueSvc.getValueForDisplay(column, rowNode)?.value,
         eventKey: key ?? null,
         column,
         colDef: column.getColDef(),

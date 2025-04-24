@@ -453,10 +453,10 @@ const CellComp = ({
                 if (!eGui.current) {
                     return;
                 }
-                cssClassManager.current!.addOrRemoveCssClass('ag-cell-value', !showCellWrapper);
-                cssClassManager.current!.addOrRemoveCssClass('ag-cell-inline-editing', !!editing && !isPopup);
-                cssClassManager.current!.addOrRemoveCssClass('ag-cell-popup-editing', !!editing && !!isPopup);
-                cssClassManager.current!.addOrRemoveCssClass('ag-cell-not-inline-editing', !editing || !!isPopup);
+                cssManager.current!.toggleCss('ag-cell-value', !showCellWrapper);
+                cssManager.current!.toggleCss('ag-cell-inline-editing', !!editing && !isPopup);
+                cssManager.current!.toggleCss('ag-cell-popup-editing', !!editing && !!isPopup);
+                cssManager.current!.toggleCss('ag-cell-not-inline-editing', !editing || !!isPopup);
             },
         };
 

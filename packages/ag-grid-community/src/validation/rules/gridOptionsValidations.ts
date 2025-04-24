@@ -486,9 +486,6 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => {
                 return null;
             },
         },
-        experimentalEditingModeV2: {
-            module: 'EditingCore',
-        },
     };
     const validations: Validations<GridOptions> = {};
     _BOOLEAN_GRID_OPTIONS.forEach((key) => {

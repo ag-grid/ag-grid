@@ -48,22 +48,22 @@ const gridOptions: GridOptions = {
     pinnedTopRowData: getPinnedTopData(),
     pinnedBottomRowData: getPinnedBottomData(),
     onRowEditingStarted: (event: RowEditingStartedEvent) => {
-        console.log('rowEditingStarted', event);
+        console.log('rowEditingStarted');
     },
     onRowEditingStopped: (event: RowEditingStoppedEvent) => {
-        console.log('rowEditingStopped', event);
+        console.log('rowEditingStopped');
     },
     onCellEditingStarted: (event: CellEditingStartedEvent) => {
-        console.log('cellEditingStarted', event);
+        console.log('cellEditingStarted');
     },
     onCellEditingStopped: (event: CellEditingStoppedEvent) => {
-        console.log('cellEditingStopped', event);
+        console.log('cellEditingStopped');
     },
     experimentalEditingModeV2: {
         strategy: 'rowEditMode',
     },
     onCellValueChanged: (event) => {
-        console.log('Cell value changed', event);
+        console.log('Cell value changed');
     },
 };
 
