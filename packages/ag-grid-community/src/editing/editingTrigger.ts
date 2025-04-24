@@ -15,8 +15,13 @@ export class EditingTrigger {
         rowCtrl?: RowCtrl | null,
         cellCtrl?: CellCtrl,
         key?: string | null,
-        event?: KeyboardEvent | MouseEvent | null
+        event?: KeyboardEvent | MouseEvent | null,
+        cellStartedEdit?: boolean | null
     ): boolean {
+        if (cellStartedEdit === true) {
+            // return true;
+        }
+
         if (this.editModel.isEditing() && event instanceof KeyboardEvent && event.key === KeyCode.TAB) {
             return true;
         }

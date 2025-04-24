@@ -5,6 +5,7 @@ import type {
     GridOptions,
     RowEditingStartedEvent,
     RowEditingStoppedEvent,
+    RowPinnedType,
 } from 'ag-grid-community';
 import {
     ClientSideRowModelModule,
@@ -47,19 +48,19 @@ const gridOptions: GridOptions = {
     pinnedTopRowData: getPinnedTopData(),
     pinnedBottomRowData: getPinnedBottomData(),
     onRowEditingStarted: (event: RowEditingStartedEvent) => {
-        console.log('never called - not doing row editing');
+        console.log('rowEditingStarted', event);
     },
     onRowEditingStopped: (event: RowEditingStoppedEvent) => {
-        console.log('never called - not doing row editing');
+        console.log('rowEditingStopped', event);
     },
     onCellEditingStarted: (event: CellEditingStartedEvent) => {
-        console.log('cellEditingStarted');
+        console.log('cellEditingStarted', event);
     },
     onCellEditingStopped: (event: CellEditingStoppedEvent) => {
-        console.log('cellEditingStopped');
+        console.log('cellEditingStopped', event);
     },
     experimentalEditingModeV2: {
-        strategy: 'cellEditMode',
+        strategy: 'rowEditMode',
     },
     onCellValueChanged: (event) => {
         console.log('Cell value changed', event);
@@ -76,6 +77,14 @@ function getPinnedTopData() {
             mood: '##',
             country: '##',
         },
+        {
+            firstName: '###',
+            lastName: '###',
+            gender: '###',
+            address: '###',
+            mood: '###',
+            country: '###',
+        },
     ];
 }
 
@@ -89,7 +98,27 @@ function getPinnedBottomData() {
             mood: '##',
             country: '##',
         },
+        {
+            firstName: '###',
+            lastName: '###',
+            gender: '###',
+            address: '###',
+            mood: '###',
+            country: '###',
+        },
     ];
+}
+
+function onBtStartEditing(key?: string, pinned?: RowPinnedType) {
+    gridApi!.setFocusedCell(1, 'lastName', pinned);
+
+    gridApi!.startEditingCell({
+        rowIndex: 1,
+        colKey: 'lastName',
+        // set to 'top', 'bottom' or undefined
+        rowPinned: pinned,
+        key: key,
+    });
 }
 
 function updateStrategy(strategy: string) {
@@ -108,11 +137,11 @@ function enableBatchEditing() {
     });
 }
 
-function commitBatchEditing() {
+function commitEdit() {
     gridApi!.commitEdits();
 }
 
-function cancelBatchEditing() {
+function cancelEdit() {
     gridApi!.cancelEdits();
 }
 

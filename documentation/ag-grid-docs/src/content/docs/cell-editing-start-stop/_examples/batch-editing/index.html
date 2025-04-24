@@ -2,9 +2,9 @@
     <div class="example-buttons">
         <div class="example-button-row">
             <div>Edit Strategy:</div>
-            <button onclick="updateStrategy('singleCellStrategy')">Single Cell (default)</button>
-            <button onclick="updateStrategy('fullRowStrategy')">Full Row</button>
-            <button onclick="updateStrategy('batchStrategy')">Batch Edit</button>
+            <button onclick="updateStrategy('cellEditMode')">Single Cell (default)</button>
+            <button onclick="updateStrategy('rowEditMode')">Full Row</button>
+            <button onclick="updateStrategy('batchEditMode')">Batch Edit</button>
         </div>
         <div class="example-button-row">
             <span>Edit Trigger: </span>
@@ -15,6 +15,7 @@
         </div>
         <div class="example-button-row">
             <span>API: </span>
+            <button onclick="onBtStartEditing(undefined)">edit (1)</button>
             <button onclick="enableBatchEdit()">Batch Edit</button>
             <button onclick="commitEdit()">Commit Batch</button>
             <button onclick="cancelEdit()">Cancel Batch</button>

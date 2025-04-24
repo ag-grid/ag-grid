@@ -3,22 +3,46 @@ import type { Column } from '../../interfaces/iColumn';
 import type { CellCtrl } from '../../rendering/cell/cellCtrl';
 import type { RowCtrl } from '../../rendering/row/rowCtrl';
 import { BaseEditStrategy } from './baseEditStrategy';
-import { _resolveControllers, _saveNewValue, _takeValueFromCellEditor } from './utils';
+import { _resolveControllers } from './utils';
 
 export class SingleCellEditStrategy extends BaseEditStrategy {
+    beanName = 'cellEditMode' as const;
+
+    private rowId?: string | null;
+    private colId?: string | null;
+
+    public override shouldStopEditing(
+        _rowCtrl?: RowCtrl | undefined,
+        _cellCtrl?: CellCtrl | undefined
+    ): boolean | null {
+        return this.rowId !== _rowCtrl?.rowId || this.colId !== _cellCtrl?.column.getColId();
+    }
+
     public startEditing(
         rowCtrl: RowCtrl,
         cellCtrl?: CellCtrl,
         key?: string | null | undefined,
-        event?: KeyboardEvent | MouseEvent | null | undefined
+        event?: KeyboardEvent | MouseEvent | null
     ): boolean {
-        console.warn('SingleCellEditStrategy: startEditing', rowCtrl?.rowId, cellCtrl?.column.colId, key, event);
-        if (this.isEditing()) {
+        const shouldStop = this.shouldStopEditing(rowCtrl, cellCtrl);
+        if (shouldStop) {
             this.stopAllEditing();
         }
 
+        console.warn(
+            'SingleCellEditStrategy: startEditing',
+            rowCtrl?.rowId,
+            cellCtrl?.column.colId,
+            key,
+            event,
+            shouldStop
+        );
+
         const rowId = rowCtrl.rowId!;
         const colId = cellCtrl?.column.getColId() ?? this.beans.visibleCols.getFirstColumn()!.getColId();
+
+        this.rowId = rowId;
+        this.colId = colId;
 
         this.editModel.startEditing(rowId, colId);
 
@@ -34,7 +58,10 @@ export class SingleCellEditStrategy extends BaseEditStrategy {
 
         this.editModel.stopEditing(rowCtrl?.rowId, cellCtrl?.column.colId);
 
-        this.updateEditor(rowCtrl, cellCtrl, false);
+        this.destroyEditor(rowCtrl, cellCtrl, false);
+
+        this.rowId = undefined;
+        this.colId = undefined;
 
         return true;
     }
@@ -48,37 +75,12 @@ export class SingleCellEditStrategy extends BaseEditStrategy {
 
         this.editModel.cancelEditing(rowCtrl?.rowId, cellCtrl?.column.colId);
 
-        this.updateEditor(rowCtrl, cellCtrl, true);
+        this.destroyEditor(rowCtrl, cellCtrl, true);
+
+        this.rowId = undefined;
+        this.colId = undefined;
 
         return true;
-    }
-
-    private updateEditor(rowCtrl?: RowCtrl | null, cellCtrl?: CellCtrl | null, cancel?: boolean): void {
-        const { comp, column, rowNode } = cellCtrl!;
-
-        const { newValue, newValueExists } = _takeValueFromCellEditor(false, comp);
-        const oldValue = this.beans.valueSvc.getValueForDisplay(column, rowNode)?.value;
-        let valueChanged = false;
-
-        if (!cancel && newValueExists) {
-            valueChanged = _saveNewValue(cellCtrl!, oldValue, newValue, rowNode, column);
-        }
-
-        comp.setEditDetails(); // passing nothing stops editing
-
-        cellCtrl?.updateAndFormatValue(false);
-        cellCtrl?.refreshCell({ forceRefresh: true, suppressFlash: true });
-
-        this.eventSvc.dispatchEvent({
-            ...cellCtrl!.createEvent(null, 'cellEditingStopped'),
-            oldValue,
-            newValue,
-            valueChanged,
-        });
-
-        rowCtrl?.forEachGui(undefined, (gui) => {
-            gui.rowComp.addOrRemoveCssClass('ag-row-editing', false);
-        });
     }
 
     protected override onCellFocusChanged(event: CellFocusedEvent<any, any>): void {
@@ -119,6 +121,10 @@ export class SingleCellEditStrategy extends BaseEditStrategy {
         }
         if (nextCell == null) {
             return false;
+        }
+
+        if (this.shouldStopEditing(nextCell.rowCtrl, nextCell)) {
+            this.stopAllEditing();
         }
 
         // only prevent default if we found a cell. so if user is on last cell and hits tab, then we default
