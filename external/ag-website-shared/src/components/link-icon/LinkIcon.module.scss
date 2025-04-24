@@ -2,6 +2,10 @@
 
 .linkIcon {
     position: relative;
+
+    svg {
+        pointer-events: none;
+    }
 }
 
 .docsHeaderIcon {
@@ -24,7 +28,6 @@
         bottom: unset;
         margin: 0;
         visibility: visible;
-        pointer-events: none;
     }
 
     &:hover,

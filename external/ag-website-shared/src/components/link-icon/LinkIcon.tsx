@@ -2,7 +2,8 @@ import { Icon } from '@ag-website-shared/components/icon/Icon';
 import classnames from 'classnames';
 import { type AllHTMLAttributes, useEffect, useRef, useState } from 'react';
 
-import styles from './LinkIcon.module.scss';
+import ctaStyles from '../open-in-cta/OpenInCTA.module.scss';
+import linkStyles from './LinkIcon.module.scss';
 
 // TODO bring in styles from OpenIn CTA
 
@@ -48,20 +49,17 @@ export function LinkIcon({
         };
     }, []);
 
+    const aStyles = exampleLink ? ctaStyles.cta : [linkStyles.docsHeaderIcon, 'button-secondary'];
+    const tooltipStyles = exampleLink ? ctaStyles.tooltip : linkStyles.tooltip;
+
     return (
         <a
             aria-label="Heading link"
             {...props}
-            className={classnames(
-                styles.linkIcon,
-                { [styles.docsHeaderIcon]: !exampleLink, ['button-secondary']: !exampleLink },
-                { [styles.exampleIcon]: exampleLink },
-                { [styles.active]: linkActive },
-                className
-            )}
+            className={classnames(linkStyles.linkIcon, aStyles, { [linkStyles.active]: linkActive }, className)}
             onClick={onClick}
         >
-            <span className={styles.tooltip}>{linkCopied ? 'Link copied!' : 'Copy'}</span>
+            <span className={tooltipStyles}>{linkCopied ? 'Link copied!' : 'Copy'}</span>
             <Icon name="link" />
         </a>
     );
