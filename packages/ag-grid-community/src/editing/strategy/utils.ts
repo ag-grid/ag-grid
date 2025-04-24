@@ -1,19 +1,25 @@
+import type { BeanStub } from '../../context/beanStub';
 import type { BeanCollection } from '../../context/context';
 import type { AgColumn } from '../../entities/agColumn';
 import type { RowNode } from '../../entities/rowNode';
+import { _isElementInThisGrid } from '../../gridBodyComp/mouseEventUtils';
+import { _addGridCommonParams } from '../../gridOptionsUtils';
+import type { ICellEditorParams } from '../../interfaces/iCellEditor';
 import type { Column } from '../../interfaces/iColumn';
 import type { CellCtrl, ICellComp } from '../../rendering/cell/cellCtrl';
 import type { RowCtrl } from '../../rendering/row/rowCtrl';
+import { _getTabIndex } from '../../utils/browser';
 
 type ResolveRowControllerType = {
     rowIndex?: number | null;
     rowId?: string;
     rowCtrl?: RowCtrl | null;
+    rowNode?: RowNode | null;
 };
 
 type ResolveCellControllerType = {
     colId?: string;
-    column?: string | Column | null;
+    column?: string | Column | AgColumn | null;
     cellCtrl?: CellCtrl | null;
 };
 
@@ -24,8 +30,19 @@ type ResolvedControllersType = {
     cellCtrl?: CellCtrl;
 };
 
+export function _getRowById(beans: BeanCollection, rowId: string): RowNode | undefined {
+    const { rowModel, pinnedRowModel } = beans;
+
+    return (
+        rowModel?.getRowNode(rowId) ??
+        pinnedRowModel?.getPinnedRowById(rowId, 'top') ??
+        pinnedRowModel?.getPinnedRowById(rowId, 'bottom')
+    );
+}
+
 export function _resolveRowController(beans: BeanCollection, inputs: ResolveRowControllerType): RowCtrl | undefined {
     const { rowIndex, rowId, rowCtrl } = inputs;
+    let { rowNode } = inputs;
 
     if (rowCtrl) {
         return rowCtrl;
@@ -33,7 +50,7 @@ export function _resolveRowController(beans: BeanCollection, inputs: ResolveRowC
 
     const { rowModel, rowRenderer } = beans;
 
-    const rowNode = rowId ? rowModel.getRowNode(rowId) : rowModel.getRow(rowIndex!); // TODO: what about pinned rows??
+    rowNode ??= rowId ? rowModel.getRowNode(rowId) : rowModel.getRow(rowIndex!); // TODO: what about pinned rows??
 
     if (!rowNode) {
         return undefined;
@@ -124,4 +141,75 @@ export function _saveNewValue(
     cellCtrl.suppressRefreshCell = false;
 
     return valueChanged;
+}
+
+export function _createCellEditorParams(
+    beans: BeanCollection,
+    cellCtrl: CellCtrl,
+    key?: string | null,
+    cellStartedEdit?: boolean | null
+): ICellEditorParams {
+    const {
+        column,
+        rowNode,
+        cellPosition: { rowIndex },
+    } = cellCtrl;
+    const { valueSvc, gos, editingSvc } = beans;
+
+    return _addGridCommonParams(gos, {
+        value: valueSvc.getValueForDisplay(column, rowNode),
+        eventKey: key ?? null,
+        column,
+        colDef: column.getColDef(),
+        rowIndex,
+        node: rowNode,
+        data: rowNode.data,
+        cellStartedEdit: cellStartedEdit ?? false,
+        onKeyDown: cellCtrl.onKeyDown.bind(cellCtrl),
+        stopEditing: (_suppressNavigateAfterEdit) => editingSvc!.stopEditing(cellCtrl.rowCtrl, cellCtrl),
+        eGridCell: cellCtrl.eGui,
+        parseValue: (newValue: any) => valueSvc.parseValue(column, rowNode, newValue, cellCtrl.value),
+        formatValue: cellCtrl.formatValue.bind(cellCtrl),
+    });
+}
+
+export function _addStopEditingWhenGridLosesFocus(
+    bean: BeanStub,
+    beans: BeanCollection,
+    viewports: HTMLElement[]
+): void {
+    if (!beans.gos.get('stopEditingWhenCellsLoseFocus')) {
+        return;
+    }
+
+    const focusOutListener = (event: FocusEvent): void => {
+        // this is the element the focus is moving to
+        const elementWithFocus = event.relatedTarget as HTMLElement;
+
+        if (_getTabIndex(elementWithFocus) === null) {
+            beans.editingSvc?.stopAllEditing();
+            return;
+        }
+
+        let clickInsideGrid =
+            // see if click came from inside the viewports
+            viewports.some((viewport) => viewport.contains(elementWithFocus)) &&
+            // and also that it's not from a detail grid
+            _isElementInThisGrid(beans.gos, elementWithFocus);
+
+        if (!clickInsideGrid) {
+            const popupSvc = beans.popupSvc;
+
+            clickInsideGrid =
+                !!popupSvc &&
+                (popupSvc.getActivePopups().some((popup) => popup.contains(elementWithFocus)) ||
+                    popupSvc.isElementWithinCustomPopup(elementWithFocus));
+        }
+
+        if (!clickInsideGrid) {
+            beans.editingSvc?.stopAllEditing();
+        }
+    };
+
+    viewports.forEach((viewport) => bean.addManagedElementListeners(viewport, { focusout: focusOutListener }));
 }

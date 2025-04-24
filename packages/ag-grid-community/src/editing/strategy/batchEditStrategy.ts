@@ -4,6 +4,12 @@ import type { RowCtrl } from '../../rendering/row/rowCtrl';
 import { BaseEditStrategy } from './baseEditStrategy';
 
 export class BatchEditStrategy extends BaseEditStrategy {
+    beanName = 'batchEditMode' as const;
+
+    public override shouldStopEditing(rowCtrl?: RowCtrl | undefined, cellCtrl?: CellCtrl | undefined): boolean | null {
+        return false;
+    }
+
     protected override onCellFocusChanged(event: CellFocusedEvent<any, any>): void {
         // NOP
     }

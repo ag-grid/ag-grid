@@ -5,17 +5,30 @@ import { BaseEditStrategy } from './baseEditStrategy';
 import { _resolveControllers } from './utils';
 
 export class FullRowEditStrategy extends BaseEditStrategy {
-    public setEditing(rowCtrl: RowCtrl): void {
+    beanName = 'rowEditMode' as const;
+    private rowId?: string | null;
+
+    public setEditing(rowCtrl: RowCtrl, editing: boolean): void {
         console.warn('FullRowEditStrategy: setEditing');
-        const editing = this.beans.editingSvc?.isEditing(rowCtrl) ?? false;
 
         rowCtrl.forEachGui(undefined, (gui) => gui.rowComp.addOrRemoveCssClass('ag-row-editing', editing));
+
+        if (editing) {
+            this.rowId = rowCtrl.rowId;
+        } else {
+            this.rowId = undefined;
+        }
 
         const event = editing
             ? rowCtrl.createRowEvent('rowEditingStarted')
             : rowCtrl.createRowEvent('rowEditingStopped');
 
         this.eventSvc.dispatchEvent(event);
+    }
+
+    public override shouldStopEditing(rowCtrl?: RowCtrl | undefined, _cellCtrl?: CellCtrl | undefined): boolean | null {
+        // stop editing if we've changed rows
+        return rowCtrl?.rowId !== this.rowId;
     }
 
     public startEditing(
@@ -26,43 +39,52 @@ export class FullRowEditStrategy extends BaseEditStrategy {
     ): boolean {
         console.warn('FullRowEditStrategy: startEditing', rowCtrl, cellCtrl, key, event);
 
-        if (!cellCtrl) {
-            // enable all cells in row
-            const cellCtrls = rowCtrl.getAllCellCtrls();
-            cellCtrls.forEach((cellCtrl) => {
-                this.startEditing(rowCtrl, cellCtrl, key, event);
-            });
-        } else {
-            this.editModel.startEditing(rowCtrl.rowId!, cellCtrl.column.colId);
+        if (this.shouldStopEditing(rowCtrl)) {
+            this.stopAllEditing();
         }
 
-        this.setEditing(rowCtrl);
+        this.setEditing(rowCtrl, true);
+
+        const cellCtrls = rowCtrl.getAllCellCtrls();
+        cellCtrls.forEach((cellCtrl) => {
+            this.editModel.startEditing(rowCtrl.rowId!, cellCtrl.column.colId);
+        });
 
         return true;
     }
 
     public cancelEditing(rowCtrl?: RowCtrl | null, cellCtrl?: CellCtrl | null): boolean {
         console.warn('FullRowEditStrategy: cancelEditing', rowCtrl, cellCtrl);
+
+        const edits = this.editModel.getEditingCellPositions();
+
         if (rowCtrl) {
             this.editModel.cancelEditing(rowCtrl!.rowId!, cellCtrl?.column.colId);
         } else {
             this.editModel.cancelEditing();
         }
 
-        this.setEditing(rowCtrl!);
+        this.setEditing(rowCtrl!, false);
+
+        this.destroyEditors(edits, true);
 
         return true;
     }
 
     public stopEditing(rowCtrl?: RowCtrl | null, cellCtrl?: CellCtrl | null): boolean {
         console.warn('FullRowEditStrategy: stopEditing', rowCtrl, cellCtrl);
+
+        const edits = this.editModel.getEditingCellPositions();
+
         if (rowCtrl) {
             this.editModel.stopEditing(rowCtrl!.rowId!, cellCtrl?.column.colId);
         } else {
             this.editModel.stopEditing();
         }
 
-        this.setEditing(rowCtrl!);
+        this.setEditing(rowCtrl!, false);
+
+        this.destroyEditors(edits, false);
 
         return true;
     }

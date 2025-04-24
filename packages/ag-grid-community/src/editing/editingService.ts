@@ -1,20 +1,18 @@
-import { _getCellEditorDetails } from '../components/framework/userCompUtils';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
+import type { BeanCollection } from '../context/context';
 import { PopupEditorWrapper } from '../edit/cellEditors/popupEditorWrapper';
 import type { AgColumn } from '../entities/agColumn';
-import { _isElementInThisGrid } from '../gridBodyComp/mouseEventUtils';
-import { _addGridCommonParams } from '../gridOptionsUtils';
+import type { RowNode } from '../entities/rowNode';
 import type { DefaultProvidedCellEditorParams, ICellEditorParams } from '../interfaces/iCellEditor';
 import type { IRowNode } from '../interfaces/iRowNode';
 import type { CellPosition } from '../main-umd-noStyles';
 import { CellCtrl } from '../rendering/cell/cellCtrl';
 import type { RowCtrl } from '../rendering/row/rowCtrl';
-import { _getTabIndex } from '../utils/browser';
 import { EditingTrigger } from './editingTrigger';
 import { GridEditingModel } from './model/gridEditingModel';
 import type { IEditStrategy } from './strategy/iEditStrategy';
-import { _resolveControllers } from './strategy/utils';
+import { _addStopEditingWhenGridLosesFocus, _resolveControllers } from './strategy/utils';
 
 export class EditingService extends BeanStub implements NamedBean {
     beanName = 'editingSvc' as const;
@@ -37,10 +35,12 @@ export class EditingService extends BeanStub implements NamedBean {
             if (pStrategy?.beanName !== this.editStrategy?.beanName) {
                 this.editModel?.destroy();
                 this.editModel = new GridEditingModel(this.beans);
+
+                console.warn('EditingService: strategy changed to', this.editStrategy?.beanName);
             }
         });
 
-        this.createEditTrigger();
+        this.editTrigger = new EditingTrigger(this.beans, this.editModel!);
     }
 
     private createEditStrategy(): IEditStrategy {
@@ -52,16 +52,12 @@ export class EditingService extends BeanStub implements NamedBean {
             if (editStrategy.beanName === strategyName) {
                 return editStrategy;
             }
-            editStrategy.destroy?.();
+            this.destroyEditStrategy();
         }
 
         return (this.editStrategy = this.createOptionalManagedBean(
             beans.registry.createDynamicBean<IEditStrategy>(strategyName, true, this.editModel)
         )!);
-    }
-
-    private createEditTrigger(): EditingTrigger {
-        return new EditingTrigger(this.beans, this.editModel!);
     }
 
     private destroyEditStrategy(): void {
@@ -81,7 +77,7 @@ export class EditingService extends BeanStub implements NamedBean {
         rowCtrl: RowCtrl,
         cellCtrl: CellCtrl,
         key: string | null = null,
-        cellStartedEdit = true,
+        cellStartedEdit: boolean | null = true,
         event: KeyboardEvent | MouseEvent | null = null
     ): boolean {
         if (!cellCtrl.isCellEditable()) {
@@ -89,7 +85,6 @@ export class EditingService extends BeanStub implements NamedBean {
         }
 
         this.editStrategy = this.createEditStrategy();
-        this.editTrigger = this.createEditTrigger();
 
         // because of async in React, the cellComp may not be set yet, if no cellComp then we are
         // yet to initialise the cell, so we re-schedule this operation for when celLComp is attached
@@ -100,27 +95,19 @@ export class EditingService extends BeanStub implements NamedBean {
             return true;
         }
 
-        if (!this.editTrigger?.shouldStartEditing?.(rowCtrl, cellCtrl, key, event)) {
+        if (!this.editTrigger?.shouldStartEditing?.(rowCtrl, cellCtrl, key, event, cellStartedEdit)) {
             return false;
+        }
+
+        if (this.isEditing(rowCtrl, cellCtrl)) {
+            return true;
         }
 
         console.warn('EditingService: startEditing');
 
-        const editorParams = this.createCellEditorParams(cellCtrl, key, cellStartedEdit);
-        const colDef = cellCtrl.column.getColDef();
-        const compDetails = _getCellEditorDetails(this.beans.userCompFactory, colDef, editorParams);
+        this.editStrategy!.startEditing?.(rowCtrl, cellCtrl, key, event);
 
-        // if cellEditorSelector was used, we give preference to popup and popupPosition from the selector
-        const popup = compDetails?.popupFromSelector != null ? compDetails.popupFromSelector : !!colDef.cellEditorPopup;
-        const position: 'over' | 'under' | undefined =
-            compDetails?.popupPositionFromSelector != null
-                ? compDetails.popupPositionFromSelector
-                : colDef.cellEditorPopupPosition;
-
-        cellCtrl.editCompDetails = compDetails;
-        cellCtrl.comp.setEditDetails(compDetails, popup, position, this.gos.get('reactiveCustomComponents'));
-
-        this.editStrategy!.startEditing?.(rowCtrl, cellCtrl, key, event) ?? true;
+        const compDetails = this.editStrategy!.setupEditors(rowCtrl, cellCtrl, key, cellStartedEdit);
 
         this.eventSvc.dispatchEvent(cellCtrl.createEvent(event, 'cellEditingStarted'));
         event?.preventDefault();
@@ -146,14 +133,12 @@ export class EditingService extends BeanStub implements NamedBean {
 
         cellCtrl.onEditorAttachedFuncs = [];
 
-        this.editTrigger = this.createEditTrigger();
-
-        if (this.editTrigger.shouldStopEditing?.(rowCtrl, cellCtrl, key, event)) {
+        if (this.editTrigger!.shouldStopEditing?.(rowCtrl, cellCtrl, key, event)) {
             console.warn('EditingService: stopEditing');
             return this.editStrategy?.stopEditing?.(rowCtrl, cellCtrl) ?? false;
         }
 
-        if (this.editTrigger.shouldCancelEditing?.(rowCtrl, cellCtrl, key, event)) {
+        if (this.editTrigger!.shouldCancelEditing?.(rowCtrl, cellCtrl, key, event)) {
             console.warn('EditingService: cancelEditing');
             return this.editStrategy?.cancelEditing?.(rowCtrl, cellCtrl) ?? false;
         }
@@ -196,34 +181,6 @@ export class EditingService extends BeanStub implements NamedBean {
         return column.isColumnFunc(rowNode, column.colDef.editable);
     }
 
-    private createCellEditorParams(
-        cellCtrl: CellCtrl,
-        key: string | null,
-        cellStartedEdit: boolean
-    ): ICellEditorParams {
-        const {
-            column,
-            rowNode,
-            cellPosition: { rowIndex },
-        } = cellCtrl;
-        const { valueSvc, gos } = this.beans;
-        return _addGridCommonParams(gos, {
-            value: valueSvc.getValueForDisplay(column, rowNode),
-            eventKey: key,
-            column,
-            colDef: column.getColDef(),
-            rowIndex,
-            node: rowNode,
-            data: rowNode.data,
-            cellStartedEdit: cellStartedEdit,
-            onKeyDown: cellCtrl.onKeyDown.bind(cellCtrl),
-            stopEditing: (suppressNavigateAfterEdit) => this.stopEditing.bind(this, cellCtrl.rowCtrl, cellCtrl),
-            eGridCell: cellCtrl.eGui,
-            parseValue: (newValue: any) => valueSvc.parseValue(column, rowNode, newValue, cellCtrl.value),
-            formatValue: cellCtrl.formatValue.bind(cellCtrl),
-        });
-    }
-
     moveToNextCell(previous: CellCtrl, backwards: boolean, event?: KeyboardEvent): boolean | null {
         let editing =
             previous instanceof CellCtrl ? this.isEditing(previous.rowCtrl, previous) : this.isEditing(previous);
@@ -264,44 +221,24 @@ export class EditingService extends BeanStub implements NamedBean {
     }
 
     public addStopEditingWhenGridLosesFocus(viewports: HTMLElement[]): void {
-        if (!this.gos.get('stopEditingWhenCellsLoseFocus')) {
-            return;
-        }
-
-        const focusOutListener = (event: FocusEvent): void => {
-            // this is the element the focus is moving to
-            const elementWithFocus = event.relatedTarget as HTMLElement;
-
-            if (_getTabIndex(elementWithFocus) === null) {
-                this.stopAllEditing();
-                return;
-            }
-
-            let clickInsideGrid =
-                // see if click came from inside the viewports
-                viewports.some((viewport) => viewport.contains(elementWithFocus)) &&
-                // and also that it's not from a detail grid
-                _isElementInThisGrid(this.gos, elementWithFocus);
-
-            if (!clickInsideGrid) {
-                const popupSvc = this.beans.popupSvc;
-
-                clickInsideGrid =
-                    !!popupSvc &&
-                    (popupSvc.getActivePopups().some((popup) => popup.contains(elementWithFocus)) ||
-                        popupSvc.isElementWithinCustomPopup(elementWithFocus));
-            }
-
-            if (!clickInsideGrid) {
-                this.stopAllEditing();
-            }
-        };
-
-        viewports.forEach((viewport) => this.addManagedElementListeners(viewport, { focusout: focusOutListener }));
+        // TODO: find a better place for this
+        _addStopEditingWhenGridLosesFocus(this, this.beans, viewports);
     }
 
     public createPopupEditorWrapper(params: ICellEditorParams): PopupEditorWrapper {
+        // TODO: find a better place for this
         return new PopupEditorWrapper(params);
+    }
+
+    setDataValue(rowNode: RowNode, colKey: string | AgColumn<any>, newValue: any): boolean | null {
+        const { rowCtrl, cellCtrl } = _resolveControllers(this.beans, { rowNode, column: colKey });
+
+        if (rowCtrl && cellCtrl && this.isEditing(rowCtrl, cellCtrl)) {
+            this.editModel?.getEditModels(rowCtrl?.rowId, cellCtrl.column.getColId())?.[0].updateValue(newValue);
+            return true;
+        }
+
+        return null;
     }
 
     public override destroy(): void {

@@ -2,6 +2,7 @@ import type { BeanCollection } from '../../context/context';
 import type { CellPosition } from '../../interfaces/iCellPosition';
 import type { CellCtrl } from '../../rendering/cell/cellCtrl';
 import type { RowCtrl } from '../../rendering/row/rowCtrl';
+import { _getRowById } from '../strategy/utils';
 import type { CellEditingModel } from './cellEditingModel';
 import { RowEditingModel } from './rowEditingModel';
 
@@ -21,13 +22,13 @@ export class GridEditingModel {
     }
 
     public removeEditModel(rowId: string, columnId?: string): void {
-        console.warn('GridEditingModel: removeEditModel', rowId, columnId);
-
         const rowModel = this.rowModels.get(rowId);
 
         if (!rowModel) {
             return;
         }
+
+        console.warn('GridEditingModel: removeEditModel', rowId, columnId);
 
         if (!columnId) {
             rowModel.destroy();
@@ -42,7 +43,7 @@ export class GridEditingModel {
         }
     }
 
-    public getEditModels(rowId?: string, columnId?: string): CellEditingModel[] {
+    public getEditModels(rowId?: string | null, columnId?: string | null): CellEditingModel[] {
         const models: CellEditingModel[] = [];
         if (!rowId) {
             this.rowModels.forEach((rowModel) => {
@@ -70,7 +71,7 @@ export class GridEditingModel {
         const positions: CellPosition[] = [];
 
         this.rowModels.forEach((rowModel, rowId) => {
-            const rowNode = this.beans.rowModel.getRowNode(rowId)!;
+            const rowNode = _getRowById(this.beans, rowId)!;
             rowModel.getEditModels().forEach(({ columnId }) =>
                 positions.push({
                     column: this.beans.colModel.getCol(columnId)!,
@@ -101,11 +102,11 @@ export class GridEditingModel {
     }
 
     public stopEditing(rowId?: string | null, colId?: string | null): void {
-        console.warn('GridEditingModel: stopEditing', rowId, colId);
-
         if (!this._isEditing(rowId, colId)) {
             return;
         }
+
+        console.warn('GridEditingModel: stopEditing', rowId, colId);
 
         if (rowId) {
             const rowModel = this.rowModels.get(rowId);
@@ -131,11 +132,11 @@ export class GridEditingModel {
     }
 
     public cancelEditing(rowId?: string | null, colId?: string | null): void {
-        console.warn('GridEditingModel: cancelEditing', rowId, colId);
-
         if (!this._isEditing(rowId, colId)) {
             return;
         }
+
+        console.warn('GridEditingModel: cancelEditing', rowId, colId);
 
         if (rowId) {
             const rowModel = this.rowModels.get(rowId);

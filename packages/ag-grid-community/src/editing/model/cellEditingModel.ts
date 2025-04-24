@@ -40,6 +40,11 @@ export class CellEditingModel {
         return this._newValue;
     }
 
+    public updateValue(newValue: any): void {
+        this.oldValue = this.newValue;
+        this.newValue = newValue;
+    }
+
     constructor(rowId: string, columnId: string) {
         this.rowId = rowId;
         this.columnId = columnId;
