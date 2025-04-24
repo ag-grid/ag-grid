@@ -92,7 +92,7 @@ export function startEditingCell(beans: BeanCollection, params: StartEditingCell
             preventScrollOnBrowserFocus: true,
         });
     }
-    editingSvc?.startEditing(cell.rowCtrl, cell, params.key);
+    editingSvc?.startEditing(cell.rowCtrl, cell, params.key, true, undefined, 'api');
 }
 
 export function updateEditStrategy(beans: BeanCollection, editStrategy: string): void {

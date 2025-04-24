@@ -1,6 +1,6 @@
+import { _getCellEditorDetails } from '../components/framework/userCompUtils';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
-import type { BeanCollection } from '../context/context';
 import { PopupEditorWrapper } from '../edit/cellEditors/popupEditorWrapper';
 import type { AgColumn } from '../entities/agColumn';
 import type { RowNode } from '../entities/rowNode';
@@ -9,16 +9,14 @@ import type { IRowNode } from '../interfaces/iRowNode';
 import type { CellPosition } from '../main-umd-noStyles';
 import { CellCtrl } from '../rendering/cell/cellCtrl';
 import type { RowCtrl } from '../rendering/row/rowCtrl';
-import { EditingTrigger } from './editingTrigger';
 import { GridEditingModel } from './model/gridEditingModel';
-import type { IEditStrategy } from './strategy/iEditStrategy';
-import { _addStopEditingWhenGridLosesFocus, _resolveControllers } from './strategy/utils';
+import type { BaseEditStrategy } from './strategy/baseEditStrategy';
+import { _addStopEditingWhenGridLosesFocus, _createCellEditorParams, _resolveControllers } from './strategy/utils';
 
 export class EditingService extends BeanStub implements NamedBean {
     beanName = 'editingSvc' as const;
     private editModel?: GridEditingModel;
-    private editStrategy?: IEditStrategy;
-    private editTrigger?: EditingTrigger;
+    public editStrategy?: BaseEditStrategy;
 
     postConstruct(): void {
         this.editModel = new GridEditingModel(this.beans);
@@ -39,11 +37,9 @@ export class EditingService extends BeanStub implements NamedBean {
                 console.warn('EditingService: strategy changed to', this.editStrategy?.beanName);
             }
         });
-
-        this.editTrigger = new EditingTrigger(this.beans, this.editModel!);
     }
 
-    private createEditStrategy(): IEditStrategy {
+    private createEditStrategy(): BaseEditStrategy {
         const { beans, gos, editStrategy } = this;
 
         const strategyName: any = gos.get('experimentalEditingModeV2')?.strategy ?? 'cellEditMode';
@@ -56,7 +52,7 @@ export class EditingService extends BeanStub implements NamedBean {
         }
 
         return (this.editStrategy = this.createOptionalManagedBean(
-            beans.registry.createDynamicBean<IEditStrategy>(strategyName, true, this.editModel)
+            beans.registry.createDynamicBean<BaseEditStrategy>(strategyName, true, this.editModel)
         )!);
     }
 
@@ -66,6 +62,35 @@ export class EditingService extends BeanStub implements NamedBean {
         }
         this.destroyBean(this.editStrategy);
         this.editStrategy = undefined;
+    }
+
+    shouldStartEditing(
+        rowCtrl?: RowCtrl | null,
+        cellCtrl?: CellCtrl,
+        key?: string | null,
+        event?: KeyboardEvent | MouseEvent | null,
+        cellStartedEdit?: boolean | null,
+        source: 'api' | 'ui' = 'ui'
+    ): boolean {
+        return this.editStrategy?.shouldStartEditing?.(rowCtrl, cellCtrl, key, event, cellStartedEdit, source) ?? false;
+    }
+
+    shouldStopEditing(
+        rowCtrl?: RowCtrl | null,
+        cellCtrl?: CellCtrl | null,
+        key?: string | null | undefined,
+        event?: KeyboardEvent | MouseEvent | null | undefined
+    ): boolean {
+        return this.editStrategy?.shouldStopEditing?.(rowCtrl, cellCtrl, key, event) ?? false;
+    }
+
+    shouldCancelEditing(
+        rowCtrl?: RowCtrl | null,
+        cellCtrl?: CellCtrl | null,
+        key?: string | null | undefined,
+        event?: KeyboardEvent | MouseEvent | null | undefined
+    ): boolean {
+        return this.editStrategy?.shouldCancelEditing?.(rowCtrl, cellCtrl, key, event) ?? false;
     }
 
     public isEditing(rowCtrl?: RowCtrl | null, cellCtrl?: CellCtrl | null): boolean {
@@ -78,7 +103,8 @@ export class EditingService extends BeanStub implements NamedBean {
         cellCtrl: CellCtrl,
         key: string | null = null,
         cellStartedEdit: boolean | null = true,
-        event: KeyboardEvent | MouseEvent | null = null
+        event: KeyboardEvent | MouseEvent | null = null,
+        source: 'api' | 'ui' = 'ui'
     ): boolean {
         if (!cellCtrl.isCellEditable()) {
             return false;
@@ -95,7 +121,7 @@ export class EditingService extends BeanStub implements NamedBean {
             return true;
         }
 
-        if (!this.editTrigger?.shouldStartEditing?.(rowCtrl, cellCtrl, key, event, cellStartedEdit)) {
+        if (!this.shouldStartEditing?.(rowCtrl, cellCtrl, key, event, cellStartedEdit, source)) {
             return false;
         }
 
@@ -127,19 +153,19 @@ export class EditingService extends BeanStub implements NamedBean {
         event?: KeyboardEvent | MouseEvent | null,
         cancel: boolean = false
     ): boolean {
-        if (!this.isEditing(rowCtrl, cellCtrl) || !cellCtrl) {
+        if (!this.isEditing()) {
             return false;
         }
 
-        cellCtrl.onEditorAttachedFuncs = [];
-
-        if (this.editTrigger!.shouldStopEditing?.(rowCtrl, cellCtrl, key, event)) {
-            console.warn('EditingService: stopEditing');
-            return this.editStrategy?.stopEditing?.(rowCtrl, cellCtrl) ?? false;
+        if (cellCtrl) {
+            cellCtrl.onEditorAttachedFuncs = [];
         }
 
-        if (this.editTrigger!.shouldCancelEditing?.(rowCtrl, cellCtrl, key, event)) {
-            console.warn('EditingService: cancelEditing');
+        this.editStrategy = this.createEditStrategy();
+
+        if (!cancel && this.shouldStopEditing?.(rowCtrl, cellCtrl, key, event)) {
+            return this.editStrategy?.stopEditing?.(rowCtrl, cellCtrl) ?? false;
+        } else if (cancel && this.shouldCancelEditing?.(rowCtrl, cellCtrl, key, event)) {
             return this.editStrategy?.cancelEditing?.(rowCtrl, cellCtrl) ?? false;
         }
 
@@ -239,6 +265,17 @@ export class EditingService extends BeanStub implements NamedBean {
         }
 
         return null;
+    }
+
+    public handleColDefChanged(cellCtrl: CellCtrl): void {
+        const cellEditor = cellCtrl.comp?.getCellEditor();
+        if (cellEditor?.refresh) {
+            const { eventKey, cellStartedEdit } = cellCtrl.editCompDetails!.params;
+            const editorParams = _createCellEditorParams(this.beans, cellCtrl, eventKey, cellStartedEdit);
+            const colDef = cellCtrl.column.getColDef();
+            const compDetails = _getCellEditorDetails(this.beans.userCompFactory, colDef, editorParams);
+            cellEditor.refresh(compDetails!.params);
+        }
     }
 
     public override destroy(): void {

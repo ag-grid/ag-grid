@@ -448,9 +448,14 @@ export class CellCtrl extends BeanStub {
     // + rowCtrl: event dataChanged {suppressFlash: !update, newData: !update}
     // + rowCtrl: api refreshCells() {animate: true/false}
     // + rowRenderer: api softRefreshView() {}
-    public refreshCell(params?: { suppressFlash?: boolean; newData?: boolean; forceRefresh?: boolean }) {
+    public refreshCell(params?: {
+        suppressFlash?: boolean;
+        newData?: boolean;
+        forceRefresh?: boolean;
+        editing?: boolean;
+    }) {
         // if we are in the middle of 'stopEditing', then we don't refresh here, as refresh gets called explicitly
-        if (this.suppressRefreshCell || this.beans.editingSvc?.isEditing(this.rowCtrl, this)) {
+        if (this.suppressRefreshCell) {
             return;
         }
 
@@ -499,8 +504,9 @@ export class CellCtrl extends BeanStub {
 
         this.tooltipFeature?.refreshTooltip();
 
-        const editing = this.beans.editingSvc?.isEditing(this.rowCtrl, this) ?? false;
-        this.comp.refreshEditStyles(editing, false);
+        if (params?.editing != undefined) {
+            this.comp.refreshEditStyles(params.editing, false);
+        }
 
         // we do cellClassRules even if the value has not changed, so that users who have rules that
         // look at other parts of the row (where the other part of the row might of changed) will work.
@@ -818,47 +824,11 @@ export class CellCtrl extends BeanStub {
 
         this.setWrapText();
 
-        if (!this.beans.editingSvc?.isEditing(this.rowCtrl, this)) {
-            this.refreshOrDestroyCell({ forceRefresh: true, suppressFlash: true });
+        if (this.beans.editingSvc?.isEditing(this.rowCtrl, this)) {
+            this.beans.editingSvc?.handleColDefChanged(this);
         } else {
-            this.handleColDefChanged(this);
+            this.refreshOrDestroyCell({ forceRefresh: true, suppressFlash: true });
         }
-    }
-
-    public handleColDefChanged(cellCtrl: CellCtrl): void {
-        const cellEditor = cellCtrl.comp?.getCellEditor();
-        if (cellEditor?.refresh) {
-            const { eventKey, cellStartedEdit } = cellCtrl.editCompDetails!.params;
-            const editorParams = this.createCellEditorParams(cellCtrl, eventKey, cellStartedEdit);
-            const colDef = cellCtrl.column.getColDef();
-            const compDetails = _getCellEditorDetails(this.beans.userCompFactory, colDef, editorParams);
-            cellEditor.refresh(compDetails!.params);
-        }
-    }
-
-    public createCellEditorParams(cellCtrl: CellCtrl, key: string | null, cellStartedEdit: boolean): ICellEditorParams {
-        const {
-            column,
-            rowNode,
-            cellPosition: { rowIndex },
-        } = cellCtrl;
-        const { valueSvc, gos, editingSvc } = this.beans;
-        return _addGridCommonParams(gos, {
-            value: valueSvc.getValueForDisplay(column, rowNode),
-            eventKey: key,
-            column,
-            colDef: column.getColDef(),
-            rowIndex,
-            node: rowNode,
-            data: rowNode.data,
-            cellStartedEdit: cellStartedEdit,
-            onKeyDown: cellCtrl.onKeyDown.bind(cellCtrl),
-            stopEditing: (suppressNavigateAfterEdit?: boolean | undefined) =>
-                editingSvc!.stopEditing?.bind(this, cellCtrl.rowCtrl, cellCtrl),
-            eGridCell: cellCtrl.eGui,
-            parseValue: (newValue: any) => valueSvc.parseValue(column, rowNode, newValue, cellCtrl.value),
-            formatValue: cellCtrl.formatValue.bind(cellCtrl),
-        });
     }
 
     private setWrapText(): void {

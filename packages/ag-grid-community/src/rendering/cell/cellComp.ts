@@ -153,6 +153,7 @@ export class CellComp extends Component {
 
         // if display template has changed, means any previous Cell Renderer is in the wrong location
         const controlWrapperChanged = this.refreshWrapper(false);
+        this.refreshEditStyles(false);
 
         // all of these have dependencies on the eGui, so only do them after eGui is set
         if (compDetails) {
@@ -441,7 +442,6 @@ export class CellComp extends Component {
     }
 
     public refreshEditStyles(editing: boolean, isPopup?: boolean): void {
-        // console.warn('cell edit styles', this, editing, isPopup);
         const { cellCssManager } = this;
         cellCssManager.toggleCss('ag-cell-inline-editing', editing && !isPopup);
         cellCssManager.toggleCss('ag-cell-popup-editing', editing && !!isPopup);
