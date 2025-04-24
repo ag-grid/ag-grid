@@ -9,7 +9,7 @@ export function LinkIcon({
     className,
     exampleLink,
     ...props
-}: AllHTMLAttributes<HTMLAnchorElement> & { children?: never; exampleLink?: Boolean }) {
+}: AllHTMLAttributes<HTMLAnchorElement> & { children?: never; exampleLink?: boolean }) {
     const [linkCopied, setLinkCopied] = useState(false);
     const [linkActive, setlinkActive] = useState(false);
     const copiedTimeoutRef = useRef(null);
