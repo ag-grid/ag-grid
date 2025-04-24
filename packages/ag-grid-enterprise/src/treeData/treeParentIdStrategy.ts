@@ -1,6 +1,5 @@
 import type {
     IRowGroupingStrategy,
-    IRowModel,
     IsGroupOpenByDefaultParams,
     RowNode,
     StageExecuteParams,
@@ -18,8 +17,10 @@ const FLAG_CHILDREN_CHANGED = 0x40000000;
 const FLAG_EXPANDED_INITIALIZED = 0x20000000;
 const MASK_CHILDREN_LENGTH = 0x1fffffff; // This equates to 536,870,911 maximum children per parent (536 million rows)
 
+type ParentIdGetter<TData> = DataFieldGetter<TData, string>;
+
 export class TreeParentIdStrategy<TData = any> extends BeanStub implements IRowGroupingStrategy<TData> {
-    private parentIdGetter: DataFieldGetter<TData, string | null | undefined> | null = null;
+    private parentIdGetter: ParentIdGetter<TData> | null = null;
     private oldGroupDisplayColIds: string | null = null;
 
     public override destroy(): void {
@@ -55,17 +56,14 @@ export class TreeParentIdStrategy<TData = any> extends BeanStub implements IRowG
             groupDisplayColIdsChanged = this.updateGroupDisplayColsIds();
         }
 
-        let parentIdGetter = this.parentIdGetter;
-        const parentIdField = this.gos.get('treeDataParentIdField');
-        if (!parentIdGetter || parentIdGetter.path !== parentIdField) {
-            parentIdGetter = makeFieldPathGetter(parentIdField);
-        }
-
         // Loop all the nodes, and put the children in the right place, updating the parent and the children arrays
 
         const renderEmpty = !this.gos.get('getRowId'); // If getRowId is not provided, we make an empty tree
         if (!renderEmpty) {
-            preprocess(this.beans.rowModel, params, parentIdGetter, fullReload);
+            if (fullReload || params.changedRowNodes || !params.changedPath?.active) {
+                this.update(params, fullReload);
+            }
+            preprocess(params);
         }
 
         rootChildrenAfterGroup.length = rootNode.treeNodeFlags & MASK_CHILDREN_LENGTH;
@@ -186,6 +184,45 @@ export class TreeParentIdStrategy<TData = any> extends BeanStub implements IRowG
             }
         }
     }
+
+    private update = ({ rowNode: rootNode, changedRowNodes }: StageExecuteParams<TData>, fullReload: boolean): void => {
+        const adds = changedRowNodes?.adds;
+        const updates = changedRowNodes?.updates;
+        const rootAllLeafChildren = rootNode.allLeafChildren!;
+        const rootAllLeafChildrenLen = rootAllLeafChildren.length;
+        const rowModel = this.beans.rowModel;
+
+        let parentIdGetter = this.parentIdGetter;
+        const parentIdField = this.gos.get('treeDataParentIdField') || null;
+        if (parentIdGetter?.path !== parentIdField) {
+            this.parentIdGetter = parentIdGetter = makeFieldPathGetter(parentIdField);
+        }
+
+        for (let i = 0; i < rootAllLeafChildrenLen; ++i) {
+            const row = rootAllLeafChildren[i];
+            const updated = updates?.has(row) || adds?.has(row);
+            let newParent: TreeRow<TData> | null | undefined;
+            if (updated || fullReload) {
+                const parentId = parentIdGetter(row.data);
+                if (parentId === null || parentId === undefined) {
+                    newParent = rootNode;
+                } else {
+                    newParent = rowModel.getRowNode(parentId);
+                    if (!newParent) {
+                        _warn(271, { id: row.id!, parentId });
+                        newParent = rootNode;
+                    }
+                }
+                row.treeParent = newParent;
+            } else {
+                newParent = rootNode;
+            }
+
+            if (updated) {
+                newParent.treeNodeFlags |= FLAG_CHANGED;
+            }
+        }
+    };
 }
 
 type IsGroupOpenByDefaultCallback = ((params: WithoutGridCommon<IsGroupOpenByDefaultParams>) => boolean) | undefined;
@@ -301,35 +338,14 @@ const getExpandedInitialValue = (
         : expandByDefault === -1 || row.level < expandByDefault;
 };
 
-const preprocess = <TData>(
-    rowModel: IRowModel,
-    { rowNode: rootNode, changedRowNodes }: StageExecuteParams<TData>,
-    parentIdGetter: DataFieldGetter<TData, string | null | undefined>,
-    fullReload: boolean
-): void => {
-    const updates = changedRowNodes?.updates;
-    const adds = changedRowNodes?.adds;
+const preprocess = <TData>({ rowNode: rootNode }: StageExecuteParams<TData>): void => {
     const rootAllLeafChildren = rootNode.allLeafChildren!;
-    for (let i = 0, len = rootAllLeafChildren.length; i < len; ++i) {
-        const row = rootAllLeafChildren[i];
-        const updated = updates?.has(row) || adds?.has(row);
-        const oldParent: TreeRow<TData> | null = row.parent;
-        let newParent: TreeRow<TData> | null | undefined;
+    const rootAllLeafChildrenLen = rootAllLeafChildren.length;
 
-        if (updated || fullReload) {
-            const parentId = parentIdGetter(row.data);
-            if (parentId === null || parentId === undefined) {
-                newParent = rootNode;
-            } else {
-                newParent = rowModel.getRowNode(parentId);
-                if (!newParent) {
-                    _warn(271, { id: row.id!, parentId });
-                    newParent = rootNode;
-                }
-            }
-        } else {
-            newParent = row.parent ?? rootNode;
-        }
+    for (let i = 0; i < rootAllLeafChildrenLen; ++i) {
+        const row = rootAllLeafChildren[i];
+        const oldParent: TreeRow<TData> | null = row.parent;
+        const newParent: TreeRow<TData> | null = row.treeParent ?? rootNode;
 
         let parentFlags = newParent.treeNodeFlags;
         const indexInParent = parentFlags & MASK_CHILDREN_LENGTH;
@@ -345,10 +361,10 @@ const preprocess = <TData>(
             parentFlags |= FLAG_CHILDREN_CHANGED;
         }
 
-        if (updated || row.parent !== newParent) {
+        if (oldParent !== newParent) {
             row.parent = newParent;
             parentFlags |= FLAG_CHANGED;
-            if (oldParent !== newParent && oldParent !== null) {
+            if (oldParent !== null) {
                 oldParent.treeNodeFlags |= FLAG_CHANGED;
             }
         }

@@ -92,6 +92,7 @@ const resetGrouping = <TData>(rootNode: RowGroupingRowNode<TData>): void => {
         if (sibling) {
             resetChildRowGrouping(sibling);
         }
+        row.treeParent = null;
         row.parent = rootNode;
         row.level = 0;
         row.key = null;

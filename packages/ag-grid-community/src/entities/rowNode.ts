@@ -204,6 +204,12 @@ export class RowNode<TData = any>
      */
     public childrenMapped: { [key: string]: any } | null = {};
 
+    /**
+     * This is used by TreeStrategy to assign the new parent after processing in the grouping stage.
+     * This is required to understand parent changed and to update parent field in tree data in the TreStrategy grouping stage.
+     */
+    public treeParent: RowNode<TData> | null = null;
+
     /** The TreeNode associated to this row. Used only with tree data. */
     public readonly treeNode: ITreeNode | null = null;
 
