@@ -23,6 +23,6 @@
     "@trivago/prettier-plugin-sort-imports": "^4.3.0",
     "prettier": "^3.2.5",
     "prettier-plugin-astro": "^0.13.0",
-    "vitest": "3.1.2"
+    "vitest": "2.1.6"
   }
 }

@@ -107,7 +107,7 @@ const getPackageInformation = () => {
 
     packageDirectories.forEach((packageDirectory) => {
         const file = `${packageDirectory}/package.json`;
-        if(!fs.existsSync(file)) {
+        if (!fs.existsSync(file)) {
             return;
         }
         const projectPackageJson = readFile(file);

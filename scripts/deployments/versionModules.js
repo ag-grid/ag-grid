@@ -91,7 +91,7 @@ function updateRootPackageJson() {
 }
 
 function updateFileWithNewVersions(currentFile) {
-    if(!fs.existsSync(currentFile)) {
+    if (!fs.existsSync(currentFile)) {
         return;
     }
     const packageJson = JSON.parse(fs.readFileSync(currentFile, 'utf8'));

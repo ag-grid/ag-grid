@@ -96,6 +96,6 @@
     "ag-grid-vue3": "33.2.3",
     "prettier-plugin-astro": "^0.12.3",
     "vite-plugin-mkcert": "^1.17.2",
-    "vitest": "3.1.2"
+    "vitest": "2.1.6"
   }
 }
