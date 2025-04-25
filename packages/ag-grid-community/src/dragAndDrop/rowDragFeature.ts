@@ -191,13 +191,6 @@ export class RowDragFeature extends BeanStub implements DropTarget {
         return dragSourceDomDataKey === this.gos.getDomDataKey();
     }
 
-    private getMouseY(draggingEvent: DraggingEvent): number {
-        const beans = this.beans;
-        const { pageFirstPixel } = beans.pageBounds.getCurrentPagePixelRange();
-        const yNormalised = _getNormalisedMousePosition(beans, draggingEvent).y;
-        return yNormalised + pageFirstPixel;
-    }
-
     private onEnterOrDragging(draggingEvent: DraggingEvent): void {
         // this event is fired for enter and move
         this.dispatchGridEvent('rowDragMove', draggingEvent);
@@ -281,7 +274,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
             return null; // No rows to move
         }
         const source = (draggingEvent.dragItem.rowNode as RowNode | undefined) ?? rows[0];
-        const y = this.getMouseY(draggingEvent);
+        const y = _getNormalisedMousePosition(this.beans, draggingEvent).y;
         const clientSideRowModel = this.clientSideRowModel;
         const targetRowIndex = clientSideRowModel.getRowIndexAtPixel(y);
         let target = clientSideRowModel.getRow(targetRowIndex);
@@ -454,14 +447,14 @@ export class RowDragFeature extends BeanStub implements DropTarget {
     private draggingToRowDragEvent<T extends RowDragEventType>(type: T, draggingEvent: DraggingEvent): RowDragEvent<T> {
         const beans = this.beans;
         const { pageBounds, rowModel, gos } = beans;
-        const yNormalised = this.getMouseY(draggingEvent);
-        const mouseIsPastLastRow = yNormalised > pageBounds.getCurrentPagePixelRange().pageLastPixel;
+        const y = _getNormalisedMousePosition(this.beans, draggingEvent).y;
+        const mouseIsPastLastRow = y > pageBounds.getCurrentPagePixelRange().pageLastPixel;
 
         let overIndex = -1;
         let overNode: RowNode | undefined;
 
         if (!mouseIsPastLastRow) {
-            overIndex = rowModel.getRowIndexAtPixel(yNormalised);
+            overIndex = rowModel.getRowIndexAtPixel(y);
             overNode = rowModel.getRow(overIndex);
         }
 
@@ -472,7 +465,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
             nodes: draggingEvent.dragItem.rowNodes!,
             overIndex: overIndex,
             overNode: overNode,
-            y: yNormalised,
+            y,
             vDirection: draggingEvent.vDirection,
         });
 
