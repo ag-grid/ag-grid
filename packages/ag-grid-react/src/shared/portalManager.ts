@@ -87,7 +87,7 @@ export class PortalManager {
 
             window.setTimeout(() => {
                 this.waitForInstance(reactComponent, resolve, startTime);
-            }, 5);
+            });
         }
     }
 }
