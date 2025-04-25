@@ -776,9 +776,8 @@ export class CellCtrl extends BeanStub {
             focusEl.focus({ preventScroll: !!event.preventScrollOnBrowserFocus });
         }
 
-        beans.editingSvc?.stopEditing(this.rowCtrl, this);
-
         if (cellFocused) {
+            beans.editingSvc?.stopEditing(this.rowCtrl, this);
             this.rowCtrl.announceDescription();
         }
     }

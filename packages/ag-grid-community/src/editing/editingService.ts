@@ -21,22 +21,19 @@ export class EditingService extends BeanStub implements NamedBean {
     postConstruct(): void {
         this.editModel = new GridEditingModel(this.beans);
 
-        this.addManagedPropertyListener('experimentalEditingModeV2', (experimentalEditingModeV2) => {
-            if (!experimentalEditingModeV2) {
-                return;
-            }
+        this.addManagedPropertyListener(
+            'experimentalEditingModeV2',
+            ((experimentalEditingModeV2: any) => {
+                if (!experimentalEditingModeV2) {
+                    return;
+                }
 
-            const pStrategy = this.editStrategy;
-            // will re-create if different
-            this.createEditStrategy();
+                this.stopAllEditing();
 
-            if (pStrategy?.beanName !== this.editStrategy?.beanName) {
-                this.editModel?.destroy();
-                this.editModel = new GridEditingModel(this.beans);
-
-                console.warn('EditingService: strategy changed to', this.editStrategy?.beanName);
-            }
-        });
+                // will re-create if different
+                this.createEditStrategy();
+            }).bind(this)
+        );
     }
 
     private createEditStrategy(): BaseEditStrategy {

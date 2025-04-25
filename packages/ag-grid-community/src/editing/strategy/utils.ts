@@ -6,6 +6,7 @@ import { _isElementInThisGrid } from '../../gridBodyComp/mouseEventUtils';
 import { _addGridCommonParams } from '../../gridOptionsUtils';
 import type { ICellEditorParams } from '../../interfaces/iCellEditor';
 import type { Column } from '../../interfaces/iColumn';
+import type { RowPinnedType } from '../../interfaces/iRowNode';
 import type { CellCtrl, ICellComp } from '../../rendering/cell/cellCtrl';
 import type { RowCtrl } from '../../rendering/row/rowCtrl';
 import { _getTabIndex } from '../../utils/browser';
@@ -15,12 +16,15 @@ type ResolveRowControllerType = {
     rowId?: string | null;
     rowCtrl?: RowCtrl | null;
     rowNode?: RowNode | null;
+    rowPinned?: RowPinnedType;
 };
 
 type ResolveCellControllerType = {
     colId?: string | null;
+    columnId?: string | null;
     column?: string | Column | AgColumn | null;
     cellCtrl?: CellCtrl | null;
+    rowPinned?: RowPinnedType;
 };
 
 type ResolveControllerType = ResolveRowControllerType & ResolveCellControllerType;
@@ -30,18 +34,25 @@ type ResolvedControllersType = {
     cellCtrl?: CellCtrl;
 };
 
-export function _getRowById(beans: BeanCollection, rowId: string): RowNode | undefined {
+export function _getRowById(beans: BeanCollection, rowId: string, rowPinned?: RowPinnedType): RowNode | undefined {
     const { rowModel, pinnedRowModel } = beans;
 
-    return (
-        rowModel?.getRowNode(rowId) ??
-        pinnedRowModel?.getPinnedRowById(rowId, 'top') ??
-        pinnedRowModel?.getPinnedRowById(rowId, 'bottom')
-    );
+    let rowNode;
+
+    rowNode ??= rowModel?.getRowNode(rowId);
+
+    if (rowPinned) {
+        rowNode ??= pinnedRowModel?.getPinnedRowById(rowId, rowPinned!);
+    } else {
+        rowNode ??= pinnedRowModel?.getPinnedRowById(rowId, 'top');
+        rowNode ??= pinnedRowModel?.getPinnedRowById(rowId, 'bottom');
+    }
+
+    return rowNode;
 }
 
 export function _resolveRowController(beans: BeanCollection, inputs: ResolveRowControllerType): RowCtrl | undefined {
-    const { rowIndex, rowId, rowCtrl } = inputs;
+    const { rowIndex, rowId, rowCtrl, rowPinned } = inputs;
     let { rowNode } = inputs;
 
     if (rowCtrl) {
@@ -50,7 +61,7 @@ export function _resolveRowController(beans: BeanCollection, inputs: ResolveRowC
 
     const { rowModel, rowRenderer } = beans;
 
-    rowNode ??= rowId ? rowModel.getRowNode(rowId) : rowModel.getRow(rowIndex!); // TODO: what about pinned rows??
+    rowNode ??= rowId ? _getRowById(beans, rowId, rowPinned) : rowModel.getRow(rowIndex!); // TODO: what about pinned rows??
 
     if (!rowNode) {
         return undefined;
@@ -66,7 +77,9 @@ export function _resolveCellController(beans: BeanCollection, inputs: ResolveCon
         return cellCtrl;
     }
 
-    const { colId, column, rowIndex, rowId } = inputs;
+    const { column, rowIndex, rowId } = inputs;
+    const colId = inputs.colId ?? inputs.columnId;
+
     let { rowCtrl } = inputs;
     const { rowRenderer, colModel } = beans;
 

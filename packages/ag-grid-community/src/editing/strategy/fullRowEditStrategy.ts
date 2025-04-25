@@ -42,7 +42,7 @@ export class FullRowEditStrategy extends BaseEditStrategy {
         });
 
         if (!oldRowCtrl) {
-            return false;
+            return true;
         }
 
         const res = super.shouldStopEditing(oldRowCtrl, undefined, key, event);
@@ -50,7 +50,7 @@ export class FullRowEditStrategy extends BaseEditStrategy {
             return res;
         }
 
-        if (this.isEditing(oldRowCtrl)) {
+        if (this.isEditing(oldRowCtrl) && oldRowCtrl !== rowCtrl) {
             return true;
         }
 
@@ -96,7 +96,7 @@ export class FullRowEditStrategy extends BaseEditStrategy {
 
         console.warn('FullRowEditStrategy: cancelEditing');
 
-        const edits = this.editModel.getEditingCellPositions();
+        const edits = this.editModel.getEditingCellIds();
 
         if (rowCtrl) {
             this.editModel.cancelEditing(rowCtrl!.rowId!, cellCtrl?.column.colId);
@@ -112,15 +112,26 @@ export class FullRowEditStrategy extends BaseEditStrategy {
     }
 
     public stopEditing(rowCtrl?: RowCtrl | null, _cellCtrl?: CellCtrl | null): boolean {
-        const oldState = this.isEditing(rowCtrl);
+        const oldCtrl = _resolveRowController(this.beans, {
+            rowId: this.rowId,
+        });
+
+        if (!oldCtrl) {
+            this.rowId = undefined;
+            this.stopAllEditing();
+            return true;
+        }
+
+        const oldState = this.isEditing(oldCtrl);
 
         if (!oldState) {
+            this.rowId = undefined;
             return false;
         }
 
         console.warn('FullRowEditStrategy: stopEditing');
 
-        const edits = this.editModel.getEditingCellPositions();
+        const edits = this.editModel.getEditingCellIds();
 
         if (rowCtrl) {
             this.editModel.stopEditing(rowCtrl!.rowId!);

@@ -5,11 +5,10 @@ import type { BeanName } from '../../context/context';
 import type { ColDef } from '../../entities/colDef';
 import type { CellFocusedEvent } from '../../events';
 import type { ICellEditorComp } from '../../interfaces/iCellEditor';
-import type { CellPosition } from '../../interfaces/iCellPosition';
 import type { UserCompDetails } from '../../interfaces/iUserCompDetails';
 import type { CellCtrl } from '../../rendering/cell/cellCtrl';
 import type { RowCtrl } from '../../rendering/row/rowCtrl';
-import type { GridEditingModel } from '../model/gridEditingModel';
+import type { CellIdPositions, GridEditingModel } from '../model/gridEditingModel';
 import { _createCellEditorParams, _resolveCellController, _saveNewValue, _takeValueFromCellEditor } from './utils';
 
 export abstract class BaseEditStrategy extends BeanStub {
@@ -49,15 +48,12 @@ export abstract class BaseEditStrategy extends BeanStub {
     }
 
     public stopAllEditing(): void {
-        const editingCells = this.editModel.getEditingCellPositions();
+        const editingCells = this.editModel.getEditingCellIds();
         if (editingCells.length === 0) {
             return;
         }
         editingCells.forEach((cellPosition) => {
-            const cellCtrl = _resolveCellController(this.beans, {
-                rowIndex: cellPosition.rowIndex,
-                column: cellPosition.column,
-            });
+            const cellCtrl = _resolveCellController(this.beans, cellPosition);
 
             if (cellCtrl) {
                 this.editModel.stopEditing(cellCtrl.rowCtrl!.rowId!, cellCtrl?.column.colId);
@@ -115,7 +111,7 @@ export abstract class BaseEditStrategy extends BeanStub {
         cellStartedEdit?: boolean | null
     ): UserCompDetails<ICellEditorComp<any, any, any>> | undefined {
         console.warn('BaseEditStrategy: setupEditors');
-        const editingCells = this.editModel.getEditingCellPositions();
+        const editingCells = this.editModel.getEditingCellIds();
 
         if (editingCells.length === 0) {
             return this.setupEditor(cellCtrl!, key, cellStartedEdit);
@@ -124,10 +120,7 @@ export abstract class BaseEditStrategy extends BeanStub {
         let startedCompDetails: UserCompDetails<ICellEditorComp<any, any, any>> | undefined;
 
         for (const cellPosition of editingCells) {
-            const curCellCtrl = _resolveCellController(this.beans, {
-                rowIndex: cellPosition.rowIndex,
-                column: cellPosition.column,
-            });
+            const curCellCtrl = _resolveCellController(this.beans, cellPosition);
 
             if (!curCellCtrl) {
                 continue;
@@ -168,14 +161,11 @@ export abstract class BaseEditStrategy extends BeanStub {
         return compDetails;
     }
 
-    protected destroyEditors(cellPositions: CellPosition[], cancel: boolean): void {
+    protected destroyEditors(cellPositions: CellIdPositions[], cancel: boolean): void {
         console.warn('BaseEditStrategy: destroyEditors');
 
         cellPositions.forEach((cellPosition) => {
-            const cellCtrl = _resolveCellController(this.beans, {
-                rowIndex: cellPosition.rowIndex,
-                column: cellPosition.column,
-            });
+            const cellCtrl = _resolveCellController(this.beans, cellPosition);
 
             this.destroyEditor(cellCtrl?.rowCtrl, cellCtrl, cancel);
         });
@@ -194,7 +184,7 @@ export abstract class BaseEditStrategy extends BeanStub {
         }
 
         comp.setEditDetails(); // passing nothing stops editing
-
+        comp.refreshEditStyles(false, false);
         cellCtrl?.updateAndFormatValue(false);
         cellCtrl?.refreshCell({ forceRefresh: true, suppressFlash: true, editing: false });
 
