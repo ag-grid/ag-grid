@@ -161,10 +161,12 @@ function getTagsData({ definition, gridOpProp }: { definition: ChildDocEntry; gr
           ']'
         : defaultValue;
     const isInitial = tags.some((t) => t.name === 'initial') ?? false;
+    const agModule = tags.find((t) => t.name === 'agModule')?.comment.replace(/`/g, '');
 
     return {
         formattedDefaultValue,
         isInitial,
+        agModule,
     };
 }
 
@@ -209,7 +211,7 @@ export const Property: FunctionComponent<{
         isObject,
         config,
     });
-    const { formattedDefaultValue, isInitial } = getTagsData({ definition, gridOpProp });
+    const { formattedDefaultValue, isInitial, agModule } = getTagsData({ definition, gridOpProp });
     const { more } = definition;
 
     const propertyRef = useRef<HTMLTableRowElement>(null);
@@ -281,6 +283,14 @@ export const Property: FunctionComponent<{
                                         <span className={classnames(styles.metaValue, styles.defaultValue)}>
                                             <span className={styles.defaultLabel}>default: </span>
                                             {formattedDefaultValue}
+                                        </span>
+                                    </div>
+                                )}
+                                {agModule && (
+                                    <div className={classnames(styles.metaItem)}>
+                                        <span className={classnames(styles.metaValue, styles.defaultValue)}>
+                                            <span className={styles.defaultLabel}>module: </span>
+                                            {agModule}
                                         </span>
                                     </div>
                                 )}
