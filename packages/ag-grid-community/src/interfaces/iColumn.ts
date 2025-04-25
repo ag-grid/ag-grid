@@ -347,6 +347,9 @@ export interface ProvidedColumnGroup extends IProvidedColumn, IEventEmitter<AgPr
     /** Returns the leaf columns of this group. */
     getLeafColumns(): Column[];
 
+    /** Calls callback for each leaf column in this group */
+    forEachLeafColumn(callback: (column: Column) => void): void;
+
     /** isColumn is always `false`. Used to distinguish between columns and column groups.  */
     isColumn: false;
 }
