@@ -1,9 +1,16 @@
 @use 'design-system' as *;
 
+.linkIcon {
+    position: relative;
+
+    svg {
+        pointer-events: none;
+    }
+}
+
 .docsHeaderIcon {
     width: 28px;
     height: 28px;
-    position: relative;
     padding: 0;
     margin-left: $spacing-size-1;
     font-size: var(--text-fs-base);
@@ -21,13 +28,16 @@
         bottom: unset;
         margin: 0;
         visibility: visible;
-        pointer-events: none;
     }
 
     &:hover,
     &.active {
         opacity: 1;
     }
+}
+
+.exampleIcon {
+    color: red;
 }
 
 // Half highlight icon if hovering over container heading element
@@ -78,8 +88,8 @@ h6 {
         z-index: -1;
     }
 
-    .docsHeaderIcon:hover &,
-    .docsHeaderIcon.active & {
+    .linkIcon:hover &,
+    .linkIcon.active & {
         opacity: 1;
         transform: translate(-50%, 0);
         transition:
@@ -87,7 +97,7 @@ h6 {
             transform 0.33s ease-in;
     }
 
-    .docsHeaderIcon.active & {
+    .linkIcon.active & {
         animation-name: bounce;
         animation-duration: 0.25s;
     }

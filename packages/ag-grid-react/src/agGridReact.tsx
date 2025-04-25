@@ -24,6 +24,6 @@ export class AgGridReact<TData = any> extends Component<AgGridReactProps<TData>,
     }
 
     override render() {
-        return <AgGridReactUi<TData> {...this.props} setGridApi={this.setGridApi} />;
+        return <AgGridReactUi<TData> {...this.props} passGridApi={this.setGridApi} />;
     }
 }

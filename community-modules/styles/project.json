@@ -51,7 +51,7 @@
         "!{projectRoot}/_css-content.scss"
       ],
       "options": {
-        "cwd": "community-modules/styles",
+        "cwd": "{projectRoot}",
         "command": "sass --silence-deprecation=mixed-decls --no-source-map --load-path src/internal src:."
       },
       "cache": true
@@ -68,7 +68,7 @@
       "inputs": [],
       "outputs": [],
       "options": {
-        "cwd": "community-modules/styles",
+        "cwd": "{projectRoot}",
         "commands": [
           "stylelint --formatter unix --config stylelint-config-scss.js 'src/**/*.scss' '*.scss'",
           "stylelint --formatter unix --config stylelint-config-css.js '*.css'"
@@ -84,10 +84,11 @@
     },
     "test": {
       "executor": "nx:run-commands",
+      "dependsOn": ["build"],
       "inputs": [],
       "outputs": [],
       "options": {
-        "cwd": "community-modules/styles",
+        "cwd": "{projectRoot}",
         "commands": ["sass test/test.scss"]
       }
     }
