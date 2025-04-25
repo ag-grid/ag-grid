@@ -318,6 +318,32 @@ export class ColumnModel extends BeanStub implements NamedBean {
             return;
         }
 
+        const hasSiblings = (col: AgColumn | AgProvidedColumnGroup): boolean => {
+            const ancestor = col.getOriginalParent();
+            if (!ancestor) {
+                return false;
+            }
+            const children = ancestor.getChildren();
+            if (children.length > 1) {
+                return true;
+            }
+            return hasSiblings(ancestor);
+        };
+
+        // if none of the preserved cols have siblings; shortcut, as all new cols can be added to the end
+        // this is a common scenario due to generated cols.
+        if (!preservedOrder.some((col) => hasSiblings(col))) {
+            const preservedOrderSet = new Set(preservedOrder);
+            for (let i = 0; i < cols.list.length; i++) {
+                const col = cols.list[i];
+                if (!preservedOrderSet.has(col)) {
+                    preservedOrder.push(col);
+                }
+            }
+            cols.list = preservedOrder;
+            return;
+        }
+
         // create map of known col positions and their indices
         const colPositionMap = new Map<AgColumn, number>();
         for (let i = 0; i < preservedOrder.length; i++) {
