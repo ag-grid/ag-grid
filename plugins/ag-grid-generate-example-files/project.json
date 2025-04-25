@@ -57,6 +57,7 @@
     },
     "test": {
       "executor": "@nx/jest:jest",
+      "dependsOn": ["copySrcFilesForGeneration"],
       "outputs": [
         "{workspaceRoot}/coverage/{projectRoot}",
         "{workspaceRoot}/reports/ag-grid-generate-example-files.xml"
