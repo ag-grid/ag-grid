@@ -16,7 +16,8 @@
         "ag-grid-community:build:package",
         "ag-grid-enterprise:build:types",
         "ag-grid-enterprise:build:package",
-        "ag-grid-react:build"
+        "ag-grid-react:build",
+        "ag-shared:build"
       ],
       "options": {
         "script": "test:e2e"
