@@ -6,6 +6,11 @@ import { _getRowById } from '../strategy/utils';
 import type { CellEditingModel } from './cellEditingModel';
 import { RowEditingModel } from './rowEditingModel';
 
+export type CellIdPositions = {
+    rowId: string;
+    columnId: string;
+};
+
 export class GridEditingModel {
     private rowModels: Map<string, RowEditingModel> = new Map();
 
@@ -67,18 +72,26 @@ export class GridEditingModel {
         return models;
     }
 
+    public getEditingCellIds(): CellIdPositions[] {
+        const ids: { rowId: string; columnId: string }[] = [];
+        this.rowModels.forEach((rowModel, rowId) => {
+            rowModel.getEditModels().forEach(({ columnId }) => ids.push({ rowId, columnId }));
+        });
+        return ids;
+    }
+
     public getEditingCellPositions(): CellPosition[] {
         const positions: CellPosition[] = [];
-
-        this.rowModels.forEach((rowModel, rowId) => {
-            const rowNode = _getRowById(this.beans, rowId)!;
-            rowModel.getEditModels().forEach(({ columnId }) =>
+        const cellIds = this.getEditingCellIds();
+        cellIds.forEach(({ rowId, columnId }) => {
+            const rowNode = _getRowById(this.beans, rowId);
+            if (rowNode) {
                 positions.push({
                     column: this.beans.colModel.getCol(columnId)!,
                     rowIndex: rowNode.rowIndex!,
                     rowPinned: rowNode.rowPinned,
-                })
-            );
+                });
+            }
         });
 
         return positions;

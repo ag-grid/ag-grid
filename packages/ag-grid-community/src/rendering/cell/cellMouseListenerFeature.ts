@@ -76,6 +76,7 @@ export class CellMouseListenerFeature extends BeanStub {
             }, 0);
         }
 
+        this.beans.editingSvc?.stopEditing(this.cellCtrl.rowCtrl, this.cellCtrl, undefined, mouseEvent);
         this.beans.editingSvc?.startEditing(this.cellCtrl.rowCtrl, this.cellCtrl, null, undefined, mouseEvent);
     }
 
