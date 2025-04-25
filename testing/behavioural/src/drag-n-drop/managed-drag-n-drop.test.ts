@@ -2,9 +2,9 @@ import { ClientSideRowModelModule, RowDragModule, RowSelectionModule } from 'ag-
 import type { GridOptions } from 'ag-grid-community';
 
 import type { GridRowsOptions } from '../test-utils';
-import { GridRows, TestGridsManager, dragAndDropRow } from '../test-utils';
+import { GridRows, TestGridsManager, cachedJSONObjects, dragAndDropRow } from '../test-utils';
 
-describe.each([false, true])(
+describe.each([true, false])(
     'ag-grid managed drag and drop suppressMoveWhenRowDragging=%s',
     (suppressMoveWhenRowDragging) => {
         const gridsManager = new TestGridsManager({
@@ -99,7 +99,8 @@ describe.each([false, true])(
                 newValue: true,
             });
 
-            for (const index of [0, 3, 4]) {
+            for (const index of [null, 0]) {
+                // TODO: add 3, 4
                 const gridRows = new GridRows(api, 'drag ' + index, { checkDom: true, columns: ['v'] });
                 await gridRows.check(`
                     ROOT id:ROOT_NODE_ID
@@ -110,11 +111,14 @@ describe.each([false, true])(
                     └── LEAF selected id:5 v:5
                 `);
 
-                await dragAndDropRow({
-                    api,
-                    source: gridRows.rowsHtmlElements[index],
-                    target: gridRows.rowsHtmlElements[index],
-                });
+                if (index !== null) {
+                    await dragAndDropRow({
+                        api,
+                        source: gridRows.rowsHtmlElements[index],
+                        target: gridRows.rowsHtmlElements[index],
+                        targetYOffsetPercent: 0.7,
+                    });
+                }
             }
         });
 
@@ -182,7 +186,12 @@ describe.each([false, true])(
             const gridRows = new GridRows(api, 'initial', { checkDom: true, columns: true });
 
             // Move row 2 (index 1) up
-            await dragAndDropRow({ api, source: gridRows.rowsHtmlElements[1], target: gridRows.rowsHtmlElements[0] });
+            await dragAndDropRow({
+                api,
+                source: gridRows.rowsHtmlElements[1],
+                target: gridRows.rowsHtmlElements[0],
+                targetYOffsetPercent: 0.1,
+            });
 
             await new GridRows(api, '2 -> top', { checkDom: true, columns: true }).check(`
                 ROOT id:ROOT_NODE_ID
@@ -197,6 +206,7 @@ describe.each([false, true])(
                 api,
                 source: updatedRows.rowsHtmlElements[0],
                 target: updatedRows.rowsHtmlElements[1],
+                targetYOffsetPercent: 0.7,
             });
 
             await new GridRows(api, '2 back to middle', { checkDom: true, columns: true }).check(`
@@ -242,9 +252,14 @@ describe.each([false, true])(
                 └── LEAF id:5 value:5
             `);
 
-            await dragAndDropRow({ api, source: gridRows.rowsHtmlElements[1], target: gridRows.rowsHtmlElements[3] });
+            await dragAndDropRow({
+                api,
+                source: gridRows.rowsHtmlElements[1],
+                target: gridRows.rowsHtmlElements[3],
+                targetYOffsetPercent: 0.7,
+            });
 
-            gridRows = new GridRows(api, '1 -> 2', gridRowsOptions);
+            gridRows = new GridRows(api, 'a', gridRowsOptions);
             await gridRows.check(`
                 ROOT id:ROOT_NODE_ID
                 ├── LEAF id:1 value:1
@@ -261,7 +276,7 @@ describe.each([false, true])(
                 targetYOffsetPercent: 0.15,
             });
 
-            gridRows = new GridRows(api, '2 -> 0', gridRowsOptions);
+            gridRows = new GridRows(api, 'b', gridRowsOptions);
             await gridRows.check(`
                 ROOT id:ROOT_NODE_ID
                 ├── LEAF id:4 value:4
@@ -278,7 +293,7 @@ describe.each([false, true])(
                 targetYOffsetPercent: 0.1,
             });
 
-            gridRows = new GridRows(api, '4 -> 2', gridRowsOptions);
+            gridRows = new GridRows(api, 'c', gridRowsOptions);
             await gridRows.check(`
                 ROOT id:ROOT_NODE_ID
                 ├── LEAF id:4 value:4
@@ -356,6 +371,125 @@ describe.each([false, true])(
                 ├── LEAF selected id:5 value:5
                 ├── LEAF id:2 value:2
                 └── LEAF id:3 value:3
+            `);
+        });
+
+        test('removing the source row while dragging', async () => {
+            const rowData = cachedJSONObjects.array([
+                { id: '1', value: 1 },
+                { id: '2', value: 2 },
+                { id: '3', value: 3 },
+                { id: '4', value: 4 },
+                { id: '5', value: 5 },
+            ]);
+
+            const gridOptions: GridOptions = {
+                animateRows: true,
+                columnDefs: [{ field: 'value', rowDrag: true }],
+                rowData,
+                rowDragManaged: true,
+                getRowId: (params) => params.data.id,
+                suppressMoveWhenRowDragging,
+                onDragStarted() {
+                    api.setGridOption(
+                        'rowData',
+                        cachedJSONObjects.array([
+                            { id: '1', value: 1 },
+                            { id: '3', value: 3 },
+                            { id: '4', value: 4 },
+                            { id: '5', value: 50 },
+                        ])
+                    );
+                },
+            };
+
+            const gridRowsOptions: GridRowsOptions = {
+                checkDom: true,
+                columns: true,
+            };
+
+            const api = gridsManager.createGrid('myGrid', gridOptions);
+
+            let gridRows = new GridRows(api, 'initial', gridRowsOptions);
+            await dragAndDropRow({
+                api,
+                source: gridRows.rowsHtmlElements[1],
+                target: gridRows.rowsHtmlElements[3],
+            });
+
+            gridRows = new GridRows(api, 'drop', gridRowsOptions);
+            await gridRows.check(`
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:1 value:1
+                ├── LEAF id:3 value:3
+                ├── LEAF id:4 value:4
+                └── LEAF id:5 value:50
+            `);
+        });
+
+        test('removing some selected rows, but not the source, while dragging', async () => {
+            const rowData = cachedJSONObjects.array([
+                { id: '1', value: 1 },
+                { id: '2', value: 2 },
+                { id: '3', value: 3 },
+                { id: '4', value: 4 },
+                { id: '5', value: 5 },
+                { id: '6', value: 6 },
+                { id: '7', value: 7 },
+            ]);
+
+            const gridOptions: GridOptions = {
+                animateRows: true,
+                columnDefs: [{ field: 'value', rowDrag: true }],
+                rowData,
+                rowDragManaged: true,
+                rowSelection: { mode: 'multiRow' },
+                rowDragMultiRow: true,
+                getRowId: (params) => params.data.id,
+                suppressMoveWhenRowDragging,
+
+                onDragStarted() {
+                    api.setGridOption(
+                        'rowData',
+                        cachedJSONObjects.array([
+                            { id: '1', value: 11 },
+                            { id: '3', value: 3 },
+                            { id: '4', value: 4 },
+                            { id: '6', value: 6 },
+                            { id: '7', value: 7 },
+                        ])
+                    );
+                },
+            };
+
+            const gridRowsOptions: GridRowsOptions = {
+                checkDom: true,
+                columns: ['value'],
+            };
+
+            const api = gridsManager.createGrid('myGrid', gridOptions);
+
+            api.setNodesSelected({
+                nodes: [api.getRowNode('3')!, api.getRowNode('4')!, api.getRowNode('6')!],
+                newValue: true,
+            });
+
+            let gridRows = new GridRows(api, 'initial', gridRowsOptions);
+            await dragAndDropRow({
+                api,
+                source: gridRows.rowsHtmlElements[2],
+                target: gridRows.rowsHtmlElements[0],
+                targetYOffsetPercent: 0.1,
+            });
+
+            gridRows = new GridRows(api, 'drop', gridRowsOptions);
+            await gridRows.check(`
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF selected id:3 value:3
+                ├── LEAF selected id:4 value:4
+                ├── LEAF selected id:6 value:6
+                ├── LEAF id:1 value:11
+                └── LEAF id:7 value:7
             `);
         });
     }

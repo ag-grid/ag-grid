@@ -134,7 +134,7 @@ export class StaticPinnedRowModel extends BeanStub implements IPinnedRowModel {
             const existingNode = getById(nodes, id);
             if (existingNode !== undefined) {
                 if (existingNode.data !== data) {
-                    existingNode.setData(data);
+                    existingNode.updateData(data);
                 }
                 nextRowTop += this.setRowTopAndRowIndex(existingNode, nextRowTop, i);
 
