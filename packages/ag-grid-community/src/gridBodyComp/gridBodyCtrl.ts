@@ -113,10 +113,8 @@ export class GridBodyCtrl extends BeanStub {
         );
 
         this.createManagedBean(new LayoutFeature(this.comp));
-        this.scrollFeature = this.createManagedBean(
-            new GridBodyScrollFeature(this.eBodyViewport, this.eTop, this.eBottom)
-        );
-        this.beans.rowDragSvc?.setupRowDrag(this.eBodyViewport, this);
+        this.scrollFeature = this.createManagedBean(new GridBodyScrollFeature(eBodyViewport, eTop, eBottom));
+        this.beans.rowDragSvc?.setupRowDrag(eBodyViewport, this);
 
         this.setupRowAnimationCssClass();
 

@@ -20,8 +20,8 @@ enum ScrollDir {
 }
 
 const VIEWPORT = 'Viewport';
-
 const FAKE_V_SCROLLBAR = 'fakeVScrollComp';
+const PINNED_VIEWPORT = 'pinnedViewport';
 
 const HORIZONTAL_SOURCES = [
     'fakeHScrollComp',
@@ -30,15 +30,29 @@ const HORIZONTAL_SOURCES = [
     'bottomCenter',
     'stickyTopCenter',
     'stickyBottomCenter',
+    'topLeft',
+    'left',
+    'bottomLeft',
+    'topRight',
+    'right',
+    'bottomRight',
 ] as const;
 
-type VerticalScrollSource = typeof VIEWPORT | typeof FAKE_V_SCROLLBAR;
+type VerticalScrollSource = typeof VIEWPORT | typeof FAKE_V_SCROLLBAR | typeof PINNED_VIEWPORT;
 type HorizontalScrollSource = typeof VIEWPORT | (typeof HORIZONTAL_SOURCES)[number];
 
 // timeout used for the debounceVerticalScrollbar property
 const SCROLL_DEBOUNCE_TIMEOUT = 100;
 // timeout used to fire onBodyScrollEnd and to reset last scroll source
 const SCROLL_END_TIMEOUT = 150;
+
+function debounceIf<T>(
+    shouldDebounce: boolean,
+    bindingCtx: BeanStub,
+    fn: (...args: T[]) => void
+): (...args: T[]) => void {
+    return shouldDebounce ? _debounce(bindingCtx, fn, SCROLL_DEBOUNCE_TIMEOUT) : fn;
+}
 
 export interface ScrollPartner {
     eViewport: HTMLElement;
@@ -82,6 +96,9 @@ export class GridBodyScrollFeature extends BeanStub {
     private readonly resetLastVScrollDebounced: () => void;
 
     private centerRowsCtrl: RowContainerCtrl;
+
+    private wheelDeltaY = 0;
+    private wheelDeltaX = 0;
 
     constructor(
         private readonly eBodyViewport: HTMLElement,
@@ -154,7 +171,7 @@ export class GridBodyScrollFeature extends BeanStub {
         });
 
         for (const source of HORIZONTAL_SOURCES) {
-            const scrollPartner: ScrollPartner = this.ctrlsSvc.get(source);
+            const scrollPartner = this.ctrlsSvc.get(source);
             this.registerScrollPartner(scrollPartner, this.onHScroll.bind(this, source));
         }
     }
@@ -163,21 +180,46 @@ export class GridBodyScrollFeature extends BeanStub {
         const fakeVScrollComp = this.ctrlsSvc.get('fakeVScrollComp');
         const isDebounce = this.gos.get('debounceVerticalScrollbar');
 
-        const onVScroll = isDebounce
-            ? _debounce(this, this.onVScroll.bind(this, VIEWPORT), SCROLL_DEBOUNCE_TIMEOUT)
-            : this.onVScroll.bind(this, VIEWPORT);
-        const onFakeVScroll = isDebounce
-            ? _debounce(this, this.onVScroll.bind(this, FAKE_V_SCROLLBAR), SCROLL_DEBOUNCE_TIMEOUT)
-            : this.onVScroll.bind(this, FAKE_V_SCROLLBAR);
+        const onVScroll = debounceIf(isDebounce, this, this.onVScroll.bind(this, VIEWPORT));
+        const onFakeVScroll = debounceIf(isDebounce, this, this.onVScroll.bind(this, FAKE_V_SCROLLBAR));
+        const onWheelVScroll = debounceIf(isDebounce, this, this.onWheel.bind(this, undefined));
+        const onWheelHScroll = debounceIf(isDebounce, this, this.onWheel.bind(this, undefined));
 
         this.addManagedElementListeners(this.eBodyViewport, { scroll: onVScroll });
-        this.addManagedElementListeners(this.eTop, {
-            wheel: (e) => {
-                console.log('wheeling', e);
-                onVScroll();
-            },
-        });
+        this.addManagedElementListeners(this.eTop, { wheel: onWheelVScroll });
+        this.addManagedElementListeners(this.eBottom, { wheel: onWheelVScroll });
+
+        for (const container of ['topLeft', 'left', 'bottomLeft'] as const) {
+            this.addManagedElementListeners(this.ctrlsSvc.get(container).eViewport, {
+                wheel: onWheelHScroll.bind(container),
+            });
+        }
+
         this.registerScrollPartner(fakeVScrollComp, onFakeVScroll);
+    }
+
+    private onWheel(
+        container: 'topLeft' | 'left' | 'bottomLeft' | undefined,
+        { deltaX, deltaY, ...e }: WheelEvent
+    ): void {
+        if (!this.gos.get('enableRowPinning')) {
+            return;
+        }
+
+        this.wheelDeltaX = deltaX;
+        this.wheelDeltaY = deltaY;
+
+        if (Math.abs(deltaX) < Math.abs(deltaY)) {
+            this.onVScroll(PINNED_VIEWPORT);
+        } else if (container) {
+            console.log({ deltaX, deltaY, container });
+            this.onHScroll(container);
+        }
+
+        this.wheelDeltaX = 0;
+        this.wheelDeltaY = 0;
+
+        e.stopPropagation();
     }
 
     private registerScrollPartner(comp: ScrollPartner, callback: () => void) {
@@ -221,7 +263,7 @@ export class GridBodyScrollFeature extends BeanStub {
     }
 
     private getViewportForSource(source: VerticalScrollSource | HorizontalScrollSource): HTMLElement {
-        if (source === VIEWPORT) {
+        if (source === VIEWPORT || source === PINNED_VIEWPORT) {
             return this.centerRowsCtrl.eViewport;
         }
 
@@ -253,7 +295,7 @@ export class GridBodyScrollFeature extends BeanStub {
         if (this.shouldBlockScrollUpdate(ScrollDir.Horizontal, scrollLeft, true)) {
             return;
         }
-        const newScrollLeft = _getScrollLeft(this.getViewportForSource(source), this.enableRtl);
+        const newScrollLeft = _getScrollLeft(this.getViewportForSource(source), this.enableRtl) + this.wheelDeltaX;
 
         this.doHorizontalScroll(newScrollLeft);
         this.resetLastHScrollDebounced();
@@ -266,10 +308,16 @@ export class GridBodyScrollFeature extends BeanStub {
 
         let scrollTop: number;
 
-        if (source === VIEWPORT) {
-            scrollTop = this.eBodyViewport.scrollTop;
-        } else {
-            scrollTop = this.ctrlsSvc.get('fakeVScrollComp').getScrollPosition();
+        switch (source) {
+            case VIEWPORT:
+                scrollTop = this.eBodyViewport.scrollTop;
+                break;
+            case FAKE_V_SCROLLBAR:
+                scrollTop = this.ctrlsSvc.get('fakeVScrollComp').getScrollPosition();
+                break;
+
+            case PINNED_VIEWPORT:
+                scrollTop = this.eBodyViewport.scrollTop + this.wheelDeltaY;
         }
 
         if (this.shouldBlockScrollUpdate(ScrollDir.Vertical, scrollTop, true)) {
@@ -281,8 +329,11 @@ export class GridBodyScrollFeature extends BeanStub {
 
         if (source === VIEWPORT) {
             this.ctrlsSvc.get('fakeVScrollComp').setScrollPosition(scrollTop);
+        } else if (source === FAKE_V_SCROLLBAR) {
+            this.eBodyViewport.scrollTop = scrollTop;
         } else {
             this.eBodyViewport.scrollTop = scrollTop;
+            this.ctrlsSvc.get('fakeVScrollComp').setScrollPosition(scrollTop);
         }
 
         // the `scrollGridIfNeeded` will recalculate the rows to be rendered by the grid
