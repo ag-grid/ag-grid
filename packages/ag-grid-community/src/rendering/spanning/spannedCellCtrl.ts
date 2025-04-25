@@ -80,7 +80,7 @@ export class SpannedCellCtrl extends CellCtrl {
 
     protected override applyStaticCssClasses(): void {
         super.applyStaticCssClasses();
-        this.comp.addOrRemoveCssClass(this.SPANNED_CELL_CSS_CLASS, true);
+        this.comp.toggleCss(this.SPANNED_CELL_CSS_CLASS, true);
     }
 
     public override onCellFocused(event?: CellFocusedEvent): void {

@@ -3,13 +3,15 @@ import {
     ClientSideRowModelModule,
     ColumnApiModule,
     ModuleRegistry,
+    PinnedRowModule,
     ValidationModule,
     createGrid,
+    themeQuartz,
 } from 'ag-grid-community';
-import { ContextMenuModule, ManualPinnedRowModule, SetFilterModule } from 'ag-grid-enterprise';
+import { ContextMenuModule, SetFilterModule } from 'ag-grid-enterprise';
 
 ModuleRegistry.registerModules([
-    ManualPinnedRowModule,
+    PinnedRowModule,
     ClientSideRowModelModule,
     ContextMenuModule,
     SetFilterModule,
@@ -34,6 +36,11 @@ const gridOptions: GridOptions<IOlympicData> = {
     rowData: null,
     enableRowPinning: true,
     isRowPinned: (node) => (!node.data?.country ? 'top' : null),
+    theme: themeQuartz.withParams({
+        pinnedRowBorder: {
+            width: 3,
+        },
+    }),
 };
 
 // setup the grid after the page has finished loading

@@ -9,7 +9,7 @@ import type { WithoutGridCommon } from '../interfaces/iCommon';
 import type { IRowNode, VerticalScrollPosition } from '../interfaces/iRowNode';
 import type { AnimationFrameService } from '../misc/animationFrameService';
 import { _isIOSUserAgent } from '../utils/browser';
-import { _getInnerHeight, _getScrollLeft, _isRtlNegativeScroll, _setScrollLeft } from '../utils/dom';
+import { _getInnerHeight, _getScrollLeft, _setScrollLeft } from '../utils/dom';
 import { _debounce } from '../utils/function';
 import { _warn } from '../validation/logging';
 import type { RowContainerCtrl } from './rowContainer/rowContainerCtrl';
@@ -104,7 +104,7 @@ export class GridBodyScrollFeature extends BeanStub {
     }
 
     public postConstruct(): void {
-        this.enableRtl = this.gos.getAsBool('enableRtl');
+        this.enableRtl = this.gos.get('enableRtl');
 
         const invalidateVerticalScroll = this.invalidateVerticalScroll.bind(this);
         const invalidateHorizontalScroll = this.invalidateHorizontalScroll.bind(this);
@@ -358,7 +358,7 @@ export class GridBodyScrollFeature extends BeanStub {
         const clientWidth = this.centerRowsCtrl.getCenterWidth();
         const { scrollWidth } = this.centerRowsCtrl.eViewport;
 
-        if (this.enableRtl && _isRtlNegativeScroll()) {
+        if (this.enableRtl) {
             if (scrollTo > 0) {
                 return true;
             }
@@ -411,7 +411,7 @@ export class GridBodyScrollFeature extends BeanStub {
         // if this is call is coming from the alignedGridsSvc, we don't need to validate the
         // scroll, because it has already been validated by the grid firing the scroll event.
         if (!fromAlignedGridsService && this.shouldBlockScrollUpdate(ScrollDir.Horizontal, hScrollPosition)) {
-            if (this.enableRtl && _isRtlNegativeScroll()) {
+            if (this.enableRtl) {
                 hScrollPosition = hScrollPosition > 0 ? 0 : maxScrollLeft;
             } else {
                 hScrollPosition = Math.min(Math.max(hScrollPosition, minScrollLeft), maxScrollLeft);
@@ -530,7 +530,7 @@ export class GridBodyScrollFeature extends BeanStub {
     // eg if grid needs to scroll up, it scrolls until row is on top,
     //    if grid needs to scroll down, it scrolls until row is on bottom,
     //    if row is already in view, grid does not scroll
-    public ensureIndexVisible(index: number, position?: 'top' | 'bottom' | 'middle' | null) {
+    public ensureIndexVisible(index: number, position?: 'top' | 'bottom' | 'middle' | null, retry = 0) {
         // if for print or auto height, everything is always visible
         if (_isDomLayout(this.gos, 'print')) {
             return;
@@ -618,6 +618,12 @@ export class GridBodyScrollFeature extends BeanStub {
 
             // so when we return back to user, the cells have rendered
             this.animationFrameSvc?.flushAllFrames();
+
+            if (retry < 10 && !this.beans.rowAutoHeight?.areRowsMeasured()) {
+                setTimeout(() => {
+                    this.ensureIndexVisible(index, position, retry + 1);
+                }, 0);
+            }
         });
     }
 

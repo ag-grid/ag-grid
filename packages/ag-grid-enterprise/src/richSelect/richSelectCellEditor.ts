@@ -33,7 +33,7 @@ export class RichSelectCellEditor<TData = any, TValue = any> extends PopupCompon
 
         const richSelect = this.createManagedBean(new AgRichSelect<TValue>(richSelectParams));
         this.richSelect = richSelect;
-        richSelect.addCssClass('ag-cell-editor');
+        richSelect.addCss('ag-cell-editor');
         this.appendChild(richSelect);
 
         if (valuesPromise) {

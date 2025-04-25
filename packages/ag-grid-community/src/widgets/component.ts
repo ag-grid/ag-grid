@@ -55,12 +55,12 @@ export class Component<TLocalEvent extends string = ComponentEvent>
     // around as we create a new rowComp instance for the same row node).
     private compId = compIdSequence++;
 
-    private cssClassManager: CssClassManager;
+    private cssManager: CssClassManager;
 
     constructor(templateOrParams?: string | ElementParams, componentSelectors?: ComponentSelector[]) {
         super();
 
-        this.cssClassManager = new CssClassManager(() => this.eGui);
+        this.cssManager = new CssClassManager(() => this.eGui);
 
         this.componentSelectors = new Map((componentSelectors ?? []).map((comp) => [comp.selector, comp]));
         if (templateOrParams) {
@@ -369,20 +369,16 @@ export class Component<TLocalEvent extends string = ComponentEvent>
         this.addDestroyFunc(() => this.eGui.removeEventListener(event, listener));
     }
 
-    public addCssClass(className: string): void {
-        this.cssClassManager.addCssClass(className);
+    public addCss(className: string): void {
+        this.cssManager.toggleCss(className, true);
     }
 
-    public removeCssClass(className: string): void {
-        this.cssClassManager.removeCssClass(className);
+    public removeCss(className: string): void {
+        this.cssManager.toggleCss(className, false);
     }
 
-    public containsCssClass(className: string): boolean {
-        return this.cssClassManager.containsCssClass(className);
-    }
-
-    public addOrRemoveCssClass(className: string, addOrRemove: boolean): void {
-        this.cssClassManager.addOrRemoveCssClass(className, addOrRemove);
+    public toggleCss(className: string, addOrRemove: boolean): void {
+        this.cssManager.toggleCss(className, addOrRemove);
     }
 
     protected registerCSS(css: string): void {

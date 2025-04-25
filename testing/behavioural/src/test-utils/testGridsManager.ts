@@ -3,6 +3,7 @@ import { AllCommunityModule, createGrid } from 'ag-grid-community';
 import { ServerSideRowModelApiModule } from 'ag-grid-enterprise';
 
 import { mockGridLayout } from './polyfills/mockGridLayout';
+import { ignoreConsoleLicenseKeyError } from './utils';
 
 export interface TestGridManagerOptions {
     /** The modules to register when a grid gets created */
@@ -90,39 +91,16 @@ export class TestGridsManager {
             throw new Error(`Grid with id "${element.id}" already exists`);
         }
 
-        let api: GridApi;
+        ignoreConsoleLicenseKeyError();
 
-        const originalConsoleError = console.error;
-
-        // We want to ignore the missing license error message during tests.
-        function consoleErrorImpl(...args: unknown[]) {
-            if (
-                args.length === 1 &&
-                typeof args[0] === 'string' &&
-                args[0].startsWith('*') &&
-                args[0].endsWith('*') &&
-                args[0].length === 124
-            ) {
-                return; // This is a license error message
-            }
-            return originalConsoleError.apply(console, args);
-        }
-
-        console.error = consoleErrorImpl;
-        try {
-            const modules = unique(this.modulesToRegister ?? [])
-                .concat(params?.modules ?? [])
-                .concat([AllCommunityModule, ServerSideRowModelApiModule]);
-            api = createGrid(
-                element,
-                { ...TestGridsManager.defaultGridOptions, ...gridOptions },
-                { ...params, modules }
-            );
-        } finally {
-            if (console.error === consoleErrorImpl) {
-                console.error = originalConsoleError;
-            }
-        }
+        const modules = unique(this.modulesToRegister ?? [])
+            .concat(params?.modules ?? [])
+            .concat([AllCommunityModule, ServerSideRowModelApiModule]);
+        const api = createGrid(
+            element,
+            { ...TestGridsManager.defaultGridOptions, ...gridOptions },
+            { ...params, modules }
+        );
 
         this.gridsMap.set(element, api);
         gridApiHtmlElementsMap.set(api, element);

@@ -1,6 +1,5 @@
 import type { BeanCollection, RowNode } from 'ag-grid-community';
-
-import { _createRowNodeSibling } from '../misc/rowNodeSiblingUtils';
+import { _createRowNodeSibling } from 'ag-grid-community';
 
 export function _createRowNodeFooter(rowNode: RowNode, beans: BeanCollection): void {
     // only create footer node once, otherwise we have daemons and

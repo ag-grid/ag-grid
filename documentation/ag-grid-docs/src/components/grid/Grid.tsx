@@ -4,6 +4,7 @@ import {
     CellStyleModule,
     ClientSideRowModelModule,
     ColumnAutoSizeModule,
+    ExternalFilterModule,
     QuickFilterModule,
     RowApiModule,
     RowAutoHeightModule,
@@ -46,6 +47,7 @@ export const Grid: FunctionComponent<Props> = ({ gridHeight, ...props }) => {
                     SetFilterModule,
                     ColumnsToolPanelModule,
                     StatusBarModule,
+                    ExternalFilterModule,
                 ]}
                 statusBar={{
                     statusPanels: [

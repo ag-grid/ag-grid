@@ -24,7 +24,7 @@ const GridHeaderComp = () => {
         if (!eRef) return;
 
         const compProxy: IGridHeaderComp = {
-            addOrRemoveCssClass: (name, on) => setCssClasses((prev) => prev.setClass(name, on)),
+            toggleCss: (name, on) => setCssClasses((prev) => prev.setClass(name, on)),
             setHeightAndMinHeight: (height) => setHeight(height),
         };
 

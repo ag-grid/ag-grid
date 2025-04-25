@@ -1,6 +1,5 @@
 import type { GridApi } from '../api/gridApi';
-import type { ColDef, GetFindTextFunc } from '../entities/colDef';
-import type { ICellRendererParams } from '../rendering/cellRenderers/iCellRenderer';
+import type { GetFindTextFunc } from '../entities/colDef';
 import type { Column } from './iColumn';
 import type { IRowNode } from './iRowNode';
 
@@ -33,11 +32,7 @@ export interface IFindService {
 
     getNumMatches(node: IRowNode, column: Column | null): number;
 
-    setupGroupCol(colDef: ColDef): void;
-
     registerDetailGrid(node: IRowNode, api: GridApi): void;
-
-    getDisplayValue(params: ICellRendererParams): string | undefined;
 
     refresh(maintainActive: boolean): void;
 }

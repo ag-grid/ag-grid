@@ -1,7 +1,10 @@
 @use 'design-system' as *;
 
 .loggerOuter {
+    min-height: 154px;
     height: 154px;
+    max-height: 700px;
+    resize: vertical;
     display: flex;
     flex-direction: column;
     margin-top: $spacing-size-4;
@@ -16,6 +19,13 @@
     font-size: var(--text-fs-xs);
     font-weight: var(--text-semibold);
     border-bottom: 1px solid var(--color-border-secondary);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    button {
+        padding: 0.08em 0.5em 0;
+    }
 }
 
 .loggerPre {
@@ -31,21 +41,50 @@
         background-color: var(--color-gray-900);
         color: var(--color-text-secondary);
     }
+}
 
-    > div {
-        display: flex;
-        flex-direction: row;
-        flex-wrap: wrap;
-        gap: $spacing-size-2;
-        padding: $spacing-size-2;
-        border-bottom: 1px solid var(--color-border-secondary);
-        white-space: pre-wrap;
-        line-height: var(--text-lh-base);
+.logItem,
+.placeholder {
+    display: flex;
+    flex-direction: row;
+    gap: $spacing-size-2;
+    padding: $spacing-size-2;
+    border-bottom: 1px solid var(--color-border-secondary);
 
-        &:nth-child(odd) {
-            background-color: color-mix(in srgb, var(--color-bg-primary) 66.66%, transparent);
-        }
+    &:nth-child(odd) {
+        background-color: color-mix(in srgb, var(--color-bg-primary) 66.66%, transparent);
     }
+}
+
+.count {
+    min-width: $spacing-size-4;
+    height: $spacing-size-4;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: var(--text-fs-2xs);
+    border-radius: $spacing-size-2;
+    background-color: var(--color-gray-200);
+    color: var(--color-gray-800);
+    opacity: 1;
+    flex-shrink: 0;
+    font-weight: 600;
+    padding-left: 4px;
+    padding-right: 4px;
+
+    #{$selector-darkmode} & {
+        background-color: var(--color-gray-600);
+        color: var(--color-gray-300);
+    }
+}
+
+.dataItem {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: $spacing-size-2;
+    white-space: pre-wrap;
+    line-height: var(--text-lh-base);
 }
 
 .type-null,
@@ -111,4 +150,9 @@
             }
         }
     }
+}
+
+.clearButton {
+    font-family: var(--text-monospace-font-family);
+    color: var(--color-button-secondary-fg);
 }

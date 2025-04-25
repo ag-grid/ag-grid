@@ -277,7 +277,7 @@ export class RowContainerCtrl extends BeanStub implements ScrollPartner {
     }
 
     public postConstruct(): void {
-        this.enableRtl = this.gos.getAsBool('enableRtl');
+        this.enableRtl = this.gos.get('enableRtl');
 
         this.forContainers(['center'], () => {
             this.viewportSizeFeature = this.createManagedBean(new ViewportSizeFeature(this));

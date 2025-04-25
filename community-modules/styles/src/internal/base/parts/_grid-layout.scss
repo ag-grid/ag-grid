@@ -347,10 +347,10 @@
         }
     }
 
-    .ag-floating-top {
+    .ag-floating-top:not(.ag-invisible) {
         border-bottom: var(--ag-borders-critical) var(--ag-border-color);
     }
-    .ag-floating-bottom {
+    .ag-floating-bottom:not(.ag-invisible) {
         border-top: var(--ag-borders-critical) var(--ag-border-color);
     }
 

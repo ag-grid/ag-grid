@@ -492,13 +492,13 @@ export class AgFiltersToolPanelList extends Component<AgFiltersToolPanelListEven
 
         this.filterGroupComps.forEach((filterGroup, idx) => {
             recursivelySearch(filterGroup, false);
-
+            const isHidden = filterGroup.getGui()?.classList.contains('ag-hidden');
             if (firstVisible === undefined) {
-                if (!filterGroup.containsCssClass('ag-hidden')) {
+                if (!isHidden) {
                     firstVisible = idx;
                     lastVisible = idx;
                 }
-            } else if (!filterGroup.containsCssClass('ag-hidden') && lastVisible !== idx) {
+            } else if (!isHidden && lastVisible !== idx) {
                 lastVisible = idx;
             }
         });
@@ -509,14 +509,14 @@ export class AgFiltersToolPanelList extends Component<AgFiltersToolPanelListEven
 
     private setFirstAndLastVisible(firstIdx?: number, lastIdx?: number) {
         this.filterGroupComps.forEach((filterGroup, idx) => {
-            filterGroup.removeCssClass('ag-first-group-visible');
-            filterGroup.removeCssClass('ag-last-group-visible');
+            filterGroup.removeCss('ag-first-group-visible');
+            filterGroup.removeCss('ag-last-group-visible');
 
             if (idx === firstIdx) {
-                filterGroup.addCssClass('ag-first-group-visible');
+                filterGroup.addCss('ag-first-group-visible');
             }
             if (idx === lastIdx) {
-                filterGroup.addCssClass('ag-last-group-visible');
+                filterGroup.addCss('ag-last-group-visible');
             }
         });
     }

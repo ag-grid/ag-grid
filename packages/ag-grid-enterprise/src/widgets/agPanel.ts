@@ -215,7 +215,7 @@ export class AgPanel<TConfig extends PanelOptions = PanelOptions> extends Compon
 
         position = Math.max(0, Math.min(position, len));
 
-        button.addCssClass('ag-panel-title-bar-button');
+        button.addCss('ag-panel-title-bar-button');
 
         const eGui = button.getGui();
 

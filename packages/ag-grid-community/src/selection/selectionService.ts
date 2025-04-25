@@ -128,7 +128,7 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
             const rowNode = nodes[i];
             // if node is a footer, we don't do selection, just pass the info
             // to the sibling (the parent of the group)
-            const node = _normaliseFooterRef(rowNode);
+            const node = _normaliseSiblingRef(rowNode);
 
             // when groupSelectsFiltered, then this node may end up indeterminate despite
             // trying to set it to true / false. this group will be calculated further on
@@ -163,7 +163,7 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
         if (!suppressFinishActions) {
             const clearOtherNodes = newValue && (clearSelection || !this.isMultiSelect());
             if (clearOtherNodes) {
-                updatedCount += this.clearOtherNodes(_normaliseFooterRef(nodes[0]), source);
+                updatedCount += this.clearOtherNodes(_normaliseSiblingRef(nodes[0]), source);
             }
 
             // only if we selected something, then update groups and fire events
@@ -183,7 +183,9 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
     private selectRange(nodesToSelect: readonly RowNode[], value: boolean, source: SelectionEventSourceType): number {
         let updatedCount = 0;
 
-        nodesToSelect.forEach((rowNode) => {
+        nodesToSelect.forEach((node) => {
+            const rowNode = _normaliseSiblingRef(node);
+
             if (rowNode.group && this.groupSelectsDescendants) {
                 return;
             }
@@ -443,7 +445,7 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
 
         let updatedNodes = false;
         const callback = (rowNode: RowNode) => {
-            const updated = this.selectRowNode(_normaliseFooterRef(rowNode), false, undefined, source);
+            const updated = this.selectRowNode(_normaliseSiblingRef(rowNode), false, undefined, source);
             updatedNodes ||= updated;
         };
 
@@ -583,7 +585,7 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
         let updatedNodes = false;
 
         this.getNodesToSelect(selectAll).forEach((rowNode) => {
-            const updated = this.selectRowNode(_normaliseFooterRef(rowNode), true, undefined, source);
+            const updated = this.selectRowNode(_normaliseSiblingRef(rowNode), true, undefined, source);
             updatedNodes ||= updated;
         });
 
@@ -786,8 +788,8 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
     }
 }
 
-/** Selection state of footer nodes is a clone of their siblings, so always act on sibling rather than footer */
-function _normaliseFooterRef(node: RowNode): RowNode {
+/** Selection state of sibling nodes is a clone of their siblings, so always act on sibling rather than footer */
+function _normaliseSiblingRef(node: RowNode): RowNode {
     return _isManualPinnedRow(node) ? node.pinnedSibling! : node.footer ? node.sibling : node;
 }
 

@@ -28,9 +28,9 @@ const HeaderCellComp = ({ ctrl }: { ctrl: HeaderCellCtrl }) => {
     const eHeaderCompWrapper = useRef<HTMLDivElement>(null);
     const userCompRef = useRef<IHeader>();
 
-    const cssClassManager = useRef<CssClassManager>();
-    if (isAlive && !cssClassManager.current) {
-        cssClassManager.current = new CssClassManager(() => eGui.current);
+    const cssManager = useRef<CssClassManager>();
+    if (isAlive && !cssManager.current) {
+        cssManager.current = new CssClassManager(() => eGui.current);
     }
     const setRef = useCallback((eRef: HTMLDivElement | null) => {
         eGui.current = eRef;
@@ -45,7 +45,7 @@ const HeaderCellComp = ({ ctrl }: { ctrl: HeaderCellCtrl }) => {
                     eGui.current.style.width = width;
                 }
             },
-            addOrRemoveCssClass: (name: string, on: boolean) => cssClassManager.current!.addOrRemoveCssClass(name, on),
+            toggleCss: (name: string, on: boolean) => cssManager.current!.toggleCss(name, on),
             setUserStyles: (styles: HeaderStyle) => setUserStyles(styles),
             setAriaSort: (sort?: ColumnSortState) => {
                 if (eGui.current) {

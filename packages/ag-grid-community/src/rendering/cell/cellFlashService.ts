@@ -52,8 +52,8 @@ export class CellFlashService extends BeanStub implements NamedBean {
         const animationFullName = `ag-cell-${cssName}-animation`;
 
         // we want to highlight the cells, without any animation
-        cellComp.addOrRemoveCssClass(fullName, true);
-        cellComp.addOrRemoveCssClass(animationFullName, false);
+        cellComp.toggleCss(fullName, true);
+        cellComp.toggleCss(animationFullName, false);
 
         const eCell = cellCtrl.eGui;
 
@@ -63,8 +63,8 @@ export class CellFlashService extends BeanStub implements NamedBean {
                 if (!cellCtrl.isAlive()) {
                     return;
                 }
-                cellComp.addOrRemoveCssClass(fullName, false);
-                cellComp.addOrRemoveCssClass(animationFullName, true);
+                cellComp.toggleCss(fullName, false);
+                cellComp.toggleCss(animationFullName, true);
 
                 eCell.style.transition = `background-color ${fadeDuration}ms`;
                 window.setTimeout(() => {
@@ -72,7 +72,7 @@ export class CellFlashService extends BeanStub implements NamedBean {
                         return;
                     }
                     // and then to leave things as we got them, we remove the animation
-                    cellComp.addOrRemoveCssClass(animationFullName, false);
+                    cellComp.toggleCss(animationFullName, false);
                     eCell.style.transition = '';
                 }, fadeDuration!);
             }, flashDuration!);

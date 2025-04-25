@@ -28,7 +28,8 @@ function validateSizes() {
         // validate that all results their selfSize is less than the expectedSize + 2%
 
         // Some modules are very small and the expected size is very close to the actual size
-        const bufferSize = (expected) => Math.max(expected * 0.03, 1);
+        // But for large modules cap at a 5kb change.
+        const bufferSize = (expected) => Math.min(5, Math.max(expected * 0.03, 1));
 
         const tooBig = result.selfSize > result.expectedSize + bufferSize(result.expectedSize);
 
@@ -36,7 +37,7 @@ function validateSizes() {
         const tooSmall = result.selfSize < result.expectedSize - bufferSize(result.expectedSize);
 
         if (tooBig || tooSmall) {
-            const errors = [];
+            const errors: string[] = [];
             if (tooBig) {
                 errors.push(
                     'Validation failed for the following modules which are too large compared to their expected size:'

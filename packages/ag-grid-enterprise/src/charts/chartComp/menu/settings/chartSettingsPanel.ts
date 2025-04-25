@@ -189,8 +189,8 @@ export class ChartSettingsPanel extends Component {
         const animatingClass = 'ag-animating';
 
         futurePalette.setDisplayed(true);
-        currentPalette.addCssClass(animatingClass);
-        futurePalette.addCssClass(animatingClass);
+        currentPalette.addCss(animatingClass);
+        futurePalette.addCss(animatingClass);
 
         this.chartController.setChartThemeName(this.themes[index]);
 
@@ -202,8 +202,8 @@ export class ChartSettingsPanel extends Component {
         window.setTimeout(() => {
             this.isAnimating = false;
 
-            currentPalette.removeCssClass(animatingClass);
-            futurePalette.removeCssClass(animatingClass);
+            currentPalette.removeCss(animatingClass);
+            futurePalette.removeCss(animatingClass);
             currentPalette.setDisplayed(false);
         }, 300);
     }

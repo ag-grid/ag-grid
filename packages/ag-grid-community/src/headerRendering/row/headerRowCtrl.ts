@@ -53,7 +53,7 @@ export class HeaderRowCtrl extends BeanStub {
 
     public postConstruct(): void {
         this.isPrintLayout = _isDomLayout(this.gos, 'print');
-        this.isEnsureDomOrder = this.gos.getAsBool('ensureDomOrder');
+        this.isEnsureDomOrder = this.gos.get('ensureDomOrder');
     }
 
     /** Checks that every header cell that is currently visible has been rendered.

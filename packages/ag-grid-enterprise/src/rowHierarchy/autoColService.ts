@@ -251,7 +251,6 @@ export class AutoColService extends BeanStub implements NamedBean, IColumnCollec
         // only add the default group cell renderer if user hasn't provided one
         if (!userHasProvidedGroupCellRenderer) {
             res.cellRenderer = 'agGroupCellRenderer';
-            this.beans.findSvc?.setupGroupCol(res);
         }
 
         if (rowGroupCol) {

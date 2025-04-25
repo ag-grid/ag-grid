@@ -21,7 +21,7 @@ export class RowNodeSorter extends BeanStub implements NamedBean {
 
     public postConstruct(): void {
         const { gos } = this;
-        this.isAccentedSort = gos.getAsBool('accentedSort');
+        this.isAccentedSort = gos.get('accentedSort');
         this.primaryColumnsSortGroups = _isColumnsSortingCoupledToGroup(gos);
 
         this.addManagedPropertyListener(

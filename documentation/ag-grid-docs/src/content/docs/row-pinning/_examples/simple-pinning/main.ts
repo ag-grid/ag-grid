@@ -1,9 +1,16 @@
 import type { ColDef, GridApi, GridOptions } from 'ag-grid-community';
-import { ClientSideRowModelModule, ModuleRegistry, ValidationModule, createGrid } from 'ag-grid-community';
-import { ContextMenuModule, ManualPinnedRowModule } from 'ag-grid-enterprise';
+import {
+    ClientSideRowModelModule,
+    ModuleRegistry,
+    PinnedRowModule,
+    ValidationModule,
+    createGrid,
+    themeQuartz,
+} from 'ag-grid-community';
+import { ContextMenuModule } from 'ag-grid-enterprise';
 
 ModuleRegistry.registerModules([
-    ManualPinnedRowModule,
+    PinnedRowModule,
     ClientSideRowModelModule,
     ContextMenuModule,
     ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
@@ -20,6 +27,11 @@ const gridOptions: GridOptions<IOlympicData> = {
     columnDefs: columnDefs,
     rowData: null,
     enableRowPinning: true,
+    theme: themeQuartz.withParams({
+        pinnedRowBorder: {
+            width: 3,
+        },
+    }),
 };
 
 // setup the grid after the page has finished loading

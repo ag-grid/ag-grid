@@ -68,6 +68,10 @@ export type IconName =
     | 'valuePanel'
     | 'columnDrag'
     | 'rowDrag'
+    | 'rowPin'
+    | 'rowPinTop'
+    | 'rowPinBottom'
+    | 'rowUnpin'
     | 'save'
     | 'csvExport'
     | 'excelExport'
@@ -166,7 +170,10 @@ export type IconValue =
     | 'radio-button-on'
     | 'radio-button-off'
     | 'eye'
-    | 'column-arrow';
+    | 'column-arrow'
+    | 'un-pin'
+    | 'pinned-bottom'
+    | 'pinned-top';
 
 /**
  * If icon provided, use this (either a string, or a function callback).

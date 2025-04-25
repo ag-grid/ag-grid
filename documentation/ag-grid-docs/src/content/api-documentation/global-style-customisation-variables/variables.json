@@ -500,6 +500,14 @@
         "--ag-find-active-match-background-color": {
             "description": "Background colour of the active match used in Find",
             "type": "CSS color (e.g. `red` or `#fff`)"
+        },
+        "--ag-pinned-row-border": {
+            "description": "Border style for pinned row containers, e.g. `1px solid black` or `3rem dashed #ggg`.",
+            "type": "a CSS border style, size and color (e.g. `1px dotted black`, `3rem solid #fff` or `none`)"
+        },
+        "--ag-pinned-row-source-color": {
+            "description": "Text colour of the source row that has been pinned",
+            "type": "CSS color (e.g. `red` or `#fff`)"
         }
     }
 }

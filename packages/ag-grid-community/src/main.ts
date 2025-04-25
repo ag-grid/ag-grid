@@ -17,6 +17,7 @@ export type { ColumnMoveService } from './columnMove/columnMoveService';
 export type { ColumnNameService } from './columns/columnNameService';
 export { IAggColumnNameService } from './interfaces/iAggColumnNameService';
 export { IShowRowGroupColsService } from './interfaces/iShowRowGroupColsService';
+export { IShowRowGroupColsValueService } from './interfaces/iShowRowGroupColsValueService';
 export { IPivotResultColsService } from './interfaces/iPivotResultColsService';
 export { ColumnKeyCreator } from './columns/columnKeyCreator';
 export type { VisibleColsService } from './columns/visibleColsService';
@@ -140,7 +141,7 @@ export {
     ROW_ID_PREFIX_TOP_PINNED as _ROW_ID_PREFIX_TOP_PINNED,
     ROW_ID_PREFIX_BOTTOM_PINNED as _ROW_ID_PREFIX_BOTTOM_PINNED,
 } from './entities/rowNode';
-export { _createGlobalRowEvent } from './entities/rowNodeUtils';
+export { _createGlobalRowEvent, _createRowNodeSibling } from './entities/rowNodeUtils';
 export {
     RowPinnedType,
     IRowNode,
@@ -658,6 +659,7 @@ export {
     _isClientSideRowModel,
     _isServerSideRowModel,
     _isGroupUseEntireRow,
+    _isFullWidthGroupRow,
     _canSkipShowingRowGroup,
     _getRowHeightAsNumber,
     _shouldUpdateColVisibilityAfterGroup,
@@ -1066,6 +1068,7 @@ export { RowSpanningAccumulator, GridSerializingParams, RowAccumulator } from '.
 
 // modules
 export {
+    AgModuleName,
     Module,
     ModuleValidationResult,
     _ModuleWithApi,

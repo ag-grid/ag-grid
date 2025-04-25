@@ -165,7 +165,7 @@ export abstract class PillDragComp<TItem> extends Component<PillDragCompEvent> {
         this.setupRemove();
 
         if (this.ghost) {
-            this.addCssClass('ag-column-drop-cell-ghost');
+            this.addCss('ag-column-drop-cell-ghost');
         }
     }
 

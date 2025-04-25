@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 
 import { AgGridAngular } from 'ag-grid-angular';
-import type { ColDef } from 'ag-grid-community';
+import type { AgModuleName, ColDef, GridReadyEvent } from 'ag-grid-community';
 import {
     ClientSideRowModelModule,
     CsvExportModule,
@@ -20,13 +20,17 @@ import {
 
 import './styles.css';
 
-// Register shared Modules globally
-ModuleRegistry.registerModules([
+const sharedModules = [
     ClientSideRowModelModule,
     ColumnMenuModule,
     ContextMenuModule,
     ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
-]);
+];
+const leftModules = [SetFilterModule, ClipboardModule, CsvExportModule];
+const rightModules = [TextFilterModule, NumberFilterModule, CsvExportModule, ExcelExportModule];
+
+// Register shared Modules globally
+ModuleRegistry.registerModules(sharedModules);
 
 @Component({
     selector: 'my-app',
@@ -36,27 +40,31 @@ ModuleRegistry.registerModules([
         <div class="example-wrapper">
             <div class="inner-col">
                 <ag-grid-angular
+                    [gridId]="'Left'"
                     [defaultColDef]="defaultColDef"
                     [rowData]="leftRowData"
                     [modules]="leftModules"
                     [columnDefs]="columns"
+                    (gridReady)="onGridReady($event)"
                 />
             </div>
 
             <div class="inner-col">
                 <ag-grid-angular
+                    [gridId]="'Right'"
                     [defaultColDef]="defaultColDef"
                     [rowData]="leftRowData"
                     [modules]="rightModules"
                     [columnDefs]="columns"
+                    (gridReady)="onGridReady($event)"
                 />
             </div>
         </div>
     `,
 })
 export class AppComponent {
-    leftModules = [SetFilterModule, ClipboardModule, CsvExportModule];
-    rightModules = [TextFilterModule, NumberFilterModule, CsvExportModule, ExcelExportModule];
+    leftModules = leftModules;
+    rightModules = rightModules;
     leftRowData: any[] = [];
     rightRowData: any[] = [];
 
@@ -72,6 +80,24 @@ export class AppComponent {
     constructor() {
         this.leftRowData = createRowBlock();
         this.rightRowData = createRowBlock();
+    }
+
+    onGridReady(event: GridReadyEvent) {
+        const api = event.api;
+        const moduleNames: AgModuleName[] = [
+            'ClipboardModule',
+            'ClientSideRowModelModule',
+            'ColumnMenuModule',
+            'ContextMenuModule',
+            'CsvExportModule',
+            'ExcelExportModule',
+            'NumberFilterModule',
+            'SetFilterModule',
+            'TextFilterModule',
+            'IntegratedChartsModule', // Not registered in this example
+        ];
+        const registered = moduleNames.filter((name) => api.isModuleRegistered(name));
+        console.log(api.getGridId(), 'registered:', registered.join(', '));
     }
 }
 

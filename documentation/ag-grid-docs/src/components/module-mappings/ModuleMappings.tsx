@@ -143,7 +143,7 @@ export const ModuleMappings: FunctionComponent<Props> = ({ framework, modules })
                 // when deselecting a group with all community selected, we need to prevent deselecting disabled children
                 const nodesToReselect: IRowNode[] = [];
                 node.allLeafChildren?.forEach((child) => {
-                    if (!child.isSelected() && !child.data.isEnterprise) {
+                    if (!child.isSelected() && !child.data.isEnterprise && !child.group) {
                         nodesToReselect.push(child);
                     }
                     api.setNodesSelected({

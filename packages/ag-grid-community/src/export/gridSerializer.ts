@@ -89,7 +89,8 @@ export class GridSerializer extends BeanStub implements NamedBean {
             (!isLeafNode && !isFooter && (params.skipRowGroups || shouldSkipCurrentGroup || hideOpenParents)) ||
             (params.onlySelected && !node.isSelected()) ||
             (params.skipPinnedTop && node.rowPinned === 'top') ||
-            (params.skipPinnedBottom && node.rowPinned === 'bottom')
+            (params.skipPinnedBottom && node.rowPinned === 'bottom') ||
+            node.stub // skip SSRM stub/loading rows
         ) {
             return;
         }

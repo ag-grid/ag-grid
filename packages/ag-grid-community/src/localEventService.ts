@@ -34,7 +34,7 @@ export class LocalEventService<TEventType extends string> implements IEventEmitt
         // against 'memory bloat' as empty collections will prevent the RowNode's event service from being removed after
         // the RowComp is destroyed, see noRegisteredListenersExist() below.
         if (!listeners && autoCreateListenerCollection) {
-            listeners = new Set<IEventListener<TEventType>>();
+            listeners = new Set();
             listenerMap.set(eventType, listeners);
         }
 
@@ -63,17 +63,16 @@ export class LocalEventService<TEventType extends string> implements IEventEmitt
         listeners.delete(listener);
 
         if (listeners.size === 0) {
-            const listenerMap = async ? this.allAsyncListeners : this.allSyncListeners;
-            listenerMap.delete(eventType);
+            (async ? this.allAsyncListeners : this.allSyncListeners).delete(eventType);
         }
     }
 
     public addGlobalListener(listener: IGlobalEventListener<TEventType>, async = false): void {
-        (async ? this.globalAsyncListeners : this.globalSyncListeners).add(listener);
+        this.getGlobalListeners(async).add(listener);
     }
 
     public removeGlobalListener(listener: IGlobalEventListener<TEventType>, async = false): void {
-        (async ? this.globalAsyncListeners : this.globalSyncListeners).delete(listener);
+        this.getGlobalListeners(async).delete(listener);
     }
 
     public dispatchEvent(event: AgEvent<TEventType>): void {
@@ -102,49 +101,41 @@ export class LocalEventService<TEventType extends string> implements IEventEmitt
                 (event as any).eventPath = browserEvent.composedPath();
             }
         }
+        const { frameworkOverrides } = this;
 
-        const processEventListeners = (
-            listeners: Set<IEventListener<TEventType>>,
-            originalListeners: Set<IEventListener<TEventType>>
-        ) =>
-            listeners.forEach((listener) => {
-                if (!originalListeners.has(listener)) {
-                    // A listener could have been removed by a previously processed listener. In this case we don't want to call
-                    return;
-                }
-                const callback = this.frameworkOverrides
-                    ? () => this.frameworkOverrides!.wrapIncoming(() => listener(event))
-                    : () => listener(event);
-
-                if (async) {
-                    this.dispatchAsync(callback);
-                } else {
-                    callback();
-                }
-            });
-
-        const originalListeners = this.getListeners(eventType, async, false) ?? new Set<IEventListener<TEventType>>();
-        // create a shallow copy to prevent listeners cyclically adding more listeners to capture this event
-        const listeners = new Set<IEventListener<TEventType>>(originalListeners);
-        if (listeners.size > 0) {
-            processEventListeners(listeners, originalListeners);
-        }
-
-        const globalListeners: Set<IGlobalEventListener<TEventType>> = new Set(
-            async ? this.globalAsyncListeners : this.globalSyncListeners
-        );
-
-        globalListeners.forEach((listener) => {
-            const callback = this.frameworkOverrides
-                ? () => this.frameworkOverrides!.wrapIncoming(() => listener(eventType, event))
-                : () => listener(eventType, event);
-
+        const runCallback = (func: () => void) => {
+            const callback = frameworkOverrides ? () => frameworkOverrides.wrapIncoming(func) : func;
             if (async) {
                 this.dispatchAsync(callback);
             } else {
                 callback();
             }
-        });
+        };
+
+        const originalListeners = this.getListeners(eventType, async, false);
+        if ((originalListeners?.size ?? 0) > 0) {
+            // create a shallow copy to prevent listeners cyclically adding more listeners to capture this event
+            const listeners = new Set(originalListeners);
+            for (const listener of listeners) {
+                if (!originalListeners?.has(listener)) {
+                    // A listener could have been removed by a previously processed listener. In this case we don't want to call
+                    continue;
+                }
+                runCallback(() => listener(event));
+            }
+        }
+
+        const globalListenersSrc = this.getGlobalListeners(async);
+        if (globalListenersSrc.size > 0) {
+            const globalListeners = new Set(globalListenersSrc);
+            for (const listener of globalListeners) {
+                runCallback(() => listener(eventType, event));
+            }
+        }
+    }
+
+    private getGlobalListeners(async: boolean): Set<IGlobalEventListener<TEventType>> {
+        return async ? this.globalAsyncListeners : this.globalSyncListeners;
     }
 
     // this gets called inside the grid's thread, for each event that it

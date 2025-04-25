@@ -317,8 +317,6 @@ export const _BOOLEAN_GRID_OPTIONS: KeysWithType<boolean>[] = [
     'suppressSetFilterByDefault',
 ];
 
-export type BooleanGridOptions = (typeof _BOOLEAN_GRID_OPTIONS)[number];
-
 // Used in example generation
 export const _FUNCTION_GRID_OPTIONS: (CallbackKeys | FunctionKeys)[] = [
     'doesExternalFilterPass',

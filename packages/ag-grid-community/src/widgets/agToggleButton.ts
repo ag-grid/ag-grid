@@ -14,7 +14,7 @@ export class AgToggleButton extends AgCheckbox<AgToggleButtonParams> {
     public override setValue(value: boolean, silent?: boolean): this {
         super.setValue(value, silent);
 
-        this.addOrRemoveCssClass('ag-selected', this.getValue()!);
+        this.toggleCss('ag-selected', this.getValue()!);
 
         return this;
     }

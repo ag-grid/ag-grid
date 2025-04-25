@@ -48,7 +48,7 @@ export class HeaderFilterCellComp extends AbstractHeaderCellComp<HeaderFilterCel
         const eGui = this.getGui();
 
         const compProxy: IHeaderFilterCellComp = {
-            addOrRemoveCssClass: (cssClassName, on) => this.addOrRemoveCssClass(cssClassName, on),
+            toggleCss: (cssClassName, on) => this.toggleCss(cssClassName, on),
             setUserStyles: (styles: HeaderStyle) => _addStylesToElement(eGui, styles),
             addOrRemoveBodyCssClass: (cssClassName, on) => this.eFloatingFilterBody.classList.toggle(cssClassName, on),
             setButtonWrapperDisplayed: (displayed) => _setDisplayed(this.eButtonWrapper, displayed),

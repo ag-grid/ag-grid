@@ -6,7 +6,7 @@ import {
 
 export const AllGridCommunityModules: Record<`${CommunityModuleName}Module`, number> = {
     AlignedGridsModule: 3.06,
-    AllCommunityModule: 400,
+    AllCommunityModule: 405,
     CellApiModule: 0.28,
     CellStyleModule: 2.24,
     CheckboxEditorModule: 18.81,
@@ -31,13 +31,13 @@ export const AllGridCommunityModules: Record<`${CommunityModuleName}Module`, num
     NumberEditorModule: 22.82,
     NumberFilterModule: 107,
     PaginationModule: 42.74,
-    PinnedRowModule: 9.35,
+    PinnedRowModule: 18.27,
     QuickFilterModule: 17.3,
     RenderApiModule: 1.48,
     RowApiModule: 0.88,
     RowAutoHeightModule: 1.84,
-    RowDragModule: 13,
-    RowSelectionModule: 33,
+    RowDragModule: 14.38,
+    RowSelectionModule: 33.5,
     RowStyleModule: 1.24,
     ScrollApiModule: 0.7,
     SelectEditorModule: 31.89,
@@ -51,9 +51,9 @@ export const AllGridCommunityModules: Record<`${CommunityModuleName}Module`, num
 };
 export const AllEnterpriseModules: Record<`${EnterpriseModuleName}Module`, number> = {
     AdvancedFilterModule: 200,
-    AllEnterpriseModule: 1357.11,
+    AllEnterpriseModule: 1368,
     CellSelectionModule: 53,
-    ClipboardModule: 46,
+    ClipboardModule: 44.6,
     ColumnMenuModule: 147,
     ColumnsToolPanelModule: 146,
     ContextMenuModule: 72,
@@ -61,9 +61,8 @@ export const AllEnterpriseModules: Record<`${EnterpriseModuleName}Module`, numbe
     FiltersToolPanelModule: 116,
     FindModule: 14.51,
     GridChartsModule: 67,
-    IntegratedChartsModule: 385.33,
+    IntegratedChartsModule: 392,
     GroupFilterModule: 93,
-    ManualPinnedRowModule: 18.35,
     MasterDetailModule: 82,
     MenuModule: 153,
     MultiFilterModule: 121,
@@ -79,7 +78,7 @@ export const AllEnterpriseModules: Record<`${EnterpriseModuleName}Module`, numbe
     SideBarModule: 32,
     SparklinesModule: 20,
     StatusBarModule: 27,
-    TreeDataModule: 91.6,
+    TreeDataModule: 94.81,
     ViewportRowModelModule: 26,
 };
 
@@ -133,7 +132,7 @@ const chartModules: ModuleTest[] = [
     },
 ];
 
-export const baseModule = { modules: [], expectedSize: 459.29 };
+export const baseModule = { modules: [], expectedSize: 465 };
 
 export const moduleCombinations: ModuleTest[] = [
     ...commonFeatureSets,

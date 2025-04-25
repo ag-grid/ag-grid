@@ -15,7 +15,7 @@ import type { ModuleName, ValidationModuleName } from './interfaces/iModule';
 import type { RowModelType } from './interfaces/iRowModel';
 import { LocalEventService } from './localEventService';
 import { _areModulesGridScoped, _isModuleRegistered, _isUmd } from './modules/moduleRegistry';
-import type { AnyGridOptions, BooleanGridOptions } from './propertyKeys';
+import type { AnyGridOptions } from './propertyKeys';
 import { _logIfDebug } from './utils/function';
 import { _exists } from './utils/generic';
 import type { MissingModuleErrors } from './validation/errorMessages/errorText';
@@ -23,7 +23,7 @@ import { _error } from './validation/logging';
 import { COLUMN_DEFINITION_MOD_VALIDATIONS } from './validation/rules/colDefValidations';
 import { GRID_OPTIONS_MODULES } from './validation/rules/gridOptionsValidations';
 import type { ValidationService } from './validation/validationService';
-import type { RequiredModule } from './validation/validationTypes';
+import type { ModuleValidation, RequiredModule } from './validation/validationTypes';
 
 type GetKeys<T, U> = {
     [K in keyof T]: T[K] extends U | undefined ? K : never;
@@ -128,7 +128,7 @@ export class GridOptionsService extends BeanStub implements NamedBean {
     }
 
     /**
-     * Get the raw value of the GridOptions property provided or the default value if not set.
+     * Get the raw value of the GridOptions property provided.
      * @param property
      */
     public get<K extends keyof GridOptions>(property: K): GridOptionOrDefault<K> {
@@ -136,14 +136,6 @@ export class GridOptionsService extends BeanStub implements NamedBean {
             this.gridOptions[property] ??
             (GRID_OPTION_DEFAULTS[property as keyof typeof GRID_OPTION_DEFAULTS] as GridOptionOrDefault<K>)
         );
-    }
-
-    /**
-     * Get the GridOption property as a boolean. This will coerce the value to a boolean.
-     * @param property
-     */
-    public getAsBool<K extends BooleanGridOptions>(property: K): boolean {
-        return !!this.get(property);
     }
 
     /**
@@ -270,33 +262,32 @@ export class GridOptionsService extends BeanStub implements NamedBean {
         return params as T;
     }
 
-    private assertModules<T extends object>(
-        requiredModule: RequiredModule<T> | null | undefined,
-        option: T,
-        key: string
-    ) {
-        const moduleToCheck =
-            typeof requiredModule === 'function'
-                ? requiredModule(option, this.gridOptions, this.beans)
-                : requiredModule;
-        if (moduleToCheck) {
-            this.assertModuleRegistered(moduleToCheck, key);
+    private validateOptions<T extends object>(options: T, modValidations: ModuleValidation<T>): void {
+        for (const key of Object.keys(options)) {
+            const value = options[key as keyof T];
+            if (value == null || value === false) {
+                // false implies feature is disabled, don't validate.
+                continue;
+            }
+
+            let moduleToCheck: RequiredModule<T> | undefined | null = modValidations[key as keyof T];
+            if (typeof moduleToCheck === 'function') {
+                moduleToCheck = moduleToCheck(options, this.gridOptions, this.beans);
+            }
+            if (moduleToCheck) {
+                this.assertModuleRegistered(moduleToCheck, key);
+            }
         }
     }
 
     private validateGridOptions(gridOptions: GridOptions): void {
-        for (const key of Object.keys(gridOptions)) {
-            const requiredModule = GRID_OPTIONS_MODULES[key as keyof GridOptions];
-            this.assertModules(requiredModule, gridOptions, key);
-        }
+        this.validateOptions(gridOptions, GRID_OPTIONS_MODULES);
         this.validation?.processGridOptions(gridOptions);
     }
 
     public validateColDef(colDef: ColDef | ColGroupDef, colId: string, skipInferenceCheck?: boolean): void {
         if (skipInferenceCheck || !this.beans.dataTypeSvc?.isColPendingInference(colId)) {
-            for (const key of Object.keys(colDef)) {
-                this.assertModules((COLUMN_DEFINITION_MOD_VALIDATIONS as any)[key], colDef, key);
-            }
+            this.validateOptions(colDef, COLUMN_DEFINITION_MOD_VALIDATIONS);
             this.validation?.validateColDef(colDef);
         }
     }

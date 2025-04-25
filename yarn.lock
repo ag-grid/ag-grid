@@ -735,6 +735,11 @@
   resolved "http://52.50.158.57:4873/@babel/compat-data/-/compat-data-7.26.5.tgz#df93ac37f4417854130e21d72c66ff3d4b897fc7"
   integrity sha512-XvcZi1KWf88RVbF9wn8MN6tYFloU5qX8KjuF3E1PVBmJ9eypXfs4GRiJwLuTZL0iSnJUKn1BFPa5BPZZJyFzPg==
 
+"@babel/compat-data@^7.26.8":
+  version "7.26.8"
+  resolved "http://52.50.158.57:4873/@babel/compat-data/-/compat-data-7.26.8.tgz#821c1d35641c355284d4a870b8a4a7b0c141e367"
+  integrity sha512-oH5UPLMWR3L2wEFLnFJ1TZXqHufiTKAiLfqw5zkhS4dKXLJ10yVztfil/twG8EDTA4F/tvVNw9nOl4ZMslB8rQ==
+
 "@babel/core@7.23.9":
   version "7.23.9"
   resolved "http://52.50.158.57:4873/@babel/core/-/core-7.23.9.tgz#b028820718000f267870822fec434820e9b1e4d1"
@@ -798,6 +803,27 @@
     json5 "^2.2.3"
     semver "^6.3.1"
 
+"@babel/core@^7.26.10":
+  version "7.26.10"
+  resolved "http://52.50.158.57:4873/@babel/core/-/core-7.26.10.tgz#5c876f83c8c4dcb233ee4b670c0606f2ac3000f9"
+  integrity sha512-vMqyb7XCDMPvJFFOaT9kxtiRh42GwlZEg1/uIgtZshS5a/8OaduUfCi7kynKgc3Tw/6Uo2D+db9qBttghhmxwQ==
+  dependencies:
+    "@ampproject/remapping" "^2.2.0"
+    "@babel/code-frame" "^7.26.2"
+    "@babel/generator" "^7.26.10"
+    "@babel/helper-compilation-targets" "^7.26.5"
+    "@babel/helper-module-transforms" "^7.26.0"
+    "@babel/helpers" "^7.26.10"
+    "@babel/parser" "^7.26.10"
+    "@babel/template" "^7.26.9"
+    "@babel/traverse" "^7.26.10"
+    "@babel/types" "^7.26.10"
+    convert-source-map "^2.0.0"
+    debug "^4.1.0"
+    gensync "^1.0.0-beta.2"
+    json5 "^2.2.3"
+    semver "^6.3.1"
+
 "@babel/generator@7.17.7":
   version "7.17.7"
   resolved "http://52.50.158.57:4873/@babel/generator/-/generator-7.17.7.tgz#8da2599beb4a86194a3b24df6c085931d9ee45ad"
@@ -839,6 +865,17 @@
     "@jridgewell/trace-mapping" "^0.3.25"
     jsesc "^3.0.2"
 
+"@babel/generator@^7.26.10", "@babel/generator@^7.27.0":
+  version "7.27.0"
+  resolved "http://52.50.158.57:4873/@babel/generator/-/generator-7.27.0.tgz#764382b5392e5b9aff93cadb190d0745866cbc2c"
+  integrity sha512-VybsKvpiN1gU1sdMZIp7FcqphVVKEwcuj02x73uvcHE0PTihx1nlBcowYWhDwjpoAXRv43+gDzyggGnn1XZhVw==
+  dependencies:
+    "@babel/parser" "^7.27.0"
+    "@babel/types" "^7.27.0"
+    "@jridgewell/gen-mapping" "^0.3.5"
+    "@jridgewell/trace-mapping" "^0.3.25"
+    jsesc "^3.0.2"
+
 "@babel/helper-annotate-as-pure@7.22.5":
   version "7.22.5"
   resolved "http://52.50.158.57:4873/@babel/helper-annotate-as-pure/-/helper-annotate-as-pure-7.22.5.tgz#e7f06737b197d580a01edf75d97e2c8be99d3882"
@@ -859,6 +896,17 @@
   integrity sha512-IXuyn5EkouFJscIDuFF5EsiSolseme1s0CZB+QxVugqJLYmKdxI1VfIBOst0SUu4rnk2Z7kqTwmoO1lp3HIfnA==
   dependencies:
     "@babel/compat-data" "^7.26.5"
+    "@babel/helper-validator-option" "^7.25.9"
+    browserslist "^4.24.0"
+    lru-cache "^5.1.1"
+    semver "^6.3.1"
+
+"@babel/helper-compilation-targets@^7.26.5":
+  version "7.27.0"
+  resolved "http://52.50.158.57:4873/@babel/helper-compilation-targets/-/helper-compilation-targets-7.27.0.tgz#de0c753b1cd1d9ab55d473c5a5cf7170f0a81880"
+  integrity sha512-LVk7fbXml0H2xH34dFzKQ7TDZ2G4/rVTOrq9V+icbbadjbVxxeFeDsNHv2SrZeWoA+6ZiTyWYWtScEIW07EAcA==
+  dependencies:
+    "@babel/compat-data" "^7.26.8"
     "@babel/helper-validator-option" "^7.25.9"
     browserslist "^4.24.0"
     lru-cache "^5.1.1"
@@ -1039,12 +1087,27 @@
     "@babel/template" "^7.25.9"
     "@babel/types" "^7.26.0"
 
+"@babel/helpers@^7.26.10":
+  version "7.27.0"
+  resolved "http://52.50.158.57:4873/@babel/helpers/-/helpers-7.27.0.tgz#53d156098defa8243eab0f32fa17589075a1b808"
+  integrity sha512-U5eyP/CTFPuNE3qk+WZMxFkp/4zUzdceQlfzf7DdGdhp+Fezd7HD+i8Y24ZuTMKX3wQBld449jijbGq6OdGNQg==
+  dependencies:
+    "@babel/template" "^7.27.0"
+    "@babel/types" "^7.27.0"
+
 "@babel/parser@^7.1.0", "@babel/parser@^7.14.7", "@babel/parser@^7.20.5", "@babel/parser@^7.20.7", "@babel/parser@^7.23.0", "@babel/parser@^7.23.9", "@babel/parser@^7.24.0", "@babel/parser@^7.25.3", "@babel/parser@^7.25.4", "@babel/parser@^7.25.6", "@babel/parser@^7.25.9", "@babel/parser@^7.26.0", "@babel/parser@^7.26.2", "@babel/parser@^7.26.5":
   version "7.26.5"
   resolved "http://52.50.158.57:4873/@babel/parser/-/parser-7.26.5.tgz#6fec9aebddef25ca57a935c86dbb915ae2da3e1f"
   integrity sha512-SRJ4jYmXRqV1/Xc+TIVG84WjHBXKlxO9sHQnA2Pf12QQEAp1LOh6kDzNHXcUnbH1QI0FDoPPVOt+vyUDucxpaw==
   dependencies:
     "@babel/types" "^7.26.5"
+
+"@babel/parser@^7.26.10", "@babel/parser@^7.27.0":
+  version "7.27.0"
+  resolved "http://52.50.158.57:4873/@babel/parser/-/parser-7.27.0.tgz#3d7d6ee268e41d2600091cbd4e145ffee85a44ec"
+  integrity sha512-iaepho73/2Pz7w2eMS0Q5f83+0RKI7i4xmiYeBmDzfRVbQtTOG7Ts0S4HzJVsTMGI9keU8rNfuZr8DKfSt7Yyg==
+  dependencies:
+    "@babel/types" "^7.27.0"
 
 "@babel/plugin-bugfix-firefox-class-in-computed-class-key@^7.25.9":
   version "7.25.9"
@@ -2052,6 +2115,15 @@
     "@babel/parser" "^7.25.9"
     "@babel/types" "^7.25.9"
 
+"@babel/template@^7.26.9", "@babel/template@^7.27.0":
+  version "7.27.0"
+  resolved "http://52.50.158.57:4873/@babel/template/-/template-7.27.0.tgz#b253e5406cc1df1c57dcd18f11760c2dbf40c0b4"
+  integrity sha512-2ncevenBqXI6qRMukPlXwHKHchC7RyMuu4xv5JBXRfOGVcTy1mXCD12qrp7Jsoxll1EV3+9sE4GugBVRjT2jFA==
+  dependencies:
+    "@babel/code-frame" "^7.26.2"
+    "@babel/parser" "^7.27.0"
+    "@babel/types" "^7.27.0"
+
 "@babel/traverse@7.23.2":
   version "7.23.2"
   resolved "http://52.50.158.57:4873/@babel/traverse/-/traverse-7.23.2.tgz#329c7a06735e144a506bdb2cad0268b7f46f4ad8"
@@ -2081,6 +2153,19 @@
     debug "^4.3.1"
     globals "^11.1.0"
 
+"@babel/traverse@^7.26.10":
+  version "7.27.0"
+  resolved "http://52.50.158.57:4873/@babel/traverse/-/traverse-7.27.0.tgz#11d7e644779e166c0442f9a07274d02cd91d4a70"
+  integrity sha512-19lYZFzYVQkkHkl4Cy4WrAVcqBkgvV2YM2TU3xG6DIwO7O3ecbDPfW3yM3bjAGcqcQHi+CCtjMR3dIEHxsd6bA==
+  dependencies:
+    "@babel/code-frame" "^7.26.2"
+    "@babel/generator" "^7.27.0"
+    "@babel/parser" "^7.27.0"
+    "@babel/template" "^7.27.0"
+    "@babel/types" "^7.27.0"
+    debug "^4.3.1"
+    globals "^11.1.0"
+
 "@babel/types@7.17.0":
   version "7.17.0"
   resolved "http://52.50.158.57:4873/@babel/types/-/types-7.17.0.tgz#a826e368bccb6b3d84acd76acad5c0d87342390b"
@@ -2093,6 +2178,14 @@
   version "7.26.5"
   resolved "http://52.50.158.57:4873/@babel/types/-/types-7.26.5.tgz#7a1e1c01d28e26d1fe7f8ec9567b3b92b9d07747"
   integrity sha512-L6mZmwFDK6Cjh1nRCLXpa6no13ZIioJDz7mdkzHv399pThrTa/k0nUlNaenOeh2kWu/iaOQYElEpKPUswUa9Vg==
+  dependencies:
+    "@babel/helper-string-parser" "^7.25.9"
+    "@babel/helper-validator-identifier" "^7.25.9"
+
+"@babel/types@^7.26.10", "@babel/types@^7.27.0":
+  version "7.27.0"
+  resolved "http://52.50.158.57:4873/@babel/types/-/types-7.27.0.tgz#ef9acb6b06c3173f6632d993ecb6d4ae470b4559"
+  integrity sha512-H45s8fVLYjbhFH62dIJ3WtmJ6RSPt/3DRO0ZcT2SUiYiQyz3BLVb9ADEnLl91m74aQPS3AzzeajZHYOalWe3bg==
   dependencies:
     "@babel/helper-string-parser" "^7.25.9"
     "@babel/helper-validator-identifier" "^7.25.9"
@@ -6904,7 +6997,7 @@
     lz-string "^1.5.0"
     pretty-format "^27.0.2"
 
-"@testing-library/jest-dom@^6.5.0":
+"@testing-library/jest-dom@^6.6.3":
   version "6.6.3"
   resolved "http://52.50.158.57:4873/@testing-library/jest-dom/-/jest-dom-6.6.3.tgz#26ba906cf928c0f8172e182c6fe214eb4f9f2bd2"
   integrity sha512-IteBhl4XqYNkM54f4ejhLRJiZNqcSCoXUOG2CPK7qbD322KjQozM4kHQOfkG2oln9b9HTYqs+Sae8vBATubxxA==
@@ -6917,17 +7010,17 @@
     lodash "^4.17.21"
     redent "^3.0.0"
 
-"@testing-library/react@^16.0.1":
-  version "16.1.0"
-  resolved "http://52.50.158.57:4873/@testing-library/react/-/react-16.1.0.tgz#aa0c61398bac82eaf89776967e97de41ac742d71"
-  integrity sha512-Q2ToPvg0KsVL0ohND9A3zLJWcOXXcO8IDu3fj11KhNt0UlCWyFyvnCIBkd12tidB2lkiVRG8VFqdhcqhqnAQtg==
+"@testing-library/react@^16.3.0":
+  version "16.3.0"
+  resolved "http://52.50.158.57:4873/@testing-library/react/-/react-16.3.0.tgz#3a85bb9bdebf180cd76dba16454e242564d598a6"
+  integrity sha512-kFSyxiEDwv1WLl2fgsq6pPBbw5aWKrsY2/noi1Id0TK0UParSF62oFQFGHXIyaG4pp2tEub/Zlel+fjjZILDsw==
   dependencies:
     "@babel/runtime" "^7.12.5"
 
-"@testing-library/user-event@^14.5.2":
-  version "14.5.2"
-  resolved "http://52.50.158.57:4873/@testing-library/user-event/-/user-event-14.5.2.tgz#db7257d727c891905947bd1c1a99da20e03c2ebd"
-  integrity sha512-YAh82Wh4TIrxYLmfGcixwD18oIjyC1pFQC2Y01F2lzV2HTMiYrI0nze0FD0ocB//CKS/7jIUgae+adPqxK5yCQ==
+"@testing-library/user-event@^14.6.1":
+  version "14.6.1"
+  resolved "http://52.50.158.57:4873/@testing-library/user-event/-/user-event-14.6.1.tgz#13e09a32d7a8b7060fe38304788ebf4197cd2149"
+  integrity sha512-vq7fv0rnt+QTXgPxr5Hjc210p6YKq2kmdziLgnsZGgLJ9e6VAShx1pACLuRjd/AS/sr7phAR58OIIpf0LlmQNw==
 
 "@tokenizer/token@^0.3.0":
   version "0.3.0"
@@ -7493,6 +7586,11 @@
   resolved "http://52.50.158.57:4873/@types/react-dom/-/react-dom-18.3.5.tgz#45f9f87398c5dcea085b715c58ddcf1faf65f716"
   integrity sha512-P4t6saawp+b/dFrUr2cvkVsfvPguwsxtH6dNIYRllMsefqFzkZk5UIjzyDOv5g1dXIPdG4Sp1yCR4Z6RCUsG/Q==
 
+"@types/react-dom@^18.3.6":
+  version "18.3.6"
+  resolved "http://52.50.158.57:4873/@types/react-dom/-/react-dom-18.3.6.tgz#fa59a5e9a33499a792af6c1130f55921ef49d268"
+  integrity sha512-nf22//wEbKXusP6E9pfOCDwFdHAX4u172eaJI4YkDRQEZiorm6KfYnSC2SWLDMVWUOWPERmJnN0ujeAfTBLvrw==
+
 "@types/react-dom@~18.2.0":
   version "18.2.25"
   resolved "http://52.50.158.57:4873/@types/react-dom/-/react-dom-18.2.25.tgz#2946a30081f53e7c8d585eb138277245caedc521"
@@ -7507,10 +7605,18 @@
   dependencies:
     csstype "^3.0.2"
 
-"@types/react@^18.2.47", "@types/react@^18.3.3", "@types/react@^18.3.5":
+"@types/react@^18.2.47", "@types/react@^18.3.3":
   version "18.3.18"
   resolved "http://52.50.158.57:4873/@types/react/-/react-18.3.18.tgz#9b382c4cd32e13e463f97df07c2ee3bbcd26904b"
   integrity sha512-t4yC+vtgnkYjNSKlFx1jkAhH8LgTo2N/7Qvi83kdEaUtMDiwpbLAktKDaAMlRcJ5eSxZkH74eEGt1ky31d7kfQ==
+  dependencies:
+    "@types/prop-types" "*"
+    csstype "^3.0.2"
+
+"@types/react@^18.3.20":
+  version "18.3.20"
+  resolved "http://52.50.158.57:4873/@types/react/-/react-18.3.20.tgz#b0dccda9d2f1bc24d2a04b1d0cb5d0b9a3576ad3"
+  integrity sha512-IPaCZN7PShZK/3t6Q87pfTkRm6oLTd4vztyoj+cbHUF1g3FfVb2tFIL79uCRKEfv16AhqDMBywP2VW3KIZUvcg==
   dependencies:
     "@types/prop-types" "*"
     csstype "^3.0.2"
@@ -7902,6 +8008,17 @@
     "@types/babel__core" "^7.20.5"
     react-refresh "^0.14.2"
 
+"@vitejs/plugin-react@^4.4.1":
+  version "4.4.1"
+  resolved "http://52.50.158.57:4873/@vitejs/plugin-react/-/plugin-react-4.4.1.tgz#d7d1e9c9616d7536b0953637edfee7c6cbe2fe0f"
+  integrity sha512-IpEm5ZmeXAP/osiBXVVP5KjFMzbWOonMs0NaQQl+xYnUAcq4oHUBsF2+p4MgKWG4YMmFYJU8A6sxRPuowllm6w==
+  dependencies:
+    "@babel/core" "^7.26.10"
+    "@babel/plugin-transform-react-jsx-self" "^7.25.9"
+    "@babel/plugin-transform-react-jsx-source" "^7.25.9"
+    "@types/babel__core" "^7.20.5"
+    react-refresh "^0.17.0"
+
 "@vitejs/plugin-vue-jsx@^4.0.0":
   version "4.1.1"
   resolved "http://52.50.158.57:4873/@vitejs/plugin-vue-jsx/-/plugin-vue-jsx-4.1.1.tgz#180eef4d4ca42e9b46a2150caa605c9ae2272be7"
@@ -7935,31 +8052,12 @@
     chai "^5.1.2"
     tinyrainbow "^1.2.0"
 
-"@vitest/expect@2.1.9":
-  version "2.1.9"
-  resolved "http://52.50.158.57:4873/@vitest/expect/-/expect-2.1.9.tgz#b566ea20d58ea6578d8dc37040d6c1a47ebe5ff8"
-  integrity sha512-UJCIkTBenHeKT1TTlKMJWy1laZewsRIzYighyYiJKZreqtdxSos/S1t+ktRMQWu2CKqaarrkeszJx1cgC5tGZw==
-  dependencies:
-    "@vitest/spy" "2.1.9"
-    "@vitest/utils" "2.1.9"
-    chai "^5.1.2"
-    tinyrainbow "^1.2.0"
-
 "@vitest/mocker@2.1.6":
   version "2.1.6"
   resolved "http://52.50.158.57:4873/@vitest/mocker/-/mocker-2.1.6.tgz#d13c5a7bd0abf432e1030f68acb43f51c4b3692e"
   integrity sha512-MHZp2Z+Q/A3am5oD4WSH04f9B0T7UvwEb+v5W0kCYMhtXGYbdyl2NUk1wdSMqGthmhpiThPDp/hEoVwu16+u1A==
   dependencies:
     "@vitest/spy" "2.1.6"
-    estree-walker "^3.0.3"
-    magic-string "^0.30.12"
-
-"@vitest/mocker@2.1.9":
-  version "2.1.9"
-  resolved "http://52.50.158.57:4873/@vitest/mocker/-/mocker-2.1.9.tgz#36243b27351ca8f4d0bbc4ef91594ffd2dc25ef5"
-  integrity sha512-tVL6uJgoUdi6icpxmdrn5YNo3g3Dxv+IHJBr0GXHaEdTcw3F+cPKnsXFhli6nO+f/6SDKPHEK1UN+k+TQv0Ehg==
-  dependencies:
-    "@vitest/spy" "2.1.9"
     estree-walker "^3.0.3"
     magic-string "^0.30.12"
 
@@ -7970,7 +8068,7 @@
   dependencies:
     tinyrainbow "^1.2.0"
 
-"@vitest/pretty-format@2.1.9", "@vitest/pretty-format@^2.1.6", "@vitest/pretty-format@^2.1.9":
+"@vitest/pretty-format@^2.1.6":
   version "2.1.9"
   resolved "http://52.50.158.57:4873/@vitest/pretty-format/-/pretty-format-2.1.9.tgz#434ff2f7611689f9ce70cd7d567eceb883653fdf"
   integrity sha512-KhRIdGV2U9HOUzxfiHmY8IFHTdqtOhIzCpd8WRdJiE7D/HUcZVD0EgQCVjm+Q9gkUXWgBvMmTtZgIG48wq7sOQ==
@@ -7994,14 +8092,6 @@
     "@vitest/utils" "2.1.6"
     pathe "^1.1.2"
 
-"@vitest/runner@2.1.9":
-  version "2.1.9"
-  resolved "http://52.50.158.57:4873/@vitest/runner/-/runner-2.1.9.tgz#cc18148d2d797fd1fd5908d1f1851d01459be2f6"
-  integrity sha512-ZXSSqTFIrzduD63btIfEyOmNcBmQvgOVsPNPe0jYtESiXkhd8u2erDLnMxmGrDCwHCCHE7hxwRDCT3pt0esT4g==
-  dependencies:
-    "@vitest/utils" "2.1.9"
-    pathe "^1.1.2"
-
 "@vitest/snapshot@1.6.0":
   version "1.6.0"
   resolved "http://52.50.158.57:4873/@vitest/snapshot/-/snapshot-1.6.0.tgz#deb7e4498a5299c1198136f56e6e0f692e6af470"
@@ -8020,15 +8110,6 @@
     magic-string "^0.30.12"
     pathe "^1.1.2"
 
-"@vitest/snapshot@2.1.9":
-  version "2.1.9"
-  resolved "http://52.50.158.57:4873/@vitest/snapshot/-/snapshot-2.1.9.tgz#24260b93f798afb102e2dcbd7e61c6dfa118df91"
-  integrity sha512-oBO82rEjsxLNJincVhLhaxxZdEtV0EFHMK5Kmx5sJ6H9L183dHECjiefOAdnqpIgT5eZwT04PoggUnW88vOBNQ==
-  dependencies:
-    "@vitest/pretty-format" "2.1.9"
-    magic-string "^0.30.12"
-    pathe "^1.1.2"
-
 "@vitest/spy@1.6.0":
   version "1.6.0"
   resolved "http://52.50.158.57:4873/@vitest/spy/-/spy-1.6.0.tgz#362cbd42ccdb03f1613798fde99799649516906d"
@@ -8040,13 +8121,6 @@
   version "2.1.6"
   resolved "http://52.50.158.57:4873/@vitest/spy/-/spy-2.1.6.tgz#229f9d48b90b8bdd6573723bdec0699915598080"
   integrity sha512-oTFObV8bd4SDdRka5O+mSh5w9irgx5IetrD5i+OsUUsk/shsBoHifwCzy45SAORzAhtNiprUVaK3hSCCzZh1jQ==
-  dependencies:
-    tinyspy "^3.0.2"
-
-"@vitest/spy@2.1.9":
-  version "2.1.9"
-  resolved "http://52.50.158.57:4873/@vitest/spy/-/spy-2.1.9.tgz#cb28538c5039d09818b8bfa8edb4043c94727c60"
-  integrity sha512-E1B35FwzXXTs9FHNK6bDszs7mtydNi5MIfUWpceJ8Xbfb1gBMscAnwLbEu+B44ed6W3XjL9/ehLPHR1fkf1KLQ==
   dependencies:
     tinyspy "^3.0.2"
 
@@ -8079,15 +8153,6 @@
   integrity sha512-ixNkFy3k4vokOUTU2blIUvOgKq/N2PW8vKIjZZYsGJCMX69MRa9J2sKqX5hY/k5O5Gty3YJChepkqZ3KM9LyIQ==
   dependencies:
     "@vitest/pretty-format" "2.1.6"
-    loupe "^3.1.2"
-    tinyrainbow "^1.2.0"
-
-"@vitest/utils@2.1.9":
-  version "2.1.9"
-  resolved "http://52.50.158.57:4873/@vitest/utils/-/utils-2.1.9.tgz#4f2486de8a54acf7ecbf2c5c24ad7994a680a6c1"
-  integrity sha512-v0psaMSkNJ3A2NMrUEHFRzJtDPFn+/VWZ5WxImB21T9fjucJRmS7xCS3ppEnARb9y11OAzaD+P2Ps+b+BGX5iQ==
-  dependencies:
-    "@vitest/pretty-format" "2.1.9"
     loupe "^3.1.2"
     tinyrainbow "^1.2.0"
 
@@ -8634,61 +8699,61 @@ adm-zip@^0.5.10:
   resolved "http://52.50.158.57:4873/adm-zip/-/adm-zip-0.5.16.tgz#0b5e4c779f07dedea5805cdccb1147071d94a909"
   integrity sha512-TGw5yVi4saajsSEgz25grObGHEUaDrniwvA2qwSC060KfqGPdglhvPMA2lPIoxs3PQIItj2iag35fONcQqgUaQ==
 
-ag-charts-angular@11.2.1-beta.20250406:
-  version "11.2.1-beta.20250406"
-  resolved "http://52.50.158.57:4873/ag-charts-angular/-/ag-charts-angular-11.2.1-beta.20250406.tgz#bde8d18375a5e8473685761606c984bdf2bd1ff0"
-  integrity sha512-eMeewbqClatX7RYNV8LMhWG9YGhzUBLyPIvEmQgP1m8b+Ddiv0Y20f53M20qcoxYLh4eIJOwPODDMEz7viucng==
+ag-charts-angular@11.2.1-beta.20250420:
+  version "11.2.1-beta.20250420"
+  resolved "http://52.50.158.57:4873/ag-charts-angular/-/ag-charts-angular-11.2.1-beta.20250420.tgz#10b5e00a9b4bd3654986ddf4a3c5ee0a89f019cb"
+  integrity sha512-b/wkTN/TnA+vWrRAOhBj+Mpash/SFpo1gumyGZxz+askniQnRAePmUDBdWtrURFpdNHsk2y7Jai34U00ZXK1GA==
   dependencies:
-    ag-charts-community "11.2.1-beta.20250406"
+    ag-charts-community "11.2.1-beta.20250420"
     tslib "^2.3.0"
 
-ag-charts-community@11.2.1-beta.20250406:
-  version "11.2.1-beta.20250406"
-  resolved "http://52.50.158.57:4873/ag-charts-community/-/ag-charts-community-11.2.1-beta.20250406.tgz#77addeb49c959b96be48eb14de78f03063f4cb37"
-  integrity sha512-PDo5jWc0d0/FbaQXGKxbfB/hJlENbkPHvF1Q67yNu8rOAsdB8gODrGaAkD/wc9NReqBum/4fo5H/bxrEgAAWtw==
+ag-charts-community@11.2.1-beta.20250420:
+  version "11.2.1-beta.20250420"
+  resolved "http://52.50.158.57:4873/ag-charts-community/-/ag-charts-community-11.2.1-beta.20250420.tgz#4e91b4dafe324066d5e7d6983b512afcbcc75156"
+  integrity sha512-ovazaJRGzg85bpA9mXrm8bWQPh/68LIUuYt/cEb2fT8ZXwg2VJ6WKGKDAHv1lIoIOSqW66pnssrThpZrj/SZOg==
   dependencies:
-    ag-charts-core "11.2.1-beta.20250406"
-    ag-charts-locale "11.2.1-beta.20250406"
-    ag-charts-types "11.2.1-beta.20250406"
+    ag-charts-core "11.2.1-beta.20250420"
+    ag-charts-locale "11.2.1-beta.20250420"
+    ag-charts-types "11.2.1-beta.20250420"
 
-ag-charts-core@11.2.1-beta.20250406:
-  version "11.2.1-beta.20250406"
-  resolved "http://52.50.158.57:4873/ag-charts-core/-/ag-charts-core-11.2.1-beta.20250406.tgz#8e22e728035d1474e02091f70d444f8ea545ce80"
-  integrity sha512-KoGGtfUnTCJO7OwH1bqaJCjXnetvntZrA5UdFlLzSP+M7Yv+mEIzAT/r1Vf4T+dBI91ojwSA3LPm6oQHWWisIQ==
+ag-charts-core@11.2.1-beta.20250420:
+  version "11.2.1-beta.20250420"
+  resolved "http://52.50.158.57:4873/ag-charts-core/-/ag-charts-core-11.2.1-beta.20250420.tgz#49d5c5f69959a8ffc361dd7512a05ffb8701f1cf"
+  integrity sha512-4r0v76f1POAp0PrTb/GMkEZFjUmWLyqqgNH1d56clEK01apYcbWobAHIApKGf23kwstzTAGXo1FvX35eO6HlXA==
   dependencies:
-    ag-charts-types "11.2.1-beta.20250406"
+    ag-charts-types "11.2.1-beta.20250420"
 
-ag-charts-enterprise@11.2.1-beta.20250406:
-  version "11.2.1-beta.20250406"
-  resolved "http://52.50.158.57:4873/ag-charts-enterprise/-/ag-charts-enterprise-11.2.1-beta.20250406.tgz#1c754aa676ded1e6fd0c00ff85c3bd6375e0844f"
-  integrity sha512-2yswkVmZxP4Tiu6LrRVzneNXJvVNlhxMrcLVnRn6ljZ4RORXaUv+r3XaQFbAdhyWC1KyJC/TXP4du+KOYYviRA==
+ag-charts-enterprise@11.2.1-beta.20250420:
+  version "11.2.1-beta.20250420"
+  resolved "http://52.50.158.57:4873/ag-charts-enterprise/-/ag-charts-enterprise-11.2.1-beta.20250420.tgz#ace860382bec8f08d73d98da3248465a9fdaac3e"
+  integrity sha512-fLVge9QrmDHzXCiK19aAJenWPGxS9Mazrxl9wS2h18+1N9EGJ8zHmA0UKnbrluthwF7A2Tg+pQtAfvUX8RDaJw==
   dependencies:
-    ag-charts-community "11.2.1-beta.20250406"
-    ag-charts-core "11.2.1-beta.20250406"
+    ag-charts-community "11.2.1-beta.20250420"
+    ag-charts-core "11.2.1-beta.20250420"
 
-ag-charts-locale@11.2.1-beta.20250406:
-  version "11.2.1-beta.20250406"
-  resolved "http://52.50.158.57:4873/ag-charts-locale/-/ag-charts-locale-11.2.1-beta.20250406.tgz#b6fcfee58796268b84d49b3038657a1baf1f9475"
-  integrity sha512-Hft/2DhCpOyLZ/l90NZ4SI+J4c+wMqMjWWtWuaoV2grqruTzNLZ+AHcWsebn3VVukw8VOU1lJzQ9WFDcZZ+rcA==
+ag-charts-locale@11.2.1-beta.20250420:
+  version "11.2.1-beta.20250420"
+  resolved "http://52.50.158.57:4873/ag-charts-locale/-/ag-charts-locale-11.2.1-beta.20250420.tgz#ae9f1abb4346ad4a6684e5ef0f43c52a11ec2b5d"
+  integrity sha512-Khc7N55TT8QBAA+wWdlaXZ4bmMQxj8XWc+/6AOInTzgiL5EQBPLmXjFZ/ww21TszAxpmdFFImjeVDULdYU+pFw==
 
-ag-charts-react@11.2.1-beta.20250406:
-  version "11.2.1-beta.20250406"
-  resolved "http://52.50.158.57:4873/ag-charts-react/-/ag-charts-react-11.2.1-beta.20250406.tgz#ee4f6734ec2dc5ffd2b1a58e2d2ff375ce63a214"
-  integrity sha512-Q5R5tJVd14qhJ2e4x7bHHJn03CZst6EsDegbq9SL6gyr3uo3ISmkHQ8WDW12b6yW6nz9mMxrkBQQ7G/hrgJ90A==
+ag-charts-react@11.2.1-beta.20250420:
+  version "11.2.1-beta.20250420"
+  resolved "http://52.50.158.57:4873/ag-charts-react/-/ag-charts-react-11.2.1-beta.20250420.tgz#750e4a5531d8b247679b27742a18b897a16962eb"
+  integrity sha512-uUWnCeE5Y3VSmV6musGTuhu5mxYXDVDZRTuje2mChoSlFqfdisn3uM9V1BAEUrri3Eicgk0TPqy7U6SWAVwMmg==
   dependencies:
-    ag-charts-community "11.2.1-beta.20250406"
+    ag-charts-community "11.2.1-beta.20250420"
 
-ag-charts-types@11.2.1-beta.20250406:
-  version "11.2.1-beta.20250406"
-  resolved "http://52.50.158.57:4873/ag-charts-types/-/ag-charts-types-11.2.1-beta.20250406.tgz#bfe3f0bdce37ac59d5f11ca635c2be01600f00bc"
-  integrity sha512-w768bu9GydW3Jo0w9wPLcdezQK2nrZCaMzd1stPsTK74lyg3NesI70KCJvUd8Dcgjg1wBduHlxe1ViAD76O8/g==
+ag-charts-types@11.2.1-beta.20250420:
+  version "11.2.1-beta.20250420"
+  resolved "http://52.50.158.57:4873/ag-charts-types/-/ag-charts-types-11.2.1-beta.20250420.tgz#5b583533a6e791c52be27c213e91f07a066b87d9"
+  integrity sha512-BAL0vGwOelOcDRuktM4krqq8AkMW9nQEfN8JsTMcGU2W84/Rkn7abYaXTjuqruBqI5ZawSCRsdJWssWF2CzSOw==
 
-ag-charts-vue3@11.2.1-beta.20250406:
-  version "11.2.1-beta.20250406"
-  resolved "http://52.50.158.57:4873/ag-charts-vue3/-/ag-charts-vue3-11.2.1-beta.20250406.tgz#1c51ed78d9b7ec42d7cc8a0cd97d2d44917ef392"
-  integrity sha512-MdudbaE90k+p9npzvdm0o/b8vMiBTaLwcKaDvklOItjLvHRJvxsb7Gl/RbPJfHK3vl9z0zGtTR1g+/taQgBd0w==
+ag-charts-vue3@11.2.1-beta.20250420:
+  version "11.2.1-beta.20250420"
+  resolved "http://52.50.158.57:4873/ag-charts-vue3/-/ag-charts-vue3-11.2.1-beta.20250420.tgz#a9e023729ad2936c01d00e9cf8519005c84ee5f4"
+  integrity sha512-Uie4oKNOGkIxURD6nqE9q8PyfCodcN8lZcGM7ErmPJ0YCW7qGvPwVGP8kmuj933XS+OA/aBIjhlUXM5GbkoBVQ==
   dependencies:
-    ag-charts-community "11.2.1-beta.20250406"
+    ag-charts-community "11.2.1-beta.20250420"
 
 agent-base@4, agent-base@^4.1.0, agent-base@^4.3.0:
   version "4.3.0"
@@ -10216,9 +10281,9 @@ chai@^4.3.10:
     type-detect "^4.1.0"
 
 chai@^5.1.2:
-  version "5.1.2"
-  resolved "http://52.50.158.57:4873/chai/-/chai-5.1.2.tgz#3afbc340b994ae3610ca519a6c70ace77ad4378d"
-  integrity sha512-aGtmf24DW6MLHHG5gCx4zaI3uBq3KRtxeVs0DjFH6Z0rDNbsvTxFASFvdj79pxjxZ8/5u3PIiN3IwEIQkiiuPw==
+  version "5.2.0"
+  resolved "http://52.50.158.57:4873/chai/-/chai-5.2.0.tgz#1358ee106763624114addf84ab02697e411c9c05"
+  integrity sha512-mCuXncKXk5iCLhfhwTc0izo0gtEmpz5CtG2y8GiOINBlMVS6v8TMRc5TaLWKS6692m9+dVVfzgeVxR5UxWHTYw==
   dependencies:
     assertion-error "^2.0.1"
     check-error "^2.1.1"
@@ -12559,10 +12624,15 @@ es-errors@^1.3.0:
   resolved "http://52.50.158.57:4873/es-errors/-/es-errors-1.3.0.tgz#05f75a25dab98e4fb1dcd5e1472c0546d5057c8f"
   integrity sha512-Zf5H2Kxt2xjTvbJvP2ZWLEICxA6j+hAmMzIlypy4xcBg1vKVnx89Wy0GbS+kf5cwCVFFzdCFh2XSCFNULS6csw==
 
-es-module-lexer@^1.2.1, es-module-lexer@^1.5.4, es-module-lexer@^1.6.0:
+es-module-lexer@^1.2.1, es-module-lexer@^1.6.0:
   version "1.6.0"
   resolved "http://52.50.158.57:4873/es-module-lexer/-/es-module-lexer-1.6.0.tgz#da49f587fd9e68ee2404fe4e256c0c7d3a81be21"
   integrity sha512-qqnD1yMU6tk/jnaMosogGySTZP8YtUgAffA9nMN+E/rjxcfRQ6IEk7IiozUjgxKoFHBGjTLnrHB/YC45r/59EQ==
+
+es-module-lexer@^1.5.4:
+  version "1.7.0"
+  resolved "http://52.50.158.57:4873/es-module-lexer/-/es-module-lexer-1.7.0.tgz#9159601561880a85f2734560a9099b2c31e5372a"
+  integrity sha512-jEQoCwk8hyb2AZziIOLhDqpm5+2ww5uIE6lkO/6jcOCusfk6LhMHpXXfBLXTZ7Ydyt0j4VoUQv6uGNYbdW+kBA==
 
 es-object-atoms@^1.0.0:
   version "1.1.1"
@@ -13235,9 +13305,9 @@ expand-tilde@^2.0.0, expand-tilde@^2.0.2:
     homedir-polyfill "^1.0.1"
 
 expect-type@^1.1.0:
-  version "1.1.0"
-  resolved "http://52.50.158.57:4873/expect-type/-/expect-type-1.1.0.tgz#a146e414250d13dfc49eafcfd1344a4060fa4c75"
-  integrity sha512-bFi65yM+xZgk+u/KRIpekdSYkTB5W1pEf0Lt8Q8Msh7b+eQ7LXVtIB1Bkm4fvclDEL1b2CZkMhv2mOeF8tMdkA==
+  version "1.2.1"
+  resolved "http://52.50.158.57:4873/expect-type/-/expect-type-1.2.1.tgz#af76d8b357cf5fa76c41c09dafb79c549e75f71f"
+  integrity sha512-/kP8CAwxzLVEeFrMm4kMmy4CCDlpipyA7MYLVrdJIkV0fYF0UaigQHRsxHiuY/GEea+bh4KSv3TIlgr+2UL6bw==
 
 expect@^29.0.0, expect@^29.7.0:
   version "29.7.0"
@@ -17709,10 +17779,15 @@ loupe@^2.3.6, loupe@^2.3.7:
   dependencies:
     get-func-name "^2.0.1"
 
-loupe@^3.1.0, loupe@^3.1.2:
+loupe@^3.1.0:
   version "3.1.2"
   resolved "http://52.50.158.57:4873/loupe/-/loupe-3.1.2.tgz#c86e0696804a02218f2206124c45d8b15291a240"
   integrity sha512-23I4pFZHmAemUnz8WZXbYRSKYj801VDaNv9ETuMh7IrMc7VuVVSo+Z9iLE3ni30+U48iDWfi30d3twAXBYmnCg==
+
+loupe@^3.1.2:
+  version "3.1.3"
+  resolved "http://52.50.158.57:4873/loupe/-/loupe-3.1.3.tgz#042a8f7986d77f3d0f98ef7990a2b2fef18b0fd2"
+  integrity sha512-kkIp7XSkP78ZxJEsSxW3712C6teJVoeHHwgo9zJ380de7IYyJ2ISlxojcH2pC5OFLewESmnRi/+XCDIEEVyoug==
 
 lower-case@^2.0.2:
   version "2.0.2"
@@ -22406,6 +22481,11 @@ react-refresh@^0.14.2:
   resolved "http://52.50.158.57:4873/react-refresh/-/react-refresh-0.14.2.tgz#3833da01ce32da470f1f936b9d477da5c7028bf9"
   integrity sha512-jCvmsr+1IUSMUyzOkRcvnVbX3ZYC6g9TDrDbFuFmRDq7PD4yaGbLKNQL6k2jnArV8hjYxh7hVhAZB6s9HDGpZA==
 
+react-refresh@^0.17.0:
+  version "0.17.0"
+  resolved "http://52.50.158.57:4873/react-refresh/-/react-refresh-0.17.0.tgz#b7e579c3657f23d04eccbe4ad2e58a8ed51e7e53"
+  integrity sha512-z6F7K9bV85EfseRCp2bzrpyQ0Gkw1uLoCel9XBVWPg/TjRj94SkJzUTGfOa4bs7iJvBWtQG0Wq7wnI0syw3EBQ==
+
 react-remove-scroll-bar@^2.3.7:
   version "2.3.8"
   resolved "http://52.50.158.57:4873/react-remove-scroll-bar/-/react-remove-scroll-bar-2.3.8.tgz#99c20f908ee467b385b68a3469b4a3e750012223"
@@ -24480,10 +24560,15 @@ statuses@2.0.1:
   resolved "http://52.50.158.57:4873/statuses/-/statuses-1.5.0.tgz#161c7dac177659fd9811f43771fa99381478628c"
   integrity sha512-OpZ3zP+jT1PI7I8nemJX4AKmAX070ZkYPVWV/AaKTJl+tXCTGyVdC1a4SL8RUQYEwk/f34ZX8UTykN68FwrqAA==
 
-std-env@^3.5.0, std-env@^3.8.0:
+std-env@^3.5.0:
   version "3.8.0"
   resolved "http://52.50.158.57:4873/std-env/-/std-env-3.8.0.tgz#b56ffc1baf1a29dcc80a3bdf11d7fca7c315e7d5"
   integrity sha512-Bc3YwwCB+OzldMxOXJIIvC6cPRWr/LxOp48CdQTOkPyk/t4JWWJbrilwBd7RJzKV8QW7tJkcgAmeuLLJugl5/w==
+
+std-env@^3.8.0:
+  version "3.9.0"
+  resolved "http://52.50.158.57:4873/std-env/-/std-env-3.9.0.tgz#1a6f7243b339dca4c9fd55e1c7504c77ef23e8f1"
+  integrity sha512-UGvjygr6F6tpH7o2qyqR6QYpwraIjKSdtzyBdyytFOHmPZY917kwdwLG0RbOjWOnKmnm3PeHjaoLLMie7kPLQw==
 
 stream-combiner@^0.2.2:
   version "0.2.2"
@@ -26656,17 +26741,6 @@ vite-node@2.1.6:
     pathe "^1.1.2"
     vite "^5.0.0 || ^6.0.0"
 
-vite-node@2.1.9:
-  version "2.1.9"
-  resolved "http://52.50.158.57:4873/vite-node/-/vite-node-2.1.9.tgz#549710f76a643f1c39ef34bdb5493a944e4f895f"
-  integrity sha512-AM9aQ/IPrW/6ENLQg3AGY4K1N2TGZdR5e4gu/MmmR2xR3Ll1+dib+nook92g4TV3PXVyeyxdWwtaCAiUL0hMxA==
-  dependencies:
-    cac "^6.7.14"
-    debug "^4.3.7"
-    es-module-lexer "^1.5.4"
-    pathe "^1.1.2"
-    vite "^5.0.0"
-
 vite-plugin-inspect@0.8.9:
   version "0.8.9"
   resolved "http://52.50.158.57:4873/vite-plugin-inspect/-/vite-plugin-inspect-0.8.9.tgz#01a7e484ccbc12a8c86ee8bc90efe13aeb0fed1b"
@@ -26802,32 +26876,6 @@ vitest@2.1.6:
     tinyrainbow "^1.2.0"
     vite "^5.0.0 || ^6.0.0"
     vite-node "2.1.6"
-    why-is-node-running "^2.3.0"
-
-vitest@2.1.9:
-  version "2.1.9"
-  resolved "http://52.50.158.57:4873/vitest/-/vitest-2.1.9.tgz#7d01ffd07a553a51c87170b5e80fea3da7fb41e7"
-  integrity sha512-MSmPM9REYqDGBI8439mA4mWhV5sKmDlBKWIYbA3lRb2PTHACE0mgKwA8yQ2xq9vxDTuk4iPrECBAEW2aoFXY0Q==
-  dependencies:
-    "@vitest/expect" "2.1.9"
-    "@vitest/mocker" "2.1.9"
-    "@vitest/pretty-format" "^2.1.9"
-    "@vitest/runner" "2.1.9"
-    "@vitest/snapshot" "2.1.9"
-    "@vitest/spy" "2.1.9"
-    "@vitest/utils" "2.1.9"
-    chai "^5.1.2"
-    debug "^4.3.7"
-    expect-type "^1.1.0"
-    magic-string "^0.30.12"
-    pathe "^1.1.2"
-    std-env "^3.8.0"
-    tinybench "^2.9.0"
-    tinyexec "^0.3.1"
-    tinypool "^1.0.1"
-    tinyrainbow "^1.2.0"
-    vite "^5.0.0"
-    vite-node "2.1.9"
     why-is-node-running "^2.3.0"
 
 vitest@^1.6.0:

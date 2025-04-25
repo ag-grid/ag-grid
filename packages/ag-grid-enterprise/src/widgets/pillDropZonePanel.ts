@@ -163,7 +163,7 @@ export abstract class PillDropZonePanel<TPill extends PillDragComp<TItem>, TItem
         let isPrevious = key === KeyCode.UP;
 
         if (!isVertical) {
-            const isRtl = this.gos.getAsBool('enableRtl');
+            const isRtl = this.gos.get('enableRtl');
             isNext = (!isRtl && key === KeyCode.RIGHT) || (isRtl && key === KeyCode.LEFT);
             isPrevious = (!isRtl && key === KeyCode.LEFT) || (isRtl && key === KeyCode.RIGHT);
         }
@@ -617,7 +617,7 @@ export abstract class PillDropZonePanel<TPill extends PillDragComp<TItem>, TItem
         _setAriaHidden(eTitleBar, true);
         this.addElementClasses(eTitleBar, 'title-bar');
         this.addElementClasses(eGroupIcon, 'icon');
-        this.addOrRemoveCssClass('ag-column-drop-empty', this.isExistingItemsEmpty());
+        this.toggleCss('ag-column-drop-empty', this.isExistingItemsEmpty());
 
         eTitleBar.appendChild(eGroupIcon);
 

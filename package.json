@@ -1,6 +1,6 @@
 {
   "name": "ag-grid",
-  "version": "33.2.1",
+  "version": "33.2.3",
   "license": "MIT",
   "scripts": {
     "compressVideo": "tsx external/ag-website-shared/scripts/compress-video",
@@ -101,6 +101,9 @@
       "testing/behavioural",
       "testing/module-size",
       "testing/module-size-angular",
+      "testing/angular-package-tests",
+      "testing/react-package-tests",
+      "testing/vue-package-tests",
       "external/ag-shared"
     ],
     "nohoist": [

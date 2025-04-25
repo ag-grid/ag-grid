@@ -287,7 +287,7 @@ export class DragService extends BeanStub implements NamedBean {
 
     private shouldPreventMouseEvent(mouseEvent: MouseEvent): boolean {
         const { gos } = this;
-        const isEnableCellTextSelect = gos.getAsBool('enableCellTextSelection');
+        const isEnableCellTextSelect = gos.get('enableCellTextSelection');
         const isMouseMove = mouseEvent.type === 'mousemove';
         const isOverFormFieldElement = (mouseEvent: MouseEvent) => {
             const el = mouseEvent.target as HTMLElement | null;

@@ -28,7 +28,6 @@ export { TreeDataModule } from './treeData/treeDataModule';
 export { AggregationModule } from './aggregation/aggregationModule';
 export { PivotModule } from './pivot/pivotModule';
 export { FindModule } from './find/findModule';
-export { ManualPinnedRowModule } from './manualPinnedRows/manualPinnedRowModule';
 
 export { GridChartsModule, IntegratedChartsModule } from './charts/integratedChartsModule';
 

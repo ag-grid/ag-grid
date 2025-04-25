@@ -202,7 +202,8 @@ export async function generateFiles(options: ExecutorOptions, gridOptionsTypes: 
             let transformedEntryFile = entryFile;
 
             if (hasExampleConsoleLog) {
-                transformedEntryFile = transformedEntryFile + '\n' + getConsoleLogSnippet({ pageName, exampleName });
+                transformedEntryFile =
+                    getConsoleLogSnippet({ pageName, exampleName, logError: isDev }) + '\n' + transformedEntryFile;
             }
 
             return transformedEntryFile;

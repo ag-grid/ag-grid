@@ -24,7 +24,7 @@ import type { RowBounds, RowModelType } from '../interfaces/iRowModel';
 import type { IRowNodeStage } from '../interfaces/iRowNodeStage';
 import type { RowDataTransaction } from '../interfaces/rowDataTransaction';
 import type { RowNodeTransaction } from '../interfaces/rowNodeTransaction';
-import { _EmptyArray, _last, _removeFromArray } from '../utils/array';
+import { _EmptyArray, _last } from '../utils/array';
 import { ChangedPath } from '../utils/changedPath';
 import { _debounce } from '../utils/function';
 import { _warn } from '../validation/logging';
@@ -35,10 +35,6 @@ import { updateRowNodeAfterSort } from './sortStage';
 
 interface ClientSideRowModelRootNode extends RowNode {
     childrenAfterGroup: RowNode[] | null;
-}
-
-interface ClientSideRowModelRowNode extends RowNode {
-    sourceRowIndex: number;
 }
 
 interface BatchTransactionItem<TData = any> {
@@ -83,7 +79,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
     private rowsToDisplay: RowNode[] = []; // the rows mapped to rows to display
     private nodeManager: IClientSideNodeManager<any>;
     private rowDataTransactionBatch: BatchTransactionItem[] | null;
-    private lastHighlightedRow: RowNode | null;
+    private lastHighlightedRow: RowNode | null = null;
     private applyAsyncTransactionsTimeout: number | undefined;
     /** Has the start method been called */
     private started: boolean = false;
@@ -437,118 +433,23 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         recurse(this.rootNode);
     }
 
-    // returns false if row was moved, otherwise true
-    public ensureRowsAtPixel(rowNodes: RowNode[], pixel: number, increment: number = 0): boolean {
-        const indexAtPixelNow = this.getRowIndexAtPixel(pixel);
-        const rowNodeAtPixelNow = this.getRow(indexAtPixelNow);
-        const animate = !this.gos.get('suppressAnimationFrame');
-
-        if (rowNodeAtPixelNow === rowNodes[0]) {
-            return false;
-        }
-
-        const allLeafChildren = this.rootNode?.allLeafChildren;
-        if (!allLeafChildren) {
-            return false;
-        }
-
-        // TODO: this implementation is currently quite inefficient and it could be optimized to run in O(n) in a single pass
-
-        rowNodes.forEach((rowNode) => {
-            _removeFromArray(allLeafChildren, rowNode);
-        });
-
-        rowNodes.forEach((rowNode, idx) => {
-            allLeafChildren.splice(Math.max(indexAtPixelNow + increment, 0) + idx, 0, rowNode);
-        });
-
-        allLeafChildren.forEach((rowNode: ClientSideRowModelRowNode, index) => {
-            rowNode.sourceRowIndex = index; // Update all the sourceRowIndex to reflect the new positions
-        });
-
-        this.refreshModel({
-            step: 'group',
-            keepRenderedRows: true,
-            animate,
-            rowNodesOrderChanged: true, // We assume the order changed and we don't need to check if it really did
-        });
-
-        return true;
-    }
-
-    public highlightRowAtPixel(rowNode: RowNode | null, pixel?: number): void {
-        const indexAtPixelNow = pixel != null ? this.getRowIndexAtPixel(pixel) : null;
-        const rowNodeAtPixelNow = indexAtPixelNow != null ? this.getRow(indexAtPixelNow) : null;
-
-        if (!rowNodeAtPixelNow || !rowNode || pixel == null) {
-            this.clearHighlightedRow();
-            return;
-        }
-
-        const highlight = this.getHighlightPosition(pixel, rowNodeAtPixelNow);
-        const isSamePosition = this.isHighlightingCurrentPosition(rowNode, rowNodeAtPixelNow, highlight);
-        const isDifferentNode = this.lastHighlightedRow != null && this.lastHighlightedRow !== rowNodeAtPixelNow;
-
-        if (isSamePosition || isDifferentNode) {
-            this.clearHighlightedRow();
-            if (isSamePosition) {
-                return;
+    public highlightRow(rowNode: RowNode | null | undefined = null, highlight: RowHighlightPosition = 'Below'): void {
+        const old = this.lastHighlightedRow;
+        if (old !== rowNode || (rowNode && rowNode.highlighted !== highlight)) {
+            if (old && old !== rowNode) {
+                old.highlighted = null;
+                old.dispatchRowEvent('rowHighlightChanged');
             }
-        }
-
-        this.setRowNodeHighlighted(rowNodeAtPixelNow, highlight);
-        this.lastHighlightedRow = rowNodeAtPixelNow;
-    }
-
-    private setRowNodeHighlighted(rowNode: RowNode, highlighted: RowHighlightPosition | null): void {
-        if (rowNode.highlighted !== highlighted) {
-            rowNode.highlighted = highlighted;
-            rowNode.dispatchRowEvent('rowHighlightChanged');
-        }
-    }
-
-    public getHighlightPosition(pixel: number, rowNode?: RowNode): RowHighlightPosition {
-        if (!rowNode) {
-            const index = this.getRowIndexAtPixel(pixel);
-            rowNode = this.getRow(index || 0);
-
-            if (!rowNode) {
-                return 'Below';
+            if (rowNode) {
+                rowNode.highlighted = highlight;
+                rowNode.dispatchRowEvent('rowHighlightChanged');
             }
+            this.lastHighlightedRow = rowNode;
         }
-
-        const { rowTop, rowHeight } = rowNode;
-
-        return pixel - rowTop! < rowHeight! / 2 ? 'Above' : 'Below';
     }
 
     public getLastHighlightedRowNode(): RowNode | null {
         return this.lastHighlightedRow;
-    }
-
-    private isHighlightingCurrentPosition(
-        movingRowNode: RowNode,
-        hoveredRowNode: RowNode,
-        highlightPosition: RowHighlightPosition
-    ): boolean {
-        if (movingRowNode === hoveredRowNode) {
-            return true;
-        }
-
-        const diff = highlightPosition === 'Above' ? -1 : 1;
-
-        if (this.getRow(hoveredRowNode.rowIndex! + diff) === movingRowNode) {
-            return true;
-        }
-
-        return false;
-    }
-
-    private clearHighlightedRow(): void {
-        if (this.lastHighlightedRow) {
-            this.setRowNodeHighlighted(this.lastHighlightedRow, null);
-            this.lastHighlightedRow = null;
-        }
     }
 
     public isLastRowIndexKnown(): boolean {
@@ -1321,12 +1222,11 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         super.destroy();
 
         // Forcefully deallocate memory
-        this.clearHighlightedRow();
+        this.highlightRow(null);
         this.started = false;
         this.rootNode = null;
         this.nodeManager = null!;
         this.rowDataTransactionBatch = null;
-        this.lastHighlightedRow = null;
         this.orderedStages = _EmptyArray;
         this.rowsToDisplay = _EmptyArray;
     }

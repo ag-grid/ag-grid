@@ -65,7 +65,7 @@ export function _shouldMaintainColumnOrder(gos: GridOptionsService, isPivotColum
     if (isPivotColumns) {
         return !gos.get('enableStrictPivotColumnOrder');
     }
-    return gos.getAsBool('maintainColumnOrder');
+    return gos.get('maintainColumnOrder');
 }
 
 export function _getRowHeightForNode(
@@ -352,7 +352,7 @@ export function _getGroupTotalRowCallback(
 }
 
 export function _isGroupMultiAutoColumn(gos: GridOptionsService) {
-    const isHideOpenParents = gos.getAsBool('groupHideOpenParents');
+    const isHideOpenParents = !!gos.get('groupHideOpenParents');
     if (isHideOpenParents) {
         return true;
     }
@@ -366,6 +366,10 @@ export function _isGroupUseEntireRow(gos: GridOptionsService, pivotMode: boolean
     }
 
     return gos.get('groupDisplayType') === 'groupRows';
+}
+
+export function _isFullWidthGroupRow(gos: GridOptionsService, node: RowNode, pivotMode: boolean): boolean {
+    return !!node.group && !node.footer && _isGroupUseEntireRow(gos, pivotMode);
 }
 
 // AG-9259 Can't use `WrappedCallback<'getRowId', ...>` here because of a strange typescript bug
@@ -483,7 +487,7 @@ export function _getSuppressMultiRanges(gos: GridOptionsService): boolean {
     const useNewAPI = selection !== undefined;
 
     if (!useNewAPI) {
-        return gos.getAsBool('suppressMultiRangeSelection');
+        return gos.get('suppressMultiRangeSelection');
     }
 
     return typeof selection !== 'boolean' ? selection?.suppressMultiRanges ?? false : false;
@@ -493,7 +497,7 @@ export function _isCellSelectionEnabled(gos: GridOptionsService): boolean {
     const selection = gos.get('cellSelection');
     const useNewAPI = selection !== undefined;
 
-    return useNewAPI ? !!selection : gos.getAsBool('enableRangeSelection');
+    return useNewAPI ? !!selection : gos.get('enableRangeSelection');
 }
 
 export function _getFillHandle(gos: GridOptionsService): FillHandleOptions | undefined {
@@ -595,7 +599,7 @@ export function _getEnableSelectionWithoutKeys(gos: GridOptionsService): boolean
     const selection = gos.get('rowSelection');
 
     if (typeof selection === 'string') {
-        return gos.getAsBool('rowMultiSelectWithClick');
+        return gos.get('rowMultiSelectWithClick');
     }
 
     return selection?.enableSelectionWithoutKeys ?? false;
