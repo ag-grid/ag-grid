@@ -28,14 +28,15 @@ To pin a row use right-click to bring up the [Context Menu](./context-menu) and 
 
 {% gridExampleRunner title="Simple Row Pinning" name="simple-pinning" /%}
 
-Note that rows that have been pinned also appear greyed-out in the main viewport. All the examples on this page also apply additional styling to visually differentiate the pinned rows from the rows in the main viewport.
+Note that all the examples on this page also apply additional styling to visually differentiate the pinned rows from the rows in the main viewport.
 
 ```{% frameworkTransform=true %}
 const gridOptions = {
     theme: themeQuartz.withParts({
         pinnedRowBorder: { 
             width: 3 
-        }
+        },
+        pinnedSourceRowTextColor: '#919191',
     })
 }
 ```
