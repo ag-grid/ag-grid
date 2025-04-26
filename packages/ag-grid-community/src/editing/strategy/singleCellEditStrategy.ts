@@ -1,6 +1,5 @@
 import type { BeanName } from '../../context/context';
 import type { CellFocusedEvent, CommonCellFocusParams } from '../../events';
-import { DefaultProvidedCellEditorParams } from '../../interfaces/iCellEditor';
 import type { Column } from '../../interfaces/iColumn';
 import type { CellCtrl } from '../../rendering/cell/cellCtrl';
 import type { RowCtrl } from '../../rendering/row/rowCtrl';
@@ -55,7 +54,7 @@ export class SingleCellEditStrategy extends BaseEditStrategy {
 
         this.editModel.startEditing(rowId, colId);
 
-        return true;
+        return this.finishStartEdit(rowCtrl, cellCtrl, undefined, true, event);
     }
 
     public stopEditing(rowCtrl?: RowCtrl | null, cellCtrl?: CellCtrl | null): boolean {
@@ -138,7 +137,7 @@ export class SingleCellEditStrategy extends BaseEditStrategy {
 
         // only prevent default if we found a cell. so if user is on last cell and hits tab, then we default
         // to the normal tabbing so user can exit the grid.
-        this.beans.editingSvc?.startEditing(nextCell.rowCtrl, nextCell, null, true, event, 'api');
+        this.startEditing(nextCell.rowCtrl, nextCell, null, event);
 
         // const compDetails = this.setupEditors(nextCell.rowCtrl, nextCell, undefined, true);
         // const suppressPreventDefault = !(compDetails?.params as DefaultProvidedCellEditorParams)

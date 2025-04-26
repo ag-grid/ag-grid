@@ -4,7 +4,7 @@ import { BeanStub } from '../../context/beanStub';
 import type { BeanName } from '../../context/context';
 import type { ColDef } from '../../entities/colDef';
 import type { CellFocusedEvent } from '../../events';
-import type { ICellEditorComp } from '../../interfaces/iCellEditor';
+import type { DefaultProvidedCellEditorParams, ICellEditorComp } from '../../interfaces/iCellEditor';
 import type { UserCompDetails } from '../../interfaces/iUserCompDetails';
 import type { CellCtrl } from '../../rendering/cell/cellCtrl';
 import type { RowCtrl } from '../../rendering/row/rowCtrl';
@@ -104,17 +104,39 @@ export abstract class BaseEditStrategy extends BeanStub {
         return null;
     }
 
+    protected finishStartEdit(
+        rowCtrl?: RowCtrl | null,
+        cellCtrl?: CellCtrl | null,
+        key?: string,
+        cellStartedEdit?: boolean,
+        event?: Event | null
+    ) {
+        const compDetails = this.setupEditors(rowCtrl, cellCtrl, key, cellStartedEdit);
+        const suppressPreventDefault = !(compDetails?.params as DefaultProvidedCellEditorParams)
+            ?.suppressPreventDefault;
+
+        if (event && cellCtrl) {
+            this.eventSvc.dispatchEvent(cellCtrl.createEvent(event, 'cellEditingStarted'));
+        }
+
+        if (!suppressPreventDefault) {
+            event?.preventDefault();
+        }
+
+        return suppressPreventDefault;
+    }
+
     public setupEditors(
         rowCtrl?: RowCtrl | null,
-        cellCtrl?: CellCtrl,
+        cellCtrl?: CellCtrl | null,
         key?: string | null,
         cellStartedEdit?: boolean | null
     ): UserCompDetails<ICellEditorComp<any, any, any>> | undefined {
         console.warn('BaseEditStrategy: setupEditors');
         const editingCells = this.editModel.getEditingCellIds();
 
-        if (editingCells.length === 0) {
-            return this.setupEditor(cellCtrl!, key, cellStartedEdit);
+        if (editingCells.length === 0 && cellCtrl) {
+            return this.setupEditor(cellCtrl, key, cellStartedEdit);
         }
 
         let startedCompDetails: UserCompDetails<ICellEditorComp<any, any, any>> | undefined;

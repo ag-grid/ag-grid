@@ -128,17 +128,7 @@ export class EditingService extends BeanStub implements NamedBean {
 
         console.warn('EditingService: startEditing');
 
-        this.editStrategy!.startEditing?.(rowCtrl, cellCtrl, key, event);
-
-        const compDetails = this.editStrategy!.setupEditors(rowCtrl, cellCtrl, key, cellStartedEdit);
-        const suppressPreventDefault = !(compDetails?.params as DefaultProvidedCellEditorParams)
-            ?.suppressPreventDefault;
-        this.eventSvc.dispatchEvent(cellCtrl.createEvent(event, 'cellEditingStarted'));
-        if (!suppressPreventDefault) {
-            event?.preventDefault();
-        }
-
-        return suppressPreventDefault;
+        return this.editStrategy!.startEditing?.(rowCtrl, cellCtrl, key, event);
     }
 
     /**

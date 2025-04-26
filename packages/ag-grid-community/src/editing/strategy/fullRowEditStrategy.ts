@@ -1,6 +1,5 @@
 import type { BeanName } from '../../context/context';
 import type { CellFocusedEvent } from '../../events';
-import { DefaultProvidedCellEditorParams } from '../../interfaces/iCellEditor';
 import type { CellCtrl } from '../../rendering/cell/cellCtrl';
 import type { RowCtrl } from '../../rendering/row/rowCtrl';
 import { BaseEditStrategy } from './baseEditStrategy';
@@ -60,15 +59,14 @@ export class FullRowEditStrategy extends BaseEditStrategy {
         }
 
         // stop editing if we've changed rows
-
         return rowCtrl?.rowId !== this.rowId;
     }
 
     public startEditing(
         rowCtrl: RowCtrl,
-        _cellCtrl?: CellCtrl,
+        cellCtrl?: CellCtrl,
         _key?: string | null | undefined,
-        _event?: KeyboardEvent | MouseEvent | null | undefined
+        event?: KeyboardEvent | MouseEvent | null | undefined
     ): boolean {
         console.warn('FullRowEditStrategy: startEditing');
 
@@ -85,7 +83,7 @@ export class FullRowEditStrategy extends BaseEditStrategy {
             this.editModel.startEditing(rowCtrl.rowId!, cellCtrl.column.colId);
         });
 
-        return true;
+        return this.finishStartEdit(rowCtrl, cellCtrl, undefined, true, event);
     }
 
     public cancelEditing(rowCtrl?: RowCtrl | null, cellCtrl?: CellCtrl | null): boolean {
@@ -198,16 +196,7 @@ export class FullRowEditStrategy extends BaseEditStrategy {
             this.stopEditing(pRow);
 
             const nRow = nextCell.rowCtrl;
-            this.beans.editingSvc?.startEditing(nextCell.rowCtrl, nextCell, null, true, event);
-
-            // const compDetails = this.setupEditors(nRow, undefined, undefined, true);
-            // const suppressPreventDefault = !(compDetails?.params as DefaultProvidedCellEditorParams)
-            //     ?.suppressPreventDefault;
-
-            // this.eventSvc.dispatchEvent(nextCell.createEvent(event!, 'cellEditingStarted'));
-            // if (!suppressPreventDefault) {
-            //     event?.preventDefault();
-            // }
+            this.startEditing(nRow, nextCell, null, event);
         }
 
         if (nextEditable) {
