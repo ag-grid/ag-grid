@@ -1,5 +1,6 @@
 import type { BeanName } from '../../context/context';
 import type { CellFocusedEvent } from '../../events';
+import { DefaultProvidedCellEditorParams } from '../../interfaces/iCellEditor';
 import type { CellCtrl } from '../../rendering/cell/cellCtrl';
 import type { RowCtrl } from '../../rendering/row/rowCtrl';
 import { BaseEditStrategy } from './baseEditStrategy';
@@ -197,7 +198,16 @@ export class FullRowEditStrategy extends BaseEditStrategy {
             this.stopEditing(pRow);
 
             const nRow = nextCell.rowCtrl;
-            this?.startEditing(nRow, undefined, undefined, event);
+            this.beans.editingSvc?.startEditing(nextCell.rowCtrl, nextCell, null, true, event);
+
+            // const compDetails = this.setupEditors(nRow, undefined, undefined, true);
+            // const suppressPreventDefault = !(compDetails?.params as DefaultProvidedCellEditorParams)
+            //     ?.suppressPreventDefault;
+
+            // this.eventSvc.dispatchEvent(nextCell.createEvent(event!, 'cellEditingStarted'));
+            // if (!suppressPreventDefault) {
+            //     event?.preventDefault();
+            // }
         }
 
         if (nextEditable) {
