@@ -118,7 +118,7 @@ export class EditingService extends BeanStub implements NamedBean {
             return true;
         }
 
-        if (!this.shouldStartEditing?.(rowCtrl, cellCtrl, key, event, cellStartedEdit, source)) {
+        if (!this.shouldStartEditing?.(rowCtrl, cellCtrl, key, event, cellStartedEdit, source) && source !== 'api') {
             return false;
         }
 
@@ -131,11 +131,14 @@ export class EditingService extends BeanStub implements NamedBean {
         this.editStrategy!.startEditing?.(rowCtrl, cellCtrl, key, event);
 
         const compDetails = this.editStrategy!.setupEditors(rowCtrl, cellCtrl, key, cellStartedEdit);
-
+        const suppressPreventDefault = !(compDetails?.params as DefaultProvidedCellEditorParams)
+            ?.suppressPreventDefault;
         this.eventSvc.dispatchEvent(cellCtrl.createEvent(event, 'cellEditingStarted'));
-        event?.preventDefault();
+        if (!suppressPreventDefault) {
+            event?.preventDefault();
+        }
 
-        return !(compDetails?.params as DefaultProvidedCellEditorParams)?.suppressPreventDefault;
+        return suppressPreventDefault;
     }
 
     /**

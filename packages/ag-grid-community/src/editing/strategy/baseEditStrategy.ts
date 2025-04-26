@@ -208,15 +208,17 @@ export abstract class BaseEditStrategy extends BeanStub {
         cellStartedEdit?: boolean | null,
         source: 'api' | 'ui' = 'ui'
     ): boolean | null {
-        if (this.editModel.isEditing() && event instanceof KeyboardEvent && event.key === KeyCode.TAB) {
+        const isTab = event instanceof KeyboardEvent && event.key === KeyCode.TAB;
+
+        if (this.editModel.isEditing() && isTab) {
             return true;
         }
 
-        if (event instanceof KeyboardEvent) {
-            return event.key === 'Enter';
+        if (event instanceof KeyboardEvent && event.key === KeyCode.ENTER) {
+            return true;
         }
 
-        const extendingRange = event?.shiftKey && this.beans.rangeSvc?.getCellRanges().length != 0;
+        const extendingRange = event?.shiftKey && !isTab && this.beans.rangeSvc?.getCellRanges().length != 0;
         if (extendingRange) {
             return false;
         }
