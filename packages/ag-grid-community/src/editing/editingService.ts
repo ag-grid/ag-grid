@@ -222,7 +222,14 @@ export class EditingService extends BeanStub implements NamedBean {
         }
 
         // if a cell wasn't found, it's possible that focus was moved to the header
-        return res || !!this.beans.focusSvc.focusedHeader;
+        res = res || !!this.beans.focusSvc.focusedHeader;
+
+        if (res === false) {
+            // not a header and not the table
+            this.stopAllEditing();
+        }
+
+        return res;
     }
 
     public getCellDataValue(rowId?: string, colId?: string): any {
