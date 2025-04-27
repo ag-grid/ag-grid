@@ -145,6 +145,10 @@ function cancelEdit() {
     gridApi!.cancelEdits();
 }
 
+function stopEdit() {
+    gridApi!.stopEditing();
+}
+
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
     const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;

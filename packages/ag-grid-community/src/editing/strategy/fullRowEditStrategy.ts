@@ -9,14 +9,24 @@ export class FullRowEditStrategy extends BaseEditStrategy {
     override beanName = 'rowEditMode' as BeanName | undefined;
     private rowId?: string | null;
 
-    public setEditing(rowCtrl: RowCtrl, newState: boolean, oldState: boolean): void {
+    public setEditing(rowCtrl?: RowCtrl | null, newState?: boolean, oldState?: boolean): void {
         if (oldState === newState) {
             return;
         }
 
         console.warn('FullRowEditStrategy: setEditing');
 
-        rowCtrl.forEachGui(undefined, (gui) => gui.rowComp.toggleCss('ag-row-editing', newState));
+        if (!rowCtrl) {
+            rowCtrl = _resolveRowController(this.beans, {
+                rowId: this.rowId,
+            });
+        }
+
+        if (!rowCtrl) {
+            return;
+        }
+
+        rowCtrl.forEachGui(undefined, (gui) => gui.rowComp.toggleCss('ag-row-editing', newState ?? false));
 
         if (newState) {
             this.rowId = rowCtrl.rowId;
@@ -103,7 +113,7 @@ export class FullRowEditStrategy extends BaseEditStrategy {
             this.editModel.cancelEditing();
         }
 
-        this.setEditing(rowCtrl!, false, oldState);
+        this.setEditing(rowCtrl, false, oldState);
 
         this.destroyEditors(edits, true);
 
