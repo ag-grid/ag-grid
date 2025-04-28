@@ -148,7 +148,12 @@ export class ValueService extends BeanStub implements NamedBean {
         };
     }
 
-    public getValue(column: AgColumn, rowNode?: IRowNode | null, ignoreAggData = false): any {
+    public getValue(
+        column: AgColumn,
+        rowNode?: IRowNode | null,
+        ignoreAggData = false,
+        source: 'ui' | 'api' = 'ui'
+    ): any {
         // hack - the grid is getting refreshed before this bean gets initialised, race condition.
         // really should have a way so they get initialised in the right order???
         if (!this.initialised) {
@@ -165,13 +170,26 @@ export class ValueService extends BeanStub implements NamedBean {
         const colId = column.getColId();
         const data = rowNode.data;
 
+        const { editingSvc, rowRenderer, rowGroupColsSvc } = this.beans;
+
+        if (editingSvc && source === 'ui') {
+            const rowCtrl = rowRenderer.getRowCtrls([rowNode])?.[0];
+            const cellCtrl = rowRenderer.getCellCtrls([rowNode], [column])?.[0];
+            if (editingSvc?.isEditing(rowCtrl, cellCtrl)) {
+                const res = editingSvc?.getCellDataValue(rowCtrl!.rowId!, colId);
+                if (res.newValue !== undefined) {
+                    return res.newValue;
+                }
+            }
+        }
+
         let result: any;
 
         // when using multiple columns, the group column should have no value higher than its level
         const rowGroupColId = colDef.showRowGroup;
         if (typeof rowGroupColId === 'string') {
             // if multiple columns, don't show values in cells grouped at a higher level
-            const colRowGroupIndex = this.beans.rowGroupColsSvc?.getColumnIndex(rowGroupColId) ?? -1;
+            const colRowGroupIndex = rowGroupColsSvc?.getColumnIndex(rowGroupColId) ?? -1;
             if (colRowGroupIndex > rowNode.level) {
                 return null;
             }

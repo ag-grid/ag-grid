@@ -4,11 +4,12 @@ import { BeanStub } from '../context/beanStub';
 import { PopupEditorWrapper } from '../edit/cellEditors/popupEditorWrapper';
 import type { AgColumn } from '../entities/agColumn';
 import type { RowNode } from '../entities/rowNode';
-import type { DefaultProvidedCellEditorParams, ICellEditorParams } from '../interfaces/iCellEditor';
+import type { ICellEditorParams } from '../interfaces/iCellEditor';
 import type { IRowNode } from '../interfaces/iRowNode';
 import type { CellPosition } from '../main-umd-noStyles';
 import { CellCtrl } from '../rendering/cell/cellCtrl';
 import type { RowCtrl } from '../rendering/row/rowCtrl';
+import { CellEditingModel } from './model/cellEditingModel';
 import { GridEditingModel } from './model/gridEditingModel';
 import type { BaseEditStrategy } from './strategy/baseEditStrategy';
 import { _addStopEditingWhenGridLosesFocus, _createCellEditorParams, _resolveControllers } from './strategy/utils';
@@ -76,18 +77,20 @@ export class EditingService extends BeanStub implements NamedBean {
         rowCtrl?: RowCtrl | null,
         cellCtrl?: CellCtrl | null,
         key?: string | null | undefined,
-        event?: KeyboardEvent | MouseEvent | null | undefined
+        event?: KeyboardEvent | MouseEvent | null | undefined,
+        source: 'api' | 'ui' = 'ui'
     ): boolean {
-        return this.editStrategy?.shouldStopEditing?.(rowCtrl, cellCtrl, key, event) ?? false;
+        return this.editStrategy?.shouldStopEditing?.(rowCtrl, cellCtrl, key, event, source) ?? false;
     }
 
     shouldCancelEditing(
         rowCtrl?: RowCtrl | null,
         cellCtrl?: CellCtrl | null,
         key?: string | null | undefined,
-        event?: KeyboardEvent | MouseEvent | null | undefined
+        event?: KeyboardEvent | MouseEvent | null | undefined,
+        source: 'api' | 'ui' = 'ui'
     ): boolean {
-        return this.editStrategy?.shouldCancelEditing?.(rowCtrl, cellCtrl, key, event) ?? false;
+        return this.editStrategy?.shouldCancelEditing?.(rowCtrl, cellCtrl, key, event, source) ?? false;
     }
 
     public isEditing(rowCtrl?: RowCtrl | null, cellCtrl?: CellCtrl | null): boolean {
@@ -113,7 +116,7 @@ export class EditingService extends BeanStub implements NamedBean {
         // yet to initialise the cell, so we re-schedule this operation for when celLComp is attached
         if (!cellCtrl.comp) {
             cellCtrl.onCompAttachedFuncs.push(() => {
-                this.startEditing(rowCtrl, cellCtrl, key, cellStartedEdit, event);
+                this.startEditing(rowCtrl, cellCtrl, key, cellStartedEdit, event, source);
             });
             return true;
         }
@@ -128,7 +131,7 @@ export class EditingService extends BeanStub implements NamedBean {
 
         console.warn('EditingService: startEditing');
 
-        return this.editStrategy!.startEditing?.(rowCtrl, cellCtrl, key, event);
+        return this.editStrategy!.startEditing?.(rowCtrl, cellCtrl, key, event, source);
     }
 
     /**
@@ -141,7 +144,8 @@ export class EditingService extends BeanStub implements NamedBean {
         cellCtrl?: CellCtrl | null,
         key?: string,
         event?: KeyboardEvent | MouseEvent | null,
-        cancel: boolean = false
+        cancel: boolean = false,
+        source: 'api' | 'ui' = 'ui'
     ): boolean {
         if (!this.isEditing()) {
             return false;
@@ -153,10 +157,10 @@ export class EditingService extends BeanStub implements NamedBean {
 
         this.editStrategy = this.createEditStrategy();
 
-        if (!cancel && this.shouldStopEditing?.(rowCtrl, cellCtrl, key, event)) {
-            return this.editStrategy?.stopEditing?.(rowCtrl, cellCtrl) ?? false;
-        } else if (cancel && this.shouldCancelEditing?.(rowCtrl, cellCtrl, key, event)) {
-            return this.editStrategy?.cancelEditing?.(rowCtrl, cellCtrl) ?? false;
+        if (!cancel && this.shouldStopEditing?.(rowCtrl, cellCtrl, key, event, source)) {
+            return this.editStrategy?.stopEditing?.(rowCtrl, cellCtrl, source) ?? false;
+        } else if (cancel && this.shouldCancelEditing?.(rowCtrl, cellCtrl, key, event, source)) {
+            return this.editStrategy?.cancelEditing?.(rowCtrl, cellCtrl, source) ?? false;
         }
 
         return false;
@@ -166,11 +170,11 @@ export class EditingService extends BeanStub implements NamedBean {
         return this.beans.editingSvc?.editModel?.getEditingCellPositions() ?? [];
     }
 
-    public stopAllEditing(cancel: boolean = false): void {
+    public stopAllEditing(cancel: boolean = false, source: 'api' | 'ui' = 'ui'): void {
         console.warn('EditingService: stopAllEditing');
         if (this.isEditing()) {
             if (cancel) {
-                this.editStrategy?.cancelEditing?.();
+                this.editStrategy?.cancelEditing?.(undefined, undefined, source);
             } else {
                 this.editStrategy?.stopAllEditing?.();
             }
@@ -232,15 +236,26 @@ export class EditingService extends BeanStub implements NamedBean {
         return res;
     }
 
-    public getCellDataValue(rowId?: string, colId?: string): any {
-        const { rowCtrl, cellCtrl } = _resolveControllers(this.beans, { rowId, colId });
-        if (this.isEditing(rowCtrl, cellCtrl)) {
-            return this.editModel?.getEditModels(rowId, colId)?.[0]?.newValue;
+    public getCellDataValue(rowId?: string, colId?: string): { newValue: any; oldValue: any } {
+        if (!rowId || !colId) {
+            return {
+                newValue: undefined,
+                oldValue: undefined,
+            };
         }
 
-        return rowCtrl?.rowNode && cellCtrl?.column
-            ? this.beans.valueSvc.getValue(cellCtrl?.column, rowCtrl?.rowNode)
-            : undefined;
+        const { rowCtrl, cellCtrl } = _resolveControllers(this.beans, { rowId, colId });
+        if (this.isEditing(rowCtrl, cellCtrl)) {
+            const result = this.editModel?.getEditModels(rowId, colId)?.[0] as CellEditingModel;
+            return result;
+        }
+
+        const oldValue = this.beans.valueSvc.getValue(cellCtrl?.column as any, rowCtrl?.rowNode, undefined, 'api');
+
+        return {
+            oldValue,
+            newValue: undefined,
+        };
     }
 
     public addStopEditingWhenGridLosesFocus(viewports: HTMLElement[]): void {

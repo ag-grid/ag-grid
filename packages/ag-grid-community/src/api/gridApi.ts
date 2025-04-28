@@ -673,9 +673,6 @@ export interface _EditingGridApi<TData> {
     /** Returns `true` if the grid is editing a cell */
     isEditing(rowId?: string, colId?: string): boolean;
 
-    /** When using `batchEdit` or `fullRow` edit strategy, commits currently pending edits */
-    commitEdits(): void;
-
     /** When using `batchEdit` or `fullRow` edit strategy, cancels currently pending edits */
     cancelEdits(): void;
 }

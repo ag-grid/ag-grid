@@ -13,7 +13,6 @@ import { VERSION } from '../version';
 import { cellEditingCSS } from './cell-editing.css-GENERATED';
 import {
     cancelEdits,
-    commitEdits,
     getCellEditorInstances,
     getCurrentRedoSize,
     getCurrentUndoSize,
@@ -42,7 +41,6 @@ export const EditingCoreModule: _ModuleWithApi<_EditingGridApi<any>> = {
         startEditingCell,
         stopEditing,
         isEditing,
-        commitEdits,
         cancelEdits,
     },
     dynamicBeans: {
