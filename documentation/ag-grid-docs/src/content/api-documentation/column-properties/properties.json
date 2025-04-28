@@ -88,13 +88,15 @@
     "charts": {
         "meta": {
             "displayName": "Columns: Integrated Charts",
-            "description": "(Enterprise only) See [Integrated Charts](./integrated-charts/)"
+            "description": "(Enterprise only) See [Integrated Charts](./integrated-charts/)",
+            "module": "IntegratedChartsModule"
         },
         "chartDataType": {}
     },
     "tooltips": {
         "meta": {
-            "displayName": "Columns: Tooltips"
+            "displayName": "Columns: Tooltips",
+            "module": "TooltipModule"
         },
         "tooltipField": {
             "interfaceHierarchyOverrides": {
@@ -352,7 +354,8 @@
             "page": {
                 "name": "Filtering",
                 "url": "./filtering-overview/"
-            }
+            },
+            "module": "Pick Filter Modules"
         },
         "filter": {
             "description": "Filter component to use for this column. <br/>Set to `true` to use the default filter. <br/>Set to the name of a [Provided Filter](./filtering/#column-filter-types) or set to a `IFilterComp`.",
@@ -415,7 +418,8 @@
             "page": {
                 "name": "Cell Editing",
                 "url": "./cell-editing/"
-            }
+            },
+            "module": "Pick Editing Modules"
         },
         "editable": {},
         "valueSetter": {
@@ -459,7 +463,8 @@
     "grouping": {
         "meta": {
             "displayName": "Columns: Row Grouping",
-            "description": "(Enterprise only) See [Row Grouping](./grouping/)"
+            "description": "(Enterprise only) See [Row Grouping](./grouping/)",
+            "module": "RowGroupingModule"
         },
         "rowGroup": {},
         "initialRowGroup": {},
@@ -476,7 +481,8 @@
     "aggregation": {
         "meta": {
             "displayName": "Columns: Aggregation",
-            "description": "(Enterprise only) See [Aggregation](./aggregation-columns/)"
+            "description": "(Enterprise only) See [Aggregation](./aggregation-columns/)",
+            "module": "RowGroupingModule"
         },
         "aggFunc": {
             "more": {
@@ -507,7 +513,8 @@
     "pivoting": {
         "meta": {
             "displayName": "Columns: Pivoting",
-            "description": "(Enterprise only) See [Pivoting](./pivoting/)"
+            "description": "(Enterprise only) See [Pivoting](./pivoting/)",
+            "module": "PivotModule"
         },
         "pivot": {
             "more": {
@@ -537,7 +544,8 @@
             "page": {
                 "name": "Row Dragging",
                 "url": "./row-dragging/"
-            }
+            },
+            "module": "DragAndDropModule"
         },
         "rowDrag": {},
         "rowDragText": {},
@@ -613,7 +621,8 @@
     },
     "find": {
         "meta": {
-            "displayName": "Columns: Find"
+            "displayName": "Columns: Find",
+            "module": "FindModule"
         },
         "getFindText": {
             "more": {
