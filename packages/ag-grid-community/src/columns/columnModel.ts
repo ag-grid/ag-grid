@@ -340,8 +340,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
         // this is a common scenario due to generated cols.
         if (!preservedOrder.some((col) => hasSiblings(col))) {
             const preservedOrderSet = new Set(preservedOrder);
-            for (let i = 0; i < cols.list.length; i++) {
-                const col = cols.list[i];
+            for (const col of cols.list) {
                 if (!preservedOrderSet.has(col)) {
                     preservedOrder.push(col);
                 }
@@ -383,28 +382,34 @@ export class ColumnModel extends BeanStub implements NamedBean {
 
                 if (child instanceof AgColumn) {
                     const colIdx = colPositionMap.get(child);
-                    if (colIdx != null) {
-                        if (highestIdx == null) {
-                            highestIdx = colIdx;
-                            highestSibling = child;
-                        } else if (highestIdx < colIdx) {
-                            highestIdx = colIdx;
-                            highestSibling = child;
-                        }
+                    // if col does not exist in last order, skip
+                    if (colIdx == null) {
+                        continue;
+                    }
+
+                    if (highestIdx == null) {
+                        highestIdx = colIdx;
+                        highestSibling = child;
+                    } else if (highestIdx < colIdx) {
+                        highestIdx = colIdx;
+                        highestSibling = child;
                     }
                     continue;
                 }
 
                 child.forEachLeafColumn((leafCol) => {
                     const colIdx = colPositionMap.get(leafCol);
-                    if (colIdx != null) {
-                        if (highestIdx == null) {
-                            highestIdx = colIdx;
-                            highestSibling = leafCol;
-                        } else if (highestIdx < colIdx) {
-                            highestIdx = colIdx;
-                            highestSibling = leafCol;
-                        }
+                    // if col does not exist in last order, skip
+                    if (colIdx == null) {
+                        return;
+                    }
+
+                    if (highestIdx == null) {
+                        highestIdx = colIdx;
+                        highestSibling = leafCol;
+                    } else if (highestIdx < colIdx) {
+                        highestIdx = colIdx;
+                        highestSibling = leafCol;
                     }
                 });
             }
@@ -423,11 +428,11 @@ export class ColumnModel extends BeanStub implements NamedBean {
         const previousSiblingPosMap: Map<AgColumn, AgColumn | AgColumn[]> = new Map();
 
         // for each new col, find the col it needs inserted after and store for when array is constructed
-        additionalCols.forEach((col) => {
+        for (const col of additionalCols) {
             const prevSiblingIdx = getPreviousSibling(col, null);
             if (prevSiblingIdx == null) {
                 noSiblingsAvailable.push(col);
-                return;
+                continue;
             }
 
             const prev = previousSiblingPosMap.get(prevSiblingIdx);
@@ -439,7 +444,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
                 // if we have a single col, then we need to add the new col to the array
                 previousSiblingPosMap.set(prevSiblingIdx, [prev, col]);
             }
-        });
+        }
 
         // the following code starts at the tail of the array and works backwards.
         // first it applies all of the cols with no siblings (so no location in last order)

@@ -127,13 +127,13 @@ export class AgProvidedColumnGroup extends BeanStub<AgProvidedColumnGroupEvent> 
             return;
         }
 
-        this.children.forEach((child) => {
+        for (const child of this.children) {
             if (isColumn(child)) {
                 callback(child);
             } else if (isProvidedColumnGroup(child)) {
                 child.forEachLeafColumn(callback);
             }
-        });
+        }
     }
 
     private addLeafColumns(leafColumns: Column[]): void {
