@@ -7,6 +7,7 @@ import type { ColumnEventType } from '../events';
 import { _isColumnsSortingCoupledToGroup } from '../gridOptionsUtils';
 import { _mergeDeep } from '../utils/object';
 import { _warn } from '../validation/logging';
+import { createMergedColGroupDef } from './columnGroups/columnGroupUtils';
 import type { IColumnKeyCreator } from './columnKeyCreator';
 import { ColumnKeyCreator } from './columnKeyCreator';
 import { convertColumnTypes } from './columnUtils';
@@ -37,7 +38,7 @@ export function _createColumnTreeWithIds(
             const groupId = def.groupId!;
             const group = colGroupIdMap.get(groupId);
 
-            const colGroupDef = beans.colGroupSvc.createMergedColGroupDef(def, groupId);
+            const colGroupDef = createMergedColGroupDef(beans, def, groupId);
             const newGroup = new AgProvidedColumnGroup(colGroupDef, groupId, false, level);
             beans.context.createBean(newGroup);
 

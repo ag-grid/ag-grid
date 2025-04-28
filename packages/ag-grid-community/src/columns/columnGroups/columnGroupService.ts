@@ -14,6 +14,7 @@ import { _recursivelyCreateColumns, depthFirstOriginalTreeSearch } from '../colu
 import type { IColumnKeyCreator } from '../columnKeyCreator';
 import type { GroupInstanceIdCreator } from '../groupInstanceIdCreator';
 import { depthFirstAllColumnTreeSearch } from '../visibleColsService';
+import { createMergedColGroupDef } from './columnGroupUtils';
 
 export interface CreateGroupsParams {
     // all displayed columns sorted - this is the columns the grid should show
@@ -328,7 +329,7 @@ export class ColumnGroupService extends BeanStub implements NamedBean {
         source: ColumnEventType
     ): AgProvidedColumnGroup {
         const groupId = columnKeyCreator.getUniqueKey(colGroupDef.groupId || null, null);
-        const colGroupDefMerged = this.createMergedColGroupDef(colGroupDef, groupId);
+        const colGroupDefMerged = createMergedColGroupDef(this.beans, colGroupDef, groupId);
         const providedGroup = new AgProvidedColumnGroup(colGroupDefMerged, groupId, false, level);
         this.createBean(providedGroup);
         const existingGroupAndIndex = this.findExistingGroup(colGroupDef, existingGroups);
@@ -390,7 +391,7 @@ export class ColumnGroupService extends BeanStub implements NamedBean {
                 // this for loop will NOT run any loops if no padded column groups are needed
                 for (let j = columnDepth - 1; j >= currentDepth; j--) {
                     const newColId = columnKeyCreator.getUniqueKey(null, null);
-                    const colGroupDefMerged = this.createMergedColGroupDef(null, newColId);
+                    const colGroupDefMerged = createMergedColGroupDef(this.beans, null, newColId);
 
                     const paddedGroup = new AgProvidedColumnGroup(colGroupDefMerged, newColId, true, currentDepth);
                     this.createBean(paddedGroup);
@@ -484,16 +485,6 @@ export class ColumnGroupService extends BeanStub implements NamedBean {
         });
 
         return tree;
-    }
-
-    public createMergedColGroupDef(colGroupDef: ColGroupDef | null, groupId: string): ColGroupDef {
-        const colGroupDefMerged: ColGroupDef = {} as ColGroupDef;
-        const { gos } = this.beans;
-        Object.assign(colGroupDefMerged, gos.get('defaultColGroupDef'));
-        Object.assign(colGroupDefMerged, colGroupDef);
-        gos.validateColDef(colGroupDefMerged, groupId);
-
-        return colGroupDefMerged;
     }
 
     private findExistingGroup(
