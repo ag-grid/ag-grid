@@ -4,7 +4,11 @@
 // if no field or id provided in the col, it will try the ids of natural numbers
 import { _toStringOrNull } from '../utils/generic';
 
-export class ColumnKeyCreator {
+export type IColumnKeyCreator = {
+    getUniqueKey(colId?: string | null, colField?: string | null): string;
+};
+
+export class ColumnKeyCreator implements IColumnKeyCreator {
     private existingKeys: { [key: string]: boolean } = {};
 
     public addExistingKeys(keys: string[]): void {

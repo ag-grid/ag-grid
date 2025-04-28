@@ -108,7 +108,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
         _destroyColumnTree(beans, this.colDefCols?.tree, newTree.columnTree);
 
         const tree = newTree.columnTree;
-        const treeDepth = newTree.treeDept;
+        const treeDepth = newTree.treeDepth;
         const list = _getColumnsFromTree(tree);
         const map: { [id: string]: AgColumn } = {};
 
