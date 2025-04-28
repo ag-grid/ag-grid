@@ -76,7 +76,7 @@ export function _createColumnTreeWithIds(
     };
     const columnTree = beans.colGroupSvc ? beans.colGroupSvc.balanceColumnTree(root, 0, maxDepth, keyCreator) : root;
 
-    const deptFirstCallback = (child: AgColumn | AgProvidedColumnGroup, parent: AgProvidedColumnGroup) => {
+    const depthFirstCallback = (child: AgColumn | AgProvidedColumnGroup, parent: AgProvidedColumnGroup) => {
         if (isProvidedColumnGroup(child)) {
             child.setupExpandable();
         }
@@ -85,7 +85,7 @@ export function _createColumnTreeWithIds(
         child.originalParent = parent;
     };
 
-    depthFirstOriginalTreeSearch(null, columnTree, deptFirstCallback);
+    depthFirstOriginalTreeSearch(null, columnTree, depthFirstCallback);
 
     return {
         columnTree,
@@ -125,7 +125,7 @@ export function _createColumnTree(
         ? colGroupSvc.balanceColumnTree(unbalancedTree, 0, treeDepth, columnKeyCreator)
         : unbalancedTree;
 
-    const deptFirstCallback = (child: AgColumn | AgProvidedColumnGroup, parent: AgProvidedColumnGroup) => {
+    const depthFirstCallback = (child: AgColumn | AgProvidedColumnGroup, parent: AgProvidedColumnGroup) => {
         if (isProvidedColumnGroup(child)) {
             child.setupExpandable();
         }
@@ -134,7 +134,7 @@ export function _createColumnTree(
         child.originalParent = parent;
     };
 
-    depthFirstOriginalTreeSearch(null, columnTree, deptFirstCallback);
+    depthFirstOriginalTreeSearch(null, columnTree, depthFirstCallback);
 
     return {
         columnTree,
