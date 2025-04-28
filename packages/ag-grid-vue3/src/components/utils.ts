@@ -13,7 +13,6 @@ import type {
     DataTypeDefinition,
     DefaultChartMenuItem,
     DomLayoutType,
-    EditStrategyType,
     ExcelExportParams,
     ExcelStyle,
     FillOperationParams,
@@ -448,6 +447,9 @@ export interface Props<TData> {
          * @default false
          */
     suppressClickEdit?: boolean | undefined,
+    /** Set to `true` to enable batch editing.
+         */
+    batchEdit?: boolean | undefined,
     /** Set to `true` to stop the grid updating data after `Edit`, `Clipboard` and `Fill Handle` operations. When this is set, it is intended the application will update the data, eg in an external immutable store, and then pass the new dataset to the grid. <br />**Note:** `rowNode.setDataValue()` does not update the value of the cell when this is `True`, it fires `onCellEditRequest` instead.
          * @default false
          */
@@ -1587,13 +1589,6 @@ export interface Props<TData> {
     /** Tells the grid if this row should be rendered as full width.
          */
     isFullWidthRow?: ((params: IsFullWidthRowParams<TData>) => boolean) | undefined,
-    /** Experimental editing mode v2.
-         * @default false
-         */
-    experimentalEditingModeV2?: {
-        strategy?: EditStrategyType;
-        params?: any;
-    } | undefined,
 
     // @END_PROPS@
 
@@ -1760,6 +1755,7 @@ export function getProps() {
         editType: undefined,
         singleClickEdit: undefined,
         suppressClickEdit: undefined,
+        batchEdit: undefined,
         readOnlyEdit: undefined,
         stopEditingWhenCellsLoseFocus: undefined,
         enterNavigatesVertically: undefined,
@@ -2020,7 +2016,6 @@ export function getProps() {
         getRowClass: undefined,
         getRowHeight: undefined,
         isFullWidthRow: undefined,
-        experimentalEditingModeV2: undefined,
 
 // @END_DEFAULTS@
 

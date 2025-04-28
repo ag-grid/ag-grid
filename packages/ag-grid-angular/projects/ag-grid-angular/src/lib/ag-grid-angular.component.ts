@@ -76,7 +76,6 @@ import type {
     DragCancelledEvent,
     DragStartedEvent,
     DragStoppedEvent,
-    EditStrategyType,
     ExcelExportParams,
     ExcelStyle,
     ExpandOrCollapseAllEvent,
@@ -623,6 +622,9 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * @default false
      */
     @Input({ transform: booleanAttribute }) public suppressClickEdit: boolean | undefined = undefined;
+    /** Set to `true` to enable batch editing.
+     */
+    @Input({ transform: booleanAttribute }) public batchEdit: boolean | undefined = undefined;
     /** Set to `true` to stop the grid updating data after `Edit`, `Clipboard` and `Fill Handle` operations. When this is set, it is intended the application will update the data, eg in an external immutable store, and then pass the new dataset to the grid. <br />**Note:** `rowNode.setDataValue()` does not update the value of the cell when this is `True`, it fires `onCellEditRequest` instead.
      * @default false
      */
@@ -1796,15 +1798,6 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     /** Tells the grid if this row should be rendered as full width.
      */
     @Input() public isFullWidthRow: ((params: IsFullWidthRowParams<TData>) => boolean) | undefined = undefined;
-    /** Experimental editing mode v2.
-     * @default false
-     */
-    @Input() public experimentalEditingModeV2:
-        | {
-              strategy?: EditStrategyType;
-              params?: any;
-          }
-        | undefined = undefined;
 
     /** The tool panel visibility has changed. Fires twice if switching between panels - once with the old panel and once with the new panel.
      */
