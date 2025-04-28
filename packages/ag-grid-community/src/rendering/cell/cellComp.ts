@@ -11,7 +11,7 @@ import { _getLocaleTextFunc } from '../../misc/locale/localeUtils';
 import type { CheckboxSelectionComponent } from '../../selection/checkboxSelectionComponent';
 import { _addStylesToElement, _clearElement, _createElement, _removeFromParent } from '../../utils/dom';
 import { _missing } from '../../utils/generic';
-import { _escapeString } from '../../utils/string';
+import { _toString } from '../../utils/string';
 import { _warn } from '../../validation/logging';
 import { Component } from '../../widgets/component';
 import { CssClassManager } from '../cssClassManager';
@@ -78,7 +78,7 @@ export class CellComp extends Component {
             role: cellCtrl.getCellAriaRole() as any,
             attrs: {
                 'comp-id': `${this.getCompId()}`,
-                'col-id': cellCtrl.colIdSanitised,
+                'col-id': cellCtrl.column.colIdSanitised,
             },
         });
 
@@ -274,7 +274,7 @@ export class CellComp extends Component {
         const eParent = this.getParentOfValue();
         _clearElement(eParent);
 
-        const escapedValue = valueToDisplay != null ? _escapeString(valueToDisplay, true) : null;
+        const escapedValue = _toString(valueToDisplay);
         if (escapedValue != null) {
             eParent.textContent = escapedValue;
         }
