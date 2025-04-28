@@ -357,8 +357,7 @@
             "page": {
                 "name": "Cell Editing",
                 "url": "./cell-editing/"
-            },
-            "module": "Pick Editing Modules"
+            }
         },
         "editType": {
             "more": {

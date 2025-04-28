@@ -354,8 +354,7 @@
             "page": {
                 "name": "Filtering",
                 "url": "./filtering-overview/"
-            },
-            "module": "Pick Filter Modules"
+            }
         },
         "filter": {
             "description": "Filter component to use for this column. <br/>Set to `true` to use the default filter. <br/>Set to the name of a [Provided Filter](./filtering/#column-filter-types) or set to a `IFilterComp`.",
@@ -418,8 +417,7 @@
             "page": {
                 "name": "Cell Editing",
                 "url": "./cell-editing/"
-            },
-            "module": "Pick Editing Modules"
+            }
         },
         "editable": {},
         "valueSetter": {

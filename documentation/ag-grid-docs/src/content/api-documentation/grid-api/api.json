@@ -467,8 +467,7 @@
             "page": {
                 "name": "Cell Editing",
                 "url": "./cell-editing/"
-            },
-            "module": "Pick Editing Module"
+            }
         },
         "startEditingCell": {
             "more": {
