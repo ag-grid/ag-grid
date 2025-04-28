@@ -105,7 +105,7 @@ export class PivotResultColsService extends BeanStub implements NamedBean, IPivo
             _destroyColumnTree(this.beans, this.pivotResultCols?.tree, balancedTreeResult.columnTree);
 
             const tree = balancedTreeResult.columnTree;
-            const treeDepth = balancedTreeResult.treeDept;
+            const treeDepth = balancedTreeResult.treeDepth;
             const list = _getColumnsFromTree(tree);
             const map = {};
 

@@ -22,7 +22,7 @@ export function _createColumnTreeWithIds(
     primaryColumns: boolean,
     existingTree: (AgColumn | AgProvidedColumnGroup)[] | undefined,
     source: ColumnEventType
-): { columnTree: (AgColumn | AgProvidedColumnGroup)[]; treeDept: number } {
+): { columnTree: (AgColumn | AgProvidedColumnGroup)[]; treeDepth: number } {
     const { existingCols, existingGroups } = extractExistingTreeData(existingTree);
     const colIdMap = new Map<string, AgColumn>(existingCols.map((col) => [col.getId(), col]));
     const colGroupIdMap = new Map<string, AgProvidedColumnGroup>(existingGroups.map((group) => [group.getId(), group]));
@@ -89,7 +89,7 @@ export function _createColumnTreeWithIds(
 
     return {
         columnTree,
-        treeDept: maxDepth,
+        treeDepth: maxDepth,
     };
 }
 
@@ -99,7 +99,7 @@ export function _createColumnTree(
     primaryColumns: boolean,
     existingTree: (AgColumn | AgProvidedColumnGroup)[] | undefined,
     source: ColumnEventType
-): { columnTree: (AgColumn | AgProvidedColumnGroup)[]; treeDept: number } {
+): { columnTree: (AgColumn | AgProvidedColumnGroup)[]; treeDepth: number } {
     // column key creator dishes out unique column id's in a deterministic way,
     // so if we have two grids (that could be master/slave) with same column definitions,
     // then this ensures the two grids use identical id's.
@@ -120,9 +120,9 @@ export function _createColumnTree(
         source
     );
     const { colGroupSvc } = beans;
-    const treeDept = colGroupSvc?.findMaxDepth(unbalancedTree, 0) ?? 0;
+    const treeDepth = colGroupSvc?.findMaxDepth(unbalancedTree, 0) ?? 0;
     const columnTree = colGroupSvc
-        ? colGroupSvc.balanceColumnTree(unbalancedTree, 0, treeDept, columnKeyCreator)
+        ? colGroupSvc.balanceColumnTree(unbalancedTree, 0, treeDepth, columnKeyCreator)
         : unbalancedTree;
 
     const deptFirstCallback = (child: AgColumn | AgProvidedColumnGroup, parent: AgProvidedColumnGroup) => {
@@ -138,7 +138,7 @@ export function _createColumnTree(
 
     return {
         columnTree,
-        treeDept,
+        treeDepth,
     };
 }
 
