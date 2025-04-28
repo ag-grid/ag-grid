@@ -130,9 +130,19 @@
       },
       "cache": true
     },
+    "startElapsedBuildTime": {
+      "cache": false,
+      "command": "node scripts/buildTime.mjs start"
+    },
     "dev": {
       "executor": "nx:run-commands",
-      "dependsOn": ["^build:types", "^build:package", "generate-examples", "generate-doc-references"],
+      "dependsOn": [
+        "startElapsedBuildTime",
+        "^build:types",
+        "^build:package",
+        "generate-examples",
+        "generate-doc-references"
+      ],
       "inputs": [],
       "outputs": [],
       "cache": false,
