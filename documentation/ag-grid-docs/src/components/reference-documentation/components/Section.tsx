@@ -110,6 +110,7 @@ const ObjectCodeSample: React.FC<ObjectCode> = ({ framework, id, breadcrumbs = {
 const SectionHeader = ({
     description,
     page,
+    module,
     framework,
     breadcrumbs = {},
     displayName,
@@ -120,6 +121,7 @@ const SectionHeader = ({
 }: {
     description?: string;
     page?: any;
+    module?: any;
     framework: Framework;
     breadcrumbs: Record<string, string>;
     displayName: string;
@@ -146,11 +148,33 @@ const SectionHeader = ({
             )}
             <Breadcrumbs breadcrumbs={breadcrumbs} />
             {descriptionDisplay && <p dangerouslySetInnerHTML={{ __html: descriptionDisplay }}></p>}
-            {page && (
+            {(page || module) && (
                 <p>
-                    See <a href={urlWithPrefix({ url: page.url, framework })}>{page.name}</a> for more information.
+                    {page && (
+                        <>
+                            See <a href={urlWithPrefix({ url: page.url, framework })}>{page.name}</a> for more
+                            information.
+                        </>
+                    )}
+                    {module && (
+                        <div>
+                            <span className={classnames(styles.metaValue, styles.defaultValue)}>
+                                <span className={styles.defaultLabel}>module: </span>
+                                <a
+                                    className={classnames(styles.metaValue)}
+                                    href={urlWithPrefix({
+                                        url: './modules/#selecting-modules',
+                                        framework,
+                                    })}
+                                >
+                                    {module}
+                                </a>
+                            </span>
+                        </div>
+                    )}
                 </p>
             )}
+
             {showSnippets && (
                 <ObjectCodeSample framework={framework} id={id} breadcrumbs={breadcrumbs} properties={properties} />
             )}
@@ -176,6 +200,7 @@ export const Section: FunctionComponent<SectionProps> = ({
     };
     const breadcrumbKeys = Object.keys(newBreadcrumbs);
     const id = breadcrumbKeys.join('.');
+    config.hideModule = meta?.module != null;
 
     return (
         <div
@@ -187,6 +212,7 @@ export const Section: FunctionComponent<SectionProps> = ({
                 <SectionHeader
                     description={meta?.description}
                     page={meta?.page}
+                    module={meta?.module}
                     framework={framework}
                     breadcrumbs={newBreadcrumbs}
                     displayName={displayName}

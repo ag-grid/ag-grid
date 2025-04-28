@@ -286,14 +286,6 @@ export const Property: FunctionComponent<{
                                         </span>
                                     </div>
                                 )}
-                                {agModule && (
-                                    <div className={classnames(styles.metaItem)}>
-                                        <span className={classnames(styles.metaValue, styles.defaultValue)}>
-                                            <span className={styles.defaultLabel}>module: </span>
-                                            {agModule}
-                                        </span>
-                                    </div>
-                                )}
 
                                 {isInitial && (
                                     <div className={classnames(styles.metaItem, styles.initialItem)}>
@@ -306,6 +298,23 @@ export const Property: FunctionComponent<{
                                         >
                                             Initial
                                         </a>
+                                    </div>
+                                )}
+
+                                {agModule && !config.hideModule && (
+                                    <div className={classnames(styles.metaItem)}>
+                                        <span className={classnames(styles.metaValue, styles.defaultValue)}>
+                                            <span className={styles.defaultLabel}>module: </span>
+                                            <a
+                                                className={classnames(styles.metaValue)}
+                                                href={urlWithPrefix({
+                                                    url: './modules/#selecting-modules',
+                                                    framework,
+                                                })}
+                                            >
+                                                {agModule}
+                                            </a>
+                                        </span>
                                     </div>
                                 )}
                             </div>

@@ -12,6 +12,7 @@ interface MetaTag {
         url: string;
         name: string;
     };
+    module?: string;
     type?: string;
     isEvent?: boolean;
     /** Suppress the missing property check. Needed for events as they are dynamic and so do not appear in src code */
@@ -164,6 +165,9 @@ export interface Config {
      * Hide the header to make it easy to just include the sections as part of doc pages
      */
     hideHeader?: boolean;
+
+    /** Hide the required module */
+    hideModule?: boolean;
     /**
      * Override the headerLevel used.
      */
