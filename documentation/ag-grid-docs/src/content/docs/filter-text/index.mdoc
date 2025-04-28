@@ -8,6 +8,8 @@ Text Filters allow you to filter string data.
 
 ## Enabling Text Filters
 
+{% gridExampleRunner title="Text Filter" name="text-filter" /%}
+
 {% metaTag tags=["agTextColumnFilter"] /%}
 
 The Text Filter is the default filter used in AG Grid Community, but it can also be explicitly configured as shown below:
@@ -35,31 +37,24 @@ const gridOptions = {
 }
 ```
 
-## Example: Text Filter
-
-The example below shows the Text Filter in action:
-
-* For the **Athlete** column:
-  * There are only two [Filter Options](#text-filter-options): `filterOptions = ['contains', 'notContains']`
-  * There is a [Text Formatter](#text-formatter), so if you search for 'o' it will find 'ö'. You can try this by searching the string `'Bjo'`.
-  * The filter has a debounce of 200ms (`debounceMs = 200`).
-  * Only one Filter Condition is allowed (`maxNumConditions = 1`)
-* For the **Country** column:
-  * There is only one [Filter Option](#text-filter-options): `filterOptions = ['contains']`
-  * There is a [Custom Matcher](#text-custom-matcher) so that aliases can be entered in the filter, e.g. if you filter using the text `'usa'` it will match `United States` or `'holland'` will match `'Netherlands'`
-  * The filter input will be trimmed when the filter is applied (`trimInput = true`)
-  * There is a debounce of 1000ms (`debounceMs = 1000`)
-* For the **Sport** column:
-  * There is a different default [Filter Option](#text-filter-options) (`defaultOption = 'startsWith'`)
-  * The filter is case-sensitive (`caseSensitive = true`)
-
-{% gridExampleRunner title="Text Filter" name="text-filter"  exampleHeight=555 /%}
-
 ## Text Filter Parameters
 
 Text Filters are configured though the `filterParams` attribute of the column definition (`ITextFilterParams` interface):
 
 {% interfaceDocumentation interfaceName="ITextFilterParams" overrideSrc="filter-text/text-filter-params.json" config={"description":"", "sortAlphabetically":true} /%}
+
+The following example demonstrates configuring different Text Filter parameters:
+
+* For the **Athlete** column:
+  * The filter has a debounce of 200ms (`debounceMs = 200`).
+  * Only one Filter Condition is allowed (`maxNumConditions = 1`)
+* For the **Country** column:
+  * The filter input will be trimmed when the filter is applied (`trimInput = true`)
+  * There is a debounce of 1000ms (`debounceMs = 1000`)
+* For the **Sport** column:
+  * The filter is case-sensitive (`caseSensitive = true`)
+
+{% gridExampleRunner title="Text Filter Parameters" name="text-filter-parameters" /%}
 
 ## Text Formatter
 
@@ -92,6 +87,11 @@ const toLowerWithoutAccents = value => value == null
 ```
 
 Note that when providing a Text Formatter, the `caseSensitive` parameter is ignored. In this situation, if you want to do a case-insensitive comparison, you will need to perform case conversion inside the `textFormatter` function.
+
+The example below demonstrates a `textFormatter` on the **Athlete** column:
+ * If you search for `'o'` it will find `'ö'`. You can try this by searching the string `'Bjo'`.
+
+{% gridExampleRunner title="Text Formatter" name="text-formatter" /%}
 
 ## Text Custom Matcher
 
@@ -130,7 +130,7 @@ const gridOptions = {
                             return index >= 0 && index === (value.length - filterText.length);
                         default:
                             // should never happen
-                            console.warn('invalid filter type ' + filter);
+                            console.warn('invalid filter type ' + filterOption);
                             return false;
                     }
                 }
@@ -141,6 +141,12 @@ const gridOptions = {
 ```
 
 Note that the `textMatcher` is not called for the `blank` and `notBlank` options.
+
+The example below demonstrates a `textMatcher` on the **Country** column:
+  * Most options are implemented as per the default grid implementation above.
+  * The `contains` option has additional logic so that aliases can be entered in the filter. E.g. if you filter using the text `'usa'` it will match `United States`, or `'holland'` will match `'Netherlands'`.
+
+{% gridExampleRunner title="Text Custom Matcher" name="text-custom-matcher" /%}
 
 ## Text Filter Model
 
@@ -211,6 +217,13 @@ Note that the `empty` filter option is primarily used when creating [Custom Filt
 The default option for the Text Filter is `contains`.
 
 When providing filter options, the default filter option (or the first option if no default set) must be an option that displays an input or the `empty` filter option (as a filter option with no inputs would mean the filter is active by default).
+
+The example below demonstrates configuring different filter options:
+* For the **Athlete** column, there are only two filter options: `filterOptions = ['contains', 'notContains']`.
+* For the **Country** column, there is only one filter option: `filterOptions = ['contains']`.
+* For the **Sport** column, there is a different default filter option: `defaultOption = 'startsWith'`.
+
+{% gridExampleRunner title="Text Filter Options" name="text-filter-options" /%}
 
 ## Text Filter Values
 

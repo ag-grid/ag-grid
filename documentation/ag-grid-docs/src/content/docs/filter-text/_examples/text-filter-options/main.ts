@@ -1,4 +1,4 @@
-import type { ColDef, GridApi, GridOptions } from 'ag-grid-community';
+import type { ColDef, GridApi, GridOptions, ITextFilterParams } from 'ag-grid-community';
 import {
     ClientSideRowModelModule,
     ModuleRegistry,
@@ -16,15 +16,22 @@ ModuleRegistry.registerModules([
 const columnDefs: ColDef[] = [
     {
         field: 'athlete',
-        filter: true,
+        filterParams: {
+            filterOptions: ['contains', 'notContains'],
+            maxNumConditions: 1,
+        } as ITextFilterParams,
     },
     {
         field: 'country',
-        filter: 'agTextColumnFilter',
+        filterParams: {
+            filterOptions: ['contains'],
+        } as ITextFilterParams,
     },
     {
         field: 'sport',
-        filter: true,
+        filterParams: {
+            defaultOption: 'startsWith',
+        } as ITextFilterParams,
     },
 ];
 
@@ -33,6 +40,7 @@ let gridApi: GridApi<IOlympicData>;
 const gridOptions: GridOptions<IOlympicData> = {
     defaultColDef: {
         flex: 1,
+        filter: true,
     },
     columnDefs,
     rowData: null,

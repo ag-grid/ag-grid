@@ -1,4 +1,4 @@
-import type { ColDef, GridApi, GridOptions } from 'ag-grid-community';
+import type { ColDef, GridApi, GridOptions, ITextFilterParams } from 'ag-grid-community';
 import {
     ClientSideRowModelModule,
     ModuleRegistry,
@@ -13,18 +13,35 @@ ModuleRegistry.registerModules([
     ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 
+const athleteFilterParams: ITextFilterParams = {
+    textFormatter: (r) => {
+        if (r == null) return null;
+
+        return r
+            .toLowerCase()
+            .replace(/[àáâãäå]/g, 'a')
+            .replace(/æ/g, 'ae')
+            .replace(/ç/g, 'c')
+            .replace(/[èéêë]/g, 'e')
+            .replace(/[ìíîï]/g, 'i')
+            .replace(/ñ/g, 'n')
+            .replace(/[òóôõö]/g, 'o')
+            .replace(/œ/g, 'oe')
+            .replace(/[ùúûü]/g, 'u')
+            .replace(/[ýÿ]/g, 'y');
+    },
+};
+
 const columnDefs: ColDef[] = [
     {
         field: 'athlete',
-        filter: true,
+        filterParams: athleteFilterParams,
     },
     {
         field: 'country',
-        filter: 'agTextColumnFilter',
     },
     {
         field: 'sport',
-        filter: true,
     },
 ];
 
@@ -33,6 +50,7 @@ let gridApi: GridApi<IOlympicData>;
 const gridOptions: GridOptions<IOlympicData> = {
     defaultColDef: {
         flex: 1,
+        filter: true,
     },
     columnDefs,
     rowData: null,
