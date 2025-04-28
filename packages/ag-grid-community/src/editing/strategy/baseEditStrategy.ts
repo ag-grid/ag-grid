@@ -115,13 +115,14 @@ export abstract class BaseEditStrategy extends BeanStub {
     }
 
     protected finishStartEdit(
+        editingCells: CellIdPositions[],
         rowCtrl?: RowCtrl | null,
         cellCtrl?: CellCtrl | null,
         key?: string,
         cellStartedEdit?: boolean,
         event?: Event | null
     ) {
-        const compDetails = this.setupEditors(rowCtrl, cellCtrl, key, cellStartedEdit);
+        const compDetails = this.setupEditors(editingCells, rowCtrl, cellCtrl, key, cellStartedEdit);
         const suppressPreventDefault = !(compDetails?.params as DefaultProvidedCellEditorParams)
             ?.suppressPreventDefault;
 
@@ -137,13 +138,13 @@ export abstract class BaseEditStrategy extends BeanStub {
     }
 
     public setupEditors(
+        editingCells: CellIdPositions[],
         rowCtrl?: RowCtrl | null,
         cellCtrl?: CellCtrl | null,
         key?: string | null,
         cellStartedEdit?: boolean | null
     ): UserCompDetails<ICellEditorComp<any, any, any>> | undefined {
         // console.warn('BaseEditStrategy: setupEditors');
-        const editingCells = this.editModel.getEditingCellIds();
 
         if (editingCells.length === 0 && cellCtrl) {
             return this.setupEditor(cellCtrl, key, cellStartedEdit);
@@ -216,17 +217,19 @@ export abstract class BaseEditStrategy extends BeanStub {
 
         const { newValue, newValueExists } = _takeValueFromCellEditor(false, comp);
 
-        if (source !== 'api' && batchEdit && !cancel) {
+        let valueChanged = false;
+        let oldValue: any;
+
+        const preserveBatchEdits = source !== 'api' && batchEdit && !cancel;
+        if (preserveBatchEdits) {
             // console.warn('BaseEditStrategy: destroyEditor - batchEdit');
             _updatePendingValue(this.beans, this.editModel);
-            return;
-        }
+        } else {
+            oldValue = this.beans.valueSvc.getValueForDisplay(column, rowNode)?.value;
 
-        const oldValue = this.beans.valueSvc.getValueForDisplay(column, rowNode)?.value;
-        let valueChanged = false;
-
-        if (!cancel && newValueExists) {
-            valueChanged = _saveNewValue(cellCtrl!, oldValue, newValue, rowNode, column);
+            if (!cancel && newValueExists) {
+                valueChanged = _saveNewValue(cellCtrl!, oldValue, newValue, rowNode, column);
+            }
         }
 
         comp.setEditDetails(); // passing nothing stops editing
@@ -234,16 +237,18 @@ export abstract class BaseEditStrategy extends BeanStub {
         cellCtrl?.updateAndFormatValue(false);
         cellCtrl?.refreshCell({ forceRefresh: true, suppressFlash: true, editing: false });
 
-        this.eventSvc.dispatchEvent({
-            ...cellCtrl!.createEvent(null, 'cellEditingStopped'),
-            oldValue,
-            newValue,
-            valueChanged,
-        });
+        if (!preserveBatchEdits) {
+            this.eventSvc.dispatchEvent({
+                ...cellCtrl!.createEvent(null, 'cellEditingStopped'),
+                oldValue,
+                newValue,
+                valueChanged,
+            });
 
-        rowCtrl?.forEachGui(undefined, (gui) => {
-            gui.rowComp.toggleCss('ag-row-editing', false);
-        });
+            rowCtrl?.forEachGui(undefined, (gui) => {
+                gui.rowComp.toggleCss('ag-row-editing', false);
+            });
+        }
     }
 
     shouldStartEditing(

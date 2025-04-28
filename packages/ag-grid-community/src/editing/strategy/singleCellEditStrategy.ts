@@ -35,8 +35,13 @@ export class SingleCellEditStrategy extends BaseEditStrategy {
         _source: 'api' | 'ui' = 'ui'
     ): boolean {
         const shouldStop = this.shouldStopEditing(rowCtrl, cellCtrl, undefined, undefined, 'ui');
-        if (shouldStop && !this.gos.get('batchEdit')) {
-            this.stopAllEditing();
+        if (shouldStop) {
+            if (this.gos.get('batchEdit')) {
+                const cells = this.editModel.getEditingCellIds();
+                this.destroyEditors(cells, false, 'ui');
+            } else {
+                this.stopAllEditing();
+            }
         }
 
         console.warn(
@@ -56,7 +61,19 @@ export class SingleCellEditStrategy extends BaseEditStrategy {
 
         this.editModel.startEditing(rowId, colId);
 
-        return this.finishStartEdit(rowCtrl, cellCtrl, undefined, true, event);
+        return this.finishStartEdit(
+            [
+                {
+                    rowId,
+                    columnId: colId,
+                },
+            ],
+            rowCtrl,
+            cellCtrl,
+            undefined,
+            true,
+            event
+        );
     }
 
     public stopEditing(rowCtrl?: RowCtrl | null, cellCtrl?: CellCtrl | null, source: 'api' | 'ui' = 'ui'): boolean {

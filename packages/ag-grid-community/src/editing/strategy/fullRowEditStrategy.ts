@@ -2,6 +2,7 @@ import type { BeanName } from '../../context/context';
 import type { CellFocusedEvent } from '../../events';
 import type { CellCtrl } from '../../rendering/cell/cellCtrl';
 import type { RowCtrl } from '../../rendering/row/rowCtrl';
+import { CellIdPositions } from '../model/gridEditingModel';
 import { BaseEditStrategy } from './baseEditStrategy';
 import { _resolveControllers, _resolveRowController } from './utils';
 
@@ -94,18 +95,29 @@ export class FullRowEditStrategy extends BaseEditStrategy {
 
         const oldState = this.isEditing(rowCtrl);
 
-        if (this.shouldStopEditing(rowCtrl) && !this.gos.get('batchEdit')) {
-            this.stopAllEditing();
+        if (this.shouldStopEditing(rowCtrl)) {
+            if (this.gos.get('batchEdit')) {
+                const cells = this.editModel.getEditingCellIds();
+                this.destroyEditors(cells, false, 'ui');
+            } else {
+                this.stopAllEditing();
+            }
         }
 
         this.setEditing(rowCtrl, true, oldState);
 
         const cellCtrls = rowCtrl.getAllCellCtrls();
+        const cells: CellIdPositions[] = [];
+
         cellCtrls.forEach((cellCtrl) => {
             this.editModel.startEditing(rowCtrl.rowId!, cellCtrl.column.colId);
+            cells.push({
+                rowId: rowCtrl.rowId!,
+                columnId: cellCtrl.column.getColId(),
+            });
         });
 
-        return this.finishStartEdit(rowCtrl, cellCtrl, undefined, true, event);
+        return this.finishStartEdit(cells, rowCtrl, cellCtrl, undefined, true, event);
     }
 
     public override cancelEditing(
