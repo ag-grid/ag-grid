@@ -10,6 +10,7 @@ import type { RowPinnedType } from '../../interfaces/iRowNode';
 import type { CellCtrl, ICellComp } from '../../rendering/cell/cellCtrl';
 import type { RowCtrl } from '../../rendering/row/rowCtrl';
 import { _getTabIndex } from '../../utils/browser';
+import { GridEditingModel } from '../model/gridEditingModel';
 
 type ResolveRowControllerType = {
     rowIndex?: number | null;
@@ -225,4 +226,24 @@ export function _addStopEditingWhenGridLosesFocus(
     };
 
     viewports.forEach((viewport) => bean.addManagedElementListeners(viewport, { focusout: focusOutListener }));
+}
+
+export function _updatePendingValue(beans: BeanCollection, gridEditModel: GridEditingModel): void {
+    gridEditModel.getEditingCellIds().forEach((cellId) => {
+        const { rowId, columnId } = cellId;
+        const cellCtrl = _resolveCellController(beans, { rowId, columnId });
+        const { comp, rowNode, column } = cellCtrl!;
+
+        const { newValue, newValueExists } = _takeValueFromCellEditor(false, comp);
+
+        if (!newValueExists) {
+            return;
+        }
+
+        gridEditModel.getEditModels(rowId!, column.colId).forEach((editModel) => {
+            const oldValue = beans.valueSvc.getValueForDisplay(column, rowNode)?.value;
+            editModel.newValue = newValue;
+            editModel.oldValue = oldValue;
+        });
+    });
 }

@@ -24,7 +24,6 @@ import {
     undoCellEditing,
 } from './editingApi';
 import { EditingService } from './editingService';
-import { BatchEditStrategy } from './strategy/batchEditStrategy';
 import { FullRowEditStrategy } from './strategy/fullRowEditStrategy';
 import { SingleCellEditStrategy } from './strategy/singleCellEditStrategy';
 
@@ -44,9 +43,8 @@ export const EditingCoreModule: _ModuleWithApi<_EditingGridApi<any>> = {
         cancelEdits,
     },
     dynamicBeans: {
-        cellEditMode: SingleCellEditStrategy,
-        rowEditMode: FullRowEditStrategy,
-        batchEditMode: BatchEditStrategy,
+        singleCell: SingleCellEditStrategy,
+        fullRow: FullRowEditStrategy,
     },
     dependsOn: [],
     css: [cellEditingCSS],

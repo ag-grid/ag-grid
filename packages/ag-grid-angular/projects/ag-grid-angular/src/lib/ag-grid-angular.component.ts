@@ -77,7 +77,6 @@ import type {
     DragCancelledEvent,
     DragStartedEvent,
     DragStoppedEvent,
-    EditStrategyType,
     ExcelExportParams,
     ExcelStyle,
     ExpandOrCollapseAllEvent,
@@ -1950,15 +1949,6 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     /** Tells the grid if this row should be rendered as full width.
      */
     @Input() public isFullWidthRow: ((params: IsFullWidthRowParams<TData>) => boolean) | undefined = undefined;
-    /** Experimental editing mode v2.
-     * @default false
-     */
-    @Input() public experimentalEditingModeV2:
-        | {
-              strategy?: EditStrategyType;
-              params?: any;
-          }
-        | undefined = undefined;
 
     /** The tool panel visibility has changed. Fires twice if switching between panels - once with the old panel and once with the new panel.
      */

@@ -102,18 +102,18 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
 
     public stoppingRowEdit: boolean;
     /** full row editing */
-    public get editing(): boolean {
-        if (!this.gos?.get('experimentalEditingModeV2')) {
-            return this._editing;
-        }
-        return this.beans.editingSvc?.isEditing(this) ?? false;
-    }
-    public set editing(value: boolean) {
-        if (!this.gos?.get('experimentalEditingModeV2')) {
-            this._editing = value;
-        }
-    }
-    private _editing: boolean;
+    // public get editing(): boolean {
+    //     if (!this.gos?.get('experimentalEditingModeV2')) {
+    //         return this._editing;
+    //     }
+    //     return this.beans.editingSvc?.isEditing(this) ?? false;
+    // }
+    // public set editing(value: boolean) {
+    //     if (!this.gos?.get('experimentalEditingModeV2')) {
+    //         this._editing = value;
+    //     }
+    // }
+    // private _editing: boolean;
     private rowFocused: boolean;
 
     private centerCellCtrls: CellCtrlListAndMap = { list: [], map: {} };
@@ -234,11 +234,8 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         const focusableElement = this.fullWidthGui?.element;
         if (focusableElement) {
             // when cell is created, if it should be focus the grid should take focus from the focused cell
-            if (
-                !this.editing &&
-                focusSvc.isRowFocused(rowNode.rowIndex!, rowNode.rowPinned) &&
-                focusSvc.shouldTakeFocus()
-            ) {
+            const editing = this.beans.editingSvc?.isEditing(this);
+            if (!editing && focusSvc.isRowFocused(rowNode.rowIndex!, rowNode.rowPinned) && focusSvc.shouldTakeFocus()) {
                 setTimeout(() => focusableElement.focus({ preventScroll: true }), 0);
             }
         }

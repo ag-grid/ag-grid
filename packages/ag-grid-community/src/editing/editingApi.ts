@@ -5,7 +5,6 @@ import type { BeanCollection } from '../context/context';
 import type { AgColumn } from '../entities/agColumn';
 import { _getCellByPosition } from '../entities/positionUtils';
 import { _getActiveDomElement } from '../gridOptionsUtils';
-import type { EditStrategyType } from '../interfaces/editStrategyType';
 import type { GetCellEditorInstancesParams, ICellEditor } from '../interfaces/iCellEditor';
 import type { CellPosition } from '../interfaces/iCellPosition';
 import { _warn } from '../validation/logging';
@@ -93,17 +92,6 @@ export function startEditingCell(beans: BeanCollection, params: StartEditingCell
         });
     }
     editingSvc?.startEditing(cell.rowCtrl, cell, params.key, true, undefined, 'api');
-}
-
-export function updateEditStrategy(beans: BeanCollection, editStrategy: string): void {
-    cancelEdits(beans);
-    beans.gos.updateGridOptions({
-        options: {
-            experimentalEditingModeV2: {
-                strategy: editStrategy as EditStrategyType,
-            },
-        },
-    });
 }
 
 export function cancelEdits(beans: BeanCollection): void {

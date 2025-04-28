@@ -9,7 +9,7 @@ import type { IRowNode } from '../interfaces/iRowNode';
 import type { CellPosition } from '../main-umd-noStyles';
 import { CellCtrl } from '../rendering/cell/cellCtrl';
 import type { RowCtrl } from '../rendering/row/rowCtrl';
-import { CellEditingModel } from './model/cellEditingModel';
+import type { CellEditingModel } from './model/cellEditingModel';
 import { GridEditingModel } from './model/gridEditingModel';
 import type { BaseEditStrategy } from './strategy/baseEditStrategy';
 import { _addStopEditingWhenGridLosesFocus, _createCellEditorParams, _resolveControllers } from './strategy/utils';
@@ -23,24 +23,26 @@ export class EditingService extends BeanStub implements NamedBean {
         this.editModel = new GridEditingModel(this.beans);
 
         this.addManagedPropertyListener(
-            'experimentalEditingModeV2',
-            ((experimentalEditingModeV2: any) => {
-                if (!experimentalEditingModeV2) {
-                    return;
-                }
-
+            'editType',
+            (({ currentValue }: any) => {
                 this.stopAllEditing();
 
                 // will re-create if different
-                this.createEditStrategy();
+                this.createEditStrategy(currentValue);
+            }).bind(this)
+        );
+        this.addManagedPropertyListener(
+            'batchEdit',
+            (() => {
+                this.stopAllEditing();
             }).bind(this)
         );
     }
 
-    private createEditStrategy(): BaseEditStrategy {
+    private createEditStrategy(editType?: string): BaseEditStrategy {
         const { beans, gos, editStrategy } = this;
 
-        const strategyName: any = gos.get('experimentalEditingModeV2')?.strategy ?? 'cellEditMode';
+        const strategyName: any = editType ?? gos.get('editType') ?? 'singleCell';
 
         if (editStrategy) {
             if (editStrategy.beanName === strategyName) {
@@ -176,7 +178,7 @@ export class EditingService extends BeanStub implements NamedBean {
             if (cancel) {
                 this.editStrategy?.cancelEditing?.(undefined, undefined, source);
             } else {
-                this.editStrategy?.stopAllEditing?.();
+                this.editStrategy?.stopAllEditing?.(source);
             }
         }
     }

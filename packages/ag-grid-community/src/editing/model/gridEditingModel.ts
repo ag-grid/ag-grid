@@ -19,7 +19,7 @@ export class GridEditingModel {
     constructor(private readonly beans: BeanCollection) {}
 
     private createEditModel(rowId: string, columnId: string) {
-        console.warn('GridEditingModel: createEditModel', columnId);
+        // console.warn('GridEditingModel: createEditModel', columnId);
 
         const rowModel = this.rowModels.get(rowId) ?? this.createRowModel(rowId);
         const cellModel = rowModel.getEditModel(columnId);
@@ -35,7 +35,7 @@ export class GridEditingModel {
             return;
         }
 
-        console.warn('GridEditingModel: removeEditModel', rowId, columnId);
+        // console.warn('GridEditingModel: removeEditModel', rowId, columnId);
 
         if (!columnId) {
             rowModel.destroy();
@@ -115,7 +115,7 @@ export class GridEditingModel {
     }
 
     public startEditing(rowId: string, columnId: string): void {
-        console.warn('GridEditingModel: startEditing', rowId, columnId);
+        // console.warn('GridEditingModel: startEditing', rowId, columnId);
 
         this.createEditModel(rowId, columnId);
     }
@@ -125,7 +125,7 @@ export class GridEditingModel {
             return;
         }
 
-        console.warn('GridEditingModel: stopEditing', rowId, colId);
+        // console.warn('GridEditingModel: stopEditing', rowId, colId);
 
         if (rowId) {
             const rowModel = this.rowModels.get(rowId);
@@ -155,7 +155,7 @@ export class GridEditingModel {
             return;
         }
 
-        console.warn('GridEditingModel: cancelEditing', rowId, colId);
+        // console.warn('GridEditingModel: cancelEditing', rowId, colId);
 
         if (rowId) {
             const rowModel = this.rowModels.get(rowId);

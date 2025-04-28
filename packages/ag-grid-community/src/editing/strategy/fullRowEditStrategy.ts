@@ -6,7 +6,7 @@ import { BaseEditStrategy } from './baseEditStrategy';
 import { _resolveControllers, _resolveRowController } from './utils';
 
 export class FullRowEditStrategy extends BaseEditStrategy {
-    override beanName = 'rowEditMode' as BeanName | undefined;
+    override beanName = 'fullRow' as BeanName | undefined;
     private rowId?: string | null;
 
     public setEditing(rowCtrl?: RowCtrl | null, newState?: boolean, oldState?: boolean): void {
@@ -14,7 +14,7 @@ export class FullRowEditStrategy extends BaseEditStrategy {
             return;
         }
 
-        console.warn('FullRowEditStrategy: setEditing');
+        // console.warn('FullRowEditStrategy: setEditing');
 
         if (!rowCtrl) {
             rowCtrl = _resolveRowController(this.beans, {
@@ -45,7 +45,8 @@ export class FullRowEditStrategy extends BaseEditStrategy {
         rowCtrl?: RowCtrl | undefined,
         _cellCtrl?: CellCtrl | undefined,
         key?: string | null | undefined,
-        event?: KeyboardEvent | MouseEvent | null | undefined
+        event?: KeyboardEvent | MouseEvent | null | undefined,
+        source: 'api' | 'ui' = 'ui'
     ): boolean | null {
         const oldRowCtrl = _resolveRowController(this.beans, {
             rowId: this.rowId,
@@ -70,6 +71,16 @@ export class FullRowEditStrategy extends BaseEditStrategy {
 
         // stop editing if we've changed rows
         return rowCtrl?.rowId !== this.rowId;
+    }
+
+    override shouldCancelEditing(
+        rowCtrl?: RowCtrl | null | undefined,
+        cellCtrl?: CellCtrl | null | undefined,
+        key?: string | null | undefined,
+        event?: KeyboardEvent | MouseEvent | null | undefined,
+        source?: 'api' | 'ui'
+    ): boolean | null {
+        return super.shouldCancelEditing(rowCtrl, cellCtrl, key, event, source);
     }
 
     public override startEditing(
@@ -100,7 +111,7 @@ export class FullRowEditStrategy extends BaseEditStrategy {
     public override cancelEditing(
         rowCtrl?: RowCtrl | null,
         cellCtrl?: CellCtrl | null,
-        _source: 'api' | 'ui' = 'ui'
+        source: 'api' | 'ui' = 'ui'
     ): boolean {
         const oldState = this.isEditing(rowCtrl);
 
@@ -120,7 +131,7 @@ export class FullRowEditStrategy extends BaseEditStrategy {
 
         this.setEditing(rowCtrl, false, oldState);
 
-        this.destroyEditors(edits, true);
+        this.destroyEditors(edits, true, source);
 
         return true;
     }
@@ -128,7 +139,7 @@ export class FullRowEditStrategy extends BaseEditStrategy {
     public override stopEditing(
         rowCtrl?: RowCtrl | null,
         _cellCtrl?: CellCtrl | null,
-        _source: 'api' | 'ui' = 'ui'
+        source: 'api' | 'ui' = 'ui'
     ): boolean {
         const oldCtrl = _resolveRowController(this.beans, {
             rowId: this.rowId,
@@ -136,7 +147,7 @@ export class FullRowEditStrategy extends BaseEditStrategy {
 
         if (!oldCtrl) {
             this.rowId = undefined;
-            this.stopAllEditing();
+            this.stopAllEditing(source);
             return true;
         }
 
@@ -159,7 +170,7 @@ export class FullRowEditStrategy extends BaseEditStrategy {
 
         this.setEditing(rowCtrl!, false, oldState);
 
-        this.destroyEditors(edits, false);
+        this.destroyEditors(edits, false, source);
 
         return true;
     }
@@ -169,6 +180,8 @@ export class FullRowEditStrategy extends BaseEditStrategy {
     }
 
     protected override onCellFocusChanged(event: CellFocusedEvent<any, any>): void {
+        super.onCellFocusChanged(event);
+
         const { focusSvc } = this.beans;
         const { rowIndex, rowPinned, column } = event;
 
