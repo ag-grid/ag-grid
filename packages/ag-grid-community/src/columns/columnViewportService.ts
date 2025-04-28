@@ -77,18 +77,18 @@ export class ColumnViewportService extends BeanStub implements NamedBean {
         }
     }
 
-    public getHeadersToRender(type: ColumnPinnedType, dept: number): (AgColumn | AgColumnGroup)[] {
+    public getHeadersToRender(type: ColumnPinnedType, depth: number): (AgColumn | AgColumnGroup)[] {
         let result: (AgColumn | AgColumnGroup)[];
 
         switch (type) {
             case 'left':
-                result = this.rowsOfHeadersToRenderLeft[dept];
+                result = this.rowsOfHeadersToRenderLeft[depth];
                 break;
             case 'right':
-                result = this.rowsOfHeadersToRenderRight[dept];
+                result = this.rowsOfHeadersToRenderRight[depth];
                 break;
             default:
-                result = this.rowsOfHeadersToRenderCenter[dept];
+                result = this.rowsOfHeadersToRenderCenter[depth];
                 break;
         }
 
@@ -215,7 +215,7 @@ export class ColumnViewportService extends BeanStub implements NamedBean {
         const testGroup = (
             children: (AgColumn | AgColumnGroup)[],
             result: { [row: number]: (AgColumn | AgColumnGroup)[] },
-            dept: number
+            depth: number
         ): boolean => {
             let returnValue = false;
 
@@ -233,16 +233,16 @@ export class ColumnViewportService extends BeanStub implements NamedBean {
                     const displayedChildren = columnGroup.getDisplayedChildren();
 
                     if (displayedChildren) {
-                        addThisItem = testGroup(displayedChildren, result, dept + 1);
+                        addThisItem = testGroup(displayedChildren, result, depth + 1);
                     }
                 }
 
                 if (addThisItem) {
                     returnValue = true;
-                    if (!result[dept]) {
-                        result[dept] = [];
+                    if (!result[depth]) {
+                        result[depth] = [];
                     }
-                    result[dept].push(child);
+                    result[depth].push(child);
                 }
             }
             return returnValue;
