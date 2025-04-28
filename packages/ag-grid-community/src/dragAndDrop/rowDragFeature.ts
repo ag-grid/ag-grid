@@ -447,14 +447,14 @@ export class RowDragFeature extends BeanStub implements DropTarget {
     private draggingToRowDragEvent<T extends RowDragEventType>(type: T, draggingEvent: DraggingEvent): RowDragEvent<T> {
         const beans = this.beans;
         const { pageBounds, rowModel, gos } = beans;
-        const yNormalised = _getNormalisedMousePosition(beans, draggingEvent).y;
-        const mouseIsPastLastRow = yNormalised > pageBounds.getCurrentPageHeight();
+        const y = _getNormalisedMousePosition(this.beans, draggingEvent).y;
+        const mouseIsPastLastRow = y > pageBounds.getCurrentPagePixelRange().pageLastPixel;
 
         let overIndex = -1;
         let overNode: RowNode | undefined;
 
         if (!mouseIsPastLastRow) {
-            overIndex = rowModel.getRowIndexAtPixel(yNormalised);
+            overIndex = rowModel.getRowIndexAtPixel(y);
             overNode = rowModel.getRow(overIndex);
         }
 
@@ -465,7 +465,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
             nodes: draggingEvent.dragItem.rowNodes!,
             overIndex: overIndex,
             overNode: overNode,
-            y: yNormalised,
+            y,
             vDirection: draggingEvent.vDirection,
         });
 
