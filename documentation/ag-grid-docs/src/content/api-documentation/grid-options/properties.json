@@ -972,7 +972,7 @@
                 "name": "Aggregation",
                 "url": "./aggregation/"
             },
-            "module": "RowGroupingModule"
+            "module": "RowGroupingModule / PivotModule / TreeDataModule"
         },
         "aggFuncs": {
             "more": {

@@ -480,7 +480,7 @@
         "meta": {
             "displayName": "Columns: Aggregation",
             "description": "(Enterprise only) See [Aggregation](./aggregation-columns/)",
-            "module": "RowGroupingModule"
+            "module": "RowGroupingModule / PivotModule / TreeDataModule"
         },
         "aggFunc": {
             "more": {

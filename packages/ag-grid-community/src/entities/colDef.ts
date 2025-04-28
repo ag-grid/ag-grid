@@ -348,12 +348,10 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
     valueParser?: string | ValueParserFunc<TData, TValue>;
     /**
      * Provide your own cell editor component for this column's cells.
-     * @agModule `CustomEditorModule`
      */
     cellEditor?: any;
     /**
      * Params to be passed to the `cellEditor` component.
-     * @agModule `CustomEditorModule`
      */
     cellEditorParams?: any;
     /** Callback to select which cell editor to be used for a given row within the same column. */
@@ -685,12 +683,12 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
      * Set to `true` if you want to be able to aggregate by this column via the GUI.
      * This will not block the API or properties being used to achieve aggregation.
      * @default false
-     * @agModule `RowGroupingModule`
+     * @agModule `RowGroupingModule` / `PivotModule` / `TreeDataModule` / `ServerSideRowModelModule`
      */
     enableValue?: boolean;
     /**
      * Name of function to use for aggregation. In-built options are: `sum`, `min`, `max`, `count`, `avg`, `first`, `last`. Also accepts a custom aggregation name or an aggregation function.
-     * @agModule `RowGroupingModule`
+     * @agModule `RowGroupingModule` / `PivotModule` / `TreeDataModule` / `ServerSideRowModelModule`
      */
     aggFunc?: string | IAggFunc<TData, TValue> | null;
     /**
