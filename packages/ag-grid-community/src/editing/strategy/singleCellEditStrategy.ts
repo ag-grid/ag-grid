@@ -35,7 +35,7 @@ export class SingleCellEditStrategy extends BaseEditStrategy {
         _source: 'api' | 'ui' = 'ui'
     ): boolean {
         const shouldStop = this.shouldStopEditing(rowCtrl, cellCtrl, undefined, undefined, 'ui');
-        if (shouldStop) {
+        if (shouldStop && !this.gos.get('batchEdit')) {
             this.stopAllEditing();
         }
 

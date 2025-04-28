@@ -142,7 +142,7 @@ export abstract class BaseEditStrategy extends BeanStub {
         key?: string | null,
         cellStartedEdit?: boolean | null
     ): UserCompDetails<ICellEditorComp<any, any, any>> | undefined {
-        console.warn('BaseEditStrategy: setupEditors');
+        // console.warn('BaseEditStrategy: setupEditors');
         const editingCells = this.editModel.getEditingCellIds();
 
         if (editingCells.length === 0 && cellCtrl) {
@@ -175,7 +175,7 @@ export abstract class BaseEditStrategy extends BeanStub {
         key?: string | null,
         cellStartedEdit?: boolean | null
     ): UserCompDetails<ICellEditorComp<any, any, any>> | undefined {
-        console.warn('BaseEditStrategy: setupEditor');
+        // console.warn('BaseEditStrategy: setupEditor');
         const editorParams = _createCellEditorParams(this.beans, cellCtrl, key, cellStartedEdit);
         const colDef = cellCtrl.column.getColDef();
         const compDetails = _getCellEditorDetails(this.beans.userCompFactory, colDef, editorParams);

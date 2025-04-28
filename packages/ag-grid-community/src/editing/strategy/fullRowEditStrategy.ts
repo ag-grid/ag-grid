@@ -94,7 +94,7 @@ export class FullRowEditStrategy extends BaseEditStrategy {
 
         const oldState = this.isEditing(rowCtrl);
 
-        if (this.shouldStopEditing(rowCtrl)) {
+        if (this.shouldStopEditing(rowCtrl) && !this.gos.get('batchEdit')) {
             this.stopAllEditing();
         }
 
