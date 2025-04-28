@@ -387,10 +387,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
                         continue;
                     }
 
-                    if (highestIdx == null) {
-                        highestIdx = colIdx;
-                        highestSibling = child;
-                    } else if (highestIdx < colIdx) {
+                    if (highestIdx == null || highestIdx < colIdx) {
                         highestIdx = colIdx;
                         highestSibling = child;
                     }
@@ -404,10 +401,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
                         return;
                     }
 
-                    if (highestIdx == null) {
-                        highestIdx = colIdx;
-                        highestSibling = leafCol;
-                    } else if (highestIdx < colIdx) {
+                    if (highestIdx == null || highestIdx < colIdx) {
                         highestIdx = colIdx;
                         highestSibling = leafCol;
                     }
