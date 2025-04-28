@@ -203,7 +203,7 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
                               name:
                                   localeTextFunc('groupBy', 'Group by') +
                                   ' ' +
-                                  _escapeString(colNames.getDisplayNameForColumn(column, 'header')),
+                                  colNames.getDisplayNameForColumn(column, 'header'),
                               disabled:
                                   gos.get('functionsReadOnly') ||
                                   column?.isRowGroupActive() ||
@@ -233,7 +233,7 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
                             const underlyingColumn = colModel.getColDefCol(showRowGroup);
                             const ungroupByName =
                                 underlyingColumn != null
-                                    ? _escapeString(colNames.getDisplayNameForColumn(underlyingColumn, 'header'))
+                                    ? colNames.getDisplayNameForColumn(underlyingColumn, 'header')
                                     : showRowGroup;
                             name = localeTextFunc('ungroupBy', 'Un-Group by') + ' ' + ungroupByName;
                             disabled = gos.get('functionsReadOnly') || isRowGroupColLocked(underlyingColumn, beans);
@@ -245,7 +245,7 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
                             name =
                                 localeTextFunc('ungroupBy', 'Un-Group by') +
                                 ' ' +
-                                _escapeString(colNames.getDisplayNameForColumn(column, 'header'));
+                                colNames.getDisplayNameForColumn(column, 'header');
                             disabled =
                                 gos.get('functionsReadOnly') ||
                                 !column?.isRowGroupActive() ||
