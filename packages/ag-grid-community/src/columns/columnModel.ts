@@ -297,6 +297,12 @@ export class ColumnModel extends BeanStub implements NamedBean {
         );
     }
 
+    /**
+     * Restores provided columns order to the previous order in this.lastPivotOrder / this.lastOrder
+     * If columns are not in the last order:
+     *  - Check column groups, and apply column after the last column in the lowest shared group
+     *  - If no sibling is found, apply the column at the end of the cols
+     */
     private restoreColOrder(cols: ColumnCollections): void {
         const lastOrder = this.showingPivotResult ? this.lastPivotOrder : this.lastOrder;
         if (!lastOrder) {
@@ -360,9 +366,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
             return;
         }
 
-        /**
-         * Function finds the sibling with the lowest shared parent and highest index in last order
-         */
+        // Function finds the sibling with the lowest shared parent and highest index in last order
         const getPreviousSibling = (col: AgColumn, group: AgProvidedColumnGroup | null): AgColumn | null => {
             const parent = group ? group.getOriginalParent() : col.getOriginalParent();
             if (!parent) {
@@ -373,7 +377,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
             let highestSibling: AgColumn | null = null;
             for (const child of parent.getChildren()) {
                 // shortcut - skip the group that has already been processed
-                if (child === group) {
+                if (child === group || child === col) {
                     continue;
                 }
 
