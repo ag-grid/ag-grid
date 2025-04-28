@@ -72,11 +72,12 @@ export class FullRowEditStrategy extends BaseEditStrategy {
         return rowCtrl?.rowId !== this.rowId;
     }
 
-    public startEditing(
+    public override startEditing(
         rowCtrl: RowCtrl,
         cellCtrl?: CellCtrl,
         _key?: string | null | undefined,
-        event?: KeyboardEvent | MouseEvent | null | undefined
+        event?: KeyboardEvent | MouseEvent | null | undefined,
+        _source: 'api' | 'ui' = 'ui'
     ): boolean {
         console.warn('FullRowEditStrategy: startEditing');
 
@@ -96,7 +97,11 @@ export class FullRowEditStrategy extends BaseEditStrategy {
         return this.finishStartEdit(rowCtrl, cellCtrl, undefined, true, event);
     }
 
-    public cancelEditing(rowCtrl?: RowCtrl | null, cellCtrl?: CellCtrl | null): boolean {
+    public override cancelEditing(
+        rowCtrl?: RowCtrl | null,
+        cellCtrl?: CellCtrl | null,
+        _source: 'api' | 'ui' = 'ui'
+    ): boolean {
         const oldState = this.isEditing(rowCtrl);
 
         if (!oldState) {
@@ -120,7 +125,11 @@ export class FullRowEditStrategy extends BaseEditStrategy {
         return true;
     }
 
-    public stopEditing(rowCtrl?: RowCtrl | null, _cellCtrl?: CellCtrl | null): boolean {
+    public override stopEditing(
+        rowCtrl?: RowCtrl | null,
+        _cellCtrl?: CellCtrl | null,
+        _source: 'api' | 'ui' = 'ui'
+    ): boolean {
         const oldCtrl = _resolveRowController(this.beans, {
             rowId: this.rowId,
         });
@@ -177,7 +186,11 @@ export class FullRowEditStrategy extends BaseEditStrategy {
     }
 
     // returns null if no navigation should be performed
-    moveToNextEditingCell(previousCell: CellCtrl, backwards: boolean, event?: KeyboardEvent): boolean | null {
+    public override moveToNextEditingCell(
+        previousCell: CellCtrl,
+        backwards: boolean,
+        event?: KeyboardEvent
+    ): boolean | null {
         const previousPos = previousCell.cellPosition;
 
         // find the next cell to start editing

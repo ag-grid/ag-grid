@@ -129,18 +129,6 @@ function updateStrategy(strategy: string) {
     });
 }
 
-function enableBatchEditing() {
-    gridApi!.updateGridOptions({
-        experimentalEditingModeV2: {
-            strategy: 'batchEditMode',
-        },
-    });
-}
-
-function commitEdit() {
-    gridApi!.commitEdits();
-}
-
 function cancelEdit() {
     gridApi!.cancelEdits();
 }

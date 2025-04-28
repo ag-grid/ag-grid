@@ -116,7 +116,7 @@ export class CellKeyboardListenerFeature extends BeanStub {
                 rowNode.setDataValue(column, emptyValue, 'cellClear');
             }
         } else {
-            beans.editingSvc?.startEditing(rowCtrl, cellCtrl, key, true, event);
+            beans.editingSvc?.startEditing(rowCtrl, cellCtrl, key, true, event, 'ui');
         }
 
         eventSvc.dispatchEvent({ type: 'keyShortcutChangedCellEnd' });
@@ -133,7 +133,14 @@ export class CellKeyboardListenerFeature extends BeanStub {
                 const key = e.shiftKey ? KeyCode.UP : KeyCode.DOWN;
                 beans.navigation?.navigateToNextCell(null, key, cellCtrl.cellPosition, false);
             } else {
-                const started = beans.editingSvc?.startEditing(cellCtrl.rowCtrl, cellCtrl, KeyCode.ENTER, true, e);
+                const started = beans.editingSvc?.startEditing(
+                    cellCtrl.rowCtrl,
+                    cellCtrl,
+                    KeyCode.ENTER,
+                    true,
+                    e,
+                    'ui'
+                );
                 if (started) {
                     // if we started editing, then we need to prevent default, otherwise the Enter action can get
                     // applied to the cell editor. this happened, for example, with largeTextCellEditor where not
@@ -157,7 +164,7 @@ export class CellKeyboardListenerFeature extends BeanStub {
         const { cellCtrl, rowCtrl, beans } = this;
         const { editingSvc } = beans;
 
-        editingSvc?.stopEditing(rowCtrl, cellCtrl, KeyCode.ESCAPE, event, true);
+        editingSvc?.stopEditing(rowCtrl, cellCtrl, KeyCode.ESCAPE, event, true, 'ui');
     }
 
     public processCharacter(event: KeyboardEvent): void {

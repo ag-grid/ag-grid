@@ -19,10 +19,15 @@ export abstract class BaseEditStrategy extends BeanStub {
         rowCtrl: RowCtrl,
         cellCtrl?: CellCtrl,
         key?: string | null | undefined,
-        event?: KeyboardEvent | MouseEvent | null
+        event?: KeyboardEvent | MouseEvent | null,
+        source?: 'api' | 'ui'
     ): boolean;
-    public abstract stopEditing?(rowCtrl?: RowCtrl | null, cellCtrl?: CellCtrl | null): boolean;
-    public abstract cancelEditing?(rowCtrl?: RowCtrl | null, cellCtrl?: CellCtrl | null): boolean;
+    public abstract stopEditing?(rowCtrl?: RowCtrl | null, cellCtrl?: CellCtrl | null, source?: 'api' | 'ui'): boolean;
+    public abstract cancelEditing?(
+        rowCtrl?: RowCtrl | null,
+        cellCtrl?: CellCtrl | null,
+        source?: 'api' | 'ui'
+    ): boolean;
 
     protected abstract onCellFocusChanged?(event: CellFocusedEvent): void;
     public abstract moveToNextEditingCell(
@@ -183,21 +188,32 @@ export abstract class BaseEditStrategy extends BeanStub {
         return compDetails;
     }
 
-    protected destroyEditors(cellPositions: CellIdPositions[], cancel: boolean): void {
+    protected destroyEditors(cellPositions: CellIdPositions[], cancel: boolean, batchEdit?: boolean): void {
         console.warn('BaseEditStrategy: destroyEditors');
 
         cellPositions.forEach((cellPosition) => {
             const cellCtrl = _resolveCellController(this.beans, cellPosition);
 
-            this.destroyEditor(cellCtrl?.rowCtrl, cellCtrl, cancel);
+            this.destroyEditor(cellCtrl?.rowCtrl, cellCtrl, cancel, batchEdit);
         });
     }
 
-    protected destroyEditor(rowCtrl?: RowCtrl | null, cellCtrl?: CellCtrl | null, cancel?: boolean): void {
+    protected destroyEditor(
+        rowCtrl?: RowCtrl | null,
+        cellCtrl?: CellCtrl | null,
+        cancel?: boolean,
+        batchEdit?: boolean
+    ): void {
         console.warn('BaseEditStrategy: destroyEditor');
         const { comp, column, rowNode } = cellCtrl!;
 
         const { newValue, newValueExists } = _takeValueFromCellEditor(false, comp);
+
+        if (batchEdit) {
+            this.editModel.getEditModels(rowCtrl!.rowId!, column.getColId())?.[0].updateValue(newValue);
+            return;
+        }
+
         const oldValue = this.beans.valueSvc.getValueForDisplay(column, rowNode)?.value;
         let valueChanged = false;
 
@@ -266,7 +282,8 @@ export abstract class BaseEditStrategy extends BeanStub {
         _rowCtrl?: RowCtrl | null,
         _cellCtrl?: CellCtrl | null,
         _key?: string | null | undefined,
-        event?: KeyboardEvent | MouseEvent | null | undefined
+        event?: KeyboardEvent | MouseEvent | null | undefined,
+        _source: 'api' | 'ui' = 'ui'
     ): boolean | null {
         if (event instanceof KeyboardEvent) {
             return event.key === KeyCode.ENTER;
@@ -279,7 +296,8 @@ export abstract class BaseEditStrategy extends BeanStub {
         _rowCtrl?: RowCtrl | null,
         _cellCtrl?: CellCtrl | null,
         _key?: string | null | undefined,
-        event?: KeyboardEvent | MouseEvent | null | undefined
+        event?: KeyboardEvent | MouseEvent | null | undefined,
+        _source: 'api' | 'ui' = 'ui'
     ): boolean | null {
         if (!this.isEditing()) {
             return false;

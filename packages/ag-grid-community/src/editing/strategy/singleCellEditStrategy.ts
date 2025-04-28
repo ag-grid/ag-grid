@@ -16,7 +16,8 @@ export class SingleCellEditStrategy extends BaseEditStrategy {
         _rowCtrl?: RowCtrl | undefined,
         _cellCtrl?: CellCtrl | undefined,
         key?: string | null | undefined,
-        event?: KeyboardEvent | MouseEvent | null | undefined
+        event?: KeyboardEvent | MouseEvent | null | undefined,
+        _source: 'api' | 'ui' = 'ui'
     ): boolean | null {
         const res = super.shouldStopEditing(_rowCtrl, _cellCtrl, key, event);
         if (res) {
@@ -30,7 +31,8 @@ export class SingleCellEditStrategy extends BaseEditStrategy {
         rowCtrl: RowCtrl,
         cellCtrl?: CellCtrl,
         key?: string | null | undefined,
-        event?: KeyboardEvent | MouseEvent | null
+        event?: KeyboardEvent | MouseEvent | null,
+        _source: 'api' | 'ui' = 'ui'
     ): boolean {
         const shouldStop = this.shouldStopEditing(rowCtrl, cellCtrl);
         if (shouldStop) {
@@ -57,7 +59,7 @@ export class SingleCellEditStrategy extends BaseEditStrategy {
         return this.finishStartEdit(rowCtrl, cellCtrl, undefined, true, event);
     }
 
-    public stopEditing(rowCtrl?: RowCtrl | null, cellCtrl?: CellCtrl | null): boolean {
+    public stopEditing(rowCtrl?: RowCtrl | null, cellCtrl?: CellCtrl | null, _source: 'api' | 'ui' = 'ui'): boolean {
         if (!this.isEditing(rowCtrl, cellCtrl)) {
             return false;
         }
@@ -74,7 +76,7 @@ export class SingleCellEditStrategy extends BaseEditStrategy {
         return true;
     }
 
-    public cancelEditing(rowCtrl?: RowCtrl | null, cellCtrl?: CellCtrl | null): boolean {
+    public cancelEditing(rowCtrl?: RowCtrl | null, cellCtrl?: CellCtrl | null, _source: 'api' | 'ui' = 'ui'): boolean {
         if (!this.isEditing(rowCtrl, cellCtrl)) {
             return false;
         }
@@ -131,22 +133,7 @@ export class SingleCellEditStrategy extends BaseEditStrategy {
             return false;
         }
 
-        // if (this.shouldStopEditing(nextCell.rowCtrl, nextCell)) {
-        //     this.stopAllEditing();
-        // }
-
-        // only prevent default if we found a cell. so if user is on last cell and hits tab, then we default
-        // to the normal tabbing so user can exit the grid.
         this.startEditing(nextCell.rowCtrl, nextCell, null, event);
-
-        // const compDetails = this.setupEditors(nextCell.rowCtrl, nextCell, undefined, true);
-        // const suppressPreventDefault = !(compDetails?.params as DefaultProvidedCellEditorParams)
-        //     ?.suppressPreventDefault;
-
-        // this.eventSvc.dispatchEvent(nextCell.createEvent(event!, 'cellEditingStarted'));
-        // if (!suppressPreventDefault) {
-        //     event?.preventDefault();
-        // }
 
         nextCell.focusCell(false);
         return true;

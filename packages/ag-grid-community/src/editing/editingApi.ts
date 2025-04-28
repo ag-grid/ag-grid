@@ -42,7 +42,7 @@ export function getEditingCells(beans: BeanCollection): CellPosition[] {
 
 export function stopEditing(beans: BeanCollection, cancel: boolean = false): void {
     if (beans.editingSvc?.isEditing()) {
-        beans.editingSvc?.stopAllEditing(cancel);
+        beans.editingSvc?.stopAllEditing(cancel, 'api');
     }
 }
 
@@ -106,15 +106,9 @@ export function updateEditStrategy(beans: BeanCollection, editStrategy: string):
     });
 }
 
-export function commitEdits(beans: BeanCollection): void {
-    if (beans.editingSvc?.isEditing()) {
-        beans.editingSvc?.stopAllEditing(false);
-    }
-}
-
 export function cancelEdits(beans: BeanCollection): void {
     if (beans.editingSvc?.isEditing()) {
-        beans.editingSvc?.stopAllEditing(true);
+        beans.editingSvc?.stopAllEditing(true, 'api');
     }
 }
 

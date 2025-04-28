@@ -9,6 +9,8 @@ import { RowEditingModel } from './rowEditingModel';
 export type CellIdPositions = {
     rowId: string;
     columnId: string;
+    oldValue?: any;
+    newValue?: any;
 };
 
 export class GridEditingModel {
@@ -73,9 +75,11 @@ export class GridEditingModel {
     }
 
     public getEditingCellIds(): CellIdPositions[] {
-        const ids: { rowId: string; columnId: string }[] = [];
+        const ids: { rowId: string; columnId: string; oldValue?: any; newValue?: any }[] = [];
         this.rowModels.forEach((rowModel, rowId) => {
-            rowModel.getEditModels().forEach(({ columnId }) => ids.push({ rowId, columnId }));
+            rowModel
+                .getEditModels()
+                .forEach(({ columnId, oldValue, newValue }) => ids.push({ rowId, columnId, oldValue, newValue }));
         });
         return ids;
     }
@@ -83,14 +87,16 @@ export class GridEditingModel {
     public getEditingCellPositions(): CellPosition[] {
         const positions: CellPosition[] = [];
         const cellIds = this.getEditingCellIds();
-        cellIds.forEach(({ rowId, columnId }) => {
-            const rowNode = _getRowById(this.beans, rowId);
+        cellIds.forEach((cell) => {
+            const rowNode = _getRowById(this.beans, cell.rowId);
             if (rowNode) {
                 positions.push({
-                    column: this.beans.colModel.getCol(columnId)!,
+                    column: this.beans.colModel.getCol(cell.columnId)!,
                     rowIndex: rowNode.rowIndex!,
                     rowPinned: rowNode.rowPinned,
-                });
+                    oldValue: cell.oldValue,
+                    newValue: cell.newValue,
+                } as any);
             }
         });
 
