@@ -1040,7 +1040,7 @@ export { _exists, _missing, _jsonEquals, _toStringOrNull, _makeNull, _defaultCom
 export { _isEventFromPrintableCharacter } from './utils/keyboard';
 export { _formatNumberCommas } from './utils/number';
 export { _mergeDeep } from './utils/object';
-export { _escapeString } from './utils/string';
+export { _escapeString, _toString } from './utils/string';
 
 export { AgPromise, _isPromise } from './utils/promise';
 export {
