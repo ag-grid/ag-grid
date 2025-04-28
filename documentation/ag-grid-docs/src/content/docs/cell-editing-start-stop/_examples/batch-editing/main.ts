@@ -59,12 +59,10 @@ const gridOptions: GridOptions = {
     onCellEditingStopped: (event: CellEditingStoppedEvent) => {
         console.log('cellEditingStopped');
     },
-    experimentalEditingModeV2: {
-        strategy: 'rowEditMode',
-    },
     onCellValueChanged: (event) => {
         console.log('Cell value changed');
     },
+    editType: 'fullRow',
 };
 
 function getPinnedTopData() {
@@ -121,11 +119,15 @@ function onBtStartEditing(key?: string, pinned?: RowPinnedType) {
     });
 }
 
-function updateStrategy(strategy: string) {
+function setBatch(batchEdit: boolean) {
     gridApi!.updateGridOptions({
-        experimentalEditingModeV2: {
-            strategy: strategy as any,
-        },
+        batchEdit,
+    });
+}
+
+function setEditType(editType: any) {
+    gridApi!.updateGridOptions({
+        editType,
     });
 }
 

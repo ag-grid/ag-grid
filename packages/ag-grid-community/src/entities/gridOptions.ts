@@ -108,7 +108,6 @@ import type {
     SizeColumnsToFitGridStrategy,
     SizeColumnsToFitProvidedWidthStrategy,
 } from '../interfaces/autoSize';
-import type { EditStrategyType } from '../interfaces/editStrategyType';
 import type {
     CsvExportParams,
     ProcessCellForExportParams,
@@ -495,6 +494,11 @@ export interface GridOptions<TData = any> {
      * @default false
      */
     suppressClickEdit?: boolean;
+
+    /**
+     * Set to `true` to enable batch editing.
+     */
+    batchEdit?: boolean;
 
     /**
      * Set to `true` to stop the grid updating data after `Edit`, `Clipboard` and `Fill Handle` operations. When this is set, it is intended the application will update the data, eg in an external immutable store, and then pass the new dataset to the grid. <br />**Note:** `rowNode.setDataValue()` does not update the value of the cell when this is `True`, it fires `onCellEditRequest` instead.
@@ -2477,15 +2481,6 @@ export interface GridOptions<TData = any> {
      * Sort has changed. The grid also listens for this and updates the model.
      */
     onSortChanged?(event: SortChangedEvent<TData>): void;
-
-    /**
-     * Experimental editing mode v2.
-     * @default false
-     */
-    experimentalEditingModeV2?: {
-        strategy?: EditStrategyType;
-        params?: any;
-    };
 }
 
 export type RowGroupingDisplayType = 'singleColumn' | 'multipleColumns' | 'groupRows' | 'custom';

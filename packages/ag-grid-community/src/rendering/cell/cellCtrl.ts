@@ -767,7 +767,7 @@ export class CellCtrl extends BeanStub {
         }
 
         if (cellFocused) {
-            beans.editingSvc?.stopEditing(this.rowCtrl, this);
+            // beans.editingSvc?.stopEditing(this.rowCtrl, this);
             this.rowCtrl.announceDescription();
         }
     }

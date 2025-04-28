@@ -9,12 +9,12 @@ export class RowEditingModel {
     }
 
     public getEditModel(columnId: string): CellEditingModel | undefined {
-        console.warn('RowEditingModel: getEditModel', columnId);
+        // console.warn('RowEditingModel: getEditModel', columnId);
         return this.editorModels.get(columnId);
     }
 
     public createEditModel(columnId: string): boolean {
-        console.warn('RowEditingModel: createEditModel', columnId);
+        // console.warn('RowEditingModel: createEditModel', columnId);
 
         if (!this.editorModels.has(columnId)) {
             this.editorModels.set(columnId, new CellEditingModel(this.rowId, columnId));
@@ -28,7 +28,7 @@ export class RowEditingModel {
     }
 
     public removeEditModel(columnId: string): boolean {
-        console.warn('RowEditingModel: removeEditModel', columnId);
+        // console.warn('RowEditingModel: removeEditModel', columnId);
         if (!this.editorModels.has(columnId)) {
             return false;
         }
@@ -49,7 +49,7 @@ export class RowEditingModel {
     }
 
     destroy() {
-        console.warn('RowEditingModel: destroy', this.rowId);
+        // console.warn('RowEditingModel: destroy', this.rowId);
         this.editorModels.clear();
     }
 }

@@ -2,13 +2,14 @@
     <div class="example-buttons">
         <div class="example-button-row">
             <div>Edit Strategy:</div>
-            <button onclick="updateStrategy('cellEditMode')">Single Cell (default)</button>
-            <button onclick="updateStrategy('rowEditMode')">Full Row</button>
-            <button onclick="updateStrategy('batchEditMode')">Batch Edit</button>
+            <button onclick="setEditType(undefined)">Single Cell (default)</button>
+            <button onclick="setEditType('fullRow')">Full Row</button>
         </div>
         <div class="example-button-row">
             <span>API: </span>
             <button onclick="onBtStartEditing(undefined)">Edit (1)</button>
+            <button onclick="setBatch(true)">Enable Batch Edits</button>
+            <button onclick="setBatch(false)">Disable Batch Edits</button>
             <button onclick="stopEdit()">Stop Edits</button>
             <button onclick="cancelEdit()">Cancel Edits</button>
         </div>

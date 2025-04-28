@@ -1,1 +1,1 @@
-export type EditStrategyType = 'cellEditMode' | 'rowEditMode' | 'batchEditMode';
+export type EditStrategyType = 'singleCell' | 'fullRow';

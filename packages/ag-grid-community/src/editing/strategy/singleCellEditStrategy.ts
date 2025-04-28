@@ -7,7 +7,7 @@ import { BaseEditStrategy } from './baseEditStrategy';
 import { _resolveControllers } from './utils';
 
 export class SingleCellEditStrategy extends BaseEditStrategy {
-    override beanName = 'cellEditMode' as BeanName | undefined;
+    override beanName = 'singleCell' as BeanName | undefined;
 
     private rowId?: string | null;
     private colId?: string | null;
@@ -34,7 +34,7 @@ export class SingleCellEditStrategy extends BaseEditStrategy {
         event?: KeyboardEvent | MouseEvent | null,
         _source: 'api' | 'ui' = 'ui'
     ): boolean {
-        const shouldStop = this.shouldStopEditing(rowCtrl, cellCtrl);
+        const shouldStop = this.shouldStopEditing(rowCtrl, cellCtrl, undefined, undefined, 'ui');
         if (shouldStop) {
             this.stopAllEditing();
         }
@@ -59,16 +59,18 @@ export class SingleCellEditStrategy extends BaseEditStrategy {
         return this.finishStartEdit(rowCtrl, cellCtrl, undefined, true, event);
     }
 
-    public stopEditing(rowCtrl?: RowCtrl | null, cellCtrl?: CellCtrl | null, _source: 'api' | 'ui' = 'ui'): boolean {
+    public stopEditing(rowCtrl?: RowCtrl | null, cellCtrl?: CellCtrl | null, source: 'api' | 'ui' = 'ui'): boolean {
         if (!this.isEditing(rowCtrl, cellCtrl)) {
             return false;
         }
 
         console.warn('SingleCellEditStrategy: stopEditing', rowCtrl?.rowId, cellCtrl?.column.colId);
 
+        const cells = this.editModel.getEditingCellIds();
+
         this.editModel.stopEditing(rowCtrl?.rowId, cellCtrl?.column.colId);
 
-        this.destroyEditor(rowCtrl, cellCtrl, false);
+        this.destroyEditors(cells, false, source);
 
         this.rowId = undefined;
         this.colId = undefined;
@@ -76,16 +78,18 @@ export class SingleCellEditStrategy extends BaseEditStrategy {
         return true;
     }
 
-    public cancelEditing(rowCtrl?: RowCtrl | null, cellCtrl?: CellCtrl | null, _source: 'api' | 'ui' = 'ui'): boolean {
+    public cancelEditing(rowCtrl?: RowCtrl | null, cellCtrl?: CellCtrl | null, source: 'api' | 'ui' = 'ui'): boolean {
         if (!this.isEditing(rowCtrl, cellCtrl)) {
             return false;
         }
 
         console.warn('SingleCellEditStrategy: cancelEditing', rowCtrl?.rowId, cellCtrl?.column.colId);
 
+        const cells = this.editModel.getEditingCellIds();
+
         this.editModel.cancelEditing(rowCtrl?.rowId, cellCtrl?.column.colId);
 
-        this.destroyEditor(rowCtrl, cellCtrl, true);
+        this.destroyEditors(cells, true, source);
 
         this.rowId = undefined;
         this.colId = undefined;
@@ -94,6 +98,8 @@ export class SingleCellEditStrategy extends BaseEditStrategy {
     }
 
     protected override onCellFocusChanged(event: CellFocusedEvent<any, any>): void {
+        super.onCellFocusChanged(event);
+
         const { rowIndex, column } = event;
         const previous = (event as any)['previousParams']! as CommonCellFocusParams;
 
@@ -107,7 +113,9 @@ export class SingleCellEditStrategy extends BaseEditStrategy {
         });
 
         // if we are editing, then moving the focus out of a cell will stop editing
-        this.stopEditing(rowCtrl, cellCtrl);
+        if (this.shouldStopEditing(rowCtrl, cellCtrl, undefined, undefined, 'ui')) {
+            this.stopEditing(rowCtrl, cellCtrl);
+        }
     }
 
     // returns null if no navigation should be performed
