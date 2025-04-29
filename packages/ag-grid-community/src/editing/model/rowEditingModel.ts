@@ -1,52 +1,47 @@
 import { CellEditingModel } from './cellEditingModel';
 
 export class RowEditingModel {
-    public rowId: string;
-    public editorModels: Map<string, CellEditingModel> = new Map();
-
-    constructor(rowId: string) {
-        this.rowId = rowId;
-    }
+    private models: Map<string, CellEditingModel> = new Map();
 
     public getEditModel(columnId: string): CellEditingModel | undefined {
-        return this.editorModels.get(columnId);
+        return this.models.get(columnId);
     }
 
     public createEditModel(columnId: string): CellEditingModel {
-        if (this.editorModels.has(columnId)) {
-            return this.editorModels.get(columnId)!;
-        } else {
-            const model = new CellEditingModel(this.rowId, columnId);
-            this.editorModels.set(columnId, model);
-            return model;
+        if (this.models.has(columnId)) {
+            return this.models.get(columnId)!;
         }
+
+        const model = new CellEditingModel(columnId);
+        this.models.set(columnId, model);
+        return model;
     }
 
     public getEditModelCount(): number {
-        return this.editorModels.size;
+        return this.models.size;
     }
 
     public removeEditModel(columnId: string): boolean {
-        if (!this.editorModels.has(columnId)) {
+        if (!this.models.has(columnId)) {
             return false;
         }
 
-        this.editorModels.delete(columnId);
+        this.models.delete(columnId);
         return true;
     }
 
     public getEditModels(): CellEditingModel[] {
-        return Array.from(this.editorModels.values());
+        return Array.from(this.models.values());
     }
 
     public isEditing(colId?: string): boolean {
         if (colId) {
-            return this.editorModels.has(colId);
+            return this.models.has(colId);
         }
         return this.getEditModelCount() > 0;
     }
 
     destroy() {
-        this.editorModels.clear();
+        this.models.clear();
     }
 }

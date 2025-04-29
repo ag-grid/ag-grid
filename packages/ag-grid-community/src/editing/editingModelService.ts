@@ -1,10 +1,11 @@
-import type { BeanCollection } from '../../context/context';
-import { _getRowById } from '../../entities/positionUtils';
-import type { CellPosition } from '../../interfaces/iCellPosition';
-import type { CellCtrl } from '../../rendering/cell/cellCtrl';
-import type { RowCtrl } from '../../rendering/row/rowCtrl';
-import type { CellEditingModel } from './cellEditingModel';
-import { RowEditingModel } from './rowEditingModel';
+import type { NamedBean } from '../context/bean';
+import { BeanStub } from '../context/beanStub';
+import { _getRowById } from '../entities/positionUtils';
+import type { CellPosition } from '../interfaces/iCellPosition';
+import type { CellCtrl } from '../rendering/cell/cellCtrl';
+import type { RowCtrl } from '../rendering/row/rowCtrl';
+import type { CellEditingModel } from './model/cellEditingModel';
+import { RowEditingModel } from './model/rowEditingModel';
 
 export type CellIdPositions = {
     rowId: string;
@@ -13,10 +14,10 @@ export type CellIdPositions = {
     newValue?: any;
 };
 
-export class GridEditingModel {
-    private rowModels: Map<string, RowEditingModel> = new Map();
+export class EditingModelService extends BeanStub implements NamedBean {
+    beanName = 'editingModelSvc' as const;
 
-    constructor(private readonly beans: BeanCollection) {}
+    private rowModels: Map<string, RowEditingModel> = new Map();
 
     private createEditModel(rowId: string, columnId: string) {
         const rowModel = this.rowModels.get(rowId) ?? this.createRowModel(rowId);
@@ -167,12 +168,13 @@ export class GridEditingModel {
         }
     }
 
-    public destroy(): void {
+    public override destroy(): void {
+        super.destroy();
         this.stopEditing();
     }
 
     private createRowModel(rowId: string): RowEditingModel {
-        const rowModel = new RowEditingModel(rowId);
+        const rowModel = new RowEditingModel();
         this.rowModels.set(rowId, rowModel);
         return rowModel;
     }

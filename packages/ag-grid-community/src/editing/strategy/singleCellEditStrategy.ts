@@ -39,7 +39,7 @@ export class SingleCellEditStrategy extends BaseEditStrategy {
         if (shouldStop) {
             if (this.gos.get('batchEdit')) {
                 const cells = this.editModel.getEditingCellIds();
-                _destroyEditors(this.beans, this.editModel, cells, false, 'ui');
+                _destroyEditors(this.beans, cells, false, 'ui');
             } else {
                 this.stopAllEditing();
             }
@@ -78,7 +78,7 @@ export class SingleCellEditStrategy extends BaseEditStrategy {
 
         this.editModel.stopEditing(rowCtrl?.rowId, cellCtrl?.column.colId);
 
-        _destroyEditors(this.beans, this.editModel, cells, false, source);
+        _destroyEditors(this.beans, cells, false, source);
 
         this.rowId = undefined;
         this.colId = undefined;
@@ -95,7 +95,7 @@ export class SingleCellEditStrategy extends BaseEditStrategy {
 
         this.editModel.cancelEditing(rowCtrl?.rowId, cellCtrl?.column.colId);
 
-        _destroyEditors(this.beans, this.editModel, cells, true, source);
+        _destroyEditors(this.beans, cells, true, source);
 
         this.rowId = undefined;
         this.colId = undefined;
