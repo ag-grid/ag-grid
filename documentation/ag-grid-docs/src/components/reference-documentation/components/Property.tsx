@@ -164,10 +164,10 @@ function getTagsData({ definition, gridOpProp }: { definition: ChildDocEntry; gr
 
     // Get module from either tags or meta
     const tagModule = tags.find((t) => t.name === 'agModule')?.comment.replace(/`/g, '');
-    const metaModule = gridOpProp?.meta?.module;
+    const metaModule = definition.meta?.module || gridOpProp?.meta?.module;
     const moduleStr = tagModule || metaModule || '';
 
-    // Split by both forward slashes and handle multiple modules
+    // Split by forward slashes and handle multiple modules
     const allModules = moduleStr
         .split(/\s*\/\s*/)
         .map((m) => m.trim())
@@ -179,7 +179,7 @@ function getTagsData({ definition, gridOpProp }: { definition: ChildDocEntry; gr
         formattedDefaultValue,
         isInitial,
         agModule: allModules[0],
-        additionalModules: allModules.slice(1),
+        additionalModules: hasMultipleModules ? allModules.slice(1) : [],
         hasMultipleModules,
     };
 }
