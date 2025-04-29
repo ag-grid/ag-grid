@@ -125,9 +125,6 @@ export class DefaultStrategy extends BeanStub implements ISelectionStrategy {
                     toggledNodes: new Set(),
                 };
             }
-            if (source === 'api') {
-                this.selectionCtx.setRoot(node);
-            }
             return 1;
         }
 
@@ -148,6 +145,10 @@ export class DefaultStrategy extends BeanStub implements ISelectionStrategy {
         };
 
         nodes.forEach((node) => updateNodeState(node));
+
+        if (nodes.length === 1 && source === 'api') {
+            this.selectionCtx.setRoot(nodes[0].footer ? nodes[0].sibling : nodes[0]);
+        }
         return 1;
     }
 
