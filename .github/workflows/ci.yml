@@ -107,12 +107,12 @@ jobs:
 #        run: |
 #          yarn nx lint
 
-      - name: nx build
-        id: build
-        run: |
-          yarn nx generate-doc-references
-          yarn nx generate-examples -c staging
-          yarn nx run-many --t build -c staging --exclude ag-grid-docs --exclude all
+#      - name: nx build
+#        id: build
+#        run: |
+#          yarn nx generate-doc-references
+#          yarn nx generate-examples -c staging
+#          yarn nx run-many --t build -c staging --exclude ag-grid-docs --exclude all
 
       - name: calculate matrix
         id: matrix
@@ -416,30 +416,30 @@ jobs:
     env:
       NX_BASE: ${{ needs.init.outputs.nx_base }}
     steps:
-      - name: Checkout
-        id: checkout
-        if: matrix.framework != 'none'
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 1
-
-      - name: Fetch Refs
-        if: matrix.framework != 'none'
-        run: |
-          git fetch origin --depth 1 latest
-          git fetch origin --depth 1 tag latest-success
-
-      - name: Setup
-        id: setup
-        if: matrix.framework != 'none'
-        uses: ./.github/actions/setup-nx
-        with:
-          cache_mode: ro
-          base_ref: ${{ github.event.pull_request.base.ref || github.event.base_ref }}
+#      - name: Checkout
+#        id: checkout
+#        if: matrix.framework != 'none'
+#        uses: actions/checkout@v4
+#        with:
+#          fetch-depth: 1
+#
+#      - name: Fetch Refs
+#        if: matrix.framework != 'none'
+#        run: |
+#          git fetch origin --depth 1 latest
+#          git fetch origin --depth 1 tag latest-success
+#
+#      - name: Setup
+#        id: setup
+#        if: matrix.framework != 'none'
+#        uses: ./.github/actions/setup-nx
+#        with:
+#          cache_mode: ro
+#          base_ref: ${{ github.event.pull_request.base.ref || github.event.base_ref }}
 
       - name: test
         run: |
-          echo ${{ matrix }}
+          echo ${{ matrix.shards }}
 
 #      - name: nx package:test
 #        id: package-test
