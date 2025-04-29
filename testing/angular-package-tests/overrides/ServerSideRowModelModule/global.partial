@@ -1,0 +1,43 @@
+function createServerSideDatasource(server: any): any {
+  return {
+    getRows: (params) => {
+      console.log("[Datasource] - rows requested by grid: ", params.request);
+      // get data for request from our fake server
+      const response = server.getData(params.request);
+      // simulating real server call with a 500ms delay
+      setTimeout(() => {
+        if (response.success) {
+          // supply rows for requested block to grid
+          params.success({ rowData: response.rows });
+        } else {
+          params.fail();
+        }
+      }, 500);
+    },
+  };
+}
+
+function createFakeServer(allData: any[]) {
+  return {
+    getData: (request: any) => {
+      // in this simplified fake server all rows are contained in an array
+      const requestedRows = allData.slice(request.startRow, request.endRow);
+      return {
+        success: true,
+        rows: requestedRows,
+      };
+    },
+  };
+}
+
+const fakeServer = createFakeServer([
+    { make: "Tesla", model: "Model Y", price: 64950, electric: true },
+    { make: "Ford", model: "F-Series", price: 33850, electric: false },
+    { make: "Toyota", model: "Corolla", price: 29600, electric: false },
+    { make: "Mercedes", model: "EQA", price: 48890, electric: true },
+    { make: "Fiat", model: "500", price: 15774, electric: false },
+    { make: "Nissan", model: "Juke", price: 20675, electric: false },
+  ]
+);
+// create datasource with a reference to the fake server
+const serverSideDatasource = createServerSideDatasource(fakeServer);

@@ -385,7 +385,7 @@
     },
     "test:package:InfiniteRowModelModule-latest": {
       "dependsOn": ["^pack"],
-      "command": "{projectRoot}/run.sh -o InfiniteRowModelModule latest",
+      "command": "{projectRoot}/run.sh -o InfiniteRowModelModule -e latest",
       "configurations": {
         "update": {
           "command": "{projectRoot}/run.sh -o InfiniteRowModelModule -u latest"
@@ -799,7 +799,7 @@
     },
     "test:package:ServerSideRowModelModule-latest": {
       "dependsOn": ["^pack"],
-      "command": "{projectRoot}/run.sh -o ServerSideRowModelModule latest",
+      "command": "{projectRoot}/run.sh -o ServerSideRowModelModule -e latest",
       "configurations": {
         "update": {
           "command": "{projectRoot}/run.sh -o ServerSideRowModelModule -u latest"
