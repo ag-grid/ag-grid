@@ -339,7 +339,7 @@ export const Property: FunctionComponent<{
                                     </a>
                                 )}
 
-                                {agModule && !config.hideModule && (
+                                {agModule && (
                                     <div className={classnames(styles.metaItem, styles.moduleItem)}>
                                         <a
                                             href={urlWithPrefix({

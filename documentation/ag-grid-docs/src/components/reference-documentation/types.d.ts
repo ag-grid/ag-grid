@@ -166,8 +166,6 @@ export interface Config {
      */
     hideHeader?: boolean;
 
-    /** Hide the required module */
-    hideModule?: boolean;
     /**
      * Override the headerLevel used.
      */
