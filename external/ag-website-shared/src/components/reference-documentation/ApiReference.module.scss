@@ -527,6 +527,9 @@ button.seeMore {
         cursor: pointer;
         font-size: var(--text-fs-sm);
         font-weight: var(--text-semibold);
+        background: #0e45910a;
+        padding: 0px 6px;
+        border-radius: 8px;
     }
 
     .moduleTooltip {
