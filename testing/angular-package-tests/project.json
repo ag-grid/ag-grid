@@ -385,7 +385,7 @@
     },
     "test:package:InfiniteRowModelModule-latest": {
       "dependsOn": ["^pack"],
-      "command": "{projectRoot}/run.sh -o InfiniteRowModelModule -e latest",
+      "command": "{projectRoot}/run.sh -o InfiniteRowModelModule latest",
       "configurations": {
         "update": {
           "command": "{projectRoot}/run.sh -o InfiniteRowModelModule -u latest"
@@ -799,7 +799,7 @@
     },
     "test:package:ServerSideRowModelModule-latest": {
       "dependsOn": ["^pack"],
-      "command": "{projectRoot}/run.sh -o ServerSideRowModelModule -e latest",
+      "command": "{projectRoot}/run.sh -o ServerSideRowModelModule latest",
       "configurations": {
         "update": {
           "command": "{projectRoot}/run.sh -o ServerSideRowModelModule -u latest"
@@ -869,8 +869,7 @@
         "test:package:ClientSideRowModelModule-TextFilterModule-latest",
         "test:package:tfm_nfm_dfm_sfm_mfm_cfm_efm_qfm-latest",
         "test:package:AgChartsCommunityModule-IntegratedChartsModule-latest",
-        "test:package:AgChartsEnterpriseModule-IntegratedChartsModule-latest",
-        "test:package:AgChartsCommunityModule-SparklinesModule-latest"
+        "test:package:AgChartsEnterpriseModule-IntegratedChartsModule-latest"
       ],
       "configurations": {
         "update": {}
@@ -881,11 +880,10 @@
       "inputs": [],
       "outputs": [],
       "dependsOn": [
+        "test:package:AgChartsCommunityModule-SparklinesModule-latest",
         "test:package:AgChartsEnterpriseModule-SparklinesModule-latest",
         "test:package:AlignedGridsModule-latest",
-        "test:package:AllCommunityModule-latest",
-        "test:package:CellApiModule-latest",
-        "test:package:CellStyleModule-latest"
+        "test:package:AllCommunityModule-latest"
       ],
       "configurations": {
         "update": {}
@@ -896,11 +894,10 @@
       "inputs": [],
       "outputs": [],
       "dependsOn": [
+        "test:package:CellApiModule-latest",
+        "test:package:CellStyleModule-latest",
         "test:package:CheckboxEditorModule-latest",
-        "test:package:ClientSideRowModelApiModule-latest",
-        "test:package:ClientSideRowModelModule-latest",
-        "test:package:ColumnApiModule-latest",
-        "test:package:ColumnAutoSizeModule-latest"
+        "test:package:ClientSideRowModelApiModule-latest"
       ],
       "configurations": {
         "update": {}
@@ -911,11 +908,10 @@
       "inputs": [],
       "outputs": [],
       "dependsOn": [
-        "test:package:ColumnHoverModule-latest",
-        "test:package:CsvExportModule-latest",
-        "test:package:CustomEditorModule-latest",
-        "test:package:CustomFilterModule-latest",
-        "test:package:DateEditorModule-latest"
+        "test:package:ClientSideRowModelModule-latest",
+        "test:package:ColumnApiModule-latest",
+        "test:package:ColumnAutoSizeModule-latest",
+        "test:package:ColumnHoverModule-latest"
       ],
       "configurations": {
         "update": {}
@@ -926,11 +922,10 @@
       "inputs": [],
       "outputs": [],
       "dependsOn": [
-        "test:package:DateFilterModule-latest",
-        "test:package:DragAndDropModule-latest",
-        "test:package:EventApiModule-latest",
-        "test:package:ExternalFilterModule-latest",
-        "test:package:GridStateModule-latest"
+        "test:package:CsvExportModule-latest",
+        "test:package:CustomEditorModule-latest",
+        "test:package:CustomFilterModule-latest",
+        "test:package:DateEditorModule-latest"
       ],
       "configurations": {
         "update": {}
@@ -941,11 +936,10 @@
       "inputs": [],
       "outputs": [],
       "dependsOn": [
-        "test:package:HighlightChangesModule-latest",
-        "test:package:InfiniteRowModelModule-latest",
-        "test:package:LargeTextEditorModule-latest",
-        "test:package:LocaleModule-latest",
-        "test:package:NumberEditorModule-latest"
+        "test:package:DateFilterModule-latest",
+        "test:package:DragAndDropModule-latest",
+        "test:package:EventApiModule-latest",
+        "test:package:ExternalFilterModule-latest"
       ],
       "configurations": {
         "update": {}
@@ -956,11 +950,10 @@
       "inputs": [],
       "outputs": [],
       "dependsOn": [
-        "test:package:NumberFilterModule-latest",
-        "test:package:PaginationModule-latest",
-        "test:package:PinnedRowModule-latest",
-        "test:package:QuickFilterModule-latest",
-        "test:package:RenderApiModule-latest"
+        "test:package:GridStateModule-latest",
+        "test:package:HighlightChangesModule-latest",
+        "test:package:InfiniteRowModelModule-latest",
+        "test:package:LargeTextEditorModule-latest"
       ],
       "configurations": {
         "update": {}
@@ -971,11 +964,10 @@
       "inputs": [],
       "outputs": [],
       "dependsOn": [
-        "test:package:RowApiModule-latest",
-        "test:package:RowAutoHeightModule-latest",
-        "test:package:RowDragModule-latest",
-        "test:package:RowSelectionModule-latest",
-        "test:package:RowStyleModule-latest"
+        "test:package:LocaleModule-latest",
+        "test:package:NumberEditorModule-latest",
+        "test:package:NumberFilterModule-latest",
+        "test:package:PaginationModule-latest"
       ],
       "configurations": {
         "update": {}
@@ -986,11 +978,10 @@
       "inputs": [],
       "outputs": [],
       "dependsOn": [
-        "test:package:ScrollApiModule-latest",
-        "test:package:SelectEditorModule-latest",
-        "test:package:TextEditorModule-latest",
-        "test:package:TextFilterModule-latest",
-        "test:package:TooltipModule-latest"
+        "test:package:PinnedRowModule-latest",
+        "test:package:QuickFilterModule-latest",
+        "test:package:RenderApiModule-latest",
+        "test:package:RowApiModule-latest"
       ],
       "configurations": {
         "update": {}
@@ -1001,11 +992,10 @@
       "inputs": [],
       "outputs": [],
       "dependsOn": [
-        "test:package:UndoRedoEditModule-latest",
-        "test:package:ValidationModule-latest",
-        "test:package:ValueCacheModule-latest",
-        "test:package:CellSpanModule-latest",
-        "test:package:AdvancedFilterModule-latest"
+        "test:package:RowAutoHeightModule-latest",
+        "test:package:RowDragModule-latest",
+        "test:package:RowSelectionModule-latest",
+        "test:package:RowStyleModule-latest"
       ],
       "configurations": {
         "update": {}
@@ -1016,11 +1006,10 @@
       "inputs": [],
       "outputs": [],
       "dependsOn": [
-        "test:package:AllEnterpriseModule-latest",
-        "test:package:CellSelectionModule-latest",
-        "test:package:ClipboardModule-latest",
-        "test:package:ColumnMenuModule-latest",
-        "test:package:ColumnsToolPanelModule-latest"
+        "test:package:ScrollApiModule-latest",
+        "test:package:SelectEditorModule-latest",
+        "test:package:TextEditorModule-latest",
+        "test:package:TextFilterModule-latest"
       ],
       "configurations": {
         "update": {}
@@ -1031,11 +1020,10 @@
       "inputs": [],
       "outputs": [],
       "dependsOn": [
-        "test:package:ContextMenuModule-latest",
-        "test:package:ExcelExportModule-latest",
-        "test:package:FiltersToolPanelModule-latest",
-        "test:package:FindModule-latest",
-        "test:package:GridChartsModule-latest"
+        "test:package:TooltipModule-latest",
+        "test:package:UndoRedoEditModule-latest",
+        "test:package:ValidationModule-latest",
+        "test:package:ValueCacheModule-latest"
       ],
       "configurations": {
         "update": {}
@@ -1046,11 +1034,10 @@
       "inputs": [],
       "outputs": [],
       "dependsOn": [
-        "test:package:IntegratedChartsModule-latest",
-        "test:package:GroupFilterModule-latest",
-        "test:package:MasterDetailModule-latest",
-        "test:package:MenuModule-latest",
-        "test:package:MultiFilterModule-latest"
+        "test:package:CellSpanModule-latest",
+        "test:package:AdvancedFilterModule-latest",
+        "test:package:AllEnterpriseModule-latest",
+        "test:package:CellSelectionModule-latest"
       ],
       "configurations": {
         "update": {}
@@ -1061,11 +1048,10 @@
       "inputs": [],
       "outputs": [],
       "dependsOn": [
-        "test:package:PivotModule-latest",
-        "test:package:RangeSelectionModule-latest",
-        "test:package:RichSelectModule-latest",
-        "test:package:RowNumbersModule-latest",
-        "test:package:RowGroupingModule-latest"
+        "test:package:ClipboardModule-latest",
+        "test:package:ColumnMenuModule-latest",
+        "test:package:ColumnsToolPanelModule-latest",
+        "test:package:ContextMenuModule-latest"
       ],
       "configurations": {
         "update": {}
@@ -1076,11 +1062,10 @@
       "inputs": [],
       "outputs": [],
       "dependsOn": [
-        "test:package:RowGroupingPanelModule-latest",
-        "test:package:ServerSideRowModelApiModule-latest",
-        "test:package:ServerSideRowModelModule-latest",
-        "test:package:SetFilterModule-latest",
-        "test:package:SideBarModule-latest"
+        "test:package:ExcelExportModule-latest",
+        "test:package:FiltersToolPanelModule-latest",
+        "test:package:FindModule-latest",
+        "test:package:GridChartsModule-latest"
       ],
       "configurations": {
         "update": {}
@@ -1091,7 +1076,62 @@
       "inputs": [],
       "outputs": [],
       "dependsOn": [
-        "test:package:SparklinesModule-latest",
+        "test:package:IntegratedChartsModule-latest",
+        "test:package:GroupFilterModule-latest",
+        "test:package:MasterDetailModule-latest",
+        "test:package:MenuModule-latest"
+      ],
+      "configurations": {
+        "update": {}
+      }
+    },
+    "test:package:shard-16": {
+      "executor": "nx:noop",
+      "inputs": [],
+      "outputs": [],
+      "dependsOn": [
+        "test:package:MultiFilterModule-latest",
+        "test:package:PivotModule-latest",
+        "test:package:RangeSelectionModule-latest",
+        "test:package:RichSelectModule-latest"
+      ],
+      "configurations": {
+        "update": {}
+      }
+    },
+    "test:package:shard-17": {
+      "executor": "nx:noop",
+      "inputs": [],
+      "outputs": [],
+      "dependsOn": [
+        "test:package:RowNumbersModule-latest",
+        "test:package:RowGroupingModule-latest",
+        "test:package:RowGroupingPanelModule-latest",
+        "test:package:ServerSideRowModelApiModule-latest"
+      ],
+      "configurations": {
+        "update": {}
+      }
+    },
+    "test:package:shard-18": {
+      "executor": "nx:noop",
+      "inputs": [],
+      "outputs": [],
+      "dependsOn": [
+        "test:package:ServerSideRowModelModule-latest",
+        "test:package:SetFilterModule-latest",
+        "test:package:SideBarModule-latest",
+        "test:package:SparklinesModule-latest"
+      ],
+      "configurations": {
+        "update": {}
+      }
+    },
+    "test:package:shard-19": {
+      "executor": "nx:noop",
+      "inputs": [],
+      "outputs": [],
+      "dependsOn": [
         "test:package:StatusBarModule-latest",
         "test:package:TreeDataModule-latest",
         "test:package:ViewportRowModelModule-latest"

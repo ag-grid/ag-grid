@@ -35,7 +35,7 @@ const shardTemplate = `
       }
     }`;
 
-const jobsPerShard = 5;
+const jobsPerShard = 4;
 const generatedTasks: { [key: string]: string } = {};
 
 const ROW_MODELS = [
