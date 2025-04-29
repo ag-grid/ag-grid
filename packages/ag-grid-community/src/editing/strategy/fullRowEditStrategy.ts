@@ -2,7 +2,7 @@ import type { BeanName } from '../../context/context';
 import type { CellFocusedEvent } from '../../events';
 import type { CellCtrl } from '../../rendering/cell/cellCtrl';
 import type { RowCtrl } from '../../rendering/row/rowCtrl';
-import type { CellIdPositions } from '../model/gridEditingModel';
+import type { CellIdPositions } from '../editingModelService';
 import { _resolveControllers, _resolveRowController } from '../utils/controllers';
 import { _destroyEditors, _getOldValue } from '../utils/editors';
 import { BaseEditStrategy } from './baseEditStrategy';
@@ -95,7 +95,7 @@ export class FullRowEditStrategy extends BaseEditStrategy {
         if (this.shouldStopEditing(rowCtrl)) {
             if (this.gos.get('batchEdit')) {
                 const cells = this.editModel.getEditingCellIds();
-                _destroyEditors(this.beans, this.editModel, cells, false, 'ui');
+                _destroyEditors(this.beans, cells, false, 'ui');
             } else {
                 this.stopAllEditing();
             }
@@ -140,7 +140,7 @@ export class FullRowEditStrategy extends BaseEditStrategy {
 
         this.setEditing(rowCtrl, false, oldState);
 
-        _destroyEditors(this.beans, this.editModel, edits, true, source);
+        _destroyEditors(this.beans, edits, true, source);
 
         return true;
     }
@@ -177,7 +177,7 @@ export class FullRowEditStrategy extends BaseEditStrategy {
 
         this.setEditing(rowCtrl!, false, oldState);
 
-        _destroyEditors(this.beans, this.editModel, edits, false, source);
+        _destroyEditors(this.beans, edits, false, source);
 
         return true;
     }

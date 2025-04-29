@@ -7,7 +7,7 @@ import type { ICellEditorComp, ICellEditorParams } from '../../interfaces/iCellE
 import type { UserCompDetails } from '../../interfaces/iUserCompDetails';
 import type { CellCtrl, ICellComp } from '../../rendering/cell/cellCtrl';
 import type { RowCtrl } from '../../rendering/row/rowCtrl';
-import type { CellIdPositions, GridEditingModel } from '../model/gridEditingModel';
+import type { CellIdPositions } from '../editingModelService';
 import { _resolveCellController, _resolveControllers } from './controllers';
 
 export function _setupEditors(
@@ -72,8 +72,7 @@ export function _getOldValue(beans: BeanCollection, cellCtrl?: CellCtrl): any {
     }
 
     const { column, rowNode } = cellCtrl;
-    const value = beans.valueSvc.getValue(column, rowNode, undefined, 'api');
-    return value;
+    return beans.valueSvc.getValue(column, rowNode, undefined, 'api');
 }
 
 export function _takeValueFromCellEditor(
@@ -172,8 +171,8 @@ export function _refreshEditorOnColDefChanged(beans: BeanCollection, cellCtrl: C
     }
 }
 
-export function _syncModelsFromEditors(beans: BeanCollection, gridEditModel: GridEditingModel): void {
-    gridEditModel.getEditingCellIds().forEach((cellId) => {
+export function _syncModelsFromEditors(beans: BeanCollection): void {
+    beans.editingModelSvc?.getEditingCellIds().forEach((cellId) => {
         const { rowCtrl, cellCtrl } = _resolveControllers(beans, cellId)!;
         const { comp } = cellCtrl!;
 
@@ -183,20 +182,21 @@ export function _syncModelsFromEditors(beans: BeanCollection, gridEditModel: Gri
             return;
         }
 
-        return _syncModelFromEditor(beans, gridEditModel, rowCtrl, cellCtrl, newValue);
+        return _syncModelFromEditor(beans, rowCtrl, cellCtrl, newValue);
     });
 }
 
 export function _syncModelFromEditor(
     beans: BeanCollection,
-    editModel: GridEditingModel,
     rowCtrl?: RowCtrl | null,
     cellCtrl?: CellCtrl | null,
     newValue?: any
 ): boolean | null {
     if (rowCtrl && cellCtrl && beans.editingSvc?.isEditing(rowCtrl, cellCtrl)) {
         const oldValue = beans.valueSvc.getValue(cellCtrl.column, rowCtrl.rowNode, undefined, 'api');
-        editModel?.getEditModel(rowCtrl.rowId as string, cellCtrl.column.getColId())?.setValues(oldValue, newValue);
+        beans.editingModelSvc
+            ?.getEditModel(rowCtrl.rowId as string, cellCtrl.column.getColId())
+            ?.setValues(oldValue, newValue);
         return true;
     }
     return null;
@@ -204,21 +204,19 @@ export function _syncModelFromEditor(
 
 export function _destroyEditors(
     beans: BeanCollection,
-    editModel: GridEditingModel,
     cellPositions: CellIdPositions[],
     cancel: boolean,
     source: 'ui' | 'api' = 'ui'
 ): void {
     cellPositions.forEach((cellPosition) => {
-        const cellCtrl = _resolveCellController(beans, cellPosition);
+        const { rowCtrl, cellCtrl } = _resolveControllers(beans, cellPosition);
 
-        _destroyEditor(beans, editModel, cellCtrl?.rowCtrl, cellCtrl, cancel, source);
+        _destroyEditor(beans, rowCtrl, cellCtrl, cancel, source);
     });
 }
 
 export function _destroyEditor(
     beans: BeanCollection,
-    editModel: GridEditingModel,
     rowCtrl?: RowCtrl | null,
     cellCtrl?: CellCtrl | null,
     cancel?: boolean,
@@ -235,7 +233,7 @@ export function _destroyEditor(
 
     const preserveBatchEdits = source !== 'api' && batchEdit && !cancel;
     if (preserveBatchEdits) {
-        _syncModelsFromEditors(beans, editModel);
+        _syncModelsFromEditors(beans);
     } else {
         oldValue = beans.valueSvc.getValueForDisplay(column, rowNode)?.value;
 

@@ -8,24 +8,24 @@ import type { IRowNode } from '../interfaces/iRowNode';
 import type { CellPosition } from '../main-umd-noStyles';
 import { CellCtrl } from '../rendering/cell/cellCtrl';
 import type { RowCtrl } from '../rendering/row/rowCtrl';
+import type { EditingModelService } from './editingModelService';
 import type { CellEditingModel } from './model/cellEditingModel';
-import { GridEditingModel } from './model/gridEditingModel';
 import type { BaseEditStrategy } from './strategy/baseEditStrategy';
 import { _addStopEditingWhenGridLosesFocus, _resolveControllers } from './utils/controllers';
 import { _getOldValue, _refreshEditorOnColDefChanged, _syncModelFromEditor } from './utils/editors';
 
 export class EditingService extends BeanStub implements NamedBean {
     beanName = 'editingSvc' as const;
-    private editModel?: GridEditingModel;
-    public editStrategy?: BaseEditStrategy;
+    private editModel?: EditingModelService;
+    private editStrategy?: BaseEditStrategy;
 
     postConstruct(): void {
-        this.editModel = new GridEditingModel(this.beans);
+        this.editModel = this.beans.editingModelSvc;
 
         this.addManagedPropertyListener(
             'editType',
             (({ currentValue }: any) => {
-                this.stopAllEditing();
+                this.stopAllEditing(true);
 
                 // will re-create if different
                 this.createEditStrategy(currentValue);
@@ -34,7 +34,7 @@ export class EditingService extends BeanStub implements NamedBean {
         this.addManagedPropertyListener(
             'batchEdit',
             (() => {
-                this.stopAllEditing();
+                this.stopAllEditing(true);
             }).bind(this)
         );
     }
@@ -52,7 +52,7 @@ export class EditingService extends BeanStub implements NamedBean {
         }
 
         return (this.editStrategy = this.createOptionalManagedBean(
-            beans.registry.createDynamicBean<BaseEditStrategy>(strategyName, true, this.editModel)
+            beans.registry.createDynamicBean<BaseEditStrategy>(strategyName, true)
         )!);
     }
 
@@ -266,7 +266,7 @@ export class EditingService extends BeanStub implements NamedBean {
     setDataValue(rowNode: RowNode, column: string | AgColumn<any>, newValue: any): boolean | null {
         const { rowCtrl, cellCtrl } = _resolveControllers(this.beans, { rowNode, column });
 
-        return _syncModelFromEditor(this.beans, this.editModel!, rowCtrl, cellCtrl, newValue);
+        return _syncModelFromEditor(this.beans, rowCtrl, cellCtrl, newValue);
     }
 
     public handleColDefChanged(cellCtrl: CellCtrl): void {

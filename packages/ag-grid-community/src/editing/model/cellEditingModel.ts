@@ -1,12 +1,10 @@
 export class CellEditingModel {
-    public rowId: string;
     public columnId: string;
 
-    oldValue: any;
-    newValue: any;
+    public oldValue: any;
+    public newValue: any;
 
-    constructor(rowId: string, columnId: string) {
-        this.rowId = rowId;
+    constructor(columnId: string) {
         this.columnId = columnId;
     }
 

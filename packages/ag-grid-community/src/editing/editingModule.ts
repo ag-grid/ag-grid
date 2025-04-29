@@ -23,6 +23,7 @@ import {
     stopEditing,
     undoCellEditing,
 } from './editingApi';
+import { EditingModelService } from './editingModelService';
 import { EditingService } from './editingService';
 import { FullRowEditStrategy } from './strategy/fullRowEditStrategy';
 import { SingleCellEditStrategy } from './strategy/singleCellEditStrategy';
@@ -33,7 +34,7 @@ import { SingleCellEditStrategy } from './strategy/singleCellEditStrategy';
 export const EditingCoreModule: _ModuleWithApi<_EditingGridApi<any>> = {
     moduleName: 'EditingCore',
     version: VERSION,
-    beans: [EditingService],
+    beans: [EditingModelService, EditingService],
     apiFunctions: {
         getEditingCells,
         getCellEditorInstances,

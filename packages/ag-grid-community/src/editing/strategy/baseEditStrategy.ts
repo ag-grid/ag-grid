@@ -6,13 +6,13 @@ import type { CellFocusedEvent } from '../../events';
 import type { DefaultProvidedCellEditorParams } from '../../interfaces/iCellEditor';
 import type { CellCtrl } from '../../rendering/cell/cellCtrl';
 import type { RowCtrl } from '../../rendering/row/rowCtrl';
-import type { CellIdPositions, GridEditingModel } from '../model/gridEditingModel';
+import type { CellIdPositions, EditingModelService } from '../editingModelService';
 import { _resolveCellController } from '../utils/controllers';
 import { _destroyEditor, _setupEditors, _syncModelsFromEditors } from '../utils/editors';
 
 export abstract class BaseEditStrategy extends BeanStub {
     beanName: BeanName | undefined;
-    protected editModel: GridEditingModel;
+    protected editModel: EditingModelService;
 
     public abstract startEditing(
         rowCtrl: RowCtrl,
@@ -21,12 +21,8 @@ export abstract class BaseEditStrategy extends BeanStub {
         event?: KeyboardEvent | MouseEvent | null,
         source?: 'api' | 'ui'
     ): boolean;
-    public abstract stopEditing?(rowCtrl?: RowCtrl | null, cellCtrl?: CellCtrl | null, source?: 'api' | 'ui'): boolean;
-    public abstract cancelEditing?(
-        rowCtrl?: RowCtrl | null,
-        cellCtrl?: CellCtrl | null,
-        source?: 'api' | 'ui'
-    ): boolean;
+    public abstract stopEditing(rowCtrl?: RowCtrl | null, cellCtrl?: CellCtrl | null, source?: 'api' | 'ui'): boolean;
+    public abstract cancelEditing(rowCtrl?: RowCtrl | null, cellCtrl?: CellCtrl | null, source?: 'api' | 'ui'): boolean;
 
     public abstract moveToNextEditingCell(
         previousCell: CellCtrl,
@@ -34,12 +30,8 @@ export abstract class BaseEditStrategy extends BeanStub {
         event?: KeyboardEvent
     ): boolean | null;
 
-    constructor(...args: any[]) {
-        super();
-        this.editModel = args[0];
-    }
-
     postConstruct(): void {
+        this.editModel = this.beans.editingModelSvc!;
         this.addManagedListeners(this.beans.eventSvc, {
             cellFocused: this.onCellFocusChanged?.bind(this),
             cellFocusCleared: this.onCellFocusChanged?.bind(this),
@@ -60,7 +52,7 @@ export abstract class BaseEditStrategy extends BeanStub {
 
             if (cellCtrl) {
                 this.editModel.stopEditing(cellCtrl.rowCtrl!.rowId!, cellCtrl?.column.colId);
-                _destroyEditor(this.beans, this.editModel, cellCtrl.rowCtrl, cellCtrl, undefined, source);
+                _destroyEditor(this.beans, cellCtrl.rowCtrl, cellCtrl, undefined, source);
             }
         });
     }
@@ -201,7 +193,7 @@ export abstract class BaseEditStrategy extends BeanStub {
     }
 
     protected onCellFocusChanged(_event: CellFocusedEvent<any, any>): void {
-        _syncModelsFromEditors(this.beans, this.editModel);
+        _syncModelsFromEditors(this.beans);
     }
 
     private deriveClickCount(colDef?: ColDef): number {
