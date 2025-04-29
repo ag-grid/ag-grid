@@ -161,12 +161,26 @@ function getTagsData({ definition, gridOpProp }: { definition: ChildDocEntry; gr
           ']'
         : defaultValue;
     const isInitial = tags.some((t) => t.name === 'initial') ?? false;
-    const agModule = tags.find((t) => t.name === 'agModule')?.comment.replace(/`/g, '');
+
+    // Get module from either tags or meta
+    const tagModule = tags.find((t) => t.name === 'agModule')?.comment.replace(/`/g, '');
+    const metaModule = gridOpProp?.meta?.module;
+    const moduleStr = tagModule || metaModule || '';
+
+    // Split by both forward slashes and handle multiple modules
+    const allModules = moduleStr
+        .split(/\s*\/\s*/)
+        .map((m) => m.trim())
+        .filter(Boolean);
+
+    const hasMultipleModules = allModules.length > 1;
 
     return {
         formattedDefaultValue,
         isInitial,
-        agModule,
+        agModule: allModules[0],
+        additionalModules: allModules.slice(1),
+        hasMultipleModules,
     };
 }
 
@@ -211,7 +225,10 @@ export const Property: FunctionComponent<{
         isObject,
         config,
     });
-    const { formattedDefaultValue, isInitial, agModule } = getTagsData({ definition, gridOpProp });
+    const { formattedDefaultValue, isInitial, agModule, additionalModules, hasMultipleModules } = getTagsData({
+        definition,
+        gridOpProp,
+    });
     const { more } = definition;
 
     const propertyRef = useRef<HTMLTableRowElement>(null);
@@ -349,20 +366,20 @@ export const Property: FunctionComponent<{
                                         >
                                             <Icon name="module" />
                                             <span>{agModule}</span>
-                                            <span className={styles.moduleCount}>+9</span>
-                                            <div className={styles.moduleTooltip}>
-                                                <div className={styles.moduleTooltipContent}>
-                                                    <div>AdvancedFilterModule</div>
-                                                    <div>ApiReferenceModule</div>
-                                                    <div>ClientSideRowModelModule</div>
-                                                    <div>ColumnMenuModule</div>
-                                                    <div>ExcelExportModule</div>
-                                                    <div>FilterModule</div>
-                                                    <div>GridChartsModule</div>
-                                                    <div>MasterDetailModule</div>
-                                                    <div>RangeSelectionModule</div>
-                                                </div>
-                                            </div>
+                                            {hasMultipleModules && (
+                                                <>
+                                                    <span className={styles.moduleCount}>
+                                                        +{additionalModules.length}
+                                                    </span>
+                                                    <div className={styles.moduleTooltip}>
+                                                        <div className={styles.moduleTooltipContent}>
+                                                            {additionalModules.map((module, index) => (
+                                                                <div key={index}>{module}</div>
+                                                            ))}
+                                                        </div>
+                                                    </div>
+                                                </>
+                                            )}
                                         </a>
                                     </div>
                                 )}
