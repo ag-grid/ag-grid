@@ -23,6 +23,8 @@ const VIEWPORT = 'Viewport';
 const FAKE_V_SCROLLBAR = 'fakeVScrollComp';
 const PINNED_VIEWPORT = 'pinnedViewport';
 
+const HORIZONTAL_PINNED_SOURCES = ['topLeft', 'left', 'bottomLeft', 'topRight', 'right', 'bottomRight'] as const;
+
 const HORIZONTAL_SOURCES = [
     'fakeHScrollComp',
     'centerHeader',
@@ -30,28 +32,21 @@ const HORIZONTAL_SOURCES = [
     'bottomCenter',
     'stickyTopCenter',
     'stickyBottomCenter',
-    'topLeft',
-    'left',
-    'bottomLeft',
-    'topRight',
-    'right',
-    'bottomRight',
 ] as const;
 
 type VerticalScrollSource = typeof VIEWPORT | typeof FAKE_V_SCROLLBAR | typeof PINNED_VIEWPORT;
-type HorizontalScrollSource = typeof VIEWPORT | (typeof HORIZONTAL_SOURCES)[number];
+type HorizontalScrollSource =
+    | typeof VIEWPORT
+    | (typeof HORIZONTAL_SOURCES)[number]
+    | (typeof HORIZONTAL_PINNED_SOURCES)[number];
 
 // timeout used for the debounceVerticalScrollbar property
 const SCROLL_DEBOUNCE_TIMEOUT = 100;
 // timeout used to fire onBodyScrollEnd and to reset last scroll source
 const SCROLL_END_TIMEOUT = 150;
 
-function debounceIf<T>(
-    shouldDebounce: boolean,
-    bindingCtx: BeanStub,
-    fn: (...args: T[]) => void
-): (...args: T[]) => void {
-    return shouldDebounce ? _debounce(bindingCtx, fn, SCROLL_DEBOUNCE_TIMEOUT) : fn;
+function debounceIf<T extends (...args: any[]) => void>(shouldDebounce: boolean, bindingCtx: BeanStub, fn: T): T {
+    return shouldDebounce ? (_debounce(bindingCtx, fn, SCROLL_DEBOUNCE_TIMEOUT) as T) : fn;
 }
 
 export interface ScrollPartner {
@@ -183,36 +178,32 @@ export class GridBodyScrollFeature extends BeanStub {
         const onVScroll = debounceIf(isDebounce, this, this.onVScroll.bind(this, VIEWPORT));
         const onFakeVScroll = debounceIf(isDebounce, this, this.onVScroll.bind(this, FAKE_V_SCROLLBAR));
         const onWheelVScroll = debounceIf(isDebounce, this, this.onWheel.bind(this, undefined));
-        const onWheelHScroll = debounceIf(isDebounce, this, this.onWheel.bind(this, undefined));
 
         this.addManagedElementListeners(this.eBodyViewport, { scroll: onVScroll });
         this.addManagedElementListeners(this.eTop, { wheel: onWheelVScroll });
         this.addManagedElementListeners(this.eBottom, { wheel: onWheelVScroll });
 
-        for (const container of ['topLeft', 'left', 'bottomLeft'] as const) {
-            this.addManagedElementListeners(this.ctrlsSvc.get(container).eViewport, {
-                wheel: onWheelHScroll.bind(container),
+        for (const container of HORIZONTAL_PINNED_SOURCES) {
+            const containerCtrl = this.ctrlsSvc.get(container);
+            this.addManagedElementListeners(containerCtrl.eViewport ?? containerCtrl.eContainer, {
+                wheel: debounceIf(isDebounce, this, this.onWheel.bind(this, container)),
             });
         }
 
         this.registerScrollPartner(fakeVScrollComp, onFakeVScroll);
     }
 
-    private onWheel(
-        container: 'topLeft' | 'left' | 'bottomLeft' | undefined,
-        { deltaX, deltaY, ...e }: WheelEvent
-    ): void {
+    private onWheel(container: (typeof HORIZONTAL_PINNED_SOURCES)[number] | undefined, e: WheelEvent): void {
         if (!this.gos.get('enableRowPinning')) {
             return;
         }
 
-        this.wheelDeltaX = deltaX;
-        this.wheelDeltaY = deltaY;
+        this.wheelDeltaX = e.deltaX;
+        this.wheelDeltaY = e.deltaY;
 
-        if (Math.abs(deltaX) < Math.abs(deltaY)) {
+        if (Math.abs(e.deltaX) < Math.abs(e.deltaY)) {
             this.onVScroll(PINNED_VIEWPORT);
         } else if (container) {
-            console.log({ deltaX, deltaY, container });
             this.onHScroll(container);
         }
 
@@ -267,6 +258,10 @@ export class GridBodyScrollFeature extends BeanStub {
             return this.centerRowsCtrl.eViewport;
         }
 
+        if (HORIZONTAL_PINNED_SOURCES.some((s) => s === source)) {
+            return this.ctrlsSvc.get(source as (typeof HORIZONTAL_PINNED_SOURCES)[number]).eContainer;
+        }
+
         return this.ctrlsSvc.get(source).eViewport;
     }
 
@@ -296,6 +291,7 @@ export class GridBodyScrollFeature extends BeanStub {
             return;
         }
         const newScrollLeft = _getScrollLeft(this.getViewportForSource(source), this.enableRtl) + this.wheelDeltaX;
+        console.log({ newScrollLeft });
 
         this.doHorizontalScroll(newScrollLeft);
         this.resetLastHScrollDebounced();
