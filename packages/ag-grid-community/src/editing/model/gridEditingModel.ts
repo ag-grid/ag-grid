@@ -1,8 +1,8 @@
 import type { BeanCollection } from '../../context/context';
+import { _getRowById } from '../../entities/positionUtils';
 import type { CellPosition } from '../../interfaces/iCellPosition';
 import type { CellCtrl } from '../../rendering/cell/cellCtrl';
 import type { RowCtrl } from '../../rendering/row/rowCtrl';
-import { _getRowById } from '../strategy/utils';
 import type { CellEditingModel } from './cellEditingModel';
 import { RowEditingModel } from './rowEditingModel';
 
@@ -19,13 +19,8 @@ export class GridEditingModel {
     constructor(private readonly beans: BeanCollection) {}
 
     private createEditModel(rowId: string, columnId: string) {
-        // console.warn('GridEditingModel: createEditModel', columnId);
-
         const rowModel = this.rowModels.get(rowId) ?? this.createRowModel(rowId);
-        const cellModel = rowModel.getEditModel(columnId);
-        if (!cellModel) {
-            rowModel.createEditModel(columnId);
-        }
+        return rowModel.getEditModel(columnId) ?? rowModel.createEditModel(columnId);
     }
 
     public removeEditModel(rowId: string, columnId?: string): void {
@@ -34,8 +29,6 @@ export class GridEditingModel {
         if (!rowModel) {
             return;
         }
-
-        // console.warn('GridEditingModel: removeEditModel', rowId, columnId);
 
         if (!columnId) {
             rowModel.destroy();
@@ -48,6 +41,10 @@ export class GridEditingModel {
         if (rowModel.getEditModelCount() === 0) {
             this.rowModels.delete(rowId);
         }
+    }
+
+    public getEditModel(rowId: string, columnId: string): CellEditingModel | undefined {
+        return this.rowModels.get(rowId)?.getEditModel(columnId);
     }
 
     public getEditModels(rowId?: string | null, columnId?: string | null): CellEditingModel[] {
@@ -114,18 +111,14 @@ export class GridEditingModel {
         return this.rowModels.size > 0;
     }
 
-    public startEditing(rowId: string, columnId: string): void {
-        // console.warn('GridEditingModel: startEditing', rowId, columnId);
-
-        this.createEditModel(rowId, columnId);
+    public startEditing(rowId: string, columnId: string): CellEditingModel {
+        return this.createEditModel(rowId, columnId);
     }
 
     public stopEditing(rowId?: string | null, colId?: string | null): void {
         if (!this._isEditing(rowId, colId)) {
             return;
         }
-
-        // console.warn('GridEditingModel: stopEditing', rowId, colId);
 
         if (rowId) {
             const rowModel = this.rowModels.get(rowId);
@@ -154,8 +147,6 @@ export class GridEditingModel {
         if (!this._isEditing(rowId, colId)) {
             return;
         }
-
-        // console.warn('GridEditingModel: cancelEditing', rowId, colId);
 
         if (rowId) {
             const rowModel = this.rowModels.get(rowId);

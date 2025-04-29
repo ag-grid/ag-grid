@@ -126,6 +126,23 @@ export function _getCellByPosition(beans: BeanCollection, cellPosition: CellPosi
     return rowCtrl.getCellCtrl(cellPosition.column as AgColumn);
 }
 
+export function _getRowById(beans: BeanCollection, rowId: string, rowPinned?: RowPinnedType): RowNode | undefined {
+    const { rowModel: rm, pinnedRowModel: prm } = beans;
+
+    let node;
+
+    node ??= rm?.getRowNode(rowId);
+
+    if (rowPinned) {
+        node ??= prm?.getPinnedRowById(rowId, rowPinned!);
+    } else {
+        node ??= prm?.getPinnedRowById(rowId, 'top');
+        node ??= prm?.getPinnedRowById(rowId, 'bottom');
+    }
+
+    return node;
+}
+
 export function _getRowAbove(beans: BeanCollection, rowPosition: RowPosition): RowPosition | null {
     const { rowIndex: index, rowPinned: pinned } = rowPosition;
     const { pageBounds, pinnedRowModel, rowModel } = beans;

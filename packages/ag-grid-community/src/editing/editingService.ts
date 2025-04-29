@@ -1,4 +1,3 @@
-import { _getCellEditorDetails } from '../components/framework/userCompUtils';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import { PopupEditorWrapper } from '../edit/cellEditors/popupEditorWrapper';
@@ -12,7 +11,8 @@ import type { RowCtrl } from '../rendering/row/rowCtrl';
 import type { CellEditingModel } from './model/cellEditingModel';
 import { GridEditingModel } from './model/gridEditingModel';
 import type { BaseEditStrategy } from './strategy/baseEditStrategy';
-import { _addStopEditingWhenGridLosesFocus, _createCellEditorParams, _resolveControllers } from './strategy/utils';
+import { _addStopEditingWhenGridLosesFocus, _resolveControllers } from './utils/controllers';
+import { _getOldValue, _refreshEditorOnColDefChanged, _syncModelFromEditor } from './utils/editors';
 
 export class EditingService extends BeanStub implements NamedBean {
     beanName = 'editingSvc' as const;
@@ -127,12 +127,6 @@ export class EditingService extends BeanStub implements NamedBean {
             return false;
         }
 
-        if (this.isEditing(rowCtrl, cellCtrl)) {
-            return true;
-        }
-
-        console.warn('EditingService: startEditing');
-
         return this.editStrategy!.startEditing?.(rowCtrl, cellCtrl, key, event, source);
     }
 
@@ -173,7 +167,6 @@ export class EditingService extends BeanStub implements NamedBean {
     }
 
     public stopAllEditing(cancel: boolean = false, source: 'api' | 'ui' = 'ui'): void {
-        console.warn('EditingService: stopAllEditing');
         if (this.isEditing()) {
             if (cancel) {
                 this.editStrategy?.cancelEditing?.(undefined, undefined, source);
@@ -248,11 +241,11 @@ export class EditingService extends BeanStub implements NamedBean {
 
         const { rowCtrl, cellCtrl } = _resolveControllers(this.beans, { rowId, colId });
         if (this.isEditing(rowCtrl, cellCtrl)) {
-            const result = this.editModel?.getEditModels(rowId, colId)?.[0] as CellEditingModel;
-            return result;
+            const { oldValue, newValue } = this.editModel?.getEditModel(rowId, colId) as CellEditingModel;
+            return { oldValue, newValue };
         }
 
-        const oldValue = this.beans.valueSvc.getValue(cellCtrl?.column as any, rowCtrl?.rowNode, undefined, 'api');
+        const oldValue = _getOldValue(this.beans, cellCtrl);
 
         return {
             oldValue,
@@ -270,26 +263,14 @@ export class EditingService extends BeanStub implements NamedBean {
         return new PopupEditorWrapper(params);
     }
 
-    setDataValue(rowNode: RowNode, colKey: string | AgColumn<any>, newValue: any): boolean | null {
-        const { rowCtrl, cellCtrl } = _resolveControllers(this.beans, { rowNode, column: colKey });
+    setDataValue(rowNode: RowNode, column: string | AgColumn<any>, newValue: any): boolean | null {
+        const { rowCtrl, cellCtrl } = _resolveControllers(this.beans, { rowNode, column });
 
-        if (rowCtrl && cellCtrl && this.isEditing(rowCtrl, cellCtrl)) {
-            this.editModel?.getEditModels(rowCtrl?.rowId, cellCtrl.column.getColId())?.[0].updateValue(newValue);
-            return true;
-        }
-
-        return null;
+        return _syncModelFromEditor(this.beans, this.editModel!, rowCtrl, cellCtrl, newValue);
     }
 
     public handleColDefChanged(cellCtrl: CellCtrl): void {
-        const cellEditor = cellCtrl.comp?.getCellEditor();
-        if (cellEditor?.refresh) {
-            const { eventKey, cellStartedEdit } = cellCtrl.editCompDetails!.params;
-            const editorParams = _createCellEditorParams(this.beans, cellCtrl, eventKey, cellStartedEdit);
-            const colDef = cellCtrl.column.getColDef();
-            const compDetails = _getCellEditorDetails(this.beans.userCompFactory, colDef, editorParams);
-            cellEditor.refresh(compDetails!.params);
-        }
+        _refreshEditorOnColDefChanged(this.beans, cellCtrl);
     }
 
     public override destroy(): void {
