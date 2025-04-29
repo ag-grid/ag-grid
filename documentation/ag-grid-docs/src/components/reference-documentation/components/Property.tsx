@@ -300,23 +300,6 @@ export const Property: FunctionComponent<{
                                         </a>
                                     </div>
                                 )}
-
-                                {agModule && !config.hideModule && (
-                                    <div className={classnames(styles.metaItem)}>
-                                        <span className={classnames(styles.metaValue, styles.defaultValue)}>
-                                            <span className={styles.defaultLabel}>module: </span>
-                                            <a
-                                                className={classnames(styles.metaValue)}
-                                                href={urlWithPrefix({
-                                                    url: './modules/#selecting-modules',
-                                                    framework,
-                                                })}
-                                            >
-                                                {agModule}
-                                            </a>
-                                        </span>
-                                    </div>
-                                )}
                             </div>
                         </div>
                         <div className={styles.rightColumn}>
@@ -354,6 +337,20 @@ export const Property: FunctionComponent<{
                                         {more.name}
                                         <Icon name="newTab" />
                                     </a>
+                                )}
+
+                                {agModule && !config.hideModule && (
+                                    <div className={classnames(styles.metaItem, styles.moduleItem)}>
+                                        <a
+                                            href={urlWithPrefix({
+                                                url: './modules/#selecting-modules',
+                                                framework,
+                                            })}
+                                        >
+                                            <Icon name="module" />
+                                            <span>{agModule}</span>
+                                        </a>
+                                    </div>
                                 )}
                             </div>
                         </div>

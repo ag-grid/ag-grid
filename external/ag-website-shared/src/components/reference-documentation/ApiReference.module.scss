@@ -507,3 +507,16 @@ button.seeMore {
         padding-left: $spacing-size-6;
     }
 }
+
+.moduleItem {
+    font-family: var(--text-monospace-font-family);
+
+    span {
+        margin-top: 2px;
+    }
+    svg {
+        height: 16px;
+        width: 16px;
+        margin-right: $spacing-size-2;
+    }
+}
