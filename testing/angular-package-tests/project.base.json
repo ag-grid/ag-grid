@@ -13,19 +13,11 @@
         "test:package:local-18",
         "test:package:local-19",
         "test:package:local-latest",
-        "test:package:production-19"
+        "test:package:production-19",
+-- generated-task-names --
       ],
       "configurations": {
         "update": {}
-      }
-    },
-    "test:package:test": {
-      "dependsOn": ["^pack"],
-      "command": "{projectRoot}/run.sh -o csrmm-tfm -e latest",
-      "configurations": {
-        "update": {
-          "command": "{projectRoot}/run.sh -u 17"
-        }
       }
     },
     "test:package:local-17": {
@@ -77,7 +69,8 @@
     "test:package:editor": {
       "dependsOn": ["^pack"],
       "command": "{projectRoot}/run.sh -n -e latest"
-    }
+    },
+-- generated-tasks --
   },
   "implicitDependencies": ["ag-grid-community", "ag-grid-enterprise", "ag-grid-angular"]
 }

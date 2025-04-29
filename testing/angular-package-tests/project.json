@@ -9,23 +9,11 @@
       "inputs": [],
       "outputs": [],
       "dependsOn": [
-        "test:package:local-17",
-        "test:package:local-18",
-        "test:package:local-19",
-        "test:package:local-latest",
-        "test:package:production-19"
+        "test:package:csrmm_tfm-latest",
+        "test:package:accm_icm-latest"
       ],
       "configurations": {
         "update": {}
-      }
-    },
-    "test:package:test": {
-      "dependsOn": ["^pack"],
-      "command": "{projectRoot}/run.sh -o csrmm-tfm -e latest",
-      "configurations": {
-        "update": {
-          "command": "{projectRoot}/run.sh -u 17"
-        }
       }
     },
     "test:package:local-17": {
@@ -77,6 +65,52 @@
     "test:package:editor": {
       "dependsOn": ["^pack"],
       "command": "{projectRoot}/run.sh -n -e latest"
+    },
+
+    "test:package:csrmm_tfm-latest": {
+      "dependsOn": ["^pack"],
+      "command": "{projectRoot}/run.sh -o csrmm_tfm -e latest",
+      "configurations": {
+        "update": {
+          "command": "{projectRoot}/run.sh -o csrmm_tfm -u latest"
+        }
+      }
+    },
+    "test:package:accm_icm-latest": {
+      "dependsOn": ["^pack"],
+      "command": "{projectRoot}/run.sh -o accm_icm -e latest",
+      "configurations": {
+        "update": {
+          "command": "{projectRoot}/run.sh -o accm_icm -u latest"
+        }
+      }
+    },
+    "test:package:acem_icm-latest": {
+      "dependsOn": ["^pack"],
+      "command": "{projectRoot}/run.sh -o acem_icm -e latest",
+      "configurations": {
+        "update": {
+          "command": "{projectRoot}/run.sh -o acem_icm -u latest"
+        }
+      }
+    },
+    "test:package:accm_sm-latest": {
+      "dependsOn": ["^pack"],
+      "command": "{projectRoot}/run.sh -o accm_sm -e latest",
+      "configurations": {
+        "update": {
+          "command": "{projectRoot}/run.sh -o accm_sm -u latest"
+        }
+      }
+    },
+    "test:package:acem_sm-latest": {
+      "dependsOn": ["^pack"],
+      "command": "{projectRoot}/run.sh -o acem_sm -e latest",
+      "configurations": {
+        "update": {
+          "command": "{projectRoot}/run.sh -o acem_sm -u latest"
+        }
+      }
     }
   },
   "implicitDependencies": ["ag-grid-community", "ag-grid-enterprise", "ag-grid-angular"]
