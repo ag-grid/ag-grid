@@ -249,7 +249,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
         }
         if (sameGrid) {
             delta = targetRowIndex - (source.rowIndex ?? targetRowIndex);
-            if (delta && rows.includes(target)) {
+            if (rows.includes(target)) {
                 target = this.getPrevOrNextTarget(rows, delta) ?? target;
             }
         }
