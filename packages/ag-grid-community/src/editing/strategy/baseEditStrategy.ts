@@ -1,21 +1,14 @@
-import { _getCellEditorDetails } from '../../components/framework/userCompUtils';
 import { KeyCode } from '../../constants/keyCode';
 import { BeanStub } from '../../context/beanStub';
-import type { BeanCollection, BeanName } from '../../context/context';
+import type { BeanName } from '../../context/context';
 import type { ColDef } from '../../entities/colDef';
 import type { CellFocusedEvent } from '../../events';
-import type { DefaultProvidedCellEditorParams, ICellEditorComp } from '../../interfaces/iCellEditor';
-import type { UserCompDetails } from '../../interfaces/iUserCompDetails';
+import type { DefaultProvidedCellEditorParams } from '../../interfaces/iCellEditor';
 import type { CellCtrl } from '../../rendering/cell/cellCtrl';
 import type { RowCtrl } from '../../rendering/row/rowCtrl';
 import type { CellIdPositions, GridEditingModel } from '../model/gridEditingModel';
-import {
-    _createCellEditorParams,
-    _resolveCellController,
-    _saveNewValue,
-    _takeValueFromCellEditor,
-    _updatePendingValue,
-} from './utils';
+import { _resolveCellController } from '../utils/controllers';
+import { _destroyEditor, _setupEditors, _syncModelsFromEditors } from '../utils/editors';
 
 export abstract class BaseEditStrategy extends BeanStub {
     beanName: BeanName | undefined;
@@ -67,7 +60,7 @@ export abstract class BaseEditStrategy extends BeanStub {
 
             if (cellCtrl) {
                 this.editModel.stopEditing(cellCtrl.rowCtrl!.rowId!, cellCtrl?.column.colId);
-                this.destroyEditor(cellCtrl.rowCtrl, cellCtrl, undefined, source);
+                _destroyEditor(this.beans, this.editModel, cellCtrl.rowCtrl, cellCtrl, undefined, source);
             }
         });
     }
@@ -102,18 +95,6 @@ export abstract class BaseEditStrategy extends BeanStub {
         }
     }
 
-    setDataValue(rowCtrl: RowCtrl, cellCtrl: CellCtrl, newValue: any): boolean | null {
-        if (rowCtrl && cellCtrl) {
-            if (this.shouldStopEditing(rowCtrl, cellCtrl)) {
-                this.stopAllEditing();
-            }
-
-            this.editModel?.getEditModels(rowCtrl.rowId, cellCtrl.column.getColId())?.[0].updateValue(newValue);
-            return true;
-        }
-        return null;
-    }
-
     protected finishStartEdit(
         editingCells: CellIdPositions[],
         rowCtrl?: RowCtrl | null,
@@ -122,7 +103,7 @@ export abstract class BaseEditStrategy extends BeanStub {
         cellStartedEdit?: boolean,
         event?: Event | null
     ) {
-        const compDetails = this.setupEditors(editingCells, rowCtrl, cellCtrl, key, cellStartedEdit);
+        const compDetails = _setupEditors(this.beans, editingCells, rowCtrl, cellCtrl, key, cellStartedEdit);
         const suppressPreventDefault = !(compDetails?.params as DefaultProvidedCellEditorParams)
             ?.suppressPreventDefault;
 
@@ -135,120 +116,6 @@ export abstract class BaseEditStrategy extends BeanStub {
         }
 
         return suppressPreventDefault;
-    }
-
-    public setupEditors(
-        editingCells: CellIdPositions[],
-        rowCtrl?: RowCtrl | null,
-        cellCtrl?: CellCtrl | null,
-        key?: string | null,
-        cellStartedEdit?: boolean | null
-    ): UserCompDetails<ICellEditorComp<any, any, any>> | undefined {
-        // console.warn('BaseEditStrategy: setupEditors');
-
-        if (editingCells.length === 0 && cellCtrl) {
-            return this.setupEditor(cellCtrl, key, cellStartedEdit);
-        }
-
-        let startedCompDetails: UserCompDetails<ICellEditorComp<any, any, any>> | undefined;
-
-        for (const cellPosition of editingCells) {
-            const curCellCtrl = _resolveCellController(this.beans, cellPosition);
-
-            if (!curCellCtrl) {
-                continue;
-            }
-
-            const shouldStartEditing = cellStartedEdit && rowCtrl === curCellCtrl.rowCtrl && curCellCtrl === cellCtrl;
-
-            const compDetails = this.setupEditor(curCellCtrl, key, shouldStartEditing);
-
-            if (shouldStartEditing) {
-                startedCompDetails = compDetails;
-            }
-        }
-
-        return startedCompDetails;
-    }
-
-    private setupEditor(
-        cellCtrl: CellCtrl,
-        key?: string | null,
-        cellStartedEdit?: boolean | null
-    ): UserCompDetails<ICellEditorComp<any, any, any>> | undefined {
-        // console.warn('BaseEditStrategy: setupEditor');
-        const editorParams = _createCellEditorParams(this.beans, cellCtrl, key, cellStartedEdit);
-        const colDef = cellCtrl.column.getColDef();
-        const compDetails = _getCellEditorDetails(this.beans.userCompFactory, colDef, editorParams);
-
-        // if cellEditorSelector was used, we give preference to popup and popupPosition from the selector
-        const popup = compDetails?.popupFromSelector != null ? compDetails.popupFromSelector : !!colDef.cellEditorPopup;
-        const position: 'over' | 'under' | undefined =
-            compDetails?.popupPositionFromSelector != null
-                ? compDetails.popupPositionFromSelector
-                : colDef.cellEditorPopupPosition;
-
-        cellCtrl.editCompDetails = compDetails;
-        cellCtrl.comp.setEditDetails(compDetails, popup, position, this.gos.get('reactiveCustomComponents'));
-
-        return compDetails;
-    }
-
-    protected destroyEditors(cellPositions: CellIdPositions[], cancel: boolean, source: 'ui' | 'api' = 'ui'): void {
-        // console.warn('BaseEditStrategy: destroyEditors');
-
-        cellPositions.forEach((cellPosition) => {
-            const cellCtrl = _resolveCellController(this.beans, cellPosition);
-
-            this.destroyEditor(cellCtrl?.rowCtrl, cellCtrl, cancel, source);
-        });
-    }
-
-    protected destroyEditor(
-        rowCtrl?: RowCtrl | null,
-        cellCtrl?: CellCtrl | null,
-        cancel?: boolean,
-        source: 'ui' | 'api' = 'ui'
-    ): void {
-        const batchEdit = this.beans.gos.get('batchEdit');
-
-        // console.warn('BaseEditStrategy: destroyEditor');
-        const { comp, column, rowNode } = cellCtrl!;
-
-        const { newValue, newValueExists } = _takeValueFromCellEditor(false, comp);
-
-        let valueChanged = false;
-        let oldValue: any;
-
-        const preserveBatchEdits = source !== 'api' && batchEdit && !cancel;
-        if (preserveBatchEdits) {
-            // console.warn('BaseEditStrategy: destroyEditor - batchEdit');
-            _updatePendingValue(this.beans, this.editModel);
-        } else {
-            oldValue = this.beans.valueSvc.getValueForDisplay(column, rowNode)?.value;
-
-            if (!cancel && newValueExists) {
-                valueChanged = _saveNewValue(cellCtrl!, oldValue, newValue, rowNode, column);
-            }
-        }
-
-        comp.setEditDetails(); // passing nothing stops editing
-        comp.refreshEditStyles(false, false);
-        cellCtrl?.updateAndFormatValue(false);
-        cellCtrl?.refreshCell({ forceRefresh: true, suppressFlash: true, editing: false });
-
-        if (!preserveBatchEdits) {
-            this.eventSvc.dispatchEvent({
-                ...cellCtrl!.createEvent(null, 'cellEditingStopped'),
-                oldValue,
-                newValue,
-                valueChanged,
-            });
-
-            rowCtrl?.forEachGui(undefined, (gui) => {
-                gui.rowComp.toggleCss('ag-row-editing', false);
-            });
-        }
     }
 
     shouldStartEditing(
@@ -334,7 +201,7 @@ export abstract class BaseEditStrategy extends BeanStub {
     }
 
     protected onCellFocusChanged(_event: CellFocusedEvent<any, any>): void {
-        _updatePendingValue(this.beans, this.editModel);
+        _syncModelsFromEditors(this.beans, this.editModel);
     }
 
     private deriveClickCount(colDef?: ColDef): number {

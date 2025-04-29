@@ -8,7 +8,7 @@ import { _getActiveDomElement } from '../gridOptionsUtils';
 import type { GetCellEditorInstancesParams, ICellEditor } from '../interfaces/iCellEditor';
 import type { CellPosition } from '../interfaces/iCellPosition';
 import { _warn } from '../validation/logging';
-import { _resolveControllers, _resolveRowController } from './strategy/utils';
+import { _resolveControllers, _resolveRowController } from './utils/controllers';
 
 export function undoCellEditing(beans: BeanCollection): void {
     beans.undoRedo?.undo('api');

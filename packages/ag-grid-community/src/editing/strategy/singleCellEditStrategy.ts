@@ -3,8 +3,9 @@ import type { CellFocusedEvent, CommonCellFocusParams } from '../../events';
 import type { Column } from '../../interfaces/iColumn';
 import type { CellCtrl } from '../../rendering/cell/cellCtrl';
 import type { RowCtrl } from '../../rendering/row/rowCtrl';
+import { _resolveControllers } from '../utils/controllers';
+import { _destroyEditors, _getOldValue } from '../utils/editors';
 import { BaseEditStrategy } from './baseEditStrategy';
-import { _resolveControllers } from './utils';
 
 export class SingleCellEditStrategy extends BaseEditStrategy {
     override beanName = 'singleCell' as BeanName | undefined;
@@ -30,7 +31,7 @@ export class SingleCellEditStrategy extends BaseEditStrategy {
     public startEditing(
         rowCtrl: RowCtrl,
         cellCtrl?: CellCtrl,
-        key?: string | null | undefined,
+        _key?: string | null | undefined,
         event?: KeyboardEvent | MouseEvent | null,
         _source: 'api' | 'ui' = 'ui'
     ): boolean {
@@ -38,20 +39,11 @@ export class SingleCellEditStrategy extends BaseEditStrategy {
         if (shouldStop) {
             if (this.gos.get('batchEdit')) {
                 const cells = this.editModel.getEditingCellIds();
-                this.destroyEditors(cells, false, 'ui');
+                _destroyEditors(this.beans, this.editModel, cells, false, 'ui');
             } else {
                 this.stopAllEditing();
             }
         }
-
-        console.warn(
-            'SingleCellEditStrategy: startEditing',
-            rowCtrl?.rowId,
-            cellCtrl?.column.colId,
-            key,
-            event,
-            shouldStop
-        );
 
         const rowId = rowCtrl.rowId!;
         const colId = cellCtrl?.column.getColId() ?? this.beans.visibleCols.getFirstColumn()!.getColId();
@@ -59,7 +51,8 @@ export class SingleCellEditStrategy extends BaseEditStrategy {
         this.rowId = rowId;
         this.colId = colId;
 
-        this.editModel.startEditing(rowId, colId);
+        const cellModel = this.editModel.startEditing(rowId, colId);
+        cellModel.oldValue = _getOldValue(this.beans, cellCtrl);
 
         return this.finishStartEdit(
             [
@@ -81,13 +74,11 @@ export class SingleCellEditStrategy extends BaseEditStrategy {
             return false;
         }
 
-        console.warn('SingleCellEditStrategy: stopEditing', rowCtrl?.rowId, cellCtrl?.column.colId);
-
         const cells = this.editModel.getEditingCellIds();
 
         this.editModel.stopEditing(rowCtrl?.rowId, cellCtrl?.column.colId);
 
-        this.destroyEditors(cells, false, source);
+        _destroyEditors(this.beans, this.editModel, cells, false, source);
 
         this.rowId = undefined;
         this.colId = undefined;
@@ -100,13 +91,11 @@ export class SingleCellEditStrategy extends BaseEditStrategy {
             return false;
         }
 
-        console.warn('SingleCellEditStrategy: cancelEditing', rowCtrl?.rowId, cellCtrl?.column.colId);
-
         const cells = this.editModel.getEditingCellIds();
 
         this.editModel.cancelEditing(rowCtrl?.rowId, cellCtrl?.column.colId);
 
-        this.destroyEditors(cells, true, source);
+        _destroyEditors(this.beans, this.editModel, cells, true, source);
 
         this.rowId = undefined;
         this.colId = undefined;
@@ -160,7 +149,7 @@ export class SingleCellEditStrategy extends BaseEditStrategy {
 
         this.startEditing(nextCell.rowCtrl, nextCell, null, event);
 
-        nextCell.focusCell(false);
+        // nextCell.focusCell(false);
         return true;
     }
 }

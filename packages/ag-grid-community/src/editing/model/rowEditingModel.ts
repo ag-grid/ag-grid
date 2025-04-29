@@ -9,18 +9,17 @@ export class RowEditingModel {
     }
 
     public getEditModel(columnId: string): CellEditingModel | undefined {
-        // console.warn('RowEditingModel: getEditModel', columnId);
         return this.editorModels.get(columnId);
     }
 
-    public createEditModel(columnId: string): boolean {
-        // console.warn('RowEditingModel: createEditModel', columnId);
-
-        if (!this.editorModels.has(columnId)) {
-            this.editorModels.set(columnId, new CellEditingModel(this.rowId, columnId));
-            return true;
+    public createEditModel(columnId: string): CellEditingModel {
+        if (this.editorModels.has(columnId)) {
+            return this.editorModels.get(columnId)!;
+        } else {
+            const model = new CellEditingModel(this.rowId, columnId);
+            this.editorModels.set(columnId, model);
+            return model;
         }
-        return false;
     }
 
     public getEditModelCount(): number {
@@ -28,7 +27,6 @@ export class RowEditingModel {
     }
 
     public removeEditModel(columnId: string): boolean {
-        // console.warn('RowEditingModel: removeEditModel', columnId);
         if (!this.editorModels.has(columnId)) {
             return false;
         }
@@ -49,7 +47,6 @@ export class RowEditingModel {
     }
 
     destroy() {
-        // console.warn('RowEditingModel: destroy', this.rowId);
         this.editorModels.clear();
     }
 }

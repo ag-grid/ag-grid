@@ -2,9 +2,10 @@ import type { BeanName } from '../../context/context';
 import type { CellFocusedEvent } from '../../events';
 import type { CellCtrl } from '../../rendering/cell/cellCtrl';
 import type { RowCtrl } from '../../rendering/row/rowCtrl';
-import { CellIdPositions } from '../model/gridEditingModel';
+import type { CellIdPositions } from '../model/gridEditingModel';
+import { _resolveControllers, _resolveRowController } from '../utils/controllers';
+import { _destroyEditors, _getOldValue } from '../utils/editors';
 import { BaseEditStrategy } from './baseEditStrategy';
-import { _resolveControllers, _resolveRowController } from './utils';
 
 export class FullRowEditStrategy extends BaseEditStrategy {
     override beanName = 'fullRow' as BeanName | undefined;
@@ -14,8 +15,6 @@ export class FullRowEditStrategy extends BaseEditStrategy {
         if (oldState === newState) {
             return;
         }
-
-        // console.warn('FullRowEditStrategy: setEditing');
 
         if (!rowCtrl) {
             rowCtrl = _resolveRowController(this.beans, {
@@ -47,7 +46,7 @@ export class FullRowEditStrategy extends BaseEditStrategy {
         _cellCtrl?: CellCtrl | undefined,
         key?: string | null | undefined,
         event?: KeyboardEvent | MouseEvent | null | undefined,
-        source: 'api' | 'ui' = 'ui'
+        _source: 'api' | 'ui' = 'ui'
     ): boolean | null {
         const oldRowCtrl = _resolveRowController(this.beans, {
             rowId: this.rowId,
@@ -91,14 +90,12 @@ export class FullRowEditStrategy extends BaseEditStrategy {
         event?: KeyboardEvent | MouseEvent | null | undefined,
         _source: 'api' | 'ui' = 'ui'
     ): boolean {
-        console.warn('FullRowEditStrategy: startEditing');
-
         const oldState = this.isEditing(rowCtrl);
 
         if (this.shouldStopEditing(rowCtrl)) {
             if (this.gos.get('batchEdit')) {
                 const cells = this.editModel.getEditingCellIds();
-                this.destroyEditors(cells, false, 'ui');
+                _destroyEditors(this.beans, this.editModel, cells, false, 'ui');
             } else {
                 this.stopAllEditing();
             }
@@ -110,7 +107,9 @@ export class FullRowEditStrategy extends BaseEditStrategy {
         const cells: CellIdPositions[] = [];
 
         cellCtrls.forEach((cellCtrl) => {
-            this.editModel.startEditing(rowCtrl.rowId!, cellCtrl.column.colId);
+            const cellModel = this.editModel.startEditing(rowCtrl.rowId!, cellCtrl.column.colId);
+            cellModel.oldValue = _getOldValue(this.beans, cellCtrl);
+
             cells.push({
                 rowId: rowCtrl.rowId!,
                 columnId: cellCtrl.column.getColId(),
@@ -131,8 +130,6 @@ export class FullRowEditStrategy extends BaseEditStrategy {
             return false;
         }
 
-        console.warn('FullRowEditStrategy: cancelEditing');
-
         const edits = this.editModel.getEditingCellIds();
 
         if (rowCtrl) {
@@ -143,7 +140,7 @@ export class FullRowEditStrategy extends BaseEditStrategy {
 
         this.setEditing(rowCtrl, false, oldState);
 
-        this.destroyEditors(edits, true, source);
+        _destroyEditors(this.beans, this.editModel, edits, true, source);
 
         return true;
     }
@@ -170,8 +167,6 @@ export class FullRowEditStrategy extends BaseEditStrategy {
             return false;
         }
 
-        console.warn('FullRowEditStrategy: stopEditing');
-
         const edits = this.editModel.getEditingCellIds();
 
         if (rowCtrl) {
@@ -182,7 +177,7 @@ export class FullRowEditStrategy extends BaseEditStrategy {
 
         this.setEditing(rowCtrl!, false, oldState);
 
-        this.destroyEditors(edits, false, source);
+        _destroyEditors(this.beans, this.editModel, edits, false, source);
 
         return true;
     }
