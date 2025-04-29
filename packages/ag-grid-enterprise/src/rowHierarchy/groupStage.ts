@@ -28,6 +28,10 @@ export class GroupStage<TData> extends BeanStub implements NamedBean, IRowNodeSt
     private approach: GroupingApproach | null = null;
     private strategy: IRowGroupingStrategy<TData> | undefined = undefined;
 
+    public get setParent() {
+        return this.strategy?.setParent;
+    }
+
     public override destroy(): void {
         super.destroy();
         this.strategy = undefined;
@@ -92,7 +96,6 @@ const resetGrouping = <TData>(rootNode: RowGroupingRowNode<TData>): void => {
         if (sibling) {
             resetChildRowGrouping(sibling);
         }
-        row.treeParent = null;
         row.parent = rootNode;
         row.level = 0;
         row.key = null;

@@ -28,10 +28,15 @@ export interface StageExecuteParams<TData = any> {
 }
 
 export interface IRowGroupingStrategy<TData = any> extends Bean {
+    /** If not undefined, the parent of a row can be changed calling this function before invoking the grouping stage. Used for drag'n'drop */
+    readonly setParent?: (row: RowNode<TData>, newParent: RowNode<TData>) => boolean;
     execute(params: StageExecuteParams<TData>): void;
 }
 
 export interface IRowNodeStage<TResult = any, TData = any> {
+    /** If not undefined, the parent of a row can be changed calling this function before invoking the grouping stage. Used for drag'n'drop */
+    readonly setParent?: (row: RowNode<TData>, newParent: RowNode<TData>) => boolean;
+
     step: ClientSideRowModelStage;
     refreshProps: Set<keyof GridOptions>;
     execute(params: StageExecuteParams<TData>): TResult;
