@@ -15,7 +15,7 @@ import type {
     IGroupCellRendererCtrl,
     UserCompDetails,
 } from 'ag-grid-community';
-import { _escapeString } from 'ag-grid-community';
+import { _toString } from 'ag-grid-community';
 
 import { BeansContext } from '../beansContext';
 import { showJsComp } from '../jsComp';
@@ -100,7 +100,7 @@ const GroupCellRenderer = forwardRef((props: GroupCellRendererParams, ref) => {
     const useFwRenderer = innerCompDetails && innerCompDetails.componentFromFramework;
     const FwRenderer = useFwRenderer ? innerCompDetails!.componentClass : undefined;
     const useValue = innerCompDetails == null && value != null;
-    const escapedValue = _escapeString(value, true);
+    const escapedValue = _toString(value);
 
     // if there is no ColDef, it means this is a Full Width Group, then we need to add `role="gridcell"`.
     return (

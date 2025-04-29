@@ -1315,7 +1315,7 @@ export interface GridOptions<TData = any> {
      * Set to `true` to allow pinning rows to top or bottom.
      * Set to `'top'` to allow pinning rows to the top only.
      * Set to `'bottom'` to allow pinning rows to the bottom only.
-     * @agModule `ManualPinnedRowModule`
+     * @agModule `PinnedRowModule`
      */
     enableRowPinning?: boolean | 'top' | 'bottom';
     /**
@@ -1323,7 +1323,7 @@ export interface GridOptions<TData = any> {
      * Return `false` if the grid should prevent the row from being pinned
      *
      * When not defined, all rows default to pinnable.
-     * @agModule `ManualPinnedRowModule`
+     * @agModule `PinnedRowModule`
      */
     isRowPinnable?: IsRowPinnable<TData>;
     /**
@@ -2153,9 +2153,18 @@ export interface GridOptions<TData = any> {
 
     // *** Editing *** //
     /**
-     * Value has changed after editing (this event will not fire if editing was cancelled, eg ESC was pressed) or
-     *  if cell value has changed as a result of cut, paste, cell clear (pressing Delete key),
-     * fill handle, copy range down, undo and redo.
+     * Cell value has changed. This occurs after the following scenarios:
+     * - Editing. Will not fire if any of the following are true:
+     *     new value is the same as old value;
+     *     `readOnlyEdit = true`;
+     *     editing was cancelled (e.g. Escape key was pressed);
+     *     or new value is of the wrong cell data type for the column.
+     *  - Cut.
+     *  - Paste.
+     *  - Cell clear (pressing Delete key).
+     *  - Fill handle.
+     *  - Copy range down.
+     *  - Undo and redo.
      */
     onCellValueChanged?(event: CellValueChangedEvent<TData>): void;
     /**

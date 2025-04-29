@@ -57,7 +57,7 @@ export function LinkIcon({
             className={classnames(linkStyles.linkIcon, aStyles, { [linkStyles.active]: linkActive }, className)}
             onClick={onClick}
         >
-            <span className={tooltipStyles}>{linkCopied ? 'Link copied!' : 'Copy'}</span>
+            <span className={tooltipStyles}>{linkCopied ? 'Link copied!' : 'Copy Link'}</span>
             <Icon name="link" />
         </a>
     );

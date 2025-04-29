@@ -1072,14 +1072,14 @@ export interface Props<TData> {
          * Set to `true` to allow pinning rows to top or bottom.
          * Set to `'top'` to allow pinning rows to the top only.
          * Set to `'bottom'` to allow pinning rows to the bottom only.
-         * @agModule `ManualPinnedRowModule`
+         * @agModule `PinnedRowModule`
          */
     enableRowPinning?: boolean | 'top' | 'bottom' | undefined,
     /** Return `true` if the grid should allow the row to be manually pinned.
          * Return `false` if the grid should prevent the row from being pinned
          *
          * When not defined, all rows default to pinnable.
-         * @agModule `ManualPinnedRowModule`
+         * @agModule `PinnedRowModule`
          */
     isRowPinnable?: IsRowPinnable<TData> | undefined,
     /** Called for every row in the grid.

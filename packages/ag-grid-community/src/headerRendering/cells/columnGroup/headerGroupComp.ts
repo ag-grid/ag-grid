@@ -11,7 +11,7 @@ import { _isStopPropagationForAgGrid, _stopPropagationForAgGrid } from '../../..
 import { _exists } from '../../../utils/generic';
 import type { IconName } from '../../../utils/icon';
 import { _createIconNoSpan } from '../../../utils/icon';
-import { _escapeString } from '../../../utils/string';
+import { _toString } from '../../../utils/string';
 import { _warn } from '../../../validation/logging';
 import { Component, RefPlaceholder } from '../../../widgets/component';
 
@@ -238,8 +238,7 @@ export class HeaderGroupComp extends Component implements IHeaderGroupComp {
         const hasInnerComponent = this.innerHeaderGroupComponent || this.isLoadingInnerComponent;
 
         if (_exists(displayName) && !hasInnerComponent) {
-            const displayNameSanitised = _escapeString(displayName, true);
-            this.agLabel.textContent = displayNameSanitised!;
+            this.agLabel.textContent = _toString(displayName);
         }
 
         this.toggleCss('ag-sticky-label', !columnGroup.getColGroupDef()?.suppressStickyLabel);

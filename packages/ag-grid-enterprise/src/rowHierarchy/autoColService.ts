@@ -84,12 +84,12 @@ export class AutoColService extends BeanStub implements NamedBean, IColumnCollec
         const list = this.generateAutoCols(rowGroupCols);
         const autoColsSame = _areColIdsEqual(list, this.columns?.list || null);
 
-        // the new tree dept will equal the current tree dept of cols
+        // the new tree depth will equal the current tree depth of cols
         const newTreeDepth = cols.treeDepth;
         const oldTreeDepth = this.columns ? this.columns.treeDepth : -1;
-        const treeDeptSame = oldTreeDepth == newTreeDepth;
+        const treeDepthSame = oldTreeDepth == newTreeDepth;
 
-        if (autoColsSame && treeDeptSame) {
+        if (autoColsSame && treeDepthSame) {
             return;
         }
 

@@ -178,7 +178,7 @@ export class MenuService extends BeanStub implements NamedBean {
                         headerCellCtrl.getAnchorElementForMenu(filtersOnly),
                         containerType,
                         onClosedCallback,
-                        true
+                        filtersOnly
                     );
                 }
             });

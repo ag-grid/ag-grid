@@ -18,11 +18,11 @@ import {
     BeanStub,
     _addGridCommonParams,
     _debounce,
-    _escapeString,
     _isClientSideRowModel,
     _isFullWidthGroupRow,
     _jsonEquals,
     _missing,
+    _toString,
     isColumnSelectionCol,
     isRowNumberCol,
 } from 'ag-grid-community';
@@ -43,7 +43,7 @@ function getMatchesForValue(
     caseFormat: (value?: string | null) => string | undefined,
     valueToFind: string | null
 ): number {
-    const finalValue = caseFormat(_escapeString(valueToFind, true));
+    const finalValue = caseFormat(_toString(valueToFind));
     let numMatches = 0;
     if (finalValue?.length) {
         // there can be multiple matches per cell, so find them all
@@ -209,7 +209,7 @@ export class FindService extends BeanStub implements NamedBean, IFindService {
     public getParts(params: FindCellValueParams): FindPart[] {
         const { value, node, column, precedingNumMatches } = params;
         const findSearchValue = this.findSearchValue;
-        const stringValue = _escapeString(value, true) ?? '';
+        const stringValue = _toString(value) ?? '';
         if (_missing(findSearchValue)) {
             return [{ value: stringValue }];
         }

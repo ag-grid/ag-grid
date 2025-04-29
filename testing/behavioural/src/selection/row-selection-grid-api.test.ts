@@ -1,7 +1,7 @@
 import type { MockInstance } from 'vitest';
 
 import type { GetRowIdParams, GridApi, GridOptions } from 'ag-grid-community';
-import { ClientSideRowModelModule } from 'ag-grid-community';
+import { ClientSideRowModelModule, RowSelectionModule } from 'ag-grid-community';
 import { RowGroupingModule, ServerSideRowModelModule } from 'ag-grid-enterprise';
 
 import { TestGridsManager } from '../test-utils';
@@ -19,7 +19,7 @@ describe('Row Selection Grid API', () => {
     let consoleWarnSpy: MockInstance;
 
     const gridMgr = new TestGridsManager({
-        modules: [ClientSideRowModelModule, ServerSideRowModelModule, RowGroupingModule],
+        modules: [ClientSideRowModelModule, ServerSideRowModelModule, RowGroupingModule, RowSelectionModule],
     });
 
     function createGrid(gridOptions: GridOptions): [GridApi, GridActions] {
@@ -237,6 +237,17 @@ describe('Row Selection Grid API', () => {
 
                     assertSelectedRowNodes(toSelect, api);
                 });
+
+                test('API calls will update selection context for bulk selection', () => {
+                    const [api, actions] = createGrid({ columnDefs, rowData, rowSelection: { mode: 'multiRow' } });
+
+                    const nodes = api.getRenderedNodes();
+                    const toSelect = [nodes[3]];
+                    api.setNodesSelected({ nodes: toSelect, newValue: true });
+
+                    actions.toggleCheckboxByIndex(5, { shiftKey: true });
+                    assertSelectedRowsByIndex([3, 4, 5], api);
+                });
             });
 
             describe('selectAll', () => {
@@ -299,6 +310,30 @@ describe('Row Selection Grid API', () => {
                     api.setNodesSelected({ nodes: toSelect, newValue: true });
 
                     assertSelectedRowNodes(toSelect, api);
+                });
+
+                test('API calls will update selection context for bulk selection', async () => {
+                    const [api, actions] = createGrid({
+                        columnDefs,
+                        rowModelType: 'serverSide',
+                        serverSideDatasource: {
+                            getRows(params) {
+                                params.success({ rowData });
+                            },
+                        },
+                        getRowId(params) {
+                            return params.data.sport;
+                        },
+                        rowSelection: { mode: 'multiRow' },
+                    });
+
+                    await waitForEvent('firstDataRendered', api);
+                    const nodes = api.getRenderedNodes();
+                    const toSelect = [nodes[3]];
+                    api.setNodesSelected({ nodes: toSelect, newValue: true });
+
+                    actions.toggleCheckboxByIndex(5, { shiftKey: true });
+                    assertSelectedRowsByIndex([3, 4, 5], api);
                 });
             });
         });

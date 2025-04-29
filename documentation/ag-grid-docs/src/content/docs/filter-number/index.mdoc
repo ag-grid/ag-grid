@@ -2,20 +2,30 @@
 title: "Number Filter"
 ---
 
-Number Filters allow you to filter number data.
+Number Filters allow you to filter numeric data.
 
 {% imageCaption imagePath="resources/number-filter.png" alt="Number Filter" centered=true /%}
 
 ## Enabling Number Filters
 
-The Number Filter can be configured as shown below:
+{% gridExampleRunner title="Number Filter" name="number-filter" /%}
+
+The Number Filter is the default filter used in AG Grid Community for columns with number [Cell Data Type](./cell-data-types/), but it can also be explicitly configured as shown below:
 
 ```{% frameworkTransform=true %}
 const gridOptions = {
     columnDefs: [
         {
-            field: 'age',
-            // configure column to use the Number Filter
+            field: 'price',
+            // Number Filter is used by default in Community version for numeric columns
+            filter: true,
+            filterParams: {
+                // pass in additional parameters to the Number Filter
+            },
+        },
+        {
+            field: 'quantity',
+            // explicitly configure column to use the Number Filter
             filter: 'agNumberColumnFilter',
             filterParams: {
                 // pass in additional parameters to the Number Filter
@@ -24,16 +34,6 @@ const gridOptions = {
     ],
 }
 ```
-
-## Example: Number Filter
-
-The example below shows the Number Filter in action:
-
-* The first column shows the default Number Filter behaviour.
-* The second column demonstrates [Custom Number Support](#custom-number-support) and uses commas for decimals and allows a dollar sign ($) to be included.
-* Floating filters are enabled and also react to the configuration of `allowedCharPattern`.
-
-{% gridExampleRunner title="Number Filter" name="number-filter" /%}
 
 ## Number Filter Parameters
 
@@ -74,9 +74,14 @@ The `numberParser` should take the user-entered text and return either a number 
 
 The `numberFormatter` should take a number (e.g. from the Filter Model) and convert it into the formatted text to be displayed, or `null` if no value.
 
-Custom number support can be seen in the [Number Filter Example](#example-number-filter) above.
-
 An `allowedCharPattern` of `\\d\\-\\.` will give similar behaviour to the default `number` input.
+
+The following example demonstrates custom number support:
+* The first column shows the default Number Filter behaviour.
+* The second column demonstrates custom number support, and uses commas for decimals and allows a dollar sign ($) to be included.
+* Floating filters are enabled and also react to the configuration of `allowedCharPattern`.
+
+{% gridExampleRunner title="Custom Number Support" name="custom-number-support" /%}
 
 ## Number Filter Model
 

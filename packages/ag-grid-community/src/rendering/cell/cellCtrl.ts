@@ -88,7 +88,6 @@ export type CellCtrlInstanceId = BrandedType<string, 'CellCtrlInstanceId'>;
 
 export class CellCtrl extends BeanStub {
     public readonly instanceId: CellCtrlInstanceId;
-    public readonly colIdSanitised: string;
 
     public eGui: HTMLElement;
 
@@ -136,10 +135,9 @@ export class CellCtrl extends BeanStub {
         super();
         this.beans = beans;
 
-        const { colId, colIdSanitised } = column;
+        const { colId } = column;
         // unique id to this instance, including the column ID to help with debugging in React as it's used in 'key'
         this.instanceId = (colId + '-' + instanceIdSequence++) as CellCtrlInstanceId;
-        this.colIdSanitised = colIdSanitised;
 
         this.createCellPosition();
         this.updateAndFormatValue(false);

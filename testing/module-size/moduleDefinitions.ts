@@ -6,7 +6,7 @@ import {
 
 export const AllGridCommunityModules: Record<`${CommunityModuleName}Module`, number> = {
     AlignedGridsModule: 3.06,
-    AllCommunityModule: 405,
+    AllCommunityModule: 410,
     CellApiModule: 0.28,
     CellStyleModule: 2.24,
     CheckboxEditorModule: 18.81,
@@ -66,7 +66,7 @@ export const AllEnterpriseModules: Record<`${EnterpriseModuleName}Module`, numbe
     MasterDetailModule: 82,
     MenuModule: 153,
     MultiFilterModule: 121,
-    PivotModule: 90.61,
+    PivotModule: 93.6,
     RangeSelectionModule: 53,
     RichSelectModule: 77,
     RowNumbersModule: 26,

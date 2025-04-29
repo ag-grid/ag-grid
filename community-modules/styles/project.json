@@ -65,6 +65,7 @@
     },
     "stylelint": {
       "executor": "nx:run-commands",
+      "dependsOn": ["build:styles"],
       "inputs": [],
       "outputs": [],
       "options": {

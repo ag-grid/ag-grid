@@ -15,11 +15,11 @@ import {
     _addGridCommonParams,
     _clearElement,
     _createElement,
-    _escapeString,
     _exists,
     _getEditorRendererDetails,
     _setAriaSelected,
     _shouldDisplayTooltip,
+    _toString,
 } from 'ag-grid-community';
 
 import type { AgRichSelect } from './agRichSelect';
@@ -126,7 +126,7 @@ export class RichSelectRow<TValue> extends Component {
         const span = _createElement({ tag: 'span' });
         span.style.overflow = 'hidden';
         span.style.textOverflow = 'ellipsis';
-        const parsedValue = _escapeString(_exists(valueFormatted) ? valueFormatted : value, true);
+        const parsedValue = _toString(_exists(valueFormatted) ? valueFormatted : value);
         this.parsedValue = _exists(parsedValue) ? parsedValue : null;
 
         eGui.appendChild(span);

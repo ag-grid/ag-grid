@@ -58,9 +58,25 @@ function getBoundingClientRect(this: HTMLElement): DOMRect {
             height = headerHeight;
             break;
         }
+
         case 'row': {
             const rowIndex = parseInt(this.getAttribute('row-index') || '0', 10);
-            top = rowIndex * rowHeight;
+            const paginationOffset = getPaginationOffset(this);
+            const adjustedRowIndex = rowIndex - paginationOffset;
+            top = adjustedRowIndex * rowHeight;
+            height = rowHeight;
+            break;
+        }
+
+        case 'cell': {
+            const rowIndex = parseInt(this.getAttribute('row-index') || '0', 10);
+            const colIndex = parseInt(this.getAttribute('col-index') || '0', 10);
+            const paginationOffset = getPaginationOffset(this);
+            const adjustedRowIndex = rowIndex - paginationOffset;
+
+            top = adjustedRowIndex * rowHeight;
+            left = colIndex * columnWidth;
+            width = columnWidth;
             height = rowHeight;
             break;
         }
@@ -71,16 +87,6 @@ function getBoundingClientRect(this: HTMLElement): DOMRect {
                 new DOMRect(0, 0, 75, mockGridLayout.rowHeight);
 
             return new DOMRect(cellRect.left, cellRect.top, mockGridLayout.dragHandleWidth, cellRect.height);
-        }
-
-        case 'cell': {
-            const rowIndex = parseInt(this.getAttribute('row-index') || '0', 10);
-            const colIndex = parseInt(this.getAttribute('col-index') || '0', 10);
-            top = rowIndex * rowHeight;
-            left = colIndex * columnWidth;
-            width = columnWidth;
-            height = rowHeight;
-            break;
         }
 
         case 'body':
@@ -158,4 +164,24 @@ function init(): boolean {
     });
 
     return true;
+}
+
+function getPaginationOffset(el: HTMLElement): number {
+    const body = el.closest('.ag-body');
+    if (!body) {
+        return 0;
+    }
+
+    const rows = body.querySelectorAll('.ag-row');
+    let minIndex = Infinity;
+
+    for (let i = 0; i < rows.length; i++) {
+        const rowIndexAttr = rows[i].getAttribute('row-index');
+        if (rowIndexAttr) {
+            const idx = parseInt(rowIndexAttr, 10);
+            minIndex = idx < minIndex ? idx : minIndex;
+        }
+    }
+
+    return isFinite(minIndex) ? minIndex : 0;
 }
