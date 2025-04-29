@@ -10,6 +10,12 @@ The following [Column Definition](./column-definitions/) properties set Tooltips
 
 {% interfaceDocumentation interfaceName="ColDef" names=["tooltipField", "tooltipValueGetter","headerTooltip"] overrideSrc="tooltips/tooltips.json" config={"description":""} /%}
 
+## Tooltip Show Mode
+
+It's possible to configure tooltips to show only when the items hovered are truncated by setting `tooltipShowMode = 'whenTruncated'`.
+
+{% gridExampleRunner title="Tooltips" name="tooltip-show-mode" /%}
+
 ## Show and Hide Delay
 
 Tooltips show after 2 seconds and hide after 10 seconds. Set `tooltipShowDelay` and `tooltipHideDelay` to override these values. The example below has `tooltipShowDelay=0` (shows immediately) and `tooltipHideDelay=2000` (hides in 2,000 milliseconds, or 2 seconds).

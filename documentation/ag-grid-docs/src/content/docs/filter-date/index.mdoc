@@ -6,14 +6,26 @@ Date Filters allow you to filter date data.
 
 {% imageCaption imagePath="resources/date-filter.png" alt="Date Filter" centered=true /%}
 
-Configure as follows:
+## Enabling Date Filters
+
+{% gridExampleRunner title="Date Filter" name="date-filter" /%}
+
+The Date Filter is the default filter used in AG Grid Community for columns with date [Cell Data Type](./cell-data-types/), but it can also be explicitly configured as shown below:
 
 ```{% frameworkTransform=true %}
 const gridOptions = {
     columnDefs: [
         {
-            field: 'date',
-            // configure column to use the Date Filter
+            field: 'startDate',
+            // Date Filter is used by default in Community version for date columns
+            filter: true,
+            filterParams: {
+                // pass in additional parameters to the Date Filter
+            },
+        },
+        {
+            field: 'endDate',
+            // explicitly configure column to use the Date Filter
             filter: 'agDateColumnFilter',
             filterParams: {
                 // pass in additional parameters to the Date Filter
@@ -23,18 +35,7 @@ const gridOptions = {
 }
 ```
 
-The example below shows the Date Filter in action:
-
-* The **Date** column is using a Date Filter.
-* A [Date Filter Comparator](#date-filter-comparator) is provided to parse the data and allow date comparisons to be made.
-* The minimum valid year is set to `2000`, and maximum valid year is `2021`. Dates outside this range will be considered invalid, and will:
-  * Deactivate the column filter. This avoids the filter getting applied as the user is typing a year - for example suppose the user is typing the year `2008`, the filter doesn't execute for values `2`, `20` or `200` (as the text `2008` is partially typed).
-  * Be highlighted with a red border (default theme) or other theme-appropriate highlight.
-* the `inRangeFloatingFilterDateFormat` property has been set to define a custom date format, this is only shown in the floating filter panel when an in-range filter has been applied.
-
-{% gridExampleRunner title="Date Picker" name="date-filter"  exampleHeight=520 /%}
-
-## Configuration
+## Date Filter Parameters
 
 Date Filters are configured though the `filterParams` attribute of the column definition (`IDateFilterParams` interface):
 
@@ -44,10 +45,13 @@ Date Filters are configured though the `filterParams` attribute of the column de
 
 The example below demonstrates configuring date range filtering in the Date Filter with minimum and maximum validation dates:
 
-* The `minValidDate` parameter is set to `2008-01-08` using a string.
-* The `maxValidDate` is dynamically set to tomorrow's date using JavaScript's Date object.
-* Together, `minValidDate` and `maxValidDate` restrict the selectable date range.
-* Any manually entered or selected dates outside the valid range will be invalid.
+* For the **Start Date** column:
+  * The `minValidDate` parameter is set to `'2000-01-01'` using a string.
+  * The `maxValidDate` is dynamically set to tomorrow's date using a `Date` object.
+* For the **End Date** column:
+  * The `minValidYear` parameter is set to `2010`.
+  * The `maxValidYear` parameter is set to `2030`.
+* Dates outside the valid ranges will be invalid.
 
 {% gridExampleRunner title="Setting Date Range For Filter" name="range-for-date-filter"  exampleHeight=520 /%}
 
@@ -55,7 +59,9 @@ The example below demonstrates configuring date range filtering in the Date Filt
 
 Dates can be represented in your data in many ways e.g. as a JavaScript `Date` object, as a string in a particular format such as `'26-MAR-2020'`, or something else. How you represent dates will be particular to your application.
 
-By default, the date filter assumes you are using JavaScript `Date` objects. If this is the case, the date filter will work out of the box. However, if your date is in any other format you will have to provide your own `comparator` to perform the date comparisons.
+The Date Filter will automatically be configured to work correctly if the [Cell Data Type](./cell-data-types/) is `date` or `dateString`.
+
+If you are not using Cell Data Types (and the cell value is not a `Date` object, which will also work automatically), then a `comparator` needs to be configured to allow the Date Filter to perform the date comparisons.
 
 {% interfaceDocumentation interfaceName="IDateFilterParams" names=["comparator"] config={"description":"", "overrideBottomMargin":"1rem"} /%}
 
@@ -67,7 +73,7 @@ The `comparator` function takes two parameters. The first parameter is a JavaScr
 
 This pattern is intended to be similar to the JavaScript `compareTo(a, b)` function.
 
-Below is an example of using a date filter with a comparator.
+A date filter with a comparator can be configured similar to the following:
 
 ```{% frameworkTransform=true %}
 const gridOptions = {
@@ -111,6 +117,10 @@ const gridOptions = {
 Once the date comparator callback is provided, then the Date Filter is able to perform all the comparison operations it needs, e.g. 'Less Than', 'Greater Than' and 'Equals'.
 
 If the cell values can contain invalid dates, then the `isValidDate` filter param should be implemented alongside `comparator` to allow the invalid date values to be filtered out.
+
+The example below demonstrates configuring a comparator:
+
+{% gridExampleRunner title="Date Filter Comparator" name="date-filter-comparator" /%}
 
 ## Filter Model
 

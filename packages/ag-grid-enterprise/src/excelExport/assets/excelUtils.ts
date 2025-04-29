@@ -170,7 +170,7 @@ export const buildSharedString = (strMap: Map<string, number>): XmlElement[] => 
 
         const child: XmlElement = {
             name: 't',
-            textNode: _escapeString(replaceInvisibleCharacters(textNode), false),
+            textNode: _escapeString(replaceInvisibleCharacters(textNode)),
         };
 
         // if we have leading or trailing spaces, instruct Excel not to trim them

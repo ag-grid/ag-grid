@@ -93,6 +93,12 @@ const COLUMN_DEFINITION_VALIDATIONS: () => Validations<ColDef | ColGroupDef> = (
     const validations: Validations<ColDef | ColGroupDef> = {
         autoHeight: {
             supportedRowModels: ['clientSide', 'serverSide'],
+            validate: (_colDef, { paginationAutoPageSize }) => {
+                if (paginationAutoPageSize) {
+                    return 'colDef.autoHeight is not supported with paginationAutoPageSize.';
+                }
+                return null;
+            },
         },
         cellRendererParams: {
             validate: (colDef) => {

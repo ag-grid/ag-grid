@@ -1,5 +1,5 @@
 // columns
-export { _updateColumnState, _addColumnDefaultAndTypes, _createColumnTree } from './columns/columnFactoryUtils';
+export { _updateColumnState, _addColumnDefaultAndTypes, _createColumnTreeWithIds } from './columns/columnFactoryUtils';
 export type { ColumnGroupService } from './columns/columnGroups/columnGroupService';
 export type { ColumnModel } from './columns/columnModel';
 export { ColumnCollections as _ColumnCollections, ColKey } from './columns/columnModel';
@@ -733,6 +733,7 @@ export {
     SideBarState,
     SortState,
 } from './interfaces/gridState';
+export { convertColumnGroupState, convertColumnState } from './misc/state/stateUtils';
 
 // uncatalogued
 export { IRowModel, RowBounds, RowModelType } from './interfaces/iRowModel';
@@ -1040,7 +1041,7 @@ export { _exists, _missing, _jsonEquals, _toStringOrNull, _makeNull, _defaultCom
 export { _isEventFromPrintableCharacter } from './utils/keyboard';
 export { _formatNumberCommas } from './utils/number';
 export { _mergeDeep } from './utils/object';
-export { _escapeString } from './utils/string';
+export { _escapeString, _toString } from './utils/string';
 
 export { AgPromise, _isPromise } from './utils/promise';
 export {

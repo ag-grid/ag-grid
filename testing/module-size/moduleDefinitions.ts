@@ -66,7 +66,7 @@ export const AllEnterpriseModules: Record<`${EnterpriseModuleName}Module`, numbe
     MasterDetailModule: 82,
     MenuModule: 153,
     MultiFilterModule: 121,
-    PivotModule: 90.61,
+    PivotModule: 93.6,
     RangeSelectionModule: 53,
     RichSelectModule: 77,
     RowNumbersModule: 26,
