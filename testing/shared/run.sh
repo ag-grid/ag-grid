@@ -168,7 +168,7 @@ mv ../e2e ../playwright.config.ts ./
 export FW_VERSION=${version}
 export FW_TYPE=${fw}
 export FW_DEV_PORT=${dev_port}
-export FW_VARIANT=${overrides_subdir}
+export FW_VARIANT=${overrides_subdir:-}
 if ${production} ; then
     export FW_VERSION=production-$FW_VERSION
 fi

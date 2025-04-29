@@ -146,7 +146,7 @@
     },
     "test:package:editor": {
       "dependsOn": ["^pack"],
-      "command": "{projectRoot}/run.sh -n -e latest"
+      "command": "{projectRoot}/run.sh -n latest"
     },
 
     "test:package:ClientSideRowModelModule-TextFilterModule-latest": {
@@ -1020,7 +1020,6 @@
       "inputs": [],
       "outputs": [],
       "dependsOn": [
-        "test:package:TooltipModule-latest",
         "test:package:UndoRedoEditModule-latest",
         "test:package:ValidationModule-latest",
         "test:package:ValueCacheModule-latest"
@@ -1120,7 +1119,6 @@
       "dependsOn": [
         "test:package:ServerSideRowModelModule-latest",
         "test:package:SetFilterModule-latest",
-        "test:package:SideBarModule-latest",
         "test:package:SparklinesModule-latest"
       ],
       "configurations": {
