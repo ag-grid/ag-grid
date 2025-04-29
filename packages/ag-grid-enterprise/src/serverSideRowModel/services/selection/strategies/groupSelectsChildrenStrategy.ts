@@ -180,7 +180,7 @@ export class GroupSelectsChildrenStrategy extends BeanStub implements ISelection
             this.recursivelySelectNode(idPathToNode, this.selectedState, newValue);
         });
         this.removeRedundantState();
-        if (source.startsWith('api')) {
+        if (source === 'api') {
             this.selectionCtx.setRoot(nodes[0]);
         }
         return 1;

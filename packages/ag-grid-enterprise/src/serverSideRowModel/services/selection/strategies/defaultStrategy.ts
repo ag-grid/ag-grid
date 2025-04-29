@@ -125,7 +125,7 @@ export class DefaultStrategy extends BeanStub implements ISelectionStrategy {
                     toggledNodes: new Set(),
                 };
             }
-            if (source.startsWith('api')) {
+            if (source === 'api') {
                 this.selectionCtx.setRoot(node);
             }
             return 1;
