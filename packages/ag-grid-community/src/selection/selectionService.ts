@@ -612,7 +612,8 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
 
     public setSelectionState(
         state: string[] | ServerSideRowSelectionState | ServerSideRowGroupSelectionState,
-        source: SelectionEventSourceType
+        source: SelectionEventSourceType,
+        clearSelection?: boolean
     ): void {
         if (!Array.isArray(state)) {
             _error(103);
@@ -628,6 +629,7 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
         this.setNodesSelected({
             newValue: true,
             nodes,
+            clearSelection,
             source,
         });
     }

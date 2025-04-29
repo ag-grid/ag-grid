@@ -9,7 +9,7 @@ export interface IExpansionService {
         hasChildrenChanged: () => void;
     };
 
-    expandRows(rowIds: string[]): void;
+    expandRows(rowIdsToExpand: string[], rowIdsToCollapse?: string[]): void;
 
     expandAll(value: boolean): void;
 

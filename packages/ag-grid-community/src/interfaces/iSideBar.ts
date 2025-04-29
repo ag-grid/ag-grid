@@ -19,6 +19,7 @@ export interface ISideBar {
     isDisplayed(): boolean;
     getDef(): SideBarDef | undefined;
     getState(): SideBarState;
+    setState(state: SideBarState): void;
 }
 
 export interface ToolPanelDef {
