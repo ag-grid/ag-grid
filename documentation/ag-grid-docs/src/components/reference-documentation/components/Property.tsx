@@ -349,6 +349,20 @@ export const Property: FunctionComponent<{
                                         >
                                             <Icon name="module" />
                                             <span>{agModule}</span>
+                                            <span className={styles.moduleCount}>+9</span>
+                                            <div className={styles.moduleTooltip}>
+                                                <div className={styles.moduleTooltipContent}>
+                                                    <div>AdvancedFilterModule</div>
+                                                    <div>ApiReferenceModule</div>
+                                                    <div>ClientSideRowModelModule</div>
+                                                    <div>ColumnMenuModule</div>
+                                                    <div>ExcelExportModule</div>
+                                                    <div>FilterModule</div>
+                                                    <div>GridChartsModule</div>
+                                                    <div>MasterDetailModule</div>
+                                                    <div>RangeSelectionModule</div>
+                                                </div>
+                                            </div>
                                         </a>
                                     </div>
                                 )}
