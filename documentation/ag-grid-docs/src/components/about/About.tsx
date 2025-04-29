@@ -298,14 +298,6 @@ export const About = () => {
                         </div>
                         <div>
                             <img
-                                src={urlWithBaseUrl('/images/team/simon.jpg')}
-                                alt="Simon Kenny, Customer Experience Manager"
-                            />
-                            <h3>Simon Kenny</h3>
-                            <p>Sales Director</p>
-                        </div>
-                        <div>
-                            <img
                                 src={urlWithBaseUrl('/images/team/nathan.jpeg')}
                                 alt="Nathan Gauge-Klein, General Counsel"
                             />
@@ -359,14 +351,6 @@ export const About = () => {
                                 alt="Alison Bunworth, Business Development Manager"
                             />
                             <h3>Alison Bunworth</h3>
-                            <p>Business Development Manager</p>
-                        </div>
-                        <div>
-                            <img
-                                src={urlWithBaseUrl('/images/team/kristian.jpg')}
-                                alt="Kristian Gornik, Business Development Manager"
-                            />
-                            <h3>Kristian Gornik</h3>
                             <p>Business Development Manager</p>
                         </div>
                         <div>

@@ -9,7 +9,7 @@ import { _removeFromParent, _setDisplayed } from '../../../utils/dom';
 import type { IconName } from '../../../utils/icon';
 import { _createIconNoSpan } from '../../../utils/icon';
 import { _mergeDeep } from '../../../utils/object';
-import { _escapeString } from '../../../utils/string';
+import { _toString } from '../../../utils/string';
 import { Component, RefPlaceholder } from '../../../widgets/component';
 
 function getHeaderCompElementParams(includeSortIndicator: boolean): ElementParams {
@@ -180,8 +180,7 @@ export class HeaderComp extends Component implements IHeaderComp {
         ) {
             return;
         }
-        const displayNameSanitised = _escapeString(displayName, true);
-        this.eText.textContent = displayNameSanitised!;
+        this.eText.textContent = _toString(displayName);
     }
 
     private addInIcon(iconName: IconName, eParent: HTMLElement, column: AgColumn): void {

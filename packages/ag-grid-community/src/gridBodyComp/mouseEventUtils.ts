@@ -60,6 +60,9 @@ export function _getNormalisedMousePosition(
         y = e.y;
     }
 
+    const { pageFirstPixel } = beans.pageBounds.getCurrentPagePixelRange();
+    y += pageFirstPixel;
+
     if (gridPanelHasScrolls) {
         const scrollFeature = beans.ctrlsSvc.getScrollFeature();
         const vRange = scrollFeature.getVScrollPosition();

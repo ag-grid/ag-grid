@@ -4,7 +4,7 @@ import type { AgGridCommon } from '../interfaces/iCommon';
 import type { IComponent } from '../interfaces/iComponent';
 import type { IRowNode } from '../interfaces/iRowNode';
 import type { ElementParams } from '../utils/dom';
-import { _escapeString } from '../utils/string';
+import { _toString } from '../utils/string';
 import { PopupComponent } from '../widgets/popupComponent';
 
 export type TooltipLocation =
@@ -56,6 +56,6 @@ export class TooltipComponent extends PopupComponent implements ITooltipComp {
     // will need to type params
     public init(params: ITooltipParams): void {
         const { value } = params;
-        this.getGui().textContent = _escapeString(value, true) as string;
+        this.getGui().textContent = _toString(value) as string;
     }
 }

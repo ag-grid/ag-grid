@@ -59,15 +59,12 @@
         "command": "tsc --project {projectRoot}/tsconfig.json"
       }
     },
-    "elapsedBuildTime": {
-      "dependsOn": ["^build", "^docs-resolved-interfaces"],
-      "command": "node scripts/buildTime.mjs stop && node scripts/buildTime.mjs elapsed"
-    },
     "dev": {
       "dependsOn": [
         "^build",
+        "generate-doc-references",
+        "generate-examples",
         "^docs-resolved-interfaces",
-        "elapsedBuildTime",
         "ag-grid-react:build",
         "ag-grid-angular:build",
         "ag-grid-vue3:build",
@@ -120,7 +117,7 @@
     "test:vitest": {
       "command": "npx vitest",
       "outputs": ["{workspaceRoot}/reports/ag-grid-website.xml"],
-      "dependsOn": [],
+      "dependsOn": ["ag-grid-community:build:css", "ag-grid-enterprise:build:css", "generate-doc-references"],
       "options": {
         "cwd": "{projectRoot}",
         "config": "vitest.config.mjs",

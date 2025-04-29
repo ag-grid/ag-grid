@@ -161,6 +161,10 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
 
         // clear other nodes if not doing multi select
         if (!suppressFinishActions) {
+            if (nodes.length === 1 && source === 'api') {
+                this.selectionCtx.setRoot(_normaliseSiblingRef(nodes[0]));
+            }
+
             const clearOtherNodes = newValue && (clearSelection || !this.isMultiSelect());
             if (clearOtherNodes) {
                 updatedCount += this.clearOtherNodes(_normaliseSiblingRef(nodes[0]), source);

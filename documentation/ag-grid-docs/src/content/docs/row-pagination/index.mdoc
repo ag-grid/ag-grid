@@ -26,10 +26,7 @@ If you set `paginationAutoPageSize=true` the grid will automatically show as man
 {% gridExampleRunner title="Auto Page Size" name="auto-page-size" /%}
 
 {% note %}
-Each pagination page must have the same number of rows. If you use `paginationAutoPageSize` with
-[getRowHeight()](./row-height/#getrowheight-callback) callback (to have different
-rows with different heights) then the page height will be calculated using the default row height and not
-the actual row heights. Therefore the rows will not fit perfectly into the page if these features are mixed.
+Each pagination page must have the same number of rows. If you use `paginationAutoPageSize` with auto row height or dynamic row height via the [getRowHeight()](./row-height/#getrowheight-callback) callback, the page height will be calculated using the default row height and not the actual row heights. Therefore the rows will not fit perfectly into the page if these features are mixed.
 {% /note %}
 
 {% note %}

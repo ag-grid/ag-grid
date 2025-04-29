@@ -307,12 +307,25 @@ export abstract class BaseSelectionService extends BeanStub {
                 reset: selectionCtx.selectAll || !!(root && !root.isSelected()),
             };
         } else if (metaKey) {
-            // CTRL is used for deselection of a single node
-            selectionCtx.setRoot(node);
+            // CTRL is used for deselection of a single node or adding a single node to selection
+            if (isRowClicked) {
+                const newValue = !currentSelection;
 
-            if (isRowClicked && currentSelection && !enableDeselection) {
-                return null;
+                const selectingWhenDisabled = newValue && !enableClickSelection;
+                const deselectingWhenDisabled = !newValue && !enableDeselection;
+
+                if (selectingWhenDisabled || deselectingWhenDisabled) return null;
+
+                selectionCtx.setRoot(node);
+
+                return {
+                    node,
+                    newValue,
+                    clearSelection: false,
+                };
             }
+
+            selectionCtx.setRoot(node);
 
             return {
                 node,

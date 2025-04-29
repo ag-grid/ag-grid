@@ -2,12 +2,13 @@ import type { GridApi, RowDragCancelEvent, RowDragEndEvent, RowDragEvent, RowDra
 
 import { initDataTransferPolyfill } from './polyfills/dataTransfer';
 import { mockGridLayout } from './polyfills/mockGridLayout';
+import { TestGridsManager } from './testGridsManager';
 import { asyncSetTimeout } from './utils';
 
 export interface DragAndDropRowOptions {
     api: GridApi;
-    source: HTMLElement | null | undefined;
-    target: HTMLElement | null | undefined;
+    source: Element | string | null | undefined;
+    target: Element | string | null | undefined;
     sourceYOffsetPercent?: number;
     targetYOffsetPercent?: number;
     cancel?: boolean;
@@ -36,8 +37,19 @@ export async function dragAndDropRow({
         rowDragCancelEvents,
     };
 
-    source = source?.classList.contains('ag-row') ? source : source?.closest('.ag-row') ?? source;
-    target = target?.classList.contains('ag-row') ? target : target?.closest('.ag-row') ?? target;
+    const gridElement = TestGridsManager.getHTMLElement(api);
+
+    if (typeof source === 'string') {
+        source = gridElement?.querySelector(`[row-id="${source}"]`);
+    } else {
+        source = source?.classList.contains('ag-row') ? source : source?.closest('.ag-row') ?? source;
+    }
+
+    if (typeof target === 'string') {
+        target = gridElement?.querySelector(`[row-id="${target}"]`);
+    } else {
+        target = target?.classList.contains('ag-row') ? target : target?.closest('.ag-row') ?? target;
+    }
 
     if (!source) {
         result.error = 'Drop source row not found';
@@ -142,7 +154,11 @@ export async function dragAndDropRow({
 
         if (rowDragEnterEvents.length === 1) {
             expect(rowDragEnterEvents[0].node.id).toBe(sourceRowId);
-            expect(rowDragEnterEvents[0].overNode?.id).toBe(sourceRowId);
+
+            const expectedOverId = rowDragEnterEvents[0].overNode?.id;
+            if (expectedOverId !== sourceRowId && expectedOverId !== target.getAttribute('row-id')) {
+                expect(expectedOverId).toBe(sourceRowId);
+            }
 
             expect(rowDragMoveEvents.length).toBeGreaterThan(0);
 
