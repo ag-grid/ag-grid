@@ -733,6 +733,7 @@ export {
     SideBarState,
     SortState,
 } from './interfaces/gridState';
+export { convertColumnGroupState, convertColumnState } from './misc/state/stateUtils';
 
 // uncatalogued
 export { IRowModel, RowBounds, RowModelType } from './interfaces/iRowModel';
