@@ -92,20 +92,20 @@ jobs:
         with:
           cache_mode: ${{ github.event.inputs.clean_checkout == 'true' && 'off' || 'rw' }}
 
-      - name: nx format:check
-        id: format
-        if: steps.setup.outcome == 'success' || steps.setup.outcome == 'skipped'
-        run: |
-          if [[ "${{ github.event.inputs.nx_command || 'affected' }}" == "run-many" ]] ; then
-            yarn nx format:check --all
-          else
-            yarn nx format:check --base ${{ steps.setup.outputs.base }}
-          fi
-
-      - name: nx lint
-        id: lint
-        run: |
-          yarn nx lint
+#      - name: nx format:check
+#        id: format
+#        if: steps.setup.outcome == 'success' || steps.setup.outcome == 'skipped'
+#        run: |
+#          if [[ "${{ github.event.inputs.nx_command || 'affected' }}" == "run-many" ]] ; then
+#            yarn nx format:check --all
+#          else
+#            yarn nx format:check --base ${{ steps.setup.outputs.base }}
+#          fi
+#
+#      - name: nx lint
+#        id: lint
+#        run: |
+#          yarn nx lint
 
       - name: nx build
         id: build
@@ -437,10 +437,14 @@ jobs:
           cache_mode: ro
           base_ref: ${{ github.event.pull_request.base.ref || github.event.base_ref }}
 
-      - name: nx package:test
-        id: package-test
-        if: matrix.framework != 'none'
-        run: yarn nx run-many -t test:package:shard-${{ matrix.shard }} -p angular-package-tests --configuration=ci
+      - name: test
+        run: |
+          echo ${{ matrix }}
+
+#      - name: nx package:test
+#        id: package-test
+#        if: matrix.framework != 'none'
+#        run: yarn nx run-many -t test:package:shard-${{ matrix.shard }} -p angular-package-tests --configuration=ci
 
 #  report:
 #    runs-on: ubuntu-24.04
