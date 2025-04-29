@@ -92,27 +92,27 @@ jobs:
         with:
           cache_mode: ${{ github.event.inputs.clean_checkout == 'true' && 'off' || 'rw' }}
 
-#      - name: nx format:check
-#        id: format
-#        if: steps.setup.outcome == 'success' || steps.setup.outcome == 'skipped'
-#        run: |
-#          if [[ "${{ github.event.inputs.nx_command || 'affected' }}" == "run-many" ]] ; then
-#            yarn nx format:check --all
-#          else
-#            yarn nx format:check --base ${{ steps.setup.outputs.base }}
-#          fi
-#
-#      - name: nx lint
-#        id: lint
-#        run: |
-#          yarn nx lint
+      - name: nx format:check
+        id: format
+        if: steps.setup.outcome == 'success' || steps.setup.outcome == 'skipped'
+        run: |
+          if [[ "${{ github.event.inputs.nx_command || 'affected' }}" == "run-many" ]] ; then
+            yarn nx format:check --all
+          else
+            yarn nx format:check --base ${{ steps.setup.outputs.base }}
+          fi
 
-#      - name: nx build
-#        id: build
-#        run: |
-#          yarn nx generate-doc-references
-#          yarn nx generate-examples -c staging
-#          yarn nx run-many --t build -c staging --exclude ag-grid-docs --exclude all
+      - name: nx lint
+        id: lint
+        run: |
+          yarn nx lint
+
+      - name: nx build
+        id: build
+        run: |
+          yarn nx generate-doc-references
+          yarn nx generate-examples -c staging
+          yarn nx run-many --t build -c staging --exclude ag-grid-docs --exclude all
 
       - name: calculate matrix
         id: matrix
@@ -416,35 +416,31 @@ jobs:
     env:
       NX_BASE: ${{ needs.init.outputs.nx_base }}
     steps:
-#      - name: Checkout
-#        id: checkout
-#        if: matrix.framework != 'none'
-#        uses: actions/checkout@v4
-#        with:
-#          fetch-depth: 1
-#
-#      - name: Fetch Refs
-#        if: matrix.framework != 'none'
-#        run: |
-#          git fetch origin --depth 1 latest
-#          git fetch origin --depth 1 tag latest-success
-#
-#      - name: Setup
-#        id: setup
-#        if: matrix.framework != 'none'
-#        uses: ./.github/actions/setup-nx
-#        with:
-#          cache_mode: ro
-#          base_ref: ${{ github.event.pull_request.base.ref || github.event.base_ref }}
+      - name: Checkout
+        id: checkout
+        if: matrix.framework != 'none'
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
 
-      - name: test
+      - name: Fetch Refs
+        if: matrix.framework != 'none'
         run: |
-          echo ${{ matrix.shards }}
+          git fetch origin --depth 1 latest
+          git fetch origin --depth 1 tag latest-success
 
-#      - name: nx package:test
-#        id: package-test
-#        if: matrix.framework != 'none'
-#        run: yarn nx run-many -t test:package:shard-${{ matrix.shard }} -p angular-package-tests --configuration=ci
+      - name: Setup
+        id: setup
+        if: matrix.framework != 'none'
+        uses: ./.github/actions/setup-nx
+        with:
+          cache_mode: ro
+          base_ref: ${{ github.event.pull_request.base.ref || github.event.base_ref }}
+
+      - name: nx package:test
+        id: package-test
+        if: matrix.framework != 'none'
+        run: yarn nx run-many -t test:package:shard-${{ matrix.shard }} -p angular-package-tests --configuration=ci
 
 #  report:
 #    runs-on: ubuntu-24.04

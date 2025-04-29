@@ -19,7 +19,7 @@ if (result.framework.length === 0) {
     // Avoid failing GHA matrix execution due to zero matrix permutations.
     result.framework.push('none');
 } else {
-    result.shards = Array.from(
+    result.shard = Array.from(
         Array(
             parseInt(
                 execSync('grep "test:package:shard-" ./testing/angular-package-tests/project.json | wc -l | xargs', {
