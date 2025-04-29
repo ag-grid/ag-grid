@@ -374,7 +374,18 @@ export const Property: FunctionComponent<{
                                                     <div className={styles.moduleTooltip}>
                                                         <div className={styles.moduleTooltipContent}>
                                                             {additionalModules.map((module, index) => (
-                                                                <div key={index}>{module}</div>
+                                                                <div key={index}>
+                                                                    {' '}
+                                                                    <a
+                                                                        href={urlWithPrefix({
+                                                                            url: './modules/#selecting-modules',
+                                                                            framework,
+                                                                        })}
+                                                                    >
+                                                                        <Icon name="module" />
+                                                                        {module}
+                                                                    </a>
+                                                                </div>
                                                             ))}
                                                         </div>
                                                     </div>
