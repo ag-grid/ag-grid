@@ -216,7 +216,7 @@ export class ColumnMoveService extends BeanStub implements NamedBean {
         const { gos, colModel, dragAndDrop, visibleCols } = this.beans;
         let hideColumnOnExit = !gos.get('suppressDragLeaveHidesColumns');
         const isGroup = isColumnGroup(column);
-        const columns = isGroup ? column.getProvidedColumnGroup().getLeafColumns() : [column];
+        const columns = isGroup ? column.getLeafColumns() : [column];
         const getDragItem = isGroup
             ? () => createDragItemForGroup(column, visibleCols.allCols)
             : () => createDragItem(column);

@@ -70,11 +70,12 @@ export function _createColumnTreeWithIds(
     };
 
     const root = defs?.map((def) => recursivelyProcessColDef(def, 0)) ?? [];
-    let counter = 0;
-    const keyCreator: IColumnKeyCreator = {
-        getUniqueKey: (_colId: string, _field: string | undefined) => String(++counter),
-    };
-    const columnTree = beans.colGroupSvc ? beans.colGroupSvc.balanceColumnTree(root, 0, maxDepth, keyCreator) : root;
+    // let counter = 0;
+    // const keyCreator: IColumnKeyCreator = {
+    //     getUniqueKey: (_colId: string, _field: string | undefined) => String(++counter),
+    // };
+    const columnTree = root;
+    // const columnTree = beans.colGroupSvc ? beans.colGroupSvc.balanceColumnTree(root, 0, maxDepth, keyCreator) : root;
 
     const depthFirstCallback = (child: AgColumn | AgProvidedColumnGroup, parent: AgProvidedColumnGroup) => {
         if (isProvidedColumnGroup(child)) {
@@ -121,9 +122,10 @@ export function _createColumnTree(
     );
     const { colGroupSvc } = beans;
     const treeDepth = colGroupSvc?.findMaxDepth(unbalancedTree, 0) ?? 0;
-    const columnTree = colGroupSvc
-        ? colGroupSvc.balanceColumnTree(unbalancedTree, 0, treeDepth, columnKeyCreator)
-        : unbalancedTree;
+    // const columnTree = colGroupSvc
+    //     ? colGroupSvc.balanceColumnTree(unbalancedTree, 0, treeDepth, columnKeyCreator)
+    //     : unbalancedTree;
+    const columnTree = unbalancedTree;
 
     const depthFirstCallback = (child: AgColumn | AgProvidedColumnGroup, parent: AgProvidedColumnGroup) => {
         if (isProvidedColumnGroup(child)) {

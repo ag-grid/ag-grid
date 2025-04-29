@@ -155,9 +155,9 @@ export class HeaderGroupComp extends Component implements IHeaderGroupComp {
                 return;
             }
 
-            const newExpandedValue = !columnGroup.isExpanded();
+            const newExpandedValue = !columnGroup?.isExpanded();
             beans.colGroupSvc!.setColumnGroupOpened(
-                (columnGroup as AgColumnGroup).getProvidedColumnGroup(),
+                (columnGroup as AgColumnGroup)?.getProvidedColumnGroup(),
                 newExpandedValue,
                 'uiColumnExpanded'
             );
@@ -182,12 +182,14 @@ export class HeaderGroupComp extends Component implements IHeaderGroupComp {
 
         this.updateIconVisibility();
 
-        const providedColumnGroup = columnGroup.getProvidedColumnGroup();
-        const updateIcon = this.updateIconVisibility.bind(this);
-        this.addManagedListeners(providedColumnGroup, {
-            expandedChanged: updateIcon,
-            expandableChanged: updateIcon,
-        });
+        const providedColumnGroup = columnGroup?.getProvidedColumnGroup();
+        if (providedColumnGroup) {
+            const updateIcon = this.updateIconVisibility.bind(this);
+            this.addManagedListeners(providedColumnGroup, {
+                expandedChanged: updateIcon,
+                expandableChanged: updateIcon,
+            });
+        }
     }
 
     private addTouchAndClickListeners(
@@ -205,8 +207,8 @@ export class HeaderGroupComp extends Component implements IHeaderGroupComp {
             agClosed,
             params: { columnGroup },
         } = this;
-        if (columnGroup.isExpandable()) {
-            const expanded = columnGroup.isExpanded();
+        if (columnGroup?.isExpandable()) {
+            const expanded = columnGroup?.isExpanded();
             _setDisplayed(agOpened, expanded);
             _setDisplayed(agClosed, !expanded);
         } else {
@@ -223,7 +225,7 @@ export class HeaderGroupComp extends Component implements IHeaderGroupComp {
     }
 
     private addGroupExpandIcon(params: IHeaderGroupParams) {
-        if (!params.columnGroup.isExpandable()) {
+        if (!params.columnGroup?.isExpandable()) {
             const { agOpened, agClosed } = this;
             _setDisplayed(agOpened, false);
             _setDisplayed(agClosed, false);
@@ -241,7 +243,7 @@ export class HeaderGroupComp extends Component implements IHeaderGroupComp {
             this.agLabel.textContent = _toString(displayName);
         }
 
-        this.toggleCss('ag-sticky-label', !columnGroup.getColGroupDef()?.suppressStickyLabel);
+        this.toggleCss('ag-sticky-label', !columnGroup?.getColGroupDef()?.suppressStickyLabel);
     }
 
     public override destroy(): void {

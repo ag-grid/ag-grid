@@ -9,6 +9,7 @@ import type { ColumnEventType } from '../events';
 import type { ColumnPinnedType, HeaderColumnId } from '../interfaces/iColumn';
 import { _last } from '../utils/array';
 import type { ColumnGroupService, CreateGroupsParams } from './columnGroups/columnGroupService';
+import { getOriginalColumnTreeDepth } from './columnGroups/columnGroupUtils';
 import type { ColumnModel } from './columnModel';
 import { getWidthOfColsInList } from './columnUtils';
 import { GroupInstanceIdCreator } from './groupInstanceIdCreator';
@@ -44,6 +45,9 @@ export class VisibleColsService extends BeanStub implements NamedBean {
     // all three lists above combined
     public allCols: AgColumn[] = [];
 
+    // depth of the displayed tree
+    public treeDepth: number = 0;
+
     public autoHeightCols: AgColumn[];
 
     // used by:
@@ -76,6 +80,7 @@ export class VisibleColsService extends BeanStub implements NamedBean {
 
         this.joinColsAriaOrder(colModel);
         this.joinCols();
+        this.treeDepth = getOriginalColumnTreeDepth(this.allCols);
 
         this.setLeftValues(source);
         this.autoHeightCols = this.allCols.filter((col) => col.isAutoHeight());
@@ -163,6 +168,7 @@ export class VisibleColsService extends BeanStub implements NamedBean {
         const createGroups = (params: CreateGroupsParams): (AgColumn | AgColumnGroup)[] => {
             return columnGroupSvc ? columnGroupSvc.createColumnGroups(params) : params.columns;
         };
+
         this.treeLeft = createGroups({
             columns: leftCols,
             idCreator,
@@ -191,6 +197,7 @@ export class VisibleColsService extends BeanStub implements NamedBean {
         this.centerCols = [];
         this.allCols = [];
         this.ariaOrderColumns = [];
+        this.treeDepth = 0;
     }
 
     private joinColsAriaOrder(colModel: ColumnModel): void {

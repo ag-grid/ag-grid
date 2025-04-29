@@ -5,7 +5,8 @@ import { BeanStub } from '../context/beanStub';
 import type { AgColumn } from '../entities/agColumn';
 import type { AgColumnGroup } from '../entities/agColumnGroup';
 import type { ColumnEventType } from '../events';
-import type { HeaderCellCtrl, IHeaderCellComp } from '../headerRendering/cells/column/headerCellCtrl';
+import type { IAbstractHeaderCellComp } from '../headerRendering/cells/abstractCell/abstractHeaderCellCtrl';
+import type { HeaderCellCtrl } from '../headerRendering/cells/column/headerCellCtrl';
 import type { IHeaderGroupCellComp } from '../headerRendering/cells/columnGroup/headerGroupCellCtrl';
 import type { ColumnPinnedType } from '../interfaces/iColumn';
 import { _error } from '../validation/logging';
@@ -248,8 +249,8 @@ export class ColumnResizeService extends BeanStub implements NamedBean {
         pinned: ColumnPinnedType,
         column: AgColumn,
         eResize: HTMLElement,
-        comp: IHeaderCellComp,
-        ctrl: HeaderCellCtrl
+        comp: IAbstractHeaderCellComp,
+        ctrl?: HeaderCellCtrl
     ): ResizeFeature {
         return new ResizeFeature(pinned, column, eResize, comp, ctrl);
     }

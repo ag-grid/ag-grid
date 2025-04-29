@@ -2,9 +2,9 @@ import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
 import type { AgColumn } from '../entities/agColumn';
+import type { AgColumnGroup } from '../entities/agColumnGroup';
 import { _addGridCommonParams } from '../gridOptionsUtils';
 import type { HeaderCellCtrl } from '../headerRendering/cells/column/headerCellCtrl';
-import type { HeaderGroupCellCtrl } from '../headerRendering/cells/columnGroup/headerGroupCellCtrl';
 import type { CellCtrl } from '../rendering/cell/cellCtrl';
 import type { RowCtrl } from '../rendering/row/rowCtrl';
 import { _exists } from '../utils/generic';
@@ -61,17 +61,19 @@ export class TooltipService extends BeanStub implements NamedBean {
 
     public setupHeaderGroupTooltip(
         existingTooltipFeature: TooltipFeature | undefined,
-        ctrl: HeaderGroupCellCtrl,
+        eGui: HTMLElement,
+        column?: AgColumnGroup,
         value?: string,
         shouldDisplayTooltip?: () => boolean
     ): TooltipFeature | undefined {
         if (existingTooltipFeature) {
-            ctrl.destroyBean(existingTooltipFeature);
+            this.destroyBean(existingTooltipFeature);
         }
 
         const isTooltipWhenTruncated = _isShowTooltipWhenTruncated(this.gos);
-        const { column, eGui } = ctrl;
-        const colGroupDef = column.getColGroupDef();
+
+        // no col group def for padding cells
+        const colGroupDef = column?.getColGroupDef() ?? this.gos.get('defaultColGroupDef');
 
         if (!shouldDisplayTooltip && isTooltipWhenTruncated && !colGroupDef?.headerGroupComponent) {
             shouldDisplayTooltip = _shouldDisplayTooltip(
@@ -80,7 +82,7 @@ export class TooltipService extends BeanStub implements NamedBean {
         }
 
         const tooltipCtrl: ITooltipCtrl = {
-            getColumn: () => column,
+            getColumn: () => column!, // breaking
             getGui: () => eGui,
             getLocation: () => 'headerGroup',
             getTooltipValue: () => value ?? (colGroupDef && colGroupDef.headerTooltip),
@@ -92,7 +94,7 @@ export class TooltipService extends BeanStub implements NamedBean {
         }
 
         const tooltipFeature = this.createTooltipFeature(tooltipCtrl);
-        return tooltipFeature ? ctrl.createBean(tooltipFeature) : tooltipFeature;
+        return this.createBean(tooltipFeature);
     }
 
     public enableCellTooltipFeature(

@@ -25,7 +25,7 @@ import type { HeaderComp } from './headerComp';
 
 export interface IHeaderCellComp extends IAbstractHeaderCellComp {
     setWidth(width: string): void;
-    setAriaSort(sort?: ColumnSortState): void;
+    setAriaSort?(sort?: ColumnSortState): void;
     setUserCompDetails(compDetails: UserCompDetails): void;
     getUserCompInstance(): IHeader | undefined;
 }
@@ -551,10 +551,10 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
         if (this.sortable) {
             const translate = this.getLocaleTextFunc();
             const sort = this.beans.sortSvc?.getDisplaySortForColumn(this.column) || null;
-            this.comp.setAriaSort(_getAriaSortState(sort));
+            this.comp.setAriaSort?.(_getAriaSortState(sort));
             this.setAriaDescriptionProperty('sort', translate('ariaSortableColumn', 'Press ENTER to sort'));
         } else {
-            this.comp.setAriaSort();
+            this.comp.setAriaSort?.();
             this.setAriaDescriptionProperty('sort', null);
         }
     }

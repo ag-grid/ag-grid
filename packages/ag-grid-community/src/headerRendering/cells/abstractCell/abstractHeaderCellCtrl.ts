@@ -385,7 +385,7 @@ export abstract class AbstractHeaderCellCtrl<
     protected handleContextMenuMouseEvent(
         mouseEvent: MouseEvent | undefined,
         touchEvent: TouchEvent | undefined,
-        column: AgColumn | AgProvidedColumnGroup
+        column: AgColumn | AgProvidedColumnGroup | undefined
     ): void {
         const event = mouseEvent ?? touchEvent!;
         const { menuSvc, gos } = this.beans;
@@ -396,7 +396,7 @@ export abstract class AbstractHeaderCellCtrl<
             menuSvc.showHeaderContextMenu(column, mouseEvent, touchEvent);
         }
 
-        this.dispatchColumnMouseEvent('columnHeaderContextMenu', column);
+        this.dispatchColumnMouseEvent('columnHeaderContextMenu', column!); //breaking change
     }
 
     protected dispatchColumnMouseEvent(

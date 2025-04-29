@@ -1,10 +1,16 @@
-import type { ColumnModel } from '../columns/columnModel';
 import type { BeanCollection } from '../context/context';
 import type { HeaderRowCtrl } from './row/headerRowCtrl';
 
 // + gridPanel -> for resizing the body and setting top margin
-export function getHeaderRowCount(colModel: ColumnModel): number {
-    return colModel.cols ? colModel.cols.treeDepth + 1 : -1;
+export function getHeaderRowCount(beans: BeanCollection): number {
+    const { gos, visibleCols, colModel } = beans;
+    if (!colModel.cols) {
+        return -1;
+    }
+    if (gos.get('dynamicHeaderHeight')) {
+        return visibleCols.treeDepth + 1;
+    }
+    return colModel.cols.treeDepth + 1;
 }
 
 export function getFocusHeaderRowCount(beans: BeanCollection): number {

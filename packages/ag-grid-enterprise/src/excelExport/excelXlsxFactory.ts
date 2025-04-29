@@ -113,7 +113,7 @@ export function addXlsxTableToSheet(sheetIndex: number, table: ExcelDataTable): 
 }
 
 function processTableConfig(worksheet: ExcelWorksheet, config: ExcelGridSerializingParams & ExcelExportParams) {
-    const { exportAsExcelTable, prependContent, appendContent, colModel } = config;
+    const { exportAsExcelTable, prependContent, appendContent, beans } = config;
     if (!exportAsExcelTable) {
         return;
     }
@@ -134,7 +134,7 @@ function processTableConfig(worksheet: ExcelWorksheet, config: ExcelGridSerializ
     const sheetIndex = XLSX_SHEET_NAMES.length - 1;
     const { table } = worksheet;
     const { rows, columns } = table;
-    const headerRowCount = _getHeaderRowCount(colModel);
+    const headerRowCount = _getHeaderRowCount(beans);
     const skipTopRows = prependContent ? prependContent.length : 0;
     const removeFromBottom = appendContent ? appendContent.length : 0;
     const tableRowCount = rows.length;

@@ -390,6 +390,10 @@ export interface GridOptions<TData = any> {
 
     // *** Column Headers *** //
     /**
+     * If `true` the grid reduces the column header height to the minimum viable height based on the displayed columns.
+     */
+    dynamicHeaderHeight?: boolean;
+    /**
      * The height in pixels for the row containing the column label header. If not specified, it uses the theme value of `header-height`.
      */
     headerHeight?: number;

@@ -23,7 +23,7 @@ export function _getHeaderClassesFromColDef(
         return [];
     }
 
-    return getColumnClassesFromCollDef(abstractColDef.headerClass, abstractColDef, gos, column, columnGroup);
+    return getColumnClassesFromColDef(abstractColDef.headerClass, abstractColDef, gos, column, columnGroup);
 }
 
 export function _getToolPanelClassesFromColDef(
@@ -36,7 +36,7 @@ export function _getToolPanelClassesFromColDef(
         return [];
     }
 
-    return getColumnClassesFromCollDef(abstractColDef.toolPanelClass, abstractColDef, gos, column, columnGroup);
+    return getColumnClassesFromColDef(abstractColDef.toolPanelClass, abstractColDef, gos, column, columnGroup);
 }
 
 export function refreshFirstAndLastStyles(
@@ -64,7 +64,7 @@ function getClassParams<T extends HeaderClassParams | ToolPanelClassParams>(
     } as WithoutGridCommon<T>);
 }
 
-function getColumnClassesFromCollDef<T extends HeaderClassParams | ToolPanelClassParams>(
+export function getColumnClassesFromColDef<T extends HeaderClassParams | ToolPanelClassParams>(
     classesOrFunc: string | string[] | ((params: T) => string | string[] | undefined) | null | undefined,
     abstractColDef: AbstractColDef,
     gos: GridOptionsService,

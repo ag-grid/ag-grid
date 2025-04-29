@@ -1,7 +1,10 @@
 import { BeanStub } from '../context/beanStub';
 import type { AgColumn } from '../entities/agColumn';
-import type { IHeaderResizeFeature } from '../headerRendering/cells/abstractCell/abstractHeaderCellCtrl';
-import type { HeaderCellCtrl, IHeaderCellComp } from '../headerRendering/cells/column/headerCellCtrl';
+import type {
+    IAbstractHeaderCellComp,
+    IHeaderResizeFeature,
+} from '../headerRendering/cells/abstractCell/abstractHeaderCellCtrl';
+import type { HeaderCellCtrl } from '../headerRendering/cells/column/headerCellCtrl';
 import type { ColumnPinnedType } from '../interfaces/iColumn';
 import { _getInnerWidth, _setDisplayed } from '../utils/dom';
 
@@ -14,8 +17,8 @@ export class ResizeFeature extends BeanStub implements IHeaderResizeFeature {
         private pinned: ColumnPinnedType,
         private column: AgColumn,
         private eResize: HTMLElement,
-        private comp: IHeaderCellComp,
-        private ctrl: HeaderCellCtrl
+        private comp: IAbstractHeaderCellComp,
+        private ctrl?: HeaderCellCtrl
     ) {
         super();
     }
@@ -67,7 +70,7 @@ export class ResizeFeature extends BeanStub implements IHeaderResizeFeature {
 
         refresh();
         this.addDestroyFunc(removeResize);
-        this.ctrl.setRefreshFunction('resize', refresh);
+        this.ctrl?.setRefreshFunction('resize', refresh);
     }
 
     private onResizing(finished: boolean, resizeAmount: number): void {

@@ -530,24 +530,36 @@ export class AgColumn<TValue = any>
     }
 
     public getColumnGroupPaddingInfo(): { numberOfParents: number; isSpanningTotal: boolean } {
-        let parent = this.getParent();
-
-        if (!parent || !parent.isPadding()) {
+        if (!this.beans.colGroupSvc) {
             return { numberOfParents: 0, isSpanningTotal: false };
         }
 
-        const numberOfParents = parent.getPaddingLevel() + 1;
-        let isSpanningTotal = true;
-
-        while (parent) {
-            if (!parent.isPadding()) {
-                isSpanningTotal = false;
-                break;
-            }
-            parent = parent.getParent();
+        const maxDepth = this.beans.visibleCols.treeDepth;
+        if (maxDepth === 0) {
+            return { numberOfParents: 0, isSpanningTotal: false };
         }
 
-        return { numberOfParents, isSpanningTotal };
+        const parentDepth = (this.getOriginalParent()?.getLevel() ?? -1) + 1;
+        return { numberOfParents: maxDepth - parentDepth, isSpanningTotal: maxDepth !== parentDepth };
+
+        // let parent = this.getParent();
+
+        // if (!parent || !parent.isPadding()) {
+        //     return { numberOfParents: 0, isSpanningTotal: false };
+        // }
+
+        // const numberOfParents = parent.getPaddingLevel() + 1;
+        // let isSpanningTotal = true;
+
+        // while (parent) {
+        //     if (!parent.isPadding()) {
+        //         isSpanningTotal = false;
+        //         break;
+        //     }
+        //     parent = parent.getParent();
+        // }
+
+        // return { numberOfParents, isSpanningTotal };
     }
 
     public getColDef(): ColDef<any, TValue> {

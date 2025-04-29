@@ -69,13 +69,10 @@ export class SelectionColService extends BeanStub implements NamedBean, IColumnC
         }
 
         destroyCollection();
-        const { colGroupSvc } = this.beans;
-        const treeDepth = colGroupSvc?.findDepth(cols.tree) ?? 0;
-        const tree = colGroupSvc?.balanceTreeForAutoCols(list, treeDepth) ?? [];
         this.columns = {
             list,
-            tree,
-            treeDepth,
+            tree: list,
+            treeDepth: 0,
             map: {},
         };
 

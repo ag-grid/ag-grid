@@ -173,6 +173,7 @@ export type AgEventTypeParams<TData = any, TContext = any> = BuildEventTypeMap<
         stickyTopOffsetChanged: StickyTopOffsetChangedEvent<TData, TContext>;
         overlayExclusiveChanged: AgEvent<'overlayExclusiveChanged'>;
         rowNodeDataChanged: RowNodeDataChangedEvent<TData, TContext>;
+        headerRowsChanged: AgEvent<'headerRowsChanged'>;
     }
 >;
 

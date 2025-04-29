@@ -151,7 +151,7 @@ export function _getHeaderGroupCompDetails(
     userCompFactory: UserComponentFactory,
     params: IHeaderGroupParams
 ): UserCompDetails<IHeaderGroupComp> | undefined {
-    const colGroupDef = params.columnGroup.getColGroupDef()!;
+    const colGroupDef = params.columnGroup?.getColGroupDef();
     return userCompFactory.getCompDetails(colGroupDef, HeaderGroupComponent, 'agColumnGroupHeader', params);
 }
 

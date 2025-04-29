@@ -1,5 +1,6 @@
 import type { ColumnModel } from '../columns/columnModel';
 import type { ColumnNameService } from '../columns/columnNameService';
+import type { BeanCollection } from '../context/context';
 import type { AgColumn } from '../entities/agColumn';
 import type { RowNode } from '../entities/rowNode';
 import type { GridOptionsService } from '../gridOptionsService';
@@ -28,6 +29,7 @@ export interface RowSpanningAccumulator {
 }
 
 export interface GridSerializingParams {
+    beans: BeanCollection;
     colModel: ColumnModel;
     rowGroupColsSvc?: IColsService;
     colNames: ColumnNameService;

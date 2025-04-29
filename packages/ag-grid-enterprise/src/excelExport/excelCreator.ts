@@ -330,6 +330,7 @@ export class ExcelCreator
 
         const config: ExcelGridSerializingParams = {
             ...params,
+            beans: this.beans,
             colModel,
             colNames,
             rowGroupColsSvc,

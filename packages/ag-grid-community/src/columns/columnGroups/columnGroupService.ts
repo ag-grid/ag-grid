@@ -1,6 +1,6 @@
 import type { NamedBean } from '../../context/bean';
 import { BeanStub } from '../../context/beanStub';
-import type { AgColumn } from '../../entities/agColumn';
+import { AgColumn } from '../../entities/agColumn';
 import { createUniqueColumnGroupId, isColumnGroup } from '../../entities/agColumnGroup';
 import { AgColumnGroup } from '../../entities/agColumnGroup';
 import { AgProvidedColumnGroup } from '../../entities/agProvidedColumnGroup';
@@ -14,7 +14,7 @@ import { _recursivelyCreateColumns, depthFirstOriginalTreeSearch } from '../colu
 import type { IColumnKeyCreator } from '../columnKeyCreator';
 import type { GroupInstanceIdCreator } from '../groupInstanceIdCreator';
 import { depthFirstAllColumnTreeSearch } from '../visibleColsService';
-import { createMergedColGroupDef } from './columnGroupUtils';
+import { createMergedColGroupDef, getOriginalColumnTreeDepth } from './columnGroupUtils';
 
 export interface CreateGroupsParams {
     // all displayed columns sorted - this is the columns the grid should show
@@ -235,46 +235,27 @@ export class ColumnGroupService extends BeanStub implements NamedBean {
         const { columns, idCreator, pinned, oldDisplayedGroups, isStandaloneStructure } = params;
         const oldColumnsMapped = this.mapOldGroupsById(oldDisplayedGroups!);
 
-        /**
-         * The following logic starts at the leaf level of columns, iterating through them to build their parent
-         * groups when the parents match.
-         *
-         * The created groups are then added to an array, and similarly iterated on until we reach the top level.
-         *
-         * When row groups have no original parent, it's added to the result.
-         */
-        const topLevelResultCols: (AgColumn | AgColumnGroup)[] = [];
+        let levelToBalance = getOriginalColumnTreeDepth(columns) - 1;
+        // rename, this isn't balancing, it's splitting
+        let remainingToBalance: (AgColumn | AgColumnGroup)[] = columns;
+        while (levelToBalance > -1 && remainingToBalance.length) {
+            // store what we are currently splitting, and reset the next level
+            const balancing = remainingToBalance;
+            remainingToBalance = [];
 
-        // this is an array of cols or col groups at one level of depth, starting from leaf and ending at root
-        let groupsOrColsAtCurrentLevel: (AgColumn | AgColumnGroup)[] = columns as AgColumn[];
-        while (groupsOrColsAtCurrentLevel.length) {
-            // store what's currently iterating so the function can build the next level of col groups
-            const currentlyIterating = groupsOrColsAtCurrentLevel;
-            groupsOrColsAtCurrentLevel = [];
-
-            // store the index of the last row which was different from the previous row, this is used as a slice
-            // index for finding the children to group together
-            let lastGroupedColIdx = 0;
+            // the start of the next group
+            let groupStartIndex = -1;
 
             // create a group of children from lastGroupedColIdx to the provided `to` parameter
             const createGroupToIndex = (to: number) => {
-                const from = lastGroupedColIdx;
-                lastGroupedColIdx = to;
+                const from = groupStartIndex;
+                groupStartIndex = -1;
 
-                const previousNode = currentlyIterating[from];
+                const previousNode = balancing[from];
                 const previousNodeProvided = isColumnGroup(previousNode)
                     ? previousNode.getProvidedColumnGroup()
                     : previousNode;
-                const previousNodeParent = previousNodeProvided.getOriginalParent() as AgProvidedColumnGroup | null;
-
-                if (previousNodeParent == null) {
-                    // if the last node was different, and had a null parent, then we add all the nodes to the final
-                    // results)
-                    for (let i = from; i < to; i++) {
-                        topLevelResultCols.push(currentlyIterating[i]);
-                    }
-                    return;
-                }
+                const previousNodeParent = previousNodeProvided.getOriginalParent()!;
 
                 // the parent differs from the previous node, so we create a group from the previous node
                 // and add all to the result array, except the current node.
@@ -287,36 +268,139 @@ export class ColumnGroupService extends BeanStub implements NamedBean {
                 );
 
                 for (let i = from; i < to; i++) {
-                    newGroup.addChild(currentlyIterating[i]);
+                    newGroup.addChild(balancing[i]);
                 }
-                groupsOrColsAtCurrentLevel.push(newGroup);
+                remainingToBalance.push(newGroup);
             };
 
-            for (let i = 1; i < currentlyIterating.length; i++) {
-                const thisNode = currentlyIterating[i];
-                const thisNodeProvided = isColumnGroup(thisNode) ? thisNode.getProvidedColumnGroup() : thisNode;
-                const thisNodeParent = thisNodeProvided.getOriginalParent();
+            for (let i = 0; i < balancing.length; i++) {
+                const columnOrGroup = balancing[i];
+                const originalParent = isColumnGroup(columnOrGroup)
+                    ? columnOrGroup.getProvidedColumnGroup().getOriginalParent()
+                    : columnOrGroup.getOriginalParent();
 
-                const previousNode = currentlyIterating[lastGroupedColIdx];
-                const previousNodeProvided = isColumnGroup(previousNode)
-                    ? previousNode.getProvidedColumnGroup()
-                    : previousNode;
-                const previousNodeParent = previousNodeProvided.getOriginalParent();
+                // if the original parent is null or wrong level, then push back into array to handle in the next level
+                if (originalParent == null || originalParent.getLevel() !== levelToBalance) {
+                    // create group
 
-                if (thisNodeParent !== previousNodeParent) {
-                    createGroupToIndex(i);
+                    if (groupStartIndex !== -1) {
+                        createGroupToIndex(i);
+                    }
+                    remainingToBalance.push(columnOrGroup);
+                    continue;
+                }
+
+                if (groupStartIndex === -1) {
+                    groupStartIndex = i;
+                    continue;
+                }
+
+                if (i > 0) {
+                    const previousItem = balancing[i - 1];
+                    const previousItemOriginalParent = isColumnGroup(previousItem)
+                        ? previousItem.getProvidedColumnGroup().getOriginalParent()
+                        : previousItem.getOriginalParent();
+                    if (previousItemOriginalParent !== originalParent) {
+                        createGroupToIndex(i);
+                        groupStartIndex = i;
+                    }
                 }
             }
 
-            if (lastGroupedColIdx < currentlyIterating.length) {
-                createGroupToIndex(currentlyIterating.length);
+            if (groupStartIndex !== -1) {
+                createGroupToIndex(balancing.length);
             }
+            levelToBalance--;
         }
 
         if (!isStandaloneStructure) {
-            this.setupParentsIntoCols(topLevelResultCols, null);
+            this.setupParentsIntoCols(remainingToBalance, null);
         }
-        return topLevelResultCols;
+
+        return remainingToBalance;
+
+        // /**
+        //  * The following logic starts at the leaf level of columns, iterating through them to build their parent
+        //  * groups when the parents match.
+        //  *
+        //  * The created groups are then added to an array, and similarly iterated on until we reach the top level.
+        //  *
+        //  * When row groups have no original parent, it's added to the result.
+        //  */
+        // const topLevelResultCols: (AgColumn | AgColumnGroup)[] = [];
+
+        // // this is an array of cols or col groups at one level of depth, starting from leaf and ending at root
+        // let groupsOrColsAtCurrentLevel: (AgColumn | AgColumnGroup)[] = columns;
+        // while (groupsOrColsAtCurrentLevel.length) {
+        //     // store what's currently iterating so the function can build the next level of col groups
+        //     const currentlyIterating = groupsOrColsAtCurrentLevel;
+        //     groupsOrColsAtCurrentLevel = [];
+
+        //     // store the index of the last row which was different from the previous row, this is used as a slice
+        //     // index for finding the children to group together
+        //     let lastGroupedColIdx = 0;
+
+        //     // create a group of children from lastGroupedColIdx to the provided `to` parameter
+        //     const createGroupToIndex = (to: number) => {
+        //         const from = lastGroupedColIdx;
+        //         lastGroupedColIdx = to;
+
+        //         const previousNode = currentlyIterating[from];
+        //         const previousNodeProvided = isColumnGroup(previousNode)
+        //             ? previousNode.getProvidedColumnGroup()
+        //             : previousNode;
+        //         const previousNodeParent = previousNodeProvided.getOriginalParent() as AgProvidedColumnGroup | null;
+
+        //         if (previousNodeParent == null) {
+        //             // if the last node was different, and had a null parent, then we add all the nodes to the final
+        //             // results)
+        //             for (let i = from; i < to; i++) {
+        //                 topLevelResultCols.push(currentlyIterating[i]);
+        //             }
+        //             return;
+        //         }
+
+        //         // the parent differs from the previous node, so we create a group from the previous node
+        //         // and add all to the result array, except the current node.
+        //         const newGroup = this.createColumnGroup(
+        //             previousNodeParent,
+        //             idCreator,
+        //             oldColumnsMapped,
+        //             pinned,
+        //             isStandaloneStructure
+        //         );
+
+        //         for (let i = from; i < to; i++) {
+        //             newGroup.addChild(currentlyIterating[i]);
+        //         }
+        //         groupsOrColsAtCurrentLevel.push(newGroup);
+        //     };
+
+        //     for (let i = 1; i < currentlyIterating.length; i++) {
+        //         const thisNode = currentlyIterating[i];
+        //         const thisNodeProvided = isColumnGroup(thisNode) ? thisNode.getProvidedColumnGroup() : thisNode;
+        //         const thisNodeParent = thisNodeProvided.getOriginalParent();
+
+        //         const previousNode = currentlyIterating[lastGroupedColIdx];
+        //         const previousNodeProvided = isColumnGroup(previousNode)
+        //             ? previousNode.getProvidedColumnGroup()
+        //             : previousNode;
+        //         const previousNodeParent = previousNodeProvided.getOriginalParent();
+
+        //         if (thisNodeParent !== previousNodeParent) {
+        //             createGroupToIndex(i);
+        //         }
+        //     }
+
+        //     if (lastGroupedColIdx < currentlyIterating.length) {
+        //         createGroupToIndex(currentlyIterating.length);
+        //     }
+        // }
+
+        // if (!isStandaloneStructure) {
+        //     this.setupParentsIntoCols(topLevelResultCols, null);
+        // }
+        // return topLevelResultCols;
     }
 
     public createProvidedColumnGroup(

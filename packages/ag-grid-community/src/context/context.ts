@@ -124,6 +124,7 @@ export type DynamicBeanName =
     | 'groupCellRendererCtrl'
     | 'headerFilterCellCtrl'
     | 'headerGroupCellCtrl'
+    | 'headerGroupPaddingCellCtrl'
     | 'rangeHandle'
     | 'tooltipFeature'
     | 'groupStrategy'

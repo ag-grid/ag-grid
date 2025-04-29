@@ -10,7 +10,7 @@ import type {
 import { _last } from '../utils/array';
 import type { AgColumn } from './agColumn';
 import { isColumn } from './agColumn';
-import type { AgProvidedColumnGroup } from './agProvidedColumnGroup';
+import { AgProvidedColumnGroup } from './agProvidedColumnGroup';
 import type { AbstractColDef, ColGroupDef } from './colDef';
 
 export function createUniqueColumnGroupId(groupId: string, instanceId: number): HeaderColumnId {
@@ -23,6 +23,8 @@ export function isColumnGroup(col: Column | ColumnGroup | string): col is AgColu
 
 export class AgColumnGroup<TValue = any> extends BeanStub<AgColumnGroupEvent> implements ColumnGroup<TValue> {
     public readonly isColumn = false as const;
+
+    private paddedColumn: AgColumn | null = null;
 
     // all the children of this group, regardless of whether they are opened or closed
     private children: (AgColumn | AgColumnGroup)[] | null;
@@ -38,13 +40,20 @@ export class AgColumnGroup<TValue = any> extends BeanStub<AgColumnGroupEvent> im
 
     public parent: AgColumnGroup | null = null;
 
+    private level: number;
+
     constructor(
-        private readonly providedColumnGroup: AgProvidedColumnGroup,
+        private providedColumnGroup: AgProvidedColumnGroup | null = null,
         private readonly groupId: string,
         private readonly partId: number,
         private readonly pinned: ColumnPinnedType
     ) {
         super();
+    }
+
+    public setPaddedColumn(paddedColumn: AgColumn, level: number): void {
+        this.paddedColumn = paddedColumn;
+        this.level = level;
     }
 
     // as the user is adding and removing columns, the groups are recalculated.
@@ -68,7 +77,7 @@ export class AgColumnGroup<TValue = any> extends BeanStub<AgColumnGroupEvent> im
     }
 
     public isMoving(): boolean {
-        const allLeafColumns = this.getProvidedColumnGroup().getLeafColumns();
+        const allLeafColumns = this.providedColumnGroup?.getLeafColumns();
         if (!allLeafColumns || allLeafColumns.length === 0) {
             return false;
         }
@@ -162,9 +171,7 @@ export class AgColumnGroup<TValue = any> extends BeanStub<AgColumnGroupEvent> im
     }
 
     public addChild(child: AgColumn | AgColumnGroup): void {
-        if (!this.children) {
-            this.children = [];
-        }
+        this.children ??= [];
         this.children.push(child);
     }
 
@@ -185,27 +192,35 @@ export class AgColumnGroup<TValue = any> extends BeanStub<AgColumnGroupEvent> im
     }
 
     public getDefinition(): AbstractColDef | null {
-        return this.providedColumnGroup.getColGroupDef();
+        return this.providedColumnGroup?.getColGroupDef() ?? null;
     }
 
     public getColGroupDef(): ColGroupDef | null {
-        return this.providedColumnGroup.getColGroupDef();
+        return this.providedColumnGroup?.getColGroupDef() ?? null;
     }
 
     public isPadding(): boolean {
-        return this.providedColumnGroup.isPadding();
+        return this.paddedColumn != null;
+    }
+
+    public getPaddedColumn(): AgColumn | null {
+        return this.paddedColumn;
+    }
+
+    public getLevel(): number {
+        return this.providedColumnGroup?.getLevel() ?? this.level;
     }
 
     public isExpandable(): boolean {
-        return this.providedColumnGroup.isExpandable();
+        return this.providedColumnGroup?.isExpandable() ?? false;
     }
 
     public isExpanded(): boolean {
-        return this.providedColumnGroup.isExpanded();
+        return this.providedColumnGroup?.isExpanded() ?? false;
     }
 
     public setExpanded(expanded: boolean): void {
-        this.providedColumnGroup.setExpanded(expanded);
+        this.providedColumnGroup?.setExpanded(expanded);
     }
 
     public isAutoHeaderHeight(): boolean {
@@ -248,11 +263,11 @@ export class AgColumnGroup<TValue = any> extends BeanStub<AgColumnGroupEvent> im
     }
 
     public getColumnGroupShow(): ColumnGroupShowType | undefined {
-        return this.providedColumnGroup.getColumnGroupShow();
+        return this.providedColumnGroup?.getColumnGroupShow();
     }
 
     public getProvidedColumnGroup(): AgProvidedColumnGroup {
-        return this.providedColumnGroup;
+        return (this.providedColumnGroup ??= new AgProvidedColumnGroup(null, this.groupId, true, this.level));
     }
 
     public getPaddingLevel(): number {
@@ -276,7 +291,7 @@ export class AgColumnGroup<TValue = any> extends BeanStub<AgColumnGroupEvent> im
             parentWithExpansion = parentWithExpansion.getParent();
         }
 
-        const isExpandable = parentWithExpansion ? parentWithExpansion.getProvidedColumnGroup().isExpandable() : false;
+        const isExpandable = parentWithExpansion ? parentWithExpansion.providedColumnGroup?.isExpandable() : false;
         // it not expandable, everything is visible
         if (!isExpandable) {
             this.displayedChildren = this.children;

@@ -85,25 +85,18 @@ export class RowNumbersService extends BeanStub implements NamedBean, IRowNumber
             this.columns = null;
         };
 
-        const newTreeDepth = cols.treeDepth;
-        const oldTreeDepth = this.columns?.treeDepth ?? -1;
-        const treeDepthSame = oldTreeDepth == newTreeDepth;
-
         const list = this.generateRowNumberCols();
         const areSame = _areColIdsEqual(list, this.columns?.list ?? []);
 
-        if (areSame && treeDepthSame) {
+        if (areSame) {
             return;
         }
 
         destroyCollection();
-        const { colGroupSvc } = this.beans;
-        const treeDepth = colGroupSvc?.findDepth(cols.tree) ?? 0;
-        const tree = colGroupSvc?.balanceTreeForAutoCols(list, treeDepth) ?? [];
         this.columns = {
             list,
-            tree,
-            treeDepth,
+            tree: list,
+            treeDepth: 0,
             map: {},
         };
 

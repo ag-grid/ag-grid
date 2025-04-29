@@ -81,6 +81,7 @@ export class CsvCreator
         } = params!;
 
         return new CsvSerializingSession({
+            beans: this.beans,
             colModel,
             colNames,
             valueSvc,

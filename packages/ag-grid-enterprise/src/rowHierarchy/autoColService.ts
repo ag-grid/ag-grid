@@ -51,7 +51,7 @@ export class AutoColService extends BeanStub implements NamedBean, IColumnCollec
         updateOrders: (callback: (cols: AgColumn[] | null) => AgColumn[] | null) => void
     ): void {
         const beans = this.beans;
-        const { colModel, gos, rowGroupColsSvc, colGroupSvc } = beans;
+        const { colModel, gos, rowGroupColsSvc } = beans;
         const isPivotMode = colModel.isPivotMode();
         const groupFullWidthRow = _isGroupUseEntireRow(gos, isPivotMode);
         // we need to allow suppressing auto-column separately for group and pivot as the normal situation
@@ -84,22 +84,15 @@ export class AutoColService extends BeanStub implements NamedBean, IColumnCollec
         const list = this.generateAutoCols(rowGroupCols);
         const autoColsSame = _areColIdsEqual(list, this.columns?.list || null);
 
-        // the new tree depth will equal the current tree depth of cols
-        const newTreeDepth = cols.treeDepth;
-        const oldTreeDepth = this.columns ? this.columns.treeDepth : -1;
-        const treeDepthSame = oldTreeDepth == newTreeDepth;
-
-        if (autoColsSame && treeDepthSame) {
+        if (autoColsSame) {
             return;
         }
 
         destroyPrevious();
-        const treeDepth = colGroupSvc?.findDepth(cols.tree) ?? 0;
-        const tree = colGroupSvc?.balanceTreeForAutoCols(list, treeDepth) ?? [];
         this.columns = {
             list,
-            tree,
-            treeDepth,
+            tree: list,
+            treeDepth: 0,
             map: {},
         };
 

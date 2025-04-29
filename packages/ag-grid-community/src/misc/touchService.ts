@@ -125,7 +125,7 @@ export class TouchService extends BeanStub implements NamedBean {
         const params = comp.params;
         if (
             this.beans.menuSvc?.isHeaderContextMenuEnabled(
-                params.columnGroup.getProvidedColumnGroup() as AgProvidedColumnGroup
+                params.columnGroup?.getProvidedColumnGroup() as AgProvidedColumnGroup
             )
         ) {
             const touchListener = new TouchListener(params.eGridHeader, true);
