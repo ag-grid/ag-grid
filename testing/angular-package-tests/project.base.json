@@ -70,7 +70,8 @@
       "dependsOn": ["^pack"],
       "command": "{projectRoot}/run.sh -n -e latest"
     },
--- generated-tasks --
+-- generated-tasks --,
+-- generated-shard-tasks --
   },
   "implicitDependencies": ["ag-grid-community", "ag-grid-enterprise", "ag-grid-angular"]
 }

@@ -1,6 +1,0 @@
-
-// overridden
-import { ModuleRegistry } from 'ag-grid-community';
-
-import { SparklinesModule } from 'ag-grid-enterprise';
-ModuleRegistry.registerModules([, SparklinesModule]);

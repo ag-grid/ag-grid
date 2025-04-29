@@ -1,6 +1,0 @@
-
-// overridden
-import { ModuleRegistry } from 'ag-grid-community';
-
-import { IntegratedChartsModule } from 'ag-grid-enterprise';
-ModuleRegistry.registerModules([, IntegratedChartsModule]);

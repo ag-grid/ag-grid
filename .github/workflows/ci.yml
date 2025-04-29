@@ -67,6 +67,7 @@ jobs:
       test_count: ${{ steps.matrix.outputs.test_count }}
       test_matrix: ${{ steps.matrix.outputs.test_matrix }}
       test_pkg_matrix: ${{ steps.matrix.outputs.pkg_matrix }}
+      test_angular_pkg_matrix: ${{ steps.matrix.outputs.angular_pkg_matrix }}
       e2e_test_count: ${{ steps.matrix.outputs.e2e_test_count }}
       e2e_test_matrix: ${{ steps.matrix.outputs.e2e_test_matrix }}
       bundle_test_count: ${{ steps.matrix.outputs.bundle_test_count }}
@@ -150,6 +151,10 @@ jobs:
           pkg_matrix=$(node ./external/ag-shared/scripts/shard/calculate-pkg-shards.js)
           echo "pkg_matrix=${pkg_matrix}" >> $GITHUB_OUTPUT
           echo "Package test matrix determined to be: ${pkg_matrix}"
+
+          angular_pkg_matrix=$(node ./testing/angular-package-tests/calculate-angular-pkg-shards.js)
+          echo "angular_pkg_matrix=${angular_pkg_matrix}" >> $GITHUB_OUTPUT
+          echo "Angular package test matrix determined to be: ${angular_pkg_matrix}"
 
 #  test:
 #    runs-on: ubuntu-24.04
@@ -399,6 +404,43 @@ jobs:
         id: package-test
         if: matrix.framework != 'none'
         run: yarn nx run-many -t test:package -p ${{ matrix.framework }}-package-tests --configuration=ci
+
+  angular_fw_pkg_test:
+    runs-on: ubuntu-24.04
+    name: Angular Package Tests
+    needs: build_lint
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJson(needs.build_lint.outputs.angular_pkg_matrix )}}
+#    if: (needs.init.outputs.build_type == 'latest' || needs.init.outputs.build_type == 'release')
+    env:
+      NX_BASE: ${{ needs.init.outputs.nx_base }}
+    steps:
+      - name: Checkout
+        id: checkout
+        if: matrix.framework != 'none'
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Fetch Refs
+        if: matrix.framework != 'none'
+        run: |
+          git fetch origin --depth 1 latest
+          git fetch origin --depth 1 tag latest-success
+
+      - name: Setup
+        id: setup
+        if: matrix.framework != 'none'
+        uses: ./.github/actions/setup-nx
+        with:
+          cache_mode: ro
+          base_ref: ${{ github.event.pull_request.base.ref || github.event.base_ref }}
+
+      - name: nx package:test
+        id: package-test
+        if: matrix.framework != 'none'
+        run: yarn nx run-many -t test:package:shard-${{ matrix.shard }} -p angular-package-tests --configuration=ci
 
 #  report:
 #    runs-on: ubuntu-24.04

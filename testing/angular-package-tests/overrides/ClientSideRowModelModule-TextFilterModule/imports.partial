@@ -1,0 +1,7 @@
+
+// overridden
+import { ModuleRegistry } from 'ag-grid-community';
+
+import { ClientSideRowModelModule, TextFilterModule } from 'ag-grid-community';
+
+ModuleRegistry.registerModules([ ClientSideRowModelModule, TextFilterModule,  ]);
