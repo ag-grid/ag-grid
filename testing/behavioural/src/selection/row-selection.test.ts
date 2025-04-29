@@ -1160,6 +1160,22 @@ describe('Row Selection Grid Options', () => {
                     actions.toggleCheckboxByIndex(2, { shiftKey: true, metaKey: true });
                     assertSelectedRowsByIndex([], api);
                 });
+
+                test('Range selection context is unaffected after CTRL-click with enableClickSelection="enableDeselection"', () => {
+                    const [api, actions] = createGrid({
+                        columnDefs,
+                        rowData,
+                        rowSelection: { mode: 'multiRow', enableClickSelection: 'enableDeselection' },
+                    });
+
+                    actions.toggleCheckboxByIndex(4);
+                    actions.clickRowByIndex(6, { ctrlKey: true });
+                    assertSelectedRowsByIndex([4], api);
+
+                    actions.toggleCheckboxByIndex(2, { shiftKey: true });
+
+                    assertSelectedRowsByIndex([2, 3, 4], api);
+                });
             });
         });
 
