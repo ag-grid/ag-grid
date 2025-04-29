@@ -168,6 +168,17 @@ describe('Row Selection Grid Options', () => {
                 assertSelectedRowsByIndex([], api);
             });
 
+            test('enableClickSelection="enableDeselection" does not allow selection via CTRL-clicking', () => {
+                const [api, actions] = createGrid({
+                    columnDefs,
+                    rowData,
+                    rowSelection: { mode: 'multiRow', enableClickSelection: 'enableDeselection' },
+                });
+
+                actions.clickRowByIndex(2, { ctrlKey: true });
+                assertSelectedRowsByIndex([], api);
+            });
+
             test('Clicking an already-selected row is a no-op', () => {
                 const [api, actions] = createGrid({
                     columnDefs,
