@@ -678,15 +678,18 @@ export class StateService extends BeanStub implements NamedBean {
         if (!pagination) {
             return;
         }
-        if (paginationState.pageSize && !gos.get('paginationAutoPageSize')) {
-            pagination.setPageSize(
-                paginationState.pageSize,
-                source === 'gridInitializing' ? 'initialState' : 'pageSizeSelector'
-            );
+        const { pageSize, page } = paginationState;
+        const isInit = source === 'gridInitializing';
+        if (pageSize && !gos.get('paginationAutoPageSize')) {
+            pagination.setPageSize(pageSize, isInit ? 'initialState' : 'pageSizeSelector');
         }
 
-        if (typeof paginationState.page === 'number') {
-            pagination.setPage(paginationState.page);
+        if (typeof page === 'number') {
+            if (isInit) {
+                pagination.setPage(page);
+            } else {
+                pagination.goToPage(page);
+            }
         }
     }
 

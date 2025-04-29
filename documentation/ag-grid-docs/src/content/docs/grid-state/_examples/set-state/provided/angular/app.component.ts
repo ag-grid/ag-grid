@@ -54,10 +54,10 @@ ModuleRegistry.registerModules([
         <div class="example-wrapper">
             <div>
                 <span class="button-group">
-                    <button (click)="reloadGrid()">Recreate Grid with No State</button>
-                    <button (click)="printState()">Print State</button>
                     <button (click)="saveState()">Save State</button>
+                    <button (click)="reloadGrid()">Recreate Grid with No State</button>
                     <button (click)="setState()">Set State</button>
+                    <button (click)="printState()">Print State</button>
                 </span>
             </div>
             @if (gridVisible) {
@@ -141,6 +141,7 @@ export class AppComponent {
     setState(): void {
         if (this.savedState) {
             this.gridApi.setState(this.savedState);
+            console.log('Set state', this.savedState);
         }
     }
 

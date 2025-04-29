@@ -49,10 +49,10 @@ const VueExample = defineComponent({
             <div class="example-wrapper">
                 <div>
                     <span class="button-group">
-                        <button v-on:click="reloadGrid()">Recreate Grid with No State</button>
-                        <button v-on:click="printState()">Print State</button>
                         <button v-on:click="saveState()">Save State</button>
+                        <button v-on:click="reloadGrid()">Recreate Grid with No State</button>
                         <button v-on:click="setState()">Set State</button>
+                        <button v-on:click="printState()">Print State</button>
                     </span>
                 </div>
                 <ag-grid-vue
@@ -122,6 +122,7 @@ const VueExample = defineComponent({
         const setState = () => {
             if (savedState.value) {
                 gridApi.value!.setState(savedState.value);
+                console.log('Set state', savedState.value);
             }
         };
         const onGridReady = (params: GridReadyEvent) => {

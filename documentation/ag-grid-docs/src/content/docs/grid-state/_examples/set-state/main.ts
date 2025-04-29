@@ -99,6 +99,7 @@ function saveState() {
 function setState() {
     if (savedState) {
         gridApi.setState(savedState);
+        console.log('Set state', savedState);
     }
 }
 

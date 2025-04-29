@@ -117,6 +117,7 @@ const GridExample = () => {
     const setState = useCallback(() => {
         if (savedState) {
             gridRef.current!.api.setState(savedState);
+            console.log('Set state', savedState);
         }
     }, [savedState]);
 
@@ -125,10 +126,10 @@ const GridExample = () => {
             <div className="example-wrapper">
                 <div>
                     <span className="button-group">
-                        <button onClick={reloadGrid}>Recreate Grid with No State</button>
-                        <button onClick={printState}>Print State</button>
                         <button onClick={saveState}>Save State</button>
+                        <button onClick={reloadGrid}>Recreate Grid with No State</button>
                         <button onClick={setState}>Set State</button>
+                        <button onClick={printState}>Print State</button>
                     </span>
                 </div>
                 <div style={gridStyle}>
