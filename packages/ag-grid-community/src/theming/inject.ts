@@ -11,8 +11,6 @@ type InjectedStyle = {
     priority: number;
 };
 
-let injectionsByContainer = new WeakMap<HTMLElement, InjectedStyle[]>();
-
 export const _injectGlobalCSS = (
     css: string,
     styleContainer: HTMLElement,
@@ -28,10 +26,10 @@ export const _injectGlobalCSS = (
         css = `@layer ${CSS.escape(layer)} { ${css} }`;
     }
 
-    let injections = injectionsByContainer.get(styleContainer);
+    let injections = injectionState.map.get(styleContainer);
     if (!injections) {
         injections = [];
-        injectionsByContainer.set(styleContainer, injections);
+        injectionState.map.set(styleContainer, injections);
     }
     if (injections.find((i) => i.css === css)) return;
 
@@ -73,17 +71,39 @@ export const _injectCoreAndModuleCSS = (
         );
 };
 
-const gridsUsingThemingAPI = new Set<object>();
-
 export const _registerGridUsingThemingAPI = (environment: Environment) => {
-    gridsUsingThemingAPI.add(environment);
+    injectionState.grids.add(environment);
 };
 export const _unregisterGridUsingThemingAPI = (environment: Environment) => {
-    gridsUsingThemingAPI.delete(environment);
-    if (gridsUsingThemingAPI.size === 0) {
-        injectionsByContainer = new WeakMap();
+    injectionState.grids.delete(environment);
+    if (injectionState.grids.size === 0) {
+        injectionState.map = new WeakMap();
         for (const style of document.head.querySelectorAll('style[data-ag-global-css]')) {
             style.remove();
         }
     }
 };
+
+type InjectionState = {
+    // Set of grids that are using the theming API
+    grids: Set<object>;
+    // Map of style containers to injected styles
+    map: WeakMap<HTMLElement, InjectedStyle[]>;
+};
+
+type WindowState = {
+    agStyleInjectionState?: InjectionState;
+};
+
+// AG-14716 - for customers using module federation, there may be many
+// instances of this module, but we want to ensure that there is only
+// one instance of the container to injection map per window otherwise
+// unmounting any grid instance will clear all styles from the page
+// resulting in unstyled grids
+const injectionState: InjectionState = ((typeof window === 'object'
+    ? (window as WindowState)
+    : {}
+).agStyleInjectionState ??= {
+    map: new WeakMap(),
+    grids: new Set(),
+});
