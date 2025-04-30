@@ -474,7 +474,8 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
             },
             this.rowNode.rowIndex!,
             'p1',
-            false
+            useFlushSync
+            // false
         );
         this.updateColumnListsPending = true;
     }

@@ -137,6 +137,7 @@ export class AnimationFrameService extends BeanStub implements NamedBean {
                     // to loop through all framework tasks for as long as we have time left
                     frameworkOverrides.wrapOutgoing(() => {
                         while (noMaxMillis || duration < millis) {
+                            // Maybe we can get REact to do the same thing here with flushSync in wrapOutgouing????
                             const gridBodyDidSomething = scrollFeature.scrollGridIfNeeded();
 
                             if (!gridBodyDidSomething) {

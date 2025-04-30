@@ -191,11 +191,24 @@ export class ColumnViewportService extends BeanStub implements NamedBean {
     // + setColumnWidth(), setViewportPosition(), setColumnDefs(), sizeColumnsToFit()
     public checkViewportColumns(afterScroll: boolean = false): void {
         const viewportColumnsChanged = this.extractViewport();
-        if (viewportColumnsChanged) {
-            this.eventSvc.dispatchEvent({
-                type: 'virtualColumnsChanged',
-                afterScroll,
-            });
+
+        const fireEvent = () => {
+            if (viewportColumnsChanged) {
+                this.eventSvc.dispatchEvent({
+                    type: 'virtualColumnsChanged',
+                    afterScroll,
+                });
+            }
+        };
+
+        const frame = this.beans.frameworkOverrides as any;
+        const suppressAnimationFrame = this.gos.get('suppressAnimationFrame');
+        if (afterScroll && suppressAnimationFrame && frame?.flushSync) {
+            // only required for React and when suppressAnimationFrame=true so that all setCellCtrls are wrapped in a top level flushSync
+            frame.flushSync(() => fireEvent());
+            // fireEvent();
+        } else {
+            fireEvent();
         }
     }
 

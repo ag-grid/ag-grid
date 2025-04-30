@@ -55,7 +55,7 @@ import { ReactComponent } from '../shared/reactComponent';
 import { BeansContext } from './beansContext';
 import GridComp from './gridComp';
 import { RenderStatusService } from './renderStatusService';
-import { CssClasses, isReact19, runWithoutFlushSync } from './utils';
+import { CssClasses, agFlushSync, isReact19, runWithoutFlushSync } from './utils';
 
 type ReactCompProps = Omit<InternalAgGridReactProps, keyof GridOptions>;
 
@@ -438,7 +438,7 @@ const DetailCellRenderer = forwardRef((props: IDetailCellRendererParams, ref: an
 class ReactFrameworkOverrides extends VanillaFrameworkOverrides {
     private queueUpdates = false;
     public override readonly renderingEngine = 'react';
-
+    public override readonly batchFrameworkComps = true;
     constructor(private readonly processQueuedUpdates: () => void) {
         super('react');
     }
@@ -476,6 +476,10 @@ class ReactFrameworkOverrides extends VanillaFrameworkOverrides {
         return callback();
     };
 
+    override wrapOutgoing: (callback: () => any) => any = (callback) => {
+        return this.flushSync(callback);
+    };
+
     getLockOnRefresh(): void {
         this.queueUpdates = true;
     }
@@ -492,5 +496,9 @@ class ReactFrameworkOverrides extends VanillaFrameworkOverrides {
     runWhenReadyAsync(): boolean {
         // We make this async only for React 19 as StrictMode in React 19 double fires ref callbacks whereas previous versions of React do not.
         return isReact19();
+    }
+
+    public flushSync(callback: () => void): void {
+        agFlushSync(true, callback);
     }
 }
