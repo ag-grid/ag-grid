@@ -521,6 +521,14 @@ button.seeMore {
         margin-right: $spacing-size-2;
     }
 
+    .enterpriseIcon {
+        svg {
+            height: 20px;
+            width: 20px;
+            --icon-color: var(--color-enterprise-icon);
+        }
+    }
+
     .moduleCount {
         margin-left: $spacing-size-2;
         color: var(--color-link);

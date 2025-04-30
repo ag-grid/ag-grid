@@ -1,6 +1,5 @@
 import type { Framework } from '@ag-grid-types';
 import Code from '@ag-website-shared/components/code/Code';
-import { EnterpriseIcon } from '@ag-website-shared/components/icon/EnterpriseIcon';
 import { Icon } from '@ag-website-shared/components/icon/Icon';
 import { LinkIcon } from '@ag-website-shared/components/link-icon/LinkIcon';
 import styles from '@ag-website-shared/components/reference-documentation/ApiReference.module.scss';
@@ -392,7 +391,10 @@ export const Property: FunctionComponent<{
                                                 {agModule}
 
                                                 {/* TODO: Add enterprise icon */}
-                                                {/* <EnterpriseIcon /> */}
+                                                {/* <span className={styles.enterpriseIcon}>
+                                                    {' '}
+                                                    <Icon name="enterprise" />
+                                                </span> */}
                                             </span>
                                             {hasMultipleModules && (
                                                 <>
@@ -426,7 +428,10 @@ export const Property: FunctionComponent<{
                                                                         <Icon name="module" />
                                                                         {module}
                                                                         {/* TODO: Add enterprise icon */}
-                                                                        {/* <EnterpriseIcon /> */}
+                                                                        {/* <span className={styles.enterpriseIcon}>
+                                                                            {' '}
+                                                                            <Icon name="enterprise" />
+                                                                        </span> */}
                                                                     </a>
                                                                 </div>
                                                             ))}
