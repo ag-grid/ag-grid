@@ -1,5 +1,3 @@
-import { config } from 'process';
-
 (function (global) {
     process = { env: { NODE_ENV: 'development' } };
 
