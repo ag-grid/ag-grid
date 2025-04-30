@@ -21,8 +21,10 @@ enum ScrollDir {
 
 const VIEWPORT = 'Viewport';
 const FAKE_V_SCROLLBAR = 'fakeVScrollComp';
+/** Pinned containers can act as sources for scrolling the grid but cannot be scrolled themselves */
 const PINNED_VIEWPORT = 'pinnedViewport';
 
+/** Pinned containers can act as sources for scrolling the grid but cannot be scrolled themselves */
 const HORIZONTAL_PINNED_SOURCES = ['topLeft', 'left', 'bottomLeft', 'topRight', 'right', 'bottomRight'] as const;
 
 const HORIZONTAL_SOURCES = [
@@ -194,10 +196,6 @@ export class GridBodyScrollFeature extends BeanStub {
     }
 
     private onWheel(container: (typeof HORIZONTAL_PINNED_SOURCES)[number] | undefined, e: WheelEvent): void {
-        if (!this.gos.get('enableRowPinning')) {
-            return;
-        }
-
         this.wheelDeltaX = e.deltaX;
         this.wheelDeltaY = e.deltaY;
 
@@ -209,8 +207,6 @@ export class GridBodyScrollFeature extends BeanStub {
 
         this.wheelDeltaX = 0;
         this.wheelDeltaY = 0;
-
-        e.stopPropagation();
     }
 
     private registerScrollPartner(comp: ScrollPartner, callback: () => void) {
@@ -260,7 +256,7 @@ export class GridBodyScrollFeature extends BeanStub {
 
         if (HORIZONTAL_PINNED_SOURCES.some((s) => s === source)) {
             // If the scroll originates from a pinned container, we base our scroll calculations
-            // on the actual scrollable containers, and so we use the fakeHScrollComp as a proxy
+            // on the actually scrollable containers, and so we use the fakeHScrollComp as a proxy
             // (since they should all be synced)
             return this.ctrlsSvc.get('fakeHScrollComp').eViewport;
         }
