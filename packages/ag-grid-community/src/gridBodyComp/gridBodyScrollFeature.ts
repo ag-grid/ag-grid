@@ -259,7 +259,10 @@ export class GridBodyScrollFeature extends BeanStub {
         }
 
         if (HORIZONTAL_PINNED_SOURCES.some((s) => s === source)) {
-            return this.ctrlsSvc.get(source as (typeof HORIZONTAL_PINNED_SOURCES)[number]).eContainer;
+            // If the scroll originates from a pinned container, we base our scroll calculations
+            // on the actual scrollable containers, and so we use the fakeHScrollComp as a proxy
+            // (since they should all be synced)
+            return this.ctrlsSvc.get('fakeHScrollComp').eViewport;
         }
 
         return this.ctrlsSvc.get(source).eViewport;
@@ -291,7 +294,6 @@ export class GridBodyScrollFeature extends BeanStub {
             return;
         }
         const newScrollLeft = _getScrollLeft(this.getViewportForSource(source), this.enableRtl) + this.wheelDeltaX;
-        console.log({ newScrollLeft });
 
         this.doHorizontalScroll(newScrollLeft);
         this.resetLastHScrollDebounced();
@@ -311,7 +313,6 @@ export class GridBodyScrollFeature extends BeanStub {
             case FAKE_V_SCROLLBAR:
                 scrollTop = this.ctrlsSvc.get('fakeVScrollComp').getScrollPosition();
                 break;
-
             case PINNED_VIEWPORT:
                 scrollTop = this.eBodyViewport.scrollTop + this.wheelDeltaY;
         }
