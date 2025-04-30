@@ -546,6 +546,8 @@ jobs:
             WORKFLOW_STATUS="failure"
           elif [ "${{ needs.fw_pkg_test.result }}" == "failure" ] ; then
             WORKFLOW_STATUS="failure"
+          elif [ "${{ needs.angular_fw_pkg_test.result }}" == "failure" ] ; then
+            WORKFLOW_STATUS="failure"
           elif [ "${{ needs.bundle_size.result }}" == "failure" ] ; then
             WORKFLOW_STATUS="failure"
           fi
@@ -621,6 +623,7 @@ jobs:
                     "Docs": "${{ needs.docs.result }}",
                     "Bundle": "${{ needs.bundle_size.result }}"
                     "FW_Pkg": "${{ needs.fw_pkg_test.result }}"
+                    "Angular_Pkg": "${{ needs.fw_pkg_test.result }}"
                 }
             }
         run: |
