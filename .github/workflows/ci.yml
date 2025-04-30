@@ -163,12 +163,18 @@ jobs:
           echo "angular_pkg_matrix=${angular_pkg_matrix}" >> $GITHUB_OUTPUT
           echo "Angular package test matrix determined to be: ${angular_pkg_matrix}"
 
+      - name: Cache docker image
+        run: |
+          docker image pull mcr.microsoft.com/playwright:v1.45.0-jammy
+          docker image save -o mcr.microsoft.com.playwright.tar mcr.microsoft.com/playwright
+
       - name: Perist build outputs
         if: always()
         uses: actions/upload-artifact@v4
         with:
             name: e2e-init-outputs
             path: |
+                mcr.microsoft.com.playwright.tar
                 dist/
                 packages/*/dist/
                 external/*/dist/
@@ -395,6 +401,10 @@ jobs:
         with:
           name: e2e-init-outputs
 
+      - name: Load docker image
+        run: |
+          docker image load < mcr.microsoft.com.playwright.tar
+
       - name: Setup
         id: setup
         if: matrix.framework != 'none'
@@ -429,6 +439,10 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: e2e-init-outputs
+
+      - name: Load docker image
+        run: |
+          docker image load < mcr.microsoft.com.playwright.tar
 
       - name: Setup
         id: setup
