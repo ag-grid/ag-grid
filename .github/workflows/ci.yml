@@ -107,12 +107,20 @@ jobs:
         run: |
           yarn nx lint
 
+      - name: update base url
+#        if: ${{ github.ref == 'refs/heads/latest' }}
+        run: node scripts/deployments/prep_and_archive/updateBaseUrl.js staging
+
       - name: nx build
         id: build
         run: |
           yarn nx generate-doc-references
           yarn nx generate-examples -c staging
           yarn nx run-many --t build -c staging --exclude ag-grid-docs --exclude all
+
+      - name: validate base url
+#        if: ${{ github.ref == 'refs/heads/latest' }}
+        run: node scripts/deployments/sanityCheckBaseUrl.js staging
 
       - name: calculate matrix
         id: matrix
@@ -156,6 +164,15 @@ jobs:
           echo "angular_pkg_matrix=${angular_pkg_matrix}" >> $GITHUB_OUTPUT
           echo "Angular package test matrix determined to be: ${angular_pkg_matrix}"
 
+      - name: Perist build outputs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+            name: e2e-init-outputs
+            path: |
+                dist/
+                packages/*/dist/
+                external/*/dist/
   test:
     runs-on: ubuntu-24.04
     name: Unit Tests (${{ matrix.shard }}/${{ strategy.job-total }})
@@ -230,10 +247,15 @@ jobs:
         with:
           fetch-depth: 1 # shallow copy
 
-      - name: Fetch Refs
-        run: |
-          git fetch origin --depth 1 latest
-          git fetch origin --depth 1 tag latest-success
+      - name: Restore Init Build Outputs
+        uses: actions/download-artifact@v4
+        with:
+          name: e2e-init-outputs
+
+#      - name: Fetch Refs
+#        run: |
+#          git fetch origin --depth 1 latest
+#          git fetch origin --depth 1 tag latest-success
 
       - name: Setup
         id: setup
@@ -271,10 +293,15 @@ jobs:
         with:
           fetch-depth: 1 # shallow copy
 
-      - name: Fetch Refs
-        run: |
-          git fetch origin --depth 1 latest
-          git fetch origin --depth 1 tag latest-success
+      - name: Restore Init Build Outputs
+        uses: actions/download-artifact@v4
+        with:
+          name: e2e-init-outputs
+
+#      - name: Fetch Refs
+#        run: |
+#          git fetch origin --depth 1 latest
+#          git fetch origin --depth 1 tag latest-success
 
       - name: Setup
         id: setup
@@ -317,10 +344,15 @@ jobs:
         with:
           fetch-depth: 1 # shallow copy
 
-      - name: Fetch Refs
-        run: |
-          git fetch origin --depth 1 latest
-          git fetch origin --depth 1 tag latest-success
+      - name: Restore Init Build Outputs
+        uses: actions/download-artifact@v4
+        with:
+          name: e2e-init-outputs
+
+#      - name: Fetch Refs
+#        run: |
+#          git fetch origin --depth 1 latest
+#          git fetch origin --depth 1 tag latest-success
 
       - name: Setup
         id: setup
@@ -328,18 +360,18 @@ jobs:
         with:
           cache_mode: ro
 
-      - name: update base url
-        if: ${{ github.ref == 'refs/heads/latest' }}
-        run: node scripts/deployments/prep_and_archive/updateBaseUrl.js staging
-      - name: build
-        if: ${{ github.ref == 'refs/heads/latest' }}
-        run: |
-          yarn nx generate-doc-references
-          yarn nx generate-examples -c staging
-          yarn nx run-many --t build -c staging --exclude ag-grid-docs --exclude all
-      - name: validate base url
-        if: ${{ github.ref == 'refs/heads/latest' }}
-        run: node scripts/deployments/sanityCheckBaseUrl.js staging
+#      - name: update base url
+#        if: ${{ github.ref == 'refs/heads/latest' }}
+#        run: node scripts/deployments/prep_and_archive/updateBaseUrl.js staging
+#      - name: build
+#        if: ${{ github.ref == 'refs/heads/latest' }}
+#        run: |
+#          yarn nx generate-doc-references
+#          yarn nx generate-examples -c staging
+#          yarn nx run-many --t build -c staging --exclude ag-grid-docs --exclude all
+#      - name: validate base url
+#        if: ${{ github.ref == 'refs/heads/latest' }}
+#        run: node scripts/deployments/sanityCheckBaseUrl.js staging
       - name: validate grid modules
         run: node scripts/deployments/validateGridModulesList.js
       - name: docs build and link checker
@@ -386,11 +418,16 @@ jobs:
         with:
           fetch-depth: 1
 
-      - name: Fetch Refs
-        if: matrix.framework != 'none'
-        run: |
-          git fetch origin --depth 1 latest
-          git fetch origin --depth 1 tag latest-success
+      - name: Restore Init Build Outputs
+        uses: actions/download-artifact@v4
+        with:
+          name: e2e-init-outputs
+
+#      - name: Fetch Refs
+#        if: matrix.framework != 'none'
+#        run: |
+#          git fetch origin --depth 1 latest
+#          git fetch origin --depth 1 tag latest-success
 
       - name: Setup
         id: setup
@@ -423,11 +460,16 @@ jobs:
         with:
           fetch-depth: 1
 
-      - name: Fetch Refs
-        if: matrix.framework != 'none'
-        run: |
-          git fetch origin --depth 1 latest
-          git fetch origin --depth 1 tag latest-success
+      - name: Restore Init Build Outputs
+        uses: actions/download-artifact@v4
+        with:
+          name: e2e-init-outputs
+
+#      - name: Fetch Refs
+#        if: matrix.framework != 'none'
+#        run: |
+#          git fetch origin --depth 1 latest
+#          git fetch origin --depth 1 tag latest-success
 
       - name: Setup
         id: setup
