@@ -1,5 +1,6 @@
 import type { Framework } from '@ag-grid-types';
 import Code from '@ag-website-shared/components/code/Code';
+import { EnterpriseIcon } from '@ag-website-shared/components/icon/EnterpriseIcon';
 import { Icon } from '@ag-website-shared/components/icon/Icon';
 import { LinkIcon } from '@ag-website-shared/components/link-icon/LinkIcon';
 import styles from '@ag-website-shared/components/reference-documentation/ApiReference.module.scss';
@@ -387,7 +388,12 @@ export const Property: FunctionComponent<{
                                             })}
                                         >
                                             <Icon name="module" />
-                                            <span>{agModule}</span>
+                                            <span>
+                                                {agModule}
+
+                                                {/* TODO: Add enterprise icon */}
+                                                {/* <EnterpriseIcon /> */}
+                                            </span>
                                             {hasMultipleModules && (
                                                 <>
                                                     <span
@@ -419,6 +425,8 @@ export const Property: FunctionComponent<{
                                                                     >
                                                                         <Icon name="module" />
                                                                         {module}
+                                                                        {/* TODO: Add enterprise icon */}
+                                                                        {/* <EnterpriseIcon /> */}
                                                                     </a>
                                                                 </div>
                                                             ))}
