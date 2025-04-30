@@ -530,12 +530,21 @@ button.seeMore {
         background: #0e45910a;
         padding: 0px 6px;
         border-radius: 8px;
+        padding-right: 2px;
+        transition: background 0.2s ease-in-out;
+        &:hover {
+            background: #0e459125;
+        }
+
+        &.moduleCountActive {
+            background: #0e459125;
+        }
     }
 
     .moduleTooltip {
         position: absolute;
         top: 100%;
-        left: 0;
+        left: -14px;
         z-index: 1000;
         margin-top: $spacing-size-2;
         background-color: var(--color-bg-primary);
@@ -551,6 +560,17 @@ button.seeMore {
             visibility 0s linear 0.15s;
         pointer-events: none;
         visibility: hidden;
+
+        &.isVisible {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+            pointer-events: auto;
+            visibility: visible;
+            transition:
+                opacity 0.15s ease,
+                transform 0.15s ease,
+                visibility 0s linear;
+        }
     }
 
     .moduleTooltipContent {
@@ -559,7 +579,6 @@ button.seeMore {
 
         > div {
             padding: $spacing-size-2 $spacing-size-3;
-            font-size: var(--text-fs-sm);
             color: var(--color-fg-primary);
             border-bottom: 1px solid var(--color-border-secondary);
             white-space: nowrap;
@@ -569,19 +588,6 @@ button.seeMore {
             &:last-child {
                 border-bottom: none;
             }
-        }
-    }
-
-    &:hover {
-        .moduleTooltip {
-            opacity: 1;
-            transform: translateY(0) scale(1);
-            pointer-events: auto;
-            visibility: visible;
-            transition:
-                opacity 0.15s ease,
-                transform 0.15s ease,
-                visibility 0s linear;
         }
     }
 }

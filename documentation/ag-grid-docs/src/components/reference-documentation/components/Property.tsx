@@ -233,6 +233,7 @@ export const Property: FunctionComponent<{
 
     const propertyRef = useRef<HTMLTableRowElement>(null);
     const [isExpanded, setExpanded] = useState(config.defaultExpand);
+    const [isModuleTooltipVisible, setIsModuleTooltipVisible] = useState(false);
     const scrollToAnchor = useScrollToAnchor();
 
     useEffect(() => {
@@ -249,6 +250,27 @@ export const Property: FunctionComponent<{
             return !prevIsExpanded;
         });
     }, []);
+
+    const toggleModuleTooltip = useCallback(() => {
+        setIsModuleTooltipVisible((prev) => !prev);
+    }, []);
+
+    // Close tooltip when clicking outside
+    useEffect(() => {
+        const handleClickOutside = (event: MouseEvent) => {
+            if (isModuleTooltipVisible) {
+                const target = event.target as HTMLElement;
+                if (!target.closest(`.${styles.moduleItem}`)) {
+                    setIsModuleTooltipVisible(false);
+                }
+            }
+        };
+
+        document.addEventListener('click', handleClickOutside);
+        return () => {
+            document.removeEventListener('click', handleClickOutside);
+        };
+    }, [isModuleTooltipVisible]);
 
     return (
         <>
@@ -368,10 +390,23 @@ export const Property: FunctionComponent<{
                                             <span>{agModule}</span>
                                             {hasMultipleModules && (
                                                 <>
-                                                    <span className={styles.moduleCount}>
-                                                        +{additionalModules.length}
+                                                    <span
+                                                        className={classnames(styles.moduleCount, {
+                                                            [styles.moduleCountActive]: isModuleTooltipVisible,
+                                                        })}
+                                                        onClick={(e) => {
+                                                            e.preventDefault();
+                                                            e.stopPropagation();
+                                                            toggleModuleTooltip();
+                                                        }}
+                                                    >
+                                                        +{additionalModules.length} <Icon name="chevronDown" />
                                                     </span>
-                                                    <div className={styles.moduleTooltip}>
+                                                    <div
+                                                        className={classnames(styles.moduleTooltip, {
+                                                            [styles.isVisible]: isModuleTooltipVisible,
+                                                        })}
+                                                    >
                                                         <div className={styles.moduleTooltipContent}>
                                                             {additionalModules.map((module, index) => (
                                                                 <div key={index}>
