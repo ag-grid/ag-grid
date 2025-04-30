@@ -424,7 +424,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix: ${{ fromJson(needs.build_lint.outputs.test_angular_pkg_matrix )}}
-    if: (needs.build_lint.outputs.build_type == 'latest' || needs.build_lint.outputs.build_type == 'release')
+#    if: (needs.build_lint.outputs.build_type == 'latest' || needs.build_lint.outputs.build_type == 'release')
     env:
       NX_BASE: ${{ needs.init.outputs.nx_base }}
     steps:
@@ -595,7 +595,7 @@ jobs:
                     "Docs": "${{ needs.docs.result }}",
                     "Bundle": "${{ needs.bundle_size.result }}",
                     "FW_Pkg": "${{ needs.fw_pkg_test.result }}",
-                    "Angular_Pkg": "${{ needs.fw_pkg_test.result }}"
+                    "Angular_Pkg": "${{ needs.angular_fw_pkg_test.result }}"
                 }
             }
         run: |
