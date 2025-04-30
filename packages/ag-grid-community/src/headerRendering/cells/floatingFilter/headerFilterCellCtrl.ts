@@ -9,6 +9,7 @@ import type { UserCompDetails } from '../../../interfaces/iUserCompDetails';
 import { SetLeftFeature } from '../../../rendering/features/setLeftFeature';
 import { _setAriaLabel } from '../../../utils/aria';
 import { _isElementChildOfClass } from '../../../utils/dom';
+import { _stopPropagationForAgGrid } from '../../../utils/event';
 import { _findNextFocusableElement, _focusInto } from '../../../utils/focus';
 import { _createIconNoSpan } from '../../../utils/icon';
 import { ManagedFocusFeature } from '../../../widgets/managedFocusFeature';
@@ -187,16 +188,12 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl<IHeaderFilterCe
         switch (e.key) {
             case KeyCode.UP:
             case KeyCode.DOWN:
-                if (!wrapperHasFocus) {
-                    e.preventDefault();
-                }
-            // eslint-disable-next-line no-fallthrough
             case KeyCode.LEFT:
             case KeyCode.RIGHT:
                 if (wrapperHasFocus) {
                     return;
                 }
-                e.stopPropagation();
+                _stopPropagationForAgGrid(e);
             // eslint-disable-next-line no-fallthrough
             case KeyCode.ENTER:
                 if (wrapperHasFocus) {
