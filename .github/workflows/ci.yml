@@ -51,6 +51,7 @@ env:
   BRANCH_NAME: ${{ github.head_ref || github.ref_name }}
   SHARP_IGNORE_GLOBAL_LIBVIPS: true
   YARN_REGISTRY: "http://52.50.158.57:4873"
+  CI: true
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -108,7 +109,6 @@ jobs:
           yarn nx lint
 
       - name: update base url
-#        if: ${{ github.ref == 'refs/heads/latest' }}
         run: node scripts/deployments/prep_and_archive/updateBaseUrl.js staging
 
       - name: nx build
@@ -119,7 +119,6 @@ jobs:
           yarn nx run-many --t build -c staging --exclude ag-grid-docs --exclude all
 
       - name: validate base url
-#        if: ${{ github.ref == 'refs/heads/latest' }}
         run: node scripts/deployments/sanityCheckBaseUrl.js staging
 
       - name: calculate matrix
@@ -205,11 +204,11 @@ jobs:
       - name: nx test
         if: matrix.shard != 0
         id: test
-        run: yarn nx ${{ github.event.inputs.nx_command || 'affected' }} -t test --configuration=ci --exclude tag:no-sharding --exclude all --shard=${{ matrix.shard }}/$((${{ strategy.job-total }} - 1))
+        run: yarn nx ${{ github.event.inputs.nx_command || 'affected' }} -t test -c=staging --exclude tag:no-sharding --exclude all --shard=${{ matrix.shard }}/$((${{ strategy.job-total }} - 1))
       - name: nx test (non-sharded)
         if: matrix.shard == 0
         id: test-no-shard
-        run: yarn nx ${{ github.event.inputs.nx_command || 'affected' }} -t test --configuration=ci --exclude '*,!tag:no-sharding'
+        run: yarn nx ${{ github.event.inputs.nx_command || 'affected' }} -t test -c staging --exclude '*,!tag:no-sharding'
       - name: nx pack:verify
         if: matrix.shard == 0
         id: pack-verify
@@ -252,11 +251,6 @@ jobs:
         with:
           name: e2e-init-outputs
 
-#      - name: Fetch Refs
-#        run: |
-#          git fetch origin --depth 1 latest
-#          git fetch origin --depth 1 tag latest-success
-
       - name: Setup
         id: setup
         uses: ./.github/actions/setup-nx
@@ -265,7 +259,7 @@ jobs:
 
       - name: nx test:e2e
         id: tests
-        run: yarn nx ${{ github.event.inputs.nx_command || 'affected' }} -t test:e2e --configuration=ci --exclude 'tag:module-size' --exclude all
+        run: yarn nx ${{ github.event.inputs.nx_command || 'affected' }} -t test:e2e -c staging --exclude 'tag:module-size' --exclude all
 
       - name: Persist test results
         if: always() && matrix.shard != 0
@@ -298,11 +292,6 @@ jobs:
         with:
           name: e2e-init-outputs
 
-#      - name: Fetch Refs
-#        run: |
-#          git fetch origin --depth 1 latest
-#          git fetch origin --depth 1 tag latest-success
-
       - name: Setup
         id: setup
         uses: ./.github/actions/setup-nx
@@ -312,11 +301,11 @@ jobs:
       - name: module-size tests (non-sharded)
         if: matrix.shard == 0
         id: test-no-shard
-        run: yarn nx ${{ github.event.inputs.nx_command || 'affected' }} -t test:e2e --configuration=ci --exclude '!tag:module-size' --exclude 'tag:sharding' --exclude all
+        run: yarn nx ${{ github.event.inputs.nx_command || 'affected' }} -t test:e2e -c staging --exclude '!tag:module-size' --exclude 'tag:sharding' --exclude all
       - name: module-size tests
         if: matrix.shard != 0
         id: test
-        run: yarn nx ${{ github.event.inputs.nx_command || 'affected' }}  -t test:e2e --configuration=ci --exclude '!tag:module-size' --exclude 'tag:non-sharding' --exclude all --shard=${{ matrix.shard }}/$((${{ strategy.job-total }} - 1))
+        run: yarn nx ${{ github.event.inputs.nx_command || 'affected' }}  -t test:e2e -c staging --exclude '!tag:module-size' --exclude 'tag:non-sharding' --exclude all --shard=${{ matrix.shard }}/$((${{ strategy.job-total }} - 1))
 
       - name: Persist test results
         if: always() && matrix.shard != 0
@@ -349,29 +338,12 @@ jobs:
         with:
           name: e2e-init-outputs
 
-#      - name: Fetch Refs
-#        run: |
-#          git fetch origin --depth 1 latest
-#          git fetch origin --depth 1 tag latest-success
-
       - name: Setup
         id: setup
         uses: ./.github/actions/setup-nx
         with:
           cache_mode: ro
 
-#      - name: update base url
-#        if: ${{ github.ref == 'refs/heads/latest' }}
-#        run: node scripts/deployments/prep_and_archive/updateBaseUrl.js staging
-#      - name: build
-#        if: ${{ github.ref == 'refs/heads/latest' }}
-#        run: |
-#          yarn nx generate-doc-references
-#          yarn nx generate-examples -c staging
-#          yarn nx run-many --t build -c staging --exclude ag-grid-docs --exclude all
-#      - name: validate base url
-#        if: ${{ github.ref == 'refs/heads/latest' }}
-#        run: node scripts/deployments/sanityCheckBaseUrl.js staging
       - name: validate grid modules
         run: node scripts/deployments/validateGridModulesList.js
       - name: docs build and link checker
@@ -407,7 +379,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix: ${{ fromJson(needs.build_lint.outputs.test_pkg_matrix )}}
-#    if: (needs.init.outputs.build_type == 'latest' || needs.init.outputs.build_type == 'release')
+    if: (needs.build_lint.outputs.build_type == 'latest' || needs.build_lint.outputs.build_type == 'release')
     env:
       NX_BASE: ${{ needs.init.outputs.nx_base }}
     steps:
@@ -423,24 +395,17 @@ jobs:
         with:
           name: e2e-init-outputs
 
-#      - name: Fetch Refs
-#        if: matrix.framework != 'none'
-#        run: |
-#          git fetch origin --depth 1 latest
-#          git fetch origin --depth 1 tag latest-success
-
       - name: Setup
         id: setup
         if: matrix.framework != 'none'
         uses: ./.github/actions/setup-nx
         with:
           cache_mode: ro
-#          base_ref: ${{ github.event.pull_request.base.ref || github.event.base_ref }}
 
       - name: nx package:test
         id: package-test
         if: matrix.framework != 'none'
-        run: yarn nx run-many -t test:package -p ${{ matrix.framework }}-package-tests --configuration=ci
+        run: yarn nx run-many -t test:package -p ${{ matrix.framework }}-package-tests -c=staging
 
   angular_fw_pkg_test:
     runs-on: ubuntu-24.04
@@ -449,7 +414,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix: ${{ fromJson(needs.build_lint.outputs.test_angular_pkg_matrix )}}
-#    if: (needs.init.outputs.build_type == 'latest' || needs.init.outputs.build_type == 'release')
+    if: (needs.build_lint.outputs.build_type == 'latest' || needs.build_lint.outputs.build_type == 'release')
     env:
       NX_BASE: ${{ needs.init.outputs.nx_base }}
     steps:
@@ -465,24 +430,17 @@ jobs:
         with:
           name: e2e-init-outputs
 
-#      - name: Fetch Refs
-#        if: matrix.framework != 'none'
-#        run: |
-#          git fetch origin --depth 1 latest
-#          git fetch origin --depth 1 tag latest-success
-
       - name: Setup
         id: setup
         if: matrix.framework != 'none'
         uses: ./.github/actions/setup-nx
         with:
           cache_mode: ro
-#          base_ref: ${{ github.event.pull_request.base.ref || github.event.base_ref }}
 
       - name: nx package:test
         id: package-test
         if: matrix.framework != 'none'
-        run: yarn nx run-many -t test:package:shard-${{ matrix.shard }} -p angular-package-tests --configuration=ci
+        run: yarn nx run-many -t test:package:shard-${{ matrix.shard }} -p angular-package-tests -c staging
 
   report:
     runs-on: ubuntu-24.04
@@ -621,8 +579,8 @@ jobs:
                     "Test": "${{ needs.test.result }}",
                     "e2e": "${{ needs.e2e.result }}",
                     "Docs": "${{ needs.docs.result }}",
-                    "Bundle": "${{ needs.bundle_size.result }}"
-                    "FW_Pkg": "${{ needs.fw_pkg_test.result }}"
+                    "Bundle": "${{ needs.bundle_size.result }}",
+                    "FW_Pkg": "${{ needs.fw_pkg_test.result }}",
                     "Angular_Pkg": "${{ needs.fw_pkg_test.result }}"
                 }
             }

@@ -427,15 +427,28 @@ export class GridBodyCtrl extends BeanStub {
     }
 
     private setFloatingHeights(): void {
-        const { pinnedRowModel, beans } = this;
+        const {
+            pinnedRowModel,
+            beans: { environment },
+        } = this;
 
-        const borderWidth = beans.environment.getPinnedRowBorderWidth();
         const floatingTopHeight = pinnedRowModel?.getPinnedTopTotalHeight();
         const floatingBottomHeight = pinnedRowModel?.getPinnedBottomTotalHeight();
 
-        // We only add the border width if there's actually pinned rows visible
-        const normalisedFloatingTopHeight = !floatingTopHeight ? 0 : borderWidth + floatingTopHeight;
-        const normalisedFloatingBottomHeight = !floatingBottomHeight ? 0 : borderWidth + floatingBottomHeight;
+        // We need to account for the row border and the pinned row borders.
+        // The floating container has box-sizing: border-box, so it's border will be
+        // part of its total height. Therefore we add it on to the total floating row heights.
+        // However, we don't want a double border on the final row of the pinned container,
+        // we instead want the pinned row border to "replace" the row border. As such, we
+        // subtract the row border width from the pinned border width to arrive at the final
+        // additional height to add to the container.
+        const pinnedBorderWidth = environment.getPinnedRowBorderWidth();
+        const rowBorderWidth = environment.getRowBorderWidth();
+        const additionalHeight = pinnedBorderWidth - rowBorderWidth;
+
+        // We only add the border-related adjustment if there's actually pinned rows visible
+        const normalisedFloatingTopHeight = !floatingTopHeight ? 0 : additionalHeight + floatingTopHeight;
+        const normalisedFloatingBottomHeight = !floatingBottomHeight ? 0 : additionalHeight + floatingBottomHeight;
 
         this.comp.setTopHeight(normalisedFloatingTopHeight);
         this.comp.setBottomHeight(normalisedFloatingBottomHeight);

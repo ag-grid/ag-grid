@@ -7,7 +7,7 @@ const matches = {
 };
 
 const result = { framework: [] };
-const affectedProjects = execSync('yarn nx show projects -t pack', { encoding: 'utf-8' }).split('\n');
+const affectedProjects = execSync('yarn nx show projects --affected  -t pack', { encoding: 'utf-8' }).split('\n');
 
 for (const packageName in matches) {
     if (affectedProjects.includes(packageName)) {
