@@ -136,6 +136,7 @@ import type {
     PasteEndEvent,
     PasteStartEvent,
     PinnedRowDataChangedEvent,
+    PinnedRowsChangedEvent,
     PivotMaxColumnsExceededEvent,
     PostProcessPopupParams,
     PostSortRowsParams,
@@ -2156,6 +2157,11 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      */
     @Output() public pinnedRowDataChanged: EventEmitter<PinnedRowDataChangedEvent<TData>> = new EventEmitter<
         PinnedRowDataChangedEvent<TData>
+    >();
+    /** A row has been pinned to top or bottom, or unpinned.
+     */
+    @Output() public pinnedRowsChanged: EventEmitter<PinnedRowsChangedEvent<TData>> = new EventEmitter<
+        PinnedRowsChangedEvent<TData>
     >();
     /** Client-Side Row Model only. The client has updated data for the grid by either a) setting new Row Data or b) Applying a Row Transaction.
      */
