@@ -25,6 +25,7 @@ export const _PUBLIC_EVENTS = [
     'rowGroupOpened',
     'rowDataUpdated',
     'pinnedRowDataChanged',
+    'pinnedRowsChanged',
     'rangeSelectionChanged',
     'cellSelectionChanged',
     'chartCreated',
@@ -152,7 +153,6 @@ export const _INTERNAL_EVENTS = [
     'overlayExclusiveChanged',
     'beforeRefreshModel',
     'rowNodeDataChanged',
-    'pinnedRowsChanged',
 ] as const;
 
 // We define as a callback to help with tree shaking (esbuild)

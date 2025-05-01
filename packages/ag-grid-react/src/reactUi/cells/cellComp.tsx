@@ -180,7 +180,10 @@ const CellComp = ({
 }) => {
     const beans = useContext(BeansContext);
     const { context } = beans;
-    const { colIdSanitised, instanceId } = cellCtrl;
+    const {
+        column: { colIdSanitised },
+        instanceId,
+    } = cellCtrl;
     const compBean = useRef<_EmptyBean>();
 
     // Only provide an initial state when not using a Cell Renderer so that we do not display a raw value before the cell renderer is created.

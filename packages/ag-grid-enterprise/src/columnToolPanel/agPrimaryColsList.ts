@@ -338,21 +338,21 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
 
         const recursivelyBuild = (
             tree: (AgColumn | AgProvidedColumnGroup)[],
-            dept: number,
+            depth: number,
             parentList: ColumnModelItem[]
         ): void => {
             tree.forEach((child) => {
                 if (isProvidedColumnGroup(child)) {
-                    createGroupItem(child, dept, parentList);
+                    createGroupItem(child, depth, parentList);
                 } else {
-                    createColumnItem(child, dept, parentList);
+                    createColumnItem(child, depth, parentList);
                 }
             });
         };
 
         const createGroupItem = (
             columnGroup: AgProvidedColumnGroup,
-            dept: number,
+            depth: number,
             parentList: ColumnModelItem[]
         ): void => {
             const columnGroupDef = columnGroup.getColGroupDef();
@@ -362,7 +362,7 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
             }
 
             if (columnGroup.isPadding()) {
-                recursivelyBuild(columnGroup.getChildren(), dept, parentList);
+                recursivelyBuild(columnGroup.getChildren(), depth, parentList);
                 return;
             }
 
@@ -370,7 +370,7 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
             const item: ColumnModelItem = new ColumnModelItem(
                 displayName,
                 columnGroup,
-                dept,
+                depth,
                 true,
                 this.expandGroupsByDefault
             );
@@ -378,10 +378,10 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
             parentList.push(item);
             addListeners(item);
 
-            recursivelyBuild(columnGroup.getChildren(), dept + 1, item.children);
+            recursivelyBuild(columnGroup.getChildren(), depth + 1, item.children);
         };
 
-        const createColumnItem = (column: AgColumn, dept: number, parentList: ColumnModelItem[]): void => {
+        const createColumnItem = (column: AgColumn, depth: number, parentList: ColumnModelItem[]): void => {
             const skipThisColumn = column.getColDef() && column.getColDef().suppressColumnsToolPanel;
 
             if (skipThisColumn) {
@@ -390,7 +390,7 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
 
             const displayName = colNames.getDisplayNameForColumn(column, 'columnToolPanel');
 
-            parentList.push(new ColumnModelItem(displayName, column, dept));
+            parentList.push(new ColumnModelItem(displayName, column, depth));
         };
 
         this.destroyColumnTree();

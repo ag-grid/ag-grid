@@ -116,6 +116,10 @@ export class Environment extends BeanStub implements NamedBean {
         return this.getCSSVariablePixelValue(PINNED_BORDER_WIDTH);
     }
 
+    public getRowBorderWidth(): number {
+        return this.getCSSVariablePixelValue(ROW_BORDER_WIDTH);
+    }
+
     public getDefaultRowHeight(): number {
         return this.getCSSVariablePixelValue(ROW_HEIGHT);
     }

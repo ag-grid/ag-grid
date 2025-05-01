@@ -48,7 +48,7 @@ export class ServerSideSelectionService extends BaseSelectionService implements 
             if (Strategy) {
                 this.destroyBean(this.selectionStrategy);
 
-                this.selectionStrategy = this.createManagedBean(new Strategy());
+                this.selectionStrategy = this.createManagedBean(new Strategy(this.selectionCtx));
 
                 this.shotgunResetNodeSelectionState();
                 this.dispatchSelectionChanged('api');
@@ -67,7 +67,7 @@ export class ServerSideSelectionService extends BaseSelectionService implements 
         this.selectionMode = _getRowSelectionMode(this.gos);
         const groupSelectsChildren = _getGroupSelectsDescendants(this.gos);
         const Strategy = !groupSelectsChildren ? DefaultStrategy : GroupSelectsChildrenStrategy;
-        this.selectionStrategy = this.createManagedBean(new Strategy());
+        this.selectionStrategy = this.createManagedBean(new Strategy(this.selectionCtx));
     }
 
     public handleSelectionEvent(

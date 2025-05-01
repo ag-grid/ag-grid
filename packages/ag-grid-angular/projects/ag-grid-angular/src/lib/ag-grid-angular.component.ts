@@ -136,6 +136,7 @@ import type {
     PasteEndEvent,
     PasteStartEvent,
     PinnedRowDataChangedEvent,
+    PinnedRowsChangedEvent,
     PivotMaxColumnsExceededEvent,
     PostProcessPopupParams,
     PostSortRowsParams,
@@ -1918,9 +1919,18 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Output() public componentStateChanged: EventEmitter<ComponentStateChangedEvent<TData>> = new EventEmitter<
         ComponentStateChangedEvent<TData>
     >();
-    /** Value has changed after editing (this event will not fire if editing was cancelled, eg ESC was pressed) or
-     *  if cell value has changed as a result of cut, paste, cell clear (pressing Delete key),
-     * fill handle, copy range down, undo and redo.
+    /** Cell value has changed. This occurs after the following scenarios:
+     * - Editing. Will not fire if any of the following are true:
+     *     new value is the same as old value;
+     *     `readOnlyEdit = true`;
+     *     editing was cancelled (e.g. Escape key was pressed);
+     *     or new value is of the wrong cell data type for the column.
+     *  - Cut.
+     *  - Paste.
+     *  - Cell clear (pressing Delete key).
+     *  - Fill handle.
+     *  - Copy range down.
+     *  - Undo and redo.
      */
     @Output() public cellValueChanged: EventEmitter<CellValueChangedEvent<TData>> = new EventEmitter<
         CellValueChangedEvent<TData>
@@ -2147,6 +2157,11 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      */
     @Output() public pinnedRowDataChanged: EventEmitter<PinnedRowDataChangedEvent<TData>> = new EventEmitter<
         PinnedRowDataChangedEvent<TData>
+    >();
+    /** A row has been pinned to top or bottom, or unpinned.
+     */
+    @Output() public pinnedRowsChanged: EventEmitter<PinnedRowsChangedEvent<TData>> = new EventEmitter<
+        PinnedRowsChangedEvent<TData>
     >();
     /** Client-Side Row Model only. The client has updated data for the grid by either a) setting new Row Data or b) Applying a Row Transaction.
      */

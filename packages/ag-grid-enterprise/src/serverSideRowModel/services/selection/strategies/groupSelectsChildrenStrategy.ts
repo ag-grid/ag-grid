@@ -9,6 +9,7 @@ import type {
     IServerSideSelectionState,
     ISetNodesSelectedParams,
     RowNode,
+    RowRangeSelectionContext,
 } from 'ag-grid-community';
 import { BeanStub, _error, _isMultiRowSelection, _warn } from 'ag-grid-community';
 
@@ -34,6 +35,10 @@ export class GroupSelectsChildrenStrategy extends BeanStub implements ISelection
     }
 
     private selectedState: SelectionState = { selectAllChildren: false, toggledNodes: new Map() };
+
+    constructor(private readonly selectionCtx: RowRangeSelectionContext) {
+        super();
+    }
 
     public postConstruct(): void {
         this.addManagedEventListeners({
@@ -157,7 +162,7 @@ export class GroupSelectsChildrenStrategy extends BeanStub implements ISelection
         return anyStateChanged;
     }
 
-    public setNodesSelected({ nodes, newValue, clearSelection }: ISetNodesSelectedParams): number {
+    public setNodesSelected({ nodes, newValue, clearSelection, source }: ISetNodesSelectedParams): number {
         if (nodes.length === 0) return 0;
 
         const onlyThisNode = clearSelection && newValue;
@@ -175,6 +180,9 @@ export class GroupSelectsChildrenStrategy extends BeanStub implements ISelection
             this.recursivelySelectNode(idPathToNode, this.selectedState, newValue);
         });
         this.removeRedundantState();
+        if (nodes.length === 1 && source === 'api') {
+            this.selectionCtx.setRoot(nodes[0].footer ? nodes[0].sibling : nodes[0]);
+        }
         return 1;
     }
 

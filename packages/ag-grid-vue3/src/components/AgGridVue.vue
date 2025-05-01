@@ -68,6 +68,7 @@ import type {
     PasteEndEvent,
     PasteStartEvent,
     PinnedRowDataChangedEvent,
+    PinnedRowsChangedEvent,
     PivotMaxColumnsExceededEvent,
     RangeDeleteEndEvent,
     RangeDeleteStartEvent,

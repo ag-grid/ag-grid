@@ -25,8 +25,12 @@ function snapshot_versions {
     fi
 }
 
-while getopts ":eniupc" opt; do
+while getopts ":o:eniupc" opt; do
   case $opt in
+    o)
+      overrides_subdir="$OPTARG"
+      passthrough_opts="${passthrough_opts} -o ${overrides_subdir}"
+      ;;
     e)
       editor=true
       ;;
@@ -78,6 +82,11 @@ else
     cp -R ${project_dir}/../shared/* $project/
     cp -R ${project_dir}/* $project/
     cp dist/artifacts/packages/*.tgz $project/
+
+    if [[ ${overrides_subdir:-} != "" ]] ; then
+        echo ">>> copying overrides from ${overrides_subdir}"
+        cp -R ${project_dir}/overrides/${overrides_subdir}/* $project/
+    fi
 
     cd ${project_dir}
     sed -e '/source .*\/run.sh$/r ../shared/run.sh' ${project_dir}/${project_script} >${project}/run.sh
@@ -159,6 +168,7 @@ mv ../e2e ../playwright.config.ts ./
 export FW_VERSION=${version}
 export FW_TYPE=${fw}
 export FW_DEV_PORT=${dev_port}
+export FW_VARIANT=${overrides_subdir:-}
 if ${production} ; then
     export FW_VERSION=production-$FW_VERSION
 fi
@@ -168,7 +178,6 @@ fi
 
 build_fw
 
-#npx playwright install chromium
 if ${interactive} ; then
     serve_fw
     npx playwright test $(${update} && echo "-u" || echo "") || echo "Tests failed"

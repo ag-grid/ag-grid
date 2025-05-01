@@ -1,0 +1,7 @@
+
+// overridden
+import { ModuleRegistry } from 'ag-grid-community';
+
+import { InfiniteRowModelModule } from 'ag-grid-community';
+
+ModuleRegistry.registerModules([ InfiniteRowModelModule,  ]);

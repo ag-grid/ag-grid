@@ -110,6 +110,8 @@ export class SparklineCellRenderer extends Component implements ICellRenderer {
                 data: this.processData(params.value),
             } as AgSparklineOptions;
 
+            this.sparklineOptions.type ??= 'line';
+
             if (this.sparklineOptions.tooltip?.renderer) {
                 this.wrapTooltipRenderer();
             } else {
