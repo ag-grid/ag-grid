@@ -132,6 +132,11 @@ export class GridOptionsService extends BeanStub implements NamedBean {
         });
     }
 
+    public override destroy(): void {
+        super.destroy();
+        this.queueEvents = [];
+    }
+
     /**
      * Get the raw value of the GridOptions property provided.
      * @param property
