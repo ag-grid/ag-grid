@@ -23,7 +23,7 @@ export async function getStaticPaths() {
 
 const { page } = Astro.props;
 const currentFramework = Astro.params.framework as Framework;
-const pageName = Astro.params.pageName as Framework;
+const pageName = Astro.params.pageName;
 const path = Astro.url.pathname;
 const { title, enterprise, hideSideMenu, hidePageMenu, headings: pageHeadings, migrationVersion } = page.data;
 
