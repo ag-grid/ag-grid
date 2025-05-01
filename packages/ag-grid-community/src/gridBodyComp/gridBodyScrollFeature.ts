@@ -623,6 +623,38 @@ export class GridBodyScrollFeature extends BeanStub {
                 setTimeout(() => {
                     this.ensureIndexVisible(index, position, retry + 1);
                 }, 0);
+                return;
+            }
+
+            // SSRM - if the node is a stub, give the grid a chance to load the data
+            // when data loads, try again to scroll to the row.
+            // Cancel if any other scroll event occurs.
+            if (rowNode?.stub) {
+                const scrollTop = this.getVScrollPosition().top;
+                const destroyFuncs = this.addManagedEventListeners({
+                    bodyScroll: () => {
+                        const newScrollTop = this.getVScrollPosition().top;
+
+                        // allow horizontal scroll without cancelling/also allow also use scroll top as opposed to event direction
+                        // as scrolling from this func will fire a scroll even asynchronously, but scroll top will be up to date
+                        if (scrollTop === newScrollTop) {
+                            return;
+                        }
+
+                        destroyFuncs.forEach((destroyFunc) => destroyFunc());
+                    },
+                    modelUpdated: () => {
+                        destroyFuncs.forEach((destroyFunc) => destroyFunc());
+
+                        // if index not in count, stop waiting
+                        if (index >= rowModel.getRowCount()) {
+                            return;
+                        }
+
+                        // try again to scroll to the row.
+                        this.ensureIndexVisible(index, position, retry + 1);
+                    },
+                });
             }
         });
     }
