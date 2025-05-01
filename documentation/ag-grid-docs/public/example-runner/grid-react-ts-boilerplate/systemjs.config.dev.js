@@ -1,5 +1,45 @@
 (function (global) {
     process = { env: { NODE_ENV: 'development' } };
+
+    // Valid values: 18 / 19
+    const REACT_VERSION = 18;
+    const reactConfig =
+        REACT_VERSION == 18
+            ? {
+                  map: {
+                      react: 'npm:react@18.2.0',
+                      'react-dom': 'npm:react-dom@18.2.0',
+                      'react-dom/client': 'npm:react-dom@18.2.0',
+                  },
+                  packages: {
+                      react: {
+                          main: './umd/react.development.js',
+                      },
+                      'react-dom': {
+                          main: './umd/react-dom.development.js',
+                      },
+                  },
+              }
+            : {
+                  map: {
+                      react: 'npm:react@19.1.0/cjs/react.development.js',
+                      'react-dom': 'npm:react-dom@19.1.0/cjs/react-dom.development.js',
+                      'react-dom/client': 'npm:react-dom@19.1.0/cjs/react-dom-client.development.js',
+                      scheduler: 'npm:scheduler@0.26.0/cjs/scheduler.development.js',
+                  },
+                  packages: {
+                      react: {
+                          format: 'cjs',
+                      },
+                      'react-dom': {
+                          format: 'cjs',
+                      },
+                      scheduler: {
+                          format: 'cjs',
+                      },
+                  },
+              };
+
     var sjsPaths = {};
     if (typeof systemJsPaths !== 'undefined') {
         sjsPaths = systemJsPaths;
@@ -19,10 +59,7 @@
             // css: boilerplatePath + "css.js",
             css: 'npm:systemjs-plugin-css@0.1.37/css.js',
 
-            // react
-            react: 'npm:react@18.2.0',
-            'react-dom': 'npm:react-dom@18.2.0',
-            'react-dom/client': 'npm:react-dom@18.2.0',
+            ...reactConfig.map,
 
             ts: 'npm:plugin-typescript@8.0.0/lib/plugin.js',
             typescript: 'npm:typescript@5.4.5/lib/typescript.min.js',
@@ -34,15 +71,7 @@
 
         packages: {
             css: {},
-            react: {
-                main: './umd/react.development.js',
-            },
-            'react-dom': {
-                main: './umd/react-dom.development.js',
-            },
-            'react-dom/server': {
-                main: '../umd/react-dom-server.browser.production.min.js',
-            },
+            ...reactConfig.packages,
             app: {
                 main: './index.tsx',
                 defaultExtension: 'tsx',

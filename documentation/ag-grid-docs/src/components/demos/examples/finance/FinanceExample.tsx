@@ -1,5 +1,6 @@
 import { useIntersectionObserver } from '@utils/hooks/useIntersectionObserver';
 import { AgChartsEnterpriseModule } from 'ag-charts-enterprise';
+import type { AgSparklineOptions } from 'ag-charts-types';
 import React, { useCallback, useMemo, useRef, useState } from 'react';
 
 import {
@@ -210,12 +211,13 @@ export const FinanceExample: React.FC<Props> = ({
                         type: 'bar',
                         direction: 'vertical',
                         axis: {
+                            type: 'category',
                             strokeWidth: 0,
                         },
                         tooltip: {
                             renderer: sparklineTooltipRenderer,
                         },
-                    },
+                    } satisfies AgSparklineOptions,
                 },
                 ...timelineWidthDefs,
             },
