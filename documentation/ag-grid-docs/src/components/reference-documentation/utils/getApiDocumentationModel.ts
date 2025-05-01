@@ -36,7 +36,7 @@ function addEnterprisePropertyToTags({
     callSignature: ICallSignature;
     allModules: GridModule[];
 }) {
-    if (!callSignature.meta?.tags) {
+    if (!callSignature?.meta?.tags) {
         return callSignature;
     }
 
