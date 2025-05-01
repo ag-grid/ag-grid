@@ -259,8 +259,8 @@ export class GridOptionsService extends BeanStub implements NamedBean {
                 if (eventName === 'gridReady') {
                     fireEvent(event);
                     this.gridReadyFired = true;
-                    for (const event of this.queueEvents) {
-                        fireEvent(event);
+                    for (const queuedEvent of this.queueEvents) {
+                        fireEvent(queuedEvent);
                     }
                     this.queueEvents = [];
                 } else {
