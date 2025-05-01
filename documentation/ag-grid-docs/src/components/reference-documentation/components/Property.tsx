@@ -380,22 +380,16 @@ export const Property: FunctionComponent<{
 
                                 {agModule && (
                                     <div className={classnames(styles.metaItem, styles.moduleItem)}>
-                                        <a
-                                            href={urlWithPrefix({
-                                                url: './modules/#selecting-modules',
-                                                framework,
-                                            })}
-                                        >
-                                            <Icon name="module" />
-                                            <span>
-                                                {agModule}
-
-                                                {/* TODO: Add enterprise icon */}
-                                                {/* <span className={styles.enterpriseIcon}>
-                                                    {' '}
-                                                    <Icon name="enterprise" />
-                                                </span> */}
-                                            </span>
+                                        <div className={styles.moduleContent}>
+                                            <a
+                                                href={urlWithPrefix({
+                                                    url: './modules/#selecting-modules',
+                                                    framework,
+                                                })}
+                                            >
+                                                <Icon name="module" />
+                                                <span>{agModule}</span>
+                                            </a>
                                             {hasMultipleModules && (
                                                 <>
                                                     <span
@@ -418,7 +412,6 @@ export const Property: FunctionComponent<{
                                                         <div className={styles.moduleTooltipContent}>
                                                             {additionalModules.map((module, index) => (
                                                                 <div key={index}>
-                                                                    {' '}
                                                                     <a
                                                                         href={urlWithPrefix({
                                                                             url: './modules/#selecting-modules',
@@ -427,11 +420,6 @@ export const Property: FunctionComponent<{
                                                                     >
                                                                         <Icon name="module" />
                                                                         {module}
-                                                                        {/* TODO: Add enterprise icon */}
-                                                                        {/* <span className={styles.enterpriseIcon}>
-                                                                            {' '}
-                                                                            <Icon name="enterprise" />
-                                                                        </span> */}
                                                                     </a>
                                                                 </div>
                                                             ))}
@@ -439,7 +427,7 @@ export const Property: FunctionComponent<{
                                                     </div>
                                                 </>
                                             )}
-                                        </a>
+                                        </div>
                                     </div>
                                 )}
                             </div>

@@ -512,6 +512,12 @@ button.seeMore {
     font-family: var(--text-monospace-font-family);
     position: relative;
 
+    .moduleContent {
+        display: flex;
+        align-items: center;
+        gap: $spacing-size-2;
+    }
+
     span {
         margin-top: 2px;
     }
@@ -539,10 +545,6 @@ button.seeMore {
         padding: 0px 6px;
         border-radius: 8px;
         padding-right: 2px;
-        transition: background 0.2s ease-in-out;
-        &:hover {
-            background: #0e459125;
-        }
 
         &.moduleCountActive {
             background: #0e459125;
