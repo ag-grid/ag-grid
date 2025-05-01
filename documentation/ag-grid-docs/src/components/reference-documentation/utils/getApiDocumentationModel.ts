@@ -1,4 +1,4 @@
-import type { Framework, ModuleMappings } from '@ag-grid-types';
+import type { Framework } from '@ag-grid-types';
 import { throwDevWarning } from '@ag-website-shared/utils/throwDevWarning';
 
 import { AG_MODULE_TAG_NAME } from '../constants';
@@ -40,7 +40,7 @@ function addEnterprisePropertyToTags({
         return callSignature;
     }
 
-    const newTags = callSignature.meta.tags.map((tag) => {
+    const newTags = callSignature.meta?.tags.map((tag) => {
         if (tag.name === AG_MODULE_TAG_NAME) {
             const tagModule = tag.comment.replace(/`/g, '');
 
