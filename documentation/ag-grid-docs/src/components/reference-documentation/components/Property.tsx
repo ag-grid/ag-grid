@@ -8,6 +8,7 @@ import { urlWithPrefix } from '@utils/urlWithPrefix';
 import classnames from 'classnames';
 import { Fragment, type FunctionComponent, useCallback, useEffect, useRef, useState } from 'react';
 
+import { AG_MODULE_TAG_NAME } from '../constants';
 import type { ChildDocEntry, Config, ICallSignature, InterfaceEntry } from '../types';
 import {
     convertMarkdown,
@@ -161,26 +162,12 @@ function getTagsData({ definition, gridOpProp }: { definition: ChildDocEntry; gr
           ']'
         : defaultValue;
     const isInitial = tags.some((t) => t.name === 'initial') ?? false;
-
-    // Get module from either tags or meta
-    const tagModule = tags.find((t) => t.name === 'agModule')?.comment.replace(/`/g, '');
-    const metaModule = definition.meta?.module || gridOpProp?.meta?.module;
-    const moduleStr = tagModule || metaModule || '';
-
-    // Split by forward slashes and handle multiple modules
-    const allModules = moduleStr
-        .split(/\s*\/\s*/)
-        .map((m) => m.trim())
-        .filter(Boolean);
-
-    const hasMultipleModules = allModules.length > 1;
+    const modules = tags.find((t) => t.name === AG_MODULE_TAG_NAME)?.modules ?? [];
 
     return {
         formattedDefaultValue,
         isInitial,
-        agModule: allModules[0],
-        additionalModules: hasMultipleModules ? allModules.slice(1) : [],
-        hasMultipleModules,
+        modules,
     };
 }
 
@@ -225,10 +212,13 @@ export const Property: FunctionComponent<{
         isObject,
         config,
     });
-    const { formattedDefaultValue, isInitial, agModule, additionalModules, hasMultipleModules } = getTagsData({
+    const { formattedDefaultValue, isInitial, modules } = getTagsData({
         definition,
         gridOpProp,
     });
+
+    const firstModule = modules[0];
+    const otherModules = modules.slice(1) ?? [];
     const { more } = definition;
 
     const propertyRef = useRef<HTMLTableRowElement>(null);
@@ -378,7 +368,7 @@ export const Property: FunctionComponent<{
                                     </a>
                                 )}
 
-                                {agModule && (
+                                {firstModule && (
                                     <div className={classnames(styles.metaItem, styles.moduleItem)}>
                                         <div className={styles.moduleContent}>
                                             <a
@@ -388,9 +378,15 @@ export const Property: FunctionComponent<{
                                                 })}
                                             >
                                                 <Icon name="module" />
-                                                <span>{agModule}</span>
+                                                <span>{firstModule.name}</span>
+                                                {firstModule.isEnterprise && (
+                                                    <span className={styles.enterpriseIcon}>
+                                                        {' '}
+                                                        <Icon name="enterprise" />
+                                                    </span>
+                                                )}
                                             </a>
-                                            {hasMultipleModules && (
+                                            {otherModules.length > 0 && (
                                                 <>
                                                     <span
                                                         className={classnames(styles.moduleCount, {
@@ -402,7 +398,7 @@ export const Property: FunctionComponent<{
                                                             toggleModuleTooltip();
                                                         }}
                                                     >
-                                                        +{additionalModules.length} <Icon name="chevronDown" />
+                                                        +{otherModules.length} <Icon name="chevronDown" />
                                                     </span>
                                                     <div
                                                         className={classnames(styles.moduleTooltip, {
@@ -410,8 +406,8 @@ export const Property: FunctionComponent<{
                                                         })}
                                                     >
                                                         <div className={styles.moduleTooltipContent}>
-                                                            {additionalModules.map((module, index) => (
-                                                                <div key={index}>
+                                                            {otherModules.map((module) => (
+                                                                <div key={module.name}>
                                                                     <a
                                                                         href={urlWithPrefix({
                                                                             url: './modules/#selecting-modules',
@@ -419,7 +415,13 @@ export const Property: FunctionComponent<{
                                                                         })}
                                                                     >
                                                                         <Icon name="module" />
-                                                                        {module}
+                                                                        {module.name}
+                                                                        {module.isEnterprise && (
+                                                                            <span className={styles.enterpriseIcon}>
+                                                                                {' '}
+                                                                                <Icon name="enterprise" />
+                                                                            </span>
+                                                                        )}
                                                                     </a>
                                                                 </div>
                                                             ))}

@@ -243,3 +243,10 @@ export interface MultipleApiModel {
 }
 
 export type ApiDocumentationModel = SingleApiModel | MultipleApiModel;
+
+export interface GridModule {
+    moduleName: string;
+    name: string;
+    path: string;
+    isEnterprise: boolean;
+}
