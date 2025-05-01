@@ -249,13 +249,11 @@ export class GridOptionsService extends BeanStub implements NamedBean {
                 return;
             }
 
-            const eventHandler = (this.gridOptions as any)[_getCallbackForEvent(eventName)];
-            if (typeof eventHandler !== 'function') {
-                return;
-            }
-
-            const fireEvent = (e?: any) => {
-                this.beans.frameworkOverrides.wrapOutgoing(() => eventHandler(e));
+            const fireEvent = (name: AgEventType, e?: any) => {
+                const eventHandler = (this.gridOptions as any)[_getCallbackForEvent(name)];
+                if (typeof eventHandler === 'function') {
+                    this.beans.frameworkOverrides.wrapOutgoing(() => eventHandler(e));
+                }
             };
 
             if (this.gridReadyFired) {
