@@ -260,7 +260,7 @@ export abstract class BaseSelectionService extends BeanStub {
         // the children (as the default behaviour when clicking is to unselect other rows) which results
         // in the group getting unselected (as all children are unselected). the correct thing would be
         // to change this, so that children of the selected group are not then subsequently un-selected.
-        if (isRowClicked && groupSelectsDescendants && node.group) return null;
+        // if (isRowClicked && groupSelectsDescendants && node.group) return null;
 
         if (isRowClicked && !(enableClickSelection || enableDeselection)) return null;
 
@@ -365,6 +365,7 @@ export abstract class BaseSelectionService extends BeanStub {
                     node,
                     newValue,
                     clearSelection: !isMultiSelect || shouldClear,
+                    keepDescendants: node.group && groupSelectsDescendants,
                 };
             }
 
@@ -381,6 +382,7 @@ interface SingleNodeSelection {
     node: RowNode;
     newValue: boolean;
     clearSelection: boolean;
+    keepDescendants?: boolean;
 }
 
 interface MultiNodeSelection {

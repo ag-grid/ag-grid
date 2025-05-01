@@ -97,6 +97,7 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
                 nodes: [selection.node],
                 newValue: selection.newValue,
                 clearSelection: selection.clearSelection,
+                keepDescendants: selection.keepDescendants,
                 event,
                 source,
             });
@@ -110,7 +111,8 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
         nodes,
         event,
         source,
-    }: ISetNodesSelectedParams): number {
+        keepDescendants = false,
+    }: ISetNodesSelectedParams & { keepDescendants?: boolean }): number {
         if (!_isRowSelection(this.gos) && newValue) {
             _warn(132);
             return 0;
@@ -167,7 +169,7 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
 
             const clearOtherNodes = newValue && (clearSelection || !this.isMultiSelect());
             if (clearOtherNodes) {
-                updatedCount += this.clearOtherNodes(_normaliseSiblingRef(nodes[0]), source);
+                updatedCount += this.clearOtherNodes(_normaliseSiblingRef(nodes[0]), keepDescendants, source);
             }
 
             // only if we selected something, then update groups and fire events
@@ -291,11 +293,28 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
         return selectionChanged;
     }
 
-    private clearOtherNodes(rowNodeToKeepSelected: RowNode, source: SelectionEventSourceType): number {
+    private clearOtherNodes(
+        rowNodeToKeepSelected: RowNode,
+        keepDescendants: boolean,
+        source: SelectionEventSourceType
+    ): number {
+        function isDescendantOf(root: RowNode, child: RowNode): boolean {
+            let parent = child.parent;
+            while (parent) {
+                if (parent === root) return true;
+                parent = parent.parent;
+            }
+            return false;
+        }
         const groupsToRefresh = new Map<string, RowNode>();
         let updatedCount = 0;
         this.selectedNodes.forEach((otherRowNode) => {
-            if (otherRowNode && otherRowNode.id !== rowNodeToKeepSelected.id) {
+            if (
+                keepDescendants
+                    ? !isDescendantOf(rowNodeToKeepSelected, otherRowNode) &&
+                      otherRowNode.id != rowNodeToKeepSelected.id
+                    : otherRowNode.id != rowNodeToKeepSelected.id
+            ) {
                 const rowNode = this.selectedNodes.get(otherRowNode.id!)!;
                 updatedCount += this.setNodesSelected({
                     nodes: [rowNode],
