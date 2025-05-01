@@ -43,6 +43,7 @@ export abstract class BaseEditStrategy extends BeanStub {
     }
 
     public stopAllEditing(source: 'ui' | 'api' = 'ui'): void {
+        _syncModelsFromEditors(this.beans);
         const editingCells = this.editModel.getEditingCellIds();
         if (editingCells.length === 0) {
             return;
@@ -52,7 +53,7 @@ export abstract class BaseEditStrategy extends BeanStub {
 
             if (cellCtrl) {
                 this.editModel.stopEditing(cellCtrl.rowCtrl!.rowId!, cellCtrl?.column.colId);
-                _destroyEditor(this.beans, cellCtrl.rowCtrl, cellCtrl, undefined, source);
+                _destroyEditor(this.beans, cellPosition, undefined, source);
             }
         });
     }

@@ -327,6 +327,7 @@ export class ValueService extends BeanStub implements NamedBean {
      * @returns `True` if the value has been updated, otherwise`False`.
      */
     public setValue(rowNode: IRowNode, colKey: string | AgColumn, newValue: any, eventSource?: string): boolean {
+        console.warn('setValue', rowNode, colKey, newValue, eventSource);
         const column = this.colModel.getColDefCol(colKey);
 
         if (!rowNode || !column) {

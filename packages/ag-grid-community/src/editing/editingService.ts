@@ -153,10 +153,10 @@ export class EditingService extends BeanStub implements NamedBean {
 
         this.editStrategy = this.createEditStrategy();
 
-        if (!cancel && this.shouldStopEditing?.(rowCtrl, cellCtrl, key, event, source)) {
-            return this.editStrategy?.stopEditing?.(rowCtrl, cellCtrl, source) ?? false;
-        } else if (cancel && this.shouldCancelEditing?.(rowCtrl, cellCtrl, key, event, source)) {
-            return this.editStrategy?.cancelEditing?.(rowCtrl, cellCtrl, source) ?? false;
+        if (!cancel && this.shouldStopEditing?.(undefined, undefined, key, event, source)) {
+            return this.editStrategy?.stopEditing?.(undefined, undefined, source) ?? false;
+        } else if (cancel && this.shouldCancelEditing?.(undefined, undefined, key, event, source)) {
+            return this.editStrategy?.cancelEditing?.(undefined, undefined, source) ?? false;
         }
 
         return false;
@@ -263,10 +263,16 @@ export class EditingService extends BeanStub implements NamedBean {
         return new PopupEditorWrapper(params);
     }
 
-    setDataValue(rowNode: RowNode, column: string | AgColumn<any>, newValue: any): boolean | null {
+    setDataValue(
+        rowNode: RowNode,
+        column: string | AgColumn<any>,
+        newValue: any,
+        eventSource?: string
+    ): boolean | null {
+        console.warn('setDataValue', rowNode, column, newValue, eventSource);
         const { rowCtrl, cellCtrl } = _resolveControllers(this.beans, { rowNode, column });
 
-        return _syncModelFromEditor(this.beans, rowCtrl, cellCtrl, newValue);
+        return _syncModelFromEditor(this.beans, rowCtrl, cellCtrl, newValue, eventSource);
     }
 
     public handleColDefChanged(cellCtrl: CellCtrl): void {
