@@ -20,7 +20,7 @@ import {
 } from '../../gridOptionsUtils';
 import { refreshFirstAndLastStyles } from '../../headerRendering/cells/cssClassApplier';
 import type { BrandedType } from '../../interfaces/brandedType';
-import type { ICellEditor, ICellEditorParams } from '../../interfaces/iCellEditor';
+import type { ICellEditor } from '../../interfaces/iCellEditor';
 import type { CellPosition } from '../../interfaces/iCellPosition';
 import type { ICellRangeFeature } from '../../interfaces/iCellRangeFeature';
 import type { CellChangedEvent } from '../../interfaces/iRowNode';
@@ -382,13 +382,16 @@ export class CellCtrl extends BeanStub {
             rowNode,
             comp,
             eGui,
-            beans: { valueSvc, gos },
+            beans: { valueSvc, gos, editingSvc },
         } = this;
         const res: ICellRendererParams = _addGridCommonParams(gos, {
             value: value,
             valueFormatted: valueFormatted,
             getValue: () => valueSvc.getValueForDisplay(column, rowNode).value,
-            setValue: (value: any) => valueSvc.setValue(rowNode, column, value),
+            setValue: (value: any) =>
+                editingSvc
+                    ? editingSvc.setDataValue(rowNode, column, value)
+                    : valueSvc.setValue(rowNode, column, value),
             formatValue: this.formatValue.bind(this),
             data: rowNode.data,
             node: rowNode,

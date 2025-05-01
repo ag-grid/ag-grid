@@ -4,7 +4,7 @@ import type { Column } from '../../interfaces/iColumn';
 import type { CellCtrl } from '../../rendering/cell/cellCtrl';
 import type { RowCtrl } from '../../rendering/row/rowCtrl';
 import { _resolveControllers } from '../utils/controllers';
-import { _destroyEditors, _getOldValue } from '../utils/editors';
+import { _destroyEditors, _getOldValue, _syncModelsFromEditors } from '../utils/editors';
 import { BaseEditStrategy } from './baseEditStrategy';
 
 export class SingleCellEditStrategy extends BaseEditStrategy {
@@ -74,6 +74,10 @@ export class SingleCellEditStrategy extends BaseEditStrategy {
             return false;
         }
 
+        console.log('stopEditing', rowCtrl, cellCtrl);
+
+        _syncModelsFromEditors(this.beans);
+
         const cells = this.editModel.getEditingCellIds();
 
         this.editModel.stopEditing(rowCtrl?.rowId, cellCtrl?.column.colId);
@@ -90,6 +94,8 @@ export class SingleCellEditStrategy extends BaseEditStrategy {
         if (!this.isEditing(rowCtrl, cellCtrl)) {
             return false;
         }
+
+        console.log('cancelEditing', rowCtrl, cellCtrl);
 
         const cells = this.editModel.getEditingCellIds();
 

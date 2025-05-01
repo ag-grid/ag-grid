@@ -119,6 +119,8 @@ export function _saveNewValue(
         return false;
     }
 
+    console.log('Saving new value', cellCtrl, oldValue, newValue);
+
     // we suppressRefreshCell because the call to rowNode.setDataValue() results in change detection
     // getting triggered, which results in all cells getting refreshed. we do not want this refresh
     // to happen on this call as we want to call it explicitly below. otherwise refresh gets called twice.
@@ -172,6 +174,7 @@ export function _refreshEditorOnColDefChanged(beans: BeanCollection, cellCtrl: C
 }
 
 export function _syncModelsFromEditors(beans: BeanCollection): void {
+    console.log('Syncing models from editors');
     beans.editingModelSvc?.getEditingCellIds().forEach((cellId) => {
         const { rowCtrl, cellCtrl } = _resolveControllers(beans, cellId)!;
         const { comp } = cellCtrl!;
@@ -190,9 +193,10 @@ export function _syncModelFromEditor(
     beans: BeanCollection,
     rowCtrl?: RowCtrl | null,
     cellCtrl?: CellCtrl | null,
-    newValue?: any
+    newValue?: any,
+    eventSource?: string
 ): boolean | null {
-    if (rowCtrl && cellCtrl && beans.editingSvc?.isEditing(rowCtrl, cellCtrl)) {
+    if (eventSource !== 'edit' && rowCtrl && cellCtrl && beans.editingSvc?.isEditing(rowCtrl, cellCtrl)) {
         const oldValue = beans.valueSvc.getValue(cellCtrl.column, rowCtrl.rowNode, undefined, 'api');
         beans.editingModelSvc
             ?.getEditModel(rowCtrl.rowId as string, cellCtrl.column.getColId())
@@ -208,25 +212,46 @@ export function _destroyEditors(
     cancel: boolean,
     source: 'ui' | 'api' = 'ui'
 ): void {
-    cellPositions.forEach((cellPosition) => {
-        const { rowCtrl, cellCtrl } = _resolveControllers(beans, cellPosition);
+    console.log('Destroying editors', cellPositions, cancel, source);
+    _syncModelsFromEditors(beans);
 
-        _destroyEditor(beans, rowCtrl, cellCtrl, cancel, source);
+    cellPositions.forEach((cellPosition) => {
+        _destroyEditor(beans, cellPosition, cancel, source);
     });
+}
+
+function _takeNewValueFromPosition(
+    beans: BeanCollection,
+    cellPosition: CellIdPositions
+): { newValue?: any; newValueExists: boolean } {
+    const cellCtrl = _resolveCellController(beans, cellPosition);
+    if (!cellCtrl) {
+        return { newValueExists: false };
+    }
+
+    if (cellPosition.oldValue !== cellPosition.newValue) {
+        return { newValue: cellPosition.newValue, newValueExists: true };
+    }
+
+    const { comp } = cellCtrl;
+    return _takeValueFromCellEditor(false, comp);
 }
 
 export function _destroyEditor(
     beans: BeanCollection,
-    rowCtrl?: RowCtrl | null,
-    cellCtrl?: CellCtrl | null,
+    cellPosition: CellIdPositions,
     cancel?: boolean,
     source: 'ui' | 'api' = 'ui'
 ): void {
+    console.log('Destroying editor', cellPosition);
+
+    const { rowCtrl, cellCtrl } = _resolveControllers(beans, cellPosition);
+
     const batchEdit = beans.gos.get('batchEdit');
 
     const { comp, column, rowNode } = cellCtrl!;
 
-    const { newValue, newValueExists } = _takeValueFromCellEditor(false, comp);
+    const { newValue, newValueExists } = _takeNewValueFromPosition(beans, cellPosition); //_takeValueFromCellEditor(false, comp);
 
     let valueChanged = false;
     let oldValue: any;
