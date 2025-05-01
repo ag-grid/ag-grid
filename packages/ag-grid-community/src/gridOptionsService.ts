@@ -104,6 +104,11 @@ export class GridOptionsService extends BeanStub implements NamedBean {
     /** This is only used for the main DOM element */
     public readonly gridInstanceId = gridInstanceSequence++;
 
+    // Used to hold user events until the grid is ready
+    // Required to support React 19 StrictMode. See IFrameworkOverrides.runWhenReadyAsync but also is likely a good idea that onGridReady is the first event fired.
+    private gridReadyFired = false;
+    private queueEvents: any[] = [];
+
     // This is quicker then having code call gridOptionsService.get('context')
     private get gridOptionsContext() {
         return this.gridOptions['context'];
@@ -239,12 +244,28 @@ export class GridOptionsService extends BeanStub implements NamedBean {
                 return;
             }
 
-            const eventHandlerName = _getCallbackForEvent(eventName);
-            const eventHandler = (this.gridOptions as any)[eventHandlerName];
-            if (typeof eventHandler === 'function') {
-                this.beans.frameworkOverrides.wrapOutgoing(() => {
-                    eventHandler(event);
-                });
+            const eventHandler = (this.gridOptions as any)[_getCallbackForEvent(eventName)];
+            if (typeof eventHandler !== 'function') {
+                return;
+            }
+
+            const fireEvent = (e?: any) => {
+                this.beans.frameworkOverrides.wrapOutgoing(() => eventHandler(e));
+            };
+
+            if (this.gridReadyFired) {
+                fireEvent(event);
+            } else {
+                if (eventName === 'gridReady') {
+                    fireEvent(event);
+                    this.gridReadyFired = true;
+                    for (const event of this.queueEvents) {
+                        fireEvent(event);
+                    }
+                    this.queueEvents = [];
+                } else {
+                    this.queueEvents.push(event);
+                }
             }
         };
     };
