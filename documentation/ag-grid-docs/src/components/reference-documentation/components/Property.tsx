@@ -373,17 +373,24 @@ export const Property: FunctionComponent<{
                                         <div className={styles.moduleContent}>
                                             <a
                                                 href={urlWithPrefix({
-                                                    url: './modules/#selecting-modules',
+                                                    url: './modules',
                                                     framework,
                                                 })}
                                             >
                                                 <Icon name="module" />
                                                 <span>{firstModule.name}</span>
                                                 {firstModule.isEnterprise && (
-                                                    <span className={styles.enterpriseIcon}>
-                                                        {' '}
-                                                        <Icon name="enterprise" />
-                                                    </span>
+                                                    <a
+                                                        href={urlWithPrefix({
+                                                            url: './community-vs-enterprise/',
+                                                            framework,
+                                                        })}
+                                                    >
+                                                        <span className={styles.enterpriseIcon}>
+                                                            {' '}
+                                                            <Icon name="enterprise" />
+                                                        </span>
+                                                    </a>
                                                 )}
                                             </a>
                                             {otherModules.length > 0 && (
@@ -410,17 +417,24 @@ export const Property: FunctionComponent<{
                                                                 <div key={module.name}>
                                                                     <a
                                                                         href={urlWithPrefix({
-                                                                            url: './modules/#selecting-modules',
+                                                                            url: './modules/',
                                                                             framework,
                                                                         })}
                                                                     >
                                                                         <Icon name="module" />
                                                                         {module.name}
                                                                         {module.isEnterprise && (
-                                                                            <span className={styles.enterpriseIcon}>
-                                                                                {' '}
-                                                                                <Icon name="enterprise" />
-                                                                            </span>
+                                                                            <a
+                                                                                href={urlWithPrefix({
+                                                                                    url: './community-vs-enterprise/',
+                                                                                    framework,
+                                                                                })}
+                                                                            >
+                                                                                <span className={styles.enterpriseIcon}>
+                                                                                    {' '}
+                                                                                    <Icon name="enterprise" />
+                                                                                </span>
+                                                                            </a>
                                                                         )}
                                                                     </a>
                                                                 </div>
