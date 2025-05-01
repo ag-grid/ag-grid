@@ -280,8 +280,13 @@ export function _destroyEditor(
             valueChanged,
         });
 
+        comp.toggleCss('ag-cell-batch-edit', false);
+
         rowCtrl?.forEachGui(undefined, (gui) => {
             gui.rowComp.toggleCss('ag-row-editing', false);
+            gui.rowComp.toggleCss('ag-row-batch-edit', false);
         });
+    } else {
+        comp.toggleCss('ag-cell-batch-edit', true);
     }
 }

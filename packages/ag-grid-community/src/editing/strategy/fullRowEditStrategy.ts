@@ -26,7 +26,10 @@ export class FullRowEditStrategy extends BaseEditStrategy {
             return;
         }
 
-        rowCtrl.forEachGui(undefined, (gui) => gui.rowComp.toggleCss('ag-row-editing', newState ?? false));
+        rowCtrl.forEachGui(undefined, (gui) => {
+            gui.rowComp.toggleCss('ag-row-editing', newState ?? false);
+            gui.rowComp.toggleCss('ag-row-batch-edit', (this.gos.get('batchEdit') && newState) ?? false);
+        });
 
         if (newState) {
             this.rowId = rowCtrl.rowId;
