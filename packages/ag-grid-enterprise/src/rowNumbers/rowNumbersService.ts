@@ -23,6 +23,7 @@ import type {
     IRowNumbersService,
     NamedBean,
     PropertyValueChangedEvent,
+    RowNode,
     RowNumbersOptions,
     RowPosition,
     ValueFormatterParams,
@@ -313,7 +314,14 @@ export class RowNumbersService extends BeanStub implements NamedBean, IRowNumber
     }
 
     private valueGetter(params: ValueGetterParams): string {
-        return String((params.node?.rowIndex || 0) + 1);
+        const node = params.node as RowNode | null;
+
+        // Rows that are in the pinned container take the row numbers of their pinned sibling rows
+        if (node?.rowPinned && node.pinnedSibling) {
+            return `${node.pinnedSibling.rowIndex ?? '-'}`;
+        }
+
+        return String((node?.rowIndex || 0) + 1);
     }
 
     private getHeaderClass(): string[] {

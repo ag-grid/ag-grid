@@ -18,5 +18,5 @@ export function DocsNavFromLocalStorage({ menuData, pageName }: { menuData: any;
         }
     }, [internalFramework]);
 
-    return framework && <DocsNav menuData={menuData} framework={framework} pageName={pageName} />;
+    return <DocsNav menuData={menuData} framework={framework} pageName={pageName} />;
 }

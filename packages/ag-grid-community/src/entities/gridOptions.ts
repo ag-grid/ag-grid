@@ -70,6 +70,7 @@ import type {
     PasteEndEvent,
     PasteStartEvent,
     PinnedRowDataChangedEvent,
+    PinnedRowsChangedEvent,
     PivotMaxColumnsExceededEvent,
     RangeDeleteEndEvent,
     RangeDeleteStartEvent,
@@ -2395,6 +2396,10 @@ export interface GridOptions<TData = any> {
      * The client has set new pinned row data into the grid.
      */
     onPinnedRowDataChanged?(event: PinnedRowDataChangedEvent<TData>): void;
+    /**
+     * A row has been pinned to top or bottom, or unpinned.
+     */
+    onPinnedRowsChanged?(event: PinnedRowsChangedEvent<TData>): void;
 
     // *** Row Model: Client Side *** //
     /**

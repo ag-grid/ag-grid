@@ -11,8 +11,31 @@ const redirectUrl = `./${Astro.props.redirectPageName}`;
 ---
 
 <div class="layout-grid">
-    <slot />
+    <div class="redirectContent hidden">
+        <slot />
+    </div>
 </div>
+
+<style lang="scss">
+    @use 'design-system' as *;
+
+    .redirectContent {
+        width: 100%;
+        text-align: center;
+        margin-top: $spacing-size-6;
+
+        &.hidden {
+            display: none;
+        }
+    }
+</style>
+<script>
+    const WAIT_TO_SHOW_REDIRECT_CONTENT = 1000;
+
+    setTimeout(() => {
+        document.querySelector('.redirectContent')?.classList.remove('hidden');
+    }, WAIT_TO_SHOW_REDIRECT_CONTENT);
+</script>
 
 <!-- 
     Redirect page to framework page based on stored internal framework
@@ -31,5 +54,11 @@ const redirectUrl = `./${Astro.props.redirectPageName}`;
     const framework = dataAttrFrameworkOverride ?? getFrameworkFromInternalFramework($internalFramework.get());
     const redirectUrl = urlWithPrefix({ framework, url: dataAttrUrl });
 
-    window.location.replace(redirectUrl);
+    const searchParams = window.location.search;
+    const debugSearchParam = new URLSearchParams(searchParams).get('debug');
+    if (debugSearchParam === 'true') {
+        console.log(`Debug: Redirect to '${redirectUrl}'`);
+    } else {
+        window.location.replace(redirectUrl);
+    }
 </script>

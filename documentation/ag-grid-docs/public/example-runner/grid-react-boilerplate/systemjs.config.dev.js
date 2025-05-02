@@ -1,7 +1,7 @@
 (function (global) {
     process = { env: { NODE_ENV: 'development' } };
     // Valid values: 18 / 19
-    const REACT_VERSION = 18;
+    const REACT_VERSION = 19;
     const reactConfig =
         REACT_VERSION == 18
             ? {

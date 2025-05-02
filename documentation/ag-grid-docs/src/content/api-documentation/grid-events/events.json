@@ -474,7 +474,8 @@
                 "url": "./row-pinning/"
             }
         },
-        "pinnedRowDataChanged": {}
+        "pinnedRowDataChanged": {},
+        "pinnedRowsChanged": {}
     },
     "tooltips": {
         "meta": {
