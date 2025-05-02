@@ -482,6 +482,21 @@ export type CoreParams = {
     pinnedRowBorder: BorderValue;
 
     /**
+     * Font-weight for the rows that have been pinned to the top or bottom.
+     */
+    pinnedRowFontWeight: FontWeightValue;
+
+    /**
+     * Background color for the rows that have been pinned to the top or bottom.
+     */
+    pinnedRowBackgroundColor: ColorValue;
+
+    /**
+     * Text color for the rows that have been pinned to the top or bottom.
+     */
+    pinnedRowTextColor: ColorValue;
+
+    /**
      * Text color for row in the main viewport that has been pinned to the top or bottom.
      */
     pinnedSourceRowTextColor: ColorValue;
@@ -492,9 +507,9 @@ export type CoreParams = {
     pinnedSourceRowBackgroundColor: ColorValue;
 
     /**
-     * Font-family for the row in the main viewport that has been pinned to the top or bottom.
+     * Font-weight for the row in the main viewport that has been pinned to the top or bottom.
      */
-    pinnedSourceRowFontFamily: FontFamilyValue;
+    pinnedSourceRowFontWeight: FontWeightValue;
 
     /**
      * Default shadow for elements that float above the grid and are intended to appear separated from it e.g. dialogs and menus
@@ -1090,7 +1105,12 @@ export const coreDefaults: Readonly<CoreParams> = {
     pinnedSourceRowBackgroundColor: {
         ref: 'backgroundColor',
     },
-    pinnedSourceRowFontFamily: {
-        ref: 'fontFamily',
+    pinnedSourceRowFontWeight: 600,
+    pinnedRowFontWeight: 600,
+    pinnedRowBackgroundColor: {
+        ref: 'backgroundColor',
+    },
+    pinnedRowTextColor: {
+        ref: 'textColor',
     },
 };

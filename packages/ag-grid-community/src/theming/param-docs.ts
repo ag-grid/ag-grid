@@ -309,7 +309,10 @@ const docs: Record<AllThemeParams, string> = {
     pinnedSourceRowTextColor: 'Text color for row in the main viewport that has been pinned to the top or bottom',
     pinnedSourceRowBackgroundColor:
         'Background color for the row in the main viewport that has been pinned to the top or bottom',
-    pinnedSourceRowFontFamily: 'Font-family for the row in the main viewport that has been pinned to the top or bottom',
+    pinnedSourceRowFontWeight: 'Font-weight for the row in the main viewport that has been pinned to the top or bottom',
+    pinnedRowFontWeight: 'Font-weight for the rows that have been pinned to the top or bottom',
+    pinnedRowBackgroundColor: 'Background color for the rows that have been pinned to the top or bottom',
+    pinnedRowTextColor: 'Text color for rows that have been pinned to the top or bottom',
 };
 
 export const getParamDocs = (param: string): string | undefined => {
