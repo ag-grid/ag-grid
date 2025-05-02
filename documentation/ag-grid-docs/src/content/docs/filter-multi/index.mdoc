@@ -9,29 +9,77 @@ The Multi Filter allows multiple [Provided Filters](./filtering/#column-filter-t
 
 ## Enabling the Multi Filter
 
+{% gridExampleRunner title="Multi Filter" name="multi-filter"  exampleHeight=602 /%}
+
 To use a Multi Filter, specify the following in your Column Definition:
 
 ```{% frameworkTransform=true %}
 const gridOptions = {
     columnDefs: [
-        // column configured to use the Multi Filter
+        // use the Multi Filter with default Text Filter and Set Filter
         { field: 'athlete', filter: 'agMultiColumnFilter' },
+        // use the Multi Filter with Number Filter and Set Filter
+        {
+            field: 'year',
+            filter: 'agMultiColumnFilter',
+            filterParams: {
+                filters: [
+                    {
+                        filter: 'agNumberColumnFilter',
+                    },
+                    {
+                        filter: 'agSetColumnFilter',
+                    },
+                ],
+            },
+        },
     ]
 }
 ```
 
 By default the Multi Filter will show a [Text Filter](./filter-text/) and [Set Filter](./filter-set/), but you can specify which filters you would like to use in the `filters` array. The filters will be displayed in the same order as they are specified.
 
-The example below shows the Multi Filter in action. Note the following:
+The example above shows the Multi Filter in action. Note the following:
 
 * The **Athlete** column has a Multi Filter with default behaviour.
-* The **Country**, **Gold** and **Date** columns have Multi Filters with the child filters configured explicitly, using the [Text](./filter-text/), [Number](./filter-number/) and [Date](./filter-date/) Simple Filters respectively.
-* Different `filterParams` can be supplied to each child filter:{% br /%}
-  * The Text Filter in the Country column has a different default option (`'startsWith'`)
-  * The Date Filter in the Date column has a custom comparator to compare dates correctly
-  * The Set Filter in the Date column has a custom comparator, so the values are displayed in ascending order
+* The **Country** column has a Multi Filter with the child filters configured explicitly to match the default behaviour.
+* The **Year** and **Age** columns have Multi Filters with the child filters configured explicitly to use the [Number Filter](./filter-number/) with the Set Filter.
 
-{% gridExampleRunner title="Multi Filter" name="multi-filter"  exampleHeight=602 /%}
+## Passing Parameters to Child Filters
+
+Parameters can be passed to child filters by specifying `filterParams` within the `filters` array of the Multi Filter params:
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    columnDefs: [
+        {
+            field: 'athlete',
+            filter: 'agMultiColumnFilter',
+            filterParams: {
+                filters: [
+                    {
+                        filter: 'agTextColumnFilter',
+                        // pass params to child filter
+                        filterParams: {
+                            defaultOption: 'startsWith',
+                        },
+                    },
+                    {
+                        filter: 'agSetColumnFilter',
+                    },
+                ],
+            },
+        },
+    ]
+}
+```
+
+The example below demonstrates passing parameters to child filters:
+* The Text Filter in the **Athlete** column has a different default option (`'startsWith'`).
+* The [Date Filter](./filter-date/) in the **Date** column has a custom comparator to compare dates correctly.
+* The Set Filter in the **Date** column has a custom comparator, so the values are displayed in ascending order.
+
+{% gridExampleRunner title="Multi Filter Child Params" name="multi-filter-child-params"  exampleHeight=602 /%}
 
 ## Floating Filters
 

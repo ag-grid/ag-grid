@@ -1,0 +1,26 @@
+---
+import { getCollection } from 'astro:content';
+import Layout from '@layouts/Layout.astro';
+import FrameworkRedirectPage from '@ag-website-shared/components/framework-redirect-page/FrameworkRedirectPage.astro';
+import { getDocsPages } from '@components/docs/utils/pageData';
+
+export async function getStaticPaths() {
+    const pages = await getCollection('docs');
+    return getDocsPages(pages);
+}
+
+const { page } = Astro.props;
+const { title } = page.data;
+const { pageName } = Astro.params;
+---
+
+<Layout
+    title={`Data Grid: ${title} | AG Grid`}
+    description={'View the AG Grid Documentation - a feature-rich datagrid for major JavaScript frameworks, offering filtering, grouping, pivoting, and more.'}
+    showSearchBar={false}
+    showDocsNav={false}
+>
+    <FrameworkRedirectPage redirectPageName={pageName}>
+        <h1>Redirecting to "{title}" page</h1>
+    </FrameworkRedirectPage>
+</Layout>
