@@ -43,27 +43,27 @@ const isApiPage = isApiMenuPath({ pageName, menuData: apiNavData });
 const menuData = isApiPage ? apiNavData : docsNavData;
 
 const { Content } = await render(page);
-const headings =
-    pageHeadings ||
-    (await getHeadings({
-        title,
-        pageName,
-        markdocContent: page.body,
-        framework: currentFramework,
-        getTabItemSlug: (id) => `${DOCS_TAB_ITEM_ID_PREFIX}${id}`,
-        /**
-         * Skip the headings for migration doc nav items if the major/minor is the same as the current library version.
-         *
-         * NOTE: The migration version comes from the frontmatter on the page. There is also a version attribute on the documentation archive section tag, but if the value comes from a variable, it doesn't get parsed during build time, and hence doesn't come through to this function. Using the frontmatter value is the best way to get the migration version here.
-         */
-        skipHeading: (heading) => {
-            const libraryVersion = parseVersion(agLibraryVersion);
-            const { major, minor } = parseVersion(migrationVersion);
-            // Don't show documentation nav if the current library major/minor version is the same as the migration version
-            const checkHeading = major === libraryVersion.major && minor === libraryVersion.minor;
-            return checkHeading ? heading.id === MIGRATION_DOCUMENTATION_NAV_DATA.id : false;
-        },
-    }));
+
+const headings = await getHeadings({
+    pageHeadings,
+    title,
+    pageName,
+    markdocContent: page.body,
+    framework: currentFramework,
+    getTabItemSlug: (id) => `${DOCS_TAB_ITEM_ID_PREFIX}${id}`,
+    /**
+     * Skip the headings for migration doc nav items if the major/minor is the same as the current library version.
+     *
+     * NOTE: The migration version comes from the frontmatter on the page. There is also a version attribute on the documentation archive section tag, but if the value comes from a variable, it doesn't get parsed during build time, and hence doesn't come through to this function. Using the frontmatter value is the best way to get the migration version here.
+     */
+    skipHeading: (heading) => {
+        const libraryVersion = parseVersion(agLibraryVersion);
+        const { major, minor } = parseVersion(migrationVersion);
+        // Don't show documentation nav if the current library major/minor version is the same as the migration version
+        const checkHeading = major === libraryVersion.major && minor === libraryVersion.minor;
+        return checkHeading ? heading.id === MIGRATION_DOCUMENTATION_NAV_DATA.id : false;
+    },
+});
 ---
 
 <link rel="preconnect" href="https://fonts.googleapis.com" />
