@@ -73,8 +73,8 @@ export interface RowDropZoneParams extends RowDropZoneEvents {
 interface RowsDrop<TData = any> {
     sameGrid: boolean;
     delta: number;
-    inside: boolean;
     target: RowNode<TData>;
+    newParent: RowNode<TData> | null;
     rows: IRowNode<TData>[];
 }
 
@@ -242,70 +242,92 @@ export class RowDragFeature extends BeanStub implements DropTarget {
         const y = _getNormalisedMousePosition(this.beans, draggingEvent).y;
         const targetRowIndex = clientSideRowModel.getRowIndexAtPixel(y);
         let target = clientSideRowModel.getRow(targetRowIndex);
-        let delta = 0;
-        let inside = true;
-        if (!source || !target || target === source) {
+        if (!source || !target) {
             return null; // Nothing to move
         }
-        const rows = rowNodes ?? [source];
+        const centerDist = (y - target.rowTop! - target.rowHeight! / 2) / target.rowHeight! || 0;
+        let delta = centerDist;
+        let inside = true;
+        const rows = rowNodes?.length ? rowNodes : [source];
         const sameGrid = this.isFromThisGrid(draggingEvent);
         if (sameGrid) {
-            delta = targetRowIndex - (source.rowIndex ?? targetRowIndex);
+            const sourceRowIndex = source.rowIndex;
+            if (sourceRowIndex !== null) {
+                const diff = targetRowIndex - sourceRowIndex;
+                if (diff === -1 || diff === 1) {
+                    delta = diff;
+                    inside = false;
+                }
+            }
             if (rows.includes(target)) {
+                // We are dragging multiple rows and we are moving from the current source to another selected row.
+                // We just want to drag the whole group of selected rows of +1 or -1 rows.
+                // and only if they have the same tree parent (if tree data).
                 inside = false;
-                target = this.getPrevOrNextTarget(rows, delta) ?? target;
-            }
-        }
-        if (!sameGrid) {
-            inside = false; // TODO: implement tree data drag and drop from external grid. Still not supported.
-        }
-        const setParent = this.beans.groupStage?.setParent;
-        if (target.sourceRowIndex < 0 || !setParent) {
-            inside = false;
-        }
-
-        const rowHeight = target.rowHeight!;
-        const mouseOffset = y - target.rowTop! - rowHeight / 2;
-
-        // 0% - 25% height: Insert rows above
-        // 25% - 75% height: Add to group / create group
-        // 75% - 100% height - Insert rows below
-        inside &&= 0.25 > Math.abs(mouseOffset / rowHeight);
-        if (inside) {
-            delta = 1; // always insert below
-        } else if (!sameGrid || delta < -1 || delta > 1 || (setParent && (delta === 1 || delta === -1))) {
-            delta = mouseOffset;
-        }
-
-        return rows.length ? { sameGrid, delta, inside, target, rows } : null;
-    }
-
-    /** When dragging multiple rows, we want the user to be able to drag to the prev or next in the group if dragging on one of the selected rows */
-    private getPrevOrNextTarget(rows: IRowNode<any>[], delta: number): RowNode | undefined {
-        const allLeafChildren = this.clientSideRowModel.rootNode?.allLeafChildren;
-        const allLeafChildrenLen = allLeafChildren?.length;
-        if (!allLeafChildrenLen) {
-            return undefined;
-        }
-        let index = -1;
-        if (delta < 0) {
-            let min = allLeafChildrenLen;
-            for (const { sourceRowIndex } of rows) {
-                min = sourceRowIndex >= 0 && sourceRowIndex < min ? sourceRowIndex : min;
-            }
-            if (min < allLeafChildrenLen) {
-                index = Math.max(min - 1, 0);
+                if (delta) {
+                    const newTarget = delta < 0 ? this.getPrevOrNext(-1, rows[0]) : this.getPrevOrNext(1, _last(rows));
+                    if (newTarget?.parent === target.parent) {
+                        // Allow multiple rows dragging to the next selected dragging only in the original parent group
+                        target = newTarget;
+                    }
+                }
             }
         } else {
-            let max = -1;
-            for (const { sourceRowIndex } of rows) {
-                max = sourceRowIndex > max ? sourceRowIndex : max;
+            inside = false; // Inserting as child from another grid is not yet supported
+        }
+
+        let newParent: RowNode | null = null;
+
+        if (this.beans.groupStage?.setParent) {
+            const INSIDE_THRESHOLD = 0.25;
+            inside &&= Math.abs(centerDist) < INSIDE_THRESHOLD;
+
+            if (inside) {
+                // Inside the middle of the row, we want to move inside
+                newParent = target;
+                delta = 1;
+            } else if (centerDist > 1 && target.rowIndex === this.beans.pageBounds.getLastRow()) {
+                // Special case, we are dragging outside of the rows, we want to insert after the last row at the root level
+                newParent = clientSideRowModel.rootNode;
+            } else {
+                newParent = target.parent;
             }
-            if (max >= 0) {
-                index = Math.min(max + 1, allLeafChildrenLen - 1);
+
+            if (newParent !== null) {
+                let hasDifferentParent = false;
+                for (let i = 0, len = rows.length; i < len && !hasDifferentParent; ++i) {
+                    hasDifferentParent = rows[i].parent !== newParent;
+                }
+                if (!hasDifferentParent) {
+                    newParent = null; // No need to set parent if all rows are in the same group
+                }
             }
         }
-        return index >= 0 ? (allLeafChildren[index] as RowNode) : undefined;
+
+        if (target === source && !newParent) {
+            return null; // no-op
+        }
+
+        return { sameGrid, delta, target, newParent, rows };
+    }
+
+    /** When dragging multiple rows, we want the user to be able to drag to the prev or next in the group if dragging on one of the selected rows. */
+    private getPrevOrNext(increment: -1 | 1, initialRow: IRowNode): RowNode | undefined {
+        const clientSideRowModel = this.clientSideRowModel;
+        const pageBounds = this.beans.pageBounds;
+        const firstRow = pageBounds.getFirstRow();
+        const lastRow = pageBounds.getLastRow();
+        let rowIndex = initialRow.rowIndex!;
+        while (true) {
+            rowIndex += increment;
+            const row = clientSideRowModel.getRow(rowIndex);
+            if (!row || rowIndex < firstRow || rowIndex > lastRow) {
+                return undefined;
+            }
+            if (row.rowIndex !== null && row.sourceRowIndex >= 0) {
+                return row;
+            }
+        }
     }
 
     public addRowDropZone(params: RowDropZoneParams & { fromGrid?: boolean }): void {
@@ -535,23 +557,26 @@ export class RowDragFeature extends BeanStub implements DropTarget {
         return true;
     }
 
-    private moveRows({ inside, delta, target, rows }: RowsDrop): boolean {
+    private moveRows({ delta, target, rows, newParent }: RowsDrop): boolean {
         const rowsToMoveSet = this.getValidRowsToMove(rows);
         let changed = false;
 
-        const setParent = this.beans.groupStage?.setParent;
-        if (setParent) {
-            const newParent = inside ? target : target.parent ?? target;
-            for (const row of rowsToMoveSet) {
-                if (row.parent !== newParent) {
-                    if (wouldFormCycle(row, newParent)) {
-                        rowsToMoveSet.delete(row);
-                    } else if (setParent(row, newParent)) {
-                        changed = true;
+        if (newParent) {
+            const setParent = this.beans.groupStage?.setParent;
+            if (setParent) {
+                for (const row of rowsToMoveSet) {
+                    if (row.parent !== newParent) {
+                        if (wouldFormCycle(row, newParent)) {
+                            rowsToMoveSet.delete(row);
+                        } else {
+                            setParent(row, newParent);
+                            changed = true;
+                        }
                     }
                 }
             }
         }
+
         if (!rowsToMoveSet.size) {
             return false; // Nothing to move
         }
