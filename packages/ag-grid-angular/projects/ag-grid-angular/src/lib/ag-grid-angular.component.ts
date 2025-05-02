@@ -413,6 +413,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     /** Set to `true` to use the browser's default tooltip instead of using the grid's Tooltip Component.
      * @default false
      * @initial
+     * @agModule `TooltipModule`
      */
     @Input({ transform: booleanAttribute }) public enableBrowserTooltips: boolean | undefined = undefined;
     /** The trigger that will cause tooltips to show and hide.
@@ -420,33 +421,39 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      *  - `focus` - The tooltip will show/hide when a cell/header is focused.
      * @default 'hover'
      * @initial
+     * @agModule `TooltipModule`
      */
     @Input() public tooltipTrigger: 'hover' | 'focus' | undefined = undefined;
     /** The delay in milliseconds that it takes for tooltips to show up once an element is hovered over.
      *     **Note:** This property does not work if `enableBrowserTooltips` is `true`.
      * @default 2000
+     * @agModule `TooltipModule`
      */
     @Input() public tooltipShowDelay: number | undefined = undefined;
     /** The delay in milliseconds that it takes for tooltips to hide once they have been displayed.
      *     **Note:** This property does not work if `enableBrowserTooltips` is `true` and `tooltipHideTriggers` includes `timeout`.
      * @default 10000
+     * @agModule `TooltipModule`
      */
     @Input() public tooltipHideDelay: number | undefined = undefined;
     /** Set to `true` to have tooltips follow the cursor once they are displayed.
      * @default false
      * @initial
+     * @agModule `TooltipModule`
      */
     @Input({ transform: booleanAttribute }) public tooltipMouseTrack: boolean | undefined = undefined;
     /** This defines when tooltip will show up for Cells, Headers and SetFilter Items.
      *  - `standard` - The tooltip always shows up when the items configured with Tooltips are hovered.
      * - `whenTruncated` - The tooltip will only be displayed when the items hovered have truncated (showing ellipsis) values. This property does not work when `enableBrowserTooltips={true}`.
      * @default `standard`
+     * @agModule `TooltipModule`
      */
     @Input() public tooltipShowMode: 'standard' | 'whenTruncated' | undefined = undefined;
     /** Set to `true` to enable tooltip interaction. When this option is enabled, the tooltip will not hide while the
      * tooltip itself it being hovered or has focus.
      * @default false
      * @initial
+     * @agModule `TooltipModule`
      */
     @Input({ transform: booleanAttribute }) public tooltipInteraction: boolean | undefined = undefined;
     /** DOM element to use as the popup parent for grid popups (context menu, column menu etc).
@@ -454,14 +461,17 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Input() public popupParent: HTMLElement | null | undefined = undefined;
     /** Set to `true` to also include headers when copying to clipboard using `Ctrl + C` clipboard.
      * @default false
+     * @agModule `ClipboardModule`
      */
     @Input({ transform: booleanAttribute }) public copyHeadersToClipboard: boolean | undefined = undefined;
     /** Set to `true` to also include group headers when copying to clipboard using `Ctrl + C` clipboard.
      * @default false
+     * @agModule `ClipboardModule`
      */
     @Input({ transform: booleanAttribute }) public copyGroupHeadersToClipboard: boolean | undefined = undefined;
     /** Specify the delimiter to use when copying to clipboard.
      * @default '\t'
+     * @agModule `ClipboardModule`
      */
     @Input() public clipboardDelimiter: string | undefined = undefined;
     /** Set to `true` to copy the cell range or focused cell to the clipboard and never the selected rows.
@@ -476,18 +486,22 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Input({ transform: booleanAttribute }) public suppressCopySingleCellRanges: boolean | undefined = undefined;
     /** Set to `true` to work around a bug with Excel (Windows) that adds an extra empty line at the end of ranges copied to the clipboard.
      * @default false
+     * @agModule `ClipboardModule`
      */
     @Input({ transform: booleanAttribute }) public suppressLastEmptyLineOnPaste: boolean | undefined = undefined;
     /** Set to `true` to turn off paste operations within the grid.
      * @default false
+     * @agModule `ClipboardModule`
      */
     @Input({ transform: booleanAttribute }) public suppressClipboardPaste: boolean | undefined = undefined;
     /** Set to `true` to stop the grid trying to use the Clipboard API, if it is blocked, and immediately fallback to the workaround.
      * @default false
+     * @agModule `ClipboardModule`
      */
     @Input({ transform: booleanAttribute }) public suppressClipboardApi: boolean | undefined = undefined;
     /** Set to `true` to block     **cut** operations within the grid.
      * @default false
+     * @agModule `ClipboardModule`
      */
     @Input({ transform: booleanAttribute }) public suppressCutToClipboard: boolean | undefined = undefined;
     /** Array of Column / Column Group definitions.
@@ -521,6 +535,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     /** Resets pivot column order when impacted by filters, data or configuration changes
      *
      * @default false
+     * @agModule `PivotModule`
      */
     @Input({ transform: booleanAttribute }) public enableStrictPivotColumnOrder: boolean | undefined = undefined;
     /** If `true`, then dots in field names (e.g. `'address.firstLine'`) are not treated as deep references. Allows you to use dots in your field name if you prefer.
@@ -544,6 +559,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Input() public pivotGroupHeaderHeight: number | undefined = undefined;
     /** Allow reordering and pinning columns by dragging columns from the Columns Tool Panel to the grid.
      * @default false
+     * @agModule `ColumnsToolPanelModule`
      */
     @Input({ transform: booleanAttribute }) public allowDragFromColumnsToolPanel: boolean | undefined = undefined;
     /** Set to `true` to suppress column moving, i.e. to make the columns fixed position.
@@ -597,6 +613,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     /** Set this to `true` to skip the `headerName` when `autoSize` is called by default.
      * @default false
      * @initial
+     * @agModule `ColumnAutoSizeModule`
      */
     @Input({ transform: booleanAttribute }) public skipHeaderOnAutoSize: boolean | undefined = undefined;
     /** Auto-size the columns when the grid is loaded. Can size to fit the grid width, fit a provided width, or fit the cell contents.
@@ -613,37 +630,45 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      */
     @Input() public components: { [p: string]: any } | undefined = undefined;
     /** Set to `'fullRow'` to enable Full Row Editing. Otherwise leave blank to edit one cell at a time.
+     * @agModule `TextEditorModule` / `LargeTextEditorModule` / `NumberEditorModule` / `DateEditorModule` / `CheckboxEditorModule` / `CustomEditorModule` / `SelectEditorModule` / `RichSelectModule`
      */
     @Input() public editType: 'fullRow' | undefined = undefined;
     /** Set to `true` to enable Single Click Editing for cells, to start editing with a single click.
      * @default false
+     * @agModule `TextEditorModule` / `LargeTextEditorModule` / `NumberEditorModule` / `DateEditorModule` / `CheckboxEditorModule` / `CustomEditorModule` / `SelectEditorModule` / `RichSelectModule`
      */
     @Input({ transform: booleanAttribute }) public singleClickEdit: boolean | undefined = undefined;
     /** Set to `true` so that neither single nor double click starts editing.
      * @default false
+     * @agModule `TextEditorModule` / `LargeTextEditorModule` / `NumberEditorModule` / `DateEditorModule` / `CheckboxEditorModule` / `CustomEditorModule` / `SelectEditorModule` / `RichSelectModule`
      */
     @Input({ transform: booleanAttribute }) public suppressClickEdit: boolean | undefined = undefined;
     /** Set to `true` to stop the grid updating data after `Edit`, `Clipboard` and `Fill Handle` operations. When this is set, it is intended the application will update the data, eg in an external immutable store, and then pass the new dataset to the grid. <br />**Note:** `rowNode.setDataValue()` does not update the value of the cell when this is `True`, it fires `onCellEditRequest` instead.
      * @default false
+     * @agModule `TextEditorModule` / `LargeTextEditorModule` / `NumberEditorModule` / `DateEditorModule` / `CheckboxEditorModule` / `CustomEditorModule` / `SelectEditorModule` / `RichSelectModule`
      */
     @Input({ transform: booleanAttribute }) public readOnlyEdit: boolean | undefined = undefined;
     /** Set this to `true` to stop cell editing when grid loses focus.
      * The default is that the grid stays editing until focus goes onto another cell.
      * @default false
      * @initial
+     * @agModule `TextEditorModule` / `LargeTextEditorModule` / `NumberEditorModule` / `DateEditorModule` / `CheckboxEditorModule` / `CustomEditorModule` / `SelectEditorModule` / `RichSelectModule`
      */
     @Input({ transform: booleanAttribute }) public stopEditingWhenCellsLoseFocus: boolean | undefined = undefined;
     /** Set to `true` along with `enterNavigatesVerticallyAfterEdit` to have Excel-style behaviour for the `Enter` key.
      * i.e. pressing the `Enter` key will move down to the cell beneath and `Shift+Enter` will move up to the cell above.
      * @default false
+     * @agModule `TextEditorModule` / `LargeTextEditorModule` / `NumberEditorModule` / `DateEditorModule` / `CheckboxEditorModule` / `CustomEditorModule` / `SelectEditorModule` / `RichSelectModule`
      */
     @Input({ transform: booleanAttribute }) public enterNavigatesVertically: boolean | undefined = undefined;
     /** Set to `true` along with `enterNavigatesVertically` to have Excel-style behaviour for the 'Enter' key.
      * i.e. pressing the Enter key will move down to the cell beneath and Shift+Enter key will move up to the cell above.
      * @default false
+     * @agModule `TextEditorModule` / `LargeTextEditorModule` / `NumberEditorModule` / `DateEditorModule` / `CheckboxEditorModule` / `CustomEditorModule` / `SelectEditorModule` / `RichSelectModule`
      */
     @Input({ transform: booleanAttribute }) public enterNavigatesVerticallyAfterEdit: boolean | undefined = undefined;
     /** Forces Cell Editing to start when backspace is pressed. This is only relevant for MacOS users.
+     * @agModule `TextEditorModule` / `LargeTextEditorModule` / `NumberEditorModule` / `DateEditorModule` / `CheckboxEditorModule` / `CustomEditorModule` / `SelectEditorModule` / `RichSelectModule`
      */
     @Input({ transform: booleanAttribute }) public enableCellEditingOnBackspace: boolean | undefined = undefined;
     /** Set to `true` to enable Undo / Redo while editing.
@@ -654,9 +679,11 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     /** Set the size of the undo / redo stack.
      * @default 10
      * @initial
+     * @agModule `UndoRedoEditModule`
      */
     @Input() public undoRedoCellEditingLimit: number | undefined = undefined;
     /** A default configuration object used to export to CSV.
+     * @agModule `CsvExportModule`
      */
     @Input() public defaultCsvExportParams: CsvExportParams | undefined = undefined;
     /** Prevents the user from exporting the grid to CSV.
@@ -664,6 +691,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      */
     @Input({ transform: booleanAttribute }) public suppressCsvExport: boolean | undefined = undefined;
     /** A default configuration object used to export to Excel.
+     * @agModule `ExcelExportModule`
      */
     @Input() public defaultExcelExportParams: ExcelExportParams | undefined = undefined;
     /** Prevents the user from exporting the grid to Excel.
@@ -672,6 +700,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Input({ transform: booleanAttribute }) public suppressExcelExport: boolean | undefined = undefined;
     /** A list (array) of Excel styles to be used when exporting to Excel with styles.
      * @initial
+     * @agModule `ExcelExportModule`
      */
     @Input() public excelStyles: ExcelStyle[] | undefined = undefined;
     /** Text to find within the grid.
@@ -679,6 +708,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      */
     @Input() public findSearchValue: string | undefined = undefined;
     /** Options for the Find feature.
+     * @agModule `FindModule`
      */
     @Input() public findOptions: FindOptions | undefined = undefined;
     /** Rows are filtered using this text as a Quick Filter.
@@ -689,17 +719,21 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     /** Set to `true` to turn on the Quick Filter cache, used to improve performance when using the Quick Filter.
      * @default false
      * @initial
+     * @agModule `QuickFilterModule`
      */
     @Input({ transform: booleanAttribute }) public cacheQuickFilter: boolean | undefined = undefined;
     /** Hidden columns are excluded from the Quick Filter by default.
      * To include hidden columns, set to `true`.
      * @default false
+     * @agModule `QuickFilterModule`
      */
     @Input({ transform: booleanAttribute }) public includeHiddenColumnsInQuickFilter: boolean | undefined = undefined;
     /** Changes how the Quick Filter splits the Quick Filter text into search terms.
+     * @agModule `QuickFilterModule`
      */
     @Input() public quickFilterParser: ((quickFilter: string) => string[]) | undefined = undefined;
     /** Changes the matching logic for whether a row passes the Quick Filter.
+     * @agModule `QuickFilterModule`
      */
     @Input() public quickFilterMatcher:
         | ((quickFilterParts: string[], rowQuickFilterAggregateText: string) => boolean)
@@ -708,10 +742,12 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * (or aggregated data if `groupAggFiltering = true`).
      * Set to `true` to apply Quick Filter before pivoting (/aggregating) instead.
      * @default false
+     * @agModule `QuickFilterModule` / 'PivotModule'
      */
     @Input({ transform: booleanAttribute }) public applyQuickFilterBeforePivotOrAgg: boolean | undefined = undefined;
     /** Set to `true` to override the default tree data filtering behaviour to instead exclude child nodes from filter results.
      * @default false
+     * @agModule `TreeDataModule`
      */
     @Input({ transform: booleanAttribute }) public excludeChildrenWhenTreeDataFiltering: boolean | undefined =
         undefined;
@@ -723,25 +759,30 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     /** Allows rows to always be displayed, even if they don't match the applied filtering.
      * Return `true` for the provided row to always be displayed.
      * Only works with the Client-Side Row Model.
+     * @agModule `TextFilterModule` / `NumberFilterModule` / `DateFilterModule` / `SetFilterModule` / `MultiFilterModule` / `CustomFilterModule` / `QuickFilterModule` / `ExternalFilterModule` / `AdvancedFilterModule`
      */
     @Input() public alwaysPassFilter: ((rowNode: IRowNode<TData>) => boolean) | undefined = undefined;
     /** Hidden columns are excluded from the Advanced Filter by default.
      * To include hidden columns, set to `true`.
      * @default false
+     * @agModule `AdvancedFilterModule`
      */
     @Input({ transform: booleanAttribute }) public includeHiddenColumnsInAdvancedFilter: boolean | undefined =
         undefined;
     /** DOM element to use as the parent for the Advanced Filter to allow it to appear outside of the grid.
      * Set to `null` or `undefined` to appear inside the grid.
+     * @agModule `AdvancedFilterModule`
      */
     @Input() public advancedFilterParent: HTMLElement | null | undefined = undefined;
     /** Customise the parameters passed to the Advanced Filter Builder.
+     * @agModule `AdvancedFilterModule`
      */
     @Input() public advancedFilterBuilderParams: IAdvancedFilterBuilderParams | undefined = undefined;
     /** By default, Advanced Filter sanitises user input and passes it to `new Function()` to provide the best performance.
      * Set to `true` to prevent this and use defined functions instead.
      * This will result in slower filtering, but it enables Advanced Filter to work when `unsafe-eval` is disabled.
      * @default false
+     * @agModule `AdvancedFilterModule`
      */
     @Input({ transform: booleanAttribute }) public suppressAdvancedFilterEval: boolean | undefined = undefined;
     /** When using AG Grid Enterprise, the Set Filter is used by default when `filter: true` is set on column definitions.
@@ -749,6 +790,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * the same as when using AG Grid Community.
      * @default false
      * @initial
+     * @agModule TextFilterModule / NumberFilterModule / DateFilterModule / MultiFilterModule / CustomFilterModule
      */
     @Input({ transform: booleanAttribute }) public suppressSetFilterByDefault: boolean | undefined = undefined;
     /** Set to `true` to Enable Charts.
@@ -759,21 +801,26 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     /** The list of chart themes that a user can choose from in the chart panel.
      * @default ['ag-default', 'ag-material', 'ag-sheets', 'ag-polychroma', 'ag-vivid'];
      * @initial
+     * @agModule `IntegratedChartsModule`
      */
     @Input() public chartThemes: string[] | undefined = undefined;
     /** A map containing custom chart themes.
      * @initial
+     * @agModule `IntegratedChartsModule`
      */
     @Input() public customChartThemes: { [name: string]: AgChartTheme } | undefined = undefined;
     /** Chart theme overrides applied to all themes.
      * @initial
+     * @agModule `IntegratedChartsModule`
      */
     @Input() public chartThemeOverrides: AgChartThemeOverrides | undefined = undefined;
     /** Allows customisation of the Chart Tool Panels, such as changing the tool panels visibility and order, as well as choosing which charts should be displayed in the chart panel.
      * @initial
+     * @agModule `IntegratedChartsModule`
      */
     @Input() public chartToolPanelsDef: ChartToolPanelsDef | undefined = undefined;
     /** Get chart menu items. Only applies when using AG Charts Enterprise.
+     * @agModule `IntegratedChartsModule`
      */
     @Input() public chartMenuItems: (DefaultChartMenuItem | MenuItemDef)[] | GetChartMenuItems<TData> | undefined =
         undefined;
@@ -795,45 +842,44 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Input() public localeText: { [key: string]: string } | undefined = undefined;
     /** Set to `true` to enable Master Detail.
      * @default false
-     * @agModule `MasterDetailModule` or `ServerSideRowModelModule`
+     * @agModule `MasterDetailModule`
      */
     @Input({ transform: booleanAttribute }) public masterDetail: boolean | undefined = undefined;
     /** Set to `true` to keep detail rows for when they are displayed again.
      * @default false
      * @initial
+     * @agModule `MasterDetailModule`
      */
     @Input({ transform: booleanAttribute }) public keepDetailRows: boolean | undefined = undefined;
     /** Sets the number of details rows to keep.
      * @default 10
      * @initial
+     * @agModule `MasterDetailModule`
      */
     @Input() public keepDetailRowsCount: number | undefined = undefined;
     /** Provide a custom `detailCellRenderer` to use when a master row is expanded.
      * See [Detail Cell Renderer](https://www.ag-grid.com/javascript-data-grid/master-detail-custom-detail/) for framework specific implementation details.
+     * @agModule `MasterDetailModule`
      */
     @Input() public detailCellRenderer: any = undefined;
     /** Specifies the params to be used by the Detail Cell Renderer. Can also be a function that provides the params to enable dynamic definitions of the params.
+     * @agModule `MasterDetailModule`
      */
     @Input() public detailCellRendererParams: any = undefined;
     /** Set fixed height in pixels for each detail row.
      * @initial
+     * @agModule `MasterDetailModule`
      */
     @Input() public detailRowHeight: number | undefined = undefined;
     /** Set to `true` to have the detail grid dynamically change it's height to fit it's rows.
      * @initial
+     * @agModule `MasterDetailModule`
      */
     @Input({ transform: booleanAttribute }) public detailRowAutoHeight: boolean | undefined = undefined;
     /** Provides a context object that is provided to different callbacks the grid uses. Used for passing additional information to the callbacks used by your application.
      * @initial
      */
     @Input() public context: any = undefined;
-    /** Provide a custom drag and drop image component.
-     * @initial
-     */
-    @Input() public dragAndDropImageComponent: any = undefined;
-    /** Customise the parameters provided to the Drag and Drop Image Component.
-     */
-    @Input() public dragAndDropImageComponentParams: any = undefined;
     /**
      * A list of grids to treat as Aligned Grids.
      * Provide a list if the grids / apis already exist or return via a callback to allow the aligned grids to be retrieved asynchronously.
@@ -860,6 +906,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     /** Set to `true` to configure the value cache to not expire after data updates.
      * @default false
      * @initial
+     * @agModule `ValueCacheModule`
      */
     @Input({ transform: booleanAttribute }) public valueCacheNeverExpires: boolean | undefined = undefined;
     /** Set to `true` to allow cell expressions.
@@ -937,6 +984,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Input({ transform: booleanAttribute }) public pagination: boolean | undefined = undefined;
     /** How many rows to load per page. If `paginationAutoPageSize` is specified, this property is ignored.
      * @default 100
+     * @agModule `PaginationModule`
      */
     @Input() public paginationPageSize: number | undefined = undefined;
     /** Determines if the page size selector is shown in the pagination panel or not.
@@ -945,26 +993,30 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * Set to `false` to hide the page size selector.
      * @default true
      * @initial
+     * @agModule `PaginationModule`
      */
     @Input() public paginationPageSizeSelector: number[] | boolean | undefined = undefined;
     /** Set to `true` so that the number of rows to load per page is automatically adjusted by the grid so each page shows enough rows to just fill the area designated for the grid. If `false`, `paginationPageSize` is used.
      * @default false
+     * @agModule `PaginationModule`
      */
     @Input({ transform: booleanAttribute }) public paginationAutoPageSize: boolean | undefined = undefined;
     /** Set to `true` to have pages split children of groups when using Row Grouping or detail rows with Master Detail.
      * @default false
      * @initial
+     * @agModule `PaginationModule`
      */
     @Input({ transform: booleanAttribute }) public paginateChildRows: boolean | undefined = undefined;
     /** If `true`, the default grid controls for navigation are hidden.
      * This is useful if `pagination=true` and you want to provide your own pagination controls.
      * Otherwise, when `pagination=true` the grid automatically shows the necessary controls at the bottom so that the user can navigate through the different pages.
      * @default false
+     * @agModule `PaginationModule`
      */
     @Input({ transform: booleanAttribute }) public suppressPaginationPanel: boolean | undefined = undefined;
     /** Set to `true` to enable pivot mode.
      * @default false
-     * @agModule `PivotModule` or `ServerSideRowModelModule`
+     * @agModule `PivotModule`
      */
     @Input({ transform: booleanAttribute }) public pivotMode: boolean | undefined = undefined;
     /** When to show the 'pivot panel' (where you drag rows to pivot) at the top. Note that the pivot panel will never show if `pivotMode` is off.
@@ -976,54 +1028,67 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     /** The maximum number of generated columns before the grid halts execution. Upon reaching this number, the grid halts generation of columns
      * and triggers a `pivotMaxColumnsExceeded` event. `-1` for no limit.
      * @default -1
+     * @agModule `PivotModule`
      */
     @Input() public pivotMaxGeneratedColumns: number | undefined = undefined;
     /** If pivoting, set to the number of column group levels to expand by default, e.g. `0` for none, `1` for first level only, etc. Set to `-1` to expand everything.
      * @default 0
+     * @agModule `PivotModule`
      */
     @Input() public pivotDefaultExpanded: number | undefined = undefined;
     /** When set and the grid is in pivot mode, automatically calculated totals will appear within the Pivot Column Groups, in the position specified.
+     * @agModule `PivotModule`
      */
     @Input() public pivotColumnGroupTotals: 'before' | 'after' | undefined = undefined;
     /** When set and the grid is in pivot mode, automatically calculated totals will appear for each value column in the position specified.
+     * @agModule `PivotModule`
      */
     @Input() public pivotRowTotals: 'before' | 'after' | undefined = undefined;
     /** If `true`, the grid will not swap in the grouping column when pivoting. Useful if pivoting using Server Side Row Model or Viewport Row Model and you want full control of all columns including the group column.
      * @default false
      * @initial
+     * @agModule `PivotModule`
      */
     @Input({ transform: booleanAttribute }) public pivotSuppressAutoColumn: boolean | undefined = undefined;
     /** When enabled, pivot column groups will appear 'fixed', without the ability to expand and collapse the column groups.
      * @default false
      * @initial
+     * @agModule `PivotModule`
      */
     @Input({ transform: booleanAttribute }) public suppressExpandablePivotGroups: boolean | undefined = undefined;
     /** If `true`, then row group, pivot and value aggregation will be read-only from the GUI. The grid will display what values are used for each, but will not allow the user to change the selection.
      * @default false
+     * @agModule `RowGroupingModule` / `PivotModule` / `TreeDataModule` / `ServerSideRowModelModule`
      */
     @Input({ transform: booleanAttribute }) public functionsReadOnly: boolean | undefined = undefined;
     /** A map of 'function name' to 'function' for custom aggregation functions.
      * @initial
+     * @agModule `RowGroupingModule` / `PivotModule` / `TreeDataModule` / `ServerSideRowModelModule`
      */
     @Input() public aggFuncs: { [key: string]: IAggFunc<TData> } | undefined = undefined;
     /** When `true`, column headers won't include the `aggFunc` name, e.g. `'sum(Bank Balance)`' will just be `'Bank Balance'`.
      * @default false
+     * @agModule `RowGroupingModule` / `PivotModule` / `TreeDataModule` / `ServerSideRowModelModule`
      */
     @Input({ transform: booleanAttribute }) public suppressAggFuncInHeader: boolean | undefined = undefined;
     /** When using aggregations, the grid will always calculate the root level aggregation value.
      * @default false
+     * @agModule `RowGroupingModule` / `PivotModule` / `TreeDataModule` / `ServerSideRowModelModule`
      */
     @Input({ transform: booleanAttribute }) public alwaysAggregateAtRootLevel: boolean | undefined = undefined;
     /** When using change detection, only the updated column will be re-aggregated.
      * @default false
+     * @agModule `RowGroupingModule` / `PivotModule` / `TreeDataModule` / `ServerSideRowModelModule`
      */
     @Input({ transform: booleanAttribute }) public aggregateOnlyChangedColumns: boolean | undefined = undefined;
     /** Set to `true` so that aggregations are not impacted by filtering.
      * @default false
+     * @agModule `RowGroupingModule` / `PivotModule` / `TreeDataModule` / `ServerSideRowModelModule`
      */
     @Input({ transform: booleanAttribute }) public suppressAggFilteredOnly: boolean | undefined = undefined;
     /** Set to `true` to omit the value Column header when there is only a single value column.
      * @default false
+     * @agModule `PivotModule`
      */
     @Input({ transform: booleanAttribute }) public removePivotHeaderRowWhenSingleValueColumn: boolean | undefined =
         undefined;
@@ -1067,6 +1132,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      */
     @Input({ transform: booleanAttribute }) public enableRtl: boolean | undefined = undefined;
     /** Set to `true` so that the grid doesn't virtualise the columns. For example, if you have 100 columns, but only 10 visible due to scrolling, all 100 will always be rendered.
+     *     **It is not recommended to set this to `true` as it may cause performance issues.**
      * @default false
      * @initial
      */
@@ -1078,6 +1144,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      */
     @Input({ transform: booleanAttribute }) public suppressMaxRenderedRowRestriction: boolean | undefined = undefined;
     /** Set to `true` so that the grid doesn't virtualise the rows. For example, if you have 100 rows, but only 10 visible due to scrolling, all 100 will always be rendered.
+     *     **It is not recommended to set this to `true` as it may cause performance issues.**
      * @default false
      * @initial
      */
@@ -1093,14 +1160,17 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Input({ transform: booleanAttribute }) public suppressRowDrag: boolean | undefined = undefined;
     /** Set to `true` to suppress moving rows while dragging the `rowDrag` waffle. This option highlights the position where the row will be placed and it will only move the row on mouse up.
      * @default false
+     * @agModule `RowDragModule`
      */
     @Input({ transform: booleanAttribute }) public suppressMoveWhenRowDragging: boolean | undefined = undefined;
     /** Set to `true` to enable clicking and dragging anywhere on the row without the need for a drag handle.
      * @default false
+     * @agModule `RowDragModule`
      */
     @Input({ transform: booleanAttribute }) public rowDragEntireRow: boolean | undefined = undefined;
     /** Set to `true` to enable dragging multiple rows at the same time.
      * @default false
+     * @agModule `RowDragModule`
      */
     @Input({ transform: booleanAttribute }) public rowDragMultiRow: boolean | undefined = undefined;
     /** A callback that should return a string to be displayed by the `rowDragComp` while dragging a row.
@@ -1108,8 +1178,18 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * If the `rowDragText` callback is set in the ColDef it will take precedence over this, except when
      * `rowDragEntireRow=true`.
      * @initial
+     * @agModule `RowDragModule`
      */
     @Input() public rowDragText: ((params: IRowDragItem, dragItemCount: number) => string) | undefined = undefined;
+    /** Provide a custom drag and drop image component.
+     * @initial
+     * @agModule `RowDragModule`
+     */
+    @Input() public dragAndDropImageComponent: any = undefined;
+    /** Customise the parameters provided to the Drag and Drop Image Component.
+     * @agModule `RowDragModule`
+     */
+    @Input() public dragAndDropImageComponentParams: any = undefined;
     /** Provide your own cell renderer component to use for full width rows.
      * See [Full Width Rows](https://www.ag-grid.com/javascript-data-grid/full-width-rows/) for framework specific implementation details.
      */
@@ -1128,17 +1208,21 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * - `'multipleColumns'`: a group column per row group is added automatically.
      * - `'groupRows'`: group rows are automatically added instead of group columns.
      * - `'custom'`: informs the grid that group columns will be provided.
+     * @agModule `RowGroupingModule`
      */
     @Input() public groupDisplayType: RowGroupingDisplayType | undefined = undefined;
     /** If grouping, set to the number of levels to expand by default, e.g. `0` for none, `1` for first level only, etc. Set to `-1` to expand everything.
      * @default 0
+     * @agModule `RowGroupingModule`
      */
     @Input() public groupDefaultExpanded: number | undefined = undefined;
     /** Allows specifying the group 'auto column' if you are not happy with the default. If grouping, this column definition is included as the first column in the grid. If not grouping, this column is not included.
+     * @agModule `RowGroupingModule` / `TreeDataModule`
      */
     @Input() public autoGroupColumnDef: ColDef<TData> | undefined = undefined;
     /** When `true`, preserves the current group order when sorting on non-group columns.
      * @default false
+     * @agModule `RowGroupingModule`
      */
     @Input({ transform: booleanAttribute }) public groupMaintainOrder: boolean | undefined = undefined;
     /** When `true`, if you select a group, the children of the group will also be selected.
@@ -1149,28 +1233,32 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     /** If grouping, locks the group settings of a number of columns, e.g. `0` for no group locking. `1` for first group column locked, `-1` for all group columns locked.
      * @default 0
      * @initial
+     * @agModule `RowGroupingModule`
      */
     @Input() public groupLockGroupColumns: number | undefined = undefined;
     /** Set to determine whether filters should be applied on aggregated group values.
      * @default false
+     * @agModule `RowGroupingModule`
      */
     @Input() public groupAggFiltering: boolean | IsRowFilterable<TData> | undefined = undefined;
     /** When provided, an extra row group total row will be inserted into row groups at the specified position, to display
      * when the group is expanded. This row will contain the aggregate values for the group. If a callback function is
      * provided, it can be used to selectively determine which groups will have a total row added.
-     * @agModule `RowGroupingModule` or `ServerSideRowModelModule`
+     * @agModule `RowGroupingModule`
      */
     @Input() public groupTotalRow: 'top' | 'bottom' | UseGroupTotalRow<TData> | undefined = undefined;
     /** When provided, an extra grand total row will be inserted into the grid at the specified position.
      * This row displays the aggregate totals of all rows in the grid.
-     * @agModule `RowGroupingModule` or `ServerSideRowModelModule`
+     * @agModule `RowGroupingModule`
      */
     @Input() public grandTotalRow: 'top' | 'bottom' | 'pinnedTop' | 'pinnedBottom' | undefined = undefined;
     /** Suppress the sticky behaviour of the total rows, can be suppressed individually by passing `'grand'` or `'group'`.
+     * @agModule `RowGroupingModule`
      */
     @Input() public suppressStickyTotalRow: boolean | 'grand' | 'group' | undefined = undefined;
     /** If `true`, and showing footer, aggregate data will always be displayed at both the header and footer levels. This stops the possibly undesirable behaviour of the header details 'jumping' to the footer on expand.
      * @default false
+     * @agModule `RowGroupingModule` / `PivotModule` / `TreeDataModule` / `ServerSideRowModelModule`
      */
     @Input({ transform: booleanAttribute }) public groupSuppressBlankHeader: boolean | undefined = undefined;
     /** If using `groupSelectsChildren`, then only the children that pass the current filter will get selected.
@@ -1180,10 +1268,12 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Input({ transform: booleanAttribute }) public groupSelectsFiltered: boolean | undefined = undefined;
     /** Shows the open group in the group column for non-group rows.
      * @default false
+     * @agModule `RowGroupingModule`
      */
     @Input({ transform: booleanAttribute }) public showOpenedGroup: boolean | undefined = undefined;
     /** Enable to display the child row in place of the group row when the group only has a single child.
      * @default false
+     * @agModule `RowGroupingModule`
      */
     @Input() public groupHideParentOfSingleChild: boolean | 'leafGroupsOnly' | undefined = undefined;
     /** Set to `true` to collapse groups that only have one child.
@@ -1198,10 +1288,12 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Input({ transform: booleanAttribute }) public groupRemoveLowestSingleChildren: boolean | undefined = undefined;
     /** Set to `true` to hide parents that are open. When used with multiple columns for showing groups, it can give a more pleasing user experience.
      * @default false
+     * @agModule `RowGroupingModule`
      */
     @Input({ transform: booleanAttribute }) public groupHideOpenParents: boolean | undefined = undefined;
     /** Set to `true` to prevent the grid from creating a '(Blanks)' group for nodes which do not belong to a group, and display the unbalanced nodes alongside group nodes.
      * @default false
+     * @agModule `RowGroupingModule`
      */
     @Input({ transform: booleanAttribute }) public groupAllowUnbalanced: boolean | undefined = undefined;
     /** When to show the 'row group panel' (where you drag rows to group) at the top.
@@ -1211,9 +1303,11 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Input() public rowGroupPanelShow: 'always' | 'onlyWhenGrouping' | 'never' | undefined = undefined;
     /** Provide the Cell Renderer to use when `groupDisplayType = 'groupRows'`.
      * See [Group Row Cell Renderer](https://www.ag-grid.com/javascript-data-grid/grouping-group-rows/#providing-cell-renderer) for framework specific implementation details.
+     * @agModule `RowGroupingModule`
      */
     @Input() public groupRowRenderer: any = undefined;
     /** Customise the parameters provided to the `groupRowRenderer` component.
+     * @agModule `RowGroupingModule`
      */
     @Input() public groupRowRendererParams: any = undefined;
     /** Set to `true` to enable the Grid to work with Tree Data.
@@ -1224,21 +1318,25 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Input({ transform: booleanAttribute }) public treeData: boolean | undefined = undefined;
     /** The name of the field to use in a data item to retrieve the array of children nodes of a node when while using treeData=true.
      * It supports accessing nested fields using the dot notation.
+     * @agModule `TreeDataModule`
      */
     @Input() public treeDataChildrenField: string | undefined = undefined;
     /** The name of the field to use in a data item to find the parent node of a node when using treeData=true.
      * The tree will be constructed via relationships between nodes using this field.
      * getRowId callback need to be provided as well for this to work.
      * It supports accessing nested fields using the dot notation.
+     * @agModule `TreeDataModule`
      */
     @Input() public treeDataParentIdField: string | undefined = undefined;
     /** Set to `true` to suppress sort indicators and actions from the row group panel.
      * @default false
+     * @agModule `RowGroupingPanelModule`
      */
     @Input({ transform: booleanAttribute }) public rowGroupPanelSuppressSort: boolean | undefined = undefined;
     /** Set to `true` prevent Group Rows from sticking to the top of the grid.
      * @default false
      * @initial
+     * @agModule `RowGroupingModule` / `TreeDataModule`
      */
     @Input({ transform: booleanAttribute }) public suppressGroupRowsSticky: boolean | undefined = undefined;
     /** Data to be displayed as pinned top rows in the grid.
@@ -1268,11 +1366,13 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      *
      * Return `true` if the row should be pinned initially. Return `false` otherwise.
      * User interactions can subsequently still change the pinned state of a row.
+     * @agModule `PinnedRowModule`
      */
     @Input() public isRowPinned: IsRowPinned<TData> | undefined = undefined;
     /** Sets the row model type.
      * @default 'clientSide'
      * @initial
+     * @agModule `ClientSideRowModelModule` / `InfiniteRowModelModule` / `ServerSideRowModelModule` / `ViewportRowModelModule`
      */
     @Input() public rowModelType: RowModelType | undefined = undefined;
     /** Set the data to be displayed as rows in the grid.
@@ -1294,11 +1394,13 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     /** How many extra blank rows to display to the user at the end of the dataset, which sets the vertical scroll and then allows the grid to request viewing more rows of data.
      * @default 1
      * @initial
+     * @agModule `InfiniteRowModelModule`
      */
     @Input() public cacheOverflowSize: number | undefined = undefined;
     /** How many extra blank rows to display to the user at the end of the dataset, which sets the vertical scroll and then allows the grid to request viewing more rows of data.
      * @default 1
      * @initial
+     * @agModule `InfiniteRowModelModule`
      */
     @Input() public infiniteInitialRowCount: number | undefined = undefined;
     /** Set how many loading rows to display to the user for the root level group.
@@ -1307,21 +1409,25 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      */
     @Input() public serverSideInitialRowCount: number | undefined = undefined;
     /** When `true`, the Server-side Row Model will not use a full width loading renderer, instead using the colDef `loadingCellRenderer` if present.
+     * @agModule `ServerSideRowModelModule`
      */
     @Input({ transform: booleanAttribute }) public suppressServerSideFullWidthLoadingRow: boolean | undefined =
         undefined;
     /** How many rows for each block in the store, i.e. how many rows returned from the server at a time.
      * @default 100
+     * @agModule `ServerSideRowModelModule` / `InfiniteRowModelModule`
      */
     @Input() public cacheBlockSize: number | undefined = undefined;
     /** How many blocks to keep in the store. Default is no limit, so every requested block is kept. Use this if you have memory concerns, and blocks that were least recently viewed will be purged when the limit is hit. The grid will additionally make sure it has all the blocks needed to display what is currently visible, in case this property is set to a low value.
      * @initial
+     * @agModule `ServerSideRowModelModule` / `InfiniteRowModelModule`
      */
     @Input() public maxBlocksInCache: number | undefined = undefined;
     /** How many requests to hit the server with concurrently. If the max is reached, requests are queued.
      * Set to `-1` for no maximum restriction on requests.
      * @default 2
      * @initial
+     * @agModule `ServerSideRowModelModule` / `InfiniteRowModelModule`
      */
     @Input() public maxConcurrentDatasourceRequests: number | undefined = undefined;
     /** How many milliseconds to wait before loading a block. Useful when scrolling over many blocks, as it prevents blocks loading until scrolling has settled.
@@ -1330,6 +1436,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Input() public blockLoadDebounceMillis: number | undefined = undefined;
     /** When enabled, closing group rows will remove children of that row. Next time the row is opened, child rows will be read from the datasource again. This property only applies when there is Row Grouping or Tree Data.
      * @default false
+     * @agModule `ServerSideRowModelModule`
      */
     @Input({ transform: booleanAttribute }) public purgeClosedRowNodes: boolean | undefined = undefined;
     /** Provide the `serverSideDatasource` for server side row model.
@@ -1338,20 +1445,24 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Input() public serverSideDatasource: IServerSideDatasource | undefined = undefined;
     /** When enabled, always refreshes top level groups regardless of which column was sorted. This property only applies when there is Row Grouping & sorting is handled on the server.
      * @default false
+     * @agModule `ServerSideRowModelModule`
      */
     @Input({ transform: booleanAttribute }) public serverSideSortAllLevels: boolean | undefined = undefined;
     /** When enabled, sorts fully loaded groups in the browser instead of requesting from the server.
      * @default false
+     * @agModule `ServerSideRowModelModule`
      */
     @Input({ transform: booleanAttribute }) public serverSideEnableClientSideSort: boolean | undefined = undefined;
     /** When enabled, only refresh groups directly impacted by a filter. This property only applies when there is Row Grouping & filtering is handled on the server.
      * @default false
      * @initial
+     * @agModule `ServerSideRowModelModule`
      */
     @Input({ transform: booleanAttribute }) public serverSideOnlyRefreshFilteredGroups: boolean | undefined = undefined;
     /** Used to split pivot field strings for generating pivot result columns when `pivotResultFields` is provided as part of a `getRows` success.
      * @default '_'
      * @initial
+     * @agModule `ServerSideRowModelModule` / `PivotModule`
      */
     @Input() public serverSidePivotResultFieldSeparator: string | undefined = undefined;
     /** To use the viewport row model you need to provide the grid with a `viewportDatasource`.
@@ -1360,10 +1471,12 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Input() public viewportDatasource: IViewportDatasource | undefined = undefined;
     /** When using viewport row model, sets the page size for the viewport.
      * @initial
+     * @agModule `ViewportRowModelModule`
      */
     @Input() public viewportRowModelPageSize: number | undefined = undefined;
     /** When using viewport row model, sets the buffer size for the viewport.
      * @initial
+     * @agModule `ViewportRowModelModule`
      */
     @Input() public viewportRowModelBufferSize: number | undefined = undefined;
     /** Set to `true` to always show the horizontal scrollbar.
@@ -1411,7 +1524,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      */
     @Input() public scrollbarWidth: number | undefined = undefined;
     /** Use the `RowSelectionOptions` object to configure row selection. The string values `'single'` and `'multiple'` are deprecated.
-     * @agModule `RowSelectionModule` or `ServerSideRowModelModule`
+     * @agModule `RowSelectionModule`
      */
     @Input() public rowSelection: RowSelectionOptions<TData> | 'single' | 'multiple' | undefined = undefined;
     /** Configure cell selection.
@@ -1624,26 +1737,32 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Input() public processUnpinnedColumns: ((params: ProcessUnpinnedColumnsParams<TData>) => Column[]) | undefined =
         undefined;
     /** Allows you to process cells for the clipboard. Handy if for example you have `Date` objects that need to have a particular format if importing into Excel.
+     * @agModule `ClipboardModule`
      */
     @Input() public processCellForClipboard: ((params: ProcessCellForExportParams<TData>) => any) | undefined =
         undefined;
     /** Allows you to process header values for the clipboard.
+     * @agModule `ClipboardModule`
      */
     @Input() public processHeaderForClipboard: ((params: ProcessHeaderForExportParams<TData>) => any) | undefined =
         undefined;
     /** Allows you to process group header values for the clipboard.
+     * @agModule `ClipboardModule`
      */
     @Input() public processGroupHeaderForClipboard:
         | ((params: ProcessGroupHeaderForExportParams<TData>) => any)
         | undefined = undefined;
     /** Allows you to process cells from the clipboard. Handy if for example you have number fields and want to block non-numbers from getting into the grid.
+     * @agModule `ClipboardModule`
      */
     @Input() public processCellFromClipboard: ((params: ProcessCellForExportParams<TData>) => any) | undefined =
         undefined;
     /** Allows you to get the data that would otherwise go to the clipboard. To be used when you want to control the 'copy to clipboard' operation yourself.
+     * @agModule `ClipboardModule`
      */
     @Input() public sendToClipboard: ((params: SendToClipboardParams<TData>) => void) | undefined = undefined;
     /** Allows complete control of the paste operation, including cancelling the operation (so nothing happens) or replacing the data with other data.
+     * @agModule `ClipboardModule`
      */
     @Input() public processDataFromClipboard:
         | ((params: ProcessDataFromClipboardParams<TData>) => string[][] | null)
@@ -1659,10 +1778,12 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Input() public doesExternalFilterPass: ((node: IRowNode<TData>) => boolean) | undefined = undefined;
     /** Callback to be used to customise the chart toolbar items.
      * @initial
+     * @agModule `IntegratedChartsModule`
      */
     @Input() public getChartToolbarItems: GetChartToolbarItems | undefined = undefined;
     /** Callback to enable displaying the chart in an alternative chart container.
      * @initial
+     * @agModule `IntegratedChartsModule`
      */
     @Input() public createChartContainer: ((params: ChartRefParams<TData>) => void) | undefined = undefined;
     /** Allows overriding the element that will be focused when the grid receives focus from outside elements (tabbing into the grid).
@@ -1701,54 +1822,67 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Input() public getDocument: (() => Document) | undefined = undefined;
     /** Allows user to format the numbers in the pagination panel, i.e. 'row count' and 'page number' labels. This is for pagination panel only, to format numbers inside the grid's cells (i.e. your data), then use `valueFormatter` in the column definitions.
      * @initial
+     * @agModule `PaginationModule`
      */
     @Input() public paginationNumberFormatter:
         | ((params: PaginationNumberFormatterParams<TData>) => string)
         | undefined = undefined;
     /** Callback to use when you need access to more then the current column for aggregation.
+     * @agModule `RowGroupingModule` / `PivotModule` / `TreeDataModule` / `ServerSideRowModelModule`
      */
     @Input() public getGroupRowAgg: ((params: GetGroupRowAggParams<TData>) => any) | undefined = undefined;
     /** (Client-side Row Model only) Allows groups to be open by default.
+     * @agModule `RowGroupingModule` / `TreeDataModule`
      */
     @Input() public isGroupOpenByDefault: ((params: IsGroupOpenByDefaultParams<TData>) => boolean) | undefined =
         undefined;
     /** Allows default sorting of groups.
+     * @agModule `RowGroupingModule`
      */
     @Input() public initialGroupOrderComparator:
         | ((params: InitialGroupOrderComparatorParams<TData>) => number)
         | undefined = undefined;
     /** Callback for the mutation of the generated pivot result column definitions
+     * @agModule `PivotModule`
      */
     @Input() public processPivotResultColDef: ((colDef: ColDef<TData>) => void) | undefined = undefined;
     /** Callback for the mutation of the generated pivot result column group definitions
+     * @agModule `PivotModule`
      */
     @Input() public processPivotResultColGroupDef: ((colGroupDef: ColGroupDef<TData>) => void) | undefined = undefined;
     /** Callback to be used when working with Tree Data when `treeData = true`.
      * @initial
+     * @agModule `TreeDataModule`
      */
     @Input() public getDataPath: GetDataPath<TData> | undefined = undefined;
     /** Allows setting the child count for a group row.
      * @initial
+     * @agModule `ServerSideRowModelModule`
      */
     @Input() public getChildCount: ((dataItem: any) => number) | undefined = undefined;
     /** Allows providing different params for different levels of grouping.
      * @initial
+     * @agModule `ServerSideRowModelModule`
      */
     @Input() public getServerSideGroupLevelParams:
         | ((params: GetServerSideGroupLevelParamsParams) => ServerSideGroupLevelParams)
         | undefined = undefined;
     /** Allows groups to be open by default.
+     * @agModule `ServerSideRowModelModule`
      */
     @Input() public isServerSideGroupOpenByDefault:
         | ((params: IsServerSideGroupOpenByDefaultParams) => boolean)
         | undefined = undefined;
     /** Allows cancelling transactions.
+     * @agModule `ServerSideRowModelModule`
      */
     @Input() public isApplyServerSideTransaction: IsApplyServerSideTransaction | undefined = undefined;
     /** SSRM Tree Data: Allows specifying which rows are expandable.
+     * @agModule `ServerSideRowModelModule`
      */
     @Input() public isServerSideGroup: IsServerSideGroup | undefined = undefined;
     /** SSRM Tree Data: Allows specifying group keys.
+     * @agModule `ServerSideRowModelModule`
      */
     @Input() public getServerSideGroupKey: GetServerSideGroupKey | undefined = undefined;
     /** Return a business key for the node. If implemented, each row in the DOM will have an attribute `row-business-key='abc'` where `abc` is what you return as the business key.
@@ -1761,6 +1895,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Input() public getRowId: GetRowIdFunc<TData> | undefined = undefined;
     /** When enabled, getRowId() callback is implemented and new Row Data is set, the grid will disregard all previous rows and treat the new Row Data as new data. As a consequence, all Row State (eg selection, rendered rows) will be reset.
      * @default false
+     * @agModule `ClientSideRowModelModule`
      */
     @Input({ transform: booleanAttribute }) public resetRowDataOnUpdate: boolean | undefined = undefined;
     /** Callback fired after the row is rendered into the DOM. Should not be used to initiate side effects.
@@ -1771,6 +1906,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      */
     @Input() public isRowSelectable: IsRowSelectable<TData> | undefined = undefined;
     /** Callback to be used with Master Detail to determine if a row should be a master row. If `false` is returned no detail row will exist for this row.
+     * @agModule `MasterDetailModule`
      */
     @Input() public isRowMaster: IsRowMaster<TData> | undefined = undefined;
     /** Callback to fill values instead of simply copying values or increasing number values using linear progression.

@@ -798,16 +798,28 @@ export interface _DragGridApi {
 }
 
 export interface _EditGridApi<TData> {
-    /** Returns the list of active cell editor instances. Optionally provide parameters to restrict to certain columns / row nodes. */
+    /**
+     * Returns the list of active cell editor instances. Optionally provide parameters to restrict to certain columns / row nodes.
+     * @agModule `TextEditorModule` / `LargeTextEditorModule` / `NumberEditorModule` / `DateEditorModule` / `CheckboxEditorModule` / `CustomEditorModule` / `SelectEditorModule` / `RichSelectModule`
+     */
     getCellEditorInstances(params?: GetCellEditorInstancesParams<TData>): ICellEditor[];
 
-    /** If the grid is editing, returns back details of the editing cell(s). */
+    /**
+     * If the grid is editing, returns back details of the editing cell(s).
+     * @agModule `TextEditorModule` / `LargeTextEditorModule` / `NumberEditorModule` / `DateEditorModule` / `CheckboxEditorModule` / `CustomEditorModule` / `SelectEditorModule` / `RichSelectModule`
+     */
     getEditingCells(): CellPosition[];
 
-    /** If a cell is editing, it stops the editing. Pass `true` if you want to cancel the editing (i.e. don't accept changes). */
+    /**
+     * If a cell is editing, it stops the editing. Pass `true` if you want to cancel the editing (i.e. don't accept changes).
+     * @agModule `TextEditorModule` / `LargeTextEditorModule` / `NumberEditorModule` / `DateEditorModule` / `CheckboxEditorModule` / `CustomEditorModule` / `SelectEditorModule` / `RichSelectModule`
+     */
     stopEditing(cancel?: boolean): void;
 
-    /** Start editing the provided cell. If another cell is editing, the editing will be stopped in that other cell. */
+    /**
+     * Start editing the provided cell. If another cell is editing, the editing will be stopped in that other cell.
+     * @agModule `TextEditorModule` / `LargeTextEditorModule` / `NumberEditorModule` / `DateEditorModule` / `CheckboxEditorModule` / `CustomEditorModule` / `SelectEditorModule` / `RichSelectModule`
+     */
     startEditingCell(params: StartEditingCellParams): void;
 }
 
@@ -838,28 +850,39 @@ export interface _UndoRedoGridApi {
 }
 
 export interface _FilterGridApi {
-    /** Returns `true` if any filter is set. This includes quick filter, column filter, external filter or advanced filter. */
+    /**
+     * Returns `true` if any filter is set. This includes quick filter, column filter, external filter or advanced filter.
+     * @agModule `TextFilterModule` / `NumberFilterModule` / `DateFilterModule` / `SetFilterModule` / `MultiFilterModule` / `CustomFilterModule` / `QuickFilterModule` / `ExternalFilterModule` / `AdvancedFilterModule`
+     *  */
     isAnyFilterPresent(): boolean;
 
     /**
      * Informs the grid that a filter has changed. This is typically called after a filter change through one of the filter APIs.
      * @param source The source of the filter change event. If not specified defaults to `'api'`.
+     * @agModule `TextFilterModule` / `NumberFilterModule` / `DateFilterModule` / `SetFilterModule` / `MultiFilterModule` / `CustomFilterModule` / `QuickFilterModule` / `ExternalFilterModule` / `AdvancedFilterModule`
      */
     onFilterChanged(source?: FilterChangedEventSourceType): void;
 }
 
 export interface _ColumnFilterGridApi {
-    /** Returns `true` if any column filter is set, otherwise `false`. */
+    /**
+     * Returns `true` if any column filter is set, otherwise `false`.
+     * @agModule `TextFilterModule` / `NumberFilterModule` / `DateFilterModule` / `SetFilterModule` / `MultiFilterModule` / `CustomFilterModule`
+     */
     isColumnFilterPresent(): boolean;
 
     /**
      * Returns the filter component instance for a column.
      * For getting/setting models for individual column filters, use `getColumnFilterModel` and `setColumnFilterModel` instead of this.
      * `key` can be a column ID or a `Column` object.
+     * @agModule `TextFilterModule` / `NumberFilterModule` / `DateFilterModule` / `SetFilterModule` / `MultiFilterModule` / `CustomFilterModule`
      */
     getColumnFilterInstance<TFilter extends IFilter>(key: string | Column): Promise<TFilter | null | undefined>;
 
-    /** Destroys a filter. Useful to force a particular filter to be created from scratch again. */
+    /**
+     * Destroys a filter. Useful to force a particular filter to be created from scratch again.
+     * @agModule `TextFilterModule` / `NumberFilterModule` / `DateFilterModule` / `SetFilterModule` / `MultiFilterModule` / `CustomFilterModule`
+     */
     destroyFilter(key: string | Column): void;
 
     /**
@@ -868,15 +891,20 @@ export interface _ColumnFilterGridApi {
      * the filter model will be applied asynchronously after row data is added.
      * To always perform this synchronously, set `cellDataType = false` on the default column definition,
      * or provide cell data types for every column.
+     * @agModule `TextFilterModule` / `NumberFilterModule` / `DateFilterModule` / `SetFilterModule` / `MultiFilterModule` / `CustomFilterModule`
      */
     setFilterModel(model: FilterModel | null): void;
 
-    /** Gets the current state of all the column filters. Used for saving filter state. */
+    /**
+     * Gets the current state of all the column filters. Used for saving filter state.
+     * @agModule `TextFilterModule` / `NumberFilterModule` / `DateFilterModule` / `SetFilterModule` / `MultiFilterModule` / `CustomFilterModule`
+     */
     getFilterModel(): FilterModel;
 
     /**
      * Gets the current filter model for the specified column.
      * Will return `null` if no active filter.
+     * @agModule `TextFilterModule` / `NumberFilterModule` / `DateFilterModule` / `SetFilterModule` / `MultiFilterModule` / `CustomFilterModule`
      */
     getColumnFilterModel<TModel>(column: string | Column): TModel | null;
 
@@ -884,10 +912,14 @@ export interface _ColumnFilterGridApi {
      * Sets the filter model for the specified column.
      * Setting a `model` of `null` will reset the filter (make inactive).
      * Must wait on the response before calling `api.onFilterChanged()`.
+     * @agModule `TextFilterModule` / `NumberFilterModule` / `DateFilterModule` / `SetFilterModule` / `MultiFilterModule` / `CustomFilterModule`
      */
     setColumnFilterModel<TModel>(column: string | Column, model: TModel | null): Promise<void>;
 
-    /** Show the filter for the provided column. */
+    /**
+     * Show the filter for the provided column.
+     * @agModule `TextFilterModule` / `NumberFilterModule` / `DateFilterModule` / `SetFilterModule` / `MultiFilterModule` / `CustomFilterModule`
+     */
     showColumnFilter(colKey: string | Column): void;
 }
 

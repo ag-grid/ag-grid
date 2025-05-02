@@ -38,12 +38,14 @@ export interface AbstractColDef<TData = any, TValue = any> {
     /**
      * Set to `true` if you do not want this column or group to appear in the Columns Tool Panel.
      * @default false
+     * @agModule `ColumnsToolPanelModule`
      */
     suppressColumnsToolPanel?: boolean;
 
     /**
      * Set to `true` if you do not want this column (filter) or group (filter group) to appear in the Filters Tool Panel.
      * @default false
+     * @agModule `ColumnsToolPanelModule`
      */
     suppressFiltersToolPanel?: boolean;
 
@@ -694,21 +696,21 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
     /**
      * Same as `aggFunc`, except only applied when creating a new column. Not applied when updating column definitions.
      * @initial
-     * @agModule `RowGroupingModule`
+     * @agModule `RowGroupingModule` / `PivotModule` / `TreeDataModule` / `ServerSideRowModelModule`
      */
     initialAggFunc?: string | IAggFunc<TData, TValue>;
     /**
      * The name of the aggregation function to use for this column when it is enabled via the GUI.
      * Note that this does not immediately apply the aggregation function like `aggFunc`
      * @default 'sum'
-     * @agModule `RowGroupingModule`
+     * @agModule `RowGroupingModule` / `PivotModule` / `TreeDataModule` / `ServerSideRowModelModule`
      */
     defaultAggFunc?: string;
     /**
      * Aggregation functions allowed on this column e.g. `['sum', 'avg']`.
      * If missing, all installed functions are allowed.
      * This will only restrict what the GUI allows a user to select, it does not impact when you set a function via the API.
-     * @agModule `RowGroupingModule`
+     * @agModule `RowGroupingModule` / `PivotModule` / `TreeDataModule` / `ServerSideRowModelModule`
      * */
     allowedAggFuncs?: string[];
 

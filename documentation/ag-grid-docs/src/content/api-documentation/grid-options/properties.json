@@ -254,12 +254,6 @@
                 "url": "./column-moving/"
             }
         },
-        "allowDragFromColumnsToolPanel": {
-            "more": {
-                "name": "Columns Tool Panel",
-                "url": "./tool-panel-columns/"
-            }
-        },
         "suppressMovableColumns": {},
         "suppressMoveWhenColumnDragging": {
             "more": {
@@ -278,6 +272,12 @@
             "more": {
                 "name": "Suppress Hide Leave",
                 "url": "./column-moving/#suppress-hide-leave"
+            }
+        },
+        "allowDragFromColumnsToolPanel": {
+            "more": {
+                "name": "Columns Tool Panel",
+                "url": "./tool-panel-columns/"
             }
         }
     },
@@ -555,6 +555,27 @@
         },
         "alwaysPassFilter": {}
     },
+    "find": {
+        "meta": {
+            "displayName": "Find",
+            "page": {
+                "name": "Find",
+                "url": "./find/"
+            }
+        },
+        "findSearchValue": {
+            "more": {
+                "name": "Find",
+                "url": "./find/"
+            }
+        },
+        "findOptions": {
+            "more": {
+                "name": "Customising Find",
+                "url": "./find/#customising-find"
+            }
+        }
+    },
     "charts": {
         "meta": {
             "displayName": "Integrated Charts",
@@ -712,12 +733,6 @@
                 "url": "./master-detail-height/#auto-height"
             }
         },
-        "embedFullWidthRows": {
-            "more": {
-                "name": "Syncing Detail Scrolling with Master",
-                "url": "./master-detail-other/#syncing-detail-scrolling-with-master"
-            }
-        },
         "keepDetailRows": {
             "more": {
                 "name": "Detail Grid Lifecycle",
@@ -767,18 +782,6 @@
             },
             "interfaceHierarchyOverrides": {
                 "include": ["RowNumbersOptions"]
-            }
-        },
-        "findSearchValue": {
-            "more": {
-                "name": "Find",
-                "url": "./find/"
-            }
-        },
-        "findOptions": {
-            "more": {
-                "name": "Customising Find",
-                "url": "./find/#customising-find"
             }
         },
         "valueCache": {
@@ -1251,6 +1254,12 @@
             "more": {
                 "name": "Full Width Cell Renderer",
                 "url": "./full-width-rows/"
+            }
+        },
+        "embedFullWidthRows": {
+            "more": {
+                "name": "Embedded Full Width Rows",
+                "url": "./full-width-rows/#embedded-full-width-rows"
             }
         }
     },
