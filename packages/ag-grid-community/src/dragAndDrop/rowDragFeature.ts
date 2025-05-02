@@ -281,8 +281,8 @@ export class RowDragFeature extends BeanStub implements DropTarget {
             if (!row || rowIndex < firstRow || rowIndex > lastRow) {
                 return undefined; // Out of bounds
             }
-            if (row.rowIndex !== null && row.sourceRowIndex >= 0) {
-                return row; // Valid row
+            if (row.sourceRowIndex >= 0) {
+                return row; // Valid leaf node
             }
         }
     }
