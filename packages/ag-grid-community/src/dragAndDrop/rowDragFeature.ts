@@ -271,20 +271,16 @@ export class RowDragFeature extends BeanStub implements DropTarget {
     /** When dragging multiple rows, we want the user to be able to drag to the prev or next in the group if dragging on one of the selected rows. */
     private getPrevOrNext(increment: -1 | 1, initialRow: IRowNode): RowNode | undefined {
         const clientSideRowModel = this.clientSideRowModel;
-        const pageBounds = this.beans.pageBounds;
-        const firstRow = pageBounds.getFirstRow();
-        const lastRow = pageBounds.getLastRow();
-        let rowIndex = initialRow.rowIndex!;
-        while (true) {
-            rowIndex += increment;
-            const row = clientSideRowModel.getRow(rowIndex);
-            if (!row || rowIndex < firstRow || rowIndex > lastRow) {
-                return undefined; // Out of bounds
-            }
+        const rowCount = clientSideRowModel.getRowCount();
+        let rowIndex = initialRow.rowIndex! + increment;
+        while (rowIndex >= 0 && rowIndex < rowCount) {
+            const row = clientSideRowModel.getRow(rowIndex)!;
             if (row.sourceRowIndex >= 0) {
                 return row; // Valid leaf node
             }
+            rowIndex += increment;
         }
+        return undefined; // Out of bounds
     }
 
     public addRowDropZone(params: RowDropZoneParams & { fromGrid?: boolean }): void {
