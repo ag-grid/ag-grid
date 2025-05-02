@@ -38,9 +38,8 @@ const gridOptions: GridOptions<IOlympicData> = {
     isRowPinned: (node) => (!node.data?.country ? 'top' : null),
     theme: themeQuartz.withParams({
         pinnedRowBorder: {
-            width: 3,
+            width: 2,
         },
-        pinnedSourceRowTextColor: '#919191',
     }),
 };
 
