@@ -250,14 +250,14 @@ export class RowDragFeature extends BeanStub implements DropTarget {
         const targetRowIndex = clientSideRowModel.getRowIndexAtPixel(y);
         let target = clientSideRowModel.getRow(targetRowIndex);
         let delta = 0;
-        if (!source || target === source) {
+        if (!source) {
             return null; // Nothing to move
         }
         if (sameGrid) {
-            if (!target) {
+            if (!target || target === source) {
                 return null; // Nothing to move
             }
-            delta = targetRowIndex - (source.rowIndex ?? targetRowIndex);
+            delta = targetRowIndex - source.rowIndex!;
             if (rows.includes(target)) {
                 target = (delta < 0 ? this.getPrevOrNext(-1, rows[0]) : this.getPrevOrNext(1, _last(rows))) ?? target;
             }
