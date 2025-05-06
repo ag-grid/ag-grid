@@ -4,7 +4,6 @@ import type { Column } from '../../interfaces/iColumn';
 import type { CellCtrl } from '../../rendering/cell/cellCtrl';
 import type { RowCtrl } from '../../rendering/row/rowCtrl';
 import { _resolveControllers } from '../utils/controllers';
-import { _destroyEditors, _getOldValue, _syncModelsFromEditors } from '../utils/editors';
 import { BaseEditStrategy } from './baseEditStrategy';
 
 export class SingleCellEditStrategy extends BaseEditStrategy {
@@ -35,15 +34,7 @@ export class SingleCellEditStrategy extends BaseEditStrategy {
         event?: KeyboardEvent | MouseEvent | null,
         _source: 'api' | 'ui' = 'ui'
     ): boolean {
-        const shouldStop = this.shouldStopEditing(rowCtrl, cellCtrl, undefined, undefined, 'ui');
-        if (shouldStop) {
-            if (this.gos.get('batchEdit')) {
-                const cells = this.editModel.getEditingCellIds();
-                _destroyEditors(this.beans, cells, false, 'ui');
-            } else {
-                this.stopAllEditing();
-            }
-        }
+        console.log('SingleCellEditStrategy: startEditing', rowCtrl, cellCtrl);
 
         const rowId = rowCtrl.rowId!;
         const colId = cellCtrl?.column.getColId() ?? this.beans.visibleCols.getFirstColumn()!.getColId();
@@ -51,8 +42,7 @@ export class SingleCellEditStrategy extends BaseEditStrategy {
         this.rowId = rowId;
         this.colId = colId;
 
-        const cellModel = this.editModel.startEditing(rowId, colId);
-        cellModel.oldValue = _getOldValue(this.beans, cellCtrl);
+        this.editModel.startEditing(rowId, colId);
 
         return this.finishStartEdit(
             [
@@ -69,39 +59,14 @@ export class SingleCellEditStrategy extends BaseEditStrategy {
         );
     }
 
-    public stopEditing(rowCtrl?: RowCtrl | null, cellCtrl?: CellCtrl | null, source: 'api' | 'ui' = 'ui'): boolean {
-        if (!this.isEditing(rowCtrl, cellCtrl)) {
-            return false;
-        }
+    public override stopEditing(
+        rowCtrl?: RowCtrl | null,
+        cellCtrl?: CellCtrl | null,
+        source: 'api' | 'ui' = 'ui'
+    ): boolean {
+        console.log('SingleCellEditStrategy: stopEditing', rowCtrl, cellCtrl);
 
-        console.log('stopEditing', rowCtrl, cellCtrl);
-
-        _syncModelsFromEditors(this.beans);
-
-        const cells = this.editModel.getEditingCellIds();
-
-        this.editModel.stopEditing(rowCtrl?.rowId, cellCtrl?.column.colId);
-
-        _destroyEditors(this.beans, cells, false, source);
-
-        this.rowId = undefined;
-        this.colId = undefined;
-
-        return true;
-    }
-
-    public cancelEditing(rowCtrl?: RowCtrl | null, cellCtrl?: CellCtrl | null, source: 'api' | 'ui' = 'ui'): boolean {
-        if (!this.isEditing(rowCtrl, cellCtrl)) {
-            return false;
-        }
-
-        console.log('cancelEditing', rowCtrl, cellCtrl);
-
-        const cells = this.editModel.getEditingCellIds();
-
-        this.editModel.cancelEditing(rowCtrl?.rowId, cellCtrl?.column.colId);
-
-        _destroyEditors(this.beans, cells, true, source);
+        super.stopEditing(rowCtrl, cellCtrl, source);
 
         this.rowId = undefined;
         this.colId = undefined;
@@ -126,12 +91,16 @@ export class SingleCellEditStrategy extends BaseEditStrategy {
 
         // if we are editing, then moving the focus out of a cell will stop editing
         if (this.shouldStopEditing(rowCtrl, cellCtrl, undefined, undefined, 'ui')) {
-            this.stopEditing(rowCtrl, cellCtrl);
+            this.beans.editingSvc?.stopEditing(rowCtrl, cellCtrl);
         }
     }
 
     // returns null if no navigation should be performed
-    moveToNextEditingCell(previousCell: CellCtrl, backwards: boolean, event?: KeyboardEvent): boolean | null {
+    public override moveToNextEditingCell(
+        previousCell: CellCtrl,
+        backwards: boolean,
+        event?: KeyboardEvent
+    ): boolean | null {
         const previousPos = previousCell.cellPosition;
 
         // before we stop editing, we need to focus the cell element
@@ -153,7 +122,7 @@ export class SingleCellEditStrategy extends BaseEditStrategy {
             return false;
         }
 
-        this.startEditing(nextCell.rowCtrl, nextCell, null, event);
+        this.beans.editingSvc?.startEditing(nextCell.rowCtrl, nextCell, null, true, event);
 
         // nextCell.focusCell(false);
         return true;

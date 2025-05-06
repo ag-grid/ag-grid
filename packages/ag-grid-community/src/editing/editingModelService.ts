@@ -1,11 +1,11 @@
+import type { Maybe } from '../columns/columnModel';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
+import type { BeanCollection } from '../context/context';
 import { _getRowById } from '../entities/positionUtils';
 import type { CellPosition } from '../interfaces/iCellPosition';
 import type { CellCtrl } from '../rendering/cell/cellCtrl';
 import type { RowCtrl } from '../rendering/row/rowCtrl';
-import type { CellEditingModel } from './model/cellEditingModel';
-import { RowEditingModel } from './model/rowEditingModel';
 
 export type CellIdPositions = {
     rowId: string;
@@ -14,168 +14,165 @@ export type CellIdPositions = {
     newValue?: any;
 };
 
+type RowId = string;
+type ColId = string;
+type CData = any;
+
 export class EditingModelService extends BeanStub implements NamedBean {
     beanName = 'editingModelSvc' as const;
 
-    private rowModels: Map<string, RowEditingModel> = new Map();
+    private pendingUpdates: Map<RowId, Map<ColId, CData>> = new Map();
 
-    private createEditModel(rowId: string, columnId: string) {
-        const rowModel = this.rowModels.get(rowId) ?? this.createRowModel(rowId);
-        return rowModel.getEditModel(columnId) ?? rowModel.createEditModel(columnId);
-    }
-
-    public removeEditModel(rowId: string, columnId?: string): void {
-        const rowModel = this.rowModels.get(rowId);
-
-        if (!rowModel) {
+    public removePendingEdit(rowId: RowId, colId?: ColId | null): void {
+        if (!this._hasPending(rowId)) {
             return;
         }
 
-        if (!columnId) {
-            rowModel.destroy();
-            this.rowModels.delete(rowId);
-            return;
+        const rowUpdateMap = this.pendingUpdates.get(rowId)!;
+
+        if (colId) {
+            rowUpdateMap.delete(colId);
+        } else {
+            rowUpdateMap.clear();
         }
 
-        rowModel.removeEditModel(columnId);
-
-        if (rowModel.getEditModelCount() === 0) {
-            this.rowModels.delete(rowId);
+        if (rowUpdateMap.size === 0) {
+            this.pendingUpdates.delete(rowId);
         }
     }
 
-    public getEditModel(rowId: string, columnId: string): CellEditingModel | undefined {
-        return this.rowModels.get(rowId)?.getEditModel(columnId);
+    public getPendingUpdate(rowId: RowId, columnId: ColId): CData {
+        return this.pendingUpdates.get(rowId)?.get(columnId);
     }
 
-    public getEditModels(rowId?: string | null, columnId?: string | null): CellEditingModel[] {
-        const models: CellEditingModel[] = [];
-        if (!rowId) {
-            this.rowModels.forEach((rowModel) => {
-                models.push(...rowModel.getEditModels());
-            });
-            return models;
-        }
+    public getPendingUpdates(): Map<RowId, Map<ColId, CData>> {
+        return this.pendingUpdates;
+    }
 
-        if (columnId) {
-            const model = this.rowModels.get(rowId)?.getEditModel(columnId);
-            if (model) {
-                models.push(model);
+    public addPendingEdit(rowId: RowId, columnId: ColId, newValue: CData) {
+        if (!this.pendingUpdates.has(rowId)) {
+            this.pendingUpdates.set(rowId, new Map());
+        }
+        this.pendingUpdates.get(rowId)!.set(columnId, newValue);
+    }
+
+    public getPendingCellIds(): CellIdPositions[] {
+        const ids: { rowId: RowId; columnId: ColId }[] = [];
+        this.pendingUpdates.forEach((rowUpdateMap, rowId) => {
+            const rowUpdateKeys = Array.from(rowUpdateMap.keys());
+            for (const columnId of rowUpdateKeys) {
+                ids.push({
+                    rowId,
+                    columnId,
+                });
             }
-            return models;
-        }
-
-        const cellModels = this.rowModels.get(rowId)?.getEditModels();
-        if (cellModels) {
-            models.push(...cellModels);
-        }
-        return models;
-    }
-
-    public getEditingCellIds(): CellIdPositions[] {
-        const ids: { rowId: string; columnId: string; oldValue?: any; newValue?: any }[] = [];
-        this.rowModels.forEach((rowModel, rowId) => {
-            rowModel
-                .getEditModels()
-                .forEach(({ columnId, oldValue, newValue }) => ids.push({ rowId, columnId, oldValue, newValue }));
         });
+
         return ids;
     }
 
-    public getEditingCellPositions(): CellPosition[] {
-        const positions: CellPosition[] = [];
-        const cellIds = this.getEditingCellIds();
+    public getPendingCellPositions(): CellPosition[] {
+        const result: CellPosition[] = [];
+        const cellIds = this.getPendingCellIds();
         cellIds.forEach((cell) => {
             const rowNode = _getRowById(this.beans, cell.rowId);
             if (rowNode) {
-                positions.push({
+                result.push({
                     column: this.beans.colModel.getCol(cell.columnId)!,
                     rowIndex: rowNode.rowIndex!,
                     rowPinned: rowNode.rowPinned,
-                    oldValue: cell.oldValue,
-                    newValue: cell.newValue,
                 } as any);
             }
         });
 
-        return positions;
+        return result;
     }
 
-    public isEditing(rowCtrl?: RowCtrl | null, cellCtrl?: CellCtrl | null): boolean {
-        return this._isEditing(rowCtrl?.rowId, cellCtrl?.column.colId);
+    public hasPending(rowCtrl?: RowCtrl | null, cellCtrl?: CellCtrl | null): boolean {
+        return this._hasPending(rowCtrl?.rowId, cellCtrl?.column.colId);
     }
 
-    private _isEditing(rowId?: string | null, colId?: string | null): boolean {
+    private _hasPending(rowId?: RowId | null, colId?: ColId | null): boolean {
         if (rowId) {
-            return this.rowModels.get(rowId)?.isEditing(colId ?? undefined) ?? false;
+            const rowEdits = this.pendingUpdates.get(rowId);
+            if (colId) {
+                return rowEdits?.has(colId) ?? false;
+            }
+            return (rowEdits?.size ?? 0) > 0;
         }
-        return this.rowModels.size > 0;
+        return this.pendingUpdates.size > 0;
     }
 
-    public startEditing(rowId: string, columnId: string): CellEditingModel {
-        return this.createEditModel(rowId, columnId);
+    public startEditing(rowId: RowId, ...colId: Maybe<ColId>[]): void {
+        let map = this.pendingUpdates.get(rowId);
+        if (!map) {
+            map = new Map<ColId, CData>();
+        }
+        colId.forEach((col) => col && map!.set(col, undefined));
+        this.pendingUpdates.set(rowId, map);
     }
 
-    public stopEditing(rowId?: string | null, colId?: string | null): void {
-        if (!this._isEditing(rowId, colId)) {
+    public stopEditing(rowId?: RowId | null, colId?: ColId | null): void {
+        if (!this._hasPending(rowId, colId)) {
             return;
         }
 
         if (rowId) {
-            const rowModel = this.rowModels.get(rowId);
-            if (rowModel) {
-                if (colId) {
-                    rowModel.removeEditModel(colId);
-                } else {
-                    rowModel.destroy();
-                    this.rowModels.delete(rowId);
-                }
-
-                if (rowModel.getEditModelCount() === 0) {
-                    rowModel.destroy();
-                    this.rowModels.delete(rowId);
-                }
-            }
+            this.removePendingEdit(rowId, colId);
         } else {
-            this.rowModels.forEach((rowModel, key) => {
-                rowModel.destroy();
-                this.rowModels.delete(key);
-            });
+            for (const pendingRowEdits of this.pendingUpdates.values()) {
+                pendingRowEdits.clear();
+            }
+            this.clear();
         }
     }
 
-    public cancelEditing(rowId?: string | null, colId?: string | null): void {
-        if (!this._isEditing(rowId, colId)) {
-            return;
-        }
-
-        if (rowId) {
-            const rowModel = this.rowModels.get(rowId);
-
-            if (rowModel) {
-                if (colId) {
-                    rowModel.removeEditModel(colId);
-                } else {
-                    rowModel.destroy();
-                    this.rowModels.delete(rowId);
-                }
-            }
-        } else {
-            this.rowModels.forEach((rowModel, key) => {
-                rowModel.destroy();
-                this.rowModels.delete(key);
-            });
-        }
+    public clear(): void {
+        this.pendingUpdates.clear();
     }
 
     public override destroy(): void {
         super.destroy();
-        this.stopEditing();
+        this.clear();
+    }
+}
+
+export type CellUpdate = {
+    rowId: string;
+    columnId: string;
+    newValue: any;
+    oldValue: any;
+};
+
+export function _createUpdates(beans: BeanCollection): CellUpdate[] {
+    const { editingModelSvc } = beans;
+    if (!editingModelSvc) {
+        return []; // Changed from {} to undefined
     }
 
-    private createRowModel(rowId: string): RowEditingModel {
-        const rowModel = new RowEditingModel();
-        this.rowModels.set(rowId, rowModel);
-        return rowModel;
+    const rowUpdates = editingModelSvc.getPendingUpdates();
+
+    if (rowUpdates.size === 0) {
+        return [];
     }
+
+    const updates: CellUpdate[] = [];
+
+    rowUpdates.forEach((rowUpdateMap, rowId) => {
+        const rowNode = _getRowById(beans, rowId);
+        if (!rowNode) {
+            return;
+        }
+        const original = rowNode.data;
+        rowUpdateMap.forEach((newValue, columnId) => {
+            updates.push({
+                rowId,
+                columnId,
+                newValue,
+                oldValue: original[columnId],
+            });
+        });
+    });
+
+    return updates;
 }

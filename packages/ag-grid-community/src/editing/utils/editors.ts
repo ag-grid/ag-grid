@@ -1,7 +1,5 @@
 import { _getCellEditorDetails } from '../../components/framework/userCompUtils';
 import type { BeanCollection } from '../../context/context';
-import type { AgColumn } from '../../entities/agColumn';
-import type { RowNode } from '../../entities/rowNode';
 import { _addGridCommonParams } from '../../gridOptionsUtils';
 import type { ICellEditorComp, ICellEditorParams } from '../../interfaces/iCellEditor';
 import type { UserCompDetails } from '../../interfaces/iUserCompDetails';
@@ -105,33 +103,6 @@ export function _takeValueFromCellEditor(
     };
 }
 
-/**
- * @returns `True` if the value changes, otherwise `False`.
- */
-export function _saveNewValue(
-    cellCtrl: CellCtrl,
-    oldValue: any,
-    newValue: any,
-    rowNode: RowNode,
-    column: AgColumn
-): boolean {
-    if (newValue === oldValue) {
-        return false;
-    }
-
-    console.log('Saving new value', cellCtrl, oldValue, newValue);
-
-    // we suppressRefreshCell because the call to rowNode.setDataValue() results in change detection
-    // getting triggered, which results in all cells getting refreshed. we do not want this refresh
-    // to happen on this call as we want to call it explicitly below. otherwise refresh gets called twice.
-    // if we only did this refresh (and not the one below) then the cell would flash and not be forced.
-    cellCtrl.suppressRefreshCell = true;
-    const valueChanged = rowNode.setDataValue(column, newValue, 'edit');
-    cellCtrl.suppressRefreshCell = false;
-
-    return valueChanged;
-}
-
 export function _createCellEditorParams(
     beans: BeanCollection,
     cellCtrl: CellCtrl,
@@ -174,8 +145,8 @@ export function _refreshEditorOnColDefChanged(beans: BeanCollection, cellCtrl: C
 }
 
 export function _syncModelsFromEditors(beans: BeanCollection): void {
-    console.log('Syncing models from editors');
-    beans.editingModelSvc?.getEditingCellIds().forEach((cellId) => {
+    console.warn('Syncing models from editors');
+    beans.editingModelSvc?.getPendingCellIds().forEach((cellId) => {
         const { rowCtrl, cellCtrl } = _resolveControllers(beans, cellId)!;
         const { comp } = cellCtrl!;
 
@@ -197,10 +168,7 @@ export function _syncModelFromEditor(
     eventSource?: string
 ): boolean | null {
     if (eventSource !== 'edit' && rowCtrl && cellCtrl && beans.editingSvc?.isEditing(rowCtrl, cellCtrl)) {
-        const oldValue = beans.valueSvc.getValue(cellCtrl.column, rowCtrl.rowNode, undefined, 'api');
-        beans.editingModelSvc
-            ?.getEditModel(rowCtrl.rowId as string, cellCtrl.column.getColId())
-            ?.setValues(oldValue, newValue);
+        beans.editingModelSvc?.addPendingEdit(rowCtrl.rowId as string, cellCtrl.column.getColId(), newValue);
         return true;
     }
     return null;
@@ -212,29 +180,15 @@ export function _destroyEditors(
     cancel: boolean,
     source: 'ui' | 'api' = 'ui'
 ): void {
+    if (cellPositions.length === 0) {
+        return;
+    }
+
     console.log('Destroying editors', cellPositions, cancel, source);
-    _syncModelsFromEditors(beans);
 
     cellPositions.forEach((cellPosition) => {
         _destroyEditor(beans, cellPosition, cancel, source);
     });
-}
-
-function _takeNewValueFromPosition(
-    beans: BeanCollection,
-    cellPosition: CellIdPositions
-): { newValue?: any; newValueExists: boolean } {
-    const cellCtrl = _resolveCellController(beans, cellPosition);
-    if (!cellCtrl) {
-        return { newValueExists: false };
-    }
-
-    if (cellPosition.oldValue !== cellPosition.newValue) {
-        return { newValue: cellPosition.newValue, newValueExists: true };
-    }
-
-    const { comp } = cellCtrl;
-    return _takeValueFromCellEditor(false, comp);
 }
 
 export function _destroyEditor(
@@ -245,48 +199,22 @@ export function _destroyEditor(
 ): void {
     console.log('Destroying editor', cellPosition);
 
-    const { rowCtrl, cellCtrl } = _resolveControllers(beans, cellPosition);
-
-    const batchEdit = beans.gos.get('batchEdit');
-
-    const { comp, column, rowNode } = cellCtrl!;
-
-    const { newValue, newValueExists } = _takeNewValueFromPosition(beans, cellPosition); //_takeValueFromCellEditor(false, comp);
-
-    let valueChanged = false;
-    let oldValue: any;
-
-    const preserveBatchEdits = source !== 'api' && batchEdit && !cancel;
-    if (preserveBatchEdits) {
-        _syncModelsFromEditors(beans);
-    } else {
-        oldValue = beans.valueSvc.getValueForDisplay(column, rowNode)?.value;
-
-        if (!cancel && newValueExists) {
-            valueChanged = _saveNewValue(cellCtrl!, oldValue, newValue, rowNode, column);
-        }
-    }
+    const { cellCtrl } = _resolveControllers(beans, cellPosition);
+    const { comp } = cellCtrl!;
 
     comp.setEditDetails(); // passing nothing stops editing
     comp.refreshEditStyles(false, false);
     cellCtrl?.updateAndFormatValue(false);
     cellCtrl?.refreshCell({ forceRefresh: true, suppressFlash: true, editing: false });
 
-    if (!preserveBatchEdits) {
-        beans.eventSvc.dispatchEvent({
-            ...cellCtrl!.createEvent(null, 'cellEditingStopped'),
-            oldValue,
-            newValue,
-            valueChanged,
-        });
+    // if (!preserveBatchEdits) {
+    //     comp.toggleCss('ag-cell-batch-edit', false);
 
-        comp.toggleCss('ag-cell-batch-edit', false);
-
-        rowCtrl?.forEachGui(undefined, (gui) => {
-            gui.rowComp.toggleCss('ag-row-editing', false);
-            gui.rowComp.toggleCss('ag-row-batch-edit', false);
-        });
-    } else {
-        comp.toggleCss('ag-cell-batch-edit', true);
-    }
+    //     rowCtrl?.forEachGui(undefined, (gui) => {
+    //         gui.rowComp.toggleCss('ag-row-editing', false);
+    //         gui.rowComp.toggleCss('ag-row-batch-edit', false);
+    //     });
+    // } else {
+    //     comp.toggleCss('ag-cell-batch-edit', true);
+    // }
 }

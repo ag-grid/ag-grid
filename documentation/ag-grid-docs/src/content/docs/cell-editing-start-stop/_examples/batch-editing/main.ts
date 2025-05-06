@@ -62,8 +62,24 @@ const gridOptions: GridOptions = {
     onCellValueChanged: (event) => {
         console.log('Cell value changed');
     },
-    editType: 'fullRow',
+    // editType: 'fullRow',
 };
+
+function logPendingEdits() {
+    console.log(gridApi!.getEditingCells());
+}
+
+let polling: any = undefined;
+
+function togglePollPendingEdits() {
+    if (!polling) {
+        console.log('Start polling for pending edits');
+        polling = setInterval(logPendingEdits, 1000);
+    } else {
+        console.log('Stop polling for pending edits');
+        clearInterval(polling);
+    }
+}
 
 function getPinnedTopData() {
     return [

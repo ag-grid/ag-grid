@@ -21,8 +21,24 @@ export abstract class BaseEditStrategy extends BeanStub {
         event?: KeyboardEvent | MouseEvent | null,
         source?: 'api' | 'ui'
     ): boolean;
-    public abstract stopEditing(rowCtrl?: RowCtrl | null, cellCtrl?: CellCtrl | null, source?: 'api' | 'ui'): boolean;
-    public abstract cancelEditing(rowCtrl?: RowCtrl | null, cellCtrl?: CellCtrl | null, source?: 'api' | 'ui'): boolean;
+
+    public stopEditing(rowCtrl?: RowCtrl | null, cellCtrl?: CellCtrl | null, source?: 'api' | 'ui'): boolean {
+        console.log('BaseEditStrategy: stopEditing', rowCtrl, cellCtrl);
+        const editingCells = this.editModel.getPendingCellIds();
+        if (editingCells.length === 0) {
+            return false;
+        }
+
+        editingCells.forEach((cellPosition) => {
+            const cellCtrl = _resolveCellController(this.beans, cellPosition);
+            if (cellCtrl) {
+                this.editModel.stopEditing(cellCtrl.rowCtrl.rowId, cellCtrl.column.colId);
+                _destroyEditor(this.beans, cellPosition, undefined, source);
+            }
+        });
+
+        return true;
+    }
 
     public abstract moveToNextEditingCell(
         previousCell: CellCtrl,
@@ -38,13 +54,9 @@ export abstract class BaseEditStrategy extends BeanStub {
         });
     }
 
-    protected isEditing(rowCtrl?: RowCtrl | null, cellCtrl?: CellCtrl | null): boolean {
-        return this.editModel.isEditing(rowCtrl, cellCtrl) ?? false;
-    }
-
     public stopAllEditing(source: 'ui' | 'api' = 'ui'): void {
         _syncModelsFromEditors(this.beans);
-        const editingCells = this.editModel.getEditingCellIds();
+        const editingCells = this.editModel.getPendingCellIds();
         if (editingCells.length === 0) {
             return;
         }
@@ -59,20 +71,10 @@ export abstract class BaseEditStrategy extends BeanStub {
     }
 
     setFocusOutOnEditor(cellCtrl: CellCtrl): void {
-        if (!this.isEditing(cellCtrl.rowCtrl, cellCtrl)) {
-            return;
-        }
-        const cellEditor = cellCtrl.comp.getCellEditor();
-
-        if (cellEditor && cellEditor.focusOut) {
-            cellEditor.focusOut();
-        }
+        cellCtrl.comp.getCellEditor()?.focusOut?.();
     }
 
     setFocusInOnEditor(cellCtrl: CellCtrl): void {
-        if (!this.isEditing(cellCtrl.rowCtrl, cellCtrl)) {
-            return;
-        }
         const cellComp = cellCtrl.comp;
         const cellEditor = cellComp.getCellEditor();
 
@@ -96,13 +98,15 @@ export abstract class BaseEditStrategy extends BeanStub {
         cellStartedEdit?: boolean,
         event?: Event | null
     ) {
+        console.log('BaseEditStrategy: startEditing', rowCtrl, cellCtrl);
         const compDetails = _setupEditors(this.beans, editingCells, rowCtrl, cellCtrl, key, cellStartedEdit);
         const suppressPreventDefault = !(compDetails?.params as DefaultProvidedCellEditorParams)
             ?.suppressPreventDefault;
 
-        if (event && cellCtrl) {
-            this.eventSvc.dispatchEvent(cellCtrl.createEvent(event, 'cellEditingStarted'));
-        }
+        editingCells.forEach((cellPosition) => {
+            const cellCtrl = _resolveCellController(this.beans, cellPosition);
+            this.eventSvc.dispatchEvent(cellCtrl!.createEvent(event ?? null, 'cellEditingStarted'));
+        });
 
         if (!suppressPreventDefault) {
             event?.preventDefault();
@@ -121,7 +125,7 @@ export abstract class BaseEditStrategy extends BeanStub {
     ): boolean | null {
         const isTab = event instanceof KeyboardEvent && event.key === KeyCode.TAB;
 
-        if (this.editModel.isEditing() && isTab) {
+        if (isTab) {
             return true;
         }
 
@@ -182,10 +186,6 @@ export abstract class BaseEditStrategy extends BeanStub {
             return source === 'api';
         }
 
-        if (!this.isEditing()) {
-            return false;
-        }
-
         if (event instanceof KeyboardEvent) {
             return event.key === KeyCode.ESCAPE;
         }
@@ -194,7 +194,7 @@ export abstract class BaseEditStrategy extends BeanStub {
     }
 
     protected onCellFocusChanged(_event: CellFocusedEvent<any, any>): void {
-        _syncModelsFromEditors(this.beans);
+        // _syncModelsFromEditors(this.beans);
     }
 
     private deriveClickCount(colDef?: ColDef): number {

@@ -4,7 +4,7 @@ import type { CellCtrl } from '../../rendering/cell/cellCtrl';
 import type { RowCtrl } from '../../rendering/row/rowCtrl';
 import type { CellIdPositions } from '../editingModelService';
 import { _resolveControllers, _resolveRowController } from '../utils/controllers';
-import { _destroyEditors, _getOldValue } from '../utils/editors';
+import { _destroyEditors } from '../utils/editors';
 import { BaseEditStrategy } from './baseEditStrategy';
 
 export class FullRowEditStrategy extends BaseEditStrategy {
@@ -64,26 +64,12 @@ export class FullRowEditStrategy extends BaseEditStrategy {
             return res;
         }
 
-        if (this.isEditing(oldRowCtrl) && oldRowCtrl !== rowCtrl) {
-            return true;
-        }
-
         if (!this.rowId) {
             return false;
         }
 
         // stop editing if we've changed rows
         return rowCtrl?.rowId !== this.rowId;
-    }
-
-    override shouldCancelEditing(
-        rowCtrl?: RowCtrl | null | undefined,
-        cellCtrl?: CellCtrl | null | undefined,
-        key?: string | null | undefined,
-        event?: KeyboardEvent | MouseEvent | null | undefined,
-        source?: 'api' | 'ui'
-    ): boolean | null {
-        return super.shouldCancelEditing(rowCtrl, cellCtrl, key, event, source);
     }
 
     public override startEditing(
@@ -93,59 +79,34 @@ export class FullRowEditStrategy extends BaseEditStrategy {
         event?: KeyboardEvent | MouseEvent | null | undefined,
         _source: 'api' | 'ui' = 'ui'
     ): boolean {
-        const oldState = this.isEditing(rowCtrl);
+        console.log('FullRowEditStrategy: startEditing', rowCtrl, cellCtrl);
+
+        const oldState = this.editModel.hasPending(rowCtrl);
 
         if (this.shouldStopEditing(rowCtrl)) {
             if (this.gos.get('batchEdit')) {
-                const cells = this.editModel.getEditingCellIds();
+                const cells = this.editModel.getPendingCellIds();
                 _destroyEditors(this.beans, cells, false, 'ui');
             } else {
                 this.stopAllEditing();
             }
         }
 
-        this.setEditing(rowCtrl, true, oldState);
-
         const cellCtrls = rowCtrl.getAllCellCtrls();
         const cells: CellIdPositions[] = [];
 
         cellCtrls.forEach((cellCtrl) => {
-            const cellModel = this.editModel.startEditing(rowCtrl.rowId!, cellCtrl.column.colId);
-            cellModel.oldValue = _getOldValue(this.beans, cellCtrl);
-
-            cells.push({
+            const position = {
                 rowId: rowCtrl.rowId!,
                 columnId: cellCtrl.column.getColId(),
-            });
+            };
+            cells.push(position);
+            this.editModel.startEditing(position.rowId, position.columnId);
         });
 
+        this.setEditing(rowCtrl, true, false);
+
         return this.finishStartEdit(cells, rowCtrl, cellCtrl, undefined, true, event);
-    }
-
-    public override cancelEditing(
-        rowCtrl?: RowCtrl | null,
-        cellCtrl?: CellCtrl | null,
-        source: 'api' | 'ui' = 'ui'
-    ): boolean {
-        const oldState = this.isEditing(rowCtrl);
-
-        if (!oldState) {
-            return false;
-        }
-
-        const edits = this.editModel.getEditingCellIds();
-
-        if (rowCtrl) {
-            this.editModel.cancelEditing(rowCtrl!.rowId!, cellCtrl?.column.colId);
-        } else {
-            this.editModel.cancelEditing();
-        }
-
-        this.setEditing(rowCtrl, false, oldState);
-
-        _destroyEditors(this.beans, edits, true, source);
-
-        return true;
     }
 
     public override stopEditing(
@@ -153,40 +114,13 @@ export class FullRowEditStrategy extends BaseEditStrategy {
         _cellCtrl?: CellCtrl | null,
         source: 'api' | 'ui' = 'ui'
     ): boolean {
-        const oldCtrl = _resolveRowController(this.beans, {
-            rowId: this.rowId,
-        });
+        console.log('FullRowEditStrategy: stopEditing', rowCtrl, _cellCtrl);
 
-        if (!oldCtrl) {
-            this.rowId = undefined;
-            this.stopAllEditing(source);
-            return true;
-        }
+        super.stopEditing(rowCtrl, _cellCtrl, source);
 
-        const oldState = this.isEditing(oldCtrl);
-
-        if (!oldState) {
-            this.rowId = undefined;
-            return false;
-        }
-
-        const edits = this.editModel.getEditingCellIds();
-
-        if (rowCtrl) {
-            this.editModel.stopEditing(rowCtrl!.rowId!);
-        } else {
-            this.editModel.stopEditing();
-        }
-
-        this.setEditing(rowCtrl!, false, oldState);
-
-        _destroyEditors(this.beans, edits, false, source);
+        this.setEditing(rowCtrl!, false, true);
 
         return true;
-    }
-
-    public override isEditing(rowCtrl?: RowCtrl | null, cellCtrl?: CellCtrl | null): boolean {
-        return this.editModel.isEditing(rowCtrl, cellCtrl) ?? false;
     }
 
     protected override onCellFocusChanged(event: CellFocusedEvent<any, any>): void {
@@ -203,8 +137,8 @@ export class FullRowEditStrategy extends BaseEditStrategy {
         });
 
         // if we are editing, then moving the focus out of a row will stop editing
-        if (!rowFocused && this.isEditing(rowCtrl!, cellCtrl)) {
-            this.stopEditing(rowCtrl!, cellCtrl);
+        if (!rowFocused && this.editModel.hasPending(rowCtrl!, cellCtrl)) {
+            this.beans.editingSvc?.stopEditing(rowCtrl!, cellCtrl);
         }
     }
 
@@ -239,10 +173,10 @@ export class FullRowEditStrategy extends BaseEditStrategy {
 
         if (!rowsMatch) {
             const pRow = previousCell.rowCtrl;
-            this.stopEditing(pRow);
+            this.beans.editingSvc?.stopEditing(pRow);
 
             const nRow = nextCell.rowCtrl;
-            this.startEditing(nRow, nextCell, null, event);
+            this.beans.editingSvc?.startEditing(nRow, nextCell, null, true, event);
         }
 
         if (nextEditable) {
