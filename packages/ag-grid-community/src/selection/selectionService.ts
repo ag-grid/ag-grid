@@ -298,23 +298,13 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
         keepDescendants: boolean,
         source: SelectionEventSourceType
     ): number {
-        function isDescendantOf(root: RowNode, child: RowNode): boolean {
-            let parent = child.parent;
-            while (parent) {
-                if (parent === root) return true;
-                parent = parent.parent;
-            }
-            return false;
-        }
         const groupsToRefresh = new Map<string, RowNode>();
         let updatedCount = 0;
+
         this.selectedNodes.forEach((otherRowNode) => {
-            if (
-                keepDescendants
-                    ? !isDescendantOf(rowNodeToKeepSelected, otherRowNode) &&
-                      otherRowNode.id != rowNodeToKeepSelected.id
-                    : otherRowNode.id != rowNodeToKeepSelected.id
-            ) {
+            const isNodeToKeep = otherRowNode.id == rowNodeToKeepSelected.id;
+            const shouldClearDescendant = keepDescendants ? !isDescendantOf(rowNodeToKeepSelected, otherRowNode) : true;
+            if (shouldClearDescendant && !isNodeToKeep) {
                 const rowNode = this.selectedNodes.get(otherRowNode.id!)!;
                 updatedCount += this.setNodesSelected({
                     nodes: [rowNode],
@@ -845,4 +835,13 @@ function _calculateSelectAllState(selected: number, notSelected: number): boolea
 
     // only selected
     return selected > 0;
+}
+
+function isDescendantOf(root: RowNode, child: RowNode): boolean {
+    let parent = child.parent;
+    while (parent) {
+        if (parent === root) return true;
+        parent = parent.parent;
+    }
+    return false;
 }
