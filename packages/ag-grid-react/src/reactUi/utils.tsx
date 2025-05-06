@@ -80,7 +80,6 @@ export const agFlushSync = (useFlushSync: boolean, fn: () => void) => {
     if (!isReactVersion17Minus && useFlushSync && !disableFlushSync) {
         disableFlushSync = true;
         (ReactDOM as any).flushSync(fn);
-        // fn();
         disableFlushSync = false;
     } else {
         fn();

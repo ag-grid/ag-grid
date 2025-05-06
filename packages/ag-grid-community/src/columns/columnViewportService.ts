@@ -203,7 +203,8 @@ export class ColumnViewportService extends BeanStub implements NamedBean {
 
         const frame = this.beans.frameworkOverrides as any;
         const suppressAnimationFrame = this.gos.get('suppressAnimationFrame');
-        if (afterScroll && suppressAnimationFrame && frame?.flushSync) {
+        if (suppressAnimationFrame && frame?.flushSync) {
+            // afterScroll
             // only required for React and when suppressAnimationFrame=true so that all setCellCtrls are wrapped in a top level flushSync
             frame.flushSync(() => fireEvent());
             // fireEvent();
