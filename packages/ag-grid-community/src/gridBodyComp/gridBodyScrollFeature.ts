@@ -21,12 +21,6 @@ enum ScrollDir {
 
 const VIEWPORT = 'Viewport';
 const FAKE_V_SCROLLBAR = 'fakeVScrollComp';
-/** Pinned containers can act as sources for scrolling the grid but cannot be scrolled themselves */
-const PINNED_VIEWPORT = 'pinnedViewport';
-
-/** Pinned containers can act as sources for scrolling the grid but cannot be scrolled themselves */
-const HORIZONTAL_PINNED_SOURCES = ['topLeft', 'left', 'bottomLeft', 'topRight', 'right', 'bottomRight'] as const;
-
 const HORIZONTAL_SOURCES = [
     'fakeHScrollComp',
     'centerHeader',
@@ -36,11 +30,8 @@ const HORIZONTAL_SOURCES = [
     'stickyBottomCenter',
 ] as const;
 
-type VerticalScrollSource = typeof VIEWPORT | typeof FAKE_V_SCROLLBAR | typeof PINNED_VIEWPORT;
-type HorizontalScrollSource =
-    | typeof VIEWPORT
-    | (typeof HORIZONTAL_SOURCES)[number]
-    | (typeof HORIZONTAL_PINNED_SOURCES)[number];
+type VerticalScrollSource = typeof VIEWPORT | typeof FAKE_V_SCROLLBAR;
+type HorizontalScrollSource = typeof VIEWPORT | (typeof HORIZONTAL_SOURCES)[number];
 
 // timeout used for the debounceVerticalScrollbar property
 const SCROLL_DEBOUNCE_TIMEOUT = 100;
@@ -97,11 +88,7 @@ export class GridBodyScrollFeature extends BeanStub {
     private wheelDeltaY = 0;
     private wheelDeltaX = 0;
 
-    constructor(
-        private readonly eBodyViewport: HTMLElement,
-        private readonly eTop: HTMLElement,
-        private readonly eBottom: HTMLElement
-    ) {
+    constructor(private readonly eBodyViewport: HTMLElement) {
         super();
         this.resetLastHScrollDebounced = _debounce(
             this,
@@ -179,34 +166,10 @@ export class GridBodyScrollFeature extends BeanStub {
 
         const onVScroll = debounceIf(isDebounce, this, this.onVScroll.bind(this, VIEWPORT));
         const onFakeVScroll = debounceIf(isDebounce, this, this.onVScroll.bind(this, FAKE_V_SCROLLBAR));
-        const onWheelVScroll = debounceIf(isDebounce, this, this.onWheel.bind(this, undefined));
 
         this.addManagedElementListeners(this.eBodyViewport, { scroll: onVScroll });
-        this.addManagedElementListeners(this.eTop, { wheel: onWheelVScroll });
-        this.addManagedElementListeners(this.eBottom, { wheel: onWheelVScroll });
-
-        for (const container of HORIZONTAL_PINNED_SOURCES) {
-            const containerCtrl = this.ctrlsSvc.get(container);
-            this.addManagedElementListeners(containerCtrl.eViewport ?? containerCtrl.eContainer, {
-                wheel: debounceIf(isDebounce, this, this.onWheel.bind(this, container)),
-            });
-        }
 
         this.registerScrollPartner(fakeVScrollComp, onFakeVScroll);
-    }
-
-    private onWheel(container: (typeof HORIZONTAL_PINNED_SOURCES)[number] | undefined, e: WheelEvent): void {
-        this.wheelDeltaX = e.deltaX;
-        this.wheelDeltaY = e.deltaY;
-
-        if (Math.abs(e.deltaX) < Math.abs(e.deltaY)) {
-            this.onVScroll(PINNED_VIEWPORT);
-        } else if (container) {
-            this.onHScroll(container);
-        }
-
-        this.wheelDeltaX = 0;
-        this.wheelDeltaY = 0;
     }
 
     private registerScrollPartner(comp: ScrollPartner, callback: () => void) {
@@ -250,15 +213,8 @@ export class GridBodyScrollFeature extends BeanStub {
     }
 
     private getViewportForSource(source: VerticalScrollSource | HorizontalScrollSource): HTMLElement {
-        if (source === VIEWPORT || source === PINNED_VIEWPORT) {
+        if (source === VIEWPORT) {
             return this.centerRowsCtrl.eViewport;
-        }
-
-        if (HORIZONTAL_PINNED_SOURCES.some((s) => s === source)) {
-            // If the scroll originates from a pinned container, we base our scroll calculations
-            // on the actually scrollable containers, and so we use the fakeHScrollComp as a proxy
-            // (since they should all be synced)
-            return this.ctrlsSvc.get('fakeHScrollComp').eViewport;
         }
 
         return this.ctrlsSvc.get(source).eViewport;
@@ -309,8 +265,6 @@ export class GridBodyScrollFeature extends BeanStub {
             case FAKE_V_SCROLLBAR:
                 scrollTop = this.ctrlsSvc.get('fakeVScrollComp').getScrollPosition();
                 break;
-            case PINNED_VIEWPORT:
-                scrollTop = this.eBodyViewport.scrollTop + this.wheelDeltaY;
         }
 
         if (this.shouldBlockScrollUpdate(ScrollDir.Vertical, scrollTop, true)) {
