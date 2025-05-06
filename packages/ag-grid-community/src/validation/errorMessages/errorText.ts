@@ -653,6 +653,8 @@ export const AG_GRID_ERRORS = {
     271: ({ id, parentId }: { id: string; parentId: string }) =>
         `Parent row not found for row with id='${id}' and parent id='${parentId}'. Showing row with id='${id}' as a root-level node.` as const,
     272: () => NoModulesRegisteredError(),
+    273: ({ providedId, usedId }: { providedId: string; usedId: string }) =>
+        `Provided column id '${providedId}' was already in use, ensure all column and group ids are unique. Using '${usedId}' instead.` as const,
     273: ({ prop }: { prop: string }) => {
         let msg = `Since v33, ${prop} has been deprecated.`;
         switch (prop) {

@@ -50,6 +50,9 @@ export class GridBodyScrollFeature extends BeanStub {
     private animationFrameSvc?: AnimationFrameService;
     private visibleCols: VisibleColsService;
 
+    // listeners for when ensureIndexVisible is waiting for SSRM data to load
+    private clearRetryListenerFncs: (() => void)[] = [];
+
     public wireBeans(beans: BeanCollection): void {
         this.ctrlsSvc = beans.ctrlsSvc;
         this.animationFrameSvc = beans.animationFrameSvc;
@@ -99,6 +102,7 @@ export class GridBodyScrollFeature extends BeanStub {
 
     public override destroy(): void {
         super.destroy();
+        this.clearRetryListenerFncs = [];
 
         window.clearTimeout(this.scrollTimer);
     }
@@ -544,6 +548,8 @@ export class GridBodyScrollFeature extends BeanStub {
             return;
         }
 
+        this.clearRetryListeners();
+
         const { frameworkOverrides, pageBounds, rowContainerHeight: heightScaler, rowRenderer } = this.beans;
         frameworkOverrides.wrapIncoming(() => {
             const gridBodyCtrl = this.ctrlsSvc.getGridBodyCtrl();
@@ -623,8 +629,45 @@ export class GridBodyScrollFeature extends BeanStub {
                 setTimeout(() => {
                     this.ensureIndexVisible(index, position, retry + 1);
                 }, 0);
+                return;
+            }
+
+            // SSRM - if the node is a stub, give the grid a chance to load the data
+            // when data loads, try again to scroll to the row.
+            // Cancel if any other scroll event occurs.
+            if (rowNode?.stub) {
+                const scrollTop = this.getVScrollPosition().top;
+                this.clearRetryListenerFncs = this.addManagedEventListeners({
+                    bodyScroll: () => {
+                        const newScrollTop = this.getVScrollPosition().top;
+
+                        // allow horizontal scroll without cancelling/also allow also use scroll top as opposed to event direction
+                        // as scrolling from this func will fire a scroll even asynchronously, but scroll top will be up to date
+                        if (scrollTop === newScrollTop) {
+                            return;
+                        }
+
+                        this.clearRetryListeners();
+                    },
+                    modelUpdated: () => {
+                        this.clearRetryListeners();
+
+                        // if index not in count, stop waiting
+                        if (index >= rowModel.getRowCount()) {
+                            return;
+                        }
+
+                        // try again to scroll to the row.
+                        this.ensureIndexVisible(index, position, retry + 1);
+                    },
+                });
             }
         });
+    }
+
+    private clearRetryListeners(): void {
+        this.clearRetryListenerFncs.forEach((callback) => callback());
+        this.clearRetryListenerFncs = [];
     }
 
     public ensureColumnVisible(key: any, position: 'auto' | 'start' | 'middle' | 'end' = 'auto'): void {

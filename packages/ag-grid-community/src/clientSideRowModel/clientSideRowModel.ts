@@ -880,6 +880,17 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         includeFooterNodes: boolean = false,
         afterSort: boolean = false
     ): void {
+        const { colModel, rowGroupColsSvc } = this.beans;
+        if (!colModel.isPivotMode()) {
+            return;
+        }
+
+        // if no row grouping, then only row is root node
+        if (!rowGroupColsSvc?.columns.length) {
+            callback(this.rootNode!, 0);
+            return;
+        }
+
         const childrenField = afterSort ? 'childrenAfterSort' : 'childrenAfterGroup';
         // for pivot, we don't go below leafGroup levels
         this.depthFirstSearchRowNodes(callback, includeFooterNodes, (node) =>
