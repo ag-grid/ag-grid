@@ -20,7 +20,9 @@ enum ScrollDir {
 }
 
 const VIEWPORT = 'Viewport';
+
 const FAKE_V_SCROLLBAR = 'fakeVScrollComp';
+
 const HORIZONTAL_SOURCES = [
     'fakeHScrollComp',
     'centerHeader',
@@ -37,10 +39,6 @@ type HorizontalScrollSource = typeof VIEWPORT | (typeof HORIZONTAL_SOURCES)[numb
 const SCROLL_DEBOUNCE_TIMEOUT = 100;
 // timeout used to fire onBodyScrollEnd and to reset last scroll source
 const SCROLL_END_TIMEOUT = 150;
-
-function debounceIf<T extends (...args: any[]) => void>(shouldDebounce: boolean, bindingCtx: BeanStub, fn: T): T {
-    return shouldDebounce ? (_debounce(bindingCtx, fn, SCROLL_DEBOUNCE_TIMEOUT) as T) : fn;
-}
 
 export interface ScrollPartner {
     eViewport: HTMLElement;
@@ -65,6 +63,8 @@ export class GridBodyScrollFeature extends BeanStub {
 
     private lastScrollSource: [VerticalScrollSource | null, HorizontalScrollSource | null] = [null, null];
 
+    private eBodyViewport: HTMLElement;
+
     private scrollLeft = -1;
     private nextScrollTop = -1;
     private scrollTop = -1;
@@ -85,11 +85,9 @@ export class GridBodyScrollFeature extends BeanStub {
 
     private centerRowsCtrl: RowContainerCtrl;
 
-    private wheelDeltaY = 0;
-    private wheelDeltaX = 0;
-
-    constructor(private readonly eBodyViewport: HTMLElement) {
+    constructor(eBodyViewport: HTMLElement) {
         super();
+        this.eBodyViewport = eBodyViewport;
         this.resetLastHScrollDebounced = _debounce(
             this,
             () => (this.lastScrollSource[ScrollDir.Horizontal] = null),
@@ -155,7 +153,7 @@ export class GridBodyScrollFeature extends BeanStub {
         });
 
         for (const source of HORIZONTAL_SOURCES) {
-            const scrollPartner = this.ctrlsSvc.get(source);
+            const scrollPartner: ScrollPartner = this.ctrlsSvc.get(source);
             this.registerScrollPartner(scrollPartner, this.onHScroll.bind(this, source));
         }
     }
@@ -164,11 +162,14 @@ export class GridBodyScrollFeature extends BeanStub {
         const fakeVScrollComp = this.ctrlsSvc.get('fakeVScrollComp');
         const isDebounce = this.gos.get('debounceVerticalScrollbar');
 
-        const onVScroll = debounceIf(isDebounce, this, this.onVScroll.bind(this, VIEWPORT));
-        const onFakeVScroll = debounceIf(isDebounce, this, this.onVScroll.bind(this, FAKE_V_SCROLLBAR));
+        const onVScroll = isDebounce
+            ? _debounce(this, this.onVScroll.bind(this, VIEWPORT), SCROLL_DEBOUNCE_TIMEOUT)
+            : this.onVScroll.bind(this, VIEWPORT);
+        const onFakeVScroll = isDebounce
+            ? _debounce(this, this.onVScroll.bind(this, FAKE_V_SCROLLBAR), SCROLL_DEBOUNCE_TIMEOUT)
+            : this.onVScroll.bind(this, FAKE_V_SCROLLBAR);
 
         this.addManagedElementListeners(this.eBodyViewport, { scroll: onVScroll });
-
         this.registerScrollPartner(fakeVScrollComp, onFakeVScroll);
     }
 
@@ -245,7 +246,7 @@ export class GridBodyScrollFeature extends BeanStub {
         if (this.shouldBlockScrollUpdate(ScrollDir.Horizontal, scrollLeft, true)) {
             return;
         }
-        const newScrollLeft = _getScrollLeft(this.getViewportForSource(source), this.enableRtl) + this.wheelDeltaX;
+        const newScrollLeft = _getScrollLeft(this.getViewportForSource(source), this.enableRtl);
 
         this.doHorizontalScroll(newScrollLeft);
         this.resetLastHScrollDebounced();
@@ -258,13 +259,10 @@ export class GridBodyScrollFeature extends BeanStub {
 
         let scrollTop: number;
 
-        switch (source) {
-            case VIEWPORT:
-                scrollTop = this.eBodyViewport.scrollTop;
-                break;
-            case FAKE_V_SCROLLBAR:
-                scrollTop = this.ctrlsSvc.get('fakeVScrollComp').getScrollPosition();
-                break;
+        if (source === VIEWPORT) {
+            scrollTop = this.eBodyViewport.scrollTop;
+        } else {
+            scrollTop = this.ctrlsSvc.get('fakeVScrollComp').getScrollPosition();
         }
 
         if (this.shouldBlockScrollUpdate(ScrollDir.Vertical, scrollTop, true)) {
@@ -276,11 +274,8 @@ export class GridBodyScrollFeature extends BeanStub {
 
         if (source === VIEWPORT) {
             this.ctrlsSvc.get('fakeVScrollComp').setScrollPosition(scrollTop);
-        } else if (source === FAKE_V_SCROLLBAR) {
-            this.eBodyViewport.scrollTop = scrollTop;
         } else {
             this.eBodyViewport.scrollTop = scrollTop;
-            this.ctrlsSvc.get('fakeVScrollComp').setScrollPosition(scrollTop);
         }
 
         // the `scrollGridIfNeeded` will recalculate the rows to be rendered by the grid
