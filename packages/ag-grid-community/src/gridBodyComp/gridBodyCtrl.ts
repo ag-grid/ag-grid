@@ -341,11 +341,10 @@ export class GridBodyCtrl extends BeanStub {
         this.addManagedElementListeners(this.eTop, { wheel: onStickyWheel });
         this.addManagedElementListeners(this.eBottom, { wheel: onStickyWheel });
 
-        const onHStickyWheel = (container: HTMLElement) => (e: WheelEvent) => this.onStickyWheel(e, container);
+        const onHorizontalWheel = (e: WheelEvent) => this.onStickyWheel(e, true);
         for (const container of ['left', 'right', 'topLeft', 'topRight', 'bottomLeft', 'bottomRight'] as const) {
-            const source = this.ctrlsSvc.get(container).eContainer;
-            this.addManagedElementListeners(source, {
-                wheel: onHStickyWheel(source),
+            this.addManagedElementListeners(this.ctrlsSvc.get(container).eContainer, {
+                wheel: onHorizontalWheel,
             });
         }
 
@@ -368,7 +367,7 @@ export class GridBodyCtrl extends BeanStub {
         }
     }
 
-    private onStickyWheel(e: WheelEvent, source?: HTMLElement): void {
+    private onStickyWheel(e: WheelEvent, allowHorizontalScroll = false): void {
         const { deltaX, deltaY, shiftKey } = e;
 
         const isHorizontalScroll = shiftKey || Math.abs(deltaX) > Math.abs(deltaY);
@@ -382,7 +381,7 @@ export class GridBodyCtrl extends BeanStub {
         } else if (
             this.eStickyTopFullWidthContainer.contains(target) ||
             this.eStickyBottomFullWidthContainer.contains(target) ||
-            source?.contains(target)
+            allowHorizontalScroll
         ) {
             this.scrollGridBodyToMatchEvent(e);
         }
