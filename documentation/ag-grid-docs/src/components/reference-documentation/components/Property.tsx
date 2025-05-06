@@ -363,7 +363,7 @@ export const Property: FunctionComponent<{
                                             framework,
                                         })}
                                     >
-                                        See docs
+                                        {more.name}
                                         <Icon name="newTab" />
                                     </a>
                                 )}
