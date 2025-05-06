@@ -50,6 +50,9 @@ export class GridBodyScrollFeature extends BeanStub {
     private animationFrameSvc?: AnimationFrameService;
     private visibleCols: VisibleColsService;
 
+    // listeners for when ensureIndexVisible is waiting for SSRM data to load
+    private clearRetryListenerFncs: (() => void)[] = [];
+
     public wireBeans(beans: BeanCollection): void {
         this.ctrlsSvc = beans.ctrlsSvc;
         this.animationFrameSvc = beans.animationFrameSvc;
@@ -544,6 +547,8 @@ export class GridBodyScrollFeature extends BeanStub {
             return;
         }
 
+        this.clearRetryListenerFncs.forEach((callback) => callback());
+
         const { frameworkOverrides, pageBounds, rowContainerHeight: heightScaler, rowRenderer } = this.beans;
         frameworkOverrides.wrapIncoming(() => {
             const gridBodyCtrl = this.ctrlsSvc.getGridBodyCtrl();
@@ -631,7 +636,7 @@ export class GridBodyScrollFeature extends BeanStub {
             // Cancel if any other scroll event occurs.
             if (rowNode?.stub) {
                 const scrollTop = this.getVScrollPosition().top;
-                const destroyFuncs = this.addManagedEventListeners({
+                this.clearRetryListenerFncs = this.addManagedEventListeners({
                     bodyScroll: () => {
                         const newScrollTop = this.getVScrollPosition().top;
 
@@ -641,10 +646,10 @@ export class GridBodyScrollFeature extends BeanStub {
                             return;
                         }
 
-                        destroyFuncs.forEach((destroyFunc) => destroyFunc());
+                        this.clearRetryListenerFncs.forEach((destroyFunc) => destroyFunc());
                     },
                     modelUpdated: () => {
-                        destroyFuncs.forEach((destroyFunc) => destroyFunc());
+                        this.clearRetryListenerFncs.forEach((destroyFunc) => destroyFunc());
 
                         // if index not in count, stop waiting
                         if (index >= rowModel.getRowCount()) {
