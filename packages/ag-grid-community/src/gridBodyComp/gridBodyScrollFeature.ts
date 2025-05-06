@@ -625,17 +625,11 @@ export class GridBodyScrollFeature extends BeanStub {
             // so when we return back to user, the cells have rendered
             this.animationFrameSvc?.flushAllFrames();
 
-            if (retry < 10 && !this.beans.rowAutoHeight?.areRowsMeasured()) {
-                setTimeout(() => {
-                    this.ensureIndexVisible(index, position, retry + 1);
-                }, 0);
-                return;
-            }
-
             // SSRM - if the node is a stub, give the grid a chance to load the data
             // when data loads, try again to scroll to the row.
             // Cancel if any other scroll event occurs.
-            if (rowNode?.stub) {
+            // also retry if the row is not measured yet, as this can happen when using autoHeight
+            if (retry < 10 && (rowNode?.stub || !this.beans.rowAutoHeight?.areRowsMeasured())) {
                 const scrollTop = this.getVScrollPosition().top;
                 this.clearRetryListenerFncs = this.addManagedEventListeners({
                     bodyScroll: () => {
