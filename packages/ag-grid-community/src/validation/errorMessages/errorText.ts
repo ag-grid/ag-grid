@@ -653,6 +653,23 @@ export const AG_GRID_ERRORS = {
     271: ({ id, parentId }: { id: string; parentId: string }) =>
         `Parent row not found for row with id='${id}' and parent id='${parentId}'. Showing row with id='${id}' as a root-level node.` as const,
     272: () => NoModulesRegisteredError(),
+    273: ({ prop }: { prop: string }) => {
+        let msg = `Since v33, ${prop} has been deprecated.`;
+        switch (prop) {
+            case 'componentWrappingElement':
+            case 'maxComponentCreationTimeMs':
+                msg +=
+                    ' It is expected that this property is no longer required and so will be removed in a future version. If you require this property please contact support.';
+                break;
+            case 'setGridApi':
+                msg += ` This method is not called by AG Grid. To access the GridApi see: https://ag-grid.com/react-data-grid/grid-interface/#grid-api `;
+                break;
+            case 'children':
+                msg += ` For multiple versions AgGridReact does not support children.`;
+                break;
+        }
+        return msg;
+    },
 };
 
 export type ErrorMap = typeof AG_GRID_ERRORS;
