@@ -255,7 +255,7 @@ function extractGridPropertyChanges(prevProps: any, nextProps: any): { [p: strin
     Object.keys(nextProps).forEach((propKey) => {
         if (excludeReactCompProps.has(propKey)) {
             if (deprecatedReactCompProps.has(propKey)) {
-                _warn(273, { prop: propKey });
+                _warn(274, { prop: propKey });
             }
             return;
         }
