@@ -102,6 +102,7 @@ export class GridBodyScrollFeature extends BeanStub {
 
     public override destroy(): void {
         super.destroy();
+        this.clearRetryListenerFncs = [];
 
         window.clearTimeout(this.scrollTimer);
     }
@@ -547,7 +548,7 @@ export class GridBodyScrollFeature extends BeanStub {
             return;
         }
 
-        this.clearRetryListenerFncs.forEach((callback) => callback());
+        this.clearRetryListeners();
 
         const { frameworkOverrides, pageBounds, rowContainerHeight: heightScaler, rowRenderer } = this.beans;
         frameworkOverrides.wrapIncoming(() => {
@@ -646,10 +647,10 @@ export class GridBodyScrollFeature extends BeanStub {
                             return;
                         }
 
-                        this.clearRetryListenerFncs.forEach((destroyFunc) => destroyFunc());
+                        this.clearRetryListeners();
                     },
                     modelUpdated: () => {
-                        this.clearRetryListenerFncs.forEach((destroyFunc) => destroyFunc());
+                        this.clearRetryListeners();
 
                         // if index not in count, stop waiting
                         if (index >= rowModel.getRowCount()) {
@@ -662,6 +663,11 @@ export class GridBodyScrollFeature extends BeanStub {
                 });
             }
         });
+    }
+
+    private clearRetryListeners(): void {
+        this.clearRetryListenerFncs.forEach((callback) => callback());
+        this.clearRetryListenerFncs = [];
     }
 
     public ensureColumnVisible(key: any, position: 'auto' | 'start' | 'middle' | 'end' = 'auto'): void {
