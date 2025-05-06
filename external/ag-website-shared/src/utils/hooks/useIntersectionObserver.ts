@@ -2,7 +2,7 @@ import { type MutableRefObject, useEffect } from 'react';
 
 export interface UseIntersectionObserverParams {
     elementRef: MutableRefObject<HTMLElement | null>;
-    onChange: (params: { isIntersecting: boolean }) => void;
+    onChange: (params: { isIntersecting: boolean; disconnect: () => void }) => void;
     threshold?: number;
     isDisabled?: boolean;
 }
@@ -21,7 +21,7 @@ export function useIntersectionObserver({
         }
 
         const observer = new window.IntersectionObserver(
-            ([entry]) => onChange({ isIntersecting: entry.isIntersecting }),
+            ([entry]) => onChange({ isIntersecting: entry.isIntersecting, disconnect: () => observer.disconnect() }),
             {
                 root: null,
                 threshold,

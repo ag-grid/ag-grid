@@ -1,11 +1,11 @@
 import { OverlayButton } from '@ag-website-shared/components/automated-examples/OverlayButton';
 import { ToggleAutomatedExampleButton } from '@ag-website-shared/components/automated-examples/ToggleAutomatedExampleButton';
 import { INTEGRATED_CHARTS_ID } from '@ag-website-shared/components/automated-examples/lib/constants';
+import { useIntersectionObserver } from '@ag-website-shared/utils/hooks/useIntersectionObserver';
 import LogoMark from '@components/logo/LogoMark';
 import { useStore } from '@nanostores/react';
 import { trackHomepageExampleIntegratedCharts, trackOnceHomepageExampleIntegratedCharts } from '@utils/analytics';
 import { useDarkmode } from '@utils/hooks/useDarkmode';
-import { useIntersectionObserver } from '@utils/hooks/useIntersectionObserver';
 import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
 import classNames from 'classnames';
 import { useCallback, useEffect, useRef, useState } from 'react';

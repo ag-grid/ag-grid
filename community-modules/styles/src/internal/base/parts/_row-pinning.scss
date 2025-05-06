@@ -1,5 +1,13 @@
 .ag-row.ag-row-pinned-source {
-    color: var(--ag-pinned-row-source-color);
+    color: var(--ag-pinned-source-row-text-color);
+    background-color: var(--ag-pinned-source-row-background-color);
+    font-weight: var(--ag-pinned-source-row-font-weight);
+}
+
+.ag-row.ag-row-pinned {
+    color: var(--ag-pinned-row-text-color);
+    background-color: var(--ag-pinned-row-background-color);
+    font-weight: var(--ag-pinned-row-font-weight);
 }
 
 .ag-floating-top-viewport {

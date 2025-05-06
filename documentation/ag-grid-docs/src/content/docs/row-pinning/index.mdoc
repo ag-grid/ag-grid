@@ -15,31 +15,6 @@ const gridOptions = {
 }
 ```
 
-## Pinning Rows via the Context Menu
-
-{% note %}
-This approach requires the [Context Menu](./context-menu) which is an Enterprise feature.
-{% /note %}
-
-To pin a row use right-click to bring up the [Context Menu](./context-menu) and select one of the options in the "Pin Row" submenu. In the example below, try the following:
-1. Pin a row to the top.
-2. Switch the row to being pinned to the bottom.
-3. Unpin the row.
-
-{% gridExampleRunner title="Simple Row Pinning" name="simple-pinning" /%}
-
-Note that rows that have been pinned also appear greyed-out in the main viewport. All the examples on this page also apply additional styling to visually differentiate the pinned rows from the rows in the main viewport.
-
-```{% frameworkTransform=true %}
-const gridOptions = {
-    theme: themeQuartz.withParts({
-        pinnedRowBorder: { 
-            width: 3 
-        }
-    })
-}
-```
-
 ## Pinning Rows on First Render
 To have a row appear as pinned when the grid initially renders data, use the `isRowPinned` callback. As an example, the snippet below will pin all rows whose `country` field is `null` in the top container.
 
@@ -55,6 +30,33 @@ const gridOptions = {
 This is illustrated in the example below.
 
 {% gridExampleRunner title="Pinning on First Render" name="pinning-on-render" /%}
+
+Note that all the examples on this page also apply additional styling to visually differentiate the pinned rows from the rows in the main viewport.
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    theme: themeQuartz.withParts({
+        pinnedRowBorder: { 
+            width: 2
+        },
+    })
+}
+```
+
+To see what other parameters are available for the theming of pinned rows, see the [Theme Builder](/theme-builder).
+
+## Pinning Rows via the Context Menu
+
+{% note %}
+This approach requires the [Context Menu](./context-menu) which is an Enterprise feature.
+{% /note %}
+
+To pin a row use right-click to bring up the [Context Menu](./context-menu) and select one of the options in the "Pin Row" submenu. In the example below, try the following:
+1. Pin a row to the top.
+2. Switch the row to being pinned to the bottom.
+3. Unpin the row.
+
+{% gridExampleRunner title="Simple Row Pinning" name="simple-pinning" /%}
 
 ## Preventing Rows from being Pinnable
 To prevent a user from pinning a row via the context menu, use the `isRowPinnable` callback. As an example, the snippet below will prevent any rows being pinned where the `sport` field is `'Swimming'`.

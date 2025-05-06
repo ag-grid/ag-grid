@@ -1535,10 +1535,7 @@ describe('Row Selection Grid Options', () => {
                 assertSelectedRowElementsById([], api);
             });
 
-            // This behaviour is actually explicitly disabled because it doesn't work in CSRM
-            // however, keep the test because it works (at time of writing) in SSRM and we may want
-            // to bring this behaviour back
-            test.skip('deselect group row with `groupSelects = "descendants"` and `enableClickSelection`', async () => {
+            test('de/select group row with `groupSelects = "descendants"` and `enableClickSelection`', async () => {
                 const [api, actions] = await createGridAndWait({
                     ...groupGridOptions,
                     rowSelection: { mode: 'multiRow', groupSelects: 'descendants', enableClickSelection: true },
