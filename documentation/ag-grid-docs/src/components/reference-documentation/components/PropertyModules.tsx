@@ -49,6 +49,7 @@ export const PropertyModules: FunctionComponent<{
         };
 
         document.addEventListener('click', handleClickOutside);
+
         return () => {
             document.removeEventListener('click', handleClickOutside);
         };
