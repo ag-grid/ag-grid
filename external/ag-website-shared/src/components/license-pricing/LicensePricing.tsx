@@ -81,25 +81,29 @@ export const LicensePricing: FunctionComponent<Props> = ({ defaultSelection }) =
                         return (
                             <div className={styles.fullWidthBarItem} key={i}>
                                 <span className={classnames(styles.fwProduct, 'text-lg')}>{license.subHeading}</span>
+                                <div>
+                                    <span className={styles.fwPrice}>
+                                        {isCommunity ? (
+                                            <b>Free</b>
+                                        ) : (
+                                            <>
+                                                <span>From </span>
+                                                <b> ${license.priceFullDollars}</b>
+                                                <span className="text-2xs">USD</span>
+                                            </>
+                                        )}
+                                    </span>
 
-                                <span className={styles.fwPrice}>
-                                    {isCommunity ? (
-                                        <b>Free</b>
-                                    ) : (
-                                        <>
-                                            <span>From </span>
-                                            <b> ${license.priceFullDollars}</b>
-                                            <span className="text-2xs">USD</span>
-                                        </>
-                                    )}
-                                </span>
-
-                                <a
-                                    className={classnames(styles.fwAction, isCommunity ? 'button-tertiary' : 'button')}
-                                    href={license.buyLink}
-                                >
-                                    {isCommunity ? 'Get started' : 'Buy now'}
-                                </a>
+                                    <a
+                                        className={classnames(
+                                            styles.fwAction,
+                                            isCommunity ? 'button-tertiary' : 'button'
+                                        )}
+                                        href={license.buyLink}
+                                    >
+                                        {isCommunity ? 'Get started' : 'Buy now'}
+                                    </a>
+                                </div>
                             </div>
                         );
                     })}

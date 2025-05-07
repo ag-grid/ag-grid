@@ -527,6 +527,7 @@
     display: grid;
     grid-template-columns: 1fr 1fr 1fr 1fr;
     font-weight: bold;
+    padding-top: $spacing-size-1;
 }
 
 .fullWidthBarItem {
@@ -534,7 +535,26 @@
     flex-wrap: wrap;
     align-items: center;
     gap: $spacing-size-2 $spacing-size-4;
-    padding-left: $spacing-size-2;
+    padding-left: $spacing-size-4;
+    position: relative;
+
+    &:not(:last-child)::after {
+        content: '';
+        position: absolute;
+        right: 0;
+        top: 0;
+        bottom: 0;
+        width: 1px;
+        background-color: var(--color-border-secondary);
+    }
+
+    div {
+        display: flex;
+        align-items: center;
+        gap: $spacing-size-3;
+        justify-content: center;
+        margin-top: $spacing-size-1;
+    }
 
     &:first-child {
         grid-column: 2 / span 1;
@@ -543,14 +563,21 @@
 
 .fwProduct {
     width: 100%;
+    font-size: var(--text-fs-base) !important;
+    font-weight: 600;
 }
 
 .fwPrice {
     display: inline-flex;
     font-weight: var(--text-regular);
 
+    span {
+        display: none;
+    }
+
     b:nth-child(2) {
-        margin: 0 2px 0 6px;
+        color: black;
+        font-size: var(--text-fs-lg);
     }
 
     span:last-child {
@@ -560,7 +587,8 @@
 
 a.fwAction {
     align-self: flex-end;
-    padding: 3px $spacing-size-4 4px;
+    padding: 3px $spacing-size-3 4px;
+    font-size: var(--text-fs-sm) !important;
 }
 
 .pricingHeading {
