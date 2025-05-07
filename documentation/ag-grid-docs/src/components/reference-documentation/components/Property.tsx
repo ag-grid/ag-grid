@@ -380,17 +380,9 @@ export const Property: FunctionComponent<{
                                                 <Icon name="module" />
                                                 <span>{firstModule.name}</span>
                                                 {firstModule.isEnterprise && (
-                                                    <a
-                                                        href={urlWithPrefix({
-                                                            url: './community-vs-enterprise/',
-                                                            framework,
-                                                        })}
-                                                    >
-                                                        <span className={styles.enterpriseIcon}>
-                                                            {' '}
-                                                            <Icon name="enterprise" />
-                                                        </span>
-                                                    </a>
+                                                    <span className={styles.enterpriseIcon}>
+                                                        <Icon name="enterprise" />
+                                                    </span>
                                                 )}
                                             </a>
                                             {otherModules.length > 0 && (
@@ -424,17 +416,9 @@ export const Property: FunctionComponent<{
                                                                         <Icon name="module" />
                                                                         {module.name}
                                                                         {module.isEnterprise && (
-                                                                            <a
-                                                                                href={urlWithPrefix({
-                                                                                    url: './community-vs-enterprise/',
-                                                                                    framework,
-                                                                                })}
-                                                                            >
-                                                                                <span className={styles.enterpriseIcon}>
-                                                                                    {' '}
-                                                                                    <Icon name="enterprise" />
-                                                                                </span>
-                                                                            </a>
+                                                                            <span className={styles.enterpriseIcon}>
+                                                                                <Icon name="enterprise" />
+                                                                            </span>
                                                                         )}
                                                                     </a>
                                                                 </div>
