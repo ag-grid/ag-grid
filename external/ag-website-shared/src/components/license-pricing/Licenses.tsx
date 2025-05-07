@@ -60,7 +60,7 @@ export const DEV_LICENSE_DATA: LicenseData[] = [
         id: 'together',
         subHeading: 'Enterprise Bundle',
         description: 'AG Grid Enterprise &<br />AG Charts Enterprise',
-        priceFullDollars: '1498',
+        priceFullDollars: '1,498',
         buyLink: 'https://www.ag-grid.com/ecommerce/#/ecommerce/?licenseType=single&productType=both',
         tabGroup: 'both',
     },

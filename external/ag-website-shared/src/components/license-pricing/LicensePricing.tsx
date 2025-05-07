@@ -28,8 +28,9 @@ interface Props {
 
 export const LicensePricing: FunctionComponent<Props> = ({ defaultSelection }) => {
     const [showFullWidthBar, setShowFullWidthBar] = useState(false);
+    const lastScrollY = useRef(0);
 
-    const contactSalesRef = useRef(null); // Step 1: Create a ref for the contactSales div
+    const contactSalesRef = useRef(null);
     const framework = useFrameworkFromStore();
 
     const gridLicenseData = DEV_LICENSE_DATA.filter(
@@ -41,15 +42,14 @@ export const LicensePricing: FunctionComponent<Props> = ({ defaultSelection }) =
 
     useEffect(() => {
         const handleScroll = () => {
-            // Step 2: Determine the position of the contactSales div
-            const contactSalesPosition = contactSalesRef.current
-                ? contactSalesRef.current.getBoundingClientRect().top
-                : 0;
+            const currentScrollY = window.scrollY;
+            const isScrollingDown = currentScrollY > lastScrollY.current;
+            lastScrollY.current = currentScrollY;
 
-            // Check if contactSales div is at the top of the viewport or if the scroll is beyond a certain point
-            if (window.scrollY > 300 && contactSalesPosition > 120) {
+            // Only show bar when scrolling down and past threshold
+            if (isScrollingDown && currentScrollY > 300) {
                 setShowFullWidthBar(true);
-            } else {
+            } else if (!isScrollingDown && currentScrollY <= 300) {
                 setShowFullWidthBar(false);
             }
         };
