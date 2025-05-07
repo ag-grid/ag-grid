@@ -1,9 +1,10 @@
 import type { Framework } from '@ag-grid-types';
 import { Icon } from '@ag-website-shared/components/icon/Icon';
-import styles from '@ag-website-shared/components/reference-documentation/ApiReference.module.scss';
 import { urlWithPrefix } from '@utils/urlWithPrefix';
 import classnames from 'classnames';
 import { type FunctionComponent, useCallback, useEffect, useState } from 'react';
+
+import styles from './PropertyModules.module.scss';
 
 const Module: FunctionComponent<{
     module: Object;
