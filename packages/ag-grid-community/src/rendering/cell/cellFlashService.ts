@@ -49,7 +49,7 @@ export class CellFlashService extends BeanStub implements NamedBean {
         cellComp.toggleCss(fullName, true);
         cellComp.toggleCss(animationFullName, false);
 
-        // need an earlier animation cycle, but we delay flash end by 10ms as it's ok if flash starts a little late
+        // need an earlier animation cycle, but we delay flash end by 10ms as it's ok if fade starts a little late
         // in favour of batching
         if (this.nextAnimationTime && animState.flashEnd + 15 < this.nextAnimationTime) {
             clearTimeout(this.nextAnimationCycle!);
@@ -92,7 +92,7 @@ export class CellFlashService extends BeanStub implements NamedBean {
                     cellComp.toggleCss(fullName, false);
                     cellComp.toggleCss(animationFullName, true);
                     cell.eGui.style.transition = `background-color ${fadeEnd - flashEnd}ms`;
-                    cell.eGui.style.transitionDelay = `${flashEnd - time}ms`; // start part way through the flash
+                    cell.eGui.style.transitionDelay = `${flashEnd - time}ms`; // start part way through the fade
                     nextAnimationTime = Math.min(flashEnd, nextAnimationTime ?? Infinity);
                     animState.phase = 'fade';
                     break;
