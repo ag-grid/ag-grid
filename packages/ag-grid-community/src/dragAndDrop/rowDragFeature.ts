@@ -217,8 +217,14 @@ export class RowDragFeature extends BeanStub implements DropTarget {
 
         if (gos.get('suppressMoveWhenRowDragging') || !isFromThisGrid) {
             if (dragAndDrop!.isDropZoneWithinThisGrid(draggingEvent)) {
+                const clientSideRowModel = this.clientSideRowModel;
                 const rowsDrop = this.getRowsDrop(draggingEvent);
-                this.clientSideRowModel.highlightRow(rowsDrop?.target, rowsDrop?.delta ?? 0 < 0 ? 'Above' : 'Below');
+                const target = rowsDrop?.target;
+                if (target) {
+                    clientSideRowModel.highlightRow(target, rowsDrop.delta < 0 ? 'Above' : 'Below');
+                } else {
+                    clientSideRowModel.clearHighlight();
+                }
             }
         } else {
             const rowsDrop = this.getRowsDrop(draggingEvent);
@@ -244,47 +250,37 @@ export class RowDragFeature extends BeanStub implements DropTarget {
         const targetRowIndex = clientSideRowModel.getRowIndexAtPixel(y);
         let target = clientSideRowModel.getRow(targetRowIndex);
         let delta = 0;
-        if (!source || !target || target === source) {
+        if (!source) {
             return null; // Nothing to move
         }
         if (sameGrid) {
-            delta = targetRowIndex - (source.rowIndex ?? targetRowIndex);
+            if (!target || target === source) {
+                return null; // Nothing to move
+            }
+            delta = targetRowIndex - source.rowIndex!;
             if (rows.includes(target)) {
-                target = this.getPrevOrNextTarget(rows, delta) ?? target;
+                target = (delta < 0 ? this.getPrevOrNext(-1, rows[0]) : this.getPrevOrNext(1, _last(rows))) ?? target;
             }
         }
-        if (!sameGrid || delta < -1 || delta > 1) {
+        if (target && (!sameGrid || delta < -1 || delta > 1)) {
             delta = y - target.rowTop! - target.rowHeight! / 2;
         }
         return { sameGrid, delta, target, rows };
     }
 
-    /** When dragging multiple rows, we want the user to be able to drag to the prev or next in the group if dragging on one of the selected rows */
-    private getPrevOrNextTarget(rows: IRowNode<any>[], delta: number): RowNode | undefined {
-        const allLeafChildren = this.clientSideRowModel.rootNode?.allLeafChildren;
-        const allLeafChildrenLen = allLeafChildren?.length;
-        if (!allLeafChildrenLen) {
-            return undefined;
+    /** When dragging multiple rows, we want the user to be able to drag to the prev or next in the group if dragging on one of the selected rows. */
+    private getPrevOrNext(increment: -1 | 1, initialRow: IRowNode): RowNode | undefined {
+        const clientSideRowModel = this.clientSideRowModel;
+        const rowCount = clientSideRowModel.getRowCount();
+        let rowIndex = initialRow.rowIndex! + increment;
+        while (rowIndex >= 0 && rowIndex < rowCount) {
+            const row = clientSideRowModel.getRow(rowIndex)!;
+            if (row.sourceRowIndex >= 0) {
+                return row; // Valid leaf node
+            }
+            rowIndex += increment;
         }
-        let index = -1;
-        if (delta < 0) {
-            let min = allLeafChildrenLen;
-            for (const { sourceRowIndex } of rows) {
-                min = sourceRowIndex >= 0 && sourceRowIndex < min ? sourceRowIndex : min;
-            }
-            if (min < allLeafChildrenLen) {
-                index = Math.max(min - 1, 0);
-            }
-        } else {
-            let max = -1;
-            for (const { sourceRowIndex } of rows) {
-                max = sourceRowIndex > max ? sourceRowIndex : max;
-            }
-            if (max >= 0) {
-                index = Math.min(max + 1, allLeafChildrenLen - 1);
-            }
-        }
-        return index >= 0 ? (allLeafChildren[index] as RowNode) : undefined;
+        return undefined; // Out of bounds
     }
 
     public addRowDropZone(params: RowDropZoneParams & { fromGrid?: boolean }): void {
@@ -441,7 +437,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
         this.stopDragging(draggingEvent);
 
         if (this.gos.get('rowDragManaged')) {
-            this.clientSideRowModel.highlightRow(null);
+            this.clientSideRowModel.clearHighlight();
         }
     }
 
@@ -459,7 +455,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
             if (rowsDrop) {
                 this.dropRows(rowsDrop);
             }
-            this.clientSideRowModel.highlightRow(null);
+            this.clientSideRowModel.clearHighlight();
         }
     }
 
@@ -473,7 +469,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
             (gos.get('suppressMoveWhenRowDragging') || !this.isFromThisGrid(draggingEvent)) &&
             dragAndDrop!.isDropZoneWithinThisGrid(draggingEvent)
         ) {
-            this.clientSideRowModel.highlightRow(null);
+            this.clientSideRowModel.clearHighlight();
         }
     }
 
