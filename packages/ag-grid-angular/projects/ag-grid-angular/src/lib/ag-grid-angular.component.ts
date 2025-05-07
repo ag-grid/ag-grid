@@ -168,6 +168,8 @@ import type {
     RowHeightParams,
     RowModelType,
     RowNumbersOptions,
+    RowResizeEndedEvent,
+    RowResizeStartedEvent,
     RowSelectedEvent,
     RowSelectionOptions,
     RowStyle,
@@ -2133,6 +2135,14 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Output() public rowDragCancel: EventEmitter<RowDragCancelEvent<TData>> = new EventEmitter<
         RowDragCancelEvent<TData>
     >();
+    /** The row resize has started (Row Numbers Feature)
+     */
+    @Output() public rowResizeStarted: EventEmitter<RowResizeStartedEvent<TData>> = new EventEmitter<
+        RowResizeStartedEvent<TData>
+    >();
+    /** The row resize has ended (Row Numbers Feature)
+     */
+    @Output() public rowResizeEnded: EventEmitter<RowResizeEndedEvent> = new EventEmitter<RowResizeEndedEvent>();
     /** A row group column was added, removed or reordered.
      */
     @Output() public columnRowGroupChanged: EventEmitter<ColumnRowGroupChangedEvent<TData>> = new EventEmitter<

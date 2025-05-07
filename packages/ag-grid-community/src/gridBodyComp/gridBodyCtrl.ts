@@ -2,7 +2,7 @@ import type { ColumnModel } from '../columns/columnModel';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
 import type { CtrlsService } from '../ctrlsService';
-import type { RowResizeEventEnded, RowResizeEventStarted } from '../events';
+import type { RowResizeEndedEvent, RowResizeStartedEvent } from '../events';
 import type { FilterManager } from '../filter/filterManager';
 import { _isAnimateRows, _isDomLayout } from '../gridOptionsUtils';
 import type { IColsService } from '../interfaces/iColsService';
@@ -156,7 +156,7 @@ export class GridBodyCtrl extends BeanStub {
         this.addManagedPropertyListener('treeData', setGridRootRole);
     }
 
-    private toggleRowResizeStyles(params: RowResizeEventStarted | RowResizeEventEnded) {
+    private toggleRowResizeStyles(params: RowResizeStartedEvent | RowResizeEndedEvent) {
         const isResizingRow = params.type === 'rowResizeStarted';
         this.eBodyViewport.classList.toggle('ag-prevent-animation', isResizingRow);
     }

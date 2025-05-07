@@ -88,6 +88,8 @@ import type {
     RowEditingStartedEvent,
     RowEditingStoppedEvent,
     RowGroupOpenedEvent,
+    RowResizeEndedEvent,
+    RowResizeStartedEvent,
     RowSelectedEvent,
     RowValueChangedEvent,
     SelectionChangedEvent,
@@ -2372,6 +2374,16 @@ export interface GridOptions<TData = any> {
      * The drag has been cancelled over the grid.
      */
     onRowDragCancel?(event: RowDragCancelEvent<TData>): void;
+
+    /**
+     * The row resize has started (Row Numbers Feature)
+     */
+    onRowResizeStarted?(event: RowResizeStartedEvent<TData>): void;
+
+    /**
+     * The row resize has ended (Row Numbers Feature)
+     */
+    onRowResizeEnded?(event: RowResizeEndedEvent): void;
 
     // *** Row Grouping *** //
     /**

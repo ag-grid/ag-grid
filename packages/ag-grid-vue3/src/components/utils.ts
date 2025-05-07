@@ -173,6 +173,8 @@ import type {
     RowEditingStartedEvent,
     RowEditingStoppedEvent,
     RowGroupOpenedEvent,
+    RowResizeEndedEvent,
+    RowResizeStartedEvent,
     RowSelectedEvent,
     RowValueChangedEvent,
     SelectionChangedEvent,
@@ -1663,6 +1665,8 @@ export interface Props<TData> {
    'onRow-drag-leave'?: RowDragLeaveEvent<TData>,
    'onRow-drag-end'?: RowDragEndEvent<TData>,
    'onRow-drag-cancel'?: RowDragCancelEvent<TData>,
+   'onRow-resize-started'?: RowResizeStartedEvent<TData>,
+   'onRow-resize-ended'?: RowResizeEndedEvent,
    'onColumn-row-group-changed'?: ColumnRowGroupChangedEvent<TData>,
    'onRow-group-opened'?: RowGroupOpenedEvent<TData>,
    'onExpand-or-collapse-all'?: ExpandOrCollapseAllEvent<TData>,
@@ -2115,7 +2119,9 @@ export function getProps() {
         'onRow-drag-leave': undefined,
         'onRow-drag-end': undefined,
         'onRow-drag-cancel': undefined,
-        'onFind-changed': undefined
+        'onFind-changed': undefined,
+        'onRow-resize-started': undefined,
+        'onRow-resize-ended': undefined
 // @END_EVENT_PROPS@
 
     };

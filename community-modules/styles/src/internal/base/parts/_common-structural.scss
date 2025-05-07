@@ -1692,6 +1692,15 @@
         );
     }
 
+    .ag-row-numbers-resizer {
+        position: absolute;
+        bottom: -2px;
+        left: 0;
+        height: 3px;
+        width: 100%;
+        cursor: ns-resize;
+    }
+
     // /**
     //  ****************************
     //  * Widgets
