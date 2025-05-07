@@ -28,7 +28,6 @@ interface Props {
 
 export const LicensePricing: FunctionComponent<Props> = ({ defaultSelection }) => {
     const [showFullWidthBar, setShowFullWidthBar] = useState(false);
-    const lastScrollY = useRef(0);
 
     const contactSalesRef = useRef(null);
     const framework = useFrameworkFromStore();
@@ -42,14 +41,13 @@ export const LicensePricing: FunctionComponent<Props> = ({ defaultSelection }) =
 
     useEffect(() => {
         const handleScroll = () => {
-            const currentScrollY = window.scrollY;
-            const isScrollingDown = currentScrollY > lastScrollY.current;
-            lastScrollY.current = currentScrollY;
+            const contactSalesPosition = contactSalesRef.current
+                ? contactSalesRef.current.getBoundingClientRect().top
+                : 0;
 
-            // Only show bar when scrolling down and past threshold
-            if (isScrollingDown && currentScrollY > 300) {
+            if (window.scrollY > 300 && contactSalesPosition > 120) {
                 setShowFullWidthBar(true);
-            } else if (!isScrollingDown && currentScrollY <= 300) {
+            } else {
                 setShowFullWidthBar(false);
             }
         };

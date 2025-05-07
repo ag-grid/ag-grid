@@ -507,14 +507,10 @@
     background-color: var(--color-bg-primary);
     box-shadow: var(--shadow-xs);
     transform: translateY(-$bar-height);
-    transition:
-        transform $transition-default-timing,
-        visibility $transition-default-timing;
-    visibility: hidden;
+    transition: transform $transition-default-timing;
 
     &.active {
         transform: translateY(0);
-        visibility: visible;
     }
 
     @media screen and (max-width: $breakpoint-pricing-medium) {
