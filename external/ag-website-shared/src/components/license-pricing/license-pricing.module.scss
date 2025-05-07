@@ -506,11 +506,15 @@
     z-index: 2;
     background-color: var(--color-bg-primary);
     box-shadow: var(--shadow-xs);
+    opacity: 0;
     transform: translateY(-$bar-height);
-    transition: transform $transition-default-timing;
+    transition:
+        transform $transition-default-timing,
+        opacity $transition-default-timing;
 
     &.active {
         transform: translateY(0);
+        opacity: 1;
     }
 
     @media screen and (max-width: $breakpoint-pricing-medium) {
