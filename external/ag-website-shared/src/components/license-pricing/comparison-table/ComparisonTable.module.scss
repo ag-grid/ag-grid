@@ -48,6 +48,10 @@
     align-items: center;
     min-height: $spacing-size-12;
 
+    &:first-child {
+        margin-top: -$spacing-size-2;
+    }
+
     &:first-child .cell {
         padding-top: $spacing-size-4;
     }

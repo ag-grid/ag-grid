@@ -39,7 +39,7 @@ export const LicensePricing: FunctionComponent<Props> = ({ defaultSelection }) =
                 : 0;
 
             // Check if contactSales div is at the top of the viewport or if the scroll is beyond a certain point
-            if (window.scrollY > 390 && contactSalesPosition > 0) {
+            if (window.scrollY > 320 && contactSalesPosition > 120) {
                 setShowFullWidthBar(true);
             } else {
                 setShowFullWidthBar(false);
@@ -64,22 +64,16 @@ export const LicensePricing: FunctionComponent<Props> = ({ defaultSelection }) =
 
     return (
         <>
-            {showFullWidthBar && (
-                <div className={styles.fullWidthBar}>
-                    <div className={classnames('layout-max-width-small', styles.fullWidthBarContainer)}>
-                        <div className={styles.fullWidthBarLeft}> </div>
-                        <div className={styles.fullWidthBarItem}>
-                            AG {chartsIsSelected ? 'Charts' : 'Grid'} Community
-                        </div>
-                        <div className={styles.fullWidthBarItem}>
-                            AG {chartsIsSelected ? 'Charts' : 'Grid'} Enterprise
-                        </div>
-                        <div className={styles.fullWidthBarItem}>AG Grid Bundle</div>
+            <div className={classnames(styles.fullWidthBar, { [styles.active]: showFullWidthBar })}>
+                <div className={classnames('layout-max-width-small', styles.fullWidthBarContainer)}>
+                    <div className={styles.fullWidthBarLeft}> </div>
+                    <div className={styles.fullWidthBarItem}>AG {chartsIsSelected ? 'Charts' : 'Grid'} Community</div>
+                    <div className={styles.fullWidthBarItem}>AG {chartsIsSelected ? 'Charts' : 'Grid'} Enterprise</div>
+                    <div className={styles.fullWidthBarItem}>Enterprise Bundle</div>
 
-                        <div className={styles.fullWidthBarRight}></div>
-                    </div>
+                    <div className={styles.fullWidthBarRight}></div>
                 </div>
-            )}
+            </div>
 
             <div className={styles.introSection}>
                 <div className={styles.gradient}></div>
