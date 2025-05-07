@@ -1,11 +1,17 @@
 import type { ResizeFeature } from '../../../columnResize/resizeFeature';
+import { isColumnSelectionCol } from '../../../columns/columnUtils';
 import { setupCompBean } from '../../../components/emptyBean';
 import { _getHeaderCompDetails } from '../../../components/framework/userCompUtils';
 import { KeyCode } from '../../../constants/keyCode';
 import type { BeanStub } from '../../../context/beanStub';
 import type { AgColumn } from '../../../entities/agColumn';
 import type { HeaderClassParams, SortDirection } from '../../../entities/colDef';
-import { _addGridCommonParams, _getActiveDomElement, _isLegacyMenuEnabled } from '../../../gridOptionsUtils';
+import {
+    _addGridCommonParams,
+    _getActiveDomElement,
+    _getSelectAll,
+    _isLegacyMenuEnabled,
+} from '../../../gridOptionsUtils';
 import { ColumnHighlightPosition } from '../../../interfaces/iColumn';
 import type { IHeader, IHeaderParams } from '../../../interfaces/iHeader';
 import type { UserCompDetails } from '../../../interfaces/iUserCompDetails';
@@ -228,7 +234,9 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
 
     private setupSelectAll(compBean: BeanStub): void {
         const { selectionSvc } = this.beans;
-        if (!selectionSvc) {
+        const selectAll = _getSelectAll(this.gos, false);
+
+        if (!selectionSvc || selectAll == null || !isColumnSelectionCol(this.column)) {
             return;
         }
         this.selectAllFeature = compBean.createManagedBean(selectionSvc.createSelectAllFeature(this.column));
