@@ -8,7 +8,7 @@ import type { CellCtrl } from '../../rendering/cell/cellCtrl';
 import type { RowCtrl } from '../../rendering/row/rowCtrl';
 import type { CellIdPositions, EditingModelService } from '../editingModelService';
 import { _resolveCellController } from '../utils/controllers';
-import { _destroyEditor, _setupEditors, _syncModelsFromEditors } from '../utils/editors';
+import { _destroyEditor, _destroyEditors, _setupEditors, _syncModelsFromEditors } from '../utils/editors';
 
 export abstract class BaseEditStrategy extends BeanStub {
     beanName: BeanName | undefined;
@@ -52,6 +52,12 @@ export abstract class BaseEditStrategy extends BeanStub {
             cellFocused: this.onCellFocusChanged?.bind(this),
             cellFocusCleared: this.onCellFocusChanged?.bind(this),
         });
+    }
+
+    public cleanupEditors() {
+        _syncModelsFromEditors(this.beans);
+        // clean up any dangling editors
+        _destroyEditors(this.beans, this.editModel.getPendingCellIds(), true, 'ui');
     }
 
     public stopAllEditing(source: 'ui' | 'api' = 'ui'): void {
@@ -162,12 +168,14 @@ export abstract class BaseEditStrategy extends BeanStub {
         event?: KeyboardEvent | MouseEvent | null | undefined,
         source: 'api' | 'ui' = 'ui'
     ): boolean | null {
-        if (this.gos.get('batchEdit')) {
+        const batchEdit = this.gos.get('batchEdit');
+
+        if (batchEdit && source === 'api') {
             // we always defer to the API
-            return source === 'api';
+            return true;
         }
 
-        if (event instanceof KeyboardEvent) {
+        if (event instanceof KeyboardEvent && !batchEdit) {
             return event.key === KeyCode.ENTER;
         }
 
@@ -181,21 +189,20 @@ export abstract class BaseEditStrategy extends BeanStub {
         event?: KeyboardEvent | MouseEvent | null | undefined,
         source: 'api' | 'ui' = 'ui'
     ): boolean | null {
-        if (this.gos.get('batchEdit')) {
+        const batchEdit = this.gos.get('batchEdit');
+        if (batchEdit) {
             // we always defer to the API
-            return source === 'api';
+            return true;
         }
 
-        if (event instanceof KeyboardEvent) {
+        if (event instanceof KeyboardEvent && !batchEdit) {
             return event.key === KeyCode.ESCAPE;
         }
 
         return false;
     }
 
-    protected onCellFocusChanged(_event: CellFocusedEvent<any, any>): void {
-        // _syncModelsFromEditors(this.beans);
-    }
+    public abstract onCellFocusChanged(_event: CellFocusedEvent<any, any>): void;
 
     private deriveClickCount(colDef?: ColDef): number {
         const { gos } = this.beans;

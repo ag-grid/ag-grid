@@ -129,8 +129,8 @@ export class EditingService extends BeanStub implements NamedBean {
             return false;
         }
 
-        if (this.editStrategy.shouldStopEditing(rowCtrl, cellCtrl, undefined, undefined, 'ui')) {
-            this.stopEditing(undefined, undefined, undefined);
+        if (this.editStrategy.shouldStopEditing(rowCtrl, cellCtrl, undefined, undefined, source)) {
+            this.stopEditing(undefined, undefined, undefined, undefined, undefined, source);
         }
 
         return this.editStrategy!.startEditing?.(rowCtrl, cellCtrl, key, event, source);

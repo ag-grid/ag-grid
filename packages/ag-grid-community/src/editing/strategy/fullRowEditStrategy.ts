@@ -4,7 +4,6 @@ import type { CellCtrl } from '../../rendering/cell/cellCtrl';
 import type { RowCtrl } from '../../rendering/row/rowCtrl';
 import type { CellIdPositions } from '../editingModelService';
 import { _resolveControllers, _resolveRowController } from '../utils/controllers';
-import { _destroyEditors } from '../utils/editors';
 import { BaseEditStrategy } from './baseEditStrategy';
 
 export class FullRowEditStrategy extends BaseEditStrategy {
@@ -59,8 +58,8 @@ export class FullRowEditStrategy extends BaseEditStrategy {
             return true;
         }
 
-        const res = super.shouldStopEditing(oldRowCtrl, undefined, key, event);
-        if (res) {
+        const res = super.shouldStopEditing(oldRowCtrl, undefined, key, event, _source);
+        if (res !== undefined) {
             return res;
         }
 
@@ -81,15 +80,8 @@ export class FullRowEditStrategy extends BaseEditStrategy {
     ): boolean {
         console.log('FullRowEditStrategy: startEditing', rowCtrl, cellCtrl);
 
-        const oldState = this.editModel.hasPending(rowCtrl);
-
-        if (this.shouldStopEditing(rowCtrl)) {
-            if (this.gos.get('batchEdit')) {
-                const cells = this.editModel.getPendingCellIds();
-                _destroyEditors(this.beans, cells, false, 'ui');
-            } else {
-                this.stopAllEditing();
-            }
+        if (this.rowId !== rowCtrl.rowId) {
+            super.cleanupEditors();
         }
 
         const cellCtrls = rowCtrl.getAllCellCtrls();
@@ -116,16 +108,19 @@ export class FullRowEditStrategy extends BaseEditStrategy {
     ): boolean {
         console.log('FullRowEditStrategy: stopEditing', rowCtrl, _cellCtrl);
 
-        super.stopEditing(rowCtrl, _cellCtrl, source);
+        for (const rowId of this.editModel.getPendingUpdates().keys()) {
+            const rowController = _resolveRowController(this.beans, { rowId });
+            if (rowController) {
+                this.setEditing(rowController!, false, true);
+            }
+        }
 
-        this.setEditing(rowCtrl!, false, true);
+        super.stopEditing(rowCtrl, _cellCtrl, source);
 
         return true;
     }
 
-    protected override onCellFocusChanged(event: CellFocusedEvent<any, any>): void {
-        super.onCellFocusChanged(event);
-
+    public onCellFocusChanged(event: CellFocusedEvent<any, any>): void {
         const { focusSvc } = this.beans;
         const { rowIndex, rowPinned, column } = event;
 
@@ -137,7 +132,7 @@ export class FullRowEditStrategy extends BaseEditStrategy {
         });
 
         // if we are editing, then moving the focus out of a row will stop editing
-        if (!rowFocused && this.editModel.hasPending(rowCtrl!, cellCtrl)) {
+        if (!rowFocused && this.editModel.hasPending(rowCtrl!, cellCtrl) && !this.gos.get('batchEdit')) {
             this.beans.editingSvc?.stopEditing(rowCtrl!, cellCtrl);
         }
     }
@@ -172,8 +167,10 @@ export class FullRowEditStrategy extends BaseEditStrategy {
         }
 
         if (!rowsMatch) {
-            const pRow = previousCell.rowCtrl;
-            this.beans.editingSvc?.stopEditing(pRow);
+            if (!this.gos.get('batchEdit')) {
+                const pRow = previousCell.rowCtrl;
+                this.beans.editingSvc?.stopEditing(pRow);
+            }
 
             const nRow = nextCell.rowCtrl;
             this.beans.editingSvc?.startEditing(nRow, nextCell, null, true, event);

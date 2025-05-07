@@ -19,12 +19,16 @@ export class SingleCellEditStrategy extends BaseEditStrategy {
         event?: KeyboardEvent | MouseEvent | null | undefined,
         _source: 'api' | 'ui' = 'ui'
     ): boolean | null {
-        const res = super.shouldStopEditing(_rowCtrl, _cellCtrl, key, event);
-        if (res) {
+        const res = super.shouldStopEditing(_rowCtrl, _cellCtrl, key, event, _source);
+        if (res !== undefined) {
             return res;
         }
 
         return this.rowId !== _rowCtrl?.rowId || this.colId !== _cellCtrl?.column.getColId();
+    }
+
+    public setEditing(rowCtrl?: RowCtrl | null, cellCtrl?: CellCtrl | null, newState?: boolean): void {
+        cellCtrl?.comp.toggleCss('ag-cell-batch-edit', (newState && this.gos.get('batchEdit')) ?? false);
     }
 
     public startEditing(
@@ -39,10 +43,16 @@ export class SingleCellEditStrategy extends BaseEditStrategy {
         const rowId = rowCtrl.rowId!;
         const colId = cellCtrl?.column.getColId() ?? this.beans.visibleCols.getFirstColumn()!.getColId();
 
+        if (this.rowId !== rowId || this.colId !== colId) {
+            super.cleanupEditors();
+        }
+
         this.rowId = rowId;
         this.colId = colId;
 
         this.editModel.startEditing(rowId, colId);
+
+        this.setEditing(rowCtrl, cellCtrl, true);
 
         return this.finishStartEdit(
             [
@@ -66,6 +76,17 @@ export class SingleCellEditStrategy extends BaseEditStrategy {
     ): boolean {
         console.log('SingleCellEditStrategy: stopEditing', rowCtrl, cellCtrl);
 
+        if (this.gos.get('batchEdit')) {
+            const cellIds = this.editModel.getPendingCellIds();
+            cellIds.forEach((cellId) => {
+                const cellCtrl = _resolveControllers(this.beans, cellId).cellCtrl;
+                if (cellCtrl) {
+                    cellCtrl.comp.toggleCss('ag-cell-batch-edit', false);
+                    this.setEditing(cellCtrl.rowCtrl, cellCtrl, false);
+                }
+            });
+        }
+
         super.stopEditing(rowCtrl, cellCtrl, source);
 
         this.rowId = undefined;
@@ -74,9 +95,7 @@ export class SingleCellEditStrategy extends BaseEditStrategy {
         return true;
     }
 
-    protected override onCellFocusChanged(event: CellFocusedEvent<any, any>): void {
-        super.onCellFocusChanged(event);
-
+    public onCellFocusChanged(event: CellFocusedEvent<any, any>): void {
         const { rowIndex, column } = event;
         const previous = (event as any)['previousParams']! as CommonCellFocusParams;
 
