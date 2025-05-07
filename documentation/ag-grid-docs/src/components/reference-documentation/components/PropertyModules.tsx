@@ -5,6 +5,24 @@ import { urlWithPrefix } from '@utils/urlWithPrefix';
 import classnames from 'classnames';
 import { type FunctionComponent, useCallback, useEffect, useState } from 'react';
 
+const Module: FunctionComponent<{
+    module: Object;
+    framework: Framework;
+}> = ({ module, framework }) => {
+    return (
+        <a
+            href={urlWithPrefix({
+                url: './modules',
+                framework,
+            })}
+        >
+            <Icon name="module" />
+            <span>{module.name}</span>
+            {module.isEnterprise && <Icon name="enterprise" svgClasses={styles.enterpriseIcon} />}
+        </a>
+    );
+};
+
 export const PropertyModules: FunctionComponent<{
     modules: Array;
     framework: Framework;
@@ -38,20 +56,7 @@ export const PropertyModules: FunctionComponent<{
     return (
         <div className={classnames(styles.metaItem, styles.moduleItem)}>
             <div className={styles.moduleContent}>
-                <a
-                    href={urlWithPrefix({
-                        url: './modules',
-                        framework,
-                    })}
-                >
-                    <Icon name="module" />
-                    <span>{firstModule.name}</span>
-                    {firstModule.isEnterprise && (
-                        <span className={styles.enterpriseIcon}>
-                            <Icon name="enterprise" />
-                        </span>
-                    )}
-                </a>
+                <Module module={firstModule} framework={framework} />
 
                 {otherModules.length > 0 && (
                     <>
@@ -75,22 +80,7 @@ export const PropertyModules: FunctionComponent<{
                         >
                             <div className={styles.moduleTooltipContent}>
                                 {otherModules.map((module) => (
-                                    <div key={module.name}>
-                                        <a
-                                            href={urlWithPrefix({
-                                                url: './modules/',
-                                                framework,
-                                            })}
-                                        >
-                                            <Icon name="module" />
-                                            {module.name}
-                                            {module.isEnterprise && (
-                                                <span className={styles.enterpriseIcon}>
-                                                    <Icon name="enterprise" />
-                                                </span>
-                                            )}
-                                        </a>
-                                    </div>
+                                    <Module module={module} framework={framework} key={module.name} />
                                 ))}
                             </div>
                         </div>
