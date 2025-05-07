@@ -10,17 +10,7 @@ export class FullRowEditStrategy extends BaseEditStrategy {
     override beanName = 'fullRow' as BeanName | undefined;
     private rowId?: string | null;
 
-    public setEditing(rowCtrl?: RowCtrl | null, newState?: boolean, oldState?: boolean): void {
-        if (oldState === newState) {
-            return;
-        }
-
-        if (!rowCtrl) {
-            rowCtrl = _resolveRowController(this.beans, {
-                rowId: this.rowId,
-            });
-        }
-
+    public updateStyles(rowCtrl?: RowCtrl | null, cellCtrl?: CellCtrl | null, newState?: boolean): void {
         if (!rowCtrl) {
             return;
         }
@@ -30,11 +20,7 @@ export class FullRowEditStrategy extends BaseEditStrategy {
             gui.rowComp.toggleCss('ag-row-batch-edit', (this.gos.get('batchEdit') && newState) ?? false);
         });
 
-        if (newState) {
-            this.rowId = rowCtrl.rowId;
-        } else {
-            this.rowId = undefined;
-        }
+        this.rowId = newState ? rowCtrl.rowId : undefined;
 
         const event = newState
             ? rowCtrl.createRowEvent('rowEditingStarted')
@@ -96,26 +82,26 @@ export class FullRowEditStrategy extends BaseEditStrategy {
             this.editModel.startEditing(position.rowId, position.columnId);
         });
 
-        this.setEditing(rowCtrl, true, false);
+        this.updateStyles(rowCtrl, cellCtrl, true);
 
         return this.finishStartEdit(cells, rowCtrl, cellCtrl, undefined, true, event);
     }
 
     public override stopEditing(
         rowCtrl?: RowCtrl | null,
-        _cellCtrl?: CellCtrl | null,
+        cellCtrl?: CellCtrl | null,
         source: 'api' | 'ui' = 'ui'
     ): boolean {
-        console.log('FullRowEditStrategy: stopEditing', rowCtrl, _cellCtrl);
+        console.log('FullRowEditStrategy: stopEditing', rowCtrl, cellCtrl);
 
         for (const rowId of this.editModel.getPendingUpdates().keys()) {
             const rowController = _resolveRowController(this.beans, { rowId });
             if (rowController) {
-                this.setEditing(rowController!, false, true);
+                this.updateStyles(rowController!, undefined, false);
             }
         }
 
-        super.stopEditing(rowCtrl, _cellCtrl, source);
+        super.stopEditing(rowCtrl, cellCtrl, source);
 
         return true;
     }

@@ -13,21 +13,21 @@ export class SingleCellEditStrategy extends BaseEditStrategy {
     private colId?: string | null;
 
     public override shouldStopEditing(
-        _rowCtrl?: RowCtrl | undefined,
-        _cellCtrl?: CellCtrl | undefined,
+        rowCtrl?: RowCtrl | undefined,
+        cellCtrl?: CellCtrl | undefined,
         key?: string | null | undefined,
         event?: KeyboardEvent | MouseEvent | null | undefined,
-        _source: 'api' | 'ui' = 'ui'
+        source: 'api' | 'ui' = 'ui'
     ): boolean | null {
-        const res = super.shouldStopEditing(_rowCtrl, _cellCtrl, key, event, _source);
+        const res = super.shouldStopEditing(rowCtrl, cellCtrl, key, event, source);
         if (res !== undefined) {
             return res;
         }
 
-        return this.rowId !== _rowCtrl?.rowId || this.colId !== _cellCtrl?.column.getColId();
+        return this.rowId !== rowCtrl?.rowId || this.colId !== cellCtrl?.column.getColId();
     }
 
-    public setEditing(rowCtrl?: RowCtrl | null, cellCtrl?: CellCtrl | null, newState?: boolean): void {
+    public updateStyles(rowCtrl?: RowCtrl | null, cellCtrl?: CellCtrl | null, newState?: boolean): void {
         cellCtrl?.comp.toggleCss('ag-cell-batch-edit', (newState && this.gos.get('batchEdit')) ?? false);
     }
 
@@ -52,7 +52,7 @@ export class SingleCellEditStrategy extends BaseEditStrategy {
 
         this.editModel.startEditing(rowId, colId);
 
-        this.setEditing(rowCtrl, cellCtrl, true);
+        this.updateStyles(rowCtrl, cellCtrl, true);
 
         return this.finishStartEdit(
             [
@@ -82,7 +82,7 @@ export class SingleCellEditStrategy extends BaseEditStrategy {
                 const cellCtrl = _resolveControllers(this.beans, cellId).cellCtrl;
                 if (cellCtrl) {
                     cellCtrl.comp.toggleCss('ag-cell-batch-edit', false);
-                    this.setEditing(cellCtrl.rowCtrl, cellCtrl, false);
+                    this.updateStyles(cellCtrl.rowCtrl, cellCtrl, false);
                 }
             });
         }

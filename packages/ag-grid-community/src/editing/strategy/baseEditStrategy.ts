@@ -22,6 +22,16 @@ export abstract class BaseEditStrategy extends BeanStub {
         source?: 'api' | 'ui'
     ): boolean;
 
+    public abstract onCellFocusChanged(_event: CellFocusedEvent<any, any>): void;
+
+    public abstract moveToNextEditingCell(
+        previousCell: CellCtrl,
+        backwards: boolean,
+        event?: KeyboardEvent
+    ): boolean | null;
+
+    public abstract updateStyles(rowCtrl?: RowCtrl | null, cellCtrl?: CellCtrl | null, newState?: boolean): void;
+
     public stopEditing(rowCtrl?: RowCtrl | null, cellCtrl?: CellCtrl | null, source?: 'api' | 'ui'): boolean {
         console.log('BaseEditStrategy: stopEditing', rowCtrl, cellCtrl);
         const editingCells = this.editModel.getPendingCellIds();
@@ -39,12 +49,6 @@ export abstract class BaseEditStrategy extends BeanStub {
 
         return true;
     }
-
-    public abstract moveToNextEditingCell(
-        previousCell: CellCtrl,
-        backwards: boolean,
-        event?: KeyboardEvent
-    ): boolean | null;
 
     postConstruct(): void {
         this.editModel = this.beans.editingModelSvc!;
@@ -96,6 +100,7 @@ export abstract class BaseEditStrategy extends BeanStub {
         }
     }
 
+    // move to main editingsvc
     protected finishStartEdit(
         editingCells: CellIdPositions[],
         rowCtrl?: RowCtrl | null,
@@ -187,7 +192,7 @@ export abstract class BaseEditStrategy extends BeanStub {
         _cellCtrl?: CellCtrl | null,
         _key?: string | null | undefined,
         event?: KeyboardEvent | MouseEvent | null | undefined,
-        source: 'api' | 'ui' = 'ui'
+        _source: 'api' | 'ui' = 'ui'
     ): boolean | null {
         const batchEdit = this.gos.get('batchEdit');
         if (batchEdit) {
@@ -201,8 +206,6 @@ export abstract class BaseEditStrategy extends BeanStub {
 
         return false;
     }
-
-    public abstract onCellFocusChanged(_event: CellFocusedEvent<any, any>): void;
 
     private deriveClickCount(colDef?: ColDef): number {
         const { gos } = this.beans;
