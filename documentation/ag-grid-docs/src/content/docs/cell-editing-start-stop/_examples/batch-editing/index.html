@@ -7,16 +7,17 @@
         </div>
         <div class="example-button-row">
             <span>API: </span>
-            <button onclick="onBtStartEditing(undefined)">Edit (1)</button>
-            <button onclick="setBatch(true)">Enable Batch Edits</button>
-            <button onclick="setBatch(false)">Disable Batch Edits</button>
+            <button onclick="onBtStartEditing()">Edit (1)</button>
+            <button id="enableBatch" onclick="setBatch(true)">Enable Batch Edits</button>
+            <button id="disableBatch" onclick="setBatch(false)">Disable Batch Edits</button>
             <button onclick="stopEdit()">Stop Edits</button>
             <button onclick="cancelEdit()">Cancel Edits</button>
         </div>
         <div class="example-button-row">
             <span>Utility: </span>
             <button onclick="logPendingEdits()">Log Pending Edits</button>
-            <button onclick="togglePollPendingEdits()">Poll Pending Edits</button>
+            <button id="enablePoll" onclick="pollPendingEdits()">Poll Pending Edits</button>
+            <button id="disablePoll" onclick="pollPendingEdits()">Stop Polling</button>
         </div>
     </div>
     <div class="grid-wrapper">

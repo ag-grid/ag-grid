@@ -71,14 +71,16 @@ function logPendingEdits() {
 
 let polling: any = undefined;
 
-function togglePollPendingEdits() {
-    if (!polling) {
-        console.log('Start polling for pending edits');
-        polling = setInterval(logPendingEdits, 1000);
-    } else {
-        console.log('Stop polling for pending edits');
+function pollPendingEdits() {
+    if (polling) {
         clearInterval(polling);
+        polling = undefined;
+    } else {
+        polling = setInterval(logPendingEdits, 1000);
     }
+
+    document.getElementById('enablePoll')!.style.display = polling ? 'none' : 'unset';
+    document.getElementById('disablePoll')!.style.display = polling ? 'unset' : 'none';
 }
 
 function getPinnedTopData() {
@@ -136,6 +138,9 @@ function onBtStartEditing(key?: string, pinned?: RowPinnedType) {
 }
 
 function setBatch(batchEdit: boolean) {
+    document.getElementById('enableBatch')!.style.display = batchEdit ? 'none' : 'unset';
+    document.getElementById('disableBatch')!.style.display = batchEdit ? 'unset' : 'none';
+
     gridApi!.updateGridOptions({
         batchEdit,
     });
