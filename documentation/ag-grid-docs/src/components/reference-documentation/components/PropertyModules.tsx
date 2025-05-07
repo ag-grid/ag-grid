@@ -7,7 +7,7 @@ import { type FunctionComponent, useCallback, useEffect, useState } from 'react'
 import styles from './PropertyModules.module.scss';
 
 const Module: FunctionComponent<{
-    module: Object;
+    module: object;
     framework: Framework;
 }> = ({ module, framework }) => {
     return (
