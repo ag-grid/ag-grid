@@ -5,39 +5,39 @@ import type { FlashCellsEvent } from '../../events';
 import type { FlashCellsParams } from '../../interfaces/iCellsParams';
 import type { CellCtrl } from './cellCtrl';
 
+type FlashClassName = 'highlight' | 'data-changed';
+interface AnimationPhase {
+    phase: 'flash' | 'fade';
+    flashEnd: number;
+    fadeEnd: number;
+}
 export class CellFlashService extends BeanStub implements NamedBean {
     beanName = 'cellFlashSvc' as const;
 
     private nextAnimationTime: number | null = null;
     private nextAnimationCycle: number | null = null;
 
-    private runningAnimations: {
-        cell: WeakRef<CellCtrl>;
-        anim: 'highlight' | 'data-changed';
-        phase: 'flash' | 'fade' | 'done';
-        flashEnd: number;
-        fadeEnd: number;
-    }[] = [];
+    private animations: Record<FlashClassName, Map<CellCtrl, AnimationPhase>> = {
+        highlight: new Map(),
+        'data-changed': new Map(),
+    };
 
     private animateCell(
         cellCtrl: CellCtrl,
-        cssName: 'highlight' | 'data-changed',
+        cssName: FlashClassName,
         flashDuration: number = this.beans.gos.get('cellFlashDuration'),
         fadeDuration: number = this.beans.gos.get('cellFadeDuration')
     ) {
+        const time = Date.now();
+        const animations = this.animations[cssName];
         // cancel any pre-existing animation for this cell
-        this.runningAnimations = this.runningAnimations.filter(
-            ({ cell, anim }) => anim !== cssName && cell.deref() !== cellCtrl
-        );
-
+        animations.delete(cellCtrl);
         const animState = {
-            cell: new WeakRef(cellCtrl),
-            anim: cssName,
             phase: 'flash' as const,
-            flashEnd: Date.now() + flashDuration,
-            fadeEnd: Date.now() + flashDuration + fadeDuration,
+            flashEnd: time + flashDuration,
+            fadeEnd: time + flashDuration + fadeDuration,
         };
-        this.runningAnimations.push(animState);
+        animations.set(cellCtrl, animState);
 
         const fullName = `ag-cell-${cssName}`;
         const animationFullName = `ag-cell-${cssName}-animation`;
@@ -59,59 +59,56 @@ export class CellFlashService extends BeanStub implements NamedBean {
 
         if (!this.nextAnimationCycle) {
             this.nextAnimationCycle = setTimeout(this.advanceAnimations.bind(this), flashDuration);
-            this.nextAnimationTime = Date.now() + flashDuration;
+            this.nextAnimationTime = time + flashDuration;
         }
     }
 
     private advanceAnimations() {
-        let filterAfterFinish = false;
-        let nextAnimationTime: number | null = null;
         const time = Date.now();
-        for (const animState of this.runningAnimations) {
-            const nextActionableTime = animState.phase === 'flash' ? animState.flashEnd : animState.fadeEnd;
-            const requiresAction = time + 15 >= nextActionableTime;
-            if (!requiresAction) {
-                nextAnimationTime = Math.min(nextActionableTime, nextAnimationTime ?? Infinity);
-                continue;
-            }
+        let nextAnimationTime: number | null = null;
+        for (const cssName of Object.keys(this.animations) as Array<FlashClassName>) {
+            const animations = this.animations[cssName];
 
-            const cell = animState.cell.deref();
-            if (!cell?.isAlive() || !cell.comp) {
-                animState.phase = 'done';
-                filterAfterFinish = true;
-                continue;
-            }
+            for (const [cell, animState] of animations) {
+                if (!cell.isAlive() || !cell.comp) {
+                    animations.delete(cell);
+                    continue;
+                }
 
-            const cellComp = cell.comp;
-            const fullName = `ag-cell-${animState.anim}`;
-            const animationFullName = `ag-cell-${animState.anim}-animation`;
+                const nextActionableTime = animState.phase === 'flash' ? animState.flashEnd : animState.fadeEnd;
+                const requiresAction = time + 15 >= nextActionableTime; // if need to act up to 15ms in future, batch into now.
+                if (!requiresAction) {
+                    nextAnimationTime = Math.min(nextActionableTime, nextAnimationTime ?? Infinity);
+                    continue;
+                }
 
-            const { phase, flashEnd, fadeEnd } = animState;
-            switch (phase) {
-                case 'flash':
-                    cellComp.toggleCss(fullName, false);
-                    cellComp.toggleCss(animationFullName, true);
-                    cell.eGui.style.transition = `background-color ${fadeEnd - flashEnd}ms`;
-                    cell.eGui.style.transitionDelay = `${flashEnd - time}ms`; // start part way through the fade
-                    nextAnimationTime = Math.min(flashEnd, nextAnimationTime ?? Infinity);
-                    animState.phase = 'fade';
-                    break;
-                case 'fade':
-                    cellComp.toggleCss(fullName, false);
-                    cellComp.toggleCss(animationFullName, false);
-                    cell.eGui.style.transition = '';
-                    cell.eGui.style.transitionDelay = '';
-                    animState.phase = 'done';
-                    filterAfterFinish = true;
-                    break;
+                const cellComp = cell.comp;
+                const fullName = `ag-cell-${cssName}`;
+                const animationFullName = `ag-cell-${cssName}-animation`;
+
+                const { phase, flashEnd, fadeEnd } = animState;
+                switch (phase) {
+                    case 'flash':
+                        cellComp.toggleCss(fullName, false);
+                        cellComp.toggleCss(animationFullName, true);
+                        cell.eGui.style.transition = `background-color ${fadeEnd - flashEnd}ms`;
+                        cell.eGui.style.transitionDelay = `${flashEnd - time}ms`; // start part way through the fade
+                        nextAnimationTime = Math.min(fadeEnd, nextAnimationTime ?? Infinity);
+                        animState.phase = 'fade';
+                        break;
+                    case 'fade':
+                        cellComp.toggleCss(fullName, false);
+                        cellComp.toggleCss(animationFullName, false);
+                        animations.delete(cell);
+                        cell.eGui.style.transition = '';
+                        cell.eGui.style.transitionDelay = '';
+                        break;
+                }
             }
         }
 
-        if (filterAfterFinish) {
-            this.runningAnimations = this.runningAnimations.filter((animState) => animState.phase !== 'done');
-        }
-
-        if (this.runningAnimations.length === 0) {
+        if (nextAnimationTime == null) {
+            this.nextAnimationTime = null;
             this.nextAnimationCycle = null;
         } else if (nextAnimationTime) {
             this.nextAnimationCycle = setTimeout(this.advanceAnimations.bind(this), nextAnimationTime - time);
