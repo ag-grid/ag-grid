@@ -299,6 +299,8 @@ export class CellCtrl extends BeanStub {
         if (!skipRangeHandleRefresh && rangeFeature) {
             _requestAnimationFrame(beans, () => rangeFeature?.refreshHandle());
         }
+
+        this.rowResizeFeature?.refreshRowResizer();
     }
 
     private setupControlComps(): void {
@@ -673,6 +675,8 @@ export class CellCtrl extends BeanStub {
 
         // check range selection
         this.rangeFeature?.onCellSelectionChanged();
+
+        this.rowResizeFeature?.refreshRowResizer();
     }
 
     public onSuppressCellFocusChanged(suppressCellFocus: boolean): void {

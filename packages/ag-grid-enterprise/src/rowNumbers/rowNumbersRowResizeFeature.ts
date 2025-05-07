@@ -30,25 +30,24 @@ export class RowNumbersRowResizeFeature implements IRowNumbersRowResizeFeature {
 
     private addResizerToCellComp() {
         const { beans, cellCtrl } = this;
-
-        if (this.rowResizer) {
-            return;
-        }
-
-        const rowResizer = beans.registry.createDynamicBean<AgRowNumbersRowResizer>(
-            'rowNumberRowResizer',
-            false,
-            cellCtrl
-        );
-
-        if (!rowResizer) {
-            return;
-        }
-        this.rowResizer = beans.context.createBean(rowResizer);
-
         const { eGui } = cellCtrl;
 
-        eGui.appendChild(this.rowResizer.getGui());
+        let { rowResizer } = this;
+
+        if (!rowResizer) {
+            rowResizer = beans.registry.createDynamicBean<AgRowNumbersRowResizer>(
+                'rowNumberRowResizer',
+                false,
+                cellCtrl
+            );
+
+            if (!rowResizer) {
+                return;
+            }
+            this.rowResizer = beans.context.createBean(rowResizer);
+        }
+
+        eGui.appendChild(rowResizer.getGui());
     }
 
     private removeRowResizerFromCellComp(): void {
