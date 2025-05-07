@@ -495,7 +495,7 @@
 }
 
 .fullWidthBar {
-    $bar-height: 56px;
+    $bar-height: 100px;
 
     width: 100%;
     position: fixed;
@@ -512,52 +512,55 @@
     &.active {
         transform: translateY(0);
     }
-}
 
-@media screen and (min-width: $breakpoint-pricing-large) {
-    .fullWidthBar {
+    @media screen and (max-width: $breakpoint-pricing-medium) {
+        display: none;
+    }
+
+    @media screen and (min-width: $breakpoint-pricing-large) {
         top: 64px;
     }
 }
 
-@media screen and (max-width: $breakpoint-pricing-medium) {
-    .fullWidthBar {
-        display: none;
-    }
-}
-
 .fullWidthBarContainer {
-    margin: 0 auto; /* Center the container horizontally */
+    margin: 0 auto;
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr 1fr; /* Create a 3-column grid */
-    font-weight: bold; /* Add font-weight as needed */
-}
-
-/* Style for the left part of the full-width bar (Pricing) */
-.fullWidthBarLeft {
-    font-weight: bold; /* Add font-weight as needed */
-}
-
-/* Style for the right part of the full-width bar (Community, Enterprise, Grid + Charts) */
-.fullWidthBarRight {
-    display: flex;
-    gap: 10px; /* Adjust the gap between items as needed */
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    font-weight: bold;
 }
 
 .fullWidthBarItem {
     display: flex;
-    justify-content: center;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: $spacing-size-2 $spacing-size-4;
+    padding-left: $spacing-size-2;
+
+    &:first-child {
+        grid-column: 2 / span 1;
+    }
 }
 
-/* Remove the border-right for the last item to avoid an extra separator */
-.fullWidthBarItem:last-child {
-    border-right: none;
+.fwProduct {
+    width: 100%;
 }
 
-/* Show the fullWidthBar when it appears */
-.fullWidthBar.active {
-    opacity: 1;
-    transform: translateY(0%);
+.fwPrice {
+    display: inline-flex;
+    font-weight: var(--text-regular);
+
+    b:nth-child(2) {
+        margin: 0 2px 0 6px;
+    }
+
+    span:last-child {
+        transform: translateY(7px);
+    }
+}
+
+a.fwAction {
+    align-self: flex-end;
+    padding: 3px $spacing-size-4 4px;
 }
 
 .pricingHeading {
@@ -565,7 +568,6 @@
 }
 
 /* products toggle */
-
 .toggleCheckbox {
     display: none;
 }
@@ -795,7 +797,7 @@
 
     @media screen and (min-width: $breakpoint-pricing-large) {
         position: sticky;
-        top: 128px;
+        top: 172px;
     }
 
     #{$selector-darkmode} & {

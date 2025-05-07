@@ -18,7 +18,7 @@ type LicenseData = {
     tabGroup: string;
 };
 
-const DEV_LICENSE_DATA: LicenseData[] = [
+export const DEV_LICENSE_DATA: LicenseData[] = [
     {
         className: styles.gridLicense,
         id: 'community',

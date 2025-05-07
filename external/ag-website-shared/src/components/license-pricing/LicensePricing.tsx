@@ -15,6 +15,7 @@ import gridFeaturesData from '../../content/license-features/gridFeaturesMatrix.
 import { TrialLicenceForm } from '../trial-licence-form/TrialLicenceForm';
 import { InfoEmailLink } from './InfoEmailLink';
 import { Licenses } from './Licenses';
+import { DEV_LICENSE_DATA } from './Licenses';
 import SocialProof from './SocialProof';
 import { ComparisonTable } from './comparison-table/ComparisonTable';
 import styles from './license-pricing.module.scss';
@@ -31,6 +32,13 @@ export const LicensePricing: FunctionComponent<Props> = ({ defaultSelection }) =
     const contactSalesRef = useRef(null); // Step 1: Create a ref for the contactSales div
     const framework = useFrameworkFromStore();
 
+    const gridLicenseData = DEV_LICENSE_DATA.filter(
+        (license) => license.tabGroup === 'grid' || license.tabGroup === 'both'
+    );
+    const chartsLicenseData = DEV_LICENSE_DATA.filter(
+        (license) => license.tabGroup === 'charts' || license.tabGroup === 'both'
+    );
+
     useEffect(() => {
         const handleScroll = () => {
             // Step 2: Determine the position of the contactSales div
@@ -39,7 +47,7 @@ export const LicensePricing: FunctionComponent<Props> = ({ defaultSelection }) =
                 : 0;
 
             // Check if contactSales div is at the top of the viewport or if the scroll is beyond a certain point
-            if (window.scrollY > 320 && contactSalesPosition > 120) {
+            if (window.scrollY > 300 && contactSalesPosition > 120) {
                 setShowFullWidthBar(true);
             } else {
                 setShowFullWidthBar(false);
@@ -61,17 +69,40 @@ export const LicensePricing: FunctionComponent<Props> = ({ defaultSelection }) =
     };
 
     const featuresData = chartsIsSelected ? chartsFeaturesData : gridFeaturesData;
+    const licenseData = chartsIsSelected ? chartsLicenseData : gridLicenseData;
 
     return (
         <>
             <div className={classnames(styles.fullWidthBar, { [styles.active]: showFullWidthBar })}>
                 <div className={classnames('layout-max-width-small', styles.fullWidthBarContainer)}>
-                    <div className={styles.fullWidthBarLeft}> </div>
-                    <div className={styles.fullWidthBarItem}>AG {chartsIsSelected ? 'Charts' : 'Grid'} Community</div>
-                    <div className={styles.fullWidthBarItem}>AG {chartsIsSelected ? 'Charts' : 'Grid'} Enterprise</div>
-                    <div className={styles.fullWidthBarItem}>Enterprise Bundle</div>
+                    {licenseData.map((license, i) => {
+                        const isCommunity = license.id === 'community';
 
-                    <div className={styles.fullWidthBarRight}></div>
+                        return (
+                            <div className={styles.fullWidthBarItem} key={i}>
+                                <span className={classnames(styles.fwProduct, 'text-lg')}>{license.subHeading}</span>
+
+                                <span className={styles.fwPrice}>
+                                    {isCommunity ? (
+                                        <b>Free</b>
+                                    ) : (
+                                        <>
+                                            <span>From </span>
+                                            <b> ${license.priceFullDollars}</b>
+                                            <span className="text-2xs">USD</span>
+                                        </>
+                                    )}
+                                </span>
+
+                                <a
+                                    className={classnames(styles.fwAction, isCommunity ? 'button-tertiary' : 'button')}
+                                    href={license.buyLink}
+                                >
+                                    {isCommunity ? 'Get started' : 'Buy now'}
+                                </a>
+                            </div>
+                        );
+                    })}
                 </div>
             </div>
 
