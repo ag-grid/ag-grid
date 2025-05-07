@@ -120,7 +120,6 @@ const SectionHeader = ({
 }: {
     description?: string;
     page?: any;
-    module?: any;
     framework: Framework;
     breadcrumbs: Record<string, string>;
     displayName: string;
