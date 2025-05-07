@@ -88,15 +88,13 @@
     "charts": {
         "meta": {
             "displayName": "Columns: Integrated Charts",
-            "description": "(Enterprise only) See [Integrated Charts](./integrated-charts/)",
-            "module": "IntegratedChartsModule"
+            "description": "(Enterprise only) See [Integrated Charts](./integrated-charts/)"
         },
         "chartDataType": {}
     },
     "tooltips": {
         "meta": {
-            "displayName": "Columns: Tooltips",
-            "module": "TooltipModule"
+            "displayName": "Columns: Tooltips"
         },
         "tooltipField": {
             "interfaceHierarchyOverrides": {
@@ -461,8 +459,7 @@
     "grouping": {
         "meta": {
             "displayName": "Columns: Row Grouping",
-            "description": "(Enterprise only) See [Row Grouping](./grouping/)",
-            "module": "RowGroupingModule"
+            "description": "(Enterprise only) See [Row Grouping](./grouping/)"
         },
         "rowGroup": {},
         "initialRowGroup": {},
@@ -479,8 +476,7 @@
     "aggregation": {
         "meta": {
             "displayName": "Columns: Aggregation",
-            "description": "(Enterprise only) See [Aggregation](./aggregation-columns/)",
-            "module": "RowGroupingModule / PivotModule / TreeDataModule"
+            "description": "(Enterprise only) See [Aggregation](./aggregation-columns/)"
         },
         "aggFunc": {
             "more": {
@@ -511,8 +507,7 @@
     "pivoting": {
         "meta": {
             "displayName": "Columns: Pivoting",
-            "description": "(Enterprise only) See [Pivoting](./pivoting/)",
-            "module": "PivotModule"
+            "description": "(Enterprise only) See [Pivoting](./pivoting/)"
         },
         "pivot": {
             "more": {
@@ -542,8 +537,7 @@
             "page": {
                 "name": "Row Dragging",
                 "url": "./row-dragging/"
-            },
-            "module": "DragAndDropModule"
+            }
         },
         "rowDrag": {},
         "rowDragText": {},
@@ -619,8 +613,7 @@
     },
     "find": {
         "meta": {
-            "displayName": "Columns: Find",
-            "module": "FindModule"
+            "displayName": "Columns: Find"
         },
         "getFindText": {
             "more": {

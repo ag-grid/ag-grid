@@ -83,8 +83,7 @@
             "page": {
                 "name": "Clipboard",
                 "url": "./clipboard/"
-            },
-            "module": "ClipboardModule"
+            }
         },
         "copyHeadersToClipboard": {
             "more": {
@@ -582,8 +581,7 @@
             "page": {
                 "name": "Integrated Charts",
                 "url": "./integrated-charts/"
-            },
-            "module": "IntegratedChartsModule"
+            }
         },
         "enableCharts": {
             "more": {
@@ -669,8 +667,7 @@
             "page": {
                 "name": "Localisation",
                 "url": "./localisation/"
-            },
-            "module": "LocaleModule"
+            }
         },
         "localeText": {
             "more": {
@@ -691,8 +688,7 @@
             "page": {
                 "name": "Master Detail",
                 "url": "./master-detail/"
-            },
-            "module": "MasterDetailModule"
+            }
         },
         "masterDetail": {
             "more": {
@@ -922,8 +918,7 @@
             "page": {
                 "name": "Row Pagination",
                 "url": "./row-pagination"
-            },
-            "module": "PaginationModule"
+            }
         },
         "pagination": {
             "more": {
@@ -974,8 +969,7 @@
             "page": {
                 "name": "Aggregation",
                 "url": "./aggregation/"
-            },
-            "module": "RowGroupingModule / PivotModule / TreeDataModule"
+            }
         },
         "aggFuncs": {
             "more": {
@@ -1035,8 +1029,7 @@
             "page": {
                 "name": "Pivoting",
                 "url": "./pivoting/"
-            },
-            "module": "PivotModule"
+            }
         },
         "pivotMode": {
             "more": {
@@ -1183,8 +1176,7 @@
             "page": {
                 "name": "Row Dragging",
                 "url": "./row-dragging/"
-            },
-            "module": "RowDragModule"
+            }
         },
         "rowDragManaged": {
             "more": {
@@ -1269,8 +1261,7 @@
             "page": {
                 "name": "Row Grouping",
                 "url": "./grouping/"
-            },
-            "module": "RowGroupingModule"
+            }
         },
         "groupDisplayType": {
             "more": {
@@ -1385,8 +1376,7 @@
                 "name": "Tree Data",
                 "url": "./tree-data/"
             },
-            "description": "Tree Data provides a way to supply the grid with structured hierarchical data.",
-            "module": "TreeDataModule"
+            "description": "Tree Data provides a way to supply the grid with structured hierarchical data."
         },
         "treeData": {
             "more": {
@@ -1444,7 +1434,6 @@
                 "name": "Row Pinning",
                 "url": "./row-pinning/"
             },
-            "module": "RowPinningModule",
             "description": "Row data uses the [generic type](./typescript-generics) `TData` if provided via `GridOptions&lt;TData&gt;`. Otherwise `TData` will default to `any`."
         },
         "enableRowPinning": {
@@ -1484,8 +1473,7 @@
             "page": {
                 "name": "Row Model",
                 "url": "./row-models/"
-            },
-            "module": "ClientSideRowModelModule / ServerSideRowModelModule / InfiniteRowModelModule / ViewportRowModelModule"
+            }
         },
         "rowModelType": {
             "more": {
@@ -1503,8 +1491,7 @@
     "clientRowModel": {
         "meta": {
             "displayName": "RowModel: Client-Side",
-            "description": "Row data uses the [generic type](./typescript-generics) `TData` if provided via `GridOptions&lt;TData&gt;`. Otherwise `TData` will default to `any`.",
-            "module": "ClientSideRowModelModule"
+            "description": "Row data uses the [generic type](./typescript-generics) `TData` if provided via `GridOptions&lt;TData&gt;`. Otherwise `TData` will default to `any`."
         },
         "rowData": {
             "more": {
@@ -1533,8 +1520,7 @@
             "page": {
                 "name": "Server-Side Row Model",
                 "url": "./server-side-model/"
-            },
-            "module": "ServerSideRowModelModule"
+            }
         },
         "serverSideDatasource": {
             "more": {
@@ -1630,8 +1616,7 @@
             "page": {
                 "name": "Infinite Row Model",
                 "url": "./infinite-scrolling/"
-            },
-            "module": "InfiniteRowModelModule"
+            }
         },
         "datasource": {
             "more": {
@@ -1676,8 +1661,7 @@
             "page": {
                 "name": "Viewport Row Model",
                 "url": "./viewport/"
-            },
-            "module": "ViewportRowModelModule"
+            }
         },
         "viewportDatasource": {
             "more": {
@@ -1934,8 +1918,7 @@
             "page": {
                 "name": "Tooltip Component",
                 "url": "./tooltips/"
-            },
-            "module": "TooltipModule"
+            }
         },
         "enableBrowserTooltips": {
             "more": {

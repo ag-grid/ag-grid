@@ -31,8 +31,7 @@
             "page": {
                 "name": "Updating Column Definitions",
                 "url": "./column-updating-definitions/"
-            },
-            "module": "ColumnApiModule"
+            }
         },
         "getColumnDefs": {
             "more": {
@@ -140,8 +139,7 @@
     },
     "colHover": {
         "meta": {
-            "displayName": "Column Hover",
-            "module": "ColumnHoverModule"
+            "displayName": "Column Hover"
         },
         "isColumnHovered": {
             "more": {
@@ -152,8 +150,7 @@
     },
     "Visibility and Display": {
         "meta": {
-            "displayName": "Column Display",
-            "module": "ColumnApiModule"
+            "displayName": "Column Display"
         },
         "setColumnsVisible": {},
         "getDisplayNameForColumn": {},
@@ -171,8 +168,7 @@
             "page": {
                 "name": "Row Pinning",
                 "url": "./row-pinning/"
-            },
-            "module": "PinnedRowModule"
+            }
         },
         "getPinnedTopRowCount": {},
         "getPinnedBottomRowCount": {},
@@ -217,8 +213,7 @@
     },
     "displayedRows": {
         "meta": {
-            "displayName": "Row Displayed",
-            "module": "RowApiModule"
+            "displayName": "Row Displayed"
         },
         "getDisplayedRowAtIndex": {
             "more": {
@@ -251,8 +246,7 @@
             "page": {
                 "name": "Master Detail",
                 "url": "./master-detail/"
-            },
-            "module": "MasterDetailModule"
+            }
         },
         "getDetailGridInfo": {
             "more": {
@@ -546,8 +540,7 @@
     },
     "events": {
         "meta": {
-            "displayName": "Events",
-            "module": "EventApiModule"
+            "displayName": "Events"
         },
         "addEventListener": {
             "interfaceHierarchyOverrides": {
@@ -597,8 +590,7 @@
             "page": {
                 "name": "Row Grouping",
                 "url": "./grouping/"
-            },
-            "module": "RowGroupingModule"
+            }
         },
         "getRowGroupColumns": {},
         "setRowGroupColumns": {},
@@ -612,8 +604,7 @@
             "page": {
                 "name": "Row Dragging",
                 "url": "./row-dragging/"
-            },
-            "module": "RowDragModule"
+            }
         },
         "addRowDropZone": {
             "more": {
@@ -719,8 +710,7 @@
             "page": {
                 "name": "Infinite Row Model",
                 "url": "./infinite-scrolling/"
-            },
-            "module": "InfiniteRowModelModule"
+            }
         },
         "refreshInfiniteCache": {},
         "purgeInfiniteCache": {},
@@ -745,8 +735,7 @@
             "page": {
                 "name": "Clipboard",
                 "url": "./clipboard/"
-            },
-            "module": "ClipboardModule"
+            }
         },
         "cutToClipboard": {},
         "copyToClipboard": {},
@@ -773,8 +762,7 @@
             "page": {
                 "name": "Row Pagination",
                 "url": "./row-pagination"
-            },
-            "module": "PaginationModule"
+            }
         },
         "paginationIsLastPageFound": {
             "description": "Returns `true` when the last page is known; this will always be the case if you are using the Client-Side Row Model for pagination. Returns `false` when the last page is not known; this only happens when using [Infinite Row Model](./infinite-scrolling/)."
@@ -795,8 +783,7 @@
             "page": {
                 "name": "Undo/Redo Edits",
                 "url": "./undo-redo-edits/"
-            },
-            "module": "UndoRedoEditModule"
+            }
         },
         "undoCellEditing": {},
         "redoCellEditing": {},
@@ -824,8 +811,7 @@
     "rowPivoting": {
         "meta": {
             "displayName": "Row Pivoting",
-            "description": "See [Pivot](./pivoting/)  for more information",
-            "module": "PivotModule"
+            "description": "See [Pivot](./pivoting/)  for more information"
         },
         "isPivotMode": {},
         "getPivotColumns": {},
@@ -949,8 +935,7 @@
             "page": {
                 "name": "Integrated Charts",
                 "url": "./integrated-charts/"
-            },
-            "module": "IntegratedChartsModule"
+            }
         },
         "createRangeChart": {
             "more": {
@@ -1075,8 +1060,7 @@
     },
     "data": {
         "meta": {
-            "displayName": "RowModel: Client-Side",
-            "module": "ClientSideRowModelApiModule"
+            "displayName": "RowModel: Client-Side"
         },
         "applyTransaction": {
             "more": {
@@ -1116,8 +1100,7 @@
             "page": {
                 "name": "Server-Side Row Model",
                 "url": "./server-side-model/"
-            },
-            "module": "ServerSideRowModelApiModule"
+            }
         },
         "setRowCount": {},
         "refreshServerSide": {
@@ -1177,8 +1160,7 @@
             "page": {
                 "name": "Find",
                 "url": "./find/"
-            },
-            "module": "FindModule"
+            }
         },
         "findNext": {
             "more": {

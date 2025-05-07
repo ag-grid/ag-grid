@@ -12,7 +12,6 @@ interface MetaTag {
         url: string;
         name: string;
     };
-    module?: string;
     type?: string;
     isEvent?: boolean;
     /** Suppress the missing property check. Needed for events as they are dynamic and so do not appear in src code */
