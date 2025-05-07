@@ -130,4 +130,11 @@ export class CellFlashService extends BeanStub implements NamedBean {
     public flashCell(cellCtrl: CellCtrl, delays?: Pick<FlashCellsParams, 'fadeDuration' | 'flashDuration'>): void {
         this.animateCell(cellCtrl, 'data-changed', delays?.flashDuration, delays?.fadeDuration);
     }
+
+    public override destroy(): void {
+        for (const cssName of Object.keys(this.animations) as Array<FlashClassName>) {
+            const animations = this.animations[cssName];
+            animations.clear();
+        }
+    }
 }
