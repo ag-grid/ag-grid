@@ -66,6 +66,11 @@ export function createAgChartTheme(
             }),
             rootTheme
         );
+    theme.params = {
+        chromeFontFamily: `"IBM Plex Sans", -apple-system, "system-ui", "Segoe UI", Roboto, Oxygen-Sans, Ubuntu`,
+        chromeFontSize: 14,
+        chromeFontWeight: 500,
+    };
 
     // Avoid explicitly setting the `theme.palette` property unless we're using the restored theme
     // AND the palette is actually different.
