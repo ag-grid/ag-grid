@@ -46,6 +46,27 @@ const gridOptions = {
 
 {% interfaceDocumentation interfaceName="RowNumbersOptions" config={ "description": "" } names=["suppressCellSelectionIntegration"] /%}
 
+## Row Resizing
+
+To allow the Row Numbers feature to resize rows, the `enableRowResizer` property can be used.
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    rowNumbers: {
+        enableRowResizer: true
+    },
+}
+```
+
+{% interfaceDocumentation interfaceName="RowNumbersOptions" config={ "description": "" } names=["enableRowResizer"] /%}
+
+{% gridExampleRunner title="Row Numbers Row Resizer" name="row-numbers-row-resizer" /%}
+
+{% note %}
+The Row Resizer feature does not work when columns are configured with [Auto Row Height](./row-height/#auto-row-height).
+{% /note %}
+
+
 ## Value Export
 
 By default, when working with exporters such as [CSV Export](./csv-export/) or [Excel Export](./excel-export/), the value of the Row Numbers column is not exported. 
