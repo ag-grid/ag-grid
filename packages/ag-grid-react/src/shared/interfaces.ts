@@ -27,6 +27,8 @@ export interface AgGridReactProps<TData = any> extends GridOptions<TData> {
     setGridApi?: (gridApi: GridApi<TData>) => void;
     /** @deprecated v33.3 AgGridReact does not accept children so this property will be removed. */
     children?: any;
+
+    unstable_renderMode?: 'flushSync' | 'vanilla' | 'batchedFlushSync';
 }
 
 export interface InternalAgGridReactProps<TData = any> extends AgGridReactProps<TData> {

@@ -55,7 +55,7 @@ import { ReactComponent } from '../shared/reactComponent';
 import { BeansContext } from './beansContext';
 import GridComp from './gridComp';
 import { RenderStatusService } from './renderStatusService';
-import { CssClasses, agFlushSync, isReact19, runWithoutFlushSync } from './utils';
+import { CssClasses, agFlushSync, forceDisableFlushSync, isReact19, runWithoutFlushSync } from './utils';
 
 const deprecatedProps: Pick<
     InternalAgGridReactProps,
@@ -97,6 +97,10 @@ export const AgGridReactUi = <TData,>(props: InternalAgGridReactProps<TData>) =>
     // Hook to enable Portals to be displayed via the PortalManager
     const [, setPortalRefresher] = useState(0);
 
+    if (props.unstable_renderMode === 'vanilla') {
+        forceDisableFlushSync();
+    }
+
     const setRef = useCallback((eRef: HTMLDivElement | null) => {
         eGui.current = eRef;
         if (!eRef) {
@@ -137,7 +141,7 @@ export const AgGridReactUi = <TData,>(props: InternalAgGridReactProps<TData>) =>
             }
         };
 
-        const frameworkOverrides = new ReactFrameworkOverrides(processQueuedUpdates);
+        const frameworkOverrides = new ReactFrameworkOverrides(processQueuedUpdates, props.unstable_renderMode);
         frameworkOverridesRef.current = frameworkOverrides;
         const renderStatus = new RenderStatusService();
         const gridParams: GridParams = {
@@ -449,7 +453,10 @@ class ReactFrameworkOverrides extends VanillaFrameworkOverrides {
     private queueUpdates = false;
     public override readonly renderingEngine = 'react';
     public override readonly batchFrameworkComps = true;
-    constructor(private readonly processQueuedUpdates: () => void) {
+    constructor(
+        private readonly processQueuedUpdates: () => void,
+        public unstable_renderMode?: 'flushSync' | 'vanilla' | 'batchedFlushSync'
+    ) {
         super('react');
     }
 

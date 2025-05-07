@@ -474,7 +474,8 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
             },
             this.rowNode.rowIndex!,
             'p1',
-            this.beans.frameworkOverrides.renderingEngine === 'react'
+            this.beans.frameworkOverrides.renderingEngine === 'react' &&
+                (this.beans.frameworkOverrides as any).unstable_renderMode === 'batchedFlushSync'
         );
         this.updateColumnListsPending = true;
     }

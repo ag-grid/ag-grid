@@ -71,6 +71,10 @@ export function runWithoutFlushSync<T>(func: () => T) {
     return func();
 }
 
+export function forceDisableFlushSync() {
+    disableFlushSync = true;
+}
+
 /**
  * Wrapper around flushSync to provide backwards compatibility with React 16-17
  * Also allows us to control via the `useFlushSync` param whether we want to use flushSync or not
