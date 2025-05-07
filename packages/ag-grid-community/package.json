@@ -74,8 +74,7 @@
     "./styles/agGridMaterialFont.css",
     "./styles/agGridMaterialFont.min.css",
     "./styles/agGridQuartzFont.css",
-    "./styles/agGridQuartzFont.min.css",
-    "./styles"
+    "./styles/agGridQuartzFont.min.css"
   ],
   "repository": {
     "type": "git",
