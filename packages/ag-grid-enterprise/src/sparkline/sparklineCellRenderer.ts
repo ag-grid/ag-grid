@@ -43,7 +43,9 @@ export class SparklineCellRenderer extends Component implements ICellRenderer {
 
     postConstruct(): void {
         this.env = this.beans.environment;
-        this.addManagedPropertyListeners(['chartThemeOverrides', 'chartThemes'], (_event) => this.refresh(this.params));
+        this.addManagedPropertyListeners(['chartThemeOverrides', 'chartThemes', 'styleNonce'], () =>
+            this.refresh(this.params)
+        );
     }
 
     private createListener(batch = true) {
@@ -100,6 +102,7 @@ export class SparklineCellRenderer extends Component implements ICellRenderer {
 
         const width = this.cachedWidth;
         const height = this.cachedHeight;
+        const styleNonce = this.gos.get('styleNonce');
 
         if (!this.sparklineInstance && params && width > 0 && height > 0) {
             this.sparklineOptions = {
@@ -107,6 +110,7 @@ export class SparklineCellRenderer extends Component implements ICellRenderer {
                 width,
                 height,
                 ...params.sparklineOptions,
+                ...(styleNonce ? { styleNonce } : {}),
                 data: this.processData(params.value),
             } as AgSparklineOptions;
 
@@ -139,6 +143,7 @@ export class SparklineCellRenderer extends Component implements ICellRenderer {
                 data: this.processData(params?.value),
                 width,
                 height,
+                ...(styleNonce ? { styleNonce } : {}),
             });
 
             return true;
