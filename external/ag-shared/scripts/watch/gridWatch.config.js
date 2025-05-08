@@ -31,6 +31,12 @@ function getProjectBuildTargets(project) {
             }
 
             buildTargets.push(['ag-grid-community', ['build'], 'watch'], ['ag-grid-enterprise', ['build'], 'watch']);
+
+            if (project === 'ag-grid-community') {
+                for (const framework of FRAMEWORK_PROJECTS) {
+                    buildTargets.push([framework, ['build']]);
+                }
+            }
         } else if (project.startsWith('@ag-grid')) {
             // For locale and styles
             buildTargets.push(

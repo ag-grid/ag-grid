@@ -149,7 +149,7 @@
       "parallelism": false,
       "options": {
         "parallel": true,
-        "commands": ["node external/ag-shared/scripts/watch/watch.js grid", "nx run ag-grid-docs:dev"]
+        "commands": ["BUILD_FWS=1 node external/ag-shared/scripts/watch/watch.js grid", "nx run ag-grid-docs:dev"]
       }
     },
     "dev:quick": {
