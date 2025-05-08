@@ -45,7 +45,7 @@ export const LicensePricing: FunctionComponent<Props> = ({ defaultSelection }) =
                 ? contactSalesRef.current.getBoundingClientRect().top
                 : 0;
 
-            if (window.scrollY > 300 && contactSalesPosition > 120) {
+            if (window.scrollY > 300 && contactSalesPosition > 200) {
                 setShowFullWidthBar(true);
             } else {
                 setShowFullWidthBar(false);

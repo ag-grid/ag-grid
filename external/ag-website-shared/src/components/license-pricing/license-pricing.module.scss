@@ -505,7 +505,9 @@
     padding-top: $spacing-size-4;
     z-index: 2;
     background-color: var(--color-bg-primary);
-    box-shadow: var(--shadow-xs);
+    box-shadow:
+        0 8px 0 0 var(--color-bg-primary),
+        var(--shadow-xs);
     opacity: 0;
     transform: translateY(-$bar-height);
     transition:
@@ -521,7 +523,7 @@
         display: none;
     }
 
-    @media screen and (min-width: $breakpoint-pricing-large) {
+    @media screen and (min-width: $breakpoint-docs-nav-medium) {
         top: 64px;
     }
 }
@@ -828,9 +830,11 @@ a.fwAction {
         margin-top: 0;
     }
 
-    @media screen and (min-width: $breakpoint-pricing-large) {
-        position: sticky;
-        top: 172px;
+    .tableContainer:not(:last-child) & {
+        @media screen and (min-width: $breakpoint-pricing-large) {
+            position: sticky;
+            top: 172px;
+        }
     }
 
     #{$selector-darkmode} & {
