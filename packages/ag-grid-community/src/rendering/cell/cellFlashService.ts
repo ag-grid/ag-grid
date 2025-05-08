@@ -56,7 +56,7 @@ export class CellFlashService extends BeanStub implements NamedBean {
         style.removeProperty('transition');
         style.removeProperty('transition-delay');
 
-        // need an earlier animation cycle, but we delay flash end by 10ms as it's ok if fade starts a little late
+        // need an earlier animation cycle, but we delay flash end by 15ms as it's ok if fade starts a little late
         // in favour of batching
         if (this.nextAnimationTime && flashEndTime + 15 < this.nextAnimationTime) {
             clearTimeout(this.nextAnimationCycle!);
@@ -65,7 +65,10 @@ export class CellFlashService extends BeanStub implements NamedBean {
         }
 
         if (!this.nextAnimationCycle) {
-            this.nextAnimationCycle = setTimeout(this.advanceAnimations.bind(this), flashDuration);
+            // then once that is applied, we remove the highlight with animation
+            this.beans.frameworkOverrides.wrapIncoming(() => {
+                this.nextAnimationCycle = setTimeout(this.advanceAnimations.bind(this), flashDuration);
+            });
             this.nextAnimationTime = flashEndTime;
         }
     }
