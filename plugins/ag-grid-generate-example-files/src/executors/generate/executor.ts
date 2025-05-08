@@ -30,6 +30,7 @@ import {
 import { frameworkFilesGenerator } from './generator/utils/frameworkFilesGenerator';
 import type { TransformEntryFile } from './generator/utils/frameworkFilesGenerator';
 import { getConsoleLogSnippet } from './generator/utils/getConsoleLogSnippet';
+import { getHtmlFiles } from './generator/utils/getHtmlFiles';
 import { getOtherScriptFiles, getUseFetchJsonFile } from './generator/utils/getOtherScriptFiles';
 import { getPackageJson } from './generator/utils/getPackageJson';
 import { getStyleFiles } from './generator/utils/getStyleFiles';
@@ -128,6 +129,7 @@ export async function generateFiles(options: ExecutorOptions, gridOptionsTypes: 
         readFile(path.join(folderPath, 'index.html')),
         getStyleFiles({ folderPath, sourceFileList }),
     ]);
+    const htmlFiles = await getHtmlFiles({ folderPath, sourceFileList });
 
     const isEnterprise = getIsEnterprise({ entryFile });
     const isLocale = getIsLocale({ entryFile });
@@ -245,7 +247,13 @@ export async function generateFiles(options: ExecutorOptions, gridOptionsTypes: 
         }
 
         let styleFilesKeys = [];
-        const mergedFiles = { ...mergedStyleFiles, ...files, ...provideFrameworkFiles, ...interfaceContents };
+        const mergedFiles = {
+            ...mergedStyleFiles,
+            ...htmlFiles,
+            ...files,
+            ...provideFrameworkFiles,
+            ...interfaceContents,
+        };
         if ((['typescript', 'vanilla'] as InternalFramework[]).includes(internalFramework)) {
             styleFilesKeys = Object.keys(mergedStyleFiles);
         }
@@ -267,6 +275,7 @@ export async function generateFiles(options: ExecutorOptions, gridOptionsTypes: 
             mainFileName,
             scriptFiles: scriptFiles!,
             styleFiles: styleFilesKeys,
+            htmlFiles: Object.keys(htmlFiles),
             files: mergedFiles,
             boilerPlateFiles,
             packageJson,

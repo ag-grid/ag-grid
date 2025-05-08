@@ -13,9 +13,9 @@ interface Props {
     scriptFiles?: string[];
     styleFiles?: string[];
     indexFragment: string;
+    headFragment?: string;
     appLocation: string;
     extraStyles?: string;
-    children?: any;
     extras?: string[];
     usesMathRandom?: boolean;
 }
@@ -30,6 +30,7 @@ const {
     styleFiles,
     scriptFiles,
     indexFragment,
+    headFragment,
     appLocation,
     extraStyles,
     extras,
@@ -73,6 +74,7 @@ const gridScriptLocalePath = getCacheBustingUrl(getGridLocaleScriptPath(siteUrl)
                 : []}
         />
         <Extras extras={extras ?? []} />
+        <Fragment set:html={headFragment} />
     </head>
     <body>
         <Fragment set:html={indexFragment} />
