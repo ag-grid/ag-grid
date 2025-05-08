@@ -259,10 +259,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
         let above = yDelta < 0;
 
         const sameGrid = this.isFromThisGrid(draggingEvent);
-        const canSetParent =
-            !!beans.groupStage?.setParent &&
-            // TODO: we don't yet support moving inside from one grid to another, as it uses transactions
-            sameGrid;
+        const canSetParent = !!beans.groupStage?.setParent; // TreeData support for managed drag and drop
 
         let targetInRows = false;
 
@@ -298,8 +295,9 @@ export class RowDragFeature extends BeanStub implements DropTarget {
                 above = false;
                 newParent = target;
             } else if (
-                !targetInRows &&
                 !above &&
+                !targetInRows &&
+                sameGrid &&
                 yDelta <= 1 &&
                 clientSideRowModel.getRow(targetRowIndex + 1)?.parent === target &&
                 clientSideRowModel.getRow(targetRowIndex + 2)?.parent === target
@@ -533,38 +531,66 @@ export class RowDragFeature extends BeanStub implements DropTarget {
         return rowsDrop.sameGrid ? this.moveRows(rowsDrop) : this.addRows(rowsDrop);
     }
 
-    private addRows({ above, target, rows }: RowsDrop): boolean {
+    private addRows({ above, target, rows, newParent }: RowsDrop): boolean {
         const getRowIdFunc = _getRowIdCallback(this.gos);
         const clientSideRowModel = this.clientSideRowModel;
+
         const add = rows
             .filter(
                 ({ data, rowPinned }) =>
                     !clientSideRowModel.getRowNode(getRowIdFunc?.({ data, level: 0, rowPinned }) ?? data.id)
             )
             .map(({ data }) => data);
+
         if (add.length === 0) {
             return false; // Nothing to add
         }
+
         const addIndex = target ? target.sourceRowIndex + (above ? 0 : 1) : undefined;
-        clientSideRowModel.updateRowData({ add, addIndex });
+        const result = clientSideRowModel.updateRowData({ add, addIndex });
+
+        // This is a bit of a hack, as we are moving the parents to the new parent after the transaction
+        // This will cause a second refresh, but we need to do this as transactions are not really supporting tree data
+        const setParent = this.beans.groupStage?.setParent;
+        if (result && newParent && setParent) {
+            let parentsChanged = false;
+            for (const row of result.add) {
+                if (row.parent !== newParent && !wouldFormCycle(row, newParent)) {
+                    setParent(row as RowNode, newParent);
+                    parentsChanged = true;
+                }
+            }
+            if (parentsChanged) {
+                this.refreshModelAfterDrop();
+            }
+        }
+
         return true;
+    }
+
+    private refreshModelAfterDrop(): void {
+        this.clientSideRowModel.refreshModel({
+            step: 'group',
+            keepRenderedRows: true,
+            animate: !this.gos.get('suppressAnimationFrame'),
+            changedPath: new ChangedPath(false, this.clientSideRowModel.rootNode!),
+            rowNodesOrderChanged: true,
+        });
     }
 
     private moveRows({ above, target, rows, newParent }: RowsDrop): boolean {
         const rowsToMoveSet = this.getValidRowsToMove(rows);
         let changed = false;
 
-        if (newParent) {
-            const setParent = this.beans.groupStage?.setParent;
-            if (setParent) {
-                for (const row of rowsToMoveSet) {
-                    if (row.parent !== newParent) {
-                        if (wouldFormCycle(row, newParent)) {
-                            rowsToMoveSet.delete(row);
-                        } else {
-                            setParent(row, newParent);
-                            changed = true;
-                        }
+        const setParent = this.beans.groupStage?.setParent;
+        if (newParent && setParent) {
+            for (const row of rowsToMoveSet) {
+                if (row.parent !== newParent) {
+                    if (wouldFormCycle(row, newParent)) {
+                        rowsToMoveSet.delete(row);
+                    } else {
+                        setParent(row, newParent);
+                        changed = true;
                     }
                 }
             }
@@ -587,13 +613,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
             return false;
         }
 
-        this.clientSideRowModel.refreshModel({
-            step: 'group',
-            keepRenderedRows: true,
-            animate: !this.gos.get('suppressAnimationFrame'),
-            changedPath: new ChangedPath(false, this.clientSideRowModel.rootNode!),
-            rowNodesOrderChanged: true,
-        });
+        this.refreshModelAfterDrop();
 
         // Get the focussed cell so we can ensure it remains focussed after the move
         if (cellCtrl) {
