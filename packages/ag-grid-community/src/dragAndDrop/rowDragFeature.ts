@@ -73,8 +73,8 @@ export interface RowDropZoneParams extends RowDropZoneEvents {
 interface RowsDrop<TData = any> {
     sameGrid: boolean;
     above: boolean;
-    target: RowNode<TData> | null | undefined;
-    newParent: RowNode<TData> | null | undefined;
+    target: RowNode<TData> | null;
+    newParent: RowNode<TData> | null;
     rows: IRowNode<TData>[];
 }
 
@@ -253,7 +253,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
         const y = _getNormalisedMousePosition(beans, draggingEvent).y;
         const clientSideRowModel = this.clientSideRowModel;
         let targetRowIndex = clientSideRowModel.getRowIndexAtPixel(y);
-        let target = clientSideRowModel.getRow(targetRowIndex);
+        let target = clientSideRowModel.getRow(targetRowIndex) ?? null;
 
         const yDelta = target ? (y - target.rowTop! - target.rowHeight! / 2) / target.rowHeight! || 0 : 1;
         let above = yDelta < 0;
@@ -289,41 +289,50 @@ export class RowDragFeature extends BeanStub implements DropTarget {
             }
         }
 
-        let newParent: RowNode | null | undefined;
-        if (canSetParent) {
-            if (!target || (yDelta > 1 && targetRowIndex === beans.pageBounds.getLastRow())) {
-                // Dragging outside of the rows, move to last row at the root level
-                above = false;
-                newParent = clientSideRowModel.rootNode;
-            } else if (!targetInRows && Math.abs(yDelta) < 0.25) {
-                // Inside the middle of the row, we want to move inside, as children
-                above = false;
-                newParent = target;
-            } else if (
-                !above &&
-                !targetInRows &&
-                sameGrid &&
-                yDelta <= 1 &&
-                clientSideRowModel.getRow(targetRowIndex + 1)?.parent === target &&
-                clientSideRowModel.getRow(targetRowIndex + 2)?.parent === target
-            ) {
-                // In the bottom half of an expanded group with more than one child, we move inside the target
-                newParent = target;
-            } else {
-                // Same parent as the target
-                newParent = target.parent;
+        let newParent = canSetParent ? this.determineNewParent(target, yDelta, targetInRows) : null;
+        if (newParent) {
+            if (newParent === target) {
+                above = false; // When moving inside the target, we want to insert below it
             }
-
-            if (newParent && rowsHaveSameParent(rows, newParent)) {
+            if (rowsHaveSameParent(rows, newParent)) {
                 newParent = null; // No need to set parent if all rows have the same parent
             }
         }
 
-        if (source === target && newParent === null) {
+        if (source === target && !newParent) {
             return null; // No change, nothing to move
         }
 
         return { sameGrid, above, target, newParent, rows };
+    }
+
+    private determineNewParent(target: RowNode | null, yDelta: number, targetInRows: boolean): RowNode | null {
+        const clientSideRowModel = this.clientSideRowModel;
+        const targetRowIndex = target?.rowIndex;
+        if (!target || (yDelta > 1 && targetRowIndex === this.beans.pageBounds.getLastRow())) {
+            // Dragging outside of the rows, move to last row at the root level
+            return clientSideRowModel.rootNode;
+        }
+
+        const INSIDE_THRESHOLD = 0.25;
+
+        if (!targetInRows) {
+            if (Math.abs(yDelta) < INSIDE_THRESHOLD) {
+                return target; // Inside the middle of the row, we want to move inside, as children
+            }
+
+            if (
+                yDelta >= INSIDE_THRESHOLD &&
+                yDelta <= 1 &&
+                clientSideRowModel.getRow(targetRowIndex! + 1)?.parent === target &&
+                clientSideRowModel.getRow(targetRowIndex! + 2)?.parent === target
+            ) {
+                return target; // In the bottom half of an expanded group with more than one child, we move inside the target
+            }
+        }
+
+        // Same parent as the target
+        return target.parent;
     }
 
     public addRowDropZone(params: RowDropZoneParams & { fromGrid?: boolean }): void {
