@@ -74,7 +74,7 @@ interface RowsDrop<TData = any> {
     sameGrid: boolean;
     above: boolean;
     target: RowNode<TData> | null | undefined;
-    newParent: RowNode<TData> | null;
+    newParent: RowNode<TData> | null | undefined;
     rows: IRowNode<TData>[];
 }
 
@@ -264,45 +264,60 @@ export class RowDragFeature extends BeanStub implements DropTarget {
             // TODO: we don't yet support moving inside from one grid to another, as it uses transactions
             sameGrid;
 
-        const INSIDE_THRESHOLD = 0.25;
-        let inside = Math.abs(yDelta) < INSIDE_THRESHOLD;
+        let targetInRows = false;
 
         if (sameGrid && target) {
-            if (source === target && yDelta <= 1) {
-                return null; // Nothing to move
-            }
-            const rowsHasTarget = rows.indexOf(target) >= 0;
-            if (rowsHasTarget) {
-                inside = false;
-                const prevOrNextTarget = getRowsPrevOrNext(clientSideRowModel, targetRowIndex < source.rowIndex!, rows);
-                if (prevOrNextTarget?.parent === target.parent) {
-                    target = prevOrNextTarget; // Allow multiple rows dragging to the next selected dragging only in the original parent group
-                    targetRowIndex = target.rowIndex!;
+            if (source === target) {
+                targetInRows = true;
+                if (Math.abs(yDelta) <= 1) {
+                    return null; // Nothing to move
+                }
+            } else {
+                targetInRows = rows.indexOf(target) >= 0;
+                if (targetInRows) {
+                    const newTarget = getRowsPrevOrNext(clientSideRowModel, targetRowIndex < source.rowIndex!, rows);
+                    if (newTarget?.parent === target.parent) {
+                        target = newTarget; // Allow multiple rows dragging to the next selected dragging only in the original parent group
+                        targetRowIndex = target.rowIndex!;
+                    }
                 }
             }
-            if (rowsHasTarget || (!canSetParent && Math.abs(targetRowIndex - source.rowIndex!) === 1)) {
+            if (targetInRows || (!canSetParent && Math.abs(targetRowIndex - source.rowIndex!) === 1)) {
                 above = targetRowIndex < source.rowIndex!; // Facilitate the user by moving up and down the rows when dragging over a selected row to move
             }
         }
 
-        let newParent: RowNode | null = null;
+        let newParent: RowNode | null | undefined;
         if (canSetParent) {
             if (!target || (yDelta > 1 && targetRowIndex === beans.pageBounds.getLastRow())) {
-                newParent = clientSideRowModel.rootNode; // Dragging outside of the rows, move to last row at the root level
+                // Dragging outside of the rows, move to last row at the root level
                 above = false;
-            } else if (inside) {
-                newParent = target; // Inside the middle of the row, we want to move inside
+                newParent = clientSideRowModel.rootNode;
+            } else if (!targetInRows && Math.abs(yDelta) < 0.25) {
+                // Inside the middle of the row, we want to move inside, as children
                 above = false;
+                newParent = target;
+            } else if (
+                !targetInRows &&
+                !above &&
+                yDelta <= 1 &&
+                clientSideRowModel.getRow(targetRowIndex + 1)?.parent === target &&
+                clientSideRowModel.getRow(targetRowIndex + 2)?.parent === target
+            ) {
+                // In the bottom half of an expanded group with more than one child, we move inside the target
+                newParent = target;
             } else {
-                newParent = target.parent; // Same parent as the target
+                // Same parent as the target
+                newParent = target.parent;
             }
+
             if (newParent && rowsHaveSameParent(rows, newParent)) {
                 newParent = null; // No need to set parent if all rows have the same parent
             }
         }
 
         if (source === target && newParent === null) {
-            return null; // Nothing to move
+            return null; // No change, nothing to move
         }
 
         return { sameGrid, above, target, newParent, rows };
