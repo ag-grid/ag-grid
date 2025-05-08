@@ -259,7 +259,12 @@ export class RowDragFeature extends BeanStub implements DropTarget {
         let above = yDelta < 0;
 
         const sameGrid = this.isFromThisGrid(draggingEvent);
-        const canSetParent = !!beans.groupStage?.setParent; // TreeData support for managed drag and drop
+
+        // TreeData support for managed drag and drop
+        const canSetParent =
+            !!beans.groupStage?.setParent &&
+            // We don't yet support moving tree rows from a different grid in a structured way
+            sameGrid;
 
         let targetInRows = false;
 
@@ -531,7 +536,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
         return rowsDrop.sameGrid ? this.moveRows(rowsDrop) : this.addRows(rowsDrop);
     }
 
-    private addRows({ above, target, rows, newParent }: RowsDrop): boolean {
+    private addRows({ above, target, rows }: RowsDrop): boolean {
         const getRowIdFunc = _getRowIdCallback(this.gos);
         const clientSideRowModel = this.clientSideRowModel;
 
@@ -547,23 +552,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
         }
 
         const addIndex = target ? target.sourceRowIndex + (above ? 0 : 1) : undefined;
-        const result = clientSideRowModel.updateRowData({ add, addIndex });
-
-        // This is a bit of a hack, as we are moving the parents to the new parent after the transaction
-        // This will cause a second refresh, but we need to do this as transactions are not really supporting tree data
-        const setParent = this.beans.groupStage?.setParent;
-        if (result && newParent && setParent) {
-            let parentsChanged = false;
-            for (const row of result.add) {
-                if (row.parent !== newParent && !wouldFormCycle(row, newParent)) {
-                    setParent(row as RowNode, newParent);
-                    parentsChanged = true;
-                }
-            }
-            if (parentsChanged) {
-                this.refreshModelAfterDrop();
-            }
-        }
+        clientSideRowModel.updateRowData({ add, addIndex });
 
         return true;
     }
