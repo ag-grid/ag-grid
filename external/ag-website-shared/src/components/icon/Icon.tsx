@@ -16,6 +16,7 @@ import Funnel from '@ag-website-shared/images/inline-svgs/funnel.svg?react';
 import HeadingResult from '@ag-website-shared/images/inline-svgs/heading-result.svg?react';
 import maximizeIcon from '@ag-website-shared/images/inline-svgs/maximize.svg?react';
 import minimizeIcon from '@ag-website-shared/images/inline-svgs/minimize.svg?react';
+import moduleIcon from '@ag-website-shared/images/inline-svgs/module.svg?react';
 import NewTabIcon from '@ag-website-shared/images/inline-svgs/new-tab.svg?react';
 import PageResult from '@ag-website-shared/images/inline-svgs/page-result.svg?react';
 import PlunkerIcon from '@ag-website-shared/images/inline-svgs/plunker.svg?react';
@@ -135,6 +136,7 @@ export const ICON_MAP = {
     zoomArea: CarbonIcon.ZoomArea,
     colorPalette: CarbonIcon.ColorPalette,
     newTab: NewTabIcon,
+    module: moduleIcon,
     sort: CarbonIcon.ChevronSort,
     escape: EscapeIcon,
     pageResult: PageResult,

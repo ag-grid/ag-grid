@@ -768,7 +768,7 @@
     //  ****************************
     // */
     // for row animations.
-    .ag-row-animation .ag-row {
+    .ag-row-animation:not(.ag-prevent-animation) .ag-row {
         transition:
             transform 0.4s,
             top 0.4s,
@@ -776,7 +776,7 @@
     }
     // for rows older than one second, we also animate the height. we don't include the height
     // initially so we are not animating auto-height rows on initial render.
-    .ag-row-animation .ag-row.ag-after-created {
+    .ag-row-animation:not(.ag-prevent-animation) .ag-row.ag-after-created {
         transition:
             transform 0.4s,
             top 0.4s,
@@ -1683,13 +1683,22 @@
     .ag-row-number-cell {
         width: 100%;
         white-space: nowrap;
-        overflow: hidden;
+        overflow: visible;
         user-select: none;
         @include ag.unthemed-rtl(
             (
                 text-align: right,
             )
         );
+    }
+
+    .ag-row-numbers-resizer {
+        position: absolute;
+        bottom: -2px;
+        left: 0;
+        height: 3px;
+        width: 100%;
+        cursor: ns-resize;
     }
 
     // /**

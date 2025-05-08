@@ -32,7 +32,7 @@
         }
     }
 
-    :where(.ag-rtl) {
+    .ag-rtl {
         .ag-row-number-header,
         .ag-cell.ag-row-number-cell:not(.ag-cell-first-right-pinned) {
             border-left: var(--ag-pinned-column-border);

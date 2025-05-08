@@ -2,6 +2,7 @@ import type { ColumnModel } from '../columns/columnModel';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
 import type { CtrlsService } from '../ctrlsService';
+import type { RowResizeEndedEvent, RowResizeStartedEvent } from '../events';
 import type { FilterManager } from '../filter/filterManager';
 import { _isAnimateRows, _isDomLayout } from '../gridOptionsUtils';
 import type { IColsService } from '../interfaces/iColsService';
@@ -136,6 +137,7 @@ export class GridBodyCtrl extends BeanStub {
     private addEventListeners(): void {
         const setFloatingHeights = this.setFloatingHeights.bind(this);
         const setGridRootRole = this.setGridRootRole.bind(this);
+        const toggleRowResizeStyle = this.toggleRowResizeStyles.bind(this);
 
         this.addManagedEventListeners({
             gridColumnsChanged: this.onGridColumnsChanged.bind(this),
@@ -147,9 +149,16 @@ export class GridBodyCtrl extends BeanStub {
             headerHeightChanged: this.setStickyTopOffsetTop.bind(this),
             columnRowGroupChanged: setGridRootRole,
             columnPivotChanged: setGridRootRole,
+            rowResizeStarted: toggleRowResizeStyle,
+            rowResizeEnded: toggleRowResizeStyle,
         });
 
         this.addManagedPropertyListener('treeData', setGridRootRole);
+    }
+
+    private toggleRowResizeStyles(params: RowResizeStartedEvent | RowResizeEndedEvent) {
+        const isResizingRow = params.type === 'rowResizeStarted';
+        this.eBodyViewport.classList.toggle('ag-prevent-animation', isResizingRow);
     }
 
     private onGridColumnsChanged(): void {

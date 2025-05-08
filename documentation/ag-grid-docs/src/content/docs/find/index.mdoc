@@ -15,7 +15,7 @@ Find is only compatible with the [Client-Side Row Model](./row-models/).
 
 Find is enabled by setting the grid option `findSearchValue` with the text to be searched for.
 
-{% apiDocumentation source="grid-options/properties.json" section="miscellaneous" names=["findSearchValue"] /%}
+{% apiDocumentation source="grid-options/properties.json" section="find" names=["findSearchValue"] /%}
 
 ```{% frameworkTransform=true %}
 const gridOptions = {
@@ -29,7 +29,7 @@ The grid API methods `findNext()`, `findPrevious()`, and `findGoTo(matchNumber)`
 
 Changing the Find search value, changing the active match, or updates to the grid that cause changes to the visible cells (e.g. changing columns/rows) trigger the `findChanged` event. The event contains details on the active match, as well as the total number of matches.
 
-{% apiDocumentation source="grid-events/events.json" section="miscellaneous" names=["findChanged"] /%}
+{% apiDocumentation source="grid-events/events.json" section="find" names=["findChanged"] /%}
 
 The active match and the total number of matches can also be retrieved via the API.
 

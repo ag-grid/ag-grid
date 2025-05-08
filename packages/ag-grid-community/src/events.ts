@@ -122,6 +122,8 @@ export type AgEventTypeParams<TData = any, TContext = any> = BuildEventTypeMap<
         rowDragEnd: RowDragEndEvent<TData, TContext>;
         rowDragCancel: RowDragCancelEvent<TData, TContext>;
         findChanged: FindChangedEvent<TData, TContext>;
+        rowResizeStarted: RowResizeStartedEvent<TData, TContext>;
+        rowResizeEnded: RowResizeEndedEvent<TData, TContext>;
         // Internal events
         beforeRefreshModel: BeforeRefreshModelEvent<TData, TContext>;
         scrollbarWidthChanged: ScrollbarWidthChangedEvent<TData, TContext>;
@@ -479,6 +481,19 @@ export interface PivotMaxColumnsExceededEvent<TData = any, TContext = any>
     extends AgGlobalEvent<'pivotMaxColumnsExceeded', TData, TContext> {
     message: string;
 }
+
+interface RowResizeEvent<TData = any, TContext = any, T extends AgEventType = any>
+    extends AgGlobalEvent<T, TData, TContext> {
+    node: IRowNode<TData>;
+    event: MouseEvent | Touch;
+    rowHeight: number;
+}
+
+export interface RowResizeStartedEvent<TData = any, TContext = any>
+    extends RowResizeEvent<TData, TContext, 'rowResizeStarted'> {}
+
+export interface RowResizeEndedEvent<TData = any, TContext = any>
+    extends RowResizeEvent<TData, TContext, 'rowResizeEnded'> {}
 
 export interface RowDragEvent<TData = any, TContext = any, T extends AgEventType = any>
     extends AgGlobalEvent<T, TData, TContext> {

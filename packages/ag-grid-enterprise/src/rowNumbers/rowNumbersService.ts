@@ -17,9 +17,12 @@ import {
     isRowNumberCol,
 } from 'ag-grid-community';
 import type {
+    BeanCollection,
     CellClassParams,
+    CellCtrl,
     CellPosition,
     ColDef,
+    IRowNumbersRowResizeFeature,
     IRowNumbersService,
     NamedBean,
     PropertyValueChangedEvent,
@@ -31,6 +34,8 @@ import type {
     _ColumnCollections,
     _HeaderComp,
 } from 'ag-grid-community';
+
+import { RowNumbersRowResizeFeature, _isRowNumbersResizerEnabled } from './rowNumbersRowResizeFeature';
 
 export class RowNumbersService extends BeanStub implements NamedBean, IRowNumbersService {
     beanName = 'rowNumbersSvc' as const;
@@ -162,6 +167,17 @@ export class RowNumbersService extends BeanStub implements NamedBean, IRowNumber
             keydown: this.onHeaderKeyDown.bind(this),
             focus: this.onHeaderFocus.bind(this),
         });
+    }
+
+    public createRowNumbersRowResizerFeature(
+        beans: BeanCollection,
+        ctrl: CellCtrl
+    ): IRowNumbersRowResizeFeature | undefined {
+        if (!_isRowNumbersResizerEnabled(this.gos)) {
+            return undefined;
+        }
+
+        return new RowNumbersRowResizeFeature(beans, ctrl);
     }
 
     private refreshSelectionIntegration(): void {

@@ -34,6 +34,10 @@
         font-weight: 600;
     }
 
+    .ag-row-height-zero .ag-row-numbers-resizer {
+        background-color: var(--ag-balham-active-color);
+    }
+
     .ag-tab {
         border: 1px solid transparent;
         padding: var(--ag-grid-size) calc(var(--ag-grid-size) * 2);

@@ -130,7 +130,23 @@
             }
         },
         "getProvidedColumnGroup": {},
-        "setColumnGroupOpened": {}
+        "setColumnGroupOpened": {},
+        "getDisplayNameForColumnGroup": {},
+        "getAllDisplayedColumnGroups": {},
+        "getCenterDisplayedColumnGroups": {},
+        "getLeftDisplayedColumnGroups": {},
+        "getRightDisplayedColumnGroups": {}
+    },
+    "colHover": {
+        "meta": {
+            "displayName": "Column Hover"
+        },
+        "isColumnHovered": {
+            "more": {
+                "name": "Column Hover",
+                "url": "./row-styles/#highlighting-rows-and-columns"
+            }
+        }
     },
     "Visibility and Display": {
         "meta": {
@@ -138,19 +154,13 @@
         },
         "setColumnsVisible": {},
         "getDisplayNameForColumn": {},
-        "getDisplayNameForColumnGroup": {},
         "getDisplayedColAfter": {},
         "getDisplayedColBefore": {},
         "getAllDisplayedVirtualColumns": {},
         "getAllDisplayedColumns": {},
         "getDisplayedCenterColumns": {},
         "getDisplayedLeftColumns": {},
-        "getDisplayedRightColumns": {},
-        "getAllDisplayedColumnGroups": {},
-        "getCenterDisplayedColumnGroups": {},
-        "getLeftDisplayedColumnGroups": {},
-        "getRightDisplayedColumnGroups": {},
-        "isColumnHovered": {}
+        "getDisplayedRightColumns": {}
     },
     "pinned": {
         "meta": {
@@ -661,12 +671,7 @@
             }
         },
         "getSizesForCurrentTheme": {},
-        "resetRowHeights": {
-            "more": {
-                "name": "Changing Row Height",
-                "url": "./row-height/#changing-row-height"
-            }
-        },
+
         "onRowHeightChanged": {
             "more": {
                 "name": "Changing Row Height",
@@ -1081,7 +1086,13 @@
                 "url": "./data-update-single-row-cell/#sort--filter--group-refresh"
             }
         },
-        "isRowDataEmpty": {}
+        "isRowDataEmpty": {},
+        "resetRowHeights": {
+            "more": {
+                "name": "Changing Row Height",
+                "url": "./row-height/#changing-row-height"
+            }
+        }
     },
     "serverSideRowModel": {
         "meta": {

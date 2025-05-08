@@ -24,7 +24,7 @@ export const AllGridCommunityModules: Record<`${CommunityModuleName}Module`, num
     EventApiModule: 2.64,
     ExternalFilterModule: 13.69,
     GridStateModule: 13.24,
-    HighlightChangesModule: 3.92,
+    HighlightChangesModule: 5.09,
     InfiniteRowModelModule: 17,
     LargeTextEditorModule: 18.6,
     LocaleModule: 0.43,
@@ -51,7 +51,7 @@ export const AllGridCommunityModules: Record<`${CommunityModuleName}Module`, num
 };
 export const AllEnterpriseModules: Record<`${EnterpriseModuleName}Module`, number> = {
     AdvancedFilterModule: 200,
-    AllEnterpriseModule: 1368,
+    AllEnterpriseModule: 1373.05,
     CellSelectionModule: 53,
     ClipboardModule: 44.6,
     ColumnMenuModule: 147,
@@ -69,7 +69,7 @@ export const AllEnterpriseModules: Record<`${EnterpriseModuleName}Module`, numbe
     PivotModule: 93.6,
     RangeSelectionModule: 53,
     RichSelectModule: 77,
-    RowNumbersModule: 26,
+    RowNumbersModule: 29,
     RowGroupingModule: 77.52,
     RowGroupingPanelModule: 71,
     ServerSideRowModelApiModule: 19,
