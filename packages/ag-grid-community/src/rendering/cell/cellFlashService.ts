@@ -8,8 +8,8 @@ import type { CellCtrl } from './cellCtrl';
 type FlashClassName = 'highlight' | 'data-changed';
 interface AnimationPhase {
     phase: 'flash' | 'fade';
-    flashEnd: number;
-    fadeEnd: number;
+    flashEndTime: number;
+    fadeEndTime: number;
 }
 export class CellFlashService extends BeanStub implements NamedBean {
     beanName = 'cellFlashSvc' as const;
@@ -28,30 +28,37 @@ export class CellFlashService extends BeanStub implements NamedBean {
         flashDuration: number = this.beans.gos.get('cellFlashDuration'),
         fadeDuration: number = this.beans.gos.get('cellFadeDuration')
     ) {
-        const time = Date.now();
         const animations = this.animations[cssName];
         // cancel any pre-existing animation for this cell
         animations.delete(cellCtrl);
+
+        const time = Date.now();
+        const flashEndTime = time + flashDuration;
+        const fadeEndTime = time + flashDuration + fadeDuration;
+
         const animState = {
             phase: 'flash' as const,
-            flashEnd: time + flashDuration,
-            fadeEnd: time + flashDuration + fadeDuration,
+            flashEndTime,
+            fadeEndTime,
         };
         animations.set(cellCtrl, animState);
 
-        const fullName = `ag-cell-${cssName}`;
-        const animationFullName = `ag-cell-${cssName}-animation`;
+        const cssBase = `ag-cell-${cssName}`;
+        const cssAnimation = `${cssBase}-animation`;
 
-        const cellComp = cellCtrl.comp;
+        const {
+            comp,
+            eGui: { style },
+        } = cellCtrl;
         // we want to highlight the cells, without any animation
-        cellCtrl.eGui.style.transition = '';
-        cellCtrl.eGui.style.transitionDelay = '';
-        cellComp.toggleCss(fullName, true);
-        cellComp.toggleCss(animationFullName, false);
+        comp.toggleCss(cssBase, true);
+        comp.toggleCss(cssAnimation, false);
+        style.removeProperty('transition');
+        style.removeProperty('transition-delay');
 
         // need an earlier animation cycle, but we delay flash end by 10ms as it's ok if fade starts a little late
         // in favour of batching
-        if (this.nextAnimationTime && animState.flashEnd + 15 < this.nextAnimationTime) {
+        if (this.nextAnimationTime && flashEndTime + 15 < this.nextAnimationTime) {
             clearTimeout(this.nextAnimationCycle!);
             this.nextAnimationCycle = null;
             this.nextAnimationTime = null;
@@ -59,49 +66,53 @@ export class CellFlashService extends BeanStub implements NamedBean {
 
         if (!this.nextAnimationCycle) {
             this.nextAnimationCycle = setTimeout(this.advanceAnimations.bind(this), flashDuration);
-            this.nextAnimationTime = time + flashDuration;
+            this.nextAnimationTime = flashEndTime;
         }
     }
 
     private advanceAnimations() {
         const time = Date.now();
         let nextAnimationTime: number | null = null;
-        for (const cssName of Object.keys(this.animations) as Array<FlashClassName>) {
+        for (const cssName of Object.keys(this.animations) as FlashClassName[]) {
             const animations = this.animations[cssName];
+            const cssBase = `ag-cell-${cssName}`;
+            const cssAnimation = `${cssBase}-animation`;
 
             for (const [cell, animState] of animations) {
                 if (!cell.isAlive() || !cell.comp) {
                     animations.delete(cell);
                     continue;
                 }
+                const { phase, flashEndTime, fadeEndTime } = animState;
 
-                const nextActionableTime = animState.phase === 'flash' ? animState.flashEnd : animState.fadeEnd;
+                const nextActionableTime = phase === 'flash' ? flashEndTime : fadeEndTime;
                 const requiresAction = time + 15 >= nextActionableTime; // if need to act up to 15ms in future, batch into now.
                 if (!requiresAction) {
                     nextAnimationTime = Math.min(nextActionableTime, nextAnimationTime ?? Infinity);
                     continue;
                 }
 
-                const cellComp = cell.comp;
-                const fullName = `ag-cell-${cssName}`;
-                const animationFullName = `ag-cell-${cssName}-animation`;
-
-                const { phase, flashEnd, fadeEnd } = animState;
+                const {
+                    comp,
+                    eGui: { style },
+                } = cell;
                 switch (phase) {
                     case 'flash':
-                        cellComp.toggleCss(fullName, false);
-                        cellComp.toggleCss(animationFullName, true);
-                        cell.eGui.style.transition = `background-color ${fadeEnd - flashEnd}ms`;
-                        cell.eGui.style.transitionDelay = `${flashEnd - time}ms`; // start part way through the fade
-                        nextAnimationTime = Math.min(fadeEnd, nextAnimationTime ?? Infinity);
+                        comp.toggleCss(cssBase, false);
+                        comp.toggleCss(cssAnimation, true);
+                        style.transition = `background-color ${fadeEndTime - flashEndTime}ms`;
+                        // transition delay accounts for the fact that the timeout may be late
+                        // and allows the animation to delay or start part way through
+                        style.transitionDelay = `${flashEndTime - time}ms`;
+                        nextAnimationTime = Math.min(fadeEndTime, nextAnimationTime ?? Infinity);
                         animState.phase = 'fade';
                         break;
                     case 'fade':
-                        cellComp.toggleCss(fullName, false);
-                        cellComp.toggleCss(animationFullName, false);
+                        comp.toggleCss(cssBase, false);
+                        comp.toggleCss(cssAnimation, false);
+                        style.removeProperty('transition');
+                        style.removeProperty('transition-delay');
                         animations.delete(cell);
-                        cell.eGui.style.transition = '';
-                        cell.eGui.style.transitionDelay = '';
                         break;
                 }
             }
