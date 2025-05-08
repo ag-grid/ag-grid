@@ -2,6 +2,7 @@ import type { ColumnModel } from '../columns/columnModel';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
 import type { CtrlsService } from '../ctrlsService';
+import type { RowResizeEndedEvent, RowResizeStartedEvent } from '../events';
 import type { FilterManager } from '../filter/filterManager';
 import { _isAnimateRows, _isDomLayout } from '../gridOptionsUtils';
 import type { IColsService } from '../interfaces/iColsService';
@@ -113,8 +114,8 @@ export class GridBodyCtrl extends BeanStub {
         );
 
         this.createManagedBean(new LayoutFeature(this.comp));
-        this.scrollFeature = this.createManagedBean(new GridBodyScrollFeature(this.eBodyViewport));
-        this.beans.rowDragSvc?.setupRowDrag(this.eBodyViewport, this);
+        this.scrollFeature = this.createManagedBean(new GridBodyScrollFeature(eBodyViewport));
+        this.beans.rowDragSvc?.setupRowDrag(eBodyViewport, this);
 
         this.setupRowAnimationCssClass();
 
@@ -136,6 +137,7 @@ export class GridBodyCtrl extends BeanStub {
     private addEventListeners(): void {
         const setFloatingHeights = this.setFloatingHeights.bind(this);
         const setGridRootRole = this.setGridRootRole.bind(this);
+        const toggleRowResizeStyle = this.toggleRowResizeStyles.bind(this);
 
         this.addManagedEventListeners({
             gridColumnsChanged: this.onGridColumnsChanged.bind(this),
@@ -147,9 +149,16 @@ export class GridBodyCtrl extends BeanStub {
             headerHeightChanged: this.setStickyTopOffsetTop.bind(this),
             columnRowGroupChanged: setGridRootRole,
             columnPivotChanged: setGridRootRole,
+            rowResizeStarted: toggleRowResizeStyle,
+            rowResizeEnded: toggleRowResizeStyle,
         });
 
         this.addManagedPropertyListener('treeData', setGridRootRole);
+    }
+
+    private toggleRowResizeStyles(params: RowResizeStartedEvent | RowResizeEndedEvent) {
+        const isResizingRow = params.type === 'rowResizeStarted';
+        this.eBodyViewport.classList.toggle('ag-prevent-animation', isResizingRow);
     }
 
     private onGridColumnsChanged(): void {
@@ -335,8 +344,18 @@ export class GridBodyCtrl extends BeanStub {
         this.addManagedElementListeners(this.eBodyViewport, {
             wheel: this.onBodyViewportWheel.bind(this, popupSvc),
         });
-        this.addManagedElementListeners(this.eStickyTop, { wheel: this.onStickyWheel.bind(this) });
-        this.addManagedElementListeners(this.eStickyBottom, { wheel: this.onStickyWheel.bind(this) });
+        const onStickyWheel = this.onStickyWheel.bind(this);
+        this.addManagedElementListeners(this.eStickyTop, { wheel: onStickyWheel });
+        this.addManagedElementListeners(this.eStickyBottom, { wheel: onStickyWheel });
+        this.addManagedElementListeners(this.eTop, { wheel: onStickyWheel });
+        this.addManagedElementListeners(this.eBottom, { wheel: onStickyWheel });
+
+        const onHorizontalWheel = (e: WheelEvent) => this.onStickyWheel(e, true);
+        for (const container of ['left', 'right', 'topLeft', 'topRight', 'bottomLeft', 'bottomRight'] as const) {
+            this.addManagedElementListeners(this.ctrlsSvc.get(container).eContainer, {
+                wheel: onHorizontalWheel,
+            });
+        }
 
         // allow mouseWheel on the Full Width Container to Scroll the Viewport
         this.addFullWidthContainerWheelListener();
@@ -357,7 +376,7 @@ export class GridBodyCtrl extends BeanStub {
         }
     }
 
-    private onStickyWheel(e: WheelEvent): void {
+    private onStickyWheel(e: WheelEvent, allowHorizontalScroll = false): void {
         const { deltaX, deltaY, shiftKey } = e;
 
         const isHorizontalScroll = shiftKey || Math.abs(deltaX) > Math.abs(deltaY);
@@ -370,7 +389,8 @@ export class GridBodyCtrl extends BeanStub {
             this.scrollVertically(deltaY);
         } else if (
             this.eStickyTopFullWidthContainer.contains(target) ||
-            this.eStickyBottomFullWidthContainer.contains(target)
+            this.eStickyBottomFullWidthContainer.contains(target) ||
+            allowHorizontalScroll
         ) {
             this.scrollGridBodyToMatchEvent(e);
         }
@@ -427,15 +447,28 @@ export class GridBodyCtrl extends BeanStub {
     }
 
     private setFloatingHeights(): void {
-        const { pinnedRowModel, beans } = this;
+        const {
+            pinnedRowModel,
+            beans: { environment },
+        } = this;
 
-        const borderWidth = beans.environment.getPinnedRowBorderWidth();
         const floatingTopHeight = pinnedRowModel?.getPinnedTopTotalHeight();
         const floatingBottomHeight = pinnedRowModel?.getPinnedBottomTotalHeight();
 
-        // We only add the border width if there's actually pinned rows visible
-        const normalisedFloatingTopHeight = !floatingTopHeight ? 0 : borderWidth + floatingTopHeight;
-        const normalisedFloatingBottomHeight = !floatingBottomHeight ? 0 : borderWidth + floatingBottomHeight;
+        // We need to account for the row border and the pinned row borders.
+        // The floating container has box-sizing: border-box, so it's border will be
+        // part of its total height. Therefore we add it on to the total floating row heights.
+        // However, we don't want a double border on the final row of the pinned container,
+        // we instead want the pinned row border to "replace" the row border. As such, we
+        // subtract the row border width from the pinned border width to arrive at the final
+        // additional height to add to the container.
+        const pinnedBorderWidth = environment.getPinnedRowBorderWidth();
+        const rowBorderWidth = environment.getRowBorderWidth();
+        const additionalHeight = pinnedBorderWidth - rowBorderWidth;
+
+        // We only add the border-related adjustment if there's actually pinned rows visible
+        const normalisedFloatingTopHeight = !floatingTopHeight ? 0 : additionalHeight + floatingTopHeight;
+        const normalisedFloatingBottomHeight = !floatingBottomHeight ? 0 : additionalHeight + floatingBottomHeight;
 
         this.comp.setTopHeight(normalisedFloatingTopHeight);
         this.comp.setBottomHeight(normalisedFloatingBottomHeight);

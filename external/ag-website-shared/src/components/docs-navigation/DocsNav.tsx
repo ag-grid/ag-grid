@@ -39,11 +39,11 @@ function getOpenGroup({ menuData, pageName }: { menuData?: any; pageName?: strin
     return openGroup;
 }
 
-function getLinkUrl({ framework, path, url }: { framework: Framework; path?: string; url?: string }) {
+function getLinkUrl({ framework, path, url }: { framework?: Framework; path?: string; url?: string }) {
     return url ? url : getExamplePageUrl({ framework, path: path! });
 }
 
-function Item({ itemData, framework, pageName }: { itemData?: any; framework: Framework; pageName?: string }) {
+function Item({ itemData, framework, pageName }: { itemData?: any; framework?: Framework; pageName?: string }) {
     const linkUrl = itemData.path ? getLinkUrl({ framework, path: itemData.path }) : itemData.url;
     const isExternalURL = itemData.url;
     const isCorrectFramework = !itemData.frameworks
@@ -98,7 +98,7 @@ function Group({
     setOpenGroup,
 }: {
     groupData?: any;
-    framework: Framework;
+    framework?: Framework;
     pageName?: string;
     openGroup?: any;
     setOpenGroup?: any;
@@ -148,7 +148,7 @@ function Section({
     setOpenGroup,
 }: {
     sectionData?: any;
-    framework: Framework;
+    framework?: Framework;
     pageName?: string;
     openGroup?: any;
     setOpenGroup?: any;
@@ -186,7 +186,7 @@ export function DocsNav({
     showWhatsNew = true,
 }: {
     menuData?: any;
-    framework: Framework;
+    framework?: Framework;
     pageName?: string;
     showWhatsNew?: boolean;
 }) {

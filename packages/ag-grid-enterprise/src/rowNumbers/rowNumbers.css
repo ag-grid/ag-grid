@@ -1,7 +1,7 @@
 .ag-row-number-cell {
     width: 100%;
     white-space: nowrap;
-    overflow: hidden;
+    overflow: visible;
     text-align: right;
     user-select: none;
     background-color: var(--ag-header-background-color);
@@ -9,6 +9,20 @@
     font-size: var(--ag-header-font-size);
     font-family: var(--ag-header-font-family);
     font-weight: var(--ag-header-font-weight);
+    border: none;
+}
+
+.ag-row-numbers-resizer {
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    height: 3px;
+    width: 100%;
+    cursor: ns-resize;
+}
+
+:where(.ag-row-height-zero .ag-row-numbers-resizer) {
+    background-color: var(--ag-accent-color);
 }
 
 :where(.ag-row-number-header.ag-row-number-selection-enabled) {

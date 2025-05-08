@@ -33,3 +33,5 @@ documentation/ag-grid-docs/public/example-runner/grid-angular-boilerplate/main.t
 external/ag-website-shared/src/components/documentation-archive/DocumentationArchiveSection.astro
 
 /.nx/workspace-data
+
+testing/angular-package-tests/project.base.json

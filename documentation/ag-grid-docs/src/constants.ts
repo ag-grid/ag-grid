@@ -109,6 +109,13 @@ export const SITE_BASE_URL_SEGMENTS = SITE_BASE_URL?.split('/').filter(Boolean).
 export const FILES_BASE_PATH = '/files';
 
 /**
+ * URL path used to redirect to the user selected framework
+ *
+ * Useful when the framework is not known eg, root pages
+ */
+export const FRAMEWORK_REDIRECT_PATH = 'data-grid';
+
+/**
  * Charts robots disallow json url for merging with grid
  */
 export const CHARTS_ROBOTS_DISALLOW_JSON_URL = import.meta.env?.CHARTS_ROBOTS_DISALLOW_JSON_URL;

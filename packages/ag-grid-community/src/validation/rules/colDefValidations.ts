@@ -70,6 +70,7 @@ export const COLUMN_DEFINITION_MOD_VALIDATIONS: ModuleValidation<ColDef | ColGro
         return 'ColumnFilter';
     },
     floatingFilter: 'ColumnFilter',
+    getQuickFilterText: 'QuickFilter',
     headerTooltip: 'Tooltip',
     mainMenuItems: 'ColumnMenu',
     menuTabs: (options: ColDef) => {

@@ -246,6 +246,7 @@ export function getTopHeading(title: string) {
  * tab headings
  */
 export async function getHeadings({
+    pageHeadings,
     title,
     pageName,
     markdocContent,
@@ -253,6 +254,7 @@ export async function getHeadings({
     getTabItemSlug,
     skipHeading,
 }: {
+    pageHeadings: MarkdownHeading[];
     title: string;
     pageName: string;
     markdocContent: string;
@@ -260,6 +262,21 @@ export async function getHeadings({
     getTabItemSlug: (id: string) => string;
     skipHeading?: (heading: HeadingData) => boolean;
 }): Promise<MarkdownHeading[]> {
+    if (pageHeadings) {
+        return pageHeadings.filter(({ frameworks }) => {
+            if (frameworks) {
+                const isFramework = frameworks.includes(framework);
+                if (!isFramework) {
+                    return false;
+                }
+
+                return true;
+            }
+
+            return true;
+        });
+    }
+
     const transformAst = (ast: Node) => {
         ast.children = ast.children.map((node) => {
             if (isApiDocsHeadingNode(node)) {

@@ -1,4 +1,5 @@
 1s/^/import \{ AgGridAngular \} from 'ag-grid-angular';\n/
+/import { Component } from '@angular\/core';/ r ../global.partial
 /import { Component } from '@angular\/core';/ r ../imports.partial
 s/\imports: \[\]/imports: \[AgGridAngular\]/
 /title = .*/{

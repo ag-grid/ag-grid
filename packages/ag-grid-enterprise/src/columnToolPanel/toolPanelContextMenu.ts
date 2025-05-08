@@ -71,11 +71,12 @@ export class ToolPanelContextMenu extends Component {
         }
         this.columns = columns;
 
-        this.allowScrollIntoView = columns.some((col) => col.isVisible());
+        const isPivotMode = this.beans.colModel.isPivotMode();
+
+        this.allowScrollIntoView = !isPivotMode && columns.some(this.isColumnValidForScrollIntoView);
         this.allowGrouping = columns.some((col) => col.isPrimary() && col.isAllowRowGroup());
         this.allowValues = columns.some((col) => col.isPrimary() && col.isAllowValue());
-        this.allowPivoting =
-            this.beans.colModel.isPivotMode() && columns.some((col) => col.isPrimary() && col.isAllowPivot());
+        this.allowPivoting = isPivotMode && columns.some((col) => col.isPrimary() && col.isAllowPivot());
     }
 
     private buildMenuItemMap(): void {
@@ -86,13 +87,15 @@ export class ToolPanelContextMenu extends Component {
         const menuItemMap = new Map<MenuItemName, MenuItemProperty>();
         this.menuItemMap = menuItemMap;
 
+        const isPivotMode = colModel.isPivotMode();
+
         menuItemMap.set('scrollIntoView', {
-            allowedFunction: (col) => col.isVisible() && !col.isPinned(),
+            allowedFunction: (col) => !col.isPinned() && !isPivotMode && this.isColumnValidForScrollIntoView(col),
             activeFunction: () => false,
             activateLabel: () =>
                 localeTextFunc('scrollColumnIntoView', `Scroll ${displayName} into view`, [displayName!]),
             activateFunction: () => {
-                const firstVisibleColumn = this.columns.find((col) => col.isVisible());
+                const firstVisibleColumn = this.columns.find(this.isColumnValidForScrollIntoView);
 
                 if (firstVisibleColumn) {
                     this.beans.ctrlsSvc.getScrollFeature().ensureColumnVisible(firstVisibleColumn);
@@ -130,7 +133,7 @@ export class ToolPanelContextMenu extends Component {
         });
 
         menuItemMap.set('pivot', {
-            allowedFunction: (col) => colModel.isPivotMode() && col.isPrimary() && col.isAllowPivot(),
+            allowedFunction: (col) => isPivotMode && col.isPrimary() && col.isAllowPivot(),
             activeFunction: (col) => col.isPivotActive(),
             activateLabel: () => localeTextFunc('addToLabels', `Add ${displayName} to labels`, [displayName!]),
             deactivateLabel: () =>
@@ -142,6 +145,21 @@ export class ToolPanelContextMenu extends Component {
             addIcon: 'pivotPanel',
             removeIcon: 'pivotPanel',
         });
+    }
+
+    private isColumnValidForScrollIntoView(col: AgColumn): boolean {
+        const isVisible = col.isVisible();
+
+        if (!isVisible) {
+            return false;
+        }
+
+        const parent = col.getParent();
+        if (!parent) {
+            return true;
+        }
+
+        return parent.getDisplayedChildren()?.indexOf(col) !== -1;
     }
 
     private addColumnsToList(columnList: AgColumn[]): AgColumn[] {
