@@ -380,13 +380,26 @@ export function _syncFromEditor(
 }
 
 function _persistEditorValue(beans: BeanCollection, position: Required<EditPosition>): void {
-    const { editModelSvc } = beans;
+    const { editModelSvc, formulae } = beans;
 
     const edit = editModelSvc?.getEdit(position, true);
 
+    let value = edit?.editorValue;
+
+    /**
+     * Formulas, if the input value has relative references, the formula needs to be normalised.
+     */
+    if (formulae?.isFormula(value)) {
+        // don't save modified version if formula did not parse
+        const normalisedFormula = formulae.normaliseFormula(value);
+        if (normalisedFormula) {
+            value = normalisedFormula;
+        }
+    }
+
     // propagate the editor value to pending.
     editModelSvc?.setEdit(position, {
-        pendingValue: edit?.editorValue,
+        pendingValue: value,
     });
 }
 

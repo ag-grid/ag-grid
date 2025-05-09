@@ -10,6 +10,10 @@ export class DragListenerFeature extends BeanStub {
         const rangeSvc = beans.rangeSvc!;
         const params = {
             eElement: eContainer,
+            onMouseDown: (evt: any) => {
+                evt.preventDefault();
+                evt.stopPropagation();
+            },
             onDragStart: rangeSvc.onDragStart.bind(rangeSvc),
             onDragStop: rangeSvc.onDragStop.bind(rangeSvc),
             onDragging: rangeSvc.onDragging.bind(rangeSvc),

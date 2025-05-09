@@ -1,4 +1,7 @@
 import type { _ValueApi, _ValueCacheApi } from '../api/gridApi';
+// import { formulaCellEditorCSS } from '../formulae/formula-cell-editor.css-GENERATED';
+// import { FormulaCellEditor } from '../formulae/formulaCellEditor';
+import { FormulaeService } from '../formulae/formulaeService';
 import type { _ModuleWithApi, _ModuleWithoutApi } from '../interfaces/iModule';
 import { VERSION } from '../version';
 import { expireValueCache, getCellValue } from './cellApi';
@@ -13,10 +16,12 @@ import { ValueCache } from './valueCache';
 export const ValueCacheModule: _ModuleWithApi<_ValueCacheApi> = {
     moduleName: 'ValueCache',
     version: VERSION,
-    beans: [ValueCache],
+    beans: [ValueCache, FormulaeService],
+    // userComponents: { agFormulaEditor: FormulaCellEditor },
     apiFunctions: {
         expireValueCache,
     },
+    // css: [formulaCellEditorCSS],
 };
 
 /**

@@ -144,6 +144,11 @@ export class TooltipService extends BeanStub implements NamedBean {
             const colDef = column.getColDef();
             const data = rowNode.data;
 
+            const error = this.beans.formulae?.getFormulaError(column, rowNode);
+            if (error) {
+                return error.message;
+            }
+
             if (colDef.tooltipField && _exists(data)) {
                 return _getValueUsingField(data, colDef.tooltipField, column.isTooltipFieldContainsDots());
             }

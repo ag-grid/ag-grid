@@ -1104,6 +1104,18 @@ export interface GridOptions<TData = any> {
      */
     aggFuncs?: { [key: string]: IAggFunc<TData> };
     /**
+     * A map of 'function name' to 'function' for custom functions that are used for formulas.
+     * @initial
+     * @agModule ?
+     */
+    formulaFuncs?: { [key: string]: (args: any[]) => any };
+    /**
+     * Enable or disable spreadsheet mode.
+     * @initial
+     * @agModule ?
+     */
+    spreadsheetMode?: boolean;
+    /**
      * When `true`, column headers won't include the `aggFunc` name, e.g. `'sum(Bank Balance)`' will just be `'Bank Balance'`.
      * @default false
      * @agModule `RowGroupingModule` / `PivotModule` / `TreeDataModule` / `ServerSideRowModelModule`

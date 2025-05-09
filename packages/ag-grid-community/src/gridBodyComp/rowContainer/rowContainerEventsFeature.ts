@@ -86,6 +86,13 @@ export class RowContainerEventsFeature extends BeanStub {
             return;
         }
 
+        // probably a better place to do this
+        if (this.beans.formulae?.isWritingFormula()) {
+            mouseEvent.preventDefault();
+            mouseEvent.stopImmediatePropagation();
+            return;
+        }
+
         const { cellCtrl, rowCtrl } = this.getControlsForEventTarget(mouseEvent.target);
 
         if (eventName === 'contextmenu') {

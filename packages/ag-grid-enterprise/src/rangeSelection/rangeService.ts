@@ -92,7 +92,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
     private newestRangeStartCell?: CellPosition;
 
     private dragging = false;
-    private draggingRange?: CellRange;
+    public draggingRange?: CellRange;
 
     private intersectionRange = false; // When dragging ends, the current range will be used to intersect all other ranges
 
@@ -1146,6 +1146,10 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
 
     private shouldSkipCurrentColumn(currentColumn: AgColumn): boolean {
         return isRowNumberCol(currentColumn);
+    }
+
+    public getDraggingRange(): CellRange | undefined {
+        return this.draggingRange;
     }
 
     private dispatchChangedEvent(started: boolean, finished: boolean, id?: string): void {

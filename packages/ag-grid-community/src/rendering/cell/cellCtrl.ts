@@ -252,6 +252,7 @@ export class CellCtrl extends BeanStub {
         this.setupAutoHeight(eCellWrapper, compBean);
 
         this.refreshFirstAndLastStyles();
+        this.checkFormulaError();
         this.refreshAriaColIndex();
 
         this.positionFeature?.init();
@@ -281,6 +282,14 @@ export class CellCtrl extends BeanStub {
             this.onCompAttachedFuncs.forEach((func) => func());
             this.onCompAttachedFuncs = [];
         }
+    }
+
+    private checkFormulaError() {
+        const isFormulaError = !!this.beans.formulae?.getFormulaError(this.column, this.rowNode);
+        this.eGui.classList.toggle(
+            'formula-error',
+            isFormulaError,
+        );
     }
 
     private setupAutoHeight(eCellWrapper: HTMLElement | undefined, compBean: BeanStub): void {
@@ -586,6 +595,8 @@ export class CellCtrl extends BeanStub {
 
             this.customStyleFeature?.applyUserStyles();
             this.customStyleFeature?.applyClassesFromColDef();
+
+            this.checkFormulaError();
         }
 
         this.tooltipFeature?.refreshTooltip();
@@ -1031,7 +1042,7 @@ export class CellCtrl extends BeanStub {
     }
 
     // used by spannedCellCtrl
-    public refreshAriaRowIndex(): void {}
+    public refreshAriaRowIndex(): void { }
 
     /**
      * Returns the root element of the cell, could be a span container rather than the cell element.

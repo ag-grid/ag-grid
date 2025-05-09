@@ -1,0 +1,28 @@
+.ag-formula-wrapper {
+    position: relative;
+}
+
+.ag-formula-wrapper > input {
+    color: #0000; /* transparent */
+    caret-color: var(--ag-input-text-color);
+}
+
+.ag-formula-cell-editor-value {
+    position: absolute;
+    inset: 0;
+    align-content: center;
+    pointer-events: none;
+    white-space: pre;
+    padding-left: var(--ag-input-padding-start);
+    border: var(--ag-input-border);
+    border-radius: var(--ag-input-border-radius);
+    color: var(--ag-input-text-color);
+}
+
+.ag-formula-cell-editor-error {
+    text-decoration: red wavy underline;
+}
+
+.ag-formula-mode .ag-cell {
+    border-style: dashed !important;
+}

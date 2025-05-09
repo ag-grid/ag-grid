@@ -145,7 +145,11 @@ export class ValueService extends BeanStub implements NamedBean {
         // if doing grouping and footers, we don't want to include the agg value
         // in the header when the group is open
         const ignoreAggData = isOpenedGroup && !groupShowsAggData;
-        const value = this.getValue(column, node, ignoreAggData, source);
+        let value = this.getValue(column, node, ignoreAggData, source);
+
+        if (this.beans.formulae?.isFormula(value)) {
+            value = this.beans.formulae.resolveValue(column, node as RowNode);
+        }
 
         const format = includeValueFormatted && !(exporting && column.colDef.useValueFormatterForExport === false);
         return {
@@ -158,7 +162,7 @@ export class ValueService extends BeanStub implements NamedBean {
         column: AgColumn,
         rowNode?: IRowNode | null,
         ignoreAggData = false,
-        source: 'ui' | 'api' | 'edit' | string = 'ui'
+        source: 'ui' | 'api' | 'edit' | string = 'ui',
     ): any {
         // hack - the grid is getting refreshed before this bean gets initialised, race condition.
         // really should have a way so they get initialised in the right order???
