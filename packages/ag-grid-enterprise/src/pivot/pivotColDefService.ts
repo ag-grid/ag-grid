@@ -462,7 +462,7 @@ export class PivotColDefService extends BeanStub implements NamedBean, IPivotCol
         type UniqueValue = Map<string, UniqueValue>;
         // tear the ids down into groups, while this could be done in-step with the next stage, the lookup is faster
         // than searching col group children array for the right group
-        const uniqueValues: UniqueValue = new Map();
+        const uniqueValues: UniqueValue = new Map(); // use maps over objects as objects sort numeric keys
         for (let i = 0; i < fields.length; i++) {
             const field = fields[i];
             const parts = field.split(this.fieldSeparator);
