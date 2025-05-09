@@ -10,6 +10,7 @@ export async function getSitemapIgnorePaths() {
         urlWithBaseUrl('/examples'),
         urlWithBaseUrl('/archive'),
         urlWithBaseUrl('/performance-test'),
+        urlWithBaseUrl('/campaigns'),
     ].map(addTrailingSlash);
 
     return folderPaths.concat(urlWithBaseUrl('/404'));
