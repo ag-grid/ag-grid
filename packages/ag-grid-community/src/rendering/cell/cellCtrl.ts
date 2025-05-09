@@ -25,6 +25,7 @@ import type { ICellRangeFeature } from '../../interfaces/iCellRangeFeature';
 import type { CellChangedEvent } from '../../interfaces/iRowNode';
 import type { RowPosition } from '../../interfaces/iRowPosition';
 import type { UserCompDetails } from '../../interfaces/iUserCompDetails';
+import type { IRowNumbersRowResizeFeature } from '../../interfaces/rowNumbers';
 import { _isManualPinnedRow } from '../../pinnedRowModel/pinnedRowUtils';
 import type { CheckboxSelectionComponent } from '../../selection/checkboxSelectionComponent';
 import type { CellCustomStyleFeature } from '../../styling/cellCustomStyleFeature';
@@ -100,6 +101,7 @@ export class CellCtrl extends BeanStub {
     public valueFormatted: any;
 
     private rangeFeature: ICellRangeFeature | undefined = undefined;
+    private rowResizeFeature: IRowNumbersRowResizeFeature | undefined = undefined;
     private positionFeature: CellPositionFeature | undefined = undefined;
     private customStyleFeature: CellCustomStyleFeature | undefined = undefined;
     private tooltipFeature: TooltipFeature | undefined = undefined;
@@ -160,6 +162,10 @@ export class CellCtrl extends BeanStub {
         if (cellSelectionEnabled) {
             this.rangeFeature = rangeSvc!.createCellRangeFeature(beans, this);
         }
+
+        if (isRowNumberCol(this.column)) {
+            this.rowResizeFeature = this.beans.rowNumbersSvc!.createRowNumbersRowResizerFeature(beans, this);
+        }
     }
 
     public isCellSpanning(): boolean {
@@ -177,6 +183,7 @@ export class CellCtrl extends BeanStub {
         this.mouseListener = context.destroyBean(this.mouseListener);
         this.keyboardListener = context.destroyBean(this.keyboardListener);
         this.rangeFeature = context.destroyBean(this.rangeFeature);
+        this.rowResizeFeature = context.destroyBean(this.rowResizeFeature);
 
         this.disableTooltipFeature();
     }
@@ -228,6 +235,7 @@ export class CellCtrl extends BeanStub {
         this.tooltipFeature?.refreshTooltip();
         this.keyboardListener?.init();
         this.rangeFeature?.setComp(comp);
+        this.rowResizeFeature?.refreshRowResizer();
 
         if (startEditing && this.isCellEditable()) {
             this.beans.editSvc?.startEditing(this);
@@ -291,6 +299,8 @@ export class CellCtrl extends BeanStub {
         if (!skipRangeHandleRefresh && rangeFeature) {
             _requestAnimationFrame(beans, () => rangeFeature?.refreshHandle());
         }
+
+        this.rowResizeFeature?.refreshRowResizer();
     }
 
     private setupControlComps(): void {
@@ -665,6 +675,8 @@ export class CellCtrl extends BeanStub {
 
         // check range selection
         this.rangeFeature?.onCellSelectionChanged();
+
+        this.rowResizeFeature?.refreshRowResizer();
     }
 
     public onSuppressCellFocusChanged(suppressCellFocus: boolean): void {

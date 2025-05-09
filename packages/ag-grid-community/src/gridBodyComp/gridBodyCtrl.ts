@@ -2,6 +2,7 @@ import type { ColumnModel } from '../columns/columnModel';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
 import type { CtrlsService } from '../ctrlsService';
+import type { RowResizeEndedEvent, RowResizeStartedEvent } from '../events';
 import type { FilterManager } from '../filter/filterManager';
 import { _isAnimateRows, _isDomLayout } from '../gridOptionsUtils';
 import type { IColsService } from '../interfaces/iColsService';
@@ -113,8 +114,8 @@ export class GridBodyCtrl extends BeanStub {
         );
 
         this.createManagedBean(new LayoutFeature(this.comp));
-        this.scrollFeature = this.createManagedBean(new GridBodyScrollFeature(this.eBodyViewport));
-        this.beans.rowDragSvc?.setupRowDrag(this.eBodyViewport, this);
+        this.scrollFeature = this.createManagedBean(new GridBodyScrollFeature(eBodyViewport));
+        this.beans.rowDragSvc?.setupRowDrag(eBodyViewport, this);
 
         this.setupRowAnimationCssClass();
 
@@ -136,6 +137,7 @@ export class GridBodyCtrl extends BeanStub {
     private addEventListeners(): void {
         const setFloatingHeights = this.setFloatingHeights.bind(this);
         const setGridRootRole = this.setGridRootRole.bind(this);
+        const toggleRowResizeStyle = this.toggleRowResizeStyles.bind(this);
 
         this.addManagedEventListeners({
             gridColumnsChanged: this.onGridColumnsChanged.bind(this),
@@ -147,9 +149,16 @@ export class GridBodyCtrl extends BeanStub {
             headerHeightChanged: this.setStickyTopOffsetTop.bind(this),
             columnRowGroupChanged: setGridRootRole,
             columnPivotChanged: setGridRootRole,
+            rowResizeStarted: toggleRowResizeStyle,
+            rowResizeEnded: toggleRowResizeStyle,
         });
 
         this.addManagedPropertyListener('treeData', setGridRootRole);
+    }
+
+    private toggleRowResizeStyles(params: RowResizeStartedEvent | RowResizeEndedEvent) {
+        const isResizingRow = params.type === 'rowResizeStarted';
+        this.eBodyViewport.classList.toggle('ag-prevent-animation', isResizingRow);
     }
 
     private onGridColumnsChanged(): void {
@@ -335,8 +344,18 @@ export class GridBodyCtrl extends BeanStub {
         this.addManagedElementListeners(this.eBodyViewport, {
             wheel: this.onBodyViewportWheel.bind(this, popupSvc),
         });
-        this.addManagedElementListeners(this.eStickyTop, { wheel: this.onStickyWheel.bind(this) });
-        this.addManagedElementListeners(this.eStickyBottom, { wheel: this.onStickyWheel.bind(this) });
+        const onStickyWheel = this.onStickyWheel.bind(this);
+        this.addManagedElementListeners(this.eStickyTop, { wheel: onStickyWheel });
+        this.addManagedElementListeners(this.eStickyBottom, { wheel: onStickyWheel });
+        this.addManagedElementListeners(this.eTop, { wheel: onStickyWheel });
+        this.addManagedElementListeners(this.eBottom, { wheel: onStickyWheel });
+
+        const onHorizontalWheel = (e: WheelEvent) => this.onStickyWheel(e, true);
+        for (const container of ['left', 'right', 'topLeft', 'topRight', 'bottomLeft', 'bottomRight'] as const) {
+            this.addManagedElementListeners(this.ctrlsSvc.get(container).eContainer, {
+                wheel: onHorizontalWheel,
+            });
+        }
 
         // allow mouseWheel on the Full Width Container to Scroll the Viewport
         this.addFullWidthContainerWheelListener();
@@ -357,7 +376,7 @@ export class GridBodyCtrl extends BeanStub {
         }
     }
 
-    private onStickyWheel(e: WheelEvent): void {
+    private onStickyWheel(e: WheelEvent, allowHorizontalScroll = false): void {
         const { deltaX, deltaY, shiftKey } = e;
 
         const isHorizontalScroll = shiftKey || Math.abs(deltaX) > Math.abs(deltaY);
@@ -370,7 +389,8 @@ export class GridBodyCtrl extends BeanStub {
             this.scrollVertically(deltaY);
         } else if (
             this.eStickyTopFullWidthContainer.contains(target) ||
-            this.eStickyBottomFullWidthContainer.contains(target)
+            this.eStickyBottomFullWidthContainer.contains(target) ||
+            allowHorizontalScroll
         ) {
             this.scrollGridBodyToMatchEvent(e);
         }

@@ -27,11 +27,11 @@ const gridOptions = {
 }
 ```
 
-This is illustrated in the example below.
+This is illustrated in the example below. Rows that are pinned appear fixed at the top (or bottom) of the grid, as well as remaining in the main viewport. Pinned rows are styled bold by default to visually distinguish them.
 
 {% gridExampleRunner title="Pinning on First Render" name="pinning-on-render" /%}
 
-Note that all the examples on this page also apply additional styling to visually differentiate the pinned rows from the rows in the main viewport.
+Note that all the examples on this page also apply additional styling to visually separate the pinned rows from the rows in the main viewport.
 
 ```{% frameworkTransform=true %}
 const gridOptions = {
@@ -93,12 +93,12 @@ The [Grand Total Rows](./aggregation-total-rows/#enabling-a-grand-total-row) can
 
 {% gridExampleRunner title="Pinning Grand Total Row" name="pinning-grand-total" exampleHeight=650 /%}
 
-Note that when `grandTotalRow` is `'pinnedTop'` or `'pinnedBottom'` and the user _unpins_ the grand total row, it will behave as if it were set to `'top'` and `'bottom'`, respectively.
+Note that when `grandTotalRow` is `'pinnedTop'` or `'pinnedBottom'` the user is not able to unpin the grand total row.
 
 ## Providing Pinned Row Data
 
 {% note %}
-This approach cannot be used at the same time as using `enableRowPinning`.
+You cannot provide pinned row data at the same time as using `enableRowPinning` to manually pin rows.
 {% /note %}
 
 Pinned row data may be provided directly to the grid via Grid Options. Providing pinned rows this way means they cannot be altered by end users.

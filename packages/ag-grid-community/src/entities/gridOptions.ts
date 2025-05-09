@@ -88,6 +88,8 @@ import type {
     RowEditingStartedEvent,
     RowEditingStoppedEvent,
     RowGroupOpenedEvent,
+    RowResizeEndedEvent,
+    RowResizeStartedEvent,
     RowSelectedEvent,
     RowValueChangedEvent,
     SelectionChangedEvent,
@@ -229,6 +231,7 @@ export interface GridOptions<TData = any> {
      * Set to `true` to use the browser's default tooltip instead of using the grid's Tooltip Component.
      * @default false
      * @initial
+     * @agModule `TooltipModule`
      */
     enableBrowserTooltips?: boolean;
     /**
@@ -237,24 +240,28 @@ export interface GridOptions<TData = any> {
      *  - `focus` - The tooltip will show/hide when a cell/header is focused.
      * @default 'hover'
      * @initial
+     * @agModule `TooltipModule`
      */
     tooltipTrigger?: 'hover' | 'focus';
     /**
      * The delay in milliseconds that it takes for tooltips to show up once an element is hovered over.
      * **Note:** This property does not work if `enableBrowserTooltips` is `true`.
      * @default 2000
+     * @agModule `TooltipModule`
      */
     tooltipShowDelay?: number;
     /**
      * The delay in milliseconds that it takes for tooltips to hide once they have been displayed.
      * **Note:** This property does not work if `enableBrowserTooltips` is `true` and `tooltipHideTriggers` includes `timeout`.
      * @default 10000
+     * @agModule `TooltipModule`
      */
     tooltipHideDelay?: number;
     /**
      * Set to `true` to have tooltips follow the cursor once they are displayed.
      * @default false
      * @initial
+     * @agModule `TooltipModule`
      */
     tooltipMouseTrack?: boolean;
     /**
@@ -262,6 +269,7 @@ export interface GridOptions<TData = any> {
      *  - `standard` - The tooltip always shows up when the items configured with Tooltips are hovered.
      * - `whenTruncated` - The tooltip will only be displayed when the items hovered have truncated (showing ellipsis) values. This property does not work when `enableBrowserTooltips={true}`.
      * @default `standard`
+     * @agModule `TooltipModule`
      */
     tooltipShowMode?: 'standard' | 'whenTruncated';
     /**
@@ -269,6 +277,7 @@ export interface GridOptions<TData = any> {
      * tooltip itself it being hovered or has focus.
      * @default false
      * @initial
+     * @agModule `TooltipModule`
      */
     tooltipInteraction?: boolean;
     /**
@@ -280,16 +289,19 @@ export interface GridOptions<TData = any> {
     /**
      * Set to `true` to also include headers when copying to clipboard using `Ctrl + C` clipboard.
      * @default false
+     * @agModule `ClipboardModule`
      */
     copyHeadersToClipboard?: boolean;
     /**
      * Set to `true` to also include group headers when copying to clipboard using `Ctrl + C` clipboard.
      * @default false
+     * @agModule `ClipboardModule`
      */
     copyGroupHeadersToClipboard?: boolean;
     /**
      * Specify the delimiter to use when copying to clipboard.
      * @default '\t'
+     * @agModule `ClipboardModule`
      */
     clipboardDelimiter?: string;
     /**
@@ -307,21 +319,25 @@ export interface GridOptions<TData = any> {
     /**
      * Set to `true` to work around a bug with Excel (Windows) that adds an extra empty line at the end of ranges copied to the clipboard.
      * @default false
+     * @agModule `ClipboardModule`
      */
     suppressLastEmptyLineOnPaste?: boolean;
     /**
      * Set to `true` to turn off paste operations within the grid.
      * @default false
+     * @agModule `ClipboardModule`
      */
     suppressClipboardPaste?: boolean;
     /**
      * Set to `true` to stop the grid trying to use the Clipboard API, if it is blocked, and immediately fallback to the workaround.
      * @default false
+     * @agModule `ClipboardModule`
      */
     suppressClipboardApi?: boolean;
     /**
      * Set to `true` to block **cut** operations within the grid.
      * @default false
+     * @agModule `ClipboardModule`
      */
     suppressCutToClipboard?: boolean;
 
@@ -363,6 +379,7 @@ export interface GridOptions<TData = any> {
      * Resets pivot column order when impacted by filters, data or configuration changes
      *
      * @default false
+     * @agModule `PivotModule`
      */
     enableStrictPivotColumnOrder?: boolean;
     /**
@@ -397,6 +414,7 @@ export interface GridOptions<TData = any> {
     /**
      * Allow reordering and pinning columns by dragging columns from the Columns Tool Panel to the grid.
      * @default false
+     * @agModule `ColumnsToolPanelModule`
      */
     allowDragFromColumnsToolPanel?: boolean;
     /**
@@ -461,6 +479,7 @@ export interface GridOptions<TData = any> {
      * Set this to `true` to skip the `headerName` when `autoSize` is called by default.
      * @default false
      * @initial
+     * @agModule `ColumnAutoSizeModule`
      */
     skipHeaderOnAutoSize?: boolean;
     /**
@@ -483,22 +502,26 @@ export interface GridOptions<TData = any> {
     // *** Editing *** //
     /**
      * Set to `'fullRow'` to enable Full Row Editing. Otherwise leave blank to edit one cell at a time.
+     * @agModule `TextEditorModule` / `LargeTextEditorModule` / `NumberEditorModule` / `DateEditorModule` / `CheckboxEditorModule` / `CustomEditorModule` / `SelectEditorModule` / `RichSelectModule`
      */
     editType?: 'fullRow';
     /**
      * Set to `true` to enable Single Click Editing for cells, to start editing with a single click.
      * @default false
+     * @agModule `TextEditorModule` / `LargeTextEditorModule` / `NumberEditorModule` / `DateEditorModule` / `CheckboxEditorModule` / `CustomEditorModule` / `SelectEditorModule` / `RichSelectModule`
      */
     singleClickEdit?: boolean;
     /**
      * Set to `true` so that neither single nor double click starts editing.
      * @default false
+     * @agModule `TextEditorModule` / `LargeTextEditorModule` / `NumberEditorModule` / `DateEditorModule` / `CheckboxEditorModule` / `CustomEditorModule` / `SelectEditorModule` / `RichSelectModule`
      */
     suppressClickEdit?: boolean;
 
     /**
      * Set to `true` to stop the grid updating data after `Edit`, `Clipboard` and `Fill Handle` operations. When this is set, it is intended the application will update the data, eg in an external immutable store, and then pass the new dataset to the grid. <br />**Note:** `rowNode.setDataValue()` does not update the value of the cell when this is `True`, it fires `onCellEditRequest` instead.
      * @default false
+     * @agModule `TextEditorModule` / `LargeTextEditorModule` / `NumberEditorModule` / `DateEditorModule` / `CheckboxEditorModule` / `CustomEditorModule` / `SelectEditorModule` / `RichSelectModule`
      */
     readOnlyEdit?: boolean;
 
@@ -507,22 +530,26 @@ export interface GridOptions<TData = any> {
      * The default is that the grid stays editing until focus goes onto another cell.
      * @default false
      * @initial
+     * @agModule `TextEditorModule` / `LargeTextEditorModule` / `NumberEditorModule` / `DateEditorModule` / `CheckboxEditorModule` / `CustomEditorModule` / `SelectEditorModule` / `RichSelectModule`
      */
     stopEditingWhenCellsLoseFocus?: boolean;
     /**
      * Set to `true` along with `enterNavigatesVerticallyAfterEdit` to have Excel-style behaviour for the `Enter` key.
      * i.e. pressing the `Enter` key will move down to the cell beneath and `Shift+Enter` will move up to the cell above.
      * @default false
+     * @agModule `TextEditorModule` / `LargeTextEditorModule` / `NumberEditorModule` / `DateEditorModule` / `CheckboxEditorModule` / `CustomEditorModule` / `SelectEditorModule` / `RichSelectModule`
      */
     enterNavigatesVertically?: boolean;
     /**
      * Set to `true` along with `enterNavigatesVertically` to have Excel-style behaviour for the 'Enter' key.
      * i.e. pressing the Enter key will move down to the cell beneath and Shift+Enter key will move up to the cell above.
      * @default false
+     * @agModule `TextEditorModule` / `LargeTextEditorModule` / `NumberEditorModule` / `DateEditorModule` / `CheckboxEditorModule` / `CustomEditorModule` / `SelectEditorModule` / `RichSelectModule`
      */
     enterNavigatesVerticallyAfterEdit?: boolean;
     /**
      * Forces Cell Editing to start when backspace is pressed. This is only relevant for MacOS users.
+     * @agModule `TextEditorModule` / `LargeTextEditorModule` / `NumberEditorModule` / `DateEditorModule` / `CheckboxEditorModule` / `CustomEditorModule` / `SelectEditorModule` / `RichSelectModule`
      */
     enableCellEditingOnBackspace?: boolean;
     /**
@@ -535,12 +562,14 @@ export interface GridOptions<TData = any> {
      * Set the size of the undo / redo stack.
      * @default 10
      * @initial
+     * @agModule `UndoRedoEditModule`
      */
     undoRedoCellEditingLimit?: number;
 
     // *** Export *** //
     /**
      * A default configuration object used to export to CSV.
+     * @agModule `CsvExportModule`
      */
     defaultCsvExportParams?: CsvExportParams;
     /**
@@ -550,6 +579,7 @@ export interface GridOptions<TData = any> {
     suppressCsvExport?: boolean;
     /**
      * A default configuration object used to export to Excel.
+     * @agModule `ExcelExportModule`
      */
     defaultExcelExportParams?: ExcelExportParams;
     /**
@@ -560,6 +590,7 @@ export interface GridOptions<TData = any> {
     /**
      * A list (array) of Excel styles to be used when exporting to Excel with styles.
      * @initial
+     * @agModule `ExcelExportModule`
      */
     excelStyles?: ExcelStyle[];
 
@@ -571,6 +602,7 @@ export interface GridOptions<TData = any> {
     findSearchValue?: string;
     /**
      * Options for the Find feature.
+     * @agModule `FindModule`
      */
     findOptions?: FindOptions;
 
@@ -585,20 +617,24 @@ export interface GridOptions<TData = any> {
      * Set to `true` to turn on the Quick Filter cache, used to improve performance when using the Quick Filter.
      * @default false
      * @initial
+     * @agModule `QuickFilterModule`
      */
     cacheQuickFilter?: boolean;
     /**
      * Hidden columns are excluded from the Quick Filter by default.
      * To include hidden columns, set to `true`.
      * @default false
+     * @agModule `QuickFilterModule`
      */
     includeHiddenColumnsInQuickFilter?: boolean;
     /**
      * Changes how the Quick Filter splits the Quick Filter text into search terms.
+     * @agModule `QuickFilterModule`
      */
     quickFilterParser?: (quickFilter: string) => string[];
     /**
      * Changes the matching logic for whether a row passes the Quick Filter.
+     * @agModule `QuickFilterModule`
      */
     quickFilterMatcher?: (quickFilterParts: string[], rowQuickFilterAggregateText: string) => boolean;
     /**
@@ -606,11 +642,13 @@ export interface GridOptions<TData = any> {
      * (or aggregated data if `groupAggFiltering = true`).
      * Set to `true` to apply Quick Filter before pivoting (/aggregating) instead.
      * @default false
+     * @agModule `QuickFilterModule` / 'PivotModule'
      */
     applyQuickFilterBeforePivotOrAgg?: boolean;
     /**
      * Set to `true` to override the default tree data filtering behaviour to instead exclude child nodes from filter results.
      * @default false
+     * @agModule `TreeDataModule`
      */
     excludeChildrenWhenTreeDataFiltering?: boolean;
     /**
@@ -623,6 +661,7 @@ export interface GridOptions<TData = any> {
      * Allows rows to always be displayed, even if they don't match the applied filtering.
      * Return `true` for the provided row to always be displayed.
      * Only works with the Client-Side Row Model.
+     * @agModule `TextFilterModule` / `NumberFilterModule` / `DateFilterModule` / `SetFilterModule` / `MultiFilterModule` / `CustomFilterModule` / `QuickFilterModule` / `ExternalFilterModule` / `AdvancedFilterModule`
      */
     alwaysPassFilter?: (rowNode: IRowNode<TData>) => boolean;
 
@@ -630,15 +669,18 @@ export interface GridOptions<TData = any> {
      * Hidden columns are excluded from the Advanced Filter by default.
      * To include hidden columns, set to `true`.
      * @default false
+     * @agModule `AdvancedFilterModule`
      */
     includeHiddenColumnsInAdvancedFilter?: boolean;
     /**
      * DOM element to use as the parent for the Advanced Filter to allow it to appear outside of the grid.
      * Set to `null` or `undefined` to appear inside the grid.
+     * @agModule `AdvancedFilterModule`
      */
     advancedFilterParent?: HTMLElement | null;
     /**
      * Customise the parameters passed to the Advanced Filter Builder.
+     * @agModule `AdvancedFilterModule`
      */
     advancedFilterBuilderParams?: IAdvancedFilterBuilderParams;
     /**
@@ -646,6 +688,7 @@ export interface GridOptions<TData = any> {
      * Set to `true` to prevent this and use defined functions instead.
      * This will result in slower filtering, but it enables Advanced Filter to work when `unsafe-eval` is disabled.
      * @default false
+     * @agModule `AdvancedFilterModule`
      */
     suppressAdvancedFilterEval?: boolean;
     /**
@@ -654,6 +697,7 @@ export interface GridOptions<TData = any> {
      * the same as when using AG Grid Community.
      * @default false
      * @initial
+     * @agModule TextFilterModule / NumberFilterModule / DateFilterModule / MultiFilterModule / CustomFilterModule
      */
     suppressSetFilterByDefault?: boolean;
 
@@ -668,25 +712,30 @@ export interface GridOptions<TData = any> {
      * The list of chart themes that a user can choose from in the chart panel.
      * @default ['ag-default', 'ag-material', 'ag-sheets', 'ag-polychroma', 'ag-vivid'];
      * @initial
+     * @agModule `IntegratedChartsModule`
      */
     chartThemes?: string[];
     /**
      * A map containing custom chart themes.
      * @initial
+     * @agModule `IntegratedChartsModule`
      */
     customChartThemes?: { [name: string]: AgChartTheme };
     /**
      * Chart theme overrides applied to all themes.
      * @initial
+     * @agModule `IntegratedChartsModule`
      */
     chartThemeOverrides?: AgChartThemeOverrides;
     /**
      * Allows customisation of the Chart Tool Panels, such as changing the tool panels visibility and order, as well as choosing which charts should be displayed in the chart panel.
      * @initial
+     * @agModule `IntegratedChartsModule`
      */
     chartToolPanelsDef?: ChartToolPanelsDef;
     /**
      * Get chart menu items. Only applies when using AG Charts Enterprise.
+     * @agModule `IntegratedChartsModule`
      */
     chartMenuItems?: (DefaultChartMenuItem | MenuItemDef)[] | GetChartMenuItems<TData>;
 
@@ -719,40 +768,46 @@ export interface GridOptions<TData = any> {
     /**
      * Set to `true` to enable Master Detail.
      * @default false
-     * @agModule `MasterDetailModule` or `ServerSideRowModelModule`
+     * @agModule `MasterDetailModule`
      */
     masterDetail?: boolean;
     /**
      * Set to `true` to keep detail rows for when they are displayed again.
      * @default false
      * @initial
+     * @agModule `MasterDetailModule`
      */
     keepDetailRows?: boolean;
     /**
      * Sets the number of details rows to keep.
      * @default 10
      * @initial
+     * @agModule `MasterDetailModule`
      */
     keepDetailRowsCount?: number;
 
     /**
      * Provide a custom `detailCellRenderer` to use when a master row is expanded.
      * See [Detail Cell Renderer](https://www.ag-grid.com/javascript-data-grid/master-detail-custom-detail/) for framework specific implementation details.
+     * @agModule `MasterDetailModule`
      */
     detailCellRenderer?: any;
     /**
      * Specifies the params to be used by the Detail Cell Renderer. Can also be a function that provides the params to enable dynamic definitions of the params.
+     * @agModule `MasterDetailModule`
      */
     detailCellRendererParams?: any;
 
     /**
      * Set fixed height in pixels for each detail row.
      * @initial
+     * @agModule `MasterDetailModule`
      */
     detailRowHeight?: number;
     /**
      * Set to `true` to have the detail grid dynamically change it's height to fit it's rows.
      * @initial
+     * @agModule `MasterDetailModule`
      */
     detailRowAutoHeight?: boolean;
 
@@ -763,15 +818,7 @@ export interface GridOptions<TData = any> {
      * @initial
      */
     context?: any;
-    /**
-     * Provide a custom drag and drop image component.
-     * @initial
-     */
-    dragAndDropImageComponent?: any;
-    /**
-     * Customise the parameters provided to the Drag and Drop Image Component.
-     */
-    dragAndDropImageComponentParams?: any;
+
     /**
      *
      * A list of grids to treat as Aligned Grids.
@@ -803,6 +850,7 @@ export interface GridOptions<TData = any> {
      * Set to `true` to configure the value cache to not expire after data updates.
      * @default false
      * @initial
+     * @agModule `ValueCacheModule`
      */
     valueCacheNeverExpires?: boolean;
     /**
@@ -904,6 +952,7 @@ export interface GridOptions<TData = any> {
     /**
      * How many rows to load per page. If `paginationAutoPageSize` is specified, this property is ignored.
      * @default 100
+     * @agModule `PaginationModule`
      */
     paginationPageSize?: number;
     /**
@@ -913,17 +962,20 @@ export interface GridOptions<TData = any> {
      * Set to `false` to hide the page size selector.
      * @default true
      * @initial
+     * @agModule `PaginationModule`
      */
     paginationPageSizeSelector?: number[] | boolean;
     /**
      * Set to `true` so that the number of rows to load per page is automatically adjusted by the grid so each page shows enough rows to just fill the area designated for the grid. If `false`, `paginationPageSize` is used.
      * @default false
+     * @agModule `PaginationModule`
      */
     paginationAutoPageSize?: boolean;
     /**
      * Set to `true` to have pages split children of groups when using Row Grouping or detail rows with Master Detail.
      * @default false
      * @initial
+     * @agModule `PaginationModule`
      */
     paginateChildRows?: boolean;
     /**
@@ -931,6 +983,7 @@ export interface GridOptions<TData = any> {
      * This is useful if `pagination=true` and you want to provide your own pagination controls.
      * Otherwise, when `pagination=true` the grid automatically shows the necessary controls at the bottom so that the user can navigate through the different pages.
      * @default false
+     * @agModule `PaginationModule`
      */
     suppressPaginationPanel?: boolean;
 
@@ -938,7 +991,7 @@ export interface GridOptions<TData = any> {
     /**
      * Set to `true` to enable pivot mode.
      * @default false
-     * @agModule `PivotModule` or `ServerSideRowModelModule`
+     * @agModule `PivotModule`
      */
     pivotMode?: boolean;
     /**
@@ -952,67 +1005,80 @@ export interface GridOptions<TData = any> {
      * The maximum number of generated columns before the grid halts execution. Upon reaching this number, the grid halts generation of columns
      * and triggers a `pivotMaxColumnsExceeded` event. `-1` for no limit.
      * @default -1
+     * @agModule `PivotModule`
      */
     pivotMaxGeneratedColumns?: number;
     /**
      * If pivoting, set to the number of column group levels to expand by default, e.g. `0` for none, `1` for first level only, etc. Set to `-1` to expand everything.
      * @default 0
+     * @agModule `PivotModule`
      */
     pivotDefaultExpanded?: number;
     /**
      * When set and the grid is in pivot mode, automatically calculated totals will appear within the Pivot Column Groups, in the position specified.
+     * @agModule `PivotModule`
      */
     pivotColumnGroupTotals?: 'before' | 'after';
     /**
      * When set and the grid is in pivot mode, automatically calculated totals will appear for each value column in the position specified.
+     * @agModule `PivotModule`
      */
     pivotRowTotals?: 'before' | 'after';
     /**
      * If `true`, the grid will not swap in the grouping column when pivoting. Useful if pivoting using Server Side Row Model or Viewport Row Model and you want full control of all columns including the group column.
      * @default false
      * @initial
+     * @agModule `PivotModule`
      */
     pivotSuppressAutoColumn?: boolean;
     /**
      * When enabled, pivot column groups will appear 'fixed', without the ability to expand and collapse the column groups.
      * @default false
      * @initial
+     * @agModule `PivotModule`
      */
     suppressExpandablePivotGroups?: boolean;
     /**
      * If `true`, then row group, pivot and value aggregation will be read-only from the GUI. The grid will display what values are used for each, but will not allow the user to change the selection.
      * @default false
+     * @agModule `RowGroupingModule` / `PivotModule` / `TreeDataModule` / `ServerSideRowModelModule`
      */
     functionsReadOnly?: boolean;
     /**
      * A map of 'function name' to 'function' for custom aggregation functions.
      * @initial
+     * @agModule `RowGroupingModule` / `PivotModule` / `TreeDataModule` / `ServerSideRowModelModule`
      */
     aggFuncs?: { [key: string]: IAggFunc<TData> };
     /**
      * When `true`, column headers won't include the `aggFunc` name, e.g. `'sum(Bank Balance)`' will just be `'Bank Balance'`.
      * @default false
+     * @agModule `RowGroupingModule` / `PivotModule` / `TreeDataModule` / `ServerSideRowModelModule`
      */
     suppressAggFuncInHeader?: boolean;
 
     /**
      * When using aggregations, the grid will always calculate the root level aggregation value.
      * @default false
+     * @agModule `RowGroupingModule` / `PivotModule` / `TreeDataModule` / `ServerSideRowModelModule`
      */
     alwaysAggregateAtRootLevel?: boolean;
     /**
      * When using change detection, only the updated column will be re-aggregated.
      * @default false
+     * @agModule `RowGroupingModule` / `PivotModule` / `TreeDataModule` / `ServerSideRowModelModule`
      */
     aggregateOnlyChangedColumns?: boolean;
     /**
      * Set to `true` so that aggregations are not impacted by filtering.
      * @default false
+     * @agModule `RowGroupingModule` / `PivotModule` / `TreeDataModule` / `ServerSideRowModelModule`
      */
     suppressAggFilteredOnly?: boolean;
     /**
      * Set to `true` to omit the value Column header when there is only a single value column.
      * @default false
+     * @agModule `PivotModule`
      */
     removePivotHeaderRowWhenSingleValueColumn?: boolean;
     // *** Rendering *** //
@@ -1068,6 +1134,7 @@ export interface GridOptions<TData = any> {
     enableRtl?: boolean;
     /**
      * Set to `true` so that the grid doesn't virtualise the columns. For example, if you have 100 columns, but only 10 visible due to scrolling, all 100 will always be rendered.
+     * **It is not recommended to set this to `true` as it may cause performance issues.**
      * @default false
      * @initial
      */
@@ -1081,6 +1148,7 @@ export interface GridOptions<TData = any> {
     suppressMaxRenderedRowRestriction?: boolean;
     /**
      * Set to `true` so that the grid doesn't virtualise the rows. For example, if you have 100 rows, but only 10 visible due to scrolling, all 100 will always be rendered.
+     * **It is not recommended to set this to `true` as it may cause performance issues.**
      * @default false
      * @initial
      */
@@ -1101,16 +1169,19 @@ export interface GridOptions<TData = any> {
     /**
      * Set to `true` to suppress moving rows while dragging the `rowDrag` waffle. This option highlights the position where the row will be placed and it will only move the row on mouse up.
      * @default false
+     * @agModule `RowDragModule`
      */
     suppressMoveWhenRowDragging?: boolean;
     /**
      * Set to `true` to enable clicking and dragging anywhere on the row without the need for a drag handle.
      * @default false
+     * @agModule `RowDragModule`
      */
     rowDragEntireRow?: boolean;
     /**
      * Set to `true` to enable dragging multiple rows at the same time.
      * @default false
+     * @agModule `RowDragModule`
      */
     rowDragMultiRow?: boolean;
     /**
@@ -1119,8 +1190,20 @@ export interface GridOptions<TData = any> {
      * If the `rowDragText` callback is set in the ColDef it will take precedence over this, except when
      * `rowDragEntireRow=true`.
      * @initial
+     * @agModule `RowDragModule`
      */
     rowDragText?: (params: IRowDragItem, dragItemCount: number) => string;
+    /**
+     * Provide a custom drag and drop image component.
+     * @initial
+     * @agModule `RowDragModule`
+     */
+    dragAndDropImageComponent?: any;
+    /**
+     * Customise the parameters provided to the Drag and Drop Image Component.
+     * @agModule `RowDragModule`
+     */
+    dragAndDropImageComponentParams?: any;
 
     // *** Row Full Width *** //
 
@@ -1150,20 +1233,24 @@ export interface GridOptions<TData = any> {
      * - `'multipleColumns'`: a group column per row group is added automatically.
      * - `'groupRows'`: group rows are automatically added instead of group columns.
      * - `'custom'`: informs the grid that group columns will be provided.
+     * @agModule `RowGroupingModule`
      */
     groupDisplayType?: RowGroupingDisplayType;
     /**
      * If grouping, set to the number of levels to expand by default, e.g. `0` for none, `1` for first level only, etc. Set to `-1` to expand everything.
      * @default 0
+     * @agModule `RowGroupingModule`
      */
     groupDefaultExpanded?: number;
     /**
      * Allows specifying the group 'auto column' if you are not happy with the default. If grouping, this column definition is included as the first column in the grid. If not grouping, this column is not included.
+     * @agModule `RowGroupingModule` / `TreeDataModule`
      */
     autoGroupColumnDef?: ColDef<TData>;
     /**
      * When `true`, preserves the current group order when sorting on non-group columns.
      * @default false
+     * @agModule `RowGroupingModule`
      */
     groupMaintainOrder?: boolean;
     /**
@@ -1176,11 +1263,13 @@ export interface GridOptions<TData = any> {
      * If grouping, locks the group settings of a number of columns, e.g. `0` for no group locking. `1` for first group column locked, `-1` for all group columns locked.
      * @default 0
      * @initial
+     * @agModule `RowGroupingModule`
      */
     groupLockGroupColumns?: number;
     /**
      * Set to determine whether filters should be applied on aggregated group values.
      * @default false
+     * @agModule `RowGroupingModule`
      */
     groupAggFiltering?: boolean | IsRowFilterable<TData>;
 
@@ -1188,25 +1277,27 @@ export interface GridOptions<TData = any> {
      * When provided, an extra row group total row will be inserted into row groups at the specified position, to display
      * when the group is expanded. This row will contain the aggregate values for the group. If a callback function is
      * provided, it can be used to selectively determine which groups will have a total row added.
-     * @agModule `RowGroupingModule` or `ServerSideRowModelModule`
+     * @agModule `RowGroupingModule`
      */
     groupTotalRow?: 'top' | 'bottom' | UseGroupTotalRow<TData>;
 
     /**
      * When provided, an extra grand total row will be inserted into the grid at the specified position.
      * This row displays the aggregate totals of all rows in the grid.
-     * @agModule `RowGroupingModule` or `ServerSideRowModelModule`
+     * @agModule `RowGroupingModule`
      */
     grandTotalRow?: 'top' | 'bottom' | 'pinnedTop' | 'pinnedBottom';
 
     /**
      * Suppress the sticky behaviour of the total rows, can be suppressed individually by passing `'grand'` or `'group'`.
+     * @agModule `RowGroupingModule`
      */
     suppressStickyTotalRow?: boolean | 'grand' | 'group';
 
     /**
      * If `true`, and showing footer, aggregate data will always be displayed at both the header and footer levels. This stops the possibly undesirable behaviour of the header details 'jumping' to the footer on expand.
      * @default false
+     * @agModule `RowGroupingModule` / `PivotModule` / `TreeDataModule` / `ServerSideRowModelModule`
      */
     groupSuppressBlankHeader?: boolean;
     /**
@@ -1218,12 +1309,14 @@ export interface GridOptions<TData = any> {
     /**
      * Shows the open group in the group column for non-group rows.
      * @default false
+     * @agModule `RowGroupingModule`
      */
     showOpenedGroup?: boolean;
 
     /**
      * Enable to display the child row in place of the group row when the group only has a single child.
      * @default false
+     * @agModule `RowGroupingModule`
      */
     groupHideParentOfSingleChild?: boolean | 'leafGroupsOnly';
     /**
@@ -1241,11 +1334,13 @@ export interface GridOptions<TData = any> {
     /**
      * Set to `true` to hide parents that are open. When used with multiple columns for showing groups, it can give a more pleasing user experience.
      * @default false
+     * @agModule `RowGroupingModule`
      */
     groupHideOpenParents?: boolean;
     /**
      * Set to `true` to prevent the grid from creating a '(Blanks)' group for nodes which do not belong to a group, and display the unbalanced nodes alongside group nodes.
      * @default false
+     * @agModule `RowGroupingModule`
      */
     groupAllowUnbalanced?: boolean;
     /**
@@ -1257,10 +1352,12 @@ export interface GridOptions<TData = any> {
     /**
      * Provide the Cell Renderer to use when `groupDisplayType = 'groupRows'`.
      * See [Group Row Cell Renderer](https://www.ag-grid.com/javascript-data-grid/grouping-group-rows/#providing-cell-renderer) for framework specific implementation details.
+     * @agModule `RowGroupingModule`
      */
     groupRowRenderer?: any;
     /**
      * Customise the parameters provided to the `groupRowRenderer` component.
+     * @agModule `RowGroupingModule`
      */
     groupRowRendererParams?: any;
 
@@ -1275,6 +1372,7 @@ export interface GridOptions<TData = any> {
     /**
      * The name of the field to use in a data item to retrieve the array of children nodes of a node when while using treeData=true.
      * It supports accessing nested fields using the dot notation.
+     * @agModule `TreeDataModule`
      */
     treeDataChildrenField?: string;
 
@@ -1283,12 +1381,14 @@ export interface GridOptions<TData = any> {
      * The tree will be constructed via relationships between nodes using this field.
      * getRowId callback need to be provided as well for this to work.
      * It supports accessing nested fields using the dot notation.
+     * @agModule `TreeDataModule`
      */
     treeDataParentIdField?: string;
 
     /**
      * Set to `true` to suppress sort indicators and actions from the row group panel.
      * @default false
+     * @agModule `RowGroupingPanelModule`
      */
     rowGroupPanelSuppressSort?: boolean;
 
@@ -1296,6 +1396,7 @@ export interface GridOptions<TData = any> {
      * Set to `true` prevent Group Rows from sticking to the top of the grid.
      * @default false
      * @initial
+     * @agModule `RowGroupingModule` / `TreeDataModule`
      */
     suppressGroupRowsSticky?: boolean;
 
@@ -1332,6 +1433,7 @@ export interface GridOptions<TData = any> {
      *
      * Return `true` if the row should be pinned initially. Return `false` otherwise.
      * User interactions can subsequently still change the pinned state of a row.
+     * @agModule `PinnedRowModule`
      */
     isRowPinned?: IsRowPinned<TData>;
     // *** Row Model *** //
@@ -1339,6 +1441,7 @@ export interface GridOptions<TData = any> {
      * Sets the row model type.
      * @default 'clientSide'
      * @initial
+     * @agModule `ClientSideRowModelModule` / `InfiniteRowModelModule` / `ServerSideRowModelModule` / `ViewportRowModelModule`
      */
     rowModelType?: RowModelType;
 
@@ -1369,12 +1472,14 @@ export interface GridOptions<TData = any> {
      * How many extra blank rows to display to the user at the end of the dataset, which sets the vertical scroll and then allows the grid to request viewing more rows of data.
      * @default 1
      * @initial
+     * @agModule `InfiniteRowModelModule`
      */
     cacheOverflowSize?: number;
     /**
      * How many extra blank rows to display to the user at the end of the dataset, which sets the vertical scroll and then allows the grid to request viewing more rows of data.
      * @default 1
      * @initial
+     * @agModule `InfiniteRowModelModule`
      */
     infiniteInitialRowCount?: number;
     /**
@@ -1386,17 +1491,20 @@ export interface GridOptions<TData = any> {
 
     /**
      * When `true`, the Server-side Row Model will not use a full width loading renderer, instead using the colDef `loadingCellRenderer` if present.
+     * @agModule `ServerSideRowModelModule`
      */
     suppressServerSideFullWidthLoadingRow?: boolean;
 
     /**
      * How many rows for each block in the store, i.e. how many rows returned from the server at a time.
      * @default 100
+     * @agModule `ServerSideRowModelModule` / `InfiniteRowModelModule`
      */
     cacheBlockSize?: number;
     /**
      * How many blocks to keep in the store. Default is no limit, so every requested block is kept. Use this if you have memory concerns, and blocks that were least recently viewed will be purged when the limit is hit. The grid will additionally make sure it has all the blocks needed to display what is currently visible, in case this property is set to a low value.
      * @initial
+     * @agModule `ServerSideRowModelModule` / `InfiniteRowModelModule`
      */
     maxBlocksInCache?: number;
     /**
@@ -1404,6 +1512,7 @@ export interface GridOptions<TData = any> {
      * Set to `-1` for no maximum restriction on requests.
      * @default 2
      * @initial
+     * @agModule `ServerSideRowModelModule` / `InfiniteRowModelModule`
      */
     maxConcurrentDatasourceRequests?: number;
     /**
@@ -1414,6 +1523,7 @@ export interface GridOptions<TData = any> {
     /**
      * When enabled, closing group rows will remove children of that row. Next time the row is opened, child rows will be read from the datasource again. This property only applies when there is Row Grouping or Tree Data.
      * @default false
+     * @agModule `ServerSideRowModelModule`
      */
     purgeClosedRowNodes?: boolean;
     /**
@@ -1425,17 +1535,20 @@ export interface GridOptions<TData = any> {
     /**
      * When enabled, always refreshes top level groups regardless of which column was sorted. This property only applies when there is Row Grouping & sorting is handled on the server.
      * @default false
+     * @agModule `ServerSideRowModelModule`
      */
     serverSideSortAllLevels?: boolean;
     /**
      * When enabled, sorts fully loaded groups in the browser instead of requesting from the server.
      * @default false
+     * @agModule `ServerSideRowModelModule`
      */
     serverSideEnableClientSideSort?: boolean;
     /**
      * When enabled, only refresh groups directly impacted by a filter. This property only applies when there is Row Grouping & filtering is handled on the server.
      * @default false
      * @initial
+     * @agModule `ServerSideRowModelModule`
      */
     serverSideOnlyRefreshFilteredGroups?: boolean;
 
@@ -1443,6 +1556,7 @@ export interface GridOptions<TData = any> {
      * Used to split pivot field strings for generating pivot result columns when `pivotResultFields` is provided as part of a `getRows` success.
      * @default '_'
      * @initial
+     * @agModule `ServerSideRowModelModule` / `PivotModule`
      */
     serverSidePivotResultFieldSeparator?: string;
 
@@ -1455,11 +1569,13 @@ export interface GridOptions<TData = any> {
     /**
      * When using viewport row model, sets the page size for the viewport.
      * @initial
+     * @agModule `ViewportRowModelModule`
      */
     viewportRowModelPageSize?: number;
     /**
      * When using viewport row model, sets the buffer size for the viewport.
      * @initial
+     * @agModule `ViewportRowModelModule`
      */
     viewportRowModelBufferSize?: number;
 
@@ -1522,7 +1638,7 @@ export interface GridOptions<TData = any> {
     // *** Selection *** //
     /**
      * Use the `RowSelectionOptions` object to configure row selection. The string values `'single'` and `'multiple'` are deprecated.
-     * @agModule `RowSelectionModule` or `ServerSideRowModelModule`
+     * @agModule `RowSelectionModule`
      */
     rowSelection?: RowSelectionOptions<TData> | 'single' | 'multiple';
     /**
@@ -1815,26 +1931,32 @@ export interface GridOptions<TData = any> {
     // *** Clipboard *** //
     /**
      * Allows you to process cells for the clipboard. Handy if for example you have `Date` objects that need to have a particular format if importing into Excel.
+     * @agModule `ClipboardModule`
      */
     processCellForClipboard?: (params: ProcessCellForExportParams<TData>) => any;
     /**
      * Allows you to process header values for the clipboard.
+     * @agModule `ClipboardModule`
      */
     processHeaderForClipboard?: (params: ProcessHeaderForExportParams<TData>) => any;
     /**
      * Allows you to process group header values for the clipboard.
+     * @agModule `ClipboardModule`
      */
     processGroupHeaderForClipboard?: (params: ProcessGroupHeaderForExportParams<TData>) => any;
     /**
      * Allows you to process cells from the clipboard. Handy if for example you have number fields and want to block non-numbers from getting into the grid.
+     * @agModule `ClipboardModule`
      */
     processCellFromClipboard?: (params: ProcessCellForExportParams<TData>) => any;
     /**
      * Allows you to get the data that would otherwise go to the clipboard. To be used when you want to control the 'copy to clipboard' operation yourself.
+     * @agModule `ClipboardModule`
      */
     sendToClipboard?: (params: SendToClipboardParams<TData>) => void;
     /**
      * Allows complete control of the paste operation, including cancelling the operation (so nothing happens) or replacing the data with other data.
+     * @agModule `ClipboardModule`
      */
     processDataFromClipboard?: (params: ProcessDataFromClipboardParams<TData>) => string[][] | null;
 
@@ -1854,11 +1976,13 @@ export interface GridOptions<TData = any> {
     /**
      * Callback to be used to customise the chart toolbar items.
      * @initial
+     * @agModule `IntegratedChartsModule`
      */
     getChartToolbarItems?: GetChartToolbarItems;
     /**
      * Callback to enable displaying the chart in an alternative chart container.
      * @initial
+     * @agModule `IntegratedChartsModule`
      */
     createChartContainer?: (params: ChartRefParams<TData>) => void;
 
@@ -1907,33 +2031,40 @@ export interface GridOptions<TData = any> {
     /**
      * Allows user to format the numbers in the pagination panel, i.e. 'row count' and 'page number' labels. This is for pagination panel only, to format numbers inside the grid's cells (i.e. your data), then use `valueFormatter` in the column definitions.
      * @initial
+     * @agModule `PaginationModule`
      */
     paginationNumberFormatter?: (params: PaginationNumberFormatterParams<TData>) => string;
 
     // *** Row Grouping and Pivoting *** //
     /**
      * Callback to use when you need access to more then the current column for aggregation.
+     * @agModule `RowGroupingModule` / `PivotModule` / `TreeDataModule` / `ServerSideRowModelModule`
      */
     getGroupRowAgg?: (params: GetGroupRowAggParams<TData>) => any;
     /**
      * (Client-side Row Model only) Allows groups to be open by default.
+     * @agModule `RowGroupingModule` / `TreeDataModule`
      */
     isGroupOpenByDefault?: (params: IsGroupOpenByDefaultParams<TData>) => boolean;
     /**
      * Allows default sorting of groups.
+     * @agModule `RowGroupingModule`
      */
     initialGroupOrderComparator?: (params: InitialGroupOrderComparatorParams<TData>) => number;
     /**
      * Callback for the mutation of the generated pivot result column definitions
+     * @agModule `PivotModule`
      */
     processPivotResultColDef?: (colDef: ColDef<TData>) => void;
     /**
      * Callback for the mutation of the generated pivot result column group definitions
+     * @agModule `PivotModule`
      */
     processPivotResultColGroupDef?: (colGroupDef: ColGroupDef<TData>) => void;
     /**
      * Callback to be used when working with Tree Data when `treeData = true`.
      * @initial
+     * @agModule `TreeDataModule`
      */
     getDataPath?: GetDataPath<TData>;
 
@@ -1941,27 +2072,33 @@ export interface GridOptions<TData = any> {
     /**
      * Allows setting the child count for a group row.
      * @initial
+     * @agModule `ServerSideRowModelModule`
      */
     getChildCount?: (dataItem: any) => number;
     /**
      * Allows providing different params for different levels of grouping.
      * @initial
+     * @agModule `ServerSideRowModelModule`
      */
     getServerSideGroupLevelParams?: (params: GetServerSideGroupLevelParamsParams) => ServerSideGroupLevelParams;
     /**
      * Allows groups to be open by default.
+     * @agModule `ServerSideRowModelModule`
      */
     isServerSideGroupOpenByDefault?: (params: IsServerSideGroupOpenByDefaultParams) => boolean;
     /**
      * Allows cancelling transactions.
+     * @agModule `ServerSideRowModelModule`
      */
     isApplyServerSideTransaction?: IsApplyServerSideTransaction;
     /**
      * SSRM Tree Data: Allows specifying which rows are expandable.
+     * @agModule `ServerSideRowModelModule`
      */
     isServerSideGroup?: IsServerSideGroup;
     /**
      * SSRM Tree Data: Allows specifying group keys.
+     * @agModule `ServerSideRowModelModule`
      */
     getServerSideGroupKey?: GetServerSideGroupKey;
 
@@ -1980,6 +2117,7 @@ export interface GridOptions<TData = any> {
     /**
      * When enabled, getRowId() callback is implemented and new Row Data is set, the grid will disregard all previous rows and treat the new Row Data as new data. As a consequence, all Row State (eg selection, rendered rows) will be reset.
      * @default false
+     * @agModule `ClientSideRowModelModule`
      */
     resetRowDataOnUpdate?: boolean;
     /**
@@ -1993,6 +2131,7 @@ export interface GridOptions<TData = any> {
     isRowSelectable?: IsRowSelectable<TData>;
     /**
      * Callback to be used with Master Detail to determine if a row should be a master row. If `false` is returned no detail row will exist for this row.
+     * @agModule `MasterDetailModule`
      */
     isRowMaster?: IsRowMaster<TData>;
     /**
@@ -2372,6 +2511,16 @@ export interface GridOptions<TData = any> {
      * The drag has been cancelled over the grid.
      */
     onRowDragCancel?(event: RowDragCancelEvent<TData>): void;
+
+    /**
+     * The row resize has started (Row Numbers Feature)
+     */
+    onRowResizeStarted?(event: RowResizeStartedEvent<TData>): void;
+
+    /**
+     * The row resize has ended (Row Numbers Feature)
+     */
+    onRowResizeEnded?(event: RowResizeEndedEvent): void;
 
     // *** Row Grouping *** //
     /**

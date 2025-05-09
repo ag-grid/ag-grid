@@ -1,9 +1,10 @@
 import type { _ModuleWithoutApi } from 'ag-grid-community';
-import { CellStyleModule } from 'ag-grid-community';
+import { CellStyleModule, _SharedDragAndDropModule } from 'ag-grid-community';
 
 import { EnterpriseCoreModule } from '../agGridEnterpriseModule';
 import { VERSION } from '../version';
 import { rowNumbersCSS } from './rowNumbers.css-GENERATED';
+import { AgRowNumbersRowResizer } from './rowNumbersRowResizer';
 import { RowNumbersService } from './rowNumbersService';
 
 /**
@@ -14,6 +15,7 @@ export const RowNumbersModule: _ModuleWithoutApi = {
     moduleName: 'RowNumbers',
     version: VERSION,
     beans: [RowNumbersService],
-    dependsOn: [EnterpriseCoreModule, CellStyleModule],
+    dynamicBeans: { rowNumberRowResizer: AgRowNumbersRowResizer as any },
+    dependsOn: [EnterpriseCoreModule, CellStyleModule, _SharedDragAndDropModule],
     css: [rowNumbersCSS],
 };

@@ -164,6 +164,7 @@ export interface Config {
      * Hide the header to make it easy to just include the sections as part of doc pages
      */
     hideHeader?: boolean;
+
     /**
      * Override the headerLevel used.
      */
@@ -241,3 +242,10 @@ export interface MultipleApiModel {
 }
 
 export type ApiDocumentationModel = SingleApiModel | MultipleApiModel;
+
+export interface GridModule {
+    moduleName: string;
+    name: string;
+    path: string;
+    isEnterprise: boolean;
+}

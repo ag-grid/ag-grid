@@ -20,8 +20,8 @@ interface Props {
     appLocation: string;
     boilerplatePath: string;
     extraStyles?: string;
-    children?: any;
     extras?: string[];
+    headFragment?: string;
     usesMathRandom?: boolean;
 }
 
@@ -37,6 +37,7 @@ const {
     boilerplatePath,
     extraStyles,
     extras,
+    headFragment,
     usesMathRandom,
 } = Astro.props as Props;
 
@@ -56,6 +57,7 @@ const startFile = pathJoin(appLocation, entryFileName);
                 : []}
         />
         <Extras extras={extras ?? []} />
+        <Fragment set:html={headFragment} />
     </head>
     <body>
         <Fragment set:html={indexFragment} />

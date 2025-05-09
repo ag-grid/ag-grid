@@ -1,3 +1,6 @@
+/**
+ * Styles for control elements in examples, not required for the examples' functionality
+ */
 :root {
     --main-fg: #101828;
     --main-bg: #fff;
@@ -162,20 +165,19 @@ body > #highlighter {
     border-radius: 8px;
     cursor: pointer;
     overflow: hidden; /*  slider progress trick  */
+    background: var(--range-track-bg);
 }
 
 .example-controls input[type='range']::-webkit-slider-runnable-track {
     appearance: none;
     height: 16px;
     background: var(--range-track-bg);
-    border-radius: 8px;
 }
 
 .example-controls input[type='range']::-moz-range-track {
     appearance: none;
     height: 16px;
     background: var(--range-track-bg);
-    border-radius: 8px;
 }
 
 .example-controls input[type='range']::-webkit-slider-thumb {

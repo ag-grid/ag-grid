@@ -57,21 +57,28 @@ import GridComp from './gridComp';
 import { RenderStatusService } from './renderStatusService';
 import { CssClasses, isReact19, runWithoutFlushSync } from './utils';
 
-type ReactCompProps = Omit<InternalAgGridReactProps, keyof GridOptions>;
+const deprecatedProps: Pick<
+    InternalAgGridReactProps,
+    'setGridApi' | 'children' | 'componentWrappingElement' | 'maxComponentCreationTimeMs'
+> = {
+    setGridApi: undefined,
+    componentWrappingElement: undefined,
+    maxComponentCreationTimeMs: undefined,
+    children: undefined,
+};
 
 // Used to only pass gridOptions to the GridCoreCreator from the props
+type ReactCompProps = Omit<InternalAgGridReactProps, keyof GridOptions>;
 const reactPropsNotGridOptions: ReactCompProps = {
     gridOptions: undefined,
     modules: undefined,
     containerStyle: undefined,
     className: undefined,
-    setGridApi: undefined,
     passGridApi: undefined,
-    componentWrappingElement: undefined,
-    maxComponentCreationTimeMs: undefined,
-    children: undefined,
+    ...deprecatedProps,
 };
 const excludeReactCompProps = new Set(Object.keys(reactPropsNotGridOptions));
+const deprecatedReactCompProps = new Set(Object.keys(deprecatedProps));
 
 export const AgGridReactUi = <TData,>(props: InternalAgGridReactProps<TData>) => {
     const apiRef = useRef<GridApi<TData>>();
@@ -247,6 +254,9 @@ function extractGridPropertyChanges(prevProps: any, nextProps: any): { [p: strin
     const changes: { [p: string]: any } = {};
     Object.keys(nextProps).forEach((propKey) => {
         if (excludeReactCompProps.has(propKey)) {
+            if (deprecatedReactCompProps.has(propKey)) {
+                _warn(274, { prop: propKey });
+            }
             return;
         }
         const propValue = nextProps[propKey];

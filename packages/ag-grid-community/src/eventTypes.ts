@@ -99,6 +99,8 @@ export const _PUBLIC_EVENTS = [
     'rowDragEnd',
     'rowDragCancel',
     'findChanged',
+    'rowResizeStarted',
+    'rowResizeEnded',
 ] as const;
 
 // events that are internal to AG Grid and should not be exposed to users via documentation or generated framework components

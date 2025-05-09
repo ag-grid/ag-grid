@@ -1,5 +1,7 @@
+import type { BeanCollection } from '../context/context';
 import type { ColDef } from '../entities/colDef';
 import type { HeaderComp } from '../headerRendering/cells/column/headerComp';
+import type { CellCtrl } from '../rendering/cell/cellCtrl';
 import type { CellPosition } from './iCellPosition';
 import type { IColumnCollectionService } from './iColumnCollectionService';
 
@@ -30,6 +32,11 @@ export interface RowNumbersOptions
      */
     suppressCellSelectionIntegration?: boolean;
 
+    /** Set to `true` to add a resizer to each Row Number cell that allows row resizing.
+     * @default false
+     */
+    enableRowResizer?: boolean;
+
     /**
      * The minimum width for the row number column.
      * @default 60
@@ -52,4 +59,10 @@ export interface RowNumbersOptions
 export interface IRowNumbersService extends IColumnCollectionService {
     setupForHeader(comp: HeaderComp): void;
     handleMouseDownOnCell(cell: CellPosition, mouseEvent: MouseEvent): boolean;
+    createRowNumbersRowResizerFeature(beans: BeanCollection, ctrl: CellCtrl): IRowNumbersRowResizeFeature | undefined;
+}
+
+export interface IRowNumbersRowResizeFeature {
+    refreshRowResizer(): void;
+    destroy(): void;
 }

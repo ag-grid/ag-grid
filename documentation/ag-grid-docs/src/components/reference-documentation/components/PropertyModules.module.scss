@@ -1,0 +1,122 @@
+@use 'design-system' as *;
+
+.moduleItem {
+    font-family: var(--text-monospace-font-family);
+    position: relative;
+
+    span {
+        margin-top: 2px;
+    }
+
+    svg {
+        height: 16px;
+        width: 16px;
+        margin-right: $spacing-size-2;
+    }
+}
+
+.moduleContent {
+    display: flex;
+    align-items: center;
+    gap: $spacing-size-2;
+}
+
+.enterpriseIcon {
+    --icon-color: var(--color-enterprise-icon);
+
+    height: 20px;
+    width: 20px;
+    margin-left: $spacing-size-1;
+}
+
+.moduleCount {
+    --icon-color: var(--color-link);
+
+    color: var(--color-link);
+    cursor: pointer;
+    font-size: var(--text-fs-sm);
+    font-weight: var(--text-semibold);
+    background: var(--color-util-brand-50);
+    padding: 0px 6px;
+    border-radius: var(--radius-sm);
+    padding-right: 2px;
+    transition: background-color $transition-default-timing;
+
+    &:hover,
+    &.moduleCountActive {
+        background: var(--color-util-brand-100);
+    }
+
+    #{$selector-darkmode} & {
+        background: color-mix(in srgb, var(--color-link) 15%, transparent);
+
+        &:hover,
+        &.moduleCountActive {
+            background: color-mix(in srgb, var(--color-link) 20%, transparent);
+        }
+    }
+}
+
+.moduleTooltip {
+    position: absolute;
+    top: 100%;
+    left: -14px;
+    z-index: 1000;
+    margin-top: $spacing-size-2;
+    background-color: var(--color-bg-primary);
+    border: 1px solid var(--color-border-secondary);
+    border-radius: var(--radius-sm);
+    box-shadow: var(--shadow-sm);
+    min-width: 280px;
+    opacity: 0;
+    transform: translateY(10px) scale(0.95);
+    transition:
+        opacity 0.15s ease,
+        transform 0.15s ease,
+        visibility 0s linear 0.15s;
+    pointer-events: none;
+    visibility: hidden;
+
+    &.isVisible {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+        pointer-events: auto;
+        visibility: visible;
+        transition:
+            opacity 0.15s ease,
+            transform 0.15s ease,
+            visibility 0s linear;
+    }
+}
+
+.moduleTooltipContent {
+    padding: 0;
+    max-width: 400px;
+
+    > a {
+        --icon-color: var(--color-link);
+
+        color: var(--color-link);
+        display: block;
+        padding: $spacing-size-2 $spacing-size-3;
+        border-bottom: 1px solid var(--color-border-secondary);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+
+        &:last-child {
+            border-bottom: none;
+        }
+    }
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(-0.5rem) scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}

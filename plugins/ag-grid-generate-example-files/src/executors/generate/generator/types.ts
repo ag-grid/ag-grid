@@ -99,6 +99,7 @@ export interface GeneratedContents extends ExampleConfig {
     files: FileContents;
     scriptFiles: string[];
     styleFiles: string[];
+    htmlFiles: string[];
     boilerPlateFiles: FileContents;
     packageJson: Record<string, any>;
 }

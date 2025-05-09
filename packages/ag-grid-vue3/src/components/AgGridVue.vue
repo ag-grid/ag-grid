@@ -86,6 +86,8 @@ import type {
     RowEditingStartedEvent,
     RowEditingStoppedEvent,
     RowGroupOpenedEvent,
+    RowResizeEndedEvent,
+    RowResizeStartedEvent,
     RowSelectedEvent,
     RowValueChangedEvent,
     SelectionChangedEvent,

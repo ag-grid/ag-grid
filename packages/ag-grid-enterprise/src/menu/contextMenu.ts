@@ -85,16 +85,8 @@ export class ContextMenuService extends BeanStub implements NamedBean, IContextM
             }
         }
 
+        // if user clicks a cell
         if (_exists(node)) {
-            // if user clicks a cell
-            const suppressExcel = gos.get('suppressExcelExport') || !excelCreator;
-            const suppressCsv = gos.get('suppressCsvExport') || !csvCreator;
-            const onIPad = _isIOSUserAgent();
-            const anyExport = !onIPad && (!suppressExcel || !suppressCsv);
-            if (anyExport) {
-                defaultMenuOptions.push('export');
-            }
-
             const enableRowPinning = gos.get('enableRowPinning');
             const isRowPinnable = gos.get('isRowPinnable');
             const grandTotalRow = gos.get('grandTotalRow');
@@ -114,6 +106,14 @@ export class ContextMenuService extends BeanStub implements NamedBean, IContextM
                         defaultMenuOptions.push('pinRowSubMenu');
                     }
                 }
+            }
+
+            const suppressExcel = gos.get('suppressExcelExport') || !excelCreator;
+            const suppressCsv = gos.get('suppressCsvExport') || !csvCreator;
+            const onIPad = _isIOSUserAgent();
+            const anyExport = !onIPad && (!suppressExcel || !suppressCsv);
+            if (anyExport) {
+                defaultMenuOptions.push('export');
             }
         }
 
