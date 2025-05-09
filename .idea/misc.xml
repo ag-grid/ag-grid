@@ -1,9 +1,0 @@
-<project version="4">
-  <component name="FrameworkDetectionExcludesConfiguration">
-    <type id="AngularCLI" />
-  </component>
-  <component name="JavaScriptSettings">
-    <option name="languageLevel" value="ES6" />
-  </component>
-  <component name="ProjectRootManager" version="2" project-jdk-name="1.8" project-jdk-type="JavaSDK" />
-</project>

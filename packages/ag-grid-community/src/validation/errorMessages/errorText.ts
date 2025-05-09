@@ -63,6 +63,16 @@ function umdMissingModule(
     return message;
 }
 
+export function missingRowModelTypeError({
+    moduleName,
+    rowModelType,
+}: {
+    moduleName: CommunityModuleName | EnterpriseModuleName;
+    rowModelType: RowModelType;
+}) {
+    return `To use the ${moduleName}Module you must set the gridOption "rowModelType='${rowModelType}'"`;
+}
+
 const missingModule = ({
     reasonOrId,
     moduleName,
@@ -672,6 +682,7 @@ export const AG_GRID_ERRORS = {
         }
         return msg;
     },
+    275: missingRowModelTypeError,
 };
 
 export type ErrorMap = typeof AG_GRID_ERRORS;

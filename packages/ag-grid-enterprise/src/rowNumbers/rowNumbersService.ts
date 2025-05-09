@@ -120,7 +120,10 @@ export class RowNumbersService extends BeanStub implements NamedBean, IRowNumber
     }
 
     public handleMouseDownOnCell(cellPosition: CellPosition, mouseEvent: MouseEvent): boolean {
-        if (!this.isIntegratedWithSelection) {
+        if (
+            !this.isIntegratedWithSelection ||
+            (mouseEvent.target as HTMLElement).classList.contains('ag-row-numbers-resizer')
+        ) {
             return false;
         }
 

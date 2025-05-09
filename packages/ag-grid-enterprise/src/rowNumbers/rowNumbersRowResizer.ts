@@ -1,5 +1,5 @@
 import { Component, _getRowNode } from 'ag-grid-community';
-import type { CellCtrl, ElementParams, IPinnedRowModel, IRowModel, IRowNode } from 'ag-grid-community';
+import type { CellCtrl, ElementParams, RowNode } from 'ag-grid-community';
 
 const RowNumbersRowResizerElement: ElementParams = {
     tag: 'div',
@@ -7,11 +7,11 @@ const RowNumbersRowResizerElement: ElementParams = {
 };
 
 export class AgRowNumbersRowResizer extends Component {
-    private node: IRowNode | undefined;
-    private rowModel: IRowModel | IPinnedRowModel | undefined;
+    private node: RowNode | undefined;
     private initialYPosition: number = -1;
     private initialHeight: number | null | undefined;
     private dragging = false;
+    private defaultRowHeight: number;
 
     constructor(private readonly cellCtrl: CellCtrl) {
         super(RowNumbersRowResizerElement);
@@ -19,7 +19,9 @@ export class AgRowNumbersRowResizer extends Component {
 
     public postConstruct() {
         const { beans, cellCtrl } = this;
-        const { dragSvc, pinnedRowModel, rowModel } = beans;
+        const { dragSvc, environment } = beans;
+        this.defaultRowHeight = environment.getDefaultRowHeight();
+
         dragSvc!.addDragSource({
             dragStartPixels: 0,
             eElement: this.getGui(),
@@ -30,12 +32,8 @@ export class AgRowNumbersRowResizer extends Component {
         });
 
         const rowPosition = cellCtrl.getRowPosition();
-        const { rowHeight } = (this.node = _getRowNode(this.beans, rowPosition)!);
-        this.rowModel = rowPosition.rowPinned ? pinnedRowModel : rowModel;
 
-        if (rowHeight != null) {
-            this.toggleRowNumberHeightZeroStyle(rowHeight);
-        }
+        this.node = _getRowNode(this.beans, rowPosition);
     }
 
     private onDragStart(mouseEvent: MouseEvent | Touch): void {
@@ -61,31 +59,27 @@ export class AgRowNumbersRowResizer extends Component {
             return;
         }
 
-        const { initialHeight, initialYPosition } = this;
+        const { beans, initialHeight, initialYPosition, defaultRowHeight, node } = this;
 
         if (initialHeight == null) {
             return;
         }
 
-        const currentSize = this.node?.rowHeight;
-        const newSize = Math.max(initialHeight - (initialYPosition - clientY), 1);
-
-        this.toggleRowNumberHeightZeroStyle(newSize);
+        const currentSize = node?.rowHeight;
+        const newSize = Math.max(initialHeight - (initialYPosition - clientY), defaultRowHeight);
 
         if (currentSize === newSize) {
             return;
         }
 
-        this.node?.setRowHeight(newSize);
-        if (this.node?.rowPinned || !(this.rowModel as any).onRowHeightChanged) {
-            this.beans.rowRenderer.redraw({ afterScroll: true });
-        } else {
-            (this.rowModel as any).onRowHeightChanged({ animate: false });
-        }
-    }
+        node?.setRowHeight(newSize);
+        const { rowRenderer, rowModel } = beans;
 
-    private toggleRowNumberHeightZeroStyle(height: number): void {
-        this.cellCtrl.comp.toggleCss('ag-row-height-zero', height <= 2);
+        if (node?.rowPinned) {
+            rowRenderer.redraw({ afterScroll: true });
+        } else {
+            (rowModel as any).onRowHeightChanged({ animate: false });
+        }
     }
 
     private onDragStop(mouseEvent: MouseEvent | Touch): void {
@@ -112,7 +106,6 @@ export class AgRowNumbersRowResizer extends Component {
     public override destroy(): void {
         this.clearDragDetails();
         this.node = undefined;
-        this.rowModel = undefined;
         super.destroy();
     }
 }

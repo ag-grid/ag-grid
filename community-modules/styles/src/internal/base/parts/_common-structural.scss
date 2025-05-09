@@ -768,7 +768,7 @@
     //  ****************************
     // */
     // for row animations.
-    .ag-row-animation:not(.ag-prevent-animation) .ag-row {
+    .ag-row-animation .ag-row {
         transition:
             transform 0.4s,
             top 0.4s,
@@ -776,12 +776,17 @@
     }
     // for rows older than one second, we also animate the height. we don't include the height
     // initially so we are not animating auto-height rows on initial render.
-    .ag-row-animation:not(.ag-prevent-animation) .ag-row.ag-after-created {
+    .ag-row-animation .ag-row.ag-after-created {
         transition:
             transform 0.4s,
             top 0.4s,
             height 0.4s,
             opacity 0.2s;
+    }
+
+    .ag-row-animation.ag-prevent-animation .ag-row,
+    .ag-row-animation.ag-prevent-animation .ag-row.ag-after-created {
+        transition: none !important;
     }
 
     .ag-row-no-animation .ag-row {
@@ -1683,7 +1688,7 @@
     .ag-row-number-cell {
         width: 100%;
         white-space: nowrap;
-        overflow: visible;
+        overflow: hidden;
         user-select: none;
         @include ag.unthemed-rtl(
             (
@@ -1696,7 +1701,7 @@
         position: absolute;
         bottom: -2px;
         left: 0;
-        height: 3px;
+        height: 4px;
         width: 100%;
         cursor: ns-resize;
     }
