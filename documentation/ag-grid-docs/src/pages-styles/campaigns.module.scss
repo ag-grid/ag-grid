@@ -1,1 +1,62 @@
 @use 'design-system' as *;
+
+.campaignOuter {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    text-align: center;
+
+    gap: $spacing-size-8;
+
+    font-size: var(--text-fs-lg);
+    line-height: var(--text-lh-lg);
+
+    max-width: 60ch;
+    margin: $spacing-size-24 auto $spacing-size-48;
+}
+
+.campaignHero {
+    h1 {
+        font-size: 72px;
+        text-align: center;
+        line-height: 77px;
+        margin-bottom: $spacing-size-8;
+        font-weight: var(--text-bold);
+
+        @media screen and (max-width: $breakpoint-landing-page-medium) {
+            font-size: 52px;
+            padding: 0;
+            line-height: 55px;
+        }
+    }
+
+    h2 {
+        margin: 0px $spacing-size-48;
+        text-align: center;
+        margin-bottom: 0px;
+
+        @media screen and (max-width: $breakpoint-landing-page-medium) {
+            margin: 0;
+            padding: 0;
+        }
+    }
+}
+
+.campaignBenefitsList {
+    h3 {
+        font-size: var(--text-fs-xl);
+        line-height: var(--text-lh-xl);
+        margin-bottom: $spacing-size-5;
+    }
+
+    ul {
+        text-align: left;
+        width: 60ch;
+    }
+
+    li {
+        margin-bottom: $spacing-size-3;
+    }
+}
