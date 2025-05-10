@@ -5,6 +5,7 @@ import type {
     IRowNumbersRowResizeFeature,
     RowNode,
 } from 'ag-grid-community';
+import { _warn } from 'ag-grid-community';
 
 import type { AgRowNumbersRowResizer } from './rowNumbersRowResizer';
 
@@ -35,8 +36,13 @@ export class RowNumbersRowResizeFeature implements IRowNumbersRowResizeFeature {
     }
 
     private isRowResizeSupported(node: RowNode): boolean {
-        const { pinnedRowModel, rowModel } = this.beans;
+        const { pinnedRowModel, rowModel, visibleCols } = this.beans;
         const rowModelModelHasOnRowHeightChanged = !!(rowModel as any).onRowHeightChanged;
+
+        if (visibleCols.autoHeightCols.length) {
+            _warn(276);
+            return false;
+        }
 
         if (node.rowPinned != null) {
             return pinnedRowModel?.isManual() ? rowModelModelHasOnRowHeightChanged : true;
