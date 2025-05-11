@@ -9,7 +9,7 @@
     gap: $spacing-size-8;
     font-size: var(--text-fs-lg);
     line-height: var(--text-lh-lg);
-    max-width: 60ch;
+    max-width: Min(60ch, calc(100vw - $spacing-size-16));
     margin: $spacing-size-24 auto $spacing-size-48;
 }
 
@@ -36,6 +36,11 @@
             border-left: 1px solid linear-gradient(0deg, #29384b -61.34%, #f1bbde26 89.79%);
             border-right: 1px solid linear-gradient(0deg, #29384b -61.34%, #f1bbde26 89.79%);
             border-bottom: 1px solid #f1bbde26;
+        }
+
+        @media screen and (max-width: 940px) {
+            width: 120vw;
+            transform: translateX(-60vw);
         }
     }
 
@@ -67,7 +72,7 @@
 
 .campaignDummyVideo {
     aspect-ratio: 16 / 9;
-    width: 100% !important;
+    width: Min(100%, calc(100vw - $spacing-size-16)) !important;
     margin-top: -$spacing-size-6;
     margin-bottom: $spacing-size-12;
     border-radius: 8px;
@@ -83,6 +88,10 @@
     ul {
         text-align: left;
         width: 60ch;
+
+        @media screen and (max-width: $breakpoint-landing-page-medium) {
+            width: auto;
+        }
     }
 
     li {
