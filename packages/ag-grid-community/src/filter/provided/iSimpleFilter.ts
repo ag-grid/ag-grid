@@ -64,7 +64,7 @@ export interface ISimpleFilterParams extends IProvidedFilterParams {
     numAlwaysVisibleConditions?: number;
 
     /**
-     * Placeholder text for the filter textbox
+     * Placeholder text for the filter textbox.
      */
     filterPlaceholder?: FilterPlaceholderFunction | string;
 }
