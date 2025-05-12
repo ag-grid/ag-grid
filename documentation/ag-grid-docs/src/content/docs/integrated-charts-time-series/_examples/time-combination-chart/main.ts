@@ -119,9 +119,7 @@ function numberParser(params: ValueParserParams) {
 }
 
 function chartTooltipRenderer({ datum, xKey, yKey }: AgCartesianSeriesTooltipRendererParams) {
-    return {
-        content: `${formatDate(datum[xKey])}: ${datum[yKey]}`,
-    };
+    return `${formatDate(datum[xKey])}: ${datum[yKey]}`;
 }
 
 function formatDate(date: Date | number) {
