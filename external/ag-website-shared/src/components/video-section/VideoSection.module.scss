@@ -52,7 +52,6 @@ svg.ytIcon {
     border-radius: var(--radius-md);
     border: 2px solid var(--color-border-secondary);
     object-fit: cover;
-    object-position: center center;
     width: 100%;
 
     @media screen and (min-width: $breakpoint-docs-home-small) {
