@@ -206,6 +206,7 @@ export const AG_GRID_LOCALE_PK = {
     pageSizeSelectorLabel: 'صفحہ کا سائز:',
     footerTotal: 'کل',
     statusBarLastRowUnknown: '؟',
+    scrollColumnIntoView: '${variable} کو منظر میں سکرول کریں',
 
     // Pivoting
     pivotColumnGroupTotals: 'کل',
