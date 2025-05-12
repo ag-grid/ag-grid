@@ -2,22 +2,12 @@ import type { ColDef, GridApi, GridOptions } from 'ag-grid-community';
 import {
     ClientSideRowModelModule,
     ModuleRegistry,
-    NumberEditorModule,
-    NumberFilterModule,
     PaginationModule,
-    RowSelectionModule,
-    TextEditorModule,
-    TextFilterModule,
     ValidationModule,
     createGrid,
 } from 'ag-grid-community';
 
 ModuleRegistry.registerModules([
-    NumberEditorModule,
-    TextEditorModule,
-    TextFilterModule,
-    NumberFilterModule,
-    RowSelectionModule,
     PaginationModule,
     ClientSideRowModelModule,
     ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
@@ -30,12 +20,7 @@ const columnDefs: ColDef[] = [
     },
     { field: 'age' },
     { field: 'country' },
-    { field: 'year' },
     { field: 'date' },
-    { field: 'sport' },
-    { field: 'gold' },
-    { field: 'silver' },
-    { field: 'bronze' },
     { field: 'total' },
 ];
 
@@ -43,14 +28,8 @@ let gridApi: GridApi<IOlympicData>;
 
 const gridOptions: GridOptions<IOlympicData> = {
     defaultColDef: {
-        editable: true,
-        filter: true,
         flex: 1,
         minWidth: 100,
-    },
-    rowSelection: {
-        mode: 'multiRow',
-        groupSelects: 'descendants',
     },
     columnDefs,
     paginationAutoPageSize: true,
