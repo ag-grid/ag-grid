@@ -642,7 +642,7 @@ export interface GridOptions<TData = any> {
      * (or aggregated data if `groupAggFiltering = true`).
      * Set to `true` to apply Quick Filter before pivoting (/aggregating) instead.
      * @default false
-     * @agModule `QuickFilterModule` / 'PivotModule'
+     * @agModule `QuickFilterModule`
      */
     applyQuickFilterBeforePivotOrAgg?: boolean;
     /**
@@ -1239,7 +1239,7 @@ export interface GridOptions<TData = any> {
     /**
      * If grouping, set to the number of levels to expand by default, e.g. `0` for none, `1` for first level only, etc. Set to `-1` to expand everything.
      * @default 0
-     * @agModule `RowGroupingModule`
+     * @agModule `RowGroupingModule` / `TreeDataModule`
      */
     groupDefaultExpanded?: number;
     /**
@@ -1277,20 +1277,20 @@ export interface GridOptions<TData = any> {
      * When provided, an extra row group total row will be inserted into row groups at the specified position, to display
      * when the group is expanded. This row will contain the aggregate values for the group. If a callback function is
      * provided, it can be used to selectively determine which groups will have a total row added.
-     * @agModule `RowGroupingModule`
+     * @agModule `RowGroupingModule` / `ServerSideRowModelModule`
      */
     groupTotalRow?: 'top' | 'bottom' | UseGroupTotalRow<TData>;
 
     /**
      * When provided, an extra grand total row will be inserted into the grid at the specified position.
      * This row displays the aggregate totals of all rows in the grid.
-     * @agModule `RowGroupingModule`
+     * @agModule `RowGroupingModule` / `ServerSideRowModelModule`
      */
     grandTotalRow?: 'top' | 'bottom' | 'pinnedTop' | 'pinnedBottom';
 
     /**
      * Suppress the sticky behaviour of the total rows, can be suppressed individually by passing `'grand'` or `'group'`.
-     * @agModule `RowGroupingModule`
+     * @agModule `RowGroupingModule` / `ServerSideRowModelModule`
      */
     suppressStickyTotalRow?: boolean | 'grand' | 'group';
 
@@ -1486,6 +1486,7 @@ export interface GridOptions<TData = any> {
      * Set how many loading rows to display to the user for the root level group.
      * @default 1
      * @initial
+     * @agModule `ServerSideRowModelModule`
      */
     serverSideInitialRowCount?: number;
 
@@ -1518,6 +1519,7 @@ export interface GridOptions<TData = any> {
     /**
      * How many milliseconds to wait before loading a block. Useful when scrolling over many blocks, as it prevents blocks loading until scrolling has settled.
      * @initial
+     * @agModule `ServerSideRowModelModule` / `InfiniteRowModelModule`
      */
     blockLoadDebounceMillis?: number;
     /**
@@ -1556,7 +1558,7 @@ export interface GridOptions<TData = any> {
      * Used to split pivot field strings for generating pivot result columns when `pivotResultFields` is provided as part of a `getRows` success.
      * @default '_'
      * @initial
-     * @agModule `ServerSideRowModelModule` / `PivotModule`
+     * @agModule `ServerSideRowModelModule`
      */
     serverSidePivotResultFieldSeparator?: string;
 
