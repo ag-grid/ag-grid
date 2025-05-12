@@ -29,8 +29,9 @@ export const PropertyModules: FunctionComponent<{
     framework: Framework;
 }> = ({ modules, framework }) => {
     const firstModule = modules[0];
-    const otherModules = modules.slice(1) ?? [];
+    const otherModules = modules.slice(0) ?? [];
 
+    const labelCount = otherModules.length - 1;
     const [isModuleTooltipVisible, setIsModuleTooltipVisible] = useState(false);
 
     const toggleModuleTooltip = useCallback(() => {
@@ -60,7 +61,7 @@ export const PropertyModules: FunctionComponent<{
             <div className={styles.moduleContent}>
                 <Module module={firstModule} framework={framework} />
 
-                {otherModules.length > 0 && (
+                {otherModules.length > 1 && (
                     <>
                         <span
                             className={classnames(styles.moduleCount, {
@@ -72,7 +73,7 @@ export const PropertyModules: FunctionComponent<{
                                 toggleModuleTooltip();
                             }}
                         >
-                            +{otherModules.length} <Icon name="chevronDown" />
+                            +{labelCount} <Icon name="chevronDown" />
                         </span>
 
                         <div
@@ -81,6 +82,7 @@ export const PropertyModules: FunctionComponent<{
                             })}
                         >
                             <div className={styles.moduleTooltipContent}>
+                                <span className={styles.moduleTooltipTitle}>Available in any of</span>
                                 {otherModules.map((module) => (
                                     <Module module={module} framework={framework} key={module.name} />
                                 ))}

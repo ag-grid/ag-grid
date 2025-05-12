@@ -92,6 +92,7 @@
 .moduleTooltipContent {
     padding: 0;
     max-width: 400px;
+    padding-top: $spacing-size-2;
 
     > a {
         --icon-color: var(--color-link);
@@ -119,4 +120,16 @@
         opacity: 1;
         transform: translateY(0) scale(1);
     }
+}
+
+.moduleTooltipTitle {
+    text-transform: uppercase;
+    font-family: var(--text-font-family);
+    font-size: var(--text-fs-sm);
+    font-weight: var(--text-semibold);
+    color: var(--color-text-secondary);
+    margin-bottom: $spacing-size-2;
+    padding-left: $spacing-size-2;
+    opacity: 0.7;
+    padding-top: $spacing-size-4;
 }
