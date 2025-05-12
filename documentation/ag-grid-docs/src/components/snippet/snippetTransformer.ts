@@ -209,7 +209,7 @@ class ReactTransformer extends SnippetTransformer {
         }
 
         if (isUseCallbackProp(propName) && !isJsLiteralValue(value)) {
-            return `const ${propName} = useCallback(${value}, []);`;
+            return `const ${propName} = useCallback(${decreaseIndent(value)}, []);`;
         }
 
         return `const ${getName(property)} = ${decreaseIndent(value)};`;
