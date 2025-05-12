@@ -71,6 +71,7 @@ const reactPropsNotGridOptions: ReactCompProps = {
     containerStyle: undefined,
     className: undefined,
     passGridApi: undefined,
+    componentWrappingElement: undefined,
     ...deprecatedProps,
 };
 const excludeReactCompProps = new Set(Object.keys(reactPropsNotGridOptions));
