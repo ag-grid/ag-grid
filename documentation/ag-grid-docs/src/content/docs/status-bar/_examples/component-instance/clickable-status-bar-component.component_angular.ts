@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, signal } from '@angular/core';
 
 import type { IStatusPanelAngularComp } from 'ag-grid-angular';
 import type { IStatusPanelParams } from 'ag-grid-community';
@@ -9,9 +9,10 @@ import type { IStatusPanelParams } from 'ag-grid-community';
         @if (visible) {
             <div class="container">
                 <div>
-                    <span class="component"
-                        >Status Bar Component <input type="button" (click)="onClick()" value="Click Me"
-                    /></span>
+                    <span class="component">
+                        Status Bar Component <input type="button" (click)="onClick()" value="Click Me" />
+                        {{ text }}
+                    </span>
                 </div>
             </div>
         }
@@ -20,13 +21,14 @@ import type { IStatusPanelParams } from 'ag-grid-community';
 export class ClickableStatusBarComponent implements IStatusPanelAngularComp {
     public params!: IStatusPanelParams;
     public visible = true;
+    private text = signal<string>('');
 
     agInit(params: IStatusPanelParams): void {
         this.params = params;
     }
 
     onClick(): void {
-        console.log('Selected Row Count: ' + this.params.api.getSelectedRows().length);
+        this.text.set(this.params.api.getSelectedRows().length + ' selected');
     }
 
     setVisible(visible: boolean) {
