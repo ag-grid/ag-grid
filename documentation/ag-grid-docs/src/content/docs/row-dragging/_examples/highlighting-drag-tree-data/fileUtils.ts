@@ -11,28 +11,17 @@ export interface IFile {
  * @param files the list of files
  * @param source the file or folder to move
  * @param target the target file or folder to move to
- * @param reorderOnly if true, the move is a reorder only operation, not a move to a different folder
- * @returns the new list of files
+ * @returns the new list of files, or null if the move is invalid
  */
-export function moveFiles(
-    files: IFile[],
-    source: IFile,
-    target: IFile | null | undefined,
-    reorderOnly: boolean
-): IFile[] {
+export function moveFiles(files: IFile[], source: IFile, target: IFile | null | undefined): IFile[] | null {
     if (source === target) {
-        return files; // invalid move - no-op
+        return null; // invalid move - no-op
     }
 
     const sourcePath = source.filePath; // folder or file to move
     let newParentPath: string[] | undefined; // folder to drop into is where we are going to move the file/folder to
 
-    if (reorderOnly) {
-        newParentPath = pathParent(sourcePath);
-        if (target && !pathInSameFolder(sourcePath, target.filePath)) {
-            return files; // invalid move - we are moving to a different folder
-        }
-    } else if (target) {
+    if (target) {
         newParentPath = target.filePath;
         if (target.type !== 'folder') {
             newParentPath = pathParent(newParentPath); // if over a file, we take the parent folder
@@ -40,7 +29,7 @@ export function moveFiles(
     }
 
     if (pathStartsWith(newParentPath, sourcePath)) {
-        return files; // invalid move - we are moving a parent folder into one of its child folders
+        return null; // invalid move - we are moving a parent folder into one of its child folders
     }
 
     let splitIndex: number;

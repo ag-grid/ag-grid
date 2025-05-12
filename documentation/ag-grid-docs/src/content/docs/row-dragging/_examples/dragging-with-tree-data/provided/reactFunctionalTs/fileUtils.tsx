@@ -64,7 +64,7 @@ export function moveFiles(
     // All the rows after the split index not starting with the source path
     const rowsAfter = files.slice(splitIndex).filter((item) => !pathStartsWith(item.filePath, sourcePath));
 
-    // Merge the three parts and update the grid row data
+    // Merge the three parts
     return [...rowsBefore, ...rowsMiddle, ...rowsAfter];
 }
 
@@ -100,6 +100,8 @@ export function getFileCssIcon(type: 'file' | 'folder' | undefined, filename: st
         return 'far fa-folder';
     }
     switch (fileExtension(filename)) {
+        case 'txt':
+            return 'far fa-file';
         case 'xls':
             return 'far fa-file-excel';
         case 'pdf':
