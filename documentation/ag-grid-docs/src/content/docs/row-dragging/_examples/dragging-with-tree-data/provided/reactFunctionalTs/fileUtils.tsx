@@ -100,6 +100,8 @@ export function getFileCssIcon(type: 'file' | 'folder' | undefined, filename: st
         return 'far fa-folder';
     }
     switch (fileExtension(filename)) {
+        case 'txt':
+            return 'far fa-file';
         case 'xls':
             return 'far fa-file-excel';
         case 'pdf':
