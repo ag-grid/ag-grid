@@ -683,6 +683,7 @@ export const AG_GRID_ERRORS = {
         return msg;
     },
     275: missingRowModelTypeError,
+    276: () => 'Row Numbers Row Resizer cannot be used when Grid Columns have `autoHeight` enabled.',
 };
 
 export type ErrorMap = typeof AG_GRID_ERRORS;
