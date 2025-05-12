@@ -11,8 +11,7 @@ export interface IFile {
  * @param files the list of files
  * @param source the file or folder to move
  * @param target the target file or folder to move to
- * @param reorderOnly if true, the move is a reorder only operation, not a move to a different folder
- * @returns the new list of files
+ * @returns the new list of files, or null if the move is invalid
  */
 export function moveFiles(files: IFile[], source: IFile, target: IFile | null | undefined): IFile[] | null {
     if (source === target) {
