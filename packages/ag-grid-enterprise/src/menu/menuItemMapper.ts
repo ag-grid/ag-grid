@@ -114,6 +114,8 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
                         : null;
                 case 'pinRowSubMenu': {
                     const enableRowPinning = gos.get('enableRowPinning');
+                    const isRowPinnable = gos.get('isRowPinnable');
+                    const pinnable = node ? isRowPinnable?.(node) ?? true : false;
                     const subMenu: string[] = [];
                     const pinned = node?.rowPinned ?? node?.pinnedSibling?.rowPinned;
 
@@ -134,6 +136,10 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
                               name: localeTextFunc('pinRow', 'Pin Row'),
                               icon: _createIconNoSpan('rowPin', beans, column),
                               subMenu,
+                              // `pinnable` determines whether pinned status can be affected by the user via the context menu,
+                              // not whether the row may be pinned at all (via for example, the `isRowPinned` callback).
+                              // As-such if `pinnable` is falsy, disable the sub-menu options for the end user.
+                              disabled: !pinnable,
                           }
                         : null;
                 }
