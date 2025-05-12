@@ -49,10 +49,12 @@ export class FunnelChartProxy extends ChartProxy<AgStandaloneChartOptions, Funne
             zoom: {
                 enabled: false,
             },
-            axes: {
-                category: config,
-                number: config,
-            },
+            ...(this.chartType !== 'pyramid' && {
+                axes: {
+                    category: config,
+                    number: config,
+                },
+            }),
         };
     }
 
