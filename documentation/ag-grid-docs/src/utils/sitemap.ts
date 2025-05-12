@@ -1,3 +1,5 @@
+import { FRAMEWORK_REDIRECT_PATH } from '../constants';
+
 /**
  * Example runner pages
  */
@@ -35,7 +37,8 @@ const isRedirectPage = (page: string) => {
         page.endsWith('/react-data-grid/') ||
         page.endsWith('/angular-data-grid/') ||
         page.endsWith('/javascript-data-grid/') ||
-        page.endsWith('/vue-data-grid/')
+        page.endsWith('/vue-data-grid/') ||
+        page.includes(`/${FRAMEWORK_REDIRECT_PATH}/`)
     );
 };
 
