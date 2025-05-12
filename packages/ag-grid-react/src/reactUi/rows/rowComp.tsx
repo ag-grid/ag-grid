@@ -31,11 +31,17 @@ const RowComp = ({ rowCtrl, containerType }: { rowCtrl: RowCtrl; containerType: 
     );
     const [rowId, setRowId] = useState<string | null>(() => rowCtrl.rowId);
     const [rowBusinessKey, setRowBusinessKey] = useState<string | null>(() => rowCtrl.businessKey);
-
     const [userStyles, setUserStyles] = useState<RowStyle | undefined>(() => rowCtrl.rowStyles);
-    const cellCtrlsRef = useRef<CellCtrl[] | null>(null);
-    const prevCellCtrlsRef = useRef<CellCtrl[] | null>(null);
-    const [cellCtrls, setCellCtrls] = useState<CellCtrl[] | null>(() => null);
+
+    const initialCellCtrls = useRef<CellCtrl[] | null>(null);
+    if (!initialCellCtrls.current) {
+        initialCellCtrls.current = rowCtrl.getCellCtrlsForContainer(containerType);
+    }
+
+    const cellCtrlsRef = useRef<CellCtrl[] | null>(initialCellCtrls.current);
+    const prevCellCtrlsRef = useRef<CellCtrl[] | null>(initialCellCtrls.current);
+    const [cellCtrls, setCellCtrls] = useState<CellCtrl[] | null>(initialCellCtrls.current);
+
     const [fullWidthCompDetails, setFullWidthCompDetails] = useState<UserCompDetails>();
 
     // these styles have initial values, so element is placed into the DOM with them,

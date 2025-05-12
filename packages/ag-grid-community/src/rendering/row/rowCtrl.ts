@@ -167,6 +167,10 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         this.rowStyles = this.processStylesFromGridOptions();
 
         this.addListeners();
+
+        this.updateColumnLists(true);
+
+        // const cells = this.getCellCtrlsForContainer(cons)
     }
 
     private initRowBusinessKey(): void {
@@ -262,7 +266,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
             this.onRowSelected(gui);
         }
 
-        this.updateColumnLists(!this.useAnimationFrameForCreate);
+        // this.updateColumnLists(!this.useAnimationFrameForCreate);
 
         const comp = gui.rowComp;
 
@@ -630,7 +634,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         });
     }
 
-    private getCellCtrlsForContainer(containerType: RowContainerType) {
+    public getCellCtrlsForContainer(containerType: RowContainerType) {
         switch (containerType) {
             case 'left':
                 return this.leftCellCtrls.list;
