@@ -81,6 +81,7 @@ export const PropertyModules: FunctionComponent<{
                             })}
                         >
                             <div className={styles.moduleTooltipContent}>
+                                <span className={styles.moduleTooltipTitle}>Available in any of</span>
                                 {otherModules.map((module) => (
                                     <Module module={module} framework={framework} key={module.name} />
                                 ))}
