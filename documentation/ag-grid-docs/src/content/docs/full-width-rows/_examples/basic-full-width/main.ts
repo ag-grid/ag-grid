@@ -18,8 +18,6 @@ ModuleRegistry.registerModules([
 ]);
 
 const rowData = createData(100, 'body');
-const pinnedTopRowData = createData(3, 'pinned');
-const pinnedBottomRowData = createData(3, 'pinned');
 
 function getColumnDefs() {
     const columnDefs: ColDef[] = [];
@@ -44,9 +42,19 @@ let gridApi: GridApi;
 
 const gridOptions: GridOptions = {
     columnDefs: getColumnDefs(),
-    rowData: rowData,
-    pinnedTopRowData: pinnedTopRowData,
-    pinnedBottomRowData: pinnedBottomRowData,
+    rowData,
+    enableRowPinning: true,
+    isRowPinned: (node) => {
+        const { A } = node.data;
+        if (A === 'body (A,51)' || A === 'body (A,52)' || A === 'body (A,53)') {
+            return 'top';
+        }
+
+        if (A === 'body (A,96)' || A === 'body (A,97)' || A === 'body (A,98)') {
+            return 'bottom';
+        }
+        return null;
+    },
     isFullWidthRow: (params: IsFullWidthRowParams) => {
         // in this example, we check the fullWidth attribute that we set
         // while creating the data. what check you do to decide if you
