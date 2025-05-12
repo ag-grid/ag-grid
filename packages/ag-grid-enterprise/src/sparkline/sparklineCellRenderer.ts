@@ -158,7 +158,7 @@ export class SparklineCellRenderer extends Component implements ICellRenderer {
 
         if (this.dataRef !== data) {
             this.dataRef = data;
-            this.processedData = data.filter((item) => item != null);
+            this.processedData = Array.isArray(data[0]) ? data.filter((item) => item != null) : data;
         }
 
         return this.processedData;
