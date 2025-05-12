@@ -175,16 +175,13 @@ function getTagsData({
     const isInitial = tags.some((t) => t.name === 'initial') ?? false;
     let modules = tags.find((t) => t.name === AG_MODULE_TAG_NAME)?.modules ?? [];
 
-    const restrictedModules = definition?.restrictModules ?? config.restrictModules;
-
-    if (modules.length > 0 && restrictedModules) {
-        const filteredModules = modules.filter((mod) => restrictedModules!.includes(mod.name));
-        if (filteredModules.length === 0) {
-            throw new Error(
-                `The property ${name} does not include the restricted module. Restricted: ${restrictedModules.join()}, JsDoc: ${JSON.stringify(modules)}`
-            );
+    const restrictedModule: string | undefined = definition?.restrictModule ?? config.restrictModule;
+    if (modules.length > 1 && restrictedModule) {
+        // If the property contains the restricted module and others then only show the restricted module
+        const restrictedModuleTag = modules.find((mod) => restrictedModule == mod.name);
+        if (restrictedModuleTag) {
+            modules = [restrictedModuleTag];
         }
-        modules = filteredModules;
     }
 
     return {

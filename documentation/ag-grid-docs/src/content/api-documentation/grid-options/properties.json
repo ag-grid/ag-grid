@@ -1274,7 +1274,7 @@
                 "name": "Group Column Configuration",
                 "url": "./grouping-single-group-column/#configuration"
             },
-            "restrictModules": ["RowGroupingModule"]
+            "restrictModule": ["RowGroupingModule"]
         },
         "groupRowRenderer": {
             "description": "Provide the Cell Renderer to use when `groupDisplayType = 'groupRows'`.",
@@ -1325,21 +1325,21 @@
                 "name": "Opening Group Levels by Default",
                 "url": "./grouping-opening-groups/#expanding-by-group-level"
             },
-            "restrictModules": ["RowGroupingModule"]
+            "restrictModule": ["RowGroupingModule"]
         },
         "isGroupOpenByDefault": {
             "more": {
                 "name": "Open Groups by Default",
                 "url": "./grouping-opening-groups/#expanding-via-callback"
             },
-            "restrictModules": ["RowGroupingModule"]
+            "restrictModule": ["RowGroupingModule"]
         },
         "suppressGroupRowsSticky": {
             "more": {
                 "name": "Suppressing Sticky Groups",
                 "url": "./grouping-opening-groups/#prevent-sticky-groups"
             },
-            "restrictModules": ["RowGroupingModule"]
+            "restrictModule": ["RowGroupingModule"]
         },
         "rowGroupPanelShow": {
             "more": {
@@ -1411,28 +1411,28 @@
                 "name": "Group Column Configuration",
                 "url": "./grouping-single-group-column/#configuration"
             },
-            "restrictModules": ["TreeDataModule"]
+            "restrictModule": ["TreeDataModule"]
         },
         "groupDefaultExpanded": {
             "more": {
                 "name": "Opening Group Levels by Default",
                 "url": "./grouping-opening-groups/#expanding-by-group-level"
             },
-            "restrictModules": ["TreeDataModule"]
+            "restrictModule": ["TreeDataModule"]
         },
         "isGroupOpenByDefault": {
             "more": {
                 "name": "Open Groups by Default",
                 "url": "./grouping-opening-groups/#expanding-via-callback"
             },
-            "restrictModules": ["TreeDataModule"]
+            "restrictModule": ["TreeDataModule"]
         },
         "suppressGroupRowsSticky": {
             "more": {
                 "name": "Suppressing Sticky Groups",
                 "url": "./grouping-opening-groups/#prevent-sticky-groups"
             },
-            "restrictModules": ["TreeDataModule"]
+            "restrictModule": ["TreeDataModule"]
         }
     },
     "rowPinning": {
@@ -1542,7 +1542,7 @@
                 "url": "./server-side-model-configuration/#server-side-cache"
             },
             "description": "How many rows for each block in the cache, i.e. how many rows returned from the server at a time. Default: `100`",
-            "restrictModules": ["ServerSideRowModelModule"]
+            "restrictModule": ["ServerSideRowModelModule"]
         },
         "maxBlocksInCache": {
             "more": {
@@ -1550,21 +1550,21 @@
                 "url": "./server-side-model-configuration/#server-side-cache"
             },
             "description": "How many blocks to keep in the cache. Default is no limit, so every requested block is kept. Use this if you have memory concerns, and blocks that were least recently viewed will be purged when the limit is hit. The grid will additionally make sure it has all the blocks needed to display what is currently visible, in case this property is set to a low value.",
-            "restrictModules": ["ServerSideRowModelModule"]
+            "restrictModule": ["ServerSideRowModelModule"]
         },
         "maxConcurrentDatasourceRequests": {
             "more": {
                 "name": "Providing Additional Data",
                 "url": "./server-side-model-configuration/#providing-additional-data"
             },
-            "restrictModules": ["ServerSideRowModelModule"]
+            "restrictModule": ["ServerSideRowModelModule"]
         },
         "blockLoadDebounceMillis": {
             "more": {
                 "name": "Block Loading Debounce",
                 "url": "./server-side-model-configuration/#block-loading-debounce"
             },
-            "restrictModules": ["ServerSideRowModelModule"]
+            "restrictModule": ["ServerSideRowModelModule"]
         },
         "suppressServerSideFullWidthLoadingRow": {
             "more": {
@@ -1647,21 +1647,21 @@
                 "name": "More Control via Properties and API",
                 "url": "./infinite-scrolling/#more-control-via-properties-and-api"
             },
-            "restrictModules": ["InfiniteRowModelModule"]
+            "restrictModule": ["InfiniteRowModelModule"]
         },
         "cacheBlockSize": {
             "more": {
                 "name": "More Control via Properties and API",
                 "url": "./infinite-scrolling/#more-control-via-properties-and-api"
             },
-            "restrictModules": ["InfiniteRowModelModule"]
+            "restrictModule": ["InfiniteRowModelModule"]
         },
         "maxBlocksInCache": {
             "more": {
                 "name": "More Control via Properties and API",
                 "url": "./infinite-scrolling/#more-control-via-properties-and-api"
             },
-            "restrictModules": ["InfiniteRowModelModule"]
+            "restrictModule": ["InfiniteRowModelModule"]
         },
         "infiniteInitialRowCount": {
             "more": {

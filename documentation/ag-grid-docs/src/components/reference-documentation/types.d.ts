@@ -58,8 +58,8 @@ export interface ChildDocEntry {
      * even though there is no matching code property for it.
      */
     overrideMissingPropCheck?: true;
-    /** Restrict to only these modules if there are multiple options for a property. */
-    restrictModules?: string[];
+    /** Only show this module if it is one of a number of options for the given property. */
+    restrictModule?: string;
 }
 export interface ObjectCode {
     framework: Framework;
@@ -185,8 +185,8 @@ export interface Config {
     /** Override link shown for initial properties */
     initialLink?: string;
 
-    /** Restrict to only these modules if there are multiple options for a property. */
-    restrictModules?: string[];
+    /** Only show this module if it is one of a number of options for the given property. */
+    restrictModule?: string;
 }
 
 export type Properties = DocEntryMap | DocEntry | ChildDocEntry;
