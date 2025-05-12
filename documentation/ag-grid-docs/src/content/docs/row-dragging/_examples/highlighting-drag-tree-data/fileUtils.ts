@@ -14,7 +14,7 @@ export interface IFile {
  * @param reorderOnly if true, the move is a reorder only operation, not a move to a different folder
  * @returns the new list of files
  */
-export function getMovedFiles(
+export function moveFiles(
     files: IFile[],
     source: IFile,
     target: IFile | null | undefined,

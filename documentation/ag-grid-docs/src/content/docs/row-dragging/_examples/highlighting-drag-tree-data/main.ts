@@ -1,6 +1,5 @@
 import type {
     CellClassParams,
-    GetRowIdParams,
     GridApi,
     GridOptions,
     ICellRendererParams,
@@ -24,7 +23,8 @@ import {
 import { TreeDataModule } from 'ag-grid-enterprise';
 
 import { getData } from './data';
-import { type IFile, getFileCssIcon, getMovedFiles } from './fileUtils';
+import { getFileCssIcon, moveFiles } from './fileUtils';
+import type { IFile } from './fileUtils';
 
 ModuleRegistry.registerModules([
     RowDragModule,
@@ -123,7 +123,7 @@ function onRowDragLeave(event: RowDragLeaveEvent) {
 
 function onRowDragEnd(event: RowDragEndEvent) {
     if (!potentialParent) {
-        return;
+        return; // no potential parent, so no move
     }
 
     let target = event.overNode?.data;
@@ -131,7 +131,7 @@ function onRowDragEnd(event: RowDragEndEvent) {
     const rowData = event.api.getGridOption('rowData');
     if (rowData && source && source !== target) {
         const reorderOnly = event.event?.shiftKey;
-        const newRowData = getMovedFiles(rowData, source, target, reorderOnly);
+        const newRowData = moveFiles(rowData, source, target, reorderOnly);
         if (!newRowData) {
             console.log('invalid move');
         } else if (newRowData !== rowData) {
