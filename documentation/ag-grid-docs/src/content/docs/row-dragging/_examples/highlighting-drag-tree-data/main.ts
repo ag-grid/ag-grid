@@ -130,8 +130,7 @@ function onRowDragEnd(event: RowDragEndEvent) {
     const source = event.node.data;
     const rowData = event.api.getGridOption('rowData');
     if (rowData && source && source !== target) {
-        const reorderOnly = event.event?.shiftKey;
-        const newRowData = moveFiles(rowData, source, target, reorderOnly);
+        const newRowData = moveFiles(rowData, source, target);
         if (!newRowData) {
             console.log('invalid move');
         } else if (newRowData !== rowData) {
