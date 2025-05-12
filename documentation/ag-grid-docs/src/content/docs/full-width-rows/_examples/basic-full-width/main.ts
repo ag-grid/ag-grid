@@ -45,12 +45,11 @@ const gridOptions: GridOptions = {
     rowData,
     enableRowPinning: true,
     isRowPinned: (node) => {
-        const { A } = node.data;
-        if (A === 'body (A,51)' || A === 'body (A,52)' || A === 'body (A,53)') {
+        if ([51, 52, 53].includes(node.rowIndex!)) {
             return 'top';
         }
 
-        if (A === 'body (A,96)' || A === 'body (A,97)' || A === 'body (A,98)') {
+        if ([96, 97, 98].includes(node.rowIndex!)) {
             return 'bottom';
         }
         return null;
