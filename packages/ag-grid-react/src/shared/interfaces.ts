@@ -17,9 +17,9 @@ export interface AgGridReactProps<TData = any> extends GridOptions<TData> {
     className?: string;
 
     // The following properties are only used when custom React components are rendered within a Javascript grid component via React portals.
-    // Since the introduction of React UI these are no longer as important and so instead we can just provide sensible defaults internally.
-    /** @deprecated v33.3 It is expected that this property is no longer required and so will be removed in a future version. If you require this property please contact support. */
+    /** Default: div */
     componentWrappingElement?: string;
+
     /** @deprecated v33.3 It is expected that this property is no longer required and so will be removed in a future version. If you require this property please contact support. */
     maxComponentCreationTimeMs?: number;
 
