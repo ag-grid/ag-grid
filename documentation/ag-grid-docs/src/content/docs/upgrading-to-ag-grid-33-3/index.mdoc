@@ -1,0 +1,45 @@
+---
+title: "Upgrading to AG Grid 33.3"
+description: "See whats new in AG Grid, view a full list of changes and migrate your $framework Data Grid to version v33.3."
+migrationVersion: "33.3.0"
+---
+
+Row Pinning, Row Height Resizing, Grand Total Row Pinning, Scroll Column Into View.
+
+## What's New
+
+AG Grid {% migrationVersion() %} adds important new features - [Row Pinning](./row-pinning), [Row Height Resizing](./row-numbers/#row-resizing), [Grand Total Row Pinning](./row-pinning/#pinning-the-grand-total-row), Scroll Column Into View as described in the [release post](https://blog.ag-grid.com/whats-new-in-ag-grid-33-3/). 
+
+These improvements involve no breaking changes as listed below.
+
+<!-- 
+Documentation to the highest patch release of the major/minor
+NOTE: This will not show if the current library version is the same as the migration version
+-->
+{% documentationArchiveSection version=migrationVersionPatch() /%}
+
+## Breaking Changes
+
+There are no breaking changes in AG Grid {% migrationVersion() %}.
+
+## Behaviour Changes
+
+There are no behaviour changes in AG Grid version {% migrationVersion() %}.
+
+## Removal of Deprecated APIs
+
+There are no deprecated APIs removed in AG Grid version {% migrationVersion() %}.
+
+## Deprecations
+
+### AgGridReactProps interface:
+
+- `setGridApi` - deprecated without replacement as it is not used anymore.
+
+- `children` - deprecated without replacement as it is not used anymore.
+
+- `componentWrappingElement` - deprecated without replacement as it is not used anymore.
+
+- `maxComponentCreationTimeMs` - deprecated without replacement as it is not used anymore.
+
+{% changelogSection version=$migrationVersion /%}
