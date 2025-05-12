@@ -1,5 +1,5 @@
 import type { ColDef, GridOptions } from 'ag-grid-community';
-import { ModuleRegistry, colorSchemeVariable, createGrid, createPart, createTheme } from 'ag-grid-community';
+import { ModuleRegistry, createGrid, createPart, themeQuartz } from 'ag-grid-community';
 import { AllEnterpriseModule } from 'ag-grid-enterprise';
 
 ModuleRegistry.registerModules([AllEnterpriseModule]);
@@ -59,7 +59,7 @@ const myCheckboxStyle = createPart({
         `,
 });
 
-const myCustomTheme = createTheme().withPart(myCheckboxStyle).withPart(colorSchemeVariable);
+const myCustomTheme = themeQuartz.withPart(myCheckboxStyle);
 
 const columnDefs: ColDef[] = [{ field: 'make' }, { field: 'model' }, { field: 'price' }];
 
