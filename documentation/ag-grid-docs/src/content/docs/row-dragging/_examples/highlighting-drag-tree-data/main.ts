@@ -122,11 +122,12 @@ function onRowDragLeave(event: RowDragLeaveEvent) {
 }
 
 function onRowDragEnd(event: RowDragEndEvent) {
-    if (!potentialParent) {
-        return; // no potential parent, so no move
+    let target = event.overNode?.data;
+
+    if (!potentialParent && target) {
+        return; // no move
     }
 
-    let target = event.overNode?.data;
     const source = event.node.data;
     const rowData = event.api.getGridOption('rowData');
     if (rowData && source && source !== target) {
