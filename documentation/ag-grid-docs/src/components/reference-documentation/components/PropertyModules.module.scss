@@ -124,9 +124,9 @@
 
 .moduleTooltipTitle {
     text-transform: uppercase;
-    font-family: 'SF Pro Display', sans-serif;
-    font-size: 12px;
-    font-weight: 600;
+    font-family: var(--text-font-family)
+    font-size: var(--text-fs-sm);
+    font-weight: var(--text-semibold);
     color: var(--color-text-secondary);
     margin-bottom: $spacing-size-2;
     padding-left: $spacing-size-2;
