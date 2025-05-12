@@ -206,6 +206,7 @@ export const AG_GRID_LOCALE_TR = {
     pageSizeSelectorLabel: 'Sayfa Boyutu:',
     footerTotal: 'Toplam',
     statusBarLastRowUnknown: '?',
+    scrollColumnIntoView: '${variable} görünümü için kaydır',
 
     // Pivoting
     pivotColumnGroupTotals: 'Toplam',

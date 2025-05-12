@@ -206,6 +206,7 @@ export const AG_GRID_LOCALE_JP = {
     pageSizeSelectorLabel: 'ページサイズ：',
     footerTotal: '合計',
     statusBarLastRowUnknown: '？',
+    scrollColumnIntoView: '${variable} を表示範囲にスクロール',
 
     // Pivoting
     pivotColumnGroupTotals: '合計',

@@ -206,6 +206,7 @@ export const AG_GRID_LOCALE_KR = {
     pageSizeSelectorLabel: '페이지 크기:',
     footerTotal: '총계',
     statusBarLastRowUnknown: '?',
+    scrollColumnIntoView: '${variable}을(를) 화면으로 스크롤',
 
     // Pivoting
     pivotColumnGroupTotals: '총합계',

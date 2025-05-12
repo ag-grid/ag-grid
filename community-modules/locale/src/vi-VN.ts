@@ -206,6 +206,7 @@ export const AG_GRID_LOCALE_VN = {
     pageSizeSelectorLabel: 'Kích cỡ trang:',
     footerTotal: 'Tổng',
     statusBarLastRowUnknown: '?',
+    scrollColumnIntoView: 'Cuộn ${variable} vào tầm nhìn',
 
     // Pivoting
     pivotColumnGroupTotals: 'Tổng cộng',

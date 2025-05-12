@@ -206,6 +206,7 @@ export const AG_GRID_LOCALE_HR = {
     pageSizeSelectorLabel: 'Veličina stranice:',
     footerTotal: 'Ukupno',
     statusBarLastRowUnknown: '?',
+    scrollColumnIntoView: 'Pomakni ${variable} u prikaz',
 
     // Pivoting
     pivotColumnGroupTotals: 'Ukupno',
