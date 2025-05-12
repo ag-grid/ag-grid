@@ -93,7 +93,7 @@ export class ToolPanelContextMenu extends Component {
             allowedFunction: (col) => !col.isPinned() && !isPivotMode && this.isColumnValidForScrollIntoView(col),
             activeFunction: () => false,
             activateLabel: () =>
-                localeTextFunc('scrollColumnIntoView', `Scroll ${displayName} into view`, [displayName!]),
+                localeTextFunc('scrollColumnIntoView', `Scroll ${displayName} into View`, [displayName!]),
             activateFunction: () => {
                 const firstVisibleColumn = this.columns.find(this.isColumnValidForScrollIntoView);
 
