@@ -4,20 +4,18 @@ export default {
       <div>
           <span class="component">Status Bar Component&nbsp;
             <input type="button" v-on:click="onClick" value="Click Me"/>
-            {{ text }}
           </span>
       </div>
       </div>
     `,
     data: function () {
         return {
-            text: '',
             visible: true,
         };
     },
     methods: {
         onClick() {
-            this.text = this.params.api.getSelectedRows().length + ' selected';
+            console.log('Selected Row Count: ' + this.params.api.getSelectedRows().length);
         },
         setVisible(visible) {
             this.visible = visible;

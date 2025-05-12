@@ -4,10 +4,9 @@ import type { CustomStatusPanelProps } from 'ag-grid-react';
 
 export default forwardRef((props: CustomStatusPanelProps, ref) => {
     const [visible, setVisible] = useState(true);
-    const [text, setText] = useState('');
 
     const onClick = () => {
-        setText(props.api.getSelectedRows().length + ' selected');
+        console.log('Selected Row Count: ' + props.api.getSelectedRows().length);
     };
 
     useImperativeHandle(ref, () => {
@@ -28,7 +27,6 @@ export default forwardRef((props: CustomStatusPanelProps, ref) => {
                     <span className="component">
                         Status Bar Component&nbsp;
                         <input type="button" onClick={() => onClick()} value="Click Me" />
-                        <span> {text}</span>
                     </span>
                 </div>
             </div>

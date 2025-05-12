@@ -4,9 +4,7 @@ export class ClickableStatusBarComponent implements IStatusPanelComp {
     params!: IStatusPanelParams;
     eGui!: HTMLDivElement;
     eButton!: HTMLButtonElement;
-    eCounter!: HTMLSpanElement;
     buttonListener: any;
-    clickCount: number = 0;
 
     init(params: IStatusPanelParams) {
         this.params = params;
@@ -24,10 +22,7 @@ export class ClickableStatusBarComponent implements IStatusPanelComp {
         this.eButton.addEventListener('click', this.buttonListener);
         this.eButton.textContent = 'Click Me';
 
-        this.eCounter = document.createElement('span');
-
         this.eGui.appendChild(this.eButton);
-        this.eGui.appendChild(this.eCounter);
     }
 
     getGui() {
@@ -39,6 +34,6 @@ export class ClickableStatusBarComponent implements IStatusPanelComp {
     }
 
     onButtonClicked() {
-        this.eCounter.textContent = ` ${this.params.api.getSelectedRows().length} selected`;
+        console.log('Selected Row Count: ' + this.params.api.getSelectedRows().length);
     }
 }
