@@ -1,6 +1,8 @@
 ---
 import Layout from '@layouts/Layout.astro';
 import styles from '../../pages-styles/campaigns.module.scss';
+
+import { TrialLicenceForm } from '@ag-website-shared/components/trial-licence-form/TrialLicenceForm';
 ---
 
 <Layout
@@ -8,6 +10,7 @@ import styles from '../../pages-styles/campaigns.module.scss';
     description={'Create fast, flexible and fully customisable charts with minimal configuration for maximum impact.'}
     showDocsNav={false}
     showSearchBar={true}
+    hidePageFromSearchEngines={true}
 >
     <main class={styles.campaignOuter}>
         <div class={styles.campaignHero}>
@@ -43,8 +46,13 @@ import styles from '../../pages-styles/campaigns.module.scss';
                 <li>Integrate seamlessly with your AG Grid apps</li>
                 <li>Access simple, consistent APIs for JavaScript, React, Angular, and Vue</li>
                 <li>Visualise large datasets with outstanding performance</li>
-                <li><a href="mailto:info@ag-grid.com">Start your free trial today</a></li>
             </ul>
+        </div>
+
+        <div>
+            <h3>Start your free trial today</h3>
+
+            <TrialLicenceForm />
         </div>
 
         <div class={styles.campaignBenefitsList}>
