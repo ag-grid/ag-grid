@@ -2,21 +2,13 @@ import type { ColDef, GridApi, GridOptions } from 'ag-grid-community';
 import {
     ClientSideRowModelModule,
     ModuleRegistry,
-    NumberEditorModule,
-    NumberFilterModule,
     PaginationModule,
-    TextEditorModule,
-    TextFilterModule,
     ValidationModule,
     createGrid,
 } from 'ag-grid-community';
 import { RowGroupingModule } from 'ag-grid-enterprise';
 
 ModuleRegistry.registerModules([
-    NumberEditorModule,
-    TextEditorModule,
-    TextFilterModule,
-    NumberFilterModule,
     PaginationModule,
     ClientSideRowModelModule,
     RowGroupingModule,
@@ -44,8 +36,6 @@ const gridOptions: GridOptions<IOlympicData> = {
     paginationPageSize: 10,
     paginationPageSizeSelector: [10, 20, 50, 100],
     defaultColDef: {
-        editable: true,
-        filter: true,
         flex: 1,
         minWidth: 190,
     },
