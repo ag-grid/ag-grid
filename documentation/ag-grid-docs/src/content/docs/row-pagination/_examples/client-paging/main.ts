@@ -15,7 +15,6 @@ ModuleRegistry.registerModules([
 
 const columnDefs: ColDef[] = [
     {
-        headerName: 'Athlete',
         field: 'athlete',
         minWidth: 170,
     },
