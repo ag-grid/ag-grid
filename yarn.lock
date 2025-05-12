@@ -8699,61 +8699,61 @@ adm-zip@^0.5.10:
   resolved "http://52.50.158.57:4873/adm-zip/-/adm-zip-0.5.16.tgz#0b5e4c779f07dedea5805cdccb1147071d94a909"
   integrity sha512-TGw5yVi4saajsSEgz25grObGHEUaDrniwvA2qwSC060KfqGPdglhvPMA2lPIoxs3PQIItj2iag35fONcQqgUaQ==
 
-ag-charts-angular@11.3.0-beta.20250512:
-  version "11.3.0-beta.20250512"
-  resolved "http://52.50.158.57:4873/ag-charts-angular/-/ag-charts-angular-11.3.0-beta.20250512.tgz#97b99d811210a4a6ef9840d8151302cbb16c2e4b"
-  integrity sha512-1H65ojza6kkUeD5URDWM7A+tzKBq00TvvgWmWuRNpQXr8hTc0hZhBtKYA/aBCuAe+2iG2C9OFJBiUdEzWKHWNQ==
+ag-charts-angular@11.3.0-beta.20250512.1344:
+  version "11.3.0-beta.20250512.1344"
+  resolved "http://52.50.158.57:4873/ag-charts-angular/-/ag-charts-angular-11.3.0-beta.20250512.1344.tgz#065d866eb1d9709eb44fbf617a867ffb0656d659"
+  integrity sha512-HHi7aR4urrjdK92GKwWC6M7nkZkqsJ0tzXJVQOiYF23FsCnIYxOc03COzIP6vSTpoCztlHdL9wXydjQWKw6dLA==
   dependencies:
-    ag-charts-community "11.3.0-beta.20250512"
+    ag-charts-community "11.3.0-beta.20250512.1344"
     tslib "^2.3.0"
 
-ag-charts-community@11.3.0-beta.20250512:
-  version "11.3.0-beta.20250512"
-  resolved "http://52.50.158.57:4873/ag-charts-community/-/ag-charts-community-11.3.0-beta.20250512.tgz#4bbf11e560e8581cd83871f0adb0a9bd4cb5d3de"
-  integrity sha512-T/WxUm3KKedf6tKdm78m2NUBBG6lePewTd0Vf3eYm0DngZA2mOFWibMXJByG73PPG0MNKd6Tb/Yj670++d3qOw==
+ag-charts-community@11.3.0-beta.20250512.1344:
+  version "11.3.0-beta.20250512.1344"
+  resolved "http://52.50.158.57:4873/ag-charts-community/-/ag-charts-community-11.3.0-beta.20250512.1344.tgz#2577b9d896d48a2346a3336d6a611a5da4e32ea9"
+  integrity sha512-Nn0ZejqsIJ5q+r6QxCtqMfqJO2qFz5Fw1aZCF2ruYVBng6znwMC/I4YOL4r+C9nAYRuBpwmNxgIm4MkC2SmTBQ==
   dependencies:
-    ag-charts-core "11.3.0-beta.20250512"
-    ag-charts-locale "11.3.0-beta.20250512"
-    ag-charts-types "11.3.0-beta.20250512"
+    ag-charts-core "11.3.0-beta.20250512.1344"
+    ag-charts-locale "11.3.0-beta.20250512.1344"
+    ag-charts-types "11.3.0-beta.20250512.1344"
 
-ag-charts-core@11.3.0-beta.20250512:
-  version "11.3.0-beta.20250512"
-  resolved "http://52.50.158.57:4873/ag-charts-core/-/ag-charts-core-11.3.0-beta.20250512.tgz#676fb1ef7dfc016a59f3e06b26d3360613a430c8"
-  integrity sha512-bvl+2ksGHeoErqVAc8vjsL816msCvpj7uaQnJlgiAXQF14neZtnGi8maHjwIE+DG7v+HF6ksMsyoNpiHDfQFtg==
+ag-charts-core@11.3.0-beta.20250512.1344:
+  version "11.3.0-beta.20250512.1344"
+  resolved "http://52.50.158.57:4873/ag-charts-core/-/ag-charts-core-11.3.0-beta.20250512.1344.tgz#60bea043877cff6c6e33412c627720d0bd828bae"
+  integrity sha512-Cgx9tm5pMwBO/rmNmpP5Y45nsigYfBDL8Dh5WLZ5LO3Q8rgYGSUnIM6Zoos2Ozpy/+Bc4KD6Mpl4WD+XfTqgRg==
   dependencies:
-    ag-charts-types "11.3.0-beta.20250512"
+    ag-charts-types "11.3.0-beta.20250512.1344"
 
-ag-charts-enterprise@11.3.0-beta.20250512:
-  version "11.3.0-beta.20250512"
-  resolved "http://52.50.158.57:4873/ag-charts-enterprise/-/ag-charts-enterprise-11.3.0-beta.20250512.tgz#2338960cfc5582d968fa6a7f6ffe6f7f72ce18d4"
-  integrity sha512-OjOUxBhmiY24ZecuQRm0nB3A69C2m7jkfoK1ds1i1eqMvEnCejmHdo1rjI+APJ3DG8QWIVFEc+wTWms4822ZSQ==
+ag-charts-enterprise@11.3.0-beta.20250512.1344:
+  version "11.3.0-beta.20250512.1344"
+  resolved "http://52.50.158.57:4873/ag-charts-enterprise/-/ag-charts-enterprise-11.3.0-beta.20250512.1344.tgz#10ca573d60db8b4146e17a37b712b5613762c4b4"
+  integrity sha512-xEPKI3uxhXDGvS+7p9tIs+bfa2/K1V1Que/fN8MGZMd2rGYxOJvGY66IIYF59GFJoNG0wQSt0fcn7SP09nepAw==
   dependencies:
-    ag-charts-community "11.3.0-beta.20250512"
-    ag-charts-core "11.3.0-beta.20250512"
+    ag-charts-community "11.3.0-beta.20250512.1344"
+    ag-charts-core "11.3.0-beta.20250512.1344"
 
-ag-charts-locale@11.3.0-beta.20250512:
-  version "11.3.0-beta.20250512"
-  resolved "http://52.50.158.57:4873/ag-charts-locale/-/ag-charts-locale-11.3.0-beta.20250512.tgz#951c3b5403e01200a6a4f5608303be6befd1ae25"
-  integrity sha512-wNF4iNxrL9pAY0fHLheFUaOtfBpB9F7BA29od6s4Xc7IFDphqAuUVe4zx2W/4LuBbKZiMXUYR7NWSZLybp3vqQ==
+ag-charts-locale@11.3.0-beta.20250512.1344:
+  version "11.3.0-beta.20250512.1344"
+  resolved "http://52.50.158.57:4873/ag-charts-locale/-/ag-charts-locale-11.3.0-beta.20250512.1344.tgz#5c61f489ab13aec83aa804aa3c392341fc774977"
+  integrity sha512-IJANhdnqClrSU19HquytFJ737V8KhQ7F65g3vP+dPQYyyoEejcQgdoSQGfB7z2p38pz5asXD9l7GON3HvJk2GQ==
 
-ag-charts-react@11.3.0-beta.20250512:
-  version "11.3.0-beta.20250512"
-  resolved "http://52.50.158.57:4873/ag-charts-react/-/ag-charts-react-11.3.0-beta.20250512.tgz#9985b79005ea1ca0823b695b8a0ab5db16e17ce4"
-  integrity sha512-gOKehdKzAiKK3AWQ4acpO1OvSHwaBiw1aY0pc+V1yJsLHjENCtwfqFq3BEHn+AOFTGm2hndC0M9TpsmViQYnmg==
+ag-charts-react@11.3.0-beta.20250512.1344:
+  version "11.3.0-beta.20250512.1344"
+  resolved "http://52.50.158.57:4873/ag-charts-react/-/ag-charts-react-11.3.0-beta.20250512.1344.tgz#c3408b33802b0b9033625c39cecba19cdaaec871"
+  integrity sha512-j8I/n4+F0PDiD6GQyZhHrQDuF/rrkcXafO4ejtCpmkJwrfPLouBLWozR/LUqmnTpRWT4ZTrRQ17yqWM6LYpv/w==
   dependencies:
-    ag-charts-community "11.3.0-beta.20250512"
+    ag-charts-community "11.3.0-beta.20250512.1344"
 
-ag-charts-types@11.3.0-beta.20250512:
-  version "11.3.0-beta.20250512"
-  resolved "http://52.50.158.57:4873/ag-charts-types/-/ag-charts-types-11.3.0-beta.20250512.tgz#729ae6dd82ffa3d50e510a1ea52a3522667baf46"
-  integrity sha512-IWN63DUXxXcGDEZEvYYAVZ/h5XEJxqtE8mthDsteZUJJMT/Vl+MzbPSvrDMtf2cGlWch0is/0PHzuIn+1XldbQ==
+ag-charts-types@11.3.0-beta.20250512.1344:
+  version "11.3.0-beta.20250512.1344"
+  resolved "http://52.50.158.57:4873/ag-charts-types/-/ag-charts-types-11.3.0-beta.20250512.1344.tgz#a3e4c5550e1a78a9918b8e7cb44c73cc7da08b13"
+  integrity sha512-Nj7bdZvHOnkMWIWmMoaqDH7W2l8AZCx6nKEoQJH4GAeS6kkxAvGzPPXrThcg+2gHDVo5dUiTourL/AT80aoxyw==
 
-ag-charts-vue3@11.3.0-beta.20250512:
-  version "11.3.0-beta.20250512"
-  resolved "http://52.50.158.57:4873/ag-charts-vue3/-/ag-charts-vue3-11.3.0-beta.20250512.tgz#7b0f41ccd77a1407e858292d9b6675ad81f44280"
-  integrity sha512-RcgKflNgAljLYADesxyVzQFT9ZOsSsBepxqcZGHPfKfp+8gxcRgaBoNN5n06bdzI9WzL7pSgS84LK6UJI2wJag==
+ag-charts-vue3@11.3.0-beta.20250512.1344:
+  version "11.3.0-beta.20250512.1344"
+  resolved "http://52.50.158.57:4873/ag-charts-vue3/-/ag-charts-vue3-11.3.0-beta.20250512.1344.tgz#4a80214ebe6965cca4785a031ae3ac99063d822c"
+  integrity sha512-g3auzJJklr7YHAZjJnqQ/mBkq7tfUuu6VkXiO/qq8n5xwUMsjf3eHulW0XNXfIfKVuL1bC1FJhnvvEHXi5tD3Q==
   dependencies:
-    ag-charts-community "11.3.0-beta.20250512"
+    ag-charts-community "11.3.0-beta.20250512.1344"
 
 agent-base@4, agent-base@^4.1.0, agent-base@^4.3.0:
   version "4.3.0"
