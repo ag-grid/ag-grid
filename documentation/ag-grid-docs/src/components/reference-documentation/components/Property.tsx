@@ -151,12 +151,10 @@ function getDefinitionTypeUrl({
 }
 
 function getTagsData({
-    name,
     definition,
     gridOpProp,
     config,
 }: {
-    name: string;
     definition: ChildDocEntry;
     gridOpProp: InterfaceEntry;
     config: Config;
@@ -233,7 +231,6 @@ export const Property: FunctionComponent<{
         config,
     });
     const { formattedDefaultValue, isInitial, modules } = getTagsData({
-        name,
         definition,
         gridOpProp,
         config,
