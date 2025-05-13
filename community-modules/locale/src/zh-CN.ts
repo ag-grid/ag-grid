@@ -206,6 +206,7 @@ export const AG_GRID_LOCALE_CN = {
     pageSizeSelectorLabel: '每页大小：',
     footerTotal: '合计',
     statusBarLastRowUnknown: '？',
+    scrollColumnIntoView: '滚动${variable}到视图内',
 
     // Pivoting
     pivotColumnGroupTotals: '总计',

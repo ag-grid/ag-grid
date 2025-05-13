@@ -567,7 +567,7 @@ export interface Props<TData> {
          * (or aggregated data if `groupAggFiltering = true`).
          * Set to `true` to apply Quick Filter before pivoting (/aggregating) instead.
          * @default false
-         * @agModule `QuickFilterModule` / 'PivotModule'
+         * @agModule `QuickFilterModule`
          */
     applyQuickFilterBeforePivotOrAgg?: boolean | undefined,
     /** Set to `true` to override the default tree data filtering behaviour to instead exclude child nodes from filter results.
@@ -1034,7 +1034,7 @@ export interface Props<TData> {
     groupDisplayType?: RowGroupingDisplayType | undefined,
     /** If grouping, set to the number of levels to expand by default, e.g. `0` for none, `1` for first level only, etc. Set to `-1` to expand everything.
          * @default 0
-         * @agModule `RowGroupingModule`
+         * @agModule `RowGroupingModule` / `TreeDataModule`
          */
     groupDefaultExpanded?: number | undefined,
     /** Allows specifying the group 'auto column' if you are not happy with the default. If grouping, this column definition is included as the first column in the grid. If not grouping, this column is not included.
@@ -1065,16 +1065,16 @@ export interface Props<TData> {
     /** When provided, an extra row group total row will be inserted into row groups at the specified position, to display
          * when the group is expanded. This row will contain the aggregate values for the group. If a callback function is
          * provided, it can be used to selectively determine which groups will have a total row added.
-         * @agModule `RowGroupingModule`
+         * @agModule `RowGroupingModule` / `ServerSideRowModelModule`
          */
     groupTotalRow?: 'top' | 'bottom' | UseGroupTotalRow<TData> | undefined,
     /** When provided, an extra grand total row will be inserted into the grid at the specified position.
          * This row displays the aggregate totals of all rows in the grid.
-         * @agModule `RowGroupingModule`
+         * @agModule `RowGroupingModule` / `ServerSideRowModelModule`
          */
     grandTotalRow?: 'top' | 'bottom' | 'pinnedTop' | 'pinnedBottom' | undefined,
     /** Suppress the sticky behaviour of the total rows, can be suppressed individually by passing `'grand'` or `'group'`.
-         * @agModule `RowGroupingModule`
+         * @agModule `RowGroupingModule` / `ServerSideRowModelModule`
          */
     suppressStickyTotalRow?: boolean | 'grand' | 'group' | undefined,
     /** If `true`, and showing footer, aggregate data will always be displayed at both the header and footer levels. This stops the possibly undesirable behaviour of the header details 'jumping' to the footer on expand.
@@ -1226,6 +1226,7 @@ export interface Props<TData> {
     /** Set how many loading rows to display to the user for the root level group.
          * @default 1
          * @initial
+         * @agModule `ServerSideRowModelModule`
          */
     serverSideInitialRowCount?: number | undefined,
     /** When `true`, the Server-side Row Model will not use a full width loading renderer, instead using the colDef `loadingCellRenderer` if present.
@@ -1251,6 +1252,7 @@ export interface Props<TData> {
     maxConcurrentDatasourceRequests?: number | undefined,
     /** How many milliseconds to wait before loading a block. Useful when scrolling over many blocks, as it prevents blocks loading until scrolling has settled.
          * @initial
+         * @agModule `ServerSideRowModelModule` / `InfiniteRowModelModule`
          */
     blockLoadDebounceMillis?: number | undefined,
     /** When enabled, closing group rows will remove children of that row. Next time the row is opened, child rows will be read from the datasource again. This property only applies when there is Row Grouping or Tree Data.
@@ -1281,7 +1283,7 @@ export interface Props<TData> {
     /** Used to split pivot field strings for generating pivot result columns when `pivotResultFields` is provided as part of a `getRows` success.
          * @default '_'
          * @initial
-         * @agModule `ServerSideRowModelModule` / `PivotModule`
+         * @agModule `ServerSideRowModelModule`
          */
     serverSidePivotResultFieldSeparator?: string | undefined,
     /** To use the viewport row model you need to provide the grid with a `viewportDatasource`.

@@ -206,6 +206,7 @@ export const AG_GRID_LOCALE_HU = {
     pageSizeSelectorLabel: 'Oldalméret:',
     footerTotal: 'Összesen',
     statusBarLastRowUnknown: '?',
+    scrollColumnIntoView: 'Görgetés ${variable} megtekintéséhez',
 
     // Pivoting
     pivotColumnGroupTotals: 'Összesen',

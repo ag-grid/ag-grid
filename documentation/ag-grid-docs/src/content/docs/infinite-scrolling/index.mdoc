@@ -223,11 +223,11 @@ Infinite scrolling has a cache working behind the scenes. The following properti
 
 ### Properties
 
-{% apiDocumentation source="grid-options/properties.json" section="infiniteRowModel" names=["cacheOverflowSize", "maxConcurrentDatasourceRequests", "maxBlocksInCache", "infiniteInitialRowCount", "cacheBlockSize"] /%}
+{% apiDocumentation source="grid-options/properties.json" section="infiniteRowModel" names=["cacheOverflowSize", "maxConcurrentDatasourceRequests", "maxBlocksInCache", "infiniteInitialRowCount", "cacheBlockSize"]  config={"restrictModule":"InfiniteRowModelModule"} /%}
 
 ### API
 
-{% apiDocumentation source="grid-api/api.json" section="infiniteScrolling" /%}
+{% apiDocumentation source="grid-api/api.json" section="infiniteScrolling" config={"restrictModule":"InfiniteRowModelModule"} /%}
 
 {% note %}
 Adding / removing rows directly in the grid for infinite scrolling is not recommended as it will complicate your application. It will make your life easier if you update the data on the server and refresh the block cache.

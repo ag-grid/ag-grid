@@ -1314,19 +1314,19 @@ export interface _RowGroupingGridApi {
 export interface _AggregationGridApi<TData> {
     /**
      * Add aggregations function with the specified keys.
-     * @agModule `PivotModule / RowGroupingModule / TreeDataModule`
+     * @agModule `RowGroupingModule / PivotModule / TreeDataModule`
      */
     addAggFuncs(aggFuncs: { [key: string]: IAggFunc<TData> }): void;
 
     /**
      * Clears all aggregation functions (including those provided by the grid).
-     * @agModule `PivotModule / RowGroupingModule / TreeDataModule`
+     * @agModule `RowGroupingModule / PivotModule / TreeDataModule`
      */
     clearAggFuncs(): void;
 
     /**
      * Sets the agg function for a column. `aggFunc` can be one of the built-in aggregations or a custom aggregation by name or direct function.
-     * @agModule `PivotModule / RowGroupingModule / TreeDataModule`
+     * @agModule `RowGroupingModule / PivotModule / TreeDataModule`
      */
     setColumnAggFunc<TValue = any>(
         key: string | ColDef<TData, TValue> | Column<TValue>,

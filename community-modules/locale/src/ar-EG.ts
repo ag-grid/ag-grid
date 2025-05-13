@@ -206,6 +206,7 @@ export const AG_GRID_LOCALE_EG = {
     pageSizeSelectorLabel: 'حجم الصفحة:',
     footerTotal: 'المجموع',
     statusBarLastRowUnknown: '؟',
+    scrollColumnIntoView: "مرر '${variable}' إلى العرض",
 
     // Pivoting
     pivotColumnGroupTotals: 'المجموع',

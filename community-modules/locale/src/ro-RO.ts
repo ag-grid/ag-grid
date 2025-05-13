@@ -206,6 +206,7 @@ export const AG_GRID_LOCALE_RO = {
     pageSizeSelectorLabel: 'Mărime Pagină:',
     footerTotal: 'Total',
     statusBarLastRowUnknown: '?',
+    scrollColumnIntoView: 'Derulează ${variable} în vizualizare',
 
     // Pivoting
     pivotColumnGroupTotals: 'Total',

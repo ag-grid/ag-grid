@@ -150,11 +150,19 @@ function getDefinitionTypeUrl({
     return typeUrl;
 }
 
-function getTagsData({ definition, gridOpProp }: { definition: ChildDocEntry; gridOpProp: InterfaceEntry }) {
+function getTagsData({
+    definition,
+    gridOpProp,
+    config,
+}: {
+    definition: ChildDocEntry;
+    gridOpProp: InterfaceEntry;
+    config: Config;
+}) {
     // Default may or may not be on a new line in JsDoc but in both cases we want the default to be on the next line
     const tags = gridOpProp?.meta?.tags ?? definition?.tags ?? [];
     const jsdocDefault = tags.find((t) => t.name === 'default');
-    const defaultValue = definition.default ?? jsdocDefault?.comment;
+    const defaultValue = definition?.default ?? jsdocDefault?.comment;
     const formattedDefaultValue = Array.isArray(defaultValue)
         ? '[' +
           defaultValue.map((v, i) => {
@@ -163,7 +171,16 @@ function getTagsData({ definition, gridOpProp }: { definition: ChildDocEntry; gr
           ']'
         : defaultValue;
     const isInitial = tags.some((t) => t.name === 'initial') ?? false;
-    const modules = tags.find((t) => t.name === AG_MODULE_TAG_NAME)?.modules ?? [];
+    let modules = tags.find((t) => t.name === AG_MODULE_TAG_NAME)?.modules ?? [];
+
+    const restrictedModule: string | undefined = definition?.restrictModule ?? config.restrictModule;
+    if (modules.length > 1 && restrictedModule) {
+        // If the property contains the restricted module and others then only show the restricted module
+        const restrictedModuleTag = modules.find((mod) => restrictedModule == mod.name);
+        if (restrictedModuleTag) {
+            modules = [restrictedModuleTag];
+        }
+    }
 
     return {
         formattedDefaultValue,
@@ -216,6 +233,7 @@ export const Property: FunctionComponent<{
     const { formattedDefaultValue, isInitial, modules } = getTagsData({
         definition,
         gridOpProp,
+        config,
     });
 
     const { more } = definition;

@@ -54,6 +54,9 @@ export const LicensePricing: FunctionComponent<Props> = ({ defaultSelection }) =
 
         window.addEventListener('scroll', handleScroll);
 
+        // Call once on mount to set initial state
+        handleScroll();
+
         return () => {
             window.removeEventListener('scroll', handleScroll);
         };

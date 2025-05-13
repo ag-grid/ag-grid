@@ -4,8 +4,8 @@
     font-weight: var(--ag-pinned-source-row-font-weight);
 }
 
-.ag-row-pinned {
-    color: var(--ag-pinned-source-row-text-color);
-    background-color: var(--ag-pinned-source-row-background-color);
+.ag-row-pinned-manual {
+    color: var(--ag-pinned-row-text-color);
+    background-color: var(--ag-pinned-row-background-color);
     font-weight: var(--ag-pinned-row-font-weight);
 }

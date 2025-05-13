@@ -53,7 +53,7 @@ In order to give screen readers the contextual information they require to inter
 
 When inspecting the DOM you'll notice the following roles and properties have been added:
 
-* **role="treegrid"** - marks the enclosing element of the grid.
+* **role="treegrid"** / **role="grid"** - marks the enclosing element of the grid. The grid has `role="treegrid"` when using [Tree Data](./tree-data/) or the grid has [Row Grouping](./grouping/) applied. In other cases, when providing flat data or using [Master / Detail](./master-detail/), the grid has `role="grid"`.
 
   **Note:** You can set any aria property in the panel (role="treegrid") by using the `setGridAriaProperty` method in the [Grid Api](./grid-api/).
 

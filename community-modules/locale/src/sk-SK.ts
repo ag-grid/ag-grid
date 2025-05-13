@@ -206,6 +206,7 @@ export const AG_GRID_LOCALE_SK = {
     pageSizeSelectorLabel: 'Veľkosť strany:',
     footerTotal: 'Celkom',
     statusBarLastRowUnknown: '?',
+    scrollColumnIntoView: 'Posunúť ${variable} do zobrazenia',
 
     // Pivoting
     pivotColumnGroupTotals: 'Celkom',
