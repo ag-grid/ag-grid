@@ -174,4 +174,9 @@ export class FullRowEditStrategy extends BaseEditStrategy {
 
         return true;
     }
+
+    public override destroy(): void {
+        super.destroy();
+        this.rowId = undefined;
+    }
 }

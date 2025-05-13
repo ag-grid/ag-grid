@@ -116,6 +116,10 @@ export class EditingService extends BeanStub implements NamedBean {
             return false;
         }
 
+        if (this.isEditing(rowCtrl, cellCtrl)) {
+            return true;
+        }
+
         console.log('EditingService: startEditing');
 
         this.editStrategy = this.createEditStrategy();
