@@ -152,7 +152,7 @@ export class ValueService extends BeanStub implements NamedBean {
         column: AgColumn,
         rowNode?: IRowNode | null,
         ignoreAggData = false,
-        source: 'ui' | 'api' = 'ui'
+        source: 'ui' | 'api' | 'edit' | string = 'ui'
     ): any {
         // hack - the grid is getting refreshed before this bean gets initialised, race condition.
         // really should have a way so they get initialised in the right order???
@@ -353,7 +353,7 @@ export class ValueService extends BeanStub implements NamedBean {
         const params: ValueSetterParams = _addGridCommonParams(this.gos, {
             node: rowNode,
             data: rowNode.data,
-            oldValue: this.getValue(column, rowNode),
+            oldValue: this.getValue(column, rowNode, undefined, eventSource),
             newValue: newValue,
             colDef: column.getColDef(),
             column: column,
