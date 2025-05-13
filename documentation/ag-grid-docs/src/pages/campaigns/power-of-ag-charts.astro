@@ -11,8 +11,7 @@ import 'ag-grid-community/styles/ag-theme-quartz.css';
 import { getIsProduction } from '@utils/env';
 
 const TRIAL_LICENCE_FORM_URL = getIsProduction()
-    ? // TODO: Update for production URL
-      'https://us-central1-stripe-testing-19784.cloudfunctions.net/CreateLeadForTrialChartsCampaign'
+    ? 'https://us-central1-aggrid-ecommerce.cloudfunctions.net/CreateLeadForTrialChartsCampaign'
     : 'https://us-central1-stripe-testing-19784.cloudfunctions.net/CreateLeadForTrialChartsCampaign';
 ---
 
