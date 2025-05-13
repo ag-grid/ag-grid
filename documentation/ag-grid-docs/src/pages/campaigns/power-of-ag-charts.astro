@@ -1,0 +1,75 @@
+---
+import Layout from '@layouts/Layout.astro';
+import styles from '../../pages-styles/campaigns.module.scss';
+
+import { TrialLicenceForm } from '@ag-website-shared/components/trial-licence-form/TrialLicenceForm';
+---
+
+<Layout
+    title={'Unlock the power of AG Charts'}
+    description={'Create fast, flexible and fully customisable charts with minimal configuration for maximum impact.'}
+    showDocsNav={false}
+    showSearchBar={true}
+    hidePageFromSearchEngines={true}
+>
+    <main class={styles.campaignOuter}>
+        <div class={styles.campaignHero}>
+            <h1>Unlock the power<br />of AG Charts</h1>
+
+            <h2>Visualise your AG Grid data with fast, flexible charts</h2>
+
+            <p>High-performance charting, built for AG Grid users.</p>
+
+            <p>
+                Create fast, flexible and fully customisable charts<br />with minimal configuration for maximum impact.
+            </p>
+        </div>
+
+        <h2>Watch AG Charts in Action</h2>
+
+        <iframe
+            src="https://www.youtube.com/embed/KocCv954fbo?si=JUQzgwBiWPL8oUcI"
+            title="YouTube video player"
+            frameborder="0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            referrerpolicy="strict-origin-when-cross-origin"
+            allowfullscreen
+            class={styles.campaignDummyVideo}
+        >
+        </iframe>
+
+        <div class={styles.campaignBenefitsList}>
+            <h3>Built for Developers</h3>
+
+            <ul>
+                <li>Deliver high-impact visualisations that showcase the value in your data</li>
+                <li>Integrate seamlessly with your AG Grid apps</li>
+                <li>Access simple, consistent APIs for JavaScript, React, Angular, and Vue</li>
+                <li>Visualise large datasets with outstanding performance</li>
+            </ul>
+        </div>
+
+        <div>
+            <h3>Start your free trial today</h3>
+
+            <TrialLicenceForm />
+        </div>
+
+        <div class={styles.campaignBenefitsList}>
+            <h3>Built for Developers</h3>
+
+            <ul>
+                <li>Make better decisions with your data</li>
+                <li>Spot trends, outliers, and risks at a glance</li>
+                <li>Create professional, interactive reports without additional tools</li>
+                <li>Reduce development time with charts that work straight out of the box</li>
+                <li>Get trusted support and seamless integration with your existing AG Grid setup</li>
+                <li>Take advantage of exclusive bundle pricing for AG Grid customers</li>
+            </ul>
+        </div>
+
+        <a href="mailto:info@ag-grid.com" class="text-xl">Contact our team</a>
+
+        <a href="https://www.ag-grid.com/charts/gallery/" class="button text-xl">View our demos</a>
+    </main>
+</Layout>
