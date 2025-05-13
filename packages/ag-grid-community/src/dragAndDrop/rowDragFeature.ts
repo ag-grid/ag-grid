@@ -292,7 +292,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
             }
         }
 
-        let newParent = canSetParent ? this.determineNewParent(target, yDelta, targetInRows) : null;
+        let newParent = canSetParent ? this.determineNewParent(target, yDelta, targetInRows, source) : null;
         if (newParent) {
             if (newParent === target) {
                 above = false; // When moving inside the target, we want to insert below it
@@ -309,7 +309,12 @@ export class RowDragFeature extends BeanStub implements DropTarget {
         return { sameGrid, above, target, newParent, rows };
     }
 
-    private determineNewParent(target: RowNode | null, yDelta: number, targetInRows: boolean): RowNode | null {
+    private determineNewParent(
+        target: RowNode | null,
+        yDelta: number,
+        targetInRows: boolean,
+        source: IRowNode
+    ): RowNode | null {
         const clientSideRowModel = this.clientSideRowModel;
         const targetRowIndex = target?.rowIndex;
         if (!target || (yDelta > 1 && targetRowIndex === this.beans.pageBounds.getLastRow())) {
@@ -323,14 +328,24 @@ export class RowDragFeature extends BeanStub implements DropTarget {
             if (Math.abs(yDelta) < INSIDE_THRESHOLD) {
                 return target; // Inside the middle of the row, we want to move inside, as children
             }
-
             if (
                 yDelta >= INSIDE_THRESHOLD &&
                 yDelta <= 1 &&
-                clientSideRowModel.getRow(targetRowIndex! + 1)?.parent === target &&
-                (clientSideRowModel.getRow(targetRowIndex! + 2)?.uiLevel ?? 0) > target.uiLevel
+                clientSideRowModel.getRow(targetRowIndex! + 1)?.parent === target
             ) {
-                return target; // In the bottom half of an expanded group with more than one child, we move inside the target
+                const children = target.childrenAfterAggFilter;
+                if (children) {
+                    let hasMoreChildren = false;
+                    for (const child of children) {
+                        if (child !== source && child.rowIndex !== null) {
+                            hasMoreChildren = true;
+                            break;
+                        }
+                    }
+                    if (hasMoreChildren) {
+                        return target; // In the bottom half of an expanded group with more than one child, we move inside the target
+                    }
+                }
             }
         }
 
