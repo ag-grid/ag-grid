@@ -216,6 +216,10 @@ See the [Columns Tool Panel](./tool-panel-columns/) documentation for the full l
 
 ## Side Bar API
 
+{% note %}
+The Side Bar state can be saved and restored as part of [Grid State](./grid-state/).
+{% /note %}
+
 The list below details all the API methods relevant to the Tool Panel.
 
 {% apiDocumentation source="grid-api/api.json" section="accessories" names=["getSideBar","setSideBarVisible","isSideBarVisible","setSideBarPosition","openToolPanel","closeToolPanel","getOpenedToolPanel","isToolPanelShowing","refreshToolPanel", "getToolPanelInstance"] /%}
@@ -227,6 +231,7 @@ The example below demonstrates different usages of the Tool Panel API methods. T
 * **Open / Close Buttons:** These open and close different Tool Panel items.
 * **Reset Buttons:** These reset the Tool Panel to a new configuration. Notice that [shortcuts](#configuration-shortcuts) are provided as configuration however `getSideBar()` returns back the long form.
 * **Position Buttons:** These change the position of the Side Bar relative to the grid.
+* The `get*` buttons log data to the developer console.
 
 {% gridExampleRunner title="Side Bar API" name="api"  exampleHeight=630 /%}
 

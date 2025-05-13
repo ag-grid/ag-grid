@@ -188,7 +188,6 @@ export type EnterpriseModuleName =
     | 'ViewportRowModel';
 
 /** The names of all publicly available AG Grid modules */
-
 export type AgModuleName =
     | 'AlignedGridsModule'
     | 'AllCommunityModule'

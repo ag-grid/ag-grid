@@ -3,6 +3,7 @@
 // eg, if the col field is 'name', it will try ids: {name, name_1, name_2...}
 // if no field or id provided in the col, it will try the ids of natural numbers
 import { _toStringOrNull } from '../utils/generic';
+import { _warn } from '../validation/logging';
 
 export type IColumnKeyCreator = {
     getUniqueKey(colId?: string | null, colField?: string | null): string;
@@ -35,8 +36,12 @@ export class ColumnKeyCreator implements IColumnKeyCreator {
             }
 
             if (!this.existingKeys[idToTry]) {
-                this.existingKeys[idToTry] = true;
-                return String(idToTry);
+                const usedId = String(idToTry);
+                if (colId && count > 0) {
+                    _warn(273, { providedId: colId, usedId });
+                }
+                this.existingKeys[usedId] = true;
+                return usedId;
             }
 
             count++;

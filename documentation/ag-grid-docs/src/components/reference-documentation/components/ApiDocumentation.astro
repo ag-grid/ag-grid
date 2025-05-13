@@ -2,14 +2,18 @@
 import { getFrameworkFromPath } from '@components/docs/utils/urlPaths';
 import { getPropertiesFromSource } from '../utils/getPropertiesFromSource';
 import { getApiDocumentationModel } from '../utils/getApiDocumentationModel';
+import { flattenModules } from '../utils/flattenModules';
 import { ApiDocumentation } from './ApiDocumentation';
 import { getJsonFile } from '@utils/pages';
+import { getEntry, type CollectionEntry } from 'astro:content';
 
 const { names, config, source, sources: sourcesProp, section } = Astro.props;
 
 const framework = getFrameworkFromPath(Astro.url.pathname);
 
 const interfaceLookup = getJsonFile('reference/interfaces.AUTO.json');
+const { data: modules } = (await getEntry('moduleMappings', 'modules')) as CollectionEntry<'moduleMappings'>;
+const allModules = flattenModules(modules);
 
 const { sources, propertiesFromFiles, propertyConfigs, codeConfigs } = await getPropertiesFromSource({
     source,
@@ -26,6 +30,7 @@ const model = getApiDocumentationModel({
     propertyConfigs,
     interfaceLookup,
     codeConfigs,
+    allModules,
 });
 ---
 

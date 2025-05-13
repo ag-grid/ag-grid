@@ -1,7 +1,16 @@
 import type { Framework } from '@ag-grid-types';
 import { throwDevWarning } from '@ag-website-shared/utils/throwDevWarning';
 
-import type { ApiDocumentationModel, ChildDocEntry, Config, InterfaceEntry, MetaTag } from '../types';
+import { AG_MODULE_TAG_NAME } from '../constants';
+import type {
+    ApiDocumentationModel,
+    ChildDocEntry,
+    Config,
+    GridModule,
+    ICallSignature,
+    InterfaceEntry,
+    MetaTag,
+} from '../types';
 import { getDefinitionType } from './getDefinitionType';
 import { getDetailsCode } from './getDetailsCode';
 import { getShowAdditionalDetails } from './getShowAdditionalDetails';
@@ -17,6 +26,56 @@ interface Params {
     propertyConfigs: any[];
     interfaceLookup: Record<string, InterfaceEntry>;
     codeConfigs: Record<string, any>;
+    allModules: GridModule[];
+}
+
+function addEnterprisePropertyToTags({
+    callSignature,
+    allModules,
+}: {
+    callSignature: ICallSignature;
+    allModules: GridModule[];
+}) {
+    if (!callSignature?.meta?.tags) {
+        return callSignature;
+    }
+
+    const newTags = callSignature.meta?.tags.map((tag) => {
+        if (tag.name === AG_MODULE_TAG_NAME) {
+            const tagModule = tag.comment.replace(/`/g, '');
+
+            const modules = tagModule
+                .split(/\s*\/\s*/)
+                .map((m) => {
+                    const name = m.trim();
+                    if (!name) {
+                        return false;
+                    }
+
+                    const module = allModules.find((mod) => mod.moduleName === name);
+                    return {
+                        name,
+                        isEnterprise: module?.isEnterprise,
+                    };
+                })
+                .filter(Boolean);
+
+            return {
+                ...tag,
+                modules,
+            };
+        }
+
+        return tag;
+    });
+
+    return {
+        ...callSignature,
+        meta: {
+            ...callSignature.meta,
+            tags: newTags,
+        },
+    };
 }
 
 function getCodeLookup({ propertyConfigs, codeConfigs }: { propertyConfigs: any[]; codeConfigs: Record<string, any> }) {
@@ -38,6 +97,7 @@ function getResolvedProperties({
     codeLookup,
     interfaceLookup,
     config,
+    allModules,
 }: {
     framework: Framework;
     names?: string[];
@@ -45,6 +105,7 @@ function getResolvedProperties({
     codeLookup: Record<string, any>;
     interfaceLookup: Record<string, InterfaceEntry>;
     config: Config;
+    allModules: GridModule[];
 }) {
     const { meta, ...processedProperties } = properties;
 
@@ -59,7 +120,11 @@ function getResolvedProperties({
             return config.sortAlphabetically ? (a[0] < b[0] ? -1 : 1) : 0;
         })
         .map(([name, definition]) => {
-            const gridOpProp = codeLookup[name];
+            const codeLookUpGridOpProp = codeLookup[name];
+            const gridOpProp = addEnterprisePropertyToTags({
+                callSignature: codeLookUpGridOpProp,
+                allModules,
+            });
             const showAdditionalDetails = getShowAdditionalDetails({ name, definition, gridOpProp, interfaceLookup });
             const { type, propertyType } = getDefinitionType({
                 name,
@@ -105,6 +170,7 @@ function getSectionProperties({
     codeLookup,
     interfaceLookup,
     config,
+    allModules,
 }: {
     framework: Framework;
     section: string;
@@ -114,6 +180,7 @@ function getSectionProperties({
     interfaceLookup: Record<string, InterfaceEntry>;
     gridOpProp?: InterfaceEntry;
     config: Config;
+    allModules: GridModule[];
 }) {
     const keys = section.split('.');
     const title = keys[keys.length - 1];
@@ -138,6 +205,7 @@ function getSectionProperties({
         codeLookup,
         interfaceLookup,
         config,
+        allModules,
     });
 
     return {
@@ -157,6 +225,7 @@ export function getApiDocumentationModel({
     propertyConfigs,
     interfaceLookup,
     codeConfigs,
+    allModules,
 }: Params): ApiDocumentationModel | undefined {
     if (!sources || sources.length < 1) {
         return undefined;
@@ -178,6 +247,7 @@ export function getApiDocumentationModel({
             codeLookup,
             interfaceLookup,
             config,
+            allModules,
         });
 
         return {
@@ -198,6 +268,7 @@ export function getApiDocumentationModel({
                 codeLookup,
                 interfaceLookup,
                 config,
+                allModules,
             });
 
             return [name, { meta: meta as MetaTag, properties: resolvedProperties as ChildDocEntry }];

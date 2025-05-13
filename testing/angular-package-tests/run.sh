@@ -9,10 +9,10 @@ dev_port=4200
 function install_fw {
     if [[ ${version} == "latest" ]] ; then
         echo ">>> npm i -g @angular/cli@latest"
-        npm i -g @angular/cli
+        npm i -g @angular/cli --cache ${cache_location}
     else
         echo ">>> npm i -g @angular/cli@^${version}.0.0"
-        npm i -g @angular/cli@^${version}.0.0
+        npm i -g @angular/cli@^${version}.0.0 --cache ${cache_location}
     fi
     echo ">>> ng new angular-${version}-test"
     echo "" | ng new angular-${version}-test --defaults=true --strict --prefix=app --style=scss --package-manager=npm --routing=false --interactive=false --no-strict --skip-git

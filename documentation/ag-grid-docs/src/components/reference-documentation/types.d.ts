@@ -58,6 +58,8 @@ export interface ChildDocEntry {
      * even though there is no matching code property for it.
      */
     overrideMissingPropCheck?: true;
+    /** Only show this module if it is one of a number of options for the given property. */
+    restrictModule?: string;
 }
 export interface ObjectCode {
     framework: Framework;
@@ -164,6 +166,7 @@ export interface Config {
      * Hide the header to make it easy to just include the sections as part of doc pages
      */
     hideHeader?: boolean;
+
     /**
      * Override the headerLevel used.
      */
@@ -181,6 +184,9 @@ export interface Config {
 
     /** Override link shown for initial properties */
     initialLink?: string;
+
+    /** Only show this module if it is one of a number of options for the given property. */
+    restrictModule?: string;
 }
 
 export type Properties = DocEntryMap | DocEntry | ChildDocEntry;
@@ -241,3 +247,10 @@ export interface MultipleApiModel {
 }
 
 export type ApiDocumentationModel = SingleApiModel | MultipleApiModel;
+
+export interface GridModule {
+    moduleName: string;
+    name: string;
+    path: string;
+    isEnterprise: boolean;
+}

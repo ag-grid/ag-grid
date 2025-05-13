@@ -1,8 +1,8 @@
 import { createAutomatedIntegratedCharts } from '@ag-website-shared/components/automated-examples/examples/integrated-charts/indexPackages';
+import { useIntersectionObserver } from '@ag-website-shared/utils/hooks/useIntersectionObserver';
 import { throwDevWarning } from '@ag-website-shared/utils/throwDevWarning';
 import { GRID_STAGING_SITE_URL, agChartsVersion, agGridVersion } from '@constants';
 import { getIsArchive, getIsProduction } from '@utils/env';
-import { useIntersectionObserver } from '@utils/hooks/useIntersectionObserver';
 import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
 import { useCallback, useRef, useState } from 'react';
 

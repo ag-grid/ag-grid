@@ -31,6 +31,10 @@ const usdFormatter = new Intl.NumberFormat('en-US', {
     minimumFractionDigits: 2,
 });
 
+const currencyComparator = (a: any, b: any) => {
+    return a.amount - b.amount;
+};
+
 const currencyCellRenderer = (params: ICellRendererParams) => {
     switch (params.value.currency) {
         case 'EUR':
@@ -50,12 +54,14 @@ const columnDefs: ColDef[] = [
         headerName: 'Price Local',
         field: 'price',
         cellRenderer: currencyCellRenderer,
+        comparator: currencyComparator,
         cellDataType: false,
     },
     {
         headerName: 'Report Price',
         field: 'price',
         cellRenderer: currencyCellRenderer,
+        comparator: currencyComparator,
         valueGetter: reportingCurrencyValueGetter,
         headerValueGetter: 'ctx.reportingCurrency',
     },

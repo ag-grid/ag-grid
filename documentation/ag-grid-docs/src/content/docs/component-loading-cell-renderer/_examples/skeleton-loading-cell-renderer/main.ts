@@ -77,7 +77,7 @@ function getServerSideDatasource(server: any): IServerSideDatasource {
 function getFakeServer(allData: any[]): any {
     return {
         getResponse: (request: IServerSideGetRowsRequest) => {
-            console.log('asking for rows: ' + request.startRow + ' to ' + request.endRow);
+            console.log('[Datasource] asking for rows: ' + request.startRow + ' to ' + request.endRow);
 
             // take a slice of the total rows
             const rowsThisPage = allData.slice(request.startRow, request.endRow);

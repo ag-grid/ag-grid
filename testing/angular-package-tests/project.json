@@ -13,7 +13,86 @@
         "test:package:local-18",
         "test:package:local-19",
         "test:package:local-latest",
-        "test:package:production-19"
+        "test:package:production-19",
+        "test:package:ClientSideRowModelModule-TextFilterModule-latest",
+        "test:package:tfm_nfm_dfm_sfm_mfm_cfm_efm_qfm-latest",
+        "test:package:AgChartsCommunityModule-IntegratedChartsModule-latest",
+        "test:package:AgChartsEnterpriseModule-IntegratedChartsModule-latest",
+        "test:package:AgChartsCommunityModule-SparklinesModule-latest",
+        "test:package:AgChartsEnterpriseModule-SparklinesModule-latest",
+        "test:package:AlignedGridsModule-latest",
+        "test:package:AllCommunityModule-latest",
+        "test:package:CellApiModule-latest",
+        "test:package:CellStyleModule-latest",
+        "test:package:CheckboxEditorModule-latest",
+        "test:package:ClientSideRowModelApiModule-latest",
+        "test:package:ClientSideRowModelModule-latest",
+        "test:package:ColumnApiModule-latest",
+        "test:package:ColumnAutoSizeModule-latest",
+        "test:package:ColumnHoverModule-latest",
+        "test:package:CsvExportModule-latest",
+        "test:package:CustomEditorModule-latest",
+        "test:package:CustomFilterModule-latest",
+        "test:package:DateEditorModule-latest",
+        "test:package:DateFilterModule-latest",
+        "test:package:DragAndDropModule-latest",
+        "test:package:EventApiModule-latest",
+        "test:package:ExternalFilterModule-latest",
+        "test:package:GridStateModule-latest",
+        "test:package:HighlightChangesModule-latest",
+        "test:package:InfiniteRowModelModule-latest",
+        "test:package:LargeTextEditorModule-latest",
+        "test:package:LocaleModule-latest",
+        "test:package:NumberEditorModule-latest",
+        "test:package:NumberFilterModule-latest",
+        "test:package:PaginationModule-latest",
+        "test:package:PinnedRowModule-latest",
+        "test:package:QuickFilterModule-latest",
+        "test:package:RenderApiModule-latest",
+        "test:package:RowApiModule-latest",
+        "test:package:RowAutoHeightModule-latest",
+        "test:package:RowDragModule-latest",
+        "test:package:RowSelectionModule-latest",
+        "test:package:RowStyleModule-latest",
+        "test:package:ScrollApiModule-latest",
+        "test:package:SelectEditorModule-latest",
+        "test:package:TextEditorModule-latest",
+        "test:package:TextFilterModule-latest",
+        "test:package:TooltipModule-latest",
+        "test:package:UndoRedoEditModule-latest",
+        "test:package:ValidationModule-latest",
+        "test:package:ValueCacheModule-latest",
+        "test:package:CellSpanModule-latest",
+        "test:package:AdvancedFilterModule-latest",
+        "test:package:AllEnterpriseModule-latest",
+        "test:package:CellSelectionModule-latest",
+        "test:package:ClipboardModule-latest",
+        "test:package:ColumnMenuModule-latest",
+        "test:package:ColumnsToolPanelModule-latest",
+        "test:package:ContextMenuModule-latest",
+        "test:package:ExcelExportModule-latest",
+        "test:package:FiltersToolPanelModule-latest",
+        "test:package:FindModule-latest",
+        "test:package:GridChartsModule-latest",
+        "test:package:IntegratedChartsModule-latest",
+        "test:package:GroupFilterModule-latest",
+        "test:package:MasterDetailModule-latest",
+        "test:package:MenuModule-latest",
+        "test:package:MultiFilterModule-latest",
+        "test:package:PivotModule-latest",
+        "test:package:RangeSelectionModule-latest",
+        "test:package:RichSelectModule-latest",
+        "test:package:RowNumbersModule-latest",
+        "test:package:RowGroupingModule-latest",
+        "test:package:RowGroupingPanelModule-latest",
+        "test:package:ServerSideRowModelApiModule-latest",
+        "test:package:ServerSideRowModelModule-latest",
+        "test:package:SetFilterModule-latest",
+        "test:package:SideBarModule-latest",
+        "test:package:SparklinesModule-latest",
+        "test:package:StatusBarModule-latest",
+        "test:package:TreeDataModule-latest",
+        "test:package:ViewportRowModelModule-latest"
       ],
       "configurations": {
         "update": {}
@@ -67,7 +146,997 @@
     },
     "test:package:editor": {
       "dependsOn": ["^pack"],
-      "command": "{projectRoot}/run.sh -n -e latest"
+      "command": "{projectRoot}/run.sh -n latest"
+    },
+
+    "test:package:ClientSideRowModelModule-TextFilterModule-latest": {
+      "dependsOn": ["^pack"],
+      "command": "{projectRoot}/run.sh -o ClientSideRowModelModule-TextFilterModule latest",
+      "configurations": {
+        "update": {
+          "command": "{projectRoot}/run.sh -o ClientSideRowModelModule-TextFilterModule -u latest"
+        }
+      }
+    },
+    "test:package:tfm_nfm_dfm_sfm_mfm_cfm_efm_qfm-latest": {
+      "dependsOn": ["^pack"],
+      "command": "{projectRoot}/run.sh -o tfm_nfm_dfm_sfm_mfm_cfm_efm_qfm latest",
+      "configurations": {
+        "update": {
+          "command": "{projectRoot}/run.sh -o tfm_nfm_dfm_sfm_mfm_cfm_efm_qfm -u latest"
+        }
+      }
+    },
+    "test:package:AgChartsCommunityModule-IntegratedChartsModule-latest": {
+      "dependsOn": ["^pack"],
+      "command": "{projectRoot}/run.sh -o AgChartsCommunityModule-IntegratedChartsModule latest",
+      "configurations": {
+        "update": {
+          "command": "{projectRoot}/run.sh -o AgChartsCommunityModule-IntegratedChartsModule -u latest"
+        }
+      }
+    },
+    "test:package:AgChartsEnterpriseModule-IntegratedChartsModule-latest": {
+      "dependsOn": ["^pack"],
+      "command": "{projectRoot}/run.sh -o AgChartsEnterpriseModule-IntegratedChartsModule latest",
+      "configurations": {
+        "update": {
+          "command": "{projectRoot}/run.sh -o AgChartsEnterpriseModule-IntegratedChartsModule -u latest"
+        }
+      }
+    },
+    "test:package:AgChartsCommunityModule-SparklinesModule-latest": {
+      "dependsOn": ["^pack"],
+      "command": "{projectRoot}/run.sh -o AgChartsCommunityModule-SparklinesModule latest",
+      "configurations": {
+        "update": {
+          "command": "{projectRoot}/run.sh -o AgChartsCommunityModule-SparklinesModule -u latest"
+        }
+      }
+    },
+    "test:package:AgChartsEnterpriseModule-SparklinesModule-latest": {
+      "dependsOn": ["^pack"],
+      "command": "{projectRoot}/run.sh -o AgChartsEnterpriseModule-SparklinesModule latest",
+      "configurations": {
+        "update": {
+          "command": "{projectRoot}/run.sh -o AgChartsEnterpriseModule-SparklinesModule -u latest"
+        }
+      }
+    },
+    "test:package:AlignedGridsModule-latest": {
+      "dependsOn": ["^pack"],
+      "command": "{projectRoot}/run.sh -o AlignedGridsModule latest",
+      "configurations": {
+        "update": {
+          "command": "{projectRoot}/run.sh -o AlignedGridsModule -u latest"
+        }
+      }
+    },
+    "test:package:AllCommunityModule-latest": {
+      "dependsOn": ["^pack"],
+      "command": "{projectRoot}/run.sh -o AllCommunityModule latest",
+      "configurations": {
+        "update": {
+          "command": "{projectRoot}/run.sh -o AllCommunityModule -u latest"
+        }
+      }
+    },
+    "test:package:CellApiModule-latest": {
+      "dependsOn": ["^pack"],
+      "command": "{projectRoot}/run.sh -o CellApiModule latest",
+      "configurations": {
+        "update": {
+          "command": "{projectRoot}/run.sh -o CellApiModule -u latest"
+        }
+      }
+    },
+    "test:package:CellStyleModule-latest": {
+      "dependsOn": ["^pack"],
+      "command": "{projectRoot}/run.sh -o CellStyleModule latest",
+      "configurations": {
+        "update": {
+          "command": "{projectRoot}/run.sh -o CellStyleModule -u latest"
+        }
+      }
+    },
+    "test:package:CheckboxEditorModule-latest": {
+      "dependsOn": ["^pack"],
+      "command": "{projectRoot}/run.sh -o CheckboxEditorModule latest",
+      "configurations": {
+        "update": {
+          "command": "{projectRoot}/run.sh -o CheckboxEditorModule -u latest"
+        }
+      }
+    },
+    "test:package:ClientSideRowModelApiModule-latest": {
+      "dependsOn": ["^pack"],
+      "command": "{projectRoot}/run.sh -o ClientSideRowModelApiModule latest",
+      "configurations": {
+        "update": {
+          "command": "{projectRoot}/run.sh -o ClientSideRowModelApiModule -u latest"
+        }
+      }
+    },
+    "test:package:ClientSideRowModelModule-latest": {
+      "dependsOn": ["^pack"],
+      "command": "{projectRoot}/run.sh -o ClientSideRowModelModule latest",
+      "configurations": {
+        "update": {
+          "command": "{projectRoot}/run.sh -o ClientSideRowModelModule -u latest"
+        }
+      }
+    },
+    "test:package:ColumnApiModule-latest": {
+      "dependsOn": ["^pack"],
+      "command": "{projectRoot}/run.sh -o ColumnApiModule latest",
+      "configurations": {
+        "update": {
+          "command": "{projectRoot}/run.sh -o ColumnApiModule -u latest"
+        }
+      }
+    },
+    "test:package:ColumnAutoSizeModule-latest": {
+      "dependsOn": ["^pack"],
+      "command": "{projectRoot}/run.sh -o ColumnAutoSizeModule latest",
+      "configurations": {
+        "update": {
+          "command": "{projectRoot}/run.sh -o ColumnAutoSizeModule -u latest"
+        }
+      }
+    },
+    "test:package:ColumnHoverModule-latest": {
+      "dependsOn": ["^pack"],
+      "command": "{projectRoot}/run.sh -o ColumnHoverModule latest",
+      "configurations": {
+        "update": {
+          "command": "{projectRoot}/run.sh -o ColumnHoverModule -u latest"
+        }
+      }
+    },
+    "test:package:CsvExportModule-latest": {
+      "dependsOn": ["^pack"],
+      "command": "{projectRoot}/run.sh -o CsvExportModule latest",
+      "configurations": {
+        "update": {
+          "command": "{projectRoot}/run.sh -o CsvExportModule -u latest"
+        }
+      }
+    },
+    "test:package:CustomEditorModule-latest": {
+      "dependsOn": ["^pack"],
+      "command": "{projectRoot}/run.sh -o CustomEditorModule latest",
+      "configurations": {
+        "update": {
+          "command": "{projectRoot}/run.sh -o CustomEditorModule -u latest"
+        }
+      }
+    },
+    "test:package:CustomFilterModule-latest": {
+      "dependsOn": ["^pack"],
+      "command": "{projectRoot}/run.sh -o CustomFilterModule latest",
+      "configurations": {
+        "update": {
+          "command": "{projectRoot}/run.sh -o CustomFilterModule -u latest"
+        }
+      }
+    },
+    "test:package:DateEditorModule-latest": {
+      "dependsOn": ["^pack"],
+      "command": "{projectRoot}/run.sh -o DateEditorModule latest",
+      "configurations": {
+        "update": {
+          "command": "{projectRoot}/run.sh -o DateEditorModule -u latest"
+        }
+      }
+    },
+    "test:package:DateFilterModule-latest": {
+      "dependsOn": ["^pack"],
+      "command": "{projectRoot}/run.sh -o DateFilterModule latest",
+      "configurations": {
+        "update": {
+          "command": "{projectRoot}/run.sh -o DateFilterModule -u latest"
+        }
+      }
+    },
+    "test:package:DragAndDropModule-latest": {
+      "dependsOn": ["^pack"],
+      "command": "{projectRoot}/run.sh -o DragAndDropModule latest",
+      "configurations": {
+        "update": {
+          "command": "{projectRoot}/run.sh -o DragAndDropModule -u latest"
+        }
+      }
+    },
+    "test:package:EventApiModule-latest": {
+      "dependsOn": ["^pack"],
+      "command": "{projectRoot}/run.sh -o EventApiModule latest",
+      "configurations": {
+        "update": {
+          "command": "{projectRoot}/run.sh -o EventApiModule -u latest"
+        }
+      }
+    },
+    "test:package:ExternalFilterModule-latest": {
+      "dependsOn": ["^pack"],
+      "command": "{projectRoot}/run.sh -o ExternalFilterModule latest",
+      "configurations": {
+        "update": {
+          "command": "{projectRoot}/run.sh -o ExternalFilterModule -u latest"
+        }
+      }
+    },
+    "test:package:GridStateModule-latest": {
+      "dependsOn": ["^pack"],
+      "command": "{projectRoot}/run.sh -o GridStateModule latest",
+      "configurations": {
+        "update": {
+          "command": "{projectRoot}/run.sh -o GridStateModule -u latest"
+        }
+      }
+    },
+    "test:package:HighlightChangesModule-latest": {
+      "dependsOn": ["^pack"],
+      "command": "{projectRoot}/run.sh -o HighlightChangesModule latest",
+      "configurations": {
+        "update": {
+          "command": "{projectRoot}/run.sh -o HighlightChangesModule -u latest"
+        }
+      }
+    },
+    "test:package:InfiniteRowModelModule-latest": {
+      "dependsOn": ["^pack"],
+      "command": "{projectRoot}/run.sh -o InfiniteRowModelModule latest",
+      "configurations": {
+        "update": {
+          "command": "{projectRoot}/run.sh -o InfiniteRowModelModule -u latest"
+        }
+      }
+    },
+    "test:package:LargeTextEditorModule-latest": {
+      "dependsOn": ["^pack"],
+      "command": "{projectRoot}/run.sh -o LargeTextEditorModule latest",
+      "configurations": {
+        "update": {
+          "command": "{projectRoot}/run.sh -o LargeTextEditorModule -u latest"
+        }
+      }
+    },
+    "test:package:LocaleModule-latest": {
+      "dependsOn": ["^pack"],
+      "command": "{projectRoot}/run.sh -o LocaleModule latest",
+      "configurations": {
+        "update": {
+          "command": "{projectRoot}/run.sh -o LocaleModule -u latest"
+        }
+      }
+    },
+    "test:package:NumberEditorModule-latest": {
+      "dependsOn": ["^pack"],
+      "command": "{projectRoot}/run.sh -o NumberEditorModule latest",
+      "configurations": {
+        "update": {
+          "command": "{projectRoot}/run.sh -o NumberEditorModule -u latest"
+        }
+      }
+    },
+    "test:package:NumberFilterModule-latest": {
+      "dependsOn": ["^pack"],
+      "command": "{projectRoot}/run.sh -o NumberFilterModule latest",
+      "configurations": {
+        "update": {
+          "command": "{projectRoot}/run.sh -o NumberFilterModule -u latest"
+        }
+      }
+    },
+    "test:package:PaginationModule-latest": {
+      "dependsOn": ["^pack"],
+      "command": "{projectRoot}/run.sh -o PaginationModule latest",
+      "configurations": {
+        "update": {
+          "command": "{projectRoot}/run.sh -o PaginationModule -u latest"
+        }
+      }
+    },
+    "test:package:PinnedRowModule-latest": {
+      "dependsOn": ["^pack"],
+      "command": "{projectRoot}/run.sh -o PinnedRowModule latest",
+      "configurations": {
+        "update": {
+          "command": "{projectRoot}/run.sh -o PinnedRowModule -u latest"
+        }
+      }
+    },
+    "test:package:QuickFilterModule-latest": {
+      "dependsOn": ["^pack"],
+      "command": "{projectRoot}/run.sh -o QuickFilterModule latest",
+      "configurations": {
+        "update": {
+          "command": "{projectRoot}/run.sh -o QuickFilterModule -u latest"
+        }
+      }
+    },
+    "test:package:RenderApiModule-latest": {
+      "dependsOn": ["^pack"],
+      "command": "{projectRoot}/run.sh -o RenderApiModule latest",
+      "configurations": {
+        "update": {
+          "command": "{projectRoot}/run.sh -o RenderApiModule -u latest"
+        }
+      }
+    },
+    "test:package:RowApiModule-latest": {
+      "dependsOn": ["^pack"],
+      "command": "{projectRoot}/run.sh -o RowApiModule latest",
+      "configurations": {
+        "update": {
+          "command": "{projectRoot}/run.sh -o RowApiModule -u latest"
+        }
+      }
+    },
+    "test:package:RowAutoHeightModule-latest": {
+      "dependsOn": ["^pack"],
+      "command": "{projectRoot}/run.sh -o RowAutoHeightModule latest",
+      "configurations": {
+        "update": {
+          "command": "{projectRoot}/run.sh -o RowAutoHeightModule -u latest"
+        }
+      }
+    },
+    "test:package:RowDragModule-latest": {
+      "dependsOn": ["^pack"],
+      "command": "{projectRoot}/run.sh -o RowDragModule latest",
+      "configurations": {
+        "update": {
+          "command": "{projectRoot}/run.sh -o RowDragModule -u latest"
+        }
+      }
+    },
+    "test:package:RowSelectionModule-latest": {
+      "dependsOn": ["^pack"],
+      "command": "{projectRoot}/run.sh -o RowSelectionModule latest",
+      "configurations": {
+        "update": {
+          "command": "{projectRoot}/run.sh -o RowSelectionModule -u latest"
+        }
+      }
+    },
+    "test:package:RowStyleModule-latest": {
+      "dependsOn": ["^pack"],
+      "command": "{projectRoot}/run.sh -o RowStyleModule latest",
+      "configurations": {
+        "update": {
+          "command": "{projectRoot}/run.sh -o RowStyleModule -u latest"
+        }
+      }
+    },
+    "test:package:ScrollApiModule-latest": {
+      "dependsOn": ["^pack"],
+      "command": "{projectRoot}/run.sh -o ScrollApiModule latest",
+      "configurations": {
+        "update": {
+          "command": "{projectRoot}/run.sh -o ScrollApiModule -u latest"
+        }
+      }
+    },
+    "test:package:SelectEditorModule-latest": {
+      "dependsOn": ["^pack"],
+      "command": "{projectRoot}/run.sh -o SelectEditorModule latest",
+      "configurations": {
+        "update": {
+          "command": "{projectRoot}/run.sh -o SelectEditorModule -u latest"
+        }
+      }
+    },
+    "test:package:TextEditorModule-latest": {
+      "dependsOn": ["^pack"],
+      "command": "{projectRoot}/run.sh -o TextEditorModule latest",
+      "configurations": {
+        "update": {
+          "command": "{projectRoot}/run.sh -o TextEditorModule -u latest"
+        }
+      }
+    },
+    "test:package:TextFilterModule-latest": {
+      "dependsOn": ["^pack"],
+      "command": "{projectRoot}/run.sh -o TextFilterModule latest",
+      "configurations": {
+        "update": {
+          "command": "{projectRoot}/run.sh -o TextFilterModule -u latest"
+        }
+      }
+    },
+    "test:package:TooltipModule-latest": {
+      "dependsOn": ["^pack"],
+      "command": "{projectRoot}/run.sh -o TooltipModule latest",
+      "configurations": {
+        "update": {
+          "command": "{projectRoot}/run.sh -o TooltipModule -u latest"
+        }
+      }
+    },
+    "test:package:UndoRedoEditModule-latest": {
+      "dependsOn": ["^pack"],
+      "command": "{projectRoot}/run.sh -o UndoRedoEditModule latest",
+      "configurations": {
+        "update": {
+          "command": "{projectRoot}/run.sh -o UndoRedoEditModule -u latest"
+        }
+      }
+    },
+    "test:package:ValidationModule-latest": {
+      "dependsOn": ["^pack"],
+      "command": "{projectRoot}/run.sh -o ValidationModule latest",
+      "configurations": {
+        "update": {
+          "command": "{projectRoot}/run.sh -o ValidationModule -u latest"
+        }
+      }
+    },
+    "test:package:ValueCacheModule-latest": {
+      "dependsOn": ["^pack"],
+      "command": "{projectRoot}/run.sh -o ValueCacheModule latest",
+      "configurations": {
+        "update": {
+          "command": "{projectRoot}/run.sh -o ValueCacheModule -u latest"
+        }
+      }
+    },
+    "test:package:CellSpanModule-latest": {
+      "dependsOn": ["^pack"],
+      "command": "{projectRoot}/run.sh -o CellSpanModule latest",
+      "configurations": {
+        "update": {
+          "command": "{projectRoot}/run.sh -o CellSpanModule -u latest"
+        }
+      }
+    },
+    "test:package:AdvancedFilterModule-latest": {
+      "dependsOn": ["^pack"],
+      "command": "{projectRoot}/run.sh -o AdvancedFilterModule latest",
+      "configurations": {
+        "update": {
+          "command": "{projectRoot}/run.sh -o AdvancedFilterModule -u latest"
+        }
+      }
+    },
+    "test:package:AllEnterpriseModule-latest": {
+      "dependsOn": ["^pack"],
+      "command": "{projectRoot}/run.sh -o AllEnterpriseModule latest",
+      "configurations": {
+        "update": {
+          "command": "{projectRoot}/run.sh -o AllEnterpriseModule -u latest"
+        }
+      }
+    },
+    "test:package:CellSelectionModule-latest": {
+      "dependsOn": ["^pack"],
+      "command": "{projectRoot}/run.sh -o CellSelectionModule latest",
+      "configurations": {
+        "update": {
+          "command": "{projectRoot}/run.sh -o CellSelectionModule -u latest"
+        }
+      }
+    },
+    "test:package:ClipboardModule-latest": {
+      "dependsOn": ["^pack"],
+      "command": "{projectRoot}/run.sh -o ClipboardModule latest",
+      "configurations": {
+        "update": {
+          "command": "{projectRoot}/run.sh -o ClipboardModule -u latest"
+        }
+      }
+    },
+    "test:package:ColumnMenuModule-latest": {
+      "dependsOn": ["^pack"],
+      "command": "{projectRoot}/run.sh -o ColumnMenuModule latest",
+      "configurations": {
+        "update": {
+          "command": "{projectRoot}/run.sh -o ColumnMenuModule -u latest"
+        }
+      }
+    },
+    "test:package:ColumnsToolPanelModule-latest": {
+      "dependsOn": ["^pack"],
+      "command": "{projectRoot}/run.sh -o ColumnsToolPanelModule latest",
+      "configurations": {
+        "update": {
+          "command": "{projectRoot}/run.sh -o ColumnsToolPanelModule -u latest"
+        }
+      }
+    },
+    "test:package:ContextMenuModule-latest": {
+      "dependsOn": ["^pack"],
+      "command": "{projectRoot}/run.sh -o ContextMenuModule latest",
+      "configurations": {
+        "update": {
+          "command": "{projectRoot}/run.sh -o ContextMenuModule -u latest"
+        }
+      }
+    },
+    "test:package:ExcelExportModule-latest": {
+      "dependsOn": ["^pack"],
+      "command": "{projectRoot}/run.sh -o ExcelExportModule latest",
+      "configurations": {
+        "update": {
+          "command": "{projectRoot}/run.sh -o ExcelExportModule -u latest"
+        }
+      }
+    },
+    "test:package:FiltersToolPanelModule-latest": {
+      "dependsOn": ["^pack"],
+      "command": "{projectRoot}/run.sh -o FiltersToolPanelModule latest",
+      "configurations": {
+        "update": {
+          "command": "{projectRoot}/run.sh -o FiltersToolPanelModule -u latest"
+        }
+      }
+    },
+    "test:package:FindModule-latest": {
+      "dependsOn": ["^pack"],
+      "command": "{projectRoot}/run.sh -o FindModule latest",
+      "configurations": {
+        "update": {
+          "command": "{projectRoot}/run.sh -o FindModule -u latest"
+        }
+      }
+    },
+    "test:package:GridChartsModule-latest": {
+      "dependsOn": ["^pack"],
+      "command": "{projectRoot}/run.sh -o GridChartsModule latest",
+      "configurations": {
+        "update": {
+          "command": "{projectRoot}/run.sh -o GridChartsModule -u latest"
+        }
+      }
+    },
+    "test:package:IntegratedChartsModule-latest": {
+      "dependsOn": ["^pack"],
+      "command": "{projectRoot}/run.sh -o IntegratedChartsModule latest",
+      "configurations": {
+        "update": {
+          "command": "{projectRoot}/run.sh -o IntegratedChartsModule -u latest"
+        }
+      }
+    },
+    "test:package:GroupFilterModule-latest": {
+      "dependsOn": ["^pack"],
+      "command": "{projectRoot}/run.sh -o GroupFilterModule latest",
+      "configurations": {
+        "update": {
+          "command": "{projectRoot}/run.sh -o GroupFilterModule -u latest"
+        }
+      }
+    },
+    "test:package:MasterDetailModule-latest": {
+      "dependsOn": ["^pack"],
+      "command": "{projectRoot}/run.sh -o MasterDetailModule latest",
+      "configurations": {
+        "update": {
+          "command": "{projectRoot}/run.sh -o MasterDetailModule -u latest"
+        }
+      }
+    },
+    "test:package:MenuModule-latest": {
+      "dependsOn": ["^pack"],
+      "command": "{projectRoot}/run.sh -o MenuModule latest",
+      "configurations": {
+        "update": {
+          "command": "{projectRoot}/run.sh -o MenuModule -u latest"
+        }
+      }
+    },
+    "test:package:MultiFilterModule-latest": {
+      "dependsOn": ["^pack"],
+      "command": "{projectRoot}/run.sh -o MultiFilterModule latest",
+      "configurations": {
+        "update": {
+          "command": "{projectRoot}/run.sh -o MultiFilterModule -u latest"
+        }
+      }
+    },
+    "test:package:PivotModule-latest": {
+      "dependsOn": ["^pack"],
+      "command": "{projectRoot}/run.sh -o PivotModule latest",
+      "configurations": {
+        "update": {
+          "command": "{projectRoot}/run.sh -o PivotModule -u latest"
+        }
+      }
+    },
+    "test:package:RangeSelectionModule-latest": {
+      "dependsOn": ["^pack"],
+      "command": "{projectRoot}/run.sh -o RangeSelectionModule latest",
+      "configurations": {
+        "update": {
+          "command": "{projectRoot}/run.sh -o RangeSelectionModule -u latest"
+        }
+      }
+    },
+    "test:package:RichSelectModule-latest": {
+      "dependsOn": ["^pack"],
+      "command": "{projectRoot}/run.sh -o RichSelectModule latest",
+      "configurations": {
+        "update": {
+          "command": "{projectRoot}/run.sh -o RichSelectModule -u latest"
+        }
+      }
+    },
+    "test:package:RowNumbersModule-latest": {
+      "dependsOn": ["^pack"],
+      "command": "{projectRoot}/run.sh -o RowNumbersModule latest",
+      "configurations": {
+        "update": {
+          "command": "{projectRoot}/run.sh -o RowNumbersModule -u latest"
+        }
+      }
+    },
+    "test:package:RowGroupingModule-latest": {
+      "dependsOn": ["^pack"],
+      "command": "{projectRoot}/run.sh -o RowGroupingModule latest",
+      "configurations": {
+        "update": {
+          "command": "{projectRoot}/run.sh -o RowGroupingModule -u latest"
+        }
+      }
+    },
+    "test:package:RowGroupingPanelModule-latest": {
+      "dependsOn": ["^pack"],
+      "command": "{projectRoot}/run.sh -o RowGroupingPanelModule latest",
+      "configurations": {
+        "update": {
+          "command": "{projectRoot}/run.sh -o RowGroupingPanelModule -u latest"
+        }
+      }
+    },
+    "test:package:ServerSideRowModelApiModule-latest": {
+      "dependsOn": ["^pack"],
+      "command": "{projectRoot}/run.sh -o ServerSideRowModelApiModule latest",
+      "configurations": {
+        "update": {
+          "command": "{projectRoot}/run.sh -o ServerSideRowModelApiModule -u latest"
+        }
+      }
+    },
+    "test:package:ServerSideRowModelModule-latest": {
+      "dependsOn": ["^pack"],
+      "command": "{projectRoot}/run.sh -o ServerSideRowModelModule latest",
+      "configurations": {
+        "update": {
+          "command": "{projectRoot}/run.sh -o ServerSideRowModelModule -u latest"
+        }
+      }
+    },
+    "test:package:SetFilterModule-latest": {
+      "dependsOn": ["^pack"],
+      "command": "{projectRoot}/run.sh -o SetFilterModule latest",
+      "configurations": {
+        "update": {
+          "command": "{projectRoot}/run.sh -o SetFilterModule -u latest"
+        }
+      }
+    },
+    "test:package:SideBarModule-latest": {
+      "dependsOn": ["^pack"],
+      "command": "{projectRoot}/run.sh -o SideBarModule latest",
+      "configurations": {
+        "update": {
+          "command": "{projectRoot}/run.sh -o SideBarModule -u latest"
+        }
+      }
+    },
+    "test:package:SparklinesModule-latest": {
+      "dependsOn": ["^pack"],
+      "command": "{projectRoot}/run.sh -o SparklinesModule latest",
+      "configurations": {
+        "update": {
+          "command": "{projectRoot}/run.sh -o SparklinesModule -u latest"
+        }
+      }
+    },
+    "test:package:StatusBarModule-latest": {
+      "dependsOn": ["^pack"],
+      "command": "{projectRoot}/run.sh -o StatusBarModule latest",
+      "configurations": {
+        "update": {
+          "command": "{projectRoot}/run.sh -o StatusBarModule -u latest"
+        }
+      }
+    },
+    "test:package:TreeDataModule-latest": {
+      "dependsOn": ["^pack"],
+      "command": "{projectRoot}/run.sh -o TreeDataModule latest",
+      "configurations": {
+        "update": {
+          "command": "{projectRoot}/run.sh -o TreeDataModule -u latest"
+        }
+      }
+    },
+    "test:package:ViewportRowModelModule-latest": {
+      "dependsOn": ["^pack"],
+      "command": "{projectRoot}/run.sh -o ViewportRowModelModule latest",
+      "configurations": {
+        "update": {
+          "command": "{projectRoot}/run.sh -o ViewportRowModelModule -u latest"
+        }
+      }
+    },
+
+    "test:package:shard-0": {
+      "executor": "nx:noop",
+      "inputs": [],
+      "outputs": [],
+      "dependsOn": [
+        "test:package:ClientSideRowModelModule-TextFilterModule-latest",
+        "test:package:tfm_nfm_dfm_sfm_mfm_cfm_efm_qfm-latest",
+        "test:package:AgChartsCommunityModule-IntegratedChartsModule-latest",
+        "test:package:AgChartsEnterpriseModule-IntegratedChartsModule-latest"
+      ],
+      "configurations": {
+        "update": {}
+      }
+    },
+    "test:package:shard-1": {
+      "executor": "nx:noop",
+      "inputs": [],
+      "outputs": [],
+      "dependsOn": [
+        "test:package:AgChartsCommunityModule-SparklinesModule-latest",
+        "test:package:AgChartsEnterpriseModule-SparklinesModule-latest",
+        "test:package:AlignedGridsModule-latest",
+        "test:package:AllCommunityModule-latest"
+      ],
+      "configurations": {
+        "update": {}
+      }
+    },
+    "test:package:shard-2": {
+      "executor": "nx:noop",
+      "inputs": [],
+      "outputs": [],
+      "dependsOn": [
+        "test:package:CellApiModule-latest",
+        "test:package:CellStyleModule-latest",
+        "test:package:CheckboxEditorModule-latest",
+        "test:package:ClientSideRowModelApiModule-latest"
+      ],
+      "configurations": {
+        "update": {}
+      }
+    },
+    "test:package:shard-3": {
+      "executor": "nx:noop",
+      "inputs": [],
+      "outputs": [],
+      "dependsOn": [
+        "test:package:ClientSideRowModelModule-latest",
+        "test:package:ColumnApiModule-latest",
+        "test:package:ColumnAutoSizeModule-latest",
+        "test:package:ColumnHoverModule-latest"
+      ],
+      "configurations": {
+        "update": {}
+      }
+    },
+    "test:package:shard-4": {
+      "executor": "nx:noop",
+      "inputs": [],
+      "outputs": [],
+      "dependsOn": [
+        "test:package:CsvExportModule-latest",
+        "test:package:CustomEditorModule-latest",
+        "test:package:CustomFilterModule-latest",
+        "test:package:DateEditorModule-latest"
+      ],
+      "configurations": {
+        "update": {}
+      }
+    },
+    "test:package:shard-5": {
+      "executor": "nx:noop",
+      "inputs": [],
+      "outputs": [],
+      "dependsOn": [
+        "test:package:DateFilterModule-latest",
+        "test:package:DragAndDropModule-latest",
+        "test:package:EventApiModule-latest",
+        "test:package:ExternalFilterModule-latest"
+      ],
+      "configurations": {
+        "update": {}
+      }
+    },
+    "test:package:shard-6": {
+      "executor": "nx:noop",
+      "inputs": [],
+      "outputs": [],
+      "dependsOn": [
+        "test:package:GridStateModule-latest",
+        "test:package:HighlightChangesModule-latest",
+        "test:package:InfiniteRowModelModule-latest",
+        "test:package:LargeTextEditorModule-latest"
+      ],
+      "configurations": {
+        "update": {}
+      }
+    },
+    "test:package:shard-7": {
+      "executor": "nx:noop",
+      "inputs": [],
+      "outputs": [],
+      "dependsOn": [
+        "test:package:LocaleModule-latest",
+        "test:package:NumberEditorModule-latest",
+        "test:package:NumberFilterModule-latest",
+        "test:package:PaginationModule-latest"
+      ],
+      "configurations": {
+        "update": {}
+      }
+    },
+    "test:package:shard-8": {
+      "executor": "nx:noop",
+      "inputs": [],
+      "outputs": [],
+      "dependsOn": [
+        "test:package:PinnedRowModule-latest",
+        "test:package:QuickFilterModule-latest",
+        "test:package:RenderApiModule-latest",
+        "test:package:RowApiModule-latest"
+      ],
+      "configurations": {
+        "update": {}
+      }
+    },
+    "test:package:shard-9": {
+      "executor": "nx:noop",
+      "inputs": [],
+      "outputs": [],
+      "dependsOn": [
+        "test:package:RowAutoHeightModule-latest",
+        "test:package:RowDragModule-latest",
+        "test:package:RowSelectionModule-latest",
+        "test:package:RowStyleModule-latest"
+      ],
+      "configurations": {
+        "update": {}
+      }
+    },
+    "test:package:shard-10": {
+      "executor": "nx:noop",
+      "inputs": [],
+      "outputs": [],
+      "dependsOn": [
+        "test:package:ScrollApiModule-latest",
+        "test:package:SelectEditorModule-latest",
+        "test:package:TextEditorModule-latest",
+        "test:package:TextFilterModule-latest"
+      ],
+      "configurations": {
+        "update": {}
+      }
+    },
+    "test:package:shard-11": {
+      "executor": "nx:noop",
+      "inputs": [],
+      "outputs": [],
+      "dependsOn": [
+        "test:package:UndoRedoEditModule-latest",
+        "test:package:ValidationModule-latest",
+        "test:package:ValueCacheModule-latest"
+      ],
+      "configurations": {
+        "update": {}
+      }
+    },
+    "test:package:shard-12": {
+      "executor": "nx:noop",
+      "inputs": [],
+      "outputs": [],
+      "dependsOn": [
+        "test:package:CellSpanModule-latest",
+        "test:package:AdvancedFilterModule-latest",
+        "test:package:AllEnterpriseModule-latest",
+        "test:package:CellSelectionModule-latest"
+      ],
+      "configurations": {
+        "update": {}
+      }
+    },
+    "test:package:shard-13": {
+      "executor": "nx:noop",
+      "inputs": [],
+      "outputs": [],
+      "dependsOn": [
+        "test:package:ClipboardModule-latest",
+        "test:package:ColumnMenuModule-latest",
+        "test:package:ColumnsToolPanelModule-latest",
+        "test:package:ContextMenuModule-latest"
+      ],
+      "configurations": {
+        "update": {}
+      }
+    },
+    "test:package:shard-14": {
+      "executor": "nx:noop",
+      "inputs": [],
+      "outputs": [],
+      "dependsOn": [
+        "test:package:ExcelExportModule-latest",
+        "test:package:FiltersToolPanelModule-latest",
+        "test:package:FindModule-latest",
+        "test:package:GridChartsModule-latest"
+      ],
+      "configurations": {
+        "update": {}
+      }
+    },
+    "test:package:shard-15": {
+      "executor": "nx:noop",
+      "inputs": [],
+      "outputs": [],
+      "dependsOn": [
+        "test:package:IntegratedChartsModule-latest",
+        "test:package:GroupFilterModule-latest",
+        "test:package:MasterDetailModule-latest",
+        "test:package:MenuModule-latest"
+      ],
+      "configurations": {
+        "update": {}
+      }
+    },
+    "test:package:shard-16": {
+      "executor": "nx:noop",
+      "inputs": [],
+      "outputs": [],
+      "dependsOn": [
+        "test:package:MultiFilterModule-latest",
+        "test:package:PivotModule-latest",
+        "test:package:RangeSelectionModule-latest",
+        "test:package:RichSelectModule-latest"
+      ],
+      "configurations": {
+        "update": {}
+      }
+    },
+    "test:package:shard-17": {
+      "executor": "nx:noop",
+      "inputs": [],
+      "outputs": [],
+      "dependsOn": [
+        "test:package:RowNumbersModule-latest",
+        "test:package:RowGroupingModule-latest",
+        "test:package:RowGroupingPanelModule-latest",
+        "test:package:ServerSideRowModelApiModule-latest"
+      ],
+      "configurations": {
+        "update": {}
+      }
+    },
+    "test:package:shard-18": {
+      "executor": "nx:noop",
+      "inputs": [],
+      "outputs": [],
+      "dependsOn": [
+        "test:package:ServerSideRowModelModule-latest",
+        "test:package:SetFilterModule-latest",
+        "test:package:SparklinesModule-latest"
+      ],
+      "configurations": {
+        "update": {}
+      }
+    },
+    "test:package:shard-19": {
+      "executor": "nx:noop",
+      "inputs": [],
+      "outputs": [],
+      "dependsOn": [
+        "test:package:StatusBarModule-latest",
+        "test:package:TreeDataModule-latest",
+        "test:package:ViewportRowModelModule-latest"
+      ],
+      "configurations": {
+        "update": {}
+      }
     }
   },
   "implicitDependencies": ["ag-grid-community", "ag-grid-enterprise", "ag-grid-angular"]

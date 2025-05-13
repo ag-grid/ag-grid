@@ -106,6 +106,15 @@
                 },
                 "returnType": "void"
             }
+        },
+        "rowPinned": {
+            "description": "Row has been pinned to the top or bottom by the user",
+            "type": {
+                "arguments": {
+                    "event": "RowNodePinnedEvent"
+                },
+                "returnType": "void"
+            }
         }
     }
 }

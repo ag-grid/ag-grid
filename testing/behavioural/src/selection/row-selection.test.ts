@@ -1353,14 +1353,14 @@ describe('Row Selection Grid Options', () => {
                 assertSelectedRowsByIndex([0], api);
             });
 
-            test('clicking group row with `groupSelects = "descendants"` does nothing', async () => {
+            test('clicking group row with `groupSelects = "descendants"` selects group and descendants', async () => {
                 const [api, actions] = await createGridAndWait({
                     ...groupGridOptions,
                     rowSelection: { mode: 'multiRow', groupSelects: 'descendants', enableClickSelection: true },
                 });
 
                 actions.clickRowByIndex(0);
-                assertSelectedRowsByIndex([], api);
+                assertSelectedRowsByIndex([2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 13], api);
             });
 
             test('toggling group row with `groupSelects = "descendants"` enabled selects that row and all its children', async () => {

@@ -1,0 +1,7 @@
+
+// overridden
+import { ModuleRegistry } from 'ag-grid-community';
+import { ClientSideRowModelModule } from 'ag-grid-community';
+
+import { ServerSideRowModelApiModule } from 'ag-grid-enterprise';
+ModuleRegistry.registerModules([ClientSideRowModelModule,   ServerSideRowModelApiModule]);

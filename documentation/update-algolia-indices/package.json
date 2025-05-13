@@ -1,6 +1,6 @@
 {
   "name": "update-algolia-indices",
-  "version": "33.2.3",
+  "version": "33.3.0",
   "description": "Update algolia indices",
   "main": "src/index.ts",
   "type": "module",

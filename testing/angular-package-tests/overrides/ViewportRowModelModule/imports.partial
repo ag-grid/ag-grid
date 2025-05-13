@@ -1,0 +1,7 @@
+
+// overridden
+import { ModuleRegistry } from 'ag-grid-community';
+
+
+import { ViewportRowModelModule } from 'ag-grid-enterprise';
+ModuleRegistry.registerModules([  ViewportRowModelModule]);

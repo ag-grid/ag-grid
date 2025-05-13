@@ -1,57 +1,35 @@
-import type { ColDef, GridApi, GridOptions, ValueFormatterParams } from 'ag-grid-community';
+import type { ColDef, GridApi, GridOptions } from 'ag-grid-community';
 import {
     ClientSideRowModelModule,
     ModuleRegistry,
-    NumberFilterModule,
     PaginationModule,
-    RowSelectionModule,
-    TextFilterModule,
     ValidationModule,
     createGrid,
 } from 'ag-grid-community';
-import { RowGroupingModule } from 'ag-grid-enterprise';
 
 ModuleRegistry.registerModules([
-    TextFilterModule,
-    NumberFilterModule,
-    RowSelectionModule,
     PaginationModule,
     ClientSideRowModelModule,
-    RowGroupingModule,
     ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 
 const columnDefs: ColDef[] = [
-    // this row just shows the row index, doesn't use any data from the row
     {
-        headerName: '#',
-        width: 70,
-        valueFormatter: (params: ValueFormatterParams) => {
-            return `${parseInt(params.node!.id!) + 1}`;
-        },
+        field: 'athlete',
+        minWidth: 170,
     },
-    { headerName: 'Athlete', field: 'athlete', width: 150 },
-    { headerName: 'Age', field: 'age', width: 90 },
-    { headerName: 'Country', field: 'country', width: 120 },
-    { headerName: 'Year', field: 'year', width: 90 },
-    { headerName: 'Date', field: 'date', width: 110 },
-    { headerName: 'Sport', field: 'sport', width: 110 },
-    { headerName: 'Gold', field: 'gold', width: 100 },
-    { headerName: 'Silver', field: 'silver', width: 100 },
-    { headerName: 'Bronze', field: 'bronze', width: 100 },
-    { headerName: 'Total', field: 'total', width: 100 },
+    { field: 'age' },
+    { field: 'country' },
+    { field: 'date' },
+    { field: 'total' },
 ];
 
 let gridApi: GridApi<IOlympicData>;
 
 const gridOptions: GridOptions<IOlympicData> = {
     defaultColDef: {
-        filter: true,
-    },
-    rowSelection: {
-        mode: 'multiRow',
-        checkboxes: true,
-        headerCheckbox: true,
+        flex: 1,
+        minWidth: 100,
     },
     paginationPageSize: 500,
     paginationPageSizeSelector: [100, 500, 1000],

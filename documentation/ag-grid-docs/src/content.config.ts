@@ -30,6 +30,7 @@ const docs = defineCollection({
                     depth: z.number(),
                     slug: z.string(),
                     text: z.string(),
+                    frameworks: z.array(framework).optional(),
                 })
             )
             .optional(),

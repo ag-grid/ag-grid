@@ -3,14 +3,12 @@ import {
     ClientSideRowModelModule,
     ColumnApiModule,
     ModuleRegistry,
-    ScrollApiModule,
     ValidationModule,
     createGrid,
 } from 'ag-grid-community';
 
 ModuleRegistry.registerModules([
     ColumnApiModule,
-    ScrollApiModule,
     ClientSideRowModelModule,
     ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
@@ -38,8 +36,7 @@ const columnDefs: ColDef[] = [
 let gridApi: GridApi<IOlympicData>;
 
 const gridOptions: GridOptions<IOlympicData> = {
-    columnDefs: columnDefs,
-    // debug: true,
+    columnDefs,
 };
 
 function clearPinned() {
@@ -63,35 +60,6 @@ function pinCountry() {
         state: [{ colId: 'country', pinned: 'left' }],
         defaultState: { pinned: null },
     });
-}
-
-function jumpToCol() {
-    const value = (document.getElementById('col') as HTMLInputElement).value;
-    if (typeof value !== 'string' || value === '') {
-        return;
-    }
-
-    const index = Number(value);
-    if (typeof index !== 'number' || isNaN(index)) {
-        return;
-    }
-
-    // it's actually a column the api needs, so look the column up
-    const allColumns = gridApi!.getColumns();
-    if (allColumns) {
-        const column = allColumns[index];
-        if (column) {
-            gridApi!.ensureColumnVisible(column);
-        }
-    }
-}
-
-function jumpToRow() {
-    const value = (document.getElementById('row') as HTMLInputElement).value;
-    const index = Number(value);
-    if (typeof index === 'number' && !isNaN(index)) {
-        gridApi!.ensureIndexVisible(index);
-    }
 }
 
 // setup the grid after the page has finished loading

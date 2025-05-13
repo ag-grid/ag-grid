@@ -433,18 +433,25 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         recurse(this.rootNode);
     }
 
-    public highlightRow(rowNode: RowNode | null | undefined = null, highlight: RowHighlightPosition = 'Below'): void {
-        const old = this.lastHighlightedRow;
-        if (old !== rowNode || (rowNode && rowNode.highlighted !== highlight)) {
-            if (old && old !== rowNode) {
-                old.highlighted = null;
-                old.dispatchRowEvent('rowHighlightChanged');
+    public clearHighlight(): void {
+        const last = this.lastHighlightedRow;
+        if (last) {
+            last.highlighted = null;
+            last.dispatchRowEvent('rowHighlightChanged');
+            this.lastHighlightedRow = null;
+        }
+    }
+
+    public highlightRow(row: RowNode, highlight: RowHighlightPosition): void {
+        const nodeChanged = row !== this.lastHighlightedRow;
+        const highlightChanged = highlight !== row.highlighted;
+        if (nodeChanged || highlightChanged) {
+            if (nodeChanged) {
+                this.clearHighlight();
             }
-            if (rowNode) {
-                rowNode.highlighted = highlight;
-                rowNode.dispatchRowEvent('rowHighlightChanged');
-            }
-            this.lastHighlightedRow = rowNode;
+            row.highlighted = highlight;
+            row.dispatchRowEvent('rowHighlightChanged');
+            this.lastHighlightedRow = row;
         }
     }
 
@@ -873,6 +880,17 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         includeFooterNodes: boolean = false,
         afterSort: boolean = false
     ): void {
+        const { colModel, rowGroupColsSvc } = this.beans;
+        if (!colModel.isPivotMode()) {
+            return;
+        }
+
+        // if no row grouping, then only row is root node
+        if (!rowGroupColsSvc?.columns.length) {
+            callback(this.rootNode!, 0);
+            return;
+        }
+
         const childrenField = afterSort ? 'childrenAfterSort' : 'childrenAfterGroup';
         // for pivot, we don't go below leafGroup levels
         this.depthFirstSearchRowNodes(callback, includeFooterNodes, (node) =>
@@ -1222,7 +1240,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         super.destroy();
 
         // Forcefully deallocate memory
-        this.highlightRow(null);
+        this.clearHighlight();
         this.started = false;
         this.rootNode = null;
         this.nodeManager = null!;

@@ -1,0 +1,100 @@
+@use 'design-system' as *;
+
+.campaignOuter {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    gap: $spacing-size-8;
+    font-size: var(--text-fs-lg);
+    line-height: var(--text-lh-lg);
+    max-width: Min(60ch, calc(100vw - $spacing-size-16));
+    margin: $spacing-size-24 auto $spacing-size-48;
+}
+
+.campaignHero {
+    position: relative;
+    margin-bottom: $spacing-size-8;
+
+    &:before {
+        position: absolute;
+        content: '';
+        width: calc(100vw - 60px);
+        height: 180%;
+        left: 50%;
+        transform: translateX(calc(-50vw + 30px));
+        z-index: -1;
+        border-radius: 8px;
+        background: linear-gradient(0deg, #dde9f9 -61.34%, #ffffff 89.79%);
+        border-left: 1px solid linear-gradient(0deg, #dde9f9 -61.34%, #0e449126 89.79%);
+        border-right: 1px solid linear-gradient(0deg, #dde9f9 -61.34%, #0e449126 89.79%);
+        border-bottom: 1px solid #0e449126;
+
+        #{$selector-darkmode} & {
+            background: linear-gradient(0deg, #29384b -61.34%, #141d2c 89.79%);
+            border-left: 1px solid linear-gradient(0deg, #29384b -61.34%, #f1bbde26 89.79%);
+            border-right: 1px solid linear-gradient(0deg, #29384b -61.34%, #f1bbde26 89.79%);
+            border-bottom: 1px solid #f1bbde26;
+        }
+
+        @media screen and (max-width: 940px) {
+            width: 120vw;
+            transform: translateX(-60vw);
+        }
+    }
+
+    h1 {
+        font-size: 72px;
+        text-align: center;
+        line-height: 77px;
+        margin-bottom: $spacing-size-8;
+        font-weight: var(--text-bold);
+
+        @media screen and (max-width: $breakpoint-landing-page-medium) {
+            font-size: 52px;
+            padding: 0;
+            line-height: 55px;
+        }
+    }
+
+    h2 {
+        margin: 0px $spacing-size-48;
+        text-align: center;
+        margin-bottom: $spacing-size-8;
+
+        @media screen and (max-width: $breakpoint-landing-page-medium) {
+            margin: 0;
+            padding: 0;
+        }
+    }
+}
+
+.campaignDummyVideo {
+    aspect-ratio: 16 / 9;
+    width: Min(100%, calc(100vw - $spacing-size-16)) !important;
+    margin-top: -$spacing-size-6;
+    margin-bottom: $spacing-size-12;
+    border-radius: 8px;
+}
+
+.campaignBenefitsList {
+    h3 {
+        font-size: var(--text-fs-2xl);
+        line-height: var(--text-lh-2xl);
+        margin-bottom: $spacing-size-5;
+    }
+
+    ul {
+        text-align: left;
+        width: 60ch;
+
+        @media screen and (max-width: $breakpoint-landing-page-medium) {
+            width: auto;
+        }
+    }
+
+    li {
+        margin-bottom: $spacing-size-3;
+    }
+}
