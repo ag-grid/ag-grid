@@ -60,7 +60,7 @@ export class GroupStage<TData> extends BeanStub implements NamedBean, IRowNodeSt
             this.approach = approach;
             this.destroyBean(strategy);
             if (strategy && this.approach !== 'treeNested' && this.approach !== 'treePath') {
-                resetGrouping(params.rowNode as RowGroupingRowNode<TData>);
+                resetGrouping(params.rowNode);
             }
             strategy = this.createStrategy();
             this.strategy = strategy;
