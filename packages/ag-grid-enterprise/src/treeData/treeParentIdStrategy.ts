@@ -206,6 +206,7 @@ export class TreeParentIdStrategy<TData = any> extends BeanStub implements IRowG
         const parentIdField = this.gos.get('treeDataParentIdField') || null;
         if (parentIdGetter?.path !== parentIdField) {
             this.parentIdGetter = parentIdGetter = makeFieldPathGetter(parentIdField);
+            fullReload = true;
         }
 
         for (let i = 0, len = rootAllLeafChildren.length; i < len; ++i) {
