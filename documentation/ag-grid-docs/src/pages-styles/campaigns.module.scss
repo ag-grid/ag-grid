@@ -79,6 +79,8 @@
         margin-left: auto;
         margin-right: auto;
 
+        text-align: center;
+
         font-size: var(--text-fs-lg);
         line-height: var(--text-lh-lg);
         // font-weight: var(--text-semibold);
@@ -116,31 +118,37 @@
 }
 
 .campaignBenefitsContainer {
+    --benefitsBG: #fbfbfc;
+
     display: flex;
     gap: $spacing-size-4;
-    background-color: #fbfbfc;
+    background-color: var(--benefitsBG);
     margin: $spacing-size-16 0;
     padding: $spacing-size-16 0;
     position: relative;
     text-align: center;
 
-    &::before,
-    &::after {
-        position: absolute;
-        content: '';
-        width: 100vw;
-        top: 0;
-        bottom: 0;
-        background-color: #fbfbfc;
-    }
+    box-shadow:
+        50vw 0 0 0 var(--benefitsBG),
+        -50vw 0 0 0 var(--benefitsBG);
 
-    &::before {
-        left: -100vw;
-    }
+    // &::before,
+    // &::after {
+    //     position: absolute;
+    //     content: '';
+    //     width: 100vw;
+    //     top: 0;
+    //     bottom: 0;
+    //     background-color: #fbfbfc;
+    // }
 
-    &::after {
-        right: -100vw;
-    }
+    // &::before {
+    //     left: -100vw;
+    // }
+
+    // &::after {
+    //     right: -100vw;
+    // }
 }
 
 .autoICExample {
@@ -202,7 +210,6 @@
     display: flex;
     flex-direction: column;
     gap: $spacing-size-4 $spacing-size-10;
-    padding-top: $spacing-size-16;
     padding-bottom: $spacing-size-16;
     text-align: left;
 
@@ -214,7 +221,6 @@
     @media screen and (min-width: $breakpoint-pricing-medium) {
         flex-direction: row;
         align-items: center;
-        padding-top: $spacing-size-24;
         padding-bottom: $spacing-size-20;
     }
 }
@@ -418,5 +424,22 @@
 
     footer > div {
         margin-left: $spacing-size-4;
+    }
+}
+
+.finalCTA {
+    text-align: center;
+    margin: $spacing-size-10 auto $spacing-size-32;
+
+    div {
+        margin-top: $spacing-size-4;
+        display: flex;
+        gap: $spacing-size-4;
+    }
+
+    svg {
+        --icon-size: #{$spacing-size-6};
+
+        margin-left: $spacing-size-2;
     }
 }

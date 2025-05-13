@@ -57,28 +57,6 @@ const TRIAL_LICENCE_FORM_URL = getIsProduction()
         </div>
 
         <div class={styles.socialProofOuter}>
-            <!-- <div class={styles.statsOuter}>
-                <div class={styles.stat}>
-                    <h4 class="text-2xl">90%</h4>
-                    <p>Of the Fortune 500 use AG Grid</p>
-                </div>
-
-                <div class={styles.stat}>
-                    <h4 class="text-2xl">1M+</h4>
-                    <p>Weekly NPM downloads</p>
-                </div>
-
-                <div class={styles.stat}>
-                    <h4 class="text-2xl">13K+</h4>
-                    <p>Stars on GitHub</p>
-                </div>
-
-                <div class={styles.stat}>
-                    <h4 class="text-2xl">40K+</h4>
-                    <p>Commits</p>
-                </div>
-            </div> -->
-
             <div class={styles.quotesOuter}>
                 <div class={styles.quote}>
                     <blockquote>
@@ -172,15 +150,17 @@ const TRIAL_LICENCE_FORM_URL = getIsProduction()
             </div>
         </div>
 
+        <div style="text-align: center;">
+            <h3 class="text-2xl" id="request-trial-licence">
+                <Icon name="enterprise" svgClasses={styles.enterpriseIcon} />
+                <span>Enterprise Bundle Trial</span>
+            </h3>
+
+            <p>Fill out the form to receive a trial licence for AG Grid and AG Charts</p>
+        </div>
+
         <div class={styles.trialLicence}>
             <div class={styles.trialLicenceCopy}>
-                <h3 class="text-2xl" id="request-trial-licence">
-                    <Icon name="enterprise" svgClasses={styles.enterpriseIcon} />
-                    <span>Enterprise Bundle Trial</span>
-                </h3>
-
-                <p>Fill out the form to receive a trial licence for AG Grid and AG Charts</p>
-
                 <div class={styles.trialLicenceCopyItem}>
                     <Icon name="alarm" svgClasses={styles.alarmIcon} />
                     <p>
@@ -219,6 +199,19 @@ const TRIAL_LICENCE_FORM_URL = getIsProduction()
 
             <div class={styles.trialLicenceForm}>
                 <TrialLicenceForm client:load submitUrl={TRIAL_LICENCE_FORM_URL} />
+            </div>
+        </div>
+
+        <div class={styles.finalCTA}>
+            <h2 class="text-2xl">Want to Learn More?</h2>
+
+            <div>
+                <a href="https://www.ag-grid.com/charts/gallery/" class="button-tertiary text-md"
+                    >View Gallery <Icon name="arrowRight" /></a
+                >
+                <a href="https://www.ag-grid.com/charts/gallery/" class="button text-md"
+                    >Contact Sales <Icon name="email" /></a
+                >
             </div>
         </div>
     </main>
