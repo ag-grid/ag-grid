@@ -328,7 +328,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
                 yDelta >= INSIDE_THRESHOLD &&
                 yDelta <= 1 &&
                 clientSideRowModel.getRow(targetRowIndex! + 1)?.parent === target &&
-                countAtLeastNChildrenWithRowIndex(target, 2) <= 0
+                (clientSideRowModel.getRow(targetRowIndex! + 2)?.uiLevel ?? 0) > target.uiLevel
             ) {
                 return target; // In the bottom half of an expanded group with more than one child, we move inside the target
             }
@@ -762,23 +762,3 @@ const rowsHaveSameParent = (rows: IRowNode<any>[], newParent: RowNode): boolean 
     }
     return true;
 };
-
-function countAtLeastNChildrenWithRowIndex(target: RowNode<any>, remaining: number): number {
-    const children = target.childrenAfterAggFilter;
-    if (children) {
-        for (const child of children) {
-            if (child.rowIndex != null) {
-                if (--remaining <= 0) {
-                    break;
-                }
-            }
-        }
-        for (const child of children) {
-            remaining = countAtLeastNChildrenWithRowIndex(child, remaining);
-            if (remaining <= 0) {
-                break;
-            }
-        }
-    }
-    return remaining;
-}
