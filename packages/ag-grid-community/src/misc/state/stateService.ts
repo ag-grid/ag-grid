@@ -130,18 +130,21 @@ export class StateService extends BeanStub implements NamedBean {
         this.setColumnState(initialState);
         this.setColumnGroupState(initialState);
 
-        this.updateColumnState([
-            'aggregation',
-            'columnOrder',
-            'columnPinning',
-            'columnSizing',
-            'columnVisibility',
-            'pivot',
-            'pivot',
-            'rowGroup',
-            'sort',
-        ]);
-        this.updateCachedState('columnGroup', this.getColumnGroupState());
+        const updateAllColumnState = () =>
+            this.updateColumnState([
+                'aggregation',
+                'columnOrder',
+                'columnPinning',
+                'columnSizing',
+                'columnVisibility',
+                'pivot',
+                'rowGroup',
+                'sort',
+            ]);
+        updateAllColumnState();
+
+        const updateColumnGroupState = () => this.updateCachedState('columnGroup', this.getColumnGroupState());
+        updateColumnGroupState();
 
         const onUpdate = (state: keyof GridState) => () => this.updateColumnState([state]);
         this.addManagedEventListeners({
@@ -154,18 +157,11 @@ export class StateService extends BeanStub implements NamedBean {
             columnPivotModeChanged: onUpdate('pivot'),
             columnRowGroupChanged: onUpdate('rowGroup'),
             sortChanged: onUpdate('sort'),
-            newColumnsLoaded: () =>
-                this.updateColumnState([
-                    'aggregation',
-                    'columnOrder',
-                    'columnPinning',
-                    'columnSizing',
-                    'columnVisibility',
-                    'pivot',
-                    'rowGroup',
-                    'sort',
-                ]),
-            columnGroupOpened: () => this.updateCachedState('columnGroup', this.getColumnGroupState()),
+            newColumnsLoaded: () => {
+                updateAllColumnState();
+                updateColumnGroupState();
+            },
+            columnGroupOpened: updateColumnGroupState,
         });
     }
 
