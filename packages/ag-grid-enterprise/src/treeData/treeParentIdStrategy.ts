@@ -210,8 +210,7 @@ export class TreeParentIdStrategy<TData = any> extends BeanStub implements IRowG
 
         for (let i = 0, len = rootAllLeafChildren.length; i < len; ++i) {
             const row = rootAllLeafChildren[i];
-            const updated = row.treeNodeFlags & FLAG_CHANGED;
-            if (updated || fullReload) {
+            if (fullReload || row.treeNodeFlags & FLAG_CHANGED) {
                 let newParent: TreeStrategyRow<TData> | null | undefined;
                 const parentId = parentIdGetter(row.data);
                 if (parentId !== null && parentId !== undefined) {
