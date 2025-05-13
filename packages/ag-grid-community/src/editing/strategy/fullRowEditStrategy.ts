@@ -45,7 +45,7 @@ export class FullRowEditStrategy extends BaseEditStrategy {
         }
 
         const res = super.shouldStopEditing(oldRowCtrl, undefined, key, event, _source);
-        if (res !== undefined) {
+        if (res !== null) {
             return res;
         }
 

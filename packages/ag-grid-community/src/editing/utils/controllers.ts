@@ -117,7 +117,7 @@ export function _addStopEditingWhenGridLosesFocus(
         }
 
         if (!clickInsideGrid) {
-            beans.editingSvc?.stopAllEditing();
+            beans.editingSvc?.stopAllEditing(false, 'api');
         }
     };
 

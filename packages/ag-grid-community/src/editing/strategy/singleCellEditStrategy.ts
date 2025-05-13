@@ -20,7 +20,7 @@ export class SingleCellEditStrategy extends BaseEditStrategy {
         source: 'api' | 'ui' = 'ui'
     ): boolean | null {
         const res = super.shouldStopEditing(rowCtrl, cellCtrl, key, event, source);
-        if (res !== undefined) {
+        if (res !== null) {
             return res;
         }
 

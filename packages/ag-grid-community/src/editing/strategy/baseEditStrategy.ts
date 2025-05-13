@@ -178,6 +178,9 @@ export abstract class BaseEditStrategy extends BeanStub {
         if (batchEdit && source === 'api') {
             // we always defer to the API
             return true;
+        } else if (batchEdit && source === 'ui') {
+            // we always defer to the UI
+            return false;
         } else if (source === 'api') {
             return true;
         }
@@ -186,7 +189,7 @@ export abstract class BaseEditStrategy extends BeanStub {
             return event.key === KeyCode.ENTER;
         }
 
-        return false;
+        return null;
     }
 
     shouldCancelEditing(
