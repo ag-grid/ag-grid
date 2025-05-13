@@ -25,6 +25,7 @@ export const _PUBLIC_EVENTS = [
     'rowGroupOpened',
     'rowDataUpdated',
     'pinnedRowDataChanged',
+    'pinnedRowsChanged',
     'rangeSelectionChanged',
     'cellSelectionChanged',
     'chartCreated',
@@ -100,6 +101,8 @@ export const _PUBLIC_EVENTS = [
     'rowDragEnd',
     'rowDragCancel',
     'findChanged',
+    'rowResizeStarted',
+    'rowResizeEnded',
 ] as const;
 
 // events that are internal to AG Grid and should not be exposed to users via documentation or generated framework components
@@ -154,7 +157,6 @@ export const _INTERNAL_EVENTS = [
     'overlayExclusiveChanged',
     'beforeRefreshModel',
     'rowNodeDataChanged',
-    'pinnedRowsChanged',
 ] as const;
 
 // We define as a callback to help with tree shaking (esbuild)

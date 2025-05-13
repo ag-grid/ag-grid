@@ -1,0 +1,7 @@
+
+// overridden
+import { ModuleRegistry } from 'ag-grid-community';
+import { ClientSideRowModelModule } from 'ag-grid-community';
+import { ColumnHoverModule } from 'ag-grid-community';
+
+ModuleRegistry.registerModules([ClientSideRowModelModule,  ColumnHoverModule,  ]);

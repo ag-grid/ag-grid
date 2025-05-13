@@ -148,9 +148,16 @@ This means the row heights and row positions are changing as the grid is scrolli
 
 The above are results of Lazy Height Calculation. It is not possible to avoid these effects.
 
+## Row Resizing
+
+Row resizing is available as an option when showing [Row Numbers](./row-numbers/).
+
 ## Height for Pinned Rows
 
-Row height for pinned rows works exactly as for normal rows with one difference: it
+When pinning rows while `enableRowPinning = true`, the row height of pinned rows can be changed as [described above](#rownodesetrowheightheight-and-apionrowheightchanged). 
+Use `api.forEachPinnedRow` to get references to the row nodes of pinned rows.
+
+When setting pinned row data via `pinnedTopRowData` or `pinnedBottomRowData`, row height works exactly as for normal rows with one difference: it
 is not possible to dynamically change the height once set. However this is easily solved
 by just setting the pinned row data again which resets the row heights. Setting the
 data again is not a problem for pinned rows as it doesn't impact scroll position, filtering,

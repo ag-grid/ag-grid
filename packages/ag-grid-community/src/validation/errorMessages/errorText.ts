@@ -63,6 +63,16 @@ function umdMissingModule(
     return message;
 }
 
+export function missingRowModelTypeError({
+    moduleName,
+    rowModelType,
+}: {
+    moduleName: CommunityModuleName | EnterpriseModuleName;
+    rowModelType: RowModelType;
+}) {
+    return `To use the ${moduleName}Module you must set the gridOption "rowModelType='${rowModelType}'"`;
+}
+
 const missingModule = ({
     reasonOrId,
     moduleName,
@@ -653,7 +663,26 @@ export const AG_GRID_ERRORS = {
     271: ({ id, parentId }: { id: string; parentId: string }) =>
         `Parent row not found for row with id='${id}' and parent id='${parentId}'. Showing row with id='${id}' as a root-level node.` as const,
     272: () => NoModulesRegisteredError(),
-    273: ({ colId }: { colId: string }) =>
+    273: ({ providedId, usedId }: { providedId: string; usedId: string }) =>
+        `Provided column id '${providedId}' was already in use, ensure all column and group ids are unique. Using '${usedId}' instead.` as const,
+    274: ({ prop }: { prop: string }) => {
+        let msg = `Since v33, ${prop} has been deprecated.`;
+        switch (prop) {
+            case 'maxComponentCreationTimeMs':
+                msg += ' This property is no longer required and so will be removed in a future version.';
+                break;
+            case 'setGridApi':
+                msg += ` This method is not called by AG Grid. To access the GridApi see: https://ag-grid.com/react-data-grid/grid-interface/#grid-api `;
+                break;
+            case 'children':
+                msg += ` For multiple versions AgGridReact does not support children.`;
+                break;
+        }
+        return msg;
+    },
+    275: missingRowModelTypeError,
+    276: () => 'Row Numbers Row Resizer cannot be used when Grid Columns have `autoHeight` enabled.',
+    277: ({ colId }: { colId: string }) =>
         `'enableFilterEvaluators' is set to true, but column '${colId}' does not have 'filterEvaluator' set.` as const,
 };
 

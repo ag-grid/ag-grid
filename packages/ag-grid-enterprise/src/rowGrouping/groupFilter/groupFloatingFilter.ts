@@ -7,7 +7,14 @@ import type {
     IFloatingFilterComp,
     IFloatingFilterParams,
 } from 'ag-grid-community';
-import { AgInputTextField, AgPromise, Component, RefPlaceholder, _clearElement } from 'ag-grid-community';
+import {
+    AgInputTextField,
+    AgPromise,
+    Component,
+    RefPlaceholder,
+    _clearElement,
+    _isGroupMultiAutoColumn,
+} from 'ag-grid-community';
 
 import type { GroupFilter } from './groupFilter';
 import type { GroupFilterEvaluator } from './groupFilterEvaluator';
@@ -37,7 +44,7 @@ export class GroupFloatingFilterComp extends Component implements IFloatingFilte
         this.params = params;
 
         // we only support showing the underlying floating filter for multiple group columns
-        const canShowUnderlyingFloatingFilter = this.gos.get('groupDisplayType') === 'multipleColumns';
+        const canShowUnderlyingFloatingFilter = _isGroupMultiAutoColumn(this.gos);
         const onColChange = this.onColChange.bind(this);
         const setupFilterElement = (resolve: () => void) => {
             if (canShowUnderlyingFloatingFilter) {

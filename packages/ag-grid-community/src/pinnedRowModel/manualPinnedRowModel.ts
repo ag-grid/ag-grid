@@ -80,7 +80,10 @@ export class ManualPinnedRowModel extends BeanStub implements IPinnedRowModel {
 
     public reset(dispatch = true): void {
         this.forContainers((container) => {
-            container.forEach(_destroyRowNodeSibling);
+            const nodesToUnpin: RowNode[] = [];
+            container.forEach((n) => nodesToUnpin.push(n));
+            // Have to collect up the nodes to unpin because unpinning mutates the container
+            nodesToUnpin.forEach((n) => this.pinRow(n, null));
             container.clear();
         });
         if (dispatch) {
@@ -359,7 +362,7 @@ function refreshRowPositions(beans: BeanCollection, container: PinnedRows) {
     let rowTop = 0;
     container.forEach((node, index) => {
         node.setRowTop(rowTop);
-        if (node.rowHeightEstimated) {
+        if (node.rowHeightEstimated || node.rowHeight == null) {
             node.setRowHeight(_getRowHeightForNode(beans, node).height);
         }
         node.setRowIndex(index);

@@ -683,7 +683,7 @@ export class RowNode<TData = any>
             this.__localEventService
         );
 
-        const listener = this.frameworkEventListenerService?.wrap(userListener) ?? userListener;
+        const listener = this.frameworkEventListenerService?.wrap(eventType, userListener) ?? userListener;
         this.__localEventService.addEventListener(eventType, listener);
     }
 
@@ -694,7 +694,7 @@ export class RowNode<TData = any>
         eventType: T,
         userListener: AgRowNodeEventListener<T>
     ): void {
-        const listener = this.frameworkEventListenerService?.unwrap(userListener) ?? userListener;
+        const listener = this.frameworkEventListenerService?.unwrap(eventType, userListener) ?? userListener;
         this.removeLocalListener(eventType, listener);
     }
 

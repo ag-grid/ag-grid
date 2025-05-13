@@ -206,6 +206,7 @@ export const AG_GRID_LOCALE_BG = {
     pageSizeSelectorLabel: 'Размер на Страницата:',
     footerTotal: 'Общо',
     statusBarLastRowUnknown: '?',
+    scrollColumnIntoView: 'Превъртане на ${variable} във видимата част',
 
     // Pivoting
     pivotColumnGroupTotals: 'Общо',

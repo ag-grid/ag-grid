@@ -1,7 +1,7 @@
 import { placeLockedColumns } from '../columnMove/columnMoveUtils';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
-import type { AgColumn } from '../entities/agColumn';
+import { AgColumn } from '../entities/agColumn';
 import type { AgProvidedColumnGroup } from '../entities/agProvidedColumnGroup';
 import type { ColDef, ColGroupDef } from '../entities/colDef';
 import type { GridOptions } from '../entities/gridOptions';
@@ -108,7 +108,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
         _destroyColumnTree(beans, this.colDefCols?.tree, newTree.columnTree);
 
         const tree = newTree.columnTree;
-        const treeDepth = newTree.treeDept;
+        const treeDepth = newTree.treeDepth;
         const list = _getColumnsFromTree(tree);
         const map: { [id: string]: AgColumn } = {};
 
@@ -297,69 +297,178 @@ export class ColumnModel extends BeanStub implements NamedBean {
         );
     }
 
+    /**
+     * Restores provided columns order to the previous order in this.lastPivotOrder / this.lastOrder
+     * If columns are not in the last order:
+     *  - Check column groups, and apply column after the last column in the lowest shared group
+     *  - If no sibling is found, apply the column at the end of the cols
+     */
     private restoreColOrder(cols: ColumnCollections): void {
         const lastOrder = this.showingPivotResult ? this.lastPivotOrder : this.lastOrder;
         if (!lastOrder) {
             return;
         }
 
-        const lastOrderMapped = new Map<AgColumn, number>(lastOrder.map((col, index) => [col, index]));
+        // get the cols present in both new list and last order, according to the last order
+        const preservedOrder = lastOrder.filter((col) => cols.map[col.getId()] != null);
 
-        // only do the sort if at least one column is accounted for. columns will be not accounted for
-        // if changing from pivot result cols to provided columns
-        const noColsFound = !cols.list.some((col) => lastOrderMapped.has(col));
-        if (noColsFound) {
+        // if no cols in last order are in the new, then order is already correct
+        if (preservedOrder.length === 0) {
             return;
         }
 
-        // order cols in the same order as before. we need to make sure that all
-        // cols still exists, so filter out any that no longer exist.
-        const colsMap = new Map<AgColumn, boolean>(cols.list.map((col) => [col, true]));
-        const lastOrderFiltered = lastOrder.filter((col) => colsMap.has(col));
-        const lastOrderFilteredMap = new Map<AgColumn, boolean>(lastOrderFiltered.map((col) => [col, true]));
-        const missingFromLastOrder = cols.list.filter((col) => !lastOrderFilteredMap.has(col));
+        // if after removing all the cols that are not in the new set, we have no cols left,
+        // then we don't need to do anything further, as the new order is correct.
+        if (preservedOrder.length === cols.list.length) {
+            cols.list = preservedOrder;
+            return;
+        }
 
-        // add in the new columns, at the end (if no group), or at the end of the group (if a group)
-        const res = lastOrderFiltered.slice();
+        const hasSiblings = (col: AgColumn | AgProvidedColumnGroup): boolean => {
+            const ancestor = col.getOriginalParent();
+            if (!ancestor) {
+                return false;
+            }
+            const children = ancestor.getChildren();
+            if (children.length > 1) {
+                return true;
+            }
+            return hasSiblings(ancestor);
+        };
 
-        missingFromLastOrder.forEach((newCol) => {
-            let parent = newCol.getOriginalParent();
+        // if none of the preserved cols have siblings; shortcut, as all new cols can be added to the end
+        // this is a common scenario due to generated cols.
+        if (!preservedOrder.some((col) => hasSiblings(col))) {
+            const preservedOrderSet = new Set(preservedOrder);
+            for (const col of cols.list) {
+                if (!preservedOrderSet.has(col)) {
+                    preservedOrder.push(col);
+                }
+            }
+            cols.list = preservedOrder;
+            return;
+        }
 
-            // if no parent, means we are not grouping, so add the column to the end
+        // create map of known col positions and their indices
+        const colPositionMap = new Map<AgColumn, number>();
+        for (let i = 0; i < preservedOrder.length; i++) {
+            const col = preservedOrder[i];
+            colPositionMap.set(col, i);
+        }
+
+        // find any cols that have been introduced that are not in the last order
+        const additionalCols = cols.list.filter((col) => !colPositionMap.has(col));
+
+        // no additional cols to be inserted, probably means cols were removed, but preserved order is correct.
+        if (additionalCols.length === 0) {
+            cols.list = preservedOrder;
+            return;
+        }
+
+        // Function finds the sibling with the lowest shared parent and highest index in last order
+        const getPreviousSibling = (col: AgColumn, group: AgProvidedColumnGroup | null): AgColumn | null => {
+            const parent = group ? group.getOriginalParent() : col.getOriginalParent();
             if (!parent) {
-                res.push(newCol);
-                return;
+                return null;
             }
 
-            // find the group the column belongs to. if no siblings at the current level (eg col in group on it's
-            // own) then go up one level and look for siblings there.
-            const siblings: AgColumn[] = [];
-            while (!siblings.length && parent) {
-                const leafCols = parent.getLeafColumns();
-                leafCols.forEach((leafCol) => {
-                    const presentInNewCols = res.indexOf(leafCol) >= 0;
-                    const notYetInSiblings = siblings.indexOf(leafCol) < 0;
-                    if (presentInNewCols && notYetInSiblings) {
-                        siblings.push(leafCol);
+            let highestIdx: number | null = null;
+            let highestSibling: AgColumn | null = null;
+            for (const child of parent.getChildren()) {
+                // shortcut - skip the group that has already been processed
+                if (child === group || child === col) {
+                    continue;
+                }
+
+                if (child instanceof AgColumn) {
+                    const colIdx = colPositionMap.get(child);
+                    // if col does not exist in last order, skip
+                    if (colIdx == null) {
+                        continue;
+                    }
+
+                    if (highestIdx == null || highestIdx < colIdx) {
+                        highestIdx = colIdx;
+                        highestSibling = child;
+                    }
+                    continue;
+                }
+
+                child.forEachLeafColumn((leafCol) => {
+                    const colIdx = colPositionMap.get(leafCol);
+                    // if col does not exist in last order, skip
+                    if (colIdx == null) {
+                        return;
+                    }
+
+                    if (highestIdx == null || highestIdx < colIdx) {
+                        highestIdx = colIdx;
+                        highestSibling = leafCol;
                     }
                 });
-                parent = parent.getOriginalParent();
             }
 
-            // if no siblings exist at any level, this means the col is in a group (or parent groups) on it's own
-            if (!siblings.length) {
-                res.push(newCol);
-                return;
+            if (highestSibling == null) {
+                return getPreviousSibling(col, parent);
+            }
+            return highestSibling;
+        };
+
+        // array of cols that have no siblings in the last order, to be added at the tail of the results
+        const noSiblingsAvailable: AgColumn[] = [];
+
+        // map is keyed by cols in last order, and values are the cols that should be added after them
+        // in results array
+        const previousSiblingPosMap: Map<AgColumn, AgColumn | AgColumn[]> = new Map();
+
+        // for each new col, find the col it needs inserted after and store for when array is constructed
+        for (const col of additionalCols) {
+            const prevSiblingIdx = getPreviousSibling(col, null);
+            if (prevSiblingIdx == null) {
+                noSiblingsAvailable.push(col);
+                continue;
             }
 
-            // find index of last column in the group
-            const indexes = siblings.map((col) => res.indexOf(col));
-            const lastIndex = Math.max(...indexes);
+            const prev = previousSiblingPosMap.get(prevSiblingIdx);
+            if (prev === undefined) {
+                previousSiblingPosMap.set(prevSiblingIdx, col);
+            } else if (Array.isArray(prev)) {
+                prev.push(col);
+            } else {
+                // if we have a single col, then we need to add the new col to the array
+                previousSiblingPosMap.set(prevSiblingIdx, [prev, col]);
+            }
+        }
 
-            res.splice(lastIndex + 1, 0, newCol);
-        });
+        // the following code starts at the tail of the array and works backwards.
+        // first it applies all of the cols with no siblings (so no location in last order)
+        // then it works backwards through the preserved order - when a col has siblings, it adds
+        // them to the array and then adds the col itself.
 
-        cols.list = res;
+        const result = new Array(cols.list.length);
+        let resultPointer = result.length - 1;
+        // work backwards, first adding no siblings to end
+        for (let i = noSiblingsAvailable.length - 1; i >= 0; i--) {
+            result[resultPointer--] = noSiblingsAvailable[i];
+        }
+
+        for (let i = preservedOrder.length - 1; i >= 0; i--) {
+            const nextCol = preservedOrder[i];
+            const extraCols = previousSiblingPosMap.get(nextCol);
+            if (extraCols) {
+                if (Array.isArray(extraCols)) {
+                    // add the extra cols backwards.
+                    for (let x = extraCols.length - 1; x >= 0; x--) {
+                        const col = extraCols[x];
+                        result[resultPointer--] = col;
+                    }
+                } else {
+                    result[resultPointer--] = extraCols;
+                }
+            }
+            result[resultPointer--] = nextCol;
+        }
+        cols.list = result;
     }
 
     private positionLockedCols(cols: ColumnCollections): void {
@@ -491,6 +600,15 @@ export class ColumnModel extends BeanStub implements NamedBean {
             return null;
         }
         return this.getColFromCollection(key, this.cols);
+    }
+
+    /**
+     * Get column exclusively by ID.
+     *
+     * Note getCol/getColFromCollection have poor performance when col has been removed.
+     */
+    public getColById(key: string): AgColumn | null {
+        return this.cols?.map[key] ?? null;
     }
 
     public getColFromCollection(key: ColKey, cols?: ColumnCollections): AgColumn | null {

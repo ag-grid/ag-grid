@@ -1,5 +1,65 @@
 [
     {
+        "title": "Frontend Nation",
+        "description": "Our first sponsorship of Frontend Nation, we're putting AG Charts front and center in front of 50,000 attendees. This event is free to join - come along to hear from senior AG Charts Engineer, Jacob, on how we implemented the M4 algorithm to make our charts run flawlessly at 60fps with large (1-million-point) data sets, join our free 90 min workshop, and meet the team at our virtual booth.",
+        "location": "Online",
+        "logo": "/community/events/organiser-logos/frontend-nation.jpg",
+        "logoLight": "/community/events/organiser-logos/frontend-nation.jpg",
+        "countryIcon": "",
+        "startDate": "2025-06-05",
+        "eventPage": "https://frontendnation.com/",
+        "collage": "",
+        "recording": ""
+    },
+    {
+        "title": "JSNation",
+        "description": "The self titled 'main JS conference of 2025', we're returning to sponsor JSNation for the first time since 2022, this time, with a focus on AG Charts. You'll hear from senior AG Charts Engineer, Oli, on how we make AG Charts' Canvas accessible, and have a chance to meet the wider AG Charts team at our booth.",
+        "location": "Amsterdam, NL",
+        "logo": "/community/events/organiser-logos/jsnation-logo.svg",
+        "logoLight": "/community/events/organiser-logos/jsnation-logo-light.svg",
+        "countryIcon": "netherlands.png",
+        "startDate": "2025-06-12",
+        "eventPage": "https://jsnation.com/",
+        "collage": "",
+        "recording": ""
+    },
+    {
+        "title": "React Summit (Europe)",
+        "description": "Back again for the fourth year in a row, AG Grid is sponsoring React Summit Amsterdam. This year, we're focusing on AG Charts, and you'll hear from senior AG Charts Engineer, Ido, on how to work with SVGs in React, where its limitations lie, and what alternatives exist. You'll also have a chance to meet the wider AG Charts team at our booth.",
+        "location": "Amsterdam, NL",
+        "logo": "/community/events/organiser-logos/react-summit-logo.svg",
+        "logoLight": "/community/events/organiser-logos/react-summit-logo-light.svg",
+        "startDate": "2025-06-13",
+        "countryIcon": "netherlands.png",
+        "recording": "",
+        "collage": "",
+        "eventPage": "https://reactsummit.com/"
+    },
+    {
+        "title": "Angular Connect",
+        "description": "Angular Connect is back! AG Grid is proud to be the premier sponsor of this event, which is set to take place in London. This year, we're focusing on AG Charts. AG Grid is popular in the Angular community, and we're excited to share AG Charts with you.",
+        "location": "London, UK",
+        "logo": "/community/events/organiser-logos/angularconnect-logo.svg",
+        "logoLight": "/community/events/organiser-logos/angularconnect-logo.svg",
+        "countryIcon": "united-kingdom.png",
+        "startDate": "2025-09-12",
+        "eventPage": "https://angularconnect.com/",
+        "collage": "",
+        "recording": ""
+    },
+    {
+        "title": "React Summit (US)",
+        "description": "Last but not least, we'll be at React Summit again this year in New Jersey to round out the year. More info to follow soon. Watch this space!",
+        "location": "New Jersey, USA",
+        "logo": "/community/events/organiser-logos/react-summit-logo.svg",
+        "logoLight": "/community/events/organiser-logos/react-summit-logo-light.svg",
+        "startDate": "2025-11-18",
+        "countryIcon": "us.png",
+        "recording": "",
+        "collage": "",
+        "eventPage": "https://reactsummit.us/"
+    },
+    {
         "title": "React Summit",
         "description": "Our last event of 2024 was React Summit US, which took place in New Jersey. We were proud to sponsor this event for the second year running, and we had a great time meeting developers from all over the world, and introducing them to AG Charts. Stephen Cooper also had the chance to present his talk: 'What refs can do for you', based on our research throughout 2024 whilst optimising AG Grid for React",
         "location": "New Jersey, USA",

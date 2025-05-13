@@ -70,6 +70,7 @@ export const COLUMN_DEFINITION_MOD_VALIDATIONS: ModuleValidation<ColDef | ColGro
         return 'ColumnFilter';
     },
     floatingFilter: 'ColumnFilter',
+    getQuickFilterText: 'QuickFilter',
     headerTooltip: 'Tooltip',
     mainMenuItems: 'ColumnMenu',
     menuTabs: (options: ColDef) => {
@@ -93,6 +94,12 @@ const COLUMN_DEFINITION_VALIDATIONS: () => Validations<ColDef | ColGroupDef> = (
     const validations: Validations<ColDef | ColGroupDef> = {
         autoHeight: {
             supportedRowModels: ['clientSide', 'serverSide'],
+            validate: (_colDef, { paginationAutoPageSize }) => {
+                if (paginationAutoPageSize) {
+                    return 'colDef.autoHeight is not supported with paginationAutoPageSize.';
+                }
+                return null;
+            },
         },
         cellRendererParams: {
             validate: (colDef) => {

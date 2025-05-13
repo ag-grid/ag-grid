@@ -151,6 +151,7 @@ const SectionHeader = ({
                     See <a href={urlWithPrefix({ url: page.url, framework })}>{page.name}</a> for more information.
                 </p>
             )}
+
             {showSnippets && (
                 <ObjectCodeSample framework={framework} id={id} breadcrumbs={breadcrumbs} properties={properties} />
             )}

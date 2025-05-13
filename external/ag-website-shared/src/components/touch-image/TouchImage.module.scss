@@ -1,0 +1,93 @@
+@use 'design-system' as *;
+
+.container {
+    position: relative;
+    width: 100%;
+}
+
+.touchImage {
+    filter: invert(0) hue-rotate(206deg) saturate(1.25);
+    width: 150px;
+}
+
+#{$selector-darkmode} {
+    .touchImage {
+        filter: invert(1) hue-rotate(19deg) saturate(1.25);
+        mix-blend-mode: screen;
+    }
+}
+
+.title {
+    font-weight: var(--text-semibold);
+}
+
+.description {
+    color: var(--color-text-secondary);
+    opacity: 0.8;
+}
+
+.gap {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.deviceContainer {
+    position: relative;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: row;
+    padding-top: $spacing-size-5;
+    padding-bottom: $spacing-size-5;
+    gap: 16px;
+}
+
+.touchContainer {
+    flex: 0 0 60%;
+    max-width: 60%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+
+    img {
+        height: auto;
+        display: block;
+    }
+}
+
+.deviceContainer {
+    hr {
+        flex: 1 1 0;
+    }
+}
+
+@media (max-width: 720px) {
+    .deviceContainer {
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .touchContainer {
+        flex: 0 0 100%;
+        max-width: 100%;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .description {
+        text-align: center;
+    }
+
+    .gap {
+        align-items: center;
+        width: 100%;
+    }
+
+    hr {
+        display: none;
+    }
+}

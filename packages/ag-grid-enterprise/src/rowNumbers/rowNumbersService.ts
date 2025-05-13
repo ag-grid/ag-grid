@@ -17,12 +17,16 @@ import {
     isRowNumberCol,
 } from 'ag-grid-community';
 import type {
+    BeanCollection,
     CellClassParams,
+    CellCtrl,
     CellPosition,
     ColDef,
+    IRowNumbersRowResizeFeature,
     IRowNumbersService,
     NamedBean,
     PropertyValueChangedEvent,
+    RowNode,
     RowNumbersOptions,
     RowPosition,
     ValueFormatterParams,
@@ -30,6 +34,8 @@ import type {
     _ColumnCollections,
     _HeaderComp,
 } from 'ag-grid-community';
+
+import { RowNumbersRowResizeFeature, _isRowNumbersResizerEnabled } from './rowNumbersRowResizeFeature';
 
 export class RowNumbersService extends BeanStub implements NamedBean, IRowNumbersService {
     beanName = 'rowNumbersSvc' as const;
@@ -114,7 +120,10 @@ export class RowNumbersService extends BeanStub implements NamedBean, IRowNumber
     }
 
     public handleMouseDownOnCell(cellPosition: CellPosition, mouseEvent: MouseEvent): boolean {
-        if (!this.isIntegratedWithSelection) {
+        if (
+            !this.isIntegratedWithSelection ||
+            (mouseEvent.target as HTMLElement).classList.contains('ag-row-numbers-resizer')
+        ) {
             return false;
         }
 
@@ -161,6 +170,17 @@ export class RowNumbersService extends BeanStub implements NamedBean, IRowNumber
             keydown: this.onHeaderKeyDown.bind(this),
             focus: this.onHeaderFocus.bind(this),
         });
+    }
+
+    public createRowNumbersRowResizerFeature(
+        beans: BeanCollection,
+        ctrl: CellCtrl
+    ): IRowNumbersRowResizeFeature | undefined {
+        if (!_isRowNumbersResizerEnabled(this.gos)) {
+            return undefined;
+        }
+
+        return new RowNumbersRowResizeFeature(beans, ctrl);
     }
 
     private refreshSelectionIntegration(): void {
@@ -313,7 +333,15 @@ export class RowNumbersService extends BeanStub implements NamedBean, IRowNumber
     }
 
     private valueGetter(params: ValueGetterParams): string {
-        return String((params.node?.rowIndex || 0) + 1);
+        const node = params.node as RowNode | null;
+
+        // Rows that are in the pinned container take the row numbers of their pinned sibling rows
+        if (node?.rowPinned && node.pinnedSibling) {
+            const { rowIndex } = node.pinnedSibling;
+            return `${rowIndex == null ? '-' : rowIndex + 1}`;
+        }
+
+        return String((node?.rowIndex || 0) + 1);
     }
 
     private getHeaderClass(): string[] {

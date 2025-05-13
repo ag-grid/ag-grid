@@ -124,6 +124,7 @@
     },
     "test": {
       "executor": "@nx/jest:jest",
+      "dependsOn": ["build:css"],
       "outputs": ["{workspaceRoot}/coverage/{projectRoot}", "{workspaceRoot}/reports/ag-grid-community.xml"],
       "parallelism": false,
       "options": {

@@ -9,6 +9,7 @@ import mkcert from 'vite-plugin-mkcert';
 import svgr from 'vite-plugin-svgr';
 
 import agLinkChecker from '../../external/ag-website-shared/plugins/agLinkChecker';
+import buildTime from './plugins/agBuildTime';
 import agHotModuleReload from './plugins/agHotModuleReload';
 import agHtaccessGen from './plugins/agHtaccessGen';
 import agMergeSitemap from './plugins/agMergeSitemap';
@@ -185,6 +186,7 @@ export default defineConfig({
         },
     },
     integrations: [
+        buildTime(),
         react(),
         markdoc(),
         sitemap(getSitemapConfig()),

@@ -168,6 +168,17 @@ describe('Row Selection Grid Options', () => {
                 assertSelectedRowsByIndex([], api);
             });
 
+            test('enableClickSelection="enableDeselection" does not allow selection via CTRL-clicking', () => {
+                const [api, actions] = createGrid({
+                    columnDefs,
+                    rowData,
+                    rowSelection: { mode: 'multiRow', enableClickSelection: 'enableDeselection' },
+                });
+
+                actions.clickRowByIndex(2, { ctrlKey: true });
+                assertSelectedRowsByIndex([], api);
+            });
+
             test('Clicking an already-selected row is a no-op', () => {
                 const [api, actions] = createGrid({
                     columnDefs,
@@ -1149,6 +1160,22 @@ describe('Row Selection Grid Options', () => {
                     actions.toggleCheckboxByIndex(2, { shiftKey: true, metaKey: true });
                     assertSelectedRowsByIndex([], api);
                 });
+
+                test('Range selection context is unaffected after CTRL-click with enableClickSelection="enableDeselection"', () => {
+                    const [api, actions] = createGrid({
+                        columnDefs,
+                        rowData,
+                        rowSelection: { mode: 'multiRow', enableClickSelection: 'enableDeselection' },
+                    });
+
+                    actions.toggleCheckboxByIndex(4);
+                    actions.clickRowByIndex(6, { ctrlKey: true });
+                    assertSelectedRowsByIndex([4], api);
+
+                    actions.toggleCheckboxByIndex(2, { shiftKey: true });
+
+                    assertSelectedRowsByIndex([2, 3, 4], api);
+                });
             });
         });
 
@@ -1326,14 +1353,14 @@ describe('Row Selection Grid Options', () => {
                 assertSelectedRowsByIndex([0], api);
             });
 
-            test('clicking group row with `groupSelects = "descendants"` does nothing', async () => {
+            test('clicking group row with `groupSelects = "descendants"` selects group and descendants', async () => {
                 const [api, actions] = await createGridAndWait({
                     ...groupGridOptions,
                     rowSelection: { mode: 'multiRow', groupSelects: 'descendants', enableClickSelection: true },
                 });
 
                 actions.clickRowByIndex(0);
-                assertSelectedRowsByIndex([], api);
+                assertSelectedRowsByIndex([2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 13], api);
             });
 
             test('toggling group row with `groupSelects = "descendants"` enabled selects that row and all its children', async () => {

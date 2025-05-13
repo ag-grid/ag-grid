@@ -459,12 +459,10 @@ export class PivotColDefService extends BeanStub implements NamedBean, IPivotCol
      * @param fields
      */
     public createColDefsFromFields(fields: string[]): (ColDef | ColGroupDef)[] {
-        interface UniqueValue {
-            [key: string]: UniqueValue;
-        }
+        type UniqueValue = Map<string, UniqueValue>;
         // tear the ids down into groups, while this could be done in-step with the next stage, the lookup is faster
         // than searching col group children array for the right group
-        const uniqueValues: UniqueValue = {};
+        const uniqueValues: UniqueValue = new Map(); // use maps over objects as objects sort numeric keys
         for (let i = 0; i < fields.length; i++) {
             const field = fields[i];
             const parts = field.split(this.fieldSeparator);
@@ -472,10 +470,12 @@ export class PivotColDefService extends BeanStub implements NamedBean, IPivotCol
             let level: UniqueValue = uniqueValues;
             for (let p = 0; p < parts.length; p++) {
                 const part = parts[p];
-                if (level[part] == null) {
-                    level[part] = {};
+                let map = level.get(part);
+                if (!map) {
+                    map = new Map();
+                    level.set(part, map);
                 }
-                level = level[part];
+                level = map;
             }
         }
 
@@ -486,8 +486,7 @@ export class PivotColDefService extends BeanStub implements NamedBean, IPivotCol
             depth: number
         ): ColDef | ColGroupDef => {
             const children: (ColDef | ColGroupDef)[] = [];
-            for (const key of Object.keys(uniqueValues)) {
-                const item = uniqueValues[key];
+            for (const [key, item] of uniqueValues) {
                 const child = uniqueValuesToGroups(`${id}${this.fieldSeparator}${key}`, key, item, depth + 1);
                 children.push(child);
             }
@@ -531,8 +530,7 @@ export class PivotColDefService extends BeanStub implements NamedBean, IPivotCol
         };
 
         const res: (ColDef | ColGroupDef)[] = [];
-        for (const key of Object.keys(uniqueValues)) {
-            const item = uniqueValues[key];
+        for (const [key, item] of uniqueValues) {
             const col = uniqueValuesToGroups(key, key, item, 0);
             res.push(col);
         }

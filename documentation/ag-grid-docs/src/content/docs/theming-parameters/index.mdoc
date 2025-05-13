@@ -77,7 +77,7 @@ All parameters ending "FontFamily" are font family values. These can accept any 
 
 | Syntax | Description |
 |-|-|
-| `{ googleFont: 'IBM Plex Sans' }` | A Google font. To prevent potential licensing and privacy implications of accidentally loading Google fonts, you must set the `loadThemeGoogleFonts` grid option to true. A warning will be logged to the console if this option is unset. |
+| `{ googleFont: 'IBM Plex Sans' }` | A font available from Google Fonts. To prevent potential licensing and privacy implications of automatically loading Google fonts, you must either load the font yourself or set the `loadThemeGoogleFonts` grid option to true. |
 | `['Arial', 'sans-serif']` | An array of fonts. Each item can be a string font name or a `{ googleFont: "..." }` object. The browser will attempt to use the first font and fall back to later fonts if the first one fails to load or is not available on the host system. |
 
 ### Font Weight Values

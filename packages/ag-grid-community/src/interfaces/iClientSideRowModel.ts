@@ -53,9 +53,8 @@ export interface IClientSideRowModel<TData = any> extends IRowModel {
     flushAsyncTransactions(): void;
     doAggregate(changedPath?: ChangedPath): void;
     getTopLevelNodes(): RowNode[] | null;
-    ensureRowsAtPixel(rowNode: RowNode[], pixel: number, increment: number): boolean;
-    highlightRowAtPixel(rowNode: RowNode | null, pixel?: number): void;
-    getHighlightPosition(pixel: number, rowNode?: RowNode): RowHighlightPosition;
+    clearHighlight(): void;
+    highlightRow(rowNode: RowNode, highlight: RowHighlightPosition): void;
     getLastHighlightedRowNode(): RowNode | null;
     isRowDataLoaded(): boolean;
 

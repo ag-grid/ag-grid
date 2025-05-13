@@ -399,6 +399,15 @@
                 "name": "Grid State",
                 "url": "./grid-state/"
             }
+        }
+    },
+    "find": {
+        "meta": {
+            "displayName": "Find",
+            "page": {
+                "name": "Find",
+                "url": "./find/"
+            }
         },
         "findChanged": {
             "more": {
@@ -474,7 +483,8 @@
                 "url": "./row-pinning/"
             }
         },
-        "pinnedRowDataChanged": {}
+        "pinnedRowDataChanged": {},
+        "pinnedRowsChanged": {}
     },
     "tooltips": {
         "meta": {

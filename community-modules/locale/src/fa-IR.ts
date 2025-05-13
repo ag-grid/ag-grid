@@ -206,6 +206,7 @@ export const AG_GRID_LOCALE_IR = {
     pageSizeSelectorLabel: 'اندازه صفحه:',
     footerTotal: 'کل',
     statusBarLastRowUnknown: '?',
+    scrollColumnIntoView: '${variable} را به نما بیار',
 
     // Pivoting
     pivotColumnGroupTotals: 'مجموع',

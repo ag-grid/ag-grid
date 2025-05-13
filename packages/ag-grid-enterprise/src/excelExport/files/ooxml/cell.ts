@@ -43,7 +43,7 @@ const cellFactory: ExcelOOXMLTemplate = {
             children = [
                 {
                     name: 'f',
-                    textNode: _escapeString(replaceInvisibleCharacters(value), false),
+                    textNode: _escapeString(replaceInvisibleCharacters(value)),
                 },
             ];
         } else if (convertedType === 'inlineStr') {
@@ -53,7 +53,7 @@ const cellFactory: ExcelOOXMLTemplate = {
                     children: [
                         {
                             name: 't',
-                            textNode: _escapeString(replaceInvisibleCharacters(value), false),
+                            textNode: _escapeString(replaceInvisibleCharacters(value)),
                         },
                     ],
                 },

@@ -1,4 +1,4 @@
-import { useIntersectionObserver } from '@utils/hooks/useIntersectionObserver';
+import { useIntersectionObserver } from '@ag-website-shared/utils/hooks/useIntersectionObserver';
 import { AgChartsEnterpriseModule } from 'ag-charts-enterprise';
 import React, { useCallback, useMemo, useRef, useState } from 'react';
 

@@ -6,7 +6,7 @@ import {
 
 export const AllGridCommunityModules: Record<`${CommunityModuleName}Module`, number> = {
     AlignedGridsModule: 3.06,
-    AllCommunityModule: 405,
+    AllCommunityModule: 410,
     CellApiModule: 0.28,
     CellStyleModule: 2.24,
     CheckboxEditorModule: 18.81,
@@ -24,7 +24,7 @@ export const AllGridCommunityModules: Record<`${CommunityModuleName}Module`, num
     EventApiModule: 2.64,
     ExternalFilterModule: 13.69,
     GridStateModule: 13.24,
-    HighlightChangesModule: 3.92,
+    HighlightChangesModule: 5.09,
     InfiniteRowModelModule: 17,
     LargeTextEditorModule: 18.6,
     LocaleModule: 0.43,
@@ -36,7 +36,7 @@ export const AllGridCommunityModules: Record<`${CommunityModuleName}Module`, num
     RenderApiModule: 1.48,
     RowApiModule: 0.88,
     RowAutoHeightModule: 1.84,
-    RowDragModule: 13,
+    RowDragModule: 14.38,
     RowSelectionModule: 33.5,
     RowStyleModule: 1.24,
     ScrollApiModule: 0.7,
@@ -51,7 +51,7 @@ export const AllGridCommunityModules: Record<`${CommunityModuleName}Module`, num
 };
 export const AllEnterpriseModules: Record<`${EnterpriseModuleName}Module`, number> = {
     AdvancedFilterModule: 200,
-    AllEnterpriseModule: 1368,
+    AllEnterpriseModule: 1373.05,
     CellSelectionModule: 53,
     ClipboardModule: 44.6,
     ColumnMenuModule: 147,
@@ -66,10 +66,10 @@ export const AllEnterpriseModules: Record<`${EnterpriseModuleName}Module`, numbe
     MasterDetailModule: 82,
     MenuModule: 153,
     MultiFilterModule: 121,
-    PivotModule: 90.61,
+    PivotModule: 93.6,
     RangeSelectionModule: 53,
     RichSelectModule: 77,
-    RowNumbersModule: 26,
+    RowNumbersModule: 29,
     RowGroupingModule: 77.52,
     RowGroupingPanelModule: 71,
     ServerSideRowModelApiModule: 19,
@@ -132,7 +132,7 @@ const chartModules: ModuleTest[] = [
     },
 ];
 
-export const baseModule = { modules: [], expectedSize: 465 };
+export const baseModule = { modules: [], expectedSize: 470 };
 
 export const moduleCombinations: ModuleTest[] = [
     ...commonFeatureSets,

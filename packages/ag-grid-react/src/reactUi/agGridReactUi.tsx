@@ -50,7 +50,7 @@ import { NoRowsOverlayComponentWrapper } from '../shared/customComp/noRowsOverla
 import { StatusPanelComponentWrapper } from '../shared/customComp/statusPanelComponentWrapper';
 import { ToolPanelComponentWrapper } from '../shared/customComp/toolPanelComponentWrapper';
 import { warnReactiveCustomComponents } from '../shared/customComp/util';
-import type { AgGridReactProps } from '../shared/interfaces';
+import type { AgGridReactProps, InternalAgGridReactProps } from '../shared/interfaces';
 import { PortalManager } from '../shared/portalManager';
 import { ReactComponent } from '../shared/reactComponent';
 import { BeansContext } from './beansContext';
@@ -58,22 +58,27 @@ import GridComp from './gridComp';
 import { RenderStatusService } from './renderStatusService';
 import { CssClasses, isReact19, runWithoutFlushSync } from './utils';
 
-type ReactCompProps = Omit<AgGridReactProps, keyof GridOptions>;
+const deprecatedProps: Pick<InternalAgGridReactProps, 'setGridApi' | 'children' | 'maxComponentCreationTimeMs'> = {
+    setGridApi: undefined,
+    maxComponentCreationTimeMs: undefined,
+    children: undefined,
+};
 
 // Used to only pass gridOptions to the GridCoreCreator from the props
+type ReactCompProps = Omit<InternalAgGridReactProps, keyof GridOptions>;
 const reactPropsNotGridOptions: ReactCompProps = {
     gridOptions: undefined,
     modules: undefined,
     containerStyle: undefined,
     className: undefined,
-    setGridApi: undefined,
+    passGridApi: undefined,
     componentWrappingElement: undefined,
-    maxComponentCreationTimeMs: undefined,
-    children: undefined,
+    ...deprecatedProps,
 };
 const excludeReactCompProps = new Set(Object.keys(reactPropsNotGridOptions));
+const deprecatedReactCompProps = new Set(Object.keys(deprecatedProps));
 
-export const AgGridReactUi = <TData,>(props: AgGridReactProps<TData>) => {
+export const AgGridReactUi = <TData,>(props: InternalAgGridReactProps<TData>) => {
     const apiRef = useRef<GridApi<TData>>();
     const eGui = useRef<HTMLDivElement | null>(null);
     const portalManager = useRef<PortalManager | null>(null);
@@ -165,7 +170,7 @@ export const AgGridReactUi = <TData,>(props: AgGridReactProps<TData>) => {
 
                     const api = apiRef.current;
                     if (api) {
-                        props.setGridApi?.(api);
+                        props.passGridApi?.(api);
                     }
                 }
             );
@@ -244,6 +249,9 @@ function extractGridPropertyChanges(prevProps: any, nextProps: any): { [p: strin
     const changes: { [p: string]: any } = {};
     Object.keys(nextProps).forEach((propKey) => {
         if (excludeReactCompProps.has(propKey)) {
+            if (deprecatedReactCompProps.has(propKey)) {
+                _warn(274, { prop: propKey });
+            }
             return;
         }
         const propValue = nextProps[propKey];
@@ -416,7 +424,7 @@ const DetailCellRenderer = forwardRef((props: IDetailCellRendererParams, ref: an
         }
     }, []);
 
-    const setGridApi = useCallback((api: GridApi) => {
+    const registerGridApi = useCallback((api: GridApi) => {
         ctrlRef.current?.registerDetailWithMaster(api);
     }, []);
 
@@ -428,7 +436,7 @@ const DetailCellRenderer = forwardRef((props: IDetailCellRendererParams, ref: an
                     {...detailGridOptions}
                     modules={parentModules}
                     rowData={detailRowData}
-                    setGridApi={setGridApi}
+                    passGridApi={registerGridApi}
                 />
             )}
         </div>

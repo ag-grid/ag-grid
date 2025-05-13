@@ -87,6 +87,11 @@ const gridOptions = {
 
 {% gridExampleRunner title="Customising Checkbox Column" name="customise-checkbox-column" /%}
 
+{% note %}
+When sorting by the checkbox column, selecting a new row will not automatically update the row order, see [Change Detection](./change-detection/#change-detection-and-sorting-filtering-grouping)
+for more information.
+{% /note %}
+
 ## Enable Click Selection & Deselection
 
 The `rowSelection.enableClickSelection` property configures whether a row's selection state will be impacted when the row is clicked. 

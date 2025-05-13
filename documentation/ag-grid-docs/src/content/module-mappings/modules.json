@@ -16,7 +16,7 @@
                 {
                     "moduleName": "ColumnHoverModule",
                     "name": "Column Hover",
-                    "path": "grid-api/#reference-Visibility%20and%20Display-isColumnHovered"
+                    "path": "grid-api/#reference-colHover-isColumnHovered"
                 }
             ]
         },

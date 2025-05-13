@@ -2,6 +2,29 @@
 
 .customerLogosOuter {
     text-align: center;
+    overflow: hidden;
+    position: relative;
+
+    &::before,
+    &::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        height: 100%;
+        width: var(--overflow-width, 10vw);
+        pointer-events: none;
+        z-index: 1;
+    }
+
+    &::before {
+        left: 0;
+        background-image: linear-gradient(90deg, var(--color-bg-primary), transparent);
+    }
+
+    &::after {
+        right: 0;
+        background-image: linear-gradient(90deg, transparent, var(--color-bg-primary));
+    }
 }
 
 .customerLogos {
@@ -19,24 +42,6 @@
     animation-iteration-count: infinite;
     @media screen and (min-width: $breakpoint-grid-homepage-medium) {
         animation-duration: 400s;
-    }
-
-    &::before,
-    &::after {
-        content: '';
-        position: absolute;
-        height: 100%;
-        width: var(--overflow-width);
-    }
-
-    &::before {
-        left: 0;
-        background-image: linear-gradient(90deg, var(--color-bg-primary), transparent);
-    }
-
-    &::after {
-        right: 0;
-        background-image: linear-gradient(90deg, transparent, var(--color-bg-primary));
     }
 
     @media screen and (max-width: $breakpoint-hero-small) {

@@ -3,6 +3,7 @@ import type {
     IServerSideSelectionState,
     ISetNodesSelectedParams,
     RowNode,
+    RowRangeSelectionContext,
 } from 'ag-grid-community';
 import { BeanStub, _error, _isMultiRowSelection, _isUsingNewRowSelectionAPI, _warn } from 'ag-grid-community';
 
@@ -26,6 +27,10 @@ export class DefaultStrategy extends BeanStub implements ISelectionStrategy {
     private selectAllUsed = false;
     /** This is to prevent regressions, default selectionSvc retains reference of selected nodes. */
     private selectedNodes: { [key: string]: RowNode } = {};
+
+    constructor(private readonly selectionCtx: RowRangeSelectionContext) {
+        super();
+    }
 
     public getSelectedState(): IServerSideSelectionState {
         return {
@@ -96,7 +101,7 @@ export class DefaultStrategy extends BeanStub implements ISelectionStrategy {
     }
 
     public setNodesSelected(params: ISetNodesSelectedParams): number {
-        const { nodes, clearSelection, newValue } = params;
+        const { nodes, clearSelection, newValue, source } = params;
         if (nodes.length === 0) return 0;
 
         const onlyThisNode = clearSelection && newValue;
@@ -140,6 +145,10 @@ export class DefaultStrategy extends BeanStub implements ISelectionStrategy {
         };
 
         nodes.forEach((node) => updateNodeState(node));
+
+        if (nodes.length === 1 && source === 'api') {
+            this.selectionCtx.setRoot(nodes[0].footer ? nodes[0].sibling : nodes[0]);
+        }
         return 1;
     }
 

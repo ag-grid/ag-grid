@@ -2,8 +2,10 @@
 
 .cta {
     position: relative;
+    display: inline-block;
 }
 
+a.cta,
 .cta a,
 .cta button {
     display: flex;

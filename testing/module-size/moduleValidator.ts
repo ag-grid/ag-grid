@@ -3,7 +3,7 @@ const path = require('path');
 const resultsFilePath = path.resolve(__dirname, 'module-size-results.json');
 const { TestSuites, TestSuite, TestCase } = require('ag-shared/processor');
 
-const isCI = process.env.NX_TASK_TARGET_CONFIGURATION === 'ci';
+const isCI = process.env.CI || process.env.NX_TASK_TARGET_CONFIGURATION === 'ci';
 
 function validateSizes() {
     const testSuites = new TestSuites('Module Size Tests');

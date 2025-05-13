@@ -1,6 +1,5 @@
 import type {
     CellClassParams,
-    GetRowIdParams,
     GridApi,
     GridOptions,
     ICellRendererParams,
@@ -24,6 +23,8 @@ import {
 import { TreeDataModule } from 'ag-grid-enterprise';
 
 import { getData } from './data';
+import { getFileCssIcon, moveFiles } from './fileUtils';
+import type { IFile } from './fileUtils';
 
 ModuleRegistry.registerModules([
     RowDragModule,
@@ -38,27 +39,23 @@ ModuleRegistry.registerModules([
 class FileCellRenderer {
     private eGui!: any;
 
-    init(params: ICellRendererParams) {
-        const tempDiv = document.createElement('div');
-        const value = params.value;
-        const icon = this.getFileIcon(params.value);
-        tempDiv.innerHTML = icon ? '<i class="' + icon + '"/>' + '<span class="filename">' + value + '</span>' : value;
-        this.eGui = tempDiv.firstChild!;
+    init(params: ICellRendererParams<IFile>) {
+        const eGui = document.createElement('div');
+
+        const eIcon = document.createElement('i');
+        eIcon.className = getFileCssIcon(params.data?.type, params.value);
+
+        const eFilename = document.createElement('span');
+        eFilename.className = 'filename';
+        eFilename.innerText = params.value;
+
+        eGui.appendChild(eIcon);
+        eGui.appendChild(eFilename);
+
+        this.eGui = eGui;
     }
     getGui() {
         return this.eGui;
-    }
-
-    getFileIcon(filename: string) {
-        return filename.endsWith('.mp3') || filename.endsWith('.wav')
-            ? 'far fa-file-audio'
-            : filename.endsWith('.xls')
-              ? 'far fa-file-excel'
-              : filename.endsWith('.txt')
-                ? 'far fa-file'
-                : filename.endsWith('.pdf')
-                  ? 'far fa-file-pdf'
-                  : 'far fa-folder';
     }
 }
 
@@ -74,7 +71,7 @@ const cellClassRules = {
 
 let gridApi: GridApi;
 
-const gridOptions: GridOptions = {
+const gridOptions: GridOptions<IFile> = {
     columnDefs: [
         {
             field: 'dateModified',
@@ -92,12 +89,8 @@ const gridOptions: GridOptions = {
     rowData: getData(),
     treeData: true,
     groupDefaultExpanded: -1,
-    getDataPath: (data: any) => {
-        return data.filePath;
-    },
-    getRowId: (params: GetRowIdParams) => {
-        return String(params.data.id);
-    },
+    getDataPath: (data: IFile) => data.filePath,
+    getRowId: ({ data }) => data.id,
     autoGroupColumnDef: {
         rowDrag: true,
         headerName: 'Files',
@@ -129,30 +122,21 @@ function onRowDragLeave(event: RowDragLeaveEvent) {
 }
 
 function onRowDragEnd(event: RowDragEndEvent) {
-    if (!potentialParent) {
-        return;
+    let target = event.overNode?.data;
+
+    if (!potentialParent && target) {
+        return; // no move
     }
 
-    const movingData = event.node.data;
-
-    // take new parent path from parent, if data is missing, means it's the root node,
-    // which has no data.
-    const newParentPath = potentialParent.data ? potentialParent.data.filePath : [];
-    const needToChangeParent = !arePathsEqual(newParentPath, movingData.filePath);
-
-    // check we are not moving a folder into a child folder
-    const invalidMode = isSelectionParentOfTarget(event.node, potentialParent);
-    if (invalidMode) {
-        console.log('invalid move');
-    }
-
-    if (needToChangeParent && !invalidMode) {
-        const updatedRows: any[] = [];
-        moveToPath(newParentPath, event.node, updatedRows);
-
-        gridApi!.applyTransaction({
-            update: updatedRows,
-        });
+    const source = event.node.data;
+    const rowData = event.api.getGridOption('rowData');
+    if (rowData && source && source !== target) {
+        const newRowData = moveFiles(rowData, source, target);
+        if (!newRowData) {
+            console.log('invalid move');
+        } else if (newRowData !== rowData) {
+            event.api.setGridOption('rowData', newRowData);
+        }
         gridApi!.clearFocusedCell();
     }
 
@@ -160,64 +144,22 @@ function onRowDragEnd(event: RowDragEndEvent) {
     setPotentialParentForNode(event.api, null);
 }
 
-function moveToPath(newParentPath: string[], node: IRowNode, allUpdatedNodes: any[]) {
-    // last part of the file path is the file name
-    const oldPath = node.data.filePath;
-    const fileName = oldPath[oldPath.length - 1];
-    const newChildPath = newParentPath.slice();
-    newChildPath.push(fileName);
+function setPotentialParentForNode(api: GridApi<IFile>, overNode: IRowNode<IFile> | undefined | null) {
+    let newPotentialParent: IRowNode<IFile> | null = null;
 
-    node.data.filePath = newChildPath;
-
-    allUpdatedNodes.push(node.data);
-
-    if (node.childrenAfterGroup) {
-        node.childrenAfterGroup.forEach((childNode) => {
-            moveToPath(newChildPath, childNode, allUpdatedNodes);
-        });
-    }
-}
-
-function isSelectionParentOfTarget(selectedNode: IRowNode, targetNode: any) {
-    const children = selectedNode.childrenAfterGroup || [];
-    for (let i = 0; i < children.length; i++) {
-        if (targetNode && children[i].key === targetNode.key) return true;
-        isSelectionParentOfTarget(children[i], targetNode);
-    }
-    return false;
-}
-
-function arePathsEqual(path1: string[], path2: string[]) {
-    if (path1.length !== path2.length) {
-        return false;
-    }
-
-    let equal = true;
-    path1.forEach(function (item, index) {
-        if (path2[index] !== item) {
-            equal = false;
-        }
-    });
-
-    return equal;
-}
-
-function setPotentialParentForNode(api: GridApi, overNode: IRowNode | undefined | null) {
-    let newPotentialParent;
     if (overNode) {
-        newPotentialParent =
-            overNode.data.type === 'folder'
-                ? // if over a folder, we take the immediate row
-                  overNode
-                : // if over a file, we take the parent row (which will be a folder)
-                  overNode.parent;
-    } else {
-        newPotentialParent = null;
+        if (overNode.data?.type === 'folder') {
+            // over a folder, we take the immediate row
+            newPotentialParent = overNode;
+        } else if (overNode.parent) {
+            // over a file, we take the parent row (which will be a folder)
+            newPotentialParent = overNode.parent;
+        }
     }
 
     const alreadySelected = potentialParent === newPotentialParent;
     if (alreadySelected) {
-        return;
+        return; // no change
     }
 
     // we refresh the previous selection (if it exists) to clear
@@ -235,8 +177,8 @@ function setPotentialParentForNode(api: GridApi, overNode: IRowNode | undefined 
     refreshRows(api, rowsToRefresh);
 }
 
-function refreshRows(api: GridApi, rowsToRefresh: IRowNode[]) {
-    const params: RefreshCellsParams = {
+function refreshRows(api: GridApi, rowsToRefresh: IRowNode<IFile>[]) {
+    const params: RefreshCellsParams<IFile> = {
         // refresh these rows only.
         rowNodes: rowsToRefresh,
         // because the grid does change detection, the refresh

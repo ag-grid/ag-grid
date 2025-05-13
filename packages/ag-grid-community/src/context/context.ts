@@ -129,6 +129,7 @@ export type DynamicBeanName =
     | 'tooltipFeature'
     | 'groupStrategy'
     | 'treeParentIdStrategy'
+    | 'rowNumberRowResizer'
     | 'agSetColumnFilterEvaluator'
     | 'agMultiColumnFilterEvaluator'
     | 'agGroupColumnFilterEvaluator'

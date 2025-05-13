@@ -42,7 +42,7 @@ const gridOptions: GridOptions<IOlympicData> = {
     },
     theme: themeQuartz.withParams({
         pinnedRowBorder: {
-            width: 3,
+            width: 2,
         },
     }),
 };

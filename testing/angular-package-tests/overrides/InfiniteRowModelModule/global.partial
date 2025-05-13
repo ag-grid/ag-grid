@@ -1,0 +1,23 @@
+const data =[
+  { make: "Tesla", model: "Model Y", price: 64950, electric: true },
+  { make: "Ford", model: "F-Series", price: 33850, electric: false },
+  { make: "Toyota", model: "Corolla", price: 29600, electric: false },
+  { make: "Mercedes", model: "EQA", price: 48890, electric: true },
+  { make: "Fiat", model: "500", price: 15774, electric: false },
+  { make: "Nissan", model: "Juke", price: 20675, electric: false },
+];
+
+const dataSource: any = {
+  rowCount: undefined,
+  getRows: (params: any) => {
+    // take a slice of the total rows
+    const rowsThisPage = data.slice(params.startRow, params.endRow);
+    // if on or after the last page, work out the last row.
+    let lastRow = -1;
+    if (data.length <= params.endRow) {
+      lastRow = data.length;
+    }
+    // call the success callback
+    params.successCallback(rowsThisPage, lastRow);
+  },
+};

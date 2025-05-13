@@ -25,7 +25,7 @@ interface Props {
     boilerplatePath: string;
     ignoreSystemJs?: boolean;
     extraStyles?: string;
-    children?: any;
+    headFragment?: string;
     extras?: string[];
     usesMathRandom?: boolean;
 }
@@ -43,6 +43,7 @@ const {
     boilerplatePath,
     ignoreSystemJs,
     extraStyles,
+    headFragment,
     extras,
     usesMathRandom,
 } = Astro.props as Props;
@@ -56,6 +57,7 @@ const startFile = pathJoin(appLocation, entryFileName);
         <ExampleStyle rootSelector="#root" extraStyles={extraStyles} />
         <Styles baseUrl={appLocation} files={styleFiles} />
         <Extras extras={extras ?? []} />
+        <Fragment set:html={headFragment} />
     </head>
     <body>
         <div id="root"></div>

@@ -1,6 +1,7 @@
 import type { InternalFramework } from '@ag-grid-types';
 import { ExampleLogger } from '@ag-website-shared/components/example-runner/components/ExampleLogger';
 import { Icon } from '@ag-website-shared/components/icon/Icon';
+import { LinkIcon } from '@ag-website-shared/components/link-icon/LinkIcon';
 import { OpenInCTA } from '@ag-website-shared/components/open-in-cta/OpenInCTA';
 import type { FileContents } from '@components/example-generator/types';
 import classnames from 'classnames';
@@ -103,6 +104,9 @@ export const ExampleRunner: FunctionComponent<Props> = ({
                     </button>
 
                     <ul className={classnames('list-style-none', styles.externalLinks)}>
+                        <li>
+                            <LinkIcon href={`#${id}`} exampleLink={true} />
+                        </li>
                         <li>
                             <OpenInCTA type="newTab" href={exampleUrl!} />
                         </li>

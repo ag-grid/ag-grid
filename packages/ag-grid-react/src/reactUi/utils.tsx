@@ -54,9 +54,6 @@ const reactVersion = React.version?.split('.')[0];
 // We only want to disable flushSync and change rendering behaviour for React 16 and 17
 const isReactVersion17Minus = reactVersion === '16' || reactVersion === '17';
 
-export function isReact17Minus(): boolean {
-    return isReactVersion17Minus;
-}
 export function isReact19(): boolean {
     return reactVersion === '19';
 }

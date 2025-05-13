@@ -31,7 +31,7 @@ in a cell. The grid comes with some Provided Cell Components for common grid tas
 {% /videoSection %}
 {% /if %}
 
-The example below shows adding images, hyperlinks, and buttons to a cell using Custom Cell Components.
+The example below shows adding images, hyperlinks, and buttons to a cell using Custom Cell Components. The custom button logs to the developer console when clicked.
 
 {% gridExampleRunner title="Simple Cell Renderer" name="cell-renderer-summary"  exampleHeight=460 /%}
 
@@ -220,10 +220,10 @@ Note that this method will only return instances of the Cell Component that exis
 
 The example below demonstrates custom methods on Cell Components called by the application. The following can be noted:
 
-* The medal columns are all using the user defined `MedalCellRenderer`. The Cell Component has an arbitrary method `medalUserFunction()` which prints some data to the console.
-* The **Gold** method executes a method on all instances of the Cell Component in the gold column.
-* The **First Row Gold** method executes a method on the gold cell of the first row only. Note that the `getCellRendererInstances()` method will return nothing if the grid is scrolled far past the first row showing row virtualisation in action.
-* The **All Cells** method executes a method on all instances of all Cell Components.
+* The medal columns are all using the user defined `MedalCellRenderer`. The Cell Component has an arbitrary method `medalUserFunction()` which prints some data to the developer console.
+* The **Gold** button executes a method on all instances of the Cell Component in the gold column and prints the data to the developer console.
+* The **First Row Gold** button executes a method on the gold cell of the first row only and prints data to the developer console. Note that the `getCellRendererInstances()` method will return nothing if the grid is scrolled far past the first row showing row virtualisation in action.
+* The **All Cells** button executes a method on all instances of all Cell Components and prints data to the developer console.
 
 {% gridExampleRunner title="Get Cell Renderer" name="get-cell-renderer" /%}
 
@@ -246,7 +246,7 @@ Compliment props to a cell renderer using the Column Definition attribute  `cell
 {% partial file="./_complementing-component-vue.mdoc" /%}
 
 This example shows rendering an image with and without custom props and using custom props to pass a callback to a button.
-The `Refresh Data` button triggers the cell components to refresh by randomising the success data.
+The `Refresh Data` button triggers the cell components to refresh by randomising the success data. The `Launch` button logs a message to the developer console.
 
 {% gridExampleRunner title="Custom Props" name="custom-props" /%}
 

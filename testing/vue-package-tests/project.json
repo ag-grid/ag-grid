@@ -1,0 +1,41 @@
+{
+  "name": "vue-package-tests",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "testing/vue-package-tests",
+  "projectType": "",
+  "targets": {
+    "test:package": {
+      "executor": "nx:noop",
+      "inputs": [],
+      "outputs": [],
+      "dependsOn": ["test:package:local-latest", "test:package:production-latest"],
+      "configurations": {
+        "update": {}
+      }
+    },
+    "test:package:local-latest": {
+      "dependsOn": ["^pack"],
+      "command": "{projectRoot}/run.sh latest",
+      "configurations": {
+        "update": {
+          "command": "{projectRoot}/run.sh -u latest"
+        }
+      }
+    },
+    "test:package:production-latest": {
+      "dependsOn": ["^pack"],
+      "command": "{projectRoot}/run.sh -p latest",
+      "cache": false,
+      "configurations": {
+        "update": {
+          "command": "{projectRoot}/run.sh -p -u latest"
+        }
+      }
+    },
+    "test:package:editor": {
+      "dependsOn": ["^pack"],
+      "command": "{projectRoot}/run.sh -n -e latest"
+    }
+  },
+  "implicitDependencies": ["ag-grid-community", "ag-grid-enterprise", "ag-grid-vue3"]
+}

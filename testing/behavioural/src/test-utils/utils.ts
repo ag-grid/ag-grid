@@ -94,3 +94,33 @@ export function unindentText(text: string | string[]) {
     if (minIndent > 0) lines = lines.map((line) => line.slice(minIndent));
     return lines.join('\n');
 }
+
+let consoleLicenseKeyErrorInitialized = false;
+
+export function ignoreConsoleLicenseKeyError() {
+    if (consoleLicenseKeyErrorInitialized) {
+        return;
+    }
+
+    consoleLicenseKeyErrorInitialized = true;
+
+    const originalConsoleError = console.error;
+
+    // We want to ignore the missing license error message during tests.
+    function consoleErrorImpl(...args: unknown[]) {
+        if (
+            args.length === 1 &&
+            typeof args[0] === 'string' &&
+            args[0].startsWith('*') &&
+            args[0].endsWith('*') &&
+            args[0].length === 124
+        ) {
+            return; // This is a license error message
+        }
+        return originalConsoleError.apply(console, args);
+    }
+
+    consoleErrorImpl.original = originalConsoleError;
+
+    console.error = consoleErrorImpl;
+}

@@ -80,9 +80,7 @@ const gridOptions: GridOptions = {
             series: {
                 tooltip: {
                     renderer: ({ datum, xKey, yKey }) => {
-                        return {
-                            content: `${formatDate(datum[xKey])}: ${Math.round(datum[yKey])}°C`,
-                        };
+                        return `${formatDate(datum[xKey])}: ${Math.round(datum[yKey])}°C`;
                     },
                 },
             },

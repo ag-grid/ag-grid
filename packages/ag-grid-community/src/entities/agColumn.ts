@@ -302,7 +302,7 @@ export class AgColumn<TValue = any>
             this.frameworkEventListenerService,
             this.colEventSvc
         );
-        const listener = this.frameworkEventListenerService?.wrap(userListener) ?? userListener;
+        const listener = this.frameworkEventListenerService?.wrap(eventType, userListener) ?? userListener;
 
         this.colEventSvc.addEventListener(eventType, listener);
     }
@@ -314,7 +314,7 @@ export class AgColumn<TValue = any>
         eventType: T,
         userListener: (params: ColumnEvent<T>) => void
     ): void {
-        const listener = this.frameworkEventListenerService?.unwrap(userListener) ?? userListener;
+        const listener = this.frameworkEventListenerService?.unwrap(eventType, userListener) ?? userListener;
         this.colEventSvc.removeEventListener(eventType, listener);
     }
 

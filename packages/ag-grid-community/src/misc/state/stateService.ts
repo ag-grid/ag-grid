@@ -6,13 +6,11 @@ import type { AgColumn } from '../../entities/agColumn';
 import { _isCellSelectionEnabled, _isClientSideRowModel } from '../../gridOptionsUtils';
 import type { CellRange } from '../../interfaces/IRangeService';
 import type {
-    AggregationColumnState,
     AggregationState,
     CellSelectionState,
     ColumnGroupState,
     ColumnOrderState,
     ColumnPinningState,
-    ColumnSizeState,
     ColumnSizingState,
     ColumnVisibilityState,
     FilterState,
@@ -28,12 +26,12 @@ import type {
     SortState,
 } from '../../interfaces/gridState';
 import type { FilterModel } from '../../interfaces/iFilter';
-import type { SortModelItem } from '../../interfaces/iSortModelItem';
 import type { ServerSideRowGroupSelectionState, ServerSideRowSelectionState } from '../../interfaces/selectionState';
 import { _debounce } from '../../utils/function';
 import { _jsonEquals } from '../../utils/generic';
 import { VERSION } from '../../version';
 import { migrateGridStateModel } from './stateModelMigration';
+import { _convertColumnGroupState, convertColumnState } from './stateUtils';
 
 export class StateService extends BeanStub implements NamedBean {
     beanName = 'stateSvc' as const;
@@ -282,68 +280,7 @@ export class StateService extends BeanStub implements NamedBean {
         columnOrder?: ColumnOrderState;
     } {
         const beans = this.beans;
-        const pivotMode = beans.colModel.isPivotMode();
-        const sortColumns: SortModelItem[] = [];
-        const groupColIds: string[] = [];
-        const aggregationColumns: AggregationColumnState[] = [];
-        const pivotColIds: string[] = [];
-        const leftColIds: string[] = [];
-        const rightColIds: string[] = [];
-        const hiddenColIds: string[] = [];
-        const columnSizes: ColumnSizeState[] = [];
-        const columns: string[] = [];
-
-        let defaultSortIndex = 0;
-        const columnState = _getColumnState(beans);
-        for (let i = 0; i < columnState.length; i++) {
-            const {
-                colId,
-                sort,
-                sortIndex,
-                rowGroup,
-                rowGroupIndex,
-                aggFunc,
-                pivot,
-                pivotIndex,
-                pinned,
-                hide,
-                width,
-                flex,
-            } = columnState[i];
-            columns.push(colId);
-            if (sort) {
-                sortColumns[sortIndex ?? defaultSortIndex++] = { colId, sort };
-            }
-            if (rowGroup) {
-                groupColIds[rowGroupIndex ?? 0] = colId;
-            }
-            if (typeof aggFunc === 'string') {
-                aggregationColumns.push({ colId, aggFunc });
-            }
-            if (pivot) {
-                pivotColIds[pivotIndex ?? 0] = colId;
-            }
-            if (pinned) {
-                (pinned === 'right' ? rightColIds : leftColIds).push(colId);
-            }
-            if (hide) {
-                hiddenColIds.push(colId);
-            }
-            if (flex != null || width) {
-                columnSizes.push({ colId, flex: flex ?? undefined, width });
-            }
-        }
-
-        return {
-            sort: sortColumns.length ? { sortModel: sortColumns } : undefined,
-            rowGroup: groupColIds.length ? { groupColIds } : undefined,
-            aggregation: aggregationColumns.length ? { aggregationModel: aggregationColumns } : undefined,
-            pivot: pivotColIds.length || pivotMode ? { pivotMode, pivotColIds } : undefined,
-            columnPinning: leftColIds.length || rightColIds.length ? { leftColIds, rightColIds } : undefined,
-            columnVisibility: hiddenColIds.length ? { hiddenColIds } : undefined,
-            columnSizing: columnSizes.length ? { columnSizingModel: columnSizes } : undefined,
-            columnOrder: columns.length ? { orderedColIds: columns } : undefined,
-        };
+        return convertColumnState(_getColumnState(beans), beans.colModel.isPivotMode());
     }
 
     private setColumnState(initialState: GridState): void {
@@ -503,13 +440,7 @@ export class StateService extends BeanStub implements NamedBean {
             return undefined;
         }
         const columnGroupState = colGroupSvc.getColumnGroupState();
-        const openColumnGroups: string[] = [];
-        columnGroupState.forEach(({ groupId, open }) => {
-            if (open) {
-                openColumnGroups.push(groupId);
-            }
-        });
-        return openColumnGroups.length ? { openColumnGroupIds: openColumnGroups } : undefined;
+        return _convertColumnGroupState(columnGroupState);
     }
 
     private setColumnGroupState(initialState: GridState): void {
