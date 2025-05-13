@@ -155,12 +155,12 @@ export class EditService extends BeanStub implements NamedBean {
         rowCtrl.stoppingRowEdit = true;
 
         let fireRowEditEvent = false;
-        for (const ctrl of cellControls) {
+        cellControls.forEach((ctrl) => {
             const valueChanged = ctrl.stopEditing(cancel);
             if (isRowEdit && !cancel && !fireRowEditEvent && valueChanged) {
                 fireRowEditEvent = true;
             }
-        }
+        });
 
         if (fireRowEditEvent) {
             this.eventSvc.dispatchEvent(rowCtrl.createRowEvent('rowValueChanged'));

@@ -1328,12 +1328,25 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         }
     }
 
-    public getAllCellCtrls(): CellCtrl[] {
-        if (this.leftCellCtrls.list.length === 0 && this.rightCellCtrls.list.length === 0) {
-            return this.centerCellCtrls.list;
-        }
-        const res = [...this.centerCellCtrls.list, ...this.leftCellCtrls.list, ...this.rightCellCtrls.list];
-        return res;
+    public getAllCellCtrls() {
+        const self = this;
+
+        // return a proxy object that allows us to iterate over all cellCtrls
+        // this optimization is here to avoid having to create a new array every time we want to iterate
+        return {
+            ...sharedProxyArrayMethods,
+            forEach(callbackfn: (value: CellCtrl) => void) {
+                for (let i = 0; i < self.centerCellCtrls.list.length; i++) {
+                    callbackfn(self.leftCellCtrls.list[i]);
+                }
+                for (let i = 0; i < self.leftCellCtrls.list.length; i++) {
+                    callbackfn(self.leftCellCtrls.list[i]);
+                }
+                for (let i = 0; i < self.rightCellCtrls.list.length; i++) {
+                    callbackfn(self.rightCellCtrls.list[i]);
+                }
+            },
+        };
     }
 
     private postProcessClassesFromGridOptions(): void {
@@ -1811,3 +1824,26 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         });
     }
 }
+
+/**
+ * This is an optimization effort to cut on array copying
+ * we checked this callback based approach is the fastest (compared to generators, iterators, and straight up array copy + forEach)
+ * see AG-12347
+ */
+export const sharedProxyArrayMethods = {
+    forEach<T extends CellCtrl>(_callbackfn: (value: T) => void) {}, // placeholder, meant to be overridden
+    find<T extends CellCtrl>(predicate: (value: T) => boolean): T | undefined {
+        let found: T | undefined;
+        this.forEach((value) => {
+            if (predicate(value as T)) {
+                found = value as T;
+            }
+        });
+        return found;
+    },
+    // careful, this is not the same as Array.prototype.some, as it doesn't support
+    // undefined values in the array, since that would require copying code from find()
+    some<T extends CellCtrl>(predicate: (value: T) => boolean): boolean {
+        return this.find(predicate) !== undefined;
+    },
+};
