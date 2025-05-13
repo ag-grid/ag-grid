@@ -82,16 +82,13 @@ export class SingleCellEditStrategy extends BaseEditStrategy {
     ): boolean {
         console.log('SingleCellEditStrategy: stopEditing', rowCtrl, cellCtrl);
 
-        if (this.gos.get('batchEdit')) {
-            const cellIds = this.editModel.getPendingCellIds();
-            cellIds.forEach((cellId) => {
-                const cellCtrl = _resolveControllers(this.beans, cellId).cellCtrl;
-                if (cellCtrl) {
-                    cellCtrl.comp.toggleCss('ag-cell-batch-edit', false);
-                    this.updateStyles(cellCtrl.rowCtrl, cellCtrl, false);
-                }
-            });
-        }
+        this.editModel.getPendingCellIds().forEach((cellId) => {
+            const cellCtrl = _resolveControllers(this.beans, cellId).cellCtrl;
+            if (cellCtrl) {
+                cellCtrl.comp.toggleCss('ag-cell-batch-edit', false);
+                this.updateStyles(cellCtrl.rowCtrl, cellCtrl, false);
+            }
+        });
 
         super.stopEditing(rowCtrl, cellCtrl, source);
 
@@ -159,6 +156,13 @@ export class SingleCellEditStrategy extends BaseEditStrategy {
         this.beans.editingSvc?.startEditing(nextCell.rowCtrl, nextCell, null, true, event, batchEdit ? 'ui' : 'api');
 
         return true;
+    }
+
+    public override destroy(): void {
+        super.destroy();
+
+        this.rowId = undefined;
+        this.colId = undefined;
     }
 }
 

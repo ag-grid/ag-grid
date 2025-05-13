@@ -24,11 +24,6 @@ button {
     width: 100%;
 }
 
-.ag-cell-batch-edit,
-.ag-row-batch-edit {
-    background-color: bisque !important;
-}
-
 #disableBatch,
 #disablePoll {
     display: none;

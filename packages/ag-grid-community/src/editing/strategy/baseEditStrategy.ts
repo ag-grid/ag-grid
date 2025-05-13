@@ -7,7 +7,7 @@ import type { DefaultProvidedCellEditorParams } from '../../interfaces/iCellEdit
 import type { CellCtrl } from '../../rendering/cell/cellCtrl';
 import type { RowCtrl } from '../../rendering/row/rowCtrl';
 import type { CellIdPositions, EditingModelService } from '../editingModelService';
-import { _resolveCellController } from '../utils/controllers';
+import { _resolveCellController, _resolveControllers } from '../utils/controllers';
 import { _destroyEditor, _destroyEditors, _setupEditors, _syncModelsFromEditors } from '../utils/editors';
 
 export abstract class BaseEditStrategy extends BeanStub {
@@ -230,5 +230,16 @@ export abstract class BaseEditStrategy extends BeanStub {
         }
 
         return 2;
+    }
+
+    public override destroy(): void {
+        this.editModel.getPendingCellIds().forEach((cellId) => {
+            const { rowCtrl, cellCtrl } = _resolveControllers(this.beans, cellId);
+            this.updateStyles(rowCtrl, cellCtrl, false);
+        });
+
+        this.cleanupEditors();
+
+        super.destroy();
     }
 }

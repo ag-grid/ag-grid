@@ -126,7 +126,16 @@ export function _createCellEditorParams(
         data: rowNode.data,
         cellStartedEdit: cellStartedEdit ?? false,
         onKeyDown: cellCtrl.onKeyDown.bind(cellCtrl),
-        stopEditing: (_suppressNavigateAfterEdit) => editingSvc!.stopEditing(cellCtrl.rowCtrl, cellCtrl),
+        stopEditing: (suppressNavigateAfterEdit) =>
+            editingSvc!.stopEditing(
+                cellCtrl.rowCtrl,
+                cellCtrl,
+                undefined,
+                undefined,
+                undefined,
+                'api',
+                suppressNavigateAfterEdit
+            ),
         eGridCell: cellCtrl.eGui,
         parseValue: (newValue: any) => valueSvc.parseValue(column, rowNode, newValue, cellCtrl.value),
         formatValue: cellCtrl.formatValue.bind(cellCtrl),

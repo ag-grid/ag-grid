@@ -1,3 +1,4 @@
+import { KeyCode } from '../constants/keyCode';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import { PopupEditorWrapper } from '../edit/cellEditors/popupEditorWrapper';
@@ -25,7 +26,7 @@ export class EditingService extends BeanStub implements NamedBean {
         this.addManagedPropertyListener(
             'editType',
             (({ currentValue }: any) => {
-                this.stopAllEditing(true);
+                this.stopAllEditing(true, 'api');
 
                 // will re-create if different
                 this.createEditStrategy(currentValue);
@@ -34,7 +35,7 @@ export class EditingService extends BeanStub implements NamedBean {
         this.addManagedPropertyListener(
             'batchEdit',
             (() => {
-                this.stopAllEditing(true);
+                this.stopAllEditing(true, 'api');
             }).bind(this)
         );
     }
@@ -60,6 +61,9 @@ export class EditingService extends BeanStub implements NamedBean {
         if (!this.editStrategy) {
             return;
         }
+
+        this.editStrategy.destroy();
+
         this.destroyBean(this.editStrategy);
         this.editStrategy = undefined;
     }
@@ -152,7 +156,9 @@ export class EditingService extends BeanStub implements NamedBean {
         key?: string,
         event?: KeyboardEvent | MouseEvent | null,
         cancel: boolean = false,
-        source: 'api' | 'ui' = 'ui'
+        source: 'api' | 'ui' = 'ui',
+        suppressNavigateAfterEdit: boolean = false,
+        shiftKey: boolean = false
     ): boolean {
         if (!this.isEditing()) {
             return false;
@@ -170,19 +176,34 @@ export class EditingService extends BeanStub implements NamedBean {
 
         const updates = _createUpdates(this.beans);
 
+        let res = false;
+
         if (!cancel && this.shouldStopEditing?.(rowCtrl, cellCtrl, key, event, source)) {
             this.processUpdates(updates, false);
 
             this.editStrategy?.stopEditing?.(rowCtrl, cellCtrl, source) ?? false;
 
-            return true;
+            res = true;
         } else if (cancel && this.shouldCancelEditing?.(rowCtrl, cellCtrl, key, event, source)) {
             this.processUpdates(updates, true);
 
             this.editStrategy?.stopEditing?.(rowCtrl, cellCtrl, source) ?? false;
         }
 
-        return false;
+        if (!suppressNavigateAfterEdit && cellCtrl) {
+            this.navigateAfterEdit(shiftKey, cellCtrl.cellPosition);
+        }
+
+        return res;
+    }
+
+    private navigateAfterEdit(shiftKey: boolean, cellPosition: CellPosition): void {
+        const enterNavigatesVerticallyAfterEdit = this.gos.get('enterNavigatesVerticallyAfterEdit');
+
+        if (enterNavigatesVerticallyAfterEdit) {
+            const key = shiftKey ? KeyCode.UP : KeyCode.DOWN;
+            this.beans.navigation?.navigateToNextCell(null, key, cellPosition, false);
+        }
     }
 
     private processUpdates(updates: any[], cancel: boolean): void {
