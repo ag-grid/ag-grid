@@ -282,13 +282,13 @@ export class RowDragFeature extends BeanStub implements DropTarget {
                 if (targetInRows) {
                     const newTarget = getRowsPrevOrNext(clientSideRowModel, targetRowIndex < source.rowIndex!, rows);
                     if (newTarget?.parent === target.parent) {
-                        target = newTarget; // Allow multiple rows dragging to the next selected dragging only in the original parent group
+                        target = newTarget; // Delta dragging, the user moved to a selected row above or below
                         targetRowIndex = target.rowIndex!;
                     }
                 }
             }
             if (targetInRows || (!canSetParent && Math.abs(targetRowIndex - source.rowIndex!) === 1)) {
-                above = targetRowIndex < source.rowIndex!; // Facilitate the user by moving up and down the rows when dragging over a selected row to move
+                above = targetRowIndex < source.rowIndex!; // Select the row above or below without the mid point if the diff is 1
             }
         }
 
@@ -302,8 +302,13 @@ export class RowDragFeature extends BeanStub implements DropTarget {
             }
         }
 
-        if (source === target && !newParent) {
-            return null; // No change, nothing to move
+        if (!newParent && targetInRows) {
+            if (canSetParent) {
+                return null; // No delta dragging of multiple rows with TreeData
+            }
+            if (source === target) {
+                return null; // No change, nothing to move
+            }
         }
 
         return { sameGrid, above, target, newParent, rows };
