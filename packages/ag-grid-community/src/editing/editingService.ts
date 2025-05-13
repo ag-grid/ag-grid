@@ -71,8 +71,8 @@ export class EditingService extends BeanStub implements NamedBean {
         event?: KeyboardEvent | MouseEvent | null,
         cellStartedEdit?: boolean | null,
         source: 'api' | 'ui' = 'ui'
-    ): boolean {
-        return this.editStrategy?.shouldStartEditing?.(rowCtrl, cellCtrl, key, event, cellStartedEdit, source) ?? false;
+    ): boolean | null {
+        return this.editStrategy?.shouldStartEditing?.(rowCtrl, cellCtrl, key, event, cellStartedEdit, source) ?? null;
     }
 
     shouldStopEditing(
@@ -81,8 +81,8 @@ export class EditingService extends BeanStub implements NamedBean {
         key?: string | null | undefined,
         event?: KeyboardEvent | MouseEvent | null | undefined,
         source: 'api' | 'ui' = 'ui'
-    ): boolean {
-        return this.editStrategy?.shouldStopEditing?.(rowCtrl, cellCtrl, key, event, source) ?? false;
+    ): boolean | null {
+        return this.editStrategy?.shouldStopEditing?.(rowCtrl, cellCtrl, key, event, source) ?? null;
     }
 
     shouldCancelEditing(
@@ -91,8 +91,8 @@ export class EditingService extends BeanStub implements NamedBean {
         key?: string | null | undefined,
         event?: KeyboardEvent | MouseEvent | null | undefined,
         source: 'api' | 'ui' = 'ui'
-    ): boolean {
-        return this.editStrategy?.shouldCancelEditing?.(rowCtrl, cellCtrl, key, event, source) ?? false;
+    ): boolean | null {
+        return this.editStrategy?.shouldCancelEditing?.(rowCtrl, cellCtrl, key, event, source) ?? null;
     }
 
     public isEditing(rowCtrl?: RowCtrl | null, cellCtrl?: CellCtrl | null): boolean {
@@ -125,7 +125,12 @@ export class EditingService extends BeanStub implements NamedBean {
             return true;
         }
 
-        if (!this.shouldStartEditing?.(rowCtrl, cellCtrl, key, event, cellStartedEdit, source) && source !== 'api') {
+        const res = this.shouldStartEditing?.(rowCtrl, cellCtrl, key, event, cellStartedEdit, source);
+
+        if (res === false && source !== 'api') {
+            if (this.isEditing()) {
+                this.stopEditing();
+            }
             return false;
         }
 
@@ -165,16 +170,16 @@ export class EditingService extends BeanStub implements NamedBean {
 
         const updates = _createUpdates(this.beans);
 
-        if (!cancel && this.shouldStopEditing?.(undefined, undefined, key, event, source)) {
+        if (!cancel && this.shouldStopEditing?.(rowCtrl, cellCtrl, key, event, source)) {
             this.processUpdates(updates, false);
 
-            this.editStrategy?.stopEditing?.(undefined, undefined, source) ?? false;
+            this.editStrategy?.stopEditing?.(rowCtrl, cellCtrl, source) ?? false;
 
             return true;
-        } else if (cancel && this.shouldCancelEditing?.(undefined, undefined, key, event, source)) {
+        } else if (cancel && this.shouldCancelEditing?.(rowCtrl, cellCtrl, key, event, source)) {
             this.processUpdates(updates, true);
 
-            this.editStrategy?.stopEditing?.(undefined, undefined, source) ?? false;
+            this.editStrategy?.stopEditing?.(rowCtrl, cellCtrl, source) ?? false;
         }
 
         return false;

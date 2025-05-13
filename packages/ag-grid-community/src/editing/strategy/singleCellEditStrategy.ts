@@ -24,6 +24,12 @@ export class SingleCellEditStrategy extends BaseEditStrategy {
             return res;
         }
 
+        if ((!this.rowId || !this.colId) && rowCtrl && cellCtrl) {
+            return null;
+        } else if (!rowCtrl && !cellCtrl && this.rowId && this.colId) {
+            return null;
+        }
+
         return this.rowId !== rowCtrl?.rowId || this.colId !== cellCtrl?.column.getColId();
     }
 
@@ -109,9 +115,14 @@ export class SingleCellEditStrategy extends BaseEditStrategy {
         });
 
         // if we are editing, then moving the focus out of a cell will stop editing
-        if (this.shouldStopEditing(rowCtrl, cellCtrl, undefined, undefined, 'ui')) {
-            this.beans.editingSvc?.stopEditing(rowCtrl, cellCtrl);
-        }
+        this.beans.editingSvc?.stopEditing(
+            rowCtrl,
+            cellCtrl,
+            undefined,
+            undefined,
+            undefined,
+            this.gos.get('batchEdit') ? 'ui' : 'api'
+        );
     }
 
     // returns null if no navigation should be performed
@@ -141,9 +152,12 @@ export class SingleCellEditStrategy extends BaseEditStrategy {
             return false;
         }
 
-        this.beans.editingSvc?.startEditing(nextCell.rowCtrl, nextCell, null, true, event);
+        nextCell.focusCell(false);
 
-        // nextCell.focusCell(false);
+        const batchEdit = this.gos.get('batchEdit');
+
+        this.beans.editingSvc?.startEditing(nextCell.rowCtrl, nextCell, null, true, event, batchEdit ? 'ui' : 'api');
+
         return true;
     }
 }

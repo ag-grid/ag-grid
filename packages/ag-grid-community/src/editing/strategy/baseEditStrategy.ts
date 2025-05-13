@@ -153,6 +153,8 @@ export abstract class BaseEditStrategy extends BeanStub {
         const clickCount = this.deriveClickCount(colDef);
         const type = event?.type;
 
+        console.warn('shouldStartEditing', { type, detail: event?.detail, clickCount, source, cellStartedEdit });
+
         if (type === 'click' && event?.detail === 1 && clickCount === 1) {
             return true;
         } else if (type === 'dblclick' && event?.detail === 2 && clickCount === 2) {
