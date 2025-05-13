@@ -786,4 +786,11 @@ export class RowNode<TData = any>
             this.dispatchRowEvent('uiLevelChanged');
         }
     }
+
+    public getFirstChild(): RowNode<TData> | null {
+        if (this.childStore) {
+            return this.childStore.getFirstNode() as RowNode<TData>;
+        }
+        return this.childrenAfterSort?.[0] ?? null;
+    }
 }
