@@ -1337,7 +1337,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
             ...sharedProxyArrayMethods,
             forEach(callbackfn: (value: CellCtrl) => void) {
                 for (let i = 0; i < self.centerCellCtrls.list.length; i++) {
-                    callbackfn(self.leftCellCtrls.list[i]);
+                    callbackfn(self.centerCellCtrls.list[i]);
                 }
                 for (let i = 0; i < self.leftCellCtrls.list.length; i++) {
                     callbackfn(self.leftCellCtrls.list[i]);
