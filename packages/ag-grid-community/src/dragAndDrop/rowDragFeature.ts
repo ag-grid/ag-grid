@@ -246,13 +246,13 @@ export class RowDragFeature extends BeanStub implements DropTarget {
         const { rowNode, rowNodes: rows } = draggingEvent.dragItem;
         const rowsLen = rows?.length;
         const source = rowsLen && (rowNode ?? rows[0]);
+
         if (!source) {
             return null; // Nothing to move
         }
 
-        const beans = this.beans;
+        const { beans, gos, clientSideRowModel } = this;
         const y = _getNormalisedMousePosition(beans, draggingEvent).y;
-        const clientSideRowModel = this.clientSideRowModel;
         let targetRowIndex = clientSideRowModel.getRowIndexAtPixel(y);
         let target = clientSideRowModel.getRow(targetRowIndex) ?? null;
 
@@ -265,9 +265,9 @@ export class RowDragFeature extends BeanStub implements DropTarget {
             // We don't yet support moving tree rows from a different grid in a structured way
             sameGrid &&
             // TreeData support for managed drag and drop
-            this.gos.get('treeData') &&
-            this.gos.get('treeDataParentIdField') &&
-            !this.gos.get('treeDataChildrenField');
+            gos.get('treeData') &&
+            gos.get('treeDataParentIdField') &&
+            !gos.get('treeDataChildrenField');
 
         let targetInRows = false;
 
@@ -287,6 +287,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
                     }
                 }
             }
+
             if (targetInRows || (!canSetParent && Math.abs(targetRowIndex - source.rowIndex!) === 1)) {
                 above = targetRowIndex < source.rowIndex!; // Select the row above or below without the mid point if the diff is 1
             }
@@ -302,13 +303,9 @@ export class RowDragFeature extends BeanStub implements DropTarget {
             }
         }
 
-        if (!newParent && targetInRows) {
-            if (canSetParent) {
-                return null; // No delta dragging of multiple rows with TreeData
-            }
-            if (source === target) {
-                return null; // No change, nothing to move
-            }
+        if (!newParent && targetInRows && (canSetParent || source === target)) {
+            // No delta dragging of multiple rows with TreeData or no change, nothing to move
+            return null;
         }
 
         return { sameGrid, above, target, newParent, rows };
@@ -320,9 +317,10 @@ export class RowDragFeature extends BeanStub implements DropTarget {
         targetInRows: boolean,
         rows: IRowNode[]
     ): RowNode | null {
-        const clientSideRowModel = this.clientSideRowModel;
+        const { clientSideRowModel, beans } = this;
+        const { pageBounds } = beans;
         const targetRowIndex = target?.rowIndex;
-        if (!target || (yDelta > 1 && targetRowIndex === this.beans.pageBounds.getLastRow())) {
+        if (!target || (yDelta > 1 && targetRowIndex === pageBounds.getLastRow())) {
             // Dragging outside of the rows, move to last row at the root level
             return clientSideRowModel.rootNode;
         }
@@ -338,11 +336,11 @@ export class RowDragFeature extends BeanStub implements DropTarget {
                 yDelta <= 1 &&
                 clientSideRowModel.getRow(targetRowIndex! + 1)?.parent === target
             ) {
-                const children = target.childrenAfterAggFilter;
-                if (children) {
+                const { childrenAfterAggFilter } = target;
+                if (childrenAfterAggFilter) {
                     let hasMoreChildren = false;
                     const rowsSet = new Set(rows);
-                    for (const child of children) {
+                    for (const child of childrenAfterAggFilter) {
                         if (!rowsSet.has(child) && child.rowIndex !== null) {
                             hasMoreChildren = true;
                             break;
