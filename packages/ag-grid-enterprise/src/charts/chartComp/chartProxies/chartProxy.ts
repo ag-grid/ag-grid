@@ -26,6 +26,7 @@ export interface ChartProxyParams {
     customChartThemes?: { [name: string]: AgChartTheme };
     parentElement: HTMLElement;
     grouping: boolean;
+    styleNonce?: string;
     getChartThemeName: () => string;
     getChartThemes: () => string[];
     getGridOptionsChartThemeOverrides: () => AgChartThemeOverrides | undefined;
@@ -183,6 +184,7 @@ export abstract class ChartProxy<
         const existingOptions = (this.clearThemeOverrides ? {} : this.chart?.getOptions() ?? {}) as TOptions;
         const formattingPanelOverrides = this.chart != null ? this.getActiveFormattingPanelOverrides() : undefined;
         this.clearThemeOverrides = false;
+        const styleNonce = this.chartProxyParams.styleNonce;
 
         const theme = createAgChartTheme(
             this.chartProxyParams,
@@ -195,6 +197,7 @@ export abstract class ChartProxy<
         const newOptions = {
             ...existingOptions,
             mode: 'integrated',
+            ...(styleNonce ? { styleNonce } : {}),
         } as const;
 
         // propagate setting if set

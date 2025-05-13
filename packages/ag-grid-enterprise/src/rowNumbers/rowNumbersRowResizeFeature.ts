@@ -1,4 +1,10 @@
-import type { BeanCollection, CellCtrl, GridOptionsService, IRowNumbersRowResizeFeature } from 'ag-grid-community';
+import type {
+    BeanCollection,
+    CellCtrl,
+    GridOptionsService,
+    IRowNumbersRowResizeFeature,
+    RowNode,
+} from 'ag-grid-community';
 
 import type { AgRowNumbersRowResizer } from './rowNumbersRowResizer';
 
@@ -21,11 +27,21 @@ export class RowNumbersRowResizeFeature implements IRowNumbersRowResizeFeature {
     ) {}
 
     public refreshRowResizer(): void {
-        if (!_isRowNumbersResizerEnabled(this.beans.gos)) {
+        if (!_isRowNumbersResizerEnabled(this.beans.gos) || !this.isRowResizeSupported(this.cellCtrl.rowNode)) {
             this.removeRowResizerFromCellComp();
         } else {
             this.addResizerToCellComp();
         }
+    }
+
+    private isRowResizeSupported(node: RowNode): boolean {
+        const { pinnedRowModel, rowModel } = this.beans;
+        const rowModelModelHasOnRowHeightChanged = !!(rowModel as any).onRowHeightChanged;
+
+        if (node.rowPinned != null) {
+            return pinnedRowModel?.isManual() ? rowModelModelHasOnRowHeightChanged : true;
+        }
+        return rowModelModelHasOnRowHeightChanged;
     }
 
     private addResizerToCellComp() {
