@@ -782,12 +782,11 @@ export class RowRenderer extends BeanStub implements NamedBean {
 
     public getAllCellCtrls() {
         const rowCtrls = this.getAllRowCtrls();
-        const rowCtrlsLength = rowCtrls.length;
 
         return {
             ...sharedProxyArrayMethods,
             forEach(callbackfn: (value: CellCtrl) => void) {
-                for (let i = 0; i < rowCtrlsLength; i++) {
+                for (let i = 0; i < rowCtrls.length; i++) {
                     rowCtrls[i].getAllCellCtrls().forEach(callbackfn);
                 }
             },
