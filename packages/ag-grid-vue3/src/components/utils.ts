@@ -16,6 +16,7 @@ import type {
     ExcelExportParams,
     ExcelStyle,
     FillOperationParams,
+    FilterEvaluatorGeneratorFunc,
     FindOptions,
     FocusGridInnerElementParams,
     GetChartMenuItems,
@@ -573,8 +574,12 @@ export interface Props<TData> {
          * @initial
          */
     suppressSetFilterByDefault?: boolean | undefined,
-    /** TODO     */
+    /** TODO
+         * @initial
+         */
     enableFilterEvaluators?: boolean | undefined,
+    /** TODO     */
+    filterEvaluators?: { [key: string]: FilterEvaluatorGeneratorFunc } | undefined,
     /** Set to `true` to Enable Charts.
          * @default false
          * @agModule `IntegratedChartsModule`
@@ -1787,6 +1792,7 @@ export function getProps() {
         suppressAdvancedFilterEval: undefined,
         suppressSetFilterByDefault: undefined,
         enableFilterEvaluators: undefined,
+        filterEvaluators: undefined,
         enableCharts: undefined,
         chartThemes: undefined,
         customChartThemes: undefined,

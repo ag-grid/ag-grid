@@ -37,7 +37,7 @@ export interface SetValueModelParams<TValue> {
 
 export class SetValueModel<TValue> extends BeanStub<SetValueModelEvent> {
     /** Values can be loaded asynchronously, so wait on this promise if you need to ensure values have been loaded. */
-    public allValuesPromise: AgPromise<(string | null)[]>;
+    public allKeys: AgPromise<(string | null)[]>;
 
     /** All possible values for the filter, sorted if required. */
     public allValues: Map<string | null, TValue | null> = new Map();
@@ -147,7 +147,7 @@ export class SetValueModel<TValue> extends BeanStub<SetValueModelEvent> {
     }
 
     public updateAllValues(): AgPromise<(string | null)[]> {
-        this.allValuesPromise = new AgPromise<(string | null)[]>((resolve) => {
+        this.allKeys = new AgPromise<(string | null)[]>((resolve) => {
             switch (this.valuesType) {
                 case SetFilterModelValuesType.TAKEN_FROM_GRID_VALUES:
                     this.getValuesFromRowsAsync().then((values) => resolve(this.processAllValues(values)));
@@ -185,12 +185,12 @@ export class SetValueModel<TValue> extends BeanStub<SetValueModelEvent> {
             }
         });
 
-        this.allValuesPromise.then((values) => {
+        this.allKeys.then((values) => {
             this.updateAvailableKeys(values ?? []);
             this.initialised = true;
         });
 
-        return this.allValuesPromise;
+        return this.allKeys;
     }
 
     public getAvailableValues(predicate: (node: RowNode) => boolean): (string | null)[] {
@@ -198,7 +198,7 @@ export class SetValueModel<TValue> extends BeanStub<SetValueModelEvent> {
     }
 
     public overrideValues(valuesToUse: (TValue | null)[]): AgPromise<void> {
-        return this.allValuesPromise.then(() => {
+        return this.allKeys.then(() => {
             this.valuesType = SetFilterModelValuesType.PROVIDED_LIST;
             this.providedValues = valuesToUse;
         });
@@ -207,7 +207,7 @@ export class SetValueModel<TValue> extends BeanStub<SetValueModelEvent> {
     public refreshAvailable(): AgPromise<boolean> {
         return new AgPromise((resolve) => {
             if (this.showAvailableOnly()) {
-                this.allValuesPromise.then((keys) => {
+                this.allKeys.then((keys) => {
                     const updatedKeys = keys ?? [];
                     this.updateAvailableKeys(updatedKeys);
                     resolve(true);
@@ -220,7 +220,7 @@ export class SetValueModel<TValue> extends BeanStub<SetValueModelEvent> {
 
     public refreshAll(): AgPromise<void> {
         return new AgPromise((resolve) => {
-            this.allValuesPromise.then(() => {
+            this.allKeys.then(() => {
                 this.updateAllValues().then(() => {
                     resolve();
                 });

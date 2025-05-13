@@ -653,6 +653,8 @@ export const AG_GRID_ERRORS = {
     271: ({ id, parentId }: { id: string; parentId: string }) =>
         `Parent row not found for row with id='${id}' and parent id='${parentId}'. Showing row with id='${id}' as a root-level node.` as const,
     272: () => NoModulesRegisteredError(),
+    273: ({ colId }: { colId: string }) =>
+        `'enableFilterEvaluators' is set to true, but column '${colId}' does not have 'filterEvaluator' set.` as const,
 };
 
 export type ErrorMap = typeof AG_GRID_ERRORS;

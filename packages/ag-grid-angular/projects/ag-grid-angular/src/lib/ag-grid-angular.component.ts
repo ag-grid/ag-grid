@@ -83,6 +83,7 @@ import type {
     FillOperationParams,
     FillStartEvent,
     FilterChangedEvent,
+    FilterEvaluatorGeneratorFunc,
     FilterModifiedEvent,
     FilterOpenedEvent,
     FilterUiChangedEvent,
@@ -752,8 +753,12 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * @initial
      */
     @Input({ transform: booleanAttribute }) public suppressSetFilterByDefault: boolean | undefined = undefined;
-    /** TODO     */
+    /** TODO
+     * @initial
+     */
     @Input({ transform: booleanAttribute }) public enableFilterEvaluators: boolean | undefined = undefined;
+    /** TODO     */
+    @Input() public filterEvaluators: { [key: string]: FilterEvaluatorGeneratorFunc } | undefined = undefined;
     /** Set to `true` to Enable Charts.
      * @default false
      * @agModule `IntegratedChartsModule`

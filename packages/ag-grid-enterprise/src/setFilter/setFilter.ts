@@ -102,7 +102,7 @@ export class SetFilter<V = string>
                   column as AgColumn
               ) as any);
 
-        evaluator.valueModel.allValuesPromise.then((values) => {
+        evaluator.valueModel.allKeys.then((values) => {
             this.updateDisplayedValues('reload', values ?? []);
             this.resetSelectionState(values ?? []);
         });
@@ -156,7 +156,7 @@ export class SetFilter<V = string>
             this.evaluatorDestroyFuncs = [
                 ...this.addManagedListeners(evaluator, {
                     anyFilterChanged: (event) => {
-                        evaluator.valueModel.allValuesPromise.then((values) => {
+                        evaluator.valueModel.allKeys.then((values) => {
                             if (this.isAlive()) {
                                 this.updateDisplayedValues('otherFilter', values ?? []);
                                 if (event.updated) {
@@ -167,7 +167,7 @@ export class SetFilter<V = string>
                         });
                     },
                     dataChanged: ({ hardRefresh }) => {
-                        evaluator.valueModel.allValuesPromise.then((values) => {
+                        evaluator.valueModel.allKeys.then((values) => {
                             if (this.isAlive()) {
                                 this.updateDisplayedValues('reload', values ?? []);
                                 this.setSelectedModel(this.state.model?.values ?? null);
@@ -1119,7 +1119,7 @@ export class SetFilter<V = string>
     private setSelectedModel(model: SetFilterModelValue | null): AgPromise<void> {
         const evaluator = this.evaluator;
         const valueModel = evaluator.valueModel;
-        return valueModel.allValuesPromise.then((keys) => {
+        return valueModel.allKeys.then((keys) => {
             if (model == null) {
                 this.resetSelectionState(keys ?? []);
             } else {

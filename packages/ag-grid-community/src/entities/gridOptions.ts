@@ -663,7 +663,10 @@ export interface GridOptions<TData = any> {
      * @initial
      */
     enableFilterEvaluators?: boolean;
-    /** TODO */
+    /**
+     * TODO
+     * @initial
+     */
     filterEvaluators?: { [key: string]: FilterEvaluatorGeneratorFunc };
 
     // *** Integrated Charts *** //

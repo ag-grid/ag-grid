@@ -35,7 +35,7 @@ export class SetFilterEvaluator<TValue = string>
     extends BeanStub<SetFilterEvaluatorEventType>
     implements FilterEvaluator<any, any, SetFilterModel, ISetFilterParams<any, TValue>>, ISetFilterEvaluator<TValue>
 {
-    public params: FilterEvaluatorParams<any, any, SetFilterModel, ISetFilterParams<any, TValue>>;
+    private params: FilterEvaluatorParams<any, any, SetFilterModel, ISetFilterParams<any, TValue>>;
     /**
      * Here we keep track of the keys that are currently being used for filtering.
      * In most cases, the filtering keys are the same as the selected keys,
@@ -267,7 +267,7 @@ export class SetFilterEvaluator<TValue = string>
     ): void {
         const valueModel = this.valueModel;
 
-        valueModel.allValuesPromise.then(() => {
+        valueModel.allKeys.then(() => {
             const model = params.model;
             if (model == null) {
                 return;

@@ -9,12 +9,8 @@ import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { BeanName } from '../context/context';
 import type { AgColumn } from '../entities/agColumn';
-import type { ColDef, ValueFormatterParams, ValueGetterParams } from '../entities/colDef';
-import type {
-    CoreDataTypeDefinition,
-    DataTypeFormatValueFunc,
-    DateStringDataTypeDefinition,
-} from '../entities/dataType';
+import type { ColDef } from '../entities/colDef';
+import type { CoreDataTypeDefinition, DataTypeFormatValueFunc } from '../entities/dataType';
 import type { RowNode } from '../entities/rowNode';
 import type { AgEvent, ColumnEventType, FilterChangedEventSourceType } from '../events';
 import { _addGridCommonParams, _getGroupAggFiltering, _isSetFilterByDefault } from '../gridOptionsUtils';
@@ -39,41 +35,13 @@ import type { UserCompDetails } from '../interfaces/iUserCompDetails';
 import { _exists, _jsonEquals } from '../utils/generic';
 import { AgPromise } from '../utils/promise';
 import { _error, _warn } from '../validation/logging';
+import { _setColDefPropsForDataType } from './filterDataTypeUtils';
 import type {
     FloatingFilterDisplayParams,
     IFloatingFilterParams,
     IFloatingFilterParentCallback,
 } from './floating/floatingFilter';
 import { _getDefaultFloatingFilterType } from './floating/floatingFilterMapper';
-
-const MONTH_LOCALE_TEXT = {
-    january: 'January',
-    february: 'February',
-    march: 'March',
-    april: 'April',
-    may: 'May',
-    june: 'June',
-    july: 'July',
-    august: 'August',
-    september: 'September',
-    october: 'October',
-    november: 'November',
-    december: 'December',
-};
-const MONTH_KEYS: (keyof typeof MONTH_LOCALE_TEXT)[] = [
-    'january',
-    'february',
-    'march',
-    'april',
-    'may',
-    'june',
-    'july',
-    'august',
-    'september',
-    'october',
-    'november',
-    'december',
-];
 
 const EVALUATOR_MAP = {
     agSetColumnFilter: 'agSetColumnFilterEvaluator',
@@ -84,17 +52,9 @@ const EVALUATOR_MAP = {
     agTextColumnFilter: 'agTextColumnFilterEvaluator',
 } as const;
 
-type EvaluatorName = (typeof EVALUATOR_MAP)[keyof typeof EVALUATOR_MAP];
+const EVALUATORS = new Set(Object.values(EVALUATOR_MAP));
 
-function setFilterNumberComparator(a: string, b: string): number {
-    if (a == null) {
-        return -1;
-    }
-    if (b == null) {
-        return 1;
-    }
-    return parseFloat(a) - parseFloat(b);
-}
+type EvaluatorName = (typeof EVALUATOR_MAP)[keyof typeof EVALUATOR_MAP];
 
 interface CompDoesFilterPassWrapper {
     isEvaluator: false;
@@ -896,9 +856,10 @@ export class ColumnFilterService
     private createFilterWrapper(column: AgColumn): FilterWrapper {
         const { compDetails, evaluator, evaluatorGenerator, evaluatorParams, createFilterUi } =
             this.createFilterInstanceForColumn(column);
+        const colId = column.getColId();
 
         if (evaluator) {
-            delete this.initialFilterModel[column.getColId()];
+            delete this.initialFilterModel[colId];
             evaluator.init?.({
                 ...evaluatorParams!,
                 source: 'init',
@@ -912,6 +873,10 @@ export class ColumnFilterService
                 evaluatorParams: evaluatorParams!,
                 filterUi: this.createFilterUiForEvaluator(compDetails, createFilterUi as any),
             };
+        }
+
+        if (this.gos.get('enableFilterEvaluators')) {
+            _warn(273, { colId });
         }
 
         if (createFilterUi) {
@@ -939,11 +904,24 @@ export class ColumnFilterService
     ): { filterEvaluator: FilterEvaluatorGeneratorFunc; evaluatorName?: EvaluatorName } | undefined {
         const { gos, frameworkOverrides, registry } = this.beans;
         const providedFilterEvaluator = gos.get('enableFilterEvaluators') ? filterDef.filterEvaluator : undefined;
-        let filterEvaluator =
-            typeof providedFilterEvaluator === 'string'
-                ? gos.get('filterEvaluators')?.[providedFilterEvaluator]
-                : providedFilterEvaluator;
+
+        const resolveProvidedFilterEvaluator = (evaluatorName: EvaluatorName) => () =>
+            this.createBean(registry.createDynamicBean<FilterEvaluator & BeanStub>(evaluatorName!, true)!);
+
+        let filterEvaluator: FilterEvaluatorGeneratorFunc | undefined;
         let evaluatorName: EvaluatorName | undefined;
+
+        if (typeof providedFilterEvaluator === 'string') {
+            const userFilterEvaluator = gos.get('filterEvaluators')?.[providedFilterEvaluator];
+            if (userFilterEvaluator != null) {
+                filterEvaluator = userFilterEvaluator;
+            } else {
+                if (EVALUATORS.has(providedFilterEvaluator as EvaluatorName)) {
+                    filterEvaluator = resolveProvidedFilterEvaluator(providedFilterEvaluator as EvaluatorName);
+                    evaluatorName = providedFilterEvaluator as EvaluatorName;
+                }
+            }
+        }
         if (!filterEvaluator) {
             let filterName: string | undefined;
             const { compName, jsComp, fwComp } = _getFilterCompKeys(frameworkOverrides, filterDef);
@@ -956,9 +934,9 @@ export class ColumnFilterService
                 }
             }
             evaluatorName = this.evaluatorMap[filterName as keyof typeof this.evaluatorMap];
+
             if (evaluatorName) {
-                filterEvaluator = () =>
-                    this.createBean(registry.createDynamicBean<FilterEvaluator & BeanStub>(evaluatorName!, true)!);
+                filterEvaluator = resolveProvidedFilterEvaluator(evaluatorName);
             }
         }
         if (!filterEvaluator) {
@@ -1462,145 +1440,7 @@ export class ColumnFilterService
         dataTypeDefinition: CoreDataTypeDefinition,
         formatValue: DataTypeFormatValueFunc
     ): void {
-        const usingSetFilter = _isSetFilterByDefault(this.gos);
-        const translate = this.getLocaleTextFunc();
-        const mergeFilterParams = (params: any) => {
-            const { filterParams } = colDef;
-            colDef.filterParams =
-                typeof filterParams === 'object'
-                    ? {
-                          ...filterParams,
-                          ...params,
-                      }
-                    : params;
-        };
-        switch (dataTypeDefinition.baseDataType) {
-            case 'number': {
-                if (usingSetFilter) {
-                    mergeFilterParams({
-                        comparator: setFilterNumberComparator,
-                    });
-                }
-                break;
-            }
-            case 'boolean': {
-                if (usingSetFilter) {
-                    mergeFilterParams({
-                        valueFormatter: (params: ValueFormatterParams) => {
-                            if (!_exists(params.value)) {
-                                return translate('blanks', '(Blanks)');
-                            }
-                            return translate(String(params.value), params.value ? 'True' : 'False');
-                        },
-                    });
-                } else {
-                    mergeFilterParams({
-                        maxNumConditions: 1,
-                        debounceMs: 0,
-                        filterOptions: [
-                            'empty',
-                            {
-                                displayKey: 'true',
-                                displayName: 'True',
-                                predicate: (_filterValues: any[], cellValue: any) => cellValue,
-                                numberOfInputs: 0,
-                            },
-                            {
-                                displayKey: 'false',
-                                displayName: 'False',
-                                predicate: (_filterValues: any[], cellValue: any) => cellValue === false,
-                                numberOfInputs: 0,
-                            },
-                        ],
-                    });
-                }
-                break;
-            }
-            case 'date': {
-                if (usingSetFilter) {
-                    mergeFilterParams({
-                        valueFormatter: (params: ValueFormatterParams) => {
-                            const valueFormatted = formatValue(params);
-                            return _exists(valueFormatted) ? valueFormatted : translate('blanks', '(Blanks)');
-                        },
-                        treeList: true,
-                        treeListFormatter: (pathKey: string | null, level: number) => {
-                            if (pathKey === 'NaN') {
-                                return translate('invalidDate', 'Invalid Date');
-                            }
-                            if (level === 1 && pathKey != null) {
-                                const monthKey = MONTH_KEYS[Number(pathKey) - 1];
-                                return translate(monthKey, MONTH_LOCALE_TEXT[monthKey]);
-                            }
-                            return pathKey ?? translate('blanks', '(Blanks)');
-                        },
-                    });
-                } else {
-                    mergeFilterParams({
-                        isValidDate,
-                    });
-                }
-                break;
-            }
-            case 'dateString': {
-                const convertToDate = (dataTypeDefinition as DateStringDataTypeDefinition).dateParser!;
-                if (usingSetFilter) {
-                    mergeFilterParams({
-                        valueFormatter: (params: ValueFormatterParams) => {
-                            const valueFormatted = formatValue(params);
-                            return _exists(valueFormatted) ? valueFormatted : translate('blanks', '(Blanks)');
-                        },
-                        treeList: true,
-                        treeListPathGetter: (value: string | null) => {
-                            const date = convertToDate(value ?? undefined);
-                            return date
-                                ? [String(date.getFullYear()), String(date.getMonth() + 1), String(date.getDate())]
-                                : null;
-                        },
-                        treeListFormatter: (pathKey: string | null, level: number) => {
-                            if (level === 1 && pathKey != null) {
-                                const monthKey = MONTH_KEYS[Number(pathKey) - 1];
-                                return translate(monthKey, MONTH_LOCALE_TEXT[monthKey]);
-                            }
-                            return pathKey ?? translate('blanks', '(Blanks)');
-                        },
-                    });
-                } else {
-                    mergeFilterParams({
-                        comparator: (filterDate: Date, cellValue: string | undefined) => {
-                            const cellAsDate = convertToDate(cellValue)!;
-                            if (cellValue == null || cellAsDate < filterDate) {
-                                return -1;
-                            }
-                            if (cellAsDate > filterDate) {
-                                return 1;
-                            }
-                            return 0;
-                        },
-                        isValidDate: (value: any) => typeof value === 'string' && isValidDate(convertToDate(value)),
-                    });
-                }
-                break;
-            }
-            case 'object': {
-                if (usingSetFilter) {
-                    mergeFilterParams({
-                        valueFormatter: (params: ValueFormatterParams) => {
-                            const valueFormatted = formatValue(params);
-                            return _exists(valueFormatted) ? valueFormatted : translate('blanks', '(Blanks)');
-                        },
-                    });
-                } else {
-                    colDef.filterValueGetter = (params: ValueGetterParams) =>
-                        formatValue({
-                            column: params.column,
-                            node: params.node,
-                            value: this.beans.valueSvc.getValue(params.column as AgColumn, params.node),
-                        });
-                }
-                break;
-            }
-        }
+        _setColDefPropsForDataType(colDef, dataTypeDefinition, formatValue, this.beans, this.getLocaleTextFunc());
     }
 
     // additionalEventAttributes is used by provided simple floating filter, so it can add 'floatingFilter=true' to the event
@@ -1872,10 +1712,6 @@ export function _refreshFilterUi(
         state,
         source,
     });
-}
-
-function isValidDate(value: any): boolean {
-    return value instanceof Date && !isNaN(value.getTime());
 }
 
 function refreshFilterUi(
