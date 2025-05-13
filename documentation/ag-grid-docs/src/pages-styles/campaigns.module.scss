@@ -66,9 +66,45 @@
     code {
         white-space: nowrap;
     }
+
+    h1,
+    h2 {
+        max-width: 66%;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    :global(.alert) {
+        max-width: 66%;
+        margin-left: auto;
+        margin-right: auto;
+
+        font-size: var(--text-fs-lg);
+        line-height: var(--text-lh-lg);
+        // font-weight: var(--text-semibold);
+        // color: var(--color-link);
+    }
+}
+
+.campaignSubhead,
+.campaignOffer {
+    margin: $spacing-size-12 auto;
+    text-align: center;
+    max-width: 66%;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.campaignSubhead {
+    font-size: var(--text-fs-lg);
+    line-height: var(--text-lh-lg);
 }
 
 .campaignOffer {
+    font-size: var(--text-fs-xl);
+    line-height: var(--text-lh-xl);
+    font-weight: var(--text-semibold);
+    color: var(--color-link);
 }
 
 .campaignDummyVideo {
@@ -86,6 +122,7 @@
     margin: $spacing-size-16 0;
     padding: $spacing-size-16 0;
     position: relative;
+    text-align: center;
 
     &::before,
     &::after {
@@ -108,6 +145,7 @@
 
 .autoICExample {
     margin-top: $spacing-size-8;
+    width: 70vw;
 
     footer:last-of-type {
         margin-top: $spacing-size-4;
@@ -149,6 +187,12 @@
 
     li {
         margin-bottom: $spacing-size-3;
+    }
+
+    svg {
+        --icon-size: #{$spacing-size-6};
+
+        margin-left: $spacing-size-2;
     }
 }
 
@@ -260,3 +304,119 @@
 
 // end license-pricing.module.scss content
 // =======================================
+
+.socialProofOuter {
+    border: 1px solid var(--color-border-secondary);
+    border-radius: 8px;
+
+    width: 80vw;
+}
+
+.statsOuter {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    border-bottom: 1px solid var(--color-border-secondary);
+
+    #{$selector-darkmode} & {
+        background: color-mix(in srgb, var(--color-fg-primary), var(--color-bg-primary) 98%);
+    }
+
+    @media screen and (max-width: $breakpoint-pricing-large) {
+        display: grid;
+        grid-template-columns: repeat(1, 1fr);
+    }
+}
+
+.stat {
+    padding: $spacing-size-10;
+    font-size: var(--text-fs-base);
+
+    @media screen and (max-width: $breakpoint-pricing-large) {
+        padding-top: $spacing-size-10;
+        padding-bottom: $spacing-size-10;
+        border-bottom: 1px solid var(--color-border-secondary);
+    }
+
+    &:first-child {
+        padding-left: $spacing-size-6;
+        @media screen and (max-width: $breakpoint-pricing-large) {
+            padding-left: $spacing-size-10;
+        }
+    }
+
+    &:not(:last-child) {
+        border-right: 1px solid var(--color-border-secondary);
+    }
+
+    h4 {
+        margin-bottom: $spacing-size-2;
+        color: var(--color-text-brand-primary);
+    }
+}
+
+.advocates {
+    display: flex;
+    border-bottom: 1px solid var(--color-border-secondary);
+
+    @media screen and (max-width: $breakpoint-pricing-medium) {
+        flex-direction: column;
+    }
+
+    #{$selector-darkmode} & {
+        background: color-mix(in srgb, var(--color-fg-primary), var(--color-bg-primary) 98%);
+    }
+}
+
+.quotesOuter {
+    display: flex;
+}
+
+.quote {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    width: 50%;
+    font-size: var(--text-fs-base);
+    line-height: var(--text-lh-2xl);
+
+    padding: $spacing-size-10;
+
+    @media screen and (max-width: $breakpoint-pricing-medium) {
+        width: 100%;
+    }
+
+    &:not(:last-child) {
+        // padding: $spacing-size-6 $spacing-size-8 $spacing-size-6 $spacing-size-6;
+        border-right: 1px solid var(--color-border-secondary);
+
+        @media screen and (max-width: $breakpoint-pricing-medium) {
+            border-bottom: 1px solid var(--color-border-secondary);
+        }
+    }
+
+    &:last-child {
+        // padding: $spacing-size-6 $spacing-size-6 $spacing-size-6 $spacing-size-8;
+    }
+
+    blockquote p {
+        margin-bottom: $spacing-size-6;
+        text-indent: -0.5em;
+
+        &::before {
+            content: '“';
+        }
+
+        &::after {
+            content: '”';
+        }
+    }
+
+    footer {
+        display: flex;
+        align-items: flex-end;
+    }
+
+    footer > div {
+        margin-left: $spacing-size-4;
+    }
+}
