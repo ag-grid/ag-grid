@@ -74,6 +74,9 @@ export class FullRowEditStrategy extends BaseEditStrategy {
         const cells: CellIdPositions[] = [];
 
         cellCtrls.forEach((cellCtrl) => {
+            if (!cellCtrl.isCellEditable()) {
+                return;
+            }
             const position = {
                 rowId: rowCtrl.rowId!,
                 columnId: cellCtrl.column.getColId(),
