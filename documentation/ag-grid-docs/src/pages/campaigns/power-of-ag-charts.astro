@@ -4,8 +4,7 @@ import styles from '../../pages-styles/campaigns.module.scss';
 
 import { TrialLicenceForm } from '@ag-website-shared/components/trial-licence-form/TrialLicenceForm';
 import { AutomatedIntegratedCharts } from '@ag-website-shared/components/automated-examples/AutomatedIntegratedCharts';
-import chartsFeaturesData from './chartsFeaturesMatrix.json';
-import { ComparisonTable } from '@ag-website-shared/components/license-pricing/comparison-table/ComparisonTable';
+import { Icon } from '@ag-website-shared/components/icon/Icon';
 
 import 'ag-grid-community/styles/ag-grid.css';
 import 'ag-grid-community/styles/ag-theme-quartz.css';
@@ -28,8 +27,8 @@ import 'ag-grid-community/styles/ag-theme-quartz.css';
             <h1>Enhance your Integrated Charts with AG Charts Enterprise</h1>
 
             <p>
-                Access advanced features and chart types without any additional development - simply update your licence
-                and import the <code>ag-charts-enterprise</code> package.
+                Access advanced features and chart types without any additional development.<br />Simply update your
+                licence and import the <code>ag-charts-enterprise</code> package.
             </p>
 
             <div style={{ display: 'flex', gap: '1rem', marginTop: '2rem', justifyContent: 'center' }}>
@@ -38,12 +37,13 @@ import 'ag-grid-community/styles/ag-theme-quartz.css';
                 >
                 <a href="#free-trial" class="button-secondary text-xl">Start Free Trial</a>
             </div>
-            <div style={{ marginTop: '2rem', textAlign: 'center' }}>
+
+            <div class={styles.autoICExample}>
                 <AutomatedIntegratedCharts client:load visibilityThreshold={0.8} />
             </div>
         </div>
 
-        <div style={{ display: 'flex', gap: '2rem', marginBottom: '2rem' }}>
+        <div class={styles.campaignBenefitsContainer}>
             <div class={styles.campaignBenefitsList}>
                 <h2>Built for Developers</h2>
                 <ul>
@@ -58,7 +58,7 @@ import 'ag-grid-community/styles/ag-theme-quartz.css';
                     </li>
                     <li>Add charts to your app with the standalone library for non-data grid use cases.</li>
                 </ul>
-                <a href="https://www.ag-grid.com/charts/gallery/" class="button-secondary text-md">View Gallery</a>
+                <a href="https://www.ag-grid.com/charts/gallery/" class="button-tertiary text-md">View Gallery</a>
             </div>
 
             <div class={styles.campaignBenefitsList}>
@@ -79,70 +79,56 @@ import 'ag-grid-community/styles/ag-theme-quartz.css';
                     <li>Export your visualisations to images and share them across your organisation.</li>
                     <li>Take advantage of exclusive bundle pricing for existing AG Grid customers.</li>
                 </ul>
-                <a href="https://www.ag-grid.com/charts/gallery/" class="button-secondary text-md">Contact Sales</a>
+                <a href="https://www.ag-grid.com/charts/gallery/" class="button-tertiary text-md">Contact Sales</a>
             </div>
         </div>
 
-        <div>
-            <h2>Feature Comparison</h2>
-            <div class={styles.licensesOuter}>
-                <div class={styles.license}>
-                    <div class={styles.licenseMeta}></div>
+        <div class={styles.trialLicence}>
+            <div class={styles.trialLicenceCopy}>
+                <h3 class="text-2xl" id="request-trial-licence">
+                    <Icon name="enterprise" svgClasses={styles.enterpriseIcon} />
+                    <span>Enterprise Bundle Trial</span>
+                </h3>
+
+                <p>Fill out the form to receive a trial licence for AG Grid and AG Charts</p>
+
+                <div class={styles.trialLicenceCopyItem}>
+                    <Icon name="alarm" svgClasses={styles.alarmIcon} />
+                    <p>
+                        <b>Two Week Trial</b>
+                        <br />
+                        Trial licences are valid for two weeks from the date of issue, or{' '}
+                        <a href="mailto:info@ag-grid.com">contact&nbsp;us</a> to extend.
+                    </p>
                 </div>
-                <div class={styles.license}>
-                    <div class={styles.licenseMeta}>
-                        <h4>Community Integrated Charts</h4>
-                        <p>(Available with AG Grid Enterprise)</p>
-                    </div>
+
+                <div class={styles.trialLicenceSeparator}></div>
+
+                <div class={styles.trialLicenceCopyItem}>
+                    <Icon name="terminal" svgClasses={styles.terminalIcon} />
+                    <p>
+                        <b>Suppresses Console Warnings</b>
+                        <br />
+                        Removes console errors and watermarks from AG Grid and AG&nbsp;Chart&nbsp;components.
+                    </p>
                 </div>
-                <div class={styles.license}>
-                    <div class={styles.licenseMeta}>
-                        <h4>Enterprise Integrated Charts</h4>
-                        <p>(Available with the Enterprise Bundle)</p>
-                    </div>
+
+                <div class={styles.trialLicenceSeparator}></div>
+
+                <div class={styles.trialLicenceCopyItem}>
+                    <Icon name="support" svgClasses={styles.supportIcon} />
+                    <p>
+                        <b>Access Support</b>
+                        <br />
+                        Access dedicated support from our engineering team via{' '}
+                        <a href="https://ag-grid.zendesk.com/hc/en-us">Zendesk</a>.
+                    </p>
                 </div>
             </div>
-        </div>
 
-        <div class={styles.desktopTableContainer}>
-            {
-                chartsFeaturesData.map((section, i) => {
-                    return (
-                        <div class={styles.tableContainer} key={i}>
-                            <h4 class={styles.categoryTableHeader}>{section.group.name}</h4>
+            <div class={styles.trialLicenceSeparator}></div>
 
-                            <ComparisonTable
-                                client:load
-                                data={section.items}
-                                columns={{
-                                    label: '',
-                                    community: '',
-                                    chartsGrid: '',
-                                }}
-                                cellRenderer={{
-                                    label: 'label',
-                                    community: 'feature',
-                                    enterprise: 'feature',
-                                    chartsGrid: 'feature',
-                                }}
-                            />
-                        </div>
-                    );
-                })
-            }
-        </div>
-
-        <div
-            id="free-trial"
-            style={{
-                textAlign: 'center',
-                backgroundColor: '#f9f9f9',
-                width: '100vw',
-                padding: '4rem',
-            }}
-        >
-            <h2 style={{ marginBottom: '2rem', fontSize: '32px' }}>Start your free trial today</h2>
-            <div style={{ width: '50vw', justifyContent: 'center', margin: '0 auto' }}>
+            <div class={styles.trialLicenceForm}>
                 <TrialLicenceForm />
             </div>
         </div>
@@ -158,16 +144,3 @@ import 'ag-grid-community/styles/ag-theme-quartz.css';
         scrollPosition: 566,
     });
 </script>
-
-<!-- <h2>Watch AG Charts in Action</h2>
-
-        <iframe
-            src="https://www.youtube.com/embed/KocCv954fbo?si=JUQzgwBiWPL8oUcI"
-            title="YouTube video player"
-            frameborder="0"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-            referrerpolicy="strict-origin-when-cross-origin"
-            allowfullscreen
-            class={styles.campaignDummyVideo}
-        >
-        </iframe> -->

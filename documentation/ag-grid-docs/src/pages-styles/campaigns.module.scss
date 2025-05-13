@@ -8,7 +8,6 @@
     text-align: center;
     gap: $spacing-size-8;
     font-size: var(--text-fs-lg);
-    line-height: var(--text-lh-lg);
     max-width: Min(90ch, calc(100vw - $spacing-size-8));
     margin: $spacing-size-24 auto 0;
 }
@@ -47,14 +46,12 @@
     h1 {
         font-size: 72px;
         text-align: center;
-        line-height: 77px;
+        line-height: var(--text-lh-tight);
         margin-bottom: $spacing-size-8;
         font-weight: var(--text-bold);
 
         @media screen and (max-width: $breakpoint-landing-page-medium) {
             font-size: 52px;
-            padding: 0;
-            line-height: 55px;
         }
     }
 
@@ -65,8 +62,11 @@
 
         @media screen and (max-width: $breakpoint-landing-page-medium) {
             margin: 0;
-            padding: 0;
         }
+    }
+
+    code {
+        white-space: nowrap;
     }
 }
 
@@ -78,16 +78,40 @@
     border-radius: 8px;
 }
 
-.campaignBenefitsList {
-    border: 1px solid var(--color-border-secondary);
-    border-radius: 8px;
-    padding: $spacing-size-8;
-    background-color: var(--color-bg-secondary);
+.campaignBenefitsContainer {
+    display: flex;
+    gap: $spacing-size-4;
+}
 
-    h3 {
+.autoICExample {
+    margin-top: $spacing-size-8;
+
+    footer:last-of-type {
+        margin-top: $spacing-size-4;
+        justify-content: center;
+    }
+}
+
+.campaignBenefitsList {
+    border: 1px solid var(--color-util-gray-200);
+    border-radius: 8px;
+    padding: $spacing-size-4;
+    box-shadow: 0 2px 4px #0000001a;
+
+    #{$selector-darkmode} & {
+        border-color: var(--color-util-gray-300);
+        background-color: #192232;
+    }
+
+    h2 {
         font-size: var(--text-fs-2xl);
         line-height: var(--text-lh-2xl);
-        margin-bottom: $spacing-size-5;
+        margin-bottom: $spacing-size-6;
+        color: var(--color-brand-500);
+
+        #{$selector-darkmode} & {
+            color: var(--color-brand-200);
+        }
     }
 
     ul {
@@ -104,79 +128,112 @@
     }
 }
 
-.categoryTableHeader {
-    margin-top: $spacing-size-3;
-    margin-bottom: 0;
-    padding-top: $spacing-size-3;
-    background-color: var(--color-bg-secondary);
-    padding-bottom: $spacing-size-3;
-    padding-left: $spacing-size-3;
-    border-radius: var(--radius-md);
-    border: 1px solid var(--color-border-secondary);
-    color: var(--color-text-secondary);
-    z-index: 1;
-    text-align: start;
+// license-pricing.module.scss content
+// ===================================
+.trialLicence {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-size-4 $spacing-size-10;
+    padding-top: $spacing-size-16;
+    padding-bottom: $spacing-size-16;
+    text-align: left;
 
-    @media screen and (min-width: $breakpoint-pricing-large) {
-        position: sticky;
-        top: 119px;
-    }
-
-    &:first-child {
-        margin-top: 0;
-    }
-
-    @media screen and (min-width: $breakpoint-pricing-large) {
-        position: sticky;
-        top: 119px;
-    }
-
-    #{$selector-darkmode} & {
-        background-color: color-mix(in srgb, var(--color-bg-secondary), var(--color-bg-primary) 55%);
-    }
-}
-
-.tableContainer {
-    width: 65vw;
-    font-size: 18px;
-    text-align: start;
-}
-
-.licensesOuter {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    padding-top: $spacing-size-5;
-    width: 100%;
-}
-
-.license {
-    width: 100%;
-    color: var(--color-fg-primary);
-
-    @media screen and (max-width: $breakpoint-pricing-medium) {
-        border-radius: var(--radius-md);
+    > .trialLicenceSeparator {
+        width: 1px;
+        align-self: stretch;
     }
 
     @media screen and (min-width: $breakpoint-pricing-medium) {
-        max-height: 480px;
-        border-right: 1px solid var(--color-border-secondary);
-    }
-
-    p {
-        margin: 0;
-    }
-
-    .top {
-        display: flex;
-        flex-direction: column;
+        flex-direction: row;
         align-items: center;
-        text-align: center;
-        height: 100%;
-        padding: $spacing-size-4;
-
-        @media screen and (min-width: $breakpoint-pricing-medium) {
-            align-items: flex-start;
-            text-align: left;
-        }
+        padding-top: $spacing-size-24;
+        padding-bottom: $spacing-size-20;
+        border-top: 1px solid var(--color-border-secondary);
     }
 }
+
+.trialLicenceCopy {
+    flex: 1;
+    padding-top: $spacing-size-4;
+    padding-bottom: $spacing-size-8;
+
+    h3 svg {
+        --icon-size: 36px;
+
+        margin-right: $spacing-size-2;
+        transform: translateY(-3px);
+    }
+
+    h4 svg {
+        --icon-size: #{$spacing-size-6};
+
+        margin-right: $spacing-size-2;
+        transform: translateY(-2px);
+    }
+
+    > p {
+        margin-bottom: $spacing-size-10;
+    }
+
+    > .trialLicenceSeparator {
+        height: 1px;
+        margin-top: $spacing-size-6;
+        margin-bottom: $spacing-size-6;
+    }
+}
+
+.trialLicenceCopyItem {
+    --icon-color: var(--color-link);
+
+    display: flex;
+
+    svg {
+        flex-shrink: 0;
+        margin-right: $spacing-size-2;
+        transform: translateY(-$spacing-size-1);
+    }
+
+    b {
+        color: var(--color-fg-primary);
+    }
+}
+
+.enterpriseIcon {
+    --icon-color: var(--color-enterprise-icon);
+}
+
+.trialLicenceSeparator {
+    background-color: var(--color-border-secondary);
+}
+
+.trialLicenceForm {
+    flex: 1;
+}
+
+.licenceKeyDocs {
+    --section-background-color: var(--color-util-brand-50);
+
+    padding-top: $spacing-size-12;
+    padding-bottom: $spacing-size-6;
+
+    #{$selector-darkmode} & {
+        --section-background-color: var(--color-util-gray-100);
+    }
+}
+
+/* mobile breakpoint responsive */
+@media screen and (max-width: $breakpoint-pricing-medium) {
+    .licensesOuter {
+        display: flex;
+        flex-direction: column;
+        gap: $spacing-size-8;
+        padding-top: $spacing-size-3;
+    }
+
+    .desktopTableContainer {
+        display: none;
+    }
+}
+
+// end license-pricing.module.scss content
+// =======================================
