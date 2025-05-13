@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { ChangeDetectorRef, Component } from '@angular/core';
+import { Component, signal } from '@angular/core';
 
 import { AgGridAngular } from 'ag-grid-angular';
 import type {
@@ -58,7 +58,7 @@ ModuleRegistry.registerModules([
                     <button (click)="printState()">Print State</button>
                 </span>
             </div>
-            @if (gridVisible) {
+            @if (gridVisible()) {
                 <ag-grid-angular
                     style="width: 100%; height: 100%;"
                     [columnDefs]="columnDefs"
@@ -104,7 +104,7 @@ export class AppComponent {
         mode: 'multiRow',
     };
     public rowData?: IOlympicData[];
-    public gridVisible = true;
+    public gridVisible = signal(true);
     public initialState?: GridState;
     public gridOptions: GridOptions = {
         onGridPreDestroyed: (params: GridPreDestroyedEvent<IOlympicData>) => {
@@ -112,20 +112,15 @@ export class AppComponent {
         },
     };
 
-    constructor(
-        private http: HttpClient,
-        private cdRef: ChangeDetectorRef
-    ) {}
+    constructor(private http: HttpClient) {}
 
     reloadGrid(): void {
         const state = this.gridApi.getState();
-        this.gridVisible = false;
-        this.cdRef.detectChanges();
+        this.gridVisible.set(false);
         this.initialState = state;
         this.rowData = undefined;
         setTimeout(() => {
-            this.gridVisible = true;
-            this.cdRef.detectChanges();
+            this.gridVisible.set(true);
         });
     }
 

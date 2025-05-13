@@ -59,25 +59,26 @@ export class ServerSideExpansionService extends BaseExpansionService implements 
     }
 
     public expandRows(rowIdsToExpand: string[], rowIdsToCollapse?: string[]): void {
-        for (const rowId of rowIdsToExpand) {
-            const rowNode = this.serverSideRowModel.getRowNode(rowId);
-            if (rowNode) {
-                rowNode.setExpanded(true);
-            } else {
-                this.queuedRowIds.add(rowId);
+        const { serverSideRowModel, queuedRowIds } = this;
+        const processNodes = (rowIds: string[], expanded: boolean) => {
+            for (const rowId of rowIds) {
+                const rowNode = serverSideRowModel.getRowNode(rowId);
+                if (rowNode) {
+                    rowNode.setExpanded(expanded);
+                } else {
+                    if (expanded) {
+                        queuedRowIds.add(rowId);
+                    } else {
+                        queuedRowIds.delete(rowId);
+                    }
+                }
             }
-        }
+        };
+        processNodes(rowIdsToExpand, true);
         if (!rowIdsToCollapse) {
             return;
         }
-        for (const rowId of rowIdsToCollapse) {
-            const rowNode = this.serverSideRowModel.getRowNode(rowId);
-            if (rowNode) {
-                rowNode.setExpanded(false);
-            } else {
-                this.queuedRowIds.delete(rowId);
-            }
-        }
+        processNodes(rowIdsToCollapse, false);
     }
 
     public expandAll(value: boolean): void {
