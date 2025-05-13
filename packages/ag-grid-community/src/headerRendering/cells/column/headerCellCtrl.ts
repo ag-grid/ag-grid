@@ -236,7 +236,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
         const { selectionSvc } = this.beans;
         const selectAll = _getSelectAll(this.gos, false);
 
-        if (!selectionSvc || selectAll == null || !isColumnSelectionCol(this.column)) {
+        if (!selectionSvc) {
             return;
         }
         this.selectAllFeature = compBean.createManagedBean(selectionSvc.createSelectAllFeature(this.column));

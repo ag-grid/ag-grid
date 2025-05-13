@@ -23,7 +23,7 @@ export class SelectAllFeature extends BeanStub {
     private processingEventFromCheckbox = false;
     private headerCellCtrl: HeaderCellCtrl;
 
-    private cbSelectAll: AgCheckbox;
+    private cbSelectAll: AgCheckbox | undefined;
 
     constructor(private readonly column: AgColumn) {
         super();
@@ -31,6 +31,9 @@ export class SelectAllFeature extends BeanStub {
 
     public onSpaceKeyDown(e: KeyboardEvent): void {
         const checkbox = this.cbSelectAll;
+        if (!checkbox) {
+            return;
+        }
 
         if (checkbox.isDisplayed() && !checkbox.getGui().contains(_getActiveDomElement(this.beans))) {
             e.preventDefault();
@@ -38,12 +41,15 @@ export class SelectAllFeature extends BeanStub {
         }
     }
 
-    public getCheckboxGui(): HTMLElement {
-        return this.cbSelectAll.getGui();
+    public getCheckboxGui(): HTMLElement | undefined {
+        return this.cbSelectAll?.getGui();
     }
 
     public setComp(ctrl: HeaderCellCtrl): void {
         this.headerCellCtrl = ctrl;
+        if (!this.isCheckboxSelection()) {
+            return;
+        }
         const cbSelectAll = this.createManagedBean(new AgCheckbox());
         this.cbSelectAll = cbSelectAll;
         cbSelectAll.addCss('ag-header-select-all');
@@ -86,7 +92,7 @@ export class SelectAllFeature extends BeanStub {
     private showOrHideSelectAll(fromColumnMoved: boolean = false): void {
         const cbSelectAllVisible = this.isCheckboxSelection();
         this.cbSelectAllVisible = cbSelectAllVisible;
-        this.cbSelectAll.setDisplayed(cbSelectAllVisible);
+        this.cbSelectAll?.setDisplayed(cbSelectAllVisible);
         if (cbSelectAllVisible) {
             // in case user is trying this feature with the wrong model type
             this.checkRightRowModelType('selectAllCheckbox');
@@ -99,16 +105,15 @@ export class SelectAllFeature extends BeanStub {
     }
 
     private updateStateOfCheckbox(): void {
-        if (!this.cbSelectAllVisible || this.processingEventFromCheckbox) {
+        const cbSelectAll = this.cbSelectAll;
+        if (!cbSelectAll || !this.cbSelectAllVisible || this.processingEventFromCheckbox) {
             return;
         }
 
         this.processingEventFromCheckbox = true;
 
         const selectAllMode = this.getSelectAllMode();
-
         const selectionSvc = this.beans.selectionSvc!;
-        const cbSelectAll = this.cbSelectAll;
 
         const allSelected = selectionSvc.getSelectAllState(selectAllMode);
         cbSelectAll.setValue(allSelected!);
@@ -124,6 +129,10 @@ export class SelectAllFeature extends BeanStub {
     private refreshSelectAllLabel(fromColumnMoved: boolean = false): void {
         const translate = this.getLocaleTextFunc();
         const { headerCellCtrl, cbSelectAll, cbSelectAllVisible } = this;
+        if (!cbSelectAll) {
+            return;
+        }
+
         const checked = cbSelectAll.getValue();
         const ariaStatus = checked ? translate('ariaChecked', 'checked') : translate('ariaUnchecked', 'unchecked');
         const ariaLabel = translate('ariaRowSelectAll', 'Press Space to toggle all rows selection');
@@ -170,7 +179,7 @@ export class SelectAllFeature extends BeanStub {
             return;
         }
 
-        const value = this.cbSelectAll.getValue();
+        const value = this.cbSelectAll?.getValue();
         const selectAll = this.getSelectAllMode();
 
         let source: SelectionEventSourceType = 'uiSelectAll';
