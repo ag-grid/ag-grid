@@ -7,7 +7,8 @@
     "build-generators": "nx run-many -p ag-grid-task-autogen -t build",
     "subrepo": "tsx external/ag-shared/scripts/subrepo",
     "postinstall": "patch-package && yarn run build-generators",
-    "bootstrap": "SHARP_IGNORE_GLOBAL_LIBVIPS=true YARN_REGISTRY=\"http://52.50.158.57:4873\" yarn"
+    "bootstrap": "SHARP_IGNORE_GLOBAL_LIBVIPS=true YARN_REGISTRY=\"http://52.50.158.57:4873\" yarn",
+    "git-clean": "git clean -fdx && git reset --hard HEAD"
   },
   "private": true,
   "engines": {
