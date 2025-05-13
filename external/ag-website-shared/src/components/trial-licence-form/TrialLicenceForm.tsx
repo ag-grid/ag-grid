@@ -9,6 +9,10 @@ import type { ChangeEventHandler, FormEventHandler, FunctionComponent } from 're
 import { MESSAGES } from './Messages';
 import styles from './TrialLicenceForm.module.scss';
 
+interface Props {
+    submitUrl?: string;
+}
+
 type TrialFormState = 'success' | 'error' | 'loading' | 'idle';
 
 const getFormErrorMessage = (message: string) => {
@@ -88,15 +92,17 @@ function useRequiredValidation(initialValue: string = '') {
 }
 
 async function submitTrialLicenceFormData({
+    submitUrl = TRIAL_LICENCE_FORM_URL,
     firstName,
     lastName,
     email,
 }: {
+    submitUrl?: string;
     firstName: string;
     lastName: string;
     email: string;
 }) {
-    const response = await fetch(TRIAL_LICENCE_FORM_URL, {
+    const response = await fetch(submitUrl, {
         method: 'POST',
         body: JSON.stringify({ data: { firstName, lastName, email } }),
         headers: {
@@ -108,7 +114,7 @@ async function submitTrialLicenceFormData({
     return json;
 }
 
-function useTrialForm() {
+function useTrialForm({ submitUrl }: Props) {
     const [formState, setFormState] = useState<TrialFormState>('idle');
     const [formError, setFormError] = useState<string>('');
     const [wasValidated, setWasValidated] = useState<boolean>(false);
@@ -145,7 +151,7 @@ function useTrialForm() {
             const currentPage = window.location.pathname;
 
             try {
-                const response = await submitTrialLicenceFormData({ firstName, lastName, email });
+                const response = await submitTrialLicenceFormData({ submitUrl, firstName, lastName, email });
 
                 if (response.error) {
                     setFormState('error');
@@ -193,7 +199,7 @@ function useTrialForm() {
     };
 }
 
-export const TrialLicenceForm: FunctionComponent = () => {
+export const TrialLicenceForm: FunctionComponent = ({ submitUrl }: Props) => {
     const {
         formState,
         formError,
@@ -207,7 +213,7 @@ export const TrialLicenceForm: FunctionComponent = () => {
         lastNameError,
         handleLastNameChange,
         handleFormSubmit,
-    } = useTrialForm();
+    } = useTrialForm({ submitUrl });
     const hasFormError = Boolean(emailError || firstNameError || lastNameError);
 
     return (
