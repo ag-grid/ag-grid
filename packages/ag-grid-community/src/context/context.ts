@@ -26,7 +26,6 @@ import type { HorizontalResizeService } from '../dragAndDrop/horizontalResizeSer
 import type { RowDragService } from '../dragAndDrop/rowDragService';
 import type { EditService } from '../edit/editService';
 import type { RowEditService } from '../edit/rowEditService';
-import type { EditingValidationService } from '../editing-validation/editingValidationService';
 import type { EditingModelService } from '../editing/editingModelService';
 import type { EditingService } from '../editing/editingService';
 import type { GridOptions } from '../entities/gridOptions';
@@ -301,7 +300,6 @@ export interface CoreBeanCollection {
     editSvc?: EditService;
     editingSvc?: EditingService;
     editingModelSvc?: EditingModelService;
-    editingValidationSvc?: EditingValidationService;
     rowEditSvc?: RowEditService;
     alignedGridsSvc?: AlignedGridsService;
     paginationAutoPageSizeSvc?: PaginationAutoPageSizeService;
@@ -432,7 +430,6 @@ export type BeanName =
     | 'editSvc'
     | 'editingSvc'
     | 'editingModelSvc'
-    | 'editingValidationSvc'
     | 'excelCreator'
     | 'enterpriseMenuFactory'
     | 'environment'
