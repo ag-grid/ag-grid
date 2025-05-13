@@ -9,8 +9,8 @@
     gap: $spacing-size-8;
     font-size: var(--text-fs-lg);
     line-height: var(--text-lh-lg);
-    max-width: Min(60ch, calc(100vw - $spacing-size-16));
-    margin: $spacing-size-24 auto $spacing-size-48;
+    max-width: Min(90ch, calc(100vw - $spacing-size-8));
+    margin: $spacing-size-24 auto 0;
 }
 
 .campaignHero {
@@ -21,7 +21,7 @@
         position: absolute;
         content: '';
         width: calc(100vw - 60px);
-        height: 180%;
+        height: 70%;
         left: 50%;
         transform: translateX(calc(-50vw + 30px));
         z-index: -1;
@@ -79,6 +79,11 @@
 }
 
 .campaignBenefitsList {
+    border: 1px solid var(--color-border-secondary);
+    border-radius: 8px;
+    padding: $spacing-size-8;
+    background-color: var(--color-bg-secondary);
+
     h3 {
         font-size: var(--text-fs-2xl);
         line-height: var(--text-lh-2xl);
@@ -87,7 +92,7 @@
 
     ul {
         text-align: left;
-        width: 60ch;
+        width: 50ch;
 
         @media screen and (max-width: $breakpoint-landing-page-medium) {
             width: auto;
@@ -96,5 +101,82 @@
 
     li {
         margin-bottom: $spacing-size-3;
+    }
+}
+
+.categoryTableHeader {
+    margin-top: $spacing-size-3;
+    margin-bottom: 0;
+    padding-top: $spacing-size-3;
+    background-color: var(--color-bg-secondary);
+    padding-bottom: $spacing-size-3;
+    padding-left: $spacing-size-3;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--color-border-secondary);
+    color: var(--color-text-secondary);
+    z-index: 1;
+    text-align: start;
+
+    @media screen and (min-width: $breakpoint-pricing-large) {
+        position: sticky;
+        top: 119px;
+    }
+
+    &:first-child {
+        margin-top: 0;
+    }
+
+    @media screen and (min-width: $breakpoint-pricing-large) {
+        position: sticky;
+        top: 119px;
+    }
+
+    #{$selector-darkmode} & {
+        background-color: color-mix(in srgb, var(--color-bg-secondary), var(--color-bg-primary) 55%);
+    }
+}
+
+.tableContainer {
+    width: 65vw;
+    font-size: 18px;
+    text-align: start;
+}
+
+.licensesOuter {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    padding-top: $spacing-size-5;
+    width: 100%;
+}
+
+.license {
+    width: 100%;
+    color: var(--color-fg-primary);
+
+    @media screen and (max-width: $breakpoint-pricing-medium) {
+        border-radius: var(--radius-md);
+    }
+
+    @media screen and (min-width: $breakpoint-pricing-medium) {
+        max-height: 480px;
+        border-right: 1px solid var(--color-border-secondary);
+    }
+
+    p {
+        margin: 0;
+    }
+
+    .top {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        height: 100%;
+        padding: $spacing-size-4;
+
+        @media screen and (min-width: $breakpoint-pricing-medium) {
+            align-items: flex-start;
+            text-align: left;
+        }
     }
 }
