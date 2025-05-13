@@ -200,14 +200,15 @@ export class StateService extends BeanStub implements NamedBean {
             updateCachedState('rowGroupExpansion', this.getRowGroupExpansionState());
         };
 
+        const gos = this.gos;
         this.addManagedEventListeners({
             filterChanged: () => updateCachedState('filter', this.getFilterState()),
             rowGroupOpened: () => this.onRowGroupOpenedDebounced(),
             expandOrCollapseAll: updateRowGroupExpansionState,
-            // `groupDefaultExpanded` updates expansion state without an expansion event
+            // `groupDefaultExpanded`/`isGroupOpenByDefault` updates expansion state without an expansion event
             columnRowGroupChanged: updateRowGroupExpansionState,
             rowDataUpdated: () => {
-                if (this.gos.get('groupDefaultExpanded') !== 0) {
+                if (gos.get('groupDefaultExpanded') !== 0 || gos.get('isGroupOpenByDefault')) {
                     // once rows are loaded, they may be expanded, start the timer only once
                     this.updateRowGroupExpansionStateTimer ||= setTimeout(updateRowGroupExpansionState);
                 }
