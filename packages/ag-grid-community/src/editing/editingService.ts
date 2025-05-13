@@ -120,8 +120,6 @@ export class EditingService extends BeanStub implements NamedBean {
             return true;
         }
 
-        console.log('EditingService: startEditing');
-
         this.editStrategy = this.createEditStrategy();
 
         // because of async in React, the cellComp may not be set yet, if no cellComp then we are
@@ -167,8 +165,6 @@ export class EditingService extends BeanStub implements NamedBean {
         if (!this.isEditing()) {
             return false;
         }
-
-        console.log('EditingService: stopEditing');
 
         if (cellCtrl) {
             cellCtrl.onEditorAttachedFuncs = [];
@@ -327,7 +323,6 @@ export class EditingService extends BeanStub implements NamedBean {
         newValue: any,
         eventSource?: string
     ): boolean | null {
-        console.warn('setDataValue', rowNode, column, newValue, eventSource);
         const { rowCtrl, cellCtrl } = _resolveControllers(this.beans, { rowNode, column });
 
         return _syncModelFromEditor(this.beans, rowCtrl, cellCtrl, newValue, eventSource);

@@ -89,7 +89,7 @@ export function _takeValueFromCellEditor(
         return noValueResult;
     }
 
-    const userWantsToCancel = cellEditor.isCancelAfterEnd && cellEditor.isCancelAfterEnd();
+    const userWantsToCancel = cellEditor.isCancelAfterEnd?.();
 
     if (userWantsToCancel) {
         return noValueResult;
@@ -154,7 +154,6 @@ export function _refreshEditorOnColDefChanged(beans: BeanCollection, cellCtrl: C
 }
 
 export function _syncModelsFromEditors(beans: BeanCollection): void {
-    console.warn('Syncing models from editors');
     beans.editingModelSvc?.getPendingCellIds().forEach((cellId) => {
         const { rowCtrl, cellCtrl } = _resolveControllers(beans, cellId)!;
         const { comp } = cellCtrl!;
@@ -183,31 +182,11 @@ export function _syncModelFromEditor(
     return null;
 }
 
-export function _destroyEditors(
-    beans: BeanCollection,
-    cellPositions: CellIdPositions[],
-    cancel: boolean,
-    source: 'ui' | 'api' = 'ui'
-): void {
-    if (cellPositions.length === 0) {
-        return;
-    }
-
-    console.log('Destroying editors', cellPositions, cancel, source);
-
-    cellPositions.forEach((cellPosition) => {
-        _destroyEditor(beans, cellPosition, cancel, source);
-    });
+export function _destroyEditors(beans: BeanCollection, cellPositions: CellIdPositions[]): void {
+    cellPositions.forEach((cellPosition) => _destroyEditor(beans, cellPosition));
 }
 
-export function _destroyEditor(
-    beans: BeanCollection,
-    cellPosition: CellIdPositions,
-    cancel?: boolean,
-    source: 'ui' | 'api' = 'ui'
-): void {
-    console.log('Destroying editor', cellPosition);
-
+export function _destroyEditor(beans: BeanCollection, cellPosition: CellIdPositions): void {
     const { cellCtrl } = _resolveControllers(beans, cellPosition);
     const { comp } = cellCtrl!;
 
@@ -215,15 +194,4 @@ export function _destroyEditor(
     comp.refreshEditStyles(false, false);
     cellCtrl?.updateAndFormatValue(false);
     cellCtrl?.refreshCell({ forceRefresh: true, suppressFlash: true, editing: false });
-
-    // if (!preserveBatchEdits) {
-    //     comp.toggleCss('ag-cell-batch-edit', false);
-
-    //     rowCtrl?.forEachGui(undefined, (gui) => {
-    //         gui.rowComp.toggleCss('ag-row-editing', false);
-    //         gui.rowComp.toggleCss('ag-row-batch-edit', false);
-    //     });
-    // } else {
-    //     comp.toggleCss('ag-cell-batch-edit', true);
-    // }
 }

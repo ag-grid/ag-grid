@@ -32,8 +32,7 @@ export abstract class BaseEditStrategy extends BeanStub {
 
     public abstract updateStyles(rowCtrl?: RowCtrl | null, cellCtrl?: CellCtrl | null, newState?: boolean): void;
 
-    public stopEditing(rowCtrl?: RowCtrl | null, cellCtrl?: CellCtrl | null, source?: 'api' | 'ui'): boolean {
-        console.log('BaseEditStrategy: stopEditing', rowCtrl, cellCtrl);
+    public stopEditing(_rowCtrl?: RowCtrl | null, _cellCtrl?: CellCtrl | null, _source?: 'api' | 'ui'): boolean {
         const editingCells = this.editModel.getPendingCellIds();
         if (editingCells.length === 0) {
             return false;
@@ -43,7 +42,7 @@ export abstract class BaseEditStrategy extends BeanStub {
             const cellCtrl = _resolveCellController(this.beans, cellPosition);
             if (cellCtrl) {
                 this.editModel.stopEditing(cellCtrl.rowCtrl.rowId, cellCtrl.column.colId);
-                _destroyEditor(this.beans, cellPosition, undefined, source);
+                _destroyEditor(this.beans, cellPosition);
             }
         });
 
@@ -61,10 +60,10 @@ export abstract class BaseEditStrategy extends BeanStub {
     public cleanupEditors() {
         _syncModelsFromEditors(this.beans);
         // clean up any dangling editors
-        _destroyEditors(this.beans, this.editModel.getPendingCellIds(), true, 'ui');
+        _destroyEditors(this.beans, this.editModel.getPendingCellIds());
     }
 
-    public stopAllEditing(source: 'ui' | 'api' = 'ui'): void {
+    public stopAllEditing(): void {
         _syncModelsFromEditors(this.beans);
         const editingCells = this.editModel.getPendingCellIds();
         if (editingCells.length === 0) {
@@ -75,7 +74,7 @@ export abstract class BaseEditStrategy extends BeanStub {
 
             if (cellCtrl) {
                 this.editModel.stopEditing(cellCtrl.rowCtrl!.rowId!, cellCtrl?.column.colId);
-                _destroyEditor(this.beans, cellPosition, undefined, source);
+                _destroyEditor(this.beans, cellPosition);
             }
         });
     }
@@ -109,7 +108,6 @@ export abstract class BaseEditStrategy extends BeanStub {
         cellStartedEdit?: boolean,
         event?: Event | null
     ) {
-        console.log('BaseEditStrategy: startEditing', rowCtrl, cellCtrl);
         const compDetails = _setupEditors(this.beans, editingCells, rowCtrl, cellCtrl, key, cellStartedEdit);
         const suppressPreventDefault = !(compDetails?.params as DefaultProvidedCellEditorParams)
             ?.suppressPreventDefault;
@@ -152,8 +150,6 @@ export abstract class BaseEditStrategy extends BeanStub {
         const colDef = cellCtrl?.column?.colDef;
         const clickCount = this.deriveClickCount(colDef);
         const type = event?.type;
-
-        console.warn('shouldStartEditing', { type, detail: event?.detail, clickCount, source, cellStartedEdit });
 
         if (type === 'click' && event?.detail === 1 && clickCount === 1) {
             return true;

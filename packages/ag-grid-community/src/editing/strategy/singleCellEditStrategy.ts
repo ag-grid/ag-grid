@@ -33,7 +33,7 @@ export class SingleCellEditStrategy extends BaseEditStrategy {
         return this.rowId !== rowCtrl?.rowId || this.colId !== cellCtrl?.column.getColId();
     }
 
-    public updateStyles(rowCtrl?: RowCtrl | null, cellCtrl?: CellCtrl | null, newState?: boolean): void {
+    public updateStyles(_rowCtrl?: RowCtrl | null, cellCtrl?: CellCtrl | null, newState?: boolean): void {
         cellCtrl?.comp.toggleCss('ag-cell-batch-edit', (newState && this.gos.get('batchEdit')) ?? false);
     }
 
@@ -44,8 +44,6 @@ export class SingleCellEditStrategy extends BaseEditStrategy {
         event?: KeyboardEvent | MouseEvent | null,
         _source: 'api' | 'ui' = 'ui'
     ): boolean {
-        console.log('SingleCellEditStrategy: startEditing', rowCtrl, cellCtrl);
-
         const rowId = rowCtrl.rowId!;
         const colId = cellCtrl?.column.getColId() ?? this.beans.visibleCols.getFirstColumn()!.getColId();
 
@@ -80,8 +78,6 @@ export class SingleCellEditStrategy extends BaseEditStrategy {
         cellCtrl?: CellCtrl | null,
         source: 'api' | 'ui' = 'ui'
     ): boolean {
-        console.log('SingleCellEditStrategy: stopEditing', rowCtrl, cellCtrl);
-
         this.editModel.getPendingCellIds().forEach((cellId) => {
             const cellCtrl = _resolveControllers(this.beans, cellId).cellCtrl;
             if (cellCtrl) {

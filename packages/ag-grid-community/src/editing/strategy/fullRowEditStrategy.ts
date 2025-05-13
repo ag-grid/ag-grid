@@ -10,7 +10,7 @@ export class FullRowEditStrategy extends BaseEditStrategy {
     override beanName = 'fullRow' as BeanName | undefined;
     private rowId?: string | null;
 
-    public updateStyles(rowCtrl?: RowCtrl | null, cellCtrl?: CellCtrl | null, newState?: boolean): void {
+    public updateStyles(rowCtrl?: RowCtrl | null, _cellCtrl?: CellCtrl | null, newState?: boolean): void {
         if (!rowCtrl) {
             return;
         }
@@ -64,8 +64,6 @@ export class FullRowEditStrategy extends BaseEditStrategy {
         event?: KeyboardEvent | MouseEvent | null | undefined,
         _source: 'api' | 'ui' = 'ui'
     ): boolean {
-        console.log('FullRowEditStrategy: startEditing', rowCtrl, cellCtrl);
-
         if (this.rowId !== rowCtrl.rowId) {
             super.cleanupEditors();
         }
@@ -95,8 +93,6 @@ export class FullRowEditStrategy extends BaseEditStrategy {
         cellCtrl?: CellCtrl | null,
         source: 'api' | 'ui' = 'ui'
     ): boolean {
-        console.log('FullRowEditStrategy: stopEditing', rowCtrl, cellCtrl);
-
         for (const rowId of this.editModel.getPendingUpdates().keys()) {
             const rowController = _resolveRowController(this.beans, { rowId });
             if (rowController) {
