@@ -62,18 +62,6 @@ const gridOptions: GridOptions<IRow> = {
         cellDataType: false,
     },
     rowData: rowData,
-    onRowEditingStarted: (event: RowEditingStartedEvent<IRow>) => {
-        console.log('never called - not doing row editing');
-    },
-    onRowEditingStopped: (event: RowEditingStoppedEvent<IRow>) => {
-        console.log('never called - not doing row editing');
-    },
-    onCellEditingStarted: (event: CellEditingStartedEvent<IRow>) => {
-        console.log('cellEditingStarted');
-    },
-    onCellEditingStopped: (event: CellEditingStoppedEvent<IRow>) => {
-        console.log('cellEditingStopped');
-    },
 };
 
 // setup the grid after the page has finished loading

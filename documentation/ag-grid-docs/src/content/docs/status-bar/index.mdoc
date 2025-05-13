@@ -116,6 +116,8 @@ const gridOptions = {
 
 Applications that are using [Server-side Data](./row-models/) or which require bespoke Status Bar Panels can provide their own custom Status Bar panels.
 
+Clicking on the button in the status bar will log the number of selected rows to the developer console.
+
 {% gridExampleRunner title="Custom Panels" name="custom-component" /%}
 
 {% partial file="./_component-interface-javascript.mdoc" /%}
@@ -150,5 +152,7 @@ Custom Panels can listen to grid events to react to grid changes. An easy way to
 Use the grid API `getStatusPanel(key)` to access a panel instance. This can be used to expose Custom Panels to the application.
 
 {% apiDocumentation source="grid-api/api.json" section="accessories" names=["getStatusPanel"] /%}
+
+Clicking on the button in the status bar will log the number of selected rows to the developer console.
 
 {% gridExampleRunner title="Get Status Bar Panel Instance" name="component-instance" /%}

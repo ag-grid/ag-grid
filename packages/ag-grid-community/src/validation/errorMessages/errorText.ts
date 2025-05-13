@@ -668,10 +668,8 @@ export const AG_GRID_ERRORS = {
     274: ({ prop }: { prop: string }) => {
         let msg = `Since v33, ${prop} has been deprecated.`;
         switch (prop) {
-            case 'componentWrappingElement':
             case 'maxComponentCreationTimeMs':
-                msg +=
-                    ' It is expected that this property is no longer required and so will be removed in a future version. If you require this property please contact support.';
+                msg += ' This property is no longer required and so will be removed in a future version.';
                 break;
             case 'setGridApi':
                 msg += ` This method is not called by AG Grid. To access the GridApi see: https://ag-grid.com/react-data-grid/grid-interface/#grid-api `;
@@ -683,6 +681,7 @@ export const AG_GRID_ERRORS = {
         return msg;
     },
     275: missingRowModelTypeError,
+    276: () => 'Row Numbers Row Resizer cannot be used when Grid Columns have `autoHeight` enabled.',
 };
 
 export type ErrorMap = typeof AG_GRID_ERRORS;

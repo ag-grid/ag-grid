@@ -32,14 +32,18 @@ There are no deprecated APIs removed in AG Grid version {% migrationVersion() %}
 
 ## Deprecations
 
-### AgGridReactProps interface:
+{% if isFramework("react") %}
+### AgGridReactProps interface
 
-- `setGridApi` - deprecated without replacement as it is not used anymore.
+- `setGridApi` - deprecated without replacement as no longer used.
 
-- `children` - deprecated without replacement as it is not used anymore.
+- `children` - deprecated without replacement as no longer used.
 
-- `componentWrappingElement` - deprecated without replacement as it is not used anymore.
+- `maxComponentCreationTimeMs` - deprecated without replacement as no longer used.
+{% /if %}
 
-- `maxComponentCreationTimeMs` - deprecated without replacement as it is not used anymore.
+{% if isFramework("javascript", "angular", "vue") %}
+There are no deprecations in AG Grid version {% migrationVersion() %}.
+{% /if %}
 
 {% changelogSection version=$migrationVersion /%}

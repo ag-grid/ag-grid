@@ -120,7 +120,7 @@ A `quickFilterParser` is defined to allow exact searches using quotes, e.g. `"go
 
 The example also demonstrates having the Quick Filter cache turned on. The grid works very fast even when the cache is turned off, so you probably don't need it for small data sets. For large data sets (e.g. over 10,000 rows), turning the cache on will improve Quick Filter speed. Tweaking the `cacheQuickFilter` option in the example allows both modes to be experimented with:
 
-* **Cache Quick Filter (example default):** The cache is used. Value getters are executed the first time the Quick Filter is run. Hitting 'Print Quick Filter Cache Texts' will return back the Quick Filter text for each row which will initially be `undefined` and then return the Quick Filter text after the Quick Filter is executed for the first time.
+* **Cache Quick Filter (example default):** The cache is used. Value getters are executed the first time the Quick Filter is run. Hitting 'Print Quick Filter Cache Texts' will return back the Quick Filter text for each row which will initially be `undefined` and then return the Quick Filter text after the Quick Filter is executed for the first time. This is printed to the developer console.
 * **Normal Quick Filter:** The cache is not used. Value getters are executed on every node each time the filter is executed. Hitting 'Print Quick Filter Cache Texts' will always return `undefined` for every row because the cache is not used.
 
 {% gridExampleRunner title="Quick Filter Configuration" name="quick-filter-configuration" /%}

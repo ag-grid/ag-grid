@@ -206,6 +206,7 @@ export const AG_GRID_LOCALE_GR = {
     pageSizeSelectorLabel: 'Μέγεθος Σελίδας:',
     footerTotal: 'Σύνολο',
     statusBarLastRowUnknown: '?',
+    scrollColumnIntoView: 'Μετακίνηση ${variable} σε προβολή',
 
     // Pivoting
     pivotColumnGroupTotals: 'Σύνολο',

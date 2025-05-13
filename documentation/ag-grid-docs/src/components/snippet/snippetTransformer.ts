@@ -209,7 +209,7 @@ class ReactTransformer extends SnippetTransformer {
         }
 
         if (isUseCallbackProp(propName) && !isJsLiteralValue(value)) {
-            return `const ${propName} = useCallback(${value}, []);`;
+            return `const ${propName} = useCallback(${decreaseIndent(value)}, []);`;
         }
 
         return `const ${getName(property)} = ${decreaseIndent(value)};`;
@@ -331,7 +331,15 @@ const isUseMemoProp = (propName) =>
         'detailCellRendererParams',
     ].includes(propName);
 
-const isUseCallbackProp = (propName) => ['getDataPath', 'getRowId', 'getRowClass', 'getRowStyle'].includes(propName);
+const isUseCallbackProp = (propName) =>
+    [
+        'getDataPath',
+        'getRowId',
+        'getRowClass',
+        'getRowStyle',
+        'processPivotResultColDef',
+        'processPivotResultColGroupDef',
+    ].includes(propName);
 
 // removes a tab spacing from the beginning of each line after first
 const decreaseIndent = (codeBlock, times = 1) => {

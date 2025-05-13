@@ -57,12 +57,8 @@ import GridComp from './gridComp';
 import { RenderStatusService } from './renderStatusService';
 import { CssClasses, isReact19, runWithoutFlushSync } from './utils';
 
-const deprecatedProps: Pick<
-    InternalAgGridReactProps,
-    'setGridApi' | 'children' | 'componentWrappingElement' | 'maxComponentCreationTimeMs'
-> = {
+const deprecatedProps: Pick<InternalAgGridReactProps, 'setGridApi' | 'children' | 'maxComponentCreationTimeMs'> = {
     setGridApi: undefined,
-    componentWrappingElement: undefined,
     maxComponentCreationTimeMs: undefined,
     children: undefined,
 };
@@ -75,6 +71,7 @@ const reactPropsNotGridOptions: ReactCompProps = {
     containerStyle: undefined,
     className: undefined,
     passGridApi: undefined,
+    componentWrappingElement: undefined,
     ...deprecatedProps,
 };
 const excludeReactCompProps = new Set(Object.keys(reactPropsNotGridOptions));

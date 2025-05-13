@@ -1,5 +1,11 @@
 import type { ColDef, GridApi, GridOptions } from 'ag-grid-community';
-import { ClientSideRowModelModule, ModuleRegistry, ValidationModule, createGrid } from 'ag-grid-community';
+import {
+    ClientSideRowModelModule,
+    CsvExportModule,
+    ModuleRegistry,
+    ValidationModule,
+    createGrid,
+} from 'ag-grid-community';
 import { CellSelectionModule, ContextMenuModule, ExcelExportModule, RowNumbersModule } from 'ag-grid-enterprise';
 
 ModuleRegistry.registerModules([
@@ -7,6 +13,7 @@ ModuleRegistry.registerModules([
     RowNumbersModule,
     CellSelectionModule,
     ExcelExportModule,
+    CsvExportModule,
     ContextMenuModule,
     ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
