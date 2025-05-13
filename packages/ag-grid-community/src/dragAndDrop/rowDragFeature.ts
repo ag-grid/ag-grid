@@ -292,7 +292,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
             }
         }
 
-        let newParent = canSetParent ? this.determineNewParent(target, yDelta, targetInRows, source) : null;
+        let newParent = canSetParent ? this.determineNewParent(target, yDelta, targetInRows, rows) : null;
         if (newParent) {
             if (newParent === target) {
                 above = false; // When moving inside the target, we want to insert below it
@@ -313,7 +313,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
         target: RowNode | null,
         yDelta: number,
         targetInRows: boolean,
-        source: IRowNode
+        rows: IRowNode[]
     ): RowNode | null {
         const clientSideRowModel = this.clientSideRowModel;
         const targetRowIndex = target?.rowIndex;
@@ -336,8 +336,9 @@ export class RowDragFeature extends BeanStub implements DropTarget {
                 const children = target.childrenAfterAggFilter;
                 if (children) {
                     let hasMoreChildren = false;
+                    const rowsSet = new Set(rows);
                     for (const child of children) {
-                        if (child !== source && child.rowIndex !== null) {
+                        if (!rowsSet.has(child) && child.rowIndex !== null) {
                             hasMoreChildren = true;
                             break;
                         }
