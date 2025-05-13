@@ -72,7 +72,7 @@ export class ClientSidePathTreeNodeManager<TData>
         if (rowNodesOrderMaybeChanged && rows) {
             for (let rowIdx = 0, rowsLen = rows.length; rowIdx < rowsLen; ++rowIdx) {
                 const node = rows[rowIdx].treeNode as TreeNode | null;
-                if (node && node.sourceIdx !== rowIdx) {
+                if (node && node.sourceRowIndex !== rowIdx) {
                     node.invalidateOrder(); // Order might have changed
                 }
             }

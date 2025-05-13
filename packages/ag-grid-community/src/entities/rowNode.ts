@@ -27,7 +27,7 @@ export interface ITreeNode {
     readonly key: string;
 
     /** Updated during commit to be the same as row.sourceRowIndex */
-    readonly sourceIdx: number;
+    readonly sourceRowIndex: number;
 
     invalidate(): void;
 }
@@ -204,8 +204,13 @@ export class RowNode<TData = any>
      */
     public childrenMapped: { [key: string]: any } | null = {};
 
-    /** The TreeNode associated to this row. Used only with tree data. */
-    public readonly treeNode: ITreeNode | null = null;
+    /**
+     * Used only by tree data internally.
+     * - Associated TreeNode if treeData with path
+     * - Associated TreeNode if treeData with children
+     * - Parent RowNode if treeData with parentId
+     */
+    public readonly treeNode: ITreeNode | RowNode<TData> | null = null;
 
     /** The flags associated to this node. Used only with tree data. */
     public readonly treeNodeFlags: number = 0;

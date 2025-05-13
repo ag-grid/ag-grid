@@ -1,9 +1,10 @@
 import { _EmptyArray } from 'ag-grid-community';
-import type { ITreeNode, RowNode } from 'ag-grid-community';
+import type { ITreeNode } from 'ag-grid-community';
 
 import type { TreeRow } from './treeRow';
 
-const treeNodePositionComparer = (a: RowNode, b: RowNode): number => a.treeNode!.sourceIdx - b.treeNode!.sourceIdx;
+const treeNodePositionComparer = (a: TreeRow, b: TreeRow): number =>
+    a.treeNode!.sourceRowIndex - b.treeNode!.sourceRowIndex;
 
 /** An empty iterator, to avoid null checking when we iterate the children map */
 const EMPTY_CHILDREN = (_EmptyArray as TreeNode[]).values();
@@ -74,7 +75,7 @@ export class TreeNode implements ITreeNode {
     public duplicateRowsWarned?: boolean;
 
     /** The ordering this node had in the previous commit. */
-    public sourceIdx: number = -1;
+    public sourceRowIndex: number = -1;
 
     public constructor(
         /** The parent node of this node. Is null if destroyed or if is the root. */
@@ -303,7 +304,7 @@ export class TreeNode implements ITreeNode {
             return row.sourceRowIndex;
         }
         // This is a filler node, return the rowPosition of the first child
-        return this.childrenAfterGroup[0]?.treeNode?.sourceIdx ?? this.sourceIdx;
+        return this.childrenAfterGroup[0]?.treeNode?.sourceRowIndex ?? this.sourceRowIndex;
     }
 
     /**
@@ -351,7 +352,7 @@ export class TreeNode implements ITreeNode {
                 needSort = true;
             }
             prevPosition = nextPosition;
-            child.sourceIdx = nextPosition;
+            child.sourceRowIndex = nextPosition;
             const row = child.row;
             if (childrenAfterGroup[index] !== row) {
                 childrenAfterGroup[index] = row!;

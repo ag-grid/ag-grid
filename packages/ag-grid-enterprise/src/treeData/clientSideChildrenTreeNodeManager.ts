@@ -269,7 +269,7 @@ export class ClientSideChildrenTreeNodeManager<TData>
                 for (let i = 0, len = allLeafChildren.length; i < len; ++i) {
                     const row = allLeafChildren[i];
                     row.groupData = null;
-                    row.treeNode?.invalidate();
+                    (row.treeNode as TreeNode | null)?.invalidate();
                 }
             }
             treeRoot.childrenChanged = true;

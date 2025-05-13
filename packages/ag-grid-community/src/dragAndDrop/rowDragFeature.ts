@@ -1,7 +1,7 @@
 import { AutoScrollService } from '../autoScrollService';
 import { BeanStub } from '../context/beanStub';
 import { _getCellByPosition } from '../entities/positionUtils';
-import type { RowNode } from '../entities/rowNode';
+import type { ITreeNode, RowNode } from '../entities/rowNode';
 import type {
     RowDragCancelEvent,
     RowDragEndEvent,
@@ -36,6 +36,7 @@ export interface RowDropZoneEvents {
 }
 
 interface WritableRowNode extends RowNode {
+    treeNode: ITreeNode | RowNode | null;
     sourceRowIndex: number;
 }
 
@@ -260,11 +261,13 @@ export class RowDragFeature extends BeanStub implements DropTarget {
 
         const sameGrid = this.isFromThisGrid(draggingEvent);
 
-        // TreeData support for managed drag and drop
         const canSetParent =
-            !!beans.groupStage?.setParent &&
             // We don't yet support moving tree rows from a different grid in a structured way
-            sameGrid;
+            sameGrid &&
+            // TreeData support for managed drag and drop
+            this.gos.get('treeData') &&
+            this.gos.get('treeDataParentIdField') &&
+            !this.gos.get('treeDataChildrenField');
 
         let targetInRows = false;
 
@@ -580,14 +583,13 @@ export class RowDragFeature extends BeanStub implements DropTarget {
         const rowsToMoveSet = this.getValidRowsToMove(rows);
         let changed = false;
 
-        const setParent = this.beans.groupStage?.setParent;
-        if (newParent && setParent) {
+        if (newParent) {
             for (const row of rowsToMoveSet) {
                 if (row.parent !== newParent) {
                     if (wouldFormCycle(row, newParent)) {
-                        rowsToMoveSet.delete(row);
+                        rowsToMoveSet.delete(row); // Invalid move.
                     } else {
-                        setParent(row, newParent);
+                        row.treeNode = newParent;
                         changed = true;
                     }
                 }
