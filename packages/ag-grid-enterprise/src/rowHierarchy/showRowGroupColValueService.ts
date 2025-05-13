@@ -164,9 +164,9 @@ export class ShowRowGroupColValueService extends BeanStub implements NamedBean, 
             return node.parent ?? undefined;
         }
 
-        let pointer: IRowNode | null = node;
+        let pointer: RowNode | null = node as RowNode;
         while (pointer && pointer.rowGroupColumn?.getId() != showRowGroup) {
-            const isFirstChild = pointer === pointer.parent?.childrenAfterSort?.[0];
+            const isFirstChild = pointer === pointer.parent?.getFirstChild();
             if (!isShowOpenedGroupValue && !isFirstChild) {
                 // if not first child and not showOpenedGroup then groupHideOpenParents doesn't
                 // display the parent value

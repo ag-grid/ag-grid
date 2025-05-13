@@ -741,4 +741,9 @@ export class LazyStore extends BeanStub implements IServerSideStore {
     public getCache() {
         return this.cache;
     }
+
+    public getFirstNode() {
+        const firstNode = this.cache.getNodes().getBy('index', 0);
+        return firstNode?.node ?? null;
+    }
 }

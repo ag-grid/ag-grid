@@ -1,7 +1,12 @@
 import type { Bean } from '../context/bean';
+import type { IRowNode } from './iRowNode';
 
 export interface IServerSideStore extends Bean {
     getStoreBounds(): { topPx: number; heightPx: number };
+    /**
+     * Returns the first child of the group (index 0), if the node is not loaded, returns null.
+     */
+    getFirstNode(): IRowNode | null;
 }
 
 export interface StoreRefreshAfterParams {
