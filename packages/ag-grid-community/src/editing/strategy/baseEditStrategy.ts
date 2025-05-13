@@ -178,6 +178,8 @@ export abstract class BaseEditStrategy extends BeanStub {
         if (batchEdit && source === 'api') {
             // we always defer to the API
             return true;
+        } else if (source === 'api') {
+            return true;
         }
 
         if (event instanceof KeyboardEvent && !batchEdit) {
@@ -192,16 +194,20 @@ export abstract class BaseEditStrategy extends BeanStub {
         _cellCtrl?: CellCtrl | null,
         _key?: string | null | undefined,
         event?: KeyboardEvent | MouseEvent | null | undefined,
-        _source: 'api' | 'ui' = 'ui'
+        source: 'api' | 'ui' = 'ui'
     ): boolean | null {
         const batchEdit = this.gos.get('batchEdit');
-        if (batchEdit) {
+        if (event instanceof KeyboardEvent && !batchEdit) {
+            return event.key === KeyCode.ESCAPE;
+        }
+
+        if (batchEdit && source === 'api') {
             // we always defer to the API
             return true;
         }
 
-        if (event instanceof KeyboardEvent && !batchEdit) {
-            return event.key === KeyCode.ESCAPE;
+        if (source === 'api') {
+            return true;
         }
 
         return false;
