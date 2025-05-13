@@ -200,7 +200,6 @@ export class TreeParentIdStrategy<TData = any> extends BeanStub implements IRowG
     private updateParents = ({ rowNode }: StageExecuteParams<TData>, fullReload: boolean): void => {
         const rootNode = rowNode as TreeStrategyRow<TData>;
         const rootAllLeafChildren = rootNode.allLeafChildren!;
-        const rootAllLeafChildrenLen = rootAllLeafChildren.length;
         const rowModel = this.beans.rowModel;
 
         let parentIdGetter = this.parentIdGetter;
@@ -209,28 +208,21 @@ export class TreeParentIdStrategy<TData = any> extends BeanStub implements IRowG
             this.parentIdGetter = parentIdGetter = makeFieldPathGetter(parentIdField);
         }
 
-        for (let i = 0; i < rootAllLeafChildrenLen; ++i) {
+        for (let i = 0, len = rootAllLeafChildren.length; i < len; ++i) {
             const row = rootAllLeafChildren[i];
             const updated = row.treeNodeFlags & FLAG_CHANGED;
-            let newParent: TreeStrategyRow<TData> | undefined;
-            if (updated) {
-                row.treeNodeFlags |= FLAG_CHANGED;
-            }
             if (updated || fullReload) {
+                let newParent: TreeStrategyRow<TData> | null | undefined;
                 const parentId = parentIdGetter(row.data);
-                if (parentId === null || parentId === undefined) {
-                    newParent = rootNode;
-                } else {
+                if (parentId !== null && parentId !== undefined) {
                     newParent = rowModel.getRowNode(parentId) as TreeStrategyRow<TData>;
                     if (!newParent) {
                         _warn(271, { id: row.id!, parentId });
-                        newParent = rootNode;
                     }
                 }
-            }
-
-            if (newParent !== undefined) {
-                row.treeNode = newParent;
+                row.treeNode = newParent ?? rootNode;
+            } else {
+                row.treeNode ??= rootNode;
             }
         }
     };
