@@ -175,7 +175,7 @@ export class ValueService extends BeanStub implements NamedBean {
         if (editingSvc && source === 'ui') {
             const rowCtrl = rowRenderer.getRowCtrls([rowNode])?.[0];
             const cellCtrl = rowRenderer.getCellCtrls([rowNode], [column])?.[0];
-            if (editingSvc?.isEditing(rowCtrl, cellCtrl)) {
+            if (rowCtrl && editingSvc?.isEditing(rowCtrl, cellCtrl)) {
                 const newValue = editingSvc?.getCellDataValue(rowCtrl!.rowId!, colId);
                 if (newValue !== undefined) {
                     return newValue;
