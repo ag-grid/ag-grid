@@ -442,6 +442,8 @@ export class AdvancedFilterBuilderItemComp extends TabGuardComp<AdvancedFilterBu
                 return 'number';
             case 'date':
             case 'dateString':
+            case "dateTime":
+            case "dateTimeString":
                 return 'date';
         }
     }

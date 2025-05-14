@@ -522,6 +522,30 @@ export class DataTypeService extends BeanStub implements NamedBean {
     private getDefaultDataTypes(): BaseCellDataTypeDefMap {
         const defaultDateFormatMatcher = (value: string) => !!value.match('^\\d{4}-\\d{2}-\\d{2}$');
         const translate = this.getLocaleTextFunc();
+        const dateOperationsProps = {
+            valueParser: (params: ValueParserLiteParams<any, Date>) =>
+                _parseDateTimeFromString(params.newValue == null ? null : String(params.newValue)),
+            valueFormatter: (params: ValueFormatterLiteParams<any, Date>) => {
+                if (params.value == null) {
+                    return '';
+                }
+                if (!(params.value instanceof Date) || isNaN(params.value.getTime())) {
+                    return translate('invalidDate', 'Invalid Date');
+                }
+                return _serialiseDate(params.value, false) ?? '';
+            },
+            dataTypeMatcher: (value: any) => value instanceof Date,
+        };
+        const dateStringOperationsProps = {
+            dateParser: (value: string | undefined) => _parseDateTimeFromString(value) ?? undefined,
+            dateFormatter: (value: Date | undefined) => _serialiseDate(value ?? null, false) ?? undefined,
+            valueParser: (params: ValueParserLiteParams<any, string>) =>
+                defaultDateFormatMatcher(String(params.newValue)) ? params.newValue : null,
+            valueFormatter: (params: ValueFormatterLiteParams<any, string>) =>
+                defaultDateFormatMatcher(String(params.value)) ? params.value! : '',
+            dataTypeMatcher: (value: any) => typeof value === 'string' && defaultDateFormatMatcher(value),
+        };
+
         return {
             number: {
                 baseDataType: 'number',
@@ -560,28 +584,11 @@ export class DataTypeService extends BeanStub implements NamedBean {
             },
             date: {
                 baseDataType: 'date',
-                valueParser: (params: ValueParserLiteParams<any, Date>) =>
-                    _parseDateTimeFromString(params.newValue == null ? null : String(params.newValue)),
-                valueFormatter: (params: ValueFormatterLiteParams<any, Date>) => {
-                    if (params.value == null) {
-                        return '';
-                    }
-                    if (!(params.value instanceof Date) || isNaN(params.value.getTime())) {
-                        return translate('invalidDate', 'Invalid Date');
-                    }
-                    return _serialiseDate(params.value, false) ?? '';
-                },
-                dataTypeMatcher: (value: any) => value instanceof Date,
+                ...dateOperationsProps,
             },
             dateString: {
                 baseDataType: 'dateString',
-                dateParser: (value: string | undefined) => _parseDateTimeFromString(value) ?? undefined,
-                dateFormatter: (value: Date | undefined) => _serialiseDate(value ?? null, false) ?? undefined,
-                valueParser: (params: ValueParserLiteParams<any, string>) =>
-                    defaultDateFormatMatcher(String(params.newValue)) ? params.newValue : null,
-                valueFormatter: (params: ValueFormatterLiteParams<any, string>) =>
-                    defaultDateFormatMatcher(String(params.value)) ? params.value! : '',
-                dataTypeMatcher: (value: any) => typeof value === 'string' && defaultDateFormatMatcher(value),
+                ...dateStringOperationsProps,
             },
             object: {
                 baseDataType: 'object',
@@ -590,9 +597,11 @@ export class DataTypeService extends BeanStub implements NamedBean {
             },
             dateTime: {
                 baseDataType: 'dateTime',
+                ...dateOperationsProps,
             },
             dateTimeString: {
                 baseDataType: 'dateTimeString',
+                ...dateStringOperationsProps,
             },
         };
     }
