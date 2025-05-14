@@ -34,16 +34,9 @@ export abstract class BaseEditStrategy extends BeanStub {
 
     public stopEditing(_rowCtrl?: RowCtrl | null, _cellCtrl?: CellCtrl | null, _source?: 'api' | 'ui'): boolean {
         const editingCells = this.editModel.getPendingCellIds();
-        if (editingCells.length === 0) {
-            return false;
-        }
-
         editingCells.forEach((cellPosition) => {
-            const cellCtrl = _resolveCellController(this.beans, cellPosition);
-            if (cellCtrl) {
-                this.editModel.stopEditing(cellCtrl.rowCtrl.rowId, cellCtrl.column.colId);
-                _destroyEditor(this.beans, cellPosition);
-            }
+            this.editModel.stopEditing(cellPosition.rowNode, cellPosition.column);
+            _destroyEditor(this.beans, cellPosition);
         });
 
         return true;
@@ -65,18 +58,7 @@ export abstract class BaseEditStrategy extends BeanStub {
 
     public stopAllEditing(): void {
         _syncModelsFromEditors(this.beans);
-        const editingCells = this.editModel.getPendingCellIds();
-        if (editingCells.length === 0) {
-            return;
-        }
-        editingCells.forEach((cellPosition) => {
-            const cellCtrl = _resolveCellController(this.beans, cellPosition);
-
-            if (cellCtrl) {
-                this.editModel.stopEditing(cellCtrl.rowCtrl!.rowId!, cellCtrl?.column.colId);
-                _destroyEditor(this.beans, cellPosition);
-            }
-        });
+        this.stopEditing();
     }
 
     setFocusOutOnEditor(cellCtrl: CellCtrl): void {

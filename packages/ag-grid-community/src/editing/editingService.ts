@@ -9,10 +9,10 @@ import type { IRowNode } from '../interfaces/iRowNode';
 import type { CellPosition } from '../main-umd-noStyles';
 import { CellCtrl } from '../rendering/cell/cellCtrl';
 import type { RowCtrl } from '../rendering/row/rowCtrl';
-import type { EditingModelService } from './editingModelService';
+import type { CellUpdate, EditingModelService } from './editingModelService';
 import { _createUpdates } from './editingModelService';
 import type { BaseEditStrategy } from './strategy/baseEditStrategy';
-import { _addStopEditingWhenGridLosesFocus, _resolveControllers } from './utils/controllers';
+import { _addStopEditingWhenGridLosesFocus, _resolveCellController, _resolveControllers } from './utils/controllers';
 import { _refreshEditorOnColDefChanged, _syncModelFromEditor, _syncModelsFromEditors } from './utils/editors';
 
 export class EditingService extends BeanStub implements NamedBean {
@@ -206,10 +206,10 @@ export class EditingService extends BeanStub implements NamedBean {
         }
     }
 
-    private processUpdates(updates: any[], cancel: boolean): void {
-        updates.forEach(({ rowId, columnId, newValue, oldValue }) => {
-            const { rowCtrl, cellCtrl } = _resolveControllers(this.beans, { rowId, columnId });
-            if (!rowCtrl || !cellCtrl) {
+    private processUpdates(updates: CellUpdate[], cancel: boolean): void {
+        updates.forEach(({ rowNode, column, newValue, oldValue }) => {
+            const cellCtrl = _resolveCellController(this.beans, { rowNode, column });
+            if (!cellCtrl) {
                 return;
             }
 
@@ -220,12 +220,12 @@ export class EditingService extends BeanStub implements NamedBean {
                 // to happen on this call as we want to call it explicitly below. otherwise refresh gets called twice.
                 // if we only did this refresh (and not the one below) then the cell would flash and not be forced.
                 cellCtrl.suppressRefreshCell = true;
-                rowCtrl.rowNode.setDataValue(columnId, newValue, 'edit');
+                rowNode.setDataValue(column.getColId(), newValue, 'edit');
                 cellCtrl.suppressRefreshCell = false;
             }
 
             this.beans.eventSvc.dispatchEvent({
-                ...cellCtrl!.createEvent(null, 'cellEditingStopped'),
+                ...cellCtrl.createEvent(null, 'cellEditingStopped'),
                 oldValue,
                 newValue,
                 value: newValue,
@@ -304,7 +304,10 @@ export class EditingService extends BeanStub implements NamedBean {
             return undefined;
         }
 
-        return this.editModel?.getPendingUpdate(rowId, colId);
+        const rowNode = this.beans.rowModel.getRowNode(rowId);
+        const column = this.beans.colModel.getColById(colId);
+
+        return this.editModel?.getPendingUpdate(rowNode!, column!);
     }
 
     public addStopEditingWhenGridLosesFocus(viewports: HTMLElement[]): void {

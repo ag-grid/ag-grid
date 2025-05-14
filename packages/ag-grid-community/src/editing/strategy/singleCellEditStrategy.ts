@@ -1,16 +1,17 @@
 import type { BeanName } from '../../context/context';
+import type { RowNode } from '../../entities/rowNode';
 import type { CellFocusedEvent, CommonCellFocusParams } from '../../events';
 import type { Column } from '../../interfaces/iColumn';
 import type { CellCtrl } from '../../rendering/cell/cellCtrl';
 import type { RowCtrl } from '../../rendering/row/rowCtrl';
-import { _resolveControllers } from '../utils/controllers';
+import { _getColId, _resolveCellController, _resolveControllers } from '../utils/controllers';
 import { BaseEditStrategy } from './baseEditStrategy';
 
 export class SingleCellEditStrategy extends BaseEditStrategy {
     override beanName = 'singleCell' as BeanName | undefined;
 
-    private rowId?: string | null;
-    private colId?: string | null;
+    private rowNode?: RowNode | null;
+    private column?: Column | null;
 
     public override shouldStopEditing(
         rowCtrl?: RowCtrl | undefined,
@@ -24,13 +25,13 @@ export class SingleCellEditStrategy extends BaseEditStrategy {
             return res;
         }
 
-        if ((!this.rowId || !this.colId) && rowCtrl && cellCtrl) {
+        if ((!this.rowNode || !this.column) && rowCtrl && cellCtrl) {
             return null;
-        } else if (!rowCtrl && !cellCtrl && this.rowId && this.colId) {
+        } else if (!rowCtrl && !cellCtrl && this.rowNode && this.column) {
             return null;
         }
 
-        return this.rowId !== rowCtrl?.rowId || this.colId !== cellCtrl?.column.getColId();
+        return this.rowNode !== rowCtrl?.rowNode || this.column !== cellCtrl?.column;
     }
 
     public updateStyles(_rowCtrl?: RowCtrl | null, cellCtrl?: CellCtrl | null, newState?: boolean): void {
@@ -44,25 +45,25 @@ export class SingleCellEditStrategy extends BaseEditStrategy {
         event?: KeyboardEvent | MouseEvent | null,
         _source: 'api' | 'ui' = 'ui'
     ): boolean {
-        const rowId = rowCtrl.rowId!;
-        const colId = cellCtrl?.column.getColId() ?? this.beans.visibleCols.getFirstColumn()!.getColId();
+        const rowNode = rowCtrl.rowNode!;
+        const column = cellCtrl?.column ?? this.beans.visibleCols.getFirstColumn()!;
 
-        if (this.rowId !== rowId || this.colId !== colId) {
+        if (this.rowNode !== rowNode || this.column !== column) {
             super.cleanupEditors();
         }
 
-        this.rowId = rowId;
-        this.colId = colId;
+        this.rowNode = rowNode;
+        this.column = column;
 
-        this.editModel.startEditing(rowId, colId);
+        this.editModel.startEditing(rowNode, column);
 
         this.updateStyles(rowCtrl, cellCtrl, true);
 
         return this.finishStartEdit(
             [
                 {
-                    rowId,
-                    columnId: colId,
+                    rowNode,
+                    column,
                 },
             ],
             rowCtrl,
@@ -79,7 +80,7 @@ export class SingleCellEditStrategy extends BaseEditStrategy {
         source: 'api' | 'ui' = 'ui'
     ): boolean {
         this.editModel.getPendingCellIds().forEach((cellId) => {
-            const cellCtrl = _resolveControllers(this.beans, cellId).cellCtrl;
+            const cellCtrl = _resolveCellController(this.beans, cellId);
             if (cellCtrl) {
                 cellCtrl.comp.toggleCss('ag-cell-batch-edit', false);
                 this.updateStyles(cellCtrl.rowCtrl, cellCtrl, false);
@@ -88,8 +89,8 @@ export class SingleCellEditStrategy extends BaseEditStrategy {
 
         super.stopEditing(rowCtrl, cellCtrl, source);
 
-        this.rowId = undefined;
-        this.colId = undefined;
+        this.rowNode = undefined;
+        this.column = undefined;
 
         return true;
     }
@@ -98,7 +99,7 @@ export class SingleCellEditStrategy extends BaseEditStrategy {
         const { rowIndex, column } = event;
         const previous = (event as any)['previousParams']! as CommonCellFocusParams;
 
-        if (previous?.rowIndex === rowIndex && getColId(previous?.column) === getColId(column)) {
+        if (previous?.rowIndex === rowIndex && _getColId(previous?.column) === _getColId(column)) {
             return;
         }
 
@@ -157,18 +158,7 @@ export class SingleCellEditStrategy extends BaseEditStrategy {
     public override destroy(): void {
         super.destroy();
 
-        this.rowId = undefined;
-        this.colId = undefined;
+        this.rowNode = undefined;
+        this.column = undefined;
     }
-}
-
-function getColId(column?: Column | string | null): string | undefined {
-    if (!column) {
-        return undefined;
-    }
-
-    if (typeof column === 'string') {
-        return column;
-    }
-    return column.getColId();
 }

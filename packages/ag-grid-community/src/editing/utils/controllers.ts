@@ -35,7 +35,6 @@ type ResolvedControllersType = {
 
 export function _resolveRowController(beans: BeanCollection, inputs: ResolveRowControllerType): RowCtrl | undefined {
     const { rowIndex, rowId, rowCtrl, rowPinned } = inputs;
-    let { rowNode } = inputs;
 
     if (rowCtrl) {
         return rowCtrl;
@@ -43,34 +42,21 @@ export function _resolveRowController(beans: BeanCollection, inputs: ResolveRowC
 
     const { rowModel, rowRenderer } = beans;
 
-    rowNode ??= rowId ? _getRowById(beans, rowId, rowPinned) : rowModel.getRow(rowIndex!); // TODO: what about pinned rows??
+    let { rowNode } = inputs;
+    rowNode ??= rowId ? _getRowById(beans, rowId, rowPinned) : rowModel.getRow(rowIndex!);
 
-    if (!rowNode) {
-        return undefined;
-    }
-
-    return rowRenderer.getRowCtrls([rowNode])?.[0];
+    return rowRenderer.getRowCtrls(rowNode ? [rowNode] : [])?.[0];
 }
 
 export function _resolveCellController(beans: BeanCollection, inputs: ResolveControllerType): CellCtrl | undefined {
-    const { cellCtrl } = inputs;
+    const { cellCtrl, colId, columnId, column } = inputs;
 
     if (cellCtrl) {
         return cellCtrl;
     }
 
-    const { column, rowIndex, rowId } = inputs;
-    const colId = inputs.colId ?? inputs.columnId;
-
-    let { rowCtrl } = inputs;
-    const { rowRenderer, colModel } = beans;
-
-    const agColumn = colId
-        ? colModel.getCol(colId)
-        : colModel.getCol(typeof column === 'string' ? column : column?.getColId());
-
-    rowCtrl ??= rowIndex || rowId ? _resolveRowController(beans, inputs) : rowRenderer.getRowCtrls()?.[0];
-    return rowCtrl?.getCellCtrl(agColumn!) ?? undefined;
+    const rowCtrl = inputs.rowCtrl ?? _resolveRowController(beans, inputs);
+    return rowCtrl?.getCellCtrl(beans.colModel.getCol(colId ?? columnId ?? _getColId(column))!) ?? undefined;
 }
 
 export function _resolveControllers(beans: BeanCollection, inputs: ResolveControllerType): ResolvedControllersType {
@@ -122,4 +108,15 @@ export function _addStopEditingWhenGridLosesFocus(
     };
 
     viewports.forEach((viewport) => bean.addManagedElementListeners(viewport, { focusout: focusOutListener }));
+}
+
+export function _getColId(column?: Column | string | null): string | undefined {
+    if (!column) {
+        return undefined;
+    }
+
+    if (typeof column === 'string') {
+        return column;
+    }
+    return column.getColId();
 }

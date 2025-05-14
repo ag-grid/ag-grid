@@ -176,7 +176,7 @@ export function _syncModelFromEditor(
     eventSource?: string
 ): boolean | null {
     if (eventSource !== 'edit' && rowCtrl && cellCtrl && beans.editingSvc?.isEditing(rowCtrl, cellCtrl)) {
-        beans.editingModelSvc?.addPendingEdit(rowCtrl.rowId as string, cellCtrl.column.getColId(), newValue);
+        beans.editingModelSvc?.addPendingEdit(rowCtrl.rowNode, cellCtrl.column, newValue);
         return true;
     }
     return null;

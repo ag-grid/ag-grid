@@ -1,4 +1,5 @@
 import type { BeanName } from '../../context/context';
+import type { RowNode } from '../../entities/rowNode';
 import type { CellFocusedEvent } from '../../events';
 import type { CellCtrl } from '../../rendering/cell/cellCtrl';
 import type { RowCtrl } from '../../rendering/row/rowCtrl';
@@ -8,7 +9,7 @@ import { BaseEditStrategy } from './baseEditStrategy';
 
 export class FullRowEditStrategy extends BaseEditStrategy {
     override beanName = 'fullRow' as BeanName | undefined;
-    private rowId?: string | null;
+    private rowNode?: RowNode | null;
 
     public updateStyles(rowCtrl?: RowCtrl | null, _cellCtrl?: CellCtrl | null, newState?: boolean): void {
         if (!rowCtrl) {
@@ -20,7 +21,7 @@ export class FullRowEditStrategy extends BaseEditStrategy {
             gui.rowComp.toggleCss('ag-row-batch-edit', (this.gos.get('batchEdit') && newState) ?? false);
         });
 
-        this.rowId = newState ? rowCtrl.rowId : undefined;
+        this.rowNode = newState ? rowCtrl.rowNode : undefined;
 
         const event = newState
             ? rowCtrl.createRowEvent('rowEditingStarted')
@@ -37,7 +38,7 @@ export class FullRowEditStrategy extends BaseEditStrategy {
         _source: 'api' | 'ui' = 'ui'
     ): boolean | null {
         const oldRowCtrl = _resolveRowController(this.beans, {
-            rowId: this.rowId,
+            rowNode: this.rowNode,
         });
 
         if (!oldRowCtrl) {
@@ -49,12 +50,12 @@ export class FullRowEditStrategy extends BaseEditStrategy {
             return res;
         }
 
-        if (!this.rowId) {
+        if (!this.rowNode) {
             return false;
         }
 
         // stop editing if we've changed rows
-        return rowCtrl?.rowId !== this.rowId;
+        return rowCtrl?.rowNode !== this.rowNode;
     }
 
     public override startEditing(
@@ -64,7 +65,7 @@ export class FullRowEditStrategy extends BaseEditStrategy {
         event?: KeyboardEvent | MouseEvent | null | undefined,
         _source: 'api' | 'ui' = 'ui'
     ): boolean {
-        if (this.rowId !== rowCtrl.rowId) {
+        if (this.rowNode !== rowCtrl.rowNode) {
             super.cleanupEditors();
         }
 
@@ -76,11 +77,11 @@ export class FullRowEditStrategy extends BaseEditStrategy {
                 return;
             }
             const position = {
-                rowId: rowCtrl.rowId!,
-                columnId: cellCtrl.column.getColId(),
+                rowNode: rowCtrl.rowNode!,
+                column: cellCtrl.column,
             };
             cells.push(position);
-            this.editModel.startEditing(position.rowId, position.columnId);
+            this.editModel.startEditing(position.rowNode, position.column);
         });
 
         this.updateStyles(rowCtrl, cellCtrl, true);
@@ -93,8 +94,8 @@ export class FullRowEditStrategy extends BaseEditStrategy {
         cellCtrl?: CellCtrl | null,
         source: 'api' | 'ui' = 'ui'
     ): boolean {
-        for (const rowId of this.editModel.getPendingUpdates().keys()) {
-            const rowController = _resolveRowController(this.beans, { rowId });
+        for (const rowNode of this.editModel.getPendingUpdates().keys()) {
+            const rowController = _resolveRowController(this.beans, { rowNode });
             if (rowController) {
                 this.updateStyles(rowController!, undefined, false);
             }
@@ -173,6 +174,6 @@ export class FullRowEditStrategy extends BaseEditStrategy {
 
     public override destroy(): void {
         super.destroy();
-        this.rowId = undefined;
+        this.rowNode = undefined;
     }
 }

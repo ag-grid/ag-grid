@@ -2,68 +2,67 @@ import type { Maybe } from '../columns/columnModel';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
-import { _getRowById } from '../entities/positionUtils';
+import type { RowNode } from '../entities/rowNode';
 import type { CellPosition } from '../interfaces/iCellPosition';
+import type { Column } from '../interfaces/iColumn';
 import type { CellCtrl } from '../rendering/cell/cellCtrl';
 import type { RowCtrl } from '../rendering/row/rowCtrl';
 
 export type CellIdPositions = {
-    rowId: string;
-    columnId: string;
+    rowNode: RowNode;
+    column: Column;
     oldValue?: any;
     newValue?: any;
 };
 
-type RowId = string;
-type ColId = string;
 type CData = any;
 
 export class EditingModelService extends BeanStub implements NamedBean {
     beanName = 'editingModelSvc' as const;
 
-    private pendingUpdates: Map<RowId, Map<ColId, CData>> = new Map();
+    private pendingUpdates: Map<RowNode, Map<Column, CData>> = new Map();
 
-    public removePendingEdit(rowId: RowId, colId?: ColId | null): void {
-        if (!this._hasPending(rowId)) {
+    public removePendingEdit(rowNode: RowNode, column?: Column | null): void {
+        if (!this._hasPending(rowNode)) {
             return;
         }
 
-        const rowUpdateMap = this.pendingUpdates.get(rowId)!;
+        const rowUpdateMap = this.pendingUpdates.get(rowNode)!;
 
-        if (colId) {
-            rowUpdateMap.delete(colId);
+        if (column) {
+            rowUpdateMap.delete(column);
         } else {
             rowUpdateMap.clear();
         }
 
         if (rowUpdateMap.size === 0) {
-            this.pendingUpdates.delete(rowId);
+            this.pendingUpdates.delete(rowNode);
         }
     }
 
-    public getPendingUpdate(rowId: RowId, columnId: ColId): CData {
-        return this.pendingUpdates.get(rowId)?.get(columnId);
+    public getPendingUpdate(rowNode: RowNode, column: Column): CData {
+        return this.pendingUpdates.get(rowNode)?.get(column);
     }
 
-    public getPendingUpdates(): Map<RowId, Map<ColId, CData>> {
+    public getPendingUpdates(): Map<RowNode, Map<Column, CData>> {
         return this.pendingUpdates;
     }
 
-    public addPendingEdit(rowId: RowId, columnId: ColId, newValue: CData) {
-        if (!this.pendingUpdates.has(rowId)) {
-            this.pendingUpdates.set(rowId, new Map());
+    public addPendingEdit(rowNode: RowNode, column: Column, newValue: CData) {
+        if (!this.pendingUpdates.has(rowNode)) {
+            this.pendingUpdates.set(rowNode, new Map());
         }
-        this.pendingUpdates.get(rowId)!.set(columnId, newValue);
+        this.pendingUpdates.get(rowNode)!.set(column, newValue);
     }
 
     public getPendingCellIds(): CellIdPositions[] {
-        const ids: { rowId: RowId; columnId: ColId }[] = [];
-        this.pendingUpdates.forEach((rowUpdateMap, rowId) => {
+        const ids: CellIdPositions[] = [];
+        this.pendingUpdates.forEach((rowUpdateMap, rowNode) => {
             const rowUpdateKeys = Array.from(rowUpdateMap.keys());
-            for (const columnId of rowUpdateKeys) {
+            for (const column of rowUpdateKeys) {
                 ids.push({
-                    rowId,
-                    columnId,
+                    rowNode,
+                    column,
                 });
             }
         });
@@ -74,51 +73,48 @@ export class EditingModelService extends BeanStub implements NamedBean {
     public getPendingCellPositions(): CellPosition[] {
         const result: CellPosition[] = [];
         const cellIds = this.getPendingCellIds();
-        cellIds.forEach((cell) => {
-            const rowNode = _getRowById(this.beans, cell.rowId);
-            if (rowNode) {
-                result.push({
-                    column: this.beans.colModel.getCol(cell.columnId)!,
-                    rowIndex: rowNode.rowIndex!,
-                    rowPinned: rowNode.rowPinned,
-                } as any);
-            }
+        cellIds.forEach(({ column, rowNode: { rowIndex, rowPinned } }) => {
+            result.push({
+                column,
+                rowIndex,
+                rowPinned,
+            } as any);
         });
 
         return result;
     }
 
     public hasPending(rowCtrl?: RowCtrl | null, cellCtrl?: CellCtrl | null): boolean {
-        return this._hasPending(rowCtrl?.rowId, cellCtrl?.column.colId);
+        return this._hasPending(rowCtrl?.rowNode, cellCtrl?.column);
     }
 
-    private _hasPending(rowId?: RowId | null, colId?: ColId | null): boolean {
-        if (rowId) {
-            const rowEdits = this.pendingUpdates.get(rowId);
-            if (colId) {
-                return rowEdits?.has(colId) ?? false;
+    private _hasPending(rowNode?: RowNode | null, column?: Column | null): boolean {
+        if (rowNode) {
+            const rowEdits = this.pendingUpdates.get(rowNode);
+            if (column) {
+                return rowEdits?.has(column) ?? false;
             }
             return (rowEdits?.size ?? 0) > 0;
         }
         return this.pendingUpdates.size > 0;
     }
 
-    public startEditing(rowId: RowId, ...colId: Maybe<ColId>[]): void {
-        let map = this.pendingUpdates.get(rowId);
+    public startEditing(rowNode: RowNode, ...columns: Maybe<Column>[]): void {
+        let map = this.pendingUpdates.get(rowNode);
         if (!map) {
-            map = new Map<ColId, CData>();
+            map = new Map<Column, CData>();
         }
-        colId.forEach((col) => col && map!.set(col, undefined));
-        this.pendingUpdates.set(rowId, map);
+        columns.forEach((col) => col && map!.set(col, undefined));
+        this.pendingUpdates.set(rowNode, map);
     }
 
-    public stopEditing(rowId?: RowId | null, colId?: ColId | null): void {
-        if (!this._hasPending(rowId, colId)) {
+    public stopEditing(rowNode?: RowNode | null, column?: Column | null): void {
+        if (!this._hasPending(rowNode, column)) {
             return;
         }
 
-        if (rowId) {
-            this.removePendingEdit(rowId, colId);
+        if (rowNode) {
+            this.removePendingEdit(rowNode, column);
         } else {
             for (const pendingRowEdits of this.pendingUpdates.values()) {
                 pendingRowEdits.clear();
@@ -138,8 +134,8 @@ export class EditingModelService extends BeanStub implements NamedBean {
 }
 
 export type CellUpdate = {
-    rowId: string;
-    columnId: string;
+    rowNode: RowNode;
+    column: Column;
     newValue: any;
     oldValue: any;
 };
@@ -158,18 +154,17 @@ export function _createUpdates(beans: BeanCollection): CellUpdate[] {
 
     const updates: CellUpdate[] = [];
 
-    rowUpdates.forEach((rowUpdateMap, rowId) => {
-        const rowNode = _getRowById(beans, rowId);
+    rowUpdates.forEach((rowUpdateMap, rowNode) => {
         if (!rowNode) {
             return;
         }
         const original = rowNode.data;
-        rowUpdateMap.forEach((newValue, columnId) => {
+        rowUpdateMap.forEach((newValue, column) => {
             updates.push({
-                rowId,
-                columnId,
+                rowNode,
+                column,
                 newValue,
-                oldValue: original[columnId],
+                oldValue: original[column.getColId()],
             });
         });
     });
