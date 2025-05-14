@@ -138,7 +138,7 @@ export abstract class BaseEditStrategy extends BeanStub {
             return true;
         }
 
-        if (event instanceof KeyboardEvent && event.key === KeyCode.ENTER) {
+        if (event instanceof KeyboardEvent && (event.key === KeyCode.ENTER || event.key === KeyCode.F2)) {
             return true;
         }
 
