@@ -32,7 +32,8 @@ import { _requestAnimationFrame } from '../utils/dom';
 import { _exists } from '../utils/generic';
 import { _errMsg } from '../validation/logging';
 import type { CellCtrl } from './cell/cellCtrl';
-import { RowCtrlInstanceId, sharedProxyArrayMethods } from './row/rowCtrl';
+import type { RowCtrlInstanceId } from './row/rowCtrl';
+import { sharedProxyArrayMethods } from './row/rowCtrl';
 import { RowCtrl } from './row/rowCtrl';
 import type { RowContainerHeightService } from './rowContainerHeightService';
 
@@ -893,7 +894,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
         return {
             ...sharedProxyArrayMethods,
             forEach(callbackfn: (value: CellCtrl) => void) {
-                let rowCtrls = self.getRowCtrls(rowNodes);
+                const rowCtrls = self.getRowCtrls(rowNodes);
                 for (let i = 0; i < rowCtrls.length; i++) {
                     const rowCtrl = rowCtrls[i];
                     rowCtrl.getAllCellCtrls().forEach((cellCtrl) => {
