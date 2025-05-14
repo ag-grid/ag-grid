@@ -17,22 +17,15 @@ const TRIAL_LICENCE_FORM_URL = getIsProduction()
 
 const QUOTES_DATA = [
     {
-        quote: 'Our internal customers are excited about the reports we’ve developed using AG Charts and Grid – the performance and potential to replace our slow, unstable Tableau reports will be a',
+        quote: 'Replacing our slow, unstable Tableau reports will be a big ‘quality of life’ improvement.',
         source: 'A leading global aerospace and defence company',
     },
-
     {
-        quote: 'Your grids and charts are the backbone of this project. The free version is great, but I’m building something that needs to punch above its weight, and your tools are on another',
+        quote: 'Your Grid and Charts are the backbone of this project.',
         source: 'An AI-driven investment research platform',
     },
-
     {
-        quote: 'We appreciate AG Grid and its rich features. We’re particularly impressed by the addition of AG Charts, which we believe will be a valuable tool.',
-        source: 'A leading technology company in the retail and agri-food industries',
-    },
-
-    {
-        quote: 'The speed of AG Grid’s charting library is insanely impressive. Tried many others, but nothing comes close in performance, interface and usability… hats off to their devs.',
+        quote: 'The speed of AG Grid’s charting library is insanely impressive.',
         source: 'Developer on X',
     },
 ];
@@ -78,19 +71,17 @@ const QUOTES_DATA = [
             </div>
         </div>
 
-        <div class={styles.socialProofOuter}>
-            <div class={styles.quotesOuter}>
-                {
-                    QUOTES_DATA.map(({ quote, source }) => {
-                        return (
-                            <div class={styles.quote}>
-                                <blockquote>{quote}</blockquote>
-                                <b>{source}</b>
-                            </div>
-                        );
-                    })
-                }
-            </div>
+        <div class={styles.quotesOuter}>
+            {
+                QUOTES_DATA.map(({ quote, source }) => {
+                    return (
+                        <div class={styles.quote}>
+                            <blockquote>{quote}</blockquote>
+                            <p class="text-sm">– {source}</p>
+                        </div>
+                    );
+                })
+            }
         </div>
 
         <div class={styles.campaignBenefitsContainer}>

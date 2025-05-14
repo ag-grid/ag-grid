@@ -295,77 +295,27 @@
 
 // end license-pricing.module.scss content
 // =======================================
-.socialProofOuter {
+.quotesOuter {
+    display: flex;
+
+    max-width: 1400px;
     border: 1px solid var(--color-border-secondary);
     border-radius: 8px;
 
-    width: 80vw;
-}
-
-.statsOuter {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    border-bottom: 1px solid var(--color-border-secondary);
-
-    #{$selector-darkmode} & {
-        background: color-mix(in srgb, var(--color-fg-primary), var(--color-bg-primary) 98%);
+    @media screen and (min-width: 900px) {
+        width: 80vw;
     }
 
-    @media screen and (max-width: $breakpoint-pricing-large) {
-        display: grid;
-        grid-template-columns: repeat(1, 1fr);
-    }
-}
-
-.stat {
-    padding: $spacing-size-10;
-    font-size: var(--text-fs-base);
-
-    @media screen and (max-width: $breakpoint-pricing-large) {
-        padding-top: $spacing-size-10;
-        padding-bottom: $spacing-size-10;
-        border-bottom: 1px solid var(--color-border-secondary);
-    }
-
-    &:first-child {
-        padding-left: $spacing-size-6;
-        @media screen and (max-width: $breakpoint-pricing-large) {
-            padding-left: $spacing-size-10;
-        }
-    }
-
-    &:not(:last-child) {
-        border-right: 1px solid var(--color-border-secondary);
-    }
-
-    h4 {
-        margin-bottom: $spacing-size-2;
-        color: var(--color-text-brand-primary);
-    }
-}
-
-.advocates {
-    display: flex;
-    border-bottom: 1px solid var(--color-border-secondary);
-
-    @media screen and (max-width: $breakpoint-pricing-medium) {
+    @media screen and (max-width: 660px) {
         flex-direction: column;
     }
-
-    #{$selector-darkmode} & {
-        background: color-mix(in srgb, var(--color-fg-primary), var(--color-bg-primary) 98%);
-    }
-}
-
-.quotesOuter {
-    display: flex;
 }
 
 .quote {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    width: 50%;
+    width: 33.33%;
     font-size: var(--text-fs-base);
     line-height: var(--text-lh-2xl);
 
@@ -378,13 +328,17 @@
     &:not(:last-child) {
         border-right: 1px solid var(--color-border-secondary);
 
-        @media screen and (max-width: $breakpoint-pricing-medium) {
+        @media screen and (max-width: 660px) {
             border-bottom: 1px solid var(--color-border-secondary);
+            border-right: none;
         }
     }
 
     blockquote {
+        font-size: var(--text-fs-lg);
+        font-weight: var(--text-semibold);
         margin-bottom: $spacing-size-6;
+        color: var(--color-fg-primary);
         text-indent: -0.5em;
 
         &::before {
@@ -396,13 +350,8 @@
         }
     }
 
-    footer {
-        display: flex;
-        align-items: flex-end;
-    }
-
-    footer > div {
-        margin-left: $spacing-size-4;
+    p {
+        font-style: italic;
     }
 }
 
