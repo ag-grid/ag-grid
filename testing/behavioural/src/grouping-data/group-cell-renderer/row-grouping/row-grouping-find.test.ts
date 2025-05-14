@@ -66,7 +66,8 @@ describe('ag-grid find API', () => {
         gridsManager.reset();
     });
 
-    describe.each(['clientSide', 'serverSide'])('with rowModelType=%s', (rowModelType) => {
+    // test work for SSRM, but find doesn't support SSRM, so removed for now.
+    describe.each(['clientSide'])('with rowModelType=%s', (rowModelType) => {
         const { csrm, ssrm } = rowModelGridOptions;
         const gridOptions = rowModelType === 'clientSide' ? csrm : ssrm;
         const csrmExpandedConcern: TestPermutation = {
