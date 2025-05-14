@@ -231,8 +231,8 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
         if (!selectionSvc) {
             return;
         }
-        this.selectAllFeature = compBean.createManagedBean(selectionSvc.createSelectAllFeature(this.column));
-        this.selectAllFeature.setComp(this);
+        this.selectAllFeature = compBean.createOptionalManagedBean(selectionSvc.createSelectAllFeature(this.column));
+        this.selectAllFeature?.setComp(this);
     }
 
     public getSelectAllGui(): HTMLElement | undefined {

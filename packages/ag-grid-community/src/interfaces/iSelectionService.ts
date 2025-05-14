@@ -37,7 +37,7 @@ export interface ISelectionService {
     selectAllRowNodes(params: { source: SelectionEventSourceType; selectAll?: SelectAllMode }): void;
     deselectAllRowNodes(params: { source: SelectionEventSourceType; selectAll?: SelectAllMode }): void;
     createCheckboxSelectionComponent(): CheckboxSelectionComponent;
-    createSelectAllFeature(column: AgColumn): SelectAllFeature;
+    createSelectAllFeature(column: AgColumn): SelectAllFeature | undefined;
     onRowCtrlSelected(rowCtrl: RowCtrl, hasFocusFunc: (gui: RowGui) => void, gui?: RowGui): void;
     announceAriaRowSelection(rowNode: RowNode): void;
     /** Called after grouping / treeData */
