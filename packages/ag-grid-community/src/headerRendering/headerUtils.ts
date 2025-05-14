@@ -7,7 +7,7 @@ export function getHeaderRowCount(beans: BeanCollection): number {
     if (!colModel.cols) {
         return -1;
     }
-    if (gos.get('dynamicHeaderHeight')) {
+    if (gos.get('suppressEmptyHeaderRows')) {
         return visibleCols.treeDepth + 1;
     }
     return colModel.cols.treeDepth + 1;

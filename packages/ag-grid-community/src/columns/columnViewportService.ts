@@ -221,11 +221,11 @@ export class ColumnViewportService extends BeanStub implements NamedBean {
         this.columnsToRenderRight = rightCols;
         this.columnsToRenderCenter = this.colsWithinViewport;
 
-        const unbalancedTreeDepth = Math.max(
-            getOriginalColumnTreeDepth(this.columnsToRenderLeft),
-            getOriginalColumnTreeDepth(this.columnsToRenderRight),
-            getOriginalColumnTreeDepth(this.columnsToRenderCenter)
-        );
+        // if empty header groups are allowed, then max depth is calculated from all selected cols, otherwise
+        // only visible cols
+        const unbalancedTreeDepth = this.beans.gos.get('suppressEmptyHeaderRows')
+            ? getOriginalColumnTreeDepth(this.visibleCols.allCols)
+            : getOriginalColumnTreeDepth(this.beans.colModel.cols?.list ?? []);
 
         const workOutGroupsToRender = (cols: AgColumn[]) => {
             const groupsToRenderSet = new Set<AgColumnGroup>();
@@ -265,7 +265,6 @@ export class ColumnViewportService extends BeanStub implements NamedBean {
         this.rowsOfHeadersToRenderRight = workOutGroupsToRender(rightCols);
         // should these be this.headerColsWithinViewport?
         this.rowsOfHeadersToRenderCenter = workOutGroupsToRender(this.colsWithinViewport);
-        console.log(this.rowsOfHeadersToRenderCenter);
         // const testGroup = (
         //     children: (AgColumn | AgColumnGroup)[],
         //     result: { [row: number]: (AgColumn | AgColumnGroup)[] },

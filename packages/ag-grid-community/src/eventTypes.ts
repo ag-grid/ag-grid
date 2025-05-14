@@ -155,6 +155,7 @@ export const _INTERNAL_EVENTS = [
     'overlayExclusiveChanged',
     'beforeRefreshModel',
     'rowNodeDataChanged',
+    'headerRowsChanged',
 ] as const;
 
 // We define as a callback to help with tree shaking (esbuild)
