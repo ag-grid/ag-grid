@@ -168,23 +168,16 @@ export class ColumnGroupService extends BeanStub implements NamedBean {
     }
 
     public getColGroupAtLevel(column: AgColumn, level: number): AgColumnGroup | null {
-        // get group at same level as the one we are looking for
-        let groupPointer: AgColumnGroup = column.getParent()!;
-        let originalGroupLevel: number;
-        let groupPointerLevel: number;
-
-        while (true) {
-            const groupPointerProvidedColumnGroup = groupPointer.getProvidedColumnGroup();
-            originalGroupLevel = groupPointerProvidedColumnGroup.getLevel();
-            groupPointerLevel = groupPointer.getPaddingLevel();
-
-            if (originalGroupLevel + groupPointerLevel <= level) {
-                break;
-            }
-            groupPointer = groupPointer.getParent()!;
+        let ancestor = column.getParent();
+        if (!ancestor) {
+            return null;
         }
 
-        return groupPointer;
+        for (let i = ancestor.getLevel(); ancestor && i > level; i--) {
+            ancestor = ancestor.getParent();
+        }
+
+        return ancestor?.getLevel() === level ? ancestor : null;
     }
 
     public updateOpenClosedVisibility(): void {

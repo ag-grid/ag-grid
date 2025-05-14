@@ -4,7 +4,6 @@ import { _getHeaderGroupCompDetails } from '../../../components/framework/userCo
 import type { BeanStub } from '../../../context/beanStub';
 import type { AgColumn } from '../../../entities/agColumn';
 import type { HeaderClassParams } from '../../../entities/colDef';
-import type { ColumnEventType } from '../../../events';
 import { _addGridCommonParams } from '../../../gridOptionsUtils';
 import { ColumnHighlightPosition } from '../../../interfaces/iColumn';
 import type { UserCompDetails } from '../../../interfaces/iUserCompDetails';
