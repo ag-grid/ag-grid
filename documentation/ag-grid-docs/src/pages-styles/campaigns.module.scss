@@ -10,104 +10,155 @@
     margin: $spacing-size-24 auto 0;
 }
 
-.campaignHero {
-    position: relative;
-    margin-bottom: $spacing-size-8;
+.homepageHero {
+    background-color: var(--color-util-brand-500);
+    color: var(--color-white);
 
-    &:before {
-        position: absolute;
-        content: '';
-        width: calc(100vw - 60px);
-        height: 70%;
-        left: 50%;
-        transform: translateX(calc(-50vw + 30px));
-        z-index: -1;
-        border-radius: 8px;
-        background: linear-gradient(0deg, #dde9f9 -61.34%, #ffffff 89.79%);
-        border-left: 1px solid linear-gradient(0deg, #dde9f9 -61.34%, #0e449126 89.79%);
-        border-right: 1px solid linear-gradient(0deg, #dde9f9 -61.34%, #0e449126 89.79%);
-        border-bottom: 1px solid #0e449126;
+    #{$selector-darkmode} & {
+        background-color: var(--color-util-gray-100);
+        border-bottom: 1px solid var(--color-util-gray-300);
+    }
+}
 
-        #{$selector-darkmode} & {
-            background: linear-gradient(0deg, #29384b -61.34%, #141d2c 89.79%);
-            border-left: 1px solid linear-gradient(0deg, #29384b -61.34%, #f1bbde26 89.79%);
-            border-right: 1px solid linear-gradient(0deg, #29384b -61.34%, #f1bbde26 89.79%);
-            border-bottom: 1px solid #f1bbde26;
-        }
+.heroInner {
+    display: flex;
+    flex-direction: column;
+    gap: 0 $spacing-size-4;
 
-        @media screen and (max-width: 940px) {
-            width: 120vw;
-            transform: translateX(-60vw);
-        }
+    @media screen and (min-width: $breakpoint-site-header-large) {
+        gap: 0 $spacing-size-8;
     }
 
-    h1 {
-        font-size: 72px;
-        text-align: center;
-        line-height: var(--text-lh-tight);
-        margin-bottom: $spacing-size-8;
-        font-weight: var(--text-bold);
+    @media screen and (min-width: $breakpoint-hero-large) {
+        flex-direction: row;
+    }
+}
 
-        @media screen and (max-width: $breakpoint-landing-page-medium) {
-            font-size: 52px;
-        }
+.heroHeadings {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding-top: $spacing-size-10;
+    padding-bottom: $spacing-size-10;
+    min-width: 500px;
+
+    @media screen and (max-width: $breakpoint-hero-small) {
+        min-width: 100%;
     }
 
-    h2 {
-        margin: 0px $spacing-size-48;
-        text-align: center;
-        margin-bottom: $spacing-size-8;
-
-        @media screen and (max-width: $breakpoint-landing-page-medium) {
-            margin: 0;
-        }
+    @media screen and (min-width: $breakpoint-hero-small) {
+        padding-top: $spacing-size-10;
     }
 
-    code {
-        white-space: nowrap;
+    @media screen and (min-width: $breakpoint-hero-large) {
+        align-items: flex-start;
+        padding-top: $spacing-size-20;
+        text-align: unset;
     }
 
     h1,
     h2 {
-        max-width: 66%;
-        margin-left: auto;
-        margin-right: auto;
+        color: var(--color-white);
     }
 
-    :global(.alert) {
-        max-width: 66%;
-        margin-left: auto;
-        margin-right: auto;
-        text-align: center;
-        font-size: var(--text-fs-lg);
-        line-height: var(--text-lh-lg);
+    h1 {
+        margin-bottom: 0;
+        font-size: 28px;
+        line-height: 1.1;
+
+        @media screen and (min-width: $breakpoint-hero-small) {
+            font-size: var(--text-fs-2xl);
+        }
+
+        @media screen and (min-width: $breakpoint-hero-large) {
+            font-size: min(3.4vw, 40px);
+        }
+    }
+
+    h2 {
+        max-width: 18em;
+        margin-top: $spacing-size-10;
+        margin-bottom: 1.4em;
+        font-weight: var(--text-regular);
+        line-height: 1.25;
+
+        @media screen and (min-width: $breakpoint-hero-small) {
+            font-size: 22px;
+        }
+
+        @media screen and (min-width: $breakpoint-hero-large) {
+            max-width: unset;
+        }
+    }
+
+    a {
+        padding-left: $spacing-size-8;
+        background-color: var(--color-white);
+        color: var(--color-brand-500);
+        transition: opacity 0.3s;
+        height: 48px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: $spacing-size-2;
+
+        #{$selector-darkmode} & {
+            background-color: var(--color-white);
+            color: var(--color-brand-500);
+        }
+
+        &:hover {
+            color: var(--color-brand-500);
+            opacity: 0.8;
+            transition: opacity 0.3s;
+        }
+
+        :global(.icon) {
+            --icon-size: 1.3333em;
+            --icon-color: var(--color-brand-500);
+
+            transition: transform 0.33s ease-in-out;
+        }
+
+        &:hover :global(.icon) {
+            transform: translateX(4px);
+        }
     }
 }
 
-.campaignSubhead,
-.campaignOffer {
-    margin: $spacing-size-12 auto;
-    text-align: center;
-    max-width: 66%;
-    margin-left: auto;
-    margin-right: auto;
+.noWrap {
+    white-space: nowrap;
 }
 
-.campaignSubhead {
-    font-size: var(--text-fs-lg);
-    line-height: var(--text-lh-lg);
+.heroTopLine {
+    display: flex;
 }
 
-.campaignOffer {
-    font-size: var(--text-fs-xl);
-    line-height: var(--text-lh-xl);
-    font-weight: var(--text-semibold);
-    color: var(--color-link);
+@keyframes scroll-hero {
+    from {
+        background-position-y: 0;
+    }
+
+    to {
+        background-position-y: 500%;
+    }
+}
+
+.galleryScrollerExample {
+    background: white;
+
+    #{$selector-darkmode} & {
+        background: var(--color-bg-primary);
+    }
 }
 
 .autoICExample {
+    width: 80vw;
+    max-width: 1400px;
     margin-top: $spacing-size-8;
-    width: 70vw;
+    margin-bottom: $spacing-size-16;
 
     footer:last-of-type {
         margin-top: $spacing-size-4;
@@ -149,7 +200,7 @@
     background-color: var(--color-bg-primary);
 
     #{$selector-darkmode} & {
-        border-color: var(--color-util-gray-300);
+        border-color: var(--color-util-gray-200);
         background-color: #192232;
     }
 

@@ -5,7 +5,7 @@ import styles from '../../pages-styles/campaigns.module.scss';
 import { TrialLicenceForm } from '@ag-website-shared/components/trial-licence-form/TrialLicenceForm';
 import { AutomatedIntegratedCharts } from '@ag-website-shared/components/automated-examples/AutomatedIntegratedCharts';
 import { Icon } from '@ag-website-shared/components/icon/Icon';
-import { Alert } from '@ag-website-shared/components/alert/Alert';
+import ImageCarousel from './components/ImageCarousel';
 
 import 'ag-grid-community/styles/ag-grid.css';
 import 'ag-grid-community/styles/ag-theme-quartz.css';
@@ -43,32 +43,25 @@ const QUOTES_DATA = [
     showSearchBar={true}
     hidePageFromSearchEngines={true}
 >
+    <div class={styles.homepageHero}>
+        <div class:list={[styles.heroInner, 'layout-max-width-small']}>
+            <div class={styles.heroHeadings}>
+                <h1>Enhance your Insights with <span class={styles.noWrap}>AG Charts</span> Enterprise</h1>
+
+                <h2>
+                    Access advanced features and chart types without any additional development. Simply update your
+                    licence and import the <code class={styles.noWrap}>ag-charts-enterprise</code> package.
+                </h2>
+
+                <a class="button-secondary">See the charts <Icon name="chevronRight" /></a>
+            </div>
+
+            <ImageCarousel client:load />
+        </div>
+    </div>
     <main class={styles.campaignOuter}>
-        <div class={styles.campaignHero}>
-            <h1>Enhance your Integrated Charts with AG Charts Enterprise</h1>
-
-            <p class={styles.campaignSubhead}>
-                Access advanced features and chart types without any additional development.<br />Simply update your
-                licence and import the <code>ag-charts-enterprise</code> package.
-            </p>
-
-            <p class={styles.campaignOffer}>
-                <Alert>
-                    Order before 1st July for an exclusive 20% discount on your 1st year's licence costs for AG Charts –
-                    simply apply for a trial licence, or get in touch using code <b>SPRING25</b>, to redeem.
-                </Alert>
-            </p>
-
-            <div style={{ display: 'flex', gap: '1rem', marginTop: '2rem', justifyContent: 'center' }}>
-                <a href="mailto:info@ag-grid.com?subject=EnterpriseCharts2025" class="button text-xl"
-                    >Buy Now: 20% Discount</a
-                >
-                <a href="#free-trial" class="button-secondary text-xl">Start Free Trial</a>
-            </div>
-
-            <div class={styles.autoICExample}>
-                <AutomatedIntegratedCharts client:load visibilityThreshold={0.8} />
-            </div>
+        <div class={styles.autoICExample}>
+            <AutomatedIntegratedCharts client:load visibilityThreshold={0.8} />
         </div>
 
         <div class={styles.quotesOuter}>
@@ -126,10 +119,6 @@ const QUOTES_DATA = [
                     >Contact Sales <Icon name="email" /></a
                 >
             </div>
-        </div>
-
-        <div style="text-align: center;">
-            <p>FEATURES LIST/TABLE placeholder</p>
         </div>
 
         <div style="text-align: center;">
@@ -205,6 +194,6 @@ const QUOTES_DATA = [
     initScrollClassListener({
         targetSelector: '.site-header',
         scrolledClass: 'header-scrolled',
-        scrollPosition: 566,
+        scrollPosition: 480,
     });
 </script>
