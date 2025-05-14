@@ -133,7 +133,7 @@ const RowContainerComp = ({ name }: { name: RowContainerName }) => {
                 eViewport.current!
             );
         }
-    }, [areElementsReady, areElementsRemoved]);
+    }, [context, areElementsReady, areElementsRemoved]);
 
     const setContainerRef = useCallback(
         (e: HTMLDivElement | null) => {

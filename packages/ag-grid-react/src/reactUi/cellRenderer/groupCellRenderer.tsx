@@ -50,44 +50,51 @@ const GroupCellRenderer = forwardRef((props: GroupCellRendererParams, ref) => {
 
     useLayoutEffect(() => {
         return showJsComp(innerCompDetails, context, eValueRef.current!);
-    }, [innerCompDetails]);
+    }, [innerCompDetails, context]);
 
-    const setRef = useCallback((eRef: HTMLDivElement | null) => {
-        eGui.current = eRef;
-        if (!eRef) {
-            ctrlRef.current = context.destroyBean(ctrlRef.current);
-            return;
-        }
-        const compProxy: IGroupCellRenderer = {
-            setInnerRenderer: (details, valueToDisplay) => {
-                setInnerCompDetails(details);
-                setValue(valueToDisplay);
-            },
-            setChildCount: (count) => setChildCount(count),
-            toggleCss: (name, on) => setCssClasses((prev) => prev.setClass(name, on)),
-            setContractedDisplayed: (displayed) =>
-                setContractedCssClasses((prev) => prev.setClass('ag-hidden', !displayed)),
-            setExpandedDisplayed: (displayed) =>
-                setExpandedCssClasses((prev) => prev.setClass('ag-hidden', !displayed)),
-            setCheckboxVisible: (visible) => setCheckboxCssClasses((prev) => prev.setClass('ag-invisible', !visible)),
-            setCheckboxSpacing: (add) =>
-                setCheckboxCssClasses((prev) => prev.setClass('ag-group-checkbox-spacing', add)),
-        };
+    const setRef = useCallback(
+        (eRef: HTMLDivElement | null) => {
+            eGui.current = eRef;
+            if (!eRef) {
+                ctrlRef.current = context.destroyBean(ctrlRef.current);
+                return;
+            }
+            const compProxy: IGroupCellRenderer = {
+                setInnerRenderer: (details, valueToDisplay) => {
+                    setInnerCompDetails(details);
+                    setValue(valueToDisplay);
+                },
+                setChildCount: (count) => setChildCount(count),
+                toggleCss: (name, on) => setCssClasses((prev) => prev.setClass(name, on)),
+                setContractedDisplayed: (displayed) =>
+                    setContractedCssClasses((prev) => prev.setClass('ag-hidden', !displayed)),
+                setExpandedDisplayed: (displayed) =>
+                    setExpandedCssClasses((prev) => prev.setClass('ag-hidden', !displayed)),
+                setCheckboxVisible: (visible) =>
+                    setCheckboxCssClasses((prev) => prev.setClass('ag-invisible', !visible)),
+                setCheckboxSpacing: (add) =>
+                    setCheckboxCssClasses((prev) => prev.setClass('ag-group-checkbox-spacing', add)),
+            };
 
-        const groupCellRendererCtrl = registry.createDynamicBean<IGroupCellRendererCtrl>('groupCellRendererCtrl', true);
-        if (groupCellRendererCtrl) {
-            ctrlRef.current = context.createBean(groupCellRendererCtrl);
-            ctrlRef.current.init(
-                compProxy,
-                eRef,
-                eCheckboxRef.current!,
-                eExpandedRef.current!,
-                eContractedRef.current!,
-                GroupCellRenderer,
-                props
+            const groupCellRendererCtrl = registry.createDynamicBean<IGroupCellRendererCtrl>(
+                'groupCellRendererCtrl',
+                true
             );
-        }
-    }, []);
+            if (groupCellRendererCtrl) {
+                ctrlRef.current = context.createBean(groupCellRendererCtrl);
+                ctrlRef.current.init(
+                    compProxy,
+                    eRef,
+                    eCheckboxRef.current!,
+                    eExpandedRef.current!,
+                    eContractedRef.current!,
+                    GroupCellRenderer,
+                    props
+                );
+            }
+        },
+        [context]
+    );
 
     const className = useMemo(() => `ag-cell-wrapper ${cssClasses.toString()}`, [cssClasses]);
     const expandedClassName = useMemo(() => `ag-group-expanded ${expandedCssClasses.toString()}`, [expandedCssClasses]);

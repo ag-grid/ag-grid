@@ -30,7 +30,7 @@ const useJsCellRenderer = (
 
         context.destroyBean(comp);
         jsCellRendererRef.current = undefined;
-    }, []);
+    }, [context]);
 
     // create or refresh JS cell renderer
     useEffect(() => {

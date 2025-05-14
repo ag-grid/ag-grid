@@ -464,7 +464,7 @@ const CellComp = ({
             editingRow,
             compBean.current
         );
-    }, []);
+    }, [context]);
 
     const setGuiRef = useCallback((ref: HTMLDivElement | null) => {
         eGui.current = ref;

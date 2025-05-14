@@ -33,34 +33,37 @@ const HeaderRowComp = ({ ctrl }: { ctrl: HeaderRowCtrl }) => {
     const compBean = useRef<_EmptyBean>();
     const eGui = useRef<HTMLDivElement | null>(null);
 
-    const setRef = useCallback((eRef: HTMLDivElement | null) => {
-        eGui.current = eRef;
-        compBean.current = eRef ? context.createBean(new _EmptyBean()) : context.destroyBean(compBean.current);
-        if (!eRef) {
-            return;
-        }
+    const setRef = useCallback(
+        (eRef: HTMLDivElement | null) => {
+            eGui.current = eRef;
+            compBean.current = eRef ? context.createBean(new _EmptyBean()) : context.destroyBean(compBean.current);
+            if (!eRef) {
+                return;
+            }
 
-        const compProxy: IHeaderRowComp = {
-            setHeight: (height: string) => setHeight(height),
-            setTop: (top: string) => setTop(top),
-            setHeaderCtrls: (ctrls: AbstractHeaderCellCtrl[], forceOrder: boolean, afterScroll: boolean) => {
-                prevCellCtrlsRef.current = cellCtrlsRef.current;
-                cellCtrlsRef.current = ctrls;
+            const compProxy: IHeaderRowComp = {
+                setHeight: (height: string) => setHeight(height),
+                setTop: (top: string) => setTop(top),
+                setHeaderCtrls: (ctrls: AbstractHeaderCellCtrl[], forceOrder: boolean, afterScroll: boolean) => {
+                    prevCellCtrlsRef.current = cellCtrlsRef.current;
+                    cellCtrlsRef.current = ctrls;
 
-                const next = getNextValueIfDifferent(prevCellCtrlsRef.current, ctrls, forceOrder)!;
-                if (next !== prevCellCtrlsRef.current) {
-                    agFlushSync(afterScroll, () => setCellCtrls(next));
-                }
-            },
-            setWidth: (width: string) => {
-                if (eGui.current) {
-                    eGui.current.style.width = width;
-                }
-            },
-        };
+                    const next = getNextValueIfDifferent(prevCellCtrlsRef.current, ctrls, forceOrder)!;
+                    if (next !== prevCellCtrlsRef.current) {
+                        agFlushSync(afterScroll, () => setCellCtrls(next));
+                    }
+                },
+                setWidth: (width: string) => {
+                    if (eGui.current) {
+                        eGui.current.style.width = width;
+                    }
+                },
+            };
 
-        ctrl.setComp(compProxy, compBean.current, false);
-    }, []);
+            ctrl.setComp(compProxy, compBean.current, false);
+        },
+        [context]
+    );
 
     const style = useMemo(
         () => ({

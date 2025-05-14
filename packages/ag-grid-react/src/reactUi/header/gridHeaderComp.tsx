@@ -15,21 +15,24 @@ const GridHeaderComp = () => {
     const eGui = useRef<HTMLDivElement | null>(null);
     const gridCtrlRef = useRef<GridHeaderCtrl>();
 
-    const setRef = useCallback((eRef: HTMLDivElement | null) => {
-        eGui.current = eRef;
-        gridCtrlRef.current = eRef
-            ? context.createBean(new GridHeaderCtrl())
-            : context.destroyBean(gridCtrlRef.current);
+    const setRef = useCallback(
+        (eRef: HTMLDivElement | null) => {
+            eGui.current = eRef;
+            gridCtrlRef.current = eRef
+                ? context.createBean(new GridHeaderCtrl())
+                : context.destroyBean(gridCtrlRef.current);
 
-        if (!eRef) return;
+            if (!eRef) return;
 
-        const compProxy: IGridHeaderComp = {
-            toggleCss: (name, on) => setCssClasses((prev) => prev.setClass(name, on)),
-            setHeightAndMinHeight: (height) => setHeight(height),
-        };
+            const compProxy: IGridHeaderComp = {
+                toggleCss: (name, on) => setCssClasses((prev) => prev.setClass(name, on)),
+                setHeightAndMinHeight: (height) => setHeight(height),
+            };
 
-        gridCtrlRef.current!.setComp(compProxy, eRef, eRef);
-    }, []);
+            gridCtrlRef.current!.setComp(compProxy, eRef, eRef);
+        },
+        [context]
+    );
 
     const className = useMemo(() => {
         const res = cssClasses.toString();

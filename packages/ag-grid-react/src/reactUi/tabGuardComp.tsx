@@ -75,7 +75,7 @@ const TabGuardCompRef: ForwardRefRenderFunction<TabGuardCompCallback, TabGuardPr
                 })
             );
         }
-    }, []);
+    }, [context]);
 
     const setTopRef = useCallback(
         (e: HTMLDivElement | null) => {
