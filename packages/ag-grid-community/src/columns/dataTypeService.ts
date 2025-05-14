@@ -518,7 +518,7 @@ export class DataTypeService extends BeanStub implements NamedBean {
         this.beans.filterManager?.setColDefPropertiesForDataType(colDef, dataTypeDefinition, formatValue);
     }
 
-    private getDefaultDataTypes(): { [key: string]: CoreDataTypeDefinition } {
+    private getDefaultDataTypes(): Record<BaseCellDataType, CoreDataTypeDefinition> {
         const defaultDateFormatMatcher = (value: string) => !!value.match('^\\d{4}-\\d{2}-\\d{2}$');
         const translate = this.getLocaleTextFunc();
         return {
