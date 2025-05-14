@@ -38,6 +38,22 @@ type DataTypeDefinitions = {
     [cellDataType: string]: (DataTypeDefinition | CoreDataTypeDefinition) & GroupSafeValueFormatter;
 };
 
+/**
+ * Note: we are missing object and dateTime here.
+ *       This is because dateTime has a lower priority than date and gives us no way to distinguish between the two, and
+ *       object type is the default type for all other types.
+ *
+ *       Datetime has higher priority than dateString, since it includes serialized time.
+ */
+const sortedCellDataTypesForMatching: readonly Exclude<BaseCellDataType, 'dateTime' | 'object'>[] = [
+    'dateTimeString',
+    'dateString',
+    'text',
+    'number',
+    'boolean',
+    'date',
+] as const;
+
 export class DataTypeService extends BeanStub implements NamedBean {
     beanName = 'dataTypeSvc' as const;
 
@@ -120,7 +136,7 @@ export class DataTypeService extends BeanStub implements NamedBean {
 
         this.checkObjectValueHandlers(defaultDataTypes);
 
-        ['dateString', 'text', 'number', 'boolean', 'date'].forEach((cellDataType: BaseCellDataType) => {
+        sortedCellDataTypesForMatching.forEach((cellDataType: BaseCellDataType) => {
             const overriddenDataTypeMatcher = newDataTypeMatchers[cellDataType];
             if (overriddenDataTypeMatcher) {
                 // remove to maintain correct ordering
