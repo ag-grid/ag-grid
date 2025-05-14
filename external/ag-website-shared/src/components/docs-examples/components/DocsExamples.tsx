@@ -10,6 +10,7 @@ import {
     FiltersToolPanelModule,
     RowGroupingModule,
     RowGroupingPanelModule,
+    SetFilterModule,
     SideBarModule,
     StatusBarModule,
 } from 'ag-grid-enterprise';
@@ -25,7 +26,12 @@ import { FrameworkLogoCellRenderer } from './cell-renderers/FrameworkLogoCellRen
 import { LinkCellRenderer } from './cell-renderers/LinkCellRenderer';
 import { PageCountComponent } from './cell-renderers/PageCountComponent';
 
-export type ExampleProperty = 'isEnterprise' | 'isIntegratedCharts' | 'isLocale' | 'hasExampleConsoleLog';
+export type ExampleProperty =
+    | 'sourceFileList'
+    | 'isEnterprise'
+    | 'isIntegratedCharts'
+    | 'isLocale'
+    | 'hasExampleConsoleLog';
 
 export interface Props {
     properties?: ExampleProperty[];
@@ -38,6 +44,19 @@ const LOCALSTORAGE_COL_STATE_KEY = `${LOCALSTORAGE_PREFIX}:colState`;
 const ALL_PROPERTIES: (ColDef & {
     field: ExampleProperty;
 })[] = [
+    {
+        field: 'sourceFileList',
+        headerName: 'Source Files',
+        minWidth: 200,
+        filter: 'agSetColumnFilter',
+        valueFormatter: ({ value }) => {
+            if (!value) {
+                return '';
+            }
+
+            return Array.isArray(value) ? value.join(', ') : value;
+        },
+    },
     {
         field: 'isEnterprise',
         headerName: 'Enterprise',
@@ -300,6 +319,7 @@ export const DocsExamples: FunctionComponent<Props> = ({ properties = [], exampl
                     FiltersToolPanelModule,
                     ColumnsToolPanelModule,
                     RowGroupingPanelModule,
+                    SetFilterModule,
                 ]}
                 rowData={exampleContents}
                 columnDefs={colDefs}
