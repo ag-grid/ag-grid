@@ -39,6 +39,8 @@ export class ColumnViewportService extends BeanStub implements NamedBean {
     private columnsToRenderRight: AgColumn[] = [];
     private columnsToRenderCenter: AgColumn[] = [];
 
+    public treeDepth: number = 0;
+
     private scrollWidth: number;
     private scrollPosition: number;
 
@@ -223,9 +225,9 @@ export class ColumnViewportService extends BeanStub implements NamedBean {
 
         // if empty header groups are allowed, then max depth is calculated from all selected cols, otherwise
         // only visible cols
-        const unbalancedTreeDepth = this.beans.gos.get('suppressEmptyHeaderRows')
+        this.treeDepth = this.beans.gos.get('suppressEmptyHeaderRows')
             ? getOriginalColumnTreeDepth(this.visibleCols.allCols)
-            : getOriginalColumnTreeDepth(this.beans.colModel.cols?.list ?? []);
+            : this.beans.colModel.cols?.treeDepth ?? 0;
 
         const workOutGroupsToRender = (cols: AgColumn[]) => {
             const groupsToRenderSet = new Set<AgColumnGroup>();
@@ -238,7 +240,7 @@ export class ColumnViewportService extends BeanStub implements NamedBean {
                 if (balanceTree) {
                     // each tree needs more rendered filler groups if it is not balanced
                     const balanceToDepth = (parent?.getLevel() ?? -1) + 1;
-                    for (let i = balanceToDepth; i < unbalancedTreeDepth; i++) {
+                    for (let i = balanceToDepth; i < this.treeDepth; i++) {
                         groupsToRender[i] ??= [];
                         groupsToRender[i].push(col);
                     }
@@ -264,7 +266,8 @@ export class ColumnViewportService extends BeanStub implements NamedBean {
         this.rowsOfHeadersToRenderLeft = workOutGroupsToRender(leftCols);
         this.rowsOfHeadersToRenderRight = workOutGroupsToRender(rightCols);
         // should these be this.headerColsWithinViewport?
-        this.rowsOfHeadersToRenderCenter = workOutGroupsToRender(this.colsWithinViewport);
+        this.rowsOfHeadersToRenderCenter = workOutGroupsToRender(this.headerColsWithinViewport);
+        console.log('groupsToRenderCenter', this.rowsOfHeadersToRenderCenter);
         // const testGroup = (
         //     children: (AgColumn | AgColumnGroup)[],
         //     result: { [row: number]: (AgColumn | AgColumnGroup)[] },

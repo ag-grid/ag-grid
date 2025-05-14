@@ -75,7 +75,7 @@ export class HeaderGroupPaddingCellCtrl extends AbstractHeaderCellCtrl<
         compBean.createManagedBean(new SetLeftFeature(column, eGui, beans));
         compBean.createManagedBean(new GroupWidthFeature(comp, column));
         if (colResize) {
-            colResize.createResizeFeature(pinned, this.column, eResize, comp);
+            compBean.createManagedBean(colResize.createResizeFeature(pinned, this.column, eResize, comp));
         } else {
             comp.setResizableDisplayed(false);
         }
@@ -163,20 +163,7 @@ export class HeaderGroupPaddingCellCtrl extends AbstractHeaderCellCtrl<
     }
 
     protected resizeHeader(delta: number, shiftKey: boolean): void {
-        const { resizeFeature } = this;
-        // check to avoid throwing when a component has not been setup yet (React 18)
-        if (!resizeFeature) {
-            return;
-        }
-
-        const initialValues = resizeFeature.getInitialValues(shiftKey);
-
-        resizeFeature.resizeColumns(initialValues, initialValues.resizeStartWidth + delta, 'uiColumnResized', true);
-    }
-
-    public resizeLeafColumnsToFit(source: ColumnEventType): void {
-        // check to avoid throwing when a component has not been setup yet (React 18)
-        this.resizeFeature?.resizeLeafColumnsToFit(source);
+        this.beans.colResize?.resizeHeader(this.column, delta, shiftKey);
     }
 
     private setupUserComp(): void {
@@ -291,13 +278,10 @@ export class HeaderGroupPaddingCellCtrl extends AbstractHeaderCellCtrl<
         if (!this.isAlive() || this.isSuppressMoving()) {
             return;
         }
-
         this.removeDragSource();
-
         if (!eHeaderGroup) {
             return;
         }
-
         this.dragSource =
             this.beans.colMoves?.setDragSourceForHeader(eHeaderGroup, this.column, this.displayName) ?? null;
     }

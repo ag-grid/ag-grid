@@ -512,28 +512,16 @@ export class ColumnGroupService extends BeanStub implements NamedBean {
         return result;
     }
 
-    public findDepth(balancedColumnTree: (AgColumn | AgProvidedColumnGroup)[]): number {
-        let depth = 0;
-        let pointer = balancedColumnTree;
-
-        while (pointer && pointer[0] && isProvidedColumnGroup(pointer[0])) {
-            depth++;
-            pointer = (pointer[0] as AgProvidedColumnGroup).getChildren();
-        }
-        return depth;
-    }
-
-    public findMaxDepth(treeChildren: (AgColumn | AgProvidedColumnGroup)[], depth: number): number {
-        let maxDepthThisLevel = depth;
-
+    public findTreeDepth(treeChildren: (AgColumn | AgProvidedColumnGroup)[], depth: number = 0): number {
+        let maxDepthThisLevel = -1;
         for (let i = 0; i < treeChildren.length; i++) {
             const abstractColumn = treeChildren[i];
             if (isProvidedColumnGroup(abstractColumn)) {
                 const originalGroup = abstractColumn;
-                const newDepth = this.findMaxDepth(originalGroup.getChildren(), depth + 1);
-                if (maxDepthThisLevel < newDepth) {
-                    maxDepthThisLevel = newDepth;
-                }
+                const newDepth = this.findTreeDepth(originalGroup.getChildren(), depth + 1);
+                maxDepthThisLevel = Math.max(maxDepthThisLevel, newDepth);
+            } else if (maxDepthThisLevel === -1) {
+                maxDepthThisLevel = depth;
             }
         }
 

@@ -534,7 +534,7 @@ export class AgColumn<TValue = any>
             return { numberOfParents: 0, isSpanningTotal: false };
         }
 
-        const maxDepth = this.beans.visibleCols.treeDepth;
+        const maxDepth = this.beans.colViewport.treeDepth;
         if (maxDepth === 0) {
             return { numberOfParents: 0, isSpanningTotal: false };
         }

@@ -121,7 +121,7 @@ export function _createColumnTree(
         source
     );
     const { colGroupSvc } = beans;
-    const treeDepth = colGroupSvc?.findMaxDepth(unbalancedTree, 0) ?? 0;
+    const treeDepth = colGroupSvc?.findTreeDepth(unbalancedTree) ?? 0;
     // const columnTree = colGroupSvc
     //     ? colGroupSvc.balanceColumnTree(unbalancedTree, 0, treeDepth, columnKeyCreator)
     //     : unbalancedTree;

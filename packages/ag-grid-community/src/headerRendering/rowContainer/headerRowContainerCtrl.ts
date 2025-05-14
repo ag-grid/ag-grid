@@ -80,7 +80,7 @@ export class HeaderRowContainerCtrl extends BeanStub implements ScrollPartner {
         const focusedHeaderPosition = focusSvc.getFocusHeaderToUseAfterRefresh();
 
         const refreshColumnGroups = () => {
-            const groupRowCount = getHeaderRowCount(this.beans) - 1;
+            const groupRowCount = this.beans.colViewport.treeDepth;
 
             const currentGroupCount = this.groupsRowCtrls.length;
             if (currentGroupCount === groupRowCount) {

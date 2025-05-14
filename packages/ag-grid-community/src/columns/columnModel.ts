@@ -109,6 +109,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
 
         const tree = newTree.columnTree;
         const treeDepth = newTree.treeDepth;
+        console.log('treeDepth', treeDepth);
         const list = _getColumnsFromTree(tree);
         const map: { [id: string]: AgColumn } = {};
 
