@@ -5,7 +5,7 @@ import styles from '../../pages-styles/campaigns.module.scss';
 import { TrialLicenceForm } from '@ag-website-shared/components/trial-licence-form/TrialLicenceForm';
 import { AutomatedIntegratedCharts } from '@ag-website-shared/components/automated-examples/AutomatedIntegratedCharts';
 import { Icon } from '@ag-website-shared/components/icon/Icon';
-import { Alert } from '@ag-website-shared/components/alert/Alert';
+import ImageCarousel from './components/ImageCarousel';
 
 import 'ag-grid-community/styles/ag-grid.css';
 import 'ag-grid-community/styles/ag-theme-quartz.css';
@@ -14,6 +14,25 @@ import { getIsProduction } from '@utils/env';
 const TRIAL_LICENCE_FORM_URL = getIsProduction()
     ? 'https://us-central1-aggrid-ecommerce.cloudfunctions.net/CreateLeadForTrialChartsCampaign'
     : 'https://us-central1-stripe-testing-19784.cloudfunctions.net/CreateLeadForTrialChartsCampaign';
+
+const QUOTES_DATA = [
+    {
+        quote: 'Replacing our slow, unstable Tableau reports will be a big ‘quality of life’ improvement.',
+        source: 'A leading global aerospace and defence company',
+    },
+    {
+        quote: 'Your Grid and Charts are the backbone of this project.',
+        source: 'An AI-driven investment research platform',
+    },
+    {
+        quote: 'The speed of AG Grid’s charting library is insanely impressive.',
+        source: 'Developer on X',
+    },
+];
+
+const UTM_TRACKER = '?utm_source=power-of-ag-charts&utm_medium=landing-page&utm_campaign=integrated-enterprise-charts';
+
+const MAILTO_HREF = 'mailto:info@ag-grid.com?subject=AG Charts Enterprise: SPRING25 enquiry';
 ---
 
 <!-- Grid font for Quartz theme -->
@@ -28,82 +47,72 @@ const TRIAL_LICENCE_FORM_URL = getIsProduction()
     showSearchBar={true}
     hidePageFromSearchEngines={true}
 >
+    <div class={styles.homepageHero}>
+        <div class:list={[styles.heroInner, 'layout-max-width-small']}>
+            <div class={styles.heroHeadings}>
+                <h1>Enhance your Insights with <span class={styles.noWrap}>AG Charts</span> Enterprise</h1>
+
+                <h2>
+                    Access advanced features and chart types without any additional development. Simply update your
+                    licence and import the <code class={styles.noWrap}>ag-charts-enterprise</code> package.
+                </h2>
+
+                <div>
+                    <a
+                        href={'https://www.ag-grid.com/charts/gallery/' + UTM_TRACKER}
+                        target="_blank"
+                        class="button-secondary">See the charts <Icon name="chevronRight" /></a
+                    >
+                    <a href={MAILTO_HREF} class="button-secondary">Buy now: 20% discount <Icon name="email" /></a>
+                </div>
+            </div>
+
+            <ImageCarousel client:load />
+        </div>
+    </div>
+
     <main class={styles.campaignOuter}>
-        <div class={styles.campaignHero}>
-            <h1>Enhance your Integrated Charts with AG Charts Enterprise</h1>
-
-            <p class={styles.campaignSubhead}>
-                Access advanced features and chart types without any additional development.<br />Simply update your
-                licence and import the <code>ag-charts-enterprise</code> package.
+        <div class={styles.campaignOffer}>
+            <p>
+                Order before <b>1st July</b> for a <b>20% discount</b> on your 1st year's licence – apply for a trial licence,
+                or get in touch using code <b>SPRING25</b>
             </p>
-
-            <p class={styles.campaignOffer}>
-                <Alert>
-                    Order before 1st July for an exclusive 20% discount on your 1st year's licence costs for AG Charts –
-                    simply apply for a trial licence, or get in touch using code <b>SPRING25</b>, to redeem.
-                </Alert>
-            </p>
-
-            <div style={{ display: 'flex', gap: '1rem', marginTop: '2rem', justifyContent: 'center' }}>
-                <a href="mailto:info@ag-grid.com?subject=EnterpriseCharts2025" class="button text-xl"
-                    >Buy Now: 20% Discount</a
+            <span class={styles.illustration}>
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 103"
+                    ><path
+                        fill="#000"
+                        fill-rule="evenodd"
+                        d="M59.614 77.872a3.875 3.875 0 0 1 5.773 0l.904 1.01a1.3 1.3 0 0 0 1.035.43l1.356-.076a3.875 3.875 0 0 1 4.082 4.082l-.075 1.356a1.3 1.3 0 0 0 .429 1.034l1.011.904a3.874 3.874 0 0 1 0 5.775l-1.011.904a1.29 1.29 0 0 0-.429 1.035l.075 1.356a3.873 3.873 0 0 1-4.082 4.082l-1.356-.075a1.3 1.3 0 0 0-1.033.428l-.904 1.012a3.87 3.87 0 0 1-2.888 1.291 3.87 3.87 0 0 1-2.887-1.291l-.905-1.012a1.3 1.3 0 0 0-1.034-.428l-1.356.075a3.877 3.877 0 0 1-4.082-4.082l.075-1.356a1.3 1.3 0 0 0-.429-1.034l-1.01-.904a3.877 3.877 0 0 1 0-5.775l1.01-.904a1.3 1.3 0 0 0 .429-1.035l-.075-1.356a3.874 3.874 0 0 1 4.081-4.082l1.357.075a1.3 1.3 0 0 0 1.033-.429zm7.675 6.84a1.29 1.29 0 0 1 0 1.826l-7.75 7.75a1.291 1.291 0 0 1-1.827-1.826l7.75-7.75a1.29 1.29 0 0 1 1.827 0m-8.018-.379a1.937 1.937 0 0 0-1.937 1.938v.013a1.94 1.94 0 0 0 1.937 1.937h.013a1.937 1.937 0 0 0 1.938-1.937v-.013a1.937 1.937 0 0 0-1.938-1.938zm6.459 6.459a1.94 1.94 0 0 0-1.938 1.937v.013a1.94 1.94 0 0 0 1.938 1.938h.013a1.94 1.94 0 0 0 1.937-1.938v-.013a1.94 1.94 0 0 0-1.937-1.937zM83.614 41.872a3.875 3.875 0 0 1 5.773 0l.904 1.01a1.3 1.3 0 0 0 1.035.43l1.356-.076a3.875 3.875 0 0 1 4.082 4.082l-.075 1.356a1.3 1.3 0 0 0 .429 1.034l1.011.904a3.874 3.874 0 0 1 0 5.775l-1.011.904a1.29 1.29 0 0 0-.429 1.035l.075 1.356a3.873 3.873 0 0 1-4.082 4.082l-1.356-.075a1.3 1.3 0 0 0-1.033.429l-.904 1.01a3.875 3.875 0 0 1-5.775 0l-.905-1.01a1.29 1.29 0 0 0-1.034-.43l-1.356.076a3.877 3.877 0 0 1-4.082-4.082l.075-1.356a1.3 1.3 0 0 0-.429-1.034l-1.01-.904a3.877 3.877 0 0 1 0-5.775l1.01-.904a1.3 1.3 0 0 0 .429-1.035l-.075-1.356a3.874 3.874 0 0 1 4.082-4.082l1.356.075a1.3 1.3 0 0 0 1.033-.428zm7.675 6.84a1.29 1.29 0 0 1 0 1.826l-7.75 7.75a1.291 1.291 0 0 1-1.827-1.826l7.75-7.75a1.29 1.29 0 0 1 1.827 0m-8.018-.379a1.937 1.937 0 0 0-1.937 1.938v.013a1.94 1.94 0 0 0 1.937 1.937h.013a1.937 1.937 0 0 0 1.938-1.937v-.013a1.937 1.937 0 0 0-1.938-1.938zm6.459 6.459a1.94 1.94 0 0 0-1.938 1.937v.013a1.94 1.94 0 0 0 1.938 1.938h.013a1.94 1.94 0 0 0 1.937-1.938v-.013a1.94 1.94 0 0 0-1.937-1.937z"
+                        clip-rule="evenodd"
+                        opacity=".1"></path><path
+                        fill="#000"
+                        fill-rule="evenodd"
+                        d="M43.614 41.872a3.875 3.875 0 0 1 5.773 0l.904 1.01a1.3 1.3 0 0 0 1.035.43l1.356-.076a3.875 3.875 0 0 1 4.082 4.082l-.075 1.356a1.3 1.3 0 0 0 .429 1.034l1.011.904a3.874 3.874 0 0 1 0 5.775l-1.011.904a1.29 1.29 0 0 0-.429 1.035l.075 1.356a3.873 3.873 0 0 1-4.082 4.082l-1.356-.075a1.3 1.3 0 0 0-1.033.429l-.904 1.01a3.875 3.875 0 0 1-5.775 0l-.905-1.01a1.29 1.29 0 0 0-1.034-.43l-1.356.076a3.877 3.877 0 0 1-4.082-4.082l.075-1.356a1.3 1.3 0 0 0-.429-1.034l-1.01-.904a3.877 3.877 0 0 1 0-5.775l1.01-.904a1.3 1.3 0 0 0 .429-1.035l-.075-1.356a3.874 3.874 0 0 1 4.081-4.082l1.357.075a1.3 1.3 0 0 0 1.033-.428zm7.675 6.84a1.29 1.29 0 0 1 0 1.826l-7.75 7.75a1.291 1.291 0 0 1-1.827-1.826l7.75-7.75a1.29 1.29 0 0 1 1.827 0m-8.018-.379a1.937 1.937 0 0 0-1.937 1.938v.013a1.94 1.94 0 0 0 1.937 1.937h.013a1.937 1.937 0 0 0 1.938-1.937v-.013a1.937 1.937 0 0 0-1.938-1.938zm6.459 6.459a1.94 1.94 0 0 0-1.938 1.937v.013a1.94 1.94 0 0 0 1.938 1.938h.013a1.94 1.94 0 0 0 1.937-1.938v-.013a1.94 1.94 0 0 0-1.937-1.937z"
+                        clip-rule="evenodd"></path><path
+                        fill="#000"
+                        fill-rule="evenodd"
+                        d="M50.614 1.872a3.875 3.875 0 0 1 5.773 0l.904 1.01a1.3 1.3 0 0 0 1.035.43l1.356-.076a3.875 3.875 0 0 1 4.082 4.082l-.075 1.356a1.3 1.3 0 0 0 .429 1.034l1.011.904a3.874 3.874 0 0 1 0 5.775l-1.011.904a1.29 1.29 0 0 0-.429 1.035l.075 1.356a3.873 3.873 0 0 1-4.082 4.082l-1.356-.075a1.3 1.3 0 0 0-1.033.428l-.904 1.012a3.875 3.875 0 0 1-5.775 0l-.905-1.012a1.29 1.29 0 0 0-1.034-.428l-1.356.075a3.877 3.877 0 0 1-4.082-4.082l.075-1.356a1.3 1.3 0 0 0-.429-1.034l-1.01-.904a3.877 3.877 0 0 1 0-5.775l1.01-.904a1.3 1.3 0 0 0 .429-1.035l-.075-1.356a3.874 3.874 0 0 1 4.081-4.082l1.357.075a1.3 1.3 0 0 0 1.033-.429zm7.675 6.84a1.29 1.29 0 0 1 0 1.826l-7.75 7.75a1.291 1.291 0 0 1-1.827-1.826l7.75-7.75a1.29 1.29 0 0 1 1.827 0m-8.018-.379a1.937 1.937 0 0 0-1.937 1.938v.013a1.94 1.94 0 0 0 1.937 1.937h.013a1.937 1.937 0 0 0 1.938-1.937v-.013a1.937 1.937 0 0 0-1.938-1.938zm6.459 6.459a1.94 1.94 0 0 0-1.938 1.937v.013a1.94 1.94 0 0 0 1.938 1.938h.013a1.94 1.94 0 0 0 1.937-1.938v-.013a1.94 1.94 0 0 0-1.937-1.937zM10.614 1.872a3.875 3.875 0 0 1 5.773 0l.904 1.01a1.3 1.3 0 0 0 1.035.43l1.356-.076a3.875 3.875 0 0 1 4.082 4.082l-.075 1.356a1.3 1.3 0 0 0 .429 1.034l1.011.904a3.874 3.874 0 0 1 0 5.775l-1.011.904a1.29 1.29 0 0 0-.429 1.035l.075 1.356a3.873 3.873 0 0 1-4.082 4.082l-1.356-.075a1.3 1.3 0 0 0-1.033.428l-.904 1.012a3.875 3.875 0 0 1-5.775 0l-.905-1.012a1.29 1.29 0 0 0-1.034-.428l-1.356.075a3.877 3.877 0 0 1-4.082-4.082l.075-1.356a1.3 1.3 0 0 0-.429-1.034l-1.01-.904a3.875 3.875 0 0 1 0-5.775l1.01-.904a1.3 1.3 0 0 0 .429-1.035l-.075-1.356a3.875 3.875 0 0 1 4.082-4.082l1.356.075a1.3 1.3 0 0 0 1.033-.429zm7.675 6.84a1.29 1.29 0 0 1 0 1.826l-7.75 7.75a1.291 1.291 0 0 1-1.827-1.826l7.75-7.75a1.29 1.29 0 0 1 1.827 0m-8.018-.379a1.937 1.937 0 0 0-1.937 1.938v.013a1.94 1.94 0 0 0 1.937 1.937h.013a1.937 1.937 0 0 0 1.938-1.937v-.013a1.937 1.937 0 0 0-1.938-1.938zm6.459 6.459a1.94 1.94 0 0 0-1.938 1.937v.013a1.94 1.94 0 0 0 1.938 1.938h.012a1.94 1.94 0 0 0 1.938-1.938v-.013a1.94 1.94 0 0 0-1.937-1.937zM10.614 57.872a3.875 3.875 0 0 1 5.773 0l.904 1.01a1.3 1.3 0 0 0 1.035.43l1.356-.076a3.875 3.875 0 0 1 4.082 4.082l-.075 1.356a1.3 1.3 0 0 0 .429 1.034l1.011.904a3.874 3.874 0 0 1 0 5.775l-1.011.904a1.29 1.29 0 0 0-.429 1.035l.075 1.356a3.873 3.873 0 0 1-4.082 4.082l-1.356-.075a1.3 1.3 0 0 0-1.033.429l-.904 1.01a3.875 3.875 0 0 1-5.775 0l-.905-1.01a1.29 1.29 0 0 0-1.034-.43l-1.356.076a3.877 3.877 0 0 1-4.082-4.082l.075-1.356a1.3 1.3 0 0 0-.429-1.034l-1.01-.904a3.875 3.875 0 0 1 0-5.775l1.01-.904a1.3 1.3 0 0 0 .429-1.035l-.075-1.356a3.875 3.875 0 0 1 4.082-4.082l1.356.075a1.3 1.3 0 0 0 1.033-.428zm7.675 6.84a1.29 1.29 0 0 1 0 1.826l-7.75 7.75a1.291 1.291 0 0 1-1.827-1.826l7.75-7.75a1.29 1.29 0 0 1 1.827 0m-8.018-.379a1.937 1.937 0 0 0-1.937 1.938v.013a1.94 1.94 0 0 0 1.937 1.937h.013a1.937 1.937 0 0 0 1.938-1.937v-.013a1.937 1.937 0 0 0-1.938-1.938zm6.459 6.459a1.94 1.94 0 0 0-1.938 1.937v.013a1.94 1.94 0 0 0 1.938 1.938h.012a1.94 1.94 0 0 0 1.938-1.938v-.013a1.94 1.94 0 0 0-1.937-1.937z"
+                        clip-rule="evenodd"
+                        opacity=".1"></path></svg
                 >
-                <a href="#free-trial" class="button-secondary text-xl">Start Free Trial</a>
-            </div>
-
-            <div class={styles.autoICExample}>
-                <AutomatedIntegratedCharts client:load visibilityThreshold={0.8} />
-            </div>
+            </span>
         </div>
 
-        <div class={styles.socialProofOuter}>
-            <div class={styles.quotesOuter}>
-                <div class={styles.quote}>
-                    <blockquote>
-                        <p>
-                            Our internal customers are excited about the reports we’ve developed using AG Charts and
-                            Grid – the performance and potential to replace our slow, unstable Tableau reports will be a
-                            big ‘quality of life’ improvement.
-                        </p>
-                    </blockquote>
+        <div class={styles.autoICExample}>
+            <AutomatedIntegratedCharts client:load visibilityThreshold={0.8} />
+        </div>
 
-                    <b>A leading global aerospace and defence company</b>
-                </div>
-
-                <div class={styles.quote}>
-                    <blockquote>
-                        <p>
-                            Your grids and charts are the backbone of this project. The free version is great, but I’m
-                            building something that needs to punch above its weight, and your tools are on another
-                            level.
-                        </p>
-                    </blockquote>
-
-                    <b>An AI-driven investment research platform</b>
-                </div>
-
-                <div class={styles.quote}>
-                    <blockquote>
-                        <p>
-                            We appreciate AG Grid and its rich features. We’re particularly impressed by the addition of
-                            AG Charts, which we believe will be a valuable tool.
-                        </p>
-                    </blockquote>
-
-                    <b>A leading technology company in the retail and agri-food industries</b>
-                </div>
-
-                <div class={styles.quote}>
-                    <blockquote>
-                        <p>
-                            The speed of AG Grid’s charting library is insanely impressive. Tried many others, but
-                            nothing comes close in performance, interface and usability… hats off to their devs.
-                        </p>
-                    </blockquote>
-
-                    <b>Developer on X</b>
-                </div>
-            </div>
+        <div class={styles.quotesOuter}>
+            {
+                QUOTES_DATA.map(({ quote, source }) => {
+                    return (
+                        <div class={styles.quote}>
+                            <blockquote>{quote}</blockquote>
+                            <p class="text-sm">– {source}</p>
+                        </div>
+                    );
+                })
+            }
         </div>
 
         <div class={styles.campaignBenefitsContainer}>
@@ -121,8 +130,10 @@ const TRIAL_LICENCE_FORM_URL = getIsProduction()
                     </li>
                     <li>Add charts to your app with the standalone library for non-data grid use cases.</li>
                 </ul>
-                <a href="https://www.ag-grid.com/charts/gallery/" class="button-tertiary text-md"
-                    >View Gallery <Icon name="arrowRight" /></a
+                <a
+                    href={'https://www.ag-grid.com/charts/gallery/' + UTM_TRACKER}
+                    target="_blank"
+                    class="button-tertiary text-md">View Gallery <Icon name="arrowRight" /></a
                 >
             </div>
 
@@ -144,14 +155,8 @@ const TRIAL_LICENCE_FORM_URL = getIsProduction()
                     <li>Export your visualisations to images and share them across your organisation.</li>
                     <li>Take advantage of exclusive bundle pricing for existing AG Grid customers.</li>
                 </ul>
-                <a href="https://www.ag-grid.com/charts/gallery/" class="button-tertiary text-md"
-                    >Contact Sales <Icon name="email" /></a
-                >
+                <a href={MAILTO_HREF} class="button-tertiary text-md">Contact Sales <Icon name="email" /></a>
             </div>
-        </div>
-
-        <div style="text-align: center;">
-            <p>FEATURES LIST/TABLE placeholder</p>
         </div>
 
         <div style="text-align: center;">
@@ -171,7 +176,7 @@ const TRIAL_LICENCE_FORM_URL = getIsProduction()
                         <b>Two Week Trial</b>
                         <br />
                         Trial licences are valid for two weeks from the date of issue, or{' '}
-                        <a href="mailto:info@ag-grid.com">contact&nbsp;us</a> to extend.
+                        <a href={MAILTO_HREF}>contact&nbsp;us</a> to extend.
                     </p>
                 </div>
 
@@ -194,7 +199,7 @@ const TRIAL_LICENCE_FORM_URL = getIsProduction()
                         <b>Access Support</b>
                         <br />
                         Access dedicated support from our engineering team via{' '}
-                        <a href="https://ag-grid.zendesk.com/hc/en-us">Zendesk</a>.
+                        <a href={'https://ag-grid.zendesk.com/hc/en-us' + UTM_TRACKER} target="_blank">Zendesk</a>.
                     </p>
                 </div>
             </div>
@@ -210,12 +215,10 @@ const TRIAL_LICENCE_FORM_URL = getIsProduction()
             <h2 class="text-2xl">Want to Learn More?</h2>
 
             <div>
-                <a href="https://www.ag-grid.com/charts/gallery/" class="button-tertiary text-md"
-                    >View Gallery <Icon name="arrowRight" /></a
-                >
-                <a href="https://www.ag-grid.com/charts/gallery/" class="button text-md"
-                    >Contact Sales <Icon name="email" /></a
-                >
+                View our
+                <a href={'https://www.ag-grid.com/charts/gallery/' + UTM_TRACKER} target="_blank">gallery of charts</a>
+                or contact sales at
+                <a href="href={MAILTO_HREF}">info@ag-grid.com</a>.
             </div>
         </div>
     </main>
@@ -227,6 +230,6 @@ const TRIAL_LICENCE_FORM_URL = getIsProduction()
     initScrollClassListener({
         targetSelector: '.site-header',
         scrolledClass: 'header-scrolled',
-        scrollPosition: 566,
+        scrollPosition: 480,
     });
 </script>
