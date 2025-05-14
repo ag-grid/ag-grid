@@ -93,37 +93,57 @@
         }
     }
 
+    div:last-child {
+        display: flex;
+        flex-wrap: wrap;
+        gap: $spacing-size-2;
+    }
+
     a {
-        padding-left: $spacing-size-8;
+        padding: 6px 12px;
         background-color: var(--color-white);
         color: var(--color-brand-500);
         transition: opacity 0.3s;
-        height: 48px;
         display: flex;
         justify-content: center;
         align-items: center;
         gap: $spacing-size-2;
+        transition: opacity 0.3s;
 
         #{$selector-darkmode} & {
             background-color: var(--color-white);
             color: var(--color-brand-500);
         }
 
-        &:hover {
-            color: var(--color-brand-500);
-            opacity: 0.8;
-            transition: opacity 0.3s;
+        &:first-child {
+            background-color: transparent;
+            color: var(--color-white);
+            border-width: 2px;
+
+            :global(.icon) {
+                --icon-color: var(--color-white);
+            }
+        }
+
+        &:last-child {
+            &:hover {
+                color: var(--color-brand-500);
+            }
         }
 
         :global(.icon) {
             --icon-size: 1.3333em;
             --icon-color: var(--color-brand-500);
 
-            transition: transform 0.33s ease-in-out;
+            transition: transform 0.25s ease-in-out;
         }
 
-        &:hover :global(.icon) {
+        &:first-child:hover :global(.icon) {
             transform: translateX(4px);
+        }
+
+        &:last-child:hover :global(.icon) {
+            transform: scale(1.05);
         }
     }
 

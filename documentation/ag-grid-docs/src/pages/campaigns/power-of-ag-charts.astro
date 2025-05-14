@@ -57,11 +57,14 @@ const MAILTO_HREF = 'mailto:info@ag-grid.com?subject=AG Charts Enterprise: SPRIN
                     licence and import the <code class={styles.noWrap}>ag-charts-enterprise</code> package.
                 </h2>
 
-                <a
-                    href={'https://www.ag-grid.com/charts/gallery/' + UTM_TRACKER}
-                    target="_blank"
-                    class="button-secondary">See the charts <Icon name="chevronRight" /></a
-                >
+                <div>
+                    <a
+                        href={'https://www.ag-grid.com/charts/gallery/' + UTM_TRACKER}
+                        target="_blank"
+                        class="button-secondary">See the charts <Icon name="chevronRight" /></a
+                    >
+                    <a href={MAILTO_HREF} class="button-secondary">Buy now: 20% discount <Icon name="email" /></a>
+                </div>
             </div>
 
             <ImageCarousel client:load />
