@@ -78,13 +78,9 @@
         max-width: 66%;
         margin-left: auto;
         margin-right: auto;
-
         text-align: center;
-
         font-size: var(--text-fs-lg);
         line-height: var(--text-lh-lg);
-        // font-weight: var(--text-semibold);
-        // color: var(--color-link);
     }
 }
 
@@ -109,48 +105,6 @@
     color: var(--color-link);
 }
 
-.campaignDummyVideo {
-    aspect-ratio: 16 / 9;
-    width: Min(100%, calc(100vw - $spacing-size-16)) !important;
-    margin-top: -$spacing-size-6;
-    margin-bottom: $spacing-size-12;
-    border-radius: 8px;
-}
-
-.campaignBenefitsContainer {
-    --benefitsBG: #fbfbfc;
-
-    display: flex;
-    gap: $spacing-size-4;
-    background-color: var(--benefitsBG);
-    margin: $spacing-size-16 0;
-    padding: $spacing-size-16 0;
-    position: relative;
-    text-align: center;
-
-    box-shadow:
-        50vw 0 0 0 var(--benefitsBG),
-        -50vw 0 0 0 var(--benefitsBG);
-
-    // &::before,
-    // &::after {
-    //     position: absolute;
-    //     content: '';
-    //     width: 100vw;
-    //     top: 0;
-    //     bottom: 0;
-    //     background-color: #fbfbfc;
-    // }
-
-    // &::before {
-    //     left: -100vw;
-    // }
-
-    // &::after {
-    //     right: -100vw;
-    // }
-}
-
 .autoICExample {
     margin-top: $spacing-size-8;
     width: 70vw;
@@ -161,7 +115,33 @@
     }
 }
 
+.campaignBenefitsContainer {
+    --benefitsBG: #fbfbfc;
+
+    display: flex;
+    gap: $spacing-size-8 $spacing-size-4;
+    background-color: var(--benefitsBG);
+    margin: $spacing-size-16 0;
+    padding: $spacing-size-16 0;
+    position: relative;
+    text-align: center;
+    box-shadow:
+        50vw 0 0 0 var(--benefitsBG),
+        -50vw 0 0 0 var(--benefitsBG);
+
+    #{$selector-darkmode} & {
+        --benefitsBG: color-mix(in srgb, var(--color-fg-primary), var(--color-bg-primary) 98%);
+    }
+
+    @media screen and (max-width: 840px) {
+        flex-wrap: wrap;
+    }
+}
+
 .campaignBenefitsList {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
     border: 1px solid var(--color-util-gray-200);
     border-radius: 8px;
     padding: $spacing-size-4;
@@ -187,6 +167,7 @@
     ul {
         text-align: left;
         width: 50ch;
+        margin-bottom: auto;
 
         @media screen and (max-width: $breakpoint-landing-page-medium) {
             width: auto;
@@ -195,6 +176,10 @@
 
     li {
         margin-bottom: $spacing-size-3;
+    }
+
+    a {
+        margin-top: $spacing-size-4;
     }
 
     svg {
@@ -310,7 +295,6 @@
 
 // end license-pricing.module.scss content
 // =======================================
-
 .socialProofOuter {
     border: 1px solid var(--color-border-secondary);
     border-radius: 8px;
@@ -392,7 +376,6 @@
     }
 
     &:not(:last-child) {
-        // padding: $spacing-size-6 $spacing-size-8 $spacing-size-6 $spacing-size-6;
         border-right: 1px solid var(--color-border-secondary);
 
         @media screen and (max-width: $breakpoint-pricing-medium) {
@@ -400,11 +383,7 @@
         }
     }
 
-    &:last-child {
-        // padding: $spacing-size-6 $spacing-size-6 $spacing-size-6 $spacing-size-8;
-    }
-
-    blockquote p {
+    blockquote {
         margin-bottom: $spacing-size-6;
         text-indent: -0.5em;
 
