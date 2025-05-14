@@ -179,6 +179,9 @@ export class TooltipService extends BeanStub implements NamedBean {
         }
 
         const tooltipFeature = this.createTooltipFeature(tooltipParams, beans);
+        if (!tooltipFeature) {
+            return;
+        }
 
         return ctrl.createBean(tooltipFeature, context);
     }
