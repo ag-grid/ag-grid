@@ -25,7 +25,7 @@ export const AllGridCommunityModules: Record<`${CommunityModuleName}Module`, num
     ExternalFilterModule: 13.69,
     GridStateModule: 14.7,
     HighlightChangesModule: 5.09,
-    InfiniteRowModelModule: 17,
+    InfiniteRowModelModule: 18,
     LargeTextEditorModule: 18.6,
     LocaleModule: 0.43,
     NumberEditorModule: 22.82,
