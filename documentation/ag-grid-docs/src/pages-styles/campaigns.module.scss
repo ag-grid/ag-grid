@@ -225,8 +225,14 @@
     margin-bottom: $spacing-size-16;
 
     footer:last-of-type {
-        margin-top: $spacing-size-4;
+        margin-top: $spacing-size-6;
         justify-content: center;
+    }
+
+    @media screen and (min-width: 1400px) {
+        :global(div[class*='automated']) {
+            aspect-ratio: 2 / 1;
+        }
     }
 }
 
