@@ -6,6 +6,7 @@ import type { AgColumn } from '../entities/agColumn';
 import type { ColDef, SuppressKeyboardEventParams, ValueFormatterFunc, ValueFormatterParams } from '../entities/colDef';
 import type {
     BaseCellDataType,
+    BaseCellDataTypeDefMap,
     CoreDataTypeDefinition,
     DataTypeDefinition,
     DataTypeFormatValueFunc,
@@ -86,7 +87,7 @@ export class DataTypeService extends BeanStub implements NamedBean {
             };
         };
 
-        for (const cellDataType of Object.keys(defaultDataTypes)) {
+        for (const cellDataType of Object.keys(defaultDataTypes) as BaseCellDataType[]) {
             const dataTypeDefinition = defaultDataTypes[cellDataType];
             const mergedDataTypeDefinition = {
                 ...dataTypeDefinition,
@@ -119,7 +120,7 @@ export class DataTypeService extends BeanStub implements NamedBean {
 
         this.checkObjectValueHandlers(defaultDataTypes);
 
-        ['dateString', 'text', 'number', 'boolean', 'date'].forEach((cellDataType) => {
+        ['dateString', 'text', 'number', 'boolean', 'date'].forEach((cellDataType: BaseCellDataType) => {
             const overriddenDataTypeMatcher = newDataTypeMatchers[cellDataType];
             if (overriddenDataTypeMatcher) {
                 // remove to maintain correct ordering
@@ -518,7 +519,7 @@ export class DataTypeService extends BeanStub implements NamedBean {
         this.beans.filterManager?.setColDefPropertiesForDataType(colDef, dataTypeDefinition, formatValue);
     }
 
-    private getDefaultDataTypes(): Record<BaseCellDataType, CoreDataTypeDefinition> {
+    private getDefaultDataTypes(): BaseCellDataTypeDefMap {
         const defaultDateFormatMatcher = (value: string) => !!value.match('^\\d{4}-\\d{2}-\\d{2}$');
         const translate = this.getLocaleTextFunc();
         return {
@@ -586,6 +587,12 @@ export class DataTypeService extends BeanStub implements NamedBean {
                 baseDataType: 'object',
                 valueParser: () => null,
                 valueFormatter: (params: ValueFormatterLiteParams<any, any>) => _toStringOrNull(params.value) ?? '',
+            },
+            dateTime: {
+                baseDataType: 'dateTime',
+            },
+            dateTimeString: {
+                baseDataType: 'dateTimeString',
             },
         };
     }
