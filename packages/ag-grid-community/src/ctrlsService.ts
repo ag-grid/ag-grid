@@ -149,4 +149,10 @@ export class CtrlsService extends BeanStub<'ready'> implements NamedBean {
     public getScrollFeature(): GridBodyScrollFeature {
         return this.getGridBodyCtrl().scrollFeature;
     }
+
+    public override destroy(): void {
+        super.destroy();
+        this.params = {} as any;
+        this.readyCallbacks.length = 0;
+    }
 }
