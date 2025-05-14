@@ -41,7 +41,15 @@ export interface DataTypeChecker<TData, TValue> {
  *
  * `object` is any other type.
  */
-export type BaseCellDataType = 'text' | 'number' | 'boolean' | 'date' | 'dateString' | 'object';
+export type BaseCellDataType =
+    | 'text'
+    | 'number'
+    | 'boolean'
+    | 'date'
+    | 'dateString'
+    | 'object'
+    | 'dateTime'
+    | 'dateTimeString';
 
 interface BaseDataTypeDefinition<TValueType extends BaseCellDataType, TData = any, TValue = any> {
     /** The underlying data type */
@@ -116,25 +124,34 @@ export interface DateStringDataTypeDefinition<TData = any> extends BaseDataTypeD
     dateFormatter?: (value: Date | undefined) => string | undefined;
 }
 
+/** Represents a `'dateTime'` data type (type `Date`). */
+export interface DateTimeDataTypeDefinition<TData = any> extends BaseDataTypeDefinition<'dateTime', TData, Date> {}
+
+/** Represents a `'dateTimeString'` data type (type `string` that represents a dateTime). */
+export interface DateTimeStringDataTypeDefinition<TData = any> extends DateStringDataTypeDefinition<TData> {}
+
 /** Represents an `'object'` data type (any type). */
 export interface ObjectDataTypeDefinition<TData, TValue> extends BaseDataTypeDefinition<'object', TData, TValue> {}
 
+abstract class BaseCellDataTypeDefMap<TData = any, TValue = any>
+    implements Record<BaseCellDataType, BaseDataTypeDefinition<BaseCellDataType, any>>
+{
+    text: TextDataTypeDefinition<TData>;
+    number: NumberDataTypeDefinition<TData>;
+    boolean: BooleanDataTypeDefinition<TData>;
+    date: DateDataTypeDefinition<TData>;
+    dateString: DateStringDataTypeDefinition<TData>;
+    object: ObjectDataTypeDefinition<TData, TValue>;
+    dateTime: DateTimeDataTypeDefinition<BaseCellDataType>;
+    dateTimeString: DateTimeStringDataTypeDefinition<BaseCellDataType>;
+}
+
+type ValueOf<T> = T[keyof T];
+
 /** Configuration options for a cell data type. */
-export type DataTypeDefinition<TData = any> =
-    | TextDataTypeDefinition<TData>
-    | NumberDataTypeDefinition<TData>
-    | BooleanDataTypeDefinition<TData>
-    | DateDataTypeDefinition<TData>
-    | DateStringDataTypeDefinition<TData>
-    | ObjectDataTypeDefinition<TData, any>;
+export type DataTypeDefinition<TData = any> = ValueOf<BaseCellDataTypeDefMap<TData>>;
 
 /** Configuration options for pre-defined data types. */
-export type CoreDataTypeDefinition<TData = any> =
-    | Omit<TextDataTypeDefinition<TData>, 'extendsDataType'>
-    | Omit<NumberDataTypeDefinition<TData>, 'extendsDataType'>
-    | Omit<BooleanDataTypeDefinition<TData>, 'extendsDataType'>
-    | Omit<DateDataTypeDefinition<TData>, 'extendsDataType'>
-    | Omit<DateStringDataTypeDefinition<TData>, 'extendsDataType'>
-    | Omit<ObjectDataTypeDefinition<TData, any>, 'extendsDataType'>;
+export type CoreDataTypeDefinition<TData = any> = ValueOf<Omit<DataTypeDefinition<TData>, 'extendsDataType'>>;
 
 export type DataTypeFormatValueFunc = (params: { column: Column; node: IRowNode | null; value: any }) => string;
