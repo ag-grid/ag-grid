@@ -196,6 +196,10 @@
     margin-right: var(--ag-cell-widget-spacing);
 }
 
+[col-id='ag-Grid-SelectionColumn'] .ag-selection-checkbox {
+    margin-right: 0;
+}
+
 .ag-group-child-count {
     margin-left: 3px;
 }
