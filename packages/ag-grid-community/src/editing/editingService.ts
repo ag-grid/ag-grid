@@ -3,16 +3,15 @@ import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import { PopupEditorWrapper } from '../edit/cellEditors/popupEditorWrapper';
 import type { AgColumn } from '../entities/agColumn';
-import type { RowNode } from '../entities/rowNode';
 import type { ICellEditorParams } from '../interfaces/iCellEditor';
+import type { Column } from '../interfaces/iColumn';
 import type { IRowNode } from '../interfaces/iRowNode';
 import type { CellPosition } from '../main-umd-noStyles';
 import { CellCtrl } from '../rendering/cell/cellCtrl';
-import type { RowCtrl } from '../rendering/row/rowCtrl';
 import type { CellUpdate, EditingModelService } from './editingModelService';
 import { _createUpdates } from './editingModelService';
 import type { BaseEditStrategy } from './strategy/baseEditStrategy';
-import { _addStopEditingWhenGridLosesFocus, _resolveCellController, _resolveControllers } from './utils/controllers';
+import { _addStopEditingWhenGridLosesFocus, _resolveCellController } from './utils/controllers';
 import { _refreshEditorOnColDefChanged, _syncModelFromEditor, _syncModelsFromEditors } from './utils/editors';
 
 export class EditingService extends BeanStub implements NamedBean {
@@ -69,54 +68,54 @@ export class EditingService extends BeanStub implements NamedBean {
     }
 
     shouldStartEditing(
-        rowCtrl?: RowCtrl | null,
-        cellCtrl?: CellCtrl,
+        rowNode?: IRowNode,
+        column?: Column,
         key?: string | null,
         event?: KeyboardEvent | MouseEvent | null,
         cellStartedEdit?: boolean | null,
         source: 'api' | 'ui' = 'ui'
     ): boolean | null {
-        return this.editStrategy?.shouldStartEditing?.(rowCtrl, cellCtrl, key, event, cellStartedEdit, source) ?? null;
+        return this.editStrategy?.shouldStartEditing?.(rowNode, column, key, event, cellStartedEdit, source) ?? null;
     }
 
     shouldStopEditing(
-        rowCtrl?: RowCtrl | null,
-        cellCtrl?: CellCtrl | null,
+        rowNode?: IRowNode,
+        column?: Column,
         key?: string | null | undefined,
         event?: KeyboardEvent | MouseEvent | null | undefined,
         source: 'api' | 'ui' = 'ui'
     ): boolean | null {
-        return this.editStrategy?.shouldStopEditing?.(rowCtrl, cellCtrl, key, event, source) ?? null;
+        return this.editStrategy?.shouldStopEditing?.(rowNode, column, key, event, source) ?? null;
     }
 
     shouldCancelEditing(
-        rowCtrl?: RowCtrl | null,
-        cellCtrl?: CellCtrl | null,
+        rowNode?: IRowNode,
+        column?: Column,
         key?: string | null | undefined,
         event?: KeyboardEvent | MouseEvent | null | undefined,
         source: 'api' | 'ui' = 'ui'
     ): boolean | null {
-        return this.editStrategy?.shouldCancelEditing?.(rowCtrl, cellCtrl, key, event, source) ?? null;
+        return this.editStrategy?.shouldCancelEditing?.(rowNode, column, key, event, source) ?? null;
     }
 
-    public isEditing(rowCtrl?: RowCtrl | null, cellCtrl?: CellCtrl | null): boolean {
-        return this.editModel?.hasPending?.(rowCtrl, cellCtrl) ?? false;
+    public isEditing(rowNode?: IRowNode | null, column?: Column | null): boolean {
+        return this.editModel?.hasPending?.(rowNode, column) ?? false;
     }
 
     /** @return whether to prevent default on event */
     public startEditing(
-        rowCtrl: RowCtrl,
-        cellCtrl: CellCtrl,
+        rowNode: IRowNode,
+        column: Column,
         key: string | null = null,
         cellStartedEdit: boolean | null = true,
         event: KeyboardEvent | MouseEvent | null = null,
         source: 'api' | 'ui' = 'ui'
     ): boolean {
-        if (!cellCtrl.isCellEditable()) {
+        if (!column.isCellEditable(rowNode)) {
             return false;
         }
 
-        if (this.isEditing(rowCtrl, cellCtrl)) {
+        if (this.isEditing(rowNode, column)) {
             return true;
         }
 
@@ -124,14 +123,15 @@ export class EditingService extends BeanStub implements NamedBean {
 
         // because of async in React, the cellComp may not be set yet, if no cellComp then we are
         // yet to initialise the cell, so we re-schedule this operation for when celLComp is attached
+        const cellCtrl = _resolveCellController(this.beans, { rowNode, column })!;
         if (!cellCtrl.comp) {
             cellCtrl.onCompAttachedFuncs.push(() => {
-                this.startEditing(rowCtrl, cellCtrl, key, cellStartedEdit, event, source);
+                this.startEditing(rowNode, column, key, cellStartedEdit, event, source);
             });
             return true;
         }
 
-        const res = this.shouldStartEditing?.(rowCtrl, cellCtrl, key, event, cellStartedEdit, source);
+        const res = this.shouldStartEditing?.(rowNode, column, key, event, cellStartedEdit, source);
 
         if (res === false && source !== 'api') {
             if (this.isEditing()) {
@@ -140,11 +140,11 @@ export class EditingService extends BeanStub implements NamedBean {
             return false;
         }
 
-        if (this.editStrategy.shouldStopEditing(rowCtrl, cellCtrl, undefined, undefined, source)) {
+        if (this.editStrategy.shouldStopEditing(rowNode, column, undefined, undefined, source)) {
             this.stopEditing(undefined, undefined, undefined, undefined, undefined, source);
         }
 
-        return this.editStrategy!.startEditing?.(rowCtrl, cellCtrl, key, event, source);
+        return this.editStrategy!.startEditing?.(rowNode, column, key, event, source);
     }
 
     /**
@@ -153,8 +153,8 @@ export class EditingService extends BeanStub implements NamedBean {
      * @returns `True` if the value of the `GridCell` has been updated, otherwise `False`.
      */
     public stopEditing(
-        rowCtrl?: RowCtrl | null,
-        cellCtrl?: CellCtrl | null,
+        rowNode?: IRowNode,
+        column?: Column,
         key?: string,
         event?: KeyboardEvent | MouseEvent | null,
         cancel: boolean = false,
@@ -166,6 +166,7 @@ export class EditingService extends BeanStub implements NamedBean {
             return false;
         }
 
+        const cellCtrl = _resolveCellController(this.beans, { rowNode, column });
         if (cellCtrl) {
             cellCtrl.onEditorAttachedFuncs = [];
         }
@@ -178,16 +179,16 @@ export class EditingService extends BeanStub implements NamedBean {
 
         let res = false;
 
-        if (!cancel && this.shouldStopEditing?.(rowCtrl, cellCtrl, key, event, source)) {
+        if (!cancel && this.shouldStopEditing?.(rowNode, column, key, event, source)) {
             this.processUpdates(updates, false);
 
-            this.editStrategy?.stopEditing?.(rowCtrl, cellCtrl, source) ?? false;
+            this.editStrategy?.stopEditing?.() ?? false;
 
             res = true;
-        } else if (cancel && this.shouldCancelEditing?.(rowCtrl, cellCtrl, key, event, source)) {
+        } else if (cancel && this.shouldCancelEditing?.(rowNode, column, key, event, source)) {
             this.processUpdates(updates, true);
 
-            this.editStrategy?.stopEditing?.(rowCtrl, cellCtrl, source) ?? false;
+            this.editStrategy?.stopEditing?.() ?? false;
         }
 
         if (!suppressNavigateAfterEdit && cellCtrl) {
@@ -266,14 +267,16 @@ export class EditingService extends BeanStub implements NamedBean {
 
     moveToNextCell(previous: CellCtrl, backwards: boolean, event?: KeyboardEvent): boolean | null {
         let editing =
-            previous instanceof CellCtrl ? this.isEditing(previous.rowCtrl, previous) : this.isEditing(previous);
+            previous instanceof CellCtrl
+                ? this.isEditing(previous.rowCtrl.rowNode, previous.column)
+                : this.isEditing(previous);
 
         // if cell is not editing, there is still chance row is editing if it's Full Row Editing
         if (!editing && previous instanceof CellCtrl) {
             const cell = previous as CellCtrl;
             const row = cell.rowCtrl;
             if (row) {
-                editing = this.isEditing(row);
+                editing = this.isEditing(row.rowNode);
             }
         }
 
@@ -299,13 +302,10 @@ export class EditingService extends BeanStub implements NamedBean {
         return res;
     }
 
-    public getCellDataValue(rowId?: string, colId?: string): any {
-        if (!rowId || !colId) {
+    public getCellDataValue(rowNode?: IRowNode | null, column?: Column | null): any {
+        if (!rowNode || !column) {
             return undefined;
         }
-
-        const rowNode = this.beans.rowModel.getRowNode(rowId);
-        const column = this.beans.colModel.getColById(colId);
 
         return this.editModel?.getPendingUpdate(rowNode!, column!);
     }
@@ -320,15 +320,11 @@ export class EditingService extends BeanStub implements NamedBean {
         return new PopupEditorWrapper(params);
     }
 
-    setDataValue(
-        rowNode: RowNode,
-        column: string | AgColumn<any>,
-        newValue: any,
-        eventSource?: string
-    ): boolean | null {
-        const { rowCtrl, cellCtrl } = _resolveControllers(this.beans, { rowNode, column });
-
-        return _syncModelFromEditor(this.beans, rowCtrl, cellCtrl, newValue, eventSource);
+    setDataValue(rowNode: IRowNode, column: string | Column<any>, newValue: any, eventSource?: string): boolean | null {
+        if (typeof column === 'string') {
+            column = this.beans.colModel.getCol(column)!;
+        }
+        return _syncModelFromEditor(this.beans, rowNode, column, newValue, eventSource);
     }
 
     public handleColDefChanged(cellCtrl: CellCtrl): void {

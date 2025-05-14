@@ -116,7 +116,7 @@ export class RowComp extends Component {
     }
 
     private newCellComp(cellCtrl: CellCtrl): void {
-        const editing = this.beans.editingSvc?.isEditing(cellCtrl.rowCtrl, cellCtrl) ?? false;
+        const editing = this.beans.editingSvc?.isEditing(cellCtrl.rowNode, cellCtrl.column) ?? false;
         const cellComp = new CellComp(this.beans, cellCtrl, this.rowCtrl.printLayout, this.getGui(), editing);
         this.cellComps.set(cellCtrl.instanceId, cellComp);
         this.getGui().appendChild(cellComp.getGui());

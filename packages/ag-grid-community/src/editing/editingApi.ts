@@ -47,12 +47,12 @@ export function stopEditing(beans: BeanCollection, cancel: boolean = false): voi
 
 export function isEditing(beans: BeanCollection, rowId?: string, colId?: string): boolean {
     const { rowCtrl, cellCtrl } = _resolveControllers(beans, { rowId, colId });
-    return beans.editingSvc?.isEditing(rowCtrl, cellCtrl) ?? false;
+    return beans.editingSvc?.isEditing(rowCtrl?.rowNode, cellCtrl?.column) ?? false;
 }
 
 export function isRowEditing(beans: BeanCollection, rowId: string): boolean {
     const rowCtrl = _resolveRowController(beans, { rowId });
-    return beans.editingSvc?.isEditing(rowCtrl) ?? false;
+    return beans.editingSvc?.isEditing(rowCtrl?.rowNode, null) ?? false;
 }
 
 export function startEditingCell(beans: BeanCollection, params: StartEditingCellParams): void {
@@ -91,7 +91,7 @@ export function startEditingCell(beans: BeanCollection, params: StartEditingCell
             preventScrollOnBrowserFocus: true,
         });
     }
-    editingSvc?.startEditing(cell.rowCtrl, cell, params.key, true, undefined, 'api');
+    editingSvc?.startEditing(cell.rowNode, cell.column, params.key, true, undefined, 'api');
 }
 
 export function cancelEdits(beans: BeanCollection): void {

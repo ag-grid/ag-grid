@@ -234,7 +234,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         const focusableElement = this.fullWidthGui?.element;
         if (focusableElement) {
             // when cell is created, if it should be focus the grid should take focus from the focused cell
-            const editing = this.beans.editingSvc?.isEditing(this);
+            const editing = this.beans.editingSvc?.isEditing(this.rowNode);
             if (!editing && focusSvc.isRowFocused(rowNode.rowIndex!, rowNode.rowPinned) && focusSvc.shouldTakeFocus()) {
                 setTimeout(() => focusableElement.focus({ preventScroll: true }), 0);
             }
@@ -685,7 +685,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         }
 
         // we want to try and keep editing and focused cells
-        const editing = this.beans.editingSvc?.isEditing(cellCtrl.rowCtrl, cellCtrl);
+        const editing = this.beans.editingSvc?.isEditing(cellCtrl.rowNode, cellCtrl.column);
         const { visibleCols } = this.beans;
         const focused = cellCtrl.isCellFocused();
 

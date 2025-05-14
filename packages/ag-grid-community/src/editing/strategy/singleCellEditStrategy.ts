@@ -1,53 +1,53 @@
 import type { BeanName } from '../../context/context';
-import type { RowNode } from '../../entities/rowNode';
 import type { CellFocusedEvent, CommonCellFocusParams } from '../../events';
 import type { Column } from '../../interfaces/iColumn';
+import type { IRowNode } from '../../interfaces/iRowNode';
 import type { CellCtrl } from '../../rendering/cell/cellCtrl';
-import type { RowCtrl } from '../../rendering/row/rowCtrl';
 import { _getColId, _resolveCellController, _resolveControllers } from '../utils/controllers';
 import { BaseEditStrategy } from './baseEditStrategy';
 
 export class SingleCellEditStrategy extends BaseEditStrategy {
     override beanName = 'singleCell' as BeanName | undefined;
 
-    private rowNode?: RowNode | null;
+    private rowNode?: IRowNode | null;
     private column?: Column | null;
 
     public override shouldStopEditing(
-        rowCtrl?: RowCtrl | undefined,
-        cellCtrl?: CellCtrl | undefined,
+        rowNode?: IRowNode | undefined,
+        column?: Column | undefined,
         key?: string | null | undefined,
         event?: KeyboardEvent | MouseEvent | null | undefined,
         source: 'api' | 'ui' = 'ui'
     ): boolean | null {
-        const res = super.shouldStopEditing(rowCtrl, cellCtrl, key, event, source);
+        const res = super.shouldStopEditing(rowNode, column, key, event, source);
         if (res !== null) {
             return res;
         }
 
-        if ((!this.rowNode || !this.column) && rowCtrl && cellCtrl) {
+        if ((!this.rowNode || !this.column) && rowNode && column) {
             return null;
-        } else if (!rowCtrl && !cellCtrl && this.rowNode && this.column) {
+        } else if (!rowNode && !column && this.rowNode && this.column) {
             return null;
         }
 
-        return this.rowNode !== rowCtrl?.rowNode || this.column !== cellCtrl?.column;
+        return this.rowNode !== rowNode || this.column !== column;
     }
 
-    public updateStyles(_rowCtrl?: RowCtrl | null, cellCtrl?: CellCtrl | null, newState?: boolean): void {
+    public updateStyles(rowNode?: IRowNode | null, column?: Column | null, newState?: boolean): void {
+        const cellCtrl = _resolveCellController(this.beans, {
+            rowNode,
+            column,
+        });
         cellCtrl?.comp.toggleCss('ag-cell-batch-edit', (newState && this.gos.get('batchEdit')) ?? false);
     }
 
     public startEditing(
-        rowCtrl: RowCtrl,
-        cellCtrl?: CellCtrl,
+        rowNode: IRowNode,
+        column: Column,
         _key?: string | null | undefined,
         event?: KeyboardEvent | MouseEvent | null,
         _source: 'api' | 'ui' = 'ui'
     ): boolean {
-        const rowNode = rowCtrl.rowNode!;
-        const column = cellCtrl?.column ?? this.beans.visibleCols.getFirstColumn()!;
-
         if (this.rowNode !== rowNode || this.column !== column) {
             super.cleanupEditors();
         }
@@ -57,7 +57,7 @@ export class SingleCellEditStrategy extends BaseEditStrategy {
 
         this.editModel.startEditing(rowNode, column);
 
-        this.updateStyles(rowCtrl, cellCtrl, true);
+        this.updateStyles(rowNode, column, true);
 
         return this.finishStartEdit(
             [
@@ -66,28 +66,24 @@ export class SingleCellEditStrategy extends BaseEditStrategy {
                     column,
                 },
             ],
-            rowCtrl,
-            cellCtrl,
+            rowNode,
+            column,
             undefined,
             true,
             event
         );
     }
 
-    public override stopEditing(
-        rowCtrl?: RowCtrl | null,
-        cellCtrl?: CellCtrl | null,
-        source: 'api' | 'ui' = 'ui'
-    ): boolean {
+    public override stopEditing(): boolean {
         this.editModel.getPendingCellIds().forEach((cellId) => {
             const cellCtrl = _resolveCellController(this.beans, cellId);
             if (cellCtrl) {
                 cellCtrl.comp.toggleCss('ag-cell-batch-edit', false);
-                this.updateStyles(cellCtrl.rowCtrl, cellCtrl, false);
+                this.updateStyles(cellId.rowNode, cellId.column, false);
             }
         });
 
-        super.stopEditing(rowCtrl, cellCtrl, source);
+        super.stopEditing();
 
         this.rowNode = undefined;
         this.column = undefined;
@@ -103,15 +99,17 @@ export class SingleCellEditStrategy extends BaseEditStrategy {
             return;
         }
 
-        const { rowCtrl, cellCtrl } = _resolveControllers(this.beans, {
+        const { cellCtrl } = _resolveControllers(this.beans, {
             rowIndex: previous?.rowIndex,
             column: previous?.column,
         });
 
+        const { rowNode } = cellCtrl!;
+
         // if we are editing, then moving the focus out of a cell will stop editing
         this.beans.editingSvc?.stopEditing(
-            rowCtrl,
-            cellCtrl,
+            rowNode,
+            this.beans.colModel.getCol(_getColId(column)) ?? undefined,
             undefined,
             undefined,
             undefined,
@@ -150,7 +148,14 @@ export class SingleCellEditStrategy extends BaseEditStrategy {
 
         const batchEdit = this.gos.get('batchEdit');
 
-        this.beans.editingSvc?.startEditing(nextCell.rowCtrl, nextCell, null, true, event, batchEdit ? 'ui' : 'api');
+        this.beans.editingSvc?.startEditing(
+            nextCell.rowNode,
+            nextCell.column,
+            null,
+            true,
+            event,
+            batchEdit ? 'ui' : 'api'
+        );
 
         return true;
     }

@@ -77,7 +77,7 @@ export class CellMouseListenerFeature extends BeanStub {
         }
 
         // this.beans.editingSvc?.stopEditing(this.cellCtrl.rowCtrl, this.cellCtrl, undefined, mouseEvent);
-        this.beans.editingSvc?.startEditing(this.cellCtrl.rowCtrl, this.cellCtrl, null, undefined, mouseEvent);
+        this.beans.editingSvc?.startEditing(this.cellCtrl.rowNode, this.cellCtrl?.column, null, undefined, mouseEvent);
     }
 
     public onCellDoubleClicked(mouseEvent: MouseEvent) {
@@ -99,7 +99,14 @@ export class CellMouseListenerFeature extends BeanStub {
             }, 0);
         }
 
-        this.beans.editingSvc?.startEditing(this.cellCtrl.rowCtrl, this.cellCtrl, null, undefined, mouseEvent, 'ui');
+        this.beans.editingSvc?.startEditing(
+            this.cellCtrl.rowNode,
+            this.cellCtrl?.column,
+            null,
+            undefined,
+            mouseEvent,
+            'ui'
+        );
     }
 
     private onMouseDown(mouseEvent: MouseEvent): void {
@@ -128,7 +135,7 @@ export class CellMouseListenerFeature extends BeanStub {
         }
 
         if (!shiftKey || !hasRanges) {
-            const editing = this.beans.editingSvc?.isEditing(cellCtrl.rowCtrl, cellCtrl);
+            const editing = this.beans.editingSvc?.isEditing(cellCtrl.rowNode, cellCtrl?.column);
             const isEnableCellTextSelection = gos.get('enableCellTextSelection');
             // when `enableCellTextSelection` is true, we call prevent default on `mousedown`
             // within the row dragger to block text selection while dragging, but the cell
@@ -153,11 +160,10 @@ export class CellMouseListenerFeature extends BeanStub {
             if (focusedCellPosition) {
                 const { column, rowIndex, rowPinned } = focusedCellPosition;
                 const focusedRowCtrl = beans.rowRenderer.getRowByPosition({ rowIndex, rowPinned });
-                const focusedCellCtrl = focusedRowCtrl?.getCellCtrl(column as AgColumn);
 
                 // if the focused cell is editing, need to stop editing first
-                if (this.beans.editingSvc?.isEditing(focusedRowCtrl, focusedCellCtrl)) {
-                    this.beans.editingSvc?.stopEditing(focusedRowCtrl, focusedCellCtrl);
+                if (this.beans.editingSvc?.isEditing(focusedRowCtrl?.rowNode, column)) {
+                    this.beans.editingSvc?.stopEditing(focusedRowCtrl?.rowNode, column);
                 }
 
                 // focus could have been lost, so restore it to the starting cell in the range if needed

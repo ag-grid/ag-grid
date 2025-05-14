@@ -2,14 +2,12 @@ import type { Maybe } from '../columns/columnModel';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
-import type { RowNode } from '../entities/rowNode';
 import type { CellPosition } from '../interfaces/iCellPosition';
 import type { Column } from '../interfaces/iColumn';
-import type { CellCtrl } from '../rendering/cell/cellCtrl';
-import type { RowCtrl } from '../rendering/row/rowCtrl';
+import type { IRowNode } from '../interfaces/iRowNode';
 
 export type CellIdPositions = {
-    rowNode: RowNode;
+    rowNode: IRowNode;
     column: Column;
     oldValue?: any;
     newValue?: any;
@@ -20,9 +18,9 @@ type CData = any;
 export class EditingModelService extends BeanStub implements NamedBean {
     beanName = 'editingModelSvc' as const;
 
-    private pendingUpdates: Map<RowNode, Map<Column, CData>> = new Map();
+    private pendingUpdates: Map<IRowNode, Map<Column, CData>> = new Map();
 
-    public removePendingEdit(rowNode: RowNode, column?: Column | null): void {
+    public removePendingEdit(rowNode: IRowNode, column?: Column | null): void {
         if (!this._hasPending(rowNode)) {
             return;
         }
@@ -40,15 +38,15 @@ export class EditingModelService extends BeanStub implements NamedBean {
         }
     }
 
-    public getPendingUpdate(rowNode: RowNode, column: Column): CData {
+    public getPendingUpdate(rowNode: IRowNode, column: Column): CData {
         return this.pendingUpdates.get(rowNode)?.get(column);
     }
 
-    public getPendingUpdates(): Map<RowNode, Map<Column, CData>> {
+    public getPendingUpdates(): Map<IRowNode, Map<Column, CData>> {
         return this.pendingUpdates;
     }
 
-    public addPendingEdit(rowNode: RowNode, column: Column, newValue: CData) {
+    public addPendingEdit(rowNode: IRowNode, column: Column, newValue: CData) {
         if (!this.pendingUpdates.has(rowNode)) {
             this.pendingUpdates.set(rowNode, new Map());
         }
@@ -84,11 +82,11 @@ export class EditingModelService extends BeanStub implements NamedBean {
         return result;
     }
 
-    public hasPending(rowCtrl?: RowCtrl | null, cellCtrl?: CellCtrl | null): boolean {
-        return this._hasPending(rowCtrl?.rowNode, cellCtrl?.column);
+    public hasPending(rowNode?: IRowNode | null, column?: Column | null): boolean {
+        return this._hasPending(rowNode, column);
     }
 
-    private _hasPending(rowNode?: RowNode | null, column?: Column | null): boolean {
+    private _hasPending(rowNode?: IRowNode | null, column?: Column | null): boolean {
         if (rowNode) {
             const rowEdits = this.pendingUpdates.get(rowNode);
             if (column) {
@@ -99,7 +97,7 @@ export class EditingModelService extends BeanStub implements NamedBean {
         return this.pendingUpdates.size > 0;
     }
 
-    public startEditing(rowNode: RowNode, ...columns: Maybe<Column>[]): void {
+    public startEditing(rowNode: IRowNode, ...columns: Maybe<Column>[]): void {
         let map = this.pendingUpdates.get(rowNode);
         if (!map) {
             map = new Map<Column, CData>();
@@ -108,7 +106,7 @@ export class EditingModelService extends BeanStub implements NamedBean {
         this.pendingUpdates.set(rowNode, map);
     }
 
-    public stopEditing(rowNode?: RowNode | null, column?: Column | null): void {
+    public stopEditing(rowNode?: IRowNode | null, column?: Column | null): void {
         if (!this._hasPending(rowNode, column)) {
             return;
         }
@@ -134,7 +132,7 @@ export class EditingModelService extends BeanStub implements NamedBean {
 }
 
 export type CellUpdate = {
-    rowNode: RowNode;
+    rowNode: IRowNode;
     column: Column;
     newValue: any;
     oldValue: any;

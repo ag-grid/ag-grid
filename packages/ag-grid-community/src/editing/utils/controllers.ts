@@ -2,10 +2,9 @@ import type { BeanStub } from '../../context/beanStub';
 import type { BeanCollection } from '../../context/context';
 import type { AgColumn } from '../../entities/agColumn';
 import { _getRowById } from '../../entities/positionUtils';
-import type { RowNode } from '../../entities/rowNode';
 import { _isElementInThisGrid } from '../../gridBodyComp/mouseEventUtils';
 import type { Column } from '../../interfaces/iColumn';
-import type { RowPinnedType } from '../../interfaces/iRowNode';
+import type { IRowNode, RowPinnedType } from '../../interfaces/iRowNode';
 import type { CellCtrl } from '../../rendering/cell/cellCtrl';
 import type { RowCtrl } from '../../rendering/row/rowCtrl';
 import { _getTabIndex } from '../../utils/browser';
@@ -14,7 +13,7 @@ type ResolveRowControllerType = {
     rowIndex?: number | null;
     rowId?: string | null;
     rowCtrl?: RowCtrl | null;
-    rowNode?: RowNode | null;
+    rowNode?: IRowNode | null;
     rowPinned?: RowPinnedType;
 };
 

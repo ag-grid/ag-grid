@@ -2,22 +2,23 @@ import { _getCellEditorDetails } from '../../components/framework/userCompUtils'
 import type { BeanCollection } from '../../context/context';
 import { _addGridCommonParams } from '../../gridOptionsUtils';
 import type { ICellEditorComp, ICellEditorParams } from '../../interfaces/iCellEditor';
+import type { Column } from '../../interfaces/iColumn';
+import type { IRowNode } from '../../interfaces/iRowNode';
 import type { UserCompDetails } from '../../interfaces/iUserCompDetails';
 import type { CellCtrl, ICellComp } from '../../rendering/cell/cellCtrl';
-import type { RowCtrl } from '../../rendering/row/rowCtrl';
 import type { CellIdPositions } from '../editingModelService';
 import { _resolveCellController, _resolveControllers } from './controllers';
 
 export function _setupEditors(
     beans: BeanCollection,
     editingCells: CellIdPositions[],
-    rowCtrl?: RowCtrl | null,
-    cellCtrl?: CellCtrl | null,
+    rowNode?: IRowNode | null,
+    column?: Column | null,
     key?: string | null,
     cellStartedEdit?: boolean | null
 ): UserCompDetails<ICellEditorComp<any, any, any>> | undefined {
-    if (editingCells.length === 0 && cellCtrl) {
-        return _setupEditor(beans, cellCtrl, key, cellStartedEdit);
+    if (editingCells.length === 0 && rowNode && column) {
+        return _setupEditor(beans, rowNode, column, key, cellStartedEdit);
     }
 
     let startedCompDetails: UserCompDetails<ICellEditorComp<any, any, any>> | undefined;
@@ -29,9 +30,9 @@ export function _setupEditors(
             continue;
         }
 
-        const shouldStartEditing = cellStartedEdit && rowCtrl === curCellCtrl.rowCtrl && curCellCtrl === cellCtrl;
+        const shouldStartEditing = cellStartedEdit && rowNode === curCellCtrl.rowNode && curCellCtrl.column === column;
 
-        const compDetails = _setupEditor(beans, curCellCtrl, key, shouldStartEditing);
+        const compDetails = _setupEditor(beans, rowNode!, column!, key, shouldStartEditing);
 
         if (shouldStartEditing) {
             startedCompDetails = compDetails;
@@ -43,12 +44,13 @@ export function _setupEditors(
 
 export function _setupEditor(
     beans: BeanCollection,
-    cellCtrl: CellCtrl,
+    rowNode: IRowNode,
+    column: Column,
     key?: string | null,
     cellStartedEdit?: boolean | null
 ): UserCompDetails<ICellEditorComp<any, any, any>> | undefined {
-    const editorParams = _createCellEditorParams(beans, cellCtrl, key, cellStartedEdit);
-    const colDef = cellCtrl.column.getColDef();
+    const editorParams = _createCellEditorParams(beans, rowNode, column, key, cellStartedEdit);
+    const colDef = column.getColDef();
     const compDetails = _getCellEditorDetails(beans.userCompFactory, colDef, editorParams);
 
     // if cellEditorSelector was used, we give preference to popup and popupPosition from the selector
@@ -57,6 +59,8 @@ export function _setupEditor(
         compDetails?.popupPositionFromSelector != null
             ? compDetails.popupPositionFromSelector
             : colDef.cellEditorPopupPosition;
+
+    const cellCtrl = _resolveCellController(beans, { rowNode, column })!;
 
     cellCtrl.editCompDetails = compDetails;
     cellCtrl.comp.setEditDetails(compDetails, popup, position, beans.gos.get('reactiveCustomComponents'));
@@ -105,19 +109,21 @@ export function _takeValueFromCellEditor(
 
 export function _createCellEditorParams(
     beans: BeanCollection,
-    cellCtrl: CellCtrl,
+    rowNode: IRowNode,
+    column: Column,
     key?: string | null,
     cellStartedEdit?: boolean | null
 ): ICellEditorParams {
+    const { valueSvc, gos, editingSvc } = beans;
+    const cellCtrl = _resolveCellController(beans, { rowNode, column })!;
     const {
-        column,
-        rowNode,
         cellPosition: { rowIndex },
     } = cellCtrl;
-    const { valueSvc, gos, editingSvc } = beans;
+
+    const agColumn = beans.colModel.getCol(column.getId())!;
 
     return _addGridCommonParams(gos, {
-        value: valueSvc.getValueForDisplay(column, rowNode)?.value,
+        value: valueSvc.getValueForDisplay(agColumn, rowNode)?.value,
         eventKey: key ?? null,
         column,
         colDef: column.getColDef(),
@@ -127,17 +133,9 @@ export function _createCellEditorParams(
         cellStartedEdit: cellStartedEdit ?? false,
         onKeyDown: cellCtrl.onKeyDown.bind(cellCtrl),
         stopEditing: (suppressNavigateAfterEdit) =>
-            editingSvc!.stopEditing(
-                cellCtrl.rowCtrl,
-                cellCtrl,
-                undefined,
-                undefined,
-                undefined,
-                'api',
-                suppressNavigateAfterEdit
-            ),
+            editingSvc!.stopEditing(rowNode, column, undefined, undefined, undefined, 'api', suppressNavigateAfterEdit),
         eGridCell: cellCtrl.eGui,
-        parseValue: (newValue: any) => valueSvc.parseValue(column, rowNode, newValue, cellCtrl.value),
+        parseValue: (newValue: any) => valueSvc.parseValue(agColumn, rowNode, newValue, cellCtrl.value),
         formatValue: cellCtrl.formatValue.bind(cellCtrl),
     });
 }
@@ -146,7 +144,13 @@ export function _refreshEditorOnColDefChanged(beans: BeanCollection, cellCtrl: C
     const cellEditor = cellCtrl.comp?.getCellEditor();
     if (cellEditor?.refresh) {
         const { eventKey, cellStartedEdit } = cellCtrl.editCompDetails!.params;
-        const editorParams = _createCellEditorParams(beans, cellCtrl, eventKey, cellStartedEdit);
+        const editorParams = _createCellEditorParams(
+            beans,
+            cellCtrl.rowNode,
+            cellCtrl.column,
+            eventKey,
+            cellStartedEdit
+        );
         const colDef = cellCtrl.column.getColDef();
         const compDetails = _getCellEditorDetails(beans.userCompFactory, colDef, editorParams);
         cellEditor.refresh(compDetails!.params);
@@ -155,8 +159,7 @@ export function _refreshEditorOnColDefChanged(beans: BeanCollection, cellCtrl: C
 
 export function _syncModelsFromEditors(beans: BeanCollection): void {
     beans.editingModelSvc?.getPendingCellIds().forEach((cellId) => {
-        const { rowCtrl, cellCtrl } = _resolveControllers(beans, cellId)!;
-        const { comp } = cellCtrl!;
+        const { comp, rowNode, column } = _resolveCellController(beans, cellId)!;
 
         const { newValue, newValueExists } = _takeValueFromCellEditor(false, comp);
 
@@ -164,19 +167,19 @@ export function _syncModelsFromEditors(beans: BeanCollection): void {
             return;
         }
 
-        return _syncModelFromEditor(beans, rowCtrl, cellCtrl, newValue);
+        return _syncModelFromEditor(beans, rowNode, column, newValue);
     });
 }
 
 export function _syncModelFromEditor(
     beans: BeanCollection,
-    rowCtrl?: RowCtrl | null,
-    cellCtrl?: CellCtrl | null,
+    rowNode?: IRowNode | null,
+    column?: Column | null,
     newValue?: any,
     eventSource?: string
 ): boolean | null {
-    if (eventSource !== 'edit' && rowCtrl && cellCtrl && beans.editingSvc?.isEditing(rowCtrl, cellCtrl)) {
-        beans.editingModelSvc?.addPendingEdit(rowCtrl.rowNode, cellCtrl.column, newValue);
+    if (eventSource !== 'edit' && rowNode && column && beans.editingSvc?.isEditing(rowNode, column)) {
+        beans.editingModelSvc?.addPendingEdit(rowNode, column, newValue);
         return true;
     }
     return null;

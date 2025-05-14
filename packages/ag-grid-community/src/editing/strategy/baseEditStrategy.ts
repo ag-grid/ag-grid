@@ -4,10 +4,11 @@ import type { BeanName } from '../../context/context';
 import type { ColDef } from '../../entities/colDef';
 import type { CellFocusedEvent } from '../../events';
 import type { DefaultProvidedCellEditorParams } from '../../interfaces/iCellEditor';
+import type { Column } from '../../interfaces/iColumn';
+import type { IRowNode } from '../../interfaces/iRowNode';
 import type { CellCtrl } from '../../rendering/cell/cellCtrl';
-import type { RowCtrl } from '../../rendering/row/rowCtrl';
 import type { CellIdPositions, EditingModelService } from '../editingModelService';
-import { _resolveCellController, _resolveControllers } from '../utils/controllers';
+import { _resolveCellController } from '../utils/controllers';
 import { _destroyEditor, _destroyEditors, _setupEditors, _syncModelsFromEditors } from '../utils/editors';
 
 export abstract class BaseEditStrategy extends BeanStub {
@@ -15,8 +16,8 @@ export abstract class BaseEditStrategy extends BeanStub {
     protected editModel: EditingModelService;
 
     public abstract startEditing(
-        rowCtrl: RowCtrl,
-        cellCtrl?: CellCtrl,
+        rowNode: IRowNode,
+        column: Column,
         key?: string | null | undefined,
         event?: KeyboardEvent | MouseEvent | null,
         source?: 'api' | 'ui'
@@ -30,9 +31,9 @@ export abstract class BaseEditStrategy extends BeanStub {
         event?: KeyboardEvent
     ): boolean | null;
 
-    public abstract updateStyles(rowCtrl?: RowCtrl | null, cellCtrl?: CellCtrl | null, newState?: boolean): void;
+    public abstract updateStyles(rowNode?: IRowNode | null, column?: Column | null, newState?: boolean): void;
 
-    public stopEditing(_rowCtrl?: RowCtrl | null, _cellCtrl?: CellCtrl | null, _source?: 'api' | 'ui'): boolean {
+    public stopEditing(): boolean {
         const editingCells = this.editModel.getPendingCellIds();
         editingCells.forEach((cellPosition) => {
             this.editModel.stopEditing(cellPosition.rowNode, cellPosition.column);
@@ -84,13 +85,13 @@ export abstract class BaseEditStrategy extends BeanStub {
     // move to main editingsvc
     protected finishStartEdit(
         editingCells: CellIdPositions[],
-        rowCtrl?: RowCtrl | null,
-        cellCtrl?: CellCtrl | null,
+        rowNode?: IRowNode | null,
+        column?: Column | null,
         key?: string,
         cellStartedEdit?: boolean,
         event?: Event | null
     ) {
-        const compDetails = _setupEditors(this.beans, editingCells, rowCtrl, cellCtrl, key, cellStartedEdit);
+        const compDetails = _setupEditors(this.beans, editingCells, rowNode, column, key, cellStartedEdit);
         const suppressPreventDefault = !(compDetails?.params as DefaultProvidedCellEditorParams)
             ?.suppressPreventDefault;
 
@@ -107,8 +108,8 @@ export abstract class BaseEditStrategy extends BeanStub {
     }
 
     shouldStartEditing(
-        _rowCtrl?: RowCtrl | null,
-        cellCtrl?: CellCtrl,
+        _rowNode?: IRowNode | null,
+        column?: Column | null,
         _key?: string | null,
         event?: KeyboardEvent | MouseEvent | null,
         cellStartedEdit?: boolean | null,
@@ -129,7 +130,7 @@ export abstract class BaseEditStrategy extends BeanStub {
             return false;
         }
 
-        const colDef = cellCtrl?.column?.colDef;
+        const colDef = column?.getColDef();
         const clickCount = this.deriveClickCount(colDef);
         const type = event?.type;
 
@@ -147,8 +148,8 @@ export abstract class BaseEditStrategy extends BeanStub {
     }
 
     shouldStopEditing(
-        _rowCtrl?: RowCtrl | null,
-        _cellCtrl?: CellCtrl | null,
+        _rowNode?: IRowNode | null,
+        _column?: Column | null,
         _key?: string | null | undefined,
         event?: KeyboardEvent | MouseEvent | null | undefined,
         source: 'api' | 'ui' = 'ui'
@@ -173,8 +174,8 @@ export abstract class BaseEditStrategy extends BeanStub {
     }
 
     shouldCancelEditing(
-        _rowCtrl?: RowCtrl | null,
-        _cellCtrl?: CellCtrl | null,
+        _rowNode?: IRowNode | null,
+        _column?: Column | null,
         _key?: string | null | undefined,
         event?: KeyboardEvent | MouseEvent | null | undefined,
         source: 'api' | 'ui' = 'ui'
@@ -212,8 +213,7 @@ export abstract class BaseEditStrategy extends BeanStub {
 
     public override destroy(): void {
         this.editModel.getPendingCellIds().forEach((cellId) => {
-            const { rowCtrl, cellCtrl } = _resolveControllers(this.beans, cellId);
-            this.updateStyles(rowCtrl, cellCtrl, false);
+            this.updateStyles(cellId.rowNode, cellId.column, false);
         });
 
         this.cleanupEditors();

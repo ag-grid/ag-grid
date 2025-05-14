@@ -170,13 +170,11 @@ export class ValueService extends BeanStub implements NamedBean {
         const colId = column.getColId();
         const data = rowNode.data;
 
-        const { editingSvc, rowRenderer, rowGroupColsSvc } = this.beans;
+        const { editingSvc, rowGroupColsSvc } = this.beans;
 
         if (editingSvc && source === 'ui') {
-            const rowCtrl = rowRenderer.getRowCtrls([rowNode])?.[0];
-            const cellCtrl = rowRenderer.getCellCtrls([rowNode], [column])?.[0];
-            if (rowCtrl && editingSvc?.isEditing(rowCtrl, cellCtrl)) {
-                const newValue = editingSvc?.getCellDataValue(rowCtrl!.rowId!, colId);
+            if (editingSvc?.isEditing(rowNode, column)) {
+                const newValue = editingSvc?.getCellDataValue(rowNode, column);
                 if (newValue !== undefined) {
                     return newValue;
                 }
