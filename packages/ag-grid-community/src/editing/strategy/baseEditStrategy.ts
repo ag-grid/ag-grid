@@ -7,7 +7,7 @@ import type { DefaultProvidedCellEditorParams } from '../../interfaces/iCellEdit
 import type { Column } from '../../interfaces/iColumn';
 import type { IRowNode } from '../../interfaces/iRowNode';
 import type { CellCtrl } from '../../rendering/cell/cellCtrl';
-import type { CellIdPositions, EditingModelService } from '../editingModelService';
+import type { CellIdPositions, EditingModelService } from '../editModelService';
 import { _resolveCellController } from '../utils/controllers';
 import { _destroyEditor, _destroyEditors, _setupEditors, _syncModelsFromEditors } from '../utils/editors';
 

@@ -26,8 +26,8 @@ import type { HorizontalResizeService } from '../dragAndDrop/horizontalResizeSer
 import type { RowDragService } from '../dragAndDrop/rowDragService';
 import type { EditService } from '../edit/editService';
 import type { RowEditService } from '../edit/rowEditService';
-import type { EditingModelService } from '../editing/editingModelService';
-import type { EditingService } from '../editing/editingService';
+import type { EditingModelService } from '../editing/editModelService';
+import type { EditingService } from '../editing/editService';
 import type { GridOptions } from '../entities/gridOptions';
 import type { Environment } from '../environment';
 import type { EventService } from '../eventService';

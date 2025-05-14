@@ -22,9 +22,9 @@ import {
     startEditingCell,
     stopEditing,
     undoCellEditing,
-} from './editingApi';
-import { EditingModelService } from './editingModelService';
-import { EditingService } from './editingService';
+} from './editApi';
+import { EditingModelService } from './editModelService';
+import { EditingService } from './editService';
 import { FullRowEditStrategy } from './strategy/fullRowEditStrategy';
 import { SingleCellEditStrategy } from './strategy/singleCellEditStrategy';
 

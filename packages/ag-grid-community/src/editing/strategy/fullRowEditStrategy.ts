@@ -4,7 +4,7 @@ import type { CellFocusedEvent } from '../../events';
 import type { Column } from '../../interfaces/iColumn';
 import type { IRowNode } from '../../interfaces/iRowNode';
 import type { CellCtrl } from '../../rendering/cell/cellCtrl';
-import type { CellIdPositions } from '../editingModelService';
+import type { CellIdPositions } from '../editModelService';
 import { _resolveControllers, _resolveRowController } from '../utils/controllers';
 import { BaseEditStrategy } from './baseEditStrategy';
 
