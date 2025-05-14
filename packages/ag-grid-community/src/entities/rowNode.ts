@@ -500,7 +500,6 @@ export class RowNode<TData = any>
      * @returns `true` if the value was changed, otherwise `false`.
      */
     public setDataValue(colKey: string | AgColumn, newValue: any, eventSource?: string): boolean {
-        console.warn('setDataValue');
         const { colModel, valueSvc, gos, selectionSvc } = this.beans;
 
         // if in pivot mode, grid columns wont include primary columns
