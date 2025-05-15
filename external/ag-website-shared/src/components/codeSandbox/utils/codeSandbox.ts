@@ -27,7 +27,7 @@ const getPathForFile = ({
     }
 
     if (/(.js|.jsx|.tsx|.ts|.css)$/.test(fileName)) {
-        if (fileName.endsWith('.js') || fileName.endsWith('.css')) {
+        if (fileName.endsWith('.js')) {
             return `public/${fileName}`;
         }
 

@@ -10,6 +10,7 @@ export interface GeneratedContents {
     files: FileContents;
     entryFileName: string;
     mainFileName: string;
+    sourceFileList: string[];
     scriptFiles: string[];
     styleFiles: string[];
     isEnterprise: boolean;

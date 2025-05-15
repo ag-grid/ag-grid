@@ -274,6 +274,7 @@ export async function generateFiles(options: ExecutorOptions, gridOptionsTypes: 
             hasExampleConsoleLog,
             entryFileName,
             mainFileName,
+            sourceFileList,
             scriptFiles: scriptFiles!,
             styleFiles: styleFilesKeys,
             htmlFiles: Object.keys(htmlFiles),

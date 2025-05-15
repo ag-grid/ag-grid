@@ -1065,8 +1065,12 @@ export interface StoreRefreshedEvent<TData = any, TContext = any>
 }
 
 export interface StateUpdatedEvent<TData = any, TContext = any> extends AgGlobalEvent<'stateUpdated', TData, TContext> {
-    /** Which parts of the state triggered the update, or `gridInitializing` when the state has been created during grid initialization */
-    sources: (keyof GridState | 'gridInitializing')[];
+    /**
+     * Which parts of the state triggered the update,
+     * or `gridInitializing` when the state has been created during grid initialization,
+     * or 'api' when the state has been set via `api.setState`
+     */
+    sources: (keyof GridState | 'gridInitializing' | 'api')[];
     /** The updated state */
     state: GridState;
 }

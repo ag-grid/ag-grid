@@ -92,13 +92,20 @@ rows below.
 
 {% gridExampleRunner title="Changing Row Height" name="row-height-change"  exampleHeight=590 /%}
 
-## Text Wrapping
+## Text Wrapping and Displaying Multi-Line Text
 
-If you want text to wrap inside cells rather than truncating, add the flag `wrapText=true` to the Column Definition.
+By default, new line characters in cell values will not be displayed and overflowing text will be truncated.
 
-The example below has `wrapText=true` set on the **Latin Text** column.
-Behind the scenes, this results in the CSS property `white-space: normal`
-being applied to the cell, which causes the text to wrap.
+If you want text to wrap inside cells rather than truncating, add the flag `wrapText=true` to the Column Definition. Behind the scenes, this results in the CSS property `white-space: normal` being applied to the cell, which causes the text to wrap.
+
+If you want greater control over text wrapping, or you want new line characters to be displayed, this can be done via setting the CSS property `white-space` (or `white-space-collapse` and `text-wrap-mode`) on the cell.
+
+The example below demonstrates a few of the possible methods of configuring wrapping and multi-line text:
+- The **Default Behaviour** column shows the default grid behaviour with no wrapping and truncated single line text.
+- The **wrapText = true** column demonstrates the `wrapText` Column Definition property.
+- The **Wrap Text** column applies the CSS `white-space: normal` to mimic the `wrapText` Column Definition property.
+- The **Maintain New Lines** column applies the CSS `white-space-collapse: preserve-breaks`, which maintains new lines, but does not wrap.
+- The **Wrap with New Lines** column applies the CSS `white-space: pre-line`, which maintains new lines and wraps the text.
 
 {% gridExampleRunner title="Row Height Complex" name="row-height-complex" /%}
 

@@ -12,8 +12,9 @@ const exampleContents = await getDocsExampleContents({ pages });
 <DebugLayout title={`Debug: Docs Example Pages`}>
     <h1>Docs Example Pages</h1>
     <DocsExamples
+        library="grid"
         client:load
         exampleContents={exampleContents}
-        properties={['isEnterprise', 'isIntegratedCharts', 'isLocale', 'hasExampleConsoleLog']}
+        properties={['sourceFileList', 'isEnterprise', 'isIntegratedCharts', 'isLocale', 'hasExampleConsoleLog']}
     />
 </DebugLayout>

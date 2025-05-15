@@ -325,8 +325,18 @@
                 "url": "./component-loading-cell-renderer/#skeleton-loading"
             }
         },
-        "autoHeight": {},
-        "wrapText": {},
+        "autoHeight": {
+            "more": {
+                "name": "Auto Row Height",
+                "url": "./row-height/#auto-row-height"
+            }
+        },
+        "wrapText": {
+            "more": {
+                "name": "Text Wrapping and Displaying Multi-Line Text",
+                "url": "./row-height/#text-wrapping-and-displaying-multi-line-text"
+            }
+        },
         "enableCellChangeFlash": {}
     },
     "sort": {

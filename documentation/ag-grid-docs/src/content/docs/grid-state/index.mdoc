@@ -81,6 +81,16 @@ The grid state is designed to be serialisable, so any functions will be stripped
 
 {% interfaceDocumentation interfaceName="GridState" /%}
 
+## Setting State
+
+The best way to restore grid state is via initial state as described above. However, it is also possible to restore state on an existing grid via `api.setState(state)`.
+
+{% note %}
+`setState` should only be used to restore grid state. The grid does not support being used as a controlled component, so do not call this on every state update.
+{% /note %}
+
+{% gridExampleRunner title="Setting State" name="set-state"  exampleHeight=630 /%}
+
 ## Converting Column State to Grid State
 
 State retrieved via the [Column State](./column-state/) APIs can be converted into grid state via the helper functions `convertColumnState` and `convertColumnGroupState`.

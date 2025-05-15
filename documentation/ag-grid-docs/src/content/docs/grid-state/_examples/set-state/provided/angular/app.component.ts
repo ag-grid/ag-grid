@@ -54,7 +54,9 @@ ModuleRegistry.registerModules([
         <div class="example-wrapper">
             <div>
                 <span class="button-group">
-                    <button (click)="reloadGrid()">Recreate Grid with Current State</button>
+                    <button (click)="saveState()">Save State</button>
+                    <button (click)="reloadGrid()">Recreate Grid with No State</button>
+                    <button (click)="setState()">Set State</button>
                     <button (click)="printState()">Print State</button>
                 </span>
             </div>
@@ -68,7 +70,6 @@ ModuleRegistry.registerModules([
                     [rowSelection]="rowSelection"
                     [suppressColumnMoveAnimation]="true"
                     [rowData]="rowData"
-                    [initialState]="initialState"
                     [gridOptions]="gridOptions"
                     (stateUpdated)="onStateUpdated($event)"
                     (gridReady)="onGridReady($event)"
@@ -105,19 +106,18 @@ export class AppComponent {
     };
     public rowData?: IOlympicData[];
     public gridVisible = signal(true);
-    public initialState?: GridState;
     public gridOptions: GridOptions = {
         onGridPreDestroyed: (params: GridPreDestroyedEvent<IOlympicData>) => {
             console.log('Grid state on destroy (can be persisted)', params.state);
         },
     };
 
+    private savedState?: GridState;
+
     constructor(private http: HttpClient) {}
 
     reloadGrid(): void {
-        const state = this.gridApi.getState();
         this.gridVisible.set(false);
-        this.initialState = state;
         this.rowData = undefined;
         setTimeout(() => {
             this.gridVisible.set(true);
@@ -126,6 +126,18 @@ export class AppComponent {
 
     printState(): void {
         console.log('Grid state', this.gridApi.getState());
+    }
+
+    saveState(): void {
+        this.savedState = this.gridApi.getState();
+        console.log('Saved state', this.savedState);
+    }
+
+    setState(): void {
+        if (this.savedState) {
+            this.gridApi.setState(this.savedState);
+            console.log('Set state', this.savedState);
+        }
     }
 
     onStateUpdated(params: StateUpdatedEvent<IOlympicData>): void {
