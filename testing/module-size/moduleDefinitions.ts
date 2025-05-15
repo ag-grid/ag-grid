@@ -36,7 +36,7 @@ export const AllGridCommunityModules: Record<`${CommunityModuleName}Module`, num
     RenderApiModule: 1.48,
     RowApiModule: 0.88,
     RowAutoHeightModule: 1.84,
-    RowDragModule: 14.38,
+    RowDragModule: 15.49,
     RowSelectionModule: 33.5,
     RowStyleModule: 1.24,
     ScrollApiModule: 0.7,
@@ -51,7 +51,7 @@ export const AllGridCommunityModules: Record<`${CommunityModuleName}Module`, num
 };
 export const AllEnterpriseModules: Record<`${EnterpriseModuleName}Module`, number> = {
     AdvancedFilterModule: 200,
-    AllEnterpriseModule: 1373.05,
+    AllEnterpriseModule: 1378,
     CellSelectionModule: 53,
     ClipboardModule: 44.6,
     ColumnMenuModule: 147,

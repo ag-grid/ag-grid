@@ -1026,15 +1026,30 @@
             }
         }
     },
-    "miscellaneous": {
+    "gridState": {
         "meta": {
-            "displayName": "Miscellaneous"
-        },
-        "getState": {
-            "more": {
+            "displayName": "Grid State",
+            "page": {
                 "name": "Grid State",
                 "url": "./grid-state/"
             }
+        },
+        "getState": {
+            "more": {
+                "name": "Saving and Restoring State",
+                "url": "./grid-state/#saving-and-restoring-state"
+            }
+        },
+        "setState": {
+            "more": {
+                "name": "Setting State",
+                "url": "./grid-state/#setting-state"
+            }
+        }
+    },
+    "miscellaneous": {
+        "meta": {
+            "displayName": "Miscellaneous"
         },
         "getCellValue": {
             "description": "Gets the cell value for the given column and `rowNode` (row). Will return the cell value or the formatted value depending on the value of `params.useFormatter`."

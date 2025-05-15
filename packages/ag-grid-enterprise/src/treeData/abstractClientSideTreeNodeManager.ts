@@ -410,9 +410,9 @@ export abstract class AbstractClientSideTreeNodeManager<TData> extends AbstractC
         }
 
         const sourceIdx = node.getNewSourceIdx();
-        const prevRowIdx = node.sourceIdx;
+        const prevRowIdx = node.sourceRowIndex;
         if (prevRowIdx !== sourceIdx) {
-            node.sourceIdx = sourceIdx;
+            node.sourceRowIndex = sourceIdx;
             if (prevRowIdx !== -1) {
                 // TODO: this is not optimal, it has false positives.
                 // we could optimize it if we have a way to know if a node
@@ -587,7 +587,7 @@ export abstract class AbstractClientSideTreeNodeManager<TData> extends AbstractC
                 if (rowNodes) {
                     for (let i = 0, len = rowNodes.length ?? 0; i < len; ++i) {
                         const rowNode = rowNodes[i];
-                        const treeNode = rowNode.treeNode;
+                        const treeNode = rowNode.treeNode as TreeNode | null;
                         if (treeNode) {
                             this.setGroupData(rowNode, treeNode.key);
                         }

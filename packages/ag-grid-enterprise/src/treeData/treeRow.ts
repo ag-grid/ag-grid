@@ -13,7 +13,7 @@ export interface TreeRow<TData = any> extends RowNode<TData> {
     parent: TreeRow<TData> | null;
     allLeafChildren: TreeRow<TData>[] | null;
     childrenAfterGroup: TreeRow<TData>[] | null;
-    treeNode: ITreeNode | null;
+    treeNode: ITreeNode | TreeRow<TData> | null;
     treeNodeFlags: number;
     sibling: TreeRow<TData>;
     sourceRowIndex: number;

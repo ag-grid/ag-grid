@@ -22,11 +22,18 @@ export class ClientSideExpansionService extends BaseExpansionService implements 
         this.rowModel = beans.rowModel as IClientSideRowModel;
     }
 
-    public expandRows(rowIds: string[]): void {
-        const rowIdSet = new Set(rowIds);
+    public expandRows(rowIdsToExpand: string[], rowIdsToCollapse?: string[]): void {
+        const rowIdsToExpandSet = new Set(rowIdsToExpand);
+        const rowIdsToCollapseSet = rowIdsToCollapse ? new Set(rowIdsToCollapse) : undefined;
         this.rowModel.forEachNode((node) => {
-            if (node.id && rowIdSet.has(node.id)) {
+            const id = node.id;
+            if (!id) {
+                return;
+            }
+            if (rowIdsToExpandSet.has(id)) {
                 node.expanded = true;
+            } else if (rowIdsToCollapseSet?.has(id)) {
+                node.expanded = false;
             }
         });
         this.onGroupExpandedOrCollapsed();

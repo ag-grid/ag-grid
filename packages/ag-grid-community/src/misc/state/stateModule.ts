@@ -1,7 +1,7 @@
 import type { _StateGridApi } from '../../api/gridApi';
 import type { _ModuleWithApi } from '../../interfaces/iModule';
 import { VERSION } from '../../version';
-import { getState } from './stateApi';
+import { getState, setState } from './stateApi';
 import { StateService } from './stateService';
 
 /**
@@ -14,5 +14,6 @@ export const GridStateModule: _ModuleWithApi<_StateGridApi> = {
     beans: [StateService],
     apiFunctions: {
         getState,
+        setState,
     },
 };

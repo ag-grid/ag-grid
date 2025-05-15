@@ -68,7 +68,9 @@ export abstract class AgAbstractInputField<
     }
 
     protected addInputListeners() {
-        this.addManagedElementListeners(this.eInput, { input: (e: any) => this.setValue(e.target.value) });
+        this.addManagedElementListeners(this.eInput, {
+            input: (e: InputEvent) => this.setValue((e.target as HTMLInputElement).value as TValue),
+        });
     }
 
     private setInputType() {

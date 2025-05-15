@@ -1,7 +1,7 @@
 import { AutoScrollService } from '../autoScrollService';
 import { BeanStub } from '../context/beanStub';
 import { _getCellByPosition } from '../entities/positionUtils';
-import type { RowNode } from '../entities/rowNode';
+import type { ITreeNode, RowNode } from '../entities/rowNode';
 import type {
     RowDragCancelEvent,
     RowDragEndEvent,
@@ -36,6 +36,7 @@ export interface RowDropZoneEvents {
 }
 
 interface WritableRowNode extends RowNode {
+    treeNode: ITreeNode | RowNode | null;
     sourceRowIndex: number;
 }
 
@@ -72,8 +73,9 @@ export interface RowDropZoneParams extends RowDropZoneEvents {
 
 interface RowsDrop<TData = any> {
     sameGrid: boolean;
-    delta: number;
-    target: RowNode<TData> | null | undefined;
+    above: boolean;
+    target: RowNode<TData> | null;
+    newParent: RowNode<TData> | null;
     rows: IRowNode<TData>[];
 }
 
@@ -221,7 +223,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
                 const rowsDrop = this.getRowsDrop(draggingEvent);
                 const target = rowsDrop?.target;
                 if (target) {
-                    clientSideRowModel.highlightRow(target, rowsDrop.delta < 0 ? 'Above' : 'Below');
+                    clientSideRowModel.highlightRow(target, rowsDrop.above ? 'Above' : 'Below');
                 } else {
                     clientSideRowModel.clearHighlight();
                 }
@@ -243,44 +245,116 @@ export class RowDragFeature extends BeanStub implements DropTarget {
     private getRowsDrop(draggingEvent: DraggingEvent): RowsDrop | null {
         const { rowNode, rowNodes: rows } = draggingEvent.dragItem;
         const rowsLen = rows?.length;
-        const sameGrid = this.isFromThisGrid(draggingEvent);
         const source = rowsLen && (rowNode ?? rows[0]);
-        const y = _getNormalisedMousePosition(this.beans, draggingEvent).y;
-        const clientSideRowModel = this.clientSideRowModel;
-        const targetRowIndex = clientSideRowModel.getRowIndexAtPixel(y);
-        let target = clientSideRowModel.getRow(targetRowIndex);
-        let delta = 0;
+
         if (!source) {
             return null; // Nothing to move
         }
-        if (sameGrid) {
-            if (!target || target === source) {
-                return null; // Nothing to move
+
+        const { beans, gos, clientSideRowModel } = this;
+        const y = _getNormalisedMousePosition(beans, draggingEvent).y;
+        let targetRowIndex = clientSideRowModel.getRowIndexAtPixel(y);
+        let target = clientSideRowModel.getRow(targetRowIndex) ?? null;
+
+        const yDelta = target ? (y - target.rowTop! - target.rowHeight! / 2) / target.rowHeight! || 0 : 1;
+        let above = yDelta < 0;
+
+        const sameGrid = this.isFromThisGrid(draggingEvent);
+
+        const canSetParent =
+            // We don't yet support moving tree rows from a different grid in a structured way
+            sameGrid &&
+            // TreeData support for managed drag and drop
+            gos.get('treeData') &&
+            gos.get('treeDataParentIdField') &&
+            !gos.get('treeDataChildrenField');
+
+        let targetInRows = false;
+
+        if (sameGrid && target) {
+            if (source === target) {
+                targetInRows = true;
+                if (Math.abs(yDelta) <= 1) {
+                    return null; // Nothing to move
+                }
+            } else {
+                targetInRows = rows.indexOf(target) >= 0;
+                if (targetInRows) {
+                    const newTarget = getRowsPrevOrNext(clientSideRowModel, targetRowIndex < source.rowIndex!, rows);
+                    if (newTarget?.parent === target.parent) {
+                        target = newTarget; // Delta dragging, the user moved to a selected row above or below
+                        targetRowIndex = target.rowIndex!;
+                    }
+                }
             }
-            delta = targetRowIndex - source.rowIndex!;
-            if (rows.includes(target)) {
-                target = (delta < 0 ? this.getPrevOrNext(-1, rows[0]) : this.getPrevOrNext(1, _last(rows))) ?? target;
+
+            if (targetInRows || (!canSetParent && Math.abs(targetRowIndex - source.rowIndex!) === 1)) {
+                above = targetRowIndex < source.rowIndex!; // Select the row above or below without the mid point if the diff is 1
             }
         }
-        if (target && (!sameGrid || delta < -1 || delta > 1)) {
-            delta = y - target.rowTop! - target.rowHeight! / 2;
+
+        let newParent = canSetParent ? this.determineNewParent(target, yDelta, targetInRows, rows) : null;
+        if (newParent) {
+            if (newParent === target) {
+                above = false; // When moving inside the target, we want to insert below it
+            }
+            if (rowsHaveSameParent(rows, newParent)) {
+                newParent = null; // No need to set parent if all rows have the same parent
+            }
         }
-        return { sameGrid, delta, target, rows };
+
+        if (!newParent && targetInRows && (canSetParent || source === target)) {
+            // No delta dragging of multiple rows with TreeData or no change, nothing to move
+            return null;
+        }
+
+        return { sameGrid, above, target, newParent, rows };
     }
 
-    /** When dragging multiple rows, we want the user to be able to drag to the prev or next in the group if dragging on one of the selected rows. */
-    private getPrevOrNext(increment: -1 | 1, initialRow: IRowNode): RowNode | undefined {
-        const clientSideRowModel = this.clientSideRowModel;
-        const rowCount = clientSideRowModel.getRowCount();
-        let rowIndex = initialRow.rowIndex! + increment;
-        while (rowIndex >= 0 && rowIndex < rowCount) {
-            const row = clientSideRowModel.getRow(rowIndex)!;
-            if (row.sourceRowIndex >= 0) {
-                return row; // Valid leaf node
-            }
-            rowIndex += increment;
+    private determineNewParent(
+        target: RowNode | null,
+        yDelta: number,
+        targetInRows: boolean,
+        rows: IRowNode[]
+    ): RowNode | null {
+        const { clientSideRowModel, beans } = this;
+        const { pageBounds } = beans;
+        const targetRowIndex = target?.rowIndex;
+        if (!target || (yDelta > 1 && targetRowIndex === pageBounds.getLastRow())) {
+            // Dragging outside of the rows, move to last row at the root level
+            return clientSideRowModel.rootNode;
         }
-        return undefined; // Out of bounds
+
+        const INSIDE_THRESHOLD = 0.25;
+
+        if (!targetInRows) {
+            if (Math.abs(yDelta) < INSIDE_THRESHOLD) {
+                return target; // Inside the middle of the row, we want to move inside, as children
+            }
+            if (
+                yDelta >= INSIDE_THRESHOLD &&
+                yDelta <= 1 &&
+                clientSideRowModel.getRow(targetRowIndex! + 1)?.parent === target
+            ) {
+                const { childrenAfterAggFilter } = target;
+                if (childrenAfterAggFilter) {
+                    let hasMoreChildren = false;
+                    const rowsSet = new Set(rows);
+                    for (const child of childrenAfterAggFilter) {
+                        if (!rowsSet.has(child) && child.rowIndex !== null) {
+                            hasMoreChildren = true;
+                            break;
+                        }
+                    }
+                    if (hasMoreChildren) {
+                        return target; // In the bottom half of an expanded group with more than one child, we move inside the target
+                    }
+                }
+            }
+        }
+
+        // Same parent as the target
+        return target.parent;
     }
 
     public addRowDropZone(params: RowDropZoneParams & { fromGrid?: boolean }): void {
@@ -493,35 +567,28 @@ export class RowDragFeature extends BeanStub implements DropTarget {
         return rowsDrop.sameGrid ? this.moveRows(rowsDrop) : this.addRows(rowsDrop);
     }
 
-    private addRows({ delta, target, rows }: RowsDrop): boolean {
+    private addRows({ above, target, rows }: RowsDrop): boolean {
         const getRowIdFunc = _getRowIdCallback(this.gos);
         const clientSideRowModel = this.clientSideRowModel;
+
         const add = rows
             .filter(
                 ({ data, rowPinned }) =>
                     !clientSideRowModel.getRowNode(getRowIdFunc?.({ data, level: 0, rowPinned }) ?? data.id)
             )
             .map(({ data }) => data);
+
         if (add.length === 0) {
             return false; // Nothing to add
         }
-        const addIndex = target && target.sourceRowIndex + (delta < 0 ? 0 : 1);
+
+        const addIndex = target ? target.sourceRowIndex + (above ? 0 : 1) : undefined;
         clientSideRowModel.updateRowData({ add, addIndex });
+
         return true;
     }
 
-    private moveRows({ delta, target, rows }: RowsDrop): boolean {
-        const rowsToMoveSet = this.getValidRowsToMove(rows);
-
-        // Get the focussed cell so we can ensure it remains focussed after the move
-        const focusSvc = this.beans.focusSvc;
-        const cellPosition = focusSvc.getFocusedCell();
-        const cellCtrl = cellPosition && _getCellByPosition(this.beans, cellPosition);
-
-        if (!this.reorderLeafChildren(rowsToMoveSet, ...this.getMoveRowsBounds(rowsToMoveSet, target, delta))) {
-            return false; // Nothing changed
-        }
-
+    private refreshModelAfterDrop(): void {
         this.clientSideRowModel.refreshModel({
             step: 'group',
             keepRenderedRows: true,
@@ -529,6 +596,43 @@ export class RowDragFeature extends BeanStub implements DropTarget {
             changedPath: new ChangedPath(false, this.clientSideRowModel.rootNode!),
             rowNodesOrderChanged: true,
         });
+    }
+
+    private moveRows({ above, target, rows, newParent }: RowsDrop): boolean {
+        const rowsToMoveSet = this.getValidRowsToMove(rows);
+        let changed = false;
+
+        if (newParent) {
+            for (const row of rowsToMoveSet) {
+                if (row.parent !== newParent) {
+                    if (wouldFormCycle(row, newParent)) {
+                        rowsToMoveSet.delete(row); // Invalid move.
+                    } else {
+                        row.treeNode = newParent;
+                        changed = true;
+                    }
+                }
+            }
+        }
+
+        if (!rowsToMoveSet.size) {
+            return false; // Nothing to move
+        }
+
+        // Get the focussed cell so we can ensure it remains focussed after the move
+        const focusSvc = this.beans.focusSvc;
+        const cellPosition = focusSvc.getFocusedCell();
+        const cellCtrl = cellPosition && _getCellByPosition(this.beans, cellPosition);
+
+        if (this.reorderLeafChildren(rowsToMoveSet, ...this.getMoveRowsBounds(rowsToMoveSet, target, above))) {
+            changed = true;
+        }
+
+        if (!changed) {
+            return false;
+        }
+
+        this.refreshModelAfterDrop();
 
         // Get the focussed cell so we can ensure it remains focussed after the move
         if (cellCtrl) {
@@ -553,12 +657,12 @@ export class RowDragFeature extends BeanStub implements DropTarget {
     }
 
     /** For reorderLeafChildren, returns min index of the rows to move, the target index and the max index of the rows to move. */
-    private getMoveRowsBounds(rows: Iterable<RowNode>, target: RowNode | null | undefined, delta: number) {
+    private getMoveRowsBounds(rows: Iterable<RowNode>, target: RowNode | null | undefined, above: boolean) {
         const totalRows = this.clientSideRowModel.rootNode?.allLeafChildren!.length ?? 0;
         let targetPositionIdx = target?.sourceRowIndex ?? -1;
         if (targetPositionIdx < 0 || targetPositionIdx >= totalRows) {
             targetPositionIdx = totalRows;
-        } else if (delta >= 0) {
+        } else if (!above) {
             ++targetPositionIdx;
         }
         let firstAffectedLeafIdx = targetPositionIdx;
@@ -631,3 +735,49 @@ export class RowDragFeature extends BeanStub implements DropTarget {
         return orderChanged;
     }
 }
+
+const getRowsPrevOrNext = (
+    clientSideRowModel: IClientSideRowModel,
+    above: boolean,
+    rows: IRowNode[]
+): RowNode | undefined => {
+    return above ? getPrevOrNext(clientSideRowModel, -1, rows[0]) : getPrevOrNext(clientSideRowModel, 1, _last(rows));
+};
+
+/** When dragging multiple rows, we want the user to be able to drag to the prev or next in the group if dragging on one of the selected rows. */
+const getPrevOrNext = (
+    clientSideRowModel: IClientSideRowModel,
+    increment: -1 | 1,
+    initialRow: IRowNode
+): RowNode | undefined => {
+    const rowCount = clientSideRowModel.getRowCount();
+    let rowIndex = initialRow.rowIndex! + increment;
+    while (rowIndex >= 0 && rowIndex < rowCount) {
+        const row = clientSideRowModel.getRow(rowIndex)!;
+        if (row.sourceRowIndex >= 0) {
+            return row; // Valid leaf node
+        }
+        rowIndex += increment;
+    }
+    return undefined; // Out of bounds
+};
+
+const wouldFormCycle = <TData>(row: IRowNode<TData>, newParent: IRowNode<TData> | null): boolean => {
+    let parent = newParent;
+    while (parent) {
+        if (parent === row) {
+            return true;
+        }
+        parent = parent.parent;
+    }
+    return false;
+};
+
+const rowsHaveSameParent = (rows: IRowNode<any>[], newParent: RowNode): boolean => {
+    for (let i = 0, len = rows.length; i < len; ++i) {
+        if (rows[i].parent !== newParent) {
+            return false;
+        }
+    }
+    return true;
+};

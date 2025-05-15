@@ -8,7 +8,7 @@ export interface RowGroupingRowNode<TData = any> extends RowNode<TData> {
     parent: RowGroupingRowNode<TData> | null;
     allLeafChildren: RowGroupingRowNode<TData>[] | null;
     childrenAfterGroup: RowGroupingRowNode<TData>[] | null;
-    treeNode: ITreeNode | null;
+    treeNode: ITreeNode | RowNode<TData> | null;
     treeNodeFlags: number;
     sibling: RowGroupingRowNode<TData>;
     sourceRowIndex: number;

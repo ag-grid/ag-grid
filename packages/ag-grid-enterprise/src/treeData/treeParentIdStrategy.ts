@@ -1,6 +1,6 @@
 import type {
+    IChangedRowNodes,
     IRowGroupingStrategy,
-    IRowModel,
     IsGroupOpenByDefaultParams,
     RowNode,
     StageExecuteParams,
@@ -11,15 +11,26 @@ import { BeanStub, _EmptyArray, _warn } from 'ag-grid-community';
 import { setRowNodeGroup } from '../rowGrouping/rowGroupingUtils';
 import type { DataFieldGetter } from './fieldAccess';
 import { makeFieldPathGetter } from './fieldAccess';
-import type { TreeRow } from './treeRow';
 
 const FLAG_CHANGED = 0x80000000;
 const FLAG_CHILDREN_CHANGED = 0x40000000;
 const FLAG_EXPANDED_INITIALIZED = 0x20000000;
 const MASK_CHILDREN_LENGTH = 0x1fffffff; // This equates to 536,870,911 maximum children per parent (536 million rows)
 
+type ParentIdGetter<TData> = DataFieldGetter<TData, string>;
+
+export interface TreeStrategyRow<TData = any> extends RowNode<TData> {
+    parent: TreeStrategyRow<TData> | null;
+    allLeafChildren: TreeStrategyRow<TData>[] | null;
+    childrenAfterGroup: TreeStrategyRow<TData>[] | null;
+    treeNode: TreeStrategyRow<TData> | null;
+    treeNodeFlags: number;
+    sibling: TreeStrategyRow<TData>;
+    sourceRowIndex: number;
+}
+
 export class TreeParentIdStrategy<TData = any> extends BeanStub implements IRowGroupingStrategy<TData> {
-    private parentIdGetter: DataFieldGetter<TData, string | null | undefined> | null = null;
+    private parentIdGetter: ParentIdGetter<TData> | null = null;
     private oldGroupDisplayColIds: string | null = null;
 
     public override destroy(): void {
@@ -41,9 +52,9 @@ export class TreeParentIdStrategy<TData = any> extends BeanStub implements IRowG
         // the expanded initialized state and the future children count between the first loop and the tree traversal.
         // This avoid the needs to create complex data structures to store temporary data or add more fields to the row nodes.
 
-        const rootNode: TreeRow<TData> = params.rowNode;
+        const rootNode = params.rowNode as TreeStrategyRow<TData>;
 
-        let fullReload = !params.changedRowNodes;
+        let fullReload = !params.changedRowNodes && !params.changedPath?.active;
         let rootChildrenAfterGroup = rootNode.childrenAfterGroup;
         if (!rootChildrenAfterGroup || rootChildrenAfterGroup === rootNode.allLeafChildren) {
             fullReload = true;
@@ -55,17 +66,16 @@ export class TreeParentIdStrategy<TData = any> extends BeanStub implements IRowG
             groupDisplayColIdsChanged = this.updateGroupDisplayColsIds();
         }
 
-        let parentIdGetter = this.parentIdGetter;
-        const parentIdField = this.gos.get('treeDataParentIdField');
-        if (!parentIdGetter || parentIdGetter.path !== parentIdField) {
-            parentIdGetter = makeFieldPathGetter(parentIdField);
-        }
-
-        // Loop all the nodes, and put the children in the right place, updating the parent and the children arrays
+        const hasUpdates = flagUpdatedNodes(params.changedRowNodes);
 
         const renderEmpty = !this.gos.get('getRowId'); // If getRowId is not provided, we make an empty tree
         if (!renderEmpty) {
-            preprocess(this.beans.rowModel, params, parentIdGetter, fullReload);
+            if (fullReload || hasUpdates) {
+                this.updateParents(params, fullReload);
+            }
+
+            // Loop all the nodes, and put the children in the right place, updating the parent and the children arrays
+            preprocess(params);
         }
 
         rootChildrenAfterGroup.length = rootNode.treeNodeFlags & MASK_CHILDREN_LENGTH;
@@ -76,7 +86,7 @@ export class TreeParentIdStrategy<TData = any> extends BeanStub implements IRowG
         const activeChangedPath = params.changedPath?.active ? params.changedPath : undefined;
 
         let processedNodesCount = 0;
-        const processNode = (row: TreeRow<TData>, level: number): boolean => {
+        const processNode = (row: TreeStrategyRow<TData>, level: number): boolean => {
             ++processedNodesCount;
 
             let treeNodeFlags = row.treeNodeFlags;
@@ -186,14 +196,47 @@ export class TreeParentIdStrategy<TData = any> extends BeanStub implements IRowG
             }
         }
     }
+
+    private updateParents = ({ rowNode }: StageExecuteParams<TData>, fullReload: boolean): void => {
+        const rootNode = rowNode as TreeStrategyRow<TData>;
+        const rootAllLeafChildren = rootNode.allLeafChildren!;
+        const rowModel = this.beans.rowModel;
+
+        let parentIdGetter = this.parentIdGetter;
+        const parentIdField = this.gos.get('treeDataParentIdField') || null;
+        if (parentIdGetter?.path !== parentIdField) {
+            this.parentIdGetter = parentIdGetter = makeFieldPathGetter(parentIdField);
+            fullReload = true;
+        }
+
+        for (let i = 0, len = rootAllLeafChildren.length; i < len; ++i) {
+            const row = rootAllLeafChildren[i];
+            if (fullReload || row.treeNodeFlags & FLAG_CHANGED) {
+                let newParent: TreeStrategyRow<TData> | null | undefined;
+                const parentId = parentIdGetter(row.data);
+                if (parentId !== null && parentId !== undefined) {
+                    newParent = rowModel.getRowNode(parentId) as TreeStrategyRow<TData>;
+                    if (!newParent) {
+                        _warn(271, { id: row.id!, parentId });
+                    }
+                }
+                row.treeNode = newParent ?? rootNode;
+            } else {
+                row.treeNode ??= rootNode;
+            }
+        }
+    };
 }
 
 type IsGroupOpenByDefaultCallback = ((params: WithoutGridCommon<IsGroupOpenByDefaultParams>) => boolean) | undefined;
 
-const handleCycles = <TData>(rootNode: TreeRow<TData>, processNode: (row: TreeRow<TData>, level: number) => void) => {
+const handleCycles = <TData>(
+    rootNode: TreeStrategyRow<TData>,
+    processNode: (row: TreeStrategyRow<TData>, level: number) => void
+) => {
     // This is not optimal at all in terms of performance, and we don't care as this should never happen.
-    const processedNodes = new Set<TreeRow<TData>>();
-    const addProcessedNodes = (row: TreeRow<TData>) => {
+    const processedNodes = new Set<TreeStrategyRow<TData>>();
+    const addProcessedNodes = (row: TreeStrategyRow<TData>) => {
         processedNodes.add(row);
         for (const child of row.childrenAfterGroup!) {
             addProcessedNodes(child);
@@ -218,7 +261,10 @@ const handleCycles = <TData>(rootNode: TreeRow<TData>, processNode: (row: TreeRo
     }
 };
 
-const updateRootArrays = <TData>(rootNode: TreeRow<TData>, rootChildrenAfterGroup: TreeRow<TData>[]) => {
+const updateRootArrays = <TData>(
+    rootNode: TreeStrategyRow<TData>,
+    rootChildrenAfterGroup: TreeStrategyRow<TData>[]
+) => {
     rootNode.childrenAfterFilter = rootChildrenAfterGroup;
     rootNode.childrenAfterAggFilter = rootChildrenAfterGroup;
     rootNode.childrenAfterSort = rootChildrenAfterGroup;
@@ -230,7 +276,7 @@ const updateRootArrays = <TData>(rootNode: TreeRow<TData>, rootChildrenAfterGrou
     }
 };
 
-const updateRowArrays = <TData>(row: TreeRow<TData>, childrenAfterGroup: TreeRow<TData>[]) => {
+const updateRowArrays = <TData>(row: TreeStrategyRow<TData>, childrenAfterGroup: TreeStrategyRow<TData>[]) => {
     row.allLeafChildren ??= null;
     row.childrenAfterFilter ??= childrenAfterGroup;
     row.childrenAfterAggFilter ??= childrenAfterGroup;
@@ -246,8 +292,8 @@ const updateRowArrays = <TData>(row: TreeRow<TData>, childrenAfterGroup: TreeRow
 };
 
 const updateAllLeafChildren = <TData>(
-    row: TreeRow<TData>,
-    allLeafChildren: TreeRow<TData>[] | null,
+    row: TreeStrategyRow<TData>,
+    allLeafChildren: TreeStrategyRow<TData>[] | null,
     newAllLeafChildrenLen: number
 ): boolean => {
     if (newAllLeafChildrenLen === 0) {
@@ -301,37 +347,37 @@ const getExpandedInitialValue = (
         : expandByDefault === -1 || row.level < expandByDefault;
 };
 
-const preprocess = <TData>(
-    rowModel: IRowModel,
-    { rowNode: rootNode, changedRowNodes }: StageExecuteParams<TData>,
-    parentIdGetter: DataFieldGetter<TData, string | null | undefined>,
-    fullReload: boolean
-): void => {
-    const updates = changedRowNodes?.updates;
-    const adds = changedRowNodes?.adds;
-    const rootAllLeafChildren = rootNode.allLeafChildren!;
-    for (let i = 0, len = rootAllLeafChildren.length; i < len; ++i) {
-        const row = rootAllLeafChildren[i];
-        const updated = updates?.has(row) || adds?.has(row);
-        const oldParent: TreeRow<TData> | null = row.parent;
-        let newParent: TreeRow<TData> | null | undefined;
-
-        if (updated || fullReload) {
-            const parentId = parentIdGetter(row.data);
-            if (parentId === null || parentId === undefined) {
-                newParent = rootNode;
-            } else {
-                newParent = rowModel.getRowNode(parentId);
-                if (!newParent) {
-                    _warn(271, { id: row.id!, parentId });
-                    newParent = rootNode;
-                }
-            }
-        } else {
-            newParent = row.parent ?? rootNode;
+const flagUpdatedNodes = <TData>(changedRowNodes: IChangedRowNodes<TData> | undefined): boolean => {
+    if (!changedRowNodes) {
+        return false;
+    }
+    const { adds, updates } = changedRowNodes;
+    let hasUpdates = false;
+    if (updates.size > 0) {
+        hasUpdates = true;
+        for (const node of updates) {
+            (node as TreeStrategyRow<TData>).treeNodeFlags |= FLAG_CHANGED;
         }
+    }
+    if (adds.size > 0) {
+        hasUpdates = true;
+        for (const node of adds) {
+            (node as TreeStrategyRow<TData>).treeNodeFlags |= FLAG_CHANGED;
+        }
+    }
+    return hasUpdates;
+};
 
-        let parentFlags = newParent.treeNodeFlags;
+const preprocess = <TData>({ rowNode }: StageExecuteParams<TData>): void => {
+    const rootNode = rowNode as TreeStrategyRow<TData>;
+    const rootAllLeafChildren = rootNode.allLeafChildren!;
+    const rootAllLeafChildrenLen = rootAllLeafChildren.length;
+
+    for (let i = 0; i < rootAllLeafChildrenLen; ++i) {
+        const row = rootAllLeafChildren[i];
+        const oldParent = row.parent;
+        const newParent: TreeStrategyRow<TData> = row.treeNode ?? rootNode;
+        let parentFlags = newParent.treeNodeFlags ?? 0;
         const indexInParent = parentFlags & MASK_CHILDREN_LENGTH;
         parentFlags = (parentFlags & ~MASK_CHILDREN_LENGTH) | (indexInParent + 1);
 
@@ -345,10 +391,10 @@ const preprocess = <TData>(
             parentFlags |= FLAG_CHILDREN_CHANGED;
         }
 
-        if (updated || row.parent !== newParent) {
+        if (oldParent !== newParent) {
             row.parent = newParent;
             parentFlags |= FLAG_CHANGED;
-            if (oldParent !== newParent && oldParent !== null) {
+            if (oldParent) {
                 oldParent.treeNodeFlags |= FLAG_CHANGED;
             }
         }

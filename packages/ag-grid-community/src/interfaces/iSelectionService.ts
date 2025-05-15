@@ -14,7 +14,8 @@ export interface ISelectionService {
     getSelectionState(): string[] | ServerSideRowSelectionState | ServerSideRowGroupSelectionState | null;
     setSelectionState(
         state: string[] | ServerSideRowSelectionState | ServerSideRowGroupSelectionState,
-        source: SelectionEventSourceType
+        source: SelectionEventSourceType,
+        clearSelection?: boolean
     ): void;
     getSelectedNodes(): RowNode<any>[];
     getSelectedRows(): any[];

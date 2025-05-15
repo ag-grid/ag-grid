@@ -74,6 +74,7 @@ export const gridApiFunctionsMap: Record<keyof GridApi, ValidationModuleName> = 
     }),
     ...mod<_StateGridApi>('GridState', {
         getState: 0,
+        setState: 0,
     }),
     ...mod<_RowSelectionGridApi<any>>('SharedRowSelection', {
         setNodesSelected: 0,
