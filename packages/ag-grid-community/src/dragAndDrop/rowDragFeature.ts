@@ -251,13 +251,13 @@ export class RowDragFeature extends BeanStub implements DropTarget {
         const { rowNode, rowNodes: rows } = draggingEvent.dragItem;
         const rowsLen = rows?.length;
         const source = rowsLen && (rowNode ?? rows[0]);
+
         if (!source) {
             return null; // Nothing to move
         }
 
-        const beans = this.beans;
+        const { beans, gos, clientSideRowModel } = this;
         const y = _getNormalisedMousePosition(beans, draggingEvent).y;
-        const clientSideRowModel = this.clientSideRowModel;
         let targetRowIndex = clientSideRowModel.getRowIndexAtPixel(y);
         let target = clientSideRowModel.getRow(targetRowIndex) ?? null;
 
@@ -266,7 +266,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
 
         const sameGrid = this.isFromThisGrid(draggingEvent);
 
-        const groupingApproach = _getGroupingApproach(this.gos);
+        const groupingApproach = _getGroupingApproach(gos);
         const canSetParent =
             // We don't yet support drag and drop with getDataPath or row grouping
             (groupingApproach === 'treeSelfRef' || groupingApproach === 'treeNested') &&
@@ -286,17 +286,18 @@ export class RowDragFeature extends BeanStub implements DropTarget {
                 if (targetInRows) {
                     const newTarget = getRowsPrevOrNext(clientSideRowModel, targetRowIndex < source.rowIndex!, rows);
                     if (newTarget?.parent === target.parent) {
-                        target = newTarget; // Allow multiple rows dragging to the next selected dragging only in the original parent group
+                        target = newTarget; // Delta dragging, the user moved to a selected row above or below
                         targetRowIndex = target.rowIndex!;
                     }
                 }
             }
+
             if (targetInRows || (!canSetParent && Math.abs(targetRowIndex - source.rowIndex!) === 1)) {
-                above = targetRowIndex < source.rowIndex!; // Facilitate the user by moving up and down the rows when dragging over a selected row to move
+                above = targetRowIndex < source.rowIndex!; // Select the row above or below without the mid point if the diff is 1
             }
         }
 
-        let newParent = canSetParent ? this.determineNewParent(target, yDelta, targetInRows) : null;
+        let newParent = canSetParent ? this.determineNewParent(target, yDelta, targetInRows, rows) : null;
         if (newParent) {
             if (newParent === target) {
                 above = false; // When moving inside the target, we want to insert below it
@@ -306,17 +307,24 @@ export class RowDragFeature extends BeanStub implements DropTarget {
             }
         }
 
-        if (source === target && !newParent) {
-            return null; // No change, nothing to move
+        if (!newParent && targetInRows && (canSetParent || source === target)) {
+            // No delta dragging of multiple rows with TreeData or no change, nothing to move
+            return null;
         }
 
         return { sameGrid, above, target, newParent, rows };
     }
 
-    private determineNewParent(target: RowNode | null, yDelta: number, targetInRows: boolean): RowNode | null {
-        const clientSideRowModel = this.clientSideRowModel;
+    private determineNewParent(
+        target: RowNode | null,
+        yDelta: number,
+        targetInRows: boolean,
+        rows: IRowNode[]
+    ): RowNode | null {
+        const { clientSideRowModel, beans } = this;
+        const { pageBounds } = beans;
         const targetRowIndex = target?.rowIndex;
-        if (!target || (yDelta > 1 && targetRowIndex === this.beans.pageBounds.getLastRow())) {
+        if (!target || (yDelta > 1 && targetRowIndex === pageBounds.getLastRow())) {
             // Dragging outside of the rows, move to last row at the root level
             return clientSideRowModel.rootNode;
         }
@@ -327,14 +335,25 @@ export class RowDragFeature extends BeanStub implements DropTarget {
             if (Math.abs(yDelta) < INSIDE_THRESHOLD) {
                 return target; // Inside the middle of the row, we want to move inside, as children
             }
-
             if (
                 yDelta >= INSIDE_THRESHOLD &&
                 yDelta <= 1 &&
-                clientSideRowModel.getRow(targetRowIndex! + 1)?.parent === target &&
-                clientSideRowModel.getRow(targetRowIndex! + 2)?.parent === target
+                clientSideRowModel.getRow(targetRowIndex! + 1)?.parent === target
             ) {
-                return target; // In the bottom half of an expanded group with more than one child, we move inside the target
+                const { childrenAfterAggFilter } = target;
+                if (childrenAfterAggFilter) {
+                    let hasMoreChildren = false;
+                    const rowsSet = new Set(rows);
+                    for (const child of childrenAfterAggFilter) {
+                        if (!rowsSet.has(child) && child.rowIndex !== null) {
+                            hasMoreChildren = true;
+                            break;
+                        }
+                    }
+                    if (hasMoreChildren) {
+                        return target; // In the bottom half of an expanded group with more than one child, we move inside the target
+                    }
+                }
             }
         }
 
