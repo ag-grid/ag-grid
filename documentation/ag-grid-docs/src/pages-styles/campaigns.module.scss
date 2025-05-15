@@ -239,7 +239,7 @@
 }
 
 .autoICExample {
-    width: 80vw;
+    width: 100%;
     max-width: 1400px;
     margin-top: $spacing-size-8;
     margin-bottom: $spacing-size-16;
@@ -247,6 +247,10 @@
     footer:last-of-type {
         margin-top: $spacing-size-6;
         justify-content: center;
+    }
+
+    @media screen and (min-width: 1020px) {
+        width: 80vw;
     }
 
     @media screen and (min-width: 1400px) {
