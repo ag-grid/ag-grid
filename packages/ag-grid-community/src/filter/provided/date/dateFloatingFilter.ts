@@ -113,12 +113,10 @@ export class DateFloatingFilter extends SimpleFloatingFilter {
 
     private onDateChanged(): void {
         const filterValueDate = this.dateComp.getDate();
-        const filterValueText = _serialiseDate(filterValueDate);
 
         this.params.parentFilterInstance((filterInstance) => {
             if (filterInstance) {
-                const date = _parseDateTimeFromString(filterValueText);
-                filterInstance.onFloatingFilterChanged(this.lastType || null, date);
+                filterInstance.onFloatingFilterChanged(this.lastType || null, filterValueDate);
             }
         });
     }
