@@ -64,7 +64,7 @@ export class DataTypeService extends BeanStub implements NamedBean {
     }
 
     private dataTypeDefinitions: DataTypeDefinitions = {};
-    private dataTypeMatchers: { [cellDataType: string]: ((value: any) => boolean) | undefined };
+    private dataTypeMatchers: { [cellDataType in BaseCellDataType]: ((value: any) => boolean) | undefined };
     private formatValueFuncs: { [cellDataType: string]: DataTypeFormatValueFunc };
     public isPendingInference: boolean = false;
     private hasObjectValueParser: boolean;
@@ -114,10 +114,9 @@ export class DataTypeService extends BeanStub implements NamedBean {
         }
 
         const dataTypeDefinitions = this.gos.get('dataTypeDefinitions') ?? {};
-        const newDataTypeMatchers: { [cellDataType: string]: ((value: any) => boolean) | undefined } = {};
-        this.dataTypeMatchers = newDataTypeMatchers;
+        const newDataTypeMatchers = {} as { [cellDataType in BaseCellDataType]: ((value: any) => boolean) | undefined };
 
-        for (const cellDataType of Object.keys(dataTypeDefinitions)) {
+        for (const cellDataType of Object.keys(dataTypeDefinitions) as BaseCellDataType[]) {
             const dataTypeDefinition = dataTypeDefinitions[cellDataType];
             const mergedDataTypeDefinition = this.processDataTypeDefinition(
                 dataTypeDefinition,
@@ -135,16 +134,22 @@ export class DataTypeService extends BeanStub implements NamedBean {
         }
 
         this.checkObjectValueHandlers(defaultDataTypes);
+        this.dataTypeMatchers = this.sortKeysInMatchers(newDataTypeMatchers, defaultDataTypes);
+    }
 
-        sortedCellDataTypesForMatching.forEach((cellDataType: BaseCellDataType) => {
-            const overriddenDataTypeMatcher = newDataTypeMatchers[cellDataType];
-            if (overriddenDataTypeMatcher) {
-                // remove to maintain correct ordering
-                delete newDataTypeMatchers[cellDataType];
-            }
-            newDataTypeMatchers[cellDataType] =
-                overriddenDataTypeMatcher ?? defaultDataTypes[cellDataType].dataTypeMatcher;
-        });
+    /**
+     * Sorts the keys in the matchers object.
+     * Returns a new newDataTypeMatchers object with the keys in the order defined by `sortedCellDataTypesForMatching`.
+     */
+    private sortKeysInMatchers<T extends Record<BaseCellDataType, any>>(
+        matchers: T,
+        dataTypes: BaseCellDataTypeDefMap
+    ) {
+        const sortedMatchers = {} as T;
+        for (const cellDataType of sortedCellDataTypesForMatching) {
+            sortedMatchers[cellDataType] = matchers[cellDataType] ?? dataTypes[cellDataType].dataTypeMatcher;
+        }
+        return sortedMatchers;
     }
 
     private processDataTypeDefinition(
@@ -291,8 +296,9 @@ export class DataTypeService extends BeanStub implements NamedBean {
             return undefined;
         }
         return (
-            Object.keys(this.dataTypeMatchers).find((_cellDataType) => this.dataTypeMatchers[_cellDataType]!(value)) ??
-            'object'
+            Object.keys(this.dataTypeMatchers).find((_cellDataType: BaseCellDataType) =>
+                this.dataTypeMatchers[_cellDataType]!(value)
+            ) ?? 'object'
         );
     }
 
@@ -643,7 +649,7 @@ export class DataTypeService extends BeanStub implements NamedBean {
 
     public override destroy(): void {
         this.dataTypeDefinitions = {};
-        this.dataTypeMatchers = {};
+        this.dataTypeMatchers = {} as typeof this.dataTypeMatchers;
         this.formatValueFuncs = {};
         this.columnStateUpdatesPendingInference = {};
         this.destroyColumnStateUpdateListeners();
