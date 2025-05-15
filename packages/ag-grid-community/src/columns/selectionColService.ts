@@ -133,9 +133,6 @@ export class SelectionColService extends BeanStub implements NamedBean, IColumnC
         const selectionColumnDef = def ?? gos.get('selectionColumnDef');
         const enableRTL = gos.get('enableRtl');
 
-        // We don't support row spanning in the selection column
-        const { rowSpan: _, spanRows: __, ...filteredSelColDef } = (selectionColumnDef ?? {}) as ColDef;
-
         return {
             // overridable properties
             width: 50,
@@ -152,11 +149,25 @@ export class SelectionColService extends BeanStub implements NamedBean, IColumnC
             editable: false,
             suppressFillHandle: true,
             pinned: null,
+            headerStyle:
+                // If there's no custom header component in the selection column, we set the 'gap' property
+                // to 2px to kill the excess spacing between the component container and the checkbox container.
+                // This ensures the width of the column remains at 50px when autosizing the column with the
+                // 'fitCellContents' strategy.
+                selectionColumnDef?.headerComponent != null
+                    ? undefined
+                    : {
+                          gap: '2px',
+                      },
             // overrides
-            ...filteredSelColDef,
+            ...selectionColumnDef,
             // non-overridable properties
             colId: SELECTION_COLUMN_ID,
             chartDataType: 'excluded',
+            // We don't support row spanning in the selection column
+            rowSpan: undefined,
+            spanRows: undefined,
+            headerName: undefined,
         };
     }
 
