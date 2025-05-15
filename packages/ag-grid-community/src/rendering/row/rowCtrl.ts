@@ -100,20 +100,6 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
 
     private active = true;
 
-    public stoppingRowEdit: boolean;
-    /** full row editing */
-    // public get editing(): boolean {
-    //     if (!this.gos?.get('experimentalEditingModeV2')) {
-    //         return this._editing;
-    //     }
-    //     return this.beans.editSvc?.isEditing(this) ?? false;
-    // }
-    // public set editing(value: boolean) {
-    //     if (!this.gos?.get('experimentalEditingModeV2')) {
-    //         this._editing = value;
-    //     }
-    // }
-    // private _editing: boolean;
     private rowFocused: boolean;
 
     private centerCellCtrls: CellCtrlListAndMap = { list: [], map: {} };
@@ -674,7 +660,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         const KEEP_CELL = false;
 
         // always remove the cell if it's not rendered or if it's in the wrong pinned location
-        const { column } = cellCtrl;
+        const { column, rowNode } = cellCtrl;
         if (column.getPinned() != nextContainerPinned) {
             return REMOVE_CELL;
         }
@@ -685,8 +671,8 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         }
 
         // we want to try and keep editing and focused cells
-        const editing = this.beans.editSvc?.isEditing(cellCtrl.rowNode, cellCtrl.column);
-        const { visibleCols } = this.beans;
+        const { visibleCols, editSvc } = this.beans;
+        const editing = editSvc?.isEditing(rowNode, column);
         const focused = cellCtrl.isCellFocused();
 
         const mightWantToKeepCell = editing || focused;

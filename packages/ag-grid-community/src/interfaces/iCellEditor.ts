@@ -96,8 +96,6 @@ export interface ICellEditorParams<TData = any, TValue = any, TContext = any> ex
     parseValue: (value: string) => TValue | null | undefined;
     /** Utility function to format a value using the column's `colDef.valueFormatter` */
     formatValue: (value: TValue | null | undefined) => string;
-    /** Optional: A method to validate the value before it is set */
-    validateValue?: (value: TValue) => boolean;
 }
 
 export interface ICellEditorComp<TData = any, TValue = any, TContext = any>

@@ -77,7 +77,6 @@ export type InternalModuleName =
     | 'DataType'
     | 'Drag'
     | 'EditCore'
-    | 'EditingCore'
     | 'EnterpriseCore'
     | 'Expression'
     | 'FilterCore'
@@ -280,7 +279,6 @@ export type ModuleName = InternalModuleName | CommunityModuleName | EnterpriseMo
 export type ResolvableModuleName = Extract<
     InternalModuleName,
     | 'EditCore'
-    | `EditingCore`
     | 'MenuCore'
     | 'EnterpriseCore'
     | 'ColumnHeaderComp'

@@ -14,8 +14,6 @@ function _getCallbackForEvent(eventName: string): string {
 }
 const EVENT_LOOKUP = new Set(_GET_ALL_EVENTS().map((event) => _getCallbackForEvent(event)));
 
-const EXPERIMENTAL_API = ['_EditingGridApi'];
-
 function findAllInNodesTree(node) {
     const kind = ts.SyntaxKind[node.kind];
     let interfaces = [];
@@ -584,21 +582,16 @@ export function getGridApi(gridApiFile: string) {
     let members = {};
 
     const errors: string[] = [];
-    const warnings: string[] = [];
 
     const apiToTypeMap = new Map<string, string>();
 
-    const addType = (typeName: string, n: ts.Node, experimental?: boolean) => {
+    const addType = (typeName: string, n: ts.Node) => {
         const typesFromNode = extractTypesFromNode(n, srcFile, false);
 
         for (const apiName of Object.keys(typesFromNode)) {
             const apiTypeName = apiToTypeMap.get(apiName);
             if (apiTypeName !== undefined && apiTypeName !== typeName) {
-                if (experimental) {
-                    warnings.push(`API ${apiName} already exists in both ${apiTypeName} and ${typeName}`);
-                } else {
-                    errors.push(`API ${apiName} already exists in both ${apiTypeName} and ${typeName}`);
-                }
+                errors.push(`API ${apiName} already exists in both ${apiTypeName} and ${typeName}`);
             } else {
                 apiToTypeMap.set(apiName, typeName);
             }
@@ -619,14 +612,13 @@ export function getGridApi(gridApiFile: string) {
                 const typeName = formatNode(t.expression, srcFile);
                 const typeNode = findNode(typeName, srcFile);
 
-                const experimental = EXPERIMENTAL_API.includes(typeName);
                 if (!typeNode) {
                     errors.push(`Could not find base interface for ${typeName}`);
                 } else {
                     if (ts.isInterfaceDeclaration(typeNode)) {
                         processInterface(typeNode);
                     }
-                    ts.forEachChild(typeNode, (n) => addType(typeName, n, experimental));
+                    ts.forEachChild(typeNode, (n) => addType(typeName, n));
                 }
             });
         });
@@ -638,8 +630,6 @@ export function getGridApi(gridApiFile: string) {
 
     if (errors.length > 0) {
         throw new Error(`getGridApi validation failures:\n  ${errors.join('\n  ')}`);
-    } else if (warnings.length > 0) {
-        console.warn(`getGridApi validation warnings:\n  ${warnings.join('\n  ')}`);
     }
 
     return members;

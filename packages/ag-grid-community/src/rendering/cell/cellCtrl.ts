@@ -362,14 +362,15 @@ export class CellCtrl extends BeanStub {
     }
 
     public onPopupEditorClosed(): void {
-        if (!this.beans.editSvc?.isEditing(this.rowNode, this.column)) {
+        const { rowNode, column } = this;
+        if (!this.beans.editSvc?.isEditing(rowNode, column)) {
             return;
         }
 
         // note: this happens because of a click outside of the grid or if the popupEditor
         // is closed with `Escape` key. if another cell was clicked, then the editing will
         // have already stopped and returned on the conditional above.
-        this.beans.editSvc?.stopEditing(this.rowNode, this.column);
+        this.beans.editSvc?.stopEditing(rowNode, column);
     }
 
     /**
@@ -448,12 +449,7 @@ export class CellCtrl extends BeanStub {
     // + rowCtrl: event dataChanged {suppressFlash: !update, newData: !update}
     // + rowCtrl: api refreshCells() {animate: true/false}
     // + rowRenderer: api softRefreshView() {}
-    public refreshCell(params?: {
-        suppressFlash?: boolean;
-        newData?: boolean;
-        forceRefresh?: boolean;
-        editing?: boolean;
-    }) {
+    public refreshCell(params?: { suppressFlash?: boolean; newData?: boolean; forceRefresh?: boolean }) {
         // if we are in the middle of 'stopEditing', then we don't refresh here, as refresh gets called explicitly
         if (this.suppressRefreshCell) {
             return;
@@ -503,10 +499,6 @@ export class CellCtrl extends BeanStub {
         }
 
         this.tooltipFeature?.refreshTooltip();
-
-        if (params?.editing != undefined) {
-            this.comp.refreshEditStyles(params.editing, false);
-        }
 
         // we do cellClassRules even if the value has not changed, so that users who have rules that
         // look at other parts of the row (where the other part of the row might of changed) will work.
@@ -652,12 +644,13 @@ export class CellCtrl extends BeanStub {
      * @param waitForRender if the cell has just setComp, it may not be rendered yet, so we wait for the next render
      */
     private restoreFocus(waitForRender = false): void {
-        if (
-            !this.comp ||
-            this.beans.editSvc?.isEditing(this.rowNode, this.column) ||
-            !this.isCellFocused() ||
-            !this.beans.focusSvc.shouldTakeFocus()
-        ) {
+        const {
+            beans: { editSvc, focusSvc },
+            rowNode,
+            column,
+            comp,
+        } = this;
+        if (!comp || editSvc?.isEditing(rowNode, column) || !this.isCellFocused() || !focusSvc.shouldTakeFocus()) {
             return;
         }
 
@@ -665,7 +658,7 @@ export class CellCtrl extends BeanStub {
             if (!this.isAlive()) {
                 return;
             }
-            const focusableElement = this.comp.getFocusableElement();
+            const focusableElement = comp.getFocusableElement();
             if (this.isCellFocused()) {
                 focusableElement.focus({ preventScroll: true });
             }

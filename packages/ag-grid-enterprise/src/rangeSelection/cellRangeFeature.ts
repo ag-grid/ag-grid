@@ -234,7 +234,7 @@ export class CellRangeFeature implements ICellRangeFeature {
     }
 
     private shouldHaveSelectionHandle(): boolean {
-        const gos = this.beans.gos;
+        const { gos, editSvc } = this.beans;
         const rangeSvc = this.rangeSvc;
         const cellRanges = rangeSvc.getCellRanges();
         const rangesLen = cellRanges.length;
@@ -244,10 +244,10 @@ export class CellRangeFeature implements ICellRangeFeature {
         }
 
         const cellRange = _last(cellRanges);
-        const { cellPosition } = this.cellCtrl;
-        const isFillHandleAvailable = _isFillHandleEnabled(gos) && !this.cellCtrl.column.isSuppressFillHandle();
+        const { cellPosition, column, rowNode } = this.cellCtrl;
+        const isFillHandleAvailable = _isFillHandleEnabled(gos) && !column.isSuppressFillHandle();
         const isRangeHandleAvailable = _isRangeHandleEnabled(gos);
-        const isCellEditing = this.beans.editSvc?.isEditing(this.cellCtrl.rowNode, this.cellCtrl.column);
+        const isCellEditing = editSvc?.isEditing(rowNode, column);
 
         let handleIsAvailable = rangesLen === 1 && !isCellEditing && (isFillHandleAvailable || isRangeHandleAvailable);
 

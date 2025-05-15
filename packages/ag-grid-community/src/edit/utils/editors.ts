@@ -193,5 +193,5 @@ export function _destroyEditor(beans: BeanCollection, cellPosition: CellIdPositi
     comp.setEditDetails(); // passing nothing stops editing
     comp.refreshEditStyles(false, false);
     cellCtrl?.updateAndFormatValue(false);
-    cellCtrl?.refreshCell({ forceRefresh: true, suppressFlash: true, editing: false });
+    cellCtrl?.refreshCell({ forceRefresh: true, suppressFlash: true });
 }
