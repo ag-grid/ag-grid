@@ -87,7 +87,7 @@ export abstract class BaseEditStrategy extends BeanStub {
         editingCells: CellIdPositions[],
         rowNode?: IRowNode | null,
         column?: Column | null,
-        key?: string,
+        key?: string | null,
         cellStartedEdit?: boolean,
         event?: Event | null
     ) {

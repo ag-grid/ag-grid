@@ -66,7 +66,7 @@ export class FullRowEditStrategy extends BaseEditStrategy {
     public override startEditing(
         rowNode: IRowNode,
         column?: Column,
-        _key?: string | null | undefined,
+        key?: string | null | undefined,
         event?: KeyboardEvent | MouseEvent | null | undefined,
         _source: 'api' | 'ui' = 'ui'
     ): boolean {
@@ -91,7 +91,7 @@ export class FullRowEditStrategy extends BaseEditStrategy {
 
         this.updateStyles(rowNode, column, true);
 
-        return this.finishStartEdit(cells, rowNode, column, undefined, true, event);
+        return this.finishStartEdit(cells, rowNode, column, key, true, event);
     }
 
     public override stopEditing(): boolean {

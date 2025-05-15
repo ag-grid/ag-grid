@@ -62,7 +62,6 @@ const gridOptions: GridOptions = {
     onCellValueChanged: (event) => {
         console.log('Cell value changed');
     },
-    // editType: 'fullRow',
 };
 
 function logPendingEdits() {

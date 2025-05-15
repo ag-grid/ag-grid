@@ -44,7 +44,7 @@ export class SingleCellEditStrategy extends BaseEditStrategy {
     public startEditing(
         rowNode: IRowNode,
         column: Column,
-        _key?: string | null | undefined,
+        key?: string | null | undefined,
         event?: KeyboardEvent | MouseEvent | null,
         _source: 'api' | 'ui' = 'ui'
     ): boolean {
@@ -68,7 +68,7 @@ export class SingleCellEditStrategy extends BaseEditStrategy {
             ],
             rowNode,
             column,
-            undefined,
+            key,
             true,
             event
         );
