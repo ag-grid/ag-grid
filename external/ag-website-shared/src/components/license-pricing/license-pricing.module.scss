@@ -582,7 +582,7 @@
     }
 
     b:nth-child(2) {
-        color: black;
+        color: var(--color-fg-primary);
         font-size: var(--text-fs-lg);
         letter-spacing: -0.5px;
     }
