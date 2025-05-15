@@ -109,6 +109,7 @@ export const GRID_OPTIONS_MODULES: Partial<Record<keyof GridOptions, ValidationM
     datasource: 'InfiniteRowModel',
     doesExternalFilterPass: 'ExternalFilter',
     editType: 'EditCore',
+    batchEdit: 'EditCore',
     enableAdvancedFilter: 'AdvancedFilter',
     enableCellSpan: 'CellSpan',
     enableCharts: 'IntegratedCharts',

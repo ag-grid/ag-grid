@@ -29,7 +29,7 @@ export class EditService extends BeanStub implements NamedBean {
                 this.stopAllEditing(true, 'api');
 
                 // will re-create if different
-                this.createEditStrategy(currentValue);
+                this.createStrategy(currentValue);
             }).bind(this)
         );
         this.addManagedPropertyListener(
@@ -40,7 +40,7 @@ export class EditService extends BeanStub implements NamedBean {
         );
     }
 
-    private createEditStrategy(editType?: string): BaseEditStrategy {
+    private createStrategy(editType?: string): BaseEditStrategy {
         const { beans, gos, strategy: editStrategy } = this;
 
         const strategyName: any = editType ?? gos.get('editType') ?? 'singleCell';
@@ -49,7 +49,7 @@ export class EditService extends BeanStub implements NamedBean {
             if (editStrategy.beanName === strategyName) {
                 return editStrategy;
             }
-            this.destroyEditStrategy();
+            this.destroyStrategy();
         }
 
         return (this.strategy = this.createOptionalManagedBean(
@@ -57,7 +57,7 @@ export class EditService extends BeanStub implements NamedBean {
         )!);
     }
 
-    private destroyEditStrategy(): void {
+    private destroyStrategy(): void {
         if (!this.strategy) {
             return;
         }
@@ -120,7 +120,7 @@ export class EditService extends BeanStub implements NamedBean {
             return true;
         }
 
-        this.strategy = this.createEditStrategy();
+        this.strategy = this.createStrategy();
 
         // because of async in React, the cellComp may not be set yet, if no cellComp then we are
         // yet to initialise the cell, so we re-schedule this operation for when celLComp is attached
@@ -172,7 +172,7 @@ export class EditService extends BeanStub implements NamedBean {
             cellCtrl.onEditorAttachedFuncs = [];
         }
 
-        this.strategy = this.createEditStrategy();
+        this.strategy = this.createStrategy();
 
         _syncModelsFromEditors(this.beans);
 
@@ -322,7 +322,7 @@ export class EditService extends BeanStub implements NamedBean {
     }
 
     public override destroy(): void {
-        this.destroyEditStrategy();
+        this.destroyStrategy();
         this.model?.destroy();
         super.destroy();
     }

@@ -114,6 +114,7 @@ import type {
     SizeColumnsToFitGridStrategy,
     SizeColumnsToFitProvidedWidthStrategy,
 } from '../interfaces/autoSize';
+import { EditStrategyType } from '../interfaces/editStrategyType';
 import type {
     CsvExportParams,
     ProcessCellForExportParams,
@@ -508,7 +509,7 @@ export interface GridOptions<TData = any> {
      * Set to `'fullRow'` to enable Full Row Editing. Otherwise leave blank to edit one cell at a time.
      * @agModule `TextEditorModule` / `LargeTextEditorModule` / `NumberEditorModule` / `DateEditorModule` / `CheckboxEditorModule` / `CustomEditorModule` / `SelectEditorModule` / `RichSelectModule`
      */
-    editType?: 'fullRow';
+    editType?: EditStrategyType;
     /**
      * Set to `true` to enable Single Click Editing for cells, to start editing with a single click.
      * @default false
@@ -523,7 +524,9 @@ export interface GridOptions<TData = any> {
     suppressClickEdit?: boolean;
 
     /**
-     * Set to `true` to enable batch editing.
+     * Set to `true` to enable batch editing. When this is set, the grid will not update the data until the user calls `stopEditing()`.
+     * @default false
+     * @agModule `EditModule`
      */
     batchEdit?: boolean;
 

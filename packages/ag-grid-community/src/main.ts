@@ -1160,6 +1160,7 @@ export {
     UndoRedoEditModule,
     CustomEditorModule,
 } from './edit/editModule';
+export type { EditStrategyType } from './interfaces/editStrategyType';
 export {
     RowSelectionModule,
     SharedRowSelectionModule as _SharedRowSelectionModule,
