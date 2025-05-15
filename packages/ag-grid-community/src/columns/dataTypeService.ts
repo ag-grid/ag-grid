@@ -536,7 +536,8 @@ export class DataTypeService extends BeanStub implements NamedBean {
     }
 
     private getDefaultDataTypes(): BaseCellDataTypeDefMap {
-        const defaultDateTimeFormatMatcher = (value: string) => !!value.match('^\\d{4}-\\d{2}-\\d{2} \\d{2}(:\\d{2}){2}$');
+        const defaultDateTimeFormatMatcher = (value: string) =>
+            !!value.match('^\\d{4}-\\d{2}-\\d{2} \\d{2}(:\\d{2}){2}$');
         const translate = this.getLocaleTextFunc();
 
         return {
@@ -619,7 +620,7 @@ export class DataTypeService extends BeanStub implements NamedBean {
                     }
                     return _serialiseDate(params.value, true) ?? '';
                 },
-                dataTypeMatcher: (value: any) => value instanceof Date ,
+                dataTypeMatcher: (value: any) => value instanceof Date,
             },
             // todo do special treatment of time
             dateTimeString: {
