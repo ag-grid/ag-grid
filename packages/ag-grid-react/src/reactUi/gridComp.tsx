@@ -27,13 +27,11 @@ const GridComp = ({ context }: GridCompProps) => {
     const [cursor, setCursor] = useState<string | null>(null);
     const [userSelect, setUserSelect] = useState<string | null>(null);
     const [initialised, setInitialised] = useState<boolean>(false);
-    const [tabGuardReady, setTabGuardReady] = useState<any>();
 
     const gridCtrlRef = useRef<GridCtrl>();
     const eRootWrapperRef = useRef<HTMLDivElement | null>(null);
     const tabGuardRef = useRef<TabGuardCompCallback>();
-    // eGridBodyParent is state as we use it in render
-    const [eGridBodyParent, setGridBodyParent] = useState<HTMLDivElement | null>(null);
+    const eGridBodyParentRef = useRef<HTMLDivElement | null>(null);
 
     const focusInnerElementRef = useRef<(fromBottom?: boolean) => void>(() => undefined);
     const paginationCompRef = useRef<JsTabGuardComp | undefined>();
@@ -41,68 +39,69 @@ const GridComp = ({ context }: GridCompProps) => {
 
     const onTabKeyDown = useCallback(() => undefined, []);
 
-    const beans = useMemo(() => {
-        if (context.isDestroyed()) {
-            return null;
-        }
-        return context.getBeans();
-    }, [context]);
-
     useReactCommentEffect(' AG Grid ', eRootWrapperRef);
 
-    const setRef = useCallback((eRef: HTMLDivElement) => {
-        eRootWrapperRef.current = eRef;
-        gridCtrlRef.current = eRef ? context.createBean(new GridCtrl()) : context.destroyBean(gridCtrlRef.current);
+    const setRef = useCallback(
+        (eRef: HTMLDivElement) => {
+            eRootWrapperRef.current = eRef;
 
-        if (!eRef || context.isDestroyed()) {
-            return;
-        }
+            if (context.isDestroyed()) {
+                // Don't expect this to be possible
+                console.warn('AG Grid: trying to set ref on a destroyed context', eRef);
+                return;
+            }
 
-        const gridCtrl = gridCtrlRef.current!;
+            gridCtrlRef.current = eRef ? context.createBean(new GridCtrl()) : context.destroyBean(gridCtrlRef.current);
 
-        focusInnerElementRef.current = gridCtrl.focusInnerElement.bind(gridCtrl);
+            if (!eRef) {
+                return;
+            }
 
-        const compProxy: IGridComp = {
-            destroyGridUi: () => {}, // do nothing, as framework users destroy grid by removing the comp
-            setRtlClass,
-            forceFocusOutOfContainer: (up?: boolean) => {
-                if (!up && paginationCompRef.current?.isDisplayed()) {
-                    paginationCompRef.current.forceFocusOutOfContainer(up);
-                    return;
-                }
-                tabGuardRef.current?.forceFocusOutOfContainer(up);
-            },
-            updateLayoutClasses: setLayoutClass,
-            getFocusableContainers: () => {
-                const comps: FocusableContainer[] = [];
-                const gridBodyCompEl = eRootWrapperRef.current?.querySelector('.ag-root');
-                if (gridBodyCompEl) {
-                    comps.push({ getGui: () => gridBodyCompEl as HTMLElement });
-                }
-                focusableContainersRef.current.forEach((comp) => {
-                    if (comp.isDisplayed()) {
-                        comps.push(comp);
+            const gridCtrl = gridCtrlRef.current!;
+
+            focusInnerElementRef.current = gridCtrl.focusInnerElement.bind(gridCtrl);
+
+            const compProxy: IGridComp = {
+                destroyGridUi: () => {}, // do nothing, as framework users destroy grid by removing the comp
+                setRtlClass,
+                forceFocusOutOfContainer: (up?: boolean) => {
+                    if (!up && paginationCompRef.current?.isDisplayed()) {
+                        paginationCompRef.current.forceFocusOutOfContainer(up);
+                        return;
                     }
-                });
-                return comps;
-            },
-            setCursor,
-            setUserSelect,
-        };
+                    tabGuardRef.current?.forceFocusOutOfContainer(up);
+                },
+                updateLayoutClasses: setLayoutClass,
+                getFocusableContainers: () => {
+                    const comps: FocusableContainer[] = [];
+                    const gridBodyCompEl = eRootWrapperRef.current?.querySelector('.ag-root');
+                    if (gridBodyCompEl) {
+                        comps.push({ getGui: () => gridBodyCompEl as HTMLElement });
+                    }
+                    focusableContainersRef.current.forEach((comp) => {
+                        if (comp.isDisplayed()) {
+                            comps.push(comp);
+                        }
+                    });
+                    return comps;
+                },
+                setCursor,
+                setUserSelect,
+            };
 
-        gridCtrl.setComp(compProxy, eRef, eRef);
-
-        setInitialised(true);
-    }, []);
+            gridCtrl.setComp(compProxy, eRef, eRef);
+        },
+        [context]
+    );
 
     // initialise the extra components
     useEffect(() => {
+        const eGridBodyParent = eGridBodyParentRef.current;
         const gridCtrl = gridCtrlRef.current;
         const eRootWrapper = eRootWrapperRef.current;
-        if (!tabGuardReady || !beans || !gridCtrl || !eGridBodyParent || !eRootWrapper) {
+        if (!gridCtrl || !eGridBodyParent || !eRootWrapper || !initialised) {
             return;
         }
-
         const beansToDestroy: any[] = [];
 
         // these components are optional, so we check if they are registered before creating them
@@ -165,7 +164,7 @@ const GridComp = ({ context }: GridCompProps) => {
                 el.parentElement?.removeChild(el);
             });
         };
-    }, [tabGuardReady, eGridBodyParent, beans]);
+    }, [context, initialised]);
 
     const rootWrapperClasses = useMemo(
         () => classesList('ag-root-wrapper', rtlClass, layoutClass),
@@ -187,19 +186,29 @@ const GridComp = ({ context }: GridCompProps) => {
 
     const setTabGuardCompRef = useCallback((ref: TabGuardCompCallback) => {
         tabGuardRef.current = ref;
-        setTabGuardReady(ref !== null);
     }, []);
+    const setGridBodyParent = useCallback(
+        (ref: HTMLDivElement) => {
+            eGridBodyParentRef.current = ref;
+            if (ref) {
+                setInitialised(true);
+            }
+        },
+        [context]
+    );
 
     const isFocusable = useCallback(() => !gridCtrlRef.current?.isFocusable(), []);
+
+    console.log('GridComp', { context: !!context, initialised, eGridBodyParent: eGridBodyParentRef.current });
 
     return (
         <div ref={setRef} className={rootWrapperClasses} style={topStyle} role="presentation">
             <div className={rootWrapperBodyClasses} ref={setGridBodyParent} role="presentation">
-                {initialised && eGridBodyParent && beans && (
-                    <BeansContext.Provider value={beans}>
+                {initialised && (
+                    <BeansContext.Provider value={context.getBeans()}>
                         <TabGuardComp
                             ref={setTabGuardCompRef}
-                            eFocusableElement={eGridBodyParent}
+                            eFocusableElement={eGridBodyParentRef.current!}
                             onTabKeyDown={onTabKeyDown}
                             gridCtrl={gridCtrlRef.current!}
                             forceFocusOutWhenTabGuardsAreEmpty={true}
