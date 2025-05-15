@@ -153,7 +153,7 @@ function setEditType(editType: any) {
 }
 
 function cancelEdit() {
-    gridApi!.cancelEdits();
+    gridApi!.stopEditing(true);
 }
 
 function stopEdit() {

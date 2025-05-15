@@ -13,7 +13,7 @@ export class FullRowEditStrategy extends BaseEditStrategy {
     private rowNode?: RowNode | null;
 
     public updateStyles(rowNode?: IRowNode | null, _column?: Column | null, newState?: boolean): void {
-        if (!rowNode || !_column) {
+        if (!rowNode) {
             return;
         }
 
