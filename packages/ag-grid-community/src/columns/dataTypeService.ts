@@ -139,7 +139,7 @@ export class DataTypeService extends BeanStub implements NamedBean {
 
     /**
      * Sorts the keys in the matchers object.
-     * Returns a new newDataTypeMatchers object with the keys in the order defined by `sortedCellDataTypesForMatching`.
+     * Does not mutate the original object, creates a copy of it with sorted keys instead.
      */
     private sortKeysInMatchers<T extends Record<BaseCellDataType, any>>(
         matchers: T,
@@ -543,7 +543,7 @@ export class DataTypeService extends BeanStub implements NamedBean {
 
     private getDefaultDataTypes(): BaseCellDataTypeDefMap {
         const defaultDateTimeFormatMatcher = (value: string) =>
-            !!value.match('^\\d{4}-\\d{2}-\\d{2} \\d{2}(:\\d{2}){2}$');
+            !!value.match('^\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}$');
         const translate = this.getLocaleTextFunc();
 
         return {
@@ -612,7 +612,6 @@ export class DataTypeService extends BeanStub implements NamedBean {
                 valueParser: () => null,
                 valueFormatter: (params: ValueFormatterLiteParams<any, any>) => _toStringOrNull(params.value) ?? '',
             },
-            // todo do special treatment of time
             dateTime: {
                 baseDataType: 'dateTime',
                 valueParser: (params: ValueParserLiteParams<any, Date>) =>
@@ -628,7 +627,6 @@ export class DataTypeService extends BeanStub implements NamedBean {
                 },
                 dataTypeMatcher: (value: any) => value instanceof Date,
             },
-            // todo do special treatment of time
             dateTimeString: {
                 baseDataType: 'dateTimeString',
                 dateParser: (value: string | undefined) => _parseDateTimeFromString(value) ?? undefined,
