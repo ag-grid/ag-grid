@@ -457,39 +457,43 @@ export class ColumnFilterService extends BeanStub implements NamedBean {
     }
 
     private getDefaultFilter(column: AgColumn): string {
-        let defaultFilter;
         const { gos, dataTypeSvc } = this.beans;
         if (_isSetFilterByDefault(gos)) {
-            defaultFilter = 'agSetColumnFilter';
-        } else {
-            const cellDataType = dataTypeSvc?.getBaseDataType(column);
-            if (cellDataType === 'number') {
-                defaultFilter = 'agNumberColumnFilter';
-            } else if (cellDataType === 'date' || cellDataType === 'dateString') {
-                defaultFilter = 'agDateColumnFilter';
-            } else {
-                defaultFilter = 'agTextColumnFilter';
-            }
+            return 'agSetColumnFilter';
         }
-        return defaultFilter;
+        switch (dataTypeSvc?.getBaseDataType(column)) {
+            case 'number': {
+                return 'agNumberColumnFilter';
+            }
+            case 'dateTime':
+            case 'dateTimeString':
+            case 'date':
+            case 'dateString': {
+                return 'agDateColumnFilter';
+            }
+            default:
+                return 'agTextColumnFilter';
+        }
     }
 
     public getDefaultFloatingFilter(column: AgColumn): string {
-        let defaultFloatingFilterType: string;
         const { gos, dataTypeSvc } = this.beans;
         if (_isSetFilterByDefault(gos)) {
-            defaultFloatingFilterType = 'agSetColumnFloatingFilter';
-        } else {
-            const cellDataType = dataTypeSvc?.getBaseDataType(column);
-            if (cellDataType === 'number') {
-                defaultFloatingFilterType = 'agNumberColumnFloatingFilter';
-            } else if (cellDataType === 'date' || cellDataType === 'dateString') {
-                defaultFloatingFilterType = 'agDateColumnFloatingFilter';
-            } else {
-                defaultFloatingFilterType = 'agTextColumnFloatingFilter';
-            }
+            return 'agSetColumnFloatingFilter';
         }
-        return defaultFloatingFilterType;
+        switch (dataTypeSvc?.getBaseDataType(column)) {
+            case 'number': {
+                return 'agNumberColumnFloatingFilter';
+            }
+            case 'dateTime':
+            case 'dateTimeString':
+            case 'date':
+            case 'dateString': {
+                return 'agDateColumnFloatingFilter';
+            }
+            default:
+                return 'agTextColumnFloatingFilter';
+        }
     }
 
     private createFilterInstance(

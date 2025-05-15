@@ -34,6 +34,8 @@ interface GroupSafeValueFormatter {
     groupSafeValueFormatter?: ValueFormatterFunc;
 }
 
+const dateTimeRegexp = /^\d{4}-\d{2}-\d{2}( \d{2}:\d{2}:\d{2})?$/;
+
 type DataTypeDefinitions = {
     [cellDataType: string]: (DataTypeDefinition | CoreDataTypeDefinition) & GroupSafeValueFormatter;
 };
@@ -214,7 +216,8 @@ export class DataTypeService extends BeanStub implements NamedBean {
             cellDataType = colDef.cellDataType;
         }
         if (cellDataType == null || cellDataType === true) {
-            cellDataType = this.canInferCellDataType(colDef, userColDef) ? this.inferCellDataType(field, colId) : false;
+            const canInfer = this.canInferCellDataType(colDef, userColDef);
+            cellDataType = canInfer ? this.inferCellDataType(field, colId) : false;
         }
         if (!cellDataType) {
             colDef.cellDataType = false;
@@ -295,11 +298,11 @@ export class DataTypeService extends BeanStub implements NamedBean {
         if (value == null) {
             return undefined;
         }
-        return (
-            Object.keys(this.dataTypeMatchers).find((_cellDataType: BaseCellDataType) =>
-                this.dataTypeMatchers[_cellDataType]!(value)
-            ) ?? 'object'
+        const matchedType = Object.keys(this.dataTypeMatchers).find((_cellDataType: BaseCellDataType) =>
+            this.dataTypeMatchers[_cellDataType]!(value)
         );
+
+        return matchedType ?? 'object';
     }
 
     private getInitialData(): any {
@@ -542,8 +545,7 @@ export class DataTypeService extends BeanStub implements NamedBean {
     }
 
     private getDefaultDataTypes(): BaseCellDataTypeDefMap {
-        const defaultDateTimeFormatMatcher = (value: string) =>
-            !!value.match('^\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}$');
+        const defaultDateTimeFormatMatcher = (value: string) => !!value.match(dateTimeRegexp);
         const translate = this.getLocaleTextFunc();
 
         return {
