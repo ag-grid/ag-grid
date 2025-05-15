@@ -430,7 +430,7 @@ describe('ag-grid hierarchical tree data reset', () => {
         `);
     });
 
-    test.only('tree data setRowData with id maintains selection and expanded state, and follows order', async () => {
+    test('tree data setRowData with id maintains selection and expanded state, and follows order', async () => {
         const rowData1 = [
             {
                 id: 'g0',
