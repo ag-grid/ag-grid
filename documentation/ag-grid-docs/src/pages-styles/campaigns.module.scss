@@ -239,7 +239,7 @@
 }
 
 .autoICExample {
-    width: 80vw;
+    width: 100%;
     max-width: 1400px;
     margin-top: $spacing-size-8;
     margin-bottom: $spacing-size-16;
@@ -247,6 +247,10 @@
     footer:last-of-type {
         margin-top: $spacing-size-6;
         justify-content: center;
+    }
+
+    @media screen and (min-width: 1020px) {
+        width: 80vw;
     }
 
     @media screen and (min-width: 1400px) {
@@ -259,6 +263,7 @@
 .campaignBenefitsContainer {
     --benefitsBG: #fbfbfc;
 
+    position: relative;
     display: flex;
     gap: $spacing-size-8 $spacing-size-4;
     background-color: var(--benefitsBG);
@@ -266,9 +271,6 @@
     padding: $spacing-size-16 0;
     position: relative;
     text-align: center;
-    box-shadow:
-        50vw 0 0 0 var(--benefitsBG),
-        -50vw 0 0 0 var(--benefitsBG);
 
     #{$selector-darkmode} & {
         --benefitsBG: color-mix(in srgb, var(--color-fg-primary), var(--color-bg-primary) 98%);
@@ -276,6 +278,25 @@
 
     @media screen and (max-width: 840px) {
         flex-wrap: wrap;
+    }
+
+    &::before,
+    &::after {
+        position: absolute;
+        content: '';
+        top: 0;
+        bottom: 0;
+        width: 100vw;
+        background-color: var(--benefitsBG);
+        pointer-events: none;
+    }
+
+    &::before {
+        left: -100vw;
+    }
+
+    &::after {
+        right: -100vw;
     }
 }
 
@@ -290,7 +311,7 @@
     background-color: var(--color-bg-primary);
 
     #{$selector-darkmode} & {
-        border-color: var(--color-util-gray-200);
+        border-color: var(--color-util-gray-300);
         background-color: #192232;
     }
 

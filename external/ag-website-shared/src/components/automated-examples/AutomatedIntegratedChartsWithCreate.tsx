@@ -27,6 +27,7 @@ export interface AutomatedIntegratedChartsProps {
 
 type AutomatedIntegratedChartsWithCreateProps = {
     createAutomatedIntegratedCharts: (params: CreateAutomatedIntegratedChartsParams) => AutomatedExample;
+    startOnInit?: boolean;
 } & AutomatedIntegratedChartsProps;
 
 function useClientIsReady() {
@@ -41,6 +42,7 @@ function useClientIsReady() {
 
 export function AutomatedIntegratedChartsWithCreate({
     createAutomatedIntegratedCharts,
+    startOnInit,
     visibilityThreshold,
 }: AutomatedIntegratedChartsWithCreateProps) {
     const exampleId = INTEGRATED_CHARTS_ID;
@@ -86,7 +88,7 @@ export function AutomatedIntegratedChartsWithCreate({
             }
         },
         threshold: visibilityThreshold,
-        isDisabled: !gridIsReady,
+        isDisabled: startOnInit || !gridIsReady,
     });
 
     useEffect(() => {
@@ -126,6 +128,13 @@ export function AutomatedIntegratedChartsWithCreate({
             },
             onGridReady() {
                 setGridIsReady(true);
+
+                if (startOnInit) {
+                    setTimeout(() => {
+                        setAllScriptEnabledVars(true);
+                        automatedExampleManager.start(exampleId);
+                    }, 0);
+                }
             },
             visibilityThreshold,
         };
