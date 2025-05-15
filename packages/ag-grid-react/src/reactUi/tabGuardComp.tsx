@@ -75,7 +75,7 @@ const TabGuardCompRef: ForwardRefRenderFunction<TabGuardCompCallback, TabGuardPr
                 })
             );
         }
-    }, []);
+    }, [context, eFocusableElement, forceFocusOutWhenTabGuardsAreEmpty, gridCtrl, isEmpty, onTabKeyDown]);
 
     const setTopRef = useCallback(
         (e: HTMLDivElement | null) => {

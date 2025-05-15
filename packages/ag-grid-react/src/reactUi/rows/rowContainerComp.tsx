@@ -49,7 +49,7 @@ const RowContainerComp = ({ name }: { name: RowContainerName }) => {
         const containerReady = eContainer.current != null;
         const spanContainerReady = !isSpanning || eSpanContainer.current != null;
         return viewportReady && containerReady && spanContainerReady;
-    }, []);
+    }, [isSpanning, shouldRenderViewport]);
 
     const areElementsRemoved = useCallback(() => {
         return eViewport.current == null && eContainer.current == null && eSpanContainer.current == null;
@@ -133,7 +133,7 @@ const RowContainerComp = ({ name }: { name: RowContainerName }) => {
                 eViewport.current!
             );
         }
-    }, [areElementsReady, areElementsRemoved]);
+    }, [areElementsReady, areElementsRemoved, context, name]);
 
     const setContainerRef = useCallback(
         (e: HTMLDivElement | null) => {

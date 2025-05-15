@@ -1,36 +1,41 @@
 import type { MutableRefObject } from 'react';
-import { useCallback, useContext, useEffect } from 'react';
+import { useContext, useEffect } from 'react';
 
-import type { ICellRendererComp } from 'ag-grid-community';
+import type { Context, ICellRendererComp } from 'ag-grid-community';
 
 import { BeansContext } from '../beansContext';
 import type { RenderDetails } from './cellComp';
+
+const destroyCellRenderer = (
+    context: Context,
+    setJsCellRendererRef: (comp: ICellRendererComp | undefined) => void,
+    getJsCellRendererRef: () => ICellRendererComp | undefined
+) => {
+    const comp = getJsCellRendererRef();
+    if (!comp) {
+        return;
+    }
+
+    const compGui = comp.getGui();
+
+    if (compGui && compGui.parentElement) {
+        compGui.parentElement.removeChild(compGui);
+    }
+
+    context.destroyBean(comp);
+    setJsCellRendererRef(undefined);
+};
 
 const useJsCellRenderer = (
     showDetails: RenderDetails | undefined,
     showTools: boolean,
     eCellValue: HTMLElement | undefined | null,
     cellValueVersion: number,
-    jsCellRendererRef: MutableRefObject<ICellRendererComp | undefined>,
+    setJsCellRendererRef: (comp: ICellRendererComp | undefined) => void,
+    getJsCellRendererRef: () => ICellRendererComp | undefined,
     eGui: MutableRefObject<any>
 ) => {
     const { context } = useContext(BeansContext);
-
-    const destroyCellRenderer = useCallback(() => {
-        const comp = jsCellRendererRef.current;
-        if (!comp) {
-            return;
-        }
-
-        const compGui = comp.getGui();
-
-        if (compGui && compGui.parentElement) {
-            compGui.parentElement.removeChild(compGui);
-        }
-
-        context.destroyBean(comp);
-        jsCellRendererRef.current = undefined;
-    }, []);
 
     // create or refresh JS cell renderer
     useEffect(() => {
@@ -41,15 +46,15 @@ const useJsCellRenderer = (
 
         // if not showing comp, destroy any existing one and return
         if (!showComp) {
-            destroyCellRenderer();
+            destroyCellRenderer(context, setJsCellRendererRef, getJsCellRendererRef);
             return;
         }
 
         const compDetails = showDetails!.compDetails;
 
-        if (jsCellRendererRef.current) {
+        const comp = getJsCellRendererRef();
+        if (comp) {
             // attempt refresh if refresh method exists
-            const comp = jsCellRendererRef.current;
             const attemptRefresh = comp.refresh != null && showDetails!.force == false;
             const refreshResult = attemptRefresh ? comp.refresh(compDetails!.params) : false;
             const refreshWorked = refreshResult === true || refreshResult === undefined;
@@ -60,7 +65,7 @@ const useJsCellRenderer = (
             }
 
             // if refresh didn't work, we destroy it and continue, so new cell renderer created below
-            destroyCellRenderer();
+            destroyCellRenderer(context, setJsCellRendererRef, getJsCellRendererRef);
         }
 
         const promise = compDetails!.newAgStackInstance();
@@ -78,17 +83,26 @@ const useJsCellRenderer = (
             const parent = showTools ? eCellValue! : eGui.current!;
             parent.appendChild(compGui);
 
-            jsCellRendererRef.current = comp;
+            setJsCellRendererRef(comp);
         });
         // We do not return the destroy here as we want to keep the comp alive for our custom refresh approach above
-    }, [showDetails, showTools, cellValueVersion]);
+    }, [
+        showDetails,
+        showTools,
+        cellValueVersion,
+        eCellValue,
+        eGui,
+        context,
+        getJsCellRendererRef,
+        setJsCellRendererRef,
+    ]);
 
     // this effect makes sure destroyCellRenderer gets called when the
     // component is destroyed. as the other effect only updates when there
     // is a change in state
     useEffect(() => {
-        return destroyCellRenderer;
-    }, []);
+        return () => destroyCellRenderer(context, setJsCellRendererRef, getJsCellRendererRef);
+    }, [context, getJsCellRendererRef, setJsCellRendererRef]);
 };
 
 export default useJsCellRenderer;

@@ -15,7 +15,7 @@ const useReactCommentEffect = (comment: string, eForCommentRef: RefObject<HTMLEl
                 };
             }
         }
-    }, [comment]);
+    }, [comment, eForCommentRef]);
 };
 
 export default useReactCommentEffect;

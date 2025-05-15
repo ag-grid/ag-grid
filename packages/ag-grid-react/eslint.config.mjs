@@ -1,7 +1,12 @@
+import reactCompiler from 'eslint-plugin-react-compiler';
+import reactHooks from 'eslint-plugin-react-hooks';
+
 import rootESLint from '../../eslint.config.mjs';
 
 export default [
     ...rootESLint,
+    reactHooks.configs['recommended-latest'],
+    reactCompiler.configs.recommended,
     {
         rules: {
             'no-empty': 'error',

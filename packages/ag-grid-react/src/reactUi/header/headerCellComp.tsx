@@ -32,49 +32,52 @@ const HeaderCellComp = ({ ctrl }: { ctrl: HeaderCellCtrl }) => {
     if (isAlive && !cssManager.current) {
         cssManager.current = new CssClassManager(() => eGui.current);
     }
-    const setRef = useCallback((eRef: HTMLDivElement | null) => {
-        eGui.current = eRef;
-        compBean.current = eRef ? context.createBean(new _EmptyBean()) : context.destroyBean(compBean.current);
-        if (!eRef || !ctrl.isAlive()) {
-            return;
-        }
+    const setRef = useCallback(
+        (eRef: HTMLDivElement | null) => {
+            eGui.current = eRef;
+            compBean.current = eRef ? context.createBean(new _EmptyBean()) : context.destroyBean(compBean.current);
+            if (!eRef || !ctrl.isAlive()) {
+                return;
+            }
 
-        const compProxy: IHeaderCellComp = {
-            setWidth: (width: string) => {
-                if (eGui.current) {
-                    eGui.current.style.width = width;
-                }
-            },
-            toggleCss: (name: string, on: boolean) => cssManager.current!.toggleCss(name, on),
-            setUserStyles: (styles: HeaderStyle) => setUserStyles(styles),
-            setAriaSort: (sort?: ColumnSortState) => {
-                if (eGui.current) {
-                    sort ? _setAriaSort(eGui.current, sort) : _removeAriaSort(eGui.current);
-                }
-            },
-            setUserCompDetails: (compDetails: UserCompDetails) => setUserCompDetails(compDetails),
-            getUserCompInstance: () => userCompRef.current || undefined,
-        };
+            const compProxy: IHeaderCellComp = {
+                setWidth: (width: string) => {
+                    if (eGui.current) {
+                        eGui.current.style.width = width;
+                    }
+                },
+                toggleCss: (name: string, on: boolean) => cssManager.current!.toggleCss(name, on),
+                setUserStyles: (styles: HeaderStyle) => setUserStyles(styles),
+                setAriaSort: (sort?: ColumnSortState) => {
+                    if (eGui.current) {
+                        sort ? _setAriaSort(eGui.current, sort) : _removeAriaSort(eGui.current);
+                    }
+                },
+                setUserCompDetails: (compDetails: UserCompDetails) => setUserCompDetails(compDetails),
+                getUserCompInstance: () => userCompRef.current || undefined,
+            };
 
-        ctrl.setComp(compProxy, eRef, eResize.current!, eHeaderCompWrapper.current!, compBean.current);
+            ctrl.setComp(compProxy, eRef, eResize.current!, eHeaderCompWrapper.current!, compBean.current);
 
-        const selectAllGui = ctrl.getSelectAllGui();
-        if (selectAllGui) {
-            eResize.current?.insertAdjacentElement('afterend', selectAllGui);
-            compBean.current!.addDestroyFunc(() => selectAllGui.remove());
-        }
-    }, []);
+            const selectAllGui = ctrl.getSelectAllGui();
+            if (selectAllGui) {
+                eResize.current?.insertAdjacentElement('afterend', selectAllGui);
+                compBean.current!.addDestroyFunc(() => selectAllGui.remove());
+            }
+        },
+        [context, ctrl]
+    );
 
     // js comps
     useLayoutEffect(
         () => showJsComp(userCompDetails, context, eHeaderCompWrapper.current!, userCompRef),
-        [userCompDetails]
+        [userCompDetails, context]
     );
 
     // add drag handling, must be done after component is added to the dom
     useEffect(() => {
         ctrl.setDragSource(eGui.current!);
-    }, [userCompDetails]);
+    }, [userCompDetails, ctrl]);
 
     const userCompStateless = useMemo(() => {
         const res = userCompDetails?.componentFromFramework && isComponentStateless(userCompDetails.componentClass);

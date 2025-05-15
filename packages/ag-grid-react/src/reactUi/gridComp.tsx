@@ -50,50 +50,53 @@ const GridComp = ({ context }: GridCompProps) => {
 
     useReactCommentEffect(' AG Grid ', eRootWrapperRef);
 
-    const setRef = useCallback((eRef: HTMLDivElement) => {
-        eRootWrapperRef.current = eRef;
-        gridCtrlRef.current = eRef ? context.createBean(new GridCtrl()) : context.destroyBean(gridCtrlRef.current);
+    const setRef = useCallback(
+        (eRef: HTMLDivElement) => {
+            eRootWrapperRef.current = eRef;
+            gridCtrlRef.current = eRef ? context.createBean(new GridCtrl()) : context.destroyBean(gridCtrlRef.current);
 
-        if (!eRef || context.isDestroyed()) {
-            return;
-        }
+            if (!eRef || context.isDestroyed()) {
+                return;
+            }
 
-        const gridCtrl = gridCtrlRef.current!;
+            const gridCtrl = gridCtrlRef.current!;
 
-        focusInnerElementRef.current = gridCtrl.focusInnerElement.bind(gridCtrl);
+            focusInnerElementRef.current = gridCtrl.focusInnerElement.bind(gridCtrl);
 
-        const compProxy: IGridComp = {
-            destroyGridUi: () => {}, // do nothing, as framework users destroy grid by removing the comp
-            setRtlClass,
-            forceFocusOutOfContainer: (up?: boolean) => {
-                if (!up && paginationCompRef.current?.isDisplayed()) {
-                    paginationCompRef.current.forceFocusOutOfContainer(up);
-                    return;
-                }
-                tabGuardRef.current?.forceFocusOutOfContainer(up);
-            },
-            updateLayoutClasses: setLayoutClass,
-            getFocusableContainers: () => {
-                const comps: FocusableContainer[] = [];
-                const gridBodyCompEl = eRootWrapperRef.current?.querySelector('.ag-root');
-                if (gridBodyCompEl) {
-                    comps.push({ getGui: () => gridBodyCompEl as HTMLElement });
-                }
-                focusableContainersRef.current.forEach((comp) => {
-                    if (comp.isDisplayed()) {
-                        comps.push(comp);
+            const compProxy: IGridComp = {
+                destroyGridUi: () => {}, // do nothing, as framework users destroy grid by removing the comp
+                setRtlClass,
+                forceFocusOutOfContainer: (up?: boolean) => {
+                    if (!up && paginationCompRef.current?.isDisplayed()) {
+                        paginationCompRef.current.forceFocusOutOfContainer(up);
+                        return;
                     }
-                });
-                return comps;
-            },
-            setCursor,
-            setUserSelect,
-        };
+                    tabGuardRef.current?.forceFocusOutOfContainer(up);
+                },
+                updateLayoutClasses: setLayoutClass,
+                getFocusableContainers: () => {
+                    const comps: FocusableContainer[] = [];
+                    const gridBodyCompEl = eRootWrapperRef.current?.querySelector('.ag-root');
+                    if (gridBodyCompEl) {
+                        comps.push({ getGui: () => gridBodyCompEl as HTMLElement });
+                    }
+                    focusableContainersRef.current.forEach((comp) => {
+                        if (comp.isDisplayed()) {
+                            comps.push(comp);
+                        }
+                    });
+                    return comps;
+                },
+                setCursor,
+                setUserSelect,
+            };
 
-        gridCtrl.setComp(compProxy, eRef, eRef);
+            gridCtrl.setComp(compProxy, eRef, eRef);
 
-        setInitialised(true);
-    }, []);
+            setInitialised(true);
+        },
+        [context]
+    );
 
     // initialise the extra components
     useEffect(() => {
@@ -165,7 +168,7 @@ const GridComp = ({ context }: GridCompProps) => {
                 el.parentElement?.removeChild(el);
             });
         };
-    }, [tabGuardReady, eGridBodyParent, beans]);
+    }, [tabGuardReady, eGridBodyParent, beans, context]);
 
     const rootWrapperClasses = useMemo(
         () => classesList('ag-root-wrapper', rtlClass, layoutClass),

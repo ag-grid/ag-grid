@@ -251,7 +251,14 @@ const CellComp = ({
         cssManager.current = new CssClassManager(() => eGui.current);
     }
 
-    useJsCellRenderer(renderDetails, showCellWrapper, eCellValue.current, cellValueVersion, jsCellRendererRef, eGui);
+    const setJsRef = (comp: ICellRendererComp | undefined) => {
+        jsCellRendererRef.current = comp;
+    };
+    const getJsRef = (): ICellRendererComp | undefined => {
+        return jsCellRendererRef.current;
+    };
+
+    useJsCellRenderer(renderDetails, showCellWrapper, eCellValue.current, cellValueVersion, setJsRef, getJsRef, eGui);
 
     // if RenderDetails changed, need to call refresh. This is not our preferred way (the preferred
     // way for React is just allow the new props to propagate down to the React Cell Renderer)
@@ -336,7 +343,7 @@ const CellComp = ({
                 compGui?.parentElement?.removeChild(compGui);
             });
         };
-    }, [editDetails]);
+    }, [context, editDetails, forceWrapper, setCellEditorRef]);
 
     // tool widgets effect
     const setCellWrapperRef = useCallback(
@@ -464,17 +471,23 @@ const CellComp = ({
             editingRow,
             compBean.current
         );
-    }, []);
+    }, [cellCtrl, context, editingRow, printLayout]);
 
-    const setGuiRef = useCallback((ref: HTMLDivElement | null) => {
-        eGui.current = ref;
-        init();
-    }, []);
+    const setGuiRef = useCallback(
+        (ref: HTMLDivElement | null) => {
+            eGui.current = ref;
+            init();
+        },
+        [init]
+    );
 
-    const setWrapperRef = useCallback((ref: HTMLDivElement | null) => {
-        eWrapper.current = ref;
-        init();
-    }, []);
+    const setWrapperRef = useCallback(
+        (ref: HTMLDivElement | null) => {
+            eWrapper.current = ref;
+            init();
+        },
+        [init]
+    );
 
     const reactCellRendererStateless = useMemo(() => {
         const res =

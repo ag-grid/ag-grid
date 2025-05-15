@@ -72,96 +72,99 @@ const GridBodyComp = () => {
     useReactCommentEffect(' AG Middle ', eBodyViewport);
     useReactCommentEffect(' AG Pinned Bottom ', eBottom);
 
-    const setRef = useCallback((eRef: HTMLDivElement | null) => {
-        eRoot.current = eRef;
-        if (!eRef) {
-            beansToDestroy.current = context.destroyBeans(beansToDestroy.current);
-            destroyFuncs.current.forEach((f) => f());
-            destroyFuncs.current = [];
+    const setRef = useCallback(
+        (eRef: HTMLDivElement | null) => {
+            eRoot.current = eRef;
+            if (!eRef) {
+                beansToDestroy.current = context.destroyBeans(beansToDestroy.current);
+                destroyFuncs.current.forEach((f) => f());
+                destroyFuncs.current = [];
 
-            return;
-        }
+                return;
+            }
 
-        if (!context) {
-            return;
-        }
+            if (!context) {
+                return;
+            }
 
-        const attachToDom = (eParent: HTMLElement, eChild: HTMLElement | Comment) => {
-            eParent.appendChild(eChild);
-            destroyFuncs.current.push(() => eParent.removeChild(eChild));
-        };
-        const newComp = (compClass: ComponentSelector['component']) => {
-            const comp = context.createBean(new compClass());
-            beansToDestroy.current.push(comp);
-            return comp;
-        };
-        const addComp = (eParent: HTMLElement, compClass: ComponentSelector['component'], comment: string) => {
-            attachToDom(eParent, document.createComment(comment));
-            attachToDom(eParent, newComp(compClass).getGui());
-        };
+            const attachToDom = (eParent: HTMLElement, eChild: HTMLElement | Comment) => {
+                eParent.appendChild(eChild);
+                destroyFuncs.current.push(() => eParent.removeChild(eChild));
+            };
+            const newComp = (compClass: ComponentSelector['component']) => {
+                const comp = context.createBean(new compClass());
+                beansToDestroy.current.push(comp);
+                return comp;
+            };
+            const addComp = (eParent: HTMLElement, compClass: ComponentSelector['component'], comment: string) => {
+                attachToDom(eParent, document.createComment(comment));
+                attachToDom(eParent, newComp(compClass).getGui());
+            };
 
-        addComp(eRef, FakeHScrollComp, ' AG Fake Horizontal Scroll ');
-        const overlayComp = overlays?.getOverlayWrapperCompClass();
-        if (overlayComp) {
-            addComp(eRef, overlayComp, ' AG Overlay Wrapper ');
-        }
+            addComp(eRef, FakeHScrollComp, ' AG Fake Horizontal Scroll ');
+            const overlayComp = overlays?.getOverlayWrapperCompClass();
+            if (overlayComp) {
+                addComp(eRef, overlayComp, ' AG Overlay Wrapper ');
+            }
 
-        if (eBody.current) {
-            addComp(eBody.current, FakeVScrollComp, ' AG Fake Vertical Scroll ');
-        }
-        const compProxy: IGridBodyComp = {
-            setRowAnimationCssOnBodyViewport: setRowAnimationClass,
-            setColumnCount: (count: number) => {
-                if (eRoot.current) {
-                    _setAriaColCount(eRoot.current, count);
-                }
-            },
-            setRowCount: (count: number) => {
-                if (eRoot.current) {
-                    _setAriaRowCount(eRoot.current, count);
-                }
-            },
-            setTopHeight,
-            setBottomHeight,
-            setStickyTopHeight,
-            setStickyTopTop,
-            setStickyTopWidth,
-            setTopInvisible,
-            setBottomInvisible,
-            setColumnMovingCss: (cssClass: string, flag: boolean) => cssManager.current!.toggleCss(cssClass, flag),
-            updateLayoutClasses: setLayoutClass,
-            setAlwaysVerticalScrollClass: setForceVerticalScrollClass,
-            setPinnedTopBottomOverflowY: setTopAndBottomOverflowY,
-            setCellSelectableCss: (cssClass: string, flag: boolean) => setCellSelectableCss(flag ? cssClass : null),
-            setBodyViewportWidth: (width: string) => {
-                if (eBodyViewport.current) {
-                    eBodyViewport.current.style.width = width;
-                }
-            },
-            registerBodyViewportResizeListener: (listener: () => void) => {
-                if (eBodyViewport.current) {
-                    const unsubscribeFromResize = _observeResize(beans, eBodyViewport.current, listener);
-                    destroyFuncs.current.push(() => unsubscribeFromResize());
-                }
-            },
-            setStickyBottomHeight,
-            setStickyBottomBottom,
-            setStickyBottomWidth,
-            setGridRootRole: (role: 'grid' | 'treegrid') => eRef.setAttribute('role', role),
-        };
+            if (eBody.current) {
+                addComp(eBody.current, FakeVScrollComp, ' AG Fake Vertical Scroll ');
+            }
+            const compProxy: IGridBodyComp = {
+                setRowAnimationCssOnBodyViewport: setRowAnimationClass,
+                setColumnCount: (count: number) => {
+                    if (eRoot.current) {
+                        _setAriaColCount(eRoot.current, count);
+                    }
+                },
+                setRowCount: (count: number) => {
+                    if (eRoot.current) {
+                        _setAriaRowCount(eRoot.current, count);
+                    }
+                },
+                setTopHeight,
+                setBottomHeight,
+                setStickyTopHeight,
+                setStickyTopTop,
+                setStickyTopWidth,
+                setTopInvisible,
+                setBottomInvisible,
+                setColumnMovingCss: (cssClass: string, flag: boolean) => cssManager.current!.toggleCss(cssClass, flag),
+                updateLayoutClasses: setLayoutClass,
+                setAlwaysVerticalScrollClass: setForceVerticalScrollClass,
+                setPinnedTopBottomOverflowY: setTopAndBottomOverflowY,
+                setCellSelectableCss: (cssClass: string, flag: boolean) => setCellSelectableCss(flag ? cssClass : null),
+                setBodyViewportWidth: (width: string) => {
+                    if (eBodyViewport.current) {
+                        eBodyViewport.current.style.width = width;
+                    }
+                },
+                registerBodyViewportResizeListener: (listener: () => void) => {
+                    if (eBodyViewport.current) {
+                        const unsubscribeFromResize = _observeResize(beans, eBodyViewport.current, listener);
+                        destroyFuncs.current.push(() => unsubscribeFromResize());
+                    }
+                },
+                setStickyBottomHeight,
+                setStickyBottomBottom,
+                setStickyBottomWidth,
+                setGridRootRole: (role: 'grid' | 'treegrid') => eRef.setAttribute('role', role),
+            };
 
-        const ctrl = context.createBean(new GridBodyCtrl());
-        beansToDestroy.current.push(ctrl);
-        ctrl.setComp(
-            compProxy,
-            eRef,
-            eBodyViewport.current!,
-            eTop.current!,
-            eBottom.current!,
-            eStickyTop.current!,
-            eStickyBottom.current!
-        );
-    }, []);
+            const ctrl = context.createBean(new GridBodyCtrl());
+            beansToDestroy.current.push(ctrl);
+            ctrl.setComp(
+                compProxy,
+                eRef,
+                eBodyViewport.current!,
+                eTop.current!,
+                eBottom.current!,
+                eStickyTop.current!,
+                eStickyBottom.current!
+            );
+        },
+        [beans, context, overlays]
+    );
 
     const rootClasses = useMemo(() => classesList('ag-root', 'ag-unselectable', layoutClass), [layoutClass]);
     const bodyViewportClasses = useMemo(

@@ -82,7 +82,7 @@ const PopupEditorComp = (props: {
                 eParentCell.focus({ preventScroll: true });
             }
         };
-    }, [popupEditorWrapper]);
+    }, [beans, cellCtrl, eParentCell, popupEditorWrapper]);
 
     return (
         <>

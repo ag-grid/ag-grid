@@ -19,44 +19,47 @@ const HeaderRowContainerComp = ({ pinned }: { pinned: ColumnPinnedType }) => {
     const pinnedRight = pinned === 'right';
     const centre = !pinnedLeft && !pinnedRight;
 
-    const setRef = useCallback((eRef: HTMLDivElement) => {
-        eGui.current = eRef;
-        headerRowCtrlRef.current = eRef
-            ? context.createBean(new HeaderRowContainerCtrl(pinned))
-            : context.destroyBean(headerRowCtrlRef.current);
+    const setRef = useCallback(
+        (eRef: HTMLDivElement) => {
+            eGui.current = eRef;
+            headerRowCtrlRef.current = eRef
+                ? context.createBean(new HeaderRowContainerCtrl(pinned))
+                : context.destroyBean(headerRowCtrlRef.current);
 
-        if (!eRef) {
-            return;
-        }
+            if (!eRef) {
+                return;
+            }
 
-        const compProxy: IHeaderRowContainerComp = {
-            setDisplayed,
-            setCtrls: (ctrls) => setHeaderRowCtrls(ctrls),
+            const compProxy: IHeaderRowContainerComp = {
+                setDisplayed,
+                setCtrls: (ctrls) => setHeaderRowCtrls(ctrls),
 
-            // centre only
-            setCenterWidth: (width) => {
-                if (eCenterContainer.current) {
-                    eCenterContainer.current.style.width = width;
-                }
-            },
-            setViewportScrollLeft: (left) => {
-                if (eGui.current) {
-                    eGui.current.scrollLeft = left;
-                }
-            },
+                // centre only
+                setCenterWidth: (width) => {
+                    if (eCenterContainer.current) {
+                        eCenterContainer.current.style.width = width;
+                    }
+                },
+                setViewportScrollLeft: (left) => {
+                    if (eGui.current) {
+                        eGui.current.scrollLeft = left;
+                    }
+                },
 
-            // pinned only
-            setPinnedContainerWidth: (width) => {
-                if (eGui.current) {
-                    eGui.current.style.width = width;
-                    eGui.current.style.minWidth = width;
-                    eGui.current.style.maxWidth = width;
-                }
-            },
-        };
+                // pinned only
+                setPinnedContainerWidth: (width) => {
+                    if (eGui.current) {
+                        eGui.current.style.width = width;
+                        eGui.current.style.minWidth = width;
+                        eGui.current.style.maxWidth = width;
+                    }
+                },
+            };
 
-        headerRowCtrlRef.current!.setComp(compProxy, eGui.current);
-    }, []);
+            headerRowCtrlRef.current!.setComp(compProxy, eGui.current);
+        },
+        [context, pinned]
+    );
 
     const className = !displayed ? 'ag-hidden' : '';
 

@@ -22,7 +22,7 @@ const HeaderGroupCellComp = ({ ctrl }: { ctrl: HeaderGroupCellCtrl }) => {
     const [resizableAriaHidden, setResizableAriaHidden] = useState<'true' | 'false'>('false');
     const [ariaExpanded, setAriaExpanded] = useState<'true' | 'false' | undefined>();
     const [userCompDetails, setUserCompDetails] = useState<UserCompDetails>();
-    const colId = useMemo(() => ctrl.column.getUniqueId(), []);
+    const colId = useMemo(() => ctrl.column.getUniqueId(), [ctrl.column]);
 
     const compBean = useRef<_EmptyBean>();
     const eGui = useRef<HTMLDivElement | null>(null);
@@ -30,69 +30,75 @@ const HeaderGroupCellComp = ({ ctrl }: { ctrl: HeaderGroupCellCtrl }) => {
     const eHeaderCompWrapper = useRef<HTMLDivElement>(null);
     const userCompRef = useRef<IHeaderGroupComp>();
 
-    const setRef = useCallback((eRef: HTMLDivElement | null) => {
-        eGui.current = eRef;
-        compBean.current = eRef ? context.createBean(new _EmptyBean()) : context.destroyBean(compBean.current);
-        if (!eRef) {
-            return;
-        }
-        const compProxy: IHeaderGroupCellComp = {
-            setWidth: (width: string) => {
-                if (eGui.current) {
-                    eGui.current.style.width = width;
-                }
-            },
-            toggleCss: (name: string, on: boolean) => setCssClasses((prev) => prev.setClass(name, on)),
-            setUserStyles: (styles: HeaderStyle) => setUserStyles(styles),
-            setHeaderWrapperHidden: (hidden: boolean) => {
-                const headerCompWrapper = eHeaderCompWrapper.current;
+    const setRef = useCallback(
+        (eRef: HTMLDivElement | null) => {
+            eGui.current = eRef;
+            compBean.current = eRef ? context.createBean(new _EmptyBean()) : context.destroyBean(compBean.current);
+            if (!eRef) {
+                return;
+            }
+            const compProxy: IHeaderGroupCellComp = {
+                setWidth: (width: string) => {
+                    if (eGui.current) {
+                        eGui.current.style.width = width;
+                    }
+                },
+                toggleCss: (name: string, on: boolean) => setCssClasses((prev) => prev.setClass(name, on)),
+                setUserStyles: (styles: HeaderStyle) => setUserStyles(styles),
+                setHeaderWrapperHidden: (hidden: boolean) => {
+                    const headerCompWrapper = eHeaderCompWrapper.current;
 
-                if (!headerCompWrapper) {
-                    return;
-                }
+                    if (!headerCompWrapper) {
+                        return;
+                    }
 
-                if (hidden) {
-                    headerCompWrapper.style.setProperty('display', 'none');
-                } else {
-                    headerCompWrapper.style.removeProperty('display');
-                }
-            },
-            setHeaderWrapperMaxHeight: (value: number | null) => {
-                const headerCompWrapper = eHeaderCompWrapper.current;
+                    if (hidden) {
+                        headerCompWrapper.style.setProperty('display', 'none');
+                    } else {
+                        headerCompWrapper.style.removeProperty('display');
+                    }
+                },
+                setHeaderWrapperMaxHeight: (value: number | null) => {
+                    const headerCompWrapper = eHeaderCompWrapper.current;
 
-                if (!headerCompWrapper) {
-                    return;
-                }
+                    if (!headerCompWrapper) {
+                        return;
+                    }
 
-                if (value != null) {
-                    headerCompWrapper.style.setProperty('max-height', `${value}px`);
-                } else {
-                    headerCompWrapper.style.removeProperty('max-height');
-                }
+                    if (value != null) {
+                        headerCompWrapper.style.setProperty('max-height', `${value}px`);
+                    } else {
+                        headerCompWrapper.style.removeProperty('max-height');
+                    }
 
-                headerCompWrapper.classList.toggle('ag-header-cell-comp-wrapper-limited-height', value != null);
-            },
-            setUserCompDetails: (compDetails: UserCompDetails) => setUserCompDetails(compDetails),
-            setResizableDisplayed: (displayed: boolean) => {
-                setResizableCssClasses((prev) => prev.setClass('ag-hidden', !displayed));
-                setResizableAriaHidden(!displayed ? 'true' : 'false');
-            },
-            setAriaExpanded: (expanded: 'true' | 'false' | undefined) => setAriaExpanded(expanded),
-            getUserCompInstance: () => userCompRef.current || undefined,
-        };
+                    headerCompWrapper.classList.toggle('ag-header-cell-comp-wrapper-limited-height', value != null);
+                },
+                setUserCompDetails: (compDetails: UserCompDetails) => setUserCompDetails(compDetails),
+                setResizableDisplayed: (displayed: boolean) => {
+                    setResizableCssClasses((prev) => prev.setClass('ag-hidden', !displayed));
+                    setResizableAriaHidden(!displayed ? 'true' : 'false');
+                },
+                setAriaExpanded: (expanded: 'true' | 'false' | undefined) => setAriaExpanded(expanded),
+                getUserCompInstance: () => userCompRef.current || undefined,
+            };
 
-        ctrl.setComp(compProxy, eRef, eResize.current!, eHeaderCompWrapper.current!, compBean.current);
-    }, []);
+            ctrl.setComp(compProxy, eRef, eResize.current!, eHeaderCompWrapper.current!, compBean.current);
+        },
+        [context, ctrl]
+    );
 
     // js comps
-    useLayoutEffect(() => showJsComp(userCompDetails, context, eHeaderCompWrapper.current!), [userCompDetails]);
+    useLayoutEffect(
+        () => showJsComp(userCompDetails, context, eHeaderCompWrapper.current!),
+        [context, userCompDetails]
+    );
 
     // add drag handling, must be done after component is added to the dom
     useEffect(() => {
         if (eGui.current) {
             ctrl.setDragSource(eGui.current);
         }
-    }, [userCompDetails]);
+    }, [ctrl, userCompDetails]);
 
     const userCompStateless = useMemo(() => {
         const res = userCompDetails?.componentFromFramework && isComponentStateless(userCompDetails.componentClass);

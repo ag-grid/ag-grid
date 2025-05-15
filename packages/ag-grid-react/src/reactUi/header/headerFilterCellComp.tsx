@@ -51,42 +51,51 @@ const HeaderFilterCellComp = ({ ctrl }: { ctrl: HeaderFilterCellCtrl }) => {
         userCompResolve.current && userCompResolve.current(value);
     };
 
-    const setRef = useCallback((eRef: HTMLDivElement | null) => {
-        eGui.current = eRef;
-        compBean.current = eRef ? context.createBean(new _EmptyBean()) : context.destroyBean(compBean.current);
-        if (!eRef) {
-            return;
-        }
+    const setRef = useCallback(
+        (eRef: HTMLDivElement | null) => {
+            eGui.current = eRef;
+            compBean.current = eRef ? context.createBean(new _EmptyBean()) : context.destroyBean(compBean.current);
+            if (!eRef) {
+                return;
+            }
 
-        userCompPromise.current = new AgPromise<IFloatingFilter>((resolve) => {
-            userCompResolve.current = resolve;
-        });
+            userCompPromise.current = new AgPromise<IFloatingFilter>((resolve) => {
+                userCompResolve.current = resolve;
+            });
 
-        const compProxy: IHeaderFilterCellComp = {
-            toggleCss: (name, on) => setCssClasses((prev) => prev.setClass(name, on)),
-            setUserStyles: (styles: HeaderStyle) => setUserStyles(styles),
-            addOrRemoveBodyCssClass: (name, on) => setBodyCssClasses((prev) => prev.setClass(name, on)),
-            setButtonWrapperDisplayed: (displayed) => {
-                setButtonWrapperCssClasses((prev) => prev.setClass('ag-hidden', !displayed));
-                setButtonWrapperAriaHidden(!displayed ? 'true' : 'false');
-            },
-            setWidth: (width) => {
-                if (eGui.current) {
-                    eGui.current.style.width = width;
-                }
-            },
-            setCompDetails: (compDetails) => setUserCompDetails(compDetails),
-            getFloatingFilterComp: () => (userCompPromise.current ? userCompPromise.current : null),
-            setMenuIcon: (eIcon) => eButtonShowMainFilter.current?.appendChild(eIcon),
-        };
+            const compProxy: IHeaderFilterCellComp = {
+                toggleCss: (name, on) => setCssClasses((prev) => prev.setClass(name, on)),
+                setUserStyles: (styles: HeaderStyle) => setUserStyles(styles),
+                addOrRemoveBodyCssClass: (name, on) => setBodyCssClasses((prev) => prev.setClass(name, on)),
+                setButtonWrapperDisplayed: (displayed) => {
+                    setButtonWrapperCssClasses((prev) => prev.setClass('ag-hidden', !displayed));
+                    setButtonWrapperAriaHidden(!displayed ? 'true' : 'false');
+                },
+                setWidth: (width) => {
+                    if (eGui.current) {
+                        eGui.current.style.width = width;
+                    }
+                },
+                setCompDetails: (compDetails) => setUserCompDetails(compDetails),
+                getFloatingFilterComp: () => (userCompPromise.current ? userCompPromise.current : null),
+                setMenuIcon: (eIcon) => eButtonShowMainFilter.current?.appendChild(eIcon),
+            };
 
-        ctrl.setComp(compProxy, eRef, eButtonShowMainFilter.current!, eFloatingFilterBody.current!, compBean.current);
-    }, []);
+            ctrl.setComp(
+                compProxy,
+                eRef,
+                eButtonShowMainFilter.current!,
+                eFloatingFilterBody.current!,
+                compBean.current
+            );
+        },
+        [context, ctrl]
+    );
 
     // js comps
     useLayoutEffect(
         () => showJsComp(userCompDetails, context, eFloatingFilterBody.current!, userCompRef),
-        [userCompDetails]
+        [context, userCompDetails]
     );
 
     const className = useMemo(() => cssClasses.toString(), [cssClasses]);
@@ -101,7 +110,7 @@ const HeaderFilterCellComp = ({ ctrl }: { ctrl: HeaderFilterCellCtrl }) => {
         return !!res;
     }, [userCompDetails]);
 
-    const reactiveCustomComponents = useMemo(() => gos.get('reactiveCustomComponents'), []);
+    const reactiveCustomComponents = useMemo(() => gos.get('reactiveCustomComponents'), [gos]);
     const floatingFilterCompProxy = useMemo(() => {
         if (userCompDetails) {
             if (reactiveCustomComponents) {
@@ -115,7 +124,7 @@ const HeaderFilterCellComp = ({ ctrl }: { ctrl: HeaderFilterCellCtrl }) => {
             }
         }
         return undefined;
-    }, [userCompDetails]);
+    }, [reactiveCustomComponents, userCompDetails]);
     const floatingFilterProps = floatingFilterCompProxy?.getProps();
 
     const reactUserComp = userCompDetails && userCompDetails.componentFromFramework;

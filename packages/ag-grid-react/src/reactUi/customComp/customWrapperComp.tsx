@@ -11,7 +11,7 @@ const CustomWrapperComp = <P extends { key?: string }, M>(params: WrapperParams<
     useEffect(() => {
         // this allows the ts wrapper component to update the props passed into the custom component
         addUpdateCallback((newProps) => setProps(newProps));
-    }, []);
+    }, [addUpdateCallback]);
 
     return (
         <CustomContext.Provider value={{ setMethods }}>

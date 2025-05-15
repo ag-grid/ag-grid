@@ -94,125 +94,132 @@ export const AgGridReactUi = <TData,>(props: InternalAgGridReactProps<TData>) =>
     // Hook to enable Portals to be displayed via the PortalManager
     const [, setPortalRefresher] = useState(0);
 
-    const setRef = useCallback((eRef: HTMLDivElement | null) => {
-        eGui.current = eRef;
-        if (!eRef) {
-            destroyFuncs.current.forEach((f) => f());
-            destroyFuncs.current.length = 0;
-            return;
-        }
-
-        const modules = props.modules || [];
-
-        if (!portalManager.current) {
-            portalManager.current = new PortalManager(
-                () => setPortalRefresher((prev) => prev + 1),
-                props.componentWrappingElement,
-                props.maxComponentCreationTimeMs
-            );
-            destroyFuncs.current.push(() => {
-                portalManager.current?.destroy();
-                portalManager.current = null;
-            });
-        }
-
-        const mergedGridOps = _combineAttributesAndGridOptions(
-            props.gridOptions,
-            props,
-            Object.keys(props).filter((key) => !excludeReactCompProps.has(key))
-        );
-
-        const processQueuedUpdates = () => {
-            if (ready.current) {
-                const getFn = () =>
-                    frameworkOverridesRef.current?.shouldQueueUpdates() ? undefined : whenReadyFuncs.current.shift();
-                let fn = getFn();
-                while (fn) {
-                    fn();
-                    fn = getFn();
-                }
+    const setRef = useCallback(
+        (eRef: HTMLDivElement | null) => {
+            eGui.current = eRef;
+            if (!eRef) {
+                destroyFuncs.current.forEach((f) => f());
+                destroyFuncs.current.length = 0;
+                return;
             }
-        };
 
-        const frameworkOverrides = new ReactFrameworkOverrides(processQueuedUpdates);
-        frameworkOverridesRef.current = frameworkOverrides;
-        const renderStatus = new RenderStatusService();
-        const gridParams: GridParams = {
-            providedBeanInstances: {
-                frameworkCompWrapper: new ReactFrameworkComponentWrapper(
-                    portalManager.current,
-                    mergedGridOps.reactiveCustomComponents ?? _getGlobalGridOption('reactiveCustomComponents') ?? true
-                ),
-                renderStatus,
-            },
-            modules,
-            frameworkOverrides,
-            setThemeOnGridDiv: true,
-        };
+            const modules = props.modules || [];
 
-        const createUiCallback = (context: Context) => {
-            setContext(context);
-            context.createBean(renderStatus);
+            if (!portalManager.current) {
+                portalManager.current = new PortalManager(
+                    () => setPortalRefresher((prev) => prev + 1),
+                    props.componentWrappingElement,
+                    props.maxComponentCreationTimeMs
+                );
+                destroyFuncs.current.push(() => {
+                    portalManager.current?.destroy();
+                    portalManager.current = null;
+                });
+            }
 
+            const mergedGridOps = _combineAttributesAndGridOptions(
+                props.gridOptions,
+                props,
+                Object.keys(props).filter((key) => !excludeReactCompProps.has(key))
+            );
+
+            const processQueuedUpdates = () => {
+                if (ready.current) {
+                    const getFn = () =>
+                        frameworkOverridesRef.current?.shouldQueueUpdates()
+                            ? undefined
+                            : whenReadyFuncs.current.shift();
+                    let fn = getFn();
+                    while (fn) {
+                        fn();
+                        fn = getFn();
+                    }
+                }
+            };
+
+            const frameworkOverrides = new ReactFrameworkOverrides(processQueuedUpdates);
+            frameworkOverridesRef.current = frameworkOverrides;
+            const renderStatus = new RenderStatusService();
+            const gridParams: GridParams = {
+                providedBeanInstances: {
+                    frameworkCompWrapper: new ReactFrameworkComponentWrapper(
+                        portalManager.current,
+                        mergedGridOps.reactiveCustomComponents ??
+                            _getGlobalGridOption('reactiveCustomComponents') ??
+                            true
+                    ),
+                    renderStatus,
+                },
+                modules,
+                frameworkOverrides,
+                setThemeOnGridDiv: true,
+            };
+
+            const createUiCallback = (context: Context) => {
+                setContext(context);
+                context.createBean(renderStatus);
+
+                destroyFuncs.current.push(() => {
+                    context.destroy();
+                });
+
+                // because React is Async, we need to wait for the UI to be initialised before exposing the API's
+                context.getBean('ctrlsSvc').whenReady(
+                    {
+                        addDestroyFunc: (func) => {
+                            destroyFuncs.current.push(func);
+                        },
+                    },
+                    () => {
+                        if (context.isDestroyed()) {
+                            return;
+                        }
+
+                        const api = apiRef.current;
+                        if (api) {
+                            props.passGridApi?.(api);
+                        }
+                    }
+                );
+            };
+
+            // this callback adds to ctrlsSvc.whenReady(), just like above, however because whenReady() executes
+            // funcs in the order they were received, we know adding items here will be AFTER the grid has set columns
+            // and data. this is because GridCoreCreator sets these between calling createUiCallback and acceptChangesCallback
+            const acceptChangesCallback = (context: Context) => {
+                context.getBean('ctrlsSvc').whenReady(
+                    {
+                        addDestroyFunc: (func) => {
+                            destroyFuncs.current.push(func);
+                        },
+                    },
+                    () => {
+                        whenReadyFuncs.current.forEach((f) => f());
+                        whenReadyFuncs.current.length = 0;
+                        ready.current = true;
+                    }
+                );
+            };
+
+            const gridCoreCreator = new GridCoreCreator();
+            // We ensure that the gridId is stable even in StrictMode
+            mergedGridOps.gridId ??= gridIdRef.current;
+            apiRef.current = gridCoreCreator.create(
+                eRef,
+                mergedGridOps,
+                createUiCallback,
+                acceptChangesCallback,
+                gridParams
+            );
             destroyFuncs.current.push(() => {
-                context.destroy();
+                apiRef.current = undefined;
             });
-
-            // because React is Async, we need to wait for the UI to be initialised before exposing the API's
-            context.getBean('ctrlsSvc').whenReady(
-                {
-                    addDestroyFunc: (func) => {
-                        destroyFuncs.current.push(func);
-                    },
-                },
-                () => {
-                    if (context.isDestroyed()) {
-                        return;
-                    }
-
-                    const api = apiRef.current;
-                    if (api) {
-                        props.passGridApi?.(api);
-                    }
-                }
-            );
-        };
-
-        // this callback adds to ctrlsSvc.whenReady(), just like above, however because whenReady() executes
-        // funcs in the order they were received, we know adding items here will be AFTER the grid has set columns
-        // and data. this is because GridCoreCreator sets these between calling createUiCallback and acceptChangesCallback
-        const acceptChangesCallback = (context: Context) => {
-            context.getBean('ctrlsSvc').whenReady(
-                {
-                    addDestroyFunc: (func) => {
-                        destroyFuncs.current.push(func);
-                    },
-                },
-                () => {
-                    whenReadyFuncs.current.forEach((f) => f());
-                    whenReadyFuncs.current.length = 0;
-                    ready.current = true;
-                }
-            );
-        };
-
-        const gridCoreCreator = new GridCoreCreator();
-        // We ensure that the gridId is stable even in StrictMode
-        mergedGridOps.gridId ??= gridIdRef.current;
-        apiRef.current = gridCoreCreator.create(
-            eRef,
-            mergedGridOps,
-            createUiCallback,
-            acceptChangesCallback,
-            gridParams
-        );
-        destroyFuncs.current.push(() => {
-            apiRef.current = undefined;
-        });
-        if (apiRef.current) {
-            gridIdRef.current = apiRef.current.getGridId();
-        }
-    }, []);
+            if (apiRef.current) {
+                gridIdRef.current = apiRef.current.getGridId();
+            }
+        },
+        [props]
+    );
 
     const style = useMemo(() => {
         return {
@@ -237,7 +244,7 @@ export const AgGridReactUi = <TData,>(props: InternalAgGridReactProps<TData>) =>
                 _processOnChange(changes, apiRef.current);
             }
         });
-    }, [props]);
+    }, [processWhenReady, props]);
 
     return (
         <div style={style} className={props.className} ref={setRef}>
@@ -347,81 +354,83 @@ const DetailCellRenderer = forwardRef((props: IDetailCellRendererParams, ref: an
 
     const parentModules = useMemo(
         () => _getGridRegisteredModules(props.api.getGridId(), detailGridOptions?.rowModelType ?? 'clientSide'),
-        [props]
+        [detailGridOptions?.rowModelType, props.api]
     );
     const topClassName = useMemo(() => cssClasses.toString() + ' ag-details-row', [cssClasses]);
     const gridClassName = useMemo(() => gridCssClasses.toString() + ' ag-details-grid', [gridCssClasses]);
 
-    if (ref) {
-        useImperativeHandle(ref, () => ({
-            refresh() {
-                return ctrlRef.current?.refresh() ?? false;
-            },
-        }));
-    }
+    useImperativeHandle(ref, () => ({
+        refresh() {
+            return ctrlRef.current?.refresh() ?? false;
+        },
+    }));
 
     if (props.template) {
         _warn(230);
     }
 
-    const setRef = useCallback((eRef: HTMLDivElement | null) => {
-        eGuiRef.current = eRef;
+    const setRef = useCallback(
+        (eRef: HTMLDivElement | null) => {
+            eGuiRef.current = eRef;
 
-        if (!eRef) {
-            ctrlRef.current = context.destroyBean(ctrlRef.current);
-            resizeObserverDestroyFunc.current?.();
-            return;
-        }
+            if (!eRef) {
+                ctrlRef.current = context.destroyBean(ctrlRef.current);
+                resizeObserverDestroyFunc.current?.();
+                return;
+            }
 
-        const compProxy: IDetailCellRenderer = {
-            toggleCss: (name: string, on: boolean) => setCssClasses((prev) => prev.setClass(name, on)),
-            toggleDetailGridCss: (name: string, on: boolean) => setGridCssClasses((prev) => prev.setClass(name, on)),
-            setDetailGrid: (gridOptions) => setDetailGridOptions(gridOptions),
-            setRowData: (rowData) => setDetailRowData(rowData),
-            getGui: () => eGuiRef.current!,
-        };
-
-        const ctrl = registry.createDynamicBean<IDetailCellRendererCtrl>('detailCellRendererCtrl', true);
-        if (!ctrl) {
-            return;
-        } // should never happen, means master/detail module not loaded
-        context.createBean(ctrl);
-
-        ctrl.init(compProxy, props);
-
-        ctrlRef.current = ctrl;
-
-        if (gos.get('detailRowAutoHeight')) {
-            const checkRowSizeFunc = () => {
-                // when disposed, current is null, so nothing to do, and the resize observer will
-                // be disposed of soon
-                if (eGuiRef.current == null) {
-                    return;
-                }
-
-                const clientHeight = eGuiRef.current.clientHeight;
-
-                // if the UI is not ready, the height can be 0, which we ignore, as otherwise a flicker will occur
-                // as UI goes from the default height, to 0, then to the real height as UI becomes ready. this means
-                // it's not possible for have 0 as auto-height, however this is an improbable use case, as even an
-                // empty detail grid would still have some styling around it giving at least a few pixels.
-                if (clientHeight != null && clientHeight > 0) {
-                    // we do the update in a timeout, to make sure we are not calling from inside the grid
-                    // doing another update
-                    const updateRowHeightFunc = () => {
-                        props.node.setRowHeight(clientHeight);
-                        if (_isClientSideRowModel(gos, rowModel) || _isServerSideRowModel(gos, rowModel)) {
-                            rowModel.onRowHeightChanged();
-                        }
-                    };
-                    setTimeout(updateRowHeightFunc, 0);
-                }
+            const compProxy: IDetailCellRenderer = {
+                toggleCss: (name: string, on: boolean) => setCssClasses((prev) => prev.setClass(name, on)),
+                toggleDetailGridCss: (name: string, on: boolean) =>
+                    setGridCssClasses((prev) => prev.setClass(name, on)),
+                setDetailGrid: (gridOptions) => setDetailGridOptions(gridOptions),
+                setRowData: (rowData) => setDetailRowData(rowData),
+                getGui: () => eGuiRef.current!,
             };
 
-            resizeObserverDestroyFunc.current = _observeResize(beans, eRef, checkRowSizeFunc);
-            checkRowSizeFunc();
-        }
-    }, []);
+            const ctrl = registry.createDynamicBean<IDetailCellRendererCtrl>('detailCellRendererCtrl', true);
+            if (!ctrl) {
+                return;
+            } // should never happen, means master/detail module not loaded
+            context.createBean(ctrl);
+
+            ctrl.init(compProxy, props);
+
+            ctrlRef.current = ctrl;
+
+            if (gos.get('detailRowAutoHeight')) {
+                const checkRowSizeFunc = () => {
+                    // when disposed, current is null, so nothing to do, and the resize observer will
+                    // be disposed of soon
+                    if (eGuiRef.current == null) {
+                        return;
+                    }
+
+                    const clientHeight = eGuiRef.current.clientHeight;
+
+                    // if the UI is not ready, the height can be 0, which we ignore, as otherwise a flicker will occur
+                    // as UI goes from the default height, to 0, then to the real height as UI becomes ready. this means
+                    // it's not possible for have 0 as auto-height, however this is an improbable use case, as even an
+                    // empty detail grid would still have some styling around it giving at least a few pixels.
+                    if (clientHeight != null && clientHeight > 0) {
+                        // we do the update in a timeout, to make sure we are not calling from inside the grid
+                        // doing another update
+                        const updateRowHeightFunc = () => {
+                            props.node.setRowHeight(clientHeight);
+                            if (_isClientSideRowModel(gos, rowModel) || _isServerSideRowModel(gos, rowModel)) {
+                                rowModel.onRowHeightChanged();
+                            }
+                        };
+                        setTimeout(updateRowHeightFunc, 0);
+                    }
+                };
+
+                resizeObserverDestroyFunc.current = _observeResize(beans, eRef, checkRowSizeFunc);
+                checkRowSizeFunc();
+            }
+        },
+        [beans, context, gos, props, registry, rowModel]
+    );
 
     const registerGridApi = useCallback((api: GridApi) => {
         ctrlRef.current?.registerDetailWithMaster(api);
