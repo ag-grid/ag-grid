@@ -34,7 +34,7 @@ export class ClientSidePathTreeNodeManager<TData> extends AbstractClientSideNode
     /** The root node of the tree. */
     public treeRoot: TreeNode | null = null;
 
-    public override get treeData(): boolean {
+    public override get skipGrouping(): boolean {
         const gos = this.gos;
         return gos.get('treeData') && !!gos.get('getDataPath');
     }
@@ -181,7 +181,7 @@ export class ClientSidePathTreeNodeManager<TData> extends AbstractClientSideNode
         }
 
         this.treeCommitPending = false;
-        const treeData = this.treeData;
+        const treeData = this.skipGrouping;
         const activeChangedPath = changedPath?.active ? changedPath : null;
 
         const details: TreeCommitDetails<TData> = {
@@ -369,7 +369,7 @@ export class ClientSidePathTreeNodeManager<TData> extends AbstractClientSideNode
         }
 
         if (isTreeRowPathChanged(row)) {
-            if (this.treeData) {
+            if (this.skipGrouping) {
                 details.activeChangedPath?.addParentNode(row);
             } else {
                 markTreeRowPathChanged(details.rootNode);
@@ -559,7 +559,7 @@ export class ClientSidePathTreeNodeManager<TData> extends AbstractClientSideNode
 
         // Check if group data need to be recomputed due to group columns change
 
-        if (this.treeData) {
+        if (this.skipGrouping) {
             const newGroupDisplayColIds =
                 this.beans.showRowGroupCols
                     ?.getShowRowGroupCols()
@@ -627,7 +627,7 @@ export class ClientSidePathTreeNodeManager<TData> extends AbstractClientSideNode
 
     private addOrUpdateRow(getDataPath: GetDataPath | undefined, row: RowNode, created: boolean): void {
         const treeRoot = this.treeRoot!;
-        if (!this.treeData) {
+        if (!this.skipGrouping) {
             // We assume that the data is flat and we use id as the key for the tree nodes.
             // This happens when treeData is false and getDataPath is undefined/null.
             this.treeSetRow(treeRoot.upsertKey(row.id!), row, created);

@@ -994,7 +994,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
 
         if (
             !groupStageExecuted &&
-            !this.nodeManager.treeData // managed by the node manager
+            !this.nodeManager.skipGrouping // managed by the node manager
         ) {
             const sibling: ClientSideRowModelRootNode = rootNode.sibling;
             rootNode.childrenAfterGroup = rootNode.allLeafChildren;

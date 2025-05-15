@@ -45,7 +45,7 @@ export abstract class AbstractClientSideNodeManager<TData = any>
 
     public rootNode: AbstractClientSideNodeManager.RootNode<TData> | null = null;
 
-    public get treeData(): boolean {
+    public get skipGrouping(): boolean {
         return false; // not supported by this node manager
     }
 
