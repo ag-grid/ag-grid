@@ -4,7 +4,7 @@ import type {
     FilterDisplayParams,
     FilterDisplayState,
     IComponent,
-    IFilterDef,
+    IMultiFilterDef,
     IMultiFilterModel,
     IMultiFilterParams,
     SharedFilterUi,
@@ -14,7 +14,12 @@ import { AgPromise, _getFilterDetails, _refreshFilterUi } from 'ag-grid-communit
 import type { BaseFilterComponent } from './baseMultiFilter';
 import { BaseMultiFilter } from './baseMultiFilter';
 import type { MultiFilterEvaluator } from './multiFilterEvaluator';
-import { getFilterModelForIndex, getMultiFilterDefs, getUpdatedMultiFilterModel } from './multiFilterUtil';
+import {
+    getFilterModelForIndex,
+    getMultiFilterDefs,
+    getUpdatedMultiFilterModel,
+    updateGetValue,
+} from './multiFilterUtil';
 
 export class MultiFilterUi
     extends BaseMultiFilter<FilterDisplayComp>
@@ -107,7 +112,7 @@ export class MultiFilterUi
         return wrapper;
     }
 
-    private createFilter(filterDef: IFilterDef, index: number): AgPromise<FilterDisplayComp | null> {
+    private createFilter(filterDef: IMultiFilterDef, index: number): AgPromise<FilterDisplayComp | null> {
         const userCompFactory = this.beans.userCompFactory;
 
         const filterParams = this.updateParams(filterDef, this.params, index);
@@ -126,7 +131,7 @@ export class MultiFilterUi
     }
 
     private updateParams(
-        filterDef: IFilterDef,
+        filterDef: IMultiFilterDef,
         params: IMultiFilterParams & FilterDisplayParams<any, any, IMultiFilterModel>,
         index: number
     ): FilterDisplayParams {
@@ -140,6 +145,7 @@ export class MultiFilterUi
             source,
             onAction,
             onUiChange,
+            getValue,
         } = params;
         const filterModel = getFilterModelForIndex(model, index);
         const filterState = state
@@ -191,6 +197,7 @@ export class MultiFilterUi
             },
             onUiChange,
             source,
+            getValue: updateGetValue(this.beans, column as AgColumn, filterDef, getValue),
         };
     }
 

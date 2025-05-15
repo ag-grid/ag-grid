@@ -302,7 +302,7 @@ export function _getFilterCompKeys(frameworkOverrides: IFrameworkOverrides, def:
 
 export function _mergeFilterParamsWithApplicationProvidedParams(
     userCompFactory: UserComponentFactory,
-    defObject: ColDef,
+    defObject: IFilterDef,
     paramsFromGrid: IFilterParams
 ): IFilterParams {
     return userCompFactory.mergeParams(defObject, FilterComponent, paramsFromGrid);

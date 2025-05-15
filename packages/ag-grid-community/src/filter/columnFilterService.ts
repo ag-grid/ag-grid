@@ -9,8 +9,8 @@ import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { BeanName } from '../context/context';
 import type { AgColumn } from '../entities/agColumn';
-import type { ColDef } from '../entities/colDef';
-import type { CoreDataTypeDefinition, DataTypeFormatValueFunc } from '../entities/dataType';
+import type { ColDef, ValueGetterFunc } from '../entities/colDef';
+import type { BaseCellDataType, CoreDataTypeDefinition, DataTypeFormatValueFunc } from '../entities/dataType';
 import type { RowNode } from '../entities/rowNode';
 import type { AgEvent, ColumnEventType, FilterChangedEventSourceType } from '../events';
 import { _addGridCommonParams, _getGroupAggFiltering, _isSetFilterByDefault } from '../gridOptionsUtils';
@@ -35,7 +35,7 @@ import type { UserCompDetails } from '../interfaces/iUserCompDetails';
 import { _exists, _jsonEquals } from '../utils/generic';
 import { AgPromise } from '../utils/promise';
 import { _error, _warn } from '../validation/logging';
-import { _setColDefPropsForDataType } from './filterDataTypeUtils';
+import { _getFilterParamsForDataType } from './filterDataTypeUtils';
 import type {
     FloatingFilterDisplayParams,
     IFloatingFilterParams,
@@ -555,11 +555,14 @@ export class ColumnFilterService
             .then(() => this.updateActiveFilters());
     }
 
-    private createGetValue(filterColumn: AgColumn): IFilterParams['getValue'] {
+    public createGetValue(
+        filterColumn: AgColumn,
+        filterValueGetterOverride?: string | ValueGetterFunc
+    ): IFilterParams['getValue'] {
         const { filterValueSvc, colModel } = this.beans;
         return (rowNode, column) => {
             const columnToUse = column ? colModel.getCol(column) : filterColumn;
-            return columnToUse ? filterValueSvc!.getValue(columnToUse, rowNode) : undefined;
+            return columnToUse ? filterValueSvc!.getValue(columnToUse, rowNode, filterValueGetterOverride) : undefined;
         };
     }
 
@@ -638,39 +641,38 @@ export class ColumnFilterService
     }
 
     private getDefaultFilter(column: AgColumn): string {
-        let defaultFilter;
-        const { gos, dataTypeSvc } = this.beans;
-        if (_isSetFilterByDefault(gos)) {
-            defaultFilter = 'agSetColumnFilter';
-        } else {
-            const cellDataType = dataTypeSvc?.getBaseDataType(column);
-            if (cellDataType === 'number') {
-                defaultFilter = 'agNumberColumnFilter';
-            } else if (cellDataType === 'date' || cellDataType === 'dateString') {
-                defaultFilter = 'agDateColumnFilter';
-            } else {
-                defaultFilter = 'agTextColumnFilter';
-            }
+        return this.getDefaultFilterFromDataType(() => this.beans.dataTypeSvc?.getBaseDataType(column));
+    }
+
+    public getDefaultSimpleFilter(cellDataType?: BaseCellDataType): string {
+        if (cellDataType === 'number') {
+            return 'agNumberColumnFilter';
         }
-        return defaultFilter;
+        if (cellDataType === 'date' || cellDataType === 'dateString') {
+            return 'agDateColumnFilter';
+        }
+        return 'agTextColumnFilter';
+    }
+
+    private getDefaultFilterFromDataType(getCellDataType: () => BaseCellDataType | undefined): string {
+        if (_isSetFilterByDefault(this.gos)) {
+            return 'agSetColumnFilter';
+        }
+        return this.getDefaultSimpleFilter(getCellDataType());
     }
 
     public getDefaultFloatingFilter(column: AgColumn): string {
-        let defaultFloatingFilterType: string;
         const { gos, dataTypeSvc } = this.beans;
         if (_isSetFilterByDefault(gos)) {
-            defaultFloatingFilterType = 'agSetColumnFloatingFilter';
-        } else {
-            const cellDataType = dataTypeSvc?.getBaseDataType(column);
-            if (cellDataType === 'number') {
-                defaultFloatingFilterType = 'agNumberColumnFloatingFilter';
-            } else if (cellDataType === 'date' || cellDataType === 'dateString') {
-                defaultFloatingFilterType = 'agDateColumnFloatingFilter';
-            } else {
-                defaultFloatingFilterType = 'agTextColumnFloatingFilter';
-            }
+            return 'agSetColumnFloatingFilter';
         }
-        return defaultFloatingFilterType;
+        const cellDataType = dataTypeSvc?.getBaseDataType(column);
+        if (cellDataType === 'number') {
+            return 'agNumberColumnFloatingFilter';
+        } else if (cellDataType === 'date' || cellDataType === 'dateString') {
+            return 'agDateColumnFloatingFilter';
+        }
+        return 'agTextColumnFloatingFilter';
     }
 
     private createFilterInstanceForColumn(column: AgColumn): {
@@ -962,7 +964,7 @@ export class ColumnFilterService
         }
         const filterParams = _mergeFilterParamsWithApplicationProvidedParams(
             this.beans.userCompFactory,
-            column.colDef,
+            filterDef,
             this.createFilterCompParams(column, true, 'init') as IFilterParams
         );
         const { evaluatorName, filterEvaluator } = evaluatorFunc;
@@ -1440,7 +1442,36 @@ export class ColumnFilterService
         dataTypeDefinition: CoreDataTypeDefinition,
         formatValue: DataTypeFormatValueFunc
     ): void {
-        _setColDefPropsForDataType(colDef, dataTypeDefinition, formatValue, this.beans, this.getLocaleTextFunc());
+        const providedFilter = colDef.filter;
+        const filter =
+            providedFilter === true
+                ? this.getDefaultFilterFromDataType(() => dataTypeDefinition.baseDataType)
+                : providedFilter;
+        if (typeof filter !== 'string') {
+            return;
+        }
+        let filterParams: any;
+        let filterValueGetter: string | ValueGetterFunc | undefined;
+        const beans = this.beans;
+        if (filter === 'agMultiColumnFilter') {
+            ({ filterParams, filterValueGetter } =
+                beans.multiFilter?.getParamsForDataType(colDef.filterParams, colDef, dataTypeDefinition, formatValue) ??
+                {});
+        } else {
+            ({ filterParams, filterValueGetter } = _getFilterParamsForDataType(
+                filter,
+                colDef.filterParams,
+                colDef,
+                dataTypeDefinition,
+                formatValue,
+                beans,
+                this.getLocaleTextFunc()
+            ));
+        }
+        colDef.filterParams = filterParams;
+        if (filterValueGetter) {
+            colDef.filterValueGetter = filterValueGetter;
+        }
     }
 
     // additionalEventAttributes is used by provided simple floating filter, so it can add 'floatingFilter=true' to the event

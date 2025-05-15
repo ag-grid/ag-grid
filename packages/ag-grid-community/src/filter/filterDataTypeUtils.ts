@@ -1,12 +1,11 @@
 import type { BeanCollection } from '../context/context';
 import type { AgColumn } from '../entities/agColumn';
-import type { ColDef, ValueFormatterParams, ValueGetterParams } from '../entities/colDef';
+import type { ColDef, ValueFormatterParams, ValueGetterFunc, ValueGetterParams } from '../entities/colDef';
 import type {
     CoreDataTypeDefinition,
     DataTypeFormatValueFunc,
     DateStringDataTypeDefinition,
 } from '../entities/dataType';
-import { _isSetFilterByDefault } from '../gridOptionsUtils';
 import type { LocaleTextFunc } from '../misc/locale/localeUtils';
 import { _exists } from '../utils/generic';
 
@@ -53,21 +52,24 @@ function isValidDate(value: any): boolean {
     return value instanceof Date && !isNaN(value.getTime());
 }
 
-export function _setColDefPropsForDataType(
+export function _getFilterParamsForDataType(
+    filter: string,
+    existingFilterParams: any,
     colDef: ColDef,
     dataTypeDefinition: CoreDataTypeDefinition,
     formatValue: DataTypeFormatValueFunc,
     beans: BeanCollection,
     translate: LocaleTextFunc
-): void {
-    const usingSetFilter = _isSetFilterByDefault(beans.gos);
+): { filterParams?: any; filterValueGetter?: string | ValueGetterFunc } {
+    let filterParams: any = existingFilterParams;
+    let filterValueGetter: string | ValueGetterFunc | undefined;
+    const usingSetFilter = filter === 'agSetColumnFilter';
     const mergeFilterParams = (params: any) => {
-        const { filterParams } = colDef;
-        colDef.filterParams =
-            typeof filterParams === 'object'
+        filterParams =
+            typeof existingFilterParams === 'object'
                 ? {
-                      ...filterParams,
                       ...params,
+                      ...existingFilterParams,
                   }
                 : params;
     };
@@ -90,7 +92,7 @@ export function _setColDefPropsForDataType(
                         return translate(String(params.value), params.value ? 'True' : 'False');
                     },
                 });
-            } else {
+            } else if (filter === 'agTextColumnFilter') {
                 mergeFilterParams({
                     maxNumConditions: 1,
                     debounceMs: 0,
@@ -132,7 +134,7 @@ export function _setColDefPropsForDataType(
                         return pathKey ?? translate('blanks', '(Blanks)');
                     },
                 });
-            } else {
+            } else if (filter === 'agDateColumnFilter') {
                 mergeFilterParams({
                     isValidDate,
                 });
@@ -162,7 +164,7 @@ export function _setColDefPropsForDataType(
                         return pathKey ?? translate('blanks', '(Blanks)');
                     },
                 });
-            } else {
+            } else if (filter === 'agDateColumnFilter') {
                 mergeFilterParams({
                     comparator: (filterDate: Date, cellValue: string | undefined) => {
                         const cellAsDate = convertToDate(cellValue)!;
@@ -187,15 +189,18 @@ export function _setColDefPropsForDataType(
                         return _exists(valueFormatted) ? valueFormatted : translate('blanks', '(Blanks)');
                     },
                 });
-            } else {
-                colDef.filterValueGetter = (params: ValueGetterParams) =>
-                    formatValue({
-                        column: params.column,
-                        node: params.node,
-                        value: beans.valueSvc.getValue(params.column as AgColumn, params.node),
-                    });
+            } else if (filter === 'agTextColumnFilter') {
+                filterValueGetter =
+                    colDef.filterValueGetter ??
+                    ((params: ValueGetterParams) =>
+                        formatValue({
+                            column: params.column,
+                            node: params.node,
+                            value: beans.valueSvc.getValue(params.column as AgColumn, params.node),
+                        }));
             }
             break;
         }
     }
+    return { filterParams, filterValueGetter };
 }

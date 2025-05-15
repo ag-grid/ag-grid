@@ -1,3 +1,4 @@
+import type { ValueGetterFunc } from '../entities/colDef';
 import type { IProvidedFilter, ProvidedFilterModel } from '../filter/provided/iProvidedFilter';
 import type { AgPromise } from '../utils/promise';
 import type {
@@ -36,6 +37,12 @@ export interface IMultiFilterDef extends IFilterDef {
     floatingFilterComponent?: IFloatingFilterType;
     /** Custom parameters to be passed to the floating filter component. */
     floatingFilterComponentParams?: any;
+    /**
+     * Function or expression. Gets the value for filtering purposes.
+     * Allows for different values to be used for child filters
+     * instead of using `colDef.filterValueGetter`.
+     */
+    filterValueGetter?: string | ValueGetterFunc;
 }
 
 /**

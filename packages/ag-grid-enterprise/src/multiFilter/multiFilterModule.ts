@@ -6,6 +6,7 @@ import { VERSION } from '../version';
 import { MenuItemModule } from '../widgets/menuItemModule';
 import { MultiFilter } from './multiFilter';
 import { MultiFilterEvaluator } from './multiFilterEvaluator';
+import { MultiFilterService } from './multiFilterService';
 import { MultiFilterUi } from './multiFilterUi';
 import { MultiFloatingFilterComp } from './multiFloatingFilter';
 
@@ -29,6 +30,7 @@ export const MultiFilterModule: _ModuleWithoutApi = {
         },
         agMultiColumnFloatingFilter: MultiFloatingFilterComp,
     },
+    beans: [MultiFilterService],
     dynamicBeans: {
         agMultiColumnFilterEvaluator: MultiFilterEvaluator,
     },

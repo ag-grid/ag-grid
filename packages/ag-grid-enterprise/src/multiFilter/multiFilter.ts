@@ -7,9 +7,9 @@ import type {
     FilterEvaluatorBaseParams,
     IDoesFilterPassParams,
     IFilterComp,
-    IFilterDef,
     IFilterParams,
     IMultiFilter,
+    IMultiFilterDef,
     IMultiFilterModel,
     IMultiFilterParams,
     MultiFilterParams,
@@ -30,7 +30,12 @@ import {
 
 import type { BaseFilterComponent } from './baseMultiFilter';
 import { BaseMultiFilter } from './baseMultiFilter';
-import { getFilterModelForIndex, getMultiFilterDefs, getUpdatedMultiFilterModel } from './multiFilterUtil';
+import {
+    getFilterModelForIndex,
+    getMultiFilterDefs,
+    getUpdatedMultiFilterModel,
+    updateGetValue,
+} from './multiFilterUtil';
 
 interface MultiFilterWrapper {
     filter: IFilterComp;
@@ -264,7 +269,7 @@ export class MultiFilter extends BaseMultiFilter<MultiFilterWrapper> implements 
     }
 
     private createFilter(
-        filterDef: IFilterDef,
+        filterDef: IMultiFilterDef,
         index: number,
         initialModel: IMultiFilterModel | null
     ): AgPromise<MultiFilterWrapper | null> {
@@ -272,13 +277,14 @@ export class MultiFilter extends BaseMultiFilter<MultiFilterWrapper> implements 
 
         let initialModelForFilter: any = null;
         let createWrapperComp: ((filter: IFilterComp<any> | null) => FilterWrapperComp) | undefined;
+        const beans = this.beans;
 
         const {
             compDetails,
             evaluator,
             evaluatorParams: originalEvaluatorParams,
             createFilterUi,
-        } = this.beans.colFilter!.createFilterInstance(
+        } = beans.colFilter!.createFilterInstance(
             column,
             filterDef,
             'agTextColumnFilter',
@@ -295,6 +301,7 @@ export class MultiFilter extends BaseMultiFilter<MultiFilterWrapper> implements 
                     doesRowPassOtherFilter: (node: RowNode) =>
                         defaultParams.doesRowPassOtherFilter(node) &&
                         this.doesFilterPass({ node, data: node.data }, index),
+                    getValue: updateGetValue(beans, column, filterDef, defaultParams.getValue),
                 };
                 if (isEvaluator) {
                     initialModelForFilter = getFilterModelForIndex(initialModel, index);
@@ -316,7 +323,7 @@ export class MultiFilter extends BaseMultiFilter<MultiFilterWrapper> implements 
 
         let evaluatorParams: FilterEvaluatorBaseParams | undefined;
         if (evaluator) {
-            const { onModelChange, doesRowPassOtherFilter } = originalEvaluatorParams!;
+            const { onModelChange, doesRowPassOtherFilter, getValue } = originalEvaluatorParams!;
             evaluatorParams = {
                 ...originalEvaluatorParams!,
                 onModelChange: (newModel, additionalEventAttributes) =>
@@ -326,6 +333,8 @@ export class MultiFilter extends BaseMultiFilter<MultiFilterWrapper> implements 
                     ),
                 doesRowPassOtherFilter: (node) =>
                     doesRowPassOtherFilter(node) && this.doesFilterPass({ node, data: node.data }, index),
+
+                getValue: updateGetValue(beans, column, filterDef, getValue),
             };
             evaluator.init?.({ ...evaluatorParams, model: initialModelForFilter, source: 'init' });
         }

@@ -458,6 +458,19 @@ export class DataTypeService extends BeanStub implements NamedBean {
         }
     }
 
+    public postProcess(colDef: ColDef): void {
+        const cellDataType = colDef.cellDataType;
+        if (!cellDataType) {
+            return;
+        }
+        const dataTypeDefinition = this.dataTypeDefinitions[cellDataType as string];
+        this.beans.colFilter?.setColDefPropsForDataType(
+            colDef,
+            dataTypeDefinition,
+            this.formatValueFuncs[cellDataType as string]
+        );
+    }
+
     public getFormatValue(cellDataType: string): DataTypeFormatValueFunc | undefined {
         return this.formatValueFuncs[cellDataType];
     }
@@ -515,7 +528,6 @@ export class DataTypeService extends BeanStub implements NamedBean {
                 break;
             }
         }
-        this.beans.filterManager?.setColDefPropertiesForDataType(colDef, dataTypeDefinition, formatValue);
     }
 
     private getDefaultDataTypes(): { [key: string]: CoreDataTypeDefinition } {

@@ -222,9 +222,11 @@ export {
     MultiFilterParams,
     IMultiFilterDef,
 } from './interfaces/iMultiFilter';
+export { IMultiFilterService } from './interfaces/iMultiFilterService';
 export { FilterComp } from './filter/filterComp';
 export { FilterWrapperComp } from './filter/filterWrapperComp';
 export { FilterButtonComp } from './filter/filterButtonComp';
+export { _getFilterParamsForDataType } from './filter/filterDataTypeUtils';
 
 export {
     IProvidedFilter,
@@ -859,6 +861,8 @@ export {
     ValueParserLiteFunc,
     ValueParserLiteParams,
     BaseCellDataType,
+    CoreDataTypeDefinition,
+    DataTypeFormatValueFunc,
 } from './entities/dataType';
 export type { DataTypeService } from './columns/dataTypeService';
 export {

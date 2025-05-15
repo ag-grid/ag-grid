@@ -4,6 +4,7 @@ import type {
     FilterEvaluatorBaseParams,
     FilterEvaluatorFuncParams,
     FilterEvaluatorParams,
+    IMultiFilterDef,
     IMultiFilterModel,
     IMultiFilterParams,
 } from 'ag-grid-community';
@@ -14,6 +15,7 @@ import {
     getFilterModelForIndex,
     getMultiFilterDefs,
     getUpdatedMultiFilterModel,
+    updateGetValue,
 } from './multiFilterUtil';
 
 interface EvaluatorWrapper {
@@ -29,11 +31,13 @@ export class MultiFilterEvaluator
     private evaluatorWrappers: (EvaluatorWrapper | undefined)[] = [];
     /** ui active. could still have null model */
     private activeFilterIndices: number[] = [];
+    private filterDefs: IMultiFilterDef[] = [];
 
     public init(params: FilterEvaluatorParams<any, any, IMultiFilterModel, IMultiFilterParams>): void {
         this.params = params;
 
         const filterDefs = getMultiFilterDefs(params.filterParams);
+        this.filterDefs = filterDefs;
         filterDefs.forEach((def, index) => {
             const wrapper = this.beans.colFilter!.createEvaluator(params.column as AgColumn, def, 'agTextColumnFilter');
             this.evaluatorWrappers.push(wrapper);
@@ -68,7 +72,7 @@ export class MultiFilterEvaluator
     }
 
     private updateEvaluatorParams(params: FilterEvaluatorBaseParams, index: number): FilterEvaluatorBaseParams {
-        const { onModelChange, doesRowPassOtherFilter } = params;
+        const { onModelChange, doesRowPassOtherFilter, getValue } = params;
         const evaluatorParams: FilterEvaluatorBaseParams = {
             ...params!,
             onModelChange: (newModel, additionalEventAttributes) =>
@@ -79,6 +83,7 @@ export class MultiFilterEvaluator
             doesRowPassOtherFilter: (node) =>
                 doesRowPassOtherFilter(node) &&
                 this.doesFilterPass({ node, data: node.data, model: this.params.model, evaluatorParams }, index),
+            getValue: updateGetValue(this.beans, params.column as AgColumn, this.filterDefs[index], getValue),
         };
         return evaluatorParams;
     }

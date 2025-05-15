@@ -1,5 +1,13 @@
 import { ProvidedFilter } from 'ag-grid-community';
-import type { IMultiFilterDef, IMultiFilterModel, IMultiFilterParams, SharedFilterUi } from 'ag-grid-community';
+import type {
+    AgColumn,
+    BeanCollection,
+    FilterDisplayParams,
+    IMultiFilterDef,
+    IMultiFilterModel,
+    IMultiFilterParams,
+    SharedFilterUi,
+} from 'ag-grid-community';
 
 export function getMultiFilterDefs(params: IMultiFilterParams): IMultiFilterDef[] {
     const { filters } = params;
@@ -48,4 +56,14 @@ export function getUpdatedMultiFilterModel(
 
 export function getFilterModelForIndex<TModel = any>(model: IMultiFilterModel | null, index: number): TModel | null {
     return model?.filterModels?.[index] ?? null;
+}
+
+export function updateGetValue(
+    beans: BeanCollection,
+    column: AgColumn,
+    filterDef: IMultiFilterDef,
+    existingGetValue: FilterDisplayParams['getValue']
+): FilterDisplayParams['getValue'] {
+    const filterValueGetter = filterDef.filterValueGetter;
+    return filterValueGetter ? beans.colFilter!.createGetValue(column, filterValueGetter) : existingGetValue;
 }
