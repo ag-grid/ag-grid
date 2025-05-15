@@ -32,7 +32,7 @@ export function _setupEditors(
 
         const shouldStartEditing = cellStartedEdit && rowNode === curCellCtrl.rowNode && curCellCtrl.column === column;
 
-        const compDetails = _setupEditor(beans, rowNode!, column!, key, shouldStartEditing);
+        const compDetails = _setupEditor(beans, rowNode!, curCellCtrl.column!, key, shouldStartEditing);
 
         if (shouldStartEditing) {
             startedCompDetails = compDetails;
@@ -42,7 +42,7 @@ export function _setupEditors(
     return startedCompDetails;
 }
 
-export function _setupEditor(
+function _setupEditor(
     beans: BeanCollection,
     rowNode: IRowNode,
     column: Column,
@@ -77,10 +77,7 @@ export function _getOldValue(beans: BeanCollection, cellCtrl?: CellCtrl): any {
     return beans.valueSvc.getValue(column, rowNode, undefined, 'api');
 }
 
-export function _takeValueFromCellEditor(
-    cancel: boolean,
-    cellComp: ICellComp
-): { newValue?: any; newValueExists: boolean } {
+function _takeValueFromCellEditor(cancel: boolean, cellComp: ICellComp): { newValue?: any; newValueExists: boolean } {
     const noValueResult = { newValueExists: false };
 
     if (cancel) {
@@ -107,7 +104,7 @@ export function _takeValueFromCellEditor(
     };
 }
 
-export function _createCellEditorParams(
+function _createCellEditorParams(
     beans: BeanCollection,
     rowNode: IRowNode,
     column: Column,

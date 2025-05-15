@@ -114,7 +114,7 @@ import type {
     SizeColumnsToFitGridStrategy,
     SizeColumnsToFitProvidedWidthStrategy,
 } from '../interfaces/autoSize';
-import { EditStrategyType } from '../interfaces/editStrategyType';
+import type { EditStrategyType } from '../interfaces/editStrategyType';
 import type {
     CsvExportParams,
     ProcessCellForExportParams,
