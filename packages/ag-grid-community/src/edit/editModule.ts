@@ -12,7 +12,6 @@ import { NumberCellEditor } from './cellEditors/numberCellEditor';
 import { SelectCellEditor } from './cellEditors/selectCellEditor';
 import { TextCellEditor } from './cellEditors/textCellEditor';
 import {
-    cancelEdits,
     getCellEditorInstances,
     getCurrentRedoSize,
     getCurrentUndoSize,
@@ -41,7 +40,6 @@ export const EditCoreModule: _ModuleWithApi<_EditGridApi<any>> = {
         startEditingCell,
         stopEditing,
         isEditing,
-        cancelEdits,
     },
     dynamicBeans: {
         singleCell: SingleCellEditStrategy,

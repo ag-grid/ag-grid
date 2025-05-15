@@ -40,9 +40,7 @@ export function getEditingCells(beans: BeanCollection): CellPosition[] {
 }
 
 export function stopEditing(beans: BeanCollection, cancel: boolean = false): void {
-    if (beans.editSvc?.isEditing()) {
-        beans.editSvc?.stopAllEditing(cancel, 'api');
-    }
+    beans.editSvc?.stopAllEditing(cancel, 'api');
 }
 
 export function isEditing(beans: BeanCollection, rowId?: string, colId?: string): boolean {
@@ -95,9 +93,7 @@ export function startEditingCell(beans: BeanCollection, params: StartEditingCell
 }
 
 export function cancelEdits(beans: BeanCollection): void {
-    if (beans.editSvc?.isEditing()) {
-        beans.editSvc?.stopAllEditing(true, 'api');
-    }
+    beans.editSvc?.stopAllEditing(true, 'api');
 }
 
 export function getCurrentUndoSize(beans: BeanCollection): number {

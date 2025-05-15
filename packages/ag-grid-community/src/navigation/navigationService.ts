@@ -455,7 +455,7 @@ export class NavigationService extends BeanStub implements NamedBean {
         const { editSvc, focusSvc } = this.beans;
 
         let res: boolean | null | undefined = undefined;
-        const cellCtrl = previous instanceof CellCtrl ? previous : undefined;
+        const cellCtrl = previous instanceof CellCtrl ? previous : previous.getAllCellCtrls()?.[0];
 
         if (editSvc?.isEditing()) {
             res = editSvc?.moveToNextCell(cellCtrl!, backwards, event);

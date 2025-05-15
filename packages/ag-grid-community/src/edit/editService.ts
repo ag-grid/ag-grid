@@ -6,7 +6,8 @@ import type { ICellEditorParams } from '../interfaces/iCellEditor';
 import type { Column } from '../interfaces/iColumn';
 import type { IRowNode } from '../interfaces/iRowNode';
 import type { CellPosition } from '../main-umd-noStyles';
-import type { CellCtrl } from '../rendering/cell/cellCtrl';
+import { CellCtrl } from '../rendering/cell/cellCtrl';
+import type { RowCtrl } from '../rendering/row/rowCtrl';
 import { PopupEditorWrapper } from './cellEditors/popupEditorWrapper';
 import type { CellUpdate, EditModelService } from './editModelService';
 import { _createUpdates } from './editModelService';
@@ -265,10 +266,13 @@ export class EditService extends BeanStub implements NamedBean {
         return column.isColumnFunc(rowNode, column.colDef.editable);
     }
 
-    moveToNextCell(previous: CellCtrl, backwards: boolean, event?: KeyboardEvent): boolean | null {
+    moveToNextCell(previous: CellCtrl | RowCtrl, backwards: boolean, event?: KeyboardEvent): boolean | null {
         let res: boolean | null | undefined;
 
-        if (this.isEditing(previous.rowNode, previous.column) ?? this.isEditing(previous.rowNode)) {
+        if (
+            previous instanceof CellCtrl &&
+            (this.isEditing(previous.rowNode, previous.column) ?? this.isEditing(previous.rowNode))
+        ) {
             // if we are editing, we know it's not a Full Width Row (RowComp)
             res = this.strategy?.moveToNextEditingCell(previous, backwards, event);
         }

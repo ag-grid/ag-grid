@@ -844,9 +844,6 @@ export interface _EditGridApi<TData> {
 
     /** Returns `true` if the grid is editing a cell */
     isEditing(rowId?: string, colId?: string): boolean;
-
-    /** When using `batchEdit` or `fullRow` edit strategy, cancels currently pending edits */
-    cancelEdits(): void;
 }
 
 export interface _UndoRedoGridApi {
