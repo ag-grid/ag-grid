@@ -121,7 +121,7 @@ export class FullRowEditStrategy extends BaseEditStrategy {
             this.editModel.hasPending(rowCtrl!.rowNode, cellCtrl?.column) &&
             !this.gos.get('batchEdit')
         ) {
-            this.beans.editingSvc?.stopEditing(rowCtrl!.rowNode, cellCtrl?.column);
+            this.beans.editSvc?.stopEditing(rowCtrl!.rowNode, cellCtrl?.column);
         }
     }
 
@@ -157,11 +157,11 @@ export class FullRowEditStrategy extends BaseEditStrategy {
         if (!rowsMatch) {
             if (!this.gos.get('batchEdit')) {
                 const pRow = previousCell.rowCtrl.rowNode;
-                this.beans.editingSvc?.stopEditing(pRow);
+                this.beans.editSvc?.stopEditing(pRow);
             }
 
             const nRow = nextCell.rowCtrl.rowNode;
-            this.beans.editingSvc?.startEditing(nRow, nextCell.column, null, true, event);
+            this.beans.editSvc?.startEditing(nRow, nextCell.column, null, true, event);
         }
 
         if (nextEditable) {

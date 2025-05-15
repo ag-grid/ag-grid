@@ -841,20 +841,6 @@ export interface _EditGridApi<TData> {
      * @agModule `TextEditorModule` / `LargeTextEditorModule` / `NumberEditorModule` / `DateEditorModule` / `CheckboxEditorModule` / `CustomEditorModule` / `SelectEditorModule` / `RichSelectModule`
      */
     startEditingCell(params: StartEditingCellParams): void;
-}
-
-export interface _EditingGridApi<TData> {
-    /** Returns the list of active cell editor instances. Optionally provide parameters to restrict to certain columns / row nodes. */
-    getCellEditorInstances(params?: GetCellEditorInstancesParams<TData>): ICellEditor[];
-
-    /** If the grid is editing, returns back details of the editing cell(s). */
-    getEditingCells(): CellPosition[];
-
-    /** If a cell is editing, it stops the editing. Pass `true` if you want to cancel the editing (i.e. don't accept changes). */
-    stopEditing(cancel?: boolean): void;
-
-    /** Start editing the provided cell. If another cell is editing, the editing will be stopped in that other cell. */
-    startEditingCell(params: StartEditingCellParams): void;
 
     /** Returns `true` if the grid is editing a cell */
     isEditing(rowId?: string, colId?: string): boolean;
@@ -1812,7 +1798,6 @@ export interface GridApi<TData = any>
         _ColumnGroupGridApi,
         _DragGridApi,
         _EditGridApi<TData>,
-        _EditingGridApi<TData>,
         _UndoRedoGridApi,
         _FilterGridApi,
         _ColumnFilterGridApi,

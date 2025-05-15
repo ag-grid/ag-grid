@@ -18,7 +18,7 @@ const PopupEditorComp = (props: {
     const [popupEditorWrapper, setPopupEditorWrapper] = useState<PopupEditorWrapper>();
 
     const beans = useContext(BeansContext);
-    const { context, popupSvc, localeSvc, gos, editingSvc } = beans;
+    const { context, popupSvc, localeSvc, gos, editSvc } = beans;
     const { editDetails, cellCtrl, eParentCell } = props;
 
     useEffectOnce(() => {
@@ -26,7 +26,7 @@ const PopupEditorComp = (props: {
 
         const useModelPopup = gos.get('stopEditingWhenCellsLoseFocus');
 
-        const wrapper = context.createBean(editingSvc!.createPopupEditorWrapper(compDetails.params));
+        const wrapper = context.createBean(editSvc!.createPopupEditorWrapper(compDetails.params));
         const ePopupGui = wrapper.getGui();
 
         if (props.jsChildComp) {

@@ -1,10 +1,8 @@
 import type { _EditGridApi, _UndoRedoGridApi } from '../api/gridApi';
-import { EditingCoreModule } from '../editing/editModule';
 import type { DefaultProvidedCellEditorParams } from '../interfaces/iCellEditor';
 import type { _ModuleWithApi, _ModuleWithoutApi } from '../interfaces/iModule';
 import { UndoRedoService } from '../undoRedo/undoRedoService';
 import { VERSION } from '../version';
-import { PopupModule } from '../widgets/popupModule';
 import { cellEditingCSS } from './cell-editing.css-GENERATED';
 import { CheckboxCellEditor } from './cellEditors/checkboxCellEditor';
 import { DateCellEditor } from './cellEditors/dateCellEditor';
@@ -14,15 +12,21 @@ import { NumberCellEditor } from './cellEditors/numberCellEditor';
 import { SelectCellEditor } from './cellEditors/selectCellEditor';
 import { TextCellEditor } from './cellEditors/textCellEditor';
 import {
-    // getCellEditorInstances,
+    cancelEdits,
+    getCellEditorInstances,
     getCurrentRedoSize,
-    getCurrentUndoSize, // getEditingCells,
-    redoCellEditing, // startEditingCell,
-    // stopEditing,
+    getCurrentUndoSize,
+    getEditingCells,
+    isEditing,
+    redoCellEditing,
+    startEditingCell,
+    stopEditing,
     undoCellEditing,
 } from './editApi';
+import { EditModelService } from './editModelService';
 import { EditService } from './editService';
-import { RowEditService } from './rowEditService';
+import { FullRowEditStrategy } from './strategy/fullRowEditStrategy';
+import { SingleCellEditStrategy } from './strategy/singleCellEditStrategy';
 
 /**
  * @internal
@@ -30,14 +34,20 @@ import { RowEditService } from './rowEditService';
 export const EditCoreModule: _ModuleWithApi<_EditGridApi<any>> = {
     moduleName: 'EditCore',
     version: VERSION,
-    beans: [EditService, RowEditService],
-    // apiFunctions: {
-    // getCellEditorInstances,
-    // getEditingCells,
-    // stopEditing,
-    // startEditingCell,
-    // },
-    dependsOn: [PopupModule, EditingCoreModule],
+    beans: [EditModelService, EditService],
+    apiFunctions: {
+        getEditingCells,
+        getCellEditorInstances,
+        startEditingCell,
+        stopEditing,
+        isEditing,
+        cancelEdits,
+    },
+    dynamicBeans: {
+        singleCell: SingleCellEditStrategy,
+        fullRow: FullRowEditStrategy,
+    },
+    dependsOn: [],
     css: [cellEditingCSS],
 };
 

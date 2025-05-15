@@ -114,7 +114,7 @@ export function _createCellEditorParams(
     key?: string | null,
     cellStartedEdit?: boolean | null
 ): ICellEditorParams {
-    const { valueSvc, gos, editingSvc } = beans;
+    const { valueSvc, gos, editSvc } = beans;
     const cellCtrl = _resolveCellController(beans, { rowNode, column })!;
     const {
         cellPosition: { rowIndex },
@@ -133,7 +133,7 @@ export function _createCellEditorParams(
         cellStartedEdit: cellStartedEdit ?? false,
         onKeyDown: cellCtrl.onKeyDown.bind(cellCtrl),
         stopEditing: (suppressNavigateAfterEdit) =>
-            editingSvc!.stopEditing(rowNode, column, undefined, undefined, undefined, 'api', suppressNavigateAfterEdit),
+            editSvc!.stopEditing(rowNode, column, undefined, undefined, undefined, 'api', suppressNavigateAfterEdit),
         eGridCell: cellCtrl.eGui,
         parseValue: (newValue: any) => valueSvc.parseValue(agColumn, rowNode, newValue, cellCtrl.value),
         formatValue: cellCtrl.formatValue.bind(cellCtrl),
@@ -158,7 +158,7 @@ export function _refreshEditorOnColDefChanged(beans: BeanCollection, cellCtrl: C
 }
 
 export function _syncModelsFromEditors(beans: BeanCollection): void {
-    beans.editingModelSvc?.getPendingCellIds().forEach((cellId) => {
+    beans.editModelSvc?.getPendingCellIds().forEach((cellId) => {
         const { comp, rowNode, column } = _resolveCellController(beans, cellId)!;
 
         const { newValue, newValueExists } = _takeValueFromCellEditor(false, comp);
@@ -178,8 +178,8 @@ export function _syncModelFromEditor(
     newValue?: any,
     eventSource?: string
 ): boolean | null {
-    if (eventSource !== 'edit' && rowNode && column && beans.editingSvc?.isEditing(rowNode, column)) {
-        beans.editingModelSvc?.addPendingEdit(rowNode, column, newValue);
+    if (eventSource !== 'edit' && rowNode && column && beans.editSvc?.isEditing(rowNode, column)) {
+        beans.editModelSvc?.addPendingEdit(rowNode, column, newValue);
         return true;
     }
     return null;

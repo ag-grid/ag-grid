@@ -22,7 +22,6 @@ import type {
     _CsvExportGridApi,
     _DragGridApi,
     _EditGridApi,
-    _EditingGridApi,
     _EventGridApi,
     _ExcelExportGridApi,
     _FilterGridApi,
@@ -215,12 +214,6 @@ export const gridApiFunctionsMap: Record<keyof GridApi, ValidationModuleName> = 
         isColumnHovered: 0,
     }),
     ...mod<_EditGridApi<any>>('EditCore', {
-        getCellEditorInstances: 0,
-        getEditingCells: 0,
-        stopEditing: 0,
-        startEditingCell: 0,
-    }),
-    ...mod<_EditingGridApi<any>>('EditingCore', {
         getCellEditorInstances: 0,
         getEditingCells: 0,
         stopEditing: 0,

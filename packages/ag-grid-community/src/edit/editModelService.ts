@@ -15,8 +15,8 @@ export type CellIdPositions = {
 
 type CData = any;
 
-export class EditingModelService extends BeanStub implements NamedBean {
-    beanName = 'editingModelSvc' as const;
+export class EditModelService extends BeanStub implements NamedBean {
+    beanName = 'editModelSvc' as const;
 
     private pendingUpdates: Map<IRowNode, Map<Column, CData>> = new Map();
 
@@ -139,12 +139,12 @@ export type CellUpdate = {
 };
 
 export function _createUpdates(beans: BeanCollection): CellUpdate[] {
-    const { editingModelSvc } = beans;
-    if (!editingModelSvc) {
+    const { editModelSvc } = beans;
+    if (!editModelSvc) {
         return []; // Changed from {} to undefined
     }
 
-    const rowUpdates = editingModelSvc.getPendingUpdates();
+    const rowUpdates = editModelSvc.getPendingUpdates();
 
     if (rowUpdates.size === 0) {
         return [];

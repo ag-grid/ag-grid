@@ -533,8 +533,8 @@ export class RowNode<TData = any>
             return false;
         }
 
-        if (this.beans.editingSvc) {
-            const result = this.beans.editingSvc.setDataValue(this, colKey, newValue, eventSource);
+        if (this.beans.editSvc) {
+            const result = this.beans.editSvc.setDataValue(this, colKey, newValue, eventSource);
 
             if (result != null) {
                 return result;

@@ -239,7 +239,7 @@ export class CellCtrl extends BeanStub {
         this.rowResizeFeature?.refreshRowResizer();
 
         if (startEditing && this.isCellEditable()) {
-            this.beans.editingSvc?.startEditing(this.rowNode, this.column, undefined, true);
+            this.beans.editSvc?.startEditing(this.rowNode, this.column, undefined, true);
         } else {
             // We can skip refreshing the range handle as this is done in this.rangeFeature.setComp above
             this.showValue(false, true);
@@ -362,14 +362,14 @@ export class CellCtrl extends BeanStub {
     }
 
     public onPopupEditorClosed(): void {
-        if (!this.beans.editingSvc?.isEditing(this.rowNode, this.column)) {
+        if (!this.beans.editSvc?.isEditing(this.rowNode, this.column)) {
             return;
         }
 
         // note: this happens because of a click outside of the grid or if the popupEditor
         // is closed with `Escape` key. if another cell was clicked, then the editing will
         // have already stopped and returned on the conditional above.
-        this.beans.editingSvc?.stopEditing(this.rowNode, this.column);
+        this.beans.editSvc?.stopEditing(this.rowNode, this.column);
     }
 
     /**
@@ -378,7 +378,7 @@ export class CellCtrl extends BeanStub {
      * @returns `True` if the value of the `GridCell` has been updated, otherwise `False`.
      */
     public stopEditing(cancel = false): boolean {
-        return this.beans.editingSvc?.stopEditing(this.rowNode, this.column, undefined, undefined, cancel) ?? false;
+        return this.beans.editSvc?.stopEditing(this.rowNode, this.column, undefined, undefined, cancel) ?? false;
     }
 
     private createCellRendererParams(): ICellRendererParams {
@@ -389,16 +389,14 @@ export class CellCtrl extends BeanStub {
             rowNode,
             comp,
             eGui,
-            beans: { valueSvc, gos, editingSvc },
+            beans: { valueSvc, gos, editSvc },
         } = this;
         const res: ICellRendererParams = _addGridCommonParams(gos, {
             value: value,
             valueFormatted: valueFormatted,
             getValue: () => valueSvc.getValueForDisplay(column, rowNode).value,
             setValue: (value: any) =>
-                editingSvc
-                    ? editingSvc.setDataValue(rowNode, column, value)
-                    : valueSvc.setValue(rowNode, column, value),
+                editSvc ? editSvc.setDataValue(rowNode, column, value) : valueSvc.setValue(rowNode, column, value),
             formatValue: this.formatValue.bind(this),
             data: rowNode.data,
             node: rowNode,
@@ -656,7 +654,7 @@ export class CellCtrl extends BeanStub {
     private restoreFocus(waitForRender = false): void {
         if (
             !this.comp ||
-            this.beans.editingSvc?.isEditing(this.rowNode, this.column) ||
+            this.beans.editSvc?.isEditing(this.rowNode, this.column) ||
             !this.isCellFocused() ||
             !this.beans.focusSvc.shouldTakeFocus()
         ) {
@@ -760,7 +758,7 @@ export class CellCtrl extends BeanStub {
         }
 
         const cellFocused = this.isCellFocused();
-        const editing = beans.editingSvc?.isEditing(this.rowNode, this.column) ?? false;
+        const editing = beans.editSvc?.isEditing(this.rowNode, this.column) ?? false;
 
         this.comp.toggleCss(CSS_CELL_FOCUS, cellFocused);
 
@@ -779,7 +777,7 @@ export class CellCtrl extends BeanStub {
         }
 
         if (cellFocused) {
-            // beans.editingSvc?.stopEditing(this.rowCtrl, this);
+            // beans.editSvc?.stopEditing(this.rowCtrl, this);
             this.rowCtrl.announceDescription();
         }
     }
@@ -825,8 +823,8 @@ export class CellCtrl extends BeanStub {
 
         this.setWrapText();
 
-        if (this.beans.editingSvc?.isEditing(this.rowNode, this.column)) {
-            this.beans.editingSvc?.handleColDefChanged(this);
+        if (this.beans.editSvc?.isEditing(this.rowNode, this.column)) {
+            this.beans.editSvc?.handleColDefChanged(this);
         } else {
             this.refreshOrDestroyCell({ forceRefresh: true, suppressFlash: true });
         }

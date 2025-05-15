@@ -1149,7 +1149,7 @@ export {
     DateFilterModule,
     ExternalFilterModule,
 } from './filter/filterModule';
-export { EditingCoreModule as _EditingCoreModule } from './editing/editModule';
+export { EditCoreModule as _EditingCoreModule } from './edit/editModule';
 export {
     EditCoreModule as _EditCoreModule,
     NumberEditorModule,

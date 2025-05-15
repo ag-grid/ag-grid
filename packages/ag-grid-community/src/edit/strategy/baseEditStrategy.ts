@@ -7,13 +7,13 @@ import type { DefaultProvidedCellEditorParams } from '../../interfaces/iCellEdit
 import type { Column } from '../../interfaces/iColumn';
 import type { IRowNode } from '../../interfaces/iRowNode';
 import type { CellCtrl } from '../../rendering/cell/cellCtrl';
-import type { CellIdPositions, EditingModelService } from '../editModelService';
+import type { CellIdPositions, EditModelService } from '../editModelService';
 import { _resolveCellController } from '../utils/controllers';
 import { _destroyEditor, _destroyEditors, _setupEditors, _syncModelsFromEditors } from '../utils/editors';
 
 export abstract class BaseEditStrategy extends BeanStub {
     beanName: BeanName | undefined;
-    protected editModel: EditingModelService;
+    protected editModel: EditModelService;
 
     public abstract startEditing(
         rowNode: IRowNode,
@@ -44,7 +44,7 @@ export abstract class BaseEditStrategy extends BeanStub {
     }
 
     postConstruct(): void {
-        this.editModel = this.beans.editingModelSvc!;
+        this.editModel = this.beans.editModelSvc!;
         this.addManagedListeners(this.beans.eventSvc, {
             cellFocused: this.onCellFocusChanged?.bind(this),
             cellFocusCleared: this.onCellFocusChanged?.bind(this),
@@ -82,7 +82,7 @@ export abstract class BaseEditStrategy extends BeanStub {
         }
     }
 
-    // move to main editingsvc
+    // move to main editsvc
     protected finishStartEdit(
         editingCells: CellIdPositions[],
         rowNode?: IRowNode | null,

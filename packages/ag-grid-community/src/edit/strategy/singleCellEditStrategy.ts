@@ -107,7 +107,7 @@ export class SingleCellEditStrategy extends BaseEditStrategy {
         const { rowNode } = cellCtrl!;
 
         // if we are editing, then moving the focus out of a cell will stop editing
-        this.beans.editingSvc?.stopEditing(
+        this.beans.editSvc?.stopEditing(
             rowNode,
             this.beans.colModel.getCol(_getColId(column)) ?? undefined,
             undefined,
@@ -148,7 +148,7 @@ export class SingleCellEditStrategy extends BaseEditStrategy {
 
         const batchEdit = this.gos.get('batchEdit');
 
-        this.beans.editingSvc?.startEditing(
+        this.beans.editSvc?.startEditing(
             nextCell.rowNode,
             nextCell.column,
             null,

@@ -2,7 +2,7 @@ import { KeyCode } from '../constants/keyCode';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
-import { _resolveControllers } from '../editing/utils/controllers';
+import { _resolveControllers } from '../edit/utils/controllers';
 import type { AgColumn } from '../entities/agColumn';
 import { _getCellByPosition, _getRowNode, _isRowBefore } from '../entities/positionUtils';
 import type { RowNode } from '../entities/rowNode';
@@ -453,13 +453,13 @@ export class NavigationService extends BeanStub implements NamedBean {
         backwards: boolean,
         event?: KeyboardEvent
     ): boolean | null {
-        const { editingSvc, focusSvc } = this.beans;
+        const { editSvc, focusSvc } = this.beans;
 
         let res: boolean | null | undefined = undefined;
         const cellCtrl = previous instanceof CellCtrl ? previous : undefined;
 
-        if (editingSvc?.isEditing()) {
-            res = editingSvc?.moveToNextCell(cellCtrl!, backwards, event);
+        if (editSvc?.isEditing()) {
+            res = editSvc?.moveToNextCell(cellCtrl!, backwards, event);
         } else {
             res = this.moveToNextCellNotEditing(previous, backwards, event);
         }

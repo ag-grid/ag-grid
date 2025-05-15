@@ -1450,7 +1450,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
         const rowNode = rowCtrl.rowNode;
 
         const rowHasFocus = this.focusSvc.isRowFocused(rowNode.rowIndex!, rowNode.rowPinned);
-        const rowIsEditing = this.beans.editingSvc?.isEditing(rowNode) ?? false;
+        const rowIsEditing = this.beans.editSvc?.isEditing(rowNode) ?? false;
         const rowIsDetail = rowNode.detail;
 
         const mightWantToKeepRow = rowHasFocus || rowIsEditing || rowIsDetail;

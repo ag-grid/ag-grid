@@ -468,7 +468,7 @@ export class CellComp extends Component {
     }
 
     private addPopupCellEditor(params: ICellEditorParams, position?: 'over' | 'under'): void {
-        const { gos, context, popupSvc, localeSvc, editingSvc } = this.beans;
+        const { gos, context, popupSvc, localeSvc, editSvc } = this.beans;
         if (gos.get('editType') === 'fullRow') {
             //popup cellEditor does not work with fullRowEdit
             _warn(98);
@@ -477,7 +477,7 @@ export class CellComp extends Component {
         const cellEditor = this.cellEditor!;
 
         // if a popup, then we wrap in a popup editor and return the popup
-        this.cellEditorPopupWrapper = context.createBean(editingSvc!.createPopupEditorWrapper(params));
+        this.cellEditorPopupWrapper = context.createBean(editSvc!.createPopupEditorWrapper(params));
         const ePopupGui = this.cellEditorPopupWrapper.getGui();
         if (this.cellEditorGui) {
             ePopupGui.appendChild(this.cellEditorGui);
