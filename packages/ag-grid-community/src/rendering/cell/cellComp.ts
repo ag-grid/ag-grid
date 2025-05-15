@@ -1,5 +1,5 @@
 import type { BeanCollection } from '../../context/context';
-import { PopupEditorWrapper } from '../../edit/cellEditors/popupEditorWrapper';
+import type { PopupEditorWrapper } from '../../edit/cellEditors/popupEditorWrapper';
 import type { AgColumn } from '../../entities/agColumn';
 import type { CellStyle } from '../../entities/colDef';
 import type { RowNode } from '../../entities/rowNode';

@@ -6,7 +6,7 @@ import type { ICellEditorParams } from '../interfaces/iCellEditor';
 import type { Column } from '../interfaces/iColumn';
 import type { IRowNode } from '../interfaces/iRowNode';
 import type { CellPosition } from '../main-umd-noStyles';
-import { CellCtrl } from '../rendering/cell/cellCtrl';
+import type { CellCtrl } from '../rendering/cell/cellCtrl';
 import { PopupEditorWrapper } from './cellEditors/popupEditorWrapper';
 import type { CellUpdate, EditModelService } from './editModelService';
 import { _createUpdates } from './editModelService';
@@ -16,11 +16,11 @@ import { _refreshEditorOnColDefChanged, _syncModelFromEditor, _syncModelsFromEdi
 
 export class EditService extends BeanStub implements NamedBean {
     beanName = 'editSvc' as const;
-    private editModel?: EditModelService;
-    private editStrategy?: BaseEditStrategy;
+    private model?: EditModelService;
+    private strategy?: BaseEditStrategy;
 
     postConstruct(): void {
-        this.editModel = this.beans.editModelSvc;
+        this.model = this.beans.editModelSvc;
 
         this.addManagedPropertyListener(
             'editType',
@@ -40,7 +40,7 @@ export class EditService extends BeanStub implements NamedBean {
     }
 
     private createEditStrategy(editType?: string): BaseEditStrategy {
-        const { beans, gos, editStrategy } = this;
+        const { beans, gos, strategy: editStrategy } = this;
 
         const strategyName: any = editType ?? gos.get('editType') ?? 'singleCell';
 
@@ -51,20 +51,20 @@ export class EditService extends BeanStub implements NamedBean {
             this.destroyEditStrategy();
         }
 
-        return (this.editStrategy = this.createOptionalManagedBean(
+        return (this.strategy = this.createOptionalManagedBean(
             beans.registry.createDynamicBean<BaseEditStrategy>(strategyName, true)
         )!);
     }
 
     private destroyEditStrategy(): void {
-        if (!this.editStrategy) {
+        if (!this.strategy) {
             return;
         }
 
-        this.editStrategy.destroy();
+        this.strategy.destroy();
 
-        this.destroyBean(this.editStrategy);
-        this.editStrategy = undefined;
+        this.destroyBean(this.strategy);
+        this.strategy = undefined;
     }
 
     shouldStartEditing(
@@ -75,7 +75,7 @@ export class EditService extends BeanStub implements NamedBean {
         cellStartedEdit?: boolean | null,
         source: 'api' | 'ui' = 'ui'
     ): boolean | null {
-        return this.editStrategy?.shouldStartEditing?.(rowNode, column, key, event, cellStartedEdit, source) ?? null;
+        return this.strategy?.shouldStartEditing?.(rowNode, column, key, event, cellStartedEdit, source) ?? null;
     }
 
     shouldStopEditing(
@@ -85,7 +85,7 @@ export class EditService extends BeanStub implements NamedBean {
         event?: KeyboardEvent | MouseEvent | null | undefined,
         source: 'api' | 'ui' = 'ui'
     ): boolean | null {
-        return this.editStrategy?.shouldStopEditing?.(rowNode, column, key, event, source) ?? null;
+        return this.strategy?.shouldStopEditing?.(rowNode, column, key, event, source) ?? null;
     }
 
     shouldCancelEditing(
@@ -95,11 +95,11 @@ export class EditService extends BeanStub implements NamedBean {
         event?: KeyboardEvent | MouseEvent | null | undefined,
         source: 'api' | 'ui' = 'ui'
     ): boolean | null {
-        return this.editStrategy?.shouldCancelEditing?.(rowNode, column, key, event, source) ?? null;
+        return this.strategy?.shouldCancelEditing?.(rowNode, column, key, event, source) ?? null;
     }
 
     public isEditing(rowNode?: IRowNode | null, column?: Column | null): boolean {
-        return this.editModel?.hasPending?.(rowNode, column) ?? false;
+        return this.model?.hasPending?.(rowNode, column) ?? false;
     }
 
     /** @return whether to prevent default on event */
@@ -119,7 +119,7 @@ export class EditService extends BeanStub implements NamedBean {
             return true;
         }
 
-        this.editStrategy = this.createEditStrategy();
+        this.strategy = this.createEditStrategy();
 
         // because of async in React, the cellComp may not be set yet, if no cellComp then we are
         // yet to initialise the cell, so we re-schedule this operation for when celLComp is attached
@@ -140,11 +140,11 @@ export class EditService extends BeanStub implements NamedBean {
             return false;
         }
 
-        if (this.editStrategy.shouldStopEditing(rowNode, column, undefined, undefined, source)) {
+        if (this.strategy.shouldStopEditing(rowNode, column, undefined, undefined, source)) {
             this.stopEditing(undefined, undefined, undefined, undefined, undefined, source);
         }
 
-        return this.editStrategy!.startEditing?.(rowNode, column, key, event, source);
+        return this.strategy!.startEditing?.(rowNode, column, key, event, source);
     }
 
     /**
@@ -171,7 +171,7 @@ export class EditService extends BeanStub implements NamedBean {
             cellCtrl.onEditorAttachedFuncs = [];
         }
 
-        this.editStrategy = this.createEditStrategy();
+        this.strategy = this.createEditStrategy();
 
         _syncModelsFromEditors(this.beans);
 
@@ -182,13 +182,13 @@ export class EditService extends BeanStub implements NamedBean {
         if (!cancel && this.shouldStopEditing?.(rowNode, column, key, event, source)) {
             this.processUpdates(updates, false);
 
-            this.editStrategy?.stopEditing?.() ?? false;
+            this.strategy?.stopEditing?.() ?? false;
 
             res = true;
         } else if (cancel && this.shouldCancelEditing?.(rowNode, column, key, event, source)) {
             this.processUpdates(updates, true);
 
-            this.editStrategy?.stopEditing?.() ?? false;
+            this.strategy?.stopEditing?.() ?? false;
         }
 
         if (!suppressNavigateAfterEdit && cellCtrl) {
@@ -199,9 +199,9 @@ export class EditService extends BeanStub implements NamedBean {
     }
 
     private navigateAfterEdit(shiftKey: boolean, cellPosition: CellPosition): void {
-        const enterNavigatesVerticallyAfterEdit = this.gos.get('enterNavigatesVerticallyAfterEdit');
+        const navAfterEdit = this.gos.get('enterNavigatesVerticallyAfterEdit');
 
-        if (enterNavigatesVerticallyAfterEdit) {
+        if (navAfterEdit) {
             const key = shiftKey ? KeyCode.UP : KeyCode.DOWN;
             this.beans.navigation?.navigateToNextCell(null, key, cellPosition, false);
         }
@@ -236,7 +236,7 @@ export class EditService extends BeanStub implements NamedBean {
     }
 
     public getEditingCellPositions(): CellPosition[] {
-        return this.beans.editSvc?.editModel?.getPendingCellPositions() ?? [];
+        return this.beans.editSvc?.model?.getPendingCellPositions() ?? [];
     }
 
     public stopAllEditing(cancel: boolean = false, source: 'api' | 'ui' = 'ui'): void {
@@ -266,25 +266,11 @@ export class EditService extends BeanStub implements NamedBean {
     }
 
     moveToNextCell(previous: CellCtrl, backwards: boolean, event?: KeyboardEvent): boolean | null {
-        let editing =
-            previous instanceof CellCtrl
-                ? this.isEditing(previous.rowCtrl.rowNode, previous.column)
-                : this.isEditing(previous);
-
-        // if cell is not editing, there is still chance row is editing if it's Full Row Editing
-        if (!editing && previous instanceof CellCtrl) {
-            const cell = previous as CellCtrl;
-            const row = cell.rowCtrl;
-            if (row) {
-                editing = this.isEditing(row.rowNode);
-            }
-        }
-
         let res: boolean | null | undefined;
 
-        if (editing) {
+        if (this.isEditing(previous.rowNode, previous.column) ?? this.isEditing(previous.rowNode)) {
             // if we are editing, we know it's not a Full Width Row (RowComp)
-            res = this.editStrategy?.moveToNextEditingCell(previous, backwards, event);
+            res = this.strategy?.moveToNextEditingCell(previous, backwards, event);
         }
 
         if (res === null) {
@@ -307,7 +293,7 @@ export class EditService extends BeanStub implements NamedBean {
             return undefined;
         }
 
-        return this.editModel?.getPendingUpdate(rowNode!, column!);
+        return this.model?.getPendingUpdate(rowNode!, column!);
     }
 
     public addStopEditingWhenGridLosesFocus(viewports: HTMLElement[]): void {
@@ -333,7 +319,7 @@ export class EditService extends BeanStub implements NamedBean {
 
     public override destroy(): void {
         this.destroyEditStrategy();
-        this.editModel?.destroy();
+        this.model?.destroy();
         super.destroy();
     }
 }

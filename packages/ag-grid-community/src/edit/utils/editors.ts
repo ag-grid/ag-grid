@@ -142,19 +142,16 @@ export function _createCellEditorParams(
 
 export function _refreshEditorOnColDefChanged(beans: BeanCollection, cellCtrl: CellCtrl): void {
     const cellEditor = cellCtrl.comp?.getCellEditor();
-    if (cellEditor?.refresh) {
-        const { eventKey, cellStartedEdit } = cellCtrl.editCompDetails!.params;
-        const editorParams = _createCellEditorParams(
-            beans,
-            cellCtrl.rowNode,
-            cellCtrl.column,
-            eventKey,
-            cellStartedEdit
-        );
-        const colDef = cellCtrl.column.getColDef();
-        const compDetails = _getCellEditorDetails(beans.userCompFactory, colDef, editorParams);
-        cellEditor.refresh(compDetails!.params);
+    if (!cellEditor?.refresh) {
+        return;
     }
+
+    const { eventKey, cellStartedEdit } = cellCtrl.editCompDetails!.params;
+    const { rowNode, column } = cellCtrl;
+    const editorParams = _createCellEditorParams(beans, rowNode, column, eventKey, cellStartedEdit);
+    const colDef = column.getColDef();
+    const compDetails = _getCellEditorDetails(beans.userCompFactory, colDef, editorParams);
+    cellEditor.refresh(compDetails!.params);
 }
 
 export function _syncModelsFromEditors(beans: BeanCollection): void {

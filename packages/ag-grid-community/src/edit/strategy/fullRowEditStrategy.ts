@@ -156,12 +156,10 @@ export class FullRowEditStrategy extends BaseEditStrategy {
 
         if (!rowsMatch) {
             if (!this.gos.get('batchEdit')) {
-                const pRow = previousCell.rowCtrl.rowNode;
-                this.beans.editSvc?.stopEditing(pRow);
+                this.beans.editSvc?.stopEditing(previousCell.rowNode);
             }
 
-            const nRow = nextCell.rowCtrl.rowNode;
-            this.beans.editSvc?.startEditing(nRow, nextCell.column, null, true, event);
+            this.beans.editSvc?.startEditing(nextCell.rowNode, nextCell.column, null, true, event);
         }
 
         if (nextEditable) {

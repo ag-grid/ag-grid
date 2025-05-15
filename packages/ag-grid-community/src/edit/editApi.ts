@@ -8,7 +8,7 @@ import { _getActiveDomElement } from '../gridOptionsUtils';
 import type { GetCellEditorInstancesParams, ICellEditor } from '../interfaces/iCellEditor';
 import type { CellPosition } from '../interfaces/iCellPosition';
 import { _warn } from '../validation/logging';
-import { _resolveControllers, _resolveRowController } from './utils/controllers';
+import { _resolveControllers } from './utils/controllers';
 
 export function undoCellEditing(beans: BeanCollection): void {
     beans.undoRedo?.undo('api');
@@ -50,39 +50,39 @@ export function isEditing(beans: BeanCollection, rowId?: string, colId?: string)
     return beans.editSvc?.isEditing(rowCtrl?.rowNode, cellCtrl?.column) ?? false;
 }
 
-export function isRowEditing(beans: BeanCollection, rowId: string): boolean {
-    const rowCtrl = _resolveRowController(beans, { rowId });
-    return beans.editSvc?.isEditing(rowCtrl?.rowNode, null) ?? false;
-}
-
 export function startEditingCell(beans: BeanCollection, params: StartEditingCellParams): void {
-    const column = beans.colModel.getCol(params.colKey);
+    const { key, colKey, rowIndex, rowPinned } = params;
+    const column = beans.colModel.getCol(colKey);
     if (!column) {
-        _warn(12, { colKey: params.colKey });
+        _warn(12, { colKey });
         return;
     }
+
     const cellPosition: CellPosition = {
-        rowIndex: params.rowIndex,
-        rowPinned: params.rowPinned || null,
+        rowIndex,
+        rowPinned: rowPinned || null,
         column,
     };
-    const notPinned = params.rowPinned == null;
+
+    const notPinned = rowPinned == null;
     if (notPinned) {
-        ensureIndexVisible(beans, params.rowIndex);
+        ensureIndexVisible(beans, rowIndex);
     }
 
-    ensureColumnVisible(beans, params.colKey);
+    ensureColumnVisible(beans, colKey);
 
     const cell = _getCellByPosition(beans, cellPosition);
     if (!cell) {
         return;
     }
+
+    const { eGui, rowNode } = cell;
     const { focusSvc, gos, editSvc } = beans;
     const isFocusWithinCell = () => {
         const activeElement = _getActiveDomElement(beans);
-        const eCell = cell.eGui;
-        return activeElement !== eCell && !!eCell?.contains(activeElement);
+        return activeElement !== eGui && !!eGui?.contains(activeElement);
     };
+
     const forceBrowserFocus = gos.get('stopEditingWhenCellsLoseFocus') && isFocusWithinCell();
     if (forceBrowserFocus || !focusSvc.isCellFocused(cellPosition)) {
         focusSvc.setFocusedCell({
@@ -91,7 +91,7 @@ export function startEditingCell(beans: BeanCollection, params: StartEditingCell
             preventScrollOnBrowserFocus: true,
         });
     }
-    editSvc?.startEditing(cell.rowNode, cell.column, params.key, true, undefined, 'api');
+    editSvc?.startEditing(rowNode, column, key, true, undefined, 'api');
 }
 
 export function cancelEdits(beans: BeanCollection): void {

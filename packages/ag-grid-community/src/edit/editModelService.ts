@@ -21,7 +21,7 @@ export class EditModelService extends BeanStub implements NamedBean {
     private pendingUpdates: Map<IRowNode, Map<Column, CData>> = new Map();
 
     public removePendingEdit(rowNode: IRowNode, column?: Column | null): void {
-        if (!this._hasPending(rowNode)) {
+        if (!this.hasPending(rowNode)) {
             return;
         }
 
@@ -83,10 +83,6 @@ export class EditModelService extends BeanStub implements NamedBean {
     }
 
     public hasPending(rowNode?: IRowNode | null, column?: Column | null): boolean {
-        return this._hasPending(rowNode, column);
-    }
-
-    private _hasPending(rowNode?: IRowNode | null, column?: Column | null): boolean {
         if (rowNode) {
             const rowEdits = this.pendingUpdates.get(rowNode);
             if (column) {
@@ -98,30 +94,27 @@ export class EditModelService extends BeanStub implements NamedBean {
     }
 
     public startEditing(rowNode: IRowNode, ...columns: Maybe<Column>[]): void {
-        let map = this.pendingUpdates.get(rowNode);
-        if (!map) {
-            map = new Map<Column, CData>();
-        }
+        const map = this.pendingUpdates.get(rowNode) ?? new Map<Column, CData>();
         columns.forEach((col) => col && map!.set(col, undefined));
         this.pendingUpdates.set(rowNode, map);
     }
 
     public stopEditing(rowNode?: IRowNode | null, column?: Column | null): void {
-        if (!this._hasPending(rowNode, column)) {
+        if (!this.hasPending(rowNode, column)) {
             return;
         }
 
         if (rowNode) {
             this.removePendingEdit(rowNode, column);
         } else {
-            for (const pendingRowEdits of this.pendingUpdates.values()) {
-                pendingRowEdits.clear();
-            }
             this.clear();
         }
     }
 
     public clear(): void {
+        for (const pendingRowEdits of this.pendingUpdates.values()) {
+            pendingRowEdits.clear();
+        }
         this.pendingUpdates.clear();
     }
 
@@ -138,8 +131,7 @@ export type CellUpdate = {
     oldValue: any;
 };
 
-export function _createUpdates(beans: BeanCollection): CellUpdate[] {
-    const { editModelSvc } = beans;
+export function _createUpdates({ editModelSvc }: BeanCollection): CellUpdate[] {
     if (!editModelSvc) {
         return []; // Changed from {} to undefined
     }
@@ -151,18 +143,13 @@ export function _createUpdates(beans: BeanCollection): CellUpdate[] {
     }
 
     const updates: CellUpdate[] = [];
-
     rowUpdates.forEach((rowUpdateMap, rowNode) => {
-        if (!rowNode) {
-            return;
-        }
-        const original = rowNode.data;
         rowUpdateMap.forEach((newValue, column) => {
             updates.push({
                 rowNode,
                 column,
                 newValue,
-                oldValue: original[column.getColId()],
+                oldValue: rowNode.data[column.getColId()],
             });
         });
     });

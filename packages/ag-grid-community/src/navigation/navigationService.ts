@@ -2,7 +2,6 @@ import { KeyCode } from '../constants/keyCode';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
-import { _resolveControllers } from '../edit/utils/controllers';
 import type { AgColumn } from '../entities/agColumn';
 import { _getCellByPosition, _getRowNode, _isRowBefore } from '../entities/positionUtils';
 import type { RowNode } from '../entities/rowNode';
