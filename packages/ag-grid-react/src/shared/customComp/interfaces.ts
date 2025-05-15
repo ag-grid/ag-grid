@@ -66,7 +66,7 @@ export interface CustomFilterProps<TData = any, TContext = any, TModel = any>
     onUiChange: () => void;
 }
 
-/** TODO */
+/** Props provided to custom filter components when `enableFilterEvaluators = true` */
 export interface CustomFilterDisplayProps<TData = any, TContext = any, TModel = any>
     extends FilterDisplayParams<TData, TContext, TModel> {}
 
@@ -165,7 +165,7 @@ export interface CustomDateCallbacks extends BaseDate {}
 /** Callbacks for custom filter components */
 export interface CustomFilterCallbacks extends BaseFilter {}
 
-/** TODO */
+/** Callbacks for custom filter components when using `enableFilterEvaluators = true` */
 export interface CustomFilterDisplayCallbacks extends SharedFilterUi {}
 
 /** Callbacks for custom floating filter components */
@@ -196,7 +196,7 @@ export function useGridFilter(callbacks: CustomFilterCallbacks): void {
     return useGridCustomComponent(callbacks);
 }
 
-/** TODO */
+/** Hook to allow custom filter component callbacks to be provided to the grid when using `enableFilterEvaluators = true` */
 export function useGridFilterDisplay(callbacks: CustomFilterDisplayCallbacks): void {
     return useGridCustomComponent(callbacks);
 }

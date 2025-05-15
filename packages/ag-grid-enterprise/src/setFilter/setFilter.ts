@@ -642,35 +642,35 @@ export class SetFilter<V = string>
     }
 
     /**
-     * @deprecated TODO
+     * @deprecated v34 Internal method - should only be called by the grid.
      */
     public override onNewRowsLoaded(): void {
         // do nothing
     }
 
     /**
-     * @deprecated TODO
+     * @deprecated v34 Use the same method on the filter evaluator (`api.getColumnFilterEvaluator()`) instead.
      */
     public setFilterValues(values: (V | null)[]): void {
         this.evaluator.setFilterValues(values);
     }
 
     /**
-     * @deprecated TODO
+     * @deprecated v34 Use the same method on the filter evaluator (`api.getColumnFilterEvaluator()`) instead.
      */
     public resetFilterValues(): void {
         this.evaluator.resetFilterValues();
     }
 
     /**
-     * @deprecated TODO
+     * @deprecated v34 Use the same method on the filter evaluator (`api.getColumnFilterEvaluator()`) instead.
      */
     public refreshFilterValues(): void {
         this.evaluator.refreshFilterValues();
     }
 
     /**
-     * @deprecated TODO
+     * @deprecated v34 Internal method - should only be called by the grid.
      */
     public onAnyFilterChanged(): void {
         // do nothing
@@ -857,31 +857,20 @@ export class SetFilter<V = string>
     }
 
     /**
-     * @deprecated TODO
+     * @deprecated v34 Use the same method on the filter evaluator (`api.getColumnFilterEvaluator()`) instead.
      */
     public getFilterKeys(): SetFilterModelValue {
         return this.evaluator.getFilterKeys();
     }
 
     /**
-     * @deprecated TODO
+     * @deprecated v34 Use the same method on the filter evaluator (`api.getColumnFilterEvaluator()`) instead.
      */
     public getFilterValues(): (V | null)[] {
         return this.evaluator.getFilterValues();
     }
 
-    /**
-     * @deprecated TODO
-     */
-    public getValues(): SetFilterModelValue {
-        return this.getFilterKeys();
-    }
-
-    // just make this private
-    /**
-     * @deprecated TODO
-     */
-    public refreshVirtualList(): void {
+    private refreshVirtualList(): void {
         if (this.params.refreshValuesOnOpen) {
             this.refreshFilterValues();
         } else {

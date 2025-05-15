@@ -39,7 +39,7 @@ import type { Column, ColumnGroup, ColumnPinnedType, ProvidedColumnGroup } from 
 import type { IColumnToolPanel } from '../interfaces/iColumnToolPanel';
 import type { IContextMenuParams } from '../interfaces/iContextMenu';
 import type { ExcelExportMultipleSheetParams, ExcelExportParams } from '../interfaces/iExcelCreator';
-import type { FilterModel, IFilter } from '../interfaces/iFilter';
+import type { FilterEvaluator, FilterModel, IFilter } from '../interfaces/iFilter';
 import type { IFiltersToolPanel } from '../interfaces/iFiltersToolPanel';
 import type { FindCellParams, FindCellValueParams, FindMatch, FindPart } from '../interfaces/iFind';
 import type { AgModuleName } from '../interfaces/iModule';
@@ -878,6 +878,16 @@ export interface _ColumnFilterGridApi {
      * @agModule `TextFilterModule` / `NumberFilterModule` / `DateFilterModule` / `SetFilterModule` / `MultiFilterModule` / `CustomFilterModule`
      */
     getColumnFilterInstance<TFilter extends IFilter>(key: string | Column): Promise<TFilter | null | undefined>;
+
+    /**
+     * Returns the filter evaluator instance for a column.
+     * Used when `enableFilterEvaluators = true`, or when using a grid-provided filter.
+     * `key` can be a column ID or a `Column` object.
+     * @agModule `TextFilterModule` / `NumberFilterModule` / `DateFilterModule` / `SetFilterModule` / `MultiFilterModule` / `CustomFilterModule`
+     */
+    getColumnFilterEvaluator<TFilterEvaluator extends FilterEvaluator>(
+        key: string | Column
+    ): TFilterEvaluator | undefined;
 
     /**
      * Destroys a filter. Useful to force a particular filter to be created from scratch again.

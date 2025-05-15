@@ -69,7 +69,11 @@ export interface IFilterDef {
     filter?: any;
     /** Params to be passed to the filter component specified in `filter`. */
     filterParams?: any;
-    /** TODO */
+    /**
+     * Filter evaluator to use for this column (when `enableFilterEvaluators = true`).
+     * Either a function that returns an evaluator,
+     * or a `string` key for the `filterEvaluators` grid option.
+     */
     filterEvaluator?: string | FilterEvaluatorGeneratorFunc;
 
     /**
@@ -189,11 +193,32 @@ export interface IDoesFilterPassParams<TData = any> {
 
 export type FilterAction = 'apply' | 'clear' | 'reset' | 'cancel';
 
+/** Common filter params for all column filters (when using `enableFilterEvaluators = true`) */
 export interface FilterWrapperParams {
-    /** TODO */
+    /** If `true`, the filter will be wrapped in a `form` element that applies on submit. */
     useForm?: boolean;
+    /**
+     * Specifies the buttons to be shown in the filter, in the order they should be displayed in.
+     * The options are:
+     *
+     *  - `'apply'`: If the Apply button is present, the filter is only applied after the user hits the Apply button.
+     *  - `'clear'`: The Clear button will clear the (form) details of the filter without removing any active filters on the column.
+     *  - `'reset'`: The Reset button will clear the details of the filter and any active filters on that column.
+     *  - `'cancel'`: The Cancel button will discard any changes that have been made to the filter in the UI, restoring the applied model.
+     */
     buttons?: FilterAction[];
+    /**
+     * If the Apply button is present, the filter popup will be closed immediately when the Apply
+     * or Reset button is clicked if this is set to `true`.
+     *
+     * @default false
+     */
     closeOnApply?: boolean;
+    /**
+     * If set to `true`, will disable and hide any `buttons`.
+     *
+     * @default false
+     */
     readOnly?: boolean;
 }
 
@@ -272,11 +297,18 @@ export interface FilterDisplayParams<TData = any, TContext = any, TModel = any, 
     model: TModel | null;
     /** The current state to display in the component. */
     state: FilterDisplayState<TModel, TState>;
-    /** Callback that should be called every time the model in the component changes. */
+    /**
+     * Callback that should be called every time the model in the component changes.
+     * @param additionalEventAttributes If provided, will be passed to the filter changed event
+     */
     onModelChange: (model: TModel | null, additionalEventAttributes?: any) => void;
     /** If using the filter with apply buttons, callback that should be called every time the unapplied model in the component changes. */
     onStateChange: (componentState: FilterDisplayState<TModel, TState>) => void;
-    /** TODO */
+    /**
+     * Can be called to manually apply any of the filter actions that would be done via buttons.
+     * @param additionalEventAttributes If provided, will be passed to the filter changed event
+     * @param event If the action was via the keyboard, provide the event here for correct focus handling.
+     */
     onAction: (action: FilterAction, additionalEventAttributes?: any, event?: KeyboardEvent) => void;
     /**
      * Callback that can be optionally called every time the filter UI changes.

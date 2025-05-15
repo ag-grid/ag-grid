@@ -14,7 +14,7 @@ export interface SetFilterModel extends ProvidedFilterModel {
 }
 
 /**
- * @deprecated TODO
+ * @deprecated v34 Use `SetFilterUi` for the filter UI component, and `SetFilterEvaluator` for the filter evaluator.
  */
 export interface ISetFilter<V = string> extends IProvidedFilter {
     readonly filterType: 'set';

@@ -704,12 +704,14 @@ export interface GridOptions<TData = any> {
      */
     suppressSetFilterByDefault?: boolean;
     /**
-     * TODO
+     * Enable filter evaluators for custom filter components.
+     * Requires all custom filters need to be implemented using evaluators.
      * @initial
      */
     enableFilterEvaluators?: boolean;
     /**
-     * TODO
+     * A map of filter evaluator key to filter evaluator function.
+     * Allows for filter evaluator keys to be used in `colDef.filterEvaluator`.
      * @initial
      */
     filterEvaluators?: { [key: string]: FilterEvaluatorGeneratorFunc };
@@ -2407,12 +2409,11 @@ export interface GridOptions<TData = any> {
      */
     onFilterModified?(event: FilterModifiedEvent<TData>): void;
     /**
-     * TODO - update
+     * Filter UI was modified (when using `enableFilterEvaluators = true`).
      */
     onFilterUiChanged?(event: FilterUiChangedEvent<TData>): void;
     /**
-     * TODO - update
-     * Floating filter modified. Only used when `enableFilterEvaluators` is enabled.
+     * Floating filter UI modified (when using `enableFilterEvaluators = true`.
      */
     onFloatingFilterUiChanged?(event: FloatingFilterUiChangedEvent<TData>): void;
     /**

@@ -11,7 +11,7 @@ import type { ElementParams } from '../../utils/dom';
 import { _debounce } from '../../utils/function';
 import type { AgPromise } from '../../utils/promise';
 import type { ComponentSelector } from '../../widgets/component';
-import { Component, RefPlaceholder } from '../../widgets/component';
+import { Component } from '../../widgets/component';
 import { ManagedFocusFeature } from '../../widgets/managedFocusFeature';
 import { FILTER_LOCALE_TEXT } from '../filterLocaleText';
 import { getDebounceMs, isUseApplyButton } from '../floating/provided/providedFilterUtils';
@@ -53,9 +53,6 @@ export abstract class ProvidedFilter<
 
     private positionableFeature: PositionableFeature | undefined;
 
-    /** @deprecated TODO */
-    private readonly eFilterBody: HTMLElement = RefPlaceholder;
-
     constructor(
         private readonly filterNameKey: keyof typeof FILTER_LOCALE_TEXT,
         private readonly cssIdentifier: string
@@ -76,7 +73,6 @@ export abstract class ProvidedFilter<
     public postConstruct(): void {
         const element: ElementParams = {
             tag: 'div',
-            ref: 'eFilterBody',
             cls: `ag-filter-body-wrapper ag-${this.cssIdentifier}-body-wrapper`,
             children: [this.createBodyTemplate()],
         };

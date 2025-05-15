@@ -8,7 +8,7 @@ import type {
     IMultiFilterModel,
     IMultiFilterParams,
 } from 'ag-grid-community';
-import { BeanStub, _removeFromArray } from 'ag-grid-community';
+import { BeanStub, _removeFromArray, _warn } from 'ag-grid-community';
 
 import {
     forEachReverse,
@@ -42,7 +42,7 @@ export class MultiFilterEvaluator
             const wrapper = this.beans.colFilter!.createEvaluator(params.column as AgColumn, def, 'agTextColumnFilter');
             this.evaluatorWrappers.push(wrapper);
             if (!wrapper) {
-                // TODO - warning
+                _warn(278, { colId: params.column.getColId() });
                 return;
             }
             const { evaluator, evaluatorParams } = wrapper;
