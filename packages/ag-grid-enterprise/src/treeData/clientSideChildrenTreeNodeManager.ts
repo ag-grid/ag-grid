@@ -193,13 +193,13 @@ export class ClientSideChildrenTreeNodeManager<TData>
             const pinnedRowModel = this.beans.pinnedRowModel;
             for (let i = 0, len = oldAllLeafChildren.length; i < len; ++i) {
                 const row = oldAllLeafChildren[i];
-                const data = row.data;
-                if (!data || !processedData.has(data)) {
-                    if (row.pinnedSibling) {
-                        pinnedRowModel?.pinRow(row.pinnedSibling, null);
-                    }
+                if (!processedData.has(row.data)) {
                     row.treeNode = null;
                     row.treeNodeFlags = 0;
+                    const pinnedSibling = row.pinnedSibling;
+                    if (pinnedSibling) {
+                        pinnedRowModel?.pinRow(pinnedSibling, null);
+                    }
                     row.clearRowTopAndRowIndex();
                     this.rowNodeDeleted(row);
                     if (row.isSelected()) {
