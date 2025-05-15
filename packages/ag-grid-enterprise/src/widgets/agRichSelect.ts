@@ -654,6 +654,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
         if (!this.isPickerDisplayed) {
             return;
         }
+
         e.preventDefault();
 
         if (this.listComponent?.getCurrentList()) {
@@ -753,7 +754,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
     }
 
     protected override onKeyDown(e: KeyboardEvent): void {
-        const { key } = e;
+        const { key, isComposing } = e;
 
         const { isPickerDisplayed, config, listComponent, pickerComponent } = this;
         const { allowTyping, multiSelect, suppressDeselectAll } = config;
@@ -789,12 +790,15 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
                 break;
             case KeyCode.DOWN:
             case KeyCode.UP:
-                this.onNavigationKeyDown(e, key, () => {
-                    if (multiSelect) {
-                        this.doWhileBlockingAnnouncement(() => this.eWrapper.focus());
-                        this.announceAriaValue(this.ariaToggleSelection);
-                    }
-                });
+                if (!isComposing) {
+                    this.onNavigationKeyDown(e, key, () => {
+                        if (multiSelect) {
+                            this.doWhileBlockingAnnouncement(() => this.eWrapper.focus());
+                            this.announceAriaValue(this.ariaToggleSelection);
+                        }
+                    });
+                }
+
                 break;
             case KeyCode.ESCAPE:
                 if (isPickerDisplayed) {
@@ -806,12 +810,17 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
                 }
                 break;
             case KeyCode.ENTER:
-                this.onEnterKeyDown(e);
+                if (isComposing) {
+                    e.preventDefault();
+                } else {
+                    this.onEnterKeyDown(e);
+                }
+
                 break;
             case KeyCode.SPACE:
                 e.preventDefault();
 
-                if (isPickerDisplayed && multiSelect && listComponent) {
+                if (!isComposing && isPickerDisplayed && multiSelect && listComponent) {
                     const lastItemHovered = listComponent.getLastItemHovered();
 
                     if (lastItemHovered) {
