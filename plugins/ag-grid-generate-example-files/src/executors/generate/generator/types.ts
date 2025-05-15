@@ -97,6 +97,7 @@ export interface GeneratedContents extends ExampleConfig {
     entryFileName: string;
     mainFileName: string;
     files: FileContents;
+    sourceFileList: string[];
     scriptFiles: string[];
     styleFiles: string[];
     htmlFiles: string[];

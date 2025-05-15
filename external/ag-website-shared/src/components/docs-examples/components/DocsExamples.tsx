@@ -1,4 +1,4 @@
-import type { InternalFramework } from '@ag-grid-types';
+import type { InternalFramework, Library } from '@ag-grid-types';
 import { INTERNAL_FRAMEWORKS } from '@constants';
 import { type FunctionComponent, useCallback, useRef } from 'react';
 import { useMemo, useState } from 'react';
@@ -10,6 +10,7 @@ import {
     FiltersToolPanelModule,
     RowGroupingModule,
     RowGroupingPanelModule,
+    SetFilterModule,
     SideBarModule,
     StatusBarModule,
 } from 'ag-grid-enterprise';
@@ -25,19 +26,61 @@ import { FrameworkLogoCellRenderer } from './cell-renderers/FrameworkLogoCellRen
 import { LinkCellRenderer } from './cell-renderers/LinkCellRenderer';
 import { PageCountComponent } from './cell-renderers/PageCountComponent';
 
-export type ExampleProperty = 'isEnterprise' | 'isIntegratedCharts' | 'isLocale' | 'hasExampleConsoleLog';
+export type ExampleProperty =
+    | 'sourceFileList'
+    | 'isEnterprise'
+    | 'isIntegratedCharts'
+    | 'isLocale'
+    | 'hasExampleConsoleLog';
 
 export interface Props {
+    library: Library;
     properties?: ExampleProperty[];
     exampleContents: any[];
 }
+type Environment = 'local' | 'staging' | 'production';
 
 const LOCALSTORAGE_PREFIX = 'documentation:debug';
 const LOCALSTORAGE_COL_STATE_KEY = `${LOCALSTORAGE_PREFIX}:colState`;
 
+const URL_MAPPING: Record<
+    Library,
+    Record<Environment, ({ pageName, exampleName }: { pageName: string; exampleName: string }) => string>
+> = {
+    grid: {
+        local: ({ pageName, exampleName }) =>
+            `https://localhost:4610/javascript-data-grid/${pageName}/#example-${exampleName}`,
+        staging: ({ pageName, exampleName }) =>
+            `https://grid-staging.ag-grid.com/javascript-data-grid/${pageName}/#example-${exampleName}`,
+        production: ({ pageName, exampleName }) =>
+            `https://www.ag-grid.com/javascript-data-grid/${pageName}/#example-${exampleName}`,
+    },
+    charts: {
+        local: ({ pageName, exampleName }) =>
+            `https://localhost:4600/charts/javascript/${pageName}/#example-${exampleName}`,
+        staging: ({ pageName, exampleName }) =>
+            `https://charts-staging.ag-grid.com/javascript/${pageName}/#example-${exampleName}`,
+        production: ({ pageName, exampleName }) =>
+            `https://www.ag-grid.com/charts/javascript/${pageName}/#example-${exampleName}`,
+    },
+};
+
 const ALL_PROPERTIES: (ColDef & {
     field: ExampleProperty;
 })[] = [
+    {
+        field: 'sourceFileList',
+        headerName: 'Source Files',
+        minWidth: 200,
+        filter: 'agSetColumnFilter',
+        valueFormatter: ({ value }) => {
+            if (!value) {
+                return '';
+            }
+
+            return Array.isArray(value) ? value.join(', ') : value;
+        },
+    },
     {
         field: 'isEnterprise',
         headerName: 'Enterprise',
@@ -71,7 +114,7 @@ const ALL_PROPERTIES: (ColDef & {
     },
 ];
 
-export const DocsExamples: FunctionComponent<Props> = ({ properties = [], exampleContents }) => {
+export const DocsExamples: FunctionComponent<Props> = ({ library, properties = [], exampleContents }) => {
     const gridRef = useRef<AgGridReact>(null);
     const [colDefs] = useState<(ColDef | ColGroupDef)[]>([
         {
@@ -249,6 +292,57 @@ export const DocsExamples: FunctionComponent<Props> = ({ properties = [], exampl
         );
     }, [gridRef]);
 
+    const copyFilteredRows = useCallback(() => {
+        const rows = [
+            [
+                'Page Name',
+                'Example Name',
+                'Source Files',
+                'Enterprise',
+                'Integrated Charts',
+                'Locale',
+                'Console Log',
+                'Local URL',
+                'Staging URL',
+                'Production URL',
+            ],
+        ];
+        gridRef.current!.api.forEachNodeAfterFilterAndSort((node) => {
+            if (node.group) {
+                return;
+            }
+
+            const {
+                pageName,
+                exampleName,
+                sourceFileList,
+                isEnterprise,
+                isIntegratedCharts,
+                isLocale,
+                hasExampleConsoleLog,
+            } = node.data;
+            const localUrl = URL_MAPPING[library].local({ pageName, exampleName });
+            const stagingUrl = URL_MAPPING[library].staging({ pageName, exampleName });
+            const productionUrl = URL_MAPPING[library].production({ pageName, exampleName });
+            const row = [
+                pageName,
+                exampleName,
+                sourceFileList?.join(', '),
+                isEnterprise,
+                isIntegratedCharts,
+                isLocale,
+                hasExampleConsoleLog,
+                localUrl,
+                stagingUrl,
+                productionUrl,
+            ];
+            rows.push(row);
+        });
+
+        const rowsText = rows.map((row) => row.join('\t')).join('\n');
+        navigator.clipboard.writeText(rowsText);
+    }, [gridRef]);
+
     const saveState = useCallback(() => {
         const currentColState = gridRef.current!.api.getColumnState();
         setColState(currentColState);
@@ -279,6 +373,9 @@ export const DocsExamples: FunctionComponent<Props> = ({ properties = [], exampl
                     <input type="text" id="filter-text-box" placeholder="Filter..." onInput={onFilterTextBoxChanged} />
                 </div>
                 <div className={styles.controlsState}>
+                    <button className={`button-secondary ${styles.copyFilteredRows}`} onClick={copyFilteredRows}>
+                        Copy Filtered Rows
+                    </button>
                     <button className="button-secondary" onClick={saveState}>
                         Save
                     </button>
@@ -300,6 +397,7 @@ export const DocsExamples: FunctionComponent<Props> = ({ properties = [], exampl
                     FiltersToolPanelModule,
                     ColumnsToolPanelModule,
                     RowGroupingPanelModule,
+                    SetFilterModule,
                 ]}
                 rowData={exampleContents}
                 columnDefs={colDefs}

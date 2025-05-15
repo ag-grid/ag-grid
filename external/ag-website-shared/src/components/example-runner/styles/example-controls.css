@@ -217,6 +217,7 @@ body > #highlighter {
     align-items: center;
     flex-wrap: wrap;
     gap: var(--row-gap);
+    font-variant: tabular-nums;
 }
 
 .controls-row + .controls-row {

@@ -10,12 +10,18 @@ export default function parseSitemap(xml: string) {
     return categorizeUrls(parsedDoc);
 }
 
+const CHARTS_PREFIX = '/charts';
+
 const categorizeUrls = (urls: string[]): CategorizedSitemap => {
     const categorisedSitemap: CategorizedSitemap = {};
 
     urls.forEach((url: string) => {
         const urlObj = new URL(url);
-        const path = urlObj.pathname.split('/').filter(Boolean);
+        // Ignore charts prefix (only on some environments)
+        const pathname = urlObj.pathname.startsWith(CHARTS_PREFIX)
+            ? urlObj.pathname.slice(CHARTS_PREFIX.length)
+            : urlObj.pathname;
+        const path = pathname.split('/').filter(Boolean);
 
         // Determine category
         if (path.length === 0) return;

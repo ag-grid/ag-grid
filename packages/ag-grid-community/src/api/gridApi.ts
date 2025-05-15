@@ -1003,10 +1003,18 @@ export interface _FindApi<TData> {
 
 export interface _StateGridApi {
     /**
-     * Get the current state of the grid. Can be used in conjunction with the `initialState` grid option to save and restore grid state.
+     * Get the current state of the grid.
+     * Can be used in conjunction with the `initialState` grid option or `api.setState()` to save and restore grid state.
      * @agModule `GridStateModule`
      */
     getState(): GridState;
+    /**
+     * Set the current state of the grid.
+     * Can be used in conjunction with `api.getState()` or `onStateUpdated` to save and restore grid state.
+     * This method should only be used to restore state;
+     * it should not be called on every state update (the grid does not support being used as a controlled component).
+     */
+    setState(state: GridState): void;
 }
 
 export interface _PaginationGridApi {
