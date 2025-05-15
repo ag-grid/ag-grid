@@ -430,7 +430,7 @@ describe('ag-grid hierarchical tree data reset', () => {
         `);
     });
 
-    test('tree data setRowData with id maintains selection and expanded state, and follows order', async () => {
+    test.only('tree data setRowData with id maintains selection and expanded state, and follows order', async () => {
         const rowData1 = [
             {
                 id: 'g0',
@@ -578,8 +578,17 @@ describe('ag-grid hierarchical tree data reset', () => {
         `);
 
         api.setGridOption('rowData', rowData3);
+        api.getRowNode('g3')!.setExpanded(false, undefined, true);
 
         await new GridRows(api, 'update 2', gridRowsOptions).check(`
+            ROOT id:ROOT_NODE_ID
+            ├── 100 LEAF id:100 label:"100-v3" x:"a"
+            └─┬ g3 GROUP collapsed id:g3 label:"g-C" x:"C"
+            · └── 3 LEAF hidden id:3 label:"3-v3" x:"D"
+        `);
+
+        api.setGridOption('rowData', rowData3);
+        await new GridRows(api, 'update 2 (repeat)', gridRowsOptions).check(`
             ROOT id:ROOT_NODE_ID
             ├── 100 LEAF id:100 label:"100-v3" x:"a"
             └─┬ g3 GROUP collapsed id:g3 label:"g-C" x:"C"
