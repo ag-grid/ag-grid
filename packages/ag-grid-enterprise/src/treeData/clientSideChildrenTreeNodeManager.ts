@@ -211,7 +211,7 @@ export class ClientSideChildrenTreeNodeManager<TData>
         }
 
         if (!canReorder) {
-            // First process all the old children that weren't weren't removed
+            // First append all the old children that weren't removed
             if (oldAllLeafChildren) {
                 const removals = changedRowNodes.removals;
                 for (let i = 0, len = oldAllLeafChildren.length; i < len; ++i) {
@@ -222,7 +222,7 @@ export class ClientSideChildrenTreeNodeManager<TData>
                 }
             }
 
-            // Now append all the new children that weren't added
+            // Now append all the new children
             for (const row of changedRowNodes.adds) {
                 (row as TreeRow<TData>).sourceRowIndex = allLeafChildren.push(row) - 1;
             }
