@@ -174,7 +174,6 @@ export class SelectionColService extends BeanStub implements NamedBean, IColumnC
             // We don't support row spanning in the selection column
             rowSpan: undefined,
             spanRows: undefined,
-            headerName: undefined,
         };
     }
 
