@@ -10,7 +10,8 @@ import type { ICombinedSimpleModel, Tuple } from '../iSimpleFilter';
 import { SimpleFilter } from '../simpleFilter';
 import { removeItems } from '../simpleFilterUtils';
 import { DateCompWrapper } from './dateCompWrapper';
-import { DateFilterHelper } from './dateFilterHelper';
+import { DEFAULT_DATE_FILTER_OPTIONS } from './dateFilterConstants';
+import { mapValuesFromDateFilterModel } from './dateFilterUtils';
 import type { DateFilterModel, IDateFilterParams } from './iDateFilter';
 
 const DEFAULT_MIN_YEAR = 1000;
@@ -35,7 +36,7 @@ export class DateFilter extends SimpleFilter<DateFilterModel, Date, DateCompWrap
     public readonly filterType = 'date' as const;
 
     constructor() {
-        super('dateFilter', new DateFilterHelper());
+        super('dateFilter', mapValuesFromDateFilterModel, DEFAULT_DATE_FILTER_OPTIONS);
     }
 
     public override afterGuiAttached(params?: IAfterGuiAttachedParams): void {

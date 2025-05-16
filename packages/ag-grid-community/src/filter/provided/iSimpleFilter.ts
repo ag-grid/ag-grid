@@ -1,6 +1,7 @@
 import type { IFilterParams } from '../../interfaces/iFilter';
 import type { IFloatingFilterParent } from '../floating/floatingFilter';
 import type { IProvidedFilter, IProvidedFilterParams, ProvidedFilterModel } from './iProvidedFilter';
+import type { OptionsFactory } from './optionsFactory';
 
 export interface IFilterOptionDef {
     /** A unique key that does not clash with the built-in filter keys. */
@@ -106,3 +107,8 @@ export interface ICombinedSimpleModel<M extends ISimpleFilterModel> extends Prov
 }
 
 export type Tuple<T> = (T | null)[];
+
+export type MapValuesFromSimpleFilterModel<TModel extends ISimpleFilterModel, TValue> = (
+    filterModel: TModel | null,
+    optionsFactory: OptionsFactory
+) => Tuple<TValue>;

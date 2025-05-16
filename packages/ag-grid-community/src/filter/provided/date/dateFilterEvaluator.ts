@@ -1,7 +1,8 @@
 import type { Comparator } from '../iScalarFilter';
 import { ScalarFilterEvaluator } from '../scalarFilterEvaluator';
-import { DateFilterHelper } from './dateFilterHelper';
+import { DEFAULT_DATE_FILTER_OPTIONS } from './dateFilterConstants';
 import { DateFilterModelFormatter } from './dateFilterModelFormatter';
+import { mapValuesFromDateFilterModel } from './dateFilterUtils';
 import type { DateFilterModel, IDateFilterParams } from './iDateFilter';
 
 function defaultDateComparator(filterDate: Date, cellValue: any): number {
@@ -22,7 +23,7 @@ export class DateFilterEvaluator extends ScalarFilterEvaluator<DateFilterModel, 
     protected readonly FilterModelFormatterClass = DateFilterModelFormatter;
 
     constructor() {
-        super(new DateFilterHelper());
+        super(mapValuesFromDateFilterModel, DEFAULT_DATE_FILTER_OPTIONS);
     }
 
     protected override comparator(): Comparator<Date> {

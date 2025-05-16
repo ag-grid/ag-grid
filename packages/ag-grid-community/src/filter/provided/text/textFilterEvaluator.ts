@@ -3,8 +3,9 @@ import type { ICombinedSimpleModel, ISimpleFilterModelType, Tuple } from '../iSi
 import { SimpleFilterEvaluator } from '../simpleFilterEvaluator';
 import { isBlank } from '../simpleFilterUtils';
 import type { ITextFilterParams, TextFilterModel, TextFormatter, TextMatcher } from './iTextFilter';
-import { TextFilterHelper } from './textFilterHelper';
+import { DEFAULT_TEXT_FILTER_OPTIONS } from './textFilterConstants';
 import { TextFilterModelFormatter } from './textFilterModelFormatter';
+import { mapValuesFromTextFilterModel } from './textFilterUtils';
 
 const defaultMatcher: TextMatcher = ({ filterOption, value, filterText }) => {
     if (filterText == null) {
@@ -42,7 +43,7 @@ export class TextFilterEvaluator extends SimpleFilterEvaluator<TextFilterModel, 
     private formatter: TextFormatter;
 
     constructor() {
-        super(new TextFilterHelper());
+        super(mapValuesFromTextFilterModel, DEFAULT_TEXT_FILTER_OPTIONS);
     }
 
     protected override updateParams(

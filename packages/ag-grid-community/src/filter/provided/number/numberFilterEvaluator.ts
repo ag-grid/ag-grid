@@ -1,14 +1,15 @@
 import type { Comparator } from '../iScalarFilter';
 import { ScalarFilterEvaluator } from '../scalarFilterEvaluator';
 import type { INumberFilterParams, NumberFilterModel } from './iNumberFilter';
-import { NumberFilterHelper } from './numberFilterHelper';
+import { DEFAULT_NUMBER_FILTER_OPTIONS } from './numberFilterConstants';
 import { NumberFilterModelFormatter } from './numberFilterModelFormatter';
+import { mapValuesFromNumberFilterModel } from './numberFilterUtils';
 
 export class NumberFilterEvaluator extends ScalarFilterEvaluator<NumberFilterModel, number, INumberFilterParams> {
     protected readonly FilterModelFormatterClass = NumberFilterModelFormatter;
 
     constructor() {
-        super(new NumberFilterHelper());
+        super(mapValuesFromNumberFilterModel, DEFAULT_NUMBER_FILTER_OPTIONS);
     }
 
     protected override comparator(): Comparator<number> {

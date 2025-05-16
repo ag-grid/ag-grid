@@ -6,8 +6,8 @@ import { AgInputTextField } from '../../../widgets/agInputTextField';
 import type { ICombinedSimpleModel, Tuple } from '../iSimpleFilter';
 import { SimpleFilter } from '../simpleFilter';
 import type { INumberFilterParams, NumberFilterModel } from './iNumberFilter';
-import { NumberFilterHelper } from './numberFilterHelper';
-import { getAllowedCharPattern, processNumberFilterValue } from './numberFilterUtils';
+import { DEFAULT_NUMBER_FILTER_OPTIONS } from './numberFilterConstants';
+import { getAllowedCharPattern, mapValuesFromNumberFilterModel, processNumberFilterValue } from './numberFilterUtils';
 
 /** temporary type until `NumberFilterParams` is updated as breaking change */
 type NumberFilterDisplayParams = INumberFilterParams &
@@ -25,7 +25,7 @@ export class NumberFilter extends SimpleFilter<
     public readonly filterType = 'number' as const;
 
     constructor() {
-        super('numberFilter', new NumberFilterHelper());
+        super('numberFilter', mapValuesFromNumberFilterModel, DEFAULT_NUMBER_FILTER_OPTIONS);
     }
 
     protected override defaultDebounceMs: number = 500;

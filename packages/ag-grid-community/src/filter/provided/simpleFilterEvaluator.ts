@@ -11,10 +11,10 @@ import type {
     ISimpleFilterModel,
     ISimpleFilterModelType,
     ISimpleFilterParams,
+    MapValuesFromSimpleFilterModel,
     Tuple,
 } from './iSimpleFilter';
 import { OptionsFactory } from './optionsFactory';
-import type { SimpleFilterHelper } from './simpleFilterHelper';
 import type { SimpleFilterModelFormatter } from './simpleFilterModelFormatter';
 import { evaluateCustomFilter } from './simpleFilterUtils';
 
@@ -36,7 +36,10 @@ export abstract class SimpleFilterEvaluator<
     private optionsFactory: OptionsFactory;
     private filterModelFormatter: SimpleFilterModelFormatter<ISimpleFilterParams>;
 
-    constructor(private readonly helper: SimpleFilterHelper<TModel, TValue>) {
+    constructor(
+        private readonly mapValuesFromModel: MapValuesFromSimpleFilterModel<TModel, TValue>,
+        private readonly defaultOptions: string[]
+    ) {
         super();
     }
 
@@ -53,7 +56,7 @@ export abstract class SimpleFilterEvaluator<
         const filterParams = params.filterParams;
         const optionsFactory = new OptionsFactory();
         this.optionsFactory = optionsFactory;
-        optionsFactory.init(filterParams, this.helper.defaultOptions);
+        optionsFactory.init(filterParams, this.defaultOptions);
 
         this.filterModelFormatter = new this.FilterModelFormatterClass(
             this.getLocaleTextFunc.bind(this),
@@ -70,7 +73,7 @@ export abstract class SimpleFilterEvaluator<
         if (params.source === 'colDef') {
             const filterParams = params.filterParams;
             const optionsFactory = this.optionsFactory;
-            optionsFactory.refresh(filterParams, this.helper.defaultOptions);
+            optionsFactory.refresh(filterParams, this.defaultOptions);
             this.filterModelFormatter.updateParams({ optionsFactory, filterParams });
 
             this.updateParams(params);
@@ -127,7 +130,7 @@ export abstract class SimpleFilterEvaluator<
         // Invalid when one of the existing condition options is not in new options list
         const newOptionsList =
             filterOptions?.map((option) => (typeof option === 'string' ? option : option.displayKey)) ??
-            this.helper.defaultOptions;
+            this.defaultOptions;
 
         const allConditionsExistInNewOptionsList =
             !conditions ||
@@ -160,7 +163,7 @@ export abstract class SimpleFilterEvaluator<
     /** returns true if the row passes the said condition */
     private individualConditionPasses(params: IDoesFilterPassParams, filterModel: TModel, cellValue: any) {
         const optionsFactory = this.optionsFactory;
-        const values = this.helper.mapValuesFromModel(filterModel, this.optionsFactory);
+        const values = this.mapValuesFromModel(filterModel, optionsFactory);
         const customFilterOption = optionsFactory.getCustomOption(filterModel.type);
 
         const customFilterResult = evaluateCustomFilter<TValue>(customFilterOption, values, cellValue);

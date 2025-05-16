@@ -121,7 +121,8 @@ export class FilterWrapperComp extends Component {
     }
 
     private close(e?: Event): void {
-        if (!this.hidePopup) {
+        const hidePopup = this.hidePopup;
+        if (!hidePopup) {
             return;
         }
 
@@ -133,7 +134,7 @@ export class FilterWrapperComp extends Component {
             params = { keyboardEvent };
         }
 
-        this.hidePopup(params!);
+        hidePopup(params!);
         this.hidePopup = null;
     }
 

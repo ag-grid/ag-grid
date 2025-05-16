@@ -5,8 +5,8 @@ import { AgInputTextField } from '../../../widgets/agInputTextField';
 import type { ICombinedSimpleModel, Tuple } from '../iSimpleFilter';
 import { SimpleFilter } from '../simpleFilter';
 import type { ITextFilterParams, TextFilterModel } from './iTextFilter';
-import { TextFilterHelper } from './textFilterHelper';
-import { trimInputForFilter } from './textFilterUtils';
+import { DEFAULT_TEXT_FILTER_OPTIONS } from './textFilterConstants';
+import { mapValuesFromTextFilterModel, trimInputForFilter } from './textFilterUtils';
 
 /** temporary type until `TextFilterParams` is updated as breaking change */
 type TextFilterDisplayParams = ITextFilterParams &
@@ -19,7 +19,7 @@ export class TextFilter extends SimpleFilter<TextFilterModel, string, AgInputTex
     private readonly eValuesTo: AgInputTextField[] = [];
 
     constructor() {
-        super('textFilter', new TextFilterHelper());
+        super('textFilter', mapValuesFromTextFilterModel, DEFAULT_TEXT_FILTER_OPTIONS);
     }
 
     protected override defaultDebounceMs: number = 500;
@@ -80,8 +80,9 @@ export class TextFilter extends SimpleFilter<TextFilterModel, string, AgInputTex
     protected createValueElement(): HTMLElement {
         const eCondition = _createElement({ tag: 'div', cls: 'ag-filter-body', role: 'presentation' });
 
-        this.createFromToElement(eCondition, this.eValuesFrom, 'from');
-        this.createFromToElement(eCondition, this.eValuesTo, 'to');
+        const { eValuesFrom, eValuesTo } = this;
+        this.createFromToElement(eCondition, eValuesFrom, 'from');
+        this.createFromToElement(eCondition, eValuesTo, 'to');
 
         return eCondition;
     }
@@ -96,7 +97,8 @@ export class TextFilter extends SimpleFilter<TextFilterModel, string, AgInputTex
 
     protected removeValueElements(startPosition: number, deleteCount?: number): void {
         const removeComps = (eGui: AgInputTextField[]) => this.removeComponents(eGui, startPosition, deleteCount);
-        removeComps(this.eValuesFrom);
-        removeComps(this.eValuesTo);
+        const { eValuesFrom, eValuesTo } = this;
+        removeComps(eValuesFrom);
+        removeComps(eValuesTo);
     }
 }

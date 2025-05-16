@@ -619,11 +619,13 @@ export interface Props<TData> {
          * @agModule TextFilterModule / NumberFilterModule / DateFilterModule / MultiFilterModule / CustomFilterModule
          */
     suppressSetFilterByDefault?: boolean | undefined,
-    /** TODO
+    /** Enable filter evaluators for custom filter components.
+         * Requires all custom filters need to be implemented using evaluators.
          * @initial
          */
     enableFilterEvaluators?: boolean | undefined,
-    /** TODO
+    /** A map of filter evaluator key to filter evaluator function.
+         * Allows for filter evaluator keys to be used in `colDef.filterEvaluator`.
          * @initial
          */
     filterEvaluators?: { [key: string]: FilterEvaluatorGeneratorFunc } | undefined,

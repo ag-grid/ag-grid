@@ -36,8 +36,7 @@ export class FilterButtonComp extends Component<FilterAction> {
         const eGui = this.getGui();
         _clearElement(eGui);
         let eApplyButton: HTMLElement | undefined;
-        this.buttonListeners.forEach((destroyFunc) => destroyFunc());
-        this.buttonListeners = [];
+        this.destroyListeners();
 
         // Instead of appending each button to the DOM individually, we create a fragment and append that
         // to the DOM once. This is much faster than appending each button individually.
