@@ -896,6 +896,8 @@ export class ColumnFilterService
                     evaluatorName = providedFilterEvaluator as EvaluatorName;
                 }
             }
+        } else {
+            filterEvaluator = providedFilterEvaluator;
         }
         if (!filterEvaluator) {
             let filterName: string | undefined;
