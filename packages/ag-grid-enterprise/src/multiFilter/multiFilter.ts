@@ -22,6 +22,7 @@ import {
     FilterWrapperComp,
     LocalEventService,
     ProvidedFilter,
+    _getFilterModel,
     _refreshEvaluatorAndUi,
     _refreshFilterUi,
     _removeFromArray,
@@ -66,7 +67,7 @@ export class MultiFilter extends BaseMultiFilter<MultiFilterWrapper> implements 
         this.params = params as unknown as MultiFilterDisplayParams;
         this.filterDefs = getMultiFilterDefs(params);
 
-        const initialModel = this.beans.colFilter!.getModelFromInitialState(params.column);
+        const initialModel = _getFilterModel(this.beans.colFilter!.model, params.column.getColId());
 
         const { filterChangedCallback } = params;
 

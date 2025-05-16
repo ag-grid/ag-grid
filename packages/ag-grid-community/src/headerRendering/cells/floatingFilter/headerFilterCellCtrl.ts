@@ -4,6 +4,7 @@ import type { BeanStub } from '../../../context/beanStub';
 import type { AgColumn } from '../../../entities/agColumn';
 import type { HeaderClassParams } from '../../../entities/colDef';
 import type { ColumnEvent, FilterChangedEvent } from '../../../events';
+import { _getFilterModel } from '../../../filter/columnFilterUtils';
 import { _addGridCommonParams, _getActiveDomElement, _isLegacyMenuEnabled } from '../../../gridOptionsUtils';
 import type { UserCompDetails } from '../../../interfaces/iUserCompDetails';
 import { SetLeftFeature } from '../../../rendering/features/setLeftFeature';
@@ -423,7 +424,7 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl<IHeaderFilterCe
                 if (this.gos.get('enableFilterEvaluators')) {
                     params = {
                         ...params,
-                        model: this.beans.colFilter?.getModelForEvaluator(this.column),
+                        model: _getFilterModel(this.beans.colFilter?.model ?? {}, this.column.getColId()),
                         source,
                     };
                 }

@@ -18,7 +18,7 @@ import { FilterButtonComp } from './filterButtonComp';
 import { isUseApplyButton } from './floating/provided/providedFilterUtils';
 
 export class FilterWrapperComp extends Component {
-    private eButtonsPanel?: FilterButtonComp;
+    private eButtons?: FilterButtonComp;
     private params?: FilterWrapperParams;
     private hidePopup: ((params: PopupEventParams) => void) | null | undefined = null;
     private applyActive: boolean = false;
@@ -62,7 +62,7 @@ export class FilterWrapperComp extends Component {
             filterStateChanged: (event: FilterStateChangedEvent) => {
                 const { column, state } = event;
                 if (column === this.column) {
-                    this.eButtonsPanel?.updateValidity(state.valid);
+                    this.eButtons?.updateValidity(state.valid);
                 }
             },
             filterAction: (event: FilterActionEvent) => {
@@ -89,7 +89,7 @@ export class FilterWrapperComp extends Component {
 
         const hasButtons = buttons && buttons.length > 0 && !newParams.readOnly;
 
-        let eButtonsPanel = this.eButtonsPanel;
+        let eButtonsPanel = this.eButtons;
         if (hasButtons) {
             this.applyActive = isUseApplyButton(this.params!);
             if (!eButtonsPanel) {
@@ -108,14 +108,14 @@ export class FilterWrapperComp extends Component {
                     reset: getListener('reset'),
                     cancel: getListener('cancel'),
                 });
-                this.eButtonsPanel = eButtonsPanel;
+                this.eButtons = eButtonsPanel;
             }
             eButtonsPanel.updateButtons(buttons, useForm);
         } else {
             this.applyActive = false;
             if (eButtonsPanel) {
                 _removeFromParent(eButtonsPanel.getGui());
-                this.eButtonsPanel = this.destroyBean(eButtonsPanel);
+                this.eButtons = this.destroyBean(eButtonsPanel);
             }
         }
     }
@@ -175,6 +175,6 @@ export class FilterWrapperComp extends Component {
 
     public override destroy(): void {
         this.hidePopup = null;
-        this.eButtonsPanel = this.destroyBean(this.eButtonsPanel);
+        this.eButtons = this.destroyBean(this.eButtons);
     }
 }

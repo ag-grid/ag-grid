@@ -97,7 +97,8 @@ export abstract class TextInputFloatingFilter<
     private syncUpWithParentFilter(e: KeyboardEvent): void {
         const isEnterKey = e.key === KeyCode.ENTER;
 
-        if (this.reactive) {
+        const reactive = this.reactive;
+        if (reactive) {
             const reactiveParams = this.params as unknown as FloatingFilterDisplayParams<any, any, M>;
             reactiveParams.onUiChange();
         }
@@ -106,7 +107,7 @@ export abstract class TextInputFloatingFilter<
             return;
         }
 
-        const { inputSvc, params } = this;
+        const { inputSvc, params, lastType } = this;
         let value = inputSvc.getValue();
 
         if ((params.filterParams as TextFilterParams).trimInput) {
@@ -114,7 +115,7 @@ export abstract class TextInputFloatingFilter<
             inputSvc.setValue(value, true); // ensure visible value is trimmed
         }
 
-        if (this.reactive) {
+        if (reactive) {
             const reactiveParams = params as unknown as FloatingFilterDisplayParams<any, any, M>;
             const model = reactiveParams.model;
             const parsedValue = this.convertValue(value);
@@ -124,7 +125,7 @@ export abstract class TextInputFloatingFilter<
                     : ({
                           ...(model ?? {
                               filterType: this.filterType,
-                              type: this.lastType ?? this.optionsFactory.defaultOption,
+                              type: lastType ?? this.optionsFactory.defaultOption,
                           }),
                           filter: parsedValue,
                       } as M);
@@ -132,7 +133,7 @@ export abstract class TextInputFloatingFilter<
         } else {
             params.parentFilterInstance((filterInstance) => {
                 // NumberFilter is typed as number, but actually receives string values
-                filterInstance?.onFloatingFilterChanged(this.lastType || null, (value as never) || null);
+                filterInstance?.onFloatingFilterChanged(lastType || null, (value as never) || null);
             });
         }
     }

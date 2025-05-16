@@ -345,10 +345,6 @@ export class FilterManager extends BeanStub implements NamedBean {
         this.advFilterModelUpdateQueue = [];
     }
 
-    public getColumnFilterModel(key: string | AgColumn): any {
-        return this.colFilter?.getModelForColumn(key);
-    }
-
     public setColumnFilterModel(key: string | AgColumn, model: any): Promise<void> {
         if (this.isAdvFilterEnabled()) {
             this.warnAdvFilters();

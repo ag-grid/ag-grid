@@ -18,8 +18,8 @@ const FilterButtonCompElement: ElementParams = {
 
 export class FilterButtonComp extends Component<FilterAction> {
     private buttons: FilterAction[];
-    private buttonListeners: (() => void)[] = [];
-    private eApplyButton?: HTMLElement;
+    private listeners: (() => void)[] = [];
+    private eApply?: HTMLElement;
 
     constructor() {
         super(FilterButtonCompElement);
@@ -79,19 +79,19 @@ export class FilterButtonComp extends Component<FilterAction> {
                     clickListener(event);
                 }
             });
-            this.buttonListeners.push(() => button.removeEventListener('click', clickListener));
+            this.listeners.push(() => button.removeEventListener('click', clickListener));
             fragment.append(button);
         };
 
         buttons.forEach((type) => addButton(type));
 
-        this.eApplyButton = eApplyButton;
+        this.eApply = eApplyButton;
 
         eGui.append(fragment);
     }
 
     public updateValidity(valid?: boolean): void {
-        const eApplyButton = this.eApplyButton;
+        const eApplyButton = this.eApply;
         if (!eApplyButton) {
             return;
         }
@@ -99,8 +99,8 @@ export class FilterButtonComp extends Component<FilterAction> {
     }
 
     private destroyListeners(): void {
-        this.buttonListeners.forEach((destroyFunc) => destroyFunc());
-        this.buttonListeners = [];
+        this.listeners.forEach((destroyFunc) => destroyFunc());
+        this.listeners = [];
     }
 
     public override destroy(): void {

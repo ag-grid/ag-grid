@@ -15,8 +15,8 @@ import type { FilterRequestSource } from './iColumnFilter';
 const FilterElement: ElementParams = { tag: 'div', cls: 'ag-filter' };
 
 export class FilterComp extends Component {
-    private filterWrapper: AgPromise<FilterDisplayWrapper> | null = null;
-    private displayComp?: FilterWrapperComp;
+    private wrapper: AgPromise<FilterDisplayWrapper> | null = null;
+    private comp?: FilterWrapperComp;
 
     constructor(
         private readonly column: AgColumn,
@@ -32,26 +32,26 @@ export class FilterComp extends Component {
     }
 
     public hasFilter(): boolean {
-        return this.filterWrapper != null;
+        return this.wrapper != null;
     }
 
     public getFilter(): AgPromise<IFilterComp> | null {
-        return this.filterWrapper?.then((wrapper) => wrapper!.comp as any) ?? null;
+        return this.wrapper?.then((wrapper) => wrapper!.comp as any) ?? null;
     }
 
     public afterInit(): AgPromise<void> {
-        return this.filterWrapper?.then(() => {}) ?? AgPromise.resolve();
+        return this.wrapper?.then(() => {}) ?? AgPromise.resolve();
     }
 
     public afterGuiAttached(params?: IAfterGuiAttachedParams): void {
-        this.filterWrapper?.then((wrapper) => {
-            this.displayComp?.afterGuiAttached(params);
+        this.wrapper?.then((wrapper) => {
+            this.comp?.afterGuiAttached(params);
             wrapper?.comp?.afterGuiAttached?.(params);
         });
     }
 
     public afterGuiDetached(): void {
-        this.filterWrapper?.then((wrapper) => {
+        this.wrapper?.then((wrapper) => {
             wrapper?.comp?.afterGuiDetached?.();
         });
     }
@@ -63,7 +63,7 @@ export class FilterComp extends Component {
             beans: { colFilter },
         } = this;
         const filterPromise = colFilter!.getFilterUiForDisplay(column) ?? null;
-        this.filterWrapper = filterPromise;
+        this.wrapper = filterPromise;
         filterPromise?.then((wrapper) => {
             if (!wrapper) {
                 return;
@@ -74,7 +74,7 @@ export class FilterComp extends Component {
                 const displayComp = this.createBean(
                     new FilterWrapperComp(column, wrapper, colFilter!, colFilter!.updateModel.bind(colFilter))
                 );
-                this.displayComp = displayComp;
+                this.comp = displayComp;
                 filterGui = displayComp.getGui();
             } else {
                 filterGui = comp.getGui();
@@ -104,14 +104,14 @@ export class FilterComp extends Component {
         ) {
             // filter has been destroyed by the API or params changing. If the column still exists, need to recreate UI component
             _clearElement(this.getGui());
-            this.displayComp = this.destroyBean(this.displayComp);
+            this.comp = this.destroyBean(this.comp);
             this.createFilter();
         }
     }
 
     public override destroy(): void {
-        this.filterWrapper = null;
-        this.displayComp = this.destroyBean(this.displayComp);
+        this.wrapper = null;
+        this.comp = this.destroyBean(this.comp);
         super.destroy();
     }
 }

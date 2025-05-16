@@ -84,10 +84,11 @@ export abstract class SimpleFloatingFilter<TParams extends IFloatingFilterParams
 
     public init(params: TParams): void {
         this.params = params;
-        this.reactive = this.gos.get('enableFilterEvaluators');
+        const reactive = this.gos.get('enableFilterEvaluators');
+        this.reactive = reactive;
         this.setParams(params);
 
-        if (this.reactive) {
+        if (reactive) {
             const reactiveParams = params as unknown as FloatingFilterDisplayParams;
             this.onModelUpdated(reactiveParams.model);
         }
@@ -129,21 +130,23 @@ export abstract class SimpleFloatingFilter<TParams extends IFloatingFilterParams
     public refresh(params: TParams): void {
         this.params = params;
         const reactiveParams = params as unknown as FloatingFilterDisplayParams;
-        if (!this.reactive || reactiveParams.source === 'colDef') {
+        const reactive = this.reactive;
+        if (!reactive || reactiveParams.source === 'colDef') {
             this.updateParams(params);
         }
 
-        if (this.reactive) {
-            if (reactiveParams.source === 'dataChanged' || reactiveParams.source === 'ui') {
+        if (reactive) {
+            const { source, model } = reactiveParams;
+            if (source === 'dataChanged' || source === 'ui') {
                 return;
             }
-            this.onModelUpdated(reactiveParams.model);
+            this.onModelUpdated(model);
         }
     }
 
     protected updateParams(params: TParams): void {
         const optionsFactory = this.optionsFactory;
-        this.optionsFactory.refresh(params.filterParams as ISimpleFilterParams, this.defaultOptions);
+        optionsFactory.refresh(params.filterParams as ISimpleFilterParams, this.defaultOptions);
 
         this.setSimpleParams(params);
 

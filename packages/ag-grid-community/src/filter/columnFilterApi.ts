@@ -31,8 +31,9 @@ export function getFilterModel(beans: BeanCollection): FilterModel {
     return beans.filterManager?.getFilterModel() ?? {};
 }
 
-export function getColumnFilterModel<TModel>(beans: BeanCollection, column: string | Column): TModel | null {
-    return beans.filterManager?.getColumnFilterModel(column as string | AgColumn) ?? null;
+export function getColumnFilterModel<TModel>(beans: BeanCollection, key: string | Column): TModel | null {
+    const column = beans.colModel.getColDefCol(key) as AgColumn | null;
+    return column ? beans.colFilter?.getModelForColumn(column) ?? null : null;
 }
 
 export function setColumnFilterModel<TModel>(

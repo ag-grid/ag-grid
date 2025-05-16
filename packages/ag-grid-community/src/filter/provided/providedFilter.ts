@@ -83,11 +83,11 @@ export abstract class ProvidedFilter<
             })
         );
 
-        this.positionableFeature = new PositionableFeature(this.getPositionableElement(), {
-            forcePopupParentAsOffsetParent: true,
-        });
-
-        this.createBean(this.positionableFeature);
+        this.positionableFeature = this.createBean(
+            new PositionableFeature(this.getPositionableElement(), {
+                forcePopupParentAsOffsetParent: true,
+            })
+        );
     }
 
     protected handleKeyDown(_e: KeyboardEvent): void {}
@@ -199,9 +199,10 @@ export abstract class ProvidedFilter<
     }
 
     private doApplyModel(additionalEventAttributes?: any): boolean {
-        const changed = !this.areModelsEqual(this.params.model, this.state.model);
+        const { params, state } = this;
+        const changed = !this.areModelsEqual(params.model, state.model);
         if (changed) {
-            this.params.onAction('apply', additionalEventAttributes);
+            params.onAction('apply', additionalEventAttributes);
         }
         return changed;
     }
@@ -222,8 +223,9 @@ export abstract class ProvidedFilter<
             valid: this.canApply(model),
         };
         this.state = state;
-        this.params.onStateChange(state);
-        this.params.onUiChange(this.getUiChangeEventParams());
+        const params = this.params;
+        params.onStateChange(state);
+        params.onUiChange(this.getUiChangeEventParams());
 
         apply ??= this.applyActive ? undefined : 'debounce';
         if (apply === 'immediately') {

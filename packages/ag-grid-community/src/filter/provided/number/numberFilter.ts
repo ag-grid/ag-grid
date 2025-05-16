@@ -41,7 +41,7 @@ export class NumberFilter extends SimpleFilter<
         super.setElementValue(element, valueToSet as any);
     }
 
-    protected createValueElement(): HTMLElement {
+    protected createEValue(): HTMLElement {
         const allowedCharPattern = getAllowedCharPattern(this.params);
 
         const eCondition = _createElement({ tag: 'div', cls: 'ag-filter-body', role: 'presentation' });
@@ -67,7 +67,7 @@ export class NumberFilter extends SimpleFilter<
         eCondition.appendChild(eValue.getGui());
     }
 
-    protected removeValueElements(startPosition: number, deleteCount?: number): void {
+    protected removeEValues(startPosition: number, deleteCount?: number): void {
         const removeComps = (eGui: (AgInputTextField | AgInputNumberField)[]) =>
             this.removeComponents(eGui, startPosition, deleteCount);
 

@@ -77,7 +77,7 @@ export class TextFilter extends SimpleFilter<TextFilterModel, string, AgInputTex
         return result;
     }
 
-    protected createValueElement(): HTMLElement {
+    protected createEValue(): HTMLElement {
         const eCondition = _createElement({ tag: 'div', cls: 'ag-filter-body', role: 'presentation' });
 
         const { eValuesFrom, eValuesTo } = this;
@@ -95,7 +95,7 @@ export class TextFilter extends SimpleFilter<TextFilterModel, string, AgInputTex
         eCondition.appendChild(eValue.getGui());
     }
 
-    protected removeValueElements(startPosition: number, deleteCount?: number): void {
+    protected removeEValues(startPosition: number, deleteCount?: number): void {
         const removeComps = (eGui: AgInputTextField[]) => this.removeComponents(eGui, startPosition, deleteCount);
         const { eValuesFrom, eValuesTo } = this;
         removeComps(eValuesFrom);

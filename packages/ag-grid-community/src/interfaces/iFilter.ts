@@ -312,12 +312,13 @@ export interface FilterDisplayParams<TData = any, TContext = any, TModel = any, 
     onAction: (action: FilterAction, additionalEventAttributes?: any, event?: KeyboardEvent) => void;
     /**
      * Callback that can be optionally called every time the filter UI changes.
-     * The grid will respond with emitting a FilterModifiedEvent.
+     * The grid will respond with emitting a FilterUiChangedEvent.
      * Apart from emitting the event, the grid takes no further action.
      * The callback takes one optional parameter which, if included,
      * will get merged to the FilterUiChangedEvent object.
      */
     onUiChange: (additionalEventAttributes?: any) => void;
+    /** Get the filter evaluator instance. */
     getEvaluator: () => FilterEvaluator<TData, TContext, TModel>;
     source: FilterDisplaySource;
 }

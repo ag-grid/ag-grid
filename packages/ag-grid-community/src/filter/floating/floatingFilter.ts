@@ -3,7 +3,6 @@ import type { Column } from '../../interfaces/iColumn';
 import type { AgGridCommon } from '../../interfaces/iCommon';
 import type { IComponent } from '../../interfaces/iComponent';
 import type { FilterEvaluator, IFilter, IFilterParams } from '../../interfaces/iFilter';
-import type { ProvidedFilterModel } from '../provided/iProvidedFilter';
 
 export interface IFloatingFilterParent {
     /**
@@ -67,9 +66,24 @@ export interface FloatingFilterDisplayParams<TData = any, TContext = any, TModel
      * For example, the provided filters use debounceMs from the parent filter params.
      * */
     filterParams: TCustomParams;
+    /**
+     * The current applied filter model for the column.
+     */
     model: TModel | null;
+    /**
+     * Callback that should be called every time the model in the component changes.
+     * @param additionalEventAttributes If provided, will be passed to the filter changed event
+     */
     onModelChange: (model: TModel | null, additionalEventAttributes?: any) => void;
+    /**
+     * Callback that can be optionally called every time the floating filter UI changes.
+     * The grid will respond with emitting a FloatingFilterUiChangedEvent.
+     * Apart from emitting the event, the grid takes no further action.
+     * The callback takes one optional parameter which, if included,
+     * will get merged to the FloatingFilterUiChangedEvent object.
+     */
     onUiChange: (additionalEventAttributes?: any) => void;
+    /** Get the filter evaluator instance. */
     getEvaluator: () => FilterEvaluator<TData, TContext, TModel, TCustomParams>;
     source: 'init' | 'ui' | 'filter' | 'api' | 'colDef' | 'dataChanged';
 }
@@ -97,12 +111,3 @@ export interface IFloatingFilter<P = any> extends BaseFloatingFilter {
 }
 
 export interface IFloatingFilterComp<P = any> extends IFloatingFilter<P>, IComponent<IFloatingFilterParams<P>> {}
-
-// @deprecated v30 - this has been unused for years so delete in v34
-/**
- * @deprecated v33.1 Unused
- */
-export interface BaseFloatingFilterChange {
-    model: ProvidedFilterModel;
-    apply: boolean;
-}

@@ -115,7 +115,7 @@ export class DateFilter extends SimpleFilter<DateFilterModel, Date, DateCompWrap
         element.setDisabled(disabled);
     }
 
-    protected createValueElement(): HTMLElement {
+    protected createEValue(): HTMLElement {
         const eCondition = _createElement({ tag: 'div', cls: 'ag-filter-body' });
 
         this.createFromToElement(eCondition, this.eConditionPanelsFrom, this.dateConditionFromComps, 'from');
@@ -136,7 +136,7 @@ export class DateFilter extends SimpleFilter<DateFilterModel, Date, DateCompWrap
         dateConditionComps.push(this.createDateCompWrapper(eConditionPanel));
     }
 
-    protected removeValueElements(startPosition: number, deleteCount?: number): void {
+    protected removeEValues(startPosition: number, deleteCount?: number): void {
         this.removeDateComps(this.dateConditionFromComps, startPosition, deleteCount);
         this.removeDateComps(this.dateConditionToComps, startPosition, deleteCount);
         removeItems(this.eConditionPanelsFrom, startPosition, deleteCount);

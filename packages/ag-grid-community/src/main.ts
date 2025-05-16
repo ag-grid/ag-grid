@@ -213,7 +213,12 @@ export {
 export type { FilterManager } from './filter/filterManager';
 export type { FilterValueService } from './filter/filterValueService';
 export { FilterRequestSource } from './filter/iColumnFilter';
-export { _refreshEvaluatorAndUi, _updateFilterModel, _refreshFilterUi } from './filter/columnFilterService';
+export {
+    _refreshEvaluatorAndUi,
+    _updateFilterModel,
+    _refreshFilterUi,
+    _getFilterModel,
+} from './filter/columnFilterUtils';
 export {
     IMultiFilter,
     IMultiFilterModel,
@@ -273,7 +278,6 @@ export {
     IFloatingFilter,
     IFloatingFilterParams,
     IFloatingFilterComp,
-    BaseFloatingFilterChange,
     IFloatingFilterParent,
     IFloatingFilterParentCallback,
     BaseFloatingFilter,

@@ -35,6 +35,16 @@ import type { UserCompDetails } from '../interfaces/iUserCompDetails';
 import { _exists, _jsonEquals } from '../utils/generic';
 import { AgPromise } from '../utils/promise';
 import { _error, _warn } from '../validation/logging';
+import type { EvaluatorName, FilterUi, FilterWrapper, LegacyFilterWrapper } from './columnFilterUtils';
+import {
+    EVALUATORS,
+    EVALUATOR_MAP,
+    _getFilterModel,
+    _refreshEvaluatorAndUi,
+    _updateFilterModel,
+    getAndRefreshFilterUi,
+    getFilterUiFromWrapper,
+} from './columnFilterUtils';
 import { _getFilterParamsForDataType } from './filterDataTypeUtils';
 import type {
     FloatingFilterDisplayParams,
@@ -42,19 +52,6 @@ import type {
     IFloatingFilterParentCallback,
 } from './floating/floatingFilter';
 import { _getDefaultFloatingFilterType } from './floating/floatingFilterMapper';
-
-const EVALUATOR_MAP = {
-    agSetColumnFilter: 'agSetColumnFilterEvaluator',
-    agMultiColumnFilter: 'agMultiColumnFilterEvaluator',
-    agGroupColumnFilter: 'agGroupColumnFilterEvaluator',
-    agNumberColumnFilter: 'agNumberColumnFilterEvaluator',
-    agDateColumnFilter: 'agDateColumnFilterEvaluator',
-    agTextColumnFilter: 'agTextColumnFilterEvaluator',
-} as const;
-
-const EVALUATORS = new Set(Object.values(EVALUATOR_MAP));
-
-type EvaluatorName = (typeof EVALUATOR_MAP)[keyof typeof EVALUATOR_MAP];
 
 interface CompDoesFilterPassWrapper {
     isEvaluator: false;
@@ -112,12 +109,12 @@ export class ColumnFilterService
     private processingFilterChange = false;
 
     // when we're waiting for cell data types to be inferred, we need to defer filter model updates
-    private filterModelUpdateQueue: { model: FilterModel | null; source: FilterChangedEventSourceType }[] = [];
-    private columnFilterModelUpdateQueue: { key: string | AgColumn; model: any; resolve: () => void }[] = [];
+    private modelUpdates: { model: FilterModel | null; source: FilterChangedEventSourceType }[] = [];
+    private columnModelUpdates: { key: string | AgColumn; model: any; resolve: () => void }[] = [];
 
-    private initialFilterModel: FilterModel;
+    public initialModel: FilterModel;
     /** This may not contain the model for non-evaluator columns */
-    private model: FilterModel;
+    public model: FilterModel;
     /** This contains the UI state for evaluator columns */
     private state: Map<string, FilterDisplayState> = new Map();
     private evaluatorMap: { -readonly [K in keyof typeof EVALUATOR_MAP]?: (typeof EVALUATOR_MAP)[K] } = {
@@ -136,13 +133,15 @@ export class ColumnFilterService
             dataTypesInferred: this.processFilterModelUpdateQueue.bind(this),
         });
 
-        this.initialFilterModel = {
-            ...(this.gos.get('initialState')?.filter?.filterModel ?? {}),
+        const gos = this.gos;
+        const initialFilterModel = {
+            ...(gos.get('initialState')?.filter?.filterModel ?? {}),
         };
+        this.initialModel = initialFilterModel;
         this.model = {
-            ...this.initialFilterModel,
+            ...initialFilterModel,
         };
-        if (!this.gos.get('enableFilterEvaluators')) {
+        if (!gos.get('enableFilterEvaluators')) {
             delete this.evaluatorMap['agMultiColumnFilter'];
         }
     }
@@ -150,7 +149,7 @@ export class ColumnFilterService
     public setModel(model: FilterModel | null, source: FilterChangedEventSourceType = 'api'): void {
         const { colModel, dataTypeSvc, filterManager } = this.beans;
         if (dataTypeSvc?.isPendingInference) {
-            this.filterModelUpdateQueue.push({ model, source });
+            this.modelUpdates.push({ model, source });
             return;
         }
 
@@ -182,7 +181,7 @@ export class ColumnFilterService
                     return;
                 }
 
-                const filterWrapper = this.getOrCreateFilterWrapper(column);
+                const filterWrapper = this.getOrCreateFilterWrapper(column, true);
                 if (!filterWrapper) {
                     _warn(64, { colId });
                     return;
@@ -220,7 +219,7 @@ export class ColumnFilterService
 
         const {
             allColumnFilters,
-            initialFilterModel,
+            initialModel,
             beans: { colModel },
         } = this;
 
@@ -233,8 +232,8 @@ export class ColumnFilterService
         });
 
         if (!excludeInitialState) {
-            for (const colId of Object.keys(initialFilterModel)) {
-                const model = initialFilterModel[colId];
+            for (const colId of Object.keys(initialModel)) {
+                const model = initialModel[colId];
                 if (_exists(model) && !allColumnFilters.has(colId) && colModel.getCol(colId)?.isFilterAllowed()) {
                     result[colId] = model;
                 }
@@ -246,8 +245,9 @@ export class ColumnFilterService
 
     private getModelFromFilterWrapper(filterWrapper: FilterWrapper): any {
         const column = filterWrapper.column;
+        const colId = column.getColId();
         if (filterWrapper.isEvaluator) {
-            return this.getModelForEvaluator(column);
+            return _getFilterModel(this.model, colId);
         }
         const filter = filterWrapper.filter;
         if (filter) {
@@ -259,15 +259,7 @@ export class ColumnFilterService
             return filter.getModel();
         }
         // filter still being created. return initial state if it exists and hasn't been applied yet
-        return this.getModelFromInitialState(column);
-    }
-
-    public getModelForEvaluator(column: Column): any {
-        return this.model[column.getColId()] ?? null;
-    }
-
-    public getModelFromInitialState(column: Column): any {
-        return this.initialFilterModel[column.getColId()] ?? null;
+        return _getFilterModel(this.initialModel, colId);
     }
 
     public isFilterPresent(): boolean {
@@ -279,7 +271,7 @@ export class ColumnFilterService
     }
 
     public disableFilters(): boolean {
-        this.initialFilterModel = {};
+        this.initialModel = {};
         const { allColumnFilters } = this;
         if (allColumnFilters.size) {
             allColumnFilters.forEach((filterWrapper) =>
@@ -437,7 +429,7 @@ export class ColumnFilterService
                     !evaluator.doesFilterPass({
                         node,
                         data: targetedData,
-                        model: model[colId] ?? null,
+                        model: _getFilterModel(model, colId),
                         evaluatorParams,
                     })
                 ) {
@@ -576,13 +568,13 @@ export class ColumnFilterService
             return filter.isFilterActive();
         }
         // if not created, should only be active if there's a model
-        return this.getModelFromInitialState(column) != null;
+        return _getFilterModel(this.initialModel, column.getColId()) != null;
     }
 
     private isEvaluatorActive(column: AgColumn): boolean {
         // all the existing filter code uses `_exists` rather than not null,
         // so need to keep handling `''` until all the code is updated to do a simple null check
-        const active = _exists(this.model[column.getColId()]);
+        const active = _exists(_getFilterModel(this.model, column.getColId()));
         if (active) {
             return active;
         }
@@ -591,12 +583,12 @@ export class ColumnFilterService
     }
 
     public getOrCreateFilterUi(column: AgColumn): AgPromise<IFilterComp> | null {
-        const filterWrapper = this.getOrCreateFilterWrapper(column);
+        const filterWrapper = this.getOrCreateFilterWrapper(column, true);
         return filterWrapper ? getFilterUiFromWrapper(filterWrapper) : null;
     }
 
     public getFilterUiForDisplay(column: AgColumn): AgPromise<FilterDisplayWrapper> | null {
-        const filterWrapper = this.getOrCreateFilterWrapper(column);
+        const filterWrapper = this.getOrCreateFilterWrapper(column, true);
         if (!filterWrapper) {
             return null;
         }
@@ -611,24 +603,19 @@ export class ColumnFilterService
         }));
     }
 
-    public getEvaluator(column: AgColumn): FilterEvaluator | undefined {
-        const filterWrapper = this.cachedFilter(column);
+    public getEvaluator(column: AgColumn, createIfMissing?: boolean): FilterEvaluator | undefined {
+        const filterWrapper = this.getOrCreateFilterWrapper(column, createIfMissing);
         return filterWrapper?.isEvaluator ? filterWrapper.evaluator : undefined;
     }
 
-    private getOrCreateEvaluator(column: AgColumn): FilterEvaluator | undefined {
-        const filterWrapper = this.getOrCreateFilterWrapper(column);
-        return filterWrapper?.isEvaluator ? filterWrapper.evaluator : undefined;
-    }
-
-    private getOrCreateFilterWrapper(column: AgColumn): FilterWrapper | null {
+    private getOrCreateFilterWrapper(column: AgColumn, createIfMissing?: boolean): FilterWrapper | undefined {
         if (!column.isFilterAllowed()) {
-            return null;
+            return undefined;
         }
 
         let filterWrapper = this.cachedFilter(column);
 
-        if (!filterWrapper) {
+        if (!filterWrapper && createIfMissing) {
             filterWrapper = this.createFilterWrapper(column);
             this.setColumnFilterWrapper(column, filterWrapper);
         }
@@ -673,20 +660,6 @@ export class ColumnFilterService
             return 'agDateColumnFloatingFilter';
         }
         return 'agTextColumnFloatingFilter';
-    }
-
-    private createFilterInstanceForColumn(column: AgColumn): {
-        compDetails: UserCompDetails | null;
-        evaluator?: FilterEvaluator;
-        evaluatorGenerator?: FilterEvaluatorGeneratorFunc | EvaluatorName;
-        evaluatorParams?: FilterEvaluatorBaseParams;
-        createFilterUi: ((update?: boolean) => AgPromise<IFilterComp | FilterDisplayComp>) | null;
-    } {
-        const defaultFilter = this.getDefaultFilter(column);
-
-        const colDef = column.getColDef();
-
-        return this.createFilterInstance(column, colDef, defaultFilter, (params) => params);
     }
 
     private createFilterComp(
@@ -760,17 +733,17 @@ export class ColumnFilterService
     }
 
     public createBaseFilterParams(column: AgColumn, forFloatingFilter?: boolean): BaseFilterParams {
+        const { filterManager, rowModel } = this.beans;
         return _addGridCommonParams(this.gos, {
             column,
             colDef: column.getColDef(),
             getValue: this.createGetValue(column),
             doesRowPassOtherFilter: forFloatingFilter
                 ? () => true
-                : (node) =>
-                      this.beans.filterManager?.doesRowPassOtherFilters(column.getColId(), node as RowNode) ?? true,
+                : (node) => filterManager?.doesRowPassOtherFilters(column.getColId(), node as RowNode) ?? true,
             // to avoid breaking changes to `filterParams` defined as functions
             // we need to provide the below options even though they are not valid for evaluators
-            rowModel: this.beans.rowModel,
+            rowModel,
         });
     }
 
@@ -790,9 +763,9 @@ export class ColumnFilterService
 
         if (useEvaluator) {
             const displayParams = params as unknown as FilterDisplayParams;
-            const model = this.getModelForEvaluator(column);
-            displayParams.model = model;
             const colId = column.getColId();
+            const model = _getFilterModel(this.model, colId);
+            displayParams.model = model;
             displayParams.state = this.state.get(colId) ?? {
                 model,
             };
@@ -815,7 +788,7 @@ export class ColumnFilterService
                     event,
                 });
             };
-            displayParams.getEvaluator = () => this.getOrCreateEvaluator(column)!;
+            displayParams.getEvaluator = () => this.getEvaluator(column, true)!;
             displayParams.onUiChange = (additionalEventAttributes?: any) =>
                 this.filterUiChanged(column, additionalEventAttributes);
             displayParams.source = source;
@@ -857,15 +830,15 @@ export class ColumnFilterService
 
     private createFilterWrapper(column: AgColumn): FilterWrapper {
         const { compDetails, evaluator, evaluatorGenerator, evaluatorParams, createFilterUi } =
-            this.createFilterInstanceForColumn(column);
+            this.createFilterInstance(column, column.getColDef(), this.getDefaultFilter(column), (params) => params);
         const colId = column.getColId();
 
         if (evaluator) {
-            delete this.initialFilterModel[colId];
+            delete this.initialModel[colId];
             evaluator.init?.({
                 ...evaluatorParams!,
                 source: 'init',
-                model: this.getModelForEvaluator(column),
+                model: _getFilterModel(this.model, colId),
             });
             return {
                 column,
@@ -1087,14 +1060,14 @@ export class ColumnFilterService
             const filterChangedCallback = this.filterChangedCallbackFactory(column);
             displayParams.onUiChange = (additionalEventAttributes) =>
                 this.floatingFilterUiChanged(column, additionalEventAttributes);
-            displayParams.model = this.getModelForEvaluator(column);
+            displayParams.model = _getFilterModel(this.model, colId);
             displayParams.onModelChange = (model, additionalEventAttributes) => {
                 this.updateStoredModel(colId, model);
                 this.refreshEvaluatorAndUi(column, model, 'floating', true).then(() => {
                     filterChangedCallback({ ...additionalEventAttributes, source: 'columnFilter' });
                 });
             };
-            displayParams.getEvaluator = () => this.getOrCreateEvaluator(column)!;
+            displayParams.getEvaluator = () => this.getEvaluator(column, true)!;
             displayParams.source = 'init';
         }
 
@@ -1112,7 +1085,7 @@ export class ColumnFilterService
         createFilterUi: ((update?: boolean) => AgPromise<IFilterComp>) | null
     ): void {
         if (filterWrapper.isEvaluator) {
-            delete this.initialFilterModel[column.getColId()];
+            delete this.initialModel[column.getColId()];
             const filterUi = filterWrapper.filterUi;
             if (filterUi?.created) {
                 filterUi.promise.then((filter) => {
@@ -1139,7 +1112,7 @@ export class ColumnFilterService
 
         this.disposeColumnListener(colId);
 
-        delete this.initialFilterModel[colId];
+        delete this.initialModel[colId];
 
         if (filterWrapper) {
             this.disposeFilterWrapper(filterWrapper, source).then((wasActive) => {
@@ -1264,7 +1237,7 @@ export class ColumnFilterService
                 filterWrapper.evaluator.refresh?.({
                     ...evaluatorParams,
                     source: 'colDef',
-                    model: this.getModelForEvaluator(column),
+                    model: _getFilterModel(this.model, colId),
                 });
             }
         }
@@ -1306,13 +1279,12 @@ export class ColumnFilterService
         source: 'ui' | 'api' | 'colDef' | 'floating' | 'evaluator',
         createIfMissing?: boolean
     ): AgPromise<void> {
-        const colId = column.getColId();
-        const filterWrapper = this.allColumnFilters.get(colId);
+        const filterWrapper = this.cachedFilter(column);
 
         if (!filterWrapper) {
             if (createIfMissing) {
                 // create one. Don't need to refresh as it will be created with the latest details
-                this.getOrCreateFilterWrapper(column);
+                this.getOrCreateFilterWrapper(column, true);
             }
             return AgPromise.resolve();
         }
@@ -1341,7 +1313,7 @@ export class ColumnFilterService
             evaluator,
             evaluatorParams,
             model,
-            this.state.get(colId) ?? { model },
+            this.state.get(column.getColId()) ?? { model },
             source
         );
     }
@@ -1399,16 +1371,16 @@ export class ColumnFilterService
     }
 
     private processFilterModelUpdateQueue(): void {
-        this.filterModelUpdateQueue.forEach(({ model, source }) => this.setModel(model, source));
-        this.filterModelUpdateQueue = [];
-        this.columnFilterModelUpdateQueue.forEach(({ key, model, resolve }) => {
+        this.modelUpdates.forEach(({ model, source }) => this.setModel(model, source));
+        this.modelUpdates = [];
+        this.columnModelUpdates.forEach(({ key, model, resolve }) => {
             this.setModelForColumn(key, model).then(() => resolve());
         });
-        this.columnFilterModelUpdateQueue = [];
+        this.columnModelUpdates = [];
     }
 
-    public getModelForColumn(key: string | AgColumn): any {
-        const filterWrapper = this.getFilterWrapper(key);
+    public getModelForColumn(column: AgColumn): any {
+        const filterWrapper = this.cachedFilter(column);
         return filterWrapper ? this.getModelFromFilterWrapper(filterWrapper) : null;
     }
 
@@ -1418,7 +1390,7 @@ export class ColumnFilterService
             const promise = new Promise<void>((res) => {
                 resolve = res;
             });
-            this.columnFilterModelUpdateQueue.push({ key, model, resolve });
+            this.columnModelUpdates.push({ key, model, resolve });
             return promise;
         }
         return new Promise((resolve) => {
@@ -1428,13 +1400,8 @@ export class ColumnFilterService
 
     public setModelForColumnLegacy(key: string | AgColumn, model: any): AgPromise<void> {
         const column = this.beans.colModel.getColDefCol(key);
-        const filterWrapper = column ? this.getOrCreateFilterWrapper(column) : null;
+        const filterWrapper = column ? this.getOrCreateFilterWrapper(column, true) : null;
         return filterWrapper ? this.setModelOnFilterWrapper(filterWrapper, model) : AgPromise.resolve();
-    }
-
-    private getFilterWrapper(key: string | AgColumn): FilterWrapper | null {
-        const column = this.beans.colModel.getColDefCol(key);
-        return column ? this.cachedFilter(column) ?? null : null;
     }
 
     public setColDefPropsForDataType(
@@ -1575,7 +1542,7 @@ export class ColumnFilterService
         _updateFilterModel(
             action,
             getFilterUi,
-            () => this.model[colId] ?? null,
+            () => _getFilterModel(this.model, colId),
             () => this.state.get(colId),
             (state) => this.updateState(column, state),
             (model) => getFilterUi()?.filterParams?.onModelChange(model, additionalEventAttributes)
@@ -1590,7 +1557,7 @@ export class ColumnFilterService
                 _updateFilterModel(
                     action,
                     () => filter.filterUi as FilterUi<FilterDisplayComp, FilterDisplayParams> | undefined,
-                    () => this.model[colId] ?? null,
+                    () => _getFilterModel(this.model, colId),
                     () => this.state.get(colId),
                     (state) => this.updateState(column, state),
                     (model) => {
@@ -1618,9 +1585,9 @@ export class ColumnFilterService
 
     private updateOrRefreshFilterUi(column: AgColumn): void {
         const colId = column.getColId();
-        refreshFilterUi(
+        getAndRefreshFilterUi(
             () => this.cachedFilter(column)?.filterUi as FilterUi<FilterDisplayComp, FilterDisplayParams> | undefined,
-            () => this.model[colId] ?? null,
+            () => _getFilterModel(this.model, colId),
             () => this.state.get(colId)
         );
     }
@@ -1640,178 +1607,5 @@ export class ColumnFilterService
         // don't need to destroy the listeners as they are managed listeners
         this.allColumnListeners.clear();
         this.state.clear();
-    }
-}
-
-interface BaseFilterUi<TComp = IFilterComp, TParams = IFilterParams> {
-    create: (update?: boolean) => AgPromise<TComp>;
-    filterParams: TParams;
-    compDetails: UserCompDetails;
-    /**
-     * True if has been refreshed but not created yet
-     */
-    refreshed?: boolean;
-}
-
-interface CreatedFilterUi<TComp = IFilterComp, TParams = IFilterParams> extends BaseFilterUi<TComp, TParams> {
-    created: true;
-    promise: AgPromise<TComp>;
-}
-
-interface UncreatedFilterUi<TComp = IFilterComp, TParams = IFilterParams> extends BaseFilterUi<TComp, TParams> {
-    created: false;
-}
-
-type FilterUi<TComp = IFilterComp, TParams = IFilterParams> =
-    | CreatedFilterUi<TComp, TParams>
-    | UncreatedFilterUi<TComp, TParams>;
-
-interface BaseFilterWrapper<
-    TComp extends IFilterComp | FilterDisplayComp = IFilterComp,
-    TParams extends IFilterParams | FilterDisplayParams = IFilterParams,
-> {
-    column: AgColumn;
-    /**
-     * `null` if invalid
-     */
-    filterUi: FilterUi<TComp, TParams> | null;
-}
-
-interface LegacyFilterWrapper extends BaseFilterWrapper<IFilterComp, IFilterParams> {
-    isEvaluator: false;
-    filter?: IFilterComp;
-}
-
-interface EvaluatorFilterWrapper extends BaseFilterWrapper<FilterDisplayComp, FilterDisplayParams> {
-    isEvaluator: true;
-    evaluator: FilterEvaluator;
-    evaluatorGenerator: FilterEvaluatorGeneratorFunc | EvaluatorName;
-    evaluatorParams: FilterEvaluatorBaseParams;
-}
-
-type FilterWrapper = LegacyFilterWrapper | EvaluatorFilterWrapper;
-
-function getFilterUiFromWrapper<TComp extends IFilterComp | FilterDisplayComp>(
-    filterWrapper: FilterWrapper,
-    skipCreate?: boolean
-): AgPromise<TComp> | null {
-    const filterUi = filterWrapper.filterUi;
-    if (!filterUi) {
-        return null;
-    }
-    if (filterUi.created) {
-        return filterUi.promise as AgPromise<TComp>;
-    }
-    if (skipCreate) {
-        return null;
-    }
-    const promise = filterUi.create(filterUi.refreshed) as AgPromise<TComp>;
-    const createdFilterUi = filterUi as unknown as CreatedFilterUi<TComp>;
-    createdFilterUi.created = true;
-    createdFilterUi.promise = promise;
-    return promise;
-}
-
-export function _refreshEvaluatorAndUi(
-    getFilterUi: () => AgPromise<{ filter: FilterDisplayComp; filterParams: FilterDisplayParams } | undefined>,
-    evaluator: FilterEvaluator,
-    evaluatorParams: FilterEvaluatorBaseParams,
-    model: any,
-    state: FilterDisplayState,
-    source: 'ui' | 'api' | 'colDef' | 'floating' | 'evaluator'
-): AgPromise<void> {
-    evaluator.refresh?.({ ...evaluatorParams, model, source });
-
-    return getFilterUi().then((filterUi) => {
-        if (filterUi) {
-            const { filter, filterParams } = filterUi;
-            _refreshFilterUi(filter, filterParams, model, state, source);
-        }
-    });
-}
-
-export function _refreshFilterUi(
-    filter: FilterDisplayComp | null | undefined,
-    filterParams: FilterDisplayParams,
-    model: any,
-    state: FilterDisplayState,
-    source: 'ui' | 'api' | 'colDef' | 'floating' | 'evaluator' | 'init'
-): void {
-    filter?.refresh?.({
-        ...filterParams,
-        model,
-        state,
-        source,
-    });
-}
-
-function refreshFilterUi(
-    getFilterUi: () => FilterUi<FilterDisplayComp, FilterDisplayParams> | undefined,
-    getModel: () => any,
-    getState: () => FilterDisplayState | undefined
-): void {
-    const filterUi = getFilterUi();
-    if (filterUi?.created) {
-        filterUi.promise.then((filter) => {
-            const model = getModel();
-            _refreshFilterUi(filter!, filterUi.filterParams, model, getState() ?? { model }, 'ui');
-        });
-    }
-}
-
-export function _updateFilterModel(
-    action: FilterAction,
-    getFilterUi: () => FilterUi<FilterDisplayComp, FilterDisplayParams> | undefined,
-    getModel: () => any,
-    getState: () => FilterDisplayState | undefined,
-    updateState: (state: FilterDisplayState) => void,
-    updateModel: (model: any) => void
-): void {
-    let state: FilterDisplayState;
-    let shouldUpdateModel = false;
-    let model: any;
-
-    switch (action) {
-        case 'apply': {
-            const oldState = getState();
-            model = oldState?.model ?? null;
-            state = {
-                // keep the other UI state
-                state: oldState?.state,
-                model,
-            };
-            shouldUpdateModel = true;
-            break;
-        }
-        case 'clear': {
-            state = {
-                // wipe other UI state
-                model: null,
-            };
-            break;
-        }
-        case 'reset': {
-            state = {
-                // wipe other UI state
-                model: null,
-            };
-            shouldUpdateModel = true;
-            model = null;
-            break;
-        }
-        case 'cancel': {
-            state = {
-                // wipe other UI state
-                model: getModel(),
-            };
-            break;
-        }
-    }
-
-    updateState(state);
-    if (shouldUpdateModel) {
-        updateModel(model);
-    } else {
-        refreshFilterUi(getFilterUi, getModel, getState);
     }
 }

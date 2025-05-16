@@ -2,7 +2,7 @@ import type { IFilterParams } from '../../interfaces/iFilter';
 import type { ISimpleFilterParams } from './iSimpleFilter';
 
 /**
- * @deprecated v33.1 Internal only. Use `IScalarFilterParams`
+ * @deprecated v34 Internal only. Use `IScalarFilterParams`
  */
 export type ScalarFilterParams<TData = any> = IScalarFilterParams & IFilterParams<TData>;
 

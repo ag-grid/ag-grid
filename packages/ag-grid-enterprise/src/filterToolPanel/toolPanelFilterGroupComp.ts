@@ -107,13 +107,7 @@ export class ToolPanelFilterGroupComp extends Component {
     }
 
     public onPanelHidden() {
-        this.childFilterComps.forEach((filterComp) => {
-            if (filterComp instanceof ToolPanelFilterGroupComp) {
-                filterComp.onPanelHidden();
-            } else {
-                filterComp.onPanelHidden();
-            }
-        });
+        this.childFilterComps.forEach((filterComp) => filterComp.onPanelHidden());
     }
 
     public isColumnGroup(): boolean {
