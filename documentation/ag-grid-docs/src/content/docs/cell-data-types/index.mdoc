@@ -8,7 +8,7 @@ This allows different grid features to work without any additional configuration
 
 ## Enable Cell Data Types
 
-There are six pre-defined cell data types: `'text'`, `'number'`, `'boolean'`, `'date'`, `'dateString'` and `'object'`.
+There are eight pre-defined cell data types: `'text'`, `'number'`, `'boolean'`, `'date'`, `'dateString'`, `'dateTime'`, `'dateTimeString'` and `'object'`.
 
 These are enabled by default, with the data type being inferred from the row data if possible (see [Inferring Data Types](#inferring-data-types)).
 
@@ -33,6 +33,8 @@ The following example demonstrates the six pre-defined cell data types (inferred
 * The **Gold** column has a `'boolean'` data type.
 * The **Date** column has a `'date'` data type (cell values are `Date` objects).
 * The **Date (String)** column has a `'dateString'` data type (cell values are `string`s representing dates).
+* The **DateTime** column has a `'dateTime'` data type (cell values are `Date` objects).
+* The **DateTime (String)** column has a `'dateTimeString'` data type (cell values are `string`s representing dates).
 * The **Country** column has an `'object'` data type. This also [Overrides the Pre-Defined Cell Data Type Definition](#overriding-the-pre-defined-cell-data-type-definitions) so that the value parser and formatter work with the object structure.
 
 {% gridExampleRunner title="Enable Cell Data Types" name="enable-cell-data-types" /%}
@@ -99,7 +101,7 @@ The following properties are set:
 
 The `'date'` cell data type is used for date values that are represented as `Date` objects.
 
-The default Value Parser and Value Formatter use the ISO string format `'yyyy-mm-dd'`. If you wish to use a different date format, then you can [Override the Pre-Defined Cell Data Type Definition](#overriding-the-pre-defined-cell-data-type-definitions).
+The default Value Parser and Value Formatter use the ISO string format `'YYYY-MM-DD'`. If you wish to use a different date format, then you can [Override the Pre-Defined Cell Data Type Definition](#overriding-the-pre-defined-cell-data-type-definitions).
 
 The following properties are set:
 
@@ -111,7 +113,31 @@ The following properties are set:
 
 The `'dateString'` cell data type is used for date values that are represented as `string` values.
 
-This data type uses the ISO string format `'yyyy-mm-dd'`. If you wish to use a different date format, then you can [Override the Pre-Defined Cell Data Type Definition](#overriding-the-pre-defined-cell-data-type-definitions).
+This data type uses the ISO string format `'YYYY-MM-DD'`. If you wish to use a different date format, then you can [Override the Pre-Defined Cell Data Type Definition](#overriding-the-pre-defined-cell-data-type-definitions).
+
+The following properties are set:
+
+* The [Date as String Cell Editor](./provided-cell-editors-date/#enabling-date-as-string-cell-editor) is used for editing.
+* When the [Set Filter is Disabled by Default](./filter-set/#suppress-set-filter-by-default), the [Date Filter](./filter-text/) is used, and `filterParams.comparator` is set to parse the `string` date values.
+* When the [Set Filter is Enabled by Default](./filter-set/#suppress-set-filter-by-default), the [Set Filter Tree List](./filter-set-tree-list/) is enabled, with `filterParams.treeListPathGetter` set to convert the `string` date values into paths, and the [Values are Formatted](./filter-set-tree-list/#formatting-values) by setting `filterParams.treeListFormatter` to convert the months to names and `filterParams.valueFormatter` to format the Floating Filter values using the Value Formatter.
+
+### DateTime
+
+The `'dateTime'` cell data type is used for date values that are represented as `Date` objects. The difference between this and the `'date'` cell data type is that the time is rendered with `'dateTime'`, while it is hidden with cell data type set to `'date'`.
+
+This data type uses the ISO string format `'YYYY-MM-DD hh:mm:ss'`. If you wish to use a different date format, then you can [Override the Pre-Defined Cell Data Type Definition](#overriding-the-pre-defined-cell-data-type-definitions).
+
+The following properties are set:
+
+* The [Date Cell Editor](./provided-cell-editors-date/) is used for editing.
+* When the [Set Filter is Disabled by Default](./filter-set/#suppress-set-filter-by-default), the [Date Filter](./filter-date/) is used.
+* When the [Set Filter is Enabled by Default](./filter-set/#suppress-set-filter-by-default), the [Set Filter Tree List](./filter-set-tree-list/) is enabled, and the [Values are Formatted](./filter-set-tree-list/#formatting-values) by setting `filterParams.treeListFormatter` to convert the months to names and `filterParams.valueFormatter` to format the Floating Filter values using the Value Formatter.
+
+### DateTime as String
+
+The `'dateTimeString'` cell data type is used for date values that are represented as `string` values. The difference between this and the `'dateString'` cell data type is that the time is rendered with `'dateTimeString'`, while it is hidden with cell data type set to `'dateString'`.
+
+This data type uses the ISO string format `'YYYY-MM-DD hh:mm:ss'`. If you wish to use a different date format, then you can [Override the Pre-Defined Cell Data Type Definition](#overriding-the-pre-defined-cell-data-type-definitions).
 
 The following properties are set:
 

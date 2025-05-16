@@ -1,7 +1,7 @@
 import type { FilterChangedEvent } from '../../../events';
 import { _addGridCommonParams } from '../../../gridOptionsUtils';
 import type { IDateParams } from '../../../interfaces/dateComponent';
-import { _parseDateTimeFromString, _serialiseDate } from '../../../utils/date';
+import { _parseDateTimeFromString } from '../../../utils/date';
 import type { ElementParams } from '../../../utils/dom';
 import { _setDisplayed } from '../../../utils/dom';
 import { _debounce } from '../../../utils/function';

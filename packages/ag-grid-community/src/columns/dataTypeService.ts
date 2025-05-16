@@ -548,6 +548,30 @@ export class DataTypeService extends BeanStub implements NamedBean {
         const defaultDateTimeFormatMatcher = (value: string) => !!value.match(dateTimeRegexp);
         const translate = this.getLocaleTextFunc();
 
+        const getDateCommonProps = (includeTime = true) => ({
+            dateParser: (value: string | undefined) => _parseDateTimeFromString(value) ?? undefined,
+            valueParser: (params: ValueParserLiteParams<any, string>) =>
+                defaultDateTimeFormatMatcher(String(params.newValue)) ? params.newValue : null,
+            valueFormatter: (params: ValueFormatterLiteParams<any, string>) =>
+                defaultDateTimeFormatMatcher(String(params.value)) ? params.value! : '',
+            dataTypeMatcher: (value: any) => typeof value === 'string' && defaultDateTimeFormatMatcher(value),
+            dateFormatter: (value: Date | undefined) => _serialiseDate(value ?? null, includeTime) ?? undefined,
+        });
+        const getDateTimeStringCommonProps = (includeTime = true) => ({
+            valueParser: (params: ValueParserLiteParams<any, Date>) =>
+                _parseDateTimeFromString(params.newValue == null ? null : String(params.newValue)),
+            valueFormatter: (params: ValueFormatterLiteParams<any, Date>) => {
+                if (params.value == null) {
+                    return '';
+                }
+                if (!(params.value instanceof Date) || isNaN(params.value.getTime())) {
+                    return translate('invalidDate', 'Invalid Date');
+                }
+                return _serialiseDate(params.value, includeTime) ?? '';
+            },
+            dataTypeMatcher: (value: any) => value instanceof Date,
+        });
+
         return {
             number: {
                 baseDataType: 'number',
@@ -586,58 +610,24 @@ export class DataTypeService extends BeanStub implements NamedBean {
             },
             date: {
                 baseDataType: 'date',
-                valueParser: (params: ValueParserLiteParams<any, Date>) =>
-                    _parseDateTimeFromString(params.newValue == null ? null : String(params.newValue)),
-                valueFormatter: (params: ValueFormatterLiteParams<any, Date>) => {
-                    if (params.value == null) {
-                        return '';
-                    }
-                    if (!(params.value instanceof Date) || isNaN(params.value.getTime())) {
-                        return translate('invalidDate', 'Invalid Date');
-                    }
-                    return _serialiseDate(params.value, false) ?? '';
-                },
-                dataTypeMatcher: (value: any) => value instanceof Date,
+                ...getDateTimeStringCommonProps(false),
             },
             dateString: {
                 baseDataType: 'dateString',
-                dateParser: (value: string | undefined) => _parseDateTimeFromString(value) ?? undefined,
-                dateFormatter: (value: Date | undefined) => _serialiseDate(value ?? null, false) ?? undefined,
-                valueParser: (params: ValueParserLiteParams<any, string>) =>
-                    defaultDateTimeFormatMatcher(String(params.newValue)) ? params.newValue : null,
-                valueFormatter: (params: ValueFormatterLiteParams<any, string>) =>
-                    defaultDateTimeFormatMatcher(String(params.value)) ? params.value! : '',
-                dataTypeMatcher: (value: any) => typeof value === 'string' && defaultDateTimeFormatMatcher(value),
+                ...getDateCommonProps(false),
+            },
+            dateTime: {
+                baseDataType: 'dateTime',
+                ...getDateTimeStringCommonProps(),
+            },
+            dateTimeString: {
+                baseDataType: 'dateTimeString',
+                ...getDateCommonProps(),
             },
             object: {
                 baseDataType: 'object',
                 valueParser: () => null,
                 valueFormatter: (params: ValueFormatterLiteParams<any, any>) => _toStringOrNull(params.value) ?? '',
-            },
-            dateTime: {
-                baseDataType: 'dateTime',
-                valueParser: (params: ValueParserLiteParams<any, Date>) =>
-                    _parseDateTimeFromString(params.newValue == null ? null : String(params.newValue)),
-                valueFormatter: (params: ValueFormatterLiteParams<any, Date>) => {
-                    if (params.value == null) {
-                        return '';
-                    }
-                    if (!(params.value instanceof Date) || isNaN(params.value.getTime())) {
-                        return translate('invalidDate', 'Invalid Date');
-                    }
-                    return _serialiseDate(params.value, true) ?? '';
-                },
-                dataTypeMatcher: (value: any) => value instanceof Date,
-            },
-            dateTimeString: {
-                baseDataType: 'dateTimeString',
-                dateParser: (value: string | undefined) => _parseDateTimeFromString(value) ?? undefined,
-                dateFormatter: (value: Date | undefined) => _serialiseDate(value ?? null, true) ?? undefined,
-                valueParser: (params: ValueParserLiteParams<any, string>) =>
-                    defaultDateTimeFormatMatcher(String(params.newValue)) ? params.newValue : null,
-                valueFormatter: (params: ValueFormatterLiteParams<any, string>) =>
-                    defaultDateTimeFormatMatcher(String(params.value)) ? params.value! : '',
-                dataTypeMatcher: (value: any) => typeof value === 'string' && defaultDateTimeFormatMatcher(value),
             },
         };
     }

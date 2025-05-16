@@ -149,7 +149,9 @@ export class DefaultDateComponent extends Component implements IDateComp {
     }
 
     public setDate(date: Date): void {
-        this.eDateInput.setValue(_serialiseDate(date, false));
+        const columnDef = this.params.filterParams.colDef;
+        const colType = columnDef.cellDataType;
+        this.eDateInput.setValue(_serialiseDate(date, colType === 'dateTime' || colType === 'dateTimeString'));
     }
 
     public setInputPlaceholder(placeholder: string): void {
