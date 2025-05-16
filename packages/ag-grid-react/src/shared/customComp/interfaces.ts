@@ -157,7 +157,16 @@ export interface CustomCellEditorCallbacks extends BaseCellEditor {}
 export interface CustomDateCallbacks extends BaseDate {}
 
 /** Callbacks for custom filter components */
-export interface CustomFilterCallbacks extends BaseFilter {}
+export interface CustomFilterCallbacks extends BaseFilter {
+    /** enable to customize isFilterActive callback
+     *
+     * copied from IFilter
+     * Returns `true` if the filter is currently active, otherwise `false`.
+     * If active then 1) the grid will show the filter icon in the column header
+     * and 2) the filter will be included in the filtering of the data.
+     */
+    isFilterActive?: (model: any) => boolean;
+}
 
 /** Callbacks for custom floating filter components */
 export interface CustomFloatingFilterCallbacks extends BaseFloatingFilter {}

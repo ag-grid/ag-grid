@@ -19,6 +19,9 @@ export class FilterComponentWrapper
     });
 
     public isFilterActive(): boolean {
+        if (this.providedMethods?.isFilterActive) {
+            return this.providedMethods.isFilterActive(this.model);
+        }
         return this.model != null;
     }
 
