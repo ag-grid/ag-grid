@@ -26,13 +26,32 @@ export const getConsoleLogSnippet = ({ pageName, exampleName, logError }: Params
 
 function patchConsoleLog() {
     const PRIMITIVE_TYPES = ["string", "number", "boolean", "undefined", "null", "nan", "symbol"];
-    const REPLACEMENT_TYPES = ["undefined", "nan", "infinity", "negativeInfinity", 'classInstance', 'event'];
+    const REPLACEMENT_TYPES = [
+        "undefined",
+        "nan",
+        "infinity",
+        "negativeInfinity",
+        "classInstance",
+        "event",
+        "cssStylesheet",
+        "element",
+        "document",
+        "window"
+    ];
     const getReplacementValue = (value) => {
         const valueType = getType(value);
         if (valueType === "classInstance") {
             return value.constructor.name + "Class {}";
         } else if (valueType === "event") {
             return value.constructor.name + " { type: " + value.type + " }";
+        } else if (valueType === "cssStylesheet") {
+            return value.constructor.name + " {}";
+        } else if (valueType === 'element') {
+             return "Element { " + value.localName + " }";
+        } else if (valueType === 'document') {
+             return "Document {}";
+        } else if (valueType === 'window') {
+             return "Window {}";
         }
 
         return \`[TYPE:\${valueType}]\`;
@@ -49,6 +68,13 @@ function patchConsoleLog() {
         if (value instanceof Map) return "map";
         if (value instanceof Set) return "set";
         if (value instanceof Event) return "event";
+        if (value instanceof Element) return "element";
+        if (value instanceof Document) return "document";
+        if (value instanceof Window) return "window";
+        if ((value instanceof CSSStyleSheet) ||
+            (typeof value === 'object' &&
+            value.constructor.name === 'CSSStyleSheet')
+        ) return "cssStylesheet";
         if (value instanceof WeakMap) return "weakmap";
         if (value instanceof WeakSet) return "weakset";
         if (value instanceof Promise) return "promise";
@@ -61,41 +87,47 @@ function patchConsoleLog() {
         return typeof value;
     }
 
-    function safeStringify(obj, space = 2) {
+    function updateWithReplacements(originalValue, replacementTypes) {
         const seen = new WeakSet();
-        return JSON.stringify(obj, (key, value) => {
-            if (typeof value === "object" && value !== null) {
-                if (seen.has(value)) {
+
+        const updateWithReplacementsRecursively = (value) => {
+            const valueType = getType(value);
+
+            if (seen.has(value)) {
+                if (replacementTypes.includes(valueType)) {
+                    return getReplacementValue(value);
+                } else {
                     return "[Circular]";
                 }
-                seen.add(value);
             }
-            return value;
-        }, space);
-    }
 
-    function updateWithReplacements(value, replacementTypes) {
-        const valueType = getType(value);
-        
-        if (replacementTypes.includes(valueType)) {
-            return getReplacementValue(value);
-        } else if (valueType === 'array') {
-            return value.map(item => updateWithReplacements(item, replacementTypes));
-        } else if (valueType === 'object') {
-            const obj = { ...value };
-            for (const key in value) {
-                const objValue = value[key];
-                const objValueType = getType(objValue);
-                if (replacementTypes.includes(objValueType)) {
-                    obj[key] = getReplacementValue(objValue);
-                } else {
-                    obj[key] = updateWithReplacements(objValue, replacementTypes);
+            if (replacementTypes.includes(valueType)) {
+                return getReplacementValue(value);
+            } else if (valueType === 'array') {
+                return value.map(item => updateWithReplacementsRecursively(item));
+            } else if (valueType === 'object') {
+                const obj = { ...value };
+
+                seen.add(value);
+
+                for (const key in value) {
+                    const objValue = value[key];
+                    const objValueType = getType(objValue);
+
+                    if (replacementTypes.includes(objValueType)) {
+                        obj[key] = getReplacementValue(objValue);
+                    } else {
+                        obj[key] = updateWithReplacementsRecursively(objValue);
+                    }
                 }
+
+                return obj;
+            } else {
+                return value;
             }
-            return obj;
-        } else {
-            return value;
-        }
+        };
+
+        return updateWithReplacementsRecursively(originalValue);
     }
 
     function isPrimitiveType(value) {
@@ -103,11 +135,17 @@ function patchConsoleLog() {
     }
 
     function getConsoleValue(value) {
-        return isPrimitiveType(value) ? value : {
+        if (isPrimitiveType(value)) {
+            return value;
+        }
+
+        const updatedValue = updateWithReplacements(value, REPLACEMENT_TYPES);
+        const safeString = JSON.stringify(updatedValue, null, 2);
+        return {
             __consoleLogObject: true,
             isLoggable: isPrimitiveType(value),
             argType: getType(value),
-            safeString: safeStringify(updateWithReplacements(value, REPLACEMENT_TYPES)),
+            safeString,
         }
     }
 
