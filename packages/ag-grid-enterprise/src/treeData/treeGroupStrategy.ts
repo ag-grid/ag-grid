@@ -189,7 +189,7 @@ export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGrou
         }
     }
 
-    private setParentsByParentIdField = ({ rowNode }: StageExecuteParams<TData>, fullReload: boolean): void => {
+    private setParentsByParentIdField({ rowNode }: StageExecuteParams<TData>, fullReload: boolean): void {
         const rootNode = rowNode as TreeRow<TData>;
         const rootAllLeafChildren = rootNode.allLeafChildren!;
         const rowModel = this.beans.rowModel;
@@ -217,7 +217,7 @@ export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGrou
                 row.treeNode ??= rootNode;
             }
         }
-    };
+    }
 }
 
 type IsGroupOpenByDefaultCallback = ((params: WithoutGridCommon<IsGroupOpenByDefaultParams>) => boolean) | undefined;
