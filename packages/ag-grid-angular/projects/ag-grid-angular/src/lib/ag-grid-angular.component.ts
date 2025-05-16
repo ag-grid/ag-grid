@@ -798,11 +798,13 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * @agModule TextFilterModule / NumberFilterModule / DateFilterModule / MultiFilterModule / CustomFilterModule
      */
     @Input({ transform: booleanAttribute }) public suppressSetFilterByDefault: boolean | undefined = undefined;
-    /** TODO
+    /** Enable filter evaluators for custom filter components.
+     * Requires all custom filters need to be implemented using evaluators.
      * @initial
      */
     @Input({ transform: booleanAttribute }) public enableFilterEvaluators: boolean | undefined = undefined;
-    /** TODO
+    /** A map of filter evaluator key to filter evaluator function.
+     * Allows for filter evaluator keys to be used in `colDef.filterEvaluator`.
      * @initial
      */
     @Input() public filterEvaluators: { [key: string]: FilterEvaluatorGeneratorFunc } | undefined = undefined;
@@ -2173,13 +2175,12 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Output() public filterModified: EventEmitter<FilterModifiedEvent<TData>> = new EventEmitter<
         FilterModifiedEvent<TData>
     >();
-    /** TODO - update
+    /** Filter UI was modified (when using `enableFilterEvaluators = true`).
      */
     @Output() public filterUiChanged: EventEmitter<FilterUiChangedEvent<TData>> = new EventEmitter<
         FilterUiChangedEvent<TData>
     >();
-    /** TODO - update
-     * Floating filter modified. Only used when `enableFilterEvaluators` is enabled.
+    /** Floating filter UI modified (when using `enableFilterEvaluators = true`.
      */
     @Output() public floatingFilterUiChanged: EventEmitter<FloatingFilterUiChangedEvent<TData>> = new EventEmitter<
         FloatingFilterUiChangedEvent<TData>
