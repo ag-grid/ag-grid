@@ -157,6 +157,18 @@
         color: var(--ag-secondary-foreground-color);
     }
 
+    [col-id='ag-Grid-SelectionColumn'] .ag-selection-checkbox {
+        @include ag.unthemed-rtl(
+            (
+                margin-right: 0,
+            )
+        );
+    }
+
+    .ag-selection-checkbox-no-margin .ag-selection-checkbox {
+        margin-right: 0;
+    }
+
     .ag-cell-wrapper > *:not(.ag-cell-value):not(.ag-group-value) {
         // assign internal variables to simplify the `height` value
         --ag-internal-calculated-line-height: var(

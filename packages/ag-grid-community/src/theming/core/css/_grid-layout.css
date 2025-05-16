@@ -196,7 +196,7 @@
     margin-right: var(--ag-cell-widget-spacing);
 }
 
-[col-id='ag-Grid-SelectionColumn'] .ag-selection-checkbox {
+.ag-selection-checkbox-no-margin .ag-selection-checkbox {
     margin-right: 0;
 }
 

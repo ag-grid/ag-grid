@@ -1,7 +1,7 @@
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import { AgColumn } from '../entities/agColumn';
-import type { ColDef } from '../entities/colDef';
+import type { ColDef, HeaderStyle } from '../entities/colDef';
 import type { GridOptions, SelectionColumnDef } from '../entities/gridOptions';
 import type { ColumnEventType } from '../events';
 import type { PropertyValueChangedEvent } from '../gridOptionsService';
@@ -132,6 +132,20 @@ export class SelectionColService extends BeanStub implements NamedBean, IColumnC
         const { gos } = this.beans;
         const selectionColumnDef = def ?? gos.get('selectionColumnDef');
         const enableRTL = gos.get('enableRtl');
+        const isFitCellContents = gos.get('autoSizeStrategy')?.type === 'fitCellContents';
+
+        // If there's no custom header component in the selection column, we set the 'gap' property
+        // to 2px to remove the excess spacing between the component container and the checkbox container.
+        // This ensures the width of the column remains at 50px when autosizing the column with the
+        // 'fitCellContents' strategy.
+        const headerStyle: HeaderStyle | undefined =
+            isFitCellContents && !selectionColumnDef?.headerComponent ? { gap: '2px' } : undefined;
+
+        const headerClass =
+            isFitCellContents && !selectionColumnDef?.headerComponent ? 'ag-header-select-all-no-margin' : undefined;
+
+        const cellClass =
+            isFitCellContents && !selectionColumnDef?.cellRenderer ? 'ag-selection-checkbox-no-margin' : undefined;
 
         return {
             // overridable properties
@@ -149,16 +163,9 @@ export class SelectionColService extends BeanStub implements NamedBean, IColumnC
             editable: false,
             suppressFillHandle: true,
             pinned: null,
-            headerStyle:
-                // If there's no custom header component in the selection column, we set the 'gap' property
-                // to 2px to kill the excess spacing between the component container and the checkbox container.
-                // This ensures the width of the column remains at 50px when autosizing the column with the
-                // 'fitCellContents' strategy.
-                selectionColumnDef?.headerComponent != null
-                    ? undefined
-                    : {
-                          gap: '2px',
-                      },
+            headerStyle,
+            headerClass,
+            cellClass,
             // overrides
             ...selectionColumnDef,
             // non-overridable properties
