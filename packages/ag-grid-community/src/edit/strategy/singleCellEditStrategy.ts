@@ -104,11 +104,9 @@ export class SingleCellEditStrategy extends BaseEditStrategy {
             column: previous?.column,
         });
 
-        const { rowNode } = cellCtrl!;
-
         // if we are editing, then moving the focus out of a cell will stop editing
         this.beans.editSvc?.stopEditing(
-            rowNode,
+            cellCtrl?.rowNode,
             this.beans.colModel.getCol(_getColId(column)) ?? undefined,
             undefined,
             undefined,
