@@ -116,10 +116,6 @@ export class EditService extends BeanStub implements NamedBean {
             return false;
         }
 
-        if (this.isEditing(rowNode, column)) {
-            return true;
-        }
-
         this.strategy = this.createStrategy();
 
         // because of async in React, the cellComp may not be set yet, if no cellComp then we are
@@ -132,7 +128,9 @@ export class EditService extends BeanStub implements NamedBean {
             return true;
         }
 
-        const res = this.shouldStartEditing?.(rowNode, column, key, event, cellStartedEdit, source);
+        const res =
+            this.isEditing(rowNode, column) ||
+            this.shouldStartEditing?.(rowNode, column, key, event, cellStartedEdit, source);
 
         if (res === false && source !== 'api') {
             if (this.isEditing()) {
