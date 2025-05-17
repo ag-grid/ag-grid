@@ -161,7 +161,7 @@ export class EditService extends BeanStub implements NamedBean {
         suppressNavigateAfterEdit: boolean = false,
         shiftKey: boolean = false
     ): boolean {
-        if (!this.isEditing()) {
+        if (!this.isEditing() || !this.strategy) {
             return false;
         }
 
@@ -169,8 +169,6 @@ export class EditService extends BeanStub implements NamedBean {
         if (cellCtrl) {
             cellCtrl.onEditorAttachedFuncs = [];
         }
-
-        this.strategy = this.createStrategy();
 
         _syncModelsFromEditors(this.beans);
 
