@@ -53,7 +53,12 @@ export class HeaderCellComp extends AbstractHeaderCellComp<HeaderCellCtrl> {
                 const selectAllGui = this.ctrl.getSelectAllGui();
                 if (selectAllGui) {
                     this.eResize.insertAdjacentElement('afterend', selectAllGui);
+                    this.addDestroyFunc(() => selectAllGui.remove());
                 }
+            },
+            removeSelectAllGui: () => {
+                const selectAllGui = this.ctrl.getSelectAllGui();
+                selectAllGui?.remove();
             },
         };
 
@@ -62,6 +67,7 @@ export class HeaderCellComp extends AbstractHeaderCellComp<HeaderCellCtrl> {
         const selectAllGui = this.ctrl.getSelectAllGui();
         if (selectAllGui) {
             this.eResize.insertAdjacentElement('afterend', selectAllGui);
+            this.addDestroyFunc(() => selectAllGui.remove());
         }
     }
 

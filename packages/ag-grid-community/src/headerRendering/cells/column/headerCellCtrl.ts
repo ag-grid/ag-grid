@@ -29,6 +29,7 @@ export interface IHeaderCellComp extends IAbstractHeaderCellComp {
     setUserCompDetails(compDetails: UserCompDetails): void;
     getUserCompInstance(): IHeader | undefined;
     refreshSelectAllGui(): void;
+    removeSelectAllGui(): void;
 }
 
 type HeaderAriaDescriptionKey = 'filter' | 'menu' | 'sort' | 'selectAll' | 'filterButton';
@@ -242,6 +243,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
                 this.selectAllFeature?.setComp(this);
                 this.comp.refreshSelectAllGui();
             } else if (this.selectAllFeature && !selectAllFeature) {
+                this.comp.removeSelectAllGui();
                 this.selectAllFeature = this.destroyBean(this.selectAllFeature);
             }
         });

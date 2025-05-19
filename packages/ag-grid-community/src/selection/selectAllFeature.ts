@@ -1,5 +1,6 @@
 import { isColumnGroupAutoCol, isColumnSelectionCol } from '../columns/columnUtils';
 import { BeanStub } from '../context/beanStub';
+import type { BeanCollection } from '../context/context';
 import type { AgColumn } from '../entities/agColumn';
 import type { GridOptions, SelectAllMode } from '../entities/gridOptions';
 import type { DisplayedColumnsChangedEvent, SelectionEventSourceType } from '../events';
@@ -192,38 +193,17 @@ export class SelectAllFeature extends BeanStub {
      * Checkbox is enabled when either the `headerCheckbox` option is enabled in the new selection API
      * or `headerCheckboxSelection` is enabled in the legacy API.
      */
-    public isCheckboxSelection(): boolean {
+    private isCheckboxSelection(): boolean {
         const { column, gos, beans } = this;
         const rowSelection = gos.get('rowSelection');
-        const colDef = column.getColDef();
-        const { headerCheckboxSelection } = colDef;
-
-        let result = false;
         const newHeaderCheckbox = typeof rowSelection === 'object';
-        if (newHeaderCheckbox) {
-            // new selection config
-            const isSelectionCol = isColumnSelectionCol(column);
-            const isAutoCol = isColumnGroupAutoCol(column);
-            // default to displaying header checkbox in the selection column
-            const location = _getCheckboxLocation(rowSelection);
-            if (
-                (location === 'autoGroupColumn' && isAutoCol) ||
-                (isSelectionCol && beans.selectionColSvc?.isSelectionColumnEnabled())
-            ) {
-                result = _getHeaderCheckbox(rowSelection);
-            }
-        } else {
-            // legacy selection config
-            if (typeof headerCheckboxSelection === 'function') {
-                result = headerCheckboxSelection(_addGridCommonParams(gos, { column, colDef }));
-            } else {
-                result = !!headerCheckboxSelection;
-            }
-        }
-
         const featureName = newHeaderCheckbox ? 'headerCheckbox' : 'headerCheckboxSelection';
 
-        return result && this.checkRightRowModelType(featureName) && this.checkSelectionType(featureName);
+        return (
+            isCheckboxSelection(beans, column) &&
+            this.checkRightRowModelType(featureName) &&
+            this.checkSelectionType(featureName)
+        );
     }
 
     private getSelectAllMode(): SelectAllMode {
@@ -242,9 +222,39 @@ export class SelectAllFeature extends BeanStub {
     }
 
     public override destroy(): void {
-        const eGui = this.getCheckboxGui();
-        eGui.parentElement?.removeChild(eGui);
-
         super.destroy();
+        (this.cbSelectAll as any) = undefined;
+        (this.headerCellCtrl as any) = undefined;
     }
+}
+
+export function isCheckboxSelection({ gos, selectionColSvc }: BeanCollection, column: AgColumn): boolean {
+    const rowSelection = gos.get('rowSelection');
+    const colDef = column.getColDef();
+    const { headerCheckboxSelection } = colDef;
+
+    let result = false;
+    const newHeaderCheckbox = typeof rowSelection === 'object';
+    if (newHeaderCheckbox) {
+        // new selection config
+        const isSelectionCol = isColumnSelectionCol(column);
+        const isAutoCol = isColumnGroupAutoCol(column);
+        // default to displaying header checkbox in the selection column
+        const location = _getCheckboxLocation(rowSelection);
+        if (
+            (location === 'autoGroupColumn' && isAutoCol) ||
+            (isSelectionCol && selectionColSvc?.isSelectionColumnEnabled())
+        ) {
+            result = _getHeaderCheckbox(rowSelection);
+        }
+    } else {
+        // legacy selection config
+        if (typeof headerCheckboxSelection === 'function') {
+            result = headerCheckboxSelection(_addGridCommonParams(gos, { column, colDef }));
+        } else {
+            result = !!headerCheckboxSelection;
+        }
+    }
+
+    return result;
 }
