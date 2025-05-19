@@ -1,9 +1,46 @@
 ---
-import Layout from '@layouts/Layout.astro';
+import Layout from '../../layouts/Layout.astro';
 import styles from '../../pages-styles/campaigns.module.scss';
 
 import { TrialLicenceForm } from '@ag-website-shared/components/trial-licence-form/TrialLicenceForm';
+import { AutomatedIntegratedCharts } from '@ag-website-shared/components/automated-examples/AutomatedIntegratedCharts';
+import { Icon } from '@ag-website-shared/components/icon/Icon';
+import ImageCarousel from './components/ImageCarousel';
+
+import 'ag-grid-community/styles/ag-grid.css';
+import 'ag-grid-community/styles/ag-theme-quartz.css';
+import { getIsProduction } from '@utils/env';
+
+const TRIAL_LICENCE_FORM_URL = getIsProduction()
+    ? 'https://us-central1-aggrid-ecommerce.cloudfunctions.net/CreateLeadForTrialChartsCampaign'
+    : 'https://us-central1-stripe-testing-19784.cloudfunctions.net/CreateLeadForTrialChartsCampaign';
+
+const QUOTES_DATA = [
+    {
+        quote: 'Replacing our slow, unstable Tableau reports will be a big ‘quality of life’ improvement.',
+        source: 'A leading global aerospace and defence company',
+    },
+    {
+        quote: 'Your Grid and Charts are the backbone of this project.',
+        source: 'An AI-driven investment research platform',
+    },
+    {
+        quote: 'The speed of AG Grid’s charting library is insanely impressive.',
+        source: 'Developer on X',
+    },
+];
+
+const CAMPAIGN_CODE = `SPRING20`;
+
+const UTM_TRACKER = '?utm_source=power-of-ag-charts&utm_medium=landing-page&utm_campaign=integrated-enterprise-charts';
+
+const MAILTO_HREF = `mailto:info@ag-grid.com?subject=AG Charts Enterprise: ${CAMPAIGN_CODE} enquiry`;
 ---
+
+<!-- Grid font for Quartz theme -->
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;700&display=swap" rel="stylesheet" />
 
 <Layout
     title={'Unlock the power of AG Charts'}
@@ -12,64 +49,189 @@ import { TrialLicenceForm } from '@ag-website-shared/components/trial-licence-fo
     showSearchBar={true}
     hidePageFromSearchEngines={true}
 >
+    <div class={styles.homepageHero}>
+        <div class:list={[styles.heroInner, 'layout-max-width-small']}>
+            <div class={styles.heroHeadings}>
+                <h1>Enhance your Insights with <span class={styles.noWrap}>AG Charts</span> Enterprise</h1>
+
+                <h2>
+                    Access advanced features and chart types without any additional development. Simply update your
+                    licence and import the <code class={styles.noWrap}>ag-charts-enterprise</code> package.
+                </h2>
+
+                <div>
+                    <a
+                        href={'https://www.ag-grid.com/charts/gallery/' + UTM_TRACKER}
+                        target="_blank"
+                        class="button-secondary">See the charts <Icon name="chevronRight" /></a
+                    >
+                    <a href={MAILTO_HREF} class="button-secondary">Buy now: 20% discount <Icon name="email" /></a>
+                </div>
+            </div>
+
+            <ImageCarousel client:load />
+        </div>
+    </div>
+
     <main class={styles.campaignOuter}>
-        <div class={styles.campaignHero}>
-            <h1>Unlock the power<br />of AG Charts</h1>
-
-            <h2>Visualise your AG Grid data with fast, flexible charts</h2>
-
-            <p>High-performance charting, built for AG Grid users.</p>
-
+        <div class={styles.campaignOffer}>
             <p>
-                Create fast, flexible and fully customisable charts<br />with minimal configuration for maximum impact.
+                Order before <b>1st July</b> for a <b>20% discount</b> on your 1st year's licence – apply for a trial licence,
+                or get in touch using code <b>{CAMPAIGN_CODE}</b>
             </p>
+            <span class={styles.illustration}>
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 103"
+                    ><path
+                        fill="#000"
+                        fill-rule="evenodd"
+                        d="M59.614 77.872a3.875 3.875 0 0 1 5.773 0l.904 1.01a1.3 1.3 0 0 0 1.035.43l1.356-.076a3.875 3.875 0 0 1 4.082 4.082l-.075 1.356a1.3 1.3 0 0 0 .429 1.034l1.011.904a3.874 3.874 0 0 1 0 5.775l-1.011.904a1.29 1.29 0 0 0-.429 1.035l.075 1.356a3.873 3.873 0 0 1-4.082 4.082l-1.356-.075a1.3 1.3 0 0 0-1.033.428l-.904 1.012a3.87 3.87 0 0 1-2.888 1.291 3.87 3.87 0 0 1-2.887-1.291l-.905-1.012a1.3 1.3 0 0 0-1.034-.428l-1.356.075a3.877 3.877 0 0 1-4.082-4.082l.075-1.356a1.3 1.3 0 0 0-.429-1.034l-1.01-.904a3.877 3.877 0 0 1 0-5.775l1.01-.904a1.3 1.3 0 0 0 .429-1.035l-.075-1.356a3.874 3.874 0 0 1 4.081-4.082l1.357.075a1.3 1.3 0 0 0 1.033-.429zm7.675 6.84a1.29 1.29 0 0 1 0 1.826l-7.75 7.75a1.291 1.291 0 0 1-1.827-1.826l7.75-7.75a1.29 1.29 0 0 1 1.827 0m-8.018-.379a1.937 1.937 0 0 0-1.937 1.938v.013a1.94 1.94 0 0 0 1.937 1.937h.013a1.937 1.937 0 0 0 1.938-1.937v-.013a1.937 1.937 0 0 0-1.938-1.938zm6.459 6.459a1.94 1.94 0 0 0-1.938 1.937v.013a1.94 1.94 0 0 0 1.938 1.938h.013a1.94 1.94 0 0 0 1.937-1.938v-.013a1.94 1.94 0 0 0-1.937-1.937zM83.614 41.872a3.875 3.875 0 0 1 5.773 0l.904 1.01a1.3 1.3 0 0 0 1.035.43l1.356-.076a3.875 3.875 0 0 1 4.082 4.082l-.075 1.356a1.3 1.3 0 0 0 .429 1.034l1.011.904a3.874 3.874 0 0 1 0 5.775l-1.011.904a1.29 1.29 0 0 0-.429 1.035l.075 1.356a3.873 3.873 0 0 1-4.082 4.082l-1.356-.075a1.3 1.3 0 0 0-1.033.429l-.904 1.01a3.875 3.875 0 0 1-5.775 0l-.905-1.01a1.29 1.29 0 0 0-1.034-.43l-1.356.076a3.877 3.877 0 0 1-4.082-4.082l.075-1.356a1.3 1.3 0 0 0-.429-1.034l-1.01-.904a3.877 3.877 0 0 1 0-5.775l1.01-.904a1.3 1.3 0 0 0 .429-1.035l-.075-1.356a3.874 3.874 0 0 1 4.082-4.082l1.356.075a1.3 1.3 0 0 0 1.033-.428zm7.675 6.84a1.29 1.29 0 0 1 0 1.826l-7.75 7.75a1.291 1.291 0 0 1-1.827-1.826l7.75-7.75a1.29 1.29 0 0 1 1.827 0m-8.018-.379a1.937 1.937 0 0 0-1.937 1.938v.013a1.94 1.94 0 0 0 1.937 1.937h.013a1.937 1.937 0 0 0 1.938-1.937v-.013a1.937 1.937 0 0 0-1.938-1.938zm6.459 6.459a1.94 1.94 0 0 0-1.938 1.937v.013a1.94 1.94 0 0 0 1.938 1.938h.013a1.94 1.94 0 0 0 1.937-1.938v-.013a1.94 1.94 0 0 0-1.937-1.937z"
+                        clip-rule="evenodd"
+                        opacity=".1"></path><path
+                        fill="#000"
+                        fill-rule="evenodd"
+                        d="M43.614 41.872a3.875 3.875 0 0 1 5.773 0l.904 1.01a1.3 1.3 0 0 0 1.035.43l1.356-.076a3.875 3.875 0 0 1 4.082 4.082l-.075 1.356a1.3 1.3 0 0 0 .429 1.034l1.011.904a3.874 3.874 0 0 1 0 5.775l-1.011.904a1.29 1.29 0 0 0-.429 1.035l.075 1.356a3.873 3.873 0 0 1-4.082 4.082l-1.356-.075a1.3 1.3 0 0 0-1.033.429l-.904 1.01a3.875 3.875 0 0 1-5.775 0l-.905-1.01a1.29 1.29 0 0 0-1.034-.43l-1.356.076a3.877 3.877 0 0 1-4.082-4.082l.075-1.356a1.3 1.3 0 0 0-.429-1.034l-1.01-.904a3.877 3.877 0 0 1 0-5.775l1.01-.904a1.3 1.3 0 0 0 .429-1.035l-.075-1.356a3.874 3.874 0 0 1 4.081-4.082l1.357.075a1.3 1.3 0 0 0 1.033-.428zm7.675 6.84a1.29 1.29 0 0 1 0 1.826l-7.75 7.75a1.291 1.291 0 0 1-1.827-1.826l7.75-7.75a1.29 1.29 0 0 1 1.827 0m-8.018-.379a1.937 1.937 0 0 0-1.937 1.938v.013a1.94 1.94 0 0 0 1.937 1.937h.013a1.937 1.937 0 0 0 1.938-1.937v-.013a1.937 1.937 0 0 0-1.938-1.938zm6.459 6.459a1.94 1.94 0 0 0-1.938 1.937v.013a1.94 1.94 0 0 0 1.938 1.938h.013a1.94 1.94 0 0 0 1.937-1.938v-.013a1.94 1.94 0 0 0-1.937-1.937z"
+                        clip-rule="evenodd"></path><path
+                        fill="#000"
+                        fill-rule="evenodd"
+                        d="M50.614 1.872a3.875 3.875 0 0 1 5.773 0l.904 1.01a1.3 1.3 0 0 0 1.035.43l1.356-.076a3.875 3.875 0 0 1 4.082 4.082l-.075 1.356a1.3 1.3 0 0 0 .429 1.034l1.011.904a3.874 3.874 0 0 1 0 5.775l-1.011.904a1.29 1.29 0 0 0-.429 1.035l.075 1.356a3.873 3.873 0 0 1-4.082 4.082l-1.356-.075a1.3 1.3 0 0 0-1.033.428l-.904 1.012a3.875 3.875 0 0 1-5.775 0l-.905-1.012a1.29 1.29 0 0 0-1.034-.428l-1.356.075a3.877 3.877 0 0 1-4.082-4.082l.075-1.356a1.3 1.3 0 0 0-.429-1.034l-1.01-.904a3.877 3.877 0 0 1 0-5.775l1.01-.904a1.3 1.3 0 0 0 .429-1.035l-.075-1.356a3.874 3.874 0 0 1 4.081-4.082l1.357.075a1.3 1.3 0 0 0 1.033-.429zm7.675 6.84a1.29 1.29 0 0 1 0 1.826l-7.75 7.75a1.291 1.291 0 0 1-1.827-1.826l7.75-7.75a1.29 1.29 0 0 1 1.827 0m-8.018-.379a1.937 1.937 0 0 0-1.937 1.938v.013a1.94 1.94 0 0 0 1.937 1.937h.013a1.937 1.937 0 0 0 1.938-1.937v-.013a1.937 1.937 0 0 0-1.938-1.938zm6.459 6.459a1.94 1.94 0 0 0-1.938 1.937v.013a1.94 1.94 0 0 0 1.938 1.938h.013a1.94 1.94 0 0 0 1.937-1.938v-.013a1.94 1.94 0 0 0-1.937-1.937zM10.614 1.872a3.875 3.875 0 0 1 5.773 0l.904 1.01a1.3 1.3 0 0 0 1.035.43l1.356-.076a3.875 3.875 0 0 1 4.082 4.082l-.075 1.356a1.3 1.3 0 0 0 .429 1.034l1.011.904a3.874 3.874 0 0 1 0 5.775l-1.011.904a1.29 1.29 0 0 0-.429 1.035l.075 1.356a3.873 3.873 0 0 1-4.082 4.082l-1.356-.075a1.3 1.3 0 0 0-1.033.428l-.904 1.012a3.875 3.875 0 0 1-5.775 0l-.905-1.012a1.29 1.29 0 0 0-1.034-.428l-1.356.075a3.877 3.877 0 0 1-4.082-4.082l.075-1.356a1.3 1.3 0 0 0-.429-1.034l-1.01-.904a3.875 3.875 0 0 1 0-5.775l1.01-.904a1.3 1.3 0 0 0 .429-1.035l-.075-1.356a3.875 3.875 0 0 1 4.082-4.082l1.356.075a1.3 1.3 0 0 0 1.033-.429zm7.675 6.84a1.29 1.29 0 0 1 0 1.826l-7.75 7.75a1.291 1.291 0 0 1-1.827-1.826l7.75-7.75a1.29 1.29 0 0 1 1.827 0m-8.018-.379a1.937 1.937 0 0 0-1.937 1.938v.013a1.94 1.94 0 0 0 1.937 1.937h.013a1.937 1.937 0 0 0 1.938-1.937v-.013a1.937 1.937 0 0 0-1.938-1.938zm6.459 6.459a1.94 1.94 0 0 0-1.938 1.937v.013a1.94 1.94 0 0 0 1.938 1.938h.012a1.94 1.94 0 0 0 1.938-1.938v-.013a1.94 1.94 0 0 0-1.937-1.937zM10.614 57.872a3.875 3.875 0 0 1 5.773 0l.904 1.01a1.3 1.3 0 0 0 1.035.43l1.356-.076a3.875 3.875 0 0 1 4.082 4.082l-.075 1.356a1.3 1.3 0 0 0 .429 1.034l1.011.904a3.874 3.874 0 0 1 0 5.775l-1.011.904a1.29 1.29 0 0 0-.429 1.035l.075 1.356a3.873 3.873 0 0 1-4.082 4.082l-1.356-.075a1.3 1.3 0 0 0-1.033.429l-.904 1.01a3.875 3.875 0 0 1-5.775 0l-.905-1.01a1.29 1.29 0 0 0-1.034-.43l-1.356.076a3.877 3.877 0 0 1-4.082-4.082l.075-1.356a1.3 1.3 0 0 0-.429-1.034l-1.01-.904a3.875 3.875 0 0 1 0-5.775l1.01-.904a1.3 1.3 0 0 0 .429-1.035l-.075-1.356a3.875 3.875 0 0 1 4.082-4.082l1.356.075a1.3 1.3 0 0 0 1.033-.428zm7.675 6.84a1.29 1.29 0 0 1 0 1.826l-7.75 7.75a1.291 1.291 0 0 1-1.827-1.826l7.75-7.75a1.29 1.29 0 0 1 1.827 0m-8.018-.379a1.937 1.937 0 0 0-1.937 1.938v.013a1.94 1.94 0 0 0 1.937 1.937h.013a1.937 1.937 0 0 0 1.938-1.937v-.013a1.937 1.937 0 0 0-1.938-1.938zm6.459 6.459a1.94 1.94 0 0 0-1.938 1.937v.013a1.94 1.94 0 0 0 1.938 1.938h.012a1.94 1.94 0 0 0 1.938-1.938v-.013a1.94 1.94 0 0 0-1.937-1.937z"
+                        clip-rule="evenodd"
+                        opacity=".1"></path></svg
+                >
+            </span>
         </div>
 
-        <h2>Watch AG Charts in Action</h2>
-
-        <iframe
-            src="https://www.youtube.com/embed/KocCv954fbo?si=JUQzgwBiWPL8oUcI"
-            title="YouTube video player"
-            frameborder="0"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-            referrerpolicy="strict-origin-when-cross-origin"
-            allowfullscreen
-            class={styles.campaignDummyVideo}
-        >
-        </iframe>
-
-        <div class={styles.campaignBenefitsList}>
-            <h3>Built for Developers</h3>
-
-            <ul>
-                <li>Deliver high-impact visualisations that showcase the value in your data</li>
-                <li>Integrate seamlessly with your AG Grid apps</li>
-                <li>Access simple, consistent APIs for JavaScript, React, Angular, and Vue</li>
-                <li>Visualise large datasets with outstanding performance</li>
-            </ul>
+        <div class={styles.autoICExample}>
+            <AutomatedIntegratedCharts client:load visibilityThreshold={0.8} />
         </div>
 
-        <div>
-            <h3>Start your free trial today</h3>
-
-            <TrialLicenceForm />
+        <div class={styles.quotesOuter}>
+            {
+                QUOTES_DATA.map(({ quote, source }) => {
+                    return (
+                        <div class={styles.quote}>
+                            <blockquote>{quote}</blockquote>
+                            <p class="text-sm">– {source}</p>
+                        </div>
+                    );
+                })
+            }
         </div>
 
-        <div class={styles.campaignBenefitsList}>
-            <h3>Built for Developers</h3>
+        <div class={styles.campaignBenefitsContainer}>
+            <div class={styles.campaignBenefitsList}>
+                <h2>Built for Developers</h2>
+                <ul>
+                    <li>
+                        Add advanced chart types and features to your existing app, with no additional development
+                        required.
+                    </li>
+                    <li>Access 20+ new chart types, including Heatmaps, Funnels, Gauges, Ranges, and more.</li>
+                    <li>Make your charts interactive with features like Zooming, Context Menus, and Annotations.</li>
+                    <li>
+                        Leverage our easy-to-use API to extend, customise and enhance our charts in any way you like.
+                    </li>
+                    <li>Add charts to your app with the standalone library for non-data grid use cases.</li>
+                </ul>
+                <a
+                    href={'https://www.ag-grid.com/charts/gallery/' + UTM_TRACKER}
+                    target="_blank"
+                    class="button-tertiary text-md">View Gallery <Icon name="arrowRight" /></a
+                >
+            </div>
 
-            <ul>
-                <li>Make better decisions with your data</li>
-                <li>Spot trends, outliers, and risks at a glance</li>
-                <li>Create professional, interactive reports without additional tools</li>
-                <li>Reduce development time with charts that work straight out of the box</li>
-                <li>Get trusted support and seamless integration with your existing AG Grid setup</li>
-                <li>Take advantage of exclusive bundle pricing for AG Grid customers</li>
-            </ul>
+            <div class={styles.campaignBenefitsList}>
+                <h2>Benefits for Business</h2>
+                <ul>
+                    <li>
+                        Unlock more meaningful insights into your data with complex charts to match the needs of your
+                        data.
+                    </li>
+                    <li>
+                        Analyse your data in more detail with advanced interactivity features, including zoom and
+                        context menus.
+                    </li>
+                    <li>
+                        Annotate your charts in real-time with the annotations toolbar - add lines, arrows, text, shapes
+                        and more.
+                    </li>
+                    <li>Export your visualisations to images and share them across your organisation.</li>
+                    <li>Take advantage of exclusive bundle pricing for existing AG Grid customers.</li>
+                </ul>
+                <a href={MAILTO_HREF} class="button-tertiary text-md">Contact Sales <Icon name="email" /></a>
+            </div>
         </div>
 
-        <a href="mailto:info@ag-grid.com" class="text-xl">Contact our team</a>
+        <div style="text-align: center;">
+            <h3 class="text-2xl" id="request-trial-licence">
+                <Icon name="enterprise" svgClasses={styles.enterpriseIcon} />
+                <span>Try AG Charts Enterprise for Free</span>
+            </h3>
 
-        <a href="https://www.ag-grid.com/charts/gallery/" class="button text-xl">View our demos</a>
+            <p>Fill out the form to receive a trial licence for AG Grid and AG Charts</p>
+        </div>
+
+        <div class={styles.trialLicence}>
+            <div class={styles.trialLicenceCopy}>
+                <div class={styles.trialLicenceCopyItem}>
+                    <Icon name="alarm" svgClasses={styles.alarmIcon} />
+                    <p>
+                        <b>Two Week Trial</b>
+                        <br />
+                        Trial licences are valid for two weeks from the date of issue, or{' '}
+                        <a href={MAILTO_HREF}>contact&nbsp;us</a> to extend.
+                    </p>
+                </div>
+
+                <div class={styles.trialLicenceSeparator}></div>
+
+                <div class={styles.trialLicenceCopyItem}>
+                    <Icon name="terminal" svgClasses={styles.terminalIcon} />
+                    <p>
+                        <b>Suppresses Console Warnings</b>
+                        <br />
+                        Removes console errors and watermarks from AG Grid and AG&nbsp;Chart&nbsp;components.
+                    </p>
+                </div>
+
+                <div class={styles.trialLicenceSeparator}></div>
+
+                <div class={styles.trialLicenceCopyItem}>
+                    <Icon name="support" svgClasses={styles.supportIcon} />
+                    <p>
+                        <b>Access Support</b>
+                        <br />
+                        Access dedicated support from our engineering team via{' '}
+                        <a href={'https://ag-grid.zendesk.com/hc/en-us' + UTM_TRACKER} target="_blank">Zendesk</a>.
+                    </p>
+                </div>
+            </div>
+
+            <div class={styles.trialLicenceSeparator}></div>
+
+            <div class={styles.trialLicenceForm}>
+                <TrialLicenceForm client:load submitUrl={TRIAL_LICENCE_FORM_URL} />
+            </div>
+        </div>
+
+        <div class={styles.finalCTA}>
+            <h2 class="text-2xl">Want to Learn More?</h2>
+
+            <div>
+                View our
+                <a href={'https://www.ag-grid.com/charts/gallery/' + UTM_TRACKER} target="_blank">gallery of charts</a>
+                or contact sales at
+                <a href={MAILTO_HREF}>info@ag-grid.com</a>.
+            </div>
+        </div>
     </main>
 </Layout>
+
+<script>
+    import { initScrollClassListener } from '@ag-website-shared/utils/initScrollClassListener';
+
+    initScrollClassListener({
+        targetSelector: '.site-header',
+        scrolledClass: 'header-scrolled',
+        scrollPosition: 480,
+    });
+</script>

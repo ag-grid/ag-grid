@@ -126,7 +126,7 @@ export const createScript = ({
                     colIndex: END_CELL_COL_INDEX,
                     rowIndex: END_CELL_ROW_INDEX,
                 },
-                menuItemPath: ['Chart Range', 'Line'],
+                menuItemPath: ['Chart Range', 'Line', 'Line'],
                 tweenGroup,
                 scriptDebugger,
                 speed: 0.5,

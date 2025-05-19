@@ -1,8 +1,8 @@
 #!/bin/bash
 
-if [ "$#" -ne 1 ]
+if [ "$#" -ne 2 ]
   then
-    echo "You must supply a version file to upload"
+    echo "You must supply a version file to upload, and ssh host"
     echo "For example: ./scripts/deployments/release/uploadReleaseZip.sh release_20190222_v2010.zip"
     exit 1
 fi
@@ -21,6 +21,8 @@ VERSION=""${RAW_VERSION//./}""
 TIMESTAMP=`date +%Y%m%d`
 FILENAME=release_"$TIMESTAMP"_v"$VERSION".zip
 
+CURRENT_HOST=$2
+
 SSH_LOCATION=$SSH_FILE
 
 if [ -z "$SSH_LOCATION" ]
@@ -32,4 +34,4 @@ fi
 checkFileExists $FILENAME
 checkFileExists $SSH_LOCATION
 
-scp -i $SSH_LOCATION -P $SSH_PORT $FILENAME $HOST:$WWW_ROOT_DIR
+scp -i $SSH_LOCATION -P $SSH_PORT $FILENAME $CURRENT_HOST:$WWW_ROOT_DIR
