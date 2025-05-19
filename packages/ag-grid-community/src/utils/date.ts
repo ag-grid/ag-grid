@@ -94,17 +94,18 @@ export function _dateToFormattedString(date: Date, format: string = 'YYYY-MM-DD'
     });
 }
 
-export const dateTimeRegexp = /^(\d{4})-(\d{2})-(\d{2})( (\d{2}):(\d{2}):(\d{2}))?$/;
+export const getDateTimeRegexp = (includeTime = true) =>
+    new RegExp(`^(\\d{4})-(\\d{2})-(\\d{2})${includeTime ? '( (\\d{2}):(\\d{2}):(\\d{2}))?' : ''}$`);
 
 /**
  * Parses a date and time from a string in the format `yyyy-MM-dd HH:mm:ss`
  */
-export function _parseDateTimeFromString(value?: string | null): Date | null {
+export function _parseDateTimeFromString(value?: string | null, delimiter = ' '): Date | null {
     if (!value) {
         return null;
     }
 
-    const [dateStr, timeStr] = value.split(' ');
+    const [dateStr, timeStr] = value.split(delimiter);
 
     if (!dateStr) {
         return null;
