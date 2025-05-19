@@ -1,3 +1,4 @@
+import type { BaseCellDataType } from '../entities/dataType';
 import { _getActiveDomElement } from '../gridOptionsUtils';
 import { _isBrowserSafari } from '../utils/browser';
 import { _parseDateTimeFromString, _serialiseDate } from '../utils/date';
@@ -6,13 +7,21 @@ import type { AgInputTextFieldParams } from './agInputTextField';
 import { AgInputTextField } from './agInputTextField';
 import type { ComponentSelector } from './component';
 
+export interface AgInputDateFieldParams extends AgInputTextFieldParams {
+    cellDataType?: ('date' | 'dateTime' | 'dateString' | 'dateTimeString') & BaseCellDataType; // AND-ing with BaseCellDataType to ensure we don't forget to update this when adding new cell data types
+}
+const DATETIME_FIELD_TYPES = ['dateTime', 'dateTimeString'];
 export class AgInputDateField extends AgInputTextField {
     private min?: string;
     private max?: string;
     private step?: number;
+    private readonly includeTime: boolean;
 
-    constructor(config?: AgInputTextFieldParams) {
-        super(config, 'ag-date-field', 'date');
+    constructor(config?: AgInputDateFieldParams) {
+        const includeTime = DATETIME_FIELD_TYPES.includes(config?.cellDataType || '');
+        const inputType = includeTime ? 'datetime-local' : 'date';
+        super(config, 'ag-date-field', inputType);
+        this.includeTime = includeTime;
     }
 
     public override postConstruct() {
@@ -41,7 +50,7 @@ export class AgInputDateField extends AgInputTextField {
     }
 
     public setMin(minDate: Date | string | undefined): this {
-        const min = minDate instanceof Date ? _serialiseDate(minDate ?? null, false) ?? undefined : minDate;
+        const min = minDate instanceof Date ? _serialiseDate(minDate ?? null, this.includeTime) ?? undefined : minDate;
         if (this.min === min) {
             return this;
         }
@@ -54,7 +63,7 @@ export class AgInputDateField extends AgInputTextField {
     }
 
     public setMax(maxDate: Date | string | undefined): this {
-        const max = maxDate instanceof Date ? _serialiseDate(maxDate ?? null, false) ?? undefined : maxDate;
+        const max = maxDate instanceof Date ? _serialiseDate(maxDate ?? null, this.includeTime) ?? undefined : maxDate;
         if (this.max === max) {
             return this;
         }
@@ -82,11 +91,11 @@ export class AgInputDateField extends AgInputTextField {
         if (!this.eInput.validity.valid) {
             return undefined;
         }
-        return _parseDateTimeFromString(this.getValue()) ?? undefined;
+        return _parseDateTimeFromString(this.getValue(), 'T') ?? undefined;
     }
 
     public setDate(date: Date | undefined, silent?: boolean): void {
-        this.setValue(_serialiseDate(date ?? null, false), silent);
+        this.setValue(_serialiseDate(date ?? null, this.includeTime), silent);
     }
 }
 
