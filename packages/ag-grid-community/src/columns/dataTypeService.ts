@@ -20,7 +20,7 @@ import { _isClientSideRowModel } from '../gridOptionsUtils';
 import type { IClientSideRowModel } from '../interfaces/iClientSideRowModel';
 import type { ColumnEventName } from '../interfaces/iColumn';
 import type { IEventListener } from '../interfaces/iEventEmitter';
-import { _parseDateTimeFromString, _serialiseDate, dateTimeRegexp } from '../utils/date';
+import { _parseDateTimeFromString, _serialiseDate, getDateTimeRegexp } from '../utils/date';
 import { _toStringOrNull } from '../utils/generic';
 import { _getValueUsingField } from '../utils/object';
 import { _warn } from '../validation/logging';
@@ -45,14 +45,15 @@ type DataTypeDefinitions = {
  *
  *       Datetime has higher priority than dateString, since it includes serialized time.
  */
-const sortedCellDataTypesForMatching: readonly Exclude<BaseCellDataType, 'dateTime' | 'object'>[] = [
-    'dateTimeString',
+const SORTED_CELL_DATA_TYPES_FOR_MATCHING: readonly Exclude<BaseCellDataType, 'dateTime' | 'object'>[] = [
     'dateString',
+    'dateTimeString',
     'text',
     'number',
     'boolean',
     'date',
 ] as const;
+const DATETIME_FIELD_TYPES = ['dateTime', 'dateTimeString'];
 
 export class DataTypeService extends BeanStub implements NamedBean {
     beanName = 'dataTypeSvc' as const;
@@ -146,7 +147,7 @@ export class DataTypeService extends BeanStub implements NamedBean {
         dataTypes: BaseCellDataTypeDefMap
     ) {
         const sortedMatchers = {} as T;
-        for (const cellDataType of sortedCellDataTypesForMatching) {
+        for (const cellDataType of SORTED_CELL_DATA_TYPES_FOR_MATCHING) {
             sortedMatchers[cellDataType] = matchers[cellDataType] ?? dataTypes[cellDataType].dataTypeMatcher;
         }
         return sortedMatchers;
@@ -446,6 +447,10 @@ export class DataTypeService extends BeanStub implements NamedBean {
         return this.getDateStringTypeDefinition(column).dateFormatter!;
     }
 
+    public getDateIncludesTimeFlag(cellDataType?: ColDef['cellDataType']): boolean {
+        return DATETIME_FIELD_TYPES.includes(cellDataType as string);
+    }
+
     public getDataTypeDefinition(column: AgColumn): DataTypeDefinition | CoreDataTypeDefinition | undefined {
         const colDef = column.getColDef();
         if (!colDef.cellDataType) {
@@ -497,35 +502,38 @@ export class DataTypeService extends BeanStub implements NamedBean {
         colId: string
     ): void {
         const formatValue = this.formatValueFuncs[cellDataType];
-        switch (dataTypeDefinition.baseDataType) {
-            case 'number': {
+        const self = this;
+        const cellEditorMap: Record<keyof BaseCellDataTypeDefMap, () => void> = {
+            number(): void {
                 colDef.cellEditor = 'agNumberCellEditor';
-                break;
-            }
-            case 'boolean': {
+            },
+            boolean(): void {
                 colDef.cellEditor = 'agCheckboxCellEditor';
                 colDef.cellRenderer = 'agCheckboxCellRenderer';
                 colDef.getFindText = () => null;
                 colDef.suppressKeyboardEvent = (params: SuppressKeyboardEventParams<any, boolean>) =>
                     !!params.colDef.editable && params.event.key === KeyCode.SPACE;
-                break;
-            }
-            case 'date': {
+            },
+            date(): void {
                 colDef.cellEditor = 'agDateCellEditor';
                 colDef.keyCreator = formatValue;
-                break;
-            }
-            case 'dateString': {
+            },
+            dateString(): void {
                 colDef.cellEditor = 'agDateStringCellEditor';
                 colDef.keyCreator = formatValue;
-                break;
-            }
-            case 'object': {
+            },
+            dateTime(): void {
+                this.date();
+            },
+            dateTimeString(): void {
+                this.dateString();
+            },
+            object(): void {
                 colDef.cellEditorParams = {
                     useFormatter: true,
                 };
                 colDef.comparator = (a: any, b: any) => {
-                    const column = this.colModel.getColDefCol(colId);
+                    const column = self.colModel.getColDefCol(colId);
                     const colDef = column?.getColDef();
                     if (!column || !colDef) {
                         return 0;
@@ -536,16 +544,18 @@ export class DataTypeService extends BeanStub implements NamedBean {
                     return valA > valB ? 1 : -1;
                 };
                 colDef.keyCreator = formatValue;
-                break;
-            }
-        }
+            },
+            text(): void {},
+        };
+        cellEditorMap[dataTypeDefinition.baseDataType]();
+
         this.beans.filterManager?.setColDefPropertiesForDataType(colDef, dataTypeDefinition, formatValue);
     }
 
     private getDefaultDataTypes(): BaseCellDataTypeDefMap {
         const translate = this.getLocaleTextFunc();
 
-        const getDateProps = <T extends BaseCellDataType, TData>(baseDataType: T, includeTime = true) =>
+        const getDateProps = <T extends BaseCellDataType, TData>(baseDataType: T) =>
             ({
                 baseDataType,
                 valueParser: (params: ValueParserLiteParams<any, Date>) =>
@@ -557,22 +567,25 @@ export class DataTypeService extends BeanStub implements NamedBean {
                     if (!(params.value instanceof Date) || isNaN(params.value.getTime())) {
                         return translate('invalidDate', 'Invalid Date');
                     }
-                    return _serialiseDate(params.value, includeTime) ?? '';
+                    return _serialiseDate(params.value, this.getDateIncludesTimeFlag(baseDataType)) ?? '';
                 },
                 dataTypeMatcher: (value: any) => value instanceof Date,
             }) as BaseCellDataTypeDefMap<TData>[T];
 
-        const getDateStringProps = <T extends BaseCellDataType, TData>(baseDataType: T, includeTime = true) =>
-            ({
+        const getDateStringProps = <T extends BaseCellDataType, TData>(baseDataType: T) => {
+            const regexp = getDateTimeRegexp(this.getDateIncludesTimeFlag(baseDataType));
+            return {
                 baseDataType,
                 dateParser: (value: string | undefined) => _parseDateTimeFromString(value) ?? undefined,
                 valueParser: (params: ValueParserLiteParams<any, string>) =>
-                    dateTimeRegexp.test(String(params.newValue)) ? params.newValue : null,
+                    regexp.test(String(params.newValue)) ? params.newValue : null,
                 valueFormatter: (params: ValueFormatterLiteParams<any, string>) =>
-                    dateTimeRegexp.test(String(params.value)) ? params.value : '',
-                dataTypeMatcher: (value: any) => typeof value === 'string' && dateTimeRegexp.test(value),
-                dateFormatter: (value: Date | undefined) => _serialiseDate(value ?? null, includeTime) ?? undefined,
-            }) as BaseCellDataTypeDefMap<TData>[T];
+                    regexp.test(String(params.value)) ? params.value : '',
+                dataTypeMatcher: (value: any) => typeof value === 'string' && regexp.test(value),
+                dateFormatter: (value: Date | undefined) =>
+                    _serialiseDate(value ?? null, this.getDateIncludesTimeFlag(baseDataType)) ?? undefined,
+            } as BaseCellDataTypeDefMap<TData>[T];
+        };
 
         return {
             number: {
@@ -610,8 +623,8 @@ export class DataTypeService extends BeanStub implements NamedBean {
                     params.value == null ? '' : String(params.value),
                 dataTypeMatcher: (value: any) => typeof value === 'boolean',
             },
-            date: getDateProps('date', false),
-            dateString: getDateStringProps('dateString', false),
+            date: getDateProps('date'),
+            dateString: getDateStringProps('dateString'),
             dateTime: getDateProps('dateTime'),
             dateTimeString: getDateStringProps('dateTimeString'),
             object: {
