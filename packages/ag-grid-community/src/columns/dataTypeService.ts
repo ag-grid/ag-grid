@@ -545,32 +545,36 @@ export class DataTypeService extends BeanStub implements NamedBean {
     }
 
     private getDefaultDataTypes(): BaseCellDataTypeDefMap {
-        const defaultDateTimeFormatMatcher = (value: string) => !!value.match(dateTimeRegexp);
         const translate = this.getLocaleTextFunc();
 
-        const getDateCommonProps = (includeTime = true) => ({
-            dateParser: (value: string | undefined) => _parseDateTimeFromString(value) ?? undefined,
-            valueParser: (params: ValueParserLiteParams<any, string>) =>
-                defaultDateTimeFormatMatcher(String(params.newValue)) ? params.newValue : null,
-            valueFormatter: (params: ValueFormatterLiteParams<any, string>) =>
-                defaultDateTimeFormatMatcher(String(params.value)) ? params.value! : '',
-            dataTypeMatcher: (value: any) => typeof value === 'string' && defaultDateTimeFormatMatcher(value),
-            dateFormatter: (value: Date | undefined) => _serialiseDate(value ?? null, includeTime) ?? undefined,
-        });
-        const getDateTimeStringCommonProps = (includeTime = true) => ({
-            valueParser: (params: ValueParserLiteParams<any, Date>) =>
-                _parseDateTimeFromString(params.newValue == null ? null : String(params.newValue)),
-            valueFormatter: (params: ValueFormatterLiteParams<any, Date>) => {
-                if (params.value == null) {
-                    return '';
-                }
-                if (!(params.value instanceof Date) || isNaN(params.value.getTime())) {
-                    return translate('invalidDate', 'Invalid Date');
-                }
-                return _serialiseDate(params.value, includeTime) ?? '';
-            },
-            dataTypeMatcher: (value: any) => value instanceof Date,
-        });
+        const getDateProps = <T extends BaseCellDataType, TData>(baseDataType: T, includeTime = true) =>
+            ({
+                baseDataType,
+                valueParser: (params: ValueParserLiteParams<any, Date>) =>
+                    _parseDateTimeFromString(params.newValue == null ? null : String(params.newValue)),
+                valueFormatter: (params: ValueFormatterLiteParams<any, Date>) => {
+                    if (params.value == null) {
+                        return '';
+                    }
+                    if (!(params.value instanceof Date) || isNaN(params.value.getTime())) {
+                        return translate('invalidDate', 'Invalid Date');
+                    }
+                    return _serialiseDate(params.value, includeTime) ?? '';
+                },
+                dataTypeMatcher: (value: any) => value instanceof Date,
+            }) as BaseCellDataTypeDefMap<TData>[T];
+
+        const getDateStringProps = <T extends BaseCellDataType, TData>(baseDataType: T, includeTime = true) =>
+            ({
+                baseDataType,
+                dateParser: (value: string | undefined) => _parseDateTimeFromString(value) ?? undefined,
+                valueParser: (params: ValueParserLiteParams<any, string>) =>
+                    dateTimeRegexp.test(String(params.newValue)) ? params.newValue : null,
+                valueFormatter: (params: ValueFormatterLiteParams<any, string>) =>
+                    dateTimeRegexp.test(String(params.value)) ? params.value : '',
+                dataTypeMatcher: (value: any) => typeof value === 'string' && dateTimeRegexp.test(value),
+                dateFormatter: (value: Date | undefined) => _serialiseDate(value ?? null, includeTime) ?? undefined,
+            }) as BaseCellDataTypeDefMap<TData>[T];
 
         return {
             number: {
@@ -608,22 +612,10 @@ export class DataTypeService extends BeanStub implements NamedBean {
                     params.value == null ? '' : String(params.value),
                 dataTypeMatcher: (value: any) => typeof value === 'boolean',
             },
-            date: {
-                baseDataType: 'date',
-                ...getDateTimeStringCommonProps(false),
-            },
-            dateString: {
-                baseDataType: 'dateString',
-                ...getDateCommonProps(false),
-            },
-            dateTime: {
-                baseDataType: 'dateTime',
-                ...getDateTimeStringCommonProps(),
-            },
-            dateTimeString: {
-                baseDataType: 'dateTimeString',
-                ...getDateCommonProps(),
-            },
+            date: getDateProps('date', false),
+            dateString: getDateStringProps('dateString', false),
+            dateTime: getDateProps('dateTime'),
+            dateTimeString: getDateStringProps('dateTimeString'),
             object: {
                 baseDataType: 'object',
                 valueParser: () => null,
