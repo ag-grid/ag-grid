@@ -15,6 +15,10 @@ const gridOptions: GridOptions = {
 // Create Grid, to simplify example generation
 gridApi = createGrid(document.querySelector<HTMLElement>('#myGrid')!, gridOptions);
 
+const FakeGrid = class {
+    constructor() {}
+};
+
 const CONSOLE_LOG_ARGS = [
     ['string'],
     [23],
@@ -46,6 +50,7 @@ const CONSOLE_LOG_ARGS = [
         { a: 'more', b: 'here', c: 'now', d: 'more' },
         'asdfasdfsadfsadfds asdfasdfsadfsadfds asdfasdfsadfsadfds asdfasdfsadfsadfds asdfasdfsadfsadfds asdfasdfsadfsadfds asdfasdfsadfsadfds asdfasdfsadfsadfds',
     ],
+    [window, document, new CSSStyleSheet(), new Event('click'), new FakeGrid()],
 ];
 const PRIMITIVE_TYPES = ['string', 'number', 'boolean', 'undefined', 'null', 'nan', 'symbol'];
 const REPLACEMENT_TYPES_MAP: Record<string, any> = {
@@ -54,10 +59,39 @@ const REPLACEMENT_TYPES_MAP: Record<string, any> = {
     infinity: Infinity,
     negativeInfinity: -Infinity,
 };
-const REPLACEMENT_TYPES = Object.keys(REPLACEMENT_TYPES_MAP);
+const REPLACEMENT_TYPES = [
+    'undefined',
+    'nan',
+    'infinity',
+    'negativeInfinity',
+    'classInstance',
+    'event',
+    'cssStylesheet',
+    'element',
+    'document',
+    'window',
+];
+const getReplacementValue = (value: any) => {
+    const valueType = getType(value);
+    if (valueType === 'classInstance') {
+        return value.constructor.name + 'Class {}';
+    } else if (valueType === 'event') {
+        return value.constructor.name + ' { type: ' + value.type + ' }';
+    } else if (valueType === 'cssStylesheet') {
+        return value.constructor.name + ' {}';
+    } else if (valueType === 'element') {
+        return 'Element { ' + value.localName + ' }';
+    } else if (valueType === 'document') {
+        return 'Document {}';
+    } else if (valueType === 'window') {
+        return 'Window {}';
+    }
+
+    return `[TYPE:${valueType}]`;
+};
+
 const MATCH_TYPE_REGEXP = /\[TYPE:([^\]]+)]/g;
 const MATCH_TYPE_WITH_QUOTES_REGEXP = /"\[TYPE:([^\]]+)]"/g;
-const getReplacementTypeValue = (typeValue: string) => `[TYPE:${typeValue}]`;
 const getReplacementType = (typeValue: string) => {
     const matches = MATCH_TYPE_REGEXP.exec(typeValue);
     return matches ? matches[1] : undefined;
@@ -73,6 +107,12 @@ function getType(value: any) {
     if (value instanceof RegExp) return 'regexp';
     if (value instanceof Map) return 'map';
     if (value instanceof Set) return 'set';
+    if (value instanceof Event) return 'event';
+    if (value instanceof Element) return 'element';
+    if (value instanceof Document) return 'document';
+    if (value instanceof Window) return 'window';
+    if (value instanceof CSSStyleSheet || (typeof value === 'object' && value.constructor.name === 'CSSStyleSheet'))
+        return 'cssStylesheet';
     if (value instanceof WeakMap) return 'weakmap';
     if (value instanceof WeakSet) return 'weakset';
     if (value instanceof Promise) return 'promise';
@@ -92,27 +132,47 @@ function isPrimitiveType(value: any) {
     return PRIMITIVE_TYPES.includes(getType(value));
 }
 
-function updateWithReplacements(value: any, replacementTypes: string[]) {
-    const valueType = getType(value);
+function updateWithReplacements(originalValue: any, replacementTypes: any) {
+    const seen = new WeakSet();
 
-    if (replacementTypes.includes(valueType)) {
-        return getReplacementTypeValue(valueType);
-    } else if (valueType === 'array') {
-        return value.map((item) => updateWithReplacements(item, replacementTypes));
-    } else if (valueType === 'object') {
-        const obj = { ...value };
-        for (const key in value) {
-            const valueValueType = getType(value[key]);
-            if (replacementTypes.includes(valueValueType)) {
-                obj[key] = getReplacementTypeValue(valueValueType);
+    const updateWithReplacementsRecursively = (value: any) => {
+        const valueType = getType(value);
+
+        if (seen.has(value)) {
+            if (replacementTypes.includes(valueType)) {
+                return getReplacementValue(value);
             } else {
-                obj[key] = updateWithReplacements(value[key], replacementTypes);
+                return '[Circular]';
             }
         }
-        return obj;
-    } else {
-        return value;
-    }
+
+        if (replacementTypes.includes(valueType)) {
+            return getReplacementValue(value);
+        } else if (valueType === 'array') {
+            return value.map((item: any) => updateWithReplacementsRecursively(item));
+        } else if (valueType === 'object') {
+            const obj = { ...value };
+
+            seen.add(value);
+
+            for (const key in value) {
+                const objValue = value[key];
+                const objValueType = getType(objValue);
+
+                if (replacementTypes.includes(objValueType)) {
+                    obj[key] = getReplacementValue(objValue);
+                } else {
+                    obj[key] = updateWithReplacementsRecursively(objValue);
+                }
+            }
+
+            return obj;
+        } else {
+            return value;
+        }
+    };
+
+    return updateWithReplacementsRecursively(originalValue);
 }
 
 function replaceTypeString({ str, withQuotes }: { str: string; withQuotes?: boolean }) {
