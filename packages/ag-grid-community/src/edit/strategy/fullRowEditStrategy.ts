@@ -128,7 +128,8 @@ export class FullRowEditStrategy extends BaseEditStrategy {
     public override moveToNextEditingCell(
         previousCell: CellCtrl,
         backwards: boolean,
-        event?: KeyboardEvent
+        event?: KeyboardEvent,
+        source: 'api' | 'ui' = 'ui'
     ): boolean | null {
         const previousPos = previousCell.cellPosition;
 
@@ -158,7 +159,7 @@ export class FullRowEditStrategy extends BaseEditStrategy {
                 this.beans.editSvc?.stopEditing(previousCell.rowNode);
             }
 
-            this.beans.editSvc?.startEditing(nextCell.rowNode, nextCell.column, null, true, event);
+            this.beans.editSvc?.startEditing(nextCell.rowNode, nextCell.column, null, true, event, source);
         }
 
         if (nextEditable) {

@@ -105,7 +105,8 @@ export class SingleCellEditStrategy extends BaseEditStrategy {
     public override moveToNextEditingCell(
         previousCell: CellCtrl,
         backwards: boolean,
-        event?: KeyboardEvent
+        event?: KeyboardEvent,
+        source: 'api' | 'ui' = 'ui'
     ): boolean | null {
         const previousPos = previousCell.cellPosition;
 
@@ -130,7 +131,7 @@ export class SingleCellEditStrategy extends BaseEditStrategy {
 
         nextCell.focusCell(false);
 
-        const batchEdit = this.gos.get('batchEdit');
+        // const batchEdit = this.gos.get('batchEdit');
 
         this.beans.editSvc?.startEditing(
             nextCell.rowNode,
@@ -138,7 +139,7 @@ export class SingleCellEditStrategy extends BaseEditStrategy {
             null,
             true,
             event,
-            batchEdit ? 'ui' : 'api'
+            source //batchEdit ? 'ui' : 'api'
         );
 
         return true;

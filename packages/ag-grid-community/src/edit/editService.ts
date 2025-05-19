@@ -275,15 +275,20 @@ export class EditService extends BeanStub implements NamedBean {
         return column.isColumnFunc(rowNode, column.colDef.editable);
     }
 
-    moveToNextCell(previous: CellCtrl | RowCtrl, backwards: boolean, event?: KeyboardEvent): boolean | null {
+    moveToNextCell(
+        previous: CellCtrl | RowCtrl,
+        backwards: boolean,
+        event?: KeyboardEvent,
+        source: 'api' | 'ui' = 'ui'
+    ): boolean | null {
         let res: boolean | null | undefined;
 
         if (
             previous instanceof CellCtrl &&
-            (this.isEditing(previous.rowNode, previous.column) ?? this.isEditing(previous.rowNode))
+            (this.isEditing(previous.rowNode, previous.column) || this.isEditing(previous.rowNode))
         ) {
             // if we are editing, we know it's not a Full Width Row (RowComp)
-            res = this.strategy?.moveToNextEditingCell(previous, backwards, event);
+            res = this.strategy?.moveToNextEditingCell(previous, backwards, event, source);
         }
 
         if (res === null) {

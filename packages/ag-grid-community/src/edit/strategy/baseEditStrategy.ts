@@ -30,7 +30,8 @@ export abstract class BaseEditStrategy extends BeanStub {
     public abstract moveToNextEditingCell(
         previousCell: CellCtrl,
         backwards: boolean,
-        event?: KeyboardEvent
+        event?: KeyboardEvent,
+        source?: 'api' | 'ui'
     ): boolean | null;
 
     public updateCells(updates?: PendingUpdates, forcedState?: boolean): void {

@@ -444,13 +444,14 @@ export class NavigationService extends BeanStub implements NamedBean {
             }
         }
 
-        return !!this.tabToNextCellCommon(cellOrRow, backwards, event);
+        return !!this.tabToNextCellCommon(cellOrRow, backwards, event, 'api');
     }
 
     private tabToNextCellCommon(
         previous: CellCtrl | RowCtrl,
         backwards: boolean,
-        event?: KeyboardEvent
+        event?: KeyboardEvent,
+        source: 'api' | 'ui' = 'ui'
     ): boolean | null {
         const { editSvc, focusSvc } = this.beans;
 
@@ -458,7 +459,7 @@ export class NavigationService extends BeanStub implements NamedBean {
         const cellCtrl = previous instanceof CellCtrl ? previous : previous.getAllCellCtrls()?.[0];
 
         if (editSvc?.isEditing()) {
-            res = editSvc?.moveToNextCell(cellCtrl!, backwards, event);
+            res = editSvc?.moveToNextCell(cellCtrl!, backwards, event, source);
         } else {
             res = this.moveToNextCellNotEditing(previous, backwards, event);
         }
