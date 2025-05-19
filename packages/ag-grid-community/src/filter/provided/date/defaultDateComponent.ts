@@ -86,7 +86,7 @@ export class DefaultDateComponent extends Component implements IDateComp {
         const shouldUseBrowserDatePicker = this.shouldUseBrowserDatePicker(params);
         this.usingSafariDatePicker = shouldUseBrowserDatePicker && _isBrowserSafari();
 
-        inputElement.type = shouldUseBrowserDatePicker ? 'date' : 'text';
+        inputElement.type = shouldUseBrowserDatePicker ? 'date' : 'text'; // todo
 
         const { minValidYear, maxValidYear, minValidDate, maxValidDate, buttons } = params.filterParams || {};
 
