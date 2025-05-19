@@ -13,12 +13,17 @@ export type CellIdPositions = {
     newValue?: any;
 };
 
-type CData = any;
+type CData = {
+    newValue: any;
+    oldValue: any;
+};
+
+export type PendingUpdates = Map<IRowNode, Map<Column, CData | undefined>>;
 
 export class EditModelService extends BeanStub implements NamedBean {
     beanName = 'editModelSvc' as const;
 
-    private pendingUpdates: Map<IRowNode, Map<Column, CData>> = new Map();
+    private pendingUpdates: PendingUpdates = new Map();
 
     public removePendingEdit(rowNode: IRowNode, column?: Column | null): void {
         if (!this.hasPending(rowNode)) {
@@ -38,19 +43,23 @@ export class EditModelService extends BeanStub implements NamedBean {
         }
     }
 
-    public getPendingUpdate(rowNode: IRowNode, column: Column): CData {
+    public getPendingUpdate(rowNode: IRowNode, column: Column): CData | undefined {
         return this.pendingUpdates.get(rowNode)?.get(column);
     }
 
-    public getPendingUpdates(): Map<IRowNode, Map<Column, CData>> {
-        return this.pendingUpdates;
+    public getPendingUpdates(): PendingUpdates {
+        const copy = new Map<IRowNode, Map<Column, CData | undefined>>();
+        this.pendingUpdates.forEach((rowUpdateMap, rowNode) => {
+            copy.set(rowNode, new Map<Column, CData | undefined>(rowUpdateMap));
+        });
+        return copy;
     }
 
-    public addPendingEdit(rowNode: IRowNode, column: Column, newValue: CData) {
+    public setPendingValue(rowNode: IRowNode, column: Column, newValue: any, oldValue: any): void {
         if (!this.pendingUpdates.has(rowNode)) {
             this.pendingUpdates.set(rowNode, new Map());
         }
-        this.pendingUpdates.get(rowNode)!.set(column, newValue);
+        this.pendingUpdates.get(rowNode)!.set(column, { newValue, oldValue });
     }
 
     public getPendingCellIds(): CellIdPositions[] {
@@ -94,7 +103,7 @@ export class EditModelService extends BeanStub implements NamedBean {
     }
 
     public startEditing(rowNode: IRowNode, ...columns: Maybe<Column>[]): void {
-        const map = this.pendingUpdates.get(rowNode) ?? new Map<Column, CData>();
+        const map = this.pendingUpdates.get(rowNode) ?? new Map<Column, CData | undefined>();
         columns.forEach((col) => col && map!.set(col, undefined));
         this.pendingUpdates.set(rowNode, map);
     }
@@ -133,7 +142,7 @@ export type CellUpdate = {
 
 export function _createUpdates({ editModelSvc }: BeanCollection): CellUpdate[] {
     if (!editModelSvc) {
-        return []; // Changed from {} to undefined
+        return [];
     }
 
     const rowUpdates = editModelSvc.getPendingUpdates();
@@ -144,12 +153,13 @@ export function _createUpdates({ editModelSvc }: BeanCollection): CellUpdate[] {
 
     const updates: CellUpdate[] = [];
     rowUpdates.forEach((rowUpdateMap, rowNode) => {
-        rowUpdateMap.forEach((newValue, column) => {
+        rowUpdateMap.forEach((entry, column) => {
+            const { newValue, oldValue } = entry || {};
             updates.push({
                 rowNode,
                 column,
                 newValue,
-                oldValue: rowNode.data[column.getColId()],
+                oldValue,
             });
         });
     });

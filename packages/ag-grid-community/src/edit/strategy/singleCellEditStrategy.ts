@@ -3,7 +3,7 @@ import type { CellFocusedEvent, CommonCellFocusParams } from '../../events';
 import type { Column } from '../../interfaces/iColumn';
 import type { IRowNode } from '../../interfaces/iRowNode';
 import type { CellCtrl } from '../../rendering/cell/cellCtrl';
-import { _getColId, _resolveCellController, _resolveControllers } from '../utils/controllers';
+import { _getColId, _resolveControllers } from '../utils/controllers';
 import { BaseEditStrategy } from './baseEditStrategy';
 
 export class SingleCellEditStrategy extends BaseEditStrategy {
@@ -33,14 +33,6 @@ export class SingleCellEditStrategy extends BaseEditStrategy {
         return this.rowNode !== rowNode || this.column !== column;
     }
 
-    public updateStyles(rowNode?: IRowNode | null, column?: Column | null, newState?: boolean): void {
-        const cellCtrl = _resolveCellController(this.beans, {
-            rowNode,
-            column,
-        });
-        cellCtrl?.comp.toggleCss('ag-cell-batch-edit', (newState && this.gos.get('batchEdit')) ?? false);
-    }
-
     public startEditing(
         rowNode: IRowNode,
         column: Column,
@@ -56,8 +48,6 @@ export class SingleCellEditStrategy extends BaseEditStrategy {
         this.column = column;
 
         this.editModel.startEditing(rowNode, column);
-
-        this.updateStyles(rowNode, column, true);
 
         return this.finishStartEdit(
             [
@@ -75,14 +65,6 @@ export class SingleCellEditStrategy extends BaseEditStrategy {
     }
 
     public override stopEditing(): boolean {
-        this.editModel.getPendingCellIds().forEach((cellId) => {
-            const cellCtrl = _resolveCellController(this.beans, cellId);
-            if (cellCtrl) {
-                cellCtrl.comp.toggleCss('ag-cell-batch-edit', false);
-                this.updateStyles(cellId.rowNode, cellId.column, false);
-            }
-        });
-
         super.stopEditing();
 
         this.rowNode = undefined;

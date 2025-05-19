@@ -1,38 +1,22 @@
 import type { BeanName } from '../../context/context';
-import type { RowNode } from '../../entities/rowNode';
 import type { CellFocusedEvent } from '../../events';
 import type { Column } from '../../interfaces/iColumn';
 import type { IRowNode } from '../../interfaces/iRowNode';
 import type { CellCtrl } from '../../rendering/cell/cellCtrl';
+import type { RowCtrl } from '../../rendering/row/rowCtrl';
 import type { CellIdPositions } from '../editModelService';
 import { _resolveControllers, _resolveRowController } from '../utils/controllers';
 import { BaseEditStrategy } from './baseEditStrategy';
 
 export class FullRowEditStrategy extends BaseEditStrategy {
     override beanName = 'fullRow' as BeanName | undefined;
-    private rowNode?: RowNode | null;
+    private rowNode?: IRowNode | null;
 
-    public updateStyles(rowNode?: IRowNode | null, _column?: Column | null, newState?: boolean): void {
-        if (!rowNode) {
-            return;
-        }
-
-        const rowCtrl = _resolveRowController(this.beans, {
-            rowNode,
-        })!;
-
-        rowCtrl.forEachGui(undefined, (gui) => {
+    protected override updateRowStyle(rowCtrl?: RowCtrl | null, newState?: boolean, batchEdit?: boolean): void {
+        rowCtrl?.forEachGui(undefined, (gui) => {
             gui.rowComp.toggleCss('ag-row-editing', newState ?? false);
-            gui.rowComp.toggleCss('ag-row-batch-edit', (this.gos.get('batchEdit') && newState) ?? false);
+            gui.rowComp.toggleCss('ag-row-batch-edit', (newState && batchEdit) ?? false);
         });
-
-        this.rowNode = newState ? rowCtrl.rowNode : undefined;
-
-        const event = newState
-            ? rowCtrl.createRowEvent('rowEditingStarted')
-            : rowCtrl.createRowEvent('rowEditingStopped');
-
-        this.eventSvc.dispatchEvent(event);
     }
 
     public override shouldStopEditing(
@@ -89,17 +73,36 @@ export class FullRowEditStrategy extends BaseEditStrategy {
             this.editModel.startEditing(position.rowNode, position.column);
         });
 
-        this.updateStyles(rowNode, column, true);
+        this.rowNode = rowNode;
+
+        this.dispatchRowEvent(rowNode, 'rowEditingStarted');
 
         return this.finishStartEdit(cells, rowNode, column, key, true, event);
     }
 
-    public override stopEditing(): boolean {
-        for (const rowNode of this.editModel.getPendingUpdates().keys()) {
-            this.updateStyles(rowNode!, undefined, false);
+    private dispatchRowEvent(
+        rowNode: IRowNode | undefined | null,
+        type: 'rowEditingStarted' | 'rowEditingStopped'
+    ): void {
+        const rowCtrl = _resolveRowController(this.beans, {
+            rowNode,
+        })!;
+
+        if (rowCtrl) {
+            this.eventSvc.dispatchEvent(rowCtrl.createRowEvent(type));
         }
+    }
+
+    public override stopEditing(): boolean {
+        // for (const rowNode of this.editModel.getPendingUpdates().keys()) {
+        //     this.update(rowNode!, undefined, false);
+        // }
 
         super.stopEditing();
+
+        this.dispatchRowEvent(this.rowNode, 'rowEditingStopped');
+
+        this.rowNode = undefined;
 
         return true;
     }

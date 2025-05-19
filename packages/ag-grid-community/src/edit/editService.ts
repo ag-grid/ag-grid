@@ -143,7 +143,11 @@ export class EditService extends BeanStub implements NamedBean {
             this.stopEditing(undefined, undefined, undefined, undefined, undefined, source);
         }
 
-        return this.strategy!.startEditing?.(rowNode, column, key, event, source);
+        const result = this.strategy!.startEditing?.(rowNode, column, key, event, source);
+
+        this.strategy.updateCells(this.model?.getPendingUpdates());
+
+        return result;
     }
 
     /**
@@ -173,8 +177,10 @@ export class EditService extends BeanStub implements NamedBean {
         _syncModelsFromEditors(this.beans);
 
         const updates = _createUpdates(this.beans);
+        const pendingUpdates = this.model?.getPendingUpdates();
 
         let res = false;
+        let updateCells = false;
 
         if (!cancel && this.shouldStopEditing?.(rowNode, column, key, event, source)) {
             this.processUpdates(updates, false);
@@ -182,14 +188,20 @@ export class EditService extends BeanStub implements NamedBean {
             this.strategy?.stopEditing?.() ?? false;
 
             res = true;
+            updateCells = true;
         } else if (cancel && this.shouldCancelEditing?.(rowNode, column, key, event, source)) {
             this.processUpdates(updates, true);
 
             this.strategy?.stopEditing?.() ?? false;
+            updateCells = true;
         }
 
         if (!suppressNavigateAfterEdit && cellCtrl) {
             this.navigateAfterEdit(shiftKey, cellCtrl.cellPosition);
+        }
+
+        if (updateCells) {
+            this.strategy.updateCells(pendingUpdates, false);
         }
 
         return res;
@@ -293,7 +305,7 @@ export class EditService extends BeanStub implements NamedBean {
             return undefined;
         }
 
-        return this.model?.getPendingUpdate(rowNode!, column!);
+        return this.model?.getPendingUpdate(rowNode!, column!)?.newValue;
     }
 
     public addStopEditingWhenGridLosesFocus(viewports: HTMLElement[]): void {
@@ -306,11 +318,12 @@ export class EditService extends BeanStub implements NamedBean {
         return new PopupEditorWrapper(params);
     }
 
-    setDataValue(rowNode: IRowNode, column: string | Column<any>, newValue: any, eventSource?: string): boolean | null {
+    setDataValue(rowNode: IRowNode, column: string | Column<any>, newValue: any, eventSource?: string): void {
         if (typeof column === 'string') {
             column = this.beans.colModel.getCol(column)!;
         }
-        return _syncModelFromEditor(this.beans, rowNode, column, newValue, eventSource);
+
+        _syncModelFromEditor(this.beans, rowNode, column, newValue, eventSource);
     }
 
     public handleColDefChanged(cellCtrl: CellCtrl): void {

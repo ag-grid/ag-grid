@@ -7,8 +7,9 @@ import type { DefaultProvidedCellEditorParams } from '../../interfaces/iCellEdit
 import type { Column } from '../../interfaces/iColumn';
 import type { IRowNode } from '../../interfaces/iRowNode';
 import type { CellCtrl } from '../../rendering/cell/cellCtrl';
-import type { CellIdPositions, EditModelService } from '../editModelService';
-import { _resolveCellController } from '../utils/controllers';
+import type { RowCtrl } from '../../rendering/row/rowCtrl';
+import type { CellIdPositions, EditModelService, PendingUpdates } from '../editModelService';
+import { _resolveCellController, _resolveRowController } from '../utils/controllers';
 import { _destroyEditor, _destroyEditors, _setupEditors, _syncModelsFromEditors } from '../utils/editors';
 
 export abstract class BaseEditStrategy extends BeanStub {
@@ -31,7 +32,41 @@ export abstract class BaseEditStrategy extends BeanStub {
         event?: KeyboardEvent
     ): boolean | null;
 
-    public abstract updateStyles(rowNode?: IRowNode | null, column?: Column | null, newState?: boolean): void;
+    public updateCells(updates?: PendingUpdates, forcedState?: boolean): void {
+        const batchEdit = this.gos.get('batchEdit');
+        const forced = forcedState !== undefined;
+
+        updates?.forEach((rowUpdateMap, rowNode) => {
+            const rowCtrl = _resolveRowController(this.beans, {
+                rowNode,
+            });
+
+            let rowEdited = false;
+
+            rowUpdateMap.forEach((cellData, column) => {
+                const newState = forced ? forcedState : cellData?.newValue && cellData?.newValue !== cellData?.oldValue;
+
+                rowEdited ||= newState;
+
+                const cellCtrl = _resolveCellController(this.beans, {
+                    rowCtrl,
+                    column,
+                });
+
+                this.updateCellStyle(cellCtrl, newState, batchEdit);
+            });
+
+            this.updateRowStyle(rowCtrl, rowEdited, batchEdit);
+        });
+    }
+
+    protected updateCellStyle(cellCtrl?: CellCtrl | null, newState?: boolean, batchEdit?: boolean): void {
+        cellCtrl?.comp.toggleCss('ag-cell-batch-edit', (newState && batchEdit) ?? false);
+    }
+
+    protected updateRowStyle(_rowCtrl?: RowCtrl | null, _newState?: boolean, _batchEdit?: boolean): void {
+        // NOP
+    }
 
     public stopEditing(): boolean {
         const editingCells = this.editModel.getPendingCellIds();
@@ -212,9 +247,7 @@ export abstract class BaseEditStrategy extends BeanStub {
     }
 
     public override destroy(): void {
-        this.editModel.getPendingCellIds().forEach((cellId) => {
-            this.updateStyles(cellId.rowNode, cellId.column, false);
-        });
+        this.updateCells(this.editModel.getPendingUpdates());
 
         this.cleanupEditors();
 

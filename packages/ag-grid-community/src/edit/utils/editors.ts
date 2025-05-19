@@ -153,15 +153,19 @@ export function _refreshEditorOnColDefChanged(beans: BeanCollection, cellCtrl: C
 
 export function _syncModelsFromEditors(beans: BeanCollection): void {
     beans.editModelSvc?.getPendingCellIds().forEach((cellId) => {
-        const { comp, rowNode, column } = _resolveCellController(beans, cellId)!;
+        const cellCtrl = _resolveCellController(beans, cellId);
 
-        const { newValue, newValueExists } = _takeValueFromCellEditor(false, comp);
+        if (!cellCtrl) {
+            return;
+        }
+
+        const { newValue, newValueExists } = _takeValueFromCellEditor(false, cellCtrl.comp);
 
         if (!newValueExists) {
             return;
         }
 
-        return _syncModelFromEditor(beans, rowNode, column, newValue);
+        _syncModelFromEditor(beans, cellId.rowNode, cellId.column, newValue);
     });
 }
 
@@ -171,12 +175,12 @@ export function _syncModelFromEditor(
     column?: Column | null,
     newValue?: any,
     eventSource?: string
-): boolean | null {
+): void {
     if (eventSource !== 'edit' && rowNode && column && beans.editSvc?.isEditing(rowNode, column)) {
-        beans.editModelSvc?.addPendingEdit(rowNode, column, newValue);
-        return true;
+        const oldValue = rowNode.data[column.getColId()];
+
+        beans.editModelSvc?.setPendingValue(rowNode, column, newValue, oldValue);
     }
-    return null;
 }
 
 export function _destroyEditors(beans: BeanCollection, cellPositions: CellIdPositions[]): void {
