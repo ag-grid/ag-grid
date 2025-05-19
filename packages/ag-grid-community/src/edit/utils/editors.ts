@@ -68,15 +68,6 @@ function _setupEditor(
     return compDetails;
 }
 
-export function _getOldValue(beans: BeanCollection, cellCtrl?: CellCtrl): any {
-    if (!cellCtrl) {
-        return undefined;
-    }
-
-    const { column, rowNode } = cellCtrl;
-    return beans.valueSvc.getValue(column, rowNode, undefined, 'api');
-}
-
 function _takeValueFromCellEditor(cancel: boolean, cellComp: ICellComp): { newValue?: any; newValueExists: boolean } {
     const noValueResult = { newValueExists: false };
 

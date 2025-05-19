@@ -116,8 +116,6 @@ export class EditService extends BeanStub implements NamedBean {
             return false;
         }
 
-        this.strategy = this.createStrategy();
-
         // because of async in React, the cellComp may not be set yet, if no cellComp then we are
         // yet to initialise the cell, so we re-schedule this operation for when celLComp is attached
         const cellCtrl = _resolveCellController(this.beans, { rowNode, column })!;
@@ -128,12 +126,14 @@ export class EditService extends BeanStub implements NamedBean {
             return true;
         }
 
-        const res =
-            this.isEditing(rowNode, column) ||
-            this.shouldStartEditing?.(rowNode, column, key, event, cellStartedEdit, source);
+        this.strategy = this.createStrategy();
+
+        const editing = this.isEditing(rowNode, column);
+
+        const res = editing || this.shouldStartEditing?.(rowNode, column, key, event, cellStartedEdit, source);
 
         if (res === false && source !== 'api') {
-            if (this.isEditing()) {
+            if (editing) {
                 this.stopEditing();
             }
             return false;
@@ -143,7 +143,7 @@ export class EditService extends BeanStub implements NamedBean {
             this.stopEditing(undefined, undefined, undefined, undefined, undefined, source);
         }
 
-        const result = this.strategy!.startEditing?.(rowNode, column, key, event, source);
+        const result = editing ? false : this.strategy!.startEditing?.(rowNode, column, key, event, source);
 
         this.strategy.updateCells(this.model?.getPendingUpdates());
 
