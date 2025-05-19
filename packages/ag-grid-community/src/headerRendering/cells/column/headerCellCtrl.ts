@@ -28,6 +28,7 @@ export interface IHeaderCellComp extends IAbstractHeaderCellComp {
     setAriaSort(sort?: ColumnSortState): void;
     setUserCompDetails(compDetails: UserCompDetails): void;
     getUserCompInstance(): IHeader | undefined;
+    refreshSelectAllGui(): void;
 }
 
 type HeaderAriaDescriptionKey = 'filter' | 'menu' | 'sort' | 'selectAll' | 'filterButton';
@@ -233,6 +234,17 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
         }
         this.selectAllFeature = compBean.createOptionalManagedBean(selectionSvc.createSelectAllFeature(this.column));
         this.selectAllFeature?.setComp(this);
+
+        compBean.addManagedPropertyListener('rowSelection', () => {
+            const selectAllFeature = selectionSvc.createSelectAllFeature(this.column);
+            if (selectAllFeature && !this.selectAllFeature) {
+                this.selectAllFeature = compBean.createManagedBean(selectAllFeature);
+                this.selectAllFeature?.setComp(this);
+                this.comp.refreshSelectAllGui();
+            } else if (this.selectAllFeature && !selectAllFeature) {
+                this.selectAllFeature = this.destroyBean(this.selectAllFeature);
+            }
+        });
     }
 
     public getSelectAllGui(): HTMLElement | undefined {

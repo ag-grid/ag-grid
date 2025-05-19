@@ -49,6 +49,12 @@ export class HeaderCellComp extends AbstractHeaderCellComp<HeaderCellCtrl> {
             setAriaSort: (sort) => (sort ? _setAriaSort(eGui, sort) : _removeAriaSort(eGui)),
             setUserCompDetails: (compDetails) => this.setUserCompDetails(compDetails),
             getUserCompInstance: () => this.headerComp,
+            refreshSelectAllGui: () => {
+                const selectAllGui = this.ctrl.getSelectAllGui();
+                if (selectAllGui) {
+                    this.eResize.insertAdjacentElement('afterend', selectAllGui);
+                }
+            },
         };
 
         this.ctrl.setComp(compProxy, this.getGui(), this.eResize, this.eHeaderCompWrapper, undefined);

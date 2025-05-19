@@ -240,4 +240,11 @@ export class SelectAllFeature extends BeanStub {
         }
         return 'all';
     }
+
+    public override destroy(): void {
+        const eGui = this.getCheckboxGui();
+        eGui.parentElement?.removeChild(eGui);
+
+        super.destroy();
+    }
 }
