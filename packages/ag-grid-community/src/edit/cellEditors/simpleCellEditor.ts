@@ -20,13 +20,15 @@ export class SimpleCellEditor<
     protected readonly eInput: I = RefPlaceholder;
 
     constructor(protected cellEditorInput: CellEditorInput<TValue, P, I>) {
-        super(
-            { tag: 'div', cls: 'ag-cell-edit-wrapper', children: [cellEditorInput.getTemplate()] },
-            cellEditorInput.getAgComponents()
-        );
+        super();
     }
 
     public init(params: P): void {
+        this.setTemplate(
+            { tag: 'div', cls: 'ag-cell-edit-wrapper', children: [this.cellEditorInput.getTemplate()] },
+            this.cellEditorInput.getAgComponents(),
+            { eInput: { cellDataType: params.colDef.cellDataType } }
+        );
         this.params = params;
         const { cellStartedEdit, eventKey, suppressPreventDefault } = params;
 
