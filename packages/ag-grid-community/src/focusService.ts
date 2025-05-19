@@ -5,7 +5,7 @@ import type { NamedBean } from './context/bean';
 import { BeanStub } from './context/beanStub';
 import type { BeanCollection } from './context/context';
 import type { AgColumn } from './entities/agColumn';
-import type { AgColumnGroup } from './entities/agColumnGroup';
+import { AgColumnGroup } from './entities/agColumnGroup';
 import { _areCellsEqual, _getFirstRow, _getLastRow, _getRowNode } from './entities/positionUtils';
 import type { CellFocusedParams, CommonCellFocusParams } from './events';
 import type { FilterManager } from './filter/filterManager';
@@ -456,8 +456,10 @@ export class FocusService extends BeanStub implements NamedBean {
             firstColumn = colGroupSvc.getColGroupAtLevel(firstColumn, 0)!;
         }
 
-        const headerPosition = getHeaderIndexToFocus(firstColumn, 0);
-
+        const headerPosition =
+            firstColumn instanceof AgColumnGroup
+                ? { headerRowIndex: firstColumn.getLevel(), column: firstColumn }
+                : { headerRowIndex: this.beans.visibleCols.treeDepth, column: firstColumn };
         return this.focusHeaderPosition({
             headerPosition,
             rowWithoutSpanValue: 0,

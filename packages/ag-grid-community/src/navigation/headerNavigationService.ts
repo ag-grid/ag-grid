@@ -298,7 +298,7 @@ export class HeaderNavigationService extends BeanStub implements NamedBean {
 
         let currentFocusedColumn = focusedHeader.column as AgColumn | AgColumnGroup;
         if (currentFocusedColumn instanceof AgColumnGroup) {
-            const leafChildren = currentFocusedColumn.getLeafColumns();
+            const leafChildren = currentFocusedColumn.getDisplayedLeafColumns();
             currentFocusedColumn = direction === 'Before' ? leafChildren[0] : leafChildren[leafChildren.length - 1];
         }
 
@@ -392,31 +392,25 @@ function getColumnVisibleChild(
 ): HeaderFuturePosition {
     const optimisticNextIndex = currentIndex + 1;
 
+    const result: HeaderFuturePosition = {
+        column,
+        headerRowIndex: optimisticNextIndex,
+    };
+
     // if a group, push focus into the first child
     if (column instanceof AgColumnGroup) {
         const children = column.getDisplayedChildren();
         const firstChild = children![0];
+        result.column = firstChild;
 
         // if the first child is a col that is spanning, skip to the full tree depth index
         // not last row, as last row could be filter
         const isSpanningCol = firstChild instanceof AgColumn && firstChild.isSpanHeaderHeight();
         if (isSpanningCol) {
-            return {
-                column: firstChild,
-                headerRowIndex: treeDepth,
-                headerRowIndexWithoutSpan: optimisticNextIndex,
-            };
+            result.headerRowIndex = treeDepth;
+            result.headerRowIndexWithoutSpan = optimisticNextIndex;
         }
-        return {
-            column: firstChild,
-            headerRowIndex: optimisticNextIndex,
-            headerRowIndexWithoutSpan: optimisticNextIndex,
-        };
     }
 
-    return {
-        column,
-        headerRowIndex: optimisticNextIndex,
-        headerRowIndexWithoutSpan: optimisticNextIndex,
-    };
+    return result;
 }
