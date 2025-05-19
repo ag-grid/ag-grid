@@ -117,7 +117,7 @@
 
         &:first-child {
             background-color: transparent;
-            color: var(--color-white);
+            color: var(--color-white) !important;
             border-width: 2px;
 
             :global(.icon) {
