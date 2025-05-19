@@ -4,6 +4,7 @@ import type { Column } from '../../interfaces/iColumn';
 import type { IRowNode } from '../../interfaces/iRowNode';
 import type { CellCtrl } from '../../rendering/cell/cellCtrl';
 import { _getColId, _resolveControllers } from '../utils/controllers';
+import { _syncModelsFromEditors } from '../utils/editors';
 import { BaseEditStrategy } from './baseEditStrategy';
 
 export class SingleCellEditStrategy extends BaseEditStrategy {
@@ -48,8 +49,9 @@ export class SingleCellEditStrategy extends BaseEditStrategy {
         this.column = column;
 
         this.editModel.startEditing(rowNode, column);
+        this.dispatchCellEvent(rowNode, column, event, 'cellEditingStarted');
 
-        return this.finishStartEdit(
+        return this.setupEditors(
             [
                 {
                     rowNode,
@@ -85,6 +87,8 @@ export class SingleCellEditStrategy extends BaseEditStrategy {
             rowIndex: previous?.rowIndex,
             column: previous?.column,
         });
+
+        _syncModelsFromEditors(this.beans);
 
         // if we are editing, then moving the focus out of a cell will stop editing
         this.beans.editSvc?.stopEditing(

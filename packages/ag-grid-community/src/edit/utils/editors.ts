@@ -110,8 +110,11 @@ function _createCellEditorParams(
 
     const agColumn = beans.colModel.getCol(column.getId())!;
 
+    const newValue = editSvc?.getCellDataValue(rowNode, column);
+    const value = newValue ?? valueSvc.getValueForDisplay(agColumn, rowNode)?.value;
+
     return _addGridCommonParams(gos, {
-        value: valueSvc.getValueForDisplay(agColumn, rowNode)?.value,
+        value,
         eventKey: key ?? null,
         column,
         colDef: column.getColDef(),

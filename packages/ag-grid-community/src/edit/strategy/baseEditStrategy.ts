@@ -2,6 +2,7 @@ import { KeyCode } from '../../constants/keyCode';
 import { BeanStub } from '../../context/beanStub';
 import type { BeanName } from '../../context/context';
 import type { ColDef } from '../../entities/colDef';
+import type { AgEventType } from '../../eventTypes';
 import type { CellFocusedEvent } from '../../events';
 import type { DefaultProvidedCellEditorParams } from '../../interfaces/iCellEditor';
 import type { Column } from '../../interfaces/iColumn';
@@ -118,7 +119,7 @@ export abstract class BaseEditStrategy extends BeanStub {
     }
 
     // move to main editsvc
-    protected finishStartEdit(
+    protected setupEditors(
         editingCells: CellIdPositions[],
         rowNode?: IRowNode | null,
         column?: Column | null,
@@ -130,16 +131,40 @@ export abstract class BaseEditStrategy extends BeanStub {
         const suppressPreventDefault = !(compDetails?.params as DefaultProvidedCellEditorParams)
             ?.suppressPreventDefault;
 
-        editingCells.forEach((cellPosition) => {
-            const cellCtrl = _resolveCellController(this.beans, cellPosition);
-            this.eventSvc.dispatchEvent(cellCtrl!.createEvent(event ?? null, 'cellEditingStarted'));
-        });
-
         if (!suppressPreventDefault) {
             event?.preventDefault();
         }
 
         return suppressPreventDefault;
+    }
+
+    protected dispatchCellEvent<T extends AgEventType>(
+        rowNode: IRowNode | undefined | null,
+        column: Column | undefined | null,
+        event?: Event | null,
+        type?: T
+    ): void {
+        const cellCtrl = _resolveCellController(this.beans, {
+            rowNode,
+            column,
+        });
+
+        if (cellCtrl) {
+            this.eventSvc.dispatchEvent(cellCtrl.createEvent(event ?? null, type as T) as any);
+        }
+    }
+
+    protected dispatchRowEvent(
+        rowNode: IRowNode | undefined | null,
+        type: 'rowEditingStarted' | 'rowEditingStopped'
+    ): void {
+        const rowCtrl = _resolveRowController(this.beans, {
+            rowNode,
+        })!;
+
+        if (rowCtrl) {
+            this.eventSvc.dispatchEvent(rowCtrl.createRowEvent(type));
+        }
     }
 
     shouldStartEditing(

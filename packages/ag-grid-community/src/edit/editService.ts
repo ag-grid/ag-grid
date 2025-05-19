@@ -129,6 +129,7 @@ export class EditService extends BeanStub implements NamedBean {
         this.strategy = this.createStrategy();
 
         const editing = this.isEditing(rowNode, column);
+        const batchEdit = this.gos.get('batchEdit');
 
         const res = editing || this.shouldStartEditing?.(rowNode, column, key, event, cellStartedEdit, source);
 
@@ -139,11 +140,11 @@ export class EditService extends BeanStub implements NamedBean {
             return false;
         }
 
-        if (this.strategy.shouldStopEditing(rowNode, column, undefined, undefined, source)) {
+        if (!batchEdit && this.strategy.shouldStopEditing(rowNode, column, undefined, undefined, source)) {
             this.stopEditing(undefined, undefined, undefined, undefined, undefined, source);
         }
 
-        const result = editing ? false : this.strategy!.startEditing?.(rowNode, column, key, event, source);
+        const result = this.strategy!.startEditing?.(rowNode, column, key, event, source);
 
         this.strategy.updateCells(this.model?.getPendingUpdates());
 

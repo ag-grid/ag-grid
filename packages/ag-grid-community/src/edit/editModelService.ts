@@ -104,7 +104,7 @@ export class EditModelService extends BeanStub implements NamedBean {
 
     public startEditing(rowNode: IRowNode, ...columns: Maybe<Column>[]): void {
         const map = this.pendingUpdates.get(rowNode) ?? new Map<Column, CData | undefined>();
-        columns.forEach((col) => col && map!.set(col, undefined));
+        columns.forEach((col) => col && !map.has(col) && map!.set(col, undefined));
         this.pendingUpdates.set(rowNode, map);
     }
 

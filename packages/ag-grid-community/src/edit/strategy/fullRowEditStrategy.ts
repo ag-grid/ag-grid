@@ -6,6 +6,7 @@ import type { CellCtrl } from '../../rendering/cell/cellCtrl';
 import type { RowCtrl } from '../../rendering/row/rowCtrl';
 import type { CellIdPositions } from '../editModelService';
 import { _resolveControllers, _resolveRowController } from '../utils/controllers';
+import { _syncModelsFromEditors } from '../utils/editors';
 import { BaseEditStrategy } from './baseEditStrategy';
 
 export class FullRowEditStrategy extends BaseEditStrategy {
@@ -58,6 +59,10 @@ export class FullRowEditStrategy extends BaseEditStrategy {
             super.cleanupEditors();
         }
 
+        if (!this.editModel.hasPending(rowNode)) {
+            this.dispatchRowEvent(rowNode, 'rowEditingStarted');
+        }
+
         const columns = this.beans.colModel.getCols();
         const cells: CellIdPositions[] = [];
 
@@ -70,37 +75,26 @@ export class FullRowEditStrategy extends BaseEditStrategy {
                 column: rowColumn,
             };
             cells.push(position);
-            this.editModel.startEditing(position.rowNode, position.column);
+
+            if (!this.editModel.hasPending(rowNode, rowColumn)) {
+                this.editModel.startEditing(rowNode, rowColumn);
+                this.dispatchCellEvent(rowNode, rowColumn, event, 'cellEditingStarted');
+            }
         });
 
         this.rowNode = rowNode;
 
-        this.dispatchRowEvent(rowNode, 'rowEditingStarted');
-
-        return this.finishStartEdit(cells, rowNode, column, key, true, event);
-    }
-
-    private dispatchRowEvent(
-        rowNode: IRowNode | undefined | null,
-        type: 'rowEditingStarted' | 'rowEditingStopped'
-    ): void {
-        const rowCtrl = _resolveRowController(this.beans, {
-            rowNode,
-        })!;
-
-        if (rowCtrl) {
-            this.eventSvc.dispatchEvent(rowCtrl.createRowEvent(type));
-        }
+        return this.setupEditors(cells, rowNode, column, key, true, event);
     }
 
     public override stopEditing(): boolean {
-        // for (const rowNode of this.editModel.getPendingUpdates().keys()) {
-        //     this.update(rowNode!, undefined, false);
-        // }
+        const updates = this.editModel.getPendingUpdates();
 
         super.stopEditing();
 
-        this.dispatchRowEvent(this.rowNode, 'rowEditingStopped');
+        for (const rowNode of updates.keys()) {
+            this.dispatchRowEvent(rowNode, 'rowEditingStopped');
+        }
 
         this.rowNode = undefined;
 
@@ -117,6 +111,8 @@ export class FullRowEditStrategy extends BaseEditStrategy {
             rowIndex,
             column,
         });
+
+        _syncModelsFromEditors(this.beans);
 
         // if we are editing, then moving the focus out of a row will stop editing
         if (
