@@ -20,7 +20,7 @@ import { _isClientSideRowModel } from '../gridOptionsUtils';
 import type { IClientSideRowModel } from '../interfaces/iClientSideRowModel';
 import type { ColumnEventName } from '../interfaces/iColumn';
 import type { IEventListener } from '../interfaces/iEventEmitter';
-import { _parseDateTimeFromString, _serialiseDate } from '../utils/date';
+import { _parseDateTimeFromString, _serialiseDate, dateTimeRegexp } from '../utils/date';
 import { _toStringOrNull } from '../utils/generic';
 import { _getValueUsingField } from '../utils/object';
 import { _warn } from '../validation/logging';
@@ -33,8 +33,6 @@ import { convertColumnTypes } from './columnUtils';
 interface GroupSafeValueFormatter {
     groupSafeValueFormatter?: ValueFormatterFunc;
 }
-
-const dateTimeRegexp = /^\d{4}-\d{2}-\d{2}( \d{2}:\d{2}:\d{2})?$/;
 
 type DataTypeDefinitions = {
     [cellDataType: string]: (DataTypeDefinition | CoreDataTypeDefinition) & GroupSafeValueFormatter;

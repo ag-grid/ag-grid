@@ -94,6 +94,8 @@ export function _dateToFormattedString(date: Date, format: string = 'YYYY-MM-DD'
     });
 }
 
+export const dateTimeRegexp = /^(\d{4})-(\d{2})-(\d{2})( (\d{2}):(\d{2}):(\d{2}))?$/;
+
 /**
  * Parses a date and time from a string in the format `yyyy-MM-dd HH:mm:ss`
  */
