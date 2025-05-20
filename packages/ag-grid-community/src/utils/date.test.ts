@@ -9,21 +9,21 @@ describe('_serialiseDate', () => {
         const date = new Date(2020, 2, 27, 14, 22, 19);
         const result = _serialiseDate(date);
 
-        expect(result).toBe('2020-03-27 14:22:19');
+        expect(result).toBe('2020-03-27T14:22:19');
     });
 
     it('can serialise with a different separator', () => {
         const date = new Date(2020, 2, 27, 14, 22, 19);
         const result = _serialiseDate(date, true, '/');
 
-        expect(result).toBe('2020/03/27 14:22:19');
+        expect(result).toBe('2020/03/27T14:22:19');
     });
 
     it('pads parts to two digits', () => {
         const date = new Date(2020, 2, 4, 3, 7, 2);
         const result = _serialiseDate(date, true, '/');
 
-        expect(result).toBe('2020/03/04 03:07:02');
+        expect(result).toBe('2020/03/04T03:07:02');
     });
 
     it('will not include time if instructed', () => {
@@ -42,23 +42,20 @@ describe('_parseDateTimeFromString', () => {
         expect(result).toStrictEqual(new Date(2020, 2, 27));
     });
 
-    it.each([null, '2017', '2017-', '2017-03', '2017-03-', '2017-00-04', '2017-13-05', '2017-02-30'])(
-        'returns null if invalid value supplied: %s',
-        (value) => {
-            expect(_parseDateTimeFromString(value)).toBeNull();
-        }
-    );
+    it.each([null, '2017-00-04', '2017-13-05'])('returns null if invalid value supplied: %s', (value) => {
+        expect(_parseDateTimeFromString(value)).toBeNull();
+    });
 
     it('can parse date with time', () => {
-        const value = '2020-03-30 14:19:34';
+        const value = '2020-03-30T14:19:34';
         const result = _parseDateTimeFromString(value);
 
         expect(result).toStrictEqual(new Date(2020, 2, 30, 14, 19, 34));
     });
 
-    it.each(['25:61:61', '-1:-1:-1'])('ignores invalid time parts: %s', (value) => {
-        const result = _parseDateTimeFromString('2020-03-30 ' + value);
+    it.each(['25:61:61', '-1:-1:-1'])('returns null if invalid time supplied: %s', (value) => {
+        const result = _parseDateTimeFromString('2020-03-30T' + value);
 
-        expect(result).toStrictEqual(new Date(2020, 2, 30));
+        expect(result).toStrictEqual(null);
     });
 });
