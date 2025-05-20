@@ -7,20 +7,26 @@ function _padStartWidthZeros(value: number, totalStringSize: number): string {
  * An alternative separator can be provided to be used instead of hyphens.
  * @param date The date to serialise
  * @param includeTime Whether to include the time in the serialised string
- * @param separator The separator to use between date parts
+ * @param dateSeparator The separator to use between date parts, e.g. 2025-01-01 or 2025/01/01
+ * @param dateTimeSeparator  The separator to use between date and time parts, e.g. 2025-01-01 12:00:00 or 2025-01-01T12:00:00
  */
-export function _serialiseDate(date: Date | null, includeTime = true, separator = '-'): string | null {
+export function _serialiseDate(
+    date: Date | null,
+    includeTime = true,
+    dateSeparator = '-',
+    dateTimeSeparator = ' '
+): string | null {
     if (!date) {
         return null;
     }
 
     let serialised = [date.getFullYear(), date.getMonth() + 1, date.getDate()]
         .map((part) => _padStartWidthZeros(part, 2))
-        .join(separator);
+        .join(dateSeparator);
 
     if (includeTime) {
         serialised +=
-            ' ' +
+            dateTimeSeparator +
             [date.getHours(), date.getMinutes(), date.getSeconds()]
                 .map((part) => _padStartWidthZeros(part, 2))
                 .join(':');

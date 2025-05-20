@@ -158,13 +158,13 @@ export class DefaultDateComponent extends Component implements IDateComp {
     }
 
     public getDate(): Date | null {
-        return _parseDateTimeFromString(this.eDateInput.getValue());
+        return _parseDateTimeFromString(this.eDateInput.getValue(), 'T');
     }
 
     public setDate(date: Date): void {
-        const columnDef = this.params.filterParams.colDef;
-        const colType = columnDef.cellDataType;
-        this.eDateInput.setValue(_serialiseDate(date, colType === 'dateTime' || colType === 'dateTimeString'));
+        const colType = this.params.filterParams.colDef.cellDataType;
+        const includeTime = this.beans.dataTypeSvc?.getDateIncludesTimeFlag(colType) ?? false;
+        this.eDateInput.setValue(_serialiseDate(date, includeTime, '-', 'T'));
     }
 
     public setInputPlaceholder(placeholder: string): void {
