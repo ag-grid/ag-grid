@@ -62,10 +62,7 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
             }
         });
 
-        this.addManagedEventListeners({
-            rowSelected: this.onRowSelected.bind(this),
-            rowDataUpdated: () => this.updateSelectable(),
-        });
+        this.addManagedEventListeners({ rowSelected: this.onRowSelected.bind(this) });
     }
 
     public override destroy(): void {
