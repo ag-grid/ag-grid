@@ -128,13 +128,12 @@ export class EditService extends BeanStub implements NamedBean {
 
         this.strategy = this.createStrategy();
 
-        const editing = this.isEditing(rowNode, column);
         const batchEdit = this.gos.get('batchEdit');
 
-        const res = editing || this.shouldStartEditing?.(rowNode, column, key, event, cellStartedEdit, source);
+        const res = this.shouldStartEditing?.(rowNode, column, key, event, cellStartedEdit, source);
 
         if (res === false && source !== 'api') {
-            if (editing) {
+            if (this.isEditing(rowNode, column)) {
                 this.stopEditing();
             }
             return false;

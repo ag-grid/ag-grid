@@ -7,7 +7,7 @@ import type { IRowNode } from '../../interfaces/iRowNode';
 import type { UserCompDetails } from '../../interfaces/iUserCompDetails';
 import type { CellCtrl, ICellComp } from '../../rendering/cell/cellCtrl';
 import type { CellIdPositions } from '../editModelService';
-import { _resolveCellController, _resolveControllers } from './controllers';
+import { _resolveCellController } from './controllers';
 
 export function _setupEditors(
     beans: BeanCollection,
