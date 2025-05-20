@@ -203,7 +203,11 @@ export function _destroyEditors(beans: BeanCollection, cellPositions: CellIdPosi
 }
 
 export function _destroyEditor(beans: BeanCollection, cellPosition: CellIdPositions): void {
-    const { cellCtrl } = _resolveControllers(beans, cellPosition);
+    const cellCtrl = _resolveCellController(beans, cellPosition);
+    if (!cellCtrl) {
+        return;
+    }
+
     const { comp } = cellCtrl!;
 
     comp.setEditDetails(); // passing nothing stops editing
