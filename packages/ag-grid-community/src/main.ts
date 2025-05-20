@@ -738,6 +738,7 @@ export {
     ScrollState,
     SideBarState,
     SortState,
+    GridStateKey,
 } from './interfaces/gridState';
 export { convertColumnGroupState, convertColumnState } from './misc/state/stateUtils';
 

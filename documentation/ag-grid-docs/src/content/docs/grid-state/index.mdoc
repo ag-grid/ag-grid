@@ -91,6 +91,8 @@ The best way to restore grid state is via initial state as described above. Howe
 
 {% gridExampleRunner title="Setting State" name="set-state"  exampleHeight=630 /%}
 
+It is possible to maintain the existing state for individual state contents by passing a second argument to `setState` that contains the top-level properties to ignore. E.g. `api.setState(state, ['filter'])` will maintain the existing filter state in the grid.
+
 ## Converting Column State to Grid State
 
 State retrieved via the [Column State](./column-state/) APIs can be converted into grid state via the helper functions `convertColumnState` and `convertColumnGroupState`.

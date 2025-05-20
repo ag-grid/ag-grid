@@ -1,5 +1,7 @@
 import type { GridState } from '../../interfaces/gridState';
+import { VERSION } from '../../version';
 
+/** This always returns a new object */
 export function migrateGridStateModel(state: GridState): GridState {
     state = { ...state };
     // The `version` field was introduced in v32.2.0, so anything without that
@@ -12,6 +14,8 @@ export function migrateGridStateModel(state: GridState): GridState {
         case '32.1.0':
             state = migrateV32_1(state);
     }
+
+    state.version = VERSION;
 
     return state;
 }

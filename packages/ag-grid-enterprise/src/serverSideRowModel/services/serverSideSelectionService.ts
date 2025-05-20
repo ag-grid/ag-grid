@@ -115,20 +115,26 @@ export class ServerSideSelectionService extends BaseSelectionService implements 
     }
 
     public setSelectionState(
-        state: string[] | ServerSideRowSelectionState | ServerSideRowGroupSelectionState,
+        state: string[] | ServerSideRowSelectionState | ServerSideRowGroupSelectionState | undefined,
         source: SelectionEventSourceType
     ): void {
         if (!_isRowSelection(this.gos)) {
-            _warn(132);
+            if (state) {
+                _warn(132);
+            }
             return;
         }
         if (Array.isArray(state)) {
             return;
         }
-        this.selectionStrategy.setSelectedState(state);
-        this.shotgunResetNodeSelectionState();
+        if (state) {
+            this.selectionStrategy.setSelectedState(state);
+            this.shotgunResetNodeSelectionState();
 
-        this.dispatchSelectionChanged(source);
+            this.dispatchSelectionChanged(source);
+        } else {
+            this.deselectAllRowNodes({ source });
+        }
     }
 
     public setNodesSelected(params: ISetNodesSelectedParams): number {
