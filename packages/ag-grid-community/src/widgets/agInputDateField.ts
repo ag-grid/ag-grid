@@ -91,7 +91,7 @@ export class AgInputDateField extends AgInputTextField {
         if (!this.eInput.validity.valid) {
             return undefined;
         }
-        return _parseDateTimeFromString(this.getValue(), 'T') ?? undefined;
+        return _parseDateTimeFromString(this.getValue()) ?? undefined;
     }
 
     public setDate(date: Date | undefined, silent?: boolean): void {
