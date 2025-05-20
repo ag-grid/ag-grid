@@ -43,7 +43,7 @@ type DataTypeDefinitions = {
  *       This is because dateTime has a lower priority than date and gives us no way to distinguish between the two, and
  *       object type is the default type for all other types.
  *
- *       DateString has higher priority than dateTimeString, since it doesn't include serialized time.
+ *       dateTimeString has higher priority than dateString, since it does include serialized time and isValidDate() considers datetime a valid date :shrug:.
  */
 const SORTED_CELL_DATA_TYPES_FOR_MATCHING: readonly Exclude<BaseCellDataType, 'dateTime' | 'object'>[] = [
     'dateTimeString',
