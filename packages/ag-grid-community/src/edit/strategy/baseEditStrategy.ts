@@ -46,7 +46,9 @@ export abstract class BaseEditStrategy extends BeanStub {
             let rowEdited = false;
 
             rowUpdateMap.forEach((cellData, column) => {
-                const newState = forced ? forcedState : cellData?.newValue && cellData?.newValue !== cellData?.oldValue;
+                const newState = forced
+                    ? forcedState
+                    : cellData?.newValue !== undefined && cellData?.newValue !== cellData?.oldValue;
 
                 rowEdited ||= newState;
 
