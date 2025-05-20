@@ -15,8 +15,13 @@ const gridOptions: GridOptions = {
 // Create Grid, to simplify example generation
 gridApi = createGrid(document.querySelector<HTMLElement>('#myGrid')!, gridOptions);
 
-const FakeGrid = class {
-    constructor() {}
+// Mock classes
+const FakeGrid = class {};
+const AgColumn = class {
+    colId = 'someColId';
+};
+const RowNode = class {
+    id = '2';
 };
 
 const CONSOLE_LOG_ARGS = [
@@ -50,7 +55,14 @@ const CONSOLE_LOG_ARGS = [
         { a: 'more', b: 'here', c: 'now', d: 'more' },
         'asdfasdfsadfsadfds asdfasdfsadfsadfds asdfasdfsadfsadfds asdfasdfsadfsadfds asdfasdfsadfsadfds asdfasdfsadfsadfds asdfasdfsadfsadfds asdfasdfsadfsadfds',
     ],
-    [window, document, new CSSStyleSheet(), new Event('click'), new FakeGrid()],
+
+    // Browser objects that render differently than console
+    [window, document, document.createElement('div')],
+    [new CSSStyleSheet(), new Event('click'), new FakeGrid()],
+
+    // AG Grid replacement classes
+    [new AgColumn()],
+    [new RowNode()],
 ];
 const PRIMITIVE_TYPES = ['string', 'number', 'boolean', 'undefined', 'null', 'nan', 'symbol'];
 const REPLACEMENT_TYPES_MAP: Record<string, any> = {

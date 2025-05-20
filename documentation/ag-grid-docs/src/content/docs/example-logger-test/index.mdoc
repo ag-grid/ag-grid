@@ -58,5 +58,11 @@ console.log(
     'asdfasdfsadfsadfds asdfasdfsadfsadfds asdfasdfsadfsadfds asdfasdfsadfsadfds asdfasdfsadfsadfds asdfasdfsadfsadfds asdfasdfsadfsadfds asdfasdfsadfsadfds'
 );
 
-console.log(window, document, new CSSStyleSheet(), new Event('click'), new FakeGrid());
+// Browser objects that render differently than console
+console.log(window, document, document.createElement('div'));
+console.log(new CSSStyleSheet(), new Event('click'), new FakeGrid());
+
+// AG Grid replacement classes
+console.log(new AgColumn());
+console.log(new RowNode());
 ```

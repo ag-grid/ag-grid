@@ -38,16 +38,24 @@ function patchConsoleLog() {
         "document",
         "window"
     ];
+    const REPLACEMENT_CLASS_MAPPING = {
+        "AgColumn": (value) => \`ColumnClass { colId: '\${value.colId}' }\`,
+        "RowNode": (value) => \`IRowNodeClass { rowId: '\${value.id}' }\`,
+    }
     const getReplacementValue = (value) => {
         const valueType = getType(value);
         if (valueType === "classInstance") {
-            return value.constructor.name + "Class {}";
+            const className = value.constructor.name;
+            if (className in REPLACEMENT_CLASS_MAPPING) {
+                return REPLACEMENT_CLASS_MAPPING[className](value);
+            }
+            return className + "Class {}";
         } else if (valueType === "event") {
-            return value.constructor.name + " { type: " + value.type + " }";
+            return value.constructor.name + " { type: '" + value.type + "' }";
         } else if (valueType === "cssStylesheet") {
             return value.constructor.name + " {}";
         } else if (valueType === 'element') {
-             return "Element { " + value.localName + " }";
+             return "Element { localName: '" + value.localName + "' }";
         } else if (valueType === 'document') {
              return "Document {}";
         } else if (valueType === 'window') {
