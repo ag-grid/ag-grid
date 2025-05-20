@@ -10,6 +10,7 @@ import type { BeanName } from '../context/context';
 import type { AgColumn } from '../entities/agColumn';
 import type { ColDef, ValueFormatterParams, ValueGetterParams } from '../entities/colDef';
 import type {
+    BaseCellDataTypeDefMap,
     CoreDataTypeDefinition,
     DataTypeFormatValueFunc,
     DateStringDataTypeDefinition,
@@ -900,23 +901,17 @@ export class ColumnFilterService extends BeanStub implements NamedBean {
         const mergeFilterParams = (params: any) => {
             const { filterParams } = colDef;
             colDef.filterParams =
-                typeof filterParams === 'object'
-                    ? {
-                          ...filterParams,
-                          ...params,
-                      }
-                    : params;
+                typeof filterParams === 'object' ? { colDef, ...filterParams, ...params } : { colDef, ...params };
         };
-        switch (dataTypeDefinition.baseDataType) {
-            case 'number': {
+        const self = this;
+        // using an object here to enforce dev to not forget to implement new types as they are added
+        const cellEditorMap: Record<keyof BaseCellDataTypeDefMap, () => void> = {
+            number(): void {
                 if (usingSetFilter) {
-                    mergeFilterParams({
-                        comparator: setFilterNumberComparator,
-                    });
+                    mergeFilterParams({ comparator: setFilterNumberComparator });
                 }
-                break;
-            }
-            case 'boolean': {
+            },
+            boolean(): void {
                 if (usingSetFilter) {
                     mergeFilterParams({
                         valueFormatter: (params: ValueFormatterParams) => {
@@ -947,9 +942,8 @@ export class ColumnFilterService extends BeanStub implements NamedBean {
                         ],
                     });
                 }
-                break;
-            }
-            case 'date': {
+            },
+            date(): void {
                 if (usingSetFilter) {
                     mergeFilterParams({
                         valueFormatter: (params: ValueFormatterParams) => {
@@ -969,13 +963,10 @@ export class ColumnFilterService extends BeanStub implements NamedBean {
                         },
                     });
                 } else {
-                    mergeFilterParams({
-                        isValidDate,
-                    });
+                    mergeFilterParams({ isValidDate });
                 }
-                break;
-            }
-            case 'dateString': {
+            },
+            dateString(): void {
                 const convertToDate = (dataTypeDefinition as DateStringDataTypeDefinition).dateParser!;
                 if (usingSetFilter) {
                     mergeFilterParams({
@@ -1013,9 +1004,14 @@ export class ColumnFilterService extends BeanStub implements NamedBean {
                         isValidDate: (value: any) => typeof value === 'string' && isValidDate(convertToDate(value)),
                     });
                 }
-                break;
-            }
-            case 'object': {
+            },
+            dateTime(): void {
+                this.date();
+            },
+            dateTimeString(): void {
+                this.dateString();
+            },
+            object(): void {
                 if (usingSetFilter) {
                     mergeFilterParams({
                         valueFormatter: (params: ValueFormatterParams) => {
@@ -1028,12 +1024,13 @@ export class ColumnFilterService extends BeanStub implements NamedBean {
                         formatValue({
                             column: params.column,
                             node: params.node,
-                            value: this.beans.valueSvc.getValue(params.column as AgColumn, params.node),
+                            value: self.beans.valueSvc.getValue(params.column as AgColumn, params.node),
                         });
                 }
-                break;
-            }
-        }
+            },
+            text(): void {},
+        };
+        cellEditorMap[dataTypeDefinition.baseDataType]();
     }
 
     // additionalEventAttributes is used by provided simple floating filter, so it can add 'floatingFilter=true' to the event

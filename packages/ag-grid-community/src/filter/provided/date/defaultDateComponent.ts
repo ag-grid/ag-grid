@@ -1,3 +1,4 @@
+import type { BaseCellDataType } from '../../../entities/dataType';
 import type { IDateComp, IDateParams } from '../../../interfaces/dateComponent';
 import type { IAfterGuiAttachedParams } from '../../../interfaces/iAfterGuiAttachedParams';
 import { _isBrowserSafari } from '../../../utils/browser';
@@ -8,6 +9,7 @@ import type { AgInputTextField } from '../../../widgets/agInputTextField';
 import { AgInputTextFieldSelector } from '../../../widgets/agInputTextField';
 import { Component, RefPlaceholder } from '../../../widgets/component';
 
+const DATETIME_FIELD_TYPES = ['dateTime', 'dateTimeString'];
 const DefaultDateElement: ElementParams = {
     tag: 'div',
     cls: 'ag-filter-filter',
@@ -86,7 +88,18 @@ export class DefaultDateComponent extends Component implements IDateComp {
         const shouldUseBrowserDatePicker = this.shouldUseBrowserDatePicker(params);
         this.usingSafariDatePicker = shouldUseBrowserDatePicker && _isBrowserSafari();
 
-        inputElement.type = shouldUseBrowserDatePicker ? 'date' : 'text'; // todo
+        let type;
+        if (shouldUseBrowserDatePicker) {
+            if (DATETIME_FIELD_TYPES.includes(params.filterParams?.colDef?.cellDataType as BaseCellDataType)) {
+                type = 'datetime-local';
+            } else {
+                type = 'date';
+            }
+        } else {
+            type = 'text';
+        }
+
+        inputElement.type = type;
 
         const { minValidYear, maxValidYear, minValidDate, maxValidDate, buttons } = params.filterParams || {};
 

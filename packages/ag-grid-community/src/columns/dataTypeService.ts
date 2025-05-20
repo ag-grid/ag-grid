@@ -504,6 +504,7 @@ export class DataTypeService extends BeanStub implements NamedBean {
         const formatValue = this.formatValueFuncs[cellDataType];
         const self = this;
         const cellEditorMap: Record<keyof BaseCellDataTypeDefMap, () => void> = {
+            // using an object here to enforce dev to not forget to implement new types as they are added
             number(): void {
                 colDef.cellEditor = 'agNumberCellEditor';
             },
