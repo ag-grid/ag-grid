@@ -18,7 +18,7 @@ import { _refreshEditorOnColDefChanged, _syncModelFromEditor, _syncModelsFromEdi
 export class EditService extends BeanStub implements NamedBean {
     beanName = 'editSvc' as const;
     private model?: EditModelService;
-    private strategy?: BaseEditStrategy;
+    public strategy?: BaseEditStrategy;
 
     postConstruct(): void {
         this.model = this.beans.editModelSvc;
@@ -224,7 +224,7 @@ export class EditService extends BeanStub implements NamedBean {
                 return;
             }
 
-            const valueChanged = newValue !== oldValue;
+            const valueChanged = newValue && newValue !== oldValue;
             if (!cancel && valueChanged) {
                 // we suppressRefreshCell because the call to rowNode.setDataValue() results in change detection
                 // getting triggered, which results in all cells getting refreshed. we do not want this refresh

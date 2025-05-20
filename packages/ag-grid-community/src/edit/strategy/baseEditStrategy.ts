@@ -34,7 +34,7 @@ export abstract class BaseEditStrategy extends BeanStub {
         source?: 'api' | 'ui'
     ): boolean | null;
 
-    public updateCells(updates?: PendingUpdates, forcedState?: boolean): void {
+    public updateCells(updates: PendingUpdates = this.editModel.getPendingUpdates(), forcedState?: boolean): void {
         const batchEdit = this.gos.get('batchEdit');
         const forced = forcedState !== undefined;
 

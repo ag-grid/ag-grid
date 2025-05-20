@@ -49,7 +49,17 @@ function _setupEditor(
     key?: string | null,
     cellStartedEdit?: boolean | null
 ): UserCompDetails<ICellEditorComp<any, any, any>> | undefined {
+    const cellCtrl = _resolveCellController(beans, { rowNode, column })!;
+    const editorComp = cellCtrl?.comp.getCellEditor();
+
     const editorParams = _createCellEditorParams(beans, rowNode, column, key, cellStartedEdit);
+
+    if (editorComp) {
+        // don't reinitialise, just refresh if possible
+        editorComp.refresh?.(editorParams);
+        return cellCtrl.editCompDetails;
+    }
+
     const colDef = column.getColDef();
     const compDetails = _getCellEditorDetails(beans.userCompFactory, colDef, editorParams);
 
@@ -59,8 +69,6 @@ function _setupEditor(
         compDetails?.popupPositionFromSelector != null
             ? compDetails.popupPositionFromSelector
             : colDef.cellEditorPopupPosition;
-
-    const cellCtrl = _resolveCellController(beans, { rowNode, column })!;
 
     cellCtrl.editCompDetails = compDetails;
     cellCtrl.comp.setEditDetails(compDetails, popup, position, beans.gos.get('reactiveCustomComponents'));
@@ -107,11 +115,13 @@ function _createCellEditorParams(
     const {
         cellPosition: { rowIndex },
     } = cellCtrl;
+    const batchEdit = gos.get('batchEdit');
 
     const agColumn = beans.colModel.getCol(column.getId())!;
 
-    const newValue = editSvc?.getCellDataValue(rowNode, column);
-    const value = newValue ?? valueSvc.getValueForDisplay(agColumn, rowNode)?.value;
+    const initialNewValue =
+        editSvc?.getCellDataValue(rowNode, column) ?? _takeValueFromCellEditor(false, cellCtrl.comp)?.newValue;
+    const value = initialNewValue ?? valueSvc.getValueForDisplay(agColumn, rowNode)?.value;
 
     return _addGridCommonParams(gos, {
         value,
@@ -123,8 +133,19 @@ function _createCellEditorParams(
         data: rowNode.data,
         cellStartedEdit: cellStartedEdit ?? false,
         onKeyDown: cellCtrl.onKeyDown.bind(cellCtrl),
-        stopEditing: (suppressNavigateAfterEdit) =>
-            editSvc!.stopEditing(rowNode, column, undefined, undefined, undefined, 'api', suppressNavigateAfterEdit),
+        stopEditing: (suppressNavigateAfterEdit) => {
+            editSvc!.stopEditing(
+                rowNode,
+                column,
+                undefined,
+                undefined,
+                undefined,
+                batchEdit ? 'ui' : 'api',
+                suppressNavigateAfterEdit
+            );
+            _destroyEditor(beans, { rowNode, column });
+            editSvc?.strategy?.updateCells();
+        },
         eGridCell: cellCtrl.eGui,
         parseValue: (newValue: any) => valueSvc.parseValue(agColumn, rowNode, newValue, cellCtrl.value),
         formatValue: cellCtrl.formatValue.bind(cellCtrl),

@@ -65,11 +65,11 @@ export class EditModelService extends BeanStub implements NamedBean {
     public getPendingCellIds(): CellIdPositions[] {
         const ids: CellIdPositions[] = [];
         this.pendingUpdates.forEach((rowUpdateMap, rowNode) => {
-            const rowUpdateKeys = Array.from(rowUpdateMap.keys());
-            for (const column of rowUpdateKeys) {
+            for (const column of rowUpdateMap.keys()) {
                 ids.push({
                     rowNode,
                     column,
+                    ...rowUpdateMap.get(column),
                 });
             }
         });
@@ -80,11 +80,14 @@ export class EditModelService extends BeanStub implements NamedBean {
     public getPendingCellPositions(): CellPosition[] {
         const result: CellPosition[] = [];
         const cellIds = this.getPendingCellIds();
-        cellIds.forEach(({ column, rowNode: { rowIndex, rowPinned } }) => {
+        cellIds.forEach(({ column, rowNode: { rowIndex, rowPinned }, newValue, oldValue }) => {
             result.push({
                 column,
                 rowIndex,
                 rowPinned,
+                // TODO: update API docs and types
+                newValue,
+                oldValue,
             } as any);
         });
 
