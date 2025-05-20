@@ -77,6 +77,7 @@ import type {
     RangeSelectionChangedEvent,
     RedoEndedEvent,
     RedoStartedEvent,
+    ResetColumnsEvent,
     RowClickedEvent,
     RowDataUpdatedEvent,
     RowDoubleClickedEvent,
@@ -387,6 +388,11 @@ export interface GridOptions<TData = any> {
      * @default false
      */
     suppressFieldDotNotation?: boolean;
+
+    /**
+     * Return `true` to prevent column state from being reset when `api.resetColumnState` is called or "Reset Columns" is selected from the column header menu.
+     */
+    suppressResetColumns?: (params: SuppressResetColumnsParams<TData>) => boolean;
 
     // *** Column Headers *** //
     /**
@@ -2263,6 +2269,10 @@ export interface GridOptions<TData = any> {
      * or use one of the more specific column events.
      */
     onColumnEverythingChanged?(event: ColumnEverythingChangedEvent<TData>): void;
+    /**
+     * Columns have been reset to their default state as reflected by the colDefs.
+     */
+    onResetColumns?(event: ResetColumnsEvent<TData>): void;
 
     // *** Column Header *** //
 
@@ -3018,3 +3028,7 @@ export type RowSelectionMode = RowSelectionOptions['mode'];
 export type CheckboxLocation = 'selectionColumn' | 'autoGroupColumn';
 
 export type MasterSelectionMode = NonNullable<CommonRowSelectionOptions['masterSelects']>;
+
+export interface SuppressResetColumnsParams<TData, TContext = any> extends AgGridCommon<TData, TContext> {
+    column?: Column;
+}

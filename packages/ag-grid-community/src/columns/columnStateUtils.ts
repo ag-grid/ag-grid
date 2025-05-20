@@ -270,8 +270,17 @@ export function _applyColumnState(
     return unmatchedCount === 0; // Successful if no states unaccounted for
 }
 
-export function _resetColumnState(beans: BeanCollection, source: ColumnEventType): void {
+export function _resetColumnState(beans: BeanCollection, source: ColumnEventType, column?: AgColumn | null): void {
     const { colModel, autoColSvc, selectionColSvc, eventSvc, gos } = beans;
+
+    const suppressResetColumns = gos.get('suppressResetColumns');
+    if (suppressResetColumns) {
+        const shouldSupress = suppressResetColumns(_addGridCommonParams(gos, { column: column ?? undefined }));
+        if (shouldSupress) {
+            return;
+        }
+    }
+
     const primaryCols = colModel.getColDefCols();
     if (!primaryCols?.length) {
         return;
