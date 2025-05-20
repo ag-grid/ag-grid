@@ -100,54 +100,42 @@ export function _dateToFormattedString(date: Date, format: string = 'YYYY-MM-DD'
     });
 }
 
-export const getDateTimeRegexp = (includeTime = true) =>
-    new RegExp(`^(\\d{4})-(\\d{2})-(\\d{2})${includeTime ? '( (\\d{2}):(\\d{2}):(\\d{2}))?' : ''}$`);
+/**
+ * Executing this against date produces the following:
+ * ["2008-08-24 03:46:08","2008","-","08","-","24"," 03:46:08"," ","03",":","46",":","08"]
+ * [                   0,     1,  2,   3,  4,   5,          6,  7,   8,  9,  10, 11,  12] - indexes if you want to refer to a specific part
+ */
+const DATE_TIME_REGEXP = /^(\d{4})(.)(\d{2})(.)(\d{2})((.)(\d{2})(.)(\d{2})(.)(\d{2}))?$/;
 
 /**
- * Parses a date and time from a string in the format `yyyy-MM-dd HH:mm:ss`
+ * Helper function to check if a date is valid. Use isValidDateTime() to check if a date is valid and has time parts.
  */
-export function _parseDateTimeFromString(value?: string | null, delimiter = ' '): Date | null {
+export function isValidDate(value?: string | null): boolean {
+    return !!_parseDateTimeFromString(value);
+}
+
+export function isValidDateTime(value?: string | null): boolean {
+    if (!value || !isValidDate(value)) {
+        return false;
+    }
+    const dateTime = value.match(DATE_TIME_REGEXP);
+    if (!dateTime) {
+        return false;
+    }
+    // check if dateTime has time parts
+    return !!dateTime[6]; // matches the whole 'T14:22:19' part
+}
+
+/**
+ * Parses a date and time from a string in any format Date() can accept.
+ */
+export function _parseDateTimeFromString(value?: string | null): Date | null {
     if (!value) {
         return null;
     }
-
-    const [dateStr, timeStr] = value.split(delimiter);
-
-    if (!dateStr) {
+    const date = new Date(value);
+    if (isNaN(date.getTime())) {
         return null;
     }
-
-    const fields = dateStr.split('-').map((f) => parseInt(f, 10));
-
-    if (fields.filter((f) => !isNaN(f)).length !== 3) {
-        return null;
-    }
-
-    const [year, month, day] = fields;
-    const date = new Date(year, month - 1, day);
-
-    if (date.getFullYear() !== year || date.getMonth() !== month - 1 || date.getDate() !== day) {
-        // date was not parsed as expected so must have been invalid
-        return null;
-    }
-
-    if (!timeStr || timeStr === '00:00:00') {
-        return date;
-    }
-
-    const [hours, minutes, seconds] = timeStr.split(':').map((part) => parseInt(part, 10));
-
-    if (hours >= 0 && hours < 24) {
-        date.setHours(hours);
-    }
-
-    if (minutes >= 0 && minutes < 60) {
-        date.setMinutes(minutes);
-    }
-
-    if (seconds >= 0 && seconds < 60) {
-        date.setSeconds(seconds);
-    }
-
     return date;
 }
