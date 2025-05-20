@@ -20,7 +20,7 @@ import { _isClientSideRowModel } from '../gridOptionsUtils';
 import type { IClientSideRowModel } from '../interfaces/iClientSideRowModel';
 import type { ColumnEventName } from '../interfaces/iColumn';
 import type { IEventListener } from '../interfaces/iEventEmitter';
-import { _parseDateTimeFromString, _serialiseDate, getDateTimeRegexp } from '../utils/date';
+import { _parseDateTimeFromString, _serialiseDate, isValidDate, isValidDateTime } from '../utils/date';
 import { _toStringOrNull } from '../utils/generic';
 import { _getValueUsingField } from '../utils/object';
 import { _warn } from '../validation/logging';
@@ -46,8 +46,8 @@ type DataTypeDefinitions = {
  *       DateString has higher priority than dateTimeString, since it doesn't include serialized time.
  */
 const SORTED_CELL_DATA_TYPES_FOR_MATCHING: readonly Exclude<BaseCellDataType, 'dateTime' | 'object'>[] = [
-    'dateString',
     'dateTimeString',
+    'dateString',
     'text',
     'number',
     'boolean',
@@ -487,6 +487,7 @@ export class DataTypeService extends BeanStub implements NamedBean {
         }
     }
 
+    // noinspection JSUnusedGlobalSymbols
     public getFormatValue(cellDataType: string): DataTypeFormatValueFunc | undefined {
         return this.formatValueFuncs[cellDataType];
     }
@@ -560,7 +561,7 @@ export class DataTypeService extends BeanStub implements NamedBean {
             ({
                 baseDataType,
                 valueParser: (params: ValueParserLiteParams<any, Date>) =>
-                    _parseDateTimeFromString(params.newValue == null ? null : String(params.newValue)),
+                    _parseDateTimeFromString(params.newValue && String(params.newValue)),
                 valueFormatter: (params: ValueFormatterLiteParams<any, Date>) => {
                     if (params.value == null) {
                         return '';
@@ -574,17 +575,16 @@ export class DataTypeService extends BeanStub implements NamedBean {
             }) as BaseCellDataTypeDefMap<TData>[T];
 
         const getDateStringProps = <T extends BaseCellDataType, TData>(baseDataType: T) => {
-            const regexp = getDateTimeRegexp(this.getDateIncludesTimeFlag(baseDataType));
             return {
                 baseDataType,
                 dateParser: (value: string | undefined) => _parseDateTimeFromString(value) ?? undefined,
-                valueParser: (params: ValueParserLiteParams<any, string>) =>
-                    regexp.test(String(params.newValue)) ? params.newValue : null,
-                valueFormatter: (params: ValueFormatterLiteParams<any, string>) =>
-                    regexp.test(String(params.value)) ? params.value : '',
-                dataTypeMatcher: (value: any) => typeof value === 'string' && regexp.test(value),
                 dateFormatter: (value: Date | undefined) =>
                     _serialiseDate(value ?? null, this.getDateIncludesTimeFlag(baseDataType)) ?? undefined,
+                valueParser: (params: ValueParserLiteParams<any, string>) =>
+                    isValidDate(String(params.newValue)) ? params.newValue : null,
+                valueFormatter: (params: ValueFormatterLiteParams<any, string>) =>
+                    isValidDate(String(params.value)) ? params.value : '',
+                dataTypeMatcher: (value: any) => typeof value === 'string' && isValidDate(value),
             } as BaseCellDataTypeDefMap<TData>[T];
         };
 
@@ -627,7 +627,10 @@ export class DataTypeService extends BeanStub implements NamedBean {
             date: getDateProps('date'),
             dateString: getDateStringProps('dateString'),
             dateTime: getDateProps('dateTime'),
-            dateTimeString: getDateStringProps('dateTimeString'),
+            dateTimeString: {
+                ...getDateStringProps('dateTimeString'),
+                dataTypeMatcher: (value: any) => typeof value === 'string' && isValidDateTime(value),
+            },
             object: {
                 baseDataType: 'object',
                 valueParser: () => null,
