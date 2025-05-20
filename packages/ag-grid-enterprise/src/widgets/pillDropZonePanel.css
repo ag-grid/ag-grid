@@ -119,7 +119,7 @@
 
 .ag-select-agg-func-popup {
     position: absolute;
-    border: solid 1px var(--ag-border-color);
+    border: solid var(--ag-border-width) var(--ag-border-color);
     border-radius: var(--ag-border-radius);
     box-shadow: var(--ag-dropdown-shadow);
     background: var(--ag-background-color);
@@ -137,5 +137,5 @@
 }
 
 .ag-column-drop-horizontal-half-width:where(:not(:last-child)) {
-    border-right: solid 1px var(--ag-border-color);
+    border-right: solid var(--ag-border-width) var(--ag-border-color);
 }

@@ -23,6 +23,7 @@ const docs: Record<AllThemeParams, string> = {
     backgroundColor:
         'Background color of the grid. Many UI elements are semi-transparent, so their color blends with the background color.',
     borderColor: 'Default color for borders.',
+    borderWidth: 'Default width for borders.',
     borderRadius: 'Default corner radius for many UI elements such as menus, dialogs and form widgets.',
     browserColorScheme:
         'The CSS color-scheme to apply to the grid, which affects the default appearance of browser scrollbars form inputs unless these have been styled with CSS.',
