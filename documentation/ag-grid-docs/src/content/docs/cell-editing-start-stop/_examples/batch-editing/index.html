@@ -10,8 +10,11 @@
             <button onclick="onBtStartEditing()">Edit (1, Last Name)</button>
             <button id="enableBatch" onclick="setBatch(true)">Enable Batch Edits</button>
             <button id="disableBatch" onclick="setBatch(false)">Disable Batch Edits</button>
-            <button onclick="stopEdit()">Stop Edits</button>
-            <button onclick="cancelEdit()">Cancel Edits</button>
+            <button id="stopEdit" onclick="stopEdit()">Stop Edits</button>
+            <button id="cancelEdit" onclick="cancelEdit()">Cancel Edits</button>
+            <button id="getPending" onclick="getPendingUpdates()">Get Pending Edits</button>
+            <button id="setPending" onclick="setPendingUpdates()">Set Pending Edits</button>
+            <button id="clearPending" onclick="clearPendingUpdates()">Clear Pending Edits</button>
         </div>
         <div class="example-button-row">
             <span>Utility: </span>

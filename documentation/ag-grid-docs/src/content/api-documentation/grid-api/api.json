@@ -490,6 +490,26 @@
                 "exclude": ["ICellEditor"],
                 "include": []
             }
+        },
+        "getPendingUpdates": {
+            "more": {
+                "name": "Get Pending Updates",
+                "url": "./cell-editing-start-stop/#batch-editing"
+            },
+            "interfaceHierarchyOverrides": {
+                "exclude": [],
+                "include": []
+            }
+        },
+        "setPendingUpdates": {
+            "more": {
+                "name": "Set Pending Updates",
+                "url": "./cell-editing-start-stop/#batch-editing"
+            },
+            "interfaceHierarchyOverrides": {
+                "exclude": [],
+                "include": []
+            }
         }
     },
     "export": {

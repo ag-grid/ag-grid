@@ -25,6 +25,9 @@ button {
 }
 
 #disableBatch,
-#disablePoll {
+#disablePoll,
+#enablePoll,
+#stopEdit,
+#cancelEdit {
     display: none;
 }

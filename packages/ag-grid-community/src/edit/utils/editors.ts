@@ -208,9 +208,21 @@ export function _destroyEditor(beans: BeanCollection, cellPosition: CellIdPositi
         return;
     }
 
-    const { comp } = cellCtrl!;
+    const { comp } = cellCtrl;
 
     comp.setEditDetails(); // passing nothing stops editing
+    comp.refreshEditStyles(false, false);
+    cellCtrl?.updateAndFormatValue(false);
+    cellCtrl?.refreshCell({ forceRefresh: true, suppressFlash: true });
+}
+
+export function _refreshCell(beans: BeanCollection, cellPosition: CellIdPositions): void {
+    const cellCtrl = _resolveCellController(beans, cellPosition);
+    if (!cellCtrl) {
+        return;
+    }
+
+    const { comp } = cellCtrl;
     comp.refreshEditStyles(false, false);
     cellCtrl?.updateAndFormatValue(false);
     cellCtrl?.refreshCell({ forceRefresh: true, suppressFlash: true });

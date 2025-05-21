@@ -35,6 +35,7 @@ import type { CsvExportParams } from '../interfaces/exportParams';
 import type { GridState, GridStateKey } from '../interfaces/gridState';
 import type { RenderedRowEvent } from '../interfaces/iCallbackParams';
 import type { GetCellEditorInstancesParams, ICellEditor } from '../interfaces/iCellEditor';
+import type { CellPendingPosition } from '../interfaces/iCellPendingPosition';
 import type { CellPosition } from '../interfaces/iCellPosition';
 import type { FlashCellsParams, RefreshCellsParams } from '../interfaces/iCellsParams';
 import type { ClientSideRowModelStep } from '../interfaces/iClientSideRowModel';
@@ -844,6 +845,12 @@ export interface _EditGridApi<TData> {
 
     /** Returns `true` if the grid is editing a cell */
     isEditing(rowId?: string, colId?: string): boolean;
+
+    /** Get currently pending cell updates when in batch editing mode */
+    getPendingUpdates(): CellPendingPosition[];
+
+    /** Set currently pending cell updates when in batch editing mode. Specify `update=true` to update current state, otherwise pending state will be replaced. Will enable batch edit mode if not already enabled. */
+    setPendingUpdates(pendingPositions: CellPendingPosition[], update?: boolean): void;
 }
 
 export interface _UndoRedoGridApi {

@@ -1,6 +1,7 @@
 import type {
     CellEditingStartedEvent,
     CellEditingStoppedEvent,
+    CellPendingPosition,
     GridApi,
     GridOptions,
     RowEditingStartedEvent,
@@ -137,12 +138,59 @@ function onBtStartEditing(key?: string, pinned?: RowPinnedType) {
 }
 
 function setBatch(batchEdit: boolean) {
+    document.getElementById('enablePoll')!.style.display = batchEdit && polling ? 'none' : 'unset';
+    document.getElementById('disablePoll')!.style.display = batchEdit && !polling ? 'none' : 'unset';
     document.getElementById('enableBatch')!.style.display = batchEdit ? 'none' : 'unset';
     document.getElementById('disableBatch')!.style.display = batchEdit ? 'unset' : 'none';
+    document.getElementById('stopEdit')!.style.display = batchEdit ? 'unset' : 'none';
+    document.getElementById('cancelEdit')!.style.display = batchEdit ? 'unset' : 'none';
+    document.getElementById('getPending')!.style.display = batchEdit ? 'unset' : 'none';
+    document.getElementById('setPending')!.style.display = batchEdit ? 'unset' : 'none';
+    document.getElementById('clearPending')!.style.display = batchEdit ? 'unset' : 'none';
 
     gridApi!.updateGridOptions({
         batchEdit,
     });
+}
+
+function getPendingUpdates() {
+    const pendingEdits = gridApi!.getPendingUpdates();
+    console.log('Pending Edits: ', pendingEdits);
+}
+
+function setPendingUpdates() {
+    const pendingEdits: CellPendingPosition[] = [
+        {
+            rowIndex: 1,
+            rowPinned: undefined,
+            colKey: 'lastName',
+            newValue: 'Smith',
+        },
+        {
+            rowIndex: 2,
+            rowPinned: undefined,
+            colKey: 'age',
+            newValue: 30,
+        },
+        {
+            rowIndex: 1,
+            rowPinned: 'top',
+            colKey: 'firstName',
+            newValue: 'John',
+        },
+        {
+            rowIndex: 0,
+            rowPinned: 'bottom',
+            colKey: 'firstName',
+            newValue: 'Jane',
+        },
+    ];
+
+    gridApi!.setPendingUpdates(pendingEdits);
+}
+
+function clearPendingUpdates() {
+    gridApi!.setPendingUpdates([]);
 }
 
 function setEditType(editType: any) {

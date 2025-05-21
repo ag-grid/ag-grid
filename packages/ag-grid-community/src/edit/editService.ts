@@ -9,11 +9,16 @@ import type { CellPosition } from '../main-umd-noStyles';
 import { CellCtrl } from '../rendering/cell/cellCtrl';
 import type { RowCtrl } from '../rendering/row/rowCtrl';
 import { PopupEditorWrapper } from './cellEditors/popupEditorWrapper';
-import type { CellUpdate, EditModelService } from './editModelService';
+import type { CellIdPositions, EditModelService, PendingUpdates } from './editModelService';
 import { _createUpdates } from './editModelService';
 import type { BaseEditStrategy } from './strategy/baseEditStrategy';
 import { _addStopEditingWhenGridLosesFocus, _resolveCellController } from './utils/controllers';
-import { _refreshEditorOnColDefChanged, _syncModelFromEditor, _syncModelsFromEditors } from './utils/editors';
+import {
+    _refreshCell,
+    _refreshEditorOnColDefChanged,
+    _syncModelFromEditor,
+    _syncModelsFromEditors,
+} from './utils/editors';
 
 export class EditService extends BeanStub implements NamedBean {
     beanName = 'editSvc' as const;
@@ -216,7 +221,7 @@ export class EditService extends BeanStub implements NamedBean {
         }
     }
 
-    private processUpdates(updates: CellUpdate[], cancel: boolean): void {
+    private processUpdates(updates: CellIdPositions[], cancel: boolean): void {
         updates.forEach(({ rowNode, column, newValue, oldValue }) => {
             const cellCtrl = _resolveCellController(this.beans, { rowNode, column });
             if (!cellCtrl) {
@@ -240,6 +245,24 @@ export class EditService extends BeanStub implements NamedBean {
                 newValue,
                 value: newValue,
                 valueChanged,
+            });
+        });
+    }
+
+    public setPendingUpdates(updates: PendingUpdates): void {
+        const existingUpdates = this.model?.getPendingUpdates();
+        this.strategy = this.createStrategy();
+        this.strategy.updateCells(existingUpdates, false);
+        this.model?.setPendingUpdates(updates);
+        this.strategy.updateCells(updates);
+
+        // now update cell values
+        updates.forEach((rowUpdateMap, rowNode) => {
+            rowUpdateMap.forEach((cellData, column) => {
+                if (!cellData) {
+                    return;
+                }
+                _refreshCell(this.beans, { rowNode, column });
             });
         });
     }
