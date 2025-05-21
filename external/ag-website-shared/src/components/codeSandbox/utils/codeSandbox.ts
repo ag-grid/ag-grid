@@ -1,5 +1,6 @@
 import type { InternalFramework } from '@ag-grid-types';
 import type { FileContents } from '@components/example-generator/types';
+import { EXAMPLE_STYLE_FILE_NAME } from '@constants';
 import { isReactInternalFramework } from '@utils/framework';
 import { getParameters } from 'codesandbox/lib/api/define';
 
@@ -24,6 +25,10 @@ const getPathForFile = ({
 
     if (fileName === 'index.html') {
         return `public/index.html`;
+    }
+
+    if (fileName === EXAMPLE_STYLE_FILE_NAME) {
+        return `public/${EXAMPLE_STYLE_FILE_NAME}`;
     }
 
     if (/(.js|.jsx|.tsx|.ts|.css)$/.test(fileName)) {
