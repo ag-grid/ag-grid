@@ -18,7 +18,7 @@ import { CustomContext } from '../../shared/customComp/customContext';
 import type { CustomCellEditorCallbacks } from '../../shared/customComp/interfaces';
 import { warnReactiveCustomComponents } from '../../shared/customComp/util';
 import { BeansContext } from '../beansContext';
-import { agStartTransition, isComponentStateless } from '../utils';
+import { isComponentStateless } from '../utils';
 import PopupEditorComp from './popupEditorComp';
 import useJsCellRenderer from './showJsRenderer';
 
@@ -403,25 +403,17 @@ const CellComp = ({
             getParentOfValue: () => eCellValue.current ?? eCellWrapper.current ?? eGui.current,
 
             setRenderDetails: (compDetails, value, force) => {
-                const updateRenderDetails = () => {
-                    setRenderDetails((prev) => {
-                        if (prev?.compDetails !== compDetails || prev?.value !== value || prev?.force !== force) {
-                            return {
-                                value,
-                                compDetails,
-                                force,
-                            };
-                        } else {
-                            return prev;
-                        }
-                    });
-                };
-
-                if (compDetails?.params?.useTransition) {
-                    agStartTransition(updateRenderDetails);
-                } else {
-                    updateRenderDetails();
-                }
+                setRenderDetails((prev) => {
+                    if (prev?.compDetails !== compDetails || prev?.value !== value || prev?.force !== force) {
+                        return {
+                            value,
+                            compDetails,
+                            force,
+                        };
+                    } else {
+                        return prev;
+                    }
+                });
             },
 
             setEditDetails: (compDetails, popup, popupPosition, reactiveCustomComponents) => {
