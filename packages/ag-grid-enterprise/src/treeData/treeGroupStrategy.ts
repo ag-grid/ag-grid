@@ -337,20 +337,35 @@ const flagUpdatedNodes = <TData>(changedRowNodes: IChangedRowNodes<TData> | unde
     if (!changedRowNodes) {
         return false;
     }
-    const { adds, updates } = changedRowNodes;
     let hasUpdates = false;
-    if (updates.size > 0) {
-        hasUpdates = true;
-        for (const node of updates) {
-            (node as TreeRow<TData>).treeNodeFlags |= FLAG_CHANGED;
-        }
-    }
+    const { adds, updates, removals } = changedRowNodes;
+
     if (adds.size > 0) {
         hasUpdates = true;
         for (const node of adds) {
             (node as TreeRow<TData>).treeNodeFlags |= FLAG_CHANGED;
         }
     }
+
+    if (updates.size > 0) {
+        hasUpdates = true;
+        for (const node of updates) {
+            (node as TreeRow<TData>).treeNodeFlags |= FLAG_CHANGED;
+        }
+    }
+
+    if (removals.size > 0) {
+        hasUpdates = true;
+        for (const node of removals) {
+            const childrenAfterGroup = node.childrenAfterGroup as TreeRow<TData>[] | null;
+            if (childrenAfterGroup) {
+                for (let i = 0, len = childrenAfterGroup.length; i < len; ++i) {
+                    childrenAfterGroup[i].treeNodeFlags |= FLAG_CHANGED;
+                }
+            }
+        }
+    }
+
     return hasUpdates;
 };
 
