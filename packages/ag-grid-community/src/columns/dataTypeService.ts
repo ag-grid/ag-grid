@@ -39,11 +39,11 @@ type DataTypeDefinitions = {
 };
 
 /**
- * Note: we are missing object and dateTime here.
- *       This is because dateTime has a lower priority than date and gives us no way to distinguish between the two, and
- *       object type is the default type for all other types.
+ *  We are missing object and dateTime here.
+ *  This is because dateTime has a lower priority than date and gives us no way to distinguish between the two, and
+ *  object type is the default type for all other types.
  *
- *       dateTimeString has higher priority than dateString, since it does include serialized time and isValidDate() considers datetime a valid date :shrug:.
+ *  dateTimeString has higher priority than dateString, since it includes serialized time and isValidDate() considers datetime a valid date.
  */
 const SORTED_CELL_DATA_TYPES_FOR_MATCHING: readonly Exclude<BaseCellDataType, 'dateTime' | 'object'>[] = [
     'dateTimeString',
@@ -65,7 +65,7 @@ export class DataTypeService extends BeanStub implements NamedBean {
     }
 
     private dataTypeDefinitions: DataTypeDefinitions = {};
-    private dataTypeMatchers: { [cellDataType in BaseCellDataType]: ((value: any) => boolean) | undefined };
+    private dataTypeMatchers: { [cellDataType: string]: ((value: any) => boolean) | undefined };
     private formatValueFuncs: { [cellDataType: string]: DataTypeFormatValueFunc };
     public isPendingInference: boolean = false;
     private hasObjectValueParser: boolean;
@@ -496,46 +496,49 @@ export class DataTypeService extends BeanStub implements NamedBean {
         return this.isPendingInference && !!this.columnStateUpdatesPendingInference[colId];
     }
 
-    private setColDefPropertiesForBaseDataType(
-        colDef: ColDef,
-        cellDataType: string,
-        dataTypeDefinition: (DataTypeDefinition | CoreDataTypeDefinition) & GroupSafeValueFormatter,
-        colId: string
-    ): void {
-        const formatValue = this.formatValueFuncs[cellDataType];
-        const self = this;
-        const cellEditorMap: Record<BaseCellDataType, () => void> = {
-            // using an object here to enforce dev to not forget to implement new types as they are added
-            number(): void {
-                colDef.cellEditor = 'agNumberCellEditor';
-            },
-            boolean(): void {
-                colDef.cellEditor = 'agCheckboxCellEditor';
-                colDef.cellRenderer = 'agCheckboxCellRenderer';
-                colDef.getFindText = () => null;
-                colDef.suppressKeyboardEvent = (params: SuppressKeyboardEventParams<any, boolean>) =>
-                    !!params.colDef.editable && params.event.key === KeyCode.SPACE;
-            },
-            date(): void {
-                colDef.cellEditor = 'agDateCellEditor';
-                colDef.keyCreator = formatValue;
-            },
-            dateString(): void {
-                colDef.cellEditor = 'agDateStringCellEditor';
-                colDef.keyCreator = formatValue;
-            },
-            dateTime(): void {
-                this.date();
-            },
-            dateTimeString(): void {
-                this.dateString();
-            },
-            object(): void {
-                colDef.cellEditorParams = {
+    // using an object here to enforce dev to not forget to implement new types as they are added
+    private columnDefinitionPropsPerDataType: Record<
+        BaseCellDataType,
+        (args: {
+            colDef: ColDef;
+            cellDataType: string;
+            colModel: ColumnModel;
+            dataTypeDefinition: (DataTypeDefinition | CoreDataTypeDefinition) & GroupSafeValueFormatter;
+            colId: string;
+            formatValue: DataTypeFormatValueFunc;
+        }) => Partial<ColDef>
+    > = {
+        number() {
+            return { cellEditor: 'agNumberCellEditor' };
+        },
+        boolean() {
+            return {
+                cellEditor: 'agCheckboxCellEditor',
+                cellRenderer: 'agCheckboxCellRenderer',
+                getFindText: () => null,
+                suppressKeyboardEvent: (params: SuppressKeyboardEventParams<any, boolean>) =>
+                    !!params.colDef.editable && params.event.key === KeyCode.SPACE,
+            };
+        },
+        date({ formatValue }) {
+            return { cellEditor: 'agDateCellEditor', keyCreator: formatValue };
+        },
+        dateString({ formatValue }) {
+            return { cellEditor: 'agDateStringCellEditor', keyCreator: formatValue };
+        },
+        dateTime(args) {
+            return this.date(args);
+        },
+        dateTimeString(args) {
+            return this.dateString(args);
+        },
+        object({ formatValue, colModel, colId }) {
+            return {
+                cellEditorParams: {
                     useFormatter: true,
-                };
-                colDef.comparator = (a: any, b: any) => {
-                    const column = self.colModel.getColDefCol(colId);
+                },
+                comparator: (a: any, b: any) => {
+                    const column = colModel.getColDefCol(colId);
                     const colDef = column?.getColDef();
                     if (!column || !colDef) {
                         return 0;
@@ -544,12 +547,31 @@ export class DataTypeService extends BeanStub implements NamedBean {
                     const valB = b == null ? '' : formatValue({ column, node: null, value: b });
                     if (valA === valB) return 0;
                     return valA > valB ? 1 : -1;
-                };
-                colDef.keyCreator = formatValue;
-            },
-            text(): void {},
-        };
-        cellEditorMap[dataTypeDefinition.baseDataType]();
+                },
+                keyCreator: formatValue,
+            };
+        },
+        text() {
+            return {};
+        },
+    };
+
+    private setColDefPropertiesForBaseDataType(
+        colDef: ColDef,
+        cellDataType: string,
+        dataTypeDefinition: (DataTypeDefinition | CoreDataTypeDefinition) & GroupSafeValueFormatter,
+        colId: string
+    ): void {
+        const formatValue = this.formatValueFuncs[cellDataType];
+        const partialColDef = this.columnDefinitionPropsPerDataType[dataTypeDefinition.baseDataType]({
+            colDef,
+            cellDataType,
+            colModel: this.colModel,
+            dataTypeDefinition,
+            colId,
+            formatValue,
+        });
+        Object.assign(colDef, partialColDef); // todo prefer object copy instead of mutation
 
         this.beans.filterManager?.setColDefPropertiesForDataType(colDef, dataTypeDefinition, formatValue);
     }

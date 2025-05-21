@@ -1,5 +1,3 @@
-import { ValueGetterFunc, ValueService } from 'ag-grid-community';
-
 import { _unwrapUserComp } from '../components/framework/unwrapUserComp';
 import {
     _getFilterDetails,
@@ -13,7 +11,6 @@ import type { AgColumn } from '../entities/agColumn';
 import type { ColDef, ValueFormatterParams, ValueGetterParams } from '../entities/colDef';
 import type {
     BaseCellDataType,
-    BaseCellDataTypeDefMap,
     CoreDataTypeDefinition,
     DataTypeFormatValueFunc,
     DateStringDataTypeDefinition,
@@ -26,6 +23,7 @@ import type { UserCompDetails } from '../interfaces/iUserCompDetails';
 import { _exists, _jsonEquals } from '../utils/generic';
 import { AgPromise } from '../utils/promise';
 import { _error, _warn } from '../validation/logging';
+import type { ValueService } from '../valueService/valueService';
 import type { IFloatingFilterParams, IFloatingFilterParentCallback } from './floating/floatingFilter';
 import { _getDefaultFloatingFilterType } from './floating/floatingFilterMapper';
 
@@ -895,7 +893,7 @@ export class ColumnFilterService extends BeanStub implements NamedBean {
     }
 
     // using an object here to enforce dev to not forget to implement new types as they are added
-    private cellEditorMap: Record<
+    private filterParamsForEachDataType: Record<
         BaseCellDataType,
         (args: {
             formatValue: DataTypeFormatValueFunc;
@@ -1044,7 +1042,7 @@ export class ColumnFilterService extends BeanStub implements NamedBean {
         dataTypeDefinition: CoreDataTypeDefinition,
         formatValue: DataTypeFormatValueFunc
     ): void {
-        const filterParamsOrNothing = this.cellEditorMap[dataTypeDefinition.baseDataType]({
+        const filterParamsOrNothing = this.filterParamsForEachDataType[dataTypeDefinition.baseDataType]({
             dataTypeDefinition,
             usingSetFilter: _isSetFilterByDefault(this.gos),
             formatValue,
