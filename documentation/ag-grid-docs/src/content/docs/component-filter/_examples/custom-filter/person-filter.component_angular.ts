@@ -2,8 +2,8 @@ import type { ElementRef } from '@angular/core';
 import { Component, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
-import type { IFilterAngularComp } from 'ag-grid-angular';
-import type { IAfterGuiAttachedParams, IDoesFilterPassParams, IFilterParams } from 'ag-grid-community';
+import type { IFilterDisplayAngularComp } from 'ag-grid-angular';
+import type { FilterDisplayParams, IAfterGuiAttachedParams } from 'ag-grid-community';
 
 @Component({
     standalone: true,
@@ -26,53 +26,28 @@ import type { IAfterGuiAttachedParams, IDoesFilterPassParams, IFilterParams } fr
         </div>
     `,
 })
-export class PersonFilter implements IFilterAngularComp {
+export class PersonFilter implements IFilterDisplayAngularComp<any, any, string> {
     @ViewChild('eFilterText') eFilterText!: ElementRef;
 
-    filterParams!: IFilterParams;
+    filterParams!: FilterDisplayParams<any, any, string>;
     filterText = '';
 
-    agInit(params: IFilterParams): void {
+    agInit(params: FilterDisplayParams<any, any, string>): void {
         this.filterParams = params;
+        this.refresh(params);
     }
 
-    doesFilterPass(params: IDoesFilterPassParams) {
-        // make sure each word passes separately, ie search for firstname, lastname
-        let passed = true;
-        const { node } = params;
-
-        this.filterText
-            .toLowerCase()
-            .split(' ')
-            .forEach((filterWord) => {
-                const value = this.filterParams.getValue(node);
-
-                if (value.toString().toLowerCase().indexOf(filterWord) < 0) {
-                    passed = false;
-                }
-            });
-
-        return passed;
-    }
-
-    isFilterActive(): boolean {
-        return this.filterText != null && this.filterText !== '';
-    }
-
-    getModel() {
-        if (!this.isFilterActive()) {
-            return null;
+    refresh(newParams: FilterDisplayParams<any, any, string, any>): boolean {
+        const currentValue = this.filterText;
+        const newValue = newParams.model ?? '';
+        if (newValue !== currentValue) {
+            this.filterText = newValue;
         }
-
-        return { value: this.filterText };
-    }
-
-    setModel(model: any) {
-        this.filterText = model == null ? null : model.value;
+        return true;
     }
 
     onInputChanged() {
-        this.filterParams.filterChangedCallback();
+        this.filterParams.onModelChange(this.filterText == null || this.filterText === '' ? null : this.filterText);
     }
 
     afterGuiAttached(params?: IAfterGuiAttachedParams): void {

@@ -1,7 +1,7 @@
 import React, { StrictMode, useCallback, useMemo, useRef, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 
-import type { ColDef, ColGroupDef, IFilter } from 'ag-grid-community';
+import type { ColDef, ColGroupDef, FilterDisplay, FilterEvaluator } from 'ag-grid-community';
 import {
     ClientSideRowModelModule,
     CustomFilterModule,
@@ -24,6 +24,21 @@ ModuleRegistry.registerModules([
     ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 
+function partialMatchFilterEvaluator(): FilterEvaluator<any, any, string> {
+    return {
+        doesFilterPass({ model, node, evaluatorParams }): boolean {
+            const value = evaluatorParams.getValue(node).toString().toLowerCase();
+            return (
+                model == null ||
+                model
+                    .toLowerCase()
+                    .split(' ')
+                    .every((filterWord) => value.indexOf(filterWord) >= 0)
+            );
+        },
+    };
+}
+
 const GridExample = () => {
     const gridRef = useRef<AgGridReact>(null);
     const containerStyle = useMemo(() => ({ width: '100%', height: '100%' }), []);
@@ -34,6 +49,7 @@ const GridExample = () => {
         {
             field: 'name',
             filter: PartialMatchFilter,
+            filterEvaluator: partialMatchFilterEvaluator,
         },
     ]);
     const defaultColDef = useMemo<ColDef>(() => {
@@ -47,11 +63,14 @@ const GridExample = () => {
 
     const onClicked = useCallback(() => {
         gridRef.current!.api.getColumnFilterInstance('name').then((instance) => {
-            getInstance<IFilter, IFilter & { componentMethod(message: string): void }>(instance!, (component) => {
-                if (component) {
-                    component.componentMethod('Hello World!');
+            getInstance<FilterDisplay, FilterDisplay & { componentMethod(message: string): void }>(
+                instance as FilterDisplay,
+                (component) => {
+                    if (component) {
+                        component.componentMethod('Hello World!');
+                    }
                 }
-            });
+            );
         });
     }, []);
 
@@ -68,6 +87,7 @@ const GridExample = () => {
                         rowData={rowData}
                         columnDefs={columnDefs}
                         defaultColDef={defaultColDef}
+                        enableFilterEvaluators
                     />
                 </div>
             </div>

@@ -1,30 +1,37 @@
+let id = 1;
+
 export default {
     template: `
         <div class="year-filter">
             <div>Select Year Range</div>
             <label>
-                <input type="radio" ref="rbAllYears" name="year" v-model="year" v-on:change="updateFilter()" value="All"/> All
+                <input type="radio" ref="rbAllYears" :name="name" v-model="year" v-on:change="updateFilter()" value="All"/> All
             </label>
             <label>
-                <input type="radio" name="year" v-model="year" v-on:change="updateFilter()" value="2010"/> Since 2010
+                <input type="radio" :name="name" v-model="year" v-on:change="updateFilter()" value="2010"/> Since 2010
             </label>
         </div>
     `,
     data: function () {
         return {
             year: 'All',
+            name: `year${id++}`,
         };
     },
     methods: {
         updateFilter() {
-            this.params.onStateChange({ model: this.year === '2010' || null });
+            const { onStateChange, onAction, buttons } = this.params;
+            onStateChange({ model: this.year === '2010' || null });
+            if (!buttons?.includes('apply')) {
+                onAction('apply');
+            }
         },
 
         refresh(newParams): boolean {
             const currentValue = this.year === '2010' || null;
-            const newValue = newParams.model;
+            const newValue = newParams.state.model;
             if (newValue !== currentValue) {
-                this.year = newValue ? 'All' : '2010';
+                this.year = newValue ? '2010' : 'All';
             }
             return true;
         },

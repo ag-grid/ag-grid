@@ -7,7 +7,6 @@ import {
     createGrid,
 } from 'ag-grid-community';
 
-import { PersonFilter } from './personFilter_typescript';
 import { YearFilter } from './yearFilter_typescript';
 
 ModuleRegistry.registerModules([
@@ -15,26 +14,6 @@ ModuleRegistry.registerModules([
     ClientSideRowModelModule,
     ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
-
-function personFilterEvaluator(): FilterEvaluator<any, any, string> {
-    return {
-        doesFilterPass: ({ model, node, evaluatorParams }) => {
-            // make sure each word passes separately, ie search for firstname, lastname
-            let passed = true;
-            model
-                ?.toLowerCase()
-                .split(' ')
-                .forEach((filterWord) => {
-                    const value = evaluatorParams.getValue(node);
-                    if (value.toString().toLowerCase().indexOf(filterWord) < 0) {
-                        passed = false;
-                    }
-                });
-
-            return passed;
-        },
-    };
-}
 
 function yearFilterEvaluator(): FilterEvaluator<any, any, boolean> {
     return {
@@ -46,11 +25,17 @@ const columnDefs: ColDef[] = [
     {
         field: 'athlete',
         minWidth: 150,
-        filter: PersonFilter,
-        filterEvaluator: personFilterEvaluator,
     },
     {
         field: 'year',
+        headerName: 'Year Default',
+        minWidth: 130,
+        filter: YearFilter,
+        filterEvaluator: yearFilterEvaluator,
+    },
+    {
+        field: 'year',
+        headerName: 'Year Apply',
         minWidth: 130,
         filter: YearFilter,
         filterParams: {
@@ -60,12 +45,17 @@ const columnDefs: ColDef[] = [
         },
         filterEvaluator: yearFilterEvaluator,
     },
-    { field: 'country', minWidth: 150 },
+    {
+        field: 'year',
+        headerName: 'Year Reset',
+        minWidth: 130,
+        filter: YearFilter,
+        filterParams: {
+            buttons: ['reset'],
+        },
+        filterEvaluator: yearFilterEvaluator,
+    },
     { field: 'sport' },
-    { field: 'gold' },
-    { field: 'silver' },
-    { field: 'bronze' },
-    { field: 'total' },
 ];
 
 let gridApi: GridApi<IOlympicData>;

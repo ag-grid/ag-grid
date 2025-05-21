@@ -1,25 +1,11 @@
 import React, { useCallback, useRef } from 'react';
 
-import type { IAfterGuiAttachedParams, IDoesFilterPassParams } from 'ag-grid-community';
-import type { CustomFilterProps } from 'ag-grid-react';
-import { useGridFilter } from 'ag-grid-react';
+import type { IAfterGuiAttachedParams } from 'ag-grid-community';
+import type { CustomFilterDisplayProps } from 'ag-grid-react';
+import { useGridFilterDisplay } from 'ag-grid-react';
 
-export default ({ model, onModelChange, getValue }: CustomFilterProps) => {
+export default ({ model, onModelChange }: CustomFilterDisplayProps) => {
     const refInput = useRef<HTMLInputElement>(null);
-
-    const doesFilterPass = useCallback(
-        (params: IDoesFilterPassParams) => {
-            const { node } = params;
-            const filterText: string = model;
-            const value: string = getValue(node).toString().toLowerCase();
-            // make sure each word passes separately, ie search for firstname, lastname
-            return filterText
-                .toLowerCase()
-                .split(' ')
-                .every((filterWord) => value.indexOf(filterWord) >= 0);
-        },
-        [model]
-    );
 
     const afterGuiAttached = useCallback((params?: IAfterGuiAttachedParams) => {
         if (!params || !params.suppressFocus) {
@@ -31,8 +17,7 @@ export default ({ model, onModelChange, getValue }: CustomFilterProps) => {
     }, []);
 
     // register filter handlers with the grid
-    useGridFilter({
-        doesFilterPass,
+    useGridFilterDisplay({
         afterGuiAttached,
     });
 

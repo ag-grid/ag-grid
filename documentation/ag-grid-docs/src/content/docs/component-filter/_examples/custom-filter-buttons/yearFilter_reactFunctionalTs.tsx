@@ -1,11 +1,16 @@
 import type { ChangeEvent } from 'react';
 import React, { useCallback, useRef } from 'react';
 
-import type { IAfterGuiAttachedParams } from 'ag-grid-community';
+import type { FilterWrapperParams, IAfterGuiAttachedParams } from 'ag-grid-community';
 import type { CustomFilterDisplayProps } from 'ag-grid-react';
 import { useGridFilterDisplay } from 'ag-grid-react';
 
-export default ({ state, onStateChange }: CustomFilterDisplayProps<any, any, true>) => {
+export default ({
+    state,
+    onStateChange,
+    onAction,
+    buttons,
+}: CustomFilterDisplayProps<any, any, true> & FilterWrapperParams) => {
     const refInput = useRef<HTMLInputElement>(null);
 
     const afterGuiAttached = useCallback((params?: IAfterGuiAttachedParams) => {
@@ -24,6 +29,9 @@ export default ({ state, onStateChange }: CustomFilterDisplayProps<any, any, tru
 
     const onYearChange = ({ target: { value } }: ChangeEvent<HTMLInputElement>) => {
         onStateChange({ model: value === 'All' ? null : true });
+        if (!buttons?.includes('apply')) {
+            onAction('apply');
+        }
     };
 
     return (

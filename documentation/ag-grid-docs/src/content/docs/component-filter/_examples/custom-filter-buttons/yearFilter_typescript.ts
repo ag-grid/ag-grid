@@ -1,23 +1,31 @@
-import type { FilterDisplay, FilterDisplayParams, IAfterGuiAttachedParams } from 'ag-grid-community';
+import type {
+    FilterDisplay,
+    FilterDisplayParams,
+    FilterWrapperParams,
+    IAfterGuiAttachedParams,
+} from 'ag-grid-community';
+
+let id = 1;
 
 export class YearFilter implements FilterDisplay<any, any, true> {
     eGui!: HTMLDivElement;
     rbAllYears!: HTMLInputElement;
     rbSince2010!: HTMLInputElement;
 
-    init(params: FilterDisplayParams<any, any, true>) {
+    init(params: FilterDisplayParams<any, any, true> & FilterWrapperParams) {
         this.eGui = document.createElement('div');
+        let compId = id++;
         this.eGui.innerHTML = `<div class="year-filter">
                 <div>Select Year Range</div>
                 <label>  
-                    <input type="radio" name="yearFilter" checked="true" id="rbAllYears" filter-checkbox="true"/> All
+                    <input type="radio" name="year${compId}" checked="true" id="rbAllYears${compId}" filter-checkbox="true"/> All
                 </label>
                 <label>  
-                    <input type="radio" name="yearFilter" id="rbSince2010" filter-checkbox="true"/> Since 2010
+                    <input type="radio" name="year${compId}" id="rbSince2010${compId}" filter-checkbox="true"/> Since 2010
                 </label>
             </div>`;
-        this.rbAllYears = this.eGui.querySelector('#rbAllYears')!;
-        this.rbSince2010 = this.eGui.querySelector('#rbSince2010')!;
+        this.rbAllYears = this.eGui.querySelector(`#rbAllYears${compId}`)!;
+        this.rbSince2010 = this.eGui.querySelector(`#rbSince2010${compId}`)!;
 
         this.refresh(params);
 
@@ -26,6 +34,9 @@ export class YearFilter implements FilterDisplay<any, any, true> {
             params.onStateChange({
                 model: value,
             });
+            if (!params.buttons?.includes('apply')) {
+                params.onAction('apply');
+            }
         };
         this.rbAllYears.addEventListener('change', onRbChanged);
         this.rbSince2010.addEventListener('change', onRbChanged);

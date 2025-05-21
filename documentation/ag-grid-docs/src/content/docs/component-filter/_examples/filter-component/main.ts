@@ -1,4 +1,4 @@
-import type { ColDef, GridApi, GridOptions } from 'ag-grid-community';
+import type { ColDef, FilterEvaluator, GridApi, GridOptions } from 'ag-grid-community';
 import {
     ClientSideRowModelModule,
     CustomFilterModule,
@@ -20,11 +20,27 @@ ModuleRegistry.registerModules([
     ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 
+function partialMatchFilterEvaluator(): FilterEvaluator<any, any, string> {
+    return {
+        doesFilterPass({ model, node, evaluatorParams }): boolean {
+            const value = evaluatorParams.getValue(node).toString().toLowerCase();
+            return (
+                model == null ||
+                model
+                    .toLowerCase()
+                    .split(' ')
+                    .every((filterWord) => value.indexOf(filterWord) >= 0)
+            );
+        },
+    };
+}
+
 const columnDefs: ColDef[] = [
     { field: 'row' },
     {
         field: 'name',
         filter: PartialMatchFilter,
+        filterEvaluator: partialMatchFilterEvaluator,
     },
 ];
 
@@ -39,6 +55,7 @@ const gridOptions: GridOptions = {
     },
     columnDefs: columnDefs,
     rowData: getData(),
+    enableFilterEvaluators: true,
 };
 
 function onClicked() {

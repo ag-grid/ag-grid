@@ -13,7 +13,12 @@ import type { ColDef, ValueGetterFunc } from '../entities/colDef';
 import type { BaseCellDataType, CoreDataTypeDefinition, DataTypeFormatValueFunc } from '../entities/dataType';
 import type { RowNode } from '../entities/rowNode';
 import type { AgEvent, ColumnEventType, FilterChangedEventSourceType } from '../events';
-import { _addGridCommonParams, _getGroupAggFiltering, _isSetFilterByDefault } from '../gridOptionsUtils';
+import {
+    _addGridCommonParams,
+    _getGroupAggFiltering,
+    _isClientSideRowModel,
+    _isSetFilterByDefault,
+} from '../gridOptionsUtils';
 import type { Column } from '../interfaces/iColumn';
 import type { WithoutGridCommon } from '../interfaces/iCommon';
 import type {
@@ -89,6 +94,13 @@ export interface FilterActionEvent extends AgEvent<'filterAction'> {
     action: FilterAction;
     event?: KeyboardEvent;
 }
+
+/** Used for non-CSRM evaluators */
+const DUMMY_EVALUATOR = {
+    filterEvaluator: () => ({
+        doesFilterPass: () => true,
+    }),
+};
 
 export class ColumnFilterService
     extends BeanStub<'filterParamsChanged' | 'filterStateChanged' | 'filterAction'>
@@ -850,10 +862,6 @@ export class ColumnFilterService
             };
         }
 
-        if (this.gos.get('enableFilterEvaluators')) {
-            _warn(277, { colId });
-        }
-
         if (createFilterUi) {
             const filterWrapper: LegacyFilterWrapper = {
                 column,
@@ -933,8 +941,17 @@ export class ColumnFilterService
               evaluatorGenerator: FilterEvaluatorGeneratorFunc | EvaluatorName;
           }
         | undefined {
-        const evaluatorFunc = this.createEvaluatorFunc(filterDef, defaultFilter);
+        let evaluatorFunc = this.createEvaluatorFunc(filterDef, defaultFilter);
         if (!evaluatorFunc) {
+            const gos = this.gos;
+            if (gos.get('enableFilterEvaluators')) {
+                if (_isClientSideRowModel(gos)) {
+                    _warn(277, { colId: column.getColId() });
+                } else {
+                    evaluatorFunc = DUMMY_EVALUATOR;
+                }
+            }
+            // if !client side and enabled, create dummy evaluator
             return undefined;
         }
         const filterParams = _mergeFilterParamsWithApplicationProvidedParams(

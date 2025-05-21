@@ -34,10 +34,22 @@ export interface FilterEvaluatorParams<TData = any, TContext = any, TModel = any
 export interface FilterEvaluator<TData = any, TContext = any, TModel = any, TCustomParams = any>
     extends SharedFilter,
         ReadOnlyFloatingFilterParent<TModel> {
+    /** Optional: Called once when the evaluator is created. */
     init?(params: FilterEvaluatorParams<TData, TContext, TModel, TCustomParams>): void;
+    /** Optional: Called every time the evaluator is updated, e.g. when the model changes. */
     refresh?(params: FilterEvaluatorParams<TData, TContext, TModel, TCustomParams>): void;
+    /**
+     * The grid will ask each active filter, in turn, whether each row in the grid passes. If any
+     * filter fails, then the row will be excluded from the final set.
+     */
     doesFilterPass(params: FilterEvaluatorFuncParams<TData, TContext, TModel, TCustomParams>): boolean;
+    /**
+     * Optional: Used by AG Grid when rendering floating filters and there isn't a floating filter
+     * associated for this filter, this will happen if you create a custom filter and NOT a custom floating
+     * filter.
+     */
     getModelAsString?(model: TModel | null): string;
+    /** Optional: Gets called once by grid when the component is being removed; if your component needs to do any cleanup, do it here */
     destroy?(): void;
 }
 
