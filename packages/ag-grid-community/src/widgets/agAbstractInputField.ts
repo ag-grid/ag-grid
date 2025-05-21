@@ -38,13 +38,15 @@ export abstract class AgAbstractInputField<
         config?: TConfig,
         className?: string,
         private readonly inputType: string | null = 'text',
-        private readonly displayFieldTag: keyof HTMLElementTagNameMap = 'input'
+        private readonly displayFieldTag: keyof HTMLElementTagNameMap = 'input',
+        private readonly extraAttributes = {} as Record<string, string>
     ) {
         super(config, config?.template ?? buildTemplate(displayFieldTag), [], className);
     }
 
     public override postConstruct() {
         super.postConstruct();
+        this.setExtraAttributes(this.extraAttributes);
         this.setInputType();
 
         const { eLabel, eWrapper, eInput, className } = this;
@@ -136,5 +138,16 @@ export abstract class AgAbstractInputField<
             _addOrRemoveAttribute(this.eInput, 'autocomplete', autoCompleteValue);
         }
         return this;
+    }
+
+    private setExtraAttributes(extraAttributes: Record<string, string>) {
+        Object.keys(extraAttributes).forEach((key) => {
+            const value = extraAttributes[key];
+            if (value === null || value === undefined) {
+                this.eInput.removeAttribute(key);
+                return;
+            }
+            this.eInput.setAttribute(key, value);
+        });
     }
 }

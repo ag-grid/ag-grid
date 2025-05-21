@@ -13,8 +13,13 @@ export class AgInputTextField<
     TConfig extends AgInputTextFieldParams = AgInputTextFieldParams,
     TEventType extends string = AgInputTextFieldEvent,
 > extends AgAbstractInputField<HTMLInputElement, string, TConfig, AgInputTextFieldEvent | TEventType> {
-    constructor(config?: TConfig, className = 'ag-text-field', inputType = 'text') {
-        super(config, className, inputType);
+    constructor(
+        config?: TConfig,
+        className = 'ag-text-field',
+        inputType = 'text',
+        extraAttributes: Record<string, string> = {}
+    ) {
+        super(config, className, inputType, 'input', extraAttributes);
     }
 
     public override postConstruct() {

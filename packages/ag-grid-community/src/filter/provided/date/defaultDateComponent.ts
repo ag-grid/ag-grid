@@ -88,18 +88,16 @@ export class DefaultDateComponent extends Component implements IDateComp {
         const shouldUseBrowserDatePicker = this.shouldUseBrowserDatePicker(params);
         this.usingSafariDatePicker = shouldUseBrowserDatePicker && _isBrowserSafari();
 
-        let type;
         if (shouldUseBrowserDatePicker) {
             if (DATETIME_FIELD_TYPES.includes(params.filterParams?.colDef?.cellDataType as BaseCellDataType)) {
-                type = 'datetime-local';
+                inputElement.type = 'datetime-local';
+                inputElement.step = '1'; // enforce seconds part to show up by default
             } else {
-                type = 'date';
+                inputElement.type = 'date';
             }
         } else {
-            type = 'text';
+            inputElement.type = 'text';
         }
-
-        inputElement.type = type;
 
         const { minValidYear, maxValidYear, minValidDate, maxValidDate, buttons } = params.filterParams || {};
 
