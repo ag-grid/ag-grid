@@ -10,6 +10,7 @@ import type { BeanName } from '../context/context';
 import type { AgColumn } from '../entities/agColumn';
 import type { ColDef, ValueFormatterParams, ValueGetterParams } from '../entities/colDef';
 import type {
+    BaseCellDataType,
     BaseCellDataTypeDefMap,
     CoreDataTypeDefinition,
     DataTypeFormatValueFunc,
@@ -905,7 +906,7 @@ export class ColumnFilterService extends BeanStub implements NamedBean {
         };
         const self = this;
         // using an object here to enforce dev to not forget to implement new types as they are added
-        const cellEditorMap: Record<keyof BaseCellDataTypeDefMap, () => void> = {
+        const cellEditorMap: Record<BaseCellDataType, () => void> = {
             number(): void {
                 if (usingSetFilter) {
                     mergeFilterParams({ comparator: setFilterNumberComparator });

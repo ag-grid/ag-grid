@@ -1,4 +1,4 @@
-import type { BaseCellDataType } from '../entities/dataType';
+import type { BaseCellDataType, CheckDataTypes } from '../entities/dataType';
 
 export type AdvancedFilterModel = JoinAdvancedFilterModel | ColumnAdvancedFilterModel;
 
@@ -97,7 +97,7 @@ interface DateTimeStringAdvancedFilterModel extends BaseScalarAdvancedFilterMode
     filterType: 'dateTimeString';
 }
 
-export abstract class BaseAdvancedFilterModelDefMap implements Record<BaseCellDataType, BaseAdvancedFilterModel> {
+type FilterModelDefMap = {
     boolean: BooleanAdvancedFilterModel;
     object: ObjectAdvancedFilterModel;
     date: DateAdvancedFilterModel;
@@ -106,7 +106,10 @@ export abstract class BaseAdvancedFilterModelDefMap implements Record<BaseCellDa
     dateTimeString: DateTimeStringAdvancedFilterModel;
     number: NumberAdvancedFilterModel;
     text: TextAdvancedFilterModel;
-}
+};
+
+/**  Throws an error if not all data type keys are present in FilterModelDefMap */
+type EnforcedFilterModelDefMap = CheckDataTypes<FilterModelDefMap>;
 
 /** Represents a single filter condition on a column */
-export type ColumnAdvancedFilterModel = BaseAdvancedFilterModelDefMap[keyof BaseAdvancedFilterModelDefMap];
+export type ColumnAdvancedFilterModel = EnforcedFilterModelDefMap[keyof EnforcedFilterModelDefMap];

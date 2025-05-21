@@ -39,6 +39,10 @@ export interface DataTypeChecker<TData, TValue> {
  *
  * `'dateString'` is type `string` but represents a date.
  *
+ * `'dateTime'` is type `Date`.
+ *
+ * `'dateTimeString'` is type `string` but represents a date with time.
+ *
  * `object` is any other type.
  */
 export type BaseCellDataType =
@@ -135,7 +139,12 @@ export interface DateTimeStringDataTypeDefinition<TData = any>
 /** Represents an `'object'` data type (any type). */
 export interface ObjectDataTypeDefinition<TData, TValue> extends BaseDataTypeDefinition<'object', TData, TValue> {}
 
-export type BaseCellDataTypeDefMap<TData = any, TValue = any> = {
+/** Throws an error if not all keys K are present in Record Obj, as well as if Obj has extra keys (though only if you try to access properties) */
+export type CheckDataTypes<Obj extends Record<K, any>, K extends keyof any = BaseCellDataType> = keyof Obj extends K
+    ? Obj
+    : never;
+
+type DataTypeDefinitionMap<TData = any, TValue = any> = {
     text: Omit<TextDataTypeDefinition<TData>, 'extendsDataType'>;
     number: Omit<NumberDataTypeDefinition<TData>, 'extendsDataType'>;
     boolean: Omit<BooleanDataTypeDefinition<TData>, 'extendsDataType'>;
@@ -145,6 +154,8 @@ export type BaseCellDataTypeDefMap<TData = any, TValue = any> = {
     dateTimeString: Omit<DateTimeStringDataTypeDefinition<TData>, 'extendsDataType'>;
     object: Omit<ObjectDataTypeDefinition<TData, TValue>, 'extendsDataType'>;
 };
+
+export type BaseCellDataTypeDefMap<TData = any, TValue = any> = CheckDataTypes<DataTypeDefinitionMap<TData, TValue>>;
 
 type ValueOf<T> = T[keyof T];
 
