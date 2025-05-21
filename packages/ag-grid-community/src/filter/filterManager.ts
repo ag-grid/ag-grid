@@ -90,9 +90,15 @@ export class FilterManager extends BeanStub implements NamedBean {
         return typeof doesFilterPass === 'function' && doesFilterPass(node);
     }
 
-    public setFilterModel(model: FilterModel | null, source: FilterChangedEventSourceType = 'api'): void {
+    public setFilterModel(
+        model: FilterModel | null,
+        source: FilterChangedEventSourceType = 'api',
+        skipWarning?: boolean
+    ): void {
         if (this.isAdvFilterEnabled()) {
-            this.warnAdvFilters();
+            if (!skipWarning) {
+                this.warnAdvFilters();
+            }
             return;
         }
 

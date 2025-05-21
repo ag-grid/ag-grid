@@ -63,7 +63,7 @@ export class AgSideBar extends Component implements ISideBar {
             sideBarState,
         });
 
-        this.addManagedPropertyListener('sideBar', () => this.updateSideBar());
+        this.addManagedPropertyListener('sideBar', () => this.setState());
 
         (beans.sideBar as SideBarService).comp = this;
         const eGui = this.getFocusableElement();
@@ -417,11 +417,7 @@ export class AgSideBar extends Component implements ISideBar {
         return activeToolPanel;
     }
 
-    public setState(state: SideBarState): void {
-        this.updateSideBar(state);
-    }
-
-    private updateSideBar(sideBarState?: SideBarState): void {
+    public setState(sideBarState?: SideBarState): void {
         const sideBarDef = parseSideBarDef(this.gos.get('sideBar'));
 
         const existingToolPanelWrappers: { [id: string]: ToolPanelWrapper } = {};

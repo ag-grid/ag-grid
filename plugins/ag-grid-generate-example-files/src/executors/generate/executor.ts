@@ -18,7 +18,8 @@ import { formatFile } from './generator/utils/fileFormatUtils';
 import {
     convertTsxToJsx,
     getBoilerPlateFiles,
-    getEntryFileName, // getHasExampleConsoleLog,
+    getEntryFileName,
+    getHasExampleConsoleLog,
     getIsEnterprise,
     getIsLocale,
     getMainFileName,
@@ -190,16 +191,14 @@ export async function generateFiles(options: ExecutorOptions, gridOptionsTypes: 
             transformTsFileExt: getTransformTsFileExt(internalFramework),
             internalFramework,
         });
-        // TODO: Ignore example console log for now
-        // const hasExampleConsoleLog = [
-        //     entryFile,
-        //     ...Object.values(otherScriptFiles),
-        //     ...Object.values(componentScriptFiles),
-        //     ...(provideFrameworkFiles ? Object.values(provideFrameworkFiles) : []),
-        // ].some((file: string) => {
-        //     return getHasExampleConsoleLog({ contents: file });
-        // });
-        const hasExampleConsoleLog = false;
+        const hasExampleConsoleLog = [
+            entryFile,
+            ...Object.values(otherScriptFiles),
+            ...Object.values(componentScriptFiles),
+            ...(provideFrameworkFiles ? Object.values(provideFrameworkFiles) : []),
+        ].some((file: string) => {
+            return getHasExampleConsoleLog({ contents: file });
+        });
 
         const transformEntryFile: TransformEntryFile = ({ entryFile }) => {
             let transformedEntryFile = entryFile;

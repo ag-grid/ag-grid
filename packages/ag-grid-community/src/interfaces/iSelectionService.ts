@@ -13,7 +13,7 @@ import type { ServerSideRowGroupSelectionState, ServerSideRowSelectionState } fr
 export interface ISelectionService {
     getSelectionState(): string[] | ServerSideRowSelectionState | ServerSideRowGroupSelectionState | null;
     setSelectionState(
-        state: string[] | ServerSideRowSelectionState | ServerSideRowGroupSelectionState,
+        state: string[] | ServerSideRowSelectionState | ServerSideRowGroupSelectionState | undefined,
         source: SelectionEventSourceType,
         clearSelection?: boolean
     ): void;

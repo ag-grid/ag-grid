@@ -6,7 +6,7 @@ import {
 
 export const AllGridCommunityModules: Record<`${CommunityModuleName}Module`, number> = {
     AlignedGridsModule: 3.06,
-    AllCommunityModule: 411,
+    AllCommunityModule: 415.79,
     CellApiModule: 0.28,
     CellStyleModule: 2.24,
     CheckboxEditorModule: 18.81,
@@ -23,7 +23,7 @@ export const AllGridCommunityModules: Record<`${CommunityModuleName}Module`, num
     DragAndDropModule: 1,
     EventApiModule: 2.64,
     ExternalFilterModule: 13.69,
-    GridStateModule: 13.24,
+    GridStateModule: 14.7,
     HighlightChangesModule: 5.09,
     InfiniteRowModelModule: 17,
     LargeTextEditorModule: 18.6,
@@ -79,7 +79,7 @@ export const AllEnterpriseModules: Record<`${EnterpriseModuleName}Module`, numbe
     SparklinesModule: 20,
     StatusBarModule: 27,
     TreeDataModule: 94.81,
-    ViewportRowModelModule: 26,
+    ViewportRowModelModule: 27,
 };
 
 export interface ModuleTest {

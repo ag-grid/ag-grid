@@ -620,10 +620,13 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
     }
 
     public setSelectionState(
-        state: string[] | ServerSideRowSelectionState | ServerSideRowGroupSelectionState,
+        state: string[] | ServerSideRowSelectionState | ServerSideRowGroupSelectionState | undefined,
         source: SelectionEventSourceType,
         clearSelection?: boolean
     ): void {
+        if (!state) {
+            state = [];
+        }
         if (!Array.isArray(state)) {
             _error(103);
             return;
@@ -635,10 +638,12 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
                 nodes.push(node);
             }
         });
+        if (clearSelection) {
+            this.resetNodes();
+        }
         this.setNodesSelected({
             newValue: true,
             nodes,
-            clearSelection,
             source,
         });
     }

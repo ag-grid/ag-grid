@@ -34,5 +34,5 @@ export function useIntersectionObserver({
                 observer.unobserve(elementRef.current);
             }
         };
-    }, [elementRef.current]);
+    }, [elementRef.current, isDisabled]);
 }

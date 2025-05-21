@@ -10,7 +10,7 @@ import {
 import { VERSION } from '../version';
 import { ClientSideChildrenTreeNodeManager } from './clientSideChildrenTreeNodeManager';
 import { ClientSidePathTreeNodeManager } from './clientSidePathTreeNodeManager';
-import { TreeParentIdStrategy } from './treeParentIdStrategy';
+import { TreeGroupStrategy } from './treeGroupStrategy';
 
 /**
  * @internal
@@ -29,7 +29,7 @@ export const TreeDataModule: _ModuleWithoutApi = {
     moduleName: 'TreeData',
     version: VERSION,
     beans: [ClientSidePathTreeNodeManager, ClientSideChildrenTreeNodeManager],
-    dynamicBeans: { treeParentIdStrategy: TreeParentIdStrategy },
+    dynamicBeans: { treeGroupStrategy: TreeGroupStrategy },
     rowModels: ['clientSide'],
     dependsOn: [SharedTreeDataModule, AggregationModule, ClientSideRowModelHierarchyModule],
 };

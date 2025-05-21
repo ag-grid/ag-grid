@@ -1,6 +1,7 @@
 import type { Bean } from '../context/bean';
 import type { GridOptions } from '../entities/gridOptions';
 import type { ITreeNode, RowNode } from '../entities/rowNode';
+import type { GroupingApproach } from '../gridOptionsUtils';
 import type { ChangedPath } from '../utils/changedPath';
 import type { ClientSideRowModelStage, IChangedRowNodes } from './iClientSideRowModel';
 
@@ -28,7 +29,7 @@ export interface StageExecuteParams<TData = any> {
 }
 
 export interface IRowGroupingStrategy<TData = any> extends Bean {
-    execute(params: StageExecuteParams<TData>): void;
+    execute(params: StageExecuteParams<TData>, approach: GroupingApproach): void;
 }
 
 export interface IRowNodeStage<TResult = any, TData = any> {
