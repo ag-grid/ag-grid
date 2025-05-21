@@ -1,5 +1,3 @@
-import { _exists } from 'ag-grid-community';
-
 import { MD5 } from './md5';
 
 const LICENSE_TYPES = {
