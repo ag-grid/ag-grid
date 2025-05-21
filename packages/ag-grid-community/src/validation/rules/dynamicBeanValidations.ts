@@ -12,6 +12,7 @@ export const DYNAMIC_BEAN_MODULES: Record<DynamicBeanName, ValidationModuleName>
     tooltipFeature: 'Tooltip',
     groupStrategy: 'RowGrouping',
     treeParentIdStrategy: 'TreeData',
+    treeGroupStrategy: 'TreeData',
     rowNumberRowResizer: 'RowNumbers',
     agSetColumnFilterEvaluator: 'SetFilter',
     agMultiColumnFilterEvaluator: 'MultiFilter',

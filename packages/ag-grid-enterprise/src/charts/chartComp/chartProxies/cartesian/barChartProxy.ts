@@ -54,7 +54,7 @@ export class BarChartProxy extends CartesianChartProxy<'bar'> {
             const primarySeries = {
                 ...commonSeries,
                 listeners: {
-                    nodeClick: this.crossFilterCallback,
+                    seriesNodeClick: this.crossFilterCallback,
                 },
             };
 

@@ -576,20 +576,17 @@
 .fwPrice {
     display: inline-flex;
     font-weight: var(--text-regular);
+    color: var(--color-gray-950);
 
-    span {
-        display: none;
+    #{$selector-darkmode} & {
+        color: var(--color-gray-25);
     }
+}
 
-    b:nth-child(2) {
-        color: var(--color-fg-primary);
-        font-size: var(--text-fs-lg);
-        letter-spacing: -0.5px;
-    }
-
-    span:last-child {
-        transform: translateY(7px);
-    }
+.fwPriceDollars {
+    font-size: var(--text-fs-lg);
+    font-weight: var(--text-bold);
+    letter-spacing: -0.5px;
 }
 
 a.fwAction {

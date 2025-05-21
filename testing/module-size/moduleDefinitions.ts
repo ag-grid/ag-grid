@@ -23,7 +23,7 @@ export const AllGridCommunityModules: Record<`${CommunityModuleName}Module`, num
     DragAndDropModule: 1,
     EventApiModule: 2.64,
     ExternalFilterModule: 12.67,
-    GridStateModule: 13.24,
+    GridStateModule: 14.7,
     HighlightChangesModule: 5.09,
     InfiniteRowModelModule: 17,
     LargeTextEditorModule: 18.6,
@@ -70,7 +70,7 @@ export const AllEnterpriseModules: Record<`${EnterpriseModuleName}Module`, numbe
     RangeSelectionModule: 53,
     RichSelectModule: 77,
     RowNumbersModule: 29,
-    RowGroupingModule: 77.52,
+    RowGroupingModule: 79.85,
     RowGroupingPanelModule: 71,
     ServerSideRowModelApiModule: 19,
     ServerSideRowModelModule: 147,
@@ -79,7 +79,7 @@ export const AllEnterpriseModules: Record<`${EnterpriseModuleName}Module`, numbe
     SparklinesModule: 20,
     StatusBarModule: 27,
     TreeDataModule: 94.81,
-    ViewportRowModelModule: 26,
+    ViewportRowModelModule: 27,
 };
 
 export interface ModuleTest {

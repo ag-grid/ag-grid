@@ -1,9 +1,11 @@
 (function (global) {
     process = { env: { NODE_ENV: 'development' } };
-    // Valid values: 18 / 19
-    const REACT_VERSION = 19;
+    // Valid versions (18/19)
+    const config = { version: 19, isProd: false };
+
+    const filePart = config.isProd ? 'production.min' : 'development';
     const reactConfig =
-        REACT_VERSION == 18
+        config.version == 18
             ? {
                   map: {
                       react: 'npm:react@18.2.0',
@@ -12,19 +14,19 @@
                   },
                   packages: {
                       react: {
-                          main: './umd/react.development.js',
+                          main: `./umd/react.${filePart}.js`,
                       },
                       'react-dom': {
-                          main: './umd/react-dom.development.js',
+                          main: `./umd/react-dom.${filePart}.js`,
                       },
                   },
               }
             : {
                   map: {
-                      react: 'npm:react@19.1.0/cjs/react.development.js',
-                      'react-dom': 'npm:react-dom@19.1.0/cjs/react-dom.development.js',
-                      'react-dom/client': 'npm:react-dom@19.1.0/cjs/react-dom-client.development.js',
-                      scheduler: 'npm:scheduler@0.26.0/cjs/scheduler.development.js',
+                      react: `npm:react@19.1.0/cjs/react.${filePart}.js`,
+                      'react-dom': `npm:react-dom@19.1.0/cjs/react-dom.${filePart}.js`,
+                      'react-dom/client': `npm:react-dom@19.1.0/cjs/react-dom-client.${filePart}.js`,
+                      scheduler: `npm:scheduler@0.26.0/cjs/scheduler.${filePart}.js`,
                   },
                   packages: {
                       react: {

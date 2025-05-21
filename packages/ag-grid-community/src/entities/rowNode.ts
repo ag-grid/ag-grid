@@ -207,8 +207,8 @@ export class RowNode<TData = any>
     /**
      * Used only by tree data internally.
      * - Associated TreeNode if treeData with path
-     * - Associated TreeNode if treeData with children
-     * - Parent RowNode if treeData with parentId
+     * - Parent RowNode if treeData with children, set by the ClientSideChildrenTreeNodeManager and processed by TreeGroupStrategy
+     * - Parent RowNode if treeData with parentId, set and processed by TreeGroupStrategy
      */
     public readonly treeNode: ITreeNode | RowNode<TData> | null = null;
 

@@ -2,6 +2,7 @@ import fs from 'fs';
 import path from 'path';
 
 import type { GridState } from '../../interfaces/gridState';
+import { VERSION } from '../../version';
 import { migrateGridStateModel } from './stateModelMigration';
 
 const FIXTURES_DIR = path.join(__dirname, 'fixtures');
@@ -19,6 +20,17 @@ function loadFixtures(): [name: string, version: string | undefined, state: Grid
 describe('Grid State Migration', () => {
     test.each(loadFixtures())('%s: should upgrade version %s', (name, version, state) => {
         const migrated = migrateGridStateModel(state);
-        expect(migrated).toMatchSnapshot();
+        expect(migrated).toEqual({
+            cellSelection: {
+                cellRanges: [],
+            },
+            rangeSelection: {
+                cellRanges: [],
+            },
+            sort: {
+                sortModel: [],
+            },
+            version: VERSION,
+        });
     });
 });

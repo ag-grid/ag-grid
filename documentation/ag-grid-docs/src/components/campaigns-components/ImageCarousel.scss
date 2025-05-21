@@ -1,0 +1,71 @@
+@use 'design-system' as *;
+
+.carousel-container {
+    position: relative;
+    height: 480px;
+    width: 100%;
+    overflow: hidden;
+    display: flex;
+    pointer-events: none;
+    @media screen and (max-width: $breakpoint-hero-small) {
+        height: 200px;
+    }
+}
+
+.carousel-column {
+    flex: 1;
+    position: relative;
+    overflow: hidden;
+}
+
+.carousel-scroll {
+    position: absolute;
+    inset: 0;
+    overflow-y: scroll;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+
+    &::-webkit-scrollbar {
+        display: none;
+    }
+}
+
+.scroll-down {
+    mask-image: linear-gradient(to top, var(--color-util-brand-500) 80%, transparent);
+    -webkit-mask-image: linear-gradient(to top, var(--color-util-brand-700) 80%, transparent);
+}
+
+.scroll-up {
+    mask-image: linear-gradient(to top, var(--color-util-brand-500) 80%, transparent);
+    -webkit-mask-image: linear-gradient(to top, var(--color-util-brand-700) 80%, transparent);
+}
+
+.carousel-content {
+    display: flex;
+    flex-direction: column;
+}
+
+.image-row {
+    width: 100%;
+    padding: $spacing-size-2;
+}
+
+.carousel-image {
+    width: 100%;
+    height: auto;
+    border-radius: 8px;
+    box-shadow:
+        0 10px 15px -3px rgba(0, 0, 0, 0.1),
+        0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+.gradient-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, var(--color-util-brand-500), transparent 20%);
+    pointer-events: none;
+
+    #{$selector-darkmode} & {
+        background: linear-gradient(to top, var(--color-bg-primary), transparent 30%);
+    }
+}

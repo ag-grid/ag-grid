@@ -89,6 +89,8 @@ function onPrintQuickFilterTexts() {
 }
 
 function quickFilterParser(quickFilter: string) {
+    // Note that this implementation is just provided as a simple example of the feature.
+    // It does not handle all edge cases, e.g. preceding spaces inside quotes.
     const quickFilterParts = [];
     let lastSpaceIndex = -1;
 

@@ -1,5 +1,4 @@
 import type {
-    AbstractClientSideNodeManager,
     ClientSideNodeManagerUpdateRowDataResult,
     IChangedRowNodes,
     IClientSideNodeManager,
@@ -8,30 +7,20 @@ import type {
     RowDataTransaction,
     RowNode,
 } from 'ag-grid-community';
+import { AbstractClientSideNodeManager } from 'ag-grid-community';
 import { ChangedPath, _error, _getRowIdCallback, _warn } from 'ag-grid-community';
 
-import { AbstractClientSideTreeNodeManager } from './abstractClientSideTreeNodeManager';
 import { makeFieldPathGetter } from './fieldAccess';
 import type { DataFieldGetter } from './fieldAccess';
-import type { TreeNode } from './treeNode';
 import type { TreeRow } from './treeRow';
 
 export class ClientSideChildrenTreeNodeManager<TData>
-    extends AbstractClientSideTreeNodeManager<TData>
+    extends AbstractClientSideNodeManager<TData>
     implements IClientSideNodeManager<TData>, NamedBean
 {
     beanName = 'csrmChildrenTreeNodeSvc' as const;
 
     private childrenGetter: DataFieldGetter<TData, TData[] | null | undefined> | null = null;
-
-    public override get treeData(): boolean {
-        return this.gos.get('treeData');
-    }
-
-    public override extractRowData(): TData[] | null | undefined {
-        const treeRoot = this.treeRoot;
-        return treeRoot && Array.from(treeRoot.enumChildren(), (node) => node.row!.data);
-    }
 
     public override destroy(): void {
         super.destroy();
@@ -40,14 +29,23 @@ export class ClientSideChildrenTreeNodeManager<TData>
         this.childrenGetter = null;
     }
 
+    public override extractRowData(): TData[] | null | undefined {
+        return this.rootNode?.childrenAfterGroup?.map(({ data }) => data!);
+    }
+
     public override activate(rootNode: RowNode<TData>): void {
         const oldChildrenGetter = this.childrenGetter;
-        const childrenField = this.gos.get('treeDataChildrenField');
+        const childrenField = this.gos.get('treeDataChildrenField') ?? null;
         if (!oldChildrenGetter || oldChildrenGetter.path !== childrenField) {
             this.childrenGetter = makeFieldPathGetter(childrenField);
         }
 
         super.activate(rootNode);
+    }
+
+    public override deactivate(): void {
+        this.childrenGetter = null;
+        super.deactivate();
     }
 
     public override updateRowData(
@@ -63,19 +61,15 @@ export class ClientSideChildrenTreeNodeManager<TData>
     }
 
     protected override loadNewRowData(rowData: TData[]): void {
-        const treeRoot = this.treeRoot!;
         const rootNode = this.rootNode!;
         const childrenGetter = this.childrenGetter;
 
-        const processedData = new Map<TData, RowNode<TData>>();
+        const processedData = new Map<TData, TreeRow<TData>>();
         const allLeafChildren: TreeRow<TData>[] = [];
 
         rootNode.allLeafChildren = allLeafChildren;
 
-        this.treeClear(treeRoot);
-        this.treeSetRootNode(rootNode);
-
-        const processChild = (node: TreeNode, data: TData) => {
+        const processChild = (parent: RowNode, data: TData) => {
             let row = processedData.get(data);
             if (row !== undefined) {
                 _error(2, { nodeId: row.id }); // Duplicate node
@@ -83,62 +77,53 @@ export class ClientSideChildrenTreeNodeManager<TData>
             }
 
             row = this.createRowNode(data, allLeafChildren.length);
+            row.treeNode = parent;
             processedData.set(data, row);
             allLeafChildren.push(row);
 
-            node = node.upsertKey(row.id!);
-            this.treeSetRow(node, row, true);
             const children = childrenGetter?.(data);
             if (children) {
                 for (let i = 0, len = children.length; i < len; ++i) {
-                    processChild(node, children[i]);
+                    processChild(row, children[i]);
                 }
             }
         };
-        for (let i = 0, len = rowData.length; i < len; ++i) {
-            processChild(treeRoot, rowData[i]);
-        }
 
-        this.treeCommitPending = true;
+        for (let i = 0, len = rowData.length; i < len; ++i) {
+            processChild(rootNode, rowData[i]);
+        }
     }
 
     public override setImmutableRowData(params: RefreshModelParams<TData>, rowData: TData[]): void {
         this.dispatchRowDataUpdateStartedEvent(rowData);
 
         const gos = this.gos;
-        const treeRoot = this.treeRoot!;
         const rootNode = this.rootNode!;
         const childrenGetter = this.childrenGetter;
         const getRowIdFunc = _getRowIdCallback(gos)!;
         const canReorder = !gos.get('suppressMaintainUnsortedOrder');
 
-        const processedData = new Map<TData, AbstractClientSideNodeManager.RowNode<TData>>();
+        const processedData = new Map<TData, TreeRow<TData>>();
 
         const changedPath = new ChangedPath(false, rootNode);
         params.changedPath = changedPath;
 
         const changedRowNodes = params.changedRowNodes!;
 
-        const oldAllLeafChildren = rootNode.allLeafChildren;
+        const oldAllLeafChildren: TreeRow[] | null = rootNode.allLeafChildren;
         const allLeafChildren: TreeRow[] = [];
         const nodesToUnselect: TreeRow<TData>[] = [];
 
         let orderChanged = false;
         let rowsChanged = false;
 
-        const processChildrenNoReorder = (node: TreeNode, children: TData[], childrenLevel: number): void => {
-            for (let i = 0, len = children.length; i < len; ++i) {
-                processChild(node, children[i], childrenLevel);
-            }
-        };
-
-        const processChildrenReOrder = (node: TreeNode, children: TData[], childrenLevel: number): void => {
+        const processChildren = (parent: TreeRow<TData>, children: TData[], childrenLevel: number): void => {
             const childrenLen = children?.length;
             let inOrder = true;
             let prevIndex = -1;
             for (let i = 0; i < childrenLen; ++i) {
-                const oldSourceRowIndex = processChild(node, children[i], childrenLevel);
-                if (oldSourceRowIndex >= 0) {
+                const oldSourceRowIndex = processChild(parent, children[i], childrenLevel);
+                if (canReorder && oldSourceRowIndex >= 0) {
                     if (oldSourceRowIndex < prevIndex) {
                         inOrder = false;
                     }
@@ -147,16 +132,10 @@ export class ClientSideChildrenTreeNodeManager<TData>
             }
             if (!inOrder) {
                 orderChanged = true;
-                if (!node.childrenChanged) {
-                    node.childrenChanged = true;
-                    node.invalidate();
-                }
             }
         };
 
-        const processChildren = canReorder ? processChildrenReOrder : processChildrenNoReorder;
-
-        const processChild = (parent: TreeNode, data: TData, level: number): number => {
+        const processChild = (parent: TreeRow<TData>, data: TData, level: number): number => {
             let row = processedData.get(data);
             if (row !== undefined) {
                 _warn(2, { nodeId: row.id }); // Duplicate node
@@ -165,88 +144,95 @@ export class ClientSideChildrenTreeNodeManager<TData>
 
             const id = getRowIdFunc({ data, level });
 
-            let created = false;
             row = this.getRowNode(id) as TreeRow<TData> | undefined;
             if (row) {
+                let rowChanged = false;
                 if (row.data !== data) {
-                    changedRowNodes.update(row);
+                    rowChanged = true;
                     row.updateData(data);
                     if (!row.selectable && row.isSelected()) {
                         nodesToUnselect.push(row);
                     }
                 }
+                if (row.treeNode !== parent) {
+                    row.treeNode = parent;
+                    rowChanged = true;
+                }
+                if (rowChanged) {
+                    rowsChanged = true;
+                    changedRowNodes.update(row);
+                }
             } else {
                 row = this.createRowNode(data, -1);
+                row.treeNode = parent;
+                rowsChanged = true;
                 changedRowNodes.add(row);
-                created = true;
             }
 
             processedData.set(data, row);
 
             let oldSourceRowIndex: number;
-            let node: TreeNode;
             if (canReorder) {
-                node = parent.appendKey(row.id!);
                 oldSourceRowIndex = row.sourceRowIndex;
                 row.sourceRowIndex = allLeafChildren.push(row) - 1;
             } else {
-                node = parent.upsertKey(row.id!);
                 oldSourceRowIndex = -1;
-            }
-
-            if (this.treeSetRow(node, row, created)) {
-                rowsChanged = true;
             }
 
             const children = childrenGetter?.(data);
             if (children) {
-                processChildren(node, children, level + 1);
+                processChildren(row, children, level + 1);
             }
 
             return oldSourceRowIndex;
         };
 
-        processChildren(treeRoot, rowData, 0);
+        processChildren(rootNode, rowData, 0);
 
         if (oldAllLeafChildren) {
+            const pinnedRowModel = this.beans.pinnedRowModel;
             for (let i = 0, len = oldAllLeafChildren.length; i < len; ++i) {
                 const row = oldAllLeafChildren[i];
-                const node = row.treeNode as TreeNode | null;
-                if (node) {
-                    const data = row.data;
-                    if (data && !processedData.has(data)) {
-                        if (row.pinnedSibling) {
-                            this.beans.pinnedRowModel?.pinRow(row.pinnedSibling, null);
-                        }
-                        changedRowNodes.remove(row);
-                        this.treeRemove(node, row);
+                if (!processedData.has(row.data)) {
+                    row.treeNode = null;
+                    row.treeNodeFlags = 0;
+                    const pinnedSibling = row.pinnedSibling;
+                    if (pinnedSibling) {
+                        pinnedRowModel?.pinRow(pinnedSibling, null);
                     }
+                    row.clearRowTopAndRowIndex();
+                    this.rowNodeDeleted(row);
+                    if (row.isSelected()) {
+                        nodesToUnselect.push(row);
+                    }
+                    changedRowNodes.remove(row);
                 }
             }
         }
 
         if (!canReorder) {
-            // To maintain the old order, we need to process all children as they appear in the node, recursively
-            const appendChildren = (node: TreeNode): void => {
-                for (const child of node.enumChildren()) {
-                    const row = child.row;
-                    if (row) {
+            // First append all the old children that weren't removed
+            if (oldAllLeafChildren) {
+                const removals = changedRowNodes.removals;
+                for (let i = 0, len = oldAllLeafChildren.length; i < len; ++i) {
+                    const row = oldAllLeafChildren[i];
+                    if (!removals.has(row)) {
                         row.sourceRowIndex = allLeafChildren.push(row) - 1;
-                        appendChildren(child);
                     }
                 }
-            };
-            appendChildren(treeRoot);
+            }
+
+            // Now append all the new children
+            for (const row of changedRowNodes.adds) {
+                (row as TreeRow<TData>).sourceRowIndex = allLeafChildren.push(row) - 1;
+            }
         }
 
         rootNode.allLeafChildren = allLeafChildren;
-        treeRoot.allLeafChildren = allLeafChildren;
 
         if (nodesToUnselect.length) {
             this.deselectNodes(nodesToUnselect);
         }
-
-        this.treeCommitPending = true;
 
         const sibling = rootNode.sibling;
         if (sibling) {
@@ -257,25 +243,5 @@ export class ClientSideChildrenTreeNodeManager<TData>
             params.rowDataUpdated = true;
             params.rowNodesOrderChanged ||= orderChanged;
         }
-    }
-
-    public override refreshModel(params: RefreshModelParams<TData>, started: boolean): void {
-        const rootNode = this.rootNode;
-        if (rootNode && params.changedProps?.has('treeData') && !params.newData) {
-            this.treeSetRootNode(rootNode);
-            const treeRoot = this.treeRoot!;
-            const allLeafChildren = rootNode.allLeafChildren;
-            if (allLeafChildren) {
-                for (let i = 0, len = allLeafChildren.length; i < len; ++i) {
-                    const row = allLeafChildren[i];
-                    row.groupData = null;
-                    (row.treeNode as TreeNode | null)?.invalidate();
-                }
-            }
-            treeRoot.childrenChanged = true;
-            this.treeCommitPending = true;
-        }
-
-        super.refreshModel(params, started);
     }
 }

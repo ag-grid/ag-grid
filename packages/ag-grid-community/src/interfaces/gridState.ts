@@ -188,6 +188,9 @@ export interface GridState {
     /**
      * When providing a partial `initialState` with some but not all column state properties, set this to `true`.
      * Not required if passing the whole state object retrieved from the grid.
+     * Not used for `api.setState()`, as that instead takes a second argument of properties to ignore.
      */
     partialColumnState?: boolean;
 }
+
+export type GridStateKey = Exclude<keyof GridState, 'version' | 'partialColumnState' | 'rangeSelection'>;
