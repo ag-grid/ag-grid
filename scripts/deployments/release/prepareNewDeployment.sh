@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 
-if [ "$#" -lt 1 ]
+if [ "$#" -lt 2 ]
   then
-    echo "You must supply a release version"
+    echo "You must supply a release version and host"
     echo "For example: ./scripts/deployments/release/prepareNewDeployment.sh 28.0.0"
     exit 1
 fi
@@ -27,14 +27,15 @@ function checkFileExists {
 checkFileExists $SSH_LOCATION
 
 VERSION=$1
+CURRENT_HOST=$2
 
 # replace tokens in prepareNewDeploymentRemote.sh with env variables - we'll transfer the newly tokenised file to prod
 sed "s#\@GRID_ROOT_DIR\@#$GRID_ROOT_DIR#g" ./scripts/deployments/release/prepareNewDeploymentRemote.sh | sed "s#\@WWW_ROOT_DIR\@#$WWW_ROOT_DIR#g" > /tmp/prepareNewDeploymentRemote.sh
 
-scp -i $SSH_LOCATION -P $SSH_PORT "/tmp/prepareNewDeploymentRemote.sh" $HOST:$WWW_ROOT_DIR/prepareNewDeploymentRemote.sh
-ssh -i $SSH_LOCATION -p $SSH_PORT $HOST "chmod +x $WWW_ROOT_DIR/prepareNewDeploymentRemote.sh"
+scp -i $SSH_LOCATION -P $SSH_PORT "/tmp/prepareNewDeploymentRemote.sh" $CURRENT_HOST:$WWW_ROOT_DIR/prepareNewDeploymentRemote.sh
+ssh -i $SSH_LOCATION -p $SSH_PORT $CURRENT_HOST "chmod +x $WWW_ROOT_DIR/prepareNewDeploymentRemote.sh"
 
 # backup the old html folder, unzip the new release and update permissions etc
 # we do this via a remote script as there are many steps and doing so one by one remotely times out occasionally
-ssh -i $SSH_LOCATION -p $SSH_PORT $HOST "cd $WWW_ROOT_DIR && ./prepareNewDeploymentRemote.sh $VERSION"
+ssh -i $SSH_LOCATION -p $SSH_PORT $CURRENT_HOST "cd $WWW_ROOT_DIR && ./prepareNewDeploymentRemote.sh $VERSION"
 

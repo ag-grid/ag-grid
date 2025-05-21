@@ -88,9 +88,9 @@ export const LicensePricing: FunctionComponent<Props> = ({ defaultSelection }) =
                                             <b>Free</b>
                                         ) : (
                                             <>
-                                                <span>From </span>
-                                                <b> ${license.priceFullDollars}</b>
-                                                <span className="text-2xs">USD</span>
+                                                <span className={styles.fwPriceDollars}>
+                                                    ${license.priceFullDollars}
+                                                </span>
                                             </>
                                         )}
                                     </span>
