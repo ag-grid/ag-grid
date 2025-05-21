@@ -178,14 +178,6 @@
         );
     }
 
-    .ag-header-select-all-no-margin .ag-header-select-all {
-        @include ag.unthemed-rtl(
-            (
-                margin-right: 0,
-            )
-        );
-    }
-
     .ag-floating-filter-button {
         @include ag.unthemed-rtl(
             (

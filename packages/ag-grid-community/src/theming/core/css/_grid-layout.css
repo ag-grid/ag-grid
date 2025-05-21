@@ -196,10 +196,6 @@
     margin-right: var(--ag-cell-widget-spacing);
 }
 
-.ag-selection-checkbox-no-margin .ag-selection-checkbox {
-    margin-right: 0;
-}
-
 .ag-group-child-count {
     margin-left: 3px;
 }
