@@ -276,11 +276,14 @@ export class LicenseManager {
 
     static setChartsLicenseManager(dependantLicenseManager: ILicenseManager): void {
         this.chartsLicenseManager = dependantLicenseManager;
+
+        // we set this again in the event users have set the key BEFORE they've registered the modules
+        // if we dont then order of events can be such that we dont update the chartsLicenseManager with the license key
+        this.chartsLicenseManager?.setLicenseKey(this.licenseKey, true);
     }
 
     static setLicenseKey(licenseKey: string): void {
         this.licenseKey = licenseKey;
-
         this.chartsLicenseManager?.setLicenseKey(licenseKey, true);
     }
 
