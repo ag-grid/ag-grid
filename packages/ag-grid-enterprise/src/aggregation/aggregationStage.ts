@@ -148,6 +148,12 @@ export class AggregationStage extends BeanStub implements NamedBean, IRowNodeSta
         // to the group, so update the data here also if there is one
         if (rowNode.sibling) {
             this.setAggData(rowNode.sibling, aggResult);
+
+            // Similarly for pinned siblings. A pinned grand total row is a `pinnedSibling` of
+            // the `sibling` of the root node.
+            if (rowNode.sibling.pinnedSibling) {
+                this.setAggData(rowNode.sibling.pinnedSibling, aggResult);
+            }
         }
     }
 
