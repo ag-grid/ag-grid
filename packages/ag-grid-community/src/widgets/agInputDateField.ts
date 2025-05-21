@@ -1,4 +1,3 @@
-import type { BaseCellDataType } from '../entities/dataType';
 import { _getActiveDomElement } from '../gridOptionsUtils';
 import { _isBrowserSafari } from '../utils/browser';
 import { _parseDateTimeFromString, _serialiseDate } from '../utils/date';
@@ -8,9 +7,8 @@ import { AgInputTextField } from './agInputTextField';
 import type { ComponentSelector } from './component';
 
 export interface AgInputDateFieldParams extends AgInputTextFieldParams {
-    cellDataType?: ('date' | 'dateTime' | 'dateString' | 'dateTimeString') & BaseCellDataType; // AND-ing with BaseCellDataType to ensure we don't forget to update this when adding new cell data types
+    includeTime?: boolean;
 }
-const DATETIME_FIELD_TYPES = ['dateTime', 'dateTimeString'];
 export class AgInputDateField extends AgInputTextField {
     private min?: string;
     private max?: string;
@@ -18,11 +16,10 @@ export class AgInputDateField extends AgInputTextField {
     private readonly includeTime: boolean;
 
     constructor(config?: AgInputDateFieldParams) {
-        const includeTime = DATETIME_FIELD_TYPES.includes(config?.cellDataType || '');
-        const inputType = includeTime ? 'datetime-local' : 'date';
+        const inputType = config?.includeTime ? 'datetime-local' : 'date';
 
         super(config, 'ag-date-field', inputType);
-        this.includeTime = includeTime;
+        this.includeTime = !!config?.includeTime;
     }
 
     public override postConstruct() {
