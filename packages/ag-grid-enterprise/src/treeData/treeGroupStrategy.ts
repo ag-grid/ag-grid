@@ -228,10 +228,11 @@ export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGrou
         }
     }
 
-    private loadSelfRef({ rowNode }: StageExecuteParams<TData>, fullReload: boolean): void {
+    private loadSelfRef({ rowNode, changedRowNodes }: StageExecuteParams<TData>, fullReload: boolean): void {
         const rootNode = rowNode as GroupingRowNode<TData>;
         const rootAllLeafChildren = rootNode.allLeafChildren!;
         const rowModel = this.beans.rowModel;
+        const removals = changedRowNodes?.removals;
 
         let parentIdGetter = this.parentIdGetter;
         const parentIdField = this.gos.get('treeDataParentIdField') || null;
@@ -242,7 +243,7 @@ export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGrou
 
         for (let i = 0, len = rootAllLeafChildren.length; i < len; ++i) {
             const row = rootAllLeafChildren[i];
-            if (fullReload || row.treeNodeFlags & FLAG_CHANGED) {
+            if (fullReload || row.treeNodeFlags & FLAG_CHANGED || removals?.has(row.treeParent!)) {
                 let newParent: GroupingRowNode<TData> | null | undefined;
                 const parentId = parentIdGetter(row.data);
                 if (parentId !== null && parentId !== undefined) {
@@ -436,8 +437,8 @@ const flagUpdatedNodes = <TData>(changedRowNodes: IChangedRowNodes<TData> | unde
     if (!changedRowNodes) {
         return false;
     }
-    let hasUpdates = false;
     const { adds, updates, removals } = changedRowNodes;
+    let hasUpdates = removals.size > 0;
 
     if (adds.size > 0) {
         hasUpdates = true;
@@ -450,18 +451,6 @@ const flagUpdatedNodes = <TData>(changedRowNodes: IChangedRowNodes<TData> | unde
         hasUpdates = true;
         for (const node of updates) {
             (node as GroupingRowNode<TData>).treeNodeFlags |= FLAG_CHANGED;
-        }
-    }
-
-    if (removals.size > 0) {
-        hasUpdates = true;
-        for (const node of removals) {
-            const childrenAfterGroup: GroupingRowNode<TData>[] | null | undefined = node.childrenAfterGroup;
-            if (childrenAfterGroup) {
-                for (let i = 0, len = childrenAfterGroup.length; i < len; ++i) {
-                    childrenAfterGroup[i].treeNodeFlags |= FLAG_CHANGED;
-                }
-            }
         }
     }
 
