@@ -1,3 +1,5 @@
+import { ValueGetterFunc, ValueService } from 'ag-grid-community';
+
 import { _unwrapUserComp } from '../components/framework/unwrapUserComp';
 import {
     _getFilterDetails,
@@ -892,146 +894,173 @@ export class ColumnFilterService extends BeanStub implements NamedBean {
         return column ? this.cachedFilter(column) ?? null : null;
     }
 
+    // using an object here to enforce dev to not forget to implement new types as they are added
+    private cellEditorMap: Record<
+        BaseCellDataType,
+        (args: {
+            formatValue: DataTypeFormatValueFunc;
+            t: ReturnType<ColumnFilterService['getLocaleTextFunc']>;
+            valueSvc: ValueService;
+            usingSetFilter: boolean;
+            dataTypeDefinition: CoreDataTypeDefinition;
+        }) => ColDef['filterParams'] | ColDef['filterValueGetter'] | void
+    > = {
+        number({ usingSetFilter }) {
+            if (usingSetFilter) {
+                return { comparator: setFilterNumberComparator };
+            }
+        },
+        boolean({ usingSetFilter, t }) {
+            if (usingSetFilter) {
+                return {
+                    valueFormatter: (params: ValueFormatterParams) => {
+                        if (_exists(params.value)) {
+                            return t(String(params.value), params.value ? 'True' : 'False');
+                        }
+                        return t('blanks', '(Blanks)');
+                    },
+                };
+            }
+            return {
+                maxNumConditions: 1,
+                debounceMs: 0,
+                filterOptions: [
+                    'empty',
+                    {
+                        displayKey: 'true',
+                        displayName: 'True',
+                        predicate: (_filterValues: any[], cellValue: any) => cellValue,
+                        numberOfInputs: 0,
+                    },
+                    {
+                        displayKey: 'false',
+                        displayName: 'False',
+                        predicate: (_filterValues: any[], cellValue: any) => cellValue === false,
+                        numberOfInputs: 0,
+                    },
+                ],
+            };
+        },
+        date({ usingSetFilter, formatValue, t }) {
+            if (usingSetFilter) {
+                return {
+                    valueFormatter: (params: ValueFormatterParams) => {
+                        const valueFormatted = formatValue(params);
+                        return _exists(valueFormatted) ? valueFormatted : t('blanks', '(Blanks)');
+                    },
+                    treeList: true,
+                    treeListFormatter: (pathKey: string | null, level: number) => {
+                        if (pathKey === 'NaN') {
+                            return t('invalidDate', 'Invalid Date');
+                        }
+                        if (level === 1 && pathKey != null) {
+                            const monthKey = MONTH_KEYS[Number(pathKey) - 1];
+                            return t(monthKey, MONTH_LOCALE_TEXT[monthKey]);
+                        }
+                        return pathKey ?? t('blanks', '(Blanks)');
+                    },
+                };
+            }
+            return { isValidDate };
+        },
+        dateString({ usingSetFilter, formatValue, dataTypeDefinition, t }): ColDef['filterParams'] {
+            const convertToDate = (dataTypeDefinition as DateStringDataTypeDefinition).dateParser!;
+            if (usingSetFilter) {
+                return {
+                    valueFormatter: (params: ValueFormatterParams) => {
+                        const valueFormatted = formatValue(params);
+                        return _exists(valueFormatted) ? valueFormatted : t('blanks', '(Blanks)');
+                    },
+                    treeList: true,
+                    treeListPathGetter: (value: string | null) => {
+                        const date = convertToDate(value ?? undefined);
+                        return date
+                            ? [String(date.getFullYear()), String(date.getMonth() + 1), String(date.getDate())]
+                            : null;
+                    },
+                    treeListFormatter: (pathKey: string | null, level: number) => {
+                        if (level === 1 && pathKey != null) {
+                            const monthKey = MONTH_KEYS[Number(pathKey) - 1];
+                            return t(monthKey, MONTH_LOCALE_TEXT[monthKey]);
+                        }
+                        return pathKey ?? t('blanks', '(Blanks)');
+                    },
+                };
+            }
+            return {
+                comparator: (filterDate: Date, cellValue: string | undefined) => {
+                    const cellAsDate = convertToDate(cellValue)!;
+                    if (cellValue == null || cellAsDate < filterDate) {
+                        return -1;
+                    }
+                    if (cellAsDate > filterDate) {
+                        return 1;
+                    }
+                    return 0;
+                },
+                isValidDate: (value: any) => typeof value === 'string' && isValidDate(convertToDate(value)),
+            };
+        },
+        dateTime(args) {
+            return this.date(args);
+        },
+        dateTimeString(args) {
+            const convertToDate = (args.dataTypeDefinition as DateStringDataTypeDefinition).dateParser!;
+
+            return {
+                ...this.dateString(args),
+                treeListPathGetter: (value: string | null) => {
+                    const date = convertToDate(value ?? undefined);
+                    return date
+                        ? [
+                              String(date.getFullYear()),
+                              String(date.getMonth() + 1),
+                              String(date.getDate()),
+                              String(date.getHours()),
+                              String(date.getMinutes()),
+                              String(date.getSeconds()),
+                          ]
+                        : null;
+                },
+            };
+        },
+        object({ usingSetFilter, valueSvc, formatValue, t }) {
+            if (usingSetFilter) {
+                return {
+                    valueFormatter: (params: ValueFormatterParams) => {
+                        const valueFormatted = formatValue(params);
+                        return _exists(valueFormatted) ? valueFormatted : t('blanks', '(Blanks)');
+                    },
+                };
+            }
+            return ({ column, node }: ValueGetterParams) =>
+                formatValue({ column, node, value: valueSvc.getValue(column as AgColumn, node) });
+        },
+        text(): void {},
+    };
+
     public setColDefPropertiesForDataType(
         colDef: ColDef,
         dataTypeDefinition: CoreDataTypeDefinition,
         formatValue: DataTypeFormatValueFunc
     ): void {
-        const usingSetFilter = _isSetFilterByDefault(this.gos);
-        const translate = this.getLocaleTextFunc();
-        const mergeFilterParams = (params: any) => {
-            const { filterParams } = colDef;
-            colDef.filterParams =
-                typeof filterParams === 'object' ? { colDef, ...filterParams, ...params } : { colDef, ...params };
-        };
-        const self = this;
-        // using an object here to enforce dev to not forget to implement new types as they are added
-        const cellEditorMap: Record<BaseCellDataType, () => void> = {
-            number(): void {
-                if (usingSetFilter) {
-                    mergeFilterParams({ comparator: setFilterNumberComparator });
-                }
-            },
-            boolean(): void {
-                if (usingSetFilter) {
-                    mergeFilterParams({
-                        valueFormatter: (params: ValueFormatterParams) => {
-                            if (!_exists(params.value)) {
-                                return translate('blanks', '(Blanks)');
-                            }
-                            return translate(String(params.value), params.value ? 'True' : 'False');
-                        },
-                    });
-                } else {
-                    mergeFilterParams({
-                        maxNumConditions: 1,
-                        debounceMs: 0,
-                        filterOptions: [
-                            'empty',
-                            {
-                                displayKey: 'true',
-                                displayName: 'True',
-                                predicate: (_filterValues: any[], cellValue: any) => cellValue,
-                                numberOfInputs: 0,
-                            },
-                            {
-                                displayKey: 'false',
-                                displayName: 'False',
-                                predicate: (_filterValues: any[], cellValue: any) => cellValue === false,
-                                numberOfInputs: 0,
-                            },
-                        ],
-                    });
-                }
-            },
-            date(): void {
-                if (usingSetFilter) {
-                    mergeFilterParams({
-                        valueFormatter: (params: ValueFormatterParams) => {
-                            const valueFormatted = formatValue(params);
-                            return _exists(valueFormatted) ? valueFormatted : translate('blanks', '(Blanks)');
-                        },
-                        treeList: true,
-                        treeListFormatter: (pathKey: string | null, level: number) => {
-                            if (pathKey === 'NaN') {
-                                return translate('invalidDate', 'Invalid Date');
-                            }
-                            if (level === 1 && pathKey != null) {
-                                const monthKey = MONTH_KEYS[Number(pathKey) - 1];
-                                return translate(monthKey, MONTH_LOCALE_TEXT[monthKey]);
-                            }
-                            return pathKey ?? translate('blanks', '(Blanks)');
-                        },
-                    });
-                } else {
-                    mergeFilterParams({ isValidDate });
-                }
-            },
-            dateString(): void {
-                const convertToDate = (dataTypeDefinition as DateStringDataTypeDefinition).dateParser!;
-                if (usingSetFilter) {
-                    mergeFilterParams({
-                        valueFormatter: (params: ValueFormatterParams) => {
-                            const valueFormatted = formatValue(params);
-                            return _exists(valueFormatted) ? valueFormatted : translate('blanks', '(Blanks)');
-                        },
-                        treeList: true,
-                        treeListPathGetter: (value: string | null) => {
-                            const date = convertToDate(value ?? undefined);
-                            return date
-                                ? [String(date.getFullYear()), String(date.getMonth() + 1), String(date.getDate())]
-                                : null;
-                        },
-                        treeListFormatter: (pathKey: string | null, level: number) => {
-                            if (level === 1 && pathKey != null) {
-                                const monthKey = MONTH_KEYS[Number(pathKey) - 1];
-                                return translate(monthKey, MONTH_LOCALE_TEXT[monthKey]);
-                            }
-                            return pathKey ?? translate('blanks', '(Blanks)');
-                        },
-                    });
-                } else {
-                    mergeFilterParams({
-                        comparator: (filterDate: Date, cellValue: string | undefined) => {
-                            const cellAsDate = convertToDate(cellValue)!;
-                            if (cellValue == null || cellAsDate < filterDate) {
-                                return -1;
-                            }
-                            if (cellAsDate > filterDate) {
-                                return 1;
-                            }
-                            return 0;
-                        },
-                        isValidDate: (value: any) => typeof value === 'string' && isValidDate(convertToDate(value)),
-                    });
-                }
-            },
-            dateTime(): void {
-                this.date();
-            },
-            dateTimeString(): void {
-                this.dateString();
-            },
-            object(): void {
-                if (usingSetFilter) {
-                    mergeFilterParams({
-                        valueFormatter: (params: ValueFormatterParams) => {
-                            const valueFormatted = formatValue(params);
-                            return _exists(valueFormatted) ? valueFormatted : translate('blanks', '(Blanks)');
-                        },
-                    });
-                } else {
-                    colDef.filterValueGetter = (params: ValueGetterParams) =>
-                        formatValue({
-                            column: params.column,
-                            node: params.node,
-                            value: self.beans.valueSvc.getValue(params.column as AgColumn, params.node),
-                        });
-                }
-            },
-            text(): void {},
-        };
-        cellEditorMap[dataTypeDefinition.baseDataType]();
+        const filterParamsOrNothing = this.cellEditorMap[dataTypeDefinition.baseDataType]({
+            dataTypeDefinition,
+            usingSetFilter: _isSetFilterByDefault(this.gos),
+            formatValue,
+            t: this.getLocaleTextFunc(),
+            valueSvc: this.beans.valueSvc,
+        });
+        if (filterParamsOrNothing) {
+            if (typeof filterParamsOrNothing === 'object') {
+                colDef.filterParams =
+                    typeof colDef.filterParams === 'object'
+                        ? { colDef, ...colDef.filterParams, ...filterParamsOrNothing }
+                        : { colDef, ...filterParamsOrNothing };
+            } else {
+                colDef.filterValueGetter = filterParamsOrNothing;
+            }
+        }
     }
 
     // additionalEventAttributes is used by provided simple floating filter, so it can add 'floatingFilter=true' to the event
