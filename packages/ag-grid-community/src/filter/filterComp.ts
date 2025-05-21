@@ -14,6 +14,7 @@ import type { FilterRequestSource } from './iColumnFilter';
 
 const FilterElement: ElementParams = { tag: 'div', cls: 'ag-filter' };
 
+/** Wraps column filters for use in menus, tool panel etc. */
 export class FilterComp extends Component {
     private wrapper: AgPromise<FilterDisplayWrapper> | null = null;
     private comp?: FilterWrapperComp;

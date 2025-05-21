@@ -21,6 +21,7 @@ import {
     updateGetValue,
 } from './multiFilterUtil';
 
+// This version of multi filter is only used when `enableFilterEvaluators = true`
 export class MultiFilterUi
     extends BaseMultiFilter<FilterDisplayComp>
     implements IComponent<IMultiFilterParams & FilterDisplayParams<any, any, IMultiFilterModel>>

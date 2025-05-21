@@ -53,6 +53,7 @@ interface MultiFilterWrapper {
 /** temporary type until `MultiFilterParams` is updated as breaking change */
 type MultiFilterDisplayParams = IMultiFilterParams & FilterDisplayParams<any, any, IMultiFilterModel>;
 
+// This version of multi filter is only used when `enableFilterEvaluators = false`
 export class MultiFilter extends BaseMultiFilter<MultiFilterWrapper> implements IFilterComp, IMultiFilter {
     public readonly filterType = 'multi' as const;
 
