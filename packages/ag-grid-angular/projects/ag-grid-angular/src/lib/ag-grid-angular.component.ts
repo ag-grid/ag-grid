@@ -151,6 +151,7 @@ import type {
     RangeSelectionChangedEvent,
     RedoEndedEvent,
     RedoStartedEvent,
+    ResetColumnsEvent,
     RowClassParams,
     RowClassRules,
     RowClickedEvent,
@@ -187,6 +188,7 @@ import type {
     StateUpdatedEvent,
     StatusPanelDef,
     StoreRefreshedEvent,
+    SuppressResetColumnsParams,
     TabToNextCellParams,
     TabToNextHeaderParams,
     Theme,
@@ -544,6 +546,10 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * @default false
      */
     @Input({ transform: booleanAttribute }) public suppressFieldDotNotation: boolean | undefined = undefined;
+    /** Return `true` to prevent column state from being reset when `api.resetColumnState` is called or "Reset Columns" is selected from the column header menu.
+     */
+    @Input() public suppressResetColumns: ((params: SuppressResetColumnsParams<TData>) => boolean) | undefined =
+        undefined;
     /** The height in pixels for the row containing the column label header. If not specified, it uses the theme value of `header-height`.
      */
     @Input() public headerHeight: number | undefined = undefined;
@@ -2032,6 +2038,11 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      */
     @Output() public columnEverythingChanged: EventEmitter<ColumnEverythingChangedEvent<TData>> = new EventEmitter<
         ColumnEverythingChangedEvent<TData>
+    >();
+    /** Columns have been reset to their default state as reflected by the colDefs.
+     */
+    @Output() public resetColumns: EventEmitter<ResetColumnsEvent<TData>> = new EventEmitter<
+        ResetColumnsEvent<TData>
     >();
     /** A mouse cursor is initially moved over a column header.
      */

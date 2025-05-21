@@ -79,6 +79,7 @@ import type {
     SizeColumnsToFitProvidedWidthStrategy,
     SortDirection,
     StatusPanelDef,
+    SuppressResetColumnsParams,
     TabToNextCellParams,
     TabToNextHeaderParams,
     Theme,
@@ -162,6 +163,7 @@ import type {
     RangeSelectionChangedEvent,
     RedoEndedEvent,
     RedoStartedEvent,
+    ResetColumnsEvent,
     RowClickedEvent,
     RowDataUpdatedEvent,
     RowDoubleClickedEvent,
@@ -376,6 +378,9 @@ export interface Props<TData> {
          * @default false
          */
     suppressFieldDotNotation?: boolean | undefined,
+    /** Return `true` to prevent column state from being reset when `api.resetColumnState` is called or "Reset Columns" is selected from the column header menu.
+         */
+    suppressResetColumns?: ((params: SuppressResetColumnsParams<TData>) => boolean) | undefined,
     /** The height in pixels for the row containing the column label header. If not specified, it uses the theme value of `header-height`.
          */
     headerHeight?: number | undefined,
@@ -1752,6 +1757,7 @@ export interface Props<TData> {
    'onDisplayed-columns-changed'?: DisplayedColumnsChangedEvent<TData>,
    'onVirtual-columns-changed'?: VirtualColumnsChangedEvent<TData>,
    'onColumn-everything-changed'?: ColumnEverythingChangedEvent<TData>,
+   'onReset-columns'?: ResetColumnsEvent<TData>,
    'onColumn-header-mouse-over'?: ColumnHeaderMouseOverEvent<TData>,
    'onColumn-header-mouse-leave'?: ColumnHeaderMouseLeaveEvent<TData>,
    'onColumn-header-clicked'?: ColumnHeaderClickedEvent<TData>,
@@ -1874,6 +1880,7 @@ export function getProps() {
         maintainColumnOrder: undefined,
         enableStrictPivotColumnOrder: undefined,
         suppressFieldDotNotation: undefined,
+        suppressResetColumns: undefined,
         headerHeight: undefined,
         groupHeaderHeight: undefined,
         floatingFiltersHeight: undefined,
@@ -2259,7 +2266,8 @@ export function getProps() {
         'onRow-drag-cancel': undefined,
         'onFind-changed': undefined,
         'onRow-resize-started': undefined,
-        'onRow-resize-ended': undefined
+        'onRow-resize-ended': undefined,
+        'onReset-columns': undefined
 // @END_EVENT_PROPS@
 
     };

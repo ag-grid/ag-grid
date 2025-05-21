@@ -889,6 +889,7 @@ export {
     UseGroupFooter,
     UseGroupTotalRow,
     GetChartMenuItems,
+    SuppressResetColumnsParams,
 } from './entities/gridOptions';
 export type { RowNumbersOptions, IRowNumbersRowResizeFeature } from './interfaces/rowNumbers';
 export type { ManagedGridOptionKey, ManagedGridOptions } from './gridOptionsInitial';
