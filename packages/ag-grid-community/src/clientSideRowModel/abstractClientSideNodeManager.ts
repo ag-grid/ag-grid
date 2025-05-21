@@ -45,10 +45,6 @@ export abstract class AbstractClientSideNodeManager<TData = any>
 
     public rootNode: AbstractClientSideNodeManager.RootNode<TData> | null = null;
 
-    public get skipGrouping(): boolean {
-        return false; // not supported by this node manager
-    }
-
     public getRowNode(id: string): RowNode | undefined {
         return this.allNodesMap[id];
     }

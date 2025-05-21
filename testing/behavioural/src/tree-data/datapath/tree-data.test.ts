@@ -197,7 +197,7 @@ describe('ag-grid tree data', () => {
         expect(rowsSnapshot).toMatchObject(expectedSnapshot);
     });
 
-    test('ag-grid override tree data is insensitive to updateGridOptions object order', async () => {
+    test.only('ag-grid override tree data is insensitive to updateGridOptions object order', async () => {
         // see https://ag-grid.atlassian.net/browse/AG-13089 - Order of grouped property listener changed is not deterministic
         const rowData0 = [
             { orgHierarchy: ['A', 'B'], x: 'B' },

@@ -300,7 +300,6 @@ export interface CoreBeanCollection {
     stickyRowSvc?: IStickyRowService;
     filterValueSvc?: FilterValueService;
     csrmNodeSvc?: IClientSideNodeManager;
-    csrmPathTreeNodeSvc?: IClientSideNodeManager;
     csrmChildrenTreeNodeSvc?: IClientSideNodeManager;
     cellFlashSvc?: CellFlashService;
     masterDetailSvc?: IMasterDetailService;
@@ -495,7 +494,6 @@ export type BeanName =
     | 'validationLogger'
     | 'validation'
     | 'csrmNodeSvc'
-    | 'csrmPathTreeNodeSvc'
     | 'csrmChildrenTreeNodeSvc'
     | 'rowSpanSvc'
     | 'spannedRowRenderer'

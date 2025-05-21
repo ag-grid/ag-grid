@@ -1,6 +1,16 @@
 import { _getLocaleTextFunc } from 'ag-grid-community';
 import type { BeanCollection, Column, GridOptionsService, RowNode } from 'ag-grid-community';
 
+export interface GroupingRowNode<TData = any> extends RowNode<TData> {
+    parent: GroupingRowNode<TData> | null;
+    allLeafChildren: GroupingRowNode<TData>[] | null;
+    childrenAfterGroup: GroupingRowNode<TData>[] | null;
+    treeParent: GroupingRowNode<TData> | null;
+    treeNodeFlags: number;
+    sibling: GroupingRowNode<TData>;
+    sourceRowIndex: number;
+}
+
 /**
  * Returns if the node and all of its parents are all firstChild until ancestor node is reached
  * This is to check for [groupHideOpenParents] where we only show the expand controls for first child of a group
@@ -51,4 +61,20 @@ export function _getGroupValue(
         }
     }
     return null;
+}
+
+export function _resetRowGroup<TData>(row: GroupingRowNode<TData>): void {
+    row.key = null;
+    row.treeNodeFlags = 0;
+    row.allChildrenCount = null;
+    row.allLeafChildren = null;
+    row.childrenAfterGroup = null;
+    row.childrenAfterAggFilter = null;
+    row.childrenAfterFilter = null;
+    row.childrenAfterSort = null;
+    row.childrenMapped = null;
+    row.level = 0;
+    if (row.groupData) {
+        row.groupData = null;
+    }
 }

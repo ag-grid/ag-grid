@@ -25,7 +25,7 @@ describe('ag-grid hierarchical tree expanded state', () => {
     });
 
     // Test for AG-12591
-    test('When removing a group and so it gets replaced by a filler node, its expanded state is retained', async () => {
+    test('When removing a group its expanded state is retained', async () => {
         const originalRowData = getOrgHierarchyData();
         let yooCounter = 0;
 

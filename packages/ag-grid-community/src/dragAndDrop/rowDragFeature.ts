@@ -1,7 +1,7 @@
 import { AutoScrollService } from '../autoScrollService';
 import { BeanStub } from '../context/beanStub';
 import { _getCellByPosition } from '../entities/positionUtils';
-import type { ITreeNode, RowNode } from '../entities/rowNode';
+import type { RowNode } from '../entities/rowNode';
 import type {
     RowDragCancelEvent,
     RowDragEndEvent,
@@ -41,7 +41,7 @@ export interface RowDropZoneEvents {
 }
 
 interface WritableRowNode extends RowNode {
-    treeNode: ITreeNode | RowNode | null;
+    treeParent: RowNode | null;
     sourceRowIndex: number;
 }
 
@@ -268,8 +268,8 @@ export class RowDragFeature extends BeanStub implements DropTarget {
 
         const groupingApproach = _getGroupingApproach(gos);
         const canSetParent =
-            // We don't yet support drag and drop with getDataPath or row grouping
-            (groupingApproach === 'treeSelfRef' || groupingApproach === 'treeNested') &&
+            // We don't yet support drag and drop with grouping
+            groupingApproach !== 'group' &&
             // We don't yet support moving tree rows from a different grid in a structured way
             sameGrid;
 
@@ -612,7 +612,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
                     if (wouldFormCycle(row, newParent)) {
                         rowsToMoveSet.delete(row); // Invalid move.
                     } else {
-                        row.treeNode = newParent;
+                        row.treeParent = newParent;
                         changed = true;
                     }
                 }

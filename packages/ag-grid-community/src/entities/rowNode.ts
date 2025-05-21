@@ -18,20 +18,6 @@ import { LocalEventService } from '../localEventService';
 import { _error, _warn } from '../validation/logging';
 import type { AgColumn } from './agColumn';
 
-/**
- * This is used only when using tree data.
- * Implementation in enterprise-modules/row-grouping/src/rowGrouping/groupStage/treeStrategy/treeNode.ts
- */
-export interface ITreeNode {
-    /** The key of this node */
-    readonly key: string;
-
-    /** Updated during commit to be the same as row.sourceRowIndex */
-    readonly sourceRowIndex: number;
-
-    invalidate(): void;
-}
-
 export const ROW_ID_PREFIX_ROW_GROUP = 'row-group-';
 export const ROW_ID_PREFIX_TOP_PINNED = 't-';
 export const ROW_ID_PREFIX_BOTTOM_PINNED = 'b-';
@@ -205,14 +191,13 @@ export class RowNode<TData = any>
     public childrenMapped: { [key: string]: any } | null = {};
 
     /**
-     * Used only by tree data internally.
-     * - Associated TreeNode if treeData with path
-     * - Parent RowNode if treeData with children, set by the ClientSideChildrenTreeNodeManager and processed by TreeGroupStrategy
-     * - Parent RowNode if treeData with parentId, set and processed by TreeGroupStrategy
+     * Parent RowNode for tree data.
+     * When set, during CSRM grouping the parent of the node in the hierarchy will be updated reflecting this.
+     * Used by the ClientSideChildrenTreeNodeManager, TreeGroupStrategy, RowDragFeature
      */
-    public readonly treeNode: ITreeNode | RowNode<TData> | null = null;
+    public readonly treeParent: RowNode<TData> | null = null;
 
-    /** The flags associated to this node. Used only with tree data. */
+    /** The flags associated to this node. Used only internally within TreeGroupStrategy. */
     public readonly treeNodeFlags: number = 0;
 
     /** Server Side Row Model Only - the children are in an infinite cache. */

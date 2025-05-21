@@ -138,14 +138,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
 
     private getNewNodeManager(): IClientSideNodeManager<any> {
         const { gos, beans } = this;
-        switch (_getGroupingApproach(gos)) {
-            case 'treeNested':
-                return beans.csrmChildrenTreeNodeSvc ?? beans.csrmNodeSvc!;
-            case 'treePath':
-                return beans.csrmPathTreeNodeSvc ?? beans.csrmNodeSvc!;
-            default:
-                return beans.csrmNodeSvc!;
-        }
+        return (_getGroupingApproach(gos) === 'treeNested' && beans.csrmChildrenTreeNodeSvc) || beans.csrmNodeSvc!;
     }
 
     private addPropertyListeners() {
@@ -659,8 +652,6 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
 
         const changedPath = (params.changedPath ??= this.createChangePath(!params.newData && !!params.rowDataUpdated));
 
-        this.nodeManager.refreshModel?.(params, this.started);
-
         this.eventSvc.dispatchEvent({ type: 'beforeRefreshModel', params });
 
         if (!this.started) {
@@ -992,10 +983,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
             afterColumnsChanged,
         });
 
-        if (
-            !groupStageExecuted &&
-            !this.nodeManager.skipGrouping // managed by the node manager
-        ) {
+        if (!groupStageExecuted) {
             const sibling: ClientSideRowModelRootNode = rootNode.sibling;
             rootNode.childrenAfterGroup = rootNode.allLeafChildren;
             if (sibling) {

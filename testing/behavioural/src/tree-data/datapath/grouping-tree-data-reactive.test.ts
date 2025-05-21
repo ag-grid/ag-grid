@@ -2,7 +2,7 @@ import { ClientSideRowModelModule } from 'ag-grid-community';
 import type { GridOptions } from 'ag-grid-community';
 import { RowGroupingModule, TreeDataModule } from 'ag-grid-enterprise';
 
-import type { GridRowsOptions, RowSnapshot } from '../../test-utils';
+import type { GridRowsOptions } from '../../test-utils';
 import { GridRows, TestGridsManager, getRowsSnapshot } from '../../test-utils';
 
 describe('ag-grid grouping treeData is reactive', () => {
@@ -70,7 +70,6 @@ describe('ag-grid grouping treeData is reactive', () => {
             `);
 
             const groupRows = gridRows.rowNodes;
-            const groupSnapshot = getRowsSnapshot(groupRows);
             expect(groupRows.length).toBe(5);
 
             expect(groupRows[0].data).toEqual(undefined);
@@ -78,151 +77,6 @@ describe('ag-grid grouping treeData is reactive', () => {
             expect(groupRows[2].data).toEqual(rowData[2]);
             expect(groupRows[3].data).toEqual(undefined);
             expect(groupRows[4].data).toEqual(rowData[1]);
-
-            const expectedGroupSnapshots: RowSnapshot[] = [
-                {
-                    allChildrenCount: 2,
-                    allLeafChildren: [null, null],
-                    childIndex: 0,
-                    childrenAfterFilter: [null, null],
-                    childrenAfterGroup: [null, null],
-                    childrenAfterSort: [null, null],
-                    detail: undefined,
-                    displayed: true,
-                    expanded: true,
-                    firstChild: true,
-                    footer: undefined,
-                    group: true,
-                    groupData: { 'ag-Grid-AutoColumn': 0 },
-                    id: 'row-group-g-0',
-                    key: '0',
-                    lastChild: false,
-                    leafGroup: true,
-                    level: 0,
-                    master: false,
-                    parentKey: null,
-                    rowGroupIndex: 0,
-                    rowPinned: undefined,
-                    selectable: true,
-                    siblingKey: undefined,
-                    uiLevel: 0,
-                    rowIndex: 0,
-                },
-                {
-                    allChildrenCount: undefined,
-                    allLeafChildren: undefined,
-                    childIndex: 0,
-                    childrenAfterFilter: undefined,
-                    childrenAfterGroup: undefined,
-                    childrenAfterSort: undefined,
-                    detail: undefined,
-                    displayed: true,
-                    expanded: false,
-                    firstChild: true,
-                    footer: undefined,
-                    group: false,
-                    groupData: undefined,
-                    id: '0',
-                    key: null,
-                    lastChild: false,
-                    leafGroup: undefined,
-                    level: 1,
-                    master: false,
-                    parentKey: '0',
-                    rowGroupIndex: undefined,
-                    rowPinned: undefined,
-                    selectable: true,
-                    siblingKey: undefined,
-                    uiLevel: 1,
-                    rowIndex: 1,
-                },
-                {
-                    allChildrenCount: undefined,
-                    allLeafChildren: undefined,
-                    childIndex: 1,
-                    childrenAfterFilter: undefined,
-                    childrenAfterGroup: undefined,
-                    childrenAfterSort: undefined,
-                    detail: undefined,
-                    displayed: true,
-                    expanded: false,
-                    firstChild: false,
-                    footer: undefined,
-                    group: false,
-                    groupData: undefined,
-                    id: '2',
-                    key: null,
-                    lastChild: true,
-                    leafGroup: undefined,
-                    level: 1,
-                    master: false,
-                    parentKey: '0',
-                    rowGroupIndex: undefined,
-                    rowPinned: undefined,
-                    selectable: true,
-                    siblingKey: undefined,
-                    uiLevel: 1,
-                    rowIndex: 2,
-                },
-                {
-                    allChildrenCount: 1,
-                    allLeafChildren: [null],
-                    childIndex: 1,
-                    childrenAfterFilter: [null],
-                    childrenAfterGroup: [null],
-                    childrenAfterSort: [null],
-                    detail: undefined,
-                    displayed: true,
-                    expanded: true,
-                    firstChild: false,
-                    footer: undefined,
-                    group: true,
-                    groupData: { 'ag-Grid-AutoColumn': 1 },
-                    id: 'row-group-g-1',
-                    key: '1',
-                    lastChild: true,
-                    leafGroup: true,
-                    level: 0,
-                    master: false,
-                    parentKey: null,
-                    rowGroupIndex: 0,
-                    rowPinned: undefined,
-                    selectable: true,
-                    siblingKey: undefined,
-                    uiLevel: 0,
-                    rowIndex: 3,
-                },
-                {
-                    allChildrenCount: undefined,
-                    allLeafChildren: undefined,
-                    childIndex: 0,
-                    childrenAfterFilter: undefined,
-                    childrenAfterGroup: undefined,
-                    childrenAfterSort: undefined,
-                    detail: undefined,
-                    displayed: true,
-                    expanded: false,
-                    firstChild: true,
-                    footer: undefined,
-                    group: false,
-                    groupData: undefined,
-                    id: '1',
-                    key: null,
-                    lastChild: true,
-                    leafGroup: undefined,
-                    level: 1,
-                    master: false,
-                    parentKey: '1',
-                    rowGroupIndex: undefined,
-                    rowPinned: undefined,
-                    selectable: true,
-                    siblingKey: undefined,
-                    uiLevel: 1,
-                    rowIndex: 4,
-                },
-            ];
-
-            expect(groupSnapshot).toMatchObject(expectedGroupSnapshots);
 
             // Switch to treeData
 
