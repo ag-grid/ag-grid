@@ -20,11 +20,8 @@ export class AgInputDateField extends AgInputTextField {
     constructor(config?: AgInputDateFieldParams) {
         const includeTime = DATETIME_FIELD_TYPES.includes(config?.cellDataType || '');
         const inputType = includeTime ? 'datetime-local' : 'date';
-        const extraAttributes: Record<string, string> = {};
-        if (includeTime) {
-            extraAttributes.step = '1';
-        }
-        super(config, 'ag-date-field', inputType, extraAttributes);
+
+        super(config, 'ag-date-field', inputType);
         this.includeTime = includeTime;
     }
 
@@ -44,6 +41,9 @@ export class AgInputDateField extends AgInputTextField {
             },
         });
         this.eInput.step = 'any';
+        if (this.includeTime) {
+            this.setStep(1);
+        }
     }
 
     private onWheel(e: WheelEvent) {
