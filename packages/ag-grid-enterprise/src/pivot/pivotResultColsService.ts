@@ -16,6 +16,7 @@ import type {
 import {
     BeanStub,
     _areEqual,
+    _createColumnTree,
     _createColumnTreeWithIds,
     _destroyColumnTree,
     _exists,
@@ -95,7 +96,9 @@ export class PivotResultColsService extends BeanStub implements NamedBean, IPivo
 
         if (colDefs) {
             this.processPivotResultColDef(colDefs);
-            const balancedTreeResult = _createColumnTreeWithIds(
+            // if the attempt has come from the API, can't guarantee the user has provided IDs.
+            const createColTreeFunc = source === 'api' ? _createColumnTree : _createColumnTreeWithIds;
+            const balancedTreeResult = createColTreeFunc(
                 this.beans,
                 colDefs,
                 false,

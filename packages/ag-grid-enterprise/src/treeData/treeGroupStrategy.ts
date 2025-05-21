@@ -456,7 +456,7 @@ const flagUpdatedNodes = <TData>(changedRowNodes: IChangedRowNodes<TData> | unde
     if (removals.size > 0) {
         hasUpdates = true;
         for (const node of removals) {
-            const childrenAfterGroup = node.childrenAfterGroup as GroupingRowNode<TData>[] | null;
+            const childrenAfterGroup: GroupingRowNode<TData>[] | null | undefined = node.childrenAfterGroup;
             if (childrenAfterGroup) {
                 for (let i = 0, len = childrenAfterGroup.length; i < len; ++i) {
                     childrenAfterGroup[i].treeNodeFlags |= FLAG_CHANGED;

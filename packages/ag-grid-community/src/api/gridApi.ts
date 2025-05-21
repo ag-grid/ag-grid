@@ -28,7 +28,7 @@ import type { ServerSideGroupLevelState } from '../interfaces/IServerSideStore';
 import type { AdvancedFilterModel } from '../interfaces/advancedFilterModel';
 import type { ISizeColumnsToFitParams } from '../interfaces/autoSize';
 import type { CsvExportParams } from '../interfaces/exportParams';
-import type { GridState } from '../interfaces/gridState';
+import type { GridState, GridStateKey } from '../interfaces/gridState';
 import type { RenderedRowEvent } from '../interfaces/iCallbackParams';
 import type { GetCellEditorInstancesParams, ICellEditor } from '../interfaces/iCellEditor';
 import type { CellPosition } from '../interfaces/iCellPosition';
@@ -1013,8 +1013,9 @@ export interface _StateGridApi {
      * Can be used in conjunction with `api.getState()` or `onStateUpdated` to save and restore grid state.
      * This method should only be used to restore state;
      * it should not be called on every state update (the grid does not support being used as a controlled component).
+     * @param propertiesToIgnore If supplied, the existing state of the provided properties will be maintained.
      */
-    setState(state: GridState): void;
+    setState(state: GridState, propertiesToIgnore?: GridStateKey[]): void;
 }
 
 export interface _PaginationGridApi {

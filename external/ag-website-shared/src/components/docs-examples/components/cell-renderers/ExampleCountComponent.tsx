@@ -7,26 +7,26 @@ export const ExampleCountComponent = (props: CustomHeaderProps) => {
     const [maxCount, setMaxCount] = useState(0);
 
     useEffect(() => {
-        const examples = new Set();
+        let numExamples = 0;
         props.api.forEachNode((rowNode) => {
             const exampleName = rowNode.data?.exampleName;
             if (exampleName) {
-                examples.add(exampleName);
+                numExamples++;
             }
         });
-        setMaxCount(examples.size);
+        setMaxCount(numExamples);
     }, []);
 
     useEffect(() => {
         const onFilterCountChanged = () => {
-            const examples = new Set();
+            let numExamples = 0;
             props.api.forEachNodeAfterFilter((rowNode) => {
                 const exampleName = rowNode.data?.exampleName;
                 if (exampleName) {
-                    examples.add(exampleName);
+                    numExamples++;
                 }
             });
-            setCount(examples.size);
+            setCount(numExamples);
         };
         props.api.addEventListener('filterChanged', onFilterCountChanged);
 
