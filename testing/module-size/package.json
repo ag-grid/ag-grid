@@ -17,8 +17,8 @@
     "ag-grid-react": "33.3.0",
     "ag-grid-community": "33.3.0",
     "ag-grid-enterprise": "33.3.0",
-    "ag-charts-community": "11.3.0-beta.20250518",
-    "ag-charts-enterprise": "11.3.0-beta.20250518",
+    "ag-charts-community": "11.3.0-beta.20250521",
+    "ag-charts-enterprise": "11.3.0-beta.20250521",
     "ag-shared": "0.0.1",
     "react": "^18.3.1",
     "react-dom": "^18.3.1"

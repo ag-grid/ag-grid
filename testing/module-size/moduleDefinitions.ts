@@ -79,7 +79,7 @@ export const AllEnterpriseModules: Record<`${EnterpriseModuleName}Module`, numbe
     SparklinesModule: 20,
     StatusBarModule: 27,
     TreeDataModule: 94.81,
-    ViewportRowModelModule: 26,
+    ViewportRowModelModule: 27,
 };
 
 export interface ModuleTest {
