@@ -314,7 +314,7 @@ export class AggregationStage extends BeanStub implements NamedBean, IRowNodeSta
                 }
 
                 // do a quick lookup - despite the event it's possible the column no longer exists
-                const column = this.colModel.getColById(colId)!;
+                const column = this.colModel.getColById(colId);
                 if (!column) {
                     return;
                 }
