@@ -8,14 +8,8 @@ function _padStartWidthZeros(value: number, totalStringSize: number): string {
  * @param date The date to serialise
  * @param includeTime Whether to include the time in the serialised string
  * @param dateSeparator The separator to use between date parts, e.g. 2025-01-01 or 2025/01/01
- * @param dateTimeSeparator  The separator to use between date and time parts, e.g. 2025-01-01 12:00:00 or 2025-01-01T12:00:00
  */
-export function _serialiseDate(
-    date: Date | null,
-    includeTime = true,
-    dateSeparator = '-',
-    dateTimeSeparator = ' '
-): string | null {
+export function _serialiseDate(date: Date | null, includeTime = true, dateSeparator = '-'): string | null {
     if (!date) {
         return null;
     }
@@ -26,7 +20,7 @@ export function _serialiseDate(
 
     if (includeTime) {
         serialised +=
-            dateTimeSeparator +
+            ' ' +
             [date.getHours(), date.getMinutes(), date.getSeconds()]
                 .map((part) => _padStartWidthZeros(part, 2))
                 .join(':');
@@ -102,10 +96,9 @@ export function _dateToFormattedString(date: Date, format: string = 'YYYY-MM-DD'
 
 /**
  * Executing this against date produces the following:
- * ["2008-08-24 03:46:08","2008","-","08","-","24"," 03:46:08"," ","03",":","46",":","08"]
- * [                   0,     1,  2,   3,  4,   5,          6,  7,   8,  9,  10, 11,  12] - indexes if you want to refer to a specific part
+ * ["2008-08-24 21:00:08"," 21:00:08"]
  */
-const DATE_TIME_REGEXP = /^(\d{4})(.)(\d{2})(.)(\d{2})((.)(\d{2})(.)(\d{2})(.)(\d{2}))?$/;
+const DATE_TIME_REGEXP = /^\d{4}.\d{2}.\d{2}(.\d{2}.\d{2}.\d{2})?$/;
 
 /**
  * Helper function to check if a date is valid. Use isValidDateTime() to check if a date is valid and has time parts.
@@ -114,6 +107,7 @@ export function isValidDate(value?: string | null): boolean {
     return !!_parseDateTimeFromString(value);
 }
 
+// check if dateTime is a valid date and has time parts
 export function isValidDateTime(value?: string | null): boolean {
     if (!value || !isValidDate(value)) {
         return false;
@@ -122,8 +116,7 @@ export function isValidDateTime(value?: string | null): boolean {
     if (!dateTime) {
         return false;
     }
-    // check if dateTime has time parts
-    return !!dateTime[6]; // matches the whole 'T14:22:19' part
+    return !!dateTime[1]; // matches the whole 'T14:22:19' part
 }
 
 /**
