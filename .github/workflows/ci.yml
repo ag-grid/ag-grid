@@ -592,3 +592,8 @@ jobs:
             --debug-channel "$SLACK_DEBUG_CHANNEL" \
             --run-context "$RUN_CONTEXT"
 
+      - name: Fail job if workflow failed
+        if: success() && steps.lastJobStatus.outputs.workflowStatus == 'failure'
+        run: |
+            echo "Workflow failed, failing the build."
+            exit 1
