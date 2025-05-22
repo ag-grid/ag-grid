@@ -26,7 +26,7 @@ const gridOptions = {
 }
 ```
 
-The following example demonstrates the six pre-defined cell data types (inferred from the row data):
+The following example demonstrates the eight pre-defined cell data types (inferred from the row data):
 
 * The **Athlete** column has a `'text'` data type.
 * The **Age** column has a `'number'` data type.
@@ -123,9 +123,9 @@ The following properties are set:
 
 ### DateTime
 
-The `'dateTime'` cell data type is used for date values that are represented as `Date` objects. The difference between this and the `'date'` cell data type is that the time is rendered with `'dateTime'`, while it is hidden with cell data type set to `'date'`.
+The `'dateTime'` cell data type is used for date and time values that are represented as `Date` objects. Unlike the `'date'` cell data type which only shows the date portion, `'dateTime'` displays both date and time components.
 
-This data type uses the ISO string format `'YYYY-MM-DD hh:mm:ss'`. If you wish to use a different date format, then you can [Override the Pre-Defined Cell Data Type Definition](#overriding-the-pre-defined-cell-data-type-definitions).
+This data type uses the string format `'YYYY-MM-DD hh:mm:ss'`. If you wish to use a different format, you can [Override the Pre-Defined Cell Data Type Definition](#overriding-the-pre-defined-cell-data-type-definitions).
 
 The following properties are set:
 
@@ -135,9 +135,9 @@ The following properties are set:
 
 ### DateTime as String
 
-The `'dateTimeString'` cell data type is used for date values that are represented as `string` values. The difference between this and the `'dateString'` cell data type is that the time is rendered with `'dateTimeString'`, while it is hidden with cell data type set to `'dateString'`.
+The `'dateTimeString'` cell data type is used for date and time values that are represented as `string` values. Unlike the `'dateString'` cell data type which only shows the date portion, `'dateTimeString'` displays both date and time components.
 
-This data type uses the ISO string format `'YYYY-MM-DD hh:mm:ss'`. If you wish to use a different date format, then you can [Override the Pre-Defined Cell Data Type Definition](#overriding-the-pre-defined-cell-data-type-definitions).
+This data type uses the string format `'YYYY-MM-DD hh:mm:ss'`. If you wish to use a different format, you can [Override the Pre-Defined Cell Data Type Definition](#overriding-the-pre-defined-cell-data-type-definitions).
 
 The following properties are set:
 
@@ -196,7 +196,7 @@ const gridOptions = {
 }
 ```
 
-Each custom data type definition must have a `baseDataType` of one of the six [Pre-Defined Cell Data Types](#pre-defined-cell-data-types), which represents the data type of the underlying cell values.
+Each custom data type definition must have a `baseDataType` of one of the eight [Pre-Defined Cell Data Types](#pre-defined-cell-data-types), which represents the data type of the underlying cell values.
 
 Data type definitions support inheritance via the `extendsDataType` property. Each custom cell data type must either extend one of the pre-defined types, or another custom type. Any non-overridden properties are inherited from the parent definition. To prevent inheriting properties from the parent definition, `suppressDefaultProperties = true` can be set on the definition.
 
@@ -257,8 +257,8 @@ The following example demonstrates overriding pre-defined cell data types:
 
 {% gridExampleRunner title="Overriding Pre-Defined Cell Data Types" name="overriding-pre-defined-cell-data-types" /%}
 
-### Date as String Data Type Definition
+### Specific case for Date and DateTime as String Data Type Definition
 
-If overriding `'dateString'` due to a different date format, then a couple of extra properties need to be set to handle conversion between `Date` objects and the desired `string` format.
+If overriding `'dateString'` or `'dateTimeString''` with a different date format, then a couple of extra properties need to be set to handle conversion between `Date` objects and the desired `string` format.
 
 {% interfaceDocumentation interfaceName="DateStringDataTypeDefinition" names=["dateParser", "dateFormatter"] config={"description":""} /%}
