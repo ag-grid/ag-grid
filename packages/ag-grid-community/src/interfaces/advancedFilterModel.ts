@@ -38,10 +38,10 @@ export interface TextAdvancedFilterModel {
     filterType: 'text';
     /** The ID of the column being filtered. */
     colId: string;
-    /** The value to filter on. This is the same value as displayed in the input. */
-    filter?: string;
     /** The filter option that is being applied. */
     type: TextAdvancedFilterModelType;
+    /** The value to filter on. This is the same value as displayed in the input. */
+    filter?: string;
 }
 
 /** Represents a single filter condition for a number column */
@@ -62,7 +62,7 @@ export interface DateAdvancedFilterModel {
     colId: string;
     /** The filter option that is being applied. */
     type: ScalarAdvancedFilterModelType;
-    /** The value to filter on. This is the same value as displayed in the input. */
+    /** The value to filter on. This is in format `YYYY-MM-DD`. */
     filter?: string;
 }
 
@@ -73,7 +73,7 @@ export interface DateStringAdvancedFilterModel {
     colId: string;
     /** The filter option that is being applied. */
     type: ScalarAdvancedFilterModelType;
-    /** The value to filter on. This is the same value as displayed in the input. */
+    /** The value to filter on. This is in format `YYYY-MM-DD`. */
     filter?: string;
 }
 
@@ -103,7 +103,7 @@ interface DateTimeAdvancedFilterModel {
     colId: string;
     /** The filter option that is being applied. */
     type: ScalarAdvancedFilterModelType;
-    /** The value to filter on. This is the same value as displayed in the input. */
+    /** The value to filter on. This is in format `YYYY-MM-DD HH:mm:ss`. */
     filter?: string;
 }
 
@@ -113,7 +113,7 @@ interface DateTimeStringAdvancedFilterModel {
     colId: string;
     /** The filter option that is being applied. */
     type: ScalarAdvancedFilterModelType;
-    /** The value to filter on. This is the same value as displayed in the input. */
+    /** The value to filter on. This is in format `YYYY-MM-DD HH:mm:ss`. */
     filter?: string;
 }
 
