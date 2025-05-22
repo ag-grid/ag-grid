@@ -33,17 +33,11 @@ export type ScalarAdvancedFilterModelType =
 
 export type BooleanAdvancedFilterModelType = 'true' | 'false';
 
-interface BaseAdvancedFilterModel {
-    filterType: BaseCellDataType;
+/** Represents a single filter condition for a text column */
+export interface TextAdvancedFilterModel {
+    filterType: 'text';
     /** The ID of the column being filtered. */
     colId: string;
-    /** The filter option that is being applied. */
-    type: TextAdvancedFilterModelType | ScalarAdvancedFilterModelType | BooleanAdvancedFilterModelType;
-}
-
-/** Represents a single filter condition for a text column */
-export interface TextAdvancedFilterModel extends BaseAdvancedFilterModel {
-    filterType: 'text';
     /** The value to filter on. This is the same value as displayed in the input. */
     filter?: string;
     /** The filter option that is being applied. */
@@ -51,8 +45,10 @@ export interface TextAdvancedFilterModel extends BaseAdvancedFilterModel {
 }
 
 /** Represents a single filter condition for a number column */
-export interface NumberAdvancedFilterModel extends BaseAdvancedFilterModel {
+export interface NumberAdvancedFilterModel {
     filterType: 'number';
+    /** The ID of the column being filtered. */
+    colId: string;
     /** The filter option that is being applied. */
     type: ScalarAdvancedFilterModelType;
     /** The value to filter on. */
@@ -60,8 +56,10 @@ export interface NumberAdvancedFilterModel extends BaseAdvancedFilterModel {
 }
 
 /** Represents a single filter condition for a date column */
-export interface DateAdvancedFilterModel extends BaseAdvancedFilterModel {
+export interface DateAdvancedFilterModel {
     filterType: 'date';
+    /** The ID of the column being filtered. */
+    colId: string;
     /** The filter option that is being applied. */
     type: ScalarAdvancedFilterModelType;
     /** The value to filter on. This is the same value as displayed in the input. */
@@ -69,8 +67,10 @@ export interface DateAdvancedFilterModel extends BaseAdvancedFilterModel {
 }
 
 /** Represents a single filter condition for a date string column */
-export interface DateStringAdvancedFilterModel extends BaseAdvancedFilterModel {
+export interface DateStringAdvancedFilterModel {
     filterType: 'dateString';
+    /** The ID of the column being filtered. */
+    colId: string;
     /** The filter option that is being applied. */
     type: ScalarAdvancedFilterModelType;
     /** The value to filter on. This is the same value as displayed in the input. */
@@ -78,38 +78,46 @@ export interface DateStringAdvancedFilterModel extends BaseAdvancedFilterModel {
 }
 
 /** Represents a single filter condition for a boolean column */
-export interface BooleanAdvancedFilterModel extends BaseAdvancedFilterModel {
+export interface BooleanAdvancedFilterModel {
     filterType: 'boolean';
+    /** The ID of the column being filtered. */
+    colId: string;
     /** The filter option that is being applied. */
     type: BooleanAdvancedFilterModelType;
 }
 
 /** Represents a single filter condition for an object column */
-export interface ObjectAdvancedFilterModel extends BaseAdvancedFilterModel {
+export interface ObjectAdvancedFilterModel {
     filterType: 'object';
+    /** The ID of the column being filtered. */
+    colId: string;
     /** The value to filter on. This is the same value as displayed in the input. */
     filter?: string;
     /** The filter option that is being applied. */
     type: TextAdvancedFilterModelType;
 }
 
-interface DateTimeAdvancedFilterModel extends BaseAdvancedFilterModel {
+interface DateTimeAdvancedFilterModel {
     filterType: 'dateTime';
+    /** The ID of the column being filtered. */
+    colId: string;
     /** The filter option that is being applied. */
     type: ScalarAdvancedFilterModelType;
     /** The value to filter on. This is the same value as displayed in the input. */
     filter?: string;
 }
 
-interface DateTimeStringAdvancedFilterModel extends BaseAdvancedFilterModel {
+interface DateTimeStringAdvancedFilterModel {
     filterType: 'dateTimeString';
+    /** The ID of the column being filtered. */
+    colId: string;
     /** The filter option that is being applied. */
     type: ScalarAdvancedFilterModelType;
     /** The value to filter on. This is the same value as displayed in the input. */
     filter?: string;
 }
 
-type FilterModelDefMap = {
+type FilterModelDefMap = CheckDataTypes<{
     boolean: BooleanAdvancedFilterModel;
     object: ObjectAdvancedFilterModel;
     date: DateAdvancedFilterModel;
@@ -118,10 +126,7 @@ type FilterModelDefMap = {
     dateTimeString: DateTimeStringAdvancedFilterModel;
     number: NumberAdvancedFilterModel;
     text: TextAdvancedFilterModel;
-};
-
-/**  Throws an error if not all data type keys are present in FilterModelDefMap */
-type EnforcedFilterModelDefMap = CheckDataTypes<FilterModelDefMap>;
+}>;
 
 /** Represents a single filter condition on a column */
-export type ColumnAdvancedFilterModel = EnforcedFilterModelDefMap[keyof EnforcedFilterModelDefMap];
+export type ColumnAdvancedFilterModel = FilterModelDefMap[keyof FilterModelDefMap];
