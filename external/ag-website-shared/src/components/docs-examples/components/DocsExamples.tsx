@@ -33,7 +33,8 @@ export type ExampleProperty =
     | 'isIntegratedCharts'
     | 'isLocale'
     | 'hasExampleConsoleLog'
-    | 'hasExampleControls';
+    | 'hasExampleControls'
+    | 'hasSimpleHtml';
 
 export interface Props {
     library: Library;
@@ -117,6 +118,12 @@ const ALL_PROPERTIES: (ColDef & {
     {
         field: 'hasExampleControls',
         headerName: 'Controls',
+        enableRowGroup: true,
+        minWidth: 115,
+    },
+    {
+        field: 'hasSimpleHtml',
+        headerName: 'Simple HTML',
         enableRowGroup: true,
         minWidth: 115,
     },

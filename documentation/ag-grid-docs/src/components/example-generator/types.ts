@@ -17,6 +17,7 @@ export interface GeneratedContents {
     isLocale?: boolean;
     isIntegratedCharts?: boolean;
     hasExampleConsoleLog?: boolean;
+    hasSimpleHtml?: boolean;
     boilerPlateFiles: FileContents;
     packageJson: Record<string, string>;
     extras?: string[];

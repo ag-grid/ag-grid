@@ -20,6 +20,7 @@ import {
     getBoilerPlateFiles,
     getEntryFileName,
     getHasExampleConsoleLog,
+    getHasSimpleHtml,
     getIsEnterprise,
     getIsLocale,
     getMainFileName,
@@ -199,6 +200,7 @@ export async function generateFiles(options: ExecutorOptions, gridOptionsTypes: 
         ].some((file: string) => {
             return getHasExampleConsoleLog({ contents: file });
         });
+        const hasSimpleHtml = getHasSimpleHtml({ contents: indexHtml });
 
         const transformEntryFile: TransformEntryFile = ({ entryFile }) => {
             let transformedEntryFile = entryFile;
@@ -271,6 +273,7 @@ export async function generateFiles(options: ExecutorOptions, gridOptionsTypes: 
             isLocale,
             isIntegratedCharts,
             hasExampleConsoleLog,
+            hasSimpleHtml,
             entryFileName,
             mainFileName,
             sourceFileList,
