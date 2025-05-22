@@ -101,7 +101,7 @@
     height: 30px;
     padding: 0 10px;
     user-select: none;
-    border-top: solid 1px var(--ag-border-color);
+    border-top: solid var(--ag-border-width) var(--ag-border-color);
 }
 
 .ag-chart-settings-card-selector {
@@ -200,13 +200,13 @@
 
 .ag-chart-mini-thumbnail {
     cursor: pointer;
-    border: solid 1px var(--ag-border-color);
+    border: solid var(--ag-border-width) var(--ag-border-color);
     border-radius: 5px;
     padding: 1px;
 
     &.ag-selected {
         border-color: var(--ag-accent-color);
-        border-width: 2px;
+        border-width: calc(var(--ag-border-width) + 1px);
         padding: unset;
     }
 
@@ -252,7 +252,7 @@
 .ag-chart-advanced-settings-section {
     display: flex;
     margin: 0;
-    border-bottom: 1px solid var(--ag-border-color);
+    border-bottom: solid var(--ag-border-width) var(--ag-border-color);
     padding-top: var(--ag-widget-container-vertical-padding);
     padding-bottom: var(--ag-widget-container-vertical-padding);
 }
@@ -383,7 +383,7 @@
 }
 
 .ag-chart-menu-panel {
-    border-left: solid 1px var(--ag-border-color);
+    border-left: solid var(--ag-border-width) var(--ag-border-color);
 
     /* this is a hack to set the panel background color, because agPanel.css
        is injected after this file and the default panel background is
@@ -433,7 +433,7 @@
 
 .ag-charts-format-top-level-group,
 .ag-charts-data-group {
-    border-top: solid 1px var(--ag-border-color);
+    border-top: solid var(--ag-border-width) var(--ag-border-color);
 }
 
 :where(.ag-charts-format-top-level-group) .ag-charts-format-top-level-group-container,

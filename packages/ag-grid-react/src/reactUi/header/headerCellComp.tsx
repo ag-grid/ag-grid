@@ -39,6 +39,14 @@ const HeaderCellComp = ({ ctrl }: { ctrl: HeaderCellCtrl }) => {
             return;
         }
 
+        const refreshSelectAllGui = () => {
+            const selectAllGui = ctrl.getSelectAllGui();
+            if (selectAllGui) {
+                eResize.current?.insertAdjacentElement('afterend', selectAllGui);
+                compBean.current!.addDestroyFunc(() => selectAllGui.remove());
+            }
+        };
+
         const compProxy: IHeaderCellComp = {
             setWidth: (width: string) => {
                 if (eGui.current) {
@@ -54,15 +62,13 @@ const HeaderCellComp = ({ ctrl }: { ctrl: HeaderCellCtrl }) => {
             },
             setUserCompDetails: (compDetails: UserCompDetails) => setUserCompDetails(compDetails),
             getUserCompInstance: () => userCompRef.current || undefined,
+            refreshSelectAllGui,
+            removeSelectAllGui: () => ctrl.getSelectAllGui()?.remove(),
         };
 
         ctrl.setComp(compProxy, eRef, eResize.current!, eHeaderCompWrapper.current!, compBean.current);
 
-        const selectAllGui = ctrl.getSelectAllGui();
-        if (selectAllGui) {
-            eResize.current?.insertAdjacentElement('afterend', selectAllGui);
-            compBean.current!.addDestroyFunc(() => selectAllGui.remove());
-        }
+        refreshSelectAllGui();
     }, []);
 
     // js comps

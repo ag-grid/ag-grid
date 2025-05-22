@@ -51,7 +51,7 @@
 .ag-menu-separator-part::after {
     content: '';
     display: block;
-    border-top: solid 1px var(--ag-menu-separator-color);
+    border-top: solid var(--ag-border-width) var(--ag-menu-separator-color);
 }
 
 .ag-menu-option-active,

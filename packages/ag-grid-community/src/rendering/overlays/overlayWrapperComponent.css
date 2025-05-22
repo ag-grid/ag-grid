@@ -27,7 +27,7 @@
 }
 
 .ag-overlay-loading-center {
-    border: solid 1px var(--ag-border-color);
+    border: solid var(--ag-border-width) var(--ag-border-color);
     background: var(--ag-background-color);
     border-radius: var(--ag-border-radius);
     box-shadow: var(--ag-popup-shadow);
