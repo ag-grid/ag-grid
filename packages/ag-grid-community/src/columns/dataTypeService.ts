@@ -6,7 +6,7 @@ import type { AgColumn } from '../entities/agColumn';
 import type { ColDef, SuppressKeyboardEventParams, ValueFormatterFunc, ValueFormatterParams } from '../entities/colDef';
 import type {
     BaseCellDataType,
-    BaseCellDataTypeDefMap,
+    CoreDataTypeDefMap,
     CoreDataTypeDefinition,
     DataTypeDefinition,
     DataTypeFormatValueFunc,
@@ -142,10 +142,7 @@ export class DataTypeService extends BeanStub implements NamedBean {
      * Sorts the keys in the matchers object.
      * Does not mutate the original object, creates a copy of it with sorted keys instead.
      */
-    private sortKeysInMatchers<T extends Record<BaseCellDataType, any>>(
-        matchers: T,
-        dataTypes: BaseCellDataTypeDefMap
-    ) {
+    private sortKeysInMatchers<T extends Record<BaseCellDataType, any>>(matchers: T, dataTypes: CoreDataTypeDefMap) {
         const sortedMatchers = {} as T;
         for (const cellDataType of SORTED_CELL_DATA_TYPES_FOR_MATCHING) {
             sortedMatchers[cellDataType] = matchers[cellDataType] ?? dataTypes[cellDataType].dataTypeMatcher;
@@ -591,7 +588,7 @@ export class DataTypeService extends BeanStub implements NamedBean {
                 return _serialiseDate(params.value, this.getDateIncludesTimeFlag(baseDataType)) ?? '';
             },
             dataTypeMatcher: (value: any) => value instanceof Date,
-        } as BaseCellDataTypeDefMap[T];
+        } as CoreDataTypeDefMap[T];
     }
 
     private getDateStringTypeDef<T extends BaseCellDataType, TData>(baseDataType: T) {
@@ -605,10 +602,10 @@ export class DataTypeService extends BeanStub implements NamedBean {
             valueFormatter: (params: ValueFormatterLiteParams<any, string>) =>
                 isValidDate(String(params.value)) ? params.value : '',
             dataTypeMatcher: (value: any) => typeof value === 'string' && isValidDate(value),
-        } as BaseCellDataTypeDefMap<TData>[T];
+        } as CoreDataTypeDefMap<TData>[T];
     }
 
-    private getDefaultDataTypes(): BaseCellDataTypeDefMap {
+    private getDefaultDataTypes(): CoreDataTypeDefMap {
         const translate = this.getLocaleTextFunc();
 
         return {
