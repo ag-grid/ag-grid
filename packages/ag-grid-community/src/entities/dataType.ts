@@ -144,7 +144,7 @@ export type CheckDataTypes<Obj extends Record<K, any>, K extends keyof any = Bas
     ? Obj
     : never;
 
-type _DataTypeDefMap<TData = any, TValue = any> = {
+type _DataTypeDefMap<TData = any, TValue = any> = CheckDataTypes<{
     text: TextDataTypeDefinition<TData>;
     number: NumberDataTypeDefinition<TData>;
     boolean: BooleanDataTypeDefinition<TData>;
@@ -153,18 +153,18 @@ type _DataTypeDefMap<TData = any, TValue = any> = {
     dateTime: DateTimeDataTypeDefinition<TData>;
     dateTimeString: DateTimeStringDataTypeDefinition<TData>;
     object: ObjectDataTypeDefinition<TData, TValue>;
-};
-
-export type CoreDataTypeDefMap<TData = any, TValue = any> = CheckDataTypes<{
-    [K in keyof _DataTypeDefMap<TData, TValue>]: Omit<_DataTypeDefMap<TData, TValue>[K], 'extendsDataType'>;
 }>;
+
+export type CoreDataTypeDefMap<TData = any, TValue = any> = {
+    [K in BaseCellDataType]: Omit<_DataTypeDefMap<TData, TValue>[K], 'extendsDataType'>;
+};
 
 type ValueOf<T> = T[keyof T];
 
 /** Configuration options for a cell data type. */
-export type DataTypeDefinition<TData = any> = ValueOf<_DataTypeDefMap<TData>>;
+export type DataTypeDefinition<TData = any, TValue = any> = ValueOf<_DataTypeDefMap<TData, TValue>>;
 
 /** Configuration options for pre-defined data types. */
-export type CoreDataTypeDefinition<TData = any> = ValueOf<CoreDataTypeDefMap<TData>>;
+export type CoreDataTypeDefinition<TData = any, TValue = any> = ValueOf<CoreDataTypeDefMap<TData, TValue>>;
 
 export type DataTypeFormatValueFunc = (params: { column: Column; node: IRowNode | null; value: any }) => string;

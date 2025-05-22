@@ -572,7 +572,7 @@ export class DataTypeService extends BeanStub implements NamedBean {
         this.beans.filterManager?.setColDefPropertiesForDataType(colDef, dataTypeDefinition, formatValue);
     }
 
-    private getDateObjectTypeDef<T extends BaseCellDataType>(baseDataType: T) {
+    private getDateObjectTypeDef<T extends 'date' | 'dateTime'>(baseDataType: T) {
         const translate = this.getLocaleTextFunc();
         return {
             baseDataType,
@@ -588,10 +588,10 @@ export class DataTypeService extends BeanStub implements NamedBean {
                 return _serialiseDate(params.value, this.getDateIncludesTimeFlag(baseDataType)) ?? '';
             },
             dataTypeMatcher: (value: any) => value instanceof Date,
-        } as CoreDataTypeDefMap[T];
+        };
     }
 
-    private getDateStringTypeDef<T extends BaseCellDataType, TData>(baseDataType: T) {
+    private getDateStringTypeDef<T extends 'dateString' | 'dateTimeString'>(baseDataType: T) {
         return {
             baseDataType,
             dateParser: (value: string | undefined) => _parseDateTimeFromString(value) ?? undefined,
@@ -600,9 +600,9 @@ export class DataTypeService extends BeanStub implements NamedBean {
             valueParser: (params: ValueParserLiteParams<any, string>) =>
                 isValidDate(String(params.newValue)) ? params.newValue : null,
             valueFormatter: (params: ValueFormatterLiteParams<any, string>) =>
-                isValidDate(String(params.value)) ? params.value : '',
+                isValidDate(String(params.value)) ? String(params.value) : '',
             dataTypeMatcher: (value: any) => typeof value === 'string' && isValidDate(value),
-        } as CoreDataTypeDefMap<TData>[T];
+        };
     }
 
     private getDefaultDataTypes(): CoreDataTypeDefMap {
