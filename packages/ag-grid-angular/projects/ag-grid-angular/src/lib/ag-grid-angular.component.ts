@@ -521,7 +521,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Input() public columnTypes: { [key: string]: ColTypeDef<TData> } | undefined = undefined;
     /** An object map of cell data types to their definitions.
      * Cell data types can either override/update the pre-defined data types
-     * (`'text'`, `'number'`,  `'boolean'`,  `'date'`,  `'dateString'` or  `'object'`),
+     * (`'text'`, `'number'`, `'boolean'`, `'date'`, `'dateString'`, `'dateTime'`, `'dateTimeString'` or `'object'`),
      * or can be custom data types.
      */
     @Input() public dataTypeDefinitions:

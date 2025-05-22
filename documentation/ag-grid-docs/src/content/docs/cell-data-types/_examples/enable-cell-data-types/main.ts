@@ -46,8 +46,8 @@ const gridOptions: GridOptions<IOlympicDataTypes> = {
         { field: 'hasSilver', minWidth: 100, headerName: 'Silver', cellRendererParams: { disabled: true } },
         { field: 'dateObject', headerName: 'Date' },
         { field: 'date', headerName: 'Date (String)' },
-        { field: 'dateTime', headerName: 'DateTime', cellDataType: 'dateTime', minWidth: 280 },
-        { field: 'dateTimeString', headerName: 'DateTime (String)', minWidth: 280 },
+        { field: 'dateTime', headerName: 'DateTime', cellDataType: 'dateTime', minWidth: 250 },
+        { field: 'dateTimeString', headerName: 'DateTime (String)', minWidth: 250 },
         { field: 'countryObject', headerName: 'Country' },
     ],
     defaultColDef: {

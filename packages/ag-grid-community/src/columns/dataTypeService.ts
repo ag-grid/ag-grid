@@ -35,7 +35,7 @@ interface GroupSafeValueFormatter {
 }
 
 type DataTypeDefinitions = {
-    [cellDataType: string]: (DataTypeDefinition | CoreDataTypeDefinition) & GroupSafeValueFormatter;
+    [cellDataType: BaseCellDataType | string]: (DataTypeDefinition | CoreDataTypeDefinition) & GroupSafeValueFormatter;
 };
 
 /**
@@ -88,9 +88,7 @@ export class DataTypeService extends BeanStub implements NamedBean {
     private processDataTypeDefinitions(): void {
         const defaultDataTypes = this.getDefaultDataTypes();
         const newDataTypeDefinitions: DataTypeDefinitions = {};
-        this.dataTypeDefinitions = newDataTypeDefinitions;
         const newFormatValueFuncs: { [cellDataType: string]: DataTypeFormatValueFunc } = {};
-        this.formatValueFuncs = newFormatValueFuncs;
         const generateFormatValueFunc = (
             dataTypeDefinition: (DataTypeDefinition | CoreDataTypeDefinition) & GroupSafeValueFormatter
         ): DataTypeFormatValueFunc => {
@@ -105,36 +103,41 @@ export class DataTypeService extends BeanStub implements NamedBean {
         };
 
         for (const cellDataType of Object.keys(defaultDataTypes) as BaseCellDataType[]) {
-            const dataTypeDefinition = defaultDataTypes[cellDataType];
+            const defaultDataTypeDef = defaultDataTypes[cellDataType];
             const mergedDataTypeDefinition = {
-                ...dataTypeDefinition,
-                groupSafeValueFormatter: createGroupSafeValueFormatter(dataTypeDefinition, this.gos),
+                ...defaultDataTypeDef,
+                groupSafeValueFormatter: createGroupSafeValueFormatter(defaultDataTypeDef, this.gos),
             };
             newDataTypeDefinitions[cellDataType] = mergedDataTypeDefinition;
             newFormatValueFuncs[cellDataType] = generateFormatValueFunc(mergedDataTypeDefinition);
         }
 
-        const dataTypeDefinitions = this.gos.get('dataTypeDefinitions') ?? {};
+        const userDataTypeDefs = this.gos.get('dataTypeDefinitions') ?? {};
         const newDataTypeMatchers = {} as { [cellDataType in BaseCellDataType]: ((value: any) => boolean) | undefined };
 
-        for (const cellDataType of Object.keys(dataTypeDefinitions) as BaseCellDataType[]) {
-            const dataTypeDefinition = dataTypeDefinitions[cellDataType];
+        for (const cellDataType of Object.keys(userDataTypeDefs) as BaseCellDataType[]) {
+            const userDataTypeDef = userDataTypeDefs[cellDataType];
             const mergedDataTypeDefinition = this.processDataTypeDefinition(
-                dataTypeDefinition,
-                dataTypeDefinitions,
+                userDataTypeDef,
+                userDataTypeDefs,
                 [cellDataType],
                 defaultDataTypes
             );
             if (mergedDataTypeDefinition) {
                 newDataTypeDefinitions[cellDataType] = mergedDataTypeDefinition;
-                if (dataTypeDefinition.dataTypeMatcher) {
-                    newDataTypeMatchers[cellDataType] = dataTypeDefinition.dataTypeMatcher;
+                if (userDataTypeDef.dataTypeMatcher) {
+                    newDataTypeMatchers[cellDataType] = userDataTypeDef.dataTypeMatcher;
                 }
                 newFormatValueFuncs[cellDataType] = generateFormatValueFunc(mergedDataTypeDefinition);
             }
         }
 
-        this.checkObjectValueHandlers(defaultDataTypes);
+        [this.hasObjectValueParser, this.hasObjectValueFormatter] = this.checkObjectValueHandlers(
+            defaultDataTypes.object,
+            newDataTypeDefinitions.object
+        );
+        this.formatValueFuncs = newFormatValueFuncs;
+        this.dataTypeDefinitions = newDataTypeDefinitions;
         this.dataTypeMatchers = this.sortKeysInMatchers(newDataTypeMatchers, defaultDataTypes);
     }
 
@@ -142,57 +145,58 @@ export class DataTypeService extends BeanStub implements NamedBean {
      * Sorts the keys in the matchers object.
      * Does not mutate the original object, creates a copy of it with sorted keys instead.
      */
-    private sortKeysInMatchers<T extends Record<BaseCellDataType, any>>(matchers: T, dataTypes: CoreDataTypeDefMap) {
-        const sortedMatchers = {} as T;
+    private sortKeysInMatchers(matchers: Record<string, any>, dataTypes: CoreDataTypeDefMap) {
+        const sortedMatchers = { ...matchers };
         for (const cellDataType of SORTED_CELL_DATA_TYPES_FOR_MATCHING) {
+            delete sortedMatchers[cellDataType];
             sortedMatchers[cellDataType] = matchers[cellDataType] ?? dataTypes[cellDataType].dataTypeMatcher;
         }
         return sortedMatchers;
     }
 
     private processDataTypeDefinition(
-        dataTypeDefinition: DataTypeDefinition,
-        dataTypeDefinitions: { [key: string]: DataTypeDefinition },
+        userDataTypeDef: DataTypeDefinition,
+        userDataTypeDefs: { [key: string]: DataTypeDefinition },
         alreadyProcessedDataTypes: string[],
         defaultDataTypes: { [key: string]: CoreDataTypeDefinition }
     ): (DataTypeDefinition & GroupSafeValueFormatter) | undefined {
         let mergedDataTypeDefinition: DataTypeDefinition;
-        const extendsCellDataType = dataTypeDefinition.extendsDataType;
+        const extendsCellDataType = userDataTypeDef.extendsDataType;
 
-        if (dataTypeDefinition.columnTypes) {
+        if (userDataTypeDef.columnTypes) {
             this.isColumnTypeOverrideInDataTypeDefinitions = true;
         }
 
-        if (dataTypeDefinition.extendsDataType === dataTypeDefinition.baseDataType) {
+        if (userDataTypeDef.extendsDataType === userDataTypeDef.baseDataType) {
             let baseDataTypeDefinition = defaultDataTypes[extendsCellDataType];
-            const overriddenBaseDataTypeDefinition = dataTypeDefinitions[extendsCellDataType];
+            const overriddenBaseDataTypeDefinition = userDataTypeDefs[extendsCellDataType];
             if (baseDataTypeDefinition && overriddenBaseDataTypeDefinition) {
                 // only if it's valid do we override with a provided one
                 baseDataTypeDefinition = overriddenBaseDataTypeDefinition;
             }
-            if (!validateDataTypeDefinition(dataTypeDefinition, baseDataTypeDefinition, extendsCellDataType)) {
+            if (!validateDataTypeDefinition(userDataTypeDef, baseDataTypeDefinition, extendsCellDataType)) {
                 return undefined;
             }
-            mergedDataTypeDefinition = mergeDataTypeDefinitions(baseDataTypeDefinition, dataTypeDefinition);
+            mergedDataTypeDefinition = mergeDataTypeDefinitions(baseDataTypeDefinition, userDataTypeDef);
         } else {
             if (alreadyProcessedDataTypes.includes(extendsCellDataType)) {
                 _warn(44);
                 return undefined;
             }
-            const extendedDataTypeDefinition = dataTypeDefinitions[extendsCellDataType];
-            if (!validateDataTypeDefinition(dataTypeDefinition, extendedDataTypeDefinition, extendsCellDataType)) {
+            const extendedDataTypeDefinition = userDataTypeDefs[extendsCellDataType];
+            if (!validateDataTypeDefinition(userDataTypeDef, extendedDataTypeDefinition, extendsCellDataType)) {
                 return undefined;
             }
             const mergedExtendedDataTypeDefinition = this.processDataTypeDefinition(
                 extendedDataTypeDefinition,
-                dataTypeDefinitions,
+                userDataTypeDefs,
                 [...alreadyProcessedDataTypes, extendsCellDataType],
                 defaultDataTypes
             );
             if (!mergedExtendedDataTypeDefinition) {
                 return undefined;
             }
-            mergedDataTypeDefinition = mergeDataTypeDefinitions(mergedExtendedDataTypeDefinition, dataTypeDefinition);
+            mergedDataTypeDefinition = mergeDataTypeDefinitions(mergedExtendedDataTypeDefinition, userDataTypeDef);
         }
 
         return {
@@ -418,13 +422,11 @@ export class DataTypeService extends BeanStub implements NamedBean {
         return true;
     }
 
-    private checkObjectValueHandlers(defaultDataTypes: { [key: string]: CoreDataTypeDefinition }): void {
-        const resolvedObjectDataTypeDefinition = this.dataTypeDefinitions.object;
-        const defaultObjectDataTypeDefinition = defaultDataTypes.object;
-        this.hasObjectValueParser =
-            resolvedObjectDataTypeDefinition.valueParser !== defaultObjectDataTypeDefinition.valueParser;
-        this.hasObjectValueFormatter =
-            resolvedObjectDataTypeDefinition.valueFormatter !== defaultObjectDataTypeDefinition.valueFormatter;
+    private checkObjectValueHandlers(
+        { valueParser: defaultValueParser, valueFormatter: defaultValueFormatter }: CoreDataTypeDefinition,
+        { valueParser: resolvedValueParser, valueFormatter: resolvedValueFormatter }: CoreDataTypeDefinition
+    ) {
+        return [resolvedValueParser !== defaultValueParser, resolvedValueFormatter !== defaultValueFormatter];
     }
 
     private getDateStringTypeDefinition(column?: AgColumn | null): DateStringDataTypeDefinition {
