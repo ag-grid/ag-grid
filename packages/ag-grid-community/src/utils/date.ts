@@ -121,6 +121,10 @@ export function isValidDateTime(value?: string | null): boolean {
 
 /**
  * Parses a date and time from a string in any format Date() can accept.
+ *
+ * Per MDN:
+ *   When the time zone offset is absent, **date-only** forms are interpreted as a UTC time and **date-time** forms are interpreted as a local time.
+ *   The interpretation as a UTC time is due to a historical spec error that was not consistent with ISO 8601 but could not be changed due to web compatibility.
  */
 export function _parseDateTimeFromString(value?: string | null): Date | null {
     if (!value) {

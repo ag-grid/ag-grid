@@ -670,7 +670,7 @@ export class DataTypeService extends BeanStub implements NamedBean {
 
     public override destroy(): void {
         this.dataTypeDefinitions = {};
-        this.dataTypeMatchers = {} as typeof this.dataTypeMatchers;
+        this.dataTypeMatchers = {};
         this.formatValueFuncs = {};
         this.columnStateUpdatesPendingInference = {};
         this.destroyColumnStateUpdateListeners();

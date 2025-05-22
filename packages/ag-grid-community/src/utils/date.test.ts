@@ -9,21 +9,21 @@ describe('_serialiseDate', () => {
         const date = new Date(2020, 2, 27, 14, 22, 19);
         const result = _serialiseDate(date);
 
-        expect(result).toBe('2020-03-27T14:22:19');
+        expect(result).toBe('2020-03-27 14:22:19');
     });
 
     it('can serialise with a different separator', () => {
         const date = new Date(2020, 2, 27, 14, 22, 19);
         const result = _serialiseDate(date, true, '/');
 
-        expect(result).toBe('2020/03/27T14:22:19');
+        expect(result).toBe('2020/03/27 14:22:19');
     });
 
     it('pads parts to two digits', () => {
         const date = new Date(2020, 2, 4, 3, 7, 2);
         const result = _serialiseDate(date, true, '/');
 
-        expect(result).toBe('2020/03/04T03:07:02');
+        expect(result).toBe('2020/03/04 03:07:02');
     });
 
     it('will not include time if instructed', () => {
@@ -40,6 +40,14 @@ describe('_parseDateTimeFromString', () => {
         const result = _parseDateTimeFromString(value);
 
         expect(result).toStrictEqual(new Date(2020, 2, 27));
+    });
+
+    it('parses date in local timezone', () => {
+        process.env.TZ = 'America/Toronto';
+        const value = '2020-03-27';
+        const result = _parseDateTimeFromString(value);
+
+        expect(result?.getTime()).toStrictEqual(1585267200000); //todo check this
     });
 
     it.each([null, '2017-00-04', '2017-13-05'])('returns null if invalid value supplied: %s', (value) => {

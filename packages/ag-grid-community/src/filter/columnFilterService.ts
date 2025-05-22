@@ -6,7 +6,7 @@ import {
 } from '../components/framework/userCompUtils';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
-import type { BeanName } from '../context/context';
+import type { BeanName, UserComponentName } from '../context/context';
 import type { AgColumn } from '../entities/agColumn';
 import type { ColDef, ValueFormatterParams, ValueGetterParams } from '../entities/colDef';
 import type {
@@ -458,44 +458,39 @@ export class ColumnFilterService extends BeanStub implements NamedBean {
         return this.allColumnFilters.get(column.getColId());
     }
 
-    private getDefaultFilter(column: AgColumn): string {
-        const { gos, dataTypeSvc } = this.beans;
-        if (_isSetFilterByDefault(gos)) {
-            return 'agSetColumnFilter';
-        }
-        switch (dataTypeSvc?.getBaseDataType(column)) {
-            case 'number': {
-                return 'agNumberColumnFilter';
-            }
-            case 'dateTime':
-            case 'dateTimeString':
-            case 'date':
-            case 'dateString': {
-                return 'agDateColumnFilter';
-            }
-            default:
-                return 'agTextColumnFilter';
-        }
+    private defaultFilters: Record<BaseCellDataType | 'set', UserComponentName> = {
+        boolean: 'agTextColumnFilter',
+        date: 'agDateColumnFilter',
+        dateString: 'agDateColumnFilter',
+        dateTime: 'agDateColumnFilter',
+        dateTimeString: 'agDateColumnFilter',
+        number: 'agNumberColumnFilter',
+        object: 'agTextColumnFilter',
+        set: 'agSetColumnFilter',
+        text: 'agTextColumnFilter',
+    };
+
+    private defaultFloatingFilters: Record<BaseCellDataType | 'set', UserComponentName> = {
+        boolean: 'agTextColumnFloatingFilter',
+        date: 'agDateColumnFloatingFilter',
+        dateString: 'agDateColumnFloatingFilter',
+        dateTime: 'agDateColumnFloatingFilter',
+        dateTimeString: 'agDateColumnFloatingFilter',
+        number: 'agNumberColumnFloatingFilter',
+        object: 'agTextColumnFloatingFilter',
+        set: 'agSetColumnFloatingFilter',
+        text: 'agTextColumnFloatingFilter',
+    };
+
+    private getDefaultFilter(column: AgColumn, isFloating: boolean = false): string {
+        const filterSet = isFloating ? this.defaultFloatingFilters : this.defaultFilters;
+        const baseDataType = this.beans.dataTypeSvc?.getBaseDataType(column) ?? 'text';
+
+        return filterSet[_isSetFilterByDefault(this.beans.gos) ? 'set' : baseDataType];
     }
 
     public getDefaultFloatingFilter(column: AgColumn): string {
-        const { gos, dataTypeSvc } = this.beans;
-        if (_isSetFilterByDefault(gos)) {
-            return 'agSetColumnFloatingFilter';
-        }
-        switch (dataTypeSvc?.getBaseDataType(column)) {
-            case 'number': {
-                return 'agNumberColumnFloatingFilter';
-            }
-            case 'dateTime':
-            case 'dateTimeString':
-            case 'date':
-            case 'dateString': {
-                return 'agDateColumnFloatingFilter';
-            }
-            default:
-                return 'agTextColumnFloatingFilter';
-        }
+        return this.getDefaultFilter(column, true);
     }
 
     private createFilterInstance(
