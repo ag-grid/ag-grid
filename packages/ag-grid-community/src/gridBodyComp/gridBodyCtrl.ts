@@ -334,23 +334,31 @@ export class GridBodyCtrl extends BeanStub {
     }
 
     private addBodyViewportListener(): void {
-        const { popupSvc, touchSvc } = this.beans;
+        const {
+            eBodyViewport,
+            eStickyTop,
+            eStickyBottom,
+            eTop,
+            eBottom,
+            beans: { popupSvc, touchSvc },
+        } = this;
         // we want to listen for clicks directly on the eBodyViewport, so the user has a way of showing
         // the context menu if no rows or columns are displayed, or user simply clicks outside of a cell
         const listener = this.onBodyViewportContextMenu.bind(this);
-        this.addManagedElementListeners(this.eBodyViewport, { contextmenu: listener });
+        this.addManagedElementListeners(eBodyViewport, { contextmenu: listener });
         touchSvc?.mockBodyContextMenu(this, listener);
 
-        this.addManagedElementListeners(this.eBodyViewport, {
+        this.addManagedElementListeners(eBodyViewport, {
             wheel: this.onBodyViewportWheel.bind(this, popupSvc),
         });
-        const onStickyWheel = this.onStickyWheel.bind(this);
-        this.addManagedElementListeners(this.eStickyTop, { wheel: onStickyWheel });
-        this.addManagedElementListeners(this.eStickyBottom, { wheel: onStickyWheel });
-        this.addManagedElementListeners(this.eTop, { wheel: onStickyWheel });
-        this.addManagedElementListeners(this.eBottom, { wheel: onStickyWheel });
 
-        const onHorizontalWheel = (e: WheelEvent) => this.onStickyWheel(e, true);
+        const onStickyWheel = this.onStickyWheel.bind(this);
+
+        for (const container of [eStickyTop, eStickyBottom, eTop, eBottom]) {
+            this.addManagedElementListeners(container, { wheel: onStickyWheel });
+        }
+
+        const onHorizontalWheel = this.onHorizontalWheel.bind(this);
         for (const container of ['left', 'right', 'topLeft', 'topRight', 'bottomLeft', 'bottomRight'] as const) {
             this.addManagedElementListeners(this.ctrlsSvc.get(container).eContainer, {
                 wheel: onHorizontalWheel,
@@ -376,24 +384,23 @@ export class GridBodyCtrl extends BeanStub {
         }
     }
 
-    private onStickyWheel(e: WheelEvent, allowHorizontalScroll = false): void {
+    private onStickyWheel(e: WheelEvent): void {
+        const { deltaY } = e;
+
+        e.preventDefault();
+        this.scrollVertically(deltaY);
+    }
+
+    private onHorizontalWheel(e: WheelEvent): void {
         const { deltaX, deltaY, shiftKey } = e;
 
         const isHorizontalScroll = shiftKey || Math.abs(deltaX) > Math.abs(deltaY);
 
-        // we test for shift key because some devices will
-        // only change deltaY even when scrolling horizontally
-        const target = e.target as HTMLElement;
         if (!isHorizontalScroll) {
-            e.preventDefault();
-            this.scrollVertically(deltaY);
-        } else if (
-            this.eStickyTopFullWidthContainer.contains(target) ||
-            this.eStickyBottomFullWidthContainer.contains(target) ||
-            allowHorizontalScroll
-        ) {
-            this.scrollGridBodyToMatchEvent(e);
+            return;
         }
+
+        this.scrollGridBodyToMatchEvent(e);
     }
 
     private scrollGridBodyToMatchEvent(e: WheelEvent): void {
