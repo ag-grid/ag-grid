@@ -7,7 +7,7 @@ import type { AgColumn } from '../entities/agColumn';
 import type { AgColumnGroup } from '../entities/agColumnGroup';
 import type { ColumnEventType } from '../events';
 import type { HeaderGroupCellCtrl } from '../headerRendering/cells/columnGroup/headerGroupCellCtrl';
-import type { IColumnLimit, ISizeColumnsToFitParams } from '../interfaces/autoSize';
+import type { IColumnLimit, ISizeColumnsToFitParams, SizeColumnsToContentColumnLimits } from '../interfaces/autoSize';
 import { _removeFromArray } from '../utils/array';
 import { _getInnerWidth } from '../utils/dom';
 import { _warn } from '../validation/logging';
@@ -31,6 +31,9 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
         skipHeader?: boolean;
         skipHeaderGroups?: boolean;
         stopAtGroup?: AgColumnGroup;
+        defaultMinWidth?: number;
+        defaultMaxWidth?: number;
+        columnLimits?: SizeColumnsToContentColumnLimits[];
         source?: ColumnEventType;
     }): void {
         if (this.shouldQueueResizeOperations) {

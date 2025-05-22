@@ -26,7 +26,7 @@ import type {
 import type { CellRange, CellRangeParams } from '../interfaces/IRangeService';
 import type { ServerSideGroupLevelState } from '../interfaces/IServerSideStore';
 import type { AdvancedFilterModel } from '../interfaces/advancedFilterModel';
-import type { ISizeColumnsToFitParams } from '../interfaces/autoSize';
+import type { ISizeColumnsToFitParams, SizeColumnsToContentStrategy } from '../interfaces/autoSize';
 import type { CsvExportParams } from '../interfaces/exportParams';
 import type { GridState, GridStateKey } from '../interfaces/gridState';
 import type { RenderedRowEvent } from '../interfaces/iCallbackParams';
@@ -573,6 +573,7 @@ export interface _ColumnAutosizeApi {
      * To always perform this synchronously, set `cellDataType = false` on the default column definition.
      * @agModule `ColumnAutoSizeModule`
      */
+    autoSizeColumns(params: SizeColumnsToContentStrategy): void;
     autoSizeColumns(keys: (string | ColDef | Column)[], skipHeader?: boolean): void;
 
     /**

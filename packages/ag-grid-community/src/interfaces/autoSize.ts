@@ -44,6 +44,8 @@ export interface SizeColumnsToFitProvidedWidthStrategy {
     width: number;
 }
 
+export type SizeColumnsToContentColumnLimits = SizeColumnsToFitGridColumnLimits;
+
 /**
  * Auto-size columns to fit their cell contents.
  *
@@ -55,4 +57,10 @@ export interface SizeColumnsToContentStrategy {
     skipHeader?: boolean;
     /** If not provided will auto-size all columns. Otherwise will size the specified columns. */
     colIds?: string[];
+    /** Default minimum width for every column (does not override the column minimum width). */
+    defaultMinWidth?: number;
+    /** Default maximum width for every column (does not override the column maximum width). */
+    defaultMaxWidth?: number;
+    /** Provide to limit specific column widths when sizing. */
+    columnLimits?: SizeColumnsToContentColumnLimits[];
 }

@@ -44,6 +44,7 @@ export {
 export type { SelectionColService } from './columns/selectionColService';
 export {
     SizeColumnsToFitGridColumnLimits,
+    SizeColumnsToContentColumnLimits,
     SizeColumnsToContentStrategy,
     SizeColumnsToFitProvidedWidthStrategy,
     SizeColumnsToFitGridStrategy,
