@@ -996,7 +996,25 @@ export class ColumnFilterService extends BeanStub implements NamedBean {
             };
         },
         dateTime(args) {
-            return this.date(args);
+            // todo!!!!
+            const convertToDate = (args.dataTypeDefinition as DateStringDataTypeDefinition).dateParser!;
+
+            return {
+                ...this.date(args),
+                treeListPathGetter: (value: string | null) => {
+                    const date = convertToDate(value ?? undefined);
+                    return date
+                        ? [
+                              String(date.getFullYear()),
+                              String(date.getMonth() + 1),
+                              String(date.getDate()),
+                              String(date.getHours()),
+                              String(date.getMinutes()),
+                              String(date.getSeconds()),
+                          ]
+                        : null;
+                },
+            };
         },
         dateTimeString(args) {
             const convertToDate = (args.dataTypeDefinition as DateStringDataTypeDefinition).dateParser!;
