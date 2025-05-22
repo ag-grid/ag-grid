@@ -41,7 +41,16 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
             return;
         }
 
-        const { colKeys, skipHeader, skipHeaderGroups, stopAtGroup, source = 'api' } = params;
+        const {
+            colKeys,
+            skipHeader,
+            skipHeaderGroups,
+            stopAtGroup,
+            defaultMaxWidth,
+            defaultMinWidth,
+            columnLimits = [],
+            source = 'api',
+        } = params;
         // because of column virtualisation, we can only do this function on columns that are
         // actually rendered, as non-rendered columns (outside the viewport and not rendered
         // due to column virtualisation) are not present. this can result in all rendered columns
@@ -75,6 +84,9 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
         // initialise with anything except 0 so that while loop executes at least once
         let changesThisTimeAround = -1;
 
+        const columnLimitsIndex = Object.fromEntries(
+            columnLimits.map(({ colId, maxWidth, minWidth }) => [colId, { maxWidth, minWidth }])
+        );
         const shouldSkipHeader = skipHeader != null ? skipHeader : this.gos.get('skipHeaderOnAutoSize');
         const shouldSkipHeaderGroups = skipHeaderGroups != null ? skipHeaderGroups : shouldSkipHeader;
 
@@ -102,7 +114,10 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
 
                 // preferredWidth = -1 if this col is not on the screen
                 if (preferredWidth > 0) {
-                    const newWidth = normaliseColumnWidth(column, preferredWidth);
+                    const columnLimit = columnLimitsIndex[column.colId];
+                    columnLimit.minWidth ??= defaultMinWidth;
+                    columnLimit.maxWidth ??= defaultMaxWidth;
+                    const newWidth = normaliseColumnWidth(column, preferredWidth, columnLimit);
                     column.setActualWidth(newWidth, source);
                     columnsAutoSized.push(column);
                     changesThisTimeAround++;
@@ -490,14 +505,18 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
 }
 
 /** returns the width we can set to this col, taking into consideration min and max widths */
-function normaliseColumnWidth(column: AgColumn, newWidth: number): number {
-    const minWidth = column.getMinWidth();
+function normaliseColumnWidth(
+    column: AgColumn,
+    newWidth: number,
+    limits: { minWidth?: number; maxWidth?: number } = {}
+): number {
+    const minWidth = limits.minWidth ?? column.getMinWidth();
 
     if (newWidth < minWidth) {
         newWidth = minWidth;
     }
 
-    const maxWidth = column.getMaxWidth();
+    const maxWidth = limits.maxWidth ?? column.getMaxWidth();
     if (column.isGreaterThanMax(newWidth)) {
         newWidth = maxWidth;
     }
