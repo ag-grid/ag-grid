@@ -18,6 +18,7 @@ import type {
 import type { RowNode } from '../entities/rowNode';
 import type { ColumnEventType, FilterChangedEventSourceType } from '../events';
 import { _addGridCommonParams, _getGroupAggFiltering, _isSetFilterByDefault } from '../gridOptionsUtils';
+import type { FilterModelDefMap } from '../interfaces/advancedFilterModel';
 import type { FilterModel, IFilter, IFilterComp, IFilterParams } from '../interfaces/iFilter';
 import type { UserCompDetails } from '../interfaces/iUserCompDetails';
 import { _exists, _jsonEquals } from '../utils/generic';
@@ -889,7 +890,7 @@ export class ColumnFilterService extends BeanStub implements NamedBean {
 
     // using an object here to enforce dev to not forget to implement new types as they are added
     private filterParamsForEachDataType: Record<
-        BaseCellDataType,
+        keyof FilterModelDefMap,
         (args: {
             formatValue: DataTypeFormatValueFunc;
             t: ReturnType<ColumnFilterService['getLocaleTextFunc']>;

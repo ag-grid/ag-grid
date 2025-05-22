@@ -156,7 +156,7 @@ type _DataTypeDefMap<TData = any, TValue = any> = CheckDataTypes<{
 }>;
 
 export type CoreDataTypeDefMap<TData = any, TValue = any> = {
-    [K in BaseCellDataType]: Omit<_DataTypeDefMap<TData, TValue>[K], 'extendsDataType'>;
+    [K in keyof _DataTypeDefMap]: Omit<_DataTypeDefMap<TData, TValue>[K], 'extendsDataType'>;
 };
 
 type ValueOf<T> = T[keyof T];

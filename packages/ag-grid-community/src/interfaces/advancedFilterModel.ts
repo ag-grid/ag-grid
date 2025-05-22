@@ -97,7 +97,7 @@ export interface ObjectAdvancedFilterModel {
     type: TextAdvancedFilterModelType;
 }
 
-interface DateTimeAdvancedFilterModel {
+export interface DateTimeAdvancedFilterModel {
     filterType: 'dateTime';
     /** The ID of the column being filtered. */
     colId: string;
@@ -107,7 +107,7 @@ interface DateTimeAdvancedFilterModel {
     filter?: string;
 }
 
-interface DateTimeStringAdvancedFilterModel {
+export interface DateTimeStringAdvancedFilterModel {
     filterType: 'dateTimeString';
     /** The ID of the column being filtered. */
     colId: string;
@@ -117,7 +117,7 @@ interface DateTimeStringAdvancedFilterModel {
     filter?: string;
 }
 
-type FilterModelDefMap = CheckDataTypes<{
+export type FilterModelDefMap = CheckDataTypes<{
     boolean: BooleanAdvancedFilterModel;
     object: ObjectAdvancedFilterModel;
     date: DateAdvancedFilterModel;
