@@ -120,8 +120,9 @@ export function isValidDateTime(value?: string | null): boolean {
 }
 
 /**
- * Parses a date and time from a string in any format Date() can accept.
+ * Parses a date and time from a string. Expected format is `yyyy-MM-dd` or `yyyy-MM-dd HH:mm:ss`.
  *
+ * Because of javascript historical reasons, we need to parse the datetime manually:
  * Per MDN:
  *   When the time zone offset is absent, **date-only** forms are interpreted as a UTC time and **date-time** forms are interpreted as a local time.
  *   The interpretation as a UTC time is due to a historical spec error that was not consistent with ISO 8601 but could not be changed due to web compatibility.
@@ -130,9 +131,44 @@ export function _parseDateTimeFromString(value?: string | null): Date | null {
     if (!value) {
         return null;
     }
-    const date = new Date(value);
-    if (isNaN(date.getTime())) {
+
+    const [dateStr, timeStr] = value.split(' ');
+
+    if (!dateStr) {
         return null;
     }
+
+    const fields = dateStr.split('-').map((f) => parseInt(f, 10));
+
+    if (fields.filter((f) => !isNaN(f)).length !== 3) {
+        return null;
+    }
+
+    const [year, month, day] = fields;
+    const date = new Date(year, month - 1, day);
+
+    if (date.getFullYear() !== year || date.getMonth() !== month - 1 || date.getDate() !== day) {
+        // date was not parsed as expected so must have been invalid
+        return null;
+    }
+
+    if (!timeStr || timeStr === '00:00:00') {
+        return date;
+    }
+
+    const [hours, minutes, seconds] = timeStr.split(':').map((part) => parseInt(part, 10));
+
+    if (hours >= 0 && hours < 24) {
+        date.setHours(hours);
+    }
+
+    if (minutes >= 0 && minutes < 60) {
+        date.setMinutes(minutes);
+    }
+
+    if (seconds >= 0 && seconds < 60) {
+        date.setSeconds(seconds);
+    }
+
     return date;
 }

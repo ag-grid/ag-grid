@@ -42,28 +42,23 @@ describe('_parseDateTimeFromString', () => {
         expect(result).toStrictEqual(new Date(2020, 2, 27));
     });
 
-    it('parses date in local timezone', () => {
-        process.env.TZ = 'America/Toronto';
-        const value = '2020-03-27';
-        const result = _parseDateTimeFromString(value);
-
-        expect(result?.getTime()).toStrictEqual(1585267200000); //todo check this
-    });
-
-    it.each([null, '2017-00-04', '2017-13-05'])('returns null if invalid value supplied: %s', (value) => {
-        expect(_parseDateTimeFromString(value)).toBeNull();
-    });
+    it.each([null, '2017', '2017-', '2017-03', '2017-03-', '2017-00-04', '2017-13-05', '2017-02-30'])(
+        'returns null if invalid value supplied: %s',
+        (value) => {
+            expect(_parseDateTimeFromString(value)).toBeNull();
+        }
+    );
 
     it('can parse date with time', () => {
-        const value = '2020-03-30T14:19:34';
+        const value = '2020-03-30 14:19:34';
         const result = _parseDateTimeFromString(value);
 
         expect(result).toStrictEqual(new Date(2020, 2, 30, 14, 19, 34));
     });
 
-    it.each(['25:61:61', '-1:-1:-1'])('returns null if invalid time supplied: %s', (value) => {
-        const result = _parseDateTimeFromString('2020-03-30T' + value);
+    it.each(['25:61:61', '-1:-1:-1'])('ignores invalid time parts: %s', (value) => {
+        const result = _parseDateTimeFromString('2020-03-30 ' + value);
 
-        expect(result).toStrictEqual(null);
+        expect(result).toStrictEqual(new Date(2020, 2, 30));
     });
 });
