@@ -26,14 +26,14 @@ const gridOptions = {
 }
 ```
 
-The following example demonstrates the pre-defined cell data types (inferred from the row data):
+The following example demonstrates the pre-defined cell data types (most of which are inferred from the row data):
 
 * The **Athlete** column has a `'text'` data type.
 * The **Age** column has a `'number'` data type.
 * The **Gold** column has a `'boolean'` data type.
 * The **Date** column has a `'date'` data type (cell values are `Date` objects).
 * The **Date (String)** column has a `'dateString'` data type (cell values are `string`s representing dates).
-* The **DateTime** column has a `'dateTime'` data type (cell values are `Date` objects).
+* The **DateTime** column has a `'dateTime'` data type (cell values are `Date` objects, [and developer has to explicitly set `cellDataType: 'dateTime'`](#enable-cell-data-types), otherwise data type is set to just `'date'`).
 * The **DateTime (String)** column has a `'dateTimeString'` data type (cell values are `string`s representing dates).
 * The **Country** column has an `'object'` data type. This also [Overrides the Pre-Defined Cell Data Type Definition](#overriding-the-pre-defined-cell-data-type-definitions) so that the value parser and formatter work with the object structure.
 
@@ -44,6 +44,10 @@ The following example demonstrates the pre-defined cell data types (inferred fro
 By default, the grid will infer cell data types the first time that row data is passed into the grid.
 
 For inference to work for a column, it must contain non-null values and have the `field` property set. The resolved column definition (including the default column definition and column types) must also not have the Value Getter, Value Parser or reference data properties set, or be using [Sparklines](./sparklines-overview/). If these conditions are not met, no cell data type will be set (it will need to be defined directly on the column if desired).
+
+{% note %}
+Because `'dateTime'` corresponds to cell values that are `Date` objects, there is no easy way to tell them apart from regular `'date'` columns. If you wish to enable `'dateTime'`'s higher precision fields, please [explicitly specify `cellDataType: 'dateTime'`](#enable-cell-data-types) in the corresponding `columnDefs` entry. 
+{% /note %}
 
 Data type inference can be disabled by setting `cellDataType = false` on an individual column, or for all columns on the [Default Column Definition](./column-definitions/#default-column-definitions).
 
