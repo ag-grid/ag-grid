@@ -43,6 +43,7 @@ import { DragAndDropImageComponentWrapper } from '../shared/customComp/dragAndDr
 import { FilterComponentWrapper } from '../shared/customComp/filterComponentWrapper';
 import { FilterDisplayComponentWrapper } from '../shared/customComp/filterDisplayComponentWrapper';
 import { FloatingFilterComponentWrapper } from '../shared/customComp/floatingFilterComponentWrapper';
+import { FloatingFilterDisplayComponentWrapper } from '../shared/customComp/floatingFilterDisplayComponentWrapper';
 import { InnerHeaderComponentWrapper } from '../shared/customComp/innerHeaderComponentWrapper';
 import { LoadingOverlayComponentWrapper } from '../shared/customComp/loadingOverlayComponentWrapper';
 import { MenuItemComponentWrapper } from '../shared/customComp/menuItemComponentWrapper';
@@ -275,16 +276,19 @@ class ReactFrameworkComponentWrapper
     }
 
     protected createWrapper(UserReactComponent: { new (): any }, componentType: ComponentType): WrappableInterface {
-        const reactiveCustomComponents = _getGridOption(this.gridOptions, 'reactiveCustomComponents');
+        const gridOptions = this.gridOptions;
+        const reactiveCustomComponents = _getGridOption(gridOptions, 'reactiveCustomComponents');
         if (reactiveCustomComponents) {
             const getComponentClass = (propertyName: string) => {
                 switch (propertyName) {
                     case 'filter':
-                        return _getGridOption(this.gridOptions, 'enableFilterEvaluators')
+                        return _getGridOption(gridOptions, 'enableFilterEvaluators')
                             ? FilterDisplayComponentWrapper
                             : FilterComponentWrapper;
                     case 'floatingFilterComponent':
-                        return FloatingFilterComponentWrapper;
+                        return _getGridOption(gridOptions, 'enableFilterEvaluators')
+                            ? FloatingFilterDisplayComponentWrapper
+                            : FloatingFilterComponentWrapper;
                     case 'dateComponent':
                         return DateComponentWrapper;
                     case 'dragAndDropImageComponent':

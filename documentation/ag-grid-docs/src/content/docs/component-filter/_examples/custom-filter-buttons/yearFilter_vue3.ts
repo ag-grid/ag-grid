@@ -43,4 +43,7 @@ export default {
             }
         },
     },
+    mounted: function () {
+        this.refresh(this.params);
+    },
 };

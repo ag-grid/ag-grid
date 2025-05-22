@@ -16,7 +16,7 @@ export interface IFloatingFilterParent {
 type InbuiltParentType = IFloatingFilterParent & IFilter;
 export type IFloatingFilterParentCallback<P = InbuiltParentType> = (parentFilterInstance: P) => void;
 
-interface SharedFloatingFilter<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
+interface SharedFloatingFilterParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
     /** The column this filter is for. */
     column: Column;
 
@@ -27,7 +27,7 @@ interface SharedFloatingFilter<TData = any, TContext = any> extends AgGridCommon
 }
 
 export interface IFloatingFilterParams<P = InbuiltParentType, TData = any, TContext = any>
-    extends SharedFloatingFilter<TData, TContext> {
+    extends SharedFloatingFilterParams<TData, TContext> {
     /**
      * The params object passed to the filter.
      * This is to allow the floating filter access to the configuration of the parent filter.
@@ -59,7 +59,7 @@ export interface IFloatingFilterParams<P = InbuiltParentType, TData = any, TCont
 }
 
 export interface FloatingFilterDisplayParams<TData = any, TContext = any, TModel = any, TCustomParams = object>
-    extends SharedFloatingFilter<TData, TContext> {
+    extends SharedFloatingFilterParams<TData, TContext> {
     /**
      * The params object passed to the filter.
      * This is to allow the floating filter access to the configuration of the parent filter.
@@ -91,7 +91,6 @@ export interface FloatingFilterDisplayParams<TData = any, TContext = any, TModel
 export interface BaseFloatingFilter {
     /**
      * Optional: A hook to perform any necessary operation just after the GUI for this component has been rendered on the screen.
-     * If a parent popup is closed and reopened (e.g. for filters), this method is called each time the component is shown.
      * This is useful for any logic that requires attachment before executing, such as putting focus on a particular DOM element.
      */
     afterGuiAttached?(): void;
@@ -110,4 +109,14 @@ export interface IFloatingFilter<P = any> extends BaseFloatingFilter {
     refresh?(params: IFloatingFilterParams<P>): void;
 }
 
+export interface FloatingFilterDisplay<TData = any, TContext = any, TModel = any, TCustomParams = object>
+    extends BaseFloatingFilter {
+    /** Called when the column definition or model is updated. */
+    refresh(params: FloatingFilterDisplayParams<TData, TContext, TModel, TCustomParams>): void;
+}
+
 export interface IFloatingFilterComp<P = any> extends IFloatingFilter<P>, IComponent<IFloatingFilterParams<P>> {}
+
+export interface FloatingFilterDisplayComp<TData = any, TContext = any, TModel = any, TCustomParams = object>
+    extends FloatingFilterDisplay<TData, TContext, TModel, TCustomParams>,
+        IComponent<FloatingFilterDisplayParams<TData, TContext, TModel, TCustomParams>> {}

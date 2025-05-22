@@ -87,6 +87,7 @@ const GridExample = () => {
                     loading={loading}
                     columnDefs={columnDefs}
                     defaultColDef={defaultColDef}
+                    enableFilterEvaluators
                 />
             </div>
         </div>

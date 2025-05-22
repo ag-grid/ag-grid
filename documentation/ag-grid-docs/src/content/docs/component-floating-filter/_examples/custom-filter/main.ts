@@ -1,4 +1,4 @@
-import type { ColDef, GridApi, GridOptions } from 'ag-grid-community';
+import type { ColDef, FilterEvaluator, GridApi, GridOptions } from 'ag-grid-community';
 import {
     ClientSideRowModelModule,
     CustomFilterModule,
@@ -15,30 +15,49 @@ ModuleRegistry.registerModules([
     ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 
+function numberFilterEvaluator(): FilterEvaluator {
+    return {
+        doesFilterPass: ({ node, model, evaluatorParams }) => {
+            const value = evaluatorParams.getValue(node);
+
+            if (value == null) {
+                return true;
+            }
+
+            return value > model;
+        },
+        getModelAsString: (model) => (model == null ? '' : '>' + model),
+    };
+}
+
 const columnDefs: ColDef[] = [
-    { field: 'athlete', width: 150, filter: false },
+    { field: 'athlete', width: 150 },
     {
         field: 'gold',
         width: 100,
         filter: NumberFilterComponent,
+        filterEvaluator: numberFilterEvaluator,
         suppressHeaderMenuButton: true,
     },
     {
         field: 'silver',
         width: 100,
         filter: NumberFilterComponent,
+        filterEvaluator: numberFilterEvaluator,
         suppressHeaderMenuButton: true,
     },
     {
         field: 'bronze',
         width: 100,
         filter: NumberFilterComponent,
+        filterEvaluator: numberFilterEvaluator,
         suppressHeaderMenuButton: true,
     },
     {
         field: 'total',
         width: 100,
         filter: NumberFilterComponent,
+        filterEvaluator: numberFilterEvaluator,
         suppressHeaderMenuButton: true,
     },
 ];
@@ -49,10 +68,10 @@ const gridOptions: GridOptions<IOlympicData> = {
     defaultColDef: {
         flex: 1,
         minWidth: 100,
-        filter: true,
         floatingFilter: true,
     },
-    columnDefs: columnDefs,
+    columnDefs,
+    enableFilterEvaluators: true,
 };
 
 // setup the grid after the page has finished loading

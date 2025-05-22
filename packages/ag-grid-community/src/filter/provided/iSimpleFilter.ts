@@ -106,6 +106,12 @@ export interface ICombinedSimpleModel<M extends ISimpleFilterModel> extends Prov
     conditions: M[];
 }
 
+export function isCombinedFilterModel<M extends ISimpleFilterModel>(
+    model: M | ICombinedSimpleModel<M>
+): model is ICombinedSimpleModel<M> {
+    return !!(model as ICombinedSimpleModel<M>).operator;
+}
+
 export type Tuple<T> = (T | null)[];
 
 export type MapValuesFromSimpleFilterModel<TModel extends ISimpleFilterModel, TValue> = (

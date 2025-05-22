@@ -1,23 +1,25 @@
 import type { ChangeEvent } from 'react';
 import React, { Fragment } from 'react';
 
-import type { CustomFloatingFilterProps } from 'ag-grid-react';
+import type { CustomFloatingFilterDisplayProps } from 'ag-grid-react';
 
-export default ({ model, onModelChange }: CustomFloatingFilterProps) => {
+export interface CustomProps extends CustomFloatingFilterDisplayProps {
+    color: string;
+}
+
+export default ({ model, onModelChange, color }: CustomProps) => {
     const onInput = ({ target: { value } }: ChangeEvent<HTMLInputElement>) => {
         onModelChange(value === '' ? null : Number(value));
     };
 
+    const style = {
+        borderColor: color,
+        width: '30px',
+    };
+
     return (
         <Fragment>
-            &gt;{' '}
-            <input
-                value={model == null ? '' : model}
-                style={{ width: '30px' }}
-                type="number"
-                min="0"
-                onInput={onInput}
-            />
+            &gt; <input value={model == null ? '' : model} style={style} type="number" min="0" onInput={onInput} />
         </Fragment>
     );
 };

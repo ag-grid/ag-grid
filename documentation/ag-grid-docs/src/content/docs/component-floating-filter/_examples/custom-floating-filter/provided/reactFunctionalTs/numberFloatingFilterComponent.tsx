@@ -1,9 +1,9 @@
 import type { ChangeEvent } from 'react';
 import React, { Fragment } from 'react';
 
-import type { CustomFloatingFilterProps } from 'ag-grid-react';
+import type { CustomFloatingFilterDisplayProps } from 'ag-grid-react';
 
-export interface CustomProps extends CustomFloatingFilterProps {
+export interface CustomProps extends CustomFloatingFilterDisplayProps {
     color: string;
 }
 

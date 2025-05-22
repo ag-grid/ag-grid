@@ -1,6 +1,8 @@
 import type {
     FilterDisplay,
     FilterDisplayParams,
+    FloatingFilterDisplay,
+    FloatingFilterDisplayParams,
     ICellEditor,
     ICellEditorParams,
     ICellEditorRendererParams,
@@ -48,6 +50,10 @@ export interface IInnerHeaderAngularComp extends AgFrameworkComponent<IHeaderPar
 export interface IFloatingFilterAngularComp<P = any>
     extends AgFrameworkComponent<IFloatingFilterParams<P>>,
         IFloatingFilter {}
+
+export interface IFloatingFilterDisplayAngularComp<TData = any, TContext = any, TModel = any, TCustomParams = object>
+    extends AgFrameworkComponent<FloatingFilterDisplayParams<TData, TContext, TModel, TCustomParams>>,
+        FloatingFilterDisplay<TData, TContext, TModel, TCustomParams> {}
 
 export interface IDateAngularComp extends AgFrameworkComponent<IDateParams>, IDate {}
 

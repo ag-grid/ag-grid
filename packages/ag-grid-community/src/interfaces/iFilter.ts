@@ -187,6 +187,7 @@ export interface IFilter extends BaseFilter {
 }
 
 export interface FilterDisplay<TData = any, TContext = any, TModel = any, TState = any> extends SharedFilterUi {
+    /** Called when the column definition, state or model is updated. */
     refresh(newParams: FilterDisplayParams<TData, TContext, TModel, TState>): boolean;
 }
 

@@ -1,10 +1,8 @@
-import type { ColDef, GridApi, GridOptions } from 'ag-grid-community';
+import type { ColDef, FilterEvaluator, GridApi, GridOptions } from 'ag-grid-community';
 import {
     ClientSideRowModelModule,
     CustomFilterModule,
     ModuleRegistry,
-    NumberFilterModule,
-    TextFilterModule,
     ValidationModule,
     createGrid,
 } from 'ag-grid-community';
@@ -13,37 +11,65 @@ import { NumberFilterComponent } from './numberFilterComponent_typescript';
 import { NumberFloatingFilterComponent } from './numberFloatingFilterComponent_typescript';
 
 ModuleRegistry.registerModules([
-    NumberFilterModule,
     ClientSideRowModelModule,
-    TextFilterModule,
     CustomFilterModule,
     ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 
+function numberFilterEvaluator(): FilterEvaluator {
+    return {
+        doesFilterPass: ({ node, model, evaluatorParams }) => {
+            const value = evaluatorParams.getValue(node);
+
+            if (value == null) {
+                return true;
+            }
+
+            return value > model;
+        },
+    };
+}
+
 const columnDefs: ColDef[] = [
-    { field: 'athlete', filter: 'agTextColumnFilter' },
+    { field: 'athlete' },
     {
         field: 'gold',
         floatingFilterComponent: NumberFloatingFilterComponent,
+        floatingFilterComponentParams: {
+            color: 'gold',
+        },
         filter: NumberFilterComponent,
+        filterEvaluator: numberFilterEvaluator,
         suppressFloatingFilterButton: true,
     },
     {
         field: 'silver',
         floatingFilterComponent: NumberFloatingFilterComponent,
+        floatingFilterComponentParams: {
+            color: 'silver',
+        },
         filter: NumberFilterComponent,
+        filterEvaluator: numberFilterEvaluator,
         suppressFloatingFilterButton: true,
     },
     {
         field: 'bronze',
         floatingFilterComponent: NumberFloatingFilterComponent,
+        floatingFilterComponentParams: {
+            color: '#CD7F32',
+        },
         filter: NumberFilterComponent,
+        filterEvaluator: numberFilterEvaluator,
         suppressFloatingFilterButton: true,
     },
     {
         field: 'total',
         floatingFilterComponent: NumberFloatingFilterComponent,
+        floatingFilterComponentParams: {
+            color: 'unset',
+        },
         filter: NumberFilterComponent,
+        filterEvaluator: numberFilterEvaluator,
         suppressFloatingFilterButton: true,
     },
 ];
@@ -54,11 +80,11 @@ const gridOptions: GridOptions<IOlympicData> = {
     defaultColDef: {
         flex: 1,
         minWidth: 100,
-        filter: true,
         floatingFilter: true,
     },
-    columnDefs: columnDefs,
+    columnDefs,
     rowData: null,
+    enableFilterEvaluators: true,
 };
 
 // setup the grid after the page has finished loading

@@ -11,6 +11,7 @@ import type {
     BaseMenuItemParams,
     BaseToolPanelParams,
     FilterDisplayParams,
+    FloatingFilterDisplayParams,
     ICellEditorParams,
     ICellRendererParams,
     IDetailCellRendererParams,
@@ -78,6 +79,10 @@ export interface CustomFloatingFilterProps<P = IFilter, TData = any, TContext = 
     /** Callback that should be called every time the model in the component changes. */
     onModelChange: (model: TModel | null) => void;
 }
+
+/** Props provided to custom floating filter components when `enableFilterEvaluators = true` */
+export interface CustomFloatingFilterDisplayProps<TData = any, TContext = any, TModel = any, TCustomParams = object>
+    extends FloatingFilterDisplayParams<TData, TContext, TModel, TCustomParams> {}
 
 /** Props provided to custom tool panel components */
 export interface CustomToolPanelProps<TData = any, TContext = any, TState = any>

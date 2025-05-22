@@ -37,4 +37,7 @@ export default {
             console.log(`Alert from PartialMatchFilterComponent ${message}`);
         },
     },
+    mounted: function () {
+        this.refresh(this.params);
+    },
 };

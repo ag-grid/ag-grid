@@ -1,26 +1,8 @@
-import React, { useCallback } from 'react';
+import React from 'react';
 
-import type { IDoesFilterPassParams } from 'ag-grid-community';
-import type { CustomFilterProps } from 'ag-grid-react';
-import { useGridFilter } from 'ag-grid-react';
+import type { CustomFilterDisplayProps } from 'ag-grid-react';
 
-export default ({ model, onModelChange, getValue }: CustomFilterProps) => {
-    const doesFilterPass = useCallback(
-        (params: IDoesFilterPassParams) => {
-            const { node } = params;
-
-            const value = getValue(node);
-
-            if (value == null) return false;
-            return Number(value) > Number(model);
-        },
-        [model]
-    );
-
-    useGridFilter({
-        doesFilterPass,
-    });
-
+export default ({ model, onModelChange }: CustomFilterDisplayProps) => {
     return (
         <div style={{ padding: '4px' }}>
             <div style={{ fontWeight: 'bold' }}>Greater than:</div>

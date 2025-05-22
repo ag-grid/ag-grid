@@ -256,6 +256,7 @@ export {
     IFilterPlaceholderFunctionParams,
     FilterPlaceholderFunction,
     IFilterOptionDef,
+    isCombinedFilterModel,
 } from './filter/provided/iSimpleFilter';
 export { IScalarFilterParams, ScalarFilterParams } from './filter/provided/iScalarFilter';
 
@@ -287,6 +288,8 @@ export {
     IFloatingFilterParentCallback,
     BaseFloatingFilter,
     FloatingFilterDisplayParams,
+    FloatingFilterDisplay,
+    FloatingFilterDisplayComp,
 } from './filter/floating/floatingFilter';
 export type { TextFloatingFilter } from './filter/provided/text/textFloatingFilter';
 export { _getDefaultFloatingFilterType } from './filter/floating/floatingFilterMapper';
