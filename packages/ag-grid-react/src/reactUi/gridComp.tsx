@@ -1,4 +1,5 @@
 import React, { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useContext } from 'react';
 
 import type {
     Component,
@@ -10,7 +11,7 @@ import type {
 } from 'ag-grid-community';
 import { GridCtrl } from 'ag-grid-community';
 
-import { BeansContext } from './beansContext';
+import { BeansContext, RenderModeContext } from './beansContext';
 import GridBodyComp from './gridBodyComp';
 import useReactCommentEffect from './reactComment';
 import type { TabGuardCompCallback } from './tabGuardComp';
@@ -40,6 +41,17 @@ const GridComp = ({ context }: GridCompProps) => {
     const focusableContainersRef = useRef<Component[]>([]);
 
     const onTabKeyDown = useCallback(() => undefined, []);
+
+    const done = useRef(false);
+    const mode = useContext(RenderModeContext);
+    if (!done.current) {
+        done.current = true;
+        console.log('GridComp render mode: ', mode);
+        const valid = ['flushSync', 'uses', 'plain'];
+        if (!valid.includes(mode.cells) || !valid.includes(mode.rows)) {
+            throw new Error('AG Grid: Invalid render mode: ' + mode + ' Valid values are: ' + valid.join(', '));
+        }
+    }
 
     const beans = useMemo(() => {
         if (context.isDestroyed()) {

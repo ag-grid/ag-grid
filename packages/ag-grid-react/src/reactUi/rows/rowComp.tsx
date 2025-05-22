@@ -1,4 +1,5 @@
 import React, { memo, useCallback, useContext, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
+import { useSyncExternalStore } from 'react';
 
 import type {
     CellCtrl,
@@ -11,13 +12,14 @@ import type {
 } from 'ag-grid-community';
 import { CssClassManager, _EmptyBean } from 'ag-grid-community';
 
-import { BeansContext } from '../beansContext';
+import { BeansContext, RenderModeContext } from '../beansContext';
 import CellComp from '../cells/cellComp';
 import { showJsComp } from '../jsComp';
 import { agFlushSync, getNextValueIfDifferent, isComponentStateless } from '../utils';
 
 const RowComp = ({ rowCtrl, containerType }: { rowCtrl: RowCtrl; containerType: RowContainerType }) => {
     const { context, gos } = useContext(BeansContext);
+    const { cells: mode } = useContext(RenderModeContext);
     const compBean = useRef<_EmptyBean>();
 
     const domOrderRef = useRef<boolean>(rowCtrl.getDomOrder());
@@ -77,6 +79,20 @@ const RowComp = ({ rowCtrl, containerType }: { rowCtrl: RowCtrl; containerType: 
     if (!cssManager.current) {
         cssManager.current = new CssClassManager(() => eGui.current);
     }
+
+    const cellsChanged = useRef<any>(() => {});
+    const sub = useCallback((onStoreChange: any) => {
+        cellsChanged.current = onStoreChange;
+        return () => {
+            cellsChanged.current = () => {};
+        };
+    }, []);
+    const cellCtrlsSync = useSyncExternalStore(sub, () => {
+        return cellCtrlsRef.current;
+    });
+
+    const cellCtrlsMerged = mode === 'uses' ? cellCtrlsSync : cellCtrls;
+
     const setRef = useCallback((eRef: HTMLDivElement | null) => {
         eGui.current = eRef;
         compBean.current = eRef ? context.createBean(new _EmptyBean()) : context.destroyBean(compBean.current);
@@ -111,12 +127,30 @@ const RowComp = ({ rowCtrl, containerType }: { rowCtrl: RowCtrl; containerType: 
             // if we don't maintain the order, then cols will be ripped out and into the dom
             // when cols reordered, which would stop the CSS transitions from working
             setCellCtrls: (next, useFlushSync) => {
-                prevCellCtrlsRef.current = cellCtrlsRef.current;
-                cellCtrlsRef.current = next;
+                if (mode === 'flushSync') {
+                    prevCellCtrlsRef.current = cellCtrlsRef.current;
 
-                const nextCells = getNextValueIfDifferent(prevCellCtrlsRef.current, next, domOrderRef.current);
-                if (nextCells !== prevCellCtrlsRef.current) {
-                    agFlushSync(useFlushSync, () => setCellCtrls(nextCells));
+                    const nextCells = getNextValueIfDifferent(prevCellCtrlsRef.current, next, domOrderRef.current);
+                    if (nextCells !== prevCellCtrlsRef.current) {
+                        cellCtrlsRef.current = nextCells;
+                        agFlushSync(useFlushSync, () => setCellCtrls(nextCells));
+                    }
+                } else if (mode === 'uses') {
+                    prevCellCtrlsRef.current = cellCtrlsRef.current;
+
+                    const nextCells = getNextValueIfDifferent(prevCellCtrlsRef.current, next, domOrderRef.current);
+                    if (nextCells !== prevCellCtrlsRef.current) {
+                        cellCtrlsRef.current = nextCells;
+                        cellsChanged.current();
+                    }
+                } else if (mode === 'plain') {
+                    prevCellCtrlsRef.current = cellCtrlsRef.current;
+                    cellCtrlsRef.current = next;
+
+                    const nextCells = getNextValueIfDifferent(prevCellCtrlsRef.current, next, domOrderRef.current);
+                    if (nextCells !== prevCellCtrlsRef.current) {
+                        agFlushSync(false, () => setCellCtrls(nextCells));
+                    }
                 }
             },
             showFullWidth: (compDetails) => setFullWidthCompDetails(compDetails),
@@ -152,7 +186,7 @@ const RowComp = ({ rowCtrl, containerType }: { rowCtrl: RowCtrl; containerType: 
     }, [top, transform, userStyles]);
 
     const showFullWidthFramework = isFullWidth && fullWidthCompDetails?.componentFromFramework;
-    const showCells = !isFullWidth && cellCtrls != null;
+    const showCells = !isFullWidth && cellCtrlsMerged != null;
 
     const reactFullWidthCellRendererStateless = useMemo(() => {
         const res =
@@ -168,7 +202,7 @@ const RowComp = ({ rowCtrl, containerType }: { rowCtrl: RowCtrl; containerType: 
     }, [reactFullWidthCellRendererStateless, fullWidthCompDetails]);
 
     const showCellsJsx = () =>
-        cellCtrls?.map((cellCtrl) => (
+        cellCtrlsMerged?.map((cellCtrl) => (
             <CellComp
                 cellCtrl={cellCtrl}
                 editingRow={rowCtrl.editing}
