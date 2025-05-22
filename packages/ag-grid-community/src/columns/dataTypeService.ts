@@ -215,8 +215,7 @@ export class DataTypeService extends BeanStub implements NamedBean {
             cellDataType = colDef.cellDataType;
         }
         if (cellDataType == null || cellDataType === true) {
-            const canInfer = this.canInferCellDataType(colDef, userColDef);
-            cellDataType = canInfer ? this.inferCellDataType(field, colId) : false;
+            cellDataType = this.canInferCellDataType(colDef, userColDef) ? this.inferCellDataType(field, colId) : false;
         }
         if (!cellDataType) {
             colDef.cellDataType = false;
