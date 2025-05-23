@@ -29,7 +29,13 @@ export function _serialiseDate(date: Date | null, includeTime = true, separator 
     return serialised;
 }
 
-export function getDateParts(d: Date | null | undefined, includeTime: boolean = true) {
+/**
+ * Helper function to get the date parts of a date.
+ * @param d The date to get the parts from
+ * @param includeTime Whether to include the time in the returned array
+ * @returns The date parts as an array of strings or null if the date is null or undefined
+ */
+export function _getDateParts(d: Date | null | undefined, includeTime: boolean = true) {
     if (!d) {
         return null;
     }

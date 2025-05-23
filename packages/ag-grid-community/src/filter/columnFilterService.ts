@@ -21,7 +21,7 @@ import { _addGridCommonParams, _getGroupAggFiltering, _isSetFilterByDefault } fr
 import type { FilterParamsDefMap } from '../interfaces/advancedFilterModel';
 import type { FilterModel, IFilter, IFilterComp, IFilterParams } from '../interfaces/iFilter';
 import type { UserCompDetails } from '../interfaces/iUserCompDetails';
-import { getDateParts } from '../utils/date';
+import { _getDateParts } from '../utils/date';
 import { _exists, _jsonEquals } from '../utils/generic';
 import { AgPromise } from '../utils/promise';
 import { _error, _warn } from '../validation/logging';
@@ -944,7 +944,7 @@ export class ColumnFilterService extends BeanStub implements NamedBean {
                         }
                         return pathKey ?? t('blanks', '(Blanks)');
                     },
-                    treeListPathGetter: (date: Date | null) => getDateParts(date, false),
+                    treeListPathGetter: (date: Date | null) => _getDateParts(date, false),
                 };
             }
             return { isValidDate };
@@ -959,7 +959,7 @@ export class ColumnFilterService extends BeanStub implements NamedBean {
                     },
                     treeList: true,
                     treeListPathGetter: (value: string | null) =>
-                        getDateParts(convertToDate(value ?? undefined), false),
+                        _getDateParts(convertToDate(value ?? undefined), false),
                     treeListFormatter: (pathKey: string | null, level: number) => {
                         if (level === 1 && pathKey != null) {
                             const monthKey = MONTH_KEYS[Number(pathKey) - 1];
@@ -987,7 +987,7 @@ export class ColumnFilterService extends BeanStub implements NamedBean {
             if (args.usingSetFilter) {
                 return {
                     ...this.date(args),
-                    treeListPathGetter: (date: Date | null) => getDateParts(date),
+                    treeListPathGetter: (date: Date | null) => _getDateParts(date),
                 };
             }
             return this.date(args);
@@ -998,7 +998,7 @@ export class ColumnFilterService extends BeanStub implements NamedBean {
 
                 return {
                     ...this.dateString(args),
-                    treeListPathGetter: (value: string | null) => getDateParts(convertToDate(value ?? undefined)),
+                    treeListPathGetter: (value: string | null) => _getDateParts(convertToDate(value ?? undefined)),
                 };
             }
             return this.dateString(args);
