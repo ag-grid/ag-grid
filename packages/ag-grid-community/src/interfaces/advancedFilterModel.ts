@@ -1,4 +1,10 @@
-import type { BaseCellDataType, CheckDataTypes } from '../entities/dataType';
+import type { ValueGetterFunc } from '../entities/colDef';
+import type { CheckDataTypes, CoreDataTypeDefinition, DataTypeFormatValueFunc } from '../entities/dataType';
+import type { ColumnFilterService } from '../filter/columnFilterService';
+import type { IDateFilterParams } from '../filter/provided/date/iDateFilter';
+import type { SimpleFilterParams } from '../filter/provided/iSimpleFilter';
+import type { ValueService } from '../valueService/valueService';
+import type { ISetFilterParams } from './iSetFilter';
 
 export type AdvancedFilterModel = JoinAdvancedFilterModel | ColumnAdvancedFilterModel;
 
@@ -126,6 +132,24 @@ export type FilterModelDefMap = CheckDataTypes<{
     dateTimeString: DateTimeStringAdvancedFilterModel;
     number: NumberAdvancedFilterModel;
     text: TextAdvancedFilterModel;
+}>;
+type Translator = ReturnType<ColumnFilterService['getLocaleTextFunc']>;
+type FilterParamsDefArgs = {
+    formatValue: DataTypeFormatValueFunc;
+    t: Translator;
+    valueSvc: ValueService;
+    usingSetFilter: boolean;
+    dataTypeDefinition: CoreDataTypeDefinition;
+};
+export type FilterParamsDefMap = CheckDataTypes<{
+    number: (args: FilterParamsDefArgs) => ISetFilterParams<any, number> | void;
+    boolean: (args: FilterParamsDefArgs) => ISetFilterParams<any, boolean> | SimpleFilterParams;
+    date: (args: FilterParamsDefArgs) => ISetFilterParams<any, Date> | IDateFilterParams;
+    dateString: (args: FilterParamsDefArgs) => ISetFilterParams | IDateFilterParams;
+    dateTime: (args: FilterParamsDefArgs) => ISetFilterParams<any, Date> | IDateFilterParams;
+    dateTimeString: (args: FilterParamsDefArgs) => ISetFilterParams | IDateFilterParams;
+    object: (args: FilterParamsDefArgs) => ISetFilterParams<any, any> | ValueGetterFunc;
+    text: () => void;
 }>;
 
 /** Represents a single filter condition on a column */

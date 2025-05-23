@@ -29,6 +29,22 @@ export function _serialiseDate(date: Date | null, includeTime = true, separator 
     return serialised;
 }
 
+export function getDateParts(d: Date | null | undefined, includeTime: boolean = true) {
+    if (!d) {
+        return null;
+    }
+
+    const parts = [d.getFullYear(), d.getMonth() + 1, d.getDate(), d.getHours(), d.getMinutes(), d.getSeconds()].map(
+        String
+    );
+
+    if (includeTime) {
+        return parts;
+    }
+
+    return parts.slice(0, 3);
+}
+
 const calculateOrdinal = (value: number) => {
     if (value > 3 && value < 21) {
         return 'th';

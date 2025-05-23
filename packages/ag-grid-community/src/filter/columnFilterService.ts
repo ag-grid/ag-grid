@@ -11,20 +11,21 @@ import type { AgColumn } from '../entities/agColumn';
 import type { ColDef, ValueFormatterParams, ValueGetterParams } from '../entities/colDef';
 import type {
     BaseCellDataType,
-    CoreDataTypeDefinition,
+    CoreDataTypeDefMap,
     DataTypeFormatValueFunc,
     DateStringDataTypeDefinition,
 } from '../entities/dataType';
 import type { RowNode } from '../entities/rowNode';
 import type { ColumnEventType, FilterChangedEventSourceType } from '../events';
 import { _addGridCommonParams, _getGroupAggFiltering, _isSetFilterByDefault } from '../gridOptionsUtils';
-import type { FilterModelDefMap } from '../interfaces/advancedFilterModel';
+import type { FilterParamsDefMap } from '../interfaces/advancedFilterModel';
 import type { FilterModel, IFilter, IFilterComp, IFilterParams } from '../interfaces/iFilter';
+import type { ISetFilterParams } from '../interfaces/iSetFilter';
 import type { UserCompDetails } from '../interfaces/iUserCompDetails';
+import { getDateParts } from '../utils/date';
 import { _exists, _jsonEquals } from '../utils/generic';
 import { AgPromise } from '../utils/promise';
 import { _error, _warn } from '../validation/logging';
-import type { ValueService } from '../valueService/valueService';
 import type { IFloatingFilterParams, IFloatingFilterParentCallback } from './floating/floatingFilter';
 import { _getDefaultFloatingFilterType } from './floating/floatingFilterMapper';
 
@@ -57,14 +58,14 @@ const MONTH_KEYS: (keyof typeof MONTH_LOCALE_TEXT)[] = [
     'december',
 ];
 
-function setFilterNumberComparator(a: string, b: string): number {
+function setFilterNumberComparator<TValue = any>(a: TValue | null, b: TValue | null): number {
     if (a == null) {
         return -1;
     }
     if (b == null) {
         return 1;
     }
-    return parseFloat(a) - parseFloat(b);
+    return parseFloat(String(a)) - parseFloat(String(b));
 }
 
 export class ColumnFilterService extends BeanStub implements NamedBean {
@@ -889,16 +890,7 @@ export class ColumnFilterService extends BeanStub implements NamedBean {
     }
 
     // using an object here to enforce dev to not forget to implement new types as they are added
-    private filterParamsForEachDataType: Record<
-        keyof FilterModelDefMap,
-        (args: {
-            formatValue: DataTypeFormatValueFunc;
-            t: ReturnType<ColumnFilterService['getLocaleTextFunc']>;
-            valueSvc: ValueService;
-            usingSetFilter: boolean;
-            dataTypeDefinition: CoreDataTypeDefinition;
-        }) => ColDef['filterParams'] | ColDef['filterValueGetter'] | void
-    > = {
+    private filterParamsForEachDataType: FilterParamsDefMap = {
         number({ usingSetFilter }) {
             if (usingSetFilter) {
                 return { comparator: setFilterNumberComparator };
@@ -907,7 +899,7 @@ export class ColumnFilterService extends BeanStub implements NamedBean {
         boolean({ usingSetFilter, t }) {
             if (usingSetFilter) {
                 return {
-                    valueFormatter: (params: ValueFormatterParams) => {
+                    valueFormatter: (params: ValueFormatterParams<any, boolean>) => {
                         if (_exists(params.value)) {
                             return t(String(params.value), params.value ? 'True' : 'False');
                         }
@@ -953,11 +945,12 @@ export class ColumnFilterService extends BeanStub implements NamedBean {
                         }
                         return pathKey ?? t('blanks', '(Blanks)');
                     },
+                    treeListPathGetter: (date: Date | null) => getDateParts(date, false),
                 };
             }
             return { isValidDate };
         },
-        dateString({ usingSetFilter, formatValue, dataTypeDefinition, t }): ColDef['filterParams'] {
+        dateString({ usingSetFilter, formatValue, dataTypeDefinition, t }) {
             const convertToDate = (dataTypeDefinition as DateStringDataTypeDefinition).dateParser!;
             if (usingSetFilter) {
                 return {
@@ -966,12 +959,8 @@ export class ColumnFilterService extends BeanStub implements NamedBean {
                         return _exists(valueFormatted) ? valueFormatted : t('blanks', '(Blanks)');
                     },
                     treeList: true,
-                    treeListPathGetter: (value: string | null) => {
-                        const date = convertToDate(value ?? undefined);
-                        return date
-                            ? [String(date.getFullYear()), String(date.getMonth() + 1), String(date.getDate())]
-                            : null;
-                    },
+                    treeListPathGetter: (value: string | null) =>
+                        getDateParts(convertToDate(value ?? undefined), false),
                     treeListFormatter: (pathKey: string | null, level: number) => {
                         if (level === 1 && pathKey != null) {
                             const monthKey = MONTH_KEYS[Number(pathKey) - 1];
@@ -996,45 +985,24 @@ export class ColumnFilterService extends BeanStub implements NamedBean {
             };
         },
         dateTime(args) {
-            // todo!!!!
-            const convertToDate = (args.dataTypeDefinition as DateStringDataTypeDefinition).dateParser!;
-
-            return {
-                ...this.date(args),
-                treeListPathGetter: (value: string | null) => {
-                    const date = convertToDate(value ?? undefined);
-                    return date
-                        ? [
-                              String(date.getFullYear()),
-                              String(date.getMonth() + 1),
-                              String(date.getDate()),
-                              String(date.getHours()),
-                              String(date.getMinutes()),
-                              String(date.getSeconds()),
-                          ]
-                        : null;
-                },
-            };
+            if (args.usingSetFilter) {
+                return {
+                    ...this.date(args),
+                    treeListPathGetter: (date: Date | null) => getDateParts(date),
+                };
+            }
+            return this.date(args);
         },
         dateTimeString(args) {
-            const convertToDate = (args.dataTypeDefinition as DateStringDataTypeDefinition).dateParser!;
+            if (args.usingSetFilter) {
+                const convertToDate = (args.dataTypeDefinition as DateStringDataTypeDefinition).dateParser!;
 
-            return {
-                ...this.dateString(args),
-                treeListPathGetter: (value: string | null) => {
-                    const date = convertToDate(value ?? undefined);
-                    return date
-                        ? [
-                              String(date.getFullYear()),
-                              String(date.getMonth() + 1),
-                              String(date.getDate()),
-                              String(date.getHours()),
-                              String(date.getMinutes()),
-                              String(date.getSeconds()),
-                          ]
-                        : null;
-                },
-            };
+                return {
+                    ...this.dateString(args),
+                    treeListPathGetter: (value: string | null) => getDateParts(convertToDate(value ?? undefined)),
+                };
+            }
+            return this.dateString(args);
         },
         object({ usingSetFilter, valueSvc, formatValue, t }) {
             if (usingSetFilter) {
@@ -1043,7 +1011,7 @@ export class ColumnFilterService extends BeanStub implements NamedBean {
                         const valueFormatted = formatValue(params);
                         return _exists(valueFormatted) ? valueFormatted : t('blanks', '(Blanks)');
                     },
-                };
+                } as ISetFilterParams<any, any>;
             }
             return ({ column, node }: ValueGetterParams) =>
                 formatValue({ column, node, value: valueSvc.getValue(column as AgColumn, node) });
@@ -1051,9 +1019,9 @@ export class ColumnFilterService extends BeanStub implements NamedBean {
         text(): void {},
     };
 
-    public setColDefPropertiesForDataType(
+    public setColDefPropertiesForDataType<DT extends keyof CoreDataTypeDefMap>(
         colDef: ColDef,
-        dataTypeDefinition: CoreDataTypeDefinition,
+        dataTypeDefinition: CoreDataTypeDefMap[DT],
         formatValue: DataTypeFormatValueFunc
     ): void {
         const filterParamsOrNothing = this.filterParamsForEachDataType[dataTypeDefinition.baseDataType]({
