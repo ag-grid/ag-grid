@@ -35,7 +35,7 @@ export class SetFilterEvaluator<TValue = string>
     extends BeanStub<SetFilterEvaluatorEventType>
     implements FilterEvaluator<any, any, SetFilterModel, ISetFilterParams<any, TValue>>, ISetFilterEvaluator<TValue>
 {
-    private params: FilterEvaluatorParams<any, any, SetFilterModel, ISetFilterParams<any, TValue>>;
+    public params: FilterEvaluatorParams<any, any, SetFilterModel, ISetFilterParams<any, TValue>>;
     /**
      * Here we keep track of the keys that are currently being used for filtering.
      * In most cases, the filtering keys are the same as the selected keys,

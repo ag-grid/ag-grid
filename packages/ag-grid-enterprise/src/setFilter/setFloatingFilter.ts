@@ -1,8 +1,6 @@
 import type {
     AgColumn,
     AgInputTextField,
-    BeanCollection,
-    ColumnNameService,
     ElementParams,
     FloatingFilterDisplayParams,
     IFloatingFilter,
@@ -27,12 +25,7 @@ const SetFloatingFilterElement: ElementParams = {
 };
 
 export class SetFloatingFilterComp<V = string> extends Component implements IFloatingFilter {
-    private colNames: ColumnNameService;
     private readonly eFloatingFilterText: AgInputTextField = RefPlaceholder;
-
-    public wireBeans(beans: BeanCollection) {
-        this.colNames = beans.colNames;
-    }
 
     private params: IFloatingFilterParams;
     private availableValuesListenerAdded = false;
@@ -50,7 +43,7 @@ export class SetFloatingFilterComp<V = string> extends Component implements IFlo
     }
 
     private setParams(params: IFloatingFilterParams): void {
-        const displayName = this.colNames.getDisplayNameForColumn(params.column as AgColumn, 'header', true);
+        const displayName = this.beans.colNames.getDisplayNameForColumn(params.column as AgColumn, 'header', true);
         const translate = this.getLocaleTextFunc();
 
         this.eFloatingFilterText.setInputAriaLabel(`${displayName} ${translate('ariaFilterInput', 'Filter Input')}`);
@@ -89,10 +82,7 @@ export class SetFloatingFilterComp<V = string> extends Component implements IFlo
             // on Country will only show English speaking countries. Thus the list of items to show
             // in the floating filter can change.
             this.addManagedListeners(evaluator.valueModel, {
-                availableValuesChanged: () =>
-                    this.updateFloatingFilterText(
-                        this.beans.colFilter!.getModelForColumn(this.params.column as AgColumn)
-                    ),
+                availableValuesChanged: () => this.updateFloatingFilterText(evaluator.params.model),
             });
         };
         if (this.gos.get('enableFilterEvaluators')) {

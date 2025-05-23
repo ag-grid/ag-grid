@@ -191,8 +191,12 @@ export class MultiFilterUi
             onStateChange: (newState) => this.onStateChange(onStateChange, index, newState),
             getEvaluator: () => this.getEvaluator().getEvaluator(index)!,
             onAction: (action, additionalEventAttributes, event) => {
+                const isChange = action === 'apply' || action === 'reset';
+                if (isChange) {
+                    this.updateActiveList(index, getFilterModelForIndex(this.params.state.model, index));
+                }
                 onAction(action, additionalEventAttributes, event);
-                if (action === 'apply' || action === 'reset') {
+                if (isChange) {
                     onAnyFilterChanged();
                 }
             },
