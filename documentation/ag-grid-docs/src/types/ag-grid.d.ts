@@ -10,7 +10,7 @@ export type Library = 'charts' | 'grid';
 export interface MenuSection {
     title?: string;
     excludeFromFeatures?: boolean;
-    items?: MenuItem[];
+    children?: MenuItem[];
 
     type?: 'whats-new';
     path?: string;
@@ -24,7 +24,7 @@ export interface MenuItem {
     icon?: IconName;
     frameworks?: Framework[];
     isEnterprise?: boolean;
-    items?: MenuItem[];
+    children?: MenuItem[];
     childPaths?: string[];
 }
 

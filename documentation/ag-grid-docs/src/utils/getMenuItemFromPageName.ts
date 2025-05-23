@@ -12,8 +12,8 @@ export function getMenuItemFromPageName({
             return foundItem;
         } else if (section.path === pageName) {
             return section;
-        } else if (section.items) {
-            return getMenuItemFromPageName({ menuItems: section.items, pageName });
+        } else if (section.children) {
+            return getMenuItemFromPageName({ menuItems: section.children, pageName });
         }
     }, undefined);
 }
