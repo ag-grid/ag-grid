@@ -1,4 +1,5 @@
 import type { Framework } from '@ag-grid-types';
+import { VersionsSelector } from '@ag-website-shared/components/dev-tools/VersionsSelector';
 import { Select } from '@ag-website-shared/components/select/Select';
 import fwLogos from '@ag-website-shared/images/fw-logos';
 import { getPageNameFromPath } from '@components/docs/utils/urlPaths';
@@ -31,12 +32,15 @@ export const ExampleDevToolbar: FunctionComponent<Props> = ({ framework, example
     );
     const handleFrameworkChange = useCallback(
         (selectedFramework: Framework) => {
-            const newUrl =
-                pathJoin(
-                    window.location.origin,
-                    window.location.pathname.replace(`/${framework}-data-grid`, `/${selectedFramework}-data-grid`)
-                ) + window.location.hash;
-            window.location.replace(newUrl);
+            const newUrl = pathJoin(
+                window.location.origin,
+                urlWithPrefix({
+                    framework: selectedFramework,
+                    url: `./${pageName}`,
+                }),
+                `#example-${exampleName}`
+            );
+            window.location.href = newUrl;
         },
         [framework]
     );
@@ -45,13 +49,14 @@ export const ExampleDevToolbar: FunctionComponent<Props> = ({ framework, example
         <div className={styles.exampleLinksContainer}>
             <ul className={`list-style-none ${styles.exampleLinks}`}>
                 {Object.entries(URL_CONFIG).map(([env, config]) => {
-                    const siteBaseUrl = config.baseUrl ? pathJoin(config.hosts[0], config.baseUrl) : config.hosts[0];
+                    const siteHostBaseUrl = config.baseUrl
+                        ? pathJoin(config.hosts[0], config.baseUrl)
+                        : config.hosts[0];
                     const url = pathJoin(
-                        'https://',
+                        `https://${siteHostBaseUrl}`,
                         urlWithPrefix({
                             framework,
                             url: `./${pageName}`,
-                            siteBaseUrl,
                         }),
                         `#example-${exampleName}`
                     );
@@ -63,6 +68,7 @@ export const ExampleDevToolbar: FunctionComponent<Props> = ({ framework, example
                         </li>
                     );
                 })}
+                <VersionsSelector framework={framework} pageName={pageName} exampleName={exampleName} />
                 <Select
                     isPopper
                     options={frameworkOptions}
