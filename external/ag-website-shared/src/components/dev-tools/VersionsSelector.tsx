@@ -24,8 +24,16 @@ interface Props {
 
 const versionsUrl = urlWithBaseUrl('/debug/versions.json');
 
+function getVersionFromUrl() {
+    const [_, firstPart, secondPart] = window.location.pathname.split('/');
+    if (firstPart === 'archive') {
+        return secondPart;
+    }
+}
+
 export const VersionsSelectorInner: FunctionComponent<Props> = ({ framework, pageName, exampleName }) => {
     const [versions, setVersions] = useState([]);
+    const [selectedVersion, setSelectedVersion] = useState<string>();
     const openLinksInNewTab = useStoreSsr($openLinksInNewTab, false);
     const target = openLinksInNewTab ? '_blank' : '_self';
 
@@ -62,6 +70,20 @@ export const VersionsSelectorInner: FunctionComponent<Props> = ({ framework, pag
 
         setVersions(versionsWithDocs);
     }, [queryVersions]);
+
+    useEffect(() => {
+        if (!versions.length) {
+            return;
+        }
+
+        const versionFromUrl = getVersionFromUrl();
+        if (!versionFromUrl) {
+            return;
+        }
+        const version = versions.find((v) => v.value === versionFromUrl);
+        setSelectedVersion(version);
+    }, [versions]);
+
     const getKey = useCallback((o) => {
         return o?.value;
     }, []);
@@ -96,7 +118,7 @@ export const VersionsSelectorInner: FunctionComponent<Props> = ({ framework, pag
             getKey={getKey}
             getGroupLabel={getGroupLabel}
             options={versions}
-            value={undefined}
+            value={selectedVersion}
             onChange={(newValue) => handleVersionsChange(newValue)}
             constrainHeight={true}
             renderItem={(o) => {
