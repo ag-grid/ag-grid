@@ -127,7 +127,7 @@ export type DynamicBeanName =
     | 'rangeHandle'
     | 'tooltipFeature'
     | 'groupStrategy'
-    | 'treeParentIdStrategy'
+    | 'treeGroupStrategy'
     | 'rowNumberRowResizer';
 
 export type UserComponentName =

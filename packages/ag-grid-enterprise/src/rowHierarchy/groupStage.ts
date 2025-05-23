@@ -36,13 +36,14 @@ export class GroupStage<TData> extends BeanStub implements NamedBean, IRowNodeSt
 
     private createStrategy(): IRowGroupingStrategy<TData> | undefined {
         const { beans, approach } = this;
-        let beanName: 'treeParentIdStrategy' | 'groupStrategy' | undefined;
+        let beanName: 'treeGroupStrategy' | 'groupStrategy' | undefined;
         switch (approach) {
-            case 'treeSelfRef':
-                beanName = 'treeParentIdStrategy';
-                break;
             case 'group':
                 beanName = 'groupStrategy';
+                break;
+            case 'treeNested':
+            case 'treeSelfRef':
+                beanName = 'treeGroupStrategy';
                 break;
         }
         if (beanName) {
@@ -55,23 +56,24 @@ export class GroupStage<TData> extends BeanStub implements NamedBean, IRowNodeSt
 
     public execute(params: StageExecuteParams<TData>): boolean {
         let strategy = this.strategy;
+        const oldApproach = this.approach;
         const approach = _getGroupingApproach(this.gos);
-        if (this.approach !== approach) {
+        if (oldApproach !== approach) {
             this.approach = approach;
             this.destroyBean(strategy);
-            if (strategy && this.approach !== 'treeNested' && this.approach !== 'treePath') {
-                resetGrouping(params.rowNode);
+            if (strategy && this.approach !== 'treePath') {
+                resetGrouping(params.rowNode, this.approach !== 'treeNested');
             }
             strategy = this.createStrategy();
             this.strategy = strategy;
         }
 
-        strategy?.execute(params);
+        strategy?.execute(params, approach);
         return !!strategy;
     }
 }
 
-const resetGrouping = <TData>(rootNode: RowGroupingRowNode<TData>): void => {
+const resetGrouping = <TData>(rootNode: RowGroupingRowNode<TData>, canResetTreeNode: boolean): void => {
     const allLeafChildren = rootNode.allLeafChildren!;
     const rootSibling = rootNode.sibling;
     rootNode.treeNodeFlags = 0;
@@ -96,6 +98,9 @@ const resetGrouping = <TData>(rootNode: RowGroupingRowNode<TData>): void => {
         row.level = 0;
         row.key = null;
         row.treeNodeFlags = 0;
+        if (canResetTreeNode) {
+            row.treeNode = null;
+        }
         if (row.group || row.hasChildren()) {
             row.group = false;
             row.updateHasChildren();
@@ -111,7 +116,6 @@ const resetChildRowGrouping = <TData>(row: RowGroupingRowNode<TData>): void => {
     row.childrenAfterFilter = null;
     row.childrenAfterSort = null;
     row.childrenMapped = null;
-    row.treeNode = null;
     if (row.groupData) {
         row.groupData = null;
     }

@@ -119,7 +119,7 @@
 }
 
 .ag-filter-separator {
-    border-top: solid 1px var(--menu-separator-color);
+    border-top: solid var(--ag-border-width) var(--menu-separator-color);
 }
 
 :where(.ag-filter-select) .ag-picker-field-wrapper {

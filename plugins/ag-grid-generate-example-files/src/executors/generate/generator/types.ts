@@ -94,9 +94,11 @@ export interface GeneratedContents extends ExampleConfig {
     isIntegratedCharts?: boolean;
     isLocale?: boolean;
     hasExampleConsoleLog?: boolean;
+    hasSimpleHtml?: boolean;
     entryFileName: string;
     mainFileName: string;
     files: FileContents;
+    sourceFileList: string[];
     scriptFiles: string[];
     styleFiles: string[];
     htmlFiles: string[];

@@ -20,6 +20,8 @@ type DocExamplePage = DocExamplePages[number]['params'] & {
     isIntegratedCharts?: boolean;
     isLocale?: boolean;
     hasExampleConsoleLog?: boolean;
+    hasSimpleHtml?: boolean;
+    sourceFileList?: string[];
 };
 type DocFrameworkExamples = Record<InternalFramework, DocExamplePage>;
 
@@ -119,20 +121,23 @@ function allPropertiesAreTruthy(entries: [string, DocExamplePage][], property: k
 function flattenDocsExampleContents(data: Record<string, DocFrameworkExamples>) {
     return Object.values(data).map((frameworkExamples) => {
         const frameworkEntries = Object.entries(frameworkExamples);
-        const [_, { pageName, exampleName }] = frameworkEntries[0];
+        const [_, { pageName, exampleName, sourceFileList }] = frameworkEntries[0];
         const isEnterprise = allPropertiesAreTruthy(frameworkEntries, 'isEnterprise');
         const isIntegratedCharts = allPropertiesAreTruthy(frameworkEntries, 'isIntegratedCharts');
         const isLocale = allPropertiesAreTruthy(frameworkEntries, 'isLocale');
         const hasExampleConsoleLog = allPropertiesAreTruthy(frameworkEntries, 'hasExampleConsoleLog');
+        const hasSimpleHtml = allPropertiesAreTruthy(frameworkEntries, 'hasSimpleHtml');
 
         return {
             id: `${pageName}-${exampleName}`,
             pageName,
             exampleName,
+            sourceFileList,
             isEnterprise,
             isIntegratedCharts,
             isLocale,
             hasExampleConsoleLog,
+            hasSimpleHtml,
             frameworkExamples,
         };
     });
@@ -163,6 +168,8 @@ export async function getDocsExampleContents({ pages }: { pages: DocsPage[] }) {
             isIntegratedCharts: contents?.isIntegratedCharts,
             isLocale: contents?.isLocale,
             hasExampleConsoleLog: contents?.hasExampleConsoleLog,
+            hasSimpleHtml: contents?.hasSimpleHtml,
+            sourceFileList: contents?.sourceFileList,
             ...example.params,
         };
     });

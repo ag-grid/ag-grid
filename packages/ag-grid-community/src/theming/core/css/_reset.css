@@ -19,6 +19,10 @@
         outline: none;
         box-shadow: inset var(--ag-focus-shadow);
     }
+
+    &:where(button) {
+        color: inherit;
+    }
 }
 
 /* This next block must be on its own because browsers that don't support

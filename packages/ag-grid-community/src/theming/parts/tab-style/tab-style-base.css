@@ -13,7 +13,7 @@
 
 .ag-tabs-close-button-wrapper {
     border: 0;
-    border-right: solid 1px var(--ag-border-color);
+    border-right: solid var(--ag-border-width) var(--ag-border-color);
     padding: var(--ag-spacing);
     display: flex;
     align-items: center;

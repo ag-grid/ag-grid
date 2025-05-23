@@ -198,7 +198,7 @@
         "production": {}
       }
     },
-    "generate-one-example": {
+    "generate-docs-example": {
       "executor": "nx:run-commands",
       "options": {
         "commands": [

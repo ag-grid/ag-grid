@@ -134,7 +134,15 @@ export async function clickOnContextMenuItem({
             // NOTE: Not triggering keyboard event, use the Grid API instead, so it is more resilient to browser events
             for (let j = menuItemPath.length - 1; j >= 0; j--) {
                 const closeMenuItemEl = getMenuItemElAtIndex(j);
-                closeMenuItemEl?.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
+
+                if (j === 0) {
+                    // Remove parent `.ag-menu-list.ag-focus-managed` manually.
+                    // Otherwise, sending a keyboard event will take focus away
+                    // from the users scroll position
+                    closeMenuItemEl?.parentElement?.remove();
+                } else {
+                    closeMenuItemEl?.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
+                }
             }
         } else {
             // Use keyboard event to fake a click

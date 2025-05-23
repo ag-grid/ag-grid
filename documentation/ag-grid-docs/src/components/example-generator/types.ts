@@ -10,12 +10,14 @@ export interface GeneratedContents {
     files: FileContents;
     entryFileName: string;
     mainFileName: string;
+    sourceFileList: string[];
     scriptFiles: string[];
     styleFiles: string[];
     isEnterprise: boolean;
     isLocale?: boolean;
     isIntegratedCharts?: boolean;
     hasExampleConsoleLog?: boolean;
+    hasSimpleHtml?: boolean;
     boilerPlateFiles: FileContents;
     packageJson: Record<string, string>;
     extras?: string[];

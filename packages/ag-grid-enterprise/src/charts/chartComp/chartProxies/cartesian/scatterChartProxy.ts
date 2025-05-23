@@ -103,7 +103,7 @@ export class ScatterChartProxy extends CartesianChartProxy<'scatter' | 'bubble'>
                 highlightStyle: { item: { fill: 'yellow' } },
                 listeners: {
                     ...series.listeners,
-                    nodeClick: this.crossFilterCallback,
+                    seriesNodeClick: this.crossFilterCallback,
                 },
             };
         };
@@ -124,7 +124,7 @@ export class ScatterChartProxy extends CartesianChartProxy<'scatter' | 'bubble'>
                 showInLegend: false,
                 listeners: {
                     ...series.listeners,
-                    nodeClick: (e: any) => {
+                    seriesNodeClick: (e: any) => {
                         const value = e.datum[filteredOutKey(xKey!)];
 
                         // Need to remove the `-filtered-out` suffixes from the event so that

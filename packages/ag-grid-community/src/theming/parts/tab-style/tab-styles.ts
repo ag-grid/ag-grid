@@ -135,7 +135,7 @@ const baseParams: TabStyleParams = {
     tabSelectedTextColor: {
         ref: 'tabTextColor',
     },
-    tabSelectedBorderWidth: 1,
+    tabSelectedBorderWidth: { ref: 'borderWidth' },
     tabSelectedBorderColor: 'transparent',
     tabSelectedUnderlineColor: 'transparent',
     tabSelectedUnderlineWidth: 0,

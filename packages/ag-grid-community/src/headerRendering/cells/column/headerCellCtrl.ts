@@ -28,6 +28,8 @@ export interface IHeaderCellComp extends IAbstractHeaderCellComp {
     setAriaSort(sort?: ColumnSortState): void;
     setUserCompDetails(compDetails: UserCompDetails): void;
     getUserCompInstance(): IHeader | undefined;
+    refreshSelectAllGui(): void;
+    removeSelectAllGui(): void;
 }
 
 type HeaderAriaDescriptionKey = 'filter' | 'menu' | 'sort' | 'selectAll' | 'filterButton';
@@ -231,8 +233,20 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
         if (!selectionSvc) {
             return;
         }
-        this.selectAllFeature = compBean.createManagedBean(selectionSvc.createSelectAllFeature(this.column));
-        this.selectAllFeature.setComp(this);
+        this.selectAllFeature = compBean.createOptionalManagedBean(selectionSvc.createSelectAllFeature(this.column));
+        this.selectAllFeature?.setComp(this);
+
+        compBean.addManagedPropertyListener('rowSelection', () => {
+            const selectAllFeature = selectionSvc.createSelectAllFeature(this.column);
+            if (selectAllFeature && !this.selectAllFeature) {
+                this.selectAllFeature = compBean.createManagedBean(selectAllFeature);
+                this.selectAllFeature?.setComp(this);
+                this.comp.refreshSelectAllGui();
+            } else if (this.selectAllFeature && !selectAllFeature) {
+                this.comp.removeSelectAllGui();
+                this.selectAllFeature = this.destroyBean(this.selectAllFeature);
+            }
+        });
     }
 
     public getSelectAllGui(): HTMLElement | undefined {

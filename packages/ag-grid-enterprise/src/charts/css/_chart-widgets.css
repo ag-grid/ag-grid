@@ -13,8 +13,7 @@
     width: 24px;
     height: 24px;
     border-radius: 12px;
-    border: solid 1px;
-    border-color: var(--ag-border-color);
+    border: solid var(--ag-border-width) var(--ag-border-color);
     background-color: var(--ag-background-color);
 }
 
@@ -141,7 +140,7 @@
 
 .ag-recent-color {
     cursor: pointer;
-    border: solid 1px var(--ag-border-color);
+    border: solid var(--ag-border-width) var(--ag-border-color);
 }
 
 .ag-angle-select[disabled] {
@@ -211,7 +210,7 @@
 .ag-color-input-color {
     width: var(--ag-icon-size);
     height: var(--ag-icon-size);
-    border: solid 1px var(--ag-border-color);
+    border: solid var(--ag-border-width) var(--ag-border-color);
     border-radius: 2px;
 }
 

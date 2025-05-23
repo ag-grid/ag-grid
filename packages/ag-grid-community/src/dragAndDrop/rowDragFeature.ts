@@ -11,7 +11,12 @@ import type {
     RowDragMoveEvent,
 } from '../events';
 import { _getNormalisedMousePosition } from '../gridBodyComp/mouseEventUtils';
-import { _addGridCommonParams, _getRowIdCallback, _isClientSideRowModel } from '../gridOptionsUtils';
+import {
+    _addGridCommonParams,
+    _getGroupingApproach,
+    _getRowIdCallback,
+    _isClientSideRowModel,
+} from '../gridOptionsUtils';
 import type { IClientSideRowModel } from '../interfaces/iClientSideRowModel';
 import type { IRowNode } from '../interfaces/iRowNode';
 import { _last } from '../utils/array';
@@ -261,13 +266,12 @@ export class RowDragFeature extends BeanStub implements DropTarget {
 
         const sameGrid = this.isFromThisGrid(draggingEvent);
 
+        const groupingApproach = _getGroupingApproach(gos);
         const canSetParent =
+            // We don't yet support drag and drop with getDataPath or row grouping
+            (groupingApproach === 'treeSelfRef' || groupingApproach === 'treeNested') &&
             // We don't yet support moving tree rows from a different grid in a structured way
-            sameGrid &&
-            // TreeData support for managed drag and drop
-            gos.get('treeData') &&
-            gos.get('treeDataParentIdField') &&
-            !gos.get('treeDataChildrenField');
+            sameGrid;
 
         let targetInRows = false;
 

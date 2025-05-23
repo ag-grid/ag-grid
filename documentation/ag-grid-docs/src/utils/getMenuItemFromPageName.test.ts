@@ -45,7 +45,7 @@ describe('getMenuItemFromPageName', () => {
                 },
                 {
                     title: 'Overview',
-                    items: [
+                    children: [
                         {
                             title: 'Grid Interface',
                             path: 'grid-interface',
@@ -64,7 +64,7 @@ describe('getMenuItemFromPageName', () => {
                 },
                 {
                     title: 'Overview',
-                    items: [
+                    children: [
                         {
                             title: 'Grid Interface',
                             path: 'grid-interface',
@@ -86,7 +86,7 @@ describe('getMenuItemFromPageName', () => {
                 },
                 {
                     title: 'Overview',
-                    items: [
+                    children: [
                         {
                             title: 'Grid Interface',
                             path: 'grid-interface',
@@ -106,7 +106,7 @@ describe('getMenuItemFromPageName', () => {
                 {
                     title: 'Overview',
                     path: 'overview',
-                    items: [
+                    children: [
                         {
                             title: 'Grid Interface',
                             path: 'grid-interface',
@@ -118,7 +118,7 @@ describe('getMenuItemFromPageName', () => {
             expected: {
                 title: 'Overview',
                 path: 'overview',
-                items: [
+                children: [
                     {
                         title: 'Grid Interface',
                         path: 'grid-interface',

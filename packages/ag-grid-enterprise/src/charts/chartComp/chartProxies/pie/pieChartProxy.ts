@@ -100,7 +100,7 @@ export class PieChartProxy extends ChartProxy<AgPolarChartOptions, 'pie' | 'donu
             radiusMin: 0,
             radiusMax: 1,
             listeners: {
-                nodeClick: this.crossFilterCallback,
+                seriesNodeClick: this.crossFilterCallback,
             },
             legendItemKey: primarySeries.calloutLabelKey,
             angleKey: `${angleKey}-total`,

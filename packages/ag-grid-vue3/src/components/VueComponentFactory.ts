@@ -69,7 +69,7 @@ export class VueComponentFactory {
 
         vNode.appContext = { ...parent.appContext, provides };
 
-        let el: any = document.createElement('div');
+        let el: any = document.createDocumentFragment();
         render(vNode, el);
 
         const destroy = () => {
