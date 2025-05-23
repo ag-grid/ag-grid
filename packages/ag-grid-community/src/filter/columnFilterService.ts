@@ -20,7 +20,6 @@ import type { ColumnEventType, FilterChangedEventSourceType } from '../events';
 import { _addGridCommonParams, _getGroupAggFiltering, _isSetFilterByDefault } from '../gridOptionsUtils';
 import type { FilterParamsDefMap } from '../interfaces/advancedFilterModel';
 import type { FilterModel, IFilter, IFilterComp, IFilterParams } from '../interfaces/iFilter';
-import type { ISetFilterParams } from '../interfaces/iSetFilter';
 import type { UserCompDetails } from '../interfaces/iUserCompDetails';
 import { getDateParts } from '../utils/date';
 import { _exists, _jsonEquals } from '../utils/generic';
