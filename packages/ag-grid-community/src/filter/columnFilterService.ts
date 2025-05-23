@@ -1011,7 +1011,7 @@ export class ColumnFilterService extends BeanStub implements NamedBean {
                         const valueFormatted = formatValue(params);
                         return _exists(valueFormatted) ? valueFormatted : t('blanks', '(Blanks)');
                     },
-                } as ISetFilterParams<any, any>;
+                };
             }
             return ({ column, node }: ValueGetterParams) =>
                 formatValue({ column, node, value: valueSvc.getValue(column as AgColumn, node) });
