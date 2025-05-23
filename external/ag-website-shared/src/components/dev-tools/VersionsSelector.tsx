@@ -6,7 +6,7 @@ import { LIBRARY } from '@constants';
 import { useStore } from '@nanostores/react';
 import { $queryClient, defaultQueryOptions } from '@stores/queryClientStore';
 import { QueryClientProvider, useQuery } from '@tanstack/react-query';
-import { pathJoin } from '@utils/pathJoin';
+import { useStoreSsr } from '@utils/hooks/useStoreSsr';
 import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
 import { urlWithPrefix } from '@utils/urlWithPrefix';
 import classNames from 'classnames';
@@ -14,6 +14,7 @@ import type { FunctionComponent } from 'react';
 import { useCallback, useEffect, useState } from 'react';
 
 import styles from './ExampleDevToolbar.module.scss';
+import { $openLinksInNewTab } from './stores/devToolsStore';
 
 interface Props {
     framework: Framework;
@@ -25,6 +26,8 @@ const versionsUrl = urlWithBaseUrl('/debug/versions.json');
 
 export const VersionsSelectorInner: FunctionComponent<Props> = ({ framework, pageName, exampleName }) => {
     const [versions, setVersions] = useState([]);
+    const openLinksInNewTab = useStoreSsr($openLinksInNewTab, false);
+    const target = openLinksInNewTab ? '_blank' : '_self';
 
     /**
      * Fetch versions from an endpoint, so it is done only when required, and
@@ -68,20 +71,23 @@ export const VersionsSelectorInner: FunctionComponent<Props> = ({ framework, pag
         return `--- v${major}.${minor} ---`;
     }, []);
 
-    const handleVersionsChange = useCallback((newValue) => {
-        const version = newValue.value;
-        const newUrl = getDocumentationArchiveUrl({
-            site: LIBRARY,
-            version,
-            path:
-                urlWithPrefix({
-                    framework,
-                    url: `./${pageName}`,
-                }) + `#example-${exampleName}`,
-        });
+    const handleVersionsChange = useCallback(
+        (newValue) => {
+            const version = newValue.value;
+            const newUrl = getDocumentationArchiveUrl({
+                site: LIBRARY,
+                version,
+                path:
+                    urlWithPrefix({
+                        framework,
+                        url: `./${pageName}`,
+                    }) + `#example-${exampleName}`,
+            });
 
-        window.location.href = newUrl;
-    }, []);
+            window.open(newUrl, target);
+        },
+        [target, framework, pageName, exampleName]
+    );
 
     return versions ? (
         <Select

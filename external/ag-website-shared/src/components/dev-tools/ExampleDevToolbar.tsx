@@ -5,12 +5,14 @@ import fwLogos from '@ag-website-shared/images/fw-logos';
 import { getPageNameFromPath } from '@components/docs/utils/urlPaths';
 import { FRAMEWORKS, URL_CONFIG } from '@constants';
 import { getFrameworkDisplayText } from '@utils/framework';
+import { useStoreSsr } from '@utils/hooks/useStoreSsr';
 import { pathJoin } from '@utils/pathJoin';
 import { urlWithPrefix } from '@utils/urlWithPrefix';
 import classNames from 'classnames';
 import { type FunctionComponent, useCallback, useMemo } from 'react';
 
 import styles from './ExampleDevToolbar.module.scss';
+import { $openLinksInNewTab } from './stores/devToolsStore';
 
 interface Props {
     framework: Framework;
@@ -19,6 +21,8 @@ interface Props {
 
 export const ExampleDevToolbar: FunctionComponent<Props> = ({ framework, exampleName }) => {
     const { host, pathname } = window.location;
+    const openLinksInNewTab = useStoreSsr($openLinksInNewTab, false);
+    const target = openLinksInNewTab ? '_blank' : '_self';
     const pageName = getPageNameFromPath(pathname);
     const frameworkOptions = useMemo(() => {
         return FRAMEWORKS.map((fw) => ({
@@ -40,9 +44,10 @@ export const ExampleDevToolbar: FunctionComponent<Props> = ({ framework, example
                 }),
                 `#example-${exampleName}`
             );
-            window.location.href = newUrl;
+
+            window.open(newUrl, target);
         },
-        [framework]
+        [framework, exampleName, pageName, target]
     );
 
     return (
@@ -64,7 +69,13 @@ export const ExampleDevToolbar: FunctionComponent<Props> = ({ framework, example
                     const isEnv = config.hosts.includes(host);
                     return (
                         <li key={env} className={classNames(styles.exampleLink)}>
-                            {isEnv ? <>{env}</> : <a href={url}>{env} </a>}
+                            {isEnv ? (
+                                <>{env}</>
+                            ) : (
+                                <a href={url} target={target}>
+                                    {env}{' '}
+                                </a>
+                            )}
                         </li>
                     );
                 })}

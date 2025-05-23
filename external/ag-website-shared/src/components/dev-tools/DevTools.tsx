@@ -1,8 +1,10 @@
 import {
     $devTools,
     $exampleDevToolbar,
+    $openLinksInNewTab,
     toggleDevTools,
     toggleExampleDevToolbar,
+    toggleOpenLinksInNewTab,
 } from '@ag-website-shared/components/dev-tools/stores/devToolsStore';
 import { useStoreSsr } from '@utils/hooks/useStoreSsr';
 import type { FunctionComponent, ReactNode } from 'react';
@@ -37,6 +39,7 @@ export const DevToolsToggle = ({ children }: { children: ReactNode }) => {
 export const DevTools: FunctionComponent = () => {
     const devTools = useStoreSsr($devTools, false);
     const exampleDevToolbar = useStoreSsr($exampleDevToolbar, false);
+    const openLinksInNewTab = useStoreSsr($openLinksInNewTab, false);
 
     return devTools ? (
         <div className={styles.devToolsContainer}>
@@ -49,6 +52,16 @@ export const DevTools: FunctionComponent = () => {
                         defaultChecked={exampleDevToolbar}
                         onClick={() => {
                             toggleExampleDevToolbar();
+                        }}
+                    />
+                </div>
+                <div>
+                    <label>Open Links In New Tab:</label>
+                    <input
+                        type="checkbox"
+                        defaultChecked={openLinksInNewTab}
+                        onClick={() => {
+                            toggleOpenLinksInNewTab();
                         }}
                     />
                 </div>

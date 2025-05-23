@@ -23,3 +23,10 @@ export const $exampleDevToolbar = persistentAtom<boolean>(
     parseBoolean
 );
 export const toggleExampleDevToolbar = createToggleBoolean($exampleDevToolbar);
+
+export const $openLinksInNewTab = persistentAtom<boolean>(
+    `${LOCALSTORAGE_PREFIX}:openLinksInNewTab`,
+    false,
+    parseBoolean
+);
+export const toggleOpenLinksInNewTab = createToggleBoolean($openLinksInNewTab);
