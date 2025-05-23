@@ -13,10 +13,23 @@ export function sizeColumnsToFit(beans: BeanCollection, paramsOrGridWidth?: ISiz
 
 export function autoSizeColumns(beans: BeanCollection, keys: (string | ColDef | Column)[], skipHeader?: boolean): void;
 export function autoSizeColumns(beans: BeanCollection, params: SizeColumnsToContentStrategy): void;
-export function autoSizeColumns(beans: BeanCollection, keysOrParams: any, skipHeader?: boolean): void {
-    beans.colAutosize?.autoSizeCols(
-        Array.isArray(keysOrParams) ? { colKeys: keysOrParams, skipHeader, source: 'api' } : keysOrParams
-    );
+export function autoSizeColumns(
+    beans: BeanCollection,
+    keysOrParams: (string | ColDef | Column)[] | SizeColumnsToContentStrategy,
+    skipHeader?: boolean
+): void {
+    if (Array.isArray(keysOrParams)) {
+        beans.colAutosize?.autoSizeCols({ colKeys: keysOrParams, skipHeader, source: 'api' });
+    } else {
+        beans.colAutosize?.autoSizeCols({
+            colKeys: keysOrParams.colIds ?? beans.visibleCols.allCols,
+            skipHeader: keysOrParams.skipHeader,
+            defaultMaxWidth: keysOrParams.defaultMaxWidth,
+            defaultMinWidth: keysOrParams.defaultMinWidth,
+            columnLimits: keysOrParams.columnLimits,
+            source: 'api',
+        });
+    }
 }
 
 export function autoSizeAllColumns(beans: BeanCollection, skipHeader?: boolean): void {
