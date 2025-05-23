@@ -1,20 +1,25 @@
 import { persistentAtom } from '@nanostores/persistent';
 
-type BooleanString = 'true' | 'false';
 const LOCALSTORAGE_PREFIX = 'devTools';
 
-export const $devTools = persistentAtom<BooleanString | undefined>(`${LOCALSTORAGE_PREFIX}`);
-
-export const toggleDevTools = () => {
-    const currentValue = $devTools.get();
-    const newValue = currentValue === 'true' ? 'false' : 'true';
-    $devTools.set(newValue);
+const parseBoolean = {
+    encode: (val: any) => (val ? 'true' : 'false'),
+    decode: (val: string) => val === 'true',
 };
 
-export const $exampleDevToolbar = persistentAtom<BooleanString | undefined>(`${LOCALSTORAGE_PREFIX}:exampleDevToolbar`);
+function createToggleBoolean($store: any) {
+    return () => {
+        const currentValue = $store.get();
+        $store.set(!currentValue);
+    };
+}
 
-export const toggleExampleDevToolbar = () => {
-    const currentValue = $exampleDevToolbar.get();
-    const newValue = currentValue === 'true' ? 'false' : 'true';
-    $exampleDevToolbar.set(newValue);
-};
+export const $devTools = persistentAtom<boolean>(`${LOCALSTORAGE_PREFIX}`, false, parseBoolean);
+export const toggleDevTools = createToggleBoolean($devTools);
+
+export const $exampleDevToolbar = persistentAtom<boolean>(
+    `${LOCALSTORAGE_PREFIX}:exampleDevToolbar`,
+    false,
+    parseBoolean
+);
+export const toggleExampleDevToolbar = createToggleBoolean($exampleDevToolbar);

@@ -55,7 +55,7 @@ export const ExampleRunner: FunctionComponent<Props> = ({
     consoleBufferSize,
 }) => {
     const [showCode, setShowCode] = useState(false);
-    const showExampleDevToolbar = useStoreSsr($exampleDevToolbar, '');
+    const showExampleDevToolbar = useStoreSsr($exampleDevToolbar, false);
     const framework = getFrameworkFromInternalFramework(internalFramework);
 
     const exampleHeight = initialExampleHeight || DEFAULT_HEIGHT;
@@ -91,9 +91,7 @@ export const ExampleRunner: FunctionComponent<Props> = ({
                 </div>
                 {hasExampleConsoleLog && <ExampleLogger exampleName={exampleName} bufferSize={consoleBufferSize} />}
                 <footer className={styles.footer}>
-                    {showExampleDevToolbar === 'true' && (
-                        <ExampleDevToolbar framework={framework} exampleName={exampleName} />
-                    )}
+                    {showExampleDevToolbar && <ExampleDevToolbar framework={framework} exampleName={exampleName} />}
                     <button
                         className={classnames(styles.previewCodeToggle, 'button-secondary')}
                         onClick={() => {

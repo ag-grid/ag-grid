@@ -35,10 +35,10 @@ export const DevToolsToggle = ({ children }: { children: ReactNode }) => {
 };
 
 export const DevTools: FunctionComponent = () => {
-    const devTools = useStoreSsr($devTools, '');
-    const exampleDevToolbar = useStoreSsr($exampleDevToolbar, '');
+    const devTools = useStoreSsr($devTools, false);
+    const exampleDevToolbar = useStoreSsr($exampleDevToolbar, false);
 
-    return devTools === 'true' ? (
+    return devTools ? (
         <div className={styles.devToolsContainer}>
             <h2>Dev Tools</h2>
             <div className={styles.options}>
@@ -46,7 +46,7 @@ export const DevTools: FunctionComponent = () => {
                     <label>Example Dev Toolbar:</label>
                     <input
                         type="checkbox"
-                        defaultChecked={exampleDevToolbar === 'true'}
+                        defaultChecked={exampleDevToolbar}
                         onClick={() => {
                             toggleExampleDevToolbar();
                         }}
