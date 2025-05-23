@@ -39,7 +39,7 @@ import type { Column, ColumnGroup, ColumnPinnedType, ProvidedColumnGroup } from 
 import type { IColumnToolPanel } from '../interfaces/iColumnToolPanel';
 import type { IContextMenuParams } from '../interfaces/iContextMenu';
 import type { ExcelExportMultipleSheetParams, ExcelExportParams } from '../interfaces/iExcelCreator';
-import type { FilterDisplay, FilterEvaluator, FilterModel, IFilter } from '../interfaces/iFilter';
+import type { FilterDisplay, FilterModel, IFilter } from '../interfaces/iFilter';
 import type { IFiltersToolPanel } from '../interfaces/iFiltersToolPanel';
 import type { FindCellParams, FindCellValueParams, FindMatch, FindPart } from '../interfaces/iFind';
 import type { AgModuleName } from '../interfaces/iModule';
@@ -887,9 +887,7 @@ export interface _ColumnFilterGridApi {
      * `key` can be a column ID or a `Column` object.
      * @agModule `TextFilterModule` / `NumberFilterModule` / `DateFilterModule` / `SetFilterModule` / `MultiFilterModule` / `CustomFilterModule`
      */
-    getColumnFilterEvaluator<TFilterEvaluator extends FilterEvaluator>(
-        key: string | Column
-    ): TFilterEvaluator | undefined;
+    getColumnFilterEvaluator<TFilterEvaluator>(key: string | Column): TFilterEvaluator | undefined;
 
     /**
      * Destroys a filter. Useful to force a particular filter to be created from scratch again.

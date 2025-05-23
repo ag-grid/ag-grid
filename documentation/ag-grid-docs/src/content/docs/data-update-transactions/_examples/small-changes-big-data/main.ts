@@ -4,10 +4,6 @@ import type {
     GridApi,
     GridOptions,
     IAggFuncParams,
-    IDoesFilterPassParams,
-    IFilterComp,
-    IFilterParams,
-    IFilterType,
     IsGroupOpenByDefaultParams,
 } from 'ag-grid-community';
 import {
@@ -16,8 +12,8 @@ import {
     CustomFilterModule,
     HighlightChangesModule,
     ModuleRegistry,
+    NumberFilterModule,
     RowSelectionModule,
-    TextFilterModule,
     ValidationModule,
     createGrid,
 } from 'ag-grid-community';
@@ -27,7 +23,7 @@ import { createDataItem, getData } from './data';
 
 ModuleRegistry.registerModules([
     ClientSideRowModelApiModule,
-    TextFilterModule,
+    NumberFilterModule,
     RowSelectionModule,
     HighlightChangesModule,
     ClientSideRowModelModule,
@@ -53,66 +49,6 @@ function myComparator(a: any, b: any) {
     compareCallCount++;
     return a < b ? -1 : 1;
 }
-
-function getMyFilter(): IFilterType {
-    class MyFilter implements IFilterComp {
-        filterParams!: IFilterParams;
-        filterValue!: number | null;
-        eGui: any;
-        eInput: any;
-
-        init(params: IFilterParams) {
-            this.filterParams = params;
-            this.filterValue = null;
-
-            this.eGui = document.createElement('div');
-            this.eGui.innerHTML = '<div>Greater Than: <input type="text"/></div>';
-            this.eInput = this.eGui.querySelector('input');
-            this.eInput.addEventListener('input', () => {
-                this.getValueFromInput();
-                params.filterChangedCallback();
-            });
-        }
-
-        getGui() {
-            return this.eGui;
-        }
-
-        getValueFromInput() {
-            const value = parseInt(this.eInput.value);
-            this.filterValue = isNaN(value) ? null : value;
-        }
-
-        setModel(model: any) {
-            this.eInput.value = model == null ? null : model.value;
-            this.getValueFromInput();
-        }
-
-        getModel() {
-            if (!this.isFilterActive()) {
-                return null;
-            }
-
-            return { value: this.eInput.value };
-        }
-
-        isFilterActive() {
-            return this.filterValue !== null;
-        }
-
-        doesFilterPass(params: IDoesFilterPassParams) {
-            filterCallCount++;
-
-            const { node } = params;
-            const value = this.filterParams.getValue(node);
-
-            return value > (this.filterValue || 0);
-        }
-    }
-    return MyFilter;
-}
-
-const myFilter = getMyFilter();
 
 function getRowId(params: GetRowIdParams) {
     return String(params.data.id);
@@ -211,7 +147,24 @@ const columnDefs: ColDef[] = [
     { field: 'city', rowGroup: true, hide: true },
     { field: 'laptop', rowGroup: true, hide: true },
     { field: 'distro', sort: 'asc', comparator: myComparator },
-    { field: 'value', enableCellChangeFlash: true, aggFunc: myAggFunc, filter: myFilter },
+    {
+        field: 'value',
+        enableCellChangeFlash: true,
+        aggFunc: myAggFunc,
+        filter: 'agNumberColumnFilter',
+        filterParams: {
+            filterOptions: ['greaterThan'],
+            maxNumConditions: 1,
+        },
+        filterEvaluator: () => {
+            return {
+                doesFilterPass: ({ model, node, evaluatorParams }) => {
+                    filterCallCount++;
+                    return model == null || evaluatorParams.getValue(node) > model.filter;
+                },
+            };
+        },
+    },
 ];
 
 const gridOptions: GridOptions = {
@@ -231,7 +184,7 @@ const gridOptions: GridOptions = {
     },
     onGridReady: (params) => {
         params.api.setFilterModel({
-            value: { value: '50' },
+            value: { filterType: 'number', type: 'greaterThan', filter: 50 },
         });
 
         timeOperation('Initialisation', () => {
@@ -239,6 +192,7 @@ const gridOptions: GridOptions = {
         });
     },
     isGroupOpenByDefault: isGroupOpenByDefault,
+    enableFilterEvaluators: true,
 };
 
 function isGroupOpenByDefault(params: IsGroupOpenByDefaultParams<IOlympicData, any>) {

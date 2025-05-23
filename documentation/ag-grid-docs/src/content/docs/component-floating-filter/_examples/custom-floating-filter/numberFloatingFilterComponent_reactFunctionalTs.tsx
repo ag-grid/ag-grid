@@ -1,5 +1,4 @@
-import type { ChangeEvent } from 'react';
-import React, { Fragment } from 'react';
+import React, { ChangeEvent, Fragment } from 'react';
 
 import type { CustomFloatingFilterDisplayProps } from 'ag-grid-react';
 

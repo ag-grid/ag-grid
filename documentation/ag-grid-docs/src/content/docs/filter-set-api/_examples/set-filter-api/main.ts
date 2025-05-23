@@ -2,9 +2,9 @@ import type {
     FirstDataRenderedEvent,
     GridApi,
     GridOptions,
-    ISetFilter,
     ISetFilterParams,
     KeyCreatorParams,
+    SetFilterEvaluator,
     ValueFormatterParams,
 } from 'ag-grid-community';
 import {
@@ -95,28 +95,22 @@ function selectNothing() {
 }
 
 function setCountriesToFranceAustralia() {
-    gridApi!.getColumnFilterInstance<ISetFilter<{ name: string; code: string }>>('country').then((instance) => {
-        instance!.setFilterValues([
-            {
-                name: 'France',
-                code: 'FR',
-            },
-            {
-                name: 'Australia',
-                code: 'AU',
-            },
-        ]);
-        instance!.applyModel();
-        gridApi!.onFilterChanged();
-    });
+    const evaluator = gridApi!.getColumnFilterEvaluator<SetFilterEvaluator<{ name: string; code: string }>>('country');
+    evaluator!.setFilterValues([
+        {
+            name: 'France',
+            code: 'FR',
+        },
+        {
+            name: 'Australia',
+            code: 'AU',
+        },
+    ]);
 }
 
 function setCountriesToAll() {
-    gridApi!.getColumnFilterInstance<ISetFilter<{ name: string; code: string }>>('country').then((instance) => {
-        instance!.resetFilterValues();
-        instance!.applyModel();
-        gridApi!.onFilterChanged();
-    });
+    const evaluator = gridApi!.getColumnFilterEvaluator<SetFilterEvaluator<{ name: string; code: string }>>('country');
+    evaluator!.resetFilterValues();
 }
 
 function onFirstDataRendered(params: FirstDataRenderedEvent) {

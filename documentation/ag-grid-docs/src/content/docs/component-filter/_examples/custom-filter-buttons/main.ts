@@ -17,7 +17,7 @@ ModuleRegistry.registerModules([
 
 function yearFilterEvaluator(): FilterEvaluator<any, any, boolean> {
     return {
-        doesFilterPass: ({ model, node, evaluatorParams }) => (model ? evaluatorParams.getValue(node) >= 2010 : true),
+        doesFilterPass: ({ model, node, evaluatorParams }) => (model ? evaluatorParams.getValue(node) > 2010 : true),
     };
 }
 

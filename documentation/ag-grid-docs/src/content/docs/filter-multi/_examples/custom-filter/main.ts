@@ -1,4 +1,4 @@
-import type { GridApi, GridOptions, IMultiFilterParams } from 'ag-grid-community';
+import type { FilterEvaluator, GridApi, GridOptions, IMultiFilterParams } from 'ag-grid-community';
 import {
     ClientSideRowModelModule,
     ModuleRegistry,
@@ -34,6 +34,12 @@ ModuleRegistry.registerModules([
 
 let gridApi: GridApi<IOlympicData>;
 
+function yearFilterEvaluator(): FilterEvaluator<any, any, boolean> {
+    return {
+        doesFilterPass: ({ model, node, evaluatorParams }) => (model ? evaluatorParams.getValue(node) > 2010 : true),
+    };
+}
+
 const gridOptions: GridOptions<IOlympicData> = {
     columnDefs: [
         { field: 'athlete', filter: 'agMultiColumnFilter' },
@@ -45,6 +51,7 @@ const gridOptions: GridOptions<IOlympicData> = {
                 filters: [
                     {
                         filter: YearFilter,
+                        filterEvaluator: yearFilterEvaluator,
                         floatingFilterComponent: YearFloatingFilter,
                     },
                     {
@@ -61,6 +68,7 @@ const gridOptions: GridOptions<IOlympicData> = {
         suppressHeaderMenuButton: true,
         suppressHeaderContextMenu: true,
     },
+    enableFilterEvaluators: true,
 };
 
 // setup the grid after the page has finished loading

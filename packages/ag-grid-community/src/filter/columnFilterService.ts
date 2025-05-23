@@ -1483,8 +1483,9 @@ export class ColumnFilterService
             if (filterWrapper.isEvaluator) {
                 const column = filterWrapper.column;
                 const colId = column.getColId();
+                const existingModel = this.model[colId];
                 this.updateStoredModel(colId, newModel);
-                if (justCreated) {
+                if (justCreated && newModel === existingModel) {
                     // don't need to refresh as already has the new model
                     resolve();
                     return;

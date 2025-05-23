@@ -146,7 +146,7 @@ export class MultiFloatingFilterComp extends Component implements IFloatingFilte
             if (this.gos.get('enableFilterEvaluators')) {
                 const reactiveParams = floatingFilterParams as unknown as FloatingFilterDisplayParams;
                 reactiveParams.model = reactiveParams.model?.filterModels?.[index] ?? null;
-                const onModelChange = reactiveParams.onModelChange;
+                const { onModelChange, getEvaluator } = reactiveParams;
                 reactiveParams.onModelChange = (newModel, additionalEventAttributes) =>
                     onModelChange(
                         getUpdatedMultiFilterModel(
@@ -157,6 +157,10 @@ export class MultiFloatingFilterComp extends Component implements IFloatingFilte
                         ),
                         additionalEventAttributes
                     );
+                reactiveParams.getEvaluator = () => {
+                    const multiFilterEvaluator = getEvaluator() as MultiFilterEvaluator;
+                    return multiFilterEvaluator.getEvaluator(index)!;
+                };
             }
             _mergeDeep(floatingFilterParams.filterParams, filterDef.filterParams);
 
