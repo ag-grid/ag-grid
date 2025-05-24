@@ -114,7 +114,7 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
 
                 // preferredWidth = -1 if this col is not on the screen
                 if (preferredWidth > 0) {
-                    const columnLimit = columnLimitsIndex[column.colId];
+                    const columnLimit = columnLimitsIndex[column.colId] ?? {};
                     columnLimit.minWidth ??= defaultMinWidth;
                     columnLimit.maxWidth ??= defaultMaxWidth;
                     const newWidth = normaliseColumnWidth(column, preferredWidth, columnLimit);

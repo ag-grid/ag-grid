@@ -1,6 +1,6 @@
 import type { BeanCollection } from '../context/context';
 import type { ColDef } from '../entities/colDef';
-import type { ISizeColumnsToFitParams, SizeColumnsToContentStrategy } from '../interfaces/autoSize';
+import type { ISizeColumnsToContentParams, ISizeColumnsToFitParams } from '../interfaces/autoSize';
 import type { Column } from '../interfaces/iColumn';
 
 export function sizeColumnsToFit(beans: BeanCollection, paramsOrGridWidth?: ISizeColumnsToFitParams | number) {
@@ -12,24 +12,23 @@ export function sizeColumnsToFit(beans: BeanCollection, paramsOrGridWidth?: ISiz
 }
 
 export function autoSizeColumns(beans: BeanCollection, keys: (string | ColDef | Column)[], skipHeader?: boolean): void;
-export function autoSizeColumns(beans: BeanCollection, params: SizeColumnsToContentStrategy): void;
+export function autoSizeColumns(beans: BeanCollection, params: ISizeColumnsToContentParams): void;
 export function autoSizeColumns(
     beans: BeanCollection,
-    keysOrParams: (string | ColDef | Column)[] | SizeColumnsToContentStrategy,
+    keysOrParams: (string | ColDef | Column)[] | ISizeColumnsToContentParams,
     skipHeader?: boolean
 ): void {
-    if (Array.isArray(keysOrParams)) {
-        beans.colAutosize?.autoSizeCols({ colKeys: keysOrParams, skipHeader, source: 'api' });
-    } else {
-        beans.colAutosize?.autoSizeCols({
-            colKeys: keysOrParams.colIds ?? beans.visibleCols.allCols,
-            skipHeader: keysOrParams.skipHeader,
-            defaultMaxWidth: keysOrParams.defaultMaxWidth,
-            defaultMinWidth: keysOrParams.defaultMinWidth,
-            columnLimits: keysOrParams.columnLimits,
-            source: 'api',
-        });
-    }
+    const params = Array.isArray(keysOrParams)
+        ? { colKeys: keysOrParams, skipHeader, source: 'api' as const }
+        : {
+              colKeys: keysOrParams.colIds ?? beans.visibleCols.allCols,
+              skipHeader: keysOrParams.skipHeader,
+              defaultMaxWidth: keysOrParams.defaultMaxWidth,
+              defaultMinWidth: keysOrParams.defaultMinWidth,
+              columnLimits: keysOrParams.columnLimits,
+              source: 'api' as const,
+          };
+    beans.colAutosize?.autoSizeCols(params);
 }
 
 export function autoSizeAllColumns(beans: BeanCollection, skipHeader?: boolean): void {
