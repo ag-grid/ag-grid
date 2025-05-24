@@ -31,6 +31,15 @@ export function autoSizeColumns(
     beans.colAutosize?.autoSizeCols(params);
 }
 
-export function autoSizeAllColumns(beans: BeanCollection, skipHeader?: boolean): void {
-    beans.colAutosize?.autoSizeAllColumns('api', skipHeader);
+export function autoSizeAllColumns(beans: BeanCollection, params: ISizeColumnsToContentParams): void;
+export function autoSizeAllColumns(beans: BeanCollection, skipHeader?: boolean): void;
+export function autoSizeAllColumns(
+    beans: BeanCollection,
+    paramsOrSkipHeader?: ISizeColumnsToContentParams | boolean
+): void {
+    if (paramsOrSkipHeader && typeof paramsOrSkipHeader === 'object') {
+        autoSizeColumns(beans, paramsOrSkipHeader);
+    } else {
+        beans.colAutosize?.autoSizeAllColumns('api', paramsOrSkipHeader);
+    }
 }

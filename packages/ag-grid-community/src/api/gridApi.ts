@@ -584,6 +584,7 @@ export interface _ColumnAutosizeApi {
      * @agModule `ColumnAutoSizeModule`
      */
     autoSizeAllColumns(skipHeader?: boolean): void;
+    autoSizeAllColumns(params: ISizeColumnsToContentParams): void;
 }
 
 export interface _ColumnResizeApi {
