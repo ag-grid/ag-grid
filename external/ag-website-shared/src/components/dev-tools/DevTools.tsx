@@ -13,6 +13,7 @@ import { useEffect, useState } from 'react';
 import styles from './DevTools.module.scss';
 
 const TOGGLE_COUNT = 5;
+const DEV_TOOLS_ID = 'devTools';
 
 export const DevToolsToggle = ({ children }: { children: ReactNode }) => {
     const [toggleCount, setToggleCount] = useState(0);
@@ -20,9 +21,17 @@ export const DevToolsToggle = ({ children }: { children: ReactNode }) => {
     useEffect(() => {
         if (toggleCount >= TOGGLE_COUNT) {
             toggleDevTools();
+
+            if ($devTools.get()) {
+                setTimeout(() => {
+                    document.getElementById(DEV_TOOLS_ID)?.scrollIntoView({
+                        behavior: 'smooth',
+                    });
+                }, 0);
+            }
             setToggleCount(0);
         }
-    }, [toggleCount]);
+    }, [toggleCount, $devTools]);
 
     return (
         <span
@@ -42,7 +51,7 @@ export const DevTools: FunctionComponent = () => {
     const openLinksInNewTab = useStoreSsr($openLinksInNewTab, false);
 
     return devTools ? (
-        <div className={styles.devToolsContainer}>
+        <div id={DEV_TOOLS_ID} className={styles.devToolsContainer}>
             <h2>Dev Tools</h2>
             <div className={styles.options}>
                 <div>
