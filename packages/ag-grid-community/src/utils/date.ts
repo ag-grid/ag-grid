@@ -40,15 +40,13 @@ export function _getDateParts(d: Date | null | undefined, includeTime: boolean =
         return null;
     }
 
-    const parts = [d.getFullYear(), d.getMonth() + 1, d.getDate(), d.getHours(), d.getMinutes(), d.getSeconds()].map(
-        String
-    );
-
     if (includeTime) {
-        return parts;
+        return [d.getFullYear(), d.getMonth() + 1, d.getDate(), d.getHours(), d.getMinutes(), d.getSeconds()].map(
+            String
+        );
     }
 
-    return parts.slice(0, 3);
+    return [d.getFullYear(), d.getMonth() + 1, d.getDate()].map(String);
 }
 
 const calculateOrdinal = (value: number) => {
