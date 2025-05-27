@@ -148,11 +148,17 @@ export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGrou
                 allLeafChildrenChanged = updateAllLeafChildren(row, allLeafChildren, allLeafChildrenLen);
             }
 
-            const key = treePathApproach ? row.key! : row.id!;
-            if (groupDisplayColIdsChanged || row.key !== key || !row.groupData) {
+            if (!treePathApproach) {
+                const id = row.id!;
+                if (row.key !== id) {
+                    row.key = id;
+                    row.groupData = null;
+                }
+            }
+
+            if (groupDisplayColIdsChanged || !row.groupData) {
                 changed = true;
-                row.key = key; // TODO: improve this key change
-                this.setGroupData(row, key);
+                this.setGroupData(row, row.key!);
             }
 
             const oldGroup = row.group;
