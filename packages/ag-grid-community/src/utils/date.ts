@@ -140,7 +140,7 @@ export function isValidDateTime(value?: string | null): boolean {
 }
 
 /**
- * Parses a date and time from a string. Expected format is `yyyy-MM-dd` or `yyyy-MM-dd HH:mm:ss`.
+ * Parses a date and time from a string. Expected format is ISO-compatible `yyyy-MM-dd` or `yyyy-MM-ddTHH:mm:ssZ`.
  *
  * Because of javascript historical reasons, we need to parse the datetime manually:
  * Per MDN:
@@ -152,7 +152,7 @@ export function _parseDateTimeFromString(value?: string | null): Date | null {
         return null;
     }
 
-    const [dateStr, timeStr] = value.split(' ');
+    const [dateStr, timeStr] = value.split('T');
 
     if (!dateStr) {
         return null;
@@ -176,7 +176,7 @@ export function _parseDateTimeFromString(value?: string | null): Date | null {
         return date;
     }
 
-    const [hours, minutes, seconds] = timeStr.split(':').map((part) => parseInt(part, 10));
+    const [hours, minutes, seconds] = timeStr.split(':').map((part) => parseInt(part, 10)); // if last part includes Z, it is dropped here
 
     if (hours >= 0 && hours < 24) {
         date.setHours(hours);

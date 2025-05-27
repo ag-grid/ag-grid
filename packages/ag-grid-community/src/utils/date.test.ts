@@ -50,14 +50,14 @@ describe('_parseDateTimeFromString', () => {
     );
 
     it('can parse date with time', () => {
-        const value = '2020-03-30 14:19:34';
+        const value = '2020-03-30T14:19:34Z';
         const result = _parseDateTimeFromString(value);
 
         expect(result).toStrictEqual(new Date(2020, 2, 30, 14, 19, 34));
     });
 
     it.each(['25:61:61', '-1:-1:-1'])('ignores invalid time parts: %s', (value) => {
-        const result = _parseDateTimeFromString('2020-03-30 ' + value);
+        const result = _parseDateTimeFromString('2020-03-30T' + value);
 
         expect(result).toStrictEqual(new Date(2020, 2, 30));
     });

@@ -1035,7 +1035,7 @@ export class ColumnFilterService extends BeanStub implements NamedBean {
 
     public setColDefPropertiesForDataType(
         colDef: ColDef,
-        dataTypeDefinition: DataTypeDefinition,
+        dataTypeDefinition: CoreDataTypeDefinition,
         formatValue: DataTypeFormatValueFunc
     ): void {
         if (typeof dataTypeDefinition.baseDataType === 'object') {
