@@ -1,4 +1,4 @@
-import type { BaseCellDataType, CheckDataTypes } from '../entities/dataType';
+import type { CheckDataTypes } from '../entities/dataType';
 
 export type AdvancedFilterModel = JoinAdvancedFilterModel | ColumnAdvancedFilterModel;
 

@@ -196,7 +196,7 @@ const setFilterParamsForEachDataType: FilterParamsDefMap = {
     text: () => ({}),
 };
 
-const defaultFilters: Record<BaseCellDataType | 'set', UserComponentName> = {
+const defaultFilters: Record<BaseCellDataType, UserComponentName> = {
     boolean: 'agTextColumnFilter',
     date: 'agDateColumnFilter',
     dateString: 'agDateColumnFilter',
@@ -204,11 +204,11 @@ const defaultFilters: Record<BaseCellDataType | 'set', UserComponentName> = {
     dateTimeString: 'agDateColumnFilter',
     number: 'agNumberColumnFilter',
     object: 'agTextColumnFilter',
-    set: 'agSetColumnFilter',
+
     text: 'agTextColumnFilter',
 };
 
-const defaultFloatingFilters: Record<BaseCellDataType | 'set', UserComponentName> = {
+const defaultFloatingFilters: Record<BaseCellDataType, UserComponentName> = {
     boolean: 'agTextColumnFloatingFilter',
     date: 'agDateColumnFloatingFilter',
     dateString: 'agDateColumnFloatingFilter',
@@ -216,7 +216,7 @@ const defaultFloatingFilters: Record<BaseCellDataType | 'set', UserComponentName
     dateTimeString: 'agDateColumnFloatingFilter',
     number: 'agNumberColumnFloatingFilter',
     object: 'agTextColumnFloatingFilter',
-    set: 'agSetColumnFloatingFilter',
+
     text: 'agTextColumnFloatingFilter',
 };
 
@@ -613,10 +613,13 @@ export class ColumnFilterService extends BeanStub implements NamedBean {
     }
 
     private getDefaultFilter(column: AgColumn, isFloating: boolean = false): string {
+        if (_isSetFilterByDefault(this.beans.gos)) {
+            return isFloating ? 'agSetColumnFilter' : 'agSetColumnFloatingFilter';
+        }
+
         const filterSet = isFloating ? defaultFloatingFilters : defaultFilters;
         const baseDataType = this.beans.dataTypeSvc?.getBaseDataType(column) ?? 'text';
-
-        return filterSet[_isSetFilterByDefault(this.beans.gos) ? 'set' : baseDataType];
+        return filterSet[baseDataType];
     }
 
     public getDefaultFloatingFilter(column: AgColumn): string {
