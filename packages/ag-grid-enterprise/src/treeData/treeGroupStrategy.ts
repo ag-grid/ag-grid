@@ -90,7 +90,7 @@ export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGrou
         if (!renderEmpty) {
             if (fullReload || hasUpdates) {
                 if (treePathApproach) {
-                    this.loadDataPath(params);
+                    this.loadDataPath(params, fullReload);
                 } else if (approach === 'treeSelfRef') {
                     this.loadSelfRef(params, fullReload);
                 }
@@ -259,7 +259,7 @@ export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGrou
         }
     }
 
-    private loadDataPath({ rowNode, changedRowNodes }: StageExecuteParams<TData>): void {
+    private loadDataPath({ rowNode, changedRowNodes }: StageExecuteParams<TData>, fullReload: boolean): void {
         const nodesByPath = new Map<string, GroupingRowNode<TData>>();
 
         const rootNode = rowNode as GroupingRowNode<TData>;
@@ -277,10 +277,29 @@ export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGrou
         for (let i = 0; i < allLeafChildrenLen; ++i) {
             const node = allLeafChildren[i];
 
-            const path = getDataPath ? getDataPath(node.data!) : [node.id!];
-            if (!path?.length) {
-                _warn(185, { data: node.data }); // Empty path
-                continue;
+            let path: string[] | undefined;
+
+            if (fullReload || node.treeNodeFlags & FLAG_CHANGED) {
+                path = getDataPath ? getDataPath(node.data!) : [node.id!];
+                if (!path?.length) {
+                    _warn(185, { data: node.data }); // Empty path
+                    continue;
+                }
+
+                const key = path[path.length - 1];
+                if (node.key !== key) {
+                    node.key = key;
+                    node.treeNodeFlags |= FLAG_CHANGED;
+                    node.groupData = null;
+                }
+            } else {
+                path = [node.key ?? node.id!];
+                let parent = node.treeParent ?? node.parent;
+                while (parent && parent !== rootNode) {
+                    path.push(parent.key ?? parent.id!);
+                    parent = parent.treeParent;
+                }
+                path.reverse();
             }
 
             const pathKey = path.join(PATH_KEY_SEPARATOR);
@@ -288,13 +307,6 @@ export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGrou
             if (existing !== undefined) {
                 duplicateRows = addDuplicatePathRow(duplicateRows, pathKey, existing, node);
                 continue;
-            }
-
-            const key = path[path.length - 1];
-            if (node.key !== key) {
-                node.key = key;
-                node.treeNodeFlags |= FLAG_CHANGED;
-                node.groupData = null;
             }
 
             paths[i] = path;
@@ -329,17 +341,15 @@ export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGrou
 
                 let current = nodesByPath.get(pathKey);
                 if (current === undefined) {
-                    current = fillerNodesById.get(pathKey);
-                    if (current === undefined) {
-                        const fillerId = makeFillerRowId(path, level);
-                        current = fillerNodesById.get(fillerId);
-                        if (!current) {
-                            current = newFillerRow(beans, fillerId, key, parent);
-                            current.treeNodeFlags = FLAG_CHANGED;
-                            fillerNodesById.set(fillerId, current);
-                        }
+                    const fillerId = makeFillerRowId(path, level);
+                    current = fillerNodesById.get(fillerId);
+                    if (!current) {
+                        current = newFillerRow(beans, fillerId, key, parent);
+                        current.treeNodeFlags = FLAG_CHANGED;
+                        fillerNodesById.set(fillerId, current);
                     }
                     current.treeNodeFlags |= FLAG_FILLER_NODE;
+                    nodesByPath.set(pathKey, current);
                 }
 
                 parent = current;
