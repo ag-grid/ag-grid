@@ -11,7 +11,6 @@ import type {
     InitialGroupOrderComparatorParams,
     IsGroupOpenByDefaultParams,
     KeyCreatorParams,
-    RowGroupingRowNode,
     StageExecuteParams,
     ValueService,
     WithoutGridCommon,
@@ -26,6 +25,7 @@ import {
     _warn,
 } from 'ag-grid-community';
 
+import type { GroupingRowNode } from '../../rowHierarchy/rowHierarchyUtils';
 import { setRowNodeGroup } from '../rowGroupingUtils';
 import { BatchRemover } from './batchRemover';
 import type { GroupRow } from './groupRow';
@@ -384,7 +384,7 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
     /**
      * This is idempotent, but relies on the `key` field being the same throughout a RowNode's lifetime
      */
-    private addToParent(child: RowNode, parent: RowGroupingRowNode) {
+    private addToParent(child: RowNode, parent: GroupingRowNode) {
         const childrenMapped = (parent.childrenMapped ??= {});
         const mapKey = this.getChildrenMappedKey(child.key!, child.rowGroupColumn);
         if (childrenMapped[mapKey] !== child) {

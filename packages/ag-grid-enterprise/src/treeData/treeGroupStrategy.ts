@@ -28,7 +28,7 @@ const MASK_CHILDREN_LENGTH = 0x0fffffff; // This equates to 268,435,455 maximum 
 
 type ParentIdGetter<TData> = DataFieldGetter<TData, string>;
 
-const PATH_KEY_SEPARATOR = '\0\r';
+const PATH_KEY_SEPARATOR = '\0\rAG\t\0';
 
 export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGroupingStrategy<TData> {
     private groupColsIds: string | null = null;
@@ -279,7 +279,7 @@ export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGrou
 
             let path: string[] | undefined;
 
-            if (fullReload || node.treeNodeFlags & FLAG_CHANGED) {
+            if (fullReload || node.treeNodeFlags & FLAG_CHANGED || !node.treeParent) {
                 path = getDataPath ? getDataPath(node.data!) : [node.id!];
                 if (!path?.length) {
                     _warn(185, { data: node.data }); // Empty path
@@ -294,7 +294,7 @@ export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGrou
                 }
             } else {
                 path = [node.key ?? node.id!];
-                let parent = node.treeParent ?? node.parent;
+                let parent: GroupingRowNode<TData> | null = node.treeParent;
                 while (parent && parent !== rootNode) {
                     path.push(parent.key ?? parent.id!);
                     parent = parent.treeParent;
