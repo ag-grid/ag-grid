@@ -64,7 +64,7 @@ function setFilterNumberComparator<TValue = any>(a: TValue | null, b: TValue | n
     if (b == null) {
         return 1;
     }
-    return parseFloat(String(a)) - parseFloat(String(b));
+    return parseFloat(a as string) - parseFloat(b as string);
 }
 
 // using an object here to enforce dev to not forget to implement new types as they are added
