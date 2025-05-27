@@ -116,20 +116,20 @@ export function _dateToFormattedString(date: Date, format: string = 'YYYY-MM-DD'
 
 /**
  * Executing this against date produces the following:
- * ["2008-08-24 21:00:08"," 21:00:08"]
+ * ["2008-08-24T21:00:08"," 21:00:08"]
  */
-const DATE_TIME_REGEXP = /^\d{4}.\d{2}.\d{2}(.\d{2}.\d{2}.\d{2})?$/;
+const DATE_TIME_REGEXP = /^\d{4}-\d{2}-\d{2}(T\d{2}:\d{2}:\d{2}\D?)?/;
 
 /**
  * Helper function to check if a date is valid. Use isValidDateTime() to check if a date is valid and has time parts.
  */
-export function isValidDate(value?: string | null): boolean {
-    return !!_parseDateTimeFromString(value);
+export function isValidDate(value?: string | null, bailIfInvalidTime = false): boolean {
+    return !!_parseDateTimeFromString(value, bailIfInvalidTime);
 }
 
 // check if dateTime is a valid date and has time parts
 export function isValidDateTime(value?: string | null): boolean {
-    if (!value || !isValidDate(value)) {
+    if (!value || !isValidDate(value, true)) {
         return false;
     }
     const dateTime = value.match(DATE_TIME_REGEXP);
@@ -147,7 +147,7 @@ export function isValidDateTime(value?: string | null): boolean {
  *   When the time zone offset is absent, **date-only** forms are interpreted as a UTC time and **date-time** forms are interpreted as a local time.
  *   The interpretation as a UTC time is due to a historical spec error that was not consistent with ISO 8601 but could not be changed due to web compatibility.
  */
-export function _parseDateTimeFromString(value?: string | null): Date | null {
+export function _parseDateTimeFromString(value?: string | null, bailIfInvalidTime = false): Date | null {
     if (!value) {
         return null;
     }
@@ -180,14 +180,20 @@ export function _parseDateTimeFromString(value?: string | null): Date | null {
 
     if (hours >= 0 && hours < 24) {
         date.setHours(hours);
+    } else if (bailIfInvalidTime) {
+        return null;
     }
 
     if (minutes >= 0 && minutes < 60) {
         date.setMinutes(minutes);
+    } else if (bailIfInvalidTime) {
+        return null;
     }
 
     if (seconds >= 0 && seconds < 60) {
         date.setSeconds(seconds);
+    } else if (bailIfInvalidTime) {
+        return null;
     }
 
     return date;
