@@ -83,13 +83,10 @@ export class GenericContext<TBeanName extends string, TBeanCollection extends { 
         return Object.values(this.beans);
     }
 
-    public createBean<T extends GenericBean<TBeanName, TBeanCollection> | null | undefined>(
+    public createBean<T extends GenericBean<TBeanName, TBeanCollection>>(
         bean: T,
         afterPreCreateCallback?: (bean: GenericBean<TBeanName, TBeanCollection>) => void
     ): T {
-        if (!bean) {
-            throw Error('null bean');
-        }
         this.initBeans([bean], afterPreCreateCallback);
         return bean;
     }

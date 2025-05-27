@@ -72,6 +72,11 @@ export type CoreParams = {
     borderColor: ColorValue;
 
     /**
+     * Default width for borders.
+     */
+    borderWidth: LengthValue;
+
+    /**
      * Default corner radius for many UI elements such as menus, dialogs and form widgets.
      */
     borderRadius: LengthValue;
@@ -939,6 +944,7 @@ export const coreDefaults: Readonly<CoreParams> = {
         mix: 0.66,
     },
     oddRowBackgroundColor: backgroundColor,
+    borderWidth: 1,
     borderRadius: 4,
     wrapperBorderRadius: 8,
     cellHorizontalPadding: {

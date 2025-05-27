@@ -40,6 +40,14 @@ export class HeaderCellComp extends AbstractHeaderCellComp<HeaderCellCtrl> {
             }
         };
 
+        const refreshSelectAllGui = () => {
+            const selectAllGui = this.ctrl.getSelectAllGui();
+            if (selectAllGui) {
+                this.eResize.insertAdjacentElement('afterend', selectAllGui);
+                this.addDestroyFunc(() => selectAllGui.remove());
+            }
+        };
+
         setAttribute('col-id', this.ctrl.column.getColId());
 
         const compProxy: IHeaderCellComp = {
@@ -49,14 +57,13 @@ export class HeaderCellComp extends AbstractHeaderCellComp<HeaderCellCtrl> {
             setAriaSort: (sort) => (sort ? _setAriaSort(eGui, sort) : _removeAriaSort(eGui)),
             setUserCompDetails: (compDetails) => this.setUserCompDetails(compDetails),
             getUserCompInstance: () => this.headerComp,
+            refreshSelectAllGui,
+            removeSelectAllGui: () => this.ctrl.getSelectAllGui()?.remove(),
         };
 
         this.ctrl.setComp(compProxy, this.getGui(), this.eResize, this.eHeaderCompWrapper, undefined);
 
-        const selectAllGui = this.ctrl.getSelectAllGui();
-        if (selectAllGui) {
-            this.eResize.insertAdjacentElement('afterend', selectAllGui);
-        }
+        refreshSelectAllGui();
     }
 
     public override destroy(): void {

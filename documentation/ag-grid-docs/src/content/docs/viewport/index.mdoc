@@ -95,6 +95,10 @@ Selection works with viewport. It is recommended that you implement `getRowId()`
 Performing multiple row selections using 'shift-click' is only possible for rows that are available within the viewport.
 {% /note %}
 
+{% note %}
+The viewport row model does not have built-in support for [Select-All](./row-selection-multi-row/#selecting-all-rows) functionality. Neither clicking the header checkbox nor pressing {% kbd "^ Ctrl" /%}+A will have any effect.
+{% /note %}
+
 ## Grouping
 
 And you guessed it, if you are doing grouping, you will need to implement this yourself on the server. If you group, you will need to provide your own `groupCellRenderer` that gives functionality to your own custom grouping. You will also need to manage how the grouping impacts the overall grid's set size yourself (i.e. if you expand a group, the number of rows increases, and likewise contracting will decrease).

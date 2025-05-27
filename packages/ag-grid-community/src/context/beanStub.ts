@@ -278,13 +278,13 @@ export abstract class BeanStub<TEventType extends string = BeanStubEvent>
         return bean ? this.createManagedBean(bean, context) : undefined;
     }
 
-    public createManagedBean<T extends Bean | null | undefined>(bean: T, context?: Context): T {
+    public createManagedBean<T extends Bean>(bean: T, context?: Context): T {
         const res = this.createBean(bean, context);
         this.addDestroyFunc(this.destroyBean.bind(this, bean, context));
         return res;
     }
 
-    public createBean<T extends Bean | null | undefined>(
+    public createBean<T extends Bean>(
         bean: T,
         context?: Context | null,
         afterPreCreateCallback?: (bean: Bean) => void

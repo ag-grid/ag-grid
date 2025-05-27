@@ -41,7 +41,7 @@
 }
 
 .ag-status-bar {
-    border: solid 1px var(--ag-border-color);
+    border: solid var(--ag-border-width) var(--ag-border-color);
 }
 
 .ag-list-item-hovered::after {

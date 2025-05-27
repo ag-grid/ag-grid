@@ -1,4 +1,5 @@
 import type { InternalFramework, Library } from '@ag-grid-types';
+import { ActionsCellRenderer } from '@ag-website-shared/components/docs-examples/components/cell-renderers/ActionsCellRenderer';
 import { INTERNAL_FRAMEWORKS } from '@constants';
 import { type FunctionComponent, useCallback, useRef } from 'react';
 import { useMemo, useState } from 'react';
@@ -31,7 +32,9 @@ export type ExampleProperty =
     | 'isEnterprise'
     | 'isIntegratedCharts'
     | 'isLocale'
-    | 'hasExampleConsoleLog';
+    | 'hasExampleConsoleLog'
+    | 'hasExampleControls'
+    | 'hasSimpleHtml';
 
 export interface Props {
     library: Library;
@@ -110,7 +113,19 @@ const ALL_PROPERTIES: (ColDef & {
         field: 'hasExampleConsoleLog',
         headerName: 'Log',
         enableRowGroup: true,
-        minWidth: 90,
+        minWidth: 85,
+    },
+    {
+        field: 'hasExampleControls',
+        headerName: 'Controls',
+        enableRowGroup: true,
+        minWidth: 115,
+    },
+    {
+        field: 'hasSimpleHtml',
+        headerName: 'Simple HTML',
+        enableRowGroup: true,
+        minWidth: 115,
     },
 ];
 
@@ -119,13 +134,20 @@ export const DocsExamples: FunctionComponent<Props> = ({ library, properties = [
     const [colDefs] = useState<(ColDef | ColGroupDef)[]>([
         {
             field: 'pageName',
-            rowGroup: true,
-            hide: true,
+            initialHide: true,
+            initialRowGroup: true,
             enableRowGroup: true,
         },
         {
             field: 'exampleName',
-            hide: true,
+            initialHide: true,
+        },
+        {
+            headerName: 'Actions',
+            initialHide: true,
+            cellRenderer: ActionsCellRenderer,
+            minWidth: 220,
+            filter: false,
         },
         ...ALL_PROPERTIES.filter((property) => properties.includes(property.field)),
 
