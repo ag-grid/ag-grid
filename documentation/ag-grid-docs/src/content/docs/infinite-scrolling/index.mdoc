@@ -144,6 +144,10 @@ gridOptions.getRowId: function(params) {
 
 Once you have `getRowId()` implemented, selection will persist across sorts and filters.
 
+{% note %}
+The infinite row model does not have built-in support for [Select-All](./row-selection-multi-row/#selecting-all-rows) functionality. Neither clicking the header checkbox nor pressing {% kbd "^ Ctrl" /%}+A will have any effect.
+{% /note %}
+
 ### Example: Sorting, Filtering and Selection
 
 The following example extends the example above by adding server-side sorting, filtering and persistent selection.
