@@ -569,7 +569,7 @@ export class DataTypeService extends BeanStub implements NamedBean {
             colId,
             formatValue,
         });
-        Object.assign(colDef, partialColDef); // todo prefer object copy instead of mutation
+        Object.assign(colDef, partialColDef);
 
         this.beans.filterManager?.setColDefPropertiesForDataType(colDef, dataTypeDefinition, formatValue);
     }
