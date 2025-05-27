@@ -13,7 +13,7 @@ export function createTask(parentProject: string, srcRelativeInputPath: string):
             inputs: [
                 '{projectRoot}/**',
                 '{workspaceRoot}/packages/ag-grid-community/dist/types/**/*.d.ts',
-                '{workspaceRoot}/plugins/ag-grid-generate-example-files/dist/**/*',
+                '{workspaceRoot}/plugins/ag-grid-generate-example-files/{dist,src}/**/*',
                 '{workspaceRoot}/documentation/ag-grid-docs/public/example-runner/**',
             ],
             outputs: ['{options.outputPath}'],
