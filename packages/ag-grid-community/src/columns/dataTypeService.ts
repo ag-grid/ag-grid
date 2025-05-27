@@ -6,7 +6,6 @@ import type { AgColumn } from '../entities/agColumn';
 import type { ColDef, SuppressKeyboardEventParams, ValueFormatterFunc, ValueFormatterParams } from '../entities/colDef';
 import type {
     BaseCellDataType,
-    CoreDataTypeDefMap,
     CoreDataTypeDefinition,
     DataTypeDefinition,
     DataTypeFormatValueFunc,
@@ -37,6 +36,7 @@ interface GroupSafeValueFormatter {
 type DataTypeDefinitions = {
     [cellDataType: BaseCellDataType | string]: (DataTypeDefinition | CoreDataTypeDefinition) & GroupSafeValueFormatter;
 };
+type CoreDataTypeDefMap = { [K in BaseCellDataType]: CoreDataTypeDefinition & { baseDataType: K } };
 
 /**
  *  We are missing object and dateTime here.
@@ -53,7 +53,6 @@ const SORTED_CELL_DATA_TYPES_FOR_MATCHING: readonly Exclude<BaseCellDataType, 'd
     'boolean',
     'date',
 ] as const;
-const DATETIME_FIELD_TYPES = ['dateTime', 'dateTimeString'];
 
 export class DataTypeService extends BeanStub implements NamedBean {
     beanName = 'dataTypeSvc' as const;
@@ -131,11 +130,11 @@ export class DataTypeService extends BeanStub implements NamedBean {
                 newFormatValueFuncs[cellDataType] = generateFormatValueFunc(mergedDataTypeDefinition);
             }
         }
+        const { valueParser: defaultValueParser, valueFormatter: defaultValueFormatter } = defaultDataTypes.object;
+        const { valueParser: userValueParser, valueFormatter: userValueFormatter } = newDataTypeDefinitions.object;
 
-        [this.hasObjectValueParser, this.hasObjectValueFormatter] = this.checkObjectValueHandlers(
-            defaultDataTypes.object,
-            newDataTypeDefinitions.object
-        );
+        this.hasObjectValueParser = userValueParser !== defaultValueParser;
+        this.hasObjectValueFormatter = userValueFormatter !== defaultValueFormatter;
         this.formatValueFuncs = newFormatValueFuncs;
         this.dataTypeDefinitions = newDataTypeDefinitions;
         this.dataTypeMatchers = this.sortKeysInMatchers(newDataTypeMatchers, defaultDataTypes);
@@ -158,7 +157,7 @@ export class DataTypeService extends BeanStub implements NamedBean {
         userDataTypeDef: DataTypeDefinition,
         userDataTypeDefs: { [key: string]: DataTypeDefinition },
         alreadyProcessedDataTypes: string[],
-        defaultDataTypes: { [key: string]: CoreDataTypeDefinition }
+        defaultDataTypes: CoreDataTypeDefMap
     ): (DataTypeDefinition & GroupSafeValueFormatter) | undefined {
         let mergedDataTypeDefinition: DataTypeDefinition;
         const extendsCellDataType = userDataTypeDef.extendsDataType;
@@ -168,7 +167,7 @@ export class DataTypeService extends BeanStub implements NamedBean {
         }
 
         if (userDataTypeDef.extendsDataType === userDataTypeDef.baseDataType) {
-            let baseDataTypeDefinition = defaultDataTypes[extendsCellDataType];
+            let baseDataTypeDefinition = defaultDataTypes[extendsCellDataType as BaseCellDataType];
             const overriddenBaseDataTypeDefinition = userDataTypeDefs[extendsCellDataType];
             if (baseDataTypeDefinition && overriddenBaseDataTypeDefinition) {
                 // only if it's valid do we override with a provided one
@@ -422,13 +421,6 @@ export class DataTypeService extends BeanStub implements NamedBean {
         return true;
     }
 
-    private checkObjectValueHandlers(
-        { valueParser: defaultValueParser, valueFormatter: defaultValueFormatter }: CoreDataTypeDefinition,
-        { valueParser: resolvedValueParser, valueFormatter: resolvedValueFormatter }: CoreDataTypeDefinition
-    ) {
-        return [resolvedValueParser !== defaultValueParser, resolvedValueFormatter !== defaultValueFormatter];
-    }
-
     private getDateStringTypeDefinition(column?: AgColumn | null): DateStringDataTypeDefinition {
         const { dateString } = this.dataTypeDefinitions;
         if (!column) {
@@ -445,8 +437,8 @@ export class DataTypeService extends BeanStub implements NamedBean {
         return this.getDateStringTypeDefinition(column).dateFormatter!;
     }
 
-    public getDateIncludesTimeFlag(cellDataType?: ColDef['cellDataType']): boolean {
-        return DATETIME_FIELD_TYPES.includes(cellDataType as string);
+    public getDateIncludesTimeFlag(cellDataType?: any): cellDataType is 'dateTime' | 'dateTimeString' {
+        return cellDataType === 'dateTime' || cellDataType === 'dateTimeString';
     }
 
     public getDataTypeDefinition(column: AgColumn): DataTypeDefinition | CoreDataTypeDefinition | undefined {

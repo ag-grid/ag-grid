@@ -165,8 +165,10 @@ export type CoreDataTypeDefinition<TData = any, TValue = any> = Omit<
     'extendsDataType'
 >;
 
-export type CoreDataTypeDefMap<TData = any, TValue = any> = CheckDataTypes<{
-    [K in BaseCellDataType]: CoreDataTypeDefinition<TData, TValue> & { baseDataType: K };
-}>;
-
 export type DataTypeFormatValueFunc = (params: { column: Column; node: IRowNode | null; value: any }) => string;
+
+// Line below used for type checking
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+type _CheckDataTypeDefinition = CheckDataTypes<{
+    [K in DataTypeDefinition['baseDataType']]: DataTypeDefinition & { baseDataType: K };
+}>;

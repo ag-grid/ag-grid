@@ -12,8 +12,8 @@ import type { ColDef, ValueFormatterParams, ValueGetterParams } from '../entitie
 import type {
     BaseCellDataType,
     CheckDataTypes,
-    CoreDataTypeDefMap,
     CoreDataTypeDefinition,
+    DataTypeDefinition,
     DataTypeFormatValueFunc,
     DateStringDataTypeDefinition,
 } from '../entities/dataType';
@@ -1033,9 +1033,9 @@ export class ColumnFilterService extends BeanStub implements NamedBean {
         return column ? this.cachedFilter(column) ?? null : null;
     }
 
-    public setColDefPropertiesForDataType<DT extends keyof CoreDataTypeDefMap>(
+    public setColDefPropertiesForDataType(
         colDef: ColDef,
-        dataTypeDefinition: CoreDataTypeDefMap[DT],
+        dataTypeDefinition: DataTypeDefinition,
         formatValue: DataTypeFormatValueFunc
     ): void {
         if (typeof dataTypeDefinition.baseDataType === 'object') {
