@@ -115,18 +115,14 @@ export class EditModelService extends BeanStub implements NamedBean {
     public getPendingCellPositions(): CellPosition[] {
         const result: CellPosition[] = [];
         const cellIds = this.getPendingCellIds();
-        cellIds.forEach(({ column, rowNode: { rowIndex, rowPinned }, newValue, oldValue }) => {
-            if (!newValue || !_valuesDiffer({ newValue, oldValue })) {
-                return;
+        cellIds.forEach(({ column, rowNode: { rowIndex, rowPinned }, newValue, oldValue, state }: any) => {
+            if (state === 'editing' || _valuesDiffer({ newValue, oldValue })) {
+                result.push({
+                    column,
+                    rowIndex: rowIndex!,
+                    rowPinned,
+                });
             }
-            result.push({
-                column,
-                rowIndex,
-                rowPinned,
-                // TODO: update API docs and types
-                newValue,
-                oldValue,
-            } as any);
         });
 
         return result;

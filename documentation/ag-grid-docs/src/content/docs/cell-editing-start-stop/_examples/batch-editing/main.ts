@@ -48,6 +48,7 @@ const gridOptions: GridOptions = {
         minWidth: 110,
         editable: true,
     },
+    cellSelection: true,
     rowData: getData(),
     pinnedTopRowData: getPinnedTopData(),
     pinnedBottomRowData: getPinnedBottomData(),
@@ -72,10 +73,13 @@ const gridOptions: GridOptions = {
     },
 };
 
-function logState() {
+function logState(counts?: boolean) {
+    const editingCells = gridApi!.getEditingCells();
+    const pendingUpdates = gridApi!.getPendingUpdates();
+
     console.log({
-        editingCells: gridApi!.getEditingCells()?.length ?? 0,
-        pendingUpdates: gridApi!.getPendingUpdates()?.length ?? 0,
+        editingCells: counts ? editingCells.length : editingCells,
+        pendingUpdates: counts ? pendingUpdates.length : pendingUpdates,
     });
 }
 
@@ -86,7 +90,7 @@ function pollState() {
         clearInterval(polling);
         polling = undefined;
     } else {
-        polling = setInterval(logState, 1000);
+        polling = setInterval(() => logState(true), 1000);
     }
 
     document.getElementById('enablePoll')!.style.display = polling ? 'none' : 'unset';

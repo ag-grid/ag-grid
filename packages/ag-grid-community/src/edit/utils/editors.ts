@@ -58,6 +58,14 @@ export function _setupEditor(
 
     const editorParams = _createCellEditorParams(beans, rowNode, column, key, cellStartedEdit);
 
+    beans.editModelSvc?.setPendingValue(
+        rowNode,
+        column,
+        key ?? editorParams.value,
+        rowNode.data[column.getColId()],
+        'editing'
+    );
+
     if (editorComp) {
         // don't reinitialise, just refresh if possible
         editorComp.refresh?.(editorParams);
@@ -76,8 +84,6 @@ export function _setupEditor(
 
     cellCtrl.editCompDetails = compDetails;
     cellCtrl.comp?.setEditDetails(compDetails, popup, position, beans.gos.get('reactiveCustomComponents'));
-
-    beans.editModelSvc?.setState(rowNode, column, 'editing');
 
     return compDetails;
 }
@@ -159,13 +165,30 @@ function _createCellEditorParams(
 }
 
 export function _purgeUnchangedEdits(beans: BeanCollection): void {
+    const removedRows: IRowNode[] = [];
+    const removedCells: CellIdPositions[] = [];
     beans.editModelSvc?.getPendingUpdates().forEach((rowUpdateMap, rowNode) => {
+        const removedRowCells: CellIdPositions[] = [];
         rowUpdateMap.forEach((cellData, column) => {
             if (!_valuesDiffer(cellData) && cellData.state !== 'editing') {
                 // remove edits where the pending is equal to the old value
                 beans.editModelSvc?.removePendingEdit(rowNode, column);
+                removedRowCells.push({ rowNode, column });
             }
         });
+
+        if (removedRowCells.length === rowUpdateMap.size) {
+            // if all cells in the row were removed, remove the row
+            removedRows.push(rowNode);
+        }
+        removedCells.push(...removedRowCells);
+    });
+
+    removedCells.forEach(({ rowNode, column }) => {
+        beans.editSvc?.strategy?.dispatchCellEvent(rowNode, column, undefined, 'cellEditingStopped');
+    });
+    removedRows.forEach((rowNode) => {
+        beans.editSvc?.strategy?.dispatchRowEvent(rowNode, 'rowEditingStopped');
     });
 }
 

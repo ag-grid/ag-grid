@@ -69,7 +69,7 @@ export class SingleCellEditStrategy extends BaseEditStrategy {
         );
     }
 
-    protected override dispatchRowEvent(
+    public override dispatchRowEvent(
         _rowNode: IRowNode<any> | null | undefined,
         _type: 'rowEditingStarted' | 'rowEditingStopped'
     ): void {

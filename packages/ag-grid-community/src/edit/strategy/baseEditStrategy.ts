@@ -150,7 +150,7 @@ export abstract class BaseEditStrategy extends BeanStub {
         return suppressPreventDefault;
     }
 
-    protected dispatchCellEvent<T extends AgEventType>(
+    public dispatchCellEvent<T extends AgEventType>(
         rowNode: IRowNode | undefined | null,
         column: Column | undefined | null,
         event?: Event | null,
@@ -166,7 +166,7 @@ export abstract class BaseEditStrategy extends BeanStub {
         }
     }
 
-    protected dispatchRowEvent(
+    public dispatchRowEvent(
         rowNode: IRowNode | undefined | null,
         type: 'rowEditingStarted' | 'rowEditingStopped'
     ): void {
