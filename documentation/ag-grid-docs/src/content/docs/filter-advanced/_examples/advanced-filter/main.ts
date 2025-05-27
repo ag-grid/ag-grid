@@ -76,7 +76,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     ];
                     const paddedDateTimeStrings = [month, day, h, m, s].map((e) => e.toString().padStart(2, '0'));
                     const dateString = `${year}-${paddedDateTimeStrings[0]}-${paddedDateTimeStrings[1]}`;
-                    const dateTimeString = `${year}-${paddedDateTimeStrings[0]}-${paddedDateTimeStrings[1]} ${paddedDateTimeStrings.slice(2).join(':')}`;
+                    const dateTimeString = `${year}-${paddedDateTimeStrings[0]}-${paddedDateTimeStrings[1]}T${paddedDateTimeStrings.slice(2).join(':')}`;
                     return {
                         ...rowData,
                         date: dateString,

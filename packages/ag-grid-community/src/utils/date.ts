@@ -1,9 +1,16 @@
+const DATE_TIME_SEPARATOR = 'T';
+/**
+ * Executing this against date produces the following:
+ * ["2008-08-24T21:00:08"," 21:00:08"]
+ */
+const DATE_TIME_REGEXP = new RegExp(`^\\d{4}-\\d{2}-\\d{2}(${DATE_TIME_SEPARATOR}\\d{2}:\\d{2}:\\d{2}\\D?)?`);
+
 function _padStartWidthZeros(value: number, totalStringSize: number): string {
     return value.toString().padStart(totalStringSize, '0');
 }
 
 /**
- * Serialises a Date to a string of format `yyyy-MM-dd HH:mm:ss`.
+ * Serialises a Date to a string of format `yyyy-MM-ddTHH:mm:ss`.
  * An alternative separator can be provided to be used instead of hyphens.
  * @param date The date to serialise
  * @param includeTime Whether to include the time in the serialised string
@@ -20,7 +27,7 @@ export function _serialiseDate(date: Date | null, includeTime = true, separator 
 
     if (includeTime) {
         serialised +=
-            ' ' +
+            DATE_TIME_SEPARATOR +
             [date.getHours(), date.getMinutes(), date.getSeconds()]
                 .map((part) => _padStartWidthZeros(part, 2))
                 .join(':');
@@ -115,12 +122,6 @@ export function _dateToFormattedString(date: Date, format: string = 'YYYY-MM-DD'
 }
 
 /**
- * Executing this against date produces the following:
- * ["2008-08-24T21:00:08"," 21:00:08"]
- */
-const DATE_TIME_REGEXP = /^\d{4}-\d{2}-\d{2}(T\d{2}:\d{2}:\d{2}\D?)?/;
-
-/**
  * Helper function to check if a date is valid. Use isValidDateTime() to check if a date is valid and has time parts.
  */
 export function isValidDate(value?: string | null, bailIfInvalidTime = false): boolean {
@@ -152,7 +153,7 @@ export function _parseDateTimeFromString(value?: string | null, bailIfInvalidTim
         return null;
     }
 
-    const [dateStr, timeStr] = value.split('T');
+    const [dateStr, timeStr] = value.split(DATE_TIME_SEPARATOR);
 
     if (!dateStr) {
         return null;

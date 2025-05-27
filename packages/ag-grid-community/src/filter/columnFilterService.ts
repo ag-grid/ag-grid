@@ -125,12 +125,8 @@ const filterParamsForEachDataType: FilterParamsDefMap = {
             typeof value === 'string' &&
             isValidDate((dataTypeDefinition as DateStringDataTypeDefinition).dateParser!(value)),
     }),
-    dateTime(args) {
-        return this.date(args);
-    },
-    dateTimeString(args) {
-        return this.dateString(args);
-    },
+    dateTime: (args) => filterParamsForEachDataType.date(args),
+    dateTimeString: (args) => filterParamsForEachDataType.dateString(args),
     object: () => ({}),
     text: () => ({}),
 };
@@ -176,14 +172,14 @@ const setFilterParamsForEachDataType: FilterParamsDefMap = {
             return pathKey ?? t('blanks', '(Blanks)');
         },
     }),
-    dateTime(args) {
-        const params = this.date(args) as ISetFilterParams<any, Date>;
+    dateTime: (args) => {
+        const params = setFilterParamsForEachDataType.date(args) as ISetFilterParams<any, Date>;
         params.treeListPathGetter = (date: Date | null) => _getDateParts(date, true);
         return params;
     },
     dateTimeString(args) {
         const convertToDate = (args.dataTypeDefinition as DateStringDataTypeDefinition).dateParser!;
-        const params = this.dateString(args) as ISetFilterParams;
+        const params = setFilterParamsForEachDataType.dateString(args) as ISetFilterParams;
         params.treeListPathGetter = (value: string | null) => _getDateParts(convertToDate(value ?? undefined));
         return params;
     },
@@ -204,7 +200,6 @@ const defaultFilters: Record<BaseCellDataType, UserComponentName> = {
     dateTimeString: 'agDateColumnFilter',
     number: 'agNumberColumnFilter',
     object: 'agTextColumnFilter',
-
     text: 'agTextColumnFilter',
 };
 
@@ -216,7 +211,6 @@ const defaultFloatingFilters: Record<BaseCellDataType, UserComponentName> = {
     dateTimeString: 'agDateColumnFloatingFilter',
     number: 'agNumberColumnFloatingFilter',
     object: 'agTextColumnFloatingFilter',
-
     text: 'agTextColumnFloatingFilter',
 };
 
@@ -614,7 +608,7 @@ export class ColumnFilterService extends BeanStub implements NamedBean {
 
     private getDefaultFilter(column: AgColumn, isFloating: boolean = false): string {
         if (_isSetFilterByDefault(this.beans.gos)) {
-            return isFloating ? 'agSetColumnFilter' : 'agSetColumnFloatingFilter';
+            return isFloating ? 'agSetColumnFloatingFilter' : 'agSetColumnFilter';
         }
 
         const filterSet = isFloating ? defaultFloatingFilters : defaultFilters;
