@@ -122,11 +122,11 @@ export class DateFloatingFilter extends SimpleFloatingFilter {
     }
 
     private getDateComponentParams(): IDateParams {
-        const { filterParams, column } = this.params;
+        const { filterParams } = this.params;
         const debounceMs = getDebounceMs(filterParams, this.defaultDebounceMs);
         return _addGridCommonParams(this.gos, {
             onDateChanged: _debounce(this, this.onDateChanged.bind(this), debounceMs),
-            filterParams: column.getColDef().filterParams,
+            filterParams,
             location: 'floatingFilter',
         });
     }

@@ -11,20 +11,25 @@ import type { AgColumn } from '../entities/agColumn';
 import type { ColDef, ValueFormatterParams, ValueGetterParams } from '../entities/colDef';
 import type {
     BaseCellDataType,
+    CheckDataTypes,
     CoreDataTypeDefMap,
+    CoreDataTypeDefinition,
     DataTypeFormatValueFunc,
     DateStringDataTypeDefinition,
 } from '../entities/dataType';
 import type { RowNode } from '../entities/rowNode';
 import type { ColumnEventType, FilterChangedEventSourceType } from '../events';
+import type { IDateFilterParams } from '../filter/provided/date/iDateFilter';
+import type { SimpleFilterParams } from '../filter/provided/iSimpleFilter';
 import { _addGridCommonParams, _getGroupAggFiltering, _isSetFilterByDefault } from '../gridOptionsUtils';
-import type { FilterParamsDefMap } from '../interfaces/advancedFilterModel';
 import type { FilterModel, IFilter, IFilterComp, IFilterParams } from '../interfaces/iFilter';
+import type { ISetFilterParams } from '../interfaces/iSetFilter';
 import type { UserCompDetails } from '../interfaces/iUserCompDetails';
 import { _getDateParts } from '../utils/date';
 import { _exists, _jsonEquals } from '../utils/generic';
 import { AgPromise } from '../utils/promise';
 import { _error, _warn } from '../validation/logging';
+import type { ValueService } from '../valueService/valueService';
 import type { IFloatingFilterParams, IFloatingFilterParentCallback } from './floating/floatingFilter';
 import { _getDefaultFloatingFilterType } from './floating/floatingFilterMapper';
 
@@ -67,13 +72,28 @@ function setFilterNumberComparator<TValue = any>(a: TValue | null, b: TValue | n
     return parseFloat(a as string) - parseFloat(b as string);
 }
 
+type FilterParamsDefArgs = {
+    formatValue: DataTypeFormatValueFunc;
+    t: ReturnType<ColumnFilterService['getLocaleTextFunc']>;
+    valueSvc: ValueService;
+    usingSetFilter: boolean;
+    dataTypeDefinition: CoreDataTypeDefinition;
+};
+
+type FilterParamsDefMap = CheckDataTypes<{
+    number: (args: FilterParamsDefArgs) => ISetFilterParams<any, number>;
+    boolean: (args: FilterParamsDefArgs) => ISetFilterParams<any, boolean> | SimpleFilterParams;
+    date: (args: FilterParamsDefArgs) => ISetFilterParams<any, Date> | IDateFilterParams;
+    dateString: (args: FilterParamsDefArgs) => ISetFilterParams | IDateFilterParams;
+    dateTime: (args: FilterParamsDefArgs) => ISetFilterParams<any, Date> | IDateFilterParams;
+    dateTimeString: (args: FilterParamsDefArgs) => ISetFilterParams | IDateFilterParams;
+    text: () => Record<any, never>;
+    object: (args: FilterParamsDefArgs) => ISetFilterParams<any, any>;
+}>;
+
 // using an object here to enforce dev to not forget to implement new types as they are added
 const filterParamsForEachDataType: FilterParamsDefMap = {
-    number({ usingSetFilter }) {
-        if (usingSetFilter) {
-            return { comparator: setFilterNumberComparator };
-        }
-    },
+    number: ({ usingSetFilter }) => (usingSetFilter ? { comparator: setFilterNumberComparator } : {}),
     boolean({ usingSetFilter, t }) {
         if (usingSetFilter) {
             return {
@@ -163,25 +183,22 @@ const filterParamsForEachDataType: FilterParamsDefMap = {
     },
     dateTime(args) {
         if (args.usingSetFilter) {
-            return {
-                ...this.date(args),
-                treeListPathGetter: (date: Date | null) => _getDateParts(date),
-            };
+            const params = this.date(args) as ISetFilterParams<any, Date>;
+            params.treeListPathGetter = (date: Date | null) => _getDateParts(date, true);
+            return params;
         }
         return this.date(args);
     },
     dateTimeString(args) {
         if (args.usingSetFilter) {
             const convertToDate = (args.dataTypeDefinition as DateStringDataTypeDefinition).dateParser!;
-
-            return {
-                ...this.dateString(args),
-                treeListPathGetter: (value: string | null) => _getDateParts(convertToDate(value ?? undefined)),
-            };
+            const params = this.dateString(args) as ISetFilterParams;
+            params.treeListPathGetter = (value: string | null) => _getDateParts(convertToDate(value ?? undefined));
+            return params;
         }
         return this.dateString(args);
     },
-    object({ usingSetFilter, valueSvc, formatValue, t }) {
+    object({ usingSetFilter, formatValue, t }) {
         if (usingSetFilter) {
             return {
                 valueFormatter: (params: ValueFormatterParams) => {
@@ -190,10 +207,9 @@ const filterParamsForEachDataType: FilterParamsDefMap = {
                 },
             };
         }
-        return ({ column, node }: ValueGetterParams) =>
-            formatValue({ column, node, value: valueSvc.getValue(column as AgColumn, node) });
+        return {};
     },
-    text(): void {},
+    text: () => ({}),
 };
 
 const defaultFilters: Record<BaseCellDataType | 'set', UserComponentName> = {
@@ -1022,21 +1038,23 @@ export class ColumnFilterService extends BeanStub implements NamedBean {
         dataTypeDefinition: CoreDataTypeDefMap[DT],
         formatValue: DataTypeFormatValueFunc
     ): void {
-        const filterParamsOrNothing = filterParamsForEachDataType[dataTypeDefinition.baseDataType]({
-            dataTypeDefinition,
-            usingSetFilter: _isSetFilterByDefault(this.gos),
-            formatValue,
-            t: this.getLocaleTextFunc(),
-            valueSvc: this.beans.valueSvc,
-        });
-        if (filterParamsOrNothing) {
-            if (typeof filterParamsOrNothing === 'object') {
-                colDef.filterParams =
-                    typeof colDef.filterParams === 'object'
-                        ? { colDef, ...colDef.filterParams, ...filterParamsOrNothing }
-                        : { colDef, ...filterParamsOrNothing };
+        if (typeof dataTypeDefinition.baseDataType === 'object') {
+            colDef.filterValueGetter = ({ column, node }: ValueGetterParams) =>
+                formatValue({ column, node, value: this.beans.valueSvc.getValue(column as AgColumn, node) });
+        } else {
+            const filterParamsGetter = filterParamsForEachDataType[dataTypeDefinition.baseDataType];
+            const filterParams = filterParamsGetter({
+                dataTypeDefinition,
+                usingSetFilter: _isSetFilterByDefault(this.gos),
+                formatValue,
+                t: this.getLocaleTextFunc(),
+                valueSvc: this.beans.valueSvc,
+            });
+
+            if (typeof colDef.filterParams === 'object') {
+                Object.assign(colDef.filterParams, filterParams);
             } else {
-                colDef.filterValueGetter = filterParamsOrNothing;
+                colDef.filterParams = filterParams;
             }
         }
     }

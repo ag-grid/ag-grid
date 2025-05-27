@@ -107,7 +107,9 @@ The `'date'` cell data type is used for date values that are represented as `Dat
 
 The default Value Parser and Value Formatter use the ISO string format `'YYYY-MM-DD'`. If you wish to use a different date format, then you can [Override the Pre-Defined Cell Data Type Definition](#overriding-the-pre-defined-cell-data-type-definitions).
 
-Be aware that the `'date'` cell data type compares full `Date` objects, including their time portion. This means that if the time is not set to midnight (`00:00:00`), filtering or editing may produce unexpected results. To ensure consistent behavior with built-in filtering components, it’s recommended to normalize time values to midnight. Alternatively, if preserving the time is important, consider using the `'dateTime'` cell data type instead.
+{% note %}
+Be aware that the `'date'` cell data type compares full Date objects, including the time portion. As a result, if a date includes a time other than midnight (`00:00:00`), filtering or editing might behave unexpectedly. For consistent results with built-in filters, it’s best to normalize all date values to the same value. If keeping the time component is important, consider using the `'dateTime'` cell data type instead, or define a custom comparator as explained in the [Date Filter Comparator](./filter-date/#filter-comparator).
+{% /note %}
 
 The following properties are set:
 
