@@ -568,6 +568,7 @@ export class DataTypeService extends BeanStub implements NamedBean {
 
     private getDateObjectTypeDef<T extends 'date' | 'dateTime'>(baseDataType: T) {
         const translate = this.getLocaleTextFunc();
+        const includeTime = this.getDateIncludesTimeFlag(baseDataType);
         return {
             baseDataType,
             valueParser: (params: ValueParserLiteParams<any, Date>) =>
@@ -579,18 +580,18 @@ export class DataTypeService extends BeanStub implements NamedBean {
                 if (!(params.value instanceof Date) || isNaN(params.value.getTime())) {
                     return translate('invalidDate', 'Invalid Date');
                 }
-                return _serialiseDate(params.value, this.getDateIncludesTimeFlag(baseDataType)) ?? '';
+                return _serialiseDate(params.value, includeTime) ?? '';
             },
             dataTypeMatcher: (value: any) => value instanceof Date,
         };
     }
 
     private getDateStringTypeDef<T extends 'dateString' | 'dateTimeString'>(baseDataType: T) {
+        const includeTime = this.getDateIncludesTimeFlag(baseDataType);
         return {
             baseDataType,
             dateParser: (value: string | undefined) => _parseDateTimeFromString(value) ?? undefined,
-            dateFormatter: (value: Date | undefined) =>
-                _serialiseDate(value ?? null, this.getDateIncludesTimeFlag(baseDataType)) ?? undefined,
+            dateFormatter: (value: Date | undefined) => _serialiseDate(value ?? null, includeTime) ?? undefined,
             valueParser: (params: ValueParserLiteParams<any, string>) =>
                 isValidDate(String(params.newValue)) ? params.newValue : null,
             valueFormatter: (params: ValueFormatterLiteParams<any, string>) =>
