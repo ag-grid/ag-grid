@@ -53,37 +53,37 @@ const gridOptions: GridOptions = {
     pinnedBottomRowData: getPinnedBottomData(),
     onRowEditingStarted: (event: RowEditingStartedEvent) => {
         rowEvents.push(event);
-        console.log('rowEditingStarted', rowEvents.length, cellEvents.length);
+        console.log('rowEditingStarted', { rowEvents: rowEvents.length, cellEvents: cellEvents.length });
     },
     onRowEditingStopped: (event: RowEditingStoppedEvent) => {
         rowEvents.splice(0, 1);
-        console.log('rowEditingStopped', rowEvents.length, cellEvents.length);
+        console.log('rowEditingStopped', { rowEvents: rowEvents.length, cellEvents: cellEvents.length });
     },
     onCellEditingStarted: (event: CellEditingStartedEvent) => {
         cellEvents.push(event);
-        console.log('cellEditingStarted', rowEvents.length, cellEvents.length);
+        console.log('cellEditingStarted', { rowEvents: rowEvents.length, cellEvents: cellEvents.length });
     },
     onCellEditingStopped: (event: CellEditingStoppedEvent) => {
         cellEvents.splice(0, 1);
-        console.log('cellEditingStopped', rowEvents.length, cellEvents.length);
+        console.log('cellEditingStopped', { rowEvents: rowEvents.length, cellEvents: cellEvents.length });
     },
     onCellValueChanged: (event) => {
         console.log('Cell value changed');
     },
 };
 
-function logPendingEdits() {
-    getPendingUpdates();
+function logState() {
+    console.warn({ editingCells: gridApi!.getEditingCells(), pendingUpdates: gridApi!.getPendingUpdates() });
 }
 
 let polling: any = undefined;
 
-function pollPendingEdits() {
+function pollState() {
     if (polling) {
         clearInterval(polling);
         polling = undefined;
     } else {
-        polling = setInterval(logPendingEdits, 1000);
+        polling = setInterval(() => logState, 1000);
     }
 
     document.getElementById('enablePoll')!.style.display = polling ? 'none' : 'unset';
@@ -144,16 +144,12 @@ function onBtStartEditing(key?: string, pinned?: RowPinnedType) {
     });
 }
 
-function setBatch(batchEdit: boolean) {
-    document.getElementById('enablePoll')!.style.display = batchEdit && polling ? 'none' : 'unset';
-    document.getElementById('disablePoll')!.style.display = batchEdit && !polling ? 'none' : 'unset';
-    document.getElementById('enableBatch')!.style.display = batchEdit ? 'none' : 'unset';
-    document.getElementById('disableBatch')!.style.display = batchEdit ? 'unset' : 'none';
-    document.getElementById('stopEdit')!.style.display = batchEdit ? 'unset' : 'none';
-    document.getElementById('cancelEdit')!.style.display = batchEdit ? 'unset' : 'none';
-    document.getElementById('getPending')!.style.display = batchEdit ? 'unset' : 'none';
-    document.getElementById('setPending')!.style.display = batchEdit ? 'unset' : 'none';
-    document.getElementById('clearPending')!.style.display = batchEdit ? 'unset' : 'none';
+function toggleBatch() {
+    const batchEdit = !gridApi!.getGridOption('batchEdit');
+    document.getElementById('enablePoll')!.style.display = polling ? 'none' : 'unset';
+    document.getElementById('disablePoll')!.style.display = polling ? 'unset' : 'none';
+
+    document.getElementById('batchEditingApi')!.style.display = batchEdit ? 'unset' : 'none';
 
     gridApi!.updateGridOptions({
         batchEdit,
@@ -169,7 +165,6 @@ function getPendingUpdates() {
 }
 
 function setPendingUpdates(clearValues: boolean = false) {
-    setBatch(true);
     const pendingEdits: CellPendingPosition[] = [
         {
             rowIndex: 1,
@@ -203,6 +198,7 @@ function setPendingUpdates(clearValues: boolean = false) {
         });
     }
 
+    gridApi!.setGridOption('batchEdit', true);
     gridApi!.setPendingUpdates(pendingEdits);
 }
 

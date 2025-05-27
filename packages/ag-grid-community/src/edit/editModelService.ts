@@ -4,6 +4,7 @@ import type { BeanCollection } from '../context/context';
 import type { CellPosition } from '../interfaces/iCellPosition';
 import type { Column } from '../interfaces/iColumn';
 import type { IRowNode } from '../interfaces/iRowNode';
+import { _valuesDiffer } from './utils/editors';
 
 export type CellIdPositions = {
     rowNode: IRowNode;
@@ -115,7 +116,7 @@ export class EditModelService extends BeanStub implements NamedBean {
         const result: CellPosition[] = [];
         const cellIds = this.getPendingCellIds();
         cellIds.forEach(({ column, rowNode: { rowIndex, rowPinned }, newValue, oldValue }) => {
-            if (!newValue) {
+            if (!newValue || !_valuesDiffer({ newValue, oldValue })) {
                 return;
             }
             result.push({

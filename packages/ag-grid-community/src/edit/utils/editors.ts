@@ -42,7 +42,7 @@ export function _setupEditors(
     return startedCompDetails;
 }
 
-export function _valuesDifferent(cell: Pick<EditedCell, 'newValue' | 'oldValue'>): boolean {
+export function _valuesDiffer(cell: Pick<EditedCell, 'newValue' | 'oldValue'>): boolean {
     return `${cell.newValue ?? ''}` !== `${cell.oldValue ?? ''}`;
 }
 
@@ -161,7 +161,7 @@ function _createCellEditorParams(
 export function _purgeUnchangedEdits(beans: BeanCollection): void {
     beans.editModelSvc?.getPendingUpdates().forEach((rowUpdateMap, rowNode) => {
         rowUpdateMap.forEach((cellData, column) => {
-            if (_valuesDifferent(cellData) && cellData.state !== 'editing') {
+            if (!_valuesDiffer(cellData) && cellData.state !== 'editing') {
                 // remove edits where the pending is equal to the old value
                 beans.editModelSvc?.removePendingEdit(rowNode, column);
             }
@@ -233,6 +233,10 @@ export function _destroyEditor(beans: BeanCollection, cellPosition: CellIdPositi
     comp?.refreshEditStyles(false, false);
     cellCtrl?.updateAndFormatValue(false);
     cellCtrl?.refreshCell({ forceRefresh: true, suppressFlash: true });
+
+    if (beans.editModelSvc?.hasPending(cellPosition.rowNode, cellPosition.column)) {
+        beans.editModelSvc?.setState(cellPosition.rowNode, cellPosition.column, 'changed');
+    }
 }
 
 export function _refreshCell(beans: BeanCollection, cellPosition: CellIdPositions): void {

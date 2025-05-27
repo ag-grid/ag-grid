@@ -11,7 +11,7 @@ import type { CellPosition } from '../interfaces/iCellPosition';
 import { _warn } from '../validation/logging';
 import type { PendingUpdates } from './editModelService';
 import { _resolveControllers } from './utils/controllers';
-import { _valuesDifferent } from './utils/editors';
+import { _valuesDiffer } from './utils/editors';
 
 export function undoCellEditing(beans: BeanCollection): void {
     beans.undoRedo?.undo('api');
@@ -99,7 +99,7 @@ export function setPendingUpdates(
 
         const oldValue = rowNode.data[colKey];
 
-        if (!_valuesDifferent({ newValue, oldValue }) && state !== 'editing') {
+        if (!_valuesDiffer({ newValue, oldValue }) && state !== 'editing') {
             // If the new value is the same as the old value, we don't need to update
             return;
         }

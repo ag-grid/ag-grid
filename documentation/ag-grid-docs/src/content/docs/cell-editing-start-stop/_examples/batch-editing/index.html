@@ -1,26 +1,32 @@
 <div class="example-wrapper">
     <div class="example-buttons">
         <div class="example-button-row">
-            <div>Edit Strategy:</div>
+            <span>Editing Strategy:</span>
             <label><input type="radio" id="singleCell" onclick="setEditType(undefined)" checked>Single Cell (default)</input></label>
             <label><input type="radio" id="fullRow" onclick="setEditType('fullRow')">Full Row</input></label>
         </div>
         <div class="example-button-row">
-            <span>API: </span>
+            <span>Editing API: </span>
             <button onclick="onBtStartEditing()">Edit (1, Last Name)</button>
-            <button id="enableBatch" onclick="setBatch(true)">Enable Batch Edits</button>
-            <button id="disableBatch" onclick="setBatch(false)">Disable Batch Edits</button>
             <button id="stopEdit" onclick="stopEdit()">Stop Edits</button>
             <button id="cancelEdit" onclick="cancelEdit()">Cancel Edits</button>
+        </div>
+        <div class="example-button-row">
+            <span>Editing Utility: </span>
+            <button onclick="pollState()">Poll State</button>
+            <button id="enablePoll" onclick="pollState()">Poll State</button>
+            <button id="disablePoll" onclick="pollState()">Stop Polling</button>
+        </div>
+        <div class="example-button-row">
+            <span>Batch Editing:</span>
+            <label><input type="checkbox" id="batchEdit" onclick="toggleBatch()">Enabled</input></label>
+        </div>
+        <div id="batchEditingApi" class="example-button-row">
+            <span>Batch Editing API:</span>
             <button id="getPending" onclick="getPendingUpdates()">Get Pending Edits</button>
             <button id="setPending" onclick="setPendingUpdates()">Set Pending Edits</button>
             <button id="setPending" onclick="setPendingUpdates(true)">Set Pending Edits (empty values)</button>
             <button id="clearPending" onclick="clearPendingUpdates()">Clear Pending Edits</button>
-        </div>
-        <div class="example-button-row">
-            <span>Utility: </span>
-            <button id="enablePoll" onclick="pollPendingEdits()">Poll Pending Edits</button>
-            <button id="disablePoll" onclick="pollPendingEdits()">Stop Polling</button>
         </div>
     </div>
     <div class="grid-wrapper">

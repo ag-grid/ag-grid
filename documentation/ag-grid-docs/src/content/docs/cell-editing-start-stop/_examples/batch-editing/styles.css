@@ -26,7 +26,6 @@ button {
 
 #disableBatch,
 #disablePoll,
-#stopEdit,
-#cancelEdit {
+#batchEditingApi {
     display: none;
 }

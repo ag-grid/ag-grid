@@ -14,9 +14,10 @@ import { _resolveCellController, _resolveRowController } from '../utils/controll
 import {
     _destroyEditor,
     _destroyEditors,
+    _purgeUnchangedEdits,
     _setupEditors,
     _syncModelsFromEditors,
-    _valuesDifferent,
+    _valuesDiffer,
 } from '../utils/editors';
 
 export abstract class BaseEditStrategy extends BeanStub {
@@ -53,7 +54,7 @@ export abstract class BaseEditStrategy extends BeanStub {
             let rowEdited = false;
 
             rowUpdateMap.forEach((cellData, column) => {
-                const newState = forced ? forcedState : cellData.newValue !== undefined && _valuesDifferent(cellData);
+                const newState = forced ? forcedState : cellData.newValue !== undefined && _valuesDiffer(cellData);
 
                 rowEdited ||= newState;
 
@@ -99,6 +100,10 @@ export abstract class BaseEditStrategy extends BeanStub {
         _syncModelsFromEditors(this.beans);
         // clean up any dangling editors
         _destroyEditors(this.beans, this.editModel.getPendingCellIds());
+
+        this.updateCells();
+
+        _purgeUnchangedEdits(this.beans);
     }
 
     public stopAllEditing(): void {
