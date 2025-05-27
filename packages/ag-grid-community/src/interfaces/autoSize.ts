@@ -71,15 +71,18 @@ export interface SizeColumnsToContentStrategy {
     columnLimits?: SizeColumnsToContentColumnLimits[];
 }
 
-export interface ISizeColumnsToContentParams {
+export interface ISizeAllColumnsToContentParams {
     /** If true, the header won't be included when calculating the column widths. */
     skipHeader?: boolean;
-    /** If not provided will auto-size all columns. Otherwise will size the specified columns. */
-    colIds?: string[];
     /** Default minimum width for every column (does not override the column minimum width). */
     defaultMinWidth?: number;
     /** Default maximum width for every column (does not override the column maximum width). */
     defaultMaxWidth?: number;
     /** Provide to limit specific column widths when sizing. */
     columnLimits?: SizeColumnsToContentColumnLimits[];
+}
+
+export interface ISizeColumnsToContentParams extends ISizeAllColumnsToContentParams {
+    /** If not provided will auto-size all columns. Otherwise will size the specified columns. */
+    colIds?: string[];
 }

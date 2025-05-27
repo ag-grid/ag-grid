@@ -26,7 +26,11 @@ import type {
 import type { CellRange, CellRangeParams } from '../interfaces/IRangeService';
 import type { ServerSideGroupLevelState } from '../interfaces/IServerSideStore';
 import type { AdvancedFilterModel } from '../interfaces/advancedFilterModel';
-import type { ISizeColumnsToContentParams, ISizeColumnsToFitParams } from '../interfaces/autoSize';
+import type {
+    ISizeAllColumnsToContentParams,
+    ISizeColumnsToContentParams,
+    ISizeColumnsToFitParams,
+} from '../interfaces/autoSize';
 import type { CsvExportParams } from '../interfaces/exportParams';
 import type { GridState, GridStateKey } from '../interfaces/gridState';
 import type { RenderedRowEvent } from '../interfaces/iCallbackParams';
@@ -572,8 +576,17 @@ export interface _ColumnAutosizeApi {
      * the column sizing will happen asynchronously when row data is added.
      * To always perform this synchronously, set `cellDataType = false` on the default column definition.
      * @agModule `ColumnAutoSizeModule`
+     *
+     * @deprecated v34 Use `api.autoSizeColumns` with the `ISizeColumnsToContentParams` argument.
      */
     autoSizeColumns(keys: (string | ColDef | Column)[], skipHeader?: boolean): void;
+    /**
+     * Auto-sizes columns based on their contents. If inferring cell data types with custom column types
+     * and row data is initially empty or yet to be set,
+     * the column sizing will happen asynchronously when row data is added.
+     * To always perform this synchronously, set `cellDataType = false` on the default column definition.
+     * @agModule `ColumnAutoSizeModule`
+     */
     autoSizeColumns(params: ISizeColumnsToContentParams): void;
 
     /**
@@ -582,9 +595,18 @@ export interface _ColumnAutosizeApi {
      * the column sizing will happen asynchronously when row data is added.
      * To always perform this synchronously, set `cellDataType = false` on the default column definition.
      * @agModule `ColumnAutoSizeModule`
+     *
+     * @deprecated v34 Use `api.autoSizeAllColumns` with the `ISizeAllColumnsToContentParams` argument.
      */
     autoSizeAllColumns(skipHeader?: boolean): void;
-    autoSizeAllColumns(params: ISizeColumnsToContentParams): void;
+    /**
+     * Auto-sizes columns based on their contents. If inferring cell data types with custom column types
+     * and row data is initially empty or yet to be set,
+     * the column sizing will happen asynchronously when row data is added.
+     * To always perform this synchronously, set `cellDataType = false` on the default column definition.
+     * @agModule `ColumnAutoSizeModule`
+     */
+    autoSizeAllColumns(params: ISizeAllColumnsToContentParams): void;
 }
 
 export interface _ColumnResizeApi {

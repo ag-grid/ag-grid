@@ -50,7 +50,8 @@ export {
     SizeColumnsToFitGridStrategy,
     IColumnLimit,
     ISizeColumnsToFitParams,
-    ISizeColumnsToContentParams as ISizeColumnsToContentStrategy,
+    ISizeColumnsToContentParams,
+    ISizeAllColumnsToContentParams,
 } from './interfaces/autoSize';
 export { IRenderStatusService } from './interfaces/renderStatusService';
 

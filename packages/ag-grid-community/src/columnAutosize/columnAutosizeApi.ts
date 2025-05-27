@@ -1,6 +1,10 @@
 import type { BeanCollection } from '../context/context';
 import type { ColDef } from '../entities/colDef';
-import type { ISizeColumnsToContentParams, ISizeColumnsToFitParams } from '../interfaces/autoSize';
+import type {
+    ISizeAllColumnsToContentParams,
+    ISizeColumnsToContentParams,
+    ISizeColumnsToFitParams,
+} from '../interfaces/autoSize';
 import type { Column } from '../interfaces/iColumn';
 
 export function sizeColumnsToFit(beans: BeanCollection, paramsOrGridWidth?: ISizeColumnsToFitParams | number) {
@@ -31,7 +35,7 @@ export function autoSizeColumns(
     beans.colAutosize?.autoSizeCols(params);
 }
 
-export function autoSizeAllColumns(beans: BeanCollection, params: ISizeColumnsToContentParams): void;
+export function autoSizeAllColumns(beans: BeanCollection, params: ISizeAllColumnsToContentParams): void;
 export function autoSizeAllColumns(beans: BeanCollection, skipHeader?: boolean): void;
 export function autoSizeAllColumns(
     beans: BeanCollection,
