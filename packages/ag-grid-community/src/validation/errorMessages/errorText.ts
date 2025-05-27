@@ -682,6 +682,8 @@ export const AG_GRID_ERRORS = {
     },
     275: missingRowModelTypeError,
     276: () => 'Row Numbers Row Resizer cannot be used when Grid Columns have `autoHeight` enabled.',
+    277: ({ methodName }: { methodName: string }) =>
+        `Calling gridApi.${methodName} in this way is deprecated. Use \`ISize${methodName === 'autoSizeAllColumns' ? 'All' : ''}ColumnsToContentParams\` as the argument instead.`,
 };
 
 export type ErrorMap = typeof AG_GRID_ERRORS;

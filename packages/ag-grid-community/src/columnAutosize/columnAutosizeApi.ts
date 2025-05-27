@@ -6,6 +6,7 @@ import type {
     ISizeColumnsToFitParams,
 } from '../interfaces/autoSize';
 import type { Column } from '../interfaces/iColumn';
+import { _warn } from '../validation/logging';
 
 export function sizeColumnsToFit(beans: BeanCollection, paramsOrGridWidth?: ISizeColumnsToFitParams | number) {
     if (typeof paramsOrGridWidth === 'number') {
@@ -18,21 +19,23 @@ export function sizeColumnsToFit(beans: BeanCollection, paramsOrGridWidth?: ISiz
 export function autoSizeColumns(beans: BeanCollection, keys: (string | ColDef | Column)[], skipHeader?: boolean): void;
 export function autoSizeColumns(beans: BeanCollection, params: ISizeColumnsToContentParams): void;
 export function autoSizeColumns(
-    beans: BeanCollection,
+    { colAutosize, visibleCols }: BeanCollection,
     keysOrParams: (string | ColDef | Column)[] | ISizeColumnsToContentParams,
     skipHeader?: boolean
 ): void {
-    const params = Array.isArray(keysOrParams)
-        ? { colKeys: keysOrParams, skipHeader, source: 'api' as const }
-        : {
-              colKeys: keysOrParams.colIds ?? beans.visibleCols.allCols,
-              skipHeader: keysOrParams.skipHeader,
-              defaultMaxWidth: keysOrParams.defaultMaxWidth,
-              defaultMinWidth: keysOrParams.defaultMinWidth,
-              columnLimits: keysOrParams.columnLimits,
-              source: 'api' as const,
-          };
-    beans.colAutosize?.autoSizeCols(params);
+    if (Array.isArray(keysOrParams)) {
+        _warn(277, { methodName: 'autoSizeAllColumns' });
+        colAutosize?.autoSizeCols({ colKeys: keysOrParams, skipHeader, source: 'api' as const });
+    } else {
+        colAutosize?.autoSizeCols({
+            colKeys: keysOrParams.colIds ?? visibleCols.allCols,
+            skipHeader: keysOrParams.skipHeader,
+            defaultMaxWidth: keysOrParams.defaultMaxWidth,
+            defaultMinWidth: keysOrParams.defaultMinWidth,
+            columnLimits: keysOrParams.columnLimits,
+            source: 'api' as const,
+        });
+    }
 }
 
 export function autoSizeAllColumns(beans: BeanCollection, params: ISizeAllColumnsToContentParams): void;
@@ -42,6 +45,7 @@ export function autoSizeAllColumns(
     paramsOrSkipHeader?: ISizeColumnsToContentParams | boolean
 ): void {
     if (paramsOrSkipHeader && typeof paramsOrSkipHeader === 'object') {
+        _warn(277, { methodName: 'autoSizeAllColumns' });
         autoSizeColumns(beans, paramsOrSkipHeader);
     } else {
         beans.colAutosize?.autoSizeAllColumns('api', paramsOrSkipHeader);
