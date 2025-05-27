@@ -73,7 +73,10 @@ const gridOptions: GridOptions = {
 };
 
 function logState() {
-    console.warn({ editingCells: gridApi!.getEditingCells(), pendingUpdates: gridApi!.getPendingUpdates() });
+    console.log({
+        editingCells: gridApi!.getEditingCells()?.length ?? 0,
+        pendingUpdates: gridApi!.getPendingUpdates()?.length ?? 0,
+    });
 }
 
 let polling: any = undefined;
@@ -83,7 +86,7 @@ function pollState() {
         clearInterval(polling);
         polling = undefined;
     } else {
-        polling = setInterval(() => logState, 1000);
+        polling = setInterval(logState, 1000);
     }
 
     document.getElementById('enablePoll')!.style.display = polling ? 'none' : 'unset';
@@ -153,14 +156,6 @@ function toggleBatch() {
 
     gridApi!.updateGridOptions({
         batchEdit,
-    });
-}
-
-function getPendingUpdates() {
-    const pendingEdits = gridApi!.getPendingUpdates();
-    console.log('Pending Edits: ', pendingEdits, 'Events', {
-        rowEvents: rowEvents.length,
-        cellEvents: cellEvents.length,
     });
 }
 
