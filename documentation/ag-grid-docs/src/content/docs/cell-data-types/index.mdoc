@@ -33,7 +33,7 @@ The following example demonstrates the pre-defined cell data types (most of whic
 * The **Gold** column has a `'boolean'` data type.
 * The **Date** column has a `'date'` data type (cell values are `Date` objects).
 * The **Date (String)** column has a `'dateString'` data type (cell values are `string`s representing dates).
-* The **DateTime** column has a `'dateTime'` data type (cell values are `Date` objects, [and developer has to explicitly set `cellDataType: 'dateTime'`](#enable-cell-data-types), otherwise data type is set to just `'date'`).
+* The **DateTime** column has a `'dateTime'` data type (cell values are `Date` objects). This is explicitly set to `cellDataType: 'dateTime'` as `Date` objects are always inferred to be `'date'` data type.
 * The **DateTime (String)** column has a `'dateTimeString'` data type (cell values are `string`s representing dates).
 * The **Country** column has an `'object'` data type. This also [Overrides the Pre-Defined Cell Data Type Definition](#overriding-the-pre-defined-cell-data-type-definitions) so that the value parser and formatter work with the object structure.
 
