@@ -39,7 +39,8 @@ export class SingleCellEditStrategy extends BaseEditStrategy {
         column: Column,
         key?: string | null | undefined,
         event?: KeyboardEvent | MouseEvent | null,
-        _source: 'api' | 'ui' = 'ui'
+        _source: 'api' | 'ui' = 'ui',
+        silent?: boolean
     ): boolean {
         if (this.rowNode !== rowNode || this.column !== column) {
             super.cleanupEditors();
@@ -49,7 +50,9 @@ export class SingleCellEditStrategy extends BaseEditStrategy {
         this.column = column;
 
         this.editModel.startEditing(rowNode, column);
-        this.dispatchCellEvent(rowNode, column, event, 'cellEditingStarted');
+        if (!silent) {
+            this.dispatchCellEvent(rowNode, column, event, 'cellEditingStarted');
+        }
 
         return this.setupEditors(
             [
@@ -64,6 +67,13 @@ export class SingleCellEditStrategy extends BaseEditStrategy {
             true,
             event
         );
+    }
+
+    protected override dispatchRowEvent(
+        _rowNode: IRowNode<any> | null | undefined,
+        _type: 'rowEditingStarted' | 'rowEditingStopped'
+    ): void {
+        // NOP - single cell edit strategy does not dispatch row events
     }
 
     public override stopEditing(): boolean {

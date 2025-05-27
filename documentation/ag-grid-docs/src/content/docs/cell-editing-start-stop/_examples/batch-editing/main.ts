@@ -30,6 +30,9 @@ ModuleRegistry.registerModules([
 
 let gridApi: GridApi;
 
+let rowEvents: any[] = [];
+let cellEvents: any[] = [];
+
 const gridOptions: GridOptions = {
     columnDefs: [
         { field: 'firstName' },
@@ -49,16 +52,20 @@ const gridOptions: GridOptions = {
     pinnedTopRowData: getPinnedTopData(),
     pinnedBottomRowData: getPinnedBottomData(),
     onRowEditingStarted: (event: RowEditingStartedEvent) => {
-        console.log('rowEditingStarted');
+        rowEvents.push(event);
+        console.log('rowEditingStarted', rowEvents.length, cellEvents.length);
     },
     onRowEditingStopped: (event: RowEditingStoppedEvent) => {
-        console.log('rowEditingStopped');
+        rowEvents.splice(0, 1);
+        console.log('rowEditingStopped', rowEvents.length, cellEvents.length);
     },
     onCellEditingStarted: (event: CellEditingStartedEvent) => {
-        console.log('cellEditingStarted');
+        cellEvents.push(event);
+        console.log('cellEditingStarted', rowEvents.length, cellEvents.length);
     },
     onCellEditingStopped: (event: CellEditingStoppedEvent) => {
-        console.log('cellEditingStopped');
+        cellEvents.splice(0, 1);
+        console.log('cellEditingStopped', rowEvents.length, cellEvents.length);
     },
     onCellValueChanged: (event) => {
         console.log('Cell value changed');
@@ -66,7 +73,7 @@ const gridOptions: GridOptions = {
 };
 
 function logPendingEdits() {
-    console.log(gridApi!.getEditingCells());
+    getPendingUpdates();
 }
 
 let polling: any = undefined;
@@ -155,10 +162,14 @@ function setBatch(batchEdit: boolean) {
 
 function getPendingUpdates() {
     const pendingEdits = gridApi!.getPendingUpdates();
-    console.log('Pending Edits: ', pendingEdits);
+    console.log('Pending Edits: ', pendingEdits, 'Events', {
+        rowEvents: rowEvents.length,
+        cellEvents: cellEvents.length,
+    });
 }
 
-function setPendingUpdates() {
+function setPendingUpdates(clearValues: boolean = false) {
+    setBatch(true);
     const pendingEdits: CellPendingPosition[] = [
         {
             rowIndex: 1,
@@ -170,7 +181,7 @@ function setPendingUpdates() {
             rowIndex: 2,
             rowPinned: undefined,
             colKey: 'age',
-            newValue: 30,
+            state: 'editing',
         },
         {
             rowIndex: 1,
@@ -186,6 +197,12 @@ function setPendingUpdates() {
         },
     ];
 
+    if (clearValues) {
+        pendingEdits.forEach((edit) => {
+            edit.newValue = null;
+        });
+    }
+
     gridApi!.setPendingUpdates(pendingEdits);
 }
 
@@ -194,6 +211,9 @@ function clearPendingUpdates() {
 }
 
 function setEditType(editType: any) {
+    (document.getElementById('singleCell')! as HTMLInputElement).checked = editType !== 'fullRow';
+    (document.getElementById('fullRow')! as HTMLInputElement).checked = editType === 'fullRow';
+
     gridApi!.updateGridOptions({
         editType,
     });

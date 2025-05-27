@@ -11,6 +11,7 @@ import type { CellPosition } from '../interfaces/iCellPosition';
 import { _warn } from '../validation/logging';
 import type { PendingUpdates } from './editModelService';
 import { _resolveControllers } from './utils/controllers';
+import { _valuesDifferent } from './utils/editors';
 
 export function undoCellEditing(beans: BeanCollection): void {
     beans.undoRedo?.undo('api');
@@ -44,17 +45,16 @@ export function getEditingCells(beans: BeanCollection): CellPosition[] {
 export function getPendingUpdates(beans: BeanCollection): CellPendingPosition[] {
     const pendingUpdates = beans.editModelSvc?.getPendingUpdates();
     const pendingPositions: CellPendingPosition[] = [];
-    pendingUpdates?.forEach((rowUpdateMap, rowNode) => {
+    pendingUpdates?.forEach((rowUpdateMap, { rowIndex, rowPinned }) => {
         rowUpdateMap.forEach((cellData, column) => {
             if (!cellData) {
                 return;
             }
             const cellPendingPosition: CellPendingPosition = {
+                ...cellData,
                 colKey: column.getColId(),
-                rowIndex: rowNode.rowIndex!,
-                rowPinned: rowNode.rowPinned,
-                newValue: cellData.newValue,
-                oldValue: cellData.oldValue,
+                rowIndex: rowIndex!,
+                rowPinned,
             };
             pendingPositions.push(cellPendingPosition);
         });
@@ -78,9 +78,7 @@ export function setPendingUpdates(
         pendingUpdates = new Map(existingPendingUpdates?.entries() ?? []);
     }
 
-    stopEditing(beans, true);
-
-    pendingPositions.forEach(({ colKey, rowIndex, rowPinned, newValue }) => {
+    pendingPositions.forEach(({ colKey, rowIndex, rowPinned, newValue, state }) => {
         const column = beans.colModel.getCol(colKey);
 
         if (!column) {
@@ -98,7 +96,15 @@ export function setPendingUpdates(
         if (!pendingUpdates.has(rowNode)) {
             pendingUpdates.set(rowNode, new Map());
         }
-        pendingUpdates.get(rowNode)!.set(column, { newValue, oldValue: rowNode.data[colKey] });
+
+        const oldValue = rowNode.data[colKey];
+
+        if (!_valuesDifferent({ newValue, oldValue }) && state !== 'editing') {
+            // If the new value is the same as the old value, we don't need to update
+            return;
+        }
+
+        pendingUpdates.get(rowNode)!.set(column, { newValue, oldValue, state: state ?? 'changed' });
     });
 
     beans.editSvc?.setPendingUpdates(pendingUpdates);

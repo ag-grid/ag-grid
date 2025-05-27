@@ -1,4 +1,3 @@
-import type { Maybe } from '../columns/columnModel';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
@@ -13,12 +12,15 @@ export type CellIdPositions = {
     newValue?: any;
 };
 
+type EditedCellState = 'editing' | 'changed';
+
 export type EditedCell = {
     newValue: any;
     oldValue: any;
+    state: EditedCellState;
 };
 
-export type PendingUpdates = Map<IRowNode, Map<Column, EditedCell | undefined>>;
+export type PendingUpdates = Map<IRowNode, Map<Column, EditedCell>>;
 
 export class EditModelService extends BeanStub implements NamedBean {
     beanName = 'editModelSvc' as const;
@@ -48,9 +50,9 @@ export class EditModelService extends BeanStub implements NamedBean {
     }
 
     public getPendingUpdates(): PendingUpdates {
-        const copy = new Map<IRowNode, Map<Column, EditedCell | undefined>>();
+        const copy = new Map<IRowNode, Map<Column, EditedCell>>();
         this.pendingUpdates.forEach((rowUpdateMap, rowNode) => {
-            copy.set(rowNode, new Map<Column, EditedCell | undefined>(rowUpdateMap));
+            copy.set(rowNode, new Map<Column, EditedCell>(rowUpdateMap));
         });
         return copy;
     }
@@ -58,19 +60,40 @@ export class EditModelService extends BeanStub implements NamedBean {
     public setPendingUpdates(pendingPositions: PendingUpdates): void {
         this.pendingUpdates.clear();
         pendingPositions.forEach((rowUpdateMap, rowNode) => {
-            const newRowUpdateMap = new Map<Column, EditedCell | undefined>();
+            const newRowUpdateMap = new Map<Column, EditedCell>();
             rowUpdateMap.forEach((cellData, column) => {
-                newRowUpdateMap.set(column, cellData);
+                newRowUpdateMap.set(column, { ...cellData });
             });
             this.pendingUpdates.set(rowNode, newRowUpdateMap);
         });
     }
 
-    public setPendingValue(rowNode: IRowNode, column: Column, newValue: any, oldValue: any): void {
+    public setPendingValue(
+        rowNode: IRowNode,
+        column: Column,
+        newValue: any,
+        oldValue: any,
+        state: EditedCellState
+    ): void {
         if (!this.pendingUpdates.has(rowNode)) {
             this.pendingUpdates.set(rowNode, new Map());
         }
-        this.pendingUpdates.get(rowNode)!.set(column, { newValue, oldValue });
+        this.pendingUpdates.get(rowNode)!.set(column, { newValue, oldValue, state });
+    }
+
+    public setState(rowNode: IRowNode, column: Column, state: EditedCellState): void {
+        const rowUpdateMap = this.pendingUpdates.get(rowNode) ?? new Map();
+
+        if (!this.pendingUpdates.has(rowNode)) {
+            this.pendingUpdates.set(rowNode, rowUpdateMap);
+        }
+
+        const cellData = rowUpdateMap.get(column);
+        if (cellData) {
+            cellData.state = state;
+        } else {
+            rowUpdateMap.set(column, { newValue: undefined, oldValue: undefined, state });
+        }
     }
 
     public getPendingCellIds(): CellIdPositions[] {
@@ -119,15 +142,20 @@ export class EditModelService extends BeanStub implements NamedBean {
         return this.pendingUpdates.size > 0;
     }
 
-    public startEditing(rowNode: IRowNode, ...columns: Maybe<Column>[]): void {
-        const map = this.pendingUpdates.get(rowNode) ?? new Map<Column, EditedCell | undefined>();
-        columns.forEach((col) => col && !map.has(col) && map!.set(col, undefined));
+    public startEditing(rowNode: IRowNode, column?: Column): boolean {
+        const map = this.pendingUpdates.get(rowNode) ?? new Map<Column, EditedCell>();
+        let updated = false;
+        if (column && !map.has(column)) {
+            map.set(column, { newValue: undefined, oldValue: rowNode.data[column.getColId()], state: 'editing' });
+            updated = true;
+        }
         this.pendingUpdates.set(rowNode, map);
+        return updated;
     }
 
-    public stopEditing(rowNode?: IRowNode | null, column?: Column | null): void {
+    public stopEditing(rowNode?: IRowNode | null, column?: Column | null): boolean {
         if (!this.hasPending(rowNode, column)) {
-            return;
+            return false;
         }
 
         if (rowNode) {
@@ -135,6 +163,7 @@ export class EditModelService extends BeanStub implements NamedBean {
         } else {
             this.clear();
         }
+        return true;
     }
 
     public clear(): void {

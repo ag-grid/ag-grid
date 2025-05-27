@@ -9,4 +9,7 @@ export interface CellPendingPosition extends RowPosition {
 
     /** Existing value, used only when retrieving current editing state */
     oldValue?: any;
+
+    /** Current editing state */
+    state?: 'editing' | 'changed';
 }

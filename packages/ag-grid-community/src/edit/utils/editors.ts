@@ -6,7 +6,7 @@ import type { Column } from '../../interfaces/iColumn';
 import type { IRowNode } from '../../interfaces/iRowNode';
 import type { UserCompDetails } from '../../interfaces/iUserCompDetails';
 import type { CellCtrl, ICellComp } from '../../rendering/cell/cellCtrl';
-import type { CellIdPositions } from '../editModelService';
+import type { CellIdPositions, EditedCell } from '../editModelService';
 import { _resolveCellController } from './controllers';
 
 export function _setupEditors(
@@ -42,7 +42,11 @@ export function _setupEditors(
     return startedCompDetails;
 }
 
-function _setupEditor(
+export function _valuesDifferent(cell: Pick<EditedCell, 'newValue' | 'oldValue'>): boolean {
+    return `${cell.newValue ?? ''}` !== `${cell.oldValue ?? ''}`;
+}
+
+export function _setupEditor(
     beans: BeanCollection,
     rowNode: IRowNode,
     column: Column,
@@ -50,7 +54,7 @@ function _setupEditor(
     cellStartedEdit?: boolean | null
 ): UserCompDetails<ICellEditorComp<any, any, any>> | undefined {
     const cellCtrl = _resolveCellController(beans, { rowNode, column })!;
-    const editorComp = cellCtrl?.comp.getCellEditor();
+    const editorComp = cellCtrl?.comp?.getCellEditor();
 
     const editorParams = _createCellEditorParams(beans, rowNode, column, key, cellStartedEdit);
 
@@ -71,7 +75,9 @@ function _setupEditor(
             : colDef.cellEditorPopupPosition;
 
     cellCtrl.editCompDetails = compDetails;
-    cellCtrl.comp.setEditDetails(compDetails, popup, position, beans.gos.get('reactiveCustomComponents'));
+    cellCtrl.comp?.setEditDetails(compDetails, popup, position, beans.gos.get('reactiveCustomComponents'));
+
+    beans.editModelSvc?.setState(rowNode, column, 'editing');
 
     return compDetails;
 }
@@ -83,7 +89,7 @@ function _takeValueFromCellEditor(cancel: boolean, cellComp: ICellComp): { newVa
         return noValueResult;
     }
 
-    const cellEditor = cellComp.getCellEditor();
+    const cellEditor = cellComp?.getCellEditor();
 
     if (!cellEditor) {
         return noValueResult;
@@ -152,6 +158,17 @@ function _createCellEditorParams(
     });
 }
 
+export function _purgeUnchangedEdits(beans: BeanCollection): void {
+    beans.editModelSvc?.getPendingUpdates().forEach((rowUpdateMap, rowNode) => {
+        rowUpdateMap.forEach((cellData, column) => {
+            if (_valuesDifferent(cellData) && cellData.state !== 'editing') {
+                // remove edits where the pending is equal to the old value
+                beans.editModelSvc?.removePendingEdit(rowNode, column);
+            }
+        });
+    });
+}
+
 export function _refreshEditorOnColDefChanged(beans: BeanCollection, cellCtrl: CellCtrl): void {
     const cellEditor = cellCtrl.comp?.getCellEditor();
     if (!cellEditor?.refresh) {
@@ -189,12 +206,14 @@ export function _syncModelFromEditor(
     rowNode?: IRowNode | null,
     column?: Column | null,
     newValue?: any,
-    eventSource?: string
+    _eventSource?: string
 ): void {
-    if (eventSource !== 'edit' && rowNode && column && beans.editSvc?.isEditing(rowNode, column)) {
+    if (rowNode && column) {
         const oldValue = rowNode.data[column.getColId()];
+        const cellCtrl = _resolveCellController(beans, { rowNode, column });
+        const hasEditor = !!cellCtrl?.comp?.getCellEditor();
 
-        beans.editModelSvc?.setPendingValue(rowNode, column, newValue, oldValue);
+        beans.editModelSvc?.setPendingValue(rowNode, column, newValue, oldValue, hasEditor ? 'editing' : 'changed');
     }
 }
 
@@ -210,8 +229,8 @@ export function _destroyEditor(beans: BeanCollection, cellPosition: CellIdPositi
 
     const { comp } = cellCtrl;
 
-    comp.setEditDetails(); // passing nothing stops editing
-    comp.refreshEditStyles(false, false);
+    comp?.setEditDetails(); // passing nothing stops editing
+    comp?.refreshEditStyles(false, false);
     cellCtrl?.updateAndFormatValue(false);
     cellCtrl?.refreshCell({ forceRefresh: true, suppressFlash: true });
 }
@@ -223,7 +242,7 @@ export function _refreshCell(beans: BeanCollection, cellPosition: CellIdPosition
     }
 
     const { comp } = cellCtrl;
-    comp.refreshEditStyles(false, false);
+    comp?.refreshEditStyles(false, false);
     cellCtrl?.updateAndFormatValue(false);
     cellCtrl?.refreshCell({ forceRefresh: true, suppressFlash: true });
 }

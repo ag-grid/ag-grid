@@ -9,9 +9,15 @@ import type { Column } from '../../interfaces/iColumn';
 import type { IRowNode } from '../../interfaces/iRowNode';
 import type { CellCtrl } from '../../rendering/cell/cellCtrl';
 import type { RowCtrl } from '../../rendering/row/rowCtrl';
-import type { CellIdPositions, EditModelService, PendingUpdates } from '../editModelService';
+import type { CellIdPositions, EditModelService, EditedCell, PendingUpdates } from '../editModelService';
 import { _resolveCellController, _resolveRowController } from '../utils/controllers';
-import { _destroyEditor, _destroyEditors, _setupEditors, _syncModelsFromEditors } from '../utils/editors';
+import {
+    _destroyEditor,
+    _destroyEditors,
+    _setupEditors,
+    _syncModelsFromEditors,
+    _valuesDifferent,
+} from '../utils/editors';
 
 export abstract class BaseEditStrategy extends BeanStub {
     beanName: BeanName | undefined;
@@ -22,7 +28,8 @@ export abstract class BaseEditStrategy extends BeanStub {
         column: Column,
         key?: string | null | undefined,
         event?: KeyboardEvent | MouseEvent | null,
-        source?: 'api' | 'ui'
+        source?: 'api' | 'ui',
+        silent?: boolean
     ): boolean;
 
     public abstract onCellFocusChanged(_event: CellFocusedEvent<any, any>): void;
@@ -46,9 +53,7 @@ export abstract class BaseEditStrategy extends BeanStub {
             let rowEdited = false;
 
             rowUpdateMap.forEach((cellData, column) => {
-                const newState = forced
-                    ? forcedState
-                    : cellData?.newValue !== undefined && cellData?.newValue !== cellData?.oldValue;
+                const newState = forced ? forcedState : cellData.newValue !== undefined && _valuesDifferent(cellData);
 
                 rowEdited ||= newState;
 
@@ -102,12 +107,12 @@ export abstract class BaseEditStrategy extends BeanStub {
     }
 
     setFocusOutOnEditor(cellCtrl: CellCtrl): void {
-        cellCtrl.comp.getCellEditor()?.focusOut?.();
+        cellCtrl.comp?.getCellEditor()?.focusOut?.();
     }
 
     setFocusInOnEditor(cellCtrl: CellCtrl): void {
         const cellComp = cellCtrl.comp;
-        const cellEditor = cellComp.getCellEditor();
+        const cellEditor = cellComp?.getCellEditor();
 
         if (cellEditor?.focusIn) {
             // if the editor is present, then we just focus it
@@ -117,11 +122,10 @@ export abstract class BaseEditStrategy extends BeanStub {
             // and we are trying to set focus before the cell editor is present, so we
             // focus the cell instead
             cellCtrl.focusCell(true);
-            cellCtrl.onEditorAttachedFuncs.push(() => cellComp.getCellEditor()?.focusIn?.());
+            cellCtrl.onEditorAttachedFuncs.push(() => cellComp?.getCellEditor()?.focusIn?.());
         }
     }
 
-    // move to main editsvc
     protected setupEditors(
         editingCells: CellIdPositions[],
         rowNode?: IRowNode | null,
@@ -258,6 +262,37 @@ export abstract class BaseEditStrategy extends BeanStub {
         }
 
         return false;
+    }
+
+    public setPendingUpdates(updates: PendingUpdates): void {
+        this.beans.editSvc?.stopEditing(undefined, undefined, undefined, undefined, true, 'api');
+
+        this.editModel?.setPendingUpdates(updates);
+        this.updateCells(updates);
+
+        const editingCells: (EditedCell & { rowNode: IRowNode; column: Column })[] = [];
+
+        // primary loop to preserve event semantics
+        updates.forEach((_, rowNode) => {
+            this.dispatchRowEvent(rowNode, 'rowEditingStarted');
+        });
+
+        // now update cell values and fire cell events
+        updates.forEach((rowUpdateMap, rowNode) => {
+            rowUpdateMap.forEach((cellData, column) => {
+                const { newValue, oldValue } = cellData;
+                this.editModel.setPendingValue(rowNode, column, newValue, oldValue, cellData.state);
+                this.dispatchCellEvent(rowNode, column, undefined, 'cellEditingStarted');
+                if (cellData.state === 'editing') {
+                    editingCells.push({ ...cellData, rowNode, column });
+                }
+            });
+        });
+
+        if (editingCells.length > 0) {
+            const { rowNode, column, newValue } = editingCells.at(-1)!;
+            this.beans.editSvc?.startEditing(rowNode, column, newValue, true, undefined, 'api', true);
+        }
     }
 
     private deriveClickCount(colDef?: ColDef): number {

@@ -13,12 +13,7 @@ import type { CellIdPositions, EditModelService, PendingUpdates } from './editMo
 import { _createUpdates } from './editModelService';
 import type { BaseEditStrategy } from './strategy/baseEditStrategy';
 import { _addStopEditingWhenGridLosesFocus, _resolveCellController } from './utils/controllers';
-import {
-    _refreshCell,
-    _refreshEditorOnColDefChanged,
-    _syncModelFromEditor,
-    _syncModelsFromEditors,
-} from './utils/editors';
+import { _refreshEditorOnColDefChanged, _syncModelFromEditor, _syncModelsFromEditors } from './utils/editors';
 
 export class EditService extends BeanStub implements NamedBean {
     beanName = 'editSvc' as const;
@@ -115,7 +110,8 @@ export class EditService extends BeanStub implements NamedBean {
         key: string | null = null,
         cellStartedEdit: boolean | null = true,
         event: KeyboardEvent | MouseEvent | null = null,
-        source: 'api' | 'ui' = 'ui'
+        source: 'api' | 'ui' = 'ui',
+        silent: boolean = false
     ): boolean {
         if (!column.isCellEditable(rowNode)) {
             return false;
@@ -126,12 +122,12 @@ export class EditService extends BeanStub implements NamedBean {
         const cellCtrl = _resolveCellController(this.beans, { rowNode, column })!;
         if (!cellCtrl.comp) {
             cellCtrl.onCompAttachedFuncs.push(() => {
-                this.startEditing(rowNode, column, key, cellStartedEdit, event, source);
+                this.startEditing(rowNode, column, key, cellStartedEdit, event, source, silent);
             });
             return true;
         }
 
-        this.strategy = this.createStrategy();
+        this.strategy ??= this.createStrategy();
 
         const batchEdit = this.gos.get('batchEdit');
 
@@ -148,7 +144,7 @@ export class EditService extends BeanStub implements NamedBean {
             this.stopEditing(undefined, undefined, undefined, undefined, undefined, source);
         }
 
-        const result = this.strategy!.startEditing?.(rowNode, column, key, event, source);
+        const result = this.strategy!.startEditing?.(rowNode, column, key, event, source, silent);
 
         this.strategy.updateCells(this.model?.getPendingUpdates());
 
@@ -250,21 +246,8 @@ export class EditService extends BeanStub implements NamedBean {
     }
 
     public setPendingUpdates(updates: PendingUpdates): void {
-        const existingUpdates = this.model?.getPendingUpdates();
-        this.strategy = this.createStrategy();
-        this.strategy.updateCells(existingUpdates, false);
-        this.model?.setPendingUpdates(updates);
-        this.strategy.updateCells(updates);
-
-        // now update cell values
-        updates.forEach((rowUpdateMap, rowNode) => {
-            rowUpdateMap.forEach((cellData, column) => {
-                if (!cellData) {
-                    return;
-                }
-                _refreshCell(this.beans, { rowNode, column });
-            });
-        });
+        this.strategy ??= this.createStrategy();
+        this.strategy?.setPendingUpdates(updates);
     }
 
     public getEditingCellPositions(): CellPosition[] {
@@ -351,7 +334,11 @@ export class EditService extends BeanStub implements NamedBean {
             column = this.beans.colModel.getCol(column)!;
         }
 
+        this.strategy ??= this.createStrategy();
+
         _syncModelFromEditor(this.beans, rowNode, column, newValue, eventSource);
+
+        this.strategy?.updateCells();
     }
 
     public handleColDefChanged(cellCtrl: CellCtrl): void {

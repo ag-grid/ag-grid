@@ -2,8 +2,8 @@
     <div class="example-buttons">
         <div class="example-button-row">
             <div>Edit Strategy:</div>
-            <button onclick="setEditType(undefined)">Single Cell (default)</button>
-            <button onclick="setEditType('fullRow')">Full Row</button>
+            <label><input type="radio" id="singleCell" onclick="setEditType(undefined)" checked>Single Cell (default)</input></label>
+            <label><input type="radio" id="fullRow" onclick="setEditType('fullRow')">Full Row</input></label>
         </div>
         <div class="example-button-row">
             <span>API: </span>
@@ -14,6 +14,7 @@
             <button id="cancelEdit" onclick="cancelEdit()">Cancel Edits</button>
             <button id="getPending" onclick="getPendingUpdates()">Get Pending Edits</button>
             <button id="setPending" onclick="setPendingUpdates()">Set Pending Edits</button>
+            <button id="setPending" onclick="setPendingUpdates(true)">Set Pending Edits (empty values)</button>
             <button id="clearPending" onclick="clearPendingUpdates()">Clear Pending Edits</button>
         </div>
         <div class="example-button-row">

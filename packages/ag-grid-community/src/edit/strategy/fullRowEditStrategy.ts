@@ -53,13 +53,14 @@ export class FullRowEditStrategy extends BaseEditStrategy {
         column?: Column,
         key?: string | null | undefined,
         event?: KeyboardEvent | MouseEvent | null | undefined,
-        _source: 'api' | 'ui' = 'ui'
+        _source: 'api' | 'ui' = 'ui',
+        silent?: boolean
     ): boolean {
         if (this.rowNode !== rowNode) {
             super.cleanupEditors();
         }
 
-        if (!this.editModel.hasPending(rowNode)) {
+        if (!this.editModel.hasPending(rowNode) && !silent) {
             this.dispatchRowEvent(rowNode, 'rowEditingStarted');
         }
 
@@ -78,7 +79,9 @@ export class FullRowEditStrategy extends BaseEditStrategy {
 
             if (!this.editModel.hasPending(rowNode, rowColumn)) {
                 this.editModel.startEditing(rowNode, rowColumn);
-                this.dispatchCellEvent(rowNode, rowColumn, event, 'cellEditingStarted');
+                if (!silent) {
+                    this.dispatchCellEvent(rowNode, rowColumn, event, 'cellEditingStarted');
+                }
             }
         });
 
@@ -88,6 +91,9 @@ export class FullRowEditStrategy extends BaseEditStrategy {
     }
 
     public override stopEditing(): boolean {
+        if (!this.editModel.hasPending(this.rowNode)) {
+            return false;
+        }
         const updates = this.editModel.getPendingUpdates();
 
         super.stopEditing();
