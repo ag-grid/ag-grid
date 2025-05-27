@@ -13,7 +13,6 @@ import type {
     BaseCellDataType,
     CheckDataTypes,
     CoreDataTypeDefinition,
-    DataTypeDefinition,
     DataTypeFormatValueFunc,
     DateStringDataTypeDefinition,
 } from '../entities/dataType';
@@ -29,7 +28,6 @@ import { _getDateParts } from '../utils/date';
 import { _exists, _jsonEquals } from '../utils/generic';
 import { AgPromise } from '../utils/promise';
 import { _error, _warn } from '../validation/logging';
-import type { ValueService } from '../valueService/valueService';
 import type { IFloatingFilterParams, IFloatingFilterParentCallback } from './floating/floatingFilter';
 import { _getDefaultFloatingFilterType } from './floating/floatingFilterMapper';
 
@@ -75,8 +73,6 @@ function setFilterNumberComparator<TValue = any>(a: TValue | null, b: TValue | n
 type FilterParamsDefArgs = {
     formatValue: DataTypeFormatValueFunc;
     t: ReturnType<ColumnFilterService['getLocaleTextFunc']>;
-    valueSvc: ValueService;
-    usingSetFilter: boolean;
     dataTypeDefinition: CoreDataTypeDefinition;
 };
 
@@ -93,122 +89,110 @@ type FilterParamsDefMap = CheckDataTypes<{
 
 // using an object here to enforce dev to not forget to implement new types as they are added
 const filterParamsForEachDataType: FilterParamsDefMap = {
-    number: ({ usingSetFilter }) => (usingSetFilter ? { comparator: setFilterNumberComparator } : {}),
-    boolean({ usingSetFilter, t }) {
-        if (usingSetFilter) {
-            return {
-                valueFormatter: (params: ValueFormatterParams<any, boolean>) => {
-                    if (_exists(params.value)) {
-                        return t(String(params.value), params.value ? 'True' : 'False');
-                    }
-                    return t('blanks', '(Blanks)');
-                },
-            };
-        }
-        return {
-            maxNumConditions: 1,
-            debounceMs: 0,
-            filterOptions: [
-                'empty',
-                {
-                    displayKey: 'true',
-                    displayName: 'True',
-                    predicate: (_filterValues: any[], cellValue: any) => cellValue,
-                    numberOfInputs: 0,
-                },
-                {
-                    displayKey: 'false',
-                    displayName: 'False',
-                    predicate: (_filterValues: any[], cellValue: any) => cellValue === false,
-                    numberOfInputs: 0,
-                },
-            ],
-        };
-    },
-    date({ usingSetFilter, formatValue, t }) {
-        if (usingSetFilter) {
-            return {
-                valueFormatter: (params: ValueFormatterParams) => {
-                    const valueFormatted = formatValue(params);
-                    return _exists(valueFormatted) ? valueFormatted : t('blanks', '(Blanks)');
-                },
-                treeList: true,
-                treeListFormatter: (pathKey: string | null, level: number) => {
-                    if (pathKey === 'NaN') {
-                        return t('invalidDate', 'Invalid Date');
-                    }
-                    if (level === 1 && pathKey != null) {
-                        const monthKey = MONTH_KEYS[Number(pathKey) - 1];
-                        return t(monthKey, MONTH_LOCALE_TEXT[monthKey]);
-                    }
-                    return pathKey ?? t('blanks', '(Blanks)');
-                },
-                treeListPathGetter: (date: Date | null) => _getDateParts(date, false),
-            };
-        }
-        return { isValidDate };
-    },
-    dateString({ usingSetFilter, formatValue, dataTypeDefinition, t }) {
-        const convertToDate = (dataTypeDefinition as DateStringDataTypeDefinition).dateParser!;
-        if (usingSetFilter) {
-            return {
-                valueFormatter: (params: ValueFormatterParams) => {
-                    const valueFormatted = formatValue(params);
-                    return _exists(valueFormatted) ? valueFormatted : t('blanks', '(Blanks)');
-                },
-                treeList: true,
-                treeListPathGetter: (value: string | null) => _getDateParts(convertToDate(value ?? undefined), false),
-                treeListFormatter: (pathKey: string | null, level: number) => {
-                    if (level === 1 && pathKey != null) {
-                        const monthKey = MONTH_KEYS[Number(pathKey) - 1];
-                        return t(monthKey, MONTH_LOCALE_TEXT[monthKey]);
-                    }
-                    return pathKey ?? t('blanks', '(Blanks)');
-                },
-            };
-        }
-        return {
-            comparator: (filterDate: Date, cellValue: string | undefined) => {
-                const cellAsDate = convertToDate(cellValue)!;
-                if (cellValue == null || cellAsDate < filterDate) {
-                    return -1;
-                }
-                if (cellAsDate > filterDate) {
-                    return 1;
-                }
-                return 0;
+    number: () => ({}),
+    boolean: () => ({
+        maxNumConditions: 1,
+        debounceMs: 0,
+        filterOptions: [
+            'empty',
+            {
+                displayKey: 'true',
+                displayName: 'True',
+                predicate: (_filterValues: any[], cellValue: any) => cellValue,
+                numberOfInputs: 0,
             },
-            isValidDate: (value: any) => typeof value === 'string' && isValidDate(convertToDate(value)),
-        };
-    },
+            {
+                displayKey: 'false',
+                displayName: 'False',
+                predicate: (_filterValues: any[], cellValue: any) => cellValue === false,
+                numberOfInputs: 0,
+            },
+        ],
+    }),
+    date: () => ({ isValidDate }),
+    dateString: ({ dataTypeDefinition }) => ({
+        comparator: (filterDate: Date, cellValue: string | undefined) => {
+            const cellAsDate = (dataTypeDefinition as DateStringDataTypeDefinition).dateParser!(cellValue)!;
+            if (cellValue == null || cellAsDate < filterDate) {
+                return -1;
+            }
+            if (cellAsDate > filterDate) {
+                return 1;
+            }
+            return 0;
+        },
+        isValidDate: (value: any) =>
+            typeof value === 'string' &&
+            isValidDate((dataTypeDefinition as DateStringDataTypeDefinition).dateParser!(value)),
+    }),
     dateTime(args) {
-        if (args.usingSetFilter) {
-            const params = this.date(args) as ISetFilterParams<any, Date>;
-            params.treeListPathGetter = (date: Date | null) => _getDateParts(date, true);
-            return params;
-        }
         return this.date(args);
     },
     dateTimeString(args) {
-        if (args.usingSetFilter) {
-            const convertToDate = (args.dataTypeDefinition as DateStringDataTypeDefinition).dateParser!;
-            const params = this.dateString(args) as ISetFilterParams;
-            params.treeListPathGetter = (value: string | null) => _getDateParts(convertToDate(value ?? undefined));
-            return params;
-        }
         return this.dateString(args);
     },
-    object({ usingSetFilter, formatValue, t }) {
-        if (usingSetFilter) {
-            return {
-                valueFormatter: (params: ValueFormatterParams) => {
-                    const valueFormatted = formatValue(params);
-                    return _exists(valueFormatted) ? valueFormatted : t('blanks', '(Blanks)');
-                },
-            };
-        }
-        return {};
+    object: () => ({}),
+    text: () => ({}),
+};
+
+// using an object here to enforce dev to not forget to implement new types as they are added
+const setFilterParamsForEachDataType: FilterParamsDefMap = {
+    number: () => ({ comparator: setFilterNumberComparator }),
+    boolean: ({ t }) => ({
+        valueFormatter: (params: ValueFormatterParams<any, boolean>) =>
+            _exists(params.value) ? t(String(params.value), params.value ? 'True' : 'False') : t('blanks', '(Blanks)'),
+    }),
+    date: ({ formatValue, t }) => ({
+        valueFormatter: (params: ValueFormatterParams) => {
+            const valueFormatted = formatValue(params);
+            return _exists(valueFormatted) ? valueFormatted : t('blanks', '(Blanks)');
+        },
+        treeList: true,
+        treeListFormatter: (pathKey: string | null, level: number) => {
+            if (pathKey === 'NaN') {
+                return t('invalidDate', 'Invalid Date');
+            }
+            if (level === 1 && pathKey != null) {
+                const monthKey = MONTH_KEYS[Number(pathKey) - 1];
+                return t(monthKey, MONTH_LOCALE_TEXT[monthKey]);
+            }
+            return pathKey ?? t('blanks', '(Blanks)');
+        },
+        treeListPathGetter: (date: Date | null) => _getDateParts(date, false),
+    }),
+    dateString: ({ formatValue, dataTypeDefinition, t }) => ({
+        valueFormatter: (params: ValueFormatterParams) => {
+            const valueFormatted = formatValue(params);
+            return _exists(valueFormatted) ? valueFormatted : t('blanks', '(Blanks)');
+        },
+        treeList: true,
+        treeListPathGetter: (value: string | null) =>
+            _getDateParts((dataTypeDefinition as DateStringDataTypeDefinition).dateParser!(value ?? undefined), false),
+        treeListFormatter: (pathKey: string | null, level: number) => {
+            if (level === 1 && pathKey != null) {
+                const monthKey = MONTH_KEYS[Number(pathKey) - 1];
+                return t(monthKey, MONTH_LOCALE_TEXT[monthKey]);
+            }
+            return pathKey ?? t('blanks', '(Blanks)');
+        },
+    }),
+    dateTime(args) {
+        const params = this.date(args) as ISetFilterParams<any, Date>;
+        params.treeListPathGetter = (date: Date | null) => _getDateParts(date, true);
+        return params;
     },
+    dateTimeString(args) {
+        const convertToDate = (args.dataTypeDefinition as DateStringDataTypeDefinition).dateParser!;
+        const params = this.dateString(args) as ISetFilterParams;
+        params.treeListPathGetter = (value: string | null) => _getDateParts(convertToDate(value ?? undefined));
+        return params;
+    },
+    object: ({ formatValue, t }) => ({
+        valueFormatter: (params: ValueFormatterParams) => {
+            const valueFormatted = formatValue(params);
+            return _exists(valueFormatted) ? valueFormatted : t('blanks', '(Blanks)');
+        },
+    }),
     text: () => ({}),
 };
 
@@ -1038,24 +1022,20 @@ export class ColumnFilterService extends BeanStub implements NamedBean {
         dataTypeDefinition: CoreDataTypeDefinition,
         formatValue: DataTypeFormatValueFunc
     ): void {
-        if (typeof dataTypeDefinition.baseDataType === 'object') {
+        const usingSetFilter = _isSetFilterByDefault(this.gos);
+        if (typeof dataTypeDefinition.baseDataType === 'object' && !usingSetFilter) {
             colDef.filterValueGetter = ({ column, node }: ValueGetterParams) =>
                 formatValue({ column, node, value: this.beans.valueSvc.getValue(column as AgColumn, node) });
-        } else {
-            const filterParamsGetter = filterParamsForEachDataType[dataTypeDefinition.baseDataType];
-            const filterParams = filterParamsGetter({
-                dataTypeDefinition,
-                usingSetFilter: _isSetFilterByDefault(this.gos),
-                formatValue,
-                t: this.getLocaleTextFunc(),
-                valueSvc: this.beans.valueSvc,
-            });
+            return;
+        }
+        const filterParamsMap = usingSetFilter ? setFilterParamsForEachDataType : filterParamsForEachDataType;
+        const filterParamsGetter = filterParamsMap[dataTypeDefinition.baseDataType];
+        const filterParams = filterParamsGetter({ dataTypeDefinition, formatValue, t: this.getLocaleTextFunc() });
 
-            if (typeof colDef.filterParams === 'object') {
-                Object.assign(colDef.filterParams, filterParams);
-            } else {
-                colDef.filterParams = filterParams;
-            }
+        if (typeof colDef.filterParams === 'object') {
+            Object.assign(colDef.filterParams, filterParams);
+        } else {
+            colDef.filterParams = filterParams;
         }
     }
 
