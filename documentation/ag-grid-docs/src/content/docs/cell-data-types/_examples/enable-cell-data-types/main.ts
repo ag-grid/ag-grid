@@ -86,15 +86,14 @@ document.addEventListener('DOMContentLoaded', () => {
                         Math.floor(Math.random() * 60),
                     ];
                     const paddedDateTimeStrings = [month, day, h, m, s].map((e) => e.toString().padStart(2, '0'));
-                    const dateTimeObj = new Date(year, month - 1, day, h, m, s);
                     const dateString = `${year}-${paddedDateTimeStrings[0]}-${paddedDateTimeStrings[1]}`;
                     const dateTimeString = `${year}-${paddedDateTimeStrings[0]}-${paddedDateTimeStrings[1]} ${paddedDateTimeStrings.slice(2).join(':')}`;
                     return {
                         ...rowData,
                         date: dateString,
-                        dateObject: dateTimeObj,
+                        dateObject: new Date(year, month - 1, day),
                         dateTimeString,
-                        dateTime: dateTimeObj,
+                        dateTime: new Date(year, month - 1, day, h, m, s),
                         countryObject: {
                             name: rowData.country,
                         },
