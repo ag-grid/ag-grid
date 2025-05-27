@@ -1,6 +1,6 @@
 import type { Framework } from '@ag-grid-types';
 import { Select } from '@ag-website-shared/components/select/Select';
-import { getDocumentationArchiveUrl } from '@ag-website-shared/utils/getArchiveUrl';
+import { getDocumentationArchiveUrl, getVersionFromUrl } from '@ag-website-shared/utils/getArchiveUrl';
 import { parseVersion } from '@ag-website-shared/utils/parseVersion';
 import { LIBRARY } from '@constants';
 import { useStore } from '@nanostores/react';
@@ -23,13 +23,6 @@ interface Props {
 }
 
 const versionsUrl = urlWithBaseUrl('/debug/versions.json');
-
-function getVersionFromUrl() {
-    const [_, firstPart, secondPart] = window.location.pathname.split('/');
-    if (firstPart === 'archive') {
-        return secondPart;
-    }
-}
 
 export const VersionsSelectorInner: FunctionComponent<Props> = ({ framework, pageName, exampleName }) => {
     const [versions, setVersions] = useState([]);
@@ -103,6 +96,7 @@ export const VersionsSelectorInner: FunctionComponent<Props> = ({ framework, pag
                     urlWithPrefix({
                         framework,
                         url: `./${pageName}`,
+                        siteBaseUrl: '/', // Gets added by `getDocumentationArchiveUrl`
                     }) + `#example-${exampleName}`,
             });
 

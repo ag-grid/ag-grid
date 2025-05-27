@@ -46,3 +46,14 @@ export const getDocumentationArchiveUrl = ({
 
     return documentationArchiveLink;
 };
+
+/**
+ * Get version from current URL, from the segment after 'archive'
+ */
+export function getVersionFromUrl() {
+    const pathParts = window.location.pathname.split('/');
+    const archiveIndex = pathParts.indexOf('archive');
+    if (archiveIndex >= 0) {
+        return pathParts[archiveIndex + 1];
+    }
+}

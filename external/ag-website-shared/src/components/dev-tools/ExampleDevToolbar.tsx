@@ -62,6 +62,7 @@ export const ExampleDevToolbar: FunctionComponent<Props> = ({ framework, example
                         urlWithPrefix({
                             framework,
                             url: `./${pageName}`,
+                            siteBaseUrl: '/', // Gets added by `siteHostBaseUrl`
                         }),
                         `#example-${exampleName}`
                     );
