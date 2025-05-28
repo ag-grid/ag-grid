@@ -1,5 +1,5 @@
 import type {
-    FilterEvaluatorParams,
+    FilterHandlerParams,
     ISetFilterParams,
     RowNode,
     SetFilterModel,
@@ -31,7 +31,7 @@ enum SetFilterModelValuesType {
 export default SetFilterModelValuesType;
 
 export interface SetValueModelParams<TValue> {
-    evaluatorParams: FilterEvaluatorParams<any, any, SetFilterModel, ISetFilterParams<any, TValue>>;
+    handlerParams: FilterHandlerParams<any, any, SetFilterModel, ISetFilterParams<any, TValue>>;
     usingComplexObjects?: boolean;
 }
 
@@ -67,7 +67,7 @@ export class SetValueModel<TValue> extends BeanStub<SetValueModelEvent> {
 
     public postConstruct(): void {
         const params = this.params;
-        const values = params.evaluatorParams.filterParams.values;
+        const values = params.handlerParams.filterParams.values;
 
         this.updateParams(params);
 
@@ -85,10 +85,10 @@ export class SetValueModel<TValue> extends BeanStub<SetValueModelEvent> {
     }
 
     public refresh(params: SetValueModelParams<TValue>): void {
-        const { values, suppressSorting } = params.evaluatorParams.filterParams;
+        const { values, suppressSorting } = params.handlerParams.filterParams;
 
         const currentProvidedValues = this.providedValues;
-        const currentSuppressSorting = this.params.evaluatorParams.filterParams.suppressSorting;
+        const currentSuppressSorting = this.params.handlerParams.filterParams.suppressSorting;
 
         this.params = params;
         this.updateParams(params);
@@ -112,7 +112,7 @@ export class SetValueModel<TValue> extends BeanStub<SetValueModelEvent> {
 
     private updateParams(params: SetValueModelParams<TValue>): void {
         const {
-            evaluatorParams: {
+            handlerParams: {
                 colDef,
                 filterParams: { comparator, treeList, treeListPathGetter },
             },
@@ -167,7 +167,7 @@ export class SetValueModel<TValue> extends BeanStub<SetValueModelEvent> {
                     this.dispatchLocalEvent({ type: 'loadingStart' });
 
                     const callback = this.providedValues as SetFilterValuesFunc<any, TValue>;
-                    const { column, colDef } = this.params.evaluatorParams;
+                    const { column, colDef } = this.params.handlerParams;
                     const params: SetFilterValuesFuncParams<any, TValue> = _addGridCommonParams(this.gos, {
                         success: (values) => {
                             this.dispatchLocalEvent({ type: 'loadingEnd' });
@@ -253,7 +253,7 @@ export class SetValueModel<TValue> extends BeanStub<SetValueModelEvent> {
         }
 
         const existingValues =
-            removeUnavailableValues && !this.params.evaluatorParams.filterParams.caseSensitive
+            removeUnavailableValues && !this.params.handlerParams.filterParams.caseSensitive
                 ? this.allValues
                 : undefined;
 
@@ -318,7 +318,7 @@ export class SetValueModel<TValue> extends BeanStub<SetValueModelEvent> {
     private sortKeys(nullableValues: Map<string | null, TValue | null> | null): (string | null)[] {
         const values = nullableValues ?? new Map();
 
-        const filterParams = this.params.evaluatorParams.filterParams;
+        const filterParams = this.params.handlerParams.filterParams;
 
         if (filterParams.suppressSorting) {
             return Array.from(values.keys());
@@ -348,7 +348,7 @@ export class SetValueModel<TValue> extends BeanStub<SetValueModelEvent> {
 
     private updateAvailableKeys(allKeys: (string | null)[]): void {
         const availableKeys = this.showAvailableOnly()
-            ? this.getAvailableValues((node) => this.params.evaluatorParams.doesRowPassOtherFilter(node))
+            ? this.getAvailableValues((node) => this.params.handlerParams.doesRowPassOtherFilter(node))
             : allKeys;
 
         this.availableKeys = new Set(availableKeys);

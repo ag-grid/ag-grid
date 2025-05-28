@@ -14,7 +14,7 @@ export interface SetFilterModel extends ProvidedFilterModel {
 }
 
 /**
- * @deprecated v34 Use `SetFilterUi` for the filter UI component, and `SetFilterEvaluator` for the filter evaluator.
+ * @deprecated v34 Use `SetFilterUi` for the filter UI component, and `SetFilterHandler` for the filter handler.
  */
 export interface ISetFilter<V = string> extends IProvidedFilter {
     readonly filterType: 'set';
@@ -65,7 +65,7 @@ export interface ISetFilter<V = string> extends IProvidedFilter {
     getModelFromUi(): SetFilterModel | null;
 }
 
-export interface SetFilterEvaluator<TValue = string> {
+export interface SetFilterHandler<TValue = string> {
     /** Returns the full list of unique keys used by the Set Filter. */
     getFilterKeys(): SetFilterModelValue;
 

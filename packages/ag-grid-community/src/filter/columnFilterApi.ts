@@ -1,7 +1,7 @@
 import type { BeanCollection } from '../context/context';
 import type { AgColumn } from '../entities/agColumn';
 import type { Column } from '../interfaces/iColumn';
-import type { FilterEvaluator, FilterModel, IFilter } from '../interfaces/iFilter';
+import type { FilterHandler, FilterModel, IFilter } from '../interfaces/iFilter';
 import { _error } from '../validation/logging';
 
 export function isColumnFilterPresent(beans: BeanCollection): boolean {
@@ -58,12 +58,12 @@ export function showColumnFilter(beans: BeanCollection, colKey: string | Column)
     });
 }
 
-export function getColumnFilterEvaluator(beans: BeanCollection, colKey: string | Column): FilterEvaluator | undefined {
+export function getColumnFilterHandler(beans: BeanCollection, colKey: string | Column): FilterHandler | undefined {
     const column = beans.colModel.getCol(colKey);
     if (!column) {
         // Column not found, can't show filter
         _error(12, { colKey });
         return undefined;
     }
-    return beans.colFilter?.getEvaluator(column);
+    return beans.colFilter?.getHandler(column);
 }

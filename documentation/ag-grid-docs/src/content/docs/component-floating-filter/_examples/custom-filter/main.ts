@@ -1,4 +1,4 @@
-import type { ColDef, FilterEvaluator, GridApi, GridOptions } from 'ag-grid-community';
+import type { ColDef, FilterHandler, GridApi, GridOptions } from 'ag-grid-community';
 import {
     ClientSideRowModelModule,
     CustomFilterModule,
@@ -15,10 +15,10 @@ ModuleRegistry.registerModules([
     ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 
-function numberFilterEvaluator(): FilterEvaluator {
+function numberFilterHandler(): FilterHandler<any, any, number> {
     return {
-        doesFilterPass: ({ node, model, evaluatorParams }) => {
-            const value = evaluatorParams.getValue(node);
+        doesFilterPass: ({ node, model, handlerParams }) => {
+            const value = handlerParams.getValue(node);
 
             if (value == null) {
                 return true;
@@ -35,29 +35,25 @@ const columnDefs: ColDef[] = [
     {
         field: 'gold',
         width: 100,
-        filter: NumberFilterComponent,
-        filterEvaluator: numberFilterEvaluator,
+        filter: { component: NumberFilterComponent, handler: numberFilterHandler },
         suppressHeaderMenuButton: true,
     },
     {
         field: 'silver',
         width: 100,
-        filter: NumberFilterComponent,
-        filterEvaluator: numberFilterEvaluator,
+        filter: { component: NumberFilterComponent, handler: numberFilterHandler },
         suppressHeaderMenuButton: true,
     },
     {
         field: 'bronze',
         width: 100,
-        filter: NumberFilterComponent,
-        filterEvaluator: numberFilterEvaluator,
+        filter: { component: NumberFilterComponent, handler: numberFilterHandler },
         suppressHeaderMenuButton: true,
     },
     {
         field: 'total',
         width: 100,
-        filter: NumberFilterComponent,
-        filterEvaluator: numberFilterEvaluator,
+        filter: { component: NumberFilterComponent, handler: numberFilterHandler },
         suppressHeaderMenuButton: true,
     },
 ];
@@ -71,7 +67,7 @@ const gridOptions: GridOptions<IOlympicData> = {
         floatingFilter: true,
     },
     columnDefs,
-    enableFilterEvaluators: true,
+    enableFilterHandlers: true,
 };
 
 // setup the grid after the page has finished loading

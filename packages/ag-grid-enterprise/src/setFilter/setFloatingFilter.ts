@@ -10,7 +10,7 @@ import type {
 import { AgInputTextFieldSelector, Component, RefPlaceholder, _error } from 'ag-grid-community';
 
 import { SetFilter } from './setFilter';
-import type { SetFilterEvaluator } from './setFilterEvaluator';
+import type { SetFilterHandler } from './setFilterHandler';
 
 const SetFloatingFilterElement: ElementParams = {
     tag: 'div',
@@ -48,7 +48,7 @@ export class SetFloatingFilterComp<V = string> extends Component implements IFlo
 
         this.eFloatingFilterText.setInputAriaLabel(`${displayName} ${translate('ariaFilterInput', 'Filter Input')}`);
 
-        if (this.gos.get('enableFilterEvaluators')) {
+        if (this.gos.get('enableFilterHandlers')) {
             const reactiveParams = params as unknown as FloatingFilterDisplayParams;
             this.updateFloatingFilterText(reactiveParams.model);
         }
@@ -75,23 +75,21 @@ export class SetFloatingFilterComp<V = string> extends Component implements IFlo
     }
 
     private addAvailableValuesListener(): void {
-        const addListener = (evaluator: SetFilterEvaluator<V>) => {
+        const addListener = (handler: SetFilterHandler<V>) => {
             // unlike other filters, what we show in the floating filter can be different, even
             // if another filter changes. this is due to how set filter restricts its values based
             // on selections in other filters, e.g. if you filter Language to English, then the set filter
             // on Country will only show English speaking countries. Thus the list of items to show
             // in the floating filter can change.
-            this.addManagedListeners(evaluator.valueModel, {
-                availableValuesChanged: () => this.updateFloatingFilterText(evaluator.params.model),
+            this.addManagedListeners(handler.valueModel, {
+                availableValuesChanged: () => this.updateFloatingFilterText(handler.params.model),
             });
         };
-        if (this.gos.get('enableFilterEvaluators')) {
-            addListener(
-                (this.params as unknown as FloatingFilterDisplayParams).getEvaluator() as SetFilterEvaluator<V>
-            );
+        if (this.gos.get('enableFilterHandlers')) {
+            addListener((this.params as unknown as FloatingFilterDisplayParams).getHandler() as SetFilterHandler<V>);
         } else {
             this.parentSetFilterInstance((setFilter) => {
-                addListener(setFilter.evaluator);
+                addListener(setFilter.handler);
             });
         }
 
@@ -106,10 +104,10 @@ export class SetFloatingFilterComp<V = string> extends Component implements IFlo
         if (parentModel == null) {
             this.eFloatingFilterText.setValue('');
         } else {
-            if (this.gos.get('enableFilterEvaluators')) {
+            if (this.gos.get('enableFilterHandlers')) {
                 this.eFloatingFilterText.setValue(
                     (this.params as unknown as FloatingFilterDisplayParams)
-                        .getEvaluator()
+                        .getHandler()
                         .getModelAsString?.(parentModel) ?? ''
                 );
             } else {

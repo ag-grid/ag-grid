@@ -165,7 +165,7 @@ import type { Column } from '../interfaces/iColumn';
 import type { AgGridCommon } from '../interfaces/iCommon';
 import type { IDatasource } from '../interfaces/iDatasource';
 import type { ExcelExportParams, ExcelStyle } from '../interfaces/iExcelCreator';
-import type { FilterEvaluatorGeneratorFunc } from '../interfaces/iFilter';
+import type { CreateFilterHandlerFunc } from '../interfaces/iFilter';
 import type { FindOptions } from '../interfaces/iFind';
 import type { HeaderPosition } from '../interfaces/iHeaderPosition';
 import type { ILoadingCellRendererParams } from '../interfaces/iLoadingCellRenderer';
@@ -704,17 +704,17 @@ export interface GridOptions<TData = any> {
      */
     suppressSetFilterByDefault?: boolean;
     /**
-     * Enable filter evaluators for custom filter components.
-     * Requires all custom filters need to be implemented using evaluators.
+     * Enable filter handlers for custom filter components.
+     * Requires all custom filters need to be implemented using handlers.
      * @initial
      */
-    enableFilterEvaluators?: boolean;
+    enableFilterHandlers?: boolean;
     /**
-     * A map of filter evaluator key to filter evaluator function.
-     * Allows for filter evaluator keys to be used in `colDef.filterEvaluator`.
+     * A map of filter handler key to filter handler function.
+     * Allows for filter handler keys to be used in `colDef.filter.handler`.
      * @initial
      */
-    filterEvaluators?: { [key: string]: FilterEvaluatorGeneratorFunc };
+    filterHandlers?: { [key: string]: CreateFilterHandlerFunc };
 
     // *** Integrated Charts *** //
     /**
@@ -2409,11 +2409,11 @@ export interface GridOptions<TData = any> {
      */
     onFilterModified?(event: FilterModifiedEvent<TData>): void;
     /**
-     * Filter UI was modified (when using `enableFilterEvaluators = true`).
+     * Filter UI was modified (when using `enableFilterHandlers = true`).
      */
     onFilterUiChanged?(event: FilterUiChangedEvent<TData>): void;
     /**
-     * Floating filter UI modified (when using `enableFilterEvaluators = true`.
+     * Floating filter UI modified (when using `enableFilterHandlers = true`.
      */
     onFloatingFilterUiChanged?(event: FloatingFilterUiChangedEvent<TData>): void;
     /**

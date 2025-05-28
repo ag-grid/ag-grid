@@ -26,16 +26,16 @@ The filter model contains an array of string values where each item in the array
 
 ## Set Filter API
 
-The Set Filter values can be updated via the Set Filter Evaluator:
+The Set Filter values can be updated via the Set Filter Handler:
 
 ```{% frameworkTransform=true %}
-// get filter evaluator
-const countryFilterEvaluator = api.getColumnFilterEvaluator('country');
+// get filter handler
+const countryFilterHandler = api.getColumnFilterHandler('country');
 ```
 
-The `SetFilterEvaluator` interface defines the public API for the Set Filter Evaluator.
+The `SetFilterHandler` interface defines the public API for the Set Filter Handler.
 
-{% interfaceDocumentation interfaceName="SetFilterEvaluator" /%}
+{% interfaceDocumentation interfaceName="SetFilterHandler" /%}
 
 The Mini Filter get by interacted with via the Set Filter instance:
 

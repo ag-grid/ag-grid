@@ -18,20 +18,31 @@ The example below shows a custom filter on the `Athlete` column with "fuzzy" mat
 
 ## Implementing a Filter Component
 
-To configure custom filters, first enable the grid option `enableFilterEvaluators`.
+To configure custom filters, first enable the grid option `enableFilterHandlers`.
 
 {% note %}
-If you do not enable the grid option `enableFilterEvaluators`, it is still possible to use custom filters, however this will involve embedding your filter logic into the custom component, and is not recommended. See [Legacy Filter Component](./component-filter-legacy/).
+If you do not enable the grid option `enableFilterHandlers`, it is still possible to use custom filters, however this will involve embedding your filter logic into the custom component, and is not recommended. See [Legacy Filter Component](./component-filter-legacy/).
 {% /note %}
 
 Implementing a custom filter requires two parts:
 - The custom filter component which will be displayed to the user.
-- The filter evaluator which contains the logic to run the filter.
+- The the logic to run the filter.
+
+{% if isFramework("react") %}
+Custom filter components are controlled components, which receive a filter model as part of the props, and pass model updates back to the grid via the `onModelChange` callback.
+{%/if %}
+
+{% if isFramework("javascript", "angular", "vue") %}
+The custom filter component receives a filter model as part of the params (which is updated when the `refresh` method is called). When the model is changed via the UI, it should pass model updates back to the grid via the `onModelChange` callback.
+{%/if %}
+
+A filter model of `null` means that no filter is applied (the filter displays as inactive). Note that the filter is applied immediately when `onModelChange` is called. This behaviour can be changed by [Using Buttons](#using-buttons).
 
 {% partial file="./_component-interface-javascript.mdoc" /%}
 {% partial file="./_component-interface-angular.mdoc" /%}
 {% partial file="./_component-interface-react.mdoc" /%}
 {% partial file="./_component-interface-vue.mdoc" /%}
+
 
 ## Custom Filter Parameters
 
@@ -47,7 +58,7 @@ will be additionally added to the params object, overriding items of the same na
 
 {% if isFramework("vue") %}
 When a Vue component is instantiated the grid will make the grid APIs, a number of utility methods as well as the cell and
-row values available to you via `this.params` - the interface for what is provided is documented below.
+row values available to you via `this.params` - the interface for which is provided is documented below.
 
 If custom params are provided via the `colDef.filterParams` property, these
 will be additionally added to the params object, overriding items of the same name if a name clash exists.
@@ -78,40 +89,70 @@ The following callbacks can be passed to the `useGridFilter` hook (`CustomFilter
 {% interfaceDocumentation interfaceName="CustomFilterDisplayCallbacks" config={ "description": "" } /%}
 {% /if %}
 
-## Filter Evaluator
+## Filter Logic
 
-The filter evaluator is provided via the `filterEvaluator` column definition property.
+The logic to run the filter can be provided in one of two ways:
+- As a `doesFilterPass` callback for simple filter cases.
+- As a filter handler object for more complex filter cases.
 
-{% interfaceDocumentation interfaceName="IFilterDef" names=["filterEvaluator"] config={ "description": "" } /%}
+The logic is passed via the `filter` property along with the custom component as a `ColumnFilter` object.
+
+{% interfaceDocumentation interfaceName="ColumnFilter" config={ "description": "" } /%}
+
+{% note %}
+The filter logic is only used with the [Client-Side Row Model](./row-models/). If being used exclusively with other row models, it does not need to be provided as the filtering logic is performed on the server. If a handler is provided, it will still be instantiated, but `doesFilterPass` will not be called.
+{% /note %}
+
+### doesFilterPass Callback
 
 ```{% frameworkTransform=true %}
 const gridOptions = {
     columnDefs: [
         {
             field: 'year',
-            filter: YearFilter, // custom filter component
-            filterEvaluator: () => ({
+            filter: {
+                component: YearFilter, // custom filter component
                 doesFilterPass: (params) => {
                     // evaluate filter for row here
-                    return passes;
-                }
-            }),
+                    return model === params.handlerParams.getValue(params.node);
+                },
+            },
         }
     ],
 }
 ```
 
-The filter evaluator function should return a `FilterEvaluator` which will be created when the filter is active. The `doesFilterPass` method on the evaluator will be called for each row when filtering is performed.
+The callback `doesFilterPass(params)` will be called for each row when filtering is performed (and the filter is active), and takes the following as a parameter:
 
-{% interfaceDocumentation interfaceName="FilterEvaluator" config={ "description": "" } /%}
+{% interfaceDocumentation interfaceName="DoesFilterPassParams" config={ "description": "" } /%}
 
-The method `doesFilterPass(params)` takes the following as a parameter:
+### Filter Handler
 
-{% interfaceDocumentation interfaceName="FilterEvaluatorFuncParams" config={ "description": "" } /%}
+```{% frameworkTransform=true %}
+const gridOptions = {
+    columnDefs: [
+        {
+            field: 'year',
+            filter: {
+                component: YearFilter, // custom filter component
+                handler: (params) => ({
+                    doesFilterPass: (params) => {
+                        // evaluate filter for row here
+                        return passes;
+                    },
+                    // other handler methods
+                }),
+            },
+        }
+    ],
+}
+```
 
-{% note %}
-The `filterEvaluator` is only used with the [Client-Side Row Model](./row-models/). If being used exclusively with other row models, it does not need to be provided as the filtering logic is performed on the server. If one is provided, it will still be instantiated, but `doesFilterPass` will not be called.
-{% /note %}
+The filter handler function should return a `FilterHandler` which will be created when the filter is active. The `doesFilterPass` method on the evaluator will be called for each row when filtering is performed (and the filter is active).
+
+The filter handler is useful for when the filter model needs parsing to allow for fast comparison of values. The handler is passed the latest filter model via the `init` / `refresh` methods, which can then process the model before `doesFilterPass` is called.
+
+{% interfaceDocumentation interfaceName="FilterHandler" config={ "description": "" } /%}
 
 ## Using Buttons
 

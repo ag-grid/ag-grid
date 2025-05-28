@@ -66,6 +66,7 @@ import type {
     ColumnVisibleEvent,
     ComponentStateChangedEvent,
     ContextMenuVisibleChangedEvent,
+    CreateFilterHandlerFunc,
     CsvExportParams,
     CutEndEvent,
     CutStartEvent,
@@ -83,7 +84,6 @@ import type {
     FillOperationParams,
     FillStartEvent,
     FilterChangedEvent,
-    FilterEvaluatorGeneratorFunc,
     FilterModifiedEvent,
     FilterOpenedEvent,
     FilterUiChangedEvent,
@@ -798,16 +798,16 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * @agModule TextFilterModule / NumberFilterModule / DateFilterModule / MultiFilterModule / CustomFilterModule
      */
     @Input({ transform: booleanAttribute }) public suppressSetFilterByDefault: boolean | undefined = undefined;
-    /** Enable filter evaluators for custom filter components.
-     * Requires all custom filters need to be implemented using evaluators.
+    /** Enable filter handlers for custom filter components.
+     * Requires all custom filters need to be implemented using handlers.
      * @initial
      */
-    @Input({ transform: booleanAttribute }) public enableFilterEvaluators: boolean | undefined = undefined;
-    /** A map of filter evaluator key to filter evaluator function.
-     * Allows for filter evaluator keys to be used in `colDef.filterEvaluator`.
+    @Input({ transform: booleanAttribute }) public enablefilterHandlers: boolean | undefined = undefined;
+    /** A map of filter handler key to filter handler function.
+     * Allows for filter handler keys to be used in `colDef.filter.handler`.
      * @initial
      */
-    @Input() public filterEvaluators: { [key: string]: FilterEvaluatorGeneratorFunc } | undefined = undefined;
+    @Input() public filterHandlers: { [key: string]: CreateFilterHandlerFunc } | undefined = undefined;
     /** Set to `true` to Enable Charts.
      * @default false
      * @agModule `IntegratedChartsModule`
@@ -2175,12 +2175,12 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Output() public filterModified: EventEmitter<FilterModifiedEvent<TData>> = new EventEmitter<
         FilterModifiedEvent<TData>
     >();
-    /** Filter UI was modified (when using `enableFilterEvaluators = true`).
+    /** Filter UI was modified (when using `enablefilterHandlers = true`).
      */
     @Output() public filterUiChanged: EventEmitter<FilterUiChangedEvent<TData>> = new EventEmitter<
         FilterUiChangedEvent<TData>
     >();
-    /** Floating filter UI modified (when using `enableFilterEvaluators = true`.
+    /** Floating filter UI modified (when using `enablefilterHandlers = true`.
      */
     @Output() public floatingFilterUiChanged: EventEmitter<FloatingFilterUiChangedEvent<TData>> = new EventEmitter<
         FloatingFilterUiChangedEvent<TData>

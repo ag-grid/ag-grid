@@ -288,13 +288,13 @@ export abstract class BaseMultiFilter<TFilterWrapper> extends TabGuardComp {
 
     private executeFunctionIfExists<T extends SharedFilterUi>(
         name: keyof T,
-        executeOnEvaluator?: (wrapper: TFilterWrapper) => void
+        executeOnHandler?: (wrapper: TFilterWrapper) => void
     ): void {
         // The first filter is always the "dominant" one. By iterating in reverse order we ensure the first filter
         // always gets the last say
         forEachReverse(this.getFilterWrappers(), (wrapper) => {
             if (wrapper) {
-                executeOnEvaluator?.(wrapper);
+                executeOnHandler?.(wrapper);
                 this.executeFunctionIfExistsOnFilter(this.getFilterFromWrapper(wrapper) as T, name);
             }
         });

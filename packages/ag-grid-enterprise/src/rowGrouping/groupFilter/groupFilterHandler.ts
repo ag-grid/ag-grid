@@ -1,25 +1,25 @@
 import type {
     AgColumn,
     FilterDestroyedEvent,
-    FilterEvaluator,
-    FilterEvaluatorParams,
+    FilterHandler,
+    FilterHandlerParams,
     IFilterParams,
 } from 'ag-grid-community';
 import { BeanStub, _warn } from 'ag-grid-community';
 
 import type { GroupFilterService } from './groupFilterService';
 
-export type GroupFilterEvaluatorEventType = 'sourceColumnsChanged' | 'selectedColumnChanged' | 'destroyed';
-export class GroupFilterEvaluator
-    extends BeanStub<GroupFilterEvaluatorEventType>
-    implements FilterEvaluator<any, any, null, IFilterParams>
+export type GroupFilterHandlerEventType = 'sourceColumnsChanged' | 'selectedColumnChanged' | 'destroyed';
+export class GroupFilterHandler
+    extends BeanStub<GroupFilterHandlerEventType>
+    implements FilterHandler<any, any, null, IFilterParams>
 {
-    private params: FilterEvaluatorParams<any, any, null, IFilterParams<any, any>>;
+    private params: FilterHandlerParams<any, any, null, IFilterParams<any, any>>;
     public selectedColumn: AgColumn | undefined;
     public sourceColumns: AgColumn[];
     public hasMultipleColumns: boolean;
 
-    public init(params: FilterEvaluatorParams<any, any, null, IFilterParams<any, any>>): void {
+    public init(params: FilterHandlerParams<any, any, null, IFilterParams<any, any>>): void {
         this.params = params;
         this.validateModel(params);
         this.updateColumns();
@@ -29,7 +29,7 @@ export class GroupFilterEvaluator
         });
     }
 
-    public refresh(params: FilterEvaluatorParams<any, any, null, IFilterParams<any, any>>): void {
+    public refresh(params: FilterHandlerParams<any, any, null, IFilterParams<any, any>>): void {
         this.params = params;
         this.validateModel(params);
         if (params.source === 'colDef') {
@@ -47,7 +47,7 @@ export class GroupFilterEvaluator
         this.dispatchLocalEvent({ type: 'selectedColumnChanged' });
     }
 
-    private validateModel(params: FilterEvaluatorParams<any, any, null, IFilterParams<any, any>>): void {
+    private validateModel(params: FilterHandlerParams<any, any, null, IFilterParams<any, any>>): void {
         // model should always be null
         if (params.model != null) {
             params.onModelChange(null);

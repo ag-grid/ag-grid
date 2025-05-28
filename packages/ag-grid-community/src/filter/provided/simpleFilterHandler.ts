@@ -1,8 +1,8 @@
 import { BeanStub } from '../../context/beanStub';
 import type {
-    FilterEvaluator,
-    FilterEvaluatorFuncParams,
-    FilterEvaluatorParams,
+    DoesFilterPassParams,
+    FilterHandler,
+    FilterHandlerParams,
     IDoesFilterPassParams,
 } from '../../interfaces/iFilter';
 import type { LocaleTextFunc } from '../../misc/locale/localeUtils';
@@ -18,13 +18,13 @@ import { OptionsFactory } from './optionsFactory';
 import type { SimpleFilterModelFormatter } from './simpleFilterModelFormatter';
 import { evaluateCustomFilter } from './simpleFilterUtils';
 
-export abstract class SimpleFilterEvaluator<
+export abstract class SimpleFilterHandler<
         TModel extends ISimpleFilterModel,
         TValue,
         TParams extends ISimpleFilterParams,
     >
     extends BeanStub
-    implements FilterEvaluator<any, any, TModel | ICombinedSimpleModel<TModel>, TParams>
+    implements FilterHandler<any, any, TModel | ICombinedSimpleModel<TModel>, TParams>
 {
     protected abstract readonly FilterModelFormatterClass: new (
         getLocaleTextFunc: () => LocaleTextFunc,
@@ -32,7 +32,7 @@ export abstract class SimpleFilterEvaluator<
         filterParams: ISimpleFilterParams
     ) => SimpleFilterModelFormatter<ISimpleFilterParams>;
 
-    protected params: FilterEvaluatorParams<any, any, TModel | ICombinedSimpleModel<TModel>, TParams>;
+    protected params: FilterHandlerParams<any, any, TModel | ICombinedSimpleModel<TModel>, TParams>;
     private optionsFactory: OptionsFactory;
     private filterModelFormatter: SimpleFilterModelFormatter<ISimpleFilterParams>;
 
@@ -52,7 +52,7 @@ export abstract class SimpleFilterEvaluator<
         params: IDoesFilterPassParams
     ): boolean;
 
-    public init(params: FilterEvaluatorParams<any, any, TModel | ICombinedSimpleModel<TModel>, TParams>): void {
+    public init(params: FilterHandlerParams<any, any, TModel | ICombinedSimpleModel<TModel>, TParams>): void {
         const filterParams = params.filterParams;
         const optionsFactory = new OptionsFactory();
         this.optionsFactory = optionsFactory;
@@ -69,7 +69,7 @@ export abstract class SimpleFilterEvaluator<
         this.validateModel(params);
     }
 
-    public refresh(params: FilterEvaluatorParams<any, any, TModel | ICombinedSimpleModel<TModel>, TParams>): void {
+    public refresh(params: FilterHandlerParams<any, any, TModel | ICombinedSimpleModel<TModel>, TParams>): void {
         if (params.source === 'colDef') {
             const filterParams = params.filterParams;
             const optionsFactory = this.optionsFactory;
@@ -83,12 +83,12 @@ export abstract class SimpleFilterEvaluator<
     }
 
     protected updateParams(
-        params: FilterEvaluatorParams<any, any, TModel | ICombinedSimpleModel<TModel>, TParams>
+        params: FilterHandlerParams<any, any, TModel | ICombinedSimpleModel<TModel>, TParams>
     ): void {
         this.params = params;
     }
 
-    public doesFilterPass(params: FilterEvaluatorFuncParams<any, TModel | ICombinedSimpleModel<TModel>>): boolean {
+    public doesFilterPass(params: DoesFilterPassParams<any, TModel | ICombinedSimpleModel<TModel>>): boolean {
         const model = params.model;
 
         if (model == null) {
@@ -118,7 +118,7 @@ export abstract class SimpleFilterEvaluator<
     }
 
     protected validateModel(
-        params: FilterEvaluatorParams<any, any, TModel | ICombinedSimpleModel<TModel>, TParams>
+        params: FilterHandlerParams<any, any, TModel | ICombinedSimpleModel<TModel>, TParams>
     ): void {
         const {
             model,

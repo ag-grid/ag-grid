@@ -69,9 +69,9 @@ export class FilterComp extends Component {
             if (!wrapper) {
                 return;
             }
-            const { isEvaluator, comp } = wrapper;
+            const { isHandler, comp } = wrapper;
             let filterGui: HTMLElement;
-            if (isEvaluator) {
+            if (isHandler) {
                 const displayComp = this.createBean(
                     new FilterWrapperComp(column, wrapper, colFilter!, colFilter!.updateModel.bind(colFilter))
                 );

@@ -1,8 +1,4 @@
 {% if isFramework("react") %}
-Custom filter components are controlled components, which receive a filter model as part of the props, and pass model updates back to the grid via the `onModelChange` callback. A filter model of `null` means that no filter is applied (the filter displays as inactive). Note that the filter is applied immediately when `onModelChange` is called.
-{% /if %}
-
-{% if isFramework("react") %}
 ```jsx
 export default ({ model, onModelChange, getValue }) => {
     return (

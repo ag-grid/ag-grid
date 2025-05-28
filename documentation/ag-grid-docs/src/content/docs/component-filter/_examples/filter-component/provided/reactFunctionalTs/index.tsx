@@ -1,7 +1,7 @@
 import React, { StrictMode, useCallback, useMemo, useRef, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 
-import type { ColDef, ColGroupDef, FilterDisplay, FilterEvaluator } from 'ag-grid-community';
+import type { ColDef, ColGroupDef, DoesFilterPassParams, FilterDisplay } from 'ag-grid-community';
 import {
     ClientSideRowModelModule,
     CustomFilterModule,
@@ -24,19 +24,12 @@ ModuleRegistry.registerModules([
     ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 
-function partialMatchFilterEvaluator(): FilterEvaluator<any, any, string> {
-    return {
-        doesFilterPass({ model, node, evaluatorParams }): boolean {
-            const value = evaluatorParams.getValue(node).toString().toLowerCase();
-            return (
-                model == null ||
-                model
-                    .toLowerCase()
-                    .split(' ')
-                    .every((filterWord) => value.indexOf(filterWord) >= 0)
-            );
-        },
-    };
+function doesFilterPass({ model, node, handlerParams }: DoesFilterPassParams<any, any, string>): boolean {
+    const value = handlerParams.getValue(node).toString().toLowerCase();
+    return model
+        .toLowerCase()
+        .split(' ')
+        .every((filterWord) => value.indexOf(filterWord) >= 0);
 }
 
 const GridExample = () => {
@@ -48,8 +41,7 @@ const GridExample = () => {
         { field: 'row' },
         {
             field: 'name',
-            filter: PartialMatchFilter,
-            filterEvaluator: partialMatchFilterEvaluator,
+            filter: { component: PartialMatchFilter, doesFilterPass },
         },
     ]);
     const defaultColDef = useMemo<ColDef>(() => {
@@ -87,7 +79,7 @@ const GridExample = () => {
                         rowData={rowData}
                         columnDefs={columnDefs}
                         defaultColDef={defaultColDef}
-                        enableFilterEvaluators
+                        enableFilterHandlers
                     />
                 </div>
             </div>

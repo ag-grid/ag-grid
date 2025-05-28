@@ -1,4 +1,4 @@
-import type { ColDef, FilterEvaluator, GridApi, GridOptions } from 'ag-grid-community';
+import type { ColDef, DoesFilterPassParams, GridApi, GridOptions } from 'ag-grid-community';
 import {
     ClientSideRowModelModule,
     CustomFilterModule,
@@ -15,10 +15,8 @@ ModuleRegistry.registerModules([
     ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 
-function yearFilterEvaluator(): FilterEvaluator<any, any, boolean> {
-    return {
-        doesFilterPass: ({ model, node, evaluatorParams }) => (model ? evaluatorParams.getValue(node) > 2010 : true),
-    };
+function doesFilterPass({ model, node, handlerParams }: DoesFilterPassParams<any, any, boolean>): boolean {
+    return model ? handlerParams.getValue(node) > 2010 : true;
 }
 
 const columnDefs: ColDef[] = [
@@ -30,30 +28,27 @@ const columnDefs: ColDef[] = [
         field: 'year',
         headerName: 'Year Default',
         minWidth: 130,
-        filter: YearFilter,
-        filterEvaluator: yearFilterEvaluator,
+        filter: { component: YearFilter, doesFilterPass },
     },
     {
         field: 'year',
         headerName: 'Year Apply',
         minWidth: 130,
-        filter: YearFilter,
+        filter: { component: YearFilter, doesFilterPass },
         filterParams: {
             useForm: true,
             buttons: ['apply'],
             closeOnApply: true,
         },
-        filterEvaluator: yearFilterEvaluator,
     },
     {
         field: 'year',
         headerName: 'Year Reset',
         minWidth: 130,
-        filter: YearFilter,
+        filter: { component: YearFilter, doesFilterPass },
         filterParams: {
             buttons: ['reset'],
         },
-        filterEvaluator: yearFilterEvaluator,
     },
     { field: 'sport' },
 ];
@@ -66,7 +61,7 @@ const gridOptions: GridOptions<IOlympicData> = {
         minWidth: 100,
     },
     columnDefs: columnDefs,
-    enableFilterEvaluators: true,
+    enableFilterHandlers: true,
 };
 
 // setup the grid after the page has finished loading

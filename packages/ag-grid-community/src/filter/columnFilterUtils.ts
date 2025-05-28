@@ -1,12 +1,13 @@
 import type { AgColumn } from '../entities/agColumn';
 import type {
+    CreateFilterHandlerFunc,
+    DoesFilterPassParams,
     FilterAction,
     FilterDisplayComp,
     FilterDisplayParams,
     FilterDisplayState,
-    FilterEvaluator,
-    FilterEvaluatorBaseParams,
-    FilterEvaluatorGeneratorFunc,
+    FilterHandler,
+    FilterHandlerBaseParams,
     FilterModel,
     IFilterComp,
     IFilterParams,
@@ -14,18 +15,18 @@ import type {
 import type { UserCompDetails } from '../interfaces/iUserCompDetails';
 import type { AgPromise } from '../utils/promise';
 
-export const EVALUATOR_MAP = {
-    agSetColumnFilter: 'agSetColumnFilterEvaluator',
-    agMultiColumnFilter: 'agMultiColumnFilterEvaluator',
-    agGroupColumnFilter: 'agGroupColumnFilterEvaluator',
-    agNumberColumnFilter: 'agNumberColumnFilterEvaluator',
-    agDateColumnFilter: 'agDateColumnFilterEvaluator',
-    agTextColumnFilter: 'agTextColumnFilterEvaluator',
+export const FILTER_HANDLER_MAP = {
+    agSetColumnFilter: 'agSetColumnFilterHandler',
+    agMultiColumnFilter: 'agMultiColumnFilterHandler',
+    agGroupColumnFilter: 'agGroupColumnFilterHandler',
+    agNumberColumnFilter: 'agNumberColumnFilterHandler',
+    agDateColumnFilter: 'agDateColumnFilterHandler',
+    agTextColumnFilter: 'agTextColumnFilterHandler',
 } as const;
 
-export const EVALUATORS = new Set(Object.values(EVALUATOR_MAP));
+export const FILTER_HANDLERS = new Set(Object.values(FILTER_HANDLER_MAP));
 
-export type EvaluatorName = (typeof EVALUATOR_MAP)[keyof typeof EVALUATOR_MAP];
+export type FilterHandlerName = (typeof FILTER_HANDLER_MAP)[keyof typeof FILTER_HANDLER_MAP];
 
 interface BaseFilterUi<TComp = IFilterComp, TParams = IFilterParams> {
     create: (update?: boolean) => AgPromise<TComp>;
@@ -62,18 +63,19 @@ interface BaseFilterWrapper<
 }
 
 export interface LegacyFilterWrapper extends BaseFilterWrapper<IFilterComp, IFilterParams> {
-    isEvaluator: false;
+    isHandler: false;
     filter?: IFilterComp;
 }
 
-interface EvaluatorFilterWrapper extends BaseFilterWrapper<FilterDisplayComp, FilterDisplayParams> {
-    isEvaluator: true;
-    evaluator: FilterEvaluator;
-    evaluatorGenerator: FilterEvaluatorGeneratorFunc | EvaluatorName;
-    evaluatorParams: FilterEvaluatorBaseParams;
+interface HandlerFilterWrapper extends BaseFilterWrapper<FilterDisplayComp, FilterDisplayParams> {
+    isHandler: true;
+    handler: FilterHandler;
+    /** This is only used to see whether the handler has changed */
+    handlerGenerator: CreateFilterHandlerFunc | FilterHandlerName | ((params: DoesFilterPassParams) => boolean);
+    handlerParams: FilterHandlerBaseParams;
 }
 
-export type FilterWrapper = LegacyFilterWrapper | EvaluatorFilterWrapper;
+export type FilterWrapper = LegacyFilterWrapper | HandlerFilterWrapper;
 
 export function getFilterUiFromWrapper<TComp extends IFilterComp | FilterDisplayComp>(
     filterWrapper: FilterWrapper,
@@ -96,15 +98,15 @@ export function getFilterUiFromWrapper<TComp extends IFilterComp | FilterDisplay
     return promise;
 }
 
-export function _refreshEvaluatorAndUi(
+export function _refreshHandlerAndUi(
     getFilterUi: () => AgPromise<{ filter: FilterDisplayComp; filterParams: FilterDisplayParams } | undefined>,
-    evaluator: FilterEvaluator,
-    evaluatorParams: FilterEvaluatorBaseParams,
+    handler: FilterHandler,
+    handlerParams: FilterHandlerBaseParams,
     model: any,
     state: FilterDisplayState,
-    source: 'ui' | 'api' | 'colDef' | 'floating' | 'evaluator'
+    source: 'ui' | 'api' | 'colDef' | 'floating' | 'handler'
 ): AgPromise<void> {
-    evaluator.refresh?.({ ...evaluatorParams, model, source });
+    handler.refresh?.({ ...handlerParams, model, source });
 
     return getFilterUi().then((filterUi) => {
         if (filterUi) {
@@ -119,7 +121,7 @@ export function _refreshFilterUi(
     filterParams: FilterDisplayParams,
     model: any,
     state: FilterDisplayState,
-    source: 'ui' | 'api' | 'colDef' | 'floating' | 'evaluator' | 'init'
+    source: 'ui' | 'api' | 'colDef' | 'floating' | 'handler' | 'init'
 ): void {
     filter?.refresh?.({
         ...filterParams,

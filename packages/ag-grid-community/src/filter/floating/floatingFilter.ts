@@ -2,7 +2,7 @@ import type { FilterChangedEvent } from '../../events';
 import type { Column } from '../../interfaces/iColumn';
 import type { AgGridCommon } from '../../interfaces/iCommon';
 import type { IComponent } from '../../interfaces/iComponent';
-import type { FilterEvaluator, IFilter, IFilterParams } from '../../interfaces/iFilter';
+import type { FilterHandler, IFilter, IFilterParams } from '../../interfaces/iFilter';
 
 export interface IFloatingFilterParent {
     /**
@@ -83,8 +83,12 @@ export interface FloatingFilterDisplayParams<TData = any, TContext = any, TModel
      * will get merged to the FloatingFilterUiChangedEvent object.
      */
     onUiChange: (additionalEventAttributes?: any) => void;
-    /** Get the filter evaluator instance. */
-    getEvaluator: () => FilterEvaluator<TData, TContext, TModel, TCustomParams>;
+    /**
+     * Get the filter handler instance.
+     * If using a `SimpleColumnFilter`,
+     * the handler is is a wrapper object containing the provided `doesFilterPass` callback.
+     */
+    getHandler: () => FilterHandler<TData, TContext, TModel, TCustomParams>;
     source: 'init' | 'ui' | 'filter' | 'api' | 'colDef' | 'dataChanged';
 }
 

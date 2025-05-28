@@ -17,7 +17,7 @@ import {
 } from 'ag-grid-community';
 
 import type { GroupFilter } from './groupFilter';
-import type { GroupFilterEvaluator } from './groupFilterEvaluator';
+import type { GroupFilterHandler } from './groupFilterHandler';
 
 const GroupFloatingFilterElement: ElementParams = {
     tag: 'div',
@@ -54,9 +54,9 @@ export class GroupFloatingFilterComp extends Component implements IFloatingFilte
                 resolve();
             }
         };
-        if (this.gos.get('enableFilterEvaluators')) {
+        if (this.gos.get('enableFilterHandlers')) {
             return new AgPromise<void>((resolve) => setupFilterElement(resolve)).then(() => {
-                this.addEvaluatorListeners(params as any, onColChange);
+                this.addHandlerListeners(params as any, onColChange);
             });
         } else {
             return new AgPromise<void>((resolve) => {
@@ -75,7 +75,7 @@ export class GroupFloatingFilterComp extends Component implements IFloatingFilte
     public refresh(params: IFloatingFilterParams<GroupFilter>): void {
         this.params = params;
         this.setParams();
-        if (this.gos.get('enableFilterEvaluators')) {
+        if (this.gos.get('enableFilterHandlers')) {
             if (this.showingUnderlyingFloatingFilter) {
                 const column = this.getSelectedColumn()!;
                 const compDetails = this.beans.colFilter!.getFloatingFilterCompDetails(
@@ -95,14 +95,14 @@ export class GroupFloatingFilterComp extends Component implements IFloatingFilte
         this.eFloatingFilterText?.setInputAriaLabel(`${displayName} ${translate('ariaFilterInput', 'Filter Input')}`);
     }
 
-    private addEvaluatorListeners(params: FloatingFilterDisplayParams, listener: () => void): void {
-        const destroyFunctions = this.addManagedListeners(params.getEvaluator() as GroupFilterEvaluator, {
+    private addHandlerListeners(params: FloatingFilterDisplayParams, listener: () => void): void {
+        const destroyFunctions = this.addManagedListeners(params.getHandler() as GroupFilterHandler, {
             selectedColumnChanged: listener,
             sourceColumnsChanged: listener,
             destroyed: () => {
                 destroyFunctions.forEach((func) => func());
                 // resubscribe
-                this.addEvaluatorListeners(this.params as any, listener);
+                this.addHandlerListeners(this.params as any, listener);
             },
         });
     }
@@ -154,9 +154,9 @@ export class GroupFloatingFilterComp extends Component implements IFloatingFilte
     }
 
     private getSelectedColumn(): AgColumn | undefined {
-        if (this.gos.get('enableFilterEvaluators')) {
+        if (this.gos.get('enableFilterHandlers')) {
             const reactiveParams = this.params as unknown as FloatingFilterDisplayParams;
-            return (reactiveParams.getEvaluator() as GroupFilterEvaluator).selectedColumn;
+            return (reactiveParams.getHandler() as GroupFilterHandler).selectedColumn;
         } else {
             return this.parentFilterInstance.getSelectedColumn();
         }
@@ -197,18 +197,18 @@ export class GroupFloatingFilterComp extends Component implements IFloatingFilte
         }
         const colFilter = this.beans.colFilter!;
         const column = this.getSelectedColumn();
-        const updateText = (filterOrEvaluator?: { getModelAsString?: (model: any) => string } | null) => {
-            if (!filterOrEvaluator) {
+        const updateText = (filterOrHandler?: { getModelAsString?: (model: any) => string } | null) => {
+            if (!filterOrHandler) {
                 eFloatingFilterText.setValue('');
                 eFloatingFilterText.setDisplayed(false);
             } else {
                 const model = column ? colFilter.getModelForColumn(column) : null;
-                eFloatingFilterText.setValue(model == null ? '' : filterOrEvaluator.getModelAsString?.(model) ?? '');
+                eFloatingFilterText.setValue(model == null ? '' : filterOrHandler.getModelAsString?.(model) ?? '');
                 eFloatingFilterText.setDisplayed(true);
             }
         };
-        if (this.gos.get('enableFilterEvaluators')) {
-            updateText(colFilter.getEvaluator(column!));
+        if (this.gos.get('enableFilterHandlers')) {
+            updateText(colFilter.getHandler(column!));
         } else {
             colFilter.getOrCreateFilterUi(column!)?.then((filter) => {
                 updateText(filter);

@@ -32,7 +32,7 @@ import { VirtualList } from '../widgets/virtualList';
 import { FlatSetDisplayValueModel } from './flatSetDisplayValueModel';
 import type { ISetDisplayValueModel, SetFilterModelTreeItem } from './iSetDisplayValueModel';
 import { SET_FILTER_ADD_SELECTION_TO_FILTER, SET_FILTER_SELECT_ALL } from './iSetDisplayValueModel';
-import type { SetFilterEvaluator } from './setFilterEvaluator';
+import type { SetFilterHandler } from './setFilterHandler';
 import type {
     SetFilterListItemExpandedChangedEvent,
     SetFilterListItemParams,
@@ -59,8 +59,8 @@ export class SetFilter<V = string>
 
     private hardRefreshVirtualList = false;
 
-    public evaluator: SetFilterEvaluator<V>;
-    private evaluatorDestroyFuncs?: (() => void)[];
+    public handler: SetFilterHandler<V>;
+    private handlerDestroyFuncs?: (() => void)[];
 
     private formatter: TextFormatter;
     private displayValueModel: ISetDisplayValueModel<V>;
@@ -82,7 +82,7 @@ export class SetFilter<V = string>
     ): void {
         super.setParams(params);
 
-        const evaluator = this.updateEvaluator(params.getEvaluator() as unknown as SetFilterEvaluator<V>);
+        const handler = this.updateHandler(params.getHandler() as unknown as SetFilterHandler<V>);
 
         const { column, textFormatter, treeList, treeListPathGetter, treeListFormatter } = params;
 
@@ -93,21 +93,21 @@ export class SetFilter<V = string>
                   this.formatter,
                   treeListPathGetter,
                   treeListFormatter,
-                  evaluator.isTreeDataOrGrouping()
+                  handler.isTreeDataOrGrouping()
               )
             : (new FlatSetDisplayValueModel<V>(
                   this.beans.valueSvc,
-                  () => this.evaluator.valueFormatter,
+                  () => this.handler.valueFormatter,
                   this.formatter,
                   column as AgColumn
               ) as any);
 
-        evaluator.valueModel.allKeys.then((values) => {
+        handler.valueModel.allKeys.then((values) => {
             this.updateDisplayedValues('reload', values ?? []);
             this.resetSelectionState(values ?? []);
         });
 
-        if (evaluator.valueModel.isLoading()) {
+        if (handler.valueModel.isLoading()) {
             this.setIsLoading(true);
         }
 
@@ -119,10 +119,10 @@ export class SetFilter<V = string>
             // too hard to refresh when tree list changes, just destroy
             return false;
         }
-        this.updateEvaluator(
+        this.updateHandler(
             (
                 legacyNewParams as unknown as ISetFilterParams<any, V> & FilterDisplayParams<any, any, SetFilterModel>
-            ).getEvaluator() as unknown as SetFilterEvaluator<V>
+            ).getHandler() as unknown as SetFilterHandler<V>
         );
         return super.refresh(legacyNewParams);
     }
@@ -146,17 +146,17 @@ export class SetFilter<V = string>
         if (this.displayValueModel instanceof TreeSetDisplayValueModel) {
             this.displayValueModel.updateParams(treeListPathGetter, treeListFormatter);
         }
-        this.evaluator.refreshFilterValues();
+        this.handler.refreshFilterValues();
     }
 
-    private updateEvaluator(evaluator: SetFilterEvaluator<V>): SetFilterEvaluator<V> {
-        const oldEvaluator = this.evaluator;
-        if (oldEvaluator !== evaluator) {
-            this.evaluatorDestroyFuncs?.forEach((func) => func());
-            this.evaluatorDestroyFuncs = [
-                ...this.addManagedListeners(evaluator, {
+    private updateHandler(handler: SetFilterHandler<V>): SetFilterHandler<V> {
+        const oldHandler = this.handler;
+        if (oldHandler !== handler) {
+            this.handlerDestroyFuncs?.forEach((func) => func());
+            this.handlerDestroyFuncs = [
+                ...this.addManagedListeners(handler, {
                     anyFilterChanged: (event) => {
-                        evaluator.valueModel.allKeys.then((values) => {
+                        handler.valueModel.allKeys.then((values) => {
                             if (this.isAlive()) {
                                 this.updateDisplayedValues('otherFilter', values ?? []);
                                 if (event.updated) {
@@ -167,7 +167,7 @@ export class SetFilter<V = string>
                         });
                     },
                     dataChanged: ({ hardRefresh }) => {
-                        evaluator.valueModel.allKeys.then((values) => {
+                        handler.valueModel.allKeys.then((values) => {
                             if (this.isAlive()) {
                                 this.updateDisplayedValues('reload', values ?? []);
                                 this.setSelectedModel(this.state.model?.values ?? null);
@@ -179,14 +179,14 @@ export class SetFilter<V = string>
                         });
                     },
                 }),
-                ...this.addManagedListeners(evaluator.valueModel, {
+                ...this.addManagedListeners(handler.valueModel, {
                     loadingStart: () => this.setIsLoading(true),
                     loadingEnd: () => this.setIsLoading(false),
                 }),
             ];
-            this.evaluator = evaluator;
+            this.handler = handler;
         }
-        return evaluator;
+        return handler;
     }
 
     // unlike the simple filters, nothing in the set filter UI shows/hides.
@@ -420,7 +420,7 @@ export class SetFilter<V = string>
             value,
             params: this.params,
             translate: (translateKey: any) => translateForSetFilter(this, translateKey),
-            valueFormatter: this.evaluator.valueFormatter,
+            valueFormatter: this.handler.valueFormatter,
             item,
             isSelected,
             isTree,
@@ -531,7 +531,7 @@ export class SetFilter<V = string>
 
         // List item
         return {
-            value: this.evaluator.valueModel.allValues.get(item) ?? null,
+            value: this.handler.valueModel.allValues.get(item) ?? null,
             selectedListener: (e: SetFilterListItemSelectionChangedEvent<string | null>) =>
                 this.onItemSelected(e.item, e.isSelected),
         };
@@ -649,24 +649,24 @@ export class SetFilter<V = string>
     }
 
     /**
-     * @deprecated v34 Use the same method on the filter evaluator (`api.getColumnFilterEvaluator()`) instead.
+     * @deprecated v34 Use the same method on the filter handler (`api.getColumnFilterHandler()`) instead.
      */
     public setFilterValues(values: (V | null)[]): void {
-        this.evaluator.setFilterValues(values);
+        this.handler.setFilterValues(values);
     }
 
     /**
-     * @deprecated v34 Use the same method on the filter evaluator (`api.getColumnFilterEvaluator()`) instead.
+     * @deprecated v34 Use the same method on the filter handler (`api.getColumnFilterHandler()`) instead.
      */
     public resetFilterValues(): void {
-        this.evaluator.resetFilterValues();
+        this.handler.resetFilterValues();
     }
 
     /**
-     * @deprecated v34 Use the same method on the filter evaluator (`api.getColumnFilterEvaluator()`) instead.
+     * @deprecated v34 Use the same method on the filter handler (`api.getColumnFilterHandler()`) instead.
      */
     public refreshFilterValues(): void {
-        this.evaluator.refreshFilterValues();
+        this.handler.refreshFilterValues();
     }
 
     /**
@@ -857,17 +857,17 @@ export class SetFilter<V = string>
     }
 
     /**
-     * @deprecated v34 Use the same method on the filter evaluator (`api.getColumnFilterEvaluator()`) instead.
+     * @deprecated v34 Use the same method on the filter handler (`api.getColumnFilterHandler()`) instead.
      */
     public getFilterKeys(): SetFilterModelValue {
-        return this.evaluator.getFilterKeys();
+        return this.handler.getFilterKeys();
     }
 
     /**
-     * @deprecated v34 Use the same method on the filter evaluator (`api.getColumnFilterEvaluator()`) instead.
+     * @deprecated v34 Use the same method on the filter handler (`api.getColumnFilterHandler()`) instead.
      */
     public getFilterValues(): (V | null)[] {
-        return this.evaluator.getFilterValues();
+        return this.handler.getFilterValues();
     }
 
     private refreshVirtualList(): void {
@@ -964,7 +964,7 @@ export class SetFilter<V = string>
     }
 
     public getModelAsString(model: SetFilterModel | null): string {
-        return this.evaluator.getModelAsString(model);
+        return this.handler.getModelAsString(model);
     }
 
     protected override getPositionableElement(): HTMLElement {
@@ -980,8 +980,8 @@ export class SetFilter<V = string>
             return;
         }
 
-        const evaluator = this.evaluator;
-        const valueModel = evaluator.valueModel;
+        const handler = this.handler;
+        const valueModel = handler.valueModel;
 
         // if no filter, just display all available values
         if (this.miniFilterText == null) {
@@ -996,10 +996,10 @@ export class SetFilter<V = string>
 
         // if filter present, we filter down the list
         // to allow for case insensitive searches, upper-case both filter text and value
-        const formattedFilterText = evaluator.caseFormat(this.formatter(this.miniFilterText) || '');
+        const formattedFilterText = handler.caseFormat(this.formatter(this.miniFilterText) || '');
 
         const matchesFilter = (valueToCheck: string | null): boolean =>
-            valueToCheck != null && evaluator.caseFormat(valueToCheck).indexOf(formattedFilterText) >= 0;
+            valueToCheck != null && handler.caseFormat(valueToCheck).indexOf(formattedFilterText) >= 0;
 
         const nullMatchesFilter = !!this.params.excelMode && matchesFilter(translateForSetFilter(this, 'blanks'));
 
@@ -1016,7 +1016,7 @@ export class SetFilter<V = string>
     private hasSelections(): boolean {
         return this.params.defaultToNothingSelected
             ? this.selectedKeys.size > 0
-            : this.evaluator.valueModel.allValues.size !== this.selectedKeys.size;
+            : this.handler.valueModel.allValues.size !== this.selectedKeys.size;
     }
 
     private isInWindowsExcelMode(): boolean {
@@ -1037,7 +1037,7 @@ export class SetFilter<V = string>
     private selectAllMatchingMiniFilter(clearExistingSelection = false): void {
         if (this.miniFilterText == null) {
             // ensure everything is selected
-            this.selectedKeys = new Set(this.evaluator.valueModel.allValues.keys());
+            this.selectedKeys = new Set(this.handler.valueModel.allValues.keys());
         } else {
             // ensure everything that matches the mini filter is selected
             if (clearExistingSelection) {
@@ -1106,8 +1106,8 @@ export class SetFilter<V = string>
     }
 
     private setSelectedModel(model: SetFilterModelValue | null): AgPromise<void> {
-        const evaluator = this.evaluator;
-        const valueModel = evaluator.valueModel;
+        const handler = this.handler;
+        const valueModel = handler.valueModel;
         return valueModel.allKeys.then((keys) => {
             if (model == null) {
                 this.resetSelectionState(keys ?? []);
@@ -1117,11 +1117,11 @@ export class SetFilter<V = string>
 
                 const existingFormattedKeys: Map<string | null, string | null> = new Map();
                 valueModel.allValues.forEach((_value, key) => {
-                    existingFormattedKeys.set(evaluator.caseFormat(key), key);
+                    existingFormattedKeys.set(handler.caseFormat(key), key);
                 });
 
                 model.forEach((unformattedKey) => {
-                    const formattedKey = evaluator.caseFormat(_makeNull(unformattedKey));
+                    const formattedKey = handler.caseFormat(_makeNull(unformattedKey));
                     const existingUnformattedKey = existingFormattedKeys.get(formattedKey);
                     if (existingUnformattedKey !== undefined) {
                         this.selectedKeys.add(existingUnformattedKey);
@@ -1142,9 +1142,9 @@ export class SetFilter<V = string>
     public override destroy(): void {
         (this.virtualList as any) = this.destroyBean(this.virtualList);
 
-        this.evaluatorDestroyFuncs?.forEach((func) => func());
+        this.handlerDestroyFuncs?.forEach((func) => func());
 
-        (this.evaluator as any) = undefined;
+        (this.handler as any) = undefined;
         (this.displayValueModel as any) = undefined;
         this.selectedKeys.clear();
 

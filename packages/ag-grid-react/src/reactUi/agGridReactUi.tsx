@@ -282,11 +282,11 @@ class ReactFrameworkComponentWrapper
             const getComponentClass = (propertyName: string) => {
                 switch (propertyName) {
                     case 'filter':
-                        return _getGridOption(gridOptions, 'enableFilterEvaluators')
+                        return _getGridOption(gridOptions, 'enableFilterHandlers')
                             ? FilterDisplayComponentWrapper
                             : FilterComponentWrapper;
                     case 'floatingFilterComponent':
-                        return _getGridOption(gridOptions, 'enableFilterEvaluators')
+                        return _getGridOption(gridOptions, 'enableFilterHandlers')
                             ? FloatingFilterDisplayComponentWrapper
                             : FloatingFilterComponentWrapper;
                     case 'dateComponent':

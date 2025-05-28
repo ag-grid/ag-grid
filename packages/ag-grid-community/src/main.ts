@@ -187,19 +187,20 @@ export {
     BaseFilterParams,
     FilterDisplayParams,
     FilterDisplaySource,
-    FilterEvaluator,
-    FilterEvaluatorFuncParams,
-    FilterEvaluatorGeneratorFunc,
-    FilterEvaluatorGeneratorFuncParams,
-    FilterEvaluatorParams,
-    FilterEvaluatorBaseParams,
-    FilterEvaluatorSource,
+    FilterHandler,
+    DoesFilterPassParams,
+    CreateFilterHandlerFunc,
+    CreateFilterHandlerFuncParams,
+    FilterHandlerParams,
+    FilterHandlerBaseParams,
+    FilterHandlerSource,
     FilterDisplayState,
     FilterWrapperParams,
     FilterAction,
     FilterDisplay,
     SharedFilterUi,
     FilterDisplayComp,
+    ColumnFilter,
 } from './interfaces/iFilter';
 export {
     ISetFilter,
@@ -211,7 +212,7 @@ export {
     SetFilterValuesFunc,
     SetFilterValuesFuncParams,
     ISetFilterTreeListTooltipParams,
-    SetFilterEvaluator,
+    SetFilterHandler,
     SetFilterUi,
     SetFilterUiChangedEvent,
 } from './interfaces/iSetFilter';
@@ -219,7 +220,7 @@ export type { FilterManager } from './filter/filterManager';
 export type { FilterValueService } from './filter/filterValueService';
 export { FilterRequestSource } from './filter/iColumnFilter';
 export {
-    _refreshEvaluatorAndUi,
+    _refreshHandlerAndUi,
     _updateFilterModel,
     _refreshFilterUi,
     _getFilterModel,

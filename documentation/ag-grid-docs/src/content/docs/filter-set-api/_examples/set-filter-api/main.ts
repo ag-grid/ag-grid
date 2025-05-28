@@ -4,7 +4,7 @@ import type {
     GridOptions,
     ISetFilterParams,
     KeyCreatorParams,
-    SetFilterEvaluator,
+    SetFilterHandler,
     ValueFormatterParams,
 } from 'ag-grid-community';
 import {
@@ -95,8 +95,8 @@ function selectNothing() {
 }
 
 function setCountriesToFranceAustralia() {
-    const evaluator = gridApi!.getColumnFilterEvaluator<SetFilterEvaluator<{ name: string; code: string }>>('country');
-    evaluator!.setFilterValues([
+    const handler = gridApi!.getColumnFilterHandler<SetFilterHandler<{ name: string; code: string }>>('country');
+    handler!.setFilterValues([
         {
             name: 'France',
             code: 'FR',
@@ -109,8 +109,8 @@ function setCountriesToFranceAustralia() {
 }
 
 function setCountriesToAll() {
-    const evaluator = gridApi!.getColumnFilterEvaluator<SetFilterEvaluator<{ name: string; code: string }>>('country');
-    evaluator!.resetFilterValues();
+    const handler = gridApi!.getColumnFilterHandler<SetFilterHandler<{ name: string; code: string }>>('country');
+    handler!.resetFilterValues();
 }
 
 function onFirstDataRendered(params: FirstDataRenderedEvent) {

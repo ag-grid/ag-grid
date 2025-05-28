@@ -19,7 +19,7 @@ import {
     _warn,
 } from 'ag-grid-community';
 
-import type { GroupFilterEvaluator } from './groupFilterEvaluator';
+import type { GroupFilterHandler } from './groupFilterHandler';
 import type { GroupFilterService } from './groupFilterService';
 
 interface FilterColumnPair {
@@ -68,7 +68,7 @@ export class GroupFilter extends TabGuardComp<GroupFilterEvent> implements IFilt
     public init(legacyParams: IFilterParams): AgPromise<void> {
         this.params = legacyParams as unknown as FilterDisplayParams;
         return this.updateParams().then(() => {
-            this.addEvaluatorListeners(this.updateGroups.bind(this));
+            this.addHandlerListeners(this.updateGroups.bind(this));
         });
     }
 
@@ -99,13 +99,13 @@ export class GroupFilter extends TabGuardComp<GroupFilterEvent> implements IFilt
         }
     }
 
-    private addEvaluatorListeners(listener: () => void): void {
-        const destroyFunctions = this.addManagedListeners(this.getEvaluator() as GroupFilterEvaluator, {
+    private addHandlerListeners(listener: () => void): void {
+        const destroyFunctions = this.addManagedListeners(this.getHandler() as GroupFilterHandler, {
             sourceColumnsChanged: this.updateGroups.bind(this),
             destroyed: () => {
                 destroyFunctions.forEach((func) => func());
                 // resubscribe
-                this.addEvaluatorListeners(listener);
+                this.addHandlerListeners(listener);
             },
         });
     }
@@ -120,11 +120,11 @@ export class GroupFilter extends TabGuardComp<GroupFilterEvent> implements IFilt
 
     private updateGroupField(): { sourceColumns: AgColumn[] | null; selectedColumn?: AgColumn } {
         this.groupColumn = this.params.column as AgColumn;
-        const evaluator = this.getEvaluator();
-        if (!evaluator) {
+        const handler = this.getHandler();
+        if (!handler) {
             return { sourceColumns: null };
         }
-        const { sourceColumns, hasMultipleColumns, selectedColumn } = evaluator;
+        const { sourceColumns, hasMultipleColumns, selectedColumn } = handler;
         const eGroupField = this.eGroupField;
         _clearElement(eGroupField);
         if (this.eGroupFieldSelect) {
@@ -229,7 +229,7 @@ export class GroupFilter extends TabGuardComp<GroupFilterEvent> implements IFilt
         const selectedFilterColumnPair = this.getFilterColumnPair(columnId);
         const selectedColumn = selectedFilterColumnPair?.column;
         this.selectedFilter = selectedFilterColumnPair?.filter;
-        this.getEvaluator().setSelectedColumn(selectedColumn);
+        this.getHandler().setSelectedColumn(selectedColumn);
 
         this.dispatchLocalEvent({
             type: 'columnsChanged',
@@ -255,7 +255,7 @@ export class GroupFilter extends TabGuardComp<GroupFilterEvent> implements IFilt
 
     public afterGuiAttached(params?: IAfterGuiAttachedParams): void {
         this.afterGuiAttachedParams = params;
-        this.addUnderlyingFilterElement(this.getEvaluator().selectedColumn);
+        this.addUnderlyingFilterElement(this.getHandler().selectedColumn);
     }
 
     public afterGuiDetached(): void {
@@ -264,11 +264,11 @@ export class GroupFilter extends TabGuardComp<GroupFilterEvent> implements IFilt
     }
 
     public getSelectedColumn(): AgColumn | undefined {
-        return this.getEvaluator().selectedColumn;
+        return this.getHandler().selectedColumn;
     }
 
-    private getEvaluator(): GroupFilterEvaluator {
-        return this.params.getEvaluator() as GroupFilterEvaluator;
+    private getHandler(): GroupFilterHandler {
+        return this.params.getHandler() as GroupFilterHandler;
     }
 
     private getFilterColumnPair(columnId: string | undefined): FilterColumnPair | undefined {

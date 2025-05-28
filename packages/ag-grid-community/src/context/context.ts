@@ -132,12 +132,12 @@ export type DynamicBeanName =
     | 'treeParentIdStrategy'
     | 'treeGroupStrategy'
     | 'rowNumberRowResizer'
-    | 'agSetColumnFilterEvaluator'
-    | 'agMultiColumnFilterEvaluator'
-    | 'agGroupColumnFilterEvaluator'
-    | 'agNumberColumnFilterEvaluator'
-    | 'agDateColumnFilterEvaluator'
-    | 'agTextColumnFilterEvaluator';
+    | 'agSetColumnFilterHandler'
+    | 'agMultiColumnFilterHandler'
+    | 'agGroupColumnFilterHandler'
+    | 'agNumberColumnFilterHandler'
+    | 'agDateColumnFilterHandler'
+    | 'agTextColumnFilterHandler';
 
 export type UserComponentName =
     | 'agDragAndDropImage'

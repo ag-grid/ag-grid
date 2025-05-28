@@ -1,10 +1,10 @@
 import type {
     AgColumn,
-    FilterEvaluator,
-    FilterEvaluatorFuncParams,
-    FilterEvaluatorParams,
+    DoesFilterPassParams,
+    FilterHandler,
+    FilterHandlerParams,
     IRowNode,
-    SetFilterEvaluator as ISetFilterEvaluator,
+    SetFilterHandler as ISetFilterHandler,
     ISetFilterParams,
     KeyCreatorParams,
     RowNode,
@@ -29,13 +29,13 @@ import { SetFilterAppliedModel } from './setFilterAppliedModel';
 import { processDataPath, translateForSetFilter } from './setFilterUtils';
 import SetFilterModelValuesType, { SetValueModel } from './setValueModel';
 
-export type SetFilterEvaluatorEventType = 'anyFilterChanged' | 'dataChanged' | 'destroyed';
+export type SetFilterHandlerEventType = 'anyFilterChanged' | 'dataChanged' | 'destroyed';
 
-export class SetFilterEvaluator<TValue = string>
-    extends BeanStub<SetFilterEvaluatorEventType>
-    implements FilterEvaluator<any, any, SetFilterModel, ISetFilterParams<any, TValue>>, ISetFilterEvaluator<TValue>
+export class SetFilterHandler<TValue = string>
+    extends BeanStub<SetFilterHandlerEventType>
+    implements FilterHandler<any, any, SetFilterModel, ISetFilterParams<any, TValue>>, ISetFilterHandler<TValue>
 {
-    public params: FilterEvaluatorParams<any, any, SetFilterModel, ISetFilterParams<any, TValue>>;
+    public params: FilterHandlerParams<any, any, SetFilterModel, ISetFilterParams<any, TValue>>;
     /**
      * Here we keep track of the keys that are currently being used for filtering.
      * In most cases, the filtering keys are the same as the selected keys,
@@ -51,7 +51,7 @@ export class SetFilterEvaluator<TValue = string>
     public valueFormatter?: (params: ValueFormatterParams) => string;
     private noValueFormatterSupplied = false;
 
-    public init(params: FilterEvaluatorParams<any, any, SetFilterModel, ISetFilterParams<any, TValue>>): void {
+    public init(params: FilterHandlerParams<any, any, SetFilterModel, ISetFilterParams<any, TValue>>): void {
         this.updateParams(params);
         const isTreeDataOrGrouping = this.isTreeDataOrGrouping.bind(this);
         const isTreeData = () => this.treeDataTreeList;
@@ -71,7 +71,7 @@ export class SetFilterEvaluator<TValue = string>
             : undefined;
         this.valueModel = this.createManagedBean(
             new SetValueModel(clientSideValuesExtractor, caseFormat, createKey, isTreeDataOrGrouping, {
-                evaluatorParams: params,
+                handlerParams: params,
                 usingComplexObjects: !!(params.filterParams.keyCreator ?? params.colDef.keyCreator),
             })
         );
@@ -85,10 +85,10 @@ export class SetFilterEvaluator<TValue = string>
         this.addEventListenersForDataChanges();
     }
 
-    public refresh(params: FilterEvaluatorParams<any, any, SetFilterModel, ISetFilterParams<any, TValue>>): void {
+    public refresh(params: FilterHandlerParams<any, any, SetFilterModel, ISetFilterParams<any, TValue>>): void {
         this.updateParams(params);
         this.valueModel.refresh({
-            evaluatorParams: params,
+            handlerParams: params,
             usingComplexObjects: !!(params.filterParams.keyCreator ?? params.colDef.keyCreator),
         });
 
@@ -97,7 +97,7 @@ export class SetFilterEvaluator<TValue = string>
         this.validateModel(params);
     }
 
-    private updateParams(params: FilterEvaluatorParams<any, any, SetFilterModel, ISetFilterParams<any, TValue>>): void {
+    private updateParams(params: FilterHandlerParams<any, any, SetFilterModel, ISetFilterParams<any, TValue>>): void {
         this.params = params;
         const {
             column,
@@ -113,7 +113,7 @@ export class SetFilterEvaluator<TValue = string>
         this.setValueFormatter(valueFormatter, resolvedKeyCreator, !!treeList, !!colDef.refData);
     }
 
-    public doesFilterPass(params: FilterEvaluatorFuncParams<any, SetFilterModel>): boolean {
+    public doesFilterPass(params: DoesFilterPassParams<any, SetFilterModel>): boolean {
         const { appliedModel, treeDataTreeList, groupingTreeList } = this;
         if (appliedModel.isNull()) {
             return true;
@@ -262,7 +262,7 @@ export class SetFilterEvaluator<TValue = string>
     }
 
     private validateModel(
-        params: FilterEvaluatorParams<any, any, SetFilterModel, ISetFilterParams<any, TValue>>,
+        params: FilterHandlerParams<any, any, SetFilterModel, ISetFilterParams<any, TValue>>,
         additionalEventAttributes?: any
     ): void {
         const valueModel = this.valueModel;

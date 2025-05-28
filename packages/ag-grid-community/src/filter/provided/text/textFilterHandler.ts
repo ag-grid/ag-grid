@@ -1,6 +1,6 @@
-import type { FilterEvaluatorParams, IDoesFilterPassParams } from '../../../interfaces/iFilter';
+import type { FilterHandlerParams, IDoesFilterPassParams } from '../../../interfaces/iFilter';
 import type { ICombinedSimpleModel, ISimpleFilterModelType, Tuple } from '../iSimpleFilter';
-import { SimpleFilterEvaluator } from '../simpleFilterEvaluator';
+import { SimpleFilterHandler } from '../simpleFilterHandler';
 import { isBlank } from '../simpleFilterUtils';
 import type { ITextFilterParams, TextFilterModel, TextFormatter, TextMatcher } from './iTextFilter';
 import { DEFAULT_TEXT_FILTER_OPTIONS } from './textFilterConstants';
@@ -37,7 +37,7 @@ const defaultFormatter: TextFormatter = (from: string) => from;
 const defaultLowercaseFormatter: TextFormatter = (from: string) =>
     from == null ? null : from.toString().toLowerCase();
 
-export class TextFilterEvaluator extends SimpleFilterEvaluator<TextFilterModel, string, ITextFilterParams> {
+export class TextFilterHandler extends SimpleFilterHandler<TextFilterModel, string, ITextFilterParams> {
     protected readonly FilterModelFormatterClass = TextFilterModelFormatter;
     private matcher: TextMatcher;
     private formatter: TextFormatter;
@@ -47,7 +47,7 @@ export class TextFilterEvaluator extends SimpleFilterEvaluator<TextFilterModel, 
     }
 
     protected override updateParams(
-        params: FilterEvaluatorParams<any, any, TextFilterModel | ICombinedSimpleModel<TextFilterModel>> &
+        params: FilterHandlerParams<any, any, TextFilterModel | ICombinedSimpleModel<TextFilterModel>> &
             ITextFilterParams
     ): void {
         super.updateParams(params);

@@ -683,8 +683,8 @@ export const AG_GRID_ERRORS = {
     275: missingRowModelTypeError,
     276: () => 'Row Numbers Row Resizer cannot be used when Grid Columns have `autoHeight` enabled.' as const,
     277: ({ colId }: { colId: string }) =>
-        `'enableFilterEvaluators' is set to true, but column '${colId}' does not have 'filterEvaluator' set.` as const,
-    278: ({ colId }: { colId: string }) => `Unable to create filter evaluator for column '${colId}'` as const,
+        `'enableFilterHandlers' is set to true, but column '${colId}' does not have 'filter.doesFilterPass' or 'filter.handler' set.` as const,
+    278: ({ colId }: { colId: string }) => `Unable to create filter handler for column '${colId}'` as const,
 };
 
 export type ErrorMap = typeof AG_GRID_ERRORS;

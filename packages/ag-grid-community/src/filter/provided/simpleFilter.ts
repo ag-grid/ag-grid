@@ -582,7 +582,7 @@ export abstract class SimpleFilter<
     }
 
     public getModelAsString(model: M): string {
-        return this.params.getEvaluator()?.getModelAsString?.(model) ?? '';
+        return this.params.getHandler()?.getModelAsString?.(model) ?? '';
     }
 
     private getPlaceholderText(defaultPlaceholder: keyof typeof FILTER_LOCALE_TEXT, position: number): string {

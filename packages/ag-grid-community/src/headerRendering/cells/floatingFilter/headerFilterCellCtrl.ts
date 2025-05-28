@@ -303,7 +303,7 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl<IHeaderFilterCe
 
             compPromise.then((comp) => {
                 if (comp) {
-                    if (gos.get('enableFilterEvaluators')) {
+                    if (gos.get('enableFilterHandlers')) {
                         const eventWithParams = event as FilterChangedEvent | null;
                         let source = 'filter';
                         if (eventWithParams?.afterFloatingFilter) {
@@ -421,7 +421,7 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl<IHeaderFilterCe
 
         this.comp.getFloatingFilterComp()?.then((floatingFilter) => {
             if (typeof floatingFilter?.refresh === 'function') {
-                if (this.gos.get('enableFilterEvaluators')) {
+                if (this.gos.get('enableFilterHandlers')) {
                     params = {
                         ...params,
                         model: _getFilterModel(this.beans.colFilter?.model ?? {}, this.column.getColId()),

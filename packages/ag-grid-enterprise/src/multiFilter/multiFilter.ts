@@ -3,8 +3,8 @@ import type {
     FilterAction,
     FilterDisplayParams,
     FilterDisplayState,
-    FilterEvaluator,
-    FilterEvaluatorBaseParams,
+    FilterHandler,
+    FilterHandlerBaseParams,
     IDoesFilterPassParams,
     IFilterComp,
     IFilterParams,
@@ -23,8 +23,8 @@ import {
     LocalEventService,
     ProvidedFilter,
     _getFilterModel,
-    _refreshEvaluatorAndUi,
     _refreshFilterUi,
+    _refreshHandlerAndUi,
     _removeFromArray,
     _updateFilterModel,
 } from 'ag-grid-community';
@@ -41,11 +41,11 @@ import {
 interface MultiFilterWrapper {
     filter: IFilterComp;
     comp: BaseFilterComponent;
-    /** only set for evaluators */
+    /** only set for handlers */
     filterParams?: FilterDisplayParams;
-    evaluator?: FilterEvaluator;
-    evaluatorParams?: FilterEvaluatorBaseParams;
-    /** only set for evaluators */
+    handler?: FilterHandler;
+    handlerParams?: FilterHandlerBaseParams;
+    /** only set for handlers */
     model?: any;
     state?: FilterDisplayState;
 }
@@ -53,7 +53,7 @@ interface MultiFilterWrapper {
 /** temporary type until `MultiFilterParams` is updated as breaking change */
 type MultiFilterDisplayParams = IMultiFilterParams & FilterDisplayParams<any, any, IMultiFilterModel>;
 
-// This version of multi filter is only used when `enableFilterEvaluators = false`
+// This version of multi filter is only used when `enableFilterHandlers = false`
 export class MultiFilter extends BaseMultiFilter<MultiFilterWrapper> implements IFilterComp, IMultiFilter {
     public readonly filterType = 'multi' as const;
 
@@ -105,8 +105,8 @@ export class MultiFilter extends BaseMultiFilter<MultiFilterWrapper> implements 
             if (!wrapper) {
                 return false;
             }
-            const { filter, evaluator, model } = wrapper;
-            if (evaluator) {
+            const { filter, handler, model } = wrapper;
+            if (handler) {
                 return model != null;
             }
             return filter.isFilterActive();
@@ -123,12 +123,12 @@ export class MultiFilter extends BaseMultiFilter<MultiFilterWrapper> implements 
             if (!wrapper || (indexToSkip != null && index === indexToSkip)) {
                 return true;
             }
-            const { evaluator, filter, model } = wrapper;
-            if (evaluator && model != null) {
-                return evaluator.doesFilterPass({
+            const { handler, filter, model } = wrapper;
+            if (handler && model != null) {
+                return handler.doesFilterPass({
                     ...params,
                     model,
-                    evaluatorParams: wrapper.evaluatorParams!,
+                    handlerParams: wrapper.handlerParams!,
                 });
             }
             return !filter.isFilterActive() || filter.doesFilterPass(params);
@@ -170,8 +170,8 @@ export class MultiFilter extends BaseMultiFilter<MultiFilterWrapper> implements 
                 if (!wrapper) {
                     return null;
                 }
-                const { filter, evaluator, model } = wrapper;
-                if (evaluator) {
+                const { filter, handler, model } = wrapper;
+                if (handler) {
                     return model;
                 }
                 return filter.isFilterActive() ? filter.getModel() : null;
@@ -196,18 +196,18 @@ export class MultiFilter extends BaseMultiFilter<MultiFilterWrapper> implements 
                 return;
             }
             const modelForFilter = getFilterModelForIndex(model, index);
-            const { filter, filterParams, evaluator, evaluatorParams, state } = wrapper;
-            if (evaluator) {
+            const { filter, filterParams, handler, handlerParams, state } = wrapper;
+            if (handler) {
                 promises.push(
-                    _refreshEvaluatorAndUi(
+                    _refreshHandlerAndUi(
                         () => AgPromise.resolve({ filter: filter as any, filterParams: filterParams as any }),
-                        evaluator,
-                        evaluatorParams!,
+                        handler,
+                        handlerParams!,
                         modelForFilter,
                         state ?? { model: modelForFilter },
                         'api'
                     ).then(() => {
-                        this.updateActiveListForEvaluator(index, modelForFilter);
+                        this.updateActiveListForHandler(index, modelForFilter);
                     })
                 );
             } else {
@@ -243,7 +243,7 @@ export class MultiFilter extends BaseMultiFilter<MultiFilterWrapper> implements 
     public override destroy(): void {
         this.wrappers.forEach((wrapper) => {
             this.destroyBean(wrapper?.filter);
-            this.destroyBean(wrapper?.evaluator);
+            this.destroyBean(wrapper?.handler);
         });
 
         this.wrappers.length = 0;
@@ -267,7 +267,7 @@ export class MultiFilter extends BaseMultiFilter<MultiFilterWrapper> implements 
         wrapper: MultiFilterWrapper,
         name: 'onAnyFilterChanged' | 'onNewRowsLoaded'
     ): void {
-        wrapper.evaluator?.[name]?.();
+        wrapper.handler?.[name]?.();
     }
 
     private createFilter(
@@ -283,17 +283,17 @@ export class MultiFilter extends BaseMultiFilter<MultiFilterWrapper> implements 
 
         const {
             compDetails,
-            evaluator,
-            evaluatorParams: originalEvaluatorParams,
+            handler,
+            handlerParams: originalHandlerParams,
             createFilterUi,
         } = beans.colFilter!.createFilterInstance(
             column,
             filterDef,
             'agTextColumnFilter',
-            (defaultParams, isEvaluator) => {
+            (defaultParams, isHandler) => {
                 const updatedParams = {
                     ...defaultParams,
-                    filterChangedCallback: isEvaluator
+                    filterChangedCallback: isHandler
                         ? () => {}
                         : (additionalEventAttributes?: any) => {
                               this.executeWhenAllFiltersReady(() =>
@@ -305,14 +305,14 @@ export class MultiFilter extends BaseMultiFilter<MultiFilterWrapper> implements 
                         this.doesFilterPass({ node, data: node.data }, index),
                     getValue: updateGetValue(beans, column, filterDef, defaultParams.getValue),
                 };
-                if (isEvaluator) {
+                if (isHandler) {
                     initialModelForFilter = getFilterModelForIndex(initialModel, index);
                     createWrapperComp = this.updateDisplayParams(
                         updatedParams as unknown as FilterDisplayParams,
                         index,
                         initialModelForFilter,
                         () => compDetails,
-                        () => evaluator!
+                        () => handler!
                     );
                 }
                 return updatedParams;
@@ -323,11 +323,11 @@ export class MultiFilter extends BaseMultiFilter<MultiFilterWrapper> implements 
             return AgPromise.resolve(null);
         }
 
-        let evaluatorParams: FilterEvaluatorBaseParams | undefined;
-        if (evaluator) {
-            const { onModelChange, doesRowPassOtherFilter, getValue } = originalEvaluatorParams!;
-            evaluatorParams = {
-                ...originalEvaluatorParams!,
+        let handlerParams: FilterHandlerBaseParams | undefined;
+        if (handler) {
+            const { onModelChange, doesRowPassOtherFilter, getValue } = originalHandlerParams!;
+            handlerParams = {
+                ...originalHandlerParams!,
                 onModelChange: (newModel, additionalEventAttributes) =>
                     onModelChange(
                         getUpdatedMultiFilterModel(this.params.model, this.wrappers.length, newModel, index),
@@ -338,11 +338,11 @@ export class MultiFilter extends BaseMultiFilter<MultiFilterWrapper> implements 
 
                 getValue: updateGetValue(beans, column, filterDef, getValue),
             };
-            evaluator.init?.({ ...evaluatorParams, model: initialModelForFilter, source: 'init' });
+            handler.init?.({ ...handlerParams, model: initialModelForFilter, source: 'init' });
         }
 
         return createFilterUi().then((filter) => {
-            if (!evaluator) {
+            if (!handler) {
                 return { filter: filter!, comp: filter! };
             }
             const filterParams = compDetails?.params;
@@ -351,8 +351,8 @@ export class MultiFilter extends BaseMultiFilter<MultiFilterWrapper> implements 
                 filter: filter!,
                 comp,
                 filterParams,
-                evaluator,
-                evaluatorParams,
+                handler,
+                handlerParams,
                 model: initialModelForFilter,
             };
         });
@@ -363,7 +363,7 @@ export class MultiFilter extends BaseMultiFilter<MultiFilterWrapper> implements 
         index: number,
         initialModelForFilter: any,
         getCompDetails: () => UserCompDetails | null,
-        getEvaluator: () => FilterEvaluator
+        getHandler: () => FilterHandler
     ): (filter: IFilterComp<any> | null) => FilterWrapperComp {
         const column = this.params.column as AgColumn;
         const eventSvc: LocalEventService<'filterParamsChanged' | 'filterStateChanged' | 'filterAction'> =
@@ -375,23 +375,23 @@ export class MultiFilter extends BaseMultiFilter<MultiFilterWrapper> implements 
             if (!wrapper) {
                 return;
             }
-            _refreshEvaluatorAndUi(
+            _refreshHandlerAndUi(
                 () =>
                     AgPromise.resolve({
                         filter: wrapper.filter as any,
                         filterParams: wrapper.filterParams as any,
                     }),
-                wrapper.evaluator!,
-                wrapper.evaluatorParams!,
+                wrapper.handler!,
+                wrapper.handlerParams!,
                 model,
                 wrapper.state ?? { model },
                 'ui'
             ).then(() => {
                 wrapper.model = model;
-                this.onEvaluatorModelChanged(index, model, additionalEventAttributes);
+                this.onHandlerModelChanged(index, model, additionalEventAttributes);
             });
         };
-        displayParams.getEvaluator = getEvaluator;
+        displayParams.getHandler = getHandler;
         const updateState = (wrapper: MultiFilterWrapper, state: FilterDisplayState) => {
             wrapper.state = state;
             eventSvc.dispatchEvent({
@@ -451,7 +451,7 @@ export class MultiFilter extends BaseMultiFilter<MultiFilterWrapper> implements 
                     {
                         comp: filter!,
                         params: filterParams!,
-                        isEvaluator: true,
+                        isHandler: true,
                     },
                     eventSvc,
                     updateModel
@@ -472,7 +472,7 @@ export class MultiFilter extends BaseMultiFilter<MultiFilterWrapper> implements 
         this.updateActiveList(index, () => filter?.isFilterActive());
     }
 
-    private updateActiveListForEvaluator(index: number, model?: any): void {
+    private updateActiveListForHandler(index: number, model?: any): void {
         this.updateActiveList(index, () => model != null);
     }
 
@@ -485,15 +485,15 @@ export class MultiFilter extends BaseMultiFilter<MultiFilterWrapper> implements 
         }
     }
 
-    /** Only called for non-evaluators */
+    /** Only called for non-handlers */
     private onFilterModelChanged(index: number, additionalEventAttributes: any): void {
         this.updateActiveListForFilter(index, this.wrappers[index]?.filter);
 
         this.filterChanged(index, additionalEventAttributes);
     }
 
-    private onEvaluatorModelChanged(index: number, model: any, additionalEventAttributes?: any): void {
-        this.updateActiveListForEvaluator(index, model);
+    private onHandlerModelChanged(index: number, model: any, additionalEventAttributes?: any): void {
+        this.updateActiveListForHandler(index, model);
 
         this.filterChanged(index, additionalEventAttributes);
     }
@@ -506,9 +506,9 @@ export class MultiFilter extends BaseMultiFilter<MultiFilterWrapper> implements 
                 return;
             }
 
-            const { filter, evaluator } = wrapper;
+            const { filter, handler } = wrapper;
 
-            evaluator?.onAnyFilterChanged?.();
+            handler?.onAnyFilterChanged?.();
             if (typeof filter.onAnyFilterChanged === 'function') {
                 filter.onAnyFilterChanged();
             }

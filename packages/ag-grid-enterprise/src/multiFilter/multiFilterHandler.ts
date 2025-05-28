@@ -1,9 +1,9 @@
 import type {
     AgColumn,
-    FilterEvaluator,
-    FilterEvaluatorBaseParams,
-    FilterEvaluatorFuncParams,
-    FilterEvaluatorParams,
+    DoesFilterPassParams,
+    FilterHandler,
+    FilterHandlerBaseParams,
+    FilterHandlerParams,
     IMultiFilterDef,
     IMultiFilterModel,
     IMultiFilterParams,
@@ -18,36 +18,36 @@ import {
     updateGetValue,
 } from './multiFilterUtil';
 
-interface EvaluatorWrapper {
-    evaluator: FilterEvaluator;
-    evaluatorParams: FilterEvaluatorBaseParams;
+interface HandlerWrapper {
+    handler: FilterHandler;
+    handlerParams: FilterHandlerBaseParams;
 }
 
-export class MultiFilterEvaluator
+export class MultiFilterHandler
     extends BeanStub
-    implements FilterEvaluator<any, any, IMultiFilterModel, IMultiFilterParams>
+    implements FilterHandler<any, any, IMultiFilterModel, IMultiFilterParams>
 {
-    private params: FilterEvaluatorParams<any, any, IMultiFilterModel, IMultiFilterParams>;
-    private evaluatorWrappers: (EvaluatorWrapper | undefined)[] = [];
+    private params: FilterHandlerParams<any, any, IMultiFilterModel, IMultiFilterParams>;
+    private handlerWrappers: (HandlerWrapper | undefined)[] = [];
     /** ui active. could still have null model */
     private activeFilterIndices: number[] = [];
     private filterDefs: IMultiFilterDef[] = [];
 
-    public init(params: FilterEvaluatorParams<any, any, IMultiFilterModel, IMultiFilterParams>): void {
+    public init(params: FilterHandlerParams<any, any, IMultiFilterModel, IMultiFilterParams>): void {
         this.params = params;
 
         const filterDefs = getMultiFilterDefs(params.filterParams);
         this.filterDefs = filterDefs;
         filterDefs.forEach((def, index) => {
-            const wrapper = this.beans.colFilter!.createEvaluator(params.column as AgColumn, def, 'agTextColumnFilter');
-            this.evaluatorWrappers.push(wrapper);
+            const wrapper = this.beans.colFilter!.createHandler(params.column as AgColumn, def, 'agTextColumnFilter');
+            this.handlerWrappers.push(wrapper);
             if (!wrapper) {
                 _warn(278, { colId: params.column.getColId() });
                 return;
             }
-            const { evaluator, evaluatorParams } = wrapper;
-            evaluator.init?.({
-                ...this.updateEvaluatorParams(evaluatorParams!, index),
+            const { handler, handlerParams } = wrapper;
+            handler.init?.({
+                ...this.updateHandlerParams(handlerParams!, index),
                 model: getFilterModelForIndex(params.model, index),
                 source: 'init',
             });
@@ -55,15 +55,15 @@ export class MultiFilterEvaluator
         this.resetActiveList(params.model);
     }
 
-    public refresh(params: FilterEvaluatorParams<any, any, IMultiFilterModel> & IMultiFilterParams): void {
+    public refresh(params: FilterHandlerParams<any, any, IMultiFilterModel> & IMultiFilterParams): void {
         this.params = params;
         const { model, source } = params;
 
-        this.evaluatorWrappers.forEach((wrapper, index) => {
-            const updatedParams = this.updateEvaluatorParams(params, index);
+        this.handlerWrappers.forEach((wrapper, index) => {
+            const updatedParams = this.updateHandlerParams(params, index);
             if (wrapper) {
-                wrapper.evaluatorParams = updatedParams;
-                wrapper.evaluator.refresh?.({ ...updatedParams, model: getFilterModelForIndex(model, index), source });
+                wrapper.handlerParams = updatedParams;
+                wrapper.handler.refresh?.({ ...updatedParams, model: getFilterModelForIndex(model, index), source });
             }
         });
         if (params.source !== 'floating' && params.source !== 'ui') {
@@ -71,37 +71,35 @@ export class MultiFilterEvaluator
         }
     }
 
-    private updateEvaluatorParams(params: FilterEvaluatorBaseParams, index: number): FilterEvaluatorBaseParams {
+    private updateHandlerParams(params: FilterHandlerBaseParams, index: number): FilterHandlerBaseParams {
         const { onModelChange, doesRowPassOtherFilter, getValue } = params;
-        const evaluatorParams: FilterEvaluatorBaseParams = {
+        const handlerParams: FilterHandlerBaseParams = {
             ...params!,
             onModelChange: (newModel, additionalEventAttributes) =>
                 onModelChange(
-                    getUpdatedMultiFilterModel(this.params.model, this.evaluatorWrappers.length, newModel, index),
+                    getUpdatedMultiFilterModel(this.params.model, this.handlerWrappers.length, newModel, index),
                     additionalEventAttributes
                 ),
             doesRowPassOtherFilter: (node) =>
                 doesRowPassOtherFilter(node) &&
-                this.doesFilterPass({ node, data: node.data, model: this.params.model, evaluatorParams }, index),
+                this.doesFilterPass({ node, data: node.data, model: this.params.model, handlerParams }, index),
             getValue: updateGetValue(this.beans, params.column as AgColumn, this.filterDefs[index], getValue),
         };
-        return evaluatorParams;
+        return handlerParams;
     }
 
-    public doesFilterPass(params: FilterEvaluatorFuncParams<any, IMultiFilterModel>, indexToSkip?: number): boolean {
+    public doesFilterPass(params: DoesFilterPassParams<any, IMultiFilterModel>, indexToSkip?: number): boolean {
         const filterModels = params.model?.filterModels;
         if (filterModels == null) {
             return true;
         }
-        return this.evaluatorWrappers.every((wrapper, index) => {
+        return this.handlerWrappers.every((wrapper, index) => {
             const model = filterModels[index];
             if (model == null || (indexToSkip != null && index === indexToSkip)) {
                 return true;
             }
-            const evaluator = wrapper?.evaluator;
-            return (
-                !evaluator || evaluator.doesFilterPass({ ...params, model, evaluatorParams: wrapper.evaluatorParams })
-            );
+            const handler = wrapper?.handler;
+            return !handler || handler.doesFilterPass({ ...params, model, handlerParams: wrapper.handlerParams });
         });
     }
 
@@ -111,7 +109,7 @@ export class MultiFilterEvaluator
         if (filterModels == null) {
             return;
         }
-        for (let i = 0; i < this.evaluatorWrappers.length; i++) {
+        for (let i = 0; i < this.handlerWrappers.length; i++) {
             const isActive = filterModels[i] != null;
             if (isActive) {
                 this.activeFilterIndices.push(i);
@@ -139,25 +137,25 @@ export class MultiFilterEvaluator
             return '';
         }
         const lastActiveIndex = this.getLastActiveFilterIndex() ?? 0;
-        const activeWrapper = this.evaluatorWrappers[lastActiveIndex];
-        return activeWrapper?.evaluator.getModelAsString?.(model.filterModels[lastActiveIndex]) ?? '';
+        const activeWrapper = this.handlerWrappers[lastActiveIndex];
+        return activeWrapper?.handler.getModelAsString?.(model.filterModels[lastActiveIndex]) ?? '';
     }
 
-    public getEvaluator(index: number): FilterEvaluator | undefined {
-        return this.evaluatorWrappers[index]?.evaluator;
+    public getHandler(index: number): FilterHandler | undefined {
+        return this.handlerWrappers[index]?.handler;
     }
 
     public onAnyFilterChanged(): void {
-        forEachReverse(this.evaluatorWrappers, (wrapper) => wrapper?.evaluator?.onAnyFilterChanged?.());
+        forEachReverse(this.handlerWrappers, (wrapper) => wrapper?.handler?.onAnyFilterChanged?.());
     }
 
     public onNewRowsLoaded(): void {
-        forEachReverse(this.evaluatorWrappers, (wrapper) => wrapper?.evaluator?.onNewRowsLoaded?.());
+        forEachReverse(this.handlerWrappers, (wrapper) => wrapper?.handler?.onNewRowsLoaded?.());
     }
 
     public override destroy(): void {
-        this.evaluatorWrappers.forEach((wrapper) => this.destroyBean(wrapper?.evaluator));
-        this.evaluatorWrappers.length = 0;
+        this.handlerWrappers.forEach((wrapper) => this.destroyBean(wrapper?.handler));
+        this.handlerWrappers.length = 0;
         super.destroy();
     }
 }

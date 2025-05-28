@@ -882,12 +882,13 @@ export interface _ColumnFilterGridApi {
     ): Promise<TFilter | null | undefined>;
 
     /**
-     * Returns the filter evaluator instance for a column.
-     * Used when `enableFilterEvaluators = true`, or when using a grid-provided filter.
+     * Returns the filter handler instance for a column.
+     * Used when `enableFilterHandlers = true`, or when using a grid-provided filter.
+     * If using a `SimpleColumnFilter`, this will be an object containing the provided `doesFilterPass` callback.
      * `key` can be a column ID or a `Column` object.
      * @agModule `TextFilterModule` / `NumberFilterModule` / `DateFilterModule` / `SetFilterModule` / `MultiFilterModule` / `CustomFilterModule`
      */
-    getColumnFilterEvaluator<TFilterEvaluator>(key: string | Column): TFilterEvaluator | undefined;
+    getColumnFilterHandler<TFilterHandler>(key: string | Column): TFilterHandler | undefined;
 
     /**
      * Destroys a filter. Useful to force a particular filter to be created from scratch again.

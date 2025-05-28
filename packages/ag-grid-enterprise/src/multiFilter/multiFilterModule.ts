@@ -5,7 +5,7 @@ import { EnterpriseCoreModule } from '../agGridEnterpriseModule';
 import { VERSION } from '../version';
 import { MenuItemModule } from '../widgets/menuItemModule';
 import { MultiFilter } from './multiFilter';
-import { MultiFilterEvaluator } from './multiFilterEvaluator';
+import { MultiFilterHandler } from './multiFilterHandler';
 import { MultiFilterService } from './multiFilterService';
 import { MultiFilterUi } from './multiFilterUi';
 import { MultiFloatingFilterComp } from './multiFloatingFilter';
@@ -19,7 +19,7 @@ export const MultiFilterModule: _ModuleWithoutApi = {
     userComponents: {
         agMultiColumnFilter: {
             getComp: (beans) =>
-                beans.gos.get('enableFilterEvaluators')
+                beans.gos.get('enableFilterHandlers')
                     ? {
                           classImp: MultiFilterUi,
                           params: {
@@ -32,7 +32,7 @@ export const MultiFilterModule: _ModuleWithoutApi = {
     },
     beans: [MultiFilterService],
     dynamicBeans: {
-        agMultiColumnFilterEvaluator: MultiFilterEvaluator,
+        agMultiColumnFilterHandler: MultiFilterHandler,
     },
     dependsOn: [EnterpriseCoreModule, _ColumnFilterModule, MenuItemModule],
 };

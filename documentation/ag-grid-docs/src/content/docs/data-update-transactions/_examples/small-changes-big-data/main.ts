@@ -1,5 +1,6 @@
 import type {
     ColDef,
+    DoesFilterPassParams,
     GetRowIdParams,
     GridApi,
     GridOptions,
@@ -151,18 +152,16 @@ const columnDefs: ColDef[] = [
         field: 'value',
         enableCellChangeFlash: true,
         aggFunc: myAggFunc,
-        filter: 'agNumberColumnFilter',
+        filter: {
+            component: 'agNumberColumnFilter',
+            doesFilterPass: ({ model, node, handlerParams }: DoesFilterPassParams) => {
+                filterCallCount++;
+                return model == null || handlerParams.getValue(node) > model.filter;
+            },
+        },
         filterParams: {
             filterOptions: ['greaterThan'],
             maxNumConditions: 1,
-        },
-        filterEvaluator: () => {
-            return {
-                doesFilterPass: ({ model, node, evaluatorParams }) => {
-                    filterCallCount++;
-                    return model == null || evaluatorParams.getValue(node) > model.filter;
-                },
-            };
         },
     },
 ];
@@ -192,7 +191,7 @@ const gridOptions: GridOptions = {
         });
     },
     isGroupOpenByDefault: isGroupOpenByDefault,
-    enableFilterEvaluators: true,
+    enableFilterHandlers: true,
 };
 
 function isGroupOpenByDefault(params: IsGroupOpenByDefaultParams<IOlympicData, any>) {

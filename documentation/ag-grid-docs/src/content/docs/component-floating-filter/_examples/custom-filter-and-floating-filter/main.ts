@@ -1,4 +1,4 @@
-import type { ColDef, FilterEvaluator, GridApi, GridOptions } from 'ag-grid-community';
+import type { ColDef, DoesFilterPassParams, GridApi, GridOptions } from 'ag-grid-community';
 import {
     ClientSideRowModelModule,
     CustomFilterModule,
@@ -16,18 +16,14 @@ ModuleRegistry.registerModules([
     ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 
-function numberFilterEvaluator(): FilterEvaluator {
-    return {
-        doesFilterPass: ({ node, model, evaluatorParams }) => {
-            const value = evaluatorParams.getValue(node);
+function doesFilterPass({ node, model, handlerParams }: DoesFilterPassParams<any, any, number>): boolean {
+    const value = handlerParams.getValue(node);
 
-            if (value == null) {
-                return true;
-            }
+    if (value == null) {
+        return true;
+    }
 
-            return value > model;
-        },
-    };
+    return value > model;
 }
 
 const columnDefs: ColDef[] = [
@@ -38,8 +34,7 @@ const columnDefs: ColDef[] = [
         floatingFilterComponentParams: {
             color: 'gold',
         },
-        filter: NumberFilterComponent,
-        filterEvaluator: numberFilterEvaluator,
+        filter: { component: NumberFilterComponent, doesFilterPass },
         suppressFloatingFilterButton: true,
     },
     {
@@ -48,8 +43,7 @@ const columnDefs: ColDef[] = [
         floatingFilterComponentParams: {
             color: 'silver',
         },
-        filter: NumberFilterComponent,
-        filterEvaluator: numberFilterEvaluator,
+        filter: { component: NumberFilterComponent, doesFilterPass },
         suppressFloatingFilterButton: true,
     },
     {
@@ -58,8 +52,7 @@ const columnDefs: ColDef[] = [
         floatingFilterComponentParams: {
             color: '#CD7F32',
         },
-        filter: NumberFilterComponent,
-        filterEvaluator: numberFilterEvaluator,
+        filter: { component: NumberFilterComponent, doesFilterPass },
         suppressFloatingFilterButton: true,
     },
     {
@@ -68,8 +61,7 @@ const columnDefs: ColDef[] = [
         floatingFilterComponentParams: {
             color: 'unset',
         },
-        filter: NumberFilterComponent,
-        filterEvaluator: numberFilterEvaluator,
+        filter: { component: NumberFilterComponent, doesFilterPass },
         suppressFloatingFilterButton: true,
     },
 ];
@@ -84,7 +76,7 @@ const gridOptions: GridOptions<IOlympicData> = {
     },
     columnDefs,
     rowData: null,
-    enableFilterEvaluators: true,
+    enableFilterHandlers: true,
 };
 
 // setup the grid after the page has finished loading

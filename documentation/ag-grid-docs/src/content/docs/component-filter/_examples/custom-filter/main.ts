@@ -1,4 +1,4 @@
-import type { ColDef, FilterEvaluator, GridApi, GridOptions } from 'ag-grid-community';
+import type { ColDef, DoesFilterPassParams, GridApi, GridOptions } from 'ag-grid-community';
 import {
     ClientSideRowModelModule,
     CustomFilterModule,
@@ -15,32 +15,27 @@ ModuleRegistry.registerModules([
     ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 
-function personFilterEvaluator(): FilterEvaluator<any, any, string> {
-    return {
-        doesFilterPass: ({ model, node, evaluatorParams }) => {
-            // make sure each word passes separately, ie search for firstname, lastname
-            let passed = true;
-            model
-                ?.toLowerCase()
-                .split(' ')
-                .forEach((filterWord) => {
-                    const value = evaluatorParams.getValue(node);
-                    if (value.toString().toLowerCase().indexOf(filterWord) < 0) {
-                        passed = false;
-                    }
-                });
+function doesFilterPass({ model, node, handlerParams }: DoesFilterPassParams<any, any, string>): boolean {
+    // make sure each word passes separately, ie search for firstname, lastname
+    let passed = true;
+    model
+        .toLowerCase()
+        .split(' ')
+        .forEach((filterWord) => {
+            const value = handlerParams.getValue(node);
+            if (value.toString().toLowerCase().indexOf(filterWord) < 0) {
+                passed = false;
+            }
+        });
 
-            return passed;
-        },
-    };
+    return passed;
 }
 
 const columnDefs: ColDef[] = [
     {
         field: 'athlete',
         minWidth: 150,
-        filter: PersonFilter,
-        filterEvaluator: personFilterEvaluator,
+        filter: { component: PersonFilter, doesFilterPass },
     },
     { field: 'country', minWidth: 150 },
     { field: 'sport' },
@@ -59,7 +54,7 @@ const gridOptions: GridOptions<IOlympicData> = {
         minWidth: 100,
     },
     columnDefs: columnDefs,
-    enableFilterEvaluators: true,
+    enableFilterHandlers: true,
 };
 
 // setup the grid after the page has finished loading

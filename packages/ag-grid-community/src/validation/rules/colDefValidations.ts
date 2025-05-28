@@ -402,7 +402,6 @@ const colDefPropertyMap: Record<ColOrGroupKey, undefined> = {
     dateComponent: undefined,
     dateComponentParams: undefined,
     getFindText: undefined,
-    filterEvaluator: undefined,
 };
 const ALL_PROPERTIES: () => ColOrGroupKey[] = () => Object.keys(colDefPropertyMap) as ColOrGroupKey[];
 

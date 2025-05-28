@@ -20,10 +20,10 @@ In the following example you can see how the Gold, Silver, Bronze and Total colu
 
 ## Implementing a Floating Filter Component
 
-To configure custom floating filters, first enable the grid option `enableFilterEvaluators`.
+To configure custom floating filters, first enable the grid option `enableFilterHandlers`.
 
 {% note %}
-If you do not enable the grid option `enableFilterEvaluators`, it is still possible to use custom floating filters, however this is not recommended. See [Legacy Floating Filter Component](./component-floating-filter-legacy/).
+If you do not enable the grid option `enableFilterHandlers`, it is still possible to use custom floating filters, however this is not recommended. See [Legacy Floating Filter Component](./component-floating-filter-legacy/).
 {% /note %}
 
 
@@ -45,7 +45,7 @@ This example extends the previous example by also providing its own custom filte
 
 ## Example: Custom Filter And Read-Only Floating Filter
 
-If you want to provide a custom filter but don't want to provide an equivalent custom floating filter, you can implement `getModelAsString()` on the filter evaluator and you will get a read-only floating filter for free.
+If you want to provide a custom filter but don't want to provide an equivalent custom floating filter, you can implement `getModelAsString()` on the filter handler and you will get a read-only floating filter for free.
 
 This example uses the previous custom filter but implements `getModelAsString()`. Note how there are no custom floating filters and yet each column using `NumberFilter` (Gold, Silver, Bronze and Total) has a read-only floating filter that gets updated as you change the values from the main filter.
 

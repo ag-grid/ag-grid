@@ -9,6 +9,7 @@ import type {
     ColGroupDef,
     ColTypeDef,
     Column,
+    CreateFilterHandlerFunc,
     CsvExportParams,
     DataTypeDefinition,
     DefaultChartMenuItem,
@@ -16,7 +17,6 @@ import type {
     ExcelExportParams,
     ExcelStyle,
     FillOperationParams,
-    FilterEvaluatorGeneratorFunc,
     FindOptions,
     FocusGridInnerElementParams,
     GetChartMenuItems,
@@ -619,16 +619,16 @@ export interface Props<TData> {
          * @agModule TextFilterModule / NumberFilterModule / DateFilterModule / MultiFilterModule / CustomFilterModule
          */
     suppressSetFilterByDefault?: boolean | undefined,
-    /** Enable filter evaluators for custom filter components.
-         * Requires all custom filters need to be implemented using evaluators.
+    /** Enable filter handlers for custom filter components.
+         * Requires all custom filters need to be implemented using handlers.
          * @initial
          */
-    enableFilterEvaluators?: boolean | undefined,
-    /** A map of filter evaluator key to filter evaluator function.
-         * Allows for filter evaluator keys to be used in `colDef.filterEvaluator`.
+    enableFilterHandlers?: boolean | undefined,
+    /** A map of filter handler key to filter handler function.
+         * Allows for filter handler keys to be used in `colDef.filter.handler`.
          * @initial
          */
-    filterEvaluators?: { [key: string]: FilterEvaluatorGeneratorFunc } | undefined,
+    filterHandlers?: { [key: string]: CreateFilterHandlerFunc } | undefined,
     /** Set to `true` to Enable Charts.
          * @default false
          * @agModule `IntegratedChartsModule`
@@ -1939,8 +1939,8 @@ export function getProps() {
         advancedFilterBuilderParams: undefined,
         suppressAdvancedFilterEval: undefined,
         suppressSetFilterByDefault: undefined,
-        enableFilterEvaluators: undefined,
-        filterEvaluators: undefined,
+        enableFilterHandlers: undefined,
+        filterHandlers: undefined,
         enableCharts: undefined,
         chartThemes: undefined,
         customChartThemes: undefined,

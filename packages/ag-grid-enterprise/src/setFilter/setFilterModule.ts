@@ -4,7 +4,7 @@ import { _ColumnFilterModule } from 'ag-grid-community';
 import { EnterpriseCoreModule } from '../agGridEnterpriseModule';
 import { VERSION } from '../version';
 import { SetFilter } from './setFilter';
-import { SetFilterEvaluator } from './setFilterEvaluator';
+import { SetFilterHandler } from './setFilterHandler';
 import { applyExcelModeOptions } from './setFilterUtils';
 import { SetFloatingFilterComp } from './setFloatingFilter';
 
@@ -28,7 +28,7 @@ export const SetFilterModule: _ModuleWithoutApi = {
         agSetColumnFloatingFilter: SetFloatingFilterComp,
     },
     dynamicBeans: {
-        agSetColumnFilterEvaluator: SetFilterEvaluator,
+        agSetColumnFilterHandler: SetFilterHandler,
     },
     icons: {
         // set filter tree list group contracted (click to expand)

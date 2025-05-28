@@ -1,11 +1,11 @@
 import type { Comparator } from '../iScalarFilter';
-import { ScalarFilterEvaluator } from '../scalarFilterEvaluator';
+import { ScalarFilterHandler } from '../scalarFilterHandler';
 import type { INumberFilterParams, NumberFilterModel } from './iNumberFilter';
 import { DEFAULT_NUMBER_FILTER_OPTIONS } from './numberFilterConstants';
 import { NumberFilterModelFormatter } from './numberFilterModelFormatter';
 import { mapValuesFromNumberFilterModel } from './numberFilterUtils';
 
-export class NumberFilterEvaluator extends ScalarFilterEvaluator<NumberFilterModel, number, INumberFilterParams> {
+export class NumberFilterHandler extends ScalarFilterHandler<NumberFilterModel, number, INumberFilterParams> {
     protected readonly FilterModelFormatterClass = NumberFilterModelFormatter;
 
     constructor() {

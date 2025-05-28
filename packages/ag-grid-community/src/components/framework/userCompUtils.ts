@@ -11,6 +11,7 @@ import type { IDateComp, IDateParams } from '../../interfaces/dateComponent';
 import type { ICellEditorComp, ICellEditorParams } from '../../interfaces/iCellEditor';
 import type { AgGridCommon } from '../../interfaces/iCommon';
 import type { IComponent } from '../../interfaces/iComponent';
+import { isColumnFilterComp } from '../../interfaces/iFilter';
 import type {
     IFilterComp,
     IFilterDef,
@@ -252,6 +253,13 @@ export function _getFilterDetails<TFilter extends SharedFilterUi & IComponent<Sh
     params: SharedFilterParams,
     defaultFilter: string
 ): UserCompDetails<TFilter> | undefined {
+    const filter = def.filter;
+    if (isColumnFilterComp(filter)) {
+        def = {
+            filter: filter.component,
+            filterParams: def.filterParams,
+        };
+    }
     return userCompFactory.getCompDetails(def, FilterComponent, defaultFilter, params, true);
 }
 

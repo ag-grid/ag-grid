@@ -17,7 +17,7 @@ import type { FilterButtonEvent } from './filterButtonComp';
 import { FilterButtonComp } from './filterButtonComp';
 import { isUseApplyButton } from './floating/provided/providedFilterUtils';
 
-/** Used with filter evaluators. This adds filter buttons. */
+/** Used with filter handlers. This adds filter buttons. */
 export class FilterWrapperComp extends Component {
     private eButtons?: FilterButtonComp;
     private params?: FilterWrapperParams;

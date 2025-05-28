@@ -23,7 +23,7 @@ import {
 } from 'ag-grid-community';
 
 import { MultiFilter } from './multiFilter';
-import type { MultiFilterEvaluator } from './multiFilterEvaluator';
+import type { MultiFilterHandler } from './multiFilterHandler';
 import { MultiFilterUi } from './multiFilterUi';
 import { getMultiFilterDefs, getUpdatedMultiFilterModel } from './multiFilterUtil';
 
@@ -90,7 +90,7 @@ export class MultiFloatingFilterComp extends Component implements IFloatingFilte
                 const floatingFilter = this.floatingFilters[index] as IFloatingFilterComp<IFilter>;
                 floatingFilter.refresh?.(floatingFilterParams);
             });
-            if (this.gos.get('enableFilterEvaluators')) {
+            if (this.gos.get('enableFilterHandlers')) {
                 const reactiveParams = params as unknown as FloatingFilterDisplayParams;
                 if (reactiveParams.model == null) {
                     this.floatingFilters.forEach((filter, i) => {
@@ -98,7 +98,7 @@ export class MultiFloatingFilterComp extends Component implements IFloatingFilte
                     });
                 } else {
                     const lastActiveFloatingFilterIndex = (
-                        reactiveParams.getEvaluator() as MultiFilterEvaluator
+                        reactiveParams.getHandler() as MultiFilterHandler
                     )?.getLastActiveFilterIndex?.();
                     this.floatingFilters.forEach((filter, i) => {
                         const shouldShow =
@@ -143,10 +143,10 @@ export class MultiFloatingFilterComp extends Component implements IFloatingFilte
                 // return the parent model for the specific filter
                 currentParentModel: () => currentParentModel()?.filterModels?.[index] ?? null,
             };
-            if (this.gos.get('enableFilterEvaluators')) {
+            if (this.gos.get('enableFilterHandlers')) {
                 const reactiveParams = floatingFilterParams as unknown as FloatingFilterDisplayParams;
                 reactiveParams.model = reactiveParams.model?.filterModels?.[index] ?? null;
-                const { onModelChange, getEvaluator } = reactiveParams;
+                const { onModelChange, getHandler } = reactiveParams;
                 reactiveParams.onModelChange = (newModel, additionalEventAttributes) =>
                     onModelChange(
                         getUpdatedMultiFilterModel(
@@ -157,9 +157,9 @@ export class MultiFloatingFilterComp extends Component implements IFloatingFilte
                         ),
                         additionalEventAttributes
                     );
-                reactiveParams.getEvaluator = () => {
-                    const multiFilterEvaluator = getEvaluator() as MultiFilterEvaluator;
-                    return multiFilterEvaluator.getEvaluator(index)!;
+                reactiveParams.getHandler = () => {
+                    const multiFilterHandler = getHandler() as MultiFilterHandler;
+                    return multiFilterHandler.getHandler(index)!;
                 };
             }
             _mergeDeep(floatingFilterParams.filterParams, filterDef.filterParams);

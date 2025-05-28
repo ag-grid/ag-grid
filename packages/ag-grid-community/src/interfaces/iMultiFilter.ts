@@ -2,7 +2,8 @@ import type { ValueGetterFunc } from '../entities/colDef';
 import type { IProvidedFilter, ProvidedFilterModel } from '../filter/provided/iProvidedFilter';
 import type { AgPromise } from '../utils/promise';
 import type {
-    FilterEvaluatorGeneratorFunc,
+    ColumnFilter,
+    CreateFilterHandlerFunc,
     IFilter,
     IFilterComp,
     IFilterDef,
@@ -29,8 +30,7 @@ export interface IMultiFilterDef extends IFilterDef {
     title?: string;
 
     /** Child filter component to use inside the Multi Filter. */
-    filter?: IFilterType;
-    filterEvaluator?: FilterEvaluatorGeneratorFunc;
+    filter?: IFilterType | ColumnFilter;
     /** Custom parameters to be passed to the child filter component. */
     filterParams?: any;
     /** Floating filter component to use for the child filter. */

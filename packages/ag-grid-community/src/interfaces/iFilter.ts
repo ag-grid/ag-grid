@@ -11,38 +11,38 @@ import type { IRowNode } from './iRowNode';
 export type IFilterType = string | { new (): IFilterComp } | boolean;
 export type IFloatingFilterType = string | { new (): IFloatingFilterComp };
 
-export interface FilterEvaluatorFuncParams<TData = any, TContext = any, TModel = any, TCustomParams = any>
+export interface DoesFilterPassParams<TData = any, TContext = any, TModel = any, TCustomParams = any>
     extends IDoesFilterPassParams<TData> {
-    model: TModel | null;
-    evaluatorParams: FilterEvaluatorBaseParams<TData, TContext, TModel, TCustomParams>;
+    model: TModel;
+    handlerParams: FilterHandlerBaseParams<TData, TContext, TModel, TCustomParams>;
 }
 
-export interface FilterEvaluatorBaseParams<TData = any, TContext = any, TModel = any, TCustomParams = any>
+export interface FilterHandlerBaseParams<TData = any, TContext = any, TModel = any, TCustomParams = any>
     extends SharedFilterParams<TData, TContext> {
     filterParams: TCustomParams;
     onModelChange: (model: TModel | null, additionalEventAttributes?: any) => void;
 }
 
-export type FilterEvaluatorSource = 'init' | 'ui' | 'api' | 'colDef' | 'floating' | 'evaluator';
+export type FilterHandlerSource = 'init' | 'ui' | 'api' | 'colDef' | 'floating' | 'handler';
 
-export interface FilterEvaluatorParams<TData = any, TContext = any, TModel = any, TCustomParams = any>
-    extends FilterEvaluatorBaseParams<TData, TContext, TModel, TCustomParams> {
+export interface FilterHandlerParams<TData = any, TContext = any, TModel = any, TCustomParams = any>
+    extends FilterHandlerBaseParams<TData, TContext, TModel, TCustomParams> {
     model: TModel | null;
-    source: FilterEvaluatorSource;
+    source: FilterHandlerSource;
 }
 
-export interface FilterEvaluator<TData = any, TContext = any, TModel = any, TCustomParams = any>
+export interface FilterHandler<TData = any, TContext = any, TModel = any, TCustomParams = any>
     extends SharedFilter,
         ReadOnlyFloatingFilterParent<TModel> {
-    /** Optional: Called once when the evaluator is created. */
-    init?(params: FilterEvaluatorParams<TData, TContext, TModel, TCustomParams>): void;
-    /** Optional: Called every time the evaluator is updated, e.g. when the model changes. */
-    refresh?(params: FilterEvaluatorParams<TData, TContext, TModel, TCustomParams>): void;
+    /** Optional: Called once when the handler is created. */
+    init?(params: FilterHandlerParams<TData, TContext, TModel, TCustomParams>): void;
+    /** Optional: Called every time the handler is updated, e.g. when the model changes. */
+    refresh?(params: FilterHandlerParams<TData, TContext, TModel, TCustomParams>): void;
     /**
      * The grid will ask each active filter, in turn, whether each row in the grid passes. If any
      * filter fails, then the row will be excluded from the final set.
      */
-    doesFilterPass(params: FilterEvaluatorFuncParams<TData, TContext, TModel, TCustomParams>): boolean;
+    doesFilterPass(params: DoesFilterPassParams<TData, TContext, TModel, TCustomParams>): boolean;
     /**
      * Optional: Used by AG Grid when rendering floating filters and there isn't a floating filter
      * associated for this filter, this will happen if you create a custom filter and NOT a custom floating
@@ -53,40 +53,42 @@ export interface FilterEvaluator<TData = any, TContext = any, TModel = any, TCus
     destroy?(): void;
 }
 
-export interface FilterEvaluatorGeneratorFuncParams<TData = any, TContext = any, TValue = any>
+export interface CreateFilterHandlerFuncParams<TData = any, TContext = any, TValue = any>
     extends AgGridCommon<TData, TContext> {
     colDef: ColDef<TData, TValue>;
     column: Column<TValue>;
 }
 
-export interface FilterEvaluatorGeneratorFunc<
-    TData = any,
-    TContext = any,
-    TValue = any,
-    TModel = any,
-    TCustomParams = any,
-> {
+export interface CreateFilterHandlerFunc<TData = any, TContext = any, TValue = any, TModel = any, TCustomParams = any> {
     (
-        params: FilterEvaluatorGeneratorFuncParams<TData, TContext, TValue>
-    ): FilterEvaluator<TData, TContext, TModel, TCustomParams>;
+        params: CreateFilterHandlerFuncParams<TData, TContext, TValue>
+    ): FilterHandler<TData, TContext, TModel, TCustomParams>;
+}
+
+export interface ColumnFilter<TData = any, TContext = any, TValue = any, TModel = any, TCustomParams = any> {
+    /** TODO */
+    component: any;
+    /** TODO */
+    doesFilterPass?: (params: DoesFilterPassParams<TData, TContext, TModel, TCustomParams>) => boolean;
+    /** TODO */
+    handler?: string | CreateFilterHandlerFunc<TData, TContext, TValue, TModel, TCustomParams>;
+}
+
+export function isColumnFilterComp(filter: any): filter is ColumnFilter {
+    return typeof filter === 'object' && !!(filter as ColumnFilter).component;
 }
 
 export interface IFilterDef {
     /**
-     * Filter component to use for this column.
+     * Filter to use for this column.
      * - Set to `true` to use the default filter.
      * - Set to the name of a provided filter: `agNumberColumnFilter`, `agTextColumnFilter`, `agDateColumnFilter`, `agMultiColumnFilter`, `agSetColumnFilter`.
-     * - Set to a `IFilterComp`.
+     * - Set to a custom filter `IFilterComp` when `enableFilterHandlers = false`.
+     * - Set to a `ColumnFilter` when `enableFilterHandlers = true`
      */
     filter?: any;
     /** Params to be passed to the filter component specified in `filter`. */
     filterParams?: any;
-    /**
-     * Filter evaluator to use for this column (when `enableFilterEvaluators = true`).
-     * Either a function that returns an evaluator,
-     * or a `string` key for the `filterEvaluators` grid option.
-     */
-    filterEvaluator?: string | FilterEvaluatorGeneratorFunc;
 
     /**
      * The custom component to be used for rendering the floating filter.
@@ -206,7 +208,7 @@ export interface IDoesFilterPassParams<TData = any> {
 
 export type FilterAction = 'apply' | 'clear' | 'reset' | 'cancel';
 
-/** Common filter params for all column filters (when using `enableFilterEvaluators = true`) */
+/** Common filter params for all column filters (when using `enableFilterHandlers = true`) */
 export interface FilterWrapperParams {
     /** If `true`, the filter will be wrapped in a `form` element that applies on submit. */
     useForm?: boolean;
@@ -302,7 +304,7 @@ export interface FilterDisplayState<TModel = any, TState = any> {
     valid?: boolean;
 }
 
-export type FilterDisplaySource = 'init' | 'ui' | 'api' | 'colDef' | 'evaluator' | 'floating';
+export type FilterDisplaySource = 'init' | 'ui' | 'api' | 'colDef' | 'handler' | 'floating';
 
 export interface FilterDisplayParams<TData = any, TContext = any, TModel = any, TState = any>
     extends SharedFilterParams<TData, TContext> {
@@ -331,8 +333,12 @@ export interface FilterDisplayParams<TData = any, TContext = any, TModel = any, 
      * will get merged to the FilterUiChangedEvent object.
      */
     onUiChange: (additionalEventAttributes?: any) => void;
-    /** Get the filter evaluator instance. */
-    getEvaluator: () => FilterEvaluator<TData, TContext, TModel>;
+    /**
+     * Get the filter handler instance.
+     * If using a `SimpleColumnFilter`,
+     * the handler is is a wrapper object containing the provided `doesFilterPass` callback.
+     */
+    getHandler: () => FilterHandler<TData, TContext, TModel>;
     source: FilterDisplaySource;
 }
 

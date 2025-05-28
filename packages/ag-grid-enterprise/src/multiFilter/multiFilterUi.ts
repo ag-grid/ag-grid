@@ -13,7 +13,7 @@ import { AgPromise, _getFilterDetails, _refreshFilterUi } from 'ag-grid-communit
 
 import type { BaseFilterComponent } from './baseMultiFilter';
 import { BaseMultiFilter } from './baseMultiFilter';
-import type { MultiFilterEvaluator } from './multiFilterEvaluator';
+import type { MultiFilterHandler } from './multiFilterHandler';
 import {
     getFilterModelForIndex,
     getMultiFilterDefs,
@@ -21,7 +21,7 @@ import {
     updateGetValue,
 } from './multiFilterUtil';
 
-// This version of multi filter is only used when `enableFilterEvaluators = true`
+// This version of multi filter is only used when `enableFilterHandlers = true`
 export class MultiFilterUi
     extends BaseMultiFilter<FilterDisplayComp>
     implements IComponent<IMultiFilterParams & FilterDisplayParams<any, any, IMultiFilterModel>>
@@ -86,7 +86,7 @@ export class MultiFilterUi
     }
 
     public getLastActiveFilterIndex(): number | null {
-        return this.getEvaluator().getLastActiveFilterIndex?.() ?? null;
+        return this.getHandler().getLastActiveFilterIndex?.() ?? null;
     }
 
     public getChildFilterInstance(index: number): FilterDisplayComp | undefined {
@@ -156,10 +156,10 @@ export class MultiFilterUi
               }
             : { model: filterModel };
         const onAnyFilterChanged = () => {
-            const evaluator = this.getEvaluator();
+            const handler = this.getHandler();
             this.filters.forEach((filter, otherIndex) => {
                 if (index !== otherIndex) {
-                    evaluator.getEvaluator(otherIndex)?.onAnyFilterChanged?.();
+                    handler.getHandler(otherIndex)?.onAnyFilterChanged?.();
                     filter?.onAnyFilterChanged?.();
                 }
             });
@@ -170,12 +170,12 @@ export class MultiFilterUi
             ...filterDef,
             doesRowPassOtherFilter: (node) =>
                 doesRowPassOtherFilter(node) &&
-                this.getEvaluator().doesFilterPass(
+                this.getHandler().doesFilterPass(
                     {
                         node,
                         data: node.data,
                         model: this.params.model,
-                        evaluatorParams: colFilter.getEvaluatorParams(column)!,
+                        handlerParams: colFilter.getHandlerParams(column)!,
                     },
                     index
                 ),
@@ -189,7 +189,7 @@ export class MultiFilterUi
                 onAnyFilterChanged();
             },
             onStateChange: (newState) => this.onStateChange(onStateChange, index, newState),
-            getEvaluator: () => this.getEvaluator().getEvaluator(index)!,
+            getHandler: () => this.getHandler().getHandler(index)!,
             onAction: (action, additionalEventAttributes, event) => {
                 const isChange = action === 'apply' || action === 'reset';
                 if (isChange) {
@@ -207,11 +207,11 @@ export class MultiFilterUi
     }
 
     private updateActiveList(index: number, childModel: any): void {
-        this.getEvaluator().updateActiveList?.(index, childModel);
+        this.getHandler().updateActiveList?.(index, childModel);
     }
 
-    private getEvaluator(): MultiFilterEvaluator {
-        return this.params.getEvaluator() as MultiFilterEvaluator;
+    private getHandler(): MultiFilterHandler {
+        return this.params.getHandler() as MultiFilterHandler;
     }
 
     private onStateChange(
@@ -237,6 +237,6 @@ export class MultiFilterUi
     }
 
     public getModelAsString(model: IMultiFilterModel): string {
-        return this.getEvaluator().getModelAsString?.(model) ?? '';
+        return this.getHandler().getModelAsString?.(model) ?? '';
     }
 }

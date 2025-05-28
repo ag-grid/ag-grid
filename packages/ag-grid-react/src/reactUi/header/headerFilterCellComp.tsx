@@ -104,12 +104,12 @@ const HeaderFilterCellComp = ({ ctrl }: { ctrl: HeaderFilterCellCtrl }) => {
     }, [userCompDetails]);
 
     const reactiveCustomComponents = useMemo(() => gos.get('reactiveCustomComponents'), []);
-    const enableFilterEvaluators = useMemo(() => gos.get('enableFilterEvaluators'), []);
+    const enableFilterHandlers = useMemo(() => gos.get('enableFilterHandlers'), []);
     const floatingFilterCompProxy = useRef<FloatingFilterComponentProxy | FloatingFilterDisplayComponentProxy>();
     useEffect(() => {
         if (userCompDetails?.componentFromFramework) {
             if (reactiveCustomComponents) {
-                const ProxyClass = enableFilterEvaluators
+                const ProxyClass = enableFilterHandlers
                     ? FloatingFilterDisplayComponentProxy
                     : FloatingFilterComponentProxy;
                 const compProxy = new ProxyClass(userCompDetails!.params, () => setRenderKey((prev) => prev + 1));

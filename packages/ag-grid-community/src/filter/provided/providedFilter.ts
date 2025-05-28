@@ -142,11 +142,11 @@ export abstract class ProvidedFilter<
     }
 
     public doesFilterPass(params: IDoesFilterPassParams): boolean {
-        const { getEvaluator, model, column } = this.params;
-        return getEvaluator().doesFilterPass({
+        const { getHandler, model, column } = this.params;
+        return getHandler().doesFilterPass({
             ...params,
-            model,
-            evaluatorParams: this.beans.colFilter!.getEvaluatorParams(column)!,
+            model: model!,
+            handlerParams: this.beans.colFilter!.getHandlerParams(column)!,
         });
     }
 

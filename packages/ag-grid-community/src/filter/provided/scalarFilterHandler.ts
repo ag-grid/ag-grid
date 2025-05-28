@@ -1,14 +1,14 @@
 import { _warn } from '../../validation/logging';
 import type { Comparator, IScalarFilterParams } from './iScalarFilter';
 import type { ISimpleFilterModel, ISimpleFilterModelType, Tuple } from './iSimpleFilter';
-import { SimpleFilterEvaluator } from './simpleFilterEvaluator';
+import { SimpleFilterHandler } from './simpleFilterHandler';
 import { isBlank } from './simpleFilterUtils';
 
-export abstract class ScalarFilterEvaluator<
+export abstract class ScalarFilterHandler<
     TModel extends ISimpleFilterModel,
     TValue,
     TParams extends IScalarFilterParams,
-> extends SimpleFilterEvaluator<TModel, TValue, TParams> {
+> extends SimpleFilterHandler<TModel, TValue, TParams> {
     protected abstract comparator(): Comparator<TValue>;
 
     protected abstract isValid(value: TValue): boolean;
