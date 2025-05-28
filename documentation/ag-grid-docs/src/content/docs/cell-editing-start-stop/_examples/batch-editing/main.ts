@@ -73,6 +73,10 @@ const gridOptions: GridOptions = {
     },
 };
 
+function getPendingUpdates() {
+    console.log(gridApi!.getPendingUpdates());
+}
+
 function logState(counts?: boolean) {
     const editingCells = gridApi!.getEditingCells();
     const pendingUpdates = gridApi!.getPendingUpdates();
