@@ -209,7 +209,7 @@ export class EditService extends BeanStub implements NamedBean {
         }
 
         if (updateCells) {
-            this.strategy.updateCells(pendingUpdates, false);
+            this.strategy.updateCells(pendingUpdates, false, false);
         }
 
         return res;

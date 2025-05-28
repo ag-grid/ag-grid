@@ -47,7 +47,11 @@ export abstract class BaseEditStrategy extends BeanStub {
         return _column.isColumnFunc(_rowNode, _column.getColDef().editable);
     }
 
-    public updateCells(updates: PendingUpdates = this.editModel.getPendingUpdates(), forcedState?: boolean): void {
+    public updateCells(
+        updates: PendingUpdates = this.editModel.getPendingUpdates(),
+        forcedState?: boolean,
+        suppressFlash: boolean = true
+    ): void {
         const batchEdit = this.gos.get('batchEdit');
         const forced = forcedState !== undefined;
 
@@ -72,7 +76,7 @@ export abstract class BaseEditStrategy extends BeanStub {
 
                 // force refresh if the cell also uses a renderer for edits
                 cellCtrl?.refreshCell({
-                    suppressFlash: true,
+                    suppressFlash,
                     forceRefresh: true,
                 });
             });
