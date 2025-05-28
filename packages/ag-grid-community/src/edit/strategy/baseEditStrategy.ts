@@ -142,8 +142,8 @@ export abstract class BaseEditStrategy extends BeanStub {
         }
     }
 
-    protected setupEditors(
-        editingCells: CellIdPositions[],
+    public setupEditors(
+        editingCells: CellIdPositions[] = this.editModel.getPendingCellIds(),
         rowNode?: IRowNode | null,
         column?: Column | null,
         key?: string | null,

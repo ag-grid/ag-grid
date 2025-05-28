@@ -75,6 +75,14 @@ export class PaginationService extends BeanStub implements NamedBean {
             return;
         }
 
+        if (this.beans.editSvc?.isEditing()) {
+            if (this.gos.get('batchEdit')) {
+                this.beans.editSvc.strategy?.cleanupEditors();
+            } else {
+                this.beans.editSvc.stopEditing(undefined, undefined, undefined, undefined, undefined, 'api');
+            }
+        }
+
         this.currentPage = page;
         this.calculatePages();
 
@@ -335,5 +343,9 @@ export class PaginationService extends BeanStub implements NamedBean {
             newPageSize,
             keepRenderedRows,
         });
+
+        if (this.beans.editSvc?.isEditing() && this.gos.get('batchEdit')) {
+            this.beans.editSvc?.strategy?.updateCells();
+        }
     }
 }

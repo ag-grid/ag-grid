@@ -7,6 +7,7 @@ import type { Column } from '../interfaces/iColumn';
 import type { IRowNode } from '../interfaces/iRowNode';
 import type { CellPosition } from '../main-umd-noStyles';
 import { CellCtrl } from '../rendering/cell/cellCtrl';
+import { _createCellEvent } from '../rendering/cell/cellEvent';
 import type { RowCtrl } from '../rendering/row/rowCtrl';
 import { PopupEditorWrapper } from './cellEditors/popupEditorWrapper';
 import type { CellIdPositions, EditModelService, PendingUpdates } from './editModelService';
@@ -226,9 +227,6 @@ export class EditService extends BeanStub implements NamedBean {
     private processUpdates(updates: CellIdPositions[], cancel: boolean): void {
         updates.forEach(({ rowNode, column, newValue, oldValue }) => {
             const cellCtrl = _resolveCellController(this.beans, { rowNode, column });
-            if (!cellCtrl) {
-                return;
-            }
 
             const valueChanged = _valuesDiffer({ newValue, oldValue });
             if (!cancel && valueChanged) {
@@ -236,13 +234,17 @@ export class EditService extends BeanStub implements NamedBean {
                 // getting triggered, which results in all cells getting refreshed. we do not want this refresh
                 // to happen on this call as we want to call it explicitly below. otherwise refresh gets called twice.
                 // if we only did this refresh (and not the one below) then the cell would flash and not be forced.
-                cellCtrl.suppressRefreshCell = true;
+                if (cellCtrl) {
+                    cellCtrl.suppressRefreshCell = true;
+                }
                 rowNode.setDataValue(column.getColId(), newValue, 'commit');
-                cellCtrl.suppressRefreshCell = false;
+                if (cellCtrl) {
+                    cellCtrl.suppressRefreshCell = false;
+                }
             }
 
             this.beans.eventSvc.dispatchEvent({
-                ...cellCtrl.createEvent(null, 'cellEditingStopped'),
+                ..._createCellEvent(this.beans, null, 'cellEditingStopped', rowNode, column, newValue),
                 oldValue,
                 newValue,
                 value: newValue,

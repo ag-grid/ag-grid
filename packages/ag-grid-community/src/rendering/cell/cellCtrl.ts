@@ -39,6 +39,7 @@ import type { ICellRenderer, ICellRendererParams } from '../cellRenderers/iCellR
 import type { DndSourceComp } from '../dndSourceComp';
 import type { RowCtrl } from '../row/rowCtrl';
 import type { CellSpan } from '../spanning/rowSpanCache';
+import { _createCellEvent } from './cellEvent';
 import { CellKeyboardListenerFeature } from './cellKeyboardListenerFeature';
 import { CellMouseListenerFeature } from './cellMouseListenerFeature';
 import { CellPositionFeature } from './cellPositionFeature';
@@ -546,19 +547,8 @@ export class CellCtrl extends BeanStub {
 
     public createEvent<T extends AgEventType>(domEvent: Event | null, eventType: T): CellEvent<T> {
         const { rowNode, column, value, beans } = this;
-        const event: CellEvent<T> = _addGridCommonParams(beans.gos, {
-            type: eventType,
-            node: rowNode,
-            data: rowNode.data,
-            value,
-            column,
-            colDef: column.getColDef(),
-            rowPinned: rowNode.rowPinned,
-            event: domEvent,
-            rowIndex: rowNode.rowIndex!,
-        });
 
-        return event;
+        return _createCellEvent<T>(beans, domEvent, eventType, rowNode, column, value);
     }
 
     public processCharacter(event: KeyboardEvent): void {
