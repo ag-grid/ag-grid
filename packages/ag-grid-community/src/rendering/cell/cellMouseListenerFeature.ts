@@ -77,7 +77,9 @@ export class CellMouseListenerFeature extends BeanStub {
             }, 0);
         }
 
-        editSvc?.startEditing(rowNode, column, null, undefined, mouseEvent);
+        if (!editSvc?.isEditing(rowNode, column)) {
+            editSvc?.startEditing(rowNode, column, null, undefined, mouseEvent);
+        }
     }
 
     public onCellDoubleClicked(mouseEvent: MouseEvent) {
@@ -100,7 +102,9 @@ export class CellMouseListenerFeature extends BeanStub {
             }, 0);
         }
 
-        editSvc?.startEditing(rowNode, column, null, undefined, mouseEvent, 'ui');
+        if (!editSvc?.isEditing(rowNode, column)) {
+            editSvc?.startEditing(rowNode, column, null, undefined, mouseEvent, 'ui');
+        }
     }
 
     private onMouseDown(mouseEvent: MouseEvent): void {
