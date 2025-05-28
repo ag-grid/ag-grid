@@ -116,6 +116,13 @@ export class ClientSideExpansionService extends BaseExpansionService implements 
         const func = () => {
             this.rowModel.onRowGroupOpened();
             this.events.forEach((e) => this.eventSvc.dispatchEvent(e));
+
+            // when using footers we need to refresh the group row, as the aggregation
+            // values jump between group and footer, because the footer can be callback
+            // we refresh regardless as the output of the callback could be a moving target
+            const nodes = this.events.map((e) => e.node);
+            this.beans.rowRenderer.refreshCells({ rowNodes: nodes });
+
             this.events = [];
         };
 
