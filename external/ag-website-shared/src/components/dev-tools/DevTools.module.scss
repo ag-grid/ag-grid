@@ -1,0 +1,36 @@
+@use 'design-system' as *;
+
+.devToolsTrigger {
+    user-select: none;
+}
+
+.devToolsContainer {
+    max-width: calc(var(--layout-max-width-small) + var(--layout-horizontal-margins) * 2);
+    margin-right: auto;
+    margin-left: auto;
+    padding: $spacing-size-4;
+    background: var(--color-dev-50);
+    color: var(--color-text-primary);
+
+    @media screen and (min-width: $breakpoint-site-footer-five-column) {
+        justify-content: space-between;
+    }
+
+    h2 {
+        font-size: var(--text-fs-base);
+        margin-top: 0;
+    }
+}
+
+.options {
+    display: flex;
+    flex-direction: row;
+    gap: $spacing-size-4;
+    align-items: center;
+
+    > div {
+        display: flex;
+        align-items: center;
+        min-height: 38px;
+    }
+}

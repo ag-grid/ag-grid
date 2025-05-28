@@ -25,12 +25,35 @@ export const getArchiveUrl = ({ version, site }: { version: string; site: Librar
     return pathJoin(baseUrl, archiveBaseUrl, version);
 };
 
-export const getDocumentationArchiveUrl = ({ version, site }: { version: string; site: Library }) => {
+export const getDocumentationArchiveUrl = ({
+    version,
+    site,
+    path,
+}: {
+    version: string;
+    site: Library;
+    path?: string;
+}) => {
     const versionArchiveLink = getArchiveUrl({ version, site });
+
     const useDocumentationLink = getHasDocumentationLink({ version, site });
-    const documentationArchiveLink = useDocumentationLink
-        ? pathJoin(versionArchiveLink, '/documentation')
-        : versionArchiveLink;
+    let documentationArchiveLink = versionArchiveLink;
+    if (path) {
+        documentationArchiveLink = pathJoin(versionArchiveLink, path);
+    } else if (useDocumentationLink) {
+        documentationArchiveLink = pathJoin(versionArchiveLink, '/documentation');
+    }
 
     return documentationArchiveLink;
 };
+
+/**
+ * Get version from current URL, from the segment after 'archive'
+ */
+export function getVersionFromUrl() {
+    const pathParts = window.location.pathname.split('/');
+    const archiveIndex = pathParts.indexOf('archive');
+    if (archiveIndex >= 0) {
+        return pathParts[archiveIndex + 1];
+    }
+}

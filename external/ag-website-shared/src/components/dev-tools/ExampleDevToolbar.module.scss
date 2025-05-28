@@ -1,0 +1,36 @@
+@use 'design-system' as *;
+
+.exampleLinksContainer {
+    display: flex;
+    flex-direction: row;
+    gap: $spacing-size-2;
+    align-items: center;
+    background: var(--color-dev-50);
+    margin: 0 $spacing-size-10 0 0;
+    padding: $spacing-size-1;
+    border: 1px solid var(--color-dev-500);
+    border-radius: var(--radius-sm);
+}
+
+.exampleLinks {
+    display: flex;
+    flex-direction: row;
+    gap: $spacing-size-3;
+    align-items: center;
+}
+
+.exampleLink {
+    text-transform: capitalize;
+}
+
+.frameworkLogo {
+    width: 16px;
+    height: 16px;
+    border-radius: 4px;
+}
+
+.frameworkItem {
+    display: flex;
+    gap: $spacing-size-2;
+    align-items: center;
+}

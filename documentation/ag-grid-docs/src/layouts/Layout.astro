@@ -1,4 +1,5 @@
 ---
+import { DevTools } from '@ag-website-shared/components/dev-tools/DevTools';
 import { getEntry, type CollectionEntry } from 'astro:content';
 import '@design-system/design-system.scss';
 import SiteHeader from '@ag-website-shared/components/site-header/SiteHeader.astro';
@@ -175,8 +176,13 @@ const isHomepage = Astro.url.pathname.replaceAll('/', '') === SITE_BASE_URL.repl
 
         {
             !hideFooter && (
-                <Footer showMicrosoftMessage={path === SITE_BASE_URL || path === undefined} footerItems={footerItems} />
+                <Footer
+                    client:load
+                    showMicrosoftMessage={path === SITE_BASE_URL || path === undefined}
+                    footerItems={footerItems}
+                />
             )
         }
+        <DevTools client:only />
     </body>
 </html>

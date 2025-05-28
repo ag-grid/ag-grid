@@ -93,6 +93,18 @@ export const STAGING_SITE_URL = 'https://grid-staging.ag-grid.com';
 export const PRODUCTION_SITE_URLS = ['https://ag-grid.com', 'https://www.ag-grid.com'];
 export const USE_PUBLISHED_PACKAGES = isTruthy(import.meta.env?.PUBLIC_USE_PUBLISHED_PACKAGES);
 
+export const URL_CONFIG: Record<'local' | 'staging' | 'production', { hosts: string[]; baseUrl?: string }> = {
+    local: {
+        hosts: ['localhost:4610'],
+    },
+    staging: {
+        hosts: ['grid-staging.ag-grid.com'],
+    },
+    production: {
+        hosts: ['www.ag-grid.com', 'ag-grid.com'],
+    },
+};
+
 /**
  * Show debug logs
  */

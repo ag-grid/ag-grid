@@ -69,6 +69,10 @@
         color: var(--violet-11);
         cursor: default;
     }
+
+    &.constrainHeight {
+        max-height: 400px;
+    }
 }
 
 .item.large {
