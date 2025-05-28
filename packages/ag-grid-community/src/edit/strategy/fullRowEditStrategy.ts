@@ -1,4 +1,5 @@
 import type { BeanName } from '../../context/context';
+import type { AgColumn } from '../../entities/agColumn';
 import type { CellFocusedEvent } from '../../events';
 import type { Column } from '../../interfaces/iColumn';
 import type { IRowNode } from '../../interfaces/iRowNode';
@@ -18,6 +19,22 @@ export class FullRowEditStrategy extends BaseEditStrategy {
             gui.rowComp.toggleCss('ag-row-editing', newState ?? false);
             gui.rowComp.toggleCss('ag-row-batch-edit', (newState && batchEdit) ?? false);
         });
+    }
+
+    public override isCellEditable(
+        _rowNode: IRowNode<any>,
+        _column: AgColumn<any>,
+        source: 'api' | 'ui' = 'ui'
+    ): boolean {
+        const editable = super.isCellEditable(_rowNode, _column, source);
+
+        if (editable === true || source === 'ui') {
+            return editable;
+        }
+
+        // check if other cells in row are editable, so starting edit on uneditable cell will still work
+        const columns = this.beans.colModel.getCols();
+        return columns.some((col) => super.isCellEditable(_rowNode, col, source));
     }
 
     public override shouldStopEditing(

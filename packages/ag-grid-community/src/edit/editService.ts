@@ -118,7 +118,9 @@ export class EditService extends BeanStub implements NamedBean {
         source: 'api' | 'ui' = 'ui',
         silent: boolean = false
     ): boolean {
-        if (!column.isCellEditable(rowNode)) {
+        this.strategy ??= this.createStrategy();
+
+        if (!this.isCellEditable(rowNode, column, 'api')) {
             return false;
         }
 
@@ -131,8 +133,6 @@ export class EditService extends BeanStub implements NamedBean {
             });
             return true;
         }
-
-        this.strategy ??= this.createStrategy();
 
         const batchEdit = this.gos.get('batchEdit');
 
@@ -266,7 +266,7 @@ export class EditService extends BeanStub implements NamedBean {
         }
     }
 
-    public isCellEditable(column: AgColumn, rowNode: IRowNode): boolean {
+    public isCellEditable(rowNode: IRowNode, column: Column, source: 'api' | 'ui' = 'ui'): boolean {
         if (rowNode.group) {
             // This is a group - it could be a tree group or a grouping group...
             if (this.gos.get('treeData')) {
@@ -283,7 +283,8 @@ export class EditService extends BeanStub implements NamedBean {
             }
         }
 
-        return column.isColumnFunc(rowNode, column.colDef.editable);
+        this.strategy ??= this.createStrategy();
+        return this.strategy?.isCellEditable(rowNode, column as AgColumn, source) ?? false;
     }
 
     moveToNextCell(

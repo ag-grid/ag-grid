@@ -1,6 +1,7 @@
 import { KeyCode } from '../../constants/keyCode';
 import { BeanStub } from '../../context/beanStub';
 import type { BeanName } from '../../context/context';
+import type { AgColumn } from '../../entities/agColumn';
 import type { ColDef } from '../../entities/colDef';
 import type { AgEventType } from '../../eventTypes';
 import type { CellFocusedEvent } from '../../events';
@@ -41,6 +42,10 @@ export abstract class BaseEditStrategy extends BeanStub {
         event?: KeyboardEvent,
         source?: 'api' | 'ui'
     ): boolean | null;
+
+    public isCellEditable(_rowNode: IRowNode, _column: AgColumn, _source: 'api' | 'ui' = 'ui'): boolean {
+        return _column.isColumnFunc(_rowNode, _column.getColDef().editable);
+    }
 
     public updateCells(updates: PendingUpdates = this.editModel.getPendingUpdates(), forcedState?: boolean): void {
         const batchEdit = this.gos.get('batchEdit');
