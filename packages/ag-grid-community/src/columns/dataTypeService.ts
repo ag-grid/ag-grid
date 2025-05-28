@@ -437,7 +437,7 @@ export class DataTypeService extends BeanStub implements NamedBean {
         return this.getDateStringTypeDefinition(column).dateFormatter!;
     }
 
-    public getDateIncludesTimeFlag(cellDataType?: any): cellDataType is 'dateTime' | 'dateTimeString' {
+    public getDateIncludesTimeFlag(cellDataType?: any): boolean {
         return cellDataType === 'dateTime' || cellDataType === 'dateTimeString';
     }
 
