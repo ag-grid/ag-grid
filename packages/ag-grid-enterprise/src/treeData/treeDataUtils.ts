@@ -1,8 +1,17 @@
 import type { BeanCollection, IsGroupOpenByDefaultParams, WithoutGridCommon } from 'ag-grid-community';
-import { RowNode, _warn } from 'ag-grid-community';
+import { RowNode, _ROW_ID_PREFIX_ROW_GROUP, _warn } from 'ag-grid-community';
 
 import type { GroupingRowNode } from '../rowHierarchy/rowHierarchyUtils';
-import { _resetRowGroup } from '../rowHierarchy/rowHierarchyUtils';
+
+export const makeFillerRowId = (treeParent: GroupingRowNode<any>, leafKey: string, level: number): string => {
+    let id = level + '-' + leafKey;
+    let current = treeParent;
+    while (--level >= 0) {
+        id = level + '-' + current.key + '-' + id;
+        current = current.treeParent!;
+    }
+    return _ROW_ID_PREFIX_ROW_GROUP + id;
+};
 
 export const newFillerRow = <TData>(
     beans: BeanCollection,
@@ -22,16 +31,9 @@ export const newFillerRow = <TData>(
     return filler;
 };
 
-export const destroyFillerRow = <TData>(node: GroupingRowNode<TData>): void => {
-    _resetRowGroup(node);
-    node.parent = null;
-    node.treeParent = null;
-    node.clearRowTopAndRowIndex();
-};
-
 export type DuplicatePathRowMap<TData> = Map<string, GroupingRowNode<TData>[]>;
 
-export const addDuplicatePathRow = <TData>(
+export const duplicatePathAdd = <TData>(
     map: DuplicatePathRowMap<TData> | undefined,
     pathKey: string,
     existing: GroupingRowNode<TData>,
@@ -54,7 +56,7 @@ export const addDuplicatePathRow = <TData>(
 const compareSourceRowIndex = <TData>(a: GroupingRowNode<TData>, b: GroupingRowNode<TData>): number =>
     a.sourceRowIndex - b.sourceRowIndex;
 
-export const warnDuplicatePathRows = <TData>(map: DuplicatePathRowMap<TData>): void => {
+export const duplicatePathWarn = <TData>(map: DuplicatePathRowMap<TData>): void => {
     for (const array of map.values()) {
         array.sort(compareSourceRowIndex);
         const row = array[0];

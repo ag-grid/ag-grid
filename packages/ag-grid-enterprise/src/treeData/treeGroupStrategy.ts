@@ -1,6 +1,6 @@
 import type { GroupingApproach, IChangedRowNodes, IRowGroupingStrategy, StageExecuteParams } from 'ag-grid-community';
 import type { RowNode } from 'ag-grid-community';
-import { BeanStub, _EmptyArray, _ROW_ID_PREFIX_ROW_GROUP, _warn } from 'ag-grid-community';
+import { BeanStub, _EmptyArray, _warn } from 'ag-grid-community';
 
 import { setRowNodeGroup } from '../rowGrouping/rowGroupingUtils';
 import type { GroupingRowNode } from '../rowHierarchy/rowHierarchyUtils';
@@ -8,15 +8,15 @@ import type { DataFieldGetter } from './fieldAccess';
 import { makeFieldPathGetter } from './fieldAccess';
 import type { DuplicatePathRowMap } from './treeDataUtils';
 import {
-    addDuplicatePathRow,
     addProcessedNodes,
-    destroyFillerRow,
+    duplicatePathAdd,
+    duplicatePathWarn,
     getExpandedInitialValue,
+    makeFillerRowId,
     newFillerRow,
     updateAllLeafChildren,
     updateRootArrays,
     updateRowArrays,
-    warnDuplicatePathRows,
 } from './treeDataUtils';
 
 const FLAG_CHANGED = 0x80000000;
@@ -24,8 +24,6 @@ const FLAG_CHILDREN_CHANGED = 0x40000000;
 const FLAG_EXPANDED_INITIALIZED = 0x20000000;
 const FLAG_FILLER_NODE = 0x10000000;
 const MASK_CHILDREN_LENGTH = 0x0fffffff; // This equates to 268,435,455 maximum children per parent, more than enough
-
-type ParentIdGetter<TData> = DataFieldGetter<TData, string>;
 
 /**
  * Path key separator used internally to maintain a flat path dictionary to map nodes to a path and vice versa.
@@ -36,7 +34,7 @@ const PATH_KEY_SEPARATOR_LEN = PATH_KEY_SEPARATOR.length;
 
 export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGroupingStrategy<TData> {
     private groupColsIds: string | null = null;
-    private parentIdGetter: ParentIdGetter<TData> | null = null;
+    private parentIdGetter: DataFieldGetter<TData, string> | null = null;
     private fillerNodesById: Map<string, GroupingRowNode<TData>> | null = null;
 
     public override destroy(): void {
@@ -50,33 +48,30 @@ export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGrou
         this.groupColsIds = null;
         this.parentIdGetter = null;
         this.destroyFillerRows(true, false);
-        this.fillerNodesById = null;
     }
 
     public execute(params: StageExecuteParams<TData>, approach: GroupingApproach) {
         // Instead of trying to optimize for immutable row update and transactions when a small portion of the tree changes
-        // the decision here was to implement with two linear loops, first all nodes and then a tree traversal,
-        // reducing allocations to the minimum possible.
+        // the decision here was to implement with linear loops, first process all nodes and then a tree traversal, reducing allocations to minimum.
+        // This removes also the need of sorting or post sorting the nodes, as the tree traversal will always process the nodes in the right order.
         // We do not allocate new arrays for childrenAfterGroup and allLeafChildren, we just update the existing arrays.
         // This ensures a simpler code and less complexity, and also that enough speed for the vast majority of cases.
-        // Consider that trying other approaches might be more complex and potentially not as fast,
-        // as the user can always move an entire subtree by changing a single parentId.
-        //
+        // Consider that trying other approaches might be more complex and potentially not as fast, as the user can always move an entire subtree by changing a single parent.
         // To further reduce allocations, we use treeNodeFlags to store both temporary flags,
         // the expanded initialized state and the future children count between the first loop and the tree traversal.
         // This avoid the needs to create complex data structures to store temporary data or add more fields to the row nodes.
-        //
         // The property treeParent is used to store the parent node and detect updates in the tree structure during execution,
         // thus setting a treeParent and then executing a row grouping operation will work as expected, and this is used for managed drag and drop.
         // treeParent is also set by the tree data with children node manager to store the parent node during load or updates of the row data.
 
-        const gos = this.gos;
         const { changedRowNodes, changedPath, afterColumnsChanged } = params;
         const rootNode = params.rowNode as GroupingRowNode<TData>;
+        const gos = this.gos;
 
         let fullReload = !changedRowNodes && !changedPath?.active;
         let rootChildrenAfterGroup = rootNode.childrenAfterGroup;
-        if (!rootChildrenAfterGroup || rootChildrenAfterGroup === rootNode.allLeafChildren) {
+        const rootAllLeafChildren = rootNode.allLeafChildren!;
+        if (!rootChildrenAfterGroup || rootChildrenAfterGroup === rootAllLeafChildren) {
             fullReload = true;
             rootNode.childrenAfterGroup = rootChildrenAfterGroup = [];
         }
@@ -86,7 +81,7 @@ export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGrou
             groupDisplayColIdsChanged = this.updateGroupDisplayColsIds();
         }
 
-        const hasUpdates = flagUpdatedNodes(changedRowNodes);
+        const hasUpdates = !!changedRowNodes && flagUpdatedNodes(changedRowNodes);
 
         const treePathApproach = approach === 'treePath';
         const renderEmpty = approach === 'treeSelfRef' && !gos.get('getRowId'); // If getRowId is not provided, we make an empty tree
@@ -101,7 +96,6 @@ export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGrou
             }
 
             // Loop all the nodes, and put the children in the right place, updating the parent and the children arrays
-            const rootAllLeafChildren = rootNode.allLeafChildren!;
             for (let i = 0, len = rootAllLeafChildren.length; i < len; ++i) {
                 preprocessedCount += preprocessRow(rootAllLeafChildren[i]);
             }
@@ -211,25 +205,6 @@ export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGrou
         }
     }
 
-    private updateGroupDisplayColsIds(): boolean {
-        const cols = this.beans.showRowGroupCols?.getShowRowGroupCols();
-        const colsLen = cols?.length;
-        const oldGroupColsIds = this.groupColsIds;
-        let groupColsIds: string | null = oldGroupColsIds !== null ? '' : null;
-        if (colsLen) {
-            groupColsIds = cols[0].getId();
-            for (let i = 1; i < colsLen; ++i) {
-                groupColsIds += '\0';
-                groupColsIds += cols[i].getId();
-            }
-        }
-        if (oldGroupColsIds === groupColsIds) {
-            return false; // No change
-        }
-        this.groupColsIds = groupColsIds;
-        return true;
-    }
-
     private setGroupData(row: RowNode, key: string): void {
         const groupData: Record<string, string> = {};
         row.groupData = groupData;
@@ -239,6 +214,25 @@ export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGrou
                 groupData[col.getColId()] = key;
             }
         }
+    }
+
+    private updateGroupDisplayColsIds(): boolean {
+        const cols = this.beans.showRowGroupCols?.getShowRowGroupCols();
+        const colsLen = cols?.length;
+        const oldGroupColsIds = this.groupColsIds;
+        let groupColsIds: string | null = oldGroupColsIds !== null ? '' : null;
+        if (colsLen) {
+            groupColsIds = cols[0].getId();
+            for (let i = 1; i < colsLen; ++i) {
+                groupColsIds += PATH_KEY_SEPARATOR;
+                groupColsIds += cols[i].getId();
+            }
+        }
+        if (oldGroupColsIds === groupColsIds) {
+            return false; // No change
+        }
+        this.groupColsIds = groupColsIds;
+        return true;
     }
 
     private loadSelfRef({ rowNode, changedRowNodes }: StageExecuteParams<TData>, fullReload: boolean): void {
@@ -273,11 +267,9 @@ export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGrou
     }
 
     private loadDataPath({ rowNode, changedRowNodes }: StageExecuteParams<TData>, fullReload: boolean): void {
-        const beans = this.beans;
         const rootNode = rowNode as GroupingRowNode<TData>;
         const allLeafChildren = rootNode.allLeafChildren!;
         const allLeafChildrenLen = allLeafChildren.length;
-        const fillerNodesById = (this.fillerNodesById ??= new Map<string, GroupingRowNode<TData>>());
         const nodesByPath = new Map<string, GroupingRowNode<TData>>();
         const getDataPath = this.gos.get('getDataPath');
         let duplicateRows: DuplicatePathRowMap<TData> | undefined;
@@ -290,7 +282,7 @@ export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGrou
                 if (node.sourceRowIndex < existing.sourceRowIndex) {
                     nodesByPath.set(pathKey, node); // If the existing node has a higher sourceRowIndex, we replace it with the current node
                 }
-                duplicateRows = addDuplicatePathRow(duplicateRows, pathKey, existing, node);
+                duplicateRows = duplicatePathAdd(duplicateRows, pathKey, existing, node);
             }
         };
 
@@ -317,16 +309,14 @@ export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGrou
                 const path = getDataPath ? getDataPath(node.data!) : [node.id!];
                 if (!path?.length) {
                     _warn(185, { data: node.data });
-                    return;
+                    continue;
                 }
-
                 const key = path[path.length - 1];
                 if (node.key !== key) {
                     node.key = key;
                     node.treeNodeFlags |= FLAG_CHANGED;
                     node.groupData = null;
                 }
-
                 setNode(path.join(PATH_KEY_SEPARATOR), node);
             }
 
@@ -334,16 +324,20 @@ export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGrou
         }
 
         if (duplicateRows) {
-            warnDuplicatePathRows(duplicateRows);
+            duplicatePathWarn(duplicateRows);
         }
+        this.treeFromPaths(rootNode, nodesByPath);
+        this.destroyFillerRows(false, !!changedRowNodes);
+    }
 
+    private treeFromPaths(rootNode: GroupingRowNode<TData>, nodesByPath: Map<string, GroupingRowNode<TData>>): void {
+        const beans = this.beans;
+        let fillerNodesById = this.fillerNodesById;
         for (const pathKey of nodesByPath.keys()) {
             const node = nodesByPath.get(pathKey)!;
             if (node.treeParent !== null) {
                 continue; // Already processed
             }
-
-            let treeParent: GroupingRowNode<TData> | null = rootNode;
 
             // First let's see if the parent is already in the map, if so we can use it directly
             const lastSep = pathKey.lastIndexOf(PATH_KEY_SEPARATOR);
@@ -353,40 +347,39 @@ export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGrou
                 continue; // Parent already exists, fast path
             }
 
-            let pathKeyStart = 0;
             let level = 0;
-            while (true) {
+            let pathKeyStart = 0;
+            let treeParent: GroupingRowNode<TData> | null = rootNode;
+            const pathKeyLen = pathKey.length;
+            while (pathKeyStart < pathKeyLen) {
                 const pathKeyPos = pathKey.indexOf(PATH_KEY_SEPARATOR, pathKeyStart);
                 if (pathKeyPos === -1) {
                     break; // No more separators, we reached the leaf node
                 }
-
                 const subPathKey = pathKey.slice(0, pathKeyPos);
                 let current = nodesByPath.get(subPathKey);
                 if (!current) {
                     const leafKey = pathKey.slice(pathKeyStart, pathKeyPos);
-                    const fillerId = makeFillerRowId(leafKey, level, treeParent);
-                    current = fillerNodesById.get(fillerId);
+                    const fillerId = makeFillerRowId(treeParent, leafKey, level);
+                    if (fillerNodesById === null) {
+                        this.fillerNodesById = fillerNodesById = new Map<string, GroupingRowNode<TData>>();
+                    } else {
+                        current = fillerNodesById.get(fillerId);
+                    }
                     if (!current) {
                         current = newFillerRow(beans, fillerId, leafKey, treeParent);
-                        current.treeNodeFlags = FLAG_CHANGED;
                         fillerNodesById.set(fillerId, current);
                     }
-
                     current.treeNodeFlags |= FLAG_FILLER_NODE;
                     nodesByPath.set(subPathKey, current);
                 }
-
                 current.treeParent = treeParent;
                 treeParent = current;
+                ++level;
                 pathKeyStart = pathKeyPos + PATH_KEY_SEPARATOR_LEN;
-                level++;
             }
-
             node.treeParent = treeParent;
         }
-
-        this.destroyFillerRows(false, !!changedRowNodes);
     }
 
     private destroyFillerRows(destroyAll: boolean, updated: boolean): void {
@@ -394,7 +387,6 @@ export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGrou
         if (!fillerNodesById) {
             return;
         }
-
         let nodesToUnselect: GroupingRowNode<TData>[] | undefined;
         for (const node of fillerNodesById.values()) {
             if (destroyAll || (node.treeNodeFlags & FLAG_FILLER_NODE) === 0) {
@@ -403,12 +395,14 @@ export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGrou
                 if (node.isSelected()) {
                     (nodesToUnselect ??= []).push(node);
                 }
-                destroyFillerRow(node);
+                node.clearRowTopAndRowIndex();
             } else {
                 node.treeNodeFlags &= ~FLAG_FILLER_NODE; // Reset the flag
             }
         }
-
+        if (fillerNodesById.size === 0) {
+            this.fillerNodesById = null;
+        }
         if (destroyAll || updated || nodesToUnselect) {
             this.deselectNodes(nodesToUnselect);
         }
@@ -471,27 +465,21 @@ const handleCycles = <TData>(
     }
 };
 
-const flagUpdatedNodes = <TData>(changedRowNodes: IChangedRowNodes<TData> | undefined): boolean => {
-    if (!changedRowNodes) {
-        return false;
-    }
+const flagUpdatedNodes = <TData>(changedRowNodes: IChangedRowNodes<TData>): boolean => {
     const { adds, updates, removals } = changedRowNodes;
     let hasUpdates = removals.size > 0;
-
     if (adds.size > 0) {
         hasUpdates = true;
         for (const node of adds) {
             (node as GroupingRowNode<TData>).treeNodeFlags |= FLAG_CHANGED;
         }
     }
-
     if (updates.size > 0) {
         hasUpdates = true;
         for (const node of updates) {
             (node as GroupingRowNode<TData>).treeNodeFlags |= FLAG_CHANGED;
         }
     }
-
     return hasUpdates;
 };
 
@@ -573,15 +561,4 @@ const hideRow = <TData>(row: GroupingRowNode<TData>): void => {
             oldParent.treeNodeFlags |= FLAG_CHANGED;
         }
     }
-};
-
-const makeFillerRowId = (leafKey: string, level: number, treeParent: GroupingRowNode<any>): string => {
-    let id = level + '-' + leafKey;
-    let current = treeParent;
-    for (let i = level - 1; i >= 0; --i) {
-        const key = current.key!;
-        id = i + '-' + key + '-' + id;
-        current = current.treeParent!;
-    }
-    return _ROW_ID_PREFIX_ROW_GROUP + id;
 };
