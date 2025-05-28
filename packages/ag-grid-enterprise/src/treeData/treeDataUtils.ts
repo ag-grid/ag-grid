@@ -1,16 +1,8 @@
 import type { BeanCollection, IsGroupOpenByDefaultParams, WithoutGridCommon } from 'ag-grid-community';
-import { RowNode, _ROW_ID_PREFIX_ROW_GROUP, _warn } from 'ag-grid-community';
+import { RowNode, _warn } from 'ag-grid-community';
 
 import type { GroupingRowNode } from '../rowHierarchy/rowHierarchyUtils';
 import { _resetRowGroup } from '../rowHierarchy/rowHierarchyUtils';
-
-export const makeFillerRowId = (path: string[], level: number): string => {
-    let id = level + '-' + path[level];
-    for (let i = level - 1; i >= 0; --i) {
-        id = i + '-' + path[i] + '-' + id;
-    }
-    return _ROW_ID_PREFIX_ROW_GROUP + id;
-};
 
 export const newFillerRow = <TData>(
     beans: BeanCollection,
@@ -37,12 +29,7 @@ export const destroyFillerRow = <TData>(node: GroupingRowNode<TData>): void => {
     node.clearRowTopAndRowIndex();
 };
 
-export interface DuplicatePathRow<TData> {
-    row: GroupingRowNode;
-    data: TData[];
-}
-
-export type DuplicatePathRowMap<TData> = Map<string, DuplicatePathRow<TData>>;
+export type DuplicatePathRowMap<TData> = Map<string, GroupingRowNode<TData>[]>;
 
 export const addDuplicatePathRow = <TData>(
     map: DuplicatePathRowMap<TData> | undefined,
@@ -50,31 +37,33 @@ export const addDuplicatePathRow = <TData>(
     existing: GroupingRowNode<TData>,
     duplicate: GroupingRowNode<TData>
 ): DuplicatePathRowMap<TData> => {
-    let entry: DuplicatePathRow<TData> | undefined;
+    let array: GroupingRowNode<TData>[] | undefined;
     if (!map) {
         map = new Map();
     } else {
-        entry = map.get(pathKey);
+        array = map.get(pathKey);
     }
-    if (entry === undefined) {
-        map.set(pathKey, {
-            row: existing,
-            data: [duplicate.data!],
-        });
+    if (array === undefined) {
+        map.set(pathKey, [existing, duplicate]);
     } else {
-        entry.data.push(duplicate.data!);
+        array.push(duplicate);
     }
     return map;
 };
 
-export const warnDuplicatePathRows = <TData>(map: Map<string, DuplicatePathRow<TData>>): void => {
-    for (const entry of map.values()) {
-        const row = entry.row;
-        _warn(186, {
-            rowId: row.id,
-            rowData: row.data,
-            duplicateRowsData: entry.data,
-        }); // Duplicate path
+const compareSourceRowIndex = <TData>(a: GroupingRowNode<TData>, b: GroupingRowNode<TData>): number =>
+    a.sourceRowIndex - b.sourceRowIndex;
+
+export const warnDuplicatePathRows = <TData>(map: DuplicatePathRowMap<TData>): void => {
+    for (const array of map.values()) {
+        array.sort(compareSourceRowIndex);
+        const row = array[0];
+        const length = array.length;
+        const duplicateRowsData = new Array(array.length - 1);
+        for (let i = 1; i < length; i++) {
+            duplicateRowsData[i - 1] = array[i].data;
+        }
+        _warn(186, { rowId: row.id, rowData: row.data, duplicateRowsData }); // Duplicate path
     }
 };
 

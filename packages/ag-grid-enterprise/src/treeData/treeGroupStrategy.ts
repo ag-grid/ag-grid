@@ -1,6 +1,6 @@
 import type { GroupingApproach, IChangedRowNodes, IRowGroupingStrategy, StageExecuteParams } from 'ag-grid-community';
 import type { RowNode } from 'ag-grid-community';
-import { BeanStub, _EmptyArray, _warn } from 'ag-grid-community';
+import { BeanStub, _EmptyArray, _ROW_ID_PREFIX_ROW_GROUP, _warn } from 'ag-grid-community';
 
 import { setRowNodeGroup } from '../rowGrouping/rowGroupingUtils';
 import type { GroupingRowNode } from '../rowHierarchy/rowHierarchyUtils';
@@ -12,7 +12,6 @@ import {
     addProcessedNodes,
     destroyFillerRow,
     getExpandedInitialValue,
-    makeFillerRowId,
     newFillerRow,
     updateAllLeafChildren,
     updateRootArrays,
@@ -28,7 +27,12 @@ const MASK_CHILDREN_LENGTH = 0x0fffffff; // This equates to 268,435,455 maximum 
 
 type ParentIdGetter<TData> = DataFieldGetter<TData, string>;
 
-const PATH_KEY_SEPARATOR = '\0\rAG\t\0';
+/**
+ * Path key separator used internally to maintain a flat path dictionary to map nodes to a path and vice versa.
+ * It contains two random character (32 bit of entropy) to avoid the risk of intentional collisions or abuse.
+ */
+const PATH_KEY_SEPARATOR = String.fromCharCode(0x1f, Math.random() * 0x10000, Math.random() * 0x10000, 0x2063);
+const PATH_KEY_SEPARATOR_LEN = PATH_KEY_SEPARATOR.length;
 
 export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGroupingStrategy<TData> {
     private groupColsIds: string | null = null;
@@ -97,7 +101,10 @@ export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGrou
             }
 
             // Loop all the nodes, and put the children in the right place, updating the parent and the children arrays
-            preprocessedCount = preprocessRows(params, approach);
+            const rootAllLeafChildren = rootNode.allLeafChildren!;
+            for (let i = 0, len = rootAllLeafChildren.length; i < len; ++i) {
+                preprocessedCount += preprocessRow(rootAllLeafChildren[i]);
+            }
         }
 
         rootChildrenAfterGroup.length = rootNode.treeNodeFlags & MASK_CHILDREN_LENGTH;
@@ -266,30 +273,51 @@ export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGrou
     }
 
     private loadDataPath({ rowNode, changedRowNodes }: StageExecuteParams<TData>, fullReload: boolean): void {
-        const nodesByPath = new Map<string, GroupingRowNode<TData>>();
-
+        const beans = this.beans;
         const rootNode = rowNode as GroupingRowNode<TData>;
         const allLeafChildren = rootNode.allLeafChildren!;
         const allLeafChildrenLen = allLeafChildren.length;
-        const paths = new Array<string[] | undefined>(allLeafChildrenLen);
-
-        const getDataPath = this.gos.get('getDataPath');
-
         const fillerNodesById = (this.fillerNodesById ??= new Map<string, GroupingRowNode<TData>>());
-
+        const nodesByPath = new Map<string, GroupingRowNode<TData>>();
+        const getDataPath = this.gos.get('getDataPath');
         let duplicateRows: DuplicatePathRowMap<TData> | undefined;
 
-        // Cache paths and detect duplicates
+        const setNode = (pathKey: string, node: GroupingRowNode<TData>): void => {
+            const existing = nodesByPath.get(pathKey);
+            if (existing === undefined) {
+                nodesByPath.set(pathKey, node);
+            } else if (existing !== node) {
+                if (node.sourceRowIndex < existing.sourceRowIndex) {
+                    nodesByPath.set(pathKey, node); // If the existing node has a higher sourceRowIndex, we replace it with the current node
+                }
+                duplicateRows = addDuplicatePathRow(duplicateRows, pathKey, existing, node);
+            }
+        };
+
+        if (!fullReload) {
+            for (let i = 0; i < allLeafChildrenLen; ++i) {
+                const node = allLeafChildren[i];
+                let treeParent = node.treeParent;
+                if (treeParent === null || node.treeNodeFlags & FLAG_CHANGED) {
+                    continue;
+                }
+                let pathKey = node.key!;
+                while (treeParent && treeParent !== rootNode) {
+                    pathKey = PATH_KEY_SEPARATOR + pathKey;
+                    pathKey = treeParent.key! + pathKey;
+                    treeParent = treeParent.treeParent;
+                }
+                setNode(pathKey, node);
+            }
+        }
+
         for (let i = 0; i < allLeafChildrenLen; ++i) {
             const node = allLeafChildren[i];
-
-            let path: string[] | undefined;
-
-            if (fullReload || node.treeNodeFlags & FLAG_CHANGED || !node.treeParent) {
-                path = getDataPath ? getDataPath(node.data!) : [node.id!];
+            if (fullReload || node.treeParent === null || node.treeNodeFlags & FLAG_CHANGED) {
+                const path = getDataPath ? getDataPath(node.data!) : [node.id!];
                 if (!path?.length) {
-                    _warn(185, { data: node.data }); // Empty path
-                    continue;
+                    _warn(185, { data: node.data });
+                    return;
                 }
 
                 const key = path[path.length - 1];
@@ -298,70 +326,64 @@ export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGrou
                     node.treeNodeFlags |= FLAG_CHANGED;
                     node.groupData = null;
                 }
-            } else {
-                path = [node.key ?? node.id!];
-                let parent: GroupingRowNode<TData> | null = node.treeParent;
-                while (parent && parent !== rootNode) {
-                    path.push(parent.key ?? parent.id!);
-                    parent = parent.treeParent;
-                }
-                path.reverse();
+
+                setNode(path.join(PATH_KEY_SEPARATOR), node);
             }
 
-            const pathKey = path.join(PATH_KEY_SEPARATOR);
-            const existing = nodesByPath.get(pathKey);
-            if (existing !== undefined) {
-                duplicateRows = addDuplicatePathRow(duplicateRows, pathKey, existing, node);
-                continue;
-            }
-
-            paths[i] = path;
-            nodesByPath.set(pathKey, node);
+            node.treeParent = null; // Reset the treeParent to be set later
         }
 
         if (duplicateRows) {
             warnDuplicatePathRows(duplicateRows);
         }
 
-        // Build tree structure
-        const beans = this.beans;
-        for (let i = 0; i < allLeafChildrenLen; ++i) {
-            const node = allLeafChildren[i];
-            const path = paths[i];
-            if (!path) {
-                node.treeParent = null;
-                continue;
+        for (const pathKey of nodesByPath.keys()) {
+            const node = nodesByPath.get(pathKey)!;
+            if (node.treeParent !== null) {
+                continue; // Already processed
             }
 
-            const pathLen = path.length;
-            let parent = rootNode;
+            let treeParent: GroupingRowNode<TData> | null = rootNode;
 
-            let pathKey: string = '';
-            for (let level = 0; level < pathLen - 1; level++) {
-                const key = String(path[level]);
+            // First let's see if the parent is already in the map, if so we can use it directly
+            const lastSep = pathKey.lastIndexOf(PATH_KEY_SEPARATOR);
+            const parentNode = lastSep === -1 ? rootNode : nodesByPath.get(pathKey.slice(0, lastSep));
+            if (parentNode !== undefined) {
+                node.treeParent = parentNode;
+                continue; // Parent already exists, fast path
+            }
 
-                if (level > 0) {
-                    pathKey += PATH_KEY_SEPARATOR;
+            let pathKeyStart = 0;
+            let level = 0;
+            while (true) {
+                const pathKeyPos = pathKey.indexOf(PATH_KEY_SEPARATOR, pathKeyStart);
+                if (pathKeyPos === -1) {
+                    break; // No more separators, we reached the leaf node
                 }
-                pathKey += key;
 
-                let current = nodesByPath.get(pathKey);
-                if (current === undefined) {
-                    const fillerId = makeFillerRowId(path, level);
+                const subPathKey = pathKey.slice(0, pathKeyPos);
+                let current = nodesByPath.get(subPathKey);
+                if (!current) {
+                    const leafKey = pathKey.slice(pathKeyStart, pathKeyPos);
+                    const fillerId = makeFillerRowId(leafKey, level, treeParent);
                     current = fillerNodesById.get(fillerId);
                     if (!current) {
-                        current = newFillerRow(beans, fillerId, key, parent);
+                        current = newFillerRow(beans, fillerId, leafKey, treeParent);
                         current.treeNodeFlags = FLAG_CHANGED;
                         fillerNodesById.set(fillerId, current);
                     }
+
                     current.treeNodeFlags |= FLAG_FILLER_NODE;
-                    nodesByPath.set(pathKey, current);
+                    nodesByPath.set(subPathKey, current);
                 }
 
-                parent = current;
+                current.treeParent = treeParent;
+                treeParent = current;
+                pathKeyStart = pathKeyPos + PATH_KEY_SEPARATOR_LEN;
+                level++;
             }
 
-            node.treeParent = parent;
+            node.treeParent = treeParent;
         }
 
         this.destroyFillerRows(false, !!changedRowNodes);
@@ -473,23 +495,10 @@ const flagUpdatedNodes = <TData>(changedRowNodes: IChangedRowNodes<TData> | unde
     return hasUpdates;
 };
 
-const preprocessRows = <TData>({ rowNode }: StageExecuteParams<TData>, approach: GroupingApproach): number => {
-    const rootNode: GroupingRowNode<TData> = rowNode;
-    const rootAllLeafChildren = rootNode.allLeafChildren!;
-    const rootAllLeafChildrenLen = rootAllLeafChildren.length;
-    const fillerNodes = approach === 'treePath';
-    let count = 0;
-    for (let i = 0; i < rootAllLeafChildrenLen; ++i) {
-        count += preprocessRow(rootAllLeafChildren[i], fillerNodes);
-    }
-    return count;
-};
-
 const preprocessFillerRow = <TData>(filler: GroupingRowNode<TData> | null | undefined, changed: boolean): number => {
     if (!filler || filler.data || !filler.treeParent) {
         return 0; // Not a filler node
     }
-
     let treeNodeFlags = filler.treeNodeFlags;
     if (filler.data || (treeNodeFlags & FLAG_FILLER_NODE) !== 0) {
         return 0; // Already processed
@@ -500,30 +509,20 @@ const preprocessFillerRow = <TData>(filler: GroupingRowNode<TData> | null | unde
         changed = true;
     }
     filler.treeNodeFlags = treeNodeFlags | FLAG_FILLER_NODE; // Mark as processed
-    let count = preprocessFillerRow(filler.treeParent, changed);
-    count += preprocessRow(filler, true);
-    return count;
+    const count = preprocessFillerRow(filler.treeParent, changed);
+    return count + preprocessRow(filler);
 };
 
-const preprocessRow = <TData>(row: GroupingRowNode<TData>, fillerNodes: boolean): number => {
+const preprocessRow = <TData>(row: GroupingRowNode<TData>): number => {
     const { parent: oldParent, treeParent: newParent } = row;
 
     if (newParent === null) {
-        // this row is not in the tree
-        row.treeNodeFlags = 0;
-        row.childrenAfterGroup = _EmptyArray;
-        row.allLeafChildren = null;
-        if (oldParent !== null) {
-            row.parent = null;
-            if (oldParent !== undefined) {
-                oldParent.treeNodeFlags |= FLAG_CHANGED;
-            }
-        }
+        hideRow(row);
         return 0;
     }
 
     let count = 1;
-    if (fillerNodes && !newParent.data) {
+    if (!newParent.data) {
         count += preprocessFillerRow(newParent, (row.treeNodeFlags & FLAG_CHANGED) !== 0);
     }
 
@@ -545,7 +544,6 @@ const preprocessRow = <TData>(row: GroupingRowNode<TData>, fillerNodes: boolean)
         if (oldParent) {
             const oldFlags = oldParent.treeNodeFlags | FLAG_CHANGED;
             if (
-                fillerNodes &&
                 !newParent.data &&
                 (oldFlags & FLAG_EXPANDED_INITIALIZED) !== 0 &&
                 (parentFlags & FLAG_EXPANDED_INITIALIZED) === 0
@@ -560,4 +558,30 @@ const preprocessRow = <TData>(row: GroupingRowNode<TData>, fillerNodes: boolean)
     newParent.treeNodeFlags = parentFlags;
 
     return count;
+};
+
+const hideRow = <TData>(row: GroupingRowNode<TData>): void => {
+    const oldParent = row.parent;
+    row.treeNodeFlags = 0;
+    row.childrenAfterGroup = _EmptyArray;
+    row.allLeafChildren = null;
+    row.group = false;
+    row.updateHasChildren();
+    if (oldParent !== null) {
+        row.parent = null;
+        if (oldParent !== undefined) {
+            oldParent.treeNodeFlags |= FLAG_CHANGED;
+        }
+    }
+};
+
+const makeFillerRowId = (leafKey: string, level: number, treeParent: GroupingRowNode<any>): string => {
+    let id = level + '-' + leafKey;
+    let current = treeParent;
+    for (let i = level - 1; i >= 0; --i) {
+        const key = current.key!;
+        id = i + '-' + key + '-' + id;
+        current = current.treeParent!;
+    }
+    return _ROW_ID_PREFIX_ROW_GROUP + id;
 };
