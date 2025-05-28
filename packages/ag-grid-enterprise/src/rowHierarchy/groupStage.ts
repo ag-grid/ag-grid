@@ -10,7 +10,6 @@ import type {
 import { BeanStub, _getGroupingApproach } from 'ag-grid-community';
 
 import type { GroupingRowNode } from './rowHierarchyUtils';
-import { _resetRowGroup } from './rowHierarchyUtils';
 
 export class GroupStage<TData> extends BeanStub implements NamedBean, IRowNodeStage {
     beanName = 'groupStage' as const;
@@ -94,9 +93,9 @@ const resetGrouping = <TData>(rootNode: GroupingRowNode<TData>, canResetTreeNode
     }
     for (const row of allLeafChildren) {
         const sibling = row.sibling;
-        _resetRowGroup(row);
+        resetChildRowGrouping(row);
         if (sibling) {
-            _resetRowGroup(sibling);
+            resetChildRowGrouping(sibling);
         }
         row.parent = rootNode;
         if (canResetTreeNode) {
@@ -108,4 +107,20 @@ const resetGrouping = <TData>(rootNode: GroupingRowNode<TData>, canResetTreeNode
         }
     }
     rootNode.updateHasChildren();
+};
+
+const resetChildRowGrouping = <TData>(row: GroupingRowNode<TData>): void => {
+    row.key = null;
+    row.treeNodeFlags = 0;
+    row.allChildrenCount = null;
+    row.allLeafChildren = null;
+    row.childrenAfterGroup = null;
+    row.childrenAfterAggFilter = null;
+    row.childrenAfterFilter = null;
+    row.childrenAfterSort = null;
+    row.childrenMapped = null;
+    row.level = 0;
+    if (row.groupData) {
+        row.groupData = null;
+    }
 };

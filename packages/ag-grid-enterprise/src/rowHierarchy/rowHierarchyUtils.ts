@@ -62,19 +62,3 @@ export function _getGroupValue(
     }
     return null;
 }
-
-export function _resetRowGroup<TData>(row: GroupingRowNode<TData>): void {
-    row.key = null;
-    row.treeNodeFlags = 0;
-    row.allChildrenCount = null;
-    row.allLeafChildren = null;
-    row.childrenAfterGroup = null;
-    row.childrenAfterAggFilter = null;
-    row.childrenAfterFilter = null;
-    row.childrenAfterSort = null;
-    row.childrenMapped = null;
-    row.level = 0;
-    if (row.groupData) {
-        row.groupData = null;
-    }
-}
