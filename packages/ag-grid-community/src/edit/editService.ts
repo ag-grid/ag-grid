@@ -13,7 +13,12 @@ import type { CellIdPositions, EditModelService, PendingUpdates } from './editMo
 import { _createUpdates } from './editModelService';
 import type { BaseEditStrategy } from './strategy/baseEditStrategy';
 import { _addStopEditingWhenGridLosesFocus, _resolveCellController } from './utils/controllers';
-import { _refreshEditorOnColDefChanged, _syncModelFromEditor, _syncModelsFromEditors } from './utils/editors';
+import {
+    _refreshEditorOnColDefChanged,
+    _syncModelFromEditor,
+    _syncModelsFromEditors,
+    _valuesDiffer,
+} from './utils/editors';
 
 export class EditService extends BeanStub implements NamedBean {
     beanName = 'editSvc' as const;
@@ -184,16 +189,17 @@ export class EditService extends BeanStub implements NamedBean {
         let updateCells = false;
 
         if (!cancel && this.shouldStopEditing?.(rowNode, column, key, event, source)) {
-            this.processUpdates(updates, false);
-
             this.strategy?.stopEditing?.() ?? false;
+
+            this.processUpdates(updates, false);
 
             res = true;
             updateCells = true;
         } else if (cancel && this.shouldCancelEditing?.(rowNode, column, key, event, source)) {
+            this.strategy?.stopEditing?.() ?? false;
+
             this.processUpdates(updates, true);
 
-            this.strategy?.stopEditing?.() ?? false;
             updateCells = true;
         }
 
@@ -224,14 +230,14 @@ export class EditService extends BeanStub implements NamedBean {
                 return;
             }
 
-            const valueChanged = newValue && newValue !== oldValue;
+            const valueChanged = _valuesDiffer({ newValue, oldValue });
             if (!cancel && valueChanged) {
                 // we suppressRefreshCell because the call to rowNode.setDataValue() results in change detection
                 // getting triggered, which results in all cells getting refreshed. we do not want this refresh
                 // to happen on this call as we want to call it explicitly below. otherwise refresh gets called twice.
                 // if we only did this refresh (and not the one below) then the cell would flash and not be forced.
                 cellCtrl.suppressRefreshCell = true;
-                rowNode.setDataValue(column.getColId(), newValue, 'edit');
+                rowNode.setDataValue(column.getColId(), newValue, 'commit');
                 cellCtrl.suppressRefreshCell = false;
             }
 
@@ -329,7 +335,16 @@ export class EditService extends BeanStub implements NamedBean {
         return new PopupEditorWrapper(params);
     }
 
-    setDataValue(rowNode: IRowNode, column: string | Column<any>, newValue: any, eventSource?: string): void {
+    setDataValue(
+        rowNode: IRowNode,
+        column: string | Column<any>,
+        newValue: any,
+        eventSource?: string
+    ): boolean | undefined {
+        if (eventSource === 'commit') {
+            return;
+        }
+
         if (typeof column === 'string') {
             column = this.beans.colModel.getCol(column)!;
         }
@@ -339,6 +354,8 @@ export class EditService extends BeanStub implements NamedBean {
         _syncModelFromEditor(this.beans, rowNode, column, newValue, eventSource);
 
         this.strategy?.updateCells();
+
+        return true;
     }
 
     public handleColDefChanged(cellCtrl: CellCtrl): void {

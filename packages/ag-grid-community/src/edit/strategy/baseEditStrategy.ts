@@ -64,6 +64,12 @@ export abstract class BaseEditStrategy extends BeanStub {
                 });
 
                 this.updateCellStyle(cellCtrl, newState, batchEdit);
+
+                // force refresh if the cell also uses a renderer for edits
+                cellCtrl?.refreshCell({
+                    suppressFlash: true,
+                    forceRefresh: true,
+                });
             });
 
             this.updateRowStyle(rowCtrl, rowEdited, batchEdit);
