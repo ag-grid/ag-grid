@@ -802,7 +802,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * Requires all custom filters need to be implemented using handlers.
      * @initial
      */
-    @Input({ transform: booleanAttribute }) public enablefilterHandlers: boolean | undefined = undefined;
+    @Input({ transform: booleanAttribute }) public enableFilterHandlers: boolean | undefined = undefined;
     /** A map of filter handler key to filter handler function.
      * Allows for filter handler keys to be used in `colDef.filter.handler`.
      * @initial
@@ -2175,12 +2175,12 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Output() public filterModified: EventEmitter<FilterModifiedEvent<TData>> = new EventEmitter<
         FilterModifiedEvent<TData>
     >();
-    /** Filter UI was modified (when using `enablefilterHandlers = true`).
+    /** Filter UI was modified (when using `enableFilterHandlers = true`).
      */
     @Output() public filterUiChanged: EventEmitter<FilterUiChangedEvent<TData>> = new EventEmitter<
         FilterUiChangedEvent<TData>
     >();
-    /** Floating filter UI modified (when using `enablefilterHandlers = true`.
+    /** Floating filter UI modified (when using `enableFilterHandlers = true`.
      */
     @Output() public floatingFilterUiChanged: EventEmitter<FloatingFilterUiChangedEvent<TData>> = new EventEmitter<
         FloatingFilterUiChangedEvent<TData>
