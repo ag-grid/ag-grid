@@ -297,10 +297,7 @@ export class EditService extends BeanStub implements NamedBean {
     ): boolean | null {
         let res: boolean | null | undefined;
 
-        if (
-            previous instanceof CellCtrl &&
-            (this.isEditing(previous.rowNode, previous.column) || this.isEditing(previous.rowNode))
-        ) {
+        if (previous instanceof CellCtrl && this.isEditing()) {
             // if we are editing, we know it's not a Full Width Row (RowComp)
             res = this.strategy?.moveToNextEditingCell(previous, backwards, event, source);
         }
