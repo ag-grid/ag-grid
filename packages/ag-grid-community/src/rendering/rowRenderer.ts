@@ -577,6 +577,14 @@ export class RowRenderer extends BeanStub implements NamedBean {
     }
 
     public redrawRows(rowNodes?: IRowNode[]): void {
+        if (this.beans.editSvc?.isEditing()) {
+            if (this.gos.get('batchEdit')) {
+                this.beans.editSvc.strategy?.cleanupEditors();
+            } else {
+                this.beans.editSvc.stopEditing(undefined, undefined, undefined, undefined, undefined, 'api');
+            }
+        }
+
         // if no row nodes provided, then refresh everything
         const partialRefresh = rowNodes != null;
 
@@ -642,6 +650,10 @@ export class RowRenderer extends BeanStub implements NamedBean {
         // if a cell was focused before, ensure focus now.
         if (focusedCell != null) {
             this.restoreFocusedCell(focusedCell);
+        }
+
+        if (this.beans.editSvc?.isEditing()) {
+            this.beans.editSvc.strategy?.updateCells();
         }
 
         this.releaseLockOnRefresh();
