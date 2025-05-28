@@ -37,20 +37,25 @@ export function _serialiseDate(date: Date | null, includeTime = true, separator 
 }
 
 /**
- * Helper function to get the date parts of a date.
+ * Helper function to get the date parts of a date. Used in set filter.
  * @param d The date to get the parts from
  * @param includeTime Whether to include the time in the returned array
  * @returns The date parts as an array of strings or null if the date is null or undefined
  */
-export function _getDateParts(d: Date | null | undefined, includeTime: boolean = true) {
+export function _getDateParts(d: Date | null | undefined, includeTime: boolean = true): null | string[] {
     if (!d) {
         return null;
     }
 
     if (includeTime) {
-        return [d.getFullYear(), d.getMonth() + 1, d.getDate(), d.getHours(), d.getMinutes(), d.getSeconds()].map(
-            String
-        );
+        return [
+            String(d.getFullYear()),
+            String(d.getMonth() + 1),
+            String(d.getDate()),
+            _padStartWidthZeros(d.getHours(), 2),
+            `:${_padStartWidthZeros(d.getMinutes(), 2)}`,
+            `:${_padStartWidthZeros(d.getSeconds(), 2)}`,
+        ];
     }
 
     return [d.getFullYear(), d.getMonth() + 1, d.getDate()].map(String);
@@ -124,20 +129,13 @@ export function _dateToFormattedString(date: Date, format: string = 'YYYY-MM-DD'
 /**
  * Helper function to check if a date is valid. Use isValidDateTime() to check if a date is valid and has time parts.
  */
-export function isValidDate(value?: string | null, bailIfInvalidTime = false): boolean {
+export function _isValidDate(value?: string | null, bailIfInvalidTime = false): boolean {
     return !!_parseDateTimeFromString(value, bailIfInvalidTime);
 }
 
 // check if dateTime is a valid date and has time parts
-export function isValidDateTime(value?: string | null): boolean {
-    if (!value || !isValidDate(value, true)) {
-        return false;
-    }
-    const dateTime = value.match(DATE_TIME_REGEXP);
-    if (!dateTime) {
-        return false;
-    }
-    return !!dateTime[1]; // matches the whole 'T14:22:19' part
+export function _isValidDateTime(value?: string | null): boolean {
+    return !!value && _isValidDate(value, true) && !!value.match(DATE_TIME_REGEXP)?.[1]; // matches the 'T14:22:19' part
 }
 
 /**

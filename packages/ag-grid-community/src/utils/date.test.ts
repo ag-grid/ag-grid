@@ -1,4 +1,4 @@
-import { _parseDateTimeFromString, _serialiseDate, isValidDate, isValidDateTime } from './date';
+import { _isValidDate, _isValidDateTime, _parseDateTimeFromString, _serialiseDate } from './date';
 
 describe('_serialiseDate', () => {
     it('returns null if no date is supplied', () => {
@@ -66,32 +66,32 @@ describe('_parseDateTimeFromString', () => {
 describe('isValidDateTime', () => {
     it('returns true for valid date time', () => {
         const date = '2020-03-30T14:19:34Z';
-        expect(isValidDateTime(date)).toBe(true);
+        expect(_isValidDateTime(date)).toBe(true);
     });
 
     it.each(['2020-03-30T14:19:34', '2020-03-30T14:19:34+00:00', '2020-03-30T14:19:34+01:00'])(
         'returns true for valid date time with different formats: %s',
         (date) => {
-            expect(isValidDateTime(date)).toBe(true);
+            expect(_isValidDateTime(date)).toBe(true);
         }
     );
     it.each(['2020-03-30T25:61:61Z', null, undefined, '', '2020-03-30', '2020-03-30T14:19:345'])(
         'returns false for invalid date time: %s',
         (date) => {
-            expect(isValidDateTime(date)).toBe(false);
+            expect(_isValidDateTime(date)).toBe(false);
         }
     );
 });
 
 describe('isValidDate', () => {
     it('returns true for valid date', () => {
-        expect(isValidDate('2020-03-30')).toBe(true);
+        expect(_isValidDate('2020-03-30')).toBe(true);
     });
 
     it.each(['invalid', '', null, undefined, '2020/03/30', '30-01-2020'])(
         'returns false for invalid date: %s',
         (date) => {
-            expect(isValidDate(date)).toBe(false);
+            expect(_isValidDate(date)).toBe(false);
         }
     );
 });

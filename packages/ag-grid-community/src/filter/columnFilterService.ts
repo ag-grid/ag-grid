@@ -174,7 +174,7 @@ const setFilterParamsForEachDataType: FilterParamsDefMap = {
     }),
     dateTime: (args) => {
         const params = setFilterParamsForEachDataType.date(args) as ISetFilterParams<any, Date>;
-        params.treeListPathGetter = (date: Date | null) => _getDateParts(date, true);
+        params.treeListPathGetter = _getDateParts;
         return params;
     },
     dateTimeString(args) {

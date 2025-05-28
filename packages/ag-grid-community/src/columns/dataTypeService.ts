@@ -19,7 +19,7 @@ import { _isClientSideRowModel } from '../gridOptionsUtils';
 import type { IClientSideRowModel } from '../interfaces/iClientSideRowModel';
 import type { ColumnEventName } from '../interfaces/iColumn';
 import type { IEventListener } from '../interfaces/iEventEmitter';
-import { _parseDateTimeFromString, _serialiseDate, isValidDate, isValidDateTime } from '../utils/date';
+import { _isValidDate, _isValidDateTime, _parseDateTimeFromString, _serialiseDate } from '../utils/date';
 import { _toStringOrNull } from '../utils/generic';
 import { _getValueUsingField } from '../utils/object';
 import { _warn } from '../validation/logging';
@@ -593,10 +593,10 @@ export class DataTypeService extends BeanStub implements NamedBean {
             dateParser: (value: string | undefined) => _parseDateTimeFromString(value) ?? undefined,
             dateFormatter: (value: Date | undefined) => _serialiseDate(value ?? null, includeTime) ?? undefined,
             valueParser: (params: ValueParserLiteParams<any, string>) =>
-                isValidDate(String(params.newValue)) ? params.newValue : null,
+                _isValidDate(String(params.newValue)) ? params.newValue : null,
             valueFormatter: (params: ValueFormatterLiteParams<any, string>) =>
-                isValidDate(String(params.value)) ? String(params.value) : '',
-            dataTypeMatcher: (value: any) => typeof value === 'string' && isValidDate(value),
+                _isValidDate(String(params.value)) ? String(params.value) : '',
+            dataTypeMatcher: (value: any) => typeof value === 'string' && _isValidDate(value),
         };
     }
 
@@ -644,7 +644,7 @@ export class DataTypeService extends BeanStub implements NamedBean {
             dateTime: this.getDateObjectTypeDef('dateTime'),
             dateTimeString: {
                 ...this.getDateStringTypeDef('dateTimeString'),
-                dataTypeMatcher: (value: any) => typeof value === 'string' && isValidDateTime(value),
+                dataTypeMatcher: (value: any) => typeof value === 'string' && _isValidDateTime(value),
             },
             object: {
                 baseDataType: 'object',
