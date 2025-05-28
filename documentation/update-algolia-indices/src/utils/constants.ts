@@ -10,6 +10,6 @@ export const API_FILE_PATH = `${WORKING_DIR}/src/content/api-nav/nav.json`;
 export const SUPPORTED_FRAMEWORKS = ['react', 'angular', 'vue', 'javascript'] as const;
 
 export const MIGRATION_DOC_BREADCRUMB_PREFIX = 'Getting Started > Setup > Migration';
-export const MIGRATION_DOC_PREFIX = 'upgrading-to-ag-grid-';
+export const MIGRATION_DOC_SUFFIX = '-release-notes';
 
 export type SupportedFrameworks = (typeof SUPPORTED_FRAMEWORKS)[number];

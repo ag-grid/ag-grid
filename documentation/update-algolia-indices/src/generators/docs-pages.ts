@@ -8,7 +8,7 @@ import {
     DOC_SOURCE_DIR,
     MENU_FILE_PATH,
     MIGRATION_DOC_BREADCRUMB_PREFIX,
-    MIGRATION_DOC_PREFIX,
+    MIGRATION_DOC_SUFFIX,
 } from '../utils/constants';
 import { logWarning } from '../utils/output';
 
@@ -178,7 +178,7 @@ const getFlattenedDocMigrationItems = (): FlattenedMenuItem[] => {
     const entries = fs.readdirSync(DOC_SOURCE_DIR, { withFileTypes: true });
 
     return entries
-        .filter((entry) => entry.isDirectory() && entry.name.startsWith(MIGRATION_DOC_PREFIX))
+        .filter((entry) => entry.isDirectory() && entry.name.endsWith(MIGRATION_DOC_SUFFIX))
         .map((entry) => {
             const filePath = `${DOC_SOURCE_DIR}/${entry.name}/index.mdoc`;
             const fileContents = fs.readFileSync(filePath, 'utf-8');
