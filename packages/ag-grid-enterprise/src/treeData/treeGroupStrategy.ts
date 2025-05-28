@@ -1,22 +1,17 @@
-import type { GroupingApproach, IChangedRowNodes, IRowGroupingStrategy, StageExecuteParams } from 'ag-grid-community';
-import type { RowNode } from 'ag-grid-community';
-import { BeanStub, _EmptyArray, _warn } from 'ag-grid-community';
+import type {
+    BeanCollection,
+    GroupingApproach,
+    IChangedRowNodes,
+    IRowGroupingStrategy,
+    StageExecuteParams,
+} from 'ag-grid-community';
+import { RowNode } from 'ag-grid-community';
+import { BeanStub, _EmptyArray, _ROW_ID_PREFIX_ROW_GROUP, _warn } from 'ag-grid-community';
 
 import { setRowNodeGroup } from '../rowGrouping/rowGroupingUtils';
 import type { GroupingRowNode } from '../rowHierarchy/rowHierarchyUtils';
 import type { DataFieldGetter } from './fieldAccess';
 import { makeFieldPathGetter } from './fieldAccess';
-import type { DuplicatePathRowMap } from './treeDataUtils';
-import {
-    duplicatePathAdd,
-    duplicatePathWarn,
-    getExpandedInitialValue,
-    makeFillerRowId,
-    newFillerRow,
-    updateAllLeafChildren,
-    updateRootArrays,
-    updateRowArrays,
-} from './treeDataUtils';
 
 const FLAG_CHANGED = 0x80000000;
 const FLAG_CHILDREN_CHANGED = 0x40000000;
@@ -175,7 +170,15 @@ export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGrou
             }
             if (hasChildren && (treeNodeFlags & FLAG_EXPANDED_INITIALIZED) === 0) {
                 row.treeNodeFlags |= FLAG_EXPANDED_INITIALIZED;
-                row.expanded = getExpandedInitialValue(isGroupOpenByDefault, expandByDefault, row);
+                row.expanded = isGroupOpenByDefault
+                    ? isGroupOpenByDefault({
+                          rowNode: row,
+                          field: row.field!,
+                          key: row.key!,
+                          level: row.level,
+                          rowGroupColumn: row.rowGroupColumn!,
+                      }) == true
+                    : expandByDefault === -1 || row.level < expandByDefault;
             }
 
             if (childrenChanged || allLeafChildrenChanged || fullReload) {
@@ -322,7 +325,7 @@ export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGrou
             node.treeParent = null; // Reset the treeParent to be set later
         }
 
-        if (duplicateRows) {
+        if (duplicateRows?.size) {
             duplicatePathWarn(duplicateRows);
         }
         this.treeFromPaths(rootNode, nodesByPath);
@@ -554,4 +557,139 @@ const handleCycles = <TData>(
     if (!warned) {
         _warn(270, { id: '', parentId: '' });
     }
+};
+
+const makeFillerRowId = (treeParent: GroupingRowNode<any>, leafKey: string, level: number): string => {
+    let id = level + '-' + leafKey;
+    let current = treeParent;
+    while (--level >= 0) {
+        id = level + '-' + current.key + '-' + id;
+        current = current.treeParent!;
+    }
+    return _ROW_ID_PREFIX_ROW_GROUP + id;
+};
+
+const newFillerRow = <TData>(
+    beans: BeanCollection,
+    id: string,
+    key: string,
+    parent: GroupingRowNode<TData>
+): GroupingRowNode<TData> => {
+    const filler: GroupingRowNode<TData> = new RowNode<TData>(beans);
+    filler.id = id;
+    filler.key = key;
+    filler.group = true;
+    filler.field = null;
+    filler.leafGroup = false;
+    filler.rowGroupIndex = null;
+    filler.allChildrenCount = null;
+    filler.treeParent = parent;
+    return filler;
+};
+
+type DuplicatePathRowMap<TData> = Map<string, GroupingRowNode<TData>[]>;
+
+const duplicatePathAdd = <TData>(
+    map: DuplicatePathRowMap<TData> | undefined,
+    pathKey: string,
+    existing: GroupingRowNode<TData>,
+    duplicate: GroupingRowNode<TData>
+): DuplicatePathRowMap<TData> => {
+    let array: GroupingRowNode<TData>[] | undefined;
+    if (!map) {
+        map = new Map();
+    } else {
+        array = map.get(pathKey);
+    }
+    if (array === undefined) {
+        map.set(pathKey, [existing, duplicate]);
+    } else {
+        array.push(duplicate);
+    }
+    return map;
+};
+
+const duplicatePathWarn = <TData>(map: DuplicatePathRowMap<TData>): void => {
+    const compareSourceRowIndex = <TData>(a: GroupingRowNode<TData>, b: GroupingRowNode<TData>): number =>
+        a.sourceRowIndex - b.sourceRowIndex;
+
+    for (const array of map.values()) {
+        array.sort(compareSourceRowIndex);
+        const row = array[0];
+        const length = array.length;
+        const duplicateRowsData = new Array(array.length - 1);
+        for (let i = 1; i < length; i++) {
+            duplicateRowsData[i - 1] = array[i].data;
+        }
+        _warn(186, { rowId: row.id, rowData: row.data, duplicateRowsData }); // Duplicate path
+    }
+};
+
+const updateRootArrays = <TData>(root: GroupingRowNode<TData>, childrenAfterGroup: GroupingRowNode<TData>[]) => {
+    root.childrenAfterFilter = childrenAfterGroup;
+    root.childrenAfterAggFilter = childrenAfterGroup;
+    root.childrenAfterSort = childrenAfterGroup;
+    const sibling = root.sibling;
+    if (sibling) {
+        sibling.childrenAfterGroup = root.childrenAfterGroup;
+        sibling.childrenAfterAggFilter = root.childrenAfterAggFilter;
+        sibling.childrenAfterSort = root.childrenAfterSort;
+    }
+};
+
+const updateRowArrays = <TData>(row: GroupingRowNode<TData>, childrenAfterGroup: GroupingRowNode<TData>[]) => {
+    row.allLeafChildren ??= null;
+    row.childrenAfterFilter ??= childrenAfterGroup;
+    row.childrenAfterAggFilter ??= childrenAfterGroup;
+    row.childrenAfterSort ??= childrenAfterGroup;
+    const sibling = row.sibling;
+    if (sibling) {
+        sibling.allLeafChildren = row.allLeafChildren;
+        sibling.childrenAfterGroup = row.childrenAfterGroup;
+        sibling.childrenAfterAggFilter = row.childrenAfterAggFilter;
+        sibling.childrenAfterFilter = row.childrenAfterFilter;
+        sibling.childrenAfterSort = row.childrenAfterSort;
+    }
+};
+
+const updateAllLeafChildren = <TData>(
+    row: GroupingRowNode<TData>,
+    allLeafChildren: GroupingRowNode<TData>[] | null | undefined,
+    newAllLeafChildrenLen: number
+): boolean => {
+    if (newAllLeafChildrenLen === 0) {
+        if (allLeafChildren) {
+            row.allLeafChildren = null;
+            return !!allLeafChildren?.length;
+        }
+        return false;
+    }
+
+    let changed = false;
+    if (!allLeafChildren) {
+        allLeafChildren = row.allLeafChildren = new Array(newAllLeafChildrenLen);
+        changed = true;
+    } else if (allLeafChildren.length !== newAllLeafChildrenLen) {
+        allLeafChildren.length = newAllLeafChildrenLen;
+        changed = true;
+    }
+
+    let writeIdx = 0;
+    const childrenAfterGroup = row.childrenAfterGroup;
+    if (childrenAfterGroup) {
+        for (const child of childrenAfterGroup) {
+            if (child.data) {
+                changed ||= allLeafChildren[writeIdx] !== child;
+                allLeafChildren[writeIdx++] = child;
+            }
+            const childLeafChildren = child.allLeafChildren;
+            if (childLeafChildren) {
+                for (const leaf of childLeafChildren) {
+                    changed ||= allLeafChildren[writeIdx] !== leaf;
+                    allLeafChildren[writeIdx++] = leaf;
+                }
+            }
+        }
+    }
+    return changed;
 };
