@@ -13,7 +13,7 @@
     "test": {
       "executor": "@nx/vite:test",
       "outputs": ["{workspaceRoot}/reports/ag-behavioural-testing.xml"],
-      "dependsOn": [],
+      "dependsOn": ["ag-grid-community:build:css", "ag-grid-enterprise:build:css"],
       "options": {
         "cwd": "{projectRoot}",
         "config": "{projectRoot}/vitest.config.ts"
