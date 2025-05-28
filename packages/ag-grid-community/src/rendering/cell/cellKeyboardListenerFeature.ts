@@ -100,11 +100,7 @@ export class CellKeyboardListenerFeature extends BeanStub {
 
     private onBackspaceOrDeleteKeyDown(key: string, event: KeyboardEvent): void {
         const { cellCtrl, beans, rowNode } = this;
-        const { gos, rangeSvc, eventSvc, editSvc } = beans;
-
-        if (editSvc?.isEditing(rowNode, cellCtrl?.column)) {
-            return;
-        }
+        const { gos, rangeSvc, eventSvc } = beans;
 
         eventSvc.dispatchEvent({ type: 'keyShortcutChangedCellStart' });
 
@@ -186,7 +182,7 @@ export class CellKeyboardListenerFeature extends BeanStub {
         } = this;
         const { rowNode, column } = this.cellCtrl;
 
-        if (eventOnChildComponent || editSvc?.isEditing(rowNode, column)) {
+        if (eventOnChildComponent) {
             return;
         }
 
