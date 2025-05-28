@@ -3,7 +3,6 @@ import type { IProvidedFilter, ProvidedFilterModel } from '../filter/provided/iP
 import type { AgPromise } from '../utils/promise';
 import type {
     ColumnFilter,
-    CreateFilterHandlerFunc,
     IFilter,
     IFilterComp,
     IFilterDef,
