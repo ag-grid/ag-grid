@@ -69,16 +69,12 @@ export const duplicatePathWarn = <TData>(map: DuplicatePathRowMap<TData>): void 
     }
 };
 
-export type IsGroupOpenByDefaultCallback =
-    | ((params: WithoutGridCommon<IsGroupOpenByDefaultParams>) => boolean)
-    | undefined;
-
 export const getExpandedInitialValue = (
-    isGroupOpenByDefault: IsGroupOpenByDefaultCallback,
+    isGroupOpenByDefault: ((params: WithoutGridCommon<IsGroupOpenByDefaultParams>) => boolean) | undefined,
     expandByDefault: number,
     row: RowNode
-): boolean => {
-    return isGroupOpenByDefault
+): boolean =>
+    isGroupOpenByDefault
         ? isGroupOpenByDefault({
               rowNode: row,
               field: row.field!,
@@ -87,20 +83,16 @@ export const getExpandedInitialValue = (
               rowGroupColumn: row.rowGroupColumn!,
           }) == true
         : expandByDefault === -1 || row.level < expandByDefault;
-};
 
-export const updateRootArrays = <TData>(
-    rootNode: GroupingRowNode<TData>,
-    rootChildrenAfterGroup: GroupingRowNode<TData>[]
-) => {
-    rootNode.childrenAfterFilter = rootChildrenAfterGroup;
-    rootNode.childrenAfterAggFilter = rootChildrenAfterGroup;
-    rootNode.childrenAfterSort = rootChildrenAfterGroup;
-    const sibling = rootNode.sibling;
+export const updateRootArrays = <TData>(root: GroupingRowNode<TData>, childrenAfterGroup: GroupingRowNode<TData>[]) => {
+    root.childrenAfterFilter = childrenAfterGroup;
+    root.childrenAfterAggFilter = childrenAfterGroup;
+    root.childrenAfterSort = childrenAfterGroup;
+    const sibling = root.sibling;
     if (sibling) {
-        sibling.childrenAfterGroup = rootNode.childrenAfterGroup;
-        sibling.childrenAfterAggFilter = rootNode.childrenAfterAggFilter;
-        sibling.childrenAfterSort = rootNode.childrenAfterSort;
+        sibling.childrenAfterGroup = root.childrenAfterGroup;
+        sibling.childrenAfterAggFilter = root.childrenAfterAggFilter;
+        sibling.childrenAfterSort = root.childrenAfterSort;
     }
 };
 
@@ -121,7 +113,7 @@ export const updateRowArrays = <TData>(row: GroupingRowNode<TData>, childrenAfte
 
 export const updateAllLeafChildren = <TData>(
     row: GroupingRowNode<TData>,
-    allLeafChildren: GroupingRowNode<TData>[] | null,
+    allLeafChildren: GroupingRowNode<TData>[] | null | undefined,
     newAllLeafChildrenLen: number
 ): boolean => {
     if (newAllLeafChildrenLen === 0) {
@@ -159,15 +151,4 @@ export const updateAllLeafChildren = <TData>(
         }
     }
     return changed;
-};
-
-/** Recursively adds all nodes and children to the set */
-export const addNodesRecursively = <TData>(set: Set<GroupingRowNode<TData>>, row: GroupingRowNode<TData>) => {
-    set.add(row);
-    const childrenAfterGroup = row.childrenAfterGroup;
-    if (childrenAfterGroup) {
-        for (const child of childrenAfterGroup) {
-            addNodesRecursively(set, child);
-        }
-    }
 };
