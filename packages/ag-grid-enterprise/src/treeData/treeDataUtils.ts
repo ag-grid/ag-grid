@@ -161,12 +161,13 @@ export const updateAllLeafChildren = <TData>(
     return changed;
 };
 
-export const addProcessedNodes = <TData>(processedNodes: Set<GroupingRowNode<TData>>, row: GroupingRowNode<TData>) => {
-    processedNodes.add(row);
+/** Recursively adds all nodes and children to the set */
+export const addNodesRecursively = <TData>(set: Set<GroupingRowNode<TData>>, row: GroupingRowNode<TData>) => {
+    set.add(row);
     const childrenAfterGroup = row.childrenAfterGroup;
     if (childrenAfterGroup) {
         for (const child of childrenAfterGroup) {
-            addProcessedNodes(processedNodes, child);
+            addNodesRecursively(set, child);
         }
     }
 };

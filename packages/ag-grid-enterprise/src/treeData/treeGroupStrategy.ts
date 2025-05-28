@@ -8,7 +8,7 @@ import type { DataFieldGetter } from './fieldAccess';
 import { makeFieldPathGetter } from './fieldAccess';
 import type { DuplicatePathRowMap } from './treeDataUtils';
 import {
-    addProcessedNodes,
+    addNodesRecursively,
     duplicatePathAdd,
     duplicatePathWarn,
     getExpandedInitialValue,
@@ -439,7 +439,7 @@ const handleCycles = <TData>(
     processNode: (row: GroupingRowNode<TData>, level: number) => void
 ) => {
     const processedNodes = new Set<GroupingRowNode<TData>>();
-    addProcessedNodes(processedNodes, rootNode);
+    addNodesRecursively(processedNodes, rootNode);
     const rootChildrenAfterGroup = rootNode.childrenAfterGroup!;
     rootChildrenAfterGroup.length = 0;
     let warned = false;
@@ -454,7 +454,7 @@ const handleCycles = <TData>(
             }
             row.parent = rootNode;
             processNode(row, 0);
-            addProcessedNodes(processedNodes, row);
+            addNodesRecursively(processedNodes, row);
             rootChildrenAfterGroup.push(row);
         } else if (row.parent === rootNode) {
             rootChildrenAfterGroup.push(row);
