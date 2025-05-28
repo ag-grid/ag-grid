@@ -237,7 +237,7 @@ export { IMultiFilterService } from './interfaces/iMultiFilterService';
 export { FilterComp } from './filter/filterComp';
 export { FilterWrapperComp } from './filter/filterWrapperComp';
 export { FilterButtonComp } from './filter/filterButtonComp';
-export { _getFilterParamsForDataType } from './filter/filterDataTypeUtils';
+export { _getFilterParamsForDataType, _getDefaultSimpleFilter } from './filter/filterDataTypeUtils';
 
 export {
     IProvidedFilter,
@@ -306,6 +306,8 @@ export {
     BooleanAdvancedFilterModel,
     DateAdvancedFilterModel,
     DateStringAdvancedFilterModel,
+    DateTimeAdvancedFilterModel,
+    DateTimeStringAdvancedFilterModel,
     ObjectAdvancedFilterModel,
     TextAdvancedFilterModelType,
     ScalarAdvancedFilterModelType,
@@ -869,6 +871,8 @@ export {
     BooleanDataTypeDefinition,
     DateDataTypeDefinition,
     DateStringDataTypeDefinition,
+    DateTimeDataTypeDefinition,
+    DateTimeStringDataTypeDefinition,
     ObjectDataTypeDefinition,
     ValueFormatterLiteFunc,
     ValueFormatterLiteParams,
@@ -1050,7 +1054,7 @@ export {
 export { _EmptyArray, _removeFromArray, _last, _areEqual, _flatten } from './utils/array';
 export { _isIOSUserAgent } from './utils/browser';
 export { ChangedPath } from './utils/changedPath';
-export { _serialiseDate, _parseDateTimeFromString } from './utils/date';
+export { _serialiseDate, _getDateParts, _parseDateTimeFromString } from './utils/date';
 export {
     _getAbsoluteHeight,
     _getAbsoluteWidth,

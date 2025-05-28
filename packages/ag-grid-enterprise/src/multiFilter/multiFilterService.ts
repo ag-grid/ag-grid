@@ -6,7 +6,7 @@ import type {
     IMultiFilterService,
     ValueGetterFunc,
 } from 'ag-grid-community';
-import { BeanStub, _getFilterParamsForDataType } from 'ag-grid-community';
+import { BeanStub, _getDefaultSimpleFilter, _getFilterParamsForDataType } from 'ag-grid-community';
 
 export class MultiFilterService extends BeanStub implements IMultiFilterService {
     readonly beanName = 'multiFilter' as const;
@@ -20,7 +20,7 @@ export class MultiFilterService extends BeanStub implements IMultiFilterService 
         let filters = existingFilterParams?.filters;
         const beans = this.beans;
         if (!filters) {
-            const simpleFilter = beans.colFilter!.getDefaultSimpleFilter(dataTypeDefinition.baseDataType);
+            const simpleFilter = _getDefaultSimpleFilter(dataTypeDefinition.baseDataType);
             filters = [{ filter: simpleFilter }, { filter: 'agSetColumnFilter' }];
         }
         const translate = this.getLocaleTextFunc();

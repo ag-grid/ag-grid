@@ -52,7 +52,7 @@ import {
     getAndRefreshFilterUi,
     getFilterUiFromWrapper,
 } from './columnFilterUtils';
-import { _getFilterParamsForDataType } from './filterDataTypeUtils';
+import { _getDefaultSimpleFilter, _getFilterParamsForDataType } from './filterDataTypeUtils';
 import type {
     FloatingFilterDisplayParams,
     IFloatingFilterParams,
@@ -641,39 +641,22 @@ export class ColumnFilterService
         return this.allColumnFilters.get(column.getColId());
     }
 
-    private getDefaultFilter(column: AgColumn): string {
-        return this.getDefaultFilterFromDataType(() => this.beans.dataTypeSvc?.getBaseDataType(column));
+    private getDefaultFilter(column: AgColumn, isFloating: boolean = false): string {
+        return this.getDefaultFilterFromDataType(() => this.beans.dataTypeSvc?.getBaseDataType(column), isFloating);
     }
 
-    public getDefaultSimpleFilter(cellDataType?: BaseCellDataType): string {
-        if (cellDataType === 'number') {
-            return 'agNumberColumnFilter';
-        }
-        if (cellDataType === 'date' || cellDataType === 'dateString') {
-            return 'agDateColumnFilter';
-        }
-        return 'agTextColumnFilter';
-    }
-
-    private getDefaultFilterFromDataType(getCellDataType: () => BaseCellDataType | undefined): string {
+    private getDefaultFilterFromDataType(
+        getCellDataType: () => BaseCellDataType | undefined,
+        isFloating: boolean = false
+    ): string {
         if (_isSetFilterByDefault(this.gos)) {
-            return 'agSetColumnFilter';
+            return isFloating ? 'agSetColumnFloatingFilter' : 'agSetColumnFilter';
         }
-        return this.getDefaultSimpleFilter(getCellDataType());
+        return _getDefaultSimpleFilter(getCellDataType(), isFloating);
     }
 
     public getDefaultFloatingFilter(column: AgColumn): string {
-        const { gos, dataTypeSvc } = this.beans;
-        if (_isSetFilterByDefault(gos)) {
-            return 'agSetColumnFloatingFilter';
-        }
-        const cellDataType = dataTypeSvc?.getBaseDataType(column);
-        if (cellDataType === 'number') {
-            return 'agNumberColumnFloatingFilter';
-        } else if (cellDataType === 'date' || cellDataType === 'dateString') {
-            return 'agDateColumnFloatingFilter';
-        }
-        return 'agTextColumnFloatingFilter';
+        return this.getDefaultFilter(column, true);
     }
 
     private createFilterComp(

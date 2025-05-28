@@ -1,3 +1,5 @@
+import type { CheckDataTypes } from '../entities/dataType';
+
 export type AdvancedFilterModel = JoinAdvancedFilterModel | ColumnAdvancedFilterModel;
 
 /** Represents a series of filter conditions joined together. */
@@ -8,15 +10,6 @@ export interface JoinAdvancedFilterModel {
     /** The filter conditions that are joined by the `type` */
     conditions: AdvancedFilterModel[];
 }
-
-/** Represents a single filter condition on a column */
-export type ColumnAdvancedFilterModel =
-    | TextAdvancedFilterModel
-    | NumberAdvancedFilterModel
-    | BooleanAdvancedFilterModel
-    | DateAdvancedFilterModel
-    | DateStringAdvancedFilterModel
-    | ObjectAdvancedFilterModel;
 
 export type TextAdvancedFilterModelType =
     | 'equals'
@@ -98,8 +91,45 @@ export interface ObjectAdvancedFilterModel {
     filterType: 'object';
     /** The ID of the column being filtered. */
     colId: string;
-    /** The filter option that is being applied. */
-    type: TextAdvancedFilterModelType;
     /** The value to filter on. This is the same value as displayed in the input. */
     filter?: string;
+    /** The filter option that is being applied. */
+    type: TextAdvancedFilterModelType;
 }
+
+export interface DateTimeAdvancedFilterModel {
+    filterType: 'dateTime';
+    /** The ID of the column being filtered. */
+    colId: string;
+    /** The filter option that is being applied. */
+    type: ScalarAdvancedFilterModelType;
+    /** The value to filter on. This is in format `YYYY-MM-DD HH:mm:ss`. */
+    filter?: string;
+}
+
+export interface DateTimeStringAdvancedFilterModel {
+    filterType: 'dateTimeString';
+    /** The ID of the column being filtered. */
+    colId: string;
+    /** The filter option that is being applied. */
+    type: ScalarAdvancedFilterModelType;
+    /** The value to filter on. This is in format `YYYY-MM-DD HH:mm:ss`. */
+    filter?: string;
+}
+
+/** Represents a single filter condition on a column */
+export type ColumnAdvancedFilterModel =
+    | BooleanAdvancedFilterModel
+    | ObjectAdvancedFilterModel
+    | DateAdvancedFilterModel
+    | DateStringAdvancedFilterModel
+    | DateTimeAdvancedFilterModel
+    | DateTimeStringAdvancedFilterModel
+    | NumberAdvancedFilterModel
+    | TextAdvancedFilterModel;
+
+// Line below used for type checking
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+type _CheckColumnAdvancedFilterModel = CheckDataTypes<{
+    [K in ColumnAdvancedFilterModel['filterType']]: ColumnAdvancedFilterModel & { filterType: K };
+}>;

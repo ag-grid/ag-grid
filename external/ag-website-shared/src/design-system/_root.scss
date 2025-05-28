@@ -268,6 +268,19 @@
     --color-util-gray-800: var(--color-gray-800);
     --color-util-gray-900: var(--color-gray-900);
 
+    // Dev tools colors
+    --color-dev-50: oklch(0.969 0.016 293.756);
+    --color-dev-100: oklch(0.943 0.029 294.588);
+    --color-dev-200: oklch(0.894 0.057 293.283);
+    --color-dev-300: oklch(0.811 0.111 293.571);
+    --color-dev-400: oklch(0.702 0.183 293.541);
+    --color-dev-500: oklch(0.606 0.25 292.717);
+    --color-dev-600: oklch(0.541 0.281 293.009);
+    --color-dev-700: oklch(0.491 0.27 292.581);
+    --color-dev-800: oklch(0.432 0.232 292.759);
+    --color-dev-900: oklch(0.38 0.189 293.745);
+    --color-dev-950: oklch(0.283 0.141 291.089);
+
     // Shadows
     --shadow-xs: 0 1px 2px 0 color-mix(in srgb, var(--color-gray-950) 05%, transparent);
     --shadow-sm: 0 1px 3px 0 color-mix(in srgb, var(--color-gray-950) 10%, transparent),

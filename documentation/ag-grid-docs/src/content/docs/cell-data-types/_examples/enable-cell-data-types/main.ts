@@ -27,6 +27,8 @@ ModuleRegistry.registerModules([
 
 interface IOlympicDataTypes extends IOlympicData {
     dateObject: Date;
+    dateTime: Date;
+    dateTimeString: string;
     hasGold: boolean;
     hasSilver: boolean;
     countryObject: {
@@ -44,6 +46,8 @@ const gridOptions: GridOptions<IOlympicDataTypes> = {
         { field: 'hasSilver', minWidth: 100, headerName: 'Silver', cellRendererParams: { disabled: true } },
         { field: 'dateObject', headerName: 'Date' },
         { field: 'date', headerName: 'Date (String)' },
+        { field: 'dateTime', headerName: 'DateTime', cellDataType: 'dateTime', minWidth: 250 },
+        { field: 'dateTimeString', headerName: 'DateTime (String)', minWidth: 250 },
         { field: 'countryObject', headerName: 'Country' },
     ],
     defaultColDef: {
@@ -75,14 +79,21 @@ document.addEventListener('DOMContentLoaded', () => {
                 'rowData',
                 data.map((rowData) => {
                     const dateParts = rowData.date.split('/');
+                    const [year, month, day] = dateParts.reverse().map((e) => parseInt(e, 10));
+                    const [h, m, s] = [
+                        Math.floor(Math.random() * 24),
+                        Math.floor(Math.random() * 60),
+                        Math.floor(Math.random() * 60),
+                    ];
+                    const paddedDateTimeStrings = [month, day, h, m, s].map((e) => e.toString().padStart(2, '0'));
+                    const dateString = `${year}-${paddedDateTimeStrings[0]}-${paddedDateTimeStrings[1]}`;
+                    const dateTimeString = `${year}-${paddedDateTimeStrings[0]}-${paddedDateTimeStrings[1]}T${paddedDateTimeStrings.slice(2).join(':')}`;
                     return {
                         ...rowData,
-                        date: `${dateParts[2]}-${dateParts[1]}-${dateParts[0]}`,
-                        dateObject: new Date(
-                            parseInt(dateParts[2]),
-                            parseInt(dateParts[1]) - 1,
-                            parseInt(dateParts[0])
-                        ),
+                        date: dateString,
+                        dateObject: new Date(year, month - 1, day),
+                        dateTimeString,
+                        dateTime: new Date(year, month - 1, day, h, m, s),
                         countryObject: {
                             name: rowData.country,
                         },
