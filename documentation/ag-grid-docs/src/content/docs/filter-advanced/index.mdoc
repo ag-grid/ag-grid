@@ -103,28 +103,28 @@ For all [Cell Data Types](./cell-data-types/), the available filter options can 
 
 The available options are as follows:
 
-| Option Name             | Option Key            | Cell Data Type                                              |
-| ----------------------- | --------------------- | ----------------------------------------------------------- |
-| contains                | `contains`            | `text`, `object`                                            |
-| does not contain        | `notContains`         | `text`, `object`                                            |
-| equals                  | `equals`              | `text`, `object`                                            |
-| =                       | `equals`              | `number`, `date`, `dateString`                              |
-| not equal               | `notEqual`            | `text`, `object`                                            |
-| !=                      | `notEqual`            | `number`, `date`, `dateString`                              |
-| begins with             | `startsWith`          | `text`, `object`                                            |
-| ends with               | `endsWith`            | `text`, `object`                                            |
-| is blank                | `blank`               | `text`, `number`, `boolean`, `date`, `dateString`, `object` |
-| is not blank            | `notBlank`            | `text`, `number`, `boolean`, `date`, `dateString`, `object` |
-| >                       | `greaterThan`         | `number`, `date`, `dateString`                              |
-| >=                      | `greaterThanOrEqual`  | `number`, `date`, `dateString`                              |
-| <                       | `lessThan`            | `number`, `date`, `dateString`                              |
-| <=                      | `lessThanOrEqual`     | `number`, `date`, `dateString`                              |
-| is true                 | `true`                | `boolean`                                                   |
-| is false                | `false`               | `boolean`                                                   |
+| Option Name      | Option Key           | Cell Data Type                                                                            |
+|------------------|----------------------|-------------------------------------------------------------------------------------------|
+| contains         | `contains`           | `text`, `object`                                                                          |
+| does not contain | `notContains`        | `text`, `object`                                                                          |
+| equals           | `equals`             | `text`, `object`                                                                          |
+| =                | `equals`             | `number`, `date`, `dateString`, `dateTime`, `dateTimeString`                              |
+| not equal        | `notEqual`           | `text`, `object`                                                                          |
+| !=               | `notEqual`           | `number`, `date`, `dateString`, `dateTime`, `dateTimeString`                              |
+| begins with      | `startsWith`         | `text`, `object`                                                                          |
+| ends with        | `endsWith`           | `text`, `object`                                                                          |
+| is blank         | `blank`              | `text`, `number`, `boolean`, `date`, `dateString`, `dateTime`, `dateTimeString`, `object` |
+| is not blank     | `notBlank`           | `text`, `number`, `boolean`, `date`, `dateString`, `dateTime`, `dateTimeString`, `object` |
+| >                | `greaterThan`        | `number`, `date`, `dateString`, `dateTime`, `dateTimeString`                              |
+| >=               | `greaterThanOrEqual` | `number`, `date`, `dateString`, `dateTime`, `dateTimeString`                              |
+| <                | `lessThan`           | `number`, `date`, `dateString`, `dateTime`, `dateTimeString`                              |
+| <=               | `lessThanOrEqual`    | `number`, `date`, `dateString`, `dateTime`, `dateTimeString`                              |
+| is true          | `true`               | `boolean`                                                                                 |
+| is false         | `false`              | `boolean`                                                                                 |
 
 For `text` and `object` Cell Data Types, `caseSensitive = true` can be set to enable case sensitivity.
 
-For `number`, `date` and `dateString` Cell Data Types, the following properties can be set to include blank values for the relevant options:
+For `number`, `date`, `dateString`, `dateTime` and `dateTimeString` Cell Data Types, the following properties can be set to include blank values for the relevant options:
 
 * `includeBlanksInEquals = true`
 * `includeBlanksInLessThan = true`
