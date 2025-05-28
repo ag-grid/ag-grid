@@ -6,7 +6,6 @@ import type {
     ISizeColumnsToFitParams,
 } from '../interfaces/autoSize';
 import type { Column } from '../interfaces/iColumn';
-import { _warn } from '../validation/logging';
 
 export function sizeColumnsToFit(beans: BeanCollection, paramsOrGridWidth?: ISizeColumnsToFitParams | number) {
     if (typeof paramsOrGridWidth === 'number') {
@@ -24,7 +23,6 @@ export function autoSizeColumns(
     skipHeader?: boolean
 ): void {
     if (Array.isArray(keysOrParams)) {
-        _warn(277, { methodName: 'autoSizeAllColumns' });
         colAutosize?.autoSizeCols({ colKeys: keysOrParams, skipHeader, source: 'api' as const });
     } else {
         colAutosize?.autoSizeCols({
@@ -47,7 +45,6 @@ export function autoSizeAllColumns(
     if (paramsOrSkipHeader && typeof paramsOrSkipHeader === 'object') {
         autoSizeColumns(beans, paramsOrSkipHeader);
     } else {
-        _warn(277, { methodName: 'autoSizeAllColumns' });
         beans.colAutosize?.autoSizeAllColumns({ source: 'api', skipHeader: paramsOrSkipHeader });
     }
 }

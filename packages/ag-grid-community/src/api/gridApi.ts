@@ -576,8 +576,6 @@ export interface _ColumnAutosizeApi {
      * the column sizing will happen asynchronously when row data is added.
      * To always perform this synchronously, set `cellDataType = false` on the default column definition.
      * @agModule `ColumnAutoSizeModule`
-     *
-     * @deprecated v34 Use `api.autoSizeColumns` with the `ISizeColumnsToContentParams` argument.
      */
     autoSizeColumns(keys: (string | ColDef | Column)[], skipHeader?: boolean): void;
     /**
@@ -595,8 +593,6 @@ export interface _ColumnAutosizeApi {
      * the column sizing will happen asynchronously when row data is added.
      * To always perform this synchronously, set `cellDataType = false` on the default column definition.
      * @agModule `ColumnAutoSizeModule`
-     *
-     * @deprecated v34 Use `api.autoSizeAllColumns` with the `ISizeAllColumnsToContentParams` argument.
      */
     autoSizeAllColumns(skipHeader?: boolean): void;
     /**
