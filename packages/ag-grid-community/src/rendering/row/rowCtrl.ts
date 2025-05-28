@@ -1760,7 +1760,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         // infrequently used feature so we don't need to do this most
         // of the time
         this.getAllCellCtrls().forEach((cellCtrl) => {
-            if (cellCtrl.getColSpanningList().indexOf(column) >= 0) {
+            if (cellCtrl?.getColSpanningList().indexOf(column) >= 0) {
                 res = cellCtrl;
             }
         });
