@@ -147,6 +147,12 @@ export function startEditingCell(beans: BeanCollection, params: StartEditingCell
 
     const { eGui, rowNode } = cell;
     const { focusSvc, gos, editSvc } = beans;
+
+    if (beans.editSvc?.isEditing(rowNode, column)) {
+        // if already editing, just focus the cell
+        return;
+    }
+
     const isFocusWithinCell = () => {
         const activeElement = _getActiveDomElement(beans);
         return activeElement !== eGui && !!eGui?.contains(activeElement);
