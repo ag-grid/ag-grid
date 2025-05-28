@@ -186,14 +186,20 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
         return resizedColumns;
     }
 
-    public autoSizeAllColumns(source: ColumnEventType, skipHeader?: boolean): void {
+    public autoSizeAllColumns(params: {
+        skipHeader?: boolean;
+        defaultMinWidth?: number;
+        defaultMaxWidth?: number;
+        columnLimits?: SizeColumnsToContentColumnLimits[];
+        source?: ColumnEventType;
+    }): void {
         if (this.shouldQueueResizeOperations) {
-            this.pushResizeOperation(() => this.autoSizeAllColumns(source, skipHeader));
+            this.pushResizeOperation(() => this.autoSizeAllColumns(params));
             return;
         }
 
         const allDisplayedColumns = this.beans.visibleCols.allCols;
-        this.autoSizeCols({ colKeys: allDisplayedColumns, skipHeader, source });
+        this.autoSizeCols({ colKeys: allDisplayedColumns, ...params });
     }
 
     public addColumnAutosize(element: HTMLElement, column: AgColumn): () => void {
@@ -473,17 +479,20 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
             return;
         }
 
-        const { colIds: columns, skipHeader } = autoSizeStrategy;
+        const { colIds: columns, skipHeader, defaultMaxWidth, defaultMinWidth, columnLimits } = autoSizeStrategy;
         // ensure render has finished
         setTimeout(() => {
+            const params = {
+                skipHeader,
+                source: 'autosizeColumns' as const,
+                defaultMaxWidth,
+                defaultMinWidth,
+                columnLimits,
+            };
             if (columns) {
-                this.autoSizeCols({
-                    colKeys: columns,
-                    skipHeader,
-                    source: 'autosizeColumns',
-                });
+                this.autoSizeCols({ colKeys: columns, ...params });
             } else {
-                this.autoSizeAllColumns('autosizeColumns', skipHeader);
+                this.autoSizeAllColumns(params);
             }
         });
     }

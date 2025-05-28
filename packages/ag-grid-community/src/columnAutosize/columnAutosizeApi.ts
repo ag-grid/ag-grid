@@ -45,9 +45,9 @@ export function autoSizeAllColumns(
     paramsOrSkipHeader?: ISizeColumnsToContentParams | boolean
 ): void {
     if (paramsOrSkipHeader && typeof paramsOrSkipHeader === 'object') {
-        _warn(277, { methodName: 'autoSizeAllColumns' });
         autoSizeColumns(beans, paramsOrSkipHeader);
     } else {
-        beans.colAutosize?.autoSizeAllColumns('api', paramsOrSkipHeader);
+        _warn(277, { methodName: 'autoSizeAllColumns' });
+        beans.colAutosize?.autoSizeAllColumns({ source: 'api', skipHeader: paramsOrSkipHeader });
     }
 }
