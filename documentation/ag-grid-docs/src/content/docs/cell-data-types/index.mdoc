@@ -8,7 +8,7 @@ This allows different grid features to work without any additional configuration
 
 ## Enable Cell Data Types
 
-There are six pre-defined cell data types: `'text'`, `'number'`, `'boolean'`, `'date'`, `'dateString'` and `'object'`.
+There is a number of pre-defined cell data types: `'text'`, `'number'`, `'boolean'`, `'date'`, `'dateString'`, `'dateTime'`, `'dateTimeString'` and `'object'`.
 
 These are enabled by default, with the data type being inferred from the row data if possible (see [Inferring Data Types](#inferring-data-types)).
 
@@ -26,26 +26,32 @@ const gridOptions = {
 }
 ```
 
-The following example demonstrates the six pre-defined cell data types (inferred from the row data):
+The following example demonstrates the pre-defined cell data types (most of which are inferred from the row data):
 
 * The **Athlete** column has a `'text'` data type.
 * The **Age** column has a `'number'` data type.
 * The **Gold** column has a `'boolean'` data type.
 * The **Date** column has a `'date'` data type (cell values are `Date` objects).
 * The **Date (String)** column has a `'dateString'` data type (cell values are `string`s representing dates).
+* The **DateTime** column has a `'dateTime'` data type (cell values are `Date` objects). This is explicitly set to `cellDataType: 'dateTime'` as `Date` objects are always inferred to be `'date'` data type.
+* The **DateTime (String)** column has a `'dateTimeString'` data type (cell values are `string`s representing dates).
 * The **Country** column has an `'object'` data type. This also [Overrides the Pre-Defined Cell Data Type Definition](#overriding-the-pre-defined-cell-data-type-definitions) so that the value parser and formatter work with the object structure.
 
 {% gridExampleRunner title="Enable Cell Data Types" name="enable-cell-data-types" /%}
 
 ## Inferring Data Types
 
-By default the grid will infer cell data types the first time that row data is passed into the grid.
+By default, the grid will infer cell data types the first time that row data is passed into the grid.
 
 For inference to work for a column, it must contain non-null values and have the `field` property set. The resolved column definition (including the default column definition and column types) must also not have the Value Getter, Value Parser or reference data properties set, or be using [Sparklines](./sparklines-overview/). If these conditions are not met, no cell data type will be set (it will need to be defined directly on the column if desired).
 
+{% note %}
+Because `'dateTime'` corresponds to cell values that are `Date` objects, there is no easy way to tell them apart from regular `'date'` columns. If you wish to enable `'dateTime'`'s higher precision fields, please explicitly specify `cellDataType: 'dateTime'` in the corresponding `columnDefs` entry. 
+{% /note %}
+
 Data type inference can be disabled by setting `cellDataType = false` on an individual column, or for all columns on the [Default Column Definition](./column-definitions/#default-column-definitions).
 
-Note that where inference is possible but it does not match any of the pre-defined cell data types, it will default to `object`.
+Note that where inference is possible, but it does not match any of the pre-defined cell data types, it will default to `object`.
 
 {% note %}
 Inferring cell data types only works for the Client-Side Row Model. For other row models, you will need to define cell data types for each column.
@@ -69,7 +75,7 @@ Note that when using cell data types, the Value Formatter will not run for value
 
 ### Text
 
-The `'text'` cell data type is used for `string` values. As most grid functionality works directly with `string` values, the `'text'` cell data type does not set any properties outside of the ones specified above for all data types.
+The `'text'` cell data type is used for `string` values. As most grid functionality works directly with `string` values, the `'text'` cell data type does not set any properties outside the ones specified above for all data types.
 
 ### Number
 
@@ -99,7 +105,11 @@ The following properties are set:
 
 The `'date'` cell data type is used for date values that are represented as `Date` objects.
 
-The default Value Parser and Value Formatter use the ISO string format `'yyyy-mm-dd'`. If you wish to use a different date format, then you can [Override the Pre-Defined Cell Data Type Definition](#overriding-the-pre-defined-cell-data-type-definitions).
+The default Value Parser and Value Formatter use the ISO string format `'YYYY-MM-DD'`. If you wish to use a different date format, then you can [Override the Pre-Defined Cell Data Type Definition](#overriding-the-pre-defined-cell-data-type-definitions).
+
+{% note %}
+Please note that the `'date'` cell data type compares full Date objects, including the time portion. As a result, if a date includes a time other than midnight (`00:00:00`), filtering or editing might behave unexpectedly. For consistent results with built-in filters, it’s best to normalize all time values to the same value. If keeping the time component is important, consider using the `'dateTime'` cell data type instead or defining a custom comparator, as explained in the [Date Filter Comparator](./filter-date/#filter-comparator).
+{% /note %}
 
 The following properties are set:
 
@@ -111,7 +121,31 @@ The following properties are set:
 
 The `'dateString'` cell data type is used for date values that are represented as `string` values.
 
-This data type uses the ISO string format `'yyyy-mm-dd'`. If you wish to use a different date format, then you can [Override the Pre-Defined Cell Data Type Definition](#overriding-the-pre-defined-cell-data-type-definitions).
+This data type uses the ISO string format `'YYYY-MM-DD'`. If you wish to use a different date format, then you can [Override the Pre-Defined Cell Data Type Definition](#overriding-the-pre-defined-cell-data-type-definitions).
+
+The following properties are set:
+
+* The [Date as String Cell Editor](./provided-cell-editors-date/#enabling-date-as-string-cell-editor) is used for editing.
+* When the [Set Filter is Disabled by Default](./filter-set/#suppress-set-filter-by-default), the [Date Filter](./filter-text/) is used, and `filterParams.comparator` is set to parse the `string` date values.
+* When the [Set Filter is Enabled by Default](./filter-set/#suppress-set-filter-by-default), the [Set Filter Tree List](./filter-set-tree-list/) is enabled, with `filterParams.treeListPathGetter` set to convert the `string` date values into paths, and the [Values are Formatted](./filter-set-tree-list/#formatting-values) by setting `filterParams.treeListFormatter` to convert the months to names and `filterParams.valueFormatter` to format the Floating Filter values using the Value Formatter.
+
+### DateTime
+
+The `'dateTime'` cell data type is used for date and time values that are represented as `Date` objects. Unlike the `'date'` cell data type which only shows the date portion, `'dateTime'` displays both date and time components.
+
+This data type uses the ISO string format `'YYYY-MM-DDThh:mm:ssZ'`. If you wish to use a different format, you can [Override the Pre-Defined Cell Data Type Definition](#overriding-the-pre-defined-cell-data-type-definitions).
+
+The following properties are set:
+
+* The [Date Cell Editor](./provided-cell-editors-date/) is used for editing.
+* When the [Set Filter is Disabled by Default](./filter-set/#suppress-set-filter-by-default), the [Date Filter](./filter-date/) is used.
+* When the [Set Filter is Enabled by Default](./filter-set/#suppress-set-filter-by-default), the [Set Filter Tree List](./filter-set-tree-list/) is enabled, and the [Values are Formatted](./filter-set-tree-list/#formatting-values) by setting `filterParams.treeListFormatter` to convert the months to names and `filterParams.valueFormatter` to format the Floating Filter values using the Value Formatter.
+
+### DateTime as String
+
+The `'dateTimeString'` cell data type is used for date and time values that are represented as `string` values. Unlike the `'dateString'` cell data type which only shows the date portion, `'dateTimeString'` displays both date and time components.
+
+This data type uses the ISO string format `'YYYY-MM-DDThh:mm:ssZ'`. If you wish to use a different format, you can [Override the Pre-Defined Cell Data Type Definition](#overriding-the-pre-defined-cell-data-type-definitions).
 
 The following properties are set:
 
@@ -170,11 +204,11 @@ const gridOptions = {
 }
 ```
 
-Each custom data type definition must have a `baseDataType` of one of the six [Pre-Defined Cell Data Types](#pre-defined-cell-data-types), which represents the data type of the underlying cell values.
+Each custom data type definition must have a `baseDataType` of one of the [Pre-Defined Cell Data Types](#pre-defined-cell-data-types), which represents the data type of the underlying cell values.
 
 Data type definitions support inheritance via the `extendsDataType` property. Each custom cell data type must either extend one of the pre-defined types, or another custom type. Any non-overridden properties are inherited from the parent definition. To prevent inheriting properties from the parent definition, `suppressDefaultProperties = true` can be set on the definition.
 
-[Column Types](./column-definitions/#default-column-definitions) can be set via the `columnTypes` property to allow other column definition properties to be set for the data type. By default these will replace any column types against the parent definition. To allow these to be appended to the parent definition column types, `appendColumnTypes = true` can be set.
+[Column Types](./column-definitions/#default-column-definitions) can be set via the `columnTypes` property to allow other column definition properties to be set for the data type. By default, these will replace any column types against the parent definition. To allow these to be appended to the parent definition column types, `appendColumnTypes = true` can be set.
 
 To allow [Inferring Cell Data Types](#inferring-cell-data-types) to work for custom types, the `dataTypeMatcher` property can be set. This returns `true` if the value is of the correct type. Note that the data type matchers will be called in the order they are provided in `dataTypeDefinitions` (for custom only), and then the pre-defined data type matchers will be called.
 
@@ -231,8 +265,8 @@ The following example demonstrates overriding pre-defined cell data types:
 
 {% gridExampleRunner title="Overriding Pre-Defined Cell Data Types" name="overriding-pre-defined-cell-data-types" /%}
 
-### Date as String Data Type Definition
+### Date and DateTime as String Data Type Definition
 
-If overriding `'dateString'` due to a different date format, then a couple of extra properties need to be set to handle conversion between `Date` objects and the desired `string` format.
+If overriding `'dateString'` or `'dateTimeString''` with a different date format, then a couple of extra properties need to be set to handle conversion between `Date` objects and the desired `string` format.
 
 {% interfaceDocumentation interfaceName="DateStringDataTypeDefinition" names=["dateParser", "dateFormatter"] config={"description":""} /%}

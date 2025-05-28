@@ -1,18 +1,8 @@
 import type { TextFormatter } from 'ag-grid-community';
-import { _missing, _warn } from 'ag-grid-community';
+import { _getDateParts, _warn } from 'ag-grid-community';
 
 import type { ISetDisplayValueModel, SetFilterModelTreeItem } from './iSetDisplayValueModel';
 import { SET_FILTER_ADD_SELECTION_TO_FILTER, SET_FILTER_SELECT_ALL } from './iSetDisplayValueModel';
-
-const DATE_TREE_LIST_PATH_GETTER = (date: Date | null) => {
-    if (_missing(date)) {
-        return null;
-    }
-    if (!(date instanceof Date) || isNaN(date.getTime())) {
-        return ['NaN'];
-    }
-    return [String(date.getFullYear()), String(date.getMonth() + 1), String(date.getDate())];
-};
 
 export class TreeSetDisplayValueModel<V> implements ISetDisplayValueModel<V> {
     /** all displayed items in a tree structure */
@@ -145,7 +135,7 @@ export class TreeSetDisplayValueModel<V> implements ISetDisplayValueModel<V> {
     private getTreeListPathGetter(
         getValue: (key: string | null) => V | null,
         availableKeys: Set<string | null>
-    ): (value: V | null) => string[] | null {
+    ): NonNullable<typeof this.treeListPathGetter> {
         if (this.treeListPathGetter) {
             return this.treeListPathGetter;
         }
@@ -165,7 +155,7 @@ export class TreeSetDisplayValueModel<V> implements ISetDisplayValueModel<V> {
             }
         }
         if (isDate) {
-            return DATE_TREE_LIST_PATH_GETTER as any;
+            return (value) => _getDateParts(value as Date, false); // if user wants time, they can provide a treeListPathGetter as mentioned in Docs
         }
         _warn(211);
         return (value) => [String(value)];

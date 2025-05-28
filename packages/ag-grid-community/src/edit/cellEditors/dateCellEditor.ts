@@ -1,3 +1,4 @@
+import type { DataTypeService } from '../../columns/dataTypeService';
 import { _serialiseDate } from '../../utils/date';
 import type { ElementParams } from '../../utils/dom';
 import { _exists } from '../../utils/generic';
@@ -15,6 +16,8 @@ const DateCellElement: ElementParams = {
 class DateCellEditorInput implements CellEditorInput<Date, IDateCellEditorParams, AgInputDateField> {
     private eInput: AgInputDateField;
     private params: IDateCellEditorParams;
+
+    constructor(private getDataTypeService: () => DataTypeService | undefined) {}
 
     public getTemplate(): ElementParams {
         return DateCellElement;
@@ -52,12 +55,13 @@ class DateCellEditorInput implements CellEditorInput<Date, IDateCellEditorParams
         if (!(value instanceof Date)) {
             return undefined;
         }
-        return _serialiseDate(value, false);
+        const dataTypeSvc = this.getDataTypeService();
+        return _serialiseDate(value, dataTypeSvc?.getDateIncludesTimeFlag?.(this.params.colDef.cellDataType) ?? false);
     }
 }
 
 export class DateCellEditor extends SimpleCellEditor<Date, IDateCellEditorParams, AgInputDateField> {
     constructor() {
-        super(new DateCellEditorInput());
+        super(new DateCellEditorInput(() => this.beans.dataTypeSvc));
     }
 }

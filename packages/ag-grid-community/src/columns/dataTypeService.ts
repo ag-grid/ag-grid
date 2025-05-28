@@ -19,7 +19,7 @@ import { _isClientSideRowModel } from '../gridOptionsUtils';
 import type { IClientSideRowModel } from '../interfaces/iClientSideRowModel';
 import type { ColumnEventName } from '../interfaces/iColumn';
 import type { IEventListener } from '../interfaces/iEventEmitter';
-import { _parseDateTimeFromString, _serialiseDate } from '../utils/date';
+import { _isValidDate, _isValidDateTime, _parseDateTimeFromString, _serialiseDate } from '../utils/date';
 import { _toStringOrNull } from '../utils/generic';
 import { _getValueUsingField } from '../utils/object';
 import { _warn } from '../validation/logging';
@@ -34,8 +34,25 @@ interface GroupSafeValueFormatter {
 }
 
 type DataTypeDefinitions = {
-    [cellDataType: string]: (DataTypeDefinition | CoreDataTypeDefinition) & GroupSafeValueFormatter;
+    [cellDataType: BaseCellDataType | string]: (DataTypeDefinition | CoreDataTypeDefinition) & GroupSafeValueFormatter;
 };
+type CoreDataTypeDefMap = { [K in BaseCellDataType]: CoreDataTypeDefinition & { baseDataType: K } };
+
+/**
+ *  We are missing object and dateTime here.
+ *  This is because dateTime has a lower priority than date and gives us no way to distinguish between the two, and
+ *  object type is the default type for all other types.
+ *
+ *  dateTimeString has higher priority than dateString, since it includes serialized time and isValidDate() considers datetime a valid date.
+ */
+const SORTED_CELL_DATA_TYPES_FOR_MATCHING: readonly Exclude<BaseCellDataType, 'dateTime' | 'object'>[] = [
+    'dateTimeString',
+    'dateString',
+    'text',
+    'number',
+    'boolean',
+    'date',
+] as const;
 
 export class DataTypeService extends BeanStub implements NamedBean {
     beanName = 'dataTypeSvc' as const;
@@ -70,9 +87,7 @@ export class DataTypeService extends BeanStub implements NamedBean {
     private processDataTypeDefinitions(): void {
         const defaultDataTypes = this.getDefaultDataTypes();
         const newDataTypeDefinitions: DataTypeDefinitions = {};
-        this.dataTypeDefinitions = newDataTypeDefinitions;
         const newFormatValueFuncs: { [cellDataType: string]: DataTypeFormatValueFunc } = {};
-        this.formatValueFuncs = newFormatValueFuncs;
         const generateFormatValueFunc = (
             dataTypeDefinition: (DataTypeDefinition | CoreDataTypeDefinition) & GroupSafeValueFormatter
         ): DataTypeFormatValueFunc => {
@@ -86,93 +101,101 @@ export class DataTypeService extends BeanStub implements NamedBean {
             };
         };
 
-        for (const cellDataType of Object.keys(defaultDataTypes)) {
-            const dataTypeDefinition = defaultDataTypes[cellDataType];
+        for (const cellDataType of Object.keys(defaultDataTypes) as BaseCellDataType[]) {
+            const defaultDataTypeDef = defaultDataTypes[cellDataType];
             const mergedDataTypeDefinition = {
-                ...dataTypeDefinition,
-                groupSafeValueFormatter: createGroupSafeValueFormatter(dataTypeDefinition, this.gos),
+                ...defaultDataTypeDef,
+                groupSafeValueFormatter: createGroupSafeValueFormatter(defaultDataTypeDef, this.gos),
             };
             newDataTypeDefinitions[cellDataType] = mergedDataTypeDefinition;
             newFormatValueFuncs[cellDataType] = generateFormatValueFunc(mergedDataTypeDefinition);
         }
 
-        const dataTypeDefinitions = this.gos.get('dataTypeDefinitions') ?? {};
-        const newDataTypeMatchers: { [cellDataType: string]: ((value: any) => boolean) | undefined } = {};
-        this.dataTypeMatchers = newDataTypeMatchers;
+        const userDataTypeDefs = this.gos.get('dataTypeDefinitions') ?? {};
+        const newDataTypeMatchers = {} as { [cellDataType in BaseCellDataType]: ((value: any) => boolean) | undefined };
 
-        for (const cellDataType of Object.keys(dataTypeDefinitions)) {
-            const dataTypeDefinition = dataTypeDefinitions[cellDataType];
+        for (const cellDataType of Object.keys(userDataTypeDefs) as BaseCellDataType[]) {
+            const userDataTypeDef = userDataTypeDefs[cellDataType];
             const mergedDataTypeDefinition = this.processDataTypeDefinition(
-                dataTypeDefinition,
-                dataTypeDefinitions,
+                userDataTypeDef,
+                userDataTypeDefs,
                 [cellDataType],
                 defaultDataTypes
             );
             if (mergedDataTypeDefinition) {
                 newDataTypeDefinitions[cellDataType] = mergedDataTypeDefinition;
-                if (dataTypeDefinition.dataTypeMatcher) {
-                    newDataTypeMatchers[cellDataType] = dataTypeDefinition.dataTypeMatcher;
+                if (userDataTypeDef.dataTypeMatcher) {
+                    newDataTypeMatchers[cellDataType] = userDataTypeDef.dataTypeMatcher;
                 }
                 newFormatValueFuncs[cellDataType] = generateFormatValueFunc(mergedDataTypeDefinition);
             }
         }
+        const { valueParser: defaultValueParser, valueFormatter: defaultValueFormatter } = defaultDataTypes.object;
+        const { valueParser: userValueParser, valueFormatter: userValueFormatter } = newDataTypeDefinitions.object;
 
-        this.checkObjectValueHandlers(defaultDataTypes);
+        this.hasObjectValueParser = userValueParser !== defaultValueParser;
+        this.hasObjectValueFormatter = userValueFormatter !== defaultValueFormatter;
+        this.formatValueFuncs = newFormatValueFuncs;
+        this.dataTypeDefinitions = newDataTypeDefinitions;
+        this.dataTypeMatchers = this.sortKeysInMatchers(newDataTypeMatchers, defaultDataTypes);
+    }
 
-        ['dateString', 'text', 'number', 'boolean', 'date'].forEach((cellDataType) => {
-            const overriddenDataTypeMatcher = newDataTypeMatchers[cellDataType];
-            if (overriddenDataTypeMatcher) {
-                // remove to maintain correct ordering
-                delete newDataTypeMatchers[cellDataType];
-            }
-            newDataTypeMatchers[cellDataType] =
-                overriddenDataTypeMatcher ?? defaultDataTypes[cellDataType].dataTypeMatcher;
-        });
+    /**
+     * Sorts the keys in the matchers object.
+     * Does not mutate the original object, creates a copy of it with sorted keys instead.
+     */
+    private sortKeysInMatchers(matchers: Record<string, any>, dataTypes: CoreDataTypeDefMap) {
+        const sortedMatchers = { ...matchers };
+        for (const cellDataType of SORTED_CELL_DATA_TYPES_FOR_MATCHING) {
+            delete sortedMatchers[cellDataType];
+            sortedMatchers[cellDataType] = matchers[cellDataType] ?? dataTypes[cellDataType].dataTypeMatcher;
+        }
+        return sortedMatchers;
     }
 
     private processDataTypeDefinition(
-        dataTypeDefinition: DataTypeDefinition,
-        dataTypeDefinitions: { [key: string]: DataTypeDefinition },
+        userDataTypeDef: DataTypeDefinition,
+        userDataTypeDefs: { [key: string]: DataTypeDefinition },
         alreadyProcessedDataTypes: string[],
-        defaultDataTypes: { [key: string]: CoreDataTypeDefinition }
+        defaultDataTypes: CoreDataTypeDefMap
     ): (DataTypeDefinition & GroupSafeValueFormatter) | undefined {
         let mergedDataTypeDefinition: DataTypeDefinition;
-        const extendsCellDataType = dataTypeDefinition.extendsDataType;
+        const extendsCellDataType = userDataTypeDef.extendsDataType;
 
-        if (dataTypeDefinition.columnTypes) {
+        if (userDataTypeDef.columnTypes) {
             this.isColumnTypeOverrideInDataTypeDefinitions = true;
         }
 
-        if (dataTypeDefinition.extendsDataType === dataTypeDefinition.baseDataType) {
-            let baseDataTypeDefinition = defaultDataTypes[extendsCellDataType];
-            const overriddenBaseDataTypeDefinition = dataTypeDefinitions[extendsCellDataType];
+        if (userDataTypeDef.extendsDataType === userDataTypeDef.baseDataType) {
+            let baseDataTypeDefinition = defaultDataTypes[extendsCellDataType as BaseCellDataType];
+            const overriddenBaseDataTypeDefinition = userDataTypeDefs[extendsCellDataType];
             if (baseDataTypeDefinition && overriddenBaseDataTypeDefinition) {
                 // only if it's valid do we override with a provided one
                 baseDataTypeDefinition = overriddenBaseDataTypeDefinition;
             }
-            if (!validateDataTypeDefinition(dataTypeDefinition, baseDataTypeDefinition, extendsCellDataType)) {
+            if (!validateDataTypeDefinition(userDataTypeDef, baseDataTypeDefinition, extendsCellDataType)) {
                 return undefined;
             }
-            mergedDataTypeDefinition = mergeDataTypeDefinitions(baseDataTypeDefinition, dataTypeDefinition);
+            mergedDataTypeDefinition = mergeDataTypeDefinitions(baseDataTypeDefinition, userDataTypeDef);
         } else {
             if (alreadyProcessedDataTypes.includes(extendsCellDataType)) {
                 _warn(44);
                 return undefined;
             }
-            const extendedDataTypeDefinition = dataTypeDefinitions[extendsCellDataType];
-            if (!validateDataTypeDefinition(dataTypeDefinition, extendedDataTypeDefinition, extendsCellDataType)) {
+            const extendedDataTypeDefinition = userDataTypeDefs[extendsCellDataType];
+            if (!validateDataTypeDefinition(userDataTypeDef, extendedDataTypeDefinition, extendsCellDataType)) {
                 return undefined;
             }
             const mergedExtendedDataTypeDefinition = this.processDataTypeDefinition(
                 extendedDataTypeDefinition,
-                dataTypeDefinitions,
+                userDataTypeDefs,
                 [...alreadyProcessedDataTypes, extendsCellDataType],
                 defaultDataTypes
             );
             if (!mergedExtendedDataTypeDefinition) {
                 return undefined;
             }
-            mergedDataTypeDefinition = mergeDataTypeDefinitions(mergedExtendedDataTypeDefinition, dataTypeDefinition);
+            mergedDataTypeDefinition = mergeDataTypeDefinitions(mergedExtendedDataTypeDefinition, userDataTypeDef);
         }
 
         return {
@@ -273,10 +296,11 @@ export class DataTypeService extends BeanStub implements NamedBean {
         if (value == null) {
             return undefined;
         }
-        return (
-            Object.keys(this.dataTypeMatchers).find((_cellDataType) => this.dataTypeMatchers[_cellDataType]!(value)) ??
-            'object'
+        const matchedType = Object.keys(this.dataTypeMatchers).find((_cellDataType: BaseCellDataType) =>
+            this.dataTypeMatchers[_cellDataType]!(value)
         );
+
+        return matchedType ?? 'object';
     }
 
     private getInitialData(): any {
@@ -397,15 +421,6 @@ export class DataTypeService extends BeanStub implements NamedBean {
         return true;
     }
 
-    private checkObjectValueHandlers(defaultDataTypes: { [key: string]: CoreDataTypeDefinition }): void {
-        const resolvedObjectDataTypeDefinition = this.dataTypeDefinitions.object;
-        const defaultObjectDataTypeDefinition = defaultDataTypes.object;
-        this.hasObjectValueParser =
-            resolvedObjectDataTypeDefinition.valueParser !== defaultObjectDataTypeDefinition.valueParser;
-        this.hasObjectValueFormatter =
-            resolvedObjectDataTypeDefinition.valueFormatter !== defaultObjectDataTypeDefinition.valueFormatter;
-    }
-
     private getDateStringTypeDefinition(column?: AgColumn | null): DateStringDataTypeDefinition {
         const { dateString } = this.dataTypeDefinitions;
         if (!column) {
@@ -420,6 +435,10 @@ export class DataTypeService extends BeanStub implements NamedBean {
 
     public getDateFormatterFunction(column?: AgColumn | null): (value: Date | undefined) => string | undefined {
         return this.getDateStringTypeDefinition(column).dateFormatter!;
+    }
+
+    public getDateIncludesTimeFlag(cellDataType?: any): cellDataType is 'dateTime' | 'dateTimeString' {
+        return cellDataType === 'dateTime' || cellDataType === 'dateTimeString';
     }
 
     public getDataTypeDefinition(column: AgColumn): DataTypeDefinition | CoreDataTypeDefinition | undefined {
@@ -458,6 +477,7 @@ export class DataTypeService extends BeanStub implements NamedBean {
         }
     }
 
+    // noinspection JSUnusedGlobalSymbols
     public getFormatValue(cellDataType: string): DataTypeFormatValueFunc | undefined {
         return this.formatValueFuncs[cellDataType];
     }
@@ -466,42 +486,49 @@ export class DataTypeService extends BeanStub implements NamedBean {
         return this.isPendingInference && !!this.columnStateUpdatesPendingInference[colId];
     }
 
-    private setColDefPropertiesForBaseDataType(
-        colDef: ColDef,
-        cellDataType: string,
-        dataTypeDefinition: (DataTypeDefinition | CoreDataTypeDefinition) & GroupSafeValueFormatter,
-        colId: string
-    ): void {
-        const formatValue = this.formatValueFuncs[cellDataType];
-        switch (dataTypeDefinition.baseDataType) {
-            case 'number': {
-                colDef.cellEditor = 'agNumberCellEditor';
-                break;
-            }
-            case 'boolean': {
-                colDef.cellEditor = 'agCheckboxCellEditor';
-                colDef.cellRenderer = 'agCheckboxCellRenderer';
-                colDef.getFindText = () => null;
-                colDef.suppressKeyboardEvent = (params: SuppressKeyboardEventParams<any, boolean>) =>
-                    !!params.colDef.editable && params.event.key === KeyCode.SPACE;
-                break;
-            }
-            case 'date': {
-                colDef.cellEditor = 'agDateCellEditor';
-                colDef.keyCreator = formatValue;
-                break;
-            }
-            case 'dateString': {
-                colDef.cellEditor = 'agDateStringCellEditor';
-                colDef.keyCreator = formatValue;
-                break;
-            }
-            case 'object': {
-                colDef.cellEditorParams = {
+    // using an object here to enforce dev to not forget to implement new types as they are added
+    private columnDefinitionPropsPerDataType: Record<
+        BaseCellDataType,
+        (args: {
+            colDef: ColDef;
+            cellDataType: string;
+            colModel: ColumnModel;
+            dataTypeDefinition: (DataTypeDefinition | CoreDataTypeDefinition) & GroupSafeValueFormatter;
+            colId: string;
+            formatValue: DataTypeFormatValueFunc;
+        }) => Partial<ColDef>
+    > = {
+        number() {
+            return { cellEditor: 'agNumberCellEditor' };
+        },
+        boolean() {
+            return {
+                cellEditor: 'agCheckboxCellEditor',
+                cellRenderer: 'agCheckboxCellRenderer',
+                getFindText: () => null,
+                suppressKeyboardEvent: (params: SuppressKeyboardEventParams<any, boolean>) =>
+                    !!params.colDef.editable && params.event.key === KeyCode.SPACE,
+            };
+        },
+        date({ formatValue }) {
+            return { cellEditor: 'agDateCellEditor', keyCreator: formatValue };
+        },
+        dateString({ formatValue }) {
+            return { cellEditor: 'agDateStringCellEditor', keyCreator: formatValue };
+        },
+        dateTime(args) {
+            return this.date(args);
+        },
+        dateTimeString(args) {
+            return this.dateString(args);
+        },
+        object({ formatValue, colModel, colId }) {
+            return {
+                cellEditorParams: {
                     useFormatter: true,
-                };
-                colDef.comparator = (a: any, b: any) => {
-                    const column = this.colModel.getColDefCol(colId);
+                },
+                comparator: (a: any, b: any) => {
+                    const column = colModel.getColDefCol(colId);
                     const colDef = column?.getColDef();
                     if (!column || !colDef) {
                         return 0;
@@ -510,17 +537,72 @@ export class DataTypeService extends BeanStub implements NamedBean {
                     const valB = b == null ? '' : formatValue({ column, node: null, value: b });
                     if (valA === valB) return 0;
                     return valA > valB ? 1 : -1;
-                };
-                colDef.keyCreator = formatValue;
-                break;
-            }
-        }
+                },
+                keyCreator: formatValue,
+            };
+        },
+        text() {
+            return {};
+        },
+    };
+
+    private setColDefPropertiesForBaseDataType(
+        colDef: ColDef,
+        cellDataType: string,
+        dataTypeDefinition: (DataTypeDefinition | CoreDataTypeDefinition) & GroupSafeValueFormatter,
+        colId: string
+    ): void {
+        const formatValue = this.formatValueFuncs[cellDataType];
+        const partialColDef = this.columnDefinitionPropsPerDataType[dataTypeDefinition.baseDataType]({
+            colDef,
+            cellDataType,
+            colModel: this.colModel,
+            dataTypeDefinition,
+            colId,
+            formatValue,
+        });
+        Object.assign(colDef, partialColDef);
+
         this.beans.filterManager?.setColDefPropertiesForDataType(colDef, dataTypeDefinition, formatValue);
     }
 
-    private getDefaultDataTypes(): { [key: string]: CoreDataTypeDefinition } {
-        const defaultDateFormatMatcher = (value: string) => !!value.match('^\\d{4}-\\d{2}-\\d{2}$');
+    private getDateObjectTypeDef<T extends 'date' | 'dateTime'>(baseDataType: T) {
         const translate = this.getLocaleTextFunc();
+        const includeTime = this.getDateIncludesTimeFlag(baseDataType);
+        return {
+            baseDataType,
+            valueParser: (params: ValueParserLiteParams<any, Date>) =>
+                _parseDateTimeFromString(params.newValue && String(params.newValue)),
+            valueFormatter: (params: ValueFormatterLiteParams<any, Date>) => {
+                if (params.value == null) {
+                    return '';
+                }
+                if (!(params.value instanceof Date) || isNaN(params.value.getTime())) {
+                    return translate('invalidDate', 'Invalid Date');
+                }
+                return _serialiseDate(params.value, includeTime) ?? '';
+            },
+            dataTypeMatcher: (value: any) => value instanceof Date,
+        };
+    }
+
+    private getDateStringTypeDef<T extends 'dateString' | 'dateTimeString'>(baseDataType: T) {
+        const includeTime = this.getDateIncludesTimeFlag(baseDataType);
+        return {
+            baseDataType,
+            dateParser: (value: string | undefined) => _parseDateTimeFromString(value) ?? undefined,
+            dateFormatter: (value: Date | undefined) => _serialiseDate(value ?? null, includeTime) ?? undefined,
+            valueParser: (params: ValueParserLiteParams<any, string>) =>
+                _isValidDate(String(params.newValue)) ? params.newValue : null,
+            valueFormatter: (params: ValueFormatterLiteParams<any, string>) =>
+                _isValidDate(String(params.value)) ? String(params.value) : '',
+            dataTypeMatcher: (value: any) => typeof value === 'string' && _isValidDate(value),
+        };
+    }
+
+    private getDefaultDataTypes(): CoreDataTypeDefMap {
+        const translate = this.getLocaleTextFunc();
+
         return {
             number: {
                 baseDataType: 'number',
@@ -557,30 +639,12 @@ export class DataTypeService extends BeanStub implements NamedBean {
                     params.value == null ? '' : String(params.value),
                 dataTypeMatcher: (value: any) => typeof value === 'boolean',
             },
-            date: {
-                baseDataType: 'date',
-                valueParser: (params: ValueParserLiteParams<any, Date>) =>
-                    _parseDateTimeFromString(params.newValue == null ? null : String(params.newValue)),
-                valueFormatter: (params: ValueFormatterLiteParams<any, Date>) => {
-                    if (params.value == null) {
-                        return '';
-                    }
-                    if (!(params.value instanceof Date) || isNaN(params.value.getTime())) {
-                        return translate('invalidDate', 'Invalid Date');
-                    }
-                    return _serialiseDate(params.value, false) ?? '';
-                },
-                dataTypeMatcher: (value: any) => value instanceof Date,
-            },
-            dateString: {
-                baseDataType: 'dateString',
-                dateParser: (value: string | undefined) => _parseDateTimeFromString(value) ?? undefined,
-                dateFormatter: (value: Date | undefined) => _serialiseDate(value ?? null, false) ?? undefined,
-                valueParser: (params: ValueParserLiteParams<any, string>) =>
-                    defaultDateFormatMatcher(String(params.newValue)) ? params.newValue : null,
-                valueFormatter: (params: ValueFormatterLiteParams<any, string>) =>
-                    defaultDateFormatMatcher(String(params.value)) ? params.value! : '',
-                dataTypeMatcher: (value: any) => typeof value === 'string' && defaultDateFormatMatcher(value),
+            date: this.getDateObjectTypeDef('date'),
+            dateString: this.getDateStringTypeDef('dateString'),
+            dateTime: this.getDateObjectTypeDef('dateTime'),
+            dateTimeString: {
+                ...this.getDateStringTypeDef('dateTimeString'),
+                dataTypeMatcher: (value: any) => typeof value === 'string' && _isValidDateTime(value),
             },
             object: {
                 baseDataType: 'object',

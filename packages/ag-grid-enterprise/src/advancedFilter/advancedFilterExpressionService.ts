@@ -324,19 +324,20 @@ export class AdvancedFilterExpressionService extends BeanStub implements NamedBe
     public generateExpressionOperators(): FilterExpressionOperators {
         const translate = (key: keyof typeof ADVANCED_FILTER_LOCALE_TEXT, variableValues?: string[]) =>
             this.translate(key, variableValues);
+        const dateOperatorsParams = {
+            translate,
+            equals: (v: Date, o: Date) => v.getTime() === o.getTime(),
+        };
+
         return {
             text: new TextFilterExpressionOperators({ translate }),
             boolean: new BooleanFilterExpressionOperators({ translate }),
             object: new TextFilterExpressionOperators<any>({ translate }),
             number: new ScalarFilterExpressionOperators<number>({ translate, equals: (v, o) => v === o }),
-            date: new ScalarFilterExpressionOperators<Date>({
-                translate,
-                equals: (v: Date, o: Date) => v.getTime() === o.getTime(),
-            }),
-            dateString: new ScalarFilterExpressionOperators<Date, string>({
-                translate,
-                equals: (v: Date, o: Date) => v.getTime() === o.getTime(),
-            }),
+            date: new ScalarFilterExpressionOperators<Date>(dateOperatorsParams),
+            dateString: new ScalarFilterExpressionOperators<Date, string>(dateOperatorsParams),
+            dateTime: new ScalarFilterExpressionOperators<Date>(dateOperatorsParams),
+            dateTimeString: new ScalarFilterExpressionOperators<Date, string>(dateOperatorsParams),
         };
     }
 

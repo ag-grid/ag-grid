@@ -362,7 +362,7 @@ export interface GridOptions<TData = any> {
     /**
      * An object map of cell data types to their definitions.
      * Cell data types can either override/update the pre-defined data types
-     * (`'text'`, `'number'`,  `'boolean'`,  `'date'`,  `'dateString'` or  `'object'`),
+     * (`'text'`, `'number'`, `'boolean'`, `'date'`, `'dateString'`, `'dateTime'`, `'dateTimeString'` or `'object'`),
      * or can be custom data types.
      */
     dataTypeDefinitions?: {

@@ -6,19 +6,25 @@ import {
 } from '../components/framework/userCompUtils';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
-import type { BeanName } from '../context/context';
+import type { BeanName, UserComponentName } from '../context/context';
 import type { AgColumn } from '../entities/agColumn';
 import type { ColDef, ValueFormatterParams, ValueGetterParams } from '../entities/colDef';
 import type {
+    BaseCellDataType,
+    CheckDataTypes,
     CoreDataTypeDefinition,
     DataTypeFormatValueFunc,
     DateStringDataTypeDefinition,
 } from '../entities/dataType';
 import type { RowNode } from '../entities/rowNode';
 import type { ColumnEventType, FilterChangedEventSourceType } from '../events';
+import type { IDateFilterParams } from '../filter/provided/date/iDateFilter';
+import type { SimpleFilterParams } from '../filter/provided/iSimpleFilter';
 import { _addGridCommonParams, _getGroupAggFiltering, _isSetFilterByDefault } from '../gridOptionsUtils';
 import type { FilterModel, IFilter, IFilterComp, IFilterParams } from '../interfaces/iFilter';
+import type { ISetFilterParams } from '../interfaces/iSetFilter';
 import type { UserCompDetails } from '../interfaces/iUserCompDetails';
+import { _getDateParts } from '../utils/date';
 import { _exists, _jsonEquals } from '../utils/generic';
 import { AgPromise } from '../utils/promise';
 import { _error, _warn } from '../validation/logging';
@@ -54,15 +60,159 @@ const MONTH_KEYS: (keyof typeof MONTH_LOCALE_TEXT)[] = [
     'december',
 ];
 
-function setFilterNumberComparator(a: string, b: string): number {
+function setFilterNumberComparator<TValue = any>(a: TValue | null, b: TValue | null): number {
     if (a == null) {
         return -1;
     }
     if (b == null) {
         return 1;
     }
-    return parseFloat(a) - parseFloat(b);
+    return parseFloat(a as string) - parseFloat(b as string);
 }
+
+type FilterParamsDefArgs = {
+    formatValue: DataTypeFormatValueFunc;
+    t: ReturnType<ColumnFilterService['getLocaleTextFunc']>;
+    dataTypeDefinition: CoreDataTypeDefinition;
+};
+
+type FilterParamsDefMap = CheckDataTypes<{
+    number: (args: FilterParamsDefArgs) => ISetFilterParams<any, number>;
+    boolean: (args: FilterParamsDefArgs) => ISetFilterParams<any, boolean> | SimpleFilterParams;
+    date: (args: FilterParamsDefArgs) => ISetFilterParams<any, Date> | IDateFilterParams;
+    dateString: (args: FilterParamsDefArgs) => ISetFilterParams | IDateFilterParams;
+    dateTime: (args: FilterParamsDefArgs) => ISetFilterParams<any, Date> | IDateFilterParams;
+    dateTimeString: (args: FilterParamsDefArgs) => ISetFilterParams | IDateFilterParams;
+    text: () => Record<any, never>;
+    object: (args: FilterParamsDefArgs) => ISetFilterParams<any, any>;
+}>;
+
+// using an object here to enforce dev to not forget to implement new types as they are added
+const filterParamsForEachDataType: FilterParamsDefMap = {
+    number: () => ({}),
+    boolean: () => ({
+        maxNumConditions: 1,
+        debounceMs: 0,
+        filterOptions: [
+            'empty',
+            {
+                displayKey: 'true',
+                displayName: 'True',
+                predicate: (_filterValues: any[], cellValue: any) => cellValue,
+                numberOfInputs: 0,
+            },
+            {
+                displayKey: 'false',
+                displayName: 'False',
+                predicate: (_filterValues: any[], cellValue: any) => cellValue === false,
+                numberOfInputs: 0,
+            },
+        ],
+    }),
+    date: () => ({ isValidDate }),
+    dateString: ({ dataTypeDefinition }) => ({
+        comparator: (filterDate: Date, cellValue: string | undefined) => {
+            const cellAsDate = (dataTypeDefinition as DateStringDataTypeDefinition).dateParser!(cellValue)!;
+            if (cellValue == null || cellAsDate < filterDate) {
+                return -1;
+            }
+            if (cellAsDate > filterDate) {
+                return 1;
+            }
+            return 0;
+        },
+        isValidDate: (value: any) =>
+            typeof value === 'string' &&
+            isValidDate((dataTypeDefinition as DateStringDataTypeDefinition).dateParser!(value)),
+    }),
+    dateTime: (args) => filterParamsForEachDataType.date(args),
+    dateTimeString: (args) => filterParamsForEachDataType.dateString(args),
+    object: () => ({}),
+    text: () => ({}),
+};
+
+// using an object here to enforce dev to not forget to implement new types as they are added
+const setFilterParamsForEachDataType: FilterParamsDefMap = {
+    number: () => ({ comparator: setFilterNumberComparator }),
+    boolean: ({ t }) => ({
+        valueFormatter: (params: ValueFormatterParams<any, boolean>) =>
+            _exists(params.value) ? t(String(params.value), params.value ? 'True' : 'False') : t('blanks', '(Blanks)'),
+    }),
+    date: ({ formatValue, t }) => ({
+        valueFormatter: (params: ValueFormatterParams) => {
+            const valueFormatted = formatValue(params);
+            return _exists(valueFormatted) ? valueFormatted : t('blanks', '(Blanks)');
+        },
+        treeList: true,
+        treeListFormatter: (pathKey: string | null, level: number) => {
+            if (pathKey === 'NaN') {
+                return t('invalidDate', 'Invalid Date');
+            }
+            if (level === 1 && pathKey != null) {
+                const monthKey = MONTH_KEYS[Number(pathKey) - 1];
+                return t(monthKey, MONTH_LOCALE_TEXT[monthKey]);
+            }
+            return pathKey ?? t('blanks', '(Blanks)');
+        },
+        treeListPathGetter: (date: Date | null) => _getDateParts(date, false),
+    }),
+    dateString: ({ formatValue, dataTypeDefinition, t }) => ({
+        valueFormatter: (params: ValueFormatterParams) => {
+            const valueFormatted = formatValue(params);
+            return _exists(valueFormatted) ? valueFormatted : t('blanks', '(Blanks)');
+        },
+        treeList: true,
+        treeListPathGetter: (value: string | null) =>
+            _getDateParts((dataTypeDefinition as DateStringDataTypeDefinition).dateParser!(value ?? undefined), false),
+        treeListFormatter: (pathKey: string | null, level: number) => {
+            if (level === 1 && pathKey != null) {
+                const monthKey = MONTH_KEYS[Number(pathKey) - 1];
+                return t(monthKey, MONTH_LOCALE_TEXT[monthKey]);
+            }
+            return pathKey ?? t('blanks', '(Blanks)');
+        },
+    }),
+    dateTime: (args) => {
+        const params = setFilterParamsForEachDataType.date(args) as ISetFilterParams<any, Date>;
+        params.treeListPathGetter = _getDateParts;
+        return params;
+    },
+    dateTimeString(args) {
+        const convertToDate = (args.dataTypeDefinition as DateStringDataTypeDefinition).dateParser!;
+        const params = setFilterParamsForEachDataType.dateString(args) as ISetFilterParams;
+        params.treeListPathGetter = (value: string | null) => _getDateParts(convertToDate(value ?? undefined));
+        return params;
+    },
+    object: ({ formatValue, t }) => ({
+        valueFormatter: (params: ValueFormatterParams) => {
+            const valueFormatted = formatValue(params);
+            return _exists(valueFormatted) ? valueFormatted : t('blanks', '(Blanks)');
+        },
+    }),
+    text: () => ({}),
+};
+
+const defaultFilters: Record<BaseCellDataType, UserComponentName> = {
+    boolean: 'agTextColumnFilter',
+    date: 'agDateColumnFilter',
+    dateString: 'agDateColumnFilter',
+    dateTime: 'agDateColumnFilter',
+    dateTimeString: 'agDateColumnFilter',
+    number: 'agNumberColumnFilter',
+    object: 'agTextColumnFilter',
+    text: 'agTextColumnFilter',
+};
+
+const defaultFloatingFilters: Record<BaseCellDataType, UserComponentName> = {
+    boolean: 'agTextColumnFloatingFilter',
+    date: 'agDateColumnFloatingFilter',
+    dateString: 'agDateColumnFloatingFilter',
+    dateTime: 'agDateColumnFloatingFilter',
+    dateTimeString: 'agDateColumnFloatingFilter',
+    number: 'agNumberColumnFloatingFilter',
+    object: 'agTextColumnFloatingFilter',
+    text: 'agTextColumnFloatingFilter',
+};
 
 export class ColumnFilterService extends BeanStub implements NamedBean {
     beanName: BeanName = 'colFilter';
@@ -456,40 +606,18 @@ export class ColumnFilterService extends BeanStub implements NamedBean {
         return this.allColumnFilters.get(column.getColId());
     }
 
-    private getDefaultFilter(column: AgColumn): string {
-        let defaultFilter;
-        const { gos, dataTypeSvc } = this.beans;
-        if (_isSetFilterByDefault(gos)) {
-            defaultFilter = 'agSetColumnFilter';
-        } else {
-            const cellDataType = dataTypeSvc?.getBaseDataType(column);
-            if (cellDataType === 'number') {
-                defaultFilter = 'agNumberColumnFilter';
-            } else if (cellDataType === 'date' || cellDataType === 'dateString') {
-                defaultFilter = 'agDateColumnFilter';
-            } else {
-                defaultFilter = 'agTextColumnFilter';
-            }
+    private getDefaultFilter(column: AgColumn, isFloating: boolean = false): string {
+        if (_isSetFilterByDefault(this.beans.gos)) {
+            return isFloating ? 'agSetColumnFloatingFilter' : 'agSetColumnFilter';
         }
-        return defaultFilter;
+
+        const filterSet = isFloating ? defaultFloatingFilters : defaultFilters;
+        const baseDataType = this.beans.dataTypeSvc?.getBaseDataType(column) ?? 'text';
+        return filterSet[baseDataType];
     }
 
     public getDefaultFloatingFilter(column: AgColumn): string {
-        let defaultFloatingFilterType: string;
-        const { gos, dataTypeSvc } = this.beans;
-        if (_isSetFilterByDefault(gos)) {
-            defaultFloatingFilterType = 'agSetColumnFloatingFilter';
-        } else {
-            const cellDataType = dataTypeSvc?.getBaseDataType(column);
-            if (cellDataType === 'number') {
-                defaultFloatingFilterType = 'agNumberColumnFloatingFilter';
-            } else if (cellDataType === 'date' || cellDataType === 'dateString') {
-                defaultFloatingFilterType = 'agDateColumnFloatingFilter';
-            } else {
-                defaultFloatingFilterType = 'agTextColumnFloatingFilter';
-            }
-        }
-        return defaultFloatingFilterType;
+        return this.getDefaultFilter(column, true);
     }
 
     private createFilterInstance(
@@ -892,143 +1020,19 @@ export class ColumnFilterService extends BeanStub implements NamedBean {
         formatValue: DataTypeFormatValueFunc
     ): void {
         const usingSetFilter = _isSetFilterByDefault(this.gos);
-        const translate = this.getLocaleTextFunc();
-        const mergeFilterParams = (params: any) => {
-            const { filterParams } = colDef;
-            colDef.filterParams =
-                typeof filterParams === 'object'
-                    ? {
-                          ...filterParams,
-                          ...params,
-                      }
-                    : params;
-        };
-        switch (dataTypeDefinition.baseDataType) {
-            case 'number': {
-                if (usingSetFilter) {
-                    mergeFilterParams({
-                        comparator: setFilterNumberComparator,
-                    });
-                }
-                break;
-            }
-            case 'boolean': {
-                if (usingSetFilter) {
-                    mergeFilterParams({
-                        valueFormatter: (params: ValueFormatterParams) => {
-                            if (!_exists(params.value)) {
-                                return translate('blanks', '(Blanks)');
-                            }
-                            return translate(String(params.value), params.value ? 'True' : 'False');
-                        },
-                    });
-                } else {
-                    mergeFilterParams({
-                        maxNumConditions: 1,
-                        debounceMs: 0,
-                        filterOptions: [
-                            'empty',
-                            {
-                                displayKey: 'true',
-                                displayName: 'True',
-                                predicate: (_filterValues: any[], cellValue: any) => cellValue,
-                                numberOfInputs: 0,
-                            },
-                            {
-                                displayKey: 'false',
-                                displayName: 'False',
-                                predicate: (_filterValues: any[], cellValue: any) => cellValue === false,
-                                numberOfInputs: 0,
-                            },
-                        ],
-                    });
-                }
-                break;
-            }
-            case 'date': {
-                if (usingSetFilter) {
-                    mergeFilterParams({
-                        valueFormatter: (params: ValueFormatterParams) => {
-                            const valueFormatted = formatValue(params);
-                            return _exists(valueFormatted) ? valueFormatted : translate('blanks', '(Blanks)');
-                        },
-                        treeList: true,
-                        treeListFormatter: (pathKey: string | null, level: number) => {
-                            if (pathKey === 'NaN') {
-                                return translate('invalidDate', 'Invalid Date');
-                            }
-                            if (level === 1 && pathKey != null) {
-                                const monthKey = MONTH_KEYS[Number(pathKey) - 1];
-                                return translate(monthKey, MONTH_LOCALE_TEXT[monthKey]);
-                            }
-                            return pathKey ?? translate('blanks', '(Blanks)');
-                        },
-                    });
-                } else {
-                    mergeFilterParams({
-                        isValidDate,
-                    });
-                }
-                break;
-            }
-            case 'dateString': {
-                const convertToDate = (dataTypeDefinition as DateStringDataTypeDefinition).dateParser!;
-                if (usingSetFilter) {
-                    mergeFilterParams({
-                        valueFormatter: (params: ValueFormatterParams) => {
-                            const valueFormatted = formatValue(params);
-                            return _exists(valueFormatted) ? valueFormatted : translate('blanks', '(Blanks)');
-                        },
-                        treeList: true,
-                        treeListPathGetter: (value: string | null) => {
-                            const date = convertToDate(value ?? undefined);
-                            return date
-                                ? [String(date.getFullYear()), String(date.getMonth() + 1), String(date.getDate())]
-                                : null;
-                        },
-                        treeListFormatter: (pathKey: string | null, level: number) => {
-                            if (level === 1 && pathKey != null) {
-                                const monthKey = MONTH_KEYS[Number(pathKey) - 1];
-                                return translate(monthKey, MONTH_LOCALE_TEXT[monthKey]);
-                            }
-                            return pathKey ?? translate('blanks', '(Blanks)');
-                        },
-                    });
-                } else {
-                    mergeFilterParams({
-                        comparator: (filterDate: Date, cellValue: string | undefined) => {
-                            const cellAsDate = convertToDate(cellValue)!;
-                            if (cellValue == null || cellAsDate < filterDate) {
-                                return -1;
-                            }
-                            if (cellAsDate > filterDate) {
-                                return 1;
-                            }
-                            return 0;
-                        },
-                        isValidDate: (value: any) => typeof value === 'string' && isValidDate(convertToDate(value)),
-                    });
-                }
-                break;
-            }
-            case 'object': {
-                if (usingSetFilter) {
-                    mergeFilterParams({
-                        valueFormatter: (params: ValueFormatterParams) => {
-                            const valueFormatted = formatValue(params);
-                            return _exists(valueFormatted) ? valueFormatted : translate('blanks', '(Blanks)');
-                        },
-                    });
-                } else {
-                    colDef.filterValueGetter = (params: ValueGetterParams) =>
-                        formatValue({
-                            column: params.column,
-                            node: params.node,
-                            value: this.beans.valueSvc.getValue(params.column as AgColumn, params.node),
-                        });
-                }
-                break;
-            }
+        if (typeof dataTypeDefinition.baseDataType === 'object' && !usingSetFilter) {
+            colDef.filterValueGetter = ({ column, node }: ValueGetterParams) =>
+                formatValue({ column, node, value: this.beans.valueSvc.getValue(column as AgColumn, node) });
+            return;
+        }
+        const filterParamsMap = usingSetFilter ? setFilterParamsForEachDataType : filterParamsForEachDataType;
+        const filterParamsGetter = filterParamsMap[dataTypeDefinition.baseDataType];
+        const filterParams = filterParamsGetter({ dataTypeDefinition, formatValue, t: this.getLocaleTextFunc() });
+
+        if (typeof colDef.filterParams === 'object') {
+            Object.assign(colDef.filterParams, filterParams);
+        } else {
+            colDef.filterParams = filterParams;
         }
     }
 

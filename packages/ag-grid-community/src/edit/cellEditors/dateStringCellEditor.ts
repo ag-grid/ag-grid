@@ -52,7 +52,7 @@ class DateStringCellEditorInput implements CellEditorInput<string, IDateStringCe
     }
 
     public getStartValue(): string | null | undefined {
-        return _serialiseDate(this.parseDate(this.params.value ?? undefined) ?? null, false);
+        return this.formatDate(this.parseDate(this.params.value ?? undefined));
     }
 
     private parseDate(value: string | undefined): Date | undefined {
