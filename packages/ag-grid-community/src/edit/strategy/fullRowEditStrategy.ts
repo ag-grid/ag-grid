@@ -6,7 +6,7 @@ import type { CellCtrl } from '../../rendering/cell/cellCtrl';
 import type { RowCtrl } from '../../rendering/row/rowCtrl';
 import type { CellIdPositions } from '../editModelService';
 import { _resolveControllers, _resolveRowController } from '../utils/controllers';
-import { _syncModelsFromEditors } from '../utils/editors';
+import { _setupEditor, _syncModelsFromEditors } from '../utils/editors';
 import { BaseEditStrategy } from './baseEditStrategy';
 
 export class FullRowEditStrategy extends BaseEditStrategy {
@@ -169,6 +169,10 @@ export class FullRowEditStrategy extends BaseEditStrategy {
         }
 
         if (nextEditable) {
+            if (!nextCell.comp?.getCellEditor()) {
+                // editor missing because it was outside the viewport during creating phase, attempt to create it now
+                _setupEditor(this.beans, nextCell.rowNode, nextCell.column, undefined, true);
+            }
             this.setFocusInOnEditor(nextCell);
             nextCell.focusCell();
         } else {
