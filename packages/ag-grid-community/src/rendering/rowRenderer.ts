@@ -1041,18 +1041,19 @@ export class RowRenderer extends BeanStub implements NamedBean {
 
         const pagination = this.beans.pagination;
         // if focus should be on a row, ensure the row is rendered.
-        const focusedRow = this.beans.focusSvc?.getFocusedCell()?.rowIndex;
+        const focusedRowIndex = this.beans.focusSvc?.getFocusedCell()?.rowIndex;
         if (
-            focusedRow != null &&
-            (focusedRow < this.firstRenderedRow || focusedRow > this.lastRenderedRow) &&
-            (!pagination || pagination.isRowInPage(focusedRow))
+            focusedRowIndex != null &&
+            (focusedRowIndex < this.firstRenderedRow || focusedRowIndex > this.lastRenderedRow) &&
+            (!pagination || pagination.isRowInPage(focusedRowIndex)) &&
+            focusedRowIndex < this.rowModel.getRowCount()
         ) {
-            indexesToDraw.push(focusedRow);
+            indexesToDraw.push(focusedRowIndex);
         }
 
         const checkRowToDraw = (rowComp: RowCtrl) => {
             const index = rowComp.rowNode.rowIndex;
-            if (index == null || index === focusedRow) {
+            if (index == null || index === focusedRowIndex) {
                 return;
             }
             if (index < this.firstRenderedRow || index > this.lastRenderedRow) {
