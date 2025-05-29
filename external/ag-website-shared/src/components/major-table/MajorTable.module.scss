@@ -10,11 +10,19 @@
         gap: $spacing-size-6;
         transition: background-color $transition-default-timing;
 
+        &:first-child {
+            background-color: color-mix(in srgb, var(--color-util-brand-50), var(--color-bg-primary));
+
+            #{$selector-darkmode} & {
+                background-color: color-mix(in srgb, var(--color-util-gray-300) 15%, transparent);
+            }
+        }
+
         &:hover {
             background-color: var(--color-util-brand-50);
 
             #{$selector-darkmode} & {
-                background-color: var(--color-util-gray-200);
+                background-color: color-mix(in srgb, var(--color-util-gray-300) 25%, transparent);
             }
         }
     }
@@ -66,11 +74,20 @@
     }
 }
 
-.versionType,
-.changelog {
+.isPatch a {
+    font-weight: 400;
+    letter-spacing: 0.0275ch;
+}
+
+.versionType {
     @media screen and (max-width: 540px) {
         display: none;
     }
+}
+
+.links {
+    min-width: 15ch;
+    text-align: right;
 }
 
 .dateCol {

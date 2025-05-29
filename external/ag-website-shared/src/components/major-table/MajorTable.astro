@@ -46,9 +46,10 @@ const versions = isMigration ? allVersions.filter(filterMigrations) : allVersion
             const docsUrl = !isMigration
                 ? getDocumentationArchiveUrl({ site: library, version: version.version })
                 : null;
+            const notesPath = !isMigration && version.notesPath ? version.notesPath : null;
 
             return (
-                <tr class={isMajor ? styles.isMajor : ''}>
+                <tr class={versionType === 'Patch' ? styles.isPatch : ''}>
                     <td class:list={[styles.version, 'text-monospace ', 'text-semibold']}>{version.version}</td>
 
                     <td class={styles.dateCol}>{version.date}</td>
@@ -71,11 +72,18 @@ const versions = isMigration ? allVersions.filter(filterMigrations) : allVersion
 
                     {!isMigration && (
                         <>
-                            <td class={styles.changelog}>
-                                <a href={changelogUrl}>
-                                    Changelog
-                                    <Icon name="arrowRight" />
-                                </a>
+                            <td class={styles.links}>
+                                {notesPath ? (
+                                    <a href={notesPath}>
+                                        Release Notes
+                                        <Icon name="arrowRight" />
+                                    </a>
+                                ) : (
+                                    <a href={changelogUrl}>
+                                        Changelog
+                                        <Icon name="arrowRight" />
+                                    </a>
+                                )}
                             </td>
 
                             <td>
