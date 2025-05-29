@@ -2,7 +2,6 @@ import { Alert } from '@ag-website-shared/components/alert/Alert';
 import { Icon } from '@ag-website-shared/components/icon/Icon';
 import DetailCellRenderer from '@components/grid/DetailCellRendererComponent';
 import { Grid } from '@components/grid/Grid';
-import ReleaseVersionNotes from '@components/release-notes/ReleaseVersionNotes.jsx';
 import styles from '@pages-styles/pipelineChangelog.module.scss';
 import { IssueColDef, IssueTypeColDef } from '@utils/grid/issueColDefs';
 import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
@@ -61,11 +60,7 @@ export const Changelog = () => {
     const [rowData, setRowData] = useState(null);
     const [gridApi, setGridApi] = useState(null);
     const [versions, setVersions] = useState<string[]>([]);
-    const [allReleaseNotes, setAllReleaseNotes] = useState(null);
-    const [currentReleaseNotes, setCurrentReleaseNotes] = useState(null);
-    const [markdownContent, setMarkdownContent] = useState(undefined);
     const [fixVersion, setFixVersion] = useFixVersion();
-    const [hideExpander, setHideExpander] = useState(fixVersion === ALL_FIX_VERSIONS);
     const { searchQuery, handleSearchQueryChange } = useSearchQuery();
     const autoSizeStrategy = useMemo(() => ({ type: 'fitGridWidth' }), []);
 
@@ -106,58 +101,11 @@ export const Changelog = () => {
                 });
                 setRowData(data);
             });
-        fetch(urlWithBaseUrl('/changelog/releaseVersionNotes.json'))
-            .then((response) => response.json())
-            .then((data) => {
-                setAllReleaseNotes(data);
-            });
     }, []);
 
     useEffect(() => {
         applyFixVersionFilter();
     }, [fixVersion]);
-
-    useEffect(() => {
-        let releaseNotesVersion = fixVersion;
-        if (!releaseNotesVersion) {
-            // Find the latest release notes version
-            releaseNotesVersion = allReleaseNotes?.find((element) => !!element['release version'])?.['release version'];
-        }
-
-        if (releaseNotesVersion && allReleaseNotes) {
-            const releaseNotes = allReleaseNotes.find((element) =>
-                element['release version'].includes(releaseNotesVersion)
-            );
-
-            let currentReleaseNotesHtml = null;
-            let newHideExpander = hideExpander;
-            if (releaseNotes) {
-                newHideExpander = !releaseNotes['showExpandLink'] && releaseNotes['markdown'];
-
-                if (releaseNotes['markdown']) {
-                    fetch(urlWithBaseUrl(`/changelog/${releaseNotes['markdown']}`))
-                        .then((response) => response.text())
-                        .then((markdownContent) => {
-                            setMarkdownContent(markdownContent);
-                        })
-                        .catch((error) => {
-                            // eslint-disable-next-line no-console
-                            console.error('Error fetching Markdown content:', error);
-                        });
-                } else {
-                    currentReleaseNotesHtml = Object.keys(releaseNotes)
-                        .map((element) => releaseNotes[element])
-                        .join(' ');
-                    setMarkdownContent(undefined);
-                }
-            } else {
-                newHideExpander = true;
-            }
-
-            setHideExpander(newHideExpander);
-            setCurrentReleaseNotes(currentReleaseNotesHtml);
-        }
-    }, [fixVersion, allReleaseNotes]);
 
     const gridReady = useCallback(
         (params) => {
@@ -177,22 +125,6 @@ export const Changelog = () => {
     const isRowMaster = useCallback((params) => {
         return params.moreInformation || params.deprecationNotes || params.breakingChangesNotes;
     }, []);
-
-    const switchDisplayedFixVersion = useCallback(
-        (fixVersion) => {
-            setFixVersion(fixVersion);
-            const url = new URL(window.location.href);
-
-            // Remove trailing slash when adding search params (SEO)
-            if (url.pathname.endsWith('/')) {
-                url.pathname = url.pathname.slice(0, -1);
-            }
-
-            url.searchParams.set('fixVersion', fixVersion);
-            window.history.replaceState({}, '', url);
-        },
-        [setFixVersion]
-    );
 
     const defaultColDef = useMemo(
         () => ({
@@ -346,15 +278,6 @@ export const Changelog = () => {
                     was included. Check out the <a href="../pipeline/">Pipeline</a> to see what's in our product
                     backlog.
                 </Alert>
-
-                <ReleaseVersionNotes
-                    releaseNotes={fixVersion === ALL_FIX_VERSIONS ? undefined : currentReleaseNotes}
-                    markdownContent={fixVersion === ALL_FIX_VERSIONS ? undefined : markdownContent}
-                    versions={versions}
-                    fixVersion={fixVersion}
-                    onChange={switchDisplayedFixVersion}
-                    hideExpander={hideExpander}
-                />
             </section>
 
             <div className={styles.searchBarOuter}>
