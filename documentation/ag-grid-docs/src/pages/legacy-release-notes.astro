@@ -1,0 +1,67 @@
+---
+import { getEntry } from 'astro:content';
+import { DocsNavFromLocalStorage } from '@ag-website-shared/components/docs-navigation/DocsNavFromLocalStorage';
+import Layout from '../layouts/Layout.astro';
+import docsStyles from '@ag-website-shared/components/page-styles/docs.module.scss';
+
+import type { CollectionEntry } from 'astro:content';
+import { undefined } from 'astro:schema';
+
+const { data: docsNavData } = (await getEntry('docsNav', 'nav')) as CollectionEntry<'docsNav'>;
+const { data: legacyReleaseNotesData } = (await getEntry(
+    'legacyReleaseNotes',
+    'legacy-release-notes'
+)) as CollectionEntry<'legacyReleaseNotes'>;
+const { data: versionsData } = (await getEntry('versions', 'ag-grid-versions')) as CollectionEntry<'versions'>;
+
+const isNotEmpty = (content) => {
+    console.log(content);
+
+    return content !== undefined && content !== '';
+};
+
+const legacyReleases = legacyReleaseNotesData.map((release) => {
+    const version = versionsData.find((version) => release['release version'].includes(version.version));
+
+    const noteSections = [release['feature highlights'], release['breaking changes'], release['deprecations']].filter(
+        (section) => section !== ''
+    );
+
+    return {
+        version: version?.version,
+        date: version?.date,
+        noteSections,
+    };
+});
+---
+
+<Layout
+    title={'Legacy Release Notes | AG Grid'}
+    description={'Release notes for legacy versions of AG Grid'}
+    showDocsNav={true}
+    showSearchBar={true}
+>
+    <div class:list={[docsStyles.contentViewport, 'layout-grid']}>
+        <DocsNavFromLocalStorage client:load menuData={docsNavData} pageName={'documentation-archive'} />
+
+        <div id="doc-content" class={docsStyles.docPage}>
+            <h1>AG Grid Legacy Release Notes</h1>
+
+            {
+                legacyReleases.map((release) => {
+                    return (
+                        <div>
+                            <h3>
+                                {release.version} {release.date}
+                            </h3>
+
+                            {release.noteSections.map((section) => {
+                                return <div set:html={section} />;
+                            })}
+                        </div>
+                    );
+                })
+            }
+        </div>
+    </div>
+</Layout>
