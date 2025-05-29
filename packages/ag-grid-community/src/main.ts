@@ -44,11 +44,14 @@ export {
 export type { SelectionColService } from './columns/selectionColService';
 export {
     SizeColumnsToFitGridColumnLimits,
+    SizeColumnsToContentColumnLimits,
     SizeColumnsToContentStrategy,
     SizeColumnsToFitProvidedWidthStrategy,
     SizeColumnsToFitGridStrategy,
     IColumnLimit,
     ISizeColumnsToFitParams,
+    ISizeColumnsToContentParams,
+    ISizeAllColumnsToContentParams,
 } from './interfaces/autoSize';
 export { IRenderStatusService } from './interfaces/renderStatusService';
 
