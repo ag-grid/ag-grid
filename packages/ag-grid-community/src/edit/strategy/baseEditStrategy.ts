@@ -3,6 +3,7 @@ import { BeanStub } from '../../context/beanStub';
 import type { BeanName } from '../../context/context';
 import type { AgColumn } from '../../entities/agColumn';
 import type { ColDef } from '../../entities/colDef';
+import { RowNode } from '../../entities/rowNode';
 import type { AgEventType } from '../../eventTypes';
 import type { CellFocusedEvent } from '../../events';
 import type { DefaultProvidedCellEditorParams } from '../../interfaces/iCellEditor';
@@ -60,6 +61,13 @@ export abstract class BaseEditStrategy extends BeanStub {
                 rowNode,
             });
 
+            const siblingNode = rowNode instanceof RowNode ? rowNode.pinnedSibling : undefined;
+            const siblingRowCtrl =
+                siblingNode &&
+                _resolveRowController(this.beans, {
+                    rowNode: siblingNode,
+                });
+
             let rowEdited = false;
 
             rowUpdateMap.forEach((cellData, column) => {
@@ -72,21 +80,39 @@ export abstract class BaseEditStrategy extends BeanStub {
                     column,
                 });
 
-                this.updateCellStyle(cellCtrl, newState, batchEdit);
+                this.updateCellStyle(cellCtrl, newState, batchEdit, suppressFlash);
 
-                // force refresh if the cell also uses a renderer for edits
-                cellCtrl?.refreshCell({
-                    suppressFlash,
-                    forceRefresh: true,
-                });
+                if (siblingRowCtrl) {
+                    const siblingCellCtrl = _resolveCellController(this.beans, {
+                        rowCtrl: siblingRowCtrl,
+                        column,
+                    });
+
+                    this.updateCellStyle(siblingCellCtrl, newState, batchEdit, suppressFlash);
+                }
             });
 
             this.updateRowStyle(rowCtrl, rowEdited, batchEdit);
+
+            if (siblingRowCtrl) {
+                this.updateRowStyle(siblingRowCtrl, rowEdited, batchEdit);
+            }
         });
     }
 
-    protected updateCellStyle(cellCtrl?: CellCtrl | null, newState?: boolean, batchEdit?: boolean): void {
+    protected updateCellStyle(
+        cellCtrl?: CellCtrl | null,
+        newState?: boolean,
+        batchEdit?: boolean,
+        suppressFlash?: boolean
+    ): void {
         cellCtrl?.comp.toggleCss('ag-cell-batch-edit', (newState && batchEdit) ?? false);
+
+        // force refresh if the cell also uses a renderer for edits
+        cellCtrl?.refreshCell({
+            suppressFlash,
+            forceRefresh: true,
+        });
     }
 
     protected updateRowStyle(_rowCtrl?: RowCtrl | null, _newState?: boolean, _batchEdit?: boolean): void {

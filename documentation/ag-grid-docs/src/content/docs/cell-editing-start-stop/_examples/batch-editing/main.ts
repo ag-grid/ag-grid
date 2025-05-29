@@ -17,11 +17,27 @@ import {
     ValidationModule,
     createGrid,
 } from 'ag-grid-community';
+import {
+    CellSelectionModule,
+    ColumnMenuModule,
+    ColumnsToolPanelModule,
+    ContextMenuModule,
+    FiltersToolPanelModule,
+    PivotModule,
+    RowGroupingPanelModule,
+} from 'ag-grid-enterprise';
 
 import { getData } from './data';
 
 ModuleRegistry.registerModules([
     NumberEditorModule,
+    ColumnsToolPanelModule,
+    ColumnMenuModule,
+    ContextMenuModule,
+    PivotModule,
+    FiltersToolPanelModule,
+    RowGroupingPanelModule,
+    CellSelectionModule,
     TextEditorModule,
     PinnedRowModule,
     ClientSideRowModelModule,
@@ -30,15 +46,12 @@ ModuleRegistry.registerModules([
 
 let gridApi: GridApi;
 
-let rowEvents: any[] = [];
-let cellEvents: any[] = [];
-
 const gridOptions: GridOptions = {
     columnDefs: [
-        { field: 'firstName' },
-        { field: 'lastName' },
-        { field: 'gender' },
-        { field: 'age' },
+        { field: 'firstName', rowGroup: true },
+        { field: 'lastName', rowGroup: true },
+        { field: 'gender', pivot: true },
+        { field: 'age', aggFunc: 'sum', cellDataType: 'number' },
         { field: 'mood' },
         { field: 'country' },
         { field: 'address', minWidth: 550 },
@@ -48,25 +61,23 @@ const gridOptions: GridOptions = {
         minWidth: 110,
         editable: true,
     },
+    sideBar: 'columns',
+    pivotPanelShow: 'always',
     cellSelection: true,
     rowData: getData(),
     pinnedTopRowData: getPinnedTopData(),
     pinnedBottomRowData: getPinnedBottomData(),
     onRowEditingStarted: (event: RowEditingStartedEvent) => {
-        rowEvents.push(event);
-        console.log('rowEditingStarted', { rowEvents: rowEvents.length, cellEvents: cellEvents.length });
+        console.log('rowEditingStarted');
     },
     onRowEditingStopped: (event: RowEditingStoppedEvent) => {
-        rowEvents.splice(0, 1);
-        console.log('rowEditingStopped', { rowEvents: rowEvents.length, cellEvents: cellEvents.length });
+        console.log('rowEditingStopped');
     },
     onCellEditingStarted: (event: CellEditingStartedEvent) => {
-        cellEvents.push(event);
-        console.log('cellEditingStarted', { rowEvents: rowEvents.length, cellEvents: cellEvents.length });
+        console.log('cellEditingStarted');
     },
     onCellEditingStopped: (event: CellEditingStoppedEvent) => {
-        cellEvents.splice(0, 1);
-        console.log('cellEditingStopped', { rowEvents: rowEvents.length, cellEvents: cellEvents.length });
+        console.log('cellEditingStopped');
     },
     onCellValueChanged: (event) => {
         console.log('Cell value changed');
@@ -77,13 +88,10 @@ function getPendingUpdates() {
     console.log(gridApi!.getPendingUpdates());
 }
 
-function logState(counts?: boolean) {
-    const editingCells = gridApi!.getEditingCells();
-    const pendingUpdates = gridApi!.getPendingUpdates();
-
+function logState() {
     console.log({
-        editingCells: counts ? editingCells.length : editingCells,
-        pendingUpdates: counts ? pendingUpdates.length : pendingUpdates,
+        editingCells: gridApi!.getEditingCells(),
+        pendingUpdates: gridApi!.getPendingUpdates(),
     });
 }
 
@@ -94,7 +102,7 @@ function pollState() {
         clearInterval(polling);
         polling = undefined;
     } else {
-        polling = setInterval(() => logState(true), 1000);
+        polling = setInterval(logState, 1000);
     }
 
     document.getElementById('enablePoll')!.style.display = polling ? 'none' : 'unset';

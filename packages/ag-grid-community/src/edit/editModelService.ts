@@ -4,7 +4,6 @@ import type { BeanCollection } from '../context/context';
 import type { CellPosition } from '../interfaces/iCellPosition';
 import type { Column } from '../interfaces/iColumn';
 import type { IRowNode } from '../interfaces/iRowNode';
-import { _valuesDiffer } from './utils/editors';
 
 export type CellIdPositions = {
     rowNode: IRowNode;
@@ -50,12 +49,16 @@ export class EditModelService extends BeanStub implements NamedBean {
         return this.pendingUpdates.get(rowNode)?.get(column);
     }
 
-    public getPendingUpdates(): PendingUpdates {
-        const copy = new Map<IRowNode, Map<Column, EditedCell>>();
+    public getPendingUpdates(copy = true): PendingUpdates {
+        if (!copy) {
+            return this.pendingUpdates;
+        }
+
+        const map = new Map<IRowNode, Map<Column, EditedCell>>();
         this.pendingUpdates.forEach((rowUpdateMap, rowNode) => {
-            copy.set(rowNode, new Map<Column, EditedCell>(rowUpdateMap));
+            map.set(rowNode, new Map<Column, EditedCell>(rowUpdateMap));
         });
-        return copy;
+        return map;
     }
 
     public setPendingUpdates(pendingPositions: PendingUpdates): void {
@@ -119,8 +122,8 @@ export class EditModelService extends BeanStub implements NamedBean {
     public getPendingCellPositions(): CellPosition[] {
         const result: CellPosition[] = [];
         const cellIds = this.getPendingCellIds();
-        cellIds.forEach(({ column, rowNode: { rowIndex, rowPinned }, newValue, oldValue, state }: any) => {
-            if (state === 'editing' || _valuesDiffer({ newValue, oldValue })) {
+        cellIds.forEach(({ column, rowNode: { rowIndex, rowPinned }, state }: any) => {
+            if (state === 'editing') {
                 result.push({
                     column,
                     rowIndex: rowIndex!,

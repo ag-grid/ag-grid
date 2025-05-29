@@ -20,6 +20,7 @@ import {
     _syncModelsFromEditors,
     _valuesDiffer,
 } from './utils/editors';
+import { _refreshPendingCells } from './utils/refresh';
 
 export class EditService extends BeanStub implements NamedBean {
     beanName = 'editSvc' as const;
@@ -44,6 +45,15 @@ export class EditService extends BeanStub implements NamedBean {
                 this.stopAllEditing(true, 'api');
             }).bind(this)
         );
+
+        this.addManagedEventListeners({
+            columnPinned: _refreshPendingCells(this.beans, 'columnPinned'),
+            columnVisible: _refreshPendingCells(this.beans, 'columnVisible'),
+            columnRowGroupChanged: _refreshPendingCells(this.beans, 'columnRowGroupChanged'),
+            rowGroupOpened: _refreshPendingCells(this.beans, 'rowGroupOpened'),
+            pinnedRowsChanged: _refreshPendingCells(this.beans, 'pinnedRowsChanged'),
+            displayedRowsChanged: _refreshPendingCells(this.beans, 'displayedRowsChanged'),
+        });
     }
 
     private createStrategy(editType?: string): BaseEditStrategy {
