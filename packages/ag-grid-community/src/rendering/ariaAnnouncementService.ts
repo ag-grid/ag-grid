@@ -51,17 +51,29 @@ export class AriaAnnouncementService extends BeanStub implements NamedBean {
         // and then use a setTimeout to force the Screen Reader announcement
         this.descriptionContainer.textContent = '';
         setTimeout(() => {
-            if (this.isAlive() && this.descriptionContainer) {
-                let valueToAnnounce = value;
-                // if the announcement is the same (static announcement)
-                // we add a period at the end to force screen readers to announce
-                if (this.lastAnnouncement === valueToAnnounce) {
-                    valueToAnnounce = `${valueToAnnounce}.`;
-                }
-                this.lastAnnouncement = valueToAnnounce;
-                this.descriptionContainer.textContent = valueToAnnounce;
-            }
+            this.handleAnnouncementUpdate(value);
         }, 50);
+    }
+
+    private handleAnnouncementUpdate(value: string): void {
+        if (!this.isAlive() || !this.descriptionContainer) {
+            return;
+        }
+
+        let valueToAnnounce = value;
+        // if the value is null or an empty string, or if it's a string
+        // that only contains spaces and dots, it should not be announced
+        if (valueToAnnounce == null || valueToAnnounce.replace(/[ .]/g, '') == '') {
+            this.lastAnnouncement = '';
+            return;
+        }
+        // if the announcement is the same (static announcement)
+        // we add a zero-width space at the end to force screen readers to announce
+        if (this.lastAnnouncement === valueToAnnounce) {
+            valueToAnnounce = `${valueToAnnounce}\u200B`;
+        }
+        this.lastAnnouncement = valueToAnnounce;
+        this.descriptionContainer.textContent = valueToAnnounce;
     }
 
     public override destroy(): void {
