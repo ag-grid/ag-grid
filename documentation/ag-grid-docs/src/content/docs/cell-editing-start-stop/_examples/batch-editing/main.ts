@@ -48,8 +48,13 @@ let gridApi: GridApi;
 
 const gridOptions: GridOptions = {
     columnDefs: [
-        { field: 'firstName', rowGroup: true },
-        { field: 'lastName', rowGroup: true },
+        {
+            headerName: 'Name',
+            children: [
+                { field: 'firstName', rowGroup: true },
+                { field: 'lastName', rowGroup: true },
+            ],
+        },
         { field: 'gender', pivot: true },
         { field: 'age', aggFunc: 'sum', cellDataType: 'number' },
         { field: 'mood' },
@@ -60,6 +65,7 @@ const gridOptions: GridOptions = {
         flex: 1,
         minWidth: 110,
         editable: true,
+        filter: true,
     },
     sideBar: 'columns',
     pivotPanelShow: 'always',
