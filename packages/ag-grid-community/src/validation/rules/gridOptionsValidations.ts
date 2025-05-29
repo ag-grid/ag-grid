@@ -1,5 +1,5 @@
 import type { DomLayoutType, GridOptions } from '../../entities/gridOptions';
-import { _GET_ALL_EVENTS } from '../../eventTypes';
+import { _PUBLIC_EVENTS } from '../../eventTypes';
 import { _getCallbackForEvent } from '../../gridOptionsUtils';
 import type { ValidationModuleName } from '../../interfaces/iModule';
 import { _BOOLEAN_GRID_OPTIONS, _GET_ALL_GRID_OPTIONS, _NUMBER_GRID_OPTIONS } from '../../propertyKeys';
@@ -499,9 +499,9 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => {
     return validations;
 };
 
-export const GRID_OPTIONS_VALIDATORS: () => OptionsValidator<GridOptions> = () => ({
+export const GRID_OPTIONS_VALIDATORS: () => Required<OptionsValidator<GridOptions>> = () => ({
     objectName: 'gridOptions',
-    allProperties: [..._GET_ALL_GRID_OPTIONS(), ..._GET_ALL_EVENTS().map((event) => _getCallbackForEvent(event))],
+    allProperties: [..._GET_ALL_GRID_OPTIONS(), ..._PUBLIC_EVENTS.map((event) => _getCallbackForEvent(event))],
     propertyExceptions: ['api'],
     docsUrl: 'grid-options/',
     deprecations: GRID_OPTION_DEPRECATIONS(),

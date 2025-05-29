@@ -118,7 +118,7 @@ import {
     ALWAYS_SYNC_GLOBAL_EVENTS,
     _registerModule,
     RowApiModule,
-    _GET_ALL_EVENTS,
+    GRID_OPTIONS_VALIDATORS,
     _GET_ALL_GRID_OPTIONS,
     _combineAttributesAndGridOptions,
     _getCallbackForEvent,
@@ -276,10 +276,7 @@ onMounted(() => {
     };
 
     const gridOptions = markRaw(
-        _combineAttributesAndGridOptions(deepToRaw<GridOptions<TData>>(props.gridOptions), props, [
-            ..._GET_ALL_GRID_OPTIONS(),
-            ..._GET_ALL_EVENTS().map((event) => _getCallbackForEvent(event)),
-        ])
+        _combineAttributesAndGridOptions(deepToRaw<GridOptions<TData>>(props.gridOptions), props, GRID_OPTIONS_VALIDATORS().allProperties)
     );
 
     const rowData = getRowDataBasedOnBindings();

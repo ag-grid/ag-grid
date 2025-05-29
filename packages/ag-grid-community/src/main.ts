@@ -649,7 +649,8 @@ export {
     _FindApi,
 } from './api/gridApi';
 export { _getClientSideRowModel, _getServerSideRowModel } from './api/rowModelApiUtils';
-export { AgEventType, AgPublicEventType, _GET_ALL_EVENTS, _PUBLIC_EVENTS } from './eventTypes'; // TODO: remove _GET_ALL_EVENTS, _PUBLIC_EVENTS if not required by VUE
+export { AgEventType, AgPublicEventType, _GET_ALL_EVENTS, _PUBLIC_EVENTS } from './eventTypes';
+export { GRID_OPTIONS_VALIDATORS } from './validation/rules/gridOptionsValidations';
 export type { FocusService } from './focusService';
 export type { GridOptionsService, PropertyValueChangedEvent } from './gridOptionsService';
 export { PropertyChangedEvent } from './gridOptionsService';
