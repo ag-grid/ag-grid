@@ -483,18 +483,20 @@ const updateRowParent = <TData>(row: GroupingRowNode<TData>): void => {
 };
 
 const updateRowChildrenSize = <TData>(row: GroupingRowNode<TData>) => {
-    const { childrenAfterGroup, treeNodeFlags } = row;
-    const oldSize = childrenAfterGroup?.length ?? 0;
+    const { treeNodeFlags, childrenAfterGroup } = row;
     const newSize = treeNodeFlags & MASK_CHILDREN_LENGTH;
+    const oldSize = childrenAfterGroup?.length ?? 0;
     row.treeNodeFlags = (treeNodeFlags & ~MASK_CHILDREN_LENGTH) | (oldSize !== newSize ? FLAG_CHILDREN_CHANGED : 0);
-    if (newSize === 0) {
-        if (childrenAfterGroup !== _EmptyArray && row.level >= 0) {
+    if (newSize === 0 && row.level >= 0) {
+        if (childrenAfterGroup !== _EmptyArray) {
             row.childrenAfterGroup = _EmptyArray;
         }
-    } else if (!childrenAfterGroup || childrenAfterGroup === _EmptyArray) {
-        row.childrenAfterGroup = new Array(newSize);
     } else if (oldSize !== newSize) {
-        childrenAfterGroup.length = newSize;
+        if (!childrenAfterGroup || childrenAfterGroup === _EmptyArray) {
+            row.childrenAfterGroup = new Array(newSize);
+        } else {
+            childrenAfterGroup.length = newSize;
+        }
     }
 };
 
