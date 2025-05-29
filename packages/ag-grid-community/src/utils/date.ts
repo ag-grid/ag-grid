@@ -51,14 +51,14 @@ export function _getDateParts(d: Date | null | undefined, includeTime: boolean =
         return [
             String(d.getFullYear()),
             String(d.getMonth() + 1),
-            String(d.getDate()),
+            _padStartWidthZeros(d.getDate(), 2),
             _padStartWidthZeros(d.getHours(), 2),
             `:${_padStartWidthZeros(d.getMinutes(), 2)}`,
             `:${_padStartWidthZeros(d.getSeconds(), 2)}`,
         ];
     }
 
-    return [d.getFullYear(), d.getMonth() + 1, d.getDate()].map(String);
+    return [d.getFullYear(), d.getMonth() + 1, _padStartWidthZeros(d.getDate(), 2)].map(String);
 }
 
 const calculateOrdinal = (value: number) => {
