@@ -1,11 +1,13 @@
 ---
 import { getEntry } from 'astro:content';
 import { DocsNavFromLocalStorage } from '@ag-website-shared/components/docs-navigation/DocsNavFromLocalStorage';
+import { SideNavigation } from '@components/pages-navigation/components/SideNavigation';
+import { parseVersion } from '@ag-website-shared/utils/parseVersion';
 import Layout from '../layouts/Layout.astro';
 import docsStyles from '@ag-website-shared/components/page-styles/docs.module.scss';
+import styles from '../pages-styles/legacy-release-notes.module.scss';
 
 import type { CollectionEntry } from 'astro:content';
-import { undefined } from 'astro:schema';
 
 const { data: docsNavData } = (await getEntry('docsNav', 'nav')) as CollectionEntry<'docsNav'>;
 const { data: legacyReleaseNotesData } = (await getEntry(
@@ -14,25 +16,36 @@ const { data: legacyReleaseNotesData } = (await getEntry(
 )) as CollectionEntry<'legacyReleaseNotes'>;
 const { data: versionsData } = (await getEntry('versions', 'ag-grid-versions')) as CollectionEntry<'versions'>;
 
-const isNotEmpty = (content) => {
-    console.log(content);
+const legacyReleases = legacyReleaseNotesData
+    .map((release) => {
+        const version = versionsData.find((version) => release['release version'].includes(version.version));
 
-    return content !== undefined && content !== '';
-};
+        const noteSections = [
+            release['feature highlights'],
+            release['breaking changes'],
+            release['deprecations'],
+        ].filter((section) => section !== '');
 
-const legacyReleases = legacyReleaseNotesData.map((release) => {
-    const version = versionsData.find((version) => release['release version'].includes(version.version));
+        return {
+            version: version?.version,
+            date: version?.date,
+            noteSections,
+        };
+    })
+    .filter((release) => release.version !== undefined);
 
-    const noteSections = [release['feature highlights'], release['breaking changes'], release['deprecations']].filter(
-        (section) => section !== ''
-    );
-
-    return {
-        version: version?.version,
-        date: version?.date,
-        noteSections,
-    };
-});
+const headings = [
+    { slug: 'top', depth: 1, text: 'Release Notes' },
+    ...legacyReleases
+        .filter((release) => parseVersion(release.version).isMajor)
+        .map((release) => {
+            return {
+                slug: `version-${release.version}`,
+                depth: 2,
+                text: `Version ${parseVersion(release.version).major}`,
+            };
+        }),
+];
 ---
 
 <Layout
@@ -50,18 +63,20 @@ const legacyReleases = legacyReleaseNotesData.map((release) => {
             {
                 legacyReleases.map((release) => {
                     return (
-                        <div>
-                            <h3>
-                                {release.version} {release.date}
-                            </h3>
+                        <div class={styles.version}>
+                            <h2 id={`version-${release.version}`} class={styles.versionTitle}>
+                                AG Grid v{release.version} <span>- {release.date}</span>
+                            </h2>
 
                             {release.noteSections.map((section) => {
-                                return <div set:html={section} />;
+                                return <div class={styles.versionSection} set:html={section} />;
                             })}
                         </div>
                     );
                 })
             }
         </div>
+
+        <SideNavigation client:load headings={headings} delayedScrollSpy={true} />
     </div>
 </Layout>

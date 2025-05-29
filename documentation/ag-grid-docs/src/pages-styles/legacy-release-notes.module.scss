@@ -1,0 +1,20 @@
+@use 'design-system' as *;
+
+.version {
+    margin-top: $spacing-size-32;
+}
+
+.versionTitle {
+    font-size: var(--text-fs-2xl);
+    line-height: var(--text-lh-2xl);
+
+    span {
+        font-weight: var(--text-regular);
+    }
+}
+
+.versionSection {
+    &:not(:first-child) {
+        margin-top: $spacing-size-4;
+    }
+}
