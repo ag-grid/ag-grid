@@ -123,8 +123,8 @@ export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGrou
         rootNode.treeNodeFlags = 0;
 
         const expandByDefault = gos.get('groupDefaultExpanded');
-        const activeChangedPath = changedPath?.active ? changedPath : undefined;
         const isGroupOpenByDefault = gos.getCallback('isGroupOpenByDefault');
+        const activeChangedPath = changedPath?.active ? changedPath : undefined;
 
         let traverseCount = 0;
         const traverse = (row: GroupingRowNode<TData>, level: number): boolean => {
@@ -583,7 +583,7 @@ const warnDuplicatePaths = <TData>({ dupPaths }: NodesByPathMap<TData>): void =>
             array.sort(order);
             const row = array[0];
             const length = array.length;
-            const duplicateRowsData = new Array(array.length - 1);
+            const duplicateRowsData = new Array(length - 1);
             for (let i = 1; i < length; i++) {
                 duplicateRowsData[i - 1] = array[i].data;
             }
