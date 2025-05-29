@@ -20,10 +20,10 @@ const FLAG_FILLER_NODE = 0x10000000;
 const MASK_CHILDREN_LENGTH = 0x0fffffff; // This equates to 268,435,455 maximum children per parent, more than enough
 
 /**
- * Path key separator used internally to maintain a flat path dictionary to map nodes to a path and vice versa.
- * It contains two random character to avoid the risk of intentional collisions or abuse.
+ * Path key separator used internally to maintain a flat path dictionary to map a path to a node.
+ * It contains special characters and two random characters hard to predict to reduce the risk of intentional abuse.
  */
-const PATH_KEY_SEPARATOR = String.fromCharCode(0x1f, Math.random() * 0x10000, Math.random() * 0xf000 + 0x1000, 0x2063);
+const PATH_KEY_SEPARATOR = String.fromCharCode(31, Math.random() * 65536, 8291, 4096 + Math.random() * 61440);
 const PATH_KEY_SEPARATOR_LEN = PATH_KEY_SEPARATOR.length;
 
 export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGroupingStrategy<TData> {
