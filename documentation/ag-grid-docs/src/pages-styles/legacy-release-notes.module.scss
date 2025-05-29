@@ -1,6 +1,10 @@
 @use 'design-system' as *;
 
-.version {
+.versionsList {
+    margin-top: $spacing-size-16;
+}
+
+.version:not(:first-child) {
     margin-top: $spacing-size-32;
 }
 
@@ -13,8 +17,6 @@
     }
 }
 
-.versionSection {
-    &:not(:first-child) {
-        margin-top: $spacing-size-4;
-    }
+.versionSection:not(:first-child) {
+    margin-top: $spacing-size-4;
 }

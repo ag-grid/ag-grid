@@ -6,6 +6,7 @@ import { parseVersion } from '@ag-website-shared/utils/parseVersion';
 import Layout from '../layouts/Layout.astro';
 import docsStyles from '@ag-website-shared/components/page-styles/docs.module.scss';
 import styles from '../pages-styles/legacy-release-notes.module.scss';
+import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
 
 import type { CollectionEntry } from 'astro:content';
 
@@ -60,21 +61,32 @@ const headings = [
         <div id="doc-content" class={docsStyles.docPage}>
             <h1>AG Grid Legacy Release Notes</h1>
 
-            {
-                legacyReleases.map((release) => {
-                    return (
-                        <div class={styles.version}>
-                            <h2 id={`version-${release.version}`} class={styles.versionTitle}>
-                                AG Grid v{release.version} <span>- {release.date}</span>
-                            </h2>
+            <p class="text-lg">Review release notes for older versions of AG Grid</p>
+            <p class="text-lg">
+                For full versions references, you can also explore our <a
+                    href={urlWithBaseUrl('/documentation-archive')}>documentation archive</a
+                >, view our <a href={urlWithBaseUrl('/changelog')}>changelog</a>, or check the our <a
+                    href={urlWithBaseUrl('/pipeline')}>build pipeline</a
+                >.
+            </p>
 
-                            {release.noteSections.map((section) => {
-                                return <div class={styles.versionSection} set:html={section} />;
-                            })}
-                        </div>
-                    );
-                })
-            }
+            <div class={styles.versionsList}>
+                {
+                    legacyReleases.map((release) => {
+                        return (
+                            <div class={styles.version}>
+                                <h2 id={`version-${release.version}`} class={styles.versionTitle}>
+                                    AG Grid v{release.version} <span>- {release.date}</span>
+                                </h2>
+
+                                {release.noteSections.map((section) => {
+                                    return <div class={styles.versionSection} set:html={section} />;
+                                })}
+                            </div>
+                        );
+                    })
+                }
+            </div>
         </div>
 
         <SideNavigation client:load headings={headings} delayedScrollSpy={true} />
