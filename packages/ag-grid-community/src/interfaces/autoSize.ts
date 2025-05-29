@@ -44,6 +44,14 @@ export interface SizeColumnsToFitProvidedWidthStrategy {
     width: number;
 }
 
+export interface SizeColumnsToContentColumnLimits {
+    colId: string;
+    /** Minimum width for this column (does not override the column minimum width) */
+    minWidth?: number;
+    /** Maximum width for this column (does not override the column maximum width) */
+    maxWidth?: number;
+}
+
 /**
  * Auto-size columns to fit their cell contents.
  *
@@ -53,6 +61,28 @@ export interface SizeColumnsToContentStrategy {
     type: 'fitCellContents';
     /** If true, the header won't be included when calculating the column widths. */
     skipHeader?: boolean;
+    /** If not provided will auto-size all columns. Otherwise will size the specified columns. */
+    colIds?: string[];
+    /** Default minimum width for every column (does not override the column minimum width). */
+    defaultMinWidth?: number;
+    /** Default maximum width for every column (does not override the column maximum width). */
+    defaultMaxWidth?: number;
+    /** Provide to limit specific column widths when sizing. */
+    columnLimits?: SizeColumnsToContentColumnLimits[];
+}
+
+export interface ISizeAllColumnsToContentParams {
+    /** If true, the header won't be included when calculating the column widths. */
+    skipHeader?: boolean;
+    /** Default minimum width for every column (does not override the column minimum width). */
+    defaultMinWidth?: number;
+    /** Default maximum width for every column (does not override the column maximum width). */
+    defaultMaxWidth?: number;
+    /** Provide to limit specific column widths when sizing. */
+    columnLimits?: SizeColumnsToContentColumnLimits[];
+}
+
+export interface ISizeColumnsToContentParams extends ISizeAllColumnsToContentParams {
     /** If not provided will auto-size all columns. Otherwise will size the specified columns. */
     colIds?: string[];
 }

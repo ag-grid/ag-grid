@@ -26,7 +26,11 @@ import type {
 import type { CellRange, CellRangeParams } from '../interfaces/IRangeService';
 import type { ServerSideGroupLevelState } from '../interfaces/IServerSideStore';
 import type { AdvancedFilterModel } from '../interfaces/advancedFilterModel';
-import type { ISizeColumnsToFitParams } from '../interfaces/autoSize';
+import type {
+    ISizeAllColumnsToContentParams,
+    ISizeColumnsToContentParams,
+    ISizeColumnsToFitParams,
+} from '../interfaces/autoSize';
 import type { CsvExportParams } from '../interfaces/exportParams';
 import type { GridState, GridStateKey } from '../interfaces/gridState';
 import type { RenderedRowEvent } from '../interfaces/iCallbackParams';
@@ -574,6 +578,14 @@ export interface _ColumnAutosizeApi {
      * @agModule `ColumnAutoSizeModule`
      */
     autoSizeColumns(keys: (string | ColDef | Column)[], skipHeader?: boolean): void;
+    /**
+     * Auto-sizes columns based on their contents. If inferring cell data types with custom column types
+     * and row data is initially empty or yet to be set,
+     * the column sizing will happen asynchronously when row data is added.
+     * To always perform this synchronously, set `cellDataType = false` on the default column definition.
+     * @agModule `ColumnAutoSizeModule`
+     */
+    autoSizeColumns(params: ISizeColumnsToContentParams): void;
 
     /**
      * Calls `autoSizeColumns` on all displayed columns. If inferring cell data types with custom column types
@@ -583,6 +595,14 @@ export interface _ColumnAutosizeApi {
      * @agModule `ColumnAutoSizeModule`
      */
     autoSizeAllColumns(skipHeader?: boolean): void;
+    /**
+     * Auto-sizes columns based on their contents. If inferring cell data types with custom column types
+     * and row data is initially empty or yet to be set,
+     * the column sizing will happen asynchronously when row data is added.
+     * To always perform this synchronously, set `cellDataType = false` on the default column definition.
+     * @agModule `ColumnAutoSizeModule`
+     */
+    autoSizeAllColumns(params: ISizeAllColumnsToContentParams): void;
 }
 
 export interface _ColumnResizeApi {

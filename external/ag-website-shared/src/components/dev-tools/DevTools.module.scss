@@ -20,6 +20,10 @@
         font-size: var(--text-fs-base);
         margin-top: 0;
     }
+
+    #{$selector-darkmode} & {
+        background: var(--color-dev-950);
+    }
 }
 
 .options {

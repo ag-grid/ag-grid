@@ -25,7 +25,7 @@ describe('ag-grid tree data without hierarchical and without data path', () => {
         consoleErrorSpy?.mockRestore();
     });
 
-    test('ag-grid tree data without getDataPath and without treeDataChildrenField still works properly and raises warnings', async () => {
+    test('ag-grid tree data without getDataPath and without treeDataChildrenField and without treeDataParentIdField still works properly and raises warnings', async () => {
         const rowData = [{ x: 1 }, { x: 2, children: [{ x: 3 }] }];
 
         const gridOptions: GridOptions = {

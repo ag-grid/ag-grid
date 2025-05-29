@@ -103,28 +103,28 @@ For all [Cell Data Types](./cell-data-types/), the available filter options can 
 
 The available options are as follows:
 
-| Option Name             | Option Key            | Cell Data Type                                              |
-| ----------------------- | --------------------- | ----------------------------------------------------------- |
-| contains                | `contains`            | `text`, `object`                                            |
-| does not contain        | `notContains`         | `text`, `object`                                            |
-| equals                  | `equals`              | `text`, `object`                                            |
-| =                       | `equals`              | `number`, `date`, `dateString`                              |
-| not equal               | `notEqual`            | `text`, `object`                                            |
-| !=                      | `notEqual`            | `number`, `date`, `dateString`                              |
-| begins with             | `startsWith`          | `text`, `object`                                            |
-| ends with               | `endsWith`            | `text`, `object`                                            |
-| is blank                | `blank`               | `text`, `number`, `boolean`, `date`, `dateString`, `object` |
-| is not blank            | `notBlank`            | `text`, `number`, `boolean`, `date`, `dateString`, `object` |
-| >                       | `greaterThan`         | `number`, `date`, `dateString`                              |
-| >=                      | `greaterThanOrEqual`  | `number`, `date`, `dateString`                              |
-| <                       | `lessThan`            | `number`, `date`, `dateString`                              |
-| <=                      | `lessThanOrEqual`     | `number`, `date`, `dateString`                              |
-| is true                 | `true`                | `boolean`                                                   |
-| is false                | `false`               | `boolean`                                                   |
+| Option Name      | Option Key           | Cell Data Type                                                                            |
+|------------------|----------------------|-------------------------------------------------------------------------------------------|
+| contains         | `contains`           | `text`, `object`                                                                          |
+| does not contain | `notContains`        | `text`, `object`                                                                          |
+| equals           | `equals`             | `text`, `object`                                                                          |
+| =                | `equals`             | `number`, `date`, `dateString`, `dateTime`, `dateTimeString`                              |
+| not equal        | `notEqual`           | `text`, `object`                                                                          |
+| !=               | `notEqual`           | `number`, `date`, `dateString`, `dateTime`, `dateTimeString`                              |
+| begins with      | `startsWith`         | `text`, `object`                                                                          |
+| ends with        | `endsWith`           | `text`, `object`                                                                          |
+| is blank         | `blank`              | `text`, `number`, `boolean`, `date`, `dateString`, `dateTime`, `dateTimeString`, `object` |
+| is not blank     | `notBlank`           | `text`, `number`, `boolean`, `date`, `dateString`, `dateTime`, `dateTimeString`, `object` |
+| >                | `greaterThan`        | `number`, `date`, `dateString`, `dateTime`, `dateTimeString`                              |
+| >=               | `greaterThanOrEqual` | `number`, `date`, `dateString`, `dateTime`, `dateTimeString`                              |
+| <                | `lessThan`           | `number`, `date`, `dateString`, `dateTime`, `dateTimeString`                              |
+| <=               | `lessThanOrEqual`    | `number`, `date`, `dateString`, `dateTime`, `dateTimeString`                              |
+| is true          | `true`               | `boolean`                                                                                 |
+| is false         | `false`              | `boolean`                                                                                 |
 
 For `text` and `object` Cell Data Types, `caseSensitive = true` can be set to enable case sensitivity.
 
-For `number`, `date` and `dateString` Cell Data Types, the following properties can be set to include blank values for the relevant options:
+For `number`, `date`, `dateString`, `dateTime` and `dateTimeString` Cell Data Types, the following properties can be set to include blank values for the relevant options:
 
 * `includeBlanksInEquals = true`
 * `includeBlanksInLessThan = true`
@@ -240,8 +240,8 @@ All of the [Cell Data Types](./cell-data-types) are supported in the Advanced Fi
 * **Text** - The value in the input is compared against the cell value before any [Value Formatters](./value-formatters/) are applied (similar to the [Text Filter](./filter-text/)). To change the value being compared against, a [Filter Value Getter](./filter-text/#text-filter-values) can be used.
 * **Number** - The value in the input is compared against the cell value (like in the [Number Filter](./filter-number/)).
 * **Boolean** - No values are displayed for booleans as the filter option is used instead.
-* **Date** - The value in the input is converted to a `Date` via the [Value Parser](./value-parsers/#value-parser).
-* **Date String** - The value in the input is converted to a `Date` using the [Value Parser](./value-parsers/#value-parser) and the [Date Parser](./cell-data-types/#date-as-string-data-type-definition). This is compared against the cell values, which are also converted using the Date Parser.
+* **Date** and **Date Time** - The value in the input is converted to a `Date` via the [Value Parser](./value-parsers/#value-parser).
+* **Date String** and **Date Time String** - The value in the input is converted to a `Date` using the [Value Parser](./value-parsers/#value-parser) and the [Date Parser](./cell-data-types/#date-as-string). This is compared against the cell values, which are also converted using the Date Parser.
 * **Object** - The value in the input is compared against the values returned by the [Filter Value Getter](./column-properties/#reference-filtering-filterValueGetter) if one is provided. Otherwise, the cell values are converted using the [Value Formatter](./value-formatters/).
 
 ## Aggregation / Pivoting

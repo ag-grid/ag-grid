@@ -35,6 +35,59 @@ export class AdvancedFilterExpressionService extends BeanStub implements NamedBe
     private colNames: ColumnNameService;
     private dataTypeSvc?: DataTypeService;
 
+    private filterOperandGetters: Record<BaseCellDataType, (model: any) => string | null> = {
+        number: (model) => _toStringOrNull(model.filter) ?? '',
+        date: (model) => {
+            const column = this.colModel.getColDefCol(model.colId);
+            if (!column) {
+                return null;
+            }
+            return this.valueSvc.formatValue(column, null, _parseDateTimeFromString(model.filter));
+        },
+        dateTime: (model) => this.filterOperandGetters.date(model),
+        dateString: (model) => {
+            const column = this.colModel.getColDefCol(model.colId);
+            if (!column) {
+                return null;
+            }
+            const { filter } = model;
+            const dateFormatFn = this.dataTypeSvc?.getDateFormatterFunction(column);
+            const dateStringStringValue = dateFormatFn?.(_parseDateTimeFromString(filter) ?? undefined) ?? filter;
+            return this.valueSvc.formatValue(column, null, dateStringStringValue);
+        },
+        dateTimeString: (model) => this.filterOperandGetters.dateString(model),
+        boolean: () => null,
+        object: () => null,
+        text: () => null,
+    };
+
+    private operandModelValueGetters: Record<
+        BaseCellDataType,
+        (op: string, cln: AgColumn, dt: BaseCellDataType) => number | string | null
+    > = {
+        number: (operand) => (_exists(operand) ? Number(operand) : null),
+        date: (operand, column, baseCellDataType) =>
+            _serialiseDate(
+                this.valueSvc.parseValue(column, null, operand, undefined),
+                !!this.dataTypeSvc?.getDateIncludesTimeFlag(baseCellDataType)
+            ),
+        dateTime: (...args) => this.operandModelValueGetters.date(...args),
+        dateString: (operand, column, baseCellDataType) => {
+            const parsedDateString = this.valueSvc.parseValue(column, null, operand, undefined);
+            if (this.dataTypeSvc) {
+                return _serialiseDate(
+                    this.dataTypeSvc.getDateParserFunction(column)(parsedDateString) ?? null,
+                    this.dataTypeSvc.getDateIncludesTimeFlag(baseCellDataType)
+                );
+            }
+            return parsedDateString;
+        },
+        dateTimeString: (...args) => this.operandModelValueGetters.dateString(...args),
+        boolean: (operand) => operand,
+        object: (operand) => operand,
+        text: (operand) => operand,
+    };
+
     public wireBeans(beans: BeanCollection): void {
         this.valueSvc = beans.valueSvc;
         this.colModel = beans.colModel;
@@ -81,61 +134,23 @@ export class AdvancedFilterExpressionService extends BeanStub implements NamedBe
         baseCellDataType: BaseCellDataType,
         column: AgColumn
     ): string | number | null {
-        switch (baseCellDataType) {
-            case 'number':
-                return _exists(operand) ? Number(operand) : null;
-            case 'date':
-                return _serialiseDate(this.valueSvc.parseValue(column, null, operand, undefined), false);
-            case 'dateString': {
-                // displayed string format may be different from data string format, so parse before converting to date
-                const parsedDateString = this.valueSvc.parseValue(column, null, operand, undefined);
-                return this.dataTypeSvc
-                    ? _serialiseDate(this.dataTypeSvc.getDateParserFunction(column)(parsedDateString) ?? null, false)
-                    : parsedDateString;
-            }
-        }
-        return operand;
+        return this.operandModelValueGetters[baseCellDataType](operand, column, baseCellDataType);
     }
 
     public getOperandDisplayValue(model: ColumnAdvancedFilterModel, skipFormatting?: boolean): string {
-        const { colId, filter } = model as any;
-        const column = this.colModel.getColDefCol(colId);
-        let operand = '';
-        if (filter != null) {
-            let operand1: string | null | undefined;
-            switch (model.filterType) {
-                case 'number':
-                    operand1 = _toStringOrNull(filter) ?? '';
-                    break;
-                case 'date': {
-                    const dateValue = _parseDateTimeFromString(filter);
-                    operand1 = column ? this.valueSvc.formatValue(column, null, dateValue) : null;
-                    break;
-                }
-                case 'dateString': {
-                    let dateStringStringValue;
-                    if (this.dataTypeSvc) {
-                        // need to convert from ISO date string to Date to data string format to formatted string format
-                        const dateStringDateValue = _parseDateTimeFromString(filter);
-                        dateStringStringValue = column
-                            ? this.dataTypeSvc?.getDateFormatterFunction(column)(dateStringDateValue ?? undefined)
-                            : null;
-                    } else {
-                        dateStringStringValue = filter;
-                    }
-                    operand1 = column ? this.valueSvc.formatValue(column, null, dateStringStringValue) : null;
-                    break;
-                }
-            }
-            if (model.filterType !== 'number') {
-                operand1 = operand1 ?? _toStringOrNull(filter) ?? '';
-                if (!skipFormatting) {
-                    operand1 = `"${operand1}"`;
-                }
-            }
-            operand = skipFormatting ? operand1! : ` ${operand1}`;
+        const { filter } = model as any;
+
+        if (filter == null) {
+            return '';
         }
-        return operand;
+        let operand1 = this.filterOperandGetters[model.filterType](model);
+        if (model.filterType !== 'number') {
+            operand1 ??= _toStringOrNull(filter) ?? '';
+            if (!skipFormatting) {
+                operand1 = `"${operand1}"`;
+            }
+        }
+        return skipFormatting ? operand1! : ` ${operand1}`;
     }
 
     public parseColumnFilterModel(model: ColumnAdvancedFilterModel): string {
@@ -274,6 +289,7 @@ export class AdvancedFilterExpressionService extends BeanStub implements NamedBe
 
         const baseCellDataType = this.dataTypeSvc?.getBaseDataType(column);
         switch (baseCellDataType) {
+            case 'dateTimeString':
             case 'dateString':
                 params = {
                     valueConverter: this.dataTypeSvc?.getDateParserFunction(column) ?? ((v: any) => v),
