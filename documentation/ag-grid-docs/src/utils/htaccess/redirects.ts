@@ -2762,4 +2762,9 @@ export const SITE_301_REDIRECTS: Redirect[] = [
     ...pageForAllFrameworks('upgrading-to-ag-grid-33-2', 'ag-grid-33-2-release-notes'),
     ...pageForAllFrameworks('upgrading-to-ag-grid-33-3', 'ag-grid-33-3-release-notes'),
     ...pageForAllFrameworks('upgrading-to-ag-grid-33', 'ag-grid-33-release-notes'),
+
+    {
+        from: '/documentation-archive/',
+        to: '/release-history/',
+    },
 ];

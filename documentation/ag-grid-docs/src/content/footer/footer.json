@@ -15,8 +15,8 @@
                 "url": "/pipeline"
             },
             {
-                "name": "Documentation Archive",
-                "url": "/documentation-archive"
+                "name": "Release History",
+                "url": "/release-history"
             }
         ]
     },

@@ -56,15 +56,15 @@ const headings = [
     showSearchBar={true}
 >
     <div class:list={[docsStyles.contentViewport, 'layout-grid']}>
-        <DocsNavFromLocalStorage client:load menuData={docsNavData} pageName={'documentation-archive'} />
+        <DocsNavFromLocalStorage client:load menuData={docsNavData} pageName={'legacy-release-notes'} />
 
         <div id="doc-content" class={docsStyles.docPage}>
             <h1>AG Grid Legacy Release Notes</h1>
 
             <p class="text-lg">Review release notes for older versions of AG Grid</p>
             <p class="text-lg">
-                For full versions references, you can also explore our <a
-                    href={urlWithBaseUrl('/documentation-archive')}>documentation archive</a
+                For full versions references, you can also explore our <a href={urlWithBaseUrl('/release-history')}
+                    >release history</a
                 >, view our <a href={urlWithBaseUrl('/changelog')}>changelog</a>, or check the our <a
                     href={urlWithBaseUrl('/pipeline')}>build pipeline</a
                 >.

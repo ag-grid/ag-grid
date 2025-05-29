@@ -29,7 +29,7 @@ const majors = versionsData.reduce((majors, version) => {
 }, []);
 
 const headings = [
-    { slug: 'top', depth: 1, text: 'Documentation Archive' },
+    { slug: 'top', depth: 1, text: 'Release History' },
     ...majors.map((major) => {
         return { slug: `version-${major}`, depth: 2, text: `Version ${major}` };
     }),
@@ -37,20 +37,20 @@ const headings = [
 ---
 
 <Layout
-    title={'AG Grid Documentation Archive'}
+    title={'AG Grid Release History'}
     description={'Browse archived documentation for previous AG Grid versions, from version 14 and onwards. View changelogs for every minor and major release.'}
     showDocsNav={true}
     showSearchBar={true}
 >
     <div class:list={[docsStyles.contentViewport, 'layout-grid']}>
-        <DocsNavFromLocalStorage client:load menuData={docsNavData} pageName={'documentation-archive'} />
+        <DocsNavFromLocalStorage client:load menuData={docsNavData} pageName={'release-history'} />
 
         <div id="doc-content" class={docsStyles.docPage}>
-            <h1>Documentation Archive</h1>
+            <h1>Release History</h1>
 
             <div class={docsStyles.pageSections}>
                 <article>
-                    <p>Review documentation for previous AG Grid versions.</p>
+                    <p>Review release notes and documentation for previous AG Grid versions.</p>
 
                     {
                         majors.map((major) => {
