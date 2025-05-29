@@ -152,7 +152,7 @@ export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGrou
 
             let allLeafChildren = row.allLeafChildren;
             if (allLeafChildren === childrenAfterGroup || allLeafChildren === undefined) {
-                allLeafChildren = row.allLeafChildren = null;
+                row.allLeafChildren = allLeafChildren = null;
             }
             if (allLeafChildrenChanged || (allLeafChildren?.length ?? 0) !== allLeafChildrenLen) {
                 allLeafChildrenChanged = updateAllLeafChildren(row, allLeafChildren, allLeafChildrenLen);
@@ -163,6 +163,7 @@ export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGrou
                 if (row.key !== id) {
                     row.key = id;
                     row.groupData = null;
+                    changed = true;
                 }
             }
 
@@ -177,12 +178,20 @@ export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGrou
                 changed = true;
                 setRowNodeGroup(row, this.beans, hasChildren); // Internally calls updateHasChildren
                 if (!hasChildren && !row.expanded) {
-                    treeNodeFlags = row.treeNodeFlags &= ~FLAG_EXPANDED_INITIALIZED;
+                    row.treeNodeFlags = treeNodeFlags &= ~FLAG_EXPANDED_INITIALIZED;
                 }
             } else if (row.hasChildren() !== hasChildren) {
                 changed = true;
                 row.updateHasChildren();
             }
+
+            if (childrenChanged || allLeafChildrenChanged || fullReload) {
+                updateRowArrays(row, childrenAfterGroup);
+            }
+            if (changed) {
+                activeChangedPath?.addParentNode(row);
+            }
+
             if (hasChildren && (treeNodeFlags & FLAG_EXPANDED_INITIALIZED) === 0) {
                 row.treeNodeFlags |= FLAG_EXPANDED_INITIALIZED;
                 row.expanded = isGroupOpenByDefault
@@ -194,14 +203,6 @@ export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGrou
                           rowGroupColumn: row.rowGroupColumn!,
                       }) == true
                     : expandByDefault === -1 || row.level < expandByDefault;
-            }
-
-            if (childrenChanged || allLeafChildrenChanged || fullReload) {
-                updateRowArrays(row, childrenAfterGroup);
-            }
-
-            if (changed) {
-                activeChangedPath?.addParentNode(row);
             }
 
             return allLeafChildrenChanged;
@@ -476,6 +477,7 @@ const flagUpdatedNodes = <TData>(changedRowNodes: IChangedRowNodes<TData>): bool
 const updateRowParent = <TData>(row: GroupingRowNode<TData>): void => {
     const { parent: oldParent, treeParent } = row;
     if (treeParent === null) {
+        hideRow(row); // No parent, this row is hidden
         return;
     }
     let parentFlags = treeParent.treeNodeFlags + 1; // Increment the number of children in the parent
@@ -518,7 +520,6 @@ const updateRowChildrenSize = <TData>(row: GroupingRowNode<TData>) => {
 const insertRowChildren = <TData>(row: GroupingRowNode<TData>): number => {
     const parent = row.treeParent;
     if (parent === null) {
-        hideRow(row); // No parent, this row is hidden
         return 0;
     }
 
@@ -541,65 +542,6 @@ const insertRowChildren = <TData>(row: GroupingRowNode<TData>): number => {
     }
     parent.treeNodeFlags = parentFlags;
     return count;
-};
-
-const hideRow = <TData>(row: GroupingRowNode<TData>): void => {
-    const oldParent = row.parent;
-    row.treeNodeFlags = 0;
-    row.childrenAfterGroup = _EmptyArray;
-    row.allLeafChildren = null;
-    row.group = false;
-    row.updateHasChildren();
-    if (oldParent !== null) {
-        row.parent = null;
-        if (oldParent !== undefined) {
-            oldParent.treeNodeFlags |= FLAG_CHANGED;
-        }
-    }
-};
-
-/** Handle cycles in a tree. Is not optimal for performance but this is an edge case that shouldn't happen. */
-const handleCycles = <TData>(
-    rootNode: GroupingRowNode<TData>,
-    processNode: (row: GroupingRowNode<TData>, level: number) => void
-) => {
-    const processedNodes = new Set<GroupingRowNode<TData>>();
-
-    const addProcessedNodes = (row: GroupingRowNode<TData>): void => {
-        processedNodes.add(row);
-        const childrenAfterGroup = row.childrenAfterGroup ?? _EmptyArray;
-        for (let i = 0, len = childrenAfterGroup.length; i < len; i++) {
-            const node = childrenAfterGroup[i];
-            if (!processedNodes.has(node)) {
-                addProcessedNodes(childrenAfterGroup[i]);
-            }
-        }
-    };
-
-    const rootChildrenAfterGroup = rootNode.childrenAfterGroup!;
-    addProcessedNodes(rootNode);
-    rootChildrenAfterGroup.length = 0;
-    let warned = false;
-    for (const row of rootNode.allLeafChildren!) {
-        if (!processedNodes.has(row)) {
-            const parent = row.parent;
-            warned = true;
-            _warn(270, { id: row.id!, parentId: parent?.id ?? '' });
-            if (parent) {
-                parent.childrenAfterGroup = parent.childrenAfterGroup?.filter((x) => x !== row) ?? _EmptyArray;
-                parent.treeNodeFlags = (parent.treeNodeFlags - 1) | FLAG_CHILDREN_CHANGED | FLAG_CHANGED;
-            }
-            row.parent = rootNode;
-            processNode(row, 0);
-            addProcessedNodes(row);
-            rootChildrenAfterGroup.push(row);
-        } else if (row.parent === rootNode) {
-            rootChildrenAfterGroup.push(row);
-        }
-    }
-    if (!warned) {
-        _warn(270, { id: '', parentId: '' });
-    }
 };
 
 const makeFillerRowId = (treeParent: GroupingRowNode<any>, leafKey: string, level: number): string => {
@@ -686,7 +628,7 @@ const updateAllLeafChildren = <TData>(
         return false;
     }
 
-    let changed = false;
+    let changed = true;
     if (!allLeafChildren) {
         allLeafChildren = row.allLeafChildren = new Array(newAllLeafChildrenLen);
         changed = true;
@@ -713,4 +655,63 @@ const updateAllLeafChildren = <TData>(
         }
     }
     return changed;
+};
+
+const hideRow = <TData>(row: GroupingRowNode<TData>): void => {
+    const oldParent = row.parent;
+    row.treeNodeFlags = 0;
+    row.childrenAfterGroup = _EmptyArray;
+    row.allLeafChildren = null;
+    row.group = false;
+    row.updateHasChildren();
+    if (oldParent !== null) {
+        row.parent = null;
+        if (oldParent !== undefined) {
+            oldParent.treeNodeFlags |= FLAG_CHANGED;
+        }
+    }
+};
+
+/** Handle cycles in a tree. Is not optimal for performance but this is an edge case that shouldn't happen. */
+const handleCycles = <TData>(
+    rootNode: GroupingRowNode<TData>,
+    processNode: (row: GroupingRowNode<TData>, level: number) => void
+) => {
+    const processedNodes = new Set<GroupingRowNode<TData>>();
+
+    const addProcessedNodes = (row: GroupingRowNode<TData>): void => {
+        processedNodes.add(row);
+        const childrenAfterGroup = row.childrenAfterGroup ?? _EmptyArray;
+        for (let i = 0, len = childrenAfterGroup.length; i < len; i++) {
+            const node = childrenAfterGroup[i];
+            if (!processedNodes.has(node)) {
+                addProcessedNodes(childrenAfterGroup[i]);
+            }
+        }
+    };
+
+    const rootChildrenAfterGroup = rootNode.childrenAfterGroup!;
+    addProcessedNodes(rootNode);
+    rootChildrenAfterGroup.length = 0;
+    let warned = false;
+    for (const row of rootNode.allLeafChildren!) {
+        if (!processedNodes.has(row)) {
+            const parent = row.parent;
+            warned = true;
+            _warn(270, { id: row.id!, parentId: parent?.id ?? '' });
+            if (parent) {
+                parent.childrenAfterGroup = parent.childrenAfterGroup?.filter((x) => x !== row) ?? _EmptyArray;
+                parent.treeNodeFlags = (parent.treeNodeFlags - 1) | FLAG_CHILDREN_CHANGED | FLAG_CHANGED;
+            }
+            row.parent = rootNode;
+            processNode(row, 0);
+            addProcessedNodes(row);
+            rootChildrenAfterGroup.push(row);
+        } else if (row.parent === rootNode) {
+            rootChildrenAfterGroup.push(row);
+        }
+    }
+    if (!warned) {
+        _warn(270, { id: '', parentId: '' });
+    }
 };
