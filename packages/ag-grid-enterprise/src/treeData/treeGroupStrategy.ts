@@ -13,6 +13,9 @@ import type { GroupingRowNode } from '../rowHierarchy/rowHierarchyUtils';
 import type { DataFieldGetter } from './fieldAccess';
 import { makeFieldPathGetter } from './fieldAccess';
 
+/** Maximum number of duplicates to warn about per node, to avoid flooding the console */
+const MAX_DUPLICATES_TO_WARN = 15;
+
 const FLAG_CHANGED = 0x80000000;
 const FLAG_CHILDREN_CHANGED = 0x40000000;
 const FLAG_EXPANDED_INITIALIZED = 0x20000000;
@@ -289,26 +292,6 @@ export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGrou
         const allLeafChildren = rootNode.allLeafChildren!;
         const allLeafChildrenLen = allLeafChildren.length;
         const nodesByPath = new Map<string, GroupingRowNode<TData>>();
-        let duplicatePaths: Map<string, GroupingRowNode<TData>[]> | undefined;
-
-        const setNode = (pathKey: string, node: GroupingRowNode<TData>): void => {
-            const existing = nodesByPath.get(pathKey);
-            if (existing === undefined) {
-                nodesByPath.set(pathKey, node);
-                return;
-            }
-            if (node.sourceRowIndex < existing.sourceRowIndex) {
-                nodesByPath.set(pathKey, node); // We choose the node with the lowest sourceRowIndex
-            }
-            if (existing !== node) {
-                const duplicates = duplicatePaths?.get(pathKey);
-                if (!duplicates) {
-                    (duplicatePaths ??= new Map()).set(pathKey, [existing, node]);
-                } else if (duplicates.length < 50) {
-                    duplicates.push(node); // Don't log more than 50 duplicates
-                }
-            }
-        };
 
         if (!fullReload) {
             for (let i = 0; i < allLeafChildrenLen; ++i) {
@@ -321,7 +304,7 @@ export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGrou
                         pathKey = treeParent.key! + pathKey;
                         treeParent = treeParent.treeParent;
                     }
-                    setNode(pathKey, node);
+                    addNodeByPath(nodesByPath, pathKey, node);
                 }
             }
         }
@@ -341,14 +324,12 @@ export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGrou
                     node.treeNodeFlags |= FLAG_CHANGED;
                     node.groupData = null;
                 }
-                setNode(path.join(PATH_KEY_SEPARATOR), node);
+                addNodeByPath(nodesByPath, path.join(PATH_KEY_SEPARATOR), node);
             }
             node.treeParent = null; // Reset the treeParent to be set later
         }
 
-        if (duplicatePaths) {
-            duplicatePathWarn(duplicatePaths);
-        }
+        warnDuplicatePaths(nodesByPath);
         this.treeFromPaths(rootNode, nodesByPath);
         this.destroyFillerRows(false, !!changedRowNodes);
     }
@@ -572,19 +553,40 @@ const newFillerRow = <TData>(
     return filler;
 };
 
-const duplicatePathWarn = <TData>(map: Map<string, GroupingRowNode<TData>[]>): void => {
-    const compareSourceRowIndex = <TData>(a: GroupingRowNode<TData>, b: GroupingRowNode<TData>): number =>
-        a.sourceRowIndex - b.sourceRowIndex;
+type NodesByPathMap<TData> = Map<string, GroupingRowNode<TData>> & { dupPaths?: Map<string, GroupingRowNode<TData>[]> };
 
-    for (const array of map.values()) {
-        array.sort(compareSourceRowIndex);
-        const row = array[0];
-        const length = array.length;
-        const duplicateRowsData = new Array(array.length - 1);
-        for (let i = 1; i < length; i++) {
-            duplicateRowsData[i - 1] = array[i].data;
+const addNodeByPath = <TData>(map: NodesByPathMap<TData>, pathKey: string, node: GroupingRowNode<TData>): void => {
+    const existing = map.get(pathKey);
+    if (existing === undefined) {
+        map.set(pathKey, node);
+        return;
+    }
+    if (node.sourceRowIndex < existing.sourceRowIndex) {
+        map.set(pathKey, node); // We choose the node with the lowest sourceRowIndex
+    }
+    if (existing !== node) {
+        const duplicates = map.dupPaths?.get(pathKey);
+        if (!duplicates) {
+            (map.dupPaths ??= new Map()).set(pathKey, [existing, node]);
+        } else if (duplicates.length < MAX_DUPLICATES_TO_WARN) {
+            duplicates.push(node);
         }
-        _warn(186, { rowId: row.id, rowData: row.data, duplicateRowsData }); // Duplicate path
+    }
+};
+
+const warnDuplicatePaths = <TData>({ dupPaths }: NodesByPathMap<TData>): void => {
+    if (dupPaths) {
+        const order = (a: GroupingRowNode, b: GroupingRowNode) => a.sourceRowIndex - b.sourceRowIndex;
+        for (const array of dupPaths.values()) {
+            array.sort(order);
+            const row = array[0];
+            const length = array.length;
+            const duplicateRowsData = new Array(array.length - 1);
+            for (let i = 1; i < length; i++) {
+                duplicateRowsData[i - 1] = array[i].data;
+            }
+            _warn(186, { rowId: row.id, rowData: row.data, duplicateRowsData }); // Duplicate path
+        }
     }
 };
 
