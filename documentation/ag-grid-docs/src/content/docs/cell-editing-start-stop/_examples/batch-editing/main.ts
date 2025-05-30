@@ -163,7 +163,9 @@ function onBtStartEditing(key?: string, pinned?: RowPinnedType) {
 }
 
 function toggleBatch() {
-    if (gridApi!.batchEditingEnabled()) {
+    const batch = gridApi!.batchEditingEnabled();
+
+    if (batch) {
         gridApi!.disableBatchEditing();
     } else {
         gridApi!.enableBatchEditing();
@@ -172,7 +174,7 @@ function toggleBatch() {
     document.getElementById('enablePoll')!.style.display = polling ? 'none' : 'unset';
     document.getElementById('disablePoll')!.style.display = polling ? 'unset' : 'none';
 
-    document.getElementById('batchEditingApi')!.style.display = batch ? 'unset' : 'none';
+    document.getElementById('batchEditingApi')!.style.display = batch ? 'none' : 'unset';
 }
 
 function setEditingCells(clearValues: boolean = false) {
