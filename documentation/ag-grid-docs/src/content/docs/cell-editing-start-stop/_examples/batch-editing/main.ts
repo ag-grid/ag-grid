@@ -10,10 +10,12 @@ import type {
 } from 'ag-grid-community';
 import {
     ClientSideRowModelModule,
+    HighlightChangesModule,
     ModuleRegistry,
     NumberEditorModule,
     PinnedRowModule,
     TextEditorModule,
+    UndoRedoEditModule,
     ValidationModule,
     createGrid,
 } from 'ag-grid-community';
@@ -43,6 +45,9 @@ ModuleRegistry.registerModules([
     PinnedRowModule,
     ClientSideRowModelModule,
     ExcelExportModule,
+    UndoRedoEditModule,
+    HighlightChangesModule,
+
     ValidationModule /* Development Only */,
 ]);
 
@@ -71,11 +76,18 @@ const gridOptions: GridOptions = {
         minWidth: 110,
         editable: true,
         filter: true,
+        enableCellChangeFlash: true,
     },
     sideBar: 'columns',
     pivotPanelShow: 'always',
-    cellSelection: true,
     rowData: getData(),
+    undoRedoCellEditing: true,
+    undoRedoCellEditingLimit: 5,
+    cellSelection: {
+        handle: {
+            mode: 'fill',
+        },
+    },
     pinnedTopRowData: getPinnedTopData(),
     pinnedBottomRowData: getPinnedBottomData(),
     onRowEditingStarted: (event: RowEditingStartedEvent) => {
@@ -258,6 +270,14 @@ function onBtExport(type: 'csv' | 'excel') {
             includePendingEdits: true,
         });
     }
+}
+
+function onBtUndo() {
+    gridApi!.undoCellEditing();
+}
+
+function onBtRedo() {
+    gridApi!.redoCellEditing();
 }
 
 // setup the grid after the page has finished loading

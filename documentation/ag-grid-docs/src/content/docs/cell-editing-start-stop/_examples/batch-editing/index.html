@@ -20,6 +20,11 @@
             <button onclick="onBtExport('csv')">Export to CSV (including pending edits)</button>
         </div>
         <div class="example-button-row">
+            <span>UndoRedo API: </span>
+            <button onclick="onBtUndo()">Undo</button>
+            <button onclick="onBtRedo()">Redo</button>
+        </div>
+        <div class="example-button-row">
             <span>Editing Utility: </span>
             <button id="getPending" onclick="getEditingCells()">Get Editing Cells</button>
             <button id="enablePoll" onclick="pollState()">Poll State</button>
