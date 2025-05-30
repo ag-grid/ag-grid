@@ -108,7 +108,7 @@ export function setEditingCells(
         }
 
         const rowNode = cellCtrl.rowNode;
-        const oldValue = beans.valueSvc.getValue(col as AgColumn, rowNode, true);
+        const oldValue = beans.valueSvc.getValue(col as AgColumn, rowNode, true, 'api');
 
         if (!_valuesDiffer({ newValue, oldValue }) && state !== 'editing') {
             // If the new value is the same as the old value, we don't need to update
