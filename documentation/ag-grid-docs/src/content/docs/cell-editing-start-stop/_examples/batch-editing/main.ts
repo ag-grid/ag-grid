@@ -46,16 +46,19 @@ ModuleRegistry.registerModules([
 
 let gridApi: GridApi;
 
+const pivot = false;
+const grouping = false;
+
 const gridOptions: GridOptions = {
     columnDefs: [
         {
             headerName: 'Name',
             children: [
-                { field: 'firstName', rowGroup: true },
-                { field: 'lastName', rowGroup: true },
+                { field: 'firstName', ...(grouping ? { rowGroup: true } : {}) },
+                { field: 'lastName', ...(grouping ? { rowGroup: true } : {}) },
             ],
         },
-        { field: 'gender', pivot: true },
+        { field: 'gender', ...(pivot ? { pivot: true } : {}) },
         { field: 'age', aggFunc: 'sum', cellDataType: 'number' },
         { field: 'mood' },
         { field: 'country' },
