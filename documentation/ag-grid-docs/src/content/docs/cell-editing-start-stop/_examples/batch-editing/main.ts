@@ -211,9 +211,7 @@ function setEditingCells(clearValues: boolean = false) {
         });
     }
 
-    if (!gridApi!.batchEditingEnabled()) {
-        gridApi!.enableBatchEditing();
-    }
+    gridApi!.enableBatchEditing();
 
     gridApi!.setEditingCells(pendingEdits);
 }

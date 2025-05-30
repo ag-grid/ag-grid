@@ -83,6 +83,10 @@ export function setEditingCells(
     cellPositions: EditingCellPosition[],
     params?: SetEditingCellsParams
 ): void {
+    if (!beans.editSvc?.batchEditing) {
+        return;
+    }
+
     let pendingUpdates: PendingUpdates = new Map();
 
     if (params?.update) {
