@@ -24,6 +24,7 @@ import type { WithoutGridCommon } from '../interfaces/iCommon';
 import { isColumnFilterComp } from '../interfaces/iFilter';
 import type {
     BaseFilterParams,
+    ColumnFilterState,
     CreateFilterHandlerFunc,
     DoesFilterPassParams,
     FilterAction,
@@ -255,6 +256,41 @@ export class ColumnFilterService
         }
 
         return result;
+    }
+
+    public setState(
+        model: FilterModel | null,
+        state: ColumnFilterState | null,
+        source: FilterChangedEventSourceType = 'api'
+    ) {
+        this.state.clear();
+        if (state) {
+            for (const colId of Object.keys(state)) {
+                const newState = state[colId];
+                this.state.set(colId, {
+                    model: _getFilterModel(this.model, colId),
+                    state: newState,
+                });
+            }
+        }
+        this.setModel(model, source);
+    }
+
+    public getState(): ColumnFilterState | undefined {
+        const state = this.state;
+        if (!state.size) {
+            return undefined;
+        }
+        const newState: ColumnFilterState = {};
+        let hasNewState = false;
+        state.forEach((colState, colId) => {
+            const actualState = colState.state;
+            if (actualState != null) {
+                hasNewState = true;
+                newState[colId] = actualState;
+            }
+        });
+        return hasNewState ? newState : undefined;
     }
 
     private getModelFromFilterWrapper(filterWrapper: FilterWrapper): any {

@@ -843,9 +843,8 @@ export class SetFilter<V = string>
     }
 
     protected override getState(): any {
-        return {
-            miniFilterValue: this.miniFilterText,
-        };
+        const miniFilterValue = this.miniFilterText;
+        return miniFilterValue ? { miniFilterValue } : undefined;
     }
 
     private checkAndRefreshVirtualList() {

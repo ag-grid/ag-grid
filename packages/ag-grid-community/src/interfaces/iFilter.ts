@@ -66,11 +66,26 @@ export interface CreateFilterHandlerFunc<TData = any, TContext = any, TValue = a
 }
 
 export interface ColumnFilter<TData = any, TContext = any, TValue = any, TModel = any, TCustomParams = any> {
-    /** TODO */
+    /**
+     * Filter component to use for this column.
+     * - Set to the name of a provided filter: `agNumberColumnFilter`, `agTextColumnFilter`, `agDateColumnFilter`, `agMultiColumnFilter`, `agSetColumnFilter`.
+     * - Set to a custom filter `FilterDisplay`
+     */
     component: any;
-    /** TODO */
+    /**
+     * Contains the logic for executing the filter. If the filter is active,
+     * will be called for each row in the grid to see if it passes.
+     * If any filter fails, then the row will be excluded from the final set.
+     *
+     * Not required if providing a `handler`, or if not using Client-Side Row Model.
+     */
     doesFilterPass?: (params: DoesFilterPassParams<TData, TContext, TModel, TCustomParams>) => boolean;
-    /** TODO */
+    /**
+     * Returns a handler which contains the logic for executing the filter.
+     * Allows for more complex filter cases than `doesFilterPass`.
+     *
+     * Not required if providing `doesFilterPass` (but will take precedence), or if not using Client-Side Row Model.
+     */
     handler?: string | CreateFilterHandlerFunc<TData, TContext, TValue, TModel, TCustomParams>;
 }
 
@@ -343,10 +358,18 @@ export interface FilterDisplayParams<TData = any, TContext = any, TModel = any, 
 }
 
 /**
- * FilterModel represents the filter state for all columns in the grid keyed by the column id.
+ * FilterModel represents the applied filter model for all columns in the grid keyed by the column id.
  * If using inbuilt AG Grid filters then the type of the column filter model could be one of:
  *      `TextFilterModel`, `NumberFilterModel`, `DateFilterModel`, `SetFilterModel`, `IMultiFilterModel`, `AdvancedFilterModel`
  */
 export interface FilterModel {
+    [colId: string]: any;
+}
+
+/**
+ * ColumnFilterState represents the filter state for all columns in the grid keyed by the column id.
+ * This excludes the filter model.
+ */
+export interface ColumnFilterState {
     [colId: string]: any;
 }

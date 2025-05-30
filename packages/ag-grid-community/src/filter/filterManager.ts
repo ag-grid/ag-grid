@@ -8,7 +8,7 @@ import { _getGroupAggFiltering } from '../gridOptionsUtils';
 import type { AdvancedFilterModel } from '../interfaces/advancedFilterModel';
 import type { IAdvancedFilterService } from '../interfaces/iAdvancedFilterService';
 import type { WithoutGridCommon } from '../interfaces/iCommon';
-import type { FilterModel, IFilter } from '../interfaces/iFilter';
+import type { ColumnFilterState, FilterModel, IFilter } from '../interfaces/iFilter';
 import type { IRowNode } from '../interfaces/iRowNode';
 import { _mergeDeep } from '../utils/object';
 import { AgPromise } from '../utils/promise';
@@ -87,6 +87,18 @@ export class FilterManager extends BeanStub implements NamedBean {
         return typeof doesFilterPass === 'function' && doesFilterPass(node);
     }
 
+    public setFilterState(
+        model: FilterModel | null,
+        state: ColumnFilterState | null,
+        source: FilterChangedEventSourceType = 'api'
+    ) {
+        if (this.isAdvFilterEnabled()) {
+            return;
+        }
+
+        this.colFilter?.setState(model, state, source);
+    }
+
     public setFilterModel(
         model: FilterModel | null,
         source: FilterChangedEventSourceType = 'api',
@@ -104,6 +116,10 @@ export class FilterManager extends BeanStub implements NamedBean {
 
     public getFilterModel(): FilterModel {
         return this.colFilter?.getModel() ?? {};
+    }
+
+    public getFilterState(): ColumnFilterState | undefined {
+        return this.colFilter?.getState();
     }
 
     public isColumnFilterPresent(): boolean {

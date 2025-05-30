@@ -204,6 +204,7 @@ export {
     SharedFilterUi,
     FilterDisplayComp,
     ColumnFilter,
+    ColumnFilterState,
 } from './interfaces/iFilter';
 export {
     ISetFilter,
