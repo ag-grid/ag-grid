@@ -2,7 +2,7 @@ import { KeyCode } from '../constants/keyCode';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { AgColumn } from '../entities/agColumn';
-import type { ICellEditorParams } from '../interfaces/iCellEditor';
+import type { EditingCellPosition, ICellEditorParams } from '../interfaces/iCellEditor';
 import type { Column } from '../interfaces/iColumn';
 import type { IRowNode } from '../interfaces/iRowNode';
 import type { CellPosition } from '../main-umd-noStyles';
@@ -33,7 +33,7 @@ export class EditService extends BeanStub implements NamedBean {
         this.addManagedPropertyListener(
             'editType',
             (({ currentValue }: any) => {
-                this.stopAllEditing(true, 'api');
+                this.stopEditing(undefined, undefined, undefined, undefined, true, 'api');
 
                 // will re-create if different
                 this.createStrategy(currentValue);
@@ -42,7 +42,7 @@ export class EditService extends BeanStub implements NamedBean {
         this.addManagedPropertyListener(
             'batchEdit',
             (() => {
-                this.stopAllEditing(true, 'api');
+                this.stopEditing(undefined, undefined, undefined, undefined, true, 'api');
             }).bind(this)
         );
 
@@ -268,7 +268,7 @@ export class EditService extends BeanStub implements NamedBean {
         this.strategy?.setPendingUpdates(updates);
     }
 
-    public getEditingCellPositions(): CellPosition[] {
+    public getEditingCellPositions(): EditingCellPosition[] {
         return this.beans.editSvc?.model?.getPendingCellPositions() ?? [];
     }
 
@@ -321,7 +321,7 @@ export class EditService extends BeanStub implements NamedBean {
 
         if (res === false) {
             // not a header and not the table
-            this.stopAllEditing();
+            this.stopEditing();
         }
 
         return res;

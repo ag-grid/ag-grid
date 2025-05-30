@@ -396,6 +396,8 @@ export {
     ICellEditorParams,
     BaseCellEditor,
     GetCellEditorInstancesParams,
+    GetEditingCellsParams,
+    EditingCellPosition,
 } from './interfaces/iCellEditor';
 export { ILargeTextEditorParams } from './edit/cellEditors/iLargeTextCellEditor';
 export type { LargeTextCellEditor } from './edit/cellEditors/largeTextCellEditor';

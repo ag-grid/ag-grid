@@ -5,8 +5,13 @@ import type { BeanCollection } from '../context/context';
 import type { AgColumn } from '../entities/agColumn';
 import { _getCellByPosition } from '../entities/positionUtils';
 import { _getActiveDomElement } from '../gridOptionsUtils';
-import type { GetCellEditorInstancesParams, ICellEditor } from '../interfaces/iCellEditor';
-import type { CellPendingPosition } from '../interfaces/iCellPendingPosition';
+import type {
+    EditingCellPosition,
+    GetCellEditorInstancesParams,
+    GetEditingCellsParams,
+    ICellEditor,
+    SetEditingCellsParams,
+} from '../interfaces/iCellEditor';
 import type { CellPosition } from '../interfaces/iCellPosition';
 import { _warn } from '../validation/logging';
 import type { PendingUpdates } from './editModelService';
@@ -38,20 +43,19 @@ export function getCellEditorInstances<TData = any>(
     return res;
 }
 
-export function getEditingCells(beans: BeanCollection): CellPosition[] {
-    return beans.editSvc?.getEditingCellPositions() ?? [];
-}
-
-export function getPendingUpdates(beans: BeanCollection): CellPendingPosition[] {
+export function getEditingCells(beans: BeanCollection, params: GetEditingCellsParams): EditingCellPosition[] {
     const pendingUpdates = beans.editModelSvc?.getPendingUpdates();
-    const pendingPositions: CellPendingPosition[] = [];
+    const pendingPositions: EditingCellPosition[] = [];
     pendingUpdates?.forEach((rowUpdateMap, { rowIndex, rowPinned }) => {
-        rowUpdateMap.forEach((cellData, column) => {
-            if (!cellData) {
-                return;
+        rowUpdateMap.forEach(({ newValue, oldValue, state }, column) => {
+            if (state === 'changed' && !params?.includePending) {
+                return; // skip changed cells if not requested
             }
-            const cellPendingPosition: CellPendingPosition = {
-                ...cellData,
+            const cellPendingPosition: EditingCellPosition = {
+                newValue,
+                oldValue,
+                state,
+                column,
                 colKey: column.getColId(),
                 rowIndex: rowIndex!,
                 rowPinned,
@@ -62,56 +66,54 @@ export function getPendingUpdates(beans: BeanCollection): CellPendingPosition[] 
     return pendingPositions;
 }
 
-export function setPendingUpdates(
+export function setEditingCells(
     beans: BeanCollection,
-    pendingPositions: CellPendingPosition[],
-    update?: boolean
+    cellPositions: EditingCellPosition[],
+    params?: SetEditingCellsParams
 ): void {
-    if (!beans.gos.get('batchEdit')) {
-        beans.gridApi.setGridOption('batchEdit', true);
-    }
-
     let pendingUpdates: PendingUpdates = new Map();
 
-    if (update) {
+    if (params?.update) {
         const existingPendingUpdates = beans.editModelSvc?.getPendingUpdates();
         pendingUpdates = new Map(existingPendingUpdates?.entries() ?? []);
     }
 
-    pendingPositions.forEach(({ colKey, rowIndex, rowPinned, newValue, state }) => {
-        const column = beans.colModel.getCol(colKey);
+    cellPositions.forEach(({ colKey, column, rowIndex, rowPinned, newValue, state }) => {
+        const col = colKey ? beans.colModel.getCol(colKey) : column;
 
-        if (!column) {
+        if (!col) {
             return;
         }
 
-        const cellCtrl = _getCellByPosition(beans, { rowIndex, rowPinned, column });
+        const cellCtrl = _getCellByPosition(beans, { rowIndex, rowPinned, column: col });
 
         if (!cellCtrl) {
             return;
         }
 
         const rowNode = cellCtrl.rowNode;
-
-        if (!pendingUpdates.has(rowNode)) {
-            pendingUpdates.set(rowNode, new Map());
-        }
-
-        const oldValue = rowNode.data[colKey];
+        const oldValue = rowNode.data[col.getColId()];
 
         if (!_valuesDiffer({ newValue, oldValue }) && state !== 'editing') {
             // If the new value is the same as the old value, we don't need to update
             return;
         }
 
-        pendingUpdates.get(rowNode)!.set(column, { newValue, oldValue, state: state ?? 'changed' });
+        let rowMap = pendingUpdates.get(rowNode);
+
+        if (!rowMap) {
+            rowMap = new Map();
+            pendingUpdates.set(rowNode, rowMap);
+        }
+
+        rowMap.set(col, { newValue, oldValue, state: state ?? 'changed' });
     });
 
     beans.editSvc?.setPendingUpdates(pendingUpdates);
 }
 
 export function stopEditing(beans: BeanCollection, cancel: boolean = false): void {
-    beans.editSvc?.stopAllEditing(cancel, 'api');
+    beans.editSvc?.stopEditing(undefined, undefined, undefined, undefined, cancel, 'api');
 }
 
 export function isEditing(beans: BeanCollection, rowId?: string, colId?: string): boolean {

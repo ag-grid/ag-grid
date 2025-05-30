@@ -90,15 +90,8 @@ const gridOptions: GridOptions = {
     },
 };
 
-function getPendingUpdates() {
-    console.log(gridApi!.getPendingUpdates());
-}
-
-function logState() {
-    console.log({
-        editingCells: gridApi!.getEditingCells(),
-        pendingUpdates: gridApi!.getPendingUpdates(),
-    });
+function getEditingCells() {
+    console.log(gridApi!.getEditingCells());
 }
 
 let polling: any = undefined;
@@ -108,7 +101,7 @@ function pollState() {
         clearInterval(polling);
         polling = undefined;
     } else {
-        polling = setInterval(logState, 1000);
+        polling = setInterval(getEditingCells, 1000);
     }
 
     document.getElementById('enablePoll')!.style.display = polling ? 'none' : 'unset';
@@ -181,7 +174,7 @@ function toggleBatch() {
     });
 }
 
-function setPendingUpdates(clearValues: boolean = false) {
+function setEditingCells(clearValues: boolean = false) {
     const pendingEdits: CellPendingPosition[] = [
         {
             rowIndex: 1,
@@ -216,11 +209,11 @@ function setPendingUpdates(clearValues: boolean = false) {
     }
 
     gridApi!.setGridOption('batchEdit', true);
-    gridApi!.setPendingUpdates(pendingEdits);
+    gridApi!.setEditingCells(pendingEdits);
 }
 
-function clearPendingUpdates() {
-    gridApi!.setPendingUpdates([]);
+function clearEditingCells() {
+    gridApi!.setEditingCells([]);
 }
 
 function setEditType(editType: any) {

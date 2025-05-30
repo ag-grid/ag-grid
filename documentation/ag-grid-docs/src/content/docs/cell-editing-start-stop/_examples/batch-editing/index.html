@@ -13,7 +13,7 @@
         </div>
         <div class="example-button-row">
             <span>Editing Utility: </span>
-            <button onclick="logState()">Print State</button>
+            <button id="getPending" onclick="getEditingCells()">Get Editing Cells</button>
             <button id="enablePoll" onclick="pollState()">Poll State</button>
             <button id="disablePoll" onclick="pollState()">Stop Polling</button>
         </div>
@@ -23,10 +23,9 @@
         </div>
         <div id="batchEditingApi" class="example-button-row">
             <span>Batch Editing API:</span>
-            <button id="getPending" onclick="getPendingUpdates()">Get Pending Edits</button>
-            <button id="setPending" onclick="setPendingUpdates()">Set Pending Edits</button>
-            <button id="setPending" onclick="setPendingUpdates(true)">Set Pending Edits (empty values)</button>
-            <button id="clearPending" onclick="clearPendingUpdates()">Clear Pending Edits</button>
+            <button id="setPending" onclick="setEditingCells()">Set Editing Cells</button>
+            <button id="setPending" onclick="setEditingCells(true)">Set Editing Cells (empty values)</button>
+            <button id="clearPending" onclick="clearEditingCells()">Clear Editing Cells</button>
         </div>
     </div>
     <div class="grid-wrapper">

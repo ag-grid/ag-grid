@@ -1,7 +1,7 @@
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
-import type { CellPosition } from '../interfaces/iCellPosition';
+import type { EditingCellPosition } from '../interfaces/iCellEditor';
 import type { Column } from '../interfaces/iColumn';
 import type { IRowNode } from '../interfaces/iRowNode';
 
@@ -119,13 +119,14 @@ export class EditModelService extends BeanStub implements NamedBean {
         return ids;
     }
 
-    public getPendingCellPositions(): CellPosition[] {
-        const result: CellPosition[] = [];
+    public getPendingCellPositions(): EditingCellPosition[] {
+        const result: EditingCellPosition[] = [];
         const cellIds = this.getPendingCellIds();
-        cellIds.forEach(({ column, rowNode: { rowIndex, rowPinned }, state }: any) => {
+        cellIds.forEach(({ column, colKey, rowNode: { rowIndex, rowPinned }, state }: any) => {
             if (state === 'editing') {
                 result.push({
                     column,
+                    colKey,
                     rowIndex: rowIndex!,
                     rowPinned,
                 });

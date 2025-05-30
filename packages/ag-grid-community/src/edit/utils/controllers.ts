@@ -82,7 +82,7 @@ export function _addStopEditingWhenGridLosesFocus(
         const elementWithFocus = event.relatedTarget as HTMLElement;
 
         if (_getTabIndex(elementWithFocus) === null) {
-            beans.editSvc?.stopAllEditing();
+            beans.editSvc?.stopEditing();
             return;
         }
 
@@ -102,7 +102,7 @@ export function _addStopEditingWhenGridLosesFocus(
         }
 
         if (!clickInsideGrid) {
-            beans.editSvc?.stopAllEditing(false, 'api');
+            beans.editSvc?.stopEditing(undefined, undefined, undefined, undefined, false, 'api');
         }
     };
 

@@ -219,8 +219,7 @@ export const gridApiFunctionsMap: Record<keyof GridApi, ValidationModuleName> = 
         stopEditing: 0,
         startEditingCell: 0,
         isEditing: 0,
-        setPendingUpdates: 0,
-        getPendingUpdates: 0,
+        setEditingCells: 0,
     }),
     ...mod<_UndoRedoGridApi>('UndoRedoEdit', {
         undoCellEditing: 0,
