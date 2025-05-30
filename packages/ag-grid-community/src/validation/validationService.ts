@@ -110,16 +110,14 @@ export class ValidationService extends BeanStub implements NamedBean {
     private processOptions<T extends object>(options: T, validator: OptionsValidator<T>): void {
         const { validations, deprecations, allProperties, propertyExceptions, objectName, docsUrl } = validator;
 
-        if (allProperties && this.gridOptions.suppressPropertyNamesCheck !== true) {
-            const badProps = this.checkProperties(
+        if (allProperties && !this.gridOptions.suppressPropertyNamesCheck) {
+            this.checkProperties(
                 options,
                 [...(propertyExceptions ?? []), ...Object.keys(deprecations)],
                 allProperties,
                 objectName,
                 docsUrl
-            ) as (keyof T)[];
-            // mutates options to remove bad properties
-            this.stripProperties(options, badProps);
+            );
         }
 
         const warnings = new Set<string>();
@@ -226,7 +224,7 @@ export class ValidationService extends BeanStub implements NamedBean {
         validProperties: string[], // properties to recommend
         containerName: string,
         docsUrl?: string
-    ): K[] {
+    ) {
         // Vue adds these properties to all objects, so we ignore them when checking for invalid properties
         const VUE_FRAMEWORK_PROPS = ['__ob__', '__v_skip', '__metadata__'];
 
@@ -250,16 +248,6 @@ export class ValidationService extends BeanStub implements NamedBean {
         if (invalidPropertiesKeys.length > 0 && docsUrl) {
             const url = this.beans.frameworkOverrides.getDocLink(docsUrl);
             _warnOnce(`to see all the valid ${containerName} properties please check: ${url}`);
-        }
-        return invalidPropertiesKeys;
-    }
-
-    /**
-     * Strips properties from an object that are not in the valid properties list. Mutates the object.
-     */
-    private stripProperties<O extends object, B extends keyof O>(obj: O, invalidPropertiesKeys: B[]) {
-        for (const key of invalidPropertiesKeys) {
-            delete obj[key];
         }
     }
 
