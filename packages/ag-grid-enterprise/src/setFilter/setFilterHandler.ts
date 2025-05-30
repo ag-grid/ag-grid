@@ -213,7 +213,7 @@ export class SetFilterHandler<TValue = string>
         }
         this.valueModel.refreshAll().then(() => {
             this.dispatchLocalEvent({ type: 'dataChanged', hardRefresh: true });
-            this.validateModel(this.params);
+            this.validateModel(this.params, undefined, true);
         });
     }
 
@@ -263,7 +263,8 @@ export class SetFilterHandler<TValue = string>
 
     private validateModel(
         params: FilterHandlerParams<any, any, SetFilterModel, ISetFilterParams<any, TValue>>,
-        additionalEventAttributes?: any
+        additionalEventAttributes?: any,
+        restrictToAvailableValues?: boolean
     ): void {
         const valueModel = this.valueModel;
 
@@ -273,9 +274,14 @@ export class SetFilterHandler<TValue = string>
                 return;
             }
             const existingFormattedKeys: Map<string | null, string | null> = new Map();
-            valueModel.allValues.forEach((_value, key) => {
-                existingFormattedKeys.set(this.caseFormat(key), key);
-            });
+            const addKey = (key: string | null) => existingFormattedKeys.set(this.caseFormat(key), key);
+            if (restrictToAvailableValues) {
+                for (const key of valueModel.availableKeys) {
+                    addKey(key);
+                }
+            } else {
+                valueModel.allValues.forEach((_value, key) => addKey(key));
+            }
             const newValues: SetFilterModelValue = [];
             let updated = false;
             for (const unformattedKey of model.values) {
@@ -287,12 +293,15 @@ export class SetFilterHandler<TValue = string>
                     updated = true;
                 }
             }
-            if (newValues.length === 0 && params.filterParams.excelMode) {
+            const numNewValues = newValues.length;
+            if (numNewValues === 0 && params.filterParams.excelMode) {
                 params.onModelChange(null, additionalEventAttributes);
                 return;
             }
             if (updated) {
-                params.onModelChange({ ...model, values: newValues }, additionalEventAttributes);
+                // if all values selected, remove model
+                const newModel = numNewValues === existingFormattedKeys.size ? null : { ...model, values: newValues };
+                params.onModelChange(newModel, additionalEventAttributes);
                 return;
             }
         });
