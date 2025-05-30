@@ -1,6 +1,5 @@
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
-import type { BeanCollection } from '../context/context';
 import type { EditingCellPosition } from '../interfaces/iCellEditor';
 import type { Column } from '../interfaces/iColumn';
 import type { IRowNode } from '../interfaces/iRowNode';
@@ -182,31 +181,4 @@ export class EditModelService extends BeanStub implements NamedBean {
         super.destroy();
         this.clear();
     }
-}
-
-export function _createUpdates({ editModelSvc }: BeanCollection): CellIdPositions[] {
-    if (!editModelSvc) {
-        return [];
-    }
-
-    const rowUpdates = editModelSvc.getPendingUpdates();
-
-    if (rowUpdates.size === 0) {
-        return [];
-    }
-
-    const updates: CellIdPositions[] = [];
-    rowUpdates.forEach((rowUpdateMap, rowNode) => {
-        rowUpdateMap.forEach((entry, column) => {
-            const { newValue, oldValue } = entry || {};
-            updates.push({
-                rowNode,
-                column,
-                newValue,
-                oldValue,
-            });
-        });
-    });
-
-    return updates;
 }

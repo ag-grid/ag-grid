@@ -10,11 +10,11 @@ import { CellCtrl } from '../rendering/cell/cellCtrl';
 import { _createCellEvent } from '../rendering/cell/cellEvent';
 import type { RowCtrl } from '../rendering/row/rowCtrl';
 import { PopupEditorWrapper } from './cellEditors/popupEditorWrapper';
-import type { CellIdPositions, EditModelService, PendingUpdates } from './editModelService';
-import { _createUpdates } from './editModelService';
+import type { EditModelService, PendingUpdates } from './editModelService';
 import type { BaseEditStrategy } from './strategy/baseEditStrategy';
 import { _addStopEditingWhenGridLosesFocus, _resolveCellController } from './utils/controllers';
 import {
+    _destroyEditor,
     _refreshEditorOnColDefChanged,
     _syncModelFromEditor,
     _syncModelsFromEditors,
@@ -24,12 +24,12 @@ import { _refreshPendingCells } from './utils/refresh';
 
 export class EditService extends BeanStub implements NamedBean {
     beanName = 'editSvc' as const;
-    private model?: EditModelService;
+    private model: EditModelService;
     public strategy?: BaseEditStrategy;
     public batchEditing: boolean;
 
     postConstruct(): void {
-        this.model = this.beans.editModelSvc;
+        this.model = this.beans.editModelSvc!;
 
         this.addManagedPropertyListener(
             'editType',
@@ -121,7 +121,7 @@ export class EditService extends BeanStub implements NamedBean {
     }
 
     public isEditing(rowNode?: IRowNode | null, column?: Column | null): boolean {
-        return this.model?.hasPending?.(rowNode, column) ?? false;
+        return this.model.hasPending?.(rowNode, column) ?? false;
     }
 
     /** @return whether to prevent default on event */
@@ -165,7 +165,7 @@ export class EditService extends BeanStub implements NamedBean {
 
         const result = this.strategy!.startEditing?.(rowNode, column, key, event, source, silent);
 
-        this.strategy.updateCells(this.model?.getPendingUpdates());
+        this.strategy.updateCells(this.model.getPendingUpdates());
 
         return result;
     }
@@ -194,27 +194,43 @@ export class EditService extends BeanStub implements NamedBean {
             cellCtrl.onEditorAttachedFuncs = [];
         }
 
-        _syncModelsFromEditors(this.beans);
-
-        const updates = _createUpdates(this.beans);
-        const pendingUpdates = this.model?.getPendingUpdates();
+        const pendingUpdates = this.model.getPendingUpdates();
 
         let res = false;
         let updateCells = false;
+        let forcedState: boolean | undefined = undefined;
+        let suppressFlash = false;
 
-        if (!cancel && this.shouldStopEditing?.(rowNode, column, key, event, source)) {
+        const willStop = !cancel && !!this.shouldStopEditing?.(rowNode, column, key, event, source);
+        const willCancel = cancel && !!this.shouldCancelEditing?.(rowNode, column, key, event, source);
+
+        if (willStop || willCancel) {
+            _syncModelsFromEditors(this.beans);
+
             this.strategy?.stopEditing?.() ?? false;
 
-            this.processUpdates(updates, false);
+            this.processUpdates(pendingUpdates, cancel);
 
-            res = true;
+            res ||= willStop;
             updateCells = true;
-        } else if (cancel && this.shouldCancelEditing?.(rowNode, column, key, event, source)) {
-            this.strategy?.stopEditing?.() ?? false;
+            forcedState = false;
+            suppressFlash = willCancel;
+        } else if (event instanceof KeyboardEvent && this.batchEditing) {
+            // handle mid-batch edit interactions
+            const isEnter = key === KeyCode.ENTER;
+            const isEscape = key === KeyCode.ESCAPE;
 
-            this.processUpdates(updates, true);
+            if (isEnter || isEscape) {
+                if (isEscape) {
+                    _syncModelsFromEditors(this.beans);
+                }
 
-            updateCells = true;
+                _destroyEditor(this.beans, { rowNode: rowNode!, column: column! });
+
+                event.preventDefault();
+                updateCells = true;
+                suppressFlash = true;
+            }
         }
 
         if (!suppressNavigateAfterEdit && cellCtrl) {
@@ -222,7 +238,7 @@ export class EditService extends BeanStub implements NamedBean {
         }
 
         if (updateCells) {
-            this.strategy.updateCells(pendingUpdates, false, false);
+            this.strategy.updateCells(pendingUpdates, forcedState, suppressFlash);
         }
 
         return res;
@@ -237,33 +253,39 @@ export class EditService extends BeanStub implements NamedBean {
         }
     }
 
-    private processUpdates(updates: CellIdPositions[], cancel: boolean): void {
-        updates.forEach(({ rowNode, column, newValue, oldValue }) => {
-            const cellCtrl = _resolveCellController(this.beans, { rowNode, column });
+    private processUpdates(updates: PendingUpdates, cancel: boolean): void {
+        for (const rowNode of updates.keys()) {
+            const rowUpdateMap = updates.get(rowNode)!;
+            for (const column of rowUpdateMap.keys()) {
+                const { newValue, oldValue } = rowUpdateMap.get(column)!;
 
-            const valueChanged = _valuesDiffer({ newValue, oldValue });
-            if (!cancel && valueChanged) {
-                // we suppressRefreshCell because the call to rowNode.setDataValue() results in change detection
-                // getting triggered, which results in all cells getting refreshed. we do not want this refresh
-                // to happen on this call as we want to call it explicitly below. otherwise refresh gets called twice.
-                // if we only did this refresh (and not the one below) then the cell would flash and not be forced.
-                if (cellCtrl) {
-                    cellCtrl.suppressRefreshCell = true;
+                const cellCtrl = _resolveCellController(this.beans, { rowNode, column });
+
+                const valueChanged = _valuesDiffer({ newValue, oldValue });
+
+                if (!cancel && valueChanged) {
+                    // we suppressRefreshCell because the call to rowNode.setDataValue() results in change detection
+                    // getting triggered, which results in all cells getting refreshed. we do not want this refresh
+                    // to happen on this call as we want to call it explicitly below. otherwise refresh gets called twice.
+                    // if we only did this refresh (and not the one below) then the cell would flash and not be forced.
+                    if (cellCtrl) {
+                        cellCtrl.suppressRefreshCell = true;
+                    }
+                    rowNode.setDataValue(column.getColId(), newValue, 'commit');
+                    if (cellCtrl) {
+                        cellCtrl.suppressRefreshCell = false;
+                    }
                 }
-                rowNode.setDataValue(column.getColId(), newValue, 'commit');
-                if (cellCtrl) {
-                    cellCtrl.suppressRefreshCell = false;
-                }
+
+                this.beans.eventSvc.dispatchEvent({
+                    ..._createCellEvent(this.beans, null, 'cellEditingStopped', rowNode, column, newValue),
+                    oldValue,
+                    newValue,
+                    value: newValue,
+                    valueChanged,
+                });
             }
-
-            this.beans.eventSvc.dispatchEvent({
-                ..._createCellEvent(this.beans, null, 'cellEditingStopped', rowNode, column, newValue),
-                oldValue,
-                newValue,
-                value: newValue,
-                valueChanged,
-            });
-        });
+        }
     }
 
     public setPendingUpdates(updates: PendingUpdates): void {
@@ -272,7 +294,7 @@ export class EditService extends BeanStub implements NamedBean {
     }
 
     public getEditingCellPositions(): EditingCellPosition[] {
-        return this.beans.editSvc?.model?.getPendingCellPositions() ?? [];
+        return this.beans.editSvc?.model.getPendingCellPositions() ?? [];
     }
 
     public stopAllEditing(cancel: boolean = false, source: 'api' | 'ui' = 'ui'): void {
@@ -335,7 +357,7 @@ export class EditService extends BeanStub implements NamedBean {
             return undefined;
         }
 
-        return this.model?.getPendingUpdate(rowNode!, column!)?.newValue;
+        return this.model.getPendingUpdate(rowNode!, column!)?.newValue;
     }
 
     public addStopEditingWhenGridLosesFocus(viewports: HTMLElement[]): void {
@@ -377,7 +399,7 @@ export class EditService extends BeanStub implements NamedBean {
 
     public override destroy(): void {
         this.destroyStrategy();
-        this.model?.destroy();
+        this.model.destroy();
         super.destroy();
     }
 }
