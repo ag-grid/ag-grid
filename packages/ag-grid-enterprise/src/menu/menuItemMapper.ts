@@ -262,7 +262,7 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
                 case 'resetColumns':
                     return {
                         name: localeTextFunc('resetColumns', 'Reset Columns'),
-                        action: () => _resetColumnState(beans, source, column),
+                        action: () => _resetColumnState(beans, source),
                     };
                 case 'expandAll':
                     return expansionSvc

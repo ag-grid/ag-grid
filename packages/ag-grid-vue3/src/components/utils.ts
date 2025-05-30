@@ -79,7 +79,6 @@ import type {
     SizeColumnsToFitProvidedWidthStrategy,
     SortDirection,
     StatusPanelDef,
-    SuppressResetColumnsParams,
     TabToNextCellParams,
     TabToNextHeaderParams,
     Theme,
@@ -378,9 +377,6 @@ export interface Props<TData> {
          * @default false
          */
     suppressFieldDotNotation?: boolean | undefined,
-    /** Return `true` to prevent column state from being reset when `api.resetColumnState` is called or "Reset Columns" is selected from the column header menu.
-         */
-    suppressResetColumns?: ((params: SuppressResetColumnsParams<TData>) => boolean) | undefined,
     /** The height in pixels for the row containing the column label header. If not specified, it uses the theme value of `header-height`.
          */
     headerHeight?: number | undefined,
@@ -1880,7 +1876,6 @@ export function getProps() {
         maintainColumnOrder: undefined,
         enableStrictPivotColumnOrder: undefined,
         suppressFieldDotNotation: undefined,
-        suppressResetColumns: undefined,
         headerHeight: undefined,
         groupHeaderHeight: undefined,
         floatingFiltersHeight: undefined,

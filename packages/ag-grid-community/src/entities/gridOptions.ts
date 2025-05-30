@@ -389,11 +389,6 @@ export interface GridOptions<TData = any> {
      */
     suppressFieldDotNotation?: boolean;
 
-    /**
-     * Return `true` to prevent column state from being reset when `api.resetColumnState` is called or "Reset Columns" is selected from the column header menu.
-     */
-    suppressResetColumns?: (params: SuppressResetColumnsParams<TData>) => boolean;
-
     // *** Column Headers *** //
     /**
      * The height in pixels for the row containing the column label header. If not specified, it uses the theme value of `header-height`.
@@ -3028,7 +3023,3 @@ export type RowSelectionMode = RowSelectionOptions['mode'];
 export type CheckboxLocation = 'selectionColumn' | 'autoGroupColumn';
 
 export type MasterSelectionMode = NonNullable<CommonRowSelectionOptions['masterSelects']>;
-
-export interface SuppressResetColumnsParams<TData, TContext = any> extends AgGridCommon<TData, TContext> {
-    column?: Column;
-}
