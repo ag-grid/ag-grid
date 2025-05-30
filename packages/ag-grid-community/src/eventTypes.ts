@@ -1,7 +1,4 @@
 // events that are available for use by users of AG Grid and so should be documented
-import type { GridOptions } from './entities/gridOptions';
-import { _getCallbackForEvent } from './gridOptionsUtils';
-
 /** EVENTS that should be exposed via code generation for the framework components.  */
 export const _PUBLIC_EVENTS = [
     'columnEverythingChanged',
@@ -106,15 +103,6 @@ export const _PUBLIC_EVENTS = [
     'rowResizeEnded',
 ] as const;
 
-/** Map of public events to their handler names in GridOptions */
-export const _PUBLIC_EVENT_TO_HANDLERS_MAP = _PUBLIC_EVENTS.reduce(
-    (mem, ev) => {
-        mem[ev] = _getCallbackForEvent(ev) as AgPublicEventHandlerType;
-        return mem;
-    },
-    {} as Record<AgPublicEventType, AgPublicEventHandlerType>
-);
-
 // events that are internal to AG Grid and should not be exposed to users via documentation or generated framework components
 // These events are still available to users via the API if the eventName is cast to any to stop Typescript from complaining, but they are not intended for general use
 /** Exclude the following internal events from code generation to prevent exposing these events via framework components */
@@ -173,6 +161,5 @@ export const _INTERNAL_EVENTS = [
 export const _GET_ALL_EVENTS = () => [..._PUBLIC_EVENTS, ..._INTERNAL_EVENTS] as const;
 
 export type AgPublicEventType = (typeof _PUBLIC_EVENTS)[number];
-export type AgPublicEventHandlerType = `on${Capitalize<AgPublicEventType>}` & keyof GridOptions;
 export type AgInternalEventType = (typeof _INTERNAL_EVENTS)[number];
 export type AgEventType = AgPublicEventType | AgInternalEventType;

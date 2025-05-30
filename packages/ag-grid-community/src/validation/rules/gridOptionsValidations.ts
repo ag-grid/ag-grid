@@ -3,6 +3,7 @@ import { _PUBLIC_EVENTS } from '../../eventTypes';
 import { _getCallbackForEvent } from '../../gridOptionsUtils';
 import type { ValidationModuleName } from '../../interfaces/iModule';
 import { _BOOLEAN_GRID_OPTIONS, _GET_ALL_GRID_OPTIONS, _NUMBER_GRID_OPTIONS } from '../../propertyKeys';
+import { _PUBLIC_EVENT_HANDLERS_MAP } from '../../publicEventHandlersMap';
 import { DEFAULT_SORTING_ORDER } from '../../sort/sortService';
 import { _mergeDeep } from '../../utils/object';
 import { _errMsg, toStringWithNullUndefined } from '../logging';
@@ -501,7 +502,7 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => {
 
 export const GRID_OPTIONS_VALIDATORS: () => Required<OptionsValidator<GridOptions>> = () => ({
     objectName: 'gridOptions',
-    allProperties: [..._GET_ALL_GRID_OPTIONS(), ..._PUBLIC_EVENTS.map((event) => _getCallbackForEvent(event))],
+    allProperties: [..._GET_ALL_GRID_OPTIONS(), ...Object.values(_PUBLIC_EVENT_HANDLERS_MAP)],
     propertyExceptions: ['api'],
     docsUrl: 'grid-options/',
     deprecations: GRID_OPTION_DEPRECATIONS(),

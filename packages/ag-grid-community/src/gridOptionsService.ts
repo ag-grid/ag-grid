@@ -5,17 +5,18 @@ import type { BeanCollection } from './context/context';
 import type { ColDef, ColGroupDef } from './entities/colDef';
 import type { GridOptions } from './entities/gridOptions';
 import type { AgEventType, AgPublicEventType } from './eventTypes';
-import { _PUBLIC_EVENT_TO_HANDLERS_MAP } from './eventTypes';
 import type { AgEvent } from './events';
 import { ALWAYS_SYNC_GLOBAL_EVENTS } from './events';
 import type { GridOptionOrDefault } from './gridOptionsDefault';
 import { GRID_OPTION_DEFAULTS } from './gridOptionsDefault';
+import { isPublicEventHandler } from './gridOptionsUtils';
 import type { AgGridCommon, WithoutGridCommon } from './interfaces/iCommon';
 import type { ModuleName, ValidationModuleName } from './interfaces/iModule';
 import type { RowModelType } from './interfaces/iRowModel';
 import { LocalEventService } from './localEventService';
 import { _areModulesGridScoped, _isModuleRegistered, _isUmd } from './modules/moduleRegistry';
 import type { AnyGridOptions } from './propertyKeys';
+import { _PUBLIC_EVENT_HANDLERS_MAP } from './publicEventHandlersMap';
 import { _logIfDebug } from './utils/function';
 import { _exists } from './utils/generic';
 import type { MissingModuleErrors } from './validation/errorMessages/errorText';
@@ -232,15 +233,12 @@ export class GridOptionsService extends BeanStub implements NamedBean {
     ): void {
         this.propEventSvc.addEventListener(key, listener as any);
     }
+
     public removePropertyEventListener<K extends keyof GridOptions>(
         key: K,
         listener: PropertyValueChangedListener<K>
     ): void {
         this.propEventSvc.removeEventListener(key, listener as any);
-    }
-
-    private isPublicEventHandler(eventName: AgEventType): eventName is AgPublicEventType {
-        return !!_PUBLIC_EVENT_TO_HANDLERS_MAP[eventName as AgPublicEventType];
     }
 
     // responsible for calling the onXXX functions on gridOptions
@@ -259,12 +257,12 @@ export class GridOptionsService extends BeanStub implements NamedBean {
                 return;
             }
 
-            if (!this.isPublicEventHandler(eventName)) {
+            if (!isPublicEventHandler(eventName)) {
                 return;
             }
 
             const fireEvent = (name: AgPublicEventType, e: any) => {
-                const eventHandlerName = _PUBLIC_EVENT_TO_HANDLERS_MAP[name];
+                const eventHandlerName = _PUBLIC_EVENT_HANDLERS_MAP[name];
                 const eventHandler = this.gridOptions[eventHandlerName];
                 if (typeof eventHandler === 'function') {
                     this.beans.frameworkOverrides.wrapOutgoing(() => eventHandler(e));
