@@ -1,7 +1,7 @@
 import type {
     CellEditingStartedEvent,
     CellEditingStoppedEvent,
-    CellPendingPosition,
+    EditingCellPosition,
     GridApi,
     GridOptions,
     RowEditingStartedEvent,
@@ -175,7 +175,7 @@ function toggleBatch() {
 }
 
 function setEditingCells(clearValues: boolean = false) {
-    const pendingEdits: CellPendingPosition[] = [
+    const pendingEdits: EditingCellPosition[] = [
         {
             rowIndex: 1,
             rowPinned: undefined,

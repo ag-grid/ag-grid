@@ -793,7 +793,6 @@ export { IAggFuncService } from './interfaces/iAggFuncService';
 export { IClipboardService, IClipboardCopyParams, IClipboardCopyRowsParams } from './interfaces/iClipboardService';
 export { IMenuFactory } from './interfaces/iMenuFactory';
 export { CellPosition } from './interfaces/iCellPosition';
-export { CellPendingPosition } from './interfaces/iCellPendingPosition';
 export {
     _areCellsEqual,
     _createCellId,
