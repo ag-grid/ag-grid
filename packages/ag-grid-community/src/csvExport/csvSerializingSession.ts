@@ -19,7 +19,7 @@ export class CsvSerializingSession extends BaseGridSerializingSession<CsvCustomC
     private suppressQuotes: boolean;
     private columnSeparator: string;
 
-    constructor(config: CsvSerializingParams) {
+    constructor(private config: CsvSerializingParams) {
         super(config);
 
         const { suppressQuotes, columnSeparator } = config;
@@ -106,7 +106,14 @@ export class CsvSerializingSession extends BaseGridSerializingSession<CsvCustomC
         if (index != 0) {
             this.result += this.columnSeparator;
         }
-        const rowCellValue = this.extractRowCellValue(column, index, index, 'csv', node);
+        const rowCellValue = this.extractRowCellValue(
+            column,
+            index,
+            index,
+            'csv',
+            node,
+            this.config.includePendingEdits
+        );
         this.result += this.putInQuotes(rowCellValue.valueFormatted ?? rowCellValue.value);
     }
 

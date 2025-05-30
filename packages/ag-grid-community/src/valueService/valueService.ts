@@ -85,7 +85,8 @@ export class ValueService extends BeanStub implements NamedBean {
         column: AgColumn | undefined,
         node: IRowNode,
         includeValueFormatted: boolean = false,
-        exporting: boolean = false
+        exporting: boolean = false,
+        source: 'ui' | 'api' = 'ui'
     ): {
         value: any;
         valueFormatted: string | null;
@@ -139,7 +140,7 @@ export class ValueService extends BeanStub implements NamedBean {
         // if doing grouping and footers, we don't want to include the agg value
         // in the header when the group is open
         const ignoreAggData = isOpenedGroup && !groupShowsAggData;
-        const value = this.getValue(column, node, ignoreAggData);
+        const value = this.getValue(column, node, ignoreAggData, source);
 
         const format = includeValueFormatted && !(exporting && column.colDef.useValueFormatterForExport === false);
         return {

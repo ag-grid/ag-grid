@@ -12,6 +12,11 @@
             <button id="cancelEdit" onclick="cancelEdit()">Cancel Edits</button>
         </div>
         <div class="example-button-row">
+            <span>Export API: </span>
+            <button onclick="onBtExport('excel')">Export to Excel</button>
+            <button onclick="onBtExport('csv')">Export to CSV (including pending edits)</button>
+        </div>
+        <div class="example-button-row">
             <span>Editing Utility: </span>
             <button id="getPending" onclick="getEditingCells()">Get Editing Cells</button>
             <button id="enablePoll" onclick="pollState()">Poll State</button>

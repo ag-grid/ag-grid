@@ -68,7 +68,8 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
         currentColumnIndex: number,
         accumulatedRowIndex: number,
         type: string,
-        node: RowNode
+        node: RowNode,
+        includePendingEdits: boolean = false
     ): { value: any; valueFormatted?: string | null } {
         if (
             this.processRowGroupCallback &&
@@ -78,6 +79,8 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
             return { value: this.processRowGroupCallback(_addGridCommonParams(this.gos, { column, node })) ?? '' };
         }
 
+        const rawSource = includePendingEdits ? 'ui' : 'api';
+
         if (this.processCellCallback) {
             return {
                 value:
@@ -86,14 +89,15 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
                             accumulatedRowIndex,
                             column,
                             node,
-                            value: this.valueSvc.getValueForDisplay(column, node).value,
+                            value: this.valueSvc.getValueForDisplay(column, node, undefined, undefined, rawSource)
+                                .value,
                             type,
                             parseValue: (valueToParse: string) =>
                                 this.valueSvc.parseValue(
                                     column,
                                     node,
                                     valueToParse,
-                                    this.valueSvc.getValue(column, node)
+                                    this.valueSvc.getValue(column, node, undefined, rawSource)
                                 ),
                             formatValue: (valueToFormat: any) =>
                                 this.valueSvc.formatValue(column, node, valueToFormat) ?? valueToFormat,
@@ -130,7 +134,7 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
             };
         }
 
-        const { value, valueFormatted } = valueService.getValueForDisplay(column, node, true, true);
+        const { value, valueFormatted } = valueService.getValueForDisplay(column, node, true, true, rawSource);
         return {
             value: value ?? '',
             valueFormatted,

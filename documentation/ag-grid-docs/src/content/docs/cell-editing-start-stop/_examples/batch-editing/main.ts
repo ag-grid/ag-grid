@@ -22,6 +22,7 @@ import {
     ColumnMenuModule,
     ColumnsToolPanelModule,
     ContextMenuModule,
+    ExcelExportModule,
     FiltersToolPanelModule,
     PivotModule,
     RowGroupingPanelModule,
@@ -41,6 +42,7 @@ ModuleRegistry.registerModules([
     TextEditorModule,
     PinnedRowModule,
     ClientSideRowModelModule,
+    ExcelExportModule,
     ValidationModule /* Development Only */,
 ]);
 
@@ -238,6 +240,24 @@ function cancelEdit() {
 
 function stopEdit() {
     gridApi!.stopEditing();
+}
+
+function onBtExport(type: 'csv' | 'excel') {
+    if (type === 'excel') {
+        gridApi!.exportDataAsExcel();
+    } else {
+        gridApi!.exportDataAsCsv({
+            fileName: 'batch-editing.csv',
+            processCellCallback: (params) => {
+                // Example of modifying the cell value before export
+                if (params.value && typeof params.value === 'string') {
+                    return params.value.toUpperCase(); // Convert string values to uppercase
+                }
+                return params.value; // Return the original value for other types
+            },
+            includePendingEdits: true,
+        });
+    }
 }
 
 // setup the grid after the page has finished loading
