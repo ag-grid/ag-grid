@@ -354,7 +354,7 @@ export class EditService extends BeanStub implements NamedBean {
         newValue: any,
         eventSource?: string
     ): boolean | undefined {
-        if (eventSource === 'commit') {
+        if (!this.isEditing() || eventSource === 'commit') {
             return;
         }
 
