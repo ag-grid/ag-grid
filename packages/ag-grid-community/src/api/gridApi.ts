@@ -863,6 +863,9 @@ export interface _EditGridApi<TData> {
      * Stop batch editing.
      */
     disableBatchEditing(): void;
+
+    /** Returns `true` if batch editing is enabled */
+    batchEditingEnabled(): boolean;
 }
 
 export interface _UndoRedoGridApi {

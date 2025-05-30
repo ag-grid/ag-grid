@@ -34,6 +34,10 @@ export function disableBatchEditing(beans: BeanCollection): void {
     beans.editSvc?.disableBatchEditing();
 }
 
+export function batchEditingEnabled(beans: BeanCollection): boolean {
+    return beans.editSvc?.batchEditing ?? false;
+}
+
 export function getCellEditorInstances<TData = any>(
     beans: BeanCollection,
     params: GetCellEditorInstancesParams<TData> = {}
@@ -100,7 +104,7 @@ export function setEditingCells(
         }
 
         const rowNode = cellCtrl.rowNode;
-        const oldValue = rowNode.data[col.getColId()];
+        const oldValue = beans.valueSvc.getValue(col as AgColumn, rowNode, true);
 
         if (!_valuesDiffer({ newValue, oldValue }) && state !== 'editing') {
             // If the new value is the same as the old value, we don't need to update

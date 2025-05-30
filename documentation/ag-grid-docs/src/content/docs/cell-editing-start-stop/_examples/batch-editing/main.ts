@@ -91,7 +91,7 @@ const gridOptions: GridOptions = {
 };
 
 function getEditingCells() {
-    console.log(gridApi!.getEditingCells());
+    console.log(gridApi!.getEditingCells({ includePending: true }));
 }
 
 let polling: any = undefined;
@@ -162,21 +162,17 @@ function onBtStartEditing(key?: string, pinned?: RowPinnedType) {
     });
 }
 
-let batch = false;
-
 function toggleBatch() {
-    document.getElementById('enablePoll')!.style.display = polling ? 'none' : 'unset';
-    document.getElementById('disablePoll')!.style.display = polling ? 'unset' : 'none';
-
-    document.getElementById('batchEditingApi')!.style.display = batch ? 'unset' : 'none';
-
-    if (batch) {
+    if (gridApi!.batchEditingEnabled()) {
         gridApi!.disableBatchEditing();
     } else {
         gridApi!.enableBatchEditing();
     }
 
-    batch = !batch;
+    document.getElementById('enablePoll')!.style.display = polling ? 'none' : 'unset';
+    document.getElementById('disablePoll')!.style.display = polling ? 'unset' : 'none';
+
+    document.getElementById('batchEditingApi')!.style.display = batch ? 'unset' : 'none';
 }
 
 function setEditingCells(clearValues: boolean = false) {
@@ -213,8 +209,7 @@ function setEditingCells(clearValues: boolean = false) {
         });
     }
 
-    if (!batch) {
-        batch = true;
+    if (!gridApi!.batchEditingEnabled()) {
         gridApi!.enableBatchEditing();
     }
 

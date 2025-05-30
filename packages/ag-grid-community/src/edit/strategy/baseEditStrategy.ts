@@ -314,9 +314,6 @@ export abstract class BaseEditStrategy extends BeanStub {
         this.beans.editSvc?.stopEditing(undefined, undefined, undefined, undefined, true, 'api');
 
         this.editModel?.setPendingUpdates(updates);
-        this.updateCells(updates);
-
-        const editingCells: (EditedCell & { rowNode: IRowNode; column: Column })[] = [];
 
         // primary loop to preserve event semantics
         updates.forEach((_, rowNode) => {
@@ -324,6 +321,7 @@ export abstract class BaseEditStrategy extends BeanStub {
         });
 
         // now update cell values and fire cell events
+        const editingCells: (EditedCell & { rowNode: IRowNode; column: Column })[] = [];
         updates.forEach((rowUpdateMap, rowNode) => {
             rowUpdateMap.forEach((cellData, column) => {
                 const { newValue, oldValue } = cellData;
@@ -334,6 +332,8 @@ export abstract class BaseEditStrategy extends BeanStub {
                 }
             });
         });
+
+        this.updateCells();
 
         if (editingCells.length > 0) {
             const { rowNode, column, newValue } = editingCells.at(-1)!;
