@@ -127,7 +127,7 @@ function _createCellEditorParams(
     const {
         cellPosition: { rowIndex },
     } = cellCtrl;
-    const batchEdit = gos.get('batchEdit');
+    const batchEdit = editSvc?.batchEditing;
 
     const agColumn = beans.colModel.getCol(column.getId())!;
 

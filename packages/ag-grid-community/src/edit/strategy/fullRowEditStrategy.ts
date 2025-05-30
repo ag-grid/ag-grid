@@ -141,7 +141,7 @@ export class FullRowEditStrategy extends BaseEditStrategy {
         if (
             !rowFocused &&
             this.editModel.hasPending(rowCtrl!.rowNode, cellCtrl?.column) &&
-            !this.gos.get('batchEdit')
+            !this.beans.editSvc?.batchEditing
         ) {
             this.beans.editSvc?.stopEditing(rowCtrl!.rowNode, cellCtrl?.column);
         }

@@ -107,7 +107,7 @@ export class SingleCellEditStrategy extends BaseEditStrategy {
             undefined,
             undefined,
             undefined,
-            this.gos.get('batchEdit') ? 'ui' : 'api'
+            this.beans.editSvc?.batchEditing ? 'ui' : 'api'
         );
     }
 
@@ -141,16 +141,7 @@ export class SingleCellEditStrategy extends BaseEditStrategy {
 
         nextCell.focusCell(false);
 
-        // const batchEdit = this.gos.get('batchEdit');
-
-        this.beans.editSvc?.startEditing(
-            nextCell.rowNode,
-            nextCell.column,
-            null,
-            true,
-            event,
-            source //batchEdit ? 'ui' : 'api'
-        );
+        this.beans.editSvc?.startEditing(nextCell.rowNode, nextCell.column, null, true, event, source);
 
         return true;
     }

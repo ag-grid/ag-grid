@@ -577,11 +577,12 @@ export class RowRenderer extends BeanStub implements NamedBean {
     }
 
     public redrawRows(rowNodes?: IRowNode[]): void {
-        if (this.beans.editSvc?.isEditing()) {
-            if (this.gos.get('batchEdit')) {
-                this.beans.editSvc.strategy?.cleanupEditors();
+        const { editSvc } = this.beans;
+        if (editSvc?.isEditing()) {
+            if (editSvc.batchEditing) {
+                editSvc.strategy?.cleanupEditors();
             } else {
-                this.beans.editSvc.stopEditing(undefined, undefined, undefined, undefined, undefined, 'api');
+                editSvc.stopEditing(undefined, undefined, undefined, undefined, undefined, 'api');
             }
         }
 

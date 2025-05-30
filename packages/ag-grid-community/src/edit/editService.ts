@@ -26,6 +26,7 @@ export class EditService extends BeanStub implements NamedBean {
     beanName = 'editSvc' as const;
     private model?: EditModelService;
     public strategy?: BaseEditStrategy;
+    public batchEditing: boolean;
 
     postConstruct(): void {
         this.model = this.beans.editModelSvc;
@@ -39,12 +40,6 @@ export class EditService extends BeanStub implements NamedBean {
                 this.createStrategy(currentValue);
             }).bind(this)
         );
-        this.addManagedPropertyListener(
-            'batchEdit',
-            (() => {
-                this.stopEditing(undefined, undefined, undefined, undefined, true, 'api');
-            }).bind(this)
-        );
 
         this.addManagedEventListeners({
             columnPinned: _refreshPendingCells(this.beans, 'columnPinned'),
@@ -54,6 +49,16 @@ export class EditService extends BeanStub implements NamedBean {
             pinnedRowsChanged: _refreshPendingCells(this.beans, 'pinnedRowsChanged'),
             displayedRowsChanged: _refreshPendingCells(this.beans, 'displayedRowsChanged'),
         });
+    }
+
+    public enableBatchEditing(): void {
+        this.batchEditing = true;
+        this.stopEditing(undefined, undefined, undefined, undefined, true, 'api');
+    }
+
+    public disableBatchEditing(): void {
+        this.stopEditing(undefined, undefined, undefined, undefined, true, 'api');
+        this.batchEditing = false;
     }
 
     private createStrategy(editType?: string): BaseEditStrategy {
@@ -145,8 +150,6 @@ export class EditService extends BeanStub implements NamedBean {
             return true;
         }
 
-        const batchEdit = this.gos.get('batchEdit');
-
         const res = this.shouldStartEditing?.(rowNode, column, key, event, cellStartedEdit, source);
 
         if (res === false && source !== 'api') {
@@ -156,7 +159,7 @@ export class EditService extends BeanStub implements NamedBean {
             return false;
         }
 
-        if (!batchEdit && this.strategy.shouldStopEditing(rowNode, column, undefined, undefined, source)) {
+        if (!this.batchEditing && this.strategy.shouldStopEditing(rowNode, column, undefined, undefined, source)) {
             this.stopEditing(undefined, undefined, undefined, undefined, undefined, source);
         }
 

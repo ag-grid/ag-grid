@@ -12,6 +12,8 @@ import { NumberCellEditor } from './cellEditors/numberCellEditor';
 import { SelectCellEditor } from './cellEditors/selectCellEditor';
 import { TextCellEditor } from './cellEditors/textCellEditor';
 import {
+    disableBatchEditing,
+    enableBatchEditing,
     getCellEditorInstances,
     getCurrentRedoSize,
     getCurrentUndoSize,
@@ -42,6 +44,8 @@ export const EditCoreModule: _ModuleWithApi<_EditGridApi<any>> = {
         stopEditing,
         isEditing,
         setEditingCells,
+        enableBatchEditing,
+        disableBatchEditing,
     },
     dynamicBeans: {
         singleCell: SingleCellEditStrategy,

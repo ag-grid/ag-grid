@@ -162,16 +162,21 @@ function onBtStartEditing(key?: string, pinned?: RowPinnedType) {
     });
 }
 
+let batch = false;
+
 function toggleBatch() {
-    const batchEdit = !gridApi!.getGridOption('batchEdit');
     document.getElementById('enablePoll')!.style.display = polling ? 'none' : 'unset';
     document.getElementById('disablePoll')!.style.display = polling ? 'unset' : 'none';
 
-    document.getElementById('batchEditingApi')!.style.display = batchEdit ? 'unset' : 'none';
+    document.getElementById('batchEditingApi')!.style.display = batch ? 'unset' : 'none';
 
-    gridApi!.updateGridOptions({
-        batchEdit,
-    });
+    if (batch) {
+        gridApi!.disableBatchEditing();
+    } else {
+        gridApi!.enableBatchEditing();
+    }
+
+    batch = !batch;
 }
 
 function setEditingCells(clearValues: boolean = false) {
@@ -208,7 +213,11 @@ function setEditingCells(clearValues: boolean = false) {
         });
     }
 
-    gridApi!.setGridOption('batchEdit', true);
+    if (!batch) {
+        batch = true;
+        gridApi!.enableBatchEditing();
+    }
+
     gridApi!.setEditingCells(pendingEdits);
 }
 

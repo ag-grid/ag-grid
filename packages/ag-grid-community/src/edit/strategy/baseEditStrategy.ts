@@ -53,7 +53,7 @@ export abstract class BaseEditStrategy extends BeanStub {
         forcedState?: boolean,
         suppressFlash: boolean = true
     ): void {
-        const batchEdit = this.gos.get('batchEdit');
+        const batchEdit = this.beans.editSvc?.batchEditing;
         const forced = forcedState !== undefined;
 
         updates?.forEach((rowUpdateMap, rowNode) => {
@@ -267,7 +267,7 @@ export abstract class BaseEditStrategy extends BeanStub {
         event?: KeyboardEvent | MouseEvent | null | undefined,
         source: 'api' | 'ui' = 'ui'
     ): boolean | null {
-        const batchEdit = this.gos.get('batchEdit');
+        const batchEdit = this.beans.editSvc?.batchEditing;
 
         if (batchEdit && source === 'api') {
             // we always defer to the API
@@ -293,7 +293,7 @@ export abstract class BaseEditStrategy extends BeanStub {
         event?: KeyboardEvent | MouseEvent | null | undefined,
         source: 'api' | 'ui' = 'ui'
     ): boolean | null {
-        const batchEdit = this.gos.get('batchEdit');
+        const batchEdit = this.beans.editSvc?.batchEditing;
         if (event instanceof KeyboardEvent && !batchEdit) {
             return event.key === KeyCode.ESCAPE;
         }

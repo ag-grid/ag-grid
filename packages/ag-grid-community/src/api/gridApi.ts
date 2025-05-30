@@ -853,6 +853,16 @@ export interface _EditGridApi<TData> {
 
     /** Returns `true` if the grid is editing a cell */
     isEditing(rowId?: string, colId?: string): boolean;
+
+    /**
+     * Start batch editing.
+     */
+    enableBatchEditing(): void;
+
+    /**
+     * Stop batch editing.
+     */
+    disableBatchEditing(): void;
 }
 
 export interface _UndoRedoGridApi {

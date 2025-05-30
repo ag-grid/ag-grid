@@ -26,6 +26,14 @@ export function redoCellEditing(beans: BeanCollection): void {
     beans.undoRedo?.redo('api');
 }
 
+export function enableBatchEditing(beans: BeanCollection): void {
+    beans.editSvc?.enableBatchEditing();
+}
+
+export function disableBatchEditing(beans: BeanCollection): void {
+    beans.editSvc?.disableBatchEditing();
+}
+
 export function getCellEditorInstances<TData = any>(
     beans: BeanCollection,
     params: GetCellEditorInstancesParams<TData> = {}
