@@ -89,7 +89,6 @@ const resetGrouping = <TData>(rootNode: GroupingRowNode<TData>, canResetTreeNode
         rootSibling.childrenAfterFilter = rootNode.childrenAfterFilter;
         rootSibling.childrenAfterSort = rootNode.childrenAfterSort;
         rootSibling.childrenMapped = null;
-        rootSibling.groupData = null;
     }
     for (const row of allLeafChildren) {
         const sibling = row.sibling;
