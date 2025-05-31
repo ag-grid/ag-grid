@@ -9,7 +9,7 @@ export function getData(): any[] {
             country: 'Ireland',
         },
         {
-            firstName: 'Mary',
+            firstName: 'Jane',
             lastName: 'Wilson',
             gender: 'Female',
             age: 11,
@@ -202,7 +202,7 @@ export function getData(): any[] {
             country: 'Ireland',
         },
         {
-            firstName: 'Jerry',
+            firstName: 'John',
             lastName: 'Mane',
             gender: 'Male',
             age: 12,

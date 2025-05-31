@@ -1,9 +1,12 @@
+import { get } from 'http';
+
 import type {
     CellEditingStartedEvent,
     CellEditingStoppedEvent,
     EditingCellPosition,
     GridApi,
     GridOptions,
+    IRowNode,
     RowEditingStartedEvent,
     RowEditingStoppedEvent,
     RowPinnedType,
@@ -14,6 +17,7 @@ import {
     ModuleRegistry,
     NumberEditorModule,
     PinnedRowModule,
+    RowDragModule,
     TextEditorModule,
     UndoRedoEditModule,
     ValidationModule,
@@ -30,6 +34,7 @@ import {
     RowGroupingPanelModule,
 } from 'ag-grid-enterprise';
 
+import { CustomCellRenderer } from './custom-renderer';
 import { getData } from './data';
 
 ModuleRegistry.registerModules([
@@ -47,7 +52,7 @@ ModuleRegistry.registerModules([
     ExcelExportModule,
     UndoRedoEditModule,
     HighlightChangesModule,
-
+    RowDragModule,
     ValidationModule /* Development Only */,
 ]);
 
@@ -62,7 +67,12 @@ const gridOptions: GridOptions = {
             headerName: 'Name',
             children: [
                 { field: 'firstName', ...(grouping ? { rowGroup: true } : {}) },
-                { field: 'lastName', ...(grouping ? { rowGroup: true } : {}) },
+                {
+                    field: 'lastName',
+                    ...(grouping ? { rowGroup: true } : {}),
+                    cellRenderer: CustomCellRenderer,
+                    cellClass: 'custom-athlete-cell',
+                },
             ],
         },
         { field: 'gender', ...(pivot ? { pivot: true } : {}) },
@@ -88,8 +98,17 @@ const gridOptions: GridOptions = {
             mode: 'fill',
         },
     },
-    pinnedTopRowData: getPinnedTopData(),
-    pinnedBottomRowData: getPinnedBottomData(),
+    rowDragManaged: true,
+    enableRowPinning: true,
+    isRowPinned: (rowNode: IRowNode) => {
+        // pinning the first two rows at the top
+        if (rowNode.data.firstName === 'Jane') {
+            return 'top';
+        }
+        if (rowNode.data.firstName === 'John') {
+            return 'bottom';
+        }
+    },
     onRowEditingStarted: (event: RowEditingStartedEvent) => {
         console.log('rowEditingStarted');
     },
@@ -123,48 +142,6 @@ function pollState() {
 
     document.getElementById('enablePoll')!.style.display = polling ? 'none' : 'unset';
     document.getElementById('disablePoll')!.style.display = polling ? 'unset' : 'none';
-}
-
-function getPinnedTopData() {
-    return [
-        {
-            firstName: '##',
-            lastName: '##',
-            gender: '##',
-            address: '##',
-            mood: '##',
-            country: '##',
-        },
-        {
-            firstName: '###',
-            lastName: '###',
-            gender: '###',
-            address: '###',
-            mood: '###',
-            country: '###',
-        },
-    ];
-}
-
-function getPinnedBottomData() {
-    return [
-        {
-            firstName: '##',
-            lastName: '##',
-            gender: '##',
-            address: '##',
-            mood: '##',
-            country: '##',
-        },
-        {
-            firstName: '###',
-            lastName: '###',
-            gender: '###',
-            address: '###',
-            mood: '###',
-            country: '###',
-        },
-    ];
 }
 
 function onBtStartEditing(key?: string, pinned?: RowPinnedType) {
