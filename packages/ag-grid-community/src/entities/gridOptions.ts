@@ -3,6 +3,7 @@
  ************************************************************************************************/
 import type { AgChartTheme, AgChartThemeOverrides } from 'ag-charts-types';
 
+import type { AgPublicEventType } from '../eventTypes';
 import type {
     AdvancedFilterBuilderVisibleChangedEvent,
     AsyncTransactionsFlushedEvent,
@@ -3018,3 +3019,5 @@ export type RowSelectionMode = RowSelectionOptions['mode'];
 export type CheckboxLocation = 'selectionColumn' | 'autoGroupColumn';
 
 export type MasterSelectionMode = NonNullable<CommonRowSelectionOptions['masterSelects']>;
+
+export type AgPublicEventHandlerType = `on${Capitalize<AgPublicEventType>}` & keyof GridOptions;
