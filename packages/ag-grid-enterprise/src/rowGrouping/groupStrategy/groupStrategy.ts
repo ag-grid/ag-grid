@@ -5,7 +5,6 @@ import type {
     ColumnModel,
     IChangedRowNodes,
     IColsService,
-    IRowGroupingStrategy,
     ISelectionService,
     IShowRowGroupColsService,
     InitialGroupOrderComparatorParams,
@@ -25,7 +24,7 @@ import {
     _warn,
 } from 'ag-grid-community';
 
-import type { GroupingRowNode } from '../../rowHierarchy/rowHierarchyUtils';
+import type { GroupingRowNode, IRowGroupingStrategy } from '../../rowHierarchy/rowHierarchyUtils';
 import { setRowNodeGroup } from '../rowGroupingUtils';
 import { BatchRemover } from './batchRemover';
 import type { GroupRow } from './groupRow';

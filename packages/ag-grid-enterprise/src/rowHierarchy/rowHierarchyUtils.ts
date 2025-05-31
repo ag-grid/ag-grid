@@ -1,5 +1,18 @@
 import { _getLocaleTextFunc } from 'ag-grid-community';
-import type { BeanCollection, Column, GridOptionsService, RowNode } from 'ag-grid-community';
+import type {
+    Bean,
+    BeanCollection,
+    Column,
+    GridOptionsService,
+    GroupingApproach,
+    RowNode,
+    StageExecuteParams,
+} from 'ag-grid-community';
+
+export interface IRowGroupingStrategy<TData = any> extends Bean {
+    execute(params: StageExecuteParams<TData>, approach: GroupingApproach): void;
+    reset?(): void;
+}
 
 export interface GroupingRowNode<TData = any> extends RowNode<TData> {
     parent: GroupingRowNode<TData> | null;

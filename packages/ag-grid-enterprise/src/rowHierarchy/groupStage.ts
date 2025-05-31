@@ -2,14 +2,13 @@ import type {
     ClientSideRowModelStage,
     GridOptions,
     GroupingApproach,
-    IRowGroupingStrategy,
     IRowNodeStage,
     NamedBean,
     StageExecuteParams,
 } from 'ag-grid-community';
 import { BeanStub, _getGroupingApproach } from 'ag-grid-community';
 
-import type { GroupingRowNode } from './rowHierarchyUtils';
+import type { GroupingRowNode, IRowGroupingStrategy } from './rowHierarchyUtils';
 
 export class GroupStage<TData> extends BeanStub implements NamedBean, IRowNodeStage {
     beanName = 'groupStage' as const;
@@ -64,8 +63,9 @@ export class GroupStage<TData> extends BeanStub implements NamedBean, IRowNodeSt
             this.approach = approach;
             this.destroyBean(strategy);
             if (strategy) {
+                const rootNode = params.rowNode;
                 strategy.reset?.();
-                resetGrouping(params.rowNode, approach !== 'treeNested');
+                resetGrouping(rootNode, approach !== 'treeNested');
             }
             strategy = this.createStrategy();
             this.strategy = strategy;
