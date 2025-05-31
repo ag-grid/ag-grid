@@ -5,6 +5,7 @@ import type { AgColumn } from '../entities/agColumn';
 import type { EditingCellPosition, ICellEditorParams } from '../interfaces/iCellEditor';
 import type { Column } from '../interfaces/iColumn';
 import type { IRowNode } from '../interfaces/iRowNode';
+import type { UserCompDetails } from '../interfaces/iUserCompDetails';
 import type { CellPosition } from '../main-umd-noStyles';
 import { CellCtrl } from '../rendering/cell/cellCtrl';
 import { _createCellEvent } from '../rendering/cell/cellEvent';
@@ -12,7 +13,12 @@ import type { RowCtrl } from '../rendering/row/rowCtrl';
 import { PopupEditorWrapper } from './cellEditors/popupEditorWrapper';
 import type { EditModelService, PendingUpdates } from './editModelService';
 import type { BaseEditStrategy } from './strategy/baseEditStrategy';
-import { _addStopEditingWhenGridLosesFocus, _resolveCellController } from './utils/controllers';
+import {
+    _addStopEditingWhenGridLosesFocus,
+    _getSiblingRows,
+    _resolveCellController,
+    _resolveRowController,
+} from './utils/controllers';
 import {
     _destroyEditor,
     _refreshEditorOnColDefChanged,
@@ -120,8 +126,8 @@ export class EditService extends BeanStub implements NamedBean {
         return this.strategy?.shouldCancelEditing?.(rowNode, column, key, event, source) ?? null;
     }
 
-    public isEditing(rowNode?: IRowNode | null, column?: Column | null): boolean {
-        return this.model.hasPending?.(rowNode, column) ?? false;
+    public isEditing(rowNode?: IRowNode | null, column?: Column | null, checkSiblings = false): boolean {
+        return this.model.hasPending(rowNode, column, checkSiblings) ?? false;
     }
 
     /** @return whether to prevent default on event */
@@ -194,12 +200,10 @@ export class EditService extends BeanStub implements NamedBean {
             cellCtrl.onEditorAttachedFuncs = [];
         }
 
-        const pendingUpdates = this.model.getPendingUpdates();
+        const pendingUpdates = this.model.getPendingUpdates(true);
 
         let res = false;
-        let updateCells = false;
         let forcedState: boolean | undefined = undefined;
-        let suppressFlash = false;
 
         const willStop = !cancel && !!this.shouldStopEditing?.(rowNode, column, key, event, source);
         const willCancel = cancel && !!this.shouldCancelEditing?.(rowNode, column, key, event, source);
@@ -212,36 +216,52 @@ export class EditService extends BeanStub implements NamedBean {
             this.processUpdates(pendingUpdates, cancel);
 
             res ||= willStop;
-            updateCells = true;
             forcedState = false;
-            suppressFlash = willCancel;
         } else if (event instanceof KeyboardEvent && this.batchEditing) {
             // handle mid-batch edit interactions
             const isEnter = key === KeyCode.ENTER;
             const isEscape = key === KeyCode.ESCAPE;
 
             if (isEnter || isEscape) {
-                if (isEscape) {
+                if (isEnter) {
                     _syncModelsFromEditors(this.beans);
                 }
 
                 _destroyEditor(this.beans, { rowNode: rowNode!, column: column! });
 
                 event.preventDefault();
-                updateCells = true;
-                suppressFlash = true;
             }
+        } else {
+            _syncModelsFromEditors(this.beans);
         }
 
         if (!suppressNavigateAfterEdit && cellCtrl) {
             this.navigateAfterEdit(shiftKey, cellCtrl.cellPosition);
         }
 
-        if (updateCells) {
-            this.strategy.updateCells(pendingUpdates, forcedState, suppressFlash);
-        }
+        this.strategy.updateCells(pendingUpdates, forcedState, true);
+
+        // force refresh of all row cells as custom renderers may depend on multiple cell values
+        this.refreshAllRows(pendingUpdates);
 
         return res;
+    }
+
+    private refreshAllRows(pendingUpdates: PendingUpdates): void {
+        pendingUpdates.forEach((_, rowNode) =>
+            _getSiblingRows(this.beans, rowNode, true).forEach((sibling) => this.refreshAllCells(sibling))
+        );
+    }
+
+    private refreshAllCells(rowNode?: IRowNode | null): void {
+        if (!rowNode) {
+            return;
+        }
+        const rowCtrl = _resolveRowController(this.beans, { rowNode });
+
+        rowCtrl?.getAllCellCtrls().forEach((cellCtrl) => {
+            cellCtrl.refreshCell({ suppressFlash: true, forceRefresh: true });
+        });
     }
 
     private navigateAfterEdit(shiftKey: boolean, cellPosition: CellPosition): void {
@@ -401,5 +421,45 @@ export class EditService extends BeanStub implements NamedBean {
         this.destroyStrategy();
         this.model.destroy();
         super.destroy();
+    }
+
+    prepDetailsDuringBatch(
+        { compDetails, valueToDisplay }: { compDetails?: UserCompDetails<any>; valueToDisplay: any },
+        _rowNode: IRowNode,
+        column: Column
+    ): { compDetails?: UserCompDetails<any>; valueToDisplay?: any } | undefined {
+        if (!this.batchEditing) {
+            return undefined;
+        }
+        let updateRow = this.model.getPendingUpdateRow(_rowNode);
+
+        if (!updateRow) {
+            const sibling = this.model.getPendingSiblingRow(_rowNode);
+            if (sibling) {
+                updateRow = this.model.getPendingUpdateRow(sibling);
+            }
+        }
+
+        if (!updateRow) {
+            return undefined;
+        }
+
+        if (compDetails) {
+            compDetails!.params.data = Object.assign({}, compDetails!.params.data);
+            updateRow?.forEach((update, col) => {
+                const newValue = update.newValue;
+                if (newValue !== undefined) {
+                    compDetails!.params.data[col.getColId()] = newValue;
+                }
+            });
+            return { compDetails };
+        } else if (valueToDisplay !== undefined && updateRow?.has(column)) {
+            const newValue = updateRow.get(column)!.newValue;
+            if (newValue !== undefined) {
+                return { valueToDisplay: newValue };
+            }
+        }
+
+        return undefined;
     }
 }

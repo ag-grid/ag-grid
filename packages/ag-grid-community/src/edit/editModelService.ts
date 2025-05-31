@@ -3,6 +3,7 @@ import { BeanStub } from '../context/beanStub';
 import type { EditingCellPosition } from '../interfaces/iCellEditor';
 import type { Column } from '../interfaces/iColumn';
 import type { IRowNode } from '../interfaces/iRowNode';
+import { _getSiblingRows } from './utils/controllers';
 
 export type CellIdPositions = {
     rowNode: IRowNode;
@@ -19,7 +20,8 @@ export type EditedCell = {
     state: EditedCellState;
 };
 
-export type PendingUpdates = Map<IRowNode, Map<Column, EditedCell>>;
+export type PendingUpdateRow = Map<Column, EditedCell>;
+export type PendingUpdates = Map<IRowNode, PendingUpdateRow>;
 
 export class EditModelService extends BeanStub implements NamedBean {
     beanName = 'editModelSvc' as const;
@@ -31,7 +33,7 @@ export class EditModelService extends BeanStub implements NamedBean {
             return;
         }
 
-        const rowUpdateMap = this.pendingUpdates.get(rowNode)!;
+        const rowUpdateMap = this.getPendingUpdateRow(rowNode)!;
 
         if (column) {
             rowUpdateMap.delete(column);
@@ -44,8 +46,16 @@ export class EditModelService extends BeanStub implements NamedBean {
         }
     }
 
+    public getPendingUpdateRow(rowNode: IRowNode): PendingUpdateRow | undefined {
+        return this.pendingUpdates.get(rowNode);
+    }
+
     public getPendingUpdate(rowNode: IRowNode, column: Column): EditedCell | undefined {
-        return this.pendingUpdates.get(rowNode)?.get(column);
+        return this.getPendingUpdateRow(rowNode)?.get(column);
+    }
+
+    getPendingSiblingRow(rowNode: IRowNode): IRowNode | undefined {
+        return _getSiblingRows(this.beans, rowNode).find((node) => this.pendingUpdates.has(node));
     }
 
     public getPendingUpdates(copy = true): PendingUpdates {
@@ -81,11 +91,11 @@ export class EditModelService extends BeanStub implements NamedBean {
         if (!this.pendingUpdates.has(rowNode)) {
             this.pendingUpdates.set(rowNode, new Map());
         }
-        this.pendingUpdates.get(rowNode)!.set(column, { newValue, oldValue, state });
+        this.getPendingUpdateRow(rowNode)!.set(column, { newValue, oldValue, state });
     }
 
     public setState(rowNode: IRowNode, column: Column, state: EditedCellState): void {
-        const rowUpdateMap = this.pendingUpdates.get(rowNode) ?? new Map();
+        const rowUpdateMap = this.getPendingUpdateRow(rowNode) ?? new Map();
 
         if (!this.pendingUpdates.has(rowNode)) {
             this.pendingUpdates.set(rowNode, rowUpdateMap);
@@ -135,22 +145,32 @@ export class EditModelService extends BeanStub implements NamedBean {
         return result;
     }
 
-    public hasPending(rowNode?: IRowNode | null, column?: Column | null): boolean {
+    public hasPending(rowNode?: IRowNode | null, column?: Column | null, checkSiblings: boolean = false): boolean {
         if (rowNode) {
-            const rowEdits = this.pendingUpdates.get(rowNode);
+            const rowEdits = this.getPendingUpdateRow(rowNode);
             if (column) {
-                return rowEdits?.has(column) ?? false;
+                const res = rowEdits?.has(column);
+
+                if (res) {
+                    return true;
+                }
+            } else if (rowEdits?.size !== 0) {
+                return true;
             }
-            return (rowEdits?.size ?? 0) > 0;
+
+            return checkSiblings
+                ? !!_getSiblingRows(this.beans, rowNode).find((sibling) => this.hasPending(sibling, column, false))
+                : (rowEdits?.size ?? 0) > 0;
         }
         return this.pendingUpdates.size > 0;
     }
 
     public startEditing(rowNode: IRowNode, column?: Column): boolean {
-        const map = this.pendingUpdates.get(rowNode) ?? new Map<Column, EditedCell>();
+        const map = this.getPendingUpdateRow(rowNode) ?? new Map<Column, EditedCell>();
         let updated = false;
         if (column && !map.has(column)) {
-            map.set(column, { newValue: undefined, oldValue: rowNode.data[column.getColId()], state: 'editing' });
+            const oldValue = rowNode.data[column.getColId()];
+            map.set(column, { newValue: undefined, oldValue, state: 'editing' });
             updated = true;
         }
         this.pendingUpdates.set(rowNode, map);

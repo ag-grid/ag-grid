@@ -2,6 +2,7 @@ import type { BeanStub } from '../../context/beanStub';
 import type { BeanCollection } from '../../context/context';
 import type { AgColumn } from '../../entities/agColumn';
 import { _getRowById } from '../../entities/positionUtils';
+import { RowNode } from '../../entities/rowNode';
 import { _isElementInThisGrid } from '../../gridBodyComp/mouseEventUtils';
 import type { Column } from '../../interfaces/iColumn';
 import type { IRowNode, RowPinnedType } from '../../interfaces/iRowNode';
@@ -118,4 +119,18 @@ export function _getColId(column?: Column | string | null): string | undefined {
         return column;
     }
     return column.getColId();
+}
+
+export function _getSiblingRows(beans: BeanCollection, rowNode: IRowNode, includeSource = false): IRowNode[] {
+    const pinned = rowNode instanceof RowNode ? rowNode.pinnedSibling : undefined;
+    const sibling = rowNode.sibling;
+    const parent = rowNode.parent;
+
+    const result: IRowNode[] = [];
+    includeSource && result.push(rowNode);
+    pinned && result.push(pinned);
+    sibling && result.push(sibling);
+    parent && result.push(parent);
+
+    return result;
 }

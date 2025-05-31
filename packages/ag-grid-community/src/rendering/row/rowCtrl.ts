@@ -851,6 +851,13 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
     }
 
     private onRowNodeDataChanged(event: DataChangedEvent): void {
+        this.refreshRow({
+            suppressFlash: !event.update,
+            newData: !event.update,
+        });
+    }
+
+    public refreshRow(params: { suppressFlash?: boolean; newData?: boolean; forceRefresh?: boolean }): void {
         // if the row is rendered incorrectly, as the requirements for whether this is a FW row have changed, we force re-render this row.
         const fullWidthChanged = this.isFullWidth() !== !!this.isNodeFullWidthCell();
         if (fullWidthChanged) {
@@ -870,12 +877,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         // if this is an update, we want to refresh, as this will allow the user to put in a transition
         // into the cellRenderer refresh method. otherwise this might be completely new data, in which case
         // we will want to completely replace the cells
-        this.getAllCellCtrls().forEach((cellCtrl) =>
-            cellCtrl.refreshCell({
-                suppressFlash: !event.update,
-                newData: !event.update,
-            })
-        );
+        this.getAllCellCtrls().forEach((cellCtrl) => cellCtrl.refreshCell(params));
 
         // as data has changed update the dom row id attributes
         this.allRowGuis.forEach((gui) => {

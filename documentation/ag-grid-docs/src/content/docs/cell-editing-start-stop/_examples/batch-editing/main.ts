@@ -60,13 +60,14 @@ let gridApi: GridApi;
 
 const pivot = false;
 const grouping = false;
+const hide = false;
 
 const gridOptions: GridOptions = {
     columnDefs: [
         {
             headerName: 'Name',
             children: [
-                { field: 'firstName', ...(grouping ? { rowGroup: true } : {}) },
+                { field: 'firstName', ...(grouping ? { rowGroup: true } : {}), hide },
                 {
                     field: 'lastName',
                     ...(grouping ? { rowGroup: true } : {}),
@@ -75,11 +76,11 @@ const gridOptions: GridOptions = {
                 },
             ],
         },
-        { field: 'gender', ...(pivot ? { pivot: true } : {}) },
+        { field: 'gender', ...(pivot ? { pivot: true } : {}), hide },
         { field: 'age', aggFunc: 'sum', cellDataType: 'number' },
-        { field: 'mood' },
-        { field: 'country' },
-        { field: 'address', minWidth: 550 },
+        { field: 'mood', hide },
+        { field: 'country', hide },
+        { field: 'address', minWidth: 550, hide },
     ],
     defaultColDef: {
         flex: 1,

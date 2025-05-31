@@ -271,7 +271,7 @@ export class CellCtrl extends BeanStub {
     private showValue(forceNewCellRendererInstance: boolean, skipRangeHandleRefresh: boolean): void {
         const { beans, column, rowNode, rangeFeature } = this;
         const { userCompFactory } = beans;
-        const valueToDisplay = this.getValueToDisplay();
+        let valueToDisplay = this.getValueToDisplay();
         let compDetails: UserCompDetails | undefined;
 
         // if node is stub, and no group data for this node (groupSelectsChildren can populate group data)
@@ -293,6 +293,17 @@ export class CellCtrl extends BeanStub {
                 { ...column.getColDef(), cellRenderer: 'agFindCellRenderer' },
                 params
             );
+        }
+
+        if (beans?.editSvc?.batchEditing && beans?.editSvc?.isEditing(rowNode, undefined, true)) {
+            const result = beans.editSvc.prepDetailsDuringBatch({ compDetails, valueToDisplay }, rowNode, column);
+            if (result) {
+                if (result.compDetails) {
+                    compDetails = result.compDetails;
+                } else if (result.valueToDisplay) {
+                    valueToDisplay = result.valueToDisplay;
+                }
+            }
         }
 
         this.comp.setRenderDetails(compDetails, valueToDisplay, forceNewCellRendererInstance);

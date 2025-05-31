@@ -3,7 +3,6 @@ import { BeanStub } from '../../context/beanStub';
 import type { BeanName } from '../../context/context';
 import type { AgColumn } from '../../entities/agColumn';
 import type { ColDef } from '../../entities/colDef';
-import { RowNode } from '../../entities/rowNode';
 import type { AgEventType } from '../../eventTypes';
 import type { CellFocusedEvent } from '../../events';
 import type { DefaultProvidedCellEditorParams } from '../../interfaces/iCellEditor';
@@ -12,7 +11,7 @@ import type { IRowNode } from '../../interfaces/iRowNode';
 import type { CellCtrl } from '../../rendering/cell/cellCtrl';
 import type { RowCtrl } from '../../rendering/row/rowCtrl';
 import type { CellIdPositions, EditModelService, EditedCell, PendingUpdates } from '../editModelService';
-import { _resolveCellController, _resolveRowController } from '../utils/controllers';
+import { _getSiblingRows, _resolveCellController, _resolveRowController } from '../utils/controllers';
 import {
     _destroyEditor,
     _destroyEditors,
@@ -56,47 +55,31 @@ export abstract class BaseEditStrategy extends BeanStub {
         const batchEdit = this.beans.editSvc?.batchEditing;
         const forced = forcedState !== undefined;
 
-        updates?.forEach((rowUpdateMap, rowNode) => {
-            const rowCtrl = _resolveRowController(this.beans, {
-                rowNode,
-            });
-
-            const siblingNode = rowNode instanceof RowNode ? rowNode.pinnedSibling : undefined;
-            const siblingRowCtrl =
-                siblingNode &&
-                _resolveRowController(this.beans, {
-                    rowNode: siblingNode,
-                });
-
+        updates?.forEach((rowUpdateMap, mainNode) => {
             let rowEdited = false;
 
-            rowUpdateMap.forEach((cellData, column) => {
-                const newState = forced ? forcedState : cellData.newValue !== undefined && _valuesDiffer(cellData);
-
-                rowEdited ||= newState;
-
-                const cellCtrl = _resolveCellController(this.beans, {
-                    rowCtrl,
-                    column,
+            _getSiblingRows(this.beans, mainNode, true).forEach((rowNode) => {
+                const rowCtrl = _resolveRowController(this.beans, {
+                    rowNode,
                 });
 
-                this.updateCellStyle(cellCtrl, newState, batchEdit, suppressFlash);
+                rowUpdateMap.forEach((cellData, column) => {
+                    const newState = forced ? forcedState : cellData.newValue !== undefined && _valuesDiffer(cellData);
 
-                if (siblingRowCtrl) {
-                    const siblingCellCtrl = _resolveCellController(this.beans, {
-                        rowCtrl: siblingRowCtrl,
+                    if (rowNode === mainNode) {
+                        rowEdited ||= newState;
+                    }
+
+                    const cellCtrl = _resolveCellController(this.beans, {
+                        rowCtrl,
                         column,
                     });
 
-                    this.updateCellStyle(siblingCellCtrl, newState, batchEdit, suppressFlash);
-                }
+                    this.updateCellStyle(cellCtrl, newState, batchEdit, suppressFlash);
+                });
+
+                this.updateRowStyle(rowCtrl, rowEdited, batchEdit);
             });
-
-            this.updateRowStyle(rowCtrl, rowEdited, batchEdit);
-
-            if (siblingRowCtrl) {
-                this.updateRowStyle(siblingRowCtrl, rowEdited, batchEdit);
-            }
         });
     }
 
