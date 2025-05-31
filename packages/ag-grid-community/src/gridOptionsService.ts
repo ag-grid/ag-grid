@@ -9,7 +9,6 @@ import type { AgEvent } from './events';
 import { ALWAYS_SYNC_GLOBAL_EVENTS } from './events';
 import type { GridOptionOrDefault } from './gridOptionsDefault';
 import { GRID_OPTION_DEFAULTS } from './gridOptionsDefault';
-import { isPublicEventHandler } from './gridOptionsUtils';
 import type { AgGridCommon, WithoutGridCommon } from './interfaces/iCommon';
 import type { ModuleName, ValidationModuleName } from './interfaces/iModule';
 import type { RowModelType } from './interfaces/iRowModel';
@@ -364,4 +363,8 @@ export class GridOptionsService extends BeanStub implements NamedBean {
     public isModuleRegistered(moduleName: ModuleName): boolean {
         return _isModuleRegistered(moduleName, this.gridId, this.get('rowModelType'));
     }
+}
+
+function isPublicEventHandler(eventName: AgEventType): eventName is AgPublicEventType {
+    return !!_PUBLIC_EVENT_HANDLERS_MAP[eventName as AgPublicEventType];
 }

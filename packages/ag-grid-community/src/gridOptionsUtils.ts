@@ -16,7 +16,6 @@ import type {
     SingleRowSelectionOptions,
 } from './entities/gridOptions';
 import type { RowNode } from './entities/rowNode';
-import type { AgEventType, AgPublicEventType } from './eventTypes';
 import type { ComponentStateChangedEvent, GridOptionsChangedEvent } from './events';
 import type {
     ExtractParamsFromCallback,
@@ -33,7 +32,6 @@ import type { AgGridCommon, WithoutGridCommon } from './interfaces/iCommon';
 import type { IRowModel, RowModelType } from './interfaces/iRowModel';
 import type { IRowNode } from './interfaces/iRowNode';
 import type { IServerSideRowModel } from './interfaces/iServerSideRowModel';
-import { _PUBLIC_EVENT_HANDLERS_MAP } from './publicEventHandlersMap';
 import { _getElementRectWithOffset } from './utils/dom';
 import { _doOnce } from './utils/function';
 import { _exists, _missing } from './utils/generic';
@@ -667,10 +665,6 @@ export function _getCallbackForEvent(eventName: string): string {
         return eventName;
     }
     return 'on' + eventName[0].toUpperCase() + eventName.substring(1);
-}
-
-export function isPublicEventHandler(eventName: AgEventType): eventName is AgPublicEventType {
-    return !!_PUBLIC_EVENT_HANDLERS_MAP[eventName as AgPublicEventType];
 }
 
 /** Combines component props / attributes with the provided gridOptions returning a new combined gridOptions object */
