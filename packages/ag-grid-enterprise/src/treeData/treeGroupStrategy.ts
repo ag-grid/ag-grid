@@ -20,7 +20,7 @@ const FLAG_EXPANDED_INITIALIZED = 0x10000000;
 const MASK_CHILDREN_LEN = 0x0fffffff; // This equates to 268,435,455 maximum children per parent, more than enough
 
 /** Maximum number of duplicates to warn about per node, to avoid flooding the console */
-const MAX_DUPLICATES_PER_PATH_TO_WARN = 15;
+const MAX_DUPLICATES_PER_PATH_TO_WARN = 16;
 
 /** Path key separator used to flatten hierarchical paths. Includes uncommon and randomized characters to avoid collisions and abuse. */
 const PATH_KEY_SEPARATOR = String.fromCharCode(31, 4096 + Math.random() * 61440, 4096 + Math.random() * 61440, 8291);
@@ -48,7 +48,6 @@ export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGrou
     private groupColsChanged: boolean = true;
     private parentIdGetter: DataFieldGetter<TData, string> | null = null;
     private fillerNodesById: Map<string, GroupingRowNode<TData>> | null = null;
-
     private nodesToUnselect: GroupingRowNode<TData>[] | null = null;
 
     public override destroy(): void {
@@ -282,9 +281,7 @@ export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGrou
             result += childTraverseResult;
             leafsChanged ||= (childTraverseResult & FLAG_CHILDREN_CHANGED) !== 0;
             leafsLen += child.allLeafChildren?.length || 0;
-            if (child.data) {
-                ++leafsLen; // If not a filler node, count it
-            }
+            if (child.data) ++leafsLen; // If not a filler node, count it
         }
 
         if (this.updateAllLeafChildren(row, leafsLen, leafsChanged)) {
@@ -294,7 +291,6 @@ export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGrou
         if (changed) {
             activeChangedPath?.addParentNode(row);
         }
-
         return result;
     }
 
@@ -637,44 +633,22 @@ export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGrou
     }
 
     private deselectHiddenNodes(updated: boolean): void {
-        const source = 'rowDataChanged';
         const selectionSvc = this.beans.selectionSvc;
         const nodes = this.nodesToUnselect;
+        const source = 'rowDataChanged';
         if (nodes) {
             this.nodesToUnselect = null; // Reset the array
             selectionSvc?.setNodesSelected({ newValue: false, nodes, suppressFinishActions: true, source });
         }
-
         if (nodes || updated) {
-            // we do this regardless of nodes to unselect or not, as it's possible
-            // a new node was inserted, so a parent that was previously selected (as all
-            // children were selected) should not be tri-state (as new one unselected against
-            // all other selected children).
+            // we do this regardless of nodes to unselect or not, as it's possible a new node was inserted,
+            // so a parent that was previously selected (as all children were selected) should not be tri-state
+            // (as new one unselected against all other selected children).
             selectionSvc?.updateGroupsFromChildrenSelections?.(source);
         }
-
         if (nodes) {
-            this.eventSvc.dispatchEvent({
-                type: 'selectionChanged',
-                source: source,
-                selectedNodes: selectionSvc?.getSelectedNodes() ?? null,
-                serverSideState: null,
-            });
-        }
-    }
-
-    private checkGroupColsUpdated(afterColumnsChanged: boolean | undefined): void {
-        this.groupColsChanged = false;
-        if (afterColumnsChanged || !this.groupColsIds) {
-            const cols = this.beans.showRowGroupCols?.getShowRowGroupCols() ?? _EmptyArray;
-            let groupColsIds = '';
-            for (let i = 0, len = cols.length; i < len; ++i) {
-                groupColsIds += cols[i].getId() + PATH_KEY_SEPARATOR;
-            }
-            if (this.groupColsIds !== groupColsIds) {
-                this.groupColsIds = groupColsIds;
-                this.groupColsChanged = true;
-            }
+            const selectedNodes = selectionSvc?.getSelectedNodes() ?? null;
+            this.eventSvc.dispatchEvent({ type: 'selectionChanged', source, selectedNodes, serverSideState: null });
         }
     }
 
@@ -696,6 +670,21 @@ export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGrou
         row.updateHasChildren();
         if (row.rowIndex !== null) {
             row.clearRowTopAndRowIndex();
+        }
+    }
+
+    private checkGroupColsUpdated(afterColumnsChanged: boolean | undefined): void {
+        this.groupColsChanged = false;
+        if (afterColumnsChanged || !this.groupColsIds) {
+            const cols = this.beans.showRowGroupCols?.getShowRowGroupCols() ?? _EmptyArray;
+            let groupColsIds = '';
+            for (let i = 0, len = cols.length; i < len; ++i) {
+                groupColsIds += cols[i].getId() + PATH_KEY_SEPARATOR;
+            }
+            if (this.groupColsIds !== groupColsIds) {
+                this.groupColsIds = groupColsIds;
+                this.groupColsChanged = true;
+            }
         }
     }
 }
