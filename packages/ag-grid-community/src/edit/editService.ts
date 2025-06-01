@@ -261,12 +261,14 @@ export class EditService extends BeanStub implements NamedBean {
             this.navigateAfterEdit(shiftKey, cellCtrl.cellPosition);
         }
 
+        // update editing styles
         this.updateCells(pendingUpdates, forcedState, true, true);
 
         // force refresh of all row cells as custom renderers may depend on multiple cell values
         this.refreshAllRows(pendingUpdates, this.includeParents);
 
-        if (this.batchEditing && this.beans.rowModel.getType() !== 'clientSide') {
+        if (this.batchEditing && this.beans.rowModel.getType() === 'clientSide') {
+            // Only CSRM supported for now
             this.beans.gridApi.refreshClientSideRowModel('aggregate');
         }
 

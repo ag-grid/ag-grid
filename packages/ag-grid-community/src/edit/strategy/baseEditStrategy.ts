@@ -83,7 +83,7 @@ export abstract class BaseEditStrategy extends BeanStub {
 
             this.updateRowStyle(rowCtrl, rowEdited, batchEdit);
 
-            if (!batchEdit || !rowEdited || !changedColumns.size || !includeParents) {
+            if (!batchEdit || !includeParents) {
                 return;
             }
 
