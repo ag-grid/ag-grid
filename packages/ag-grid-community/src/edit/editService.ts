@@ -425,7 +425,7 @@ export class EditService extends BeanStub implements NamedBean {
         newValue: any,
         eventSource?: string
     ): boolean | undefined {
-        if (!this.isEditing() || eventSource === 'commit') {
+        if ((!this.isEditing() || eventSource === 'commit') && eventSource !== 'paste') {
             return;
         }
 
