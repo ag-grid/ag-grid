@@ -3,6 +3,7 @@ import type { DefaultProvidedCellEditorParams } from '../interfaces/iCellEditor'
 import type { _ModuleWithApi, _ModuleWithoutApi } from '../interfaces/iModule';
 import { UndoRedoService } from '../undoRedo/undoRedoService';
 import { VERSION } from '../version';
+import { PopupModule } from '../widgets/popupModule';
 import { cellEditingCSS } from './cell-editing.css-GENERATED';
 import { CheckboxCellEditor } from './cellEditors/checkboxCellEditor';
 import { DateCellEditor } from './cellEditors/dateCellEditor';
@@ -53,7 +54,7 @@ export const EditCoreModule: _ModuleWithApi<_EditGridApi<any>> = {
         singleCell: SingleCellEditStrategy,
         fullRow: FullRowEditStrategy,
     },
-    dependsOn: [],
+    dependsOn: [PopupModule],
     css: [cellEditingCSS],
 };
 
