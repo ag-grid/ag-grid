@@ -13,6 +13,8 @@ import type { GroupingRowNode, IRowGroupingStrategy } from './rowHierarchyUtils'
 export class GroupStage<TData> extends BeanStub implements NamedBean, IRowNodeStage {
     beanName = 'groupStage' as const;
 
+    public step: ClientSideRowModelStage = 'group';
+
     public refreshProps: Set<keyof GridOptions<any>> = new Set([
         'groupDefaultExpanded',
         'groupAllowUnbalanced',
@@ -23,56 +25,61 @@ export class GroupStage<TData> extends BeanStub implements NamedBean, IRowNodeSt
         'treeDataChildrenField',
         'treeDataParentIdField',
     ]);
-    public step: ClientSideRowModelStage = 'group';
 
     private approach: GroupingApproach | null = null;
+    private strategyBeanName: string | null = null;
     private strategy: IRowGroupingStrategy<TData> | undefined = undefined;
 
     public override destroy(): void {
         super.destroy();
         this.strategy = undefined;
-        this.approach = null;
-    }
-
-    private createStrategy(): IRowGroupingStrategy<TData> | undefined {
-        const { beans, approach } = this;
-        let beanName: 'treeGroupStrategy' | 'groupStrategy' | undefined;
-        switch (approach) {
-            case 'group':
-                beanName = 'groupStrategy';
-                break;
-            case 'treePath':
-            case 'treeNested':
-            case 'treeSelfRef':
-                beanName = 'treeGroupStrategy';
-                break;
-        }
-        if (beanName) {
-            const bean = beans.registry.createDynamicBean<IRowGroupingStrategy<TData>>(beanName, false);
-            this.createOptionalManagedBean(bean);
-            return bean;
-        }
-        return undefined;
     }
 
     public execute(params: StageExecuteParams<TData>): boolean {
-        let strategy = this.strategy;
-        const oldApproach = this.approach;
         const approach = _getGroupingApproach(this.gos);
-        if (oldApproach !== approach) {
-            this.approach = approach;
+        const strategy = this.approach === approach ? this.strategy : this.changeApproach(params, approach);
+        if (!strategy) {
+            return false;
+        }
+        strategy.execute(params, approach);
+        return true;
+    }
+
+    private getStrategyBeanName(approach: GroupingApproach | null) {
+        switch (approach) {
+            case 'group':
+                return 'groupStrategy';
+            case 'treePath':
+            case 'treeNested':
+            case 'treeSelfRef':
+                return 'treeGroupStrategy';
+            default:
+                return null;
+        }
+    }
+
+    private changeApproach(
+        { rowNode }: StageExecuteParams<TData>,
+        approach: GroupingApproach
+    ): IRowGroupingStrategy<TData> | undefined {
+        const newBeanName = this.getStrategyBeanName(approach);
+        let strategy = this.strategy;
+        if (this.strategyBeanName !== newBeanName) {
             this.destroyBean(strategy);
-            if (strategy) {
-                const rootNode = params.rowNode;
-                strategy.reset?.();
-                resetGrouping(rootNode, approach !== 'treeNested');
+            strategy = undefined;
+            if (newBeanName) {
+                strategy = this.beans.registry.createDynamicBean(newBeanName, false);
+                this.createOptionalManagedBean(strategy);
             }
-            strategy = this.createStrategy();
             this.strategy = strategy;
+            this.strategyBeanName = newBeanName;
+        } else {
+            strategy?.reset?.();
         }
 
-        strategy?.execute(params, approach);
-        return !!strategy;
+        resetGrouping(rowNode, approach !== 'treeNested');
+        this.approach = approach;
+        return strategy;
     }
 }
 

@@ -486,8 +486,14 @@ export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGrou
                         pathKey = current.key! + pathKey;
                         current = current.treeParent!;
                     }
-                    addNodeByPath(nodesByPath, pathKey, node);
+
                     node.childrenMapped = pathKey as any; // Cache the path key for faster access
+                    const existing = nodesByPath.get(pathKey);
+                    if (existing === undefined) {
+                        nodesByPath.set(pathKey, node);
+                    } else {
+                        addDuplicateNodeByPath(nodesByPath, pathKey, existing, node);
+                    }
                 }
             }
         }
@@ -509,8 +515,13 @@ export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGrou
                     node.treeNodeFlags |= FLAG_CHANGED;
                 }
                 const pathKey = path.join(PATH_KEY_SEPARATOR);
-                addNodeByPath(nodesByPath, pathKey, node);
                 node.childrenMapped = pathKey as any; // Cache the path key for faster access
+                const existing = nodesByPath.get(pathKey);
+                if (existing === undefined) {
+                    nodesByPath.set(pathKey, node);
+                } else {
+                    addDuplicateNodeByPath(nodesByPath, pathKey, existing, node);
+                }
             }
             node.treeParent = null; // Reset the treeParent to be set later
         }
@@ -691,22 +702,23 @@ export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGrou
 
 type NodesByPathMap<TData> = Map<string, GroupingRowNode<TData>> & { dupPaths?: Map<string, GroupingRowNode<TData>[]> };
 
-const addNodeByPath = <TData>(map: NodesByPathMap<TData>, pathKey: string, node: GroupingRowNode<TData>): void => {
-    const existing = map.get(pathKey);
-    if (existing === undefined) {
-        map.set(pathKey, node);
+const addDuplicateNodeByPath = <TData>(
+    map: NodesByPathMap<TData>,
+    pathKey: string,
+    existing: GroupingRowNode<TData>,
+    node: GroupingRowNode<TData>
+): void => {
+    if (existing === node) {
         return;
     }
     if (node.sourceRowIndex < existing.sourceRowIndex) {
-        existing.childrenMapped = null;
         map.set(pathKey, node); // We choose the node with the lowest sourceRowIndex
+        existing.childrenMapped = null;
     }
-    if (existing !== node) {
-        const duplicates = map.dupPaths?.get(pathKey);
-        if (!duplicates) {
-            (map.dupPaths ??= new Map()).set(pathKey, [existing, node]);
-        } else if (duplicates.length < MAX_DUPLICATES_PER_PATH_TO_WARN) {
-            duplicates.push(node);
-        }
+    const duplicates = map.dupPaths?.get(pathKey);
+    if (!duplicates) {
+        (map.dupPaths ??= new Map()).set(pathKey, [existing, node]);
+    } else if (duplicates.length < MAX_DUPLICATES_PER_PATH_TO_WARN) {
+        duplicates.push(node);
     }
 };
