@@ -56,28 +56,70 @@ export abstract class BaseEditStrategy extends BeanStub {
         const batchEdit = this.beans.editSvc?.batchEditing;
         const forced = forcedState !== undefined;
 
+        const changedColumns: Set<string> = new Set();
+
         updates?.forEach((rowUpdateMap, mainNode) => {
             let rowEdited = false;
 
-            _getSiblingRows(this.beans, mainNode, true, includeParents).forEach((rowNode) => {
+            const rowCtrl = _resolveRowController(this.beans, {
+                rowNode: mainNode,
+            });
+
+            rowUpdateMap.forEach((cellData, column) => {
+                const newState = forced ? forcedState : cellData.newValue !== undefined && _valuesDiffer(cellData);
+
+                rowEdited ||= newState;
+
+                const cellCtrl = _resolveCellController(this.beans, {
+                    rowCtrl,
+                    column,
+                });
+
+                this.updateCellStyle(cellCtrl, newState, batchEdit, suppressFlash);
+                if (newState) {
+                    changedColumns.add(column.getColId());
+                }
+            });
+
+            this.updateRowStyle(rowCtrl, rowEdited, batchEdit);
+
+            if (!batchEdit || !rowEdited || !changedColumns.size || !includeParents) {
+                return;
+            }
+
+            // check if any sibling rows have edits on other columns
+            const children = mainNode?.parent?.allLeafChildren ?? [];
+            children?.forEach((child) => {
+                const pending = this.editModel.getPendingSiblingRow(child);
+                if (pending) {
+                    this.editModel.getPendingUpdateRow(pending)?.forEach((cellData, column) => {
+                        const newState = forced
+                            ? forcedState
+                            : cellData.newValue !== undefined && _valuesDiffer(cellData);
+                        if (newState) {
+                            changedColumns.add(column.getColId());
+                        }
+                    });
+                }
+            });
+
+            // update parent nodes
+            _getSiblingRows(this.beans, mainNode, false, includeParents).forEach((rowNode) => {
                 const rowCtrl = _resolveRowController(this.beans, {
                     rowNode,
                 });
 
-                rowUpdateMap.forEach((cellData, column) => {
-                    const newState = forced ? forcedState : cellData.newValue !== undefined && _valuesDiffer(cellData);
-
-                    if (rowNode === mainNode) {
-                        rowEdited ||= newState;
-                    }
-
-                    const cellCtrl = _resolveCellController(this.beans, {
-                        rowCtrl,
-                        column,
-                    });
-
-                    this.updateCellStyle(cellCtrl, newState, batchEdit, suppressFlash);
-                });
+                rowUpdateMap.forEach((_, column) =>
+                    this.updateCellStyle(
+                        _resolveCellController(this.beans, {
+                            rowCtrl,
+                            column,
+                        }),
+                        changedColumns.has(column.getColId()),
+                        batchEdit,
+                        suppressFlash
+                    )
+                );
 
                 this.updateRowStyle(rowCtrl, rowEdited, batchEdit);
             });

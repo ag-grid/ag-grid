@@ -37,5 +37,5 @@ export const _refreshPendingCells = (beans: BeanCollection, _source: string) => 
 
     purgeCells(beans, purgeRows(beans, rowNodes), columns);
 
-    beans.editSvc?.strategy?.updateCells(beans.editModelSvc!.getPendingUpdates(false), undefined, true);
+    beans.editSvc?.updateCells(beans.editModelSvc!.getPendingUpdates(false), undefined, true);
 };

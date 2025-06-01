@@ -60,7 +60,7 @@ export function _setupEditor(
     const editorParams = _createCellEditorParams(beans, rowNode, column, key, cellStartedEdit);
 
     const newValue = key ?? editorParams.value;
-    const oldValue = beans.valueSvc.getValue(column as AgColumn, rowNode);
+    const oldValue = beans.valueSvc.getValue(column as AgColumn, rowNode, undefined, 'api');
 
     beans.editModelSvc?.setPendingValue(rowNode, column, newValue, oldValue, 'editing');
 
@@ -154,7 +154,7 @@ function _createCellEditorParams(
                 suppressNavigateAfterEdit
             );
             _destroyEditor(beans, { rowNode, column });
-            editSvc?.strategy?.updateCells();
+            editSvc?.updateCells();
         },
         eGridCell: cellCtrl.eGui,
         parseValue: (newValue: any) => valueSvc.parseValue(agColumn, rowNode, newValue, cellCtrl.value),
@@ -183,10 +183,10 @@ export function _purgeUnchangedEdits(beans: BeanCollection): void {
     });
 
     removedCells.forEach(({ rowNode, column }) => {
-        beans.editSvc?.strategy?.dispatchCellEvent(rowNode, column, undefined, 'cellEditingStopped');
+        beans.editSvc?.dispatchCellEvent(rowNode, column, undefined, 'cellEditingStopped');
     });
     removedRows.forEach((rowNode) => {
-        beans.editSvc?.strategy?.dispatchRowEvent(rowNode, 'rowEditingStopped');
+        beans.editSvc?.dispatchRowEvent(rowNode, 'rowEditingStopped');
     });
 }
 
@@ -233,7 +233,7 @@ export function _syncModelFromEditor(
         return;
     }
 
-    const oldValue = beans.valueSvc.getValue(column as AgColumn, rowNode);
+    const oldValue = beans.valueSvc.getValue(column as AgColumn, rowNode, undefined, 'api');
     const cellCtrl = _resolveCellController(beans, { rowNode, column });
     const hasEditor = !!cellCtrl?.comp?.getCellEditor();
 

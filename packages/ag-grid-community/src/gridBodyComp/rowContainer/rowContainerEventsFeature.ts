@@ -267,9 +267,8 @@ export class RowContainerEventsFeature extends BeanStub {
         }
 
         const { cellCtrl } = this.getControlsForEventTarget(event.target);
-        const editing = this.beans.editSvc?.isEditing(cellCtrl?.rowNode, cellCtrl?.column);
 
-        if (editing) {
+        if (this.beans.editSvc?.isEditing(cellCtrl?.rowNode, cellCtrl?.column)) {
             return;
         }
 
@@ -283,9 +282,8 @@ export class RowContainerEventsFeature extends BeanStub {
         }
 
         const { cellCtrl } = this.getControlsForEventTarget(event.target);
-        const editing = this.beans.editSvc?.isEditing(cellCtrl?.rowNode, cellCtrl?.column);
 
-        if (editing) {
+        if (this.beans.editSvc?.isEditing(cellCtrl?.rowNode, cellCtrl?.column)) {
             return;
         }
 
@@ -295,9 +293,8 @@ export class RowContainerEventsFeature extends BeanStub {
 
     private onCtrlAndV(clipboardSvc: IClipboardService | undefined, event: KeyboardEvent): void {
         const { cellCtrl } = this.getControlsForEventTarget(event.target);
-        const editing = this.beans.editSvc?.isEditing(cellCtrl?.rowNode, cellCtrl?.column);
 
-        if (editing) {
+        if (this.beans.editSvc?.isEditing(cellCtrl?.rowNode, cellCtrl?.column)) {
             return;
         }
 

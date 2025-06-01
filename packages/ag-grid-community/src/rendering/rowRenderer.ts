@@ -580,7 +580,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
         const { editSvc } = this.beans;
         if (editSvc?.isEditing()) {
             if (editSvc.batchEditing) {
-                editSvc.strategy?.cleanupEditors();
+                editSvc.cleanupEditors();
             } else {
                 editSvc.stopEditing(undefined, undefined, undefined, undefined, undefined, 'api');
             }
@@ -654,7 +654,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
         }
 
         if (this.beans.editSvc?.isEditing()) {
-            this.beans.editSvc.strategy?.updateCells();
+            this.beans.editSvc.updateCells();
         }
 
         this.releaseLockOnRefresh();

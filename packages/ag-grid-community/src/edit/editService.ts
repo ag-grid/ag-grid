@@ -2,6 +2,7 @@ import { KeyCode } from '../constants/keyCode';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { AgColumn } from '../entities/agColumn';
+import type { AgEventType } from '../eventTypes';
 import type { EditingCellPosition, ICellEditorParams } from '../interfaces/iCellEditor';
 import type { Column } from '../interfaces/iColumn';
 import type { IRowNode } from '../interfaces/iRowNode';
@@ -30,9 +31,10 @@ import { _refreshPendingCells } from './utils/refresh';
 
 export class EditService extends BeanStub implements NamedBean {
     beanName = 'editSvc' as const;
-    private model: EditModelService;
-    public strategy?: BaseEditStrategy;
     public batchEditing: boolean;
+
+    private model: EditModelService;
+    private strategy?: BaseEditStrategy;
     private includeParents: boolean = true;
 
     postConstruct(): void {
@@ -166,17 +168,27 @@ export class EditService extends BeanStub implements NamedBean {
             return false;
         }
 
-        if (!this.batchEditing && this.strategy.shouldStopEditing(rowNode, column, undefined, undefined, source)) {
+        if (!this.batchEditing && this.shouldStopEditing(rowNode, column, undefined, undefined, source)) {
             this.stopEditing(undefined, undefined, undefined, undefined, undefined, source);
         }
 
         const result = this.strategy!.startEditing?.(rowNode, column, key, event, source, silent);
 
-        this.strategy.updateCells(this.model.getPendingUpdates());
+        this.updateCells(this.model.getPendingUpdates());
 
         return result;
     }
 
+    public updateCells(
+        updates?: PendingUpdates,
+        forcedState?: boolean | undefined,
+        suppressFlash?: boolean,
+        includeParents = this.includeParents
+    ): void {
+        this.strategy?.updateCells(updates, forcedState, suppressFlash, includeParents);
+    }
+
+    private isStopping: boolean = false;
     /**
      * Ends the Cell Editing
      * @param cancel `True` if the edit process is being canceled.
@@ -192,16 +204,18 @@ export class EditService extends BeanStub implements NamedBean {
         suppressNavigateAfterEdit: boolean = false,
         shiftKey: boolean = false
     ): boolean {
-        if (!this.isEditing() || !this.strategy) {
+        if (!this.isEditing() || !this.strategy || this.isStopping) {
             return false;
         }
+
+        this.isStopping = true;
 
         const cellCtrl = _resolveCellController(this.beans, { rowNode, column });
         if (cellCtrl) {
             cellCtrl.onEditorAttachedFuncs = [];
         }
 
-        const pendingUpdates = this.model.getPendingUpdates(true);
+        let pendingUpdates = this.model.getPendingUpdates(true);
 
         let res = false;
         let forcedState: boolean | undefined = undefined;
@@ -217,6 +231,8 @@ export class EditService extends BeanStub implements NamedBean {
 
             this.processUpdates(freshUpdates, cancel);
 
+            pendingUpdates = freshUpdates;
+
             res ||= willStop;
             forcedState = false;
         } else if (event instanceof KeyboardEvent && this.batchEditing) {
@@ -227,7 +243,10 @@ export class EditService extends BeanStub implements NamedBean {
             if (isEnter || isEscape) {
                 if (isEnter) {
                     _syncModelsFromEditors(this.beans);
+                } else {
+                    this.model.clearPendingValue(rowNode!, column!);
                 }
+                pendingUpdates = this.model.getPendingUpdates();
 
                 _destroyEditor(this.beans, { rowNode: rowNode!, column: column! });
 
@@ -235,20 +254,23 @@ export class EditService extends BeanStub implements NamedBean {
             }
         } else {
             _syncModelsFromEditors(this.beans);
+            pendingUpdates = this.model.getPendingUpdates();
         }
 
         if (!suppressNavigateAfterEdit && cellCtrl) {
             this.navigateAfterEdit(shiftKey, cellCtrl.cellPosition);
         }
 
-        this.strategy.updateCells(pendingUpdates, forcedState, true, true);
+        this.updateCells(pendingUpdates, forcedState, true, true);
 
         // force refresh of all row cells as custom renderers may depend on multiple cell values
         this.refreshAllRows(pendingUpdates, this.includeParents);
 
-        if (this.batchEditing /* check pivot/grouping enabled */) {
+        if (this.batchEditing && this.beans.rowModel.getType() !== 'clientSide') {
             this.beans.gridApi.refreshClientSideRowModel('aggregate');
         }
+
+        this.isStopping = false;
 
         return res;
     }
@@ -415,7 +437,7 @@ export class EditService extends BeanStub implements NamedBean {
 
         _syncModelFromEditor(this.beans, rowNode, column, newValue, eventSource);
 
-        this.strategy?.updateCells();
+        this.updateCells();
 
         return true;
     }
@@ -469,5 +491,25 @@ export class EditService extends BeanStub implements NamedBean {
         }
 
         return undefined;
+    }
+
+    public cleanupEditors() {
+        this.strategy?.cleanupEditors();
+    }
+
+    public dispatchCellEvent<T extends AgEventType>(
+        rowNode: IRowNode | undefined | null,
+        column: Column | undefined | null,
+        event?: Event | null,
+        type?: T
+    ): void {
+        this.strategy?.dispatchCellEvent(rowNode, column, event, type);
+    }
+
+    public dispatchRowEvent(
+        rowNode: IRowNode | undefined | null,
+        type: 'rowEditingStarted' | 'rowEditingStopped'
+    ): void {
+        this.strategy?.dispatchRowEvent(rowNode, type);
     }
 }

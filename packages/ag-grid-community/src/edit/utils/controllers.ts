@@ -71,10 +71,10 @@ export function _resolveControllers(beans: BeanCollection, inputs: ResolveContro
 
 export function _addStopEditingWhenGridLosesFocus(
     bean: BeanStub,
-    beans: BeanCollection,
+    { editSvc, gos, popupSvc }: BeanCollection,
     viewports: HTMLElement[]
 ): void {
-    if (!beans.gos.get('stopEditingWhenCellsLoseFocus')) {
+    if (!gos.get('stopEditingWhenCellsLoseFocus')) {
         return;
     }
 
@@ -83,7 +83,7 @@ export function _addStopEditingWhenGridLosesFocus(
         const elementWithFocus = event.relatedTarget as HTMLElement;
 
         if (_getTabIndex(elementWithFocus) === null) {
-            beans.editSvc?.stopEditing();
+            editSvc?.stopEditing();
             return;
         }
 
@@ -91,11 +91,9 @@ export function _addStopEditingWhenGridLosesFocus(
             // see if click came from inside the viewports
             viewports.some((viewport) => viewport.contains(elementWithFocus)) &&
             // and also that it's not from a detail grid
-            _isElementInThisGrid(beans.gos, elementWithFocus);
+            _isElementInThisGrid(gos, elementWithFocus);
 
         if (!clickInsideGrid) {
-            const popupSvc = beans.popupSvc;
-
             clickInsideGrid =
                 !!popupSvc &&
                 (popupSvc.getActivePopups().some((popup) => popup.contains(elementWithFocus)) ||
@@ -103,7 +101,7 @@ export function _addStopEditingWhenGridLosesFocus(
         }
 
         if (!clickInsideGrid) {
-            beans.editSvc?.stopEditing(undefined, undefined, undefined, undefined, false, 'api');
+            editSvc?.stopEditing(undefined, undefined, undefined, undefined, false, 'api');
         }
     };
 
