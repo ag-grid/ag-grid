@@ -1,5 +1,4 @@
 import type {
-    BaseCellDataType,
     BeanCollection,
     DragAndDropService,
     DragSource,
@@ -423,7 +422,7 @@ export class AdvancedFilterBuilderItemComp extends TabGuardComp<AdvancedFilterBu
                     value: key,
                     valueFormatter,
                     cssClass,
-                    type: this.inputType[baseCellDataType],
+                    type: baseCellDataType,
                     ariaLabel,
                 })
             );
@@ -431,17 +430,6 @@ export class AdvancedFilterBuilderItemComp extends TabGuardComp<AdvancedFilterBu
             return comp;
         }
     }
-
-    private inputType: Record<BaseCellDataType, 'number' | 'text' | 'date'> = {
-        number: 'number',
-        boolean: 'text',
-        object: 'text',
-        text: 'text',
-        date: 'date',
-        dateString: 'date',
-        dateTime: 'date',
-        dateTimeString: 'date',
-    };
 
     private setupDragging(): void {
         const dragSource: DragSource = {

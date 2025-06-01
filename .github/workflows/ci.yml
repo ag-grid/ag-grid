@@ -491,7 +491,7 @@ jobs:
 
       - name: Check last job status
         id: lastJobStatus
-        if: always() && github.ref == 'refs/heads/latest'
+        if: always()
         run: |
           WORKFLOW_STATUS="success"
           if [[ "${{ needs.build_lint.result }}" == "failure" ]] ; then

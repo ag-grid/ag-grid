@@ -103,7 +103,7 @@ export interface DateTimeAdvancedFilterModel {
     colId: string;
     /** The filter option that is being applied. */
     type: ScalarAdvancedFilterModelType;
-    /** The value to filter on. This is in format `YYYY-MM-DD HH:mm:ss`. */
+    /** The value to filter on. This is in format `YYYY-MM-DDTHH:mm:ss`. */
     filter?: string;
 }
 

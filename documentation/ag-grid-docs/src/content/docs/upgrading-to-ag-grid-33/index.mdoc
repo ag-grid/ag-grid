@@ -166,7 +166,7 @@ The codemod for version {% migrationVersion() %} will automatically update all y
 {% note %}
 After updating your package.json file, we recommend using the Codmod to assist your migration as it will update all your applications import paths and module registration to ensure backwards compatibility.
 
-`npx @ag-grid-devtools/cli@33.0 migrate --from=$FROM_VERSION`
+`npx @ag-grid-devtools/cli@latest migrate --from=$FROM_VERSION --to=33`
 {% /note %}
 
 ### Changes to Existing Modules
@@ -309,7 +309,7 @@ Follow these steps to upgrade your project's AG Grid version to {% migrationVers
 1. Run the `migrate` command of version `33.0` of the AG Grid codemod runner, where `$FROM_VERSION` refers to your project's existing AG Grid version:
 
    ```bash
-   npx @ag-grid-devtools/cli@33.0 migrate --from=$FROM_VERSION
+    npx @ag-grid-devtools/cli@latest migrate --from=$FROM_VERSION --to=33
    ```
 
    This will update your project's source files to prepare for the new release.

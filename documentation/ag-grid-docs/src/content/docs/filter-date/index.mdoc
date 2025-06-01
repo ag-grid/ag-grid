@@ -59,10 +59,10 @@ The example below demonstrates configuring date range filtering in the Date Filt
 
 Dates can be represented in your data in many ways e.g. as a JavaScript `Date` object, as a string in a particular format such as `'26-MAR-2020'`, or something else. How you represent dates will be particular to your application.
 
-The Date Filter will automatically be configured to work correctly if the [Cell Data Type](./cell-data-types/) is `date` or `dateString`.
+The Date Filter will automatically be configured to work correctly if the [Cell Data Type](./cell-data-types/) is `date`, `dateString`, `dateTime` or `dateTimeString`.
 
 {% note %}
-If using `Date` objects, the default date comparator assumes that the `Date`s do not have a time (e.g. they are at midnight local time). If your dates have times, then you will either need to override the [Filter Values](#filter-values) to remove the time, or provide a `comparator` that can handle the time.
+If using `Date` objects, the default date comparator assumes that the `Date`s do not have a time (e.g. they are at midnight local time). If your dates have times, then you will either need to override the [Filter Values](#filter-values) to remove the time, to switch cell data type to `dateTime`, or provide a `comparator` that can handle the time.
 {% /note %}
 
 If you are not using Cell Data Types (and the cell value is not a `Date` object, which will also work automatically), then a `comparator` needs to be configured to allow the Date Filter to perform the date comparisons.
