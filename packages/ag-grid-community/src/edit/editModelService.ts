@@ -162,11 +162,7 @@ export class EditModelService extends BeanStub implements NamedBean {
         if (rowNode) {
             const rowEdits = this.getPendingUpdateRow(rowNode);
             if (column) {
-                const res = rowEdits?.has(column);
-
-                if (res) {
-                    return true;
-                }
+                return rowEdits?.has(column) ?? false;
             } else if (rowEdits?.size !== 0) {
                 return true;
             }
