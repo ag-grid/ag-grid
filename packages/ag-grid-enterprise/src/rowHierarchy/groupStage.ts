@@ -62,8 +62,10 @@ export class GroupStage<TData> extends BeanStub implements NamedBean, IRowNodeSt
         { rowNode }: StageExecuteParams<TData>,
         approach: GroupingApproach
     ): IRowGroupingStrategy<TData> | undefined {
+        this.approach = approach;
         const newBeanName = this.getStrategyBeanName(approach);
-        let strategy = this.strategy;
+        const oldStrategy = this.strategy;
+        let strategy = oldStrategy;
         if (this.strategyBeanName !== newBeanName) {
             this.destroyBean(strategy);
             strategy = undefined;
@@ -76,9 +78,9 @@ export class GroupStage<TData> extends BeanStub implements NamedBean, IRowNodeSt
         } else {
             strategy?.reset?.();
         }
-
-        resetGrouping(rowNode, approach !== 'treeNested');
-        this.approach = approach;
+        if (oldStrategy) {
+            resetGrouping(rowNode, approach !== 'treeNested');
+        }
         return strategy;
     }
 }
