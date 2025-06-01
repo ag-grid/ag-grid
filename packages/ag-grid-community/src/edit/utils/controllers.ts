@@ -121,16 +121,32 @@ export function _getColId(column?: Column | string | null): string | undefined {
     return column.getColId();
 }
 
-export function _getSiblingRows(beans: BeanCollection, rowNode: IRowNode, includeSource = false): IRowNode[] {
+export function _getSiblingRows(
+    beans: BeanCollection,
+    rowNode: IRowNode,
+    includeSource = false,
+    includeParents = false
+): IRowNode[] {
     const pinned = rowNode instanceof RowNode ? rowNode.pinnedSibling : undefined;
     const sibling = rowNode.sibling;
-    const parent = rowNode.parent;
 
     const result: IRowNode[] = [];
     includeSource && result.push(rowNode);
     pinned && result.push(pinned);
     sibling && result.push(sibling);
-    parent && result.push(parent);
+    includeParents && result.push(..._getParentRows(beans, rowNode));
+
+    return result;
+}
+
+export function _getParentRows(beans: BeanCollection, rowNode: IRowNode): IRowNode[] {
+    const result: IRowNode[] = [];
+    let parent = rowNode.parent;
+
+    while (parent) {
+        result.push(parent);
+        parent = parent.parent;
+    }
 
     return result;
 }

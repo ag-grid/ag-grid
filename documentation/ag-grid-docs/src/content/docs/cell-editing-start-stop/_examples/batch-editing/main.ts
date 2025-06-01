@@ -1,5 +1,3 @@
-import { get } from 'http';
-
 import type {
     CellEditingStartedEvent,
     CellEditingStoppedEvent,
@@ -24,6 +22,7 @@ import {
     createGrid,
 } from 'ag-grid-community';
 import {
+    AggregationModule,
     CellSelectionModule,
     ColumnMenuModule,
     ColumnsToolPanelModule,
@@ -53,13 +52,14 @@ ModuleRegistry.registerModules([
     UndoRedoEditModule,
     HighlightChangesModule,
     RowDragModule,
+    AggregationModule,
     ValidationModule /* Development Only */,
 ]);
 
 let gridApi: GridApi;
 
 const pivot = false;
-const grouping = false;
+const grouping = true;
 const hide = false;
 
 const gridOptions: GridOptions = {
@@ -70,16 +70,19 @@ const gridOptions: GridOptions = {
                 { field: 'firstName', ...(grouping ? { rowGroup: true } : {}), hide },
                 {
                     field: 'lastName',
-                    ...(grouping ? { rowGroup: true } : {}),
-                    cellRenderer: CustomCellRenderer,
-                    cellClass: 'custom-athlete-cell',
+                    ...(grouping
+                        ? { rowGroup: true }
+                        : {
+                              cellRenderer: CustomCellRenderer,
+                              cellClass: 'custom-athlete-cell',
+                          }),
                 },
             ],
         },
         { field: 'gender', ...(pivot ? { pivot: true } : {}), hide },
         { field: 'age', aggFunc: 'sum', cellDataType: 'number' },
         { field: 'mood', hide },
-        { field: 'country', hide },
+        { field: 'country', hide, ...(grouping ? { rowGroup: true } : {}) },
         { field: 'address', minWidth: 550, hide },
     ],
     defaultColDef: {
@@ -101,15 +104,19 @@ const gridOptions: GridOptions = {
     },
     rowDragManaged: true,
     enableRowPinning: true,
-    isRowPinned: (rowNode: IRowNode) => {
-        // pinning the first two rows at the top
-        if (rowNode.data.firstName === 'Jane') {
-            return 'top';
-        }
-        if (rowNode.data.firstName === 'John') {
-            return 'bottom';
-        }
-    },
+    ...(grouping || pivot
+        ? {}
+        : {
+              isRowPinned: (rowNode: IRowNode) => {
+                  // pinning the first two rows at the top
+                  if (rowNode.data.firstName === 'Jane') {
+                      return 'top';
+                  }
+                  if (rowNode.data.firstName === 'John') {
+                      return 'bottom';
+                  }
+              },
+          }),
     onRowEditingStarted: (event: RowEditingStartedEvent) => {
         console.log('rowEditingStarted');
     },

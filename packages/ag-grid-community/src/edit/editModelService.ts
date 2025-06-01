@@ -1,5 +1,6 @@
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
+import type { AgColumn } from '../entities/agColumn';
 import type { EditingCellPosition } from '../interfaces/iCellEditor';
 import type { Column } from '../interfaces/iColumn';
 import type { IRowNode } from '../interfaces/iRowNode';
@@ -145,7 +146,12 @@ export class EditModelService extends BeanStub implements NamedBean {
         return result;
     }
 
-    public hasPending(rowNode?: IRowNode | null, column?: Column | null, checkSiblings: boolean = false): boolean {
+    public hasPending(
+        rowNode?: IRowNode | null,
+        column?: Column | null,
+        checkSiblings: boolean = false,
+        includeParents: boolean = false
+    ): boolean {
         if (rowNode) {
             const rowEdits = this.getPendingUpdateRow(rowNode);
             if (column) {
@@ -159,7 +165,9 @@ export class EditModelService extends BeanStub implements NamedBean {
             }
 
             return checkSiblings
-                ? !!_getSiblingRows(this.beans, rowNode).find((sibling) => this.hasPending(sibling, column, false))
+                ? !!_getSiblingRows(this.beans, rowNode, false, includeParents).find((sibling) =>
+                      this.hasPending(sibling, column, false, includeParents)
+                  )
                 : (rowEdits?.size ?? 0) > 0;
         }
         return this.pendingUpdates.size > 0;
@@ -169,7 +177,7 @@ export class EditModelService extends BeanStub implements NamedBean {
         const map = this.getPendingUpdateRow(rowNode) ?? new Map<Column, EditedCell>();
         let updated = false;
         if (column && !map.has(column)) {
-            const oldValue = rowNode.data[column.getColId()];
+            const oldValue = this.beans.valueSvc.getValue(column as AgColumn, rowNode);
             map.set(column, { newValue: undefined, oldValue, state: 'editing' });
             updated = true;
         }

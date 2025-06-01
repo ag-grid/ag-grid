@@ -50,7 +50,8 @@ export abstract class BaseEditStrategy extends BeanStub {
     public updateCells(
         updates: PendingUpdates = this.editModel.getPendingUpdates(),
         forcedState?: boolean,
-        suppressFlash: boolean = true
+        suppressFlash: boolean = true,
+        includeParents: boolean = false
     ): void {
         const batchEdit = this.beans.editSvc?.batchEditing;
         const forced = forcedState !== undefined;
@@ -58,7 +59,7 @@ export abstract class BaseEditStrategy extends BeanStub {
         updates?.forEach((rowUpdateMap, mainNode) => {
             let rowEdited = false;
 
-            _getSiblingRows(this.beans, mainNode, true).forEach((rowNode) => {
+            _getSiblingRows(this.beans, mainNode, true, includeParents).forEach((rowNode) => {
                 const rowCtrl = _resolveRowController(this.beans, {
                     rowNode,
                 });

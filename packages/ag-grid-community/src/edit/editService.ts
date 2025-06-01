@@ -33,6 +33,7 @@ export class EditService extends BeanStub implements NamedBean {
     private model: EditModelService;
     public strategy?: BaseEditStrategy;
     public batchEditing: boolean;
+    private includeParents: boolean = true;
 
     postConstruct(): void {
         this.model = this.beans.editModelSvc!;
@@ -210,10 +211,11 @@ export class EditService extends BeanStub implements NamedBean {
 
         if (willStop || willCancel) {
             _syncModelsFromEditors(this.beans);
+            const freshUpdates = this.model.getPendingUpdates();
 
             this.strategy?.stopEditing?.() ?? false;
 
-            this.processUpdates(pendingUpdates, cancel);
+            this.processUpdates(freshUpdates, cancel);
 
             res ||= willStop;
             forcedState = false;
@@ -239,18 +241,23 @@ export class EditService extends BeanStub implements NamedBean {
             this.navigateAfterEdit(shiftKey, cellCtrl.cellPosition);
         }
 
-        this.strategy.updateCells(pendingUpdates, forcedState, true);
+        this.strategy.updateCells(pendingUpdates, forcedState, true, true);
 
         // force refresh of all row cells as custom renderers may depend on multiple cell values
-        this.refreshAllRows(pendingUpdates);
+        this.refreshAllRows(pendingUpdates, this.includeParents);
+
+        if (this.batchEditing /* check pivot/grouping enabled */) {
+            this.beans.gridApi.refreshClientSideRowModel('aggregate');
+        }
 
         return res;
     }
 
-    private refreshAllRows(pendingUpdates: PendingUpdates): void {
-        pendingUpdates.forEach((_, rowNode) =>
-            _getSiblingRows(this.beans, rowNode, true).forEach((sibling) => this.refreshAllCells(sibling))
-        );
+    private refreshAllRows(pendingUpdates: PendingUpdates, includeParents: boolean = false): void {
+        pendingUpdates.forEach((_, rowNode) => {
+            const relatedRowNodes = _getSiblingRows(this.beans, rowNode, true, includeParents);
+            return relatedRowNodes.forEach((sibling) => this.refreshAllCells(sibling));
+        });
     }
 
     private refreshAllCells(rowNode?: IRowNode | null): void {
@@ -425,16 +432,16 @@ export class EditService extends BeanStub implements NamedBean {
 
     prepDetailsDuringBatch(
         { compDetails, valueToDisplay }: { compDetails?: UserCompDetails<any>; valueToDisplay: any },
-        _rowNode: IRowNode,
+        rowNode: IRowNode,
         column: Column
     ): { compDetails?: UserCompDetails<any>; valueToDisplay?: any } | undefined {
         if (!this.batchEditing) {
             return undefined;
         }
-        let updateRow = this.model.getPendingUpdateRow(_rowNode);
+        let updateRow = this.model.getPendingUpdateRow(rowNode);
 
         if (!updateRow) {
-            const sibling = this.model.getPendingSiblingRow(_rowNode);
+            const sibling = this.model.getPendingSiblingRow(rowNode);
             if (sibling) {
                 updateRow = this.model.getPendingUpdateRow(sibling);
             }
@@ -454,7 +461,8 @@ export class EditService extends BeanStub implements NamedBean {
             });
             return { compDetails };
         } else if (valueToDisplay !== undefined && updateRow?.has(column)) {
-            const newValue = updateRow.get(column)!.newValue;
+            const newValue = this.beans.valueSvc.getValue(column as AgColumn, rowNode);
+
             if (newValue !== undefined) {
                 return { valueToDisplay: newValue };
             }

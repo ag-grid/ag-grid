@@ -1,5 +1,6 @@
 import { _getCellEditorDetails } from '../../components/framework/userCompUtils';
 import type { BeanCollection } from '../../context/context';
+import type { AgColumn } from '../../entities/agColumn';
 import { _addGridCommonParams } from '../../gridOptionsUtils';
 import type { ICellEditorComp, ICellEditorParams } from '../../interfaces/iCellEditor';
 import type { Column } from '../../interfaces/iColumn';
@@ -58,13 +59,10 @@ export function _setupEditor(
 
     const editorParams = _createCellEditorParams(beans, rowNode, column, key, cellStartedEdit);
 
-    beans.editModelSvc?.setPendingValue(
-        rowNode,
-        column,
-        key ?? editorParams.value,
-        rowNode.data[column.getColId()],
-        'editing'
-    );
+    const newValue = key ?? editorParams.value;
+    const oldValue = beans.valueSvc.getValue(column as AgColumn, rowNode);
+
+    beans.editModelSvc?.setPendingValue(rowNode, column, newValue, oldValue, 'editing');
 
     if (editorComp) {
         // don't reinitialise, just refresh if possible
@@ -231,13 +229,15 @@ export function _syncModelFromEditor(
     newValue?: any,
     _eventSource?: string
 ): void {
-    if (rowNode && column) {
-        const oldValue = rowNode.data[column.getColId()];
-        const cellCtrl = _resolveCellController(beans, { rowNode, column });
-        const hasEditor = !!cellCtrl?.comp?.getCellEditor();
-
-        beans.editModelSvc?.setPendingValue(rowNode, column, newValue, oldValue, hasEditor ? 'editing' : 'changed');
+    if (!(rowNode && column)) {
+        return;
     }
+
+    const oldValue = beans.valueSvc.getValue(column as AgColumn, rowNode);
+    const cellCtrl = _resolveCellController(beans, { rowNode, column });
+    const hasEditor = !!cellCtrl?.comp?.getCellEditor();
+
+    beans.editModelSvc?.setPendingValue(rowNode, column, newValue, oldValue, hasEditor ? 'editing' : 'changed');
 }
 
 export function _destroyEditors(beans: BeanCollection, cellPositions: CellIdPositions[]): void {
