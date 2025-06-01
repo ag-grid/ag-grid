@@ -267,11 +267,6 @@ export class EditService extends BeanStub implements NamedBean {
         // force refresh of all row cells as custom renderers may depend on multiple cell values
         this.refreshAllRows(pendingUpdates, this.includeParents);
 
-        if (this.batchEditing && this.beans.rowModel.getType() === 'clientSide') {
-            // Only CSRM supported for now
-            this.beans.gridApi.refreshClientSideRowModel('aggregate');
-        }
-
         this.isStopping = false;
 
         return res;
