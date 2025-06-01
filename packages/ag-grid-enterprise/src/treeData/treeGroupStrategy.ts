@@ -22,11 +22,26 @@ const MASK_CHILDREN_LEN = 0x0fffffff; // This equates to 268,435,455 maximum chi
 /** Maximum number of duplicates to warn about per node, to avoid flooding the console */
 const MAX_DUPLICATES_PER_PATH_TO_WARN = 15;
 
-/**
- * Path key separator used internally to maintain a flat path dictionary to map a path to a node.
- * It contains special characters and two random characters hard to predict to reduce the risk of intentional abuse.
- */
+/** Path key separator used to flatten hierarchical paths. Includes uncommon and randomized characters to avoid collisions and abuse. */
 const PATH_KEY_SEPARATOR = String.fromCharCode(31, 4096 + Math.random() * 61440, 4096 + Math.random() * 61440, 8291);
+
+//
+// This approach avoids complex incremental updates by using linear passes and a final traversal.
+// We reduce memory allocations and footprint and we ensure consistent performance.
+//
+// All leaf nodes are scanned in input order, and the tree is built by setting the treeParent field.
+// Then we execute a single traversal to set the level, expanded state, and allLeafChildren.
+// This guarantees correct parent-child relationships without requiring sorting or post-processing.
+//
+// No new arrays are allocated for childrenAfterGroup or allLeafChildren — existing arrays are reused.
+// The treeNodeFlags field encodes temporary state, child counters, and expanded status.
+// The treeParent field tracks hierarchy changes and supports re-parenting (e.g., drag-and-drop).
+// The childrenMapped field is repurposed as a temporary cache for flat string path keys for tree data by path.
+//
+// This model handles both full reloads and partial updates (such as subtree moves) uniformly,
+// avoiding the need for complex data structures, delta tracking, or transaction staging,
+// while providing reliable performance across large datasets.
+//
 
 export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGroupingStrategy<TData> {
     private groupColsIds: string = '';
@@ -53,19 +68,6 @@ export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGrou
     }
 
     public execute(params: StageExecuteParams<TData>, approach: GroupingApproach) {
-        // Instead of trying to optimize for immutable row update and transactions when a small portion of the tree changes
-        // the decision here was to implement with linear loops, first process all nodes and then a tree traversal, reducing allocations to minimum.
-        // This removes also the need of sorting or post sorting the nodes, as the tree traversal will always process the nodes in the right order.
-        // We do not allocate new arrays for childrenAfterGroup and allLeafChildren, we just update the existing arrays.
-        // This ensures a simpler code and less complexity, and also that enough speed for the vast majority of cases.
-        // Consider that trying other approaches might be more complex and potentially not as fast, as the user can always move an entire subtree by changing a single parent.
-        // To further reduce allocations, we use treeNodeFlags to store both temporary flags,
-        // the expanded initialized state and the future children count between the first loop and the tree traversal.
-        // This avoid the needs to create complex data structures to store temporary data or add more fields to the row nodes.
-        // The property treeParent is used to store the parent node and detect updates in the tree structure during execution,
-        // thus setting a treeParent and then executing a row grouping operation will work as expected, and this is used for managed drag and drop.
-        // treeParent is also set by the tree data with children node manager to store the parent node during load or updates of the row data.
-
         const { changedRowNodes, changedPath, afterColumnsChanged } = params;
         this.checkGroupColsUpdated(afterColumnsChanged);
 
@@ -76,13 +78,7 @@ export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGrou
 
         const hasUpdates = !!changedRowNodes && this.flagUpdatedNodes(changedRowNodes);
         if (fullReload || hasUpdates) {
-            if (approach === 'treeNested') {
-                this.loadNested(params, fullReload);
-            } else if (approach === 'treeSelfRef') {
-                this.loadSelfRef(params, fullReload);
-            } else {
-                this.loadDataPath(params, fullReload);
-            }
+            this.load(params, approach, fullReload);
         }
 
         const rootAllLeafChildren = rootNode.allLeafChildren!;
@@ -393,6 +389,18 @@ export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGrou
         }
     }
 
+    /** Called when there is data to be loaded, or because full reload or because there are changed rows */
+    private load(params: StageExecuteParams<TData>, approach: GroupingApproach, fullReload: boolean): void {
+        if (approach === 'treeNested') {
+            this.loadNested(params, fullReload);
+        } else if (approach === 'treeSelfRef') {
+            this.loadSelfRef(params, fullReload);
+        } else {
+            this.loadDataPath(params, fullReload);
+        }
+    }
+
+    /** Load the tree structure for nested groups, aka children property */
     private loadNested({ rowNode: rootNode, changedRowNodes }: StageExecuteParams<TData>, fullReload: boolean): void {
         if (fullReload || !changedRowNodes) {
             const rootAllLeafChildren = rootNode.allLeafChildren!;
@@ -411,6 +419,7 @@ export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGrou
         }
     }
 
+    /** Load the tree structure for self-referencing data, aka parentId field */
     private loadSelfRef({ rowNode: rootNode, changedRowNodes }: StageExecuteParams<TData>, fullReload: boolean): void {
         const rootAllLeafChildren: GroupingRowNode<TData>[] = rootNode.allLeafChildren!;
         const gos = this.gos;
@@ -454,6 +463,7 @@ export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGrou
         }
     }
 
+    /** Load the tree structure for data paths, aka getDataPath callback */
     private loadDataPath({ rowNode: rootNode }: StageExecuteParams<TData>, fullReload: boolean): void {
         const allLeafChildren: GroupingRowNode<TData>[] = rootNode.allLeafChildren!;
         const allLeafChildrenLen = allLeafChildren.length;
@@ -462,15 +472,22 @@ export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGrou
         if (!fullReload) {
             for (let i = 0; i < allLeafChildrenLen; ++i) {
                 const node = allLeafChildren[i];
-                let treeParent = node.treeParent;
+                const treeParent = node.treeParent;
                 if (treeParent !== null && (node.treeNodeFlags & FLAG_CHANGED) === 0) {
                     let pathKey = node.key!;
-                    while (treeParent !== null && treeParent !== rootNode) {
+                    let current = treeParent;
+                    while (current && current !== rootNode) {
                         pathKey = PATH_KEY_SEPARATOR + pathKey;
-                        pathKey = treeParent.key! + pathKey;
-                        treeParent = treeParent.treeParent;
+                        const cached = current.childrenMapped;
+                        if (cached !== null) {
+                            pathKey = cached + pathKey;
+                            break;
+                        }
+                        pathKey = current.key! + pathKey;
+                        current = current.treeParent!;
                     }
                     addNodeByPath(nodesByPath, pathKey, node);
+                    node.childrenMapped = pathKey as any; // Cache the path key for faster access
                 }
             }
         }
@@ -491,7 +508,9 @@ export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGrou
                     node.groupData = null;
                     node.treeNodeFlags |= FLAG_CHANGED;
                 }
-                addNodeByPath(nodesByPath, path.join(PATH_KEY_SEPARATOR), node);
+                const pathKey = path.join(PATH_KEY_SEPARATOR);
+                addNodeByPath(nodesByPath, pathKey, node);
+                node.childrenMapped = pathKey as any; // Cache the path key for faster access
             }
             node.treeParent = null; // Reset the treeParent to be set later
         }
@@ -506,8 +525,9 @@ export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGrou
     private buildFromPaths(rootNode: GroupingRowNode<TData>, nodesByPath: Map<string, GroupingRowNode<TData>>): void {
         const SEP_LEN = PATH_KEY_SEPARATOR.length;
         const segments = new Array<number>(32); // temporary array to hold the segment positions
-        for (const pathKey of nodesByPath.keys()) {
-            const node = nodesByPath.get(pathKey)!;
+        for (const node of nodesByPath.values()) {
+            const pathKey = node.childrenMapped as unknown as string;
+            node.childrenMapped = null;
             if (node.treeParent !== null) {
                 continue; // Already processed
             }
@@ -597,6 +617,7 @@ export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGrou
                 } else {
                     node.treeNodeFlags &= ~FLAG_FILLER_NODE; // Reset the flag
                 }
+                node.childrenMapped = null; // Clear the cached path key
             }
             if (fillerNodesById.size === 0) {
                 this.fillerNodesById = null;
@@ -668,9 +689,7 @@ export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGrou
     }
 }
 
-type NodesByPathMap<TData> = Map<string, GroupingRowNode<TData>> & {
-    dupPaths?: Map<string, GroupingRowNode<TData>[]>;
-};
+type NodesByPathMap<TData> = Map<string, GroupingRowNode<TData>> & { dupPaths?: Map<string, GroupingRowNode<TData>[]> };
 
 const addNodeByPath = <TData>(map: NodesByPathMap<TData>, pathKey: string, node: GroupingRowNode<TData>): void => {
     const existing = map.get(pathKey);
@@ -679,6 +698,7 @@ const addNodeByPath = <TData>(map: NodesByPathMap<TData>, pathKey: string, node:
         return;
     }
     if (node.sourceRowIndex < existing.sourceRowIndex) {
+        existing.childrenMapped = null;
         map.set(pathKey, node); // We choose the node with the lowest sourceRowIndex
     }
     if (existing !== node) {
