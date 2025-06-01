@@ -3,8 +3,7 @@ import type { CellFocusedEvent, CommonCellFocusParams } from '../../events';
 import type { Column } from '../../interfaces/iColumn';
 import type { IRowNode } from '../../interfaces/iRowNode';
 import type { CellCtrl } from '../../rendering/cell/cellCtrl';
-import { _getColId, _resolveControllers } from '../utils/controllers';
-import { _syncModelsFromEditors } from '../utils/editors';
+import { _getColId } from '../utils/controllers';
 import { BaseEditStrategy } from './baseEditStrategy';
 
 export class SingleCellEditStrategy extends BaseEditStrategy {
@@ -93,22 +92,19 @@ export class SingleCellEditStrategy extends BaseEditStrategy {
             return;
         }
 
-        const { cellCtrl } = _resolveControllers(this.beans, {
-            rowIndex: previous?.rowIndex,
-            column: previous?.column,
-        });
-
-        _syncModelsFromEditors(this.beans);
-
         // if we are editing, then moving the focus out of a cell will stop editing
-        this.beans.editSvc?.stopEditing(
-            cellCtrl?.rowNode,
-            this.beans.colModel.getCol(_getColId(column)) ?? undefined,
-            undefined,
-            undefined,
-            undefined,
-            this.beans.editSvc?.batchEditing ? 'ui' : 'api'
-        );
+        const result = this.beans.editSvc?.stopEditing(undefined, undefined, undefined, undefined, false, 'ui');
+
+        // editSvc didn't handle the stopEditing, we need to do more ourselves
+        if (!result) {
+            if (this.beans.editSvc?.batchEditing) {
+                // close editors, but don't stop editing in batch mode
+                this.beans.editSvc?.cleanupEditors();
+            } else {
+                // if not batch editing, then we stop editing the cell
+                this.beans.editSvc?.stopEditing(undefined, undefined, undefined, undefined, false, 'api');
+            }
+        }
     }
 
     // returns null if no navigation should be performed
