@@ -300,7 +300,9 @@ export class EditService extends BeanStub implements NamedBean {
     }
 
     private processUpdates(updates: PendingUpdates, cancel: boolean): void {
-        for (const rowNode of updates.keys()) {
+        const rowNodes = Array.from(updates.keys());
+
+        for (const rowNode of rowNodes) {
             const rowUpdateMap = updates.get(rowNode)!;
             for (const column of rowUpdateMap.keys()) {
                 const { newValue, oldValue } = rowUpdateMap.get(column)!;
@@ -323,7 +325,7 @@ export class EditService extends BeanStub implements NamedBean {
                     }
                 }
 
-                this.beans.eventSvc.dispatchEvent({
+                this.dispatchCellEvent(rowNode, column, undefined, 'cellEditingStopped', {
                     ..._createCellEvent(this.beans, null, 'cellEditingStopped', rowNode, column, newValue),
                     oldValue,
                     newValue,
@@ -331,6 +333,10 @@ export class EditService extends BeanStub implements NamedBean {
                     valueChanged,
                 });
             }
+        }
+
+        for (const rowNode of rowNodes) {
+            this.dispatchRowEvent(rowNode, 'rowEditingStopped');
         }
     }
 
@@ -498,9 +504,10 @@ export class EditService extends BeanStub implements NamedBean {
         rowNode: IRowNode | undefined | null,
         column: Column | undefined | null,
         event?: Event | null,
-        type?: T
+        type?: T,
+        payload?: any
     ): void {
-        this.strategy?.dispatchCellEvent(rowNode, column, event, type);
+        this.strategy?.dispatchCellEvent(rowNode, column, event, type, payload);
     }
 
     public dispatchRowEvent(

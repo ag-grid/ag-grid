@@ -111,13 +111,8 @@ export class FullRowEditStrategy extends BaseEditStrategy {
         if (!this.editModel.hasPending(this.rowNode)) {
             return false;
         }
-        const updates = this.editModel.getPendingUpdates();
 
         super.stopEditing();
-
-        for (const rowNode of updates.keys()) {
-            this.dispatchRowEvent(rowNode, 'rowEditingStopped');
-        }
 
         this.rowNode = undefined;
 

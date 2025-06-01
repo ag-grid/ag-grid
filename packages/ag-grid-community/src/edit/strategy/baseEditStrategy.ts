@@ -221,7 +221,8 @@ export abstract class BaseEditStrategy extends BeanStub {
         rowNode: IRowNode | undefined | null,
         column: Column | undefined | null,
         event?: Event | null,
-        type?: T
+        type?: T,
+        payload?: any
     ): void {
         const cellCtrl = _resolveCellController(this.beans, {
             rowNode,
@@ -229,7 +230,7 @@ export abstract class BaseEditStrategy extends BeanStub {
         });
 
         if (cellCtrl) {
-            this.eventSvc.dispatchEvent(cellCtrl.createEvent(event ?? null, type as T) as any);
+            this.eventSvc.dispatchEvent({ ...(cellCtrl.createEvent(event ?? null, type as T) as any), ...payload });
         }
     }
 

@@ -161,9 +161,11 @@ export class EditModelService extends BeanStub implements NamedBean {
     ): boolean {
         if (rowNode) {
             const rowEdits = this.getPendingUpdateRow(rowNode);
-            if (column) {
-                return rowEdits?.has(column) ?? false;
-            } else if (rowEdits?.size !== 0) {
+            if (!rowEdits) {
+                return false;
+            } else if (column) {
+                return rowEdits.has(column) ?? false;
+            } else if (rowEdits.size !== 0) {
                 return true;
             }
 
@@ -171,7 +173,7 @@ export class EditModelService extends BeanStub implements NamedBean {
                 ? !!_getSiblingRows(this.beans, rowNode, false, includeParents).find((sibling) =>
                       this.hasPending(sibling, column, false, includeParents)
                   )
-                : (rowEdits?.size ?? 0) > 0;
+                : rowEdits.size > 0;
         }
         return this.pendingUpdates.size > 0;
     }
