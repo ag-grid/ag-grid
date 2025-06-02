@@ -15,6 +15,8 @@ export default {
     data: function () {
         return {
             year: 'All',
+            // name needs to be unique within the DOM.
+            // e.g. if filter is on multiple columns and open simultaneously in filter tool panel
             name: `year${id++}`,
         };
     },

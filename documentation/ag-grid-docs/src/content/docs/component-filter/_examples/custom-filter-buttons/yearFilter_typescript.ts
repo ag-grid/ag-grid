@@ -14,6 +14,8 @@ export class YearFilter implements FilterDisplay<any, any, true> {
 
     init(params: FilterDisplayParams<any, any, true> & FilterWrapperParams) {
         this.eGui = document.createElement('div');
+        // name needs to be unique within the DOM.
+        // e.g. if filter is on multiple columns and open simultaneously in filter tool panel
         let compId = id++;
         this.eGui.innerHTML = `<div class="year-filter">
                 <div>Select Year Range</div>

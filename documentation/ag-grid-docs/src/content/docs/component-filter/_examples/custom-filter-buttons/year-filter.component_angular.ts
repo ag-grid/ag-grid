@@ -39,16 +39,18 @@ let id = 1;
 export class YearFilter implements IFilterDisplayAngularComp<any, any, true> {
     @ViewChild('rbAllYears') rbAllYears!: ElementRef;
 
+    // name needs to be unique within the DOM.
+    // e.g. if filter is on multiple columns and open simultaneously in filter tool panel
     name = `year${id++}`;
     params!: FilterDisplayParams<any, any, true> & FilterWrapperParams;
     year = 'All';
 
     agInit(params: FilterDisplayParams<any, any, true> & FilterWrapperParams): void {
-        this.params = params;
         this.refresh(params);
     }
 
     refresh(newParams: FilterDisplayParams<any, any, true> & FilterWrapperParams): boolean {
+        this.params = newParams;
         const currentValue = this.year === '2010' || null;
         const newValue = newParams.state.model;
         if (newValue !== currentValue) {
