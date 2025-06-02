@@ -13,6 +13,7 @@ import type { RowCtrl } from '../../rendering/row/rowCtrl';
 import type { CellIdPositions, EditModelService, EditedCell, PendingUpdates } from '../editModelService';
 import { _getSiblingRows, _resolveCellController, _resolveRowController } from '../utils/controllers';
 import {
+    UNEDITED,
     _destroyEditor,
     _destroyEditors,
     _purgeUnchangedEdits,
@@ -88,7 +89,7 @@ export abstract class BaseEditStrategy extends BeanStub {
             });
 
             rowUpdateMap.forEach((cellData, column) => {
-                const newState = forced ? forcedState : cellData.newValue !== undefined && _valuesDiffer(cellData);
+                const newState = forced ? forcedState : cellData.newValue !== UNEDITED && _valuesDiffer(cellData);
 
                 rowEdited ||= newState;
 

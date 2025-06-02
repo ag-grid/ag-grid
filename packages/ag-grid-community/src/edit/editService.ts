@@ -21,6 +21,7 @@ import {
     _resolveRowController,
 } from './utils/controllers';
 import {
+    UNEDITED,
     _destroyEditors,
     _purgeUnchangedEdits,
     _refreshEditorOnColDefChanged,
@@ -317,7 +318,7 @@ export class EditService extends BeanStub implements NamedBean {
 
                 const cellCtrl = _resolveCellController(this.beans, { rowNode, column });
 
-                const valueChanged = _valuesDiffer({ newValue, oldValue });
+                const valueChanged = newValue !== UNEDITED && _valuesDiffer({ newValue, oldValue });
 
                 if (!cancel && valueChanged) {
                     // we suppressRefreshCell because the call to rowNode.setDataValue() results in change detection
@@ -418,7 +419,10 @@ export class EditService extends BeanStub implements NamedBean {
             return undefined;
         }
 
-        return this.model.getPendingUpdate(rowNode!, column!)?.newValue;
+        const newValue = this.model.getPendingUpdate(rowNode!, column!)?.newValue;
+        return newValue !== UNEDITED
+            ? newValue
+            : this.beans.valueSvc.getValue(column as AgColumn, rowNode, true, 'api');
     }
 
     public addStopEditingWhenGridLosesFocus(viewports: HTMLElement[]): void {

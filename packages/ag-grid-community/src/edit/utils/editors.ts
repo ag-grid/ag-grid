@@ -10,6 +10,8 @@ import type { CellCtrl, ICellComp } from '../../rendering/cell/cellCtrl';
 import type { CellIdPositions, EditedCell } from '../editModelService';
 import { _resolveCellController } from './controllers';
 
+export const UNEDITED = Symbol('unedited');
+
 export function _setupEditors(
     beans: BeanCollection,
     editingCells: CellIdPositions[],
@@ -22,12 +24,25 @@ export function _setupEditors(
         return _setupEditor(beans, rowNode, column, key, cellStartedEdit);
     }
 
+    const { valueSvc, editSvc } = beans;
+
     let startedCompDetails: UserCompDetails<ICellEditorComp<any, any, any>> | undefined;
 
     for (const cellPosition of editingCells) {
         const curCellCtrl = _resolveCellController(beans, cellPosition);
 
         if (!curCellCtrl) {
+            if (rowNode && column) {
+                const newValue =
+                    key ??
+                    editSvc?.getCellDataValue(rowNode, column) ??
+                    valueSvc.getValueForDisplay(column as AgColumn, rowNode)?.value ??
+                    UNEDITED;
+
+                const oldValue = beans.valueSvc.getValue(column as AgColumn, rowNode, undefined, 'api');
+
+                beans.editModelSvc?.setPendingValue(rowNode, column, newValue, oldValue, 'editing');
+            }
             continue;
         }
 
@@ -62,7 +77,7 @@ export function _setupEditor(
     const newValue = key ?? editorParams.value;
     const oldValue = beans.valueSvc.getValue(column as AgColumn, rowNode, undefined, 'api');
 
-    beans.editModelSvc?.setPendingValue(rowNode, column, newValue, oldValue, 'editing');
+    beans.editModelSvc?.setPendingValue(rowNode, column, newValue ?? UNEDITED, oldValue, 'editing');
 
     if (editorComp) {
         // don't reinitialise, just refresh if possible
@@ -131,7 +146,8 @@ function _createCellEditorParams(
 
     const initialNewValue =
         editSvc?.getCellDataValue(rowNode, column) ?? _takeValueFromCellEditor(false, cellCtrl.comp)?.newValue;
-    const value = initialNewValue ?? valueSvc.getValueForDisplay(agColumn, rowNode)?.value;
+    const value =
+        initialNewValue === UNEDITED ? valueSvc.getValueForDisplay(agColumn, rowNode)?.value : initialNewValue;
 
     return _addGridCommonParams(gos, {
         value,
@@ -168,7 +184,7 @@ export function _purgeUnchangedEdits(beans: BeanCollection): void {
     beans.editModelSvc?.getPendingUpdates().forEach((rowUpdateMap, rowNode) => {
         const removedRowCells: CellIdPositions[] = [];
         rowUpdateMap.forEach((cellData, column) => {
-            if (!_valuesDiffer(cellData) && cellData.state !== 'editing') {
+            if (cellData.newValue === UNEDITED || (!_valuesDiffer(cellData) && cellData.state !== 'editing')) {
                 // remove edits where the pending is equal to the old value
                 beans.editModelSvc?.removePendingEdit(rowNode, column);
                 removedRowCells.push({ rowNode, column });
@@ -237,7 +253,13 @@ export function _syncModelFromEditor(
     const cellCtrl = _resolveCellController(beans, { rowNode, column });
     const hasEditor = !!cellCtrl?.comp?.getCellEditor();
 
-    beans.editModelSvc?.setPendingValue(rowNode, column, newValue, oldValue, hasEditor ? 'editing' : 'changed');
+    beans.editModelSvc?.setPendingValue(
+        rowNode,
+        column,
+        newValue ?? UNEDITED,
+        oldValue,
+        hasEditor ? 'editing' : 'changed'
+    );
 }
 
 export function _destroyEditors(beans: BeanCollection, cellPositions: CellIdPositions[]): void {

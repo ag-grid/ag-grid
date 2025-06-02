@@ -106,6 +106,7 @@ const gridOptions: GridOptions = {
             ],
         },
         { field: 'gender', enableRowGroup: true, enablePivot: true, aggFunc: uniqOrDots },
+        { field: 'exists', cellRenderer: 'agCheckboxCellRenderer', cellEditor: 'agCheckboxCellEditor' },
         { field: 'age', aggFunc: 'sum', cellDataType: 'number', enableValue: true },
         { field: 'mood', enableRowGroup: true, enablePivot: true, aggFunc: uniqOrDots },
         { field: 'country', enableRowGroup: true, enablePivot: true, aggFunc: uniqOrDots },

@@ -5,6 +5,7 @@ import type { EditingCellPosition } from '../interfaces/iCellEditor';
 import type { Column } from '../interfaces/iColumn';
 import type { IRowNode } from '../interfaces/iRowNode';
 import { _getSiblingRows } from './utils/controllers';
+import { UNEDITED } from './utils/editors';
 
 export type CellIdPositions = {
     rowNode: IRowNode;
@@ -195,8 +196,8 @@ export class EditModelService extends BeanStub implements NamedBean {
         const map = this.getPendingUpdateRow(rowNode) ?? new Map<Column, EditedCell>();
         let updated = false;
         if (column && !map.has(column)) {
-            const oldValue = this.beans.valueSvc.getValue(column as AgColumn, rowNode);
-            map.set(column, { newValue: undefined, oldValue, state: 'editing' });
+            const oldValue = this.beans.valueSvc.getValue(column as AgColumn, rowNode, true, 'api');
+            map.set(column, { newValue: UNEDITED, oldValue, state: 'editing' });
             updated = true;
         }
         this.pendingUpdates.set(rowNode, map);
