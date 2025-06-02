@@ -118,7 +118,7 @@ export class EditModelService extends BeanStub implements NamedBean {
         }
     }
 
-    getState(rowNode: IRowNode, column: Column): EditedCellState | undefined {
+    public getState(rowNode: IRowNode, column: Column): EditedCellState | undefined {
         return this.getPendingUpdate(rowNode, column)?.state;
     }
 
