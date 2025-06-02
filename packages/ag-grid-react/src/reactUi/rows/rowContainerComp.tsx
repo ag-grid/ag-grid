@@ -1,4 +1,4 @@
-import React, { memo, useCallback, useContext, useMemo, useRef, useState, useSyncExternalStore } from 'react';
+import React, { memo, useCallback, useContext, useMemo, useRef, useState } from 'react';
 
 import type { IRowContainerComp, RowContainerName, RowCtrl } from 'ag-grid-community';
 import {
