@@ -255,9 +255,7 @@ function clearEditingCells() {
 }
 
 function setEditType(editType: any) {
-    (document.getElementById('singleCell')! as HTMLInputElement).checked = editType !== 'fullRow';
-    (document.getElementById('fullRow')! as HTMLInputElement).checked = editType === 'fullRow';
-
+    console.log('Setting edit type to:', editType);
     gridApi!.updateGridOptions({
         editType,
     });

@@ -2,11 +2,8 @@
     <div class="example-buttons">
         <div class="example-button-row">
             <span>Editing Strategy:</span>
-            <label
-                ><input type="radio" id="singleCell" onclick="setEditType(undefined)" checked />Single Cell
-                (default)</label
-            >
-            <label><input type="radio" id="fullRow" onclick="setEditType('fullRow')" />Full Row</label>
+            <button id="singleCell" onclick="setEditType(undefined)">Single Cell (default)</button>
+            <button id="fullRow" onclick="setEditType('fullRow')">Full Row</button>
         </div>
         <div class="example-button-row">
             <span>Editing API: </span>
