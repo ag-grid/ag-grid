@@ -236,7 +236,11 @@ export class EditService extends BeanStub implements NamedBean {
 
             res ||= willStop;
             forcedState = false;
-        } else if (event instanceof KeyboardEvent && this.batchEditing) {
+        } else if (
+            event instanceof KeyboardEvent &&
+            this.batchEditing &&
+            this.model.getPendingUpdate(rowNode!, column!)?.state === 'editing'
+        ) {
             // handle mid-batch edit interactions
             const isEnter = key === KeyCode.ENTER;
             const isEscape = key === KeyCode.ESCAPE;
