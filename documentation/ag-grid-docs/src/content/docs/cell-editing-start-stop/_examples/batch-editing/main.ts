@@ -1,15 +1,19 @@
+import { get } from 'http';
+
 import type {
     CellEditingStartedEvent,
     CellEditingStoppedEvent,
     EditingCellPosition,
     GridApi,
     GridOptions,
+    IAggFuncParams,
     IRowNode,
     RowEditingStartedEvent,
     RowEditingStoppedEvent,
     RowPinnedType,
 } from 'ag-grid-community';
 import {
+    ClientSideRowModelApiModule,
     ClientSideRowModelModule,
     HighlightChangesModule,
     ModuleRegistry,
@@ -33,7 +37,6 @@ import {
     RowGroupingPanelModule,
 } from 'ag-grid-enterprise';
 
-import { CustomCellRenderer } from './custom-renderer';
 import { getData } from './data';
 
 ModuleRegistry.registerModules([
@@ -53,37 +56,60 @@ ModuleRegistry.registerModules([
     HighlightChangesModule,
     RowDragModule,
     AggregationModule,
+    ClientSideRowModelApiModule,
     ValidationModule /* Development Only */,
 ]);
 
 let gridApi: GridApi;
 
-const pivot = false;
-const grouping = true;
-const hide = false;
+const uniqOrDots = (params: IAggFuncParams) => {
+    // distinct count of first names
+    const uniqueNames = new Set<string>();
+    params.values.forEach((value) => {
+        if (value) {
+            uniqueNames.add(value);
+        }
+    });
+    return `${uniqueNames.size} / ${params.values.length}`;
+};
 
 const gridOptions: GridOptions = {
     columnDefs: [
         {
             headerName: 'Name',
             children: [
-                { field: 'firstName', ...(grouping ? { rowGroup: true } : {}), hide },
+                {
+                    field: 'firstName',
+                    enableRowGroup: true,
+                    enablePivot: true,
+                    aggFunc: uniqOrDots,
+                    rowGroup: true,
+                },
                 {
                     field: 'lastName',
-                    ...(grouping
-                        ? { rowGroup: true }
-                        : {
-                              cellRenderer: CustomCellRenderer,
-                              cellClass: 'custom-athlete-cell',
-                          }),
+                    enableRowGroup: true,
+                    enablePivot: true,
+                    aggFunc: uniqOrDots,
+                },
+                {
+                    headerName: 'Details',
+                    valueFormatter: (params) => {
+                        const names = [];
+                        params.data?.firstName && names.push(params.data.firstName);
+                        params.data?.lastName && names.push(params.data.lastName);
+                        params.data?.age && names.push(`(${params.data.age})`);
+                        return names.length > 0 ? names.join(' ') : '';
+                    },
+                    editable: false,
+                    minWidth: 145,
                 },
             ],
         },
-        { field: 'gender', ...(pivot ? { pivot: true } : {}), hide },
-        { field: 'age', aggFunc: 'sum', cellDataType: 'number' },
-        { field: 'mood', hide },
-        { field: 'country', hide, ...(grouping ? { rowGroup: true } : {}) },
-        { field: 'address', minWidth: 550, hide },
+        { field: 'gender', enableRowGroup: true, enablePivot: true, aggFunc: uniqOrDots },
+        { field: 'age', aggFunc: 'sum', cellDataType: 'number', enableValue: true },
+        { field: 'mood', enableRowGroup: true, enablePivot: true, aggFunc: uniqOrDots },
+        { field: 'country', enableRowGroup: true, enablePivot: true, aggFunc: uniqOrDots },
+        { field: 'address', minWidth: 550 },
     ],
     defaultColDef: {
         flex: 1,
@@ -91,6 +117,13 @@ const gridOptions: GridOptions = {
         editable: true,
         filter: true,
         enableCellChangeFlash: true,
+    },
+    autoGroupColumnDef: {
+        headerName: 'Group',
+        valueSetter: (params): boolean => {
+            console.log('valueSetter called for autoGroupColumnDef');
+            return true;
+        },
     },
     sideBar: 'columns',
     pivotPanelShow: 'always',
@@ -104,19 +137,18 @@ const gridOptions: GridOptions = {
     },
     rowDragManaged: true,
     enableRowPinning: true,
-    ...(grouping || pivot
-        ? {}
-        : {
-              isRowPinned: (rowNode: IRowNode) => {
-                  // pinning the first two rows at the top
-                  if (rowNode.data.firstName === 'Jane') {
-                      return 'top';
-                  }
-                  if (rowNode.data.firstName === 'John') {
-                      return 'bottom';
-                  }
-              },
-          }),
+    groupDisplayType: 'multipleColumns',
+    groupDefaultExpanded: 1,
+    isRowPinned: (rowNode: IRowNode) => {
+        // pinning the first two rows at the top
+        if (rowNode.data?.firstName === 'Jane') {
+            return 'top';
+        }
+        if (rowNode.data?.firstName === 'John') {
+            return 'bottom';
+        }
+    },
+    suppressAggFuncInHeader: true,
     onRowEditingStarted: (event: RowEditingStartedEvent) => {
         console.log('rowEditingStarted');
     },
