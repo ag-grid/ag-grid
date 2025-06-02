@@ -575,7 +575,7 @@ export class CellCtrl extends BeanStub {
     }
 
     public getColSpanningList(): AgColumn[] {
-        return this.positionFeature!.getColSpanningList();
+        return this.positionFeature?.getColSpanningList() ?? [];
     }
 
     public onLeftChanged(): void {
